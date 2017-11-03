@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,7 +49,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.util.DataMapUtil;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
@@ -94,9 +92,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
 	@Resource
-	private PaginationListSelection paginationListSelection;
-
-	@Resource
 	private StudyService studyService;
 
 	@Resource
@@ -115,10 +110,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	@ResponseBody
 	@RequestMapping(value = "/{studyType}/updateTraits", method = RequestMethod.POST)
-	public Map<String, String> updateTraits(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
-			@PathVariable final String studyType, final BindingResult result, final Model model) {
-
-		final UserSelection userSelection = this.getUserSelection();
+	public Map<String, String> updateTraits(@ModelAttribute("createNurseryForm") final CreateNurseryForm form) {
 
 		final Map<String, String> resultMap = new HashMap<>();
 
@@ -237,7 +229,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 			map.put(TrialMeasurementsController.INDEX, index);
 
-			final UserSelection userSelection = this.getUserSelection();
 			final MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
 
 			try {
@@ -319,7 +310,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		map.put(TrialMeasurementsController.INDEX, index);
 
-		final UserSelection userSelection = this.getUserSelection();
 		final MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
 
 		if (originalRow != null && originalRow.getMeasurementVariables() != null) {
@@ -378,7 +368,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/update/experiment/cell/missing/all", method = RequestMethod.GET)
 	public Map<String, Object> markAllExperimentDataAsMissing() {
 		final Map<String, Object> map = new HashMap<>();
-		final UserSelection userSelection = this.getUserSelection();
 		for (final MeasurementRow row : userSelection.getMeasurementRowList()) {
 			if (row != null && row.getMeasurementVariables() != null) {
 				this.markNonEmptyVariateValuesAsMissing(row.getDataList());
@@ -394,7 +383,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		UserSelection userSelection = this.getUserSelection();
 		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
 			if (row != null && row.getMeasurementVariables() != null) {
 				this.markNonEmptyVariateValuesAsAccepted(row.getDataList());
@@ -437,8 +425,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	 */
 	@RequestMapping(value = "/edit/experiment/cell/{experimentId}/{termId}", method = RequestMethod.GET)
 	public String editExperimentCells(@PathVariable final int experimentId, @PathVariable final int termId,
-			@RequestParam(required = false) final Integer phenotypeId, final Model model)
-			throws MiddlewareQueryException {
+			@RequestParam(required = false) final Integer phenotypeId, final Model model) {
 
 		if (phenotypeId != null) {
 			final Phenotype phenotype = this.studyDataManager.getPhenotypeById(phenotypeId);
@@ -470,10 +457,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	 * inline for import preview measurements table.
 	 */
 	@RequestMapping(value = "/update/experiment/cell/{index}/{termId}", method = RequestMethod.GET)
-	public String editExperimentCells(@PathVariable final int index, @PathVariable final int termId, final Model model)
-			throws MiddlewareQueryException {
+	public String editExperimentCells(@PathVariable final int index, @PathVariable final int termId, final Model model) {
 
-		final UserSelection userSelection = this.getUserSelection();
 		final List<MeasurementRow> tempList = new ArrayList<>();
 		tempList.addAll(userSelection.getMeasurementRowList());
 
@@ -566,7 +551,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@ResponseBody
 	@RequestMapping(value = "/plotMeasurements/preview", method = RequestMethod.GET, produces = "application/json")
 	public List<Map<String, Object>> getPreviewPlotMeasurements() {
-		final UserSelection userSelection = this.getUserSelection();
+
 		final List<MeasurementRow> tempList = new ArrayList<>();
 
 		if (userSelection.getTemporaryWorkbook() != null) {
@@ -741,7 +726,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		this.addGermplasmAndPlotFactorsDataToDataMap(row, dataMap, measurementDatasetVariables);
 
 		// generate measurement row data from newly added traits (no data yet)
-		final UserSelection userSelection = this.getUserSelection();
 		if (userSelection != null && userSelection.getMeasurementDatasetVariable() != null
 				&& !userSelection.getMeasurementDatasetVariable().isEmpty()) {
 			for (final MeasurementVariable var : userSelection.getMeasurementDatasetVariable()) {

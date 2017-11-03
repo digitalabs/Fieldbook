@@ -266,8 +266,8 @@ public class DesignImportMeasurementRowGenerator {
 			}
 		}
 
-		WorkbookUtil.addMeasurementDataToRowsIfNecessary(new ArrayList<MeasurementVariable>(temporaryList), measurements, true,
-				userSelection, ontologyService, this.fieldbookService, contextUtil.getCurrentProgramUUID());
+		WorkbookUtil.addMeasurementDataToRowsIfNecessary(new ArrayList<MeasurementVariable>(temporaryList), measurements, true
+				, ontologyService, this.fieldbookService, contextUtil.getCurrentProgramUUID());
 
 	}
 

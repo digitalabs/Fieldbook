@@ -1148,7 +1148,7 @@ public class TrialMeasurementsControllerTest {
 		CreateNurseryForm form = new CreateNurseryForm();
 		BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		Model model = Mockito.mock(Model.class);
-		final Map<String, String> resultMap = this.trialMeasurementsController.updateTraits(form, "T", bindingResult, model);
+		final Map<String, String> resultMap = this.trialMeasurementsController.updateTraits(form);
 		Assert.assertEquals("1", resultMap.get(TrialMeasurementsController.STATUS));
 		Mockito.verify(this.validationService).validateObservationValues(workbook);
 		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(), true);

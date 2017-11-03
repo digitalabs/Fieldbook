@@ -61,7 +61,7 @@
 					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
 						<li class="withMeasurementsOnly" th:id="*{'generateStockListMenuItem' + listId}" th:if="*{(listType == 'SAMPLE_LIST')}">
 							<a href="javascript: void(0)"
-							   th:onclick="'javascript: ExportSampleList.showSampleListExportOptions('+ *{listId} + ',\'' + *{listName} + '\');'"
+							   th:onclick="'javascript: ExportSampleList.exportFile('+ *{listId} + ',\'' + *{listName} + '\');'"
 							   th:text="#{export.sample.list}">
 								Export sample list</a>
 						</li>

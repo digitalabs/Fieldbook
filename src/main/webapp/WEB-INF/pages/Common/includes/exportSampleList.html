@@ -1,10 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
+	<!-- Modal -->
+	<div class="modal fade" id="exportSampleListModal" role="dialog" aria-labelledby="exportSampleListModal" aria-hidden="true">
+		<div class="modal-dialog modal-small">
+			<div class="modal-content">
+				<div class="modal-body" id="exportSampleListModalBody">
+					<div class="row form-group">
+						<div class="col-xs-11 col-md-11">
+							<label class="modal-title fbk-modal-title" id="heading-modal"></label>
+						</div>
+						<div class="col-xs-1 col-md-1">
+							<button id="close" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"></button>
+						</div>
+					</div>
+					<div class="row form-group">
+						<div class="col-xs-12 col-md-12">
+							<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+						</div>
+					</div>
+
+					<div class="row form-group">
+						<div class="col-xs-12 col-md-12">
+							<label class="control-label h4 label-bold" th:text="#{study.export.format.header}"></label>
+						</div>
+
+					</div>
+
+					<div class="row form-group">
+						<div class="col-xs-6 col-md-6">
+							<label class="control-label add_top_padding label-bold" th:text="#{study.export.choose.format}">Export Format:</label><span class="required">*</span>
+						</div>
+						<div class="report-type-section col-xs-4 col-md-4">
+							<select id="exportType">
+								<option value="0">Please Choose</option>
+								<option selected="selected"  value="6" th:text="#{nursery.export.csv}"></option>
+								<option value="2" th:text="#{nursery.export.excel}"></option>
+							</select>
+						</div>
+					</div>
+					<div class="row  form-group">&nbsp;</div>
+				</div>
+				<div class="modal-footer addVariable-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
+					<button type="button" class="btn btn-primary" aria-hidden="true" onclick="javascript:ExportSampleList.checkBeforeExport();">Export</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<form id="exportSampleListDownloadForm" role="form-horizontal" action="#" th:action="@{/ExportManager/download/SampleListFile}" method="GET">
+	<input type="hidden" name="outputFilename" id="outputFilename" value=""/>
+	<input type="hidden" name="filename" id="filename" value=""/>
+	<input type="hidden" name="contentType" id="contentType" value=""/>
+</form>
+
+<div layout:fragment="page-script">
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/exportSampleList.js}"></script>
+	<script type='text/javascript' th:inline="javascript">
+		//<![CDATA[
+		var exportHeader = /*[[#{study.export.study.header}]]*/ '';
+		//]]>
+	</script>
+</div>

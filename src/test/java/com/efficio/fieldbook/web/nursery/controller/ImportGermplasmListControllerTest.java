@@ -244,7 +244,7 @@ public class ImportGermplasmListControllerTest {
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, "T", form, model);
+		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, StudyType.T.getName(), form, model);
 
 		Assert.assertTrue("If import is successful, isImportValid should be TRUE", this.userSelection.isImportValid());
 
@@ -375,7 +375,7 @@ public class ImportGermplasmListControllerTest {
 		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 		final List<ImportedGermplasm> list = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
 		final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
-		final String type = "T";
+		final String type = StudyType.T.getName();
 		this.importGermplasmListController.initializeObjectsForGermplasmDetailsView(type, form, model, mainInfo, list,
 				dataTableDataList);
 
@@ -414,7 +414,7 @@ public class ImportGermplasmListControllerTest {
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displayGermplasmDetailsOfCurrentStudy("T", form, model);
+		this.importGermplasmListController.displayGermplasmDetailsOfCurrentStudy(StudyType.T.getName(), form, model);
 
 		Assert.assertTrue(this.userSelection.isImportValid());
 

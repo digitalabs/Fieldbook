@@ -857,7 +857,7 @@ public class ImportGermplasmListController extends SettingsController {
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form) {
 
 		try {
-			final String type = "T";
+			final String type = StudyType.T.getName();
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 			final List<ImportedGermplasm> list = this.getUserSelection().getImportedGermplasmMainInfo()

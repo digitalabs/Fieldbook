@@ -722,6 +722,18 @@ public class FieldbookServiceTest {
 	}
 
 	@Test
+	public void testaddSTUDY_UIDVariableToWorkbookConditions() {
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString()))
+				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.STUDY_UID.getId(),
+						TermId.STUDY_UID.name()));
+		final List<MeasurementVariable> conditions = new ArrayList<>();
+		this.fieldbookServiceImpl.addSTUDY_UIDVariableToWorkbookConditions(conditions);
+		final MeasurementVariable studyUIDVariable = conditions.get(0);
+		Assert.assertEquals(TermId.STUDY_UID.getId(), studyUIDVariable.getTermId());
+		Assert.assertEquals(TermId.STUDY_UID.name(), studyUIDVariable.getName());
+	}
+
+	@Test
 	public void testAddMeasurementVariableToMeasurementRows() {
 
 		final MeasurementVariable measurementVariableToAdd = new MeasurementVariable();

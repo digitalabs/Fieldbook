@@ -194,12 +194,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			this.fieldbookService.addMeasurementVariableToMeasurementRows(plotIdMeasurementVariable,
 					wb.getObservations());
 
-			// Add the STUDY_UID variable to make sure that user logged in
-			// during the import will be set as the owner
-			final MeasurementVariable userIdMeasurementVariable = this.fieldbookService.createMeasurementVariable(
-					String.valueOf(TermId.STUDY_UID.getId()), String.valueOf(this.contextUtil.getCurrentUserLocalId()),
-					Operation.ADD, PhenotypicType.STUDY);
-			this.fieldbookService.addMeasurementVariableToList(userIdMeasurementVariable, wb.getConditions());
+			this.fieldbookService.addSTUDY_UIDVariableToWorkbookConditions(wb.getConditions());
 
 			this.dataImportService.saveDataset(wb, programUUID,
 					this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());

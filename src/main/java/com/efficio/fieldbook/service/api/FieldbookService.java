@@ -232,7 +232,13 @@ public interface FieldbookService {
 	 * @param measurementVariables
 	 */
 	void addMeasurementVariableToList(MeasurementVariable measurementVariable, List<MeasurementVariable> measurementVariables);
-
+	
+	/**
+	 * Add the STUDY_UID variable to make sure that user logged in during the import will be set as the owner
+	 * @param list
+	 */
+	void addSTUDY_UIDVariableToWorkbookConditions(List<MeasurementVariable> list);
+	
 	/**
 	 * Adds the specified variable to the measurementRows. This will add a blank measurementData on each measurement row for the specified variable.
 	 *

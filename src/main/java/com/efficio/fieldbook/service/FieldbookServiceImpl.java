@@ -1262,6 +1262,16 @@ public class FieldbookServiceImpl implements FieldbookService {
 		}
 
 	}
+	
+	@Override
+	public void addSTUDY_UIDVariableToWorkbookConditions(List<MeasurementVariable> conditions) {
+		// Add the STUDY_UID variable to make sure that user logged in
+		// during the import will be set as the owner
+		final MeasurementVariable userIdMeasurementVariable = this.createMeasurementVariable(
+				String.valueOf(TermId.STUDY_UID.getId()), String.valueOf(this.contextUtil.getCurrentUserLocalId()),
+				Operation.ADD, PhenotypicType.STUDY);
+		this.addMeasurementVariableToList(userIdMeasurementVariable, conditions);
+	}
 
 	@Override
 	public void addMeasurementVariableToMeasurementRows(final MeasurementVariable measurementVariable,

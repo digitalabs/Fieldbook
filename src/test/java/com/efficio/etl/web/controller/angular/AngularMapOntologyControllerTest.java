@@ -73,12 +73,6 @@ public class AngularMapOntologyControllerTest {
 		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "",
 				Operation.ADD, PhenotypicType.GERMPLASM)).thenReturn(plotIdMeasurementVariable);
 
-		final MeasurementVariable userIdMeasurementVariable = MeasurementVariableTestDataInitializer
-				.createMeasurementVariable(TermId.STUDY_UID.getId(), TermId.STUDY_UID.name(), "");
-		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.STUDY_UID.getId()),
-				String.valueOf(this.contextUtil.getCurrentUserLocalId()), Operation.ADD, PhenotypicType.STUDY))
-				.thenReturn(userIdMeasurementVariable);
-
 		final org.apache.poi.ss.usermodel.Workbook apacheWorkbook = Mockito
 				.mock(org.apache.poi.ss.usermodel.Workbook.class);
 		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1,
@@ -94,8 +88,7 @@ public class AngularMapOntologyControllerTest {
 		Mockito.verify(this.etlService).mergeVariableData(variables, apacheWorkbook, this.userSelection);
 		Mockito.verify(this.fieldbookService).addMeasurementVariableToList(plotIdMeasurementVariable,
 				workbook.getFactors());
-		Mockito.verify(this.fieldbookService).addMeasurementVariableToList(userIdMeasurementVariable,
-				workbook.getConditions());
+		Mockito.verify(this.fieldbookService).addSTUDY_UIDVariableToWorkbookConditions(workbook.getConditions());
 		Mockito.verify(this.etlService).saveProjectOntology(workbook, AngularMapOntologyControllerTest.PROGRAM_UUID);
 
 		Mockito.verify(this.userSelection).setStudyId(workbook.getStudyDetails().getId());

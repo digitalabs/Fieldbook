@@ -851,7 +851,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 						 * variable of the name
 						 */
 						final MeasurementVariable tempVarId = studyConditionMap.get(idTermId);
-						String actualNameVal = this.resolveNameVarValue(tempVarId);
+						final String actualNameVal = this.resolveNameVarValue(tempVarId);
 
 						final StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(
 								Integer.valueOf(nameTermId), this.contextUtil.getCurrentProgramUUID());
@@ -1262,16 +1262,17 @@ public class FieldbookServiceImpl implements FieldbookService {
 		}
 
 	}
-	
+
 	@Override
-	public void addStudyUUIDConditionAndPlotIDFactorToWorkbook(Workbook workbook, boolean addPlotIdToMeasurementRows) {
+	public void addStudyUUIDConditionAndPlotIDFactorToWorkbook(final Workbook workbook,
+			final boolean addPlotIdToMeasurementRows) {
 		// Add the STUDY_UID variable to make sure that user logged in
 		// during the import will be set as the owner
 		final MeasurementVariable userIdMeasurementVariable = this.createMeasurementVariable(
 				String.valueOf(TermId.STUDY_UID.getId()), String.valueOf(this.contextUtil.getCurrentUserLocalId()),
 				Operation.ADD, PhenotypicType.STUDY);
 		this.addMeasurementVariableToList(userIdMeasurementVariable, workbook.getConditions());
-		
+
 		final MeasurementVariable plotIdMeasurementVariable = this.createMeasurementVariable(
 				String.valueOf(TermId.PLOT_ID.getId()), "", Operation.ADD, PhenotypicType.GERMPLASM);
 		plotIdMeasurementVariable.setFactor(true);
@@ -1281,17 +1282,17 @@ public class FieldbookServiceImpl implements FieldbookService {
 		// if it is not available as it is necessary in displaying the
 		// PLOT_ID column in measurements table.
 		this.addMeasurementVariableToList(plotIdMeasurementVariable, workbook.getFactors());
-		
-		//Skip addition of Plot ID to measurement rows for Import Excel using Data Import Wizard option. It will be added in the later steps. 
-		if(addPlotIdToMeasurementRows) {
+
+		// Skip addition of Plot ID to measurement rows for Import Excel using
+		// Data Import Wizard option. It will be added in the later steps.
+		if (addPlotIdToMeasurementRows) {
 			// It is important to add the PLOT_ID measurement data in
 			// measurement rows to make sure that variables
 			// in Workbook match the variables in measurement rows. This will
 			// initially creates blank values for PLOT_ID
 			// but the generation of plot IDs will be handled during the saving
 			// of Workbook.
-			this.addMeasurementVariableToMeasurementRows(plotIdMeasurementVariable,
-				workbook.getObservations());
+			this.addMeasurementVariableToMeasurementRows(plotIdMeasurementVariable, workbook.getObservations());
 		}
 	}
 

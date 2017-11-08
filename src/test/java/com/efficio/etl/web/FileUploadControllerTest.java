@@ -94,7 +94,7 @@ public class FileUploadControllerTest {
 	private HttpServletRequest request;
 	private HttpServletResponse response;
 	private MeasurementVariable plotIdMeasurementVariable;
-	
+
 	@InjectMocks
 	private FileUploadController fileUploadController;
 
@@ -202,7 +202,8 @@ public class FileUploadControllerTest {
 
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToList(this.plotIdMeasurementVariable, workbook.getFactors());
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, false);
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook,
+				false);
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable, workbook.getObservations());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook,
@@ -231,7 +232,8 @@ public class FileUploadControllerTest {
 
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToList(this.plotIdMeasurementVariable, workbook.getFactors());
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, false);
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook,
+				false);
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable, workbook.getObservations());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook,

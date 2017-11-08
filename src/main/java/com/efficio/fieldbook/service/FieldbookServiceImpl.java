@@ -164,7 +164,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 	 *
 	 * @throws RuleException
 	 * @throws FieldbookException
-	 * @throws MiddlewareQueryException
 	 */
 	@Override
 	public AdvanceResult advanceNursery(final AdvancingNursery advanceInfo, final Workbook workbook)

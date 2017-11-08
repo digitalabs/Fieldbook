@@ -14,6 +14,7 @@ import org.generationcp.middleware.data.initializer.MethodTestDataInitializer;
 import org.generationcp.middleware.data.initializer.PersonTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
+import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -717,6 +718,72 @@ public class FieldbookServiceTest {
 		Assert.assertEquals(TermId.PLOT_ID.getId(), plotIdMeasurementVariabe.getTermId());
 		Assert.assertEquals(TermId.PLOT_ID.name(), plotIdMeasurementVariabe.getName());
 
+	}
+
+	@Test
+	public void testaddSTUDY_UIDVariableToWorkbookConditionsFalse() {
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1,
+				false);
+		// Set lists to empty lists for easier testing
+		workbook.setConditions(new ArrayList<MeasurementVariable>());
+		workbook.setFactors(new ArrayList<MeasurementVariable>());
+		workbook.getObservations().get(0).setDataList(new ArrayList<MeasurementData>());
+
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.STUDY_UID.getId()),
+				Matchers.anyString()))
+				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.STUDY_UID.getId(),
+						TermId.STUDY_UID.name()));
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.PLOT_ID.getId()),
+				Matchers.anyString()))
+				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.PLOT_ID.getId(),
+						TermId.PLOT_ID.name()));
+
+		this.fieldbookServiceImpl.addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, false);
+		final MeasurementVariable studyUIDVariable = workbook.getConditions().get(0);
+		Assert.assertEquals(TermId.STUDY_UID.getId(), studyUIDVariable.getTermId());
+		Assert.assertEquals(TermId.STUDY_UID.name(), studyUIDVariable.getName());
+
+		final MeasurementVariable plotIdVariable = workbook.getFactors().get(0);
+		Assert.assertEquals(TermId.PLOT_ID.getId(), plotIdVariable.getTermId());
+		Assert.assertEquals(TermId.PLOT_ID.name(), plotIdVariable.getName());
+
+		// Plot id should not be added in the datalist
+		Assert.assertTrue(workbook.getObservations().get(0).getDataList().isEmpty());
+	}
+
+	@Test
+	public void testAddStudyUUIDConditionAndPlotIDFactorToWorkbookTrue() {
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1,
+				false);
+		// Set lists to empty lists for easier testing
+		workbook.setConditions(new ArrayList<MeasurementVariable>());
+		workbook.setFactors(new ArrayList<MeasurementVariable>());
+		workbook.getObservations().get(0).setDataList(new ArrayList<MeasurementData>());
+
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.STUDY_UID.getId()),
+				Matchers.anyString()))
+				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.STUDY_UID.getId(),
+						TermId.STUDY_UID.name()));
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.PLOT_ID.getId()),
+				Matchers.anyString()))
+				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.PLOT_ID.getId(),
+						TermId.PLOT_ID.name()));
+
+		this.fieldbookServiceImpl.addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, true);
+		final MeasurementVariable studyUIDVariable = workbook.getConditions().get(0);
+		Assert.assertEquals(TermId.STUDY_UID.getId(), studyUIDVariable.getTermId());
+		Assert.assertEquals(TermId.STUDY_UID.name(), studyUIDVariable.getName());
+
+		final MeasurementVariable plotIdVariable = workbook.getFactors().get(0);
+		Assert.assertEquals(TermId.PLOT_ID.getId(), plotIdVariable.getTermId());
+		Assert.assertEquals(TermId.PLOT_ID.name(), plotIdVariable.getName());
+
+		// Plot id should be added in the datalist
+		Assert.assertFalse(workbook.getObservations().get(0).getDataList().isEmpty());
+		final MeasurementData mData = workbook.getObservations().get(0).getDataList().get(0);
+		Assert.assertEquals(TermId.PLOT_ID.name(), mData.getLabel());
+		Assert.assertTrue(mData.getValue().isEmpty());
+		Assert.assertEquals(plotIdVariable, mData.getMeasurementVariable());
 	}
 
 	@Test

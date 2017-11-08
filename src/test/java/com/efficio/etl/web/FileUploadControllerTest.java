@@ -174,17 +174,12 @@ public class FileUploadControllerTest {
 		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request,
 				this.response, this.model);
 
-		Mockito.verify(this.fieldbookService).addMeasurementVariableToList(this.plotIdMeasurementVariable,
-				workbook.getFactors());
-		Mockito.verify(this.fieldbookService).addSTUDY_UIDVariableToWorkbookConditions(workbook.getConditions());
-		Mockito.verify(this.fieldbookService).addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable,
-				workbook.getObservations());
+		Mockito.verify(this.fieldbookService).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, true);
 		Mockito.verify(this.dataImportService).saveDataset(workbook, FileUploadControllerTest.PROGRAM_UUID,
 				FileUploadControllerTest.PROJECT_CODE_PREFIX);
 		Mockito.verify(this.httpSessionUtil).clearSessionData(this.session,
 				new String[] { HTTPSessionUtil.USER_SELECTION_SESSION_NAME });
 
-		Assert.assertTrue(this.plotIdMeasurementVariable.isFactor());
 		Assert.assertEquals(FileUploadController.STATUS_CODE_SUCCESSFUL,
 				returnMessage.get(FileUploadController.STATUS_CODE));
 		Assert.assertEquals("Import is done.", returnMessage.get(FileUploadController.STATUS_MESSAGE));
@@ -207,7 +202,7 @@ public class FileUploadControllerTest {
 
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToList(this.plotIdMeasurementVariable, workbook.getFactors());
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).addSTUDY_UIDVariableToWorkbookConditions(workbook.getConditions());
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, false);
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable, workbook.getObservations());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook,
@@ -236,7 +231,7 @@ public class FileUploadControllerTest {
 
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToList(this.plotIdMeasurementVariable, workbook.getFactors());
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).addSTUDY_UIDVariableToWorkbookConditions(workbook.getConditions());
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, false);
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable, workbook.getObservations());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook,

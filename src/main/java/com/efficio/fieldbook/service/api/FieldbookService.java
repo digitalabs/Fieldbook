@@ -234,10 +234,10 @@ public interface FieldbookService {
 	void addMeasurementVariableToList(MeasurementVariable measurementVariable, List<MeasurementVariable> measurementVariables);
 	
 	/**
-	 * Add the STUDY_UID variable to make sure that user logged in during the import will be set as the owner
-	 * @param list
+	 * Add the STUDY_UID condition and Plot ID factor to workbook
+	 * @param workbook
 	 */
-	void addSTUDY_UIDVariableToWorkbookConditions(List<MeasurementVariable> list);
+	void addStudyUUIDConditionAndPlotIDFactorToWorkbook(Workbook workbook, boolean addPlotIdToMeasurementRows);
 	
 	/**
 	 * Adds the specified variable to the measurementRows. This will add a blank measurementData on each measurement row for the specified variable.

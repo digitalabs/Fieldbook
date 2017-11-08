@@ -18,9 +18,6 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.WorkbenchAppPathResolver;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.Constants;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -228,17 +225,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService
 					.convertToWorkbook(this.userSelection);
 
-			final MeasurementVariable plotIdMeasurementVariable = this.fieldbookService.createMeasurementVariable(
-					String.valueOf(TermId.PLOT_ID.getId()), "", Operation.ADD, PhenotypicType.GERMPLASM);
-			plotIdMeasurementVariable.setFactor(true);
-
-			// PLOT_ID is not required in processing the Fieldbook data file,
-			// but we need to add it in the background
-			// if it is not available as it is necessary in displaying the
-			// PLOT_ID column in measurements table.
-			this.fieldbookService.addMeasurementVariableToList(plotIdMeasurementVariable, importData.getFactors());
-
-			this.fieldbookService.addSTUDY_UIDVariableToWorkbookConditions(importData.getConditions());
+			this.fieldbookService.addStudyUUIDConditionAndPlotIDFactorToWorkbook(importData, false);
 
 			this.etlService.saveProjectOntology(importData, this.contextUtil.getCurrentProgramUUID());
 

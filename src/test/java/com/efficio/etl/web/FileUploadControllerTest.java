@@ -89,7 +89,6 @@ public class FileUploadControllerTest {
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
-	private MeasurementRowTestDataInitializer measurementRowTestDataInitializer;
 	private Model model;
 	private HttpSession session;
 	private HttpServletRequest request;
@@ -120,16 +119,14 @@ public class FileUploadControllerTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(FileUploadControllerTest.PROGRAM_UUID);
 
-		this.plotIdMeasurementVariable = new MeasurementVariable();
-		this.plotIdMeasurementVariable.setTermId(TermId.PLOT_ID.getId());
-		this.plotIdMeasurementVariable.setName(TermId.PLOT_ID.name());
+		this.plotIdMeasurementVariable = MeasurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.PLOT_ID.getId(), TermId.PLOT_ID.name(), null);
 		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "",
 				Operation.ADD, PhenotypicType.GERMPLASM)).thenReturn(this.plotIdMeasurementVariable);
+
 		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(
 				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class),
 				Matchers.anyString())).thenReturn(null);
-
-		this.measurementRowTestDataInitializer = new MeasurementRowTestDataInitializer();
 	}
 
 	@Test
@@ -177,16 +174,12 @@ public class FileUploadControllerTest {
 		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request,
 				this.response, this.model);
 
-		Mockito.verify(this.fieldbookService).addMeasurementVariableToList(this.plotIdMeasurementVariable,
-				workbook.getFactors());
-		Mockito.verify(this.fieldbookService).addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable,
-				workbook.getObservations());
+		Mockito.verify(this.fieldbookService).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, true);
 		Mockito.verify(this.dataImportService).saveDataset(workbook, FileUploadControllerTest.PROGRAM_UUID,
 				FileUploadControllerTest.PROJECT_CODE_PREFIX);
 		Mockito.verify(this.httpSessionUtil).clearSessionData(this.session,
 				new String[] { HTTPSessionUtil.USER_SELECTION_SESSION_NAME });
 
-		Assert.assertTrue(this.plotIdMeasurementVariable.isFactor());
 		Assert.assertEquals(FileUploadController.STATUS_CODE_SUCCESSFUL,
 				returnMessage.get(FileUploadController.STATUS_CODE));
 		Assert.assertEquals("Import is done.", returnMessage.get(FileUploadController.STATUS_MESSAGE));
@@ -209,6 +202,8 @@ public class FileUploadControllerTest {
 
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToList(this.plotIdMeasurementVariable, workbook.getFactors());
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook,
+				false);
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable, workbook.getObservations());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook,
@@ -237,6 +232,8 @@ public class FileUploadControllerTest {
 
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToList(this.plotIdMeasurementVariable, workbook.getFactors());
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook,
+				false);
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable, workbook.getObservations());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook,
@@ -260,7 +257,7 @@ public class FileUploadControllerTest {
 		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(
 				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class),
 				Matchers.anyString())).thenReturn(measurementVariable);
-		final List<MeasurementRow> observations = this.measurementRowTestDataInitializer.createMeasurementRowList(
+		final List<MeasurementRow> observations = MeasurementRowTestDataInitializer.createMeasurementRowList(
 				TermId.ENTRY_TYPE.getId(), TermId.ENTRY_TYPE.name(), value, measurementVariable);
 		final Map<String, Integer> availableEntryTypes = new HashMap<>();
 		availableEntryTypes.put(value, TermId.ENTRY_TYPE.getId());

@@ -221,6 +221,15 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			final int index = Integer.parseInt(postData.get(TrialMeasurementsController.INDEX));
 			final String value = postData.get(TrialMeasurementsController.VALUE);
 
+			final Variable trait = this.ontologyVariableDataManager
+					.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true, false);
+
+			if (!this.validationService.validateObservationValue(trait, value)) {
+				map.put(TrialMeasurementsController.SUCCESS, "0");
+				map.put(TrialMeasurementsController.ERROR_MESSAGE, "Invalid value.");
+				return map;
+			}
+
 			// If isNew is set to 1, it means the updated value of categorical measurement is outside of its
 			// possible categorical values, hence it is a 'custom' categorical value
 			boolean isCustomCategoricalValue = false;

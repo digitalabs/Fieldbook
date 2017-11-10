@@ -150,7 +150,7 @@ public class TrialMeasurementsControllerTest {
 		MeasurementRow valueRow = new MeasurementRow();
 		valueRow.setDataList(this.generateTestDataList());
 
-		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow);
+		this.trialMeasurementsController.copyMeasurementValueOfVariates(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
 			assertThat("The origRow's measurement value must be equal to the valueRow's measurement value", origRow.getDataList()
@@ -183,7 +183,7 @@ public class TrialMeasurementsControllerTest {
 		origRow.getDataList().add(nullData);
 		valueRow.getDataList().add(nullData);
 
-		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow);
+		this.trialMeasurementsController.copyMeasurementValueOfVariates(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
 			assertThat(origRow.getDataList().get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
@@ -224,7 +224,7 @@ public class TrialMeasurementsControllerTest {
 		origRow.getDataList().add(data);
 		valueRow.getDataList().add(data2);
 
-		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow);
+		this.trialMeasurementsController.copyMeasurementValueOfVariates(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
 			assertThat(origRow.getDataList().get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
@@ -253,7 +253,7 @@ public class TrialMeasurementsControllerTest {
 		valueRow.setDataList(this.generateTestDataList());
 		valueRow.getDataList().get(0).setAccepted(true);
 
-		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow, true);
+		this.trialMeasurementsController.copyMeasurementValueOfVariates(origRow, valueRow, true);
 		assertThat(origRow.getDataList().get(0).isCustomCategoricalValue(),is(true));
 
 	}

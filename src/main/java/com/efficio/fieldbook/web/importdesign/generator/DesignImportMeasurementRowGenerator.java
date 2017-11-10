@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -197,7 +198,10 @@ public class DesignImportMeasurementRowGenerator {
 					germplasmEntry.getEntryCode()));
 		}
 		if (germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()) != null && !hasEntryTypeColumnFromTheImport) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), germplasmEntry.getEntryTypeValue()));
+			final MeasurementData entryTypeMeasurementData = this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), germplasmEntry.getEntryTypeName());
+			// germplasmEntry.entryTypeValue contains the categorical value of entry_type.
+			entryTypeMeasurementData.setcValueId(germplasmEntry.getEntryTypeValue());
+			dataList.add(entryTypeMeasurementData);
 		}
 		if (germplasmStandardVariables.get(TermId.GERMPLASM_SOURCE.getId()) != null) {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.GERMPLASM_SOURCE.getId()),
@@ -218,6 +222,12 @@ public class DesignImportMeasurementRowGenerator {
 		data.setValue(value);
 		data.setLabel(data.getMeasurementVariable().getName());
 		data.setDataType(data.getMeasurementVariable().getDataType());
+
+		Enumeration enumeration = standardVariable.findEnumerationByName(value);
+		if (enumeration != null) {
+			data.setcValueId(String.valueOf(enumeration.getId()));
+		}
+
 		return data;
 	}
 

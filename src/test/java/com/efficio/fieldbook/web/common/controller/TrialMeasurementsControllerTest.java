@@ -142,6 +142,122 @@ public class TrialMeasurementsControllerTest {
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(new Term(TermId.ENTRY_NO.getId(), TermId.ENTRY_NO.name(), "Definition"));
 	}
 
+	@Test
+	public void testCopyMeasurementValue() {
+
+		MeasurementRow origRow = new MeasurementRow();
+		origRow.setDataList(this.generateTestDataList());
+		MeasurementRow valueRow = new MeasurementRow();
+		valueRow.setDataList(this.generateTestDataList());
+
+		this.trialMeasurementsController.copyMeasurementValueOfVariates(origRow, valueRow);
+
+		for (int x = 0; x < origRow.getDataList().size(); x++) {
+			assertThat("The origRow's measurement value must be equal to the valueRow's measurement value", origRow.getDataList()
+					.get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+		}
+
+	}
+
+	@Test
+	public void testCopyMeasurementValueNullEmptyPossibleValues() {
+
+		MeasurementRow origRow = new MeasurementRow();
+		origRow.setDataList(this.generateTestDataList());
+		MeasurementRow valueRow = new MeasurementRow();
+		valueRow.setDataList(this.generateTestDataList());
+
+		MeasurementData nullData = new MeasurementData();
+		nullData.setcValueId(null);
+		nullData.setDataType(null);
+		nullData.setEditable(false);
+		nullData.setLabel(null);
+		nullData.setPhenotypeId(null);
+		nullData.setValue(null);
+
+		MeasurementVariable measurementVariable = new MeasurementVariable();
+		List<ValueReference> possibleValues = new ArrayList<>();
+		measurementVariable.setPossibleValues(possibleValues);
+		nullData.setMeasurementVariable(measurementVariable);
+
+		origRow.getDataList().add(nullData);
+		valueRow.getDataList().add(nullData);
+
+		this.trialMeasurementsController.copyMeasurementValueOfVariates(origRow, valueRow);
+
+		for (int x = 0; x < origRow.getDataList().size(); x++) {
+			assertThat(origRow.getDataList().get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+		}
+
+	}
+
+	@Test
+	public void testCopyMeasurementValueNullNullPossibleValuesAndValueIsNotEmpty() {
+
+		MeasurementRow origRow = new MeasurementRow();
+		origRow.setDataList(this.generateTestDataList());
+		MeasurementRow valueRow = new MeasurementRow();
+		valueRow.setDataList(this.generateTestDataList());
+
+		MeasurementData data = new MeasurementData();
+		data.setcValueId("1234");
+		data.setDataType(null);
+		data.setEditable(false);
+		data.setLabel(null);
+		data.setPhenotypeId(null);
+		data.setValue(null);
+
+		MeasurementData data2 = new MeasurementData();
+		data2.setcValueId(null);
+		data2.setDataType(null);
+		data2.setEditable(false);
+		data2.setLabel(null);
+		data2.setPhenotypeId(null);
+		data2.setValue("jjasd");
+
+		MeasurementVariable measurementVariable = new MeasurementVariable();
+		List<ValueReference> possibleValues = new ArrayList<>();
+		possibleValues.add(new ValueReference());
+		measurementVariable.setPossibleValues(possibleValues);
+		data.setMeasurementVariable(measurementVariable);
+
+		origRow.getDataList().add(data);
+		valueRow.getDataList().add(data2);
+
+		this.trialMeasurementsController.copyMeasurementValueOfVariates(origRow, valueRow);
+
+		for (int x = 0; x < origRow.getDataList().size(); x++) {
+			assertThat(origRow.getDataList().get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+
+		}
+
+	}
+
+	@Test
+	public void testCopyMeasurementValueWithCustomCategoricalValue() {
+
+		MeasurementRow origRow = new MeasurementRow();
+		origRow.setDataList(this.generateTestDataList());
+
+		List<ValueReference> possibleValues = new ArrayList<>();
+		possibleValues.add(new ValueReference());
+		possibleValues.add(new ValueReference());
+		possibleValues.get(0).setId(1);
+		possibleValues.get(0).setKey("1");
+		possibleValues.get(1).setId(2);
+		possibleValues.get(1).setKey(origRow.getDataList().get(0).getValue());
+
+		origRow.getDataList().get(0).getMeasurementVariable().setPossibleValues(possibleValues);
+
+		MeasurementRow valueRow = new MeasurementRow();
+		valueRow.setDataList(this.generateTestDataList());
+		valueRow.getDataList().get(0).setAccepted(true);
+
+		this.trialMeasurementsController.copyMeasurementValueOfVariates(origRow, valueRow, true);
+		assertThat(origRow.getDataList().get(0).isCustomCategoricalValue(),is(true));
+
+	}
+
 	private List<MeasurementData> generateTestDataList() {
 
 		List<MeasurementData> dataList = new ArrayList<>();

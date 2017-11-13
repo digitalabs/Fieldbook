@@ -24,6 +24,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Variable;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
@@ -74,12 +75,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	public static final String STATUS = "status";
 	private static final String ERROR_MESSAGE = "errorMessage";
 	private static final String INDEX = "index";
-	public static final String IS_NEW = "isNew";
-	public static final String IS_DISCARD = "isDiscard";
 	static final String SUCCESS = "success";
 	private static final String TERM_ID = "termId";
 	static final String DATA = "data";
-	public static final String VALUE = "value";
 
 	@Resource
 	private UserSelection userSelection;
@@ -165,7 +163,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		final int termId = Integer.parseInt(data.get(TrialMeasurementsController.TERM_ID));
 
 		final String value = data.get("value");
-		final boolean isDiscard = "1".equalsIgnoreCase(req.getParameter(IS_DISCARD));
+		final boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard"));
 		final boolean invalidButKeep = "1".equalsIgnoreCase(req.getParameter("invalidButKeep"));
 
 		final int experimentId = Integer.parseInt(data.get(TrialMeasurementsController.EXPERIMENT_ID));
@@ -210,45 +208,53 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@ResponseBody
 	@RequestMapping(value = "/updateByIndex/experiment/cell/data", method = RequestMethod.POST)
 	@Transactional
-	public Map<String, Object> updateExperimentCellDataByIndex(@RequestBody final Map<String, String> postData,
+	public Map<String, Object> updateExperimentCellDataByIndex(@RequestBody final Map<String, String> data,
 			final HttpServletRequest req) {
 
 		final Map<String, Object> map = new HashMap<>();
 
-		final int termId = Integer.parseInt(postData.get(TrialMeasurementsController.TERM_ID));
+		final int termId = Integer.parseInt(data.get(TrialMeasurementsController.TERM_ID));
 
-		if (StringUtils.isNotBlank(postData.get(TrialMeasurementsController.INDEX))) {
-			final int index = Integer.parseInt(postData.get(TrialMeasurementsController.INDEX));
-			final String value = postData.get(TrialMeasurementsController.VALUE);
-
-			// If isNew is set to 1, it means the updated value of categorical measurement is outside of its
-			// possible categorical values, hence it is a 'custom' categorical value
-			boolean isCustomCategoricalValue = false;
-			if (postData.get(TrialMeasurementsController.IS_NEW) != null) {
-				isCustomCategoricalValue = new Integer(1).equals(Integer.valueOf(postData.get(TrialMeasurementsController.IS_NEW)));
+		if (StringUtils.isNotBlank(data.get(TrialMeasurementsController.INDEX))) {
+			final int index = Integer.parseInt(data.get(TrialMeasurementsController.INDEX));
+			final String value = data.get("value");
+			// for categorical
+			int isNew;
+			if (data.get("isNew") != null) {
+				isNew = Integer.valueOf(data.get("isNew"));
+			} else {
+				isNew = 1;
 			}
+			final boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard"));
 
-			final boolean isDiscard = "1".equalsIgnoreCase(req.getParameter(TrialMeasurementsController.IS_DISCARD));
-
-			final MeasurementRow measurementRow = userSelection.getMeasurementRowList().get(index);
-
-			if (!isDiscard) {
-
-				// Update the measurement value of the specified trait.
-				if (measurementRow != null && measurementRow.getMeasurementVariables() != null) {
-					this.updateMeasurementValueByTermId(measurementRow.getDataList(), value, termId, isCustomCategoricalValue);
-				}
-
-				this.updateDates(measurementRow);
-			}
-
-			final DataMapUtil dataMapUtil = new DataMapUtil();
-			final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(measurementRow, "",
-					this.userSelection);
 			map.put(TrialMeasurementsController.INDEX, index);
-			map.put(TrialMeasurementsController.SUCCESS, "1");
-			map.put(TrialMeasurementsController.DATA, dataMap);
 
+			final MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
+
+			try {
+				if (!isDiscard) {
+					final MeasurementRow copyRow = originalRow.copy();
+					this.copyMeasurementValueOfVariates(copyRow, originalRow, isNew == 1);
+					// we set the data to the copy row
+					if (copyRow != null && copyRow.getMeasurementVariables() != null) {
+						this.updatePhenotypeValues(copyRow.getDataList(), value, termId, isNew);
+					}
+					this.validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
+					// if there are no error, meaning everything is good, thats
+					// the time we copy it to the original
+					this.copyMeasurementValueOfVariates(originalRow, copyRow, isNew == 1);
+					this.updateDates(originalRow);
+				}
+				map.put(TrialMeasurementsController.SUCCESS, "1");
+				final DataMapUtil dataMapUtil = new DataMapUtil();
+				final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(originalRow, "",
+						this.userSelection);
+				map.put(TrialMeasurementsController.DATA, dataMap);
+			} catch (final MiddlewareQueryException e) {
+				TrialMeasurementsController.LOG.error(e.getMessage(), e);
+				map.put(TrialMeasurementsController.SUCCESS, "0");
+				map.put(TrialMeasurementsController.ERROR_MESSAGE, e.getMessage());
+			}
 		}
 		return map;
 	}
@@ -268,13 +274,13 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	private void updateMeasurementValueByTermId(final List<MeasurementData> measurementDataList, final String value,
-			final int termId, final boolean isCustomCategoricalValue) {
+	private void updatePhenotypeValues(final List<MeasurementData> measurementDataList, final String value,
+			final int termId, final int isNew) {
 		for (final MeasurementData var : measurementDataList) {
 			if (var != null && var.getMeasurementVariable().getTermId() == termId) {
 				if (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
 						|| !var.getMeasurementVariable().getPossibleValues().isEmpty()) {
-					if (isCustomCategoricalValue) {
+					if (isNew == 1) {
 						var.setcValueId(null);
 						var.setCustomCategoricalValue(true);
 					} else {
@@ -458,7 +464,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		final MeasurementRow row = tempList.get(index);
 		final MeasurementRow copyRow = row.copy();
-
+		this.copyMeasurementValueOfVariates(copyRow, row);
 		MeasurementData editData = null;
 		if (copyRow != null && copyRow.getMeasurementVariables() != null) {
 			for (final MeasurementData var : copyRow.getDataList()) {
@@ -619,6 +625,58 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			}
 		}
 		return true;
+	}
+
+	protected void copyMeasurementValueOfVariates(final MeasurementRow origRow, final MeasurementRow valueRow) {
+		this.copyMeasurementValueOfVariates(origRow, valueRow, false);
+	}
+
+	protected void copyMeasurementValueOfVariates(final MeasurementRow origRow, final MeasurementRow valueRow,
+			final boolean isNew) {
+
+		for (int index = 0; index < origRow.getDataList().size(); index++) {
+			final MeasurementData data = origRow.getDataList().get(index);
+			final MeasurementData valueRowData = valueRow.getDataList().get(index);
+			if (!data.getMeasurementVariable().isFactor()) {
+				this.copyMeasurementDataValue(data, valueRowData, isNew);
+			}
+		}
+	}
+
+	private void copyMeasurementDataValue(final MeasurementData oldData, final MeasurementData newData,
+			final boolean isNew) {
+		if (oldData.getMeasurementVariable().getPossibleValues() != null
+				&& !oldData.getMeasurementVariable().getPossibleValues().isEmpty()) {
+			oldData.setAccepted(newData.isAccepted());
+			if (!StringUtils.isEmpty(oldData.getValue()) && oldData.isAccepted() && this.isCategoricalValueOutOfBounds(
+					oldData.getcValueId(), oldData.getValue(), oldData.getMeasurementVariable().getPossibleValues())) {
+				oldData.setCustomCategoricalValue(true);
+			} else {
+				oldData.setCustomCategoricalValue(false);
+			}
+			if (newData.getcValueId() != null) {
+				if (isNew) {
+					oldData.setCustomCategoricalValue(true);
+					oldData.setcValueId(null);
+				} else {
+					oldData.setcValueId(newData.getcValueId());
+					oldData.setCustomCategoricalValue(false);
+				}
+				oldData.setValue(newData.getcValueId());
+			} else if (newData.getValue() != null) {
+				if (isNew) {
+					oldData.setCustomCategoricalValue(true);
+					oldData.setcValueId(null);
+				} else {
+					oldData.setcValueId(newData.getValue());
+					oldData.setCustomCategoricalValue(false);
+				}
+				oldData.setValue(newData.getValue());
+			}
+		} else {
+			oldData.setValue(newData.getValue());
+			oldData.setAccepted(newData.isAccepted());
+		}
 	}
 
 	Map<String, Object> generateDatatableDataMap(final ObservationDto row) {

@@ -234,7 +234,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			try {
 				if (!isDiscard) {
 					final MeasurementRow copyRow = originalRow.copy();
-					this.copyMeasurementValueOfVariates(copyRow, originalRow, isNew == 1);
+					this.copyMeasurementValue(copyRow, originalRow, isNew == 1);
 					// we set the data to the copy row
 					if (copyRow != null && copyRow.getMeasurementVariables() != null) {
 						this.updatePhenotypeValues(copyRow.getDataList(), value, termId, isNew);
@@ -242,7 +242,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 					this.validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
 					// if there are no error, meaning everything is good, thats
 					// the time we copy it to the original
-					this.copyMeasurementValueOfVariates(originalRow, copyRow, isNew == 1);
+					this.copyMeasurementValue(originalRow, copyRow, isNew == 1);
 					this.updateDates(originalRow);
 				}
 				map.put(TrialMeasurementsController.SUCCESS, "1");
@@ -464,7 +464,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		final MeasurementRow row = tempList.get(index);
 		final MeasurementRow copyRow = row.copy();
-		this.copyMeasurementValueOfVariates(copyRow, row);
+		this.copyMeasurementValue(copyRow, row);
 		MeasurementData editData = null;
 		if (copyRow != null && copyRow.getMeasurementVariables() != null) {
 			for (final MeasurementData var : copyRow.getDataList()) {
@@ -627,19 +627,17 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		return true;
 	}
 
-	protected void copyMeasurementValueOfVariates(final MeasurementRow origRow, final MeasurementRow valueRow) {
-		this.copyMeasurementValueOfVariates(origRow, valueRow, false);
+	protected void copyMeasurementValue(final MeasurementRow origRow, final MeasurementRow valueRow) {
+		this.copyMeasurementValue(origRow, valueRow, false);
 	}
 
-	protected void copyMeasurementValueOfVariates(final MeasurementRow origRow, final MeasurementRow valueRow,
+	protected void copyMeasurementValue(final MeasurementRow origRow, final MeasurementRow valueRow,
 			final boolean isNew) {
 
 		for (int index = 0; index < origRow.getDataList().size(); index++) {
 			final MeasurementData data = origRow.getDataList().get(index);
 			final MeasurementData valueRowData = valueRow.getDataList().get(index);
-			if (!data.getMeasurementVariable().isFactor()) {
-				this.copyMeasurementDataValue(data, valueRowData, isNew);
-			}
+			this.copyMeasurementDataValue(data, valueRowData, isNew);
 		}
 	}
 

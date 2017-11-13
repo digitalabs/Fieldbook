@@ -156,7 +156,7 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 
 	protected void importDataCellValues(final MeasurementData workbookMeasurementData, final Row xlsRow, final int columnIndex,
 			final org.generationcp.middleware.domain.etl.Workbook workbook, final Map<Integer, MeasurementVariable> factorVariableMap) {
-		if (workbookMeasurementData != null && !workbookMeasurementData.getMeasurementVariable().isFactor()) {
+		if (workbookMeasurementData != null && workbookMeasurementData.isEditable()) {
 			final Cell cell = xlsRow.getCell(columnIndex);
 			final String xlsValue;
 			if (cell != null && this.hasCellValue(cell)) {

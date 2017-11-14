@@ -153,8 +153,14 @@ public class TrialMeasurementsControllerTest {
 		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
-			assertThat("The origRow's measurement value must be equal to the valueRow's measurement value", origRow.getDataList()
-					.get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+			if (!origRow.getDataList().get(x).getMeasurementVariable().isFactor()) {
+				assertThat("The origRow's measurement value must be equal to the valueRow's measurement value if the variable is not a factor",
+						origRow.getDataList().get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+			} else {
+				assertThat("The origRow's measurement value must not equal to the valueRow's measurement value if the variable is a factor",
+						origRow.getDataList().get(x).getValue(), not(equalTo(valueRow.getDataList().get(x).getValue())));
+			}
+
 		}
 
 	}
@@ -186,7 +192,14 @@ public class TrialMeasurementsControllerTest {
 		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
-			assertThat(origRow.getDataList().get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+			if (!origRow.getDataList().get(x).getMeasurementVariable().isFactor()) {
+				assertThat("The origRow's measurement value must be equal to the valueRow's measurement value if the variable is not a factor",
+						origRow.getDataList().get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+			} else {
+				assertThat("The origRow's measurement value must not equal to the valueRow's measurement value if the variable is a factor",
+						origRow.getDataList().get(x).getValue(), not(equalTo(valueRow.getDataList().get(x).getValue())));
+			}
+
 		}
 
 	}
@@ -227,7 +240,13 @@ public class TrialMeasurementsControllerTest {
 		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
-			assertThat(origRow.getDataList().get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+			if (!origRow.getDataList().get(x).getMeasurementVariable().isFactor()) {
+				assertThat("The origRow's measurement value must be equal to the valueRow's measurement value if the variable is not a factor",
+						origRow.getDataList().get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+			} else {
+				assertThat("The origRow's measurement value must not equal to the valueRow's measurement value if the variable is a factor",
+						origRow.getDataList().get(x).getValue(), not(equalTo(valueRow.getDataList().get(x).getValue())));
+			}
 
 		}
 
@@ -298,6 +317,18 @@ public class TrialMeasurementsControllerTest {
 		emptyData.setValue("");
 		emptyData.setMeasurementVariable(measurementVariable);
 		dataList.add(emptyData);
+
+		MeasurementData measurementDataOfAFactor = new MeasurementData();
+		MeasurementVariable measurementVariableOfAFactor = new MeasurementVariable();
+		measurementVariableOfAFactor.setFactor(true);
+		measurementDataOfAFactor.setcValueId(UUID.randomUUID().toString());
+		measurementDataOfAFactor.setDataType(UUID.randomUUID().toString());
+		measurementDataOfAFactor.setEditable(false);
+		measurementDataOfAFactor.setLabel(UUID.randomUUID().toString());
+		measurementDataOfAFactor.setPhenotypeId(0);
+		measurementDataOfAFactor.setValue(UUID.randomUUID().toString());
+		measurementDataOfAFactor.setMeasurementVariable(measurementVariableOfAFactor);
+		dataList.add(measurementDataOfAFactor);
 
 		return dataList;
 	}

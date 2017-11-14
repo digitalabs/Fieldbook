@@ -637,7 +637,11 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		for (int index = 0; index < origRow.getDataList().size(); index++) {
 			final MeasurementData data = origRow.getDataList().get(index);
 			final MeasurementData valueRowData = valueRow.getDataList().get(index);
-			this.copyMeasurementDataValue(data, valueRowData, isNew);
+			// We only need to copy the measurement values of traits since we do not allow
+			// editing of factor columns.
+			if (!data.getMeasurementVariable().isFactor()) {
+				this.copyMeasurementDataValue(data, valueRowData, isNew);
+			}
 		}
 	}
 

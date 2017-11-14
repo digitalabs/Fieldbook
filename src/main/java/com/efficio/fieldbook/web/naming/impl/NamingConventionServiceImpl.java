@@ -22,6 +22,7 @@ import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -118,9 +119,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		final Study study = advanceInfo.getStudy();
 		if (workbook == null) {
-			if (study.getType().equals("N")) {
+			if (StudyType.N.getName().equals(study.getType())) {
 				workbook = this.fieldbookMiddlewareService.getNurseryDataSet(study.getId());
-			} else if (study.getType().equals("T")) {
+			} else if (StudyType.T.getName().equals(study.getType())) {
 				workbook = this.fieldbookMiddlewareService.getTrialDataSet(study.getId());
 			}
 		}

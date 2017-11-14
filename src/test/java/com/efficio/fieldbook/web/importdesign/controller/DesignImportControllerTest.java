@@ -288,7 +288,7 @@ public class DesignImportControllerTest {
 		final ImportDesignForm form = new ImportDesignForm();
 		form.setFile(this.multiPartFile);
 		form.setFileType(DesignImportParser.FILE_TYPE_CSV);
-		final String resultsMap = this.designImportController.importFile(form, "N");
+		final String resultsMap = this.designImportController.importFile(form, StudyType.N.getName());
 
 		Mockito.verify(this.userSelection).setDesignImportData(Matchers.any(DesignImportData.class));
 
@@ -308,7 +308,7 @@ public class DesignImportControllerTest {
 		Mockito.when(this.designImportParser.parseFile(DesignImportParser.FILE_TYPE_CSV, this.multiPartFile))
 				.thenThrow(new FileParsingException("force file parse exception"));
 
-		final String resultsMap = this.designImportController.importFile(form, "N");
+		final String resultsMap = this.designImportController.importFile(form, StudyType.N.getName());
 
 		Assert.assertTrue(resultsMap.contains("{\"error\":[\"force file parse exception\"],\"isSuccess\":0}"));
 	}

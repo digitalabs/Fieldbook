@@ -831,7 +831,7 @@ public class DesignImportController extends SettingsController {
 		Workbook workbook;
 		final StudyDetails details = new StudyDetails();
 
-		if ("T".equalsIgnoreCase(studyType)) {
+		if (StudyType.T.getName().equalsIgnoreCase(studyType)) {
 
 			final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService,
 					name, combinedList, this.userSelection.getPlotsLevelList(),

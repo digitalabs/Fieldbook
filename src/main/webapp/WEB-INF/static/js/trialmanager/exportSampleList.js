@@ -82,20 +82,8 @@ var ExportSampleList = {};
 
 	ExportSampleList.getTableVisibleColumns = function () {
 		'use strict';
-		var visibleColumns = '';
-		var headers = $('#sample-list-' + sampleListId + '_wrapper .dataTables_scrollHead [data-column-index]');
-		var headerCount = headers.size();
-
-		for (var i = 0; i < headerCount; i++) {
-			var columnName = $('#sample-list-' + sampleListId + '_wrapper .dataTables_scrollHead [data-column-index]:eq(' + i + ')').attr('aria-label');
-
-			if (visibleColumns.length == 0) {
-				visibleColumns = columnName;
-			} else {
-				visibleColumns = visibleColumns + ',' + columnName;
-			}
-
-		}
-		return visibleColumns;
+		return $('#sample-list-' + sampleListId + '_wrapper div.dataTables_scrollHead thead > tr > th').map(function() {
+			return $(this).text();
+		}).get().join(",")
 	}
 })();

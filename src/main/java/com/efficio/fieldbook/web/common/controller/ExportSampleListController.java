@@ -78,14 +78,15 @@ public class ExportSampleListController  extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/exportSampleList/{exportType}", method = RequestMethod.POST)
 	public String exportSampleList(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
 		final HttpServletRequest req, final HttpServletResponse response) {
-		ExportSampleListController.LOG.info("Entering Export exportSampleList");
-		ExportSampleListController.LOG.info("Exiting Export exportSampleList");
 
-		return this.doExport(response, exportType, data);
+		ExportSampleListController.LOG.debug("Entering Export exportSampleList");
+		final String export = this.doExport(response, exportType, data);
+		ExportSampleListController.LOG.debug("Exiting Export exportSampleList");
+		return export;
 	}
 
 	private String doExport(final HttpServletResponse response, final int exportType, final Map<String, String> data) {
-		ExportSampleListController.LOG.info("Entering Export doExport");
+		ExportSampleListController.LOG.debug("Entering Export doExport");
 
 		final Map<String, Object> results = new HashMap<>();
 
@@ -123,7 +124,7 @@ public class ExportSampleListController  extends AbstractBaseFieldbookController
 			results.put(IS_SUCCESS, false);
 			results.put(ERROR_MESSAGE, this.messageSource.getMessage("export.study.error", null, Locale.ENGLISH));
 		}
-		LOG.info("Exiting Export doExport");
+		LOG.debug("Exiting Export doExport");
 		return super.convertObjectToJson(results);
 	}
 

@@ -418,10 +418,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		Map<String, String> studyTypes = new HashMap<String, String>();
 
 		for (StudyType type : StudyType.values()) {
-			String studyType = this.etlService.getCVDefinitionById(type.getId());
-			if (studyType != null && !"".equals(studyType.trim())) {
-				studyTypes.put(type.getName(), studyType);
-			}
+			studyTypes.put(type.getName(), type.getLabel());
 		}
 
 		return studyTypes;

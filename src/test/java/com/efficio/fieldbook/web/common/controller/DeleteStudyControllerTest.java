@@ -10,6 +10,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.GermplasmListTestDataInitializer;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.UnpermittedDeletionException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -82,7 +83,7 @@ public class DeleteStudyControllerTest {
 		Mockito.when(this.fieldbookMiddlewareService.getStudy(DeleteStudyControllerTest.PROJECT_ID))
 			.thenReturn(study);
 		final Map<String, Object> result = this.deleteStudyController
-				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "N", this.model, this.session, this.locale);
+				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, StudyType.N.getName(), this.model, this.session, this.locale);
 		Assert.assertEquals("The value should be 1", "1", result.get(DeleteStudyController.IS_SUCCESS));
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
 				.deleteStudy(DeleteStudyControllerTest.PROJECT_ID, this.contextUtil.getCurrentUserLocalId());
@@ -101,7 +102,7 @@ public class DeleteStudyControllerTest {
 		Mockito.when(this.fieldbookMiddlewareService.getStudy(DeleteStudyControllerTest.PROJECT_ID))
 			.thenReturn(study);
 		final Map<String, Object> result = this.deleteStudyController
-				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "T", this.model, this.session, this.locale);
+				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, StudyType.T.getName(), this.model, this.session, this.locale);
 		Assert.assertEquals("The value should be 1", "1", result.get(DeleteStudyController.IS_SUCCESS));
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
 				.deleteStudy(DeleteStudyControllerTest.PROJECT_ID, this.contextUtil.getCurrentUserLocalId());
@@ -126,7 +127,7 @@ public class DeleteStudyControllerTest {
 				.deleteStudy(Matchers.anyInt(), Matchers.anyInt());
 
 		final Map<String, Object> result = this.deleteStudyController
-				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "T", this.model, this.session, this.locale);
+				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, StudyType.T.getName(), this.model, this.session, this.locale);
 		Assert.assertEquals("The value should be 1", "0", result.get(DeleteStudyController.IS_SUCCESS));
 		Assert.assertEquals("The message should be " + message, message, result.get("message"));
 	}
@@ -137,7 +138,7 @@ public class DeleteStudyControllerTest {
 				Matchers.anyInt());
 
 		final Map<String, Object> result = this.deleteStudyController
-				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "T", this.model, this.session, this.locale);
+				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, StudyType.T.getName(), this.model, this.session, this.locale);
 		Assert.assertEquals("The value should be 1", "0", result.get(DeleteStudyController.IS_SUCCESS));
 	}
 
@@ -152,7 +153,7 @@ public class DeleteStudyControllerTest {
 			Matchers.eq(this.locale))).thenReturn(message);
 
 		final Map<String, Object> result = this.deleteStudyController
-			.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "T", this.model, this.session, this.locale);
+			.submitDelete(DeleteStudyControllerTest.PROJECT_ID, StudyType.T.getName(), this.model, this.session, this.locale);
 		Assert.assertEquals("The value should be 0", "0", result.get(DeleteStudyController.IS_SUCCESS));
 		Assert.assertEquals("Program templates cannot be deleted.", result.get("message"));
 	}
@@ -168,7 +169,7 @@ public class DeleteStudyControllerTest {
 			Matchers.eq(this.locale))).thenReturn(message);
 
 		final Map<String, Object> result = this.deleteStudyController
-			.submitDelete(DeleteStudyControllerTest.PROJECT_ID, "N", this.model, this.session, this.locale);
+			.submitDelete(DeleteStudyControllerTest.PROJECT_ID, StudyType.N.getName(), this.model, this.session, this.locale);
 		Assert.assertEquals("The value should be 0", "0", result.get(DeleteStudyController.IS_SUCCESS));
 		Assert.assertEquals("Program templates cannot be deleted.", result.get("message"));
 	}

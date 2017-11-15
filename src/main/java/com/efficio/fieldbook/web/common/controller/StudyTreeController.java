@@ -73,7 +73,7 @@ public class StudyTreeController {
 	@ResponseBody
 	@RequestMapping(value = "/loadInitialTree/{isFolderOnly}/{type}", method = RequestMethod.GET)
 	public String loadInitialTree(@PathVariable final String isFolderOnly, @PathVariable final String type) {
-		final boolean isNursery = type != null && "N".equalsIgnoreCase(type) ? true : false;
+		final boolean isNursery = type != null && StudyType.N.getName().equalsIgnoreCase(type) ? true : false;
 		try {
 			final List<TreeNode> rootNodes = new ArrayList<TreeNode>();
 			final String localName = isNursery ? AppConstants.NURSERIES.getString() : AppConstants.TRIALS.getString();
@@ -122,7 +122,7 @@ public class StudyTreeController {
 	public String expandTree(@PathVariable final String parentKey, @PathVariable final String isFolderOnly,
 			@PathVariable final String type) {
 		final boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
-		final boolean isNursery = type != null && "N".equalsIgnoreCase(type) ? true : false;
+		final boolean isNursery = type != null && StudyType.N.getName().equalsIgnoreCase(type) ? true : false;
 		try {
 			final List<TreeNode> childNodes = this.getChildNodes(parentKey, isNursery, isFolderOnlyBool);
 			return TreeViewUtil.convertTreeViewToJson(childNodes);

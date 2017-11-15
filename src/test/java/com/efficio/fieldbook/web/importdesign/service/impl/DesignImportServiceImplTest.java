@@ -630,7 +630,7 @@ public class DesignImportServiceImplTest {
 				TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "", "", "", "", "", "")));
 		map.put("SITE_NAME",
 				this.createList(DesignImportTestDataInitializer.createStandardVariable(VariableType.ENVIRONMENT_DETAIL,
-						TermId.TRIAL.getId(), "SITE_NAME", "", "", "", "", "", "")));
+						StudyType.T.getId(), "SITE_NAME", "", "", "", "", "", "")));
 		map.put("ENTRY_NO",
 				this.createList(DesignImportTestDataInitializer.createStandardVariable(VariableType.GERMPLASM_DESCRIPTOR,
 						TermId.ENTRY_NO.getId(), "ENTRY_NO", "", "", "", "", "", "")));

@@ -5,7 +5,6 @@ import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.sample.SampleDetailsDTO;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.SampleList;
 import org.generationcp.middleware.service.api.SampleListService;
 import org.slf4j.Logger;
@@ -33,7 +32,7 @@ public class SampleListController {
 	private static final Logger LOG = LoggerFactory.getLogger(SampleListController.class);
 
 	public static final String URL = "/sample/list";
-	private static final String NURSERY_MANAGER_SAVED_FINAL_LIST = "/NurseryManager/savedFinalList";
+	private static final String SAVED_FINAL_LIST = "/NurseryManager/savedFinalList";
 	public static final String TABLE_HEADER_LIST = "tableHeaderList";
 	public static final String SAMPLE_LIST = "sampleList";
 	private static final String SAMPLE_NAME = "sample.list.sample.name";
@@ -57,20 +56,16 @@ public class SampleListController {
 	@RequestMapping(value = "/sampleList/{listId}", method = RequestMethod.GET)
 	public String displaySampleList(@PathVariable Integer listId, HttpServletRequest req, Model model) {
 		this.processSampleList(listId, req, model);
-		return SampleListController.NURSERY_MANAGER_SAVED_FINAL_LIST;
+		return SampleListController.SAVED_FINAL_LIST;
 	}
 
 	protected void processSampleList(Integer listId, HttpServletRequest req, Model model) {
 		try {
-			List<ListDataProject> listData = null;
-			String name;
-			String notes;
-			String type;
 
-			SampleList sampleList = this.sampleListService.getSampleList(listId);
-			name = sampleList.getListName();
-			notes = sampleList.getNotes();
-			type = sampleList.getType().name();
+			final SampleList sampleList = this.sampleListService.getSampleList(listId);
+			final String name = sampleList.getListName();
+			final String notes = sampleList.getNotes();
+			final String type = sampleList.getType().name();
 			final List<SampleDetailsDTO> sampleDetailsDTOs = this.sampleListService.getSampleDetailsDTOs(listId);
 			model.addAttribute(SampleListController.SAMPLE_LIST, sampleDetailsDTOs);
 			model.addAttribute(TOTAL_NUMBER_OF_GERMPLASMS, sampleDetailsDTOs.size());

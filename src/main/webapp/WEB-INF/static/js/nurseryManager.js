@@ -981,7 +981,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 			// get the pop up selection
 			var popupSelection = $('.select2-result.select2-highlighted');
 
-			if (values != null) {
+			if (values !== null && values !== '') {
 				// hide the selected value
 				popupSelection.hide();
 

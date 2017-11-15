@@ -47,7 +47,7 @@
 			<span th:if="*{listType !='SAMPLE_LIST'}" th:text="#{list.number.of.selected}" class="control-label control-label-italic advanced-list-label">Selected:</span>
 			<span th:if="*{listType !='SAMPLE_LIST'}" class="control-label control-label-bold control-label-italic advance-list-size advanced-list-label numberOfAdvanceSelected">0</span>
 		</div>
-		<div class="pull-right" th:if="*{listType != 'SAMPLE_LIST'}">
+		<div class="pull-right">
 			<div class="col-md-12">
 				<div class="btn-group">
 					<button type="button" th:id="*{'listActionButton' + listId}"
@@ -56,8 +56,15 @@
 						<span th:text="#{advance.list.actions}" th:if="*{listType == 'ADVANCED'}">Advance List Actions</span>
 						<span th:text="#{crosses.nursery.list.actions}" th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS')}">Cross List Actions</span>
 						<span th:text="#{stock.list.actions}" th:if="*{listType == 'STOCK'}">Stock List Actions</span>
+						<span th:text="#{sample.list.actions}" th:if="*{listType == 'SAMPLE_LIST'}">Sample List Actions</span>
 					</button>
 					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+						<li class="withMeasurementsOnly" th:id="*{'generateStockListMenuItem' + listId}" th:if="*{(listType == 'SAMPLE_LIST')}">
+							<a href="javascript: void(0)"
+							   th:onclick="'javascript: ExportSampleList.exportFile('+ *{listId} + ',\'' + *{listName} + '\');'"
+							   th:text="#{export.sample.list}">
+								Export sample list</a>
+						</li>
 						<li class="withMeasurementsOnly" th:id="*{'generateStockListMenuItem' + listId}" th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') || listType == 'ADVANCED'}">
 							<a href=""
 								style="display: none" id="open-study-url"></a>
@@ -147,6 +154,7 @@
 </div>
 
 <script type="text/javascript" th:src="@{/static/js/nursery-manager/stock-list.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/exportSampleList.js}"></script>
 
 <div class="row">&nbsp;</div>
 <div class="row col-xs-12 col-md-12" id="inventory-germplasm-list">

@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -138,7 +139,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 
 		Workbook workbook = null;
 		try {
-			boolean isTrial = studyType != null && "T".equalsIgnoreCase(studyType);
+			boolean isTrial = studyType != null && StudyType.T.getName().equalsIgnoreCase(studyType);
 			workbook = this.fieldbookMiddlewareService.getCompleteDataset(datasetId, isTrial);
 			this.fieldbookService.setAllPossibleValuesInWorkbook(workbook);
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,

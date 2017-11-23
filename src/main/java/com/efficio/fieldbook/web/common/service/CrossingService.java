@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.common.service;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.pojos.Germplasm;
@@ -25,4 +26,6 @@ public interface CrossingService {
 	void processCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList);
 
 	void populateSeedSource(ImportedCrosses importedCross, Workbook workbook);
+	
+	String getNextNameInSequence(final CrossNameSetting setting);
 }

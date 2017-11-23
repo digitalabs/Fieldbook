@@ -30,6 +30,7 @@ import org.generationcp.commons.util.CrossingUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -47,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -325,14 +327,15 @@ public class CrossingServiceImpl implements CrossingService {
 
 	protected void applyCrossNameSettingToImportedCrosses(final CrossSetting setting,
 			final List<ImportedCrosses> importedCrosses) {
-		Integer nextNumberInSequence = this.getNextNumberInSequence(setting.getCrossNameSetting());
+		final CrossNameSetting crossNameSetting = setting.getCrossNameSetting();
+		Integer nextNumberInSequence = this.getNextNumberInSequence(crossNameSetting);
 		Integer entryIdCounter = 0;
 
 		for (final ImportedCrosses cross : importedCrosses) {
 			entryIdCounter++;
 			cross.setEntryId(entryIdCounter);
 			cross.setEntryCode(String.valueOf(entryIdCounter));
-			cross.setDesig(this.buildDesignationNameInSequence(cross, nextNumberInSequence++, setting));
+			cross.setDesig(this.buildDesignationNameInSequence(nextNumberInSequence++, crossNameSetting));
 
 			// this would set the correct cross string depending if the use is
 			// cimmyt wheat
@@ -341,7 +344,7 @@ public class CrossingServiceImpl implements CrossingService {
 			germplasm.setGid(Integer.MAX_VALUE);
 			germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 			germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
-			final String crossString = this.getCross(germplasm, cross, setting.getCrossNameSetting().getSeparator());
+			final String crossString = this.getCross(germplasm, cross, crossNameSetting.getSeparator());
 
 			cross.setCross(crossString);
 		}
@@ -517,37 +520,57 @@ public class CrossingServiceImpl implements CrossingService {
 		germplasm.setReferenceId(CrossingServiceImpl.GERMPLASM_REFID);
 	}
 
-	protected Integer getNextNumberInSequence(final CrossNameSetting setting) throws MiddlewareQueryException {
+	protected Integer getNextNumberInSequence(final CrossNameSetting setting) {
 
-		final String lastPrefixUsed = this.buildPrefixString(setting);
+		final String lastPrefixUsed = this.buildPrefixString(setting).toUpperCase().trim();
 		int nextNumberInSequence = 1;
 
 		final Integer startNumber = setting.getStartNumber();
 		if (startNumber != null && startNumber > 0) {
 			nextNumberInSequence = startNumber;
+			
 		} else {
 			final String nextSequenceNumberString = this.germplasmDataManager
-					.getNextSequenceNumberForCrossName(lastPrefixUsed.toUpperCase().trim());
+					.getNextSequenceNumberForCrossName(lastPrefixUsed.toUpperCase().trim(), setting.getSuffix());
 			nextNumberInSequence = Integer.parseInt(nextSequenceNumberString);
 		}
 
 		return nextNumberInSequence;
 
 	}
+	
+	@Override
+	public String getNextNameInSequence(final CrossNameSetting setting) {
 
+		Integer nextNumberInSequence = this.getNextNumberInSequence(setting);
+
+		Integer optionalStartNumber = setting.getStartNumber();
+
+		if(optionalStartNumber != null && optionalStartNumber > 0 && nextNumberInSequence > optionalStartNumber) {
+			final String invalidStatingNumberErrorMessage = this.messageSource.getMessage("error.not.valid.starting.sequence",
+					new Object[] {nextNumberInSequence - 1}, LocaleContextHolder.getLocale());
+			throw new MiddlewareException(invalidStatingNumberErrorMessage);
+		}
+
+		if(optionalStartNumber != null && nextNumberInSequence < optionalStartNumber) {
+			nextNumberInSequence = optionalStartNumber;
+		}
+
+		return this.buildDesignationNameInSequence(nextNumberInSequence, setting);
+	}
+
+    
 	/*
 	 * This method is only used for Specify Name Scenario in import crosses and
 	 * design crosses
 	 */
-	protected String buildDesignationNameInSequence(final ImportedCrosses importedCrosses, final Integer number,
-			final CrossSetting setting) {
-		final CrossNameSetting nameSetting = setting.getCrossNameSetting();
+	protected String buildDesignationNameInSequence(final Integer number, final CrossNameSetting setting) {
 		final StringBuilder sb = new StringBuilder();
-		sb.append(this.buildPrefixString(nameSetting));
-		sb.append(this.getNumberWithLeadingZeroesAsString(number, nameSetting));
+		sb.append(this.buildPrefixString(setting));
+		sb.append(this.getNumberWithLeadingZeroesAsString(number, setting));
 
-		if (!StringUtils.isEmpty(nameSetting.getSuffix())) {
-			sb.append(this.buildSuffixString(nameSetting, nameSetting.getSuffix()));
+		if (!StringUtils.isEmpty(setting.getSuffix())) {
+			sb.append(this.buildSuffixString(setting, setting.getSuffix()));
 		}
 		return sb.toString();
 	}

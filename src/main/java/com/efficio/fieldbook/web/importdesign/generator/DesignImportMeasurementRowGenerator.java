@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -218,6 +219,13 @@ public class DesignImportMeasurementRowGenerator {
 		data.setValue(value);
 		data.setLabel(data.getMeasurementVariable().getName());
 		data.setDataType(data.getMeasurementVariable().getDataType());
+
+		// For categorical variables, we should assign the categorical value id if the value imported is within valid value range
+		final Enumeration enumeration = standardVariable.findEnumerationByName(value);
+		if (enumeration != null) {
+			data.setcValueId(String.valueOf(enumeration.getId()));
+		}
+
 		return data;
 	}
 
@@ -266,8 +274,8 @@ public class DesignImportMeasurementRowGenerator {
 			}
 		}
 
-		WorkbookUtil.addMeasurementDataToRowsIfNecessary(new ArrayList<MeasurementVariable>(temporaryList), measurements, true,
-				userSelection, ontologyService, this.fieldbookService, contextUtil.getCurrentProgramUUID());
+		WorkbookUtil.addMeasurementDataToRowsIfNecessary(new ArrayList<MeasurementVariable>(temporaryList), measurements, true
+				, ontologyService, this.fieldbookService, contextUtil.getCurrentProgramUUID());
 
 	}
 

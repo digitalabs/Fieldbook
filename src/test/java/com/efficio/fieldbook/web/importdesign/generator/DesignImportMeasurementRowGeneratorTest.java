@@ -13,8 +13,10 @@ import junit.framework.Assert;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -22,6 +24,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
@@ -48,6 +51,18 @@ public class DesignImportMeasurementRowGeneratorTest {
 	private static final int GW100_G = 51496;
 
 	private static final String PROGRAM_UUID = "789c6438-5a94-11e5-885d-feff819cdc9f";
+	private static final int TEST_STANDARD_VARIABLE_TERMID = 1;
+	private static final int TEST_PROPERTY_TERMID = 1234;
+	private static final int TEST_SCALE_TERMID = 4321;
+	private static final int TEST_METHOD_TERMID = 3333;
+	private static final int TEST_DATATYPE_TERMID = 4444;
+
+	private static final String TEST_DATATYPE_DESCRIPTION = "TEST DATATYPE";
+	private static final String TEST_METHOD_NAME = "TEST METHOD";
+	private static final String TEST_SCALE_NAME = "TEST SCALE";
+	private static final String TEST_PROPERTY_NAME = "TEST PROPERTY";
+	private static final String TEST_VARIABLE_DESCRIPTION = "TEST DESCRIPTION";
+	private static final String TEST_VARIABLE_NAME = "TEST VARIABLE";
 
 	private UserSelection userSelection;
 
@@ -205,7 +220,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 	}
 
 	@Test
-	public void testCreateMeasurementData() {
+	public void testCreateMeasurementDataForMeasurementVariable() {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 
@@ -215,6 +230,57 @@ public class DesignImportMeasurementRowGeneratorTest {
 
 		Assert.assertEquals("1", data.getValue());
 		Assert.assertEquals(measurementVariable, data.getMeasurementVariable());
+
+	}
+
+	@Test
+	public void testCreateMeasurementDataForStandardVariableWithPossibleValues() {
+
+		final String measurementDataValue = "F1";
+
+		final StandardVariable standardVariable = new StandardVariable();
+		standardVariable.setId(TEST_STANDARD_VARIABLE_TERMID);
+		standardVariable.setName(TEST_VARIABLE_NAME);
+		standardVariable.setDescription(TEST_VARIABLE_DESCRIPTION);
+		standardVariable.setProperty(new Term(TEST_PROPERTY_TERMID, TEST_PROPERTY_NAME, ""));
+		standardVariable.setScale(new Term(TEST_SCALE_TERMID, TEST_SCALE_NAME, ""));
+		standardVariable.setMethod(new Term(TEST_METHOD_TERMID, TEST_METHOD_NAME, ""));
+		standardVariable.setDataType(new Term(TEST_DATATYPE_TERMID, TEST_DATATYPE_DESCRIPTION, ""));
+		List<Enumeration> possibleValues = new ArrayList<>();
+		possibleValues.add(new Enumeration(1, "F1", "F1 Description", 1));
+		possibleValues.add(new Enumeration(2, "F2", "F2 Description", 2));
+		possibleValues.add(new Enumeration(3, "F3", "F3 Description", 3));
+		standardVariable.setEnumerations(possibleValues);
+
+		final MeasurementData measurementData = this.generator.createMeasurementData(standardVariable, measurementDataValue);
+
+		Assert.assertEquals(measurementDataValue, measurementData.getValue());
+		Assert.assertEquals(TEST_VARIABLE_NAME, measurementData.getLabel());
+		Assert.assertEquals(TEST_DATATYPE_DESCRIPTION, measurementData.getDataType());
+		Assert.assertEquals("1", measurementData.getcValueId());
+
+	}
+
+	@Test
+	public void testCreateMeasurementDataForStandardVariableNoPossibleValues() {
+
+		final String measurementDataValue = "F1";
+
+		final StandardVariable standardVariable = new StandardVariable();
+		standardVariable.setId(TEST_STANDARD_VARIABLE_TERMID);
+		standardVariable.setName(TEST_VARIABLE_NAME);
+		standardVariable.setDescription(TEST_VARIABLE_DESCRIPTION);
+		standardVariable.setProperty(new Term(TEST_PROPERTY_TERMID, TEST_PROPERTY_NAME, ""));
+		standardVariable.setScale(new Term(TEST_SCALE_TERMID, TEST_SCALE_NAME, ""));
+		standardVariable.setMethod(new Term(TEST_METHOD_TERMID, TEST_METHOD_NAME, ""));
+		standardVariable.setDataType(new Term(TEST_DATATYPE_TERMID, TEST_DATATYPE_DESCRIPTION, ""));
+
+		final MeasurementData measurementData = this.generator.createMeasurementData(standardVariable, measurementDataValue);
+
+		Assert.assertEquals(measurementDataValue, measurementData.getValue());
+		Assert.assertEquals(TEST_VARIABLE_NAME, measurementData.getLabel());
+		Assert.assertEquals(TEST_DATATYPE_DESCRIPTION, measurementData.getDataType());
+		Assert.assertNull(measurementData.getcValueId());
 
 	}
 

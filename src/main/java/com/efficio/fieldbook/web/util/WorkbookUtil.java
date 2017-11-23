@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -18,7 +19,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
 
@@ -28,6 +28,10 @@ import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 
 public class WorkbookUtil {
+
+	private WorkbookUtil() {
+
+	}
 
 	public static Integer getMeasurementVariableId(final List<MeasurementVariable> variables, final String name) {
 		if (variables != null && !variables.isEmpty()) {
@@ -95,6 +99,17 @@ public class WorkbookUtil {
 			}
 		}
 		return null;
+	}
+
+	public static Optional<MeasurementVariable> findMeasurementVariableByName(final List<MeasurementVariable> variables, final String variableName) {
+		if (variables != null && !variables.isEmpty()) {
+			for (final MeasurementVariable variable : variables) {
+				if (variable != null && variableName.equalsIgnoreCase(variable.getName())) {
+					return Optional.of(variable);
+				}
+			}
+		}
+		return Optional.absent();
 	}
 
 	public static List<MeasurementRow> createMeasurementRowsFromEnvironments(final List<Environment> environments,
@@ -201,8 +216,8 @@ public class WorkbookUtil {
 	}
 
 	public static void addMeasurementDataToRowsExp(final List<MeasurementVariable> variableList, final List<MeasurementRow> observations,
-			final boolean isVariate, final UserSelection userSelection, final OntologyService ontologyService,
-			final FieldbookService fieldbookService, final String programUUID) throws MiddlewareException {
+			final boolean isVariate, final OntologyService ontologyService,
+			final FieldbookService fieldbookService, final String programUUID) {
 		// add new variables in measurement rows
 		if (observations != null && !observations.isEmpty()) {
 			for (final MeasurementVariable variable : variableList) {
@@ -232,7 +247,7 @@ public class WorkbookUtil {
 
 	public static void addMeasurementDataToRows(final List<MeasurementVariable> variableList, final boolean isVariate,
 			final UserSelection userSelection, final OntologyService ontologyService, final FieldbookService fieldbookService,
-			final String programUUID) throws MiddlewareException {
+			final String programUUID) {
 		// add new variables in measurement rows
 		for (final MeasurementVariable variable : variableList) {
 			if (variable.getOperation().equals(Operation.ADD)) {
@@ -241,8 +256,7 @@ public class WorkbookUtil {
 
 					if(!isVariate) {
 						addFactorsToMeasurementRowDataList(row, stdVariable, isVariate, variable, userSelection);
-					}
-					else {
+					} else {
 						final MeasurementData measurementData =
 								new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 
@@ -324,9 +338,8 @@ public class WorkbookUtil {
 	}
 
 	public static void addMeasurementDataToRowsIfNecessary(final List<MeasurementVariable> variableList,
-			final List<MeasurementRow> measurementRowList, final boolean isVariate, final UserSelection userSelection,
-			final OntologyService ontologyService, final FieldbookService fieldbookService, final String programUUID)
-			throws MiddlewareException {
+			final List<MeasurementRow> measurementRowList, final boolean isVariate,
+			final OntologyService ontologyService, final FieldbookService fieldbookService, final String programUUID) {
 
 		// add new variables in measurement rows
 		for (final MeasurementVariable variable : variableList) {

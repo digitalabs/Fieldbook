@@ -525,11 +525,7 @@ public class CrossingServiceImpl implements CrossingService {
 		final String lastPrefixUsed = this.buildPrefixString(setting).toUpperCase();
 		int nextNumberInSequence = 1;
 
-		final Integer startNumber = setting.getStartNumber();
-		if (startNumber != null && startNumber > 0) {
-			nextNumberInSequence = startNumber;
-			
-		} else if (!lastPrefixUsed.isEmpty()) {
+		if (!lastPrefixUsed.isEmpty()) {
 			final String nextSequenceNumberString =
 					this.germplasmDataManager.getNextSequenceNumberForCrossName(lastPrefixUsed, setting.getSuffix());
 			nextNumberInSequence = Integer.parseInt(nextSequenceNumberString);

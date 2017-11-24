@@ -57,6 +57,8 @@ public class CrossingServiceImplTest {
 	public static final String TEST_MALE_GID_2 = "8888";
 	public static final String TEST_PROCESS_CODE = "[BC]";
 	public static final String TEST_PROCESS_CODE_WITH_PREFIX = "B[RCRPRNT]";
+	
+	private static final Integer NEXT_NUMBER = 100;
 
 	private ImportedCrossesList importedCrossesList;
 
@@ -88,10 +90,9 @@ public class CrossingServiceImplTest {
 	private CrossingServiceImpl crossingService;
 
 	private CrossSetting crossSetting;
-
+	
 	@Before
 	public void setUp() throws MiddlewareQueryException {
-
 		this.importedCrossesList = this.createImportedCrossesList();
 		this.importedCrossesList.setImportedGermplasms(this.createImportedCrosses());
 
@@ -112,6 +113,8 @@ public class CrossingServiceImplTest {
 		this.crossSetting.setCrossNameSetting(this.createCrossNameSetting());
 		this.crossSetting.setBreedingMethodSetting(this.createBreedingMethodSetting());
 		this.crossSetting.setAdditionalDetailsSetting(this.getAdditionalDetailsSetting());
+		
+		Mockito.doReturn(String.valueOf(NEXT_NUMBER)).when(this.germplasmDataManager).getNextSequenceNumberForCrossName(Matchers.anyString(), Matchers.anyString());
 	}
 
 	private Project createProject() {
@@ -525,13 +528,10 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testGetNextNumberInSequenceDefault() {
 		final CrossNameSetting setting = new CrossNameSetting();
-		setting.setStartNumber(1);
 		setting.setPrefix("A");
-		Mockito.doReturn("1").when(this.germplasmDataManager).getNextSequenceNumberForCrossName(Matchers.anyString(), Matchers.anyString());
-
+		
 		final int nextNumber = this.crossingService.getNextNumberInSequence(setting);
-
-		Assert.assertEquals(1, nextNumber);
+		Assert.assertEquals(NEXT_NUMBER.intValue(), nextNumber);
 	}
 
 	@Test
@@ -542,8 +542,7 @@ public class CrossingServiceImplTest {
 		setting.setPrefix("A");
 		
 		final int nextNumber = this.crossingService.getNextNumberInSequence(setting);
-		Assert.assertEquals(1, nextNumber);
-		Mockito.verify(this.germplasmDataManager, Mockito.never()).getNextSequenceNumberForCrossName(Matchers.anyString(), Matchers.anyString());
+		Assert.assertEquals(NEXT_NUMBER.intValue(), nextNumber);
 	}
 
 	@Test
@@ -552,7 +551,6 @@ public class CrossingServiceImplTest {
 		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setStartNumber(0);
 		setting.setPrefix("A");
-		Mockito.doReturn("100").when(this.germplasmDataManager).getNextSequenceNumberForCrossName(Matchers.anyString(), Matchers.anyString());
 
 		final int nextNumber = this.crossingService.getNextNumberInSequence(setting);
 
@@ -648,25 +646,29 @@ public class CrossingServiceImplTest {
 	
 	@Test
 	public void testGetNextNameInSequence() {
-		crossSetting.getCrossNameSetting().setStartNumber(3);
-
-		Mockito.when(this.germplasmDataManager.getNextSequenceNumberForCrossName(PREFIX, null)).thenReturn("2");
 		String nextNameInSequence = this.crossingService.getNextNameInSequence(this.crossSetting.getCrossNameSetting());
-		Assert.assertEquals(PREFIX+" 0000003 " + SUFFIX, nextNameInSequence);
+		Assert.assertEquals(PREFIX+" 0000100 " + SUFFIX, nextNameInSequence);
+	}
+	
+	@Test
+	public void testGetNextNameInSequenceWhenSpecifiedSequenceStartingNumberIsGreater() {
+		crossSetting.getCrossNameSetting().setStartNumber(1000);
+
+		String nextNameInSequence = this.crossingService.getNextNameInSequence(this.crossSetting.getCrossNameSetting());
+		Assert.assertEquals("The specified starting sequence number will be used since it's larger.", PREFIX+" 0001000 " + SUFFIX, nextNameInSequence);
 	}
 
 	@Test
-	public void testGetNextNameInSequenceThrowExceptionWhenInvalidStartingNumber() {
+	public void testGetNextNameInSequenceWhenSpecifiedSequenceStartingNumberIsLower() {
 		crossSetting.getCrossNameSetting().setPrefix("ABC");
 		crossSetting.getCrossNameSetting().setStartNumber(1);
-
-		Mockito.when(this.germplasmDataManager.getNextSequenceNumberForCrossName(PREFIX, null)).thenReturn("2");
 
 		Mockito.when(this.messageSource.getMessage(Mockito.isA(String.class),Mockito.any(Object[].class),Mockito.isA(Locale.class)))
 				.thenReturn("The starting sequence number specified will generate conflict with already existing cross codes.");
 
 		try {
 			this.crossingService.getNextNameInSequence(this.crossSetting.getCrossNameSetting());
+			Assert.fail("Should have thrown RuntimeException but did not.");
 		} catch (RuntimeException e) {
 			Assert.assertEquals("The starting sequence number specified will generate conflict with already existing cross codes.", e.getMessage());
 		}

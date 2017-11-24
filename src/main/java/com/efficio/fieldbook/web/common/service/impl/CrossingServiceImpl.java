@@ -522,16 +522,16 @@ public class CrossingServiceImpl implements CrossingService {
 
 	protected Integer getNextNumberInSequence(final CrossNameSetting setting) {
 
-		final String lastPrefixUsed = this.buildPrefixString(setting).toUpperCase().trim();
+		final String lastPrefixUsed = this.buildPrefixString(setting).toUpperCase();
 		int nextNumberInSequence = 1;
 
 		final Integer startNumber = setting.getStartNumber();
 		if (startNumber != null && startNumber > 0) {
 			nextNumberInSequence = startNumber;
 			
-		} else {
-			final String nextSequenceNumberString = this.germplasmDataManager
-					.getNextSequenceNumberForCrossName(lastPrefixUsed.toUpperCase().trim(), setting.getSuffix());
+		} else if (!lastPrefixUsed.isEmpty()) {
+			final String nextSequenceNumberString =
+					this.germplasmDataManager.getNextSequenceNumberForCrossName(lastPrefixUsed, setting.getSuffix());
 			nextNumberInSequence = Integer.parseInt(nextSequenceNumberString);
 		}
 
@@ -549,7 +549,7 @@ public class CrossingServiceImpl implements CrossingService {
 		if(optionalStartNumber != null && optionalStartNumber > 0 && nextNumberInSequence > optionalStartNumber) {
 			final String invalidStatingNumberErrorMessage = this.messageSource.getMessage("error.not.valid.starting.sequence",
 					new Object[] {nextNumberInSequence - 1}, LocaleContextHolder.getLocale());
-			throw new MiddlewareException(invalidStatingNumberErrorMessage);
+			throw new RuntimeException(invalidStatingNumberErrorMessage);
 		}
 
 		if(optionalStartNumber != null && nextNumberInSequence < optionalStartNumber) {
@@ -796,5 +796,10 @@ public class CrossingServiceImpl implements CrossingService {
 	 */
 	void setSeedSourceGenerator(final SeedSourceGenerator seedSourceGenerator) {
 		this.seedSourceGenerator = seedSourceGenerator;
+	}
+
+	
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
 	}
 }

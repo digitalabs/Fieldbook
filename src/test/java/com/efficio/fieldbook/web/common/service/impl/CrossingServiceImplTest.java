@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -37,10 +38,13 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.MessageSource;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingServiceImplTest {
 
+	private static final String SUFFIX = "SUFFIX";
+	private static final String PREFIX = "PREFIX";
 	private static final int BREEDING_METHOD_ID = 1;
 	private static final String SAVED_CROSSES_GID1 = "-9999";
 	private static final String SAVED_CROSSES_GID2 = "-8888";
@@ -76,6 +80,9 @@ public class CrossingServiceImplTest {
 
 	@Mock
 	private ProcessCodeOrderedRule processCodeOrderedRule;
+	
+	@Mock
+	private MessageSource messageSource;
 
 	@InjectMocks
 	private CrossingServiceImpl crossingService;
@@ -516,8 +523,7 @@ public class CrossingServiceImplTest {
 	}
 
 	@Test
-	public void testGetNextNumberInSequenceDefault() throws MiddlewareQueryException {
-
+	public void testGetNextNumberInSequenceDefault() {
 		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setStartNumber(1);
 		setting.setPrefix("A");
@@ -529,20 +535,19 @@ public class CrossingServiceImplTest {
 	}
 
 	@Test
-	public void testGetNextNumberInSequenceStartNumberIsSpecified() throws MiddlewareQueryException {
+	public void testGetNextNumberInSequenceStartNumberIsSpecified() {
 
 		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setStartNumber(1);
 		setting.setPrefix("A");
-		Mockito.doReturn("100").when(this.germplasmDataManager).getNextSequenceNumberForCrossName(Matchers.anyString(), Matchers.anyString());
-
+		
 		final int nextNumber = this.crossingService.getNextNumberInSequence(setting);
-
 		Assert.assertEquals(1, nextNumber);
+		Mockito.verify(this.germplasmDataManager, Mockito.never()).getNextSequenceNumberForCrossName(Matchers.anyString(), Matchers.anyString());
 	}
 
 	@Test
-	public void testGetNextNumberInSequenceStartNumberIsNotSpecified() throws MiddlewareQueryException {
+	public void testGetNextNumberInSequenceStartNumberIsNotSpecified() {
 
 		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setStartNumber(0);
@@ -552,6 +557,18 @@ public class CrossingServiceImplTest {
 		final int nextNumber = this.crossingService.getNextNumberInSequence(setting);
 
 		Assert.assertEquals(100, nextNumber);
+	}
+	
+	@Test
+	public void testGetNextNumberInSequenceWhenPrefixIsEmpty() {
+
+		final CrossNameSetting setting = new CrossNameSetting();
+		setting.setStartNumber(1);
+		setting.setPrefix("");
+
+		final int nextNumber = this.crossingService.getNextNumberInSequence(setting);
+		Assert.assertEquals(1, nextNumber);
+		Mockito.verify(this.germplasmDataManager, Mockito.never()).getNextSequenceNumberForCrossName(Matchers.anyString(), Matchers.anyString());
 	}
 
 	@Test
@@ -628,6 +645,32 @@ public class CrossingServiceImplTest {
 			counter++;
 		}
 	}
+	
+	@Test
+	public void testGetNextNameInSequence() {
+		crossSetting.getCrossNameSetting().setStartNumber(3);
+
+		Mockito.when(this.germplasmDataManager.getNextSequenceNumberForCrossName(PREFIX, null)).thenReturn("2");
+		String nextNameInSequence = this.crossingService.getNextNameInSequence(this.crossSetting.getCrossNameSetting());
+		Assert.assertEquals(PREFIX+" 0000003 " + SUFFIX, nextNameInSequence);
+	}
+
+	@Test
+	public void testGetNextNameInSequenceThrowExceptionWhenInvalidStartingNumber() {
+		crossSetting.getCrossNameSetting().setPrefix("ABC");
+		crossSetting.getCrossNameSetting().setStartNumber(1);
+
+		Mockito.when(this.germplasmDataManager.getNextSequenceNumberForCrossName(PREFIX, null)).thenReturn("2");
+
+		Mockito.when(this.messageSource.getMessage(Mockito.isA(String.class),Mockito.any(Object[].class),Mockito.isA(Locale.class)))
+				.thenReturn("The starting sequence number specified will generate conflict with already existing cross codes.");
+
+		try {
+			this.crossingService.getNextNameInSequence(this.crossSetting.getCrossNameSetting());
+		} catch (RuntimeException e) {
+			Assert.assertEquals("The starting sequence number specified will generate conflict with already existing cross codes.", e.getMessage());
+		}
+	}
 
 	private ImportedCrossesList createImportedCrossesList() {
 
@@ -688,8 +731,8 @@ public class CrossingServiceImplTest {
 	private CrossNameSetting createCrossNameSetting() {
 		final CrossNameSetting setting = new CrossNameSetting();
 
-		setting.setPrefix("PREFIX");
-		setting.setSuffix("SUFFIX");
+		setting.setPrefix(PREFIX);
+		setting.setSuffix(SUFFIX);
 		setting.setAddSpaceBetweenPrefixAndCode(true);
 		setting.setAddSpaceBetweenSuffixAndCode(true);
 		setting.setSeparator("|");

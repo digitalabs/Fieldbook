@@ -199,8 +199,18 @@ public class CreateNurseryForm {
 	private String errorMessage;
 
 	private String columnOrders;
+
 	private Integer germplasmListId;
 
+	private String description;
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(final String description) {
+		this.description = description;
+	}
 
 	/**
 	 * Gets the project id.

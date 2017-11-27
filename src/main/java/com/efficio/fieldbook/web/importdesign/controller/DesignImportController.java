@@ -1,19 +1,25 @@
 
 package com.efficio.fieldbook.web.importdesign.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.api.SettingsService;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.GenerateDesignInput;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.common.form.ImportDesignForm;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
+import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -51,25 +57,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.SettingsService;
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.GenerateDesignInput;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * The Class DesignImportController.
@@ -107,6 +106,7 @@ public class DesignImportController extends SettingsController {
 	public static final String REVIEW_DETAILS_PAGINATION_TEMPLATE = "/DesignImport/reviewDetailsPagination";
 
 	public static final String DESIGN_TEMPLATE_FOLDER = "DesignPresets";
+	public static final String TEMPLATE_NAME = "templateName";
 
 	@Resource
 	private DesignImportParser designImportParser;
@@ -228,7 +228,6 @@ public class DesignImportController extends SettingsController {
 	 * measurement rows, the entry for PLOT_NO must be equal to ENTRY_NO
 	 *
 	 * @param studyId
-	 * @param studyType
 	 * @return
 	 */
 	@ResponseBody
@@ -456,7 +455,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void updateDesignMapping(final Map<String, List<DesignHeaderItem>> mappedHeaders) {
-		final Map<PhenotypicType, List<DesignHeaderItem>> newMappingResults = new HashMap<>();
+		final Map<PhenotypicType, List<DesignHeaderItem>> newMappingResults = new EnumMap<>(PhenotypicType.class);
 
 		for (final Map.Entry<String, List<DesignHeaderItem>> item : mappedHeaders.entrySet()) {
 			for (final DesignHeaderItem mappedHeader : item.getValue()) {
@@ -531,7 +530,7 @@ public class DesignImportController extends SettingsController {
 	 * @return
 	 */
 	private Map<String, Integer> generateAdditionalParams(final Integer startingEntryNo, final Integer startingPlotNo) {
-		final Map<String, Integer> additionalParams = new HashMap<String, Integer>();
+		final Map<String, Integer> additionalParams = new HashMap<>();
 		additionalParams.put("startingEntryNo", startingEntryNo);
 		additionalParams.put("startingPlotNo", startingPlotNo);
 		return additionalParams;
@@ -599,12 +598,12 @@ public class DesignImportController extends SettingsController {
 		if (this.userSelection.getExpDesignParams() != null
 				&& this.userSelection.getExpDesignParams().getFileName() != null
 				&& !this.userSelection.getExpDesignParams().getFileName().isEmpty()) {
-			output.put("templateName", this.userSelection.getExpDesignParams().getFileName());
+			output.put(TEMPLATE_NAME, this.userSelection.getExpDesignParams().getFileName());
 			return output;
 		} else if (this.userSelection.getDesignImportData() != null
 				&& this.userSelection.getDesignImportData().getImportFileName() != null
 				&& !this.userSelection.getDesignImportData().getImportFileName().isEmpty()) {
-			output.put("templateName", this.userSelection.getDesignImportData().getImportFileName());
+			output.put(TEMPLATE_NAME, this.userSelection.getDesignImportData().getImportFileName());
 			return output;
 		}
 
@@ -614,12 +613,12 @@ public class DesignImportController extends SettingsController {
 			// existing design (if saved)
 			final MeasurementVariable expDesignSource = workbook.getExperimentalDesignVariables()
 					.getExperimentalDesignSource();
-			output.put("templateName",
+			output.put(TEMPLATE_NAME,
 					expDesignSource != null && expDesignSource.getValue() != null
 							&& !expDesignSource.getValue().isEmpty() ? expDesignSource.getValue()
 									: DesignImportController.DEFAULT_DESIGN);
 		} else {
-			output.put("templateName", DesignImportController.DEFAULT_DESIGN);
+			output.put(TEMPLATE_NAME, DesignImportController.DEFAULT_DESIGN);
 		}
 
 		return output;
@@ -828,6 +827,8 @@ public class DesignImportController extends SettingsController {
 
 		final String name = "";
 
+		final String description = "";
+
 		Workbook workbook;
 		final StudyDetails details = new StudyDetails();
 
@@ -837,7 +838,7 @@ public class DesignImportController extends SettingsController {
 					name, combinedList, this.userSelection.getPlotsLevelList(),
 					this.userSelection.getBaselineTraitsList(), this.userSelection,
 					this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null,
-					null, this.userSelection.getNurseryConditions(), false, this.contextUtil.getCurrentProgramUUID());
+					null, this.userSelection.getNurseryConditions(), false, this.contextUtil.getCurrentProgramUUID(), description);
 
 			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false,
 					this.contextUtil.getCurrentProgramUUID());
@@ -859,7 +860,7 @@ public class DesignImportController extends SettingsController {
 			final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService,
 					name, combinedList, this.userSelection.getPlotsLevelList(), variatesList, this.userSelection,
 					this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null,
-					null, this.userSelection.getNurseryConditions(), true, this.contextUtil.getCurrentProgramUUID());
+					null, this.userSelection.getNurseryConditions(), true, this.contextUtil.getCurrentProgramUUID(), description);
 
 			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true,
 					this.contextUtil.getCurrentProgramUUID());
@@ -1273,7 +1274,6 @@ public class DesignImportController extends SettingsController {
 	 * headers in Design Import Data.
 	 * 
 	 * @param termId
-	 * @param userSelection
 	 * @param designImportData
 	 * @return
 	 */
@@ -1297,7 +1297,6 @@ public class DesignImportController extends SettingsController {
 	 * headers in Design Import Data and Ontology.
 	 * 
 	 * @param termId
-	 * @param userSelection
 	 * @param designImportData
 	 * @return
 	 */

@@ -1551,7 +1551,7 @@ function validateCreateNursery() {
 	if ($.trim($('#' + getJquerySafeId('basicDetails0.value')).val()) === '') {
 		hasError = true;
 		name = 'Name';
-	}else if ($.trim($('#' + getJquerySafeId('basicDetails1.value')).val()) === '') {
+	}else if ($.trim($('#' + getJquerySafeId('description')).val()) === '') {
 		hasError = true;
 		name = 'Description';
 	}else if (isNurseryNameUnique() === false) {

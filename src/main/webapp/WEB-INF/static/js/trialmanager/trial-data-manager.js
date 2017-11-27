@@ -736,7 +736,7 @@
 					} else if ($.trim(service.currentData.basicDetails.basicDetails[8005]) === '') {
 						hasError = true;
 						name = 'Name';
-					} else if ($.trim(service.currentData.basicDetails.basicDetails[8007]) === '') {
+					} else if ($.trim(service.currentData.basicDetails.description) === '') {
 						hasError = true;
 						name = 'Description';
 					} else if (!isEdit && isStudyNameUnique(service.currentData.basicDetails.basicDetails[8005]) === false) {

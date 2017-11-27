@@ -10,17 +10,18 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.util.JsonIoException;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.TreeViewUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -57,18 +58,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.util.JsonIoException;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class CreateNurseryController.
@@ -86,6 +84,8 @@ public class CreateNurseryController extends SettingsController {
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(CreateNurseryController.class);
 
+	public static final String CREATE_NURSERY_FORM = "createNurseryForm";
+
 	@Resource
 	private OntologyService ontologyService;
 
@@ -99,7 +99,7 @@ public class CreateNurseryController extends SettingsController {
 	 */
 	@Override
 	public String getContentName() {
-		return "/NurseryManager/createNursery";
+		return URL;
 	}
 
 	/**
@@ -172,7 +172,8 @@ public class CreateNurseryController extends SettingsController {
 		}
 
 		this.addVariableSectionIdentifiers(model);
-		model.addAttribute("createNurseryForm", form);
+		model.addAttribute(
+			CREATE_NURSERY_FORM, form);
 
 		return super.showAjaxPage(model, CreateNurseryController.URL_SETTINGS);
 	}
@@ -210,7 +211,7 @@ public class CreateNurseryController extends SettingsController {
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String show(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
+	public String show(@ModelAttribute(CREATE_NURSERY_FORM) final CreateNurseryForm form,
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form2, final Model model, final HttpSession session,
 			final HttpServletRequest request) throws MiddlewareException {
 
@@ -280,8 +281,8 @@ public class CreateNurseryController extends SettingsController {
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public String submit(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model)
-			throws MiddlewareQueryException {
+	public String submit(@ModelAttribute(CREATE_NURSERY_FORM) final CreateNurseryForm form, final Model model)
+			 {
 		// get the name of the nursery
 		String name = null;
 		for (final SettingDetail nvar : form.getBasicDetails()) {
@@ -292,7 +293,9 @@ public class CreateNurseryController extends SettingsController {
 			}
 		}
 
-		final List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
+		final String description = form.getDescription();
+
+		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
 		if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
 			studyLevelVariables.addAll(form.getStudyLevelVariables());
 		}
@@ -322,7 +325,7 @@ public class CreateNurseryController extends SettingsController {
 		if (baselineTraits == null && form.getSelectionVariatesVariables() != null) {
 			baselineTraits = form.getSelectionVariatesVariables();
 			this.userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);
-		} else if (form.getSelectionVariatesVariables() != null) {
+		} else if (baselineTraits != null && form.getSelectionVariatesVariables() != null) {
 			baselineTraits.addAll(form.getSelectionVariatesVariables());
 			this.userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);
 		}
@@ -338,12 +341,12 @@ public class CreateNurseryController extends SettingsController {
 
 		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, studyLevelVariables,
 				form.getPlotLevelVariables(), baselineTraits, this.userSelection, form.getNurseryConditions(),
-				this.contextUtil.getCurrentProgramUUID());
+				this.contextUtil.getCurrentProgramUUID(), description);
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, this.contextUtil.getCurrentProgramUUID());
 		this.userSelection.setWorkbook(workbook);
 
-		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), null);
+		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), null, form.getDescription());
 
 		return "success";
 	}
@@ -469,7 +472,7 @@ public class CreateNurseryController extends SettingsController {
 		} else if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId() || mode == VariableType.EXPERIMENTAL_DESIGN.getId()) {
 			return this.userSelection.getPlotsLevelList();
 		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.NURSERY_CONDITION.getId()) {
-			final List<SettingDetail> newList = new ArrayList<SettingDetail>();
+			final List<SettingDetail> newList = new ArrayList<>();
 
 			for (final SettingDetail setting : this.userSelection.getBaselineTraitsList()) {
 				newList.add(setting);
@@ -483,7 +486,7 @@ public class CreateNurseryController extends SettingsController {
 		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
 			return this.userSelection.getSelectionVariates();
 		}
-		return new ArrayList<SettingDetail>();
+		return new ArrayList<>();
 	}
 
 	// TODO : refactor out of this class and into the more general ManageSettingsController
@@ -497,7 +500,7 @@ public class CreateNurseryController extends SettingsController {
 	@ResponseBody
 	@RequestMapping(value = "displayAddSetting/{mode}", method = RequestMethod.GET)
 	public Map<String, Object> showAddSettingPopup(@PathVariable final int mode) {
-		final Map<String, Object> result = new HashMap<String, Object>();
+		final Map<String, Object> result = new HashMap<>();
 		try {
 
 			final List<StandardVariableReference> standardVariableList =
@@ -567,7 +570,7 @@ public class CreateNurseryController extends SettingsController {
 	@ResponseBody
 	@RequestMapping(value = "/addSettings/{mode}", method = RequestMethod.POST, headers = {"Content-type=application/json"})
 	public String addSettings(@RequestBody final CreateNurseryForm form, final Model model, @PathVariable final int mode) {
-		final List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
+		final List<SettingDetail> newSettings = new ArrayList<>();
 		try {
 			final List<SettingVariable> selectedVariables = form.getSelectedVariables();
 			if (selectedVariables != null && !selectedVariables.isEmpty()) {
@@ -590,7 +593,7 @@ public class CreateNurseryController extends SettingsController {
 				}
 			}
 
-			if (newSettings != null && !newSettings.isEmpty()) {
+			if (!newSettings.isEmpty()) {
 				return this.addNewSettingDetails(form, mode, newSettings);
 			}
 
@@ -602,7 +605,7 @@ public class CreateNurseryController extends SettingsController {
 	}
 
 	private Operation removeVarFromDeletedList(final SettingVariable var, final int mode) {
-		List<SettingDetail> settingsList = new ArrayList<SettingDetail>();
+		List<SettingDetail> settingsList = new ArrayList<>();
 		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			settingsList = this.userSelection.getDeletedStudyLevelConditions();
 		} else if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId() || mode == VariableType.EXPERIMENTAL_DESIGN.getId()) {
@@ -636,7 +639,7 @@ public class CreateNurseryController extends SettingsController {
 	 * @return the string
 	 */
 	@RequestMapping(value = "/clearSettings", method = RequestMethod.GET)
-	public String clearSettings(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
+	public String clearSettings(@ModelAttribute(CREATE_NURSERY_FORM) final CreateNurseryForm form, final Model model,
 			final HttpSession session, final HttpServletRequest request) {
 
 		final String contextParams = ContextUtil.getContextParameterString(request);
@@ -649,7 +652,7 @@ public class CreateNurseryController extends SettingsController {
 			CreateNurseryController.LOG.error(e.getMessage(), e);
 		}
 
-		model.addAttribute("createNurseryForm", form);
+		model.addAttribute(CREATE_NURSERY_FORM, form);
 
 		return super.showAjaxPage(model, CreateNurseryController.URL_SETTINGS);
 	}
@@ -853,13 +856,13 @@ public class CreateNurseryController extends SettingsController {
 
 		form.setMeasurementRowList(new ArrayList<MeasurementRow>());
 
-		model.addAttribute("createNurseryForm", form);
+		model.addAttribute(CREATE_NURSERY_FORM, form);
 		this.setFormStaticData(form, contextParams);
 		return super.showAjaxPage(model, CreateNurseryController.URL_SETTINGS);
 	}
 
 	protected void setSettingDetailsValueFromVariable(final MeasurementVariable var, final SettingDetail detail)
-			throws MiddlewareQueryException {
+			{
 		if (var.getTermId() == TermId.BREEDING_METHOD_CODE.getId() && var.getValue() != null && !var.getValue().isEmpty()) {
 			// set the value of code to ID for it to be selected in the popup
 			final Method method = this.fieldbookMiddlewareService.getMethodByCode(var.getValue(), this.contextUtil.getCurrentProgramUUID());
@@ -870,7 +873,7 @@ public class CreateNurseryController extends SettingsController {
 			}
 		} else if (var.getTermId() == TermId.LOCATION_ID.getId()) {
 			this.setLocationVariableValue(detail, var);
-		} else if (var != null) {
+		} else {
 			final String currentVal = var.getValue();
 			if (var.getTermId() != TermId.NURSERY_TYPE.getId()
 					&& (detail.getPossibleValues() == null || detail.getPossibleValues().isEmpty())) {
@@ -890,7 +893,7 @@ public class CreateNurseryController extends SettingsController {
 		}
 	}
 
-	protected void setLocationVariableValue(final SettingDetail detail, final MeasurementVariable var) throws MiddlewareQueryException {
+	protected void setLocationVariableValue(final SettingDetail detail, final MeasurementVariable var) {
 		final int locationId = var.getValue() != null && !var.getValue().isEmpty() && NumberUtils.isNumber(var.getValue())
 				? Integer.valueOf(var.getValue()) : 0;
 		final Location location = this.fieldbookMiddlewareService.getLocationById(locationId);

@@ -196,10 +196,6 @@ window.TrialSettingsManager = (function() {
 					variableId: 8005, // STUDY_NAME
 					propertyId: 2010  // Study
 				},
-				{
-					variableId: 8007, // STUDY_TITLE
-					propertyId: 2012  // Study title
-				},
 
 				{
 					variableId: 8009, // STUDY_UPDATE

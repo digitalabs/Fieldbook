@@ -67,8 +67,6 @@ public class ExpDesignController extends BaseTrialController {
 	private AugmentedRandomizedBlockDesignService augmentedRandomizedBlockDesignService;
 	@Resource
 	private ResourceBundleMessageSource messageSource;
-	@Resource
-	private FieldbookProperties fieldbookProperties;
 
 	@Resource
 	private DesignImportService designImportService;
@@ -84,7 +82,7 @@ public class ExpDesignController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(value = "/retrieveDesignTypes", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	public List<DesignTypeItem> retrieveDesignTypes() {
-		final List<DesignTypeItem> designTypes = new ArrayList<DesignTypeItem>();
+		final List<DesignTypeItem> designTypes = new ArrayList<>();
 
 		designTypes.add(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK);
 		designTypes.add(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK);
@@ -104,7 +102,7 @@ public class ExpDesignController extends BaseTrialController {
 	}
 
 	private List<DesignTypeItem> generatePresetDesignTypes(int index) {
-		final List<DesignTypeItem> designTypeItems = new ArrayList<DesignTypeItem>();
+		final List<DesignTypeItem> designTypeItems = new ArrayList<>();
 		final List<File> presetTemplates = ResourceFinder.getResourceListing(AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString());
 		Collections.sort(presetTemplates);
 		for (final File designTemplateFile : presetTemplates) {
@@ -160,7 +158,7 @@ public class ExpDesignController extends BaseTrialController {
 	 * @return
 	 */
 	int getTotalNoOfEntries(final String name) {
-		final int start = name.indexOf("E") + 1;
+		final int start = name.indexOf('E') + 1;
 		final int end = name.indexOf("-Rep");
 		return Integer.valueOf(name.substring(start, end));
 	}
@@ -206,12 +204,13 @@ public class ExpDesignController extends BaseTrialController {
 
 		final String name = "";
 
+		final String description = "";
 
 		final Dataset dataset = (Dataset) SettingsUtil
 				.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection.getPlotsLevelList(),
 						variatesList, this.userSelection, this.userSelection.getTrialLevelVariableList(),
 						this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(), false,
-						this.contextUtil.getCurrentProgramUUID());
+						this.contextUtil.getCurrentProgramUUID(), description);
 
 
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.contextUtil.getCurrentProgramUUID());
@@ -272,9 +271,9 @@ public class ExpDesignController extends BaseTrialController {
 							}
 						}
 
-						BVDesignLicenseInfo BVDesignLicenseInfo = designLicenseUtil.retrieveLicenseInfo();
+						BVDesignLicenseInfo bvDesignLicenseInfo = designLicenseUtil.retrieveLicenseInfo();
 
-						if (this.designLicenseUtil.isExpired(BVDesignLicenseInfo)) {
+						if (this.designLicenseUtil.isExpired(bvDesignLicenseInfo)) {
 							expParameterOutput =
 									new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.license.expired",
 											null, locale));
@@ -321,8 +320,8 @@ public class ExpDesignController extends BaseTrialController {
 
 						workbook.setExpDesignVariables(designService.getRequiredDesignVariables());
 
-						if (this.designLicenseUtil.isExpiringWithinThirtyDays(BVDesignLicenseInfo)) {
-							final int daysBeforeExpiration = Integer.valueOf(BVDesignLicenseInfo.getStatus().getLicense().getExpiryDays());
+						if (this.designLicenseUtil.isExpiringWithinThirtyDays(bvDesignLicenseInfo)) {
+							final int daysBeforeExpiration = Integer.parseInt(bvDesignLicenseInfo.getStatus().getLicense().getExpiryDays());
 							expParameterOutput =
 									new ExpDesignValidationOutput(true, this.messageSource.getMessage("experiment.design.license.expiring",
 											new Integer[] {daysBeforeExpiration}, locale));
@@ -357,7 +356,7 @@ public class ExpDesignController extends BaseTrialController {
 			workbook = userSelection.getWorkbook();
 		}
 		if (workbook != null && workbook.getObservations() != null && hasMeasurementData) {
-			final List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
+			final List<MeasurementRow> observations = new ArrayList<>();
 			observations.addAll(workbook.getObservations());
 			observations.addAll(measurementRows);
 			return observations;

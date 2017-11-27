@@ -106,16 +106,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		if ((this.userSelection.getStudyId() == null || this.userSelection.getStudyId() == 0
 				|| this.userSelection.getStudyId() == AngularSelectSheetController.FIELDBOOK_DEFAULT_STUDY_ID) && !StringUtils
 				.isEmpty(this.userSelection.getStudyName())) {
-			final StudyDetails details = new StudyDetails();
-			details.setId(this.userSelection.getStudyId() != null ? this.userSelection.getStudyId() : 0);
-			details.setStudyName(this.userSelection.getStudyName());
-			details.setTitle(this.userSelection.getStudyTitle());
-			details.setObjective(this.userSelection.getStudyObjective());
-			details.setEndDate(this.userSelection.getStudyEndDate());
-			details.setStartDate(this.userSelection.getStudyStartDate());
-			details.setStudyType(StudyType.getStudyTypeByName(this.userSelection.getStudyType()));
-			details.setLabel(this.etlService.convertMessage(new Message(AngularSelectSheetController.ADD_TO_NEW_STUDY)));
-			previousStudies.add(details);
+			this.createStudyDetails(previousStudies);
 		} else {
 			try {
 				if (!this.populateStudyDetailsIfFieldbookFormat(previousStudies, model)) {
@@ -135,6 +126,19 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		this.userSelection.clearMeasurementVariables();
 
 		return super.show(model);
+	}
+
+	private void createStudyDetails(final List<StudyDetails> previousStudies) {
+		final StudyDetails details = new StudyDetails();
+		details.setId(this.userSelection.getStudyId() != null ? this.userSelection.getStudyId() : 0);
+		details.setStudyName(this.userSelection.getStudyName());
+		details.setDescription(this.userSelection.getStudyDescription());
+		details.setObjective(this.userSelection.getStudyObjective());
+		details.setEndDate(this.userSelection.getStudyEndDate());
+		details.setStartDate(this.userSelection.getStudyStartDate());
+		details.setStudyType(StudyType.getStudyTypeByName(this.userSelection.getStudyType()));
+		details.setLabel(this.etlService.convertMessage(new Message(AngularSelectSheetController.ADD_TO_NEW_STUDY)));
+		previousStudies.add(details);
 	}
 
 	private boolean populateStudyDetailsIfFieldbookFormat(final List<StudyDetails> previousStudies, final Model model) throws IOException {
@@ -187,7 +191,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 						// update user selection
 						this.userSelection.setStudyId(studyDetails.getId());
 						this.userSelection.setStudyName(studyName);
-						this.userSelection.setStudyTitle(studyDetails.getTitle());
+						this.userSelection.setStudyDescription(studyDetails.getDescription());
 						this.userSelection.setStudyObjective(studyDetails.getObjective());
 						this.userSelection.setStudyStartDate(studyDetails.getStartDate());
 						this.userSelection.setStudyEndDate(studyDetails.getEndDate());
@@ -235,7 +239,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 		} catch (final IOException e) {
 			AngularSelectSheetController.LOG.error(e.getMessage(), e);
-			return new ArrayList<RowDTO>();
+			return new ArrayList<>();
 		}
 	}
 
@@ -243,7 +247,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	@ResponseBody
 	@RequestMapping(value = "/displayRow", params = "count=true")
 	public Map<String, Object> getMaximumRowDisplayCount(@RequestParam(value = "selectedSheetIndex") final Integer selectedSheetIndex) {
-		final Map<String, Object> returnValue = new HashMap<String, Object>();
+		final Map<String, Object> returnValue = new HashMap<>();
 		try {
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 			final Integer count = this.etlService.getAvailableRowsForDisplay(workbook, selectedSheetIndex);
@@ -266,7 +270,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		final String endDateString = form.getStudyDetails().getEndDate();
 		Date startDate = null;
 		Date endDate = null;
-		final List<Message> messageList = new ArrayList<Message>();
+		final List<Message> messageList = new ArrayList<>();
 
 		if (!StringUtils.isEmpty(startDateString)) {
 			// check if date is later than current date
@@ -303,7 +307,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		this.userSelection.setHeaderRowIndex(form.getHeaderRowIndex());
 		this.userSelection.setHeaderRowDisplayText(form.getHeaderRowDisplayText());
 		this.userSelection.setStudyName(form.getStudyDetails().getStudyName());
-		this.userSelection.setStudyTitle(form.getStudyDetails().getStudyTitle());
+		this.userSelection.setStudyDescription(form.getStudyDetails().getStudyDescription());
 		this.userSelection.setStudyObjective(form.getStudyDetails().getObjective());
 		this.userSelection.setStudyStartDate(form.getStudyDetails().getStartDate());
 		this.userSelection.setStudyEndDate(form.getStudyDetails().getEndDate());
@@ -313,7 +317,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		final Integer studyId = form.getStudyDetails().getStudyId();
 		this.userSelection.setStudyId(studyId);
 		if (studyId != null && studyId != 0) {
-			final List<String> errors = new ArrayList<String>();
+			final List<String> errors = new ArrayList<>();
 			Map<String, List<Message>> mismatchErrors = null;
 			final boolean isMeansDataImport =
 					this.userSelection.getDatasetType() != null && this.userSelection.getDatasetType().intValue() == DataSetType.MEANS_DATA
@@ -331,24 +335,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 					}
 				}
 
-				try {
-					// TODO : refactor validation logic to avoid duplication with ImportObservationsController
-					final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
-					final org.generationcp.middleware.domain.etl.Workbook importData =
-							this.etlService.retrieveAndSetProjectOntology(this.userSelection, isMeansDataImport);
-
-					final List<MeasurementVariable> studyHeaders = importData.getAllVariables();
-
-					final List<String> fileHeaders = this.etlService
-							.retrieveColumnHeaders(workbook, this.userSelection, this.etlService.headersContainsPlotId(importData));
-
-					mismatchErrors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, isMeansDataImport);
-				} catch (final Exception e) {
-					AngularSelectSheetController.LOG.error(e.getMessage(), e);
-					final List<Message> error = new ArrayList<Message>();
-					error.add(new Message(Constants.MESSAGE_KEY_GENERIC_ERROR));
-					errors.addAll(this.etlService.convertMessageList(error));
-				}
+				mismatchErrors = this.checkForMismatchedHeaders(errors, mismatchErrors, isMeansDataImport);
 
 				if (mismatchErrors != null && !mismatchErrors.isEmpty()) {
 					for (final Map.Entry<String, List<Message>> entry : mismatchErrors.entrySet()) {
@@ -361,7 +348,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 			} catch (final Exception e) {
 				AngularSelectSheetController.LOG.error(e.getMessage(), e);
-				final List<Message> error = new ArrayList<Message>();
+				final List<Message> error = new ArrayList<>();
 				error.add(new Message(Constants.MESSAGE_KEY_GENERIC_ERROR));
 				errors.addAll(this.etlService.convertMessageList(error));
 				return this.wrapFormResult(errors);
@@ -370,6 +357,29 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			return this.wrapFormResult(AngularMapOntologyController.URL, request);
 		}
 
+	}
+
+	private Map<String, List<Message>> checkForMismatchedHeaders(final List<String> errors, Map<String, List<Message>> mismatchErrors,
+		final boolean isMeansDataImport) {
+		try {
+			// TODO : refactor validation logic to avoid duplication with ImportObservationsController
+			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
+			final org.generationcp.middleware.domain.etl.Workbook importData =
+					this.etlService.retrieveAndSetProjectOntology(this.userSelection, isMeansDataImport);
+
+			final List<MeasurementVariable> studyHeaders = importData.getAllVariables();
+
+			final List<String> fileHeaders = this.etlService
+					.retrieveColumnHeaders(workbook, this.userSelection, this.etlService.headersContainsPlotId(importData));
+
+			mismatchErrors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, isMeansDataImport);
+		} catch (final Exception e) {
+			AngularSelectSheetController.LOG.error(e.getMessage(), e);
+			final List<Message> error = new ArrayList<>();
+			error.add(new Message(Constants.MESSAGE_KEY_GENERIC_ERROR));
+			errors.addAll(this.etlService.convertMessageList(error));
+		}
+		return mismatchErrors;
 	}
 
 	@ModelAttribute("form")
@@ -384,7 +394,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 		final StudyDetailsForm studyDetailsForm = new StudyDetailsForm();
 		studyDetailsForm.setStudyName(this.userSelection.getStudyName());
-		studyDetailsForm.setStudyTitle(this.userSelection.getStudyTitle());
+		studyDetailsForm.setStudyDescription(this.userSelection.getStudyDescription());
 		studyDetailsForm.setObjective(this.userSelection.getStudyObjective());
 		studyDetailsForm.setStartDate(this.userSelection.getStudyStartDate());
 		studyDetailsForm.setEndDate(this.userSelection.getStudyEndDate());
@@ -408,13 +418,13 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			AngularSelectSheetController.LOG.error(e.getMessage(), e);
 		}
 
-		return new ArrayList<SheetDTO>();
+		return new ArrayList<>();
 	}
 
 	@ModelAttribute("studyTypeList")
 	public Map<String, String> getStudyTypes() {
 
-		final Map<String, String> studyTypes = new HashMap<String, String>();
+		final Map<String, String> studyTypes = new HashMap<>();
 
 		for (final StudyType type : StudyType.values()) {
 			studyTypes.put(type.getName(), type.getLabel());
@@ -426,7 +436,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	@ModelAttribute("datasetTypeList")
 	public Map<Integer, String> getDatasetTypes() {
 
-		final Map<Integer, String> datasetTypes = new HashMap<Integer, String>();
+		final Map<Integer, String> datasetTypes = new HashMap<>();
 		datasetTypes.put(DataSetType.PLOT_DATA.getId(), this.etlService.getCVDefinitionById(DataSetType.PLOT_DATA.getId()));
 		datasetTypes.put(DataSetType.MEANS_DATA.getId(), this.etlService.getCVDefinitionById(DataSetType.MEANS_DATA.getId()));
 		return datasetTypes;

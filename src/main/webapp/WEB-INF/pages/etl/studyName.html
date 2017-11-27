@@ -45,11 +45,11 @@
 
             </div>
         </div>
-        <div class="form-group" th:class="${#fields.hasErrors('studyTitle')}? 'form-group has-error': 'form-group'">
+        <div class="form-group" th:class="${#fields.hasErrors('studyDescription')}? 'form-group has-error': 'form-group'">
 	    <label for="comboStudyTitle" class="col-lg-2 control-label" th:text="#{study.name.title.label}">Study Title</label>
 
 	    <div class="col-lg-6">
-	    	<input id="comboStudyTitle" th:field="*{studyTitle}" type="hidden" class="form-control select2" placeholder=""/>
+	    	<input id="comboStudyTitle" th:field="*{studyDescription}" type="hidden" class="form-control select2" placeholder=""/>
 	    </div>
 	  </div>
 	  
@@ -131,7 +131,7 @@
                 previousStudyNameValue = '';
             }
 
-            var previousStudyTitleValue = /*[[${studyDetails.studyTitle}]]*/ null;
+            var previousStudyTitleValue = /*[[${studyDetails.studyDescription}]]*/ null;
             if (!previousStudyTitleValue) {
                 previousStudyTitleValue = '';
             }

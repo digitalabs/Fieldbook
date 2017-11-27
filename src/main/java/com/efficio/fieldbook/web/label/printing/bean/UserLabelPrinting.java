@@ -277,8 +277,8 @@ public class UserLabelPrinting implements Serializable {
 		this.fieldMapInfoList = fieldMapInfoList;
 		int totalLabels = 0;
 		if (fieldMapInfoList != null) {
-			for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
-				for (FieldMapDatasetInfo dataset : fieldMapInfo.getDatasets()) {
+			for (final FieldMapInfo mapInfo : fieldMapInfoList) {
+				for (FieldMapDatasetInfo dataset : mapInfo.getDatasets()) {
 					for (FieldMapTrialInstanceInfo trialInstance : dataset.getTrialInstances()) {
 						totalLabels += trialInstance.getFieldMapLabels().size();
 					}
@@ -341,7 +341,7 @@ public class UserLabelPrinting implements Serializable {
 	public void setStudy(final Study study) {
 		this.study = study;
 		this.name = study.getName();
-		this.title = study.getTitle();
+		this.title = study.getDescription();
 		this.objective = study.getObjective();
 	}
 

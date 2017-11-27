@@ -39,14 +39,12 @@ import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.domain.samplelist.SampleListDTO;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.servlet.http.HttpServletRequest;
@@ -81,9 +79,10 @@ public abstract class BaseTrialController extends SettingsController {
 		final StudyDetails studyDetails = workbook.getStudyDetails();
 
 		studyDetails.setId(detailBean.getStudyID());
-		studyDetails.setTitle(detailBean.getBasicDetails().get(Integer.toString(TermId.STUDY_TITLE.getId())));
+		studyDetails.setDescription(detailBean.getDescription());
 		studyDetails.setObjective(detailBean.getBasicDetails().get(Integer.toString(TermId.STUDY_OBJECTIVE.getId())));
 		studyDetails.setStudyName(detailBean.getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId())));
+		studyDetails.setDescription(detailBean.getDescription());
 		studyDetails.setStartDate(detailBean.getBasicDetails().get(Integer.toString(TermId.START_DATE.getId())));
 		studyDetails.setEndDate(detailBean.getBasicDetails().get(Integer.toString(TermId.END_DATE.getId())));
 		studyDetails.setStudyType(StudyType.T);
@@ -98,10 +97,9 @@ public abstract class BaseTrialController extends SettingsController {
 	protected void processEnvironmentData(final EnvironmentData data) {
 		for (int i = 0; i < data.getEnvironments().size(); i++) {
 			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
-			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) {
-				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
-			} else if (values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null || values
-					.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
+			if ((!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) || (
+				values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null || values
+					.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty())) {
 				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
 			}
 		}
@@ -120,10 +118,10 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected List<List<ValueReference>> convertToValueReference(final List<Environment> environments) {
-		final List<List<ValueReference>> returnVal = new ArrayList<List<ValueReference>>(environments.size());
+		final List<List<ValueReference>> returnVal = new ArrayList<>(environments.size());
 
 		for (final Environment environment : environments) {
-			final List<ValueReference> valueRefList = new ArrayList<ValueReference>();
+			final List<ValueReference> valueRefList = new ArrayList<>();
 
 			for (final Map.Entry<String, String> entry : environment.getManagementDetailValues().entrySet()) {
 				final ValueReference valueRef = new ValueReference(entry.getKey(), entry.getValue());
@@ -189,7 +187,7 @@ public abstract class BaseTrialController extends SettingsController {
 				}
 			}
 
-			if (entryNumberList.size() != 0) {
+			if (!entryNumberList.isEmpty()) {
 				Collections.sort(entryNumberList);
 				data.setStartingEntryNo(String.valueOf(entryNumberList.get(0)));
 			}
@@ -286,7 +284,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareGermplasmTabInfo(final List<MeasurementVariable> measurementVariables, final boolean isUsePrevious) {
-		final List<SettingDetail> detailList = new ArrayList<SettingDetail>();
+		final List<SettingDetail> detailList = new ArrayList<>();
 		final List<Integer> requiredIDList = this.buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
 
 		for (final MeasurementVariable var : measurementVariables) {
@@ -352,9 +350,9 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareTreatmentFactorsInfo(final List<TreatmentVariable> treatmentVariables, final boolean isUsePrevious) {
-		final Map<Integer, SettingDetail> levelDetails = new HashMap<Integer, SettingDetail>();
-		final Map<String, TreatmentFactorData> currentData = new HashMap<String, TreatmentFactorData>();
-		final Map<String, List<SettingDetail>> treatmentFactorPairs = new HashMap<String, List<SettingDetail>>();
+		final Map<Integer, SettingDetail> levelDetails = new HashMap<>();
+		final Map<String, TreatmentFactorData> currentData = new HashMap<>();
+		final Map<String, List<SettingDetail>> treatmentFactorPairs = new HashMap<>();
 
 		for (final TreatmentVariable treatmentVariable : treatmentVariables) {
 			final Integer levelFactorID = treatmentVariable.getLevelVariable().getTermId();
@@ -390,8 +388,8 @@ public abstract class BaseTrialController extends SettingsController {
 		tabBean.setCurrentData(currentData);
 		info.setData(tabBean);
 
-		final List<SettingDetail> detailList = new ArrayList<SettingDetail>(levelDetails.values());
-		final Map<String, Object> treatmentFactorSettings = new HashMap<String, Object>();
+		final List<SettingDetail> detailList = new ArrayList<>(levelDetails.values());
+		final Map<String, Object> treatmentFactorSettings = new HashMap<>();
 		treatmentFactorSettings.put("details", detailList);
 		treatmentFactorSettings.put("treatmentLevelPairs", treatmentFactorPairs);
 
@@ -404,7 +402,7 @@ public abstract class BaseTrialController extends SettingsController {
 	protected TabInfo prepareMeasurementVariableTabInfo(final List<MeasurementVariable> variatesList, final VariableType variableType,
 			final boolean isUsePrevious) {
 
-		final List<SettingDetail> detailList = new ArrayList<SettingDetail>();
+		final List<SettingDetail> detailList = new ArrayList<>();
 
 		for (final MeasurementVariable var : variatesList) {
 			if (var.getVariableType() == variableType) {
@@ -438,8 +436,8 @@ public abstract class BaseTrialController extends SettingsController {
 	protected TabInfo prepareEnvironmentsTabInfo(final Workbook workbook, final boolean isUsePrevious) {
 		final TabInfo info = new TabInfo();
 		final Map settingMap = new HashMap();
-		final List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
-		final List<SettingDetail> trialConditionsList = new ArrayList<SettingDetail>();
+		final List<SettingDetail> managementDetailList = new ArrayList<>();
+		final List<SettingDetail> trialConditionsList = new ArrayList<>();
 		final List<Integer> hiddenFields = this.buildVariableIDList(
 				AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString() + "," + AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
 		final List<Integer> requiredFields = this.buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString());
@@ -505,7 +503,7 @@ public abstract class BaseTrialController extends SettingsController {
 			data.setNoOfEnvironments(1);
 		}
 
-		final List<Environment> environments = new ArrayList<Environment>();
+		final List<Environment> environments = new ArrayList<>();
 		for (final MeasurementRow row : trialObservations) {
 			final Environment environment = new Environment();
 			if (!isUsePrevious) {
@@ -514,7 +512,7 @@ public abstract class BaseTrialController extends SettingsController {
 				environment.setStockId(row.getStockId());
 			}
 
-			final Map<String, String> managementDetailValues = new HashMap<String, String>();
+			final Map<String, String> managementDetailValues = new HashMap<>();
 			for (final SettingDetail detail : managementDetailList) {
 
 				final MeasurementData mData = row.getMeasurementData(detail.getVariable().getCvTermId());
@@ -533,8 +531,8 @@ public abstract class BaseTrialController extends SettingsController {
 				}
 			}
 
-			final Map<String, String> trialConditionValues = new HashMap<String, String>();
-			final Map<String, Integer> phenotypeIDMap = new HashMap<String, Integer>();
+			final Map<String, String> trialConditionValues = new HashMap<>();
+			final Map<String, Integer> phenotypeIDMap = new HashMap<>();
 			for (final SettingDetail detail : trialConditionsList) {
 
 				final MeasurementData mData = row.getMeasurementData(detail.getVariable().getCvTermId());
@@ -583,7 +581,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	public List<SettingDetail> retrieveVariablePairs(final int cvTermId) {
-		final List<SettingDetail> output = new ArrayList<SettingDetail>();
+		final List<SettingDetail> output = new ArrayList<>();
 
 		try {
 
@@ -646,8 +644,8 @@ public abstract class BaseTrialController extends SettingsController {
 
 	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final List<MeasurementVariable> studyConditions,
 			final boolean isUsePrevious, final int trialID) {
-		final Map<String, String> basicDetails = new HashMap<String, String>();
-		final List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
+		final Map<String, String> basicDetails = new HashMap<>();
+		final List<SettingDetail> initialDetailList = new ArrayList<>();
 
 		// find out who created the study
 		// if no owner found default to the current user
@@ -682,12 +680,12 @@ public abstract class BaseTrialController extends SettingsController {
 		final BasicDetails basic = new BasicDetails();
 
 		basicDetails.put(Integer.toString(TermId.STUDY_NAME.getId()), studyDetails.getStudyName());
-		basicDetails.put(Integer.toString(TermId.STUDY_TITLE.getId()), studyDetails.getTitle());
 		basicDetails.put(Integer.toString(TermId.STUDY_OBJECTIVE.getId()), studyDetails.getObjective());
 		basicDetails.put(Integer.toString(TermId.START_DATE.getId()), this.convertDateStringForUI(studyDetails.getStartDate()));
 		basicDetails.put(Integer.toString(TermId.END_DATE.getId()), this.convertDateStringForUI(studyDetails.getEndDate()));
 		basic.setBasicDetails(basicDetails);
 		basic.setStudyID(trialID);
+		basic.setDescription(studyDetails.getDescription());
 
 		final int folderId = (int) studyDetails.getParentFolderId();
 		final String folderName;
@@ -776,7 +774,7 @@ public abstract class BaseTrialController extends SettingsController {
 	protected TabInfo prepareExperimentalDesignSpecialData() {
 		final TabInfo info = new TabInfo();
 		final ExpDesignData data = new ExpDesignData();
-		final List<ExpDesignDataDetail> detailList = new ArrayList<ExpDesignDataDetail>();
+		final List<ExpDesignDataDetail> detailList = new ArrayList<>();
 
 		final List<Integer> ids = this.buildVariableIDList(AppConstants.CREATE_TRIAL_EXP_DESIGN_DEFAULT_FIELDS.getString());
 		for (final Integer id : ids) {
@@ -839,7 +837,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 
 	protected List<MeasurementVariable> getMeasurementVariableFactor(List<MeasurementVariable> measurementDatasetVariables) {
-		List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
+		List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<>();
 		for (final MeasurementVariable var : measurementDatasetVariables) {
 			if (var.isFactor()) {
 				newMeasurementDatasetVariables.add(var);
@@ -853,7 +851,7 @@ public abstract class BaseTrialController extends SettingsController {
 		if (listCsv != null && !"".equalsIgnoreCase(listCsv)) {
 			final StringTokenizer token = new StringTokenizer(listCsv, ",");
 			while (token.hasMoreTokens()) {
-				final int id = Integer.valueOf(token.nextToken());
+				final int id = Integer.parseInt(token.nextToken());
 				final MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
 				if (currentVar == null) {
 					final StandardVariable var =

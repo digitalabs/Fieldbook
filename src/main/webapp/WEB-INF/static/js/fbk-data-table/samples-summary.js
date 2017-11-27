@@ -43,7 +43,7 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 							return '-';
 						}
 						return data.map(function (dataset) {
-							return "<a href='/GDMS/main/?restartApplication&dataSetId=" + dataset.datasetId + "'>" + dataset.name + "</a>"
+							return "<a href='/GDMS/main/?restartApplication&datasetId=" + dataset.datasetId + "'>" + dataset.name + "</a>"
 						}).join(", ");
 					}
 				}

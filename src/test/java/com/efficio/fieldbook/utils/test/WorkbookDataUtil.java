@@ -181,7 +181,7 @@ public class WorkbookDataUtil {
 		final StudyDetails details = new StudyDetails();
 		details.setStudyName((studyType.equals(StudyType.N) ? WorkbookDataUtil.NURSERY_NAME : WorkbookDataUtil.TRIAL_NAME)
 				+ new Random().nextInt(10000));
-		details.setTitle(WorkbookDataUtil.TITLE);
+		details.setDescription(WorkbookDataUtil.TITLE);
 		details.setObjective(WorkbookDataUtil.OBJECTIVE);
 		details.setStartDate(WorkbookDataUtil.START_DATE);
 		details.setEndDate(WorkbookDataUtil.END_DATE);

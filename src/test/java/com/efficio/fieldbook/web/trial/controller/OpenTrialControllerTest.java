@@ -554,12 +554,6 @@ public class OpenTrialControllerTest {
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8005, OpenTrialControllerTest.PROGRAM_UUID))
 				.thenReturn(studyName);
 
-		// StudyTitle
-		final StandardVariable studyTitle = this.createStandardVariable(8007, "STUDY_TITLE", "Study title", "Text",
-				"Assigned", 1120, "Character variable", "STUDY");
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8007, OpenTrialControllerTest.PROGRAM_UUID))
-				.thenReturn(studyTitle);
-
 		// StudyObjective
 		final StandardVariable studyObjective = this.createStandardVariable(8030, "STUDY_OBJECTIVE", "Study objective",
 				"Text", "Described", 1120, "Character variable", "STUDY");

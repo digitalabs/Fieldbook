@@ -4,6 +4,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.efficio.fieldbook.web.common.service.CsvExportSampleListService;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.google.common.collect.Lists;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.middleware.domain.sample.SampleDetailsDTO;
@@ -77,9 +78,17 @@ public class CsvExportSampleListServiceImpl implements CsvExportSampleListServic
 		final List<ExportColumnHeader> exportColumnHeaders = new ArrayList<>();
 
 		int i = 0;
-		for (final String header : visibleColumns) {
-			exportColumnHeaders.add(new ExportColumnHeader(i, header, true));
-			i++;
+		if(!visibleColumns.contains("SAMPLE_UID")){
+			visibleColumns.add("SAMPLE_UID");
+		}
+		final List<String> header = Lists
+			.newArrayList("ENTRY_NO", "DESIGNATION", "PLOT_NO", "PLANT_NO", "SAMPLE_NAME", "TAKEN_BY", "SAMPLING_DATE", "SAMPLE_UID",
+				"PLANT_UID", "PLOT_ID");
+		for (final String column : header) {
+			if (visibleColumns.contains(column)) {
+				exportColumnHeaders.add(new ExportColumnHeader(i++, column, true));
+
+			}
 		}
 
 		return exportColumnHeaders;

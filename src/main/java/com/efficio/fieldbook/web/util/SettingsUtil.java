@@ -1732,9 +1732,8 @@ public class SettingsUtil {
 
 			if (!found) {
 				// required field but has no value
-				SettingVariable variable = new SettingVariable("", null, null, null, null, null, null, null, null,
-					null);
-				SettingDetail settingDetail = new SettingDetail(variable, null, "", false);
+				final SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
+				final SettingDetail settingDetail = new SettingDetail(variable, null, "", false);
 				index = SettingsUtil.addToList(details, settingDetail, index, fields, strFieldId);
 			}
 		}

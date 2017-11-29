@@ -1,6 +1,8 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
+import static org.mockito.Mockito.times;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,12 +15,9 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
-import com.efficio.fieldbook.web.common.service.CrossingService;
-import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.commons.data.initializer.ImportedCrossesTestDataInitializer;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
-import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.service.impl.SettingsPresetServiceImpl;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
@@ -27,6 +26,7 @@ import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
@@ -60,10 +60,9 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
 import com.efficio.fieldbook.web.util.CrossesListUtil;
-
-import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingSettingsControllerTest {
@@ -108,8 +107,6 @@ public class CrossingSettingsControllerTest {
 	private PresetDataManager presetDataManager;
 	@Mock
 	private UserSelection studySelection;
-	@Mock
-	private CrossNameService crossNameService;
 	@Mock
 	private HttpServletRequest request;
 	@Mock
@@ -180,7 +177,7 @@ public class CrossingSettingsControllerTest {
 
 		try {
 			Mockito.doReturn(nameSetting).when(settingObject).getCrossNameSetting();
-			Mockito.doReturn(CrossingSettingsControllerTest.TEST_SEQUENCE_NAME_VALUE).when(this.crossNameService)
+			Mockito.doReturn(CrossingSettingsControllerTest.TEST_SEQUENCE_NAME_VALUE).when(this.crossingService)
 					.getNextNameInSequence(Matchers.any(CrossNameSetting.class));
 
 			final Map<String, String> output = this.crossingSettingsController.generateSequenceValue(Mockito.mock(CrossSetting.class), this.request);
@@ -199,7 +196,7 @@ public class CrossingSettingsControllerTest {
 		final CrossNameSetting nameSetting = Mockito.mock(CrossNameSetting.class);
 
 		Mockito.doReturn(nameSetting).when(settingObject).getCrossNameSetting();
-		Mockito.doThrow(new MiddlewareException("Please select a starting sequence number larger than 10")).when(this.crossNameService)
+		Mockito.doThrow(new MiddlewareException("Please select a starting sequence number larger than 10")).when(this.crossingService)
 				.getNextNameInSequence(Matchers.any(CrossNameSetting.class));
 
 		try {

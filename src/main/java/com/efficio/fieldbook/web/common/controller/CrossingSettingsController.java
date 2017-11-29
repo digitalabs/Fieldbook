@@ -16,20 +16,15 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
-import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -71,6 +66,10 @@ import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExport
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.util.CrossesListUtil;
 import com.efficio.fieldbook.web.util.DuplicatesUtil;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 @Controller
 @RequestMapping(CrossingSettingsController.URL)
@@ -105,9 +104,6 @@ public class CrossingSettingsController extends SettingsController {
 
 	@Resource
 	private CrossingService crossingService;
-
-	@Resource
-	private CrossNameService crossNameService;
 
 	@Resource
 	private CrossingTemplateExcelExporter crossingTemplateExcelExporter;
@@ -198,7 +194,7 @@ public class CrossingSettingsController extends SettingsController {
 		final Map<String, String> returnVal = new HashMap<>();
 
 		try {
-			final String sequenceValue = this.crossNameService.getNextNameInSequence(setting.getCrossNameSetting());
+			final String sequenceValue = this.crossingService.getNextNameInSequence(setting.getCrossNameSetting());
 			returnVal.put(CrossingSettingsController.SUCCESS_KEY, "1");
 			returnVal.put("sequenceValue", sequenceValue);
 		} catch (final MiddlewareException e) {

@@ -15,6 +15,7 @@ import org.generationcp.commons.exceptions.StockException;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.commons.service.StockService;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.Scale;
@@ -102,7 +103,6 @@ public class StockController extends AbstractBaseFieldbookController {
 	@Resource
 	private UserSelection userSelection;
 
-	
 
 	/**
 	 * Gets the data types.
@@ -133,13 +133,7 @@ public class StockController extends AbstractBaseFieldbookController {
 	 */
 	@ModelAttribute("allLocationList")
 	public List<Location> getAllLocationList() {
-		try {
-			return this.fieldbookMiddlewareService.getAllLocations();
-		} catch (MiddlewareQueryException e) {
-			StockController.LOG.error(e.getMessage(), e);
-		}
-
-		return new ArrayList<>();
+		return this.fieldbookMiddlewareService.getAllLocations(this.contextUtil.getCurrentProgramUUID());
 	}
 	
 	/**

@@ -20,6 +20,7 @@ import org.generationcp.commons.parsing.validation.NonEmptyValidator;
 import org.generationcp.commons.parsing.validation.ParseValidationMap;
 import org.generationcp.commons.parsing.validation.ValueRangeValidator;
 import org.generationcp.commons.parsing.validation.ValueTypeValidator;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.Scale;
@@ -60,6 +61,9 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 	@Resource
 	private InventoryDataManager inventoryDataManager;
+
+	@Resource
+	private ContextUtil contextUtil;
 
 	private List<Location> locations;
 
@@ -163,7 +167,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		final List<String> locationList = new ArrayList<>();
 
 		try {
-			this.locations = this.fieldbookMiddlewareService.getAllLocations();
+			this.locations = this.fieldbookMiddlewareService.getAllLocations(contextUtil.getCurrentProgramUUID());
 
 			if (this.locations != null) {
 				for (final Location location : this.locations) {

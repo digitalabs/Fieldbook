@@ -7,10 +7,7 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.apache.commons.collections.ListUtils;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,8 +28,14 @@ import java.util.Map;
 @RequestMapping(LocationsController.URL)
 public class LocationsController extends AbstractBaseFieldbookController {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CrossingSettingsController.class);
 	public static final String URL = "/locations";
+	public static final String FAVORITE_LOCATIONS = "favoriteLocations";
+	public static final String ALL_LOCATIONS = "allLocations";
+	public static final String SUCCESS = "success";
+	public static final String ALL_BREEDING_LOCATIONS = "allBreedingLocations";
+	public static final String ALL_SEED_STORAGE_LOCATIONS = "allSeedStorageLocations";
+	public static final String ALL_BREEDING_FAVORITES_LOCATIONS = "allBreedingFavoritesLocations";
+	public static final String ALL_SEED_STORAGE_FAVORITES_LOCATIONS = "allSeedStorageFavoritesLocations";
 
 	@Resource
 	private FieldbookProperties fieldbookProperties;
@@ -69,25 +72,20 @@ public class LocationsController extends AbstractBaseFieldbookController {
 	public Map<String, Object> getLocations() {
 		Map<String, Object> result = new HashMap<>();
 
-		try {
-			List<Integer> locationsIds =
-					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.contextUtil.getCurrentProgramUUID());
-			List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds); //All Favorite
-			List<Location> allLocations = this.fieldbookMiddlewareService.getAllLocations(); //All locations
-			List<Location> allBreedingLocations = this.fieldbookMiddlewareService.getAllBreedingLocations();//All Breeding
-			List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
-			result.put("success", "1");
-			result.put("favoriteLocations", faveLocations);
-			result.put("allLocations", allLocations);
-			result.put("allBreedingLocations", allBreedingLocations);
-			result.put("allSeedStorageLocations", allSeedStorageLocations);
-			result.put("allBreedingFavoritesLocations", ListUtils.intersection(allBreedingLocations, faveLocations));
-			result.put("allSeedStorageFavoritesLocations", ListUtils.intersection(allSeedStorageLocations, faveLocations));
+		final String programUUID = this.contextUtil.getCurrentProgramUUID();
 
-		} catch (MiddlewareQueryException e) {
-			LocationsController.LOG.error(e.getMessage(), e);
-			result.put("success", "-1");
-		}
+		List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(programUUID));
+		List<Location> allLocations = this.fieldbookMiddlewareService.getAllLocations(programUUID);
+		List<Location> allBreedingLocations = this.fieldbookMiddlewareService.getAllBreedingLocationsByProgramUUID(programUUID);
+		List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
+
+		result.put(SUCCESS, "1");
+		result.put(FAVORITE_LOCATIONS, faveLocations);
+		result.put(ALL_LOCATIONS, allLocations);
+		result.put(ALL_BREEDING_LOCATIONS, allBreedingLocations);
+		result.put(ALL_SEED_STORAGE_LOCATIONS, allSeedStorageLocations);
+		result.put(ALL_BREEDING_FAVORITES_LOCATIONS, ListUtils.intersection(allBreedingLocations, faveLocations));
+		result.put(ALL_SEED_STORAGE_FAVORITES_LOCATIONS, ListUtils.intersection(allSeedStorageLocations, faveLocations));
 
 		return result;
 	}

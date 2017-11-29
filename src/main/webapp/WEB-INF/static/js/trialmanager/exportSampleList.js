@@ -53,12 +53,12 @@ var ExportSampleList = {};
 	};
 
 	ExportSampleList.doExport = function (exportType) {
-		var action = submitExportUrl,
-			newAction = '',
+		'use strict';
+		var newAction,
 			studyName = $('.fieldmap-study-name').html(),
-			visibleColumns = '';
+			visibleColumns;
 
-		newAction = action + 'exportSampleList/' + exportType;
+		newAction = submitExportUrl + 'exportSampleList/' + exportType;
 
 		visibleColumns = ExportSampleList.getTableVisibleColumns();
 		$.ajax(newAction, {

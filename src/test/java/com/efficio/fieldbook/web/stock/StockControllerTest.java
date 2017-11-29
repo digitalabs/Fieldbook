@@ -11,6 +11,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.commons.service.StockService;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -24,6 +25,7 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,6 +61,7 @@ public class StockControllerTest {
 	public static final int TEST_CURRENT_USER_ID = 1;
 
 	public static final String TEST_LIST_NAME = "MyListName";
+	public static final String PROGRAM_UUID = "hsdkjflasf-783247-8347832";
 
 	@Mock
 	private StockService stockService;
@@ -93,8 +96,25 @@ public class StockControllerTest {
 	@Mock
 	private UserSelection userSelection;
 
+	@Mock
+	private ContextUtil contextUtil;
+
 	@InjectMocks
 	private final StockController dut = Mockito.spy(new StockController());
+
+	@Before
+	public void init() {
+
+		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
+		dut.setContextUtil(contextUtil);
+
+	}
+
+	@Test
+	public void testGetAllLocationList() {
+		this.dut.getAllLocationList();
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).getAllLocations(PROGRAM_UUID);
+	}
 
 	@Test
 	public void testGetLocationList() throws MiddlewareQueryException {

@@ -111,7 +111,7 @@ public class FieldbookServiceTest {
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(FieldbookServiceTest.PROGRAMUUID);
 		allLocation.add(LocationTestDataInitializer.createLocation(1, FieldbookServiceTest.LOCATION_NAME, null));
 		allLocation.add(LocationTestDataInitializer.createLocation(2, "Loc2", null));
-		Mockito.when(this.fieldbookMiddlewareService.getAllLocations()).thenReturn(allLocation);
+		Mockito.when(this.fieldbookMiddlewareService.getAllLocations(FieldbookServiceTest.PROGRAMUUID)).thenReturn(allLocation);
 		Mockito.when(this.fieldbookMiddlewareService.getLocationsByProgramUUID(FieldbookServiceTest.PROGRAMUUID))
 				.thenReturn(allLocation);
 		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingLocations()).thenReturn(new ArrayList<Location>());

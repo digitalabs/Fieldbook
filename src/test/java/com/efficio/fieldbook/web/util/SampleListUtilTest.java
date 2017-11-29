@@ -23,7 +23,7 @@ public abstract class SampleListUtilTest {
 
 	public static  List<String> getVisibleColumns() {
 		final List<String> visibleColumns = new ArrayList<>();
-		visibleColumns.add("ENTRY_NO");
+		visibleColumns.add("SAMPLE_ENTRY");
 		visibleColumns.add("DESIGNATION");
 		visibleColumns.add("PLOT_NO");
 		visibleColumns.add("PLANT_NO");
@@ -34,9 +34,8 @@ public abstract class SampleListUtilTest {
 		return visibleColumns;
 	}
 
-	public static  String getColumnsExport() {
-		final String visibleColumns = "ENTRY_NO,DESIGNATION,PLOT_NO,PLANT_NO,SAMPLE_NAME,TAKEN_BY,SAMPLING_DATE";
-		return visibleColumns;
+	public static String getColumnsExport() {
+		return "SAMPLE_ENTRY,DESIGNATION,PLOT_NO,PLANT_NO,SAMPLE_NAME,TAKEN_BY,SAMPLING_DATE";
 	}
 
 }

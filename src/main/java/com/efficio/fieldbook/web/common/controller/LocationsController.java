@@ -1,9 +1,7 @@
-
 package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
-
 import org.apache.commons.collections.ListUtils;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -56,8 +54,8 @@ public class LocationsController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/programID", method = RequestMethod.GET)
-	public Long getCurrentProgramID(HttpServletRequest request) {
-		ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
+	public Long getCurrentProgramID(final HttpServletRequest request) {
+		final ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
 
 		return contextInfo.getSelectedProjectId();
 	}
@@ -70,14 +68,15 @@ public class LocationsController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/getLocations", method = RequestMethod.GET)
 	public Map<String, Object> getLocations() {
-		Map<String, Object> result = new HashMap<>();
+		final Map<String, Object> result = new HashMap<>();
 
 		final String programUUID = this.contextUtil.getCurrentProgramUUID();
 
-		List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(programUUID));
-		List<Location> allLocations = this.fieldbookMiddlewareService.getAllLocations(programUUID);
-		List<Location> allBreedingLocations = this.fieldbookMiddlewareService.getAllBreedingLocationsByProgramUUID(programUUID);
-		List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
+		final List<Location> faveLocations = this.fieldbookMiddlewareService
+				.getFavoriteLocationByLocationIDs(this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(programUUID));
+		final List<Location> allLocations = this.fieldbookMiddlewareService.getAllLocations(programUUID);
+		final List<Location> allBreedingLocations = this.fieldbookMiddlewareService.getAllBreedingLocationsByProgramUUID(programUUID);
+		final List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
 
 		result.put(SUCCESS, "1");
 		result.put(FAVORITE_LOCATIONS, faveLocations);

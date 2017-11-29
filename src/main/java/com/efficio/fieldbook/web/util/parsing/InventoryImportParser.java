@@ -1,12 +1,4 @@
-
 package com.efficio.fieldbook.web.util.parsing;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -31,6 +23,12 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -100,8 +98,8 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 	void validateFileHeader() throws FileParsingException {
 		final int tempRowNo = this.currentParseIndex;
-		if (this.isHeaderInvalid(tempRowNo, InventoryImportParser.INVENTORY_SHEET, this.requiredHeaders)
-				&& this.isHeaderInvalid(tempRowNo, InventoryImportParser.INVENTORY_SHEET, this.headers)) {
+		if (this.isHeaderInvalid(tempRowNo, InventoryImportParser.INVENTORY_SHEET, this.requiredHeaders) && this
+				.isHeaderInvalid(tempRowNo, InventoryImportParser.INVENTORY_SHEET, this.headers)) {
 			throw new FileParsingException(InventoryImportParser.INVALID_HEADERS);
 		}
 
@@ -223,11 +221,11 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 			final String bulkWith = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_WITH));
 
 			String bulkCompl = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL));
-            if (!StringUtils.isEmpty(bulkCompl)) {
-                bulkCompl = bulkCompl.toUpperCase();
-            }
+			if (!StringUtils.isEmpty(bulkCompl)) {
+				bulkCompl = bulkCompl.toUpperCase();
+			}
 
-			InventoryDetails details = new InventoryDetails();
+			final InventoryDetails details = new InventoryDetails();
 			details.setGid(gid);
 			details.setEntryId(entryId);
 			details.setGermplasmName(name);
@@ -245,7 +243,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 			}
 
 			details.setAmount(StringUtils.isEmpty(amountString) ? null : Double.parseDouble(amountString));
-			
+
 			//Set the scale name if both the location and amount for the detail has value.
 			if (details.getLocationAbbr() != null && details.getAmount() != null) {
 				details.setScaleName(this.scale.getName());
@@ -264,7 +262,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		for (int i = 0; i < headers.length; i++) {
 			if (headers[i].equalsIgnoreCase(InventoryHeaderLabels.AMOUNT.getName())) {
 				final String amountHeader = this.getCellStringValue(sheetNumber, headerNo, i);
-				isInvalid = this.isAmountHeaderValid(amountHeader)?isInvalid : true;
+				isInvalid = this.isAmountHeaderValid(amountHeader) ? isInvalid : true;
 			} else {
 				isInvalid = isInvalid || !headers[i].equalsIgnoreCase(this.getCellStringValue(sheetNumber, headerNo, i));
 			}
@@ -275,7 +273,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 	boolean isAmountHeaderValid(final String amountHeader) {
 		this.scale = this.ontologyService.getInventoryScaleByName(amountHeader);
-		if(scale == null || scale.getTerm() == null){
+		if (scale == null || scale.getTerm() == null) {
 			return false;
 		}
 		return true;

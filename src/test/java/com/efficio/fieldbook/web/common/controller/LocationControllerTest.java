@@ -1,14 +1,7 @@
-
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,7 +13,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 2/4/2015 Time: 3:07 PM
@@ -66,16 +62,17 @@ public class LocationControllerTest {
 	@Test
 	public void testGetLocations() {
 
-		List<Integer> locationIDs = new ArrayList<>();
-		List<Location> allLocationsList = new ArrayList<>();
-		List<Location> breedingLocationsList = new ArrayList<>();
-		List<Location> favoriteLocationsList = new ArrayList<>();
+		final List<Integer> locationIDs = new ArrayList<>();
+		final List<Location> allLocationsList = new ArrayList<>();
+		final List<Location> breedingLocationsList = new ArrayList<>();
+		final List<Location> favoriteLocationsList = new ArrayList<>();
 
 		Mockito.doReturn(allLocationsList).when(this.fieldbookMiddlewareService).getAllLocations(Matchers.anyString());
 		Mockito.doReturn(locationIDs).when(this.fieldbookMiddlewareService).getFavoriteProjectLocationIds(Matchers.anyString());
-		Mockito.doReturn(breedingLocationsList).when(this.fieldbookMiddlewareService).getAllBreedingLocationsByProgramUUID(Matchers.anyString());
+		Mockito.doReturn(breedingLocationsList).when(this.fieldbookMiddlewareService)
+				.getAllBreedingLocationsByProgramUUID(Matchers.anyString());
 		Mockito.doReturn(favoriteLocationsList).when(this.fieldbookMiddlewareService).getFavoriteLocationByLocationIDs(locationIDs);
-		Map<String, Object> locations = this.mole.getLocations();
+		final Map<String, Object> locations = this.mole.getLocations();
 
 		Assert.assertNotNull(locations);
 		Assert.assertEquals(LocationControllerTest.SUCCESS_STRING, locations.get(LocationControllerTest.SUCCESS_KEY));

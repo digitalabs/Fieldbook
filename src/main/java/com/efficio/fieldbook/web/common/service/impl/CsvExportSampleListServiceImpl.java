@@ -4,7 +4,6 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.efficio.fieldbook.web.common.service.CsvExportSampleListService;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.google.common.collect.Lists;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.middleware.domain.sample.SampleDetailsDTO;
@@ -20,6 +19,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,8 +30,8 @@ import java.util.Map;
 public class CsvExportSampleListServiceImpl implements CsvExportSampleListService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CsvExportSampleListServiceImpl.class);
-	private static final List<String> header = Lists
-		.newArrayList("ENTRY_NO", "DESIGNATION", "PLOT_NO", "PLANT_NO", "SAMPLE_NAME", "TAKEN_BY", "SAMPLING_DATE", "SAMPLE_UID",
+	private static final List<String> header = Arrays
+		.asList("SAMPLE_ENTRY", "DESIGNATION", "PLOT_NO", "PLANT_NO", "SAMPLE_NAME", "TAKEN_BY", "SAMPLING_DATE", "SAMPLE_UID",
 			"PLANT_UID", "PLOT_ID");
 	private static final String SAMPLE_UID = "SAMPLE_UID";
 
@@ -60,9 +60,8 @@ public class CsvExportSampleListServiceImpl implements CsvExportSampleListServic
 		final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
 		int i = 1;
 		for (final SampleDetailsDTO sampleDetailsDTO : sampleDetailsDTOs) {
-			sampleDetailsDTO.setEntryNo(i);
+			sampleDetailsDTO.setSampleEntryNo(i++);
 			exportColumnValues.add(this.getColumnValueMap(columnHeaders, sampleDetailsDTO));
-			i++;
 		}
 
 		return exportColumnValues;
@@ -102,8 +101,8 @@ public class CsvExportSampleListServiceImpl implements CsvExportSampleListServic
 		ExportColumnValue columnValue = null;
 
 		switch (column.getName()) {
-			case "ENTRY_NO":
-				columnValue = new ExportColumnValue(column.getId(), sampleDetailsDTO.getEntryNo().toString());
+			case "SAMPLE_ENTRY":
+				columnValue = new ExportColumnValue(column.getId(), sampleDetailsDTO.getSampleEntryNo().toString());
 				break;
 			case "DESIGNATION":
 				columnValue = new ExportColumnValue(column.getId(), sampleDetailsDTO.getDesignation());

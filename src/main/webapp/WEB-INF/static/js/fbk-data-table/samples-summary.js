@@ -36,7 +36,17 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 				},
 				{data: 'sampleList'},
 				{data: 'plantNumber'},
-				{data: 'plantBusinessKey'}
+				{data: 'plantBusinessKey'},
+				{data: 'datasets',
+					render: function (data, type, row) {
+						if (!data || !data.length || data.length == 0) {
+							return '-';
+						}
+						return data.map(function (dataset) {
+							return "<a href='/GDMS/main/?restartApplication&datasetId=" + dataset.datasetId + "'>" + dataset.name + "</a>"
+						}).join(", ");
+					}
+				}
 			],
 			// dom: "t" // display only the table, without pagination
 		});

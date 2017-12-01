@@ -170,8 +170,10 @@ public class FieldbookUtil {
 		StringTokenizer token = new StringTokenizer(idList, ",");
 		while (token.hasMoreTokens()) {
 			final String s = token.nextToken();
-			if (!DESCRIPTION.equals(s))
+			// FIXME BMS-4397
+			if (!DESCRIPTION.equals(s)) {
 				requiredVariables.add(Integer.valueOf(s));
+			}
 		}
 		return requiredVariables;
 	}

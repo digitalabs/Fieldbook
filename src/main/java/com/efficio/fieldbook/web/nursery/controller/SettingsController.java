@@ -333,6 +333,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 			while (token.hasMoreTokens()) {
 				final String s = token.nextToken();
+				// FIXME BMS-4397
 				if(!DESCRIPTION.equals(s)) {
 					defaults.add(this.createSettingDetail(Integer.valueOf(s), requiredVariablesLabel.get(ctr), role));
 					ctr++;
@@ -918,6 +919,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		final StringTokenizer token = new StringTokenizer(variableList, ",");
 		while (token.hasMoreTokens()) {
 			final String s = token.nextToken();
+			// FIXME BMS-4397
 			if(!DESCRIPTION.equals(s)) {
 				final Integer termId = Integer.valueOf(s);
 				final boolean isFound = this.searchAndSetValuesOfSpecialVariables(nurseryLevelConditions, termId, settingDetails, form);

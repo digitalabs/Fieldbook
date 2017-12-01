@@ -1703,6 +1703,7 @@ public class SettingsUtil {
 					}
 				} else {
 					// special field logic
+					// FIXME BMS-4397
 					if (DESCRIPTION.equals(label)) {
 						final SettingVariable variableDescription =
 							new SettingVariable(DESCRIPTION, null, null, null, null, null, null, null, null, null);
@@ -1710,18 +1711,17 @@ public class SettingsUtil {
 						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
 						found = true;
 						break;
-					}
-					else {
-					final SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
-					final String value = SettingsUtil.getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);
-					final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
-					if (strFieldId.equals(AppConstants.SPFLD_ENTRIES.getString())) {
+					} else {
+						final SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
+						final String value = SettingsUtil.getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);
+						final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
+						if (strFieldId.equals(AppConstants.SPFLD_ENTRIES.getString())) {
 							final String plotValue = SettingsUtil
 								.getSpecialFieldValue(AppConstants.SPFLD_PLOT_COUNT.getString(), datasetId, fieldbookMiddlewareService,
 									workbook);
-						final PairedVariable pair =
+							final PairedVariable pair =
 								new PairedVariable(variableAppConstantLabels.get(AppConstants.SPFLD_PLOT_COUNT.getString()), plotValue);
-						settingDetail.setPairedVariable(pair);
+							settingDetail.setPairedVariable(pair);
 					}
 					index = SettingsUtil.addToList(details, settingDetail, index, fields, strFieldId);
 					found = true;

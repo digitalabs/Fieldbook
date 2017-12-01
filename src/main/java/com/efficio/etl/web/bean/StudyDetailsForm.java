@@ -7,7 +7,7 @@ package com.efficio.etl.web.bean;
 public class StudyDetailsForm {
 
 	private String studyName;
-	private String studyTitle;
+	private String studyDescription;
 	private String objective;
 	private String startDate;
 	private String endDate;
@@ -22,12 +22,12 @@ public class StudyDetailsForm {
 		this.studyName = studyName;
 	}
 
-	public String getStudyTitle() {
-		return this.studyTitle;
+	public String getStudyDescription() {
+		return this.studyDescription;
 	}
 
-	public void setStudyTitle(String studyTitle) {
-		this.studyTitle = studyTitle;
+	public void setStudyDescription(String studyDescription) {
+		this.studyDescription = studyDescription;
 	}
 
 	public String getObjective() {

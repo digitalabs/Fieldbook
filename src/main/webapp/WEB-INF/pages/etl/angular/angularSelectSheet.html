@@ -88,11 +88,11 @@
                     </div>
                 </div>
 
-                <div class="form-group" ng:class="{'has-error' : showError(selectSheetForm.studyTitle)}">
+                <div class="form-group" ng:class="{'has-error' : showError(selectSheetForm.studyDescription)}">
                     <label for="txtStudyTitle" class="col-md-2 control-label required" th:text="#{study.name.title.label}">Study Title</label>
 
                     <div class="col-md-10">
-                        <input id="txtStudyTitle" type="text" name="studyTitle" ng:model="selected.studyDetails.studyTitle"
+                        <input id="txtStudyTitle" type="text" name="studyDescription" ng:model="selected.studyDetails.studyDescription"
                                class="form-control" ng:disabled="existingStudySelected()"/>
                     </div>
                 </div>
@@ -333,8 +333,8 @@ angular.module('di-consolidatedStep', ['digitalabs-util','di-directives', 'digit
                     }}
 
                     if (valid) {
-                    if (! $scope.selected.studyDetails.studyTitle || $scope.selected.studyDetails.studyTitle.trim() === '') {
-                        $scope.currentErrorField = $scope.selectSheetForm.studyTitle;
+                    if (! $scope.selected.studyDetails.studyDescription || $scope.selected.studyDetails.studyDescription.trim() === '') {
+                        $scope.currentErrorField = $scope.selectSheetForm.studyDescription;
                         $scope.messages.push([[#{error.blank.study.title}]]);
                         valid = false;
                     }}
@@ -428,7 +428,7 @@ angular.module('di-consolidatedStep', ['digitalabs-util','di-directives', 'digit
                     var studyDetails = $scope.studyObject;
                     $scope.selected.studyDetails.studyId = studyDetails.id;
                     $scope.selected.studyDetails.studyName = studyDetails.studyName;
-                    $scope.selected.studyDetails.studyTitle = studyDetails.title;
+                    $scope.selected.studyDetails.studyDescription = studyDetails.description;
                     /*$scope.selected.studyDetails.pmKey = studyDetails.pmKey;*/
                     $scope.selected.studyDetails.objective = studyDetails.objective;
                     $scope.selected.studyDetails.startDate = studyDetails.startDate;

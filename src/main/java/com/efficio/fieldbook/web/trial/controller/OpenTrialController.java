@@ -334,6 +334,7 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("createNurseryForm", form);
 		model.addAttribute("experimentalDesignSpecialData", this.prepareExperimentalDesignSpecialData());
 		model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
+		model.addAttribute("description", trialWorkbook.getStudyDetails().getDescription());
 		model.addAttribute("advancedList", this.getAdvancedList(trialId));
 		model.addAttribute("sampleList", this.getSampleList(trialId));
 
@@ -719,11 +720,13 @@ public class OpenTrialController extends BaseTrialController {
 
 		final String name = "";
 
+		final String description = "";
+
 		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name,
 				combinedList, this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(),
 				this.userSelection, this.userSelection.getTrialLevelVariableList(),
 				this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(), false,
-				this.contextUtil.getCurrentProgramUUID());
+				this.contextUtil.getCurrentProgramUUID(), description);
 
 		final Workbook tempWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false,
 				this.contextUtil.getCurrentProgramUUID());

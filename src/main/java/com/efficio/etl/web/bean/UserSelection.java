@@ -1,14 +1,14 @@
 
 package com.efficio.etl.web.bean;
 
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.springframework.beans.BeanUtils;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.springframework.beans.BeanUtils;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte This bean models the various input that the user builds up over time to perform the
@@ -33,7 +33,7 @@ public class UserSelection implements Serializable {
 	private String contentRowDisplayText;
 
 	private String studyName;
-	private String studyTitle;
+	private String studyDescription;
 	private String studyObjective;
 	private String studyStartDate;
 	private String studyEndDate;
@@ -47,7 +47,7 @@ public class UserSelection implements Serializable {
 	private Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> giantMap =
 			new LinkedHashMap<PhenotypicType, LinkedHashMap<String, MeasurementVariable>>();
 
-	private Map<PhenotypicType, List<String>> headerCategorization = new LinkedHashMap<PhenotypicType, List<String>>();
+	private Map<PhenotypicType, List<String>> headerCategorization = new LinkedHashMap<>();
 
 	// add selected study and datasets if available
 	private Integer studyId;
@@ -134,12 +134,12 @@ public class UserSelection implements Serializable {
 		this.studyName = studyName;
 	}
 
-	public String getStudyTitle() {
-		return this.studyTitle;
+	public String getStudyDescription() {
+		return this.studyDescription;
 	}
 
-	public void setStudyTitle(String studyTitle) {
-		this.studyTitle = studyTitle;
+	public void setStudyDescription(String studyDescription) {
+		this.studyDescription = studyDescription;
 	}
 
 	public String getStudyObjective() {

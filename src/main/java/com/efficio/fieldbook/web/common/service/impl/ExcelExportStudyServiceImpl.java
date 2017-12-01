@@ -94,10 +94,10 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
-	private final String breedingMethodPropertyName = "";
+	private static final String BREEDING_METHOD_PROPERTY_NAME = "";
 
 	protected static final List<Integer> STUDY_DETAILS_IDS =
-			Arrays.asList(TermId.STUDY_NAME.getId(), TermId.STUDY_TITLE.getId(), TermId.PM_KEY.getId(), TermId.STUDY_OBJECTIVE.getId(),
+			Arrays.asList(TermId.STUDY_NAME.getId(), TermId.PM_KEY.getId(), TermId.STUDY_OBJECTIVE.getId(),
 					TermId.START_DATE.getId(), TermId.END_DATE.getId(), TermId.STUDY_UID.getId());
 
 	@Override
@@ -109,11 +109,11 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	public String export(final Workbook workbook, final String filename, final List<Integer> instances, final List<Integer> visibleColumns)
 			throws IOException {
 		FileOutputStream fos = null;
-		final List<String> filenameList = new ArrayList<String>();
+		final List<String> filenameList = new ArrayList<>();
 		String outputFilename = null;
 
 		for (final Integer trialInstanceNo : instances) {
-			final List<Integer> indexes = new ArrayList<Integer>();
+			final List<Integer> indexes = new ArrayList<>();
 			indexes.add(trialInstanceNo);
 
 			final List<MeasurementRow> plotLevelObservations =
@@ -124,7 +124,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 				final HSSFWorkbook xlsBook = new HSSFWorkbook();
 				this.writeDescriptionSheet(xlsBook, workbook, instanceLevelObservation, visibleColumns);
-				this.writeObservationSheet(xlsBook, workbook, plotLevelObservations, visibleColumns, breedingMethodPropertyName);
+				this.writeObservationSheet(xlsBook, workbook, plotLevelObservations, visibleColumns, BREEDING_METHOD_PROPERTY_NAME);
 
 				final String filenamePath = ExportImportStudyUtil
 						.getFileNamePath(trialInstanceNo, instanceLevelObservation, instances, filename, workbook.isNursery(),
@@ -212,7 +212,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.study",
 				studyDetails.getStudyName() != null ? HtmlUtils.htmlUnescape(studyDetails.getStudyName()) : "");
 		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.title",
-				studyDetails.getTitle() != null ? HtmlUtils.htmlUnescape(studyDetails.getTitle()) : "");
+				studyDetails.getDescription() != null ? HtmlUtils.htmlUnescape(studyDetails.getDescription()) : "");
 		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.objective",
 				studyDetails.getObjective() != null ? HtmlUtils.htmlUnescape(studyDetails.getObjective()) : "");
 
@@ -304,7 +304,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	 */
 	private int writeFactors(final int currentRowNum, final HSSFWorkbook xlsBook, final HSSFSheet xlsSheet,
 			final List<MeasurementVariable> factors, final List<Integer> visibleColumns, final Workbook workbook) {
-		List<MeasurementVariable> filteredFactors = new ArrayList<MeasurementVariable>();
+		List<MeasurementVariable> filteredFactors = new ArrayList<>();
 		for (final MeasurementVariable factor : factors) {
 			if (factor.getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId() && ExportImportStudyUtil
 					.isColumnVisible(factor.getTermId(), visibleColumns)) {
@@ -329,7 +329,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	private int writeConstants(final int currentRowNum, final HSSFWorkbook xlsBook, final HSSFSheet xlsSheet,
 			final List<MeasurementVariable> constants, final MeasurementRow trialObservation, final Workbook workbook) {
 
-		List<MeasurementVariable> filteredConstants = new ArrayList<MeasurementVariable>();
+		List<MeasurementVariable> filteredConstants = new ArrayList<>();
 		for (final MeasurementVariable variable : constants) {
 			filteredConstants.add(variable);
 			if (PhenotypicType.VARIATE == variable.getRole()) {
@@ -355,7 +355,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	private int writeVariates(final int currentRowNum, final HSSFWorkbook xlsBook, final HSSFSheet xlsSheet,
 			final List<MeasurementVariable> variates, final List<Integer> visibleColumns, final Workbook workbook) {
 
-		List<MeasurementVariable> filteredVariates = new ArrayList<MeasurementVariable>();
+		List<MeasurementVariable> filteredVariates = new ArrayList<>();
 		for (final MeasurementVariable variate : variates) {
 			if (ExportImportStudyUtil.isColumnVisible(variate.getTermId(), visibleColumns)) {
 				filteredVariates.add(variate);

@@ -190,10 +190,9 @@ public class ETLServiceTest {
 
 	@Test
 	public void testComputeObservationRowsAll() {
-		Assert.assertEquals(
+		Assert.assertEquals(ETLServiceTest.ALL_OBSERVATION_ROWS,
 				this.etlService.calculateObservationRows(this.workbook, ETLServiceTest.OBSERVATION_SHEET_INDEX,
-						ETLServiceTest.OBSERVATION_CONTENT_ROW, ETLServiceTest.GID_COLUMN),
-				ETLServiceTest.ALL_OBSERVATION_ROWS);
+						ETLServiceTest.OBSERVATION_CONTENT_ROW, ETLServiceTest.GID_COLUMN));
 	}
 
 	@Test
@@ -202,10 +201,9 @@ public class ETLServiceTest {
 				ETLServiceTest.OBSERVATION_SHEET_INDEX, ETLServiceTest.OBSERVATION_CONTENT_ROW,
 				ETLServiceTest.COLUMN_WITH_BLANK_CELL) < ETLServiceTest.ALL_OBSERVATION_ROWS);
 
-		Assert.assertEquals(
+		Assert.assertEquals(ETLServiceTest.CELL_COUNT_BEFORE_BLANK,
 				this.etlService.calculateObservationRows(this.workbook, ETLServiceTest.OBSERVATION_SHEET_INDEX,
-						ETLServiceTest.OBSERVATION_CONTENT_ROW, ETLServiceTest.COLUMN_WITH_BLANK_CELL),
-				ETLServiceTest.CELL_COUNT_BEFORE_BLANK);
+						ETLServiceTest.OBSERVATION_CONTENT_ROW, ETLServiceTest.COLUMN_WITH_BLANK_CELL));
 	}
 
 	@Test
@@ -243,8 +241,8 @@ public class ETLServiceTest {
 				workbook.getStudyDetails().getId());
 		Assert.assertEquals("Study name must be " + this.userSelection.getStudyName(),
 				this.userSelection.getStudyName(), workbook.getStudyDetails().getStudyName());
-		Assert.assertEquals("Study title must be " + this.userSelection.getStudyTitle(),
-				this.userSelection.getStudyTitle(), workbook.getStudyDetails().getTitle());
+		Assert.assertEquals("Study title must be " + this.userSelection.getStudyDescription(),
+				this.userSelection.getStudyDescription(), workbook.getStudyDetails().getDescription());
 		Assert.assertEquals("Study objective must be " + this.userSelection.getStudyObjective(),
 				this.userSelection.getStudyObjective(), workbook.getStudyDetails().getObjective());
 		final String expectedStartDate = ETLServiceImpl.formatDate(this.userSelection.getStudyStartDate());
@@ -310,8 +308,8 @@ public class ETLServiceTest {
 				workbook.getStudyDetails().getId());
 		Assert.assertEquals("Study name must be " + this.userSelection.getStudyName(),
 				this.userSelection.getStudyName(), workbook.getStudyDetails().getStudyName());
-		Assert.assertEquals("Study title must be " + this.userSelection.getStudyTitle(),
-				this.userSelection.getStudyTitle(), workbook.getStudyDetails().getTitle());
+		Assert.assertEquals("Study title must be " + this.userSelection.getStudyDescription(),
+				this.userSelection.getStudyDescription(), workbook.getStudyDetails().getDescription());
 		Assert.assertEquals("Study objective must be " + this.userSelection.getStudyObjective(),
 				this.userSelection.getStudyObjective(), workbook.getStudyDetails().getObjective());
 		final String expectedStartDate = ETLServiceImpl.formatDate(this.userSelection.getStudyStartDate());
@@ -383,8 +381,8 @@ public class ETLServiceTest {
 				workbook.getStudyDetails().getId());
 		Assert.assertEquals("Study name must be " + this.userSelection.getStudyName(),
 				this.userSelection.getStudyName(), workbook.getStudyDetails().getStudyName());
-		Assert.assertEquals("Study title must be " + this.userSelection.getStudyTitle(),
-				this.userSelection.getStudyTitle(), workbook.getStudyDetails().getTitle());
+		Assert.assertEquals("Study title must be " + this.userSelection.getStudyDescription(),
+				this.userSelection.getStudyDescription(), workbook.getStudyDetails().getDescription());
 		Assert.assertEquals("Study objective must be " + this.userSelection.getStudyObjective(),
 				this.userSelection.getStudyObjective(), workbook.getStudyDetails().getObjective());
 		final String expectedStartDate = ETLServiceImpl.formatDate(this.userSelection.getStudyStartDate());
@@ -816,7 +814,7 @@ public class ETLServiceTest {
 
 	private void fillStudyDetailsOfUserSelection(final UserSelection userSelection, final Integer studyId) {
 		userSelection.setStudyName("ETLStudy" + Math.random());
-		userSelection.setStudyTitle("Study for testing");
+		userSelection.setStudyDescription("Study for testing");
 		userSelection.setStudyObjective("To test the data import tool");
 		userSelection.setStudyStartDate("09/01/2015");
 		userSelection.setStudyEndDate("10/01/2015");

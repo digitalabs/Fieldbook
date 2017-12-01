@@ -655,8 +655,7 @@ public class SettingsUtilTest {
 		basicDetails.get(1).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
 		basicDetails.get(2).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
 		basicDetails.get(3).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
-		basicDetails.get(4).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
-		basicDetails.get(5).setRole(VariableType.SELECTION_METHOD.getRole());
+		basicDetails.get(4).setRole(VariableType.SELECTION_METHOD.getRole());
 
 		final Map<String, TreatmentFactorData> treatmentFactorItems = new HashMap<>();
 
@@ -670,7 +669,7 @@ public class SettingsUtilTest {
 		standardVariable.setDataType(new Term(dataType.getId(), dataType.getName(), dataType.getName()));
 
 		final SettingDetail settingDetail = new SettingDetail();
-		settingDetail.setVariable(basicDetails.get(5).getVariable());
+		settingDetail.setVariable(basicDetails.get(4).getVariable());
 		settingDetail.setRole(VariableType.SELECTION_METHOD.getRole());
 		settingDetail.setVariableType(VariableType.SELECTION_METHOD);
 
@@ -760,8 +759,6 @@ public class SettingsUtilTest {
 		final List<SettingDetail> variables = new ArrayList<>();
 		variables.add(this.createSettingDetail(TermId.STUDY_NAME.getId(), "STUDY_NAME", "Study - assigned (DBCV)",
 				SettingsUtilTest.C_DATATYPE));
-		variables.add(this.createSettingDetail(TermId.STUDY_TITLE.getId(), "STUDY_TITLE", "Study title - assigned (text)",
-				SettingsUtilTest.C_DATATYPE));
 		variables.add(this.createSettingDetail(TermId.STUDY_OBJECTIVE.getId(), "STUDY_OBJECTIVE", "Objective - described (text)",
 				SettingsUtilTest.C_DATATYPE));
 		variables.add(this.createSettingDetail(TermId.START_DATE.getId(), "START_DATE", "Start date - assigned (date)",
@@ -813,10 +810,6 @@ public class SettingsUtilTest {
 			if (TermId.STUDY_NAME.getId() == condition.getId()) {
 				Assert.assertEquals("The name should be 'STUDY_NAME'", "STUDY_NAME", condition.getName());
 				Assert.assertEquals("The value should be 'Study - assigned (DBCV)'", "Study - assigned (DBCV)", condition.getValue());
-			} else if (TermId.STUDY_TITLE.getId() == condition.getId()) {
-				Assert.assertEquals("The name should be 'STUDY_TITLE'", "STUDY_TITLE", condition.getName());
-				Assert.assertEquals("The value should be 'Study title - assigned (text)'", "Study title - assigned (text)",
-						condition.getValue());
 			} else if (TermId.STUDY_OBJECTIVE.getId() == condition.getId()) {
 				Assert.assertEquals("The name should be 'STUDY_OBJECTIVE'", "STUDY_OBJECTIVE", condition.getName());
 				Assert.assertEquals("The value should be 'Objective - described (text)'", "Objective - described (text)",

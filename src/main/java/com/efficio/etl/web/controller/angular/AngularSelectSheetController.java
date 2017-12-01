@@ -106,7 +106,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		if ((this.userSelection.getStudyId() == null || this.userSelection.getStudyId() == 0
 				|| this.userSelection.getStudyId() == AngularSelectSheetController.FIELDBOOK_DEFAULT_STUDY_ID) && !StringUtils
 				.isEmpty(this.userSelection.getStudyName())) {
-			this.createStudyDetails(previousStudies);
+			this.addStudyDetails(previousStudies);
 		} else {
 			try {
 				if (!this.populateStudyDetailsIfFieldbookFormat(previousStudies, model)) {
@@ -128,7 +128,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		return super.show(model);
 	}
 
-	private void createStudyDetails(final List<StudyDetails> previousStudies) {
+	private void addStudyDetails(final List<StudyDetails> previousStudies) {
 		final StudyDetails details = new StudyDetails();
 		details.setId(this.userSelection.getStudyId() != null ? this.userSelection.getStudyId() : 0);
 		details.setStudyName(this.userSelection.getStudyName());

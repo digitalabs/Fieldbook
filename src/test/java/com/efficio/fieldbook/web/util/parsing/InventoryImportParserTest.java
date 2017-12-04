@@ -1,12 +1,4 @@
-
 package com.efficio.fieldbook.web.util.parsing;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -18,6 +10,7 @@ import org.generationcp.commons.parsing.validation.ParseValidationMap;
 import org.generationcp.commons.parsing.validation.ValueRangeValidator;
 import org.generationcp.commons.parsing.validation.ValueTypeValidator;
 import org.generationcp.commons.service.FileService;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.ScaleTestDataInitializer;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
@@ -35,6 +28,13 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 2/26/2015 Time: 4:42 PM
  */
@@ -45,6 +45,7 @@ public class InventoryImportParserTest {
 	private static final String SCALE_VALUE = "SEED_AMOUNT_kg";
 
 	private static final String AMOUNT_HEADER = "SEED_AMOUNT_KG";
+	public static final String PROGRAM_UUID = "ahsgfkasg-jas73324-ajksdhaskjf";
 
 	@Mock
 	private FileService fileService;
@@ -60,6 +61,9 @@ public class InventoryImportParserTest {
 
 	@Mock
 	private InventoryDataManager inventoryDataManager;
+
+	@Mock
+	private ContextUtil contextUtil;
 
 	@InjectMocks
 	private InventoryImportParser parser;
@@ -85,7 +89,9 @@ public class InventoryImportParserTest {
 		this.scaleTDI = new ScaleTestDataInitializer();
 		this.testLocationList = this.createDummyLocationList();
 		this.testStockIds = this.createDummyStockIds();
-		Mockito.doReturn(this.testLocationList).when(this.fieldbookMiddlewareService).getAllLocations();
+
+		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
+		Mockito.doReturn(this.testLocationList).when(this.fieldbookMiddlewareService).getAllLocations(PROGRAM_UUID);
 		Mockito.doReturn(this.scaleTDI.createScale()).when(this.ontologyService)
 				.getInventoryScaleByName(InventoryImportParserTest.AMOUNT_HEADER);
 		Mockito.doReturn(this.testStockIds).when(this.inventoryDataManager)

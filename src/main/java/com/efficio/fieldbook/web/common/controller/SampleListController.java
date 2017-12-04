@@ -33,8 +33,8 @@ public class SampleListController {
 
 	public static final String URL = "/sample/list";
 	private static final String SAVED_FINAL_LIST = "/NurseryManager/savedFinalList";
-	public static final String TABLE_HEADER_LIST = "tableHeaderList";
-	public static final String SAMPLE_LIST = "sampleList";
+	private static final String TABLE_HEADER_LIST = "tableHeaderList";
+	private static final String SAMPLE_LIST = "sampleList";
 	private static final String SAMPLE_NAME = "sample.list.sample.name";
 	private static final String TAKEN_BY = "sample.list.taken.by";
 	private static final String SAMPLING_DATE = "sample.list.sampling.date";
@@ -42,7 +42,10 @@ public class SampleListController {
 	private static final String PLANT_UID = "sample.list.plant.uid";
 	private static final String PLANT_NO = "sample.list.plant.no";
 	private static final String PLOT_ID = "sample.list.plot.id";
-	public static final String TOTAL_NUMBER_OF_GERMPLASMS = "totalNumberOfGermplasms";
+	private static final String PLOT_NO = "sample.list.plot.no";
+	private static final String DESIGNATION = "seed.entry.designation";
+	private static final String TOTAL_NUMBER_OF_GERMPLASMS = "totalNumberOfGermplasms";
+	private static final String SAMPLE_ENTRY = "sample.list.sample.entry.no";
 
 	@Resource
 	private MessageSource messageSource;
@@ -59,7 +62,7 @@ public class SampleListController {
 		return SampleListController.SAVED_FINAL_LIST;
 	}
 
-	protected void processSampleList(Integer listId, HttpServletRequest req, Model model) {
+	private void processSampleList(Integer listId, HttpServletRequest req, Model model) {
 		try {
 
 			final SampleList sampleList = this.sampleListService.getSampleList(listId);
@@ -81,14 +84,16 @@ public class SampleListController {
 		}
 	}
 
-	protected List<TableHeader> getSampleListTableHeaders() {
+	private List<TableHeader> getSampleListTableHeaders() {
 		Locale locale = LocaleContextHolder.getLocale();
 		List<TableHeader> tableHeaderList = new ArrayList<>();
 
-		this.getCommonHeaders(locale, tableHeaderList);
 
+		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_ENTRY, null, locale),
+			this.messageSource.getMessage(SampleListController.SAMPLE_ENTRY, null, locale)));
+		this.getCommonHeaders(locale, tableHeaderList);
 		tableHeaderList.add(new TableHeader(ColumnLabels.PLOT_NO.getTermNameFromOntology(this.ontologyDataManager),
-			this.messageSource.getMessage("sample.list.plot.no", null, locale)));
+			this.messageSource.getMessage(SampleListController.PLOT_NO, null, locale)));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.PLANT_NO, null, locale),
 			this.messageSource.getMessage(SampleListController.PLANT_NO, null, locale)));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_NAME, null, locale),
@@ -108,10 +113,8 @@ public class SampleListController {
 	}
 
 	private void getCommonHeaders(final Locale locale, final List<TableHeader> tableHeaderList) {
-		tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_ID.getTermNameFromOntology(this.ontologyDataManager),
-			this.messageSource.getMessage("seed.entry.number", null, locale)));
 		tableHeaderList.add(new TableHeader(ColumnLabels.DESIGNATION.getTermNameFromOntology(this.ontologyDataManager),
-			this.messageSource.getMessage("seed.entry.designation", null, locale)));
+			this.messageSource.getMessage(SampleListController.DESIGNATION, null, locale)));
 	}
 
 }

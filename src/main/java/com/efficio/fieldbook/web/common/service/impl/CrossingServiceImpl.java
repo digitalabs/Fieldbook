@@ -30,7 +30,6 @@ import org.generationcp.commons.util.CrossingUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -526,8 +525,9 @@ public class CrossingServiceImpl implements CrossingService {
 		int nextNumberInSequence = 1;
 
 		if (!lastPrefixUsed.isEmpty()) {
+			final String suffix = this.buildSuffixString(setting, setting.getSuffix());
 			final String nextSequenceNumberString =
-					this.germplasmDataManager.getNextSequenceNumberForCrossName(lastPrefixUsed, setting.getSuffix());
+					this.germplasmDataManager.getNextSequenceNumberForCrossName(lastPrefixUsed, suffix);
 			nextNumberInSequence = Integer.parseInt(nextSequenceNumberString);
 		}
 
@@ -612,10 +612,13 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	protected String buildSuffixString(final CrossNameSetting setting, final String suffix) {
-		if (setting.isAddSpaceBetweenSuffixAndCode()) {
-			return " " + suffix.trim();
+		if (suffix != null) {
+			if (setting.isAddSpaceBetweenSuffixAndCode()) {
+				return " " + suffix.trim();
+			}
+			return suffix.trim();
 		}
-		return suffix.trim();
+		return "";
 	}
 
 	protected String getNumberWithLeadingZeroesAsString(final Integer number, final CrossNameSetting setting) {

@@ -105,7 +105,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	@Override
 	public boolean applyCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
-			final Integer userId, final Workbook workbook) throws MiddlewareQueryException {
+			final Integer userId, final Workbook workbook) {
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
 		final GermplasmListResult pairsResult = this.getPairs(crossSetting, importedCrossesList, userId, workbook);
 		this.save(crossSetting, importedCrossesList, pairsResult.germplasmPairs);
@@ -277,7 +277,7 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	void savePedigreeDesignationName(final ImportedCrossesList importedCrossesList, final List<Integer> germplasmIDs,
-			final CrossSetting crossSetting) throws MiddlewareQueryException {
+			final CrossSetting crossSetting) {
 
 		final List<Name> parentageDesignationNames = new ArrayList<>();
 		final Iterator<Integer> germplasmIdIterator = germplasmIDs.iterator();
@@ -421,8 +421,7 @@ public class CrossingServiceImpl implements CrossingService {
 	// FIXME the methods getPairs() and generateGermplasmNamePairs() should be
 	// combined into one
 	protected GermplasmListResult generateGermplasmNamePairs(final CrossSetting crossSetting,
-			final List<ImportedCrosses> importedCrosses, final Integer userId, final boolean hasPlotDuplicate)
-			throws MiddlewareQueryException {
+			final List<ImportedCrosses> importedCrosses, final Integer userId, final boolean hasPlotDuplicate) {
 
 		boolean isTrimed = false;
 		final List<Pair<Germplasm, Name>> pairList = new ArrayList<>();
@@ -637,7 +636,7 @@ public class CrossingServiceImpl implements CrossingService {
 		return sb.toString();
 	}
 
-	public Integer getIDForUserDefinedFieldCrossingName() throws MiddlewareQueryException {
+	public Integer getIDForUserDefinedFieldCrossingName() {
 
 		final List<UserDefinedField> nameTypes = this.germplasmListManager.getGermplasmNameTypes();
 		for (final UserDefinedField type : nameTypes) {

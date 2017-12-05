@@ -247,8 +247,7 @@ public class CrossingServiceImpl implements CrossingService {
 		CrossingUtil.applyMethodNameType(this.germplasmDataManager, pairsResult.germplasmPairs, crossingNameTypeId);
 
 		this.verifyGermplasmMethodPresent(germplasmList);
-		final GermplasmListResult result = new GermplasmListResult(pairsResult.germplasmPairs, pairsResult.isTrimed);
-		return result;
+		return new GermplasmListResult(pairsResult.germplasmPairs, pairsResult.isTrimed);
 	}
 
 	private List<Integer> getImportedCrossesGidsList(final ImportedCrossesList importedCrossesList) {
@@ -280,7 +279,7 @@ public class CrossingServiceImpl implements CrossingService {
 	void savePedigreeDesignationName(final ImportedCrossesList importedCrossesList, final List<Integer> germplasmIDs,
 			final CrossSetting crossSetting) throws MiddlewareQueryException {
 
-		final List<Name> parentageDesignationNames = new ArrayList<Name>();
+		final List<Name> parentageDesignationNames = new ArrayList<>();
 		final Iterator<Integer> germplasmIdIterator = germplasmIDs.iterator();
 		final Integer nstatValue = crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString() ? 0
 				: CrossingServiceImpl.PREFERRED_NAME;
@@ -497,8 +496,7 @@ public class CrossingServiceImpl implements CrossingService {
 			pairList.add(new ImmutablePair<>(germplasm, name));
 		}
 
-		final GermplasmListResult result = new GermplasmListResult(pairList, isTrimed);
-		return result;
+		return new GermplasmListResult(pairList, isTrimed);
 	}
 
 	private String truncateName(String designation) {
@@ -674,10 +672,9 @@ public class CrossingServiceImpl implements CrossingService {
 
 		// if imported cross contains raw breeding method code we use that to
 		// populate the breeding method
-		if (!StringUtils.isEmpty(rawBreedingMethod) && basedOnImportFile) {
-			if (this.processBreedingMethodImport(importedCrosses, rawBreedingMethod)) {
-				return;
-			}
+		if (!StringUtils.isEmpty(rawBreedingMethod) && basedOnImportFile
+				&& this.processBreedingMethodImport(importedCrosses, rawBreedingMethod)) {
+			return;
 		}
 
 		if (!basedOnStatusOfParentalLines && !basedOnImportFile && methodSetting.getMethodId() != null
@@ -723,10 +720,7 @@ public class CrossingServiceImpl implements CrossingService {
 		// if at this point, if there is already breeding method info available
 		// on the imported cross
 		// (from import file, etc, we proceed to next cross)
-		if (importedCrosses.isBreedingMethodInformationAvailable()) {
-			return true;
-		}
-		return false;
+		return importedCrosses.isBreedingMethodInformationAvailable();
 	}
 
 	private void setBreedingMethodNameByMethodId(final ImportedCrosses importedCrosses) {

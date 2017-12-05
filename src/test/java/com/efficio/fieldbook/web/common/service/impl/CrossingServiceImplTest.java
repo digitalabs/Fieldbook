@@ -33,6 +33,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -528,10 +529,16 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testGetNextNumberInSequenceDefault() {
 		final CrossNameSetting setting = new CrossNameSetting();
-		setting.setPrefix("A");
+		final String prefix = "A";
+		setting.setPrefix(prefix);
 		
 		final int nextNumber = this.crossingService.getNextNumberInSequence(setting);
 		Assert.assertEquals(NEXT_NUMBER.intValue(), nextNumber);
+		final ArgumentCaptor<String> prefixCaptor = ArgumentCaptor.forClass(String.class);
+		final ArgumentCaptor<String> suffixCaptor = ArgumentCaptor.forClass(String.class);
+		Mockito.verify(this.germplasmDataManager).getNextSequenceNumberForCrossName(prefixCaptor.capture(), suffixCaptor.capture());
+		Assert.assertEquals(prefix , prefixCaptor.getValue());
+		Assert.assertEquals("", suffixCaptor.getValue());
 	}
 
 	@Test
@@ -554,7 +561,7 @@ public class CrossingServiceImplTest {
 
 		final int nextNumber = this.crossingService.getNextNumberInSequence(setting);
 
-		Assert.assertEquals(100, nextNumber);
+		Assert.assertEquals(NEXT_NUMBER.intValue(), nextNumber);
 	}
 	
 	@Test
@@ -567,6 +574,78 @@ public class CrossingServiceImplTest {
 		final int nextNumber = this.crossingService.getNextNumberInSequence(setting);
 		Assert.assertEquals(1, nextNumber);
 		Mockito.verify(this.germplasmDataManager, Mockito.never()).getNextSequenceNumberForCrossName(Matchers.anyString(), Matchers.anyString());
+	}
+	
+	@Test
+	public void testGetNextNumberInSequenceWhenSuffixIsSupplied() {
+
+		final CrossNameSetting setting = new CrossNameSetting();
+		final String prefix = "A";
+		setting.setPrefix(prefix);
+		final String suffix = "CDE";
+		setting.setSuffix(suffix);
+
+		this.crossingService.getNextNumberInSequence(setting);
+		final ArgumentCaptor<String> prefixCaptor = ArgumentCaptor.forClass(String.class);
+		final ArgumentCaptor<String> suffixCaptor = ArgumentCaptor.forClass(String.class);
+		Mockito.verify(this.germplasmDataManager).getNextSequenceNumberForCrossName(prefixCaptor.capture(), suffixCaptor.capture());
+		Assert.assertEquals(prefix,  prefixCaptor.getValue());
+		Assert.assertEquals(suffix, suffixCaptor.getValue());
+	}
+	
+	@Test
+	public void testGetNextNumberInSequenceWhenSpaceSuppliedBetweenPrefixAndCode() {
+
+		final CrossNameSetting setting = new CrossNameSetting();
+		final String prefix = "A";
+		setting.setPrefix(prefix);
+		setting.setAddSpaceBetweenPrefixAndCode(true);
+		final String suffix = "CDE";
+		setting.setSuffix(suffix);
+
+		this.crossingService.getNextNumberInSequence(setting);
+		final ArgumentCaptor<String> prefixCaptor = ArgumentCaptor.forClass(String.class);
+		final ArgumentCaptor<String> suffixCaptor = ArgumentCaptor.forClass(String.class);
+		Mockito.verify(this.germplasmDataManager).getNextSequenceNumberForCrossName(prefixCaptor.capture(), suffixCaptor.capture());
+		Assert.assertEquals(prefix + " ", prefixCaptor.getValue());
+		Assert.assertEquals(suffix, suffixCaptor.getValue());
+	}
+	
+	@Test
+	public void testGetNextNumberInSequenceWhenSpaceSuppliedBetweenSuffixAndCode() {
+
+		final CrossNameSetting setting = new CrossNameSetting();
+		final String prefix = "A";
+		setting.setPrefix(prefix);
+		final String suffix = "CDE";
+		setting.setSuffix(suffix);
+		setting.setAddSpaceBetweenSuffixAndCode(true);
+
+		this.crossingService.getNextNumberInSequence(setting);
+		final ArgumentCaptor<String> prefixCaptor = ArgumentCaptor.forClass(String.class);
+		final ArgumentCaptor<String> suffixCaptor = ArgumentCaptor.forClass(String.class);
+		Mockito.verify(this.germplasmDataManager).getNextSequenceNumberForCrossName(prefixCaptor.capture(), suffixCaptor.capture());
+		Assert.assertEquals(prefix, prefixCaptor.getValue());
+		Assert.assertEquals(" " + suffix, suffixCaptor.getValue());
+	}
+	
+	@Test
+	public void testGetNextNumberInSequenceWhenSpaceSuppliedAfterPrefixAndBeforeSuffix() {
+
+		final CrossNameSetting setting = new CrossNameSetting();
+		final String prefix = "A";
+		setting.setPrefix(prefix);
+		setting.setAddSpaceBetweenPrefixAndCode(true);
+		final String suffix = "CDE";
+		setting.setSuffix(suffix);
+		setting.setAddSpaceBetweenSuffixAndCode(true);
+
+		this.crossingService.getNextNumberInSequence(setting);
+		final ArgumentCaptor<String> prefixCaptor = ArgumentCaptor.forClass(String.class);
+		final ArgumentCaptor<String> suffixCaptor = ArgumentCaptor.forClass(String.class);
+		Mockito.verify(this.germplasmDataManager).getNextSequenceNumberForCrossName(prefixCaptor.capture(), suffixCaptor.capture());
+		Assert.assertEquals(prefix + " ", prefixCaptor.getValue());
+		Assert.assertEquals(" " + suffix, suffixCaptor.getValue());
 	}
 
 	@Test

@@ -62,7 +62,7 @@ public class CrossingServiceImpl implements CrossingService {
 	public static final Integer GERMPLASM_MGID = 0;
 	public static final Integer GERMPLASM_REFID = 0;
 	public static final Integer NAME_REFID = 0;
-	public static final String[] USER_DEF_FIELD_CROSS_NAME = { "CROSS NAME", "CROSSING NAME" };
+	public static final String[] USER_DEF_FIELD_CROSS_NAME = {"CROSS NAME", "CROSSING NAME"};
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingServiceImpl.class);
 	private static final Integer PEDIGREE_NAME_TYPE = 18;
@@ -104,8 +104,8 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	@Override
-	public boolean applyCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
-			final Integer userId, final Workbook workbook) {
+	public boolean applyCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList, final Integer userId,
+			final Workbook workbook) {
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
 		final GermplasmListResult pairsResult = this.getPairs(crossSetting, importedCrossesList, userId, workbook);
 		this.save(crossSetting, importedCrossesList, pairsResult.germplasmPairs);
@@ -133,8 +133,8 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	@Override
-	public boolean applyCrossSettingWithNamingRules(final CrossSetting crossSetting,
-			final ImportedCrossesList importedCrossesList, final Integer userId, final Workbook workbook) {
+	public boolean applyCrossSettingWithNamingRules(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
+			final Integer userId, final Workbook workbook) {
 
 		int entryIdCounter = 1;
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
@@ -144,8 +144,8 @@ public class CrossingServiceImpl implements CrossingService {
 			entryIdCounter++;
 		}
 
-		final GermplasmListResult pairsResult = this.generateGermplasmNamePairs(crossSetting,
-				importedCrossesList.getImportedCrosses(), userId, importedCrossesList.hasPlotDuplicate());
+		final GermplasmListResult pairsResult = this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(),
+				userId, importedCrossesList.hasPlotDuplicate());
 
 		final List<Germplasm> germplasmList = this.extractGermplasmList(pairsResult.germplasmPairs);
 		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
@@ -162,16 +162,14 @@ public class CrossingServiceImpl implements CrossingService {
 		if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource())
 				|| importedCross.getSource().equalsIgnoreCase(ImportedCrosses.SEED_SOURCE_PENDING)) {
 
-			final String generatedSource = this.seedSourceGenerator.generateSeedSourceForCross(workbook,
-					importedCross.getMalePlotNo(), importedCross.getFemalePlotNo(), importedCross.getMaleStudyName(),
-					importedCross.getFemaleStudyName());
+			final String generatedSource = this.seedSourceGenerator.generateSeedSourceForCross(workbook, importedCross.getMalePlotNo(),
+					importedCross.getFemalePlotNo(), importedCross.getMaleStudyName(), importedCross.getFemaleStudyName());
 			importedCross.setSource(generatedSource);
 		}
 	}
 
 	/**
-	 * @Transactional to make sure Germplasm, Name and Attribute entities
-	 *                updated atomically.
+	 * @Transactional to make sure Germplasm, Name and Attribute entities updated atomically.
 	 */
 	@Override
 	@Transactional
@@ -180,8 +178,7 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	/**
-	 * @Transactional to make sure Germplasm, Name and Attribute entities save
-	 *                atomically.
+	 * @Transactional to make sure Germplasm, Name and Attribute entities save atomically.
 	 */
 	@Transactional
 	private void save(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
@@ -206,8 +203,8 @@ public class CrossingServiceImpl implements CrossingService {
 
 			// this will do the merging and using the gid and cross from the
 			// initial duplicate
-			if (FieldbookUtil.isContinueCrossingMerge(importedCrossesList.hasPlotDuplicate(),
-					crossSetting.isPreservePlotDuplicates(), cross)) {
+			if (FieldbookUtil.isContinueCrossingMerge(importedCrossesList.hasPlotDuplicate(), crossSetting.isPreservePlotDuplicates(),
+					cross)) {
 				FieldbookUtil.mergeCrossesPlotDuplicateData(cross, importedCrossesList.getImportedCrosses());
 				continue;
 			}
@@ -238,8 +235,8 @@ public class CrossingServiceImpl implements CrossingService {
 			this.populateSeedSource(importedCross, workbook);
 		}
 
-		final GermplasmListResult pairsResult = this.generateGermplasmNamePairs(crossSetting,
-				importedCrossesList.getImportedCrosses(), userId, importedCrossesList.hasPlotDuplicate());
+		final GermplasmListResult pairsResult = this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(),
+				userId, importedCrossesList.hasPlotDuplicate());
 
 		final List<Germplasm> germplasmList = this.extractGermplasmList(pairsResult.germplasmPairs);
 		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
@@ -281,8 +278,8 @@ public class CrossingServiceImpl implements CrossingService {
 
 		final List<Name> parentageDesignationNames = new ArrayList<>();
 		final Iterator<Integer> germplasmIdIterator = germplasmIDs.iterator();
-		final Integer nstatValue = crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString() ? 0
-				: CrossingServiceImpl.PREFERRED_NAME;
+		final Integer nstatValue =
+				crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString() ? 0 : CrossingServiceImpl.PREFERRED_NAME;
 
 		for (final ImportedCrosses entry : importedCrossesList.getImportedCrosses()) {
 
@@ -317,14 +314,13 @@ public class CrossingServiceImpl implements CrossingService {
 	protected void verifyGermplasmMethodPresent(final List<Germplasm> germplasmList) {
 		for (final Germplasm germplasm : germplasmList) {
 			if (germplasm.getMethodId() == null || germplasm.getMethodId() == 0) {
-				throw new MiddlewareQueryException(this.messageSource.getMessage("error.save.cross.methods.unavailable",
-						new Object[] {}, Locale.getDefault()));
+				throw new MiddlewareQueryException(
+						this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {}, Locale.getDefault()));
 			}
 		}
 	}
 
-	protected void applyCrossNameSettingToImportedCrosses(final CrossSetting setting,
-			final List<ImportedCrosses> importedCrosses) {
+	protected void applyCrossNameSettingToImportedCrosses(final CrossSetting setting, final List<ImportedCrosses> importedCrosses) {
 		final CrossNameSetting crossNameSetting = setting.getCrossNameSetting();
 		Integer nextNumberInSequence = this.getNextNumberInSequence(crossNameSetting);
 		Integer entryIdCounter = 0;
@@ -349,8 +345,7 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	/**
-	 * this method overwrites the naming settings with the defined rules from
-	 * the DB if the breeding method was provided
+	 * this method overwrites the naming settings with the defined rules from the DB if the breeding method was provided
 	 *
 	 * @param setting
 	 */
@@ -375,8 +370,8 @@ public class CrossingServiceImpl implements CrossingService {
 			}
 			return this.buildCrossName(crosses, separator);
 		} catch (final MiddlewareQueryException e) {
-			throw new RuntimeException("There was a problem accessing communicating with the database. "
-					+ "Please contact support for further help.", e);
+			throw new RuntimeException(
+					"There was a problem accessing communicating with the database. " + "Please contact support for further help.", e);
 		}
 
 	}
@@ -402,10 +397,8 @@ public class CrossingServiceImpl implements CrossingService {
 	 * <li>If not then current date will be used as gdate.</li>
 	 * </ol>
 	 *
-	 * @param germplasm
-	 *            germplasm instance into which gdate need to be set.
-	 * @param harvestDate
-	 *            date given using user form.
+	 * @param germplasm germplasm instance into which gdate need to be set.
+	 * @param harvestDate date given using user form.
 	 */
 	public void populateGermplasmDate(final Germplasm germplasm, final String harvestDate) {
 		final Integer formattedHarvestDate = this.getFormattedHarvestDate(harvestDate);
@@ -420,8 +413,8 @@ public class CrossingServiceImpl implements CrossingService {
 
 	// FIXME the methods getPairs() and generateGermplasmNamePairs() should be
 	// combined into one
-	protected GermplasmListResult generateGermplasmNamePairs(final CrossSetting crossSetting,
-			final List<ImportedCrosses> importedCrosses, final Integer userId, final boolean hasPlotDuplicate) {
+	protected GermplasmListResult generateGermplasmNamePairs(final CrossSetting crossSetting, final List<ImportedCrosses> importedCrosses,
+			final Integer userId, final boolean hasPlotDuplicate) {
 
 		boolean isTrimed = false;
 		final List<Pair<Germplasm, Name>> pairList = new ArrayList<>();
@@ -436,8 +429,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 		for (final ImportedCrosses cross : importedCrosses) {
 
-			if (FieldbookUtil.isContinueCrossingMerge(hasPlotDuplicate, crossSetting.isPreservePlotDuplicates(),
-					cross)) {
+			if (FieldbookUtil.isContinueCrossingMerge(hasPlotDuplicate, crossSetting.isPreservePlotDuplicates(), cross)) {
 				continue;
 			}
 
@@ -523,39 +515,36 @@ public class CrossingServiceImpl implements CrossingService {
 
 		if (!lastPrefixUsed.isEmpty()) {
 			final String suffix = this.buildSuffixString(setting, setting.getSuffix());
-			final String nextSequenceNumberString =
-					this.germplasmDataManager.getNextSequenceNumberForCrossName(lastPrefixUsed, suffix);
+			final String nextSequenceNumberString = this.germplasmDataManager.getNextSequenceNumberForCrossName(lastPrefixUsed, suffix);
 			nextNumberInSequence = Integer.parseInt(nextSequenceNumberString);
 		}
 
 		return nextNumberInSequence;
 
 	}
-	
+
 	@Override
 	public String getNextNameInSequence(final CrossNameSetting setting) {
 
 		Integer nextNumberInSequence = this.getNextNumberInSequence(setting);
 
-		Integer optionalStartNumber = setting.getStartNumber();
+		final Integer optionalStartNumber = setting.getStartNumber();
 
-		if(optionalStartNumber != null && optionalStartNumber > 0 && nextNumberInSequence > optionalStartNumber) {
+		if (optionalStartNumber != null && optionalStartNumber > 0 && nextNumberInSequence > optionalStartNumber) {
 			final String invalidStatingNumberErrorMessage = this.messageSource.getMessage("error.not.valid.starting.sequence",
 					new Object[] {nextNumberInSequence - 1}, LocaleContextHolder.getLocale());
 			throw new RuntimeException(invalidStatingNumberErrorMessage);
 		}
 
-		if(optionalStartNumber != null && nextNumberInSequence < optionalStartNumber) {
+		if (optionalStartNumber != null && nextNumberInSequence < optionalStartNumber) {
 			nextNumberInSequence = optionalStartNumber;
 		}
 
 		return this.buildDesignationNameInSequence(nextNumberInSequence, setting);
 	}
 
-    
 	/*
-	 * This method is only used for Specify Name Scenario in import crosses and
-	 * design crosses
+	 * This method is only used for Specify Name Scenario in import crosses and design crosses
 	 */
 	protected String buildDesignationNameInSequence(final Integer number, final CrossNameSetting setting) {
 		final StringBuilder sb = new StringBuilder();
@@ -568,8 +557,7 @@ public class CrossingServiceImpl implements CrossingService {
 		return sb.toString();
 	}
 
-	protected String replaceExpressionWithValue(final StringBuilder container, final String processCode,
-			final String value) {
+	protected String replaceExpressionWithValue(final StringBuilder container, final String processCode, final String value) {
 		final int startIndex = container.toString().toUpperCase().indexOf(processCode);
 		final int endIndex = startIndex + processCode.length();
 
@@ -578,12 +566,10 @@ public class CrossingServiceImpl implements CrossingService {
 		return container.toString();
 	}
 
-	protected String evaluateSuffixProcessCode(final ImportedCrosses crosses, final CrossSetting setting,
-			final String processCode) {
+	protected String evaluateSuffixProcessCode(final ImportedCrosses crosses, final CrossSetting setting, final String processCode) {
 		final ProcessCodeOrderedRule rule = this.processCodeRuleFactory.getRuleByProcessCode(processCode);
 
-		final CrossingRuleExecutionContext crossingRuleExecutionContext = new CrossingRuleExecutionContext(
-				new ArrayList<String>(), setting,
+		final CrossingRuleExecutionContext crossingRuleExecutionContext = new CrossingRuleExecutionContext(new ArrayList<String>(), setting,
 				crosses.getMaleGid() != null ? Integer.valueOf(crosses.getMaleGid()) : 0,
 				crosses.getFemaleGid() != null ? Integer.valueOf(crosses.getFemaleGid()) : 0, this.germplasmDataManager,
 				this.pedigreeDataManager);
@@ -641,8 +627,7 @@ public class CrossingServiceImpl implements CrossingService {
 		final List<UserDefinedField> nameTypes = this.germplasmListManager.getGermplasmNameTypes();
 		for (final UserDefinedField type : nameTypes) {
 			for (final String crossNameValue : CrossingServiceImpl.USER_DEF_FIELD_CROSS_NAME) {
-				if (crossNameValue.equalsIgnoreCase(type.getFcode())
-						|| crossNameValue.equalsIgnoreCase(type.getFname())) {
+				if (crossNameValue.equalsIgnoreCase(type.getFcode()) || crossNameValue.equalsIgnoreCase(type.getFname())) {
 					return type.getFldno();
 				}
 			}
@@ -652,15 +637,13 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	@Override
-	public void processCrossBreedingMethod(final CrossSetting crossSetting,
-			final ImportedCrossesList importedCrossesList) {
+	public void processCrossBreedingMethod(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList) {
 		final BreedingMethodSetting methodSetting = crossSetting.getBreedingMethodSetting();
 		final boolean basedOnImportFile = methodSetting.isBasedOnImportFile();
 		final boolean basedOnStatusOfParentalLines = methodSetting.isBasedOnStatusOfParentalLines();
 
 		for (final ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()) {
-			this.processCrossBreedingMethod(methodSetting, basedOnImportFile, basedOnStatusOfParentalLines,
-					importedCrosses);
+			this.processCrossBreedingMethod(methodSetting, basedOnImportFile, basedOnStatusOfParentalLines, importedCrosses);
 		}
 	}
 
@@ -697,9 +680,8 @@ public class CrossingServiceImpl implements CrossingService {
 		final Triple<Germplasm, Germplasm, Germplasm> femaleLine = this.retrieveParentGermplasmObjects(femaleGid);
 		final Triple<Germplasm, Germplasm, Germplasm> maleLine = this.retrieveParentGermplasmObjects(maleGid);
 
-		importedCrosses.setBreedingMethodId(
-				CrossingUtil.determineBreedingMethodBasedOnParentalLine(femaleLine.getLeft(), maleLine.getLeft(),
-						femaleLine.getMiddle(), femaleLine.getRight(), maleLine.getMiddle(), maleLine.getRight()));
+		importedCrosses.setBreedingMethodId(CrossingUtil.determineBreedingMethodBasedOnParentalLine(femaleLine.getLeft(),
+				maleLine.getLeft(), femaleLine.getMiddle(), femaleLine.getRight(), maleLine.getMiddle(), maleLine.getRight()));
 
 		this.setBreedingMethodNameByMethodId(importedCrosses);
 	}
@@ -790,8 +772,7 @@ public class CrossingServiceImpl implements CrossingService {
 		this.seedSourceGenerator = seedSourceGenerator;
 	}
 
-	
-	public void setMessageSource(MessageSource messageSource) {
+	public void setMessageSource(final MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
 }

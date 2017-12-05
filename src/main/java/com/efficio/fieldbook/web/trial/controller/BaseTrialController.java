@@ -21,6 +21,7 @@ import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
@@ -849,6 +850,15 @@ public abstract class BaseTrialController extends SettingsController {
 	protected void getTraitsAndSelectionVariates(List<MeasurementVariable> measurementDatasetVariables,List<MeasurementVariable> newMeasurementDatasetVariables, String listCsv) {
 
 		if (listCsv != null && !"".equalsIgnoreCase(listCsv)) {
+			// Create a map of traits from user selection (UI) so that trait's alias can be retrieved
+			final ImmutableMap<Integer, SettingDetail> traitsMap =
+					Maps.uniqueIndex(this.userSelection.getBaselineTraitsList(), new Function<SettingDetail, Integer>() {
+
+						@Override
+						public Integer apply(final SettingDetail setting) {
+							return setting.getVariable().getCvTermId();
+						}
+					});
 			final StringTokenizer token = new StringTokenizer(listCsv, ",");
 			while (token.hasMoreTokens()) {
 				final int id = Integer.parseInt(token.nextToken());
@@ -860,6 +870,11 @@ public abstract class BaseTrialController extends SettingsController {
 					final MeasurementVariable newVar =
 						ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
 					newVar.setFactor(false);
+					// Get trait's alias, if any, from user selection (UI) so that it will reflect on Measurements tab
+					final SettingDetail traitFromSession = traitsMap.get(id);
+					if (traitFromSession != null && traitFromSession.getVariable() != null){
+						newVar.setName(traitFromSession.getVariable().getName());
+					}
 					newMeasurementDatasetVariables.add(newVar);
 				} else {
 					newMeasurementDatasetVariables.add(currentVar);

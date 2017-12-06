@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -44,6 +42,11 @@ import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
+import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DesignImportMeasurementRowGeneratorTest {
@@ -82,7 +85,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 	private Workbook workbook;
 	private Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId;
 	private List<String> rowValues;
-	private List<ImportedGermplasm> importedGermplasm;
+	private Map<Integer, ImportedGermplasm> importedGermplasm;
 	private Map<Integer, StandardVariable> germplasmStandardVariables;
 	private Set<String> trialInstancesFromUI;
 	private final boolean isPreview = true;
@@ -107,7 +110,15 @@ public class DesignImportMeasurementRowGeneratorTest {
 				PhenotypicType.GERMPLASM, TermId.ENTRY_NO.getId(), "ENTRY_NO", "", "", "", TermId.NUMERIC_VARIABLE.getId(), "", "", ""));
 
 		this.rowValues = new ArrayList<String>();
-		this.importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
+
+		this.importedGermplasm = Maps.uniqueIndex(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList(),
+				new Function<ImportedGermplasm, Integer>() {
+
+					@Override
+					public Integer apply(ImportedGermplasm input) {
+						return input.getEntryId();
+					}
+				});
 
 		this.trialInstancesFromUI = new HashSet<String>();
 		this.trialInstancesFromUI.add("1");
@@ -133,7 +144,16 @@ public class DesignImportMeasurementRowGeneratorTest {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 
-		final List<ImportedGermplasm> importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
+		final Map<Integer, ImportedGermplasm> importedGermplasm = Maps.uniqueIndex(
+				ImportedGermplasmMainInfoInitializer.createImportedGermplasmList(), new Function<ImportedGermplasm, Integer>() {
+
+					@Override
+					public Integer apply(ImportedGermplasm input) {
+						return input.getEntryId();
+					}
+				});
+
+
 		final Map<Integer, StandardVariable> germplasmStandardVariables =
 				DesignImportTestDataInitializer.getStandardVariables(PhenotypicType.GERMPLASM, workbook.getFactors());
 		final List<MeasurementData> measurementDataList = new ArrayList<>();
@@ -147,7 +167,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 		Assert.assertEquals("The size of generated MeasurementData list should match the size of germplasm Standard Variables list", germplasmStandardVariables.size(),
 				measurementDataList.size());
 
-		final ImportedGermplasm germplasmEntry = importedGermplasm.get(0);
+		final ImportedGermplasm germplasmEntry = importedGermplasm.get(entryNo);
 
 		for (final MeasurementData measurementData : measurementDataList) {
 

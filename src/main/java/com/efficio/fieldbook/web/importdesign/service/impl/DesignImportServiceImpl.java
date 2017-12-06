@@ -42,6 +42,9 @@ import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 public class DesignImportServiceImpl implements DesignImportService {
 
@@ -88,6 +91,16 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		final List<ImportedGermplasm> importedGermplasm =
 				this.retrieveImportedGermplasm(workbook.getStudyDetails().getId(), Integer.valueOf(additionalParams.get("startingEntryNo")));
+		final Map<Integer, ImportedGermplasm> importedGermplasm =
+				Maps.uniqueIndex(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
+						new Function<ImportedGermplasm, Integer>() {
+
+							@Override
+							public Integer apply(ImportedGermplasm input) {
+								return input.getEntryId();
+							}
+
+						});
 
 		final Map<Integer, List<String>> csvData = designImportData.getRowDataMap();
 		final Map<Integer, StandardVariable> germplasmStandardVariables =

@@ -409,14 +409,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	/**
-	 * Creates the setting detail.
+	 * Creates the setting detail of given variable type
 	 *
-	 * @param id the id
+	 * @param id the variable id
+	 * @param alias the variable alias
+	 * @param variableType the variable type
 	 * @return the setting detail
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected SettingDetail createSettingDetail(final int id, final VariableType variableType) {
-
+	protected SettingDetail createSettingDetailWithVariableType(final int id, final String alias, final VariableType variableType) {
 		final Variable variable = this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, false, false);
 
 		final Property property = variable.getProperty();
@@ -426,7 +426,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		final Double minValue = variable.getMinValue() == null ? null : Double.parseDouble(variable.getMinValue());
 		final Double maxValue = variable.getMaxValue() == null ? null : Double.parseDouble(variable.getMaxValue());
 
-		final SettingVariable settingVariable = new SettingVariable(variable.getName(), variable.getDefinition(),
+		final SettingVariable settingVariable = new SettingVariable(alias, variable.getDefinition(),
 				variable.getProperty().getName(), scale.getName(), method.getName(), variableType.getRole().name(),
 				scale.getDataType().getName(), scale.getDataType().getId(), minValue, maxValue);
 

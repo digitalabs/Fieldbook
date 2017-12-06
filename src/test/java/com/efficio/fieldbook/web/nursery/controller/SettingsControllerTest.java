@@ -367,7 +367,7 @@ public class SettingsControllerTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.fieldbookService.getAllPossibleValuesFavorite(Mockito.anyInt(), Mockito.any(String.class), Mockito.anyBoolean())).thenReturn(valueReferenceList);
 
-		SettingDetail settingDetail = this.controller.createSettingDetail(variable.getId(), VariableType.SELECTION_METHOD);
+		SettingDetail settingDetail = this.controller.createSettingDetailWithVariableType(variable.getId(), "", VariableType.SELECTION_METHOD);
 		Assert.assertEquals("Error in Role for settingDetail", VariableType.SELECTION_METHOD.getRole().name(), settingDetail.getRole().name());
 		Assert.assertEquals("Error in Variable Type", VariableType.SELECTION_METHOD, settingDetail.getVariableType());
 		Assert.assertNull("Error in Value", settingDetail.getValue());

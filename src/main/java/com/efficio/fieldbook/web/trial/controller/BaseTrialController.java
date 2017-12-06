@@ -408,7 +408,7 @@ public abstract class BaseTrialController extends SettingsController {
 		for (final MeasurementVariable var : variatesList) {
 			if (var.getVariableType() == variableType) {
 
-				final SettingDetail detail = this.createSettingDetail(var.getTermId(), variableType);
+				final SettingDetail detail = this.createSettingDetailWithVariableType(var.getTermId(), var.getName(), variableType);
 
 				if (!isUsePrevious) {
 					detail.getVariable().setOperation(Operation.UPDATE);

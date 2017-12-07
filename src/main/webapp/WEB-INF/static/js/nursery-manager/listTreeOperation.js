@@ -78,7 +78,7 @@ var ListTreeOperation = {};
 			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 			$.ajax({
-				url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder?folderName=' + folderName + '&parentId=' + parentFolderId + '&programUUID=' + currentProgramId,
+				url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder?folderName=' + folderName + '&parentId=' + parentFolderId,
 				type: 'POST',
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader('X-Auth-Token', xAuthToken);
@@ -86,11 +86,8 @@ var ListTreeOperation = {};
 				error: function (data) {
 					if (data.status == 401) {
 						bmsAuth.handleReAuthentication();
-					} else if (data.status == 500) {
+					} else {
 						showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
-					} else if (data.status == 409) {
-						showErrorMessage('page-rename-message-modal', data.responseJSON.ERROR);
-
 					}
 				},
 				success: function() {
@@ -251,9 +248,7 @@ var ListTreeOperation = {};
 				error: function (data) {
 					if (data.status == 401) {
 						bmsAuth.handleReAuthentication();
-					} else if (data.status == 404 || data.status == 409) {
-						showErrorMessage('page-rename-message-modal', data.responseJSON.ERROR);
-					} else if (data.status == 500) {
+					} else {
 						showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
 					}
 				},
@@ -333,9 +328,7 @@ var ListTreeOperation = {};
 			error: function (data) {
 				if (data.status == 401) {
 					bmsAuth.handleReAuthentication();
-				} else if (data.status == 404 || data.status == 409) {
-					showErrorMessage('page-rename-message-modal', data.responseJSON.ERROR);
-				} else if (data.status == 500) {
+				} else {
 					showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
 				}
 			},

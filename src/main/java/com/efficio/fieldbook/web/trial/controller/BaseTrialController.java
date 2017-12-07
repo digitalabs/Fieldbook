@@ -23,6 +23,8 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
@@ -850,15 +852,8 @@ public abstract class BaseTrialController extends SettingsController {
 	protected void getTraitsAndSelectionVariates(List<MeasurementVariable> measurementDatasetVariables,List<MeasurementVariable> newMeasurementDatasetVariables, String listCsv) {
 
 		if (listCsv != null && !"".equalsIgnoreCase(listCsv)) {
-			// Create a map of traits from user selection (UI) so that trait's alias can be retrieved
-			final ImmutableMap<Integer, SettingDetail> traitsMap =
-					Maps.uniqueIndex(this.userSelection.getBaselineTraitsList(), new Function<SettingDetail, Integer>() {
-
-						@Override
-						public Integer apply(final SettingDetail setting) {
-							return setting.getVariable().getCvTermId();
-						}
-					});
+			// Create a map of traits and selection variates from user selection (UI) so their aliases can be retrieved
+			final ImmutableMap<Integer, SettingDetail> traitsMap = this.createMapOfTraitsAndSelectionVariatesFromUserSelection();
 			final StringTokenizer token = new StringTokenizer(listCsv, ",");
 			while (token.hasMoreTokens()) {
 				final int id = Integer.parseInt(token.nextToken());
@@ -881,5 +876,22 @@ public abstract class BaseTrialController extends SettingsController {
 				}
 			}
 		}
+	}
+
+	private ImmutableMap<Integer, SettingDetail> createMapOfTraitsAndSelectionVariatesFromUserSelection() {
+		final List<SettingDetail> variates = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(this.userSelection.getBaselineTraitsList())) {
+			variates.addAll(this.userSelection.getBaselineTraitsList());
+		}
+		if (CollectionUtils.isNotEmpty(this.userSelection.getSelectionVariates())) {
+			variates.addAll(this.userSelection.getSelectionVariates());
+		}
+		return Maps.uniqueIndex(variates, new Function<SettingDetail, Integer>() {
+
+			@Override
+			public Integer apply(final SettingDetail setting) {
+				return setting.getVariable().getCvTermId();
+			}
+		});
 	}
 }

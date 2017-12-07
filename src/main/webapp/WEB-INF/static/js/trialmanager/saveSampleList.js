@@ -105,11 +105,11 @@ var SaveSampleList = {};
 			error: function (data) {
 				if (data.status == 401) {
 					bmsAuth.handleReAuthentication();
-				} else if (data.status == 500) {
+				} else {
 					showErrorMessage('page-save-list-message-modal', data.responseJSON.errors[0].message);
-				} else if (data.status == 409) {
-					showErrorMessage('page-save-list-message-modal', data.responseJSON.ERROR);
-					$('#sampleListName').closest(".form-group").addClass("has-error");
+					if(data.responseJSON.errors[0].fieldNames == "ListName"){
+						$('#sampleListName').closest(".form-group").addClass("has-error");
+					}
 				}
 			},
 			success: function (response) {

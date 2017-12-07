@@ -13,6 +13,9 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -107,12 +110,28 @@ public class DesignImportValidator {
 	 */
 	protected void validateGermplasmEntriesShouldMatchTheGermplasmList(final Set<String> entryNumbers) throws DesignValidationException {
 
-		final List<ImportedGermplasm> importedGermplasmList =
-				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
-		if (importedGermplasmList.size() != entryNumbers.size()) {
+		final Map<Integer, ImportedGermplasm> importedGermplasm =
+				Maps.uniqueIndex(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
+						new Function<ImportedGermplasm, Integer>() {
+
+							@Override
+							public Integer apply(ImportedGermplasm input) {
+								return input.getEntryId();
+							}
+
+						});
+
+		if (importedGermplasm.size() != entryNumbers.size()) {
 			throw new DesignValidationException(this.messageSource
 					.getMessage("design.import.error.mismatch.count.of.germplasm.entries", null, Locale.ENGLISH)
-					.replace("{0}", String.valueOf(entryNumbers.size())).replace("{1}", String.valueOf(importedGermplasmList.size())));
+					.replace("{0}", String.valueOf(entryNumbers.size())).replace("{1}", String.valueOf(importedGermplasm.size())));
+		}
+
+		// Check if the entries in the imported design file match the entries in the current study.
+		for (String entryNumberString : entryNumbers) {
+			if (NumberUtils.isNumber(entryNumberString) && importedGermplasm.get(Integer.valueOf(entryNumberString)) == null) {
+				throw new DesignValidationException(this.messageSource.getMessage("design.import.error.mismatch.germplasm.entries", null, Locale.ENGLISH));
+			}
 		}
 	}
 

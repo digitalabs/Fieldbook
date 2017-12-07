@@ -79,6 +79,8 @@ public class DesignImportValidatorTest {
 
 		Mockito.doReturn("Error encountered entries {0} and listsize {1}").when(this.messageSource)
 				.getMessage("design.import.error.mismatch.count.of.germplasm.entries", null, Locale.ENGLISH);
+		Mockito.doReturn("entries do not match").when(this.messageSource)
+				.getMessage("design.import.error.mismatch.germplasm.entries", null, Locale.ENGLISH);
 	}
 
 	@Test
@@ -153,7 +155,8 @@ public class DesignImportValidatorTest {
 	public void testValidateGermplasmEntriesShouldMatchTheGermplasmList() {
 
 		final Set<String> entryNumbers = new HashSet<>();
-		for (int x = 1; x <= DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES; x++) {
+		int startingEntryNo = 1;
+		for (int x = startingEntryNo; x <= DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES; x++) {
 			entryNumbers.add(String.valueOf(x));
 		}
 
@@ -169,11 +172,13 @@ public class DesignImportValidatorTest {
 	}
 
 	@Test
-	public void testValidateGermplasmEntriesDoNotMatchTheGermplasmList() {
+	public void testvValidateGermplasmEntriesShouldMatchTheGermplasmListListSizeDoNotMatch() {
 
 		int wrongNumberOfEntries = DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + 5;
 		final Set<String> entryNumbers = new HashSet<>();
-		for (int x = 1; x <= wrongNumberOfEntries; x++) {
+
+		int startingEntryNo = 1;
+		for (int x = startingEntryNo; x <= wrongNumberOfEntries; x++) {
 			entryNumbers.add(String.valueOf(x));
 		}
 
@@ -184,6 +189,28 @@ public class DesignImportValidatorTest {
 		} catch (final DesignValidationException e) {
 
 			Assert.assertEquals(e.getMessage(), "Error encountered entries 7 and listsize 2");
+		}
+
+	}
+
+	@Test
+	public void testvValidateGermplasmEntriesShouldMatchTheGermplasmListEntriesDoNotMatch() {
+
+		int wrongNumberOfEntries = DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + 2;
+		final Set<String> entryNumbers = new HashSet<>();
+
+		int startingEntryNo = 3;
+		for (int x = startingEntryNo; x <= wrongNumberOfEntries; x++) {
+			entryNumbers.add(String.valueOf(x));
+		}
+
+		try {
+
+			this.designImportValidator.validateGermplasmEntriesShouldMatchTheGermplasmList(entryNumbers);
+
+		} catch (final DesignValidationException e) {
+
+			Assert.assertEquals(e.getMessage(), "entries do not match");
 		}
 
 	}

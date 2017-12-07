@@ -1,14 +1,13 @@
-
 package com.efficio.fieldbook.web.importdesign.validator;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
+import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import junit.framework.Assert;
-
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.ontology.api.OntologyScaleDataManager;
@@ -21,14 +20,11 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
-import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
-import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DesignImportValidatorTest {
@@ -59,23 +55,18 @@ public class DesignImportValidatorTest {
 		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
 				.getImportedGermplasmMainInfo();
 
-		final DesignHeaderItem trialInstanceHeaderItem =
-				DesignImportTestDataInitializer.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR, this.designImportData
-						.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
-		Mockito.doReturn(trialInstanceHeaderItem)
-				.when(this.designImportService)
-				.validateIfStandardVariableExists(
-						this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
-						"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
+		final DesignHeaderItem trialInstanceHeaderItem = DesignImportTestDataInitializer
+				.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR,
+						this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+		Mockito.doReturn(trialInstanceHeaderItem).when(this.designImportService).validateIfStandardVariableExists(
+				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
+				"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 
-		final DesignHeaderItem headerItem =
-				DesignImportTestDataInitializer.filterDesignHeaderItemsByTermId(TermId.ENTRY_NO, this.designImportData.getMappedHeaders()
-						.get(PhenotypicType.GERMPLASM));
-		Mockito.doReturn(headerItem)
-				.when(this.designImportService)
-				.validateIfStandardVariableExists(
-						this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.GERMPLASM),
-						"design.import.error.entry.no.is.required", TermId.ENTRY_NO);
+		final DesignHeaderItem headerItem = DesignImportTestDataInitializer
+				.filterDesignHeaderItemsByTermId(TermId.ENTRY_NO, this.designImportData.getMappedHeaders().get(PhenotypicType.GERMPLASM));
+		Mockito.doReturn(headerItem).when(this.designImportService).validateIfStandardVariableExists(
+				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.GERMPLASM),
+				"design.import.error.entry.no.is.required", TermId.ENTRY_NO);
 
 		Mockito.doReturn("Error encountered entries {0} and listsize {1}").when(this.messageSource)
 				.getMessage("design.import.error.mismatch.count.of.germplasm.entries", null, Locale.ENGLISH);
@@ -101,14 +92,12 @@ public class DesignImportValidatorTest {
 
 		try {
 
-			final DesignHeaderItem trialInstanceHeaderItem =
-					this.designImportService.validateIfStandardVariableExists(this.designImportData
-							.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT), "Error",
-							TermId.TRIAL_INSTANCE_FACTOR);
-			final DesignHeaderItem entryNoHeaderItem =
-					this.designImportService.validateIfStandardVariableExists(this.designImportData
-							.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.GERMPLASM), "Error",
-							TermId.ENTRY_NO);
+			final DesignHeaderItem trialInstanceHeaderItem = this.designImportService.validateIfStandardVariableExists(
+					this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
+					"Error", TermId.TRIAL_INSTANCE_FACTOR);
+			final DesignHeaderItem entryNoHeaderItem = this.designImportService.validateIfStandardVariableExists(
+					this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.GERMPLASM), "Error",
+					TermId.ENTRY_NO);
 
 			final Map<String, Map<Integer, List<String>>> data =
 					this.designImportService.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, this.designImportData.getRowDataMap());
@@ -125,12 +114,11 @@ public class DesignImportValidatorTest {
 	@Test
 	public void testValidateEntryNoMustBeUniquePerInstanceEntryNoIsNotUnique() {
 
-		final DesignHeaderItem trialInstanceHeaderItem =
-				DesignImportTestDataInitializer.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR, this.designImportData
-						.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
-		final DesignHeaderItem entryNoHeaderItem =
-				DesignImportTestDataInitializer.filterDesignHeaderItemsByTermId(TermId.ENTRY_NO, this.designImportData.getMappedHeaders()
-						.get(PhenotypicType.GERMPLASM));
+		final DesignHeaderItem trialInstanceHeaderItem = DesignImportTestDataInitializer
+				.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR,
+						this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+		final DesignHeaderItem entryNoHeaderItem = DesignImportTestDataInitializer
+				.filterDesignHeaderItemsByTermId(TermId.ENTRY_NO, this.designImportData.getMappedHeaders().get(PhenotypicType.GERMPLASM));
 
 		final Map<Integer, List<String>> csvData = this.designImportData.getRowDataMap();
 		csvData.get(1).set(entryNoHeaderItem.getColumnIndex(), "1");
@@ -155,7 +143,7 @@ public class DesignImportValidatorTest {
 	public void testValidateGermplasmEntriesShouldMatchTheGermplasmList() {
 
 		final Set<String> entryNumbers = new HashSet<>();
-		int startingEntryNo = 1;
+		final int startingEntryNo = 1;
 		for (int x = startingEntryNo; x <= DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES; x++) {
 			entryNumbers.add(String.valueOf(x));
 		}
@@ -174,10 +162,10 @@ public class DesignImportValidatorTest {
 	@Test
 	public void testvValidateGermplasmEntriesShouldMatchTheGermplasmListListSizeDoNotMatch() {
 
-		int wrongNumberOfEntries = DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + 5;
+		final int wrongNumberOfEntries = DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + 5;
 		final Set<String> entryNumbers = new HashSet<>();
 
-		int startingEntryNo = 1;
+		final int startingEntryNo = 1;
 		for (int x = startingEntryNo; x <= wrongNumberOfEntries; x++) {
 			entryNumbers.add(String.valueOf(x));
 		}
@@ -196,10 +184,10 @@ public class DesignImportValidatorTest {
 	@Test
 	public void testvValidateGermplasmEntriesShouldMatchTheGermplasmListEntriesDoNotMatch() {
 
-		int wrongNumberOfEntries = DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + 2;
+		final int wrongNumberOfEntries = DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + 2;
 		final Set<String> entryNumbers = new HashSet<>();
 
-		int startingEntryNo = 3;
+		final int startingEntryNo = 3;
 		for (int x = startingEntryNo; x <= wrongNumberOfEntries; x++) {
 			entryNumbers.add(String.valueOf(x));
 		}
@@ -218,17 +206,17 @@ public class DesignImportValidatorTest {
 	@Test
 	public void testValidateIfPlotNumberIsUnique() throws DesignValidationException {
 
-		final DesignHeaderItem trialInstanceHeaderItem =
-				this.designImportService.validateIfStandardVariableExists(this.designImportData
-						.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT), "Error",
-						TermId.TRIAL_INSTANCE_FACTOR);
+		final DesignHeaderItem trialInstanceHeaderItem = this.designImportService.validateIfStandardVariableExists(
+				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
+				"Error", TermId.TRIAL_INSTANCE_FACTOR);
 		final Map<String, Map<Integer, List<String>>> csvMap =
 				this.designImportService.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, this.designImportData.getRowDataMap());
 
 		try {
 
-			this.designImportValidator.validateIfPlotNumberIsUniquePerInstance(
-					this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN), csvMap);
+			this.designImportValidator
+					.validateIfPlotNumberIsUniquePerInstance(this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN),
+							csvMap);
 
 		} catch (final DesignValidationException e) {
 
@@ -240,12 +228,11 @@ public class DesignImportValidatorTest {
 	@Test
 	public void testValidateIfPlotNumberIsUniquePerInstance() {
 
-		final DesignHeaderItem trialInstanceHeaderItem =
-				DesignImportTestDataInitializer.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR, this.designImportData
-						.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
-		final DesignHeaderItem plotNoHeaderItem =
-				DesignImportTestDataInitializer.filterDesignHeaderItemsByTermId(TermId.PLOT_NO, this.designImportData.getMappedHeaders()
-						.get(PhenotypicType.TRIAL_DESIGN));
+		final DesignHeaderItem trialInstanceHeaderItem = DesignImportTestDataInitializer
+				.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR,
+						this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+		final DesignHeaderItem plotNoHeaderItem = DesignImportTestDataInitializer
+				.filterDesignHeaderItemsByTermId(TermId.PLOT_NO, this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN));
 
 		final Map<Integer, List<String>> csvData = this.designImportData.getRowDataMap();
 		csvData.get(0).set(plotNoHeaderItem.getColumnIndex(), "1");
@@ -257,8 +244,9 @@ public class DesignImportValidatorTest {
 
 		try {
 
-			this.designImportValidator.validateIfPlotNumberIsUniquePerInstance(
-					this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN), csvMap);
+			this.designImportValidator
+					.validateIfPlotNumberIsUniquePerInstance(this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN),
+							csvMap);
 
 			Assert.fail("The list shouldn't pass the validateIfPlotNumberIsUniquePerInstance test");
 
@@ -275,7 +263,8 @@ public class DesignImportValidatorTest {
 		try {
 			this.designImportValidator.validateColumnValues(designImportData.getRowDataMap(), mappedHeaders);
 		} catch (final DesignValidationException e) {
-			Assert.fail("Expecting that there is no exception thrown for the validation of test design import data with no invalid values.");
+			Assert.fail(
+					"Expecting that there is no exception thrown for the validation of test design import data with no invalid values.");
 		}
 	}
 

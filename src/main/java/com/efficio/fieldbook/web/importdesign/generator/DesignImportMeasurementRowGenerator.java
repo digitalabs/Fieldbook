@@ -1,12 +1,10 @@
-
 package com.efficio.fieldbook.web.importdesign.generator;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -23,12 +21,11 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DesignImportMeasurementRowGenerator {
 
@@ -66,11 +63,11 @@ public class DesignImportMeasurementRowGenerator {
 
 	/**
 	 * Create measurement row based on the values per row from the csv file.
-	 * 
+	 *
 	 * @param rowValues
 	 * @return returns measurement row based on the values per row from the csv file filtered from the number of trial instances in UI. If
-	 *         the trial instance value from the row is not included from the trial instances from the UI, this method will only returns
-	 *         empty class with empty data list.
+	 * the trial instance value from the row is not included from the trial instances from the UI, this method will only returns
+	 * empty class with empty data list.
 	 */
 	public MeasurementRow createMeasurementRow(final List<String> rowValues) {
 		LOG.debug("Design Import - Creating Measurement Row");
@@ -83,8 +80,8 @@ public class DesignImportMeasurementRowGenerator {
 		measurement.setDataList(dataList);
 
 		// only add record from file if the trial instance value within the row is selected/included in environment tab
-		if (this.trialInstancesFromUI.contains(rowValues.get(trialEnvironmentHeaders.get(TermId.TRIAL_INSTANCE_FACTOR.getId())
-				.getColumnIndex()))) {
+		if (this.trialInstancesFromUI
+				.contains(rowValues.get(trialEnvironmentHeaders.get(TermId.TRIAL_INSTANCE_FACTOR.getId()).getColumnIndex()))) {
 			dataList.addAll(this.createMeasurementRowDataList(rowValues));
 		}
 
@@ -182,8 +179,8 @@ public class DesignImportMeasurementRowGenerator {
 		final ImportedGermplasm germplasmEntry = importedGermplasm.get(entryNo);
 
 		if (germplasmStandardVariables.get(TermId.ENTRY_NO.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_NO.getId()), germplasmEntry.getEntryId()
-					.toString()));
+			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_NO.getId()),
+					germplasmEntry.getEntryId().toString()));
 		}
 		if (germplasmStandardVariables.get(TermId.GID.getId()) != null) {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.GID.getId()), germplasmEntry.getGid()));
@@ -195,18 +192,20 @@ public class DesignImportMeasurementRowGenerator {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.CROSS.getId()), germplasmEntry.getCross()));
 		}
 		if (germplasmStandardVariables.get(TermId.ENTRY_CODE.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_CODE.getId()),
-					germplasmEntry.getEntryCode()));
+			dataList.add(
+					this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_CODE.getId()), germplasmEntry.getEntryCode()));
 		}
 		if (germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()) != null && !hasEntryTypeColumnFromTheImport) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), germplasmEntry.getEntryTypeValue()));
+			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()),
+					germplasmEntry.getEntryTypeValue()));
 		}
 		if (germplasmStandardVariables.get(TermId.GERMPLASM_SOURCE.getId()) != null) {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.GERMPLASM_SOURCE.getId()),
 					germplasmEntry.getSource()));
 		}
 		if (germplasmStandardVariables.get(TermId.SEED_SOURCE.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.SEED_SOURCE.getId()), germplasmEntry.getSource()));
+			dataList.add(
+					this.createMeasurementData(germplasmStandardVariables.get(TermId.SEED_SOURCE.getId()), germplasmEntry.getSource()));
 		}
 		if (germplasmStandardVariables.get(TermId.PLOT_ID.getId()) != null) {
 			// This will initially create blank values for PLOT_ID but the generation of plot IDs will be handled during the saving of Workbook.
@@ -275,8 +274,9 @@ public class DesignImportMeasurementRowGenerator {
 			}
 		}
 
-		WorkbookUtil.addMeasurementDataToRowsIfNecessary(new ArrayList<MeasurementVariable>(temporaryList), measurements, true
-				, ontologyService, this.fieldbookService, contextUtil.getCurrentProgramUUID());
+		WorkbookUtil
+				.addMeasurementDataToRowsIfNecessary(new ArrayList<MeasurementVariable>(temporaryList), measurements, true, ontologyService,
+						this.fieldbookService, contextUtil.getCurrentProgramUUID());
 
 	}
 

@@ -419,6 +419,11 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	protected SettingDetail createSettingDetailWithVariableType(final int id, final String alias, final VariableType variableType) {
 		final Variable variable = this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, false, false);
 
+		String variableName = variable.getName();
+		if (alias != null && !alias.isEmpty()) {
+			variableName = alias;
+		} 
+		
 		final Property property = variable.getProperty();
 		final Scale scale = variable.getScale();
 		final org.generationcp.middleware.domain.ontology.Method method = variable.getMethod();
@@ -426,7 +431,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		final Double minValue = variable.getMinValue() == null ? null : Double.parseDouble(variable.getMinValue());
 		final Double maxValue = variable.getMaxValue() == null ? null : Double.parseDouble(variable.getMaxValue());
 
-		final SettingVariable settingVariable = new SettingVariable(alias, variable.getDefinition(),
+		final SettingVariable settingVariable = new SettingVariable(variableName, variable.getDefinition(),
 				variable.getProperty().getName(), scale.getName(), method.getName(), variableType.getRole().name(),
 				scale.getDataType().getName(), scale.getDataType().getId(), minValue, maxValue);
 

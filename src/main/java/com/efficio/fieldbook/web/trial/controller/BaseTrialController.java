@@ -852,7 +852,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 		if (listCsv != null && !"".equalsIgnoreCase(listCsv)) {
 			// Create a map of traits and selection variates from user selection (UI) so their aliases can be retrieved
-			final ImmutableMap<Integer, SettingDetail> traitsMap = this.createMapOfTraitsAndSelectionVariatesFromUserSelection();
+			final Map<Integer, SettingDetail> traitsMap = this.createMapOfTraitsAndSelectionVariatesFromUserSelection();
 			final StringTokenizer token = new StringTokenizer(listCsv, ",");
 			while (token.hasMoreTokens()) {
 				final int id = Integer.parseInt(token.nextToken());

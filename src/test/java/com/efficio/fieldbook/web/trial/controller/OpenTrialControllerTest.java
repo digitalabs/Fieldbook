@@ -70,6 +70,7 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.trial.TestDataHelper;
@@ -91,6 +92,10 @@ import com.google.common.collect.Maps;
 @RunWith(MockitoJUnitRunner.class)
 public class OpenTrialControllerTest {
 
+	private static final String VARIABLE_NAME_PREFIX = "Variable ";
+	private static final String VARIABLE_NAME = "Variable Name";
+	private static final String SELECTION_TRAIT = "BM_CODE_VTE";
+	private static final String TRAIT = "nEarsSel_Local";
 	private static final int NO_OF_TRIAL_INSTANCES = 3;
 	private static final int NO_OF_OBSERVATIONS = 5;
 	private static final int TRIAL_ID = 1;
@@ -100,7 +105,8 @@ public class OpenTrialControllerTest {
 	private static final int IBDB_USER_ID = 1;
 	private static final String PROGRAM_UUID = "68f0d114-5b5b-11e5-885d-feff819cdc9f";
 	public static final String TEST_TRIAL_NAME = "dummyTrial";
-	private static final int BM_CODE_VTE = 8252;
+	private static final int BM_CODE_VTE_ID = 8252;
+	private static final int N_EARS_SEL = 8253;
 	public static final String GERMPLASM_LIST_SIZE = "germplasmListSize";
 	public static final String GERMPLASM_CHECKS_SIZE = "germplasmChecksSize";
 
@@ -154,6 +160,8 @@ public class OpenTrialControllerTest {
 
 	@Mock
 	private SampleListService sampleListService;
+	
+	private Variable testVariable;
 
 	@Before
 	public void setUp() {
@@ -168,6 +176,7 @@ public class OpenTrialControllerTest {
 		Mockito.when(this.workbenchDataManager.getLastOpenedProjectAnyUser()).thenReturn(project);
 		Mockito.when(this.studyDataManager.getProject(1)).thenReturn(dmsProject);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(OpenTrialControllerTest.PROGRAM_UUID);
+		
 		final Project testProject = new Project();
 		testProject.setProjectId(1L);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
@@ -185,7 +194,9 @@ public class OpenTrialControllerTest {
 		final List<SampleListDTO> sampleListDTOs = new ArrayList<>();
 		Mockito.when(this.sampleListService.getSampleLists(Matchers.anyInt())).thenReturn(sampleListDTOs);
 
-
+		this.createTestVariable();
+		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class),
+				Matchers.anyBoolean(), Matchers.anyBoolean())).thenReturn(this.testVariable);
 	}
 
 	@Test
@@ -380,6 +391,10 @@ public class OpenTrialControllerTest {
 	private StandardVariable createStandardVariable(final Integer id) {
 		final StandardVariable standardVariable = new StandardVariable();
 		standardVariable.setId(id);
+		standardVariable.setProperty(new Term(1, "1", "1"));
+		standardVariable.setMethod(new Term(2, "2", "2"));
+		standardVariable.setScale(new Term(3, "3", "3"));
+		standardVariable.setDataType(new Term(4, "4", "4"));
 		return standardVariable;
 	}
 
@@ -870,35 +885,227 @@ public class OpenTrialControllerTest {
 	}
 
 	@Test
-	public void testPrepareMeasurementVariableTabInfo() {
+	public void testPrepareMeasurementVariableTabInfoForSelectionMethod() {
 		final List<MeasurementVariable> variatesList = this.createVariates();
 
-		final Variable variable = new Variable();
-		variable.setId(UnitTestDaoIDGenerator.generateId(Variable.class));
-		variable.setName("Variable Name");
-		variable.setMethod(TestDataHelper.createMethod());
-		variable.setProperty(TestDataHelper.createProperty());
-		variable.setScale(TestDataHelper.createScale());
-
-		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class),
-				Matchers.anyBoolean(), Matchers.anyBoolean())).thenReturn(variable);
-
+		final boolean isUsePrevious = false;
 		final TabInfo tabInfo = this.openTrialController.prepareMeasurementVariableTabInfo(variatesList,
-				VariableType.SELECTION_METHOD, false);
+				VariableType.SELECTION_METHOD, isUsePrevious);
 
-		Assert.assertEquals("Operation", Operation.UPDATE, tabInfo.getSettings().get(0).getVariable().getOperation());
-		Assert.assertEquals("Deletable", true, tabInfo.getSettings().get(0).isDeletable());
+		final List<SettingDetail> settings = tabInfo.getSettings();
+		Assert.assertEquals("Expecting only selection methods to be included.", 1, settings.size());
+		Assert.assertEquals("Expecting trait alias to be used in Setting Detail.", SELECTION_TRAIT, settings.get(0).getVariable().getName());
+		Assert.assertEquals("Operation should be UPDATE", Operation.UPDATE, settings.get(0).getVariable().getOperation());
+		Assert.assertEquals("Setting Detail should be deleteable", true, settings.get(0).isDeletable());
+		Mockito.verify(this.userSelection).setSelectionVariates(settings);
+		Mockito.verify(this.userSelection, Mockito.never()).setBaselineTraitsList(Mockito.anyListOf(SettingDetail.class));
+	}
+	
+	@Test
+	public void testPrepareMeasurementVariableTabInfoForTrait() {
+		final List<MeasurementVariable> variatesList = this.createVariates();
+
+		final boolean isUsePrevious = false;
+		final TabInfo tabInfo = this.openTrialController.prepareMeasurementVariableTabInfo(variatesList,
+				VariableType.TRAIT, isUsePrevious);
+
+		final List<SettingDetail> settings = tabInfo.getSettings();
+		Assert.assertEquals("Expecting only traits to be included.", 1, settings.size());
+		Assert.assertEquals("Expecting trait alias to be used in Setting Detail.", TRAIT, settings.get(0).getVariable().getName());
+		Assert.assertEquals("Operation should be UPDATE", Operation.UPDATE, settings.get(0).getVariable().getOperation());
+		Assert.assertEquals("Setting Detail should be deleteable", true, settings.get(0).isDeletable());
+		Mockito.verify(this.userSelection).setBaselineTraitsList(settings);
+		Mockito.verify(this.userSelection, Mockito.never()).setSelectionVariates(Mockito.anyListOf(SettingDetail.class));
+	}
+	
+	@Test
+	public void testPrepareMeasurementVariableTabInfoDoUsePrevious() {
+		final List<MeasurementVariable> variatesList = this.createVariates();
+
+		final boolean isUsePrevious = true;
+		final TabInfo tabInfo = this.openTrialController.prepareMeasurementVariableTabInfo(variatesList,
+				VariableType.TRAIT, isUsePrevious);
+
+		final List<SettingDetail> settings = tabInfo.getSettings();
+		Assert.assertEquals("Expecting only traits to be included.", 1, settings.size());
+		Assert.assertEquals("Expecting trait alias to be used in Setting Detail.", TRAIT, settings.get(0).getVariable().getName());
+		Assert.assertEquals("Operation should be ADD", Operation.ADD, settings.get(0).getVariable().getOperation());
+		Assert.assertEquals("Setting Detail should be deleteable", true, settings.get(0).isDeletable());
+	}
+	
+	@Test
+	public void testGetTraitsAndSelectionVariatesWhenTraitIsAdded() {
+		final List<SettingDetail> settings = Lists.newArrayList(this.createSettingDetail(N_EARS_SEL, TRAIT));
+		final List<MeasurementVariable> newVariables = new ArrayList<>();
+		final String idList = String.valueOf(N_EARS_SEL);
+		Mockito.when(this.userSelection.getBaselineTraitsList()).thenReturn(settings);
+		
+		final StandardVariable standardVariable = this.createStandardVariable(N_EARS_SEL);
+		standardVariable.setName(VARIABLE_NAME_PREFIX + N_EARS_SEL);
+		Mockito.doReturn(standardVariable).when(this.fieldbookMiddlewareService)
+				.getStandardVariable(N_EARS_SEL, OpenTrialControllerTest.PROGRAM_UUID);
+
+		this.openTrialController.getTraitsAndSelectionVariates(new ArrayList<MeasurementVariable>(), newVariables, idList);
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).getStandardVariable(Mockito.anyInt(), Mockito.anyString());
+		// Getting of traits called twice because of null checking
+		Mockito.verify(this.userSelection, Mockito.times(2)).getBaselineTraitsList();
+		Mockito.verify(this.userSelection, Mockito.times(1)).getSelectionVariates();
+		// Verify that trait was added to list of new variables and the alias from Setting Detail was used not the standard name
+		Assert.assertEquals(1, newVariables.size());
+		Assert.assertEquals(TRAIT, newVariables.get(0).getName());
+		Assert.assertEquals(PhenotypicType.VARIATE, newVariables.get(0).getRole());
+	}
+	
+	@Test
+	public void testGetTraitsAndSelectionVariatesWhenTraitIsAddedButNotInUserSelection() {
+		final List<MeasurementVariable> newVariables = new ArrayList<>();
+		final String idList = String.valueOf(N_EARS_SEL);
+		
+		final StandardVariable standardVariable = this.createStandardVariable(N_EARS_SEL);
+		standardVariable.setName(VARIABLE_NAME_PREFIX + N_EARS_SEL);
+		Mockito.doReturn(standardVariable).when(this.fieldbookMiddlewareService)
+				.getStandardVariable(N_EARS_SEL, OpenTrialControllerTest.PROGRAM_UUID);
+
+		this.openTrialController.getTraitsAndSelectionVariates(new ArrayList<MeasurementVariable>(), newVariables, idList);
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).getStandardVariable(Mockito.anyInt(), Mockito.anyString());
+		Mockito.verify(this.userSelection, Mockito.times(1)).getBaselineTraitsList();
+		Mockito.verify(this.userSelection, Mockito.times(1)).getSelectionVariates();
+		// Verify that trait was added to list of new variables and the standard name was used
+		Assert.assertEquals(1, newVariables.size());
+		Assert.assertEquals(VARIABLE_NAME_PREFIX + N_EARS_SEL, newVariables.get(0).getName());
+		Assert.assertEquals(PhenotypicType.VARIATE, newVariables.get(0).getRole());
+	}
+	
+	@Test
+	public void testGetTraitsAndSelectionVariatesWhenSelectionMethodIsAdded() {
+		final List<SettingDetail> settings = Lists.newArrayList(this.createSettingDetail(BM_CODE_VTE_ID, SELECTION_TRAIT));
+		final List<MeasurementVariable> newVariables = new ArrayList<>();
+		final String idList = String.valueOf(BM_CODE_VTE_ID);
+		Mockito.when(this.userSelection.getSelectionVariates()).thenReturn(settings);
+		
+		final StandardVariable standardVariable = this.createStandardVariable(BM_CODE_VTE_ID);
+		standardVariable.setName(VARIABLE_NAME_PREFIX + BM_CODE_VTE_ID);
+		Mockito.doReturn(standardVariable).when(this.fieldbookMiddlewareService)
+				.getStandardVariable(BM_CODE_VTE_ID, OpenTrialControllerTest.PROGRAM_UUID);
+
+		this.openTrialController.getTraitsAndSelectionVariates(new ArrayList<MeasurementVariable>(), newVariables, idList);
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).getStandardVariable(Mockito.anyInt(), Mockito.anyString());
+		// Getting of selection methods called twice because of null checking
+		Mockito.verify(this.userSelection, Mockito.times(1)).getBaselineTraitsList();
+		Mockito.verify(this.userSelection, Mockito.times(2)).getSelectionVariates();
+		// Verify that selection method was added to list of new variables and the alias from Setting Detail was used not the standard name
+		Assert.assertEquals(1, newVariables.size());
+		Assert.assertEquals(SELECTION_TRAIT, newVariables.get(0).getName());
+		Assert.assertEquals(PhenotypicType.VARIATE, newVariables.get(0).getRole());
+	}
+	
+	@Test
+	public void testGetTraitsAndSelectionVariatesWhenSelectionMethodIsAddedButNotInUserSelection() {
+		final List<MeasurementVariable> newVariables = new ArrayList<>();
+		final String idList = String.valueOf(BM_CODE_VTE_ID);
+		
+		final StandardVariable standardVariable = this.createStandardVariable(BM_CODE_VTE_ID);
+		standardVariable.setName(VARIABLE_NAME_PREFIX + BM_CODE_VTE_ID);
+		Mockito.doReturn(standardVariable).when(this.fieldbookMiddlewareService)
+				.getStandardVariable(BM_CODE_VTE_ID, OpenTrialControllerTest.PROGRAM_UUID);
+
+		this.openTrialController.getTraitsAndSelectionVariates(new ArrayList<MeasurementVariable>(), newVariables, idList);
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).getStandardVariable(Mockito.anyInt(), Mockito.anyString());
+		Mockito.verify(this.userSelection, Mockito.times(1)).getBaselineTraitsList();
+		Mockito.verify(this.userSelection, Mockito.times(1)).getSelectionVariates();
+		// Verify that selection method was added to list of new variables and the standard name was used
+		Assert.assertEquals(1, newVariables.size());
+		Assert.assertEquals(VARIABLE_NAME_PREFIX + BM_CODE_VTE_ID, newVariables.get(0).getName());
+		Assert.assertEquals(PhenotypicType.VARIATE, newVariables.get(0).getRole());
+	}
+	
+	@Test
+	public void testGetTraitsAndSelectionVariatesWhenTraitAndSelectionMethodAdded() {
+		final List<SettingDetail> traitSettings = Lists.newArrayList(this.createSettingDetail(BM_CODE_VTE_ID, SELECTION_TRAIT));
+		Mockito.when(this.userSelection.getSelectionVariates()).thenReturn(traitSettings);
+		final List<SettingDetail> selectionMethodSettings = Lists.newArrayList(this.createSettingDetail(N_EARS_SEL, TRAIT));
+		Mockito.when(this.userSelection.getBaselineTraitsList()).thenReturn(selectionMethodSettings);
+		final List<MeasurementVariable> newVariables = new ArrayList<>();
+		final String idList =  BM_CODE_VTE_ID + "," + N_EARS_SEL;
+		
+		final StandardVariable standardVariable1 = this.createStandardVariable(BM_CODE_VTE_ID);
+		standardVariable1.setName(VARIABLE_NAME_PREFIX + BM_CODE_VTE_ID);
+		Mockito.doReturn(standardVariable1).when(this.fieldbookMiddlewareService)
+				.getStandardVariable(BM_CODE_VTE_ID, OpenTrialControllerTest.PROGRAM_UUID);
+		final StandardVariable standardVariable2 = this.createStandardVariable(N_EARS_SEL);
+		standardVariable2.setName(VARIABLE_NAME_PREFIX + N_EARS_SEL);
+		Mockito.doReturn(standardVariable2).when(this.fieldbookMiddlewareService)
+				.getStandardVariable(N_EARS_SEL, OpenTrialControllerTest.PROGRAM_UUID);
+
+		this.openTrialController.getTraitsAndSelectionVariates(new ArrayList<MeasurementVariable>(), newVariables, idList);
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(2)).getStandardVariable(Mockito.anyInt(), Mockito.anyString());
+		// Getting of trait and selection methods called twice because of null checking
+		Mockito.verify(this.userSelection, Mockito.times(2)).getBaselineTraitsList();
+		Mockito.verify(this.userSelection, Mockito.times(2)).getSelectionVariates();
+		// Verify that trait and selection method was added to list of new variables and the alias from Setting Detail was used not the
+		// standard name
+		Assert.assertEquals(2, newVariables.size());
+		final MeasurementVariable measurementVariable1 = newVariables.get(0);
+		Assert.assertEquals(BM_CODE_VTE_ID, measurementVariable1.getTermId());
+		Assert.assertEquals(SELECTION_TRAIT, measurementVariable1.getName());
+		Assert.assertEquals(PhenotypicType.VARIATE, measurementVariable1.getRole());
+		final MeasurementVariable measurementVariable2 = newVariables.get(1);
+		Assert.assertEquals(N_EARS_SEL, measurementVariable2.getTermId());
+		Assert.assertEquals(TRAIT, measurementVariable2.getName());
+		Assert.assertEquals(PhenotypicType.VARIATE, measurementVariable2.getRole());
+	}
+	
+	@Test
+	public void testGetTraitsAndSelectionVariatesWhenIdListCsvIsNullOrEmpty() {
+		final List<MeasurementVariable> newVariables = new ArrayList<>();
+		
+		this.openTrialController.getTraitsAndSelectionVariates(new ArrayList<MeasurementVariable>(), newVariables, "");
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.never()).getStandardVariable(Mockito.anyInt(), Mockito.anyString());
+		Mockito.verify(this.userSelection, Mockito.never()).getBaselineTraitsList();
+		Mockito.verify(this.userSelection, Mockito.never()).getSelectionVariates();
+		Assert.assertTrue(newVariables.isEmpty());
+		
+		this.openTrialController.getTraitsAndSelectionVariates(new ArrayList<MeasurementVariable>(), newVariables, null);
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.never()).getStandardVariable(Mockito.anyInt(), Mockito.anyString());
+		Mockito.verify(this.userSelection, Mockito.never()).getBaselineTraitsList();
+		Mockito.verify(this.userSelection, Mockito.never()).getSelectionVariates();
+		Assert.assertTrue(newVariables.isEmpty());
+	}
+	
+	@Test
+	public void testGetTraitsAndSelectionVariatesWhenAllTraitsAlreadyInWorkbook() {
+		final List<MeasurementVariable> variablesList = this.createVariates();
+		final List<MeasurementVariable> newVariables = new ArrayList<>();
+		final String idList = BM_CODE_VTE_ID + "," + N_EARS_SEL;
+		
+		this.openTrialController.getTraitsAndSelectionVariates(variablesList, newVariables, idList);
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.never()).getStandardVariable(Mockito.anyInt(), Mockito.anyString());
+		Mockito.verify(this.userSelection, Mockito.times(1)).getBaselineTraitsList();
+		Mockito.verify(this.userSelection, Mockito.times(1)).getSelectionVariates();
+		// Verify that existing variables are reused
+		Assert.assertEquals(variablesList, newVariables);
+	}
+	
+	private void createTestVariable() {
+		this.testVariable = new Variable();
+		this.testVariable.setId(UnitTestDaoIDGenerator.generateId(Variable.class));
+		this.testVariable.setName(VARIABLE_NAME);
+		this.testVariable.setMethod(TestDataHelper.createMethod());
+		this.testVariable.setProperty(TestDataHelper.createProperty());
+		this.testVariable.setScale(TestDataHelper.createScale());
 	}
 
 	private List<MeasurementVariable> createVariates() {
 		final List<MeasurementVariable> variables = new ArrayList<>();
-		variables.add(this.createMeasurementVariable(OpenTrialControllerTest.BM_CODE_VTE, "BM_CODE_VTE",
-				"Breeding Method", "BMETH_CODE", "Observed", "VARIATE"));
+		variables.add(this.createMeasurementVariable(OpenTrialControllerTest.BM_CODE_VTE_ID, SELECTION_TRAIT,
+				"Breeding Method", "BMETH_CODE", "Observed", "VARIATE", VariableType.SELECTION_METHOD));
+		variables.add(this.createMeasurementVariable(OpenTrialControllerTest.N_EARS_SEL, TRAIT,
+				"Number of Ears", "Number", "Selected", "VARIATE", VariableType.TRAIT));
 		return variables;
 	}
 
 	private MeasurementVariable createMeasurementVariable(final int termId, final String name, final String property,
-			final String scale, final String method, final String label) {
+			final String scale, final String method, final String label, final VariableType variableType) {
 		final MeasurementVariable measurementVariable = new MeasurementVariable();
 		measurementVariable.setTermId(termId);
 		measurementVariable.setName(name);
@@ -906,9 +1113,19 @@ public class OpenTrialControllerTest {
 		measurementVariable.setProperty(property);
 		measurementVariable.setScale(scale);
 		measurementVariable.setMethod(method);
-		measurementVariable.setVariableType(VariableType.SELECTION_METHOD);
-		measurementVariable.setRole(VariableType.SELECTION_METHOD.getRole());
+		measurementVariable.setVariableType(variableType);
+		measurementVariable.setRole(variableType.getRole());
 		return measurementVariable;
+	}
+	
+	private SettingDetail createSettingDetail(final Integer id, final String name) {
+        final SettingDetail settingDetail = new SettingDetail();
+        SettingVariable settingVariable = new SettingVariable();
+        settingVariable.setCvTermId(id);
+        settingVariable.setName(name);
+        settingDetail.setVariable(settingVariable);
+        
+        return settingDetail;
 	}
 
 	@Test

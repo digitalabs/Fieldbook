@@ -78,7 +78,7 @@ var ListTreeOperation = {};
 			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 			$.ajax({
-				url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder?folderName=' + folderName + '&parentId=' + parentFolderId,
+				url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder?folderName=' + folderName + '&parentId=' + parentFolderId + '&programUUID=' + currentProgramId,
 				type: 'POST',
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader('X-Auth-Token', xAuthToken);

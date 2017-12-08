@@ -103,7 +103,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	@Resource
 	protected OntologyService ontologyService;
 
-
 	/**
 	 * Checks if the measurement table has user input data for a particular variable id
 	 *
@@ -333,13 +332,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		final StringTokenizer token = new StringTokenizer(requiredFields, ",");
 		int ctr = 0;
 
-			while (token.hasMoreTokens()) {
-				final String s = token.nextToken();
-				// FIXME BMS-4397
-				if(!DESCRIPTION.equals(s)) {
-					defaults.add(this.createSettingDetail(Integer.valueOf(s), requiredVariablesLabel.get(ctr), role));
-					ctr++;
-				}
+		while (token.hasMoreTokens()) {
+			final String s = token.nextToken();
+			// FIXME BMS-4397
+			if (!SettingsController.DESCRIPTION.equals(s)) {
+				defaults.add(this.createSettingDetail(Integer.valueOf(s), requiredVariablesLabel.get(ctr), role));
+				ctr++;
+			}
 		}
 		return defaults;
 	}
@@ -424,8 +423,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		String variableName = variable.getName();
 		if (alias != null && !alias.isEmpty()) {
 			variableName = alias;
-		} 
-		
+		}
+
 		final Property property = variable.getProperty();
 		final Scale scale = variable.getScale();
 		final org.generationcp.middleware.domain.ontology.Method method = variable.getMethod();
@@ -531,13 +530,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Creates the study details.
-	 *  @param workbook the workbook
+	 *
+	 * @param workbook the workbook
 	 * @param conditions the conditions
 	 * @param folderId the folder id
 	 * @param description
 	 */
 	public void createStudyDetails(final Workbook workbook, final List<SettingDetail> conditions, final Integer folderId,
-		final Integer studyId, final String description) {
+			final Integer studyId, final String description) {
 		if (workbook.getStudyDetails() == null) {
 			workbook.setStudyDetails(new StudyDetails());
 		}
@@ -926,7 +926,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		while (token.hasMoreTokens()) {
 			final String s = token.nextToken();
 			// FIXME BMS-4397
-			if(!DESCRIPTION.equals(s)) {
+			if (!SettingsController.DESCRIPTION.equals(s)) {
 				final Integer termId = Integer.valueOf(s);
 				final boolean isFound = this.searchAndSetValuesOfSpecialVariables(nurseryLevelConditions, termId, settingDetails, form);
 				if (!isFound) {
@@ -1012,7 +1012,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			}
 			this.userSelection.getDeletedPlotLevelList().add(newSetting);
 		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
-			addNewSettingToDeletedBaselineTraits(newSetting);
+			this.addNewSettingToDeletedBaselineTraits(newSetting);
 		} else if (mode == VariableType.NURSERY_CONDITION.getId() || mode == VariableType.TRIAL_CONDITION.getId()) {
 			if (this.userSelection.getDeletedNurseryConditions() == null) {
 				this.userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());

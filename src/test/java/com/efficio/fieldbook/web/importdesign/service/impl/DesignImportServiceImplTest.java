@@ -192,12 +192,86 @@ public class DesignImportServiceImplTest {
 
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
-		final List<MeasurementRow> measurements = this.service
-				.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
+		final List<MeasurementRow> measurements =
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
 
 		Assert.assertEquals(
 				"The first trial instance must only have " + DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations.",
 				DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, measurements.size());
+
+	}
+
+	@Test
+	public void testGenerateDesignWithCustomPlotNo() throws DesignValidationException {
+
+		int startingEntryNo = 1;
+		int startingPlotNo = 12;
+
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
+
+		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
+				.getImportedGermplasmMainInfo();
+
+		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
+
+		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
+
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(startingEntryNo, startingPlotNo);
+
+		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, designImportData, environmentData, true,
+				this.createAdditionalParamsMap(startingEntryNo, startingPlotNo));
+
+		Assert.assertEquals(
+				"The first trial instance must only have " + DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations.",
+				DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, measurements.size());
+
+		// Verify that PLOT_NO column in measurement rows starts with the specified starting plotNo
+		for (final MeasurementRow measurementRow : measurements) {
+			Assert.assertEquals(String.valueOf(startingPlotNo++), measurementRow.getMeasurementDataValue(TermId.PLOT_NO.getId()));
+		}
+
+		// Verify that the ENTRY_NO column in measurement rows starts with the specified starting entry no
+		for (final MeasurementRow measurementRow : measurements) {
+			Assert.assertEquals(String.valueOf(startingEntryNo++), measurementRow.getMeasurementDataValue(TermId.ENTRY_NO.getId()));
+		}
+
+	}
+
+	@Test
+	public void testGenerateDesignWithCustomEntryNo() throws DesignValidationException {
+
+		int startingEntryNo = 10;
+		int startingPlotNo = 1;
+
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
+
+		final ImportedGermplasmMainInfo importedGermplasmMainInfo =
+				ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo(startingEntryNo);
+
+		Mockito.doReturn(importedGermplasmMainInfo).when(this.userSelection).getImportedGermplasmMainInfo();
+
+		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
+
+		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
+
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(startingEntryNo, startingPlotNo);
+
+		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, designImportData, environmentData, true,
+				this.createAdditionalParamsMap(startingEntryNo, startingPlotNo));
+
+		Assert.assertEquals(
+				"The first trial instance must only have " + DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations.",
+				DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, measurements.size());
+
+		// Verify that the PLOT_NO column in measurement rows starts with the specified starting plotNo
+		for (final MeasurementRow measurementRow : measurements) {
+			Assert.assertEquals(String.valueOf(startingPlotNo++), measurementRow.getMeasurementDataValue(TermId.PLOT_NO.getId()));
+		}
+
+		// Verify that the ENTRY_NO column in measurement rows starts with the specified starting entry no
+		for (final MeasurementRow measurementRow : measurements) {
+			Assert.assertEquals(String.valueOf(startingEntryNo++), measurementRow.getMeasurementDataValue(TermId.ENTRY_NO.getId()));
+		}
 
 	}
 
@@ -215,8 +289,8 @@ public class DesignImportServiceImplTest {
 
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
-		final List<MeasurementRow> measurements = this.service
-				.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
+		final List<MeasurementRow> measurements =
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
 
 		// Not including the header row from the count of number of rows from the csv file
 		final int expectedNumberOfMeasurements = this.designImportData.getRowDataMap().size() - 1;
@@ -241,8 +315,8 @@ public class DesignImportServiceImplTest {
 		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
-		final List<MeasurementRow> measurements = this.service
-				.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
+		final List<MeasurementRow> measurements =
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
 
 		Assert.assertEquals("Expecting that the number of measurement rows generated for nursery is "
 						+ DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations but returned " + measurements.size() + " instead.",

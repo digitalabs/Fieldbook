@@ -694,69 +694,6 @@ public class OpenTrialControllerTest {
 	}
 
 	@Test
-	public void testPrepareExperimentalDesignTabInfo_E30Rep2Block65Ind() {
-		final String exptDesignSourceValue = "E30-Rep2-Block6-5Ind.csv";
-		final String nRepValue = "2";
-		final String rMapValue = null;
-		final Integer replicationsArrangement = null;
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
-				OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
-		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
-				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue);
-		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
-		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be Alpha Lattice using preset E30-Rep2-Block6-5Ind", 5, data.getDesignType().intValue());
-		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
-		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
-		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
-		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
-				data.getReplicationsArrangement());
-		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
-	}
-
-	@Test
-	public void testPrepareExperimentalDesignTabInfo_E30Rep3Block65Ind() {
-		final String exptDesignSourceValue = "E30-Rep3-Block6-5Ind.csv";
-		final String nRepValue = "3";
-		final String rMapValue = null;
-		final Integer replicationsArrangement = null;
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
-				OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
-		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
-				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue);
-		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
-		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be Alpha Lattice using preset E30-Rep3-Block6-5Ind", 6, data.getDesignType().intValue());
-		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
-		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
-		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
-		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
-				data.getReplicationsArrangement());
-		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
-	}
-
-	@Test
-	public void testPrepareExperimentalDesignTabInfo_E50Rep2Block510Ind() {
-		final String exptDesignSourceValue = "E50-Rep2-Block5-10Ind.csv";
-		final String nRepValue = "2";
-		final String rMapValue = null;
-		final Integer replicationsArrangement = null;
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
-				OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
-		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
-				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue);
-		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
-		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be Alpha Lattice using preset E50-Rep2-Block5-10Ind", 7, data.getDesignType().intValue());
-		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
-		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
-		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
-		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
-				data.getReplicationsArrangement());
-		Assert.assertEquals("Block size should be 3", "3", data.getBlockSize());
-	}
-
-	@Test
 	public void testPrepareExperimentalDesignTabInfo_RRCD() {
 		final String exptDesignSourceValue = null;
 		final String nRepValue = "5";

@@ -2,13 +2,11 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import com.efficio.fieldbook.service.FieldbookServiceImpl;
-import junit.framework.Assert;
 
 import org.generationcp.middleware.ContextHolder;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -32,11 +30,13 @@ import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.ui.ExtendedModelMap;
 
+import com.efficio.fieldbook.service.FieldbookServiceImpl;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -45,8 +45,18 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
+import junit.framework.Assert;
+
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsControllerTest {
+
+	private static final String TRAIT_DESCRIPTION = "Ears Selected";
+
+	private static final String TRAIT_NAME = "nEarsSel";
+
+	private Variable testVariable;
+
+	private ValueReference testValueReference;
 
 	/**
 	 * Class under test (SettingsController) is an abstract class so using a dummy impl to invoke methods for testing.
@@ -70,22 +80,30 @@ public class SettingsControllerTest {
 	@Mock
 	private FieldbookServiceImpl fieldbookService;
 
-	private String programUUID = UUID.randomUUID().toString();
+	private final String programUUID = UUID.randomUUID().toString();
 
 	@Before
 	public void setUp() {
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(this.programUUID);
-		controller.setContextUtil(this.contextUtil);
-		controller.setVariableDataManager(this.variableDataManager);
-		controller.setFieldbookService(this.fieldbookService);
+		this.controller.setContextUtil(this.contextUtil);
+		this.controller.setVariableDataManager(this.variableDataManager);
+		this.controller.setFieldbookService(this.fieldbookService);
+
+		this.createTestVariable();
+		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class), Matchers.anyBoolean(),
+				Matchers.anyBoolean())).thenReturn(this.testVariable);
+		Mockito.when(this.fieldbookService.getAllPossibleValues(Matchers.anyInt())).thenReturn(Arrays.asList(this.testValueReference));
+		Mockito.when(
+				this.fieldbookService.getAllPossibleValuesFavorite(Matchers.anyInt(), Matchers.any(String.class), Matchers.anyBoolean()))
+				.thenReturn(Arrays.asList(this.testValueReference));
 	}
 
 	@Test
 	public void testGetCheckVariables() {
-		List<SettingDetail> nurseryLevelConditions = this.createSettingDetailVariables();
-		CreateNurseryForm form = new CreateNurseryForm();
+		final List<SettingDetail> nurseryLevelConditions = this.createSettingDetailVariables();
+		final CreateNurseryForm form = new CreateNurseryForm();
 
-		List<SettingDetail> checkVariables = this.controller.getCheckVariables(nurseryLevelConditions, form);
+		final List<SettingDetail> checkVariables = this.controller.getCheckVariables(nurseryLevelConditions, form);
 
 		Assert.assertTrue("Expected only check variables but the list has non check variables as well.",
 				WorkbookTestUtil.areDetailsFilteredVariables(checkVariables, AppConstants.CHECK_VARIABLES.getString()));
@@ -93,10 +111,10 @@ public class SettingsControllerTest {
 
 	@Test
 	public void testGetBasicDetails() {
-		List<SettingDetail> nurseryLevelConditions = this.createSettingDetailVariables();
-		CreateNurseryForm form = new CreateNurseryForm();
+		final List<SettingDetail> nurseryLevelConditions = this.createSettingDetailVariables();
+		final CreateNurseryForm form = new CreateNurseryForm();
 
-		List<SettingDetail> basicDetails =
+		final List<SettingDetail> basicDetails =
 				this.controller.getSettingDetailsOfSection(nurseryLevelConditions, form, AppConstants.FIXED_NURSERY_VARIABLES.getString());
 
 		Assert.assertTrue("Expected only basic detail variables but the list has non basic detail variables as well.",
@@ -105,18 +123,18 @@ public class SettingsControllerTest {
 
 	@Test
 	public void testHasMeasurementDataEnteredGivenAListOfMeasurementRowsWithData() {
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
 
-		List<MeasurementRow> measurementRowList = workbook.getObservations();
+		final List<MeasurementRow> measurementRowList = workbook.getObservations();
 
 		Assert.assertTrue(SettingsController.hasMeasurementDataEntered(WorkbookDataUtil.CHALK_PCT_ID, measurementRowList));
 	}
 
 	@Test
 	public void testHasMeasurementDataEnteredGivenAListOfMeasurementRowsWithoutData() {
-		List<MeasurementRow> measurementRowList = new ArrayList<>();
-		List<MeasurementData> dataList = new ArrayList<>();
-		MeasurementRow measurementRow = new MeasurementRow();
+		final List<MeasurementRow> measurementRowList = new ArrayList<>();
+		final List<MeasurementData> dataList = new ArrayList<>();
+		final MeasurementRow measurementRow = new MeasurementRow();
 		dataList.add(this.getSampleMeasurementData(1, "Sample Data"));
 		measurementRow.setDataList(dataList);
 		measurementRowList.add(measurementRow);
@@ -127,46 +145,46 @@ public class SettingsControllerTest {
 
 	@Test
 	public void testHasMeasurementDataEnteredForVariablesWithAtLeast1WithData() {
-		EditNurseryController editNurseryController = new EditNurseryController();
-		List<Integer> variableIds = new ArrayList<>();
+		final EditNurseryController editNurseryController = new EditNurseryController();
+		final List<Integer> variableIds = new ArrayList<>();
 		variableIds.add(1);
 		variableIds.add(2);
-		UserSelection userSelection = new UserSelection();
-		List<MeasurementRow> measurementRowList = new ArrayList<>();
-		List<MeasurementData> dataList = new ArrayList<>();
-		MeasurementRow measurementRow = new MeasurementRow();
+		final UserSelection userSelection = new UserSelection();
+		final List<MeasurementRow> measurementRowList = new ArrayList<>();
+		final List<MeasurementData> dataList = new ArrayList<>();
+		final MeasurementRow measurementRow = new MeasurementRow();
 		dataList.add(this.getSampleMeasurementData(1, "Sample Data"));
 		dataList.add(this.getSampleMeasurementData(2, ""));
 		measurementRow.setDataList(dataList);
 		measurementRowList.add(measurementRow);
 		userSelection.setMeasurementRowList(measurementRowList);
-		boolean hasMeasurementData = editNurseryController.hasMeasurementDataEnteredForVariables(variableIds, userSelection);
+		final boolean hasMeasurementData = editNurseryController.hasMeasurementDataEnteredForVariables(variableIds, userSelection);
 		Assert.assertTrue("Should return true since there is measuredData", hasMeasurementData);
 	}
 
 	@Test
 	public void testHasMeasurementDataEnteredForVariablesWithNoData() {
-		EditNurseryController editNurseryController = new EditNurseryController();
-		List<Integer> variableIds = new ArrayList<>();
+		final EditNurseryController editNurseryController = new EditNurseryController();
+		final List<Integer> variableIds = new ArrayList<>();
 		variableIds.add(1);
 		variableIds.add(2);
-		UserSelection userSelection = new UserSelection();
-		List<MeasurementRow> measurementRowList = new ArrayList<>();
-		List<MeasurementData> dataList = new ArrayList<>();
-		MeasurementRow measurementRow = new MeasurementRow();
+		final UserSelection userSelection = new UserSelection();
+		final List<MeasurementRow> measurementRowList = new ArrayList<>();
+		final List<MeasurementData> dataList = new ArrayList<>();
+		final MeasurementRow measurementRow = new MeasurementRow();
 		dataList.add(this.getSampleMeasurementData(1, ""));
 		dataList.add(this.getSampleMeasurementData(2, ""));
 		measurementRow.setDataList(dataList);
 		measurementRowList.add(measurementRow);
 		userSelection.setMeasurementRowList(measurementRowList);
-		boolean hasMeasurementData = editNurseryController.hasMeasurementDataEnteredForVariables(variableIds, userSelection);
+		final boolean hasMeasurementData = editNurseryController.hasMeasurementDataEnteredForVariables(variableIds, userSelection);
 		Assert.assertFalse("Should return false since there is measuredData", hasMeasurementData);
 	}
 
-	private MeasurementData getSampleMeasurementData(Integer variableTermId, String data) {
-		MeasurementData measurementData = new MeasurementData();
+	private MeasurementData getSampleMeasurementData(final Integer variableTermId, final String data) {
+		final MeasurementData measurementData = new MeasurementData();
 		measurementData.setLabel("LABEL_" + variableTermId);
-		MeasurementVariable measurementVariable = new MeasurementVariable();
+		final MeasurementVariable measurementVariable = new MeasurementVariable();
 		measurementVariable.setTermId(variableTermId);
 		measurementData.setValue(data);
 		measurementData.setMeasurementVariable(measurementVariable);
@@ -174,7 +192,7 @@ public class SettingsControllerTest {
 	}
 
 	private List<SettingDetail> createSettingDetailVariables() {
-		List<SettingDetail> variables = new ArrayList<>();
+		final List<SettingDetail> variables = new ArrayList<>();
 		variables.add(this.createSettingDetail(TermId.STUDY_NAME.getId(), ""));
 		variables.add(this.createSettingDetail(TermId.START_DATE.getId(), ""));
 		variables.add(this.createSettingDetail(TermId.STUDY_OBJECTIVE.getId(), ""));
@@ -190,99 +208,99 @@ public class SettingsControllerTest {
 		return variables;
 	}
 
-	private SettingDetail createSettingDetail(Integer cvTermId, String value) {
-		SettingVariable variable = new SettingVariable();
+	private SettingDetail createSettingDetail(final Integer cvTermId, final String value) {
+		final SettingVariable variable = new SettingVariable();
 		variable.setCvTermId(cvTermId);
-		SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
+		final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
 		return settingDetail;
 	}
 
 	@Test
 	public void testGetMethod_ById() throws MiddlewareQueryException {
-		CreateNurseryController createNurseryController = new CreateNurseryController();
-		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		final CreateNurseryController createNurseryController = new CreateNurseryController();
+		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
 		createNurseryController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-		int id = 70;
-		String name = "Accession into genebank";
-		String code = "AGB1";
-		String programUUID = null;
-		Method method = this.createMethod(id, name, code, programUUID);
+		final int id = 70;
+		final String name = "Accession into genebank";
+		final String code = "AGB1";
+		final String programUUID = null;
+		final Method method = this.createMethod(id, name, code, programUUID);
 		Mockito.doReturn(method).when(fieldbookMiddlewareService).getMethodById(id);
 
-		String idTermId = Integer.toString(id);
-		Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
+		final String idTermId = Integer.toString(id);
+		final Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
 		studyConditionMap.put(idTermId, this.createMeasurementVariable(idTermId));
 
-		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
+		final Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
 		Assert.assertEquals(method.getMid(), resultingMethod.getMid());
 	}
 
 	@Test
 	public void testGetMethod_ById_EmptyValue() throws MiddlewareQueryException {
-		CreateNurseryController createNurseryController = new CreateNurseryController();
-		int id = 70;
-		String code = "AGB1";
-		String programUUID = null;
+		final CreateNurseryController createNurseryController = new CreateNurseryController();
+		final int id = 70;
+		final String code = "AGB1";
+		final String programUUID = null;
 
-		String idTermId = Integer.toString(id);
-		Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
+		final String idTermId = Integer.toString(id);
+		final Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
 		studyConditionMap.put(idTermId, this.createMeasurementVariable(""));
 
-		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
+		final Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
 		Assert.assertEquals(null, resultingMethod);
 	}
 
 	@Test
 	public void testGetMethod_ByCode() throws MiddlewareQueryException {
-		CreateNurseryController createNurseryController = new CreateNurseryController();
-		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		final CreateNurseryController createNurseryController = new CreateNurseryController();
+		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
 		createNurseryController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-		int id = 70;
-		String name = "Accession into genebank";
-		String code = "AGB1";
-		String programUUID = null;
-		Method method = this.createMethod(id, name, code, programUUID);
+		final int id = 70;
+		final String name = "Accession into genebank";
+		final String code = "AGB1";
+		final String programUUID = null;
+		final Method method = this.createMethod(id, name, code, programUUID);
 		Mockito.doReturn(method).when(fieldbookMiddlewareService).getMethodByCode(code, programUUID);
 
-		String idTermId = Integer.toString(id);
-		Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
+		final String idTermId = Integer.toString(id);
+		final Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
 		studyConditionMap.put(code, this.createMeasurementVariable(code));
 
-		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
+		final Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
 		Assert.assertEquals(method.getMid(), resultingMethod.getMid());
 	}
 
 	@Test
 	public void testGetMethod_ByCode_EmptyValue() throws MiddlewareQueryException {
-		CreateNurseryController createNurseryController = new CreateNurseryController();
+		final CreateNurseryController createNurseryController = new CreateNurseryController();
 
-		int id = 70;
-		String code = "AGB1";
-		String programUUID = null;
+		final int id = 70;
+		final String code = "AGB1";
+		final String programUUID = null;
 
-		String idTermId = Integer.toString(id);
-		Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
+		final String idTermId = Integer.toString(id);
+		final Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
 		studyConditionMap.put(code, this.createMeasurementVariable(""));
 
-		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
+		final Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
 		Assert.assertEquals(null, resultingMethod);
 	}
 
 	@Test
 	public void testGetMethod_IdAndCodeNotFound() throws MiddlewareQueryException {
-		CreateNurseryController createNurseryController = new CreateNurseryController();
-		int id = 70;
-		String code = "AGB1";
-		String programUUID = null;
-		String idTermId = Integer.toString(id);
-		Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
+		final CreateNurseryController createNurseryController = new CreateNurseryController();
+		final int id = 70;
+		final String code = "AGB1";
+		final String programUUID = null;
+		final String idTermId = Integer.toString(id);
+		final Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
 
-		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
+		final Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
 		Assert.assertEquals(null, resultingMethod);
 	}
 
-	private Method createMethod(int id, String name, String code, String uniqueID) {
-		Method method = new Method();
+	private Method createMethod(final int id, final String name, final String code, final String uniqueID) {
+		final Method method = new Method();
 		method.setMid(id);
 		method.setMname(name);
 		method.setMcode(code);
@@ -290,8 +308,8 @@ public class SettingsControllerTest {
 		return method;
 	}
 
-	private MeasurementVariable createMeasurementVariable(String value) {
-		MeasurementVariable measurementVariable = new MeasurementVariable();
+	private MeasurementVariable createMeasurementVariable(final String value) {
+		final MeasurementVariable measurementVariable = new MeasurementVariable();
 		measurementVariable.setName("TEST");
 		measurementVariable.setValue(value);
 		return measurementVariable;
@@ -299,12 +317,12 @@ public class SettingsControllerTest {
 
 	@Test
 	public void testAddVariableSecionIdModelAttributes() {
-		ExtendedModelMap model = new ExtendedModelMap();
+		final ExtendedModelMap model = new ExtendedModelMap();
 		this.controller.addVariableSectionIdentifiers(model);
 		SettingsControllerTest.checkVariableSecionIdModelAttributes(model);
 	}
 
-	public static void checkVariableSecionIdModelAttributes(ExtendedModelMap model) {
+	public static void checkVariableSecionIdModelAttributes(final ExtendedModelMap model) {
 		Assert.assertEquals(VariableType.TRAIT.getId(), model.get("baselineTraitsSegment"));
 		Assert.assertEquals(VariableType.SELECTION_METHOD.getId(), model.get("selectionVariatesSegment"));
 		Assert.assertEquals(VariableType.STUDY_DETAIL.getId(), model.get("studyLevelDetailType"));
@@ -312,76 +330,121 @@ public class SettingsControllerTest {
 		Assert.assertEquals(VariableType.NURSERY_CONDITION.getId(), model.get("nurseryConditionsType"));
 	}
 
-	/**
-	 * Test to check createSettingDetail works properly and assert expected data
-	 */
 	@Test
-	public void testCreateSettingDetail() {
+	public void testCreateSettingDetailWithVariableType() {
 		ContextHolder.setCurrentCrop("maize");
+		this.createTestProject();
 
-		org.generationcp.middleware.domain.ontology.Method method = new org.generationcp.middleware.domain.ontology.Method();
+		final String alias = "nEarsSel_Local";
+		final SettingDetail settingDetail =
+				this.controller.createSettingDetailWithVariableType(this.testVariable.getId(), alias, VariableType.SELECTION_METHOD);
+		Assert.assertEquals("Error in Role for settingDetail", VariableType.SELECTION_METHOD.getRole().name(),
+				settingDetail.getRole().name());
+		Assert.assertEquals("Error in Variable Type", VariableType.SELECTION_METHOD, settingDetail.getVariableType());
+		Assert.assertEquals("Expecting variable alias to be used but was not.", alias, settingDetail.getVariable().getName());
+		Assert.assertEquals("Expecting variable description to be used but was not.", SettingsControllerTest.TRAIT_DESCRIPTION,
+				settingDetail.getVariable().getDescription());
+		Assert.assertNull("Error in Value", settingDetail.getValue());
+
+		Assert.assertTrue("Error in Name of PossibleValuesToJson",
+				settingDetail.getPossibleValuesJson().contains(this.testValueReference.getName()));
+		Assert.assertTrue("Error in Description of PossibleValuesToJson",
+				settingDetail.getPossibleValuesJson().contains(this.testValueReference.getDescription()));
+		Assert.assertTrue("Error in Key of PossibleValuesToJson",
+				settingDetail.getPossibleValuesJson().contains(this.testValueReference.getKey()));
+		Assert.assertTrue("Error in Name of PossibleValuesFavoriteToJson",
+				settingDetail.getPossibleValuesFavoriteJson().contains(this.testValueReference.getName()));
+		Assert.assertTrue("Error in Description of PossibleValuesFavoriteToJson",
+				settingDetail.getPossibleValuesFavoriteJson().contains(this.testValueReference.getDescription()));
+		Assert.assertTrue("Error in Key of PossibleValuesFavoriteToJson",
+				settingDetail.getPossibleValuesFavoriteJson().contains(this.testValueReference.getKey()));
+
+		Mockito.verify(this.variableDataManager, Mockito.times(1)).getVariable(this.contextUtil.getCurrentProgramUUID(),
+				this.testVariable.getId(), false, false);
+		Mockito.verify(this.fieldbookService, Mockito.times(1)).getAllPossibleValues(this.testVariable.getId());
+		Mockito.verify(this.contextUtil, Mockito.times(1)).getProjectInContext();
+		Mockito.verify(this.fieldbookService, Mockito.times(1)).getAllPossibleValuesFavorite(this.testVariable.getId(),
+				this.controller.getCurrentProject().getUniqueID(), false);
+	}
+
+	@Test
+	public void testCreateSettingDetailWithVariableTypeWhenAliasIsNull() {
+		ContextHolder.setCurrentCrop("maize");
+		this.createTestProject();
+
+		final SettingDetail settingDetail =
+				this.controller.createSettingDetailWithVariableType(this.testVariable.getId(), null, VariableType.SELECTION_METHOD);
+		Assert.assertEquals("Error in Role for settingDetail", VariableType.SELECTION_METHOD.getRole().name(),
+				settingDetail.getRole().name());
+		Assert.assertEquals("Error in Variable Type", VariableType.SELECTION_METHOD, settingDetail.getVariableType());
+		Assert.assertEquals("Expecting variable's standard name to be used since alias is null but was not.",
+				SettingsControllerTest.TRAIT_NAME, settingDetail.getVariable().getName());
+		Assert.assertEquals("Expecting variable description to be used but was not.", SettingsControllerTest.TRAIT_DESCRIPTION,
+				settingDetail.getVariable().getDescription());
+		Assert.assertNull("Error in Value", settingDetail.getValue());
+	}
+
+	@Test
+	public void testCreateSettingDetailWithVariableTypeWhenAliasIsEmpty() {
+		ContextHolder.setCurrentCrop("maize");
+		this.createTestProject();
+
+		final SettingDetail settingDetail =
+				this.controller.createSettingDetailWithVariableType(this.testVariable.getId(), "", VariableType.SELECTION_METHOD);
+		Assert.assertEquals("Error in Role for settingDetail", VariableType.SELECTION_METHOD.getRole().name(),
+				settingDetail.getRole().name());
+		Assert.assertEquals("Error in Variable Type", VariableType.SELECTION_METHOD, settingDetail.getVariableType());
+		Assert.assertEquals("Expecting variable's standard name to be used since alias is empty but was not.",
+				SettingsControllerTest.TRAIT_NAME, settingDetail.getVariable().getName());
+		Assert.assertEquals("Expecting variable description to be used but was not.", SettingsControllerTest.TRAIT_DESCRIPTION,
+				settingDetail.getVariable().getDescription());
+		Assert.assertNull("Error in Value", settingDetail.getValue());
+	}
+
+	private void createTestProject() {
+		final Project project = new Project();
+		project.setUniqueID(this.programUUID);
+
+		Mockito.when(this.controller.getCurrentProject()).thenReturn(project);
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
+	}
+
+	private void createTestVariable() {
+		final org.generationcp.middleware.domain.ontology.Method method = new org.generationcp.middleware.domain.ontology.Method();
 		method.setId(UnitTestDaoIDGenerator.generateId(Method.class));
 		method.setName("Method Name");
 
-		Property property = new Property();
+		final Property property = new Property();
 		property.setName("Property Name");
 		property.setCropOntologyId("CO:501");
 		property.addClass("Class1");
 		property.addClass("Class2");
 
-		Scale scale = new Scale();
+		final Scale scale = new Scale();
 		scale.setId(UnitTestDaoIDGenerator.generateId(Scale.class));
 		scale.setName("Scale Name");
 		scale.setDataType(DataType.NUMERIC_VARIABLE);
 		scale.setMinValue("5");
 		scale.setMaxValue("500");
 
-		Variable variable = new Variable();
-		variable.setId(UnitTestDaoIDGenerator.generateId(Variable.class));
-		variable.setMinValue("10");
-		variable.setMaxValue("100");
-		variable.setName("nEarsSel");
-		variable.setDefinition("Ears Selected");
-		variable.setObsolete(false);
-		variable.setObservations(-1);
-		variable.setStudies(-1);
-		variable.setIsFavorite(false);
-		variable.setMethod(method);
-		variable.setProperty(property);
-		variable.setScale(scale);
+		this.testVariable = new Variable();
+		this.testVariable.setId(UnitTestDaoIDGenerator.generateId(Variable.class));
+		this.testVariable.setMinValue("10");
+		this.testVariable.setMaxValue("100");
+		this.testVariable.setName(SettingsControllerTest.TRAIT_NAME);
+		this.testVariable.setDefinition(SettingsControllerTest.TRAIT_DESCRIPTION);
+		this.testVariable.setObsolete(false);
+		this.testVariable.setObservations(-1);
+		this.testVariable.setStudies(-1);
+		this.testVariable.setIsFavorite(false);
+		this.testVariable.setMethod(method);
+		this.testVariable.setProperty(property);
+		this.testVariable.setScale(scale);
 
-		ValueReference valueReference = new ValueReference();
-		valueReference.setKey("1");
-		valueReference.setName("Value Reference Name");
-		valueReference.setDescription("Value Reference Description");
-
-		List<ValueReference> valueReferenceList = new ArrayList<>();
-		valueReferenceList.add(valueReference);
-
-		Project project = new Project();
-		project.setUniqueID(programUUID);
-
-		Mockito.when(this.variableDataManager.getVariable(Mockito.any(String.class), Mockito.any(Integer.class), Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(variable);
-		Mockito.when(this.fieldbookService.getAllPossibleValues(Mockito.anyInt())).thenReturn(valueReferenceList);
-		Mockito.when(this.controller.getCurrentProject()).thenReturn(project);
-		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
-		Mockito.when(this.fieldbookService.getAllPossibleValuesFavorite(Mockito.anyInt(), Mockito.any(String.class), Mockito.anyBoolean())).thenReturn(valueReferenceList);
-
-		SettingDetail settingDetail = this.controller.createSettingDetail(variable.getId(), VariableType.SELECTION_METHOD);
-		Assert.assertEquals("Error in Role for settingDetail", VariableType.SELECTION_METHOD.getRole().name(), settingDetail.getRole().name());
-		Assert.assertEquals("Error in Variable Type", VariableType.SELECTION_METHOD, settingDetail.getVariableType());
-		Assert.assertNull("Error in Value", settingDetail.getValue());
-		Assert.assertTrue("Error in Name of PossibleValuesToJson", settingDetail.getPossibleValuesJson().contains(valueReference.getName()));
-		Assert.assertTrue("Error in Description of PossibleValuesToJson", settingDetail.getPossibleValuesJson().contains(valueReference.getDescription()));
-		Assert.assertTrue("Error in Key of PossibleValuesToJson", settingDetail.getPossibleValuesJson().contains(valueReference.getKey()));
-		Assert.assertTrue("Error in Name of PossibleValuesFavoriteToJson", settingDetail.getPossibleValuesFavoriteJson().contains(valueReference.getName()));
-		Assert.assertTrue("Error in Description of PossibleValuesFavoriteToJson", settingDetail.getPossibleValuesFavoriteJson().contains(valueReference.getDescription()));
-		Assert.assertTrue("Error in Key of PossibleValuesFavoriteToJson", settingDetail.getPossibleValuesFavoriteJson().contains(valueReference.getKey()));
-
-		Mockito.verify(this.variableDataManager, Mockito.times(1)).getVariable(this.contextUtil.getCurrentProgramUUID(), variable.getId(), false, false);
-		Mockito.verify(this.fieldbookService, Mockito.times(1)).getAllPossibleValues(variable.getId());
-		Mockito.verify(this.contextUtil, Mockito.times(1)).getProjectInContext();
-		Mockito.verify(this.fieldbookService, Mockito.times(1)).getAllPossibleValuesFavorite(variable.getId(), this.controller.getCurrentProject().getUniqueID(), false);
+		this.testValueReference = new ValueReference();
+		this.testValueReference.setKey("1");
+		this.testValueReference.setName("Value Reference Name");
+		this.testValueReference.setDescription("Value Reference Description");
 	}
 
 }

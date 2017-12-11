@@ -10,18 +10,17 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
@@ -51,15 +50,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
  * The Class SettingsController.
@@ -100,7 +102,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	@Resource
 	protected OntologyService ontologyService;
-
 
 	/**
 	 * Checks if the measurement table has user input data for a particular variable id
@@ -331,13 +332,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		final StringTokenizer token = new StringTokenizer(requiredFields, ",");
 		int ctr = 0;
 
-			while (token.hasMoreTokens()) {
-				final String s = token.nextToken();
-				// FIXME BMS-4397
-				if(!DESCRIPTION.equals(s)) {
-					defaults.add(this.createSettingDetail(Integer.valueOf(s), requiredVariablesLabel.get(ctr), role));
-					ctr++;
-				}
+		while (token.hasMoreTokens()) {
+			final String s = token.nextToken();
+			// FIXME BMS-4397
+			if (!SettingsController.DESCRIPTION.equals(s)) {
+				defaults.add(this.createSettingDetail(Integer.valueOf(s), requiredVariablesLabel.get(ctr), role));
+				ctr++;
+			}
 		}
 		return defaults;
 	}
@@ -409,15 +410,20 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	/**
-	 * Creates the setting detail.
+	 * Creates the setting detail of given variable type
 	 *
-	 * @param id the id
+	 * @param id the variable id
+	 * @param alias the variable alias
+	 * @param variableType the variable type
 	 * @return the setting detail
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected SettingDetail createSettingDetail(final int id, final VariableType variableType) {
-
+	protected SettingDetail createSettingDetailWithVariableType(final int id, final String alias, final VariableType variableType) {
 		final Variable variable = this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, false, false);
+
+		String variableName = variable.getName();
+		if (alias != null && !alias.isEmpty()) {
+			variableName = alias;
+		}
 
 		final Property property = variable.getProperty();
 		final Scale scale = variable.getScale();
@@ -426,7 +432,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		final Double minValue = variable.getMinValue() == null ? null : Double.parseDouble(variable.getMinValue());
 		final Double maxValue = variable.getMaxValue() == null ? null : Double.parseDouble(variable.getMaxValue());
 
-		final SettingVariable settingVariable = new SettingVariable(variable.getName(), variable.getDefinition(),
+		final SettingVariable settingVariable = new SettingVariable(variableName, variable.getDefinition(),
 				variable.getProperty().getName(), scale.getName(), method.getName(), variableType.getRole().name(),
 				scale.getDataType().getName(), scale.getDataType().getId(), minValue, maxValue);
 
@@ -517,7 +523,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 *
 	 * @param id the id
 	 * @return the standard variable
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	protected StandardVariable getStandardVariable(final int id) {
 		return this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
@@ -525,13 +530,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Creates the study details.
-	 *  @param workbook the workbook
+	 *
+	 * @param workbook the workbook
 	 * @param conditions the conditions
 	 * @param folderId the folder id
 	 * @param description
 	 */
 	public void createStudyDetails(final Workbook workbook, final List<SettingDetail> conditions, final Integer folderId,
-		final Integer studyId, final String description) {
+			final Integer studyId, final String description) {
 		if (workbook.getStudyDetails() == null) {
 			workbook.setStudyDetails(new StudyDetails());
 		}
@@ -920,7 +926,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		while (token.hasMoreTokens()) {
 			final String s = token.nextToken();
 			// FIXME BMS-4397
-			if(!DESCRIPTION.equals(s)) {
+			if (!SettingsController.DESCRIPTION.equals(s)) {
 				final Integer termId = Integer.valueOf(s);
 				final boolean isFound = this.searchAndSetValuesOfSpecialVariables(nurseryLevelConditions, termId, settingDetails, form);
 				if (!isFound) {
@@ -1005,10 +1011,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				this.userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
 			}
 			this.userSelection.getDeletedPlotLevelList().add(newSetting);
-		} else if (mode == VariableType.TRAIT.getId()) {
-			addNewSettingToDeletedBaselineTraits(newSetting);
-		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
-			addNewSettingToDeletedBaselineTraits(newSetting);
+		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
+			this.addNewSettingToDeletedBaselineTraits(newSetting);
 		} else if (mode == VariableType.NURSERY_CONDITION.getId() || mode == VariableType.TRIAL_CONDITION.getId()) {
 			if (this.userSelection.getDeletedNurseryConditions() == null) {
 				this.userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());

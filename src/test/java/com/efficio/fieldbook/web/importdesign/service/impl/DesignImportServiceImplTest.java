@@ -451,7 +451,7 @@ public class DesignImportServiceImplTest {
 
 		try {
 			Mockito.when(this.designImportParser.parseFile(this.multiPartFile))
-					.thenReturn(DesignImportTestDataInitializer.createDesignImportData());
+					.thenReturn(DesignImportTestDataInitializer.createDesignImportData(1, 1));
 			this.designImportData = this.designImportParser.parseFile(this.multiPartFile);
 		} catch (final FileParsingException e) {
 			Assert.fail("Failed to create DesignImportData");

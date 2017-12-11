@@ -483,7 +483,7 @@ public class DesignImportControllerTest {
 		final List<SettingDetail> newDetails = new ArrayList<>();
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 
 		this.designImportController.resolveIDNamePairingAndValuesForNursery(environmentData, designImportData,
 				newDetails);
@@ -525,7 +525,7 @@ public class DesignImportControllerTest {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 1);
 
-		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
+		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 
 		this.designImportController.addFactorsIfNecessary(workbook, data);
 
@@ -552,7 +552,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
 				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
 
-		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
+		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 
 		this.designImportController.addFactorsIfNecessary(workbook, data);
 
@@ -575,7 +575,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
 				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
 
-		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
+		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 		this.designImportController.addConditionsIfNecessary(workbook, data);
 
 		Assert.assertEquals("LOCATION_NAME should not added to the Conditions, so the size of Conditions must remain "
@@ -595,7 +595,7 @@ public class DesignImportControllerTest {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
 		final int originalConditionsSize = workbook.getConditions().size();
 
-		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
+		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 		this.designImportController.addConditionsIfNecessary(workbook, data);
 
 		// Add 1 to the originalConditionsSize to include the SITE_NAME in the
@@ -646,7 +646,7 @@ public class DesignImportControllerTest {
 		final Project project = this.createProject();
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 
 		final MeasurementVariable siteName = this.createMeasurementVariable(TermId.SITE_NAME.getId(),
 				DesignImportControllerTest.SITE_NAME, "TRIAL");
@@ -692,7 +692,7 @@ public class DesignImportControllerTest {
 	@Test
 	public void testCheckTheDeletedSettingDetails() {
 
-		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 		final Set<MeasurementVariable> measurementVariables = this.createMeasurementVariables();
 		final List<SettingDetail> deletedTrialLevelVariables = this.createDeletedTrialLevelVariables();
 		final UserSelection selection = new UserSelection();
@@ -886,7 +886,7 @@ public class DesignImportControllerTest {
 	@Test
 	public void testCreateTrialObservationsForTrial() {
 
-		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 		final Workbook workbook = Mockito.spy(WorkbookDataUtil.getTestWorkbook(5, StudyType.T));
 
@@ -900,7 +900,7 @@ public class DesignImportControllerTest {
 	@Test
 	public void testCreateTrialObservationsForNursery() {
 
-		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 		final Workbook workbook = Mockito.spy(WorkbookDataUtil.getTestWorkbook(5, StudyType.N));
 
@@ -1655,7 +1655,7 @@ public class DesignImportControllerTest {
 
 	private DesignImportData createDesignImportDataWithCooperatorVariable() {
 
-		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
+		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 
 		final DesignHeaderItem cooperatorNameDesignHeaderItem = DesignImportTestDataInitializer.
 				createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.COOPERATOR.getId(), COOPERATOR_NAME , 1,

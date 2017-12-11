@@ -48,7 +48,7 @@ public class DesignImportValidatorTest {
 
 	@Before
 	public void setUp() throws DesignValidationException {
-		this.designImportData = DesignImportTestDataInitializer.createDesignImportData();
+		this.designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 
 		Mockito.doReturn("Error encountered.").when(this.messageSource)
 				.getMessage("design.import.error.no.valid.values", null, Locale.ENGLISH);
@@ -176,7 +176,7 @@ public class DesignImportValidatorTest {
 
 		} catch (final DesignValidationException e) {
 
-			Assert.assertEquals(e.getMessage(), "Error encountered entries 7 and listsize 2");
+			Assert.assertEquals(e.getMessage(), "Error encountered entries 10 and listsize 5");
 		}
 
 	}
@@ -258,7 +258,7 @@ public class DesignImportValidatorTest {
 
 	@Test
 	public void testValidateColumnValuesForImportDesignWithOutInvalidValue() {
-		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
 		try {
 			this.designImportValidator.validateColumnValues(designImportData.getRowDataMap(), mappedHeaders);
@@ -270,7 +270,7 @@ public class DesignImportValidatorTest {
 
 	@Test
 	public void testRetrieveDesignHeaderItemsBasedOnDataType() {
-		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
 
 		final List<DesignHeaderItem> numericDesignHeaderItems =

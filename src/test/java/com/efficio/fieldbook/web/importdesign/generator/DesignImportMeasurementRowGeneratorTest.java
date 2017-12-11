@@ -97,7 +97,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 
 		this.workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 
-		this.designImportData = DesignImportTestDataInitializer.createDesignImportData();
+		this.designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 		this.mappedHeadersWithStdVarId = this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
 		this.germplasmStandardVariables = new HashMap<Integer, StandardVariable>();
 		this.germplasmStandardVariables.put(TermId.ENTRY_NO.getId(), DesignImportTestDataInitializer

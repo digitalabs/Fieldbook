@@ -109,8 +109,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		final List<MeasurementRow> measurements = new ArrayList<>();
 
-		this.createMeasurementRows(environmentData.getNoOfEnvironments(), csvData, measurements, measurementRowGenerator,
-				additionalParams);
+		this.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, null);
 
 		for (final MeasurementRow measurementRow : measurements) {
 			final List<MeasurementData> measurementDatas = measurementRow.getDataList();
@@ -140,28 +139,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 
 		return measurements;
-	}
-
-	/**
-	 * Creates measurement rows based on the data from the uploaded design file.
-	 *
-	 * @param noOfEnvironments
-	 * @param csvData
-	 * @param measurements
-	 * @param measurementRowGenerator
-	 * @param additionalParams        that contains startingPlotNo, startingEntryNo, noOfAddedEnvironments
-	 * @param
-	 */
-	protected void createMeasurementRows(final Integer noOfEnvironments, final Map<Integer, List<String>> csvData,
-			final List<MeasurementRow> measurements, final DesignImportMeasurementRowGenerator measurementRowGenerator,
-			final Map<String, Integer> additionalParams) {
-
-		final Integer noOfAddedEnvironment = additionalParams.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) != null ?
-				additionalParams.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) :
-				0;
-
-		this.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, null);
-
 	}
 
 	/**

@@ -353,7 +353,7 @@ public class DesignImportControllerTest {
 		Mockito.when(this.userSelection.getTemporaryWorkbook()).thenReturn(workbook);
 		Mockito.doReturn(workbook.getObservations()).when(this.designImportService).generateDesign(
 				Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-				Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
+				Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
 		;
 
 		final List<Map<String, Object>> result = this.designImportController.showDetailsData(environmentData, model,
@@ -373,7 +373,7 @@ public class DesignImportControllerTest {
 		Mockito.when(this.userSelection.getTemporaryWorkbook()).thenReturn(workbook);
 		Mockito.doThrow(new DesignValidationException("")).when(this.designImportService).generateDesign(
 				Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-				Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
+				Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
 		;
 
 		final List<Map<String, Object>> result = this.designImportController.showDetailsData(environmentData, model,
@@ -761,7 +761,7 @@ public class DesignImportControllerTest {
 
 		Mockito.doThrow(new DesignValidationException("")).when(this.designImportService).generateDesign(
 				Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-				Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
+				Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 		final GenerateDesignInput input = new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null,
@@ -773,55 +773,7 @@ public class DesignImportControllerTest {
 
 	}
 
-	@Test
-	public void testGeneratePresetMeasurements() throws FileParsingException {
 
-		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
-		final Set<MeasurementVariable> measurementVariables = this.createMeasurementVariables();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 1);
-
-		Mockito.doReturn(workbook).when(this.userSelection).getTemporaryWorkbook();
-		Mockito.doReturn(measurementVariables).when(this.designImportService).getMeasurementVariablesFromDataFile(
-				Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
-		Mockito.doReturn(designImportData).when(this.designImportParser).parseFile(Matchers.anyInt(),
-				Matchers.anyString());
-		Mockito.doReturn(designImportData.getMappedHeaders()).when(this.designImportService)
-				.categorizeHeadersByPhenotype(Matchers.anyList());
-
-		final EnvironmentData environmentData = this.createEnvironmentData(1);
-
-		final GenerateDesignInput input = new GenerateDesignInput(environmentData, new DesignTypeItem(4,
-				"E30-Rep2-Block6-5Ind", "predefinedDesignTemplateParams.html", true, 2, 30, false), null, null, false);
-		final Map<String, Object> resultsMap = this.designImportController.generatePresetMeasurements(input);
-
-		Assert.assertEquals(1, resultsMap.get(DesignImportController.IS_SUCCESS));
-
-	}
-
-	@Test
-	public void testGeneratePresetMeasurementsFail() throws FileParsingException {
-
-		final Map<PhenotypicType, List<DesignHeaderItem>> categorizedHeadersMap = new HashMap<>();
-		final Set<MeasurementVariable> measurementVariables = this.createMeasurementVariables();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 1);
-
-		Mockito.doReturn(workbook).when(this.userSelection).getTemporaryWorkbook();
-		Mockito.doReturn(measurementVariables).when(this.designImportService).getMeasurementVariablesFromDataFile(
-				Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
-		Mockito.doReturn(categorizedHeadersMap).when(this.designImportService)
-				.categorizeHeadersByPhenotype(Matchers.anyList());
-		Mockito.doThrow(FileParsingException.class).when(this.designImportParser).parseFile(Matchers.anyInt(),
-				Matchers.anyString());
-
-		final EnvironmentData environmentData = this.createEnvironmentData(1);
-
-		final GenerateDesignInput input = new GenerateDesignInput(environmentData, new DesignTypeItem(5), null, null,
-				false);
-		final Map<String, Object> resultsMap = this.designImportController.generatePresetMeasurements(input);
-
-		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));
-
-	}
 
 	@Test
 	public void testUpdateOperationWithTermIdHasMatchInList() {
@@ -1579,7 +1531,7 @@ public class DesignImportControllerTest {
 				Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 		Mockito.doReturn(new ArrayList<MeasurementRow>()).when(this.designImportService).generateDesign(
 				Matchers.any(Workbook.class), Matchers.any(DesignImportData.class), Matchers.any(EnvironmentData.class),
-				Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
+				Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
 		Mockito.doReturn(new HashSet<MeasurementVariable>()).when(this.designImportService)
 				.getDesignMeasurementVariables(Matchers.any(Workbook.class), Matchers.any(DesignImportData.class),
 						Matchers.anyBoolean());

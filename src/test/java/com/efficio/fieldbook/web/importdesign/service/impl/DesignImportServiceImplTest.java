@@ -193,7 +193,7 @@ public class DesignImportServiceImplTest {
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements = this.service
-				.generateDesign(workbook, this.designImportData, environmentData, true, false, this.createAdditionalParamsMap(1, 1));
+				.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
 
 		Assert.assertEquals(
 				"The first trial instance must only have " + DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations.",
@@ -216,7 +216,7 @@ public class DesignImportServiceImplTest {
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements = this.service
-				.generateDesign(workbook, this.designImportData, environmentData, true, false, this.createAdditionalParamsMap(1, 1));
+				.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
 
 		// Not including the header row from the count of number of rows from the csv file
 		final int expectedNumberOfMeasurements = this.designImportData.getRowDataMap().size() - 1;
@@ -242,46 +242,11 @@ public class DesignImportServiceImplTest {
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements = this.service
-				.generateDesign(workbook, this.designImportData, environmentData, true, false, this.createAdditionalParamsMap(1, 1));
+				.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
 
 		Assert.assertEquals("Expecting that the number of measurement rows generated for nursery is "
 						+ DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations but returned " + measurements.size() + " instead.",
 				DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, measurements.size());
-
-	}
-
-	@Test
-	public void testGenerateDesignForThreeInstancesPreset() throws DesignValidationException {
-
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
-
-		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
-				.getImportedGermplasmMainInfo();
-
-		// Make sure that there is only 3 trial instances included in the selected environments from the UI
-		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(3);
-
-		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
-
-		final List<MeasurementRow> measurements = this.service
-				.generateDesign(workbook, this.designImportData, environmentData, false, true, this.createAdditionalParamsMap(1, 1));
-
-		Assert.assertEquals("The 3 trial instances should have 18 observations", 18, measurements.size());
-
-		for (int i = 0; i <= 5; i++) {
-			Assert.assertEquals("Measurement rows 1 to 6 should be assigned to trial instance 2", "1",
-					measurements.get(i).getDataList().get(0).getValue());
-		}
-
-		for (int i = 6; i <= 11; i++) {
-			Assert.assertEquals("Measurement rows 7 to 12 should be assigned to trial instance 2", "2",
-					measurements.get(i).getDataList().get(0).getValue());
-		}
-
-		for (int i = 12; i <= 17; i++) {
-			Assert.assertEquals("Measurement rows 13 to 18 should be assigned to trial instance 2", "3",
-					measurements.get(i).getDataList().get(0).getValue());
-		}
 
 	}
 

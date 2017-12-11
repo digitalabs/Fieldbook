@@ -67,10 +67,6 @@ public class ExpDesignController extends BaseTrialController {
 	private AugmentedRandomizedBlockDesignService augmentedRandomizedBlockDesignService;
 	@Resource
 	private ResourceBundleMessageSource messageSource;
-
-	@Resource
-	private DesignImportService designImportService;
-
 	@Resource
 	private DesignLicenseUtil designLicenseUtil;
 
@@ -90,89 +86,7 @@ public class ExpDesignController extends BaseTrialController {
 		designTypes.add(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK);
 		designTypes.add(DesignTypeItem.CUSTOM_IMPORT);
 
-
-		if (this.fieldbookProperties.getPresetDesignEnabledCrops()
-				.contains(this.contextUtil.getProjectInContext().getCropType().getCropName())) {
-			// There are five (0-4) fixed design types, so the preset designs get id 5 and onwards.
-			designTypes.addAll(this.generatePresetDesignTypes(5));
-
-		}
-
 		return designTypes;
-	}
-
-	private List<DesignTypeItem> generatePresetDesignTypes(int index) {
-		final List<DesignTypeItem> designTypeItems = new ArrayList<>();
-		final List<File> presetTemplates = ResourceFinder.getResourceListing(AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString());
-		Collections.sort(presetTemplates);
-		for (final File designTemplateFile : presetTemplates) {
-			final String templateFileName = designTemplateFile.getName();
-
-			if (this.isValidPresetDesignTemplate(templateFileName)) {
-				designTypeItems.add(this.generatePresetDesignTypeItem(templateFileName, index));
-				index++;
-			}
-		}
-
-		return designTypeItems;
-	}
-
-	/**
-	 * Generates a design type item from template file name
-	 *
-	 * @param templateFileName
-	 * @param index
-	 * @return
-	 */
-	DesignTypeItem generatePresetDesignTypeItem(final String templateFileName, final int index) {
-		final int noOfreps = this.getNoOfReps(templateFileName);
-		final int totalNoOfEntries = this.getTotalNoOfEntries(templateFileName);
-		final String templateName = this.getTemplateName(templateFileName);
-		return new DesignTypeItem(index, templateName, "predefinedDesignTemplateParams.html", true, noOfreps, totalNoOfEntries, false);
-	}
-
-	/***
-	 * Removed the .csv extension from the filename
-	 *
-	 * @param templateFileName
-	 * @return
-	 */
-	String getTemplateName(final String templateFileName) {
-		return templateFileName.substring(0, templateFileName.indexOf(".csv"));
-	}
-
-	/**
-	 * Checks if the filename follows the expected preset template filename i.e. E30-Rep2-Block6-5Ind.csv
-	 *
-	 * @param fileName
-	 * @return
-	 */
-	boolean isValidPresetDesignTemplate(final String fileName) {
-		return fileName.matches("E[0-9]+-Rep[0-9]+-Block[0-9]+-[0-9]+Ind.csv");
-	}
-
-	/**
-	 * Retrieves the no of entries from the design preset template name
-	 *
-	 * @param name - preset template filename
-	 * @return
-	 */
-	int getTotalNoOfEntries(final String name) {
-		final int start = name.indexOf('E') + 1;
-		final int end = name.indexOf("-Rep");
-		return Integer.valueOf(name.substring(start, end));
-	}
-
-	/**
-	 * Retrieves the no of replications from the design preset template name
-	 *
-	 * @param name - preset template filename
-	 * @return
-	 */
-	int getNoOfReps(final String name) {
-		final int start = name.indexOf("-Rep") + 4;
-		final int end = name.indexOf("-Block");
-		return Integer.valueOf(name.substring(start, end));
 	}
 
 	@ResponseBody

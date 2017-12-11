@@ -295,33 +295,26 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				// Make sure that the measurement table will only refresh if there is a selected design type for the current trial
 				var designTypeId = TrialManagerDataService.currentData.experimentalDesign.designType;
 				var designTypes = TrialManagerDataService.applicationData.designTypes;
-				if (designTypeId !== null && TrialManagerDataService.getDesignTypeById(designTypeId, designTypes).isPreset) {
-					TrialManagerDataService.generatePresetExpDesign(designTypeId).then(function() {
-						TrialManagerDataService.updateAfterGeneratingDesignSuccessfully();
-						TrialManagerDataService.applicationData.hasGeneratedDesignPreset = true;
-					});
-				} else {
-					var noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments;
-					var data = TrialManagerDataService.currentData.experimentalDesign;
-					//update the no of environments in experimental design tab
-					data.noOfEnvironments = noOfEnvironments;
+				var noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments;
+				var data = TrialManagerDataService.currentData.experimentalDesign;
+				//update the no of environments in experimental design tab
+				data.noOfEnvironments = noOfEnvironments;
 
-					TrialManagerDataService.generateExpDesign(data).then(
-						function(response) {
-							if (response.valid === true) {
-								TrialManagerDataService.clearUnappliedChangesFlag();
-								TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
-								$('#chooseGermplasmAndChecks').data('replace', '1');
-							} else {
-								showErrorMessage('', response.message);
-								$body.removeClass('preview-measurements-only');
-							}
-						}, function(errResponse) {
-                            showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
-                            $body.removeClass('preview-measurements-only');
-                        }
-					);
-				}
+				TrialManagerDataService.generateExpDesign(data).then(
+					function(response) {
+						if (response.valid === true) {
+							TrialManagerDataService.clearUnappliedChangesFlag();
+							TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
+							$('#chooseGermplasmAndChecks').data('replace', '1');
+						} else {
+							showErrorMessage('', response.message);
+							$body.removeClass('preview-measurements-only');
+						}
+					}, function(errResponse) {
+						showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
+						$body.removeClass('preview-measurements-only');
+					}
+				);
 			}
 
 			function addNewEnvironments(noOfEnvironments, displayWarningMessage) {

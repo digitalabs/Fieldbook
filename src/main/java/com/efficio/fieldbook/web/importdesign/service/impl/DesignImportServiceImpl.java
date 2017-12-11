@@ -73,18 +73,16 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	@Override
 	public List<MeasurementRow> generateDesign(final Workbook workbook, final DesignImportData designImportData,
-			final EnvironmentData environmentData, final boolean isPreview, final boolean isPreset,
+			final EnvironmentData environmentData, final boolean isPreview,
 			final Map<String, Integer> additionalParams) throws DesignValidationException {
 
 		final Set<String> generatedTrialInstancesFromUI = this.extractTrialInstancesFromEnvironmentData(environmentData);
 
 		/**
 		 * this will add the trial environment factors and their values to ManagementDetailValues so we can pass them to the UI and reflect
-		 * the values in the Environments Tab. Not needed when the design type is preset design type
+		 * the values in the Environments Tab.
 		 **/
-		if (!isPreset) {
-			this.populateEnvironmentDataWithValuesFromCsvFile(environmentData, workbook, designImportData);
-		}
+		this.populateEnvironmentDataWithValuesFromCsvFile(environmentData, workbook, designImportData);
 
 		final Map<Integer, ImportedGermplasm> importedGermplasm =
 				Maps.uniqueIndex(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
@@ -111,7 +109,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		final List<MeasurementRow> measurements = new ArrayList<>();
 
-		this.createMeasurementRows(environmentData.getNoOfEnvironments(), isPreset, csvData, measurements, measurementRowGenerator,
+		this.createMeasurementRows(environmentData.getNoOfEnvironments(), csvData, measurements, measurementRowGenerator,
 				additionalParams);
 
 		for (final MeasurementRow measurementRow : measurements) {
@@ -148,14 +146,13 @@ public class DesignImportServiceImpl implements DesignImportService {
 	 * Creates measurement rows based on the data from the uploaded design file.
 	 *
 	 * @param noOfEnvironments
-	 * @param isPreset
 	 * @param csvData
 	 * @param measurements
 	 * @param measurementRowGenerator
 	 * @param additionalParams        that contains startingPlotNo, startingEntryNo, noOfAddedEnvironments
 	 * @param
 	 */
-	protected void createMeasurementRows(final Integer noOfEnvironments, final boolean isPreset, final Map<Integer, List<String>> csvData,
+	protected void createMeasurementRows(final Integer noOfEnvironments, final Map<Integer, List<String>> csvData,
 			final List<MeasurementRow> measurements, final DesignImportMeasurementRowGenerator measurementRowGenerator,
 			final Map<String, Integer> additionalParams) {
 
@@ -163,14 +160,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 				additionalParams.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) :
 				0;
 
-		if (isPreset) {
-			final int startingTrialInstanceNo = noOfAddedEnvironment > 0 ? noOfEnvironments - noOfAddedEnvironment + 1 : 1;
-			for (int trialInstanceNo = startingTrialInstanceNo; trialInstanceNo <= noOfEnvironments; trialInstanceNo++) {
-				this.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo);
-			}
-		} else {
-			this.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, null);
-		}
+		this.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, null);
+
 	}
 
 	/**

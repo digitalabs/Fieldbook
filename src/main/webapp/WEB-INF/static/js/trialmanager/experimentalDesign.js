@@ -228,43 +228,36 @@
 						if (environmentData && environmentData.treatmentFactors) {
 							environmentData.treatmentFactors = $scope.data.treatmentFactors.vals();
 						}
-						
-						// non-preset design type
+
 						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
-						if (!selectedDesignType.isPreset) {
-							TrialManagerDataService.generateExpDesign(environmentData).then(
-								function(response) {
-									if (response.valid === true) {
-										if(response.message && response.message !== '') {
-											if(response.userConfirmationRequired) {
-												$scope.showConfirmDialog(response.message);
-											} else {
-												showSuccessfulMessage('', response.message);
-											}
-										}
-										$scope.updateAfterGeneratingDesignSuccessfully();
-									} else {
-										if(response.message && response.message !== '') {
-											if(response.userConfirmationRequired) {
-												$scope.showConfirmDialog(response.message);
-											} else {
-												showErrorMessage('', response.message);
-											}
+
+						TrialManagerDataService.generateExpDesign(environmentData).then(
+							function(response) {
+								if (response.valid === true) {
+									if(response.message && response.message !== '') {
+										if(response.userConfirmationRequired) {
+											$scope.showConfirmDialog(response.message);
+										} else {
+											showSuccessfulMessage('', response.message);
 										}
 									}
-								}, function(errResponse) {
-                                    showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
-                                }
-							);
-						} else {
-							TrialManagerDataService.generatePresetExpDesign($scope.data.designType).then(function() {
-								$scope.updateAfterGeneratingDesignSuccessfully();
-							}, function(data) {
-								showErrorMessage('', data.error[0]);
-							});
-						}
+									$scope.updateAfterGeneratingDesignSuccessfully();
+								} else {
+									if(response.message && response.message !== '') {
+										if(response.userConfirmationRequired) {
+											$scope.showConfirmDialog(response.message);
+										} else {
+											showErrorMessage('', response.message);
+										}
+									}
+								}
+							}, function(errResponse) {
+								showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
+							}
+						);
+
 					};
-					
+
 					$scope.showConfirmDialog = function(message) {
 
 						var deferred = $q.defer();

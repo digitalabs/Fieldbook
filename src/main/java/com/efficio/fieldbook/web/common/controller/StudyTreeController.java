@@ -352,7 +352,8 @@ public class StudyTreeController {
 			this.studyDataManager.moveDmsProject(Integer.parseInt(sourceId), Integer.parseInt(targetId), isAStudy);
 		} catch (final MiddlewareQueryException e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
-			throw new MiddlewareQueryException(e.getMessage(), e);
+			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
+			resultsMap.put(StudyTreeController.MESSAGE, e.getMessage());
 		}
 		return resultsMap;
 	}

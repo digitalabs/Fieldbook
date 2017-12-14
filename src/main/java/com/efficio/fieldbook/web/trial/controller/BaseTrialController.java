@@ -1,27 +1,17 @@
+
 package com.efficio.fieldbook.web.trial.controller;
 
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.trial.bean.AdvanceList;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignDataDetail;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.StringTokenizer;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
@@ -47,14 +37,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.StringTokenizer;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.trial.bean.AdvanceList;
+import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignDataDetail;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
+import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -97,9 +102,9 @@ public abstract class BaseTrialController extends SettingsController {
 	protected void processEnvironmentData(final EnvironmentData data) {
 		for (int i = 0; i < data.getEnvironments().size(); i++) {
 			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
-			if ((!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) || (
-				values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null || values
-					.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty())) {
+			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))
+					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null
+					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
 				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
 			}
 		}
@@ -407,7 +412,7 @@ public abstract class BaseTrialController extends SettingsController {
 		for (final MeasurementVariable var : variatesList) {
 			if (var.getVariableType() == variableType) {
 
-				final SettingDetail detail = this.createSettingDetail(var.getTermId(), variableType);
+				final SettingDetail detail = this.createSettingDetailWithVariableType(var.getTermId(), var.getName(), variableType);
 
 				if (!isUsePrevious) {
 					detail.getVariable().setOperation(Operation.UPDATE);
@@ -435,7 +440,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 	protected TabInfo prepareEnvironmentsTabInfo(final Workbook workbook, final boolean isUsePrevious) {
 		final TabInfo info = new TabInfo();
-		final Map settingMap = new HashMap();
+		final Map<String, Object> settingMap = new HashMap<>();
 		final List<SettingDetail> managementDetailList = new ArrayList<>();
 		final List<SettingDetail> trialConditionsList = new ArrayList<>();
 		final List<Integer> hiddenFields = this.buildVariableIDList(
@@ -587,9 +592,8 @@ public abstract class BaseTrialController extends SettingsController {
 
 			final StandardVariable variable = this.ontologyService.getStandardVariable(cvTermId, this.contextUtil.getCurrentProgramUUID());
 
-			final List<StandardVariable> pairs = this.fieldbookMiddlewareService
-					.getPossibleTreatmentPairs(variable.getId(), variable.getProperty().getId(),
-							AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
+			final List<StandardVariable> pairs = this.fieldbookMiddlewareService.getPossibleTreatmentPairs(variable.getId(),
+					variable.getProperty().getId(), AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
 
 			for (final StandardVariable item : pairs) {
 				output.add(this.createSettingDetail(item.getId(), null, VariableType.TREATMENT_FACTOR.getRole().name()));
@@ -611,7 +615,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 		boolean haveSamples = false;
 		if (this.userSelection.getWorkbook() != null) {
-			haveSamples = fieldbookMiddlewareService.hasSamples(this.userSelection.getWorkbook().getStudyDetails().getId());
+			haveSamples = this.fieldbookMiddlewareService.hasSamples(this.userSelection.getWorkbook().getStudyDetails().getId());
 		}
 
 		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
@@ -622,7 +626,7 @@ public abstract class BaseTrialController extends SettingsController {
 		if (!measurementDatasetVariables.isEmpty()) {
 			final List<MeasurementVariable> newMeasurementDatasetVariables = this.getMeasurementVariableFactor(measurementDatasetVariables);
 			if (haveSamples) {
-				final MeasurementVariable sample = createSampleVariable();
+				final MeasurementVariable sample = this.createSampleVariable();
 				newMeasurementDatasetVariables.add(sample);
 			}
 			this.getTraitsAndSelectionVariates(measurementDatasetVariables, newMeasurementDatasetVariables, listCsv);
@@ -656,7 +660,6 @@ public abstract class BaseTrialController extends SettingsController {
 			}
 		}
 		final String studyOwnerPersonName = this.fieldbookService.getPersonByUserId(studyOwnerPersonId);
-
 
 		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
 
@@ -822,9 +825,8 @@ public abstract class BaseTrialController extends SettingsController {
 						val = managementDetailValue;
 					}
 
-					final MeasurementData newData =
-							new MeasurementData(measurementVariable.getName(), val, false, measurementVariable.getDataType(),
-									measurementVariable);
+					final MeasurementData newData = new MeasurementData(measurementVariable.getName(), val, false,
+							measurementVariable.getDataType(), measurementVariable);
 					row.getDataList().add(newData);
 				}
 
@@ -835,9 +837,8 @@ public abstract class BaseTrialController extends SettingsController {
 
 	}
 
-
-	protected List<MeasurementVariable> getMeasurementVariableFactor(List<MeasurementVariable> measurementDatasetVariables) {
-		List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<>();
+	protected List<MeasurementVariable> getMeasurementVariableFactor(final List<MeasurementVariable> measurementDatasetVariables) {
+		final List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<>();
 		for (final MeasurementVariable var : measurementDatasetVariables) {
 			if (var.isFactor()) {
 				newMeasurementDatasetVariables.add(var);
@@ -846,25 +847,50 @@ public abstract class BaseTrialController extends SettingsController {
 		return newMeasurementDatasetVariables;
 	}
 
-	protected void getTraitsAndSelectionVariates(List<MeasurementVariable> measurementDatasetVariables,List<MeasurementVariable> newMeasurementDatasetVariables, String listCsv) {
+	protected void getTraitsAndSelectionVariates(final List<MeasurementVariable> measurementDatasetVariables,
+			final List<MeasurementVariable> newMeasurementDatasetVariables, final String listCsv) {
 
 		if (listCsv != null && !"".equalsIgnoreCase(listCsv)) {
+			// Create a map of traits and selection variates from user selection (UI) so their aliases can be retrieved
+			final Map<Integer, SettingDetail> traitsMap = this.createMapOfTraitsAndSelectionVariatesFromUserSelection();
 			final StringTokenizer token = new StringTokenizer(listCsv, ",");
 			while (token.hasMoreTokens()) {
 				final int id = Integer.parseInt(token.nextToken());
 				final MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
 				if (currentVar == null) {
 					final StandardVariable var =
-						this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
+							this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
 					var.setPhenotypicType(PhenotypicType.VARIATE);
 					final MeasurementVariable newVar =
-						ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
+							ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
 					newVar.setFactor(false);
+					// Get trait's alias, if any, from user selection (UI) so that it will reflect on Measurements tab
+					final SettingDetail traitFromSession = traitsMap.get(id);
+					if (traitFromSession != null && traitFromSession.getVariable() != null) {
+						newVar.setName(traitFromSession.getVariable().getName());
+					}
 					newMeasurementDatasetVariables.add(newVar);
 				} else {
 					newMeasurementDatasetVariables.add(currentVar);
 				}
 			}
 		}
+	}
+
+	private ImmutableMap<Integer, SettingDetail> createMapOfTraitsAndSelectionVariatesFromUserSelection() {
+		final List<SettingDetail> variates = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(this.userSelection.getBaselineTraitsList())) {
+			variates.addAll(this.userSelection.getBaselineTraitsList());
+		}
+		if (CollectionUtils.isNotEmpty(this.userSelection.getSelectionVariates())) {
+			variates.addAll(this.userSelection.getSelectionVariates());
+		}
+		return Maps.uniqueIndex(variates, new Function<SettingDetail, Integer>() {
+
+			@Override
+			public Integer apply(final SettingDetail setting) {
+				return setting.getVariable().getCvTermId();
+			}
+		});
 	}
 }

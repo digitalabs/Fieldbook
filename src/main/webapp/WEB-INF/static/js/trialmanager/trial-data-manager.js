@@ -330,25 +330,6 @@
 					return data;
 				},
 
-				generatePresetExpDesign: function(designType) {
-					var deferred = $q.defer();
-
-					var data = service.retrieveGenerateDesignInput(designType);
-
-					$http.post('/Fieldbook/DesignImport/generatePresetMeasurements', JSON.stringify(data)).then(function(resp) {
-						if (!resp.data.isSuccess) {
-							deferred.reject(resp.data);
-							return;
-						}
-						service.updateCurrentData('environments', data.environmentData);
-
-						deferred.resolve(true);
-					});
-
-					return deferred.promise;
-				},
-				
-
 				isOpenTrial: function() {
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;

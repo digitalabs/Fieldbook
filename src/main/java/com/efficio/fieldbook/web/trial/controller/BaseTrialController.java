@@ -209,7 +209,7 @@ public abstract class BaseTrialController extends SettingsController {
 					data.setDesignType(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId());
 					data.setUseLatenized(true);
 				} else if (TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId() == designTypeTermID) {
-					this.setCorrectUIDesignTypeOfResolvableIncompleteBlock(data);
+					data.setDesignType(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId());
 					data.setUseLatenized(false);
 				} else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId() == designTypeTermID) {
 					data.setDesignType(DesignTypeItem.ROW_COL.getId());
@@ -270,14 +270,6 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 		data.setStartingEntryNo(startingEntryNo.toString());
 		data.setStartingPlotNo(startingPlotNo.toString());
-	}
-
-	private void setCorrectUIDesignTypeOfResolvableIncompleteBlock(final ExpDesignParameterUi data) {
-		if (data.getFileName() != null) {
-			data.setDesignType(SettingsUtil.getPresetDesignTypeBasedOnFileName(data.getFileName()));
-		} else {
-			data.setDesignType(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId());
-		}
 	}
 
 	protected String getExperimentalDesignData(final MeasurementVariable var) {

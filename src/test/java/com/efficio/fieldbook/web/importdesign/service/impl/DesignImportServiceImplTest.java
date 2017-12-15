@@ -1,15 +1,19 @@
-
 package com.efficio.fieldbook.web.importdesign.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
+import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
+import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementRowGenerator;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.util.parsing.DesignImportCsvParser;
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 import junit.framework.Assert;
-
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -42,23 +46,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
-import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
-import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementRowGenerator;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.util.parsing.DesignImportCsvParser;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("deprecation")
 @RunWith(MockitoJUnitRunner.class)
 public class DesignImportServiceImplTest {
-
-	private static final int STARTING_PLOT_NO_FROM_CSV = 1;
 
 	private static final int CHALK_PCT_TERMID = 22768;
 
@@ -97,7 +94,7 @@ public class DesignImportServiceImplTest {
 	private DesignImportMeasurementRowGenerator measurementRowGenerator;
 
 	private DesignImportData designImportData;
-	
+
 	@InjectMocks
 	private DesignImportServiceImpl service;
 
@@ -163,8 +160,8 @@ public class DesignImportServiceImplTest {
 			if (stdVar != null) {
 				Assert.assertTrue("The standard variable id must be equal to the measurement variable id.",
 						stdVar.getId() == measurementVar.getTermId());
-				Assert.assertTrue("The standard variable phenotypic type must be equal to the measurement variable label.", stdVar
-						.getPhenotypicType().getLabelList().contains(measurementVar.getLabel()));
+				Assert.assertTrue("The standard variable phenotypic type must be equal to the measurement variable label.",
+						stdVar.getPhenotypicType().getLabelList().contains(measurementVar.getLabel()));
 			}
 		}
 	}
@@ -196,11 +193,85 @@ public class DesignImportServiceImplTest {
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false,
-						this.createAdditionalParamsMap(1, 1));
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
 
-		Assert.assertEquals("The first trial instance must only have " + DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES
-				+ " observations.", DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, measurements.size());
+		Assert.assertEquals(
+				"The first trial instance must only have " + DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations.",
+				DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, measurements.size());
+
+	}
+
+	@Test
+	public void testGenerateDesignWithCustomPlotNo() throws DesignValidationException {
+
+		int startingEntryNo = 1;
+		int startingPlotNo = 12;
+
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
+
+		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
+				.getImportedGermplasmMainInfo();
+
+		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
+
+		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
+
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(startingEntryNo, startingPlotNo);
+
+		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, designImportData, environmentData, true,
+				this.createAdditionalParamsMap(startingEntryNo, startingPlotNo));
+
+		Assert.assertEquals(
+				"The first trial instance must only have " + DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations.",
+				DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, measurements.size());
+
+		// Verify that PLOT_NO column in measurement rows starts with the specified starting plotNo
+		for (final MeasurementRow measurementRow : measurements) {
+			Assert.assertEquals(String.valueOf(startingPlotNo++), measurementRow.getMeasurementDataValue(TermId.PLOT_NO.getId()));
+		}
+
+		// Verify that the ENTRY_NO column in measurement rows starts with the specified starting entry no
+		for (final MeasurementRow measurementRow : measurements) {
+			Assert.assertEquals(String.valueOf(startingEntryNo++), measurementRow.getMeasurementDataValue(TermId.ENTRY_NO.getId()));
+		}
+
+	}
+
+	@Test
+	public void testGenerateDesignWithCustomEntryNo() throws DesignValidationException {
+
+		int startingEntryNo = 10;
+		int startingPlotNo = 1;
+
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
+
+		final ImportedGermplasmMainInfo importedGermplasmMainInfo =
+				ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo(startingEntryNo);
+
+		Mockito.doReturn(importedGermplasmMainInfo).when(this.userSelection).getImportedGermplasmMainInfo();
+
+		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
+
+		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
+
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(startingEntryNo, startingPlotNo);
+
+		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, designImportData, environmentData, true,
+				this.createAdditionalParamsMap(startingEntryNo, startingPlotNo));
+
+		Assert.assertEquals(
+				"The first trial instance must only have " + DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations.",
+				DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, measurements.size());
+
+		// Verify that the PLOT_NO column in measurement rows starts with the specified starting plotNo
+		for (final MeasurementRow measurementRow : measurements) {
+			Assert.assertEquals(String.valueOf(startingPlotNo++), measurementRow.getMeasurementDataValue(TermId.PLOT_NO.getId()));
+		}
+
+		// Verify that the ENTRY_NO column in measurement rows starts with the specified starting entry no
+		for (final MeasurementRow measurementRow : measurements) {
+			Assert.assertEquals(String.valueOf(startingEntryNo++), measurementRow.getMeasurementDataValue(TermId.ENTRY_NO.getId()));
+		}
 
 	}
 
@@ -219,8 +290,7 @@ public class DesignImportServiceImplTest {
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false,
-						this.createAdditionalParamsMap(1, 1));
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
 
 		// Not including the header row from the count of number of rows from the csv file
 		final int expectedNumberOfMeasurements = this.designImportData.getRowDataMap().size() - 1;
@@ -246,48 +316,11 @@ public class DesignImportServiceImplTest {
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, true, false,
-						this.createAdditionalParamsMap(1, 1));
+				this.service.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
 
 		Assert.assertEquals("Expecting that the number of measurement rows generated for nursery is "
-				+ DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations but returned " + measurements.size() + " instead.",
+						+ DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations but returned " + measurements.size() + " instead.",
 				DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES, measurements.size());
-
-	}
-
-	@Test
-	public void testGenerateDesignForThreeInstancesPreset() throws DesignValidationException {
-
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
-
-		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
-				.getImportedGermplasmMainInfo();
-
-		// Make sure that there is only 3 trial instances included in the selected environments from the UI
-		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(3);
-
-		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
-
-		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, false, true,
-						this.createAdditionalParamsMap(1, 1));
-
-		Assert.assertEquals("The 3 trial instances should have 18 observations", 18, measurements.size());
-
-		for (int i = 0; i <= 5; i++) {
-			Assert.assertEquals("Measurement rows 1 to 6 should be assigned to trial instance 2", "1", measurements.get(i).getDataList()
-					.get(0).getValue());
-		}
-
-		for (int i = 6; i <= 11; i++) {
-			Assert.assertEquals("Measurement rows 7 to 12 should be assigned to trial instance 2", "2", measurements.get(i).getDataList()
-					.get(0).getValue());
-		}
-
-		for (int i = 12; i <= 17; i++) {
-			Assert.assertEquals("Measurement rows 13 to 18 should be assigned to trial instance 2", "3", measurements.get(i).getDataList()
-					.get(0).getValue());
-		}
 
 	}
 
@@ -332,8 +365,9 @@ public class DesignImportServiceImplTest {
 				this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN).size();
 		final Set<MeasurementVariable> result = this.service.getDesignRequiredMeasurementVariable(workbook, this.designImportData);
 
-		Assert.assertEquals("The total number of Trial Design Factors is " + expectedNoOfTrialDesignVariablesFromCSV + " but returned "
-				+ result.size() + " instead.", expectedNoOfTrialDesignVariablesFromCSV, result.size());
+		Assert.assertEquals(
+				"The total number of Trial Design Factors is " + expectedNoOfTrialDesignVariablesFromCSV + " but returned " + result.size()
+						+ " instead.", expectedNoOfTrialDesignVariablesFromCSV, result.size());
 	}
 
 	/**
@@ -349,17 +383,18 @@ public class DesignImportServiceImplTest {
 				this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN).size();
 		final Set<StandardVariable> result = this.service.getDesignRequiredStandardVariables(workbook, this.designImportData);
 
-		Assert.assertEquals("The total number of Trial Design Factors is " + expectedNoOfTrialDesignVariablesFromCSV + " but returned "
-				+ result.size() + " instead.", expectedNoOfTrialDesignVariablesFromCSV, result.size());
+		Assert.assertEquals(
+				"The total number of Trial Design Factors is " + expectedNoOfTrialDesignVariablesFromCSV + " but returned " + result.size()
+						+ " instead.", expectedNoOfTrialDesignVariablesFromCSV, result.size());
 
 	}
 
 	@Test
 	public void testGroupCsvRowsIntoTrialInstance() throws DesignValidationException {
 
-		final DesignHeaderItem trialInstanceHeaderItem =
-				this.service.validateIfStandardVariableExists(this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId()
-						.get(PhenotypicType.TRIAL_ENVIRONMENT), "design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
+		final DesignHeaderItem trialInstanceHeaderItem = this.service.validateIfStandardVariableExists(
+				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
+				"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 
 		final Map<String, Map<Integer, List<String>>> result =
 				this.service.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, this.designImportData.getRowDataMap());
@@ -391,8 +426,9 @@ public class DesignImportServiceImplTest {
 	public void testValidateIfStandardVariableExists() {
 		try {
 
-			this.service.validateIfStandardVariableExists(this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId()
-					.get(PhenotypicType.TRIAL_ENVIRONMENT), "design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
+			this.service.validateIfStandardVariableExists(
+					this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
+					"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 
 		} catch (final DesignValidationException e) {
 
@@ -414,9 +450,9 @@ public class DesignImportServiceImplTest {
 	/**
 	 * This method test the following scenarios: 1. If the number of measurement rows created are the same with the number of rows imported
 	 * from the file 2. If the starting plot no is applied properly for each measurement row created
-	 * 
+	 * <p/>
 	 * This service method updates the measurement rows.
-	 * 
+	 * <p/>
 	 * NOTE: Trial Instance = Environment
 	 */
 	@Test
@@ -425,11 +461,8 @@ public class DesignImportServiceImplTest {
 		final List<MeasurementRow> measurements = new ArrayList<MeasurementRow>();
 		final DesignImportMeasurementRowGenerator measurementRowGenerator = this.generateMeasurementRowGenerator();
 		final int trialInstanceNo = 1;
-		final Integer startingPlotNo = 3;
-		// The delta that will be used to adjust the value of each plot no from the measurement rows
-		final int plotNoDelta = startingPlotNo - STARTING_PLOT_NO_FROM_CSV;
 
-		this.service.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, plotNoDelta);
+		this.service.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo);
 
 		Assert.assertEquals("The number of measurement rows from the csv file must be equal to the number of measurements row generated.",
 				csvData.size() - 1, measurements.size());
@@ -454,76 +487,7 @@ public class DesignImportServiceImplTest {
 			final int plotNoActual = Integer.valueOf(dataListMap.get(TermId.PLOT_NO.getId()).getValue());
 
 			Assert.assertEquals("Expecting that the generated value for plot no is increased based on the stated starting plot no.",
-					plotNoCsv + plotNoDelta, plotNoActual);
-		}
-	}
-
-	@Test
-	public void testGetStartingPlotNoFromCSV() {
-
-		final Map<Integer, List<String>> csvData = this.designImportData.getRowDataMap();
-		final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> map =
-				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
-
-		final int expectedStartingPlotNo = 1;
-
-		final Integer startingPlotNo = this.service.getStartingPlotNoFromCSV(csvData, map);
-		Assert.assertEquals(
-				"Expecting that the starting plot no is equal to " + expectedStartingPlotNo + " but returned " + startingPlotNo.intValue(),
-				expectedStartingPlotNo, startingPlotNo.intValue());
-	}
-
-	@Test
-	public void testRetrieveImportedGermplasmForNewTrial() {
-		final int startingEntryNo = 4;
-		final ImportedGermplasmMainInfo importedGermplasmInfo = ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo();
-
-		final Integer entryNoDelta =
-				startingEntryNo - importedGermplasmInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId();
-
-		final List<Integer> previousImportedGermplasmListEntryNos = new ArrayList<Integer>();
-		for (final ImportedGermplasm entry : importedGermplasmInfo.getImportedGermplasmList().getImportedGermplasms()) {
-			previousImportedGermplasmListEntryNos.add(entry.getEntryId());
-		}
-
-		Mockito.doReturn(importedGermplasmInfo).when(this.userSelection).getImportedGermplasmMainInfo();
-
-		this.service.retrieveImportedGermplasm(null, startingEntryNo);
-
-		final List<ImportedGermplasm> currentImportedGermplasmList = new ArrayList<ImportedGermplasm>();
-		currentImportedGermplasmList.addAll(importedGermplasmInfo.getImportedGermplasmList().getImportedGermplasms());
-
-		int currentIndx = 0;
-		while (currentIndx < currentImportedGermplasmList.size()) {
-			Assert.assertEquals("Expecting that the new entry no is incremented based on the stated starting no.",
-					Integer.valueOf(previousImportedGermplasmListEntryNos.get(currentIndx)).intValue() + entryNoDelta,
-					Integer.valueOf(currentImportedGermplasmList.get(currentIndx).getEntryId()).intValue());
-			currentIndx++;
-		}
-	}
-
-	@Test
-	public void testRetrieveImportedGermplasmForExistingTrial() {
-		final int startingEntryNo = 4;
-		final ImportedGermplasmMainInfo importedGermplasmInfo = ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo();
-
-		final List<Integer> previousImportedGermplasmListEntryNos = new ArrayList<Integer>();
-		for (final ImportedGermplasm entry : importedGermplasmInfo.getImportedGermplasmList().getImportedGermplasms()) {
-			previousImportedGermplasmListEntryNos.add(entry.getEntryId());
-		}
-
-		Mockito.doReturn(importedGermplasmInfo).when(this.userSelection).getImportedGermplasmMainInfo();
-		this.service.retrieveImportedGermplasm(1, startingEntryNo);
-
-		final List<ImportedGermplasm> currentImportedGermplasmList = new ArrayList<ImportedGermplasm>();
-		currentImportedGermplasmList.addAll(importedGermplasmInfo.getImportedGermplasmList().getImportedGermplasms());
-
-		int currentIndx = 0;
-		while (currentIndx < currentImportedGermplasmList.size()) {
-			Assert.assertEquals("Expecting that no changes made on starting no for existing trial..",
-					Integer.valueOf(previousImportedGermplasmListEntryNos.get(currentIndx)).intValue(),
-					Integer.valueOf(currentImportedGermplasmList.get(currentIndx).getEntryId()).intValue());
-			currentIndx++;
+					plotNoCsv, plotNoActual);
 		}
 	}
 
@@ -531,7 +495,17 @@ public class DesignImportServiceImplTest {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(6, 3);
 		final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId =
 				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
-		final List<ImportedGermplasm> importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
+
+		final Map<Integer, ImportedGermplasm> importedGermplasm =
+				Maps.uniqueIndex(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList(),
+						new Function<ImportedGermplasm, Integer>() {
+
+							@Override
+							public Integer apply(final ImportedGermplasm input) {
+								return input.getEntryId();
+							}
+						});
+
 		final Map<Integer, StandardVariable> germplasmStandardVariables = new HashMap<Integer, StandardVariable>();
 		germplasmStandardVariables.put(TermId.ENTRY_NO.getId(),
 				StandardVariableTestDataInitializer.createStandardVariable(TermId.ENTRY_NO.getId(), TermId.ENTRY_NO.name()));
@@ -550,8 +524,8 @@ public class DesignImportServiceImplTest {
 	private void initializeDesignImportData() {
 
 		try {
-			Mockito.when(this.designImportParser.parseFile(this.multiPartFile)).thenReturn(
-					DesignImportTestDataInitializer.createDesignImportData());
+			Mockito.when(this.designImportParser.parseFile(this.multiPartFile))
+					.thenReturn(DesignImportTestDataInitializer.createDesignImportData(1, 1));
 			this.designImportData = this.designImportParser.parseFile(this.multiPartFile);
 		} catch (final FileParsingException e) {
 			Assert.fail("Failed to create DesignImportData");
@@ -569,52 +543,51 @@ public class DesignImportServiceImplTest {
 	@SuppressWarnings({"unchecked"})
 	private void initializeOntologyService() {
 
-		Mockito.doReturn(
-				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_NO.getId(), "ENTRY_NO", "",
-						"", "", DesignImportTestDataInitializer.NUMERIC_VARIABLE, "N", "", "")).when(this.ontologyService)
+		Mockito.doReturn(DesignImportTestDataInitializer
+				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_NO.getId(), "ENTRY_NO", "", "", "",
+						DesignImportTestDataInitializer.NUMERIC_VARIABLE, "N", "", "")).when(this.ontologyService)
 				.getStandardVariable(TermId.ENTRY_NO.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(
-				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.GERMPLASM, TermId.GID.getId(), "GID", "", "", "",
+		Mockito.doReturn(DesignImportTestDataInitializer
+				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.GID.getId(), "GID", "", "", "",
 						DesignImportTestDataInitializer.NUMERIC_VARIABLE, "N", "", "")).when(this.ontologyService)
 				.getStandardVariable(TermId.GID.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(
-				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.GERMPLASM, TermId.DESIG.getId(), "DESIG", "", "", "",
+		Mockito.doReturn(DesignImportTestDataInitializer
+				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.DESIG.getId(), "DESIG", "", "", "",
 						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
 				.getStandardVariable(TermId.DESIG.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
 
-		Mockito.doReturn(
-				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.GERMPLASM, TermId.PLOT_ID.getId(), "PLOT_ID", "", "", "",
+		Mockito.doReturn(DesignImportTestDataInitializer
+				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.PLOT_ID.getId(), "PLOT_ID", "", "", "",
 						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
 				.getStandardVariable(TermId.PLOT_ID.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
 
-		Mockito.doReturn(
-				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_TYPE.getId(), "ENTRY_TYPE",
-						"", "", "", DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
+		Mockito.doReturn(DesignImportTestDataInitializer
+				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_TYPE.getId(), "ENTRY_TYPE", "", "", "",
+						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
 				.getStandardVariable(TermId.ENTRY_TYPE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(
-				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.GERMPLASM, TermId.CROSS.getId(), "CROSS", "", "", "",
+		Mockito.doReturn(DesignImportTestDataInitializer
+				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.CROSS.getId(), "CROSS", "", "", "",
 						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
 				.getStandardVariable(TermId.CROSS.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(
-				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_CODE.getId(), "ENTRY_CODE",
-						"", "", "", DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
+		Mockito.doReturn(DesignImportTestDataInitializer
+				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_CODE.getId(), "ENTRY_CODE", "", "", "",
+						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
 				.getStandardVariable(TermId.ENTRY_CODE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(
-				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.GERMPLASM, TermId.GERMPLASM_SOURCE.getId(),
-						"GERMPLASM_SOURCE", "", "", "", DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", ""))
-				.when(this.ontologyService).getStandardVariable(TermId.GERMPLASM_SOURCE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(
-				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.GERMPLASM, TermId.SEED_SOURCE.getId(), "SEED_SOURCE",
-						"", "", "", DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
+		Mockito.doReturn(DesignImportTestDataInitializer
+				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.GERMPLASM_SOURCE.getId(), "GERMPLASM_SOURCE", "", "", "",
+						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
+				.getStandardVariable(TermId.GERMPLASM_SOURCE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
+		Mockito.doReturn(DesignImportTestDataInitializer
+				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.SEED_SOURCE.getId(), "SEED_SOURCE", "", "", "",
+						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
 				.getStandardVariable(TermId.SEED_SOURCE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
 
-		Mockito.doReturn(
-				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.VARIATE, DesignImportServiceImplTest.GYLD_TERMID,
-						"GYLD", "", "", "", DesignImportTestDataInitializer.NUMERIC_VARIABLE, "N", "", "")).when(this.ontologyService)
+		Mockito.doReturn(DesignImportTestDataInitializer
+				.createStandardVariable(PhenotypicType.VARIATE, DesignImportServiceImplTest.GYLD_TERMID, "GYLD", "", "", "",
+						DesignImportTestDataInitializer.NUMERIC_VARIABLE, "N", "", "")).when(this.ontologyService)
 				.getStandardVariable(DesignImportServiceImplTest.GYLD_TERMID, DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(
-				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.VARIATE,
-						DesignImportServiceImplTest.CHALK_PCT_TERMID, "CHALK_PCT", "", "", "",
+		Mockito.doReturn(DesignImportTestDataInitializer
+				.createStandardVariable(PhenotypicType.VARIATE, DesignImportServiceImplTest.CHALK_PCT_TERMID, "CHALK_PCT", "", "", "",
 						DesignImportTestDataInitializer.NUMERIC_VARIABLE, "N", "", "")).when(this.ontologyService)
 				.getStandardVariable(DesignImportServiceImplTest.CHALK_PCT_TERMID, DesignImportServiceImplTest.PROGRAM_UUID);
 
@@ -626,23 +599,19 @@ public class DesignImportServiceImplTest {
 
 		final Map<String, List<StandardVariable>> map = new HashMap<>();
 
-		map.put("TRIAL_INSTANCE", this.createList(DesignImportTestDataInitializer.createStandardVariable(VariableType.ENVIRONMENT_DETAIL,
-				TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "", "", "", "", "", "")));
-		map.put("SITE_NAME",
-				this.createList(DesignImportTestDataInitializer.createStandardVariable(VariableType.ENVIRONMENT_DETAIL,
-						StudyType.T.getId(), "SITE_NAME", "", "", "", "", "", "")));
-		map.put("ENTRY_NO",
-				this.createList(DesignImportTestDataInitializer.createStandardVariable(VariableType.GERMPLASM_DESCRIPTOR,
-						TermId.ENTRY_NO.getId(), "ENTRY_NO", "", "", "", "", "", "")));
-		map.put("PLOT_NO",
-				this.createList(DesignImportTestDataInitializer.createStandardVariable(VariableType.EXPERIMENTAL_DESIGN,
-						TermId.PLOT_NO.getId(), "PLOT_NO", "", "", "", "", "", "")));
-		map.put("REP_NO",
-				this.createList(DesignImportTestDataInitializer.createStandardVariable(VariableType.EXPERIMENTAL_DESIGN,
-						TermId.REP_NO.getId(), "REP_NO", "", "", "", "", "", "")));
-		map.put("BLOCK_NO",
-				this.createList(DesignImportTestDataInitializer.createStandardVariable(VariableType.EXPERIMENTAL_DESIGN,
-						TermId.BLOCK_NO.getId(), "BLOCK_NO", "", "", "", "", "", "")));
+		map.put("TRIAL_INSTANCE", this.createList(DesignImportTestDataInitializer
+				.createStandardVariable(VariableType.ENVIRONMENT_DETAIL, TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "", "", "",
+						"", "", "")));
+		map.put("SITE_NAME", this.createList(DesignImportTestDataInitializer
+				.createStandardVariable(VariableType.ENVIRONMENT_DETAIL, StudyType.T.getId(), "SITE_NAME", "", "", "", "", "", "")));
+		map.put("ENTRY_NO", this.createList(DesignImportTestDataInitializer
+				.createStandardVariable(VariableType.GERMPLASM_DESCRIPTOR, TermId.ENTRY_NO.getId(), "ENTRY_NO", "", "", "", "", "", "")));
+		map.put("PLOT_NO", this.createList(DesignImportTestDataInitializer
+				.createStandardVariable(VariableType.EXPERIMENTAL_DESIGN, TermId.PLOT_NO.getId(), "PLOT_NO", "", "", "", "", "", "")));
+		map.put("REP_NO", this.createList(DesignImportTestDataInitializer
+				.createStandardVariable(VariableType.EXPERIMENTAL_DESIGN, TermId.REP_NO.getId(), "REP_NO", "", "", "", "", "", "")));
+		map.put("BLOCK_NO", this.createList(DesignImportTestDataInitializer
+				.createStandardVariable(VariableType.EXPERIMENTAL_DESIGN, TermId.BLOCK_NO.getId(), "BLOCK_NO", "", "", "", "", "", "")));
 
 		Mockito.doReturn(map).when(this.ontologyDataManager).getStandardVariablesInProjects(Matchers.anyList(), Matchers.anyString());
 

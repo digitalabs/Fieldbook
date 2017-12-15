@@ -58,7 +58,7 @@ public class SettingsUtilTest {
 
 	private static final String PROGRAM_UUID = "123456789";
 
-	private SettingDetailTestDataInitializer settingDetailTestDataInitializer;
+
 	private static final int DUMMY_ID = 0;
 
 	private static final Term CATEGORICAL_DATATYPE_TERM = new Term(TermId.CATEGORICAL_VARIABLE.getId(), "Categorical Variable",
@@ -69,7 +69,7 @@ public class SettingsUtilTest {
 
 	@Before
 	public void setUp() {
-		this.settingDetailTestDataInitializer = new SettingDetailTestDataInitializer();
+
 	}
 
 	@Test
@@ -292,48 +292,6 @@ public class SettingsUtilTest {
 		final ExpDesignParameterUi result;
 		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
 		Assert.assertEquals(3, result.getDesignType().intValue());
-
-	}
-
-	@Test
-	public void testConvertToExpDesignParamsUiAlphaLatticeEntry30Rep2() {
-
-		final List<MeasurementVariable> expDesigns = new ArrayList<>();
-		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
-				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
-		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E30-Rep2-Block6-5Ind.csv"));
-
-		final ExpDesignParameterUi result;
-		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
-		Assert.assertEquals(5, result.getDesignType().intValue());
-
-	}
-
-	@Test
-	public void testConvertToExpDesignParamsUiAlphaLatticeEntry30Rep3() {
-
-		final List<MeasurementVariable> expDesigns = new ArrayList<>();
-		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
-				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
-		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E30-Rep3-Block6-5Ind.csv"));
-
-		final ExpDesignParameterUi result;
-		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
-		Assert.assertEquals(6, result.getDesignType().intValue());
-
-	}
-
-	@Test
-	public void testConvertToExpDesignParamsUiAlphaLatticeEntry50Rep2() {
-
-		final List<MeasurementVariable> expDesigns = new ArrayList<>();
-		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
-				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
-		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E50-Rep2-Block5-10Ind.csv"));
-
-		final ExpDesignParameterUi result;
-		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
-		Assert.assertEquals(7, result.getDesignType().intValue());
 
 	}
 

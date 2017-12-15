@@ -105,7 +105,6 @@ public class DesignImportController extends SettingsController {
 
 	public static final String REVIEW_DETAILS_PAGINATION_TEMPLATE = "/DesignImport/reviewDetailsPagination";
 
-	public static final String DESIGN_TEMPLATE_FOLDER = "DesignPresets";
 	public static final String TEMPLATE_NAME = "templateName";
 
 	@Resource
@@ -345,7 +344,7 @@ public class DesignImportController extends SettingsController {
 
 		try {
 			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData,
-					false, false, this.generateAdditionalParams(DesignImportController.DEFAULT_STARTING_ENTRY_NO,
+					false, this.generateAdditionalParams(DesignImportController.DEFAULT_STARTING_ENTRY_NO,
 							DesignImportController.DEFAULT_STARTING_PLOT_NO));
 		} catch (final DesignValidationException e) {
 			DesignImportController.LOG.error(e.getMessage(), e);
@@ -503,7 +502,7 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(),
-					this.userSelection.getTemporaryWorkbook().getStudyDetails().getStudyType(), false,
+					this.userSelection.getTemporaryWorkbook().getStudyDetails().getStudyType(),
 					DesignTypeItem.CUSTOM_IMPORT, this.generateAdditionalParams(startingEntryNo, startingPlotNo));
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
@@ -534,58 +533,6 @@ public class DesignImportController extends SettingsController {
 		additionalParams.put("startingEntryNo", startingEntryNo);
 		additionalParams.put("startingPlotNo", startingPlotNo);
 		return additionalParams;
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "/generatePresetMeasurements", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-	public Map<String, Object> generatePresetMeasurements(@RequestBody final GenerateDesignInput generateDesignInput) {
-
-		final DesignTypeItem selectedDesignType = generateDesignInput.getSelectedDesignType();
-		final EnvironmentData environmentData = generateDesignInput.getEnvironmentData();
-		final Integer startingEntryNo = generateDesignInput.getStartingEntryNo();
-		final Integer startingPlotNo = generateDesignInput.getStartingPlotNo();
-
-		final Map<String, Object> resultsMap = new HashMap<>();
-
-		try {
-
-			DesignImportData designImportData = null;
-			if (selectedDesignType != null) {
-				designImportData = this.designImportParser.parseFile(DesignImportParser.FILE_TYPE_CSV,
-						ResourceFinder.locateFile(AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString()
-								.concat(selectedDesignType.getTemplateName())).getFile());
-			}
-
-			this.performAutomap(designImportData);
-
-			// populate parameters
-			final Map<String, Integer> additionalParams = this.generateAdditionalParams(startingEntryNo,
-					startingPlotNo);
-			final Workbook workbook = this.userSelection.getWorkbook();
-			if (generateDesignInput.getHasNewEnvironmentAdded() && workbook != null) {
-				this.userSelection.setTemporaryWorkbook(workbook);
-				additionalParams.put("noOfAddedEnvironments",
-						environmentData.getNoOfEnvironments() - workbook.getTrialObservations().size());
-			}
-
-			this.generateDesign(environmentData, designImportData, StudyType.T, true, selectedDesignType,
-					additionalParams);
-
-			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
-			resultsMap.put("environmentData", environmentData);
-			resultsMap.put("environmentSettings", this.userSelection.getTrialLevelVariableList());
-
-		} catch (final Exception e) {
-
-			DesignImportController.LOG.error(e.getMessage(), e);
-
-			resultsMap.put(DesignImportController.IS_SUCCESS, 0);
-			// error messages is still in .prop format,
-			resultsMap.put(DesignImportController.ERROR, new String[] { e.getMessage() });
-		}
-
-		return resultsMap;
-
 	}
 
 	@ResponseBody
@@ -625,7 +572,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
-			final StudyType studyType, final boolean isPreset, final DesignTypeItem designTypeItem,
+			final StudyType studyType, final DesignTypeItem designTypeItem,
 			final Map<String, Integer> additionalParams) throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
@@ -643,8 +590,7 @@ public class DesignImportController extends SettingsController {
 		Set<StandardVariable> expDesignVariables;
 		Set<MeasurementVariable> experimentalDesignMeasurementVariables;
 
-		measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false,
-				isPreset, additionalParams);
+		measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false, additionalParams);
 
 		workbook.setObservations(measurementRows);
 

@@ -2359,31 +2359,8 @@ public class SettingsUtil {
 				param.setNumberOfBlocks(var.getValue());
 			}
 		}
-		SettingsUtil.updateDesignTypeIfIncompleteBlockAndFileNameIsSet(param);
 
 		return param;
-	}
-
-	private static void updateDesignTypeIfIncompleteBlockAndFileNameIsSet(final ExpDesignParameterUi param) {
-		if (DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId().equals(param.getDesignType()) && param.getFileName() != null) {
-			param.setDesignType(SettingsUtil.getPresetDesignTypeBasedOnFileName(param.getFileName()));
-		}
-	}
-
-	public static int getPresetDesignTypeBasedOnFileName(final String fileName) {
-		final List<File> presetTemplates = ResourceFinder.getResourceListing(AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString());
-		// currently the UI follows this sequence for the presets: 4, 5, 6
-		// (this can be changed in the future so that constants are used)
-		Collections.sort(presetTemplates);
-		int presetDesignType = DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId() + 1;
-		for (final File designTemplateFile : presetTemplates) {
-			final String templateFileName = designTemplateFile.getName();
-			if (templateFileName.equals(fileName)) {
-				return presetDesignType;
-			}
-			presetDesignType++;
-		}
-		return presetDesignType;
 	}
 
 	/**

@@ -2741,10 +2741,15 @@ function moveStudy(sourceNode, targetNode) {
 		data: 'sourceId=' + sourceId + '&targetId=' + targetId + '&isStudy=' + isStudy,
 		cache: false,
 		success: function(data) {
-			var node = targetNode;
-			sourceNode.remove();
-			doStudyLazyLoad(node);
-			node.focus();
+			if (data.isSuccess === '1') {
+				var node = targetNode;
+				sourceNode.remove();
+				doStudyLazyLoad(node);
+				node.focus();
+			}
+			else {
+				showErrorMessage('page-rename-message-modal', data.message);
+			}
 		}
 	});
 }

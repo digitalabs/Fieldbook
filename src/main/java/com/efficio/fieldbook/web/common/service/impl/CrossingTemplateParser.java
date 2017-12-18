@@ -185,7 +185,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 					LocaleContextHolder.getLocale()));
 		}
 
-		if (!femaleNursery.equals(this.studySelection.getWorkbook().getStudyName())) {
+		if (!femaleNursery.equals(this.studySelection.getWorkbook().getStudyName().trim())) {
 			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.nursery.match", new String[] {},
 					LocaleContextHolder.getLocale()));
 		}

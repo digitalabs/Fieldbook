@@ -44,7 +44,7 @@ import com.efficio.fieldbook.web.util.AppConstants;
 public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCrossesList> {
 
 	public static final String NO_REFERENCES_ERROR_DESC = "study.import.crosses.error.no.references";
-	protected static final int OBSERVATION_SHEET_NO = 1;
+	protected static final String OBSERVATION_SHEET_NAME = "Observation";
 
 	/**
 	 * The Constant LOG.
@@ -123,22 +123,22 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		validateFemaleNursery(femaleNursery);
 
 		int currentRow = 1;
-		final int headerSize = this.getLastCellNum(CrossingTemplateParser.OBSERVATION_SHEET_NO, 0);
+		final int headerSize = this.getLastCellNum(this.getSheetIndex(OBSERVATION_SHEET_NAME), 0);
 
-		while (!this.isRowEmpty(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
+		while (!this.isRowEmpty(this.getSheetIndex(OBSERVATION_SHEET_NAME), currentRow,
 				headerSize)) {
 
-			final String femalePlotNo = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
+			final String femalePlotNo = this.getCellStringValue(this.getSheetIndex(OBSERVATION_SHEET_NAME), currentRow,
 					this.observationColumnMap.get(AppConstants.FEMALE_PLOT.getString()));
-			String maleNursery = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
+			String maleNursery = this.getCellStringValue(this.getSheetIndex(OBSERVATION_SHEET_NAME), currentRow,
 					this.observationColumnMap.get(AppConstants.MALE_NURSERY.getString()));
-			final String malePlotNo = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
+			final String malePlotNo = this.getCellStringValue(this.getSheetIndex(OBSERVATION_SHEET_NAME), currentRow,
 					this.observationColumnMap.get(AppConstants.MALE_PLOT.getString()));
-			final String breedingMethod = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
+			final String breedingMethod = this.getCellStringValue(this.getSheetIndex(OBSERVATION_SHEET_NAME), currentRow,
 					this.observationColumnMap.get(AppConstants.BREEDING_METHOD.getString()));
-			final String strCrossingDate = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
+			final String strCrossingDate = this.getCellStringValue(this.getSheetIndex(OBSERVATION_SHEET_NAME), currentRow,
 					this.observationColumnMap.get(AppConstants.CROSSING_DATE.getString()));
-			final String notes = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, currentRow,
+			final String notes = this.getCellStringValue(this.getSheetIndex(OBSERVATION_SHEET_NAME), currentRow,
 					this.observationColumnMap.get(AppConstants.NOTES.getString()));
 
 			validateObservationRow(femalePlotNo, malePlotNo, currentRow, strCrossingDate);
@@ -236,13 +236,13 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			importedVariates.add(variate.getVariate());
 		}
 
-		final int headerSize = this.getLastCellNum(CrossingTemplateParser.OBSERVATION_SHEET_NO, 0);
+		final int headerSize = this.getLastCellNum(this.getSheetIndex(OBSERVATION_SHEET_NAME), 0);
 
 		final Set<String> invalidColumns = new HashSet<>();
 
 		for (int i = 0; i < headerSize; i++) {
 			// search the current header
-			final String obsHeader = this.getCellStringValue(CrossingTemplateParser.OBSERVATION_SHEET_NO, 0, i);
+			final String obsHeader = this.getCellStringValue(this.getSheetIndex(OBSERVATION_SHEET_NAME), 0, i);
 
 			final boolean inFactors = importedFactors.contains(obsHeader);
 			final boolean inVariates = importedVariates.contains(obsHeader);

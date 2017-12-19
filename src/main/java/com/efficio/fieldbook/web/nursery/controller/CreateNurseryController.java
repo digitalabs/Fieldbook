@@ -281,17 +281,9 @@ public class CreateNurseryController extends SettingsController {
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public String submit(@ModelAttribute(CREATE_NURSERY_FORM) final CreateNurseryForm form, final Model model)
-			 {
-		// get the name of the nursery
-		String name = null;
-		for (final SettingDetail nvar : form.getBasicDetails()) {
-			if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null
-					&& nvar.getVariable().getCvTermId().equals(TermId.STUDY_NAME.getId())) {
-				name = nvar.getValue();
-				break;
-			}
-		}
+	public String submit(@ModelAttribute(CREATE_NURSERY_FORM) final CreateNurseryForm form, final Model model) {
+
+		final String name = trimNurseryName(form.getBasicDetails());
 
 		final String description = form.getDescription();
 
@@ -349,6 +341,26 @@ public class CreateNurseryController extends SettingsController {
 		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), null, form.getDescription());
 
 		return "success";
+	}
+
+	private String trimNurseryName(final List<SettingDetail> basicDetails) {
+		String name = null;
+		for (final SettingDetail nvar : basicDetails) {
+			if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null
+					&& nvar.getVariable().getCvTermId().equals(TermId.STUDY_NAME.getId())) {
+				/**
+				 * XXX save Trials does this in the frontend
+				 * Patching here trims both the name prop and the project column
+				 * This hack is enough for now since eventually Nursery code will be merged with Trial
+				 */
+				if (nvar.getValue() != null) {
+					nvar.setValue(nvar.getValue().trim());
+				}
+				name = nvar.getValue();
+				break;
+			}
+		}
+		return name;
 	}
 
 	private void addStudyLevelVariablesFromUserSelectionIfNecessary(final List<SettingDetail> studyLevelVariables,

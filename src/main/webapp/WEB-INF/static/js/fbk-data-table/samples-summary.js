@@ -42,8 +42,14 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 						if (!data || !data.length || data.length == 0) {
 							return '-';
 						}
+						var authParams =
+							'&authToken=' + authToken
+							+ '&selectedProjectId=' + selectedProjectId
+							+ '&loggedInUserId=' + loggedInUserId;
 						return data.map(function (dataset) {
-							return "<a href='/GDMS/main/?restartApplication&datasetId=" + dataset.datasetId + "'>" + dataset.name + "</a>"
+							return "<a href='/GDMS/main/?restartApplication&datasetId=" + dataset.datasetId
+								+ authParams
+								+ "'>" + dataset.name + "</a>"
 						}).join(", ");
 					}
 				}

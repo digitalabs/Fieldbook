@@ -58,6 +58,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 	private final Map<String, Integer> observationColumnMap = new HashMap<>();
 	private ImportedCrossesList importedCrossesList;
+	private Integer observationSheetIndex;
 
 	/**
 	 * Resources
@@ -88,6 +89,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	public ImportedCrossesList parseWorkbook(final Workbook workbook, final Map<String, Object> additionalParams)
 			throws FileParsingException {
 		this.workbook = workbook;
+		this.observationSheetIndex = this.getSheetIndex(CrossingTemplateParser.OBSERVATION_SHEET_NAME);
 		try {
 
 			final CrossesListDescriptionSheetParser<ImportedCrossesList> crossesListDescriptionSheetParser =
@@ -108,7 +110,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	/**
 	 * @throws org.generationcp.commons.parsing.FileParsingException
 	 */
-	protected void parseObservationSheet(final String programUUID) throws FileParsingException {
+	private void parseObservationSheet(final String programUUID) throws FileParsingException {
 		this.validateObservationsHeader();
 
 		String femaleNursery = null;
@@ -123,21 +125,21 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		this.validateFemaleNursery(femaleNursery);
 
 		int currentRow = 1;
-		final int headerSize = this.getLastCellNum(this.getSheetIndex(CrossingTemplateParser.OBSERVATION_SHEET_NAME), 0);
+		final int headerSize = this.getLastCellNum(this.observationSheetIndex, 0);
 
-		while (!this.isRowEmpty(this.getSheetIndex(CrossingTemplateParser.OBSERVATION_SHEET_NAME), currentRow, headerSize)) {
+		while (!this.isRowEmpty(this.observationSheetIndex, currentRow, headerSize)) {
 
-			final String femalePlotNo = this.getCellStringValue(this.getSheetIndex(CrossingTemplateParser.OBSERVATION_SHEET_NAME),
-					currentRow, this.observationColumnMap.get(AppConstants.FEMALE_PLOT.getString()));
-			String maleNursery = this.getCellStringValue(this.getSheetIndex(CrossingTemplateParser.OBSERVATION_SHEET_NAME), currentRow,
+			final String femalePlotNo = this.getCellStringValue(this.observationSheetIndex, currentRow,
+					this.observationColumnMap.get(AppConstants.FEMALE_PLOT.getString()));
+			String maleNursery = this.getCellStringValue(this.observationSheetIndex, currentRow,
 					this.observationColumnMap.get(AppConstants.MALE_NURSERY.getString()));
-			final String malePlotNo = this.getCellStringValue(this.getSheetIndex(CrossingTemplateParser.OBSERVATION_SHEET_NAME), currentRow,
+			final String malePlotNo = this.getCellStringValue(this.observationSheetIndex, currentRow,
 					this.observationColumnMap.get(AppConstants.MALE_PLOT.getString()));
-			final String breedingMethod = this.getCellStringValue(this.getSheetIndex(CrossingTemplateParser.OBSERVATION_SHEET_NAME),
-					currentRow, this.observationColumnMap.get(AppConstants.BREEDING_METHOD.getString()));
-			final String strCrossingDate = this.getCellStringValue(this.getSheetIndex(CrossingTemplateParser.OBSERVATION_SHEET_NAME),
-					currentRow, this.observationColumnMap.get(AppConstants.CROSSING_DATE.getString()));
-			final String notes = this.getCellStringValue(this.getSheetIndex(CrossingTemplateParser.OBSERVATION_SHEET_NAME), currentRow,
+			final String breedingMethod = this.getCellStringValue(this.observationSheetIndex, currentRow,
+					this.observationColumnMap.get(AppConstants.BREEDING_METHOD.getString()));
+			final String strCrossingDate = this.getCellStringValue(this.observationSheetIndex, currentRow,
+					this.observationColumnMap.get(AppConstants.CROSSING_DATE.getString()));
+			final String notes = this.getCellStringValue(this.observationSheetIndex, currentRow,
 					this.observationColumnMap.get(AppConstants.NOTES.getString()));
 
 			this.validateObservationRow(femalePlotNo, malePlotNo, currentRow, strCrossingDate);
@@ -177,7 +179,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 	}
 
-	protected void validateFemaleNursery(final String femaleNursery) throws FileParsingException {
+	private void validateFemaleNursery(final String femaleNursery) throws FileParsingException {
 
 		if (femaleNursery == null || femaleNursery == "") {
 			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.nursery.empty", new String[] {},
@@ -190,7 +192,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 	}
 
-	protected void validateObservationRow(final String femalePlotNo, final String malePlotNo, final int currentRow,
+	private void validateObservationRow(final String femalePlotNo, final String malePlotNo, final int currentRow,
 			final String strCrossingDate) throws FileParsingException {
 
 		if (!(StringUtils.isNotBlank(femalePlotNo) && StringUtils.isNumeric(femalePlotNo))) {
@@ -222,7 +224,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	 * @return
 	 * @throws FileParsingException If description columns are not present in observation sheet
 	 */
-	protected void validateObservationsHeader() throws FileParsingException {
+	private void validateObservationsHeader() throws FileParsingException {
 		final Set<String> importedFactors = new HashSet<>();
 
 		for (final ImportedFactor factor : this.importedCrossesList.getImportedFactors()) {
@@ -235,13 +237,13 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			importedVariates.add(variate.getVariate());
 		}
 
-		final int headerSize = this.getLastCellNum(this.getSheetIndex(CrossingTemplateParser.OBSERVATION_SHEET_NAME), 0);
+		final int headerSize = this.getLastCellNum(this.observationSheetIndex, 0);
 
 		final Set<String> invalidColumns = new HashSet<>();
 
 		for (int i = 0; i < headerSize; i++) {
 			// search the current header
-			final String obsHeader = this.getCellStringValue(this.getSheetIndex(CrossingTemplateParser.OBSERVATION_SHEET_NAME), 0, i);
+			final String obsHeader = this.getCellStringValue(this.observationSheetIndex, 0, i);
 
 			final boolean inFactors = importedFactors.contains(obsHeader);
 			final boolean inVariates = importedVariates.contains(obsHeader);
@@ -287,7 +289,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	 * @return ListDataProject - We need the Desig, and female/male gids information that we can retrive using this data structure
 	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
 	 */
-	protected ListDataProject getCrossingListProjectData(final String studyName, final Integer genderedPlotNo, final String programUUID)
+	private ListDataProject getCrossingListProjectData(final String studyName, final Integer genderedPlotNo, final String programUUID)
 			throws MiddlewareQueryException, FileParsingException {
 		// 1 get the particular study's list
 		final Integer studyId = this.studyDataManager.getStudyIdByNameAndProgramUUID(studyName, programUUID);

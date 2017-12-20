@@ -218,7 +218,7 @@ public class SettingsServiceImpl implements SettingsService {
 	}
 
 	@Override
-	public List<LabelFields> retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(final Workbook workbook) {
+	public List<LabelFields> retrieveTrialEnvironmentAsLabels(final Workbook workbook) {
 
 		final List<LabelFields> labelFieldsList = new ArrayList<>();
 
@@ -244,6 +244,14 @@ public class SettingsServiceImpl implements SettingsService {
 
 		}
 
+		return labelFieldsList;
+	}
+
+	@Override
+	public List<LabelFields> retrieveExperimentalDesignAsLabels(final Workbook workbook) {
+
+		final List<LabelFields> labelFieldsList = new ArrayList<>();
+
 		// Add BLOCK_NO experiment design factor if available
 		for (final MeasurementVariable var : workbook.getFactors()) {
 			if (TermId.BLOCK_NO.getId() == var.getTermId()) {
@@ -255,5 +263,6 @@ public class SettingsServiceImpl implements SettingsService {
 		}
 
 		return labelFieldsList;
+
 	}
 }

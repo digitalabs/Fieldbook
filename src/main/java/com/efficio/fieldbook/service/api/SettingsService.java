@@ -24,10 +24,12 @@ public interface SettingsService {
 
 	public List<LabelFields> retrieveGermplasmDescriptorsAsLabels(Workbook workbook);
 
-	public List<LabelFields> retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(Workbook workbook);
+	public List<LabelFields> retrieveTrialEnvironmentAsLabels(Workbook workbook);
 
 	public List<LabelFields> retrieveNurseryManagementDetailsAsLabels(Workbook workbook);
 
 	public SettingDetail createSettingDetail(int id, String name, UserSelection userSelection,
 			int currentIbDbUserId, String programUUID) throws MiddlewareException;
+
+	public List<LabelFields> retrieveExperimentalDesignAsLabels(Workbook workbook);
 }

@@ -31,7 +31,10 @@ public class LabelPrintingServiceDataInitializer {
 	public static final int TRIAL_SETTING_TERM_ID = 102;
 
 	public static final String TRIAL_ENVIRONMENT_DESIGN_LABEL_NAME = "trialEnvironmentDesignLabelName";
-	public static final int TRIAL_ENVIRONMENT_DESIGN__TERM_ID = 103;
+	public static final int TRIAL_ENVIRONMENT_DESIGN_TERM_ID = 103;
+
+	public static final String EXPERIMENTAL_DESIGN_LABEL_NAME = "experimentalDesignLabelName";
+	public static final int EXPERIMENTAL_DESIGN_TERM_ID = 104;
 
 
 	public static List<StudyTrialInstanceInfo> generateStudyTrialInstanceInfoList() {
@@ -94,12 +97,23 @@ public class LabelPrintingServiceDataInitializer {
 		return labelFields;
 	}
 
-	public static List<LabelFields> createEnvironmentAndExperimentalDesignSettingsLabelFields() {
+	public static List<LabelFields> createEnvironmentSettingsLabelFields() {
 		final List<LabelFields> labelFields = new ArrayList<>();
 
 		final LabelFields field =
 				new LabelFields(LabelPrintingServiceDataInitializer.TRIAL_ENVIRONMENT_DESIGN_LABEL_NAME,
-						LabelPrintingServiceDataInitializer.TRIAL_ENVIRONMENT_DESIGN__TERM_ID, false);
+						LabelPrintingServiceDataInitializer.TRIAL_ENVIRONMENT_DESIGN_TERM_ID, false);
+		labelFields.add(field);
+
+		return labelFields;
+	}
+
+	public static List<LabelFields> createExperimentalDesignSettingsLabelFields() {
+		final List<LabelFields> labelFields = new ArrayList<>();
+
+		final LabelFields field =
+				new LabelFields(LabelPrintingServiceDataInitializer.EXPERIMENTAL_DESIGN_LABEL_NAME,
+						LabelPrintingServiceDataInitializer.EXPERIMENTAL_DESIGN_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;

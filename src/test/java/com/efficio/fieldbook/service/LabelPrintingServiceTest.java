@@ -82,7 +82,7 @@ public class LabelPrintingServiceTest {
 		final List<LabelFields> germplasmLabels = this.createDummyGermplasmLabels();
 
 		Mockito.when(this.settingsService.retrieveTrialSettingsAsLabels(this.workbook)).thenReturn(trialSettingLabels);
-		Mockito.when(this.settingsService.retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(this.workbook)).thenReturn(
+		Mockito.when(this.settingsService.retrieveTrialEnvironmentAsLabels(this.workbook)).thenReturn(
 				trialEnvironmentLabels);
 		Mockito.when(this.settingsService.retrieveTraitsAsLabels(this.workbook)).thenReturn(traitLabels);
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
@@ -112,7 +112,7 @@ public class LabelPrintingServiceTest {
 		final List<LabelFields> germplasmLabels = this.createDummyGermplasmLabels();
 
 		Mockito.when(this.settingsService.retrieveTrialSettingsAsLabels(this.workbook)).thenReturn(trialSettingLabels);
-		Mockito.when(this.settingsService.retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(this.workbook)).thenReturn(
+		Mockito.when(this.settingsService.retrieveTrialEnvironmentAsLabels(this.workbook)).thenReturn(
 				trialEnvironmentLabels);
 		Mockito.when(this.settingsService.retrieveTraitsAsLabels(this.workbook)).thenReturn(traitLabels);
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);

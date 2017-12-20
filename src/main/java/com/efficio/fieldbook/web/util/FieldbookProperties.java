@@ -47,12 +47,5 @@ public class FieldbookProperties {
 	public void setUploadDirectory(String uploadDirectory) {
 		this.uploadDirectory = uploadDirectory;
 	}
-	
-	public Set<String> getPresetDesignEnabledCrops() {
-		return presetDesignEnabledCrops;
-	}
 
-	public void setPresetDesignEnabledCrops(Set<String> presetDesignEnabledCrops) {
-		this.presetDesignEnabledCrops = presetDesignEnabledCrops;
-	}
 }

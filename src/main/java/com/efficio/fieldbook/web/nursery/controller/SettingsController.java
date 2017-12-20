@@ -70,6 +70,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsController.class);
+	public static final String DESCRIPTION = "Description";
 
 	/** The workbench service. */
 	@Resource
@@ -238,7 +239,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 		// create a map of id and its id-code-name combination
 		final Map<String, String> idCodeNameMap = new HashMap<>();
-		if (idCodeNameCombination != null & !idCodeNameCombination.isEmpty()) {
+		if (idCodeNameCombination != null && !idCodeNameCombination.isEmpty()) {
 			final StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, ",");
 			if (tokenizer.hasMoreTokens()) {
 				while (tokenizer.hasMoreTokens()) {
@@ -330,9 +331,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			final List<String> requiredVariablesLabel, final String role) {
 		final StringTokenizer token = new StringTokenizer(requiredFields, ",");
 		int ctr = 0;
+
 		while (token.hasMoreTokens()) {
-			defaults.add(this.createSettingDetail(Integer.valueOf(token.nextToken()), requiredVariablesLabel.get(ctr), role));
-			ctr++;
+			final String s = token.nextToken();
+			// FIXME BMS-4397
+			if (!SettingsController.DESCRIPTION.equals(s)) {
+				defaults.add(this.createSettingDetail(Integer.valueOf(s), requiredVariablesLabel.get(ctr), role));
+				ctr++;
+			}
 		}
 		return defaults;
 	}
@@ -404,15 +410,20 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	/**
-	 * Creates the setting detail.
+	 * Creates the setting detail of given variable type
 	 *
-	 * @param id the id
+	 * @param id the variable id
+	 * @param alias the variable alias
+	 * @param variableType the variable type
 	 * @return the setting detail
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected SettingDetail createSettingDetail(final int id, final VariableType variableType) throws MiddlewareException {
-
+	protected SettingDetail createSettingDetailWithVariableType(final int id, final String alias, final VariableType variableType) {
 		final Variable variable = this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, false, false);
+
+		String variableName = variable.getName();
+		if (alias != null && !alias.isEmpty()) {
+			variableName = alias;
+		}
 
 		final Property property = variable.getProperty();
 		final Scale scale = variable.getScale();
@@ -421,7 +432,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		final Double minValue = variable.getMinValue() == null ? null : Double.parseDouble(variable.getMinValue());
 		final Double maxValue = variable.getMaxValue() == null ? null : Double.parseDouble(variable.getMaxValue());
 
-		final SettingVariable settingVariable = new SettingVariable(variable.getName(), variable.getDefinition(),
+		final SettingVariable settingVariable = new SettingVariable(variableName, variable.getDefinition(),
 				variable.getProperty().getName(), scale.getName(), method.getName(), variableType.getRole().name(),
 				scale.getDataType().getName(), scale.getDataType().getId(), minValue, maxValue);
 
@@ -431,7 +442,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		settingVariable.setCvTermId(variable.getId());
 		settingVariable.setCropOntologyId(property.getCropOntologyId());
 
-		if (property.getClasses().size() > 0) {
+		if (!property.getClasses().isEmpty()) {
 			settingVariable.setTraitClass(property.getClasses().iterator().next());
 		}
 
@@ -512,7 +523,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 *
 	 * @param id the id
 	 * @return the standard variable
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	protected StandardVariable getStandardVariable(final int id) {
 		return this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
@@ -524,9 +534,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param workbook the workbook
 	 * @param conditions the conditions
 	 * @param folderId the folder id
+	 * @param description
 	 */
 	public void createStudyDetails(final Workbook workbook, final List<SettingDetail> conditions, final Integer folderId,
-			final Integer studyId) {
+			final Integer studyId, final String description) {
 		if (workbook.getStudyDetails() == null) {
 			workbook.setStudyDetails(new StudyDetails());
 		}
@@ -536,9 +547,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			if (studyId != null) {
 				studyDetails.setId(studyId);
 			}
-			studyDetails.setTitle(SettingsUtil.getSettingDetailValue(conditions, TermId.STUDY_TITLE.getId()));
+			studyDetails.setDescription(studyDetails.getDescription());
 			studyDetails.setObjective(SettingsUtil.getSettingDetailValue(conditions, TermId.STUDY_OBJECTIVE.getId()));
 			studyDetails.setStudyName(SettingsUtil.getSettingDetailValue(conditions, TermId.STUDY_NAME.getId()));
+			studyDetails.setDescription(description);
 			studyDetails.setStartDate(SettingsUtil.getSettingDetailValue(conditions, TermId.START_DATE.getId()));
 			studyDetails.setEndDate(SettingsUtil.getSettingDetailValue(conditions, TermId.END_DATE.getId()));
 			studyDetails.setStudyType(StudyType.N);
@@ -547,7 +559,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				studyDetails.setParentFolderId(folderId);
 			}
 		}
-		studyDetails.print(1);
 	}
 
 	/**
@@ -609,8 +620,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 
 		// remove deleted variables in measurement rows & header for variates
-		this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedPlotLevelList(), workbook, this.userSelection);
-		this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedBaselineTraitsList(), workbook, this.userSelection);
+		this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedPlotLevelList(), workbook);
+		this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedBaselineTraitsList(), workbook);
 
 		// remove deleted variables in the original lists
 		// and change add operation to update
@@ -684,8 +695,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	private void removeDeletedVariablesInMeasurements(final List<SettingDetail> deletedList, final Workbook workbook,
-			final UserSelection userSelection) {
+	private void removeDeletedVariablesInMeasurements(final List<SettingDetail> deletedList, final Workbook workbook) {
 		if (deletedList != null) {
 			for (final SettingDetail setting : deletedList) {
 				// remove from header
@@ -816,13 +826,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					if (studyConditionMap.get(idTermId) != null && studyConditionMap.get(codeTermId) != null
 							&& removedConditionsMap.get(codeTermId) == null) {
 						this.addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, codeTermId,
-								method == null ? "" : method.getMcode(), this.getCurrentIbdbUserId().toString());
+								method == null ? "" : method.getMcode());
 					}
 
 					// add name to the removed conditions if name is not yet in the list
 					if (studyConditionMap.get(nameTermId) != null && removedConditionsMap.get(nameTermId) == null) {
 						this.addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, nameTermId,
-								method == null ? "" : method.getMname(), this.getCurrentIbdbUserId().toString());
+								method == null ? "" : method.getMname());
 
 					}
 				}
@@ -844,7 +854,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	private void addSettingDetail(final List<SettingDetail> removedConditions, final Map<String, SettingDetail> removedConditionsMap,
-			final Map<String, MeasurementVariable> studyConditionMap, final String id, final String value, final String userId) {
+			final Map<String, MeasurementVariable> studyConditionMap, final String id, final String value) {
 		if (removedConditionsMap.get(id) == null) {
 			removedConditions.add(this.createSettingDetail(Integer.parseInt(id), studyConditionMap.get(id).getName(), null));
 		}
@@ -914,11 +924,16 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 		final StringTokenizer token = new StringTokenizer(variableList, ",");
 		while (token.hasMoreTokens()) {
-			final Integer termId = Integer.valueOf(token.nextToken());
-			final boolean isFound = this.searchAndSetValuesOfSpecialVariables(nurseryLevelConditions, termId, settingDetails, form);
-			if (!isFound) {
-				this.addSettingDetails(settingDetails, termId, form);
+			final String s = token.nextToken();
+			// FIXME BMS-4397
+			if (!SettingsController.DESCRIPTION.equals(s)) {
+				final Integer termId = Integer.valueOf(s);
+				final boolean isFound = this.searchAndSetValuesOfSpecialVariables(nurseryLevelConditions, termId, settingDetails, form);
+				if (!isFound) {
+					this.addSettingDetails(settingDetails, termId, form);
+				}
 			}
+
 		}
 
 		return settingDetails;
@@ -996,16 +1011,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				this.userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
 			}
 			this.userSelection.getDeletedPlotLevelList().add(newSetting);
-		} else if (mode == VariableType.TRAIT.getId()) {
-			if (this.userSelection.getDeletedBaselineTraitsList() == null) {
-				this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-			}
-			this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
-		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
-			if (this.userSelection.getDeletedBaselineTraitsList() == null) {
-				this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-			}
-			this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
+		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
+			this.addNewSettingToDeletedBaselineTraits(newSetting);
 		} else if (mode == VariableType.NURSERY_CONDITION.getId() || mode == VariableType.TRIAL_CONDITION.getId()) {
 			if (this.userSelection.getDeletedNurseryConditions() == null) {
 				this.userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
@@ -1024,6 +1031,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
+	private void addNewSettingToDeletedBaselineTraits(final SettingDetail newSetting) {
+		if (this.userSelection.getDeletedBaselineTraitsList() == null) {
+			this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
+		}
+		this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
+	}
+
 	public void setFieldbookService(final FieldbookService fieldbookService) {
 		this.fieldbookService = fieldbookService;
 	}
@@ -1033,10 +1047,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * where variables appear.
 	 */
 	protected void addVariableSectionIdentifiers(final Model model) {
-		model.addAttribute("baselineTraitsSegment", VariableType.TRAIT.getId().intValue());
-		model.addAttribute("selectionVariatesSegment", VariableType.SELECTION_METHOD.getId().intValue());
-		model.addAttribute("studyLevelDetailType", VariableType.STUDY_DETAIL.getId().intValue());
-		model.addAttribute("plotLevelDetailType", VariableType.GERMPLASM_DESCRIPTOR.getId().intValue());
-		model.addAttribute("nurseryConditionsType", VariableType.NURSERY_CONDITION.getId().intValue());
+		model.addAttribute("baselineTraitsSegment", VariableType.TRAIT.getId());
+		model.addAttribute("selectionVariatesSegment", VariableType.SELECTION_METHOD.getId());
+		model.addAttribute("studyLevelDetailType", VariableType.STUDY_DETAIL.getId());
+		model.addAttribute("plotLevelDetailType", VariableType.GERMPLASM_DESCRIPTOR.getId());
+		model.addAttribute("nurseryConditionsType", VariableType.NURSERY_CONDITION.getId());
 	}
 }

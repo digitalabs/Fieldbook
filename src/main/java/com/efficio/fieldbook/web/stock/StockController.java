@@ -1,15 +1,14 @@
-
 package com.efficio.fieldbook.web.stock;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.ImportStockForm;
+import com.efficio.fieldbook.web.common.service.ImportInventoryService;
+import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
+import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
+import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
+import com.google.common.base.Joiner;
 import org.apache.commons.collections.ListUtils;
 import org.generationcp.commons.exceptions.StockException;
 import org.generationcp.commons.parsing.FileParsingException;
@@ -46,15 +45,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.ImportStockForm;
-import com.efficio.fieldbook.web.common.service.ImportInventoryService;
-import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
-import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
-import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
-import com.google.common.base.Joiner;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 4/24/2015 Time: 4:38 PM
@@ -102,8 +99,6 @@ public class StockController extends AbstractBaseFieldbookController {
 	@Resource
 	private UserSelection userSelection;
 
-	
-
 	/**
 	 * Gets the data types.
 	 *
@@ -112,20 +107,21 @@ public class StockController extends AbstractBaseFieldbookController {
 	@ModelAttribute("favoriteSeedStorageLocationList")
 	public List<Location> getFavoriteSeedStorageLocationList() {
 		try {
-			List<Integer> locationsIds =
+			final List<Integer> locationsIds =
 					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.contextUtil.getCurrentProgramUUID());
-			List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds); //All Favorite
+			final List<Location> faveLocations =
+					this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds);
 
-			List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
+			final List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
 			return ListUtils.intersection(allSeedStorageLocations, faveLocations);
 
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			StockController.LOG.error(e.getMessage(), e);
 		}
 
 		return new ArrayList<>();
 	}
-	
+
 	/**
 	 * Gets the data types.
 	 *
@@ -133,15 +129,9 @@ public class StockController extends AbstractBaseFieldbookController {
 	 */
 	@ModelAttribute("allLocationList")
 	public List<Location> getAllLocationList() {
-		try {
-			return this.fieldbookMiddlewareService.getAllLocations();
-		} catch (MiddlewareQueryException e) {
-			StockController.LOG.error(e.getMessage(), e);
-		}
-
-		return new ArrayList<>();
+		return this.fieldbookMiddlewareService.getAllLocations(this.contextUtil.getCurrentProgramUUID());
 	}
-	
+
 	/**
 	 * Gets the data types.
 	 *
@@ -151,7 +141,7 @@ public class StockController extends AbstractBaseFieldbookController {
 	public List<Location> getLocationList() {
 		try {
 			return this.fieldbookMiddlewareService.getAllSeedLocations();
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			StockController.LOG.error(e.getMessage(), e);
 		}
 
@@ -167,10 +157,10 @@ public class StockController extends AbstractBaseFieldbookController {
 	public List<Location> getFavoriteLocationList() {
 		try {
 
-			List<Integer> locationsIds =
+			final List<Integer> locationsIds =
 					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
 			return this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds);
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			StockController.LOG.error(e.getMessage(), e);
 		}
 
@@ -181,7 +171,7 @@ public class StockController extends AbstractBaseFieldbookController {
 	public List<Scale> getScaleList() {
 		try {
 			return this.ontologyService.getAllInventoryScales();
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			StockController.LOG.error(e.getMessage(), e);
 		}
 
@@ -190,25 +180,24 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/retrieveNextStockPrefix", method = RequestMethod.POST)
-	public Map<String, String> retrieveNextStockIDPrefix(@RequestBody
-	StockListGenerationSettings generationSettings) {
-		Map<String, String> resultMap = new HashMap<>();
+	public Map<String, String> retrieveNextStockIDPrefix(@RequestBody final StockListGenerationSettings generationSettings) {
+		final Map<String, String> resultMap = new HashMap<>();
 
-		Integer validationResult = generationSettings.validateSettings();
+		final Integer validationResult = generationSettings.validateSettings();
 
 		if (!validationResult.equals(StockListGenerationSettings.VALID_SETTINGS)) {
 			return this.prepareValidationErrorMessages(validationResult);
 		}
 
 		try {
-			String prefix = this.stockService.calculateNextStockIDPrefix(generationSettings.getBreederIdentifier(),
-					generationSettings.getSeparator());
+			String prefix = this.stockService
+					.calculateNextStockIDPrefix(generationSettings.getBreederIdentifier(), generationSettings.getSeparator());
 			// for UI purposes, we remove the separator from the generated prefix
 			prefix = prefix.substring(0, prefix.length() - 1);
 			resultMap.put(StockController.IS_SUCCESS, StockController.SUCCESS);
 			resultMap.put("prefix", prefix);
 
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			StockController.LOG.error(e.getMessage(), e);
 			resultMap.put(StockController.IS_SUCCESS, StockController.FAILURE);
 		}
@@ -217,12 +206,12 @@ public class StockController extends AbstractBaseFieldbookController {
 	}
 
 	@RequestMapping(value = "/generateStockTabIfNecessary/{listId}", method = RequestMethod.GET)
-	public String generateStockTabIfNecessary(@PathVariable Integer listId, Model model) {
+	public String generateStockTabIfNecessary(@PathVariable final Integer listId, final Model model) {
 
 		try {
-			boolean transactionsExist = this.inventoryDataManager.transactionsExistForListProjectDataListID(listId);
+			final boolean transactionsExist = this.inventoryDataManager.transactionsExistForListProjectDataListID(listId);
 			if (transactionsExist) {
-				GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(listId);
+				final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(listId);
 
 				model.addAttribute("listName", germplasmList.getName());
 				model.addAttribute("listId", listId);
@@ -230,15 +219,15 @@ public class StockController extends AbstractBaseFieldbookController {
 				return "/NurseryManager/stockTab";
 			}
 
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			StockController.LOG.error(e.getMessage(), e);
 		}
 
 		return "/NurseryManager/blank";
 	}
 
-	protected Map<String, String> prepareValidationErrorMessages(Integer validationResult) {
-		Map<String, String> resultMap = new HashMap<>();
+	protected Map<String, String> prepareValidationErrorMessages(final Integer validationResult) {
+		final Map<String, String> resultMap = new HashMap<>();
 		resultMap.put(StockController.IS_SUCCESS, StockController.FAILURE);
 		switch (validationResult) {
 			case StockListGenerationSettings.NUMBERS_FOUND:
@@ -258,26 +247,25 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/generateStockList/{listId}", method = RequestMethod.POST)
-	public Map<String, String> generateStockList(@RequestBody
-	StockListGenerationSettings generationSettings, @PathVariable("listId")
-	Integer listDataProjectListId) {
-		Map<String, String> resultMap = new HashMap<>();
-		Integer validationResult = generationSettings.validateSettings();
+	public Map<String, String> generateStockList(@RequestBody final StockListGenerationSettings generationSettings,
+			@PathVariable("listId") final Integer listDataProjectListId) {
+		final Map<String, String> resultMap = new HashMap<>();
+		final Integer validationResult = generationSettings.validateSettings();
 
 		if (!validationResult.equals(StockListGenerationSettings.VALID_SETTINGS)) {
 			return this.prepareValidationErrorMessages(validationResult);
 		}
 
 		try {
-			Integer listDataID = this.germplasmListManager.retrieveDataListIDFromListDataProjectListID(listDataProjectListId);
+			final Integer listDataID = this.germplasmListManager.retrieveDataListIDFromListDataProjectListID(listDataProjectListId);
 			final Map<ListDataProject, GermplasmListData> germplasmMap = this.generateGermplasmMap(listDataID, listDataProjectListId);
 
-			String prefix = this.stockService.calculateNextStockIDPrefix(generationSettings.getBreederIdentifier(),
-					generationSettings.getSeparator());
+			final String prefix = this.stockService
+					.calculateNextStockIDPrefix(generationSettings.getBreederIdentifier(), generationSettings.getSeparator());
 			final Map<Integer, InventoryDetails> inventoryDetailMap = new HashMap<>();
 
-			for (Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
-				InventoryDetails details = new InventoryDetails();
+			for (final Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
+				final InventoryDetails details = new InventoryDetails();
 				details.setAmount(0d);
 				details.setLocationId(null);
 				details.setScaleId(null);
@@ -290,20 +278,20 @@ public class StockController extends AbstractBaseFieldbookController {
 			}
 
 			if (generationSettings.hasBulkInstructions()) {
-				this.stockService.processBulkSettings(germplasmMap.keySet(), inventoryDetailMap,
-						generationSettings.isAddPedigreeDuplicate(), generationSettings.isAddPlotReciprocal(),
-						generationSettings.isAddPedigreeReciprocal());
+				this.stockService
+						.processBulkSettings(germplasmMap.keySet(), inventoryDetailMap, generationSettings.isAddPedigreeDuplicate(),
+								generationSettings.isAddPlotReciprocal(), generationSettings.isAddPedigreeReciprocal());
 			}
 
 			final TransactionTemplate transactionTemplate = new TransactionTemplate(this.transactionManager);
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus arg0) {
-					for (Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
-						ListDataProject project = entry.getKey();
-						GermplasmListData data = entry.getValue();
-						InventoryDetails details = inventoryDetailMap.get(project.getEntryId());
+				protected void doInTransactionWithoutResult(final TransactionStatus arg0) {
+					for (final Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
+						final ListDataProject project = entry.getKey();
+						final GermplasmListData data = entry.getValue();
+						final InventoryDetails details = inventoryDetailMap.get(project.getEntryId());
 						StockController.this.inventoryService.addLotAndTransaction(details, data, project);
 					}
 				}
@@ -311,7 +299,7 @@ public class StockController extends AbstractBaseFieldbookController {
 			});
 
 			resultMap.put(StockController.IS_SUCCESS, StockController.SUCCESS);
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			StockController.LOG.error(e.getMessage(), e);
 			resultMap.put(StockController.IS_SUCCESS, StockController.FAILURE);
 			resultMap.put(StockController.ERROR_MESSAGE,
@@ -321,16 +309,15 @@ public class StockController extends AbstractBaseFieldbookController {
 		return resultMap;
 	}
 
-	protected Map<ListDataProject, GermplasmListData> generateGermplasmMap(Integer listDataID, Integer listDataProjectListId) {
-		List<GermplasmListData> germplasmListDataList =
-				this.germplasmListManager.getGermplasmListDataByListId(listDataID);
-		List<ListDataProject> listDataProjectList = this.germplasmListManager.retrieveSnapshotListData(listDataProjectListId);
+	protected Map<ListDataProject, GermplasmListData> generateGermplasmMap(final Integer listDataID, final Integer listDataProjectListId) {
+		final List<GermplasmListData> germplasmListDataList = this.germplasmListManager.getGermplasmListDataByListId(listDataID);
+		final List<ListDataProject> listDataProjectList = this.germplasmListManager.retrieveSnapshotListData(listDataProjectListId);
 
-		Map<ListDataProject, GermplasmListData> germplasmMap = new HashMap<>();
+		final Map<ListDataProject, GermplasmListData> germplasmMap = new HashMap<>();
 
-		for (ListDataProject listDataProject : listDataProjectList) {
+		for (final ListDataProject listDataProject : listDataProjectList) {
 			boolean matchFound = false;
-			for (GermplasmListData germplasmListData : germplasmListDataList) {
+			for (final GermplasmListData germplasmListData : germplasmListDataList) {
 				if (germplasmListData.getEntryId().equals(listDataProject.getEntryId())) {
 					germplasmMap.put(listDataProject, germplasmListData);
 					matchFound = true;
@@ -349,19 +336,18 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/import", method = RequestMethod.POST)
-	public String importList(@ModelAttribute("importStockForm")	ImportStockForm form) {
-		Map<String, Object> result = new HashMap<>();
+	public String importList(@ModelAttribute("importStockForm") final ImportStockForm form) {
+		final Map<String, Object> result = new HashMap<>();
 		try {
-			Integer listId = form.getStockListId();
-			GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
-			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
-			Map<String, Object> additionalParams = new HashMap<>();
+			final Integer listId = form.getStockListId();
+			final GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
+			final GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
+			final Map<String, Object> additionalParams = new HashMap<>();
 			additionalParams.put(InventoryImportParser.HEADERS_MAP_PARAM_KEY, InventoryHeaderLabels.headers(germplasmListType));
 			additionalParams.put(InventoryImportParser.LIST_ID_PARAM_KEY, listId);
 			additionalParams.put(InventoryImportParser.GERMPLASM_LIST_TYPE_PARAM_KEY, germplasmListType);
-			ImportedInventoryList importedInventoryList = this.importInventoryService.parseFile(form.getFile(), additionalParams);
-			List<InventoryDetails> inventoryDetailListFromDB =
-					this.inventoryService.getInventoryListByListDataProjectListId(listId);
+			final ImportedInventoryList importedInventoryList = this.importInventoryService.parseFile(form.getFile(), additionalParams);
+			final List<InventoryDetails> inventoryDetailListFromDB = this.inventoryService.getInventoryListByListDataProjectListId(listId);
 			this.importInventoryService.validateInventoryDetails(inventoryDetailListFromDB, importedInventoryList, germplasmListType);
 			// Setting List Id & Inventory Details in user selection that will be used if user wants to discard the imported stock list
 			this.userSelection.setListId(listId);
@@ -375,16 +361,16 @@ public class StockController extends AbstractBaseFieldbookController {
 			result.put(StockController.HAS_ERROR, false);
 			result.put(StockController.STOCK_ID, listId);
 			result.put("listType", germplasmListType);
-		} catch (FileParsingException e) {
+		} catch (final FileParsingException e) {
 			StockController.LOG.error(e.getMessage(), e);
 			result.put(StockController.HAS_ERROR, true);
 			result.put(StockController.ERROR_MESSAGE,
 					this.messageSource.getMessage(e.getMessage(), e.getMessageParameters(), Locale.getDefault()));
-		} catch (FieldbookException e) {
+		} catch (final FieldbookException e) {
 			StockController.LOG.error(e.getMessage(), e);
 			result.put(StockController.HAS_ERROR, true);
 			result.put(StockController.ERROR_MESSAGE, e.getMessage());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			StockController.LOG.error(e.getMessage(), e);
 			result.put(StockController.HAS_ERROR, true);
 			result.put(StockController.ERROR_MESSAGE,
@@ -395,35 +381,35 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/revertStockListData/data", method = RequestMethod.POST)
-	public String revertStockListData(@ModelAttribute("importStockForm") ImportStockForm form) {
-		Map<String, Object> result = new HashMap<>();
-		Integer listId = this.userSelection.getListId();
-		List<InventoryDetails> inventoryDetailListFromDB = this.userSelection.getInventoryDetails();
+	public String revertStockListData(@ModelAttribute("importStockForm") final ImportStockForm form) {
+		final Map<String, Object> result = new HashMap<>();
+		final Integer listId = this.userSelection.getListId();
+		final List<InventoryDetails> inventoryDetailListFromDB = this.userSelection.getInventoryDetails();
 		this.updateInventory(listId, inventoryDetailListFromDB);
 		result.put(StockController.STOCK_ID, listId);
 		return this.convertObjectToJson(result);
 	}
 
-	private void updateInventory(Integer listId, List<InventoryDetails> inventoryDetailListFromDB) {
+	private void updateInventory(final Integer listId, final List<InventoryDetails> inventoryDetailListFromDB) {
 		this.inventoryDataManager.updateInventory(listId, inventoryDetailListFromDB);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/executeBulkingInstructions/{listId}", method = RequestMethod.POST)
-	public Map<String, Object> executeBulkingInstructions(@PathVariable	Integer listId) {
-		Map<String, Object> result = new HashMap<>();
+	public Map<String, Object> executeBulkingInstructions(@PathVariable final Integer listId) {
+		final Map<String, Object> result = new HashMap<>();
 		try {
-			List<InventoryDetails> inventoryDetailsList = this.inventoryService.getInventoryListByListDataProjectListId(listId);
+			final List<InventoryDetails> inventoryDetailsList = this.inventoryService.getInventoryListByListDataProjectListId(listId);
 			this.stockService.verifyIfBulkingForStockListCanProceed(listId, inventoryDetailsList);
 			this.stockService.executeBulkingInstructions(inventoryDetailsList);
 			result.put(StockController.HAS_ERROR, false);
 			result.put(StockController.STOCK_ID, listId);
-		} catch (StockException e) {
+		} catch (final StockException e) {
 			StockController.LOG.error(e.getMessage(), e);
 			result.put(StockController.HAS_ERROR, true);
 			result.put(StockController.ERROR_MESSAGE,
 					this.messageSource.getMessage(e.getMessage(), e.getMessageParameters(), Locale.getDefault()));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			StockController.LOG.error(e.getMessage(), e);
 			result.put(StockController.HAS_ERROR, true);
 			result.put(StockController.ERROR_MESSAGE,
@@ -433,8 +419,8 @@ public class StockController extends AbstractBaseFieldbookController {
 	}
 
 	@RequestMapping(value = "/ajax/{listId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public String showAjax(@ModelAttribute("seedStoreForm") SeedStoreForm form, @PathVariable Integer listId,
-			@RequestBody Integer[] entryIdList, Model model, HttpSession session) {
+	public String showAjax(@ModelAttribute("seedStoreForm") final SeedStoreForm form, @PathVariable final Integer listId,
+			@RequestBody final Integer[] entryIdList, final Model model, final HttpSession session) {
 		form.setListId(listId);
 		form.setEntryIdList(Joiner.on(",").join(entryIdList));
 		return super.showAjaxPage(model, "Inventory/addLotsModal");
@@ -442,26 +428,27 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/update/lots", method = RequestMethod.POST)
-	public Map<String, Object> updateLots(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, Locale local) {
-		Map<String, Object> result = new HashMap<>();
-		List<Integer> entryIdList = new ArrayList<>();
+	public Map<String, Object> updateLots(@ModelAttribute("seedStoreForm") final SeedStoreForm form, final Model model,
+			final Locale local) {
+		final Map<String, Object> result = new HashMap<>();
+		final List<Integer> entryIdList = new ArrayList<>();
 
-		for (String gid : form.getEntryIdList().split(",")) {
+		for (final String gid : form.getEntryIdList().split(",")) {
 			entryIdList.add(Integer.parseInt(gid));
 		}
 
 		// update of lots here
-		Integer listId = form.getListId();
+		final Integer listId = form.getListId();
 
 		try {
-			List<InventoryDetails> inventoryDetailListFromDB = this.inventoryService.getInventoryListByListDataProjectListId(listId);
+			final List<InventoryDetails> inventoryDetailListFromDB = this.inventoryService.getInventoryListByListDataProjectListId(listId);
 
-			Double amount = form.getAmount();
-			int inventoryLocationId = form.getInventoryLocationId();
-			int inventoryScaleId = form.getInventoryScaleId();
-			String inventoryComments = form.getInventoryComments();
+			final Double amount = form.getAmount();
+			final int inventoryLocationId = form.getInventoryLocationId();
+			final int inventoryScaleId = form.getInventoryScaleId();
+			final String inventoryComments = form.getInventoryComments();
 
-			for (InventoryDetails inventoryDetail : inventoryDetailListFromDB) {
+			for (final InventoryDetails inventoryDetail : inventoryDetailListFromDB) {
 				if (entryIdList.contains(inventoryDetail.getEntryId())) {
 					inventoryDetail.setAmount(amount);
 					inventoryDetail.setLocationId(inventoryLocationId);
@@ -476,7 +463,7 @@ public class StockController extends AbstractBaseFieldbookController {
 			result.put("success", 1);
 			result.put("listId", listId);
 
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			StockController.LOG.error(e.getMessage(), e);
 			result.put("message", "error: " + e.getMessage());
 			result.put("success", 0);

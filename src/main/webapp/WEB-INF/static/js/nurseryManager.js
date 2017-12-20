@@ -981,7 +981,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 			// get the pop up selection
 			var popupSelection = $('.select2-result.select2-highlighted');
 
-			if (values != null) {
+			if (values !== null && values !== '') {
 				// hide the selected value
 				popupSelection.hide();
 
@@ -1551,7 +1551,7 @@ function validateCreateNursery() {
 	if ($.trim($('#' + getJquerySafeId('basicDetails0.value')).val()) === '') {
 		hasError = true;
 		name = 'Name';
-	}else if ($.trim($('#' + getJquerySafeId('basicDetails1.value')).val()) === '') {
+	}else if ($.trim($('#' + getJquerySafeId('description')).val()) === '') {
 		hasError = true;
 		name = 'Description';
 	}else if (isNurseryNameUnique() === false) {

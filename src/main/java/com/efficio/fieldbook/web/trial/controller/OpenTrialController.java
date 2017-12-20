@@ -26,6 +26,7 @@ import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.domain.samplelist.SampleListDTO;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
@@ -35,6 +36,7 @@ import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +70,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @Controller
 @RequestMapping(OpenTrialController.URL)
 @SessionAttributes("isCategoricalDescriptionView")
+@Transactional
 public class OpenTrialController extends BaseTrialController {
 
 	public static final String TRIAL_SETTINGS_DATA = "trialSettingsData";
@@ -92,6 +95,9 @@ public class OpenTrialController extends BaseTrialController {
 	/** The Inventory list manager. */
 	@Resource
 	private InventoryDataManager inventoryDataManager;
+
+	@Resource
+	private SampleListService sampleListService;
 
 	@Override
 	public String getContentName() {
@@ -328,6 +334,7 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("createNurseryForm", form);
 		model.addAttribute("experimentalDesignSpecialData", this.prepareExperimentalDesignSpecialData());
 		model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
+		model.addAttribute("description", trialWorkbook.getStudyDetails().getDescription());
 		model.addAttribute("advancedList", this.getAdvancedList(trialId));
 		model.addAttribute("sampleList", this.getSampleList(trialId));
 
@@ -498,7 +505,6 @@ public class OpenTrialController extends BaseTrialController {
 	 * assign UPDATE operation for existing experimental design variables
 	 *
 	 * @param conditions
-	 * @param existingExpDesignVariables
 	 */
 	void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions) {
 		final VariableTypeList factors = this.studyDataManager
@@ -522,6 +528,9 @@ public class OpenTrialController extends BaseTrialController {
 	public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") final int id) {
 		final Map<String, Object> returnVal = new HashMap<>();
 		final Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(id);
+
+		this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
+
 		this.userSelection.setWorkbook(trialWorkbook);
 		this.userSelection.setExperimentalDesignVariables(
 				WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));
@@ -711,11 +720,13 @@ public class OpenTrialController extends BaseTrialController {
 
 		final String name = "";
 
+		final String description = "";
+
 		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name,
 				combinedList, this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(),
 				this.userSelection, this.userSelection.getTrialLevelVariableList(),
 				this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(), false,
-				this.contextUtil.getCurrentProgramUUID());
+				this.contextUtil.getCurrentProgramUUID(), description);
 
 		final Workbook tempWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false,
 				this.contextUtil.getCurrentProgramUUID());
@@ -819,6 +830,10 @@ public class OpenTrialController extends BaseTrialController {
 		filteredObservations = this.updateTrialInstanceNoAfterDelete(deletedEnvironment, filteredObservations);
 
 		return filteredObservations;
+	}
+
+	protected List<SampleListDTO> getSampleList(final Integer trialId) {
+		return this.sampleListService.getSampleLists(trialId);
 	}
 
 }

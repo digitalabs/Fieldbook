@@ -27,7 +27,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.ontology.Variable;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
@@ -38,7 +38,6 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
-import org.generationcp.middleware.manager.Operation;
 
 /**
  * This is used by the trial manager and nursery manager in communicating to the data access layer, manipulating workbook files and
@@ -63,7 +62,7 @@ public interface FieldbookService {
 	 * @return the list
 	 * @throws RuleException
 	 */
-	AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws RuleException, MiddlewareQueryException, FieldbookException;
+	AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws RuleException, FieldbookException;
 
 	/**
 	 * Filters the variables based on the current setting mode and excludes the selected ones.
@@ -232,7 +231,13 @@ public interface FieldbookService {
 	 * @param measurementVariables
 	 */
 	void addMeasurementVariableToList(MeasurementVariable measurementVariable, List<MeasurementVariable> measurementVariables);
-
+	
+	/**
+	 * Add the STUDY_UID condition and Plot ID factor to workbook
+	 * @param workbook
+	 */
+	void addStudyUUIDConditionAndPlotIDFactorToWorkbook(Workbook workbook, boolean addPlotIdToMeasurementRows);
+	
 	/**
 	 * Adds the specified variable to the measurementRows. This will add a blank measurementData on each measurement row for the specified variable.
 	 *

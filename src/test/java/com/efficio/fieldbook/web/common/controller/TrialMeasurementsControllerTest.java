@@ -1,24 +1,11 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.core.Is.is;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.google.common.collect.Lists;
+import junit.framework.Assert;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
@@ -30,6 +17,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
@@ -61,12 +49,20 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
-import com.google.common.collect.Lists;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import junit.framework.Assert;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.core.Is.is;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TrialMeasurementsControllerTest {
@@ -98,6 +94,7 @@ public class TrialMeasurementsControllerTest {
 	private static final String FIELDMAP_COLUMN = "FIELDMAP_COLUMN";
 	private static final String FIELDMAP_RANGE = "FIELDMAP_RANGE";
 	
+
 	@InjectMocks
 	private TrialMeasurementsController trialMeasurementsController;
 	private MeasurementDataTestDataInitializer measurementDataTestDataInitializer;
@@ -152,8 +149,14 @@ public class TrialMeasurementsControllerTest {
 		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
-			assertThat("The origRow's measurement value must be equal to the valueRow's measurement value", origRow.getDataList()
-					.get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+			if (!origRow.getDataList().get(x).getMeasurementVariable().isFactor()) {
+				assertThat("The origRow's measurement value must be equal to the valueRow's measurement value if the variable is not a factor",
+						origRow.getDataList().get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+			} else {
+				assertThat("The origRow's measurement value must not equal to the valueRow's measurement value if the variable is a factor",
+						origRow.getDataList().get(x).getValue(), not(equalTo(valueRow.getDataList().get(x).getValue())));
+			}
+
 		}
 
 	}
@@ -185,7 +188,14 @@ public class TrialMeasurementsControllerTest {
 		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
-			assertThat(origRow.getDataList().get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+			if (!origRow.getDataList().get(x).getMeasurementVariable().isFactor()) {
+				assertThat("The origRow's measurement value must be equal to the valueRow's measurement value if the variable is not a factor",
+						origRow.getDataList().get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+			} else {
+				assertThat("The origRow's measurement value must not equal to the valueRow's measurement value if the variable is a factor",
+						origRow.getDataList().get(x).getValue(), not(equalTo(valueRow.getDataList().get(x).getValue())));
+			}
+
 		}
 
 	}
@@ -226,7 +236,13 @@ public class TrialMeasurementsControllerTest {
 		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow);
 
 		for (int x = 0; x < origRow.getDataList().size(); x++) {
-			assertThat(origRow.getDataList().get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+			if (!origRow.getDataList().get(x).getMeasurementVariable().isFactor()) {
+				assertThat("The origRow's measurement value must be equal to the valueRow's measurement value if the variable is not a factor",
+						origRow.getDataList().get(x).getValue(), is(equalTo(valueRow.getDataList().get(x).getValue())));
+			} else {
+				assertThat("The origRow's measurement value must not equal to the valueRow's measurement value if the variable is a factor",
+						origRow.getDataList().get(x).getValue(), not(equalTo(valueRow.getDataList().get(x).getValue())));
+			}
 
 		}
 
@@ -297,6 +313,18 @@ public class TrialMeasurementsControllerTest {
 		emptyData.setValue("");
 		emptyData.setMeasurementVariable(measurementVariable);
 		dataList.add(emptyData);
+
+		MeasurementData measurementDataOfAFactor = new MeasurementData();
+		MeasurementVariable measurementVariableOfAFactor = new MeasurementVariable();
+		measurementVariableOfAFactor.setFactor(true);
+		measurementDataOfAFactor.setcValueId(UUID.randomUUID().toString());
+		measurementDataOfAFactor.setDataType(UUID.randomUUID().toString());
+		measurementDataOfAFactor.setEditable(false);
+		measurementDataOfAFactor.setLabel(UUID.randomUUID().toString());
+		measurementDataOfAFactor.setPhenotypeId(0);
+		measurementDataOfAFactor.setValue(UUID.randomUUID().toString());
+		measurementDataOfAFactor.setMeasurementVariable(measurementVariableOfAFactor);
+		dataList.add(measurementDataOfAFactor);
 
 		return dataList;
 	}
@@ -932,6 +960,12 @@ public class TrialMeasurementsControllerTest {
 		this.measurementVariables.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(
 				this.measurementCategorical.getMeasurementVariable().getId(), useDifferentLocalName? trait3Name + LOCAL : trait3Name, null));
 
+		this.measurementVariables.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(ALEUCOL_1_5_TERM_ID
+				, ALEUCOL_1_5_TRAIT_NAME, null));
+
+		this.measurementVariables.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(
+				this.measurementCategorical.getMeasurementVariable().getId(), useDifferentLocalName? trait3Name + LOCAL : trait3Name, null));
+
 		for (final TermId term : this.standardFactors) {
 			measurementVariables.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(term.getId(), useDifferentLocalName? term.name() + LOCAL : term.name(), null));
 		}
@@ -943,7 +977,7 @@ public class TrialMeasurementsControllerTest {
 	}
 
 	@Test
-	public void testAddDataTableDataMapForCategoricalVariableBlankMeasurementDto() {
+	public void testConvertForCategoricalVariableBlankMeasurementDto() {
 
 		Map<String, Object> dataMap = new HashMap<>();
 
@@ -951,14 +985,11 @@ public class TrialMeasurementsControllerTest {
 		final int aleucolPhenotypeId = 456;
 		final String aleucolPhenotypeTraitValue = "";
 
-		final MeasurementDto measurementDto = new MeasurementDto(new MeasurementVariableDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
+		final MeasurementDto measurementDto = new MeasurementDto(new MeasurementVariableDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME),
+				aleucolPhenotypeId, aleucolPhenotypeTraitValue);
 
-		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap , ALEUCOL_1_5_TRAIT_NAME, "");
-
-		assertThat(1, is(equalTo(dataMap.size())));
-		assertThat(dataMap.containsKey(ALEUCOL_1_5_TRAIT_NAME) ,is(true));
-
-		Object[] values = (Object[]) dataMap.get(ALEUCOL_1_5_TRAIT_NAME);
+		Object[] values = trialMeasurementsController.convertForCategoricalVariable(measurementVariable, measurementDto.getVariableValue(),
+				measurementDto.getPhenotypeId(), false);
 
 		assertThat("", is(equalTo(values[0])));
 		assertThat("", is(equalTo(values[1])));
@@ -969,11 +1000,11 @@ public class TrialMeasurementsControllerTest {
 
 
 	@Test
-	public void testAddDataTableDataMapForCategoricalVariableTraitValueIsOutOfRangeFromCategoricalValues() {
+	public void testConvertForCategoricalVariableTraitValueIsOutOfRangeFromCategoricalValues() {
 
 		Map<String, Object> dataMap = new HashMap<>();
 
-		final Variable measurementVariable = createTestVariable();
+		final Variable measurementVariable = createTestCategoricalVariable();
 
 
 		final int aleucolPhenotypeId = 456;
@@ -981,12 +1012,8 @@ public class TrialMeasurementsControllerTest {
 
 		final MeasurementDto measurementDto = new MeasurementDto(new MeasurementVariableDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
 
-		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap , ALEUCOL_1_5_TRAIT_NAME, "");
-
-		assertThat(1, is(equalTo(dataMap.size())));
-		assertThat(dataMap.containsKey(ALEUCOL_1_5_TRAIT_NAME) ,is(true));
-
-		Object[] values = (Object[]) dataMap.get(ALEUCOL_1_5_TRAIT_NAME);
+		Object[] values = trialMeasurementsController.convertForCategoricalVariable(measurementVariable, measurementDto.getVariableValue(),
+				measurementDto.getPhenotypeId(), false);
 
 		assertThat(aleucolPhenotypeTraitValue, is(equalTo(values[0])));
 		assertThat(aleucolPhenotypeTraitValue, is(equalTo(values[1])));
@@ -997,11 +1024,11 @@ public class TrialMeasurementsControllerTest {
 
 
 	@Test
-	public void testAddDataTableDataMapForCategoricalVariableTraitValueIsWithinCategoricalValues() {
+	public void testConvertForCategoricalVariableTraitValueIsWithinCategoricalValues() {
 
 		Map<String, Object> dataMap = new HashMap<>();
 
-		final Variable measurementVariable = createTestVariable();
+		final Variable measurementVariable = createTestCategoricalVariable();
 
 
 		final int aleucolPhenotypeId = 456;
@@ -1009,12 +1036,8 @@ public class TrialMeasurementsControllerTest {
 
 		final MeasurementDto measurementDto = new MeasurementDto(new MeasurementVariableDto(ALEUCOL_1_5_TERM_ID, ALEUCOL_1_5_TRAIT_NAME), aleucolPhenotypeId, aleucolPhenotypeTraitValue);
 
-		trialMeasurementsController.addDataTableDataMapForCategoricalVariable(measurementVariable, measurementDto, dataMap ,ALEUCOL_1_5_TRAIT_NAME, "");
-
-		assertThat(1, is(equalTo(dataMap.size())));
-		assertThat(dataMap.containsKey(ALEUCOL_1_5_TRAIT_NAME) ,is(true));
-
-		Object[] values = (Object[]) dataMap.get(ALEUCOL_1_5_TRAIT_NAME);
+		Object[] values = trialMeasurementsController.convertForCategoricalVariable(measurementVariable, measurementDto.getVariableValue(),
+				measurementDto.getPhenotypeId(), false);
 
 		assertThat(aleucolPhenotypeTraitValue, is(equalTo(values[0])));
 		assertThat("AAA Definition 1", is(equalTo(values[1])));
@@ -1116,6 +1139,32 @@ public class TrialMeasurementsControllerTest {
 		final boolean isGidDesigFactorsIncluded = false;
 		this.verifyCorrectValuesForFactors(dataMap, observationDto, isGidDesigFactorsIncluded, doAddNewGermplasmDescriptors, useDifferentLocalNames);
 	}
+
+	@Test
+	public void testAddGermplasmAndPlotFactorsDataToDataMapWithAdditionalDesignFactors() {
+
+		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), ALEUCOL_1_5_TERM_ID, true, false))
+				.thenReturn(this.createTestCategoricalVariable());
+
+		Map<String, Object> dataMap = new HashMap<>();
+		final boolean useDifferentLocalNames = false;
+		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
+
+		final boolean doAddNewGermplasmDescriptors = true;
+		// null because we are not interested in categorical traits for this test method
+		List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
+
+		final ObservationDto observationDto = observations.get(0);
+		// Add categorical design factor
+		observations.get(0).additionalDesignFactor(ALEUCOL_1_5_TRAIT_NAME, "1");
+
+		// Method to test
+		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables);
+
+		assertThat(dataMap, hasKey(ALEUCOL_1_5_TRAIT_NAME));
+		assertThat(dataMap.get(ALEUCOL_1_5_TRAIT_NAME), is(not(nullValue())));
+
+	}
 	
 	@Test
 	public void testUpdateTraits() throws WorkbookParserException {
@@ -1126,16 +1175,19 @@ public class TrialMeasurementsControllerTest {
 		CreateNurseryForm form = new CreateNurseryForm();
 		BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		Model model = Mockito.mock(Model.class);
-		final Map<String, String> resultMap = this.trialMeasurementsController.updateTraits(form, "T", bindingResult, model);
+
+		final Map<String, String> resultMap = this.trialMeasurementsController.updateTraits(form);
+
 		Assert.assertEquals("1", resultMap.get(TrialMeasurementsController.STATUS));
 		Mockito.verify(this.validationService).validateObservationValues(workbook);
 		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(), true);
 	}
 
-	private Variable createTestVariable() {
+	private Variable createTestCategoricalVariable() {
 
 		final Variable measurementVariable = new Variable();
 		final Scale scale = new Scale();
+		scale.setDataType(DataType.CATEGORICAL_VARIABLE);
 		scale.addCategory(new TermSummary(1, "AAA", "AAA Definition 1"));
 		scale.addCategory(new TermSummary(2, "BBB", "AAA Definition 2"));
 		scale.addCategory(new TermSummary(3, "CCC", "AAA Definition 3"));
@@ -1157,7 +1209,7 @@ public class TrialMeasurementsControllerTest {
 		final ObservationDto observationDto = observations.get(0);
 
 		// Method to test
-		final Map<String, Object> dataMap = this.trialMeasurementsController.generateDatatableDataMap(observationDto, "");
+		final Map<String, Object> dataMap = this.trialMeasurementsController.generateDatatableDataMap(observationDto);
 
 		assertThat("Expected a non-null data map.", dataMap.size(),is(not(equalTo(0))));
 		assertThat(String.valueOf(observationDto.getMeasurementId()), is(equalTo(dataMap.get(EXPERIMENT_ID))));
@@ -1183,7 +1235,7 @@ public class TrialMeasurementsControllerTest {
 		final ObservationDto observationDto = observations.get(0);
 
 		// Method to test
-		final Map<String, Object> dataMap = this.trialMeasurementsController.generateDatatableDataMap(observationDto, "");
+		final Map<String, Object> dataMap = this.trialMeasurementsController.generateDatatableDataMap(observationDto);
 
 		// Verify that values exist for retained traits but deleted trait is not included in data map
 		assertThat(dataMap.get(this.measurementNumeric.getMeasurementVariable().getName()),is(not(nullValue())));

@@ -1,20 +1,18 @@
-
 package com.efficio.fieldbook.web.importdesign.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementRowGenerator;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -31,17 +29,19 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.context.MessageSource;
-import org.apache.commons.lang3.StringUtils;
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementRowGenerator;
-import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class DesignImportServiceImpl implements DesignImportService {
 
@@ -73,21 +73,27 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	@Override
 	public List<MeasurementRow> generateDesign(final Workbook workbook, final DesignImportData designImportData,
-			final EnvironmentData environmentData, final boolean isPreview, final boolean isPreset,
+			final EnvironmentData environmentData, final boolean isPreview,
 			final Map<String, Integer> additionalParams) throws DesignValidationException {
 
 		final Set<String> generatedTrialInstancesFromUI = this.extractTrialInstancesFromEnvironmentData(environmentData);
 
 		/**
 		 * this will add the trial environment factors and their values to ManagementDetailValues so we can pass them to the UI and reflect
-		 * the values in the Environments Tab. Not needed when the design type is preset design type
+		 * the values in the Environments Tab.
 		 **/
-		if (!isPreset) {
-			this.populateEnvironmentDataWithValuesFromCsvFile(environmentData, workbook, designImportData);
-		}
+		this.populateEnvironmentDataWithValuesFromCsvFile(environmentData, workbook, designImportData);
 
-		final List<ImportedGermplasm> importedGermplasm =
-				this.retrieveImportedGermplasm(workbook.getStudyDetails().getId(), Integer.valueOf(additionalParams.get("startingEntryNo")));
+		final Map<Integer, ImportedGermplasm> importedGermplasm =
+				Maps.uniqueIndex(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
+						new Function<ImportedGermplasm, Integer>() {
+
+							@Override
+							public Integer apply(final ImportedGermplasm input) {
+								return input.getEntryId();
+							}
+
+						});
 
 		final Map<Integer, List<String>> csvData = designImportData.getRowDataMap();
 		final Map<Integer, StandardVariable> germplasmStandardVariables =
@@ -103,15 +109,14 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		final List<MeasurementRow> measurements = new ArrayList<>();
 
-		this.createMeasurementRows(environmentData.getNoOfEnvironments(), isPreset, csvData, measurements, measurementRowGenerator,
-				additionalParams);
+		this.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, null);
 
-		for(MeasurementRow measurementRow: measurements){
-			List<MeasurementData> measurementDatas =measurementRow.getDataList();
-			for (MeasurementData measurementData: measurementDatas){
-				if(DesignImportServiceImpl.ENTRY_TYPE.equals(measurementData.getLabel())){
-					String val = measurementData.getValue();
-					if(StringUtils.isEmpty(val) || DesignImportServiceImpl.ZERO.equals(val)){
+		for (final MeasurementRow measurementRow : measurements) {
+			final List<MeasurementData> measurementDatas = measurementRow.getDataList();
+			for (final MeasurementData measurementData : measurementDatas) {
+				if (DesignImportServiceImpl.ENTRY_TYPE.equals(measurementData.getLabel())) {
+					final String val = measurementData.getValue();
+					if (StringUtils.isEmpty(val) || DesignImportServiceImpl.ZERO.equals(val)) {
 						measurementData.setValue(DesignImportServiceImpl.TEST_ENTRY);
 					}
 				}
@@ -136,64 +141,10 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return measurements;
 	}
 
-	List<ImportedGermplasm> retrieveImportedGermplasm(final Integer studyId, final Integer startingEntryNo) {
-
-		final List<ImportedGermplasm> importedGermplasm =
-				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
-		// update the entry no based on the starting entry no
-		if (studyId == null) {
-			Integer minimumEntryNo = 0;
-			for (final ImportedGermplasm entry : importedGermplasm) {
-				final Integer entryNo = entry.getEntryId();
-				minimumEntryNo = (minimumEntryNo == 0 || entryNo < minimumEntryNo) ? entryNo : minimumEntryNo;
-			}
-
-			final Integer entryNoDelta = startingEntryNo - minimumEntryNo;
-			for (final ImportedGermplasm entry : importedGermplasm) {
-				final Integer prevEntryNo = entry.getEntryId();
-				entry.setEntryId(prevEntryNo + entryNoDelta);
-			}
-		}
-		return importedGermplasm;
-	}
-
-	/**
-	 * Creates measurement rows based on the data from the uploaded design file.
-	 * 
-	 * @param noOfEnvironments
-	 * @param isPreset
-	 * @param csvData
-	 * @param measurements
-	 * @param measurementRowGenerator
-	 * @param additionalParams that contains startingPlotNo, startingEntryNo, noOfAddedEnvironments
-	 * @param
-	 */
-	protected void createMeasurementRows(final Integer noOfEnvironments, final boolean isPreset, final Map<Integer, List<String>> csvData,
-			final List<MeasurementRow> measurements, final DesignImportMeasurementRowGenerator measurementRowGenerator,
-			final Map<String, Integer> additionalParams) {
-
-		final Integer startingPlotNo = additionalParams.get("startingPlotNo");
-		final Integer noOfAddedEnvironment =
-				additionalParams.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) != null ? additionalParams
-						.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) : 0;
-
-		final Integer startingPlotNoFromCSV = this.getStartingPlotNoFromCSV(csvData, measurementRowGenerator.getMappedHeaders());
-		final int plotNoDelta = (startingPlotNo != null) ? startingPlotNo - startingPlotNoFromCSV : 0;
-
-		if (isPreset) {
-			final int startingTrialInstanceNo = noOfAddedEnvironment > 0 ? noOfEnvironments - noOfAddedEnvironment + 1 : 1;
-			for (int trialInstanceNo = startingTrialInstanceNo; trialInstanceNo <= noOfEnvironments; trialInstanceNo++) {
-				this.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, trialInstanceNo, plotNoDelta);
-			}
-		} else {
-			this.createMeasurementRowsPerInstance(csvData, measurements, measurementRowGenerator, null, plotNoDelta);
-		}
-	}
-
 	/**
 	 * This will create measurement rows for the specified trial instance number. The design from the predefined template file will be
 	 * applied.
-	 * 
+	 *
 	 * @param csvData
 	 * @param measurements
 	 * @param measurementRowGenerator
@@ -201,7 +152,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	 * @param plotNoDelta
 	 */
 	void createMeasurementRowsPerInstance(final Map<Integer, List<String>> csvData, final List<MeasurementRow> measurements,
-			final DesignImportMeasurementRowGenerator measurementRowGenerator, final Integer trialInstanceNo, final Integer plotNoDelta) {
+			final DesignImportMeasurementRowGenerator measurementRowGenerator, final Integer trialInstanceNo) {
 
 		// row counter starts at index = 1 because zero index is the header
 		int rowCounter = 1;
@@ -222,44 +173,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 				measurementDataMap.get(TermId.TRIAL_INSTANCE_FACTOR.getId()).setValue(String.valueOf(trialInstanceNo));
 			}
 
-			if (plotNoDelta != 0) {
-				final Integer prevPlotNo = Integer.valueOf(measurementDataMap.get(TermId.PLOT_NO.getId()).getValue().toString());
-				measurementDataMap.get(TermId.PLOT_NO.getId()).setValue(String.valueOf(prevPlotNo + plotNoDelta));
-			}
-
 			measurements.add(measurementRow);
 
 		}
-	}
-
-	/**
-	 * Returns the value of the starting plot no from CSV rows
-	 * 
-	 * @param csvData
-	 * @param map
-	 * @return
-	 */
-	Integer getStartingPlotNoFromCSV(final Map<Integer, List<String>> csvData, final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> map) {
-
-		final Integer plotNoIndx = map.get(PhenotypicType.TRIAL_DESIGN).get(TermId.PLOT_NO.getId()).getColumnIndex();
-
-		Integer startingPlotNoCSV = 0;
-
-		// row counter starts at index = 1 because zero index is the header
-		int rowCounter = 1;
-		while (rowCounter <= csvData.size() - 1) {
-
-			final List<String> rowEntries = csvData.get(rowCounter);
-
-			final Integer currentPlotNo = Integer.valueOf(rowEntries.get(plotNoIndx).toString());
-			if (startingPlotNoCSV == 0 || startingPlotNoCSV > currentPlotNo) {
-				startingPlotNoCSV = currentPlotNo;
-			}
-
-			rowCounter++;
-		}
-
-		return startingPlotNoCSV;
 	}
 
 	Map<Integer, MeasurementData> getMeasurementDataMap(final List<MeasurementData> dataList) {
@@ -272,7 +188,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	/**
 	 * Returns all available check types at the moment in the form of a map <Name, CVTermId> i.e <C,10170>
-	 * 
+	 *
 	 * @return map <Name, CVTermId>
 	 */
 	private Map<String, Integer> retrieveAvailableCheckTypes() {
@@ -396,10 +312,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 	public boolean areTrialInstancesMatchTheSelectedEnvironments(final Integer noOfEnvironments, final DesignImportData designImportData)
 			throws DesignValidationException {
 
-		final DesignHeaderItem trialInstanceDesignHeaderItem =
-				this.validateIfStandardVariableExists(
-						designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
-						"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
+		final DesignHeaderItem trialInstanceDesignHeaderItem = this.validateIfStandardVariableExists(
+				designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
+				"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 
 		if (trialInstanceDesignHeaderItem != null) {
 			final Map<String, Map<Integer, List<String>>> csvMap =
@@ -435,9 +350,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		// ok, so these variables dont have Phenotypic information, we need to
 		// assign it via proj-prop or cvtermid
-		final Set<PhenotypicType> designImportRoles =
-				new HashSet<>(Arrays.asList(new PhenotypicType[] {PhenotypicType.TRIAL_ENVIRONMENT, PhenotypicType.TRIAL_DESIGN,
-						PhenotypicType.GERMPLASM, PhenotypicType.VARIATE}));
+		final Set<PhenotypicType> designImportRoles = new HashSet<>(Arrays.asList(
+				new PhenotypicType[] {PhenotypicType.TRIAL_ENVIRONMENT, PhenotypicType.TRIAL_DESIGN, PhenotypicType.GERMPLASM,
+						PhenotypicType.VARIATE}));
 		for (final Entry<String, List<StandardVariable>> entryVar : variables.entrySet()) {
 			for (final StandardVariable sv : entryVar.getValue()) {
 				for (final VariableType variableType : sv.getVariableTypes()) {
@@ -552,10 +467,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		final List<DesignHeaderItem> trialEnvironmentsDesignHeaderItems =
 				designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT);
-		final DesignHeaderItem trialInstanceHeaderItem =
-				this.validateIfStandardVariableExists(
-						designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
-						"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
+		final DesignHeaderItem trialInstanceHeaderItem = this.validateIfStandardVariableExists(
+				designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
+				"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 		final Map<String, Map<Integer, List<String>>> groupedCsvRows =
 				this.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, designImportData.getRowDataMap());
 

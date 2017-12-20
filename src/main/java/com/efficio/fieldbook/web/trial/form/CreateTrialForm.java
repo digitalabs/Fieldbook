@@ -111,6 +111,16 @@ public class CreateTrialForm {
 	/** The error message. */
 	private String errorMessage;
 
+	private String description;
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(final String description) {
+		this.description = description;
+	}
+
 	/**
 	 * Gets the study level variables.
 	 *

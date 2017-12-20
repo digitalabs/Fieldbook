@@ -1,16 +1,14 @@
-
 package com.efficio.fieldbook.web.stock;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.ImportStockForm;
+import com.efficio.fieldbook.web.common.service.ImportInventoryService;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.commons.service.StockService;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -24,6 +22,7 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,17 +37,18 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.ImportStockForm;
-import com.efficio.fieldbook.web.common.service.ImportInventoryService;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by Daniel Villafuerte on 5/8/2015.
  */
 
 @RunWith(MockitoJUnitRunner.class)
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
+@Ignore(value = "BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class StockControllerTest {
 
 	public static final String TEST_BREEDER_IDENTIFIER = "AB";
@@ -59,6 +59,7 @@ public class StockControllerTest {
 	public static final int TEST_CURRENT_USER_ID = 1;
 
 	public static final String TEST_LIST_NAME = "MyListName";
+	public static final String PROGRAM_UUID = "hsdkjflasf-783247-8347832";
 
 	@Mock
 	private StockService stockService;
@@ -93,8 +94,25 @@ public class StockControllerTest {
 	@Mock
 	private UserSelection userSelection;
 
+	@Mock
+	private ContextUtil contextUtil;
+
 	@InjectMocks
 	private final StockController dut = Mockito.spy(new StockController());
+
+	@Before
+	public void init() {
+
+		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
+		dut.setContextUtil(contextUtil);
+
+	}
+
+	@Test
+	public void testGetAllLocationList() {
+		this.dut.getAllLocationList();
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).getAllLocations(PROGRAM_UUID);
+	}
 
 	@Test
 	public void testGetLocationList() throws MiddlewareQueryException {
@@ -104,7 +122,7 @@ public class StockControllerTest {
 
 	@Test
 	public void testGetFavoriteLocationList() throws MiddlewareQueryException {
-		List<Integer> locationsIds = new ArrayList<>();
+		final List<Integer> locationsIds = new ArrayList<>();
 		locationsIds.add(1);
 		Mockito.when(this.fiedbookService.getFavoriteProjectLocationIds(Matchers.anyString())).thenReturn(locationsIds);
 
@@ -122,35 +140,35 @@ public class StockControllerTest {
 
 	@Test
 	public void testGenerateValidPrefix() throws MiddlewareException {
-		StockListGenerationSettings param =
+		final StockListGenerationSettings param =
 				new StockListGenerationSettings(StockControllerTest.TEST_BREEDER_IDENTIFIER, StockControllerTest.TEST_SEPARATOR);
-		String validPrefix = StockControllerTest.TEST_BREEDER_IDENTIFIER + 1 + StockControllerTest.TEST_SEPARATOR;
+		final String validPrefix = StockControllerTest.TEST_BREEDER_IDENTIFIER + 1 + StockControllerTest.TEST_SEPARATOR;
 		Mockito.doReturn(validPrefix).when(this.stockService)
 				.calculateNextStockIDPrefix(StockControllerTest.TEST_BREEDER_IDENTIFIER, StockControllerTest.TEST_SEPARATOR);
 
-		Map<String, String> results = this.dut.retrieveNextStockIDPrefix(param);
+		final Map<String, String> results = this.dut.retrieveNextStockIDPrefix(param);
 		Assert.assertEquals(StockController.SUCCESS, results.get(StockController.IS_SUCCESS));
 		Assert.assertEquals(StockControllerTest.TEST_BREEDER_IDENTIFIER + 1, results.get("prefix"));
 	}
 
 	@Test
 	public void testCalculatePrefixMiddlewareExceptionThrown() throws MiddlewareException {
-		StockListGenerationSettings param =
+		final StockListGenerationSettings param =
 				new StockListGenerationSettings(StockControllerTest.TEST_BREEDER_IDENTIFIER, StockControllerTest.TEST_SEPARATOR);
 		Mockito.doThrow(MiddlewareException.class).when(this.stockService)
 				.calculateNextStockIDPrefix(StockControllerTest.TEST_BREEDER_IDENTIFIER, StockControllerTest.TEST_SEPARATOR);
 
-		Map<String, String> results = this.dut.retrieveNextStockIDPrefix(param);
+		final Map<String, String> results = this.dut.retrieveNextStockIDPrefix(param);
 		Assert.assertEquals(StockController.FAILURE, results.get(StockController.IS_SUCCESS));
 
 	}
 
 	@Test
 	public void testCalculatePrefixValidationError() throws MiddlewareException {
-		StockListGenerationSettings param = new StockListGenerationSettings("AB12", StockControllerTest.TEST_SEPARATOR);
+		final StockListGenerationSettings param = new StockListGenerationSettings("AB12", StockControllerTest.TEST_SEPARATOR);
 		Mockito.doReturn("ABC").when(this.messageSource)
 				.getMessage(Matchers.anyString(), Matchers.any(Object[].class), Matchers.any(Locale.class));
-		Map<String, String> results = this.dut.retrieveNextStockIDPrefix(param);
+		final Map<String, String> results = this.dut.retrieveNextStockIDPrefix(param);
 		Assert.assertEquals(StockController.FAILURE, results.get(StockController.IS_SUCCESS));
 		Assert.assertNotNull(results.get(StockController.ERROR_MESSAGE));
 		Assert.assertTrue(results.get(StockController.ERROR_MESSAGE).length() > 0);
@@ -159,17 +177,17 @@ public class StockControllerTest {
 
 	@Test
 	public void testGenerateStockListForAdvanceList() throws MiddlewareException {
-		StockListGenerationSettings param =
+		final StockListGenerationSettings param =
 				new StockListGenerationSettings(StockControllerTest.TEST_BREEDER_IDENTIFIER, StockControllerTest.TEST_SEPARATOR);
-		String validPrefix = StockControllerTest.TEST_BREEDER_IDENTIFIER + 1 + StockControllerTest.TEST_SEPARATOR;
+		final String validPrefix = StockControllerTest.TEST_BREEDER_IDENTIFIER + 1 + StockControllerTest.TEST_SEPARATOR;
 		Mockito.doReturn(validPrefix).when(this.stockService)
 				.calculateNextStockIDPrefix(StockControllerTest.TEST_BREEDER_IDENTIFIER, StockControllerTest.TEST_SEPARATOR);
 		Mockito.doReturn(StockControllerTest.TEST_GERMPLASM_LIST_DATA_LIST_ID).when(this.germplasmListManager)
 				.retrieveDataListIDFromListDataProjectListID(StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID);
 
-		Pair<List<ListDataProject>, List<GermplasmListData>> testData = this.generateTestLists();
-		List<ListDataProject> dataProjectList = testData.getLeft();
-		List<GermplasmListData> germplasmListDatas = testData.getRight();
+		final Pair<List<ListDataProject>, List<GermplasmListData>> testData = this.generateTestLists();
+		final List<ListDataProject> dataProjectList = testData.getLeft();
+		final List<GermplasmListData> germplasmListDatas = testData.getRight();
 
 		Mockito.doReturn(germplasmListDatas).when(this.germplasmListManager)
 				.getGermplasmListDataByListId(StockControllerTest.TEST_GERMPLASM_LIST_DATA_LIST_ID);
@@ -178,12 +196,12 @@ public class StockControllerTest {
 
 		Mockito.doReturn(StockControllerTest.TEST_CURRENT_USER_ID).when(this.dut).getCurrentIbdbUserId();
 
-		Map<String, String> resultMap = this.dut.generateStockList(param, StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID);
+		final Map<String, String> resultMap = this.dut.generateStockList(param, StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID);
 
-		ArgumentCaptor<InventoryDetails> detailParam = ArgumentCaptor.forClass(InventoryDetails.class);
-		ArgumentCaptor<ListDataProject> listDataParam = ArgumentCaptor.forClass(ListDataProject.class);
-		Mockito.verify(this.inventoryService, Mockito.atMost(StockControllerTest.GERMPLASM_DATA_COUNT)).addLotAndTransaction(
-				detailParam.capture(), Matchers.any(GermplasmListData.class), listDataParam.capture());
+		final ArgumentCaptor<InventoryDetails> detailParam = ArgumentCaptor.forClass(InventoryDetails.class);
+		final ArgumentCaptor<ListDataProject> listDataParam = ArgumentCaptor.forClass(ListDataProject.class);
+		Mockito.verify(this.inventoryService, Mockito.atMost(StockControllerTest.GERMPLASM_DATA_COUNT))
+				.addLotAndTransaction(detailParam.capture(), Matchers.any(GermplasmListData.class), listDataParam.capture());
 
 		Assert.assertEquals(StockController.SUCCESS, resultMap.get(StockController.IS_SUCCESS));
 
@@ -195,39 +213,39 @@ public class StockControllerTest {
 
 	@Test
 	public void testGenerateGermplasmMap() throws MiddlewareException {
-		Pair<List<ListDataProject>, List<GermplasmListData>> testData = this.generateTestLists();
-		List<ListDataProject> dataProjectList = testData.getLeft();
-		List<GermplasmListData> germplasmListDatas = testData.getRight();
+		final Pair<List<ListDataProject>, List<GermplasmListData>> testData = this.generateTestLists();
+		final List<ListDataProject> dataProjectList = testData.getLeft();
+		final List<GermplasmListData> germplasmListDatas = testData.getRight();
 
 		Mockito.doReturn(germplasmListDatas).when(this.germplasmListManager)
 				.getGermplasmListDataByListId(StockControllerTest.TEST_GERMPLASM_LIST_DATA_LIST_ID);
 		Mockito.doReturn(dataProjectList).when(this.germplasmListManager)
 				.retrieveSnapshotListData(StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID);
 
-		Map<ListDataProject, GermplasmListData> germplasmMap =
+		final Map<ListDataProject, GermplasmListData> germplasmMap =
 				this.dut.generateGermplasmMap(StockControllerTest.TEST_GERMPLASM_LIST_DATA_LIST_ID,
 						StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID);
 
 		Assert.assertEquals(StockControllerTest.GERMPLASM_DATA_COUNT, germplasmMap.size());
-		for (Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
-			ListDataProject ldp = entry.getKey();
+		for (final Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
+			final ListDataProject ldp = entry.getKey();
 			Assert.assertTrue(ldp.getEntryId().equals(entry.getValue().getEntryId()));
 		}
 
 	}
 
 	protected Pair<List<ListDataProject>, List<GermplasmListData>> generateTestLists() {
-		List<ListDataProject> dataProjectList = new ArrayList<>();
-		List<GermplasmListData> germplasmListDatas = new ArrayList<>();
+		final List<ListDataProject> dataProjectList = new ArrayList<>();
+		final List<GermplasmListData> germplasmListDatas = new ArrayList<>();
 
 		for (int i = 0; i < StockControllerTest.GERMPLASM_DATA_COUNT; i++) {
-			ListDataProject ldp = new ListDataProject();
+			final ListDataProject ldp = new ListDataProject();
 			ldp.setEntryId(i);
 			ldp.setGermplasmId(i);
 
 			dataProjectList.add(ldp);
 
-			GermplasmListData datum = new GermplasmListData();
+			final GermplasmListData datum = new GermplasmListData();
 			datum.setEntryId(i);
 			datum.setGid(i);
 			germplasmListDatas.add(datum);
@@ -241,14 +259,14 @@ public class StockControllerTest {
 		Mockito.doReturn(true).when(this.inventoryDataManager)
 				.transactionsExistForListProjectDataListID(StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID);
 
-		GermplasmList list = new GermplasmList();
+		final GermplasmList list = new GermplasmList();
 		list.setName(StockControllerTest.TEST_LIST_NAME);
 		list.setId(StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID);
 
 		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListById(StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID);
 
-		Model model = Mockito.mock(Model.class);
-		String returnVal = this.dut.generateStockTabIfNecessary(StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID, model);
+		final Model model = Mockito.mock(Model.class);
+		final String returnVal = this.dut.generateStockTabIfNecessary(StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID, model);
 		Mockito.verify(model).addAttribute("listName", StockControllerTest.TEST_LIST_NAME);
 		Mockito.verify(model).addAttribute("listId", StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID);
 
@@ -260,47 +278,51 @@ public class StockControllerTest {
 		Mockito.doReturn(false).when(this.inventoryDataManager)
 				.transactionsExistForListProjectDataListID(StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID);
 
-		Model model = Mockito.mock(Model.class);
-		String returnVal = this.dut.generateStockTabIfNecessary(StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID, model);
+		final Model model = Mockito.mock(Model.class);
+		final String returnVal = this.dut.generateStockTabIfNecessary(StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID, model);
 
 		Assert.assertEquals("/NurseryManager/blank", returnVal);
 	}
 
 	@Test
 	public void testImportList() throws MiddlewareException, FieldbookException, FileParsingException {
-		Integer listId = 5;
-		GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
-		ImportStockForm form = new ImportStockForm();
+		final Integer listId = 5;
+		final GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
+		final ImportStockForm form = new ImportStockForm();
 		form.setStockListId(listId);
 
-		Map<String, Object> additionalParams = new HashMap<>();
+		final Map<String, Object> additionalParams = new HashMap<>();
 
-		MultipartFile file = new MockMultipartFile("FileName.xls", "OriginalFileName.xlsx", "application/octet-stream", new byte[0]);
+		final MultipartFile file = new MockMultipartFile("FileName.xls", "OriginalFileName.xlsx", "application/octet-stream", new byte[0]);
 		form.setFile(file);
 
-		GermplasmList germplasmList = new GermplasmList();
+		final GermplasmList germplasmList = new GermplasmList();
 		germplasmList.setType(germplasmListType.name());
 
-		InventoryDetails inventoryDetails = new InventoryDetails();
-		List<InventoryDetails> inventoryDetailsList = new ArrayList<>();
+		final InventoryDetails inventoryDetails = new InventoryDetails();
+		final List<InventoryDetails> inventoryDetailsList = new ArrayList<>();
 		inventoryDetailsList.add(inventoryDetails);
 
-		ImportedInventoryList importedInventoryList = new ImportedInventoryList();
+		final ImportedInventoryList importedInventoryList = new ImportedInventoryList();
 		importedInventoryList.setFilename(file.getName());
 		importedInventoryList.setImportedInventoryDetails(inventoryDetailsList);
 
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(listId)).thenReturn(germplasmList);
 		Mockito.when(this.importInventoryService.parseFile(form.getFile(), additionalParams)).thenReturn(importedInventoryList);
 		Mockito.when(this.inventoryService.getInventoryListByListDataProjectListId(listId)).thenReturn(inventoryDetailsList);
-		Mockito.when(this.importInventoryService.hasConflict(Mockito.anyListOf(InventoryDetails.class), Mockito.isA(ImportedInventoryList.class))).thenReturn(Boolean.FALSE);
+		Mockito.when(this.importInventoryService
+				.hasConflict(Mockito.anyListOf(InventoryDetails.class), Mockito.isA(ImportedInventoryList.class)))
+				.thenReturn(Boolean.FALSE);
 
-		Mockito.doNothing().when(this.importInventoryService).validateInventoryDetails(inventoryDetailsList, importedInventoryList, germplasmListType);
-		Mockito.doNothing().when(this.importInventoryService).mergeInventoryDetails(inventoryDetailsList, importedInventoryList, germplasmListType);
+		Mockito.doNothing().when(this.importInventoryService)
+				.validateInventoryDetails(inventoryDetailsList, importedInventoryList, germplasmListType);
+		Mockito.doNothing().when(this.importInventoryService)
+				.mergeInventoryDetails(inventoryDetailsList, importedInventoryList, germplasmListType);
 		Mockito.doNothing().when(this.inventoryDataManager).updateInventory(listId, inventoryDetailsList);
 		Mockito.doNothing().when(this.userSelection).setListId(listId);
 		Mockito.doNothing().when(this.userSelection).setInventoryDetails(inventoryDetailsList);
 
-		String result = dut.importList(form);
+		final String result = dut.importList(form);
 
 		Assert.assertTrue("Incorrect List Id", result.contains("5"));
 		Assert.assertTrue("Has Error", result.contains("false"));

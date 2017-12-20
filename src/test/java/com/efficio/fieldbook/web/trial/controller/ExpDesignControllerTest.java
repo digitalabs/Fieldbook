@@ -40,9 +40,6 @@ import java.util.List;
 @RunWith(MockitoJUnitRunner.class)
 public class ExpDesignControllerTest {
 
-	private static final String LICENSE_EXPIRED_MESSAGE = "License has expired";
-	private static final String LICENSE_EXPIRING_MESSAGE = "License is expiring in 30 days";
-
 	@Mock
 	private RandomizeCompleteBlockDesignService randomizeCompleteBlockDesign;
 
@@ -83,60 +80,6 @@ public class ExpDesignControllerTest {
 		this.expDesignController.setFieldbookProperties(this.fieldbookProperties);
 		this.messageSource.setUseCodeAsDefaultMessage(true);
 		this.expDesignController.setMessageSource(this.messageSource);
-	}
-
-	@Test
-	public void testIsValidPresetDesignTemplate() {
-		String fileName = "E30-Rep3-Block6-5Ind.csv";
-		Assert.assertTrue("Expecting to return true when the filename is valid.",
-				this.expDesignController.isValidPresetDesignTemplate(fileName));
-
-		fileName = "E30-Rep3-Block6-5Ind";
-		Assert.assertFalse("Expecting to return false when the filename does not ends with .csv.",
-				this.expDesignController.isValidPresetDesignTemplate(fileName));
-
-		fileName = "Rep3-Block6-5Ind.csv";
-		Assert.assertFalse("Expecting to return false when the filename does not starts with E[\\d]+",
-				this.expDesignController.isValidPresetDesignTemplate(fileName));
-
-		fileName = "E30-Block6-5Ind.csv";
-		Assert.assertFalse("Expecting to return false when the filename does not contains -Rep[\\d]+",
-				this.expDesignController.isValidPresetDesignTemplate(fileName));
-
-	}
-
-	@Test
-	public void testGetTemplateName() {
-		final String templateName = "templateFileName.csv";
-		Assert.assertFalse("Expecting that the template name does not ends with .csv",
-				this.expDesignController.getTemplateName(templateName).endsWith(".csv"));
-	}
-
-	@Test
-	public void testGetTotalNoOfEntries() {
-		final String fileName = "E30-Rep3-Block6-5Ind.csv";
-		final int actualNoOfEntries = this.expDesignController.getTotalNoOfEntries(fileName);
-		Assert.assertEquals("Expecting that the return no of entries is 30 but returned " + actualNoOfEntries, 30, actualNoOfEntries);
-	}
-
-	@Test
-	public void testGetNoOfReps() {
-		final String fileName = "E30-Rep3-Block6-5Ind.csv";
-		final int actualNoOfReps = this.expDesignController.getNoOfReps(fileName);
-		Assert.assertEquals("Expecting that the return no of replication is 3 but returned " + actualNoOfReps, 3, actualNoOfReps);
-	}
-
-	@Test
-	public void testGeneratePresetDesignTypeItem() {
-		final String fileName = "E30-Rep3-Block6-5Ind.csv";
-
-		final DesignTypeItem designTypeItem = this.expDesignController.generatePresetDesignTypeItem(fileName, 1);
-
-		Assert.assertEquals(1, designTypeItem.getId().intValue());
-		Assert.assertEquals(3, designTypeItem.getRepNo().intValue());
-		Assert.assertEquals(30, designTypeItem.getTotalNoOfEntries().intValue());
-		Assert.assertEquals(fileName, designTypeItem.getTemplateName());
-		Assert.assertEquals(fileName.substring(0, fileName.indexOf(".csv")), designTypeItem.getName());
 	}
 
 	@Test

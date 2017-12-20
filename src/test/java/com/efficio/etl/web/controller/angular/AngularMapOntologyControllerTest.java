@@ -1,18 +1,15 @@
 package com.efficio.etl.web.controller.angular;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.bean.VariableDTO;
-import com.efficio.fieldbook.service.api.FieldbookService;
-import junit.framework.Assert;
+import java.io.IOException;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
-import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.manager.Operation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,10 +18,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.Map;
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.bean.VariableDTO;
+import com.efficio.fieldbook.service.api.FieldbookService;
+
+import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AngularMapOntologyControllerTest {
@@ -56,20 +55,17 @@ public class AngularMapOntologyControllerTest {
 	@Before
 	public void setup() {
 
-		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
-		Mockito.when(this.request.getContextPath()).thenReturn(CONTEXT_PATH);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID())
+				.thenReturn(AngularMapOntologyControllerTest.PROGRAM_UUID);
+		Mockito.when(this.request.getContextPath()).thenReturn(AngularMapOntologyControllerTest.CONTEXT_PATH);
 	}
 
 	@Test
 	public void testConfirmImport() throws IOException {
-
-		final MeasurementVariable plotIdMeasurementVariable = new MeasurementVariable();
-		plotIdMeasurementVariable.setTermId(TermId.PLOT_ID.getId());
-		plotIdMeasurementVariable.setName(TermId.PLOT_ID.name());
-		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "", Operation.ADD, PhenotypicType.GERMPLASM)).thenReturn(plotIdMeasurementVariable);
-
-		final org.apache.poi.ss.usermodel.Workbook apacheWorkbook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1, false);
+		final org.apache.poi.ss.usermodel.Workbook apacheWorkbook = Mockito
+				.mock(org.apache.poi.ss.usermodel.Workbook.class);
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1,
+				false);
 		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(apacheWorkbook);
 		Mockito.when(this.etlService.convertToWorkbook(this.userSelection)).thenReturn(workbook);
 
@@ -79,18 +75,17 @@ public class AngularMapOntologyControllerTest {
 
 		Mockito.verify(this.userSelection).clearMeasurementVariables();
 		Mockito.verify(this.etlService).mergeVariableData(variables, apacheWorkbook, this.userSelection);
-		Mockito.verify(this.fieldbookService)
-				.addMeasurementVariableToList(plotIdMeasurementVariable, workbook.getFactors());
-		Mockito.verify(this.etlService).saveProjectOntology(workbook, PROGRAM_UUID);
+		Mockito.verify(this.fieldbookService).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, false);
+		Mockito.verify(this.etlService).saveProjectOntology(workbook, AngularMapOntologyControllerTest.PROGRAM_UUID);
 
 		Mockito.verify(this.userSelection).setStudyId(workbook.getStudyDetails().getId());
 		Mockito.verify(this.userSelection).setTrialDatasetId(workbook.getTrialDatasetId());
 		Mockito.verify(this.userSelection).setMeasurementDatasetId(workbook.getMeasurementDatesetId());
 		Mockito.verify(this.userSelection).setMeansDatasetId(workbook.getMeansDatasetId());
 
-		Assert.assertEquals(true, plotIdMeasurementVariable.isFactor());
 		Assert.assertEquals(true, result.get("success"));
-		Assert.assertEquals(CONTEXT_PATH + AngularOpenSheetController.URL, result.get("redirectUrl"));
+		Assert.assertEquals(AngularMapOntologyControllerTest.CONTEXT_PATH + AngularOpenSheetController.URL,
+				result.get("redirectUrl"));
 
 	}
 

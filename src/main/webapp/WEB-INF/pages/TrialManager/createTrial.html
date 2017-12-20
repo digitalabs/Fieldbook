@@ -91,10 +91,10 @@
 
 							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Plant level options</a>
-								<ul class="dropdown-menu" style="margin-left: -24px;">
+								<ul class="dropdown-menu" style="margin-left: -14px;">
 									<li>
 										<a href="javascript: createSample();" id="sample-trial-link"
-										   th:text="#{trial.trialdetails.action.create.sample}">Create sample list Beta</a>
+										   th:text="#{trial.trialdetails.action.create.sample}">Create sample list</a>
 									</li>
 								</ul>
 							</li>
@@ -165,9 +165,10 @@
 									<label class="control-label col-sm-4"><b>Description</b>: <span class="required">*</span></label>
 
 									<div class="col-sm-8">
-										<input class="form-control character-input" maxlength="225" type="text" ng-model="data.basicDetails[8007]"/>
+										<input class="form-control character-input" maxlength="225" type="text"
+										       ng-model="data.description"/>
 									</div>
-
+									
 
 								</div>
 
@@ -346,6 +347,10 @@
 	</div>
 </div>
 <div class="row">
+	<div th:include="/Common/includes/exportSampleList"></div>
+</div>
+
+<div class="row">
 	<div class="col-xs-12 col-md-12">
 		<div th:include="/Fieldmap/includes/selectTrialInstanceModal"></div>
 	</div>
@@ -400,7 +405,7 @@
 
 <div class="row">
 	<div class="col-xs-6 col-md-6">
-		<div id="Managersample-list" th:include="/TrialManager/templates/managerSampleListModal"></div>
+		<div id="Managersample-list" th:include="/TrialManager/templates/selectSelectionVariableToSampleListModal"></div>
 	</div>
 </div>
 
@@ -418,6 +423,10 @@
 
 <div class="row">
     <div th:include="/Common/includes/saveList"></div>
+</div>
+
+<div class="row">
+	<div th:include="/TrialManager/templates/saveSampleList"></div>
 </div>
 
 <div class="row">
@@ -458,7 +467,8 @@
 <script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/trial-data-manager.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentModal.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/trialmanager/sampleList.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/selectSelectionVariableToSampleList.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentToSampleList.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/fbk-data-table/samples-summary.js}"></script>
 
 

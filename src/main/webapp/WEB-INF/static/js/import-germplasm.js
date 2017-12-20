@@ -126,9 +126,24 @@
 					cell.data(newEntryNo);
 				}
 				dataTable.fnDraw();
+
+				var startingEntryNo = $.trim($('#txtStartingEntryNo').val());
+
+				// Update the entry numbers of the selected Germplasm List on the server side based on the specified
+				// starting entry number. This is to make sure the entry numbers are the same in the UI and server.
 				if (!isNursery()) {
 					var trialManager = angular.element('#mainApp').injector().get('TrialManagerDataService');
-					trialManager.updateStartingEntryNoCount($.trim($('#txtStartingEntryNo').val()));
+					trialManager.updateStartingEntryNoCount(startingEntryNo);
+				} else {
+					if($.isNumeric(startingEntryNo)) {
+						var data = new FormData().append('startingEntryNo', startingEntryNo);
+						$.ajax({
+							type : 'POST',
+							url : '/Fieldbook/NurseryManager/GermplasmList/startingEntryNo',
+							contentType: 'application/json; charset=utf-8',
+							data: startingEntryNo
+						});
+					}
 				}
 			},
 			validatePlotNo: function(inputNo) {

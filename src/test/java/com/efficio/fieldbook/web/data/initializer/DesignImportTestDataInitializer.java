@@ -36,16 +36,16 @@ public class DesignImportTestDataInitializer {
 	public static final int CATEGORICAL_VARIABLE = 1130;
 	public static final int CHARACTER_VARIABLE = 1120;
 	public static final int NUMERIC_VARIABLE = 1110;
-	public static final int NO_OF_TEST_ENTRIES = 2;
+	public static final int NO_OF_TEST_ENTRIES = 5;
 
 	public static final int AFLAVER_5_ID = 51510;
 
-	public static DesignImportData createDesignImportData() {
+	public static DesignImportData createDesignImportData(final int startingEntryNo, final int startingPlotNo) {
 
 		final DesignImportData designImportData = new DesignImportData();
 
 		designImportData.setMappedHeaders(createTestMappedHeadersForDesignImportData());
-		designImportData.setRowDataMap(createTestCsvDataForDesignImportData());
+		designImportData.setRowDataMap(createTestCsvDataForDesignImportData(startingEntryNo, startingPlotNo));
 
 		return designImportData;
 
@@ -84,20 +84,31 @@ public class DesignImportTestDataInitializer {
 
 	}
 
-	public static Map<Integer, List<String>> createTestCsvDataForDesignImportData() {
+	public static Map<Integer, List<String>> createTestCsvDataForDesignImportData(final int startingEntryNo, final int startingPlotNo) {
 
 		final Map<Integer, List<String>> csvData = new HashMap<>();
 
 		// The first row is the header
 		csvData.put(0, Lists.newArrayList("TRIAL_INSTANCE", "SITE_NAME", "ENTRY_NO", "PLOT_NO", "REP_NO", "BLOCK_NO", "AflavER_1_5"));
 
-		// csv data
-		csvData.put(1, Lists.newArrayList("1", "Laguna", "1", "1", "1", "1", ""));
-		csvData.put(2, Lists.newArrayList("1", "Laguna", "2", "2", "1", "1", ""));
-		csvData.put(3, Lists.newArrayList("2", "Bicol", "1", "6", "1", "", ""));
-		csvData.put(4, Lists.newArrayList("2", "Bicol", "2", "7", "1", "1", ""));
-		csvData.put(5, Lists.newArrayList("3", "Bulacan", "1", "11", "1", "2", ""));
-		csvData.put(6, Lists.newArrayList("3", "Bulacan", "2", "12", "1", "2", ""));
+		int plotNo = startingPlotNo;
+		int startingRowIndex = 1;
+
+		// CSV DATA
+		// Create data rows for trial instance 1
+		for (int i = 0; i < NO_OF_TEST_ENTRIES; i++) {
+			csvData.put(startingRowIndex++, Lists.newArrayList("1", "Laguna", String.valueOf(startingEntryNo + i), String.valueOf(plotNo++), "1", "1", ""));
+		}
+
+		// Create data rows for trial instance 2
+		for (int i = 0; i < NO_OF_TEST_ENTRIES; i++) {
+			csvData.put(startingRowIndex++, Lists.newArrayList("2", "Bicol", String.valueOf(startingEntryNo + i), String.valueOf(plotNo++), "1", "", ""));
+		}
+
+		// Create data rows for trial instance 3
+		for (int i = 0; i < NO_OF_TEST_ENTRIES; i++) {
+			csvData.put(startingRowIndex++, Lists.newArrayList("3", "Bulacan", String.valueOf(startingEntryNo + i), String.valueOf(plotNo++), "1", "2", ""));
+		}
 
 		return csvData;
 

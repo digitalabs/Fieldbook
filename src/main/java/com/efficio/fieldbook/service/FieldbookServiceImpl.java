@@ -11,21 +11,25 @@
 
 package com.efficio.fieldbook.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.service.internal.DesignRunner;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.service.FileService;
@@ -58,25 +62,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.service.internal.DesignRunner;
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
-import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -164,7 +162,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 	 *
 	 * @throws RuleException
 	 * @throws FieldbookException
-	 * @throws MiddlewareQueryException
 	 */
 	@Override
 	public AdvanceResult advanceNursery(final AdvancingNursery advanceInfo, final Workbook workbook)
@@ -238,7 +235,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	private List<Integer> getStoredInIdsByMode(final int mode, final boolean isNursery) {
-		final List<Integer> list = new ArrayList<Integer>();
+		final List<Integer> list = new ArrayList<>();
 		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			list.addAll(PhenotypicType.STUDY.getTypeStorages());
 			if (isNursery) {
@@ -851,7 +848,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 						 * variable of the name
 						 */
 						final MeasurementVariable tempVarId = studyConditionMap.get(idTermId);
-						String actualNameVal = this.resolveNameVarValue(tempVarId);
+						final String actualNameVal = this.resolveNameVarValue(tempVarId);
 
 						final StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(
 								Integer.valueOf(nameTermId), this.contextUtil.getCurrentProgramUUID());
@@ -1261,6 +1258,39 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 		}
 
+	}
+
+	@Override
+	public void addStudyUUIDConditionAndPlotIDFactorToWorkbook(final Workbook workbook,
+			final boolean addPlotIdToMeasurementRows) {
+		// Add the STUDY_UID variable to make sure that user logged in
+		// during the import will be set as the owner
+		final MeasurementVariable userIdMeasurementVariable = this.createMeasurementVariable(
+				String.valueOf(TermId.STUDY_UID.getId()), String.valueOf(this.contextUtil.getCurrentUserLocalId()),
+				Operation.ADD, PhenotypicType.STUDY);
+		this.addMeasurementVariableToList(userIdMeasurementVariable, workbook.getConditions());
+
+		final MeasurementVariable plotIdMeasurementVariable = this.createMeasurementVariable(
+				String.valueOf(TermId.PLOT_ID.getId()), "", Operation.ADD, PhenotypicType.GERMPLASM);
+		plotIdMeasurementVariable.setFactor(true);
+
+		// PLOT_ID is not required in processing the Fieldbook data file,
+		// but we need to add it in the background
+		// if it is not available as it is necessary in displaying the
+		// PLOT_ID column in measurements table.
+		this.addMeasurementVariableToList(plotIdMeasurementVariable, workbook.getFactors());
+
+		// Skip addition of Plot ID to measurement rows for Import Excel using
+		// Data Import Wizard option. It will be added in the later steps.
+		if (addPlotIdToMeasurementRows) {
+			// It is important to add the PLOT_ID measurement data in
+			// measurement rows to make sure that variables
+			// in Workbook match the variables in measurement rows. This will
+			// initially creates blank values for PLOT_ID
+			// but the generation of plot IDs will be handled during the saving
+			// of Workbook.
+			this.addMeasurementVariableToMeasurementRows(plotIdMeasurementVariable, workbook.getObservations());
+		}
 	}
 
 	@Override

@@ -14,6 +14,7 @@ import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -70,8 +71,8 @@ public class ExportGermplasmListControllerTest {
 	private static final int EXCEL_TYPE = 1;
 	private static final int CSV_TYPE = 2;
 
-	private static final String TRIAL_TYPE = "T";
-	private static final String NURSERY_TYPE = "N";
+	private static final String TRIAL_TYPE = StudyType.T.getName();
+	private static final String NURSERY_TYPE = StudyType.N.getName();
 
 	private static final Integer STATUS_DELETED = 9;
 

@@ -10,17 +10,17 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.context.ContextConstants;
@@ -59,17 +59,15 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The Class CreateNurseryController.
@@ -245,14 +243,14 @@ public class EditNurseryController extends SettingsController {
 
 	private void setUpModelAttibutes(final Model model, final int nurseryId) {
 		final List<GermplasmList> germplasmList =
-				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.ADVANCED);
+				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(nurseryId, GermplasmListType.ADVANCED);
 		final List<GermplasmList> germplasmCrossesList =
-				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.CROSSES);
+				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(nurseryId, GermplasmListType.CROSSES);
 
 		germplasmCrossesList.addAll(this.fieldbookMiddlewareService
-				.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.CRT_CROSS));
+				.getGermplasmListsByProjectId(nurseryId, GermplasmListType.CRT_CROSS));
 		germplasmCrossesList.addAll(this.fieldbookMiddlewareService
-				.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.IMP_CROSS));
+				.getGermplasmListsByProjectId(nurseryId, GermplasmListType.IMP_CROSS));
 
 		model.addAttribute("advancedList", germplasmList);
 		model.addAttribute("crossesList", this.fieldbookMiddlewareService.appendTabLabelToList(germplasmCrossesList));
@@ -288,7 +286,7 @@ public class EditNurseryController extends SettingsController {
 		form.setBaselineTraitVariables(this.userSelection.getBaselineTraitsList());
 		form.setSelectionVariatesVariables(this.userSelection.getSelectionVariates());
 		form.setGermplasmListId(this.getGermplasmListId(nurseryId));
-
+		form.setDescription(workbook.getStudyDetails().getDescription());
 		form.setNurseryConditions(this.userSelection.getNurseryConditions());
 		form.setLoadSettings(EditNurseryController.SUCCESS);
 		form.setFolderId(Integer.valueOf((int) workbook.getStudyDetails().getParentFolderId()));
@@ -339,6 +337,7 @@ public class EditNurseryController extends SettingsController {
 		form.setMeasurementRowList(this.userSelection.getMeasurementRowList());
 		form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
 		form.setStudyName(workbook.getStudyDetails().getStudyName());
+		form.setDescription(workbook.getStudyDetails().getDescription());
 		form.changePage(1);
 		this.userSelection.setCurrentPage(form.getCurrentPage());
 		this.userSelection.setWorkbook(workbook);
@@ -416,6 +415,10 @@ public class EditNurseryController extends SettingsController {
 				break;
 			}
 		}
+
+
+		final String description = form.getDescription();
+
 		// combine all study conditions (basic details and management details
 		// and hidden variables)
 		final List<SettingDetail> studyLevelVariables = this.combineStudyConditions(form, this.userSelection);
@@ -439,13 +442,14 @@ public class EditNurseryController extends SettingsController {
 
 		final Dataset dataset = (Dataset) SettingsUtil
 				.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, studyLevelVariables, form.getPlotLevelVariables(),
-						baselineTraits, this.userSelection, form.getNurseryConditions(), this.contextUtil.getCurrentProgramUUID());
+						baselineTraits, this.userSelection, form.getNurseryConditions(), this.contextUtil.getCurrentProgramUUID(),
+					description);
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 
 		final Workbook workbook = this.prepareNewWorkbookForSaving(trialDatasetId, measurementDatasetId, dataset);
 
-		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId());
+		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId(), description);
 		this.userSelection.setWorkbook(workbook);
 
 		final Map<String, String> resultMap = new HashMap<>();
@@ -604,7 +608,10 @@ public class EditNurseryController extends SettingsController {
 		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
 
 		if (createNurseryForm.getStudyLevelVariables() != null && !createNurseryForm.getStudyLevelVariables().isEmpty()) {
-			studyLevelVariables.addAll(createNurseryForm.getStudyLevelVariables());
+			for (final SettingDetail item: createNurseryForm.getStudyLevelVariables()) {
+				if (item != null && item.getVariable() != null)
+					studyLevelVariables.add(item);
+			}
 		}
 
 		studyLevelVariables.addAll(createNurseryForm.getBasicDetails());

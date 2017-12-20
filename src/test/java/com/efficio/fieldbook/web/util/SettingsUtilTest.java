@@ -58,7 +58,7 @@ public class SettingsUtilTest {
 
 	private static final String PROGRAM_UUID = "123456789";
 
-	private SettingDetailTestDataInitializer settingDetailTestDataInitializer;
+
 	private static final int DUMMY_ID = 0;
 
 	private static final Term CATEGORICAL_DATATYPE_TERM = new Term(TermId.CATEGORICAL_VARIABLE.getId(), "Categorical Variable",
@@ -69,7 +69,7 @@ public class SettingsUtilTest {
 
 	@Before
 	public void setUp() {
-		this.settingDetailTestDataInitializer = new SettingDetailTestDataInitializer();
+
 	}
 
 	@Test
@@ -292,48 +292,6 @@ public class SettingsUtilTest {
 		final ExpDesignParameterUi result;
 		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
 		Assert.assertEquals(3, result.getDesignType().intValue());
-
-	}
-
-	@Test
-	public void testConvertToExpDesignParamsUiAlphaLatticeEntry30Rep2() {
-
-		final List<MeasurementVariable> expDesigns = new ArrayList<>();
-		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
-				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
-		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E30-Rep2-Block6-5Ind.csv"));
-
-		final ExpDesignParameterUi result;
-		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
-		Assert.assertEquals(5, result.getDesignType().intValue());
-
-	}
-
-	@Test
-	public void testConvertToExpDesignParamsUiAlphaLatticeEntry30Rep3() {
-
-		final List<MeasurementVariable> expDesigns = new ArrayList<>();
-		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
-				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
-		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E30-Rep3-Block6-5Ind.csv"));
-
-		final ExpDesignParameterUi result;
-		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
-		Assert.assertEquals(6, result.getDesignType().intValue());
-
-	}
-
-	@Test
-	public void testConvertToExpDesignParamsUiAlphaLatticeEntry50Rep2() {
-
-		final List<MeasurementVariable> expDesigns = new ArrayList<>();
-		expDesigns.add(this.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
-				String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId())));
-		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "E50-Rep2-Block5-10Ind.csv"));
-
-		final ExpDesignParameterUi result;
-		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
-		Assert.assertEquals(7, result.getDesignType().intValue());
 
 	}
 
@@ -655,8 +613,7 @@ public class SettingsUtilTest {
 		basicDetails.get(1).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
 		basicDetails.get(2).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
 		basicDetails.get(3).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
-		basicDetails.get(4).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
-		basicDetails.get(5).setRole(VariableType.SELECTION_METHOD.getRole());
+		basicDetails.get(4).setRole(VariableType.SELECTION_METHOD.getRole());
 
 		final Map<String, TreatmentFactorData> treatmentFactorItems = new HashMap<>();
 
@@ -670,7 +627,7 @@ public class SettingsUtilTest {
 		standardVariable.setDataType(new Term(dataType.getId(), dataType.getName(), dataType.getName()));
 
 		final SettingDetail settingDetail = new SettingDetail();
-		settingDetail.setVariable(basicDetails.get(5).getVariable());
+		settingDetail.setVariable(basicDetails.get(4).getVariable());
 		settingDetail.setRole(VariableType.SELECTION_METHOD.getRole());
 		settingDetail.setVariableType(VariableType.SELECTION_METHOD);
 
@@ -760,8 +717,6 @@ public class SettingsUtilTest {
 		final List<SettingDetail> variables = new ArrayList<>();
 		variables.add(this.createSettingDetail(TermId.STUDY_NAME.getId(), "STUDY_NAME", "Study - assigned (DBCV)",
 				SettingsUtilTest.C_DATATYPE));
-		variables.add(this.createSettingDetail(TermId.STUDY_TITLE.getId(), "STUDY_TITLE", "Study title - assigned (text)",
-				SettingsUtilTest.C_DATATYPE));
 		variables.add(this.createSettingDetail(TermId.STUDY_OBJECTIVE.getId(), "STUDY_OBJECTIVE", "Objective - described (text)",
 				SettingsUtilTest.C_DATATYPE));
 		variables.add(this.createSettingDetail(TermId.START_DATE.getId(), "START_DATE", "Start date - assigned (date)",
@@ -813,10 +768,6 @@ public class SettingsUtilTest {
 			if (TermId.STUDY_NAME.getId() == condition.getId()) {
 				Assert.assertEquals("The name should be 'STUDY_NAME'", "STUDY_NAME", condition.getName());
 				Assert.assertEquals("The value should be 'Study - assigned (DBCV)'", "Study - assigned (DBCV)", condition.getValue());
-			} else if (TermId.STUDY_TITLE.getId() == condition.getId()) {
-				Assert.assertEquals("The name should be 'STUDY_TITLE'", "STUDY_TITLE", condition.getName());
-				Assert.assertEquals("The value should be 'Study title - assigned (text)'", "Study title - assigned (text)",
-						condition.getValue());
 			} else if (TermId.STUDY_OBJECTIVE.getId() == condition.getId()) {
 				Assert.assertEquals("The name should be 'STUDY_OBJECTIVE'", "STUDY_OBJECTIVE", condition.getName());
 				Assert.assertEquals("The value should be 'Objective - described (text)'", "Objective - described (text)",

@@ -1051,7 +1051,7 @@ function createSample() {
 		return;
 	}
 
-	$('#managerSampleListModal').modal('hide');
+	$('#selectSelectionVariableToSampleListModal').modal('hide');
 	$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
 	$('#selectEnvironmentToSampleListModal').modal({ backdrop: 'static', keyboard: true });
 
@@ -1074,9 +1074,9 @@ function trialSelectedEnvironmentContinueCreatingSample(trialInstances) {
 	var idVal = $('#studyId').val();
 	$('#selectEnvironmentToSampleListModal').modal('hide');
 
-	var scope = angular.element('#managerSampleListModal').scope();
+	var scope = angular.element('#selectSelectionVariableToSampleListModal').scope();
     scope.init(idVal, trialInstances);
-    $('#managerSampleListModal').modal('show');
+    $('#selectSelectionVariableToSampleListModal').modal('show');
 }
 
 function openSampleSummary(plotId, plotNumber) {
@@ -1956,7 +1956,7 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
 function displaySampleList(id, listName, isPageLoading) {
 	'use script';
 
-	var url = '/Fieldbook/germplasm/list/sampleList/' + id;
+	var url = '/Fieldbook/sample/list/sampleList/' + id;
 
 	$.ajax({
 		url: url,
@@ -2750,10 +2750,15 @@ function moveStudy(sourceNode, targetNode) {
 		data: 'sourceId=' + sourceId + '&targetId=' + targetId + '&isStudy=' + isStudy,
 		cache: false,
 		success: function(data) {
-			var node = targetNode;
-			sourceNode.remove();
-			doStudyLazyLoad(node);
-			node.focus();
+			if (data.isSuccess === '1') {
+				var node = targetNode;
+				sourceNode.remove();
+				doStudyLazyLoad(node);
+				node.focus();
+			}
+			else {
+				showErrorMessage('page-rename-message-modal', data.message);
+			}
 		}
 	});
 }
@@ -2817,6 +2822,39 @@ function moveGermplasm(sourceNode, targetNode) {
 			var node = targetNode;
 			sourceNode.remove();
 			doGermplasmLazyLoad(node);
+			node.focus();
+		}
+	});
+}
+
+function moveSamplesListFolder(sourceNode, targetNode) {
+	'use strict';
+	var sourceId = sourceNode.data.key,
+		targetId = targetNode.data.key;
+
+	if (targetId === 'LISTS') {
+		targetId = 0;
+	}
+
+	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+
+	$.ajax({
+		url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + sourceId + '/move?newParentId=' + targetId,
+		type: 'PUT',
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+		},
+		error: function (data) {
+			if (data.status == 401) {
+				bmsAuth.handleReAuthentication();
+			} else {
+				showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
+			}
+		},
+		success: function() {
+			var node = targetNode;
+			sourceNode.remove();
+			doSampleLazyLoad(node);
 			node.focus();
 		}
 	});
@@ -2992,6 +3030,15 @@ function changeBrowseGermplasmButtonBehavior(isEnable) {
 		$('.browse-germplasm-action').removeClass('disable-image');
 	} else {
 		$('.browse-germplasm-action').addClass('disable-image');
+	}
+}
+
+function changeBrowseSampleButtonBehavior(isEnable) {
+	'use strict';
+	if (isEnable) {
+		$('.browse-sample-action').removeClass('disable-image');
+	} else {
+		$('.browse-sample-action').addClass('disable-image');
 	}
 }
 function showManageCheckTypePopup() {

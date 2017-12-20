@@ -278,10 +278,10 @@ public class ImportGermplasmListController extends SettingsController {
 			WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(),
 					this.userSelection.getTemporaryWorkbook());
 			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(),
-					this.userSelection.getWorkbook().getObservations(), false, this.userSelection, this.ontologyService,
+					this.userSelection.getWorkbook().getObservations(), false, this.ontologyService,
 					this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
 			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getVariates(),
-					this.userSelection.getWorkbook().getObservations(), true, this.userSelection, this.ontologyService,
+					this.userSelection.getWorkbook().getObservations(), true, this.ontologyService,
 					this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
 
 			this.addVariablesFromTemporaryWorkbookToWorkbook(this.userSelection);
@@ -857,7 +857,7 @@ public class ImportGermplasmListController extends SettingsController {
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form) {
 
 		try {
-			final String type = "T";
+			final String type = StudyType.T.getName();
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 			final List<ImportedGermplasm> list = this.getUserSelection().getImportedGermplasmMainInfo()

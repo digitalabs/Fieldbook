@@ -100,7 +100,7 @@ public class StudyTreeControllerTest {
 
 	@Test
 	public void testLoadInitialTree() {
-		final String result = this.controller.loadInitialTree(StudyTreeControllerTest.PARENT_FOLDER_ID, "N");
+		final String result = this.controller.loadInitialTree(StudyTreeControllerTest.PARENT_FOLDER_ID, StudyType.N.getName());
 		Assert.assertNotNull(result);
 		Assert.assertTrue(!"[]".equals(result));
 	}
@@ -114,7 +114,8 @@ public class StudyTreeControllerTest {
 
 		Mockito.doReturn(testTree).when(this.studyDataManager).getRootFolders(this.selectedProject.getUniqueID(), StudyType.nurseries());
 
-		final String result = this.controller.expandTree(StudyTreeController.LOCAL, StudyTreeControllerTest.PARENT_FOLDER_ID, "N");
+		final String result = this.controller.expandTree(StudyTreeController.LOCAL, StudyTreeControllerTest.PARENT_FOLDER_ID, StudyType.N
+			.getName());
 		Assert.assertNotNull(result);
 		Assert.assertTrue(!"[]".equals(result));
 	}
@@ -130,7 +131,8 @@ public class StudyTreeControllerTest {
 				StudyType.nurseries());
 
 		final String result =
-				this.controller.expandTree(StudyTreeControllerTest.PARENT_FOLDER_ID, StudyTreeControllerTest.PARENT_FOLDER_ID, "N");
+				this.controller.expandTree(StudyTreeControllerTest.PARENT_FOLDER_ID, StudyTreeControllerTest.PARENT_FOLDER_ID, StudyType
+					.N.getName());
 		Assert.assertNotNull(result);
 		Assert.assertTrue(!"[]".equals(result));
 	}

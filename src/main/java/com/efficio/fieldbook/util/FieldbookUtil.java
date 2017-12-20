@@ -1,13 +1,6 @@
 package com.efficio.fieldbook.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
-
+import com.efficio.fieldbook.web.util.AppConstants;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -24,7 +17,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.efficio.fieldbook.web.util.AppConstants;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -34,6 +33,7 @@ public class FieldbookUtil {
 	public static final String CONTENT_TYPE = "Content-Type";
 	public static final String CONTENT_DISPOSITION = "Content-Disposition";
 	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
+	public static final String DESCRIPTION = "Description";
 	private static FieldbookUtil instance;
 
 	static {
@@ -137,7 +137,8 @@ public class FieldbookUtil {
 	 * @param filename  - the filename that will be set in the http response header
 	 * @return
 	 */
-	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(String fileWithFullPath, String filename) throws UnsupportedEncodingException {
+	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(String fileWithFullPath, String filename) throws
+		UnsupportedEncodingException {
 		final HttpHeaders respHeaders = new HttpHeaders();
 
 		final File resource = new File(fileWithFullPath);
@@ -168,7 +169,11 @@ public class FieldbookUtil {
 		List<Integer> requiredVariables = new ArrayList<>();
 		StringTokenizer token = new StringTokenizer(idList, ",");
 		while (token.hasMoreTokens()) {
-			requiredVariables.add(Integer.valueOf(token.nextToken()));
+			final String s = token.nextToken();
+			// FIXME BMS-4397
+			if (!DESCRIPTION.equals(s)) {
+				requiredVariables.add(Integer.valueOf(s));
+			}
 		}
 		return requiredVariables;
 	}

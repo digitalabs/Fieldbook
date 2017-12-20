@@ -112,7 +112,6 @@
 		<property name="programBreedingMethodsUrl" value="${url.program.breeding.methods}" />
 		<property name="germplasmDetailsUrl" value="${url.germplasm.details}" />
 		<property name="uploadDirectory" value="${upload.directory}" />
-		<property name="presetDesignEnabledCrops" value="#{'${preset.design.enabled.crops}'.split(',')}" />
 	</bean>
 
 	<bean id="fieldbookService" class="com.efficio.fieldbook.service.FieldbookServiceImpl">
@@ -442,11 +441,6 @@
 	<bean id="settingsPresetService"
 		class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl" />
 
-	<bean id="crossNameService"
-		class="org.generationcp.commons.service.impl.CrossNameServiceImpl">
-		<aop:scoped-proxy />
-	</bean>
-
 	<bean id="importInventoryService"
 		class="com.efficio.fieldbook.web.common.service.impl.ImportInventoryServiceImpl">
 		<aop:scoped-proxy />
@@ -552,6 +546,20 @@
 		<aop:scoped-proxy />
 	</bean>
 
+	<bean id="sampleListService" factory-bean="managerFactory"
+		  factory-method="getSampleListService" scope="request">
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<bean id="sampleService" factory-bean="managerFactory"
+		  factory-method="getSampleService" scope="request">
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<bean id="plantService" factory-bean="managerFactory"
+		  factory-method="getPlantService" scope="request">
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
 	<!-- Data Source and Transaction Configuration -->
 
 	<bean id="xaDataSources" class="org.generationcp.middleware.hibernate.XADataSources" />

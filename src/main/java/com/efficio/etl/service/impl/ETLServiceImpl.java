@@ -194,7 +194,7 @@ public class ETLServiceImpl implements ETLService {
 			studyDetails.setStudyType(StudyType.N);
 		}
 
-		studyDetails.setTitle(userSelection.getStudyTitle());
+		studyDetails.setDescription(userSelection.getStudyDescription());
 		studyDetails.setStartDate(ETLServiceImpl.formatDate(userSelection.getStudyStartDate()));
 
 		if (userSelection.getStudyId() != null) {
@@ -912,8 +912,6 @@ public class ETLServiceImpl implements ETLService {
 				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
 		final String title = this.getCellStringValue(sheet, ETLServiceImpl.STUDY_TITLE_ROW_INDEX,
 				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
-		final String pmKey = this.getCellStringValue(sheet, ETLServiceImpl.PMKEY_ROW_INDEX,
-				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
 		final String pmKeyLabel = this.getCellStringValue(sheet, ETLServiceImpl.PMKEY_ROW_INDEX,
 				ETLServiceImpl.STUDY_DETAILS_LABEL_COLUMN_INDEX);
 		int rowAdjustMent = 0;
@@ -928,11 +926,11 @@ public class ETLServiceImpl implements ETLService {
 				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
 		final String studyType = this.getCellStringValue(sheet, ETLServiceImpl.STUDY_TYPE_ROW_INDEX - rowAdjustMent,
 				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
-		StudyType studyTypeValue = StudyType.getStudyType(studyType);
+		StudyType studyTypeValue = StudyType.getStudyTypeByName(studyType);
 		if (studyTypeValue == null) {
 			studyTypeValue = StudyType.N;
 		}
-		return new StudyDetails(study, title, pmKey, objective, startDateStr, endDateStr, studyTypeValue, 0, null,
+		return new StudyDetails(study, title, objective, startDateStr, endDateStr, studyTypeValue, 0, null,
 				null);
 
 	}

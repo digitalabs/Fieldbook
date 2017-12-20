@@ -83,6 +83,7 @@ public class SettingsUtil {
 	 * The Constant LOG.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsUtil.class);
+	public static final String DESCRIPTION = "Description";
 
 	private SettingsUtil() {
 		// do nothing
@@ -121,15 +122,17 @@ public class SettingsUtil {
 	 * @param plotsLevelList the plots level list
 	 * @param baselineTraitsList the baseline traits list
 	 * @param userSelection the user selection
+	 * @param description
 	 * @return the dataset
 	 */
 	public static ParentDataset convertPojoToXmlDataset(
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String name,
 			final List<SettingDetail> nurseryLevelConditions, final List<SettingDetail> plotsLevelList,
 			final List<SettingDetail> baselineTraitsList, final UserSelection userSelection, final List<SettingDetail> nurseryConditions,
-			final String programUUID) {
-		return SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions, plotsLevelList,
-				baselineTraitsList, userSelection, null, null, null, nurseryConditions, null, true, programUUID);
+		final String programUUID, final String description) {
+		return SettingsUtil
+			.convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions, plotsLevelList, baselineTraitsList,
+				userSelection, null, null, null, nurseryConditions, null, true, programUUID, description);
 	}
 
 	static List<Condition> convertDetailsToConditions(final List<SettingDetail> details,
@@ -400,15 +403,16 @@ public class SettingsUtil {
 	 * @param baselineTraitsList the baseline traits list
 	 * @param userSelection the user selection
 	 * @param trialLevelVariablesList the trial level variables list
+	 * @param description
 	 * @return the parent dataset
 	 */
 	public static ParentDataset convertPojoToXmlDataset(
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String name,
 			final List<SettingDetail> studyLevelConditions, final List<SettingDetail> plotsLevelList,
 			final List<SettingDetail> baselineTraitsList, final UserSelection userSelection,
-			final List<SettingDetail> trialLevelVariablesList, final List<SettingDetail> treatmentFactorDetails,
-			final Map<String, TreatmentFactorData> treatmentFactorItems, final List<SettingDetail> nurseryConditions,
-			final List<SettingDetail> trialLevelConditions, final boolean fromNursery, final String programUUID) {
+		final List<SettingDetail> trialLevelVariablesList, final List<SettingDetail> treatmentFactorDetails, final Map<String, TreatmentFactorData> treatmentFactorItems,
+		final List<SettingDetail> nurseryConditions, final List<SettingDetail> trialLevelConditions, final boolean fromNursery,
+		final String programUUID, final String description) {
 
 		// this block is necessary for the previous nursery code because the
 		// setting details passed in from nursery are mostly empty except
@@ -450,7 +454,7 @@ public class SettingsUtil {
 		dataset.setVariates(variates);
 		dataset.setConstants(constants);
 		dataset.setName(name);
-
+		dataset.setDescription(description);
 		if (trialLevelVariablesList != null) {
 			dataset.setTrialLevelFactor(trialLevelVariables);
 			dataset.setTreatmentFactors(treatmentFactors);
@@ -1650,10 +1654,11 @@ public class SettingsUtil {
 			final FieldbookService fieldbookService, final UserSelection userSelection, final Workbook workbook, final String programUUID,
 			final Properties appConstantsProperties) {
 
-		final List<SettingDetail> details = new ArrayList<>();
 		int index = fields != null ? fields.size() : 0;
+		final List<SettingDetail> details = new ArrayList<>();
 		final MeasurementVariable studyNameVar = WorkbookUtil.getMeasurementVariable(workbook.getConditions(), TermId.STUDY_NAME.getId());
 		final String studyName = studyNameVar != null ? studyNameVar.getValue() : "";
+		final String description = workbook.getStudyDetails().getDescription() != null ? workbook.getStudyDetails().getDescription() : "";
 		Integer datasetId = workbook.getMeasurementDatesetId();
 		if (datasetId == null) {
 			datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyDetails().getId(), studyName);
@@ -1698,20 +1703,31 @@ public class SettingsUtil {
 					}
 				} else {
 					// special field logic
-					final SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
-					final String value = SettingsUtil.getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);
-					final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
-					if (strFieldId.equals(AppConstants.SPFLD_ENTRIES.getString())) {
-						final String plotValue = SettingsUtil.getSpecialFieldValue(AppConstants.SPFLD_PLOT_COUNT.getString(), datasetId,
-								fieldbookMiddlewareService, workbook);
-						final PairedVariable pair =
+					// FIXME BMS-4397
+					if (DESCRIPTION.equals(label)) {
+						final SettingVariable variableDescription =
+							new SettingVariable(DESCRIPTION, null, null, null, null, null, null, null, null, null);
+						final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, description, false);
+						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
+						found = true;
+						break;
+					} else {
+						final SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
+						final String value = SettingsUtil.getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);
+						final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
+						if (strFieldId.equals(AppConstants.SPFLD_ENTRIES.getString())) {
+							final String plotValue = SettingsUtil
+								.getSpecialFieldValue(AppConstants.SPFLD_PLOT_COUNT.getString(), datasetId, fieldbookMiddlewareService,
+									workbook);
+							final PairedVariable pair =
 								new PairedVariable(variableAppConstantLabels.get(AppConstants.SPFLD_PLOT_COUNT.getString()), plotValue);
-						settingDetail.setPairedVariable(pair);
+							settingDetail.setPairedVariable(pair);
 					}
 					index = SettingsUtil.addToList(details, settingDetail, index, fields, strFieldId);
 					found = true;
 					break;
 				}
+			}
 			}
 
 			if (!found) {
@@ -1720,8 +1736,8 @@ public class SettingsUtil {
 				final SettingDetail settingDetail = new SettingDetail(variable, null, "", false);
 				index = SettingsUtil.addToList(details, settingDetail, index, fields, strFieldId);
 			}
-
 		}
+
 		return details;
 	}
 
@@ -2090,8 +2106,9 @@ public class SettingsUtil {
 	 */
 	protected static boolean inVariableIds(final int propertyId, final String variableIds) {
 		final StringTokenizer token = new StringTokenizer(variableIds, ",");
+
 		while (token.hasMoreTokens()) {
-			if (Integer.parseInt(token.nextToken()) == propertyId) {
+			if (token.nextToken().equals(String.valueOf(propertyId))) {
 				return true;
 			}
 		}
@@ -2342,31 +2359,8 @@ public class SettingsUtil {
 				param.setNumberOfBlocks(var.getValue());
 			}
 		}
-		SettingsUtil.updateDesignTypeIfIncompleteBlockAndFileNameIsSet(param);
 
 		return param;
-	}
-
-	private static void updateDesignTypeIfIncompleteBlockAndFileNameIsSet(final ExpDesignParameterUi param) {
-		if (DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId().equals(param.getDesignType()) && param.getFileName() != null) {
-			param.setDesignType(SettingsUtil.getPresetDesignTypeBasedOnFileName(param.getFileName()));
-		}
-	}
-
-	public static int getPresetDesignTypeBasedOnFileName(final String fileName) {
-		final List<File> presetTemplates = ResourceFinder.getResourceListing(AppConstants.DESIGN_TEMPLATE_ALPHA_LATTICE_FOLDER.getString());
-		// currently the UI follows this sequence for the presets: 4, 5, 6
-		// (this can be changed in the future so that constants are used)
-		Collections.sort(presetTemplates);
-		int presetDesignType = DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId() + 1;
-		for (final File designTemplateFile : presetTemplates) {
-			final String templateFileName = designTemplateFile.getName();
-			if (templateFileName.equals(fileName)) {
-				return presetDesignType;
-			}
-			presetDesignType++;
-		}
-		return presetDesignType;
 	}
 
 	/**

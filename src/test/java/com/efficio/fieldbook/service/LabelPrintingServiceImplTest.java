@@ -736,7 +736,7 @@ public class LabelPrintingServiceImplTest {
 				this.labelPrintingServiceImpl.getAvailableLabelFieldsForStockList(GermplasmListType.LST, Locale.getDefault(), StudyType.T,
 						101);
 
-		Assert.assertEquals(11, labelFieldForNurseryStock.size());
+		Assert.assertEquals(12, labelFieldForNurseryStock.size());
 
 		Set<String> labelFieldsNames = new HashSet<>();
 		for(LabelFields labelFields : labelFieldForNurseryStock) {

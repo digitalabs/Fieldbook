@@ -127,7 +127,7 @@ public class SettingsServiceImplTest {
 
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(TermId.BLOCK_NO.getId(), result.get(0).getId());
-		Assert.assertFalse(result.get(0).isGermplasmListField());
+		Assert.assertTrue(result.get(0).isGermplasmListField());
 
 
 	}

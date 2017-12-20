@@ -251,7 +251,7 @@ public class SettingsServiceImpl implements SettingsService {
 		for (final MeasurementVariable var : workbook.getFactors()) {
 			if (TermId.BLOCK_NO.getId() == var.getTermId()) {
 				final LabelFields field =
-						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery()));
+						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), true));
 				field.setName(var.getName());
 				labelFieldsList.add(field);
 			}

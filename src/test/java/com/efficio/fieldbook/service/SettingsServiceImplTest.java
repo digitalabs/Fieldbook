@@ -11,6 +11,7 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.junit.Assert;
@@ -103,6 +104,49 @@ public class SettingsServiceImplTest {
 		List<LabelFields> result = this.serviceDUT.retrieveTraitsAsLabels(this.workbook);
 
 		Assert.assertEquals("equal results", this.initializeListOfVariates().size(), result.size());
+	}
+
+	@Test
+	public void testRetrieveExperimentalDesignAsLabelsBlockNoIsAvailable() {
+
+		final StandardVariable standardVariable = new StandardVariable();
+		final Set<VariableType> variableTypes = new HashSet<>();
+		variableTypes.add(VariableType.EXPERIMENTAL_DESIGN);
+		standardVariable.setVariableTypes(variableTypes);
+
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId(), PROGRAM_UUID)).thenReturn(standardVariable);
+
+		final List<MeasurementVariable> factors = new ArrayList<>();
+		final MeasurementVariable blockNo = new MeasurementVariable();
+		blockNo.setTermId(TermId.BLOCK_NO.getId());
+		factors.add(blockNo);
+
+		Mockito.when(workbook.getFactors()).thenReturn(factors);
+
+		List<LabelFields> result = this.serviceDUT.retrieveExperimentalDesignAsLabels(workbook);
+
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(TermId.BLOCK_NO.getId(), result.get(0).getId());
+		Assert.assertFalse(result.get(0).isGermplasmListField());
+
+
+	}
+
+	@Test
+	public void testRetrieveExperimentalDesignAsLabelsBlockNoIsNotAvailable() {
+
+		final List<MeasurementVariable> factors = new ArrayList<>();
+		final MeasurementVariable repNo = new MeasurementVariable();
+		repNo.setTermId(TermId.REP_NO.getId());
+		factors.add(repNo);
+
+		Mockito.when(workbook.getFactors()).thenReturn(factors);
+
+		List<LabelFields> result = this.serviceDUT.retrieveExperimentalDesignAsLabels(workbook);
+
+		Assert.assertTrue(result.isEmpty());
+
+
 	}
 
 	private List<MeasurementVariable> initializeListOfVariates() {

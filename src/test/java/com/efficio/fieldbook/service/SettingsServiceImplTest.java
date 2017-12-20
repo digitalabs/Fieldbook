@@ -2,14 +2,19 @@
 package com.efficio.fieldbook.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,10 +28,9 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 
 @RunWith(MockitoJUnitRunner.class)
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class SettingsServiceImplTest {
 
-	private static final int GERMPLASM_GROUP = VariableType.GERMPLASM_DESCRIPTOR.getId();
+	public static final String PROGRAM_UUID = "63274-0324-9864asdf0-747";
 
 	@Mock
 	private Workbook workbook;
@@ -34,42 +38,69 @@ public class SettingsServiceImplTest {
 	@Mock
 	private FieldbookService fieldbookService;
 
+	@Mock
+	private ContextUtil contextUtil;
+
+	@Mock
+	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+
 	@InjectMocks
 	private SettingsServiceImpl serviceDUT;
 
-	@Test
-	public void testIsGermplasmListField_ReturnsTrueForExistingVariableInNursery() throws MiddlewareQueryException {
-		List<StandardVariableReference> stdVars = new ArrayList<StandardVariableReference>();
-		StandardVariableReference stdRef = new StandardVariableReference(1, "Sample Variable");
-		stdVars.add(stdRef);
-		Mockito.when(
-				this.fieldbookService.filterStandardVariablesForSetting(SettingsServiceImplTest.GERMPLASM_GROUP,
-						new ArrayList<SettingDetail>())).thenReturn(stdVars);
+	@Before
+	public void init() {
 
-		Assert.assertTrue("Expecting to return true when the variable exists from germplasm descriptor.",
-				this.serviceDUT.isGermplasmListField(1, true));
+		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
+
 	}
 
 	@Test
-	public void testIsGermplasmListField_ReturnsFalseForNonExistingVariableInNursery() throws MiddlewareQueryException {
-		List<StandardVariableReference> stdVars = new ArrayList<StandardVariableReference>();
-		Mockito.when(
-				this.fieldbookService.filterStandardVariablesForSetting(SettingsServiceImplTest.GERMPLASM_GROUP,
-						new ArrayList<SettingDetail>())).thenReturn(stdVars);
+	public void testIsGermplasmListFieldReturnsTrueForExistingVariableInNursery() throws MiddlewareQueryException {
 
-		Assert.assertFalse("Expecting to return false when the variable does not exists from germplasm descriptor.",
-				this.serviceDUT.isGermplasmListField(1, true));
+		final int standardVariableId = 1;
+		final StandardVariable standardVariable = new StandardVariable();
+		final Set<VariableType> variableTypes = new HashSet<>();
+		variableTypes.add(VariableType.GERMPLASM_DESCRIPTOR);
+		standardVariable.setVariableTypes(variableTypes);
+		standardVariable.setId(standardVariableId);
+
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(standardVariableId, PROGRAM_UUID)).thenReturn(standardVariable);
+
+		Assert.assertTrue("Expecting to return true when the variable exists from germplasm descriptor OR experimental design.",
+				this.serviceDUT.isGermplasmListField(standardVariableId, true));
+	}
+
+	@Test
+	public void testIsGermplasmListFieldReturnsFalseForNonExistingVariableInNursery() throws MiddlewareQueryException {
+		final int standardVariableId = 1;
+		final StandardVariable standardVariable = new StandardVariable();
+		final Set<VariableType> variableTypes = new HashSet<>();
+		variableTypes.add(VariableType.ANALYSIS);
+		standardVariable.setVariableTypes(variableTypes);
+		standardVariable.setId(standardVariableId);
+
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(standardVariableId, PROGRAM_UUID)).thenReturn(standardVariable);
+
+		Assert.assertFalse("Expecting to return false when the variable do not exist from germplasm descriptor OR experimental design.",
+				this.serviceDUT.isGermplasmListField(standardVariableId, true));
 	}
 
 	@Test
 	public void testRetrieveTraitsAsLabels() throws Exception {
+
+		final StandardVariable standardVariable = new StandardVariable();
+		final Set<VariableType> variableTypes = new HashSet<>();
+		variableTypes.add(VariableType.GERMPLASM_DESCRIPTOR);
+		standardVariable.setVariableTypes(variableTypes);
+
+		Mockito.when(fieldbookMiddlewareService.getStandardVariable(Mockito.anyInt(), Mockito.anyString())).thenReturn(standardVariable);
+
 		List<MeasurementVariable> traits = this.initializeListOfVariates();
 
 		Mockito.when(this.workbook.getVariates()).thenReturn(traits);
+		Mockito.when(this.workbook.isNursery()).thenReturn(true);
 
 		List<LabelFields> result = this.serviceDUT.retrieveTraitsAsLabels(this.workbook);
-
-		Mockito.verify(this.workbook, Mockito.times(1)).getVariates();
 
 		Assert.assertEquals("equal results", this.initializeListOfVariates().size(), result.size());
 	}
@@ -77,11 +108,10 @@ public class SettingsServiceImplTest {
 	private List<MeasurementVariable> initializeListOfVariates() {
 		List<MeasurementVariable> traits = new ArrayList<>();
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 99; i < 110; i++) {
 			MeasurementVariable variate = new MeasurementVariable();
 			variate.setName("variate_name" + i);
 			variate.setTermId(i);
-
 			traits.add(variate);
 		}
 

@@ -35,7 +35,6 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
-import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.PedigreeService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
@@ -92,6 +91,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	public static final String INCLUDE_NON_PDF_HEADERS = "1";
 	public static final String BARCODE_NEEDED = "1";
 	public static final String BARCODE_GENERATED_AUTOMATICALLY = "1";
+	private final Comparator<FieldMapLabel> plotNumberEntryNumberAscComparator = new FieldMapLabelComparator();
 
 	/** The message source. */
 	@Resource
@@ -137,7 +137,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		super();
 	}
 
-	private final Comparator<FieldMapLabel> plotNumberEntryNumberAscComparator = new FieldMapLabelComparator();
+	
 
 	@Override
 	public String generateLabelsForGermplasmList(final String labelType, final List<GermplasmListData> germplasmListDataList,
@@ -323,7 +323,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	@Override
-	public void deleteProgramPreset(final Integer programPresetId) throws MiddlewareQueryException {
+	public void deleteProgramPreset(final Integer programPresetId) {
 
 		this.presetDataManager.deleteProgramPreset(programPresetId);
 
@@ -687,7 +687,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				final String instanceID2 = o2.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
 
 				if (instanceID1.equals(instanceID2)) {
-					return new Integer(o1.getExperimentId()).compareTo(new Integer(o2.getExperimentId()));
+					return Integer.compare(o1.getExperimentId(), o2.getExperimentId());
 				} else {
 					return instanceID1.compareTo(instanceID2);
 				}
@@ -1022,7 +1022,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	@Override
-	public LabelPrintingPresets getLabelPrintingPreset(final Integer presetId, final Integer presetType) throws MiddlewareQueryException {
+	public LabelPrintingPresets getLabelPrintingPreset(final Integer presetId, final Integer presetType)  {
 		if (LabelPrintingPresets.STANDARD_PRESET == presetType) {
 			final StandardPreset standardPreset = this.workbenchService.getStandardPresetById(presetId);
 
@@ -1036,15 +1036,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	@Override
-	public ProgramPreset getLabelPrintingProgramPreset(final Integer programPresetId) throws MiddlewareQueryException {
+	public ProgramPreset getLabelPrintingProgramPreset(final Integer programPresetId)  {
 		return this.presetDataManager.getProgramPresetById(programPresetId);
 	}
 
 	@Override
-	public List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(final String presetName, final Integer programId) throws MiddlewareQueryException {
+	public List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(final String presetName, final Integer programId)  {
 		final List<LabelPrintingPresets> out = new ArrayList<>();
-
-		final Project project = this.workbenchService.getProjectById(programId.longValue());
 		
 		final String toolSectionName = this.userLabelPrinting.isStockList() ? ToolSection.INVENTORY_LABEL_PRINTING_PRESET.name() : ToolSection.PLANTING_LABEL_PRINTING_PRESET.name();
 		
@@ -1064,8 +1062,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			final List<LabelPrintingPresets> allLabelPrintingPresets = new ArrayList<>();
 
 			// 1. get the crop name of the particular programId,
-			final Project project = this.workbenchService.getProjectById(programId.longValue());
-			final String cropName = project.getCropType().getCropName();
 			final Integer fieldbookToolId = this.workbenchService.getFieldbookWebTool().getToolId().intValue();
 			final String toolSectionName = this.userLabelPrinting.isStockList() ? ToolSection.INVENTORY_LABEL_PRINTING_PRESET.name() : ToolSection.PLANTING_LABEL_PRINTING_PRESET.name();
 
@@ -1087,7 +1083,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	@Override
 	public String getLabelPrintingPresetConfig(final int presetId, final int presetType) throws LabelPrintingException {
-		try {
+
 			if (LabelPrintingPresets.STANDARD_PRESET == presetType) {
 				if (this.workbenchService.getStandardPresetById(presetId) == null) {
 					throw new LabelPrintingException("label.printing.preset.does.not.exists");
@@ -1099,14 +1095,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				}
 				return this.presetDataManager.getProgramPresetById(presetId).getConfiguration();
 			}
-		} catch (final MiddlewareQueryException e) {
-			throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "database.connectivity.error", e.getMessage());
-		}
 	}
 
 	@Override
-	public void saveOrUpdateLabelPrintingPresetConfig(final String settingsName, final String xmlConfig, final Integer programId)
-			throws MiddlewareQueryException {
+	public void saveOrUpdateLabelPrintingPresetConfig(final String settingsName, final String xmlConfig, final Integer programId) {
 		// check if exists, override if true else add new
 		final List<LabelPrintingPresets> searchPresetList =
 				this.getAllLabelPrintingPresetsByName(settingsName, programId);

@@ -50,13 +50,8 @@ public class SettingsServiceImpl implements SettingsService {
 	protected org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
 	@Override
-	public List<SettingDetail> retrieveTrialSettings(final Workbook workbook) {
-		throw new UnsupportedOperationException("Currently in the works");
-	}
-
-	@Override
 	public SettingDetail createSettingDetail(final int id, final String name, final UserSelection userSelection,
-			final int currentIbDbUserId, final String programUUID) throws MiddlewareException {
+			final int currentIbDbUserId, final String programUUID) {
 
 		final String variableName;
 		final StandardVariable stdVar = this.fieldbookMiddlewareService.getStandardVariable(id, programUUID);

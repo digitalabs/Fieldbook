@@ -16,8 +16,6 @@ import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
  */
 public interface SettingsService {
 
-	public List<SettingDetail> retrieveTrialSettings(Workbook workbook);
-
 	public List<LabelFields> retrieveTrialSettingsAsLabels(Workbook workbook);
 
 	List<LabelFields> retrieveTraitsAsLabels(Workbook workbook);

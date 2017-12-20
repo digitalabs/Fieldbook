@@ -693,11 +693,6 @@ public class LabelPrintingServiceImplTest {
 		Mockito.when(this.settingsService.retrieveTrialEnvironmentAsLabels(Mockito.isA(Workbook.class))).
 				thenReturn(environmentSettingsLabelFields);
 
-		List<LabelFields> experimentalDesignLabelFields =
-				LabelPrintingServiceDataInitializer.createExperimentalDesignSettingsLabelFields();
-		Mockito.when(this.settingsService.retrieveExperimentalDesignAsLabels(Mockito.isA(Workbook.class))).
-				thenReturn(experimentalDesignLabelFields);
-
 		List<LabelFields> germplsmDescriptorsLabelFields = LabelPrintingServiceDataInitializer.createGermplsmDescriptorsLabelFields();
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(Mockito.isA(Workbook.class))).
 				thenReturn(germplsmDescriptorsLabelFields);
@@ -736,7 +731,7 @@ public class LabelPrintingServiceImplTest {
 				this.labelPrintingServiceImpl.getAvailableLabelFieldsForStockList(GermplasmListType.LST, Locale.getDefault(), StudyType.T,
 						101);
 
-		Assert.assertEquals(12, labelFieldForNurseryStock.size());
+		Assert.assertEquals(11, labelFieldForNurseryStock.size());
 
 		Set<String> labelFieldsNames = new HashSet<>();
 		for(LabelFields labelFields : labelFieldForNurseryStock) {
@@ -746,7 +741,6 @@ public class LabelPrintingServiceImplTest {
 		Assert.assertTrue(labelFieldsNames.contains("Trial Name"));
 		Assert.assertTrue(labelFieldsNames.contains(trialSettingLabelFields.get(0).getName()));
 		Assert.assertTrue(labelFieldsNames.contains(environmentSettingsLabelFields.get(0).getName()));
-		Assert.assertTrue(labelFieldsNames.contains(experimentalDesignLabelFields.get(0).getName()));
 		Assert.assertTrue(labelFieldsNames.contains(germplsmDescriptorsLabelFields.get(0).getName()));
 		Assert.assertTrue(labelFieldsNames.contains(repNoTerm.getName()));
 		Assert.assertTrue(labelFieldsNames.contains(plotNoTerm.getName()));

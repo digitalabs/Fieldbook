@@ -248,6 +248,16 @@ public class SettingsServiceImpl implements SettingsService {
 
 		}
 
+		// Add BLOCK_NO experiment design factor if available
+		for (MeasurementVariable var : workbook.getFactors()) {
+			if (TermId.BLOCK_NO.getId() == var.getTermId()) {
+				LabelFields field =
+						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery()));
+					field.setName(var.getName());
+				managementDetailList.add(field);
+			}
+		}
+
 		return managementDetailList;
 	}
 }

@@ -26,8 +26,6 @@ var InventoryPage = {
                 $('#' + inventoryTableId + ' tr').removeClass('selected');
                 $('#' + inventoryTableId + ' tr').removeClass('manual-selected');
                 $('#' + sectionContainerDiv + ' input.stockListEntryId').prop('checked', isChecked);
-                $('#' + sectionContainerDiv + ' .review-select-all').prop('checked', isChecked);
-
                 if (isChecked) {
                     $('#' + inventoryTableId + ' tr').addClass('selected');
                     $('#' + inventoryTableId + ' tr').addClass('manual-selected');
@@ -109,7 +107,6 @@ var InventoryPage = {
                 $(this).parent().parent().removeClass('selected');
                 $(this).parent().parent().removeClass('manual-selected');
                 // Deselect "Select All" check box from header as well as from bottom while selecting any one row from table
-                $('#' + sectionContainerDiv + ' .review-select-all').prop('checked', false);
                 $('#' + sectionContainerDiv + ' .selectAllStock').prop('checked', false);
             }
             $('#' + inventoryTableId + ' tr.manual-selected input.stockListEntryId').prop('checked', true);

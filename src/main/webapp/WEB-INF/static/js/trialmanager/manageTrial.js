@@ -414,7 +414,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 					if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
 					 	$timeout(function() {
 					 		$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
-					 	}, 1);
+					 	}, 1000);
 					}
 				}
 			};

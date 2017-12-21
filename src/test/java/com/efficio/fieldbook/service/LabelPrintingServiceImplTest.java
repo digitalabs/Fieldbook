@@ -690,7 +690,7 @@ public class LabelPrintingServiceImplTest {
 
 		List<LabelFields> environmentSettingsLabelFields =
 				LabelPrintingServiceDataInitializer.createEnvironmentSettingsLabelFields();
-		Mockito.when(this.settingsService.retrieveTrialEnvironmentAsLabels(Mockito.isA(Workbook.class))).
+		Mockito.when(this.settingsService.retrieveTrialEnvironmentConditionsAsLabels(Mockito.isA(Workbook.class))).
 				thenReturn(environmentSettingsLabelFields);
 
 		List<LabelFields> germplsmDescriptorsLabelFields = LabelPrintingServiceDataInitializer.createGermplsmDescriptorsLabelFields();

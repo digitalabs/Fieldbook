@@ -123,7 +123,7 @@ public class SettingsServiceImplTest {
 
 		Mockito.when(workbook.getFactors()).thenReturn(factors);
 
-		List<LabelFields> result = this.serviceDUT.retrieveExperimentalDesignAsLabels(workbook);
+		List<LabelFields> result = this.serviceDUT.retrieveExperimentalDesignFactorsAsLabels(workbook);
 
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(TermId.BLOCK_NO.getId(), result.get(0).getId());
@@ -142,7 +142,7 @@ public class SettingsServiceImplTest {
 
 		Mockito.when(workbook.getFactors()).thenReturn(factors);
 
-		List<LabelFields> result = this.serviceDUT.retrieveExperimentalDesignAsLabels(workbook);
+		List<LabelFields> result = this.serviceDUT.retrieveExperimentalDesignFactorsAsLabels(workbook);
 
 		Assert.assertTrue(result.isEmpty());
 

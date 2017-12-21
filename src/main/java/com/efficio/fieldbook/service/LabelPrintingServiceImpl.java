@@ -809,8 +809,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			workbook = this.fieldbookMiddlewareService.getTrialDataSet(studyID);
 
 			labelFieldsList.addAll(this.settingsService.retrieveTrialSettingsAsLabels(workbook));
-			labelFieldsList.addAll(this.settingsService.retrieveTrialEnvironmentAsLabels(workbook));
-			labelFieldsList.addAll(this.settingsService.retrieveExperimentalDesignAsLabels(workbook));
+			labelFieldsList.addAll(this.settingsService.retrieveTrialEnvironmentConditionsAsLabels(workbook));
+			labelFieldsList.addAll(this.settingsService.retrieveExperimentalDesignFactorsAsLabels(workbook));
 			labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
 
 		} else {
@@ -882,7 +882,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			workbook = this.fieldbookMiddlewareService.getTrialDataSet(studyID);
 
 			labelFieldsList.addAll(this.settingsService.retrieveTrialSettingsAsLabels(workbook));
-			labelFieldsList.addAll(this.settingsService.retrieveTrialEnvironmentAsLabels(workbook));
+			labelFieldsList.addAll(this.settingsService.retrieveTrialEnvironmentConditionsAsLabels(workbook));
 			labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
 
 			labelFieldsList.add(new LabelFields(ColumnLabels.REP_NO.getTermNameFromOntology(this.ontologyDataManager), TermId.REP_NO

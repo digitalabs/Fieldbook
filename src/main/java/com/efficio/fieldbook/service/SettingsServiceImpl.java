@@ -213,7 +213,7 @@ public class SettingsServiceImpl implements SettingsService {
 	}
 
 	@Override
-	public List<LabelFields> retrieveTrialEnvironmentAsLabels(final Workbook workbook) {
+	public List<LabelFields> retrieveTrialEnvironmentConditionsAsLabels(final Workbook workbook) {
 
 		final List<LabelFields> labelFieldsList = new ArrayList<>();
 
@@ -243,7 +243,7 @@ public class SettingsServiceImpl implements SettingsService {
 	}
 
 	@Override
-	public List<LabelFields> retrieveExperimentalDesignAsLabels(final Workbook workbook) {
+	public List<LabelFields> retrieveExperimentalDesignFactorsAsLabels(final Workbook workbook) {
 
 		final List<LabelFields> labelFieldsList = new ArrayList<>();
 

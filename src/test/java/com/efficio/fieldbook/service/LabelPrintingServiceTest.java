@@ -85,9 +85,9 @@ public class LabelPrintingServiceTest {
 		final List<LabelFields> germplasmLabels = this.createDummyGermplasmLabels();
 
 		Mockito.when(this.settingsService.retrieveTrialSettingsAsLabels(this.workbook)).thenReturn(trialSettingLabels);
-		Mockito.when(this.settingsService.retrieveTrialEnvironmentAsLabels(this.workbook)).thenReturn(
+		Mockito.when(this.settingsService.retrieveTrialEnvironmentConditionsAsLabels(this.workbook)).thenReturn(
 				trialEnvironmentLabels);
-		Mockito.when(this.settingsService.retrieveExperimentalDesignAsLabels(this.workbook)).thenReturn(
+		Mockito.when(this.settingsService.retrieveExperimentalDesignFactorsAsLabels(this.workbook)).thenReturn(
 				trialExperimentalDesignLabels);
 		Mockito.when(this.settingsService.retrieveTraitsAsLabels(this.workbook)).thenReturn(traitLabels);
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
@@ -120,9 +120,9 @@ public class LabelPrintingServiceTest {
 		final List<LabelFields> germplasmLabels = this.createDummyGermplasmLabels();
 
 		Mockito.when(this.settingsService.retrieveTrialSettingsAsLabels(this.workbook)).thenReturn(trialSettingLabels);
-		Mockito.when(this.settingsService.retrieveTrialEnvironmentAsLabels(this.workbook)).thenReturn(
+		Mockito.when(this.settingsService.retrieveTrialEnvironmentConditionsAsLabels(this.workbook)).thenReturn(
 				trialEnvironmentLabels);
-		Mockito.when(this.settingsService.retrieveExperimentalDesignAsLabels(this.workbook)).thenReturn(
+		Mockito.when(this.settingsService.retrieveExperimentalDesignFactorsAsLabels(this.workbook)).thenReturn(
 				trialExperimentalDesignLabels);
 		Mockito.when(this.settingsService.retrieveTraitsAsLabels(this.workbook)).thenReturn(traitLabels);
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
@@ -168,7 +168,7 @@ public class LabelPrintingServiceTest {
 		this.verifyLabelListContainsList(retrieved, germplasmLabels,
 				"Retrieved available label list does not contain all germplasm related labels");
 
-		Mockito.verify(this.settingsService, Mockito.times(0)).retrieveExperimentalDesignAsLabels(this.workbook);
+		Mockito.verify(this.settingsService, Mockito.times(0)).retrieveExperimentalDesignFactorsAsLabels(this.workbook);
 
 		this.verifyFieldMapLabelsPresent(retrieved);
 	}
@@ -195,7 +195,7 @@ public class LabelPrintingServiceTest {
 		this.verifyLabelListContainsList(retrieved, germplasmLabels,
 				"Retrieved available label list does not contain all germplasm related labels");
 
-		Mockito.verify(this.settingsService, Mockito.times(0)).retrieveExperimentalDesignAsLabels(this.workbook);
+		Mockito.verify(this.settingsService, Mockito.times(0)).retrieveExperimentalDesignFactorsAsLabels(this.workbook);
 
 		this.verifyNoFieldMapLabels(retrieved);
 	}

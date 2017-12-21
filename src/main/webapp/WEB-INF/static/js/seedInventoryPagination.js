@@ -125,5 +125,5 @@ var InventoryPage = {
 
 $(document).ready(function() {
     'use strict';
-    setTimeout(InventoryPage.setupPage, 3);
+    setTimeout(InventoryPage.setupPage, 100);
 });

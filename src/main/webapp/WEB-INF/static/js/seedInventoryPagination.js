@@ -22,37 +22,37 @@ var InventoryPage = {
             //needed set time out since chrme is not able to rnder properly the checkbox if its checked or not
             setTimeout(function() {
 
-                var isChecked = $('#' + getJquerySafeId(sectionContainerDiv) + ' .selectAllStock').prop('checked');
-                $('#' + getJquerySafeId(inventoryTableId) + ' tr').removeClass('selected');
-                $('#' + getJquerySafeId(inventoryTableId) + ' tr').removeClass('manual-selected');
-                $('#' + getJquerySafeId(sectionContainerDiv) + ' input.stockListEntryId').prop('checked', isChecked);
-                $('#' + getJquerySafeId(sectionContainerDiv) + ' .review-select-all').prop('checked', isChecked);
+                var isChecked = $('#' + sectionContainerDiv + ' .selectAllStock').prop('checked');
+                $('#' + inventoryTableId + ' tr').removeClass('selected');
+                $('#' + inventoryTableId + ' tr').removeClass('manual-selected');
+                $('#' + sectionContainerDiv + ' input.stockListEntryId').prop('checked', isChecked);
+                $('#' + sectionContainerDiv + ' .review-select-all').prop('checked', isChecked);
 
                 if (isChecked) {
-                    $('#' + getJquerySafeId(inventoryTableId) + ' tr').addClass('selected');
-                    $('#' + getJquerySafeId(inventoryTableId) + ' tr').addClass('manual-selected');
+                    $('#' + inventoryTableId + ' tr').addClass('selected');
+                    $('#' + inventoryTableId + ' tr').addClass('manual-selected');
                 }
 
-                var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
+                var oTable = $('#' + inventoryTableId).dataTable();
 
-                $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
+                $('#' + sectionContainerDiv + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
 
             }, 10);
 
         });
 
-        $('#' + getJquerySafeId(inventoryTableId)).tableSelect({
+        $('#' + inventoryTableId).tableSelect({
             onClick: function(row) {
 
                 //we clear all check
-                if ($('#' + getJquerySafeId(inventoryTableId)).data('check-click') === '1') {
-                    $('#' + getJquerySafeId(inventoryTableId)).data('check-click', '0');
-                    $('#' + getJquerySafeId(inventoryTableId) + ' tr.manual-selected').addClass('selected');
-                    $('#' + getJquerySafeId(inventoryTableId) + ' tr:not(.manual-selected) input.stockListEntryId:checked').parent().parent().addClass('selected');
-                    $('#' + getJquerySafeId(inventoryTableId) + ' tr.selected input.stockListEntryId:not(:checked)').parent().parent().removeClass('selected');
+                if ($('#' + inventoryTableId).data('check-click') === '1') {
+                    $('#' + inventoryTableId).data('check-click', '0');
+                    $('#' + inventoryTableId + ' tr.manual-selected').addClass('selected');
+                    $('#' + inventoryTableId + ' tr:not(.manual-selected) input.stockListEntryId:checked').parent().parent().addClass('selected');
+                    $('#' + inventoryTableId + ' tr.selected input.stockListEntryId:not(:checked)').parent().parent().removeClass('selected');
                 } else {
-                    $('#' + getJquerySafeId(inventoryTableId) + ' input.stockListEntryId').prop('checked', false);
-                    $('#' + getJquerySafeId(inventoryTableId) + ' tr.manual-selected').removeClass('manual-selected');
+                    $('#' + inventoryTableId + ' input.stockListEntryId').prop('checked', false);
+                    $('#' + inventoryTableId + ' tr.manual-selected').removeClass('manual-selected');
                     if ($(row).hasClass('selected')) {
                         $(row).find('input.stockListEntryId').prop('checked', true);
                     } else {
@@ -60,14 +60,14 @@ var InventoryPage = {
                     }
                 }
 
-                var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
+                var oTable = $('#' + inventoryTableId).dataTable();
 
                 $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
             },
             onCtrl: function(row) {
 
-                $('#' + getJquerySafeId(inventoryTableId) + ' tr.selected input.stockListEntryId').prop('checked', true);
-                $('#' + getJquerySafeId(inventoryTableId) + ' tr:not(.selected) input.stockListEntryId').prop('checked', false);
+                $('#' + inventoryTableId + ' tr.selected input.stockListEntryId').prop('checked', true);
+                $('#' + inventoryTableId + ' tr:not(.selected) input.stockListEntryId').prop('checked', false);
                 if ($(row).hasClass('manual-selected') || $(row).hasClass('selected')) {
                     $(row).find('input.stockListEntryId').prop('checked', true);
                     $(row).addClass('selected');
@@ -75,32 +75,32 @@ var InventoryPage = {
                     $(row).find('input.stockListEntryId').prop('checked', false);
                     $(row).removeClass('selected');
                 }
-                if ($('#' + getJquerySafeId(inventoryTableId)).data('check-click') === '1') {
-                    $('#' + getJquerySafeId(inventoryTableId)).data('check-click', '0');
+                if ($('#' + inventoryTableId).data('check-click') === '1') {
+                    $('#' + inventoryTableId).data('check-click', '0');
                     if ($(row).hasClass('selected') && $(row).hasClass('manual-selected') === false) {
                         $(row).find('input.stockListEntryId').prop('checked', false);
                         $(row).removeClass('selected');
                     }
                 }
 
-                var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
+                var oTable = $('#' + inventoryTableId).dataTable();
 
-                $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
+                $('#' + sectionContainerDiv + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
             },
             onShift: function() {
-                $('#' + getJquerySafeId(inventoryTableId) + ' tr.manual-selected-dummy').addClass('selected');
-                $('#' + getJquerySafeId(inventoryTableId) + ' tr.selected input.stockListEntryId').prop('checked', true);
-                $('#' + getJquerySafeId(inventoryTableId) + ' tr:not(.selected) input.stockListEntryId').prop('checked', false);
+                $('#' + inventoryTableId + ' tr.manual-selected-dummy').addClass('selected');
+                $('#' + inventoryTableId + ' tr.selected input.stockListEntryId').prop('checked', true);
+                $('#' + inventoryTableId + ' tr:not(.selected) input.stockListEntryId').prop('checked', false);
 
-                var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
+                var oTable = $('#' + inventoryTableId).dataTable();
 
-                $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
+                $('#' + sectionContainerDiv + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
             }
 
         });
 
-        $('#' + getJquerySafeId(inventoryTableId) + ' input.stockListEntryId').on('click', function() {
-            $('#' + getJquerySafeId(inventoryTableId)).data('check-click', '1');
+        $('#' + inventoryTableId + ' input.stockListEntryId').on('click', function() {
+            $('#' + inventoryTableId).data('check-click', '1');
             if ($(this).is(':checked')) {
                 //we highlight
                 $(this).parent().parent().addClass('selected');
@@ -109,19 +109,19 @@ var InventoryPage = {
                 $(this).parent().parent().removeClass('selected');
                 $(this).parent().parent().removeClass('manual-selected');
                 // Deselect "Select All" check box from header as well as from bottom while selecting any one row from table
-                $('#' + getJquerySafeId(sectionContainerDiv) + ' .review-select-all').prop('checked', false);
-                $('#' + getJquerySafeId(sectionContainerDiv) + ' .selectAllStock').prop('checked', false);
+                $('#' + sectionContainerDiv + ' .review-select-all').prop('checked', false);
+                $('#' + sectionContainerDiv + ' .selectAllStock').prop('checked', false);
             }
-            $('#' + getJquerySafeId(inventoryTableId) + ' tr.manual-selected input.stockListEntryId').prop('checked', true);
-            $('#' + getJquerySafeId(inventoryTableId) + ' tr.manual-selected').addClass('selected');
-            $('#' + getJquerySafeId(inventoryTableId) + ' tr:not(.manual-selected)').remove('selected');
+            $('#' + inventoryTableId + ' tr.manual-selected input.stockListEntryId').prop('checked', true);
+            $('#' + inventoryTableId + ' tr.manual-selected').addClass('selected');
+            $('#' + inventoryTableId + ' tr:not(.manual-selected)').remove('selected');
 
-            var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
+            var oTable = $('#' + inventoryTableId).dataTable();
 
-            $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
+            $('#' + sectionContainerDiv + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
         });
 
-        new BMS.Fieldbook.StockListDataTable('#' + getJquerySafeId(inventoryTableId), '#' + getJquerySafeId(sectionContainerDiv), null, false);
+        new BMS.Fieldbook.StockListDataTable('#' + inventoryTableId, '#' + sectionContainerDiv, null, false);
         $('#' + sectionContainerDiv + ' .main-inventory').css('opacity', 1);
     }
 };

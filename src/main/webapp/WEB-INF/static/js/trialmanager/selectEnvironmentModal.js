@@ -51,6 +51,12 @@
 						, name: locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].name};
 				}
 			});
+
+			// Adjust the datatable column size after the selected location is changed
+			if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
+				$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
+			}
+
 		});
 
 		$scope.trialInstances = [];

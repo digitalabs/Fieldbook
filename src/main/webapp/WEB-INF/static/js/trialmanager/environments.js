@@ -389,6 +389,14 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
 				addNewEnvironments(addtlNumOfEnvironments, 'true');
 			}
+
+
+			$timeout(function() {
+				// Adjust the datatable column size after all directives are loaded and rendered.
+				if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
+					$('.fbk-datatable-environments').DataTable().columns.adjust().draw(); 
+				}
+			});
 		}]).factory('DTLoadingTemplate', function() {
 			return {
 				html: '<span class="throbber throbber-2x"></span>'

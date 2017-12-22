@@ -411,6 +411,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				} else if (targetState === 'environment') {
 					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
                 	// of the table if we do not do that
+					//timeout is 1 sec to make sure that all elements are properly loaded before redrawing. 
 					if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
 					 	$timeout(function() {
 					 		$('.fbk-datatable-environments').DataTable().columns.adjust().draw();

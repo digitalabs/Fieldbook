@@ -1031,7 +1031,6 @@ function advanceTrial() {
 	});
 
 	var $scope = angular.element('#selectEnvironmentModal').scope();
-	$scope.init();
 	$scope.$apply();
 }
 

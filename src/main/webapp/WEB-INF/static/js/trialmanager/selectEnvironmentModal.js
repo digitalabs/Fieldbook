@@ -93,8 +93,8 @@
 						if ($scope.locationFromTrialSettings) {
 							selectedLocationDetails.push($scope.userInput[$scope.PREFERRED_LOCATION_VARIABLE]);
 						} else {
-							angular.forEach($scope.data.environments, function(environment, position) {
-								if (position === idx) {
+							angular.forEach($scope.data.environments, function(environment) {
+								if (environment.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX] === trialInstanceNumber) {
 									selectedLocationDetails.push(environment.managementDetailValues[$scope.PREFERRED_LOCATION_VARIABLE]);
 								}
 							});
@@ -113,22 +113,29 @@
 
 		};
 
-		$scope.doSelectAll = function() {
+		$scope.doSelectAll = function () {
 			$scope.trialInstances = [];
-			$scope.trialInstancesName = [];
-			if ($scope.selectAll) {
-				$scope.selectAll = true;
-			} else {
-				$scope.selectAll = false;
-				$scope.trialInstances = [];
-			}
-			angular.forEach($scope.environmentListView, function(environment) {
-				environment.selected = $scope.selectAll;
+			var i = 1;
+			angular.forEach($scope.environmentListView, function (environment) {
 				if ($scope.selectAll) {
+					environment.selected = i;
+					i = i + 1;
 					$scope.trialInstances.push(environment.trialInstanceNumber);
+				} else {
+					environment.selected = undefined;
 				}
 			});
+		};
 
+		$scope.doSelectInstance = function (index) {
+			var environment = $scope.environmentListView[index];
+			if (environment.selected != undefined) {
+				$scope.trialInstances.push(environment.trialInstanceNumber);
+			} else {
+				$scope.selectAll = false;
+				var idx = $scope.trialInstances.indexOf(environment.trialInstanceNumber);
+				$scope.trialInstances.splice(idx, 1);
+			}
 		};
 
 		$scope.init = function() {
@@ -155,6 +162,10 @@
 
 			$scope.environmentListView = convertToEnvironmentListView($scope.data.environments,
 				$scope.PREFERRED_LOCATION_VARIABLE, $scope.TRIAL_INSTANCE_INDEX);
+
+			if ($scope.selectAll) {
+				$scope.doSelectAll();
+			}
 		};
 
 		$scope.init();
@@ -167,12 +178,9 @@
 				environmentListView.push({ name: environment.managementDetailValues[preferredLocationVariable]
 					, variableId: preferredLocationVariable, trialInstanceNumber: environment.managementDetailValues[trialInstanceIndex]});
 			});
-
 			return environmentListView;
 
 		};
-
-
 	}]);
 
 })();

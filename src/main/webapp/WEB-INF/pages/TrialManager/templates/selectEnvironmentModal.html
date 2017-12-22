@@ -38,7 +38,11 @@
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="environment in environmentListView track by environment.trialInstanceNumber" ng-class="{even : $even, odd : $odd}">
-                                        <td><input type="checkbox" name="location" ng-model="trialInstances[$index]"  ng-checked="environment.selected" ng-true-value="{{environment.trialInstanceNumber}}" ng-false-value="{{undefined}}"/></td>
+                                        <td><input type="checkbox" name="location"
+												   ng-model="environment.selected"
+												   ng-change="doSelectInstance($index)"
+												   ng-true-value="{{environment.trialInstanceNumber}}"
+												   ng-false-value="{{undefined}}"/></td>
                                         <td ng-show="!locationFromTrialSettings">{{ environment.name }} </td>
                                         <td ng-show="locationFromTrialSettings">{{ userInput[environment.variableId] }}</td>
                                     </tr>

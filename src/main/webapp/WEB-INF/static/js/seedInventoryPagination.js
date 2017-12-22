@@ -1,6 +1,8 @@
 // This js file is used in seedInventoryPagination.html.
-var InventoryPage = {
-    setupPage: function() {
+var InventoryPage = InventoryPage || {
+		generated: [], // store generated tables.
+					   // tableSelect don't have a destroy method and attaching many handlers break the behavior
+		setupPage: function() {
         var listDivIdentifier  = '';
         if(isNursery()) {
             if ($('#create-nursery-tab-headers .tabdrop').hasClass('active')) {
@@ -16,7 +18,13 @@ var InventoryPage = {
         var sectionContainerDiv = 'stock-content-pane' + listDivIdentifier;
         var inventoryTableId = 'inventory-table' + listDivIdentifier;
 
-        $('#' + getJquerySafeId(sectionContainerDiv) + ' .selectAllStock').on('change', function(event) {
+		if (InventoryPage.generated.indexOf(listDivIdentifier) > 0 || !listDivIdentifier) {
+			return;
+		}
+
+		InventoryPage.generated.push(listDivIdentifier);
+
+        $('#' + sectionContainerDiv + ' .selectAllStock').on('change', function(event) {
 
             //select all the checkbox in the section container div
             //needed set time out since chrme is not able to rnder properly the checkbox if its checked or not
@@ -113,7 +121,7 @@ var InventoryPage = {
             $('#' + inventoryTableId + ' tr.manual-selected').addClass('selected');
             $('#' + inventoryTableId + ' tr:not(.manual-selected)').remove('selected');
 
-            var oTable = $('#' + inventoryTableId).dataTable();
+			var oTable = $('#' + inventoryTableId).dataTable();
 
             $('#' + sectionContainerDiv + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
         });

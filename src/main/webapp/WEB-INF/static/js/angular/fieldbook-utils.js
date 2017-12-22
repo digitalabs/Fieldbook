@@ -109,6 +109,12 @@
 								}
 							});
 						}
+						//Redraw the environments table to make sure that it's properly displayed
+						if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
+							setTimeout(function() {
+								$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
+							}, 1000);
+						}
 					};
 
 					$scope.retrieveCheckedVariableTermIds = function(_settings) {

@@ -1031,7 +1031,19 @@ function advanceTrial() {
 	});
 
 	var $scope = angular.element('#selectEnvironmentModal').scope();
+	$scope.init();
 	$scope.$apply();
+}
+
+function backAdvanceTrial() {
+	'use strict';
+	$('#advanceNurseryModal').modal('hide');
+
+	// we need to redraw the columns of the table
+	if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
+		$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
+	}
+	$('#selectEnvironmentModal').modal('show');
 }
 
 function createSample() {

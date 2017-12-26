@@ -2013,7 +2013,7 @@ input.select-all-margin{
 .ontology-no-range {
     margin-left: 5%;
 }
-#manage-trial-tabs #germplasm-list-pagination {
+#manage-trial-tabs #germplasm-list-pagination, #germplasm-seed-inventory-pagination {
     opacity: 1 !important;
 }
 

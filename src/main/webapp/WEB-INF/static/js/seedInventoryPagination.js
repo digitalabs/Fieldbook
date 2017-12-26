@@ -1,7 +1,7 @@
 // This js file is used in seedInventoryPagination.html.
 var InventoryPage = InventoryPage || {
-    generated: [], // store generated tables.
-                   // tableSelect don't have a destroy method and attaching many handlers break the behavior
+	generated: [], // store generated tables.
+	               // tableSelect don't have a destroy method and attaching many handlers break the behavior
 	setupPage: function () {
 		var listDivIdentifier = '';
 		if (isNursery()) {
@@ -23,7 +23,6 @@ var InventoryPage = InventoryPage || {
 		}
 
 		InventoryPage.generated.push(listDivIdentifier);
-		console.log(listDivIdentifier)
 
 		$('#' + sectionContainerDiv + ' .selectAllStock').on('change', function (event) {
 

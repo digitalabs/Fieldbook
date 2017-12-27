@@ -17,7 +17,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
@@ -269,7 +268,7 @@ public class TrialMeasurementsControllerTest {
 		valueRow.getDataList().get(0).setAccepted(true);
 
 		this.trialMeasurementsController.copyMeasurementValue(origRow, valueRow, true);
-		assertThat(origRow.getDataList().get(0).isCustomCategoricalValue(),is(true));
+		assertThat(origRow.getDataList().get(0).getIsCustomCategoricalValue(),is(true));
 
 	}
 
@@ -636,10 +635,10 @@ public class TrialMeasurementsControllerTest {
 						&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var
 						.getMeasurementVariable().getPossibleValues().isEmpty())) {
 						Assert.assertTrue(var.isAccepted());
-						Assert.assertTrue(var.isCustomCategoricalValue());
+						Assert.assertTrue(var.getIsCustomCategoricalValue());
 					} else {
 						Assert.assertFalse(var.isAccepted());
-						Assert.assertFalse(var.isCustomCategoricalValue());
+						Assert.assertFalse(var.getIsCustomCategoricalValue());
 					}
 				}
 			}

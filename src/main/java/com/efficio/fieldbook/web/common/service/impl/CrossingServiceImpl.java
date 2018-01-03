@@ -322,7 +322,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	protected void applyCrossNameSettingToImportedCrosses(final CrossSetting setting, final List<ImportedCrosses> importedCrosses) {
 		final CrossNameSetting crossNameSetting = setting.getCrossNameSetting();
-		Integer nextNumberInSequence = this.getNextNumberInSequence(crossNameSetting);
+		Integer nextNumberInSequence = this.getStartingSequenceNumber(crossNameSetting);   
 		Integer entryIdCounter = 0;
 
 		for (final ImportedCrosses cross : importedCrosses) {
@@ -341,6 +341,19 @@ public class CrossingServiceImpl implements CrossingService {
 			final String crossString = this.getCross(germplasm, cross, crossNameSetting.getSeparator());
 
 			cross.setCross(crossString);
+		}
+	}
+
+	/**
+	 * Method that checks if the user specified a starting number else, returns the next next number in sequence
+	 *
+	 * @param crossNameSetting
+	 */
+	Integer getStartingSequenceNumber(CrossNameSetting crossNameSetting) {
+		if(crossNameSetting.getStartNumber() != null && crossNameSetting.getStartNumber() > 0) {
+			return crossNameSetting.getStartNumber();
+		} else {
+			return this.getNextNumberInSequence(crossNameSetting);
 		}
 	}
 

@@ -744,6 +744,24 @@ public class CrossingServiceImplTest {
 					e.getMessage());
 		}
 	}
+	
+	@Test
+	public void testGetStartingSequenceNumberWhereCrossSettingStartNumberHasValue() {
+		this.crossSetting.getCrossNameSetting().setStartNumber(10);
+		final Integer startingSequenceNumber = this.crossingService.getStartingSequenceNumber(this.crossSetting.getCrossNameSetting());
+		Assert.assertEquals("The starting sequence number should be " + startingSequenceNumber, this.crossSetting.getCrossNameSetting().getStartNumber(), startingSequenceNumber); 
+	}
+	
+	@Test
+	public void testGetStartingSequenceNumberWhereCrossSettingStartNumberIsNull() {
+		this.crossSetting.getCrossNameSetting().setStartNumber(null);
+		final CrossNameSetting setting = new CrossNameSetting();
+		setting.setStartNumber(0);
+		setting.setPrefix("A");
+
+		final int startingSequenceNumber = this.crossingService.getStartingSequenceNumber(setting);
+		Assert.assertEquals("The starting sequence number should be " + startingSequenceNumber, CrossingServiceImplTest.NEXT_NUMBER.intValue(), startingSequenceNumber); 
+	}
 
 	private ImportedCrossesList createImportedCrossesList() {
 

@@ -754,7 +754,16 @@ public class CrossingServiceImplTest {
 	
 	@Test
 	public void testGetStartingSequenceNumberWhereCrossSettingStartNumberIsNull() {
-		this.crossSetting.getCrossNameSetting().setStartNumber(null);
+		final CrossNameSetting setting = new CrossNameSetting();
+		setting.setStartNumber(null);
+		setting.setPrefix("A");
+
+		final int startingSequenceNumber = this.crossingService.getStartingSequenceNumber(setting);
+		Assert.assertEquals("The starting sequence number should be " + startingSequenceNumber, CrossingServiceImplTest.NEXT_NUMBER.intValue(), startingSequenceNumber); 
+	}
+	
+	@Test
+	public void testGetStartingSequenceNumberWhereCrossSettingStartNumberIsZero() {
 		final CrossNameSetting setting = new CrossNameSetting();
 		setting.setStartNumber(0);
 		setting.setPrefix("A");

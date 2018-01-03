@@ -345,7 +345,7 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	/**
-	 * Method that checks if the user specified a starting number else, returns the next next number in sequence
+	 * Method that checks if the user specified a starting number else, returns the next number in sequence
 	 *
 	 * @param crossNameSetting
 	 */

@@ -28,6 +28,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.Person;
@@ -111,6 +112,9 @@ public class CrossingSettingsController extends SettingsController {
 
 	@Resource
 	private GermplasmDataManager germplasmDataManager;
+
+	@Resource
+	private WorkbenchDataManager workbenchDataManager;
 
 	/**
 	 * The germplasm list manager.
@@ -401,8 +405,13 @@ public class CrossingSettingsController extends SettingsController {
 	@RequestMapping(value = "/getCurrentProgramMembers", method = RequestMethod.GET, produces = "application/json")
 	public Map<String, Person> getCurrentProgramMembers() {
 		// we need to convert Integer to String because angular doest work with numbers as options for select
+
+		String cropname = this.contextUtil.getProjectInContext().getCropType().getCropName();
+
 		final Map<String, Person> currentProgramMembers = new HashMap<>();
-		final Map<Integer, Person> programMembers = new HashMap<>();
+		final Long projectId = this.workbenchDataManager.getProjectByUuidAndCrop(this.getCurrentProgramID(), cropname).getProjectId();
+
+		final Map<Integer, Person> programMembers = this.workbenchDataManager.getPersonsByProjectId(projectId);
 		for (final Map.Entry<Integer, Person> member : programMembers.entrySet()) {
 			currentProgramMembers.put(String.valueOf(member.getKey()), member.getValue());
 		}

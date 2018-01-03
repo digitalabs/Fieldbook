@@ -291,7 +291,6 @@ public class CrossingServiceImpl implements CrossingService {
 
 			if (crossSetting.getAdditionalDetailsSetting().getHarvestLocationId() != null) {
 				locationId = crossSetting.getAdditionalDetailsSetting().getHarvestLocationId();
-				;
 			}
 
 			final Name parentageDesignationName = new Name();
@@ -492,9 +491,9 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	private String truncateName(String designation) {
+
 		if (designation.length() > CrossingServiceImpl.MAX_CROSS_NAME_SIZE) {
-			designation = designation.substring(0, CrossingServiceImpl.MAX_CROSS_NAME_SIZE - 1);
-			designation = designation + CrossingServiceImpl.TRUNCATED;
+			return designation.substring(0, CrossingServiceImpl.MAX_CROSS_NAME_SIZE - 1) + CrossingServiceImpl.TRUNCATED;
 		}
 
 		return designation;

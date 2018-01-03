@@ -57,8 +57,6 @@ public class CrossingServiceImplTest {
 	public static final String TEST_MALE_GID_1 = "54321";
 	public static final String TEST_FEMALE_GID_2 = "9999";
 	public static final String TEST_MALE_GID_2 = "8888";
-	public static final String TEST_PROCESS_CODE = "[BC]";
-	public static final String TEST_PROCESS_CODE_WITH_PREFIX = "B[RCRPRNT]";
 
 	private static final Integer NEXT_NUMBER = 100;
 

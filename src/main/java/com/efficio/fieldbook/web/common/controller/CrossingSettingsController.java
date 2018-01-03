@@ -25,7 +25,6 @@ import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -411,11 +410,7 @@ public class CrossingSettingsController extends SettingsController {
 	@RequestMapping(value = "/getCurrentProgramMembers", method = RequestMethod.GET, produces = "application/json")
 	public Map<String, Person> getCurrentProgramMembers() {
 		// we need to convert Integer to String because angular doest work with numbers as options for select
-
-		String cropname = this.contextUtil.getProjectInContext().getCropType().getCropName();
-
 		final Map<String, Person> currentProgramMembers = new HashMap<>();
-		final Long projectId = this.workbenchDataManager.getProjectByUuidAndCrop(this.getCurrentProgramID(), cropname).getProjectId();
 		final Map<Integer, Person> programMembers = new HashMap<>();
 		for (final Map.Entry<Integer, Person> member : programMembers.entrySet()) {
 			currentProgramMembers.put(String.valueOf(member.getKey()), member.getValue());
@@ -533,7 +528,7 @@ public class CrossingSettingsController extends SettingsController {
 		this.presetDataManager.deleteProgramPreset(programPresetId);
 	}
 
-	protected void saveCrossSetting(final CrossSetting setting, final String programUUID) throws MiddlewareQueryException, JAXBException {
+	protected void saveCrossSetting(final CrossSetting setting, final String programUUID) throws JAXBException {
 
 		final List<ProgramPreset> presets =
 				this.presetDataManager.getProgramPresetFromProgramAndTool(programUUID, this.getFieldbookToolID(),
@@ -562,7 +557,7 @@ public class CrossingSettingsController extends SettingsController {
 		this.presetDataManager.saveOrUpdateProgramPreset(forSaving);
 	}
 
-	protected Integer getFieldbookToolID() throws MiddlewareQueryException {
+	protected Integer getFieldbookToolID() {
 		return this.workbenchService.getFieldbookWebTool().getToolId().intValue();
 	}
 

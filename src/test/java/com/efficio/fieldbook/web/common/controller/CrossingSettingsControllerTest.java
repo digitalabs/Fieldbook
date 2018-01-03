@@ -71,8 +71,6 @@ public class CrossingSettingsControllerTest {
 
 	public static final String TEST_SEQUENCE_NAME_VALUE = "PRE1";
 	public static final String SUCCESS_VALUE = "1";
-	public static final String SEQUENCE_VALUE = "sequenceValue";
-	public static final String FAILURE_VALUE = "0";
 	public static final String TEST_SETTING_NAME = "mySettingName";
 	public static final Integer TEST_BREEDING_METHOD_ID = 1;
 	public static final String SETTING_PREFIX = "PRE";

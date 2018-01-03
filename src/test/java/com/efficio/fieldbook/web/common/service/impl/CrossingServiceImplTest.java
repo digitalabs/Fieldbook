@@ -1,9 +1,4 @@
-
 package com.efficio.fieldbook.web.common.service.impl;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import org.apache.commons.lang3.tuple.Pair;
@@ -41,6 +36,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingServiceImplTest {
@@ -102,8 +101,9 @@ public class CrossingServiceImplTest {
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByID(CrossingServiceImplTest.BREEDING_METHOD_ID);
 		Mockito.doReturn(this.createProject()).when(this.contextUtil).getProjectInContext();
-		Mockito.doReturn("generatedSourceString").when(this.seedSourceGenertor).generateSeedSourceForCross(Matchers.any(Workbook.class),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
+		Mockito.doReturn("generatedSourceString").when(this.seedSourceGenertor)
+				.generateSeedSourceForCross(Matchers.any(Workbook.class), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
+						Matchers.anyString());
 		Mockito.doReturn(new UserDefinedField(1552)).when(this.germplasmDataManager).getPlotCodeField();
 
 		this.crossSetting = new CrossSetting();
@@ -267,8 +267,8 @@ public class CrossingServiceImplTest {
 
 		this.crossSetting.setCrossNameSetting(crossNameSetting);
 		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
-		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID,
-				new Workbook());
+		this.crossingService
+				.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
 
 		// TODO prepare descriptive messages for verification failure once
 		// Mockito has stable 2.0 version
@@ -290,8 +290,8 @@ public class CrossingServiceImplTest {
 
 		this.crossSetting.setCrossNameSetting(crossNameSetting);
 		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
-		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID,
-				new Workbook());
+		this.crossingService
+				.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
 
 		Mockito.verify(this.germplasmDataManager, Mockito.never()).addGermplasmName(Matchers.anyList());
 
@@ -447,8 +447,9 @@ public class CrossingServiceImplTest {
 		crossSetting.setBreedingMethodSetting(breedingMethodSetting);
 		crossSetting.setAdditionalDetailsSetting(additionalDetailsSetting);
 
-		final CrossingServiceImpl.GermplasmListResult result = this.crossingService.generateGermplasmNamePairs(crossSetting,
-				this.importedCrossesList.getImportedCrosses(), CrossingServiceImplTest.USER_ID, false);
+		final CrossingServiceImpl.GermplasmListResult result = this.crossingService
+				.generateGermplasmNamePairs(crossSetting, this.importedCrossesList.getImportedCrosses(), CrossingServiceImplTest.USER_ID,
+						false);
 
 		Pair<Germplasm, Name> germplasmNamePair = result.getGermplasmPairs().get(0);
 		final Germplasm germplasm1 = germplasmNamePair.getLeft();
@@ -561,8 +562,8 @@ public class CrossingServiceImplTest {
 
 		final int nextNumber = this.crossingService.getNextNumberInSequence(setting);
 		Assert.assertEquals(1, nextNumber);
-		Mockito.verify(this.germplasmDataManager, Mockito.never()).getNextSequenceNumberForCrossName(Matchers.anyString(),
-				Matchers.anyString());
+		Mockito.verify(this.germplasmDataManager, Mockito.never())
+				.getNextSequenceNumberForCrossName(Matchers.anyString(), Matchers.anyString());
 	}
 
 	@Test
@@ -658,8 +659,9 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testGenerateSeedSource() {
 		final String newSeedSource = "newSeedSource";
-		Mockito.doReturn(newSeedSource).when(this.seedSourceGenertor).generateSeedSourceForCross(Matchers.any(Workbook.class),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
+		Mockito.doReturn(newSeedSource).when(this.seedSourceGenertor)
+				.generateSeedSourceForCross(Matchers.any(Workbook.class), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
+						Matchers.anyString());
 
 		// Case 1 - No seed source present. Generate new.
 		final ImportedCrosses importedCross1 = new ImportedCrosses();

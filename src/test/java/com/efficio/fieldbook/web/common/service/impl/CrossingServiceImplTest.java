@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
@@ -713,13 +714,13 @@ public class CrossingServiceImplTest {
 	}
 
 	@Test
-	public void testGetNextNameInSequence() {
+	public void testGetNextNameInSequence() throws InvalidInputException {
 		final String nextNameInSequence = this.crossingService.getNextNameInSequence(this.crossSetting.getCrossNameSetting());
 		Assert.assertEquals(CrossingServiceImplTest.PREFIX + " 0000100 " + CrossingServiceImplTest.SUFFIX, nextNameInSequence);
 	}
 
 	@Test
-	public void testGetNextNameInSequenceWhenSpecifiedSequenceStartingNumberIsGreater() {
+	public void testGetNextNameInSequenceWhenSpecifiedSequenceStartingNumberIsGreater() throws InvalidInputException {
 		this.crossSetting.getCrossNameSetting().setStartNumber(1000);
 
 		final String nextNameInSequence = this.crossingService.getNextNameInSequence(this.crossSetting.getCrossNameSetting());
@@ -737,8 +738,8 @@ public class CrossingServiceImplTest {
 
 		try {
 			this.crossingService.getNextNameInSequence(this.crossSetting.getCrossNameSetting());
-			Assert.fail("Should have thrown RuntimeException but did not.");
-		} catch (final RuntimeException e) {
+			Assert.fail("Should have thrown InvalidInputException but did not.");
+		} catch (final InvalidInputException e) {
 			Assert.assertEquals("The starting sequence number specified will generate conflict with already existing cross codes.",
 					e.getMessage());
 		}

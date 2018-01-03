@@ -1,6 +1,7 @@
 
 package com.efficio.fieldbook.web.common.service;
 
+import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
@@ -27,5 +28,5 @@ public interface CrossingService {
 
 	void populateSeedSource(ImportedCrosses importedCross, Workbook workbook);
 	
-	String getNextNameInSequence(final CrossNameSetting setting);
+	String getNextNameInSequence(final CrossNameSetting setting) throws InvalidInputException;
 }

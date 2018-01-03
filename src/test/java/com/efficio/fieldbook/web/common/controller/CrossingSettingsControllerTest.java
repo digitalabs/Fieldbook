@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.common.controller;
 import static org.mockito.Mockito.times;
 
 import java.io.File;
+import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,6 +16,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
+import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import org.generationcp.commons.data.initializer.ImportedCrossesTestDataInitializer;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
@@ -170,7 +172,7 @@ public class CrossingSettingsControllerTest {
 	}
 
 	@Test
-	public void testGenerateNextNameInSequenceSuccess() {
+	public void testGenerateNextNameInSequenceSuccess() throws InvalidInputException {
 
 		final CrossSetting settingObject = Mockito.mock(CrossSetting.class);
 		final CrossNameSetting nameSetting = Mockito.mock(CrossNameSetting.class);
@@ -185,27 +187,42 @@ public class CrossingSettingsControllerTest {
 			Assert.assertNotNull(output);
 			Assert.assertEquals(CrossingSettingsControllerTest.SUCCESS_VALUE, output.get("success"));
 			Assert.assertEquals(CrossingSettingsControllerTest.TEST_SEQUENCE_NAME_VALUE, output.get("sequenceValue"));
-		} catch (final MiddlewareException e) {
+		} catch (final RuntimeException e) {
 			Assert.fail(e.getMessage());
 		}
 	}
 
 	@Test
-	public void testGenerateNextNameInSequenceError() {
+	public void testGenerateNextNameInSequenceInvalidInputError() throws InvalidInputException {
+
+		final String errorMessage = "Please select a starting sequence number larger than 10";
 		final CrossSetting settingObject = Mockito.mock(CrossSetting.class);
 		final CrossNameSetting nameSetting = Mockito.mock(CrossNameSetting.class);
 
 		Mockito.doReturn(nameSetting).when(settingObject).getCrossNameSetting();
-		Mockito.doThrow(new MiddlewareException("Please select a starting sequence number larger than 10")).when(this.crossingService)
+		Mockito.doThrow(new InvalidInputException(errorMessage)).when(this.crossingService)
 				.getNextNameInSequence(Matchers.any(CrossNameSetting.class));
 
-		try {
-			this.crossingSettingsController.generateSequenceValue(Mockito.mock(CrossSetting.class), this.request);
-		} catch (MiddlewareException e) {
-			Assert.assertNull(CrossingSettingsControllerTest.SUCCESS_VALUE);
-			Assert.assertNull(CrossingSettingsControllerTest.SEQUENCE_VALUE);
-			Assert.assertEquals("Please select a starting sequence number larger than 10", e.getMessage());
-		}
+		Map<String, String> result = this.crossingSettingsController.generateSequenceValue(Mockito.mock(CrossSetting.class), this.request);
+		Assert.assertEquals(errorMessage, result.get(CrossingSettingsController.ERROR));
+		Assert.assertEquals("0", result.get(CrossingSettingsController.SUCCESS_KEY));
+
+	}
+
+	@Test
+	public void testGenerateNextNameInSequenceRuntimeError() throws InvalidInputException {
+
+		final String errorMessage = "runtime error";
+		final CrossSetting settingObject = Mockito.mock(CrossSetting.class);
+		final CrossNameSetting nameSetting = Mockito.mock(CrossNameSetting.class);
+
+		Mockito.doReturn(nameSetting).when(settingObject).getCrossNameSetting();
+		Mockito.doThrow(new InvalidInputException(errorMessage)).when(this.crossingService)
+				.getNextNameInSequence(Matchers.any(CrossNameSetting.class));
+
+		Map<String, String> result = this.crossingSettingsController.generateSequenceValue(Mockito.mock(CrossSetting.class), this.request);
+		Assert.assertEquals(errorMessage, result.get(CrossingSettingsController.ERROR));
+		Assert.assertEquals("0", result.get(CrossingSettingsController.SUCCESS_KEY));
 
 	}
 

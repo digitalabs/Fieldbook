@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
+import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -197,13 +198,14 @@ public class CrossingSettingsController extends SettingsController {
 			final String sequenceValue = this.crossingService.getNextNameInSequence(setting.getCrossNameSetting());
 			returnVal.put(CrossingSettingsController.SUCCESS_KEY, "1");
 			returnVal.put("sequenceValue", sequenceValue);
-		} catch (final MiddlewareException e) {
+		} catch (final InvalidInputException e)	{
 			CrossingSettingsController.LOG.error(e.getMessage(), e);
 			returnVal.put(CrossingSettingsController.SUCCESS_KEY, "0");
-			String errorMessage = (e instanceof MiddlewareQueryException)
-					? this.messageSource.getMessage("error.no.next.name.in.sequence", new Object[] {}, LocaleContextHolder.getLocale())
-					: e.getMessage();
-			returnVal.put(ERROR, errorMessage);
+			returnVal.put(ERROR, e.getMessage());
+		} catch (final RuntimeException e) {
+			CrossingSettingsController.LOG.error(e.getMessage(), e);
+			returnVal.put(CrossingSettingsController.SUCCESS_KEY, "0");
+			returnVal.put(ERROR, this.messageSource.getMessage("error.no.next.name.in.sequence", new Object[] {}, LocaleContextHolder.getLocale()));
 		}
 
 		return returnVal;
@@ -414,7 +416,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		final Map<String, Person> currentProgramMembers = new HashMap<>();
 		final Long projectId = this.workbenchDataManager.getProjectByUuidAndCrop(this.getCurrentProgramID(), cropname).getProjectId();
-		final Map<Integer, Person> programMembers = this.workbenchDataManager.getPersonsByProjectId(projectId);
+		final Map<Integer, Person> programMembers = new HashMap<>();
 		for (final Map.Entry<Integer, Person> member : programMembers.entrySet()) {
 			currentProgramMembers.put(String.valueOf(member.getKey()), member.getValue());
 		}

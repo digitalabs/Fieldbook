@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -524,7 +525,7 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	@Override
-	public String getNextNameInSequence(final CrossNameSetting setting) {
+	public String getNextNameInSequence(final CrossNameSetting setting) throws InvalidInputException {
 
 		Integer nextNumberInSequence = this.getNextNumberInSequence(setting);
 
@@ -533,7 +534,7 @@ public class CrossingServiceImpl implements CrossingService {
 		if (optionalStartNumber != null && optionalStartNumber > 0 && nextNumberInSequence > optionalStartNumber) {
 			final String invalidStatingNumberErrorMessage = this.messageSource.getMessage("error.not.valid.starting.sequence",
 					new Object[] {nextNumberInSequence - 1}, LocaleContextHolder.getLocale());
-			throw new RuntimeException(invalidStatingNumberErrorMessage);
+			throw new InvalidInputException(invalidStatingNumberErrorMessage);
 		}
 
 		if (optionalStartNumber != null && nextNumberInSequence < optionalStartNumber) {

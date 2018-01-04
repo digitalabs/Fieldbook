@@ -17,7 +17,6 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
-import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.Tool;
 
 /**
@@ -35,15 +34,6 @@ public interface WorkbenchService {
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	Tool getToolWithName(String toolName) throws MiddlewareQueryException;
-
-	/**
-	 * Gets the template settings.
-	 *
-	 * @param templateSettingFilter the template setting filter
-	 * @return the template settings
-	 * @throws MiddlewareQueryException the middleware query exception
-	 */
-	List<TemplateSetting> getTemplateSettings(TemplateSetting templateSettingFilter) throws MiddlewareQueryException;
 
 	/**
 	 * Return all standard presets
@@ -101,30 +91,6 @@ public interface WorkbenchService {
 	 * @throws MiddlewareQueryException
 	 */
 	StandardPreset saveOrUpdateStandardPreset(StandardPreset preset) throws MiddlewareQueryException;
-
-	/**
-	 * Adds the template setting.
-	 *
-	 * @param templateSetting the template setting
-	 * @throws MiddlewareQueryException the middleware query exception
-	 */
-	Integer addTemplateSetting(TemplateSetting templateSetting) throws MiddlewareQueryException;
-
-	/**
-	 * Update template setting.
-	 *
-	 * @param templateSetting the template setting
-	 * @throws MiddlewareQueryException the middleware query exception
-	 */
-	void updateTemplateSetting(TemplateSetting templateSetting) throws MiddlewareQueryException;
-
-	/**
-	 * Delete template setting.
-	 *
-	 * @param templateSettingId the template setting id
-	 * @throws MiddlewareQueryException the middleware query exception
-	 */
-	void deleteTemplateSetting(Integer templateSettingId) throws MiddlewareQueryException;
 
 	/**
 	 * Gets the current ibdb user id.

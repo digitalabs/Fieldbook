@@ -20,7 +20,6 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
-import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.Tool;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
@@ -41,11 +40,6 @@ public class WorkbenchServiceImpl implements WorkbenchService {
 	@Override
 	public Tool getToolWithName(String toolName) throws MiddlewareQueryException {
 		return this.workbenchDataManager.getToolWithName(toolName);
-	}
-
-	@Override
-	public List<TemplateSetting> getTemplateSettings(TemplateSetting templateSettingFilter) throws MiddlewareQueryException {
-		return this.workbenchDataManager.getTemplateSettings(templateSettingFilter);
 	}
 
 	@Override
@@ -82,21 +76,6 @@ public class WorkbenchServiceImpl implements WorkbenchService {
 	@Override
 	public StandardPreset saveOrUpdateStandardPreset(StandardPreset preset) throws MiddlewareQueryException {
 		return this.workbenchDataManager.saveOrUpdateStandardPreset(preset);
-	}
-
-	@Override
-	public Integer addTemplateSetting(TemplateSetting templateSetting) throws MiddlewareQueryException {
-		return this.workbenchDataManager.addTemplateSetting(templateSetting);
-	}
-
-	@Override
-	public void updateTemplateSetting(TemplateSetting templateSetting) throws MiddlewareQueryException {
-		this.workbenchDataManager.updateTemplateSetting(templateSetting);
-	}
-
-	@Override
-	public void deleteTemplateSetting(Integer templateSettingId) throws MiddlewareQueryException {
-		this.workbenchDataManager.deleteTemplateSetting(templateSettingId);
 	}
 
 	@Override

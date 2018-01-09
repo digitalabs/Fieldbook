@@ -16,9 +16,9 @@
 				<span class="control-label control-label-bold"
 					th:text="#{germplasm.list.notes}">Notes:</span>
 				&nbsp; 
-				<span class="control-label control-label-italic list-notes-display"
-					th:text="*{listNotes}"></span>
-				<a th:if="*{listNotes != null and  #strings.length(listNotes) > 34 }" href="javascript: void(0)"
+				<span class="control-label control-label-italic"
+					th:classappend="${listType != 'SAMPLE_LIST'} ? 'list-notes-display' : ''" th:text="*{listNotes}"></span>
+				<a th:if="*{listNotes != null and  #strings.length(listNotes) > 34 and listType != 'SAMPLE_LIST'}" href="javascript: void(0)"
 					th:onclick="'javascript: openGermplasmListDetailsPopop(\'' + ${listId} + '\');'" 
 					style="float: right;">See More</a>
 			</div>

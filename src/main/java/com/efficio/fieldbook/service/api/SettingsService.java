@@ -16,18 +16,18 @@ import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
  */
 public interface SettingsService {
 
-	public List<SettingDetail> retrieveTrialSettings(Workbook workbook);
-
 	public List<LabelFields> retrieveTrialSettingsAsLabels(Workbook workbook);
 
 	List<LabelFields> retrieveTraitsAsLabels(Workbook workbook);
 
 	public List<LabelFields> retrieveGermplasmDescriptorsAsLabels(Workbook workbook);
 
-	public List<LabelFields> retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(Workbook workbook);
+	public List<LabelFields> retrieveTrialEnvironmentConditionsAsLabels(Workbook workbook);
 
 	public List<LabelFields> retrieveNurseryManagementDetailsAsLabels(Workbook workbook);
 
 	public SettingDetail createSettingDetail(int id, String name, UserSelection userSelection,
 			int currentIbDbUserId, String programUUID) throws MiddlewareException;
+
+	public List<LabelFields> retrieveExperimentalDesignFactorsAsLabels(Workbook workbook);
 }

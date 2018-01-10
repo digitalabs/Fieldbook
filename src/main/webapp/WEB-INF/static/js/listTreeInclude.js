@@ -63,7 +63,7 @@ function doGermplasmLazyLoad(node) {
 				if (node.data.isFolder === false) {
 					changeBrowseGermplasmButtonBehavior(false);
 				} else {
-					if (node.data.key === 'LISTS') {
+					if (node.data.key === 'LISTS' || node.data.key === 'CROPLISTS') {
 						changeBrowseGermplasmButtonBehavior(true);
 						$('.edit-germplasm-folder').addClass(
 							'disable-image');
@@ -152,10 +152,12 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 			dataType : 'json'
 		},
 		onLazyRead : function(node) {
+			debugger;
 			doGermplasmLazyLoad(node);
 		},
 		onRender : function(node, nodeSpan) {
 			if (node.data.key !== 'LISTS'
+				&& node.data.key !== 'CROPLISTS'
 				&& node.data.key !== '_statusNode'
 				&& node.data.isFolder === false) {
 				//showListTreeToolTip(node, nodeSpan);
@@ -327,6 +329,7 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 		},
 		onRender : function(node, nodeSpan) {
 			if (node.data.key !== 'LISTS'
+				&& node.data.key !== 'CROPLISTS'
 				&& node.data.key !== '_statusNode'
 				&& node.data.isFolder === false) {
 				$(nodeSpan)
@@ -356,6 +359,7 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 		onFocus : function(node) {
 			var nodeSpan = node.span;
 			if (node.data.key !== 'LISTS'
+				&& node.data.key !== 'CROPLISTS'
 				&& node.data.key !== '_statusNode'
 				&& node.data.isFolder === false) {
 				$(nodeSpan)

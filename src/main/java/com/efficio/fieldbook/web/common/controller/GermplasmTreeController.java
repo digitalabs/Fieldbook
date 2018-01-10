@@ -120,7 +120,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	public static final String GERMPLASM_LIST_ROOT_NODES = "germplasmListRootNodes";
 	private static final String GERMPLASM_LIST_TABLE_ROWS_PAGE = "Common/includes/germplasmListTableRows";
 	public static final String GERMPLASM_LIST_CHILD_NODES = "germplasmListChildNodes";
-	private static final String LISTS = "LISTS";
+	private static final String PROGRAM_LISTS = "LISTS";
+	private static final String CROP_LISTS = "CROPLISTS";
 
 	public static final String GERMPLASM_LIST_TYPE_ADVANCE = "advance";
 	public static final String GERMPLASM_LIST_TYPE_CROSS = "cross";
@@ -139,9 +140,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-
-	@Resource
-	private UserDataManager userDataManager;
 
 	@Resource
 	private CrossingService crossingService;
@@ -645,7 +643,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		GermplasmList parent = null;
 		Integer parentId = null;
 		GermplasmList gpList = null;
-		if (saveListForm.getParentId() != null && !GermplasmTreeController.LISTS.equals(saveListForm.getParentId())) {
+		if (saveListForm.getParentId() != null && !GermplasmTreeController.PROGRAM_LISTS.equals(saveListForm.getParentId())) {
 			parentId = Integer.valueOf(saveListForm.getParentId());
 			try {
 				gpList = this.germplasmListManager.getGermplasmListById(parentId);
@@ -904,7 +902,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/loadInitGermplasmTree/{isFolderOnly}", method = RequestMethod.GET)
 	public String loadInitialGermplasmTree(@PathVariable final String isFolderOnly) {
 		final List<TreeNode> rootNodes = new ArrayList<>();
-		rootNodes.add(new TreeNode(GermplasmTreeController.LISTS, AppConstants.LISTS.getString(), true, "lead",
+		rootNodes.add(new TreeNode(GermplasmTreeController.CROP_LISTS, AppConstants.CROP_LISTS.getString(), true, "lead",
+				AppConstants.FOLDER_ICON_PNG.getString(), null));
+		rootNodes.add(new TreeNode(GermplasmTreeController.PROGRAM_LISTS, AppConstants.PROGRAM_LISTS.getString(), true, "lead",
 				AppConstants.FOLDER_ICON_PNG.getString(), this.getCurrentProgramUUID()));
 		return TreeViewUtil.convertTreeViewToJson(rootNodes);
 
@@ -918,17 +918,22 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/loadInitGermplasmTreeTable", method = RequestMethod.GET)
 	public String loadInitialGermplasmTreeTable(final Model model) {
 		final List<TreeTableNode> rootNodes = new ArrayList<>();
-		final TreeTableNode localNode = new TreeTableNode(GermplasmTreeController.LISTS, AppConstants.LISTS.getString(),
+		final TreeTableNode cropListsNode = new TreeTableNode(GermplasmTreeController.CROP_LISTS, AppConstants.CROP_LISTS.getString(),
 				null, null, null, null, "1");
-		rootNodes.add(localNode);
+		final TreeTableNode programListsNode = new TreeTableNode(GermplasmTreeController.PROGRAM_LISTS, AppConstants.PROGRAM_LISTS.getString(),
+				null, null, null, null, "1");
+		rootNodes.add(cropListsNode);
+		rootNodes.add(programListsNode);
 		model.addAttribute(GermplasmTreeController.GERMPLASM_LIST_ROOT_NODES, rootNodes);
 		return super.showAjaxPage(model, GermplasmTreeController.GERMPLASM_LIST_TABLE_PAGE);
 	}
 
 	protected List<GermplasmList> getGermplasmListChildren(final String id, final String programUUID) {
 		List<GermplasmList> children = new ArrayList<>();
-		if (GermplasmTreeController.LISTS.equals(id)) {
+		if (GermplasmTreeController.PROGRAM_LISTS.equals(id)) {
 			children = this.germplasmListManager.getAllTopLevelLists(programUUID);
+		} else if (GermplasmTreeController.CROP_LISTS.equals(id)) {
+			children = this.germplasmListManager.getAllTopLevelLists(null);
 		} else if (NumberUtils.isNumber(id)) {
 			final int parentId = Integer.parseInt(id);
 			children = this.germplasmListManager.getGermplasmListByParentFolderIdBatched(parentId, programUUID,
@@ -964,8 +969,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		}
 
 		final List<GermplasmList> rootLists;
-		if (GermplasmTreeController.LISTS.equals(parentKey)) {
+		if (GermplasmTreeController.PROGRAM_LISTS.equals(parentKey)) {
 			rootLists = this.germplasmListManager.getAllTopLevelLists(programUUID);
+		} else if (GermplasmTreeController.CROP_LISTS.equals(parentKey)) {
+			rootLists = this.germplasmListManager.getAllTopLevelLists(null);
 		} else if (NumberUtils.isNumber(parentKey)) {
 			rootLists = this.getGermplasmChildrenNode(parentKey, programUUID);
 		} else {
@@ -1123,7 +1130,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	protected boolean isSimilarToRootFolderName(final String itemName) {
-		return itemName.equalsIgnoreCase(AppConstants.LISTS.getString());
+		return itemName.equalsIgnoreCase(AppConstants.PROGRAM_LISTS.getString());
 
 	}
 

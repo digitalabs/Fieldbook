@@ -149,6 +149,8 @@ var TreePersist = {
 			// If there's no previous tree state, the top level 'Lists' node should be expanded by default.
 			$('#germplasmTreeTable').treetable('expandNode', 'LISTS');
 		});
+		
+		$('#germplasmTreeTable').treetable('expandNode', 'CROPLISTS');
 	},
 
 	preLoadTreeTableSampleListState: function(listType, isSaveList) {
@@ -159,6 +161,8 @@ var TreePersist = {
 			// If there's no previous tree state, the top level 'Lists' node should be expanded by default.
 			$('#germplasmTreeTable').treetable('expandNode', 'LISTS');
 		});
+
+		$('#germplasmTreeTable').treetable('expandNode', 'CROPLISTS');
 	},
 
 	preLoadTreeState: function(containerSection, listType, isSaveList) {

@@ -225,8 +225,8 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 				anyChildNode.getNumOfChildren().equals("0"));
 
 		TreeTableNode localRootNode =
-				new TreeTableNode(GermplasmTreeControllerTestIT.LISTS, AppConstants.LISTS.getString(), null, null, null, null, "1");
-		Assert.assertFalse(AppConstants.LISTS.getString() + " should have children", localRootNode.getNumOfChildren().equals("0"));
+				new TreeTableNode(GermplasmTreeControllerTestIT.LISTS, AppConstants.PROGRAM_LISTS.getString(), null, null, null, null, "1");
+		Assert.assertFalse(AppConstants.PROGRAM_LISTS.getString() + " should have children", localRootNode.getNumOfChildren().equals("0"));
 	}
 
 	@Test
@@ -239,22 +239,22 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 				germplasmListChildren.size() == GermplasmTreeControllerTestIT.EMPTY_GERMPLASM_LIST_TEST_DATA.size());
 
 		TreeTableNode localRootNode =
-				new TreeTableNode(GermplasmTreeControllerTestIT.LISTS, AppConstants.LISTS.getString(), null, null, null, null, "1");
+				new TreeTableNode(GermplasmTreeControllerTestIT.LISTS, AppConstants.PROGRAM_LISTS.getString(), null, null, null, null, "1");
 		germplasmListChildren = this.controller.getGermplasmListChildren(localRootNode.getId(), PROGRAM_UUID);
-		Assert.assertTrue(AppConstants.LISTS.getString() + " should have " + germplasmListChildren.size() + " number of children",
+		Assert.assertTrue(AppConstants.PROGRAM_LISTS.getString() + " should have " + germplasmListChildren.size() + " number of children",
 				germplasmListChildren.size() == GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA.size());
 	}
 
 	@Test
 	public void testGetGermplasmListFolderChildNodes() throws MiddlewareQueryException {
 		TreeTableNode localRootNode =
-				new TreeTableNode(GermplasmTreeControllerTestIT.LISTS, AppConstants.LISTS.getString(), null, null, null, null, "1");
+				new TreeTableNode(GermplasmTreeControllerTestIT.LISTS, AppConstants.PROGRAM_LISTS.getString(), null, null, null, null, "1");
 		List<TreeTableNode> childNodes = this.controller.getGermplasmListFolderChildNodes(localRootNode, PROGRAM_UUID);
 		Assert.assertTrue(
-				AppConstants.LISTS.getString() + " should have " + GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA.size()
+				AppConstants.PROGRAM_LISTS.getString() + " should have " + GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA.size()
 						+ " children",
 				localRootNode.getNumOfChildren().equals(Integer.toString(GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA.size())));
-		Assert.assertTrue(AppConstants.LISTS.getString() + " should have " + childNodes.size() + " children", !childNodes.isEmpty());
+		Assert.assertTrue(AppConstants.PROGRAM_LISTS.getString() + " should have " + childNodes.size() + " children", !childNodes.isEmpty());
 
 		TreeTableNode anyChildNode = new TreeTableNode(Integer.toString(EasyMock.anyInt()),
 				GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST, null, null, null, null, "1");
@@ -267,7 +267,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 	@Test
 	public void testGetGermplasmListFolderChildNodesById() throws MiddlewareQueryException {
 		List<TreeTableNode> childNodes = this.controller.getGermplasmListFolderChildNodes(GermplasmTreeControllerTestIT.LISTS, PROGRAM_UUID);
-		Assert.assertTrue(AppConstants.LISTS.getString() + " should have " + childNodes.size() + " children", !childNodes.isEmpty());
+		Assert.assertTrue(AppConstants.PROGRAM_LISTS.getString() + " should have " + childNodes.size() + " children", !childNodes.isEmpty());
 
 		childNodes = this.controller.getGermplasmListFolderChildNodes(Integer.toString(EasyMock.anyInt()), PROGRAM_UUID);
 		Assert.assertTrue(GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST + " should have no children", childNodes.isEmpty());

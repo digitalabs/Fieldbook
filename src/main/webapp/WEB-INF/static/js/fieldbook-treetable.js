@@ -207,6 +207,7 @@ function submitDeleteGermplasmFolderInTreeTable() {
 function createGermplasmFolderInTreeTable() {
 	'use strict';
 
+	debugger;
 	if (!getSelectedGermplasmList()) {
 		showErrorMessage('page-rename-germplasm-folder-message-modal', invalidNodeGermplasmTreeMessage);
 		return false;

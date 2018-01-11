@@ -643,19 +643,16 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		GermplasmList parent = null;
 		Integer parentId = null;
 		GermplasmList gpList = null;
-		if (saveListForm.getParentId() != null && !GermplasmTreeController.PROGRAM_LISTS.equals(saveListForm.getParentId())) {
+
+		if (saveListForm.getParentId() != null
+				&& !GermplasmTreeController.PROGRAM_LISTS.equals(saveListForm.getParentId())
+				&& !GermplasmTreeController.CROP_LISTS.equals(saveListForm.getParentId())) {
 			parentId = Integer.valueOf(saveListForm.getParentId());
-			try {
-				gpList = this.germplasmListManager.getGermplasmListById(parentId);
-			} catch (final MiddlewareQueryException e) {
-				GermplasmTreeController.LOG.error(e.getMessage(), e);
-			}
+			gpList = this.germplasmListManager.getGermplasmListById(parentId);
 		}
 
 		if (gpList != null && gpList.isFolder()) {
-
 			parent = gpList;
-
 		}
 
 		final Integer status = 1;
@@ -664,7 +661,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		final GermplasmList germplasmList = new GermplasmList(null, listName, dateLong, listType, currentUserId,
 				description, parent, status, saveListForm.getListNotes());
-		germplasmList.setProgramUUID(this.getCurrentProgramUUID());
+
+		if (!GermplasmTreeController.CROP_LISTS.equals(saveListForm.getParentId())) {
+			germplasmList.setProgramUUID(this.getCurrentProgramUUID());
+		}
+
 		return germplasmList;
 
 	}

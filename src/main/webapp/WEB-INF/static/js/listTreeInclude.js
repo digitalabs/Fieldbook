@@ -109,7 +109,7 @@ function doSampleLazyLoad(node) {
 				if (node.data.isFolder === false) {
 					changeBrowseSampleButtonBehavior(false);
 				} else {
-					if (node.data.key === 'LISTS') {
+					if (node.data.key === 'LISTS' || node.data.key === 'CROPLISTS') {
 						changeBrowseSampleButtonBehavior(true);
 						$('.edit-germplasm-folder').addClass(
 							'disable-image');

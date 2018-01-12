@@ -55,7 +55,8 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 
 	private static final String GERMPLASM_LIST_TABLE_PAGE = "Common/includes/germplasmListTable";
 	public static final String GERMPLASM_LIST_ROOT_NODES = "germplasmListRootNodes";
-	private static final String LISTS = "LISTS";
+	private static final String PROGRAM_LISTS = "LISTS";
+	private static final String CROP_LISTS = "CROPLISTS";
 
 	public static final String NODE_NONE = "None";
 
@@ -80,7 +81,8 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/loadInitTree/{isFolderOnly}", method = RequestMethod.GET)
 	public String loadInitialSampleTree(@PathVariable final String isFolderOnly) {
 		final List<TreeNode> rootNodes = new ArrayList<>();
-		rootNodes.add(new TreeNode(SampleTreeController.LISTS, "Sample List", true, "lead", AppConstants.FOLDER_ICON_PNG.getString(), this.getCurrentProgramUUID()));
+		rootNodes.add(new TreeNode(SampleTreeController.CROP_LISTS,  AppConstants.CROP_LISTS.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString(), null));
+		rootNodes.add(new TreeNode(SampleTreeController.PROGRAM_LISTS, AppConstants.SAMPLE_LISTS.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString(), this.getCurrentProgramUUID()));
 		return TreeViewUtil.convertTreeViewToJson(rootNodes);
 	}
 
@@ -92,8 +94,11 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/loadInitTreeTable", method = RequestMethod.GET)
 	public String loadInitialSampleTreeTable(final Model model) {
 		final List<TreeTableNode> rootNodes = new ArrayList<>();
+		final TreeTableNode cropListNode =
+				new TreeTableNode(SampleTreeController.CROP_LISTS, AppConstants.CROP_LISTS.getString(), null, null, null, null, "1");
 		final TreeTableNode localNode =
-			new TreeTableNode(SampleTreeController.LISTS, AppConstants.SAMPLES.getString(), null, null, null, null, "1");
+			new TreeTableNode(SampleTreeController.PROGRAM_LISTS, AppConstants.SAMPLE_LISTS.getString(), null, null, null, null, "1");
+		rootNodes.add(cropListNode);
 		rootNodes.add(localNode);
 		model.addAttribute(SampleTreeController.GERMPLASM_LIST_ROOT_NODES, rootNodes);
 		return super.showAjaxPage(model, SampleTreeController.GERMPLASM_LIST_TABLE_PAGE);
@@ -105,8 +110,10 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 		}
 
 		final List<SampleList> rootLists;
-		if (SampleTreeController.LISTS.equals(parentKey)) {
+		if (SampleTreeController.PROGRAM_LISTS.equals(parentKey)) {
 			rootLists = this.sampleListService.getAllSampleTopLevelLists(programUUID);
+		} else if (SampleTreeController.CROP_LISTS.equals(parentKey)) {
+			rootLists = this.sampleListService.getAllSampleTopLevelLists(null);
 		} else if (NumberUtils.isNumber(parentKey)) {
 			rootLists = this.getSampleChildrenNode(parentKey, programUUID);
 		} else {

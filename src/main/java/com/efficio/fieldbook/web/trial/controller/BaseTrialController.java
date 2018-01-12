@@ -605,9 +605,9 @@ public abstract class BaseTrialController extends SettingsController {
 			workbook = this.userSelection.getTemporaryWorkbook();
 		}
 
-		boolean haveSamples = false;
+		boolean hasSamples = false;
 		if (this.userSelection.getWorkbook() != null) {
-			haveSamples = this.sampleService.studyHasSamples(this.userSelection.getWorkbook().getStudyDetails().getId());
+			hasSamples = this.sampleService.studyHasSamples(this.userSelection.getWorkbook().getStudyDetails().getId());
 		}
 
 		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
@@ -617,7 +617,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 		if (!measurementDatasetVariables.isEmpty()) {
 			final List<MeasurementVariable> newMeasurementDatasetVariables = this.getMeasurementVariableFactor(measurementDatasetVariables);
-			if (haveSamples) {
+			if (hasSamples) {
 				final MeasurementVariable sample = this.createSampleVariable();
 				newMeasurementDatasetVariables.add(sample);
 			}

@@ -1009,10 +1009,15 @@ function deleteNurseryInEdit() {
 	});
 }
 
-/* ADVANCING TRIAL SPECIFIC FUNCTIONS */
+/* ADVANCING SPECIFIC FUNCTIONS */
 
-function advanceTrial() {
+function advanceFromTrial(advanceType) {
 	'use strict';
+	if (advanceType == 'sample') {
+		// Validate if there is something to advance
+		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+	}
+
 	var idVal = $('#studyId').val();
 	$('#advanceNurseryModal').modal('hide');
 
@@ -1031,6 +1036,7 @@ function advanceTrial() {
 	});
 
 	var $scope = angular.element('#selectEnvironmentModal').scope();
+	$scope.advanceType = advanceType;
 	$scope.init();
 	$scope.$apply();
 }

@@ -45,6 +45,7 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.service.api.SampleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
@@ -102,6 +103,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	@Resource
 	protected OntologyService ontologyService;
+
+	@Resource
+	protected SampleService sampleService;
 
 	/**
 	 * Checks if the measurement table has user input data for a particular variable id

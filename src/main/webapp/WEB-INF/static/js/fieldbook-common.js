@@ -1011,13 +1011,18 @@ function deleteNurseryInEdit() {
 
 /* ADVANCING SPECIFIC FUNCTIONS */
 
-function advanceFromTrial(advanceType) {
-	'use strict';
+function startAdvance (advanceType) {
+	var $scope = angular.element('#selectEnvironmentModal').scope();
+	$scope.advanceType = advanceType;
 	if (advanceType == 'sample') {
-		// Validate if there is something to advance
-		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+		advanceSample();
+	} else {
+		advanceTrial();
 	}
+}
 
+function advanceTrial() {
+	'use strict';
 	var idVal = $('#studyId').val();
 	$('#advanceNurseryModal').modal('hide');
 
@@ -1036,9 +1041,38 @@ function advanceFromTrial(advanceType) {
 	});
 
 	var $scope = angular.element('#selectEnvironmentModal').scope();
-	$scope.advanceType = advanceType;
 	$scope.init();
 	$scope.$apply();
+}
+
+function advanceSample() {
+	'use strict';
+	var idVal = $('#studyId').val();
+
+	// Validate if there is something to advance
+	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+
+	$.ajax({
+		url: '/bmsapi/study/' + cropName + '/' + idVal + '/sampled',
+		type: 'GET',
+		async: false,
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+		}
+	}).done(function (data) {
+		if (data == false) {
+			showErrorMessage('', advanceSamplesError);
+		} else {
+			advanceTrial();
+		}
+	}).fail(function (data) {
+		if (data.status == 401) {
+			bmsAuth.handleReAuthentication();
+		} else {
+			showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
+		}
+	});
+
 }
 
 function backAdvanceTrial() {
@@ -1140,10 +1174,10 @@ function advanceStudy(studyId, trialInstances,noOfReplications,locationDetailHtm
     }
 
     count++;
-    if (count !== 1) {
-        showMessage(advanceStudyError);
-        return;
-    }
+	if (count !== 1) {
+		showMessage(advanceStudyError);
+		return;
+	}
 
 	//TODO do we advance the trial using the same ajax function as advancing the nursery from the nursery manager.
 	//TODO Should that be common then with the common path?

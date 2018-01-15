@@ -126,11 +126,11 @@
 								<a tabindex="-1" href="#">Advance trial options</a>
 								<ul class="dropdown-menu" style="margin-left: 4px;">
 									<li>
-										<a href="javascript: advanceFromTrial('trial');" id="advance-trial-link"
+										<a href="javascript: startAdvance('trial');" id="advance-trial-link"
 										   th:text="#{trial.trialdetails.action.advance.trial}">Advance Trial</a>
 									</li>
 									<li>
-										<a href="javascript: advanceFromTrial('sample');" id="advance-sample-link"
+										<a href="javascript: startAdvance('sample');" id="advance-sample-link"
 										   th:text="#{trial.trialdetails.action.advance.sample}">Advance sampled plants</a>
 									</li>
 								</ul>
@@ -639,6 +639,12 @@ jQuery(function() {
 });
 
 //]]>
+</script>
+
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[
+	var advanceSamplesError = /*[[#{common.error.advance.samples}]]*/ '';
+	//]]>
 </script>
 
 <!-- Controller js files for each tabs -->

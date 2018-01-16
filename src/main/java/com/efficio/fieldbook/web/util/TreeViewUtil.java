@@ -378,7 +378,7 @@ public class TreeViewUtil {
 			final String numOfChildren = germplasmFolderMetadata != null ? String.valueOf(germplasmFolderMetadata.getNumberOfChildren()): "0";
 			treeTableNode.setNumOfChildren(numOfChildren);
 		} else {
-			treeTableNode.setNumOfChildren(String.valueOf(noOfEntries));
+			treeTableNode.setNumOfChildren("0");
 		}
 		
 		treeTableNode.setParentId(TreeViewUtil.getParentId(germplasmList));

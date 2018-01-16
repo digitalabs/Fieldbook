@@ -152,7 +152,6 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 			dataType : 'json'
 		},
 		onLazyRead : function(node) {
-			debugger;
 			doGermplasmLazyLoad(node);
 		},
 		onRender : function(node, nodeSpan) {
@@ -176,7 +175,7 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 									nodeSpan);
 							}
 
-						})
+						});
 			}
 		},
 		classNames : {
@@ -191,6 +190,7 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 		onFocus : function(node) {
 			var nodeSpan = node.span;
 			if (node.data.key !== 'LISTS'
+				&& node.data.key !== 'CROPLISTS'
 				&& node.data.key !== '_statusNode'
 				&& node.data.isFolder === false) {
 				$(nodeSpan)
@@ -226,7 +226,7 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 			if (node.data.isFolder === false) {
 				changeBrowseGermplasmButtonBehavior(false);
 			} else {
-				if (node.data.key === 'LISTS') {
+				if (node.data.key === 'LISTS' || node.data.key === 'CROPLISTS') {
 					changeBrowseGermplasmButtonBehavior(true);
 					$('.edit-germplasm-folder').addClass(
 						'disable-image');
@@ -266,6 +266,8 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 					showErrorMessage(getMessageErrorDiv(), cannotMove
 						+ ' ' + sourceNode.data.title + ' '
 						+ hasChildrenString);
+				} else if (node.data.key === 'CROPLISTS' && sourceNode.data.isFolder) {
+					showErrorMessage(getMessageErrorDiv(), cannotMoveFolderToCropListError);
 				} else {
 					$.ajax({
 						url : lazyLoadUrlGetChildren
@@ -344,7 +346,7 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 										'a.dynatree-title')
 									.addClass('has-popover');
 							}
-						})
+						});
 			}
 		},
 		classNames : {
@@ -391,7 +393,7 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 			if (node.data.isFolder === false) {
 				changeBrowseSampleButtonBehavior(false);
 			} else {
-				if (node.data.key === 'LISTS') {
+				if (node.data.key === 'LISTS' || node.data.key === 'CROPLISTS') {
 					changeBrowseSampleButtonBehavior(true);
 					$('.edit-germplasm-folder').addClass(
 						'disable-image');
@@ -431,6 +433,8 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 					showErrorMessage(getMessageErrorDiv(), cannotMove
 						+ ' ' + sourceNode.data.title + ' '
 						+ hasChildrenString);
+				} else if (node.data.key === 'CROPLISTS' && sourceNode.data.isFolder) {
+					showErrorMessage(getMessageErrorDiv(), cannotMoveFolderToCropListError);
 				} else {
 					$.ajax({
 						url : lazyLoadUrlGetChildren

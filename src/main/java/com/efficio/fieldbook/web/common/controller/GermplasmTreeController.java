@@ -1258,11 +1258,17 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		try {
 			final GermplasmList gpList = this.germplasmListManager.getGermplasmListById(Integer.parseInt(sourceId));
 
-			if (targetId != null) {
+			if (targetId != null && PROGRAM_LISTS.equals(targetId) && CROP_LISTS.equals(targetId)) {
 				final GermplasmList parent = this.germplasmListManager.getGermplasmListById(Integer.parseInt(targetId));
 				gpList.setParent(parent);
 			} else {
 				gpList.setParent(null);
+			}
+
+			if (CROP_LISTS.equals(targetId)) {
+				gpList.setProgramUUID(null);
+			} else {
+				gpList.setProgramUUID(this.contextUtil.getCurrentProgramUUID());
 			}
 
 			this.germplasmListManager.updateGermplasmList(gpList);

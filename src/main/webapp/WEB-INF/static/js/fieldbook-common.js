@@ -2833,15 +2833,20 @@ function moveSamplesListFolder(sourceNode, targetNode) {
 	'use strict';
 	var sourceId = sourceNode.data.key,
 		targetId = targetNode.data.key;
+	var isCropList = false;
 
-	if (targetId === 'LISTS') {
+	if (targetId === 'LISTS' || targetId === 'CROPLISTS') {
 		targetId = 0;
+	}
+
+	if (targetId === 'CROPLISTS') {
+		isCropList = true;
 	}
 
 	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 	$.ajax({
-		url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + sourceId + '/move?newParentId=' + targetId,
+		url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + sourceId + '/move?newParentId=' + targetId + '&isCropList=' + isCropList,
 		type: 'PUT',
 		beforeSend: function (xhr) {
 			xhr.setRequestHeader('X-Auth-Token', xAuthToken);

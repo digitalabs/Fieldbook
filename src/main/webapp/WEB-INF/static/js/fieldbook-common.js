@@ -1011,9 +1011,9 @@ function deleteNurseryInEdit() {
 
 /* ADVANCING SPECIFIC FUNCTIONS */
 
-function startAdvance (advanceType) {
+function startAdvance(advanceType) {
 	var $scope = angular.element('#selectEnvironmentModal').scope();
-	$scope.advanceType = advanceType;
+	$scope.applicationData.advanceType = advanceType;
 	if (advanceType == 'sample') {
 		advanceSample();
 	} else {
@@ -1102,12 +1102,12 @@ function createSample() {
 	scope.$apply();
 }
 
-function trialSelectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, isTrialInstanceNumberUsed) {
+function trialSelectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, isTrialInstanceNumberUsed, advanceType) {
 	'use strict';
 	var idVal = $('#studyId').val();
 	$('#selectEnvironmentModal').modal('hide');
 	var locationDetailHtml = generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed);
-	advanceStudy(idVal, trialInstances, noOfReplications, locationDetailHtml);
+	advanceStudy(idVal, trialInstances, noOfReplications, locationDetailHtml, advanceType);
 }
 
 
@@ -1163,7 +1163,7 @@ function advanceNursery() {
  * @param studyId Nursery or Trial study Id
  * @param locationIds Location will be passed for Advance Trial only
  */
-function advanceStudy(studyId, trialInstances,noOfReplications,locationDetailHtml){
+function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailHtml, advanceType) {
     'use strict';
     var count = 0,
         idVal = studyId;
@@ -1189,6 +1189,9 @@ function advanceStudy(studyId, trialInstances,noOfReplications,locationDetailHtm
         if(noOfReplications) {
         	advanceStudyHref = advanceStudyHref + '&noOfReplications=' + encodeURIComponent(noOfReplications);
         }
+        if (advanceType) {
+			advanceStudyHref = advanceStudyHref + '&advanceType=' + encodeURIComponent(advanceType);
+		}
     }
 
     if (idVal != null) {

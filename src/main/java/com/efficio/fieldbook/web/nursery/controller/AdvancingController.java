@@ -138,7 +138,10 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 */
 	@RequestMapping(value = "/{nurseryId}", method = RequestMethod.GET)
 	public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, Model model, HttpServletRequest req,
-			HttpSession session, @PathVariable int nurseryId , @RequestParam(required = false) Set<String> selectedTrialInstances,@RequestParam(required = false) String noOfReplications) throws MiddlewareException {
+		HttpSession session, @PathVariable int nurseryId, @RequestParam(required = false) Set<String> selectedTrialInstances,
+		@RequestParam(required = false) String noOfReplications, @RequestParam(required = false) String advanceType)
+		throws MiddlewareException {
+
     	form.setMethodChoice("1");
 		form.setLineChoice("1");
 		form.setLineSelected("1");
@@ -166,6 +169,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		model.addAttribute("yearChoices", this.generateYearChoices(Integer.parseInt(currentYear)));
 		model.addAttribute("monthChoices", this.generateMonthChoices());
         model.addAttribute("replicationsChoices",this.generateReplicationChoice(noOfReplications));
+		model.addAttribute("advanceType", advanceType);
 
 		return super.showAjaxPage(model, AdvancingController.MODAL_URL);
 	}

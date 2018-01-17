@@ -16,7 +16,10 @@
 								<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{nursery.nurserydetails.action.advance}"></label>
 							</div>
                             <div class="col-xs-11 col-md-11" id="advanceTrialModalHeader">
-                                <label class="modal-title fbk-modal-title" th:text="#{trial.trialdetails.action.advance.trial}"></label>
+								<label class="modal-title fbk-modal-title" th:if="${advanceType} == 'sample'"
+									   th:text="#{trial.trialdetails.action.advance.sample}"></label>
+								<label class="modal-title fbk-modal-title" th:if="${advanceType} == 'trial'"
+									   th:text="#{trial.trialdetails.action.advance.trial}"></label>
                             </div>
 
 							<div class="col-xs-1 col-md-1">

@@ -22,6 +22,7 @@
 		$scope.PREFERRED_LOCATION_VARIABLE = 8170;
 		$scope.LOCATION_NAME_ID = 8190;
 		$scope.environmentListView = [];
+		$scope.applicationData = TrialManagerDataService.applicationData;
 
 
 		$scope.data = TrialManagerDataService.currentData.environments;
@@ -108,7 +109,7 @@
 					isTrialInstanceNumberUsed = true;
 				}
 				trialSelectEnvironmentContinueAdvancing(selectedTrialInstances, $scope.noOfReplications, selectedLocationDetails,
-					isTrialInstanceNumberUsed);
+					isTrialInstanceNumberUsed, $scope.applicationData.advanceType);
 			}
 
 		};

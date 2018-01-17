@@ -244,6 +244,7 @@
 					unsavedTraitsAvailable: false,
 					germplasmListCleared: false,
 					isGeneratedOwnDesign: false,
+					advanceType: 'trial',
 					hasGeneratedDesignPreset: false,
 					hasNewEnvironmentAdded: false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,

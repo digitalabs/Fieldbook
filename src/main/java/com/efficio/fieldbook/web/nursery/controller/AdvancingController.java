@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.web.nursery.bean.AdvanceType;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.constant.ColumnLabels;
@@ -249,6 +250,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		advancingNursery.setCheckAdvanceLinesUnique(false);
         advancingNursery.setSelectedReplications(form.getSelectedReplications());
         advancingNursery.setSelectedTrialInstances(form.getSelectedTrialInstances());
+        advancingNursery.setAdvanceType(AdvanceType.fromLowerCaseName(form.getAdvanceType()));
 		boolean observationsLoaded = this.fieldbookMiddlewareService.loadAllObservations(this.userSelection.getWorkbook());
 
 		try {

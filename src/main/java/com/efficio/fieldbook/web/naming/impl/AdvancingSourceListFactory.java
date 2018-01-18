@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessor;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory;
+import com.efficio.fieldbook.web.nursery.bean.AdvanceType;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
@@ -105,7 +106,8 @@ public class AdvancingSourceListFactory {
 				}
 
 				Integer methodId = null;
-				if (advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) {
+				if ((advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) && !advanceInfo.getAdvanceType()
+					.equals(AdvanceType.SAMPLE)) {
 					if (methodVariateId != null) {
 						methodId = this.getBreedingMethodId(methodVariateId, row, breedingMethodCodeMap);
 					}

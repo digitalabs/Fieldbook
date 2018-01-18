@@ -1937,7 +1937,7 @@ function callAdvanceNursery() {
 	if (methdodId === '0') {
 		showErrorMessage('page-advance-modal-message', msgMethodError);
 		return false;
-	} else if (!lines.match(/^\s*(\+|-)?\d+\s*$/)) {
+	} else if (lines && !lines.match(/^\s*(\+|-)?\d+\s*$/)) {
 		showErrorMessage('page-advance-modal-message', linesNotWholeNumberError);
 		return false;
 	} else if (validatePlantsSelected()) {

@@ -142,6 +142,7 @@
 		$scope.init = function() {
 
 			$scope.locationFromTrialSettings = false;
+			$scope.selectAll = true;
 			$scope.userInput = TrialManagerDataService.currentData.trialSettings.userInput;
 			if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null) {
 				// LOCATION_ABBR from environments
@@ -164,9 +165,7 @@
 			$scope.environmentListView = convertToEnvironmentListView($scope.data.environments,
 				$scope.PREFERRED_LOCATION_VARIABLE, $scope.TRIAL_INSTANCE_INDEX);
 
-			if ($scope.selectAll) {
-				$scope.doSelectAll();
-			}
+			$scope.doSelectAll();
 		};
 
 		$scope.init();

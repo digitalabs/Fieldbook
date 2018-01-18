@@ -66,7 +66,8 @@
 						<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">
 							Cancel
 						</button>
-						<button type="button" class="btn btn-primary" aria-hidden="true" ng-click="trialSelectEnvironmentContinue()" th:text="#{common.form.continue.text}">
+						<button type="button" class="btn btn-primary" ng-disabled="trialInstances.length === 0"
+								aria-hidden="true" ng-click="trialSelectEnvironmentContinue()" th:text="#{common.form.continue.text}">
 							Continue
 						</button>
 					</div>

@@ -1706,14 +1706,14 @@ function nurseryValidateStartEndDateBasic() {
 
 }
 
-function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
+function recreateModalMethodCombo(comboName, comboFaveCBoxName, url) {
 	var selectedMethodAll = $('#methodIdAll').val();
 	var selectedMethodDerivativeAndMaintenance = $('#methodIdDerivativeAndMaintenance').val();
 	var selectedMethodDerivativeAndMaintenanceFavorite = $('#methodIdDerivativeAndMaintenanceFavorite').val();
 	var selectedMethodFavorite = $('#methodIdFavorite').val();
 
 	$.ajax({
-		url: '/Fieldbook/breedingMethod/getBreedingMethods',
+		url: url || '/Fieldbook/breedingMethod/getBreedingMethods',
 		type: 'GET',
 		cache: false,
 		data: '',

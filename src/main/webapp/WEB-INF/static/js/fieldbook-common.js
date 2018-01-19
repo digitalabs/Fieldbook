@@ -2125,7 +2125,20 @@ function checkIfNull(object) {
 	}
 }
 
-function recreateMethodCombo(possibleFavorite) {
+function getAdvanceBreedingMethodURL() {
+	var url = '/Fieldbook/breedingMethod/getBreedingMethods';
+	if (isNursery()) {
+		return url;
+	}
+
+	var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
+	if (advanceType == 'sample') {
+		return '/Fieldbook/breedingMethod/getNoBulkingBreedingMethods';
+	}
+	return url;
+}
+
+function recreateMethodCombo(possibleFavorite, url) {
 	var selectedMethodAll = $('#methodIdAll').val(),
 		selectedMethodFavorite = $('#methodIdFavorite').val();
 	var createGermplasm = false;
@@ -2139,7 +2152,7 @@ function recreateMethodCombo(possibleFavorite) {
 	}
 
 	$.ajax({
-		url: '/Fieldbook/breedingMethod/getBreedingMethods',
+		url: url || '/Fieldbook/breedingMethod/getBreedingMethods',
 		type: 'GET',
 		cache: false,
 		data: '',

@@ -429,7 +429,7 @@ $(function() {
 	$('#s2id_methodIdAll').show();
 
 	recreateLocationCombo();
-	recreateModalMethodCombo('advanceBreedingMethodId', 'showAdvanceFavoriteMethod');
+	recreateModalMethodCombo('advanceBreedingMethodId', 'showAdvanceFavoriteMethod', getAdvanceBreedingMethodURL());
 
 	$('#showFavoriteLocation, #showAllLocationOnlyRadio, #showBreedingLocationOnlyRadio').on('change', function() {
 		showCorrectLocationCombo();

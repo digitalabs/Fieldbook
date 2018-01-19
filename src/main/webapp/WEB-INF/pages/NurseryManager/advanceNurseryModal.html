@@ -206,7 +206,7 @@
                             </div>
                         </div>
 
-						<div id="harvest-details-section" th:if="${advanceType} != 'trial'"> <!-- harvest details -->
+						<div id="harvest-details-section" th:style="${advanceType} != 'trial' ? 'display:block' : 'display:none'"> <!-- harvest details -->
 							<div class="row form-group">
 								<label class="control-label col-xs-12 add_top_padding"><strong class="sub-content-heading"
 																							   th:text="#{advancing.nursery.harvest.information}">Harvest

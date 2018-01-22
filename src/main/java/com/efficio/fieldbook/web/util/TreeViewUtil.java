@@ -229,7 +229,7 @@ public class TreeViewUtil {
 	 * @param germplasmLists the germplasm lists
 	 * @return the list
 	 */
-	public static List<TreeTableNode> convertGermplasmListToTreeTableNodes(List<GermplasmList> germplasmLists,
+	public static List<TreeTableNode> convertGermplasmListToTreeTableNodes(String parentId, List<GermplasmList> germplasmLists,
 			GermplasmListManager germplasmListManager, GermplasmDataManager germplasmDataManager) {
 		List<TreeTableNode> treeTableNodes = new ArrayList<>();
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
@@ -242,7 +242,7 @@ public class TreeViewUtil {
 					= germplasmListManager.getGermplasmFolderMetadata(germplasmLists);
 			for (GermplasmList germplasmList : germplasmLists) {
 				TreeTableNode node =
-						TreeViewUtil.convertGermplasmListToTreeTableNode(germplasmList, listTypes,
+						TreeViewUtil.convertGermplasmListToTreeTableNode(parentId, germplasmList, listTypes,
 								allListMetaData.get(germplasmList.getId()), allFolderMetaData.get(germplasmList.getId()));
 				if (node != null) {
 					treeTableNodes.add(node);
@@ -360,7 +360,7 @@ public class TreeViewUtil {
 	 * @param germplasmFolderMetadata provides us with number of children in each folder
 	 * @return the tree node
 	 */
-	private static TreeTableNode convertGermplasmListToTreeTableNode(GermplasmList germplasmList, List<UserDefinedField> listTypes,
+	private static TreeTableNode convertGermplasmListToTreeTableNode(String parentFolderId, GermplasmList germplasmList, List<UserDefinedField> listTypes,
 			GermplasmListMetadata listMetaData, GermplasmFolderMetadata germplasmFolderMetadata) {
 		final TreeTableNode treeTableNode = new TreeTableNode();
 
@@ -381,16 +381,15 @@ public class TreeViewUtil {
 			treeTableNode.setNumOfChildren("0");
 		}
 		
-		treeTableNode.setParentId(TreeViewUtil.getParentId(germplasmList));
+		treeTableNode.setParentId(TreeViewUtil.getParentId(parentFolderId, germplasmList));
 		return treeTableNode;
 	}
 
-	private static String getParentId(GermplasmList germplasmList) {
-		Integer parentId = germplasmList.getParentId();
-		if (parentId == null) {
-			return "LISTS";
+	protected static String getParentId(String parentFolderId, GermplasmList germplasmList) {
+		if (germplasmList.getParentId() == null) {
+			return parentFolderId;
 		}
-		return String.valueOf(parentId);
+		return String.valueOf(parentFolderId);
 	}
 
 	private static String getTypeString(String typeCode, List<UserDefinedField> listTypes) {

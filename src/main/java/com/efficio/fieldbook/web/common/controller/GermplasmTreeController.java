@@ -48,7 +48,6 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmFolderMetadata;
@@ -120,8 +119,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	public static final String GERMPLASM_LIST_ROOT_NODES = "germplasmListRootNodes";
 	private static final String GERMPLASM_LIST_TABLE_ROWS_PAGE = "Common/includes/germplasmListTableRows";
 	public static final String GERMPLASM_LIST_CHILD_NODES = "germplasmListChildNodes";
-	private static final String PROGRAM_LISTS = "LISTS";
-	private static final String CROP_LISTS = "CROPLISTS";
+	protected static final String PROGRAM_LISTS = "LISTS";
+	protected static final String CROP_LISTS = "CROPLISTS";
 
 	public static final String GERMPLASM_LIST_TYPE_ADVANCE = "advance";
 	public static final String GERMPLASM_LIST_TYPE_CROSS = "cross";
@@ -664,11 +663,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		// If the germplasm list is saved in 'Crop lists' folder, the programUUID should be null
 		// so that the germplasm list will be accessible to all programs of the same crop.
-		if (!GermplasmTreeController.CROP_LISTS.equals(saveListForm.getParentId())) {
-			germplasmList.setProgramUUID(this.getCurrentProgramUUID());
-		} else {
+		if (GermplasmTreeController.CROP_LISTS.equals(saveListForm.getParentId())) {
 			// list should be locked by default if it is saved in 'Crop lists' folder.
 			germplasmList.setStatus(101);
+		} else {
+			germplasmList.setProgramUUID(this.getCurrentProgramUUID());
 		}
 
 		return germplasmList;
@@ -1005,7 +1004,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	private List<TreeTableNode> getGermplasmFolderChildrenNode(final String id, final String programUUID) {
-		return TreeViewUtil.convertGermplasmListToTreeTableNodes(this.getGermplasmListChildren(id, programUUID),
+		return TreeViewUtil.convertGermplasmListToTreeTableNodes(id, this.getGermplasmListChildren(id, programUUID),
 				this.germplasmListManager, this.germplasmDataManager);
 	}
 
@@ -1375,5 +1374,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	void setGermplasmDataManager(final GermplasmDataManager germplasmDataManager) {
 		this.germplasmDataManager = germplasmDataManager;
+	}
+
+	protected void setGermplasmListManager(final GermplasmListManager germplasmListManager) {
+		this.germplasmListManager = germplasmListManager;
 	}
 }

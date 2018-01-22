@@ -55,8 +55,8 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 
 	private static final String GERMPLASM_LIST_TABLE_PAGE = "Common/includes/germplasmListTable";
 	public static final String GERMPLASM_LIST_ROOT_NODES = "germplasmListRootNodes";
-	private static final String PROGRAM_LISTS = "LISTS";
-	private static final String CROP_LISTS = "CROPLISTS";
+	protected static final String PROGRAM_LISTS = "LISTS";
+	protected static final String CROP_LISTS = "CROPLISTS";
 
 	public static final String NODE_NONE = "None";
 
@@ -104,7 +104,7 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 		return super.showAjaxPage(model, SampleTreeController.GERMPLASM_LIST_TABLE_PAGE);
 	}
 
-	private List<TreeNode> getSampleChildNodes(final String parentKey, final boolean isFolderOnly, final String programUUID) {
+	protected List<TreeNode> getSampleChildNodes(final String parentKey, final boolean isFolderOnly, final String programUUID) {
 		if (!(parentKey != null && !"".equals(parentKey))) {
 			return new ArrayList<>();
 		}
@@ -115,7 +115,7 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 		} else if (SampleTreeController.CROP_LISTS.equals(parentKey)) {
 			rootLists = this.sampleListService.getAllSampleTopLevelLists(null);
 		} else if (NumberUtils.isNumber(parentKey)) {
-			rootLists = this.getSampleChildrenNode(parentKey, programUUID);
+				rootLists = this.getSampleChildrenNode(parentKey, programUUID);
 		} else {
 			throw new IllegalStateException("Add a message");
 		}

@@ -42,12 +42,6 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 	 */
 	static final String DEFAULT_STATE_SAVED_FOR_SAMPLE_LIST = "Lists";
 
-	private static final String COMMON_SAVE_GERMPLASM_LIST = "Common/saveGermplasmList";
-
-	private static final String COMMON_SAVE_SAMPLE_LIST = "Common/saveSampleListDetails";
-
-	private static final String GERMPLASM_LIST_TYPES = "germplasmListTypes";
-
 	/**
 	 * The Constant LOG.
 	 */

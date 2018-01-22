@@ -283,9 +283,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final List<ListDataProject> listDataProject = ListDataProjectUtil
 				.createListDataProjectFromGermplasmListData(data);
 
-		final Integer listDataProjectListId = this.saveListDataProjectList(form.getGermplasmListType(), germplasmListId,
+		 return this.saveListDataProjectList(form.getGermplasmListType(), germplasmListId,
 				listDataProject);
-		return listDataProjectListId;
+
 	}
 
 	// TODO Remove
@@ -698,9 +698,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			String groupName = importedCrosses.getCross();
 
 			// Common germplasm list data fields
-			final Integer listDataId = importedCrosses.getId(); // null will be
-																// set for new
-																// records
+			final Integer listDataId = importedCrosses.getId();
+			// null will be set for new records
 			final Integer listDataStatus = 0;
 			final Integer localRecordId = 0;
 
@@ -727,9 +726,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final Integer entryId, final String entryCode, final String seedSource, final String designation,
 			final String notes, final Integer crossingDate, final String groupName, final Integer listDataId,
 			final Integer listDataStatus, final Integer localRecordId) {
-		final GermplasmListData listData = new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode,
+		return new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode,
 				seedSource, designation, groupName, listDataStatus, localRecordId, notes, crossingDate);
-		return listData;
 	}
 
 	/**
@@ -1122,7 +1120,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return this.expandGermplasmTree(parentKey, "0");
 	}
 
-	void checkIfUnique(final String folderName, final String programUUID) throws MiddlewareException {
+	void checkIfUnique(final String folderName, final String programUUID) {
 		final String trimmedName = folderName.trim();
 		final List<GermplasmList> duplicate = this.germplasmListManager.getGermplasmListByName(trimmedName, programUUID,
 				0, 1, null);
@@ -1224,7 +1222,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return resultsMap;
 	}
 
-	public boolean hasChildren(final Integer id, final String programUUID) throws MiddlewareQueryException {
+	public boolean hasChildren(final Integer id, final String programUUID) {
 		return !this.germplasmListManager.getGermplasmListByParentFolderId(id, programUUID).isEmpty();
 	}
 

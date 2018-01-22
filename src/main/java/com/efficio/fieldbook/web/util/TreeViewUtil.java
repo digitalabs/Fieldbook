@@ -56,7 +56,7 @@ public class TreeViewUtil {
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertReferencesToJson(List<Reference> references) throws IOException {
+	public static String convertReferencesToJson(List<Reference> references) {
 		List<TreeNode> treeNodes = TreeViewUtil.convertReferencesToTreeView(references);
 		return TreeViewUtil.convertTreeViewToJson(treeNodes);
 	}
@@ -68,8 +68,7 @@ public class TreeViewUtil {
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertStudyFolderReferencesToJson(List<Reference> references, boolean isAll, boolean isLazy, boolean isFolderOnly)
-			throws IOException {
+	public static String convertStudyFolderReferencesToJson(List<Reference> references, boolean isAll, boolean isLazy, boolean isFolderOnly) {
 		List<TreeNode> treeNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(references, isAll, isLazy, isFolderOnly);
 		return TreeViewUtil.convertTreeViewToJson(treeNodes);
 	}
@@ -81,7 +80,7 @@ public class TreeViewUtil {
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertFolderReferencesToJson(List<FolderReference> references, boolean isLazy) throws IOException {
+	public static String convertFolderReferencesToJson(List<FolderReference> references, boolean isLazy) {
 		List<TreeNode> treeNodes = TreeViewUtil.convertFolderReferencesToTreeView(references, isLazy);
 		return TreeViewUtil.convertTreeViewToJson(treeNodes);
 	}
@@ -93,7 +92,7 @@ public class TreeViewUtil {
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertDatasetReferencesToJson(List<DatasetReference> references) throws IOException {
+	public static String convertDatasetReferencesToJson(List<DatasetReference> references) {
 		List<TreeNode> treeNodes = TreeViewUtil.convertDatasetReferencesToTreeView(references);
 		return TreeViewUtil.convertTreeViewToJson(treeNodes);
 	}
@@ -105,7 +104,7 @@ public class TreeViewUtil {
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertGermplasmListToJson(List<GermplasmList> germplasmLists, boolean isFolderOnly) throws IOException {
+	public static String convertGermplasmListToJson(List<GermplasmList> germplasmLists, boolean isFolderOnly) {
 		List<TreeNode> treeNodes = TreeViewUtil.convertGermplasmListToTreeView(germplasmLists, isFolderOnly);
 		return TreeViewUtil.convertTreeViewToJson(treeNodes);
 	}
@@ -528,7 +527,7 @@ public class TreeViewUtil {
 	 * @throws Exception the exception
 	 */
 	public static String convertOntologyTraitsToJson(List<TraitClassReference> traitClassReferences,
-			Map<String, StandardVariableReference> mapVariableRef) throws IOException {
+			Map<String, StandardVariableReference> mapVariableRef) {
 
 		List<TreeNode> treeNodes = TreeViewUtil.convertTraitClassReferencesToTreeView(traitClassReferences, mapVariableRef);
 

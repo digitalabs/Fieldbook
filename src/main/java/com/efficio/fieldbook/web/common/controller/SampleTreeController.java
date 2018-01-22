@@ -54,7 +54,6 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 
 	public static final String NODE_NONE = "None";
 
-
 	/**
 	 * The Constant BATCH_SIZE.
 	 */
@@ -75,8 +74,10 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/loadInitTree/{isFolderOnly}", method = RequestMethod.GET)
 	public String loadInitialSampleTree(@PathVariable final String isFolderOnly) {
 		final List<TreeNode> rootNodes = new ArrayList<>();
-		rootNodes.add(new TreeNode(SampleTreeController.CROP_LISTS,  AppConstants.CROP_LISTS.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString(), null));
-		rootNodes.add(new TreeNode(SampleTreeController.PROGRAM_LISTS, AppConstants.SAMPLE_LISTS.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString(), this.getCurrentProgramUUID()));
+		rootNodes.add(new TreeNode(SampleTreeController.CROP_LISTS, AppConstants.CROP_LISTS.getString(), true, "lead",
+				AppConstants.FOLDER_ICON_PNG.getString(), null));
+		rootNodes.add(new TreeNode(SampleTreeController.PROGRAM_LISTS, AppConstants.SAMPLE_LISTS.getString(), true, "lead",
+				AppConstants.FOLDER_ICON_PNG.getString(), this.getCurrentProgramUUID()));
 		return TreeViewUtil.convertTreeViewToJson(rootNodes);
 	}
 
@@ -91,7 +92,7 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 		final TreeTableNode cropListNode =
 				new TreeTableNode(SampleTreeController.CROP_LISTS, AppConstants.CROP_LISTS.getString(), null, null, null, null, "1");
 		final TreeTableNode localNode =
-			new TreeTableNode(SampleTreeController.PROGRAM_LISTS, AppConstants.SAMPLE_LISTS.getString(), null, null, null, null, "1");
+				new TreeTableNode(SampleTreeController.PROGRAM_LISTS, AppConstants.SAMPLE_LISTS.getString(), null, null, null, null, "1");
 		rootNodes.add(cropListNode);
 		rootNodes.add(localNode);
 		model.addAttribute(SampleTreeController.GERMPLASM_LIST_ROOT_NODES, rootNodes);
@@ -109,7 +110,7 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 		} else if (SampleTreeController.CROP_LISTS.equals(parentKey)) {
 			rootLists = this.sampleListService.getAllSampleTopLevelLists(null);
 		} else if (NumberUtils.isNumber(parentKey)) {
-				rootLists = this.getSampleChildrenNode(parentKey, programUUID);
+			rootLists = this.getSampleChildrenNode(parentKey, programUUID);
 		} else {
 			throw new IllegalStateException("Add a message");
 		}
@@ -176,7 +177,7 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 			}
 
 			this.userTreeStateService
-				.saveOrUpdateUserProgramTreeState(this.contextUtil.getCurrentUserLocalId(), this.getCurrentProgramUUID(), type, states);
+					.saveOrUpdateUserProgramTreeState(this.contextUtil.getCurrentUserLocalId(), this.getCurrentProgramUUID(), type, states);
 		} catch (final MiddlewareQueryException e) {
 			SampleTreeController.LOG.error(e.getMessage(), e);
 			status = "ERROR";
@@ -198,7 +199,6 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 		}
 		return super.convertObjectToJson(stateList);
 	}
-
 
 	@Override
 	public String getContentName() {

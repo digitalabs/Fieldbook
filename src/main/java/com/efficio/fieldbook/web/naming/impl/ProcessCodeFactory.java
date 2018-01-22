@@ -3,8 +3,10 @@ package com.efficio.fieldbook.web.naming.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import com.efficio.fieldbook.web.naming.expression.Expression;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 
 public class ProcessCodeFactory {
 
@@ -18,6 +20,20 @@ public class ProcessCodeFactory {
 
 	public Expression create(final String key) {
 		return this.expressionMap.get(key.toUpperCase());
+	}
+
+	/**
+	 *
+	 * @param pattern
+	 * @return the first Expression that match the pattern
+	 */
+	public Expression lookup(final String pattern) {
+		for (String key : expressionMap.keySet()) {
+			if (key != null && pattern.matches(key)) {
+				return expressionMap.get(key);
+			}
+		}
+		return null;
 	}
 
 	public void addExpression(Expression expression) {

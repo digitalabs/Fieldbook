@@ -37,7 +37,12 @@ public class ProcessCodeServiceImpl implements ProcessCodeService {
 
 			@Override
 			public void evaluateCapturedExpression(String capturedText, String originalInput, int start, int end) {
-				Expression expression = ProcessCodeServiceImpl.this.factory.create(capturedText);
+				final Expression expression;
+				if (capturedText.contains(".")) {
+					expression = ProcessCodeServiceImpl.this.factory.lookup(capturedText);
+				} else {
+					expression = ProcessCodeServiceImpl.this.factory.create(capturedText);
+				}
 
 				// It's possible for the expression to add more elements to the builders variable.
 				if (expression != null) {

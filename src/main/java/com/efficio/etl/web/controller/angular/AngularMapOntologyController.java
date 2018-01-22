@@ -18,6 +18,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.WorkbenchAppPathResolver;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.Constants;
+import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,9 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 	@Resource
 	private ETLService etlService;
+	
+	@Resource
+	private DataImportService dataImportService;
 
 	@Resource
 	private ContextUtil contextUtil;
@@ -221,14 +225,15 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 			this.etlService.mergeVariableData(variables, workbook, this.userSelection);
-
 			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService
 					.convertToWorkbook(this.userSelection);
 
 			this.fieldbookService.addStudyUUIDConditionAndPlotIDFactorToWorkbook(importData, false);
 
+			org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbook(userSelection));
+			importData.setConstants(referenceWorkbook.getConstants());
+			importData.setConditions(referenceWorkbook.getConditions());
 			this.etlService.saveProjectOntology(importData, this.contextUtil.getCurrentProgramUUID());
-
 			this.userSelection.setStudyId(importData.getStudyDetails().getId());
 			this.userSelection.setTrialDatasetId(importData.getTrialDatasetId());
 			this.userSelection.setMeasurementDatasetId(importData.getMeasurementDatesetId());

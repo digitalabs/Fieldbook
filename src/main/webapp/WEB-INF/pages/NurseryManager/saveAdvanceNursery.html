@@ -6,11 +6,15 @@
 				<div class="modal-body">
 					<div class="row form-group">
 						<div class="col-xs-11 col-md-11" id="reviewNurseryModalHeader">
-							<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{nursery.nurserydetails.action.advance}"></label>
+							<label class="modal-title fbk-modal-title" th:text="#{nursery.nurserydetails.action.advance}"></label>
 						</div>
 
                         <div class="col-xs-11 col-md-11" id="reviewTrialModalHeader">
 							<label class="modal-title fbk-modal-title" th:text="#{trial.trialdetails.action.advance.trial}"></label>
+						</div>
+
+						<div class="col-xs-11 col-md-11" id="reviewSamplesModalHeader">
+							<label class="modal-title fbk-modal-title" th:text="#{trial.trialdetails.action.advance.sample}"></label>
 						</div>
 
 						<div class="col-xs-1 col-md-1">
@@ -88,12 +92,21 @@
         var warningMessage = /*[[#{nursery.advancelist.updateinventory.error.message}]]*/;
 
         if(!isNursery()){
-            $("#reviewNurseryModalHeader").hide();
-            $("#reviewTrialModalHeader").show();
+			var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
+			if (advanceType == 'sample') {
+				$("#reviewNurseryModalHeader").hide();
+				$("#reviewSamplesModalHeader").show();
+				$("#reviewTrialModalHeader").hide();
+			} else {
+				$("#reviewTrialModalHeader").show();
+				$("#reviewNurseryModalHeader").hide();
+				$("#reviewSamplesModalHeader").hide();
+			}
         }
         else{
-            $("#reviewTrialModalHeader").hide();
-            $("#reviewNurseryModalHeader").show();
+			$("#reviewNurseryModalHeader").show();
+			$("#reviewSamplesModalHeader").hide();
+			$("#reviewTrialModalHeader").hide();
         }
     </script>
 </div>

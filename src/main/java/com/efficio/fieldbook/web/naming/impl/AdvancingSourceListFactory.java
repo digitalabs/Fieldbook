@@ -25,7 +25,9 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.sample.PlantDTO;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
@@ -48,17 +50,26 @@ public class AdvancingSourceListFactory {
 	@Resource
 	private ExpressionDataProcessorFactory dataProcessorFactory;
 
+	@Resource
+	private StudyDataManager studyDataManager;
+
 	private static final String DEFAULT_TEST_VALUE = "T";
 
 	public AdvancingSourceList createAdvancingSourceList(Workbook workbook, AdvancingNursery advanceInfo, Study nursery,
 			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
 
+		Map<Integer, List<PlantDTO>> sampledPlantsMap = new HashMap<>();
+		if (advanceInfo.getAdvanceType().equals(AdvanceType.SAMPLE)) {
+			final Integer studyId = advanceInfo.getStudy().getId();
+			sampledPlantsMap = this.studyDataManager.getSampledPlants(studyId);
+		}
+
 		AdvancingSource environmentLevel = new AdvancingSource();
 		ExpressionDataProcessor dataProcessor = dataProcessorFactory.retrieveExecutorProcessor();
 
-		AdvancingSourceList list = new AdvancingSourceList();
+		AdvancingSourceList advancingSourceList = new AdvancingSourceList();
 
-		List<AdvancingSource> rows = new ArrayList<>();
+		List<AdvancingSource> advancingPlotRows = new ArrayList<>();
 
 		Integer methodVariateId = advanceInfo.getMethodVariateId();
 		Integer lineVariateId = advanceInfo.getLineVariateId();
@@ -76,32 +87,32 @@ public class AdvancingSourceListFactory {
 
 		if (workbook != null && workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
 			for (MeasurementRow row : workbook.getObservations()) {
-                AdvancingSource source = environmentLevel.copy();
+                AdvancingSource advancingSourceCandidate = environmentLevel.copy();
                 
                 // Only advance entries for selected trial instances (environments) 
-				source.setTrialInstanceNumber(row.getMeasurementDataValue(TermId.TRIAL_INSTANCE_FACTOR.getId()));
-				if (source.getTrialInstanceNumber() != null && advanceInfo.getSelectedTrialInstances() != null
-						&& !advanceInfo.getSelectedTrialInstances().contains(source.getTrialInstanceNumber())) {
+				advancingSourceCandidate.setTrialInstanceNumber(row.getMeasurementDataValue(TermId.TRIAL_INSTANCE_FACTOR.getId()));
+				if (advancingSourceCandidate.getTrialInstanceNumber() != null && advanceInfo.getSelectedTrialInstances() != null
+						&& !advanceInfo.getSelectedTrialInstances().contains(advancingSourceCandidate.getTrialInstanceNumber())) {
 					continue;
 				}
 
 				// If study is Trail then setting data if trail instance is not null
-				if(source.getTrialInstanceNumber() != null){
+				if(advancingSourceCandidate.getTrialInstanceNumber() != null){
 					MeasurementRow trialInstanceObservations =
-							workbook.getTrialObservationByTrialInstanceNo(Integer.valueOf(source.getTrialInstanceNumber()));
+							workbook.getTrialObservationByTrialInstanceNo(Integer.valueOf(advancingSourceCandidate.getTrialInstanceNumber()));
 
-					source.setTrailInstanceObservation(trialInstanceObservations);
+					advancingSourceCandidate.setTrailInstanceObservation(trialInstanceObservations);
 				}
 
-				source.setStudyType(workbook.getStudyDetails().getStudyType());
+				advancingSourceCandidate.setStudyType(workbook.getStudyDetails().getStudyType());
 
 				// Setting conditions for Breeders Cross ID
-				source.setConditions(workbook.getConditions());
+				advancingSourceCandidate.setConditions(workbook.getConditions());
 
 				// Only advance entries for selected replications within an environment
-				source.setReplicationNumber(row.getMeasurementDataValue(TermId.REP_NO.getId()));
-				if (source.getReplicationNumber() != null && advanceInfo.getSelectedReplications() != null
-						&& !advanceInfo.getSelectedReplications().contains(source.getReplicationNumber())) {
+				advancingSourceCandidate.setReplicationNumber(row.getMeasurementDataValue(TermId.REP_NO.getId()));
+				if (advancingSourceCandidate.getReplicationNumber() != null && advanceInfo.getSelectedReplications() != null
+						&& !advanceInfo.getSelectedReplications().contains(advancingSourceCandidate.getReplicationNumber())) {
 					continue;
 				}
 
@@ -147,41 +158,51 @@ public class AdvancingSourceListFactory {
 
 				MeasurementData plotNumberData = row.getMeasurementData(TermId.PLOT_NO.getId());
 				if (plotNumberData != null) {
-					source.setPlotNumber(plotNumberData.getValue());
+					advancingSourceCandidate.setPlotNumber(plotNumberData.getValue());
 				}
 				
-				Method breedingMethod = breedingMethodMap.get(methodId);
 				Integer plantsSelected = null;
+				Method breedingMethod = breedingMethodMap.get(methodId);
+				if (advanceInfo.getAdvanceType().equals(AdvanceType.SAMPLE)) {
+					if (sampledPlantsMap.containsKey(row.getExperimentId())) {
+						plantsSelected = sampledPlantsMap.get(row.getExperimentId()).size();
+						advancingSourceCandidate.setPlants(sampledPlantsMap.get(row.getExperimentId()));
+					} else {
+						continue;
+					}
+				}
 				Boolean isBulk = breedingMethod.isBulkingMethod();
 				if (isBulk != null) {
-					if (isBulk && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
-						if (plotVariateId != null) {
-							plantsSelected = this.getIntegerValue(row.getMeasurementDataValue(plotVariateId));
-						}
-					} else {
-						if (lineVariateId != null && (advanceInfo.getLineChoice() == null || "0".equals(advanceInfo.getLineChoice()))) {
-							plantsSelected = this.getIntegerValue(row.getMeasurementDataValue(lineVariateId));
+					if (plantsSelected == null) {
+						if (isBulk && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
+							if (plotVariateId != null) {
+								plantsSelected = this.getIntegerValue(row.getMeasurementDataValue(plotVariateId));
+							}
+						} else {
+							if (lineVariateId != null && (advanceInfo.getLineChoice() == null || "0".equals(advanceInfo.getLineChoice()))) {
+								plantsSelected = this.getIntegerValue(row.getMeasurementDataValue(lineVariateId));
+							}
 						}
 					}
-					source.setGermplasm(germplasm);
-					source.setNames(names);
-					source.setPlantsSelected(plantsSelected);
-					source.setBreedingMethod(breedingMethod);
-					source.setCheck(isCheck);
-					source.setNurseryName(nurseryName);
+					advancingSourceCandidate.setGermplasm(germplasm);
+					advancingSourceCandidate.setNames(names);
+					advancingSourceCandidate.setPlantsSelected(plantsSelected);
+					advancingSourceCandidate.setBreedingMethod(breedingMethod);
+					advancingSourceCandidate.setCheck(isCheck);
+					advancingSourceCandidate.setNurseryName(nurseryName);
 
-                    dataProcessor.processPlotLevelData(source, row);
+                    dataProcessor.processPlotLevelData(advancingSourceCandidate, row);
 
-					rows.add(source);
+					advancingPlotRows.add(advancingSourceCandidate);
 				}
 
 			}
 		}
 
-		this.setNamesToGermplasm(rows, gids);
-		list.setRows(rows);
-		this.assignSourceGermplasms(list, breedingMethodMap);
-		return list;
+		this.setNamesToGermplasm(advancingPlotRows, gids);
+		advancingSourceList.setRows(advancingPlotRows);
+		this.assignSourceGermplasms(advancingSourceList, breedingMethodMap);
+		return advancingSourceList;
 	}
 
 	private void setNamesToGermplasm(List<AdvancingSource> rows, List<Integer> gids) throws MiddlewareQueryException {

@@ -367,7 +367,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			final org.generationcp.middleware.domain.etl.Workbook importData =
 					this.etlService.retrieveAndSetProjectOntology(this.userSelection, isMeansDataImport);
 
-			final List<MeasurementVariable> studyHeaders = importData.getAllVariables();
+			final List<MeasurementVariable> studyHeaders = importData.getFactors();
 
 			final List<String> fileHeaders = this.etlService
 					.retrieveColumnHeaders(workbook, this.userSelection, this.etlService.headersContainsPlotId(importData));

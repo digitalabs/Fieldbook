@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -33,6 +34,7 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.service.api.SampleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -65,6 +67,9 @@ import com.google.common.collect.Maps;
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
 public abstract class BaseTrialController extends SettingsController {
+
+	@Resource
+	protected SampleService sampleService;
 
 	private static final Logger LOG = LoggerFactory.getLogger(BaseTrialController.class);
 

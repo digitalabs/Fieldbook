@@ -42,7 +42,8 @@
 
 							<div class="row form-group">
 								<label class="control-label col-xs-12">
-									<strong class="sub-content-heading" th:text="#{advancing.nursery.method}">METHODS</strong>
+									<strong class="sub-content-heading" th:text="#{advancing.nursery.method}">METHODS</strong><span
+										class="required" th:if="${advanceType} == 'sample'">*</span>
 								</label>
 							</div>
 

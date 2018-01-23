@@ -190,11 +190,9 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 			}
 		}
 
-		Assert.assertEquals("The number of root nodes should be 2", 2, numberOfRootNodes);
-		Assert.assertEquals("The first root node should be have an id of " + GermplasmTreeController.CROP_LISTS,
-				GermplasmTreeController.CROP_LISTS, rootNodes.get(0).getId());
-		Assert.assertEquals("The first root node should be have an id of " + GermplasmTreeController.CROP_LISTS,
-				GermplasmTreeController.PROGRAM_LISTS, rootNodes.get(1).getId());
+		Assert.assertEquals("The number of root nodes should be 1", 1, numberOfRootNodes);
+		Assert.assertEquals("The first root node should be have an id of " + GermplasmTreeController.PROGRAM_LISTS,
+				GermplasmTreeController.PROGRAM_LISTS, rootNodes.get(0).getId());
 	}
 
 

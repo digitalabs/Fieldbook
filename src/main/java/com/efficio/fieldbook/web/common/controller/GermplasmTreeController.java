@@ -898,12 +898,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/loadInitGermplasmTreeTable", method = RequestMethod.GET)
 	public String loadInitialGermplasmTreeTable(final Model model) {
 		final List<TreeTableNode> rootNodes = new ArrayList<>();
-		final TreeTableNode cropListsNode =
-				new TreeTableNode(GermplasmTreeController.CROP_LISTS, AppConstants.CROP_LISTS.getString(), null, null, null, null, "1");
 		final TreeTableNode programListsNode =
 				new TreeTableNode(GermplasmTreeController.PROGRAM_LISTS, AppConstants.PROGRAM_LISTS.getString(), null, null, null, null,
 						"1");
-		rootNodes.add(cropListsNode);
 		rootNodes.add(programListsNode);
 		model.addAttribute(GermplasmTreeController.GERMPLASM_LIST_ROOT_NODES, rootNodes);
 		return super.showAjaxPage(model, GermplasmTreeController.GERMPLASM_LIST_TABLE_PAGE);

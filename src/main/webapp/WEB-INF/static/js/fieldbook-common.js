@@ -1922,7 +1922,7 @@ function callAdvanceNursery() {
 	var methdodId = $('#advanceBreedingMethodId').val();
 
 	var repsSectionIsDisplayed = $('#reps-section').length;
-    if(!isNursery() && repsSectionIsDisplayed) {
+    if(!isNursery()  && repsSectionIsDisplayed) {
         var selectedReps = [];
         $('#replications input:checked').each(function() {
             selectedReps.push($(this).val());
@@ -1934,7 +1934,7 @@ function callAdvanceNursery() {
         }
     }
 
-	if (methdodId === '0') {
+	if (methdodId === '0' || methdodId === '') {
 		showErrorMessage('page-advance-modal-message', msgMethodError);
 		return false;
 	} else if (lines && !lines.match(/^\s*(\+|-)?\d+\s*$/)) {

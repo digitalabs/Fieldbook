@@ -28,9 +28,14 @@ public class ProcessCodeFactory {
 	 * @return the first Expression that match the pattern
 	 */
 	public Expression lookup(final String pattern) {
+		if (expressionMap.containsKey(pattern)) {
+			return expressionMap.get(pattern);
+		}
 		for (String key : expressionMap.keySet()) {
 			if (key != null && pattern.matches(key)) {
-				return expressionMap.get(key);
+				Expression expression = expressionMap.get(key);
+				expressionMap.put(pattern, expression); // memoize
+				return expression;
 			}
 		}
 		return null;

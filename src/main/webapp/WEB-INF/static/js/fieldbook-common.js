@@ -1920,6 +1920,9 @@ function callAdvanceNursery() {
 
 	var lines = $('#lineSelected').val();
 	var methdodId = $('#advanceBreedingMethodId').val();
+	if (!isNursery) {
+		var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
+	}
 
 	var repsSectionIsDisplayed = $('#reps-section').length;
     if(!isNursery() && repsSectionIsDisplayed) {
@@ -1934,7 +1937,7 @@ function callAdvanceNursery() {
         }
     }
 
-	if (methdodId === '0') {
+	if (methdodId === '0' || (methdodId === '' && advanceType == 'sample')) {
 		showErrorMessage('page-advance-modal-message', msgMethodError);
 		return false;
 	} else if (lines && !lines.match(/^\s*(\+|-)?\d+\s*$/)) {

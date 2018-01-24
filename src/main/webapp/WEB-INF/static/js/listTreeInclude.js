@@ -63,12 +63,19 @@ function doGermplasmLazyLoad(node) {
 				if (node.data.isFolder === false) {
 					changeBrowseGermplasmButtonBehavior(false);
 				} else {
+
+
+
 					if (node.data.key === 'LISTS' || node.data.key === 'CROPLISTS') {
 						changeBrowseGermplasmButtonBehavior(true);
 						$('.edit-germplasm-folder').addClass(
 							'disable-image');
 						$('.delete-germplasm-folder').addClass(
 							'disable-image');
+						if (node.data.key === 'CROPLISTS') {
+							$('.create-germplasm-folder').addClass(
+								'disable-image');
+						}
 					} else {
 						changeBrowseGermplasmButtonBehavior(true);
 					}
@@ -115,6 +122,10 @@ function doSampleLazyLoad(node) {
 							'disable-image');
 						$('.delete-germplasm-folder').addClass(
 							'disable-image');
+						if (node.data.key === 'CROPLISTS') {
+							$('.create-germplasm-folder').addClass(
+								'disable-image');
+						}
 					} else {
 						changeBrowseSampleButtonBehavior(true);
 					}
@@ -232,6 +243,10 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 						'disable-image');
 					$('.delete-germplasm-folder').addClass(
 						'disable-image');
+					if ( node.data.key === 'CROPLISTS') {
+						$('.create-germplasm-folder').addClass(
+							'disable-image');
+					}
 				} else {
 					changeBrowseGermplasmButtonBehavior(true);
 				}
@@ -399,6 +414,10 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 						'disable-image');
 					$('.delete-germplasm-folder').addClass(
 						'disable-image');
+					if ( node.data.key === 'CROPLISTS') {
+						$('.create-germplasm-folder').addClass(
+							'disable-image');
+					}
 				} else {
 					changeBrowseSampleButtonBehavior(true);
 				}

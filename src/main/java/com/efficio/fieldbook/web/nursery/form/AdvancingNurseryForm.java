@@ -142,6 +142,8 @@ public class AdvancingNurseryForm {
 
     private Set<String> selectedReplications;
 
+	private String advanceType;
+
     
 	public Set<String> getSelectedTrialInstances() {
 		return this.selectedTrialInstances;
@@ -884,6 +886,14 @@ public class AdvancingNurseryForm {
 	 */
 	public void setErrorInAdvance(String errorInAdvance) {
 		this.errorInAdvance = errorInAdvance;
+	}
+
+	public String getAdvanceType() {
+		return advanceType;
+	}
+
+	public void setAdvanceType(String advanceType) {
+		this.advanceType = advanceType;
 	}
 
 	@Override

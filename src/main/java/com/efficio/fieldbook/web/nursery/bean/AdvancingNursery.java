@@ -64,6 +64,8 @@ public class AdvancingNursery implements Serializable {
 
     private Set<String> selectedReplications;
 
+	private AdvanceType advanceType;
+
 	public Set<String> getSelectedTrialInstances() {
 		return this.selectedTrialInstances;
 	}
@@ -284,6 +286,14 @@ public class AdvancingNursery implements Serializable {
 
 	public void setCheckAdvanceLinesUnique(boolean isCheckAdvanceLinesUnique) {
 		this.isCheckAdvanceLinesUnique = isCheckAdvanceLinesUnique;
+	}
+
+	public AdvanceType getAdvanceType() {
+		return advanceType;
+	}
+
+	public void setAdvanceType(AdvanceType advanceType) {
+		this.advanceType = advanceType;
 	}
 
 	@Override

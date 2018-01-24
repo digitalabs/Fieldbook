@@ -89,11 +89,8 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/loadInitTreeTable", method = RequestMethod.GET)
 	public String loadInitialSampleTreeTable(final Model model) {
 		final List<TreeTableNode> rootNodes = new ArrayList<>();
-		final TreeTableNode cropListNode =
-				new TreeTableNode(SampleTreeController.CROP_LISTS, AppConstants.CROP_LISTS.getString(), null, null, null, null, "1");
 		final TreeTableNode localNode =
 				new TreeTableNode(SampleTreeController.PROGRAM_LISTS, AppConstants.SAMPLE_LISTS.getString(), null, null, null, null, "1");
-		rootNodes.add(cropListNode);
 		rootNodes.add(localNode);
 		model.addAttribute(SampleTreeController.GERMPLASM_LIST_ROOT_NODES, rootNodes);
 		return super.showAjaxPage(model, SampleTreeController.GERMPLASM_LIST_TABLE_PAGE);

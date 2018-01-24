@@ -1219,13 +1219,14 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final Map<String, Object> resultsMap = new HashMap<>();
 
 		try {
+
 			final GermplasmList gpList = this.germplasmListManager.getGermplasmListById(Integer.parseInt(sourceId));
 
-			if (targetId != null && PROGRAM_LISTS.equals(targetId) && CROP_LISTS.equals(targetId)) {
+			if (targetId == null || PROGRAM_LISTS.equals(targetId) || CROP_LISTS.equals(targetId)) {
+				gpList.setParent(null);
+			} else {
 				final GermplasmList parent = this.germplasmListManager.getGermplasmListById(Integer.parseInt(targetId));
 				gpList.setParent(parent);
-			} else {
-				gpList.setParent(null);
 			}
 
 			if (CROP_LISTS.equals(targetId)) {
@@ -1239,6 +1240,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		} catch (final Exception e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
 		}
+
 		return resultsMap;
 	}
 

@@ -42,6 +42,7 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -751,6 +752,75 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals(1, germplasmList.getStatus().intValue());
 		Assert.assertEquals(LIST_NOTES, germplasmList.getNotes());
 		Assert.assertEquals(TEST_PROGRAM_UUID, germplasmList.getProgramUUID());
+
+	}
+
+	@Test
+	public void testMoveStudyFolderMoveToCropListsFolder() {
+
+		final String germplasmListId = "1";
+		Mockito.when(request.getParameter("sourceId")).thenReturn(germplasmListId);
+		Mockito.when(request.getParameter("targetId")).thenReturn(GermplasmTreeController.CROP_LISTS);
+
+		final GermplasmList germplasmListToBeMoved = new GermplasmList(Integer.valueOf(germplasmListId));
+		Mockito.when(germplasmListManager.getGermplasmListById(Integer.valueOf(germplasmListId))).thenReturn(germplasmListToBeMoved);
+
+		controller.moveStudyFolder(request);
+
+		final ArgumentCaptor<GermplasmList> captor = ArgumentCaptor.forClass(GermplasmList.class);
+		Mockito.verify(germplasmListManager).updateGermplasmList(captor.capture());
+
+		final GermplasmList germplasmList = captor.getValue();
+
+		Assert.assertNull(germplasmList.getProgramUUID());
+		Assert.assertNull(germplasmList.getParent());
+
+	}
+
+	@Test
+	public void testMoveStudyFolderMoveToProgramListsFolder() {
+
+		final String germplasmListId = "1";
+		Mockito.when(request.getParameter("sourceId")).thenReturn(germplasmListId);
+		Mockito.when(request.getParameter("targetId")).thenReturn(GermplasmTreeController.PROGRAM_LISTS);
+
+		final GermplasmList germplasmListToBeMoved = new GermplasmList(Integer.valueOf(germplasmListId));
+		Mockito.when(germplasmListManager.getGermplasmListById(Integer.valueOf(germplasmListId))).thenReturn(germplasmListToBeMoved);
+
+		controller.moveStudyFolder(request);
+
+		final ArgumentCaptor<GermplasmList> captor = ArgumentCaptor.forClass(GermplasmList.class);
+		Mockito.verify(germplasmListManager).updateGermplasmList(captor.capture());
+
+		final GermplasmList germplasmList = captor.getValue();
+
+		Assert.assertEquals(TEST_PROGRAM_UUID, germplasmList.getProgramUUID());
+		Assert.assertNull(germplasmList.getParent());
+
+	}
+
+	@Test
+	public void testMoveStudyFolderMoveToFolder() {
+
+		final String germplasmListId = "1";
+		final String folderId = "2";
+		Mockito.when(request.getParameter("sourceId")).thenReturn(germplasmListId);
+		Mockito.when(request.getParameter("targetId")).thenReturn(folderId);
+
+		final GermplasmList germplasmListToBeMoved = new GermplasmList(Integer.valueOf(germplasmListId));
+		final GermplasmList folderGermplasmList = new GermplasmList(Integer.valueOf(folderId));
+		Mockito.when(germplasmListManager.getGermplasmListById(Integer.valueOf(germplasmListId))).thenReturn(germplasmListToBeMoved);
+		Mockito.when(germplasmListManager.getGermplasmListById(Integer.valueOf(folderId))).thenReturn(folderGermplasmList);
+
+		controller.moveStudyFolder(request);
+
+		final ArgumentCaptor<GermplasmList> captor = ArgumentCaptor.forClass(GermplasmList.class);
+		Mockito.verify(germplasmListManager).updateGermplasmList(captor.capture());
+
+		final GermplasmList germplasmList = captor.getValue();
+
+		Assert.assertEquals(TEST_PROGRAM_UUID, germplasmList.getProgramUUID());
+		Assert.assertEquals(folderGermplasmList, germplasmList.getParent());
 
 	}
 	

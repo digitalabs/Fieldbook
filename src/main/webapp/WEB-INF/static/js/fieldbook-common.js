@@ -2846,7 +2846,8 @@ function moveSamplesListFolder(sourceNode, targetNode) {
 	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 	$.ajax({
-		url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + sourceId + '/move?newParentId=' + targetId + '&isCropList=' + isCropList,
+		url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + sourceId + '/move?newParentId=' + targetId
+		+ '&isCropList=' + isCropList + '&programUUID=' + currentProgramId,
 		type: 'PUT',
 		beforeSend: function (xhr) {
 			xhr.setRequestHeader('X-Auth-Token', xAuthToken);

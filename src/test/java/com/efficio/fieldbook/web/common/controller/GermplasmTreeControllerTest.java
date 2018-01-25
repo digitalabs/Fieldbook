@@ -732,7 +732,7 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals(TEST_USER_ID, germplasmList.getUserId());
 		Assert.assertEquals(LIST_DESCRIPTION, germplasmList.getDescription());
 		Assert.assertNull(GermplasmTreeController.CROP_LISTS, germplasmList.getParent());
-		Assert.assertEquals(101, germplasmList.getStatus().intValue());
+		Assert.assertEquals(GermplasmTreeController.LOCKED_LIST_STATUS, germplasmList.getStatus().intValue());
 		Assert.assertEquals(LIST_NOTES, germplasmList.getNotes());
 		Assert.assertNull(germplasmList.getProgramUUID());
 

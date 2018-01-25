@@ -23,7 +23,6 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
@@ -196,7 +195,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 	}
 
 
-	private void mockGermplasmListManagerAndItsMethods() throws MiddlewareQueryException {
+	private void mockGermplasmListManagerAndItsMethods() {
 		GermplasmListManager germplasmListManager = Mockito.mock(GermplasmListManager.class);
 		Mockito.when(germplasmListManager.getAllTopLevelLists(GermplasmTreeControllerTestIT.PROGRAM_UUID)).thenReturn(GermplasmTreeControllerTestIT.PROGRAM_LISTS);
 		Mockito.when(germplasmListManager.getAllTopLevelLists(null)).thenReturn(GermplasmTreeControllerTestIT.CROP_LISTS);
@@ -222,7 +221,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testGetGermplasmListChildren() throws MiddlewareQueryException {
+	public void testGetGermplasmListChildren() {
 		TreeTableNode anyChildNode = new TreeTableNode(Integer.toString(EasyMock.anyInt()),
 				GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST, null, null, null, null, "1");
 		List<GermplasmList> germplasmListChildren = this.controller.getGermplasmListChildren(anyChildNode.getId(), PROGRAM_UUID);
@@ -238,7 +237,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testGetGermplasmListFolderChildNodes() throws MiddlewareQueryException {
+	public void testGetGermplasmListFolderChildNodes() {
 		TreeTableNode localRootNode =
 				new TreeTableNode(GermplasmTreeController.PROGRAM_LISTS, AppConstants.PROGRAM_LISTS.getString(), null, null, null, null, "1");
 		List<TreeTableNode> childNodes = this.controller.getGermplasmListFolderChildNodes(localRootNode, PROGRAM_UUID);
@@ -257,7 +256,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testGetGermplasmListFolderChildNodesById() throws MiddlewareQueryException {
+	public void testGetGermplasmListFolderChildNodesById() {
 		List<TreeTableNode> childNodes = this.controller.getGermplasmListFolderChildNodes(GermplasmTreeController.PROGRAM_LISTS, PROGRAM_UUID);
 		Assert.assertTrue(AppConstants.PROGRAM_LISTS.getString() + " should have " + childNodes.size() + " children", !childNodes.isEmpty());
 
@@ -266,7 +265,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testExpandGermplasmListFolderProgramLists() throws MiddlewareQueryException {
+	public void testExpandGermplasmListFolderProgramLists() {
 		ExtendedModelMap model = new ExtendedModelMap();
 		this.controller.expandGermplasmListFolder(GermplasmTreeController.PROGRAM_LISTS, model);
 		List<TreeTableNode> treeNodes = (List<TreeTableNode>) model.get(GermplasmTreeController.GERMPLASM_LIST_CHILD_NODES);
@@ -278,7 +277,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testExpandGermplasmListFolderCropLists() throws MiddlewareQueryException {
+	public void testExpandGermplasmListFolderCropLists() {
 		ExtendedModelMap model = new ExtendedModelMap();
 		this.controller.expandGermplasmListFolder(GermplasmTreeController.CROP_LISTS, model);
 		List<TreeTableNode> treeNodes = (List<TreeTableNode>) model.get(GermplasmTreeController.GERMPLASM_LIST_CHILD_NODES);
@@ -290,7 +289,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testCheckIfUniqueUsingTheRootFolderAsAnInput() throws MiddlewareQueryException {
+	public void testCheckIfUniqueUsingTheRootFolderAsAnInput() {
 		try {
 			this.controller.checkIfUnique(GermplasmTreeController.PROGRAM_LISTS, PROGRAM_UUID);
 		} catch (MiddlewareException e) {
@@ -299,7 +298,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testCheckIfUniqueUsingExistingListAsInput() throws MiddlewareQueryException {
+	public void testCheckIfUniqueUsingExistingListAsInput() {
 		GermplasmListManager germplasmListManager = Mockito.mock(GermplasmListManager.class);
 		String folderName = "Sample Folder Name";
 
@@ -325,7 +324,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 				this.controller.isSimilarToRootFolderName("Dummy Folder Name"));
 	}
 
-	public void testSaveCrossesListIfStudyIsNull() throws MiddlewareQueryException {
+	public void testSaveCrossesListIfStudyIsNull() {
 		UserSelection userSelection = new UserSelection();
 		userSelection.setWorkbook(null);
 		GermplasmTreeController treeController = new GermplasmTreeController();
@@ -343,7 +342,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testSaveCrossesListIfStudyIsNotNull() throws MiddlewareQueryException {
+	public void testSaveCrossesListIfStudyIsNotNull() {
 		UserSelection userSelection = new UserSelection();
 		Workbook workbook = new Workbook();
 		StudyDetails studyDetails = new StudyDetails();

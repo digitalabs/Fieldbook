@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
@@ -46,17 +45,17 @@ public class TreeViewUtilTest {
 	private static List<UserDefinedField> userDefinedFields;
 
 	@BeforeClass
-	public static void setupClass() throws MiddlewareQueryException {
+	public static void setupClass() {
 		TreeViewUtilTest.mockGermplasmListManagerAndSomeOfItsMethods();
 		TreeViewUtilTest.mockUserDataManagerAndSomeOfItsMethods();
 	}
 
-	private static void mockUserDataManagerAndSomeOfItsMethods() throws MiddlewareQueryException {
+	private static void mockUserDataManagerAndSomeOfItsMethods() {
 		TreeViewUtilTest.userDataManager = Mockito.mock(UserDataManager.class);
 		Mockito.when(TreeViewUtilTest.userDataManager.getUserById(TreeViewUtilTest.LIST_USER_ID)).thenReturn(null);
 	}
 
-	private static void mockGermplasmListManagerAndSomeOfItsMethods() throws MiddlewareQueryException {
+	private static void mockGermplasmListManagerAndSomeOfItsMethods() {
 		TreeViewUtilTest.germplasmListManager = Mockito.mock(GermplasmListManager.class);
 		TreeViewUtilTest.germplasmDataManager = Mockito.mock(GermplasmDataManager.class);
 		TreeViewUtilTest.userDefinedFields = TreeViewUtilTest.createGermplasmListUserDefinedFields();

@@ -128,6 +128,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 * The Constant BATCH_SIZE.
 	 */
 	public static final int BATCH_SIZE = 500;
+	public static final int LOCKED_LIST_STATUS = 101;
 
 	/**
 	 * The germplasm list manager.
@@ -648,7 +649,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		// so that the germplasm list will be accessible to all programs of the same crop.
 		if (GermplasmTreeController.CROP_LISTS.equals(saveListForm.getParentId())) {
 			// list should be locked by default if it is saved in 'Crop lists' folder.
-			germplasmList.setStatus(101);
+			germplasmList.setStatus(LOCKED_LIST_STATUS);
 		} else {
 			germplasmList.setProgramUUID(this.getCurrentProgramUUID());
 		}

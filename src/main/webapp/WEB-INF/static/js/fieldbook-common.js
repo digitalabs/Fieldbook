@@ -2894,12 +2894,12 @@ function moveSamplesListFolder(sourceNode, targetNode) {
 		targetId = targetNode.data.key;
 	var isCropList = false;
 
-	if (targetId === 'LISTS' || targetId === 'CROPLISTS') {
-		targetId = 0;
-	}
-
 	if (targetId === 'CROPLISTS') {
 		isCropList = true;
+	}
+
+	if (targetId === 'LISTS' || targetId === 'CROPLISTS') {
+		targetId = 0;
 	}
 
 	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;

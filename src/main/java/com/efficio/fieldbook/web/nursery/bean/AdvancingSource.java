@@ -11,6 +11,7 @@
 
 package com.efficio.fieldbook.web.nursery.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
@@ -19,6 +20,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.sample.PlantDTO;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 
@@ -68,6 +70,8 @@ public class AdvancingSource {
 	private MeasurementRow trailInstanceObservation;
 
 	private StudyType studyType;
+
+	private List<PlantDTO> plants = new ArrayList<>();
 
 	public AdvancingSource(ImportedGermplasm germplasm, List<Name> names, Integer plantsSelected, Method breedingMethod, boolean isCheck,
 			String nurseryName, String plotNumber) {
@@ -426,5 +430,13 @@ public class AdvancingSource {
 
 	public void setFemaleGid(final int femaleGid) {
 		this.femaleGid = femaleGid;
+	}
+
+	public List<PlantDTO> getPlants() {
+		return plants;
+	}
+
+	public void setPlants(final List<PlantDTO> plants) {
+		this.plants = plants;
 	}
 }

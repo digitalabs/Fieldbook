@@ -7,7 +7,13 @@ var possibleLocationsForTrial;
 
 function checkMethod() {
 	'use strict';
-	if ($('input[type=checkbox][name=methodChoice]:checked').val() == 1) {
+	var methodChoiceCheckbox = $('input[type=checkbox][name=methodChoice]');
+
+	if (!methodChoiceCheckbox.length) {
+		return;
+	}
+
+	if (methodChoiceCheckbox.is(':checked')) {
 		$('#methodIdFavorite').select2('enable', true);
 		$('#methodIdAll').select2('enable', true);
 		$('#methodIdDerivativeAndMaintenance').select2('enable', true);
@@ -74,7 +80,13 @@ function displaySectionsPerMethodVariateValues() {
 }
 
 function lineMethod() {
-	if ($('input[type=checkbox][name=lineChoice]:checked').val() == 1) {
+	var $lineCheckBox = $('input[type=checkbox][name=lineChoice]');
+
+	if (!$lineCheckBox.length) {
+		return;
+	}
+
+	if ($lineCheckBox.is(':checked')) {
 		$('#lineSelected').prop('disabled', false);
 		$('#lineSelected').val(oldLineSelected);
 		$('#line-variates-section').hide();
@@ -1694,14 +1706,14 @@ function nurseryValidateStartEndDateBasic() {
 
 }
 
-function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
+function recreateModalMethodCombo(comboName, comboFaveCBoxName, url) {
 	var selectedMethodAll = $('#methodIdAll').val();
 	var selectedMethodDerivativeAndMaintenance = $('#methodIdDerivativeAndMaintenance').val();
 	var selectedMethodDerivativeAndMaintenanceFavorite = $('#methodIdDerivativeAndMaintenanceFavorite').val();
 	var selectedMethodFavorite = $('#methodIdFavorite').val();
 
 	$.ajax({
-		url: '/Fieldbook/breedingMethod/getBreedingMethods',
+		url: url || '/Fieldbook/breedingMethod/getBreedingMethods',
 		type: 'GET',
 		cache: false,
 		data: '',
@@ -1774,7 +1786,13 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 	});
 }
 function plotMethod() {
-	if ($('input[type=checkbox][name=allPlotsChoice]:checked').val() == 1) {
+	var $plotCheckBox = $('input[type=checkbox][name=allPlotsChoice]');
+
+	if (!$plotCheckBox.length) {
+		return;
+	}
+
+	if ($plotCheckBox.is(':checked')) {
 		$('#plot-variates-section').hide();
 	} else {
 		$('#plot-variates-section').show();

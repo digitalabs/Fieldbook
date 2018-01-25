@@ -93,6 +93,7 @@ public class GermplasmTreeControllerTest {
 	private static final int REP_FIELD_NO = 1153;
 	private static final int PLOT_FIELD_NO = 1154;
 	private static final int TRIAL_INSTANCE_FIELD_NO = 1155;
+	private static final int PLANT_NUMBER = 1156;
 
 	@Mock
 	private ResourceBundleMessageSource messageSource;
@@ -178,7 +179,9 @@ public class GermplasmTreeControllerTest {
 		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT",
 				"INSTANCE_NUMBER"))
 				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.TRIAL_INSTANCE_FIELD_NO));
-
+		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT",
+				"PLANT_NUMBER"))
+				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.PLANT_NUMBER));
 		Mockito.when(this.contextUtil.getCurrentUserLocalId()).thenReturn(GermplasmTreeControllerTest.TEST_USER_ID);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(GermplasmTreeControllerTest.TEST_PROGRAM_UUID);
 		Mockito.when(this.fieldbookMiddlewareService.getOwnerListName(GermplasmTreeControllerTest.TEST_USER_ID))
@@ -517,7 +520,7 @@ public class GermplasmTreeControllerTest {
 
 		// Called 3x - for REP, TRIAL_INSTANCE and PLOT FieldNos - and not
 		// inside germplasm list loop
-		Mockito.verify(this.germplasmDataManager, Mockito.times(3)).getUserDefinedFieldByTableTypeAndCode(
+		Mockito.verify(this.germplasmDataManager, Mockito.times(4)).getUserDefinedFieldByTableTypeAndCode(
 				Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
 
 		// Check Attribute Objects created. Additional attributes are created
@@ -600,7 +603,7 @@ public class GermplasmTreeControllerTest {
 
 		// Called 3x - for REP, TRIAL_INSTANCE and PLOT FieldNos - and not
 		// inside germplasm list loop
-		Mockito.verify(this.germplasmDataManager, Mockito.times(3)).getUserDefinedFieldByTableTypeAndCode(
+		Mockito.verify(this.germplasmDataManager, Mockito.times(4)).getUserDefinedFieldByTableTypeAndCode(
 				Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
 
 		// Check Attribute Objects created. Additional attributes are created

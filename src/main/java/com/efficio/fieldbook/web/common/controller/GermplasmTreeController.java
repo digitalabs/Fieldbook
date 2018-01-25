@@ -748,10 +748,12 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final Integer plotFldNo = this.getPassportAttributeForCode("PLOT_NUMBER");
 		Integer trialInstanceFldNo = 0;
 		Integer repFldNo = 0;
+		Integer plantNumberFldNo = 0;
 		// get FLDNOs for Attribute Objects to be created
 		if (this.userSelection.isTrial()) {
 			repFldNo = this.getPassportAttributeForCode("REP_NUMBER");
 			trialInstanceFldNo = this.getPassportAttributeForCode("INSTANCE_NUMBER");
+			plantNumberFldNo = this.getPassportAttributeForCode("PLANT_NUMBER");
 		}
 
 		// Create germplasms to save - Map<Germplasm, List<Name>>
@@ -840,6 +842,12 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 						this.createAttributeObject(currentUserID, importedGermplasm.getTrialInstanceNumber(), trialInstanceFldNo,
 								locationId, gDate);
 				attributesPerGermplasm.add(instanceNoAttribute);
+
+				if (importedGermplasm.getPlantNumber() != null) {
+					final Attribute plantNoAttribute = this.createAttributeObject(currentUserID,
+							importedGermplasm.getPlantNumber(), plantNumberFldNo, locationId, gDate);
+					attributesPerGermplasm.add(plantNoAttribute);
+				}
 			}
 
 			germplasmAttributes.add(new ImmutablePair<Germplasm, List<Attribute>>(germplasm, Lists.newArrayList(attributesPerGermplasm)));

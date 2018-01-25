@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.naming.impl;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessor;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory;
+import com.efficio.fieldbook.web.nursery.bean.AdvanceType;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
@@ -23,6 +24,7 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.sample.PlantDTO;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
@@ -36,6 +38,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -125,11 +128,12 @@ public class AdvancingSourceListFactoryTest {
         bulkMethod.setMname("Breeding Method");
         bulkMethod.setPrefix("prefix");
 
-        breedingMethodMap.put(13,bulkMethod);
+        breedingMethodMap.put(13, bulkMethod);
         Map<String, Method > breedingMethodCodeMap = Maps.newConcurrentMap();
 
         advanceInfo.setSelectedTrialInstances(Sets.newHashSet(ENV_NUMBER));
         advanceInfo.setSelectedReplications(Sets.newHashSet(REPLICATION_NUMBER));
+        advanceInfo.setAdvanceType(AdvanceType.TRIAL);
         
         AdvancingSourceList advancingSourceList = factory.createAdvancingSourceList(workBook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 
@@ -240,10 +244,11 @@ public class AdvancingSourceListFactoryTest {
         breedingMethodMap.put(30,variateMethod);
 
         Map<String, Method > breedingMethodCodeMap = Maps.newConcurrentMap();
-        breedingMethodCodeMap.put("DSP",variateMethod);
+        breedingMethodCodeMap.put("DSP", variateMethod);
 
         advanceInfo.setSelectedTrialInstances(Sets.newHashSet(ENV_NUMBER));
         advanceInfo.setSelectedReplications(Sets.newHashSet(REPLICATION_NUMBER));
+        advanceInfo.setAdvanceType(AdvanceType.TRIAL);
 
         AdvancingSourceList advancingSourceList = factory.createAdvancingSourceList(workBook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 

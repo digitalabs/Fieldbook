@@ -2,9 +2,11 @@
 package com.efficio.fieldbook.web.naming.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.efficio.fieldbook.web.nursery.bean.AdvanceType;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
@@ -15,6 +17,7 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.sample.PlantDTO;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -253,7 +256,8 @@ public class NamingConventionServiceImplTest {
         as1.setCurrentMaxSequence(0);
         rows.getRows().add(as1);
 
-        Mockito.when(this.advancingSourceListFactory.createAdvancingSourceList(Mockito.isA(Workbook.class),Mockito.isA(AdvancingNursery.class),Mockito.isA(Study.class),Mockito.isA(Map.class),Mockito.isA(Map.class)))
+        Mockito.when(this.advancingSourceListFactory.createAdvancingSourceList(Mockito.isA(Workbook.class),
+				Mockito.isA(AdvancingNursery.class), Mockito.isA(Study.class), Mockito.isA(Map.class), Mockito.isA(Map.class)))
                 .thenReturn(rows);
 
         Mockito.when(this.ruleFactory.getRuleSequenceForNamespace(Mockito.eq("naming"))).thenReturn(new String[] {"RootNameGenerator"});
@@ -271,6 +275,7 @@ public class NamingConventionServiceImplTest {
         info.setLineSelected("1");
         info.setAllPlotsChoice("1");
         info.setLineSelected("1");
+		info.setAdvanceType(AdvanceType.TRIAL);
 
         Study study = new Study();
         study.setId(2345);

@@ -122,9 +122,18 @@
 								</ul>
 							</li>
 
-							<li ng-show="hasMeasurementData()">
-                                <a href="javascript: advanceTrial();" id="advance-trial-link"
-								   th:text="#{trial.trialdetails.action.advance.trial}">Advance Trial</a>
+							<li class="dropdown-submenu pull-left" ng-show="hasMeasurementData()">
+								<a tabindex="-1" href="#">Advance trial options</a>
+								<ul class="dropdown-menu" style="margin-left: -16px;">
+									<li>
+										<a href="javascript: startAdvance('trial');" id="advance-trial-link"
+										   th:text="#{trial.trialdetails.action.advance.trial}">Advance Trial</a>
+									</li>
+									<li>
+										<a href="javascript: startAdvance('sample');" id="advance-sample-link"
+										   th:text="#{trial.trialdetails.action.advance.sample}">Advance sampled plants</a>
+									</li>
+								</ul>
                             </li>
 							<li>
 								<a th:href="@{/TrialManager}" th:text="#{trial.trialdetails.action.close.trial}">Close Trial</a>
@@ -630,6 +639,12 @@ jQuery(function() {
 });
 
 //]]>
+</script>
+
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[
+	var advanceSamplesError = /*[[#{common.error.advance.samples}]]*/ '';
+	//]]>
 </script>
 
 <!-- Controller js files for each tabs -->

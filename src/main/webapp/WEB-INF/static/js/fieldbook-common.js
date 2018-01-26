@@ -1009,7 +1009,17 @@ function deleteNurseryInEdit() {
 	});
 }
 
-/* ADVANCING TRIAL SPECIFIC FUNCTIONS */
+/* ADVANCING SPECIFIC FUNCTIONS */
+
+function startAdvance(advanceType) {
+	var $scope = angular.element('#selectEnvironmentModal').scope();
+	$scope.applicationData.advanceType = advanceType;
+	if (advanceType == 'sample') {
+		advanceSample();
+	} else {
+		advanceTrial();
+	}
+}
 
 function advanceTrial() {
 	'use strict';
@@ -1033,6 +1043,36 @@ function advanceTrial() {
 	var $scope = angular.element('#selectEnvironmentModal').scope();
 	$scope.init();
 	$scope.$apply();
+}
+
+function advanceSample() {
+	'use strict';
+	var idVal = $('#studyId').val();
+
+	// Validate if there is something to advance
+	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+
+	$.ajax({
+		url: '/bmsapi/study/' + cropName + '/' + idVal + '/sampled',
+		type: 'GET',
+		async: false,
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+		}
+	}).done(function (data) {
+		if (data == false) {
+			showErrorMessage('', advanceSamplesError);
+		} else {
+			advanceTrial();
+		}
+	}).fail(function (data) {
+		if (data.status == 401) {
+			bmsAuth.handleReAuthentication();
+		} else {
+			showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
+		}
+	});
+
 }
 
 function backAdvanceTrial() {
@@ -1062,12 +1102,12 @@ function createSample() {
 	scope.$apply();
 }
 
-function trialSelectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, isTrialInstanceNumberUsed) {
+function trialSelectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, isTrialInstanceNumberUsed, advanceType) {
 	'use strict';
 	var idVal = $('#studyId').val();
 	$('#selectEnvironmentModal').modal('hide');
 	var locationDetailHtml = generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed);
-	advanceStudy(idVal, trialInstances, noOfReplications, locationDetailHtml);
+	advanceStudy(idVal, trialInstances, noOfReplications, locationDetailHtml, advanceType);
 }
 
 
@@ -1123,7 +1163,7 @@ function advanceNursery() {
  * @param studyId Nursery or Trial study Id
  * @param locationIds Location will be passed for Advance Trial only
  */
-function advanceStudy(studyId, trialInstances,noOfReplications,locationDetailHtml){
+function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailHtml, advanceType) {
     'use strict';
     var count = 0,
         idVal = studyId;
@@ -1134,10 +1174,10 @@ function advanceStudy(studyId, trialInstances,noOfReplications,locationDetailHtm
     }
 
     count++;
-    if (count !== 1) {
-        showMessage(advanceStudyError);
-        return;
-    }
+	if (count !== 1) {
+		showMessage(advanceStudyError);
+		return;
+	}
 
 	//TODO do we advance the trial using the same ajax function as advancing the nursery from the nursery manager.
 	//TODO Should that be common then with the common path?
@@ -1149,6 +1189,9 @@ function advanceStudy(studyId, trialInstances,noOfReplications,locationDetailHtm
         if(noOfReplications) {
         	advanceStudyHref = advanceStudyHref + '&noOfReplications=' + encodeURIComponent(noOfReplications);
         }
+        if (advanceType) {
+			advanceStudyHref = advanceStudyHref + '&advanceType=' + encodeURIComponent(advanceType);
+		}
     }
 
     if (idVal != null) {
@@ -1877,6 +1920,9 @@ function callAdvanceNursery() {
 
 	var lines = $('#lineSelected').val();
 	var methdodId = $('#advanceBreedingMethodId').val();
+	if (!isNursery) {
+		var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
+	}
 
 	var repsSectionIsDisplayed = $('#reps-section').length;
     if(!isNursery() && repsSectionIsDisplayed) {
@@ -1891,10 +1937,10 @@ function callAdvanceNursery() {
         }
     }
 
-	if (methdodId === '0') {
+	if (methdodId === '0' || (methdodId === '' && advanceType == 'sample')) {
 		showErrorMessage('page-advance-modal-message', msgMethodError);
 		return false;
-	} else if (!lines.match(/^\s*(\+|-)?\d+\s*$/)) {
+	} else if (lines && !lines.match(/^\s*(\+|-)?\d+\s*$/)) {
 		showErrorMessage('page-advance-modal-message', linesNotWholeNumberError);
 		return false;
 	} else if (validatePlantsSelected()) {
@@ -2082,7 +2128,20 @@ function checkIfNull(object) {
 	}
 }
 
-function recreateMethodCombo(possibleFavorite) {
+function getAdvanceBreedingMethodURL() {
+	var url = '/Fieldbook/breedingMethod/getBreedingMethods';
+	if (isNursery()) {
+		return url;
+	}
+
+	var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
+	if (advanceType == 'sample') {
+		return '/Fieldbook/breedingMethod/getNoBulkingBreedingMethods';
+	}
+	return url;
+}
+
+function recreateMethodCombo(possibleFavorite, url) {
 	var selectedMethodAll = $('#methodIdAll').val(),
 		selectedMethodFavorite = $('#methodIdFavorite').val();
 	var createGermplasm = false;
@@ -2096,7 +2155,7 @@ function recreateMethodCombo(possibleFavorite) {
 	}
 
 	$.ajax({
-		url: '/Fieldbook/breedingMethod/getBreedingMethods',
+		url: url || '/Fieldbook/breedingMethod/getBreedingMethods',
 		type: 'GET',
 		cache: false,
 		data: '',
@@ -2833,15 +2892,21 @@ function moveSamplesListFolder(sourceNode, targetNode) {
 	'use strict';
 	var sourceId = sourceNode.data.key,
 		targetId = targetNode.data.key;
+	var isCropList = false;
 
-	if (targetId === 'LISTS') {
+	if (targetId === 'CROPLISTS') {
+		isCropList = true;
+	}
+
+	if (targetId === 'LISTS' || targetId === 'CROPLISTS') {
 		targetId = 0;
 	}
 
 	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 	$.ajax({
-		url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + sourceId + '/move?newParentId=' + targetId,
+		url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + sourceId + '/move?newParentId=' + targetId
+		+ '&isCropList=' + isCropList + '&programUUID=' + currentProgramId,
 		type: 'PUT',
 		beforeSend: function (xhr) {
 			xhr.setRequestHeader('X-Auth-Token', xAuthToken);

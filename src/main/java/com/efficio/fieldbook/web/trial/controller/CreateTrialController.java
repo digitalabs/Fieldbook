@@ -32,6 +32,7 @@ import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,6 +63,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
  */
 @Controller
 @RequestMapping(CreateTrialController.URL)
+@Transactional
 public class CreateTrialController extends BaseTrialController {
 
 	/**

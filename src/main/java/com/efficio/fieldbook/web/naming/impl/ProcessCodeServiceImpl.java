@@ -46,7 +46,7 @@ public class ProcessCodeServiceImpl implements ProcessCodeService {
 
 				// It's possible for the expression to add more elements to the builders variable.
 				if (expression != null) {
-					expression.apply(builders, source);
+					expression.apply(builders, source, capturedText);
 				}
 			}
 		});

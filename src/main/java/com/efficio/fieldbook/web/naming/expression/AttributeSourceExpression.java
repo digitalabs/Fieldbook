@@ -1,31 +1,39 @@
 package com.efficio.fieldbook.web.naming.expression;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import org.slf4j.LoggerFactory;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
 public class AttributeSourceExpression extends BaseExpression {
 
+	@Autowired
+	private GermplasmDataManager germplasmDataManager;
+
 	public static final String PATTERN_KEY = "\\[ATTRSC\\.([^\\.]*)\\]"; // Example: ATTRSC.NOTES
 	private static final Pattern pattern = Pattern.compile(PATTERN_KEY);
 
 	@Override
-	public void apply(final List<StringBuilder> values, final AdvancingSource source) {
-		// TODO
+	public void apply(final List<StringBuilder> values, final AdvancingSource source, final String capturedText) {
 		for (StringBuilder value : values) {
-			this.replaceExpressionWithValue(value, "SomeExampleString");
+			String newValue = "";
+			if ((source.getBreedingMethod().getMtype().equals("DER") || source.getBreedingMethod().getMtype().equals("MAN"))
+					&& source.getGermplasm().getGpid2() != 0) {
+				final String attributeName = capturedText.substring(1, capturedText.length()-1).split("\\.")[1];
+				newValue = germplasmDataManager.getAttributeValue(Integer.parseInt(source.getGermplasm().getGid()), attributeName);
+			}
+			this.replaceExpressionWithValue(value, newValue);
 		}
 	}
 
 	@Override
 	public String getExpressionKey() {
-		return PATTERN_KEY;
+		return AttributeSourceExpression.PATTERN_KEY;
 	}
 
 	@Override

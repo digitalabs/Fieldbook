@@ -14,7 +14,7 @@ public class SelectionTraitExpression extends BaseExpression {
     }
 
     @Override
-    public void apply(List<StringBuilder> values, AdvancingSource source) {
+    public void apply(List<StringBuilder> values, AdvancingSource source, final String capturedText) {
         for (StringBuilder container : values) {
             this.replaceExpressionWithValue(container, source.getSelectionTraitValue());
         }

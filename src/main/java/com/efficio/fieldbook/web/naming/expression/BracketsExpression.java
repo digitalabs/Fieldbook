@@ -17,7 +17,7 @@ public class BracketsExpression extends BaseExpression {
 	}
 
 	@Override
-	public void apply(List<StringBuilder> values, AdvancingSource source) {
+	public void apply(List<StringBuilder> values, AdvancingSource source, final String capturedText) {
 		for (StringBuilder container : values) {
 
 			String newRootName = source.getRootName();

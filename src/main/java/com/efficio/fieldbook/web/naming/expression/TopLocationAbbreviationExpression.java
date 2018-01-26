@@ -16,7 +16,7 @@ public class TopLocationAbbreviationExpression extends BaseExpression {
 	}
 
 	@Override
-	public void apply(List<StringBuilder> values, AdvancingSource source) {
+	public void apply(List<StringBuilder> values, AdvancingSource source, final String capturedText) {
 		for (StringBuilder container : values) {
 			String rootName = source.getRootName();
 			String labbr = source.getLocationAbbreviation() != null ? source.getLocationAbbreviation() : "";

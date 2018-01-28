@@ -73,7 +73,7 @@ public class AngularMapOntologyControllerTest {
 				false);
 		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(apacheWorkbook);
 		Mockito.when(this.etlService.convertToWorkbook(this.userSelection)).thenReturn(workbook);
-		Mockito.when(this.dataImportService.parseWorkbook(apacheWorkbook)).thenReturn(workbook);
+		Mockito.when(this.dataImportService.parseWorkbookDescriptionSheet(apacheWorkbook)).thenReturn(workbook);
 
 		final VariableDTO[] variables = new VariableDTO[] {};
 

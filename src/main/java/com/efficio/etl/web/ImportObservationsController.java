@@ -168,7 +168,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 	public String confirmImport(Model model, org.generationcp.middleware.domain.etl.Workbook importData, String programUUID) {
 		List<String> errors = new ArrayList<String>();
 		try {
-			org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbook(userSelection));
+			org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(userSelection));
 			importData.setConstants(referenceWorkbook.getConstants());
 			importData.setConditions(referenceWorkbook.getConditions());
 			this.etlService.saveProjectData(importData, programUUID);

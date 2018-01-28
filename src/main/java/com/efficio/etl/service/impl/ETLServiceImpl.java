@@ -727,7 +727,7 @@ public class ETLServiceImpl implements ETLService {
 	 * @param studyId
 	 *            as the id of the study
 	 */
-	private void fillDetailsOfDatasetsInWorkbook(final org.generationcp.middleware.domain.etl.Workbook wb,
+	public void fillDetailsOfDatasetsInWorkbook(final org.generationcp.middleware.domain.etl.Workbook wb,
 			final Integer studyId, final boolean isMeansDataImport) {
 
 		wb.getStudyDetails().setId(studyId);

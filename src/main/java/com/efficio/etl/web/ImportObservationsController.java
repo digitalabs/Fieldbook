@@ -75,7 +75,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 	@RequestMapping(value = "/{confirmDiscard}", method = RequestMethod.GET)
 	public String processImport(@ModelAttribute("uploadForm") FileUploadForm uploadForm, @PathVariable int confirmDiscard, Model model,
 			HttpSession session, HttpServletRequest request) {
-		List<String> errors = new ArrayList<String>();
+		List<String> errors = new ArrayList<>();
 
 		org.generationcp.middleware.domain.etl.Workbook importData = null;
 
@@ -121,14 +121,14 @@ public class ImportObservationsController extends AbstractBaseETLController {
 				}
 			}
 
-			List<Message> messages = new ArrayList<Message>();
+			List<Message> messages = new ArrayList<>();
 			this.dataImportService.checkForInvalidGids(importData, messages);
 			errors.addAll(this.etlService.convertMessageList(messages));
 
 
 		} catch (Exception e) {
 			ImportObservationsController.LOG.error(e.getMessage(), e);
-			List<Message> error = new ArrayList<Message>();
+			List<Message> error = new ArrayList<>();
 			error.add(new Message(Constants.MESSAGE_KEY_GENERIC_ERROR));
 			errors.addAll(this.etlService.convertMessageList(error));
 
@@ -166,7 +166,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 	}
 
 	public String confirmImport(Model model, org.generationcp.middleware.domain.etl.Workbook importData, String programUUID) {
-		List<String> errors = new ArrayList<String>();
+		List<String> errors = new ArrayList<>();
 		try {
 			org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(userSelection));
 			importData.setConstants(referenceWorkbook.getConstants());

@@ -350,6 +350,7 @@ public class StudyTreeController {
 		final Map<String, Object> resultsMap = new HashMap<String, Object>();
 		try {
 			this.studyDataManager.moveDmsProject(Integer.parseInt(sourceId), Integer.parseInt(targetId), isAStudy);
+			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 		} catch (final MiddlewareQueryException e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");

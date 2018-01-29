@@ -36,7 +36,7 @@ public class DoubleHaploidSourceExpression extends BaseExpression {
 				synchronized (DoubleHaploidSourceExpression.class) {
 					String keyPrefix = value.substring(0, checkIndex + 1);
 					// Get last sequence number for KeyPrefix with synchronization at class level
-					int lastUsedSequence = this.keySequenceRegisterService.incrementAndGetNextSequence(keyPrefix);
+					int lastUsedSequence = this.keySequenceRegisterService.incrementAndGetNextSequence(keyPrefix, null);
 					replaceExistingSuffixValue(value, checkIndex + 1);
 					this.replaceExpressionWithValue(value, String.valueOf(lastUsedSequence));
 				}

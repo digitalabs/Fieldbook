@@ -268,7 +268,8 @@ public class ETLServiceTest {
 
 		final List<DataSet> plotDatasets = DataSetTestDataInitializer
 				.createPlotDatasetsTestData("MEASUREMENT EFEC_" + this.userSelection.getStudyName());
-		plotDatasets.add(DataSetTestDataInitializer.createPlotDatasetTestData("TRIAL_" + this.userSelection.getStudyName(), true));
+		plotDatasets.add(DataSetTestDataInitializer
+				.createPlotDatasetTestData("TRIAL_" + this.userSelection.getStudyName(), true));
 		Mockito.doReturn(plotDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
 				DataSetType.PLOT_DATA);
 
@@ -384,7 +385,7 @@ public class ETLServiceTest {
 
 		Assert.assertNotNull(workbook.getFactors());
 		Assert.assertEquals("The number of factors must be 0", 0, workbook.getFactors().size());
-		
+
 		Assert.assertNotNull(workbook.getVariates());
 		Assert.assertEquals("The number of variates must be 2", 2, workbook.getVariates().size());
 		for (final MeasurementVariable measurementVariable : workbook.getVariates()) {
@@ -565,7 +566,7 @@ public class ETLServiceTest {
 				result.get(0).getMeasurementData(ETLServiceTest.ALEU_COL_1_5).getValue());
 
 	}
-	
+
 	@Test
 	public void testFillDetailsOfDatasetsInWorkbook() {
 		final int datasetType = DataSetType.PLOT_DATA.getId();
@@ -586,16 +587,15 @@ public class ETLServiceTest {
 		wb.setVariates(null);
 		wb.setConditions(null);
 		wb.setConstants(null);
-		
+
 		this.etlService.fillDetailsOfDatasetsInWorkbook(wb, this.userSelection.getStudyId(), false);
-		
+
 		Assert.assertNotNull(wb.getFactors());
 		Assert.assertNotNull(wb.getConditions());
 		Assert.assertNotNull(wb.getVariates());
 		Assert.assertNotNull(wb.getConstants());
 	}
 
-	
 	@Test
 	public void testExtractExcelFileDataKeepInvalidValues() {
 
@@ -640,46 +640,45 @@ public class ETLServiceTest {
 		// Trial Environment
 		final LinkedHashMap<String, MeasurementVariable> trialEnvironmentsMap = new LinkedHashMap<>();
 		trialEnvironmentsMap.put(ETLServiceTest.TRIAL_INSTANCE,
-				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), ETLServiceTest.TRIAL_INSTANCE,
-						PhenotypicType.TRIAL_ENVIRONMENT, DataType.NUMERIC_VARIABLE.getId()));
+				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),
+						ETLServiceTest.TRIAL_INSTANCE, PhenotypicType.TRIAL_ENVIRONMENT,
+						DataType.NUMERIC_VARIABLE.getId()));
 		map.put(PhenotypicType.TRIAL_ENVIRONMENT, trialEnvironmentsMap);
 
 		// Trial Design
 		final LinkedHashMap<String, MeasurementVariable> trialDesignsMap = new LinkedHashMap<>();
-		trialDesignsMap.put("REP", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.REP_NO.getId(), "REP",
-				PhenotypicType.TRIAL_DESIGN, DataType.NUMERIC_VARIABLE.getId()));
-		trialDesignsMap.put("ROW", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.ROW.getId(), "ROW",
-				PhenotypicType.TRIAL_DESIGN, DataType.NUMERIC_VARIABLE.getId()));
-		trialDesignsMap.put("COL", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.COL.getId(), "COL",
-				PhenotypicType.TRIAL_DESIGN, DataType.NUMERIC_VARIABLE.getId()));
+		trialDesignsMap.put("REP", MeasurementVariableTestDataInitializer.createMeasurementVariable(
+				TermId.REP_NO.getId(), "REP", PhenotypicType.TRIAL_DESIGN, DataType.NUMERIC_VARIABLE.getId()));
+		trialDesignsMap.put("ROW", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.ROW.getId(),
+				"ROW", PhenotypicType.TRIAL_DESIGN, DataType.NUMERIC_VARIABLE.getId()));
+		trialDesignsMap.put("COL", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.COL.getId(),
+				"COL", PhenotypicType.TRIAL_DESIGN, DataType.NUMERIC_VARIABLE.getId()));
 		map.put(PhenotypicType.TRIAL_DESIGN, trialDesignsMap);
 
 		// Germplasm
 		final LinkedHashMap<String, MeasurementVariable> germplasmMap = new LinkedHashMap<>();
-		germplasmMap.put("SOURCE", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.SOURCE.getId(), "SOURCE",
-				PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
-		germplasmMap.put("ENTRY", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.ENTRY_NO.getId(), "ENTRY",
-				PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
-		germplasmMap.put("CROSS", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.CROSS.getId(), "CROSS",
-				PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
-		germplasmMap.put("GID", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.GID.getId(), "GID", PhenotypicType.GERMPLASM,
-				DataType.NUMERIC_VARIABLE.getId()));
+		germplasmMap.put("SOURCE", MeasurementVariableTestDataInitializer.createMeasurementVariable(
+				TermId.SOURCE.getId(), "SOURCE", PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
+		germplasmMap.put("ENTRY", MeasurementVariableTestDataInitializer.createMeasurementVariable(
+				TermId.ENTRY_NO.getId(), "ENTRY", PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
+		germplasmMap.put("CROSS", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.CROSS.getId(),
+				"CROSS", PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
+		germplasmMap.put("GID", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.GID.getId(),
+				"GID", PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
 		map.put(PhenotypicType.GERMPLASM, germplasmMap);
 
 		// Variate
 		final LinkedHashMap<String, MeasurementVariable> variatesMap = new LinkedHashMap<>();
-		variatesMap.put("GYLD", MeasurementVariableTestDataInitializer.createMeasurementVariable(18150, "GYLD", PhenotypicType.VARIATE,
-				DataType.NUMERIC_VARIABLE.getId()));
-		variatesMap.put("PH",
-				MeasurementVariableTestDataInitializer.createMeasurementVariable(20343, "PH", PhenotypicType.VARIATE, DataType.NUMERIC_VARIABLE.getId()));
-		variatesMap.put("AleuCol_1_5", MeasurementVariableTestDataInitializer.createMeasurementVariable(51547, "AleuCol_1_5", PhenotypicType.VARIATE,
-				DataType.CATEGORICAL_VARIABLE.getId()));
+		variatesMap.put("GYLD", MeasurementVariableTestDataInitializer.createMeasurementVariable(18150, "GYLD",
+				PhenotypicType.VARIATE, DataType.NUMERIC_VARIABLE.getId()));
+		variatesMap.put("PH", MeasurementVariableTestDataInitializer.createMeasurementVariable(20343, "PH",
+				PhenotypicType.VARIATE, DataType.NUMERIC_VARIABLE.getId()));
+		variatesMap.put("AleuCol_1_5", MeasurementVariableTestDataInitializer.createMeasurementVariable(51547,
+				"AleuCol_1_5", PhenotypicType.VARIATE, DataType.CATEGORICAL_VARIABLE.getId()));
 		map.put(PhenotypicType.VARIATE, variatesMap);
 
 		return map;
 	}
-
-	
 
 	private void fillObservationInfoOfUserSelection(final UserSelection userSelection) {
 		userSelection.setHeaderRowIndex(ETLServiceTest.OBSERVATION_HEADER_ROW);

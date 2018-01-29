@@ -58,7 +58,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 	@Resource
 	private ETLService etlService;
-	
+
 	@Resource
 	private DataImportService dataImportService;
 
@@ -230,7 +230,8 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			this.fieldbookService.addStudyUUIDConditionAndPlotIDFactorToWorkbook(importData, false);
 
-			org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(userSelection));
+			final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
+					.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection));
 			importData.setConstants(referenceWorkbook.getConstants());
 			importData.setConditions(referenceWorkbook.getConditions());
 			this.etlService.saveProjectOntology(importData, this.contextUtil.getCurrentProgramUUID());

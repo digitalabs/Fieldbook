@@ -763,7 +763,7 @@ public class ETLServiceImpl implements ETLService {
 		}
 		return factors;
 	}
-	
+
 	private List<MeasurementVariable> getConditionsFromDatasets(final DataSet trialDataset) {
 		final List<MeasurementVariable> conditions = new ArrayList<>();
 		for (final DMSVariableType variableType : trialDataset.getVariableTypes().getVariableTypes()) {
@@ -934,8 +934,7 @@ public class ETLServiceImpl implements ETLService {
 		if (studyTypeValue == null) {
 			studyTypeValue = StudyType.N;
 		}
-		return new StudyDetails(study, title, objective, startDateStr, endDateStr, studyTypeValue, 0, null,
-				null);
+		return new StudyDetails(study, title, objective, startDateStr, endDateStr, studyTypeValue, 0, null, null);
 
 	}
 
@@ -1089,7 +1088,7 @@ public class ETLServiceImpl implements ETLService {
 	/**
 	 * Returns all available entry types at the moment in the form of a map
 	 * <Name, CVTermId> i.e <C,10170>
-	 * 
+	 *
 	 * @param programUUID
 	 *
 	 * @return map <Name, CVTermId>

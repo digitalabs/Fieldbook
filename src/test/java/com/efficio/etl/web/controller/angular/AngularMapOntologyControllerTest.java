@@ -47,7 +47,7 @@ public class AngularMapOntologyControllerTest {
 
 	@Mock
 	private ETLService etlService;
-	
+
 	@Mock
 	private DataImportService dataImportService;
 

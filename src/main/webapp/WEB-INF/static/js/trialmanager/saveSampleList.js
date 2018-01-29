@@ -83,7 +83,11 @@ var SaveSampleList = {};
 
 		var parentId = chosenNodeFolder.data.key;
 
-		if (parentId === 'LISTS') {
+		if (parentId === 'CROPLISTS') {
+			SaveSampleList.details.programUUID = null;
+		}
+
+		if (parentId === 'LISTS' || parentId === 'CROPLISTS') {
 			parentId = 0;
 		}
 

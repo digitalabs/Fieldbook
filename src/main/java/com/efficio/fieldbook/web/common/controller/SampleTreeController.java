@@ -42,12 +42,6 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 	 */
 	static final String DEFAULT_STATE_SAVED_FOR_SAMPLE_LIST = "Lists";
 
-	private static final String COMMON_SAVE_GERMPLASM_LIST = "Common/saveGermplasmList";
-
-	private static final String COMMON_SAVE_SAMPLE_LIST = "Common/saveSampleListDetails";
-
-	private static final String GERMPLASM_LIST_TYPES = "germplasmListTypes";
-
 	/**
 	 * The Constant LOG.
 	 */
@@ -55,10 +49,10 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 
 	private static final String GERMPLASM_LIST_TABLE_PAGE = "Common/includes/germplasmListTable";
 	public static final String GERMPLASM_LIST_ROOT_NODES = "germplasmListRootNodes";
-	private static final String LISTS = "LISTS";
+	protected static final String PROGRAM_LISTS = "LISTS";
+	protected static final String CROP_LISTS = "CROPLISTS";
 
 	public static final String NODE_NONE = "None";
-
 
 	/**
 	 * The Constant BATCH_SIZE.
@@ -80,7 +74,10 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/loadInitTree/{isFolderOnly}", method = RequestMethod.GET)
 	public String loadInitialSampleTree(@PathVariable final String isFolderOnly) {
 		final List<TreeNode> rootNodes = new ArrayList<>();
-		rootNodes.add(new TreeNode(SampleTreeController.LISTS, "Sample List", true, "lead", AppConstants.FOLDER_ICON_PNG.getString(), this.getCurrentProgramUUID()));
+		rootNodes.add(new TreeNode(SampleTreeController.CROP_LISTS, AppConstants.CROP_LISTS.getString(), true, "lead",
+				AppConstants.FOLDER_ICON_PNG.getString(), null));
+		rootNodes.add(new TreeNode(SampleTreeController.PROGRAM_LISTS, AppConstants.SAMPLE_LISTS.getString(), true, "lead",
+				AppConstants.FOLDER_ICON_PNG.getString(), this.getCurrentProgramUUID()));
 		return TreeViewUtil.convertTreeViewToJson(rootNodes);
 	}
 
@@ -93,20 +90,22 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 	public String loadInitialSampleTreeTable(final Model model) {
 		final List<TreeTableNode> rootNodes = new ArrayList<>();
 		final TreeTableNode localNode =
-			new TreeTableNode(SampleTreeController.LISTS, AppConstants.SAMPLES.getString(), null, null, null, null, "1");
+				new TreeTableNode(SampleTreeController.PROGRAM_LISTS, AppConstants.SAMPLE_LISTS.getString(), null, null, null, null, "1");
 		rootNodes.add(localNode);
 		model.addAttribute(SampleTreeController.GERMPLASM_LIST_ROOT_NODES, rootNodes);
 		return super.showAjaxPage(model, SampleTreeController.GERMPLASM_LIST_TABLE_PAGE);
 	}
 
-	private List<TreeNode> getSampleChildNodes(final String parentKey, final boolean isFolderOnly, final String programUUID) {
+	protected List<TreeNode> getSampleChildNodes(final String parentKey, final boolean isFolderOnly, final String programUUID) {
 		if (!(parentKey != null && !"".equals(parentKey))) {
 			return new ArrayList<>();
 		}
 
 		final List<SampleList> rootLists;
-		if (SampleTreeController.LISTS.equals(parentKey)) {
+		if (SampleTreeController.PROGRAM_LISTS.equals(parentKey)) {
 			rootLists = this.sampleListService.getAllSampleTopLevelLists(programUUID);
+		} else if (SampleTreeController.CROP_LISTS.equals(parentKey)) {
+			rootLists = this.sampleListService.getAllSampleTopLevelLists(null);
 		} else if (NumberUtils.isNumber(parentKey)) {
 			rootLists = this.getSampleChildrenNode(parentKey, programUUID);
 		} else {
@@ -175,7 +174,7 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 			}
 
 			this.userTreeStateService
-				.saveOrUpdateUserProgramTreeState(this.contextUtil.getCurrentUserLocalId(), this.getCurrentProgramUUID(), type, states);
+					.saveOrUpdateUserProgramTreeState(this.contextUtil.getCurrentUserLocalId(), this.getCurrentProgramUUID(), type, states);
 		} catch (final MiddlewareQueryException e) {
 			SampleTreeController.LOG.error(e.getMessage(), e);
 			status = "ERROR";
@@ -197,7 +196,6 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 		}
 		return super.convertObjectToJson(stateList);
 	}
-
 
 	@Override
 	public String getContentName() {

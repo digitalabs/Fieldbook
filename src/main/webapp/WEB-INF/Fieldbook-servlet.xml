@@ -391,6 +391,11 @@
 		<aop:scoped-proxy />
 	</bean>
 
+	<bean id="listDataProjectSaver" factory-bean="managerFactory"
+		  factory-method="getListDataProjectSaver" scope="request">
+		<aop:scoped-proxy />
+	</bean>
+
 	<bean id="springAppContextProvider" class="org.generationcp.commons.util.SpringAppContextProvider" />
 
 	<bean

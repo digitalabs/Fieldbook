@@ -46,7 +46,6 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.Project;
-import org.generationcp.middleware.pojos.workbench.WorkbenchRuntimeData;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
@@ -167,12 +166,9 @@ public class OpenTrialControllerTest {
 	public void setUp() {
 		final Project project = this.createProject();
 		final DmsProject dmsProject = this.createDmsProject();
-		final WorkbenchRuntimeData workbenchRuntimeData = new WorkbenchRuntimeData();
-		workbenchRuntimeData.setUserId(OpenTrialControllerTest.WORKBENCH_USER_ID);
 
 		Mockito.when(this.workbenchService.getCurrentIbdbUserId(1L, OpenTrialControllerTest.WORKBENCH_USER_ID))
 				.thenReturn(OpenTrialControllerTest.IBDB_USER_ID);
-		Mockito.when(this.workbenchDataManager.getWorkbenchRuntimeData()).thenReturn(workbenchRuntimeData);
 		Mockito.when(this.workbenchDataManager.getLastOpenedProjectAnyUser()).thenReturn(project);
 		Mockito.when(this.studyDataManager.getProject(1)).thenReturn(dmsProject);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(OpenTrialControllerTest.PROGRAM_UUID);

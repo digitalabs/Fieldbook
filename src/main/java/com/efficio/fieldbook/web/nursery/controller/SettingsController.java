@@ -42,13 +42,11 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
@@ -120,51 +118,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 		return false;
 	}
-
-	/**
-	 * Gets the settings list.
-	 *
-	 * @return the settings list
-	 */
-	@ModelAttribute("settingsList")
-	public List<TemplateSetting> getNurserySettingsList() {
-		try {
-			final TemplateSetting templateSettingFilter =
-					new TemplateSetting(null, Integer.valueOf(this.getCurrentProjectId()), null, this.getNurseryTool(), null, null);
-			templateSettingFilter.setIsDefaultToNull();
-			final List<TemplateSetting> templateSettingsList = this.workbenchService.getTemplateSettings(templateSettingFilter);
-			templateSettingsList.add(0, new TemplateSetting(0, Integer.valueOf(this.getCurrentProjectId()), "", null, "", false));
-			return templateSettingsList;
-
-		} catch (final MiddlewareQueryException e) {
-			SettingsController.LOG.error(e.getMessage(), e);
-		}
-
-		return new ArrayList<>();
-	}
-
-	/**
-	 * Gets the trial settings list.
-	 *
-	 * @return the trial settings list
-	 */
-	@ModelAttribute("settingsTrialList")
-	public List<TemplateSetting> getTrialSettingsList() {
-		try {
-			final TemplateSetting templateSettingFilter =
-					new TemplateSetting(null, Integer.valueOf(this.getCurrentProjectId()), null, this.getTrialTool(), null, null);
-			templateSettingFilter.setIsDefaultToNull();
-			final List<TemplateSetting> templateSettingsList = this.workbenchService.getTemplateSettings(templateSettingFilter);
-			templateSettingsList.add(0, new TemplateSetting(0, Integer.valueOf(this.getCurrentProjectId()), "", null, "", false));
-			return templateSettingsList;
-
-		} catch (final MiddlewareQueryException e) {
-			SettingsController.LOG.error(e.getMessage(), e);
-		}
-
-		return new ArrayList<>();
-	}
-
+	
 	/**
 	 * Builds the required factors.
 	 *

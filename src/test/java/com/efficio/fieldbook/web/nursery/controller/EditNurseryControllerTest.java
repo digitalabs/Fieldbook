@@ -33,7 +33,6 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.Project;
-import org.generationcp.middleware.pojos.workbench.WorkbenchRuntimeData;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
@@ -125,9 +124,6 @@ public class EditNurseryControllerTest {
 	private AbstractBaseFieldbookController abstractBaseFieldbookController;
 
 	@Mock
-	private WorkbenchRuntimeData workbenchRD;
-
-	@Mock
 	private FieldbookService fieldbookService;
 
 	@Mock
@@ -193,7 +189,6 @@ public class EditNurseryControllerTest {
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString()))
 				.thenReturn(this.standardVariable);
 		Mockito.when(this.workBenchDataManager.getLastOpenedProjectAnyUser()).thenReturn(project);
-		Mockito.when(this.workBenchDataManager.getWorkbenchRuntimeData()).thenReturn(this.workbenchRD);
 
 		// test
 		final String out = this.editNurseryController

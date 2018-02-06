@@ -190,7 +190,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		// set the seed source string for the new Germplasm
 		final String seedSource =
 				this.seedSourceGenerator.generateSeedSource(workbook, source.getTrialInstanceNumber(), selectionNumberToApply,
-						source.getPlotNumber(), workbook.getStudyName());
+						source.getPlotNumber(), workbook.getStudyName(), plantNo);
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
 						, source.getGermplasm().getCross(), seedSource,

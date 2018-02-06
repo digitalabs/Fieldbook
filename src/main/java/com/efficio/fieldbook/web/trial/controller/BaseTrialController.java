@@ -92,9 +92,9 @@ public abstract class BaseTrialController extends SettingsController {
 		studyDetails.setDescription(detailBean.getDescription());
 		studyDetails.setObjective(detailBean.getBasicDetails().get(Integer.toString(TermId.STUDY_OBJECTIVE.getId())));
 		studyDetails.setStudyName(detailBean.getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId())));
-		studyDetails.setDescription(detailBean.getDescription());
-		studyDetails.setStartDate(detailBean.getBasicDetails().get(Integer.toString(TermId.START_DATE.getId())));
-		studyDetails.setEndDate(detailBean.getBasicDetails().get(Integer.toString(TermId.END_DATE.getId())));
+		studyDetails.setStartDate(detailBean.getStartDate());
+		studyDetails.setEndDate(detailBean.getEndDate());
+		studyDetails.setStudyUpdate(detailBean.getStudyUpdate());
 		studyDetails.setStudyType(StudyType.T);
 
 		if (detailBean.getFolderId() != null) {
@@ -681,11 +681,12 @@ public abstract class BaseTrialController extends SettingsController {
 
 		basicDetails.put(Integer.toString(TermId.STUDY_NAME.getId()), studyDetails.getStudyName());
 		basicDetails.put(Integer.toString(TermId.STUDY_OBJECTIVE.getId()), studyDetails.getObjective());
-		basicDetails.put(Integer.toString(TermId.START_DATE.getId()), this.convertDateStringForUI(studyDetails.getStartDate()));
-		basicDetails.put(Integer.toString(TermId.END_DATE.getId()), this.convertDateStringForUI(studyDetails.getEndDate()));
 		basic.setBasicDetails(basicDetails);
 		basic.setStudyID(trialID);
 		basic.setDescription(studyDetails.getDescription());
+		basic.setStartDate(studyDetails.getStartDate());
+		basic.setEndDate(studyDetails.getEndDate());
+		basic.setStudyUpdate(studyDetails.getStudyUpdate());
 
 		final int folderId = (int) studyDetails.getParentFolderId();
 		final String folderName;

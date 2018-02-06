@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -534,7 +535,7 @@ public class EditNurseryControllerTest {
 	}
 
 	@Test
-	public void testSubmitWhereMeasurementsListHasNoValue() {
+	public void testSubmitWhereMeasurementsListHasNoValue() throws ParseException {
 		final Workbook testWorkbook = new Workbook();
 		testWorkbook.setTrialDatasetId(1);
 		testWorkbook.setMeasurementDatesetId(2);
@@ -550,7 +551,7 @@ public class EditNurseryControllerTest {
 
 	@Test
 	@Ignore(value = "The method under test is overwriting the userSelection.workbook which causes this test to fail. Neeeds to be fixed.")
-	public void testSubmitWhereMeasurementsListHasValueSuccess() {
+	public void testSubmitWhereMeasurementsListHasValueSuccess() throws ParseException {
 		final SettingDetail settingDetail = Mockito.mock(SettingDetail.class);
 		final SettingVariable variable = Mockito.mock(SettingVariable.class);
 		final StandardVariable standardVariable = Mockito.mock(StandardVariable.class);

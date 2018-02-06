@@ -18,6 +18,9 @@ public class BasicDetails implements TabInfoBean {
 	private Integer userID;
 	private Integer studyID;
 	private String description;
+	private String startDate;
+	private String endDate;
+	private String studyUpdate;
 
 	public BasicDetails() {
 		this.basicDetails = new HashMap<>();
@@ -85,5 +88,29 @@ public class BasicDetails implements TabInfoBean {
 
 	public void setDescription(final String description) {
 		this.description = description;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(final String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return this.endDate;
+	}
+
+	public void setEndDate(final String endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getStudyUpdate() {
+		return this.studyUpdate;
+	}
+
+	public void setStudyUpdate(final String studyUpdate) {
+		this.studyUpdate = studyUpdate;
 	}
 }

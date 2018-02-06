@@ -719,10 +719,6 @@ public class SettingsUtilTest {
 				SettingsUtilTest.C_DATATYPE));
 		variables.add(this.createSettingDetail(TermId.STUDY_OBJECTIVE.getId(), "STUDY_OBJECTIVE", "Objective - described (text)",
 				SettingsUtilTest.C_DATATYPE));
-		variables.add(this.createSettingDetail(TermId.START_DATE.getId(), "START_DATE", "Start date - assigned (date)",
-				SettingsUtilTest.C_DATATYPE));
-		variables.add(this.createSettingDetail(TermId.END_DATE.getId(), "END_DATE", "End date - assigned (date)",
-				SettingsUtilTest.C_DATATYPE));
 		variables.add(this.createSettingDetail(TermId.BREEDING_METHOD_VARIATE_CODE.getId(), "BM_CODE_VTE",
 				"Breeding method observed on each plot(CODE)", SettingsUtilTest.C_DATATYPE));
 		return variables;
@@ -772,14 +768,7 @@ public class SettingsUtilTest {
 				Assert.assertEquals("The name should be 'STUDY_OBJECTIVE'", "STUDY_OBJECTIVE", condition.getName());
 				Assert.assertEquals("The value should be 'Objective - described (text)'", "Objective - described (text)",
 						condition.getValue());
-			} else if (TermId.START_DATE.getId() == condition.getId()) {
-				Assert.assertEquals("The name should be 'START_DATE'", "START_DATE", condition.getName());
-				Assert.assertEquals("The value should be 'Start date - assigned (date)'", "Start date - assigned (date)",
-						condition.getValue());
-			} else if (TermId.END_DATE.getId() == condition.getId()) {
-				Assert.assertEquals("The name should be 'END_DATE'", "END_DATE", condition.getName());
-				Assert.assertEquals("The value should be 'End date - assigned (date)'", "End date - assigned (date)", condition.getValue());
-			} else if (TermId.BREEDING_METHOD_VARIATE_CODE.getId() == condition.getId()) {
+			}  else if (TermId.BREEDING_METHOD_VARIATE_CODE.getId() == condition.getId()) {
 				Assert.assertEquals("The name should be 'BM_CODE_VTE'", "BM_CODE_VTE", condition.getName());
 				Assert.assertEquals("The value should be 'Breeding method observed on each plot(CODE)'",
 						"Breeding method observed on each plot(CODE)", condition.getValue());

@@ -98,7 +98,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 	protected static final List<Integer> STUDY_DETAILS_IDS =
 			Arrays.asList(TermId.STUDY_NAME.getId(), TermId.PM_KEY.getId(), TermId.STUDY_OBJECTIVE.getId(),
-					TermId.START_DATE.getId(), TermId.END_DATE.getId(), TermId.STUDY_UID.getId());
+					TermId.STUDY_UID.getId());
 
 	@Override
 	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {

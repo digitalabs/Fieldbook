@@ -84,6 +84,9 @@ public class SettingsUtil {
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsUtil.class);
 	public static final String DESCRIPTION = "Description";
+	private static final String START_DATE = "startDate";
+	private static final String END_DATE = "endDate";
+	private static final String STUDY_UPDATE = "studyUpdate";
 
 	private SettingsUtil() {
 		// do nothing
@@ -129,10 +132,10 @@ public class SettingsUtil {
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String name,
 			final List<SettingDetail> nurseryLevelConditions, final List<SettingDetail> plotsLevelList,
 			final List<SettingDetail> baselineTraitsList, final UserSelection userSelection, final List<SettingDetail> nurseryConditions,
-		final String programUUID, final String description) {
+		final String programUUID, final String description, final String startDate, final String endDate, final String studyUpdate) {
 		return SettingsUtil
 			.convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions, plotsLevelList, baselineTraitsList,
-				userSelection, null, null, null, nurseryConditions, null, true, programUUID, description);
+				userSelection, null, null, null, nurseryConditions, null, true, programUUID, description, startDate, endDate, studyUpdate);
 	}
 
 	static List<Condition> convertDetailsToConditions(final List<SettingDetail> details,
@@ -412,7 +415,7 @@ public class SettingsUtil {
 			final List<SettingDetail> baselineTraitsList, final UserSelection userSelection,
 		final List<SettingDetail> trialLevelVariablesList, final List<SettingDetail> treatmentFactorDetails, final Map<String, TreatmentFactorData> treatmentFactorItems,
 		final List<SettingDetail> nurseryConditions, final List<SettingDetail> trialLevelConditions, final boolean fromNursery,
-		final String programUUID, final String description) {
+		final String programUUID, final String description, final String startDate, final String endDate, final String studyUpdate) {
 
 		// this block is necessary for the previous nursery code because the
 		// setting details passed in from nursery are mostly empty except
@@ -455,6 +458,9 @@ public class SettingsUtil {
 		dataset.setConstants(constants);
 		dataset.setName(name);
 		dataset.setDescription(description);
+		dataset.setStartDate(startDate);
+		dataset.setEndDate(endDate);
+		dataset.setStudyUpdate(studyUpdate);
 		if (trialLevelVariablesList != null) {
 			dataset.setTrialLevelFactor(trialLevelVariables);
 			dataset.setTreatmentFactors(treatmentFactors);
@@ -1659,6 +1665,9 @@ public class SettingsUtil {
 		final MeasurementVariable studyNameVar = WorkbookUtil.getMeasurementVariable(workbook.getConditions(), TermId.STUDY_NAME.getId());
 		final String studyName = studyNameVar != null ? studyNameVar.getValue() : "";
 		final String description = workbook.getStudyDetails().getDescription() != null ? workbook.getStudyDetails().getDescription() : "";
+		final String startDate = workbook.getStudyDetails().getStartDate() != null ? workbook.getStudyDetails().getStartDate() : "";
+		final String endDate = workbook.getStudyDetails().getEndDate() != null ? workbook.getStudyDetails().getEndDate() : "";
+		final String studyUpdate = workbook.getStudyDetails().getStudyUpdate() != null ? workbook.getStudyDetails().getStudyUpdate() : "";
 		Integer datasetId = workbook.getMeasurementDatesetId();
 		if (datasetId == null) {
 			datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyDetails().getId(), studyName);
@@ -1708,6 +1717,27 @@ public class SettingsUtil {
 						final SettingVariable variableDescription =
 							new SettingVariable(DESCRIPTION, null, null, null, null, null, null, null, null, null);
 						final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, description, false);
+						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
+						found = true;
+						break;
+					} else if (START_DATE.equals(label)) {
+						final SettingVariable variableDescription =
+							new SettingVariable(START_DATE, null, null, null, null, null, null, null, null, null);
+						final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, startDate, false);
+						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
+						found = true;
+						break;
+					} else if (END_DATE.equals(label)) {
+						final SettingVariable variableDescription =
+							new SettingVariable(START_DATE, null, null, null, null, null, null, null, null, null);
+						final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, endDate, false);
+						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
+						found = true;
+						break;
+					} else if (STUDY_UPDATE.equals(label)) {
+						final SettingVariable variableDescription =
+							new SettingVariable(START_DATE, null, null, null, null, null, null, null, null, null);
+						final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, studyUpdate, false);
 						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
 						found = true;
 						break;

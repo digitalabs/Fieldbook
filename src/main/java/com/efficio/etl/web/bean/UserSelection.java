@@ -37,6 +37,7 @@ public class UserSelection implements Serializable {
 	private String studyObjective;
 	private String studyStartDate;
 	private String studyEndDate;
+	private String studyUpdate;
 	private String studyType;
 	private Integer datasetType;
 
@@ -286,4 +287,11 @@ public class UserSelection implements Serializable {
 		this.datasetType = datasetType;
 	}
 
+	public String getStudyUpdate() {
+		return studyUpdate;
+	}
+
+	public void setStudyUpdate(final String studyUpdate) {
+		this.studyUpdate = studyUpdate;
+	}
 }

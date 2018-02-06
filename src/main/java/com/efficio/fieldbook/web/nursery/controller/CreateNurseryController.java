@@ -286,7 +286,9 @@ public class CreateNurseryController extends SettingsController {
 		final String name = trimNurseryName(form.getBasicDetails());
 
 		final String description = form.getDescription();
-
+		final String startDate = form.getStartDate();
+		final String endDate = form.getEndDate();
+		final String studyUpdate = form.getStudyUpdate();
 		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
 		if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
 			studyLevelVariables.addAll(form.getStudyLevelVariables());
@@ -333,12 +335,13 @@ public class CreateNurseryController extends SettingsController {
 
 		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, studyLevelVariables,
 				form.getPlotLevelVariables(), baselineTraits, this.userSelection, form.getNurseryConditions(),
-				this.contextUtil.getCurrentProgramUUID(), description);
+				this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, this.contextUtil.getCurrentProgramUUID());
 		this.userSelection.setWorkbook(workbook);
 
-		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), null, form.getDescription());
+		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), null, form.getDescription(), form.getStartDate(),
+			form.getEndDate(), form.getStudyUpdate());
 
 		return "success";
 	}

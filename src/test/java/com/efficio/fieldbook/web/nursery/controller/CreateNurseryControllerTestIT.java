@@ -138,21 +138,12 @@ public class CreateNurseryControllerTestIT extends AbstractBaseIntegrationTest {
 			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_NAME.getId(),
 					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.STUDY_NAME.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.START_DATE.getId(),
-					Mockito.anyString())).thenReturn(
-					this.createStandardVariable(TermId.START_DATE.getId()));
 			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_OBJECTIVE.getId(),
 					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.STUDY_OBJECTIVE.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.END_DATE.getId(),
-					Mockito.anyString())).thenReturn(
-					this.createStandardVariable(TermId.END_DATE.getId()));
 			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_UID.getId(),
 					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.STUDY_UID.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_UPDATE.getId(),
-					Mockito.anyString())).thenReturn(
-					this.createStandardVariable(TermId.STUDY_UPDATE.getId()));
 
 			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.BREEDING_METHOD_CODE.getId(),
 					Mockito.anyString())).thenReturn(

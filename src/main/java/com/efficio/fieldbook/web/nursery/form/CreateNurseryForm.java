@@ -204,6 +204,12 @@ public class CreateNurseryForm {
 
 	private String description;
 
+	private String startDate;
+
+	private String endDate;
+
+	private String studyUpdate;
+
 	public String getDescription() {
 		return description;
 	}
@@ -484,7 +490,7 @@ public class CreateNurseryForm {
 
 	/**
 	 * Gets the start date id.
-	 * 
+	 *
 	 * @return the start date id
 	 */
 	public String getStartDateId() {
@@ -493,7 +499,7 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the start date id.
-	 * 
+	 *
 	 * @param startDateId the new start date id
 	 */
 	public void setStartDateId(final String startDateId) {
@@ -502,7 +508,7 @@ public class CreateNurseryForm {
 
 	/**
 	 * Gets the end date id.
-	 * 
+	 *
 	 * @return the end date id
 	 */
 	public String getEndDateId() {
@@ -511,7 +517,7 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the end date id.
-	 * 
+	 *
 	 * @param endDateId the new end date id
 	 */
 	public void setEndDateId(final String endDateId) {
@@ -1278,4 +1284,27 @@ public class CreateNurseryForm {
 		return germplasmListId;
 	}
 
+	public String getStartDate() {
+		return this.startDate;
+	}
+
+	public void setStartDate(final String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return this.endDate;
+	}
+
+	public void setEndDate(final String endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getStudyUpdate() {
+		return this.studyUpdate;
+	}
+
+	public void setStudyUpdate(final String studyUpdate) {
+		this.studyUpdate = studyUpdate;
+	}
 }

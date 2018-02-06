@@ -169,11 +169,6 @@ window.ChooseSettings = (function() {
 				},
 
 				{
-					variableId: 8009, // STUDY_UPDATE
-					propertyId: 2045  // Update date
-				},
-
-				{
 					variableId: 8020, // Study_UID
 					propertyId: 2002  // User
 				},
@@ -181,16 +176,6 @@ window.ChooseSettings = (function() {
 				{
 					variableId: 8030, // STUDY_OBJECTIVE
 					propertyId: 2014  // Study objective
-				},
-
-				{
-					variableId: 8050, // START_DATE
-					propertyId: 2050  // Start date
-				},
-
-				{
-					variableId: 8060, // END_DATE
-					propertyId: 2052  // End date
 				}
 			],
 

@@ -49,8 +49,8 @@
 					data.basicDetails[key] = _.unescape(val);
 				});
 
-				if (data.basicDetails[8050] === null || data.basicDetails[8050] === '') {
-					data.basicDetails[8050] = $.datepicker.formatDate('yy-mm-dd', new Date());
+				if (data.startDate === null || data.startDate === '') {
+					data.startDate = $.datepicker.formatDate('yy-mm-dd', new Date());
 				}
 
 				return data;
@@ -708,8 +708,8 @@
 					}
 
 					var hasError = false, name = '', customMessage = '', errorCode = 0;
-					var creationDate = service.currentData.basicDetails.basicDetails[8050];
-					var completionDate = service.currentData.basicDetails.basicDetails[8060];
+					var creationDate = service.currentData.basicDetails.startDate;
+					var completionDate = service.currentData.basicDetails.endDate;
 					if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
 						hasError = true;
 						name = $('#folderLabel').text();

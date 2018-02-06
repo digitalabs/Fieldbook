@@ -82,8 +82,6 @@ public class SettingsServiceImpl implements SettingsService {
 				settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
 			} else if (id == TermId.STUDY_UID.getId()) {
 				settingDetail.setValue(String.valueOf(currentIbDbUserId));
-			} else if (id == TermId.STUDY_UPDATE.getId()) {
-				settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
 			}
 			settingDetail.setPossibleValuesToJson(possibleValues);
 			final List<ValueReference> possibleValuesFavorite = this.fieldbookService.getAllPossibleValuesFavorite(id, programUUID, false);

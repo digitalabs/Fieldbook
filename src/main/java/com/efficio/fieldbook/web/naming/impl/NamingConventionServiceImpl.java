@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvanceType;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -26,11 +25,9 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.sample.PlantDTO;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.PedigreeDataManager;
-import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -88,8 +85,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private PedigreeDataManager pedigreeDataManager;
 
 	@Override
-	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException,
-			MiddlewareQueryException, FieldbookException {
+	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException, FieldbookException {
 
 		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
 		final Map<String, Method> breedingMethodCodeMap = new HashMap<>();
@@ -123,9 +119,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		final Study study = advanceInfo.getStudy();
 		if (workbook == null) {
-			if (StudyType.N.getName().equals(study.getType())) {
+			if (StudyType.N.equals(study.getType())) {
 				workbook = this.fieldbookMiddlewareService.getNurseryDataSet(study.getId());
-			} else if (StudyType.T.getName().equals(study.getType())) {
+			} else if (StudyType.T.equals(study.getType())) {
 				workbook = this.fieldbookMiddlewareService.getTrialDataSet(study.getId());
 			}
 		}
@@ -211,7 +207,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			germplasm.setMgid(source.getGermplasm().getMgid());
 		}
 
-		this.assignNames(germplasm, source);
+		this.assignNames(germplasm);
 
 		germplasm.setTrialInstanceNumber(source.getTrialInstanceNumber());
 		germplasm.setReplicationNumber(source.getReplicationNumber());
@@ -223,8 +219,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		list.add(germplasm);
 	}
 
-	protected void assignNames(final ImportedGermplasm germplasm, final AdvancingSource source) {
-		final List<Name> names = new ArrayList<Name>();
+	protected void assignNames(final ImportedGermplasm germplasm) {
+		final List<Name> names = new ArrayList<>();
 
 		final Name name = new Name();
 		name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());

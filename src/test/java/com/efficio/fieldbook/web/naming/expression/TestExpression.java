@@ -33,6 +33,48 @@ public class TestExpression {
 		return result;
 	}
 
+	public AdvancingSource createAdvancingSourceTestData(final String mType, final String name, final String separator, final String prefix,
+		final String count, String suffix,
+		final boolean isBulking) {
+
+		Method method = new Method();
+		method.setSeparator(separator);
+		method.setPrefix(prefix);
+		method.setCount(count);
+		method.setSuffix(suffix);
+		method.setMtype(mType);
+		method.setMid(31);
+		method.setMgrp("G");
+		method.setMcode("UDM");
+		method.setMname("Unknown derivative method");
+		method.setMdesc("Unknown derivative method in self fertillising species: for storing historic pedigrees");
+		method.setSeparator("-");
+		if (isBulking) {
+			method.setGeneq(TermId.BULKING_BREEDING_METHOD_CLASS.getId());
+		} else {
+			method.setGeneq(TermId.NON_BULKING_BREEDING_METHOD_CLASS.getId());
+		}
+
+		ImportedGermplasm germplasm = new ImportedGermplasm();
+		germplasm.setEntryId(1);
+		germplasm.setDesig(name);
+		germplasm.setGid("1000");
+		germplasm.setGpid1(104);
+		germplasm.setGpid2(104);
+		germplasm.setGnpgs(-1);
+		germplasm.setBreedingMethodId(323);
+		List<Name> names = new ArrayList<>();
+		names.add(new Name(1, 1, 3, 0, 1, name + "_three", 0, 0, 0));
+		names.add(new Name(1, 1, 5, 0, 1, name + "_five", 0, 0, 0));
+		names.add(new Name(1, 1, 2, 1, 1, name + "_two", 0, 0, 0));
+
+		AdvancingSource source = new AdvancingSource(germplasm, names, 2, method, false, "MNL", "1");
+		source.setRootName(name);
+		source.setSeason("Dry");
+		source.setNurseryName("NurseryTest");
+		return source;
+
+	}
 	public AdvancingSource createAdvancingSourceTestData(String name, String separator, String prefix, String count, String suffix,
 			boolean isBulking) {
 
@@ -62,7 +104,7 @@ public class TestExpression {
 	}
 
 	public List<StringBuilder> createInitialValues(AdvancingSource source) {
-		List<StringBuilder> builders = new ArrayList<StringBuilder>();
+		List<StringBuilder> builders = new ArrayList<>();
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(source.getGermplasm().getDesig()).append(this.getNonNullValue(source.getBreedingMethod().getSeparator()))

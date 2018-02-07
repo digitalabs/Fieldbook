@@ -129,7 +129,7 @@ public class StockController extends AbstractBaseFieldbookController {
 	 */
 	@ModelAttribute("allLocationList")
 	public List<Location> getAllLocationList() {
-		return this.fieldbookMiddlewareService.getAllLocations(this.contextUtil.getCurrentProgramUUID());
+		return this.fieldbookMiddlewareService.getLocationsByProgramUUID(this.contextUtil.getCurrentProgramUUID());
 	}
 
 	/**

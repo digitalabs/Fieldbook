@@ -67,7 +67,7 @@ public class LocationControllerTest {
 		final List<Location> breedingLocationsList = new ArrayList<>();
 		final List<Location> favoriteLocationsList = new ArrayList<>();
 
-		Mockito.doReturn(allLocationsList).when(this.fieldbookMiddlewareService).getAllLocations(Matchers.anyString());
+		Mockito.doReturn(allLocationsList).when(this.fieldbookMiddlewareService).getLocationsByProgramUUID(Matchers.anyString());
 		Mockito.doReturn(locationIDs).when(this.fieldbookMiddlewareService).getFavoriteProjectLocationIds(Matchers.anyString());
 		Mockito.doReturn(breedingLocationsList).when(this.fieldbookMiddlewareService)
 				.getAllBreedingLocationsByProgramUUID(Matchers.anyString());

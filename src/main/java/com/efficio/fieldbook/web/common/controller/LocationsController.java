@@ -74,7 +74,7 @@ public class LocationsController extends AbstractBaseFieldbookController {
 
 		final List<Location> faveLocations = this.fieldbookMiddlewareService
 				.getFavoriteLocationByLocationIDs(this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(programUUID));
-		final List<Location> allLocations = this.fieldbookMiddlewareService.getAllLocations(programUUID);
+		final List<Location> allLocations = this.fieldbookMiddlewareService.getLocationsByProgramUUID(programUUID);
 		final List<Location> allBreedingLocations = this.fieldbookMiddlewareService.getAllBreedingLocationsByProgramUUID(programUUID);
 		final List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
 

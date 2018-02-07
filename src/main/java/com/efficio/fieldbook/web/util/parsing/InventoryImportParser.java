@@ -165,7 +165,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		final List<String> locationList = new ArrayList<>();
 
 		try {
-			this.locations = this.fieldbookMiddlewareService.getAllLocations(contextUtil.getCurrentProgramUUID());
+			this.locations = this.fieldbookMiddlewareService.getLocationsByProgramUUID(contextUtil.getCurrentProgramUUID());
 
 			if (this.locations != null) {
 				for (final Location location : this.locations) {

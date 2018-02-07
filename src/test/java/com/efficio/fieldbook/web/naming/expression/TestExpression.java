@@ -33,52 +33,24 @@ public class TestExpression {
 		return result;
 	}
 
-	public AdvancingSource createAdvancingSourceTestData(final String mType, final String name, final String separator, final String prefix,
-		final String count, String suffix,
-		final boolean isBulking) {
-
-		Method method = new Method();
-		method.setSeparator(separator);
-		method.setPrefix(prefix);
-		method.setCount(count);
-		method.setSuffix(suffix);
-		method.setMtype(mType);
-		method.setMid(31);
-		method.setMgrp("G");
-		method.setMcode("UDM");
-		method.setMname("Unknown derivative method");
-		method.setMdesc("Unknown derivative method in self fertillising species: for storing historic pedigrees");
-		method.setSeparator("-");
-		if (isBulking) {
-			method.setGeneq(TermId.BULKING_BREEDING_METHOD_CLASS.getId());
-		} else {
-			method.setGeneq(TermId.NON_BULKING_BREEDING_METHOD_CLASS.getId());
-		}
-
-		ImportedGermplasm germplasm = new ImportedGermplasm();
-		germplasm.setEntryId(1);
-		germplasm.setDesig(name);
-		germplasm.setGid("1000");
-		germplasm.setGpid1(104);
-		germplasm.setGpid2(104);
-		germplasm.setGnpgs(-1);
-		germplasm.setBreedingMethodId(323);
-		List<Name> names = new ArrayList<>();
+	public AdvancingSource createAdvancingSourceTestData(final Method method,final ImportedGermplasm germplasm, final String name, final String season,
+		final String nurseryName) {
+		final List<Name> names = new ArrayList<>();
 		names.add(new Name(1, 1, 3, 0, 1, name + "_three", 0, 0, 0));
 		names.add(new Name(1, 1, 5, 0, 1, name + "_five", 0, 0, 0));
 		names.add(new Name(1, 1, 2, 1, 1, name + "_two", 0, 0, 0));
 
-		AdvancingSource source = new AdvancingSource(germplasm, names, 2, method, false, "MNL", "1");
+		final AdvancingSource source = new AdvancingSource(germplasm, names, 2, method, false, nurseryName, "1");
 		source.setRootName(name);
-		source.setSeason("Dry");
-		source.setNurseryName("NurseryTest");
+		source.setSeason(season);
 		return source;
 
 	}
+
 	public AdvancingSource createAdvancingSourceTestData(String name, String separator, String prefix, String count, String suffix,
 			boolean isBulking) {
 
-		Method method = new Method();
+		final Method method = new Method();
 		method.setSeparator(separator);
 		method.setPrefix(prefix);
 		method.setCount(count);
@@ -89,14 +61,14 @@ public class TestExpression {
 			method.setGeneq(TermId.NON_BULKING_BREEDING_METHOD_CLASS.getId());
 		}
 
-		ImportedGermplasm germplasm = new ImportedGermplasm();
+		final ImportedGermplasm germplasm = new ImportedGermplasm();
 		germplasm.setDesig(name);
-		List<Name> names = new ArrayList<Name>();
+		final List<Name> names = new ArrayList<Name>();
 		names.add(new Name(1, 1, 3, 0, 1, name + "_three", 0, 0, 0));
 		names.add(new Name(1, 1, 5, 0, 1, name + "_five", 0, 0, 0));
 		names.add(new Name(1, 1, 2, 1, 1, name + "_two", 0, 0, 0));
 
-		AdvancingSource source = new AdvancingSource(germplasm, names, 2, method, false, "MNL", "1");
+		final AdvancingSource source = new AdvancingSource(germplasm, names, 2, method, false, "MNL", "1");
 		source.setRootName(name);
 		source.setSeason("Dry");
 		source.setNurseryName("NurseryTest");
@@ -104,9 +76,9 @@ public class TestExpression {
 	}
 
 	public List<StringBuilder> createInitialValues(AdvancingSource source) {
-		List<StringBuilder> builders = new ArrayList<>();
+		final List<StringBuilder> builders = new ArrayList<>();
 
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append(source.getGermplasm().getDesig()).append(this.getNonNullValue(source.getBreedingMethod().getSeparator()))
 		.append(this.getNonNullValue(source.getBreedingMethod().getPrefix()))
 		.append(this.getNonNullValue(source.getBreedingMethod().getCount()))
@@ -114,6 +86,51 @@ public class TestExpression {
 		builders.add(builder);
 
 		return builders;
+	}
+
+	public ImportedGermplasm createImportedGermplasm(final Integer entryId,final String designation, final String gid, final Integer gpid1, final Integer gpid2,
+		final Integer gnpgs, final Integer mid) {
+		final ImportedGermplasm germplasm = new ImportedGermplasm();
+		germplasm.setEntryId(entryId);
+		germplasm.setDesig(designation);
+		germplasm.setGid(gid);
+		germplasm.setGpid1(gpid1);
+		germplasm.setGpid2(gpid2);
+		germplasm.setGnpgs(gnpgs);
+		germplasm.setBreedingMethodId(mid);
+		return germplasm;
+	}
+
+	public Method createDerivativeMethod(final String prefix, final String count, final String suffix, final String separator, final boolean isBulking) {
+		return createBreedingMethod(prefix, count, suffix, "DER", 323, "G", "UDM", "Unknown derivative method",
+			"Unknown derivative method in self fertilising species: for storing historic pedigrees", separator, isBulking);
+	}
+
+	public Method createGenerativeMethod(final String prefix, final String count, final String suffix, final String separator, final boolean isBulking) {
+		return createBreedingMethod(prefix, count, suffix, "GEN", 1, "G", "UGM", "Unknown generative method",
+			"Unknown generative method for storing historic pedigrees for self fertilizing species.", separator, isBulking);
+	}
+
+	public Method createBreedingMethod(final String prefix, final String count, final String suffix, final String mType, final Integer mid,
+		final String mgrp, final String mcode, final String mname, final String mdesc, final String separator, final boolean isBulking) {
+		final Method method = new Method();
+		method.setMid(mid);
+		method.setPrefix(prefix);
+		method.setCount(count);
+		method.setSuffix(suffix);
+		method.setMtype(mType);
+		method.setMid(mid);
+		method.setMgrp(mgrp);
+		method.setMcode(mcode);
+		method.setMname(mname);
+		method.setMdesc(mdesc);
+		method.setSeparator(separator);
+		if (isBulking) {
+			method.setGeneq(TermId.BULKING_BREEDING_METHOD_CLASS.getId());
+		} else {
+			method.setGeneq(TermId.NON_BULKING_BREEDING_METHOD_CLASS.getId());
+		}
+		return method;
 	}
 
 	public String getNonNullValue(String value) {

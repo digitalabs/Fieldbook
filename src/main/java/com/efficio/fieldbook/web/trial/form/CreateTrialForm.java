@@ -113,6 +113,8 @@ public class CreateTrialForm {
 
 	private String description;
 
+	private Integer germplasmListId;
+
 	public String getDescription() {
 		return description;
 	}
@@ -506,5 +508,13 @@ public class CreateTrialForm {
 	 */
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
+	}
+
+	public Integer getGermplasmListId() {
+		return germplasmListId;
+	}
+
+	public void setGermplasmListId(Integer germplasmListId) {
+		this.germplasmListId = germplasmListId;
 	}
 }

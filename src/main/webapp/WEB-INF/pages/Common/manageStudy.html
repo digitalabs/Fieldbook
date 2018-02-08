@@ -3,7 +3,7 @@
 		<h1><span th:text="#{nursery.managenurseries.header}">Manage Nurseries</span> <a class="bms-fa-question-circle fbk-help" data-help-link="MANAGE_NURSERIES"></a></h1>
 	</div>
 	<div class="page-header trial-header" th:if="${type == 'T'}">
-		<h1><span th:text="#{trial.managetrial.header}">Manage Trials</span> <a class="bms-fa-question-circle fbk-help" data-help-link="MANAGE_TRIALS"></a></h1>
+		<h1><span th:text="#{study.managestudies.header}">Manage Study</span> <a class="bms-fa-question-circle fbk-help" data-help-link="MANAGE_TRIALS"></a></h1>
 	</div>
 </div>
 <input type="hidden" id="preloadSummaryId" th:value="${preloadSummaryId}"/>
@@ -18,15 +18,15 @@
 				<img th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
 				<label  th:if="${type == 'N'}" class="h2_no_transform" th:text="#{browse.nurseries.header}"></label>
 				<label th:if="${type == 'N'}" class="control-label"><a href="javascript: openStudyTree(1)">Browse</a> for a nursery to work with.</label>
-				<label  th:if="${type == 'T'}" class="h2_no_transform" th:text="#{browse.trial.header}"></label>
-				<label th:if="${type == 'T'}" class="control-label"><a href="javascript: openStudyTree(1)">Browse</a> for a trial to work with.</label>
+				<label  th:if="${type == 'T'}" class="h2_no_transform" th:text="#{browse.studies.header}"></label>
+				<label th:if="${type == 'T'}" class="control-label"><a href="javascript: openStudyTree(1)">Browse</a> for a study to work with.</label>
 			</div>
 			<div class="col-xs-5 col-md-5">
 				<div style="float: right; padding-right: 10px;">
 					<a th:if="${type == 'N'}" th:href="@{/NurseryManager/createNursery}" class="btn btn-info"
 					th:utext="#{browse.nursery.start.new.nursery}">Start a New Nursery</a>
 					<a th:if="${type == 'T'}" th:href="@{/TrialManager/createTrial}" class="btn btn-info"
-					th:utext="#{browse.trial.start.new.trial}">Start a New Nursery</a>
+					th:utext="#{browse.study.start.new.study}">Start a New Nursery</a>
 				</div>
 			</div>
 		</div>

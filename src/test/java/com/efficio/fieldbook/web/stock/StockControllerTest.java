@@ -111,7 +111,7 @@ public class StockControllerTest {
 	@Test
 	public void testGetAllLocationList() {
 		this.dut.getAllLocationList();
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).getAllLocations(PROGRAM_UUID);
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).getLocationsByProgramUUID(PROGRAM_UUID);
 	}
 
 	@Test

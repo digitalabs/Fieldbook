@@ -189,6 +189,8 @@ public class EditNurseryControllerTest {
 		Mockito.when(dmsProject.getProgramUUID()).thenReturn("1002");
 		Mockito.when(studyDetails.getParentFolderId()).thenReturn((long) 1);
 		Mockito.when(workbook.getStudyDetails()).thenReturn(studyDetails);
+		Mockito.when(workbook.getStudyDetails().getStartDate()).thenReturn("20120314");
+		Mockito.when(workbook.getStudyDetails().getEndDate()).thenReturn("20180314");
 		Mockito.doReturn(project).when(this.abstractBaseFieldbookController).getCurrentProject();
 		Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(Matchers.anyInt())).thenReturn(workbook);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString()))

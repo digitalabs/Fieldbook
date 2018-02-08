@@ -611,9 +611,7 @@ public class SettingsUtilTest {
 		final List<SettingDetail> basicDetails = this.createSettingDetailVariables();
 		basicDetails.get(0).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
 		basicDetails.get(1).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
-		basicDetails.get(2).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
-		basicDetails.get(3).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
-		basicDetails.get(4).setRole(VariableType.SELECTION_METHOD.getRole());
+		basicDetails.get(2).setRole(VariableType.SELECTION_METHOD.getRole());
 
 		final Map<String, TreatmentFactorData> treatmentFactorItems = new HashMap<>();
 
@@ -627,7 +625,7 @@ public class SettingsUtilTest {
 		standardVariable.setDataType(new Term(dataType.getId(), dataType.getName(), dataType.getName()));
 
 		final SettingDetail settingDetail = new SettingDetail();
-		settingDetail.setVariable(basicDetails.get(4).getVariable());
+		settingDetail.setVariable(basicDetails.get(2).getVariable());
 		settingDetail.setRole(VariableType.SELECTION_METHOD.getRole());
 		settingDetail.setVariableType(VariableType.SELECTION_METHOD);
 

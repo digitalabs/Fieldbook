@@ -53,6 +53,7 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.util.DatasetUtil;
 import org.generationcp.middleware.util.Message;
 import org.generationcp.middleware.util.PoiUtil;
+import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.NoSuchMessageException;
@@ -933,7 +934,7 @@ public class ETLServiceImpl implements ETLService {
 			studyTypeValue = StudyType.N;
 		}
 		return new StudyDetails(study, title, objective, startDateStr, endDateStr, studyTypeValue, 0, null,
-				null);
+				null, Util.getCurrentDateAsStringValue());
 
 	}
 

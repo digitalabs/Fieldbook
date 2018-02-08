@@ -1,6 +1,7 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
@@ -35,6 +37,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.SampleService;
+import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -94,7 +97,7 @@ public abstract class BaseTrialController extends SettingsController {
 		studyDetails.setStudyName(detailBean.getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId())));
 		studyDetails.setStartDate(detailBean.getStartDate());
 		studyDetails.setEndDate(detailBean.getEndDate());
-		studyDetails.setStudyUpdate(detailBean.getStudyUpdate());
+		studyDetails.setStudyUpdate(Util.getCurrentDateAsStringValue(Util.DATE_AS_NUMBER_FORMAT));
 		studyDetails.setStudyType(StudyType.T);
 
 		if (detailBean.getFolderId() != null) {
@@ -644,7 +647,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final List<MeasurementVariable> studyConditions,
-			final boolean isUsePrevious, final int trialID) {
+			final boolean isUsePrevious, final int trialID) throws ParseException {
 		final Map<String, String> basicDetails = new HashMap<>();
 		final List<SettingDetail> initialDetailList = new ArrayList<>();
 
@@ -684,9 +687,13 @@ public abstract class BaseTrialController extends SettingsController {
 		basic.setBasicDetails(basicDetails);
 		basic.setStudyID(trialID);
 		basic.setDescription(studyDetails.getDescription());
-		basic.setStartDate(studyDetails.getStartDate());
-		basic.setEndDate(studyDetails.getEndDate());
-		basic.setStudyUpdate(studyDetails.getStudyUpdate());
+		basic.setStartDate(Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT));
+		basic.setEndDate(studyDetails.getEndDate().isEmpty() ?
+			StringUtils.EMPTY :
+			Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT));
+		basic.setStudyUpdate(			studyDetails.getStudyUpdate() != null && !studyDetails.getStudyUpdate().isEmpty() ?
+			Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT)
+			: StringUtils.EMPTY);
 
 		final int folderId = (int) studyDetails.getParentFolderId();
 		final String folderName;

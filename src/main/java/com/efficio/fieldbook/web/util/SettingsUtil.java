@@ -84,9 +84,9 @@ public class SettingsUtil {
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsUtil.class);
 	public static final String DESCRIPTION = "Description";
-	private static final String START_DATE = "startDate";
-	private static final String END_DATE = "endDate";
-	private static final String STUDY_UPDATE = "studyUpdate";
+	private static final String START_DATE = "Creation date";
+	private static final String END_DATE = "Completion date";
+	private static final String STUDY_UPDATE = "Last updated";
 
 	private SettingsUtil() {
 		// do nothing
@@ -1729,14 +1729,14 @@ public class SettingsUtil {
 						break;
 					} else if (END_DATE.equals(label)) {
 						final SettingVariable variableDescription =
-							new SettingVariable(START_DATE, null, null, null, null, null, null, null, null, null);
+							new SettingVariable(END_DATE, null, null, null, null, null, null, null, null, null);
 						final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, endDate, false);
 						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
 						found = true;
 						break;
 					} else if (STUDY_UPDATE.equals(label)) {
 						final SettingVariable variableDescription =
-							new SettingVariable(START_DATE, null, null, null, null, null, null, null, null, null);
+							new SettingVariable(STUDY_UPDATE, null, null, null, null, null, null, null, null, null);
 						final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, studyUpdate, false);
 						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
 						found = true;

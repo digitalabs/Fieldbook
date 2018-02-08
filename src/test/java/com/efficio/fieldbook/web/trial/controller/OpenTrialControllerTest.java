@@ -1,6 +1,7 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -251,7 +252,7 @@ public class OpenTrialControllerTest {
 			this.mockStandardVariables(workbook.getAllVariables());
 			this.openTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.TRIAL_ID, new ExtendedModelMap(), mockSession,
 					Mockito.mock(RedirectAttributes.class));
-		} catch (final MiddlewareException e) {
+		} catch (final MiddlewareException | ParseException e) {
 			this.handleUnexpectedException(e);
 		}
 
@@ -311,7 +312,7 @@ public class OpenTrialControllerTest {
 
 			Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be displayed.", this.hasAnalysisVariables(model));
 
-		} catch (final MiddlewareException e) {
+		} catch (final MiddlewareException | ParseException e) {
 			this.handleUnexpectedException(e);
 		}
 	}
@@ -1048,7 +1049,7 @@ public class OpenTrialControllerTest {
 	}
 
 	@Test
-	public void testUpdateSavedTrial() {
+	public void testUpdateSavedTrial() throws ParseException {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
 		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString()))

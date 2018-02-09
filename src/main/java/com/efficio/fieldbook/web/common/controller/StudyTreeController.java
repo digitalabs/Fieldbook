@@ -1,15 +1,9 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.TreeViewUtil;
+import com.efficio.pojos.treeview.TreeNode;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Reference;
@@ -36,9 +30,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
 
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
-import com.efficio.pojos.treeview.TreeNode;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Controller
 @RequestMapping(StudyTreeController.URL)
@@ -73,10 +71,10 @@ public class StudyTreeController {
 	@ResponseBody
 	@RequestMapping(value = "/loadInitialTree/{isFolderOnly}/{type}", method = RequestMethod.GET)
 	public String loadInitialTree(@PathVariable final String isFolderOnly, @PathVariable final String type) {
-		final boolean isNursery = type != null && StudyType.N.getName().equalsIgnoreCase(type) ? true : false;
+		//final boolean isNursery = type != null && StudyType.N.getName().equalsIgnoreCase(type) ? true : false;
 		try {
 			final List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-			final String localName = isNursery ? AppConstants.NURSERIES.getString() : AppConstants.TRIALS.getString();
+			final String localName = "Studies";//isNursery ? AppConstants.NURSERIES.getString() : AppConstants.TRIALS.getString();
 			final TreeNode localTreeNode = new TreeNode(StudyTreeController.LOCAL, localName, true, "lead",
 					AppConstants.FOLDER_ICON_PNG.getString(), this.getCurrentProgramUUID());
 			rootNodes.add(localTreeNode);
@@ -87,16 +85,17 @@ public class StudyTreeController {
 		return "[]";
 	}
 
-	private List<TreeNode> getChildNodes(final String parentKey, final boolean isNursery, final boolean isFolderOnly) {
+	private List<TreeNode> getChildNodes(final String parentKey, final boolean isFolderOnly) {
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		if (parentKey != null && !"".equals(parentKey)) {
 			try {
 				if (StudyTreeController.LOCAL.equals(parentKey)) {
 					final List<Reference> rootFolders = this.studyDataManager.getRootFolders(this.getCurrentProgramUUID(),
-							isNursery ? StudyType.nurseries() : StudyType.trials());
+							//isNursery ? StudyType.nurseries() : StudyType.trials()
+						StudyType.nurseriesAndTrials());
 					childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, false, true, isFolderOnly);
 				} else if (NumberUtils.isNumber(parentKey)) {
-					childNodes = this.getChildrenTreeNodes(parentKey, isNursery, isFolderOnly);
+					childNodes = this.getChildrenTreeNodes(parentKey, isFolderOnly);
 				} else {
 					StudyTreeController.LOG.error("parentKey = " + parentKey + " is not a number");
 				}
@@ -107,11 +106,13 @@ public class StudyTreeController {
 		return childNodes;
 	}
 
-	private List<TreeNode> getChildrenTreeNodes(final String parentKey, final boolean isNursery, final boolean isFolderOnly) {
+	private List<TreeNode> getChildrenTreeNodes(final String parentKey, final boolean isFolderOnly) {
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		final int parentId = Integer.valueOf(parentKey);
 		final List<Reference> folders = this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID(),
-				isNursery ? StudyType.nurseries() : StudyType.trials());
+				//isNursery ? StudyType.nurseries() : StudyType.trials()
+			StudyType.nurseriesAndTrials()
+		);
 
 		childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(folders, false, true, isFolderOnly);
 		return childNodes;
@@ -122,9 +123,9 @@ public class StudyTreeController {
 	public String expandTree(@PathVariable final String parentKey, @PathVariable final String isFolderOnly,
 			@PathVariable final String type) {
 		final boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
-		final boolean isNursery = type != null && StudyType.N.getName().equalsIgnoreCase(type) ? true : false;
+		//final boolean isNursery = type != null && StudyType.N.getName().equalsIgnoreCase(type) ? true : false;
 		try {
-			final List<TreeNode> childNodes = this.getChildNodes(parentKey, isNursery, isFolderOnlyBool);
+			final List<TreeNode> childNodes = this.getChildNodes(parentKey, isFolderOnlyBool);
 			return TreeViewUtil.convertTreeViewToJson(childNodes);
 		} catch (final Exception e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
@@ -326,7 +327,8 @@ public class StudyTreeController {
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 		} else {
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
-			final List<StudyType> studyTypeList = studyType.equals(StudyType.N.getName()) ? StudyType.nurseries() : StudyType.trials();
+			final List<StudyType> studyTypeList = StudyType.nurseriesAndTrials();//studyType.equals(StudyType.N.getName()) ? StudyType
+			// .nurseries() : StudyType.trials();
 			isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID(), studyTypeList);
 			String message;
 			if (!isFolderEmpty) {

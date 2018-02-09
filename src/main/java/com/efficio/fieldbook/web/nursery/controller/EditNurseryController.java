@@ -292,7 +292,7 @@ public class EditNurseryController extends SettingsController {
 		form.setDescription(workbook.getStudyDetails().getDescription());
 		form.setStartDate(DateUtil.convertDate(workbook.getStudyDetails().getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util
 			.FRONTEND_DATE_FORMAT));
-		if (!workbook.getStudyDetails().getEndDate().isEmpty()) {
+		if (workbook.getStudyDetails().getEndDate() != null && !workbook.getStudyDetails().getEndDate().isEmpty()) {
 			form.setEndDate(DateUtil.convertDate(workbook.getStudyDetails().getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util
 				.FRONTEND_DATE_FORMAT));
 		}
@@ -350,7 +350,7 @@ public class EditNurseryController extends SettingsController {
 		form.setDescription(workbook.getStudyDetails().getDescription());
 		form.setStartDate(Util.convertDate(workbook.getStudyDetails().getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util
 			.FRONTEND_DATE_FORMAT));
-		if (!workbook.getStudyDetails().getEndDate().isEmpty()) {
+		if (workbook.getStudyDetails().getEndDate() != null && !workbook.getStudyDetails().getEndDate().isEmpty()) {
 			form.setEndDate(Util.convertDate(workbook.getStudyDetails().getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util
 				.FRONTEND_DATE_FORMAT));
 		}

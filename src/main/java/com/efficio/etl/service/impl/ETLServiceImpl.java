@@ -66,6 +66,8 @@ import com.efficio.etl.web.bean.SheetDTO;
 import com.efficio.etl.web.bean.UserSelection;
 import com.efficio.etl.web.bean.VariableDTO;
 import com.efficio.etl.web.util.AppConstants;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -260,7 +262,7 @@ public class ETLServiceImpl implements ETLService {
 
 		final List<IndexValueDTO> dtoList = new ArrayList<>(columnValues.length);
 		for (int i = 0; i < columnValues.length; i++) {
-			final IndexValueDTO dto = new IndexValueDTO(i, columnValues[i]);
+			final IndexValueDTO dto = new IndexValueDTO(i, columnValues[i].trim());
 			dtoList.add(dto);
 		}
 
@@ -293,12 +295,17 @@ public class ETLServiceImpl implements ETLService {
 		final Sheet sheet = workbook.getSheetAt(userSelection.getSelectedSheet());
 		final String[] headerArray = PoiUtil.rowAsStringArray(sheet, userSelection.getHeaderRowIndex());
 
-		final List<String> returnValue = new ArrayList<>();
-		returnValue.addAll(Arrays.asList(headerArray));
-		if (addPlotId && !returnValue.contains(TermId.PLOT_ID.name())) {
-			returnValue.add(TermId.PLOT_ID.name());
+		final List<String> headers = new ArrayList<>();
+		headers.addAll(Arrays.asList(headerArray));
+		if (addPlotId && !headers.contains(TermId.PLOT_ID.name())) {
+			headers.add(TermId.PLOT_ID.name());
 		}
-		return returnValue;
+		// Trim all header names before returning
+		return Lists.transform(headers, new Function<String, String>() {
+			public String apply(String s) {
+				return s.trim();
+			}
+		});
 	}
 
 	// overloaded the method to have a version that accepts parameterized

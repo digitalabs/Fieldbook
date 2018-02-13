@@ -175,7 +175,7 @@ public class FileUploadController extends AbstractBaseETLController {
 					this.etlService.retrieveAvailableEntryTypes(programUUID));
 
 			this.fieldbookService.addStudyUUIDConditionAndPlotIDFactorToWorkbook(wb, true);
-
+			this.dataImportService.populatePossibleValuesForCategoricalVariates(wb.getConditions(), programUUID);
 			this.dataImportService.saveDataset(wb, programUUID,
 					this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
 

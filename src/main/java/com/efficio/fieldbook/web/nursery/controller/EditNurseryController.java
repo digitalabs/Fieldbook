@@ -435,13 +435,13 @@ public class EditNurseryController extends SettingsController {
 
 
 		final String description = form.getDescription();
-		final String startDate = (form.getStartDate() != null ?
+		final String startDate = (form.getStartDate() != null && !form.getStartDate().isEmpty()?
 			Util.convertDate(form.getStartDate(), Util.FRONTEND_DATE_FORMAT, Util.DATE_AS_NUMBER_FORMAT) :
 			"");
-		final String endDate = (form.getEndDate() != null ?
+		final String endDate = (form.getEndDate() != null  && !form.getEndDate().isEmpty()?
 			Util.convertDate(form.getEndDate(), Util.FRONTEND_DATE_FORMAT, Util.DATE_AS_NUMBER_FORMAT) :
 			"");
-		final String studyUpdate = (form.getStudyUpdate() != null ?
+		final String studyUpdate = (form.getStudyUpdate() != null && !form.getStudyUpdate().isEmpty() ?
 			Util.convertDate(form.getStudyUpdate(), Util.FRONTEND_DATE_FORMAT, Util.DATE_AS_NUMBER_FORMAT) :
 			"");
 

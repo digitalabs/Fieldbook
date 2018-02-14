@@ -178,6 +178,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 					.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection));
 			importData.setConstants(referenceWorkbook.getConstants());
 			importData.setConditions(referenceWorkbook.getConditions());
+			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getConditions(), programUUID);
 			this.etlService.saveProjectData(importData, programUUID);
 
 		} catch (final PhenotypeException e) {

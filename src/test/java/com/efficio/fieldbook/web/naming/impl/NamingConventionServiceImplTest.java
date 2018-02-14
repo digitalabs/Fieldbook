@@ -2,7 +2,6 @@
 package com.efficio.fieldbook.web.naming.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +16,6 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
-import org.generationcp.middleware.domain.sample.PlantDTO;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -144,7 +142,7 @@ public class NamingConventionServiceImplTest {
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
 		Mockito.when(
 				this.seedSourceGenerator.generateSeedSource(Mockito.any(Workbook.class), Mockito.anyString(), Mockito.anyString(),
-						Mockito.anyString(), Mockito.anyString())).thenReturn(testSeedSource);
+						Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(testSeedSource);
 
 		AdvancingNursery advancingParameters = new AdvancingNursery();
 		advancingParameters.setCheckAdvanceLinesUnique(false);
@@ -267,7 +265,7 @@ public class NamingConventionServiceImplTest {
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
 		Mockito.when(
 				this.seedSourceGenerator.generateSeedSource(Mockito.any(Workbook.class), Mockito.any(String.class),
-						Mockito.any(String.class), Mockito.any(String.class), Mockito.anyString())).thenReturn(testSeedSource);
+						Mockito.any(String.class), Mockito.any(String.class), Mockito.anyString(), Mockito.anyString())).thenReturn(testSeedSource);
 
         AdvancingNursery info = new AdvancingNursery();
         info.setMethodChoice("1");

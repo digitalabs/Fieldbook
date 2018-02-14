@@ -67,6 +67,8 @@ import com.efficio.etl.web.bean.SheetDTO;
 import com.efficio.etl.web.bean.UserSelection;
 import com.efficio.etl.web.bean.VariableDTO;
 import com.efficio.etl.web.util.AppConstants;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -263,7 +265,7 @@ public class ETLServiceImpl implements ETLService {
 
 		final List<IndexValueDTO> dtoList = new ArrayList<>(columnValues.length);
 		for (int i = 0; i < columnValues.length; i++) {
-			final IndexValueDTO dto = new IndexValueDTO(i, columnValues[i]);
+			final IndexValueDTO dto = new IndexValueDTO(i, columnValues[i].trim());
 			dtoList.add(dto);
 		}
 
@@ -296,12 +298,17 @@ public class ETLServiceImpl implements ETLService {
 		final Sheet sheet = workbook.getSheetAt(userSelection.getSelectedSheet());
 		final String[] headerArray = PoiUtil.rowAsStringArray(sheet, userSelection.getHeaderRowIndex());
 
-		final List<String> returnValue = new ArrayList<>();
-		returnValue.addAll(Arrays.asList(headerArray));
-		if (addPlotId && !returnValue.contains(TermId.PLOT_ID.name())) {
-			returnValue.add(TermId.PLOT_ID.name());
+		final List<String> headers = new ArrayList<>();
+		headers.addAll(Arrays.asList(headerArray));
+		if (addPlotId && !headers.contains(TermId.PLOT_ID.name())) {
+			headers.add(TermId.PLOT_ID.name());
 		}
-		return returnValue;
+		// Trim all header names before returning
+		return Lists.transform(headers, new Function<String, String>() {
+			public String apply(String s) {
+				return s.trim();
+			}
+		});
 	}
 
 	// overloaded the method to have a version that accepts parameterized
@@ -730,7 +737,7 @@ public class ETLServiceImpl implements ETLService {
 	 * @param studyId
 	 *            as the id of the study
 	 */
-	private void fillDetailsOfDatasetsInWorkbook(final org.generationcp.middleware.domain.etl.Workbook wb,
+	public void fillDetailsOfDatasetsInWorkbook(final org.generationcp.middleware.domain.etl.Workbook wb,
 			final Integer studyId, final boolean isMeansDataImport) {
 
 		wb.getStudyDetails().setId(studyId);
@@ -750,21 +757,14 @@ public class ETLServiceImpl implements ETLService {
 		}
 
 		// set variables
-		wb.setFactors(this.getFactorsFromDatasets(trialDataset, datasetForImport));
+		wb.setFactors(this.getFactorsFromDatasets(datasetForImport));
 		wb.setVariates(this.getVariatesFromDatasets(trialDataset, datasetForImport));
-		wb.setConditions(new ArrayList<MeasurementVariable>());
+		wb.setConditions(this.getConditionsFromDatasets(trialDataset));
 		wb.setConstants(new ArrayList<MeasurementVariable>());
 	}
 
-	private List<MeasurementVariable> getFactorsFromDatasets(final DataSet trialDataset,
-			final DataSet nonTrialDataset) {
+	private List<MeasurementVariable> getFactorsFromDatasets(final DataSet nonTrialDataset) {
 		final List<MeasurementVariable> factors = new ArrayList<>();
-		for (final DMSVariableType variableType : trialDataset.getVariableTypes().getVariableTypes()) {
-			final PhenotypicType pheno = variableType.getStandardVariable().getPhenotypicType();
-			if (PhenotypicType.TRIAL_ENVIRONMENT.compareTo(pheno) == 0) {
-				factors.add(this.convertToMeasurementVariable(variableType));
-			}
-		}
 		for (final DMSVariableType variableType : nonTrialDataset.getVariableTypes().getVariableTypes()) {
 			final PhenotypicType pheno = variableType.getStandardVariable().getPhenotypicType();
 			if (PhenotypicType.GERMPLASM.compareTo(pheno) == 0 || pheno.compareTo(PhenotypicType.TRIAL_DESIGN) == 0) {
@@ -772,6 +772,17 @@ public class ETLServiceImpl implements ETLService {
 			}
 		}
 		return factors;
+	}
+
+	private List<MeasurementVariable> getConditionsFromDatasets(final DataSet trialDataset) {
+		final List<MeasurementVariable> conditions = new ArrayList<>();
+		for (final DMSVariableType variableType : trialDataset.getVariableTypes().getVariableTypes()) {
+			final PhenotypicType pheno = variableType.getStandardVariable().getPhenotypicType();
+			if (PhenotypicType.TRIAL_ENVIRONMENT.compareTo(pheno) == 0) {
+				conditions.add(this.convertToMeasurementVariable(variableType));
+			}
+		}
+		return conditions;
 	}
 
 	private List<MeasurementVariable> getVariatesFromDatasets(final DataSet trialDataset,
@@ -1088,7 +1099,7 @@ public class ETLServiceImpl implements ETLService {
 	/**
 	 * Returns all available entry types at the moment in the form of a map
 	 * <Name, CVTermId> i.e <C,10170>
-	 * 
+	 *
 	 * @param programUUID
 	 *
 	 * @return map <Name, CVTermId>

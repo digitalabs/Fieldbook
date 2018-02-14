@@ -12,14 +12,11 @@
 package com.efficio.fieldbook.web.naming.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.sample.PlantDTO;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
@@ -39,11 +36,10 @@ public interface NamingConventionService {
 	 *
 	 * @param info
 	 * @return
-	 * @throws MiddlewareQueryException
 	 * @throws RuleException
 	 * @throws FieldbookException
 	 */
-	AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws RuleException, MiddlewareQueryException, FieldbookException;
+	AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws RuleException, FieldbookException;
 
 	List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, AdvancingNursery advancingParameters, Workbook workbook)
 			throws RuleException;

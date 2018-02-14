@@ -41,14 +41,15 @@ public class BVDesignRunner implements DesignRunner {
 	public BVDesignOutput runBVDesign(final WorkbenchService workbenchService, final FieldbookProperties fieldbookProperties,
 			final MainDesign design) throws IOException {
 
-		final String bvDesignLocation = BVDesignRunner.getBreedingViewExeLocation(workbenchService);
+		final String bvDesignPath = fieldbookProperties.getBvDesignPath();
+
 		int returnCode = -1;
-		if (bvDesignLocation != null && design != null && design.getDesign() != null) {
+		if (bvDesignPath != null && design != null && design.getDesign() != null) {
 			final String xml = this.getXMLStringForDesign(design);
 
 			final String filepath = BVDesignRunner.writeToFile(xml, fieldbookProperties);
 
-			final ProcessBuilder pb = new ProcessBuilder(bvDesignLocation, "-i" + filepath);
+			final ProcessBuilder pb = new ProcessBuilder(bvDesignPath, "-i" + filepath);
 			final Process p = pb.start();
 			// add a timeout for the design runner
 			final ProcessTimeoutThread processTimeoutThread = new ProcessTimeoutThread(p, BVDesignRunner.DESIGN_RUNNER_TIMEOUT_MILLIS);

@@ -1221,3 +1221,54 @@ BMS.Fieldbook.FinalSampleListDataTable = (function($) {
 	return dataTableConstructor;
 
 })(jQuery);
+
+BMS.Fieldbook.FinalCrossesListDataTable = (function($) {
+	/**
+	 * Creates a new CrossesListDataTable.
+	 *
+	 * @constructor
+	 * @alias module:fieldbook-datatable
+	 * @param {string} tableIdentifier the id of the table container
+	 * @param {string} parentDiv parentdiv of that contains the table
+	 * @param {dataList} json representation of the data to be displayed
+	 */
+	var dataTableConstructor = function FinalCrossesListDataTable(tableIdentifier, parentDiv, dataList, tableAutoWidth) {
+		'use strict';
+
+		var columns = [],
+			aoColumnsDef = [],
+			table;
+
+		$(tableIdentifier + ' thead tr th').each(function(index) {
+			columns.push({data: $(this).data('col-name')});
+			aoColumnsDef.push({bSortable: false, bVisible: $(this).data('col-visible')});
+		});
+
+		table = $(tableIdentifier).dataTable({
+			autoWidth: tableAutoWidth,
+			scrollY: '500px',
+			scrollX: '100%',
+			scrollCollapse: true,
+			columns: columns,
+			aoColumns: aoColumnsDef,
+			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+			dom: 'R<"mdt-header" rli<"mdt-columns"B>><t><"fbk-page-div"p>',
+			iDisplayLength: 100,
+			buttons: [
+				{
+					extend: 'colvis',
+					className: 'fbk-buttons-no-border fbk-colvis-button',
+					text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>'
+				}
+			]
+		});
+
+		FinalCrossesListDataTable.prototype.getDataTable = function()
+		{
+			return table;
+		};
+	};
+
+	return dataTableConstructor;
+
+})(jQuery);

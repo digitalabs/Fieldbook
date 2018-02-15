@@ -2001,6 +2001,42 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
 	});
 }
 
+function displayCrossesList(germplasmListId, listName, crossesType, isDefault, advancedGermplasmListId, isPageLoading) {
+	'use script';
+	var id = advancedGermplasmListId ? advancedGermplasmListId : germplasmListId;
+	var url = '/Fieldbook/germplasm/list/crosses/' + id;
+	if (!isDefault) {
+		$('#advanceHref' + id + ' .fbk-close-tab').before(': [' + listName + ']');
+		url += '?isSnapshot=0';
+	} else {
+		url += '?isSnapshot=1';
+	}
+	$.ajax({
+		url: url,
+		type: 'GET',
+		cache: false,
+		success: function (html) {
+			if (isNursery()) {
+				$('#Crosses-list' + id).html(html);
+				//we just show the button
+				$('.export-advance-list-action-button').removeClass('fbk-hide');
+				$('#Crosses-list' + id + '-li').addClass('Crosses-germplasm-items');
+				$('#Crosses-list' + id + '-li').data('Crosses-germplasm-list-id', advancedGermplasmListId);
+				$('.nav-tabs').tabdrop({align: 'left'});
+				$('.nav-tabs').tabdrop('layout');
+			} else {
+				var element = angular.element(document.getElementById("mainApp")).scope();
+				// To apply scope safely
+				element.safeApply(function () {
+					element.addCrossesListTabData(id, html, listName, crossesType, isPageLoading);
+				});
+				// Display Stock List if it is generated
+				StockIDFunctions.generateStockListTabIfNecessary(id, isPageLoading);
+			}
+		}
+	});
+}
+
 function displaySampleList(id, listName, isPageLoading) {
 	'use script';
 

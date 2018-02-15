@@ -1,6 +1,6 @@
 /*global angular, openStudyTree, showErrorMessage, operationMode, resetGermplasmList,
 showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
-stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, InventoryPage*/
+stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, InventoryPage, ImportCrosses*/
 //TODO move this messages under a namespace
 /* global addEnvironmentsImportDesignMessage, importSaveDataWarningMessage*/
 
@@ -167,10 +167,32 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			$scope.advanceTabsData = [];
 			$scope.advanceTrialTabs = [];
 			$scope.sampleListData = [];
+			$scope.crossesListData = [];
 			$scope.sampleListTabs = [];
+			$scope.crossesListTabs = [];
 			$scope.isOpenTrial = TrialManagerDataService.isOpenTrial;
+			$scope.studyTypes = [];
 
 			$scope.isChoosePreviousTrial = false;
+			debugger;
+			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+
+			var config = {
+				headers: {
+					'X-Auth-Token': xAuthToken
+				}
+			};
+
+
+			$http.get('/bmsapi/study/' + cropName, config).success(function (data) {
+				$scope.studyTypes = data;
+
+			}).error(function (data) {
+				if (data.status == 401) {
+					bmsAuth.handleReAuthentication();
+				}
+				showErrorMessage('', data.errors[0].message);
+			});
 
 			$scope.toggleChoosePreviousTrial = function() {
 				$scope.isChoosePreviousTrial = !$scope.isChoosePreviousTrial;
@@ -506,7 +528,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 							});
 
 							$scope.sampleListData.splice(index + 1, 0, {
-								name: 'stample-list' + tabId + '-li',
+								name: 'sample-list' + tabId + '-li',
 								data: tabData,
 								id: 'sample-content-pane' + tabId
 							});
@@ -538,6 +560,64 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				}
 			};
 
+			$scope.addCrossesListTabData = function(tabId, tabData, listName, crossesType, isPageLoading) {
+				var isSwap = false;
+				var isUpdate = false;
+				if (isPageLoading === undefined) {
+					isPageLoading = false;
+				}
+				angular.forEach($scope.crossesListTabs, function(value, index) {
+						if (value.name === listName && parseInt(value.id) === parseInt(tabId)) {
+							isUpdate = true;
+							$scope.crossesListData[index].data = tabData;
+							return;
+						}
+					}
+				);
+
+				angular.forEach($scope.crossesListTabs, function(value, index) {
+					if (!isSwap && !isUpdate) {
+						if (parseInt(value.id) === parseInt(tabId)) {
+							$scope.crossesListTabs.splice(index + 1, 0, {
+								name: listName,
+								state: 'crosses-list' + tabId + '-li',
+								id: tabId,
+								displayName: crossesType +': [' + $scope.crossesListTabs[index].name + ']'
+							});
+
+							$scope.crossesListData.splice(index + 1, 0, {
+								name: 'crosses-list' + tabId + '-li',
+								data: tabData,
+								id: 'crosses-content-pane' + tabId
+							});
+							isSwap = true;
+							if (isPageLoading !== true) {
+								$scope.tabSelected = 'crosses-list' + tabId + '-li';
+							}
+							$('#listActionButton' + tabId).addClass('disabled');
+						}
+					}
+				});
+
+				if (!isSwap && !isUpdate) {
+					$scope.crossesListTabs.push({
+						name: listName,
+						state: 'crosses-list' + tabId + '-li',
+						id: tabId,
+						displayName: crossesType +': [' + listName + ']'
+					});
+					$scope.sampleListData.push({
+						name: 'crosses-list' + tabId + '-li',
+						data: tabData,
+						id: 'crosses-list' + tabId + '-li'
+					});
+					if (isPageLoading !== true) {
+						$scope.tabSelected = 'crosses-list' + tabId + '-li';
+						$scope.isSettingsTab = false;
+					}
+				}
+			};
+
 			$scope.advancedTrialList = TrialManagerDataService.settings.advancedList;
 
 			angular.forEach($scope.advancedTrialList, function(value) {
@@ -548,6 +628,13 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 			angular.forEach($scope.sampleList, function(value) {
 				displaySampleList(value.listId, value.listName, true);
+			});
+
+			$scope.crossesList = TrialManagerDataService.settings.crossesList;
+
+			angular.forEach($scope.crossesList, function(value) {
+				debugger;
+				displayCrossesList(value.id, value.name,value.crossesType, true, '', true);
 			});
 
 			$scope.tabChange = function(selectedTab) {
@@ -582,6 +669,14 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				var index = $scope.findIndexByKeyValue($scope.sampleListTabs, 'state', tab);
 				$scope.sampleListTabs.splice(index, 1);
 				$scope.sampleListData.splice(index, 1);
+				$scope.tabSelected = 'trialSettings';
+				$scope.isSettingsTab = true;
+			};
+
+			$scope.closeCrossesListTab = function(tab) {
+				var index = $scope.findIndexByKeyValue($scope.crossesListTabs, 'state', tab);
+				$scope.crossesListTabs.splice(index, 1);
+				$scope.crossesListData.splice(index, 1);
 				$scope.tabSelected = 'trialSettings';
 				$scope.isSettingsTab = true;
 			};

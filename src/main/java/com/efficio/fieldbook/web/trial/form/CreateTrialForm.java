@@ -90,6 +90,7 @@ public class CreateTrialForm {
 
 	/** The study id. */
 	private Integer studyId;
+
 	/** The name type. */
 	private int nameType;
 
@@ -113,7 +114,11 @@ public class CreateTrialForm {
 
 	private String description;
 
+	/** The Id of Germplasm List. */
 	private Integer germplasmListId;
+
+	/** The study type name. */
+	private String studyTypeName;
 
 	public String getDescription() {
 		return description;
@@ -516,5 +521,13 @@ public class CreateTrialForm {
 
 	public void setGermplasmListId(Integer germplasmListId) {
 		this.germplasmListId = germplasmListId;
+	}
+
+	public String getStudyTypeName() {
+		return studyTypeName;
+	}
+
+	public void setStudyTypeName(String studyTypeName) {
+		this.studyTypeName = studyTypeName;
 	}
 }

@@ -2,7 +2,7 @@
 	<!-- header -->
 	<div class="row col-xs-12">
 		<h1 class="page-header col-xs-12 edit-trial-page-identifier">
-			MANAGE TRIALS <a class="bms-fa-question-circle fbk-help" data-help-link="MANAGE_TRIALS"></a>
+			MANAGE STUDIES <a class="bms-fa-question-circle fbk-help" data-help-link="MANAGE_STUDIES"></a>
 		</h1>
 	</div>
 
@@ -16,11 +16,10 @@
 						<img height="30" width="30" src="/Fieldbook/static/img/new-nursery.png"/>
 
 						<span class="fbk-nursery-heading" ng-hide="isOpenTrial()">
-						<span class="heading">Create Trial</span>
+						<span class="heading">Create Study</span>
 					</span>
 
 						<span class="fbk-nursery-heading" ng-show="isOpenTrial()">
-    					<span class="heading">Trial : </span>
                         <span class="heading" truncate-and-tooltip="data.basicDetails[8005]"></span>
 					</span>
 
@@ -36,7 +35,7 @@
 
 					<div class="pull-right fbk-nursery-heading-right">
 						<div style="padding-right: 24px">
-							<a href="/Fieldbook/TrialManager/manageTrial">Return to Manage Trials</a>
+							<a href="/Fieldbook/TrialManager/manageTrial">Return to Manage Studies</a>
 						</div>
 					</div>
 
@@ -161,7 +160,7 @@
 							<div class="row">
 								<div class="col-xs-6">
 									<div class="row form-group">
-										<label class="control-label col-sm-4"><b>Trial name</b>: <span class="required">*</span></label>
+										<label class="control-label col-sm-4"><b>Study name</b>: <span class="required">*</span></label>
 
 										<div class="col-sm-8" ng-hide="isOpenTrial()">
 											<input class="form-control character-input" maxlength="225" type="text"
@@ -181,8 +180,20 @@
 											<input class="form-control character-input" maxlength="225" type="text"
 												   ng-model="data.description"/>
 										</div>
+									</div>
 
+									<div class="row form-group">
+										<label class="control-label col-sm-4"><b>Study type</b>: <span class="required">*</span></label>
+										<span ng-show="isOpenTrial()">
+    									<span class="col-sm-8" id="studyTypeNameLabel" th:text="*{studyTypeName}"></span>
+									</span>
 
+										<div ng-show="!isOpenTrial()">
+											<select class="col-sm-8" id="studyTypeId" ng-model="studyTypeSelected"
+													ng-options="studyType.label for studyType in studyTypes">
+												<option value="">Please Choose</option>
+											</select>
+										</div>
 									</div>
 
 									<div class="row form-group">

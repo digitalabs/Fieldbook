@@ -12,6 +12,7 @@ import java.util.StringTokenizer;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import com.efficio.fieldbook.web.trial.bean.CrossesList;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
@@ -580,6 +581,22 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 
 		return advanceList;
+	}
+
+	protected List<CrossesList> getCrossesList(final Integer trialId) {
+		final List<GermplasmList> crossList =
+			this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.CROSSES);
+
+		crossList.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.IMP_CROSS));
+		crossList.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.CRT_CROSS));
+
+		final List<CrossesList> crossesList = new ArrayList<>();
+
+		for (final GermplasmList g : crossList) {
+			crossesList.add(new CrossesList(g.getId(), g.getName(),g.getType().equalsIgnoreCase(GermplasmListType.IMP_CROSS.toString())?GermplasmList.IMP_CROSS:GermplasmList.CRT_CROSS));
+		}
+
+		return crossesList;
 	}
 
 	public List<SettingDetail> retrieveVariablePairs(final int cvTermId) {

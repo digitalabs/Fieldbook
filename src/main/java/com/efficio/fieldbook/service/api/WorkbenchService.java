@@ -13,11 +13,9 @@ package com.efficio.fieldbook.service.api;
 
 import java.util.List;
 
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
-import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.Tool;
 
 /**
@@ -32,35 +30,23 @@ public interface WorkbenchService {
 	 *
 	 * @param toolName the tool name
 	 * @return the tool with name
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	Tool getToolWithName(String toolName) throws MiddlewareQueryException;
-
-	/**
-	 * Gets the template settings.
-	 *
-	 * @param templateSettingFilter the template setting filter
-	 * @return the template settings
-	 * @throws MiddlewareQueryException the middleware query exception
-	 */
-	List<TemplateSetting> getTemplateSettings(TemplateSetting templateSettingFilter) throws MiddlewareQueryException;
+	Tool getToolWithName(String toolName);
 
 	/**
 	 * Return all standard presets
 	 *
 	 * @return
-	 * @throws MiddlewareQueryException
 	 */
-	List<StandardPreset> getAllStandardPresets() throws MiddlewareQueryException;
+	List<StandardPreset> getAllStandardPresets();
 
 	/**
 	 * Return all standard preset specified by crop name
 	 *
 	 * @param cropName
 	 * @return
-	 * @throws MiddlewareQueryException
 	 */
-	List<StandardPreset> getStandardPresetByCrop(String cropName) throws MiddlewareQueryException;
+	List<StandardPreset> getStandardPresetByCrop(String cropName);
 
 	/**
 	 * Returns all standard preset specified by crop,tool,and tool_section
@@ -69,62 +55,33 @@ public interface WorkbenchService {
 	 * @param cropName
 	 * @param toolSection
 	 * @return
-	 * @throws MiddlewareQueryException
 	 */
-	List<StandardPreset> getStandardPresetByCrop(int toolId, String cropName, String toolSection) throws MiddlewareQueryException;
+	List<StandardPreset> getStandardPresetByCrop(int toolId, String cropName, String toolSection);
 
-	List<StandardPreset> getStandardPresetByCropAndPresetName(String presetName, int toolId, String cropName, String toolSection)
-			throws MiddlewareQueryException;
+	List<StandardPreset> getStandardPresetByCropAndPresetName(String presetName, int toolId, String cropName, String toolSection);
 
 	/**
 	 * Returns the specific fieldbook web tool
 	 *
 	 * @return
-	 * @throws MiddlewareQueryException
 	 */
-	Tool getFieldbookWebTool() throws MiddlewareQueryException;
+	Tool getFieldbookWebTool();
 
 	/**
 	 * Returns the standard preset specified by id
 	 *
 	 * @param id
 	 * @return
-	 * @throws MiddlewareQueryException
 	 */
-	StandardPreset getStandardPresetById(Integer id) throws MiddlewareQueryException;
+	StandardPreset getStandardPresetById(Integer id);
 
 	/**
 	 * Save new or update existing standard preset
 	 *
 	 * @param preset
 	 * @return
-	 * @throws MiddlewareQueryException
 	 */
-	StandardPreset saveOrUpdateStandardPreset(StandardPreset preset) throws MiddlewareQueryException;
-
-	/**
-	 * Adds the template setting.
-	 *
-	 * @param templateSetting the template setting
-	 * @throws MiddlewareQueryException the middleware query exception
-	 */
-	Integer addTemplateSetting(TemplateSetting templateSetting) throws MiddlewareQueryException;
-
-	/**
-	 * Update template setting.
-	 *
-	 * @param templateSetting the template setting
-	 * @throws MiddlewareQueryException the middleware query exception
-	 */
-	void updateTemplateSetting(TemplateSetting templateSetting) throws MiddlewareQueryException;
-
-	/**
-	 * Delete template setting.
-	 *
-	 * @param templateSettingId the template setting id
-	 * @throws MiddlewareQueryException the middleware query exception
-	 */
-	void deleteTemplateSetting(Integer templateSettingId) throws MiddlewareQueryException;
+	StandardPreset saveOrUpdateStandardPreset(StandardPreset preset);
 
 	/**
 	 * Gets the current ibdb user id.
@@ -132,7 +89,6 @@ public interface WorkbenchService {
 	 * @param projectId the project id
 	 * @param workbenchUserId the current workbench user id
 	 * @return the current ibdb user id
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	Integer getCurrentIbdbUserId(Long projectId, Integer workbenchUserId);
 
@@ -141,16 +97,14 @@ public interface WorkbenchService {
 	 *
 	 * @param projectId the project id
 	 * @return the project by id
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	Project getProjectById(Long projectId) throws MiddlewareQueryException;
+	Project getProjectById(Long projectId);
 	
 	/**
 	 * Gets the person by id.
 	 *
 	 * @param personID the person id
 	 * @return the person by id
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	Person getPersonById(int personID) throws MiddlewareQueryException;
+	Person getPersonById(int personID);
 }

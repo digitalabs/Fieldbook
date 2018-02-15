@@ -93,11 +93,46 @@ public class BreedingMethodController extends AbstractBaseFieldbookController {
 
 		return result;
 	}
+
+	/**
+	 * Gets the breeding methods.
+	 *
+	 * @return the breeding methods
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getNoBulkingBreedingMethods", method = RequestMethod.GET)
+	public Map<String, Object> getNoBulkingBreedingMethods() {
+
+		Map<String, Object> result = new HashMap<>();
+
+		try {
+			List<Method> noBulkingMethods = this.fieldbookMiddlewareService.getAllNoBulkingMethods(false);
+			List<Method> favoriteNoBulkingMethods = this.fieldbookMiddlewareService.getFavoriteProjectNoBulkingMethods(
+					this.contextUtil.getCurrentProgramUUID());
+			List<Method> allNoBulkingAndNoGenerativeMethods = this.fieldbookMiddlewareService.getAllNoBulkingMethods(true);
+			List<Method> allGenerativeNoBulkingMethods = this.fieldbookMiddlewareService.getAllGenerativeNoBulkingMethods(
+					this.contextUtil.getCurrentProgramUUID());
+
+			result.put("success", "1");
+			result.put("allMethods", noBulkingMethods);
+			result.put("favoriteMethods", favoriteNoBulkingMethods);
+			result.put("allNonGenerativeMethods", allNoBulkingAndNoGenerativeMethods);
+			result.put("allGenerativeMethods", allGenerativeNoBulkingMethods);
+			result.put("favoriteNonGenerativeMethods", ListUtils.intersection(favoriteNoBulkingMethods, allNoBulkingAndNoGenerativeMethods));
+			result.put("favoriteGenerativeMethods", ListUtils.intersection(favoriteNoBulkingMethods, allGenerativeNoBulkingMethods));
+		} catch (MiddlewareQueryException e) {
+			BreedingMethodController.LOG.error(e.getMessage(), e);
+			result.put("success", "-1");
+			result.put("errorMessage", e.getMessage());
+		}
+
+		return result;
+	}
 	
 	@ResponseBody
 	@RequestMapping(value = "/getBreedingMethodById", method = RequestMethod.GET)
 	public String getBreedingMethodById(@RequestParam(value = "data") String id) {
-		String result = new String();
+		String result;
 		try {
 			Method method = this.fieldbookMiddlewareService.getBreedingMethodById(Integer.parseInt(id.replace("\"", "")));
 			result = method.getMname() + " - " + method.getMcode();

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.efficio.fieldbook.web.nursery.bean.AdvanceType;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
@@ -141,7 +142,7 @@ public class NamingConventionServiceImplTest {
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
 		Mockito.when(
 				this.seedSourceGenerator.generateSeedSource(Mockito.any(Workbook.class), Mockito.anyString(), Mockito.anyString(),
-						Mockito.anyString(), Mockito.anyString())).thenReturn(testSeedSource);
+						Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(testSeedSource);
 
 		AdvancingNursery advancingParameters = new AdvancingNursery();
 		advancingParameters.setCheckAdvanceLinesUnique(false);
@@ -253,7 +254,8 @@ public class NamingConventionServiceImplTest {
         as1.setCurrentMaxSequence(0);
         rows.getRows().add(as1);
 
-        Mockito.when(this.advancingSourceListFactory.createAdvancingSourceList(Mockito.isA(Workbook.class),Mockito.isA(AdvancingNursery.class),Mockito.isA(Study.class),Mockito.isA(Map.class),Mockito.isA(Map.class)))
+        Mockito.when(this.advancingSourceListFactory.createAdvancingSourceList(Mockito.isA(Workbook.class),
+				Mockito.isA(AdvancingNursery.class), Mockito.isA(Study.class), Mockito.isA(Map.class), Mockito.isA(Map.class)))
                 .thenReturn(rows);
 
         Mockito.when(this.ruleFactory.getRuleSequenceForNamespace(Mockito.eq("naming"))).thenReturn(new String[] {"RootNameGenerator"});
@@ -263,7 +265,7 @@ public class NamingConventionServiceImplTest {
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
 		Mockito.when(
 				this.seedSourceGenerator.generateSeedSource(Mockito.any(Workbook.class), Mockito.any(String.class),
-						Mockito.any(String.class), Mockito.any(String.class), Mockito.anyString())).thenReturn(testSeedSource);
+						Mockito.any(String.class), Mockito.any(String.class), Mockito.anyString(), Mockito.anyString())).thenReturn(testSeedSource);
 
         AdvancingNursery info = new AdvancingNursery();
         info.setMethodChoice("1");
@@ -271,6 +273,7 @@ public class NamingConventionServiceImplTest {
         info.setLineSelected("1");
         info.setAllPlotsChoice("1");
         info.setLineSelected("1");
+		info.setAdvanceType(AdvanceType.TRIAL);
 
         Study study = new Study();
         study.setId(2345);

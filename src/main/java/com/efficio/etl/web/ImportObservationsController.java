@@ -73,9 +73,10 @@ public class ImportObservationsController extends AbstractBaseETLController {
 	}
 
 	@RequestMapping(value = "/{confirmDiscard}", method = RequestMethod.GET)
-	public String processImport(@ModelAttribute("uploadForm") FileUploadForm uploadForm, @PathVariable int confirmDiscard, Model model,
-			HttpSession session, HttpServletRequest request) {
-		List<String> errors = new ArrayList<String>();
+	public String processImport(@ModelAttribute("uploadForm") final FileUploadForm uploadForm,
+			@PathVariable final int confirmDiscard, final Model model, final HttpSession session,
+			final HttpServletRequest request) {
+		final List<String> errors = new ArrayList<>();
 
 		org.generationcp.middleware.domain.etl.Workbook importData = null;
 
@@ -83,52 +84,55 @@ public class ImportObservationsController extends AbstractBaseETLController {
 		try {
 
 			programUUID = this.contextUtil.getCurrentProgramUUID();
-			Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
-			boolean isMeansDataImport =
-					this.userSelection.getDatasetType() != null
-							&& this.userSelection.getDatasetType().intValue() == DataSetType.MEANS_DATA.getId();
+			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
+			final boolean isMeansDataImport = this.userSelection.getDatasetType() != null
+					&& this.userSelection.getDatasetType().intValue() == DataSetType.MEANS_DATA.getId();
 
 			importData = this.etlService.createWorkbookFromUserSelection(this.userSelection, isMeansDataImport);
 
 			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getVariates(), programUUID);
 
-			List<MeasurementVariable> studyHeaders = importData.getAllVariables();
+			final List<MeasurementVariable> studyHeaders = importData.getFactors();
 
-			List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection, this.etlService.headersContainsPlotId(importData));
+			final List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection,
+					this.etlService.headersContainsPlotId(importData));
 
-			Map<String, List<Message>> mismatchErrors =
-					this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, isMeansDataImport);
+			final Map<String, List<Message>> mismatchErrors = this.etlService.checkForMismatchedHeaders(fileHeaders,
+					studyHeaders, isMeansDataImport);
 
-			boolean isWorkbookHasObservationRecords = this.etlService.isWorkbookHasObservationRecords(this.userSelection, errors, workbook);
-			boolean isObservationOverMaxLimit = this.etlService.isObservationOverMaximumLimit(this.userSelection, errors, workbook);
+			final boolean isWorkbookHasObservationRecords = this.etlService
+					.isWorkbookHasObservationRecords(this.userSelection, errors, workbook);
+			final boolean isObservationOverMaxLimit = this.etlService.isObservationOverMaximumLimit(this.userSelection,
+					errors, workbook);
 
 			if (mismatchErrors != null && !mismatchErrors.isEmpty()) {
-				for (Map.Entry<String, List<Message>> entry : mismatchErrors.entrySet()) {
+				for (final Map.Entry<String, List<Message>> entry : mismatchErrors.entrySet()) {
 					errors.addAll(this.etlService.convertMessageList(entry.getValue()));
 				}
 			} else if (isWorkbookHasObservationRecords && !isObservationOverMaxLimit) {
 
-				importData.setObservations(this.etlService.extractExcelFileData(workbook, this.userSelection, importData,
-						confirmDiscard == 1 ? true : false));
+				importData.setObservations(this.etlService.extractExcelFileData(workbook, this.userSelection,
+						importData, confirmDiscard == 1 ? true : false));
 
-				// there is now an expectation after the validate project data step
-				Map<String, List<Message>> projectDataErrors = this.etlService.validateProjectData(importData, programUUID);
+				// there is now an expectation after the validate project data
+				// step
+				final Map<String, List<Message>> projectDataErrors = this.etlService.validateProjectData(importData,
+						programUUID);
 
 				if (projectDataErrors != null) {
-					for (Map.Entry<String, List<Message>> entry : projectDataErrors.entrySet()) {
+					for (final Map.Entry<String, List<Message>> entry : projectDataErrors.entrySet()) {
 						errors.addAll(this.etlService.convertMessageList(entry.getValue()));
 					}
 				}
 			}
 
-			List<Message> messages = new ArrayList<Message>();
+			final List<Message> messages = new ArrayList<>();
 			this.dataImportService.checkForInvalidGids(importData, messages);
 			errors.addAll(this.etlService.convertMessageList(messages));
 
-
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ImportObservationsController.LOG.error(e.getMessage(), e);
-			List<Message> error = new ArrayList<Message>();
+			final List<Message> error = new ArrayList<>();
 			error.add(new Message(Constants.MESSAGE_KEY_GENERIC_ERROR));
 			errors.addAll(this.etlService.convertMessageList(error));
 
@@ -146,18 +150,19 @@ public class ImportObservationsController extends AbstractBaseETLController {
 	}
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public String uploadFile(@ModelAttribute("uploadForm") FileUploadForm uploadForm, BindingResult result, Model model) {
-		FileUploadFormValidator validator = new FileUploadFormValidator();
+	public String uploadFile(@ModelAttribute("uploadForm") final FileUploadForm uploadForm, final BindingResult result,
+			final Model model) {
+		final FileUploadFormValidator validator = new FileUploadFormValidator();
 		validator.validate(uploadForm, result);
 		this.hasErrors = result.hasErrors();
 		if (this.hasErrors) {
 			return this.getContentName();
 		} else {
 			try {
-				String tempFileName = this.etlService.storeUserWorkbook(uploadForm.getFile().getInputStream());
+				final String tempFileName = this.etlService.storeUserWorkbook(uploadForm.getFile().getInputStream());
 				this.userSelection.setServerFileName(tempFileName);
 				this.userSelection.setActualFileName(uploadForm.getFile().getOriginalFilename());
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				ImportObservationsController.LOG.error(e.getMessage(), e);
 				result.reject("uploadForm.file", "Error occurred while uploading file.");
 			}
@@ -165,16 +170,21 @@ public class ImportObservationsController extends AbstractBaseETLController {
 		}
 	}
 
-	public String confirmImport(Model model, org.generationcp.middleware.domain.etl.Workbook importData, String programUUID) {
-		List<String> errors = new ArrayList<String>();
+	public String confirmImport(final Model model, final org.generationcp.middleware.domain.etl.Workbook importData,
+			final String programUUID) {
+		final List<String> errors = new ArrayList<>();
 		try {
-
+			final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
+					.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection));
+			importData.setConstants(referenceWorkbook.getConstants());
+			importData.setConditions(referenceWorkbook.getConditions());
+			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getConditions(), programUUID);
 			this.etlService.saveProjectData(importData, programUUID);
 
-		} catch (PhenotypeException e) {
+		} catch (final PhenotypeException e) {
 			ImportObservationsController.LOG.error(e.getMessage(), e);
 			errors.add(e.getMessage().replaceAll("\n", "<br>"));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ImportObservationsController.LOG.error(e.getMessage(), e);
 			errors.add(e.getMessage());
 		} finally {

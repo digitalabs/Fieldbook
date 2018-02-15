@@ -91,7 +91,7 @@ public class InventoryImportParserTest {
 		this.testStockIds = this.createDummyStockIds();
 
 		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
-		Mockito.doReturn(this.testLocationList).when(this.fieldbookMiddlewareService).getAllLocations(PROGRAM_UUID);
+		Mockito.doReturn(this.testLocationList).when(this.fieldbookMiddlewareService).getLocationsByProgramUUID(PROGRAM_UUID);
 		Mockito.doReturn(this.scaleTDI.createScale()).when(this.ontologyService)
 				.getInventoryScaleByName(InventoryImportParserTest.AMOUNT_HEADER);
 		Mockito.doReturn(this.testStockIds).when(this.inventoryDataManager)

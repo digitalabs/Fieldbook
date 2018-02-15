@@ -22,6 +22,7 @@
 		$scope.PREFERRED_LOCATION_VARIABLE = 8170;
 		$scope.LOCATION_NAME_ID = 8190;
 		$scope.environmentListView = [];
+		$scope.applicationData = TrialManagerDataService.applicationData;
 
 
 		$scope.data = TrialManagerDataService.currentData.environments;
@@ -114,7 +115,7 @@
 					isTrialInstanceNumberUsed = true;
 				}
 				trialSelectEnvironmentContinueAdvancing(selectedTrialInstances, $scope.noOfReplications, selectedLocationDetails,
-					isTrialInstanceNumberUsed);
+					isTrialInstanceNumberUsed, $scope.applicationData.advanceType);
 			}
 
 		};
@@ -147,6 +148,7 @@
 		$scope.init = function() {
 
 			$scope.locationFromTrialSettings = false;
+			$scope.selectAll = true;
 			$scope.userInput = TrialManagerDataService.currentData.trialSettings.userInput;
 			if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null) {
 				// LOCATION_ABBR from environments
@@ -169,9 +171,7 @@
 			$scope.environmentListView = convertToEnvironmentListView($scope.data.environments,
 				$scope.PREFERRED_LOCATION_VARIABLE, $scope.TRIAL_INSTANCE_INDEX);
 
-			if ($scope.selectAll) {
-				$scope.doSelectAll();
-			}
+			$scope.doSelectAll();
 		};
 
 		$scope.init();

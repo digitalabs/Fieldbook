@@ -18,21 +18,20 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.DataSetTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
-import org.generationcp.middleware.domain.dms.DMSVariableType;
+import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitializer;
+import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DataSet;
 import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.StudyType;
-import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -117,35 +116,14 @@ public class ETLServiceTest {
 	private final static String SHEET_2_NAME = "Observation";
 
 	private static final String TRIAL_INSTANCE = "TRIAL_INSTANCE";
-	private static final String LOCATION_ID = "LOCATION_ID";
-	private static final String LOCATION_NAME = "LOCATION_NAME";
-	private static final String SITE_SOIL_PH = "SITE_SOIL_PH";
 	private static final String ENTRY_NO = "ENTRY_NO";
 	private static final String PLOT_NO = "PLOT_NO";
-	private static final String ASI = "ASI";
-	private static final String ASI_MEAN = "ASI_MEAN";
 	private static final String ALEU_COL_1_5 = "ALEU_COL_1_5";
 
 	private static final int STUDY_ID = 1;
 	private static final int TRIAL_DATASET_ID = 2;
 	private static final int MEASUREMENT_DATASET_ID = 3;
 	private static final int MEANS_DATASET_ID = 4;
-
-	private static final int DUMMY_PROPERTY_ID = 10;
-	private static final String DUMMY_PROPERTY_NAME = "PROPERTY";
-	private static final String DUMMY_PROPERTY_DEF = "PROPERT-DEF";
-
-	private static final int DUMMY_SCALE_ID = 20;
-	private static final String DUMMY_SCALE_NAME = "SCALE";
-	private static final String DUMMY_SCALE_DEF = "SCALE-DEF";
-
-	private static final int DUMMY_METHOD_ID = 30;
-	private static final String DUMMY_METHOD_NAME = "METHOD";
-	private static final String DUMMY_METHOD_DEF = "METHOD-DEF";
-
-	private static final int DUMMY_DATATYPE_ID = 40;
-	private static final String DUMMY_DATATYPE_NAME = "DATATYPE";
-	private static final String DUMMY_DATATYPE_DEF = "DATATYPE-DEF";
 
 	@Before
 	public void setUp() throws IOException {
@@ -220,12 +198,12 @@ public class ETLServiceTest {
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
 		this.userSelection.setDatasetType(datasetType);
 
-		final List<DataSet> plotDatasets = this
+		final List<DataSet> plotDatasets = DataSetTestDataInitializer
 				.createPlotDatasetsTestData(this.userSelection.getStudyName() + "-PLOTDATA");
 		Mockito.doReturn(plotDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
 				DataSetType.PLOT_DATA);
 
-		final List<DataSet> trialDatasets = this
+		final List<DataSet> trialDatasets = DataSetTestDataInitializer
 				.createTrialDatasetsTestData(this.userSelection.getStudyName() + "-ENVIRONMENT");
 		Mockito.doReturn(trialDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
 				DataSetType.SUMMARY_DATA);
@@ -265,7 +243,7 @@ public class ETLServiceTest {
 		Assert.assertNotNull(workbook.getConstants());
 
 		Assert.assertNotNull(workbook.getFactors());
-		Assert.assertEquals("The number of factors must be 5", 5, workbook.getFactors().size());
+		Assert.assertEquals("The number of factors must be 2", 2, workbook.getFactors().size());
 		for (final MeasurementVariable measurementVariable : workbook.getFactors()) {
 			Assert.assertTrue("A factor should either have a trial environment, germplasm or trial design role",
 					measurementVariable.getRole() == PhenotypicType.TRIAL_ENVIRONMENT
@@ -288,9 +266,10 @@ public class ETLServiceTest {
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
 		this.userSelection.setDatasetType(datasetType);
 
-		final List<DataSet> plotDatasets = this
+		final List<DataSet> plotDatasets = DataSetTestDataInitializer
 				.createPlotDatasetsTestData("MEASUREMENT EFEC_" + this.userSelection.getStudyName());
-		plotDatasets.add(this.createPlotDatasetTestData("TRIAL_" + this.userSelection.getStudyName(), true));
+		plotDatasets.add(DataSetTestDataInitializer
+				.createPlotDatasetTestData("TRIAL_" + this.userSelection.getStudyName(), true));
 		Mockito.doReturn(plotDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
 				DataSetType.PLOT_DATA);
 
@@ -332,7 +311,7 @@ public class ETLServiceTest {
 		Assert.assertNotNull(workbook.getConstants());
 
 		Assert.assertNotNull(workbook.getFactors());
-		Assert.assertEquals("The number of factors must be 5", 5, workbook.getFactors().size());
+		Assert.assertEquals("The number of factors must be 2", 2, workbook.getFactors().size());
 		for (final MeasurementVariable measurementVariable : workbook.getFactors()) {
 			Assert.assertTrue("A factor should either have a trial environment, germplasm or trial design role",
 					measurementVariable.getRole() == PhenotypicType.TRIAL_ENVIRONMENT
@@ -355,17 +334,17 @@ public class ETLServiceTest {
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
 		this.userSelection.setDatasetType(datasetType);
 
-		final List<DataSet> meansDatasets = this
+		final List<DataSet> meansDatasets = DataSetTestDataInitializer
 				.createMeansDatasetsTestData(this.userSelection.getStudyName() + "-MEANS");
 		Mockito.doReturn(meansDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
 				DataSetType.MEANS_DATA);
 
-		final List<DataSet> plotDatasets = this
+		final List<DataSet> plotDatasets = DataSetTestDataInitializer
 				.createPlotDatasetsTestData(this.userSelection.getStudyName() + "-PLOTDATA");
 		Mockito.doReturn(plotDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
 				DataSetType.PLOT_DATA);
 
-		final List<DataSet> trialDatasets = this
+		final List<DataSet> trialDatasets = DataSetTestDataInitializer
 				.createTrialDatasetsTestData(this.userSelection.getStudyName() + "-ENVIRONMENT");
 		Mockito.doReturn(trialDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
 				DataSetType.SUMMARY_DATA);
@@ -405,13 +384,7 @@ public class ETLServiceTest {
 		Assert.assertNotNull(workbook.getConstants());
 
 		Assert.assertNotNull(workbook.getFactors());
-		Assert.assertEquals("The number of factors must be 3", 3, workbook.getFactors().size());
-		for (final MeasurementVariable measurementVariable : workbook.getFactors()) {
-			Assert.assertTrue("A factor should either have a trial environment, germplasm or trial design role",
-					measurementVariable.getRole() == PhenotypicType.TRIAL_ENVIRONMENT
-							|| measurementVariable.getRole() == PhenotypicType.GERMPLASM
-							|| measurementVariable.getRole() == PhenotypicType.TRIAL_DESIGN);
-		}
+		Assert.assertEquals("The number of factors must be 0", 0, workbook.getFactors().size());
 
 		Assert.assertNotNull(workbook.getVariates());
 		Assert.assertEquals("The number of variates must be 2", 2, workbook.getVariates().size());
@@ -595,6 +568,35 @@ public class ETLServiceTest {
 	}
 
 	@Test
+	public void testFillDetailsOfDatasetsInWorkbook() {
+		final int datasetType = DataSetType.PLOT_DATA.getId();
+		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
+		this.userSelection.setDatasetType(datasetType);
+
+		final List<DataSet> plotDatasets = DataSetTestDataInitializer
+				.createPlotDatasetsTestData(this.userSelection.getStudyName() + "-PLOTDATA");
+		Mockito.doReturn(plotDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
+				DataSetType.PLOT_DATA);
+
+		final List<DataSet> trialDatasets = DataSetTestDataInitializer
+				.createTrialDatasetsTestData(this.userSelection.getStudyName() + "-ENVIRONMENT");
+		Mockito.doReturn(trialDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
+				DataSetType.SUMMARY_DATA);
+		final org.generationcp.middleware.domain.etl.Workbook wb = WorkbookTestDataInitializer.getTestWorkbook();
+		wb.setFactors(null);
+		wb.setVariates(null);
+		wb.setConditions(null);
+		wb.setConstants(null);
+
+		this.etlService.fillDetailsOfDatasetsInWorkbook(wb, this.userSelection.getStudyId(), false);
+
+		Assert.assertNotNull(wb.getFactors());
+		Assert.assertNotNull(wb.getConditions());
+		Assert.assertNotNull(wb.getVariates());
+		Assert.assertNotNull(wb.getConstants());
+	}
+
+	@Test
 	public void testExtractExcelFileDataKeepInvalidValues() {
 
 		this.userSelection.setObservationRows(1);
@@ -638,171 +640,44 @@ public class ETLServiceTest {
 		// Trial Environment
 		final LinkedHashMap<String, MeasurementVariable> trialEnvironmentsMap = new LinkedHashMap<>();
 		trialEnvironmentsMap.put(ETLServiceTest.TRIAL_INSTANCE,
-				this.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), ETLServiceTest.TRIAL_INSTANCE,
-						PhenotypicType.TRIAL_ENVIRONMENT, DataType.NUMERIC_VARIABLE.getId()));
+				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),
+						ETLServiceTest.TRIAL_INSTANCE, PhenotypicType.TRIAL_ENVIRONMENT,
+						DataType.NUMERIC_VARIABLE.getId()));
 		map.put(PhenotypicType.TRIAL_ENVIRONMENT, trialEnvironmentsMap);
 
 		// Trial Design
 		final LinkedHashMap<String, MeasurementVariable> trialDesignsMap = new LinkedHashMap<>();
-		trialDesignsMap.put("REP", this.createMeasurementVariable(TermId.REP_NO.getId(), "REP",
-				PhenotypicType.TRIAL_DESIGN, DataType.NUMERIC_VARIABLE.getId()));
-		trialDesignsMap.put("ROW", this.createMeasurementVariable(TermId.ROW.getId(), "ROW",
-				PhenotypicType.TRIAL_DESIGN, DataType.NUMERIC_VARIABLE.getId()));
-		trialDesignsMap.put("COL", this.createMeasurementVariable(TermId.COL.getId(), "COL",
-				PhenotypicType.TRIAL_DESIGN, DataType.NUMERIC_VARIABLE.getId()));
+		trialDesignsMap.put("REP", MeasurementVariableTestDataInitializer.createMeasurementVariable(
+				TermId.REP_NO.getId(), "REP", PhenotypicType.TRIAL_DESIGN, DataType.NUMERIC_VARIABLE.getId()));
+		trialDesignsMap.put("ROW", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.ROW.getId(),
+				"ROW", PhenotypicType.TRIAL_DESIGN, DataType.NUMERIC_VARIABLE.getId()));
+		trialDesignsMap.put("COL", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.COL.getId(),
+				"COL", PhenotypicType.TRIAL_DESIGN, DataType.NUMERIC_VARIABLE.getId()));
 		map.put(PhenotypicType.TRIAL_DESIGN, trialDesignsMap);
 
 		// Germplasm
 		final LinkedHashMap<String, MeasurementVariable> germplasmMap = new LinkedHashMap<>();
-		germplasmMap.put("SOURCE", this.createMeasurementVariable(TermId.SOURCE.getId(), "SOURCE",
-				PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
-		germplasmMap.put("ENTRY", this.createMeasurementVariable(TermId.ENTRY_NO.getId(), "ENTRY",
-				PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
-		germplasmMap.put("CROSS", this.createMeasurementVariable(TermId.CROSS.getId(), "CROSS",
-				PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
-		germplasmMap.put("GID", this.createMeasurementVariable(TermId.GID.getId(), "GID", PhenotypicType.GERMPLASM,
-				DataType.NUMERIC_VARIABLE.getId()));
+		germplasmMap.put("SOURCE", MeasurementVariableTestDataInitializer.createMeasurementVariable(
+				TermId.SOURCE.getId(), "SOURCE", PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
+		germplasmMap.put("ENTRY", MeasurementVariableTestDataInitializer.createMeasurementVariable(
+				TermId.ENTRY_NO.getId(), "ENTRY", PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
+		germplasmMap.put("CROSS", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.CROSS.getId(),
+				"CROSS", PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
+		germplasmMap.put("GID", MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.GID.getId(),
+				"GID", PhenotypicType.GERMPLASM, DataType.NUMERIC_VARIABLE.getId()));
 		map.put(PhenotypicType.GERMPLASM, germplasmMap);
 
 		// Variate
 		final LinkedHashMap<String, MeasurementVariable> variatesMap = new LinkedHashMap<>();
-		variatesMap.put("GYLD", this.createMeasurementVariable(18150, "GYLD", PhenotypicType.VARIATE,
-				DataType.NUMERIC_VARIABLE.getId()));
-		variatesMap.put("PH",
-				this.createMeasurementVariable(20343, "PH", PhenotypicType.VARIATE, DataType.NUMERIC_VARIABLE.getId()));
-		variatesMap.put("AleuCol_1_5", this.createMeasurementVariable(51547, "AleuCol_1_5", PhenotypicType.VARIATE,
-				DataType.CATEGORICAL_VARIABLE.getId()));
+		variatesMap.put("GYLD", MeasurementVariableTestDataInitializer.createMeasurementVariable(18150, "GYLD",
+				PhenotypicType.VARIATE, DataType.NUMERIC_VARIABLE.getId()));
+		variatesMap.put("PH", MeasurementVariableTestDataInitializer.createMeasurementVariable(20343, "PH",
+				PhenotypicType.VARIATE, DataType.NUMERIC_VARIABLE.getId()));
+		variatesMap.put("AleuCol_1_5", MeasurementVariableTestDataInitializer.createMeasurementVariable(51547,
+				"AleuCol_1_5", PhenotypicType.VARIATE, DataType.CATEGORICAL_VARIABLE.getId()));
 		map.put(PhenotypicType.VARIATE, variatesMap);
 
 		return map;
-	}
-
-	private List<DataSet> createTrialDatasetsTestData(final String datasetName) {
-		final List<DataSet> trialDatasets = new ArrayList<>();
-		trialDatasets.add(this.createTrialDatasetTestData(datasetName));
-		return trialDatasets;
-	}
-
-	private DataSet createTrialDatasetTestData(final String datasetName) {
-		final DataSet trialDataset = new DataSet();
-		trialDataset.setName(datasetName);
-		trialDataset.setDescription(datasetName);
-		trialDataset.setDataSetType(DataSetType.SUMMARY_DATA);
-		trialDataset.setId(ETLServiceTest.TRIAL_DATASET_ID);
-		trialDataset.setVariableTypes(this.createTrialVariableTypesTestData());
-		return trialDataset;
-	}
-
-	private List<DataSet> createPlotDatasetsTestData(final String datasetName) {
-		final List<DataSet> plotDatasets = new ArrayList<>();
-		plotDatasets.add(this.createPlotDatasetTestData(datasetName, false));
-		return plotDatasets;
-	}
-
-	private DataSet createPlotDatasetTestData(final String datasetName, final boolean isTrial) {
-		final DataSet plotDataset = new DataSet();
-		plotDataset.setName(datasetName);
-		plotDataset.setDescription(datasetName);
-		plotDataset.setDataSetType(DataSetType.PLOT_DATA);
-		if (isTrial) {
-			plotDataset.setId(ETLServiceTest.TRIAL_DATASET_ID);
-			plotDataset.setVariableTypes(this.createTrialVariableTypesTestData());
-		} else {
-			plotDataset.setVariableTypes(this.createPlotVariableTypesTestData());
-			plotDataset.setId(ETLServiceTest.MEASUREMENT_DATASET_ID);
-		}
-		return plotDataset;
-	}
-
-	private VariableTypeList createTrialVariableTypesTestData() {
-		final VariableTypeList trialVariableTypeList = new VariableTypeList();
-		int rank = 0;
-		trialVariableTypeList.add(new DMSVariableType(ETLServiceTest.TRIAL_INSTANCE, ETLServiceTest.TRIAL_INSTANCE,
-				this.createStandardVariableTestData(ETLServiceTest.TRIAL_INSTANCE, PhenotypicType.TRIAL_ENVIRONMENT),
-				++rank));
-		trialVariableTypeList.add(new DMSVariableType(ETLServiceTest.LOCATION_ID, ETLServiceTest.LOCATION_ID,
-				this.createStandardVariableTestData(ETLServiceTest.LOCATION_ID, PhenotypicType.TRIAL_ENVIRONMENT),
-				++rank));
-		trialVariableTypeList.add(new DMSVariableType(ETLServiceTest.LOCATION_NAME, ETLServiceTest.LOCATION_NAME,
-				this.createStandardVariableTestData(ETLServiceTest.LOCATION_NAME, PhenotypicType.TRIAL_ENVIRONMENT),
-				++rank));
-		trialVariableTypeList.add(new DMSVariableType(ETLServiceTest.SITE_SOIL_PH, ETLServiceTest.SITE_SOIL_PH,
-				this.createStandardVariableTestData(ETLServiceTest.SITE_SOIL_PH, PhenotypicType.VARIATE), ++rank));
-		return trialVariableTypeList;
-	}
-
-	private StandardVariable createStandardVariableTestData(final String name, final PhenotypicType phenotypicType) {
-		final StandardVariable standardVariable = new StandardVariable();
-		standardVariable.setName(name);
-		standardVariable.setPhenotypicType(phenotypicType);
-		// PSM combination should be unique but for testing this class, it is
-		// not important
-		standardVariable.setProperty(new Term(ETLServiceTest.DUMMY_PROPERTY_ID, ETLServiceTest.DUMMY_PROPERTY_NAME,
-				ETLServiceTest.DUMMY_PROPERTY_DEF));
-		standardVariable.setScale(new Term(ETLServiceTest.DUMMY_SCALE_ID, ETLServiceTest.DUMMY_SCALE_NAME,
-				ETLServiceTest.DUMMY_SCALE_DEF));
-		standardVariable.setMethod(new Term(ETLServiceTest.DUMMY_METHOD_ID, ETLServiceTest.DUMMY_METHOD_NAME,
-				ETLServiceTest.DUMMY_METHOD_DEF));
-		standardVariable.setDataType(new Term(ETLServiceTest.DUMMY_DATATYPE_ID, ETLServiceTest.DUMMY_DATATYPE_NAME,
-				ETLServiceTest.DUMMY_DATATYPE_DEF));
-		return standardVariable;
-	}
-
-	private VariableTypeList createPlotVariableTypesTestData() {
-		final VariableTypeList plotVariableTypeList = new VariableTypeList();
-		int rank = 0;
-		plotVariableTypeList.add(new DMSVariableType(ETLServiceTest.TRIAL_INSTANCE, ETLServiceTest.TRIAL_INSTANCE,
-				this.createStandardVariableTestData(ETLServiceTest.TRIAL_INSTANCE, PhenotypicType.TRIAL_ENVIRONMENT),
-				++rank));
-		plotVariableTypeList.add(new DMSVariableType(ETLServiceTest.ENTRY_NO, ETLServiceTest.ENTRY_NO,
-				this.createStandardVariableTestData(ETLServiceTest.ENTRY_NO, PhenotypicType.GERMPLASM), ++rank));
-		plotVariableTypeList.add(new DMSVariableType(ETLServiceTest.PLOT_NO, ETLServiceTest.PLOT_NO,
-				this.createStandardVariableTestData(ETLServiceTest.PLOT_NO, PhenotypicType.TRIAL_DESIGN), ++rank));
-		plotVariableTypeList.add(new DMSVariableType(ETLServiceTest.ASI, ETLServiceTest.ASI,
-				this.createStandardVariableTestData(ETLServiceTest.ASI, PhenotypicType.VARIATE), ++rank));
-		return plotVariableTypeList;
-	}
-
-	private List<DataSet> createMeansDatasetsTestData(final String datasetName) {
-		final List<DataSet> meansDataset = new ArrayList<>();
-		meansDataset.add(this.createMeansDatasetTestData(datasetName));
-		return meansDataset;
-	}
-
-	private DataSet createMeansDatasetTestData(final String datasetName) {
-		final DataSet meansDataset = new DataSet();
-		meansDataset.setId(ETLServiceTest.MEANS_DATASET_ID);
-		meansDataset.setName(datasetName);
-		meansDataset.setDescription(datasetName);
-		meansDataset.setDataSetType(DataSetType.MEANS_DATA);
-		meansDataset.setVariableTypes(this.createMeansVariableTypesTestData());
-		return meansDataset;
-	}
-
-	private VariableTypeList createMeansVariableTypesTestData() {
-		final VariableTypeList meansVariableTypeList = new VariableTypeList();
-		int rank = 0;
-		meansVariableTypeList.add(new DMSVariableType(ETLServiceTest.TRIAL_INSTANCE, ETLServiceTest.TRIAL_INSTANCE,
-				this.createStandardVariableTestData(ETLServiceTest.TRIAL_INSTANCE, PhenotypicType.TRIAL_ENVIRONMENT),
-				++rank));
-		meansVariableTypeList.add(new DMSVariableType(ETLServiceTest.ASI_MEAN, ETLServiceTest.ASI_MEAN,
-				this.createStandardVariableTestData(ETLServiceTest.ASI_MEAN, PhenotypicType.VARIATE), ++rank));
-		return meansVariableTypeList;
-	}
-
-	private MeasurementVariable createMeasurementVariable(final int termId, final String name,
-			final PhenotypicType phenotypicType, final int dataTypeId) {
-		final StandardVariable stdvar = this.createStandardVariableTestData(name, phenotypicType);
-		stdvar.setPhenotypicType(phenotypicType);
-		stdvar.setId(termId);
-		final MeasurementVariable var = new MeasurementVariable(termId, stdvar.getName(), stdvar.getDescription(),
-				stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(),
-				stdvar.getDataType().getName(), "", stdvar.getPhenotypicType().getLabelList().get(0));
-		var.setRole(phenotypicType);
-		var.setDataTypeId(stdvar.getDataType().getId());
-		var.setFactor(false);
-		var.setOperation(null);
-		return var;
 	}
 
 	private void fillObservationInfoOfUserSelection(final UserSelection userSelection) {
@@ -866,7 +741,7 @@ public class ETLServiceTest {
 
 		final MeasurementVariable categorical = new MeasurementVariable(ETLServiceTest.ALEU_COL_1_5, "", "", "", "", "",
 				"", "");
-		categorical.setPossibleValues(this.createPossibleValues());
+		categorical.setPossibleValues(ValueReferenceTestDataInitializer.createPossibleValues());
 		categorical.setDataTypeId(DataType.CATEGORICAL_VARIABLE.getId());
 		categorical.setRole(PhenotypicType.VARIATE);
 		factors.add(categorical);
@@ -875,16 +750,6 @@ public class ETLServiceTest {
 		workbook.setVariates(variates);
 
 		return workbook;
-	}
-
-	protected List<ValueReference> createPossibleValues() {
-		final List<ValueReference> possibleValues = new ArrayList<>();
-		possibleValues.add(new ValueReference(1, "1", ""));
-		possibleValues.add(new ValueReference(2, "2", ""));
-		possibleValues.add(new ValueReference(3, "3", ""));
-		possibleValues.add(new ValueReference(4, "4", ""));
-		possibleValues.add(new ValueReference(5, "5", ""));
-		return possibleValues;
 	}
 
 }

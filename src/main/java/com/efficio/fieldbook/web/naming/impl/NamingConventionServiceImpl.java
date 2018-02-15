@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.naming.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.domain.sample.PlantDTO;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.PedigreeDataManager;
@@ -84,8 +85,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private PedigreeDataManager pedigreeDataManager;
 
 	@Override
-	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException,
-			MiddlewareQueryException, FieldbookException {
+	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException, FieldbookException {
 
 		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
 		final Map<String, Method> breedingMethodCodeMap = new HashMap<>();
@@ -119,9 +119,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		final Study study = advanceInfo.getStudy();
 		if (workbook == null) {
-			if (StudyType.N.getName().equals(study.getType())) {
+			if (StudyType.N.equals(study.getType())) {
 				workbook = this.fieldbookMiddlewareService.getNurseryDataSet(study.getId());
-			} else if (StudyType.T.getName().equals(study.getType())) {
+			} else if (StudyType.T.equals(study.getType())) {
 				workbook = this.fieldbookMiddlewareService.getTrialDataSet(study.getId());
 			}
 		}
@@ -169,7 +169,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
-			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber, AdvancingNursery advancingParameters) {
+			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber, AdvancingNursery advancingParameters, final String plantNo) {
 		
 		String selectionNumberToApply = null;
 		boolean allPlotsSelected = "1".equals(advancingParameters.getAllPlotsChoice());
@@ -186,7 +186,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		// set the seed source string for the new Germplasm
 		final String seedSource =
 				this.seedSourceGenerator.generateSeedSource(workbook, source.getTrialInstanceNumber(), selectionNumberToApply,
-						source.getPlotNumber(), workbook.getStudyName());
+						source.getPlotNumber(), workbook.getStudyName(), plantNo);
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
 						, source.getGermplasm().getCross(), seedSource,
@@ -207,17 +207,20 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			germplasm.setMgid(source.getGermplasm().getMgid());
 		}
 
-		this.assignNames(germplasm, source);
+		this.assignNames(germplasm);
 
 		germplasm.setTrialInstanceNumber(source.getTrialInstanceNumber());
 		germplasm.setReplicationNumber(source.getReplicationNumber());
         germplasm.setPlotNumber(source.getPlotNumber());
+		if (plantNo != null) {
+			germplasm.setPlantNumber(plantNo);
+		}
 
 		list.add(germplasm);
 	}
 
-	protected void assignNames(final ImportedGermplasm germplasm, final AdvancingSource source) {
-		final List<Name> names = new ArrayList<Name>();
+	protected void assignNames(final ImportedGermplasm germplasm) {
+		final List<Name> names = new ArrayList<>();
 
 		final Name name = new Name();
 		name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
@@ -233,7 +236,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final AdvancingNursery advancingParameters,
 			Workbook workbook) throws RuleException {
 
-		final List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
+		final List<ImportedGermplasm> list = new ArrayList<>();
 		int index = 1;
 		final TimerWatch timer = new TimerWatch("advance");
 
@@ -254,8 +257,13 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 				// One plot may result in multiple plants/ears selected depending on selection method.
 				int selectionNumber = row.getCurrentMaxSequence() + 1;
+				final Iterator<PlantDTO> plantIterator = row.getPlants().iterator();
 				for (final String name : names) {
-					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber, advancingParameters);
+					String plantNo = null;
+					if (plantIterator.hasNext()) {
+						plantNo = plantIterator.next().getPlantNo();
+					}
+					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber, advancingParameters, plantNo);
 					selectionNumber++;
 				}
 			}

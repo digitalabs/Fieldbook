@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
@@ -46,17 +45,17 @@ public class TreeViewUtilTest {
 	private static List<UserDefinedField> userDefinedFields;
 
 	@BeforeClass
-	public static void setupClass() throws MiddlewareQueryException {
+	public static void setupClass() {
 		TreeViewUtilTest.mockGermplasmListManagerAndSomeOfItsMethods();
 		TreeViewUtilTest.mockUserDataManagerAndSomeOfItsMethods();
 	}
 
-	private static void mockUserDataManagerAndSomeOfItsMethods() throws MiddlewareQueryException {
+	private static void mockUserDataManagerAndSomeOfItsMethods() {
 		TreeViewUtilTest.userDataManager = Mockito.mock(UserDataManager.class);
 		Mockito.when(TreeViewUtilTest.userDataManager.getUserById(TreeViewUtilTest.LIST_USER_ID)).thenReturn(null);
 	}
 
-	private static void mockGermplasmListManagerAndSomeOfItsMethods() throws MiddlewareQueryException {
+	private static void mockGermplasmListManagerAndSomeOfItsMethods() {
 		TreeViewUtilTest.germplasmListManager = Mockito.mock(GermplasmListManager.class);
 		TreeViewUtilTest.germplasmDataManager = Mockito.mock(GermplasmDataManager.class);
 		TreeViewUtilTest.userDefinedFields = TreeViewUtilTest.createGermplasmListUserDefinedFields();
@@ -66,9 +65,12 @@ public class TreeViewUtilTest {
 
 	@Test
 	public void testConvertGermplasmListToTreeTableNodes() {
+
+		String folderParentId = "123";
+
 		List<GermplasmList> germplasmLists = new ArrayList<GermplasmList>(TreeViewUtilTest.GERMPLASM_LIST_TEST_DATA);
 		List<TreeTableNode> treeTableNodes =
-				TreeViewUtil.convertGermplasmListToTreeTableNodes(germplasmLists, TreeViewUtilTest.germplasmListManager,
+				TreeViewUtil.convertGermplasmListToTreeTableNodes(folderParentId, germplasmLists, TreeViewUtilTest.germplasmListManager,
 						TreeViewUtilTest.germplasmDataManager);
 
 		Assert.assertTrue("The list should not be null", treeTableNodes != null);
@@ -99,21 +101,14 @@ public class TreeViewUtilTest {
 			int noOfEntries = germplasmList.getListData().size();
 			String noOfEntriesDisplay = noOfEntries == 0 ? "" : String.valueOf(noOfEntries);
 			Assert.assertEquals("The no of entries should be " + noOfEntriesDisplay, noOfEntriesDisplay, treeTableNode.getNoOfEntries());
-			String parentId = TreeViewUtilTest.getParentId(germplasmList);
+			String parentId = TreeViewUtil.getParentId(folderParentId, germplasmList);
 			Assert.assertEquals("The parent id should be " + parentId, parentId, treeTableNode.getParentId());
 			String type = this.getType(germplasmList.getType());
 			Assert.assertEquals("The type should be " + type, type, treeTableNode.getType());
 			String owner = this.getOwnerListName(germplasmList.getUserId());
 			Assert.assertEquals("The owner should be " + owner, owner, treeTableNode.getOwner());
+			Assert.assertEquals("The number of children should be 0", "0", treeTableNode.getNumOfChildren());
 		}
-	}
-
-	public static String getParentId(GermplasmList germplasmList) {
-		Integer parentId = germplasmList.getParentId();
-		if (parentId == null) {
-			return "LISTS";
-		}
-		return String.valueOf(parentId);
 	}
 
 	private String getOwnerListName(Integer userId) {
@@ -158,16 +153,18 @@ public class TreeViewUtilTest {
 
 	@Test
 	public void testConvertGermplasmListToTreeTableNodes_NullList() {
+		String folderParentId = "123";
 		List<TreeTableNode> treeTableNodes =
-				TreeViewUtil.convertGermplasmListToTreeTableNodes(TreeViewUtilTest.NULL_GERMPLASM_LIST_TEST_DATA,
+				TreeViewUtil.convertGermplasmListToTreeTableNodes(folderParentId, TreeViewUtilTest.NULL_GERMPLASM_LIST_TEST_DATA,
 						TreeViewUtilTest.germplasmListManager, TreeViewUtilTest.germplasmDataManager);
 		Assert.assertTrue("The list should be empty", treeTableNodes.isEmpty());
 	}
 
 	@Test
 	public void testConvertGermplasmListToTreeTableNodes_EmptyList() {
+		String folderParentId = "123";
 		List<TreeTableNode> treeTableNodes =
-				TreeViewUtil.convertGermplasmListToTreeTableNodes(TreeViewUtilTest.EMPTY_GERMPLASM_LIST_TEST_DATA,
+				TreeViewUtil.convertGermplasmListToTreeTableNodes(folderParentId, TreeViewUtilTest.EMPTY_GERMPLASM_LIST_TEST_DATA,
 						TreeViewUtilTest.germplasmListManager, TreeViewUtilTest.germplasmDataManager);
 		Assert.assertTrue("The list should be empty", treeTableNodes.isEmpty());
 	}

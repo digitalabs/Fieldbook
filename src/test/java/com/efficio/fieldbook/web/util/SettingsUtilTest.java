@@ -715,8 +715,6 @@ public class SettingsUtilTest {
 		final List<SettingDetail> variables = new ArrayList<>();
 		variables.add(this.createSettingDetail(TermId.STUDY_NAME.getId(), "STUDY_NAME", "Study - assigned (DBCV)",
 				SettingsUtilTest.C_DATATYPE));
-		variables.add(this.createSettingDetail(TermId.STUDY_OBJECTIVE.getId(), "STUDY_OBJECTIVE", "Objective - described (text)",
-				SettingsUtilTest.C_DATATYPE));
 		variables.add(this.createSettingDetail(TermId.BREEDING_METHOD_VARIATE_CODE.getId(), "BM_CODE_VTE",
 				"Breeding method observed on each plot(CODE)", SettingsUtilTest.C_DATATYPE));
 		return variables;
@@ -762,11 +760,7 @@ public class SettingsUtilTest {
 			if (TermId.STUDY_NAME.getId() == condition.getId()) {
 				Assert.assertEquals("The name should be 'STUDY_NAME'", "STUDY_NAME", condition.getName());
 				Assert.assertEquals("The value should be 'Study - assigned (DBCV)'", "Study - assigned (DBCV)", condition.getValue());
-			} else if (TermId.STUDY_OBJECTIVE.getId() == condition.getId()) {
-				Assert.assertEquals("The name should be 'STUDY_OBJECTIVE'", "STUDY_OBJECTIVE", condition.getName());
-				Assert.assertEquals("The value should be 'Objective - described (text)'", "Objective - described (text)",
-						condition.getValue());
-			}  else if (TermId.BREEDING_METHOD_VARIATE_CODE.getId() == condition.getId()) {
+			} else if (TermId.BREEDING_METHOD_VARIATE_CODE.getId() == condition.getId()) {
 				Assert.assertEquals("The name should be 'BM_CODE_VTE'", "BM_CODE_VTE", condition.getName());
 				Assert.assertEquals("The value should be 'Breeding method observed on each plot(CODE)'",
 						"Breeding method observed on each plot(CODE)", condition.getValue());

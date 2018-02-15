@@ -138,9 +138,6 @@ public class CreateNurseryControllerTestIT extends AbstractBaseIntegrationTest {
 			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_NAME.getId(),
 					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.STUDY_NAME.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_OBJECTIVE.getId(),
-					Mockito.anyString())).thenReturn(
-					this.createStandardVariable(TermId.STUDY_OBJECTIVE.getId()));
 			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_UID.getId(),
 					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.STUDY_UID.getId()));
@@ -215,12 +212,7 @@ public class CreateNurseryControllerTestIT extends AbstractBaseIntegrationTest {
 		studyNameVariable.setCvTermId(TermId.STUDY_NAME.getId());
 		studyName.setVariable(studyNameVariable);
 
-		SettingDetail studyObj = new SettingDetail();
-		SettingVariable studyObjVariable = new SettingVariable();
-		studyObjVariable.setCvTermId(TermId.STUDY_OBJECTIVE.getId());
-		studyObj.setVariable(studyObjVariable);
-
-		List<SettingDetail> basicDetails = Arrays.asList(studyName, studyObj);
+		List<SettingDetail> basicDetails = Arrays.asList(studyName);
 		form.setBasicDetails(basicDetails);
 		this.userSelection.setBasicDetails(basicDetails);
 

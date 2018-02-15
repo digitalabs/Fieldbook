@@ -26,7 +26,7 @@ public class ObjectMapperTest {
 					mapper.readValue(
 							"{\"trialSettings\":{\"userInput\":{}},\"environments\":{\"environments\":[{\"managementDetailValues\":{\"8170\":null,\"8192\":\"2\",\"8194\":\"1\"},\""
 									+ "trialDetailValues\":{}},{\"managementDetailValues\":{\"8170\":null,\"8192\":\"4\",\"8194\":\"3\"},\"trialDetailValues\":{}},{\"managementDetailValues\":{\"8170\":null,\"8192\":\""
-									+ "6\",\"8194\":\"5\"},\"trialDetailValues\":{}}],\"noOfEnvironments\":\"3\"},\"basicDetails\":{\"basicDetails\":{\"8005\":\"new trial 6\",\"8007\":\"test\",\"8030\":\"\",\"8050\":\""
+									+ "6\",\"8194\":\"5\"},\"trialDetailValues\":{}}],\"noOfEnvironments\":\"3\"},\"basicDetails\":{\"basicDetails\":{\"8005\":\"new trial 6\",\"8007\":\"test\",\"8050\":\""
 									+ "07/10/2014\",\"8060\":\"\"},\"folderId\":1,\"folderName\":\"Program Trials\",\"folderNameLabel\":\"Program Trials\",\"userID\":-1,\"userName\":\"Daniel Villafuerte\"}}",
 							TrialData.class);
 

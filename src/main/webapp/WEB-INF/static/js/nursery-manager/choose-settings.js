@@ -171,11 +171,6 @@ window.ChooseSettings = (function() {
 				{
 					variableId: 8020, // Study_UID
 					propertyId: 2002  // User
-				},
-
-				{
-					variableId: 8030, // STUDY_OBJECTIVE
-					propertyId: 2014  // Study objective
 				}
 			],
 

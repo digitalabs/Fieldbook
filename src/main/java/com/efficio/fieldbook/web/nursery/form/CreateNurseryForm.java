@@ -210,6 +210,8 @@ public class CreateNurseryForm {
 
 	private String studyUpdate;
 
+	private String objective;
+
 	public String getDescription() {
 		return description;
 	}
@@ -1306,5 +1308,13 @@ public class CreateNurseryForm {
 
 	public void setStudyUpdate(final String studyUpdate) {
 		this.studyUpdate = studyUpdate;
+	}
+
+	public String getObjective() {
+		return objective;
+	}
+
+	public void setObjective(final String objective) {
+		this.objective = objective;
 	}
 }

@@ -201,6 +201,7 @@ public class ETLServiceImpl implements ETLService {
 		studyDetails.setStartDate(ETLServiceImpl.formatDate(userSelection.getStudyStartDate()));
 		studyDetails.setEndDate(ETLServiceImpl.formatDate(userSelection.getStudyEndDate()));
 		studyDetails.setStudyUpdate(ETLServiceImpl.formatDate(userSelection.getStudyUpdate()));
+		studyDetails.setObjective(userSelection.getStudyObjective());
 
 		if (userSelection.getStudyId() != null) {
 			studyDetails.setId(userSelection.getStudyId());

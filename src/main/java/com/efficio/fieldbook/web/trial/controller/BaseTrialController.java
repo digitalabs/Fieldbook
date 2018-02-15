@@ -91,7 +91,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 		studyDetails.setId(detailBean.getStudyID());
 		studyDetails.setDescription(detailBean.getDescription());
-		studyDetails.setObjective(detailBean.getBasicDetails().get(Integer.toString(TermId.STUDY_OBJECTIVE.getId())));
+		studyDetails.setObjective(detailBean.getObjective());
 		studyDetails.setStudyName(detailBean.getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId())));
 		studyDetails.setStartDate(detailBean.getStartDate());
 		studyDetails.setEndDate(detailBean.getEndDate());
@@ -681,7 +681,6 @@ public abstract class BaseTrialController extends SettingsController {
 		final BasicDetails basic = new BasicDetails();
 
 		basicDetails.put(Integer.toString(TermId.STUDY_NAME.getId()), studyDetails.getStudyName());
-		basicDetails.put(Integer.toString(TermId.STUDY_OBJECTIVE.getId()), studyDetails.getObjective());
 		basic.setBasicDetails(basicDetails);
 		basic.setStudyID(trialID);
 		basic.setDescription(studyDetails.getDescription());
@@ -692,6 +691,7 @@ public abstract class BaseTrialController extends SettingsController {
 		basic.setStudyUpdate(			studyDetails.getStudyUpdate() != null && !studyDetails.getStudyUpdate().isEmpty() ?
 			Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT)
 			: StringUtils.EMPTY);
+		basic.setObjective(studyDetails.getObjective());
 
 		final int folderId = (int) studyDetails.getParentFolderId();
 		final String folderName;

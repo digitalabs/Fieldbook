@@ -545,22 +545,6 @@ public class OpenTrialControllerTest {
 				this.createStandardVariable(8005, "STUDY_NAME", "Study", "DBCV", "Assigned", 1120, "Character variable", "STUDY");
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8005, OpenTrialControllerTest.PROGRAM_UUID)).thenReturn(studyName);
 
-		// StudyObjective
-		final StandardVariable studyObjective = this.createStandardVariable(8030, "STUDY_OBJECTIVE", "Study objective", "Text", "Described",
-				1120, "Character variable", "STUDY");
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8030, OpenTrialControllerTest.PROGRAM_UUID))
-				.thenReturn(studyObjective);
-
-		// StartDate
-		final StandardVariable startDate = this.createStandardVariable(8050, "START_DATE", "Start date", "Date (yyyymmdd)", "Assigned",
-				1117, "Date variable", "STUDY");
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8050, OpenTrialControllerTest.PROGRAM_UUID)).thenReturn(startDate);
-
-		// EndDate
-		final StandardVariable endDate =
-				this.createStandardVariable(8060, "END_DATE", "End date", "Date (yyyymmdd)", "Assigned", 1117, "Date variable", "STUDY");
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8060, OpenTrialControllerTest.PROGRAM_UUID)).thenReturn(endDate);
-
 		final StandardVariable plotNo = this.createStandardVariable(8200, "PLOT_NO", "Field plot", "Number", "Enumerated", 1110,
 				"Numeric variable", "TRIAL_DESIGN");
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8200, OpenTrialControllerTest.PROGRAM_UUID)).thenReturn(plotNo);

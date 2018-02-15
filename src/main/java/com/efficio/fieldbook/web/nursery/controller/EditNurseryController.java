@@ -290,6 +290,7 @@ public class EditNurseryController extends SettingsController {
 		form.setSelectionVariatesVariables(this.userSelection.getSelectionVariates());
 		form.setGermplasmListId(this.getGermplasmListId(nurseryId));
 		form.setDescription(workbook.getStudyDetails().getDescription());
+		form.setObjective(workbook.getStudyDetails().getObjective());
 		form.setStartDate(DateUtil.convertDate(workbook.getStudyDetails().getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util
 			.FRONTEND_DATE_FORMAT));
 		if (workbook.getStudyDetails().getEndDate() != null && !workbook.getStudyDetails().getEndDate().isEmpty()) {
@@ -348,6 +349,7 @@ public class EditNurseryController extends SettingsController {
 		form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
 		form.setStudyName(workbook.getStudyDetails().getStudyName());
 		form.setDescription(workbook.getStudyDetails().getDescription());
+		form.setObjective(workbook.getStudyDetails().getObjective());
 		form.setStartDate(Util.convertDate(workbook.getStudyDetails().getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util
 			.FRONTEND_DATE_FORMAT));
 		if (workbook.getStudyDetails().getEndDate() != null && !workbook.getStudyDetails().getEndDate().isEmpty()) {
@@ -435,6 +437,7 @@ public class EditNurseryController extends SettingsController {
 
 
 		final String description = form.getDescription();
+		final String objective = form.getObjective();
 		final String startDate = (form.getStartDate() != null && !form.getStartDate().isEmpty()?
 			Util.convertDate(form.getStartDate(), Util.FRONTEND_DATE_FORMAT, Util.DATE_AS_NUMBER_FORMAT) :
 			"");
@@ -476,7 +479,7 @@ public class EditNurseryController extends SettingsController {
 		final Workbook workbook = this.prepareNewWorkbookForSaving(trialDatasetId, measurementDatasetId, dataset);
 
 		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId(), description, startDate, endDate,
-			studyUpdate);
+			studyUpdate, objective);
 		this.userSelection.setWorkbook(workbook);
 
 		final Map<String, String> resultMap = new HashMap<>();

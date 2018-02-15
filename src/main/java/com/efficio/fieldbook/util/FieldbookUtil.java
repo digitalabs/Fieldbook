@@ -37,6 +37,7 @@ public class FieldbookUtil {
 	private static final String START_DATE = "startDate";
 	private static final String END_DATE = "endDate";
 	private static final String STUDY_UPDATE = "studyUpdate";
+	private static final String OBJECTIVE = "Objective";
 	private static FieldbookUtil instance;
 
 	static {
@@ -174,7 +175,7 @@ public class FieldbookUtil {
 		while (token.hasMoreTokens()) {
 			final String s = token.nextToken();
 			// FIXME BMS-4397
-			if (!DESCRIPTION.equals(s) && !START_DATE.equals(s) && !END_DATE.equals(s) && !STUDY_UPDATE.equals(s)) {
+			if (!DESCRIPTION.equals(s) && !START_DATE.equals(s) && !END_DATE.equals(s) && !STUDY_UPDATE.equals(s) && !OBJECTIVE.equals(s)) {
 				requiredVariables.add(Integer.valueOf(s));
 			}
 		}

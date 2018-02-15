@@ -51,15 +51,12 @@ import org.generationcp.middleware.pojos.workbench.settings.ParentDataset;
 import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.util.ResourceFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -87,6 +84,7 @@ public class SettingsUtil {
 	private static final String START_DATE = "Creation date";
 	private static final String END_DATE = "Completion date";
 	private static final String STUDY_UPDATE = "Last updated";
+	private static final String OBJECTIVE = "Objective";
 
 	private SettingsUtil() {
 		// do nothing
@@ -1668,6 +1666,7 @@ public class SettingsUtil {
 		final String startDate = workbook.getStudyDetails().getStartDate() != null ? workbook.getStudyDetails().getStartDate() : "";
 		final String endDate = workbook.getStudyDetails().getEndDate() != null ? workbook.getStudyDetails().getEndDate() : "";
 		final String studyUpdate = workbook.getStudyDetails().getStudyUpdate() != null ? workbook.getStudyDetails().getStudyUpdate() : "";
+		final String objective = workbook.getStudyDetails().getObjective() != null ? workbook.getStudyDetails().getObjective() : "";
 		Integer datasetId = workbook.getMeasurementDatesetId();
 		if (datasetId == null) {
 			datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyDetails().getId(), studyName);
@@ -1741,7 +1740,15 @@ public class SettingsUtil {
 						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
 						found = true;
 						break;
-					} else {
+					} else if (OBJECTIVE.equals(label)) {
+						final SettingVariable variableDescription =
+							new SettingVariable(OBJECTIVE, null, null, null, null, null, null, null, null, null);
+						final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, objective, false);
+						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
+						found = true;
+						break;
+					}
+					else {
 						final SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
 						final String value = SettingsUtil.getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);
 						final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);

@@ -69,6 +69,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	private static final String START_DATE = "startDate";
 	private static final String END_DATE = "endDate";
 	private static final String STUDY_UPDATE = "studyUpdate";
+	private static final String OBJECTIVE = "Objective";
 
 	/** The workbench service. */
 	@Resource
@@ -290,7 +291,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			final String s = token.nextToken();
 			// FIXME BMS-4397
 			if (!SettingsController.DESCRIPTION.equals(s) && !SettingsController.START_DATE.equals(s) && !SettingsController.END_DATE
-				.equals(s) && !SettingsController.STUDY_UPDATE.equals(s)) {
+				.equals(s) && !SettingsController.STUDY_UPDATE.equals(s) && !SettingsController.OBJECTIVE.equals(s)) {
 				defaults.add(this.createSettingDetail(Integer.valueOf(s), requiredVariablesLabel.get(ctr), role));
 				ctr++;
 			}
@@ -481,14 +482,15 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Creates the study details.
-	 *  @param workbook the workbook
+	 * @param workbook the workbook
 	 * @param conditions the conditions
 	 * @param folderId the folder id
 	 * @param description
 	 * @param studyUpdate
+	 * @param objective
 	 */
 	public void createStudyDetails(final Workbook workbook, final List<SettingDetail> conditions, final Integer folderId, final Integer studyId, final String description, String startDate, String endDate,
-		final String studyUpdate) {
+		final String studyUpdate, final String objective) {
 		if (workbook.getStudyDetails() == null) {
 			workbook.setStudyDetails(new StudyDetails());
 		}
@@ -499,7 +501,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				studyDetails.setId(studyId);
 			}
 
-			studyDetails.setObjective(SettingsUtil.getSettingDetailValue(conditions, TermId.STUDY_OBJECTIVE.getId()));
+			studyDetails.setObjective(objective);
 			studyDetails.setStudyName(SettingsUtil.getSettingDetailValue(conditions, TermId.STUDY_NAME.getId()));
 			studyDetails.setDescription(description);
 			studyDetails.setStartDate(startDate);
@@ -879,7 +881,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			final String s = token.nextToken();
 			// FIXME BMS-4397
 			if (!SettingsController.DESCRIPTION.equals(s) && !SettingsController.START_DATE.equals(s) && !SettingsController.END_DATE
-				.equals(s) && !SettingsController.STUDY_UPDATE.equals(s)) {
+				.equals(s) && !SettingsController.STUDY_UPDATE.equals(s) && !SettingsController.OBJECTIVE.equals(s)) {
 				final Integer termId = Integer.valueOf(s);
 				final boolean isFound = this.searchAndSetValuesOfSpecialVariables(nurseryLevelConditions, termId, settingDetails, form);
 				if (!isFound) {

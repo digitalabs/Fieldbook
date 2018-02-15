@@ -289,6 +289,7 @@ public class CreateNurseryController extends SettingsController {
 		final String startDate = form.getStartDate();
 		final String endDate = form.getEndDate();
 		final String studyUpdate = form.getStudyUpdate();
+		final String objective = form.getObjective();
 		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
 		if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
 			studyLevelVariables.addAll(form.getStudyLevelVariables());
@@ -341,7 +342,7 @@ public class CreateNurseryController extends SettingsController {
 		this.userSelection.setWorkbook(workbook);
 
 		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), null, form.getDescription(), form.getStartDate(),
-			form.getEndDate(), form.getStudyUpdate());
+			form.getEndDate(), form.getStudyUpdate(), objective);
 
 		return "success";
 	}

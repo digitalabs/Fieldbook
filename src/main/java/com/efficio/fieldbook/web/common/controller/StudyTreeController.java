@@ -254,7 +254,7 @@ public class StudyTreeController {
 						parentFolderId = project.getProjectId();
 					}
 					final int newFolderId = StudyTreeController.this.studyDataManager.addSubFolder(parentFolderId, folderName, folderName,
-							StudyTreeController.this.getCurrentProgramUUID());
+							StudyTreeController.this.getCurrentProgramUUID(), folderName);
 					resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 					resultsMap.put(StudyTreeController.NEW_FOLDER_ID, Integer.toString(newFolderId));
 

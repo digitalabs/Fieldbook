@@ -71,10 +71,9 @@ public class StudyTreeController {
 	@ResponseBody
 	@RequestMapping(value = "/loadInitialTree/{isFolderOnly}/{type}", method = RequestMethod.GET)
 	public String loadInitialTree(@PathVariable final String isFolderOnly, @PathVariable final String type) {
-		//final boolean isNursery = type != null && StudyType.N.getName().equalsIgnoreCase(type) ? true : false;
 		try {
-			final List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-			final String localName = "Studies";//isNursery ? AppConstants.NURSERIES.getString() : AppConstants.TRIALS.getString();
+			final List<TreeNode> rootNodes = new ArrayList<>();
+			final String localName = AppConstants.STUDIES.getString();
 			final TreeNode localTreeNode = new TreeNode(StudyTreeController.LOCAL, localName, true, "lead",
 					AppConstants.FOLDER_ICON_PNG.getString(), this.getCurrentProgramUUID());
 			rootNodes.add(localTreeNode);
@@ -86,12 +85,11 @@ public class StudyTreeController {
 	}
 
 	private List<TreeNode> getChildNodes(final String parentKey, final boolean isFolderOnly) {
-		List<TreeNode> childNodes = new ArrayList<TreeNode>();
+		List<TreeNode> childNodes = new ArrayList<>();
 		if (parentKey != null && !"".equals(parentKey)) {
 			try {
 				if (StudyTreeController.LOCAL.equals(parentKey)) {
 					final List<Reference> rootFolders = this.studyDataManager.getRootFolders(this.getCurrentProgramUUID(),
-							//isNursery ? StudyType.nurseries() : StudyType.trials()
 						StudyType.nurseriesAndTrials());
 					childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, false, true, isFolderOnly);
 				} else if (NumberUtils.isNumber(parentKey)) {
@@ -107,14 +105,12 @@ public class StudyTreeController {
 	}
 
 	private List<TreeNode> getChildrenTreeNodes(final String parentKey, final boolean isFolderOnly) {
-		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		final int parentId = Integer.valueOf(parentKey);
 		final List<Reference> folders = this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID(),
-				//isNursery ? StudyType.nurseries() : StudyType.trials()
 			StudyType.nurseriesAndTrials()
 		);
 
-		childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(folders, false, true, isFolderOnly);
+		final List<TreeNode> childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(folders, false, true, isFolderOnly);
 		return childNodes;
 	}
 
@@ -123,7 +119,6 @@ public class StudyTreeController {
 	public String expandTree(@PathVariable final String parentKey, @PathVariable final String isFolderOnly,
 			@PathVariable final String type) {
 		final boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
-		//final boolean isNursery = type != null && StudyType.N.getName().equalsIgnoreCase(type) ? true : false;
 		try {
 			final List<TreeNode> childNodes = this.getChildNodes(parentKey, isFolderOnlyBool);
 			return TreeViewUtil.convertTreeViewToJson(childNodes);
@@ -172,7 +167,7 @@ public class StudyTreeController {
 	@ResponseBody
 	@RequestMapping(value = "/has/observations/{studyId}/{studyName}", method = RequestMethod.GET)
 	public Map<String, String> hasObservations(@PathVariable final int studyId, @PathVariable final String studyName) {
-		final Map<String, String> dataResults = new HashMap<String, String>();
+		final Map<String, String> dataResults = new HashMap<>();
 
 		int datasetId;
 		try {
@@ -227,7 +222,7 @@ public class StudyTreeController {
 	@RequestMapping(value = "/addStudyFolder", method = RequestMethod.POST)
 	public Map<String, Object> addStudyFolder(final HttpServletRequest req) {
 
-		final Map<String, Object> resultsMap = new HashMap<String, Object>();
+		final Map<String, Object> resultsMap = new HashMap<>();
 
 		try {
 
@@ -298,7 +293,7 @@ public class StudyTreeController {
 	@ResponseBody
 	@RequestMapping(value = "/deleteStudyFolder", method = RequestMethod.POST)
 	public Map<String, Object> deleteStudyListFolder(final HttpServletRequest req) {
-		final Map<String, Object> resultsMap = new HashMap<String, Object>();
+		final Map<String, Object> resultsMap = new HashMap<>();
 		final Locale locale = LocaleContextHolder.getLocale();
 		try {
 			final String folderId = req.getParameter("folderId");
@@ -319,7 +314,7 @@ public class StudyTreeController {
 	public Map<String, Object> isFolderEmpty(@RequestBody final Map<String, String> data, @PathVariable final String folderId,
 			@PathVariable final String studyType) {
 		final String folderName = data.get("folderName");
-		final Map<String, Object> resultsMap = new HashMap<String, Object>();
+		final Map<String, Object> resultsMap = new HashMap<>();
 		final Locale locale = LocaleContextHolder.getLocale();
 		boolean isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID(),
 				StudyType.nurseriesAndTrials());
@@ -327,8 +322,7 @@ public class StudyTreeController {
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 		} else {
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
-			final List<StudyType> studyTypeList = StudyType.nurseriesAndTrials();//studyType.equals(StudyType.N.getName()) ? StudyType
-			// .nurseries() : StudyType.trials();
+			final List<StudyType> studyTypeList = StudyType.allStudies();
 			isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID(), studyTypeList);
 			String message;
 			if (!isFolderEmpty) {
@@ -349,7 +343,7 @@ public class StudyTreeController {
 		final String targetId = req.getParameter("targetId");
 		final String isStudy = req.getParameter("isStudy");
 		final boolean isAStudy = "1".equalsIgnoreCase(isStudy) ? true : false;
-		final Map<String, Object> resultsMap = new HashMap<String, Object>();
+		final Map<String, Object> resultsMap = new HashMap<>();
 		try {
 			this.studyDataManager.moveDmsProject(Integer.parseInt(sourceId), Integer.parseInt(targetId), isAStudy);
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");

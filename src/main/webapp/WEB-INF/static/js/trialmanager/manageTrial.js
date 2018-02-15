@@ -144,7 +144,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				{   name: 'Settings',
 					state: 'trialSettings'
 				},
-				{   name: 'Germplasm',
+				{   name: 'Germplasm & Checks',
 					state: 'germplasm'
 				},
 				{   name: 'Environments',

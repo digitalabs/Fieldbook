@@ -6,12 +6,9 @@ import com.efficio.fieldbook.service.internal.DesignRunner;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
-import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.generationcp.commons.pojo.ProcessTimeoutThread;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +31,6 @@ public class BVDesignRunner implements DesignRunner {
 	// set 3 minutes for the design runner process to timeout
 	private static final long DESIGN_RUNNER_TIMEOUT_MILLIS = 3 * 60 * 1000;
 	private static String XML_EXTENSION = ".xml";
-	private static String BREEDING_VIEW_EXE = "BreedingView.exe";
-	private static String BVDESIGN_EXE = "BVDesign.exe";
 
 	@Override
 	public BVDesignOutput runBVDesign(final WorkbenchService workbenchService, final FieldbookProperties fieldbookProperties,
@@ -119,22 +114,6 @@ public class BVDesignRunner implements DesignRunner {
 			seedValue = seedValue.substring(seedValue.length() - 9);
 		}
 		return seedValue;
-	}
-
-	private static String getBreedingViewExeLocation(final WorkbenchService workbenchService) {
-		String bvDesignLocation = null;
-		Tool bvTool = null;
-		try {
-			bvTool = workbenchService.getToolWithName(AppConstants.TOOL_NAME_BREEDING_VIEW.getString());
-		} catch (final MiddlewareQueryException e) {
-			BVDesignRunner.LOG.error(e.getMessage(), e);
-		}
-		if (bvTool != null) {
-			// write xml to temp file
-			final File absoluteToolFile = new File(bvTool.getPath()).getAbsoluteFile();
-			bvDesignLocation = absoluteToolFile.getAbsolutePath().replaceAll(BVDesignRunner.BREEDING_VIEW_EXE, BVDesignRunner.BVDESIGN_EXE);
-		}
-		return bvDesignLocation;
 	}
 
 	private static String writeToFile(final String xml, final FieldbookProperties fieldbookProperties) {

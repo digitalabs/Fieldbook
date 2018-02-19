@@ -79,7 +79,7 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 		this.generateBVDesignLicenseJsonFile(bvDesignLocation);
 
-		return this.readLicenseInfoFromJsonFile(new File(bvDesignLocation + BVDESIGN_STATUS_OUTPUT_FILENAME));
+		return this.readLicenseInfoFromJsonFile(new File(new File(bvDesignLocation).getParent() + BVDESIGN_STATUS_OUTPUT_FILENAME));
 	}
 
 	protected BVDesignLicenseInfo readLicenseInfoFromJsonFile(final File file) throws BVLicenseParseException {
@@ -114,7 +114,7 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 		try {
 
 			final ProcessBuilder processBuilder = new ProcessBuilder(bvDesignLocation, "-status", "-json");
-			processBuilder.directory(new File(bvDesignLocation));
+			processBuilder.directory(new File(bvDesignLocation).getParentFile());
 			p = processBuilder.start();
 			p.waitFor();
 

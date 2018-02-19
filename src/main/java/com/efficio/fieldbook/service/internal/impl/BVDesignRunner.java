@@ -44,6 +44,9 @@ public class BVDesignRunner implements DesignRunner {
 
 			final String filepath = BVDesignRunner.writeToFile(xml, fieldbookProperties);
 
+			System.out.println("bvDesignPath:" + bvDesignPath);
+			System.out.println("filepath:" + filepath);
+
 			final ProcessBuilder pb = new ProcessBuilder(bvDesignPath, "-i" + filepath);
 			final Process p = pb.start();
 			// add a timeout for the design runner

@@ -85,6 +85,7 @@ public class SettingsUtil {
 	private static final String END_DATE = "Completion date";
 	private static final String STUDY_UPDATE = "Last updated";
 	private static final String OBJECTIVE = "Objective";
+	private static final String STUDY_NAME = "Name";
 
 	private SettingsUtil() {
 		// do nothing
@@ -1544,9 +1545,9 @@ public class SettingsUtil {
 		}
 
 		if (conditions != null) {
-			final MeasurementVariable studyName = WorkbookUtil.getMeasurementVariable(conditions, TermId.STUDY_NAME.getId());
+			final String studyName = workbook.getStudyDetails().getStudyName();
 			if (studyName != null) {
-				details.setName(studyName.getValue());
+				details.setName(studyName);
 			}
 			basicDetails = SettingsUtil.convertWorkbookToSettingDetails(basicFields, conditions, fieldbookMiddlewareService,
 					fieldbookService, userSelection, workbook, programUUID, appConstantsProperties);
@@ -1660,8 +1661,8 @@ public class SettingsUtil {
 
 		int index = fields != null ? fields.size() : 0;
 		final List<SettingDetail> details = new ArrayList<>();
-		final MeasurementVariable studyNameVar = WorkbookUtil.getMeasurementVariable(workbook.getConditions(), TermId.STUDY_NAME.getId());
-		final String studyName = studyNameVar != null ? studyNameVar.getValue() : "";
+
+		final String studyName = workbook.getStudyDetails().getStudyName() != null ? workbook.getStudyDetails().getStudyName() : "";
 		final String description = workbook.getStudyDetails().getDescription() != null ? workbook.getStudyDetails().getDescription() : "";
 		final String startDate = workbook.getStudyDetails().getStartDate() != null ? workbook.getStudyDetails().getStartDate() : "";
 		final String endDate = workbook.getStudyDetails().getEndDate() != null ? workbook.getStudyDetails().getEndDate() : "";
@@ -1747,7 +1748,14 @@ public class SettingsUtil {
 						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
 						found = true;
 						break;
-					}
+				} else if (STUDY_NAME.equals(label)) {
+					final SettingVariable variableDescription =
+						new SettingVariable(STUDY_NAME, null, null, null, null, null, null, null, null, null);
+					final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, studyName, false);
+					index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
+					found = true;
+					break;
+				}
 					else {
 						final SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
 						final String value = SettingsUtil.getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);

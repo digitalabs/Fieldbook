@@ -92,7 +92,7 @@ public abstract class BaseTrialController extends SettingsController {
 		studyDetails.setId(detailBean.getStudyID());
 		studyDetails.setDescription(detailBean.getDescription());
 		studyDetails.setObjective(detailBean.getObjective());
-		studyDetails.setStudyName(detailBean.getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId())));
+		studyDetails.setStudyName(detailBean.getStudyName());
 		studyDetails.setStartDate(detailBean.getStartDate());
 		studyDetails.setEndDate(detailBean.getEndDate());
 		studyDetails.setStudyUpdate(Util.getCurrentDateAsStringValue(Util.DATE_AS_NUMBER_FORMAT));
@@ -680,8 +680,8 @@ public abstract class BaseTrialController extends SettingsController {
 
 		final BasicDetails basic = new BasicDetails();
 
-		basicDetails.put(Integer.toString(TermId.STUDY_NAME.getId()), studyDetails.getStudyName());
 		basic.setBasicDetails(basicDetails);
+		basic.setStudyName(studyDetails.getStudyName());
 		basic.setStudyID(trialID);
 		basic.setDescription(studyDetails.getDescription());
 		basic.setStartDate(Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT));

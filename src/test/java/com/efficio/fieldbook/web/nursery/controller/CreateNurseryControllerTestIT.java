@@ -135,9 +135,6 @@ public class CreateNurseryControllerTestIT extends AbstractBaseIntegrationTest {
 		try {
 			Mockito.when(this.fieldbookMiddlewareService.getPersonById(-1)).thenReturn(new Person());
 
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_NAME.getId(),
-					Mockito.anyString())).thenReturn(
-					this.createStandardVariable(TermId.STUDY_NAME.getId()));
 			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_UID.getId(),
 					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.STUDY_UID.getId()));
@@ -208,9 +205,6 @@ public class CreateNurseryControllerTestIT extends AbstractBaseIntegrationTest {
 		CreateNurseryForm form = new CreateNurseryForm();
 
 		SettingDetail studyName = new SettingDetail();
-		SettingVariable studyNameVariable = new SettingVariable();
-		studyNameVariable.setCvTermId(TermId.STUDY_NAME.getId());
-		studyName.setVariable(studyNameVariable);
 
 		List<SettingDetail> basicDetails = Arrays.asList(studyName);
 		form.setBasicDetails(basicDetails);

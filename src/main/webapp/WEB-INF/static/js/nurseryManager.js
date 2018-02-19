@@ -1539,7 +1539,7 @@ function isNurseryNameUnique() {
 		return true;
 	}
 
-	var studyName = $.trim($('#' + getJquerySafeId('basicDetails0.value')).val());
+	var studyName = $.trim($('#' + getJquerySafeId('studyName')).val());
 
 	return isStudyNameUnique(studyName, studyId);
 }
@@ -1560,7 +1560,7 @@ function validateCreateNursery() {
 	});
 
 	var startDate = $('#' + getJquerySafeId('basicDetails.value2')).val();
-	if ($.trim($('#' + getJquerySafeId('basicDetails0.value')).val()) === '') {
+	if ($.trim($('#' + getJquerySafeId('studyName')).val()) === '') {
 		hasError = true;
 		name = 'Name';
 	}else if ($.trim($('#' + getJquerySafeId('description')).val()) === '') {

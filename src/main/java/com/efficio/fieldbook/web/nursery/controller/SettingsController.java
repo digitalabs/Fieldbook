@@ -70,6 +70,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	private static final String END_DATE = "endDate";
 	private static final String STUDY_UPDATE = "studyUpdate";
 	private static final String OBJECTIVE = "Objective";
+	private static final String STUDY_NAME = "Name";
 
 	/** The workbench service. */
 	@Resource
@@ -291,7 +292,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			final String s = token.nextToken();
 			// FIXME BMS-4397
 			if (!SettingsController.DESCRIPTION.equals(s) && !SettingsController.START_DATE.equals(s) && !SettingsController.END_DATE
-				.equals(s) && !SettingsController.STUDY_UPDATE.equals(s) && !SettingsController.OBJECTIVE.equals(s)) {
+				.equals(s) && !SettingsController.STUDY_UPDATE.equals(s) && !SettingsController.OBJECTIVE.equals(s) &&
+				!SettingsController.STUDY_NAME.equals(s)) {
 				defaults.add(this.createSettingDetail(Integer.valueOf(s), requiredVariablesLabel.get(ctr), role));
 				ctr++;
 			}
@@ -488,30 +490,29 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param description
 	 * @param studyUpdate
 	 * @param objective
+	 * @param name
 	 */
-	public void createStudyDetails(final Workbook workbook, final List<SettingDetail> conditions, final Integer folderId, final Integer studyId, final String description, String startDate, String endDate,
-		final String studyUpdate, final String objective) {
+	public void createStudyDetails(final Workbook workbook, final Integer folderId, final Integer studyId, final String description,
+		String startDate, String endDate, final String studyUpdate, final String objective, final String name) {
 		if (workbook.getStudyDetails() == null) {
 			workbook.setStudyDetails(new StudyDetails());
 		}
 		final StudyDetails studyDetails = workbook.getStudyDetails();
 
-		if (conditions != null && !conditions.isEmpty()) {
-			if (studyId != null) {
-				studyDetails.setId(studyId);
-			}
+		if (studyId != null) {
+			studyDetails.setId(studyId);
+		}
 
-			studyDetails.setObjective(objective);
-			studyDetails.setStudyName(SettingsUtil.getSettingDetailValue(conditions, TermId.STUDY_NAME.getId()));
-			studyDetails.setDescription(description);
-			studyDetails.setStartDate(startDate);
-			studyDetails.setEndDate(endDate);
-			studyDetails.setStudyUpdate(studyUpdate);
-			studyDetails.setStudyType(StudyType.N);
+		studyDetails.setObjective(objective);
+		studyDetails.setStudyName(name);
+		studyDetails.setDescription(description);
+		studyDetails.setStartDate(startDate);
+		studyDetails.setEndDate(endDate);
+		studyDetails.setStudyUpdate(studyUpdate);
+		studyDetails.setStudyType(StudyType.N);
 
-			if (folderId != null) {
-				studyDetails.setParentFolderId(folderId);
-			}
+		if (folderId != null) {
+			studyDetails.setParentFolderId(folderId);
 		}
 	}
 
@@ -881,7 +882,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			final String s = token.nextToken();
 			// FIXME BMS-4397
 			if (!SettingsController.DESCRIPTION.equals(s) && !SettingsController.START_DATE.equals(s) && !SettingsController.END_DATE
-				.equals(s) && !SettingsController.STUDY_UPDATE.equals(s) && !SettingsController.OBJECTIVE.equals(s)) {
+				.equals(s) && !SettingsController.STUDY_UPDATE.equals(s) && !SettingsController.OBJECTIVE.equals(s) &&
+				!SettingsController.STUDY_NAME.equals(s)) {
 				final Integer termId = Integer.valueOf(s);
 				final boolean isFound = this.searchAndSetValuesOfSpecialVariables(nurseryLevelConditions, termId, settingDetails, form);
 				if (!isFound) {

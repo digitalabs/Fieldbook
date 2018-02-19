@@ -22,6 +22,7 @@ public class BasicDetails implements TabInfoBean {
 	private String endDate;
 	private String studyUpdate;
 	private String objective;
+	private String studyName;
 
 	public BasicDetails() {
 		this.basicDetails = new HashMap<>();
@@ -121,5 +122,13 @@ public class BasicDetails implements TabInfoBean {
 
 	public void setObjective(final String objective) {
 		this.objective = objective;
+	}
+
+	public String getStudyName() {
+		return studyName;
+	}
+
+	public void setStudyName(final String studyName) {
+		this.studyName = studyName;
 	}
 }

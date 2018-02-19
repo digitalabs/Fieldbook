@@ -426,16 +426,7 @@ public class EditNurseryController extends SettingsController {
 	public Map<String, String> submit(@ModelAttribute("createNurseryForm") final CreateNurseryForm form) throws ParseException {
 		// get the name of the nursery
 
-		String name = null;
-		for (final SettingDetail nvar : form.getBasicDetails()) {
-			if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null && nvar.getVariable().getCvTermId()
-					.equals(TermId.STUDY_NAME.getId())) {
-				name = nvar.getValue();
-				break;
-			}
-		}
-
-
+		final String name = form.getStudyName();
 		final String description = form.getDescription();
 		final String objective = form.getObjective();
 		final String startDate = (form.getStartDate() != null && !form.getStartDate().isEmpty()?
@@ -478,8 +469,8 @@ public class EditNurseryController extends SettingsController {
 
 		final Workbook workbook = this.prepareNewWorkbookForSaving(trialDatasetId, measurementDatasetId, dataset);
 
-		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId(), description, startDate, endDate,
-			studyUpdate, objective);
+		this.createStudyDetails(workbook, form.getFolderId(), form.getStudyId(), description, startDate, endDate, studyUpdate, objective,
+			name);
 		this.userSelection.setWorkbook(workbook);
 
 		final Map<String, String> resultMap = new HashMap<>();
@@ -644,7 +635,9 @@ public class EditNurseryController extends SettingsController {
 			}
 		}
 
-		studyLevelVariables.addAll(createNurseryForm.getBasicDetails());
+		if (createNurseryForm.getBasicDetails() != null && !createNurseryForm.getBasicDetails().isEmpty()) {
+			studyLevelVariables.addAll(createNurseryForm.getBasicDetails());
+		}
 
 		return studyLevelVariables;
 

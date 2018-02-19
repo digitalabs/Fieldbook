@@ -715,13 +715,13 @@
 						name = $('#folderLabel').text();
 						openStudyTree(2, service.updateSelectedFolder, true);
 						return false;
-					} else if ($.trim(service.currentData.basicDetails.basicDetails[8005]) === '') {
+					} else if ($.trim(service.currentData.basicDetails.studyName) === '') {
 						hasError = true;
 						name = 'Name';
 					} else if ($.trim(service.currentData.basicDetails.description) === '') {
 						hasError = true;
 						name = 'Description';
-					} else if (!isEdit && isStudyNameUnique(service.currentData.basicDetails.basicDetails[8005]) === false) {
+					} else if (!isEdit && isStudyNameUnique(service.currentData.basicDetails.studyName) === false) {
 						hasError = true;
 						customMessage = 'Name should be unique';
 					} else if (creationDate === '') {

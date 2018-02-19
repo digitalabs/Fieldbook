@@ -23,9 +23,9 @@
 
 			            <span class="fbk-nursery-heading nursery-name-display">
 			            	<span class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</span>
-			            	<span class="heading nursery-name-display" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></span>
-			            	<span class="heading fieldmap-study-name fbk-hide" th:text="*{basicDetails[0].value}"></span>
-			            	<span class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{basicDetails[0].value.substring(0, charLimit)} + '...'" th:title="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() > charLimit}"></span>
+			            	<span class="heading nursery-name-display" th:text="*{studyName}" th:if="*{studyName.length() &lt; charLimit or studyName.length() == charLimit}"></span>
+			            	<span class="heading fieldmap-study-name fbk-hide" th:text="*{studyName}"></span>
+			            	<span class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{studyName.substring(0, charLimit)} + '...'" th:title="*{studyName}" th:if="*{studyName.length() > charLimit}"></span>
 			            </span>
 
                         <div class="fbk-nursery-heading-btns">
@@ -191,12 +191,11 @@
 						<div class="row">
 							<div class="col-xs-6">
 								<div class="row form-group">
-									<input class="cvTermIds" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />
 									<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.nursery.name}"></b>: <span class="required">*</span></label>
 
 									<div class="col-sm-8">
-										<label th:text="*{basicDetails[0].value}" class="control-label fbk-variable" data-truncate-limit="45"> </label>
-										<input type="hidden" class="form-control" th:field="*{basicDetails[0].value}" />
+										<label th:text="*{studyName}" class="control-label fbk-variable" data-truncate-limit="45"> </label>
+										<input type="hidden" class="form-control" th:field="*{studyName}" />
 									</div>
 								</div>
 

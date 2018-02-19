@@ -77,11 +77,10 @@
 				<div class="row">
 					<div class="col-xs-6">
 						<div class="row form-group">
-							<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />
 							<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.nursery.name}"></b>: <span class="required">*</span></label>
 
 							<div class="col-sm-8">
-								<input maxlength="225" type="text" class="form-control character-input" th:field="*{basicDetails[0].value}" />
+								<input maxlength="225" type="text" class="form-control character-input" th:field="*{studyName}" />
 							</div>
 						</div>
 

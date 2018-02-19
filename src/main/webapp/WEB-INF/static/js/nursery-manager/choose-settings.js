@@ -164,11 +164,6 @@ window.ChooseSettings = (function() {
 			// There are a basic set of details hard coded into the page that should not be presented as variables
 			basicDetails = [
 				{
-					variableId: 8005, // STUDY_NAME
-					propertyId: 2010  // Study
-				},
-
-				{
 					variableId: 8020, // Study_UID
 					propertyId: 2002  // User
 				}

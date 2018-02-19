@@ -21,7 +21,7 @@
 
                     <span class="fbk-nursery-heading" ng-show="isOpenTrial()">
     					<span class="heading" >Trial : </span>
-                        <span class="heading" truncate-and-tooltip="data.basicDetails[8005]"></span>
+                        <span class="heading" truncate-and-tooltip="data.studyName"></span>
 					</span>
 
 					<div class="fbk-nursery-heading-btns">
@@ -161,11 +161,11 @@
 									<label class="control-label col-sm-4"><b>Trial name</b>: <span class="required">*</span></label>
 
 									<div class="col-sm-8" ng-hide="isOpenTrial()">
-										<input class="form-control character-input" maxlength="225" type="text" ng-model="data.basicDetails[8005]"/>
+										<input class="form-control character-input" maxlength="225" type="text" ng-model="data.studyName"/>
 									</div>
 
 									<div class="col-sm-8 nursery-name-display" ng-show="isOpenTrial()">
-										<span truncate-and-tooltip="data.basicDetails[8005]"></span>
+										<span truncate-and-tooltip="data.studyName"></span>
 										<span class="fieldmap-study-name fbk-hide" th:text="${studyName}"></span>
 									</div>
 								</div>

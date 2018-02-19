@@ -281,7 +281,7 @@ public class CreateTrialController extends BaseTrialController {
 			combinedList.addAll(studyLevelConditions);
 		}
 
-		final String name = data.getBasicDetails().getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId()));
+		final String name = data.getBasicDetails().getStudyName();
 
 		if (this.userSelection.getStudyLevelConditions() == null) {
 			this.userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());

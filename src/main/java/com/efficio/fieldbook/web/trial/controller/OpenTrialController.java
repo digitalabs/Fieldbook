@@ -404,8 +404,7 @@ public class OpenTrialController extends BaseTrialController {
 		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedTreatmentFactors(),
 				this.userSelection.getTreatmentFactors());
 
-		final String name = data.getBasicDetails().getBasicDetails().get(TermId.STUDY_NAME.getId());
-
+		final String name = data.getBasicDetails().getStudyName();
 		// retain measurement dataset id and trial dataset id
 		final int trialDatasetId = this.userSelection.getWorkbook().getTrialDatasetId();
 		final int measurementDatasetId = this.userSelection.getWorkbook().getMeasurementDatesetId();

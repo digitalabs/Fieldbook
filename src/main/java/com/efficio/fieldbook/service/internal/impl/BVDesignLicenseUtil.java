@@ -1,19 +1,16 @@
 package com.efficio.fieldbook.service.internal.impl;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.breedingview.BVDesignLicenseInfo;
 import com.efficio.fieldbook.service.internal.DesignLicenseUtil;
 import com.efficio.fieldbook.service.internal.breedingview.BVLicenseParseException;
-import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.util.DateUtil;
-import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -30,12 +27,10 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 	public static final String LICENSE_SUCCESS_CODE = "0";
 	private static final Logger LOG = LoggerFactory.getLogger(BVDesignLicenseUtil.class);
 
-	private static final String BREEDING_VIEW_EXE = "BreedingView.exe";
-	private static final String BVDESIGN_EXE = "BVDesign.exe";
-	public static String BVDESIGN_STATUS_OUTPUT_FILENAME = "son";
+	public static final String BVDESIGN_STATUS_OUTPUT_FILENAME = "son";
 
 	@Resource
-	private WorkbenchService workbenchService;
+	private FieldbookProperties fieldbookProperties;
 
 	@Resource
 	private MessageSource messageSource;
@@ -80,7 +75,7 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 	@Override
 	public BVDesignLicenseInfo retrieveLicenseInfo() throws BVLicenseParseException {
 
-		final String bvDesignLocation = this.getBreedingViewExeLocation();
+		final String bvDesignLocation = this.fieldbookProperties.getBvDesignPath();
 
 		this.generateBVDesignLicenseJsonFile(bvDesignLocation);
 
@@ -118,7 +113,7 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 		try {
 
-			final ProcessBuilder processBuilder = new ProcessBuilder(bvDesignLocation + BVDesignLicenseUtil.BVDESIGN_EXE, "-status", "-json");
+			final ProcessBuilder processBuilder = new ProcessBuilder(bvDesignLocation, "-status", "-json");
 			processBuilder.directory(new File(bvDesignLocation));
 			p = processBuilder.start();
 			p.waitFor();
@@ -134,20 +129,6 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 			throw new BVLicenseParseException(errorMessage);
 		}
 
-	}
-
-	protected String getBreedingViewExeLocation() {
-		String bvDesignLocation = null;
-		Tool bvTool = null;
-
-		bvTool = this.workbenchService.getToolWithName(AppConstants.TOOL_NAME_BREEDING_VIEW.getString());
-
-		if (bvTool != null) {
-			// write xml to temp file
-			final File absoluteToolFile = new File(bvTool.getPath()).getAbsoluteFile();
-			bvDesignLocation = absoluteToolFile.getAbsolutePath().replaceAll(BVDesignLicenseUtil.BREEDING_VIEW_EXE, "");
-		}
-		return bvDesignLocation;
 	}
 
 }

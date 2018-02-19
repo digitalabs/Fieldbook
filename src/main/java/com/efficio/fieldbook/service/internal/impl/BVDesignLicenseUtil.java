@@ -79,7 +79,7 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 		this.generateBVDesignLicenseJsonFile(bvDesignLocation);
 
-		return this.readLicenseInfoFromJsonFile(new File(new File(bvDesignLocation).getParent() + BVDESIGN_STATUS_OUTPUT_FILENAME));
+		return this.readLicenseInfoFromJsonFile(new File(new File(bvDesignLocation).getParent() + File.separator + BVDESIGN_STATUS_OUTPUT_FILENAME));
 	}
 
 	protected BVDesignLicenseInfo readLicenseInfoFromJsonFile(final File file) throws BVLicenseParseException {

@@ -24,7 +24,7 @@ public class ChangeLocationExpression extends BaseExpression {
     private GermplasmDataManager germplasmDataManager;
 
     @Override
-    public void apply(List<StringBuilder> values, AdvancingSource source) {
+    public void apply(List<StringBuilder> values, AdvancingSource source, final String capturedText) {
         for (StringBuilder container : values) {
 
             try {

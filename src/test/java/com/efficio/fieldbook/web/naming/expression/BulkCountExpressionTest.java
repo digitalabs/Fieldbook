@@ -14,7 +14,7 @@ public class BulkCountExpressionTest extends TestExpression {
 		BulkCountExpression expression = new BulkCountExpression();
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "[BCOUNT]", null, null, null, true);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 	}
 
@@ -23,7 +23,7 @@ public class BulkCountExpressionTest extends TestExpression {
 		BulkCountExpression expression = new BulkCountExpression();
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST-B", "[BCOUNT]", null, null, null, true);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 	}
 
@@ -32,7 +32,7 @@ public class BulkCountExpressionTest extends TestExpression {
 		BulkCountExpression expression = new BulkCountExpression();
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST-2B", "[BCOUNT]", null, null, null, true);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 	}
 
@@ -41,7 +41,7 @@ public class BulkCountExpressionTest extends TestExpression {
 		BulkCountExpression expression = new BulkCountExpression();
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST-11a22B", "[BCOUNT]", null, null, null, true);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 	}
 
@@ -50,7 +50,7 @@ public class BulkCountExpressionTest extends TestExpression {
 		BulkCountExpression expression = new BulkCountExpression();
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST-B-4B-3B", "[BCOUNT]", null, null, null, true);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 	}
 
@@ -59,7 +59,7 @@ public class BulkCountExpressionTest extends TestExpression {
 		BulkCountExpression expression = new BulkCountExpression();
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST-B-4B-3B", "[bcount]", null, null, null, true);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		System.out.println("process code in lower case");
 		this.printResult(values, source);
 	}

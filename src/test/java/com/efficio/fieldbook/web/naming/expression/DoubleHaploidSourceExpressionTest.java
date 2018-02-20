@@ -35,7 +35,7 @@ public class DoubleHaploidSourceExpressionTest extends TestExpression {
 
 		Mockito.when(this.keySequenceRegisterService.incrementAndGetNextSequence("(CML454 X CML451)-B-3-1-1@", null)).thenReturn(25);
 
-		doubleHaploidSourceExpression.apply(values, source);
+		doubleHaploidSourceExpression.apply(values, source, null);
 
 		Assert.assertEquals("Error in Designation value for Double Haploid Source Method", "(CML454 X CML451)-B-3-1-1@25", values.get(0).toString());
 	}
@@ -50,7 +50,7 @@ public class DoubleHaploidSourceExpressionTest extends TestExpression {
 
 		List<StringBuilder> values = this.createInitialValues(source);
 
-		doubleHaploidSourceExpression.apply(values, source);
+		doubleHaploidSourceExpression.apply(values, source, null);
 
 		Assert.assertEquals("Error in Designation value for Double Haploid Source Method", "(CML454 X CML451)-B-3-1-1-DH", values.get(0).toString());
 	}

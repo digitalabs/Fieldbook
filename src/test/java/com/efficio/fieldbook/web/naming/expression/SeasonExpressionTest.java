@@ -23,7 +23,7 @@ public class SeasonExpressionTest extends TestExpression {
 		SeasonExpression expression = new SeasonExpression();
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", null, "[SEASON]", null, null, true);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 		Assert.assertEquals("GERMPLASM_TESTDry", this.buildResult(values));
 	}
@@ -34,7 +34,7 @@ public class SeasonExpressionTest extends TestExpression {
 		SeasonExpression expression = new SeasonExpression();
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", ":", null, null, "[SEASON]", true);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 		Assert.assertEquals("GERMPLASM_TEST:Dry", this.buildResult(values));
 	}
@@ -48,7 +48,7 @@ public class SeasonExpressionTest extends TestExpression {
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, null, "[SEASON]", true);
 		source.setSeason(null);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 		Assert.assertEquals("GERMPLASM_TEST-" + defSeason, this.buildResult(values));
 	}
@@ -58,7 +58,7 @@ public class SeasonExpressionTest extends TestExpression {
 		SeasonExpression expression = new SeasonExpression();
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", null, "[seasOn]", null, null, true);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		LOG.debug("Testing process code is in lower case");
 		this.printResult(values, source);
 		Assert.assertEquals("GERMPLASM_TESTDry", this.buildResult(values));

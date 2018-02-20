@@ -14,7 +14,7 @@ public class TopLocationAbbreviationExpressionTest extends TestExpression {
 		TopLocationAbbreviationExpression expression = new TopLocationAbbreviationExpression();
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", null, "[TLABBR]", null, null, true);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 	}
 
@@ -23,7 +23,7 @@ public class TopLocationAbbreviationExpressionTest extends TestExpression {
 		TopLocationAbbreviationExpression expression = new TopLocationAbbreviationExpression();
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", ":", null, null, "[TLABBR]", true);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 	}
 
@@ -33,7 +33,7 @@ public class TopLocationAbbreviationExpressionTest extends TestExpression {
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", null, null, null, "[TLABBR]", true);
 		source.setLocationAbbreviation(null);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 	}
 
@@ -42,7 +42,7 @@ public class TopLocationAbbreviationExpressionTest extends TestExpression {
 		TopLocationAbbreviationExpression expression = new TopLocationAbbreviationExpression();
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", null, "[tLabbr]", null, null, true);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		System.out.println("process code is in lower case");
 		this.printResult(values, source);
 	}

@@ -15,7 +15,7 @@ public class NumberExpressionTest extends TestExpression {
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "[NUMBER]", null, true);
 		source.setPlantsSelected(2);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 	}
 
@@ -25,7 +25,7 @@ public class NumberExpressionTest extends TestExpression {
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "[NUMBER]", null, true);
 		source.setPlantsSelected(-2);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 	}
 
@@ -35,7 +35,7 @@ public class NumberExpressionTest extends TestExpression {
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "[number]", null, true);
 		source.setPlantsSelected(2);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		System.out.println("process code is in lower case");
 		this.printResult(values, source);
 	}

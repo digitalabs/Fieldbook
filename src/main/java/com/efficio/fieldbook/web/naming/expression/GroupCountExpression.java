@@ -20,7 +20,7 @@ public class GroupCountExpression extends BaseExpression {
 	public static final int CAPTURED_FINAL_EXPRESSION_GROUP = 1;
 
 	@Override
-	public void apply(final List<StringBuilder> values, final AdvancingSource source) {
+	public void apply(final List<StringBuilder> values, final AdvancingSource source, final String capturedText) {
 		for (final StringBuilder value : values) {
 			String currentValue = value.toString();
 

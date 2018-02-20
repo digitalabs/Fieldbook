@@ -19,7 +19,7 @@ public class BulkCountExpression extends BaseExpression {
 	}
 
 	@Override
-	public void apply(List<StringBuilder> values, AdvancingSource source) {
+	public void apply(List<StringBuilder> values, AdvancingSource source, final String capturedText) {
 		for (StringBuilder container : values) {
             String computedValue;
 			if (source.getRootName() != null) {

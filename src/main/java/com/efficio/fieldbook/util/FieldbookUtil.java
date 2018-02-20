@@ -34,6 +34,7 @@ public class FieldbookUtil {
 	public static final String CONTENT_DISPOSITION = "Content-Disposition";
 	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
 	public static final String DESCRIPTION = "Description";
+	public static final String STUDYTYPE="StudyType";
 	private static FieldbookUtil instance;
 
 	static {
@@ -171,7 +172,7 @@ public class FieldbookUtil {
 		while (token.hasMoreTokens()) {
 			final String s = token.nextToken();
 			// FIXME BMS-4397
-			if (!DESCRIPTION.equals(s)) {
+			if (!DESCRIPTION.equals(s) && !STUDYTYPE.equals(s)) {
 				requiredVariables.add(Integer.valueOf(s));
 			}
 		}

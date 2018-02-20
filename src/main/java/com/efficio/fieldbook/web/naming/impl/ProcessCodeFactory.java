@@ -31,9 +31,9 @@ public class ProcessCodeFactory {
 		if (expressionMap.containsKey(pattern)) {
 			return expressionMap.get(pattern);
 		}
-		for (String key : expressionMap.keySet()) {
+		for (final String key : expressionMap.keySet()) {
 			if (key != null && pattern.matches(key)) {
-				Expression expression = expressionMap.get(key);
+				final Expression expression = expressionMap.get(key);
 				expressionMap.put(pattern, expression); // memoize
 				return expression;
 			}
@@ -41,7 +41,7 @@ public class ProcessCodeFactory {
 		return null;
 	}
 
-	public void addExpression(Expression expression) {
+	public void addExpression(final Expression expression) {
 		expressionMap.put(expression.getExpressionKey(), expression);
 	}
 }

@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.naming.expression;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.util.AppConstants;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public class AttributeSourceExpression extends BaseExpression {
 	public void apply(final List<StringBuilder> values, final AdvancingSource source, final String capturedText) {
 		for (StringBuilder value : values) {
 			String newValue = "";
-			if ((source.getBreedingMethod().getMtype().equals("DER") || source.getBreedingMethod().getMtype().equals("MAN"))
+		if ((source.getBreedingMethod().getMtype().equals(AppConstants.METHOD_TYPE_GEN.getString()) || source.getBreedingMethod().getMtype().equals(AppConstants.METHOD_TYPE_MAN.getString()))
 					&& source.getGermplasm().getGpid2() != 0) {
 				final String attributeName = capturedText.substring(1, capturedText.length()-1).split("\\.")[1];
 				newValue = germplasmDataManager.getAttributeValue(Integer.parseInt(source.getGermplasm().getGid()), attributeName);

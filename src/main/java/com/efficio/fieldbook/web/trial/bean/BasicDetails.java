@@ -18,6 +18,7 @@ public class BasicDetails implements TabInfoBean {
 	private Integer userID;
 	private Integer studyID;
 	private String description;
+	private String studyType;
 
 	public BasicDetails() {
 		this.basicDetails = new HashMap<>();
@@ -86,4 +87,13 @@ public class BasicDetails implements TabInfoBean {
 	public void setDescription(final String description) {
 		this.description = description;
 	}
+
+	public String getStudyType() {
+		return studyType;
+	}
+
+	public void setStudyType(String studyType) {
+		this.studyType = studyType;
+	}
+
 }

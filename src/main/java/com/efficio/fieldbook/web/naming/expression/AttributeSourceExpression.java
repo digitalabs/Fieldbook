@@ -38,8 +38,8 @@ public class AttributeSourceExpression extends BaseExpression {
 	}
 
 	@Override
-	protected void replaceExpressionWithValue(StringBuilder container, String value) {
-		Matcher matcher = pattern.matcher(container.toString());
+	protected void replaceExpressionWithValue(final StringBuilder container, final String value) {
+		final Matcher matcher = pattern.matcher(container.toString());
 		while (matcher.find()) {
 			container.replace(matcher.start(), matcher.end(), value);
 		}

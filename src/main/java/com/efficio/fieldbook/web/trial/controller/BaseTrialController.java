@@ -96,7 +96,7 @@ public abstract class BaseTrialController extends SettingsController {
 		studyDetails.setDescription(detailBean.getDescription());
 		studyDetails.setStartDate(detailBean.getBasicDetails().get(Integer.toString(TermId.START_DATE.getId())));
 		studyDetails.setEndDate(detailBean.getBasicDetails().get(Integer.toString(TermId.END_DATE.getId())));
-		studyDetails.setStudyType(StudyType.T);
+		studyDetails.setStudyType(StudyType.getStudyTypeByName(detailBean.getStudyType()));
 
 		if (detailBean.getFolderId() != null) {
 			studyDetails.setParentFolderId(detailBean.getFolderId());
@@ -718,7 +718,7 @@ public abstract class BaseTrialController extends SettingsController {
 		basic.setFolderNameLabel(folderName);
 		basic.setUserID(studyOwnerPersonId);
 		basic.setUserName(studyOwnerPersonName);
-
+		basic.setStudyType(studyDetails.getStudyType().getLabel());
 		final TabInfo tab = new TabInfo();
 		tab.setData(basic);
 

@@ -144,26 +144,6 @@ var SaveAdvanceList = {};
 					} else if (isStock) {
 						$('#saveListTreeModal').data('is-save-stock', '0');
 					} else {
-						var uniqueId,
-							close,
-							aHtml;
-						var id = data.advancedGermplasmListId ? data.advancedGermplasmListId : data.germplasmListId;
-						uniqueId = data.uniqueId;
-						close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="' + id +
-							'" onclick="javascript: closeAdvanceListTab(' + id + ')"></i>';
-						aHtml = '<a role="tab" data-toggle="tab" id="advanceHref' + id + '" href="#advance-list' + id +
-							'">Advance List' + close + '</a>';
-						var stockHtml = '<div id="stock-content-pane' + id + '" class="stock-list' + id + '"></div>';
-
-						if (isNursery()) {
-							$('#create-nursery-tab-headers').append('<li id="advance-list' + id + '-li">' + aHtml + '</li>');
-							$('#create-nursery-tabs').append('<div class="tab-pane info" id="advance-list' + id + '"></div>');
-							$('#create-nursery-tabs').append('<div class="tab-pane info" id="stock-tab-pane' + id + '">' + stockHtml +
-								'</div>');
-							setTimeout(function() {
-								$('.nav-tabs').tabdrop('layout');
-							}, 100);
-						}
 						$('a#advanceHref' + id).tab('show');
 						displayAdvanceList(data.uniqueId, data.germplasmListId, $.trim(data.listName), false, data.advancedGermplasmListId);
 					}

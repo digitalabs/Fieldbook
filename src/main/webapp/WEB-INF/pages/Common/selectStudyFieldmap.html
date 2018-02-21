@@ -62,7 +62,7 @@ focusNodeFieldmap = null;
 
 $(document).ready(function() {
 	'use strict';
-	displayStudyFieldMapListTree('selectStudyFieldMapTree', isNursery() ? 'N' : 'T');
+	displayStudyFieldMapListTree('selectStudyFieldMapTree');
 	$('.choose-study-field-map').click('click', chooseStudyFieldMap);
 	$('.generate-study-field-map').on('click', function() {
 		if ($('table.selected-study-fieldmap-table tbody tr').length === 0) {
@@ -193,14 +193,14 @@ function doStudyFieldmapLazyLoad(node) {
 	}
 }
 /** Germplasm Tree **/
-function displayStudyFieldMapListTree(treeName, studyType) {
+function displayStudyFieldMapListTree(treeName) {
 	'use strict';
 	urlFieldmap = '/Fieldbook/StudyTreeManager/loadInitialTree';
-	lazyReadUrlFieldmap = '/Fieldbook/StudyTreeManager/expandTree/' + studyType + '/';
+	lazyReadUrlFieldmap = '/Fieldbook/StudyTreeManager/expandTree/';
 
 	var additionalUrlFieldmap = '/0';
 
-	urlFieldmap = urlFieldmap + additionalUrlFieldmap + '/' + studyType + '?hasCentral=0';
+	urlFieldmap = urlFieldmap + additionalUrlFieldmap + '?hasCentral=0';
 
 	$('#' + treeName).dynatree({
 		title: treeName,

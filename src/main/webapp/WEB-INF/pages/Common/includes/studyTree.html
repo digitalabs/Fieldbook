@@ -114,7 +114,7 @@ var selectStudyFunction = null;
 
 $(document).ready(function () {
     'use strict';
-    displayStudyListTree('studyTree', isNursery() ? 'N' : 'T', 1);
+    displayStudyListTree('studyTree', 1);
     changeBrowseNurseryButtonBehavior(false);
     $('#addFolderDiv').hide();
     $('#renameFolderDiv').hide();
@@ -267,7 +267,7 @@ function doStudyLazyLoad(node, preSelectId) {
     }
 }
 /** Germplasm Tree **/
-function displayStudyListTree(treeName, studyType, choosingTypeParam, selectStudyFunctionParam, isPreSelect, postInitFunction) {
+function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionParam, isPreSelect, postInitFunction) {
     'use strict';
 
     if (selectStudyFunctionParam) {
@@ -275,7 +275,7 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam, selectStud
     }
 
     url = '/Fieldbook/StudyTreeManager/loadInitialTree';
-    lazyReadUrl = '/Fieldbook/StudyTreeManager/expandTree/'+studyType+'/';
+    lazyReadUrl = '/Fieldbook/StudyTreeManager/expandTree/';
     
     choosingType = choosingTypeParam;
     var additionalUrl = '/0';
@@ -283,7 +283,7 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam, selectStud
         additionalUrl = '/1';
     }
 	
-    url = url + additionalUrl + '/' + studyType;
+    url = url + additionalUrl;
 
     $('#' + treeName).dynatree({
         title: treeName,

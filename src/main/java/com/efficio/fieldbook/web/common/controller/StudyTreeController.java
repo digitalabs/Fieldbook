@@ -69,8 +69,8 @@ public class StudyTreeController {
 	private PlatformTransactionManager transactionManager;
 
 	@ResponseBody
-	@RequestMapping(value = "/loadInitialTree/{isFolderOnly}/{type}", method = RequestMethod.GET)
-	public String loadInitialTree(@PathVariable final String isFolderOnly, @PathVariable final String type) {
+	@RequestMapping(value = "/loadInitialTree/{isFolderOnly}", method = RequestMethod.GET)
+	public String loadInitialTree(@PathVariable final String isFolderOnly) {
 		try {
 			final List<TreeNode> rootNodes = new ArrayList<>();
 			final String localName = AppConstants.STUDIES.getString();
@@ -112,9 +112,8 @@ public class StudyTreeController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/expandTree/{type}/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
-	public String expandTree(@PathVariable final String parentKey, @PathVariable final String isFolderOnly,
-			@PathVariable final String type) {
+	@RequestMapping(value = "/expandTree/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
+	public String expandTree(@PathVariable final String parentKey, @PathVariable final String isFolderOnly) {
 		final boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
 		try {
 			final List<TreeNode> childNodes = this.getChildNodes(parentKey, isFolderOnlyBool);
@@ -305,26 +304,22 @@ public class StudyTreeController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/isFolderEmpty/{folderId}/{studyType}", method = RequestMethod.POST)
-	public Map<String, Object> isFolderEmpty(@RequestBody final Map<String, String> data, @PathVariable final String folderId,
-			@PathVariable final String studyType) {
+	@RequestMapping(value = "/isFolderEmpty/{folderId}", method = RequestMethod.POST)
+	public Map<String, Object> isFolderEmpty(@RequestBody final Map<String, String> data, @PathVariable final String folderId) {
 		final String folderName = data.get("folderName");
 		final Map<String, Object> resultsMap = new HashMap<>();
 		final Locale locale = LocaleContextHolder.getLocale();
-		boolean isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID(),
-				StudyType.nurseriesAndTrials());
+		boolean isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID());
 		if (isFolderEmpty) {
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 		} else {
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
-			final List<StudyType> studyTypeList = StudyType.allStudies();
-			isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID(), studyTypeList);
+			isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID());
 			String message;
 			if (!isFolderEmpty) {
-				message = "browse.nursery.delete.folder.not.empty";
+				message = "browse.study.delete.folder.not.empty";
 			} else {
-				message = studyType.equals(StudyType.N.getName()) ? "browse.trial.delete.folder.contains.trials"
-						: "browse.nursery.delete.folder.contains.nurseries";
+				message = "browse.study.delete.folder.contains.studies";
 			}
 			resultsMap.put(StudyTreeController.MESSAGE, this.messageSource.getMessage(message, new Object[] {folderName}, locale));
 		}

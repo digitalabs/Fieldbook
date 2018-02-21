@@ -85,7 +85,7 @@
                 <span class="bms-mgt-details fbk-trial-summary-icons"></span>
                 <img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}"/>
                 <img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}"/>
-                <strong class="sub-content-heading" th:text="#{fb.study.trialsettings}">TRIAL SETTINGS</strong>
+                <strong class="sub-content-heading" th:text="#{fb.study.trialsettings}">STUDY SETTINGS</strong>
             </label>
         </div>
         <div class="collapse col-md-12 trialSettings sectionContainer">
@@ -102,7 +102,7 @@
             </div>
             <!-- If trial has no settings variable found then display No Trial Settings -->
             <div th:if="*{managementDetails == null or #lists.isEmpty(managementDetails)}">
-                <div class="col-xs-12 col-md-12" th:text="#{no.available.trial.settings}">No Trial Settings</div>
+                <div class="col-xs-12 col-md-12" th:text="#{no.available.trial.settings}">No Study Settings</div>
             </div>
         </div>
 
@@ -145,7 +145,7 @@
             </div>
             <!-- If trial has no Selection variate then display No available trial selections -->
             <div th:if="*{selectionVariateDetails == null or #lists.isEmpty(selectionVariateDetails)}">
-                <div class="col-md-6 add_top_padding" th:text="#{no.available.trial.selection}">No available trial selections</div>
+                <div class="col-md-6 add_top_padding" th:text="#{no.available.trial.selection}">No available study selections</div>
             </div>
         </div>
         <br/>
@@ -243,10 +243,10 @@
 
             <div class="col-md-6 add_top_padding">
                 <div>
-                    <!-- Sub Header of Environments: TRIAL CONDITIONS -->
+                    <!-- Sub Header of Environments: STUDY CONDITIONS -->
                     <label  class="control-label">
                         <img th:src="@{/static/svg/conditions.svg}" style="margin: 3px 4px;" width="22" height="22" />
-                        <strong class="sub-content-heading" th:text="#{trial.trialdetails.trial.conditions}">TRIAL CONDITIONS</strong>
+                        <strong class="sub-content-heading" th:text="#{trial.trialdetails.trial.conditions}">STUDY CONDITIONS</strong>
                     </label>
                 </div>
 
@@ -275,7 +275,7 @@
 
                 <!-- If trial has no Condition then display No available trial conditions -->
                 <div th:if="*{nurseryConditionDetails == null or #lists.isEmpty(nurseryConditionDetails)}">
-                    <div class="add_top_padding" th:text="#{no.available.trial.conditions}">No available trial conditions</div>
+                    <div class="add_top_padding" th:text="#{no.available.trial.conditions}">No available study conditions</div>
                 </div>
             </div>
 

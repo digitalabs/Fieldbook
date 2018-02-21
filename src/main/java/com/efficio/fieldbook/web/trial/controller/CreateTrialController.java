@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -144,7 +145,8 @@ public class CreateTrialController extends BaseTrialController {
 		CreateTrialForm form = new CreateTrialForm();
 		try {
 			if (trialID != null && trialID != 0) {
-				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(trialID);
+				final Study study = this.fieldbookMiddlewareService.getStudy(trialID);
+				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(trialID, study.getType());
 				this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
 
 				this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
@@ -161,6 +163,7 @@ public class CreateTrialController extends BaseTrialController {
 				this.fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(),
 						trialWorkbook.getMeasurementDatesetId());
 				tabDetails.put("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));
+				form.setStudyTypeName(trialWorkbook.getStudyDetails().getStudyType().getLabel());
 			}
 		} catch (final MiddlewareException e) {
 			CreateTrialController.LOG.error(e.getMessage(), e);

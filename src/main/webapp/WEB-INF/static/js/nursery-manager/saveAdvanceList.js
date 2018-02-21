@@ -130,7 +130,13 @@ var SaveAdvanceList = {};
 						$('#saveListTreeModal').data('is-save-parent', '0');
 					}
 					else if (isCrosses) {
-						ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId,  $.trim(data.listName));
+						var crossType="";
+						if ($('#germplasmListType').val() === 'IMP_CROSS') {
+							crossType="Imported Crosses";
+						} else {
+							crossType="Designed Crosses";
+						}
+						displayCrossesList(data.germplasmListId, $.trim(data.listName), crossType, false, data.crossesListId, false);
 						$('#saveListTreeModal').data('is-save-crosses', '0');
 						if (data.isTrimed === 1) {
 							showAlertMessage('page-save-list-message-modal', crossesWarningMessage, 10000);

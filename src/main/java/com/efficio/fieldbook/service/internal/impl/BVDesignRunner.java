@@ -30,7 +30,7 @@ public class BVDesignRunner implements DesignRunner {
 	private static final Logger LOG = LoggerFactory.getLogger(BVDesignRunner.class);
 	// set 3 minutes for the design runner process to timeout
 	private static final long DESIGN_RUNNER_TIMEOUT_MILLIS = 3 * 60 * 1000;
-	private static String XML_EXTENSION = ".xml";
+	private static final String XML_EXTENSION = ".xml";
 
 	@Override
 	public BVDesignOutput runBVDesign(final WorkbenchService workbenchService, final FieldbookProperties fieldbookProperties,

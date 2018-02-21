@@ -120,11 +120,6 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 			p = processBuilder.start();
 			p.waitFor();
 
-		} catch (final IOException | InterruptedException e) {
-
-			BVDesignLicenseUtil.LOG.error(errorMessage + ":" + e.getMessage(), e);
-			throw new BVLicenseParseException(errorMessage);
-
 		} catch (final Exception e) {
 
 			BVDesignLicenseUtil.LOG.error(errorMessage + ":" + e.getMessage(), e);

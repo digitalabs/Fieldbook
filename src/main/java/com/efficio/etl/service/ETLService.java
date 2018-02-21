@@ -99,8 +99,6 @@ public interface ETLService {
   public Map<String, List<Message>> checkForMismatchedHeaders(List<String> fileHeaders, List<MeasurementVariable> studyHeaders,
 		  boolean isMeansDataImport);
 
-  public Tool getOntologyBrowserTool();
-
   public Tool getFieldbookWebTool();
 
   public Workbook retrieveCurrentWorkbookWithValidation(UserSelection userSelection) throws IOException, WorkbookParserException;

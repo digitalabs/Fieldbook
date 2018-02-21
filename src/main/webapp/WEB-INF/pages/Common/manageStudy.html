@@ -1,8 +1,5 @@
 <div class="row col-xs-12 col-md-12 landing-page" xmlns:th="http://www.thymeleaf.org">
-	<div class="page-header nursery-header" th:if="${type == 'N'}">
-		<h1><span th:text="#{nursery.managenurseries.header}">Manage Nurseries</span> <a class="bms-fa-question-circle fbk-help" data-help-link="MANAGE_NURSERIES"></a></h1>
-	</div>
-	<div class="page-header trial-header" th:if="${type == 'T'}">
+	<div class="page-header trial-header">
 		<h1><span th:text="#{study.managestudies.header}">Manage Study</span> <a class="bms-fa-question-circle fbk-help" data-help-link="MANAGE_TRIALS"></a></h1>
 	</div>
 </div>
@@ -16,16 +13,12 @@
 		<div class="row">
 			<div class="col-xs-7 col-md-7">
 				<img th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
-				<label  th:if="${type == 'N'}" class="h2_no_transform" th:text="#{browse.nurseries.header}"></label>
-				<label th:if="${type == 'N'}" class="control-label"><a href="javascript: openStudyTree(1)">Browse</a> for a nursery to work with.</label>
-				<label  th:if="${type == 'T'}" class="h2_no_transform" th:text="#{browse.studies.header}"></label>
-				<label th:if="${type == 'T'}" class="control-label"><a href="javascript: openStudyTree(1)">Browse</a> for a study to work with.</label>
+				<label class="h2_no_transform" th:text="#{browse.studies.header}"></label>
+				<label class="control-label"><a href="javascript: openStudyTree(1)">Browse</a> for a study to work with.</label>
 			</div>
 			<div class="col-xs-5 col-md-5">
 				<div style="float: right; padding-right: 10px;">
-					<a th:if="${type == 'N'}" th:href="@{/NurseryManager/createNursery}" class="btn btn-info"
-					th:utext="#{browse.nursery.start.new.nursery}">Start a New Nursery</a>
-					<a th:if="${type == 'T'}" th:href="@{/TrialManager/createTrial}" class="btn btn-info"
+					<a th:href="@{/TrialManager/createTrial}" class="btn btn-info"
 					th:utext="#{browse.study.start.new.study}">Start a New Nursery</a>
 				</div>
 			</div>

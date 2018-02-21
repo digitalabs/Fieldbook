@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.generationcp.commons.constant.ToolEnum;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.reports.service.JasperReportService;
@@ -30,6 +29,7 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.reports.BuildReportException;
 import org.generationcp.middleware.reports.Reporter;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -514,7 +514,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	}
 
 	public List<CustomReportType> getCustomReportTypes(final String name) {
-		return this.jasperReportService.getCustomReportTypes(name, ToolEnum.FIELDBOOK_WEB.getToolName());
+		return this.jasperReportService.getCustomReportTypes(name, ToolName.FIELDBOOK_WEB.getName());
 	}
 
 	protected File exportAdvanceListItems(final String exportType, final String advancedListIds, final StudyDetails studyDetails) {

@@ -89,8 +89,7 @@ public class StudyTreeController {
 		if (parentKey != null && !"".equals(parentKey)) {
 			try {
 				if (StudyTreeController.LOCAL.equals(parentKey)) {
-					final List<Reference> rootFolders = this.studyDataManager.getRootFolders(this.getCurrentProgramUUID(),
-						StudyType.nurseriesAndTrials());
+					final List<Reference> rootFolders = this.studyDataManager.getRootFolders(this.getCurrentProgramUUID());
 					childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, false, true, isFolderOnly);
 				} else if (NumberUtils.isNumber(parentKey)) {
 					childNodes = this.getChildrenTreeNodes(parentKey, isFolderOnly);
@@ -106,9 +105,7 @@ public class StudyTreeController {
 
 	private List<TreeNode> getChildrenTreeNodes(final String parentKey, final boolean isFolderOnly) {
 		final int parentId = Integer.valueOf(parentKey);
-		final List<Reference> folders = this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID(),
-			StudyType.nurseriesAndTrials()
-		);
+		final List<Reference> folders = this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
 
 		final List<TreeNode> childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(folders, false, true, isFolderOnly);
 		return childNodes;
@@ -139,7 +136,7 @@ public class StudyTreeController {
 
 				final int parentId = Integer.valueOf(parentKey);
 				final List<Reference> folders =
-						this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID(), StudyType.nurseriesAndTrials());
+						this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
 				return TreeViewUtil.convertStudyFolderReferencesToJson(folders, false, true, isFolderOnlyBool);
 
 			} else {
@@ -156,7 +153,7 @@ public class StudyTreeController {
 	private String getRootFolders(final boolean isFolderOnly) {
 		try {
 			final List<Reference> rootFolders =
-					this.studyDataManager.getRootFolders(this.getCurrentProgramUUID(), StudyType.nurseriesAndTrials());
+					this.studyDataManager.getRootFolders(this.getCurrentProgramUUID());
 			return TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, false, true, isFolderOnly);
 		} catch (final Exception e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
@@ -236,8 +233,7 @@ public class StudyTreeController {
 					final String folderName = req.getParameter("folderName");
 					final Locale locale = LocaleContextHolder.getLocale();
 
-					if (folderName.equalsIgnoreCase(AppConstants.NURSERIES.getString())
-							|| folderName.equalsIgnoreCase(AppConstants.TRIALS.getString())) {
+					if (folderName.equalsIgnoreCase(AppConstants.STUDIES.getString())) {
 						throw new MiddlewareQueryException(
 								StudyTreeController.this.messageSource.getMessage("folder.name.not.unique", null, locale));
 					}
@@ -276,8 +272,7 @@ public class StudyTreeController {
 		try {
 			final String newFolderName = req.getParameter("newFolderName");
 			final String folderId = req.getParameter("folderId");
-			if (newFolderName.equalsIgnoreCase(AppConstants.NURSERIES.getString())
-					|| newFolderName.equalsIgnoreCase(AppConstants.TRIALS.getString())) {
+			if (newFolderName.equalsIgnoreCase(AppConstants.STUDIES.getString())) {
 				throw new MiddlewareQueryException(this.messageSource.getMessage("folder.name.not.unique", null, locale));
 			}
 			this.studyDataManager.renameSubFolder(newFolderName, Integer.parseInt(folderId), this.getCurrentProgramUUID());

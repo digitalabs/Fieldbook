@@ -5,35 +5,39 @@ import com.efficio.fieldbook.service.internal.breedingview.BVDesignLicenseInfo;
 import com.efficio.fieldbook.service.internal.breedingview.BVLicenseParseException;
 import com.efficio.fieldbook.service.internal.breedingview.License;
 import com.efficio.fieldbook.service.internal.breedingview.Status;
-import com.efficio.fieldbook.service.internal.impl.BVDesignLicenseUtil;
-import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.util.DateUtil;
-import org.generationcp.middleware.pojos.workbench.Tool;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
+
+import org.junit.Before;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BVDesignLicenseUtilTest {
 
 	public static final String GENERIC_ERROR = "BVDesign returned an error: ";
+	public static final String FAILED_LICENSE_GENERATION = "failed license generation";
+
 	@Mock
 	private WorkbenchService workbenchService;
 
@@ -43,8 +47,21 @@ public class BVDesignLicenseUtilTest {
 	@Mock
 	private MessageSource messageSource;
 
+	@Mock
+	private FieldbookProperties fieldbookProperties;
+
+	@Mock
+	private BVDesignLicenseUtil.BVDesignLicenseProcessRunner processRunner;
+
 	@InjectMocks
 	private BVDesignLicenseUtil bvDesignLicenseUtil;
+
+	@Before
+	public void init() {
+
+		bvDesignLicenseUtil.setBvDesignLicenseProcessRunner(this.processRunner);
+
+	}
 
 	@Test
 	public void testIsExpiredWithNoDate() {
@@ -120,7 +137,8 @@ public class BVDesignLicenseUtilTest {
 	public void testIsExpiringWithinThirtyDaysExpirayDaysNotNumeric() {
 
 		BVDesignLicenseInfo bvDesignLicenseInfo = this.createBVDesignLicenseInfo();
-		Mockito.when(this.messageSource.getMessage(Mockito.anyString(), Mockito.any(Object[].class), Mockito.any(Locale.class))).thenReturn("");
+		Mockito.when(this.messageSource.getMessage(Mockito.anyString(), Mockito.any(Object[].class), Mockito.any(Locale.class)))
+				.thenReturn("");
 		bvDesignLicenseInfo.getStatus().getLicense().setExpiryDays("AAA");
 
 		Assert.assertTrue(bvDesignLicenseUtil.isExpiringWithinThirtyDays(bvDesignLicenseInfo));
@@ -130,7 +148,6 @@ public class BVDesignLicenseUtilTest {
 
 	@Test
 	public void testReadLicenseInfoFromJsonFileSuccess() throws IOException {
-
 
 		File file = Mockito.mock(File.class);
 		BVDesignLicenseInfo bvDesignLicenseInfo = this.createBVDesignLicenseInfo();
@@ -152,13 +169,11 @@ public class BVDesignLicenseUtilTest {
 	@Test
 	public void testReadLicenseInfoFromJsonFileException() throws IOException {
 
-
 		File file = Mockito.mock(File.class);
 		BVDesignLicenseInfo bvDesignLicenseInfo = this.createBVDesignLicenseInfo();
 
-		Mockito.when(this.messageSource.getMessage(Mockito.anyString(), Mockito.any(Object[].class), Mockito.any(Locale.class))).thenReturn(
-				GENERIC_ERROR);
-
+		Mockito.when(this.messageSource.getMessage(Mockito.anyString(), Mockito.any(Object[].class), Mockito.any(Locale.class)))
+				.thenReturn(GENERIC_ERROR);
 
 		// If BVDesign failed in generating the license file the return code value will be a non-zero (-1).
 		String errorStatusCode = "-1";
@@ -180,6 +195,63 @@ public class BVDesignLicenseUtilTest {
 
 	}
 
+	@Test
+	public void testGenerateBVDesignLicenseJsonFileSuccess() throws IOException {
+
+		final String bvDesignLocation = "parentDirectory/bvDesign";
+
+		try {
+			bvDesignLicenseUtil.generateBVDesignLicenseJsonFile(bvDesignLocation);
+			verify(this.processRunner).setDirectory("parentDirectory");
+			verify(this.processRunner).run(bvDesignLocation, "-status", "-json");
+		} catch (BVLicenseParseException e) {
+			fail("generateBVDesignLicenseJsonFile should not throw a BVLicenseParseException");
+		}
+
+	}
+
+	@Test
+	public void testGenerateBVDesignLicenseJsonFileFailed() throws IOException {
+
+		when(this.messageSource.getMessage("bv.design.error.failed.license.generation", null, LocaleContextHolder.getLocale()))
+				.thenReturn(FAILED_LICENSE_GENERATION);
+
+		final String bvDesignLocation = "parentDirectory/bvDesign";
+
+		when(processRunner.run(bvDesignLocation, "-status", "-json")).thenThrow(new IOException());
+
+		try {
+			bvDesignLicenseUtil.generateBVDesignLicenseJsonFile(bvDesignLocation);
+			fail("generateBVDesignLicenseJsonFile should throw a BVLicenseParseException");
+		} catch (BVLicenseParseException e) {
+			assertEquals(FAILED_LICENSE_GENERATION, e.getMessage());
+		}
+
+	}
+
+	@Test
+	public void testRetrieveLicenseInfo() throws IOException {
+
+		final String bvDesignLocation = "parentDirectory/bvdesign";
+		final BVDesignLicenseInfo bvDesignLicenseInfo = this.createBVDesignLicenseInfo();
+		bvDesignLicenseInfo.getStatus().setReturnCode(BVDesignLicenseUtil.LICENSE_SUCCESS_CODE);
+
+		when(objectMapper.readValue(any(File.class), eq(BVDesignLicenseInfo.class))).thenReturn(bvDesignLicenseInfo);
+		when(fieldbookProperties.getBvDesignPath()).thenReturn(bvDesignLocation);
+
+		try {
+
+			BVDesignLicenseInfo licenseInfo = this.bvDesignLicenseUtil.retrieveLicenseInfo();
+			verify(this.processRunner).setDirectory("parentDirectory");
+			verify(this.processRunner).run(bvDesignLocation, "-status", "-json");
+			verify(this.objectMapper).readValue(any(File.class), eq(BVDesignLicenseInfo.class));
+			assertEquals(licenseInfo, bvDesignLicenseInfo);
+
+		} catch (BVLicenseParseException e) {
+			fail("retrieveLicenseInfo should not throw a BVLicenseParseException");
+		}
+
+	}
 
 	private BVDesignLicenseInfo createBVDesignLicenseInfo() {
 		BVDesignLicenseInfo bvDesignLicenseInfo = new BVDesignLicenseInfo();
@@ -189,7 +261,5 @@ public class BVDesignLicenseUtilTest {
 		bvDesignLicenseInfo.setStatus(status);
 		return bvDesignLicenseInfo;
 	}
-
-
 
 }

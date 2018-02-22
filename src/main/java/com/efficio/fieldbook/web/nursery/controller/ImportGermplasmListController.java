@@ -258,7 +258,7 @@ public class ImportGermplasmListController extends SettingsController {
 		// start: section for taking note of the check germplasm
 		boolean isDeleteObservations = false;
 
-		final boolean isNursery = this.userSelection.getWorkbook().getStudyDetails().getStudyType() == StudyType.N;
+		final boolean isNursery = StudyType.nurseries().contains(this.userSelection.getWorkbook().getStudyDetails().getStudyType());//this.userSelection.getWorkbook().getStudyDetails().getStudyType() == StudyType.N;
 		boolean hasTemporaryWorkbook = false;
 
 		if (this.userSelection.getTemporaryWorkbook() != null) {
@@ -293,7 +293,8 @@ public class ImportGermplasmListController extends SettingsController {
 				this.userSelection.getMeasurementRowList().clear();
 			}
 
-			if (isNursery && !hasTemporaryWorkbook) {
+			//if (isNursery && !hasTemporaryWorkbook) {// VER COMO ARREGLAR ESTO. creo que se debe agregar
+			if (false && !hasTemporaryWorkbook) {// VER COMO ARREGLAR ESTO. creo que se debe agregar
 
 				this.validateEntryAndPlotNo(form);
 
@@ -472,12 +473,11 @@ public class ImportGermplasmListController extends SettingsController {
 			}
 
 			final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(projectGermplasmList);
-			this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId,
-					isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL, listId, listDataProject, this.getCurrentIbdbUserId());
+			this.fieldbookMiddlewareService
+				.saveOrUpdateListDataProject(studyId, GermplasmListType.STUDY, listId, listDataProject, this.getCurrentIbdbUserId());
 		} else {
 			// we delete the record in the db
-			this.fieldbookMiddlewareService.deleteListDataProjects(studyId,
-					isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL);
+			this.fieldbookMiddlewareService.deleteListDataProjects(studyId, GermplasmListType.STUDY);
 		}
 
 		if (this.getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
@@ -535,7 +535,7 @@ public class ImportGermplasmListController extends SettingsController {
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
 
-			final boolean isNursery = type != null && type.equalsIgnoreCase(StudyType.N.getName()) ? true : false;
+			final boolean isNursery = type != null && type.equalsIgnoreCase(StudyType.N.getName()) ? true : false; //TODO FIXME
 			final List<Map<String, Object>> dataTableDataList =
 					this.generateGermplasmListDataTable(list, defaultTestCheckId, isNursery, true);
 			this.initializeObjectsForGermplasmDetailsView(type, form, model, mainInfo, list, dataTableDataList);
@@ -565,14 +565,7 @@ public class ImportGermplasmListController extends SettingsController {
 			List<ImportedGermplasm> list = new ArrayList<>();
 
 			boolean isNursery = false;
-			GermplasmListType germplasmListType = null;
-			if (type != null && type.equalsIgnoreCase(StudyType.N.getName())) {
-				isNursery = true;
-				germplasmListType = GermplasmListType.NURSERY;
-			} else if (type != null && type.equalsIgnoreCase(StudyType.T.getName())) {
-				isNursery = false;
-				germplasmListType = GermplasmListType.TRIAL;
-			}
+			GermplasmListType germplasmListType = GermplasmListType.STUDY;// TODO COMO SE GUARDAN LAS LISTAS DE LOS ESTUDIOS
 
 			final List<GermplasmList> germplasmLists =
 					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, germplasmListType);
@@ -622,7 +615,7 @@ public class ImportGermplasmListController extends SettingsController {
 			dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
 			dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
 
-			if (!isNursery) {
+			if (!isNursery) {// TODO FIX THAT
 				if (isDefaultTestCheck || germplasm.getEntryTypeValue() == null || "0".equals(germplasm.getEntryTypeValue())) {
 					germplasm.setEntryTypeValue(defaultTestCheckId);
 					germplasm.setEntryTypeCategoricalID(Integer.valueOf(defaultTestCheckId));

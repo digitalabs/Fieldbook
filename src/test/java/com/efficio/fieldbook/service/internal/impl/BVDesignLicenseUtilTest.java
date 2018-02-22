@@ -39,9 +39,6 @@ public class BVDesignLicenseUtilTest {
 	public static final String FAILED_LICENSE_GENERATION = "failed license generation";
 
 	@Mock
-	private WorkbenchService workbenchService;
-
-	@Mock
 	private ObjectMapper objectMapper;
 
 	@Mock

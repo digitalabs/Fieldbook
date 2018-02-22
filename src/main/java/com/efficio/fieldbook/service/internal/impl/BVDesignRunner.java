@@ -115,7 +115,7 @@ public class BVDesignRunner implements DesignRunner {
 		@Override
 		public Integer run(final String... command) throws IOException {
 
-			Integer returnCode = -1;
+			final Integer returnCode = -1;
 
 			final ProcessBuilder pb = new ProcessBuilder(command);
 			final Process p = pb.start();
@@ -157,7 +157,8 @@ public class BVDesignRunner implements DesignRunner {
 		}
 	}
 
-	public class BVDesignOutputReader  {
+
+	public class BVDesignOutputReader {
 
 		public List<String[]> read(final String filePath) throws IOException {
 
@@ -175,6 +176,7 @@ public class BVDesignRunner implements DesignRunner {
 		}
 
 	}
+
 
 	public class BVDesignXmlInputWriter {
 

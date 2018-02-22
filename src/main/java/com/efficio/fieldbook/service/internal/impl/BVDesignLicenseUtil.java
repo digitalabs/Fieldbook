@@ -66,7 +66,8 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 			expiryDays = Integer.parseInt(bvDesignLicenseInfo.getStatus().getLicense().getExpiryDays());
 		} catch (final NumberFormatException e) {
 
-			final String errorMessage = this.messageSource.getMessage("bv.design.error.expiry.days.not.numeric", null, LocaleContextHolder.getLocale());
+			final String errorMessage =
+					this.messageSource.getMessage("bv.design.error.expiry.days.not.numeric", null, LocaleContextHolder.getLocale());
 			BVDesignLicenseUtil.LOG.error(errorMessage, e);
 			return true;
 		}
@@ -97,7 +98,8 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 		} catch (final IOException e) {
 
-			final String errorMessage = this.messageSource.getMessage("bv.design.error.cannot.read.license.file", null, LocaleContextHolder.getLocale());
+			final String errorMessage =
+					this.messageSource.getMessage("bv.design.error.cannot.read.license.file", null, LocaleContextHolder.getLocale());
 			BVDesignLicenseUtil.LOG.error(errorMessage + ":" + e.getMessage(), e);
 			throw new BVLicenseParseException(errorMessage);
 		}
@@ -120,7 +122,8 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 			bvDesignLicenseProcessRunner.run(bvDesignLocation, "-status", "-json");
 
 		} catch (final Exception e) {
-			final String errorMessage = this.messageSource.getMessage("bv.design.error.failed.license.generation", null, LocaleContextHolder.getLocale());
+			final String errorMessage =
+					this.messageSource.getMessage("bv.design.error.failed.license.generation", null, LocaleContextHolder.getLocale());
 			BVDesignLicenseUtil.LOG.error(errorMessage + ":" + e.getMessage(), e);
 			throw new BVLicenseParseException(errorMessage);
 		}
@@ -146,7 +149,7 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 			p = processBuilder.start();
 			try {
 				return p.waitFor();
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				BVDesignLicenseUtil.LOG.error(e.getMessage(), e);
 			}
 

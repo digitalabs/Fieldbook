@@ -15,6 +15,7 @@ import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
+import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -220,8 +221,13 @@ public class OpenTrialController extends BaseTrialController {
 	@RequestMapping(value = "/{trialId}", method = RequestMethod.GET)
 	public String openTrial(@ModelAttribute("createTrialForm") final CreateTrialForm form,
 			@PathVariable final Integer trialId, final Model model, final HttpSession session,
-			final RedirectAttributes redirectAttributes) {
+			final RedirectAttributes redirectAttributes,
+		@RequestParam(value = "crosseslistid", required = false) final String crossesListId) {
+
+		model.addAttribute("createdCrossesListId", crossesListId);
+
 		this.clearSessionData(session);
+		session.setAttribute("createdCrossesListId", crossesListId);
 		try {
 			if (trialId != null && trialId != 0) {
 				final DmsProject dmsProject = this.studyDataManager.getProject(trialId);
@@ -229,7 +235,7 @@ public class OpenTrialController extends BaseTrialController {
 					return "redirect:" + ManageTrialController.URL + "?summaryId=" + trialId + "&summaryName="
 							+ dmsProject.getName();
 				}
-				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(trialId);
+				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(trialId,dmsProject.getStudyType()); // TODO VERIFICAR POR STUDY TYPE
 
 				// FIXME
 				// See setStartingEntryNoAndPlotNoFromObservations() in
@@ -277,9 +283,8 @@ public class OpenTrialController extends BaseTrialController {
 	protected Integer getGermplasmListId(final int studyId, final String studyTypeName ) {
 		if (this.userSelection.getImportedAdvancedGermplasmList() == null) {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-
-			final List<GermplasmList> germplasmLists =
-				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId,studyTypeName.equalsIgnoreCase("N")? GermplasmListType.NURSERY:GermplasmListType.TRIAL);
+			final GermplasmListType listType = GermplasmListType.STUDY;
+			final List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, listType);
 
 			if (germplasmLists != null && !germplasmLists.isEmpty()) {
 				final GermplasmList germplasmList = germplasmLists.get(0);
@@ -302,7 +307,7 @@ public class OpenTrialController extends BaseTrialController {
 	protected void setUserSelectionImportedGermplasmMainInfo(final UserSelection userSelection, final Integer trialId,
 			final Model model) {
 		final List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId,
-				GermplasmListType.TRIAL);
+				GermplasmListType.STUDY);
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
 			final GermplasmList germplasmList = germplasmLists.get(0);
 
@@ -555,7 +560,8 @@ public class OpenTrialController extends BaseTrialController {
 	@RequestMapping(value = "/updateSavedTrial", method = RequestMethod.GET)
 	public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") final int id) {
 		final Map<String, Object> returnVal = new HashMap<>();
-		final Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(id);
+		final Study study = this.fieldbookMiddlewareService.getStudy(id);
+		final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(id,study.getType());
 
 		this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
 
@@ -759,7 +765,7 @@ public class OpenTrialController extends BaseTrialController {
 		final Workbook tempWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false,
 				this.contextUtil.getCurrentProgramUUID());
 		final StudyDetails details = new StudyDetails();
-		details.setStudyType(StudyType.T);
+		details.setStudyType(StudyType.T); //TODO VER COMO ARREGLARLO.
 		tempWorkbook.setStudyDetails(details);
 
 		return tempWorkbook;

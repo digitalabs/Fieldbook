@@ -52,7 +52,7 @@
 						<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
 							<li>
 								<a href="javascript: void(0);" ng-click="saveCurrentTrialData()"
-								   th:text="#{trial.option.save}">Save Trial</a>
+								   th:text="#{study.option.save}">Save Study</a>
 							</li>
 							<li ng-show="displayMeasurementOnlyActions()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Field map options</a>
@@ -102,7 +102,7 @@
 									</li>
 									<!--Import crosses style="display:none;"-->
 									<li id="import-crosses">
-										<a href="javascript: void(0)" class="import-crosses" th:text="#{nursery.nurserydetails.action.import.crosses}">Import crosses</a>
+										<a href="javascript: void(0)"  onclick="ImportCrosses.showPopup()" class="import-crosses" th:text="#{nursery.nurserydetails.action.import.crosses}">Import crosses</a>
 									</li>
 									<!--Design new crosses-->
 									<li id="create-new-crosses">
@@ -127,7 +127,7 @@
 								<ul class="dropdown-menu" style="margin-left: 4px;">
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a href="javascript: showExportOptions();" id="export-study-link"
-										   th:text="#{trial.trialdetails.action.export.trial}">Export Trial Book</a>
+										   th:text="#{trial.trialdetails.action.export.trial}">Export Study Book</a>
 									</li>
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a href="" style="display: none" id="open-study-url"></a>
@@ -146,11 +146,11 @@
 							</li>
 
 							<li class="dropdown-submenu pull-left" ng-show="hasMeasurementData()">
-								<a tabindex="-1" href="#">Advance trial options</a>
+								<a tabindex="-1" href="#">Advance study options</a>
 								<ul class="dropdown-menu" style="margin-left: -16px;">
 									<li>
 										<a href="javascript: startAdvance('trial');" id="advance-trial-link"
-										   th:text="#{trial.trialdetails.action.advance.trial}">Advance Trial</a>
+										   th:text="#{trial.trialdetails.action.advance.trial}">Advance Study</a>
 									</li>
 									<li>
 										<a href="javascript: startAdvance('sample');" id="advance-sample-link"
@@ -159,11 +159,11 @@
 								</ul>
                             </li>
 							<li>
-								<a th:href="@{/TrialManager}" th:text="#{trial.trialdetails.action.close.trial}">Close Trial</a>
+								<a th:href="@{/TrialManager}" th:text="#{trial.trialdetails.action.close.trial}">Close Study</a>
 							</li>
 							<li>
 								<a id="delete-success-return-url" style="display:none;" th:href="@{/TrialManager}"></a>
-								<a href="javascript: openDeleteConfirmation();" th:text="#{browse.trial.delete.trial.name}">Delete Trial</a>
+								<a href="javascript: openDeleteConfirmation();" th:text="#{browse.trial.delete.trial.name}">Delete Study</a>
 							</li>
 						</ul>
 					</div>
@@ -205,13 +205,13 @@
 
 									<div class="row form-group">
 										<label class="control-label col-sm-4"><b>Study type</b>: <span class="required">*</span></label>
-										<span ng-show="isOpenTrial()">
-    									<span class="col-sm-8" id="studyTypeNameLabel" th:text="*{studyTypeName}"></span>
-									</span>
-
-										<div ng-show="!isOpenTrial()">
-											<select class="col-sm-8" id="studyTypeId" ng-model="studyTypeSelected"
-													ng-options="studyType.label for studyType in studyTypes">
+										<span class="col-sm-8" ng-show="isOpenTrial()">
+    										<span id="studyTypeLabel" ng-bind="data.studyType"></span>
+										</span>
+										<div class="col-sm-8" ng-show="!isOpenTrial()">
+											<select class="form-control" id="studyTypeId" ng-model="studyTypeSelected"
+													ng-options="studyType.id as studyType.label for studyType in studyTypes"
+													ng-change="changeSelectStudyType(studyTypeSelected)">
 												<option value="">Please Choose</option>
 											</select>
 										</div>
@@ -265,7 +265,6 @@
 												   ng-model="data.basicDetails[8050]" jq-datepicker=""
 												   set-current-date-as-default="true" data-date-format="yyyy-mm-dd"
 												   with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
-
 										</div>
 									</div>
 
@@ -310,7 +309,7 @@
 		</form>
 	</div>
 
-	<!-- Modal Div for Advance Trial -->
+	<!-- Modal Div for Advance Study -->
 	<div id="advance-nursery-modal-div"></div>
 	<div id="review-advance-nursery-modal-div"></div>
 	<div id="advance-trial-locations-modal-div"></div>
@@ -515,12 +514,21 @@
 
 	<div class="row" id="addLotsModalDiv"></div>
 
+	<!-- Crosses -->
 	<div class="row">
 		<div id="import-crosses-screen" th:include="/Common/includes/importCrosses"></div>
 	</div>
 
 	<div class="row">
 		<div id="crossSetBreedingMethod" th:include="/Common/includes/crosses/setBreedingMethod"></div>
+	</div>
+
+	<div class="row">
+		<div id="crossImport" th:include="/Common/includes/crossingImportPresets"></div>
+	</div>
+
+	<div class="row">
+		<div id="open-crosses" th:include="/Common/includes/openCrossesListModal"></div>
 	</div>
 
 	<form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">
@@ -607,7 +615,8 @@
 			authToken = /*[[${contextInfo.authToken}]]*/ '',
 			selectedProjectId = /*[[${contextInfo.selectedProjectId}]]*/ '',
 			currentProgramId = /*[[${currentProgramId}]]*/ '',
-			cropName = /*[[${cropName}]]*/ '';
+			cropName = /*[[${cropName}]]*/ '',
+			createdCrossesListId = /*[[${createdCrossesListId}]]*/ '';
 
 		var translations = {
 			/*TRIAL SETTINGS*/
@@ -701,6 +710,10 @@
 
 			$(document).ready(function () {
 				document.onInitManageTrial();
+				if (createdCrossesListId !== null && createdCrossesListId.length > 0) {
+					ImportCrosses.isFileCrossesImport = false;
+					ImportCrosses.openBreedingModal();
+				}
 			});
 
 		})();

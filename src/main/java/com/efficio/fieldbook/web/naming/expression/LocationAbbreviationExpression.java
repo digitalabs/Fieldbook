@@ -16,7 +16,7 @@ public class LocationAbbreviationExpression extends BaseExpression {
 	}
 
 	@Override
-	public void apply(List<StringBuilder> values, AdvancingSource source) {
+	public void apply(List<StringBuilder> values, AdvancingSource source, final String capturedText) {
 		for (StringBuilder container : values) {
 			String newValue = source.getLocationAbbreviation();
 			this.replaceExpressionWithValue(container, newValue);

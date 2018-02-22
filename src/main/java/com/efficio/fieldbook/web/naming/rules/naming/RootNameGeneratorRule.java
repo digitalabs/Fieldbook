@@ -24,7 +24,7 @@ public class RootNameGeneratorRule extends OrderedRule<NamingRuleExecutionContex
 
 		List<StringBuilder> builders = new ArrayList<>();
 		builders.add(new StringBuilder());
-		rootNameExpression.apply(builders, advancingSource);
+		rootNameExpression.apply(builders, advancingSource, null);
 
 		List<String> input = context.getCurrentData();
 

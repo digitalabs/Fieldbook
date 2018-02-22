@@ -21,7 +21,7 @@ public class FirstExpression extends BaseExpression {
 	}
 
 	@Override
-	public void apply(List<StringBuilder> values, AdvancingSource source) {
+	public void apply(List<StringBuilder> values, AdvancingSource source, final String capturedText) {
 		String separatorExpression = source.getBreedingMethod().getSeparator();
 
 		for (StringBuilder value : values) {

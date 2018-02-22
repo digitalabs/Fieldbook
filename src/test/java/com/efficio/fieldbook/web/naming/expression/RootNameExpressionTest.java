@@ -38,7 +38,7 @@ public class RootNameExpressionTest extends TestExpression {
 			List<StringBuilder> builders = new ArrayList<StringBuilder>();
 			builders.add(new StringBuilder());
 			name.setNval(nameString);
-			rne.apply(builders, source);
+			rne.apply(builders, source, null);
 			String output = builders.get(0).toString();
 			System.out.println("OUTPUT = " + output);
 			System.out.println("CORRECT? " + expectedOutput.get(i).equals(output) + "\n\n");
@@ -68,7 +68,7 @@ public class RootNameExpressionTest extends TestExpression {
 			List<StringBuilder> builders = new ArrayList<StringBuilder>();
 			builders.add(new StringBuilder());
 			name.setNval(nameString);
-			rne.apply(builders, source);
+			rne.apply(builders, source, null);
 			String output = builders.get(0).toString();
 			System.out.println("OUTPUT = " + output);
 			Assert.assertEquals("", output);

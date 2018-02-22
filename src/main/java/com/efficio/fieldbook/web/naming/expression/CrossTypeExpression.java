@@ -36,7 +36,7 @@ public class CrossTypeExpression extends BaseExpression {
 	}
 
 	@Override
-	public void apply(final List<StringBuilder> values, final AdvancingSource source) {
+	public void apply(final List<StringBuilder> values, final AdvancingSource source, final String capturedText) {
 		String crossTypeAbbreviation = "";
 		final Method breedingMethod = source.getBreedingMethod();
 

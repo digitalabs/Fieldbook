@@ -19,7 +19,7 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 public class RootNameExpression implements Expression {
 
 	@Override
-	public void apply(List<StringBuilder> values, AdvancingSource source) {
+	public void apply(List<StringBuilder> values, AdvancingSource source, final String capturedText) {
 		for (StringBuilder value : values) {
 			Integer snametype = source.getBreedingMethod().getSnametype();
 			Name name = null;

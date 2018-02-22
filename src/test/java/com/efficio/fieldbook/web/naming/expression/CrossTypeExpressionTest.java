@@ -55,7 +55,7 @@ public class CrossTypeExpressionTest {
 		final List<StringBuilder> values = new ArrayList<>();
 		values.add(new StringBuilder(CRSTYP));
 
-		this.crossTypeExpression.apply(values, source);
+		this.crossTypeExpression.apply(values, source, null);
 
 		Assert.assertEquals("S", values.get(0).toString());
 	}
@@ -71,7 +71,7 @@ public class CrossTypeExpressionTest {
 		final List<StringBuilder> values = new ArrayList<>();
 		values.add(new StringBuilder(CRSTYP));
 
-		this.crossTypeExpression.apply(values, source);
+		this.crossTypeExpression.apply(values, source, null);
 
 		Assert.assertEquals("D", values.get(0).toString());
 	}

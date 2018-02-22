@@ -778,7 +778,7 @@ public class DesignImportController extends SettingsController {
 		Workbook workbook;
 		final StudyDetails details = new StudyDetails();
 
-		if (StudyType.T.getName().equalsIgnoreCase(studyType)) {
+		if (StudyType.T.getName().equalsIgnoreCase(studyType)) {// TODO VER COMO ARREGLAR ESTO.
 
 			final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService,
 					name, combinedList, this.userSelection.getPlotsLevelList(),
@@ -789,7 +789,7 @@ public class DesignImportController extends SettingsController {
 			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false,
 					this.contextUtil.getCurrentProgramUUID());
 
-			details.setStudyType(StudyType.T);
+			//details.setStudyType(StudyType.T);//TODO VER COMO ARREGLAR
 
 		} else {
 
@@ -811,10 +811,10 @@ public class DesignImportController extends SettingsController {
 			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true,
 					this.contextUtil.getCurrentProgramUUID());
 
-			details.setStudyType(StudyType.N);
+			//details.setStudyType(StudyType.N);
 
 		}
-
+		details.setStudyType(StudyType.getStudyTypeByName(studyType));
 		workbook.setStudyDetails(details);
 
 		this.userSelection.setTemporaryWorkbook(workbook);

@@ -55,8 +55,8 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/{studyId}/{studyType}", method = RequestMethod.POST)
-	public Map<String, Object> submitDelete(@PathVariable final int studyId, @PathVariable final String studyType,
+	@RequestMapping(value = "/{studyId}", method = RequestMethod.POST)
+	public Map<String, Object> submitDelete(@PathVariable final int studyId,
 			final Model model, final HttpSession session, final Locale locale) {
 		final Map<String, Object> results = new HashMap<>();
 		final List<GermplasmList> germplasmLists;
@@ -72,15 +72,15 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 			}
 
 			this.fieldbookMiddlewareService.deleteStudy(studyId, this.contextUtil.getCurrentUserLocalId());
-
-			if (StudyType.N.getName().equals(studyType)) {
+			final String studyType = "N";
+			if (StudyType.N.getName().equals(studyType)) {// FIX THAT
 				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId,
 						GermplasmListType.NURSERY);
 
 				// Also set the status of checklist to deleted
 				final List<GermplasmList> checkGermplasmLists =
 					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.CHECK);
-				this.deleteGermplasmList(checkGermplasmLists);
+				this.deleteGermplasmList(checkGermplasmLists);//
 			} else {
 				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId,
 						GermplasmListType.TRIAL);

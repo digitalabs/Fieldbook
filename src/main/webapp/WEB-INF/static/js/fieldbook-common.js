@@ -21,12 +21,13 @@ $(function() {
 		}
 	});
 
-	if (typeof convertToSelect2 === 'undefined' || convertToSelect2) {
+	// COMMENTED BROKE ANGULAR COMBO
+/*	if (typeof convertToSelect2 === 'undefined' || convertToSelect2) {
 		// Variable is undefined
 		$('select').each(function() {
 			$(this).select2({minimumResultsForSearch: 20});
 		});
-	}
+	}*/
 
 	function measureScrollBar() {
 		// david walsh
@@ -927,11 +928,8 @@ function openStudy(tableName) {
 
 function openTreeStudy(id) {
 	'use strict';
-	if (isNursery()) {
-		location.href = '/Fieldbook/NurseryManager/editNursery/' + id;
-	} else {
-		location.href = '/Fieldbook/TrialManager/openTrial/' + id;
-	}
+	location.href = '/Fieldbook/TrialManager/openTrial/' + id;
+
 }
 
 function openDeleteConfirmation() {
@@ -2001,9 +1999,9 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
 	});
 }
 
-function displayCrossesList(germplasmListId, listName, crossesType, isDefault, advancedGermplasmListId, isPageLoading) {
+function displayCrossesList(germplasmListId, listName, crossesType, isDefault, crossesListId, isPageLoading) {
 	'use script';
-	var id = advancedGermplasmListId ? advancedGermplasmListId : germplasmListId;
+	var id = crossesListId ? crossesListId : germplasmListId;
 	var url = '/Fieldbook/germplasm/list/crosses/' + id;
 	if (!isDefault) {
 		$('#advanceHref' + id + ' .fbk-close-tab').before(': [' + listName + ']');
@@ -2021,7 +2019,7 @@ function displayCrossesList(germplasmListId, listName, crossesType, isDefault, a
 				//we just show the button
 				$('.export-advance-list-action-button').removeClass('fbk-hide');
 				$('#Crosses-list' + id + '-li').addClass('Crosses-germplasm-items');
-				$('#Crosses-list' + id + '-li').data('Crosses-germplasm-list-id', advancedGermplasmListId);
+				$('#Crosses-list' + id + '-li').data('Crosses-germplasm-list-id', crossesListId);
 				$('.nav-tabs').tabdrop({align: 'left'});
 				$('.nav-tabs').tabdrop('layout');
 			} else {
@@ -2734,13 +2732,12 @@ function deleteFolder(object) {
 		var currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title,
 		isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder,
 		deleteConfirmationText,
-		studyType = isNursery()?'N':'T',
 		folderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key,
 		folderName = JSON.stringify({'folderName': currentFolderName});
 
 		if (isFolder) {
 			$.ajax({
-				url: '/Fieldbook/StudyTreeManager/isFolderEmpty/'+folderId+'/'+studyType,
+				url: '/Fieldbook/StudyTreeManager/isFolderEmpty/'+folderId,
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -3109,9 +3106,9 @@ function isValidInput(input) {
 
 function doDeleteNursery(id, callback) {
 	'use strict';
-	var studyType = isNursery() ? 'N' : 'T';
+	//var studyType = isNursery() ? 'N' : 'T';
 	$.ajax({
-		url: '/Fieldbook/StudyManager/deleteStudy/' + id + '/' + studyType,
+		url: '/Fieldbook/StudyManager/deleteStudy/' + id,
 		type: 'POST',
 		cache: false,
 		success: function(data) {
@@ -3503,6 +3500,7 @@ function refreshListDetails() {
 
 function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	'use strict';
+	debugger;
 	if (isPreSelect) {
 		$('body').data('doAutoSave', '1');
 	} else {
@@ -3513,11 +3511,11 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	$('#renameFolderDiv').hide();
 	if ($('#create-nursery #studyTree').length !== 0) {
 		$('#studyTree').dynatree('destroy');
-		displayStudyListTree('studyTree', 'N', type, selectStudyFunction, isPreSelect);
+		displayStudyListTree('studyTree', type, selectStudyFunction, isPreSelect);
 		changeBrowseNurseryButtonBehavior(false);
 	} else if ($('#create-trial #studyTree').length !== 0) {
 		$('#studyTree').dynatree('destroy');
-		displayStudyListTree('studyTree', 'T', type, selectStudyFunction, isPreSelect);
+		displayStudyListTree('studyTree', type, selectStudyFunction, isPreSelect);
 		changeBrowseNurseryButtonBehavior(false);
 	}
 
@@ -3633,11 +3631,11 @@ function initializeStudyTabs() {
 function addDetailsTab(studyId, title) {
 	// if the study is already existing, we show that tab
 	'use strict';
-
+	debugger;
 	if ($('li#li-study' + studyId).length !== 0) {
 		$('li#li-study' + studyId + ' a').tab('show');
 	} else {
-		var studyType = isNursery() ? 'N' : 'T';
+		var studyType = isNursery() ? 'N' : 'T'; // FIXME THIS DOESN'T WORK MORE.
 		$.ajax({
 			url: '/Fieldbook/StudyManager/reviewStudyDetails/show/' + studyType + '/' + studyId,
 			type: 'GET',

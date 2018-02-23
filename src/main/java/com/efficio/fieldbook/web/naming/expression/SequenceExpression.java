@@ -16,7 +16,7 @@ public class SequenceExpression extends NumberSequenceExpression implements Expr
 	}
 
 	@Override
-	public void apply(List<StringBuilder> values, AdvancingSource source) {
+	public void apply(List<StringBuilder> values, AdvancingSource source, final String capturedText) {
 		this.applyNumberSequence(values, source);
 	}
 

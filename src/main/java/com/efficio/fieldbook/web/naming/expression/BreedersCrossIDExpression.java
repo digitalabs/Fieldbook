@@ -19,7 +19,7 @@ public class BreedersCrossIDExpression extends BaseExpression{
 	}
 
 	@Override
-	public void apply(List<StringBuilder> values, AdvancingSource source) {
+	public void apply(List<StringBuilder> values, AdvancingSource source, final String capturedText) {
 
 		/**
 		 * Refer NamingConventionServiceImpl.addImportedGermplasmToList method

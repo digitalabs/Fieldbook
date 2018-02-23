@@ -11,6 +11,8 @@ public class FieldbookProperties {
 	private String programLocationsUrl;
 	private String programBreedingMethodsUrl;
 	private String germplasmDetailsUrl;
+
+	private String bvDesignPath;
 	
 	private Set<String> presetDesignEnabledCrops = new HashSet<>();
 
@@ -46,6 +48,14 @@ public class FieldbookProperties {
 
 	public void setUploadDirectory(String uploadDirectory) {
 		this.uploadDirectory = uploadDirectory;
+	}
+
+	public String getBvDesignPath() {
+		return bvDesignPath;
+	}
+
+	public void setBvDesignPath(final String bvDesignPath) {
+		this.bvDesignPath = bvDesignPath;
 	}
 
 }

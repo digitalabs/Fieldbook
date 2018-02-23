@@ -1,19 +1,17 @@
 package com.efficio.fieldbook.service.internal.impl;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.service.internal.ProcessRunner;
 import com.efficio.fieldbook.service.internal.breedingview.BVDesignLicenseInfo;
 import com.efficio.fieldbook.service.internal.DesignLicenseUtil;
 import com.efficio.fieldbook.service.internal.breedingview.BVLicenseParseException;
-import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.util.DateUtil;
-import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -30,17 +28,17 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 	public static final String LICENSE_SUCCESS_CODE = "0";
 	private static final Logger LOG = LoggerFactory.getLogger(BVDesignLicenseUtil.class);
 
-	private static final String BREEDING_VIEW_EXE = "BreedingView.exe";
-	private static final String BVDESIGN_EXE = "BVDesign.exe";
-	public static String BVDESIGN_STATUS_OUTPUT_FILENAME = "son";
+	public static final String BVDESIGN_STATUS_OUTPUT_FILENAME = "son";
 
 	@Resource
-	private WorkbenchService workbenchService;
+	private FieldbookProperties fieldbookProperties;
 
 	@Resource
 	private MessageSource messageSource;
 
 	private ObjectMapper objectMapper = new ObjectMapper();
+
+	private ProcessRunner bvDesignLicenseProcessRunner = new BVDesignLicenseProcessRunner();
 
 	@Override
 	public boolean isExpired(final BVDesignLicenseInfo bvDesignLicenseInfo) {
@@ -68,7 +66,8 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 			expiryDays = Integer.parseInt(bvDesignLicenseInfo.getStatus().getLicense().getExpiryDays());
 		} catch (final NumberFormatException e) {
 
-			final String errorMessage = this.messageSource.getMessage("bv.design.error.expiry.days.not.numeric", null, LocaleContextHolder.getLocale());
+			final String errorMessage =
+					this.messageSource.getMessage("bv.design.error.expiry.days.not.numeric", null, LocaleContextHolder.getLocale());
 			BVDesignLicenseUtil.LOG.error(errorMessage, e);
 			return true;
 		}
@@ -80,11 +79,13 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 	@Override
 	public BVDesignLicenseInfo retrieveLicenseInfo() throws BVLicenseParseException {
 
-		final String bvDesignLocation = this.getBreedingViewExeLocation();
+		final String bvDesignLocation = this.fieldbookProperties.getBvDesignPath();
 
 		this.generateBVDesignLicenseJsonFile(bvDesignLocation);
 
-		return this.readLicenseInfoFromJsonFile(new File(bvDesignLocation + BVDESIGN_STATUS_OUTPUT_FILENAME));
+		final String jsonPathFile = new File(bvDesignLocation).getParent() + File.separator + BVDESIGN_STATUS_OUTPUT_FILENAME;
+
+		return this.readLicenseInfoFromJsonFile(new File(jsonPathFile));
 	}
 
 	protected BVDesignLicenseInfo readLicenseInfoFromJsonFile(final File file) throws BVLicenseParseException {
@@ -97,7 +98,8 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 		} catch (final IOException e) {
 
-			final String errorMessage = this.messageSource.getMessage("bv.design.error.cannot.read.license.file", null, LocaleContextHolder.getLocale());
+			final String errorMessage =
+					this.messageSource.getMessage("bv.design.error.cannot.read.license.file", null, LocaleContextHolder.getLocale());
 			BVDesignLicenseUtil.LOG.error(errorMessage + ":" + e.getMessage(), e);
 			throw new BVLicenseParseException(errorMessage);
 		}
@@ -113,41 +115,52 @@ public class BVDesignLicenseUtil implements DesignLicenseUtil {
 
 	protected void generateBVDesignLicenseJsonFile(final String bvDesignLocation) throws BVLicenseParseException {
 
-		Process p = null;
-		final String errorMessage = this.messageSource.getMessage("bv.design.error.failed.license.generation", null, LocaleContextHolder.getLocale());
-
 		try {
 
-			final ProcessBuilder processBuilder = new ProcessBuilder(bvDesignLocation + BVDesignLicenseUtil.BVDESIGN_EXE, "-status", "-json");
-			processBuilder.directory(new File(bvDesignLocation));
-			p = processBuilder.start();
-			p.waitFor();
-
-		} catch (final IOException | InterruptedException e) {
-
-			BVDesignLicenseUtil.LOG.error(errorMessage + ":" + e.getMessage(), e);
-			throw new BVLicenseParseException(errorMessage);
+			final String bvDesignDirectory = new File(bvDesignLocation).getParent();
+			bvDesignLicenseProcessRunner.setDirectory(bvDesignDirectory);
+			bvDesignLicenseProcessRunner.run(bvDesignLocation, "-status", "-json");
 
 		} catch (final Exception e) {
-
+			final String errorMessage =
+					this.messageSource.getMessage("bv.design.error.failed.license.generation", null, LocaleContextHolder.getLocale());
 			BVDesignLicenseUtil.LOG.error(errorMessage + ":" + e.getMessage(), e);
 			throw new BVLicenseParseException(errorMessage);
 		}
 
 	}
 
-	protected String getBreedingViewExeLocation() {
-		String bvDesignLocation = null;
-		Tool bvTool = null;
+	public void setBvDesignLicenseProcessRunner(final BVDesignLicenseProcessRunner bvDesignLicenseProcessRunner) {
+		this.bvDesignLicenseProcessRunner = bvDesignLicenseProcessRunner;
+	}
 
-		bvTool = this.workbenchService.getToolWithName(AppConstants.TOOL_NAME_BREEDING_VIEW.getString());
+	class BVDesignLicenseProcessRunner implements ProcessRunner {
 
-		if (bvTool != null) {
-			// write xml to temp file
-			final File absoluteToolFile = new File(bvTool.getPath()).getAbsoluteFile();
-			bvDesignLocation = absoluteToolFile.getAbsolutePath().replaceAll(BVDesignLicenseUtil.BREEDING_VIEW_EXE, "");
+		private String bvDesignDirectory = "";
+
+		@Override
+		public Integer run(final String... command) throws IOException {
+
+			final Integer statusCode = -1;
+
+			Process p = null;
+			final ProcessBuilder processBuilder = new ProcessBuilder(command);
+			processBuilder.directory(new File(bvDesignDirectory));
+			p = processBuilder.start();
+			try {
+				return p.waitFor();
+			} catch (final InterruptedException e) {
+				BVDesignLicenseUtil.LOG.error(e.getMessage(), e);
+			}
+
+			return statusCode;
 		}
-		return bvDesignLocation;
+
+		@Override
+		public void setDirectory(final String directory) {
+			this.bvDesignDirectory = directory;
+		}
+
 	}
 
 }

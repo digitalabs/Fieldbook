@@ -54,7 +54,7 @@ public class DoubleHaploidSourceExpressionIntegrationTest extends IntegrationTes
                     final DoubleHaploidSourceExpression doubleHaploidSourceExpression = new DoubleHaploidSourceExpression();
                     doubleHaploidSourceExpression.setKeySequenceRegisterService(keySequenceRegisterService);
 
-                    doubleHaploidSourceExpression.apply(values, source);
+                    doubleHaploidSourceExpression.apply(values, source, null);
                     return values.get(0).toString();
                 }
             });

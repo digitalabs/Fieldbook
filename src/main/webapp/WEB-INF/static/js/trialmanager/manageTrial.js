@@ -183,16 +183,24 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				}
 			};
 
-
-			$http.get('/bmsapi/study/' + cropName, config).success(function (data) {
+			$http.get('/bmsapi/' + cropName + '/studytypes', config).success(function (data) {
 				$scope.studyTypes = data;
 
 			}).error(function (data) {
 				if (data.status == 401) {
 					bmsAuth.handleReAuthentication();
 				}
-				showErrorMessage('', data.errors[0].message);
+				showErrorMessage('', data.error.message);
 			});
+
+			$scope.changeSelectStudyType = function (studyTypeSelected) {
+				angular.forEach($scope.studyTypes, function (studyType) {
+					if (studyType.id == studyTypeSelected) {
+						$scope.data.studyType = studyType.name;
+						return;
+					}
+				});
+			};
 
 			$scope.toggleChoosePreviousTrial = function() {
 				$scope.isChoosePreviousTrial = !$scope.isChoosePreviousTrial;

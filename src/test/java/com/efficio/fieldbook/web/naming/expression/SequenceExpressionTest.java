@@ -17,7 +17,7 @@ public class SequenceExpressionTest extends TestExpression {
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "[SEQUENCE]", null, true);
 		source.setPlantsSelected(5);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 	}
 
@@ -27,7 +27,7 @@ public class SequenceExpressionTest extends TestExpression {
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "[SEQUENCE]", null, true);
 		source.setPlantsSelected(-2);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		this.printResult(values, source);
 	}
 
@@ -37,7 +37,7 @@ public class SequenceExpressionTest extends TestExpression {
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "[sequence]", null, true);
 		source.setPlantsSelected(5);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		System.out.println("process code is in lower case");
 		this.printResult(values, source);
 	}
@@ -49,7 +49,7 @@ public class SequenceExpressionTest extends TestExpression {
 		source.setPlantsSelected(5);
 		source.setCurrentMaxSequence(5);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		System.out.println("process code is in lower case");
 		this.printResult(values, source);
 	}
@@ -62,7 +62,7 @@ public class SequenceExpressionTest extends TestExpression {
 		source.setPlantsSelected(5);
 		source.setCurrentMaxSequence(5);
 		List<StringBuilder> values = this.createInitialValues(source);
-		expression.apply(values, source);
+		expression.apply(values, source, null);
 		Assert.assertEquals(5, values.size());
 		this.printResult(values, source);
 	}

@@ -80,6 +80,10 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		}
 	}
 
+	private String getContentStudy() {
+		return "TrialManager/reviewTrialDetails";
+	}
+
 	@RequestMapping(value = "/show/{studyType}/{id}", method = RequestMethod.GET)
 	public String show(@PathVariable final String studyType, @PathVariable final int id,
 			@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form, final Model model) {
@@ -107,13 +111,13 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 			this.addErrorMessageToResult(details, e, isNursery, id);
 		}
 
-		if (isNursery) {
+/*		if (isNursery) {
 			model.addAttribute("nurseryDetails", details);
-		} else {
+		} else {*/
 			model.addAttribute("trialDetails", details);
-		}
+		/*}*/
 
-		return this.showAjaxPage(model, this.getContentName(!isNursery));
+		return this.showAjaxPage(model, this.getContentStudy());
 	}
 
 	protected void addErrorMessageToResult(final StudyDetails details, final MiddlewareException e, final boolean isNursery, final int id) {

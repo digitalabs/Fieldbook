@@ -1497,14 +1497,14 @@ public class SettingsUtil {
 
 		final List<SettingDetail> factors =
 				SettingsUtil.convertWorkbookFactorsToSettingDetails(workbook.getNonTrialFactors(), fieldbookMiddlewareService);
-		if (!workbook.isNursery()) {
+		/*if (!workbook.isNursery()) {*/
 			final List<SettingDetail> germplasmDescriptors = new ArrayList<>();
 			SettingsUtil.rearrangeSettings(factors, germplasmDescriptors, PhenotypicType.GERMPLASM);
 			studyDetails.setGermplasmDescriptors(germplasmDescriptors);
 			final List<TreatmentFactorDetail> treatmentFactorDetails =
 					SettingsUtil.convertWorkbookFactorsToTreatmentDetailFactors(workbook.getTreatmentFactors());
 			studyDetails.setTreatmentFactorDetails(treatmentFactorDetails);
-		}
+		/*}*/
 		studyDetails.setFactorDetails(factors);
 		final List<SettingDetail> traits = new ArrayList<>();
 		final List<SettingDetail> selectionVariateDetails = new ArrayList<>();

@@ -24,12 +24,12 @@ public class DoubleHaploidSourceExpression extends BaseExpression {
 
 	/**
 	 * Method to append '@' + [lastUsedSequence] in designation column ex. @1, @2 etc.
-	 * 
-	 * @param values Designation column value
+	 *  @param values Designation column value
 	 * @param source Advancing Source object contains information about source
+	 * @param capturedText
 	 */
 	@Override
-	public void apply(List<StringBuilder> values, AdvancingSource source) {
+	public void apply(List<StringBuilder> values, AdvancingSource source, final String capturedText) {
 		for (StringBuilder value : values) {
 			int checkIndex = value.lastIndexOf("@0");
 			if (checkIndex != -1) {

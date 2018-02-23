@@ -21,6 +21,7 @@ import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -201,13 +202,17 @@ public class OpenTrialControllerTest {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 
-		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.TRIAL_ID, StudyType.T)).thenReturn(workbook);
+		Study study = new Study();
+		study.setStudyType(StudyType.T);
+		Mockito.when(this.fieldbookMiddlewareService.getStudy(Matchers.anyInt())).thenReturn(study);
+
 		this.mockStandardVariables(workbook.getAllVariables());
 
 		final String out = this.openTrialController.openTrial(this.createTrialForm, OpenTrialControllerTest.TRIAL_ID, this.model,
-				this.httpSession, this.redirectAttributes);
+				this.httpSession, this.redirectAttributes, null);
 
-		Mockito.verify(this.fieldbookMiddlewareService).getTrialDataSet(OpenTrialControllerTest.TRIAL_ID);
+		Mockito.verify(this.fieldbookMiddlewareService).getStudyDataSet(OpenTrialControllerTest.TRIAL_ID, StudyType.T);
 
 		Assert.assertEquals("should return the base angular template", AbstractBaseFieldbookController.ANGULAR_BASE_TEMPLATE_NAME, out);
 	}
@@ -219,7 +224,7 @@ public class OpenTrialControllerTest {
 				.thenThrow(MiddlewareQueryException.class);
 
 		final String out = this.openTrialController.openTrial(this.createTrialForm, OpenTrialControllerTest.TRIAL_ID, this.model,
-				this.httpSession, this.redirectAttributes);
+				this.httpSession, this.redirectAttributes, null);
 
 		Assert.assertEquals("should redirect to manage trial page", "redirect:" + ManageTrialController.URL, out);
 
@@ -246,7 +251,7 @@ public class OpenTrialControllerTest {
 			Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(Matchers.anyInt())).thenReturn(workbook);
 			this.mockStandardVariables(workbook.getAllVariables());
 			this.openTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.TRIAL_ID, new ExtendedModelMap(), mockSession,
-					Mockito.mock(RedirectAttributes.class));
+					Mockito.mock(RedirectAttributes.class), null);
 		} catch (final MiddlewareException e) {
 			this.handleUnexpectedException(e);
 		}
@@ -276,7 +281,7 @@ public class OpenTrialControllerTest {
 			this.mockStandardVariables(workbook.getAllVariables());
 
 			this.openTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.TRIAL_ID, model, new MockHttpSession(),
-					Mockito.mock(RedirectAttributes.class));
+					Mockito.mock(RedirectAttributes.class), null);
 
 			Assert.assertTrue("Controller does not properly set into the model the data for the basic details",
 					model.containsAttribute("basicDetailsData"));
@@ -1046,9 +1051,13 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testUpdateSavedTrial() {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
-		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.TRIAL_ID,StudyType.T)).thenReturn(workbook);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString()))
 				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(1, "STD"));
+		Study study = new Study();
+		study.setStudyType(StudyType.T);
+		Mockito.when(this.fieldbookMiddlewareService.getStudy(Matchers.anyInt())).thenReturn(study);
+
 		Mockito.when(
 				this.variableDataManager.getVariable(Matchers.anyString(), Matchers.anyInt(), Matchers.anyBoolean(), Matchers.anyBoolean()))
 				.thenReturn(VariableTestDataInitializer.createVariable());

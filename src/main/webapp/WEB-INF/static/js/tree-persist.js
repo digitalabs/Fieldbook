@@ -150,7 +150,7 @@ var TreePersist = {
 			$('#germplasmTreeTable').treetable('expandNode', 'LISTS');
 		});
 		
-		$('#germplasmTreeTable').treetable('expandNode', 'CROPLISTS');
+		//$('#germplasmTreeTable').treetable('expandNode', 'LISTS');
 	},
 
 	preLoadTreeTableSampleListState: function(listType, isSaveList) {
@@ -162,7 +162,7 @@ var TreePersist = {
 			$('#germplasmTreeTable').treetable('expandNode', 'LISTS');
 		});
 
-		$('#germplasmTreeTable').treetable('expandNode', 'CROPLISTS');
+		//$('#germplasmTreeTable').treetable('expandNode', 'LISTS');
 	},
 
 	preLoadTreeState: function(containerSection, listType, isSaveList) {

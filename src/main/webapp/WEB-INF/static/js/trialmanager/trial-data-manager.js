@@ -76,7 +76,7 @@
 					}
 
 				}).error(function() {
-					showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
+					showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 				});
 			};
 
@@ -154,7 +154,6 @@
 
 				var serializedData = $form.serializeArray();
 				serializedData[serializedData.length] = {name: 'columnOrders', value: (JSON.stringify(columnsOrder))};
-
 				var d = $q.defer();
 
 				$http.post('/Fieldbook/TrialManager/GermplasmList/next', $.param(serializedData),
@@ -446,7 +445,7 @@
 									showErrorMessage('', 'Trial could not be saved at the moment. Please try again later.');
 								}
 							}, function() {
-								showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
+								showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 							});
 						} else {
 
@@ -496,7 +495,7 @@
 									});
 
 								}).error(function() {
-									showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
+									showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 								});
 							} else {
 								service.currentData.columnOrders = serializedData;
@@ -513,10 +512,10 @@
 											service.applicationData.unsavedTraitsAvailable = false;
 											$('body').data('needToSave', '0');
 										}, function() {
-											showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
+											showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 										});
 									}).error(function() {
-										showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
+										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 									});
 							}
 
@@ -711,12 +710,7 @@
 					var hasError = false, name = '', customMessage = '', errorCode = 0;
 					var creationDate = service.currentData.basicDetails.basicDetails[8050];
 					var completionDate = service.currentData.basicDetails.basicDetails[8060];
-					if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
-						hasError = true;
-						name = $('#folderLabel').text();
-						openStudyTree(2, service.updateSelectedFolder, true);
-						return false;
-					} else if ($.trim(service.currentData.basicDetails.basicDetails[8005]) === '') {
+					if ($.trim(service.currentData.basicDetails.basicDetails[8005]) === '') {
 						hasError = true;
 						name = 'Name';
 					} else if ($.trim(service.currentData.basicDetails.description) === '') {
@@ -731,7 +725,18 @@
 						name = 'Creation Date';
 					} else if (service.currentData.environments.noOfEnvironments <= 0) {
 						hasError = true;
-						customMessage = 'Trials should have at least one environment';
+						customMessage = 'the study should have at least one environment';
+					} else if ($.trim(service.currentData.basicDetails.studyType) === '') {
+						hasError = true;
+						name = 'Study type';
+					} else if ($('.germplasm-list-items tbody tr').length === 0 ) {
+						hasError = true;
+						customMessage = 'should have at least a germplasm list in the study';
+					} else if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
+						hasError = true;
+						name = $('#folderLabel').text();
+						openStudyTree(2, service.updateSelectedFolder, true);
+						return false;
 					}
 
 					var invalidDateMsg = validateAllDates();

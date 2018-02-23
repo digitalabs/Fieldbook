@@ -23,6 +23,7 @@ public class BasicDetails implements TabInfoBean {
 	private String studyUpdate;
 	private String objective;
 	private String studyName;
+	private String createdBy;
 
 	public BasicDetails() {
 		this.basicDetails = new HashMap<>();
@@ -130,5 +131,13 @@ public class BasicDetails implements TabInfoBean {
 
 	public void setStudyName(final String studyName) {
 		this.studyName = studyName;
+	}
+
+	public String getCreatedBy() {
+		return this.createdBy;
+	}
+
+	public void setCreatedBy(final String createdBy) {
+		this.createdBy = createdBy;
 	}
 }

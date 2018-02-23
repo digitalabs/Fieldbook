@@ -182,12 +182,6 @@ public class CreateNurseryController extends SettingsController {
 	public String getChecksForUseExistingNursery(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form,
 			@PathVariable final int nurseryId, final Model model, final HttpSession session, final HttpServletRequest request)
 			throws MiddlewareQueryException {
-		if (this.userSelection.getRemovedConditions() != null) {
-			final CreateNurseryForm createNurseryForm = new CreateNurseryForm();
-			final List<SettingDetail> checkVariables = this.getCheckVariables(this.userSelection.getRemovedConditions(), createNurseryForm);
-			form.setCheckVariables(checkVariables);
-		}
-
 		model.addAttribute("importGermplasmListForm", form);
 
 		return super.showAjaxPage(model, CreateNurseryController.URL_CHECKS);
@@ -290,6 +284,10 @@ public class CreateNurseryController extends SettingsController {
 		final String endDate = form.getEndDate();
 		final String studyUpdate = form.getStudyUpdate();
 		final String objective = form.getObjective();
+		String createdBy = form.getCreatedBy();
+		if (createdBy == null) {
+			createdBy = this.getCurrentIbdbUserId().toString();
+		}
 		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
 		if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
 			studyLevelVariables.addAll(form.getStudyLevelVariables());
@@ -344,7 +342,7 @@ public class CreateNurseryController extends SettingsController {
 		this.userSelection.setWorkbook(workbook);
 
 		this.createStudyDetails(workbook, form.getFolderId(), null, form.getDescription(), form.getStartDate(),
-			form.getEndDate(), form.getStudyUpdate(), objective, name);
+			form.getEndDate(), form.getStudyUpdate(), objective, name, createdBy);
 
 		return "success";
 	}

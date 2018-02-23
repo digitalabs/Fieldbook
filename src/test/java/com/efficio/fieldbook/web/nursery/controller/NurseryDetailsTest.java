@@ -36,6 +36,7 @@ public class NurseryDetailsTest extends AbstractBaseIntegrationTest {
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(NurseryDetailsTest.class);
+	public static final int CURRENT_IBDB_USER_ID = 1;
 
 	/** The file service. */
 	@Autowired
@@ -87,7 +88,7 @@ public class NurseryDetailsTest extends AbstractBaseIntegrationTest {
 
 		// Parse the file to create Workbook
 		File file = this.fileService.retrieveCurrentWorkbookAsFile(userSelection);
-		Workbook datasetWorkbook = this.dataImportService.parseWorkbook(file);
+		Workbook datasetWorkbook = this.dataImportService.parseWorkbook(file, CURRENT_IBDB_USER_ID);
 		userSelection.setWorkbook(datasetWorkbook);
 
 		this.controllerValid = new NurseryDetailsController();

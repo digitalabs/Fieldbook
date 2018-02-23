@@ -98,6 +98,10 @@ public abstract class BaseTrialController extends SettingsController {
 		studyDetails.setStudyUpdate(Util.getCurrentDateAsStringValue(Util.DATE_AS_NUMBER_FORMAT));
 		studyDetails.setStudyType(StudyType.T);
 
+		if (detailBean.getCreatedBy() != null) {
+			studyDetails.setCreatedBy(detailBean.getCreatedBy());
+		}
+
 		if (detailBean.getFolderId() != null) {
 			studyDetails.setParentFolderId(detailBean.getFolderId());
 		}
@@ -652,11 +656,7 @@ public abstract class BaseTrialController extends SettingsController {
 		// find out who created the study
 		// if no owner found default to the current user
 		Integer studyOwnerPersonId = this.getCurrentIbdbUserId();
-		for (final MeasurementVariable measurementVariable : studyConditions) {
-			if (measurementVariable.getTermId() == TermId.STUDY_UID.getId()) {
-				studyOwnerPersonId = Integer.parseInt(measurementVariable.getValue());
-			}
-		}
+
 		final String studyOwnerPersonName = this.fieldbookService.getPersonByUserId(studyOwnerPersonId);
 
 		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());

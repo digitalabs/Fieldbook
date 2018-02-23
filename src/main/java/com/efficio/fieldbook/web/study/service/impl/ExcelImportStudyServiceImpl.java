@@ -10,6 +10,8 @@
 
 package com.efficio.fieldbook.web.study.service.impl;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.study.service.ImportStudyService;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
@@ -26,10 +28,12 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -72,6 +76,10 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 
 	@Resource
 	private ContextUtil contextUtil;
+
+	/** The workbench service. */
+	@Resource
+	protected WorkbenchService workbenchService;
 
 	public ExcelImportStudyServiceImpl(final Workbook workbook, final String currentFile, final String originalFileName) {
 		super(workbook, currentFile, originalFileName);
@@ -182,13 +190,31 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 		this.validateVariates(parsedData, workbook);
 	}
 
+	public Integer getCurrentIbdbUserId() {
+		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
+			this.contextUtil.getCurrentWorkbenchUserId());
+
+	}
+
+	public String getCurrentProjectId() {
+		try {
+			final Project projectInContext = this.contextUtil.getProjectInContext();
+			if (projectInContext != null) {
+				return projectInContext.getProjectId().toString();
+			}
+		} catch (final MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return "0";
+	}
+
 	@Override
 	protected void performWorkbookMetadataUpdate() throws WorkbookParserException {
 		final Map<String, Object> variableMap = new HashMap<>();
 		final WorkbookParser parser = new WorkbookParser();
 		final org.apache.poi.ss.usermodel.Workbook excelWorkbook = parser.loadFileToExcelWorkbook(new File(currentFile));
 
-		final Workbook descriptionWorkbook = parser.parseFile(excelWorkbook, false, false);
+		final Workbook descriptionWorkbook = parser.parseFile(excelWorkbook, false, false, this.getCurrentIbdbUserId().toString());
 		final Workbook originalWorkbook = workbook;
 
 		final List<MeasurementRow> trialObservations =

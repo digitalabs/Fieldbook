@@ -193,7 +193,7 @@ public class SettingsControllerTest {
 
 	private List<SettingDetail> createSettingDetailVariables() {
 		final List<SettingDetail> variables = new ArrayList<>();
-		variables.add(this.createSettingDetail(TermId.STUDY_UID.getId(), ""));
+		//variables.add(this.createSettingDetail(TermId.STUDY_UID.getId(), ""));
 		variables.add(this.createSettingDetail(TermId.TRIAL_INSTANCE_FACTOR.getId(), ""));
 		variables.add(this.createSettingDetail(TermId.PI_NAME.getId(), ""));
 		variables.add(this.createSettingDetail(TermId.PI_ID.getId(), ""));

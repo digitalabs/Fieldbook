@@ -97,7 +97,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	private static final String BREEDING_METHOD_PROPERTY_NAME = "";
 
 	protected static final List<Integer> STUDY_DETAILS_IDS =
-		Arrays.asList(TermId.PM_KEY.getId(), TermId.STUDY_UID.getId());
+		Arrays.asList(TermId.PM_KEY.getId());
 
 	@Override
 	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {

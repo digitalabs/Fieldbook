@@ -10,13 +10,16 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.PhenotypeException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
@@ -58,6 +61,9 @@ public class ImportObservationsController extends AbstractBaseETLController {
 	private OntologyDataManager ontologyDataManager;
 
 	private boolean hasErrors;
+
+	@Resource
+	protected WorkbenchService workbenchService;
 
 	@Override
 	public String getContentName() {
@@ -175,7 +181,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 		final List<String> errors = new ArrayList<>();
 		try {
 			final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
-					.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection));
+					.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection), this.getCurrentIbdbUserId());
 			importData.setConstants(referenceWorkbook.getConstants());
 			importData.setConditions(referenceWorkbook.getConditions());
 			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getConditions(), programUUID);
@@ -195,6 +201,24 @@ public class ImportObservationsController extends AbstractBaseETLController {
 
 		return super.show(model);
 
+	}
+
+	public Integer getCurrentIbdbUserId() {
+		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
+			this.contextUtil.getCurrentWorkbenchUserId());
+
+	}
+
+	public String getCurrentProjectId() {
+		try {
+			final Project projectInContext = this.contextUtil.getProjectInContext();
+			if (projectInContext != null) {
+				return projectInContext.getProjectId().toString();
+			}
+		} catch (final MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return "0";
 	}
 
 }

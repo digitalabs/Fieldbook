@@ -135,9 +135,9 @@ public class CreateNurseryControllerTestIT extends AbstractBaseIntegrationTest {
 		try {
 			Mockito.when(this.fieldbookMiddlewareService.getPersonById(-1)).thenReturn(new Person());
 
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_UID.getId(),
+			/*Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_UID.getId(),
 					Mockito.anyString())).thenReturn(
-					this.createStandardVariable(TermId.STUDY_UID.getId()));
+					this.createStandardVariable(TermId.STUDY_UID.getId()));*/
 
 			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.BREEDING_METHOD_CODE.getId(),
 					Mockito.anyString())).thenReturn(

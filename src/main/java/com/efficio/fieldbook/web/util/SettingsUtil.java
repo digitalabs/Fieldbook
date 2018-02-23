@@ -86,6 +86,7 @@ public class SettingsUtil {
 	private static final String STUDY_UPDATE = "Last updated";
 	private static final String OBJECTIVE = "Objective";
 	private static final String STUDY_NAME = "Name";
+	private static final String CREATED_BY = "Created By";
 
 	private SettingsUtil() {
 		// do nothing
@@ -1668,6 +1669,7 @@ public class SettingsUtil {
 		final String endDate = workbook.getStudyDetails().getEndDate() != null ? workbook.getStudyDetails().getEndDate() : "";
 		final String studyUpdate = workbook.getStudyDetails().getStudyUpdate() != null ? workbook.getStudyDetails().getStudyUpdate() : "";
 		final String objective = workbook.getStudyDetails().getObjective() != null ? workbook.getStudyDetails().getObjective() : "";
+		final String createdBy = workbook.getStudyDetails().getCreatedBy() != null ? workbook.getStudyDetails().getCreatedBy() : "";
 		Integer datasetId = workbook.getMeasurementDatesetId();
 		if (datasetId == null) {
 			datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyDetails().getId(), studyName);
@@ -1756,6 +1758,14 @@ public class SettingsUtil {
 					found = true;
 					break;
 				}
+					else if (CREATED_BY	.equals(label)) {
+						final SettingVariable variableDescription =
+							new SettingVariable(CREATED_BY, null, null, null, null, null, null, null, null, null);
+						final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, createdBy, false);
+						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
+						found = true;
+						break;
+					}
 					else {
 						final SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
 						final String value = SettingsUtil.getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);

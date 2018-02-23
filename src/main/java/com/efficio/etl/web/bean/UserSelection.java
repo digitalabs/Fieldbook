@@ -40,7 +40,7 @@ public class UserSelection implements Serializable {
 	private String studyUpdate;
 	private String studyType;
 	private Integer datasetType;
-
+	private String createdBy;
 	private Integer lastSheetRowNum;
 
 	private Boolean initialCategorizationDone = false;
@@ -293,5 +293,13 @@ public class UserSelection implements Serializable {
 
 	public void setStudyUpdate(final String studyUpdate) {
 		this.studyUpdate = studyUpdate;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(final String createdBy) {
+		this.createdBy = createdBy;
 	}
 }

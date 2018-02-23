@@ -11,15 +11,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.HTTPSessionUtil;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
@@ -82,13 +85,13 @@ public class FileUploadController extends AbstractBaseETLController {
 	private DataImportService dataImportService;
 
 	@Resource
-	private OntologyDataManager ontologyDataManager;
-
-	@Resource
 	private ResourceBundleMessageSource messageSource;
 
 	@Resource
 	private ContextUtil contextUtil;
+
+	@Resource
+	protected WorkbenchService workbenchService;
 
 	private final Map<String, String> returnMessage = new HashMap<>();
 
@@ -167,7 +170,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			org.generationcp.middleware.domain.etl.Workbook wb;
 
 			wb = this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection),
-					programUUID, confirmDiscard == 1 ? true : false, new WorkbookParser());
+					programUUID, confirmDiscard == 1 ? true : false, new WorkbookParser(), this.getCurrentIbdbUserId());
 
 			// The entry type id should be saved in the db instead of the entry
 			// type name
@@ -243,7 +246,7 @@ public class FileUploadController extends AbstractBaseETLController {
 
 			final String programUUID = this.contextUtil.getCurrentProgramUUID();
 			final Workbook workbook = this.dataImportService.strictParseWorkbook(
-					this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID);
+					this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID, this.getCurrentIbdbUserId());
 
 			if (workbook.hasOutOfBoundsData()) {
 				this.returnMessage.put(FileUploadController.STATUS_CODE,
@@ -331,5 +334,22 @@ public class FileUploadController extends AbstractBaseETLController {
 	@Override
 	public UserSelection getUserSelection() {
 		return this.userSelection;
+	}
+
+	public Integer getCurrentIbdbUserId() {
+		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
+			this.contextUtil.getCurrentWorkbenchUserId());
+	}
+
+	public String getCurrentProjectId() {
+		try {
+			final Project projectInContext = this.contextUtil.getProjectInContext();
+			if (projectInContext != null) {
+				return projectInContext.getProjectId().toString();
+			}
+		} catch (final MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return "0";
 	}
 }

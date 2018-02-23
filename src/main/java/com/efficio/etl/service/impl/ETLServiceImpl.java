@@ -46,6 +46,7 @@ import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.DataImportService;
@@ -189,7 +190,10 @@ public class ETLServiceImpl implements ETLService {
 		final StudyDetails studyDetails = new StudyDetails();
 
 		studyDetails.setStudyName(userSelection.getStudyName());
-		studyDetails.setEndDate(ETLServiceImpl.formatDate(userSelection.getStudyEndDate()));
+		if (userSelection.getStudyEndDate() != null && !userSelection.getStudyEndDate().isEmpty()) {
+			studyDetails.setEndDate(ETLServiceImpl.formatDate(userSelection.getStudyEndDate()));
+		}
+
 		studyDetails.setObjective(userSelection.getStudyObjective());
 		if (!StringUtils.isEmpty(userSelection.getStudyType())) {
 			studyDetails.setStudyType(StudyType.valueOf(userSelection.getStudyType()));
@@ -199,9 +203,20 @@ public class ETLServiceImpl implements ETLService {
 
 		studyDetails.setDescription(userSelection.getStudyDescription());
 		studyDetails.setStartDate(ETLServiceImpl.formatDate(userSelection.getStudyStartDate()));
-		studyDetails.setEndDate(ETLServiceImpl.formatDate(userSelection.getStudyEndDate()));
-		studyDetails.setStudyUpdate(ETLServiceImpl.formatDate(userSelection.getStudyUpdate()));
+
+
+		if (userSelection.getStudyUpdate() != null && !userSelection.getStudyUpdate().isEmpty()) {
+			studyDetails.setStudyUpdate(ETLServiceImpl.formatDate(userSelection.getStudyUpdate()));
+		}
+
 		studyDetails.setObjective(userSelection.getStudyObjective());
+
+		if (userSelection.getCreatedBy() != null) {
+			studyDetails.setCreatedBy(userSelection.getCreatedBy());
+		}
+		else {
+			studyDetails.setCreatedBy(this.getCurrentIbdbUserId().toString());
+		}
 
 		if (userSelection.getStudyId() != null) {
 			studyDetails.setId(userSelection.getStudyId());
@@ -946,8 +961,26 @@ public class ETLServiceImpl implements ETLService {
 			studyTypeValue = StudyType.N;
 		}
 		return new StudyDetails(study, title, objective, startDateStr, endDateStr, studyTypeValue, 0, null,
-				null, Util.getCurrentDateAsStringValue());
+				null, Util.getCurrentDateAsStringValue(), null);
 
+	}
+
+	public Integer getCurrentIbdbUserId() {
+		return this.workbenchDataManager.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
+			this.contextUtil.getCurrentWorkbenchUserId());
+
+	}
+
+	public String getCurrentProjectId() {
+		try {
+			final Project projectInContext = this.contextUtil.getProjectInContext();
+			if (projectInContext != null) {
+				return projectInContext.getProjectId().toString();
+			}
+		} catch (final MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return "0";
 	}
 
 	private String getCellStringValue(final Sheet sheet, final Integer rowNumber, final Integer columnNumber) {

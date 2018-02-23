@@ -148,6 +148,7 @@ public class WorkbookDataUtil {
 	private static final String TEST_SCALE = "TEST SCALE";
 	private static final String TEST_PROPERTY = "TEST PROPERTY";
 	private static final String TEST_DESCRIPTION = "TEST DESCRIPTION";
+	private static final String CREATED_BY = "1" ;
 
 	public static Workbook getTestWorkbook(final int noOfObservations, final StudyType studyType) {
 		return WorkbookDataUtil.createTestWorkbook(noOfObservations, studyType);
@@ -187,6 +188,7 @@ public class WorkbookDataUtil {
 		details.setEndDate(WorkbookDataUtil.END_DATE);
 		details.setParentFolderId(WorkbookDataUtil.FOLDER_ID);
 		details.setStudyType(studyType);
+		details.setCreatedBy(WorkbookDataUtil.CREATED_BY);
 		details.setId(-1);
 
 		return details;

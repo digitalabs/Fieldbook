@@ -470,7 +470,7 @@ public class EditNurseryController extends SettingsController {
 		final Workbook workbook = this.prepareNewWorkbookForSaving(trialDatasetId, measurementDatasetId, dataset);
 
 		this.createStudyDetails(workbook, form.getFolderId(), form.getStudyId(), description, startDate, endDate, studyUpdate, objective,
-			name);
+			name, null);
 		this.userSelection.setWorkbook(workbook);
 
 		final Map<String, String> resultMap = new HashMap<>();

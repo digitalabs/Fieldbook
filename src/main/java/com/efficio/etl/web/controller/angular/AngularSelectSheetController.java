@@ -144,6 +144,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		details.setObjective(this.userSelection.getStudyObjective());
 		details.setEndDate(this.userSelection.getStudyEndDate());
 		details.setStartDate(this.userSelection.getStudyStartDate());
+		details.setStartDate(this.userSelection.getCreatedBy());
 		details.setStudyType(StudyType.getStudyTypeByName(this.userSelection.getStudyType()));
 		details.setLabel(this.etlService.convertMessage(new Message(AngularSelectSheetController.ADD_TO_NEW_STUDY)));
 		previousStudies.add(details);

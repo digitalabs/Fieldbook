@@ -32,8 +32,10 @@ import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ImportObservationsControllerTest {
+
 	private static final String PROGRAM_UUID = "55bd5dde-3a68-4dcd-bdda-d2301eff9e16";
 	private static final String PROJECT_CODE_PREFIX = "AAGhs";
+	public static final int CURRENT_IBDB_USER_ID = 1;
 
 	@Mock
 	private ContextUtil contextUtil;
@@ -78,7 +80,7 @@ public class ImportObservationsControllerTest {
 				this.etlService.createWorkbookFromUserSelection(Matchers.eq(this.userSelection), Matchers.anyBoolean()))
 				.thenReturn(importData);
 		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(workbook);
-		Mockito.when(this.dataImportService.parseWorkbookDescriptionSheet(workbook)).thenReturn(importData);
+		Mockito.when(this.dataImportService.parseWorkbookDescriptionSheet(workbook, CURRENT_IBDB_USER_ID)).thenReturn(importData);
 
 		final String returnValue = this.importObservationsController.processImport(this.uploadForm, 1, this.model,
 				this.session, this.request);
@@ -86,7 +88,7 @@ public class ImportObservationsControllerTest {
 		Mockito.verify(this.contextUtil).getCurrentProgramUUID();
 		Mockito.verify(this.etlService).createWorkbookFromUserSelection(Matchers.eq(this.userSelection),
 				Matchers.anyBoolean());
-		Mockito.verify(this.dataImportService).parseWorkbookDescriptionSheet(workbook);
+		Mockito.verify(this.dataImportService).parseWorkbookDescriptionSheet(workbook, CURRENT_IBDB_USER_ID);
 		Mockito.verify(this.etlService).saveProjectData(importData, ImportObservationsControllerTest.PROGRAM_UUID);
 	}
 
@@ -116,14 +118,14 @@ public class ImportObservationsControllerTest {
 		final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = Mockito
 				.mock(org.generationcp.middleware.domain.etl.Workbook.class);
 		final Workbook workbook = Mockito.mock(Workbook.class);
-		Mockito.when(this.dataImportService.parseWorkbookDescriptionSheet(workbook)).thenReturn(referenceWorkbook);
+		Mockito.when(this.dataImportService.parseWorkbookDescriptionSheet(workbook, CURRENT_IBDB_USER_ID)).thenReturn(referenceWorkbook);
 		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(workbook);
 
 		final String returnValue = this.importObservationsController.confirmImport(this.model, importData,
 				ImportObservationsControllerTest.PROGRAM_UUID);
 
 		Assert.assertEquals("redirect:/etl/fileUpload", returnValue);
-		Mockito.verify(this.dataImportService).parseWorkbookDescriptionSheet(workbook);
+		Mockito.verify(this.dataImportService).parseWorkbookDescriptionSheet(workbook, CURRENT_IBDB_USER_ID);
 		Mockito.verify(this.etlService).saveProjectData(importData, ImportObservationsControllerTest.PROGRAM_UUID);
 	}
 }

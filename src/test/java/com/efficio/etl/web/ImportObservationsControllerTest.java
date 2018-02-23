@@ -6,6 +6,7 @@ import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
@@ -49,6 +50,9 @@ public class ImportObservationsControllerTest {
 	@Mock
 	private DataImportService dataImportService;
 
+	@Mock
+	protected WorkbenchService workbenchService;
+
 	@InjectMocks
 	ImportObservationsController importObservationsController;
 	private HttpSession session;
@@ -66,9 +70,11 @@ public class ImportObservationsControllerTest {
 		final Project project = new Project();
 		project.setCropType(new CropType("Maize"));
 		project.getCropType().setPlotCodePrefix(ImportObservationsControllerTest.PROJECT_CODE_PREFIX);
+		project.setProjectId(Long.valueOf(123));
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID())
 				.thenReturn(ImportObservationsControllerTest.PROGRAM_UUID);
+		Mockito.when(workbenchService.getCurrentIbdbUserId(Mockito.anyLong(), Mockito.anyInt())).thenReturn(1);
 	}
 
 	@Test

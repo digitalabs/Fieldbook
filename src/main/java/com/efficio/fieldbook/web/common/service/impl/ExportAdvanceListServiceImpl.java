@@ -16,11 +16,14 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.GermplasmExportService;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.ZipUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.slf4j.Logger;
@@ -32,7 +35,6 @@ import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.ZipUtil;
 
 public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
@@ -51,6 +53,9 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	private static final String NO_FILE = "noFile";
 
@@ -67,28 +72,27 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		final String suffix = AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)
 				? AppConstants.EXPORT_XLS_SUFFIX.getString() : AppConstants.EXPORT_CSV_SUFFIX.getString();
 
-		for (final Integer advanceGermpasmListId : advanceGermplasmListIds) {
-			try {
+		try {
+			for (final Integer advanceGermpasmListId : advanceGermplasmListIds) {
 				final List<InventoryDetails> inventoryDetailList =
 						this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(advanceGermpasmListId);
 				final GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(advanceGermpasmListId);
 				final String advanceListName = germplasmList.getName();
 				final String filenamePath = this.getFileNamePath(advanceListName) + suffix;
 				final String sheetName = WorkbookUtil.createSafeSheetName(ExportAdvanceListServiceImpl.ADVANCE_LIST_SHEET_NAME);
-
+	
 				this.exportList(inventoryDetailList, filenamePath, sheetName, germplasmExportServiceImpl, type, false);
-
+	
 				outputFilename = filenamePath;
 				filenameList.add(filenamePath);
-			} catch (final IOException | MiddlewareQueryException e) {
-				ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
 			}
-		}
 
-		if (filenameList.size() > 1) {
-			outputFilename = this.getFileNamePath(studyName + "-" + AppConstants.ADVANCE_ZIP_DEFAULT_FILENAME.getString())
-					+ AppConstants.ZIP_FILE_SUFFIX.getString();
-			this.zipFileNameList(outputFilename, filenameList);
+			if (filenameList.size() > 1) {
+				final String fileNameWithoutExtension =  SettingsUtil.cleanSheetAndFileName(studyName + "-" + AppConstants.ADVANCE_ZIP_DEFAULT_FILENAME.getString());
+				outputFilename = this.zipFileNameList(fileNameWithoutExtension, filenameList);
+			}
+		} catch (final IOException | MiddlewareQueryException e) {
+			ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
 		}
 
 		return new File(outputFilename);
@@ -152,9 +156,9 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		return ExportAdvanceListServiceImpl.DEFAULT_AMOUNT_HEADER;
 	}
 
-	protected boolean zipFileNameList(final String outputFilename, final List<String> filenameList) {
-		ZipUtil.zipIt(outputFilename, filenameList);
-		return true;
+	protected String zipFileNameList(final String outputFilename, final List<String> filenameList) throws IOException {
+		final ZipUtil zipUtil = new ZipUtil();
+		return zipUtil.zipIt(outputFilename, filenameList, this.contextUtil.getProjectInContext(), ToolName.TRIAL_MANAGER_FIELDBOOK_WEB);
 	}
 
 	protected List<Integer> parseDelimitedAdvanceGermplasmListIds(final String advancedListIds) {

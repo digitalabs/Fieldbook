@@ -9,8 +9,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.ZipUtil;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -24,7 +27,6 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
-import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
 @Transactional
@@ -40,6 +42,9 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 
 	@Resource
 	private OntologyService ontologyService;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	@Override
 	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
@@ -86,12 +91,8 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 		KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath, this.fieldbookMiddlewareService, this.ontologyService);
 		filenameList.add(traitFilenamePath);
 
-		final String outputFilename =
-				this.fieldbookProperties.getUploadDirectory() + File.separator
-						+ filename.replaceAll(AppConstants.EXPORT_CSV_SUFFIX.getString(), "") + AppConstants.ZIP_FILE_SUFFIX.getString();
-		ZipUtil.zipIt(outputFilename, filenameList);
-
-		return outputFilename;
+		final ZipUtil zipUtil = new ZipUtil();
+		return zipUtil.zipIt(filename.replaceAll(AppConstants.EXPORT_CSV_SUFFIX.getString(), ""), filenameList, this.contextUtil.getProjectInContext(), ToolName.TRIAL_MANAGER_FIELDBOOK_WEB);
 	}
 
 }

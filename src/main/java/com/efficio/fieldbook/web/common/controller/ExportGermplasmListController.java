@@ -15,7 +15,6 @@ import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -123,14 +122,14 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 				outputFileNamePath = this.getFieldbookProperties().getUploadDirectory() + File.separator + fileName;
 				this.exportGermplasmListService.exportGermplasmListXLS(outputFileNamePath, this.userSelection
 						.getImportedGermplasmMainInfo().getListId(), visibleColumnsMap, isNursery);
-				response.setContentType("application/vnd.ms-excel");
+				response.setContentType(FileUtils.MIME_MS_EXCEL);
 
 			} else if (exportType == 2) {
 
 				fileName = listName + ".csv";
 				outputFileNamePath = this.getFieldbookProperties().getUploadDirectory() + File.separator + fileName;
 				this.exportGermplasmListService.exportGermplasmListCSV(outputFileNamePath, visibleColumnsMap, isNursery);
-				response.setContentType("text/csv");
+				response.setContentType(FileUtils.MIME_CSV);
 			}
 		}
 

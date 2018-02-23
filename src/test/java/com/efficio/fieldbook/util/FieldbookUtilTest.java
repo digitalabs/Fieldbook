@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -249,12 +250,12 @@ public class FieldbookUtilTest {
 
 		Assert.assertEquals("Make sure we get a http success", HttpStatus.OK, result.getStatusCode());
 
-		Assert.assertNotNull("Make sure Content-disposition header exists", result.getHeaders().get(FieldbookUtil.CONTENT_DISPOSITION));
-		Assert.assertNotNull("Make sure we have a Content-Type header",result.getHeaders().get(FieldbookUtil.CONTENT_TYPE));
-		Assert.assertNotNull("Make sure we have a Content-Type header that contains at least 1 value", result.getHeaders().get(FieldbookUtil.CONTENT_TYPE).get(0));
+		Assert.assertNotNull("Make sure Content-disposition header exists", result.getHeaders().get(FileUtils.CONTENT_DISPOSITION));
+		Assert.assertNotNull("Make sure we have a Content-Type header",result.getHeaders().get(FileUtils.CONTENT_TYPE));
+		Assert.assertNotNull("Make sure we have a Content-Type header that contains at least 1 value", result.getHeaders().get(FileUtils.CONTENT_TYPE).get(0));
 
 		// Were not testing the mime type detection here, see a separate unit test for FileUTils.detectMimeType(...)
-		Assert.assertTrue("Make sure tht content-type header has a charset", result.getHeaders().get(FieldbookUtil.CONTENT_TYPE).get(0).contains("charset=utf-8"));
+		Assert.assertTrue("Make sure tht content-type header has a charset", result.getHeaders().get(FileUtils.CONTENT_TYPE).get(0).contains("charset=utf-8"));
 	}
 
 }

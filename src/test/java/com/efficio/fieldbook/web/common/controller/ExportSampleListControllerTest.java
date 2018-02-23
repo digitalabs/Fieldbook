@@ -5,6 +5,7 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SampleListUtilTest;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.sample.SampleDetailsDTO;
 import org.generationcp.middleware.service.api.SampleListService;
 import org.junit.Before;
@@ -52,8 +53,6 @@ public class ExportSampleListControllerTest {
 	@InjectMocks
 	private ExportSampleListController exportSampleListController;
 
-	private static final String CSV_CONTENT_TYPE = "text/csv";
-
 	@Before
 	public void setUp() {
 		Mockito.doReturn(ExportSampleListControllerTest.UPLOAD_DIRECTORY).when(this.fieldbookProperties).getUploadDirectory();
@@ -67,7 +66,7 @@ public class ExportSampleListControllerTest {
 		Mockito.doReturn(sampleDetailsDTOs).when(this.sampleListService).getSampleDetailsDTOs(Matchers.anyInt());
 		Mockito.when(this.csvExportSampleListService.export(Matchers.any(List.class), Matchers.anyString(), Matchers.any(List.class)))
 			.thenReturn(outputFilename);
-		Mockito.when(this.resp.getContentType()).thenReturn(ExportSampleListControllerTest.CSV_CONTENT_TYPE);
+		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_CSV);
 
 		final Integer exportType = AppConstants.EXPORT_CSV.getInt();
 		final Map<String, String> data = this.getData();
@@ -76,7 +75,7 @@ public class ExportSampleListControllerTest {
 		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
 
 		assertThat(true,equalTo((Boolean) result.get(exportSampleListController.IS_SUCCESS)));
-		assertThat(ExportSampleListControllerTest.CSV_CONTENT_TYPE,equalTo(result.get("contentType")));
+		assertThat(FileUtils.MIME_CSV,equalTo(result.get("contentType")));
 		assertThat(outputFilename,equalTo(result.get("filename")));
 		assertThat(outputFilename,equalTo(result.get("outputFilename")));
 

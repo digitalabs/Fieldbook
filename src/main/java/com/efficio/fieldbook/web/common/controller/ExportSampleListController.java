@@ -42,8 +42,6 @@ public class ExportSampleListController  extends AbstractBaseFieldbookController
 	private static final String OUTPUT_FILENAME = "outputFilename";
 	private static final String ERROR_MESSAGE = "errorMessage";
 	static final String IS_SUCCESS = "isSuccess";
-	static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
-	private static final String CSV_CONTENT_TYPE = "text/csv";
 	private static final Logger LOG = LoggerFactory.getLogger(ExportSampleListController.class);
 	public static final String URL = "/ExportManager";
 
@@ -98,7 +96,7 @@ public class ExportSampleListController  extends AbstractBaseFieldbookController
 
 			if (AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType) {
 				filename = filename + AppConstants.EXPORT_XLS_SUFFIX.getString();
-				response.setContentType(ExportSampleListController.APPLICATION_VND_MS_EXCEL);
+				response.setContentType(FileUtils.MIME_MS_EXCEL);
 
 			}else if(AppConstants.EXPORT_CSV.getInt() == exportType){
 				final List<String> visibleColumns = Lists.newArrayList(data.get("visibleColumns").split(","));
@@ -106,7 +104,7 @@ public class ExportSampleListController  extends AbstractBaseFieldbookController
 
 				final List<SampleDetailsDTO> sampleDetailsDTOs = sampleListService.getSampleDetailsDTOs(SampleListId);
 				outputFilename = this.csvExportSampleListService.export(sampleDetailsDTOs, filename, visibleColumns);
-				response.setContentType(ExportSampleListController.CSV_CONTENT_TYPE);
+				response.setContentType(FileUtils.MIME_CSV);
 
 
 			}

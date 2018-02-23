@@ -30,8 +30,6 @@ import java.util.StringTokenizer;
  */
 public class FieldbookUtil {
 
-	public static final String CONTENT_TYPE = "Content-Type";
-	public static final String CONTENT_DISPOSITION = "Content-Disposition";
 	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
 	public static final String DESCRIPTION = "Description";
 	private static FieldbookUtil instance;
@@ -147,8 +145,8 @@ public class FieldbookUtil {
 		final String mimeType = FileUtils.detectMimeType(filename);
 		final String sanitizedFilename = FileUtils.sanitizeFileName(filename);
 
-		respHeaders.set(FieldbookUtil.CONTENT_TYPE,String.format("%s;charset=utf-8",mimeType));
-		respHeaders.set(FieldbookUtil.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"; filename*=utf-8\'\'%s", sanitizedFilename, FileUtils.encodeFilenameForDownload(sanitizedFilename)));
+		respHeaders.set(FileUtils.CONTENT_TYPE,String.format("%s;charset=utf-8",mimeType));
+		respHeaders.set(FileUtils.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"; filename*=utf-8\'\'%s", sanitizedFilename, FileUtils.encodeFilenameForDownload(sanitizedFilename)));
 
 		return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 

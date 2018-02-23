@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.data.initializer.FieldMapInfoTestDataInitializer;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.GermplasmInventory;
@@ -56,7 +57,6 @@ import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
@@ -302,12 +302,12 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		final String filenameWithExtension = userLabelPrinting.getFilenameWithExtension();
 		final String contentDisposition =
 				"[attachment; filename=\"" + filenameWithExtension + "\"; filename*=utf-8''" + filenameWithExtension + "]";
-		final String responseEntityContentDisposition = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_DISPOSITION).toString();
+		final String responseEntityContentDisposition = reponseEntity.getHeaders().get(FileUtils.CONTENT_DISPOSITION).toString();
 		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition,
 				responseEntityContentDisposition);
 
 		final String contentType = "[application/octet-stream;charset=utf-8]";
-		final String responseEntityContentType = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_TYPE).toString();
+		final String responseEntityContentType = reponseEntity.getHeaders().get(FileUtils.CONTENT_TYPE).toString();
 		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
 
 		final String responseEntityFileName = reponseEntity.getBody().getFilename();
@@ -325,12 +325,12 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		final String filenameWithExtension = userLabelPrinting.getFilenameWithExtension();
 		final String contentDisposition =
 				"[attachment; filename=\"" + filenameWithExtension + "\"; filename*=utf-8''" + filenameWithExtension + "]";
-		final String responseEntityContentDisposition = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_DISPOSITION).toString();
+		final String responseEntityContentDisposition = reponseEntity.getHeaders().get(FileUtils.CONTENT_DISPOSITION).toString();
 		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition,
 				responseEntityContentDisposition);
 
 		final String contentType = "[application/vnd.ms-excel;charset=utf-8]";
-		final String responseEntityContentType = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_TYPE).toString();
+		final String responseEntityContentType = reponseEntity.getHeaders().get(FileUtils.CONTENT_TYPE).toString();
 		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
 
 		final String responseEntityFileName = reponseEntity.getBody().getFilename();
@@ -348,12 +348,12 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		final String filenameWithExtension = userLabelPrinting.getFilenameWithExtension();
 		final String contentDisposition =
 				"[attachment; filename=\"" + filenameWithExtension + "\"; filename*=utf-8''" + filenameWithExtension + "]";
-		final String responseEntityContentDisposition = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_DISPOSITION).toString();
+		final String responseEntityContentDisposition = reponseEntity.getHeaders().get(FileUtils.CONTENT_DISPOSITION).toString();
 		Assert.assertEquals("The content disposition should be " + contentDisposition, contentDisposition,
 				responseEntityContentDisposition);
 
 		final String contentType = "[application/pdf;charset=utf-8]";
-		final String responseEntityContentType = reponseEntity.getHeaders().get(FieldbookUtil.CONTENT_TYPE).toString();
+		final String responseEntityContentType = reponseEntity.getHeaders().get(FileUtils.CONTENT_TYPE).toString();
 		Assert.assertEquals("The content type should be " + contentType, contentType, responseEntityContentType);
 
 		final String responseEntityFileName = reponseEntity.getBody().getFilename();

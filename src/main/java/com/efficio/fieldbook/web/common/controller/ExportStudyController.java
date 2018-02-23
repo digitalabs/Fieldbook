@@ -79,8 +79,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	private static final String OUTPUT_FILENAME = "outputFilename";
 	private static final String ERROR_MESSAGE = "errorMessage";
 	static final String IS_SUCCESS = "isSuccess";
-	static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
-	private static final String CSV_CONTENT_TYPE = "text/csv";
 	private static final Logger LOG = LoggerFactory.getLogger(ExportStudyController.class);
 	public static final String URL = "/ExportManager";
 	private static String EXPORT_TRIAL_INSTANCE = "Common/includes/exportTrialInstance";
@@ -314,23 +312,23 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 				if (instances != null && instances.size() > 1) {
 					final int extensionIndex = filename.lastIndexOf(".");
 					filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
-					response.setContentType("application/zip");
+					response.setContentType(FileUtils.MIME_ZIP);
 				} else {
 					filename = this.getOutputFileName(userSelection.getWorkbook().isNursery(), outputFilename, filename);
-					response.setContentType(ExportStudyController.APPLICATION_VND_MS_EXCEL);
+					response.setContentType(FileUtils.MIME_MS_EXCEL);
 				}
 			} else if (AppConstants.EXPORT_KSU_EXCEL.getInt() == exportType) {
 				filename = filename + AppConstants.EXPORT_XLS_SUFFIX.getString();
 				outputFilename = this.ksuExcelExportStudyService.export(userSelection.getWorkbook(), filename, instances);
 				final int extensionIndex = filename.lastIndexOf(".");
 				filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
-				response.setContentType("application/zip");
+				response.setContentType(FileUtils.MIME_ZIP);
 			} else if (AppConstants.EXPORT_KSU_CSV.getInt() == exportType) {
 				filename = filename + AppConstants.EXPORT_CSV_SUFFIX.getString();
 				outputFilename = this.ksuCsvExportStudyService.export(userSelection.getWorkbook(), filename, instances);
 				final int extensionIndex = filename.lastIndexOf(".");
 				filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
-				response.setContentType("application/zip");
+				response.setContentType(FileUtils.MIME_ZIP);
 			} else if (AppConstants.EXPORT_CSV.getInt() == exportType) {
 				final List<Integer> visibleColumns = this.getVisibleColumns(data.get("visibleColumns"));
 				filename = filename + AppConstants.EXPORT_CSV_SUFFIX.getString();
@@ -338,10 +336,10 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 				if (instances != null && instances.size() > 1) {
 					final int extensionIndex = filename.lastIndexOf(".");
 					filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
-					response.setContentType("application/zip");
+					response.setContentType(FileUtils.MIME_ZIP);
 				} else {
 					filename = this.getOutputFileName(userSelection.getWorkbook().isNursery(), outputFilename, filename);
-					response.setContentType(ExportStudyController.CSV_CONTENT_TYPE);
+					response.setContentType(FileUtils.MIME_CSV);
 				}
 			}
 			results.put(ExportStudyController.IS_SUCCESS, true);
@@ -485,11 +483,11 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final String extensionName = outputFilename.substring(extensionIndex, outputFilename.length());
 		String contentType = "";
 		if (extensionName.indexOf(AppConstants.ZIP_FILE_SUFFIX.getString()) != -1) {
-			contentType = "application/zip";
+			contentType = FileUtils.MIME_ZIP;
 		} else if (extensionName.indexOf(AppConstants.EXPORT_CSV_SUFFIX.getString()) != -1) {
-			contentType = "text/csv";
+			contentType = FileUtils.MIME_CSV;
 		} else if (extensionName.indexOf(AppConstants.EXPORT_XLS_SUFFIX.getString()) != -1) {
-			contentType = ExportStudyController.APPLICATION_VND_MS_EXCEL;
+			contentType = FileUtils.MIME_MS_EXCEL;
 		}
 		response.setContentType(contentType);
 
@@ -545,7 +543,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final File file = this.exportAdvanceListService.exportStockList(Integer.valueOf(stockIds), this.germplasmExportService);
 
 		outputFilename = file.getAbsolutePath();
-		final String contentType = ExportStudyController.APPLICATION_VND_MS_EXCEL;
+		final String contentType = FileUtils.MIME_MS_EXCEL;
 		response.setContentType(contentType);
 		final Map<String, Object> results = new HashMap<String, Object>();
 		results.put(ExportStudyController.OUTPUT_FILENAME, outputFilename);

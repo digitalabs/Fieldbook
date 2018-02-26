@@ -536,7 +536,7 @@
                     $('body').removeClass('import-preview-measurements');
                     //TODO Remove other classes as well
 
-                    // GLOBAL
+                    refreshListDetails();
                     if ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) {
                     	onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
                     }

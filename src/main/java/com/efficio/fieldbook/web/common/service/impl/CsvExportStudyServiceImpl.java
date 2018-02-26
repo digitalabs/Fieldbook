@@ -1,7 +1,6 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,100 +12,45 @@ import javax.annotation.Resource;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.GermplasmExportService;
-import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.commons.util.ZipUtil;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 @Service
 @Transactional
-public class CsvExportStudyServiceImpl implements CsvExportStudyService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(CsvExportStudyServiceImpl.class);
-
-	@Resource
-	private FieldbookProperties fieldbookProperties;
+public class CsvExportStudyServiceImpl extends BaseExportStudyServiceImpl implements CsvExportStudyService {
 
 	@Resource
 	private OntologyService ontologyService;
 
 	@Resource
-	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-
-	@Resource
 	private GermplasmExportService germplasmExportService;
 	
-	@Resource
-	private ContextUtil contextUtil;
-
 	@Override
-	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
-		return this.export(workbook, filename, instances, null);
+	void writeOutputFile(Workbook workbook, List<Integer> visibleColumns, MeasurementRow instanceLevelObservation,
+			List<MeasurementRow> plotLevelObservations, String fileNamePath) throws IOException {
+		final List<ExportColumnHeader> exportColumnHeaders =
+				this.getExportColumnHeaders(visibleColumns, workbook.getMeasurementDatasetVariables());
+		final List<Map<Integer, ExportColumnValue>> exportColumnValues =
+				this.getExportColumnValues(exportColumnHeaders, workbook.getMeasurementDatasetVariables(), plotLevelObservations);
+
+		this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileNamePath);
 	}
 
 	@Override
-	public String export(final Workbook workbook, final String filename, final List<Integer> instances, final List<Integer> visibleColumns)
-			throws IOException {
-
-		final FileOutputStream fos = null;
-		final List<String> filenameList = new ArrayList<String>();
-		String outputFilename = null;
-
-		for (final Integer trialInstanceNo : instances) {
-			final List<Integer> listOfTrialInstanceNo = new ArrayList<Integer>();
-			listOfTrialInstanceNo.add(trialInstanceNo);
-
-			final List<MeasurementRow> plotLevelObservations = this.getApplicableObservations(workbook, listOfTrialInstanceNo);
-
-			try {
-
-				final MeasurementRow instanceLevelObservation = workbook.getTrialObservationByTrialInstanceNo(trialInstanceNo);
-
-				final String filenamePath =
-						ExportImportStudyUtil.getFileNamePath(trialInstanceNo, instanceLevelObservation, instances, filename,
-								workbook.isNursery(), this.fieldbookProperties, this.fieldbookMiddlewareService);
-
-				final List<ExportColumnHeader> exportColumnHeaders =
-						this.getExportColumnHeaders(visibleColumns, workbook.getMeasurementDatasetVariables());
-				final List<Map<Integer, ExportColumnValue>> exportColumnValues =
-						this.getExportColumnValues(exportColumnHeaders, workbook.getMeasurementDatasetVariables(), plotLevelObservations);
-
-				this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, filenamePath);
-
-				outputFilename = filenamePath;
-				filenameList.add(filenamePath);
-
-			} finally {
-				if (fos != null) {
-					fos.close();
-				}
-			}
-		}
-
-		if (instances != null && instances.size() > 1) {
-			final ZipUtil zipUtil = new ZipUtil();
-			outputFilename = zipUtil.zipIt(filename.replaceAll(AppConstants.EXPORT_CSV_SUFFIX.getString(), ""), filenameList,
-					this.contextUtil.getProjectInContext(), ToolName.TRIAL_MANAGER_FIELDBOOK_WEB);
-		}
-
-		return outputFilename;
-
+	String getFileExtension() {
+		return AppConstants.EXPORT_CSV_SUFFIX.getString();
 	}
-
+	
 	protected List<MeasurementRow> getApplicableObservations(final Workbook workbook, final List<Integer> indexes) {
 		return ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
 	}
@@ -219,11 +163,8 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 		this.ontologyService = ontologyService;
 	}
 
-	public void setFieldbookProperties(final FieldbookProperties fieldbookProperties) {
-		this.fieldbookProperties = fieldbookProperties;
-	}
-
 	public void setGermplasmExportService(final GermplasmExportService germplasmExportService) {
 		this.germplasmExportService = germplasmExportService;
 	}
+	
 }

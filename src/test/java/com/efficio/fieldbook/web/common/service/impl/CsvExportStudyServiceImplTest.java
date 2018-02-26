@@ -30,10 +30,10 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.exceptions.verification.NeverWantedButInvoked;
 
+import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 public class CsvExportStudyServiceImplTest {
 
@@ -42,9 +42,6 @@ public class CsvExportStudyServiceImplTest {
 	private static final String ZIP_EXT = ".zip";
 
 	private static CsvExportStudyServiceImpl csvExportStudyService;
-
-	@Mock
-	private FieldbookProperties fieldbookProperties;
 
 	@Mock
 	private OntologyService ontologyService;
@@ -60,14 +57,12 @@ public class CsvExportStudyServiceImplTest {
 
 	private static String PROPERTY_NAME = "Property Name";
 	private static String FILENAME = "TestFileName.csv";
-	private static String UPLOAD_DIRECTORY = "";
 
 	@Before
 	public void setUp() throws MiddlewareQueryException, IOException {
 		MockitoAnnotations.initMocks(this);
 
 		CsvExportStudyServiceImplTest.csvExportStudyService = Mockito.spy(new CsvExportStudyServiceImpl());
-		CsvExportStudyServiceImplTest.csvExportStudyService.setFieldbookProperties(this.fieldbookProperties);
 		CsvExportStudyServiceImplTest.csvExportStudyService.setGermplasmExportService(this.germplasmExportService);
 		CsvExportStudyServiceImplTest.csvExportStudyService.setOntologyService(this.ontologyService);
 
@@ -76,7 +71,6 @@ public class CsvExportStudyServiceImplTest {
 		Mockito.doReturn(new Term(1, CsvExportStudyServiceImplTest.PROPERTY_NAME, "Dummy defintion")).when(prop).getTerm();
 		Mockito.doReturn(Mockito.mock(File.class)).when(this.germplasmExportService)
 				.generateCSVFile(Matchers.any(List.class), Matchers.any(List.class), Matchers.anyString());
-		Mockito.doReturn(CsvExportStudyServiceImplTest.UPLOAD_DIRECTORY).when(this.fieldbookProperties).getUploadDirectory();
 	}
 
 	@Test
@@ -89,11 +83,11 @@ public class CsvExportStudyServiceImplTest {
 		Mockito.doReturn(workbook.getObservations()).when(CsvExportStudyServiceImplTest.csvExportStudyService)
 				.getApplicableObservations(workbook, instances);
 
-		final String outputFilename =
+		final FileExportInfo exportInfo =
 				CsvExportStudyServiceImplTest.csvExportStudyService.export(workbook, CsvExportStudyServiceImplTest.FILENAME, instances);
 
 		Assert.assertTrue("Expected the filename must end in .zip",
-				CsvExportStudyServiceImplTest.ZIP_EXT.equalsIgnoreCase(outputFilename.substring(outputFilename.lastIndexOf("."))));
+				CsvExportStudyServiceImplTest.ZIP_EXT.equalsIgnoreCase(exportInfo.getDownloadFileName().substring(exportInfo.getDownloadFileName().lastIndexOf("."))));
 	}
 
 	@Test
@@ -107,11 +101,11 @@ public class CsvExportStudyServiceImplTest {
 		Mockito.doReturn(workbook.getObservations()).when(CsvExportStudyServiceImplTest.csvExportStudyService)
 				.getApplicableObservations(workbook, instances);
 
-		final String outputFilename =
+		final FileExportInfo exportInfo =
 				CsvExportStudyServiceImplTest.csvExportStudyService.export(workbook, CsvExportStudyServiceImplTest.FILENAME, instances);
 
 		Assert.assertTrue("Expected the filename must end in .csv",
-				CsvExportStudyServiceImplTest.CSV_EXT.equalsIgnoreCase(outputFilename.substring(outputFilename.lastIndexOf("."))));
+				CsvExportStudyServiceImplTest.CSV_EXT.equalsIgnoreCase(exportInfo.getDownloadFileName().substring(exportInfo.getDownloadFileName().lastIndexOf("."))));
 	}
 
 	@Test

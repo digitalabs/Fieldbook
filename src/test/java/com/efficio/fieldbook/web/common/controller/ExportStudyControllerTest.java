@@ -44,6 +44,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -271,7 +272,7 @@ public class ExportStudyControllerTest {
 		final String outputFilename = ExportStudyControllerTest.SAMPLE_NURSERY_FILENAME + ExportStudyControllerTest.CSV_EXT;
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 		Mockito.when(this.csvExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.CSV_EXT, instances,
-				this.getVisibleColumns())).thenReturn(outputFilename);
+				this.getVisibleColumns())).thenReturn(new FileExportInfo(outputFilename, outputFilename));
 
 		Mockito.when(this.resp.getContentType()).thenReturn(ExportStudyControllerTest.CSV_CONTENT_TYPE);
 
@@ -324,7 +325,7 @@ public class ExportStudyControllerTest {
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 		final String outputFilename = ExportStudyControllerTest.SAMPLE_TRIAL_FILENAME + ExportStudyControllerTest.CSV_EXT;
 		Mockito.when(this.csvExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.CSV_EXT, instances,
-				this.getVisibleColumns())).thenReturn(outputFilename);
+				this.getVisibleColumns())).thenReturn(new FileExportInfo(outputFilename, outputFilename));
 		Mockito.when(this.resp.getContentType()).thenReturn(ExportStudyControllerTest.CSV_CONTENT_TYPE);
 
 		final Integer exportType = AppConstants.EXPORT_CSV.getInt();
@@ -352,8 +353,9 @@ public class ExportStudyControllerTest {
 
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 		final String outputFilename = ExportStudyControllerTest.SAMPLE_TRIAL_FILENAME + ExportStudyControllerTest.CSV_EXT;
+		final String filename = outputFilename + ExportStudyControllerTest.ZIP_EXT;
 		Mockito.when(this.csvExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.CSV_EXT, instances,
-				this.getVisibleColumns())).thenReturn(outputFilename + ExportStudyControllerTest.ZIP_EXT);
+				this.getVisibleColumns())).thenReturn(new FileExportInfo(filename, filename));
 		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_ZIP);
 
 		final Integer exportType = AppConstants.EXPORT_CSV.getInt();
@@ -369,8 +371,8 @@ public class ExportStudyControllerTest {
 				FileUtils.MIME_ZIP, result.get("contentType"));
 		Assert.assertEquals("Expected that the returned filename is " + generatedFilename + ExportStudyControllerTest.ZIP_EXT,
 				generatedFilename + ExportStudyControllerTest.ZIP_EXT, result.get("filename"));
-		Assert.assertEquals("Expected that the returned output filename is " + outputFilename + ExportStudyControllerTest.ZIP_EXT,
-				outputFilename + ExportStudyControllerTest.ZIP_EXT, result.get("outputFilename"));
+		Assert.assertEquals("Expected that the returned output filename is " + filename,
+				filename, result.get("outputFilename"));
 	}
 
 	@Test
@@ -384,7 +386,7 @@ public class ExportStudyControllerTest {
 		final String outputFilename = ExportStudyControllerTest.SAMPLE_NURSERY_FILENAME + ExportStudyControllerTest.XLS_EXT;
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 		Mockito.when(this.excelExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.XLS_EXT, instances,
-				this.getVisibleColumns())).thenReturn(outputFilename);
+				this.getVisibleColumns())).thenReturn(new FileExportInfo(outputFilename, outputFilename));
 
 		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_MS_EXCEL);
 
@@ -415,7 +417,7 @@ public class ExportStudyControllerTest {
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 		final String outputFilename = ExportStudyControllerTest.SAMPLE_TRIAL_FILENAME + ExportStudyControllerTest.XLS_EXT;
 		Mockito.when(this.excelExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.XLS_EXT, instances,
-				this.getVisibleColumns())).thenReturn(outputFilename);
+				this.getVisibleColumns())).thenReturn(new FileExportInfo(outputFilename, outputFilename));
 		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_ZIP);
 
 		final Integer exportType = AppConstants.EXPORT_NURSERY_EXCEL.getInt();
@@ -443,8 +445,9 @@ public class ExportStudyControllerTest {
 
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 		final String outputFilename = ExportStudyControllerTest.SAMPLE_TRIAL_FILENAME + ExportStudyControllerTest.ZIP_EXT;
+		final String filename = outputFilename + ExportStudyControllerTest.ZIP_EXT;
 		Mockito.when(this.excelExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.XLS_EXT, instances,
-				this.getVisibleColumns())).thenReturn(outputFilename + ExportStudyControllerTest.ZIP_EXT);
+				this.getVisibleColumns())).thenReturn(new FileExportInfo(filename, filename));
 		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_ZIP);
 
 		final Integer exportType = AppConstants.EXPORT_NURSERY_EXCEL.getInt();
@@ -461,7 +464,7 @@ public class ExportStudyControllerTest {
 		Assert.assertEquals("Expected that the returned filename is " + generatedFilename + ExportStudyControllerTest.ZIP_EXT,
 				generatedFilename + ExportStudyControllerTest.ZIP_EXT, result.get("filename"));
 		Assert.assertEquals("Expected that the returned output filename is " + outputFilename,
-				outputFilename + ExportStudyControllerTest.ZIP_EXT, result.get("outputFilename"));
+				filename, result.get("outputFilename"));
 	}
 
 	@Test
@@ -476,7 +479,7 @@ public class ExportStudyControllerTest {
 		final String outputFilename = ExportStudyControllerTest.SAMPLE_NURSERY_FILENAME + ExportStudyControllerTest.ZIP_EXT;
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 		Mockito.when(this.ksuCsvExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.CSV_EXT, instances))
-				.thenReturn(outputFilename);
+				.thenReturn(new FileExportInfo(outputFilename, outputFilename));
 
 		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_ZIP);
 
@@ -507,7 +510,7 @@ public class ExportStudyControllerTest {
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 		final String outputFilename = ExportStudyControllerTest.SAMPLE_TRIAL_FILENAME + ExportStudyControllerTest.ZIP_EXT;
 		Mockito.when(this.ksuCsvExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.CSV_EXT, instances))
-				.thenReturn(outputFilename);
+				.thenReturn(new FileExportInfo(outputFilename, outputFilename));
 		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_ZIP);
 
 		final Integer exportType = AppConstants.EXPORT_KSU_CSV.getInt();
@@ -538,7 +541,7 @@ public class ExportStudyControllerTest {
 		final String outputFilename = ExportStudyControllerTest.SAMPLE_NURSERY_FILENAME + ExportStudyControllerTest.ZIP_EXT;
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 		Mockito.when(this.ksuExcelExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.XLS_EXT, instances))
-				.thenReturn(outputFilename);
+				.thenReturn(new FileExportInfo(outputFilename, outputFilename));
 
 		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_ZIP);
 
@@ -569,7 +572,7 @@ public class ExportStudyControllerTest {
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 		final String outputFilename = ExportStudyControllerTest.SAMPLE_TRIAL_FILENAME + ExportStudyControllerTest.ZIP_EXT;
 		Mockito.when(this.ksuExcelExportStudyService.export(workbook, generatedFilename + ExportStudyControllerTest.XLS_EXT, instances))
-				.thenReturn(outputFilename);
+				.thenReturn(new FileExportInfo(outputFilename, outputFilename));
 		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_ZIP);
 
 		final Integer exportType = AppConstants.EXPORT_KSU_EXCEL.getInt();

@@ -16,8 +16,12 @@ import java.util.List;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 
+import com.efficio.fieldbook.util.FileExportInfo;
+
 public interface ExportStudyService {
 
-	String export(Workbook workbook, String filename, List<Integer> instances) throws IOException;
+	FileExportInfo export(Workbook workbook, String filename, List<Integer> instances) throws IOException;
+	
+	FileExportInfo export(Workbook workbook, String filename, List<Integer> instances, List<Integer> visibleColumns) throws IOException;
 
 }

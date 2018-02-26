@@ -51,6 +51,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
@@ -300,51 +301,32 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 			exportDataCollectionService.reorderWorkbook(userSelection.getWorkbook());
 
-			String filename = FileUtils.sanitizeFileName(userSelection.getEscapedStudyName());
-			String outputFilename = null;
+			String studyName = FileUtils.sanitizeFileName(userSelection.getEscapedStudyName());
+			FileExportInfo fileExportInfo = new FileExportInfo();
 			FieldbookUtil.setColumnOrderingOnWorkbook(userSelection.getWorkbook(), data.get("columnOrders"));
-
+			// By default the content type will be ZIP, unless only 1 instance being exported
+			response.setContentType(FileUtils.MIME_ZIP);
 			if (AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType) {
 				final List<Integer> visibleColumns = this.getVisibleColumns(data.get("visibleColumns"));
-				filename = filename + AppConstants.EXPORT_XLS_SUFFIX.getString();
-				outputFilename = this.excelExportStudyService.export(userSelection.getWorkbook(), filename, instances, visibleColumns);
-
-				if (instances != null && instances.size() > 1) {
-					final int extensionIndex = filename.lastIndexOf(".");
-					filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
-					response.setContentType(FileUtils.MIME_ZIP);
-				} else {
-					filename = this.getOutputFileName(userSelection.getWorkbook().isNursery(), outputFilename, filename);
+				fileExportInfo = this.excelExportStudyService.export(userSelection.getWorkbook(), studyName, instances, visibleColumns);
+				if (instances != null && instances.size() == 1) {
 					response.setContentType(FileUtils.MIME_MS_EXCEL);
 				}
 			} else if (AppConstants.EXPORT_KSU_EXCEL.getInt() == exportType) {
-				filename = filename + AppConstants.EXPORT_XLS_SUFFIX.getString();
-				outputFilename = this.ksuExcelExportStudyService.export(userSelection.getWorkbook(), filename, instances);
-				final int extensionIndex = filename.lastIndexOf(".");
-				filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
+				fileExportInfo = this.ksuExcelExportStudyService.export(userSelection.getWorkbook(), studyName, instances);
 				response.setContentType(FileUtils.MIME_ZIP);
 			} else if (AppConstants.EXPORT_KSU_CSV.getInt() == exportType) {
-				filename = filename + AppConstants.EXPORT_CSV_SUFFIX.getString();
-				outputFilename = this.ksuCsvExportStudyService.export(userSelection.getWorkbook(), filename, instances);
-				final int extensionIndex = filename.lastIndexOf(".");
-				filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
-				response.setContentType(FileUtils.MIME_ZIP);
+				fileExportInfo = this.ksuCsvExportStudyService.export(userSelection.getWorkbook(), studyName, instances);
 			} else if (AppConstants.EXPORT_CSV.getInt() == exportType) {
 				final List<Integer> visibleColumns = this.getVisibleColumns(data.get("visibleColumns"));
-				filename = filename + AppConstants.EXPORT_CSV_SUFFIX.getString();
-				outputFilename = this.csvExportStudyService.export(userSelection.getWorkbook(), filename, instances, visibleColumns);
-				if (instances != null && instances.size() > 1) {
-					final int extensionIndex = filename.lastIndexOf(".");
-					filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
-					response.setContentType(FileUtils.MIME_ZIP);
-				} else {
-					filename = this.getOutputFileName(userSelection.getWorkbook().isNursery(), outputFilename, filename);
+				fileExportInfo = this.csvExportStudyService.export(userSelection.getWorkbook(), studyName, instances, visibleColumns);
+				if (instances != null && instances.size() == 1) {
 					response.setContentType(FileUtils.MIME_CSV);
 				}
 			}
 			results.put(ExportStudyController.IS_SUCCESS, true);
-			results.put(ExportStudyController.OUTPUT_FILENAME, outputFilename);
-			results.put(ExportStudyController.FILENAME, filename);
+			results.put(ExportStudyController.OUTPUT_FILENAME, fileExportInfo.getFilePath());
+			results.put(ExportStudyController.FILENAME, fileExportInfo.getDownloadFileName());
 			results.put(ExportStudyController.CONTENT_TYPE, response.getContentType());
 
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, userSelection.getWorkbook().getObservations(), true,

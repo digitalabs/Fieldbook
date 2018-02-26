@@ -313,17 +313,30 @@ public class WorkbookUtil {
 						new MeasurementData(variable.getName(), value, false, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 			}
 
-			if(stdVariable.getId() == TermId.SEED_SOURCE.getId()) {
-				value = importedGermplasm.getSource() != null ? importedGermplasm.getSource().toString() : "";
+			if(stdVariable.getId() == TermId.SEED_SOURCE.getId() || stdVariable.getId() == TermId.GERMPLASM_SOURCE.getId()) {
+				value = importedGermplasm.getSource() != null ? importedGermplasm.getSource() : "";
 				measurementData =
 						new MeasurementData(variable.getName(), value, false, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 			}
 
 			if(stdVariable.getId() == TermId.STOCKID.getId()) {
-				value = importedGermplasm.getStockIDs() != null ? importedGermplasm.getStockIDs().toString() : "";
+				value = importedGermplasm.getStockIDs() != null ? importedGermplasm.getStockIDs() : "";
 				measurementData =
 						new MeasurementData(variable.getName(), value, false, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 			}
+			
+			if(stdVariable.getId() == TermId.ENTRY_CODE.getId()) {
+				value = importedGermplasm.getEntryCode() != null ? importedGermplasm.getEntryCode() : "";
+				measurementData =
+						new MeasurementData(variable.getName(), value, false, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
+			}
+			
+			if(stdVariable.getId() == TermId.CROSS.getId()) {
+				value = importedGermplasm.getCross() != null ? importedGermplasm.getCross() : "";
+				measurementData =
+						new MeasurementData(variable.getName(), value, false, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
+			}
+			
 		}
 
 		if(measurementData == null) {

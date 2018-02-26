@@ -42,8 +42,6 @@
 			</div>
 		</div>
 		<div class="col-md-12 sectionContainer collapse in nurseryDetails">
-			<strong th:text="#{study.name.label} + ':'" class="">:</strong>
-			<span th:text="${nurseryDetails.name}" class="fieldmap-study-name fbk-hide"></span>
 			<div th:each="basicDetail, rowStat : *{basicStudyDetails}" th:remove="tag">
                 <div  th:class="
                             (${rowStat.last and rowStat.size mod 3 ne 0} ?

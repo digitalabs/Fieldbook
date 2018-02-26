@@ -55,8 +55,6 @@
 
         <!-- Display basic details using basicStudyDetails which contains basic details of Trial like Trial Name, Description, Objective,
             Created by, Last Updated, Creation Date, Completion date, No. of entries & plots, Field map created, no. of variates with data -->
-        <strong th:text="#{study.name.label} + ':'" class="">:</strong>
-        <span th:text="${trialDetails.studyName}" class="fieldmap-study-name fbk-hide"></span>
 		<div class="col-md-12 sectionContainer collapse in trialDetails">
             <div th:each="basicDetail, rowStat : *{basicStudyDetails}" th:remove="tag">
                 <div  th:class="

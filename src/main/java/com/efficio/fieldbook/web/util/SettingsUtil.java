@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.util;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.PairedVariable;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -25,6 +26,7 @@ import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -43,6 +45,7 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Constant;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
@@ -55,6 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -85,8 +89,9 @@ public class SettingsUtil {
 	private static final String END_DATE = "Completion date";
 	private static final String STUDY_UPDATE = "Last updated";
 	private static final String OBJECTIVE = "Objective";
-	private static final String STUDY_NAME = "Name";
-	private static final String CREATED_BY = "Created By";
+	private static final String STUDY_NAME = "Study name";
+	private static final String CREATED_BY = "Created by";
+
 
 	private SettingsUtil() {
 		// do nothing
@@ -1485,14 +1490,13 @@ public class SettingsUtil {
 		return settingDetail;
 	}
 
-	public static StudyDetails convertWorkbookToStudyDetails(final Workbook workbook,
-			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final UserSelection userSelection, final String programUUID,
-			final Properties appConstantsProperties) {
+	public static StudyDetails convertWorkbookToStudyDetails(final Workbook workbook, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
+		final FieldbookService fieldbookService, final UserSelection userSelection, final String programUUID,
+		final Properties appConstantsProperties, final String createdBy) {
 
 		final StudyDetails studyDetails =
 				SettingsUtil.convertWorkbookStudyLevelVariablesToStudyDetails(workbook, fieldbookMiddlewareService, fieldbookService,
-						userSelection, workbook.getStudyDetails().getId().toString(), programUUID, appConstantsProperties);
+						userSelection, workbook.getStudyDetails().getId().toString(), programUUID, appConstantsProperties, createdBy);
 
 		if (workbook.getTrialDatasetId() != null) {
 			studyDetails.setNumberOfEnvironments(
@@ -1523,10 +1527,9 @@ public class SettingsUtil {
 		return studyDetails;
 	}
 
-	private static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(final Workbook workbook,
-			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final UserSelection userSelection, final String projectId, final String programUUID,
-			final Properties appConstantsProperties) {
+	private static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(final Workbook workbook, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
+		final FieldbookService fieldbookService, final UserSelection userSelection, final String projectId, final String programUUID,
+		final Properties appConstantsProperties, final String createdBy) {
 
 		final StudyDetails details = new StudyDetails();
 		details.setId(workbook.getStudyDetails().getId());
@@ -1551,7 +1554,7 @@ public class SettingsUtil {
 				details.setName(studyName);
 			}
 			basicDetails = SettingsUtil.convertWorkbookToSettingDetails(basicFields, conditions, fieldbookMiddlewareService,
-					fieldbookService, userSelection, workbook, programUUID, appConstantsProperties);
+					fieldbookService, userSelection, workbook, programUUID, appConstantsProperties, createdBy);
 			managementDetails = SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(),
 					userSelection, fieldbookMiddlewareService, fieldbookService, programUUID);
 			nurseryConditionDetails = SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(constants, 1, userSelection,
@@ -1658,7 +1661,7 @@ public class SettingsUtil {
 			final List<MeasurementVariable> conditions,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			final FieldbookService fieldbookService, final UserSelection userSelection, final Workbook workbook, final String programUUID,
-			final Properties appConstantsProperties) {
+			final Properties appConstantsProperties, String createdBy) {
 
 		int index = fields != null ? fields.size() : 0;
 		final List<SettingDetail> details = new ArrayList<>();
@@ -1669,7 +1672,7 @@ public class SettingsUtil {
 		final String endDate = workbook.getStudyDetails().getEndDate() != null ? workbook.getStudyDetails().getEndDate() : "";
 		final String studyUpdate = workbook.getStudyDetails().getStudyUpdate() != null ? workbook.getStudyDetails().getStudyUpdate() : "";
 		final String objective = workbook.getStudyDetails().getObjective() != null ? workbook.getStudyDetails().getObjective() : "";
-		final String createdBy = workbook.getStudyDetails().getCreatedBy() != null ? workbook.getStudyDetails().getCreatedBy() : "";
+
 		Integer datasetId = workbook.getMeasurementDatesetId();
 		if (datasetId == null) {
 			datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyDetails().getId(), studyName);

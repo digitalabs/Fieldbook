@@ -182,6 +182,7 @@ public class CreateNurseryController extends SettingsController {
 	public String getChecksForUseExistingNursery(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form,
 			@PathVariable final int nurseryId, final Model model, final HttpSession session, final HttpServletRequest request)
 			throws MiddlewareQueryException {
+		this.setCheckVariablesInForm(form);
 		model.addAttribute("importGermplasmListForm", form);
 
 		return super.showAjaxPage(model, CreateNurseryController.URL_CHECKS);

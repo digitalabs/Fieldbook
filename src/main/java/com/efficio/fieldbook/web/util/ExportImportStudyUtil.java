@@ -192,8 +192,6 @@ public class ExportImportStudyUtil {
 		final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 		final String cleanFilename = SettingsUtil.cleanSheetAndFileName(filename);
 		String downloadFilename = cleanFilename;
-		String filenamePath = installationDirectoryUtil.getFileInTemporaryDirectoryForProjectAndTool(cleanFilename,
-				contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 
 		// For Trial, include the trial instance # and site name (if existing)
 		if (!isNursery && instances != null && !instances.isEmpty()) {
@@ -208,9 +206,10 @@ public class ExportImportStudyUtil {
 			filenameBuilder.append(cleanFilename.substring(fileExtensionIndex));
 
 			downloadFilename = filenameBuilder.toString();
-			filenamePath = installationDirectoryUtil.getFileInTemporaryDirectoryForProjectAndTool(downloadFilename,
-					contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 		}
+		
+		String filenamePath = installationDirectoryUtil.getFileInTemporaryDirectoryForProjectAndTool(downloadFilename,
+				contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 		
 		return new FileExportInfo(filenamePath, downloadFilename);
 

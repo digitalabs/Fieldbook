@@ -1,10 +1,15 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.service.CsvExportSampleListService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.google.common.collect.Lists;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.sample.SampleDetailsDTO;
 import org.generationcp.middleware.service.api.SampleListService;
@@ -21,14 +26,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.util.FileExportInfo;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.service.CsvExportSampleListService;
+import com.google.common.collect.Lists;
 
 @Controller
 @RequestMapping(ExportSampleListController.URL)
@@ -78,40 +80,28 @@ public class ExportSampleListController  extends AbstractBaseFieldbookController
 		final HttpServletRequest req, final HttpServletResponse response) {
 
 		ExportSampleListController.LOG.debug("Entering Export exportSampleList");
-		final String export = this.doExport(response, exportType, data);
+		final String export = this.doExport(response, data);
 		ExportSampleListController.LOG.debug("Exiting Export exportSampleList");
 		return export;
 	}
 
-	private String doExport(final HttpServletResponse response, final int exportType, final Map<String, String> data) {
+	private String doExport(final HttpServletResponse response, final Map<String, String> data) {
 		ExportSampleListController.LOG.debug("Entering Export doExport");
 
 		final Map<String, Object> results = new HashMap<>();
 
 		try{
-
 			String filename = FileUtils.sanitizeFileName(data.get("studyname") + "-" + data.get("listname"));
-			final Integer SampleListId = Integer.valueOf(data.get("listId"));
-			String outputFilename = null;
-
-			if (AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType) {
-				filename = filename + AppConstants.EXPORT_XLS_SUFFIX.getString();
-				response.setContentType(FileUtils.MIME_MS_EXCEL);
-
-			}else if(AppConstants.EXPORT_CSV.getInt() == exportType){
-				final List<String> visibleColumns = Lists.newArrayList(data.get("visibleColumns").split(","));
-				filename = filename + AppConstants.EXPORT_CSV_SUFFIX.getString();
-
-				final List<SampleDetailsDTO> sampleDetailsDTOs = sampleListService.getSampleDetailsDTOs(SampleListId);
-				outputFilename = this.csvExportSampleListService.export(sampleDetailsDTOs, filename, visibleColumns);
-				response.setContentType(FileUtils.MIME_CSV);
-
-
-			}
+			final Integer sampleListId = Integer.valueOf(data.get("listId"));
+			final List<String> visibleColumns = Lists.newArrayList(data.get("visibleColumns").split(","));
+	
+			final List<SampleDetailsDTO> sampleDetailsDTOs = sampleListService.getSampleDetailsDTOs(sampleListId);
+			final FileExportInfo exportInfo = this.csvExportSampleListService.export(sampleDetailsDTOs, filename, visibleColumns);
+			response.setContentType(FileUtils.MIME_CSV);
 
 			results.put(ExportSampleListController.IS_SUCCESS, true);
-			results.put(ExportSampleListController.OUTPUT_FILENAME, outputFilename);
-			results.put(ExportSampleListController.FILENAME, filename);
+			results.put(ExportSampleListController.OUTPUT_FILENAME, exportInfo.getFilePath());
+			results.put(ExportSampleListController.FILENAME, exportInfo.getDownloadFileName());
 			results.put(ExportSampleListController.CONTENT_TYPE, response.getContentType());
 
 

@@ -1,9 +1,16 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.common.service.CsvExportSampleListService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.SampleListUtilTest;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.sample.SampleDetailsDTO;
@@ -17,15 +24,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import com.efficio.fieldbook.util.FileExportInfo;
+import com.efficio.fieldbook.web.common.service.CsvExportSampleListService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.SampleListUtilTest;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -65,7 +68,7 @@ public class ExportSampleListControllerTest {
 		final String outputFilename = ExportSampleListControllerTest.SAMPLE_TRIAL_FILENAME + ExportSampleListControllerTest.CSV_EXT;
 		Mockito.doReturn(sampleDetailsDTOs).when(this.sampleListService).getSampleDetailsDTOs(Matchers.anyInt());
 		Mockito.when(this.csvExportSampleListService.export(Matchers.any(List.class), Matchers.anyString(), Matchers.any(List.class)))
-			.thenReturn(outputFilename);
+			.thenReturn(new FileExportInfo(outputFilename, outputFilename));
 		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_CSV);
 
 		final Integer exportType = AppConstants.EXPORT_CSV.getInt();

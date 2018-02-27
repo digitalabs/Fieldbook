@@ -70,9 +70,6 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	@Resource
 	private Properties appConstantsProperties;
 
-	@Resource
-	private ContextUtil contextUtil;
-
 	/** The workbench service. */
 	@Resource
 	protected WorkbenchService workbenchService;

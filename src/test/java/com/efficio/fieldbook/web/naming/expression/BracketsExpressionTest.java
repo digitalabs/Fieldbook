@@ -22,7 +22,7 @@ public class BracketsExpressionTest extends TestExpression {
 		List<StringBuilder> builders = new ArrayList<>();
 		builders.add(new StringBuilder(source.getRootName() + BracketsExpression.KEY));
 
-		this.dut.apply(builders, source);
+		this.dut.apply(builders, source, null);
 
 		Assert.assertEquals(testRootName, builders.get(0).toString());
 	}
@@ -37,7 +37,7 @@ public class BracketsExpressionTest extends TestExpression {
 		List<StringBuilder> builders = new ArrayList<>();
 		builders.add(new StringBuilder(source.getRootName() + BracketsExpression.KEY));
 
-		this.dut.apply(builders, source);
+		this.dut.apply(builders, source, null);
 
 		Assert.assertEquals("(" + testRootName + ")", builders.get(0).toString());
 	}

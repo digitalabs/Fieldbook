@@ -33,7 +33,7 @@ public class ComponentPostProcessorTest {
     public void testProcessCodeAdd() {
         Expression testExpression = new Expression() {
             @Override
-            public void apply(List<StringBuilder> values, AdvancingSource source) {
+            public void apply(List<StringBuilder> values, AdvancingSource source, final String capturedText) {
                 // do nothing
             }
 

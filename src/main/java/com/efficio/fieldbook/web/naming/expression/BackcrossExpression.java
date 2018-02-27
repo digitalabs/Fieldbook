@@ -18,7 +18,7 @@ public class BackcrossExpression extends BaseExpression {
 	private PedigreeDataManager pedigreeDataManager;
 
 	@Override
-	public void apply(final List<StringBuilder> values, final AdvancingSource source) {
+	public void apply(final List<StringBuilder> values, final AdvancingSource source, final String capturedText) {
 
 		String output = "";
 

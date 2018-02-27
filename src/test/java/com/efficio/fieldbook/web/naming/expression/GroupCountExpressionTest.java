@@ -39,7 +39,7 @@ public class GroupCountExpressionTest extends TestExpression {
         final List<StringBuilder> values = new ArrayList<>();
         values.add(new StringBuilder(source.getRootName() + countExpression));
 
-        this.dut.apply(values, source);
+        this.dut.apply(values, source, null);
         final String value = values.get(0).toString();
 
         Assert.assertEquals(expectedValue, value);

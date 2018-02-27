@@ -50,7 +50,7 @@ public class ChangeLocationExpressionTest {
         when(importedGermplasm.getGid()).thenReturn(Integer.toString(TEST_GID));
         source.setGermplasm(importedGermplasm);
 
-        dut.apply(input, source);
+        dut.apply(input, source, null);
         assertEquals("", input.get(0).toString());
     }
 
@@ -69,7 +69,7 @@ public class ChangeLocationExpressionTest {
         source.setGermplasm(importedGermplasm);
         source.setLocationAbbreviation(NEW_LOCATION_ABBR);
 
-        dut.apply(input, source);
+        dut.apply(input, source, null);
         assertEquals(NEW_LOCATION_ABBR, input.get(0).toString());
     }
 

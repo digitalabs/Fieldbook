@@ -1,7 +1,7 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -12,10 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
+import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +35,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.ExportGermplasmListForm;
 import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 @Controller
 @RequestMapping(ExportGermplasmListController.URL)
@@ -42,6 +45,7 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 	private static final Logger LOG = LoggerFactory.getLogger(ExportGermplasmListController.class);
 
 	public static final String URL = "/ExportManager";
+	public static final String GERPLASM_TYPE_LST = "LST";
 
 	@Resource
 	private UserSelection userSelection;
@@ -51,8 +55,12 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 
 	@Resource
 	private ExportGermplasmListService exportGermplasmListService;
+	
+	@Resource
+	private ContextUtil contextUtil;
+	
+	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
-	public static final String GERPLASM_TYPE_LST = "LST";
 
 	@ResponseBody
 	@RequestMapping(value = "/exportGermplasmList/{exportType}/{studyType}", method = RequestMethod.GET,
@@ -103,8 +111,7 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 			Boolean isNursery) throws GermplasmListExporterException {
 
 		String outputFileNamePath = "";
-		String fileName = "";
-		String listName = "GermplasmList";
+		String downloadFileName = "";
 
 		GermplasmList list = null;
 		if (this.userSelection.getImportedGermplasmMainInfo() != null) {
@@ -114,28 +121,33 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		if (list != null) {
 
 			// sanitize the list name to remove illegal characters for Windows filename.
-			listName = FileUtils.sanitizeFileName(list.getName());
+			final String listName = FileUtils.sanitizeFileName(list.getName());
 
-			if (exportType == 1) {
-
-				fileName = listName + ".xls";
-				outputFileNamePath = this.getFieldbookProperties().getUploadDirectory() + File.separator + fileName;
-				this.exportGermplasmListService.exportGermplasmListXLS(outputFileNamePath, this.userSelection
-						.getImportedGermplasmMainInfo().getListId(), visibleColumnsMap, isNursery);
-				response.setContentType(FileUtils.MIME_MS_EXCEL);
-
-			} else if (exportType == 2) {
-
-				fileName = listName + ".csv";
-				outputFileNamePath = this.getFieldbookProperties().getUploadDirectory() + File.separator + fileName;
-				this.exportGermplasmListService.exportGermplasmListCSV(outputFileNamePath, visibleColumnsMap, isNursery);
-				response.setContentType(FileUtils.MIME_CSV);
+			try {
+				// TODO Extract export type "1" and "2" to meaningful constants or export type enum
+				if (exportType == 1) {
+					downloadFileName = listName + AppConstants.EXPORT_XLS_SUFFIX.getString();
+					outputFileNamePath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(listName,
+							AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+					this.exportGermplasmListService.exportGermplasmListXLS(outputFileNamePath, this.userSelection
+							.getImportedGermplasmMainInfo().getListId(), visibleColumnsMap, isNursery);
+					response.setContentType(FileUtils.MIME_MS_EXCEL);
+					
+				} else if (exportType == 2) {
+					downloadFileName = listName + AppConstants.EXPORT_CSV_SUFFIX.getString();
+					outputFileNamePath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(listName,
+							AppConstants.EXPORT_CSV_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+					this.exportGermplasmListService.exportGermplasmListCSV(outputFileNamePath, visibleColumnsMap, isNursery);
+					response.setContentType(FileUtils.MIME_CSV);
+				}
+			} catch (final IOException e) {
+				throw new GermplasmListExporterException(e.getMessage(), e);
 			}
 		}
 
-		Map<String, Object> results = new HashMap<String, Object>();
+		final Map<String, Object> results = new HashMap<>();
 		results.put("outputFilename", outputFileNamePath);
-		results.put("filename", fileName);
+		results.put("filename", downloadFileName);
 		results.put("contentType", response.getContentType());
 
 		return super.convertObjectToJson(results);
@@ -153,10 +165,6 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 
 	protected void setUserSelection(UserSelection userSelection) {
 		this.userSelection = userSelection;
-	}
-
-	protected FieldbookProperties getFieldbookProperties() {
-		return super.fieldbookProperties;
 	}
 
 	protected ExportGermplasmListService getExportGermplasmListService() {

@@ -34,7 +34,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
 public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
@@ -263,10 +262,6 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 	protected String getInventoryAmount(final InventoryDetails inventoryDetails) {
 		return inventoryDetails.getAmount() != null ? inventoryDetails.getAmount().toString() : "";
-	}
-
-	public void setFieldbookProperties(final FieldbookProperties fieldbookProperties) {
-		this.fieldbookProperties = fieldbookProperties;
 	}
 
 	public void setInventoryMiddlewareService(final InventoryService inventoryMiddlewareService) {

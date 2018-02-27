@@ -29,16 +29,13 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
+import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExportAdvanceListServiceImplTest {
 
 	private static final String SEED_AMOUNT_KG = "SEED_AMOUNT_kg";
-
-	@Mock
-	private FieldbookProperties fieldbookProperties;
 
 	@Mock
 	private InventoryService inventoryMiddlewareService;
@@ -50,7 +47,6 @@ public class ExportAdvanceListServiceImplTest {
 	private GermplasmExportService germplasmExportServiceImpl;
 
 	private String advancedListIds;
-	private final String tempDirectory = "";
 	private final String studyName = "StudyName";
 
 	List<InventoryDetails> inventoryDetailsList;
@@ -61,12 +57,10 @@ public class ExportAdvanceListServiceImplTest {
 	@Before
 	public void setUp() throws MiddlewareQueryException {
 		this.inventoryDetailsList = this.generateSampleInventoryDetailsList(5);
-		Mockito.when(this.fieldbookProperties.getUploadDirectory()).thenReturn(this.tempDirectory);
 		final GermplasmList germplasmList = new GermplasmList();
 		germplasmList.setName("TempGermplasmListName");
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt())).thenReturn(germplasmList);
 
-		this.exportAdvanceListServiceImpl.setFieldbookProperties(this.fieldbookProperties);
 		this.exportAdvanceListServiceImpl.setInventoryMiddlewareService(this.inventoryMiddlewareService);
 		this.exportAdvanceListServiceImpl.setMessageSource(Mockito.mock(MessageSource.class));
 		this.exportAdvanceListServiceImpl.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
@@ -193,11 +187,11 @@ public class ExportAdvanceListServiceImplTest {
 	}
 
 	@Test
-	public void testGetFileNamePath() {
+	public void testGetFileNamePath() throws IOException {
 		final String fileName = "TestName";
-		final String fileNamePath = this.exportAdvanceListServiceImpl.getFileNamePath(fileName);
+		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.getFileNamePath(fileName);
 
-		Assert.assertEquals("Should have the same full file name path", fileNamePath, File.separator + fileName);
+		Assert.assertEquals("Should have the same full file name path", exportInfo.getFilePath(), File.separator + fileName);
 	}
 
 	@Test
@@ -220,9 +214,9 @@ public class ExportAdvanceListServiceImplTest {
 
 	@Test
 	public void testExportAdvanceGermplasmListInCsvMoreThan1AdvanceItem() throws IOException {
-		final File file = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList(this.advancedListIds, this.studyName,
+		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList(this.advancedListIds, this.studyName,
 				this.germplasmExportServiceImpl, AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString());
-		Assert.assertTrue("Return should be a zip file", file.getAbsolutePath().indexOf(".zip") != -1);
+		Assert.assertTrue("Return should be a zip file", exportInfo.getFilePath().indexOf(".zip") != -1);
 	}
 
 	@Test
@@ -230,18 +224,18 @@ public class ExportAdvanceListServiceImplTest {
 		Mockito.when(this.germplasmExportServiceImpl.generateCSVFile(Matchers.anyList(), Matchers.anyList(), Matchers.anyString()))
 				.thenReturn(new File("Temp"));
 
-		final File file = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList("1", this.studyName, this.germplasmExportServiceImpl,
+		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList("1", this.studyName, this.germplasmExportServiceImpl,
 				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString());
-		Assert.assertTrue("Return should be a csv file", file.getAbsolutePath().indexOf(".csv") != -1);
+		Assert.assertTrue("Return should be a csv file", exportInfo.getFilePath().indexOf(".csv") != -1);
 	}
 
 	@Test
 	public void testExportAdvanceGermplasmListInCsvThrowsIOException() throws MiddlewareQueryException, IOException {
 		Mockito.when(this.germplasmExportServiceImpl.generateCSVFile(Matchers.anyList(), Matchers.anyList(), Matchers.anyString()))
 				.thenThrow(new IOException());
-		final File file = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList("1", this.studyName, this.germplasmExportServiceImpl,
+		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList("1", this.studyName, this.germplasmExportServiceImpl,
 				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString());
-		Assert.assertEquals("Should return noFile since there was an error", file.getName(), "noFile");
+		Assert.assertEquals("Should return noFile since there was an error", exportInfo.getDownloadFileName(), "noFile");
 	}
 
 	@Test
@@ -249,9 +243,9 @@ public class ExportAdvanceListServiceImplTest {
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt()))
 				.thenThrow(new MiddlewareQueryException("error"));
 
-		final File file = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList("1", this.studyName, this.germplasmExportServiceImpl,
+		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList("1", this.studyName, this.germplasmExportServiceImpl,
 				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString());
-		Assert.assertEquals("Should return noFile since there was an error", file.getName(), "noFile");
+		Assert.assertEquals("Should return noFile since there was an error", exportInfo.getDownloadFileName(), "noFile");
 	}
 
 	@Test
@@ -259,9 +253,9 @@ public class ExportAdvanceListServiceImplTest {
 		Mockito.when(this.germplasmExportServiceImpl.generateExcelFileForSingleSheet(Matchers.anyList(), Matchers.anyList(),
 				Matchers.anyString(), Matchers.anyString())).thenReturn(new FileOutputStream(new File("temp")));
 
-		final File file = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList("1", this.studyName, this.germplasmExportServiceImpl,
+		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList("1", this.studyName, this.germplasmExportServiceImpl,
 				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString());
-		Assert.assertTrue("Return should be a xls file", file.getAbsolutePath().indexOf(".xls") != -1);
+		Assert.assertTrue("Return should be a xls file", exportInfo.getFilePath().indexOf(".xls") != -1);
 	}
 
 	@Test
@@ -269,19 +263,19 @@ public class ExportAdvanceListServiceImplTest {
 		Mockito.when(this.germplasmExportServiceImpl.generateExcelFileForSingleSheet(Matchers.anyList(), Matchers.anyList(),
 				Matchers.anyString(), Matchers.anyString())).thenThrow(new IOException());
 
-		final File file = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList("1", this.studyName, this.germplasmExportServiceImpl,
+		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList("1", this.studyName, this.germplasmExportServiceImpl,
 				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString());
-		Assert.assertEquals("Should return noFile since there was an error", file.getName(), "noFile");
+		Assert.assertEquals("Should return noFile since there was an error", exportInfo.getDownloadFileName(), "noFile");
 	}
 
 	@Test
-	public void testExportAdvanceGermplasmListInXlsThrowsMiddlewareException() throws IOException, MiddlewareQueryException {
+	public void testExportAdvanceGermplasmListInXlsThrowsMiddlewareException() throws IOException {
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt()))
 				.thenThrow(new MiddlewareQueryException("error"));
 
-		final File file = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList("1", this.studyName, this.germplasmExportServiceImpl,
+		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList("1", this.studyName, this.germplasmExportServiceImpl,
 				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString());
-		Assert.assertEquals("Should return noFile since there was an error", file.getName(), "noFile");
+		Assert.assertEquals("Should return noFile since there was an error", exportInfo.getDownloadFileName(), "noFile");
 	}
 
 	@Test
@@ -289,9 +283,9 @@ public class ExportAdvanceListServiceImplTest {
 		Mockito.when(this.germplasmExportServiceImpl.generateExcelFileForSingleSheet(Matchers.anyList(), Matchers.anyList(),
 				Matchers.anyString(), Matchers.anyString())).thenReturn(new FileOutputStream(new File("temp")));
 
-		final File file = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList(this.advancedListIds, this.studyName,
+		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList(this.advancedListIds, this.studyName,
 				this.germplasmExportServiceImpl, AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString());
-		Assert.assertTrue("Return should be a zip file", file.getAbsolutePath().indexOf(".zip") != -1);
+		Assert.assertTrue("Return should be a zip file", exportInfo.getFilePath().indexOf(".zip") != -1);
 	}
 
 	@Test

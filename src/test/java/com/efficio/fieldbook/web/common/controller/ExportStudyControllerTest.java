@@ -11,7 +11,6 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -134,7 +133,7 @@ public class ExportStudyControllerTest {
 	public void testDoAdvanceExportCsvMoreThan1() throws MiddlewareQueryException, JsonProcessingException, IOException {
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1|2|3", "TempName", this.germplasmExportService,
-				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new File("temp.zip"));
+				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new FileExportInfo("temp.zip", "temp.zip"));
 
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
@@ -157,7 +156,7 @@ public class ExportStudyControllerTest {
 	public void testDoAdvanceExportCsvOnly1() throws MiddlewareQueryException, JsonParseException, JsonMappingException, IOException {
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1", "TempName", this.germplasmExportService,
-				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new File("temp.csv"));
+				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new FileExportInfo("temp.csv", "temp.csv"));
 
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
@@ -181,7 +180,7 @@ public class ExportStudyControllerTest {
 	public void testDoAdvanceExportXlsMoreThan1() throws MiddlewareQueryException, JsonProcessingException, IOException {
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1|2|3", "TempName", this.germplasmExportService,
-				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString())).thenReturn(new File("temp.zip"));
+				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString())).thenReturn(new FileExportInfo("temp.zip", "temp.zip"));
 
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
@@ -204,7 +203,7 @@ public class ExportStudyControllerTest {
 	public void testDoAdvanceExportXlsOnly1() throws MiddlewareQueryException, JsonParseException, JsonMappingException, IOException {
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1", "TempName", this.germplasmExportService,
-				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString())).thenReturn(new File("temp.xls"));
+				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString())).thenReturn(new FileExportInfo("temp.xls", "temp.xls"));
 
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
@@ -229,10 +228,10 @@ public class ExportStudyControllerTest {
 		details.setStudyName("TestStudy");
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1", details.getStudyName(), this.germplasmExportService,
-				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString())).thenReturn(new File("temp.xls"));
+				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString())).thenReturn(new FileExportInfo("temp.xls", "temp.xls"));
 
-		final File file = this.exportStudyController.exportAdvanceListItems("1", "1", details);
-		Assert.assertTrue("Return file should not be null", file != null);
+		final FileExportInfo fileExportInfo = this.exportStudyController.exportAdvanceListItems("1", "1", details);
+		Assert.assertTrue("Return file should not be null", fileExportInfo.getFilePath() != null);
 	}
 
 	@Test
@@ -241,11 +240,11 @@ public class ExportStudyControllerTest {
 		details.setStudyName("TestStudy");
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1", details.getStudyName(), this.germplasmExportService,
-				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new File("temp.csv"));
+				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new FileExportInfo("temp.csv", "temp.csv"));
 
-		final File file =
+		final FileExportInfo exportInfo =
 				this.exportStudyController.exportAdvanceListItems(AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString(), "1", details);
-		Assert.assertTrue("Return file should not be null", file != null);
+		Assert.assertTrue("Return file should not be null", exportInfo.getFilePath() != null);
 	}
 
 	@Test
@@ -254,10 +253,10 @@ public class ExportStudyControllerTest {
 		details.setStudyName("TestStudy");
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1", details.getStudyName(), this.germplasmExportService,
-				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new File("temp.csv"));
+				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new FileExportInfo("temp.csv", "temp.csv"));
 
-		final File file = this.exportStudyController.exportAdvanceListItems("3", "1", details);
-		Assert.assertTrue("Return file should be null", file == null);
+		final FileExportInfo exportInfo = this.exportStudyController.exportAdvanceListItems("3", "1", details);
+		Assert.assertTrue("Return file should be null", exportInfo.getDownloadFileName() == null && exportInfo.getFilePath() == null);
 	}
 
 	@Test
@@ -593,7 +592,8 @@ public class ExportStudyControllerTest {
 
 	@Test
 	public void testDoStockExport() throws MiddlewareQueryException, JsonParseException, JsonMappingException, IOException {
-		Mockito.when(this.exportAdvanceListService.exportStockList(1, this.germplasmExportService)).thenReturn(new File("temp.xls"));
+		Mockito.when(this.exportAdvanceListService.exportStockList(1, this.germplasmExportService))
+				.thenReturn(new FileExportInfo("temp.xls", "temp.xls"));
 
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();

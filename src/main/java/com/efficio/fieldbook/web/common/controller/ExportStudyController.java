@@ -457,10 +457,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final UserSelection userSelection = this.getUserSelection();
 		final StudyDetails studyDetails = userSelection.getWorkbook().getStudyDetails();
 
-		String outputFilename = null;
-		final File file = this.exportAdvanceListItems(exportType, advancedListIds, studyDetails);
-
-		outputFilename = file.getAbsolutePath();
+		final FileExportInfo exportInfo = this.exportAdvanceListItems(exportType, advancedListIds, studyDetails);
+		String outputFilename = exportInfo.getFilePath();
 		final int extensionIndex = outputFilename.lastIndexOf(".");
 		final String extensionName = outputFilename.substring(extensionIndex, outputFilename.length());
 		String contentType = "";
@@ -473,9 +471,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		}
 		response.setContentType(contentType);
 
-		final Map<String, Object> results = new HashMap<String, Object>();
+		final Map<String, Object> results = new HashMap<>();
 		results.put(ExportStudyController.OUTPUT_FILENAME, outputFilename);
-		results.put(ExportStudyController.FILENAME, SettingsUtil.cleanSheetAndFileName(file.getName()));
+		results.put(ExportStudyController.FILENAME, SettingsUtil.cleanSheetAndFileName(exportInfo.getDownloadFileName()));
 		results.put(ExportStudyController.CONTENT_TYPE, contentType);
 
 		return super.convertObjectToJson(results);
@@ -497,13 +495,13 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		return this.jasperReportService.getCustomReportTypes(name, ToolName.FIELDBOOK_WEB.getName());
 	}
 
-	protected File exportAdvanceListItems(final String exportType, final String advancedListIds, final StudyDetails studyDetails) {
+	protected FileExportInfo exportAdvanceListItems(final String exportType, final String advancedListIds, final StudyDetails studyDetails) {
 		if (AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(exportType)
 				|| AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString().equalsIgnoreCase(exportType)) {
 			return this.exportAdvanceListService.exportAdvanceGermplasmList(advancedListIds, studyDetails.getStudyName(),
 					this.germplasmExportService, exportType);
 		}
-		return null;
+		return new FileExportInfo();
 	}
 
 	/**
@@ -520,16 +518,13 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		final String stockIds = req.getParameter("exportStockListId");
 
-		String outputFilename = null;
-
-		final File file = this.exportAdvanceListService.exportStockList(Integer.valueOf(stockIds), this.germplasmExportService);
-
-		outputFilename = file.getAbsolutePath();
+		final FileExportInfo exportInfo = this.exportAdvanceListService.exportStockList(Integer.valueOf(stockIds), this.germplasmExportService);
+		String outputFilename = exportInfo.getFilePath();
 		final String contentType = FileUtils.MIME_MS_EXCEL;
 		response.setContentType(contentType);
 		final Map<String, Object> results = new HashMap<String, Object>();
 		results.put(ExportStudyController.OUTPUT_FILENAME, outputFilename);
-		results.put(ExportStudyController.FILENAME, SettingsUtil.cleanSheetAndFileName(file.getName()));
+		results.put(ExportStudyController.FILENAME, SettingsUtil.cleanSheetAndFileName(exportInfo.getDownloadFileName()));
 		results.put(ExportStudyController.CONTENT_TYPE, contentType);
 
 		return super.convertObjectToJson(results);

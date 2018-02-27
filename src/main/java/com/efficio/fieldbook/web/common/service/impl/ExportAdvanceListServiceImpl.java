@@ -1,7 +1,6 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +16,7 @@ import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.commons.util.ZipUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
@@ -41,9 +42,6 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	private static final String DEFAULT_AMOUNT_HEADER = "SEED_AMOUNT_G";
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExportAdvanceListServiceImpl.class);
-
-	@Resource
-	private FieldbookProperties fieldbookProperties;
 
 	@Resource
 	private InventoryService inventoryMiddlewareService;
@@ -62,12 +60,15 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	private static final String ADVANCE_LIST_SHEET_NAME = "Advance List";
 
 	private static final String STOCK_LIST_EXPORT_SHEET_NAME = "Inventory List";
+	
+	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	@Override
-	public File exportAdvanceGermplasmList(final String delimitedAdvanceGermplasmListIds, final String studyName,
+	public FileExportInfo exportAdvanceGermplasmList(final String delimitedAdvanceGermplasmListIds, final String studyName,
 			final GermplasmExportService germplasmExportServiceImpl, final String type) {
 		final List<Integer> advanceGermplasmListIds = this.parseDelimitedAdvanceGermplasmListIds(delimitedAdvanceGermplasmListIds);
 		final List<String> filenameList = new ArrayList<>();
+		String downloadFilename = null;
 		String outputFilename = ExportAdvanceListServiceImpl.NO_FILE;
 		final String suffix = AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)
 				? AppConstants.EXPORT_XLS_SUFFIX.getString() : AppConstants.EXPORT_CSV_SUFFIX.getString();
@@ -77,31 +78,34 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 				final List<InventoryDetails> inventoryDetailList =
 						this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(advanceGermpasmListId);
 				final GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(advanceGermpasmListId);
-				final String advanceListName = germplasmList.getName();
-				final String filenamePath = this.getFileNamePath(advanceListName) + suffix;
+				
+				final FileExportInfo exportInfo = this.getFileNamePath(germplasmList.getName()+suffix);
+				outputFilename = exportInfo.getFilePath();
+				downloadFilename = exportInfo.getDownloadFileName();
+	
 				final String sheetName = WorkbookUtil.createSafeSheetName(ExportAdvanceListServiceImpl.ADVANCE_LIST_SHEET_NAME);
+				this.exportList(inventoryDetailList, outputFilename, sheetName, germplasmExportServiceImpl, type, false);
 	
-				this.exportList(inventoryDetailList, filenamePath, sheetName, germplasmExportServiceImpl, type, false);
-	
-				outputFilename = filenamePath;
-				filenameList.add(filenamePath);
+				filenameList.add(outputFilename);
 			}
 
 			if (filenameList.size() > 1) {
 				final String fileNameWithoutExtension =  SettingsUtil.cleanSheetAndFileName(studyName + "-" + AppConstants.ADVANCE_ZIP_DEFAULT_FILENAME.getString());
+				downloadFilename = fileNameWithoutExtension + AppConstants.ZIP_FILE_SUFFIX.getString();
 				outputFilename = this.zipFileNameList(fileNameWithoutExtension, filenameList);
 			}
 		} catch (final IOException | MiddlewareQueryException e) {
 			ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
 		}
 
-		return new File(outputFilename);
+		return new FileExportInfo(outputFilename, downloadFilename);
 	}
 
 	@Override
-	public File exportStockList(final Integer stockListId, final GermplasmExportService germplasmExportServiceImpl) {
+	public FileExportInfo exportStockList(final Integer stockListId, final GermplasmExportService germplasmExportServiceImpl) {
 
 		final List<String> filenameList = new ArrayList<>();
+		String downloadFilename = null;
 		String outputFilename = ExportAdvanceListServiceImpl.NO_FILE;
 		final String suffix = AppConstants.EXPORT_XLS_SUFFIX.getString();
 
@@ -111,25 +115,27 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 			final List<InventoryDetails> inventoryDetailList =
 					this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(stockListId);
 
-			final String advanceListName = germplasmList.getName();
-			final String filenamePath = this.getFileNamePath(advanceListName) + suffix;
+			final FileExportInfo exportInfo = this.getFileNamePath(germplasmList.getName()+suffix);
+			outputFilename = exportInfo.getFilePath();
+			downloadFilename = exportInfo.getDownloadFileName();
+
 			final String sheetName =
 					org.apache.poi.ss.util.WorkbookUtil.createSafeSheetName(ExportAdvanceListServiceImpl.STOCK_LIST_EXPORT_SHEET_NAME);
-
-			this.exportList(inventoryDetailList, filenamePath, sheetName, germplasmExportServiceImpl,
+			this.exportList(inventoryDetailList, outputFilename, sheetName, germplasmExportServiceImpl,
 					AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString(), GermplasmListType.isCrosses(germplasmListType));
 
-			outputFilename = filenamePath;
-			filenameList.add(filenamePath);
+			filenameList.add(outputFilename);
 		} catch (IOException | MiddlewareQueryException e) {
 			ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
 		}
 
-		return new File(outputFilename);
+		return new FileExportInfo(outputFilename, downloadFilename);
 	}
 
-	protected String getFileNamePath(final String name) {
-		return this.fieldbookProperties.getUploadDirectory() + File.separator + SettingsUtil.cleanSheetAndFileName(name);
+	protected FileExportInfo getFileNamePath(final String name) throws IOException {
+		final String cleanFilename = SettingsUtil.cleanSheetAndFileName(name);
+		final String outputFilepath = this.installationDirectoryUtil.getFileInTemporaryDirectoryForProjectAndTool(cleanFilename, this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+		return new FileExportInfo(outputFilepath, cleanFilename);
 	}
 
 	protected void exportList(final List<InventoryDetails> inventoryDetailList, final String filenamePath, final String sheetName,
@@ -158,7 +164,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 	protected String zipFileNameList(final String outputFilename, final List<String> filenameList) throws IOException {
 		final ZipUtil zipUtil = new ZipUtil();
-		return zipUtil.zipIt(outputFilename, filenameList, this.contextUtil.getProjectInContext(), ToolName.TRIAL_MANAGER_FIELDBOOK_WEB);
+		return zipUtil.zipIt(outputFilename, filenameList, this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 	}
 
 	protected List<Integer> parseDelimitedAdvanceGermplasmListIds(final String advancedListIds) {

@@ -50,6 +50,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -115,10 +116,10 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(new ArrayList<User>());
 
 		// to test
-		final File exportFile = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID,
+		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID,
 				CrossingTemplateExcelExporterTest.STUDY_NAME, CrossingTemplateExcelExporterTest.CURRENT_USER_ID);
 		Assert.assertEquals("uses same study name", "CrossingTemplate-" + CrossingTemplateExcelExporterTest.STUDY_NAME + ".xls",
-				exportFile.getName());
+				exportInfo.getDownloadFileName());
 	}
 
 	@Test(expected = CrossingTemplateExportException.class)
@@ -307,10 +308,10 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(new ArrayList<User>());
 
 		// to test
-		final File exportFile = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, studyName,
+		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, studyName,
 				CrossingTemplateExcelExporterTest.CURRENT_USER_ID);
-		assertThat(exportFileName, equalTo(exportFile.getName()));
-		exportFile.deleteOnExit();
+		assertThat(exportFileName, equalTo(exportInfo.getDownloadFileName()));
+		new File(exportInfo.getFilePath()).deleteOnExit();
 	}
 
 	@Test(expected = CrossingTemplateExportException.class)

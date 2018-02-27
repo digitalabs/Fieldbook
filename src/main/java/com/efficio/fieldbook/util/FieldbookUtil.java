@@ -30,6 +30,8 @@ import java.util.StringTokenizer;
  */
 public class FieldbookUtil {
 
+	public static final String UTF_8 = "UTF-8";
+	public static final String ISO_8859_1 = "iso-8859-1";
 	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
 	public static final String DESCRIPTION = "Description";
 	private static FieldbookUtil instance;

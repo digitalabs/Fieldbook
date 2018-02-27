@@ -1,7 +1,6 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,6 +26,7 @@ import org.generationcp.commons.parsing.GermplasmExportedWorkbook;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
+import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.Variable;
@@ -43,17 +43,20 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.util.PoiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The class providing export crossing template as an excel file function
  */
 public class CrossingTemplateExcelExporter {
 
-	public static final String EXPORT_FILE_NAME_FORMAT = "CrossingTemplate-%s.xls";
+	public static final String EXPORT_FILE_NAME_FORMAT = "CrossingTemplate-%s";
 	public static final String PROGRAM_UUID = UUID.randomUUID().toString();
 	public static final String FIELDMAP_COLUMN = "FIELDMAP COLUMN";
 	public static final String FIELDMAP_RANGE = "FIELDMAP RANGE";
@@ -76,9 +79,10 @@ public class CrossingTemplateExcelExporter {
 	@Resource
 	private GermplasmDataManager germplasmDataManager;
 
+	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 	private String templateFile;
 
-	public File export(final Integer studyId, final String studyName, final Integer currentUserId) throws CrossingTemplateExportException {
+	public FileExportInfo export(final Integer studyId, final String studyName, final Integer currentUserId) throws CrossingTemplateExportException {
 		try {
 			final Workbook excelWorkbook = this.fileService.retrieveWorkbookTemplate(this.templateFile);
 
@@ -287,17 +291,18 @@ public class CrossingTemplateExcelExporter {
 		this.templateFile = templateFile;
 	}
 
-	private File createExcelOutputFile(final String studyName, final Workbook excelWorkbook) throws IOException {
-		String outputFileName =
-				String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT, StringUtil.replaceInvalidChacaracterFileName(studyName,"_"));
+	private FileExportInfo createExcelOutputFile(final String studyName, final Workbook excelWorkbook) throws IOException {
+		String downloadFilename = String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT,
+				StringUtil.replaceInvalidChacaracterFileName(studyName, "_"));
+		downloadFilename = FileUtils.sanitizeFileName(downloadFilename);
+		final String outputFilepath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(downloadFilename,
+				AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 
-        outputFileName = FileUtils.sanitizeFileName(outputFileName);
-
-		try (OutputStream out = new FileOutputStream(outputFileName)) {
+		try (OutputStream out = new FileOutputStream(outputFilepath)) {
 			excelWorkbook.write(out);
 		}
 
-		return new File(outputFileName);
+		return new FileExportInfo(outputFilepath, downloadFilename + AppConstants.EXPORT_XLS_SUFFIX.getString());
 	}
 
 	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId) throws MiddlewareQueryException,

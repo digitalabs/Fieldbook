@@ -12,7 +12,6 @@
 package com.efficio.fieldbook.web.label.printing.controller;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -36,8 +35,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
-import com.google.common.base.Strings;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -46,6 +43,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.CustomReportTypeUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.FileUtils;
+import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -62,6 +60,7 @@ import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.reports.BuildReportException;
 import org.generationcp.middleware.reports.Reporter;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -103,6 +102,7 @@ import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.google.common.base.Strings;
 
 import net.sf.jasperreports.engine.JRException;
 
@@ -115,6 +115,7 @@ import net.sf.jasperreports.engine.JRException;
 @RequestMapping({LabelPrintingController.URL})
 public class LabelPrintingController extends AbstractBaseFieldbookController {
 
+	private static final String FILE_NAME = "fileName";
 	/**
 	 * The Constant URL.
 	 */
@@ -171,6 +172,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private LabelPrintingUtil labelPrintingUtil;
+	
+	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	/**
 	 * Show trial label details.
@@ -674,7 +677,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 						this.userLabelPrinting);
 
 				results.put(LabelPrintingController.IS_SUCCESS, 1);
-				results.put("fileName", fileName);
+				results.put(FILE_NAME, fileName);
 
 			} else {
 				final String errorMsg = this.messageSource.getMessage("label.printing.cannot.generate.invalid.type", new String[] {},
@@ -685,7 +688,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 				results.put(AppConstants.MESSAGE.getString(), errorMsg);
 			}
 
-		} catch ( MiddlewareException e) {
+		} catch (final MiddlewareException | IOException e) {
 			LabelPrintingController.LOG.error(e.getMessage(), e);
 			results.put(LabelPrintingController.IS_SUCCESS, 0);
 			results.put(AppConstants.MESSAGE.getString(), e.getMessage());
@@ -747,7 +750,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 
 	void generateLabelForLabelTypes(final List<StudyTrialInstanceInfo> trialInstances, final Map<String, Object> results)
-			throws LabelPrintingException {
+			throws LabelPrintingException, IOException {
 		final String fileName;
 		final LabelPrintingFileTypes selectedLabelPrintingType =
 				LabelPrintingFileTypes.getFileTypeByIndex(this.userLabelPrinting.getGenerateType());
@@ -759,7 +762,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 					this.userLabelPrinting);
 
 			results.put(LabelPrintingController.IS_SUCCESS, 1);
-			results.put("fileName", fileName);
+			results.put(FILE_NAME, fileName);
 
 		} else {
 			final String errorMsg = this.messageSource.getMessage("label.printing.cannot.generate.invalid.type", new String[] {},
@@ -790,7 +793,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setFilename(fileName);
 
 		results.put(LabelPrintingController.IS_SUCCESS, 1);
-		results.put("fileName", fileName);
+		results.put(FILE_NAME, fileName);
 
 	}
 
@@ -1014,14 +1017,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		return writer.toString();
 	}
 
-	private String getFileNameAndSetFileLocations(final String extension) {
-		String fileName = this.userLabelPrinting.getFilename().replaceAll(" ", "-") + extension;
-		fileName = FileUtils.sanitizeFileName(fileName);
-		final String fileNameLocation = this.fieldbookProperties.getUploadDirectory() + File.separator + fileName;
+	private String getFileNameAndSetFileLocations(final String extension) throws IOException {
+		String filenameWithoutExtension = this.userLabelPrinting.getFilename().replaceAll(" ", "-");
+		filenameWithoutExtension = FileUtils.sanitizeFileName(filenameWithoutExtension);
+		final String fileNameLocation = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(filenameWithoutExtension, extension,
+				this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 
-		this.userLabelPrinting.setFilenameWithExtension(fileName);
+		final String filenameWithExtension = filenameWithoutExtension + extension;
+		this.userLabelPrinting.setFilenameWithExtension(filenameWithExtension);
 		this.userLabelPrinting.setFilenameDLLocation(fileNameLocation);
-		return fileName;
+		return filenameWithExtension;
 	}
 
 	/**

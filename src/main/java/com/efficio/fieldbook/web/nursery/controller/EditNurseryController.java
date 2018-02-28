@@ -435,7 +435,7 @@ public class EditNurseryController extends SettingsController {
 		final String endDate = (form.getEndDate() != null  && !form.getEndDate().isEmpty()?
 			Util.convertDate(form.getEndDate(), Util.FRONTEND_DATE_FORMAT, Util.DATE_AS_NUMBER_FORMAT) :
 			"");
-		final String studyUpdate = (form.getStudyUpdate() != null && !form.getStudyUpdate().isEmpty() ?
+		final String studyUpdate = (form.getStudyUpdate() != null && !StringUtils.isBlank(form.getStudyUpdate()) ?
 			Util.convertDate(form.getStudyUpdate(), Util.FRONTEND_DATE_FORMAT, Util.DATE_AS_NUMBER_FORMAT) :
 			"");
 
@@ -787,9 +787,6 @@ public class EditNurseryController extends SettingsController {
 		form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
 		form.setLocationUrl(this.fieldbookProperties.getProgramLocationsUrl());
 		form.setProjectId(this.getCurrentProjectId());
-		form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
-		form.setStartDateId(AppConstants.START_DATE_ID.getString());
-		form.setEndDateId(AppConstants.END_DATE_ID.getString());
 		form.setOpenGermplasmUrl(this.fieldbookProperties.getGermplasmDetailsUrl());
 		form.setBaselineTraitsSegment(VariableType.TRAIT.getId().toString());
 		form.setSelectionVariatesSegment(VariableType.SELECTION_METHOD.getId().toString());

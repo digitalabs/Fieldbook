@@ -246,9 +246,9 @@
 								<div class="row form-group">
 									<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.creation.date}" ></b>: <span class="required">*</span></label>
 									<div class="col-sm-8">
-										<input placeholder="yyyy-mm-dd" id="basicDetails.value2" style="width: 100px" type="text"
+										<input placeholder="yyyy-mm-dd" id="startDate" style="width: 100px" type="text"
 										       class="form-control date-input" th:field="*{startDate}" />
-										<label for="basicDetails.value2" class="btn datepicker">
+										<label for="startDate" class="btn datepicker">
 											<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 										</label>
 									</div>
@@ -258,9 +258,9 @@
 									<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.completion.date}" ></b>:</label>
 
 									<div class="col-sm-8">
-										<input placeholder="yyyy-mm-dd" id="basicDetails.value4" style="width: 100px" type="text"
+										<input placeholder="yyyy-mm-dd" id="endDate" style="width: 100px" type="text"
 										       class="form-control date-input" th:field="*{endDate}" />
-										<label for="basicDetails.value4" class="btn datepicker">
+										<label for="endDate" class="btn datepicker">
 											<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 										</label>
 									</div>

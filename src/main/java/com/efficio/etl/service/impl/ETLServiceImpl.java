@@ -1,23 +1,16 @@
 
 package com.efficio.etl.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.service.FileService;
+import com.efficio.etl.web.bean.IndexValueDTO;
+import com.efficio.etl.web.bean.RowDTO;
+import com.efficio.etl.web.bean.SheetDTO;
+import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.bean.VariableDTO;
+import com.efficio.etl.web.util.AppConstants;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -46,7 +39,6 @@ import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
-import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.DataImportService;
@@ -60,16 +52,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.service.FileService;
-import com.efficio.etl.web.bean.IndexValueDTO;
-import com.efficio.etl.web.bean.RowDTO;
-import com.efficio.etl.web.bean.SheetDTO;
-import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.bean.VariableDTO;
-import com.efficio.etl.web.util.AppConstants;
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -215,7 +212,7 @@ public class ETLServiceImpl implements ETLService {
 			studyDetails.setCreatedBy(userSelection.getCreatedBy());
 		}
 		else {
-			studyDetails.setCreatedBy(this.getCurrentIbdbUserId().toString());
+			studyDetails.setCreatedBy(contextUtil.getCurrentIbdbUserId().toString());
 		}
 
 		if (userSelection.getStudyId() != null) {
@@ -963,24 +960,6 @@ public class ETLServiceImpl implements ETLService {
 		return new StudyDetails(study, title, objective, startDateStr, endDateStr, studyTypeValue, 0, null,
 				null, Util.getCurrentDateAsStringValue(), null);
 
-	}
-
-	public Integer getCurrentIbdbUserId() {
-		return this.workbenchDataManager.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
-			this.contextUtil.getCurrentWorkbenchUserId());
-
-	}
-
-	public String getCurrentProjectId() {
-		try {
-			final Project projectInContext = this.contextUtil.getProjectInContext();
-			if (projectInContext != null) {
-				return projectInContext.getProjectId().toString();
-			}
-		} catch (final MiddlewareQueryException e) {
-			LOG.error(e.getMessage(), e);
-		}
-		return "0";
 	}
 
 	private String getCellStringValue(final Sheet sheet, final Integer rowNumber, final Integer columnNumber) {

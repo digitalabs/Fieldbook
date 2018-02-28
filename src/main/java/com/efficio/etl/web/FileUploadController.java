@@ -1,16 +1,11 @@
 
 package com.efficio.etl.web;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.web.bean.FileUploadForm;
+import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.validators.FileUploadFormValidator;
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.HTTPSessionUtil;
@@ -18,11 +13,8 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
-import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
-import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
@@ -37,11 +29,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.web.bean.FileUploadForm;
-import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.validators.FileUploadFormValidator;
-import com.efficio.fieldbook.service.api.FieldbookService;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -169,8 +164,8 @@ public class FileUploadController extends AbstractBaseETLController {
 			final String programUUID = this.contextUtil.getCurrentProgramUUID();
 			org.generationcp.middleware.domain.etl.Workbook wb;
 
-			wb = this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection),
-					programUUID, confirmDiscard == 1 ? true : false, new WorkbookParser(), this.getCurrentIbdbUserId());
+			wb = this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
+				confirmDiscard == 1 ? true : false, new WorkbookParser(), this.contextUtil.getCurrentIbdbUserId());
 
 			// The entry type id should be saved in the db instead of the entry
 			// type name
@@ -245,8 +240,9 @@ public class FileUploadController extends AbstractBaseETLController {
 		try {
 
 			final String programUUID = this.contextUtil.getCurrentProgramUUID();
-			final Workbook workbook = this.dataImportService.strictParseWorkbook(
-					this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID, this.getCurrentIbdbUserId());
+			final Workbook workbook = this.dataImportService
+				.strictParseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
+					this.contextUtil.getCurrentIbdbUserId());
 
 			if (workbook.hasOutOfBoundsData()) {
 				this.returnMessage.put(FileUploadController.STATUS_CODE,
@@ -336,20 +332,4 @@ public class FileUploadController extends AbstractBaseETLController {
 		return this.userSelection;
 	}
 
-	public Integer getCurrentIbdbUserId() {
-		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
-			this.contextUtil.getCurrentWorkbenchUserId());
-	}
-
-	public String getCurrentProjectId() {
-		try {
-			final Project projectInContext = this.contextUtil.getProjectInContext();
-			if (projectInContext != null) {
-				return projectInContext.getProjectId().toString();
-			}
-		} catch (final MiddlewareQueryException e) {
-			LOG.error(e.getMessage(), e);
-		}
-		return "0";
-	}
 }

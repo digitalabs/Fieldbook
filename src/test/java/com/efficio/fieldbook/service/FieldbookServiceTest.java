@@ -728,10 +728,6 @@ public class FieldbookServiceTest {
 		workbook.setFactors(new ArrayList<MeasurementVariable>());
 		workbook.getObservations().get(0).setDataList(new ArrayList<MeasurementData>());
 
-		/*Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.STUDY_UID.getId()),
-				Matchers.anyString()))
-				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.STUDY_UID.getId(),
-						TermId.STUDY_UID.name()));*/
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.PLOT_ID.getId()),
 				Matchers.anyString()))
 				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.PLOT_ID.getId(),
@@ -756,10 +752,6 @@ public class FieldbookServiceTest {
 		workbook.setFactors(new ArrayList<MeasurementVariable>());
 		workbook.getObservations().get(0).setDataList(new ArrayList<MeasurementData>());
 
-		/*Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.STUDY_UID.getId()),
-				Matchers.anyString()))
-				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.STUDY_UID.getId(),
-						TermId.STUDY_UID.name()));*/
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.PLOT_ID.getId()),
 				Matchers.anyString()))
 				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.PLOT_ID.getId(),

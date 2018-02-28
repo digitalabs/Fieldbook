@@ -313,7 +313,7 @@ public class CreateTrialController extends BaseTrialController {
 		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(
 				data.getEnvironments().getEnvironments(), variablesForEnvironment, this.userSelection.getExpDesignParams());
 		workbook.setTrialObservations(trialEnvironmentValues);
-		data.getBasicDetails().setCreatedBy(this.getCurrentIbdbUserId().toString());
+		data.getBasicDetails().setCreatedBy(this.contextUtil.getCurrentIbdbUserId().toString());
 		this.createStudyDetails(workbook, data.getBasicDetails());
 
 		this.userSelection.setWorkbook(workbook);
@@ -405,7 +405,7 @@ public class CreateTrialController extends BaseTrialController {
 		final BasicDetails basic = new BasicDetails();
 		basic.setBasicDetails(basicDetails);
 
-		basic.setUserID(this.getCurrentIbdbUserId());
+		basic.setUserID(this.contextUtil.getCurrentIbdbUserId());
 		basic.setUserName(this.fieldbookService.getPersonByUserId(basic.getUserID()));
 
 		final TabInfo tab = new TabInfo();

@@ -80,15 +80,6 @@ public class CreateNurseryForm {
 	/** The load settings. */
 	private String loadSettings;
 
-	/** The study name term id. */
-	private String studyNameTermId;
-
-	/** The start date id. */
-	private String startDateId;
-
-	/** The end date id. */
-	private String endDateId;
-
 	/** The tree data. */
 	private String treeData;
 
@@ -470,60 +461,6 @@ public class CreateNurseryForm {
 	 */
 	public void setLoadSettings(final String loadSettings) {
 		this.loadSettings = loadSettings;
-	}
-
-	/**
-	 * Gets the study name term id.
-	 * 
-	 * @return the studyNameTermId
-	 */
-	public String getStudyNameTermId() {
-		return this.studyNameTermId;
-	}
-
-	/**
-	 * Sets the study name term id.
-	 * 
-	 * @param studyNameTermId the studyNameTermId to set
-	 */
-	public void setStudyNameTermId(final String studyNameTermId) {
-		this.studyNameTermId = studyNameTermId;
-	}
-
-	/**
-	 * Gets the start date id.
-	 *
-	 * @return the start date id
-	 */
-	public String getStartDateId() {
-		return this.startDateId;
-	}
-
-	/**
-	 * Sets the start date id.
-	 *
-	 * @param startDateId the new start date id
-	 */
-	public void setStartDateId(final String startDateId) {
-		this.startDateId = startDateId;
-	}
-
-	/**
-	 * Gets the end date id.
-	 *
-	 * @return the end date id
-	 */
-	public String getEndDateId() {
-		return this.endDateId;
-	}
-
-	/**
-	 * Sets the end date id.
-	 *
-	 * @param endDateId the new end date id
-	 */
-	public void setEndDateId(final String endDateId) {
-		this.endDateId = endDateId;
 	}
 
 	/**

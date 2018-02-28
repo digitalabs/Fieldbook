@@ -911,7 +911,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	private void addSettingDetails(final List<SettingDetail> settingDetails, final Integer termId, final CreateNurseryForm form) {
 		try {
 			settingDetails.add(this.createSettingDetail(termId, null, null));
-			form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.getCurrentIbdbUserId()));
+			form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.contextUtil.getCurrentIbdbUserId()));
 		} catch (final MiddlewareException e) {
 			SettingsController.LOG.error(e.getMessage(), e);
 		}

@@ -287,7 +287,7 @@ public class CreateNurseryController extends SettingsController {
 		final String objective = form.getObjective();
 		String createdBy = form.getCreatedBy();
 		if (createdBy == null) {
-			createdBy = this.getCurrentIbdbUserId().toString();
+			createdBy = this.contextUtil.getCurrentIbdbUserId().toString();
 		}
 		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
 		if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
@@ -440,9 +440,6 @@ public class CreateNurseryController extends SettingsController {
 		form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
 		form.setLocationId(AppConstants.LOCATION_ID.getString());
 		form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
-		form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
-		form.setStartDateId(AppConstants.START_DATE_ID.getString());
-		form.setEndDateId(AppConstants.END_DATE_ID.getString());
 		form.setOpenGermplasmUrl(this.fieldbookProperties.getGermplasmDetailsUrl());
 		form.setBaselineTraitsSegment(VariableType.TRAIT.getId().toString());
 		form.setSelectionVariatesSegment(VariableType.SELECTION_METHOD.getId().toString());
@@ -451,7 +448,7 @@ public class CreateNurseryController extends SettingsController {
 		form.setBreedingMethodCode(AppConstants.BREEDING_METHOD_CODE.getString());
 
 		try {
-			form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.getCurrentIbdbUserId()));
+			form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.contextUtil.getCurrentIbdbUserId()));
 		} catch (final MiddlewareQueryException e) {
 			CreateNurseryController.LOG.error(e.getMessage(), e);
 		}

@@ -1,25 +1,19 @@
 
 package com.efficio.etl.web;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.web.bean.FileUploadForm;
+import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.controller.angular.AngularOpenSheetController;
+import com.efficio.etl.web.validators.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.PhenotypeException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
-import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
@@ -32,11 +26,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.web.bean.FileUploadForm;
-import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.controller.angular.AngularOpenSheetController;
-import com.efficio.etl.web.validators.FileUploadFormValidator;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(ImportObservationsController.URL)
@@ -181,7 +177,8 @@ public class ImportObservationsController extends AbstractBaseETLController {
 		final List<String> errors = new ArrayList<>();
 		try {
 			final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
-					.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection), this.getCurrentIbdbUserId());
+				.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection),
+					this.contextUtil.getCurrentIbdbUserId());
 			importData.setConstants(referenceWorkbook.getConstants());
 			importData.setConditions(referenceWorkbook.getConditions());
 			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getConditions(), programUUID);
@@ -202,23 +199,4 @@ public class ImportObservationsController extends AbstractBaseETLController {
 		return super.show(model);
 
 	}
-
-	public Integer getCurrentIbdbUserId() {
-		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
-			this.contextUtil.getCurrentWorkbenchUserId());
-
-	}
-
-	public String getCurrentProjectId() {
-		try {
-			final Project projectInContext = this.contextUtil.getProjectInContext();
-			if (projectInContext != null) {
-				return projectInContext.getProjectId().toString();
-			}
-		} catch (final MiddlewareQueryException e) {
-			LOG.error(e.getMessage(), e);
-		}
-		return "0";
-	}
-
 }

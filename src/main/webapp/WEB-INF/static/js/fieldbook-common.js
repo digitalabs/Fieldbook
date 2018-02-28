@@ -1786,11 +1786,8 @@ function getDateRowIndex(divName, dateCvTermId) {
 }
 
 function validateStartEndDate(divName) {
-	//8050 - start
-	var startDateIndex = getDateRowIndex(divName, startDateId),
-		endDateIndex = getDateRowIndex(divName, endDateId),
-		startDate = $('#' + getJquerySafeId('studyLevelVariables' + startDateIndex + '.value')).val(),
-		endDate = $('#' + getJquerySafeId('studyLevelVariables' + endDateIndex + '.value')).val();
+	var startDate = $('#startDate').val(),
+		endDate = $('#enDate').val();
 
 	startDate = startDate == null ? '' : startDate;
 	endDate = endDate == null ? '' : endDate;

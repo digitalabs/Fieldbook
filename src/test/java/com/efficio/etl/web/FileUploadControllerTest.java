@@ -205,7 +205,7 @@ public class FileUploadControllerTest {
 				Matchers.anyBoolean(), Matchers.any(WorkbookParser.class), Matchers.anyInt()))
 				.thenThrow(new WorkbookParserException(errorMessage));
 
-		Mockito.when(this.fileUploadController.getCurrentIbdbUserId()).thenReturn(1);
+		Mockito.when(this.contextUtil.getCurrentIbdbUserId()).thenReturn(1);
 
 		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request,
 				this.response, this.model);

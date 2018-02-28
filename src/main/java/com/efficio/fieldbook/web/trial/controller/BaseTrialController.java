@@ -648,14 +648,14 @@ public abstract class BaseTrialController extends SettingsController {
 		return sample;
 	}
 
-	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final List<MeasurementVariable> studyConditions,
-			final boolean isUsePrevious, final int trialID) throws ParseException {
+	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final boolean isUsePrevious, final int trialID)
+		throws ParseException {
 		final Map<String, String> basicDetails = new HashMap<>();
 		final List<SettingDetail> initialDetailList = new ArrayList<>();
 
 		// find out who created the study
 		// if no owner found default to the current user
-		Integer studyOwnerPersonId = this.getCurrentIbdbUserId();
+		Integer studyOwnerPersonId = this.contextUtil.getCurrentIbdbUserId();
 
 		final String studyOwnerPersonName = this.fieldbookService.getPersonByUserId(studyOwnerPersonId);
 

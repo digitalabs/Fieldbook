@@ -84,7 +84,9 @@ public class OpenTrialController extends BaseTrialController {
 	public static final String ENVIRONMENT_DATA_TAB = "environmentData";
 	public static final String MEASUREMENT_DATA_EXISTING = "measurementDataExisting";
 	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
-	public static final String ZERO = "0";
+	public static final String IS_EXP_DESIGN_PREVIEW_FALSE = "0";
+	public static final String IS_DELETED_ENVIRONMENT = "0";
+	private static final String IS_PREVIEW_EDITABLE = "0";
 
 	@Resource
 	private StudyDataManager studyDataManager;
@@ -190,7 +192,7 @@ public class OpenTrialController extends BaseTrialController {
 			if (this.userSelection.getTemporaryWorkbook() != null) {
 				workbook = this.userSelection.getTemporaryWorkbook();
 				// TODO Remove this flag it is no longer used on the front-end
-				model.addAttribute(OpenTrialController.IS_EXP_DESIGN_PREVIEW, ZERO);
+				model.addAttribute(OpenTrialController.IS_EXP_DESIGN_PREVIEW, OpenTrialController.IS_EXP_DESIGN_PREVIEW_FALSE);
 			}
 
 			this.userSelection.setMeasurementRowList(workbook.getObservations());
@@ -308,8 +310,7 @@ public class OpenTrialController extends BaseTrialController {
 
 	protected void setModelAttributes(final CreateTrialForm form, final Integer trialId, final Model model,
 			final Workbook trialWorkbook) throws ParseException {
-		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(),
-				trialWorkbook.getStudyConditions(), false, trialId));
+		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
 		model.addAttribute("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
 		model.addAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB,
 				this.prepareEnvironmentsTabInfo(trialWorkbook, false));
@@ -547,7 +548,7 @@ public class OpenTrialController extends BaseTrialController {
 				.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
 		returnVal.put(OpenTrialController.TRIAL_SETTINGS_DATA,
 				this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
-		this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), trialWorkbook.getStudyConditions(), false, id);
+		this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, id);
 		this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false);
 		this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false);
 
@@ -602,7 +603,7 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	protected String isPreviewEditable(final Workbook originalWorkbook) {
-		String isPreviewEditable = ZERO;
+		String isPreviewEditable = IS_PREVIEW_EDITABLE;
 		if (originalWorkbook == null || originalWorkbook.getStudyDetails() == null
 				|| originalWorkbook.getStudyDetails().getId() == null) {
 			isPreviewEditable = "1";
@@ -659,7 +660,7 @@ public class OpenTrialController extends BaseTrialController {
 		}
 
 		// remove deleted environment from existing observation
-		if (deletedEnvironments.length() > 0 && !ZERO.equals(deletedEnvironments)) {
+		if (deletedEnvironments.length() > 0 && !IS_DELETED_ENVIRONMENT .equals(deletedEnvironments)) {
 			final Workbook tempWorkbook = this.processDeletedEnvironments(deletedEnvironments,
 					measurementDatasetVariables, workbook);
 			form.setMeasurementRowList(tempWorkbook.getObservations());
@@ -742,7 +743,7 @@ public class OpenTrialController extends BaseTrialController {
 	protected List<MeasurementRow> getFilteredTrialObservations(final List<MeasurementRow> trialObservations,
 			final String deletedEnvironment) {
 
-		if (ZERO.equalsIgnoreCase(deletedEnvironment) || StringUtils.EMPTY.equalsIgnoreCase(deletedEnvironment)
+		if (IS_DELETED_ENVIRONMENT .equalsIgnoreCase(deletedEnvironment) || StringUtils.EMPTY.equalsIgnoreCase(deletedEnvironment)
 				|| trialObservations == null) {
 			return trialObservations;
 		}
@@ -812,7 +813,7 @@ public class OpenTrialController extends BaseTrialController {
 	protected List<MeasurementRow> getFilteredObservations(final List<MeasurementRow> observations,
 			final String deletedEnvironment) {
 
-		if (ZERO.equalsIgnoreCase(deletedEnvironment) || StringUtils.EMPTY.equalsIgnoreCase(deletedEnvironment)) {
+		if (IS_DELETED_ENVIRONMENT .equalsIgnoreCase(deletedEnvironment) || StringUtils.EMPTY.equalsIgnoreCase(deletedEnvironment)) {
 			return observations;
 		}
 
@@ -822,7 +823,7 @@ public class OpenTrialController extends BaseTrialController {
 			for (final MeasurementData data : dataList) {
 				if (this.isATrialInstanceMeasurementVariable(data)
 						&& !deletedEnvironment.equalsIgnoreCase(data.getValue())
-						&& !ZERO.equalsIgnoreCase(data.getValue())) {
+						&& !IS_DELETED_ENVIRONMENT .equalsIgnoreCase(data.getValue())) {
 					filteredObservations.add(row);
 					break;
 				}

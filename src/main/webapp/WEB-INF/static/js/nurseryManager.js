@@ -1553,13 +1553,7 @@ function validateCreateNursery() {
 		,customMessage = ''
 		,studyNameId = $('#studyNameTermId').val();
 
-    $('.nurseryLevelVariableIdClass').each(function() {
-		if (studyNameId == $(this).val()) {
-			studyBookName = $(this).parent().find('.form-control').val();
-		}
-	});
-
-	var startDate = $('#' + getJquerySafeId('basicDetails.value2')).val();
+	var startDate = $('#' + getJquerySafeId('startDate')).val();
 	if ($.trim($('#' + getJquerySafeId('studyName')).val()) === '') {
 		hasError = true;
 		name = 'Name';
@@ -1693,8 +1687,8 @@ function validateCreateNursery() {
 
 
 function nurseryValidateStartEndDateBasic() {
-	var startDate = $('#' + getJquerySafeId('basicDetails.value2')).val();
-	var endDate = $('#' + getJquerySafeId('basicDetails.value4')).val();
+	var startDate = $('#' + getJquerySafeId('startDate')).val();
+	var endDate = $('#' + getJquerySafeId('endDate')).val();
 
 	var returnVal =  (validateStartEndDateBasic(startDate, endDate));
 	if (returnVal === true) {

@@ -1,26 +1,19 @@
 
 package com.efficio.etl.web.controller.angular;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.web.AbstractBaseETLController;
+import com.efficio.etl.web.bean.FileUploadForm;
+import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.bean.VariableDTO;
+import com.efficio.etl.web.validators.FileUploadFormValidator;
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.WorkbenchAppPathResolver;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.Constants;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
@@ -34,13 +27,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.web.AbstractBaseETLController;
-import com.efficio.etl.web.bean.FileUploadForm;
-import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.bean.VariableDTO;
-import com.efficio.etl.web.validators.FileUploadFormValidator;
-import com.efficio.fieldbook.service.api.FieldbookService;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -238,7 +234,8 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			this.fieldbookService.addStudyUUIDConditionAndPlotIDFactorToWorkbook(importData, false);
 
 			final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
-					.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection), this.getCurrentIbdbUserId());
+				.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection),
+					this.contextUtil.getCurrentIbdbUserId());
 			importData.setConstants(referenceWorkbook.getConstants());
 			importData.setConditions(referenceWorkbook.getConditions());
 			this.etlService.saveProjectOntology(importData, this.contextUtil.getCurrentProgramUUID());
@@ -257,24 +254,6 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			return this.wrapFormResult(errorMessages);
 		}
 
-	}
-
-	public Integer getCurrentIbdbUserId() {
-		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
-			this.contextUtil.getCurrentWorkbenchUserId());
-
-	}
-
-	public String getCurrentProjectId() {
-		try {
-			final Project projectInContext = this.contextUtil.getProjectInContext();
-			if (projectInContext != null) {
-				return projectInContext.getProjectId().toString();
-			}
-		} catch (final MiddlewareQueryException e) {
-			LOG.error(e.getMessage(), e);
-		}
-		return "0";
 	}
 
 	@ModelAttribute("uploadForm")

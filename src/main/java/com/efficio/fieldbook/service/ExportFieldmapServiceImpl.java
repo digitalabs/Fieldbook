@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import com.efficio.fieldbook.service.api.ExportExcelService;
+import com.efficio.fieldbook.service.api.ExportFieldmapService;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapRow;
@@ -44,9 +44,9 @@ import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
  * The Class ExcelExportServiceImpl.
  */
 @SuppressWarnings("deprecation")
-public class ExportExcelServiceImpl implements ExportExcelService {
+public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ExportExcelServiceImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ExportFieldmapServiceImpl.class);
 
 	private final static String UP = "  UP  ";
 	private final static String DOWN = "  DOWN  ";
@@ -55,7 +55,7 @@ public class ExportExcelServiceImpl implements ExportExcelService {
 	private ResourceBundleMessageSource messageSource;
 
 	@Override
-	public FileOutputStream exportFieldMapToExcel(String fileName, UserFieldmap userFieldMap) throws FieldbookException {
+	public FileOutputStream exportFieldMapToExcel(final String fileName, final UserFieldmap userFieldMap) throws FieldbookException {
 		Locale locale = LocaleContextHolder.getLocale();
 
 		boolean isTrial = userFieldMap.isTrial();
@@ -443,10 +443,10 @@ public class ExportExcelServiceImpl implements ExportExcelService {
 			return fileOutputStream;
 
 		} catch (FileNotFoundException e) {
-			ExportExcelServiceImpl.LOG.error(e.getMessage(), e);
+			ExportFieldmapServiceImpl.LOG.error(e.getMessage(), e);
 			throw new FieldbookException("Error writing to file: " + fileName, e);
 		} catch (IOException e) {
-			ExportExcelServiceImpl.LOG.error(e.getMessage(), e);
+			ExportFieldmapServiceImpl.LOG.error(e.getMessage(), e);
 			throw new FieldbookException("Error writing to file: " + fileName, e);
 		}
 
@@ -512,11 +512,11 @@ public class ExportExcelServiceImpl implements ExportExcelService {
 			int startCol = machineRowCapacity * i + 1;
 			if (i % 2 == 1) {
 				Cell cell = row.createCell(startCol);
-				cell.setCellValue(ExportExcelServiceImpl.DOWN);
+				cell.setCellValue(ExportFieldmapServiceImpl.DOWN);
 				cell.setCellStyle(subHeaderStyle);
 			} else {
 				Cell cell = row.createCell(startCol);
-				cell.setCellValue(ExportExcelServiceImpl.UP);
+				cell.setCellValue(ExportFieldmapServiceImpl.UP);
 				cell.setCellStyle(subHeaderStyle);
 			}
 			if (i == numberOfDirections - 1 && remainingRows > 0) { // last item

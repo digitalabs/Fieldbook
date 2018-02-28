@@ -1,12 +1,10 @@
 
 package com.efficio.fieldbook.web.fieldmap.controller;
 
-import java.io.File;
 import java.io.FileOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.efficio.fieldbook.util.FieldbookException;
 import org.generationcp.commons.util.DateUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,7 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.service.api.ExportExcelService;
+import com.efficio.fieldbook.service.api.ExportFieldmapService;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 
@@ -42,7 +42,7 @@ public class GenerateFieldmapControllerTest {
 	private UserFieldmap userFieldmap;
 
 	@Mock
-	private ExportExcelService exportExcelService;
+	private ExportFieldmapService exportExcelService;
 
 	@InjectMocks
 	private GenerateFieldmapController generateFieldmapCtrlToTest;
@@ -58,13 +58,13 @@ public class GenerateFieldmapControllerTest {
 		// We dont care which ever browser we use, so we return anything for user-agent
 		Mockito.when(this.request.getHeader("User-Agent")).thenReturn("RANDOM_BROWSER");
 
-		String fileName = generateFieldmapCtrlToTest.makeSafeFileName(GenerateFieldmapControllerTest.BLOCK_NAME);
+		FileExportInfo fileExportInfo = generateFieldmapCtrlToTest.makeSafeFileName(GenerateFieldmapControllerTest.BLOCK_NAME);
 
 		/* Call method to test, collect the output */
 		ResponseEntity<FileSystemResource> output = generateFieldmapCtrlToTest.exportExcel(this.request);
 
 		// Verify that we performed the export operation
-		Mockito.verify(this.exportExcelService).exportFieldMapToExcel(fileName, this.userFieldmap);
+		Mockito.verify(this.exportExcelService).exportFieldMapToExcel(fileExportInfo.getFilePath(), this.userFieldmap);
 
 		// Verify that the export is success
 		Assert.assertEquals("Request to controller should be success", HttpStatus.OK , output.getStatusCode());
@@ -88,12 +88,12 @@ public class GenerateFieldmapControllerTest {
 
 	@Test
 	public void makeSafeFileName() throws Exception {
-		String out = this.generateFieldmapCtrlToTest.makeSafeFileName(GenerateFieldmapControllerTest.BLOCK_NAME);
+		FileExportInfo exportInfo = this.generateFieldmapCtrlToTest.makeSafeFileName(GenerateFieldmapControllerTest.BLOCK_NAME);
 
 		Assert.assertTrue("Contains the BLOCK_NAME without spaces",
-				out.contains(GenerateFieldmapControllerTest.BLOCK_NAME.replace(" ", "")));
+				exportInfo.getDownloadFileName().contains(GenerateFieldmapControllerTest.BLOCK_NAME.replace(" ", "")));
 		Assert.assertTrue("No spaces, ends with \"-<current_date>.xls\"",
-				!out.contains(" ") && out.endsWith("-" + DateUtil.getCurrentDateAsStringValue() + ".xls"));
+				!exportInfo.getDownloadFileName().contains(" ") && exportInfo.getDownloadFileName().endsWith("-" + DateUtil.getCurrentDateAsStringValue() + ".xls"));
 
 	}
 

@@ -181,7 +181,7 @@
 	<bean id="labelPrintingService" class="com.efficio.fieldbook.service.LabelPrintingServiceImpl" />
 
 
-	<bean id="exportExcelService" class="com.efficio.fieldbook.service.ExportExcelServiceImpl" />
+	<bean id="exportFieldmapService" class="com.efficio.fieldbook.service.ExportFieldmapServiceImpl" />
 
 
 	<bean id="exportOrderingSerpentineOverRangeService"

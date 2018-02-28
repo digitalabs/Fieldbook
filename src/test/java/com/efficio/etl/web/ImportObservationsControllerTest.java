@@ -74,7 +74,7 @@ public class ImportObservationsControllerTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID())
 				.thenReturn(ImportObservationsControllerTest.PROGRAM_UUID);
-		Mockito.when(workbenchService.getCurrentIbdbUserId(Mockito.anyLong(), Mockito.anyInt())).thenReturn(1);
+		Mockito.when(this.contextUtil.getCurrentIbdbUserId()).thenReturn(CURRENT_IBDB_USER_ID);
 	}
 
 	@Test

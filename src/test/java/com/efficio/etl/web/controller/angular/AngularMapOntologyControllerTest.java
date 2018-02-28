@@ -67,8 +67,8 @@ public class AngularMapOntologyControllerTest {
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID())
 				.thenReturn(AngularMapOntologyControllerTest.PROGRAM_UUID);
+		Mockito.when(this.contextUtil.getCurrentIbdbUserId()).thenReturn(CURRENT_IBDB_USER_ID);
 		Mockito.when(this.request.getContextPath()).thenReturn(AngularMapOntologyControllerTest.CONTEXT_PATH);
-		Mockito.when(workbenchService.getCurrentIbdbUserId(Mockito.anyLong(), Mockito.anyInt())).thenReturn(1);
 	}
 
 	@Test

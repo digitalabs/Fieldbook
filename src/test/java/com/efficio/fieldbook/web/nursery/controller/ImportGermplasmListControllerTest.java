@@ -341,7 +341,7 @@ public class ImportGermplasmListControllerTest {
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displayGermplasmDetailsOfCurrentStudy(StudyType.N.getName(), form, model);
+		this.importGermplasmListController.displayGermplasmDetailsOfCurrentStudy(form, model);
 
 		Assert.assertTrue(this.userSelection.isImportValid());
 
@@ -414,7 +414,7 @@ public class ImportGermplasmListControllerTest {
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displayGermplasmDetailsOfCurrentStudy(StudyType.T.getName(), form, model);
+		this.importGermplasmListController.displayGermplasmDetailsOfCurrentStudy(form, model);
 
 		Assert.assertTrue(this.userSelection.isImportValid());
 

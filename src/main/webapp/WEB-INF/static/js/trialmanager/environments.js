@@ -176,7 +176,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			};
 
 			$scope.deleteEnvironment = function(index) {
-				if (!TrialManagerDataService.isOpenTrial()) {
+				if (!TrialManagerDataService.isOpenStudy()) {
 					// For New Trial
 					confirmDeleteEnvironment(index);
 
@@ -229,7 +229,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					}
 
 					// Regenerate experimental design and measurement table when the trial is not saved yet
-					if (!TrialManagerDataService.isOpenTrial() && TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
+					if (!TrialManagerDataService.isOpenStudy() && TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
 						refreshMeasurementTableAfterDeletingEnvironment();
 					}
 

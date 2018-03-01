@@ -194,7 +194,7 @@ public class StudyTreeControllerTest {
 				.thenReturn(false);
 		Mockito.when(this.studyDataManager.isFolderEmpty(Matchers.anyInt(), Matchers.anyString()))
 				.thenReturn(false);
-		Mockito.when(this.messageSource.getMessage(Matchers.eq("browse.nursery.delete.folder.not.empty"),
+		Mockito.when(this.messageSource.getMessage(Matchers.eq("browse.study.delete.folder.not.empty"),
 				Matchers.eq(new Object[] {StudyTreeControllerTest.FOLDER_NAME}), Matchers.eq(LocaleContextHolder.getLocale())))
 				.thenReturn(StudyTreeControllerTest.FOLDER_NOT_EMPTY);
 

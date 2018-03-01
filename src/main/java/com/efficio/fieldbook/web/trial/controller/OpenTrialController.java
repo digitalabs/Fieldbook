@@ -260,7 +260,7 @@ public class OpenTrialController extends BaseTrialController {
 						trialWorkbook.getMeasurementDatesetId(),
 						SettingsUtil.buildVariates(trialWorkbook.getVariates())));
 				form.setStudyId(trialId);
-				form.setGermplasmListId(this.getGermplasmListId(trialId, dmsProject.getStudyType().getName()));
+				form.setGermplasmListId(this.getGermplasmListId(trialId));
 				form.setStudyTypeName(dmsProject.getStudyType().getLabel());
 				this.setModelAttributes(form, trialId, model, trialWorkbook);
 				this.setUserSelectionImportedGermplasmMainInfo(this.userSelection, trialId, model);
@@ -270,17 +270,14 @@ public class OpenTrialController extends BaseTrialController {
 		} catch (final MiddlewareQueryException e) {
 			OpenTrialController.LOG.debug(e.getMessage(), e);
 
-			redirectAttributes.addFlashAttribute("redirectErrorMessage",
-					this.errorHandlerService.getErrorMessagesAsString(e.getCode(),
-							new String[] { AppConstants.TRIAL.getString(),
-									StringUtils.capitalize(AppConstants.TRIAL.getString()),
-									AppConstants.TRIAL.getString() },
-							"\n"));
+			redirectAttributes.addFlashAttribute("redirectErrorMessage", this.errorHandlerService.getErrorMessagesAsString(e.getCode(),
+				new String[] {AppConstants.TRIAL.getString(), StringUtils.capitalize(AppConstants.TRIAL.getString()),
+					AppConstants.TRIAL.getString()}, "\n"));
 			return "redirect:" + ManageTrialController.URL;
 		}
 	}
 
-	protected Integer getGermplasmListId(final int studyId, final String studyTypeName ) {
+	protected Integer getGermplasmListId(final int studyId) {
 		if (this.userSelection.getImportedAdvancedGermplasmList() == null) {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 			final GermplasmListType listType = GermplasmListType.STUDY;

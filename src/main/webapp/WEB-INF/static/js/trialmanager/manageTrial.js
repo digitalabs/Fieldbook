@@ -1,6 +1,6 @@
 /*global angular, openStudyTree, showErrorMessage, operationMode, resetGermplasmList,
 showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
-stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, InventoryPage, ImportCrosses*/
+stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, InventoryPage, ImportCrosses*/
 //TODO move this messages under a namespace
 /* global addEnvironmentsImportDesignMessage, importSaveDataWarningMessage*/
 
@@ -170,11 +170,10 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			$scope.crossesListData = [];
 			$scope.sampleListTabs = [];
 			$scope.crossesListTabs = [];
-			$scope.isOpenTrial = TrialManagerDataService.isOpenTrial;
+			$scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
 			$scope.studyTypes = [];
 			$scope.studyTypeSelected = undefined;
-			$scope.isChoosePreviousTrial = false;
-			$scope.usingStudyTemplate = false;
+			$scope.isChoosePreviousStudy = false;
 
 			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
@@ -202,8 +201,8 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				});
 			};
 
-			$scope.toggleChoosePreviousTrial = function() {
-				$scope.isChoosePreviousTrial = !$scope.isChoosePreviousTrial;
+			$scope.toggleChoosePreviousStudy = function() {
+				$scope.isChoosePreviousStudy = !$scope.isChoosePreviousStudy;
 			};
 
 			$scope.resetTabsData = function() {
@@ -238,21 +237,9 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				if (measurementDiv.length !== 0) {
 					//measurementDiv.html('');
 				}
-
 				if (typeof resetGermplasmList !== 'undefined') {
 					resetGermplasmList();
 				}
-				$scope.usingStudyTemplate = false;
-			};
-
-			$scope.changeSelectStudyType = function (studyTypeSelected) {
-				angular.forEach($scope.studyTypes, function (studyType) {
-						if (studyType.id === studyTypeSelected) {
-							$scope.data.studyType = studyType.name;
-							return;
-						}
-					}
-				);
 			};
 
 			// To apply scope safely
@@ -270,16 +257,16 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 			$scope.saveCurrentTrialData = TrialManagerDataService.saveCurrentData;
 
-			$scope.selectPreviousTrial = function() {
-				openStudyTree(3, $scope.useExistingTrial);
+			$scope.selectPreviousStudy = function() {
+				openStudyTree(3, $scope.useExistingStudy);
 			};
 
 			$scope.changeFolderLocation = function() {
 				openStudyTree(2, TrialManagerDataService.updateSelectedFolder);
 			};
 
-			$scope.useExistingTrial = function(existingTrialID) {
-				$http.get('/Fieldbook/TrialManager/createTrial/useExistingTrial?trialID=' + existingTrialID).success(function(data) {
+			$scope.useExistingStudy = function(existingStudyId) {
+				$http.get('/Fieldbook/TrialManager/createTrial/useExistingStudy?studyId=' + existingStudyId).success(function(data) {
 					// update data and settings
 					if (data.createTrialForm !== null && data.createTrialForm.hasError === true) {
 						$scope.resetTabsData();
@@ -304,7 +291,6 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 								if (studyType.label === data.createTrialForm.studyTypeName ) {
 									$scope.changeSelectStudyType(studyType.id);
 									$('#studyTypeId').val("number:"+studyType.id.toString());
-									$scope.usingStudyTemplate = true;
 									return;
 								}
 							}
@@ -369,7 +355,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			};
 
 			$scope.loadMeasurementsTabInBackground = function() {
-				if (isOpenTrial()) {
+				if (isOpenStudy()) {
 					$state.go('editMeasurements', {}, { location: false });
 				}
 
@@ -733,15 +719,15 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 		}]);
 
 	manageTrialApp.filter('filterMeasurementState', function() {
-			return function(tabs, isOpenTrial) {
+			return function(tabs, isOpenStudy) {
 				var filtered = angular.copy(tabs);
 
 				for (var i = 0; i < filtered.length; i++) {
-					if (filtered[i].state === 'editMeasurements' && isOpenTrial) {
+					if (filtered[i].state === 'editMeasurements' && isOpenStudy) {
 						filtered.splice(i, 1);
 
 						break;
-					} else if (filtered[i].state === 'openMeasurements' && !isOpenTrial) {
+					} else if (filtered[i].state === 'openMeasurements' && !isOpenStudy) {
 						filtered.splice(i, 1);
 
 						break;

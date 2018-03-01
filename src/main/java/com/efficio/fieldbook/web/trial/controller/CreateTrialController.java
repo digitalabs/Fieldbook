@@ -139,14 +139,15 @@ public class CreateTrialController extends BaseTrialController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/useExistingTrial", method = RequestMethod.GET)
-	public Map<String, Object> getExistingTrialDetails(@RequestParam(value = "trialID") final Integer trialID) {
+	@RequestMapping(value = "/useExistingStudy", method = RequestMethod.GET)
+	public Map<String, Object> getExistingTrialDetails(@RequestParam(value = "studyId") final Integer studyId) {
 		final Map<String, Object> tabDetails = new HashMap<>();
 		CreateTrialForm form = new CreateTrialForm();
 		try {
-			if (trialID != null && trialID != 0) {
-				final Study study = this.fieldbookMiddlewareService.getStudy(trialID);
-				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(trialID, study.getType());
+			if (studyId != null && studyId != 0) {
+				final Study study = this.fieldbookMiddlewareService.getStudy(studyId);
+				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(studyId, study.getType());
+
 				this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
 
 				this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());

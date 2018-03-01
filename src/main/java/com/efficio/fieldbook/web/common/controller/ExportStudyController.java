@@ -289,8 +289,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		// keep export functionality working.
 		boolean observationsLoaded = this.fieldbookMiddlewareService.loadAllObservations(userSelection.getWorkbook());
 
-		LOG.info("Export Nursery/Trial : doExport : getWorbook : end");
-		LOG.info("Export Nursery/Trial : doExport : processWorbook : start");
+		LOG.info("Export Study : doExport : getWorbook : end");
+		LOG.info("Export Study : doExport : processWorbook : start");
 
 
 		final Map<String, Object> results = new HashMap<>();
@@ -352,7 +352,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, userSelection.getWorkbook().getObservations(), true,
 					this.ontologyService, contextUtil.getCurrentProgramUUID());
 			
-			LOG.info("Export Nursery/Trial : doExport : processWorbook : end");
+			LOG.info("Export Study : doExport : processWorbook : end");
 			
 		} catch (final Exception e) {
 			// generic exception handling block needs to be added here so that the calling AJAX function receives proper notification that
@@ -367,7 +367,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 				userSelection.getWorkbook().getObservations().clear();
 			}
 		}
-		LOG.info("Exiting Export Nursery/Trial : doExport");
+		LOG.info("Exiting Export Study : doExport");
 		return super.convertObjectToJson(results);
 	}
 
@@ -428,11 +428,10 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/trial/instances/{studyId}", method = RequestMethod.GET)
 	public String saveList(@PathVariable final int studyId, final Model model, final HttpSession session) {
 
-		final List<ExportTrialInstanceBean> trialInstances = new ArrayList<ExportTrialInstanceBean>();
-
-		final List<Integer> trialIds = new ArrayList<Integer>();
+		final List<ExportTrialInstanceBean> trialInstances = new ArrayList<>();
+		final List<Integer> trialIds = new ArrayList<>();
 		trialIds.add(studyId);
-		List<FieldMapInfo> fieldMapInfoList = new ArrayList<FieldMapInfo>();
+		final List<FieldMapInfo> fieldMapInfoList;
 
 		fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties);
 
@@ -453,7 +452,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/retrieve/advanced/lists/{studyId}", method = RequestMethod.GET)
 	public String getAdvanceListsOfStudy(@PathVariable final int studyId, final Model model, final HttpSession session) {
 
-		List<GermplasmList> germplasmList = new ArrayList<GermplasmList>();
+		List<GermplasmList> germplasmList = new ArrayList<>();
 		germplasmList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(studyId), GermplasmListType.ADVANCED);
 		model.addAttribute("advancedList", germplasmList);
 		return super.showAjaxPage(model, ExportStudyController.DISPLAY_ADVANCE_GERMPLASM_LIST);

@@ -58,10 +58,10 @@ public class OntologyDetailsControllerTest extends AbstractBaseIntegrationTest {
 	 */
 	@Test
 	public void testGetOntologyDetails() throws Exception {
-		OntologyDetailsForm form = new OntologyDetailsForm();
-		OntologyService ontologyService = Mockito.mock(OntologyService.class);
-		StandardVariable stdvar = this.createStandardVariableTestData();
-		Mockito.when(ontologyService.getStandardVariable(8050, this.contextUtil.getCurrentProgramUUID())).thenReturn(stdvar);
+		final OntologyDetailsForm form = new OntologyDetailsForm();
+		final OntologyService ontologyService = Mockito.mock(OntologyService.class);
+		final StandardVariable stdvar = this.createStandardVariableTestData();
+		Mockito.when(ontologyService.getStandardVariable(8110, this.contextUtil.getCurrentProgramUUID())).thenReturn(stdvar);
 		this.controller.setOntologyService(ontologyService);
 
 		Assert.assertEquals(stdvar, form.getVariable());
@@ -73,19 +73,19 @@ public class OntologyDetailsControllerTest extends AbstractBaseIntegrationTest {
 	 * @return the standard variable
 	 */
 	private StandardVariable createStandardVariableTestData() {
-		Term property = new Term(100, "PROPERTY", "PROPERTY DEF");
-		Term scale = new Term(200, "SCALE", "SCALE DEF");
-		Term method = new Term(300, "METHOD", "METHOD DEF");
-		Term dataType = new Term(400, "DATA TYPE", "DATA TYPE DEF");
-		Term traitClass = new Term(600, "TRAIT CLASS", "TRAIT CLASS DEF");
-		VariableConstraints constraints = new VariableConstraints(10.0, 50.0);
-		List<Enumeration> enumerations = new ArrayList<Enumeration>();
+		final Term property = new Term(100, "PROPERTY", "PROPERTY DEF");
+		final Term scale = new Term(200, "SCALE", "SCALE DEF");
+		final Term method = new Term(300, "METHOD", "METHOD DEF");
+		final Term dataType = new Term(400, "DATA TYPE", "DATA TYPE DEF");
+		final Term traitClass = new Term(600, "TRAIT CLASS", "TRAIT CLASS DEF");
+		final VariableConstraints constraints = new VariableConstraints(10.0, 50.0);
+		final List<Enumeration> enumerations = new ArrayList<Enumeration>();
 		enumerations.add(new Enumeration(1, "ENUM1", "ENUM1 DESC", 0));
 		enumerations.add(new Enumeration(2, "ENUM1", "ENUM2 DESC", 0));
 		enumerations.add(new Enumeration(3, "ENUM1", "ENUM3 DESC", 0));
 		enumerations.add(new Enumeration(4, "ENUM1", "ENUM4 DESC", 0));
 
-		StandardVariable stdvar = new StandardVariable(property, scale, method, dataType, traitClass, PhenotypicType.TRIAL_DESIGN);
+		final StandardVariable stdvar = new StandardVariable(property, scale, method, dataType, traitClass, PhenotypicType.TRIAL_DESIGN);
 		stdvar.setConstraints(constraints);
 		stdvar.setEnumerations(enumerations);
 		stdvar.setName("VARIABLE1");

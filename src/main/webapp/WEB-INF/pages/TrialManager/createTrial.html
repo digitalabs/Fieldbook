@@ -106,7 +106,7 @@
 									</li>
 									<!--Design new crosses-->
 									<li id="create-new-crosses">
-										<a th:href="@{~/BreedingManager/main/createcrosses(nurseryid=*{studyId},germplasmlistid=*{germplasmListId},loggedInUserId=${loggedInUserId},selectedProjectId=${selectedProjectId})}"
+										<a th:href="@{~/BreedingManager/main/createcrosses(studyid=*{studyId},germplasmlistid=*{germplasmListId},loggedInUserId=${loggedInUserId},selectedProjectId=${selectedProjectId})}"
 										   class="create-new-crosses" th:text="#{nursery.nurserydetails.action.create.new.crosses}">Design new crosses</a>
 									</li>
 								</ul>

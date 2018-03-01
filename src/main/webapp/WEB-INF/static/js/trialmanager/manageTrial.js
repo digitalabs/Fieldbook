@@ -172,9 +172,10 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			$scope.crossesListTabs = [];
 			$scope.isOpenTrial = TrialManagerDataService.isOpenTrial;
 			$scope.studyTypes = [];
-
+			$scope.studyTypeSelected = undefined;
 			$scope.isChoosePreviousTrial = false;
-			debugger;
+			$scope.usingStudyTemplate = false;
+
 			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 			var config = {
@@ -185,7 +186,6 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 			$http.get('/bmsapi/' + cropName + '/studytypes', config).success(function (data) {
 				$scope.studyTypes = data;
-
 			}).error(function (data) {
 				if (data.status == 401) {
 					bmsAuth.handleReAuthentication();
@@ -207,7 +207,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			};
 
 			$scope.resetTabsData = function() {
-				// reset the service data to initial state (for untick of user previous trial)
+				// reset the service data to initial state (for untick of user previous study)
 				_.each(_.keys($localStorage.serviceBackup.settings), function(key) {
 					if ('basicDetails' !== key) {
 						TrialManagerDataService.updateSettings(key, angular.copy($localStorage.serviceBackup.settings[key]));
@@ -230,7 +230,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 					transformResponse: undefined
 				}).then(function(response) {
 					if (response.data !== 'success' || response.status !== 200) {
-						showErrorMessage('', 'Your trial settings could not be cleared at the moment. Please try again later.');
+						showErrorMessage('', 'Your study settings could not be cleared at the moment. Please try again later.');
 					}
 				});
 
@@ -242,6 +242,17 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				if (typeof resetGermplasmList !== 'undefined') {
 					resetGermplasmList();
 				}
+				$scope.usingStudyTemplate = false;
+			};
+
+			$scope.changeSelectStudyType = function (studyTypeSelected) {
+				angular.forEach($scope.studyTypes, function (studyType) {
+						if (studyType.id === studyTypeSelected) {
+							$scope.data.studyType = studyType.name;
+							return;
+						}
+					}
+				);
 			};
 
 			// To apply scope safely
@@ -287,6 +298,17 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 								});
 							}
 						}
+
+						// update Select StudyType.
+						angular.forEach($scope.studyTypes, function(studyType) {
+								if (studyType.label === data.createTrialForm.studyTypeName ) {
+									$scope.changeSelectStudyType(studyType.id);
+									$('#studyTypeId').val("number:"+studyType.id.toString());
+									$scope.usingStudyTemplate = true;
+									return;
+								}
+							}
+						);
 
 						TrialManagerDataService.updateCurrentData('trialSettings',
 							TrialManagerDataService.extractData(data.trialSettingsData));
@@ -405,20 +427,20 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 					}
 
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial.' +
+						showAlertMessage('', 'Changes have been made that may affect the experimental design of this study.' +
 							'Please regenerate the design on the Experimental Design tab', 10000);
 					}
 				} else if (targetState === 'experimentalDesign') {
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
 						showAlertMessage('', 'Trial settings have been updated since the experimental design was generated. ' +
-							'Please select a design type and specify the parameters for your trial again', 10000);
+							'Please select a design type and specify the parameters for your study again', 10000);
 					}
 				} else if (targetState === 'createMeasurements') {
 					if (TrialManagerDataService.applicationData.unsavedGeneratedDesign) {
 						$rootScope.$broadcast('previewMeasurements');
                     }
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial.' +
+						showAlertMessage('', 'Changes have been made that may affect the experimental design of this study.' +
 							'Please regenerate the design on the Experimental Design tab', 10000);
 					}
 
@@ -641,8 +663,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			$scope.crossesList = TrialManagerDataService.settings.crossesList;
 
 			angular.forEach($scope.crossesList, function(value) {
-				debugger;
-				displayCrossesList(value.id, value.name,value.crossesType, true, '', true);
+				displayCrossesList(value.id, value.name, value.crossesType, true, '', true);
 			});
 
 			$scope.tabChange = function(selectedTab) {

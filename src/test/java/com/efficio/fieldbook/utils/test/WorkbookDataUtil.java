@@ -737,7 +737,7 @@ public class WorkbookDataUtil {
 		var.setCvTermId(termId.getId());
 		settingDetail.setVariable(var);
 
-		StandardVariable stdVar = WorkbookDataUtil.createStandardVariable(termId.getId(), termId.name());
+		final StandardVariable stdVar = WorkbookDataUtil.createStandardVariable(termId.getId(), termId.name());
 		settingDetail.getVariable().setName(stdVar.getName());
 		settingDetail.getVariable().setDescription(stdVar.getDescription());
 		settingDetail.setPossibleValues(new ArrayList<ValueReference>());

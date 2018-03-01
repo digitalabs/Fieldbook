@@ -655,7 +655,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 		// find out who created the study
 		// if no owner found default to the current user
-		Integer studyOwnerPersonId = this.contextUtil.getCurrentIbdbUserId();
+		final Integer studyOwnerPersonId = this.contextUtil.getCurrentIbdbUserId();
 
 		final String studyOwnerPersonName = this.fieldbookService.getPersonByUserId(studyOwnerPersonId);
 

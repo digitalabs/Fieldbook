@@ -215,7 +215,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 
 		for (final SettingDetail variable : variables) {
-			Integer stdVar;
+			final Integer stdVar;
 			if (variable.getVariable().getCvTermId() != null) {
 				stdVar = variable.getVariable().getCvTermId();
 			} else {
@@ -309,7 +309,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the setting detail
 	 */
 	protected SettingDetail createSettingDetail(final int id, final String name, final String role) {
-		String variableName;
+		final String variableName;
 		final StandardVariable stdVar = this.getStandardVariable(id);
 		if (name != null && !name.isEmpty()) {
 			variableName = name;
@@ -489,7 +489,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param createdBy
 	 */
 	public void createStudyDetails(final Workbook workbook, final Integer folderId, final Integer studyId, final String description,
-		String startDate, String endDate, final String studyUpdate, final String objective, final String name, final String createdBy) {
+		final String startDate, final String endDate, final String studyUpdate, final String objective, final String name, final String createdBy) {
 		if (workbook.getStudyDetails() == null) {
 			workbook.setStudyDetails(new StudyDetails());
 		}

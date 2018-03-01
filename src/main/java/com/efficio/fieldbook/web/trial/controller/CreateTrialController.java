@@ -265,7 +265,7 @@ public class CreateTrialController extends BaseTrialController {
 	public String submit(@RequestBody final TrialData data) {
 		this.processEnvironmentData(data.getEnvironments());
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
-		List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
+		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
 		// transfer over data from user input into the list of setting details stored in the session
 		this.populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
 

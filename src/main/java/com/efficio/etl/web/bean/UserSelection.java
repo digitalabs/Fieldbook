@@ -56,18 +56,18 @@ public class UserSelection implements Serializable {
 	private Integer measurementDatasetId;
 	private Integer meansDatasetId;
 
-	public void setHeadersForCategory(List<String> headers, PhenotypicType type) {
+	public void setHeadersForCategory(final List<String> headers, final PhenotypicType type) {
 		this.headerCategorization.put(type, headers);
 	}
 
-	public MeasurementVariable getCurrentVariableData(String name, PhenotypicType category) {
+	public MeasurementVariable getCurrentVariableData(final String name, final PhenotypicType category) {
 
-		Map<String, MeasurementVariable> typeMap = this.giantMap.get(category);
+		final Map<String, MeasurementVariable> typeMap = this.giantMap.get(category);
 
 		return typeMap.get(name);
 	}
 
-	public List<String> getHeadersForCategory(PhenotypicType category) {
+	public List<String> getHeadersForCategory(final PhenotypicType category) {
 		return this.headerCategorization.get(category);
 	}
 
@@ -75,7 +75,7 @@ public class UserSelection implements Serializable {
 		return this.actualFileName;
 	}
 
-	public void setActualFileName(String actualFileName) {
+	public void setActualFileName(final String actualFileName) {
 		this.actualFileName = actualFileName;
 	}
 
@@ -83,7 +83,7 @@ public class UserSelection implements Serializable {
 		return this.serverFileName;
 	}
 
-	public void setServerFileName(String serverFileName) {
+	public void setServerFileName(final String serverFileName) {
 		this.serverFileName = serverFileName;
 	}
 
@@ -91,7 +91,7 @@ public class UserSelection implements Serializable {
 		return this.selectedSheet;
 	}
 
-	public void setSelectedSheet(Integer selectedSheet) {
+	public void setSelectedSheet(final Integer selectedSheet) {
 		this.selectedSheet = selectedSheet;
 	}
 
@@ -99,7 +99,7 @@ public class UserSelection implements Serializable {
 		return this.headerRowIndex;
 	}
 
-	public void setHeaderRowIndex(Integer headerRowIndex) {
+	public void setHeaderRowIndex(final Integer headerRowIndex) {
 		this.headerRowIndex = headerRowIndex;
 	}
 
@@ -107,7 +107,7 @@ public class UserSelection implements Serializable {
 		return this.contentRowIndex;
 	}
 
-	public void setContentRowIndex(Integer contentRowIndex) {
+	public void setContentRowIndex(final Integer contentRowIndex) {
 		this.contentRowIndex = contentRowIndex;
 	}
 
@@ -115,7 +115,7 @@ public class UserSelection implements Serializable {
 		return this.indexColumnIndex;
 	}
 
-	public void setIndexColumnIndex(Integer indexColumnIndex) {
+	public void setIndexColumnIndex(final Integer indexColumnIndex) {
 		this.indexColumnIndex = indexColumnIndex;
 	}
 
@@ -123,7 +123,7 @@ public class UserSelection implements Serializable {
 		return this.observationRows;
 	}
 
-	public void setObservationRows(Integer observationRows) {
+	public void setObservationRows(final Integer observationRows) {
 		this.observationRows = observationRows;
 	}
 
@@ -131,7 +131,7 @@ public class UserSelection implements Serializable {
 		return this.studyName;
 	}
 
-	public void setStudyName(String studyName) {
+	public void setStudyName(final String studyName) {
 		this.studyName = studyName;
 	}
 
@@ -139,7 +139,7 @@ public class UserSelection implements Serializable {
 		return this.studyDescription;
 	}
 
-	public void setStudyDescription(String studyDescription) {
+	public void setStudyDescription(final String studyDescription) {
 		this.studyDescription = studyDescription;
 	}
 
@@ -147,7 +147,7 @@ public class UserSelection implements Serializable {
 		return this.studyObjective;
 	}
 
-	public void setStudyObjective(String studyObjective) {
+	public void setStudyObjective(final String studyObjective) {
 		this.studyObjective = studyObjective;
 	}
 
@@ -155,7 +155,7 @@ public class UserSelection implements Serializable {
 		return this.studyStartDate;
 	}
 
-	public void setStudyStartDate(String studyStartDate) {
+	public void setStudyStartDate(final String studyStartDate) {
 		this.studyStartDate = studyStartDate;
 	}
 
@@ -163,7 +163,7 @@ public class UserSelection implements Serializable {
 		return this.studyEndDate;
 	}
 
-	public void setStudyEndDate(String studyEndDate) {
+	public void setStudyEndDate(final String studyEndDate) {
 		this.studyEndDate = studyEndDate;
 	}
 
@@ -171,16 +171,16 @@ public class UserSelection implements Serializable {
 		return this.studyType;
 	}
 
-	public void setStudyType(String studyType) {
+	public void setStudyType(final String studyType) {
 		this.studyType = studyType;
 	}
 
-	public void transferTo(UserSelection userSelection) {
+	public void transferTo(final UserSelection userSelection) {
 		BeanUtils.copyProperties(this, userSelection);
 		userSelection.setHeaderCategorization(this.headerCategorization);
 	}
 
-	public void setMeasurementVariablesByPhenotypic(PhenotypicType phenotypickey, LinkedHashMap<String, MeasurementVariable> item) {
+	public void setMeasurementVariablesByPhenotypic(final PhenotypicType phenotypickey, final LinkedHashMap<String, MeasurementVariable> item) {
 		this.giantMap.put(phenotypickey, item);
 	}
 
@@ -190,7 +190,7 @@ public class UserSelection implements Serializable {
 		}
 	}
 
-	public LinkedHashMap<String, MeasurementVariable> getMeasurementVariablesByPhenotypic(PhenotypicType phenotypickey) {
+	public LinkedHashMap<String, MeasurementVariable> getMeasurementVariablesByPhenotypic(final PhenotypicType phenotypickey) {
 
 		return this.giantMap.get(phenotypickey);
 	}
@@ -203,7 +203,7 @@ public class UserSelection implements Serializable {
 		return this.giantMap;
 	}
 
-	public void setGiantMap(Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> giantMap) {
+	public void setGiantMap(final Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> giantMap) {
 		this.giantMap = giantMap;
 	}
 
@@ -211,7 +211,7 @@ public class UserSelection implements Serializable {
 		return this.headerCategorization;
 	}
 
-	public void setHeaderCategorization(Map<PhenotypicType, List<String>> headerCategorization) {
+	public void setHeaderCategorization(final Map<PhenotypicType, List<String>> headerCategorization) {
 		this.headerCategorization = headerCategorization;
 	}
 
@@ -219,7 +219,7 @@ public class UserSelection implements Serializable {
 		return this.headerRowDisplayText;
 	}
 
-	public void setHeaderRowDisplayText(String headerRowDisplayText) {
+	public void setHeaderRowDisplayText(final String headerRowDisplayText) {
 		this.headerRowDisplayText = headerRowDisplayText;
 	}
 
@@ -227,7 +227,7 @@ public class UserSelection implements Serializable {
 		return this.contentRowDisplayText;
 	}
 
-	public void setContentRowDisplayText(String contentRowDisplayText) {
+	public void setContentRowDisplayText(final String contentRowDisplayText) {
 		this.contentRowDisplayText = contentRowDisplayText;
 	}
 
@@ -235,7 +235,7 @@ public class UserSelection implements Serializable {
 		return this.lastSheetRowNum;
 	}
 
-	public void setLastSheetRowNum(Integer lastSheetRowNum) {
+	public void setLastSheetRowNum(final Integer lastSheetRowNum) {
 		this.lastSheetRowNum = lastSheetRowNum;
 	}
 
@@ -243,7 +243,7 @@ public class UserSelection implements Serializable {
 		return this.initialCategorizationDone;
 	}
 
-	public void setInitialCategorizationDone(Boolean initialCategorizationDone) {
+	public void setInitialCategorizationDone(final Boolean initialCategorizationDone) {
 		this.initialCategorizationDone = initialCategorizationDone;
 	}
 
@@ -251,7 +251,7 @@ public class UserSelection implements Serializable {
 		return this.studyId;
 	}
 
-	public void setStudyId(Integer studyId) {
+	public void setStudyId(final Integer studyId) {
 		this.studyId = studyId;
 	}
 
@@ -259,7 +259,7 @@ public class UserSelection implements Serializable {
 		return this.trialDatasetId;
 	}
 
-	public void setTrialDatasetId(Integer trialDatasetId) {
+	public void setTrialDatasetId(final Integer trialDatasetId) {
 		this.trialDatasetId = trialDatasetId;
 	}
 
@@ -267,7 +267,7 @@ public class UserSelection implements Serializable {
 		return this.measurementDatasetId;
 	}
 
-	public void setMeasurementDatasetId(Integer measurementDatasetId) {
+	public void setMeasurementDatasetId(final Integer measurementDatasetId) {
 		this.measurementDatasetId = measurementDatasetId;
 	}
 
@@ -275,7 +275,7 @@ public class UserSelection implements Serializable {
 		return this.meansDatasetId;
 	}
 
-	public void setMeansDatasetId(Integer meansDatasetId) {
+	public void setMeansDatasetId(final Integer meansDatasetId) {
 		this.meansDatasetId = meansDatasetId;
 	}
 
@@ -283,7 +283,7 @@ public class UserSelection implements Serializable {
 		return this.datasetType;
 	}
 
-	public void setDatasetType(Integer datasetType) {
+	public void setDatasetType(final Integer datasetType) {
 		this.datasetType = datasetType;
 	}
 

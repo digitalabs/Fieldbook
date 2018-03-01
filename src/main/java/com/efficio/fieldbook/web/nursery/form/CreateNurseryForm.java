@@ -1215,7 +1215,7 @@ public class CreateNurseryForm {
 		this.experimentTypeId = experimentTypeId;
 	}
 
-	public void setGermplasmListId(Integer germplasmListId) {
+	public void setGermplasmListId(final Integer germplasmListId) {
 		this.germplasmListId = germplasmListId;
 	}
 

@@ -318,7 +318,7 @@ public class ETLServiceImpl implements ETLService {
 		}
 		// Trim all header names before returning
 		return Lists.transform(headers, new Function<String, String>() {
-			public String apply(String s) {
+			public String apply(final String s) {
 				return s.trim();
 			}
 		});

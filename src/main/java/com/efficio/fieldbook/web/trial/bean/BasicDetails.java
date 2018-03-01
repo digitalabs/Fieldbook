@@ -33,7 +33,7 @@ public class BasicDetails implements TabInfoBean {
 		return this.basicDetails;
 	}
 
-	public void setBasicDetails(Map<String, String> basicDetails) {
+	public void setBasicDetails(final Map<String, String> basicDetails) {
 		this.basicDetails = basicDetails;
 	}
 
@@ -41,7 +41,7 @@ public class BasicDetails implements TabInfoBean {
 		return this.folderId;
 	}
 
-	public void setFolderId(Integer folderId) {
+	public void setFolderId(final Integer folderId) {
 		this.folderId = folderId;
 	}
 
@@ -49,7 +49,7 @@ public class BasicDetails implements TabInfoBean {
 		return this.folderName;
 	}
 
-	public void setFolderName(String folderName) {
+	public void setFolderName(final String folderName) {
 		this.folderName = folderName;
 	}
 
@@ -57,7 +57,7 @@ public class BasicDetails implements TabInfoBean {
 		return this.folderNameLabel;
 	}
 
-	public void setFolderNameLabel(String folderNameLabel) {
+	public void setFolderNameLabel(final String folderNameLabel) {
 		this.folderNameLabel = folderNameLabel;
 	}
 
@@ -65,7 +65,7 @@ public class BasicDetails implements TabInfoBean {
 		return this.userName;
 	}
 
-	public void setUserName(String userName) {
+	public void setUserName(final String userName) {
 		this.userName = userName;
 	}
 
@@ -73,7 +73,7 @@ public class BasicDetails implements TabInfoBean {
 		return this.userID;
 	}
 
-	public void setUserID(Integer userID) {
+	public void setUserID(final Integer userID) {
 		this.userID = userID;
 	}
 
@@ -81,7 +81,7 @@ public class BasicDetails implements TabInfoBean {
 		return this.studyID;
 	}
 
-	public void setStudyID(Integer studyID) {
+	public void setStudyID(final Integer studyID) {
 		this.studyID = studyID;
 	}
 

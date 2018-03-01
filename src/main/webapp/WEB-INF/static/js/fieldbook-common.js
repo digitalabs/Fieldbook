@@ -1920,7 +1920,7 @@ function callAdvanceNursery() {
 
 	var lines = $('#lineSelected').val();
 	var methdodId = $('#advanceBreedingMethodId').val();
-	if (!isNursery) {
+	if (!isNursery()) {
 		var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
 	}
 

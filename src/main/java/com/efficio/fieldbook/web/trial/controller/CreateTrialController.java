@@ -11,20 +11,25 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.bean.TrialData;
+import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -42,21 +47,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TrialData;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class CreateTrialController.
@@ -268,8 +265,7 @@ public class CreateTrialController extends BaseTrialController {
 	public String submit(@RequestBody final TrialData data) {
 		this.processEnvironmentData(data.getEnvironments());
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
-		List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
-		basicDetails = this.addUserIdIfNecessary(basicDetails);
+		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
 		// transfer over data from user input into the list of setting details stored in the session
 		this.populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
 
@@ -281,7 +277,7 @@ public class CreateTrialController extends BaseTrialController {
 			combinedList.addAll(studyLevelConditions);
 		}
 
-		final String name = data.getBasicDetails().getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId()));
+		final String name = data.getBasicDetails().getStudyName();
 
 		if (this.userSelection.getStudyLevelConditions() == null) {
 			this.userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());
@@ -317,7 +313,7 @@ public class CreateTrialController extends BaseTrialController {
 		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(
 				data.getEnvironments().getEnvironments(), variablesForEnvironment, this.userSelection.getExpDesignParams());
 		workbook.setTrialObservations(trialEnvironmentValues);
-
+		data.getBasicDetails().setCreatedBy(this.contextUtil.getCurrentIbdbUserId().toString());
 		this.createStudyDetails(workbook, data.getBasicDetails());
 
 		this.userSelection.setWorkbook(workbook);
@@ -409,7 +405,7 @@ public class CreateTrialController extends BaseTrialController {
 		final BasicDetails basic = new BasicDetails();
 		basic.setBasicDetails(basicDetails);
 
-		basic.setUserID(this.getCurrentIbdbUserId());
+		basic.setUserID(this.contextUtil.getCurrentIbdbUserId());
 		basic.setUserName(this.fieldbookService.getPersonByUserId(basic.getUserID()));
 
 		final TabInfo tab = new TabInfo();
@@ -427,24 +423,6 @@ public class CreateTrialController extends BaseTrialController {
 		info.setSettings(new ArrayList<SettingDetail>());
 		info.setData(new TrialSettingsBean());
 		return info;
-	}
-
-	private List<SettingDetail> addUserIdIfNecessary(final List<SettingDetail> basicDetails) {
-		boolean found = false;
-		List<SettingDetail> detailList = basicDetails;
-		if (basicDetails == null) {
-			detailList = new ArrayList<>();
-		}
-		for (final SettingDetail detail : detailList) {
-			if (detail.getVariable().getCvTermId() == TermId.STUDY_UID.getId()) {
-				found = true;
-				break;
-			}
-		}
-		if (!found) {
-			detailList.add(this.createSettingDetail(TermId.STUDY_UID.getId(), "STUDY_UID", VariableType.STUDY_DETAIL.getRole().name()));
-		}
-		return detailList;
 	}
 
 	@ResponseBody

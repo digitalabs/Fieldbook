@@ -143,7 +143,7 @@ public class StudyTreeControllerTest {
 		Mockito.when(this.request.getParameter("parentFolderId")).thenReturn(StudyTreeControllerTest.PARENT_FOLDER_ID);
 		Mockito.when(this.request.getParameter("folderName")).thenReturn(StudyTreeControllerTest.FOLDER_NAME);
 		Mockito.when(this.studyDataManager.addSubFolder(Integer.valueOf(StudyTreeControllerTest.PARENT_FOLDER_ID),
-				StudyTreeControllerTest.FOLDER_NAME, StudyTreeControllerTest.FOLDER_NAME, this.selectedProject.getUniqueID()))
+				StudyTreeControllerTest.FOLDER_NAME, StudyTreeControllerTest.FOLDER_NAME, this.selectedProject.getUniqueID(), StudyTreeControllerTest.FOLDER_NAME))
 				.thenReturn(Integer.valueOf(StudyTreeControllerTest.NEW_FOLDER_ID));
 
 		final Map<String, Object> result = this.controller.addStudyFolder(this.request);
@@ -158,7 +158,7 @@ public class StudyTreeControllerTest {
 		Mockito.when(this.request.getParameter("parentFolderId")).thenReturn(StudyTreeControllerTest.PARENT_FOLDER_ID);
 		Mockito.when(this.request.getParameter("folderName")).thenReturn(StudyTreeControllerTest.FOLDER_NAME);
 		Mockito.when(this.studyDataManager.addSubFolder(Integer.valueOf(StudyTreeControllerTest.PARENT_FOLDER_ID),
-				StudyTreeControllerTest.FOLDER_NAME, StudyTreeControllerTest.FOLDER_NAME, this.selectedProject.getUniqueID()))
+				StudyTreeControllerTest.FOLDER_NAME, StudyTreeControllerTest.FOLDER_NAME, this.selectedProject.getUniqueID(), StudyTreeControllerTest.FOLDER_NAME))
 				.thenReturn(Integer.valueOf(StudyTreeControllerTest.NEW_FOLDER_ID));
 		Mockito.when(this.studyDataManager.isStudy(Integer.valueOf(StudyTreeControllerTest.PARENT_FOLDER_ID))).thenReturn(true);
 		Mockito.when(this.studyDataManager.getParentFolder(Integer.valueOf(StudyTreeControllerTest.PARENT_FOLDER_ID))).thenReturn(null);
@@ -175,7 +175,7 @@ public class StudyTreeControllerTest {
 		Mockito.when(this.request.getParameter("parentFolderId")).thenReturn(StudyTreeControllerTest.PARENT_FOLDER_ID);
 		Mockito.when(this.request.getParameter("folderName")).thenReturn(StudyTreeControllerTest.FOLDER_NAME);
 		Mockito.when(this.studyDataManager.addSubFolder(Integer.valueOf(StudyTreeControllerTest.PARENT_FOLDER_ID),
-				StudyTreeControllerTest.FOLDER_NAME, StudyTreeControllerTest.FOLDER_NAME, this.selectedProject.getUniqueID()))
+				StudyTreeControllerTest.FOLDER_NAME, StudyTreeControllerTest.FOLDER_NAME, this.selectedProject.getUniqueID(), StudyTreeControllerTest.FOLDER_NAME))
 				.thenThrow(new MiddlewareQueryException("Folder name is not unique"));
 
 		final Map<String, Object> result = this.controller.addStudyFolder(this.request);

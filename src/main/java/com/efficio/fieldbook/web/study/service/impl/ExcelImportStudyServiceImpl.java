@@ -10,6 +10,7 @@
 
 package com.efficio.fieldbook.web.study.service.impl;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.study.service.ImportStudyService;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
@@ -72,6 +73,10 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 
 	@Resource
 	private ContextUtil contextUtil;
+
+	/** The workbench service. */
+	@Resource
+	protected WorkbenchService workbenchService;
 
 	public ExcelImportStudyServiceImpl(final Workbook workbook, final String currentFile, final String originalFileName) {
 		super(workbook, currentFile, originalFileName);
@@ -188,7 +193,8 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 		final WorkbookParser parser = new WorkbookParser();
 		final org.apache.poi.ss.usermodel.Workbook excelWorkbook = parser.loadFileToExcelWorkbook(new File(currentFile));
 
-		final Workbook descriptionWorkbook = parser.parseFile(excelWorkbook, false, false);
+		final Workbook descriptionWorkbook =
+			parser.parseFile(excelWorkbook, false, false, this.contextUtil.getCurrentIbdbUserId().toString());
 		final Workbook originalWorkbook = workbook;
 
 		final List<MeasurementRow> trialObservations =

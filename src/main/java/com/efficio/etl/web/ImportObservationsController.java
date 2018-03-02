@@ -1,15 +1,12 @@
 
 package com.efficio.etl.web;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.web.bean.FileUploadForm;
+import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.controller.angular.AngularOpenSheetController;
+import com.efficio.etl.web.validators.FileUploadFormValidator;
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.DataSetType;
@@ -29,11 +26,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.web.bean.FileUploadForm;
-import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.controller.angular.AngularOpenSheetController;
-import com.efficio.etl.web.validators.FileUploadFormValidator;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(ImportObservationsController.URL)
@@ -58,6 +57,9 @@ public class ImportObservationsController extends AbstractBaseETLController {
 	private OntologyDataManager ontologyDataManager;
 
 	private boolean hasErrors;
+
+	@Resource
+	protected WorkbenchService workbenchService;
 
 	@Override
 	public String getContentName() {
@@ -175,7 +177,8 @@ public class ImportObservationsController extends AbstractBaseETLController {
 		final List<String> errors = new ArrayList<>();
 		try {
 			final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
-					.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection));
+				.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection),
+					this.contextUtil.getCurrentIbdbUserId());
 			importData.setConstants(referenceWorkbook.getConstants());
 			importData.setConditions(referenceWorkbook.getConditions());
 			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getConditions(), programUUID);
@@ -196,5 +199,4 @@ public class ImportObservationsController extends AbstractBaseETLController {
 		return super.show(model);
 
 	}
-
 }

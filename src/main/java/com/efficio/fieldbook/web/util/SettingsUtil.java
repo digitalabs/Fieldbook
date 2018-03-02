@@ -51,15 +51,12 @@ import org.generationcp.middleware.pojos.workbench.settings.ParentDataset;
 import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.util.ResourceFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -84,6 +81,13 @@ public class SettingsUtil {
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsUtil.class);
 	public static final String DESCRIPTION = "Description";
+	private static final String START_DATE = "Creation date";
+	private static final String END_DATE = "Completion date";
+	private static final String STUDY_UPDATE = "Last updated";
+	private static final String OBJECTIVE = "Objective";
+	private static final String STUDY_NAME = "Study name";
+	private static final String CREATED_BY = "Created by";
+
 
 	private SettingsUtil() {
 		// do nothing
@@ -129,10 +133,10 @@ public class SettingsUtil {
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String name,
 			final List<SettingDetail> nurseryLevelConditions, final List<SettingDetail> plotsLevelList,
 			final List<SettingDetail> baselineTraitsList, final UserSelection userSelection, final List<SettingDetail> nurseryConditions,
-		final String programUUID, final String description) {
+		final String programUUID, final String description, final String startDate, final String endDate, final String studyUpdate) {
 		return SettingsUtil
 			.convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions, plotsLevelList, baselineTraitsList,
-				userSelection, null, null, null, nurseryConditions, null, true, programUUID, description);
+				userSelection, null, null, null, nurseryConditions, null, true, programUUID, description, startDate, endDate, studyUpdate);
 	}
 
 	static List<Condition> convertDetailsToConditions(final List<SettingDetail> details,
@@ -412,7 +416,7 @@ public class SettingsUtil {
 			final List<SettingDetail> baselineTraitsList, final UserSelection userSelection,
 		final List<SettingDetail> trialLevelVariablesList, final List<SettingDetail> treatmentFactorDetails, final Map<String, TreatmentFactorData> treatmentFactorItems,
 		final List<SettingDetail> nurseryConditions, final List<SettingDetail> trialLevelConditions, final boolean fromNursery,
-		final String programUUID, final String description) {
+		final String programUUID, final String description, final String startDate, final String endDate, final String studyUpdate) {
 
 		// this block is necessary for the previous nursery code because the
 		// setting details passed in from nursery are mostly empty except
@@ -455,6 +459,9 @@ public class SettingsUtil {
 		dataset.setConstants(constants);
 		dataset.setName(name);
 		dataset.setDescription(description);
+		dataset.setStartDate(startDate);
+		dataset.setEndDate(endDate);
+		dataset.setStudyUpdate(studyUpdate);
 		if (trialLevelVariablesList != null) {
 			dataset.setTrialLevelFactor(trialLevelVariables);
 			dataset.setTreatmentFactors(treatmentFactors);
@@ -1479,14 +1486,13 @@ public class SettingsUtil {
 		return settingDetail;
 	}
 
-	public static StudyDetails convertWorkbookToStudyDetails(final Workbook workbook,
-			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final UserSelection userSelection, final String programUUID,
-			final Properties appConstantsProperties) {
+	public static StudyDetails convertWorkbookToStudyDetails(final Workbook workbook, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
+		final FieldbookService fieldbookService, final UserSelection userSelection, final String programUUID,
+		final Properties appConstantsProperties, final String createdBy) {
 
 		final StudyDetails studyDetails =
 				SettingsUtil.convertWorkbookStudyLevelVariablesToStudyDetails(workbook, fieldbookMiddlewareService, fieldbookService,
-						userSelection, workbook.getStudyDetails().getId().toString(), programUUID, appConstantsProperties);
+						userSelection, workbook.getStudyDetails().getId().toString(), programUUID, appConstantsProperties, createdBy);
 
 		if (workbook.getTrialDatasetId() != null) {
 			studyDetails.setNumberOfEnvironments(
@@ -1517,10 +1523,9 @@ public class SettingsUtil {
 		return studyDetails;
 	}
 
-	private static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(final Workbook workbook,
-			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final UserSelection userSelection, final String projectId, final String programUUID,
-			final Properties appConstantsProperties) {
+	private static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(final Workbook workbook, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
+		final FieldbookService fieldbookService, final UserSelection userSelection, final String projectId, final String programUUID,
+		final Properties appConstantsProperties, final String createdBy) {
 
 		final StudyDetails details = new StudyDetails();
 		details.setId(workbook.getStudyDetails().getId());
@@ -1540,12 +1545,12 @@ public class SettingsUtil {
 		}
 
 		if (conditions != null) {
-			final MeasurementVariable studyName = WorkbookUtil.getMeasurementVariable(conditions, TermId.STUDY_NAME.getId());
+			final String studyName = workbook.getStudyDetails().getStudyName();
 			if (studyName != null) {
-				details.setName(studyName.getValue());
+				details.setName(studyName);
 			}
 			basicDetails = SettingsUtil.convertWorkbookToSettingDetails(basicFields, conditions, fieldbookMiddlewareService,
-					fieldbookService, userSelection, workbook, programUUID, appConstantsProperties);
+					fieldbookService, userSelection, workbook, programUUID, appConstantsProperties, createdBy);
 			managementDetails = SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(),
 					userSelection, fieldbookMiddlewareService, fieldbookService, programUUID);
 			nurseryConditionDetails = SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(constants, 1, userSelection,
@@ -1652,13 +1657,18 @@ public class SettingsUtil {
 			final List<MeasurementVariable> conditions,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			final FieldbookService fieldbookService, final UserSelection userSelection, final Workbook workbook, final String programUUID,
-			final Properties appConstantsProperties) {
+			final Properties appConstantsProperties, final String createdBy) {
 
 		int index = fields != null ? fields.size() : 0;
 		final List<SettingDetail> details = new ArrayList<>();
-		final MeasurementVariable studyNameVar = WorkbookUtil.getMeasurementVariable(workbook.getConditions(), TermId.STUDY_NAME.getId());
-		final String studyName = studyNameVar != null ? studyNameVar.getValue() : "";
+
+		final String studyName = workbook.getStudyDetails().getStudyName() != null ? workbook.getStudyDetails().getStudyName() : "";
 		final String description = workbook.getStudyDetails().getDescription() != null ? workbook.getStudyDetails().getDescription() : "";
+		final String startDate = workbook.getStudyDetails().getStartDate() != null ? workbook.getStudyDetails().getStartDate() : "";
+		final String endDate = workbook.getStudyDetails().getEndDate() != null ? workbook.getStudyDetails().getEndDate() : "";
+		final String studyUpdate = workbook.getStudyDetails().getStudyUpdate() != null ? workbook.getStudyDetails().getStudyUpdate() : "";
+		final String objective = workbook.getStudyDetails().getObjective() != null ? workbook.getStudyDetails().getObjective() : "";
+
 		Integer datasetId = workbook.getMeasurementDatesetId();
 		if (datasetId == null) {
 			datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyDetails().getId(), studyName);
@@ -1711,7 +1721,51 @@ public class SettingsUtil {
 						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
 						found = true;
 						break;
-					} else {
+					} else if (START_DATE.equals(label)) {
+						final SettingVariable variableDescription =
+							new SettingVariable(START_DATE, null, null, null, null, null, null, null, null, null);
+						final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, startDate, false);
+						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
+						found = true;
+						break;
+					} else if (END_DATE.equals(label)) {
+						final SettingVariable variableDescription =
+							new SettingVariable(END_DATE, null, null, null, null, null, null, null, null, null);
+						final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, endDate, false);
+						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
+						found = true;
+						break;
+					} else if (STUDY_UPDATE.equals(label)) {
+						final SettingVariable variableDescription =
+							new SettingVariable(STUDY_UPDATE, null, null, null, null, null, null, null, null, null);
+						final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, studyUpdate, false);
+						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
+						found = true;
+						break;
+					} else if (OBJECTIVE.equals(label)) {
+						final SettingVariable variableDescription =
+							new SettingVariable(OBJECTIVE, null, null, null, null, null, null, null, null, null);
+						final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, objective, false);
+						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
+						found = true;
+						break;
+				} else if (STUDY_NAME.equals(label)) {
+					final SettingVariable variableDescription =
+						new SettingVariable(STUDY_NAME, null, null, null, null, null, null, null, null, null);
+					final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, studyName, false);
+					index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
+					found = true;
+					break;
+				}
+					else if (CREATED_BY	.equals(label)) {
+						final SettingVariable variableDescription =
+							new SettingVariable(CREATED_BY, null, null, null, null, null, null, null, null, null);
+						final SettingDetail settingDetailDescription = new SettingDetail(variableDescription, null, createdBy, false);
+						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
+						found = true;
+						break;
+					}
+					else {
 						final SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
 						final String value = SettingsUtil.getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);
 						final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);

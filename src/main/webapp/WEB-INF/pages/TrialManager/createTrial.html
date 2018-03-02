@@ -21,7 +21,7 @@
 
                     <span class="fbk-nursery-heading" ng-show="isOpenTrial()">
     					<span class="heading" >Trial : </span>
-                        <span class="heading" truncate-and-tooltip="data.basicDetails[8005]"></span>
+                        <span class="heading" truncate-and-tooltip="data.studyName"></span>
 					</span>
 
 					<div class="fbk-nursery-heading-btns">
@@ -161,11 +161,11 @@
 									<label class="control-label col-sm-4"><b>Trial name</b>: <span class="required">*</span></label>
 
 									<div class="col-sm-8" ng-hide="isOpenTrial()">
-										<input class="form-control character-input" maxlength="225" type="text" ng-model="data.basicDetails[8005]"/>
+										<input class="form-control character-input" maxlength="225" type="text" ng-model="data.studyName"/>
 									</div>
 
 									<div class="col-sm-8 nursery-name-display" ng-show="isOpenTrial()">
-										<span truncate-and-tooltip="data.basicDetails[8005]"></span>
+										<span truncate-and-tooltip="data.studyName"></span>
 										<span class="fieldmap-study-name fbk-hide" th:text="${studyName}"></span>
 									</div>
 								</div>
@@ -185,7 +185,7 @@
 									<label class="control-label col-sm-4"><b>Objective</b>:</label>
 
 									<div class="col-sm-8">
-										<textarea class="form-control character-input" maxlength="255" rows="3" ng-model="data.basicDetails[8030]"></textarea>
+										<textarea class="form-control character-input" maxlength="255" rows="3" ng-model="data.objective"></textarea>
 									</div>
 								</div>
 
@@ -222,7 +222,8 @@
 									<label class="control-label col-sm-4"><b>Creation date</b>: <span class="required">*</span></label>
 
 									<div class="col-sm-8">
-										<input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px" type="text" ng-model="data.basicDetails[8050]" jq-datepicker=""
+										<input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px" type="text"
+										       ng-model="data.startDate" jq-datepicker=""
 											   set-current-date-as-default="true" data-date-format="yyyy-mm-dd"
 											   with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
 
@@ -234,7 +235,7 @@
 
 									<div class="col-sm-8">
 										<input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px"
-											   type="text" ng-model="data.basicDetails[8060]" data-date-format="yyyy-mm-dd" jq-datepicker=""
+											   type="text" ng-model="data.endDate" data-date-format="yyyy-mm-dd" jq-datepicker=""
 											   with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
 									</div>
 								</div>
@@ -527,8 +528,6 @@ var noTreatmentFactorPairNameError = /*[[#{manage.settings.no.treatment.factor.p
 
 var startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/ '';
 var startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/ '';
-var startDateId = '';
-var endDateId = '';
 // Message for validating entry number
 var entryNoShouldBeInRange = /*[[#{entry.number.should.be.in.range}]]*/ '';
 var plotNoShouldBeInRange = /*[[#{plot.number.should.be.in.range}]]*/ '';

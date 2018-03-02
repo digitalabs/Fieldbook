@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -184,6 +185,8 @@ public class EditNurseryControllerTest {
 		Mockito.when(dmsProject.getProgramUUID()).thenReturn("1002");
 		Mockito.when(studyDetails.getParentFolderId()).thenReturn((long) 1);
 		Mockito.when(workbook.getStudyDetails()).thenReturn(studyDetails);
+		Mockito.when(workbook.getStudyDetails().getStartDate()).thenReturn("20120314");
+		Mockito.when(workbook.getStudyDetails().getEndDate()).thenReturn("20180314");
 		Mockito.doReturn(project).when(this.abstractBaseFieldbookController).getCurrentProject();
 		Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(Matchers.anyInt())).thenReturn(workbook);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString()))
@@ -284,13 +287,12 @@ public class EditNurseryControllerTest {
 
 		final CreateNurseryForm createNurseryForm = new CreateNurseryForm();
 		createNurseryForm.setStudyLevelVariables(Arrays.asList(this.createSettingDetail(TermId.COOPERATOOR_ID.getId())));
-		createNurseryForm.setBasicDetails(Arrays.asList(this.createSettingDetail(TermId.STUDY_NAME.getId())));
 
 		final List<SettingDetail> result = this.editNurseryController.combineStudyLevelVariablesInNurseryForm(createNurseryForm);
 
 		// The combined size of SettingDetails from Study Level Variables and Basic Details and Hidden Variables
 		// must equal to 2
-		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(1, result.size());
 	}
 
 	@Test
@@ -302,7 +304,6 @@ public class EditNurseryControllerTest {
 		studyLevelConditions.add(this.createSettingDetail(TermId.LOCATION_ID.getId()));
 
 		testUserSelection.setStudyLevelConditions(studyLevelConditions);
-		testUserSelection.setBasicDetails(Arrays.asList(this.createSettingDetail(TermId.STUDY_NAME.getId())));
 		testUserSelection.setRemovedConditions(Arrays.asList(this.createSettingDetail(TermId.TRIAL_LOCATION.getId())));
 
 		final List<SettingDetail> result = this.editNurseryController.combineStudyLevelConditionsInUserSelection(testUserSelection);
@@ -311,7 +312,7 @@ public class EditNurseryControllerTest {
 
 		// The combined size of SettingDetails from Study Level Conditions, Basic Details and Hidden Variables
 		// must equal to 3
-		Assert.assertEquals(3, studyLevelConditions.size());
+		Assert.assertEquals(2, studyLevelConditions.size());
 
 	}
 
@@ -346,13 +347,11 @@ public class EditNurseryControllerTest {
 
 		final CreateNurseryForm createNurseryForm = new CreateNurseryForm();
 		createNurseryForm.setStudyLevelVariables(Arrays.asList(this.createSettingDetail(TermId.COOPERATOOR_ID.getId())));
-		createNurseryForm.setBasicDetails(Arrays.asList(this.createSettingDetail(TermId.STUDY_NAME.getId())));
 
 		final UserSelection testUserSelection = new UserSelection();
 		final List<SettingDetail> studyLevelConditions = new ArrayList<>();
 		studyLevelConditions.add(this.createSettingDetail(TermId.LOCATION_ID.getId()));
 		testUserSelection.setStudyLevelConditions(studyLevelConditions);
-		testUserSelection.setBasicDetails(Arrays.asList(this.createSettingDetail(TermId.STUDY_NAME.getId())));
 		testUserSelection.setRemovedConditions(Arrays.asList(this.createSettingDetail(TermId.TRIAL_LOCATION.getId())));
 		testUserSelection.setNurseryTypeForDesign(1);
 
@@ -361,7 +360,6 @@ public class EditNurseryControllerTest {
 		// Ensure that condition variables from Create Nursery Form, UserSelection and Hidden Variable are included
 		// in the list.
 		Assert.assertTrue(containsTermId(TermId.COOPERATOOR_ID.getId(), result));
-		Assert.assertTrue(containsTermId(TermId.STUDY_NAME.getId(), result));
 		Assert.assertTrue(containsTermId(TermId.LOCATION_ID.getId(), result));
 		Assert.assertTrue(containsTermId(TermId.TRIAL_LOCATION.getId(), result));
 		Assert.assertTrue(containsTermId(TermId.NURSERY_TYPE.getId(), result));
@@ -529,7 +527,7 @@ public class EditNurseryControllerTest {
 	}
 
 	@Test
-	public void testSubmitWhereMeasurementsListHasNoValue() {
+	public void testSubmitWhereMeasurementsListHasNoValue() throws ParseException {
 		final Workbook testWorkbook = new Workbook();
 		testWorkbook.setTrialDatasetId(1);
 		testWorkbook.setMeasurementDatesetId(2);
@@ -545,7 +543,7 @@ public class EditNurseryControllerTest {
 
 	@Test
 	@Ignore(value = "The method under test is overwriting the userSelection.workbook which causes this test to fail. Neeeds to be fixed.")
-	public void testSubmitWhereMeasurementsListHasValueSuccess() {
+	public void testSubmitWhereMeasurementsListHasValueSuccess() throws ParseException {
 		final SettingDetail settingDetail = Mockito.mock(SettingDetail.class);
 		final SettingVariable variable = Mockito.mock(SettingVariable.class);
 		final StandardVariable standardVariable = Mockito.mock(StandardVariable.class);

@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -32,6 +33,7 @@ public class AngularMapOntologyControllerTest {
 
 	private static final String PROGRAM_UUID = "55bd5dde-3a68-4dcd-bdda-d2301eff9e16";
 	public static final String CONTEXT_PATH = "contextPath";
+	public static final int CURRENT_IBDB_USER_ID = 1;
 
 	@Mock
 	private HttpServletRequest request;
@@ -57,11 +59,15 @@ public class AngularMapOntologyControllerTest {
 	@InjectMocks
 	private AngularMapOntologyController controller;
 
+	@Mock
+	protected WorkbenchService workbenchService;
+
 	@Before
 	public void setup() {
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID())
 				.thenReturn(AngularMapOntologyControllerTest.PROGRAM_UUID);
+		Mockito.when(this.contextUtil.getCurrentIbdbUserId()).thenReturn(CURRENT_IBDB_USER_ID);
 		Mockito.when(this.request.getContextPath()).thenReturn(AngularMapOntologyControllerTest.CONTEXT_PATH);
 	}
 
@@ -73,7 +79,7 @@ public class AngularMapOntologyControllerTest {
 				false);
 		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(apacheWorkbook);
 		Mockito.when(this.etlService.convertToWorkbook(this.userSelection)).thenReturn(workbook);
-		Mockito.when(this.dataImportService.parseWorkbookDescriptionSheet(apacheWorkbook)).thenReturn(workbook);
+		Mockito.when(this.dataImportService.parseWorkbookDescriptionSheet(apacheWorkbook, CURRENT_IBDB_USER_ID)).thenReturn(workbook);
 
 		final VariableDTO[] variables = new VariableDTO[] {};
 

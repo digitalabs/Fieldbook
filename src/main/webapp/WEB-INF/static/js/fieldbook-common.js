@@ -1860,8 +1860,8 @@ function validatePlantsSelected() {
 
 				if (isMixed) {
 					if (data == 0) {
-						var param = $('lineVariateId').select2('data').text + ' and/or ' + $('#plotVariateId').select2('data').text;
-                        if(isNursery){
+						var param = $('#lineVariateId').select2('data').text + ' and/or ' + $('#plotVariateId').select2('data').text;
+                        if(isNursery()){
                             var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
                             showErrorMessage('page-advance-modal-message', newMessage);
                         }

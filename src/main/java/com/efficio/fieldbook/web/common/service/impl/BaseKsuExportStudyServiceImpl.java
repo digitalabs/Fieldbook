@@ -74,7 +74,7 @@ public abstract class BaseKsuExportStudyServiceImpl implements ExportStudyServic
 			final ZipUtil zipUtil = new ZipUtil();
 			downloadFilename = studyName + AppConstants.ZIP_FILE_SUFFIX.getString();
 			outputFilename =
-					zipUtil.zipIt(studyName, filenameList, this.contextUtil.getProjectInContext(), ToolName.TRIAL_MANAGER_FIELDBOOK_WEB);
+					zipUtil.zipIt(studyName, filenameList, this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 
 		} finally {
 			if (fos != null) {

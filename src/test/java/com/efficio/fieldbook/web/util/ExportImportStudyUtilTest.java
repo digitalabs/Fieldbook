@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitializer;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -29,7 +30,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.MessageSource;
 
-import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;

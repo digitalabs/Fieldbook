@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.middleware.domain.sample.SampleDetailsDTO;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +15,6 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.web.util.SampleListUtilTest;
 
 public class CsvExportSampleListServiceImplTest {

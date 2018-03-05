@@ -14,9 +14,9 @@ package com.efficio.fieldbook.web.common.service;
 import java.io.IOException;
 import java.util.List;
 
+import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.middleware.domain.etl.Workbook;
 
-import com.efficio.fieldbook.util.FileExportInfo;
 
 public interface ExportStudyService {
 

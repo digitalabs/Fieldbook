@@ -1,9 +1,9 @@
 
 package com.efficio.fieldbook.web.common.service;
 
+import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.GermplasmExportService;
 
-import com.efficio.fieldbook.util.FileExportInfo;
 
 public interface ExportAdvanceListService {
 

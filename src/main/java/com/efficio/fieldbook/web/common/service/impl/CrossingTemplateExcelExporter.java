@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.parsing.ExcelCellStyleBuilder;
 import org.generationcp.commons.parsing.ExcelWorkbookRow;
 import org.generationcp.commons.parsing.GermplasmExportedWorkbook;
+import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
@@ -47,7 +48,6 @@ import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.util.PoiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
 import com.efficio.fieldbook.web.util.AppConstants;
 

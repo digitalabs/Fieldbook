@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -44,7 +45,6 @@ import com.efficio.fieldbook.service.api.ExportFieldmapService;
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;

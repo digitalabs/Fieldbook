@@ -1,12 +1,12 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -21,7 +21,6 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.efficio.fieldbook.util.FileExportInfo;
 
 public class ExportImportStudyUtil {
 

@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.util.DateUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,7 +22,6 @@ import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.service.api.ExportFieldmapService;
 import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 

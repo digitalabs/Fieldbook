@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.sample.SampleDetailsDTO;
 import org.generationcp.middleware.service.api.SampleListService;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.service.CsvExportSampleListService;
 import com.google.common.collect.Lists;

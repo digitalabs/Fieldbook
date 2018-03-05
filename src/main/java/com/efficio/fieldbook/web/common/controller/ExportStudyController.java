@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.CustomReportType;
+import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.reports.service.JasperReportService;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.util.FileUtils;
@@ -51,7 +52,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.util.FileExportInfo;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.service.CsvExportStudyService;

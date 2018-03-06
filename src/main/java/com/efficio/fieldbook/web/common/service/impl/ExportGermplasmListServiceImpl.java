@@ -97,13 +97,9 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
 
 		final int studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
-		GermplasmListType germplasmListType = GermplasmListType.NURSERY;
-		if (!isNursery) {
-			germplasmListType = GermplasmListType.TRIAL;
-		}
 
 		// retrieval of germplasm list data from snapshot list
-		final List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, germplasmListType);
+		final List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
 		List<? extends GermplasmExportSource> germplasmlistData = new ArrayList<>();
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
 			germplasmList = germplasmLists.get(0);

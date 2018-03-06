@@ -260,6 +260,7 @@ public class OpenTrialController extends BaseTrialController {
 						trialWorkbook.getMeasurementDatesetId(),
 						SettingsUtil.buildVariates(trialWorkbook.getVariates())));
 				form.setStudyId(trialId);
+				form.setStudyTypeName(dmsProject.getStudyType().getName());
 				form.setGermplasmListId(this.getGermplasmListId(trialId));
 				form.setStudyTypeName(dmsProject.getStudyType().getLabel());
 				this.setModelAttributes(form, trialId, model, trialWorkbook);

@@ -49,12 +49,6 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	 * The Constant LOG.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingTemplateParser.class);
-	private static final Map<StudyType, GermplasmListType> STUDY_TYPE_TO_LIST_TYPE_MAP = new HashMap<>();
-
-	static {
-		CrossingTemplateParser.STUDY_TYPE_TO_LIST_TYPE_MAP.put(StudyType.N, GermplasmListType.NURSERY);
-		CrossingTemplateParser.STUDY_TYPE_TO_LIST_TYPE_MAP.put(StudyType.T, GermplasmListType.TRIAL);
-	}
 
 	private final Map<String, Integer> observationColumnMap = new HashMap<>();
 	private ImportedCrossesList importedCrossesList;
@@ -299,11 +293,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 					this.messageSource.getMessage("no.such.study.exists", new String[] {studyName}, LocaleContextHolder.getLocale()));
 		}
 
-		final StudyType studyType = this.studyDataManager.getStudyType(studyId);
-
 		// 2. retrieve the list id of the particular study
-		final ListDataProject listdataResult = this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId,
-				CrossingTemplateParser.STUDY_TYPE_TO_LIST_TYPE_MAP.get(studyType), genderedPlotNo);
+		final ListDataProject listdataResult =
+			this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId, GermplasmListType.STUDY, genderedPlotNo);
 
 		if (null == listdataResult) {
 			throw new FileParsingException(this.messageSource.getMessage("no.list.data.for.plot", new Object[] {studyName, genderedPlotNo},

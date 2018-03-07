@@ -77,7 +77,7 @@
 										<a href="javascript: void(0)" onclick="exportDesignTemplate()" class="export-design-template-link"
 										   th:text="#{nursery.nurserydetails.action.export.design.template}">Export Design Template</a>
 									</li>
-									<li ng-show="displayGermplasmOnlyActions()">
+									<li ng-show="hasGermplasmListSelected()">
 										<a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());"
 										   id="import-design-url-link"
 										   th:text="#{trial.trialdetails.action.import.design}">Import Design</a>
@@ -92,11 +92,11 @@
 							</li>
 
 							<!--Crossing options-->
-							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
+							<li  ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Crossing options</a>
 								<ul class="dropdown-menu" style="margin-left: -46px;">
 									<!--Export crossing template-->
-									<li>
+									<li id="download-crosses-template">
 										<a href="javascript: void(0)" onclick="ImportCrosses.downloadCrosses()"
 										   class="export-crosses-action" th:text="#{nursery.nurserydetails.action.export.crosses}">Export crossing template</a>
 									</li>
@@ -106,7 +106,7 @@
 									</li>
 									<!--Design new crosses-->
 									<li id="create-new-crosses">
-										<a th:href="@{~/BreedingManager/main/createcrosses(studyid=*{studyId},germplasmlistid=*{germplasmListId},loggedInUserId=${loggedInUserId},selectedProjectId=${selectedProjectId})}"
+										<a th:href="@{~/BreedingManager/main/createcrosses(studyid=*{studyId},germplasmlistid=*{germplasmListId},loggedInUserId=${loggedInUserId},selectedProjectId=${selectedProjectId},studyType=*{studyTypeName})}"
 										   class="create-new-crosses" th:text="#{nursery.nurserydetails.action.create.new.crosses}">Design new crosses</a>
 									</li>
 								</ul>
@@ -134,7 +134,7 @@
 										<a href="javascript: showImportOptions();" id="open-study-url-link"
 										   th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
 									</li>
-									<li ng-show="displayGermplasmOnlyActions()">
+									<li ng-show="hasGermplasmListSelected()">
 										<a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link"
 										   th:text="#{nursery.nurserydetails.action.export.germplasm.list}">Export Germplasm List</a>
 									</li>

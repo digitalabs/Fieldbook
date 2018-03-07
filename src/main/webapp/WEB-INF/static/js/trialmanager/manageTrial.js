@@ -185,6 +185,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$http.get('/bmsapi/' + cropName + '/studytypes', config).success(function (data) {
 				$scope.studyTypes = data;
+
 			}).error(function (data) {
 				if (data.status == 401) {
 					bmsAuth.handleReAuthentication();
@@ -370,12 +371,12 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					TrialManagerDataService.trialMeasurement.count > 0;
 			};
 
-			$scope.displayGermplasmOnlyActions = function() {
+			$scope.hasGermplasmListSelected = function() {
 				return TrialManagerDataService.applicationData.germplasmListSelected;
 			};
 
 			$scope.displayGermplasmOrMeasurmentOnlyActions = function() {
-				return this.displayGermplasmOnlyActions() || this.displayMeasurementOnlyActions();
+				return this.hasGermplasmListSelected() || this.displayMeasurementOnlyActions();
 			};
 
 			// Programatically navigate to specified tab state
@@ -418,7 +419,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				} else if (targetState === 'experimentalDesign') {
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Trial settings have been updated since the experimental design was generated. ' +
+						showAlertMessage('', 'Study settings have been updated since the experimental design was generated. ' +
 							'Please select a design type and specify the parameters for your study again', 10000);
 					}
 				} else if (targetState === 'createMeasurements') {
@@ -458,8 +459,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.addAdvanceTabData = function(tabId, tabData, listName, isPageLoading) {
-				//TODO remove this global
-				isAdvanceListGeneratedForTrial = true;
 				var isSwap = false;
 				var isUpdate = false;
 				if (isPageLoading === undefined) {
@@ -637,7 +636,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.advancedTrialList = TrialManagerDataService.settings.advancedList;
 
 			angular.forEach($scope.advancedTrialList, function(value) {
-				displayAdvanceList('', value.id, value.name, false, '', true);
+				displayAdvanceList(value.id, value.name, false, '', true);
 			});
 
 			$scope.sampleList = TrialManagerDataService.settings.sampleList;

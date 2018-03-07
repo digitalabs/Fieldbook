@@ -111,7 +111,7 @@ public class CrossingTemplateExcelExporter {
 	void writeStudyListSheet(Sheet studyListSheet, final ExcelCellStyleBuilder sheetStyles, final int studyId, final String studyName) {
 
 		final int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
-		final List<Experiment> experiments = this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null);
+		final List<Experiment> experiments = this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE);
 		int rowIndex = 1;
 		int columSheet = 6;
 		ArrayList<String> localNameList = new ArrayList<>();
@@ -138,8 +138,10 @@ public class CrossingTemplateExcelExporter {
 
 			if (gpData.getFactors().findById(TermId.CROSS) != null) {
 				PoiUtil.setCellValue(studyListSheet, 6, rowIndex, gpData.getFactors().findById(TermId.CROSS).getValue());
-
+			}else{
+				PoiUtil.setCellValue(studyListSheet, 6, rowIndex, "-");
 			}
+
 			if (gpData.getFactors().findById(TermId.FIELDMAP_COLUMN) != null) {
 				if (rowIndex == 1) {
 					addHeaderToRow(row, methodCellStyle, FIELDMAP_COLUMN);

@@ -103,7 +103,7 @@ public class CrossingTemplateExcelExporterTest {
 	@Test
 	public void testExport() throws Exception {
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
-				GermplasmListType.NURSERY)).thenReturn(this.initializeCrossesList());
+				GermplasmListType.STUDY)).thenReturn(this.initializeCrossesList());
 
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString());
 		Mockito.doReturn(this.intializeExperiments()).when(this.studyDataManager).getExperiments(Matchers.anyInt(), Matchers.anyInt(),
@@ -202,7 +202,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null)).thenReturn(experiments);
 
 		final Sheet sheet = this.workbook.getSheetAt(3);
-		this.exporter.writeNurseryListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
+		this.exporter.writeStudyListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
 				CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
 
 		assertThat("studyname", equalTo(sheet.getRow(1).getCell(0).getStringCellValue()));
@@ -229,7 +229,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null)).thenReturn(experiments);
 
 		final Sheet sheet = this.workbook.getSheetAt(3);
-		this.exporter.writeNurseryListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
+		this.exporter.writeStudyListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
 				CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
 
 		// Header added//
@@ -295,7 +295,7 @@ public class CrossingTemplateExcelExporterTest {
 		final String studyName = "Nueva Nursery \\ / : * ? \" \\&quot; &lt; &gt; | ,";
 		final String exportFileName = "CrossingTemplate-Nueva Nursery _ _ _ _ _ _ __ _ _ _ _.xls";
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
-				GermplasmListType.NURSERY)).thenReturn(this.initializeCrossesList());
+				GermplasmListType.STUDY)).thenReturn(this.initializeCrossesList());
 
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString());
 		Mockito.doReturn(this.intializeExperiments()).when(this.studyDataManager).getExperiments(Matchers.anyInt(), Matchers.anyInt(),
@@ -317,7 +317,7 @@ public class CrossingTemplateExcelExporterTest {
 	@SuppressWarnings("unchecked")
 	public void retrieveAndValidateIfHasGermplasmListExceptionHandling() throws Exception {
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
-				GermplasmListType.NURSERY)).thenReturn(Collections.EMPTY_LIST);
+				GermplasmListType.STUDY)).thenReturn(Collections.EMPTY_LIST);
 
 		this.exporter.retrieveAndValidateIfHasGermplasmList(CrossingTemplateExcelExporterTest.STUDY_ID);
 	}

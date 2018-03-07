@@ -335,7 +335,7 @@ public class ImportGermplasmListControllerTest {
 				.countGermplasmListDataByListId(this.LIST_ID);
 
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
-				.getGermplasmListsByProjectId(ImportGermplasmListControllerTest.STUDY_ID, GermplasmListType.NURSERY);
+				.getGermplasmListsByProjectId(ImportGermplasmListControllerTest.STUDY_ID, GermplasmListType.STUDY);
 		Mockito.doReturn(this.createListDataProject()).when(this.fieldbookMiddlewareService)
 				.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
 
@@ -408,7 +408,7 @@ public class ImportGermplasmListControllerTest {
 				.countGermplasmListDataByListId(this.LIST_ID);
 
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
-				.getGermplasmListsByProjectId(ImportGermplasmListControllerTest.STUDY_ID, GermplasmListType.TRIAL);
+				.getGermplasmListsByProjectId(ImportGermplasmListControllerTest.STUDY_ID, GermplasmListType.STUDY);
 		Mockito.doReturn(this.createListDataProject()).when(this.fieldbookMiddlewareService)
 				.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
 
@@ -696,7 +696,7 @@ public class ImportGermplasmListControllerTest {
 		final ListDataProject listDataProject = new ListDataProject();
 		listDataProjects.add(listDataProject);
 
-		Mockito.when(this.fieldbookMiddlewareService.saveOrUpdateListDataProject(3, GermplasmListType.NURSERY, 4,
+		Mockito.when(this.fieldbookMiddlewareService.saveOrUpdateListDataProject(3, GermplasmListType.STUDY, 4,
 				listDataProjects, 7)).thenReturn(3);
 
 		Mockito.doNothing().when(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null,

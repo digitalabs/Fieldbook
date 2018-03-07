@@ -257,7 +257,7 @@ public class LabelPrintingServiceImplTest {
 		final List<GermplasmList> germplasmLists = this.germplasmListTestDataInitializer.createGermplasmLists(1);
 		final GermplasmList germplasmList = germplasmLists.get(0);
 		final Integer numOfEntries = germplasmList.getListData().size();
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY)).thenReturn(
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY)).thenReturn(
 				germplasmLists);
 		Mockito.when(this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId(), germplasmList.getType()))
 				.thenReturn(this.inventoryDetailsInitializer.createInventoryDetailList(numOfEntries));
@@ -272,7 +272,7 @@ public class LabelPrintingServiceImplTest {
 		final Integer studyId = workbook.getStudyDetails().getId();
 		final List<GermplasmList> germplasmLists = this.germplasmListTestDataInitializer.createGermplasmLists(1);
 		final GermplasmList germplasmList = germplasmLists.get(0);
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY))
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY))
 				.thenReturn(germplasmLists);
 		Mockito.when(this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId()))
 				.thenReturn(new ArrayList<InventoryDetails>());
@@ -456,7 +456,7 @@ public class LabelPrintingServiceImplTest {
 				this.measurementData, this.environmentData, userLabelPrinting);
 		try {
 			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0))
-					.getGermplasmListsByProjectId(LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.TRIAL);
+					.getGermplasmListsByProjectId(LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.STUDY);
 		} catch (final NeverWantedButInvoked e) {
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is never invoked.");
 		}
@@ -499,7 +499,7 @@ public class LabelPrintingServiceImplTest {
 			Assert.assertNotNull(gidCaptor.getValue());
 
 			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getGermplasmListsByProjectId(
-					LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.NURSERY);
+					LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.STUDY);
 		} catch (final NeverWantedButInvoked e) {
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is never invoked.");
 		}
@@ -605,7 +605,7 @@ public class LabelPrintingServiceImplTest {
 
 		try {
 			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
-					.getGermplasmListsByProjectId(LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.NURSERY);
+					.getGermplasmListsByProjectId(LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.STUDY);
 		} catch (final TooLittleActualInvocations e) {
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is invoked.");
 		}

@@ -235,35 +235,35 @@ public class OpenTrialController extends BaseTrialController {
 					return "redirect:" + ManageTrialController.URL + "?summaryId=" + trialId + "&summaryName="
 							+ dmsProject.getName();
 				}
-				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(trialId,dmsProject.getStudyType()); // TODO VERIFICAR POR STUDY TYPE
+				final Workbook workbook =
+					this.fieldbookMiddlewareService.getStudyDataSet(trialId, dmsProject.getStudyType()); // TODO corregir workbook
 
 				// FIXME
 				// See setStartingEntryNoAndPlotNoFromObservations() in
 				// prepareExperimentalDesignTabInfo
-				this.fieldbookMiddlewareService.loadAllObservations(trialWorkbook);
+				this.fieldbookMiddlewareService.loadAllObservations(workbook);
 
-				this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
+				this.removeAnalysisAndAnalysisSummaryVariables(workbook);
 
-				this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
-				this.userSelection.setWorkbook(trialWorkbook);
+				this.userSelection.setConstantsWithLabels(workbook.getConstants());
+				this.userSelection.setWorkbook(workbook);
 				this.userSelection.setExperimentalDesignVariables(
-						WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));
+						WorkbookUtil.getExperimentalDesignVariables(workbook.getConditions()));
 				this.userSelection.setExpDesignParams(
 						SettingsUtil.convertToExpDesignParamsUi(this.userSelection.getExperimentalDesignVariables()));
 				this.userSelection.setTemporaryWorkbook(null);
-				this.userSelection.setMeasurementRowList(trialWorkbook.getObservations());
+				this.userSelection.setMeasurementRowList(workbook.getObservations());
 
-				this.fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(),
-						trialWorkbook.getMeasurementDatesetId());
+				this.fieldbookMiddlewareService.setTreatmentFactorValues(workbook.getTreatmentFactors(),
+						workbook.getMeasurementDatesetId());
 
 				form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(
-						trialWorkbook.getMeasurementDatesetId(),
-						SettingsUtil.buildVariates(trialWorkbook.getVariates())));
+						workbook.getMeasurementDatesetId(),
+						SettingsUtil.buildVariates(workbook.getVariates())));
 				form.setStudyId(trialId);
 				form.setStudyTypeName(dmsProject.getStudyType().getName());
 				form.setGermplasmListId(this.getGermplasmListId(trialId));
-				form.setStudyTypeName(dmsProject.getStudyType().getLabel());
-				this.setModelAttributes(form, trialId, model, trialWorkbook);
+				this.setModelAttributes(form, trialId, model, workbook);
 				this.setUserSelectionImportedGermplasmMainInfo(this.userSelection, trialId, model);
 			}
 			return this.showAngularPage(model);

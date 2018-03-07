@@ -342,24 +342,24 @@
 			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
 			<a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
 		</li>
-		<li ng-repeat="tab in advanceTrialTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
+		<li ng-repeat="tab in advanceTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
 			ng-click="tabChange(tab.state)"
 			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
 			<a href="#tab.name" tab-data='{{tab.id}}'>{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="id" ng-click="closeAdvanceListTab(tab.state)"></i>
 			</a>
 		</li>
-		<li ng-repeat="tab in sampleListTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
+		<li ng-repeat="tab in sampleTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
 			ng-click="tabChange(tab.state)"
 			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
-			<a href="#tab.name" tab-data='{{tab.id}}' ng-click="initSampleListTab(tab)">{{tab.displayName}}
+			<a href="#tab.name" tab-data='{{tab.id}}' ng-click="initSampleTab(tab)">{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="sampleListId" ng-click="closeSampleListTab(tab.state)"></i>
 			</a>
 		</li>
-		<li ng-repeat="tab in crossesListTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
+		<li ng-repeat="tab in crossesTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
 			ng-click="tabChange(tab.state)"
 			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
-			<a href="#tab.name" tab-data='{{tab.id}}' ng-click="initCrossesListTab(tab)">{{tab.displayName}}
+			<a href="#tab.name" tab-data='{{tab.id}}' ng-click="initCrossesTab(tab)">{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="crossesListId" ng-click="closeCrossesListTab(tab.state)"></i>
 			</a>
 		</li>
@@ -378,11 +378,11 @@
 				 ng-show="tabSelected===advancetab.name">
 				<div ng-bind-html="advancetab.data"></div>
 			</div>
-			<div class="col-xs-12" ng-repeat="sampleListTab in sampleListData track by $index" id="{{sampleListTab.id}}"
+			<div class="col-xs-12" ng-repeat="sampleListTab in sampleTabsData track by $index" id="{{sampleListTab.id}}"
 				 ng-show="tabSelected===sampleListTab.name">
 				<div ng-bind-html="sampleListTab.data"></div>
 			</div>
-			<div class="col-xs-12" ng-repeat="crossListTab in crossListData track by $index" id="{{crossListTab.id}}"
+			<div class="col-xs-12" ng-repeat="crossListTab in crossesTabsData track by $index" id="{{crossListTab.id}}"
 				 ng-show="tabSelected===crossListTab.name">
 				<div ng-bind-html="crossListTab.data"></div>
 			</div>

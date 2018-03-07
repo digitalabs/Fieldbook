@@ -64,15 +64,15 @@ public class DeleteStudyControllerTest {
 		this.locale = new Locale("en", "US");
 		this.germplasmListTestDataInitializer = new GermplasmListTestDataInitializer();
 		final GermplasmList nurseryList = this.germplasmListTestDataInitializer.createGermplasmListWithType(1,
-				GermplasmListType.NURSERY.name());
+				GermplasmListType.STUDY.name());
 		final GermplasmList trialList = this.germplasmListTestDataInitializer.createGermplasmListWithType(1,
-				GermplasmListType.TRIAL.name());
+				GermplasmListType.STUDY.name());
 
 		Mockito.when(this.fieldbookMiddlewareService
-				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.NURSERY))
+				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.STUDY))
 				.thenReturn(Arrays.asList(nurseryList));
 		Mockito.when(this.fieldbookMiddlewareService
-				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.TRIAL))
+				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.STUDY))
 				.thenReturn(Arrays.asList(trialList));
 	}
 
@@ -88,7 +88,7 @@ public class DeleteStudyControllerTest {
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
 				.deleteStudy(DeleteStudyControllerTest.PROJECT_ID, this.contextUtil.getCurrentUserLocalId());
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
-				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.NURSERY);
+				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.STUDY);
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
 				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.CHECK);
 		Mockito.verify(this.germplasmListManager, Mockito.times(1))
@@ -107,7 +107,7 @@ public class DeleteStudyControllerTest {
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
 				.deleteStudy(DeleteStudyControllerTest.PROJECT_ID, this.contextUtil.getCurrentUserLocalId());
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
-				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.TRIAL);
+				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.STUDY);
 		Mockito.verify(this.germplasmListManager, Mockito.times(1))
 				.deleteGermplasmList(Matchers.any(GermplasmList.class));
 	}

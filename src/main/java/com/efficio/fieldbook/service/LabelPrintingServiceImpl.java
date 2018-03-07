@@ -297,7 +297,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 		try {
 			GermplasmList germplasmList = null;
-			final GermplasmListType listType = workbook.isNursery() ? GermplasmListType.NURSERY : GermplasmListType.TRIAL;
+			final GermplasmListType listType = GermplasmListType.STUDY;
 			final List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, listType);
 			if (!germplasmLists.isEmpty()) {
 				germplasmList = germplasmLists.get(0);
@@ -962,7 +962,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	protected boolean hasInventoryValues(final int studyID, final boolean isNursery) {
 		try {
 			GermplasmList germplasmList = null;
-			final GermplasmListType listType = isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL;
+			final GermplasmListType listType = GermplasmListType.STUDY;
 			final List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyID, listType);
 			if (!germplasmLists.isEmpty()) {
 				germplasmList = germplasmLists.get(0);

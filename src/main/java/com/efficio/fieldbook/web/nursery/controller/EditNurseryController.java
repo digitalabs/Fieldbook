@@ -929,7 +929,7 @@ public class EditNurseryController extends SettingsController {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 
 			final List<GermplasmList> germplasmLists =
-					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY);
+					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
 
 			if (germplasmLists != null && !germplasmLists.isEmpty()) {
 				final GermplasmList germplasmList = germplasmLists.get(0);

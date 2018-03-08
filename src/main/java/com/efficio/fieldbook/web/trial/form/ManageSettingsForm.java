@@ -11,12 +11,11 @@
 
 package com.efficio.fieldbook.web.trial.form;
 
-import java.util.List;
-
-import org.generationcp.middleware.domain.oms.TraitClassReference;
-
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import org.generationcp.middleware.domain.oms.TraitClassReference;
+
+import java.util.List;
 
 /**
  * The Class AddOrRemoveTraitsForm.
@@ -81,12 +80,6 @@ public class ManageSettingsForm {
 
 	/** The number of instances. */
 	private String numberOfInstances;
-
-	/** The start date id. */
-	private String startDateId;
-
-	/** The end date id. */
-	private String endDateId;
 
 	/**
 	 * Gets the number of instances.
@@ -443,42 +436,6 @@ public class ManageSettingsForm {
 	 */
 	public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
 		this.trialLevelVariables = trialLevelVariables;
-	}
-
-	/**
-	 * Gets the start date id.
-	 *
-	 * @return the start date id
-	 */
-	public String getStartDateId() {
-		return this.startDateId;
-	}
-
-	/**
-	 * Sets the start date id.
-	 *
-	 * @param startDateId the new start date id
-	 */
-	public void setStartDateId(String startDateId) {
-		this.startDateId = startDateId;
-	}
-
-	/**
-	 * Gets the end date id.
-	 *
-	 * @return the end date id
-	 */
-	public String getEndDateId() {
-		return this.endDateId;
-	}
-
-	/**
-	 * Sets the end date id.
-	 *
-	 * @param endDateId the new end date id
-	 */
-	public void setEndDateId(String endDateId) {
-		this.endDateId = endDateId;
 	}
 
 	/**

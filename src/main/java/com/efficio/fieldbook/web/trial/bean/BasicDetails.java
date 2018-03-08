@@ -18,6 +18,12 @@ public class BasicDetails implements TabInfoBean {
 	private Integer userID;
 	private Integer studyID;
 	private String description;
+	private String startDate;
+	private String endDate;
+	private String studyUpdate;
+	private String objective;
+	private String studyName;
+	private String createdBy;
 	private String studyType;
 
 	public BasicDetails() {
@@ -28,7 +34,7 @@ public class BasicDetails implements TabInfoBean {
 		return this.basicDetails;
 	}
 
-	public void setBasicDetails(Map<String, String> basicDetails) {
+	public void setBasicDetails(final Map<String, String> basicDetails) {
 		this.basicDetails = basicDetails;
 	}
 
@@ -36,7 +42,7 @@ public class BasicDetails implements TabInfoBean {
 		return this.folderId;
 	}
 
-	public void setFolderId(Integer folderId) {
+	public void setFolderId(final Integer folderId) {
 		this.folderId = folderId;
 	}
 
@@ -44,7 +50,7 @@ public class BasicDetails implements TabInfoBean {
 		return this.folderName;
 	}
 
-	public void setFolderName(String folderName) {
+	public void setFolderName(final String folderName) {
 		this.folderName = folderName;
 	}
 
@@ -52,7 +58,7 @@ public class BasicDetails implements TabInfoBean {
 		return this.folderNameLabel;
 	}
 
-	public void setFolderNameLabel(String folderNameLabel) {
+	public void setFolderNameLabel(final String folderNameLabel) {
 		this.folderNameLabel = folderNameLabel;
 	}
 
@@ -60,7 +66,7 @@ public class BasicDetails implements TabInfoBean {
 		return this.userName;
 	}
 
-	public void setUserName(String userName) {
+	public void setUserName(final String userName) {
 		this.userName = userName;
 	}
 
@@ -68,7 +74,7 @@ public class BasicDetails implements TabInfoBean {
 		return this.userID;
 	}
 
-	public void setUserID(Integer userID) {
+	public void setUserID(final Integer userID) {
 		this.userID = userID;
 	}
 
@@ -76,7 +82,7 @@ public class BasicDetails implements TabInfoBean {
 		return this.studyID;
 	}
 
-	public void setStudyID(Integer studyID) {
+	public void setStudyID(final Integer studyID) {
 		this.studyID = studyID;
 	}
 
@@ -86,6 +92,54 @@ public class BasicDetails implements TabInfoBean {
 
 	public void setDescription(final String description) {
 		this.description = description;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(final String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return this.endDate;
+	}
+
+	public void setEndDate(final String endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getStudyUpdate() {
+		return this.studyUpdate;
+	}
+
+	public void setStudyUpdate(final String studyUpdate) {
+		this.studyUpdate = studyUpdate;
+	}
+
+	public String getObjective() {
+		return objective;
+	}
+
+	public void setObjective(final String objective) {
+		this.objective = objective;
+	}
+
+	public String getStudyName() {
+		return studyName;
+	}
+
+	public void setStudyName(final String studyName) {
+		this.studyName = studyName;
+	}
+
+	public String getCreatedBy() {
+		return this.createdBy;
+	}
+
+	public void setCreatedBy(final String createdBy) {
+		this.createdBy = createdBy;
 	}
 
 	public String getStudyType() {

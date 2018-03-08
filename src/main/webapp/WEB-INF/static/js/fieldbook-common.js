@@ -1784,11 +1784,8 @@ function getDateRowIndex(divName, dateCvTermId) {
 }
 
 function validateStartEndDate(divName) {
-	//8050 - start
-	var startDateIndex = getDateRowIndex(divName, startDateId),
-		endDateIndex = getDateRowIndex(divName, endDateId),
-		startDate = $('#' + getJquerySafeId('studyLevelVariables' + startDateIndex + '.value')).val(),
-		endDate = $('#' + getJquerySafeId('studyLevelVariables' + endDateIndex + '.value')).val();
+	var startDate = $('#startDate').val(),
+		endDate = $('#enDate').val();
 
 	startDate = startDate == null ? '' : startDate;
 	endDate = endDate == null ? '' : endDate;
@@ -1858,8 +1855,8 @@ function validatePlantsSelected() {
 
 				if (isMixed) {
 					if (data == 0) {
-						var param = $('lineVariateId').select2('data').text + ' and/or ' + $('#plotVariateId').select2('data').text;
-                        if(isNursery){
+						var param = $('#lineVariateId').select2('data').text + ' and/or ' + $('#plotVariateId').select2('data').text;
+                        if(isNursery()){
                             var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
                             showErrorMessage('page-advance-modal-message', newMessage);
                         }
@@ -1918,7 +1915,7 @@ function callAdvanceNursery() {
 
 	var lines = $('#lineSelected').val();
 	var methdodId = $('#advanceBreedingMethodId').val();
-	if (!isNursery) {
+	if (!isNursery()) {
 		var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
 	}
 

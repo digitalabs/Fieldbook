@@ -313,7 +313,7 @@ public class OpenTrialControllerTest {
 
 			Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be displayed.", this.hasAnalysisVariables(model));
 
-		} catch (final MiddlewareException | ParseException e) {
+		} catch (final MiddlewareException e) {
 			this.handleUnexpectedException(e);
 		}
 	}

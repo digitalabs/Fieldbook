@@ -91,15 +91,14 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		return "TrialManager/reviewTrialDetails";
 	}
 
-	@RequestMapping(value = "/show/{studyType}/{id}", method = RequestMethod.GET)
-	public String show(@PathVariable final String studyType, @PathVariable final int id,
-			@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form, final Model model) {
+	@RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
+	public String show(@PathVariable final int id, @ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form,
+		final Model model) {
 
-		final boolean isNursery = studyType != null && StudyType.N.getName().equalsIgnoreCase(studyType);
 		final Workbook workbook;
 		StudyDetails details;
 		try {
-			workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(id, isNursery);
+			workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(id);
 			workbook.getStudyDetails().setId(id);
 			this.removeAnalysisAndAnalysisSummaryVariables(workbook);
 			final String createdBy = this.fieldbookService.getPersonByUserId(Integer.valueOf(workbook.getStudyDetails().getCreatedBy()));
@@ -116,30 +115,20 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		} catch (final MiddlewareException e) {
 			ReviewStudyDetailsController.LOG.error(e.getMessage(), e);
 			details = new StudyDetails();
-			this.addErrorMessageToResult(details, e, isNursery, id);
+			this.addErrorMessageToResult(details, e, id);
 		}
 
-/*		if (isNursery) {
-			model.addAttribute("nurseryDetails", details);
-		} else {*/
-			model.addAttribute("trialDetails", details);
-		/*}*/
-
+		model.addAttribute("trialDetails", details);
 		return this.showAjaxPage(model, this.getContentStudy());
 	}
 
-	protected void addErrorMessageToResult(final StudyDetails details, final MiddlewareException e, final boolean isNursery, final int id) {
-		final String param;
-		if (isNursery) {
-			param = AppConstants.NURSERY.getString();
-		} else {
-			param = AppConstants.TRIAL.getString();
-		}
+	protected void addErrorMessageToResult(final StudyDetails details, final MiddlewareException e, final int id) {
+		final String param = AppConstants.STUDY.getString();
 		details.setId(id);
 		String errorMessage = e.getMessage();
 		if (e instanceof MiddlewareQueryException) {
 			errorMessage = this.errorHandlerService.getErrorMessagesAsString(((MiddlewareQueryException) e).getCode(),
-					new Object[] {param, param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n");
+				new Object[] {param, param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n");
 		}
 		details.setErrorMessage(errorMessage);
 	}

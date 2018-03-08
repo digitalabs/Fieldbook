@@ -221,9 +221,8 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	@RequestMapping(value = "/{trialId}", method = RequestMethod.GET)
-	public String openTrial(@ModelAttribute("createTrialForm") final CreateTrialForm form,
-			@PathVariable final Integer trialId, final Model model, final HttpSession session,
-			final RedirectAttributes redirectAttributes,
+	public String openTrial(@ModelAttribute("createTrialForm") final CreateTrialForm form, @PathVariable final Integer trialId,
+		final Model model, final HttpSession session, final RedirectAttributes redirectAttributes,
 		@RequestParam(value = "crosseslistid", required = false) final String crossesListId) {
 
 		model.addAttribute("createdCrossesListId", crossesListId);
@@ -274,8 +273,14 @@ public class OpenTrialController extends BaseTrialController {
 			OpenTrialController.LOG.debug(e.getMessage(), e);
 
 			redirectAttributes.addFlashAttribute("redirectErrorMessage", this.errorHandlerService.getErrorMessagesAsString(e.getCode(),
-				new String[] {AppConstants.TRIAL.getString(), StringUtils.capitalize(AppConstants.TRIAL.getString()),
-					AppConstants.TRIAL.getString()}, "\n"));
+				new String[] {AppConstants.STUDY.getString(), StringUtils.capitalize(AppConstants.STUDY.getString()),
+					AppConstants.STUDY.getString()}, "\n"));
+			return "redirect:" + ManageTrialController.URL;
+		} catch (final ParseException e) {
+			redirectAttributes.addFlashAttribute("redirectErrorMessage", this.errorHandlerService
+				.getErrorMessagesAsString("study.error.parser.format.date.basic.details",
+					new String[] {AppConstants.STUDY.getString(), StringUtils.capitalize(AppConstants.STUDY.getString()),
+						AppConstants.STUDY.getString()}, "\n"));
 			return "redirect:" + ManageTrialController.URL;
 		}
 	}

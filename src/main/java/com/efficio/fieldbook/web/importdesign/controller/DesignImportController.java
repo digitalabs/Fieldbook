@@ -783,17 +783,14 @@ public class DesignImportController extends SettingsController {
 
 		if (StudyType.T.getName().equalsIgnoreCase(studyType)) {// TODO VER COMO ARREGLAR ESTO.
 
-			final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService,
-					name, combinedList, this.userSelection.getPlotsLevelList(),
-					this.userSelection.getBaselineTraitsList(), this.userSelection,
-					this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null,
-					null, this.userSelection.getNurseryConditions(), false, this.contextUtil.getCurrentProgramUUID(), description,
-				startDate, endDate, studyUpdate);
+			final Dataset dataset = (Dataset) SettingsUtil
+				.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection.getPlotsLevelList(),
+					this.userSelection.getBaselineTraitsList(), this.userSelection, this.userSelection.getTrialLevelVariableList(),
+					this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(), false,
+					this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 
 			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false,
 					this.contextUtil.getCurrentProgramUUID());
-
-			//details.setStudyType(StudyType.T);//TODO VER COMO ARREGLAR
 
 		} else {
 
@@ -807,15 +804,14 @@ public class DesignImportController extends SettingsController {
 				variatesList.addAll(this.userSelection.getSelectionVariates());
 			}
 
-			final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService,
-					name, combinedList, this.userSelection.getPlotsLevelList(), variatesList, this.userSelection,
-					this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null,
-					null, this.userSelection.getNurseryConditions(), true, this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
+			final Dataset dataset = (Dataset) SettingsUtil
+				.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection.getPlotsLevelList(),
+					variatesList, this.userSelection, this.userSelection.getTrialLevelVariableList(),
+					this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(), true,
+					this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 
 			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true,
 					this.contextUtil.getCurrentProgramUUID());
-
-			//details.setStudyType(StudyType.N);
 
 		}
 		details.setStudyType(StudyType.getStudyTypeByName(studyType));

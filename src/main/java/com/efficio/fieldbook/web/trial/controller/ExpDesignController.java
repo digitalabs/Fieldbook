@@ -1,8 +1,6 @@
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -17,8 +15,8 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.util.ResourceFinder;
 import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +40,8 @@ import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
-import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
-import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
@@ -85,8 +81,21 @@ public class ExpDesignController extends BaseTrialController {
 		designTypes.add(DesignTypeItem.ROW_COL);
 		designTypes.add(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK);
 		designTypes.add(DesignTypeItem.CUSTOM_IMPORT);
+		designTypes.add(DesignTypeItem.ENTRY_LIST_ORDER);
 
 		return designTypes;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/retrieveInsertionManners", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	public List<TermSummary> retrieveInsertionManners() {
+		//FIXME Move to an enum and fix description in DB
+		final TermSummary t1 = new TermSummary(8414,"1","Insert each check in turn");
+		final TermSummary t2 = new TermSummary(8415,"2","Insert all checks at each position");
+		final List<TermSummary> list = new ArrayList<>();
+		list.add(t1);
+		list.add(t2);
+		return list;
 	}
 
 	@ResponseBody

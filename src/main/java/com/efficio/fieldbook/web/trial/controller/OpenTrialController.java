@@ -28,14 +28,13 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.samplelist.SampleListDTO;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
-import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
@@ -89,9 +88,7 @@ public class OpenTrialController extends BaseTrialController {
 	public static final String IS_DELETED_ENVIRONMENT = "0";
 	private static final String IS_PREVIEW_EDITABLE = "0";
 	private static final int NO_LIST_ID = -1;
-
-	@Resource
-	private StudyDataManager studyDataManager;
+	public static final String REDIRECT = "redirect:";
 
 	@Resource
 	private ErrorHandlerService errorHandlerService;
@@ -233,11 +230,13 @@ public class OpenTrialController extends BaseTrialController {
 			if (trialId != null && trialId != 0) {
 				final DmsProject dmsProject = this.studyDataManager.getProject(trialId);
 				if (dmsProject.getProgramUUID() == null) {
-					return "redirect:" + ManageTrialController.URL + "?summaryId=" + trialId + "&summaryName="
+					return REDIRECT + ManageTrialController.URL + "?summaryId=" + trialId + "&summaryName="
 							+ dmsProject.getName();
 				}
-				final Workbook workbook =
-					this.fieldbookMiddlewareService.getStudyDataSet(trialId, dmsProject.getStudyType()); // TODO corregir workbook
+
+				final Workbook workbook = this.fieldbookMiddlewareService
+					.getStudyDataSet(trialId, studyTypeBuilder.createStudyTypeDto(dmsProject.getStudyType()));
+				// TODO VERIFICAR POR STUDY TYPE
 
 				// FIXME
 				// See setStartingEntryNoAndPlotNoFromObservations() in
@@ -262,8 +261,8 @@ public class OpenTrialController extends BaseTrialController {
 						workbook.getMeasurementDatesetId(),
 						SettingsUtil.buildVariates(workbook.getVariates())));
 				form.setStudyId(trialId);
-				form.setStudyTypeName(dmsProject.getStudyType().getName());
 				form.setGermplasmListId(this.getGermplasmListId(trialId));
+				form.setStudyTypeName(dmsProject.getStudyType().getName());
 				this.setModelAttributes(form, trialId, model, workbook);
 				this.setUserSelectionImportedGermplasmMainInfo(this.userSelection, trialId, model);
 			}
@@ -275,13 +274,13 @@ public class OpenTrialController extends BaseTrialController {
 			redirectAttributes.addFlashAttribute("redirectErrorMessage", this.errorHandlerService.getErrorMessagesAsString(e.getCode(),
 				new String[] {AppConstants.STUDY.getString(), StringUtils.capitalize(AppConstants.STUDY.getString()),
 					AppConstants.STUDY.getString()}, "\n"));
-			return "redirect:" + ManageTrialController.URL;
+			return REDIRECT + ManageTrialController.URL;
 		} catch (final ParseException e) {
 			redirectAttributes.addFlashAttribute("redirectErrorMessage", this.errorHandlerService
 				.getErrorMessagesAsString("study.error.parser.format.date.basic.details",
 					new String[] {AppConstants.STUDY.getString(), StringUtils.capitalize(AppConstants.STUDY.getString()),
 						AppConstants.STUDY.getString()}, "\n"));
-			return "redirect:" + ManageTrialController.URL;
+			return REDIRECT + ManageTrialController.URL;
 		}
 	}
 
@@ -771,7 +770,7 @@ public class OpenTrialController extends BaseTrialController {
 		final Workbook tempWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false,
 				this.contextUtil.getCurrentProgramUUID());
 		final StudyDetails details = new StudyDetails();
-		details.setStudyType(StudyType.T); //TODO VER COMO ARREGLARLO.
+		details.setStudyType(new StudyTypeDto("T")); //TODO VER COMO ARREGLARLO.
 		tempWorkbook.setStudyDetails(details);
 
 		return tempWorkbook;

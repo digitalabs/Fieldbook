@@ -19,8 +19,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.sample.PlantDTO;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 
@@ -69,12 +69,12 @@ public class AdvancingSource {
 	//This will be used if we have trail
 	private MeasurementRow trailInstanceObservation;
 
-	private StudyType studyType;
+	private StudyTypeDto studyType;
 
 	private List<PlantDTO> plants = new ArrayList<>();
 
-	public AdvancingSource(ImportedGermplasm germplasm, List<Name> names, Integer plantsSelected, Method breedingMethod, boolean isCheck,
-			String nurseryName, String plotNumber) {
+	public AdvancingSource(final ImportedGermplasm germplasm, final List<Name> names, final Integer plantsSelected, final Method breedingMethod, final boolean isCheck,
+			final String nurseryName, final String plotNumber) {
 		super();
 		this.germplasm = germplasm;
 		this.names = names;
@@ -104,7 +104,7 @@ public class AdvancingSource {
 	/**
 	 * @param germplasm the germplasm to set
 	 */
-	public void setGermplasm(ImportedGermplasm germplasm) {
+	public void setGermplasm(final ImportedGermplasm germplasm) {
 		this.germplasm = germplasm;
 	}
 
@@ -118,7 +118,7 @@ public class AdvancingSource {
 	/**
 	 * @param plantsSelected the plantsSelected to set
 	 */
-	public void setPlantsSelected(Integer plantsSelected) {
+	public void setPlantsSelected(final Integer plantsSelected) {
 		this.plantsSelected = plantsSelected;
 	}
 
@@ -132,7 +132,7 @@ public class AdvancingSource {
 	/**
 	 * @param isCheck the isCheck to set
 	 */
-	public void setCheck(boolean isCheck) {
+	public void setCheck(final boolean isCheck) {
 		this.isCheck = isCheck;
 	}
 
@@ -140,14 +140,14 @@ public class AdvancingSource {
 	 * @return the isBulk
 	 */
 	public boolean isBulk() {
-		Boolean isBulk = this.getBreedingMethod().isBulkingMethod();
+		final Boolean isBulk = this.getBreedingMethod().isBulkingMethod();
 		return this.getBreedingMethod() != null && isBulk != null ? isBulk : false;
 	}
 
 	/**
 	 * @param isBulk the isBulk to set
 	 */
-	public void setBulk(boolean isBulk) {
+	public void setBulk(final boolean isBulk) {
 		this.isBulk = isBulk;
 	}
 
@@ -161,7 +161,7 @@ public class AdvancingSource {
 	/**
 	 * @param names the names to set
 	 */
-	public void setNames(List<Name> names) {
+	public void setNames(final List<Name> names) {
 		this.names = names;
 	}
 
@@ -175,7 +175,7 @@ public class AdvancingSource {
 	/**
 	 * @param breedingMethod the breedingMethod to set
 	 */
-	public void setBreedingMethod(Method breedingMethod) {
+	public void setBreedingMethod(final Method breedingMethod) {
 		this.breedingMethod = breedingMethod;
 	}
 
@@ -189,7 +189,7 @@ public class AdvancingSource {
 	/**
 	 * @param nurseryName the nurseryName to set
 	 */
-	public void setNurseryName(String nurseryName) {
+	public void setNurseryName(final String nurseryName) {
 		this.nurseryName = nurseryName;
 	}
 
@@ -203,7 +203,7 @@ public class AdvancingSource {
 	/**
 	 * @param season the season to set
 	 */
-	public void setSeason(String season) {
+	public void setSeason(final String season) {
 		this.season = season;
 	}
 
@@ -217,7 +217,7 @@ public class AdvancingSource {
 	/**
 	 * @param locationAbbreviation the locationAbbreviation to set
 	 */
-	public void setLocationAbbreviation(String locationAbbreviation) {
+	public void setLocationAbbreviation(final String locationAbbreviation) {
 		this.locationAbbreviation = locationAbbreviation;
 	}
 
@@ -231,7 +231,7 @@ public class AdvancingSource {
 	/**
 	 * @param rootName the rootName to set
 	 */
-	public void setRootName(String rootName) {
+	public void setRootName(final String rootName) {
 		this.rootName = rootName;
 	}
 
@@ -245,7 +245,7 @@ public class AdvancingSource {
 	/**
 	 * @param sourceMethod the sourceMethod to set
 	 */
-	public void setSourceMethod(Method sourceMethod) {
+	public void setSourceMethod(final Method sourceMethod) {
 		this.sourceMethod = sourceMethod;
 	}
 
@@ -259,7 +259,7 @@ public class AdvancingSource {
 	/**
 	 * @param currentMaxSequence the currentMaxSequence to set
 	 */
-	public void setCurrentMaxSequence(int currentMaxSequence) {
+	public void setCurrentMaxSequence(final int currentMaxSequence) {
 		this.currentMaxSequence = currentMaxSequence;
 	}
 
@@ -273,7 +273,7 @@ public class AdvancingSource {
 	/**
 	 * @param changeDetail the changeDetail to set
 	 */
-	public void setChangeDetail(AdvanceGermplasmChangeDetail changeDetail) {
+	public void setChangeDetail(final AdvanceGermplasmChangeDetail changeDetail) {
 		this.changeDetail = changeDetail;
 	}
 
@@ -287,7 +287,7 @@ public class AdvancingSource {
 	/**
 	 * @param prefix the prefix to set
 	 */
-	public void setPrefix(String prefix) {
+	public void setPrefix(final String prefix) {
 		this.prefix = prefix;
 	}
 
@@ -301,7 +301,7 @@ public class AdvancingSource {
 	/**
 	 * @param suffix the suffix to set
 	 */
-	public void setSuffix(String suffix) {
+	public void setSuffix(final String suffix) {
 		this.suffix = suffix;
 	}
 
@@ -309,7 +309,7 @@ public class AdvancingSource {
 		return this.isForceUniqueNameGeneration;
 	}
 
-	public void setForceUniqueNameGeneration(boolean isForceUniqueNameGeneration) {
+	public void setForceUniqueNameGeneration(final boolean isForceUniqueNameGeneration) {
 		this.isForceUniqueNameGeneration = isForceUniqueNameGeneration;
 	}
 
@@ -317,7 +317,7 @@ public class AdvancingSource {
 		return this.rootNameType;
 	}
 
-	public void setRootNameType(Integer rootNameType) {
+	public void setRootNameType(final Integer rootNameType) {
 		this.rootNameType = rootNameType;
 	}
 
@@ -325,7 +325,7 @@ public class AdvancingSource {
 		return this.plotNumber;
 	}
 
-	public void setPlotNumber(String plotNumber) {
+	public void setPlotNumber(final String plotNumber) {
 		this.plotNumber = plotNumber;
 	}
 
@@ -338,7 +338,7 @@ public class AdvancingSource {
 		return this.harvestLocationId;
 	}
 
-	public void setHarvestLocationId(Integer harvestLocationId) {
+	public void setHarvestLocationId(final Integer harvestLocationId) {
 		this.harvestLocationId = harvestLocationId;
 	}
 
@@ -346,7 +346,7 @@ public class AdvancingSource {
         return selectionTraitValue;
     }
 
-    public void setSelectionTraitValue(String selectionTraitValue) {
+    public void setSelectionTraitValue(final String selectionTraitValue) {
         this.selectionTraitValue = selectionTraitValue;
     }
 
@@ -354,7 +354,7 @@ public class AdvancingSource {
 		return this.trialInstanceNumber;
 	}
 
-	public void setTrialInstanceNumber(String trialInstanceNumber) {
+	public void setTrialInstanceNumber(final String trialInstanceNumber) {
 		this.trialInstanceNumber = trialInstanceNumber;
 	}
 
@@ -362,7 +362,7 @@ public class AdvancingSource {
 		return this.replicationNumber;
 	}
 
-	public void setReplicationNumber(String replicationNumber) {
+	public void setReplicationNumber(final String replicationNumber) {
 		this.replicationNumber = replicationNumber;
 	}
 
@@ -370,7 +370,7 @@ public class AdvancingSource {
 		return conditions;
 	}
 
-	public void setConditions(List<MeasurementVariable> conditions) {
+	public void setConditions(final List<MeasurementVariable> conditions) {
 		this.conditions = conditions;
 	}
 
@@ -378,15 +378,15 @@ public class AdvancingSource {
 		return trailInstanceObservation;
 	}
 
-	public void setTrailInstanceObservation(MeasurementRow trailInstanceObservation) {
+	public void setTrailInstanceObservation(final MeasurementRow trailInstanceObservation) {
 		this.trailInstanceObservation = trailInstanceObservation;
 	}
 
-	public StudyType getStudyType() {
+	public StudyTypeDto getStudyType() {
 		return studyType;
 	}
 
-	public void setStudyType(StudyType studyType) {
+	public void setStudyType(final StudyTypeDto studyType) {
 		this.studyType = studyType;
 	}
 
@@ -394,12 +394,12 @@ public class AdvancingSource {
 		return breedingMethodId;
 	}
 
-	public void setBreedingMethodId(Integer breedingMethodId) {
+	public void setBreedingMethodId(final Integer breedingMethodId) {
 		this.breedingMethodId = breedingMethodId;
 	}
 
 	public AdvancingSource copy() {
-        AdvancingSource source = new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, isCheck, nurseryName, plotNumber);
+        final AdvancingSource source = new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, isCheck, nurseryName, plotNumber);
         source.setSeason(this.season);
         source.setLocationAbbreviation(this.locationAbbreviation);
         source.setRootName(this.rootName);

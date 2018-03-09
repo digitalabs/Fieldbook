@@ -31,7 +31,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.Property;
 import org.generationcp.middleware.domain.ontology.Scale;
@@ -214,7 +213,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			}
 		}
 
-		for (final SettingDetail variable : variables) {
+		for (final SettingDetail variable : variables != null ? variables : null) {
 			final Integer stdVar;
 			if (variable.getVariable().getCvTermId() != null) {
 				stdVar = variable.getVariable().getCvTermId();
@@ -358,7 +357,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			return settingDetail;
 		} else {
 			final SettingVariable svar = new SettingVariable();
-			svar.setCvTermId(stdVar.getId());
+			svar.setCvTermId(stdVar != null ? stdVar.getId() : 0);
 			return new SettingDetail(svar, null, null, false);
 		}
 	}
@@ -508,8 +507,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		if(createdBy != null) {
 			studyDetails.setCreatedBy(createdBy);
 		}
-
-		studyDetails.setStudyType(StudyType.N);
 
 		if (folderId != null) {
 			studyDetails.setParentFolderId(folderId);
@@ -842,7 +839,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				final String idTermId = tokenizerPair.nextToken();
 				final String codeTermId = tokenizerPair.nextToken();
 
-				final Iterator<SettingDetail> iter = variableList.iterator();
+				final Iterator<SettingDetail> iter = variableList != null ? variableList.iterator() : null;
 				while (iter.hasNext()) {
 					final Integer cvTermId = iter.next().getVariable().getCvTermId();
 					if (cvTermId.equals(Integer.parseInt(codeTermId)) && variableListMap.get(idTermId) != null) {
@@ -885,7 +882,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				.equals(s) && !SettingsController.STUDY_UPDATE.equals(s) && !SettingsController.OBJECTIVE.equals(s)
 				&& !SettingsController.STUDY_NAME.equals(s) && !SettingsController.CREATED_BY.equals(s)) {
 				final Integer termId = Integer.valueOf(s);
-				final boolean isFound = this.searchAndSetValuesOfSpecialVariables(nurseryLevelConditions, termId, settingDetails, form);
+				final boolean isFound = this.searchAndSetValuesOfSpecialVariables(nurseryLevelConditions, termId, settingDetails);
 				if (!isFound) {
 					this.addSettingDetails(settingDetails, termId, form);
 				}
@@ -897,7 +894,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	private boolean searchAndSetValuesOfSpecialVariables(final List<SettingDetail> nurseryLevelConditions, final Integer termId,
-			final List<SettingDetail> settingDetails, final CreateNurseryForm form) {
+			final List<SettingDetail> settingDetails) {
 		boolean isFound = false;
 		for (final SettingDetail setting : nurseryLevelConditions) {
 			if (termId.equals(setting.getVariable().getCvTermId())) {

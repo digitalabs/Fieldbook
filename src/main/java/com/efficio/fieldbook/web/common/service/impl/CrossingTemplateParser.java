@@ -1,15 +1,9 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.util.AppConstants;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.parsing.AbstractExcelFileParser;
@@ -23,7 +17,6 @@ import org.generationcp.commons.parsing.pojo.ImportedVariate;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
@@ -33,9 +26,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.service.CrossingService;
-import com.efficio.fieldbook.web.util.AppConstants;
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * This parses a Crossing Template Excel file Note that this class is stateful, declare in spring app context as prototyped scope
@@ -175,7 +173,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 	private void validateFemaleNursery(final String femaleNursery) throws FileParsingException {
 
-		if (femaleNursery == null || femaleNursery == "") {
+		if (femaleNursery == null || Objects.equals(femaleNursery, "")) {
 			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.nursery.empty", new String[] {},
 					LocaleContextHolder.getLocale()));
 		}
@@ -284,7 +282,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
 	 */
 	private ListDataProject getCrossingListProjectData(final String studyName, final Integer genderedPlotNo, final String programUUID)
-			throws MiddlewareQueryException, FileParsingException {
+			throws FileParsingException {
 		// 1 get the particular study's list
 		final Integer studyId = this.studyDataManager.getStudyIdByNameAndProgramUUID(studyName, programUUID);
 

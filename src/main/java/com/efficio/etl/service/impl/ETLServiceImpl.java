@@ -29,9 +29,9 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
@@ -192,10 +192,8 @@ public class ETLServiceImpl implements ETLService {
 		}
 
 		studyDetails.setObjective(userSelection.getStudyObjective());
-		if (!StringUtils.isEmpty(userSelection.getStudyType())) {
-			studyDetails.setStudyType(StudyType.valueOf(userSelection.getStudyType()));
-		} else {
-			studyDetails.setStudyType(StudyType.N);
+		if (userSelection.getStudyType() != null && !StringUtils.isEmpty(userSelection.getStudyType())) {
+			studyDetails.setStudyType(studyDataManager.getStudyTypeByName(userSelection.getStudyType()));
 		}
 
 		studyDetails.setDescription(userSelection.getStudyDescription());
@@ -651,7 +649,8 @@ public class ETLServiceImpl implements ETLService {
 	@Override
 	public List<StudyDetails> retrieveExistingStudyDetails(final String programUUID) {
 		final List<StudyDetails> returnVal = new LinkedList<>();
-		for (final StudyType studyType : StudyType.values()) {
+
+		for (final StudyTypeDto studyType : this.studyDataManager.getAllStudyTypes()) {
 			try {
 				returnVal.addAll(this.studyDataManager.getAllStudyDetails(studyType, programUUID));
 			} catch (final MiddlewareQueryException e) {
@@ -759,7 +758,7 @@ public class ETLServiceImpl implements ETLService {
 		final int trialDatasetId = trialDataset.getId();
 		wb.setTrialDatasetId(trialDatasetId);
 
-		DataSet datasetForImport = null;
+		final DataSet datasetForImport;
 
 		if (isMeansDataImport) {
 			datasetForImport = this.getMeansDataset(studyId);
@@ -953,13 +952,9 @@ public class ETLServiceImpl implements ETLService {
 				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
 		final String studyType = this.getCellStringValue(sheet, ETLServiceImpl.STUDY_TYPE_ROW_INDEX - rowAdjustMent,
 				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
-		StudyType studyTypeValue = StudyType.getStudyTypeByName(studyType);
-		if (studyTypeValue == null) {
-			studyTypeValue = StudyType.N;
-		}
+		final StudyTypeDto studyTypeValue = studyDataManager.getStudyTypeByName(studyType);
 		return new StudyDetails(study, title, objective, startDateStr, endDateStr, studyTypeValue, 0, null,
-				null, Util.getCurrentDateAsStringValue(), null);
-
+			null, Util.getCurrentDateAsStringValue(), null);
 	}
 
 	private String getCellStringValue(final Sheet sheet, final Integer rowNumber, final Integer columnNumber) {
@@ -1003,7 +998,7 @@ public class ETLServiceImpl implements ETLService {
 	@Override
 	public boolean checkOutOfBoundsData(final UserSelection userSelection) throws IOException {
 
-		org.generationcp.middleware.domain.etl.Workbook importData = null;
+		final org.generationcp.middleware.domain.etl.Workbook importData;
 
 		final String programUUID = this.contextUtil.getCurrentProgramUUID();
 
@@ -1071,7 +1066,7 @@ public class ETLServiceImpl implements ETLService {
 	public org.generationcp.middleware.domain.etl.Workbook createWorkbookFromUserSelection(
 			final UserSelection userSelection, final boolean isMeansDataImport) {
 
-		org.generationcp.middleware.domain.etl.Workbook importData = null;
+		final org.generationcp.middleware.domain.etl.Workbook importData;
 
 		ETLServiceImpl.LOG.debug("userSelection.getPhenotypicMap() = " + userSelection.getPhenotypicMap());
 		// check if headers are not set (it means the user skipped the import

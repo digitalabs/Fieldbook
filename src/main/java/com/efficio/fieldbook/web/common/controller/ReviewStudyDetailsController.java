@@ -18,13 +18,10 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +51,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	private static final Logger LOG = LoggerFactory.getLogger(ReviewStudyDetailsController.class);
 
 	private static final int COLS = 3;
+	public static final String TRIAL_MANAGER_REVIEW_TRIAL_DETAILS = "TrialManager/reviewTrialDetails";
 
 	@Resource
 	private UserSelection userSelection;
@@ -81,25 +79,24 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	private String getContentName(final boolean isTrial) {
 		if (isTrial) {
-			return "TrialManager/reviewTrialDetails";
+			return TRIAL_MANAGER_REVIEW_TRIAL_DETAILS;
 		} else {
 			return "NurseryManager/reviewNurseryDetails";
 		}
 	}
 
 	private String getContentStudy() {
-		return "TrialManager/reviewTrialDetails";
+		return TRIAL_MANAGER_REVIEW_TRIAL_DETAILS;
 	}
 
-	@RequestMapping(value = "/show/{studyType}/{id}", method = RequestMethod.GET)
-	public String show(@PathVariable final String studyType, @PathVariable final int id,
+	@RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
+	public String show(@PathVariable final int id,
 			@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form, final Model model) {
 
-		final boolean isNursery = studyType != null && StudyType.N.getName().equalsIgnoreCase(studyType);
 		final Workbook workbook;
 		StudyDetails details;
 		try {
-			workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(id, isNursery);
+			workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(id);
 			workbook.getStudyDetails().setId(id);
 			this.removeAnalysisAndAnalysisSummaryVariables(workbook);
 			final String createdBy = this.fieldbookService.getPersonByUserId(Integer.valueOf(workbook.getStudyDetails().getCreatedBy()));
@@ -116,30 +113,20 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		} catch (final MiddlewareException e) {
 			ReviewStudyDetailsController.LOG.error(e.getMessage(), e);
 			details = new StudyDetails();
-			this.addErrorMessageToResult(details, e, isNursery, id);
+			this.addErrorMessageToResult(details, e, id);
 		}
 
-/*		if (isNursery) {
-			model.addAttribute("nurseryDetails", details);
-		} else {*/
-			model.addAttribute("trialDetails", details);
-		/*}*/
-
+		model.addAttribute("trialDetails", details);
 		return this.showAjaxPage(model, this.getContentStudy());
 	}
 
-	protected void addErrorMessageToResult(final StudyDetails details, final MiddlewareException e, final boolean isNursery, final int id) {
-		final String param;
-		if (isNursery) {
-			param = AppConstants.NURSERY.getString();
-		} else {
-			param = AppConstants.TRIAL.getString();
-		}
+	protected void addErrorMessageToResult(final StudyDetails details, final MiddlewareException e, final int id) {
+		final String param = AppConstants.TRIAL.getString();
 		details.setId(id);
 		String errorMessage = e.getMessage();
 		if (e instanceof MiddlewareQueryException) {
 			errorMessage = this.errorHandlerService.getErrorMessagesAsString(((MiddlewareQueryException) e).getCode(),
-					new Object[] {param, param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n");
+				new Object[] {param, param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n");
 		}
 		details.setErrorMessage(errorMessage);
 	}
@@ -159,7 +146,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		final List<SettingDetail> newList = new ArrayList<>();
 
 		if (list != null && !list.isEmpty()) {
-			final int rows = Double.valueOf(Math.ceil(list.size() / (double) ReviewStudyDetailsController.COLS)).intValue();
+			final int rows = Double.valueOf(Math.ceil(list.size() / ReviewStudyDetailsController.COLS)).intValue();
 			final int extra = list.size() % ReviewStudyDetailsController.COLS;
 			for (int i = 0; i < list.size(); i++) {
 				int delta = 0;

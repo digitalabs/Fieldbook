@@ -161,7 +161,7 @@ public class CreateTrialController extends BaseTrialController {
 				this.fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(),
 						trialWorkbook.getMeasurementDatesetId());
 				tabDetails.put("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));
-				form.setStudyTypeName(trialWorkbook.getStudyDetails().getStudyType().getLabel());
+				form.setStudyTypeName(trialWorkbook.getStudyDetails().getStudyType().getName());
 			}
 		} catch (final MiddlewareException e) {
 			CreateTrialController.LOG.error(e.getMessage(), e);

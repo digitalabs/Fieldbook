@@ -27,11 +27,11 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Property;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyScaleDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -309,7 +309,7 @@ public class DesignImportServiceImplTest {
 	@Test
 	public void testGenerateDesignForNursery() throws DesignValidationException {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto("N"));
 
 		// Setting to 1 since there is only 1 environment for nursery
 		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
@@ -603,7 +603,7 @@ public class DesignImportServiceImplTest {
 				.createStandardVariable(VariableType.ENVIRONMENT_DETAIL, TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "", "", "",
 						"", "", "")));
 		map.put("SITE_NAME", this.createList(DesignImportTestDataInitializer
-				.createStandardVariable(VariableType.ENVIRONMENT_DETAIL, StudyType.T.getId(), "SITE_NAME", "", "", "", "", "", "")));
+				.createStandardVariable(VariableType.ENVIRONMENT_DETAIL, new StudyTypeDto("T").getId(), "SITE_NAME", "", "", "", "", "", "")));
 		map.put("ENTRY_NO", this.createList(DesignImportTestDataInitializer
 				.createStandardVariable(VariableType.GERMPLASM_DESCRIPTOR, TermId.ENTRY_NO.getId(), "ENTRY_NO", "", "", "", "", "", "")));
 		map.put("PLOT_NO", this.createList(DesignImportTestDataInitializer

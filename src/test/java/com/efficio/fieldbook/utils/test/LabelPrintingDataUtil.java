@@ -94,7 +94,6 @@ public class LabelPrintingDataUtil {
 		fieldMapInfo.setDatasets(datasets);
 		fieldMapInfo.setFieldbookId(LabelPrintingDataUtil.FIELDBOOK_ID);
 		fieldMapInfo.setFieldbookName(LabelPrintingDataUtil.FIELDBOOK_NAME);
-		fieldMapInfo.setTrial(isTrial);
 		fieldMapInfoList.add(fieldMapInfo);
 
 		return fieldMapInfoList;

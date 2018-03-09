@@ -12,9 +12,9 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Property;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -36,7 +36,7 @@ public class ExportImportStudyUtilTest {
 
 	private static final int NO_OF_POSSIBLE_VALUES = 5;
 
-	private static String PROPERTY_NAME = "Property Name";
+	private static final String PROPERTY_NAME = "Property Name";
 
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -76,7 +76,7 @@ public class ExportImportStudyUtilTest {
 		String siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(null, this.fieldbookMiddlewareService);
 		Assert.assertTrue("The site name is '' ", "".equalsIgnoreCase(siteName));
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		final MeasurementRow trialObservationWithTrialLocation = workbook.getTrialObservations().get(0);
 		siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(trialObservationWithTrialLocation, this.fieldbookMiddlewareService);
 		Assert.assertFalse("The site name for nursery is not empty.", "".equalsIgnoreCase(siteName));

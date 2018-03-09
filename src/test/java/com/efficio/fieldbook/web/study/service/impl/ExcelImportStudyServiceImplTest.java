@@ -23,8 +23,8 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
@@ -249,7 +249,7 @@ public class ExcelImportStudyServiceImplTest {
 	public void testIsPropertyScaleMethodLabelCellNotNullReturnsFalseIfAtLeastOneFieldIsNull() {
 		this.labelCell = null;
 		Assert.assertFalse("Expecting to return false if at least 1 field from Property,Scale,Method,Label is null but didn't.",
-				this.importStudy.isPropertyScaleMethodLabelCellNotNull(this.propertyCell, this.scaleCell, this.methodCell, this.labelCell));
+				this.importStudy.isPropertyScaleMethodLabelCellNotNull(this.propertyCell, this.scaleCell, this.methodCell, null));
 	}
 
 	@Test
@@ -271,7 +271,7 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testGetTrialInstanceNumberForNursery() throws WorkbookParserException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 
 		final org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
 		Assert.assertEquals("Expecting to return 1 for the value of trialInstance in Nursery but didn't.", TRIAL_INSTANCE_NO,
@@ -280,7 +280,7 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testGetTrialInstanceNumberForTrial() throws WorkbookParserException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("T"));
 
 		this.setUpXLSWorkbookTestData();
 		Mockito.doReturn(TermId.TRIAL_INSTANCE_FACTOR.getId()).when(this.fieldbookMiddlewareService)
@@ -323,7 +323,7 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testGetTrialInstanceNumberForTrial_ReturnsExceptionForNullTrialInstance() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("T"));
 
 		this.setUpXLSWorkbookTestData();
 		Mockito.doReturn(null).when(this.fieldbookMiddlewareService)

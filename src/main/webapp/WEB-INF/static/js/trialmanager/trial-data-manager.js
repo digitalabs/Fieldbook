@@ -305,6 +305,12 @@
 					});
 				},
 
+				retrieveInsertionManner: function () {
+					$http.get('/Fieldbook/TrialManager/experimental/design/retrieveInsertionManners').success(function(insertionManners) {
+						service.applicationData.insertionManners = insertionManners;
+					});
+				},
+
 				getDesignTypeById : function(designTypeId, designTypes) {
 					return _.find(designTypes, function (designType) { return designType.id === Number(designTypeId) });
 				},
@@ -926,6 +932,7 @@
 			};
 
 			service.retrieveDesignType();
+			service.retrieveInsertionManner();
 
 			// store the initial values on some service properties so that we can revert to it later
 			$localStorage.serviceBackup = {

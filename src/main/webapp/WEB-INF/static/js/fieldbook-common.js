@@ -4003,11 +4003,7 @@ function displaySelectedCheckGermplasmDetails() {
 
 function displaySelectedGermplasmDetails() {
 	var url = '/Fieldbook/NurseryManager/importGermplasmList/displaySelectedGermplasmDetails';
-	if (isNursery()) {
-		url = url + '/N';
-	} else {
-		url = url + '/T';
-	}
+
 	$.ajax({
 		url: url,
 		type: 'GET',

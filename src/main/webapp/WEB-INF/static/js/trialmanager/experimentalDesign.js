@@ -1,5 +1,4 @@
 /* global angular, showErrorMessage, showAlertMessage, showSuccessfulMessage, expDesignMsgs */
-
 (function() {
 		'use strict';
 
@@ -25,7 +24,9 @@
 					$scope.studyID = TrialManagerDataService.currentData.basicDetails.studyID;
 
 					$scope.designTypes = TrialManagerDataService.applicationData.designTypes;
+					$scope.insertionManners = TrialManagerDataService.applicationData.insertionManners;
 					$scope.designTypeView = [];
+					$scope.insertionMannerView = [];
 
 					$scope.generateDesignView = function() {
 
@@ -59,7 +60,14 @@
 						return presetExists;
 					};
 
+					$scope.generateInsertionMannerView = function() {
+						$.each($scope.insertionManners, function(index, insertionManner){
+							$scope.insertionMannerView.push(insertionManner);
+						});
+					};
+
 					$scope.generateDesignView();
+					$scope.generateInsertionMannerView();
 
 					$scope.$watch(function() {
 						return $scope.data.designType;
@@ -160,6 +168,13 @@
 							numberOfBlocks: null
 						}, $scope.data);
 					}
+
+
+					if ($scope.data.checkStartingPosition == null) {
+						$scope.data.checkStartingPosition = 1;
+						$scope.data.checkInsertionManner = '8414';
+					}
+
 
 					TrialManagerDataService.specialSettings.experimentalDesign.data = $scope.data;
 
@@ -546,7 +561,29 @@
 								break;
 
 							}
-							case 5:
+							case DESIGN_TYPE.ENTRY_LIST_ORDER: {
+								var totalChecks = countNumberOfAllChecks();
+								if (totalChecks > 0) {
+									var totalTestEntries = $scope.totalGermplasmEntryListCount - totalChecks;
+									if ($scope.data.checkStartingPosition > totalTestEntries) {
+										showErrorMessage('page-message', EXP_DESIGN_MSGS[30]);
+										return false;
+									}
+									if ($scope.data.checkStartingPosition < 1) {
+										showErrorMessage('page-message', EXP_DESIGN_MSGS[29]);
+										return false
+									}
+									if ($scope.data.checkSpacing > totalTestEntries) {
+										showErrorMessage('page-message', EXP_DESIGN_MSGS[32]);
+										return false
+									}
+									if ($scope.data.checkSpacing < 1) {
+										showErrorMessage('page-message', EXP_DESIGN_MSGS[31]);
+										return false
+									}
+								}
+								break;
+							}
 							case 6:
 							case 7:
 							{
@@ -627,6 +664,45 @@
 
 					}
 
+					function countNumberOfAllChecks() {
+
+						// When the user changed the entry type of germplasm entries in Germplasm Tab, the changes are not yet saved in the database,
+						// so we can only count the number of checks through DataTable.
+						var germplasmListDataTable = $('.germplasm-list-items').DataTable();
+
+						if (germplasmListDataTable.rows().length !== 0) {
+
+							var numberOfChecksEntries = 0;
+
+							$.each(germplasmListDataTable.rows().data(), function(index, obj) {
+								var entryCheckType = parseInt(obj[ENTRY_TYPE_COLUMN_DATA_KEY]);
+								if (entryCheckType === SYSTEM_DEFINED_ENTRY_TYPE.CHECK_ENTRY ||
+									entryCheckType === SYSTEM_DEFINED_ENTRY_TYPE.DISEASE_CHECK ||
+									entryCheckType === SYSTEM_DEFINED_ENTRY_TYPE.STRESS_CHECK) {
+									numberOfChecksEntries++;
+								}
+							});
+
+							return numberOfChecksEntries;
+
+						} else if (TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount != null) {
+							// If the germplasmlistDataTable is not yet initialized, we should get the number of check entries of germplasm list in the database
+							// when an existing trial is opened / loaded, only if available. experimentalDesign.germplasmTotalCheckCount contains the count of checks stored in the database.
+							return TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
+						}
+
+						return 0;
+
+					}
+
+					$scope.showParamsWhenChecksAreSelected = function(designTypeId) {
+						if (designTypeId === DESIGN_TYPE.ENTRY_LIST_ORDER && countNumberOfAllChecks() == 0) {
+							return false;
+						} else {
+							return true;
+						}
+					}
+
 					function validateNumberOfBlocks() {
 						if (!$scope.data.numberOfBlocks || $scope.expDesignForm.numberOfBlocks.$invalid) {
 							showErrorMessage('page-message', 'Please specify the number of blocks.');
@@ -650,7 +726,6 @@
 
 			.filter('filterFactors', ['_','DESIGN_TYPE', function(_, DESIGN_TYPE) {
 				return function(factorList, designTypeId) {
-
 					var excludeTermIds;
 
 					if (designTypeId === DESIGN_TYPE.RANDOMIZED_COMPLETE_BLOCK) {
@@ -661,6 +736,8 @@
 						excludeTermIds = [8220, 8200];
 					} else if (designTypeId === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
 						excludeTermIds = [8210, 8581, 8582];
+					} else if (designTypeId === DESIGN_TYPE.ENTRY_LIST_ORDER) {
+						excludeTermIds = [8210, 8220, 8581, 8582];
 					}
 
 					return _.filter(factorList, function(value) {

@@ -240,10 +240,16 @@ public abstract class BaseTrialController extends SettingsController {
 				} else if (TermId.AUGMENTED_RANDOMIZED_BLOCK.getId() == designTypeTermID) {
 					data.setDesignType(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId());
 					data.setUseLatenized(false);
+				} else if (TermId.ENTRY_LIST_ORDER.getId() == designTypeTermID) {
+					data.setDesignType(DesignTypeItem.ENTRY_LIST_ORDER.getId());
+					data.setUseLatenized(false);
 				}
 			}
 
 			data.setNumberOfBlocks(this.getExperimentalDesignData(xpDesignVariable.getNumberOfBlocks()));
+			data.setCheckInsertionManner(this.getExperimentalDesignData(xpDesignVariable.getChecksMannerOfInsertion()));
+			data.setCheckSpacing(this.getExperimentalDesignData(xpDesignVariable.getChecksSpacing()));
+			data.setCheckStartingPosition(this.getExperimentalDesignData(xpDesignVariable.getChecksStartingPosition()));
 
 			tabInfo.setData(data);
 		}

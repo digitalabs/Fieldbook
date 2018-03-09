@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 public class DesignImportServiceImpl implements DesignImportService {
@@ -82,7 +83,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		 * this will add the trial environment factors and their values to ManagementDetailValues so we can pass them to the UI and reflect
 		 * the values in the Environments Tab.
 		 **/
-		this.populateEnvironmentDataWithValuesFromCsvFile(environmentData, workbook, designImportData);
+		this.populateEnvironmentDataWithValuesFromCsvFile(environmentData, designImportData);
 
 		final Map<Integer, ImportedGermplasm> importedGermplasm =
 				Maps.uniqueIndex(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
@@ -126,7 +127,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		measurementRowGenerator.addFactorsToMeasurementRows(measurements);
 
 		// add trait data to the list of measurement row
-		measurementRowGenerator.addVariatesToMeasurementRows(measurements, this.userSelection, this.ontologyService, this.contextUtil);
+		measurementRowGenerator.addVariatesToMeasurementRows(measurements, this.ontologyService, this.contextUtil);
 
 		// if there is added environments
 		if (additionalParams.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) != null
@@ -179,7 +180,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	}
 
 	Map<Integer, MeasurementData> getMeasurementDataMap(final List<MeasurementData> dataList) {
-		final Map<Integer, MeasurementData> measurementDataMap = new HashMap<Integer, MeasurementData>();
+		final Map<Integer, MeasurementData> measurementDataMap = new HashMap<>();
 		for (final MeasurementData measurementData : dataList) {
 			measurementDataMap.put(measurementData.getMeasurementVariable().getTermId(), measurementData);
 		}
@@ -192,7 +193,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	 * @return map <Name, CVTermId>
 	 */
 	private Map<String, Integer> retrieveAvailableCheckTypes() {
-		final Map<String, Integer> checkTypeMap = new HashMap<String, Integer>();
+		final Map<String, Integer> checkTypeMap = new HashMap<>();
 		final List<Enumeration> checkTypes = this.fieldbookService.getCheckTypeList();
 
 		for (final Enumeration checkType : checkTypes) {
@@ -238,7 +239,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		// Add the variates from the added traits in workbook
 		measurementVariables.addAll(workbook.getVariates());
 
-		if (workbook.getStudyDetails().getStudyType() == StudyType.N) {
+		if (Objects.equals(workbook.getStudyDetails().getStudyType().getLabel(), StudyType.N.getLabel())) {
 
 			measurementVariables.addAll(workbook.getFactors());
 
@@ -350,9 +351,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		// ok, so these variables dont have Phenotypic information, we need to
 		// assign it via proj-prop or cvtermid
-		final Set<PhenotypicType> designImportRoles = new HashSet<>(Arrays.asList(
-				new PhenotypicType[] {PhenotypicType.TRIAL_ENVIRONMENT, PhenotypicType.TRIAL_DESIGN, PhenotypicType.GERMPLASM,
-						PhenotypicType.VARIATE}));
+		final Set<PhenotypicType> designImportRoles = new HashSet<>(
+			Arrays.asList(PhenotypicType.TRIAL_ENVIRONMENT, PhenotypicType.TRIAL_DESIGN, PhenotypicType.GERMPLASM, PhenotypicType.VARIATE));
 		for (final Entry<String, List<StandardVariable>> entryVar : variables.entrySet()) {
 			for (final StandardVariable sv : entryVar.getValue()) {
 				for (final VariableType variableType : sv.getVariableTypes()) {
@@ -462,8 +462,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return generatedTrialInstancesFromUI;
 	}
 
-	protected void populateEnvironmentDataWithValuesFromCsvFile(final EnvironmentData environmentData, final Workbook workbook,
-			final DesignImportData designImportData) throws DesignValidationException {
+	protected void populateEnvironmentDataWithValuesFromCsvFile(final EnvironmentData environmentData,
+		final DesignImportData designImportData) throws DesignValidationException {
 
 		final List<DesignHeaderItem> trialEnvironmentsDesignHeaderItems =
 				designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT);

@@ -16,9 +16,9 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Property;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Assert;
@@ -50,17 +50,17 @@ public class CsvExportStudyServiceImplTest {
 	private OntologyService ontologyService;
 
 	@Mock
-	private static Property DUMMY_PROPERTY;
+	private static Property dummyProperty;
 
 	@Mock
-	private static Term DUMMY_TERM;
+	private static Term dummyTerm;
 
 	@Mock
 	private GermplasmExportService germplasmExportService;
 
-	private static String PROPERTY_NAME = "Property Name";
-	private static String FILENAME = "TestFileName.csv";
-	private static String UPLOAD_DIRECTORY = "";
+	private static final String PROPERTY_NAME = "Property Name";
+	private static final String FILENAME = "TestFileName.csv";
+	private static final String UPLOAD_DIRECTORY = "";
 
 	@Before
 	public void setUp() throws MiddlewareQueryException, IOException {
@@ -98,7 +98,7 @@ public class CsvExportStudyServiceImplTest {
 
 	@Test
 	public void testCSVStudyExportForNursery() throws IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		workbook.setExportArrangedObservations(workbook.getObservations());
 
 		final List<Integer> instances = new ArrayList<Integer>();
@@ -116,7 +116,7 @@ public class CsvExportStudyServiceImplTest {
 
 	@Test
 	public void testGetExportColumnHeadersWhenVisibleColumnsIsNull() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 
 		CsvExportStudyServiceImplTest.csvExportStudyService.getExportColumnHeaders(null, variables);
@@ -127,7 +127,7 @@ public class CsvExportStudyServiceImplTest {
 
 	@Test
 	public void testGetExportColumnHeadersWhenVisibleColumnsHasValues() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 
 		final List<Integer> visibleColumns = this.getVisibleColumnListWithOutRequiredColumns();
@@ -142,7 +142,7 @@ public class CsvExportStudyServiceImplTest {
 	@Test
 	public void testGetColumnsBasedOnVisibilityWhenTheColumnHeadersIncludeAllRequiredFields() {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 
 		final List<Integer> visibleColumns = this.getVisibleColumnListWithRequiredColumns();
@@ -167,7 +167,7 @@ public class CsvExportStudyServiceImplTest {
 	@Test
 	public void testGetColumnsBasedOnVisibilityWhenSomeRequiredColumnHeadersIsNotIncluded() {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 
 		final List<Integer> visibleColumns = this.getVisibleColumnListWithSomeRequiredColumns();
@@ -241,7 +241,7 @@ public class CsvExportStudyServiceImplTest {
 
 	@Test
 	public void testGetExportColumnValues() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 		final List<Integer> visibleColumns = this.getVisibleColumnListWithRequiredColumns();
 		final List<ExportColumnHeader> columnHeaders =
@@ -257,7 +257,7 @@ public class CsvExportStudyServiceImplTest {
 
 	@Test
 	public void testGetColumnValueMap() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 		final List<Integer> visibleColumns = this.getVisibleColumnListWithRequiredColumns();
 		final List<ExportColumnHeader> columnHeaders =

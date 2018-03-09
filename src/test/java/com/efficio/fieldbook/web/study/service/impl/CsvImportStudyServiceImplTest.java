@@ -10,8 +10,8 @@ import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -47,7 +47,7 @@ public class CsvImportStudyServiceImplTest {
 
     @Before
 	public void setUp() {
-		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(1, StudyType.N);
+		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(1, new StudyTypeDto("N"));
         this.csvImport = new CsvImportStudyServiceImpl(workbook, "", "");
 		this.rowsMap = csvImport.createMeasurementRowsMap(this.workbook.getObservations());
 

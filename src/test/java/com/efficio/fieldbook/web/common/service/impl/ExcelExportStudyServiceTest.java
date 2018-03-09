@@ -25,8 +25,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -60,7 +60,7 @@ public class ExcelExportStudyServiceTest extends AbstractBaseIntegrationTest {
 
 	private static com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 	
-	private String breedingMethodPropertyName = "Breeding Method";
+	private final String breedingMethodPropertyName = "Breeding Method";
 
 	@Test
 	public void testExportingMoreThan4000Observations() {
@@ -77,9 +77,9 @@ public class ExcelExportStudyServiceTest extends AbstractBaseIntegrationTest {
 		}
 
 		// set filename path, create test data for workbook
-		FileOutputStream fos = null;
+		final FileOutputStream fos;
 		final HSSFWorkbook xlsBook = new HSSFWorkbook();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(WorkbookDataUtil.NUMBER_OF_OBSERVATIONS, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(WorkbookDataUtil.NUMBER_OF_OBSERVATIONS, new StudyTypeDto("N"));
 		final String filenamePath =
 				this.fieldbookProperties.getUploadDirectory() + File.separator + WorkbookDataUtil.FILE_NAME
 						+ AppConstants.EXPORT_XLS_SUFFIX.getString();

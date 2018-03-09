@@ -8,6 +8,7 @@ import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.trial.bean.AdvanceList;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.CrossesList;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
@@ -24,7 +25,6 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.efficio.fieldbook.web.trial.bean.CrossesList;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -41,12 +41,13 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.operation.builder.StudyTypeBuilder;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.SampleService;
 import org.generationcp.middleware.util.Util;
@@ -73,6 +74,9 @@ public abstract class BaseTrialController extends SettingsController {
 	@Resource
 	protected SampleService sampleService;
 
+	@Resource
+	protected StudyDataManager studyDataManager;
+
 	private static final Logger LOG = LoggerFactory.getLogger(BaseTrialController.class);
 
 	public static final String URL_SETTINGS = "TrialManager/templates/trialSettings";
@@ -82,6 +86,8 @@ public abstract class BaseTrialController extends SettingsController {
 	public static final String URL_EXPERIMENTAL_DESIGN = "TrialManager/templates/experimentalDesign";
 	public static final String URL_MEASUREMENT = "TrialManager/templates/measurements";
 	public static final String URL_DATATABLE = "Common/showAddOrRemoveTraitsPagination";
+
+	protected StudyTypeBuilder studyTypeBuilder = new StudyTypeBuilder();
 
 	protected void createStudyDetails(final Workbook workbook, final BasicDetails detailBean) {
 		if (workbook.getStudyDetails() == null) {
@@ -97,7 +103,7 @@ public abstract class BaseTrialController extends SettingsController {
 		studyDetails.setStartDate(detailBean.getStartDate());
 		studyDetails.setEndDate(detailBean.getEndDate());
 		studyDetails.setStudyUpdate(Util.getCurrentDateAsStringValue(Util.DATE_AS_NUMBER_FORMAT));
-		studyDetails.setStudyType(StudyType.getStudyTypeByName(detailBean.getStudyType()));
+		studyDetails.setStudyType(studyDataManager.getStudyTypeByName(detailBean.getStudyType().getName()));
 
 		if (detailBean.getCreatedBy() != null) {
 			studyDetails.setCreatedBy(detailBean.getCreatedBy());
@@ -724,7 +730,7 @@ public abstract class BaseTrialController extends SettingsController {
 		basic.setFolderNameLabel(folderName);
 		basic.setUserID(studyOwnerPersonId);
 		basic.setUserName(studyOwnerPersonName);
-		basic.setStudyType(studyDetails.getStudyType().getLabel());
+		basic.setStudyType(studyDetails.getStudyType());
 		final TabInfo tab = new TabInfo();
 		tab.setData(basic);
 

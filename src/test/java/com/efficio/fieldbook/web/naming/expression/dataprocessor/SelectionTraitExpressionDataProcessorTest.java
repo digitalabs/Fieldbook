@@ -12,7 +12,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,9 +47,9 @@ public class SelectionTraitExpressionDataProcessorTest {
 
     @Test
     public void testRetrieveEnvironmentalValueStudyDetail() {
-        Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
-        String testValue = "test";
-        MeasurementVariable detail = new MeasurementVariable();
+        final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
+        final String testValue = "test";
+        final MeasurementVariable detail = new MeasurementVariable();
         detail.setProperty(SelectionTraitExpressionDataProcessor.SELECTION_TRAIT_PROPERTY);
         detail.setPossibleValues(Lists.newArrayList(new ValueReference(1,"name","test")));
         detail.setValue(testValue);
@@ -58,9 +58,9 @@ public class SelectionTraitExpressionDataProcessorTest {
         // study details are placed within the conditions portion of the workbook
         workbook.getConditions().add(detail);
 
-        AdvancingSource source = Mockito.mock(AdvancingSource.class);
-        AdvancingNursery nursery = Mockito.mock(AdvancingNursery.class);
-        Study study = Mockito.mock(Study.class);
+        final AdvancingSource source = Mockito.mock(AdvancingSource.class);
+        final AdvancingNursery nursery = Mockito.mock(AdvancingNursery.class);
+        final Study study = Mockito.mock(Study.class);
 
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt("1"), true)).thenReturn(testValue);
 
@@ -71,9 +71,9 @@ public class SelectionTraitExpressionDataProcessorTest {
 
     @Test
     public void testRetrieveEnvironmentalValueNurseryCondition() {
-        Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
-        String testValue = "test";
-        MeasurementVariable detail = new MeasurementVariable();
+        final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
+        final String testValue = "test";
+        final MeasurementVariable detail = new MeasurementVariable();
         detail.setProperty(SelectionTraitExpressionDataProcessor.SELECTION_TRAIT_PROPERTY);
         detail.setPossibleValues(Lists.newArrayList(new ValueReference(1,"name","test")));
         detail.setValue(testValue);
@@ -82,9 +82,9 @@ public class SelectionTraitExpressionDataProcessorTest {
         // nursery conditions are placed within the constants section of the workbook
         workbook.getConstants().add(detail);
 
-        AdvancingSource source = Mockito.mock(AdvancingSource.class);
-        AdvancingNursery nursery = Mockito.mock(AdvancingNursery.class);
-        Study study = Mockito.mock(Study.class);
+        final AdvancingSource source = Mockito.mock(AdvancingSource.class);
+        final AdvancingNursery nursery = Mockito.mock(AdvancingNursery.class);
+        final Study study = Mockito.mock(Study.class);
 
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt("1"), true)).thenReturn(testValue);
 
@@ -95,45 +95,45 @@ public class SelectionTraitExpressionDataProcessorTest {
 
     @Test
     public void testExtractCategoricalValueNonOutofBounds() {
-        String categoricalValue = "test";
-        String testCategoricalValueID = "1";
+        final String categoricalValue = "test";
+        final String testCategoricalValueID = "1";
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(testCategoricalValueID))).thenReturn(categoricalValue);
 		Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(testCategoricalValueID), true)).thenReturn(categoricalValue);
 
-        String output = unitUnderTest.extractValue(testCategoricalValueID, TEST_TERM_ID);
+        final String output = unitUnderTest.extractValue(testCategoricalValueID, TEST_TERM_ID);
 
         Assert.assertEquals("Unable to properly extract the value of a categorical value given the categorical value ID", categoricalValue, output);
     }
 
     @Test
     public void testExtractCategoricalValueOutOfBoundsNumeric() {
-        String categoricalValue = "1";
+        final String categoricalValue = "1";
 
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(categoricalValue))).thenReturn(null);
 		Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(categoricalValue), true)).thenReturn(categoricalValue);
 
-        String output = unitUnderTest.extractValue(categoricalValue, TEST_TERM_ID);
+        final String output = unitUnderTest.extractValue(categoricalValue, TEST_TERM_ID);
 
         Assert.assertEquals("Unable to properly return the value of a numeric out of bounds value for a categorical variable", categoricalValue, output);
     }
 
     @Test
     public void testExtractCategoricalValueOutOfBoundsNonNumeric() {
-        String categoricalValue = "OK";
+        final String categoricalValue = "OK";
 
-        String output = unitUnderTest.extractValue(categoricalValue, TEST_TERM_ID);
+        final String output = unitUnderTest.extractValue(categoricalValue, TEST_TERM_ID);
 
         Assert.assertEquals("Unable to properly return the value of a non numeric out of bounds value for a categorical variable", categoricalValue, output);
     }
 
     @Test
     public void testProcessPlotLevelDataWithMeasurementDataForNursery(){
-        String testValue = "test";
+        final String testValue = "test";
 
-        MeasurementRow measurementRow = new MeasurementRow();
+        final MeasurementRow measurementRow = new MeasurementRow();
         setMeasurementRow(measurementRow,1,"name","test",unitUnderTest.SELECTION_TRAIT_PROPERTY);
 
-        AdvancingSource source = Mockito.mock(AdvancingSource.class);
+        final AdvancingSource source = Mockito.mock(AdvancingSource.class);
 
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt("1"), true)).thenReturn(testValue);
 
@@ -144,13 +144,13 @@ public class SelectionTraitExpressionDataProcessorTest {
 
     @Test
     public void testProcessPlotLevelDataWithMeasurementDataForTrialWithSamples(){
-        String testValue = "test";
+        final String testValue = "test";
 
-        MeasurementRow measurementRow = new MeasurementRow();
+        final MeasurementRow measurementRow = new MeasurementRow();
         setMeasurementRow(measurementRow,1,"name","test",unitUnderTest.SELECTION_TRAIT_PROPERTY);
         setMeasurementRow(measurementRow,-2,"SAMPLES","samples description",null);
 
-        AdvancingSource source = Mockito.mock(AdvancingSource.class);
+        final AdvancingSource source = Mockito.mock(AdvancingSource.class);
 
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt("1"), true)).thenReturn(testValue);
 
@@ -161,11 +161,11 @@ public class SelectionTraitExpressionDataProcessorTest {
 
     private void setMeasurementRow(final MeasurementRow measurementRow, final Integer id, final String name,
         final String description,final String property) {
-        List<MeasurementData> dataList = new ArrayList<>();
-        MeasurementData selectionTraitData = new MeasurementData();
+        final List<MeasurementData> dataList = new ArrayList<>();
+        final MeasurementData selectionTraitData = new MeasurementData();
         selectionTraitData.setValue("test");
 
-        MeasurementVariable variable = new MeasurementVariable();
+        final MeasurementVariable variable = new MeasurementVariable();
         variable.setTermId(id);
         variable.setPossibleValues(Lists.newArrayList(new ValueReference(id,name,description)));
         if (null != property) {

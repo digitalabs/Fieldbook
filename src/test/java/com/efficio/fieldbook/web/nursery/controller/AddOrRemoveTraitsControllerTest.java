@@ -22,7 +22,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +40,7 @@ import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 
 public class AddOrRemoveTraitsControllerTest extends AbstractBaseIntegrationTest {
 
-	/** The Constant LOG. */
+	/** The Constant log. */
 	private static final Logger LOG = LoggerFactory.getLogger(AddOrRemoveTraitsControllerTest.class);
 
 	/** The file service. */
@@ -66,11 +66,11 @@ public class AddOrRemoveTraitsControllerTest extends AbstractBaseIntegrationTest
 	@Before
 	public void setUp() {
 		try {
-			InputStream inp = this.getClass().getClassLoader().getResourceAsStream("GermplasmImportTemplate-Advanced-rev4.xls");
+			final InputStream inp = this.getClass().getClassLoader().getResourceAsStream("GermplasmImportTemplate-Advanced-rev4.xls");
 
 			this.workbookAdvance = WorkbookFactory.create(inp);
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			AddOrRemoveTraitsControllerTest.LOG.error(e.getMessage(), e);
 		}
 	}
@@ -88,13 +88,13 @@ public class AddOrRemoveTraitsControllerTest extends AbstractBaseIntegrationTest
 			this.importGermplasmFileService.doProcessNow(this.workbookAdvance, mainInfo);
 			form.setImportedGermplasmMainInfo(mainInfo);
 			form.setImportedGermplasm(mainInfo.getImportedGermplasmList().getImportedGermplasms());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			AddOrRemoveTraitsControllerTest.LOG.error(e.getMessage(), e);
 		}
 		final UserSelection userSelection = new UserSelection();
 		userSelection.setWorkbook(new org.generationcp.middleware.domain.etl.Workbook());
 		final StudyDetails details = new StudyDetails();
-		details.setStudyType(StudyType.N);
+		details.setStudyType(new StudyTypeDto("N"));
 		userSelection.getWorkbook().setStudyDetails(details);
 		final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
 		final MeasurementVariable checkVariable =

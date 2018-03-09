@@ -11,19 +11,21 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.TableHeader;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
+import com.efficio.fieldbook.web.common.service.MergeCheckService;
+import com.efficio.fieldbook.web.exception.FieldbookRequestValidationException;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.nursery.form.UpdateGermplasmCheckForm;
+import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
+import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ListDataProjectUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.hazelcast.util.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.context.ContextInfo;
@@ -69,21 +71,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.TableHeader;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.common.service.MergeCheckService;
-import com.efficio.fieldbook.web.exception.FieldbookRequestValidationException;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.nursery.form.UpdateGermplasmCheckForm;
-import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
-import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ListDataProjectUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.hazelcast.util.StringUtil;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * This controller handles the 2nd step in the nursery manager process.
@@ -188,8 +186,8 @@ public class ImportGermplasmListController extends SettingsController {
 	@Resource
 	private InventoryDataManager inventoryDataManager;
 
-	private static String DEFAULT_CHECK_VALUE = "C";
-	private static String DEFAULT_TEST_VALUE = "T";
+	private static final String DEFAULT_CHECK_VALUE = "C";
+	private static final String DEFAULT_TEST_VALUE = "T";
 
 	/*
 	 * (non-Javadoc)
@@ -462,7 +460,7 @@ public class ImportGermplasmListController extends SettingsController {
 			// we save the list
 			// we need to create a new germplasm list
 			final Integer listId = germplasmMainInfo.getListId();
-			List<ImportedGermplasm> projectGermplasmList;
+			final List<ImportedGermplasm> projectGermplasmList;
 
 			final ImportedGermplasmList importedGermplasmList = germplasmMainInfo.getImportedGermplasmList();
 
@@ -538,7 +536,7 @@ public class ImportGermplasmListController extends SettingsController {
 			final boolean isNursery = type != null && type.equalsIgnoreCase(StudyType.N.getName()) ? true : false; //TODO FIXME
 			final List<Map<String, Object>> dataTableDataList =
 					this.generateGermplasmListDataTable(list, defaultTestCheckId, isNursery, true);
-			this.initializeObjectsForGermplasmDetailsView(type, form, model, mainInfo, list, dataTableDataList);
+			this.initializeObjectsForGermplasmDetailsView(form, model, mainInfo, list, dataTableDataList);
 		} catch (final Exception e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 		}
@@ -548,15 +546,14 @@ public class ImportGermplasmListController extends SettingsController {
 	/**
 	 * Displays the assigned Germplasm List of the study
 	 *
-	 * @param type - Study type (N/T)
 	 * @param form - the form
 	 * @param model - the model
 	 * @return the string
 	 */
-	@RequestMapping(value = "/displaySelectedGermplasmDetails/{type}", method = RequestMethod.GET)
-	public String displayGermplasmDetailsOfCurrentStudy(@PathVariable final String type,
-			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final Model model) {
+	@RequestMapping(value = "/displaySelectedGermplasmDetails", method = RequestMethod.GET)
+	public String displayGermplasmDetailsOfCurrentStudy(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final Model model) {
 		try {
+//TODO REMOVER TYPE CUENYAD
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 			mainInfo.setAdvanceImportType(true);
 			final Integer studyIdFromWorkbook = this.userSelection.getWorkbook().getStudyDetails().getId();
@@ -564,8 +561,9 @@ public class ImportGermplasmListController extends SettingsController {
 
 			List<ImportedGermplasm> list = new ArrayList<>();
 
-			boolean isNursery = false;
-			GermplasmListType germplasmListType = GermplasmListType.STUDY;// TODO COMO SE GUARDAN LAS LISTAS DE LOS ESTUDIOS
+			final boolean isNursery =
+				Objects.equals(this.userSelection.getWorkbook().getStudyDetails().getStudyType().getLabel(), "Nursery");
+			final GermplasmListType germplasmListType = GermplasmListType.STUDY;// TODO COMO SE GUARDAN LAS LISTAS DE LOS ESTUDIOS
 
 			final List<GermplasmList> germplasmLists =
 					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, germplasmListType);
@@ -578,7 +576,8 @@ public class ImportGermplasmListController extends SettingsController {
 					// BMS-1419, set the id to the original list's id
 					mainInfo.setListId(germplasmList.getListRef());
 				}
-				final List<ListDataProject> data = this.fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
+				final List<ListDataProject> data = this.fieldbookMiddlewareService.getListDataProject(
+					germplasmList != null ? germplasmList.getId() : null);
 				FieldbookListUtil.populateStockIdInListDataProject(data, this.inventoryDataManager);
 				list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
 			}
@@ -588,8 +587,8 @@ public class ImportGermplasmListController extends SettingsController {
 			form.setImportedGermplasm(list);
 
 			final List<Map<String, Object>> dataTableDataList =
-					this.generateGermplasmListDataTable(list, defaultTestCheckId, isNursery, false);
-			this.initializeObjectsForGermplasmDetailsView(type, form, model, mainInfo, list, dataTableDataList);
+					this.generateGermplasmListDataTable(list, defaultTestCheckId, isNursery, false);//
+			this.initializeObjectsForGermplasmDetailsView(form, model, mainInfo, list, dataTableDataList);
 
 			// setting the form
 			form.setImportedGermplasmMainInfo(mainInfo);
@@ -615,7 +614,7 @@ public class ImportGermplasmListController extends SettingsController {
 			dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
 			dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
 
-			if (!isNursery) {// TODO FIX THAT
+			//if (!isNursery) {// TODO FIX THAT
 				if (isDefaultTestCheck || germplasm.getEntryTypeValue() == null || "0".equals(germplasm.getEntryTypeValue())) {
 					germplasm.setEntryTypeValue(defaultTestCheckId);
 					germplasm.setEntryTypeCategoricalID(Integer.valueOf(defaultTestCheckId));
@@ -624,10 +623,10 @@ public class ImportGermplasmListController extends SettingsController {
 					dataMap.put(ImportGermplasmListController.CHECK, germplasm.getEntryTypeCategoricalID());
 				}
 
-			} else {
+			/*} else {
 				dataMap.put(ImportGermplasmListController.ENTRY_CODE, germplasm.getEntryCode());
 				dataMap.put(ImportGermplasmListController.CHECK, "");
-			}
+			}*/
 
 			final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 			if (factorsList != null) {
@@ -645,7 +644,7 @@ public class ImportGermplasmListController extends SettingsController {
 		return dataTableDataList;
 	}
 
-	void initializeObjectsForGermplasmDetailsView(final String type, final ImportGermplasmListForm form, final Model model,
+	void initializeObjectsForGermplasmDetailsView(final ImportGermplasmListForm form, final Model model,
 			final ImportedGermplasmMainInfo mainInfo, final List<ImportedGermplasm> list,
 			final List<Map<String, Object>> dataTableDataList) {
 		// Set first entry number from the list
@@ -674,9 +673,8 @@ public class ImportGermplasmListController extends SettingsController {
 
 		model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckTypeList());
 		model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
-		model.addAttribute(ImportGermplasmListController.TYPE2, type);
 		model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST,
-				this.getGermplasmTableHeader(type, this.userSelection.getPlotsLevelList()));
+				this.getGermplasmTableHeader(this.userSelection.getPlotsLevelList()));
 	}
 
 	@RequestMapping(value = "/displaySelectedCheckGermplasmDetails", method = RequestMethod.GET)
@@ -698,7 +696,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 			if (germplasmListCheck != null && !germplasmListCheck.isEmpty()) {
 				final GermplasmList checkList = germplasmListCheck.get(0);
-				if (checkList != null & checkList.getListRef() != null && !checkList.getListRef().equals(0)) {
+				if (checkList != null && (checkList != null ? checkList.getListRef() : null) != null && !checkList.getListRef().equals(0)) {
 					form.setKeyForOverwrite(checkList.getListRef());
 					form.setLastCheckSourcePrimary(0);
 					form.setLastDraggedChecksList(checkList.getListRef().toString());
@@ -706,7 +704,8 @@ public class ImportGermplasmListController extends SettingsController {
 					form.setLastCheckSourcePrimary(1);
 				}
 
-				final List<ListDataProject> data = this.fieldbookMiddlewareService.getListDataProject(checkList.getId());
+				final List<ListDataProject> data = this.fieldbookMiddlewareService.getListDataProject(
+					checkList != null ? checkList.getId() : null);
 				FieldbookListUtil.populateStockIdInListDataProject(data, this.inventoryDataManager);
 				list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
 			}
@@ -735,16 +734,16 @@ public class ImportGermplasmListController extends SettingsController {
 		return super.showAjaxPage(model, ImportGermplasmListController.CHECK_PAGINATION_TEMPLATE);
 	}
 
-	private List<TableHeader> getGermplasmTableHeader(final String type, final List<SettingDetail> factorsList) {
+	private List<TableHeader> getGermplasmTableHeader(final List<SettingDetail> factorsList) {
 		final Locale locale = LocaleContextHolder.getLocale();
 		final List<TableHeader> tableHeaderList = new ArrayList<>();
-		if (type != null && type.equalsIgnoreCase(StudyType.N.getName())) {
+/*		if (type != null && type.equalsIgnoreCase(StudyType.N.getName())) {
 
 			tableHeaderList.add(new TableHeader(this.messageSource.getMessage("nursery.import.header.position", null, locale),
 					ImportGermplasmListController.POSITION));
 			tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_CODE.getTermNameFromOntology(this.ontologyDataManager),
 					ImportGermplasmListController.ENTRY_CODE));
-		}
+		}*/
 
 		if (factorsList != null) {
 			// we iterate the map for dynamic header of nursery and trial
@@ -837,7 +836,7 @@ public class ImportGermplasmListController extends SettingsController {
 			model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
 			model.addAttribute(ImportGermplasmListController.TYPE2, type);
 			model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST,
-					this.getGermplasmTableHeader(type, this.userSelection.getPlotsLevelList()));
+					this.getGermplasmTableHeader(this.userSelection.getPlotsLevelList()));
 			model.addAttribute("hasMeasurement", this.hasMeasurement());
 
 			final Integer startingEntryNo = this.getUserSelection().getStartingEntryNo();
@@ -1047,6 +1046,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 			}
 
+			assert importedGermplasm != null;
 			importedGermplasm.setEntryTypeValue(checkId);
 
 			List<ImportedGermplasm> list = new ArrayList<>();
@@ -1126,6 +1126,7 @@ public class ImportGermplasmListController extends SettingsController {
 				importedCheckGermplasm = this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
 						.getImportedGermplasms().get(dataTableIndex);
 			}
+			assert importedCheckGermplasm != null;
 			importedCheckGermplasm.setEntryTypeValue(currentVal);
 			final List<Enumeration> allEnumerations = this.fieldbookService.getCheckTypeList();
 
@@ -1153,6 +1154,7 @@ public class ImportGermplasmListController extends SettingsController {
 				importedCheckGermplasm = this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
 						.getImportedGermplasms().get(form.getIndex());
 			}
+			assert importedCheckGermplasm != null;
 			importedCheckGermplasm.setEntryTypeValue(form.getCheckVal());
 			importedCheckGermplasm.setEntryTypeCategoricalID(Integer.valueOf(form.getCheckVal()));
 
@@ -1324,8 +1326,8 @@ public class ImportGermplasmListController extends SettingsController {
 		try {
 			final StandardVariable stdVar =
 					this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID());
-			Enumeration enumeration;
-			String message;
+			final Enumeration enumeration;
+			final String message;
 			if (operation == 1) {
 				enumeration = new Enumeration(null, form.getManageCheckCode(), form.getManageCheckValue(), 0);
 				message = this.messageSource.getMessage("nursery.manage.check.types.add.success", new Object[] {form.getManageCheckValue()},

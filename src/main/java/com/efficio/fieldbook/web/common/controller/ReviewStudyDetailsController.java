@@ -18,13 +18,10 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +52,8 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	private static final int COLS = 3;
 
+	public static final String TRIAL_MANAGER_REVIEW_TRIAL_DETAILS = "TrialManager/reviewTrialDetails";
+
 	@Resource
 	private UserSelection userSelection;
 
@@ -81,14 +80,14 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	private String getContentName(final boolean isTrial) {
 		if (isTrial) {
-			return "TrialManager/reviewTrialDetails";
+			return TRIAL_MANAGER_REVIEW_TRIAL_DETAILS;
 		} else {
 			return "NurseryManager/reviewNurseryDetails";
 		}
 	}
 
 	private String getContentStudy() {
-		return "TrialManager/reviewTrialDetails";
+		return TRIAL_MANAGER_REVIEW_TRIAL_DETAILS;
 	}
 
 	@RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
@@ -148,7 +147,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		final List<SettingDetail> newList = new ArrayList<>();
 
 		if (list != null && !list.isEmpty()) {
-			final int rows = Double.valueOf(Math.ceil(list.size() / (double) ReviewStudyDetailsController.COLS)).intValue();
+			final int rows = Double.valueOf(Math.ceil(list.size() / ReviewStudyDetailsController.COLS)).intValue();
 			final int extra = list.size() % ReviewStudyDetailsController.COLS;
 			for (int i = 0; i < list.size(); i++) {
 				int delta = 0;

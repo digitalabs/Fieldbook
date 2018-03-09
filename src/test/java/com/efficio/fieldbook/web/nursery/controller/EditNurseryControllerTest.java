@@ -24,10 +24,10 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
@@ -615,7 +615,7 @@ public class EditNurseryControllerTest {
 	@Test
 	public void testPrepareNewWorkbookForSaving() {
 
-		final Workbook workbookFromUserSelection = WorkbookTestDataInitializer.createTestWorkbook(2, StudyType.N, "Nursery Name", 1, false);
+		final Workbook workbookFromUserSelection = WorkbookTestDataInitializer.createTestWorkbook(2, new StudyTypeDto("N"), "Nursery Name", 1, false);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbookFromUserSelection);
 
 		final int trialDatasetId = 100;

@@ -2,7 +2,6 @@ package com.efficio.fieldbook.web.importdesign.generator;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class DesignImportMeasurementRowGenerator {
@@ -76,7 +76,7 @@ public class DesignImportMeasurementRowGenerator {
 
 		final Map<Integer, DesignHeaderItem> trialEnvironmentHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT);
 
-		final List<MeasurementData> dataList = new ArrayList<MeasurementData>();
+		final List<MeasurementData> dataList = new ArrayList<>();
 		measurement.setDataList(dataList);
 
 		// only add record from file if the trial instance value within the row is selected/included in environment tab
@@ -110,7 +110,7 @@ public class DesignImportMeasurementRowGenerator {
 
 		final Map<Integer, DesignHeaderItem> trialDesignHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_DESIGN);
 		final Map<Integer, DesignHeaderItem> variateHeaders = this.mappedHeaders.get(PhenotypicType.VARIATE);
-		final List<DesignHeaderItem> remainingColumnHeaders = new ArrayList<DesignHeaderItem>();
+		final List<DesignHeaderItem> remainingColumnHeaders = new ArrayList<>();
 		remainingColumnHeaders.addAll(trialDesignHeaders.values());
 		remainingColumnHeaders.addAll(variateHeaders.values());
 
@@ -128,12 +128,12 @@ public class DesignImportMeasurementRowGenerator {
 
 			// add trial instance factor
 			if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
-					&& this.workbook.getStudyDetails().getStudyType() == StudyType.N) {
+					&& Objects.equals(this.workbook.getStudyDetails().getStudyType().getLabel(), StudyType.N.getLabel())) {
 				// do not add the trial instance to measurement data list if the workbook is Nursery
 				LOG.debug("Study Type is Nursery - did not add Trial Instance Factor");
 				continue;
 			} else if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
-					&& this.workbook.getStudyDetails().getStudyType() == StudyType.T) {
+					&& Objects.equals(this.workbook.getStudyDetails().getStudyType().getLabel(), StudyType.T.getLabel())) {
 				LOG.debug("Study Type is Trial - adding Trial Instance Factor");
 				final String value = rowValues.get(headerItem.getColumnIndex());
 				dataList.add(this.createMeasurementData(headerItem.getVariable(), value));
@@ -244,7 +244,7 @@ public class DesignImportMeasurementRowGenerator {
 
 	public void addFactorsToMeasurementRows(final List<MeasurementRow> measurements) {
 
-		if (this.workbook.getStudyDetails().getStudyType() == StudyType.N) {
+		if (Objects.equals(this.workbook.getStudyDetails().getStudyType().getLabel(), StudyType.N.getLabel())) {
 			for (final MeasurementVariable factor : this.workbook.getFactors()) {
 				for (final MeasurementRow row : measurements) {
 					this.addFactorToDataListIfNecessary(factor, row.getDataList());
@@ -263,8 +263,8 @@ public class DesignImportMeasurementRowGenerator {
 		dataList.add(this.createMeasurementData(factor, ""));
 	}
 
-	public void addVariatesToMeasurementRows(final List<MeasurementRow> measurements, final UserSelection userSelection,
-			final OntologyService ontologyService, final ContextUtil contextUtil) {
+	public void addVariatesToMeasurementRows(final List<MeasurementRow> measurements, final OntologyService ontologyService,
+		final ContextUtil contextUtil) {
 
 		final Set<MeasurementVariable> temporaryList = new HashSet<>();
 		for (final MeasurementVariable mvar : this.workbook.getVariates()) {

@@ -143,7 +143,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		}
 
 		// multiple instances
-		if (instances != null && instances.size() > 1) {
+		if (instances.size() > 1) {
 			outputFilename = this.fieldbookProperties.getUploadDirectory() + File.separator + filename
 					.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "") + AppConstants.ZIP_FILE_SUFFIX.getString();
 			ZipUtil.zipIt(outputFilename, filenameList);
@@ -229,7 +229,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.startdate", startDate);
 		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.enddate", endDate);
 		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.studytype",
-				studyDetails.getStudyType().name());
+				studyDetails.getStudyType().getName());
 
 		return rowNumIndex;
 	}
@@ -243,7 +243,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				}
 			}
 		}
-		return variable.getRole();
+		return variable != null ? variable.getRole() : null;
 	}
 
 	/**

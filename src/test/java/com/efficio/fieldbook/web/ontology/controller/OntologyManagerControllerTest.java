@@ -50,7 +50,7 @@ import com.efficio.fieldbook.web.ontology.form.OntologyPropertyForm;
 @Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class OntologyManagerControllerTest extends AbstractBaseIntegrationTest {
 
-	/** The Constant LOG. */
+	/** The Constant log. */
 	private static final Logger LOG = LoggerFactory.getLogger(OntologyControllerTest.class);
 
 	/** The ontology service. */
@@ -82,23 +82,23 @@ public class OntologyManagerControllerTest extends AbstractBaseIntegrationTest {
 	@Override
 	@Before
 	public void setUp() {
-		List<TermProperty> termProperties = new ArrayList<TermProperty>();
+		final List<TermProperty> termProperties = new ArrayList<TermProperty>();
 		termProperties.add(new TermProperty(1, TermId.CROP_ONTOLOGY_ID.getId(), "CO:12345", 0));
 
 		try {
-			String propertyName = "property name " + new Random().nextInt(10000);
+			final String propertyName = "property name " + new Random().nextInt(10000);
 			this.ontologyService.addProperty(propertyName, "test property", 1087);
-			Property property = this.ontologyService.getProperty(propertyName);
+			final Property property = this.ontologyService.getProperty(propertyName);
 
-			String scaleName = "scale name " + new Random().nextInt(10000);
-			Term scale = this.ontologyService.addTerm(scaleName, "test scale", CvId.SCALES);
+			final String scaleName = "scale name " + new Random().nextInt(10000);
+			final Term scale = this.ontologyService.addTerm(scaleName, "test scale", CvId.SCALES);
 
-			String methodName = "method name " + new Random().nextInt(10000);
-			Term method = this.ontologyService.addTerm(methodName, methodName, CvId.METHODS);
+			final String methodName = "method name " + new Random().nextInt(10000);
+			final Term method = this.ontologyService.addTerm(methodName, methodName, CvId.METHODS);
 
-			Term dataType = new Term(400, "DATA TYPE", "DATA TYPE DEF");
-			Term storedIn = new Term(1010, "STORED IN", "STORED IN DEF");
-			Term traitClass = new Term(600, "TRAIT CLASS", "TRAIT CLASS DEF");
+			final Term dataType = new Term(400, "DATA TYPE", "DATA TYPE DEF");
+			final Term storedIn = new Term(1010, "STORED IN", "STORED IN DEF");
+			final Term traitClass = new Term(600, "TRAIT CLASS", "TRAIT CLASS DEF");
 
 			this.standardVariable = new StandardVariable();
 			this.standardVariable.setName("TestVariable" + new Random().nextInt(10000));
@@ -112,7 +112,7 @@ public class OntologyManagerControllerTest extends AbstractBaseIntegrationTest {
 			this.standardVariable.setCropOntologyId("CO:1200");
 			this.standardVariable.setConstraints(new VariableConstraints(1.0, 10.0));
 			this.ontologyService.addStandardVariable(this.standardVariable,PROGRAM_UUID);
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			OntologyManagerControllerTest.LOG.error(e.getMessage(), e);
 		}
 
@@ -126,11 +126,11 @@ public class OntologyManagerControllerTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testValidateNewVariableNameExisting() throws MiddlewareQueryException, Exception {
 
-		Term termWithValue =
+		final Term termWithValue =
 				new Term(OntologyManagerControllerTest.VARIABLE_ID, OntologyManagerControllerTest.VARIABLE_NAME,
 						OntologyManagerControllerTest.VARIABLE_DEFINITION);
-		BindingResult result = null;
-		Model model = null;
+		final BindingResult result = null;
+		final Model model = null;
 
 		this.form.setVariableName(OntologyManagerControllerTest.VARIABLE_NAME);
 		Mockito.when(this.mockOntologyService.findTermByName(OntologyManagerControllerTest.VARIABLE_NAME, CvId.VARIABLES)).thenReturn(
@@ -138,29 +138,29 @@ public class OntologyManagerControllerTest extends AbstractBaseIntegrationTest {
 
 		// set the mocked ontology service in the controller
 		this.ontologyManagerController.setOntologyService(this.mockOntologyService);
-		String status = this.ontologyManagerController.validateNewVariableName(this.form, result, model);
+		final String status = this.ontologyManagerController.validateNewVariableName(this.form, null, null);
 
 		Assert.assertEquals("error", status);
 	}
 
 	@Test
 	public void testValidateNewVariableNameNonExisting() throws MiddlewareQueryException, Exception {
-		BindingResult result = null;
-		Model model = null;
-		String variableName = OntologyManagerControllerTest.VARIABLE_NAME + new Random().nextInt();
+		final BindingResult result = null;
+		final Model model = null;
+		final String variableName = OntologyManagerControllerTest.VARIABLE_NAME + new Random().nextInt();
 
 		this.form.setVariableName(variableName);
 		Mockito.when(this.mockOntologyService.findTermByName(variableName, CvId.VARIABLES)).thenReturn(null);
 
 		this.ontologyManagerController.setOntologyService(this.mockOntologyService);
-		String status = this.ontologyManagerController.validateNewVariableName(this.form, result, model);
+		final String status = this.ontologyManagerController.validateNewVariableName(this.form, null, null);
 
 		Assert.assertEquals("success", status);
 	}
 
 	@Test
 	public void testValidationOfPropertyNameExisting() {
-		Term termWithValue =
+		final Term termWithValue =
 				new Term(OntologyManagerControllerTest.PROPERTY_ID, OntologyManagerControllerTest.PROPERTY_NAME,
 						OntologyManagerControllerTest.PROPERTY_DEFINITION);
 		this.propForm.setManagePropertyName(OntologyManagerControllerTest.PROPERTY_NAME);
@@ -170,7 +170,7 @@ public class OntologyManagerControllerTest extends AbstractBaseIntegrationTest {
 			this.ontologyManagerController.setOntologyService(this.mockOntologyService);
 
 			this.ontologyManagerController.validatePropertyName(this.propForm);
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			Assert.assertEquals("Expected error code error.ontology.property.exists but got " + e.getCode() + "instead",
 					"error.ontology.property.exists", e.getCode());
 		}
@@ -186,7 +186,7 @@ public class OntologyManagerControllerTest extends AbstractBaseIntegrationTest {
 			this.ontologyManagerController.setOntologyService(this.mockOntologyService);
 
 			this.ontologyManagerController.validatePropertyName(this.propForm);
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			hasError = true;
 		}
 

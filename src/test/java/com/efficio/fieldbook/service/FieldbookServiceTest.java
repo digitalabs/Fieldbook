@@ -21,12 +21,12 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
@@ -259,7 +259,7 @@ public class FieldbookServiceTest {
 		// prepare test data
 		final UserSelection userSelection = new UserSelection();
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 
 		userSelection.setImportedCheckGermplasmMainInfo(null);
 		userSelection.setWorkbook(workbook);
@@ -280,7 +280,7 @@ public class FieldbookServiceTest {
 		// prepare test data
 		final UserSelection userSelection = new UserSelection();
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 
 		userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
 		userSelection.setWorkbook(workbook);
@@ -301,7 +301,7 @@ public class FieldbookServiceTest {
 		// prepare test data
 		final UserSelection userSelection = new UserSelection();
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 
 		userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
 		userSelection.setWorkbook(workbook);
@@ -329,7 +329,7 @@ public class FieldbookServiceTest {
 		// prepare test data
 		final UserSelection userSelection = new UserSelection();
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 		WorkbookDataUtil.createTrialObservations(1, workbook);
 		try {
 			userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
@@ -354,7 +354,7 @@ public class FieldbookServiceTest {
 		// prepare test data
 		final UserSelection userSelection = new UserSelection();
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 		workbook.setTrialObservations(null);
 		try {
 			this.addCheckVariables(workbook.getConditions());
@@ -402,7 +402,7 @@ public class FieldbookServiceTest {
 		// prepare test data
 		final UserSelection userSelection = new UserSelection();
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 
 		try {
 			this.addCheckVariables(workbook.getConditions());
@@ -437,7 +437,7 @@ public class FieldbookServiceTest {
 		// prepare test data
 		final UserSelection userSelection = new UserSelection();
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 
 		userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
 		userSelection.setWorkbook(workbook);
@@ -455,7 +455,7 @@ public class FieldbookServiceTest {
 
 	@Test
 	public void testCheckingOfCheckVariablesIfConditionsIsNotNullAndNotEmpty() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 
 		Assert.assertFalse("Expected no check variables in the conditions but found one.",
 				this.fieldbookServiceImpl.hasCheckVariables(workbook.getConditions()));
@@ -721,7 +721,7 @@ public class FieldbookServiceTest {
 
 	@Test
 	public void testaddSTUDY_UIDVariableToWorkbookConditionsFalse() {
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1,
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto("T"), "Sample Study", 1,
 				false);
 		// Set lists to empty lists for easier testing
 		workbook.setConditions(new ArrayList<MeasurementVariable>());
@@ -745,7 +745,7 @@ public class FieldbookServiceTest {
 
 	@Test
 	public void testAddStudyUUIDConditionAndPlotIDFactorToWorkbookTrue() {
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1,
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto("T"), "Sample Study", 1,
 				false);
 		// Set lists to empty lists for easier testing
 		workbook.setConditions(new ArrayList<MeasurementVariable>());

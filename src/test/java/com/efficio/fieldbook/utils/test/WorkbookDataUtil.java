@@ -11,13 +11,9 @@
 
 package com.efficio.fieldbook.utils.test;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.util.AppConstants;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -28,12 +24,16 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.operation.builder.WorkbookBuilder;
 import org.generationcp.middleware.pojos.Location;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.util.AppConstants;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * The Class SettingsUtil.
@@ -148,20 +148,21 @@ public class WorkbookDataUtil {
 	private static final String TEST_SCALE = "TEST SCALE";
 	private static final String TEST_PROPERTY = "TEST PROPERTY";
 	private static final String TEST_DESCRIPTION = "TEST DESCRIPTION";
+	private static final String CREATED_BY = "1" ;
 
-	public static Workbook getTestWorkbook(final int noOfObservations, final StudyType studyType) {
+	public static Workbook getTestWorkbook(final int noOfObservations, final StudyTypeDto studyType) {
 		return WorkbookDataUtil.createTestWorkbook(noOfObservations, studyType);
 	}
 
 	public static Workbook getTestWorkbookForTrial(final int noOfObservations, final int noOfInstance) {
-		return WorkbookDataUtil.createTestWorkbook(noOfObservations, StudyType.T, noOfInstance);
+		return WorkbookDataUtil.createTestWorkbook(noOfObservations, new StudyTypeDto("T"), noOfInstance);
 	}
 
-	private static Workbook createTestWorkbook(final int noOfObservations, final StudyType studyType) {
+	private static Workbook createTestWorkbook(final int noOfObservations, final StudyTypeDto studyType) {
 		return WorkbookDataUtil.createTestWorkbook(noOfObservations, studyType, 2);
 	}
 
-	private static Workbook createTestWorkbook(final int noOfObservations, final StudyType studyType, final int noOfInstance) {
+	private static Workbook createTestWorkbook(final int noOfObservations, final StudyTypeDto studyType, final int noOfInstance) {
 		final Workbook workbook = new Workbook();
 
 		workbook.setStudyDetails(WorkbookDataUtil.createStudyDetails(studyType));
@@ -177,7 +178,7 @@ public class WorkbookDataUtil {
 		return workbook;
 	}
 
-	private static StudyDetails createStudyDetails(final StudyType studyType) {
+	private static StudyDetails createStudyDetails(final StudyTypeDto studyType) {
 		final StudyDetails details = new StudyDetails();
 		details.setStudyName((studyType.equals(StudyType.N) ? WorkbookDataUtil.NURSERY_NAME : WorkbookDataUtil.TRIAL_NAME)
 				+ new Random().nextInt(10000));
@@ -187,6 +188,7 @@ public class WorkbookDataUtil {
 		details.setEndDate(WorkbookDataUtil.END_DATE);
 		details.setParentFolderId(WorkbookDataUtil.FOLDER_ID);
 		details.setStudyType(studyType);
+		details.setCreatedBy(WorkbookDataUtil.CREATED_BY);
 		details.setId(-1);
 
 		return details;
@@ -609,9 +611,9 @@ public class WorkbookDataUtil {
 	}
 
 	public static MeasurementRow createTrialObservationWithoutSite() {
-		final Workbook workbook = WorkbookDataUtil.createTestWorkbook(2, StudyType.T);
+		final Workbook workbook = WorkbookDataUtil.createTestWorkbook(2, new StudyTypeDto("T"));
 
-		WorkbookDataUtil.createStudyDetails(StudyType.T);
+		WorkbookDataUtil.createStudyDetails(new StudyTypeDto("T"));
 		WorkbookDataUtil.createConditions();
 
 		final MeasurementRow row = new MeasurementRow();
@@ -735,7 +737,7 @@ public class WorkbookDataUtil {
 		var.setCvTermId(termId.getId());
 		settingDetail.setVariable(var);
 
-		StandardVariable stdVar = WorkbookDataUtil.createStandardVariable(termId.getId(), termId.name());
+		final StandardVariable stdVar = WorkbookDataUtil.createStandardVariable(termId.getId(), termId.name());
 		settingDetail.getVariable().setName(stdVar.getName());
 		settingDetail.getVariable().setDescription(stdVar.getDescription());
 		settingDetail.setPossibleValues(new ArrayList<ValueReference>());

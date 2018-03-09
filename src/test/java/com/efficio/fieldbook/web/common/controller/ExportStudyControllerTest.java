@@ -30,7 +30,7 @@ import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -262,7 +262,7 @@ public class ExportStudyControllerTest {
 	@Test
 	public void testDoExportNurseryInCSVFormatWithDefinedVisibleColumns()
 			throws MiddlewareException, JsonParseException, JsonMappingException, IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		this.userSelection.setWorkbook(workbook);
 
 		final String generatedFilename = workbook.getStudyDetails().getStudyName() + "_" + workbook.getStudyDetails().getId();
@@ -375,7 +375,7 @@ public class ExportStudyControllerTest {
 
 	@Test
 	public void testDoExportNurseryInExcelFormat() throws MiddlewareException, JsonParseException, JsonMappingException, IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		this.userSelection.setWorkbook(workbook);
 
 		final String generatedFilename = workbook.getStudyDetails().getStudyName() + "_" + workbook.getStudyDetails().getId();
@@ -467,7 +467,7 @@ public class ExportStudyControllerTest {
 	@Test
 	public void testDoExportNurseryInKSUFieldbookCsvFormat()
 			throws MiddlewareException, JsonParseException, JsonMappingException, IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		this.userSelection.setWorkbook(workbook);
 
 		final String generatedFilename = workbook.getStudyDetails().getStudyName() + "_" + workbook.getStudyDetails().getId();
@@ -529,7 +529,7 @@ public class ExportStudyControllerTest {
 	@Test
 	public void testDoExportNurseryInKSUFieldbookExcelFormat()
 			throws MiddlewareException, JsonParseException, JsonMappingException, IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		this.userSelection.setWorkbook(workbook);
 
 		final String generatedFilename = workbook.getStudyDetails().getStudyName() + "_" + workbook.getStudyDetails().getId();

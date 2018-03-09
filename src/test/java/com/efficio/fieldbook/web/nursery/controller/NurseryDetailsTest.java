@@ -34,8 +34,9 @@ import com.efficio.fieldbook.web.nursery.service.ImportWorkbookFileService;
 
 public class NurseryDetailsTest extends AbstractBaseIntegrationTest {
 
-	/** The Constant LOG. */
+	/** The Constant log. */
 	private static final Logger LOG = LoggerFactory.getLogger(NurseryDetailsTest.class);
+	public static final int CURRENT_IBDB_USER_ID = 1;
 
 	/** The file service. */
 	@Autowired
@@ -79,22 +80,22 @@ public class NurseryDetailsTest extends AbstractBaseIntegrationTest {
 	public void testValidNurseryWorkbook() throws Exception {
 
 		// Get the file
-		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(NurseryDetailsTest.FILE_NAME_VALID);
-		String tempFileName = this.fieldbookService.storeUserWorkbook(inputStream);
-		UserSelection userSelection = new UserSelection();
+		final InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(NurseryDetailsTest.FILE_NAME_VALID);
+		final String tempFileName = this.fieldbookService.storeUserWorkbook(inputStream);
+		final UserSelection userSelection = new UserSelection();
 		userSelection.setActualFileName(NurseryDetailsTest.FILE_NAME_VALID);
 		userSelection.setServerFileName(tempFileName);
 
 		// Parse the file to create Workbook
-		File file = this.fileService.retrieveCurrentWorkbookAsFile(userSelection);
-		Workbook datasetWorkbook = this.dataImportService.parseWorkbook(file);
+		final File file = this.fileService.retrieveCurrentWorkbookAsFile(userSelection);
+		final Workbook datasetWorkbook = this.dataImportService.parseWorkbook(file, CURRENT_IBDB_USER_ID);
 		userSelection.setWorkbook(datasetWorkbook);
 
 		this.controllerValid = new NurseryDetailsController();
 		this.controllerValid.setUserSelection(userSelection);
 
 		// Test if the workbook in the controller is valid
-		Workbook workbook = this.controllerValid.getUserSelection().getWorkbook();
+		final Workbook workbook = this.controllerValid.getUserSelection().getWorkbook();
 
 		Assert.assertTrue(workbook.getConditions() != null && workbook.getConditions().size() > 0);
 		Assert.assertTrue(workbook.getFactors() != null && workbook.getFactors().size() > 0);
@@ -118,8 +119,8 @@ public class NurseryDetailsTest extends AbstractBaseIntegrationTest {
 	 * @param mVariables the m variables
 	 * @param indent the indent
 	 */
-	private void printMeasurementVariables(List<MeasurementVariable> mVariables, int indent) {
-		for (MeasurementVariable mVar : mVariables) {
+	private void printMeasurementVariables(final List<MeasurementVariable> mVariables, final int indent) {
+		for (final MeasurementVariable mVar : mVariables) {
 			mVar.print(indent);
 		}
 		Debug.println(1, "");

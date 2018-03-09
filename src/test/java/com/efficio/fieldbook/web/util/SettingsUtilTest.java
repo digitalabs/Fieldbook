@@ -609,11 +609,7 @@ public class SettingsUtilTest {
 		final List<SettingDetail> studyLevelConditions = new ArrayList<>();
 
 		final List<SettingDetail> basicDetails = this.createSettingDetailVariables();
-		basicDetails.get(0).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
-		basicDetails.get(1).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
-		basicDetails.get(2).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
-		basicDetails.get(3).setRole(VariableType.ENVIRONMENT_DETAIL.getRole());
-		basicDetails.get(4).setRole(VariableType.SELECTION_METHOD.getRole());
+		basicDetails.get(0).setRole(VariableType.SELECTION_METHOD.getRole());
 
 		final Map<String, TreatmentFactorData> treatmentFactorItems = new HashMap<>();
 
@@ -627,7 +623,7 @@ public class SettingsUtilTest {
 		standardVariable.setDataType(new Term(dataType.getId(), dataType.getName(), dataType.getName()));
 
 		final SettingDetail settingDetail = new SettingDetail();
-		settingDetail.setVariable(basicDetails.get(4).getVariable());
+		settingDetail.setVariable(basicDetails.get(0).getVariable());
 		settingDetail.setRole(VariableType.SELECTION_METHOD.getRole());
 		settingDetail.setVariableType(VariableType.SELECTION_METHOD);
 
@@ -699,30 +695,8 @@ public class SettingsUtilTest {
 		}
 	}
 
-	@Test
-	public void testRemoveBasicDetailsVariables() {
-		final List<SettingDetail> settingDetails = this.createSettingDetailVariables();
-		final int sizeBeforeRemovalOfBasicDetails = settingDetails.size();
-
-		SettingsUtil.removeBasicDetailsVariables(settingDetails, AppConstants.FIXED_NURSERY_VARIABLES.getString());
-		final int sizeAfterRemovalOfBasicDetails = settingDetails.size();
-		Assert.assertFalse("The size before and after removal of basic details from the list should not be equal",
-				sizeBeforeRemovalOfBasicDetails == sizeAfterRemovalOfBasicDetails);
-		// All the setting details inside the list are basic nursery details except for the BM_CODE_VTE
-		Assert.assertEquals("The size after removal of basic details should be one", 1, sizeAfterRemovalOfBasicDetails);
-
-	}
-
 	private List<SettingDetail> createSettingDetailVariables() {
 		final List<SettingDetail> variables = new ArrayList<>();
-		variables.add(this.createSettingDetail(TermId.STUDY_NAME.getId(), "STUDY_NAME", "Study - assigned (DBCV)",
-				SettingsUtilTest.C_DATATYPE));
-		variables.add(this.createSettingDetail(TermId.STUDY_OBJECTIVE.getId(), "STUDY_OBJECTIVE", "Objective - described (text)",
-				SettingsUtilTest.C_DATATYPE));
-		variables.add(this.createSettingDetail(TermId.START_DATE.getId(), "START_DATE", "Start date - assigned (date)",
-				SettingsUtilTest.C_DATATYPE));
-		variables.add(this.createSettingDetail(TermId.END_DATE.getId(), "END_DATE", "End date - assigned (date)",
-				SettingsUtilTest.C_DATATYPE));
 		variables.add(this.createSettingDetail(TermId.BREEDING_METHOD_VARIATE_CODE.getId(), "BM_CODE_VTE",
 				"Breeding method observed on each plot(CODE)", SettingsUtilTest.C_DATATYPE));
 		return variables;
@@ -765,21 +739,7 @@ public class SettingsUtilTest {
 		Assert.assertEquals("Conditions should contain " + expectedSize + " items", expectedSize, conditions.size());
 
 		for (final Condition condition : conditions) {
-			if (TermId.STUDY_NAME.getId() == condition.getId()) {
-				Assert.assertEquals("The name should be 'STUDY_NAME'", "STUDY_NAME", condition.getName());
-				Assert.assertEquals("The value should be 'Study - assigned (DBCV)'", "Study - assigned (DBCV)", condition.getValue());
-			} else if (TermId.STUDY_OBJECTIVE.getId() == condition.getId()) {
-				Assert.assertEquals("The name should be 'STUDY_OBJECTIVE'", "STUDY_OBJECTIVE", condition.getName());
-				Assert.assertEquals("The value should be 'Objective - described (text)'", "Objective - described (text)",
-						condition.getValue());
-			} else if (TermId.START_DATE.getId() == condition.getId()) {
-				Assert.assertEquals("The name should be 'START_DATE'", "START_DATE", condition.getName());
-				Assert.assertEquals("The value should be 'Start date - assigned (date)'", "Start date - assigned (date)",
-						condition.getValue());
-			} else if (TermId.END_DATE.getId() == condition.getId()) {
-				Assert.assertEquals("The name should be 'END_DATE'", "END_DATE", condition.getName());
-				Assert.assertEquals("The value should be 'End date - assigned (date)'", "End date - assigned (date)", condition.getValue());
-			} else if (TermId.BREEDING_METHOD_VARIATE_CODE.getId() == condition.getId()) {
+			if (TermId.BREEDING_METHOD_VARIATE_CODE.getId() == condition.getId()) {
 				Assert.assertEquals("The name should be 'BM_CODE_VTE'", "BM_CODE_VTE", condition.getName());
 				Assert.assertEquals("The value should be 'Breeding method observed on each plot(CODE)'",
 						"Breeding method observed on each plot(CODE)", condition.getValue());

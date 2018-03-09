@@ -72,19 +72,13 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 			}
 
 			this.fieldbookMiddlewareService.deleteStudy(studyId, this.contextUtil.getCurrentUserLocalId());
-			final String studyType = "N";
-			if (StudyType.N.getName().equals(studyType)) {// FIX THAT
-				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId,
-						GermplasmListType.NURSERY);
 
-				// Also set the status of checklist to deleted
-				final List<GermplasmList> checkGermplasmLists =
-					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.CHECK);
-				this.deleteGermplasmList(checkGermplasmLists);//
-			} else {
-				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId,
-						GermplasmListType.TRIAL);
-			}
+			germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
+
+			// Also set the status of checklist to deleted
+			final List<GermplasmList> checkGermplasmLists =
+				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.CHECK);
+			this.deleteGermplasmList(checkGermplasmLists);
 
 			// Set germplasm list status to deleted
 			this.deleteGermplasmList(germplasmLists);

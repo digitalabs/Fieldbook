@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -92,7 +93,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 		this.userSelection.setImportedGermplasmMainInfo(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo());
 
 		Mockito.doReturn(this.createProperty(TermId.BREEDING_METHOD_PROP.getId())).when(this.ontologyService)
-				.getProperty(Mockito.anyString());
+				.getProperty(Matchers.anyString());
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(DesignImportMeasurementRowGeneratorTest.PROGRAM_UUID);
 
 		this.workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
@@ -230,7 +231,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 		}
 
 		this.generator.setWorkbook(workbook);
-		this.generator.addVariatesToMeasurementRows(measurements, this.userSelection, this.ontologyService, this.contextUtil);
+		this.generator.addVariatesToMeasurementRows(measurements, this.ontologyService, this.contextUtil);
 
 		final Integer actualSize = measurements.get(0).getDataList().size();
 		final Integer noOfAddedVariates = 1;

@@ -142,29 +142,21 @@ if (typeof StockIDFunctions === 'undefined') {
 			});
 		},
 
-		displayStockList: function(listId,isPageLoading) {
+		displayStockList: function (listId, isPageLoading) {
 			'use strict';
-
 			var url = '/Fieldbook/germplasm/list/stock/' + listId;
 
 			return $.ajax({
 				url: url,
 				type: 'GET',
 				cache: false,
-				success: function(html) {
-                    if(isNursery()) {
-                        $('#stock-content-pane' + listId).html(html);
-                        //we just show the button
-                        $('.export-advance-list-action-button').removeClass('fbk-hide');
-                        $('#stock-list' + listId + '-li').addClass('advance-germplasm-items');
-                        $('#stock-list' + listId + '-li').data('advance-germplasm-list-id', listId);
-                    } else {
-                        var element = angular.element(document.getElementById("mainApp")).scope();
-                        // To apply scope safely
-                        element.safeApply(function (){
-                            element.addAdvanceTabData(listId, html, 'stock-list', isPageLoading);
-                        });
-                    }
+				success: function (html) {
+					var element = angular.element(document.getElementById("mainApp")).scope();
+					// To apply scope safely
+					element.safeApply(function () {
+						element.addStockTabData(listId, html, 'stock-list', isPageLoading);
+					});
+
 				}
 			});
 		},

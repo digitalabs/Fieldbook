@@ -114,14 +114,14 @@ public class CreateNurseryController extends SettingsController {
 	 */
 	@RequestMapping(value = "/nursery/{nurseryId}", method = RequestMethod.GET)
 	public String useExistingNursery(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, @PathVariable final int nurseryId,
-			final Model model, final HttpSession session, final HttpServletRequest request) throws MiddlewareException {
+			final Model model, final HttpSession session, final HttpServletRequest request) {
 
 		final ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
 		final String contextParams = ContextUtil.getContextParameterString(contextInfo);
 
 		try {
 			if (nurseryId != 0) {
-				final Workbook workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(nurseryId, true);
+				final Workbook workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(nurseryId);
 				this.userSelection.setConstantsWithLabels(workbook.getConstants());
 				this.fieldbookService.createIdNameVariablePairs(workbook, new ArrayList<SettingDetail>(),
 						AppConstants.ID_NAME_COMBINATION.getString(), false);
@@ -180,14 +180,8 @@ public class CreateNurseryController extends SettingsController {
 
 	@RequestMapping(value = "/nursery/getChecks/{nurseryId}", method = RequestMethod.GET)
 	public String getChecksForUseExistingNursery(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form,
-			@PathVariable final int nurseryId, final Model model, final HttpSession session, final HttpServletRequest request)
-			throws MiddlewareQueryException {
-		if (this.userSelection.getRemovedConditions() != null) {
-			final CreateNurseryForm createNurseryForm = new CreateNurseryForm();
-			final List<SettingDetail> checkVariables = this.getCheckVariables(this.userSelection.getRemovedConditions(), createNurseryForm);
-			form.setCheckVariables(checkVariables);
-		}
-
+			@PathVariable final int nurseryId, final Model model, final HttpSession session, final HttpServletRequest request) {
+		this.setCheckVariablesInForm(form);
 		model.addAttribute("importGermplasmListForm", form);
 
 		return super.showAjaxPage(model, CreateNurseryController.URL_CHECKS);
@@ -213,7 +207,7 @@ public class CreateNurseryController extends SettingsController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(@ModelAttribute(CREATE_NURSERY_FORM) final CreateNurseryForm form,
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form2, final Model model, final HttpSession session,
-			final HttpServletRequest request) throws MiddlewareException {
+			final HttpServletRequest request) {
 
 		final ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
 		final String contextParams = ContextUtil.getContextParameterString(contextInfo);
@@ -232,8 +226,8 @@ public class CreateNurseryController extends SettingsController {
 		return super.show(model);
 	}
 
-	protected void setCheckVariablesInForm(final ImportGermplasmListForm form2) throws MiddlewareException {
-		List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
+	protected void setCheckVariablesInForm(final ImportGermplasmListForm form2) {
+		List<SettingDetail> checkVariables = new ArrayList<>();
 		checkVariables = this.buildDefaultVariables(checkVariables, AppConstants.CHECK_VARIABLES.getString(),
 				this.buildRequiredVariablesLabel(AppConstants.CHECK_VARIABLES.getString(), false),
 				VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
@@ -247,12 +241,12 @@ public class CreateNurseryController extends SettingsController {
 	 * @param form the form
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected void assignDefaultValues(final CreateNurseryForm form) throws MiddlewareException {
-		List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
-		final List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
-		List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();
-		final List<SettingDetail> baselineTraitsList = new ArrayList<SettingDetail>();
-		final List<SettingDetail> nurseryConditions = new ArrayList<SettingDetail>();
+	protected void assignDefaultValues(final CreateNurseryForm form) {
+		List<SettingDetail> basicDetails = new ArrayList<>();
+		final List<SettingDetail> nurseryDefaults = new ArrayList<>();
+		List<SettingDetail> plotDefaults = new ArrayList<>();
+		final List<SettingDetail> baselineTraitsList = new ArrayList<>();
+		final List<SettingDetail> nurseryConditions = new ArrayList<>();
 
 		basicDetails = this.buildDefaultVariables(basicDetails, AppConstants.FIXED_NURSERY_VARIABLES.getString(),
 				this.buildRequiredVariablesLabel(AppConstants.FIXED_NURSERY_VARIABLES.getString(), false),
@@ -283,16 +277,25 @@ public class CreateNurseryController extends SettingsController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String submit(@ModelAttribute(CREATE_NURSERY_FORM) final CreateNurseryForm form, final Model model) {
 
-		final String name = trimNurseryName(form.getBasicDetails());
+		final String name = form.getStudyName().trim();
 
 		final String description = form.getDescription();
-
+		final String startDate = form.getStartDate();
+		final String endDate = form.getEndDate();
+		final String studyUpdate = form.getStudyUpdate();
+		final String objective = form.getObjective();
+		String createdBy = form.getCreatedBy();
+		if (createdBy == null) {
+			createdBy = this.contextUtil.getCurrentIbdbUserId().toString();
+		}
 		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
 		if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
 			studyLevelVariables.addAll(form.getStudyLevelVariables());
 		}
 
-		studyLevelVariables.addAll(form.getBasicDetails());
+		if (form.getBasicDetails() != null && !form.getBasicDetails().isEmpty()) {
+			studyLevelVariables.addAll(form.getBasicDetails());
+		}
 
 		this.addStudyLevelVariablesFromUserSelectionIfNecessary(studyLevelVariables, this.userSelection);
 
@@ -333,34 +336,15 @@ public class CreateNurseryController extends SettingsController {
 
 		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, studyLevelVariables,
 				form.getPlotLevelVariables(), baselineTraits, this.userSelection, form.getNurseryConditions(),
-				this.contextUtil.getCurrentProgramUUID(), description);
+				this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, this.contextUtil.getCurrentProgramUUID());
 		this.userSelection.setWorkbook(workbook);
 
-		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), null, form.getDescription());
+		this.createStudyDetails(workbook, form.getFolderId(), null, form.getDescription(), form.getStartDate(),
+			form.getEndDate(), form.getStudyUpdate(), objective, name, createdBy);
 
 		return "success";
-	}
-
-	private String trimNurseryName(final List<SettingDetail> basicDetails) {
-		String name = null;
-		for (final SettingDetail nvar : basicDetails) {
-			if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null
-					&& nvar.getVariable().getCvTermId().equals(TermId.STUDY_NAME.getId())) {
-				/**
-				 * XXX save Trials does this in the frontend
-				 * Patching here trims both the name prop and the project column
-				 * This hack is enough for now since eventually Nursery code will be merged with Trial
-				 */
-				if (nvar.getValue() != null) {
-					nvar.setValue(nvar.getValue().trim());
-				}
-				name = nvar.getValue();
-				break;
-			}
-		}
-		return name;
 	}
 
 	private void addStudyLevelVariablesFromUserSelectionIfNecessary(final List<SettingDetail> studyLevelVariables,
@@ -455,9 +439,6 @@ public class CreateNurseryController extends SettingsController {
 		form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
 		form.setLocationId(AppConstants.LOCATION_ID.getString());
 		form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
-		form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
-		form.setStartDateId(AppConstants.START_DATE_ID.getString());
-		form.setEndDateId(AppConstants.END_DATE_ID.getString());
 		form.setOpenGermplasmUrl(this.fieldbookProperties.getGermplasmDetailsUrl());
 		form.setBaselineTraitsSegment(VariableType.TRAIT.getId().toString());
 		form.setSelectionVariatesSegment(VariableType.SELECTION_METHOD.getId().toString());
@@ -466,7 +447,7 @@ public class CreateNurseryController extends SettingsController {
 		form.setBreedingMethodCode(AppConstants.BREEDING_METHOD_CODE.getString());
 
 		try {
-			form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.getCurrentIbdbUserId()));
+			form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.contextUtil.getCurrentIbdbUserId()));
 		} catch (final MiddlewareQueryException e) {
 			CreateNurseryController.LOG.error(e.getMessage(), e);
 		}
@@ -527,7 +508,7 @@ public class CreateNurseryController extends SettingsController {
 				final List<TraitClassReference> traitRefList = this.userSelection.getTraitRefList();
 
 				// we convert it to map so that it would be easier to check if there is a record or not
-				final HashMap<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
+				final HashMap<String, StandardVariableReference> mapVariableRef = new HashMap<>();
 				if (standardVariableList != null && !standardVariableList.isEmpty()) {
 					for (final StandardVariableReference varRef : standardVariableList) {
 						mapVariableRef.put(varRef.getId().toString(), varRef);
@@ -633,7 +614,7 @@ public class CreateNurseryController extends SettingsController {
 			final Iterator<SettingDetail> iter = settingsList.iterator();
 			while (iter.hasNext()) {
 				final SettingVariable deletedVariable = iter.next().getVariable();
-				if (deletedVariable.getCvTermId().equals(Integer.valueOf(var.getCvTermId()))) {
+				if (deletedVariable.getCvTermId().equals(var.getCvTermId())) {
 					operation = deletedVariable.getOperation();
 					iter.remove();
 				}
@@ -742,7 +723,7 @@ public class CreateNurseryController extends SettingsController {
 			}
 		}
 		final ObjectMapper om = new ObjectMapper();
-		String jsonData = "";
+		final String jsonData;
 		try {
 			jsonData = om.writeValueAsString(newDetails);
 		} catch (final IOException e) {
@@ -832,7 +813,7 @@ public class CreateNurseryController extends SettingsController {
 
 	@RequestMapping(value = "/refresh/settings/tab", method = RequestMethod.GET)
 	public String refreshSettingsTab(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
-			final HttpSession session, final HttpServletRequest request) throws MiddlewareQueryException {
+			final HttpSession session, final HttpServletRequest request) {
 
 		final ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
 		final String contextParams = ContextUtil.getContextParameterString(contextInfo);

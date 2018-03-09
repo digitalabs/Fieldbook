@@ -13,9 +13,9 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +49,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Controller
 @RequestMapping(ExpDesignController.URL)
+@Transactional
 public class ExpDesignController extends BaseTrialController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignController.class);
@@ -65,6 +67,9 @@ public class ExpDesignController extends BaseTrialController {
 	private ResourceBundleMessageSource messageSource;
 	@Resource
 	private DesignLicenseUtil designLicenseUtil;
+
+	@Resource
+	private StudyDataManager studyDataManager;
 
 	@Override
 	public String getContentName() {
@@ -128,22 +133,25 @@ public class ExpDesignController extends BaseTrialController {
 		final String name = "";
 
 		final String description = "";
+		final String startDate = "";
+		final String endDate = "";
+		final String studyUpdate = "";
 
-		final Dataset dataset = (Dataset) SettingsUtil
-				.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection.getPlotsLevelList(),
+		final Dataset dataset = (Dataset) SettingsUtil.
+				convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection.getPlotsLevelList(),
 						variatesList, this.userSelection, this.userSelection.getTrialLevelVariableList(),
 						this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(), false,
-						this.contextUtil.getCurrentProgramUUID(), description);
+						this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 
 
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.contextUtil.getCurrentProgramUUID());
 		final StudyDetails details = new StudyDetails();
-		details.setStudyType(StudyType.T);
+		details.setStudyType(studyDataManager.getStudyTypeByName("T")); // TODO VER COMO ARRELGAR
 		workbook.setStudyDetails(details);
 		this.userSelection.setTemporaryWorkbook(workbook);
 
 		if (this.userSelection.getWorkbook() != null) {
-			int persistedNumberOfEnvironments = this.userSelection.getWorkbook().getTotalNumberOfInstances();
+			final int persistedNumberOfEnvironments = this.userSelection.getWorkbook().getTotalNumberOfInstances();
 			if (persistedNumberOfEnvironments < Integer.parseInt(expDesign.getNoOfEnvironments())) {
 				// This means we are adding new environments.
 				// workbook.observations() collection is no longer pre-loaded into user session when trial is opened.
@@ -194,7 +202,7 @@ public class ExpDesignController extends BaseTrialController {
 							}
 						}
 
-						BVDesignLicenseInfo bvDesignLicenseInfo = designLicenseUtil.retrieveLicenseInfo();
+						final BVDesignLicenseInfo bvDesignLicenseInfo = designLicenseUtil.retrieveLicenseInfo();
 
 						if (this.designLicenseUtil.isExpired(bvDesignLicenseInfo)) {
 							expParameterOutput =
@@ -235,10 +243,8 @@ public class ExpDesignController extends BaseTrialController {
 								deletedFactors.add(var);
 							}
 						}
-						if (oldFactors != null) {
-							for (final MeasurementVariable var : deletedFactors) {
-								oldFactors.remove(var);
-							}
+						for (final MeasurementVariable var : deletedFactors) {
+							oldFactors.remove(var);
 						}
 
 						workbook.setExpDesignVariables(designService.getRequiredDesignVariables());
@@ -271,7 +277,7 @@ public class ExpDesignController extends BaseTrialController {
 
 	protected List<MeasurementRow> combineNewlyGeneratedMeasurementsWithExisting(final List<MeasurementRow> measurementRows,
 			final UserSelection userSelection, final boolean hasMeasurementData) {
-		Workbook workbook = null;
+		final Workbook workbook;
 		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null
 				&& !userSelection.getTemporaryWorkbook().getObservations().isEmpty()) {
 			workbook = userSelection.getTemporaryWorkbook();
@@ -289,7 +295,7 @@ public class ExpDesignController extends BaseTrialController {
 
 	protected String countNewEnvironments(final String noOfEnvironments, final UserSelection userSelection,
 			final boolean hasMeasurementData) {
-		Workbook workbook = null;
+		final Workbook workbook;
 		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null
 				&& !userSelection.getTemporaryWorkbook().getObservations().isEmpty()) {
 			workbook = userSelection.getTemporaryWorkbook();

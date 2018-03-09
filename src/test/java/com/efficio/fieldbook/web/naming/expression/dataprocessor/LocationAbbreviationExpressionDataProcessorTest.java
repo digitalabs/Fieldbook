@@ -7,8 +7,8 @@ import com.google.common.collect.Lists;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.api.LocationDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.junit.Test;
@@ -33,8 +33,8 @@ public class LocationAbbreviationExpressionDataProcessorTest {
     @Test
     public void testProcessEnvironmentLevelDataWithHarvestLocationAbbr() throws FieldbookException {
 
-        AdvancingSource source = Mockito.mock(AdvancingSource.class);
-        AdvancingNursery advancingNursery = new AdvancingNursery();
+        final AdvancingSource source = Mockito.mock(AdvancingSource.class);
+        final AdvancingNursery advancingNursery = new AdvancingNursery();
         advancingNursery.setHarvestLocationAbbreviation("abbr");
 
         locationAbbreviationExpressionDataProcessor.processEnvironmentLevelData(source, null, advancingNursery, null);
@@ -44,8 +44,8 @@ public class LocationAbbreviationExpressionDataProcessorTest {
     @Test
     public void testProcessEnvironmentLevelDataWithNoHarvestLocationAbbr() throws FieldbookException {
 
-        AdvancingSource source = Mockito.mock(AdvancingSource.class);
-        AdvancingNursery advancingNursery = new AdvancingNursery();
+        final AdvancingSource source = Mockito.mock(AdvancingSource.class);
+        final AdvancingNursery advancingNursery = new AdvancingNursery();
 
         locationAbbreviationExpressionDataProcessor.processEnvironmentLevelData(source, null, advancingNursery, null);
         Mockito.verify(source).setLocationAbbreviation(null);
@@ -54,20 +54,20 @@ public class LocationAbbreviationExpressionDataProcessorTest {
 
     @Test
     public void testProcessPlotLevelDataWithLocationMeasurementData() throws FieldbookException {
-        AdvancingSource source = Mockito.mock(AdvancingSource.class);
+        final AdvancingSource source = Mockito.mock(AdvancingSource.class);
 
-        Mockito.when(source.getStudyType()).thenReturn(StudyType.T);
+        Mockito.when(source.getStudyType()).thenReturn(new StudyTypeDto("T"));
 
-        MeasurementRow measurementRow = Mockito.mock(MeasurementRow.class);
-        List<MeasurementData> listMeasurementData = Lists.newArrayList();
-        MeasurementData measurementData = new MeasurementData();
+        final MeasurementRow measurementRow = Mockito.mock(MeasurementRow.class);
+        final List<MeasurementData> listMeasurementData = Lists.newArrayList();
+        final MeasurementData measurementData = new MeasurementData();
         measurementData.setValue("11");
-        MeasurementVariable measurementVariable = new MeasurementVariable();
+        final MeasurementVariable measurementVariable = new MeasurementVariable();
         measurementVariable.setTermId(TermId.LOCATION_ID.getId());
         measurementData.setMeasurementVariable(measurementVariable);
         listMeasurementData.add(measurementData);
 
-        Location location = new Location();
+        final Location location = new Location();
         location.setLabbr("IND");
 
         Mockito.when(measurementRow.getDataList()).thenReturn(listMeasurementData);
@@ -81,15 +81,15 @@ public class LocationAbbreviationExpressionDataProcessorTest {
 
     @Test
     public void testProcessPlotLevelDataWithoutLocationMeasurementData() throws FieldbookException {
-        AdvancingSource source = Mockito.mock(AdvancingSource.class);
+        final AdvancingSource source = Mockito.mock(AdvancingSource.class);
 
-        Mockito.when(source.getStudyType()).thenReturn(StudyType.T);
+        Mockito.when(source.getStudyType()).thenReturn(new StudyTypeDto("T"));
 
-        MeasurementRow measurementRow = Mockito.mock(MeasurementRow.class);
-        List<MeasurementData> listMeasurementData = Lists.newArrayList();
-        MeasurementData measurementData = new MeasurementData();
+        final MeasurementRow measurementRow = Mockito.mock(MeasurementRow.class);
+        final List<MeasurementData> listMeasurementData = Lists.newArrayList();
+        final MeasurementData measurementData = new MeasurementData();
         measurementData.setValue("11");
-        MeasurementVariable measurementVariable = new MeasurementVariable();
+        final MeasurementVariable measurementVariable = new MeasurementVariable();
         measurementVariable.setTermId(TermId.LOCATION_ABBR.getId());
         measurementData.setMeasurementVariable(measurementVariable);
         listMeasurementData.add(measurementData);
@@ -104,11 +104,11 @@ public class LocationAbbreviationExpressionDataProcessorTest {
 
     @Test
     public void testProcessPlotLevelDataWithNoMeasurementData() throws Exception {
-        AdvancingSource source = Mockito.mock(AdvancingSource.class);
+        final AdvancingSource source = Mockito.mock(AdvancingSource.class);
 
-        Mockito.when(source.getStudyType()).thenReturn(StudyType.T);
+        Mockito.when(source.getStudyType()).thenReturn(new StudyTypeDto("T"));
 
-        MeasurementRow measurementRow = Mockito.mock(MeasurementRow.class);
+        final MeasurementRow measurementRow = Mockito.mock(MeasurementRow.class);
         Mockito.when(measurementRow.getDataList()).thenReturn(null);
         Mockito.when(source.getTrailInstanceObservation()).thenReturn(measurementRow);
 

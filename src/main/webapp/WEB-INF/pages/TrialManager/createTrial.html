@@ -15,12 +15,12 @@
 					<div class="pull-left">
 						<img height="30" width="30" src="/Fieldbook/static/img/new-nursery.png"/>
 
-						<span class="fbk-nursery-heading" ng-hide="isOpenTrial()">
+						<span class="fbk-nursery-heading" ng-hide="isOpenStudy()">
 						<span class="heading">Create Study</span>
 					</span>
 
-						<span class="fbk-nursery-heading" ng-show="isOpenTrial()">
-                        <span class="heading" truncate-and-tooltip="data.basicDetails[8005]"></span>
+						<span class="fbk-nursery-heading" ng-show="isOpenStudy()">
+                        <span class="heading" truncate-and-tooltip="data.studyName"></span>
 					</span>
 
 						<div class="fbk-nursery-heading-btns">
@@ -43,8 +43,8 @@
 			</div>
 
 			<div class="col-md-12 nopadding-right">
-				<section-container heading="BASIC DETAILS" collapsible="isOpenTrial()" start-collapsed="true">
-				<span name="action-buttons" ng-show="isOpenTrial()">
+				<section-container heading="BASIC DETAILS" collapsible="isOpenStudy()" start-collapsed="true">
+				<span name="action-buttons" ng-show="isOpenStudy()">
 					<div class="btn-group" style="padding-right: 36px">
 						<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
 							<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
@@ -77,7 +77,7 @@
 										<a href="javascript: void(0)" onclick="exportDesignTemplate()" class="export-design-template-link"
 										   th:text="#{nursery.nurserydetails.action.export.design.template}">Export Design Template</a>
 									</li>
-									<li ng-show="displayGermplasmOnlyActions()">
+									<li ng-show="hasGermplasmListSelected()">
 										<a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());"
 										   id="import-design-url-link"
 										   th:text="#{trial.trialdetails.action.import.design}">Import Design</a>
@@ -92,11 +92,11 @@
 							</li>
 
 							<!--Crossing options-->
-							<li class="dropdown-submenu pull-left">
+							<li  ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Crossing options</a>
 								<ul class="dropdown-menu" style="margin-left: -46px;">
 									<!--Export crossing template-->
-									<li>
+									<li id="download-crosses-template">
 										<a href="javascript: void(0)" onclick="ImportCrosses.downloadCrosses()"
 										   class="export-crosses-action" th:text="#{nursery.nurserydetails.action.export.crosses}">Export crossing template</a>
 									</li>
@@ -106,7 +106,7 @@
 									</li>
 									<!--Design new crosses-->
 									<li id="create-new-crosses">
-										<a th:href="@{~/BreedingManager/main/createcrosses(nurseryid=*{studyId},germplasmlistid=*{germplasmListId},loggedInUserId=${loggedInUserId},selectedProjectId=${selectedProjectId})}"
+										<a th:href="@{~/BreedingManager/main/createcrosses(studyid=*{studyId},germplasmlistid=*{germplasmListId},loggedInUserId=${loggedInUserId},selectedProjectId=${selectedProjectId},studyType=*{studyTypeName})}"
 										   class="create-new-crosses" th:text="#{nursery.nurserydetails.action.create.new.crosses}">Design new crosses</a>
 									</li>
 								</ul>
@@ -134,7 +134,7 @@
 										<a href="javascript: showImportOptions();" id="open-study-url-link"
 										   th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
 									</li>
-									<li ng-show="displayGermplasmOnlyActions()">
+									<li ng-show="hasGermplasmListSelected()">
 										<a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link"
 										   th:text="#{nursery.nurserydetails.action.export.germplasm.list}">Export Germplasm List</a>
 									</li>
@@ -170,7 +170,7 @@
 				</span>
 
 					<div name="content">
-						<div ng-class="isOpenTrial() ? 'fbk-basic-details-section-content' : ''" style="padding-right: 12px">
+						<div ng-class="isOpenStudy() ? 'fbk-basic-details-section-content' : ''" style="padding-right: 12px">
 							<div class="row fbk-mandatory">
 								<div class="col-md-12 ">
 									<label class=""><em><span class="required">*</span> indicates a mandatory field</em></label>
@@ -183,13 +183,13 @@
 									<div class="row form-group">
 										<label class="control-label col-sm-4"><b>Study name</b>: <span class="required">*</span></label>
 
-										<div class="col-sm-8" ng-hide="isOpenTrial()">
+										<div class="col-sm-8" ng-hide="isOpenStudy()">
 											<input class="form-control character-input" maxlength="225" type="text"
-												   ng-model="data.basicDetails[8005]"/>
+												   ng-model="data.studyName"/>
 										</div>
 
-										<div class="col-sm-8 nursery-name-display" ng-show="isOpenTrial()">
-											<span truncate-and-tooltip="data.basicDetails[8005]"></span>
+										<div class="col-sm-8 nursery-name-display" ng-show="isOpenStudy()">
+											<span truncate-and-tooltip="data.studyName"></span>
 											<span class="fieldmap-study-name fbk-hide" th:text="${studyName}"></span>
 										</div>
 									</div>
@@ -205,10 +205,10 @@
 
 									<div class="row form-group">
 										<label class="control-label col-sm-4"><b>Study type</b>: <span class="required">*</span></label>
-										<span class="col-sm-8" ng-show="isOpenTrial()">
+										<span class="col-sm-8" ng-show="isOpenStudy()">
     										<span id="studyTypeLabel" ng-bind="data.studyType"></span>
 										</span>
-										<div class="col-sm-8" ng-show="!isOpenTrial()">
+										<div class="col-sm-8" ng-show="!isOpenStudy()">
 											<select class="form-control" id="studyTypeId" ng-model="studyTypeSelected"
 													ng-options="studyType.id as studyType.label for studyType in studyTypes"
 													ng-change="changeSelectStudyType(studyTypeSelected)">
@@ -222,7 +222,7 @@
 
 										<div class="col-sm-8">
 											<textarea class="form-control character-input" maxlength="255" rows="3"
-													  ng-model="data.basicDetails[8030]"></textarea>
+													  ng-model="data.objective"></textarea>
 										</div>
 									</div>
 
@@ -262,7 +262,7 @@
 
 										<div class="col-sm-8">
 											<input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px" type="text"
-												   ng-model="data.basicDetails[8050]" jq-datepicker=""
+												   ng-model="data.startDate" jq-datepicker=""
 												   set-current-date-as-default="true" data-date-format="yyyy-mm-dd"
 												   with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
 										</div>
@@ -273,7 +273,7 @@
 
 										<div class="col-sm-8">
 											<input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px"
-												   type="text" ng-model="data.basicDetails[8060]" data-date-format="yyyy-mm-dd"
+												   type="text" ng-model="data.endDate" data-date-format="yyyy-mm-dd"
 												   jq-datepicker=""
 												   with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
 										</div>
@@ -281,17 +281,17 @@
 								</div>
 							</div>
 
-							<div class="row form-group add_top_padding" ng-hide="isOpenTrial()">
+							<div class="row form-group add_top_padding" ng-hide="isOpenStudy()">
 								<div class="col-xs-12 col-md-12">
-									<input type="checkbox" name="studyBuildOption" ng-click="toggleChoosePreviousTrial()"/>
-									<label class="fbk-use-previous-study" th:text="#{trial.managesettings.create.trial.label}">Use a
+									<input type="checkbox" name="studyBuildOption" ng-click="toggleChoosePreviousStudy()"/>
+									<label class="fbk-use-previous-study" th:text="#{study.managesettings.create.study.label}">Use a
 										previously created trial as a template</label>
 									&nbsp;&nbsp;
-									<input type="button" ng-click="selectPreviousTrial()" ng-show="isChoosePreviousTrial"
+									<input type="button" ng-click="selectPreviousStudy()" ng-show="isChoosePreviousStudy"
 										   th:value="#{common.form.choose.text}"
 										   class="btn btn-info" id="choosePreviousStudy"/>
-									<input type="button" ng-click="resetTabsData()" ng-show="isChoosePreviousTrial"
-										   th:value="#{trial.managesettings.create.trial.reset}"
+									<input type="button" ng-click="resetTabsData()" ng-show="isChoosePreviousStudy"
+										   th:value="#{study.managesettings.create.study.reset}"
 										   class="btn btn-info" id="resetTabsData"/>
 								</div>
 							</div>
@@ -339,27 +339,27 @@
 
 	<ul class="nav nav-tabs row fb-tabs-headers" id="manage-trial-tab-headers">
 		<li ng-repeat="tab in trialTabs" ng-class="{active: tabSelected===tab.state}"
-			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
+			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
 			<a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
 		</li>
-		<li ng-repeat="tab in advanceTrialTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
+		<li ng-repeat="tab in advanceTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
 			ng-click="tabChange(tab.state)"
-			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
+			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
 			<a href="#tab.name" tab-data='{{tab.id}}'>{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="id" ng-click="closeAdvanceListTab(tab.state)"></i>
 			</a>
 		</li>
-		<li ng-repeat="tab in sampleListTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
+		<li ng-repeat="tab in sampleTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
 			ng-click="tabChange(tab.state)"
-			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
-			<a href="#tab.name" tab-data='{{tab.id}}' ng-click="initSampleListTab(tab)">{{tab.displayName}}
+			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
+			<a href="#tab.name" tab-data='{{tab.id}}' ng-click="initSampleTab(tab)">{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="sampleListId" ng-click="closeSampleListTab(tab.state)"></i>
 			</a>
 		</li>
-		<li ng-repeat="tab in crossesListTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
+		<li ng-repeat="tab in crossesTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
 			ng-click="tabChange(tab.state)"
-			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
-			<a href="#tab.name" tab-data='{{tab.id}}' ng-click="initCrossesListTab(tab)">{{tab.displayName}}
+			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
+			<a href="#tab.name" tab-data='{{tab.id}}' ng-click="initCrossesTab(tab)">{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="crossesListId" ng-click="closeCrossesListTab(tab.state)"></i>
 			</a>
 		</li>
@@ -378,11 +378,11 @@
 				 ng-show="tabSelected===advancetab.name">
 				<div ng-bind-html="advancetab.data"></div>
 			</div>
-			<div class="col-xs-12" ng-repeat="sampleListTab in sampleListData track by $index" id="{{sampleListTab.id}}"
+			<div class="col-xs-12" ng-repeat="sampleListTab in sampleTabsData track by $index" id="{{sampleListTab.id}}"
 				 ng-show="tabSelected===sampleListTab.name">
 				<div ng-bind-html="sampleListTab.data"></div>
 			</div>
-			<div class="col-xs-12" ng-repeat="crossListTab in crossListData track by $index" id="{{crossListTab.id}}"
+			<div class="col-xs-12" ng-repeat="crossListTab in crossesTabsData track by $index" id="{{crossListTab.id}}"
 				 ng-show="tabSelected===crossListTab.name">
 				<div ng-bind-html="crossListTab.data"></div>
 			</div>

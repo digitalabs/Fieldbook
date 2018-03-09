@@ -42,14 +42,14 @@
 			</div>
 		</div>
 		<div class="col-md-12 sectionContainer collapse in nurseryDetails">
-            <div th:each="basicDetail, rowStat : *{basicStudyDetails}" th:remove="tag">
+			<div th:each="basicDetail, rowStat : *{basicStudyDetails}" th:remove="tag">
                 <div  th:class="
                             (${rowStat.last and rowStat.size mod 3 ne 0} ?
                                 'col-sm-6 ' +
                                 'col-md-' + ${4*(4-(rowStat.size % 3))}
                             : 'col-sm-6 col-md-4') + ' nursery-details-variable'">
                     <strong th:text="${basicDetail.variable.name} + ':'" class="">:</strong>
-                    <span th:if="${basicDetail.variable.cvTermId == 8005}" th:text="${basicDetail.value}" class="fieldmap-study-name fbk-hide"></span>                                        
+	                
                     <span th:text="${basicDetail.value}" class="div-select-val "></span>
                     <span th:if="${basicDetail.variable.name == 'Field Map Created' and basicDetail.value == 'Yes'}">
                         <a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>

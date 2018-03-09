@@ -1,15 +1,19 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.TrialData;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ListDataProjectUtil;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -24,14 +28,13 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.samplelist.SampleListDTO;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
-import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
@@ -54,19 +57,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.TrialData;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ListDataProjectUtil;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(OpenTrialController.URL)
@@ -86,10 +84,11 @@ public class OpenTrialController extends BaseTrialController {
 	public static final String ENVIRONMENT_DATA_TAB = "environmentData";
 	public static final String MEASUREMENT_DATA_EXISTING = "measurementDataExisting";
 	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
+	public static final String IS_EXP_DESIGN_PREVIEW_FALSE = "0";
+	public static final String IS_DELETED_ENVIRONMENT = "0";
+	private static final String IS_PREVIEW_EDITABLE = "0";
 	private static final int NO_LIST_ID = -1;
-
-	@Resource
-	private StudyDataManager studyDataManager;
+	public static final String REDIRECT = "redirect:";
 
 	@Resource
 	private ErrorHandlerService errorHandlerService;
@@ -192,7 +191,7 @@ public class OpenTrialController extends BaseTrialController {
 			if (this.userSelection.getTemporaryWorkbook() != null) {
 				workbook = this.userSelection.getTemporaryWorkbook();
 				// TODO Remove this flag it is no longer used on the front-end
-				model.addAttribute(OpenTrialController.IS_EXP_DESIGN_PREVIEW, "0");
+				model.addAttribute(OpenTrialController.IS_EXP_DESIGN_PREVIEW, OpenTrialController.IS_EXP_DESIGN_PREVIEW_FALSE);
 			}
 
 			this.userSelection.setMeasurementRowList(workbook.getObservations());
@@ -219,9 +218,8 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	@RequestMapping(value = "/{trialId}", method = RequestMethod.GET)
-	public String openTrial(@ModelAttribute("createTrialForm") final CreateTrialForm form,
-			@PathVariable final Integer trialId, final Model model, final HttpSession session,
-			final RedirectAttributes redirectAttributes,
+	public String openTrial(@ModelAttribute("createTrialForm") final CreateTrialForm form, @PathVariable final Integer trialId,
+		final Model model, final HttpSession session, final RedirectAttributes redirectAttributes,
 		@RequestParam(value = "crosseslistid", required = false) final String crossesListId) {
 
 		model.addAttribute("createdCrossesListId", crossesListId);
@@ -232,37 +230,40 @@ public class OpenTrialController extends BaseTrialController {
 			if (trialId != null && trialId != 0) {
 				final DmsProject dmsProject = this.studyDataManager.getProject(trialId);
 				if (dmsProject.getProgramUUID() == null) {
-					return "redirect:" + ManageTrialController.URL + "?summaryId=" + trialId + "&summaryName="
+					return REDIRECT + ManageTrialController.URL + "?summaryId=" + trialId + "&summaryName="
 							+ dmsProject.getName();
 				}
-				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(trialId,dmsProject.getStudyType()); // TODO VERIFICAR POR STUDY TYPE
+
+				final Workbook workbook = this.fieldbookMiddlewareService
+					.getStudyDataSet(trialId, studyTypeBuilder.createStudyTypeDto(dmsProject.getStudyType()));
+				// TODO VERIFICAR POR STUDY TYPE
 
 				// FIXME
 				// See setStartingEntryNoAndPlotNoFromObservations() in
 				// prepareExperimentalDesignTabInfo
-				this.fieldbookMiddlewareService.loadAllObservations(trialWorkbook);
+				this.fieldbookMiddlewareService.loadAllObservations(workbook);
 
-				this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
+				this.removeAnalysisAndAnalysisSummaryVariables(workbook);
 
-				this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
-				this.userSelection.setWorkbook(trialWorkbook);
+				this.userSelection.setConstantsWithLabels(workbook.getConstants());
+				this.userSelection.setWorkbook(workbook);
 				this.userSelection.setExperimentalDesignVariables(
-						WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));
+						WorkbookUtil.getExperimentalDesignVariables(workbook.getConditions()));
 				this.userSelection.setExpDesignParams(
 						SettingsUtil.convertToExpDesignParamsUi(this.userSelection.getExperimentalDesignVariables()));
 				this.userSelection.setTemporaryWorkbook(null);
-				this.userSelection.setMeasurementRowList(trialWorkbook.getObservations());
+				this.userSelection.setMeasurementRowList(workbook.getObservations());
 
-				this.fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(),
-						trialWorkbook.getMeasurementDatesetId());
+				this.fieldbookMiddlewareService.setTreatmentFactorValues(workbook.getTreatmentFactors(),
+						workbook.getMeasurementDatesetId());
 
 				form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(
-						trialWorkbook.getMeasurementDatesetId(),
-						SettingsUtil.buildVariates(trialWorkbook.getVariates())));
+						workbook.getMeasurementDatesetId(),
+						SettingsUtil.buildVariates(workbook.getVariates())));
 				form.setStudyId(trialId);
-				form.setGermplasmListId(this.getGermplasmListId(trialId, dmsProject.getStudyType().getName()));
-				form.setStudyTypeName(dmsProject.getStudyType().getLabel());
-				this.setModelAttributes(form, trialId, model, trialWorkbook);
+				form.setGermplasmListId(this.getGermplasmListId(trialId));
+				form.setStudyTypeName(dmsProject.getStudyType().getName());
+				this.setModelAttributes(form, trialId, model, workbook);
 				this.setUserSelectionImportedGermplasmMainInfo(this.userSelection, trialId, model);
 			}
 			return this.showAngularPage(model);
@@ -270,17 +271,20 @@ public class OpenTrialController extends BaseTrialController {
 		} catch (final MiddlewareQueryException e) {
 			OpenTrialController.LOG.debug(e.getMessage(), e);
 
-			redirectAttributes.addFlashAttribute("redirectErrorMessage",
-					this.errorHandlerService.getErrorMessagesAsString(e.getCode(),
-							new String[] { AppConstants.TRIAL.getString(),
-									StringUtils.capitalize(AppConstants.TRIAL.getString()),
-									AppConstants.TRIAL.getString() },
-							"\n"));
-			return "redirect:" + ManageTrialController.URL;
+			redirectAttributes.addFlashAttribute("redirectErrorMessage", this.errorHandlerService.getErrorMessagesAsString(e.getCode(),
+				new String[] {AppConstants.STUDY.getString(), StringUtils.capitalize(AppConstants.STUDY.getString()),
+					AppConstants.STUDY.getString()}, "\n"));
+			return REDIRECT + ManageTrialController.URL;
+		} catch (final ParseException e) {
+			redirectAttributes.addFlashAttribute("redirectErrorMessage", this.errorHandlerService
+				.getErrorMessagesAsString("study.error.parser.format.date.basic.details",
+					new String[] {AppConstants.STUDY.getString(), StringUtils.capitalize(AppConstants.STUDY.getString()),
+						AppConstants.STUDY.getString()}, "\n"));
+			return REDIRECT + ManageTrialController.URL;
 		}
 	}
 
-	protected Integer getGermplasmListId(final int studyId, final String studyTypeName ) {
+	protected Integer getGermplasmListId(final int studyId) {
 		if (this.userSelection.getImportedAdvancedGermplasmList() == null) {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 			final GermplasmListType listType = GermplasmListType.STUDY;
@@ -339,9 +343,8 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	protected void setModelAttributes(final CreateTrialForm form, final Integer trialId, final Model model,
-			final Workbook trialWorkbook) {
-		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(),
-				trialWorkbook.getStudyConditions(), false, trialId));
+			final Workbook trialWorkbook) throws ParseException {
+		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
 		model.addAttribute("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
 		model.addAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB,
 				this.prepareEnvironmentsTabInfo(trialWorkbook, false));
@@ -437,8 +440,7 @@ public class OpenTrialController extends BaseTrialController {
 		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedTreatmentFactors(),
 				this.userSelection.getTreatmentFactors());
 
-		final String name = data.getBasicDetails().getBasicDetails().get(TermId.STUDY_NAME.getId());
-
+		final String name = data.getBasicDetails().getStudyName();
 		// retain measurement dataset id and trial dataset id
 		final int trialDatasetId = this.userSelection.getWorkbook().getTrialDatasetId();
 		final int measurementDatasetId = this.userSelection.getWorkbook().getMeasurementDatesetId();
@@ -558,7 +560,7 @@ public class OpenTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/updateSavedTrial", method = RequestMethod.GET)
-	public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") final int id) {
+	public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") final int id) throws ParseException {
 		final Map<String, Object> returnVal = new HashMap<>();
 		final Study study = this.fieldbookMiddlewareService.getStudy(id);
 		final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(id,study.getType());
@@ -582,7 +584,7 @@ public class OpenTrialController extends BaseTrialController {
 				.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
 		returnVal.put(OpenTrialController.TRIAL_SETTINGS_DATA,
 				this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
-		this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), trialWorkbook.getStudyConditions(), false, id);
+		this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, id);
 		this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false);
 		this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false);
 
@@ -637,7 +639,7 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	protected String isPreviewEditable(final Workbook originalWorkbook) {
-		String isPreviewEditable = "0";
+		String isPreviewEditable = IS_PREVIEW_EDITABLE;
 		if (originalWorkbook == null || originalWorkbook.getStudyDetails() == null
 				|| originalWorkbook.getStudyDetails().getId() == null) {
 			isPreviewEditable = "1";
@@ -694,7 +696,7 @@ public class OpenTrialController extends BaseTrialController {
 		}
 
 		// remove deleted environment from existing observation
-		if (deletedEnvironments.length() > 0 && !"0".equals(deletedEnvironments)) {
+		if (deletedEnvironments.length() > 0 && !IS_DELETED_ENVIRONMENT .equals(deletedEnvironments)) {
 			final Workbook tempWorkbook = this.processDeletedEnvironments(deletedEnvironments,
 					measurementDatasetVariables, workbook);
 			form.setMeasurementRowList(tempWorkbook.getObservations());
@@ -752,20 +754,23 @@ public class OpenTrialController extends BaseTrialController {
 			combinedList.addAll(studyLevelConditions);
 		}
 
-		final String name = "";
+		final String name = StringUtils.EMPTY;
 
-		final String description = "";
+		final String description = StringUtils.EMPTY;
+		final String startDate = StringUtils.EMPTY;
+		final String endDate = StringUtils.EMPTY;
+		final String studyUpdate = StringUtils.EMPTY;
 
 		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name,
 				combinedList, this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(),
 				this.userSelection, this.userSelection.getTrialLevelVariableList(),
 				this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(), false,
-				this.contextUtil.getCurrentProgramUUID(), description);
+				this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 
 		final Workbook tempWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false,
 				this.contextUtil.getCurrentProgramUUID());
 		final StudyDetails details = new StudyDetails();
-		details.setStudyType(StudyType.T); //TODO VER COMO ARREGLARLO.
+		details.setStudyType(new StudyTypeDto("T")); //TODO VER COMO ARREGLARLO.
 		tempWorkbook.setStudyDetails(details);
 
 		return tempWorkbook;
@@ -774,7 +779,7 @@ public class OpenTrialController extends BaseTrialController {
 	protected List<MeasurementRow> getFilteredTrialObservations(final List<MeasurementRow> trialObservations,
 			final String deletedEnvironment) {
 
-		if ("0".equalsIgnoreCase(deletedEnvironment) || "".equalsIgnoreCase(deletedEnvironment)
+		if (IS_DELETED_ENVIRONMENT .equalsIgnoreCase(deletedEnvironment) || StringUtils.EMPTY.equalsIgnoreCase(deletedEnvironment)
 				|| trialObservations == null) {
 			return trialObservations;
 		}
@@ -844,7 +849,7 @@ public class OpenTrialController extends BaseTrialController {
 	protected List<MeasurementRow> getFilteredObservations(final List<MeasurementRow> observations,
 			final String deletedEnvironment) {
 
-		if ("0".equalsIgnoreCase(deletedEnvironment) || "".equalsIgnoreCase(deletedEnvironment)) {
+		if (IS_DELETED_ENVIRONMENT .equalsIgnoreCase(deletedEnvironment) || StringUtils.EMPTY.equalsIgnoreCase(deletedEnvironment)) {
 			return observations;
 		}
 
@@ -854,7 +859,7 @@ public class OpenTrialController extends BaseTrialController {
 			for (final MeasurementData data : dataList) {
 				if (this.isATrialInstanceMeasurementVariable(data)
 						&& !deletedEnvironment.equalsIgnoreCase(data.getValue())
-						&& !"0".equalsIgnoreCase(data.getValue())) {
+						&& !IS_DELETED_ENVIRONMENT .equalsIgnoreCase(data.getValue())) {
 					filteredObservations.add(row);
 					break;
 				}

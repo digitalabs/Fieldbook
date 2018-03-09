@@ -7,7 +7,6 @@ import com.efficio.pojos.treeview.TreeNode;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Reference;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
@@ -21,6 +20,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +40,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping(StudyTreeController.URL)
+@Transactional
 public class StudyTreeController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StudyTreeController.class);
@@ -104,7 +105,7 @@ public class StudyTreeController {
 	}
 
 	private List<TreeNode> getChildrenTreeNodes(final String parentKey, final boolean isFolderOnly) {
-		final int parentId = Integer.valueOf(parentKey);
+		final int parentId = Integer.parseInt(parentKey);
 		final List<Reference> folders = this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
 
 		final List<TreeNode> childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(folders, false, true, isFolderOnly);
@@ -133,7 +134,7 @@ public class StudyTreeController {
 				return this.getRootFolders(isFolderOnlyBool);
 			} else if (NumberUtils.isNumber(parentKey)) {
 
-				final int parentId = Integer.valueOf(parentKey);
+				final int parentId = Integer.parseInt(parentKey);
 				final List<Reference> folders =
 						this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
 				return TreeViewUtil.convertStudyFolderReferencesToJson(folders, false, true, isFolderOnlyBool);
@@ -165,7 +166,7 @@ public class StudyTreeController {
 	public Map<String, String> hasObservations(@PathVariable final int studyId, @PathVariable final String studyName) {
 		final Map<String, String> dataResults = new HashMap<>();
 
-		int datasetId;
+		final int datasetId;
 		try {
 			datasetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
 			final long observationCount = this.fieldbookMiddlewareService.countObservations(datasetId);
@@ -189,7 +190,7 @@ public class StudyTreeController {
 		final String studyName = req.getParameter("name");
 		final Integer studyIdInt = Integer.valueOf(studyId);
 
-		final Map<String, Object> resultsMap = new HashMap<String, Object>();
+		final Map<String, Object> resultsMap = new HashMap<>();
 		try {
 
 			final Integer studyIdDb = this.fieldbookMiddlewareService.getProjectIdByNameAndProgramUUID(HtmlUtils.htmlEscape(studyName),
@@ -245,7 +246,7 @@ public class StudyTreeController {
 						parentFolderId = project.getProjectId();
 					}
 					final int newFolderId = StudyTreeController.this.studyDataManager.addSubFolder(parentFolderId, folderName, folderName,
-							StudyTreeController.this.getCurrentProgramUUID());
+							StudyTreeController.this.getCurrentProgramUUID(), folderName);
 					resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 					resultsMap.put(StudyTreeController.NEW_FOLDER_ID, Integer.toString(newFolderId));
 
@@ -266,7 +267,7 @@ public class StudyTreeController {
 	@ResponseBody
 	@RequestMapping(value = "/renameStudyFolder", method = RequestMethod.POST)
 	public Map<String, Object> renameStudyFolder(final HttpServletRequest req) {
-		final Map<String, Object> resultsMap = new HashMap<String, Object>();
+		final Map<String, Object> resultsMap = new HashMap<>();
 		final Locale locale = LocaleContextHolder.getLocale();
 		try {
 			final String newFolderName = req.getParameter("newFolderName");
@@ -315,7 +316,7 @@ public class StudyTreeController {
 		} else {
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
 			isFolderEmpty = this.studyDataManager.isFolderEmpty(Integer.parseInt(folderId), this.getCurrentProgramUUID());
-			String message;
+			final String message;
 			if (!isFolderEmpty) {
 				message = "browse.study.delete.folder.not.empty";
 			} else {

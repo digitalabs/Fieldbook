@@ -49,8 +49,8 @@
 					data.basicDetails[key] = _.unescape(val);
 				});
 
-				if (data.basicDetails[8050] === null || data.basicDetails[8050] === '') {
-					data.basicDetails[8050] = $.datepicker.formatDate('yy-mm-dd', new Date());
+				if (data.startDate === null || data.startDate === '') {
+					data.startDate = $.datepicker.formatDate('yy-mm-dd', new Date());
 				}
 
 				return data;
@@ -149,7 +149,7 @@
 				$('#startIndex').val($('#startIndex2').val());
 				$('#interval').val($('#interval2').val());
 				$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
-				var columnsOrder = ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) ?
+				var columnsOrder = ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenStudy()) ?
 					BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table') : [];
 
 				var serializedData = $form.serializeArray();
@@ -337,7 +337,7 @@
 					return data;
 				},
 
-				isOpenTrial: function() {
+				isOpenStudy: function() {
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
 				},
@@ -417,15 +417,15 @@
 					} else if (service.applicationData.unappliedChangesAvailable) {
 						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial. Please ' +
 								'regenerate the design on the Experimental Design tab', 10000);
-					} else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
+					} else if (service.isCurrentTrialDataValid(service.isOpenStudy())) {
                         // Hide Discard Imported Data button when the user presses Save button
                         $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
                         stockListImportNotSaved = false;
 						performDataCleanup();
-						var columnsOrder =  ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) ?
+						var columnsOrder =  ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenStudy()) ?
 							BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table') : [];
 						var serializedData = (JSON.stringify(columnsOrder));
-						if (!service.isOpenTrial()) {
+						if (!service.isOpenStudy()) {
 							service.currentData.columnOrders = serializedData;
 							// we are receiving 'success' string message from server in a happy case, so the response should not be parsed
 							// as json, we set {{transformResponse: undefined}} to indicate that we don't need json transformation
@@ -543,7 +543,7 @@
                     //TODO Remove other classes as well
 
                     // GLOBAL
-                    if ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) {
+                    if ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenStudy()) {
                     	onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
                     }
 				},
@@ -714,15 +714,20 @@
 					}
 
 					var hasError = false, name = '', customMessage = '', errorCode = 0;
-					var creationDate = service.currentData.basicDetails.basicDetails[8050];
-					var completionDate = service.currentData.basicDetails.basicDetails[8060];
-					if ($.trim(service.currentData.basicDetails.basicDetails[8005]) === '') {
+					var creationDate = service.currentData.basicDetails.startDate;
+					var completionDate = service.currentData.basicDetails.endDate;
+					if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
+						hasError = true;
+						name = $('#folderLabel').text();
+						openStudyTree(2, service.updateSelectedFolder, true);
+						return false;
+					} else if ($.trim(service.currentData.basicDetails.studyName) === '') {
 						hasError = true;
 						name = 'Name';
 					} else if ($.trim(service.currentData.basicDetails.description) === '') {
 						hasError = true;
 						name = 'Description';
-					} else if (!isEdit && isStudyNameUnique(service.currentData.basicDetails.basicDetails[8005]) === false) {
+					} else if (!isEdit && isStudyNameUnique(service.currentData.basicDetails.studyName) === false) {
 						hasError = true;
 						customMessage = 'Name should be unique';
 					} else if (creationDate === '') {
@@ -735,9 +740,9 @@
 					} else if ($.trim(service.currentData.basicDetails.studyType) === '') {
 						hasError = true;
 						name = 'Study type';
-					} else if ($('.germplasm-list-items tbody tr').length === 0 ) {
+/*					} else if ($('.germplasm-list-items tbody tr').length === 0 ) {
 						hasError = true;
-						customMessage = 'should have at least a germplasm list in the study';
+						customMessage = 'should have at least a germplasm list in the study';*/
 					} else if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
 						hasError = true;
 						name = $('#folderLabel').text();

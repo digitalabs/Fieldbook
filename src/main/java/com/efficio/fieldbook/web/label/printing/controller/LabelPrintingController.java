@@ -36,8 +36,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import com.google.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -125,6 +125,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 * The Constant LOG.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingController.class);
+	public static final String FILE_NAME = "fileName";
 
 	/**
 	 * The user label printing.
@@ -159,8 +160,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	private CrossExpansionProperties crossExpansionProperties;
 	@Resource
 	private WorkbenchService workbenchService;
-	@Resource
-	private ContextUtil contextUtil;
+
 	@Resource
 	private ReportService reportService;
 
@@ -189,7 +189,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME,
 				SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
 		Study study = null;
-		List<FieldMapInfo> fieldMapInfoList = null;
+		final List<FieldMapInfo> fieldMapInfoList;
 		FieldMapInfo fieldMapInfo = null;
 		boolean hasFieldMap = false;
 		try {
@@ -214,13 +214,14 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsTrial(true);
 		this.userLabelPrinting.setIsStockList(false);
-		this.userLabelPrinting.setTitle(study.getDescription());
+		this.userLabelPrinting.setTitle(study != null ? study.getDescription() : null);
+		this.userLabelPrinting.setName(study != null ? study.getName() : null);
 
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, true));
 		form.setUserLabelPrinting(this.userLabelPrinting);
 
 		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS,
-				this.labelPrintingService.getAvailableLabelFieldsForStudy(true, hasFieldMap, locale, id));
+				this.labelPrintingService.getAvailableLabelFieldsForStudy(hasFieldMap, locale, id));
 
 		form.setIsTrial(true);
 		return super.show(model);
@@ -242,7 +243,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME,
 				SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
 		Study study = null;
-		List<FieldMapInfo> fieldMapInfoList = null;
+		final List<FieldMapInfo> fieldMapInfoList;
 		FieldMapInfo fieldMapInfo = null;
 		boolean hasFieldMap = false;
 		try {
@@ -259,7 +260,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		}
 		this.userLabelPrinting.setStudyId(id);
 		this.userLabelPrinting.setStudy(study);
-		this.userLabelPrinting.setTitle(study.getDescription());
+		this.userLabelPrinting.setTitle(study != null ? study.getDescription() : null);
+		this.userLabelPrinting.setName(study != null ? study.getName() : null);
 		this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
 		this.userLabelPrinting.setBarcodeNeeded("0");
 		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
@@ -271,7 +273,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, false));
 		form.setUserLabelPrinting(this.userLabelPrinting);
 		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS,
-				this.labelPrintingService.getAvailableLabelFieldsForStudy(false, hasFieldMap, locale, id));
+				this.labelPrintingService.getAvailableLabelFieldsForStudy(hasFieldMap, locale, id));
 		form.setIsTrial(false);
 		return super.show(model);
 	}
@@ -295,7 +297,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		// printing
 		final FieldMapInfo fieldMapInfo = fieldMapInfoList.get(0);
 		this.userLabelPrinting.setStudyId(null);
-		this.userLabelPrinting.setTitle("");
+		this.userLabelPrinting.setTitle(StringUtils.EMPTY);
+		this.userLabelPrinting.setName(StringUtils.EMPTY);
 		this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
 		this.userLabelPrinting.setFieldMapInfoList(fieldMapInfoList);
 		this.userLabelPrinting.setBarcodeNeeded("0");
@@ -304,18 +307,18 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setNumberOfLabelPerRow("3");
 		this.userLabelPrinting.setIsStockList(false);
 
-		this.userLabelPrinting.setFirstBarcodeField("");
-		this.userLabelPrinting.setSecondBarcodeField("");
-		this.userLabelPrinting.setThirdBarcodeField("");
+		this.userLabelPrinting.setFirstBarcodeField(StringUtils.EMPTY);
+		this.userLabelPrinting.setSecondBarcodeField(StringUtils.EMPTY);
+		this.userLabelPrinting.setThirdBarcodeField(StringUtils.EMPTY);
 		this.userLabelPrinting.setFieldMapsExisting(true);
 
-		this.userLabelPrinting.setSettingsName("");
+		this.userLabelPrinting.setSettingsName(StringUtils.EMPTY);
 
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, this.userFieldmap.isTrial()));
 		form.setUserLabelPrinting(this.userLabelPrinting);
 
 		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS,
-				this.labelPrintingService.getAvailableLabelFieldsForFieldMap(this.userFieldmap.isTrial(), true, locale));
+				this.labelPrintingService.getAvailableLabelFieldsForFieldMap(true, locale));
 
 		form.setIsTrial(this.userFieldmap.isTrial());
 
@@ -336,7 +339,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		final List<Integer> ids = new ArrayList<>();
 		ids.add(stockList.getProjectId());
 
-		List<FieldMapInfo> fieldMapInfoList;
+		final List<FieldMapInfo> fieldMapInfoList;
 
 		if (Objects.equals(study.getType(), StudyType.T)) {
 			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
@@ -368,7 +371,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, false));
 		form.setUserLabelPrinting(this.userLabelPrinting);
 		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS, this.labelPrintingService.getAvailableLabelFieldsForStockList(
-				this.labelPrintingService.getStockListType(stockList.getType()), locale, study.getType(), stockList.getProjectId()));
+				this.labelPrintingService.getStockListType(stockList.getType()), locale, stockList.getProjectId()));
 
 		if (Objects.equals(study.getType(), StudyType.T)) {
 			form.setIsTrial(true);
@@ -413,7 +416,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setNumberOfLotsWithReservations(String.valueOf(listWithExistingReservations.size()));
 
 		this.userLabelPrinting.setStudyId(null);
-		this.userLabelPrinting.setTitle("");
+		this.userLabelPrinting.setTitle(StringUtils.EMPTY);
+		this.userLabelPrinting.setName(StringUtils.EMPTY);
 		this.userLabelPrinting.setFieldMapInfo(null);
 		this.userLabelPrinting.setFieldMapInfoList(null);
 		this.userLabelPrinting.setBarcodeNeeded("0");
@@ -425,10 +429,10 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting.setStockListTypeName(germplasmList.getType());
 		this.userLabelPrinting.setInventoryDetailsList(inventoryDetails);
 		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting, false));
-		this.userLabelPrinting.setFirstBarcodeField("");
-		this.userLabelPrinting.setSecondBarcodeField("");
-		this.userLabelPrinting.setThirdBarcodeField("");
-		this.userLabelPrinting.setSettingsName("");
+		this.userLabelPrinting.setFirstBarcodeField(StringUtils.EMPTY);
+		this.userLabelPrinting.setSecondBarcodeField(StringUtils.EMPTY);
+		this.userLabelPrinting.setThirdBarcodeField(StringUtils.EMPTY);
+		this.userLabelPrinting.setSettingsName(StringUtils.EMPTY);
 		this.userLabelPrinting.setNumberOfCopies("1");
 		this.userLabelPrinting.setSorting("entry");
 		form.setUserLabelPrinting(this.userLabelPrinting);
@@ -536,7 +540,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 				final String selectedLabelFields = this.getSelectedLabelFields(this.userLabelPrinting);
 				this.labelPrintingService
 						.populateUserSpecifiedLabelFields(this.userLabelPrinting.getFieldMapInfo().getDatasets().get(0).getTrialInstances(),
-								workbook, selectedLabelFields, form.getIsTrial(), form.getIsStockList(), this.userLabelPrinting);
+								workbook, selectedLabelFields, form.getIsStockList(), this.userLabelPrinting);
 			}
 
 			final List<FieldMapInfo> fieldMapInfoList = this.userLabelPrinting.getFieldMapInfoList();
@@ -558,7 +562,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			}
 
 			return this.generateLabels(trialInstances, form.isCustomReport());
-		} finally {
+		} finally {//TODO VER ESTO!
 			// Important to clear out the observations collection from user session, once we are done with it to keep heap memory under
 			// control. For large trials/nurseries the observations collection can be huge.
 			this.userSelection.getWorkbook().getObservations().clear();
@@ -609,7 +613,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		final List<GermplasmListData> germplasmListDataListWithExistingReservations =
 				this.getGermplasmListDataListWithExistingReservations(germplasmListDataList);
 
-		int numberOfCopies = Strings.isNullOrEmpty(this.userLabelPrinting.getNumberOfCopies()) ?
+		final int numberOfCopies = Strings.isNullOrEmpty(this.userLabelPrinting.getNumberOfCopies()) ?
 				1 :
 				Integer.parseInt(this.userLabelPrinting.getNumberOfCopies());
 		
@@ -674,7 +678,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 						this.userLabelPrinting);
 
 				results.put(LabelPrintingController.IS_SUCCESS, 1);
-				results.put("fileName", fileName);
+				results.put(FILE_NAME, fileName);
 
 			} else {
 				final String errorMsg = this.messageSource.getMessage("label.printing.cannot.generate.invalid.type", new String[] {},
@@ -685,7 +689,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 				results.put(AppConstants.MESSAGE.getString(), errorMsg);
 			}
 
-		} catch ( MiddlewareException e) {
+		} catch ( final MiddlewareException e) {
 			LabelPrintingController.LOG.error(e.getMessage(), e);
 			results.put(LabelPrintingController.IS_SUCCESS, 0);
 			results.put(AppConstants.MESSAGE.getString(), e.getMessage());
@@ -706,7 +710,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	}
 
 	String getSelectedLabelFields(final UserLabelPrinting userLabelPrinting) {
-		String selectedLabelFields = "";
+		final String selectedLabelFields;
 		if (userLabelPrinting.getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
 			selectedLabelFields = userLabelPrinting.getLeftSelectedLabelFields() + "," + userLabelPrinting.getRightSelectedLabelFields();
 		} else {
@@ -971,8 +975,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		// Preparation, convert the form into appropriate pojos for easy access
 		CSVExcelLabelPrintingSetting nonPDFSettings = null;
 		PDFLabelPrintingSetting pdfSettings = null;
-		String barcodeGeneratedAutomatically = rawSettings.getBarcodeGeneratedAutomatically();
-		boolean isPlotCodePrefix = barcodeGeneratedAutomatically == null || barcodeGeneratedAutomatically.equals("0") ? false : true;
+		final String barcodeGeneratedAutomatically = rawSettings.getBarcodeGeneratedAutomatically();
+		final boolean isPlotCodePrefix = barcodeGeneratedAutomatically == null || barcodeGeneratedAutomatically.equals("0") ? false : true;
 		final BarcodeLabelPrintingSetting barcodeSettings = new BarcodeLabelPrintingSetting(
 				"1".equals(rawSettings.getBarcodeNeeded()), "Barcode", StringUtil.stringify(new String[] {
 						rawSettings.getFirstBarcodeField(), rawSettings.getSecondBarcodeField(), rawSettings.getThirdBarcodeField()}, ","),
@@ -988,7 +992,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		}
 
 		// get the xml value
-		String xmlConfig = "";
+		String xmlConfig = StringUtils.EMPTY;
 		try {
 			xmlConfig = this.generateXMLFromLabelPrintingSettings(rawSettings.getSettingsName(),
 					LabelPrintingFileTypes.getFileTypeByIndex(rawSettings.getGenerateType()).getType(), nonPDFSettings, pdfSettings,

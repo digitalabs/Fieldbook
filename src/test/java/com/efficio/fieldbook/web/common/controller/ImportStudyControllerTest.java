@@ -14,8 +14,8 @@ import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -140,7 +140,7 @@ public class ImportStudyControllerTest {
 		}
 
 		final Workbook testWorkbook = WorkbookDataUtil
-				.getTestWorkbook(ImportStudyControllerTest.APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, StudyType.N);
+				.getTestWorkbook(ImportStudyControllerTest.APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, new StudyTypeDto("N"));
 		this.setTestMeasurementValues(testWorkbook);
 
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(testWorkbook);
@@ -190,7 +190,7 @@ public class ImportStudyControllerTest {
 		}
 
 		final Workbook testWorkbook = WorkbookDataUtil
-				.getTestWorkbook(ImportStudyControllerTest.APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, StudyType.N);
+				.getTestWorkbook(ImportStudyControllerTest.APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, new StudyTypeDto("N"));
 		this.setTestMeasurementValues(testWorkbook);
 
 		final List<Integer> newGids = new ArrayList<>();

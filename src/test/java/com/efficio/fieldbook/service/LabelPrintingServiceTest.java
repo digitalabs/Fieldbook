@@ -11,7 +11,6 @@ import com.efficio.fieldbook.web.util.AppConstants;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.junit.Assert;
@@ -93,7 +92,7 @@ public class LabelPrintingServiceTest {
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
 
 		final List<LabelFields> retrieved =
-				this.unitUnderTest.getAvailableLabelFieldsForStudy(true, false, Locale.getDefault(),
+				this.unitUnderTest.getAvailableLabelFieldsForStudy( false, Locale.getDefault(),
 						LabelPrintingServiceTest.DUMMY_TRIAL_ID);
 
 		Assert.assertNotNull(retrieved);
@@ -129,7 +128,7 @@ public class LabelPrintingServiceTest {
 
 		final List<LabelFields> retrieved =
 				this.unitUnderTest
-						.getAvailableLabelFieldsForStudy(true, true, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_TRIAL_ID);
+						.getAvailableLabelFieldsForStudy(true, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_TRIAL_ID);
 
 		Assert.assertNotNull(retrieved);
 		this.verifyBaseLabelFieldsPresent(retrieved , LabelPrintingServiceTest.BASE_LABEL_PRINTING_FIELD_TRIAL_IDS);
@@ -157,7 +156,7 @@ public class LabelPrintingServiceTest {
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
 
 		final List<LabelFields> retrieved =
-				this.unitUnderTest.getAvailableLabelFieldsForStudy(false, true, Locale.getDefault(),
+				this.unitUnderTest.getAvailableLabelFieldsForStudy(true, Locale.getDefault(),
 						LabelPrintingServiceTest.DUMMY_NURSERY_ID);
 
 		Assert.assertNotNull(retrieved);
@@ -184,7 +183,7 @@ public class LabelPrintingServiceTest {
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
 
 		final List<LabelFields> retrieved =
-				this.unitUnderTest.getAvailableLabelFieldsForStudy(false, false, Locale.getDefault(),
+				this.unitUnderTest.getAvailableLabelFieldsForStudy(false, Locale.getDefault(),
 						LabelPrintingServiceTest.DUMMY_NURSERY_ID);
 
 		Assert.assertNotNull(retrieved);
@@ -209,8 +208,7 @@ public class LabelPrintingServiceTest {
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
 
 		final List<LabelFields> retrieved =
-				this.unitUnderTest.getAvailableLabelFieldsForStockList(GermplasmListType.CROSSES, Locale.getDefault(), StudyType.N,
-						LabelPrintingServiceTest.DUMMY_NURSERY_ID);
+				this.unitUnderTest.getAvailableLabelFieldsForStockList(GermplasmListType.CROSSES, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_NURSERY_ID);
 
 		this.verifyLabelListContainsList(retrieved, nurserySettingLabels,
 				"Retrieved available label list does not contain all nursery management related labels");
@@ -272,7 +270,7 @@ public class LabelPrintingServiceTest {
 		}
 	}
 
-	protected void verifyBaseLabelFieldsPresent(final List<LabelFields> forVerification , Integer[] baseFieldIDs) {
+	protected void verifyBaseLabelFieldsPresent(final List<LabelFields> forVerification , final Integer[] baseFieldIDs) {
 		for (final Integer baseLabelPrintingFieldId : baseFieldIDs) {
 			boolean found = false;
 
@@ -282,7 +280,7 @@ public class LabelPrintingServiceTest {
 				}
 			}
 			if(!found){
-				Assert.assertTrue("Base label field not present in values retrieved from service", found);
+				Assert.assertTrue("Base label field not present in values retrieved from service", false);
 			}
 
 		}

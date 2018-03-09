@@ -97,8 +97,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	private static final String BREEDING_METHOD_PROPERTY_NAME = "";
 
 	protected static final List<Integer> STUDY_DETAILS_IDS =
-			Arrays.asList(TermId.STUDY_NAME.getId(), TermId.PM_KEY.getId(), TermId.STUDY_OBJECTIVE.getId(),
-					TermId.START_DATE.getId(), TermId.END_DATE.getId(), TermId.STUDY_UID.getId());
+		Arrays.asList(TermId.PM_KEY.getId());
 
 	@Override
 	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
@@ -144,7 +143,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		}
 
 		// multiple instances
-		if (instances != null && instances.size() > 1) {
+		if (instances.size() > 1) {
 			outputFilename = this.fieldbookProperties.getUploadDirectory() + File.separator + filename
 					.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "") + AppConstants.ZIP_FILE_SUFFIX.getString();
 			ZipUtil.zipIt(outputFilename, filenameList);
@@ -230,7 +229,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.startdate", startDate);
 		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.enddate", endDate);
 		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.studytype",
-				studyDetails.getStudyType().name());
+				studyDetails.getStudyType().getName());
 
 		return rowNumIndex;
 	}
@@ -244,7 +243,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				}
 			}
 		}
-		return variable.getRole();
+		return variable != null ? variable.getRole() : null;
 	}
 
 	/**

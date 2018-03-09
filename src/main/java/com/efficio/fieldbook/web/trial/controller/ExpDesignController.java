@@ -14,6 +14,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.util.StringUtil;
@@ -85,8 +86,21 @@ public class ExpDesignController extends BaseTrialController {
 		designTypes.add(DesignTypeItem.ROW_COL);
 		designTypes.add(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK);
 		designTypes.add(DesignTypeItem.CUSTOM_IMPORT);
+		designTypes.add(DesignTypeItem.ENTRY_LIST_ORDER);
 
 		return designTypes;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/retrieveInsertionManners", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	public List<TermSummary> retrieveInsertionManners() {
+		//FIXME Move to an enum and fix description in DB
+		final TermSummary t1 = new TermSummary(8414,"1","Insert each check in turn");
+		final TermSummary t2 = new TermSummary(8415,"2","Insert all checks at each position");
+		final List<TermSummary> list = new ArrayList<>();
+		list.add(t1);
+		list.add(t2);
+		return list;
 	}
 
 	@ResponseBody

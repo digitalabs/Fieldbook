@@ -359,7 +359,7 @@
 		<li ng-repeat="tab in crossesTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
 			ng-click="tabChange(tab.state)"
 			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
-			<a href="#tab.name" tab-data='{{tab.id}}' ng-click="initCrossesTab(tab)">{{tab.displayName}}
+			<a href="#tab.name" tab-data='{{tab.id}}'>{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="crossesListId" ng-click="closeCrossesListTab(tab.state)"></i>
 			</a>
 		</li>

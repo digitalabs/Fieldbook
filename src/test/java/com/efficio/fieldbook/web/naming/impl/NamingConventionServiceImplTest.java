@@ -72,6 +72,7 @@ public class NamingConventionServiceImplTest {
 	private Method breedingMethod;
 	private AdvancingSource row;
 	private Integer breedingMethodSnameType;
+	private Workbook workbook;
 
 	@Before
 	public void setUp() throws Exception {
@@ -81,6 +82,11 @@ public class NamingConventionServiceImplTest {
 		this.breedingMethod.setSnametype(this.breedingMethodSnameType);
 		this.row = new AdvancingSource();
 		this.row.setBreedingMethod(this.breedingMethod);
+		this.workbook = new Workbook();
+		StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setStudyType(StudyType.N);
+		studyDetails.setStudyName("STUDY:ABC");
+		workbook.setStudyDetails(studyDetails);
 
 	}
 
@@ -146,7 +152,7 @@ public class NamingConventionServiceImplTest {
 
 		AdvancingNursery advancingParameters = new AdvancingNursery();
 		advancingParameters.setCheckAdvanceLinesUnique(false);
-		List<ImportedGermplasm> igList = this.namingConventionService.generateGermplasmList(rows, advancingParameters, new Workbook());
+		List<ImportedGermplasm> igList = this.namingConventionService.generateGermplasmList(rows, advancingParameters, this.workbook);
 		Assert.assertNotNull(igList);
 		Assert.assertFalse(igList.isEmpty());
 		Assert.assertEquals(2, igList.size());
@@ -210,10 +216,6 @@ public class NamingConventionServiceImplTest {
         methodList.add(breedingMethod);
 
         Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Mockito.anyBoolean())).thenReturn(methodList);
-
-        Workbook workbook = new Workbook();
-		StudyDetails studyDetails = new StudyDetails();
-		studyDetails.setStudyType(StudyType.N);
 
         Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(Mockito.anyInt())).thenReturn(workbook);
         AdvancingSourceList rows = new AdvancingSourceList();

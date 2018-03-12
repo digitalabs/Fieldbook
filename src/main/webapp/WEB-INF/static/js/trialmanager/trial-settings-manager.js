@@ -190,39 +190,6 @@ window.TrialSettingsManager = (function() {
 
 			studyLevelBreedingMethodPropertyId = 2670,
 
-		// There are a basic set of details hard coded into the page that should not be presented as variables
-			basicDetails = [
-				{
-					variableId: 8005, // STUDY_NAME
-					propertyId: 2010  // Study
-				},
-
-				{
-					variableId: 8009, // STUDY_UPDATE
-					propertyId: 2045  // Update date
-				},
-
-				{
-					variableId: 8020, // Study_UID
-					propertyId: 2002  // User
-				},
-
-				{
-					variableId: 8030, // STUDY_OBJECTIVE
-					propertyId: 2014  // Study objective
-				},
-
-				{
-					variableId: 8050, // START_DATE
-					propertyId: 2050  // Start date
-				},
-
-				{
-					variableId: 8060, // END_DATE
-					propertyId: 2052  // End date
-				}
-			],
-
 			selectionExclusions = {
 				// Don't allow user to select BM_CODE_VTE from the Breeding method property if BM_ID_VTE is present
 				8262: {
@@ -245,8 +212,6 @@ window.TrialSettingsManager = (function() {
 					exclusions.push(removedProperty);
 				}
 
-				// Remove variables and properties as necessary
-				exclusions = exclusions.concat(_removeVariables(basicDetails, filteredProperties));
 				break;
 
 			case 1802:

@@ -4,9 +4,6 @@
 	<input type="hidden" th:field="*{locationId}"/>
 	<input type="hidden" th:field="*{breedingMethodId}"/>
 	<input type="hidden" th:field="*{breedingMethodUrl}"/>
-	<input type="hidden" th:field="*{studyNameTermId}"/>
-	<input type="hidden" th:field="*{startDateId}"/>
-	<input type="hidden" th:field="*{endDateId}"/>
 	<input type="hidden" th:field="*{openGermplasmUrl}"/>
 	<input type="hidden" th:field="*{idNameVariables}"/>
 	<input type="hidden" th:field="*{breedingMethodCode}"/>
@@ -402,8 +399,6 @@ var entryNoShouldBeInRange = /*[[#{entry.number.should.be.in.range}]]*/ '',
 var locationId = '',
 		breedingMethodId = '',
 		requiredFields = [],
-		startDateId = '',
-		endDateId = '',
 		disabledActionTooltipMessage = /*[[#{nursery.create.actions.is.disabled}]]*/ '',
 		treeDivId = 'ontologyBrowserTree',
 		ChooseSettings = window.ChooseSettings,
@@ -435,8 +430,6 @@ $(document).ready(function() {
 	if ($('#requiredFields').val() !== '') {
 		requiredFields = $('#requiredFields').val().split(',');
 	}
-	startDateId = $('#startDateId').val();
-	endDateId = $('#endDateId').val();
 	locationId = $('#locationId').val();
 	breedingMethodId = $('#breedingMethodId').val();
 	$('#folderNameSpan').html($('#folderName').val());

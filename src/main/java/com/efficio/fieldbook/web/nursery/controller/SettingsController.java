@@ -10,20 +10,19 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -48,18 +47,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * The Class SettingsController.
@@ -69,6 +65,12 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsController.class);
 	public static final String DESCRIPTION = "Description";
+	private static final String START_DATE = "startDate";
+	private static final String END_DATE = "endDate";
+	private static final String STUDY_UPDATE = "studyUpdate";
+	private static final String OBJECTIVE = "Objective";
+	private static final String STUDY_NAME = "Name";
+	private static final String CREATED_BY = "createdBy";
 
 	/** The workbench service. */
 	@Resource
@@ -213,7 +215,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 
 		for (final SettingDetail variable : variables) {
-			Integer stdVar;
+			final Integer stdVar;
 			if (variable.getVariable().getCvTermId() != null) {
 				stdVar = variable.getVariable().getCvTermId();
 			} else {
@@ -289,7 +291,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		while (token.hasMoreTokens()) {
 			final String s = token.nextToken();
 			// FIXME BMS-4397
-			if (!SettingsController.DESCRIPTION.equals(s)) {
+			if (!SettingsController.DESCRIPTION.equals(s) && !SettingsController.START_DATE.equals(s) && !SettingsController.END_DATE
+				.equals(s) && !SettingsController.STUDY_UPDATE.equals(s) && !SettingsController.OBJECTIVE.equals(s)
+				&& !SettingsController.STUDY_NAME.equals(s) && !SettingsController.CREATED_BY.equals(s)) {
 				defaults.add(this.createSettingDetail(Integer.valueOf(s), requiredVariablesLabel.get(ctr), role));
 				ctr++;
 			}
@@ -305,7 +309,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the setting detail
 	 */
 	protected SettingDetail createSettingDetail(final int id, final String name, final String role) {
-		String variableName;
+		final String variableName;
 		final StandardVariable stdVar = this.getStandardVariable(id);
 		if (name != null && !name.isEmpty()) {
 			variableName = name;
@@ -332,10 +336,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			stdVar.setPhenotypicType(type);
 			if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
 				settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
-			} else if (id == TermId.STUDY_UID.getId()) {
-				settingDetail.setValue(this.getCurrentIbdbUserId().toString());
-			} else if (id == TermId.STUDY_UPDATE.getId()) {
-				settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
 			}
 			settingDetail.setPossibleValuesToJson(possibleValues);
 			final List<ValueReference> possibleValuesFavorite =
@@ -409,12 +409,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 		if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
 			settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
-		} else if (id == TermId.STUDY_UID.getId()) {
-			settingDetail.setValue(this.getCurrentIbdbUserId().toString());
-		} else if (id == TermId.STUDY_UPDATE.getId()) {
-			settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
 		}
-
 		settingDetail.setPossibleValuesToJson(possibleValues);
 		final List<ValueReference> possibleValuesFavorite =
 				this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID(), false);
@@ -484,34 +479,40 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Creates the study details.
-	 *
-	 * @param workbook the workbook
 	 * @param conditions the conditions
+	 * @param workbook the workbook
 	 * @param folderId the folder id
 	 * @param description
+	 * @param studyUpdate
+	 * @param objective
+	 * @param name
+	 * @param createdBy
 	 */
-	public void createStudyDetails(final Workbook workbook, final List<SettingDetail> conditions, final Integer folderId,
-			final Integer studyId, final String description) {
+	public void createStudyDetails(final Workbook workbook, final Integer folderId, final Integer studyId, final String description,
+		final String startDate, final String endDate, final String studyUpdate, final String objective, final String name, final String createdBy) {
 		if (workbook.getStudyDetails() == null) {
 			workbook.setStudyDetails(new StudyDetails());
 		}
 		final StudyDetails studyDetails = workbook.getStudyDetails();
 
-		if (conditions != null && !conditions.isEmpty()) {
-			if (studyId != null) {
-				studyDetails.setId(studyId);
-			}
-			studyDetails.setDescription(studyDetails.getDescription());
-			studyDetails.setObjective(SettingsUtil.getSettingDetailValue(conditions, TermId.STUDY_OBJECTIVE.getId()));
-			studyDetails.setStudyName(SettingsUtil.getSettingDetailValue(conditions, TermId.STUDY_NAME.getId()));
-			studyDetails.setDescription(description);
-			studyDetails.setStartDate(SettingsUtil.getSettingDetailValue(conditions, TermId.START_DATE.getId()));
-			studyDetails.setEndDate(SettingsUtil.getSettingDetailValue(conditions, TermId.END_DATE.getId()));
-			studyDetails.setStudyType(StudyType.N);
+		if (studyId != null) {
+			studyDetails.setId(studyId);
+		}
 
-			if (folderId != null) {
-				studyDetails.setParentFolderId(folderId);
-			}
+		studyDetails.setObjective(objective);
+		studyDetails.setStudyName(name);
+		studyDetails.setDescription(description);
+		studyDetails.setStartDate(startDate);
+		studyDetails.setEndDate(endDate);
+		studyDetails.setStudyUpdate(studyUpdate);
+		if(createdBy != null) {
+			studyDetails.setCreatedBy(createdBy);
+		}
+
+		studyDetails.setStudyType(StudyType.N);
+
+		if (folderId != null) {
+			studyDetails.setParentFolderId(folderId);
 		}
 	}
 
@@ -873,14 +874,16 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the basic details
 	 */
 	protected List<SettingDetail> getSettingDetailsOfSection(final List<SettingDetail> nurseryLevelConditions, final CreateNurseryForm form,
-			final String variableList) {
+		final String variableList) {
 		final List<SettingDetail> settingDetails = new ArrayList<>();
 
 		final StringTokenizer token = new StringTokenizer(variableList, ",");
 		while (token.hasMoreTokens()) {
 			final String s = token.nextToken();
 			// FIXME BMS-4397
-			if (!SettingsController.DESCRIPTION.equals(s)) {
+			if (!SettingsController.DESCRIPTION.equals(s) && !SettingsController.START_DATE.equals(s) && !SettingsController.END_DATE
+				.equals(s) && !SettingsController.STUDY_UPDATE.equals(s) && !SettingsController.OBJECTIVE.equals(s)
+				&& !SettingsController.STUDY_NAME.equals(s) && !SettingsController.CREATED_BY.equals(s)) {
 				final Integer termId = Integer.valueOf(s);
 				final boolean isFound = this.searchAndSetValuesOfSpecialVariables(nurseryLevelConditions, termId, settingDetails, form);
 				if (!isFound) {
@@ -899,33 +902,16 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		for (final SettingDetail setting : nurseryLevelConditions) {
 			if (termId.equals(setting.getVariable().getCvTermId())) {
 				isFound = true;
-				this.setCreatedByAndStudyUpdate(termId, setting, form);
 				settingDetails.add(setting);
 			}
 		}
 		return isFound;
 	}
 
-	private void setCreatedByAndStudyUpdate(final Integer termId, final SettingDetail setting, final CreateNurseryForm form) {
-		if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
-			try {
-				if (setting.getValue() != null && !setting.getValue().isEmpty() && NumberUtils.isNumber(setting.getValue())) {
-					form.setCreatedBy(this.fieldbookService.getPersonByUserId(Integer.parseInt(setting.getValue())));
-				}
-			} catch (final MiddlewareQueryException e) {
-				SettingsController.LOG.error(e.getMessage(), e);
-			}
-		} else if (termId.equals(Integer.valueOf(TermId.STUDY_UPDATE.getId()))) {
-			setting.setValue(DateUtil.getCurrentDateAsStringValue());
-		}
-	}
-
 	private void addSettingDetails(final List<SettingDetail> settingDetails, final Integer termId, final CreateNurseryForm form) {
 		try {
 			settingDetails.add(this.createSettingDetail(termId, null, null));
-			if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
-				form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.getCurrentIbdbUserId()));
-			}
+			form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.contextUtil.getCurrentIbdbUserId()));
 		} catch (final MiddlewareException e) {
 			SettingsController.LOG.error(e.getMessage(), e);
 		}

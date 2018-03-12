@@ -45,7 +45,7 @@ public class AttributeSourceExpressionTest extends TestExpression {
 		final List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source, PREFIX);
 		this.printResult(values, source);
-		assertThat("(AA/ABC)-AA", is(equalTo(values.get(0).toString())));
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-AA")));
 	}
 
 	@Test
@@ -59,11 +59,11 @@ public class AttributeSourceExpressionTest extends TestExpression {
 		final List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source, PREFIX);
 		this.printResult(values, source);
-		assertThat("(AA/ABC)-", is(equalTo(values.get(0).toString())));
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-")));
 	}
 
 	@Test
-	public void testAttributeAsPrefixInvalidGpid2() throws Exception {
+	public void testAttributeAsPrefixGpid2Unknown() throws Exception {
 
 		Mockito.when(germplasmDataManager.getAttributeValue(1000, ATTRIBUTE_NAME)).thenReturn("AA");
 		final Method derivativeMethod = this.createDerivativeMethod(PREFIX, COUNT, null, "-", true);
@@ -73,7 +73,7 @@ public class AttributeSourceExpressionTest extends TestExpression {
 		List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source, PREFIX);
 		this.printResult(values, source);
-		assertThat("(AA/ABC)-", is(equalTo(values.get(0).toString())));
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-AA")));
 	}
 
 	@Test
@@ -88,6 +88,6 @@ public class AttributeSourceExpressionTest extends TestExpression {
 		List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source, PREFIX);
 		this.printResult(values, source);
-		assertThat("(AA/ABC)-",is(equalTo(values.get(0).toString())));
+		assertThat(values.get(0).toString(),is(equalTo("(AA/ABC)-")));
 	}
 }

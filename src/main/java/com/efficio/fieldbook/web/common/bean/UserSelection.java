@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
@@ -531,7 +532,7 @@ public class UserSelection implements Serializable {
 	 * @return the basicDetails
 	 */
 	public List<SettingDetail> getBasicDetails() {
-		return this.basicDetails;
+		return (this.basicDetails != null ? this.basicDetails : new ArrayList<SettingDetail>());
 	}
 
 	/**

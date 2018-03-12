@@ -1,23 +1,16 @@
 
 package com.efficio.etl.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.service.FileService;
+import com.efficio.etl.web.bean.IndexValueDTO;
+import com.efficio.etl.web.bean.RowDTO;
+import com.efficio.etl.web.bean.SheetDTO;
+import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.bean.VariableDTO;
+import com.efficio.etl.web.util.AppConstants;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -53,21 +46,27 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.util.DatasetUtil;
 import org.generationcp.middleware.util.Message;
 import org.generationcp.middleware.util.PoiUtil;
+import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.service.FileService;
-import com.efficio.etl.web.bean.IndexValueDTO;
-import com.efficio.etl.web.bean.RowDTO;
-import com.efficio.etl.web.bean.SheetDTO;
-import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.bean.VariableDTO;
-import com.efficio.etl.web.util.AppConstants;
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -188,7 +187,10 @@ public class ETLServiceImpl implements ETLService {
 		final StudyDetails studyDetails = new StudyDetails();
 
 		studyDetails.setStudyName(userSelection.getStudyName());
-		studyDetails.setEndDate(ETLServiceImpl.formatDate(userSelection.getStudyEndDate()));
+		if (userSelection.getStudyEndDate() != null && !userSelection.getStudyEndDate().isEmpty()) {
+			studyDetails.setEndDate(ETLServiceImpl.formatDate(userSelection.getStudyEndDate()));
+		}
+
 		studyDetails.setObjective(userSelection.getStudyObjective());
 		if (!StringUtils.isEmpty(userSelection.getStudyType())) {
 			studyDetails.setStudyType(StudyType.valueOf(userSelection.getStudyType()));
@@ -198,6 +200,20 @@ public class ETLServiceImpl implements ETLService {
 
 		studyDetails.setDescription(userSelection.getStudyDescription());
 		studyDetails.setStartDate(ETLServiceImpl.formatDate(userSelection.getStudyStartDate()));
+
+
+		if (userSelection.getStudyUpdate() != null && !userSelection.getStudyUpdate().isEmpty()) {
+			studyDetails.setStudyUpdate(ETLServiceImpl.formatDate(userSelection.getStudyUpdate()));
+		}
+
+		studyDetails.setObjective(userSelection.getStudyObjective());
+
+		if (userSelection.getCreatedBy() != null) {
+			studyDetails.setCreatedBy(userSelection.getCreatedBy());
+		}
+		else {
+			studyDetails.setCreatedBy(contextUtil.getCurrentIbdbUserId().toString());
+		}
 
 		if (userSelection.getStudyId() != null) {
 			studyDetails.setId(userSelection.getStudyId());
@@ -302,7 +318,7 @@ public class ETLServiceImpl implements ETLService {
 		}
 		// Trim all header names before returning
 		return Lists.transform(headers, new Function<String, String>() {
-			public String apply(String s) {
+			public String apply(final String s) {
 				return s.trim();
 			}
 		});
@@ -930,7 +946,8 @@ public class ETLServiceImpl implements ETLService {
 		if (studyTypeValue == null) {
 			studyTypeValue = StudyType.N;
 		}
-		return new StudyDetails(study, title, objective, startDateStr, endDateStr, studyTypeValue, 0, null, null);
+		return new StudyDetails(study, title, objective, startDateStr, endDateStr, studyTypeValue, 0, null,
+				null, Util.getCurrentDateAsStringValue(), null);
 
 	}
 

@@ -36,6 +36,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Assert;
@@ -88,6 +89,9 @@ public class ETLServiceTest {
 
 	@Mock
 	private OntologyService ontologyService;
+
+	@Mock
+	private WorkbenchDataManager workbenchDataManager;
 
 	@InjectMocks
 	private final ETLServiceImpl etlService = new ETLServiceImpl();
@@ -272,6 +276,7 @@ public class ETLServiceTest {
 				.createPlotDatasetTestData("TRIAL_" + this.userSelection.getStudyName(), true));
 		Mockito.doReturn(plotDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
 				DataSetType.PLOT_DATA);
+		Mockito.doReturn(1).when(this.workbenchDataManager).getCurrentIbdbUserId(Long.valueOf(0), 1);
 
 		final org.generationcp.middleware.domain.etl.Workbook workbook = this.etlService
 				.retrieveAndSetProjectOntology(this.userSelection, false);

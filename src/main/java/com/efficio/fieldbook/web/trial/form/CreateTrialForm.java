@@ -113,6 +113,36 @@ public class CreateTrialForm {
 
 	private String description;
 
+	private String startDate;
+
+	private String endDate;
+
+	private String studyUpdate;
+
+	public String getStartDate() {
+		return this.startDate;
+	}
+
+	public void setStartDate(final String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return this.endDate;
+	}
+
+	public void setEndDate(final String endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getStudyUpdate() {
+		return this.studyUpdate;
+	}
+
+	public void setStudyUpdate(final String studyUpdate) {
+		this.studyUpdate = studyUpdate;
+	}
+
 	public String getDescription() {
 		return description;
 	}

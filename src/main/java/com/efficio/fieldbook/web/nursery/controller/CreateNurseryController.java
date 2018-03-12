@@ -182,12 +182,7 @@ public class CreateNurseryController extends SettingsController {
 	public String getChecksForUseExistingNursery(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form,
 			@PathVariable final int nurseryId, final Model model, final HttpSession session, final HttpServletRequest request)
 			throws MiddlewareQueryException {
-		if (this.userSelection.getRemovedConditions() != null) {
-			final CreateNurseryForm createNurseryForm = new CreateNurseryForm();
-			final List<SettingDetail> checkVariables = this.getCheckVariables(this.userSelection.getRemovedConditions(), createNurseryForm);
-			form.setCheckVariables(checkVariables);
-		}
-
+		this.setCheckVariablesInForm(form);
 		model.addAttribute("importGermplasmListForm", form);
 
 		return super.showAjaxPage(model, CreateNurseryController.URL_CHECKS);
@@ -283,16 +278,25 @@ public class CreateNurseryController extends SettingsController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String submit(@ModelAttribute(CREATE_NURSERY_FORM) final CreateNurseryForm form, final Model model) {
 
-		final String name = trimNurseryName(form.getBasicDetails());
+		final String name = form.getStudyName().trim();
 
 		final String description = form.getDescription();
-
+		final String startDate = form.getStartDate();
+		final String endDate = form.getEndDate();
+		final String studyUpdate = form.getStudyUpdate();
+		final String objective = form.getObjective();
+		String createdBy = form.getCreatedBy();
+		if (createdBy == null) {
+			createdBy = this.contextUtil.getCurrentIbdbUserId().toString();
+		}
 		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
 		if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
 			studyLevelVariables.addAll(form.getStudyLevelVariables());
 		}
 
-		studyLevelVariables.addAll(form.getBasicDetails());
+		if (form.getBasicDetails() != null && !form.getBasicDetails().isEmpty()) {
+			studyLevelVariables.addAll(form.getBasicDetails());
+		}
 
 		this.addStudyLevelVariablesFromUserSelectionIfNecessary(studyLevelVariables, this.userSelection);
 
@@ -333,34 +337,15 @@ public class CreateNurseryController extends SettingsController {
 
 		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, studyLevelVariables,
 				form.getPlotLevelVariables(), baselineTraits, this.userSelection, form.getNurseryConditions(),
-				this.contextUtil.getCurrentProgramUUID(), description);
+				this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, this.contextUtil.getCurrentProgramUUID());
 		this.userSelection.setWorkbook(workbook);
 
-		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), null, form.getDescription());
+		this.createStudyDetails(workbook, form.getFolderId(), null, form.getDescription(), form.getStartDate(),
+			form.getEndDate(), form.getStudyUpdate(), objective, name, createdBy);
 
 		return "success";
-	}
-
-	private String trimNurseryName(final List<SettingDetail> basicDetails) {
-		String name = null;
-		for (final SettingDetail nvar : basicDetails) {
-			if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null
-					&& nvar.getVariable().getCvTermId().equals(TermId.STUDY_NAME.getId())) {
-				/**
-				 * XXX save Trials does this in the frontend
-				 * Patching here trims both the name prop and the project column
-				 * This hack is enough for now since eventually Nursery code will be merged with Trial
-				 */
-				if (nvar.getValue() != null) {
-					nvar.setValue(nvar.getValue().trim());
-				}
-				name = nvar.getValue();
-				break;
-			}
-		}
-		return name;
 	}
 
 	private void addStudyLevelVariablesFromUserSelectionIfNecessary(final List<SettingDetail> studyLevelVariables,
@@ -455,9 +440,6 @@ public class CreateNurseryController extends SettingsController {
 		form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
 		form.setLocationId(AppConstants.LOCATION_ID.getString());
 		form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
-		form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
-		form.setStartDateId(AppConstants.START_DATE_ID.getString());
-		form.setEndDateId(AppConstants.END_DATE_ID.getString());
 		form.setOpenGermplasmUrl(this.fieldbookProperties.getGermplasmDetailsUrl());
 		form.setBaselineTraitsSegment(VariableType.TRAIT.getId().toString());
 		form.setSelectionVariatesSegment(VariableType.SELECTION_METHOD.getId().toString());
@@ -466,7 +448,7 @@ public class CreateNurseryController extends SettingsController {
 		form.setBreedingMethodCode(AppConstants.BREEDING_METHOD_CODE.getString());
 
 		try {
-			form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.getCurrentIbdbUserId()));
+			form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.contextUtil.getCurrentIbdbUserId()));
 		} catch (final MiddlewareQueryException e) {
 			CreateNurseryController.LOG.error(e.getMessage(), e);
 		}

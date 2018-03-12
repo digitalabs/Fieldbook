@@ -562,8 +562,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 			return this.getBreedingMethodByName(valueOrId);
 		} else if (DataType.LOCATION.equals(variable.getScale().getDataType())) {
 			return this.getLocationById(valueId.intValue());
-		} else if (TermId.STUDY_UID.getId() == id || DataType.PERSON.equals(variable.getScale().getDataType())) {
-			return this.getPersonByUserId(valueId.intValue());
 		} else if (isCategorical) {
 			final Term term = this.ontologyService.getTermById(valueId.intValue());
 			if (term != null) {
@@ -1263,13 +1261,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 	@Override
 	public void addStudyUUIDConditionAndPlotIDFactorToWorkbook(final Workbook workbook,
 			final boolean addPlotIdToMeasurementRows) {
-		// Add the STUDY_UID variable to make sure that user logged in
-		// during the import will be set as the owner
-		final MeasurementVariable userIdMeasurementVariable = this.createMeasurementVariable(
-				String.valueOf(TermId.STUDY_UID.getId()), String.valueOf(this.contextUtil.getCurrentUserLocalId()),
-				Operation.ADD, PhenotypicType.STUDY);
-		this.addMeasurementVariableToList(userIdMeasurementVariable, workbook.getConditions());
-
 		final MeasurementVariable plotIdMeasurementVariable = this.createMeasurementVariable(
 				String.valueOf(TermId.PLOT_ID.getId()), "", Operation.ADD, PhenotypicType.GERMPLASM);
 		plotIdMeasurementVariable.setFactor(true);

@@ -774,6 +774,9 @@ public class DesignImportController extends SettingsController {
 		final String name = "";
 
 		final String description = "";
+		final String startDate = "";
+		final String endDate = "";
+		final String studyUpdate = "";
 
 		Workbook workbook;
 		final StudyDetails details = new StudyDetails();
@@ -784,7 +787,8 @@ public class DesignImportController extends SettingsController {
 					name, combinedList, this.userSelection.getPlotsLevelList(),
 					this.userSelection.getBaselineTraitsList(), this.userSelection,
 					this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null,
-					null, this.userSelection.getNurseryConditions(), false, this.contextUtil.getCurrentProgramUUID(), description);
+					null, this.userSelection.getNurseryConditions(), false, this.contextUtil.getCurrentProgramUUID(), description,
+				startDate, endDate, studyUpdate);
 
 			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false,
 					this.contextUtil.getCurrentProgramUUID());
@@ -806,7 +810,7 @@ public class DesignImportController extends SettingsController {
 			final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService,
 					name, combinedList, this.userSelection.getPlotsLevelList(), variatesList, this.userSelection,
 					this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null,
-					null, this.userSelection.getNurseryConditions(), true, this.contextUtil.getCurrentProgramUUID(), description);
+					null, this.userSelection.getNurseryConditions(), true, this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 
 			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true,
 					this.contextUtil.getCurrentProgramUUID());

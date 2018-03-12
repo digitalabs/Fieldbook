@@ -1,44 +1,6 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.util.DateUtil;
-import org.generationcp.middleware.domain.dms.DesignTypeItem;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.TreatmentVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.StudyType;
-import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.service.api.SampleService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.ModelAttribute;
-
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -62,6 +24,45 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.etl.TreatmentVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.service.api.SampleService;
+import org.generationcp.middleware.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.StringTokenizer;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -90,12 +91,16 @@ public abstract class BaseTrialController extends SettingsController {
 
 		studyDetails.setId(detailBean.getStudyID());
 		studyDetails.setDescription(detailBean.getDescription());
-		studyDetails.setObjective(detailBean.getBasicDetails().get(Integer.toString(TermId.STUDY_OBJECTIVE.getId())));
-		studyDetails.setStudyName(detailBean.getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId())));
-		studyDetails.setDescription(detailBean.getDescription());
-		studyDetails.setStartDate(detailBean.getBasicDetails().get(Integer.toString(TermId.START_DATE.getId())));
-		studyDetails.setEndDate(detailBean.getBasicDetails().get(Integer.toString(TermId.END_DATE.getId())));
+		studyDetails.setObjective(detailBean.getObjective());
+		studyDetails.setStudyName(detailBean.getStudyName());
+		studyDetails.setStartDate(detailBean.getStartDate());
+		studyDetails.setEndDate(detailBean.getEndDate());
+		studyDetails.setStudyUpdate(Util.getCurrentDateAsStringValue(Util.DATE_AS_NUMBER_FORMAT));
 		studyDetails.setStudyType(StudyType.T);
+
+		if (detailBean.getCreatedBy() != null) {
+			studyDetails.setCreatedBy(detailBean.getCreatedBy());
+		}
 
 		if (detailBean.getFolderId() != null) {
 			studyDetails.setParentFolderId(detailBean.getFolderId());
@@ -643,19 +648,15 @@ public abstract class BaseTrialController extends SettingsController {
 		return sample;
 	}
 
-	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final List<MeasurementVariable> studyConditions,
-			final boolean isUsePrevious, final int trialID) {
+	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final boolean isUsePrevious, final int trialID)
+		throws ParseException {
 		final Map<String, String> basicDetails = new HashMap<>();
 		final List<SettingDetail> initialDetailList = new ArrayList<>();
 
 		// find out who created the study
 		// if no owner found default to the current user
-		Integer studyOwnerPersonId = this.getCurrentIbdbUserId();
-		for (final MeasurementVariable measurementVariable : studyConditions) {
-			if (measurementVariable.getTermId() == TermId.STUDY_UID.getId()) {
-				studyOwnerPersonId = Integer.parseInt(measurementVariable.getValue());
-			}
-		}
+		final Integer studyOwnerPersonId = this.contextUtil.getCurrentIbdbUserId();
+
 		final String studyOwnerPersonName = this.fieldbookService.getPersonByUserId(studyOwnerPersonId);
 
 		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
@@ -679,13 +680,18 @@ public abstract class BaseTrialController extends SettingsController {
 
 		final BasicDetails basic = new BasicDetails();
 
-		basicDetails.put(Integer.toString(TermId.STUDY_NAME.getId()), studyDetails.getStudyName());
-		basicDetails.put(Integer.toString(TermId.STUDY_OBJECTIVE.getId()), studyDetails.getObjective());
-		basicDetails.put(Integer.toString(TermId.START_DATE.getId()), this.convertDateStringForUI(studyDetails.getStartDate()));
-		basicDetails.put(Integer.toString(TermId.END_DATE.getId()), this.convertDateStringForUI(studyDetails.getEndDate()));
 		basic.setBasicDetails(basicDetails);
+		basic.setStudyName(studyDetails.getStudyName());
 		basic.setStudyID(trialID);
 		basic.setDescription(studyDetails.getDescription());
+		basic.setStartDate(Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT));
+		basic.setEndDate(studyDetails.getEndDate() != null && !studyDetails.getEndDate().isEmpty() ?
+			Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT) :
+			StringUtils.EMPTY);
+		basic.setStudyUpdate(			studyDetails.getStudyUpdate() != null && !studyDetails.getStudyUpdate().isEmpty() ?
+			Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT)
+			: StringUtils.EMPTY);
+		basic.setObjective(studyDetails.getObjective());
 
 		final int folderId = (int) studyDetails.getParentFolderId();
 		final String folderName;

@@ -17,11 +17,14 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +70,10 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	@Resource
 	private Properties appConstantsProperties;
 
+	/** The workbench service. */
+	@Resource
+	protected WorkbenchService workbenchService;
+
 	@Override
 	public String getContentName() {
 		return this.getContentName(this.userSelection.isTrial());
@@ -91,8 +98,9 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 			workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(id, isNursery);
 			workbook.getStudyDetails().setId(id);
 			this.removeAnalysisAndAnalysisSummaryVariables(workbook);
+			final String createdBy = this.fieldbookService.getPersonByUserId(Integer.valueOf(workbook.getStudyDetails().getCreatedBy()));
 			details = SettingsUtil.convertWorkbookToStudyDetails(workbook, this.fieldbookMiddlewareService, this.fieldbookService,
-					this.userSelection, this.contextUtil.getCurrentProgramUUID(), this.appConstantsProperties);
+					this.userSelection, this.contextUtil.getCurrentProgramUUID(), this.appConstantsProperties, createdBy);
 			this.rearrangeDetails(details);
 			this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);
 			if (workbook.getMeasurementDatesetId() != null) {
@@ -173,5 +181,4 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	protected void setFieldbookService(final com.efficio.fieldbook.service.api.FieldbookService fieldbookService) {
 		this.fieldbookService = fieldbookService;
 	}
-
 }

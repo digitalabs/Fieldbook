@@ -27,6 +27,7 @@ import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.util.ContextUtil;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -45,6 +46,7 @@ import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -62,6 +64,7 @@ import org.springframework.web.util.WebUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -150,7 +153,7 @@ public class EditNurseryController extends SettingsController {
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form2, @PathVariable final int nurseryId,
 			@RequestParam(required = false) final String isAjax, final Model model, final HttpServletRequest request,
 			final RedirectAttributes redirectAttributes,
-			@RequestParam(value = "crosseslistid", required = false) final String crossesListId) {
+			@RequestParam(value = "crosseslistid", required = false) final String crossesListId) throws ParseException {
 
 		model.addAttribute("createdCrossesListId", crossesListId);
 
@@ -257,7 +260,7 @@ public class EditNurseryController extends SettingsController {
 	}
 
 	private void setUpNurserylevelConditions(final Workbook workbook, final CreateNurseryForm form, final ImportGermplasmListForm form2,
-			final int nurseryId) {
+			final int nurseryId) throws ParseException {
 		final List<SettingDetail> nurseryLevelConditions =
 				this.updateRequiredFields(this.buildVariableIDList(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()),
 						this.buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true),
@@ -279,7 +282,7 @@ public class EditNurseryController extends SettingsController {
 		this.setUpFormAttributes(form, workbook, nurseryId);
 	}
 
-	private void setUpFormAttributes(final CreateNurseryForm form, final Workbook workbook, final int nurseryId) {
+	private void setUpFormAttributes(final CreateNurseryForm form, final Workbook workbook, final int nurseryId) throws ParseException {
 		form.setStudyId(nurseryId);
 		form.setBasicDetails(this.userSelection.getBasicDetails());
 		form.setStudyLevelVariables(this.userSelection.getStudyLevelConditions());
@@ -287,6 +290,14 @@ public class EditNurseryController extends SettingsController {
 		form.setSelectionVariatesVariables(this.userSelection.getSelectionVariates());
 		form.setGermplasmListId(this.getGermplasmListId(nurseryId));
 		form.setDescription(workbook.getStudyDetails().getDescription());
+		form.setObjective(workbook.getStudyDetails().getObjective());
+		form.setStartDate(DateUtil.convertDate(workbook.getStudyDetails().getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util
+			.FRONTEND_DATE_FORMAT));
+		if (workbook.getStudyDetails().getEndDate() != null && !workbook.getStudyDetails().getEndDate().isEmpty()) {
+			form.setEndDate(DateUtil.convertDate(workbook.getStudyDetails().getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util
+				.FRONTEND_DATE_FORMAT));
+		}
+		form.setStudyUpdate(workbook.getStudyDetails().getStudyUpdate());
 		form.setNurseryConditions(this.userSelection.getNurseryConditions());
 		form.setLoadSettings(EditNurseryController.SUCCESS);
 		form.setFolderId(Integer.valueOf((int) workbook.getStudyDetails().getParentFolderId()));
@@ -332,12 +343,20 @@ public class EditNurseryController extends SettingsController {
 	 * @param form     the form
 	 * @param workbook the workbook
 	 */
-	private void setMeasurementsData(final CreateNurseryForm form, final Workbook workbook) {
+	private void setMeasurementsData(final CreateNurseryForm form, final Workbook workbook) throws ParseException {
 		this.userSelection.setMeasurementRowList(workbook.getObservations());
 		form.setMeasurementRowList(this.userSelection.getMeasurementRowList());
 		form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
 		form.setStudyName(workbook.getStudyDetails().getStudyName());
 		form.setDescription(workbook.getStudyDetails().getDescription());
+		form.setObjective(workbook.getStudyDetails().getObjective());
+		form.setStartDate(Util.convertDate(workbook.getStudyDetails().getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util
+			.FRONTEND_DATE_FORMAT));
+		if (workbook.getStudyDetails().getEndDate() != null && !workbook.getStudyDetails().getEndDate().isEmpty()) {
+			form.setEndDate(Util.convertDate(workbook.getStudyDetails().getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util
+				.FRONTEND_DATE_FORMAT));
+		}
+		form.setStudyUpdate(workbook.getStudyDetails().getStudyUpdate());
 		form.changePage(1);
 		this.userSelection.setCurrentPage(form.getCurrentPage());
 		this.userSelection.setWorkbook(workbook);
@@ -404,20 +423,21 @@ public class EditNurseryController extends SettingsController {
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public Map<String, String> submit(@ModelAttribute("createNurseryForm") final CreateNurseryForm form) {
+	public Map<String, String> submit(@ModelAttribute("createNurseryForm") final CreateNurseryForm form) throws ParseException {
 		// get the name of the nursery
 
-		String name = null;
-		for (final SettingDetail nvar : form.getBasicDetails()) {
-			if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null && nvar.getVariable().getCvTermId()
-					.equals(TermId.STUDY_NAME.getId())) {
-				name = nvar.getValue();
-				break;
-			}
-		}
-
-
+		final String name = form.getStudyName();
 		final String description = form.getDescription();
+		final String objective = form.getObjective();
+		final String startDate = (form.getStartDate() != null && !form.getStartDate().isEmpty()?
+			Util.convertDate(form.getStartDate(), Util.FRONTEND_DATE_FORMAT, Util.DATE_AS_NUMBER_FORMAT) :
+			"");
+		final String endDate = (form.getEndDate() != null  && !form.getEndDate().isEmpty()?
+			Util.convertDate(form.getEndDate(), Util.FRONTEND_DATE_FORMAT, Util.DATE_AS_NUMBER_FORMAT) :
+			"");
+		final String studyUpdate = (form.getStudyUpdate() != null && !StringUtils.isBlank(form.getStudyUpdate()) ?
+			Util.convertDate(form.getStudyUpdate(), Util.FRONTEND_DATE_FORMAT, Util.DATE_AS_NUMBER_FORMAT) :
+			"");
 
 		// combine all study conditions (basic details and management details
 		// and hidden variables)
@@ -443,13 +463,14 @@ public class EditNurseryController extends SettingsController {
 		final Dataset dataset = (Dataset) SettingsUtil
 				.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, studyLevelVariables, form.getPlotLevelVariables(),
 						baselineTraits, this.userSelection, form.getNurseryConditions(), this.contextUtil.getCurrentProgramUUID(),
-					description);
+					description, startDate, endDate, studyUpdate);
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 
 		final Workbook workbook = this.prepareNewWorkbookForSaving(trialDatasetId, measurementDatasetId, dataset);
 
-		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId(), description);
+		this.createStudyDetails(workbook, form.getFolderId(), form.getStudyId(), description, startDate, endDate, studyUpdate, objective,
+			name, null);
 		this.userSelection.setWorkbook(workbook);
 
 		final Map<String, String> resultMap = new HashMap<>();
@@ -614,7 +635,9 @@ public class EditNurseryController extends SettingsController {
 			}
 		}
 
-		studyLevelVariables.addAll(createNurseryForm.getBasicDetails());
+		if (createNurseryForm.getBasicDetails() != null && !createNurseryForm.getBasicDetails().isEmpty()) {
+			studyLevelVariables.addAll(createNurseryForm.getBasicDetails());
+		}
 
 		return studyLevelVariables;
 
@@ -764,9 +787,6 @@ public class EditNurseryController extends SettingsController {
 		form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
 		form.setLocationUrl(this.fieldbookProperties.getProgramLocationsUrl());
 		form.setProjectId(this.getCurrentProjectId());
-		form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
-		form.setStartDateId(AppConstants.START_DATE_ID.getString());
-		form.setEndDateId(AppConstants.END_DATE_ID.getString());
 		form.setOpenGermplasmUrl(this.fieldbookProperties.getGermplasmDetailsUrl());
 		form.setBaselineTraitsSegment(VariableType.TRAIT.getId().toString());
 		form.setSelectionVariatesSegment(VariableType.SELECTION_METHOD.getId().toString());
@@ -823,7 +843,7 @@ public class EditNurseryController extends SettingsController {
 	 */
 	@RequestMapping(value = "/recreate/session/variables", method = RequestMethod.GET)
 	public String resetSessionVariablesAfterSave(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
-			final HttpSession session, final HttpServletRequest request) {
+			final HttpSession session, final HttpServletRequest request) throws ParseException {
 
 		final String contextParams = this.retrieveContextInfo(request);
 

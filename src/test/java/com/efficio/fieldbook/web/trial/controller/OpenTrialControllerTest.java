@@ -1,6 +1,7 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -247,7 +248,7 @@ public class OpenTrialControllerTest {
 			this.mockStandardVariables(workbook.getAllVariables());
 			this.openTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.TRIAL_ID, new ExtendedModelMap(), mockSession,
 					Mockito.mock(RedirectAttributes.class));
-		} catch (final MiddlewareException e) {
+		} catch (final MiddlewareException | ParseException e) {
 			this.handleUnexpectedException(e);
 		}
 
@@ -307,7 +308,7 @@ public class OpenTrialControllerTest {
 
 			Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be displayed.", this.hasAnalysisVariables(model));
 
-		} catch (final MiddlewareException e) {
+		} catch (final MiddlewareException | ParseException e) {
 			this.handleUnexpectedException(e);
 		}
 	}
@@ -538,27 +539,6 @@ public class OpenTrialControllerTest {
 			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(stdVar.getId(), OpenTrialControllerTest.PROGRAM_UUID))
 					.thenReturn(stdVar);
 		}
-
-		// StudyName
-		final StandardVariable studyName =
-				this.createStandardVariable(8005, "STUDY_NAME", "Study", "DBCV", "Assigned", 1120, "Character variable", "STUDY");
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8005, OpenTrialControllerTest.PROGRAM_UUID)).thenReturn(studyName);
-
-		// StudyObjective
-		final StandardVariable studyObjective = this.createStandardVariable(8030, "STUDY_OBJECTIVE", "Study objective", "Text", "Described",
-				1120, "Character variable", "STUDY");
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8030, OpenTrialControllerTest.PROGRAM_UUID))
-				.thenReturn(studyObjective);
-
-		// StartDate
-		final StandardVariable startDate = this.createStandardVariable(8050, "START_DATE", "Start date", "Date (yyyymmdd)", "Assigned",
-				1117, "Date variable", "STUDY");
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8050, OpenTrialControllerTest.PROGRAM_UUID)).thenReturn(startDate);
-
-		// EndDate
-		final StandardVariable endDate =
-				this.createStandardVariable(8060, "END_DATE", "End date", "Date (yyyymmdd)", "Assigned", 1117, "Date variable", "STUDY");
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8060, OpenTrialControllerTest.PROGRAM_UUID)).thenReturn(endDate);
 
 		final StandardVariable plotNo = this.createStandardVariable(8200, "PLOT_NO", "Field plot", "Number", "Enumerated", 1110,
 				"Numeric variable", "TRIAL_DESIGN");
@@ -1044,7 +1024,7 @@ public class OpenTrialControllerTest {
 	}
 
 	@Test
-	public void testUpdateSavedTrial() {
+	public void testUpdateSavedTrial() throws ParseException {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyType.T);
 		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString()))

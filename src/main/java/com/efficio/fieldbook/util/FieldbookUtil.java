@@ -1,13 +1,6 @@
 package com.efficio.fieldbook.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
-
+import com.efficio.fieldbook.web.util.AppConstants;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -24,17 +17,29 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.efficio.fieldbook.web.util.AppConstants;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
 public class FieldbookUtil {
-
 	public static final String UTF_8 = "UTF-8";
 	public static final String ISO_8859_1 = "iso-8859-1";
 	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
 	public static final String DESCRIPTION = "Description";
+	private static final String START_DATE = "startDate";
+	private static final String END_DATE = "endDate";
+	private static final String STUDY_UPDATE = "studyUpdate";
+	private static final String OBJECTIVE = "Objective";
+	private static final String STUDY_NAME = "Name";
+	private static final String CREATED_BY = "createdBy";
+
 	private static FieldbookUtil instance;
 
 	static {
@@ -49,18 +54,18 @@ public class FieldbookUtil {
 		return FieldbookUtil.instance;
 	}
 
-	public static List<Integer> getColumnOrderList(String columnOrders) {
+	public static List<Integer> getColumnOrderList(final String columnOrders) {
 		if (columnOrders != null && !"".equalsIgnoreCase(columnOrders)) {
 			try {
-				ObjectMapper mapper = new ObjectMapper();
-				Integer[] columnsOrderList;
+				final ObjectMapper mapper = new ObjectMapper();
+				final Integer[] columnsOrderList;
 				columnsOrderList = mapper.readValue(columnOrders, Integer[].class);
 				return Arrays.asList(columnsOrderList);
-			} catch (JsonParseException e) {
+			} catch (final JsonParseException e) {
 				FieldbookUtil.LOG.error(e.getMessage(), e);
-			} catch (JsonMappingException e) {
+			} catch (final JsonMappingException e) {
 				FieldbookUtil.LOG.error(e.getMessage(), e);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				FieldbookUtil.LOG.error(e.getMessage(), e);
 			}
 
@@ -68,18 +73,18 @@ public class FieldbookUtil {
 		return new ArrayList<>();
 	}
 
-	public static void setColumnOrderingOnWorkbook(Workbook workbook, String columnOrderDelimited) {
-		List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);
+	public static void setColumnOrderingOnWorkbook(final Workbook workbook, final String columnOrderDelimited) {
+		final List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);
 		if (!columnOrdersList.isEmpty()) {
 			workbook.setColumnOrderedLists(columnOrdersList);
 		}
 	}
 
-	public static String generateEntryCode(int index) {
+	public static String generateEntryCode(final int index) {
 		return AppConstants.ENTRY_CODE_PREFIX.getString() + String.format("%04d", index);
 	}
 
-	public static boolean isPlotDuplicateNonFirstInstance(ImportedCrosses crosses) {
+	public static boolean isPlotDuplicateNonFirstInstance(final ImportedCrosses crosses) {
 		if (crosses.isPlotDupe() && crosses.getDuplicateEntries() != null && crosses.getEntryId() > crosses.getDuplicateEntries().iterator()
 				.next()) {
 			return true;
@@ -87,26 +92,27 @@ public class FieldbookUtil {
 		return false;
 	}
 
-	public static void mergeCrossesPlotDuplicateData(ImportedCrosses crosses, List<ImportedCrosses> importedGermplasmList) {
+	public static void mergeCrossesPlotDuplicateData(final ImportedCrosses crosses, final List<ImportedCrosses> importedGermplasmList) {
 		if (FieldbookUtil.isPlotDuplicateNonFirstInstance(crosses)) {
 			// get the 1st instance of duplicate from the list
-			Integer firstInstanceDuplicate = crosses.getDuplicateEntries().iterator().next();
+			final Integer firstInstanceDuplicate = crosses.getDuplicateEntries().iterator().next();
 			// needed to minus 1 since a list is 0 based
-			ImportedCrosses firstInstanceCrossGermplasm = importedGermplasmList.get(firstInstanceDuplicate - 1);
+			final ImportedCrosses firstInstanceCrossGermplasm = importedGermplasmList.get(firstInstanceDuplicate - 1);
 			crosses.setGid(firstInstanceCrossGermplasm.getGid());
 			crosses.setCross(firstInstanceCrossGermplasm.getCross());
 			crosses.setDesig(firstInstanceCrossGermplasm.getDesig());
 		}
 	}
 
-	public static boolean isContinueCrossingMerge(boolean hasPlotDuplicate, boolean isPreservePlotDuplicate, ImportedCrosses cross) {
+	public static boolean isContinueCrossingMerge(
+		final boolean hasPlotDuplicate, final boolean isPreservePlotDuplicate, final ImportedCrosses cross) {
 		if (hasPlotDuplicate && !isPreservePlotDuplicate && FieldbookUtil.isPlotDuplicateNonFirstInstance(cross)) {
 			return true;
 		}
 		return false;
 	}
 
-	public static void copyDupeNotesToListDataProject(List<ListDataProject> dataProjectList, List<ImportedCrosses> importedCrosses) {
+	public static void copyDupeNotesToListDataProject(final List<ListDataProject> dataProjectList, final List<ImportedCrosses> importedCrosses) {
 		if (dataProjectList != null && importedCrosses != null && dataProjectList.size() == importedCrosses.size()) {
 			for (int i = 0; i < dataProjectList.size(); i++) {
 				dataProjectList.get(i).setDuplicate(importedCrosses.get(i).getDuplicate());
@@ -116,15 +122,15 @@ public class FieldbookUtil {
 
 	public static List<Integer> getFilterForMeansAndStatisticalVars() {
 
-		List<Integer> isAIds = new ArrayList<>();
-		StringTokenizer token = new StringTokenizer(AppConstants.FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS.getString(), ",");
+		final List<Integer> isAIds = new ArrayList<>();
+		final StringTokenizer token = new StringTokenizer(AppConstants.FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS.getString(), ",");
 		while (token.hasMoreTokens()) {
 			isAIds.add(Integer.valueOf(token.nextToken()));
 		}
 		return isAIds;
 	}
 
-	public static boolean isFieldmapColOrRange(MeasurementVariable var) {
+	public static boolean isFieldmapColOrRange(final MeasurementVariable var) {
 		if (var.getTermId() == TermId.COLUMN_NO.getId() || var.getTermId() == TermId.RANGE_NO.getId()) {
 			return true;
 		}
@@ -138,7 +144,7 @@ public class FieldbookUtil {
 	 * @param filename  - the filename that will be set in the http response header
 	 * @return
 	 */
-	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(String fileWithFullPath, String filename) throws
+	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(final String fileWithFullPath, final String filename) throws
 		UnsupportedEncodingException {
 		final HttpHeaders respHeaders = new HttpHeaders();
 
@@ -155,13 +161,14 @@ public class FieldbookUtil {
 
 	}
 
-	public List<Integer> buildVariableIDList(String idList) {
-		List<Integer> requiredVariables = new ArrayList<>();
-		StringTokenizer token = new StringTokenizer(idList, ",");
+	public List<Integer> buildVariableIDList(final String idList) {
+		final List<Integer> requiredVariables = new ArrayList<>();
+		final StringTokenizer token = new StringTokenizer(idList, ",");
 		while (token.hasMoreTokens()) {
 			final String s = token.nextToken();
 			// FIXME BMS-4397
-			if (!DESCRIPTION.equals(s)) {
+			if (!DESCRIPTION.equals(s) && !START_DATE.equals(s) && !END_DATE.equals(s) && !STUDY_UPDATE.equals(s) && !OBJECTIVE.equals(s)
+				&& !STUDY_NAME.equals(s) && !CREATED_BY.equals(s)) {
 				requiredVariables.add(Integer.valueOf(s));
 			}
 		}

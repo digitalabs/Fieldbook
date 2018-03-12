@@ -91,8 +91,7 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 	private static final String BREEDING_METHOD_PROPERTY_NAME = "";
 
 	protected static final List<Integer> STUDY_DETAILS_IDS =
-			Arrays.asList(TermId.STUDY_NAME.getId(), TermId.PM_KEY.getId(), TermId.STUDY_OBJECTIVE.getId(),
-					TermId.START_DATE.getId(), TermId.END_DATE.getId(), TermId.STUDY_UID.getId());
+		Arrays.asList(TermId.PM_KEY.getId());
 
 	@Override
 	void writeOutputFile(Workbook workbook, List<Integer> visibleColumns, MeasurementRow instanceLevelObservation,

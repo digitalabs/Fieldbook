@@ -77,11 +77,10 @@
 				<div class="row">
 					<div class="col-xs-6">
 						<div class="row form-group">
-							<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />
 							<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.nursery.name}"></b>: <span class="required">*</span></label>
 
 							<div class="col-sm-8">
-								<input maxlength="225" type="text" class="form-control character-input" th:field="*{basicDetails[0].value}" />
+								<input maxlength="225" type="text" class="form-control character-input" th:field="*{studyName}" />
 							</div>
 						</div>
 
@@ -94,12 +93,11 @@
 						</div>
 
 						<div class="row form-group">
-							<input class="cvTermIds" type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" />
 							<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.objective}"></b>:</label>
 
 							<div class="col-sm-8">
 								<textarea maxlength="255" class="form-control character-input" rows="3"
-								          th:field="*{basicDetails[2].value}"></textarea>
+								          th:field="*{objective}"></textarea>
 							</div>
 						</div>
 
@@ -123,38 +121,32 @@
 						</div>
 
 						<div class="row form-group">
-							<input  class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" />
 							<label  class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.created.by}"></b>: <span class="required">*</span></label>
-							<input  class="cvTermIds" type="hidden" th:field="*{basicDetails[5].variable.cvTermId}" />
-
+							
 							<div class="col-sm-8">
-								<input type="hidden" th:field="*{basicDetails[4].value}" />
-								<input type="hidden" th:field="*{basicDetails[5].value}" />
 								<label th:text="*{createdBy}"></label>
 							</div>
 
 						</div>
 
 						<div class="row form-group">
-							<input  class="cvTermIds" type="hidden" th:field="*{basicDetails[1].variable.cvTermId}" />
 							<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.creation.date}" ></b>: <span class="required">*</span></label>
 							<div class="col-sm-8">
-								<input placeholder="yyyy-mm-dd" id="basicDetails.value2" style="width: 100px" type="text"
-								       class="form-control date-input" th:field="*{basicDetails[1].value}" />
-								<label for="basicDetails.value2" class="btn datepicker">
+								<input placeholder="yyyy-mm-dd" id="startDate" style="width: 100px" type="text"
+								       class="form-control date-input" th:field="*{startDate}" />
+								<label for="startDate" class="btn datepicker">
 									<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 								</label>
 							</div>
 						</div>
 
 						<div class="row form-group">
-							<input class="cvTermIds" type="hidden" th:field="*{basicDetails[3].variable.cvTermId}" />
 							<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.completion.date}" ></b>:</label>
 
 							<div class="col-sm-8">
-								<input placeholder="yyyy-mm-dd" id="basicDetails.value4" style="width: 100px" type="text"
-								       class="form-control date-input" th:field="*{basicDetails[3].value}" />
-								<label for="basicDetails.value4" class="btn datepicker">
+								<input placeholder="yyyy-mm-dd" id="endDate" style="width: 100px" type="text"
+								       class="form-control date-input" th:field="*{endDate}" />
+								<label for="endDate" class="btn datepicker">
 									<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 								</label>
 							</div>
@@ -344,7 +336,7 @@ $(document).ready(function() {
 	$('#studyBuildOption').on('change', changeBuildOption);
 	$('#choosePreviousStudy').addClass('fbk-hide');
 	setTimeout(function() {
-		$('#' + getJquerySafeId('basicDetails.value2')).datepicker('setDate', new Date());
+		$('#' + getJquerySafeId('startDate')).datepicker('setDate', new Date());
 	}, 600);
 	$('.chs-add-variable').show();
 	displayStudyGermplasmSection(false, 0);

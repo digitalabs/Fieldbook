@@ -135,25 +135,6 @@ public class CreateNurseryControllerTestIT extends AbstractBaseIntegrationTest {
 		try {
 			Mockito.when(this.fieldbookMiddlewareService.getPersonById(-1)).thenReturn(new Person());
 
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_NAME.getId(),
-					Mockito.anyString())).thenReturn(
-					this.createStandardVariable(TermId.STUDY_NAME.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.START_DATE.getId(),
-					Mockito.anyString())).thenReturn(
-					this.createStandardVariable(TermId.START_DATE.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_OBJECTIVE.getId(),
-					Mockito.anyString())).thenReturn(
-					this.createStandardVariable(TermId.STUDY_OBJECTIVE.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.END_DATE.getId(),
-					Mockito.anyString())).thenReturn(
-					this.createStandardVariable(TermId.END_DATE.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_UID.getId(),
-					Mockito.anyString())).thenReturn(
-					this.createStandardVariable(TermId.STUDY_UID.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_UPDATE.getId(),
-					Mockito.anyString())).thenReturn(
-					this.createStandardVariable(TermId.STUDY_UPDATE.getId()));
-
 			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.BREEDING_METHOD_CODE.getId(),
 					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.BREEDING_METHOD_CODE.getId()));
@@ -220,16 +201,8 @@ public class CreateNurseryControllerTestIT extends AbstractBaseIntegrationTest {
 		CreateNurseryForm form = new CreateNurseryForm();
 
 		SettingDetail studyName = new SettingDetail();
-		SettingVariable studyNameVariable = new SettingVariable();
-		studyNameVariable.setCvTermId(TermId.STUDY_NAME.getId());
-		studyName.setVariable(studyNameVariable);
 
-		SettingDetail studyObj = new SettingDetail();
-		SettingVariable studyObjVariable = new SettingVariable();
-		studyObjVariable.setCvTermId(TermId.STUDY_OBJECTIVE.getId());
-		studyObj.setVariable(studyObjVariable);
-
-		List<SettingDetail> basicDetails = Arrays.asList(studyName, studyObj);
+		List<SettingDetail> basicDetails = Arrays.asList(studyName);
 		form.setBasicDetails(basicDetails);
 		this.userSelection.setBasicDetails(basicDetails);
 

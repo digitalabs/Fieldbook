@@ -146,6 +146,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		userLabelPrinting.setGenerateType(LabelPrintingControllerTest.WLBL_21_JASPER_REPORT);
 		userLabelPrinting.setStudyId(LabelPrintingControllerTest.SAMPLE_STUDY_ID);
 		userLabelPrinting.setTitle("Description");
+		userLabelPrinting.setName("Name");
 
 		// Mock the report service, we just need a report instance to test with
 		final ReportService reportService = Mockito.mock(ReportService.class);

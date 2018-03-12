@@ -728,19 +728,12 @@ public class FieldbookServiceTest {
 		workbook.setFactors(new ArrayList<MeasurementVariable>());
 		workbook.getObservations().get(0).setDataList(new ArrayList<MeasurementData>());
 
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.STUDY_UID.getId()),
-				Matchers.anyString()))
-				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.STUDY_UID.getId(),
-						TermId.STUDY_UID.name()));
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.PLOT_ID.getId()),
 				Matchers.anyString()))
 				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.PLOT_ID.getId(),
 						TermId.PLOT_ID.name()));
 
 		this.fieldbookServiceImpl.addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, false);
-		final MeasurementVariable studyUIDVariable = workbook.getConditions().get(0);
-		Assert.assertEquals(TermId.STUDY_UID.getId(), studyUIDVariable.getTermId());
-		Assert.assertEquals(TermId.STUDY_UID.name(), studyUIDVariable.getName());
 
 		final MeasurementVariable plotIdVariable = workbook.getFactors().get(0);
 		Assert.assertEquals(TermId.PLOT_ID.getId(), plotIdVariable.getTermId());
@@ -759,19 +752,12 @@ public class FieldbookServiceTest {
 		workbook.setFactors(new ArrayList<MeasurementVariable>());
 		workbook.getObservations().get(0).setDataList(new ArrayList<MeasurementData>());
 
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.STUDY_UID.getId()),
-				Matchers.anyString()))
-				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.STUDY_UID.getId(),
-						TermId.STUDY_UID.name()));
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.PLOT_ID.getId()),
 				Matchers.anyString()))
 				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.PLOT_ID.getId(),
 						TermId.PLOT_ID.name()));
 
 		this.fieldbookServiceImpl.addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, true);
-		final MeasurementVariable studyUIDVariable = workbook.getConditions().get(0);
-		Assert.assertEquals(TermId.STUDY_UID.getId(), studyUIDVariable.getTermId());
-		Assert.assertEquals(TermId.STUDY_UID.name(), studyUIDVariable.getName());
 
 		final MeasurementVariable plotIdVariable = workbook.getFactors().get(0);
 		Assert.assertEquals(TermId.PLOT_ID.getId(), plotIdVariable.getTermId());

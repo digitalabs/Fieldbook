@@ -6,11 +6,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.HTTPSessionUtil;
 import org.generationcp.middleware.data.initializer.MeasurementRowTestDataInitializer;
@@ -87,6 +89,9 @@ public class FileUploadControllerTest {
 	private BindingResult result;
 
 	@Mock
+	protected WorkbenchService workbenchService;
+
+	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
 	private Model model;
@@ -116,6 +121,7 @@ public class FileUploadControllerTest {
 		final Project project = new Project();
 		project.setCropType(new CropType("Maize"));
 		project.getCropType().setPlotCodePrefix(FileUploadControllerTest.PROJECT_CODE_PREFIX);
+		project.setProjectId(Long.valueOf(1));
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(FileUploadControllerTest.PROGRAM_UUID);
 
@@ -127,6 +133,8 @@ public class FileUploadControllerTest {
 		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(
 				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class),
 				Matchers.anyString())).thenReturn(null);
+
+		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt())).thenReturn(1);
 	}
 
 	@Test
@@ -169,7 +177,7 @@ public class FileUploadControllerTest {
 				false);
 
 		Mockito.when(this.dataImportService.parseWorkbook(Matchers.any(File.class), Matchers.anyString(),
-				Matchers.anyBoolean(), Matchers.any(WorkbookParser.class))).thenReturn(workbook);
+				Matchers.anyBoolean(), Matchers.any(WorkbookParser.class), Matchers.anyInt())).thenReturn(workbook);
 
 		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request,
 				this.response, this.model);
@@ -194,8 +202,10 @@ public class FileUploadControllerTest {
 				false);
 
 		Mockito.when(this.dataImportService.parseWorkbook(Matchers.any(File.class), Matchers.anyString(),
-				Matchers.anyBoolean(), Matchers.any(WorkbookParser.class)))
+				Matchers.anyBoolean(), Matchers.any(WorkbookParser.class), Matchers.anyInt()))
 				.thenThrow(new WorkbookParserException(errorMessage));
+
+		Mockito.when(this.contextUtil.getCurrentIbdbUserId()).thenReturn(1);
 
 		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request,
 				this.response, this.model);

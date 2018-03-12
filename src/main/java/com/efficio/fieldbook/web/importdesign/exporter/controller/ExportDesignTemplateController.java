@@ -29,6 +29,7 @@ public class ExportDesignTemplateController  extends AbstractBaseFieldbookContro
 	public static final String URL = "/DesignTemplate";
 	private static final String DESIGN_TEMPLATE = "DesignTemplate.csv";
 	private static final String OUTPUT_FILENAME = "outputFilename";	
+	private static final String FILENAME = "filename";
 	private static final Logger LOG = LoggerFactory.getLogger(ExportDesignTemplateController.class);
 	public static final String IS_SUCCESS = "isSuccess";
 	private static final String ERROR_MESSAGE = "errorMessage";
@@ -43,10 +44,11 @@ public class ExportDesignTemplateController  extends AbstractBaseFieldbookContro
 	@RequestMapping(value = "/export", method = RequestMethod.GET)
 	public Map<String, Object> exportDesignTemplate(final HttpServletResponse response, final HttpServletRequest req){		
 		File designTemplateFile;
-		final Map<String, Object> results = new HashMap<String, Object>();
+		final Map<String, Object> results = new HashMap<>();
 		try {
 			designTemplateFile = new File(resourceFinder.locate(ExportDesignTemplateController.DESIGN_TEMPLATE).getFile());
 			results.put(OUTPUT_FILENAME, designTemplateFile.getAbsolutePath());
+			results.put(FILENAME, designTemplateFile.getName());
 			results.put(ExportDesignTemplateController.IS_SUCCESS, 1);
 		} catch (FileNotFoundException e) {
 			ExportDesignTemplateController.LOG.error(e.getMessage(), e);

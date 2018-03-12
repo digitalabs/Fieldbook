@@ -1,6 +1,13 @@
 package com.efficio.fieldbook.util;
 
-import com.efficio.fieldbook.web.util.AppConstants;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -17,13 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -152,17 +153,6 @@ public class FieldbookUtil {
 
 		return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 
-	}
-
-	/**
-	 * Creates ResponseEntity to download a file from a controller.
-	 *
-	 * @param file      - The file to be downloaded
-	 * @return
-	 */
-	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(File file)
-			throws UnsupportedEncodingException {
-		return FieldbookUtil.createResponseEntityForFileDownload(file.getAbsoluteFile().toString(), file.getName());
 	}
 
 	public List<Integer> buildVariableIDList(String idList) {

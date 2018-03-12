@@ -160,8 +160,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	private CrossExpansionProperties crossExpansionProperties;
 	@Resource
 	private WorkbenchService workbenchService;
-	@Resource
-	private ContextUtil contextUtil;
+	
 	@Resource
 	private ReportService reportService;
 

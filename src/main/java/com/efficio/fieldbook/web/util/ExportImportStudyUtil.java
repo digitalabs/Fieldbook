@@ -214,14 +214,4 @@ public class ExportImportStudyUtil {
 
 	}
 	
-	public static String getFileNamePath(final String filename, final FieldbookProperties fieldbookProperties) {
-
-		final StringBuilder filenameBuilder = new StringBuilder();
-		filenameBuilder.append(fieldbookProperties.getUploadDirectory());
-		filenameBuilder.append(File.separator);
-		filenameBuilder.append(SettingsUtil.cleanSheetAndFileName(filename));
-
-		final String filenamePath = filenameBuilder.toString();
-		return filenamePath;
-	}
 }

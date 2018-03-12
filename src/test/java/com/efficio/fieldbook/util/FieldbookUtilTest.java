@@ -1,7 +1,6 @@
 
 package com.efficio.fieldbook.util;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -245,8 +244,8 @@ public class FieldbookUtilTest {
 
 	@Test
 	public void testCreateResponseEntityForFileDownload() throws UnsupportedEncodingException {
-		File testFile = new File("testFile.xls");
-		ResponseEntity<FileSystemResource> result = FieldbookUtil.createResponseEntityForFileDownload(testFile);
+		final String filename = "testFile.xls";
+		ResponseEntity<FileSystemResource> result = FieldbookUtil.createResponseEntityForFileDownload(filename, filename);
 
 		Assert.assertEquals("Make sure we get a http success", HttpStatus.OK, result.getStatusCode());
 

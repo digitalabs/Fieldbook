@@ -458,13 +458,15 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 			};
 
-			$scope.addStockTabData = function(tabId, tabData, listName, isPageLoading) {
+			$scope.addStockTabData = function (tabId, tabData, listName, isPageLoading) {
 				var isSwap = false;
 				if (isPageLoading === undefined) {
 					isPageLoading = false;
 				}
 
-				angular.forEach($scope.advanceTabs, function(value, index) {
+				$scope.stockListTabs = [];
+
+				angular.forEach($scope.advanceTabs, function (value, index) {
 					if (!isSwap) {
 						if (parseInt(value.id) === parseInt(tabId)) {
 							$scope.advanceTabs.splice(index + 1, 0, {
@@ -480,16 +482,12 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 								id: 'stock-content-pane' + tabId
 							});
 							isSwap = true;
-							if (isPageLoading !== true) {
-								$scope.tabSelected = 'stock-list' + tabId + '-li';
-							}
-							$('#listActionButton' + tabId).addClass('disabled');
 						}
 					}
 				});
 
 				if (!isSwap) {
-					angular.forEach($scope.crossesTabs, function(value, index) {
+					angular.forEach($scope.crossesTabs, function (value, index) {
 						if (!isSwap) {
 							if (parseInt(value.id) === parseInt(tabId)) {
 								$scope.crossesTabs.splice(index + 1, 0, {
@@ -505,30 +503,30 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 									id: 'stock-content-pane' + tabId
 								});
 								isSwap = true;
-								if (isPageLoading !== true) {
-									$scope.tabSelected = 'stock-list' + tabId + '-li';
-								}
-								$('#listActionButton' + tabId).addClass('disabled');
 							}
 						}
 					});
 				}
+
+				if (isPageLoading !== true) {
+					$scope.tabSelected = 'stock-list' + tabId + '-li';
+				}
+				$('#listActionButton' + tabId).addClass('disabled');
 			};
 
-			$scope.addAdvanceTabData = function(tabId, tabData, listName, isPageLoading) {
+			$scope.addAdvanceTabData = function (tabId, tabData, listName, isPageLoading) {
 				var isUpdate = false;
 				if (isPageLoading === undefined) {
 					isPageLoading = false;
 				}
-				angular.forEach($scope.advanceTabs, function(value, index) {
-					if (value.name === listName && parseInt(value.id) === parseInt(tabId)) {
-						isUpdate = true;
-						$scope.advanceTabsData[index].data = tabData;
-						return;
+				angular.forEach($scope.advanceTabs, function (value, index) {
+						if (!isUpdate && value.name === listName && parseInt(value.id) === parseInt(tabId)) {
+							isUpdate = true;
+							$scope.advanceTabsData[index].data = tabData;
+
+						}
 					}
-				}
 				);
-				$scope.stockListTabs = [];
 
 				if (!isUpdate) {
 					$scope.advanceTabs.push({
@@ -550,44 +548,20 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			};
 
-			$scope.addSampleListTabData = function(tabId, tabData, listName, isPageLoading) {
+			$scope.addSampleTabData = function (tabId, tabData, listName, isPageLoading) {
 				var isSwap = false;
 				var isUpdate = false;
 				if (isPageLoading === undefined) {
 					isPageLoading = false;
 				}
-				angular.forEach($scope.sampleTabs, function(value, index) {
-						if (value.name === listName && parseInt(value.id) === parseInt(tabId)) {
+				angular.forEach($scope.sampleTabs, function (value, index) {
+						if (!isUpdate && value.name === listName && parseInt(value.id) === parseInt(tabId)) {
 							isUpdate = true;
 							$scope.sampleTabsData[index].data = tabData;
-							return;
+
 						}
 					}
 				);
-
-				angular.forEach($scope.sampleTabs, function(value, index) {
-					if (!isSwap && !isUpdate) {
-						if (parseInt(value.id) === parseInt(tabId)) {
-							$scope.sampleTabs.splice(index + 1, 0, {
-								name: listName,
-								state: 'sample-list' + tabId + '-li',
-								id: tabId,
-								displayName: 'Sample List:[' + $scope.sampleTabs[index].name + ']'
-							});
-
-							$scope.sampleTabsData.splice(index + 1, 0, {
-								name: 'sample-list' + tabId + '-li',
-								data: tabData,
-								id: 'sample-content-pane' + tabId
-							});
-							isSwap = true;
-							if (isPageLoading !== true) {
-								$scope.tabSelected = 'sample-list' + tabId + '-li';
-							}
-							$('#listActionButton' + tabId).addClass('disabled');
-						}
-					}
-				});
 
 				if (!isSwap && !isUpdate) {
 					$scope.sampleTabs.push({
@@ -608,16 +582,16 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 			};
 
-			$scope.addCrossesListTabData = function(tabId, tabData, listName, crossesType, isPageLoading) {
+			$scope.addCrossesTabData = function (tabId, tabData, listName, crossesType, isPageLoading) {
 				var isUpdate = false;
 				if (isPageLoading === undefined) {
 					isPageLoading = false;
 				}
-				angular.forEach($scope.crossesTabs, function(value, index) {
-						if (value.name === listName && parseInt(value.id) === parseInt(tabId)) {
+				angular.forEach($scope.crossesTabs, function (value, index) {
+						if (!isUpdate && value.name === listName && parseInt(value.id) === parseInt(tabId)) {
 							isUpdate = true;
 							$scope.crossesTabsData[index].data = tabData;
-							return;
+
 						}
 					}
 				);
@@ -627,7 +601,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						name: listName,
 						state: 'crosses-list' + tabId + '-li',
 						id: tabId,
-						displayName: crossesType +': [' + listName + ']'
+						displayName: crossesType + ': [' + listName + ']'
 					});
 					$scope.crossesTabsData.push({
 						name: 'crosses-list' + tabId + '-li',
@@ -708,12 +682,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					$('#sample-list-' + tab.id).dataTable().fnAdjustColumnSizing();
 				}, 1);
 			};
-
-/*			$scope.initCrossesTab = function(tab) {
-				$timeout(function() {
-					$('#crosses-list-' + tab.id).dataTable().fnAdjustColumnSizing();
-				}, 1);
-			};*/
 
 			$('body').on('DO_AUTO_SAVE', function() {
 				TrialManagerDataService.saveCurrentData();

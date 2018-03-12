@@ -831,7 +831,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		this.addAvailableFieldsForFieldMap(hasFieldMap, locale, labelFieldsList);
 
 		// add inventory fields if any
-		if (this.hasInventoryValues(studyID, workbook.isNursery())) {
+		if (this.hasInventoryValues(studyID)) {
 			labelFieldsList.addAll(this.addInventoryRelatedLabelFields(locale));
 		}
 
@@ -923,10 +923,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	 * Returned true if the current study's germplasm list has inventory details
 	 *
 	 * @param studyID
-	 * @param isNursery
 	 * @return
 	 */
-	protected boolean hasInventoryValues(final int studyID, final boolean isNursery) {
+	protected boolean hasInventoryValues(final int studyID) {
 		try {
 			GermplasmList germplasmList = null;
 			final GermplasmListType listType = GermplasmListType.STUDY;

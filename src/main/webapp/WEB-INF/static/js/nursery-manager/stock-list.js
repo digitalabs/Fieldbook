@@ -111,7 +111,7 @@ if (typeof StockIDFunctions === 'undefined') {
 			}
 		},
 
-		generateStockListTabIfNecessary: function(listId, isPageLoading) {
+		generateStockListTabIfNecessary: function (listId, isPageLoading) {
 			'use strict';
 
 			var url = '/Fieldbook/stock/generateStockTabIfNecessary/' + listId;
@@ -120,23 +120,11 @@ if (typeof StockIDFunctions === 'undefined') {
 				url: url,
 				type: 'GET',
 				cache: false,
-				success: function(html) {
-					if (html && html.length > 0) {
-						if(isNursery()){
-						$('#advance-list' + listId + '-li').after(html);
-							$('#advance-list' + listId).data('has-stock', 'true');
-							$('#stock-list-anchor' + listId).on('shown.bs.tab', function() {
-								if ($(this).data('has-loaded') !== '1') {
-									$(this).data('has-loaded', '1');
-									StockIDFunctions.displayStockList($(this).data('list-id'));
-                                    $('.nav-tabs').tabdrop({align: 'left'});
-                                    $('.nav-tabs').tabdrop('layout');
-								}
-							});
-						} else {
-                            // Display already generated Stock List
-                            StockIDFunctions.displayStockList(listId,isPageLoading);
-                        }
+				success: function (html) {
+					if (html && html.length > 0) {debugger;
+						// Display already generated Stock List
+						StockIDFunctions.displayStockList(listId, isPageLoading);
+
 					}
 				}
 			});

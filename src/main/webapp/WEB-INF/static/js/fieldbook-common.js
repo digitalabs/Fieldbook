@@ -1122,7 +1122,7 @@ function trialSelectedEnvironmentContinueCreatingSample(trialInstances) {
 function openSampleSummary(plotId, plotNumber) {
 	'use strict';
 	BMS.Fieldbook.SamplesSummaryDataTable('#samples-summary-table', plotId, plotNumber);
-	$('#samplesSummaryModal').modal({ backdrop: 'static', keyboard: true })
+	$('#samplesSummaryModal').modal({ backdrop: 'static', keyboard: true });
 	$('#samples-summary-table').wrap('<div style="overflow-x: auto" />');
 }
 
@@ -1960,7 +1960,7 @@ function closeAdvanceListTab(uniqueId) {
 	}, 100);
 }
 
-function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, advancedGermplasmListId,isPageLoading) {
+function displayAdvanceList(germplasmListId, listName, isDefault, advancedGermplasmListId, isPageLoading) {
 	'use script';
 	var id = advancedGermplasmListId ? advancedGermplasmListId : germplasmListId;
 	var url = '/Fieldbook/germplasm/list/advance/' + id;
@@ -1974,24 +1974,14 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
 		url: url,
 		type: 'GET',
 		cache: false,
-		success: function(html) {
-            if (isNursery()) {
-                $('#advance-list' + id).html(html);
-                //we just show the button
-                $('.export-advance-list-action-button').removeClass('fbk-hide');
-                $('#advance-list' + id + '-li').addClass('advance-germplasm-items');
-                $('#advance-list' + id + '-li').data('advance-germplasm-list-id', advancedGermplasmListId);
-                $('.nav-tabs').tabdrop({align: 'left'});
-                $('.nav-tabs').tabdrop('layout');
-            } else {
-                var element = angular.element(document.getElementById("mainApp")).scope();
-                // To apply scope safely
-                element.safeApply(function (){
-                    element.addAdvanceTabData(id, html, listName, isPageLoading);
-                });
-                // Display Stock List if it is generated
-                StockIDFunctions.generateStockListTabIfNecessary(id, isPageLoading);
-            }
+		success: function (html) {
+			var element = angular.element(document.getElementById("mainApp")).scope();
+			// To apply scope safely
+			element.safeApply(function () {
+				element.addAdvanceTabData(id, html, listName, isPageLoading);
+			});
+			// Display Stock List if it is generated
+			StockIDFunctions.generateStockListTabIfNecessary(id, isPageLoading);
 		}
 	});
 }
@@ -2011,23 +2001,13 @@ function displayCrossesList(germplasmListId, listName, crossesType, isDefault, c
 		type: 'GET',
 		cache: false,
 		success: function (html) {
-			if (isNursery()) {
-				$('#Crosses-list' + id).html(html);
-				//we just show the button
-				$('.export-advance-list-action-button').removeClass('fbk-hide');
-				$('#Crosses-list' + id + '-li').addClass('Crosses-germplasm-items');
-				$('#Crosses-list' + id + '-li').data('Crosses-germplasm-list-id', crossesListId);
-				$('.nav-tabs').tabdrop({align: 'left'});
-				$('.nav-tabs').tabdrop('layout');
-			} else {
-				var element = angular.element(document.getElementById("mainApp")).scope();
-				// To apply scope safely
-				element.safeApply(function () {
-					element.addCrossesListTabData(id, html, listName, crossesType, isPageLoading);
-				});
-				// Display Stock List if it is generated
-				StockIDFunctions.generateStockListTabIfNecessary(id, isPageLoading);
-			}
+			var element = angular.element(document.getElementById("mainApp")).scope();
+			// To apply scope safely
+			element.safeApply(function () {
+				element.addCrossesTabData(id, html, listName, crossesType, isPageLoading);
+			});
+			// Display Stock List if it is generated
+			StockIDFunctions.generateStockListTabIfNecessary(id, isPageLoading);
 		}
 	});
 }
@@ -2041,13 +2021,13 @@ function displaySampleList(id, listName, isPageLoading) {
 		url: url,
 		type: 'GET',
 		cache: false,
-		success: function(html) {
-				var element = angular.element(document.getElementById("mainApp")).scope();
-				// To apply scope safely
-				element.safeApply(function (){
-					element.addSampleListTabData(id, html, listName, isPageLoading);
-				});
-			}
+		success: function (html) {
+			var element = angular.element(document.getElementById("mainApp")).scope();
+			// To apply scope safely
+			element.safeApply(function () {
+				element.addSampleTabData(id, html, listName, isPageLoading);
+			});
+		}
 	});
 }
 

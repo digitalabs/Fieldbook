@@ -127,7 +127,7 @@ public class LabelPrintingServiceImplTest {
 	private GermplasmListTestDataInitializer germplasmListTestDataInitializer;
 
 	@Before
-	public void beforeTest() throws Exception {
+	public void beforeTest() {
 		this.germplasmListTestDataInitializer = new GermplasmListTestDataInitializer();
 		// init data initializer
 		this.inventoryDetailsInitializer = new InventoryDetailsTestDataInitializer();
@@ -218,7 +218,7 @@ public class LabelPrintingServiceImplTest {
 	}
 
 	@Test
-	public void testGetLabelPrintingProgramPreset() throws Exception {
+	public void testGetLabelPrintingProgramPreset() {
 		LabelPrintingPresets preset = this.labelPrintingServiceImpl.getLabelPrintingPreset(LabelPrintingServiceImplTest.TEST_PRESET_ID,
 				LabelPrintingPresets.STANDARD_PRESET);
 
@@ -232,7 +232,7 @@ public class LabelPrintingServiceImplTest {
 	}
 
 	@Test
-	public void testGetAllLabelPrintingPresetsByName() throws Exception {
+	public void testGetAllLabelPrintingPresetsByName() {
 		final List<LabelPrintingPresets> programPresetList =
 				this.labelPrintingServiceImpl.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
 						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue());
@@ -254,7 +254,7 @@ public class LabelPrintingServiceImplTest {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 		final Integer studyId = workbook.getStudyDetails().getId();
-		final List<GermplasmList> germplasmLists = this.germplasmListTestDataInitializer.createGermplasmLists(1);
+		final List<GermplasmList> germplasmLists = GermplasmListTestDataInitializer.createGermplasmLists(1);
 		final GermplasmList germplasmList = germplasmLists.get(0);
 		final Integer numOfEntries = germplasmList.getListData().size();
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY)).thenReturn(
@@ -263,14 +263,14 @@ public class LabelPrintingServiceImplTest {
 				.thenReturn(this.inventoryDetailsInitializer.createInventoryDetailList(numOfEntries));
 
 		Assert.assertTrue("Expecting to return true for germplasm list entries with inventory details.",
-				this.labelPrintingServiceImpl.hasInventoryValues(studyId, workbook.isNursery()));
+				this.labelPrintingServiceImpl.hasInventoryValues(studyId));
 	}
 
 	@Test
 	public void testHasInventoryValues_ReturnsFalseForEntriesWithoutInventory() throws MiddlewareQueryException {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 		final Integer studyId = workbook.getStudyDetails().getId();
-		final List<GermplasmList> germplasmLists = this.germplasmListTestDataInitializer.createGermplasmLists(1);
+		final List<GermplasmList> germplasmLists = GermplasmListTestDataInitializer.createGermplasmLists(1);
 		final GermplasmList germplasmList = germplasmLists.get(0);
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY))
 				.thenReturn(germplasmLists);
@@ -278,7 +278,7 @@ public class LabelPrintingServiceImplTest {
 				.thenReturn(new ArrayList<InventoryDetails>());
 
 		Assert.assertFalse("Expecting to return false for germplasm list entries with inventory details.",
-				this.labelPrintingServiceImpl.hasInventoryValues(studyId, workbook.isNursery()));
+				this.labelPrintingServiceImpl.hasInventoryValues(studyId));
 	}
 
 	@Test
@@ -507,7 +507,7 @@ public class LabelPrintingServiceImplTest {
 	}
 
 	@Test
-	public void testCheckAndSetFieldMapInstanceInfoForGermplsmDescriptorsData() throws Exception {
+	public void testCheckAndSetFieldMapInstanceInfoForGermplsmDescriptorsData() {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(2, 2);
 
 		final boolean isTrial = true;
@@ -612,7 +612,7 @@ public class LabelPrintingServiceImplTest {
 	}
 
 	@Test
-	public void testGetAvailableLabelFieldsForStockListForNursery() throws Exception {
+	public void testGetAvailableLabelFieldsForStockListForNursery() {
 
 		Mockito.when(this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY,
 				null, Locale.getDefault())).thenReturn("Nursery Name");
@@ -675,7 +675,7 @@ public class LabelPrintingServiceImplTest {
 	}
 
 	@Test
-	public void testGetAvailableLabelFieldsForStockListForTrial() throws Exception {
+	public void testGetAvailableLabelFieldsForStockListForTrial() {
 
 		Mockito.when(this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null,
 				Locale.getDefault())).thenReturn("Trial Name");

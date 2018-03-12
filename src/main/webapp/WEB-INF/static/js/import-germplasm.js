@@ -12,20 +12,18 @@
 
 				var gpListItemsClass = '.germplasm-list-items',
 					gpListDataTblClass = '.germplasm-list-data-table';
-
-				if (isNursery()) {
+				/*if (isNursery()) {
 					germplasmDataTable = new BMS.Fieldbook.GermplasmListDataTable(gpListItemsClass, gpListDataTblClass, dataGermplasmList);
 					setSpinnerMaxValue();
 					if ($noGermplasmListIndicator.length !== 0) {
 						$noGermplasmListIndicator.html(noNurseryGermplasmList);
 					}
-				} else {
-					germplasmDataTable =
-						new BMS.Fieldbook.TrialGermplasmListDataTable(gpListItemsClass, gpListDataTblClass, dataGermplasmList);
+				} else {*/
+					germplasmDataTable = new BMS.Fieldbook.TrialGermplasmListDataTable(gpListItemsClass, gpListDataTblClass, dataGermplasmList);
 					if ($noGermplasmListIndicator.length !== 0 && $('body').data('service.trialMeasurement.count') !== 0) {
-						$noGermplasmListIndicator.html(noTrialGermplasmList);
+						$noGermplasmListIndicator.html(noTrialGermplasmList);//TODO MUESTRA MENSAJE CUENYAD
 					}
-				}
+				//}
 
 				// disable enter submit event on $('#txtStartingEntryNo') input box
 				$txtStartingEntryNo.keypress(function(event) {

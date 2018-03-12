@@ -3598,7 +3598,7 @@ function makeGermplasmListDraggable(isDraggable) {
     $('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
 }
 
-function isOpenTrial() {
+function isOpenStudy() {
 	'use strict';
 	var trialStatus = $('body').data('trialStatus');
 	return (trialStatus && trialStatus === 'OPEN');

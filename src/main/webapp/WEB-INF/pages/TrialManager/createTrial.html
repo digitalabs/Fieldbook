@@ -206,7 +206,7 @@
 									<div class="row form-group">
 										<label class="control-label col-sm-4"><b>Study type</b>: <span class="required">*</span></label>
 										<span class="col-sm-8" ng-show="isOpenStudy()">
-    										<span id="studyTypeLabel" ng-bind="data.studyType"></span>
+    										<span id="studyTypeLabel" ng-bind="data.studyType.label"></span>
 										</span>
 										<div class="col-sm-8" ng-show="!isOpenStudy()">
 											<select class="form-control" id="studyTypeId" ng-model="studyTypeSelected"

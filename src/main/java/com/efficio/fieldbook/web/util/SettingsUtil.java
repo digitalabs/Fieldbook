@@ -1739,13 +1739,6 @@ public class SettingsUtil {
 						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
 						found = true;
 						break;
-					} else if (STUDY_TYPE.equals(label)) {
-						final SettingVariable variableStudyType =
-							new SettingVariable(STUDY_TYPE, null, null, null, null, null, null, null, null, null);
-						final SettingDetail settingDetailDescription = new SettingDetail(variableStudyType, null, studyType, false);
-						index = SettingsUtil.addToList(details, settingDetailDescription, index, fields, strFieldId);
-						found = true;
-						break;
 					} else if (START_DATE.equals(label)) {
 						final SettingVariable variableDescription =
 							new SettingVariable(START_DATE, null, null, null, null, null, null, null, null, null);
@@ -2514,8 +2507,7 @@ public class SettingsUtil {
 		return variableIdList;
 	}
 
-	public static void addNewSettingDetails(final int mode, final List<SettingDetail> newDetails, final UserSelection userSelection)
-			throws Exception {
+	public static void addNewSettingDetails(final int mode, final List<SettingDetail> newDetails, final UserSelection userSelection) {
 		SettingsUtil.setSettingDetailRoleAndVariableType(mode, newDetails, null, null);
 
 		if (mode == VariableType.STUDY_DETAIL.getId()) {

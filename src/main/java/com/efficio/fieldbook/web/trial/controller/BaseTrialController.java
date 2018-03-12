@@ -61,9 +61,11 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -910,7 +912,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	private ImmutableMap<Integer, SettingDetail> createMapOfTraitsAndSelectionVariatesFromUserSelection() {
-		final List<SettingDetail> variates = new ArrayList<>();
+		final Set<SettingDetail> variates = new HashSet<>();
 		if (CollectionUtils.isNotEmpty(this.userSelection.getBaselineTraitsList())) {
 			variates.addAll(this.userSelection.getBaselineTraitsList());
 		}

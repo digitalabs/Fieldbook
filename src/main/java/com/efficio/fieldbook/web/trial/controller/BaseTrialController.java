@@ -719,7 +719,7 @@ public abstract class BaseTrialController extends SettingsController {
 		basic.setEndDate(studyDetails.getEndDate() != null && !studyDetails.getEndDate().isEmpty() ?
 			Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT) :
 			StringUtils.EMPTY);
-		basic.setStudyUpdate(			studyDetails.getStudyUpdate() != null && !studyDetails.getStudyUpdate().isEmpty() ?
+		basic.setStudyUpdate(studyDetails.getStudyUpdate() != null && !studyDetails.getStudyUpdate().isEmpty() ?
 			Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT)
 			: StringUtils.EMPTY);
 		basic.setObjective(studyDetails.getObjective());
@@ -742,9 +742,19 @@ public abstract class BaseTrialController extends SettingsController {
 		final TabInfo tab = new TabInfo();
 		tab.setData(basic);
 
-		this.userSelection.setBasicDetails(initialDetailList);
-
+		setUserSelectionBasicInformation(studyDetails, initialDetailList);
 		return tab;
+	}
+
+	protected void setUserSelectionBasicInformation(final StudyDetails studyDetails, final List<SettingDetail> initialDetailList) {
+		this.userSelection.setBasicDetails(initialDetailList);
+		this.userSelection.setStudyName(studyDetails.getStudyName());
+		this.userSelection.setStudyDescription(studyDetails.getDescription());
+		this.userSelection.setStudyStartDate(studyDetails.getStartDate());
+		this.userSelection.setStudyEndDate(studyDetails.getEndDate());
+		this.userSelection.setStudyUpdate(studyDetails.getStudyUpdate());
+		this.userSelection.setStudyObjective(studyDetails.getObjective());
+		this.userSelection.setStudyType(studyDetails.getStudyType().getName());
 	}
 
 	protected String convertDateStringForUI(final String value) {

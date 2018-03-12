@@ -145,7 +145,7 @@ var SaveAdvanceList = {};
 						$('#saveListTreeModal').data('is-save-stock', '0');
 					} else {
 						$('a#advanceHref' + id).tab('show');
-						displayAdvanceList(data.germplasmListId, $.trim(data.listName), false, data.advancedGermplasmListId);
+						displayAdvanceList(data.germplasmListId, $.trim(data.listName), false, data.advancedGermplasmListId, true);
 					}
 					showSuccessfulMessage('', saveListSuccessfullyMessage);
 				} else {

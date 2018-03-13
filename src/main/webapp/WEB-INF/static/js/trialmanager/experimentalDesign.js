@@ -581,6 +581,10 @@
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[31]);
 										return false
 									}
+									if (totalTestEntries == 0) {
+										showErrorMessage('page-message', EXP_DESIGN_MSGS[33]);
+										return false
+									}
 								}
 								break;
 							}

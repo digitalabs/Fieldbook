@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.service.EntryListOrderDesignService;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -63,6 +64,9 @@ public class ExpDesignController extends BaseTrialController {
 	private ResolvableRowColumnDesignService resolvableRowColumnDesign;
 	@Resource
 	private AugmentedRandomizedBlockDesignService augmentedRandomizedBlockDesignService;
+	@Resource
+	private EntryListOrderDesignService entryListOrderDesignService;
+
 	@Resource
 	private ResourceBundleMessageSource messageSource;
 	@Resource
@@ -170,7 +174,7 @@ public class ExpDesignController extends BaseTrialController {
 		final Locale locale = LocaleContextHolder.getLocale();
 		try {
 
-			// we validate here if there is gerplasm
+			// we validate here if there is germplasm
 			if (germplasmList == null) {
 				expParameterOutput = new ExpDesignValidationOutput(false,
 						this.messageSource.getMessage("experiment.design.generate.no.germplasm", null, locale));
@@ -342,6 +346,8 @@ public class ExpDesignController extends BaseTrialController {
 			return this.resolvableRowColumnDesign;
 		} else if (designType == DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId()) {
 			return this.augmentedRandomizedBlockDesignService;
+		} else if (designType == DesignTypeItem.ENTRY_LIST_ORDER.getId()) {
+			return this.entryListOrderDesignService;
 		}
 		return null;
 	}

@@ -121,7 +121,7 @@ if (typeof StockIDFunctions === 'undefined') {
 				type: 'GET',
 				cache: false,
 				success: function (html) {
-					if (html && html.length > 0) {debugger;
+					if (html && html.length > 0) {
 						// Display already generated Stock List
 						StockIDFunctions.displayStockList(listId, isPageLoading);
 

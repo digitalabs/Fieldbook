@@ -126,15 +126,14 @@ var SaveAdvanceList = {};
 			success: function(data) {
 				if (data.isSuccess === 1) {
 					$('#saveListTreeModal').modal('hide');
-					if(isParent) {
+					if (isParent) {
 						$('#saveListTreeModal').data('is-save-parent', '0');
-					}
-					else if (isCrosses) {
-						var crossType="";
+					} else if (isCrosses) {
+						var crossType = "";
 						if ($('#germplasmListType').val() === 'IMP_CROSS') {
-							crossType="Imported Crosses";
+							crossType = "Imported Crosses";
 						} else {
-							crossType="Designed Crosses";
+							crossType = "Designed Crosses";
 						}
 						displayCrossesList(data.germplasmListId, $.trim(data.listName), crossType, false, data.crossesListId, false);
 						$('#saveListTreeModal').data('is-save-crosses', '0');
@@ -144,6 +143,8 @@ var SaveAdvanceList = {};
 					} else if (isStock) {
 						$('#saveListTreeModal').data('is-save-stock', '0');
 					} else {
+						var id = data.advancedGermplasmListId ? data.advancedGermplasmListId : data.germplasmListId;
+
 						$('a#advanceHref' + id).tab('show');
 						displayAdvanceList(data.germplasmListId, $.trim(data.listName), false, data.advancedGermplasmListId, true);
 					}

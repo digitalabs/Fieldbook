@@ -37,11 +37,11 @@ import com.google.common.collect.Lists;
 @Transactional
 public class ExportSampleListController  extends AbstractBaseFieldbookController {
 
+	protected static final String CONTENT_TYPE = "contentType";
+	protected static final String FILENAME = "filename";
+	protected static final String OUTPUT_FILENAME = "outputFilename";
 	private static final String UTF_8 = "UTF-8";
 	private static final String ISO_8859_1 = "iso-8859-1";
-	private static final String CONTENT_TYPE = "contentType";
-	private static final String FILENAME = "filename";
-	private static final String OUTPUT_FILENAME = "outputFilename";
 	private static final String ERROR_MESSAGE = "errorMessage";
 	static final String IS_SUCCESS = "isSuccess";
 	private static final Logger LOG = LoggerFactory.getLogger(ExportSampleListController.class);

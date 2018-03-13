@@ -48,23 +48,21 @@ public class CsvExportSampleListServiceImpl implements CsvExportSampleListServic
 	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	@Override
-	public FileExportInfo export(final List<SampleDetailsDTO> sampleDetailsDTOs, final String filename, final List<String> visibleColumns)
+	public FileExportInfo export(final List<SampleDetailsDTO> sampleDetailsDTOs, final String filenameWithoutExtension, final List<String> visibleColumns)
 		throws IOException {
 		LOG.debug("Initialize export");
-		final List<String> filenameList = new ArrayList<>();
 
 		final List<ExportColumnHeader> exportColumnHeaders = this.getExportColumnHeaders(visibleColumns);
 		final List<Map<Integer, ExportColumnValue>> exportColumnValues = this.getExportColumnValues(exportColumnHeaders, sampleDetailsDTOs);
 
-		final String cleanFilename = SettingsUtil.cleanSheetAndFileName(filename);
-		final String filenamePath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(cleanFilename,
+		final String cleanFilenameWithoutExtension = SettingsUtil.cleanSheetAndFileName(filenameWithoutExtension);
+		final String filenamePath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(cleanFilenameWithoutExtension,
 				AppConstants.EXPORT_CSV_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 		this.generateCSVFile(exportColumnValues, exportColumnHeaders, filenamePath);
 
-		filenameList.add(filenamePath);
 		LOG.debug("Finished export");
 		
-		return new FileExportInfo(filenamePath, cleanFilename + AppConstants.EXPORT_CSV_SUFFIX.getString());
+		return new FileExportInfo(filenamePath, cleanFilenameWithoutExtension + AppConstants.EXPORT_CSV_SUFFIX.getString());
 	}
 
 	private List<Map<Integer, ExportColumnValue>> getExportColumnValues(List<ExportColumnHeader> columnHeaders,
@@ -207,6 +205,11 @@ public class CsvExportSampleListServiceImpl implements CsvExportSampleListServic
 			}
 		}
 		return values.toArray(new String[values.size()]);
+	}
+
+	
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
 	}
 
 }

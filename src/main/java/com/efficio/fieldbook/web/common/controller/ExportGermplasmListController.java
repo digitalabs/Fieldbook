@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -42,6 +41,10 @@ import com.efficio.fieldbook.web.util.AppConstants;
 @Configurable
 public class ExportGermplasmListController extends AbstractBaseFieldbookController {
 
+	protected static final String FILENAME = "filename";
+
+	protected static final String OUTPUT_FILENAME = "outputFilename";
+
 	private static final Logger LOG = LoggerFactory.getLogger(ExportGermplasmListController.class);
 
 	public static final String URL = "/ExportManager";
@@ -56,9 +59,6 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 	@Resource
 	private ExportGermplasmListService exportGermplasmListService;
 	
-	@Resource
-	private ContextUtil contextUtil;
-	
 	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 
@@ -72,12 +72,12 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		String[] clientVisibleColumnTermIds = exportGermplasmListForm.getGermplasmListVisibleColumns().split(",");
 
 		Boolean isNursery = StudyType.N.getName().equals(studyType);
-		Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnsMap(clientVisibleColumnTermIds, isNursery);
+		Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnsMap(clientVisibleColumnTermIds);
 
-		return this.doExport(exportType, response, req, visibleColumnsMap, isNursery);
+		return this.doExport(exportType, response, visibleColumnsMap, isNursery);
 	}
 
-	protected Map<String, Boolean> getVisibleColumnsMap(String[] termIds, Boolean isNursery) {
+	protected Map<String, Boolean> getVisibleColumnsMap(String[] termIds) {
 
 		List<String> visibleColumnsInClient = Arrays.asList(termIds);
 		Map<String, Boolean> map = new HashMap<>();
@@ -107,7 +107,7 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		return map;
 	}
 
-	protected String doExport(int exportType, HttpServletResponse response, HttpServletRequest req, Map<String, Boolean> visibleColumnsMap,
+	protected String doExport(int exportType, HttpServletResponse response, Map<String, Boolean> visibleColumnsMap,
 			Boolean isNursery) throws GermplasmListExporterException {
 
 		String outputFileNamePath = "";
@@ -146,8 +146,8 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		}
 
 		final Map<String, Object> results = new HashMap<>();
-		results.put("outputFilename", outputFileNamePath);
-		results.put("filename", downloadFileName);
+		results.put(OUTPUT_FILENAME, outputFileNamePath);
+		results.put(FILENAME, downloadFileName);
 		results.put("contentType", response.getContentType());
 
 		return super.convertObjectToJson(results);

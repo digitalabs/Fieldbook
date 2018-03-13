@@ -54,7 +54,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	@Resource
 	private ContextUtil contextUtil;
 
-	private static final String NO_FILE = "noFile";
+	protected static final String NO_FILE = "noFile";
 
 	private static final String ADVANCE_LIST_SHEET_NAME = "Advance List";
 
@@ -103,7 +103,6 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	@Override
 	public FileExportInfo exportStockList(final Integer stockListId, final GermplasmExportService germplasmExportServiceImpl) {
 
-		final List<String> filenameList = new ArrayList<>();
 		String downloadFilename = null;
 		String outputFilename = ExportAdvanceListServiceImpl.NO_FILE;
 		final String suffix = AppConstants.EXPORT_XLS_SUFFIX.getString();
@@ -123,7 +122,6 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 			this.exportList(inventoryDetailList, outputFilename, sheetName, germplasmExportServiceImpl,
 					AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString(), GermplasmListType.isCrosses(germplasmListType));
 
-			filenameList.add(outputFilename);
 		} catch (IOException | MiddlewareQueryException e) {
 			ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
 		}

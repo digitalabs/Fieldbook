@@ -14,6 +14,7 @@ package com.efficio.fieldbook.web.common.bean;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.google.common.collect.Lists;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
@@ -171,6 +172,14 @@ public class UserSelection implements Serializable {
 
 	private Integer startingEntryNo;
 	private Integer startingPlotNo;
+	private String studyName;
+	private String studyDescription;
+	private String studyObjective;
+	private String studyStartDate;
+	private String studyEndDate;
+	private String studyUpdate;
+	private String studyType;
+	private String createdBy;
 
 	/**
 	 * Gets the current page germplasm list.
@@ -967,5 +976,193 @@ public class UserSelection implements Serializable {
 
 	public void setStartingPlotNo(Integer startingPlotNo) {
 		this.startingPlotNo = startingPlotNo;
+	}
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+
+	public boolean isFieldLayoutRandom() {
+		return fieldLayoutRandom;
+	}
+
+	public void setFieldLayoutRandom(final boolean fieldLayoutRandom) {
+		this.fieldLayoutRandom = fieldLayoutRandom;
+	}
+
+	public Integer getNurseryTypeId() {
+		return nurseryTypeId;
+	}
+
+	public void setNurseryTypeId(final Integer nurseryTypeId) {
+		this.nurseryTypeId = nurseryTypeId;
+	}
+
+	public List<InventoryDetails> getPreviousInventoryDetails() {
+		return previousInventoryDetails;
+	}
+
+	public void setPreviousInventoryDetails(final List<InventoryDetails> previousInventoryDetails) {
+		this.previousInventoryDetails = previousInventoryDetails;
+	}
+
+	public String getStudyName() {
+		return studyName;
+	}
+
+	public void setStudyName(final String studyName) {
+		this.studyName = studyName;
+	}
+
+	public String getStudyDescription() {
+		return studyDescription;
+	}
+
+	public void setStudyDescription(final String studyDescription) {
+		this.studyDescription = studyDescription;
+	}
+
+	public String getStudyObjective() {
+		return studyObjective;
+	}
+
+	public void setStudyObjective(final String studyObjective) {
+		this.studyObjective = studyObjective;
+	}
+
+	public String getStudyStartDate() {
+		return studyStartDate;
+	}
+
+	public void setStudyStartDate(final String studyStartDate) {
+		this.studyStartDate = studyStartDate;
+	}
+
+	public String getStudyEndDate() {
+		return studyEndDate;
+	}
+
+	public void setStudyEndDate(final String studyEndDate) {
+		this.studyEndDate = studyEndDate;
+	}
+
+	public String getStudyUpdate() {
+		return studyUpdate;
+	}
+
+	public void setStudyUpdate(final String studyUpdate) {
+		this.studyUpdate = studyUpdate;
+	}
+
+	public String getStudyType() {
+		return studyType;
+	}
+
+	public void setStudyType(final String studyType) {
+		this.studyType = studyType;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(final String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof UserSelection))
+			return false;
+		final UserSelection that = (UserSelection) o;
+		return isFieldLayoutRandom() == that.isFieldLayoutRandom() && isImportValid() == that.isImportValid()
+			&& getCurrentPageGermplasmList() == that.getCurrentPageGermplasmList() && getCurrentPageCheckGermplasmList() == that
+			.getCurrentPageCheckGermplasmList() && getCurrentPage() == that.getCurrentPage() && Objects
+			.equals(getActualFileName(), that.getActualFileName()) && Objects.equals(getServerFileName(), that.getServerFileName())
+			&& Objects.equals(getImportedGermplasmMainInfo(), that.getImportedGermplasmMainInfo()) && Objects
+			.equals(getImportedCheckGermplasmMainInfo(), that.getImportedCheckGermplasmMainInfo()) && Objects
+			.equals(getStudyDetailsList(), that.getStudyDetailsList()) && Objects
+			.equals(getStudyLevelConditions(), that.getStudyLevelConditions()) && Objects
+			.equals(getPlotsLevelList(), that.getPlotsLevelList()) && Objects.equals(getBaselineTraitsList(), that.getBaselineTraitsList())
+			&& Objects.equals(getTrialLevelVariableList(), that.getTrialLevelVariableList()) && Objects
+			.equals(getTrialEnvironmentValues(), that.getTrialEnvironmentValues()) && Objects
+			.equals(getImportedAdvancedGermplasmList(), that.getImportedAdvancedGermplasmList()) && Objects
+			.equals(getTraitRefList(), that.getTraitRefList()) && Objects.equals(getTreatmentFactors(), that.getTreatmentFactors())
+			&& Objects.equals(getSelectionVariates(), that.getSelectionVariates()) && Objects
+			.equals(getBasicDetails(), that.getBasicDetails()) && Objects.equals(getNurseryConditions(), that.getNurseryConditions())
+			&& Objects.equals(getDeletedStudyLevelConditions(), that.getDeletedStudyLevelConditions()) && Objects
+			.equals(getDeletedPlotLevelList(), that.getDeletedPlotLevelList()) && Objects
+			.equals(getDeletedBaselineTraitsList(), that.getDeletedBaselineTraitsList()) && Objects
+			.equals(getDeletedNurseryConditions(), that.getDeletedNurseryConditions()) && Objects
+			.equals(getDeletedTrialLevelVariables(), that.getDeletedTrialLevelVariables()) && Objects
+			.equals(getDeletedTreatmentFactors(), that.getDeletedTreatmentFactors()) && Objects
+			.equals(getChangeDetails(), that.getChangeDetails()) && Objects.equals(getRemovedFactors(), that.getRemovedFactors()) && Objects
+			.equals(getRemovedConditions(), that.getRemovedConditions()) && Objects.equals(getNewTraits(), that.getNewTraits()) && Objects
+			.equals(getNewSelectionVariates(), that.getNewSelectionVariates()) && Objects.equals(getWorkbook(), that.getWorkbook())
+			&& Objects.equals(getTemporaryWorkbook(), that.getTemporaryWorkbook()) && Objects
+			.equals(getDesignImportData(), that.getDesignImportData()) && Objects.equals(getNurseryTypeId(), that.getNurseryTypeId())
+			&& Objects.equals(getMeasurementRowList(), that.getMeasurementRowList()) && Objects
+			.equals(getMeasurementDatasetVariable(), that.getMeasurementDatasetVariable()) && Objects
+			.equals(getConstantsWithLabels(), that.getConstantsWithLabels()) && Objects
+			.equals(getExpDesignParams(), that.getExpDesignParams()) && Objects
+			.equals(getExpDesignVariables(), that.getExpDesignVariables()) && Objects
+			.equals(getExperimentalDesignVariables(), that.getExperimentalDesignVariables()) && Objects
+			.equals(getImportedCrossesList(), that.getImportedCrossesList()) && Objects
+			.equals(getImportedCrossesId(), that.getImportedCrossesId()) && Objects.equals(getCrossSettings(), that.getCrossSettings())
+			&& Objects.equals(getListId(), that.getListId()) && Objects
+			.equals(getPreviousInventoryDetails(), that.getPreviousInventoryDetails()) && Objects
+			.equals(getStartingEntryNo(), that.getStartingEntryNo()) && Objects.equals(getStartingPlotNo(), that.getStartingPlotNo())
+			&& Objects.equals(getStudyName(), that.getStudyName()) && Objects.equals(getStudyDescription(), that.getStudyDescription())
+			&& Objects.equals(getStudyObjective(), that.getStudyObjective()) && Objects
+			.equals(getStudyStartDate(), that.getStudyStartDate()) && Objects.equals(getStudyEndDate(), that.getStudyEndDate()) && Objects
+			.equals(getStudyUpdate(), that.getStudyUpdate()) && Objects.equals(getStudyType(), that.getStudyType()) && Objects
+			.equals(getCreatedBy(), that.getCreatedBy());
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(getActualFileName(), getServerFileName(), isFieldLayoutRandom(), getImportedGermplasmMainInfo(),
+			getImportedCheckGermplasmMainInfo(), isImportValid(), getStudyDetailsList(), getCurrentPageGermplasmList(),
+			getCurrentPageCheckGermplasmList(), getStudyLevelConditions(), getPlotsLevelList(), getBaselineTraitsList(),
+			getTrialLevelVariableList(), getTrialEnvironmentValues(), getImportedAdvancedGermplasmList(), getTraitRefList(),
+			getTreatmentFactors(), getSelectionVariates(), getBasicDetails(), getNurseryConditions(), getDeletedStudyLevelConditions(),
+			getDeletedPlotLevelList(), getDeletedBaselineTraitsList(), getDeletedNurseryConditions(), getDeletedTrialLevelVariables(),
+			getDeletedTreatmentFactors(), getChangeDetails(), getRemovedFactors(), getRemovedConditions(), getNewTraits(),
+			getNewSelectionVariates(), getWorkbook(), getTemporaryWorkbook(), getDesignImportData(), getCurrentPage(), getNurseryTypeId(),
+			getMeasurementRowList(), getMeasurementDatasetVariable(), getConstantsWithLabels(), getExpDesignParams(),
+			getExpDesignVariables(), getExperimentalDesignVariables(), getImportedCrossesList(), getImportedCrossesId(), getCrossSettings(),
+			getListId(), getPreviousInventoryDetails(), getStartingEntryNo(), getStartingPlotNo(), getStudyName(), getStudyDescription(),
+			getStudyObjective(), getStudyStartDate(), getStudyEndDate(), getStudyUpdate(), getStudyType(), getCreatedBy());
+	}
+
+	@Override
+	public String toString() {
+		return "UserSelection{" + "actualFileName='" + actualFileName + '\'' + ", serverFileName='" + serverFileName + '\''
+			+ ", fieldLayoutRandom=" + fieldLayoutRandom + ", importedGermplasmMainInfo=" + importedGermplasmMainInfo
+			+ ", importedCheckGermplasmMainInfo=" + importedCheckGermplasmMainInfo + ", isImportValid=" + isImportValid
+			+ ", studyDetailsList=" + studyDetailsList + ", currentPageGermplasmList=" + currentPageGermplasmList
+			+ ", currentPageCheckGermplasmList=" + currentPageCheckGermplasmList + ", studyLevelConditions=" + studyLevelConditions
+			+ ", plotsLevelList=" + plotsLevelList + ", baselineTraitsList=" + baselineTraitsList + ", trialLevelVariableList="
+			+ trialLevelVariableList + ", trialEnvironmentValues=" + trialEnvironmentValues + ", importedAdvancedGermplasmList="
+			+ importedAdvancedGermplasmList + ", traitRefList=" + traitRefList + ", treatmentFactors=" + treatmentFactors
+			+ ", selectionVariates=" + selectionVariates + ", basicDetails=" + basicDetails + ", nurseryConditions=" + nurseryConditions
+			+ ", deletedStudyLevelConditions=" + deletedStudyLevelConditions + ", deletedPlotLevelList=" + deletedPlotLevelList
+			+ ", deletedBaselineTraitsList=" + deletedBaselineTraitsList + ", deletedNurseryConditions=" + deletedNurseryConditions
+			+ ", deletedTrialLevelVariables=" + deletedTrialLevelVariables + ", deletedTreatmentFactors=" + deletedTreatmentFactors
+			+ ", changeDetails=" + changeDetails + ", removedFactors=" + removedFactors + ", removedConditions=" + removedConditions
+			+ ", newTraits=" + newTraits + ", newSelectionVariates=" + newSelectionVariates + ", workbook=" + workbook
+			+ ", temporaryWorkbook=" + temporaryWorkbook + ", designImportData=" + designImportData + ", currentPage=" + currentPage
+			+ ", nurseryTypeId=" + nurseryTypeId + ", measurementRowList=" + measurementRowList + ", measurementDatasetVariable="
+			+ measurementDatasetVariable + ", constantsWithLabels=" + constantsWithLabels + ", expDesignParams=" + expDesignParams
+			+ ", expDesignVariables=" + expDesignVariables + ", experimentalDesignVariables=" + experimentalDesignVariables
+			+ ", importedCrossesList=" + importedCrossesList + ", importedCrossesId=" + importedCrossesId + ", crossSettings="
+			+ crossSettings + ", listId=" + listId + ", previousInventoryDetails=" + previousInventoryDetails + ", startingEntryNo="
+			+ startingEntryNo + ", startingPlotNo=" + startingPlotNo + ", studyName='" + studyName + '\'' + ", studyDescription='"
+			+ studyDescription + '\'' + ", studyObjective='" + studyObjective + '\'' + ", studyStartDate='" + studyStartDate + '\''
+			+ ", studyEndDate='" + studyEndDate + '\'' + ", studyUpdate='" + studyUpdate + '\'' + ", studyType='" + studyType + '\''
+			+ ", createdBy='" + createdBy + '\'' + '}';
 	}
 }

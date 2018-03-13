@@ -130,12 +130,11 @@ public class ExpDesignController extends BaseTrialController {
 			variatesList.addAll(this.userSelection.getSelectionVariates());
 		}
 
-		final String name = "";
-
-		final String description = "";
-		final String startDate = "";
-		final String endDate = "";
-		final String studyUpdate = "";
+		final String name = this.userSelection.getStudyName();
+		final String description = this.userSelection.getStudyDescription();
+		final String startDate = this.userSelection.getStudyStartDate();
+		final String endDate = this.userSelection.getStudyEndDate();
+		final String studyUpdate = this.userSelection.getStudyUpdate();
 
 		final Dataset dataset = (Dataset) SettingsUtil.
 				convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection.getPlotsLevelList(),
@@ -146,7 +145,7 @@ public class ExpDesignController extends BaseTrialController {
 
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.contextUtil.getCurrentProgramUUID());
 		final StudyDetails details = new StudyDetails();
-		details.setStudyType(studyDataManager.getStudyTypeByName("T")); // TODO VER COMO ARRELGAR
+		details.setStudyType(studyDataManager.getStudyTypeByName(this.userSelection.getStudyType()));
 		workbook.setStudyDetails(details);
 		this.userSelection.setTemporaryWorkbook(workbook);
 

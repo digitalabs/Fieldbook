@@ -41,7 +41,7 @@ public class CsvExportStudyServiceImpl extends BaseExportStudyServiceImpl implem
 		final List<ExportColumnHeader> exportColumnHeaders =
 				this.getExportColumnHeaders(visibleColumns, workbook.getMeasurementDatasetVariables());
 		final List<Map<Integer, ExportColumnValue>> exportColumnValues =
-				this.getExportColumnValues(exportColumnHeaders, workbook.getMeasurementDatasetVariables(), plotLevelObservations);
+				this.getExportColumnValues(exportColumnHeaders, plotLevelObservations);
 
 		this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileNamePath);
 	}
@@ -82,7 +82,7 @@ public class CsvExportStudyServiceImpl extends BaseExportStudyServiceImpl implem
 	}
 
 	protected List<Map<Integer, ExportColumnValue>> getExportColumnValues(final List<ExportColumnHeader> columns,
-			final List<MeasurementVariable> variables, final List<MeasurementRow> observations) {
+			final List<MeasurementRow> observations) {
 
 		final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
 

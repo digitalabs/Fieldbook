@@ -32,8 +32,8 @@ public abstract class BaseExportStudyServiceImpl implements ExportStudyService {
 	abstract String getFileExtension();
 	
 	@Override
-	public FileExportInfo export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
-		return this.export(workbook, filename, instances, null);
+	public FileExportInfo export(final Workbook workbook, final String studyName, final List<Integer> instances) throws IOException {
+		return this.export(workbook, studyName, instances, null);
 	}
 	
 	@Override
@@ -64,13 +64,24 @@ public abstract class BaseExportStudyServiceImpl implements ExportStudyService {
 
 		// multiple instances
 		if (instances != null && instances.size() > 1) {
-			final ZipUtil zipUtil = new ZipUtil();
 			downloadFilename = studyName + AppConstants.ZIP_FILE_SUFFIX.getString();
-			outputFilename =
-					zipUtil.zipIt(studyName, filenameList, this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+			outputFilename = createZipFile(studyName, filenameList);
 		}
 
 		return new FileExportInfo(outputFilename, downloadFilename);
+	}
+
+	protected String createZipFile(final String studyName, final List<String> filenameList) throws IOException {
+		String outputFilename;
+		final ZipUtil zipUtil = new ZipUtil();
+		outputFilename =
+				zipUtil.zipIt(studyName, filenameList, this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+		return outputFilename;
+	}
+
+	
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
 	}
 
 }

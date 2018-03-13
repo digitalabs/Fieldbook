@@ -68,13 +68,11 @@ public abstract class BaseKsuExportStudyServiceImpl implements ExportStudyServic
 			final String traitFilename = studyName + "-Traits" + AppConstants.EXPORT_KSU_TRAITS_SUFFIX.getString();
 			final String traitFilenamePath = this.installationDirectoryUtil.getFileInTemporaryDirectoryForProjectAndTool(traitFilename,
 					this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
-			KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath, this.fieldbookMiddlewareService, this.ontologyService);
+			this.writeTraitsFile(workbook, traitFilenamePath);
 			filenameList.add(traitFilenamePath);
 
-			final ZipUtil zipUtil = new ZipUtil();
 			downloadFilename = studyName + AppConstants.ZIP_FILE_SUFFIX.getString();
-			outputFilename =
-					zipUtil.zipIt(studyName, filenameList, this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+			outputFilename = this.createZipFile(studyName, filenameList);
 
 		} finally {
 			if (fos != null) {
@@ -85,10 +83,31 @@ public abstract class BaseKsuExportStudyServiceImpl implements ExportStudyServic
 		return new FileExportInfo(outputFilename, downloadFilename);
 	}
 
+	protected void writeTraitsFile(final Workbook workbook, final String traitFilenamePath) {
+		KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath, this.fieldbookMiddlewareService, this.ontologyService);
+	}
+
+	protected String createZipFile(final String studyName, final List<String> filenameList) throws IOException {
+		String outputFilename;
+		final ZipUtil zipUtil = new ZipUtil();
+		outputFilename =
+				zipUtil.zipIt(studyName, filenameList, this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+		return outputFilename;
+	}
+
 	@Override
 	public FileExportInfo export(Workbook workbook, String filename, List<Integer> instances, List<Integer> visibleColumns)
 			throws IOException {
 		return this.export(workbook, filename, instances);
+	}
+	
+	public void setOntologyService(final OntologyService ontologyService) {
+		this.ontologyService = ontologyService;
+	}
+
+	
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
 	}
 
 }

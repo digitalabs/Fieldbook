@@ -459,36 +459,58 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.addStockTabData = function (tabId, tabData, listName, isPageLoading) {
-				var isSwap = false;
+				var isAdvanceStock = false;
+				var isCrossesStock = false;
+				var isAdvance = false;
+
 				if (isPageLoading === undefined) {
 					isPageLoading = false;
 				}
 
-				$scope.stockListTabs = [];
+				if ($scope.stockListTabs === undefined) {
+					$scope.stockListTabs = [];
+				}
 
-				angular.forEach($scope.advanceTabs, function (value, index) {
-					if (!isSwap) {
-						if (parseInt(value.id) === parseInt(tabId)) {
-							$scope.advanceTabs.splice(index + 1, 0, {
-								name: listName,
-								state: 'stock-list' + tabId + '-li',
-								id: tabId,
-								displayName: 'Stock List:[' + $scope.advanceTabs[index].name + ']'
-							});
+				angular.forEach($scope.advanceTabs, function (value) {
+					if (!isAdvance && value.id === tabId) {
+						isAdvance = true;
+					}
 
-							$scope.advanceTabsData.splice(index + 1, 0, {
-								name: 'stock-list' + tabId + '-li',
-								data: tabData,
-								id: 'stock-content-pane' + tabId
-							});
-							isSwap = true;
-						}
+					if (!isAdvanceStock && value.state === 'stock-list' + tabId + '-li') {
+						isAdvanceStock = true;
 					}
 				});
 
-				if (!isSwap) {
+				angular.forEach($scope.crossesTabs, function (value) {
+					if (!isCrossesStock && value.state === 'stock-list' + tabId + '-li') {
+						isCrossesStock = true;
+					}
+				});
+
+				if (!isAdvanceStock && isAdvance) {
+					angular.forEach($scope.advanceTabs, function (value, index) {
+						if (!isAdvanceStock) {
+							if (parseInt(value.id) === parseInt(tabId)) {
+								$scope.advanceTabs.splice(index + 1, 0, {
+									name: listName,
+									state: 'stock-list' + tabId + '-li',
+									id: tabId,
+									displayName: 'Stock List:[' + $scope.advanceTabs[index].name + ']'
+								});
+
+								$scope.advanceTabsData.splice(index + 1, 0, {
+									name: 'stock-list' + tabId + '-li',
+									data: tabData,
+									id: 'stock-content-pane' + tabId
+								});
+								isAdvanceStock = true;
+							}
+						}
+					});
+
+				} else if (!isCrossesStock && !isAdvance) {
 					angular.forEach($scope.crossesTabs, function (value, index) {
-						if (!isSwap) {
+						if (!isCrossesStock) {
 							if (parseInt(value.id) === parseInt(tabId)) {
 								$scope.crossesTabs.splice(index + 1, 0, {
 									name: listName,
@@ -502,7 +524,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 									data: tabData,
 									id: 'stock-content-pane' + tabId
 								});
-								isSwap = true;
+								isCrossesStock = true;
 							}
 						}
 					});
@@ -511,6 +533,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				if (isPageLoading !== true) {
 					$scope.tabSelected = 'stock-list' + tabId + '-li';
 				}
+
 				$('#listActionButton' + tabId).addClass('disabled');
 			};
 
@@ -519,6 +542,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				if (isPageLoading === undefined) {
 					isPageLoading = false;
 				}
+
 				angular.forEach($scope.advanceTabs, function (value, index) {
 						if (!isUpdate && value.name === listName && parseInt(value.id) === parseInt(tabId)) {
 							isUpdate = true;
@@ -535,11 +559,13 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						id: tabId,
 						displayName: 'Advance List: [' + listName + ']'
 					});
+
 					$scope.advanceTabsData.push({
 						name: 'advance-list' + tabId + '-li',
 						data: tabData,
 						id: 'advance-list' + tabId + '-li'
 					});
+
 					if (isPageLoading !== true) {
 						$scope.tabSelected = 'advance-list' + tabId + '-li';
 						$scope.isSettingsTab = false;

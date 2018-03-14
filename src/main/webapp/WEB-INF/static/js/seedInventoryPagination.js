@@ -22,7 +22,7 @@ var InventoryPage = {
             //needed set time out since chrme is not able to rnder properly the checkbox if its checked or not
             setTimeout(function() {
             	var rows = $(".final-advance-list").DataTable().rows().nodes();
-            	$('input[type="checkbox"]', rows).prop('checked', false).parent('td').parent('tr').removeClass('selected');
+            	$('input[type="checkbox"]', rows).prop('checked', false).parent('td').parent('tr').removeClass('selected').removeClass('manual-selected');
                 var isChecked = $('#' + getJquerySafeId(sectionContainerDiv) + ' .selectAllStock').prop('checked');
                 if (isChecked) {
                 	$('input[type="checkbox"]', rows).prop('checked', 'checked').parent('td').parent('tr').addClass('selected').addClass('manual-selected');
@@ -86,7 +86,7 @@ var InventoryPage = {
             	var selectedRows = $(".final-advance-list").DataTable().rows(['.selected']).nodes();
 				$('input[type="checkbox"]', selectedRows).prop('checked', true).parent('td').parent('tr').addClass('selected').addClass('manual-selected');
 				var unselectedRows = $(".final-advance-list").DataTable().rows([':not(.selected)']).nodes();
-				$('input[type="checkbox"]', unselectedRows).prop('checked', false);
+				$('input[type="checkbox"]', unselectedRows).prop('checked', false).removeClass('manual-selected');
 
                 var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
                 $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);

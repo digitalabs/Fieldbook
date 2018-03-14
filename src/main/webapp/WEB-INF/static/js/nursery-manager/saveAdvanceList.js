@@ -325,11 +325,11 @@ var SaveAdvanceList = {};
 				SaveAdvanceList.verifyCheckboxesForSelectAll();
 			},
 			onShift: function() {
-				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected-dummy').addClass('selected');
-				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.selected input.reviewAdvancingListGid').prop('checked', true);
-				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr:not(.selected) input.reviewAdvancingListGid').prop('checked', false);
-                $('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected').removeClass('manual-selected');
-
+				var selectedRows = $(".advance-nursery-list-table .advance-germplasm-items").DataTable().rows(['.selected']).nodes();
+				$('input[type="checkbox"]', selectedRows).prop('checked', true).parent('td').parent('tr').addClass('selected').addClass('manual-selected');
+				var unselectedRows = $(".advance-nursery-list-table .advance-germplasm-items").DataTable().rows([':not(.selected)']).nodes();
+				$('input[type="checkbox"]', unselectedRows).prop('checked', false);
+				
                 // Display total number of selected entries
                 var selectedRows = $('[type="checkbox"]:checked', $('.advance-nursery-list-table .advance-germplasm-items').DataTable().rows().nodes()).length;
                 $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(selectedRows);

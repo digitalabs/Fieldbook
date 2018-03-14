@@ -222,7 +222,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 			}
 		}
 
-		this.markDeletedPlots(form, form.getMarkedCells());
+		this.markDeletedPlots(form.getMarkedCells());
 
 		List<FieldMapLabel> labels = this.userFieldmap.getAllSelectedFieldMapLabelsToBeAdded(true);
 
@@ -284,7 +284,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 		return "Fieldmap/generateFieldmapView";
 	}
 
-	private void markDeletedPlots(FieldmapForm form, String deletedPlots) {
+	private void markDeletedPlots(final String deletedPlots) {
 		List<String> dpform = new ArrayList<>();
 		if (deletedPlots != null) {
 			String[] dps = deletedPlots.split(",");

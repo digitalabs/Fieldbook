@@ -116,7 +116,7 @@ import net.sf.jasperreports.engine.JRException;
 @RequestMapping({LabelPrintingController.URL})
 public class LabelPrintingController extends AbstractBaseFieldbookController {
 
-	private static final String FILE_NAME = "fileName";
+	protected static final String FILE_NAME = "fileName";
 	/**
 	 * The Constant URL.
 	 */

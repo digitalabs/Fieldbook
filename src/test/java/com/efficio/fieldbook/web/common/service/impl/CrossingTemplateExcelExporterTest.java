@@ -21,6 +21,8 @@ import org.generationcp.commons.parsing.ExcelCellStyleBuilder;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.InstallationDirectoryUtil;
+import org.generationcp.middleware.data.initializer.ProjectTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -39,6 +41,7 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -56,6 +59,7 @@ import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportExceptio
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingTemplateExcelExporterTest {
 
+	private static final String XLS_EXT = ".xls";
 	private static final String STUDY_NAME = "studyname";
 	private static final int STUDY_ID = 1;
 	private static final String TEST_FILENAME = "testFilename.xls";
@@ -86,6 +90,8 @@ public class CrossingTemplateExcelExporterTest {
 	private CrossingTemplateExcelExporter exporter;
 
 	private org.apache.poi.ss.usermodel.Workbook workbook;
+	
+	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	@Before
 	public void setup() throws IOException, InvalidFormatException {
@@ -97,7 +103,7 @@ public class CrossingTemplateExcelExporterTest {
 
 	@After
 	public void tearDown() {
-		final File file = new File("CrossingTemplate-" + CrossingTemplateExcelExporterTest.STUDY_NAME + ".xls");
+		final File file = new File("CrossingTemplate-" + CrossingTemplateExcelExporterTest.STUDY_NAME + XLS_EXT);
 		file.deleteOnExit();
 	}
 
@@ -111,14 +117,23 @@ public class CrossingTemplateExcelExporterTest {
 				Matchers.anyInt(), Matchers.any(VariableTypeList.class));
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(Matchers.anyInt())).thenReturn(new ArrayList<ListDataProject>());
-		Project projectMock = Mockito.mock(Project.class);
-		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(projectMock);
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
 		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(new ArrayList<User>());
 
-		// to test
 		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID,
 				CrossingTemplateExcelExporterTest.STUDY_NAME, CrossingTemplateExcelExporterTest.CURRENT_USER_ID);
-		Assert.assertEquals("uses same study name", "CrossingTemplate-" + CrossingTemplateExcelExporterTest.STUDY_NAME + ".xls",
+
+		// Check file is written in proper directory and with correct filename
+		final String outputDirectoryPath = this.installationDirectoryUtil
+				.getOutputDirectoryForProjectAndTool(this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+		final File outputDirectoryFile = new File(outputDirectoryPath);
+		Assert.assertTrue(outputDirectoryFile.exists());
+		final File outputFile = new File(exportInfo.getFilePath());
+		Assert.assertEquals(outputDirectoryFile, outputFile.getParentFile());
+		final String expectedBaseFilename = "CrossingTemplate-" + CrossingTemplateExcelExporterTest.STUDY_NAME;
+		Assert.assertTrue(outputFile.getName().startsWith(expectedBaseFilename));
+		Assert.assertTrue(outputFile.getName().endsWith(XLS_EXT));
+		Assert.assertEquals("Uses same study name", expectedBaseFilename + XLS_EXT,
 				exportInfo.getDownloadFileName());
 	}
 
@@ -294,7 +309,7 @@ public class CrossingTemplateExcelExporterTest {
 	@Test
 	public void testChangeInvalidaCharacterExportFilename() throws Exception {
 		final String studyName = "Nueva Nursery \\ / : * ? \" \\&quot; &lt; &gt; | ,";
-		final String exportFileName = "CrossingTemplate-Nueva Nursery _ _ _ _ _ _ __ _ _ _ _.xls";
+		final String expectedBaseFilename = "CrossingTemplate-Nueva Nursery _ _ _ _ _ _ __ _ _ _ _";
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
 				GermplasmListType.NURSERY)).thenReturn(this.initializeCrossesList());
 
@@ -303,15 +318,24 @@ public class CrossingTemplateExcelExporterTest {
 				Matchers.anyInt(), Matchers.any(VariableTypeList.class));
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(Matchers.anyInt())).thenReturn(new ArrayList<ListDataProject>());
-		Project projectMock = Mockito.mock(Project.class);
-		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(projectMock);
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
 		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(new ArrayList<User>());
 
 		// to test
 		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, studyName,
 				CrossingTemplateExcelExporterTest.CURRENT_USER_ID);
-		assertThat(exportFileName, equalTo(exportInfo.getDownloadFileName()));
-		new File(exportInfo.getFilePath()).deleteOnExit();
+		
+		// Check file is written in proper directory and with correct filename
+		final String outputDirectoryPath = this.installationDirectoryUtil
+				.getOutputDirectoryForProjectAndTool(this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+		final File outputDirectoryFile = new File(outputDirectoryPath);
+		Assert.assertTrue(outputDirectoryFile.exists());
+		final File outputFile = new File(exportInfo.getFilePath());
+		Assert.assertEquals(outputDirectoryFile, outputFile.getParentFile());
+		Assert.assertTrue(outputFile.getName().startsWith(expectedBaseFilename));
+		Assert.assertTrue(outputFile.getName().endsWith(XLS_EXT));
+		Assert.assertEquals("Cleaned up study name", expectedBaseFilename + XLS_EXT,
+				exportInfo.getDownloadFileName());
 	}
 
 	@Test(expected = CrossingTemplateExportException.class)
@@ -381,5 +405,16 @@ public class CrossingTemplateExcelExporterTest {
 		testVariable.setVariableType(variableType);
 
 		return testVariable;
+	}
+	
+	@After
+	public void cleanup() {
+		this.deleteTestInstallationDirectory();
+	}
+	
+	private void deleteTestInstallationDirectory() {
+		// Delete test installation directory and its contents as part of cleanup
+		final File testInstallationDirectory = new File(InstallationDirectoryUtil.WORKSPACE_DIR);
+		this.installationDirectoryUtil.recursiveFileDelete(testInstallationDirectory);
 	}
 }

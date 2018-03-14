@@ -10,6 +10,7 @@
 
 package com.efficio.fieldbook.web.label.printing.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -27,7 +28,9 @@ import javax.servlet.http.HttpSession;
 import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
+import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.data.initializer.FieldMapInfoTestDataInitializer;
+import org.generationcp.middleware.data.initializer.ProjectTestDataInitializer;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.GermplasmInventory;
 import org.generationcp.middleware.domain.inventory.ListDataInventory;
@@ -39,17 +42,22 @@ import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.Tool;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.reports.BuildReportException;
 import org.generationcp.middleware.reports.Reporter;
 import org.generationcp.middleware.reports.WLabels21;
 import org.generationcp.middleware.service.api.ReportService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
@@ -68,6 +76,9 @@ import net.sf.jasperreports.engine.JRException;
 
 public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
+	private static final String CSV_EXT = ".csv";
+	private static final String XLS_EXT = ".xls";
+	private static final String PDF_EXT = ".pdf";
 	private static final String EMPTY_STRING = "";
 	public static final int SUCCESS_VAL = 1;
 	public static final String TEST_JASPER_REPORT_FILE_TXT = "TEST_JASPER_REPORT_FILE.txt";
@@ -82,6 +93,11 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
 	@Resource
 	private LabelPrintingController labelPrintingController;
+	
+	@Mock
+	protected ContextUtil contextUtil;
+	
+	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	private static FieldMapInfoTestDataInitializer fieldMapInfoTDI;
 
@@ -90,6 +106,13 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		LabelPrintingControllerTest.fieldMapInfoTDI = new FieldMapInfoTestDataInitializer();
 	}
 
+	@Before
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+		this.labelPrintingController.setContextUtil(this.contextUtil);
+		Mockito.doReturn(ProjectTestDataInitializer.createProject()).when(this.contextUtil).getProjectInContext();
+	}
+	
 	@Test
 	public void testGenerationOfPDFLabels() {
 		final List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
@@ -101,8 +124,21 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		final Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false);
 
 		Assert.assertNotNull("Expected results but found none", results);
-		Assert.assertTrue("Expected pdf file generated but found " + results.get("fileName").toString(),
-				results.get("fileName").toString().contains("pdf"));
+		Assert.assertEquals("Label Printing should be successful", LabelPrintingControllerTest.SUCCESS_VAL,
+				results.get(LabelPrintingController.IS_SUCCESS));
+		final String filenameInMap = results.get(LabelPrintingController.FILE_NAME).toString();
+		Assert.assertTrue("Expected pdf file generated but found " + filenameInMap,
+				filenameInMap.endsWith(PDF_EXT));
+		Assert.assertEquals(LabelPrintingDataUtil.FILE_NAME_DL_PDF, userLabelPrinting.getFilenameWithExtension());
+		
+		final String outputDirectoryPath = this.installationDirectoryUtil.getOutputDirectoryForProjectAndTool(this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+		final File outputDirectoryFile = new File(outputDirectoryPath);
+		Assert.assertTrue(outputDirectoryFile.exists());
+		final File outputFile = new File(userLabelPrinting.getFilenameDLLocation());
+		Assert.assertEquals(outputDirectoryFile, outputFile.getParentFile());
+		Assert.assertEquals(filenameInMap, outputFile.getAbsolutePath());
+		Assert.assertTrue(outputFile.getName().startsWith(LabelPrintingDataUtil.FILE_NAME));
+		Assert.assertTrue(outputFile.getName().endsWith(PDF_EXT));
 	}
 
 	@Test
@@ -116,8 +152,21 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		final Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false);
 
 		Assert.assertNotNull("Expected results but found none", results);
-		Assert.assertTrue("Expected xls file generated but found " + results.get("fileName").toString(),
-				results.get("fileName").toString().contains("xls"));
+		Assert.assertEquals("Label Printing should be successful", LabelPrintingControllerTest.SUCCESS_VAL,
+				results.get(LabelPrintingController.IS_SUCCESS));
+		final String filenameInMap = results.get(LabelPrintingController.FILE_NAME).toString();
+		Assert.assertTrue("Expected pdf file generated but found " + filenameInMap,
+				filenameInMap.endsWith(XLS_EXT));
+		Assert.assertEquals(LabelPrintingDataUtil.FILE_NAME_DL_XLS, userLabelPrinting.getFilenameWithExtension());
+		
+		final String outputDirectoryPath = this.installationDirectoryUtil.getOutputDirectoryForProjectAndTool(this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+		final File outputDirectoryFile = new File(outputDirectoryPath);
+		Assert.assertTrue(outputDirectoryFile.exists());
+		final File outputFile = new File(userLabelPrinting.getFilenameDLLocation());
+		Assert.assertEquals(outputDirectoryFile, outputFile.getParentFile());
+		Assert.assertEquals(filenameInMap, outputFile.getAbsolutePath());
+		Assert.assertTrue(outputFile.getName().startsWith(LabelPrintingDataUtil.FILE_NAME));
+		Assert.assertTrue(outputFile.getName().endsWith(XLS_EXT));
 	}
 
 	@Test
@@ -131,8 +180,21 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		final Map<String, Object> results = this.labelPrintingController.generateLabels(trialInstances, false);
 
 		Assert.assertNotNull("Expected results but found none", results);
-		Assert.assertTrue("Expected csv file generated but found " + results.get("fileName").toString(),
-				results.get("fileName").toString().contains("csv"));
+		Assert.assertEquals("Label Printing should be successful", LabelPrintingControllerTest.SUCCESS_VAL,
+				results.get(LabelPrintingController.IS_SUCCESS));
+		final String filenameInMap = results.get(LabelPrintingController.FILE_NAME).toString();
+		Assert.assertTrue("Expected pdf file generated but found " + filenameInMap,
+				filenameInMap.endsWith(CSV_EXT));
+		Assert.assertEquals(LabelPrintingDataUtil.FILE_NAME_DL_CSV, userLabelPrinting.getFilenameWithExtension());
+		
+		final String outputDirectoryPath = this.installationDirectoryUtil.getOutputDirectoryForProjectAndTool(this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+		final File outputDirectoryFile = new File(outputDirectoryPath);
+		Assert.assertTrue(outputDirectoryFile.exists());
+		final File outputFile = new File(userLabelPrinting.getFilenameDLLocation());
+		Assert.assertEquals(outputDirectoryFile, outputFile.getParentFile());
+		Assert.assertEquals(filenameInMap, outputFile.getAbsolutePath());
+		Assert.assertTrue(outputFile.getName().startsWith(LabelPrintingDataUtil.FILE_NAME));
+		Assert.assertTrue(outputFile.getName().endsWith(CSV_EXT));
 	}
 
 	@Ignore // FIXME fail on fresh db because there is no program. Create program for test
@@ -167,7 +229,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		Assert.assertNotNull("We expect that results has value", results);
 		Assert.assertEquals("Label Printing report should be success", LabelPrintingControllerTest.SUCCESS_VAL,
 				results.get(LabelPrintingController.IS_SUCCESS));
-		Assert.assertEquals("We get the generated label printing file", results.get("fileName"), reporter.getFileName());
+		Assert.assertEquals("We get the generated label printing file", results.get(LabelPrintingController.FILE_NAME), reporter.getFileName());
 	}
 
 	@Test
@@ -423,5 +485,16 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		germplasmList.setStatus(1);
 		germplasmList.setNotes("Some notes here");
 		return germplasmList;
+	}
+	
+	@After
+	public void cleanup() {
+		this.deleteTestInstallationDirectory();
+	}
+	
+	private void deleteTestInstallationDirectory() {
+		// Delete test installation directory and its contents as part of cleanup
+		final File testInstallationDirectory = new File(InstallationDirectoryUtil.WORKSPACE_DIR);
+		this.installationDirectoryUtil.recursiveFileDelete(testInstallationDirectory);
 	}
 }

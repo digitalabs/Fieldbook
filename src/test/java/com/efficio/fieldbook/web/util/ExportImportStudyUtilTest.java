@@ -1,6 +1,7 @@
 
 package com.efficio.fieldbook.web.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.Random;
 
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.InstallationDirectoryUtil;
+import org.generationcp.middleware.data.initializer.ProjectTestDataInitializer;
 import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitializer;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -21,6 +24,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +63,8 @@ public class ExportImportStudyUtilTest {
 	private List<Location> locations;
 	private Workbook workbook;
 	private List<Integer> instances;
+	
+	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	@Before
 	public void setUp() {
@@ -72,6 +78,7 @@ public class ExportImportStudyUtilTest {
 
 		// init test data initializers;
 		this.valueReferenceTestDataInitializer = new ValueReferenceTestDataInitializer();
+		Mockito.doReturn(ProjectTestDataInitializer.createProject()).when(this.contextUtil).getProjectInContext();
 	}
 
 	@Test
@@ -157,6 +164,7 @@ public class ExportImportStudyUtilTest {
 		for (final MeasurementRow row : this.workbook.getTrialObservations()) {
 			final FileExportInfo exportInfo = ExportImportStudyUtil.getFileNamePath(index, row, this.instances, this.fileNameWithExtension,
 					false, this.fieldbookMiddlewareService, this.contextUtil);
+			
 			Assert.assertTrue("Expected location in filename but did not found one.",
 					exportInfo.getDownloadFileName().contains(WorkbookDataUtil.LNAME + "_" + index));
 			index++;
@@ -266,5 +274,16 @@ public class ExportImportStudyUtilTest {
 			possibleValues.add(possibleValue);
 		}
 		return possibleValues;
+	}
+	
+	@After
+	public void cleanup() {
+		this.deleteTestInstallationDirectory();
+	}
+	
+	private void deleteTestInstallationDirectory() {
+		// Delete test installation directory and its contents as part of cleanup
+		final File testInstallationDirectory = new File(InstallationDirectoryUtil.WORKSPACE_DIR);
+		this.installationDirectoryUtil.recursiveFileDelete(testInstallationDirectory);
 	}
 }

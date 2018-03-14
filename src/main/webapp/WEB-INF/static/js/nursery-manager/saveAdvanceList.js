@@ -410,9 +410,8 @@ var SaveAdvanceList = {};
 
 	SaveAdvanceList.deleteSelectedEntries = function() {
 		var entryNums = '',
-			sectionContainerDiv = 'reviewAdvanceNurseryModal',
 			uniqueId = $('.btn-save-advance-list').attr('id');
-		$('#' + sectionContainerDiv + ' .reviewAdvancingListGid:checked').each(function() {
+		$('[type="checkbox"]:checked', $('.advance-nursery-list-table .advance-germplasm-items').DataTable().rows().nodes()).each(function() {
 			if (entryNums !== '') {
 				entryNums += ',';
 			}

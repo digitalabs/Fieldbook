@@ -431,7 +431,7 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 				});
 		},
 		onDblClick : function(node, event) {
-			chooseList();
+			chooseList(node);
 		},
 		dnd : {
 			onDragStart : function(node) {

@@ -287,8 +287,8 @@ var SaveAdvanceList = {};
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr:not(.manual-selected) input.reviewAdvancingListGid:checked').parent().parent().addClass('selected');
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.selected input.reviewAdvancingListGid:not(:checked)').parent().parent().removeClass('selected');
 				} else {
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table input.reviewAdvancingListGid').prop('checked', false);
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected').removeClass('manual-selected');
+					var rows = $(".advance-nursery-list-table .advance-germplasm-items").DataTable().rows().nodes();
+					$('input[type="checkbox"]', rows).prop('checked', false).parent('td').parent('tr').removeClass('manual-selected');
 					if ($(row).hasClass('selected')) {
 						$(row).find('input.reviewAdvancingListGid').prop('checked', true);
 					} else {

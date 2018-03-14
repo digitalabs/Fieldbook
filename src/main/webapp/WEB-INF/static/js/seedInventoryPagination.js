@@ -21,16 +21,11 @@ var InventoryPage = {
             //select all the checkbox in the section container div
             //needed set time out since chrme is not able to rnder properly the checkbox if its checked or not
             setTimeout(function() {
-
+            	var rows = $(".final-advance-list").DataTable().rows().nodes();
+            	$('input[type="checkbox"]', rows).prop('checked', false).parent('td').parent('tr').removeClass('selected');
                 var isChecked = $('#' + getJquerySafeId(sectionContainerDiv) + ' .selectAllStock').prop('checked');
-                $('#' + getJquerySafeId(inventoryTableId) + ' tr').removeClass('selected');
-                $('#' + getJquerySafeId(inventoryTableId) + ' tr').removeClass('manual-selected');
-                $('#' + getJquerySafeId(sectionContainerDiv) + ' input.stockListEntryId').prop('checked', isChecked);
-                $('#' + getJquerySafeId(sectionContainerDiv) + ' .review-select-all').prop('checked', isChecked);
-
                 if (isChecked) {
-                    $('#' + getJquerySafeId(inventoryTableId) + ' tr').addClass('selected');
-                    $('#' + getJquerySafeId(inventoryTableId) + ' tr').addClass('manual-selected');
+                	$('input[type="checkbox"]', rows).prop('checked', 'checked').parent('td').parent('tr').addClass('selected').addClass('manual-selected');
                 }
 
                 var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
@@ -51,8 +46,8 @@ var InventoryPage = {
                     $('#' + getJquerySafeId(inventoryTableId) + ' tr:not(.manual-selected) input.stockListEntryId:checked').parent().parent().addClass('selected');
                     $('#' + getJquerySafeId(inventoryTableId) + ' tr.selected input.stockListEntryId:not(:checked)').parent().parent().removeClass('selected');
                 } else {
-                    $('#' + getJquerySafeId(inventoryTableId) + ' input.stockListEntryId').prop('checked', false);
-                    $('#' + getJquerySafeId(inventoryTableId) + ' tr.manual-selected').removeClass('manual-selected');
+                	var rows = $(".final-advance-list").DataTable().rows().nodes();
+                	$('input[type="checkbox"]', rows).prop('checked', false).removeClass('manual-selected');
                     if ($(row).hasClass('selected')) {
                         $(row).find('input.stockListEntryId').prop('checked', true);
                     } else {
@@ -88,12 +83,12 @@ var InventoryPage = {
                 $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
             },
             onShift: function() {
-                $('#' + getJquerySafeId(inventoryTableId) + ' tr.manual-selected-dummy').addClass('selected');
-                $('#' + getJquerySafeId(inventoryTableId) + ' tr.selected input.stockListEntryId').prop('checked', true);
-                $('#' + getJquerySafeId(inventoryTableId) + ' tr:not(.selected) input.stockListEntryId').prop('checked', false);
+            	var selectedRows = $(".final-advance-list").DataTable().rows(['.selected']).nodes();
+				$('input[type="checkbox"]', selectedRows).prop('checked', true).parent('td').parent('tr').addClass('selected').addClass('manual-selected');
+				var unselectedRows = $(".final-advance-list").DataTable().rows([':not(.selected)']).nodes();
+				$('input[type="checkbox"]', unselectedRows).prop('checked', false);
 
                 var oTable = $('#' + getJquerySafeId(inventoryTableId)).dataTable();
-
                 $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(oTable.api().rows(':has(input.stockListEntryId:checked)').data().length);
             }
 

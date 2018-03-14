@@ -216,6 +216,8 @@
 					});
 				});
 			}
+
+            $("#sampleListName, #sampleListDate").on("change keyup", SaveSampleList.toggleSaveButton);
 			SaveSampleList.initializeSampleListTree();
 		});
 	</script>

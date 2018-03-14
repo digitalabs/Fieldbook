@@ -7,16 +7,15 @@
 /*exported save, openSaveSampleListModal*/
 
 var SaveSampleList = {};
+
 (function() {
 	'use strict';
 
-	var toggleSaveButton = function () {
+	SaveSampleList.toggleSaveButton = function () {
 		var disableButton = $("#sampleListName").val() === ''
 			|| $('#sampleListDate').val() === '';
 		$("#submitSampleList").prop("disabled", disableButton);
 	};
-
-	$("#sampleListName, #sampleListDate").on("change keyup", toggleSaveButton);
 
 	SaveSampleList.initializeSampleListTree = function() {
 		displaySampleListTree('sampleFolderTree', true, 1);
@@ -24,7 +23,7 @@ var SaveSampleList = {};
 		$('#saveSampleListTreeModal').off('hide.bs.modal');
 		$('#saveSampleListTreeModal').on('hide.bs.modal', function() {
 			TreePersist.saveSampleTreeState(false, '#sampleFolderTree');
-			toggleSaveButton();
+			SaveSampleList.toggleSaveButton();
 		});
 		$('#saveSampleListTreeModal').on('hidden.bs.modal', function() {
 			$('#sampleFolderTree').dynatree('getTree').reload();

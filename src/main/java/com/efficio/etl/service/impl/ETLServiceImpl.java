@@ -891,17 +891,6 @@ public class ETLServiceImpl implements ETLService {
 	}
 
 	@Override
-	public Tool getOntologyBrowserTool() {
-		try {
-			return this.workbenchDataManager.getToolWithName(ToolName.ONTOLOGY_BROWSER_FIELDBOOK_WEB.toString());
-		} catch (final MiddlewareQueryException e) {
-			ETLServiceImpl.LOG.error(e.getMessage(), e);
-		}
-
-		return null;
-	}
-
-	@Override
 	public Tool getFieldbookWebTool() {
 		try {
 			return this.workbenchDataManager.getToolWithName(ToolName.FIELDBOOK_WEB.toString());

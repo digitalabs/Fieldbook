@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, All Rights Reserved.
+o * Copyright (c) 2012, All Rights Reserved.
  * <p/>
  * Generation Challenge Programme (GCP)
  * <p/>
@@ -10,11 +10,19 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.ZipUtil;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -45,21 +53,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
-import javax.annotation.Resource;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
+import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 
 @Service
 @Transactional
-public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
+public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl implements ExcelExportStudyService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExcelExportStudyServiceImpl.class);
 
@@ -86,13 +86,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	private MessageSource messageSource;
 
 	@Resource
-	private FieldbookProperties fieldbookProperties;
-
-	@Resource
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
-
-	@Resource
-	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
 	private static final String BREEDING_METHOD_PROPERTY_NAME = "";
 
@@ -100,56 +94,29 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		Arrays.asList(TermId.PM_KEY.getId());
 
 	@Override
-	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
-		return this.export(workbook, filename, instances, null);
-	}
-
-	@Override
-	public String export(final Workbook workbook, final String filename, final List<Integer> instances, final List<Integer> visibleColumns)
-			throws IOException {
+	void writeOutputFile(Workbook workbook, List<Integer> visibleColumns, MeasurementRow instanceLevelObservation,
+			List<MeasurementRow> plotLevelObservations, String fileNamePath) throws IOException {
 		FileOutputStream fos = null;
-		final List<String> filenameList = new ArrayList<>();
-		String outputFilename = null;
 
-		for (final Integer trialInstanceNo : instances) {
-			final List<Integer> indexes = new ArrayList<>();
-			indexes.add(trialInstanceNo);
+		final HSSFWorkbook xlsBook = new HSSFWorkbook();
+		this.writeDescriptionSheet(xlsBook, workbook, instanceLevelObservation, visibleColumns);
+		this.writeObservationSheet(xlsBook, workbook, plotLevelObservations, visibleColumns, BREEDING_METHOD_PROPERTY_NAME);
 
-			final List<MeasurementRow> plotLevelObservations =
-					ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
-
-			try {
-				final MeasurementRow instanceLevelObservation = workbook.getTrialObservationByTrialInstanceNo(trialInstanceNo);
-
-				final HSSFWorkbook xlsBook = new HSSFWorkbook();
-				this.writeDescriptionSheet(xlsBook, workbook, instanceLevelObservation, visibleColumns);
-				this.writeObservationSheet(xlsBook, workbook, plotLevelObservations, visibleColumns, BREEDING_METHOD_PROPERTY_NAME);
-
-				final String filenamePath = ExportImportStudyUtil
-						.getFileNamePath(trialInstanceNo, instanceLevelObservation, instances, filename, workbook.isNursery(),
-								this.fieldbookProperties, this.fieldbookMiddlewareService);
-
-				fos = new FileOutputStream(new File(filenamePath));
-				xlsBook.write(fos);
-
-				outputFilename = filenamePath;
-				filenameList.add(filenamePath);
-
-			} finally {
-				if (fos != null) {
-					fos.close();
-				}
+		try {
+			fos = new FileOutputStream(new File(fileNamePath));
+			xlsBook.write(fos);
+		} finally {
+			if (fos != null) {
+				fos.close();
 			}
 		}
 
-		// multiple instances
-		if (instances.size() > 1) {
-			outputFilename = this.fieldbookProperties.getUploadDirectory() + File.separator + filename
-					.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "") + AppConstants.ZIP_FILE_SUFFIX.getString();
-			ZipUtil.zipIt(outputFilename, filenameList);
-		}
 
-		return outputFilename;
+	}
+
+	@Override
+	String getFileExtension() {
+		return AppConstants.EXPORT_XLS_SUFFIX.getString();
 	}
 
 	protected void writeDescriptionSheet(final HSSFWorkbook xlsBook, final Workbook workbook, final MeasurementRow trialObservation,
@@ -681,4 +648,5 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
+
 }

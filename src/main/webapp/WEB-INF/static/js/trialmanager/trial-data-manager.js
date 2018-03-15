@@ -460,6 +460,7 @@
 											service.trialMeasurement.count);
 										service.applicationData.unsavedGeneratedDesign = false;
 										service.applicationData.unsavedTraitsAvailable = false;
+										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
 										$('body').data('needToSave', '0');
 									});
 								});
@@ -491,6 +492,7 @@
 										service.applicationData.unsavedGeneratedDesign = false;
 										service.applicationData.unsavedTraitsAvailable = false;
 										setupSettingsVariables();
+										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
 										$('body').data('needToSave', '0');
 									});
 
@@ -510,6 +512,7 @@
 												service.trialMeasurement.count);
 											service.applicationData.unsavedGeneratedDesign = false;
 											service.applicationData.unsavedTraitsAvailable = false;
+											onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
 											$('body').data('needToSave', '0');
 										}, function() {
 											showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
@@ -534,12 +537,8 @@
                     //After Save Measurements table is available in edit mode
                     $('body').removeClass('preview-measurements-only');
                     $('body').removeClass('import-preview-measurements');
-                    //TODO Remove other classes as well
-
-                    // GLOBAL
-                    if ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) {
-                    	onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
-                    }
+                    //Refresh the germplasm list table
+                    refreshListDetails();
 				},
 				onUpdateData: function(dataKey, updateFunction) {
 					if (!dataRegistry[dataKey]) {

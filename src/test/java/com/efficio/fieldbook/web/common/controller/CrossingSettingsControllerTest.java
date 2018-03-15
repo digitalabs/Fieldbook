@@ -88,7 +88,7 @@ public class CrossingSettingsControllerTest {
 	public static final String FEMALE_PLOT = "1";
 	public static final String BREEDING_METHOD = "Test Method";
 	public static final String MALE_PLOT = "2";
-	public static final String MALE_NURSERY_NAME = "maleNursery";
+	public static final String MALE_STUDY_NAME = "maleStudy";
 	public static final Integer CROSSING_DATE = 20161212;
 	public static final String NOTES = "Test notes";
 	public static final String FEMALE_PEDIGREE = "-";
@@ -561,7 +561,7 @@ public class CrossingSettingsControllerTest {
 		importedCrosses.setDuplicate(CrossingSettingsControllerTest.TEST_DUPLICATE);
 		importedCrosses.setFemalePlotNo(CrossingSettingsControllerTest.FEMALE_PLOT);
 		importedCrosses.setMalePlotNo(CrossingSettingsControllerTest.MALE_PLOT);
-		importedCrosses.setMaleStudyName(CrossingSettingsControllerTest.MALE_NURSERY_NAME);
+		importedCrosses.setMaleStudyName(CrossingSettingsControllerTest.MALE_STUDY_NAME);
 		importedCrosses.setRawBreedingMethod(CrossingSettingsControllerTest.BREEDING_METHOD);
 		importedCrosses.setCrossingDate(CrossingSettingsControllerTest.CROSSING_DATE);
 		importedCrosses.setNotes(CrossingSettingsControllerTest.NOTES);

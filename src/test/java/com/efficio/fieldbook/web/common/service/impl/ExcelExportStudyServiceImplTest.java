@@ -1,10 +1,8 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.util.AppConstants;
+import junit.framework.Assert;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -18,9 +16,9 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.junit.After;
 import org.junit.Before;
@@ -32,10 +30,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.util.AppConstants;
-
-import junit.framework.Assert;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExcelExportStudyServiceImplTest {
 
@@ -362,7 +360,7 @@ public class ExcelExportStudyServiceImplTest {
 
 	@Test
 	public void testExportNursery() throws IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		workbook.setExportArrangedObservations(workbook.getObservations());
 		final List<Integer> instances = new ArrayList<Integer>();
 		instances.add(1);

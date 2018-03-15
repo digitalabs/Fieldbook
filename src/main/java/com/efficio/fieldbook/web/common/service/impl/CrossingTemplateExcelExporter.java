@@ -36,7 +36,6 @@ import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
@@ -94,15 +93,14 @@ public class CrossingTemplateExcelExporter {
 			gpList.setType(GermplasmListType.LST.name());
 
 			// 3. write details
-			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, gpList, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook),
+			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook),
 					currentUserId, studyName);
 
 			// 4. update codes
 			this.updateCodesSection(excelWorkbook.getSheetAt(2));
 
 			// 5. write Nursery List Sheet
-			this.writeNurseryListSheet(excelWorkbook.getSheetAt(3), new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook), studyId,
-					studyName);
+			this.writeNurseryListSheet(excelWorkbook.getSheetAt(3), studyId, studyName);
 
 			// return the resulting file back to the user
 			return this.createExcelOutputFile(studyName, excelWorkbook);
@@ -112,13 +110,13 @@ public class CrossingTemplateExcelExporter {
 		}
 	}
 
-	void writeNurseryListSheet(Sheet nurseryListSheet, final ExcelCellStyleBuilder sheetStyles, final int studyId, final String studyName) {
+	void writeNurseryListSheet(final Sheet nurseryListSheet, final int studyId, final String studyName) {
 
 		final int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
 		final List<Experiment> experiments = this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null);
 		int rowIndex = 1;
 		int columSheet = 6;
-		ArrayList<String> localNameList = new ArrayList<String>();
+		ArrayList<String> localNameList = new ArrayList<>();
 
 		final CellStyle methodCellStyle = nurseryListSheet.getWorkbook().createCellStyle();
 		methodCellStyle.cloneStyleFrom(nurseryListSheet.getRow(0).getCell(0).getCellStyle());
@@ -177,7 +175,7 @@ public class CrossingTemplateExcelExporter {
 	}
 	
 	private ArrayList<String> getTermIdList(VariableList factors) {
-		ArrayList<String> termIdList = new ArrayList<String>();
+		ArrayList<String> termIdList = new ArrayList<>();
 		List<Variable> variables = factors.getVariables();
 		for (Variable vars : variables) {
 			String name = vars.getVariableType().getLocalName();
@@ -255,8 +253,8 @@ public class CrossingTemplateExcelExporter {
 
 	}
 
-	int writeListDetailsSection(final Sheet descriptionSheet, final int startingRow, final GermplasmList germplasmList,
-			final ExcelCellStyleBuilder sheetStyles, final Integer currentUserId, final String studyName) {
+	int writeListDetailsSection(final Sheet descriptionSheet, final int startingRow, final ExcelCellStyleBuilder sheetStyles,
+			final Integer currentUserId, final String studyName) {
 		final CellStyle labelStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.LABEL_STYLE);
 		final CellStyle textStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.NUMERIC_STYLE);
 
@@ -305,8 +303,7 @@ public class CrossingTemplateExcelExporter {
 		return new FileExportInfo(outputFilepath, downloadFilename + AppConstants.EXPORT_XLS_SUFFIX.getString());
 	}
 
-	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId) throws MiddlewareQueryException,
-			CrossingTemplateExportException {
+	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId) throws CrossingTemplateExportException {
 		List<GermplasmList> crossesList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY);
 
 		if (crossesList.isEmpty()) {

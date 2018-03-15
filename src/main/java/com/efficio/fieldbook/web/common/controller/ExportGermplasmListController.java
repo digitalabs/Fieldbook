@@ -19,8 +19,6 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -44,8 +42,6 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 	protected static final String FILENAME = "filename";
 
 	protected static final String OUTPUT_FILENAME = "outputFilename";
-
-	private static final Logger LOG = LoggerFactory.getLogger(ExportGermplasmListController.class);
 
 	public static final String URL = "/ExportManager";
 	public static final String GERPLASM_TYPE_LST = "LST";

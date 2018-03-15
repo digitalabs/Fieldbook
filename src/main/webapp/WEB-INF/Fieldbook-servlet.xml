@@ -181,7 +181,7 @@
 	<bean id="labelPrintingService" class="com.efficio.fieldbook.service.LabelPrintingServiceImpl" />
 
 
-	<bean id="exportExcelService" class="com.efficio.fieldbook.service.ExportExcelServiceImpl" />
+	<bean id="exportFieldmapService" class="com.efficio.fieldbook.service.ExportFieldmapServiceImpl" />
 
 
 	<bean id="exportOrderingSerpentineOverRangeService"
@@ -197,7 +197,9 @@
 
 
 	<bean id="exportGermplasmListService"
-		class="com.efficio.fieldbook.web.common.service.impl.ExportGermplasmListServiceImpl" />
+		class="com.efficio.fieldbook.web.common.service.impl.ExportGermplasmListServiceImpl" scope="request">
+		<aop:scoped-proxy />
+	</bean>
 
     <bean id="studyServiceFactory" class="com.efficio.fieldbook.web.study.ImportStudyServiceFactory"/>
 
@@ -486,9 +488,11 @@
 		<aop:scoped-proxy />
 	</bean>
 
-    <bean id="germplasmExportService" class="org.generationcp.commons.service.impl.GermplasmExportServiceImpl"/>
+    <bean id="germplasmExportService" class="org.generationcp.commons.service.impl.GermplasmExportServiceImpl" scope="request">
+		<aop:scoped-proxy />
+	</bean>
 
-	<bean id="germplasmExportedWorkbook" class="org.generationcp.commons.parsing.GermplasmExportedWorkbook">
+	<bean id="germplasmExportedWorkbook" class="org.generationcp.commons.parsing.GermplasmExportedWorkbook" scope="request">
 		<aop:scoped-proxy />
 	</bean>
 	

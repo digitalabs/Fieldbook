@@ -1,11 +1,14 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.pojo.FileExportInfo;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -13,9 +16,11 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class ExportImportStudyUtil {
 
@@ -180,54 +185,33 @@ public class ExportImportStudyUtil {
 		}
 	}
 
-	public static String getFileNamePath(final int trialInstanceNo, final MeasurementRow trialObservation, final List<Integer> instances,
-			final String filename, final boolean isNursery, final FieldbookProperties fieldbookProperties,
-			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+	public static FileExportInfo getFileNamePath(final int trialInstanceNo, final MeasurementRow trialObservation, final List<Integer> instances,
+			final String filename, final boolean isNursery, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final ContextUtil contextUtil) throws IOException {
 
-		String filenamePath = "";
-		StringBuilder filenameBuilder = new StringBuilder();
-		filenameBuilder.append(fieldbookProperties.getUploadDirectory());
-		filenameBuilder.append(File.separator);
-		filenameBuilder.append(SettingsUtil.cleanSheetAndFileName(filename));
+		final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+		final String cleanFilename = SettingsUtil.cleanSheetAndFileName(filename);
+		String downloadFilename = cleanFilename;
 
-		filenamePath = filenameBuilder.toString();
+		// For Trial, include the trial instance # and site name (if existing)
+		if (!isNursery && instances != null && !instances.isEmpty()) {
 
-		if (isNursery) {
-			return filenamePath;
-		}
-
-		// For Trial
-		if (instances != null && !instances.isEmpty()) {
-
-			final int fileExtensionIndex = filenamePath.lastIndexOf(".");
+			final int fileExtensionIndex = cleanFilename.lastIndexOf(".");
 			final String siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(trialObservation, fieldbookMiddlewareService);
 
-			filenameBuilder = new StringBuilder();
-			if (instances.size() > 1) {
-				filenameBuilder.append(filenamePath.substring(0, fileExtensionIndex));
-			} else {
-				filenameBuilder.append(filename.substring(0, filename.lastIndexOf(".")));
-			}
-
+			final StringBuilder filenameBuilder = new StringBuilder(cleanFilename.substring(0, fileExtensionIndex));
 			filenameBuilder.append("-");
 			filenameBuilder.append(trialInstanceNo);
 			filenameBuilder.append(SettingsUtil.cleanSheetAndFileName(siteName));
-			filenameBuilder.append(filenamePath.substring(fileExtensionIndex));
+			filenameBuilder.append(cleanFilename.substring(fileExtensionIndex));
 
-			filenamePath = filenameBuilder.toString();
+			downloadFilename = filenameBuilder.toString();
 		}
+		
+		String filenamePath = installationDirectoryUtil.getFileInTemporaryDirectoryForProjectAndTool(downloadFilename,
+				contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+		
+		return new FileExportInfo(filenamePath, downloadFilename);
 
-		return filenamePath;
 	}
-
-	public static String getFileNamePath(final String filename, final FieldbookProperties fieldbookProperties) {
-
-		final StringBuilder filenameBuilder = new StringBuilder();
-		filenameBuilder.append(fieldbookProperties.getUploadDirectory());
-		filenameBuilder.append(File.separator);
-		filenameBuilder.append(SettingsUtil.cleanSheetAndFileName(filename));
-
-		final String filenamePath = filenameBuilder.toString();
-		return filenamePath;
-	}
+	
 }

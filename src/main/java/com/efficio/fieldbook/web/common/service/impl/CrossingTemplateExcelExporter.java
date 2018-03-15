@@ -1,7 +1,6 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,9 +23,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.parsing.ExcelCellStyleBuilder;
 import org.generationcp.commons.parsing.ExcelWorkbookRow;
 import org.generationcp.commons.parsing.GermplasmExportedWorkbook;
+import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
+import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.Variable;
@@ -35,7 +36,6 @@ import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
@@ -43,17 +43,19 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.util.PoiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The class providing export crossing template as an excel file function
  */
 public class CrossingTemplateExcelExporter {
 
-	public static final String EXPORT_FILE_NAME_FORMAT = "CrossingTemplate-%s.xls";
+	public static final String EXPORT_FILE_NAME_FORMAT = "CrossingTemplate-%s";
 	public static final String PROGRAM_UUID = UUID.randomUUID().toString();
 	public static final String FIELDMAP_COLUMN = "FIELDMAP COLUMN";
 	public static final String FIELDMAP_RANGE = "FIELDMAP RANGE";
@@ -76,9 +78,10 @@ public class CrossingTemplateExcelExporter {
 	@Resource
 	private GermplasmDataManager germplasmDataManager;
 
+	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 	private String templateFile;
 
-	public File export(final Integer studyId, final String studyName, final Integer currentUserId) throws CrossingTemplateExportException {
+	public FileExportInfo export(final Integer studyId, final String studyName, final Integer currentUserId) throws CrossingTemplateExportException {
 		try {
 			final Workbook excelWorkbook = this.fileService.retrieveWorkbookTemplate(this.templateFile);
 
@@ -90,15 +93,14 @@ public class CrossingTemplateExcelExporter {
 			gpList.setType(GermplasmListType.LST.name());
 
 			// 3. write details
-			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, gpList, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook),
+			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook),
 					currentUserId, studyName);
 
 			// 4. update codes
 			this.updateCodesSection(excelWorkbook.getSheetAt(2));
 
 			// 5. write Nursery List Sheet
-			this.writeNurseryListSheet(excelWorkbook.getSheetAt(3), new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook), studyId,
-					studyName);
+			this.writeNurseryListSheet(excelWorkbook.getSheetAt(3), studyId, studyName);
 
 			// return the resulting file back to the user
 			return this.createExcelOutputFile(studyName, excelWorkbook);
@@ -108,13 +110,13 @@ public class CrossingTemplateExcelExporter {
 		}
 	}
 
-	void writeNurseryListSheet(Sheet nurseryListSheet, final ExcelCellStyleBuilder sheetStyles, final int studyId, final String studyName) {
+	void writeNurseryListSheet(final Sheet nurseryListSheet, final int studyId, final String studyName) {
 
 		final int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
 		final List<Experiment> experiments = this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null);
 		int rowIndex = 1;
 		int columSheet = 6;
-		ArrayList<String> localNameList = new ArrayList<String>();
+		ArrayList<String> localNameList = new ArrayList<>();
 
 		final CellStyle methodCellStyle = nurseryListSheet.getWorkbook().createCellStyle();
 		methodCellStyle.cloneStyleFrom(nurseryListSheet.getRow(0).getCell(0).getCellStyle());
@@ -173,7 +175,7 @@ public class CrossingTemplateExcelExporter {
 	}
 	
 	private ArrayList<String> getTermIdList(VariableList factors) {
-		ArrayList<String> termIdList = new ArrayList<String>();
+		ArrayList<String> termIdList = new ArrayList<>();
 		List<Variable> variables = factors.getVariables();
 		for (Variable vars : variables) {
 			String name = vars.getVariableType().getLocalName();
@@ -251,8 +253,8 @@ public class CrossingTemplateExcelExporter {
 
 	}
 
-	int writeListDetailsSection(final Sheet descriptionSheet, final int startingRow, final GermplasmList germplasmList,
-			final ExcelCellStyleBuilder sheetStyles, final Integer currentUserId, final String studyName) {
+	int writeListDetailsSection(final Sheet descriptionSheet, final int startingRow, final ExcelCellStyleBuilder sheetStyles,
+			final Integer currentUserId, final String studyName) {
 		final CellStyle labelStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.LABEL_STYLE);
 		final CellStyle textStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.NUMERIC_STYLE);
 
@@ -287,21 +289,21 @@ public class CrossingTemplateExcelExporter {
 		this.templateFile = templateFile;
 	}
 
-	private File createExcelOutputFile(final String studyName, final Workbook excelWorkbook) throws IOException {
-		String outputFileName =
-				String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT, StringUtil.replaceInvalidChacaracterFileName(studyName,"_"));
+	private FileExportInfo createExcelOutputFile(final String studyName, final Workbook excelWorkbook) throws IOException {
+		String downloadFilename = String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT,
+				StringUtil.replaceInvalidChacaracterFileName(studyName, "_"));
+		downloadFilename = FileUtils.sanitizeFileName(downloadFilename);
+		final String outputFilepath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(downloadFilename,
+				AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 
-        outputFileName = FileUtils.sanitizeFileName(outputFileName);
-
-		try (OutputStream out = new FileOutputStream(outputFileName)) {
+		try (OutputStream out = new FileOutputStream(outputFilepath)) {
 			excelWorkbook.write(out);
 		}
 
-		return new File(outputFileName);
+		return new FileExportInfo(outputFilepath, downloadFilename + AppConstants.EXPORT_XLS_SUFFIX.getString());
 	}
 
-	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId) throws MiddlewareQueryException,
-			CrossingTemplateExportException {
+	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId) throws CrossingTemplateExportException {
 		List<GermplasmList> crossesList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY);
 
 		if (crossesList.isEmpty()) {

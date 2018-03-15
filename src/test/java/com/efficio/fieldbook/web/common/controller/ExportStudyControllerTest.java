@@ -539,7 +539,7 @@ public class ExportStudyControllerTest {
 	@Test
 	public void testDoExportNurseryInKSUFieldbookExcelFormat()
 			throws JsonParseException, JsonMappingException, IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		this.userSelection.setWorkbook(workbook);
 
 		final String generatedFilename = workbook.getStudyDetails().getStudyName() + "_" + workbook.getStudyDetails().getId();

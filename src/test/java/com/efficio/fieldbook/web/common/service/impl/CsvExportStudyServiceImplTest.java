@@ -142,7 +142,7 @@ public class CsvExportStudyServiceImplTest {
 
 	@Test
 	public void testCSVStudyExportForNursery() throws IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		workbook.setExportArrangedObservations(workbook.getObservations());
 		final List<Integer> instances = new ArrayList<Integer>();
 		instances.add(1);

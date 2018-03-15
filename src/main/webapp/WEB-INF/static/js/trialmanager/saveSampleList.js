@@ -43,7 +43,9 @@ var SaveSampleList = {};
 				$('#sampleListDate').datepicker({ dateFormat: 'yyyy-mm-dd'}).datepicker("setDate", new Date());
 				$('#sampleListDescription').val('');
 				$('#sampleListNotes').val('');
-				$('#sampleListOwner').text(SaveSampleList.details.createdBy);
+				if (SaveSampleList.details) {
+                    $('#sampleListOwner').text(SaveSampleList.details.createdBy);
+                }
 				TreePersist.preLoadSampleTreeState(false, '#sampleFolderTree', true);
 				$("#saveSampleListTreeModal .form-group").removeClass("has-error");
 			});

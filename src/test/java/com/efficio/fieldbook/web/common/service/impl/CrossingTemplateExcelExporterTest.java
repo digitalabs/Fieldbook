@@ -150,7 +150,7 @@ public class CrossingTemplateExcelExporterTest {
 		final GermplasmList list = new GermplasmList();
 		list.setDate(20150506L);
 		list.setType("LST");
-		this.exporter.writeListDetailsSection(sheet, 1, list, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
+		this.exporter.writeListDetailsSection(sheet, 1, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
 				CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
 
 		Assert.assertEquals(sheet.getRow(0).getCell(0).getStringCellValue(), "LIST NAME");
@@ -218,8 +218,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null)).thenReturn(experiments);
 
 		final Sheet sheet = this.workbook.getSheetAt(3);
-		this.exporter.writeNurseryListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
-				CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
+		this.exporter.writeNurseryListSheet(sheet, CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
 
 		assertThat("studyname", equalTo(sheet.getRow(1).getCell(0).getStringCellValue()));
 		assertThat(1, equalTo((int) sheet.getRow(1).getCell(1).getNumericCellValue()));
@@ -245,8 +244,8 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null)).thenReturn(experiments);
 
 		final Sheet sheet = this.workbook.getSheetAt(3);
-		this.exporter.writeNurseryListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
-				CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
+		this.exporter.writeNurseryListSheet(sheet, CrossingTemplateExcelExporterTest.STUDY_ID,
+				CrossingTemplateExcelExporterTest.STUDY_NAME);
 
 		// Header added//
 		assertThat("FIELDMAP COLUMN", equalTo(sheet.getRow(0).getCell(7).getStringCellValue()));

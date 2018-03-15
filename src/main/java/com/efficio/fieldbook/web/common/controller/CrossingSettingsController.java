@@ -492,13 +492,13 @@ public class CrossingSettingsController extends SettingsController {
 			if (importedCross.getGid() == null) {
 				responseMap.put(CrossingSettingsController.IS_SUCCESS, 0);
 				final String localisedErrorMessage = this.messageSource.getMessage("error.germplasm.record.already.exists", new String[] {},
-						"Cross germplasm record must already exist in database when using crossing manager to create crosses in Nurseries",
+						"Cross germplasm record must already exist in database when using crossing manager to create crosses in Studies",
 						LocaleContextHolder.getLocale());
 				responseMap.put(ERROR, new String[] {localisedErrorMessage});
 				return responseMap;
 			}
 			// When crossing using crossing manager (as opposed to crossing spreadsheet import),
-			// both female and male nursery is the current nursery.
+			// both female and male study is the current study.
 			importedCross.setMaleStudyName(studyName);
 			importedCross.setFemaleStudyName(studyName);
 			importedCrosses.add(importedCross);

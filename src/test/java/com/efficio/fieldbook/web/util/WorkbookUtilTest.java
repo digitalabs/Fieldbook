@@ -39,7 +39,8 @@ public class WorkbookUtilTest {
 
 		WorkbookUtil.updateTrialObservations(currentWorkbook, temporaryWorkbook);
 
-		Assert.assertEquals("Expecting that the trial observations of temporary workbook is copied to current workbook. ",
+		Assert.assertEquals(
+				"Expecting that the trial observations of temporary workbook is copied to current workbook. ",
 				currentWorkbook.getTrialObservations(), temporaryWorkbook.getTrialObservations());
 	}
 
@@ -54,9 +55,12 @@ public class WorkbookUtilTest {
 
 		for (final MeasurementRow row : observations) {
 			final List<MeasurementData> dataList = row.getDataList();
-			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
-			final MeasurementData plotNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
-			Assert.assertEquals("Expecting that the PLOT_NO value is equal to ENTRY_NO.", entryNoData.getValue(), plotNoData.getValue());
+			final MeasurementData entryNoData = WorkbookUtil
+					.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
+			final MeasurementData plotNoData = WorkbookUtil
+					.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
+			Assert.assertEquals("Expecting that the PLOT_NO value is equal to ENTRY_NO.", entryNoData.getValue(),
+					plotNoData.getValue());
 		}
 
 	}
@@ -64,117 +68,132 @@ public class WorkbookUtilTest {
 	@Test
 	public void testFindMeasurementVariableByName() {
 
-		List<MeasurementVariable> measurementVariables = new ArrayList<>();
-		MeasurementVariable measurementVariable1 = new MeasurementVariable();
+		final List<MeasurementVariable> measurementVariables = new ArrayList<>();
+		final MeasurementVariable measurementVariable1 = new MeasurementVariable();
 		final String variable1 = "VARIABLE1";
 		measurementVariable1.setName(variable1);
 		measurementVariables.add(measurementVariable1);
 
-		MeasurementVariable measurementVariable2 = new MeasurementVariable();
+		final MeasurementVariable measurementVariable2 = new MeasurementVariable();
 		final String variable2 = "VARIABLE2";
 		measurementVariable2.setName(variable2);
 		measurementVariables.add(measurementVariable2);
 
-		MeasurementVariable measurementVariable3 = new MeasurementVariable();
+		final MeasurementVariable measurementVariable3 = new MeasurementVariable();
 		final String variable3 = "VARIABLE_3";
 		measurementVariable3.setName(variable3);
 		measurementVariables.add(measurementVariable3);
 
-		Optional<MeasurementVariable> result = WorkbookUtil.findMeasurementVariableByName(measurementVariables, variable1);
+		final Optional<MeasurementVariable> result = WorkbookUtil.findMeasurementVariableByName(measurementVariables,
+				variable1);
 
 		Assert.assertTrue(result.isPresent());
 		Assert.assertEquals(measurementVariable1, result.get());
 	}
-	
+
 	@Test
 	public void testAddFactorsToMeasurementRowDataList() {
-		MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
-		StandardVariable stdVariable = StandardVariableTestDataInitializer.createStandardVariable(TermId.PLOT_CODE.getId(), TermId.PLOT_CODE.name());
-		MeasurementVariable variable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.PLOT_CODE.getId(), TermId.PLOT_CODE.name(), null);
+		final MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
+		final StandardVariable stdVariable = StandardVariableTestDataInitializer
+				.createStandardVariable(TermId.PLOT_CODE.getId(), TermId.PLOT_CODE.name());
+		final MeasurementVariable variable = MeasurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.PLOT_CODE.getId(), TermId.PLOT_CODE.name(), null);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
-		UserSelection userSelection = Mockito.mock(UserSelection.class);
+		final UserSelection userSelection = Mockito.mock(UserSelection.class);
 		this.setUpUserSelection(userSelection);
 		WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, true, variable, userSelection);
 		Assert.assertEquals("", row.getDataList().get(4).getValue());
 	}
-	
+
 	@Test
 	public void testAddFactorsToMeasurementRowDataListForGroupGID() {
-		MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
-		StandardVariable stdVariable = StandardVariableTestDataInitializer.createStandardVariable(TermId.GROUPGID.getId(), TermId.GROUPGID.name());
-		MeasurementVariable variable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.GROUPGID.getId(), TermId.GROUPGID.name(), null);
+		final MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
+		final StandardVariable stdVariable = StandardVariableTestDataInitializer
+				.createStandardVariable(TermId.GROUPGID.getId(), TermId.GROUPGID.name());
+		final MeasurementVariable variable = MeasurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.GROUPGID.getId(), TermId.GROUPGID.name(), null);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
-		UserSelection userSelection = Mockito.mock(UserSelection.class);
-		ImportedGermplasm importedGermplasm = this.setUpUserSelection(userSelection);
+		final UserSelection userSelection = Mockito.mock(UserSelection.class);
+		final ImportedGermplasm importedGermplasm = this.setUpUserSelection(userSelection);
 		WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, true, variable, userSelection);
 		Assert.assertEquals(importedGermplasm.getGroupId().toString(), row.getDataList().get(4).getValue());
 	}
-	
+
 	@Test
 	public void testAddFactorsToMeasurementRowDataListForSEED_SOURCE() {
-		MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
-		StandardVariable stdVariable = StandardVariableTestDataInitializer.createStandardVariable(TermId.SEED_SOURCE.getId(), TermId.SEED_SOURCE.name());
-		MeasurementVariable variable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEED_SOURCE.getId(), TermId.SEED_SOURCE.name(), null);
+		final MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
+		final StandardVariable stdVariable = StandardVariableTestDataInitializer
+				.createStandardVariable(TermId.SEED_SOURCE.getId(), TermId.SEED_SOURCE.name());
+		final MeasurementVariable variable = MeasurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.SEED_SOURCE.getId(), TermId.SEED_SOURCE.name(), null);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
-		UserSelection userSelection = Mockito.mock(UserSelection.class);
-		ImportedGermplasm importedGermplasm = this.setUpUserSelection(userSelection);
+		final UserSelection userSelection = Mockito.mock(UserSelection.class);
+		final ImportedGermplasm importedGermplasm = this.setUpUserSelection(userSelection);
 		WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, true, variable, userSelection);
 		Assert.assertEquals(importedGermplasm.getSource(), row.getDataList().get(4).getValue());
 	}
-	
+
 	@Test
 	public void testAddFactorsToMeasurementRowDataListForSOURCE() {
-		MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
-		StandardVariable stdVariable = StandardVariableTestDataInitializer.createStandardVariable(TermId.GERMPLASM_SOURCE.getId(), TermId.GERMPLASM_SOURCE.name());
-		MeasurementVariable variable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.GERMPLASM_SOURCE.getId(), TermId.GERMPLASM_SOURCE.name(), null);
+		final MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
+		final StandardVariable stdVariable = StandardVariableTestDataInitializer
+				.createStandardVariable(TermId.GERMPLASM_SOURCE.getId(), TermId.GERMPLASM_SOURCE.name());
+		final MeasurementVariable variable = MeasurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.GERMPLASM_SOURCE.getId(), TermId.GERMPLASM_SOURCE.name(), null);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
-		UserSelection userSelection = Mockito.mock(UserSelection.class);
-		ImportedGermplasm importedGermplasm = this.setUpUserSelection(userSelection);
+		final UserSelection userSelection = Mockito.mock(UserSelection.class);
+		final ImportedGermplasm importedGermplasm = this.setUpUserSelection(userSelection);
 		WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, true, variable, userSelection);
 		Assert.assertEquals(importedGermplasm.getSource(), row.getDataList().get(4).getValue());
 	}
-	
+
 	@Test
 	public void testAddFactorsToMeasurementRowDataListForSTOCKID() {
-		MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
-		StandardVariable stdVariable = StandardVariableTestDataInitializer.createStandardVariable(TermId.STOCKID.getId(), TermId.STOCKID.name());
-		MeasurementVariable variable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.STOCKID.getId(), TermId.STOCKID.name(), null);
+		final MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
+		final StandardVariable stdVariable = StandardVariableTestDataInitializer
+				.createStandardVariable(TermId.STOCKID.getId(), TermId.STOCKID.name());
+		final MeasurementVariable variable = MeasurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.STOCKID.getId(), TermId.STOCKID.name(), null);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
-		UserSelection userSelection = Mockito.mock(UserSelection.class);
-		ImportedGermplasm importedGermplasm = this.setUpUserSelection(userSelection);
+		final UserSelection userSelection = Mockito.mock(UserSelection.class);
+		final ImportedGermplasm importedGermplasm = this.setUpUserSelection(userSelection);
 		WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, true, variable, userSelection);
 		Assert.assertEquals(importedGermplasm.getStockIDs(), row.getDataList().get(4).getValue());
 	}
-	
+
 	@Test
 	public void testAddFactorsToMeasurementRowDataListForENTRY_CODE() {
-		MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
-		StandardVariable stdVariable = StandardVariableTestDataInitializer.createStandardVariable(TermId.ENTRY_CODE.getId(), TermId.ENTRY_CODE.name());
-		MeasurementVariable variable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.ENTRY_CODE.getId(), TermId.ENTRY_CODE.name(), null);
+		final MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
+		final StandardVariable stdVariable = StandardVariableTestDataInitializer
+				.createStandardVariable(TermId.ENTRY_CODE.getId(), TermId.ENTRY_CODE.name());
+		final MeasurementVariable variable = MeasurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.ENTRY_CODE.getId(), TermId.ENTRY_CODE.name(), null);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
-		UserSelection userSelection = Mockito.mock(UserSelection.class);
-		ImportedGermplasm importedGermplasm = this.setUpUserSelection(userSelection);
+		final UserSelection userSelection = Mockito.mock(UserSelection.class);
+		final ImportedGermplasm importedGermplasm = this.setUpUserSelection(userSelection);
 		WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, true, variable, userSelection);
 		Assert.assertEquals(importedGermplasm.getEntryCode(), row.getDataList().get(4).getValue());
 	}
-	
+
 	@Test
 	public void testAddFactorsToMeasurementRowDataListForCROSS() {
-		MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
-		StandardVariable stdVariable = StandardVariableTestDataInitializer.createStandardVariable(TermId.CROSS.getId(), TermId.CROSS.name());
-		MeasurementVariable variable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.CROSS.getId(), TermId.CROSS.name(), null);
+		final MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
+		final StandardVariable stdVariable = StandardVariableTestDataInitializer
+				.createStandardVariable(TermId.CROSS.getId(), TermId.CROSS.name());
+		final MeasurementVariable variable = MeasurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.CROSS.getId(), TermId.CROSS.name(), null);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
-		UserSelection userSelection = Mockito.mock(UserSelection.class);
-		ImportedGermplasm importedGermplasm = this.setUpUserSelection(userSelection);
+		final UserSelection userSelection = Mockito.mock(UserSelection.class);
+		final ImportedGermplasm importedGermplasm = this.setUpUserSelection(userSelection);
 		WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, true, variable, userSelection);
 		Assert.assertEquals(importedGermplasm.getCross(), row.getDataList().get(4).getValue());
 	}
-	
-	private ImportedGermplasm setUpUserSelection(UserSelection userSelection) {
-		ImportedGermplasmMainInfo  importedGermplasmMainInfo = Mockito.mock(ImportedGermplasmMainInfo.class);
-		ImportedGermplasmList importedGermplasmList = Mockito.mock(ImportedGermplasmList.class);
-		ImportedGermplasm importedGermplasm = ImportedGermplasmTestDataInitializer.createImportedGermplasm();
-		
+
+	private ImportedGermplasm setUpUserSelection(final UserSelection userSelection) {
+		final ImportedGermplasmMainInfo importedGermplasmMainInfo = Mockito.mock(ImportedGermplasmMainInfo.class);
+		final ImportedGermplasmList importedGermplasmList = Mockito.mock(ImportedGermplasmList.class);
+		final ImportedGermplasm importedGermplasm = ImportedGermplasmTestDataInitializer.createImportedGermplasm();
+
 		Mockito.when(userSelection.getImportedGermplasmMainInfo()).thenReturn(importedGermplasmMainInfo);
 		Mockito.when(importedGermplasmMainInfo.getImportedGermplasmList()).thenReturn(importedGermplasmList);
 		Mockito.when(importedGermplasmList.getImportedGermplasms()).thenReturn(Arrays.asList(importedGermplasm));

@@ -4,7 +4,6 @@ package com.efficio.fieldbook.web.common.controller;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.UnpermittedDeletionException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;

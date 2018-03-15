@@ -17,7 +17,7 @@ import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
@@ -447,7 +447,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 		final Map<String, String> studyTypes = new HashMap<>();
 
-		for (final StudyType type : StudyType.values()) {
+		for (final StudyTypeDto type : studyDataManager.getAllStudyTypes()) {
 			studyTypes.put(type.getName(), type.getLabel());
 		}
 

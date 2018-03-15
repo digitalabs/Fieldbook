@@ -244,13 +244,11 @@ public class DesignImportMeasurementRowGenerator {
 
 	public void addFactorsToMeasurementRows(final List<MeasurementRow> measurements) {
 
-		if (Objects.equals(this.workbook.getStudyDetails().getStudyType().getLabel(), StudyType.N.getLabel())) {
-			for (final MeasurementVariable factor : this.workbook.getFactors()) {
-				for (final MeasurementRow row : measurements) {
-					this.addFactorToDataListIfNecessary(factor, row.getDataList());
-				}
-
+		for (final MeasurementVariable factor : this.workbook.getFactors()) {
+			for (final MeasurementRow row : measurements) {
+				this.addFactorToDataListIfNecessary(factor, row.getDataList());
 			}
+
 		}
 	}
 

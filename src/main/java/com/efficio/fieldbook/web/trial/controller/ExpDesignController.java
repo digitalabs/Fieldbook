@@ -11,7 +11,6 @@ import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
@@ -79,6 +78,7 @@ public class ExpDesignController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(value = "/retrieveDesignTypes", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	public List<DesignTypeItem> retrieveDesignTypes() {
+
 		final List<DesignTypeItem> designTypes = new ArrayList<>();
 
 		designTypes.add(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK);
@@ -144,9 +144,6 @@ public class ExpDesignController extends BaseTrialController {
 
 
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.contextUtil.getCurrentProgramUUID());
-		final StudyDetails details = new StudyDetails();
-		details.setStudyType(studyDataManager.getStudyTypeByName(this.userSelection.getStudyType()));
-		workbook.setStudyDetails(details);
 		this.userSelection.setTemporaryWorkbook(workbook);
 
 		if (this.userSelection.getWorkbook() != null) {

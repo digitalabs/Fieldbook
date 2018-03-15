@@ -48,11 +48,13 @@ import org.generationcp.middleware.util.PoiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import org.springframework.transaction.annotation.Transactional;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The class providing export crossing template as an excel file function
  */
+@Transactional
 public class CrossingTemplateExcelExporter {
 
 	public static final String EXPORT_FILE_NAME_FORMAT = "CrossingTemplate-%s";
@@ -310,7 +312,7 @@ public class CrossingTemplateExcelExporter {
 	}
 
 	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId) throws CrossingTemplateExportException {
-		List<GermplasmList> crossesList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY);
+		List<GermplasmList> crossesList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
 
 		if (crossesList.isEmpty()) {
 			throw new CrossingTemplateExportException("study.export.crosses.no.germplasm.list.available");

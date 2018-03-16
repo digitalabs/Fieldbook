@@ -175,12 +175,12 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	private void validateFemaleStudy(final String femaleStudy) throws FileParsingException {
 
 		if (femaleStudy == null || Objects.equals(femaleStudy, "")) {
-			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.study.empty", new String[] {},
+			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.study.empty", new Object[] {},
 					LocaleContextHolder.getLocale()));
 		}
 
 		if (!femaleStudy.equals(this.studySelection.getWorkbook().getStudyName().trim())) {
-			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.study.match", new String[] {},
+			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.study.match", new Object[] {},
 					LocaleContextHolder.getLocale()));
 		}
 	}
@@ -280,7 +280,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	 * @param studyName - femaleStudy/maleStudy equivalent from the template
 	 * @param genderedPlotNo - femalePlot/malePlot equivalent from the template
 	 * @return ListDataProject - We need the Design, and female/male gids information that we can retrieve using this data structure
-	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
+	 * @throws FileParsingException
 	 */
 	private ListDataProject getCrossingListProjectData(final String studyName, final Integer genderedPlotNo, final String programUUID)
 			throws FileParsingException {

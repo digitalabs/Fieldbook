@@ -33,5 +33,15 @@ public class SettingDetailTestDataInitializer {
 
 		return settingDetail;
 	}
+	
+	public static SettingDetail createSettingDetail(final Integer cvTermId) {
+
+		final SettingDetail settingDetail = new SettingDetail();
+		final SettingVariable settingVariable = new SettingVariable();
+		settingVariable.setCvTermId(cvTermId);
+		settingDetail.setVariable(settingVariable);
+
+		return settingDetail;
+	}
 
 }

@@ -471,7 +471,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					$scope.stockListTabs = [];
 				}
 
-				angular.forEach($scope.advanceTabs, function (value) {
+				angular.forEach($scope.advanceTabs, function (value, index) {
 					if (!isAdvance && value.id === tabId) {
 						isAdvance = true;
 					}
@@ -479,10 +479,15 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					if (!isAdvanceStock && value.state === 'stock-list' + tabId + '-li') {
 						isAdvanceStock = true;
 					}
+
+					if(isAdvance && isAdvanceStock){
+						$scope.advanceTabsData[index].data = tabData;
+					}
 				});
 
-				angular.forEach($scope.crossesTabs, function (value) {
+				angular.forEach($scope.crossesTabs, function (value, index) {
 					if (!isCrossesStock && value.state === 'stock-list' + tabId + '-li') {
+						$scope.crossesTabsData[index].data = tabData;
 						isCrossesStock = true;
 					}
 				});

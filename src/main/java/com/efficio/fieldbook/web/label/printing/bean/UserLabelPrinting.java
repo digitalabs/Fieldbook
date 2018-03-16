@@ -22,7 +22,6 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class UserLabelPrinting.
  *

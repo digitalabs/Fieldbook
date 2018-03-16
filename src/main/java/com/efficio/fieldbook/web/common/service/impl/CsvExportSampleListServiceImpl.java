@@ -1,18 +1,5 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import au.com.bytecode.opencsv.CSVWriter;
-import com.efficio.fieldbook.web.common.service.CsvExportSampleListService;
-import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import org.generationcp.commons.pojo.ExportColumnHeader;
-import org.generationcp.commons.pojo.ExportColumnValue;
-import org.generationcp.middleware.domain.sample.SampleDetailsDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,6 +12,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
+import org.generationcp.commons.pojo.ExportColumnHeader;
+import org.generationcp.commons.pojo.ExportColumnValue;
+import org.generationcp.commons.pojo.FileExportInfo;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.InstallationDirectoryUtil;
+import org.generationcp.middleware.domain.sample.SampleDetailsDTO;
+import org.generationcp.middleware.pojos.workbench.ToolName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.efficio.fieldbook.web.common.service.CsvExportSampleListService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+
+import au.com.bytecode.opencsv.CSVWriter;
+
 @Service
 @Transactional
 public class CsvExportSampleListServiceImpl implements CsvExportSampleListService {
@@ -35,24 +42,27 @@ public class CsvExportSampleListServiceImpl implements CsvExportSampleListServic
 			"PLANT_UID", "PLOT_ID");
 	private static final String SAMPLE_UID = "SAMPLE_UID";
 
-	@Resource private FieldbookProperties fieldbookProperties;
+	@Resource
+	private ContextUtil contextUtil;
+	
+	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	@Override
-	public String export(final List<SampleDetailsDTO> sampleDetailsDTOs, final String filename, final List<String> visibleColumns)
+	public FileExportInfo export(final List<SampleDetailsDTO> sampleDetailsDTOs, final String filenameWithoutExtension, final List<String> visibleColumns)
 		throws IOException {
 		LOG.debug("Initialize export");
-		final List<String> filenameList = new ArrayList<>();
 
 		final List<ExportColumnHeader> exportColumnHeaders = this.getExportColumnHeaders(visibleColumns);
 		final List<Map<Integer, ExportColumnValue>> exportColumnValues = this.getExportColumnValues(exportColumnHeaders, sampleDetailsDTOs);
 
-		final String filenamePath = ExportImportStudyUtil.getFileNamePath(filename, this.fieldbookProperties);
+		final String cleanFilenameWithoutExtension = SettingsUtil.cleanSheetAndFileName(filenameWithoutExtension);
+		final String filenamePath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(cleanFilenameWithoutExtension,
+				AppConstants.EXPORT_CSV_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 		this.generateCSVFile(exportColumnValues, exportColumnHeaders, filenamePath);
 
-		filenameList.add(filenamePath);
 		LOG.debug("Finished export");
-		return filenamePath;
-
+		
+		return new FileExportInfo(filenamePath, cleanFilenameWithoutExtension + AppConstants.EXPORT_CSV_SUFFIX.getString());
 	}
 
 	private List<Map<Integer, ExportColumnValue>> getExportColumnValues(List<ExportColumnHeader> columnHeaders,
@@ -197,11 +207,9 @@ public class CsvExportSampleListServiceImpl implements CsvExportSampleListServic
 		return values.toArray(new String[values.size()]);
 	}
 
-	public FieldbookProperties getFieldbookProperties() {
-		return fieldbookProperties;
+	
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
 	}
 
-	public void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
-		this.fieldbookProperties = fieldbookProperties;
-	}
 }

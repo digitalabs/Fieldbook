@@ -528,7 +528,7 @@ public class OpenTrialController extends BaseTrialController {
 	public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") final int id) throws ParseException {
 		final Map<String, Object> returnVal = new HashMap<>();
 		final Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(id);
-
+		this.fieldbookMiddlewareService.loadAllObservations(trialWorkbook);
 		this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
 
 		this.userSelection.setWorkbook(trialWorkbook);

@@ -1045,7 +1045,8 @@ public class OpenTrialControllerTest {
 		Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENTS_DATA));
 		Assert.assertNotNull(resultMap.get(OpenTrialController.SELECTION_VARIABLE_DATA));
 		Assert.assertNotNull(resultMap.get(OpenTrialController.TRIAL_SETTINGS_DATA));
-
+		
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).loadAllObservations(workbook);
 		Mockito.verify(this.userSelection, Mockito.times(1)).setWorkbook(workbook);
 		Mockito.verify(this.userSelection, Mockito.times(1))
 				.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(workbook.getConditions()));

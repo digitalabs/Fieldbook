@@ -1,10 +1,16 @@
 
 package com.efficio.fieldbook.web.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.generationcp.commons.pojo.FileExportInfo;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.InstallationDirectoryUtil;
+import org.generationcp.middleware.data.initializer.ProjectTestDataInitializer;
 import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitializer;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -18,6 +24,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,14 +55,16 @@ public class ExportImportStudyUtilTest {
 	private MessageSource messageSource;
 
 	@Mock
-	private FieldbookProperties fieldbookProperties;
+	private ContextUtil contextUtil;
 
 	private ValueReferenceTestDataInitializer valueReferenceTestDataInitializer;
 
-	private String fileName;
+	private String fileNameWithExtension;
 	private List<Location> locations;
 	private Workbook workbook;
 	private List<Integer> instances;
+	
+	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	@Before
 	public void setUp() {
@@ -65,10 +74,11 @@ public class ExportImportStudyUtilTest {
 		Mockito.doReturn(new Term(1, ExportImportStudyUtilTest.PROPERTY_NAME, "Dummy defintion")).when(prop).getTerm();
 
 		this.locations = WorkbookDataUtil.createLocationData();
-		this.fileName = "trial_" + new Random().nextInt(1000) + ".xls";
+		this.fileNameWithExtension = "trial_" + new Random().nextInt(1000) + ".xls";
 
 		// init test data initializers;
 		this.valueReferenceTestDataInitializer = new ValueReferenceTestDataInitializer();
+		Mockito.doReturn(ProjectTestDataInitializer.createProject()).when(this.contextUtil).getProjectInContext();
 	}
 
 	@Test
@@ -142,7 +152,7 @@ public class ExportImportStudyUtilTest {
 	}
 
 	@Test
-	public void testGetFileNamePathWithSiteAndMoreThanOneInstance() {
+	public void testGetFileNamePathWithSiteAndMoreThanOneInstance() throws IOException {
 
 		Mockito.when(this.fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_1)).thenReturn(this.locations.get(0));
 		Mockito.when(this.fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_2)).thenReturn(this.locations.get(1));
@@ -152,31 +162,31 @@ public class ExportImportStudyUtilTest {
 
 		int index = 1;
 		for (final MeasurementRow row : this.workbook.getTrialObservations()) {
-			final String outputFileName =
-					ExportImportStudyUtil.getFileNamePath(index, row, this.instances, this.fileName, false, this.fieldbookProperties,
-							this.fieldbookMiddlewareService);
+			final FileExportInfo exportInfo = ExportImportStudyUtil.getFileNamePath(index, row, this.instances, this.fileNameWithExtension,
+					false, this.fieldbookMiddlewareService, this.contextUtil);
+			
 			Assert.assertTrue("Expected location in filename but did not found one.",
-					outputFileName.contains(WorkbookDataUtil.LNAME + "_" + index));
+					exportInfo.getDownloadFileName().contains(WorkbookDataUtil.LNAME + "_" + index));
 			index++;
 		}
 	}
 
 	@Test
-	public void testGetFileNamePathWithSiteAndOneInstance() {
+	public void testGetFileNamePathWithSiteAndOneInstance() throws IOException {
 
 		Mockito.when(this.fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_1)).thenReturn(this.locations.get(0));
 
 		this.workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 1);
 		this.instances = WorkbookDataUtil.getTrialInstances(this.workbook);
 
-		final String outputFileName =
-				ExportImportStudyUtil.getFileNamePath(1, this.workbook.getTrialObservations().get(0), this.instances, this.fileName, false,
-						this.fieldbookProperties, this.fieldbookMiddlewareService);
-		Assert.assertTrue("Expected location in filename but did not found one.", outputFileName.contains(WorkbookDataUtil.LNAME + "_1"));
+		final FileExportInfo exportInfo =
+				ExportImportStudyUtil.getFileNamePath(1, this.workbook.getTrialObservations().get(0), this.instances, this.fileNameWithExtension, false,
+						this.fieldbookMiddlewareService, this.contextUtil);
+		Assert.assertTrue("Expected location in filename but did not found one.", exportInfo.getDownloadFileName().contains(WorkbookDataUtil.LNAME + "_1"));
 	}
 
 	@Test
-	public void testGetFileNamePathWithoutSite() {
+	public void testGetFileNamePathWithoutSite() throws IOException {
 
 		Mockito.when(this.fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_1)).thenReturn(this.locations.get(0));
 
@@ -184,12 +194,11 @@ public class ExportImportStudyUtilTest {
 		this.instances = new ArrayList<Integer>();
 		this.instances.add(1);
 
-		final String outputFileName =
-				ExportImportStudyUtil.getFileNamePath(1, trialObservation, this.instances, this.fileName, false, this.fieldbookProperties,
-						this.fieldbookMiddlewareService);
+		final FileExportInfo exportInfo = ExportImportStudyUtil.getFileNamePath(1, trialObservation, this.instances,
+				this.fileNameWithExtension, false, this.fieldbookMiddlewareService, this.contextUtil);
 		Assert.assertTrue("Expected filename in output filename but found none.",
-				outputFileName.contains(this.fileName.substring(0, this.fileName.lastIndexOf("."))));
-		final String processedFileName = outputFileName.substring(0, this.fileName.lastIndexOf("."));
+				exportInfo.getDownloadFileName().contains(this.fileNameWithExtension.substring(0, this.fileNameWithExtension.lastIndexOf("."))));
+		final String processedFileName = exportInfo.getDownloadFileName().substring(0, this.fileNameWithExtension.lastIndexOf("."));
 		Assert.assertFalse("Expected no underscore before the file extension but found one.",
 				processedFileName.charAt(processedFileName.length() - 1) == '_');
 	}
@@ -265,5 +274,16 @@ public class ExportImportStudyUtilTest {
 			possibleValues.add(possibleValue);
 		}
 		return possibleValues;
+	}
+	
+	@After
+	public void cleanup() {
+		this.deleteTestInstallationDirectory();
+	}
+	
+	private void deleteTestInstallationDirectory() {
+		// Delete test installation directory and its contents as part of cleanup
+		final File testInstallationDirectory = new File(InstallationDirectoryUtil.WORKSPACE_DIR);
+		this.installationDirectoryUtil.recursiveFileDelete(testInstallationDirectory);
 	}
 }

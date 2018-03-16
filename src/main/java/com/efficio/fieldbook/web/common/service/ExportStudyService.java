@@ -14,10 +14,14 @@ package com.efficio.fieldbook.web.common.service;
 import java.io.IOException;
 import java.util.List;
 
+import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.middleware.domain.etl.Workbook;
+
 
 public interface ExportStudyService {
 
-	String export(Workbook workbook, String filename, List<Integer> instances) throws IOException;
+	FileExportInfo export(Workbook workbook, String filename, List<Integer> instances) throws IOException;
+	
+	FileExportInfo export(Workbook workbook, String filename, List<Integer> instances, List<Integer> visibleColumns) throws IOException;
 
 }

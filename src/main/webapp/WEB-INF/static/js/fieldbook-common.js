@@ -3479,7 +3479,6 @@ function refreshListDetails() {
 
 function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	'use strict';
-	debugger;
 	if (isPreSelect) {
 		$('body').data('doAutoSave', '1');
 	} else {
@@ -3610,7 +3609,6 @@ function initializeStudyTabs() {
 function addDetailsTab(studyId, title) {
 	// if the study is already existing, we show that tab
 	'use strict';
-	debugger;
 	if ($('li#li-study' + studyId).length !== 0) {
 		$('li#li-study' + studyId + ' a').tab('show');
 	} else {

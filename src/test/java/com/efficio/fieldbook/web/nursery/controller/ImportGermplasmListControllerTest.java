@@ -198,7 +198,8 @@ public class ImportGermplasmListControllerTest {
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, StudyType.N.getName(), form, model);
+		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, StudyType.N.getName(),
+				form, model);
 
 		Assert.assertTrue("If import is successful, isImportValid should be TRUE", this.userSelection.isImportValid());
 
@@ -240,7 +241,8 @@ public class ImportGermplasmListControllerTest {
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, StudyType.T.getName(), form, model);
+		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, StudyType.T.getName(),
+				form, model);
 
 		Assert.assertTrue("If import is successful, isImportValid should be TRUE", this.userSelection.isImportValid());
 
@@ -818,8 +820,8 @@ public class ImportGermplasmListControllerTest {
 				"CHECK_START", hasValue ? "1" : null, "TRIAL"));
 		checkVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_INTERVAL.getId(),
 				"CHECK_INTERVAL", hasValue ? "4" : null, "TRIAL"));
-		checkVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_PLAN.getId(),
-				"CHECK_PLAN", hasValue ? "8414" : null, "TRIAL"));
+		checkVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_PLAN.getId(), "CHECK_PLAN",
+				hasValue ? "8414" : null, "TRIAL"));
 
 		return checkVariables;
 	}

@@ -134,14 +134,11 @@ public class DesignImportControllerTest {
 
 	private final Project project = this.createProject();
 
-	private SettingDetailTestDataInitializer settingDetailTestDataInitializer;
-
 	@Before
 	public void init() throws Exception {
 
 		final DesignImportData data = createDesignImportDataWithCooperatorVariable();
-		this.settingDetailTestDataInitializer = new SettingDetailTestDataInitializer();
-
+		
 		Mockito.when(this.multiPartFile.getOriginalFilename())
 				.thenReturn(DesignImportControllerTest.TEST_IMPORT_FILE_NAME_CSV);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(this.project);
@@ -448,7 +445,7 @@ public class DesignImportControllerTest {
 
 		final List<SettingDetail> settingDetails = new ArrayList<SettingDetail>();
 
-		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId(),
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId(),
 				DesignImportControllerTest.LOCATION_ID, "", "TRIAL"));
 
 		Mockito.doReturn(settingDetails).when(this.userSelection).getTrialLevelVariableList();
@@ -613,7 +610,7 @@ public class DesignImportControllerTest {
 		final Project project = this.createProject();
 		final MeasurementVariable siteName = this.createMeasurementVariable(TermId.SITE_NAME.getId(),
 				DesignImportControllerTest.SITE_NAME, "TRIAL");
-		final SettingDetail siteNameSettingDetail = this.settingDetailTestDataInitializer
+		final SettingDetail siteNameSettingDetail = SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.SITE_NAME.getId(), DesignImportControllerTest.SITE_NAME, "", "TRIAL");
 
 		final List<SettingDetail> settingDetails = new ArrayList<>();
@@ -650,10 +647,10 @@ public class DesignImportControllerTest {
 
 		final MeasurementVariable siteName = this.createMeasurementVariable(TermId.SITE_NAME.getId(),
 				DesignImportControllerTest.SITE_NAME, "TRIAL");
-		final SettingDetail siteNameSettingDetail = this.settingDetailTestDataInitializer
+		final SettingDetail siteNameSettingDetail = SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.SITE_NAME.getId(), DesignImportControllerTest.SITE_NAME, "", "TRIAL");
 		final MeasurementVariable piName = this.createMeasurementVariable(TermId.PI_NAME.getId(), "PI_NAME", "TRIAL");
-		final SettingDetail piNameSettingDetail = this.settingDetailTestDataInitializer
+		final SettingDetail piNameSettingDetail = SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.PI_NAME.getId(), "PI_NAME", "", "TRIAL");
 
 		workbook.getConditions().clear();
@@ -779,7 +776,7 @@ public class DesignImportControllerTest {
 	public void testUpdateOperationWithTermIdHasMatchInList() {
 
 		final List<SettingDetail> settingDetails = new ArrayList<>();
-		final SettingDetail settingDetail = this.settingDetailTestDataInitializer
+		final SettingDetail settingDetail = SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.SITE_NAME.getId(), DesignImportControllerTest.SITE_NAME, "", "TRIAL");
 		settingDetails.add(settingDetail);
 
@@ -793,7 +790,7 @@ public class DesignImportControllerTest {
 	public void testUpdateOperationSuppliedTermIdNotInList() {
 
 		final List<SettingDetail> settingDetails = new ArrayList<>();
-		final SettingDetail settingDetail = this.settingDetailTestDataInitializer
+		final SettingDetail settingDetail = SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.SITE_NAME.getId(), DesignImportControllerTest.SITE_NAME, "", "TRIAL");
 		settingDetails.add(settingDetail);
 
@@ -847,8 +844,8 @@ public class DesignImportControllerTest {
 	public void testGetLocalNameFromSettingDetailsWithMatch() {
 
 		final List<SettingDetail> settingDetails = new ArrayList<>();
-		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(123, "FACTOR 1", "", "TRIAL"));
-		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(321, "FACTOR 2", "", "TRIAL"));
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(123, "FACTOR 1", "", "TRIAL"));
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(321, "FACTOR 2", "", "TRIAL"));
 
 		final String result = this.designImportController.getLocalNameFromSettingDetails(123, settingDetails);
 
@@ -859,8 +856,8 @@ public class DesignImportControllerTest {
 	public void testGetLocalNameFromSettingDetailsWithNoMatch() {
 
 		final List<SettingDetail> settingDetails = new ArrayList<>();
-		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(123, "FACTOR 1", "", "TRIAL"));
-		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(321, "FACTOR 2", "", "TRIAL"));
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(123, "FACTOR 1", "", "TRIAL"));
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(321, "FACTOR 2", "", "TRIAL"));
 
 		final String result = this.designImportController.getLocalNameFromSettingDetails(567, settingDetails);
 
@@ -985,11 +982,11 @@ public class DesignImportControllerTest {
 
 	protected void initializeSettingServiceForChecks() {
 
-		final SettingDetail checkStart = this.settingDetailTestDataInitializer
+		final SettingDetail checkStart = SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.CHECK_START.getId(), "CHECK_START", "", "TRIAL");
-		final SettingDetail checkInterval = this.settingDetailTestDataInitializer
+		final SettingDetail checkInterval = SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.CHECK_INTERVAL.getId(), "CHECK_INTERVAL", "", "TRIAL");
-		final SettingDetail checkPlan = this.settingDetailTestDataInitializer
+		final SettingDetail checkPlan = SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.CHECK_PLAN.getId(), "CHECK_PLAN", "", "TRIAL");
 
 		Mockito.when(this.settingsService.createSettingDetail(TermId.CHECK_START.getId(), "CHECK_START",
@@ -1269,9 +1266,9 @@ public class DesignImportControllerTest {
 
 		final List<SettingDetail> trialLevelVariableList = new ArrayList<SettingDetail>();
 
-		trialLevelVariableList.add(this.settingDetailTestDataInitializer
+		trialLevelVariableList.add(SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "", "TRIAL"));
-		trialLevelVariableList.add(this.settingDetailTestDataInitializer.createSettingDetail(
+		trialLevelVariableList.add(SettingDetailTestDataInitializer.createSettingDetail(
 				TermId.TRIAL_LOCATION.getId(), DesignImportControllerTest.LOCATION_NAME, "", "TRIAL"));
 
 		final DesignImportData designImportData = this.userSelection.getDesignImportData();
@@ -1297,9 +1294,9 @@ public class DesignImportControllerTest {
 
 		final List<SettingDetail> trialLevelVariableList = new ArrayList<SettingDetail>();
 
-		trialLevelVariableList.add(this.settingDetailTestDataInitializer
+		trialLevelVariableList.add(SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "", "TRIAL"));
-		trialLevelVariableList.add(this.settingDetailTestDataInitializer.createSettingDetail(
+		trialLevelVariableList.add(SettingDetailTestDataInitializer.createSettingDetail(
 				TermId.TRIAL_LOCATION.getId(), DesignImportControllerTest.LOCATION_NAME, "", "TRIAL"));
 
 		final DesignImportData designImportData = this.userSelection.getDesignImportData();
@@ -1379,17 +1376,17 @@ public class DesignImportControllerTest {
 	private List<SettingDetail> createSettingDetails() {
 		final List<SettingDetail> settingDetails = new ArrayList<SettingDetail>();
 
-		settingDetails.add(this.settingDetailTestDataInitializer
+		settingDetails.add(SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "", "TRIAL"));
-		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(),
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(),
 				DesignImportControllerTest.LOCATION_NAME, "", "TRIAL"));
-		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId(),
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId(),
 				"LOCATION_ID", "", "TRIAL"));
-		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(),
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(),
 				DesignImportControllerTest.SITE_NAME, "", "TRIAL"));
-		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.PI_NAME.getId(), "PI_NAME",
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.PI_NAME.getId(), "PI_NAME",
 				"", "TRIAL"));
-		settingDetails.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.COOPERATOR.getId(),
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.COOPERATOR.getId(),
 				"COOPERATOR", "", "TRIAL"));
 
 		return settingDetails;
@@ -1619,11 +1616,11 @@ public class DesignImportControllerTest {
 
 		final List<SettingDetail> deletedTrialLevelVariables = new ArrayList<>();
 
-		deletedTrialLevelVariables.add(this.settingDetailTestDataInitializer
+		deletedTrialLevelVariables.add(SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.SITE_NAME.getId(), DesignImportControllerTest.SITE_NAME, "", "TRIAL"));
-		deletedTrialLevelVariables.add(this.settingDetailTestDataInitializer.createSettingDetail(
+		deletedTrialLevelVariables.add(SettingDetailTestDataInitializer.createSettingDetail(
 				TermId.TRIAL_LOCATION.getId(), DesignImportControllerTest.LOCATION_NAME, "", "TRIAL"));
-		deletedTrialLevelVariables.add(this.settingDetailTestDataInitializer
+		deletedTrialLevelVariables.add(SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.LOCATION_ID.getId(), "LOCATION_NAME_ID", "", "TRIAL"));
 
 		return deletedTrialLevelVariables;

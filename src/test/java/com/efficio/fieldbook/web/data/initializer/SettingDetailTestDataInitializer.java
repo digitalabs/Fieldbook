@@ -12,7 +12,7 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 
 public class SettingDetailTestDataInitializer {
 
-	public SettingDetail createSettingDetail(int cvTermId, String name, String value, String label) {
+	public static SettingDetail createSettingDetail(int cvTermId, String name, String value, String label) {
 
 		SettingVariable variable = new SettingVariable();
 		variable.setCvTermId(cvTermId);

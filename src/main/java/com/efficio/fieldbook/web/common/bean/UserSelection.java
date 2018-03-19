@@ -69,7 +69,7 @@ public class UserSelection implements Serializable {
 	private int currentPageCheckGermplasmList;
 
 	/** Nursery level conditions in Manage Settings. */
-	private List<SettingDetail> studyLevelConditions;
+	private List<SettingDetail> studyLevelConditions = new ArrayList<>();
 
 	/** Plot level factors in Manage Settings. */
 	private List<SettingDetail> plotsLevelList;

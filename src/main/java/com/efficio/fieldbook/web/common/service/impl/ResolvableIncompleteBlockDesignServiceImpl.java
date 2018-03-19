@@ -275,4 +275,14 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 	public void setExperimentDesignGenerator(final ExperimentDesignGenerator experimentDesignGenerator) {
 		this.experimentDesignGenerator = experimentDesignGenerator;
 	}
+
+	/**
+	 * Defines if the experimental design requires breeding view licence to run
+	 *
+	 * @return
+	 */
+	@Override
+	public Boolean requiresBreedingViewLicence() {
+		return Boolean.TRUE;
+	}
 }

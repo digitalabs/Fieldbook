@@ -14,7 +14,6 @@ var addedGid = {},
 	itemsToAdd = [],
 	checksFromPrimary = 0,
 
-	importIframeOpened = false,
 	itemsIndexAdded = [];
 
 var makeCheckDraggableBool = true;
@@ -74,9 +73,8 @@ function showPopoverCheck(index, sectionContainer, bodyContainer) {
 	'use strict';
 	//if replace has been clicked or if new nursery/trial or if there are no measurement rows saved yet for trial
 	var isShowPopOver = ($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1)
-		|| ($('#studyId').length === 0 && isNursery()) || (!isOpenTrial() && !isNursery())
-		|| (isOpenTrial() && $('body').data('service.trialMeasurement.count') === 0)
-		|| ($('#studyId').length !== 0 && isNursery() && measurementRowCount === 0);
+		|| (!isOpenStudy())
+		|| (isOpenStudy() && $('body').data('service.trialMeasurement.count') === 0);
 
 	if (isShowPopOver) {
 		var currentCheckVal = $(sectionContainer + ' #selectedCheck' + index).val(),

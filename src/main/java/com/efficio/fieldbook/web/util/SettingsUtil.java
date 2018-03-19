@@ -2317,7 +2317,7 @@ public class SettingsUtil {
 				if (param.getDesignType() != null) {
 					if (param.getDesignType().equals(0)) {
 						return String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId());
-					} else if (param.getDesignType().equals(1) || param.getDesignType().equals(5) || param.getDesignType().equals(6)
+					} else if (param.getDesignType().equals(1) || param.getDesignType().equals(6) //|| param.getDesignType().equals(5)
 							|| param.getDesignType().equals(7)) {
 						if (param.getUseLatenized() != null && param.getUseLatenized()) {
 							return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId());
@@ -2334,6 +2334,8 @@ public class SettingsUtil {
 						return String.valueOf(TermId.OTHER_DESIGN.getId());
 					} else if (param.getDesignType().equals(4)) {
 						return String.valueOf(TermId.AUGMENTED_RANDOMIZED_BLOCK.getId());
+					} else if (param.getDesignType().equals(5)) {
+						return String.valueOf(TermId.ENTRY_LIST_ORDER.getId());
 					}
 				}
 				break;
@@ -2370,6 +2372,12 @@ public class SettingsUtil {
 				return param.getFileName();
 			case NBLKS:
 				return param.getNumberOfBlocks();
+			case CHECK_START:
+				return param.getCheckStartingPosition();
+			case CHECK_INTERVAL:
+				return param.getCheckSpacing();
+			case CHECK_PLAN:
+				return param.getCheckInsertionManner();
 			default:
 		}
 		return "";

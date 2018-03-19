@@ -12,7 +12,6 @@ import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
@@ -148,9 +147,6 @@ public class ExpDesignController extends BaseTrialController {
 
 
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.contextUtil.getCurrentProgramUUID());
-		final StudyDetails details = new StudyDetails();
-		details.setStudyType(studyDataManager.getStudyTypeByName(this.userSelection.getStudyType()));
-		workbook.setStudyDetails(details);
 		this.userSelection.setTemporaryWorkbook(workbook);
 
 		if (this.userSelection.getWorkbook() != null) {
@@ -207,7 +203,7 @@ public class ExpDesignController extends BaseTrialController {
 
 						final BVDesignLicenseInfo bvDesignLicenseInfo = designLicenseUtil.retrieveLicenseInfo();
 
-						if (this.designLicenseUtil.isExpired(bvDesignLicenseInfo)) {
+						if (designService.requiresBreedingViewLicence() && this.designLicenseUtil.isExpired(bvDesignLicenseInfo)) {
 							expParameterOutput =
 									new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.license.expired",
 											null, locale));
@@ -252,7 +248,7 @@ public class ExpDesignController extends BaseTrialController {
 
 						workbook.setExpDesignVariables(designService.getRequiredDesignVariables());
 
-						if (this.designLicenseUtil.isExpiringWithinThirtyDays(bvDesignLicenseInfo)) {
+						if (designService.requiresBreedingViewLicence() && this.designLicenseUtil.isExpiringWithinThirtyDays(bvDesignLicenseInfo)) {
 							final int daysBeforeExpiration = Integer.parseInt(bvDesignLicenseInfo.getStatus().getLicense().getExpiryDays());
 							expParameterOutput =
 									new ExpDesignValidationOutput(true, this.messageSource.getMessage("experiment.design.license.expiring",

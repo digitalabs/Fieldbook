@@ -217,6 +217,16 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 		return output;
 	}
 
+	/**
+	 * Defines if the experimental design requires breeding view licence to run
+	 *
+	 * @return
+	 */
+	@Override
+	public Boolean requiresBreedingViewLicence() {
+		return Boolean.TRUE;
+	}
+
 	@Override
 	public List<Integer> getExperimentalDesignVariables(final ExpDesignParameterUi params) {
 		return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NBLKS.getId());

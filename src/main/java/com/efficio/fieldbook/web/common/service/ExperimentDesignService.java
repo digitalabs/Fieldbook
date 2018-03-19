@@ -67,4 +67,10 @@ public interface ExperimentDesignService {
 	 * @return
 	 */
 	List<Integer> getExperimentalDesignVariables(ExpDesignParameterUi params);
+
+	/**
+	 * Defines if the experimental design requires breeding view licence to run
+	 * @return
+	 */
+	Boolean requiresBreedingViewLicence();
 }

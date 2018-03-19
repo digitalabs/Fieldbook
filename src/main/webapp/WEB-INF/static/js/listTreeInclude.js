@@ -330,6 +330,15 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 	var initLoadUrl = '/Fieldbook/SampleListTreeManager/loadInitTree';
 	initLoadUrl += '/' + isFolderOnly;
 
+	var authParams =
+		'authToken=' + authToken
+		+ '&selectedProjectId=' + selectedProjectId
+		+ '&loggedInUserId=' + loggedInUserId;
+
+	if (selectedProjectId) {
+		initLoadUrl += '?' + authParams
+	}
+
 	var dynaTreeOptions = {
 		title : treeName,
 		checkbox : false,

@@ -1,25 +1,20 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.ExportGermplasmListForm;
+import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
+import com.efficio.fieldbook.web.util.AppConstants;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.util.FileUtils;
+import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,21 +23,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.ExportGermplasmListForm;
-import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(ExportGermplasmListController.URL)
 @Configurable
 public class ExportGermplasmListController extends AbstractBaseFieldbookController {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ExportGermplasmListController.class);
+	protected static final String FILENAME = "filename";
+
+	protected static final String OUTPUT_FILENAME = "outputFilename";
 
 	public static final String URL = "/ExportManager";
+	public static final String GERPLASM_TYPE_LST = "LST";
 
 	@Resource
 	private UserSelection userSelection;
@@ -53,31 +53,33 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 	@Resource
 	private ExportGermplasmListService exportGermplasmListService;
 
-	public static final String GERPLASM_TYPE_LST = "LST";
+	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+
 
 	@ResponseBody
 	@RequestMapping(value = "/exportGermplasmList/{exportType}/{studyType}", method = RequestMethod.GET,
 			produces = "text/plain;charset=UTF-8")
-	public String exportGermplasmList(@ModelAttribute("exportGermplasmListForm") ExportGermplasmListForm exportGermplasmListForm,
-			@PathVariable int exportType, @PathVariable String studyType, HttpServletRequest req, HttpServletResponse response)
+	public String exportGermplasmList(@ModelAttribute("exportGermplasmListForm") final ExportGermplasmListForm exportGermplasmListForm,
+			@PathVariable final int exportType, @PathVariable
+	final String studyType, final HttpServletRequest req, final HttpServletResponse response)
 			throws GermplasmListExporterException {
 
-		String[] clientVisibleColumnTermIds = exportGermplasmListForm.getGermplasmListVisibleColumns().split(",");
+		final String[] clientVisibleColumnTermIds = exportGermplasmListForm.getGermplasmListVisibleColumns().split(",");
 
-		Boolean isNursery = StudyType.N.getName().equals(studyType);
-		Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnsMap(clientVisibleColumnTermIds, isNursery);
+		final Boolean isNursery = StudyType.N.getName().equals(studyType);
+		final Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnsMap(clientVisibleColumnTermIds);
 
-		return this.doExport(exportType, response, req, visibleColumnsMap, isNursery);
+		return this.doExport(exportType, response, visibleColumnsMap, isNursery);
 	}
 
-	protected Map<String, Boolean> getVisibleColumnsMap(String[] termIds, Boolean isNursery) {
+	protected Map<String, Boolean> getVisibleColumnsMap(final String[] termIds) {
 
-		List<String> visibleColumnsInClient = Arrays.asList(termIds);
-		Map<String, Boolean> map = new HashMap<>();
+		final List<String> visibleColumnsInClient = Arrays.asList(termIds);
+		final Map<String, Boolean> map = new HashMap<>();
 
-		List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
+		final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 
-		for (SettingDetail factor : factorsList) {
+		for (final SettingDetail factor : factorsList) {
 
 			if (!factor.isHidden()
 					&& !"0".equals(visibleColumnsInClient.get(0))
@@ -100,12 +102,13 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		return map;
 	}
 
-	protected String doExport(int exportType, HttpServletResponse response, HttpServletRequest req, Map<String, Boolean> visibleColumnsMap,
-			Boolean isNursery) throws GermplasmListExporterException {
+	protected String doExport(final int exportType, final HttpServletResponse response, final Map<String, Boolean> visibleColumnsMap,
+			final Boolean isNursery) throws GermplasmListExporterException {
 
 		String outputFileNamePath = "";
-		String fileName = "";
-		String listName = "GermplasmList";
+		final String fileName = "";
+
+		String downloadFileName = "";
 
 		GermplasmList list = null;
 		if (this.userSelection.getImportedGermplasmMainInfo() != null) {
@@ -115,28 +118,33 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		if (list != null) {
 
 			// sanitize the list name to remove illegal characters for Windows filename.
-			listName = FileUtils.sanitizeFileName(list.getName());
+			final String listName = FileUtils.sanitizeFileName(list.getName());
 
-			if (exportType == 1) {
+			try {
+				// TODO Extract export type "1" and "2" to meaningful constants or export type enum
+				if (exportType == 1) {
+					downloadFileName = listName + AppConstants.EXPORT_XLS_SUFFIX.getString();
+					outputFileNamePath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(listName,
+							AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+					this.exportGermplasmListService.exportGermplasmListXLS(outputFileNamePath, this.userSelection
+							.getImportedGermplasmMainInfo().getListId(), visibleColumnsMap);
+					response.setContentType(FileUtils.MIME_MS_EXCEL);
 
-				fileName = listName + ".xls";
-				outputFileNamePath = this.getFieldbookProperties().getUploadDirectory() + File.separator + fileName;
-				this.exportGermplasmListService.exportGermplasmListXLS(outputFileNamePath, this.userSelection
-						.getImportedGermplasmMainInfo().getListId(), visibleColumnsMap, isNursery);
-				response.setContentType("application/vnd.ms-excel");
-
-			} else if (exportType == 2) {
-
-				fileName = listName + ".csv";
-				outputFileNamePath = this.getFieldbookProperties().getUploadDirectory() + File.separator + fileName;
-				this.exportGermplasmListService.exportGermplasmListCSV(outputFileNamePath, visibleColumnsMap, isNursery);
-				response.setContentType("text/csv");
+				} else if (exportType == 2) {
+					downloadFileName = listName + AppConstants.EXPORT_CSV_SUFFIX.getString();
+					outputFileNamePath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(listName,
+							AppConstants.EXPORT_CSV_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+					this.exportGermplasmListService.exportGermplasmListCSV(outputFileNamePath, visibleColumnsMap);
+					response.setContentType(FileUtils.MIME_CSV);
+				}
+			} catch (final IOException e) {
+				throw new GermplasmListExporterException(e.getMessage(), e);
 			}
 		}
 
-		Map<String, Object> results = new HashMap<String, Object>();
-		results.put("outputFilename", outputFileNamePath);
-		results.put("filename", fileName);
+		final Map<String, Object> results = new HashMap<>();
+		results.put(OUTPUT_FILENAME, outputFileNamePath);
+		results.put(FILENAME, downloadFileName);
 		results.put("contentType", response.getContentType());
 
 		return super.convertObjectToJson(results);
@@ -152,19 +160,15 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		return this.userSelection;
 	}
 
-	protected void setUserSelection(UserSelection userSelection) {
+	protected void setUserSelection(final UserSelection userSelection) {
 		this.userSelection = userSelection;
-	}
-
-	protected FieldbookProperties getFieldbookProperties() {
-		return super.fieldbookProperties;
 	}
 
 	protected ExportGermplasmListService getExportGermplasmListService() {
 		return this.exportGermplasmListService;
 	}
 
-	protected void setExportGermplasmListService(ExportGermplasmListService exportGermplasmListService) {
+	protected void setExportGermplasmListService(final ExportGermplasmListService exportGermplasmListService) {
 		this.exportGermplasmListService = exportGermplasmListService;
 	}
 
@@ -172,7 +176,7 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		return this.fieldbookMiddlewareService;
 	}
 
-	protected void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+	protected void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 

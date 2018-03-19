@@ -9,21 +9,22 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.ProjectTestDataInitializer;
 import org.generationcp.middleware.util.ResourceFinder;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 import org.springframework.context.MessageSource;
 
 import com.efficio.fieldbook.web.importdesign.exporter.controller.ExportDesignTemplateController;
 
 import junit.framework.Assert;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ExportDesignTemplateControllerTest {
 	
 	private static String DESIGN_TEMPLATE = "DesignTemplate.csv";
@@ -44,8 +45,17 @@ public class ExportDesignTemplateControllerTest {
 	@Mock
 	private MessageSource messageSource;
 	
+	@Mock
+	private ContextUtil contextUtil;
+	
 	@InjectMocks
 	ExportDesignTemplateController exportDesignTemplateController;
+	
+	@Before 
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+		Mockito.doReturn(ProjectTestDataInitializer.createProject()).when(this.contextUtil).getProjectInContext();
+	}
 	
 	@Test
 	public void testExportDesignTemplateSuccess() throws FileNotFoundException, UnsupportedEncodingException{

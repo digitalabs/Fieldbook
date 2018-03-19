@@ -64,8 +64,8 @@
                         <div class="form-group">
                             <div class="col-xs-12 col-md-12">
                                 <label class="control-label" th:if="*{isTrial == true}"><strong class="sub-content-heading"
-                                                                                                th:text="#{label.printing.selected.trial}">SELECTED
-                                    TRIAL</strong></label>
+                                                                                                th:text="#{label.printing.selected.study}">SELECTED
+                                    STUDY</strong></label>
                                 <label class="control-label" th:if="*{isTrial == false}"><strong class="sub-content-heading"
                                                                                                  th:text="#{label.printing.selected.nursery}">SELECTED
                                     NURSERY</strong></label>
@@ -469,7 +469,7 @@
                             <div class="form-group">
                                 <div class="col-xs-6 col-md-6 lblprnt-study-choose-option-fields-label">
                                     <label class="control-label"
-                                           th:utext="(*{isTrial})? #{label.printing.choose.option.fields.trial}: #{label.printing.choose.option.fields.nursery}">Choose
+                                           th:utext="(*{isTrial})? #{label.printing.choose.option.fields.study}: #{label.printing.choose.option.fields.nursery}">Choose
                                         up to six fields you would like printed on your labels.</label>
                                 </div>
                                 <div class="col-xs-6 col-md-6 lblprnt-germplasm-choose-option-fields-label">
@@ -795,7 +795,7 @@
 				<div class="form-group">&nbsp;</div>
                 <div class="form-group">
                     <div class="col-xs-12 col-md-12 fbk-center">
-                        <input type="button" onclick="javascript: window.history.back();" value="Cancel" class="btn btn-default"/>
+                        <input type="button" onclick="window.history.back();" value="Cancel" class="btn btn-default"/>
                         <input type="button" id="fbk-lbl-printing-save-preset" value="Save Preset" class="btn btn-info fbk-hide"/>
                         <input type="button" id="export-label-data" value="Export Label" th:value="#{common.form.export.label.text}"
                                class="btn btn-primary fbk-hide"/>

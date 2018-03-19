@@ -73,10 +73,10 @@ public class LabelPrintingDataUtil {
 	private static final String FIRST_BARCODE_FIELD = "1";
 	private static final String SECOND_BARCODE_FIELD = "";
 	private static final String THIRD_BARCODE_FIELD = "";
-	private static final String FILE_NAME = "labelPrintingTest";
-	private static final String FILE_NAME_DL_PDF = LabelPrintingDataUtil.FILE_NAME + ".pdf";
-	private static final String FILE_NAME_DL_XLS = LabelPrintingDataUtil.FILE_NAME + ".xls";
-	private static final String FILE_NAME_DL_CSV = LabelPrintingDataUtil.FILE_NAME + ".csv";
+	public static final String FILE_NAME = "labelPrintingTest";
+	public static final String FILE_NAME_DL_PDF = LabelPrintingDataUtil.FILE_NAME + ".pdf";
+	public static final String FILE_NAME_DL_XLS = LabelPrintingDataUtil.FILE_NAME + ".xls";
+	public static final String FILE_NAME_DL_CSV = LabelPrintingDataUtil.FILE_NAME + ".csv";
 	private static final String FILE_NAME_DDL_PDF = System.getProperty("user.home") + "/" + LabelPrintingDataUtil.FILE_NAME_DL_PDF;
 	private static final String FILE_NAME_DDL_XLS = System.getProperty("user.home") + "/" + LabelPrintingDataUtil.FILE_NAME_DL_XLS;
 	private static final String FILE_NAME_DDL_CSV = System.getProperty("user.home") + "/" + LabelPrintingDataUtil.FILE_NAME_DL_CSV;

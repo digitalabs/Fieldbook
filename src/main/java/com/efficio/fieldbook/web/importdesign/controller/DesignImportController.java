@@ -68,7 +68,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -658,7 +657,7 @@ public class DesignImportController extends SettingsController {
 
 	/**
 	 * Resets the Check list and deletes all Check Variables previously saved in
-	 * Nursery. The system will automatically reset and override the Check List
+	 * Study. The system will automatically reset and override the Check List
 	 * after importing a Custom Design.
 	 *
 	 * @param workbook
@@ -666,29 +665,23 @@ public class DesignImportController extends SettingsController {
 	 */
 	protected void resetCheckList(final Workbook workbook, final UserSelection userSelection) {
 
-		// This is only applicable in Nursery since there's no Check List in
-		// Trial.
-		if (Objects.equals(workbook.getStudyDetails().getStudyType().getLabel(), StudyType.N.getLabel())) {
+		// Create an ImportedCheckGermplasmMainInfo with an EMPTY data so
+		// that it will be deleted on save.
+		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+		mainInfo.setAdvanceImportType(true);
 
-			// Create an ImportedCheckGermplasmMainInfo with an EMPTY data so
-			// that it will be deleted on save.
-			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-			mainInfo.setAdvanceImportType(true);
+		final List<ImportedGermplasm> list = new ArrayList<>();
 
-			final List<ImportedGermplasm> list = new ArrayList<>();
+		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+		importedGermplasmList.setImportedGermplasms(list);
+		mainInfo.setImportedGermplasmList(importedGermplasmList);
 
-			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
-			importedGermplasmList.setImportedGermplasms(list);
-			mainInfo.setImportedGermplasmList(importedGermplasmList);
+		userSelection.setCurrentPageCheckGermplasmList(1);
+		userSelection.setImportedCheckGermplasmMainInfo(mainInfo);
+		userSelection.setImportValid(true);
 
-			userSelection.setCurrentPageCheckGermplasmList(1);
-			userSelection.setImportedCheckGermplasmMainInfo(mainInfo);
-			userSelection.setImportValid(true);
-
-			// Also delete the CHECK VARIABLES
-			this.addCheckVariablesToDeleted(userSelection.getStudyLevelConditions());
-
-		}
+		// Also delete the CHECK VARIABLES
+		this.addCheckVariablesToDeleted(userSelection.getStudyLevelConditions());
 
 	}
 
@@ -877,45 +870,35 @@ public class DesignImportController extends SettingsController {
 
 	protected void addFactorsIfNecessary(final Workbook workbook, final DesignImportData designImportData) {
 
-		if (Objects.equals(workbook.getStudyDetails().getStudyType().getLabel(), StudyType.T.getLabel())) {
+		final Set<MeasurementVariable> uniqueFactors = new HashSet<>(workbook.getFactors());
+		uniqueFactors.addAll(
+			this.designImportService.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT, designImportData.getMappedHeaders()));
 
-			final Set<MeasurementVariable> uniqueFactors = new HashSet<>(workbook.getFactors());
-			uniqueFactors.addAll(this.designImportService.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT,
-					designImportData.getMappedHeaders()));
-
-			for (final MeasurementVariable mvar : uniqueFactors) {
-				final MeasurementVariable tempMvar = this.getMeasurementVariableInListByTermId(mvar.getTermId(),
-						workbook.getConditions());
-				if (tempMvar != null) {
-					mvar.setOperation(tempMvar.getOperation());
-					mvar.setName(tempMvar.getName());
-				}
+		for (final MeasurementVariable mvar : uniqueFactors) {
+			final MeasurementVariable tempMvar = this.getMeasurementVariableInListByTermId(mvar.getTermId(), workbook.getConditions());
+			if (tempMvar != null) {
+				mvar.setOperation(tempMvar.getOperation());
+				mvar.setName(tempMvar.getName());
 			}
-
-			workbook.getFactors().clear();
-			workbook.getFactors().addAll(new ArrayList<>(uniqueFactors));
-
 		}
 
+		workbook.getFactors().clear();
+		workbook.getFactors().addAll(new ArrayList<>(uniqueFactors));
 	}
 
 	protected void addConditionsIfNecessary(final Workbook workbook, final DesignImportData designImportData) {
 
-		if (Objects.equals(workbook.getStudyDetails().getStudyType().getLabel(), StudyType.N.getLabel())) {
+		final Set<MeasurementVariable> uniqueConditions = new HashSet<>(workbook.getConditions());
 
-			final Set<MeasurementVariable> uniqueConditions = new HashSet<>(workbook.getConditions());
-
-			for (final MeasurementVariable mvar : this.designImportService.extractMeasurementVariable(
-					PhenotypicType.TRIAL_ENVIRONMENT, designImportData.getMappedHeaders())) {
-				if (mvar.getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-					uniqueConditions.add(mvar);
-				}
+		for (final MeasurementVariable mvar : this.designImportService
+			.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT, designImportData.getMappedHeaders())) {
+			if (mvar.getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+				uniqueConditions.add(mvar);
 			}
-
-			workbook.getConditions().clear();
-			workbook.getConditions().addAll(new ArrayList<>(uniqueConditions));
-
 		}
+
+		workbook.getConditions().clear();
+		workbook.getConditions().addAll(new ArrayList<>(uniqueConditions));
 
 	}
 
@@ -951,37 +934,32 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void populateStudyLevelVariableListIfNecessary(final Workbook workbook,
-			final EnvironmentData environmentData, final DesignImportData designImportData) {
-		if (Objects.equals(workbook.getStudyDetails().getStudyType().getLabel(), StudyType.N.getLabel())) {
+	protected void populateStudyLevelVariableListIfNecessary(final Workbook workbook, final EnvironmentData environmentData,
+		final DesignImportData designImportData) {
 
-			final Map<String, String> managementDetailValues = environmentData.getEnvironments().get(0)
-					.getManagementDetailValues();
+		final Map<String, String> managementDetailValues = environmentData.getEnvironments().get(0).getManagementDetailValues();
 
-			final List<SettingDetail> newDetails = new ArrayList<>();
+		final List<SettingDetail> newDetails = new ArrayList<>();
 
-			for (final MeasurementVariable mvar : workbook.getConditions()) {
-				final SettingDetail newDetail = this.createSettingDetail(mvar.getTermId(), mvar.getName(),
-						PhenotypicType.STUDY.name());
-				newDetail.setRole(mvar.getRole());
+		for (final MeasurementVariable mvar : workbook.getConditions()) {
+			final SettingDetail newDetail = this.createSettingDetail(mvar.getTermId(), mvar.getName(), PhenotypicType.STUDY.name());
+			newDetail.setRole(mvar.getRole());
 
-				final String value = managementDetailValues.get(String.valueOf(newDetail.getVariable().getCvTermId()));
-				if (value != null) {
-					newDetail.setValue(value);
-				} else {
-					newDetail.setValue("");
-				}
-
-				newDetail.getVariable().setOperation(mvar.getOperation());
-				newDetails.add(newDetail);
+			final String value = managementDetailValues.get(String.valueOf(newDetail.getVariable().getCvTermId()));
+			if (value != null) {
+				newDetail.setValue(value);
+			} else {
+				newDetail.setValue("");
 			}
 
-			this.resolveIDNamePairingAndValuesForNursery(environmentData, designImportData, newDetails);
-
-			this.userSelection.getStudyLevelConditions().clear();
-			this.userSelection.getStudyLevelConditions().addAll(newDetails);
+			newDetail.getVariable().setOperation(mvar.getOperation());
+			newDetails.add(newDetail);
 		}
 
+		this.resolveIDNamePairingAndValuesForNursery(environmentData, designImportData, newDetails);
+
+		this.userSelection.getStudyLevelConditions().clear();
+		this.userSelection.getStudyLevelConditions().addAll(newDetails);
 	}
 
 	protected void addNewSettingDetailsIfNecessary(final List<SettingDetail> newDetails) {
@@ -1011,7 +989,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void createTrialObservations(final EnvironmentData environmentData, final Workbook workbook,
-			final DesignImportData designImportData) {
+		final DesignImportData designImportData) {
 
 		// get the Experiment Design MeasurementVariable
 		final Set<MeasurementVariable> trialVariables = new HashSet<>(workbook.getTrialFactors());
@@ -1020,24 +998,21 @@ public class DesignImportController extends SettingsController {
 
 		for (final MeasurementVariable trialCondition : workbook.getTrialConditions()) {
 			if (trialCondition.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()
-					|| trialCondition.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
-					|| trialCondition.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
+				|| trialCondition.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
+				|| trialCondition.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
 				trialVariables.add(trialCondition);
 			}
 		}
 
 		this.resolveIDNamePairingAndValuesForTrial(environmentData, designImportData, trialVariables);
 
-		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(
-				environmentData.getEnvironments(), new ArrayList<>(trialVariables),
+		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil
+			.createMeasurementRowsFromEnvironments(environmentData.getEnvironments(), new ArrayList<>(trialVariables),
 				this.userSelection.getExpDesignParams());
 
 		workbook.setTrialObservations(trialEnvironmentValues);
 
-		if (Objects.equals(workbook.getStudyDetails().getStudyType().getLabel(), StudyType.T.getLabel())) {
-			this.fieldbookService.addConditionsToTrialObservationsIfNecessary(workbook);
-		}
-
+		this.fieldbookService.addConditionsToTrialObservationsIfNecessary(workbook);
 	}
 
 	protected Map<String, Object> generateDatatableDataMap(final MeasurementRow row, final String suffix) {

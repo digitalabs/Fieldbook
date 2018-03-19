@@ -564,6 +564,7 @@ public class OpenTrialController extends BaseTrialController {
 		final Map<String, Object> returnVal = new HashMap<>();
 		final Study study = this.fieldbookMiddlewareService.getStudy(id);
 		final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(id,study.getType());
+		this.fieldbookMiddlewareService.loadAllObservations(trialWorkbook);
 
 		this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
 

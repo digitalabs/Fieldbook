@@ -25,6 +25,7 @@ import org.generationcp.middleware.pojos.ListDataProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ import java.util.Set;
 /**
  * This parses a Crossing Template Excel file Note that this class is stateful, declare in spring app context as prototyped scope
  */
+@Transactional
 public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCrossesList> {
 
 	public static final String NO_REFERENCES_ERROR_DESC = "study.import.crosses.error.no.references";
@@ -105,16 +107,16 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	private void parseObservationSheet(final String programUUID) throws FileParsingException {
 		this.validateObservationsHeader();
 
-		String femaleNursery = null;
+		String femaleStudy = null;
 		final List<ImportedCondition> importedConditions = this.importedCrossesList.getImportedConditions();
 		for (final ImportedCondition importedCondition : importedConditions) {
 			final String condition = importedCondition.getCondition();
-			if (condition != null && condition.equals(AppConstants.FEMALE_NURSERY.getString())) {
-				femaleNursery = importedCondition.getValue();
+			if (condition != null && condition.equals(AppConstants.FEMALE_STUDY.getString())) {
+				femaleStudy = importedCondition.getValue();
 			}
 		}
 
-		this.validateFemaleNursery(femaleNursery);
+		this.validateFemaleStudy(femaleStudy);
 
 		int currentRow = 1;
 		final int headerSize = this.getLastCellNum(this.observationSheetIndex, 0);
@@ -122,17 +124,17 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		while (!this.isRowEmpty(this.observationSheetIndex, currentRow, headerSize)) {
 
 			final String femalePlotNo = this.getCellStringValue(this.observationSheetIndex, currentRow,
-					this.observationColumnMap.get(AppConstants.FEMALE_PLOT.getString()));
-			String maleNursery = this.getCellStringValue(this.observationSheetIndex, currentRow,
-					this.observationColumnMap.get(AppConstants.MALE_NURSERY.getString()));
+				this.observationColumnMap.get(AppConstants.FEMALE_PLOT.getString()));
+				  String maleStudy = this.getCellStringValue(this.observationSheetIndex, currentRow,
+				this.observationColumnMap.get(AppConstants.MALE_STUDY.getString()));
 			final String malePlotNo = this.getCellStringValue(this.observationSheetIndex, currentRow,
-					this.observationColumnMap.get(AppConstants.MALE_PLOT.getString()));
+				this.observationColumnMap.get(AppConstants.MALE_PLOT.getString()));
 			final String breedingMethod = this.getCellStringValue(this.observationSheetIndex, currentRow,
-					this.observationColumnMap.get(AppConstants.BREEDING_METHOD.getString()));
+				this.observationColumnMap.get(AppConstants.BREEDING_METHOD.getString()));
 			final String strCrossingDate = this.getCellStringValue(this.observationSheetIndex, currentRow,
-					this.observationColumnMap.get(AppConstants.CROSSING_DATE.getString()));
+				this.observationColumnMap.get(AppConstants.CROSSING_DATE.getString()));
 			final String notes = this.getCellStringValue(this.observationSheetIndex, currentRow,
-					this.observationColumnMap.get(AppConstants.NOTES.getString()));
+				this.observationColumnMap.get(AppConstants.NOTES.getString()));
 
 			this.validateObservationRow(femalePlotNo, malePlotNo, currentRow, strCrossingDate);
 
@@ -141,17 +143,16 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 				crossingDate = Integer.valueOf(strCrossingDate);
 			}
 
-			if (StringUtils.isBlank(maleNursery)) {
-				maleNursery = femaleNursery;
+			if (StringUtils.isBlank(maleStudy)) {
+				maleStudy = femaleStudy;
 			}
 
 			// process female + male parent entries, will throw middleware query exception if no study valid or null
-			final ListDataProject femaleListData =
-					this.getCrossingListProjectData(femaleNursery, Integer.valueOf(femalePlotNo), programUUID);
-			final ListDataProject maleListData = this.getCrossingListProjectData(maleNursery, Integer.valueOf(malePlotNo), programUUID);
+			final ListDataProject femaleListData = this.getCrossingListProjectData(femaleStudy, Integer.valueOf(femalePlotNo), programUUID);
+			final ListDataProject maleListData   = this.getCrossingListProjectData(maleStudy, Integer.valueOf(malePlotNo), programUUID);
 
 			final ImportedCrosses importedCrosses =
-					new ImportedCrosses(femaleListData, maleListData, femaleNursery, maleNursery, femalePlotNo, malePlotNo, currentRow);
+					new ImportedCrosses(femaleListData, maleListData, femaleStudy, maleStudy, femalePlotNo, malePlotNo, currentRow);
 			// Show source as "Pending" in initial dialogue.
 			// Source (Plot Code) string is generated later in the proces and will be displayed in the final list generated.
 			importedCrosses.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
@@ -171,15 +172,15 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 	}
 
-	private void validateFemaleNursery(final String femaleNursery) throws FileParsingException {
+	private void validateFemaleStudy(final String femaleStudy) throws FileParsingException {
 
-		if (femaleNursery == null || Objects.equals(femaleNursery, "")) {
-			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.nursery.empty", new String[] {},
+		if (femaleStudy == null || Objects.equals(femaleStudy, "")) {
+			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.study.empty", new Object[] {},
 					LocaleContextHolder.getLocale()));
 		}
 
-		if (!femaleNursery.equals(this.studySelection.getWorkbook().getStudyName().trim())) {
-			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.nursery.match", new String[] {},
+		if (!femaleStudy.equals(this.studySelection.getWorkbook().getStudyName().trim())) {
+			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.female.study.match", new Object[] {},
 					LocaleContextHolder.getLocale()));
 		}
 	}
@@ -276,13 +277,16 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	/**
 	 * Returns the ListProjectData given a female or male plot no using the current plot position on the template.
 	 *
-	 * @param studyName - femaleNursery/maleNursery equivalent from the template
+	 * @param studyName - femaleStudy/maleStudy equivalent from the template
 	 * @param genderedPlotNo - femalePlot/malePlot equivalent from the template
-	 * @return ListDataProject - We need the Desig, and female/male gids information that we can retrive using this data structure
-	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
+	 * @return ListDataProject - We need the Design, and female/male gids information that we can retrieve using this data structure
+	 * @throws FileParsingException
 	 */
 	private ListDataProject getCrossingListProjectData(final String studyName, final Integer genderedPlotNo, final String programUUID)
 			throws FileParsingException {
+
+		final String instanceNumber = "1";
+
 		// 1 get the particular study's list
 		final Integer studyId = this.studyDataManager.getStudyIdByNameAndProgramUUID(studyName, programUUID);
 
@@ -293,7 +297,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 		// 2. retrieve the list id of the particular study
 		final ListDataProject listdataResult =
-			this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId, GermplasmListType.STUDY, genderedPlotNo);
+			this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId, GermplasmListType.STUDY, genderedPlotNo, instanceNumber);
 
 		if (null == listdataResult) {
 			throw new FileParsingException(this.messageSource.getMessage("no.list.data.for.plot", new Object[] {studyName, genderedPlotNo},

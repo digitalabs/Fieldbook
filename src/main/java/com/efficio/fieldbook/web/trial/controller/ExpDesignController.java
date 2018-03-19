@@ -82,6 +82,7 @@ public class ExpDesignController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(value = "/retrieveDesignTypes", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	public List<DesignTypeItem> retrieveDesignTypes() {
+
 		final List<DesignTypeItem> designTypes = new ArrayList<>();
 
 		designTypes.add(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK);

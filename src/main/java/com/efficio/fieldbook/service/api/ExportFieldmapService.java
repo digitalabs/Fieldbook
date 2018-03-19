@@ -19,7 +19,7 @@ import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 /**
  * The Interface ExcelExportService. Handles the exporting needs to Excel file format.
  */
-public interface ExportExcelService {
+public interface ExportFieldmapService {
 
 	/**
 	 * Exports a fieldmap to an Excel file.

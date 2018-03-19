@@ -10,27 +10,29 @@
 
 package com.efficio.fieldbook.web.fieldmap.controller;
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,7 +41,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.service.api.ExportExcelService;
+import com.efficio.fieldbook.service.api.ExportFieldmapService;
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
@@ -51,14 +53,15 @@ import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
 import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The Class GenerateFieldmapController.
  * <p/>
  * Generates the final fieldmap for the step 3.
  */
-@Controller @RequestMapping({GenerateFieldmapController.URL}) public class GenerateFieldmapController
-		extends AbstractBaseFieldbookController {
+@Controller @RequestMapping({GenerateFieldmapController.URL}) 
+public class GenerateFieldmapController extends AbstractBaseFieldbookController {
 
 	/**
 	 * The Constant URL.
@@ -69,10 +72,6 @@ import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 	 * The Constant LOG.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(GenerateFieldmapController.class);
-	/**
-	 * The Constant BUFFER_SIZE.
-	 */
-	private static final int BUFFER_SIZE = 4096 * 4;
 	/**
 	 * The user fieldmap.
 	 */
@@ -95,10 +94,12 @@ import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 	 * The export excel service.
 	 */
 	@Resource
-	private ExportExcelService exportExcelService;
+	private ExportFieldmapService exportFieldmapService;
 
 	@Resource
 	private CrossExpansionProperties crossExpansionProperties;
+	
+	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	/**
 	 * Show generated fieldmap.
@@ -167,19 +168,25 @@ import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 	}
 
 	@RequestMapping(value = "/exportExcel", method = RequestMethod.GET)
-	public ResponseEntity<FileSystemResource> exportExcel(HttpServletRequest request)
-			throws UnsupportedEncodingException, FieldbookException {
+	public ResponseEntity<FileSystemResource> exportExcel(HttpServletRequest request) throws FieldbookException {
 
-		// changed selected name to block name for now
-		String fileName = this.makeSafeFileName(this.userFieldmap.getBlockName());
+		FileExportInfo exportInfo;
+		try {
+			// changed selected name to block name for now
+			exportInfo = this.makeSafeFileName(this.userFieldmap.getBlockName());
+			this.exportFieldmapService.exportFieldMapToExcel(exportInfo.getFilePath(), this.userFieldmap);
+			
+			return FieldbookUtil.createResponseEntityForFileDownload(exportInfo.getFilePath(), exportInfo.getDownloadFileName());
+		} catch (IOException e) {
+			throw new FieldbookException(e.getMessage(), e);
+		}
 
-		this.exportExcelService.exportFieldMapToExcel(fileName, this.userFieldmap);
-
-		return FieldbookUtil.createResponseEntityForFileDownload(new File(fileName));
 	}
 
-	protected String makeSafeFileName(String filename) {
-		return filename.replace(" ", "") + "-" + DateUtil.getCurrentDateAsStringValue() + ".xls";
+	protected FileExportInfo makeSafeFileName(final String filename) throws IOException {
+		final String cleanFilename = filename.replace(" ", "") + "-" + DateUtil.getCurrentDateAsStringValue();
+		final String outputFilepath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(cleanFilename, AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
+		return new FileExportInfo(outputFilepath, cleanFilename + AppConstants.EXPORT_XLS_SUFFIX.getString());
 	}
 
 	/**
@@ -206,7 +213,7 @@ import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 
 		int col = rows / rowsPerPlot;
 		// should list here the deleted plot in col-range format
-		Map<String, String> deletedPlot = new HashMap<String, String>();
+		Map<String, String> deletedPlot = new HashMap<>();
 		if (form.getMarkedCells() != null && !form.getMarkedCells().isEmpty()) {
 			List<String> markedCells = Arrays.asList(form.getMarkedCells().split(","));
 
@@ -215,7 +222,7 @@ import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 			}
 		}
 
-		this.markDeletedPlots(form, form.getMarkedCells());
+		this.markDeletedPlots(form.getMarkedCells());
 
 		List<FieldMapLabel> labels = this.userFieldmap.getAllSelectedFieldMapLabelsToBeAdded(true);
 
@@ -277,8 +284,8 @@ import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 		return "Fieldmap/generateFieldmapView";
 	}
 
-	private void markDeletedPlots(FieldmapForm form, String deletedPlots) {
-		List<String> dpform = new ArrayList<String>();
+	private void markDeletedPlots(final String deletedPlots) {
+		List<String> dpform = new ArrayList<>();
 		if (deletedPlots != null) {
 			String[] dps = deletedPlots.split(",");
 			for (String deletedPlot : dps) {

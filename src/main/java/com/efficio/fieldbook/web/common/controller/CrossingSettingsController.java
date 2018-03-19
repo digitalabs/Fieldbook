@@ -1,25 +1,24 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
-import com.efficio.fieldbook.web.common.exception.InvalidInputException;
-import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
-import com.efficio.fieldbook.web.common.service.CrossingService;
-import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.util.CrossesListUtil;
-import com.efficio.fieldbook.web.util.DuplicatesUtil;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import java.io.UnsupportedEncodingException;
+import java.text.DateFormatSymbols;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBException;
+
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
@@ -53,19 +52,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBException;
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.text.DateFormatSymbols;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import com.efficio.fieldbook.web.common.exception.InvalidInputException;
+import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
+import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.util.CrossesListUtil;
+import com.efficio.fieldbook.web.util.DuplicatesUtil;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 @Controller
 @RequestMapping(CrossingSettingsController.URL)
@@ -82,6 +84,9 @@ public class CrossingSettingsController extends SettingsController {
 	private static final String HAS_PLOT_DUPLICATE = "hasPlotDuplicate";
 	public static final String CHOOSING_LIST_OWNER_NEEDED = "isChoosingListOwnerNeeded";
 	public static final String ERROR = "error";
+	
+	private static final String OUTPUT_FILENAME = "outputFilename";
+	private static final String FILENAME = "filename";
 
 	@Autowired
 	private CrossExpansionProperties crossExpansionProperties;
@@ -277,11 +282,12 @@ public class CrossingSettingsController extends SettingsController {
 			final Integer currentUserId = this.workbenchService
 					.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()), this.contextUtil.getCurrentWorkbenchUserId());
 
-			final File result =
+			final FileExportInfo exportInfo =
 					this.crossingTemplateExcelExporter.export(studyId, this.studySelection.getWorkbook().getStudyName(), currentUserId);
 
 			out.put(CrossingSettingsController.IS_SUCCESS, Boolean.TRUE);
-			out.put("outputFilename", result.getAbsolutePath());
+			out.put(OUTPUT_FILENAME, exportInfo.getFilePath());
+			out.put(FILENAME, exportInfo.getDownloadFileName());
 
 		} catch (CrossingTemplateExportException | NullPointerException e) {
 			CrossingSettingsController.LOG.debug(e.getMessage(), e);
@@ -297,9 +303,13 @@ public class CrossingSettingsController extends SettingsController {
 	@ResponseBody
 	@RequestMapping(value = "/download/file", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	public ResponseEntity<FileSystemResource> download(final HttpServletRequest req) throws UnsupportedEncodingException {
-		final String outputFilename = new String(req.getParameter("outputFilename").getBytes("iso-8859-1"), "UTF-8");
+		final String outputFilename =
+				new String(req.getParameter(CrossingSettingsController.OUTPUT_FILENAME).getBytes(FieldbookUtil.ISO_8859_1),
+						FieldbookUtil.UTF_8);
+		final String filename = new String(req.getParameter(CrossingSettingsController.FILENAME).getBytes(FieldbookUtil.ISO_8859_1),
+				FieldbookUtil.UTF_8);
 
-		return FieldbookUtil.createResponseEntityForFileDownload(new File(outputFilename));
+		return FieldbookUtil.createResponseEntityForFileDownload(outputFilename, filename);
 	}
 
 	@ResponseBody
@@ -482,13 +492,13 @@ public class CrossingSettingsController extends SettingsController {
 			if (importedCross.getGid() == null) {
 				responseMap.put(CrossingSettingsController.IS_SUCCESS, 0);
 				final String localisedErrorMessage = this.messageSource.getMessage("error.germplasm.record.already.exists", new String[] {},
-						"Cross germplasm record must already exist in database when using crossing manager to create crosses in Nurseries",
+						"Cross germplasm record must already exist in database when using crossing manager to create crosses in Studies",
 						LocaleContextHolder.getLocale());
 				responseMap.put(ERROR, new String[] {localisedErrorMessage});
 				return responseMap;
 			}
 			// When crossing using crossing manager (as opposed to crossing spreadsheet import),
-			// both female and male nursery is the current nursery.
+			// both female and male study is the current study.
 			importedCross.setMaleStudyName(studyName);
 			importedCross.setFemaleStudyName(studyName);
 			importedCrosses.add(importedCross);

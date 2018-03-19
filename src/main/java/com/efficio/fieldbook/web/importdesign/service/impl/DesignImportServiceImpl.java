@@ -22,7 +22,6 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.manager.Operation;
@@ -41,7 +40,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 
 public class DesignImportServiceImpl implements DesignImportService {
@@ -205,7 +203,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	@Override
 	public Set<MeasurementVariable> getDesignMeasurementVariables(final Workbook workbook, final DesignImportData designImportData,
-			final boolean isPreview) {
+		final boolean isPreview) {
 
 		final Set<MeasurementVariable> measurementVariables = new LinkedHashSet<>();
 		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
@@ -239,18 +237,15 @@ public class DesignImportServiceImpl implements DesignImportService {
 		// Add the variates from the added traits in workbook
 		measurementVariables.addAll(workbook.getVariates());
 
-		if (Objects.equals(workbook.getStudyDetails().getStudyType().getLabel(), StudyType.N.getLabel())) {
+		measurementVariables.addAll(workbook.getFactors());
 
-			measurementVariables.addAll(workbook.getFactors());
-
-			// remove the trial instance factor if the Study is Nursery because it only has 1 trial instance by default
-			final Iterator<MeasurementVariable> iterator = measurementVariables.iterator();
-			while (iterator.hasNext()) {
-				final MeasurementVariable temp = iterator.next();
-				if (temp.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-					iterator.remove();
-					break;
-				}
+		// remove the trial instance factor if the Study is Nursery because it only has 1 trial instance by default
+		final Iterator<MeasurementVariable> iterator = measurementVariables.iterator();
+		while (iterator.hasNext()) {
+			final MeasurementVariable temp = iterator.next();
+			if (temp.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+				iterator.remove();
+				break;
 			}
 		}
 

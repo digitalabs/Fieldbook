@@ -29,9 +29,8 @@ import java.util.StringTokenizer;
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
 public class FieldbookUtil {
-
-	public static final String CONTENT_TYPE = "Content-Type";
-	public static final String CONTENT_DISPOSITION = "Content-Disposition";
+	public static final String UTF_8 = "UTF-8";
+	public static final String ISO_8859_1 = "iso-8859-1";
 	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
 	public static final String DESCRIPTION = "Description";
 	private static final String START_DATE = "startDate";
@@ -156,22 +155,11 @@ public class FieldbookUtil {
 		final String mimeType = FileUtils.detectMimeType(filename);
 		final String sanitizedFilename = FileUtils.sanitizeFileName(filename);
 
-		respHeaders.set(FieldbookUtil.CONTENT_TYPE,String.format("%s;charset=utf-8",mimeType));
-		respHeaders.set(FieldbookUtil.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"; filename*=utf-8\'\'%s", sanitizedFilename, FileUtils.encodeFilenameForDownload(sanitizedFilename)));
+		respHeaders.set(FileUtils.CONTENT_TYPE,String.format("%s;charset=utf-8",mimeType));
+		respHeaders.set(FileUtils.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"; filename*=utf-8\'\'%s", sanitizedFilename, FileUtils.encodeFilenameForDownload(sanitizedFilename)));
 
 		return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 
-	}
-
-	/**
-	 * Creates ResponseEntity to download a file from a controller.
-	 *
-	 * @param file      - The file to be downloaded
-	 * @return
-	 */
-	public static ResponseEntity<FileSystemResource> createResponseEntityForFileDownload(final File file)
-			throws UnsupportedEncodingException {
-		return FieldbookUtil.createResponseEntityForFileDownload(file.getAbsoluteFile().toString(), file.getName());
 	}
 
 	public List<Integer> buildVariableIDList(final String idList) {

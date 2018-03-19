@@ -1,9 +1,6 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.generationcp.commons.util.WorkbenchAppPathResolver;
 
 public class FieldbookProperties {
@@ -14,8 +11,6 @@ public class FieldbookProperties {
 
 	private String bvDesignPath;
 	
-	private Set<String> presetDesignEnabledCrops = new HashSet<>();
-
 	private String uploadDirectory;
 
 	public String getProgramLocationsUrl() {

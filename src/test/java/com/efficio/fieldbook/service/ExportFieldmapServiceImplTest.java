@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.service.api.ExportExcelService;
+import com.efficio.fieldbook.service.api.ExportFieldmapService;
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
@@ -33,10 +33,10 @@ import com.efficio.fieldbook.web.label.printing.service.impl.HorizontalFieldMapL
 import com.efficio.fieldbook.web.label.printing.service.impl.VerticalFieldMapLayoutIterator;
 import com.efficio.fieldbook.web.util.AppConstants;
 
-public class ExportExcelServiceTest extends AbstractBaseIntegrationTest {
+public class ExportFieldmapServiceImplTest extends AbstractBaseIntegrationTest {
 
 	@Autowired
-	private ExportExcelService exportExcelService;
+	private ExportFieldmapService exportFieldmapService;
 
 	private final FieldMapService fieldMapService = new FieldMapServiceImpl();
 
@@ -82,7 +82,7 @@ public class ExportExcelServiceTest extends AbstractBaseIntegrationTest {
 		userFieldMap.setFieldmap(plots);
 
 		String fileName = "FieldMapHorizontal" + "_" + DateUtil.getCurrentDateAsStringValue() + ".xls";
-		this.exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
+		this.exportFieldmapService.exportFieldMapToExcel(fileName, userFieldMap);
 
 		Assert.assertEquals("Dummy Trial-76<br/>Entry null<br/>Rep 76", plots[2][9].getDisplayString());
 		Assert.assertEquals("Dummy Trial-70<br/>Entry null<br/>Rep 70", plots[8][9].getDisplayString());
@@ -114,7 +114,7 @@ public class ExportExcelServiceTest extends AbstractBaseIntegrationTest {
 		userFieldMap.setFieldmap(plots);
 
 		String fileName = "FieldMapVertical" + "_" + DateUtil.getCurrentDateAsStringValue() + ".xls";
-		this.exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
+		this.exportFieldmapService.exportFieldMapToExcel(fileName, userFieldMap);
 
 		Assert.assertEquals("Dummy Trial-10<br/>Entry null<br/>Rep 10", plots[2][9].getDisplayString());
 		Assert.assertEquals("Dummy Trial-67<br/>Entry null<br/>Rep 67", plots[8][9].getDisplayString());
@@ -148,7 +148,7 @@ public class ExportExcelServiceTest extends AbstractBaseIntegrationTest {
 		userFieldMap.setFieldmap(plots);
 
 		String fileName = "FieldMapHorizontalRowColumn" + "_" + DateUtil.getCurrentDateAsStringValue() + ".xls";
-		this.exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
+		this.exportFieldmapService.exportFieldMapToExcel(fileName, userFieldMap);
 		Assert.assertEquals("Dummy Trial-77<br/>Entry null<br/>Rep 77", plots[2][9].getDisplayString());
 		Assert.assertEquals("Dummy Trial-83<br/>Entry null<br/>Rep 83", plots[8][9].getDisplayString());
 		Assert.assertTrue(plots[8][5].isPlotDeleted());
@@ -181,7 +181,7 @@ public class ExportExcelServiceTest extends AbstractBaseIntegrationTest {
 		userFieldMap.setFieldmap(plots);
 
 		String fileName = "FieldMapVerticalRowColumn" + "_" + DateUtil.getCurrentDateAsStringValue() + ".xls";
-		this.exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
+		this.exportFieldmapService.exportFieldMapToExcel(fileName, userFieldMap);
 		Assert.assertEquals("Dummy Trial-17<br/>Entry null<br/>Rep 17", plots[2][9].getDisplayString());
 		Assert.assertEquals("Dummy Trial-74<br/>Entry null<br/>Rep 74", plots[8][9].getDisplayString());
 		Assert.assertTrue(plots[8][5].isPlotDeleted());

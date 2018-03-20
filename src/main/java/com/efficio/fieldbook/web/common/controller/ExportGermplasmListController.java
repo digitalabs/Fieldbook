@@ -10,7 +10,6 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.ToolName;
@@ -66,10 +65,9 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 
 		final String[] clientVisibleColumnTermIds = exportGermplasmListForm.getGermplasmListVisibleColumns().split(",");
 
-		final Boolean isNursery = StudyType.N.getName().equals(studyType);
 		final Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnsMap(clientVisibleColumnTermIds);
 
-		return this.doExport(exportType, response, visibleColumnsMap, isNursery);
+		return this.doExport(exportType, response, visibleColumnsMap);
 	}
 
 	protected Map<String, Boolean> getVisibleColumnsMap(final String[] termIds) {
@@ -102,8 +100,8 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		return map;
 	}
 
-	protected String doExport(final int exportType, final HttpServletResponse response, final Map<String, Boolean> visibleColumnsMap,
-			final Boolean isNursery) throws GermplasmListExporterException {
+	protected String doExport(final int exportType, final HttpServletResponse response, final Map<String, Boolean> visibleColumnsMap)
+		throws GermplasmListExporterException {
 
 		String outputFileNamePath = "";
 		final String fileName = "";

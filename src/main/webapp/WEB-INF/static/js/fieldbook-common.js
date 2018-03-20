@@ -3501,11 +3501,8 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 			TreePersist.saveStudyTreeState(false, '#studyTree');
 	});
 	choosingType = type;
-	if (isNursery()) {
-		$('.fbk-study-tree-title.nursery').removeClass('fbk-hide');
-	} else {
-		$('.fbk-study-tree-title.trial').removeClass('fbk-hide');
-	}
+
+	$('.fbk-study-tree-title.trial').removeClass('fbk-hide');
 	TreePersist.preLoadStudyTreeState('#studyTree');
 }
 
@@ -3601,22 +3598,22 @@ function initializeStudyTabs() {
 	});
 	determineIfShowCloseAllStudyTabs();
 }
-function addDetailsTab(studyId, title) {// TODO CUENYAD
+
+function addDetailsTab(studyId, title) {
 	// if the study is already existing, we show that tab
 	'use strict';
 	if ($('li#li-study' + studyId).length !== 0) {
 		$('li#li-study' + studyId + ' a').tab('show');
 	} else {
-		var studyType = isNursery() ? 'N' : 'T'; // FIXME THIS DOESN'T WORK MORE.
 		$.ajax({
-			url: '/Fieldbook/StudyManager/reviewStudyDetails/show/' + studyType + '/' + studyId,
+			url: '/Fieldbook/StudyManager/reviewStudyDetails/show/' + studyId,
 			type: 'GET',
 			cache: false,
-			success: function(data) {
+			success: function (data) {
 				var close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="' + studyId + '"></i>';
 				$('#study-tab-headers').append(
-						'<li id="li-study' + studyId + '"><a href="#study' + studyId + '" role="tab" data-toggle="tab"><span class="review-study-name">'
-								+ title + '</span>' + close + '</a></li>');
+					'<li id="li-study' + studyId + '"><a href="#study' + studyId + '" role="tab" data-toggle="tab"><span class="review-study-name">'
+					+ title + '</span>' + close + '</a></li>');
 				$('#study-tabs').append(
 					'<div class="info tab-pane" id="study' + studyId + '">' + data + '</div>');
 				if ($('#review-study-error-' + studyId).val() !== '') {
@@ -3626,7 +3623,7 @@ function addDetailsTab(studyId, title) {// TODO CUENYAD
 				} else {
 					initializeStudyTabs();
 					$('li#li-study' + studyId + ' a').tab('show');
-					$('.info#study' + studyId + ' select').each(function() {
+					$('.info#study' + studyId + ' select').each(function () {
 						$(this).select2({minimumResultsForSearch: 20});
 					});
 					truncateStudyVariableNames('#study' + studyId + ' .review-study-name', 20);

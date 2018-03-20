@@ -530,7 +530,7 @@ public class EditNurseryController extends SettingsController {
 
 		final String programUUID = this.contextUtil.getCurrentProgramUUID();
 
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, programUUID);
+		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, programUUID);
 
 		workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
 		workbook.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());

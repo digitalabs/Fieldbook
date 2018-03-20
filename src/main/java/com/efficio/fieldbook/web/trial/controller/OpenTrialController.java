@@ -454,8 +454,8 @@ public class OpenTrialController extends BaseTrialController {
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false,
-				this.userSelection.getExpDesignParams(), this.userSelection.getExpDesignVariables(),
+		final Workbook workbook = SettingsUtil
+			.convertXmlDatasetToWorkbook(dataset, this.userSelection.getExpDesignParams(), this.userSelection.getExpDesignVariables(),
 				this.fieldbookMiddlewareService, this.userSelection.getExperimentalDesignVariables(),
 				this.contextUtil.getCurrentProgramUUID());
 
@@ -765,11 +765,10 @@ public class OpenTrialController extends BaseTrialController {
 		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name,
 				combinedList, this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(),
 				this.userSelection, this.userSelection.getTrialLevelVariableList(),
-				this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(), false,
+				this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(),
 				this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 
-		final Workbook tempWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false,
-				this.contextUtil.getCurrentProgramUUID());
+		final Workbook tempWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID());
 		final StudyDetails details = new StudyDetails();
 		details.setStudyType(new StudyTypeDto("T")); //TODO VER COMO ARREGLARLO.
 		tempWorkbook.setStudyDetails(details);

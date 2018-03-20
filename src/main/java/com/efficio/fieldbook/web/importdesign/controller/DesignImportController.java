@@ -35,7 +35,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -779,41 +778,24 @@ public class DesignImportController extends SettingsController {
 		final Workbook workbook;
 		final StudyDetails details = new StudyDetails();
 
-		if (StudyType.T.getName().equalsIgnoreCase(studyType)) {// TODO VER COMO ARREGLAR ESTO.
+		final List<SettingDetail> variatesList = new ArrayList<>();
 
-			final Dataset dataset = (Dataset) SettingsUtil
-				.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection.getPlotsLevelList(),
-					this.userSelection.getBaselineTraitsList(), this.userSelection, this.userSelection.getTrialLevelVariableList(),
-					this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(), false,
-					this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
-
-			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false,
-					this.contextUtil.getCurrentProgramUUID());
-
-			//details.setStudyType(StudyType.T);//TODO VER COMO ARREGLAR
-
-		} else {
-
-			final List<SettingDetail> variatesList = new ArrayList<>();
-
-			if (this.userSelection.getBaselineTraitsList() != null) {
-				variatesList.addAll(this.userSelection.getBaselineTraitsList());
-			}
-
-			if (this.userSelection.getSelectionVariates() != null) {
-				variatesList.addAll(this.userSelection.getSelectionVariates());
-			}
-
-			final Dataset dataset = (Dataset) SettingsUtil
-				.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection.getPlotsLevelList(),
-					variatesList, this.userSelection, this.userSelection.getTrialLevelVariableList(),
-					this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(), true,
-					this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
-
-			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true,
-					this.contextUtil.getCurrentProgramUUID());
-
+		if (this.userSelection.getBaselineTraitsList() != null) {
+			variatesList.addAll(this.userSelection.getBaselineTraitsList());
 		}
+
+		if (this.userSelection.getSelectionVariates() != null) {
+			variatesList.addAll(this.userSelection.getSelectionVariates());
+		}
+
+		final Dataset dataset = (Dataset) SettingsUtil
+			.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection.getPlotsLevelList(),
+				variatesList, this.userSelection, this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(),
+				null, null, this.userSelection.getNurseryConditions(), this.contextUtil.getCurrentProgramUUID(), description, startDate,
+				endDate, studyUpdate);
+
+		workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID());
+
 		details.setStudyType(studyDataManager.getStudyTypeByName(studyType));
 		workbook.setStudyDetails(details);
 

@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -40,7 +38,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
 import com.efficio.fieldbook.web.trial.TestDataHelper;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
@@ -89,7 +86,7 @@ public class SettingsUtilTest {
 		variate.setVariableType(VariableType.TRAIT.getName());
 		dataset.getVariates().add(variate);
 
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, SettingsUtilTest.PROGRAM_UUID);
+		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, SettingsUtilTest.PROGRAM_UUID);
 		Debug.println(0, workbook);
 
 		final Dataset newDataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);

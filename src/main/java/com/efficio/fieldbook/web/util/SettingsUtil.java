@@ -136,7 +136,7 @@ public class SettingsUtil {
 		final String programUUID, final String description, final String startDate, final String endDate, final String studyUpdate) {
 		return SettingsUtil
 			.convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions, plotsLevelList, baselineTraitsList,
-				userSelection, null, null, null, nurseryConditions, null, true, programUUID, description, startDate, endDate, studyUpdate);
+				userSelection, null, null, null, nurseryConditions, null, programUUID, description, startDate, endDate, studyUpdate);
 	}
 
 	static List<Condition> convertDetailsToConditions(final List<SettingDetail> details,
@@ -411,31 +411,30 @@ public class SettingsUtil {
 	 * @return the parent dataset
 	 */
 	public static ParentDataset convertPojoToXmlDataset(
-			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String name,
-			final List<SettingDetail> studyLevelConditions, final List<SettingDetail> plotsLevelList,
-			final List<SettingDetail> baselineTraitsList, final UserSelection userSelection,
-		final List<SettingDetail> trialLevelVariablesList, final List<SettingDetail> treatmentFactorDetails, final Map<String, TreatmentFactorData> treatmentFactorItems,
-		final List<SettingDetail> nurseryConditions, final List<SettingDetail> trialLevelConditions, final boolean fromNursery,
-		final String programUUID, final String description, final String startDate, final String endDate, final String studyUpdate) {
+		final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String name,
+		final List<SettingDetail> studyLevelConditions, final List<SettingDetail> plotsLevelList,
+		final List<SettingDetail> baselineTraitsList, final UserSelection userSelection, final List<SettingDetail> trialLevelVariablesList,
+		final List<SettingDetail> treatmentFactorDetails, final Map<String, TreatmentFactorData> treatmentFactorItems,
+		final List<SettingDetail> nurseryConditions, final List<SettingDetail> trialLevelConditions, final String programUUID,
+		final String description, final String startDate, final String endDate, final String studyUpdate) {
 
 		// this block is necessary for the previous nursery code because the
 		// setting details passed in from nursery are mostly empty except
 		// for properties
 		// also stored in the HTML form; e.g., value
-		if (fromNursery) {// TODO I THINK IS NOT MORE NECESSARY
 
-			SettingsUtil.setNameAndOperationFromSession(studyLevelConditions, userSelection.getStudyLevelConditions(),
-					userSelection.isDesignGenerated());
-			SettingsUtil.setNameAndOperationFromSession(plotsLevelList, userSelection.getPlotsLevelList(), false);
-			SettingsUtil.setNameAndOperationFromSession(baselineTraitsList, userSelection.getBaselineTraitsList(), false);
-			SettingsUtil.setNameAndOperationFromSession(nurseryConditions, userSelection.getNurseryConditions(), false);
+		SettingsUtil.setNameAndOperationFromSession(studyLevelConditions, userSelection.getStudyLevelConditions(),
+			userSelection.isDesignGenerated());
+		SettingsUtil.setNameAndOperationFromSession(plotsLevelList, userSelection.getPlotsLevelList(), false);
+		SettingsUtil.setNameAndOperationFromSession(baselineTraitsList, userSelection.getBaselineTraitsList(), false);
+		SettingsUtil.setNameAndOperationFromSession(nurseryConditions, userSelection.getNurseryConditions(), false);
 
-			// name and operation setting are no longer performed on the other
-			// setting lists provided as params in this method
-			// because those are only defined for trials
-			// assumption is that params provided from trial management do not
-			// need this operation
-		}
+		// name and operation setting are no longer performed on the other
+		// setting lists provided as params in this method
+		// because those are only defined for trials
+		// assumption is that params provided from trial management do not
+		// need this operation
+
 
 		final List<Condition> conditions =
 				SettingsUtil.convertDetailsToConditions(studyLevelConditions, fieldbookMiddlewareService, programUUID);
@@ -1106,8 +1105,8 @@ public class SettingsUtil {
 		return inList;
 	}
 
-	public static Workbook convertXmlDatasetToWorkbook(final ParentDataset dataset, final boolean isNursery, final String programUUID) {
-		return SettingsUtil.convertXmlDatasetToWorkbook(dataset, isNursery, null, null, null, null, programUUID);
+	public static Workbook convertXmlDatasetToWorkbook(final ParentDataset dataset, final String programUUID) {
+		return SettingsUtil.convertXmlDatasetToWorkbook(dataset,  null, null, null, null, programUUID);
 	}
 
 	/**
@@ -1116,10 +1115,9 @@ public class SettingsUtil {
 	 * @param dataset the dataset
 	 * @return the workbook
 	 */
-	public static Workbook convertXmlDatasetToWorkbook(final ParentDataset dataset, final boolean isNursery,
-			final ExpDesignParameterUi param, final List<Integer> variables,
-			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final List<MeasurementVariable> allExpDesignVariables, final String programUUID) {
+	public static Workbook convertXmlDatasetToWorkbook(final ParentDataset dataset, final ExpDesignParameterUi param,
+		final List<Integer> variables, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
+		final List<MeasurementVariable> allExpDesignVariables, final String programUUID) {
 
 		final Workbook workbook = new Workbook();
 
@@ -1131,21 +1129,18 @@ public class SettingsUtil {
 		workbook.getConditions().addAll(SettingsUtil.convertFactorsToMeasurementVariables(studyDataSet.getTrialLevelFactor()));
 		workbook.setConstants(SettingsUtil.convertConstantsToMeasurementVariables(studyDataSet.getConstants()));
 
-		if (!isNursery) {
-
-			if (workbook.getTreatmentFactors() == null) {
-				workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
-			}
-			workbook.getTreatmentFactors()
-					.addAll(SettingsUtil.convertTreatmentFactorsToTreatmentVariables(studyDataSet.getTreatmentFactors()));
-			try {
-				SettingsUtil.setExperimentalDesignToWorkbook(param, variables, workbook, allExpDesignVariables, fieldbookMiddlewareService,
-						programUUID);
-			} catch (final MiddlewareException e) {
-				SettingsUtil.LOG.error(e.getMessage(), e);
-				// TODO: Why are we swallowing this exception?
-			}
+		if (workbook.getTreatmentFactors() == null) {
+			workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
 		}
+		workbook.getTreatmentFactors().addAll(SettingsUtil.convertTreatmentFactorsToTreatmentVariables(studyDataSet.getTreatmentFactors()));
+		try {
+			SettingsUtil.setExperimentalDesignToWorkbook(param, variables, workbook, allExpDesignVariables, fieldbookMiddlewareService,
+				programUUID);
+		} catch (final MiddlewareException e) {
+			SettingsUtil.LOG.error(e.getMessage(), e);
+			// TODO: Why are we swallowing this exception?
+		}
+
 
 		return workbook;
 	}

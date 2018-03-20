@@ -302,9 +302,10 @@ public class CreateTrialController extends BaseTrialController {
 				data.getTreatmentFactors().getCurrentData(), this.contextUtil.getCurrentProgramUUID());
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.userSelection.getExpDesignParams(),
-				this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
-				this.userSelection.getExperimentalDesignVariables(), this.contextUtil.getCurrentProgramUUID());
+		final Workbook workbook = SettingsUtil
+			.convertXmlDatasetToWorkbook(dataset, this.userSelection.getExpDesignParams(), this.userSelection.getExpDesignVariables(),
+				this.fieldbookMiddlewareService, this.userSelection.getExperimentalDesignVariables(),
+				this.contextUtil.getCurrentProgramUUID());
 
 		if (this.userSelection.getTemporaryWorkbook() != null) {
 			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments(), workbook,

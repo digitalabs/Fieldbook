@@ -338,7 +338,7 @@ public class CreateNurseryController extends SettingsController {
 				form.getPlotLevelVariables(), baselineTraits, this.userSelection, form.getNurseryConditions(),
 				this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, this.contextUtil.getCurrentProgramUUID());
+		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID());
 		this.userSelection.setWorkbook(workbook);
 
 		this.createStudyDetails(workbook, form.getFolderId(), null, form.getDescription(), form.getStartDate(),

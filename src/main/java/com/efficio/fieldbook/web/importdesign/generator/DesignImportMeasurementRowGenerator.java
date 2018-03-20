@@ -13,7 +13,6 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 public class DesignImportMeasurementRowGenerator {
@@ -127,13 +125,7 @@ public class DesignImportMeasurementRowGenerator {
 			final DesignHeaderItem headerItem = trialEnvironmentHeader.getValue();
 
 			// add trial instance factor
-			if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
-					&& Objects.equals(this.workbook.getStudyDetails().getStudyType().getLabel(), StudyType.N.getLabel())) {
-				// do not add the trial instance to measurement data list if the workbook is Nursery
-				LOG.debug("Study Type is Nursery - did not add Trial Instance Factor");
-				continue;
-			} else if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
-					&& Objects.equals(this.workbook.getStudyDetails().getStudyType().getLabel(), StudyType.T.getLabel())) {
+			if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				LOG.debug("Study Type is Trial - adding Trial Instance Factor");
 				final String value = rowValues.get(headerItem.getColumnIndex());
 				dataList.add(this.createMeasurementData(headerItem.getVariable(), value));

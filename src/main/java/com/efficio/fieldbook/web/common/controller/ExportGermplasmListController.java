@@ -55,21 +55,16 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 
 	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
-
 	@ResponseBody
-	@RequestMapping(value = "/exportGermplasmList/{exportType}/{studyType}", method = RequestMethod.GET,
-			produces = "text/plain;charset=UTF-8")
-	public String exportGermplasmList(@ModelAttribute("exportGermplasmListForm") final ExportGermplasmListForm exportGermplasmListForm,
-			@PathVariable final int exportType, @PathVariable
-	final String studyType, final HttpServletRequest req, final HttpServletResponse response)
-			throws GermplasmListExporterException {
+	@RequestMapping(value = "/exportGermplasmList/{exportType}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public String exportGermplasmList(@ModelAttribute("exportGermplasmListForm") ExportGermplasmListForm exportGermplasmListForm,
+		@PathVariable int exportType, HttpServletResponse response) throws GermplasmListExporterException {
 
 		final String[] clientVisibleColumnTermIds = exportGermplasmListForm.getGermplasmListVisibleColumns().split(",");
 
-		final Boolean isNursery = StudyType.N.getName().equals(studyType);
 		final Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnsMap(clientVisibleColumnTermIds);
 
-		return this.doExport(exportType, response, visibleColumnsMap, isNursery);
+		return this.doExport(exportType, response, visibleColumnsMap);
 	}
 
 	protected Map<String, Boolean> getVisibleColumnsMap(final String[] termIds) {
@@ -102,12 +97,9 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		return map;
 	}
 
-	protected String doExport(final int exportType, final HttpServletResponse response, final Map<String, Boolean> visibleColumnsMap,
-			final Boolean isNursery) throws GermplasmListExporterException {
+	protected String doExport(final int exportType, final HttpServletResponse response, final Map<String, Boolean> visibleColumnsMap) throws GermplasmListExporterException {
 
 		String outputFileNamePath = "";
-		final String fileName = "";
-
 		String downloadFileName = "";
 
 		GermplasmList list = null;

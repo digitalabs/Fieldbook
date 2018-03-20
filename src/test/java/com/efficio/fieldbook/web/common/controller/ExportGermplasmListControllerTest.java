@@ -153,9 +153,8 @@ public class ExportGermplasmListControllerTest {
 		form.setGermplasmListVisibleColumns("0");
 
 		try {
-
-			final String output = this.exportGermplasmListController.exportGermplasmList(form, ExportGermplasmListControllerTest.EXCEL_TYPE,
-					ExportGermplasmListControllerTest.TRIAL_TYPE, this.req, this.response);
+			final String output =
+				this.exportGermplasmListController.exportGermplasmList(form, ExportGermplasmListControllerTest.EXCEL_TYPE, this.response);
 
 			//  Verify temporary file is created in proper directory and response object is properly set
 			final ArgumentCaptor<String> filenameCaptor = ArgumentCaptor.forClass(String.class);
@@ -200,8 +199,8 @@ public class ExportGermplasmListControllerTest {
 		form.setGermplasmListVisibleColumns("0");
 
 		try {
-			final String output = this.exportGermplasmListController.exportGermplasmList(form, ExportGermplasmListControllerTest.EXCEL_TYPE,
-					ExportGermplasmListControllerTest.NURSERY_TYPE, this.req, this.response);
+			final String output =
+				this.exportGermplasmListController.exportGermplasmList(form, ExportGermplasmListControllerTest.EXCEL_TYPE, this.response);
 			Mockito.verify(this.exportGermplasmListService, Mockito.times(1)).exportGermplasmListXLS(Matchers.anyString(),
 					Matchers.anyInt(), Matchers.any(Map.class));
 
@@ -235,8 +234,8 @@ public class ExportGermplasmListControllerTest {
 		form.setGermplasmListVisibleColumns("0");
 
 		try {
-			final String output = this.exportGermplasmListController.exportGermplasmList(form, ExportGermplasmListControllerTest.CSV_TYPE,
-					ExportGermplasmListControllerTest.TRIAL_TYPE, this.req, this.response);
+			final String output =
+				this.exportGermplasmListController.exportGermplasmList(form, ExportGermplasmListControllerTest.CSV_TYPE, this.response);
 
 			//  Verify temporary file is created in proper directory and response object is properly set
 			final ArgumentCaptor<String> filenameCaptor = ArgumentCaptor.forClass(String.class);
@@ -265,8 +264,8 @@ public class ExportGermplasmListControllerTest {
 		form.setGermplasmListVisibleColumns("0");
 
 		try {
-			final String output = this.exportGermplasmListController.exportGermplasmList(form, ExportGermplasmListControllerTest.CSV_TYPE,
-					ExportGermplasmListControllerTest.NURSERY_TYPE, this.req, this.response);
+			final String output =
+				this.exportGermplasmListController.exportGermplasmList(form, ExportGermplasmListControllerTest.CSV_TYPE, this.response);
 
 			//  Verify temporary file is created in proper directory and response object is properly set
 			final ArgumentCaptor<String> filenameCaptor = ArgumentCaptor.forClass(String.class);
@@ -302,8 +301,7 @@ public class ExportGermplasmListControllerTest {
 		form.setGermplasmListVisibleColumns("0");
 
 		try {
-			this.exportGermplasmListController.exportGermplasmList(form, ExportGermplasmListControllerTest.CSV_TYPE,
-					ExportGermplasmListControllerTest.NURSERY_TYPE, this.req, this.response);
+			this.exportGermplasmListController.exportGermplasmList(form, ExportGermplasmListControllerTest.CSV_TYPE, this.response);
 			Mockito.verify(this.exportGermplasmListService, Mockito.times(0)).exportGermplasmListCSV(Matchers.anyString(),
 					Matchers.any(Map.class));
 		} catch (final GermplasmListExporterException e) {

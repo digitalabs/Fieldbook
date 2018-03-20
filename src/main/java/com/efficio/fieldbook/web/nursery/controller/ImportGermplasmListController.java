@@ -533,9 +533,7 @@ public class ImportGermplasmListController extends SettingsController {
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
 
-			final boolean isNursery = type != null && type.equalsIgnoreCase(StudyType.N.getName()) ? true : false; //TODO FIXME
-			final List<Map<String, Object>> dataTableDataList =
-					this.generateGermplasmListDataTable(list, defaultTestCheckId, isNursery, true);
+			final List<Map<String, Object>> dataTableDataList = this.generateGermplasmListDataTable(list, defaultTestCheckId, true);
 			this.initializeObjectsForGermplasmDetailsView(form, model, mainInfo, list, dataTableDataList);
 		} catch (final Exception e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
@@ -551,9 +549,9 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @return the string
 	 */
 	@RequestMapping(value = "/displaySelectedGermplasmDetails", method = RequestMethod.GET)
-	public String displayGermplasmDetailsOfCurrentStudy(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final Model model) {
+	public String displayGermplasmDetailsOfCurrentStudy(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form,
+		final Model model) {
 		try {
-//TODO REMOVER TYPE CUENYAD
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 			mainInfo.setAdvanceImportType(true);
 			final Integer studyIdFromWorkbook = this.userSelection.getWorkbook().getStudyDetails().getId();
@@ -561,12 +559,10 @@ public class ImportGermplasmListController extends SettingsController {
 
 			List<ImportedGermplasm> list = new ArrayList<>();
 
-			final boolean isNursery =
-				Objects.equals(this.userSelection.getWorkbook().getStudyDetails().getStudyType().getLabel(), "Nursery");
-			final GermplasmListType germplasmListType = GermplasmListType.STUDY;// TODO COMO SE GUARDAN LAS LISTAS DE LOS ESTUDIOS
+			final GermplasmListType germplasmListType = GermplasmListType.STUDY;
 
 			final List<GermplasmList> germplasmLists =
-					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, germplasmListType);
+				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, germplasmListType);
 
 			if (germplasmLists != null && !germplasmLists.isEmpty()) {
 				final GermplasmList germplasmList = germplasmLists.get(0);
@@ -576,18 +572,17 @@ public class ImportGermplasmListController extends SettingsController {
 					// BMS-1419, set the id to the original list's id
 					mainInfo.setListId(germplasmList.getListRef());
 				}
-				final List<ListDataProject> data = this.fieldbookMiddlewareService.getListDataProject(
-					germplasmList != null ? germplasmList.getId() : null);
+				final List<ListDataProject> data =
+					this.fieldbookMiddlewareService.getListDataProject(germplasmList != null ? germplasmList.getId() : null);
 				FieldbookListUtil.populateStockIdInListDataProject(data, this.inventoryDataManager);
 				list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
 			}
 
 			final String defaultTestCheckId =
-					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
+				this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
 
-			final List<Map<String, Object>> dataTableDataList =
-					this.generateGermplasmListDataTable(list, defaultTestCheckId, isNursery, false);//
+			final List<Map<String, Object>> dataTableDataList = this.generateGermplasmListDataTable(list, defaultTestCheckId, false);//
 			this.initializeObjectsForGermplasmDetailsView(form, model, mainInfo, list, dataTableDataList);
 
 			// setting the form
@@ -601,7 +596,7 @@ public class ImportGermplasmListController extends SettingsController {
 	}
 
 	List<Map<String, Object>> generateGermplasmListDataTable(final List<ImportedGermplasm> list, final String defaultTestCheckId,
-			final boolean isNursery, final boolean isDefaultTestCheck) {
+		final boolean isDefaultTestCheck) {
 		final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 		final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 
@@ -614,27 +609,21 @@ public class ImportGermplasmListController extends SettingsController {
 			dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
 			dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
 
-			//if (!isNursery) {// TODO FIX THAT
-				if (isDefaultTestCheck || germplasm.getEntryTypeValue() == null || "0".equals(germplasm.getEntryTypeValue())) {
-					germplasm.setEntryTypeValue(defaultTestCheckId);
-					germplasm.setEntryTypeCategoricalID(Integer.valueOf(defaultTestCheckId));
-					dataMap.put(ImportGermplasmListController.CHECK, defaultTestCheckId);
-				} else {
-					dataMap.put(ImportGermplasmListController.CHECK, germplasm.getEntryTypeCategoricalID());
-				}
-
-			/*} else {
-				dataMap.put(ImportGermplasmListController.ENTRY_CODE, germplasm.getEntryCode());
-				dataMap.put(ImportGermplasmListController.CHECK, "");
-			}*/
+			if (isDefaultTestCheck || germplasm.getEntryTypeValue() == null || "0".equals(germplasm.getEntryTypeValue())) {
+				germplasm.setEntryTypeValue(defaultTestCheckId);
+				germplasm.setEntryTypeCategoricalID(Integer.valueOf(defaultTestCheckId));
+				dataMap.put(ImportGermplasmListController.CHECK, defaultTestCheckId);
+			} else {
+				dataMap.put(ImportGermplasmListController.CHECK, germplasm.getEntryTypeCategoricalID());
+			}
 
 			final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 			if (factorsList != null) {
-				// we iterate the map for dynamic header of nursery and trial
+				// we iterate the map for dynamic header of study
 				for (final SettingDetail factorDetail : factorsList) {
 					if (factorDetail != null && factorDetail.getVariable() != null) {
 						dataMap.put(factorDetail.getVariable().getCvTermId() + AppConstants.TABLE_HEADER_KEY_SUFFIX.getString(),
-								this.getGermplasmData(factorDetail.getVariable().getCvTermId().toString(), germplasm));
+							this.getGermplasmData(factorDetail.getVariable().getCvTermId().toString(), germplasm));
 					}
 				}
 			}

@@ -279,8 +279,8 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testGenerateGermplasmListDataTableForTrial() {
 		final List<ImportedGermplasm> list = ImportedGermplasmTestDataInitializer.createImportedGermplasmList();
-		final List<Map<String, Object>> dataTableDataList = this.importGermplasmListController
-				.generateGermplasmListDataTable(list, "1", false, false);
+		final List<Map<String, Object>> dataTableDataList =
+			this.importGermplasmListController.generateGermplasmListDataTable(list, "1", false);
 
 		int x = 1;
 		for (final Map<String, Object> map : dataTableDataList) {
@@ -304,8 +304,8 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testGenerateGermplasmListDataTableForNursery() {
 		final List<ImportedGermplasm> list = ImportedGermplasmTestDataInitializer.createImportedGermplasmList();
-		final List<Map<String, Object>> dataTableDataList = this.importGermplasmListController
-				.generateGermplasmListDataTable(list, "1", true, false);
+		final List<Map<String, Object>> dataTableDataList =
+			this.importGermplasmListController.generateGermplasmListDataTable(list, "1", false);
 
 		int x = 1;
 		for (final Map<String, Object> map : dataTableDataList) {

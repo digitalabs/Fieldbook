@@ -20,7 +20,7 @@
 					</span>
 
 						<span class="fbk-nursery-heading" ng-show="isOpenStudy()">
-                        <span class="heading" truncate-and-tooltip="data.studyName"></span>
+						<span class="heading" ng-bind="data.studyName"></span>
 					</span>
 
 						<div class="fbk-nursery-heading-btns">
@@ -189,8 +189,7 @@
 										</div>
 
 										<div class="col-sm-8 nursery-name-display" ng-show="isOpenStudy()">
-											<span truncate-and-tooltip="data.studyName"></span>
-											<span class="fieldmap-study-name fbk-hide" th:text="${studyName}"></span>
+											<span ng-bind="data.studyName"></span>
 										</div>
 									</div>
 

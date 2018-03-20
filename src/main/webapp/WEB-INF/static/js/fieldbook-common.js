@@ -1463,11 +1463,6 @@ function exportGermplasmList() {
 		return false;
 	}
 	submitExportUrl = submitExportUrl + type;
-	if (isNursery()) {
-		submitExportUrl = submitExportUrl + '/N';
-	}else {
-		submitExportUrl = submitExportUrl + '/T';
-	}
 	$(formName).attr('action', submitExportUrl);
 	$(formName).ajaxForm(exportOptions).submit();
 }
@@ -3081,7 +3076,7 @@ function isValidInput(input) {
 	return !invalidInput;
 }
 
-function doDeleteNursery(id, callback) {
+function doDeleteNursery(id, callback) {// TODO CUENYAD
 	'use strict';
 	//var studyType = isNursery() ? 'N' : 'T';
 	$.ajax({
@@ -3144,7 +3139,7 @@ function showExportGermplasmListPopup() {
 			}
 		}
 	);
-	if (!isNursery() && $('#imported-germplasm-list').size() !== 0) {
+	if ($('#imported-germplasm-list').size() !== 0) {
 		if ($.inArray(gidTermId + '', visibleColumnTermIds) === -1
 			|| $.inArray(entryNoTermId + '', visibleColumnTermIds) === -1
 			|| $.inArray(desigTermId + '', visibleColumnTermIds) === -1) {
@@ -3606,7 +3601,7 @@ function initializeStudyTabs() {
 	});
 	determineIfShowCloseAllStudyTabs();
 }
-function addDetailsTab(studyId, title) {
+function addDetailsTab(studyId, title) {// TODO CUENYAD
 	// if the study is already existing, we show that tab
 	'use strict';
 	if ($('li#li-study' + studyId).length !== 0) {
@@ -3694,7 +3689,7 @@ function getCurrentStudyIdInTab() {
 	}
 }
 
-function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
+function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {// TODO CUENYAD
 	'use strict';
 	var currentStudyId = getCurrentStudyIdInTab(),
 		studyType = isNursery() ? 'N' : 'T';

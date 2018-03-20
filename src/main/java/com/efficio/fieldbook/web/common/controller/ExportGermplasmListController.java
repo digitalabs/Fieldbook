@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
@@ -54,14 +53,10 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 
 	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
-
 	@ResponseBody
-	@RequestMapping(value = "/exportGermplasmList/{exportType}/{studyType}", method = RequestMethod.GET,
-			produces = "text/plain;charset=UTF-8")
-	public String exportGermplasmList(@ModelAttribute("exportGermplasmListForm") final ExportGermplasmListForm exportGermplasmListForm,
-			@PathVariable final int exportType, @PathVariable
-	final String studyType, final HttpServletRequest req, final HttpServletResponse response)
-			throws GermplasmListExporterException {
+	@RequestMapping(value = "/exportGermplasmList/{exportType}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public String exportGermplasmList(@ModelAttribute("exportGermplasmListForm") ExportGermplasmListForm exportGermplasmListForm,
+		@PathVariable int exportType, HttpServletResponse response) throws GermplasmListExporterException {
 
 		final String[] clientVisibleColumnTermIds = exportGermplasmListForm.getGermplasmListVisibleColumns().split(",");
 
@@ -100,12 +95,9 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		return map;
 	}
 
-	protected String doExport(final int exportType, final HttpServletResponse response, final Map<String, Boolean> visibleColumnsMap)
-		throws GermplasmListExporterException {
+	protected String doExport(final int exportType, final HttpServletResponse response, final Map<String, Boolean> visibleColumnsMap) throws GermplasmListExporterException {
 
 		String outputFileNamePath = "";
-		final String fileName = "";
-
 		String downloadFileName = "";
 
 		GermplasmList list = null;

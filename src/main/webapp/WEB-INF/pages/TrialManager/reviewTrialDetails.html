@@ -30,13 +30,13 @@
 							<a href="" style="display: none" id="open-study-url" th:href="@{/TrialManager/openTrial}"></a>
 							<a href="javascript: openStudy('trial-table');" id="open-study-url-link" th:text="#{trial.trialdetails.action.edit}">Edit Study</a>
 						</li>
-						<!-- Delete Trial -->
+						<!-- Delete Study -->
 						<li>
 							<a href="javascript: openDeleteConfirmation();" th:text="#{browse.trial.delete.trial.name}">Delete Trial</a>
 						</li>
-                        <!-- Export Trial book: will display export format & Data collection order options -->
+                        <!-- Export Study book: will display export format & Data collection order options -->
 						<li>
-							<a href="javascript: showExportOptions();" id="export-study-link" th:text="#{trial.trialdetails.action.export.trial}">Export Trial Book</a>
+							<a href="javascript: showExportOptions();" id="export-study-link" th:text="#{study.trialdetails.action.export.study}">Export Study Book</a>
 						</li>
                         <!-- Make Field Map: will allow user to create Field Map from Summary view -->
 						<li>

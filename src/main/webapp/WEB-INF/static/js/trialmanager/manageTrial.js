@@ -347,9 +347,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 				TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 
-				//enable the user to regenerate preset design when the user adds new environment
-				TrialManagerDataService.applicationData.hasGeneratedDesignPreset = false;
-
 				$state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments, timestamp: new Date()});
 				$scope.performFunctionOnTabChange('environment');
 

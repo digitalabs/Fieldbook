@@ -45,6 +45,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 /**
  * The Class MeasurementsGeneratorServiceImpl.
  */
+@Deprecated
 @Service
 @Transactional
 public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorService {

@@ -88,6 +88,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 	 * @return the string
 	 */
 	@RequestMapping(method = RequestMethod.GET)
+	@Deprecated
 	public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, HttpSession session)
 			throws MiddlewareQueryException {
 

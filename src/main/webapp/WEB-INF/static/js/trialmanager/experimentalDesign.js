@@ -32,32 +32,10 @@
 
 						// Add Breeding View Engine Designs except for for Custom Import Design
 						$.each($scope.designTypes, function(index, designType){
-							if(!designType.isPreset && designType.name !== 'Custom Import Design'){
+							if(designType.name !== 'Custom Import Design'){
 								$scope.designTypeView.push(designType);
 							}
 						});
-
-						// Add separator only if there are preset designs.
-						if($scope.isTherePresetDesign($scope.designTypes)){
-							$scope.designTypeView.push({id:	null, name: '----------------------------------------------', isDisabled: true });
-						}
-
-						// Add preset designs.
-						$.each($scope.designTypes, function(index, designType){
-							if(designType.isPreset && designType.name !== 'Custom Import Design'){
-								$scope.designTypeView.push(designType);
-							}
-						});
-					};
-
-					$scope.isTherePresetDesign = function(designTypes) {
-						var presetExists = false;
-						$.each(designTypes, function(index, designType){
-							if(designType.isPreset){
-								presetExists = true;
-							}
-						});
-						return presetExists;
 					};
 
 					$scope.generateInsertionMannerView = function() {
@@ -100,13 +78,6 @@
 
 							if (!$scope.settings.showAdvancedOptions[$scope.data.designType]) {
 								$scope.settings.showAdvancedOptions[$scope.data.designType] = $scope.data.useLatenized;
-							}
-
-							// loading for existing trial
-							if($scope.studyID != null && !TrialManagerDataService.applicationData.unappliedChangesAvailable){
-								var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
-								$scope.applicationData.hasGeneratedDesignPreset = selectedDesignType.isPreset
-									&& $scope.studyID != null && TrialManagerDataService.trialMeasurement.count > 0;
 							}
 
 							if ($scope.currentDesignType !== null && $scope.currentDesignType.name === 'Custom Import Design') {
@@ -199,22 +170,12 @@
 
 							$scope.refreshDesignDetailsForAugmentedDesign();
 
-							if ($scope.currentDesignType.isPreset) {
-								showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);
-							}
-
 						} else {
 							$scope.currentDesignType = null;
 							$scope.data.designType = '';
 							$scope.currentParams = '';
 						}
 
-						$scope.applicationData.hasGeneratedDesignPreset = false;
-					};
-
-					$scope.toggleIsPresetWithGeneratedDesign = function() {
-						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
-						$scope.applicationData.hasGeneratedDesignPreset =  $scope.applicationData.unsavedGeneratedDesign && selectedDesignType.isPreset;
 					};
 
 					$scope.updateAfterGeneratingDesignSuccessfully = function() {
@@ -223,7 +184,6 @@
 						TrialManagerDataService.clearUnappliedChangesFlag();
 						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 						$('#chooseGermplasmAndChecks').data('replace', '1');
-						$scope.toggleIsPresetWithGeneratedDesign();
 						//if the design is generated but not saved, the measurements datatable is for preview only (edit is not allowed)
 						$rootScope.$broadcast('previewMeasurements');
 						$('body').addClass('preview-measurements-only');
@@ -347,7 +307,6 @@
 					
 					$scope.resetExperimentalDesignRelatedVariables = function() {
 						// the following reset the data used for the experimental design, allowing the user to select another design again
-						$scope.applicationData.hasGeneratedDesignPreset = false;
 						$scope.applicationData.isGeneratedOwnDesign = false;
 						$scope.currentDesignType = null;
 						$scope.applicationData.importDesignMappedData = null;
@@ -365,7 +324,7 @@
 							|| ($scope.data.designType !== null
 							&& $scope.data.designType !== ''
 							&& selectedDesignType.name === 'Custom Import Design')
-							|| $scope.applicationData.hasGeneratedDesignPreset);
+							);
 					};
 
 					$scope.isImportedDesign = function() {
@@ -379,7 +338,7 @@
 						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						return $scope.data.designType != null
 							&& $scope.data.designType !== ''
-							&& !selectedDesignType.isPreset && selectedDesignType.name !== 'Custom Import Design';
+							&& selectedDesignType.name !== 'Custom Import Design';
 					};
 					
 					$scope.showOrHideAdvancedOptions = function (isShown) {
@@ -588,7 +547,7 @@
 								}
 								break;
 							}
-							case 6:
+							case 6: // TODO Remove cases for 6 and 7
 							case 7:
 							{
 								var actualNoOfGermplasmListEntries = $scope.currentDesignType.totalNoOfEntries;

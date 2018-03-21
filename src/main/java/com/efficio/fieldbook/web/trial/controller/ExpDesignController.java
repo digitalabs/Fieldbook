@@ -19,6 +19,7 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.dms.InsertionMannerItem;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -96,13 +97,7 @@ public class ExpDesignController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(value = "/retrieveInsertionManners", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	public List<TermSummary> retrieveInsertionManners() {
-		//FIXME Move to an enum and fix description in DB
-		final TermSummary t1 = new TermSummary(8414,"1","Insert each check in turn");
-		final TermSummary t2 = new TermSummary(8415,"2","Insert all checks at each position");
-		final List<TermSummary> list = new ArrayList<>();
-		list.add(t1);
-		list.add(t2);
-		return list;
+		return InsertionMannerItem.getInsertionManners();
 	}
 
 	@ResponseBody

@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.InsertionMannerItem;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -262,7 +263,7 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 	private List<ImportedGermplasm> generateChecksToInsert(final List<ImportedGermplasm> checkList, final Integer checkIndex,
 			final Integer insertionManner) {
 		final List<ImportedGermplasm> newList = new ArrayList<>();
-		if (insertionManner.equals(8415)) {
+		if (insertionManner.equals(InsertionMannerItem.INSERT_ALL_CHECKS.getId())) {
 			for (final ImportedGermplasm checkGerm : checkList) {
 				newList.add(checkGerm.copy());
 			}

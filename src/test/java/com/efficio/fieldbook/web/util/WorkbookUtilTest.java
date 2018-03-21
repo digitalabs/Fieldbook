@@ -138,22 +138,29 @@ public class WorkbookUtilTest {
 		WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, true, variable, userSelection);
 		Assert.assertEquals(importedGermplasm.getSource(), row.getDataList().get(4).getValue());
 	}
-	
+
 	@Test
 	public void testAddMeasurementDataToRowsExp() {
-		List<MeasurementVariable> variableList =  Arrays.asList(MeasurementVariableTestDataInitializer.createMeasurementVariableWithOperation(TermId.SEED_SOURCE.getId(), TermId.SEED_SOURCE.name(), TermId.SEED_SOURCE.name(), Operation.ADD));
-		List<MeasurementRow> observations =  Arrays.asList(MeasurementRowTestDataInitializer.createMeasurementRow());
+		final List<MeasurementVariable> variableList = Arrays.asList(MeasurementVariableTestDataInitializer
+				.createMeasurementVariableWithOperation(TermId.SEED_SOURCE.getId(), TermId.SEED_SOURCE.name(),
+						TermId.SEED_SOURCE.name(), Operation.ADD));
+		final List<MeasurementRow> observations = Arrays
+				.asList(MeasurementRowTestDataInitializer.createMeasurementRow());
 		final int previousMeasurementDataSize = observations.get(0).getDataList().size();
 		final OntologyService ontologyService = Mockito.mock(OntologyService.class);
-		Mockito.when(ontologyService.getProperty(Matchers.anyString())).thenReturn(new Property(new Term(TermId.BREEDING_METHOD_PROP.getId(), TermId.BREEDING_METHOD_PROP.name(), "definition")));
-		WorkbookUtil.addMeasurementDataToRowsExp(variableList, observations, true, ontologyService, Mockito.mock(FieldbookService.class), "10101");
-		
+		Mockito.when(ontologyService.getProperty(Matchers.anyString())).thenReturn(new Property(
+				new Term(TermId.BREEDING_METHOD_PROP.getId(), TermId.BREEDING_METHOD_PROP.name(), "definition")));
+		WorkbookUtil.addMeasurementDataToRowsExp(variableList, observations, true, ontologyService,
+				Mockito.mock(FieldbookService.class), "10101");
+
 		final int measurementDataSize = observations.get(0).getDataList().size();
-		//The SEED_SOURCE Variable should be added
-		Assert.assertEquals(previousMeasurementDataSize +1, measurementDataSize);
-		
-		WorkbookUtil.addMeasurementDataToRowsExp(variableList, observations, true, ontologyService, Mockito.mock(FieldbookService.class), "10101");
-		//The SEED_SOURCE Variable should not be added since it's already in the data list
+		// The SEED_SOURCE Variable should be added
+		Assert.assertEquals(previousMeasurementDataSize + 1, measurementDataSize);
+
+		WorkbookUtil.addMeasurementDataToRowsExp(variableList, observations, true, ontologyService,
+				Mockito.mock(FieldbookService.class), "10101");
+		// The SEED_SOURCE Variable should not be added since it's already in
+		// the data list
 		Assert.assertEquals(measurementDataSize, observations.get(0).getDataList().size());
 	}
 

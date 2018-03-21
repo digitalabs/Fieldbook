@@ -1522,7 +1522,6 @@ function doExportContinue(paramUrl) {
 		exportWayType;
 
 	formname = '#addVariableForm, #addVariableForm2';
-
 	$form = $(formname);
 	serializedData = $form.serialize();
 
@@ -1542,21 +1541,18 @@ function doFinalExport(paramUrl, additionalParams, exportWayType) {
 		visibleColumns = '';
 
 	newAction = action + 'exportStudy/' + paramUrl + '/' + additionalParams;
-
 	newAction += exportWayType;
-	if ($('#browser-nurseries').length !== 0) {
-		// Meaning we are on the landing page
-		studyId = getCurrentStudyIdInTab();
-	} else {
-		// the nursery/trial is opened
-		var tableContainsPlotId = BMS.Fieldbook.MeasurementsTable.containsHeader('measurement-table', '8201');
-		visibleColumns = getMeasurementTableVisibleColumns(isNursery, tableContainsPlotId);
-		var exportType = $('#exportType').val();
-		// excel or csv
-		if ((exportType == 6 || exportType == 2) && visibleColumns.length !== 0) {
-			showWarningMessageForRequiredColumns(visibleColumns);
-		}
+	studyId = $('#studyId').val();
+
+	// the study is opened
+	var tableContainsPlotId = BMS.Fieldbook.MeasurementsTable.containsHeader('measurement-table', '8201');
+	visibleColumns = getMeasurementTableVisibleColumns(tableContainsPlotId);
+	var exportType = $('#exportType').val();
+	// excel or csv
+	if ((exportType == 6 || exportType == 2) && visibleColumns.length !== 0) {
+		showWarningMessageForRequiredColumns(visibleColumns);
 	}
+
 	var columnOrders = '';
 	if ($('.review-nursery-details').length == 0) {
 		var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true);
@@ -1603,10 +1599,10 @@ function showWarningMessageForRequiredColumns(visibleColumns) {
 	}
 }
 
-function getMeasurementTableVisibleColumns(isNursery, addPlotId) {
+function getMeasurementTableVisibleColumns(addPlotId) {
 	'use strict';
 	var visibleColumns = '';
-	if (!isNursery && $('[ui-view="editMeasurements"]').text().length === 0) {
+	if ($('[ui-view="editMeasurements"]').text().length === 0) {
 		return visibleColumns;
 	}
 	var headers = $('#measurement-table_wrapper .dataTables_scrollHead [data-term-id]');

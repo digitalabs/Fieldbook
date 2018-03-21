@@ -330,7 +330,7 @@ public class ExportStudyControllerTest {
 		final Integer exportType = AppConstants.EXPORT_CSV.getInt();
 		final Integer exportWayType = 1;
 		final Map<String, String> data = this.getData();
-		final String returnedValue = this.exportStudyController.exportFileTrial(data, exportType, "1", exportWayType, this.req, this.resp);
+		final String returnedValue = this.exportStudyController.exportFileStudy(data, exportType, "1", exportWayType, this.req, this.resp);
 		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
 
 		Assert.assertTrue("Unable to properly generate export", (Boolean) result.get(ExportStudyController.IS_SUCCESS));
@@ -361,7 +361,7 @@ public class ExportStudyControllerTest {
 		final Integer exportType = AppConstants.EXPORT_CSV.getInt();
 		final Integer exportWayType = 1;
 		final Map<String, String> data = this.getData();
-		final String returnedValue = this.exportStudyController.exportFileTrial(data, exportType, this.getTrialInstanceString(instances),
+		final String returnedValue = this.exportStudyController.exportFileStudy(data, exportType, this.getTrialInstanceString(instances),
 				exportWayType, this.req, this.resp);
 
 		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
@@ -426,7 +426,7 @@ public class ExportStudyControllerTest {
 		final Integer exportType = AppConstants.EXPORT_NURSERY_EXCEL.getInt();
 		final Integer exportWayType = 1;
 		final Map<String, String> data = this.getData();
-		final String returnedValue = this.exportStudyController.exportFileTrial(data, exportType, "1", exportWayType, this.req, this.resp);
+		final String returnedValue = this.exportStudyController.exportFileStudy(data, exportType, "1", exportWayType, this.req, this.resp);
 		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
 
 		Assert.assertTrue("Unable to properly generate export", (Boolean) result.get(ExportStudyController.IS_SUCCESS));
@@ -457,7 +457,7 @@ public class ExportStudyControllerTest {
 		final Integer exportType = AppConstants.EXPORT_NURSERY_EXCEL.getInt();
 		final Integer exportWayType = 1;
 		final Map<String, String> data = this.getData();
-		final String returnedValue = this.exportStudyController.exportFileTrial(data, exportType, this.getTrialInstanceString(instances),
+		final String returnedValue = this.exportStudyController.exportFileStudy(data, exportType, this.getTrialInstanceString(instances),
 				exportWayType, this.req, this.resp);
 
 		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
@@ -523,7 +523,7 @@ public class ExportStudyControllerTest {
 		final Integer exportType = AppConstants.EXPORT_KSU_CSV.getInt();
 		final Integer exportWayType = 1;
 		final Map<String, String> data = this.getData();
-		final String returnedValue = this.exportStudyController.exportFileTrial(data, exportType, this.getTrialInstanceString(instances),
+		final String returnedValue = this.exportStudyController.exportFileStudy(data, exportType, this.getTrialInstanceString(instances),
 				exportWayType, this.req, this.resp);
 		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
 
@@ -588,7 +588,7 @@ public class ExportStudyControllerTest {
 		final Integer exportType = AppConstants.EXPORT_KSU_EXCEL.getInt();
 		final Integer exportWayType = 1;
 		final Map<String, String> data = this.getData();
-		final String returnedValue = this.exportStudyController.exportFileTrial(data, exportType, this.getTrialInstanceString(instances),
+		final String returnedValue = this.exportStudyController.exportFileStudy(data, exportType, this.getTrialInstanceString(instances),
 				exportWayType, this.req, this.resp);
 		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
 

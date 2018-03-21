@@ -20,7 +20,7 @@
 					</span>
 
 						<span class="fbk-nursery-heading" ng-show="isOpenStudy()">
-						<span class="heading" ng-bind="data.studyName"></span>
+						<span class="heading" truncate-and-tooltip="data.studyName"></span>
 					</span>
 
 						<div class="fbk-nursery-heading-btns">
@@ -127,7 +127,7 @@
 								<ul class="dropdown-menu" style="margin-left: 4px;">
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a href="javascript: showExportOptions();" id="export-study-link"
-										   th:text="#{trial.trialdetails.action.export.trial}">Export Study Book</a>
+										   th:text="#{study.trialdetails.action.export.study}">Export Study Book</a>
 									</li>
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a href="" style="display: none" id="open-study-url"></a>
@@ -189,7 +189,7 @@
 										</div>
 
 										<div class="col-sm-8 nursery-name-display" ng-show="isOpenStudy()">
-											<span ng-bind="data.studyName"></span>
+											<span truncate-and-tooltip="data.studyName"></span>
 										</div>
 									</div>
 

@@ -514,7 +514,30 @@
 				}
 			};
 		})
+		.directive('truncateAndTooltip', ['$compile', function($compile) {
+			return {
+				restrict: 'A',
+				link: function(scope, element, attrs) {
+					var length = 30;
+					scope.$watch(attrs.truncateAndTooltip, function(newValue) {
+						if (newValue && newValue.length > length) {
+							element.attr('tooltip', newValue);
+							element.attr('tooltip-placement', 'right');
+							element.attr('tooltip-append-to-body', true);
+							element.html(newValue.substring(0, length) + '...');
 
+						} else {
+							element.html(newValue);
+						}
+
+						// remove truncateAndTooltip attr so no infinite loop
+						element.removeAttr('truncate-and-tooltip');
+
+						$compile(element)(scope);
+					});
+				}
+			};
+		}])
 		.directive('minVal', function() {
 			return {
 				require: 'ngModel',

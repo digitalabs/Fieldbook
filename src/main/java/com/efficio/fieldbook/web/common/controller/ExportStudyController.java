@@ -122,9 +122,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	private CrossExpansionProperties crossExpansionProperties;
 
 	@Resource
-	private WorkbenchService workbenchService;
-
-	@Resource
 	private ReportService reportService;
 
 	@Resource
@@ -191,32 +188,31 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	}
 
+	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "/export/{exportType}/{exportWayType}", method = RequestMethod.POST)
 	public String exportFile(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
 			@PathVariable final int exportWayType, final HttpServletRequest req, final HttpServletResponse response) throws IOException {
 		ExportStudyController.LOG.info("Entering Export Nursery:exportFile");
-		final boolean isTrial = false;
-		final List<Integer> instancesList = new ArrayList<Integer>();
+		final List<Integer> instancesList = new ArrayList<>();
 		instancesList.add(1);
 		ExportStudyController.LOG.info("Leaving Export Nursery:exportFile");
-		return this.doExport(exportType, 0, response, isTrial, instancesList, exportWayType, data);
+		return this.doExport(exportType, response, instancesList, exportWayType, data);
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/exportTrial/{exportType}/{instances}/{exportWayType}", method = RequestMethod.POST)
-	public String exportFileTrial(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
+	@RequestMapping(value = "/exportStudy/{exportType}/{instances}/{exportWayType}", method = RequestMethod.POST)
+	public String exportFileStudy(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
 			@PathVariable final String instances, @PathVariable final int exportWayType, final HttpServletRequest req,
 			final HttpServletResponse response) throws IOException {
-		ExportStudyController.LOG.info("Entering Export Trial:exportFileTrial");
-		final boolean isTrial = true;
-		final List<Integer> instancesList = new ArrayList<Integer>();
+		ExportStudyController.LOG.info("Entering Export Study:exportFileStudy");
+		final List<Integer> instancesList = new ArrayList<>();
 		final StringTokenizer tokenizer = new StringTokenizer(instances, "|");
 		while (tokenizer.hasMoreTokens()) {
 			instancesList.add(Integer.valueOf(tokenizer.nextToken()));
 		}
-		ExportStudyController.LOG.info("Exiting Export Trial:exportFileTrial");
-		return this.doExport(exportType, 0, response, isTrial, instancesList, exportWayType, data);
+		ExportStudyController.LOG.info("Exiting Export Study:exportFileStudy");
+		return this.doExport(exportType, response, instancesList, exportWayType, data);
 
 	}
 
@@ -254,21 +250,20 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	 * Do export.
 	 *
 	 * @param exportType the export type
-	 * @param selectedTraitTermId the selected trait term id
 	 * @param response the response
 	 * @return the string
 	 * @throws IOException
 	 */
-	private String doExport(final int exportType, final int selectedTraitTermId, final HttpServletResponse response, final boolean isTrial,
-			final List<Integer> instances, final int exportWayType, final Map<String, String> data) throws IOException {
+	private String doExport(final int exportType, final HttpServletResponse response,
+		final List<Integer> instances, final int exportWayType, final Map<String, String> data) throws IOException {
 
 		/*
 		 * exportWayType 1 - row column 2 - serpentine (range) 3 - serpentine (col)
 		 */
-		ExportStudyController.LOG.info("Entering Export Nursery/Trial : doExport");
+		ExportStudyController.LOG.info("Entering Export Study : doExport");
 		final ExportDataCollectionOrderService exportDataCollectionService = this.getExportOrderService(exportWayType);
 
-		ExportStudyController.LOG.info("Export Nursery/Trial : doExport : getWorbook : start");
+		ExportStudyController.LOG.info("Export Study : doExport : getWorbook : start");
 
 		final UserSelection userSelection = this.getUserSelection();
 
@@ -276,12 +271,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		if (!"0".equalsIgnoreCase(studyId)) {
 			// If studyId is not 0 it means the export is being done form one of the multiple trials that may be open on "View Summary" page
 			// tabs. View summary page does not load entire workbook so we load here.
-			Workbook workbook = null;
-			if (isTrial) {
-				workbook = this.fieldbookMiddlewareService.getTrialDataSet(Integer.valueOf(studyId));
-			} else {
-				workbook = this.fieldbookMiddlewareService.getNurseryDataSet(Integer.valueOf(studyId));
-			}
+
+			final Workbook workbook = this.fieldbookMiddlewareService.getTrialDataSet(Integer.valueOf(studyId));
 			userSelection.setWorkbook(workbook);
 		}
 		// workbook.observations() collection is no longer pre-loaded into user session when trial is opened. Load now as we need it to
@@ -291,13 +282,13 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		LOG.info("Export Study : doExport : getWorbook : end");
 		LOG.info("Export Study : doExport : processWorbook : start");
 
-
 		final Map<String, Object> results = new HashMap<>();
 
 		try {
 
-			SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, userSelection.getWorkbook().getObservations(),
-					true, this.ontologyService, contextUtil.getCurrentProgramUUID());
+			SettingsUtil
+				.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, userSelection.getWorkbook().getObservations(), true,
+					this.ontologyService, contextUtil.getCurrentProgramUUID());
 
 			exportDataCollectionService.reorderWorkbook(userSelection.getWorkbook());
 
@@ -330,10 +321,10 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			results.put(ExportStudyController.CONTENT_TYPE, response.getContentType());
 
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, userSelection.getWorkbook().getObservations(), true,
-					this.ontologyService, contextUtil.getCurrentProgramUUID());
-			
+				this.ontologyService, contextUtil.getCurrentProgramUUID());
+
 			LOG.info("Export Study : doExport : processWorbook : end");
-			
+
 		} catch (final Exception e) {
 			// generic exception handling block needs to be added here so that the calling AJAX function receives proper notification that
 			// the operation was a failure
@@ -354,14 +345,14 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	/***
 	 * Return the list of headers's term id, otherwise null
 	 *
-	 * @param data
+	 * @param unparsedVisibleColumns
 	 * @return
 	 */
 	protected List<Integer> getVisibleColumns(final String unparsedVisibleColumns) {
 		List<Integer> visibleColumns = null;
 
 		if (unparsedVisibleColumns.trim().length() != 0) {
-			visibleColumns = new ArrayList<Integer>();
+			visibleColumns = new ArrayList<>();
 
 			if (unparsedVisibleColumns.length() > 0) {
 				final String[] ids = unparsedVisibleColumns.split(",");
@@ -441,8 +432,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	/**
 	 * Do export.
 	 *
-	 * @param exportType the export type
-	 * @param selectedTraitTermId the selected trait term id
 	 * @param response the response
 	 * @return the string
 	 */
@@ -506,8 +495,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	/**
 	 * Do export.
 	 *
-	 * @param exportType the export type
-	 * @param selectedTraitTermId the selected trait term id
 	 * @param response the response
 	 * @return the string
 	 */
@@ -563,9 +550,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		this.ontologyService = ontologyService;
 	}
 
-	public void setWorkbenchService(final WorkbenchService workbenchService) {
-		this.workbenchService = workbenchService;
-	}
 
 	public void setCrossExpansionProperties(final CrossExpansionProperties crossExpansionProperties) {
 		this.crossExpansionProperties = crossExpansionProperties;

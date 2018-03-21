@@ -216,26 +216,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/study/hasFieldMap", method = RequestMethod.GET)
-	public String hasFieldMap(final HttpServletRequest req, final HttpServletResponse response) {
-		String studyId = req.getParameter("studyId");
-		final UserSelection userSelection = this.getUserSelection();
-		boolean hasFieldMap = false;
-
-		Workbook workbook = null;
-		if ("0".equalsIgnoreCase(studyId)) {
-
-			workbook = userSelection.getWorkbook();
-			studyId = workbook.getStudyDetails().getId().toString();
-		} else {
-			// meaning for the session
-			workbook = this.getPaginationListSelection().getReviewWorkbook(studyId);
-		}
-		hasFieldMap = this.fieldbookMiddlewareService.checkIfStudyHasFieldmap(Integer.valueOf(studyId));
-
-		return hasFieldMap ? "1" : "0";
-	}
 
 	@ResponseBody
 	@RequestMapping(value = "/studyTrial/hasFieldMap", method = RequestMethod.GET)
@@ -268,13 +248,10 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final UserSelection userSelection = this.getUserSelection();
 
 		final String studyId = this.getStudyId(data);
-		if (!"0".equalsIgnoreCase(studyId)) {
-			// If studyId is not 0 it means the export is being done form one of the multiple trials that may be open on "View Summary" page
-			// tabs. View summary page does not load entire workbook so we load here.
 
-			final Workbook workbook = this.fieldbookMiddlewareService.getTrialDataSet(Integer.valueOf(studyId));
-			userSelection.setWorkbook(workbook);
-		}
+		final Workbook workbook = this.fieldbookMiddlewareService.getTrialDataSet(Integer.valueOf(studyId));
+		userSelection.setWorkbook(workbook);
+
 		// workbook.observations() collection is no longer pre-loaded into user session when trial is opened. Load now as we need it to
 		// keep export functionality working.
 		boolean observationsLoaded = this.fieldbookMiddlewareService.loadAllObservations(userSelection.getWorkbook());

@@ -137,23 +137,21 @@ var submitExportUrl = '/Fieldbook/ExportManager/',
 $(document).ready(function() {
 	'use strict';
 	$('#exportStudyModal select').select2({width: 'copy', minimumResultsForSearch: 20});
-	$('#exportType').on('change', function() {
+	$('#exportType').on('change', function () {
 		if (StudyCustomExportReports.isCustomReport()) {
 			$('.data-collection-section').hide();
 			$('.exportTrialInstanceSection').addClass('fbk-hide');
 			$('.exportRSection').css('display', 'none');
-		}else if ($(this).val() === '2') {
+		} else if ($(this).val() === '2') {
 			$('.data-collection-section').show();
 			$('.exportRSection').css('display', 'block');
-			if (!isNursery()) {
-				$('.exportTrialInstanceSection').removeClass('fbk-hide');
-			}
+			$('.exportTrialInstanceSection').removeClass('fbk-hide');
+
 		} else {
 			$('.data-collection-section').show();
 			$('.exportRSection').css('display', 'none');
-			if (!isNursery()) {
-				$('.exportTrialInstanceSection').removeClass('fbk-hide');
-			}
+			$('.exportTrialInstanceSection').removeClass('fbk-hide');
+
 		}
 	});
 
@@ -165,15 +163,10 @@ $(document).ready(function() {
 
 function checkBeforeExport() {
 	'use strict';
-	var studyId = '0',
-		checkedInstance = getExportCheckedInstances(),
+	var checkedInstance = getExportCheckedInstances(),
 		counter = 0,
 		hasNoFieldmap = false;
 
-	if ($('#browser-nurseries').length !== 0) {
-		// We are on the landing page
-		studyId = getCurrentStudyIdInTab();
-	}
 
 	if (StudyCustomExportReports.isCustomReport()) {
 		StudyCustomExportReports.doExport();
@@ -189,35 +182,17 @@ function checkBeforeExport() {
 	if ($('#exportWayType').val() === '1') {
 		exportStudy();
 	} else {
-		if (isNursery()) {
-			$.ajax({
-				url: '/Fieldbook/ExportManager/study/hasFieldMap?studyId=' + studyId,
-				type: 'GET',
-				cache: false,
-				success: function (data) {
-					if (data === "0") {
-						// Disable the export order of serpentine
-						$('#exportStudyModal').modal('hide');
-						$('#exportStudyConfirmationModal').modal({backdrop: 'static', keyboard: true});
-					} else {
-						exportStudy();
-					}
-
-				}
-			});
+		for (counter = 0; counter < checkedInstance.length; counter++) {
+			if (checkedInstance[counter].hasFieldmap === 'No') {
+				hasNoFieldmap = true;
+				break;
+			}
+		}
+		if (hasNoFieldmap) {
+			$('#exportStudyModal').modal('hide');
+			$('#exportStudyConfirmationModal').modal({backdrop: 'static', keyboard: true});
 		} else {
-			for (counter = 0; counter < checkedInstance.length; counter++) {
-				if (checkedInstance[counter].hasFieldmap === 'No') {
-					hasNoFieldmap = true;
-					break;
-				}
-			}
-			if (hasNoFieldmap) {
-				$('#exportStudyModal').modal('hide');
-				$('#exportStudyConfirmationModal').modal({backdrop: 'static', keyboard: true});
-			} else {
-				exportStudy();
-			}
+			exportStudy();
 		}
 	}
 }

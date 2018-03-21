@@ -13,7 +13,7 @@
 				<img th:src="@{/static/img/basic-details.png}" />
 				<img style="margin-left: -10px" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
 				<img style="display:none; margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
-				<strong class="sub-content-heading" th:text="#{trial.trialdetails.header}">BASIC DETAILS</strong>
+				<strong class="sub-content-heading" th:text="#{study.studydetails.header}">BASIC DETAILS</strong>
 			</label>
 
             <!-- Displaying Open button to open trial in details view -->
@@ -28,15 +28,15 @@
                         <!-- Edit Trial: will open trial in details view and allow user to edit the trial -->
 						<li>
 							<a href="" style="display: none" id="open-study-url" th:href="@{/TrialManager/openTrial}"></a>
-							<a href="javascript: openStudy('trial-table');" id="open-study-url-link" th:text="#{trial.trialdetails.action.edit}">Edit Study</a>
+							<a href="javascript: openStudy('trial-table');" id="open-study-url-link" th:text="#{study.studydetails.action.edit}">Edit Study</a>
 						</li>
 						<!-- Delete Study -->
 						<li>
-							<a href="javascript: openDeleteConfirmation();" th:text="#{browse.trial.delete.trial.name}">Delete Trial</a>
+							<a href="javascript: openDeleteConfirmation();" th:text="#{browse.study.delete.study.name}">Delete Study</a>
 						</li>
                         <!-- Export Study book: will display export format & Data collection order options -->
 						<li>
-							<a href="javascript: showExportOptions();" id="export-study-link" th:text="#{study.trialdetails.action.export.study}">Export Study Book</a>
+							<a href="javascript: showExportOptions();" id="export-study-link" th:text="#{study.studydetails.action.export.study}">Export Study Book</a>
 						</li>
                         <!-- Make Field Map: will allow user to create Field Map from Summary view -->
 						<li>

@@ -1475,7 +1475,7 @@ function exportStudy() {
 		return false;
 	}
 
-	doExportContinue(type, isNursery());
+	doExportContinue(type);
 }
 
 function getExportCheckedAdvancedList() {
@@ -1520,7 +1520,8 @@ function exportAdvanceStudyList(advancedListIdParams) {
 	$('#exportAdvanceStudyForm #exportAdvanceListGermplasmType').val($('#exportAdvancedType').val());
 	$('#exportAdvanceStudyForm').ajaxForm(exportAdvanceOptions).submit();
 }
-function doExportContinue(paramUrl, isNursery) {
+
+function doExportContinue(paramUrl) {
 	var currentPage = $('#measurement-data-list-pagination .pagination .active a').html(),
 		additionalParams = '',
 		formname,
@@ -1528,35 +1529,28 @@ function doExportContinue(paramUrl, isNursery) {
 		serializedData,
 		exportWayType;
 
-	if (isNursery) {
-		formname = '#addVariableForm';
-	} else {
-		formname = '#addVariableForm, #addVariableForm2';
-	}
+	formname = '#addVariableForm, #addVariableForm2';
+
 	$form = $(formname);
 	serializedData = $form.serialize();
-	if (!isNursery) {
-		additionalParams = validateTrialInstance();
-		if (additionalParams == 'false') {
-			return false;
-		}
-	}
-	exportWayType = '/' + $('#exportWayType').val();
 
-	doFinalExport(paramUrl, additionalParams, exportWayType, isNursery);
+	additionalParams = validateTrialInstance();
+	if (additionalParams == 'false') {
+		return false;
+	}
+
+	exportWayType = '/' + $('#exportWayType').val();
+	doFinalExport(paramUrl, additionalParams, exportWayType);
 }
 
-function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
+function doFinalExport(paramUrl, additionalParams, exportWayType) {
 	var action = submitExportUrl,
 		newAction = '',
 		studyId = '0',
 		visibleColumns = '';
-	if (isNursery) {
-		newAction = action + 'export/' + paramUrl;
-	} else {
-		// Meaning its trial
-		newAction = action + 'exportTrial/' + paramUrl + '/' + additionalParams;
-	}
+
+	newAction = action + 'exportStudy/' + paramUrl + '/' + additionalParams;
+
 	newAction += exportWayType;
 	if ($('#browser-nurseries').length !== 0) {
 		// Meaning we are on the landing page
@@ -1588,7 +1582,7 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 		}),
 		type: 'POST',
 		dataType: 'text',
-		success: function(data) {
+		success: function (data) {
 			showExportResponse(data);
 		}
 	});

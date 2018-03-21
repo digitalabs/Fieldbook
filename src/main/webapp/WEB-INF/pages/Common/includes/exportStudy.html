@@ -163,15 +163,10 @@ $(document).ready(function() {
 
 function checkBeforeExport() {
 	'use strict';
-	var studyId = '0',
-		checkedInstance = getExportCheckedInstances(),
+	var checkedInstance = getExportCheckedInstances(),
 		counter = 0,
 		hasNoFieldmap = false;
 
-	if ($('#browser-nurseries').length !== 0) {
-		// We are on the landing page
-		studyId = getCurrentStudyIdInTab();
-	}
 
 	if (StudyCustomExportReports.isCustomReport()) {
 		StudyCustomExportReports.doExport();

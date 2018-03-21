@@ -720,11 +720,11 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 
 		var germplasmDataTable;
 		var _columnDefs = [
-			// Column defs for trialInstanceNumber and replicationNumber (hide if current study is nursery)
+			// Column defs for trialInstanceNumber and replicationNumber will be visible for all studies
 			// From Datatable API, using negative index counts from the last index of the columns (n-1)
 			{
 				targets: [ -1, -2 ],
-				visible: !isNursery()
+				visible: true
 			},
 			// column defs for the entry checkbox selection, fix width
 			{

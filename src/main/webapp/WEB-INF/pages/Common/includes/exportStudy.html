@@ -237,44 +237,34 @@ function doConfirmExport() {
 
 function showExportOptions() {
 	'use strict';
-	var studyType = '',
+	var heading_modal_label = exportHeader + " " + "Study" + " " + exportBookHeader,
 		studyId = '0';
-
 	if ($('.import-study-data').data('data-import') === '1') {
 		showErrorMessage('', needSaveImportDataError);
 		return;
 	}
 
-	if ($('#browser-nurseries').length !== 0) {
-		// We are on the landing page
-		studyType = $("#study" + getCurrentStudyIdInTab() + " #study-type").val();
-		studyId = getCurrentStudyIdInTab();
-	} else {
-		studyType = isNursery() ? 'Nursery' : 'Trial';
-	}
-
-	$('#exportStudyModal #heading-modal').html(exportHeader + " " + studyType + " " + exportBookHeader);
+	$('#exportStudyModal #heading-modal').html(heading_modal_label);
 	StudyCustomExportReports.showReports();
-	$('#exportStudyModal').modal({ backdrop: 'static', keyboard: true });
+	$('#exportStudyModal').modal({backdrop: 'static', keyboard: true});
 
-	if (!isNursery()) {
-		//we call an ajax to display the table of instances
-		studyId = $('#studyId').val();
-		$.ajax({
-			url: '/Fieldbook/ExportManager/trial/instances/' + studyId,
-			type: 'GET',
-			cache: false,
-			success: function(data) {
-				$('.exportTrialInstanceSection .trial-instance').html(data);
-				if (StudyCustomExportReports.isCustomReport()) {
-					$('.exportTrialInstanceSection').addClass('fbk-hide');
-				} else {
-					$('.exportTrialInstanceSection').removeClass('fbk-hide');
-				}
+	studyId = $('#studyId').val();
+	$.ajax({
+		url: '/Fieldbook/ExportManager/trial/instances/' + studyId,
+		type: 'GET',
+		cache: false,
+		success: function (data) {
+			$('.exportTrialInstanceSection .trial-instance').html(data);
+			if (StudyCustomExportReports.isCustomReport()) {
+				$('.exportTrialInstanceSection').addClass('fbk-hide');
+			} else {
+				$('.exportTrialInstanceSection').removeClass('fbk-hide');
 			}
-		});
-	}
+		}
+	});
+
 }
+
 function showExportResponse(responseText, statusText, xhr, $form) {
 	'use strict';
 	var resp = $.parseJSON(responseText);
@@ -289,7 +279,6 @@ function showExportResponse(responseText, statusText, xhr, $form) {
 	}
 
 	$('#exportStudyModal').modal('hide');
-
 }
 
 //]]>

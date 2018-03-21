@@ -166,9 +166,9 @@ $(document).ready(function() {
 function checkBeforeExport() {
 	'use strict';
 	var studyId = '0',
-	checkedInstance = getExportCheckedInstances(),
-	counter = 0,
-	hasNoFieldmap = false;
+		checkedInstance = getExportCheckedInstances(),
+		counter = 0,
+		hasNoFieldmap = false;
 
 	if ($('#browser-nurseries').length !== 0) {
 		// We are on the landing page
@@ -180,26 +180,25 @@ function checkBeforeExport() {
 		return true;
 	}
 
-	if (!isNursery()) {
-		if (checkedInstance !== null && checkedInstance.length === 0) {
-			showErrorMessage('', 'Please select at least 1 instance');
-			return false;
-		}
+
+	if (checkedInstance !== null && checkedInstance.length === 0) {
+		showErrorMessage('', 'Please select at least 1 instance');
+		return false;
 	}
 
 	if ($('#exportWayType').val() === '1') {
 		exportStudy();
-	}else {
+	} else {
 		if (isNursery()) {
 			$.ajax({
 				url: '/Fieldbook/ExportManager/study/hasFieldMap?studyId=' + studyId,
 				type: 'GET',
 				cache: false,
-				success: function(data) {
+				success: function (data) {
 					if (data === "0") {
 						// Disable the export order of serpentine
 						$('#exportStudyModal').modal('hide');
-						$('#exportStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });
+						$('#exportStudyConfirmationModal').modal({backdrop: 'static', keyboard: true});
 					} else {
 						exportStudy();
 					}
@@ -207,7 +206,7 @@ function checkBeforeExport() {
 				}
 			});
 		} else {
-			for (counter = 0 ; counter < checkedInstance.length ; counter++) {
+			for (counter = 0; counter < checkedInstance.length; counter++) {
 				if (checkedInstance[counter].hasFieldmap === 'No') {
 					hasNoFieldmap = true;
 					break;
@@ -215,7 +214,7 @@ function checkBeforeExport() {
 			}
 			if (hasNoFieldmap) {
 				$('#exportStudyModal').modal('hide');
-				$('#exportStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });
+				$('#exportStudyConfirmationModal').modal({backdrop: 'static', keyboard: true});
 			} else {
 				exportStudy();
 			}

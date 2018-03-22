@@ -18,6 +18,7 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import com.hazelcast.util.StringUtil;
@@ -2618,5 +2619,24 @@ public class SettingsUtil {
 			return ListUtils.intersection(firstList, secondList);
 		}
 		return ListUtils.EMPTY_LIST;
+	}
+	
+	public static List<SettingDetail> combineStudyLevelVariablesInNurseryForm(final CreateNurseryForm createNurseryForm) {
+
+		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
+
+		if (createNurseryForm.getStudyLevelVariables() != null && !createNurseryForm.getStudyLevelVariables().isEmpty()) {
+			for (final SettingDetail item: createNurseryForm.getStudyLevelVariables()) {
+				if (item != null && item.getVariable() != null)
+					studyLevelVariables.add(item);
+			}
+		}
+
+		if (createNurseryForm.getBasicDetails() != null && !createNurseryForm.getBasicDetails().isEmpty()) {
+			studyLevelVariables.addAll(createNurseryForm.getBasicDetails());
+		}
+
+		return studyLevelVariables;
+
 	}
 }

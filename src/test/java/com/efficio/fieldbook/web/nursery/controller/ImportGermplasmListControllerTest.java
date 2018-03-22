@@ -128,9 +128,7 @@ public class ImportGermplasmListControllerTest {
 
 	private UserSelection userSelection;
 
-	private final Integer listId = 1;
-
-	private SettingDetailTestDataInitializer settingDetailTestDataInitializer;
+	private final Integer LIST_ID = 1;
 
 	@InjectMocks
 	private ImportGermplasmListController importGermplasmListController;
@@ -140,8 +138,6 @@ public class ImportGermplasmListControllerTest {
 
 	@Before
 	public void setUp() {
-
-		this.settingDetailTestDataInitializer = new SettingDetailTestDataInitializer();
 
 		final StandardVariable experimentalDesign = this.createStandardVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
 				"EXPT_DESIGN", new Term(2140, "Experimental design", "Experimental design"),
@@ -196,13 +192,13 @@ public class ImportGermplasmListControllerTest {
 	public void testDisplayGermplasmDetailsOfSelectedListForNursery() throws MiddlewareException {
 
 		final List<GermplasmListData> list = this.createGermplasmListData();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.listId);
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn((long) list.size()).when(this.germplasmListManager)
-				.countGermplasmListDataByListId(this.listId);
+				.countGermplasmListDataByListId(this.LIST_ID);
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.listId, new StudyTypeDto("N").getName(), form, model);
+		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, StudyType.N.getName(), form, model);
 
 		Assert.assertTrue("If import is successful, isImportValid should be TRUE", this.userSelection.isImportValid());
 
@@ -238,13 +234,14 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testDisplayGermplasmDetailsOfSelectedListForTrial() throws MiddlewareException {
 		final List<GermplasmListData> list = this.createGermplasmListData();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.listId);
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn((long) list.size()).when(this.germplasmListManager)
-				.countGermplasmListDataByListId(this.listId);
+				.countGermplasmListDataByListId(this.LIST_ID);
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.listId, StudyType.T.getName(), form, model);
+		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, StudyType.T.getName(),
+				form, model);
 
 		Assert.assertTrue("If import is successful, isImportValid should be TRUE", this.userSelection.isImportValid());
 
@@ -330,9 +327,9 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testDisplayGermplasmDetailsOfCurrentStudyForNursery() throws MiddlewareException {
 		final List<GermplasmListData> list = this.createGermplasmListData();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.listId);
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn((long) list.size()).when(this.germplasmListManager)
-				.countGermplasmListDataByListId(this.listId);
+				.countGermplasmListDataByListId(this.LIST_ID);
 
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
 				.getGermplasmListsByProjectId(ImportGermplasmListControllerTest.STUDY_ID, GermplasmListType.STUDY);
@@ -401,9 +398,9 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testDisplayGermplasmDetailsOfCurrentStudyForTrial() throws MiddlewareException {
 		final List<GermplasmListData> list = this.createGermplasmListData();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.listId);
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn((long) list.size()).when(this.germplasmListManager)
-				.countGermplasmListDataByListId(this.listId);
+				.countGermplasmListDataByListId(this.LIST_ID);
 
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
 				.getGermplasmListsByProjectId(ImportGermplasmListControllerTest.STUDY_ID, GermplasmListType.STUDY);
@@ -446,11 +443,11 @@ public class ImportGermplasmListControllerTest {
 		Mockito.doReturn(null).when(this.ontologyDataManager).getTermById(Matchers.anyInt());
 
 		final List<GermplasmListData> list = this.createGermplasmListData();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.listId);
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn((long) list.size()).when(this.germplasmListManager)
-				.countGermplasmListDataByListId(this.listId);
+				.countGermplasmListDataByListId(this.LIST_ID);
 
-		this.importGermplasmListController.displayCheckGermplasmDetails(this.listId, form, model);
+		this.importGermplasmListController.displayCheckGermplasmDetails(this.LIST_ID, form, model);
 
 		Assert.assertTrue(this.userSelection.isImportValid());
 
@@ -461,9 +458,9 @@ public class ImportGermplasmListControllerTest {
 		Mockito.doReturn(null).when(this.ontologyDataManager).getTermById(Matchers.anyInt());
 
 		final List<GermplasmListData> list = this.createGermplasmListData();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.listId);
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn((long) list.size()).when(this.germplasmListManager)
-				.countGermplasmListDataByListId(this.listId);
+				.countGermplasmListDataByListId(this.LIST_ID);
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
@@ -816,12 +813,12 @@ public class ImportGermplasmListControllerTest {
 	private List<SettingDetail> createCheckVariables(final boolean hasValue) {
 		final List<SettingDetail> checkVariables = new ArrayList<>();
 
-		checkVariables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_START.getId(),
+		checkVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_START.getId(),
 				"CHECK_START", hasValue ? "1" : null, "TRIAL"));
-		checkVariables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_INTERVAL.getId(),
+		checkVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_INTERVAL.getId(),
 				"CHECK_INTERVAL", hasValue ? "4" : null, "TRIAL"));
-		checkVariables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_PLAN.getId(),
-				"CHECK_PLAN", hasValue ? "8414" : null, "TRIAL"));
+		checkVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_PLAN.getId(), "CHECK_PLAN",
+				hasValue ? "8414" : null, "TRIAL"));
 
 		return checkVariables;
 	}

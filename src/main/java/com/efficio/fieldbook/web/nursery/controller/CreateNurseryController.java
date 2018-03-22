@@ -288,14 +288,7 @@ public class CreateNurseryController extends SettingsController {
 		if (createdBy == null) {
 			createdBy = this.contextUtil.getCurrentIbdbUserId().toString();
 		}
-		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
-		if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
-			studyLevelVariables.addAll(form.getStudyLevelVariables());
-		}
-
-		if (form.getBasicDetails() != null && !form.getBasicDetails().isEmpty()) {
-			studyLevelVariables.addAll(form.getBasicDetails());
-		}
+		final List<SettingDetail> studyLevelVariables = SettingsUtil.combineStudyLevelVariablesInNurseryForm(form);
 
 		this.addStudyLevelVariablesFromUserSelectionIfNecessary(studyLevelVariables, this.userSelection);
 

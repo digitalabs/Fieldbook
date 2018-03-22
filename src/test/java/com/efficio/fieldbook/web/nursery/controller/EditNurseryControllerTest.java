@@ -61,6 +61,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -283,28 +284,15 @@ public class EditNurseryControllerTest {
 	}
 
 	@Test
-	public void testCombineStudyLevelVariablesInNurseryForm() {
-
-		final CreateNurseryForm createNurseryForm = new CreateNurseryForm();
-		createNurseryForm.setStudyLevelVariables(Arrays.asList(this.createSettingDetail(TermId.COOPERATOOR_ID.getId())));
-
-		final List<SettingDetail> result = this.editNurseryController.combineStudyLevelVariablesInNurseryForm(createNurseryForm);
-
-		// The combined size of SettingDetails from Study Level Variables and Basic Details and Hidden Variables
-		// must equal to 2
-		Assert.assertEquals(1, result.size());
-	}
-
-	@Test
 	public void testCombineStudyLevelConditionsInUserSelection() {
 
 		final UserSelection testUserSelection = new UserSelection();
 
 		final List<SettingDetail> studyLevelConditions = new ArrayList<>();
-		studyLevelConditions.add(this.createSettingDetail(TermId.LOCATION_ID.getId()));
+		studyLevelConditions.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId()));
 
 		testUserSelection.setStudyLevelConditions(studyLevelConditions);
-		testUserSelection.setRemovedConditions(Arrays.asList(this.createSettingDetail(TermId.TRIAL_LOCATION.getId())));
+		testUserSelection.setRemovedConditions(Arrays.asList(SettingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId())));
 
 		final List<SettingDetail> result = this.editNurseryController.combineStudyLevelConditionsInUserSelection(testUserSelection);
 
@@ -319,9 +307,9 @@ public class EditNurseryControllerTest {
 	@Test
 	public void testCopyTheRoleAndVariableType() {
 
-		final SettingDetail locationNameVariableInStudyLevel = this.createSettingDetail(TermId.TRIAL_LOCATION.getId());
-		final SettingDetail cooperatorNameVariableInStudyLevel = this.createSettingDetail(TermId.COOPERATOR.getId());
-		final SettingDetail locationNameVariableInConditionList = this.createSettingDetail(TermId.TRIAL_LOCATION.getId());
+		final SettingDetail locationNameVariableInStudyLevel = SettingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId());
+		final SettingDetail cooperatorNameVariableInStudyLevel = SettingDetailTestDataInitializer.createSettingDetail(TermId.COOPERATOR.getId());
+		final SettingDetail locationNameVariableInConditionList = SettingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId());
 		locationNameVariableInConditionList.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
 		locationNameVariableInConditionList.setVariableType(VariableType.ENVIRONMENT_DETAIL);
 
@@ -346,13 +334,13 @@ public class EditNurseryControllerTest {
 	public void testCombineStudyConditions() {
 
 		final CreateNurseryForm createNurseryForm = new CreateNurseryForm();
-		createNurseryForm.setStudyLevelVariables(Arrays.asList(this.createSettingDetail(TermId.COOPERATOOR_ID.getId())));
+		createNurseryForm.setStudyLevelVariables(Arrays.asList(SettingDetailTestDataInitializer.createSettingDetail(TermId.COOPERATOOR_ID.getId())));
 
 		final UserSelection testUserSelection = new UserSelection();
 		final List<SettingDetail> studyLevelConditions = new ArrayList<>();
-		studyLevelConditions.add(this.createSettingDetail(TermId.LOCATION_ID.getId()));
+		studyLevelConditions.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId()));
 		testUserSelection.setStudyLevelConditions(studyLevelConditions);
-		testUserSelection.setRemovedConditions(Arrays.asList(this.createSettingDetail(TermId.TRIAL_LOCATION.getId())));
+		testUserSelection.setRemovedConditions(Arrays.asList(SettingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId())));
 		testUserSelection.setNurseryTypeForDesign(1);
 
 		final List<SettingDetail> result = this.editNurseryController.combineStudyConditions(createNurseryForm, testUserSelection);
@@ -455,7 +443,7 @@ public class EditNurseryControllerTest {
 		testUserSelection.setPlotsLevelList(new ArrayList<SettingDetail>());
 
 		// Create any removed factors
-		testUserSelection.setRemovedFactors(Arrays.asList(this.createSettingDetail(removedFactorTermId)));
+		testUserSelection.setRemovedFactors(Arrays.asList(SettingDetailTestDataInitializer.createSettingDetail(removedFactorTermId)));
 
 		this.editNurseryController.addHiddenVariablesToFactorsListInFormAndSession(testCreateNurseryForm, testUserSelection);
 
@@ -700,16 +688,6 @@ public class EditNurseryControllerTest {
 
 		return measurementRow;
 
-	}
-
-	private SettingDetail createSettingDetail(final Integer cvTermId) {
-
-		final SettingDetail settingDetail = new SettingDetail();
-		final SettingVariable settingVariable = new SettingVariable();
-		settingVariable.setCvTermId(cvTermId);
-		settingDetail.setVariable(settingVariable);
-
-		return settingDetail;
 	}
 
 	private SettingDetail initializeSettingDetails(final boolean isAddNursery) {

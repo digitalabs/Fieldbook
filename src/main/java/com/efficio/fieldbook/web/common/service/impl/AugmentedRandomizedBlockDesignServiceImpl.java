@@ -73,12 +73,11 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 			final List<MeasurementVariable> trialVariables, final List<MeasurementVariable> factors, final List<MeasurementVariable> nonTrialFactors,
 			final List<MeasurementVariable> variates, final List<TreatmentVariable> treatmentVariables) throws BVDesignException {
 
-		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
-		
 		final Set<Integer> entryIdsOfChecks = this.getEntryIdsOfChecks(germplasmList);
 		final Set<Integer> entryIdsOfTestEntries = this.getEntryIdsOfTestEntries(germplasmList);
 
-		final Map<Integer, Integer> designExpectedEntriesMap = this.createMapOfDesignExpectedEntriesToGermplasmEntriesInTrial(germplasmList, entryIdsOfChecks, entryIdsOfTestEntries);
+		final Map<Integer, Integer> designExpectedEntriesMap = this.createMapOfDesignExpectedEntriesToGermplasmEntriesInTrial(germplasmList,
+				entryIdsOfChecks, entryIdsOfTestEntries);
 
 		final Integer numberOfBlocks = StringUtil.parseInt(parameter.getNumberOfBlocks(), null);
 		final Integer numberOfControls = entryIdsOfChecks.size();
@@ -97,10 +96,10 @@ public class AugmentedRandomizedBlockDesignServiceImpl implements AugmentedRando
 		final StandardVariable stdvarPlot = standardVariableMap.get(TermId.PLOT_NO.getId());
 
 		final MainDesign mainDesign = experimentDesignGenerator
-				.createAugmentedRandomizedBlockDesign(numberOfBlocks, numberOfTreatments, numberOfControls, startingPlotNumber, startingEntryNumber, stdvarEntryNo.getName(),
-						stdvarBlock.getName(), stdvarPlot.getName());
+				.createAugmentedRandomizedBlockDesign(numberOfBlocks, numberOfTreatments, numberOfControls, startingPlotNumber,
+						startingEntryNumber, stdvarEntryNo.getName(), stdvarBlock.getName(), stdvarPlot.getName());
 
-		measurementRowList = experimentDesignGenerator
+		final List<MeasurementRow> measurementRowList = experimentDesignGenerator
 				.generateExperimentDesignMeasurements(noOfExistingEnvironments, noOfEnvironmentsToBeAdded, trialVariables, factors, nonTrialFactors,
 						variates, treatmentVariables, requiredDesignVariables, germplasmList, mainDesign, stdvarEntryNo.getName(), null,
 						designExpectedEntriesMap);

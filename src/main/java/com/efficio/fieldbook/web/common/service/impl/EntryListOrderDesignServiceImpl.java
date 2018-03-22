@@ -57,24 +57,11 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 	@Resource
 	private ContextUtil contextUtil;
 
-	/**
-	 * Generate design.
-	 *
-	 * @param germplasmList      the germplasm list
-	 * @param parameter
-	 * @param trialVariables
-	 * @param factors
-	 * @param nonTrialFactors    the non trial factors
-	 * @param variates           the variates
-	 * @param treatmentVariables the treatment variables    @return the list
-	 */
 	@Override
 	public List<MeasurementRow> generateDesign(final List<ImportedGermplasm> germplasmList, final ExpDesignParameterUi parameter,
 			final List<MeasurementVariable> trialVariables, final List<MeasurementVariable> factors,
 			final List<MeasurementVariable> nonTrialFactors, final List<MeasurementVariable> variates,
 			final List<TreatmentVariable> treatmentVariables) throws BVDesignException {
-
-		final Long start = System.currentTimeMillis();
 
 		final List<MeasurementRow> measurementRows = new ArrayList<>();
 
@@ -84,9 +71,16 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 
 		this.loadChecksAndTestEntries(germplasmList, checkList, testEntryList);
 
+		final Integer startingPosition =
+				(StringUtils.isEmpty(parameter.getCheckStartingPosition())) ? null : Integer.parseInt(parameter.getCheckStartingPosition());
+
+		final Integer spacing = (StringUtils.isEmpty(parameter.getCheckSpacing())) ? null : Integer.parseInt(parameter.getCheckSpacing());
+
+		final Integer insertionManner =
+				(StringUtils.isEmpty(parameter.getCheckInsertionManner())) ? null : Integer.parseInt(parameter.getCheckInsertionManner());
+
 		final List<ImportedGermplasm> mergedGermplasmList =
-				this.mergeGermplasmList(testEntryList, checkList, Integer.parseInt(parameter.getCheckStartingPosition()),
-						Integer.parseInt(parameter.getCheckSpacing()), Integer.parseInt(parameter.getCheckInsertionManner()));
+				this.mergeGermplasmList(testEntryList, checkList, startingPosition, spacing, insertionManner);
 
 		final int environments = Integer.valueOf(parameter.getNoOfEnvironments());
 
@@ -103,18 +97,10 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 			}
 		}
 
-		EntryListOrderDesignServiceImpl.LOG
-				.info("generateRealMeasurementRows Time duration: " + (System.currentTimeMillis() - start) / 1000);
-
 		return measurementRows;
 
 	}
 
-	/**
-	 * Gets the list of  variables necessary for generating a design (e.g. PLOT_NO, ENTRY_NO, REP_NO).
-	 *
-	 * @return list of standard variables.
-	 */
 	@Override
 	public List<StandardVariable> getRequiredDesignVariables() {
 
@@ -134,13 +120,6 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 		return varList;
 	}
 
-	/**
-	 * Validates the design parameters and germplasm list testEntryList.
-	 *
-	 * @param expDesignParameter the exp design parameter
-	 * @param germplasmList
-	 * @return the exp design validation output
-	 */
 	@Override
 	public ExpDesignValidationOutput validate(final ExpDesignParameterUi expDesignParameter, final List<ImportedGermplasm> germplasmList) {
 		final Locale locale = LocaleContextHolder.getLocale();
@@ -157,6 +136,8 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 					this.loadChecksAndTestEntries(germplasmList, checkList, testEntryList);
 
 					this.loadChecksAndTestEntries(germplasmList, checkList, testEntryList);
+
+					//Add Size of test list should be higher than zero
 
 					if (!checkList.isEmpty()) {
 						if (expDesignParameter.getCheckStartingPosition() == null || !NumberUtils
@@ -206,15 +187,9 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 		return new ExpDesignValidationOutput(Boolean.TRUE, StringUtils.EMPTY);
 	}
 
-	/**
-	 * Gets the list of variables in experimental design (e.g. NUMBER_OF_REPLICATES, NUMBER_OF_REPLICATES, NBLKS)
-	 *
-	 * @param params
-	 * @return
-	 */
 	@Override
 	public List<Integer> getExperimentalDesignVariables(final ExpDesignParameterUi params) {
-		if (params.getCheckInsertionManner() != null && !params.getCheckInsertionManner().isEmpty()) {
+		if (!StringUtils.isEmpty(params.getCheckInsertionManner())){
 			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.CHECK_START.getId(), TermId.CHECK_INTERVAL.getId(),
 					TermId.CHECK_PLAN.getId());
 		} else {
@@ -222,33 +197,26 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 		}
 	}
 
-	/**
-	 * Defines if the experimental design requires breeding view licence to run
-	 *
-	 * @return
-	 */
 	@Override
 	public Boolean requiresBreedingViewLicence() {
 		return Boolean.FALSE;
 	}
 
+
 	private void loadChecksAndTestEntries(final List<ImportedGermplasm> importedGermplasmList, final List<ImportedGermplasm> checkList,
 			final List<ImportedGermplasm> testEntryList) {
 
 		for (final ImportedGermplasm importedGermplasm : importedGermplasmList) {
-			if (importedGermplasm.getEntryTypeCategoricalID().equals(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()) ||
-					importedGermplasm.getEntryTypeCategoricalID().equals(SystemDefinedEntryType.STRESS_CHECK.getEntryTypeCategoricalId()) ||
-					importedGermplasm.getEntryTypeCategoricalID()
-							.equals(SystemDefinedEntryType.DISEASE_CHECK.getEntryTypeCategoricalId())) {
-				checkList.add(importedGermplasm);
-			} else {
+			if (importedGermplasm.getEntryTypeCategoricalID().equals(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId())) {
 				testEntryList.add(importedGermplasm);
+			} else {
+				checkList.add(importedGermplasm);
 			}
 		}
 	}
 
 	private boolean isThereSomethingToMerge(final List<ImportedGermplasm> entriesList, final List<ImportedGermplasm> checkList,
-			final int startEntry, final int interval) {
+			final Integer startEntry, final Integer interval) {
 		Boolean isThereSomethingToMerge = Boolean.TRUE;
 		if (checkList == null || checkList.isEmpty()) {
 			isThereSomethingToMerge = Boolean.FALSE;
@@ -276,7 +244,7 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 	}
 
 	private List<ImportedGermplasm> mergeGermplasmList(final List<ImportedGermplasm> testEntryList, final List<ImportedGermplasm> checkList,
-			final int startEntry, final int interval, final int manner) {
+			final Integer startEntry, final Integer interval, final Integer manner) {
 
 		if (!this.isThereSomethingToMerge(testEntryList, checkList, startEntry, interval)) {
 			return testEntryList;
@@ -353,9 +321,7 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 
 		final Map<String, Integer> standardVariableMap = new HashMap<>();
 
-		final StandardVariable stdVarPlot =
-				this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), contextUtil.getCurrentProgramUUID());
-		stdVarPlot.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
+		final StandardVariable stdVarPlot = this.getRequiredDesignVariables().get(0);
 
 		if (WorkbookUtil.getMeasurementVariable(nonTrialFactors, stdVarPlot.getId()) == null) {
 			final MeasurementVariable measureVar =

@@ -28,7 +28,6 @@
     <input type="hidden" th:field="*{userLabelPrinting.numberOfLabelPerRow}" value="3"/>
     <input type="hidden" th:field="*{userLabelPrinting.generateType}"/>
     <input type="hidden" th:field="*{userLabelPrinting.fieldMapsExisting}"/>
-    <input type="hidden" th:field="*{isTrial}"/>
     <input type="hidden" th:field="*{isStockList}"/>
     <input type="hidden" th:field="*{customReport}"/>
     <input type="hidden" th:field="*{germplasmListId}"/>
@@ -63,20 +62,15 @@
                     <div class="col-xs-6 col-md-6">
                         <div class="form-group">
                             <div class="col-xs-12 col-md-12">
-                                <label class="control-label" th:if="*{isTrial == true}"><strong class="sub-content-heading"
-                                                                                                th:text="#{label.printing.selected.study}">SELECTED
+                                <label class="control-label"><strong class="sub-content-heading"
+                                                                     th:text="#{label.printing.selected.study}">SELECTED
                                     STUDY</strong></label>
-                                <label class="control-label" th:if="*{isTrial == false}"><strong class="sub-content-heading"
-                                                                                                 th:text="#{label.printing.selected.nursery}">SELECTED
-                                    NURSERY</strong></label>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-xs-12 col-md-12">
-                                <label class="control-label" th:if="*{isTrial == true}"><strong
+                                <label class="control-label" ><strong
                                         th:text="#{label.printing.trial.name}+':'"></strong></label>
-                                <label class="control-label" th:if="*{isTrial == false}"><strong
-                                        th:text="#{label.printing.nursery.name}+':'"></strong></label>
                                 <span th:text="*{userLabelPrinting.name}">Trial Name</span>
                             </div>
                         </div>
@@ -92,14 +86,14 @@
                                 <span th:text="*{userLabelPrinting.objective}">Objective</span>
                             </div>
                         </div>
-                        <div class="form-group" th:if="*{isTrial == true}">
+                        <div class="form-group" >
                             <div class="col-xs-12 col-md-12">
                                 <label class="control-label"><strong th:text="#{label.printing.number.of.instances}+':'"></strong></label>
                                 <span th:text="*{userLabelPrinting.numberOfInstances}">1</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-6 col-md-6" th:if="(*{userLabelPrinting.isStockList()} and *{!userLabelPrinting.isTrial()})">
+                    <div class="col-xs-6 col-md-6" th:if="(*{userLabelPrinting.isStockList()})">
                         <div class="col-xs-12 col-md-12">
                             <label class="control-label"><strong class="sub-content-heading"
                                                                  th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS
@@ -109,9 +103,6 @@
                             <table class="table table-curved table-condensed">
                                 <thead>
                                 <th th:text="#{fieldmap.trial.instance}">Instance</th>
-                                <th th:if="*{isTrial == false}" th:text="#{label.printing.nursery.entries.labels.count}"># of Entries /
-                                    Labels Needed
-                                </th>
                                 </thead>
                                 <tr>
                                     <td th:class="odd" th:text="*{userLabelPrinting.numberOfInstances}">1</td>
@@ -120,14 +111,14 @@
                                 </tr>
                             </table>
                         </div>
-                        <div class="col-xs-12 col-md-12" align="right" th:if="*{isTrial == true}">
+                        <div class="col-xs-12 col-md-12" align="right" >
                             <label class="control-label label-bold" th:text="#{label.printing.total.number.of.labels} + ':'"> Total # of
                                 Labels to Print: </label> &nbsp;
                             <span th:text="*{userLabelPrinting.totalNumberOfLabelToPrint}"></span>
                         </div>
                     </div>
                     <div class="col-xs-6 col-md-6"
-                         th:if="(*{!userLabelPrinting.isStockList()} or *{userLabelPrinting.isTrial()}) and *{!#lists.isEmpty(userLabelPrinting.fieldMapInfo)}">
+                         th:if="(*{!userLabelPrinting.isStockList()}) and *{!#lists.isEmpty(userLabelPrinting.fieldMapInfo)}">
                         <div class="col-xs-12 col-md-12">
                             <label class="control-label"><strong class="sub-content-heading"
                                                                  th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS
@@ -137,29 +128,26 @@
                             <table class="table table-curved table-condensed">
                                 <thead>
                                 <th th:text="#{fieldmap.trial.instance}">Instance</th>
-                                <th th:if="*{isTrial == true}" th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
-                                <th th:if="*{isTrial == true}" th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
-                                <th th:if="*{isTrial == true}" th:text="#{label.printing.labels.needed}">Labels Needed</th>
-                                <th th:if="*{isTrial == false}" th:text="#{label.printing.nursery.entries.labels.count}"># of Entries /
-                                    Labels Needed
-                                </th>
+                                <th  th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
+                                <th  th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
+                                <th  th:text="#{label.printing.labels.needed}">Labels Needed</th>
                                 </thead>
                                 <tr th:each="trialRow, row : *{userLabelPrinting.fieldMapInfo.datasets[0].trialInstances}">
                                     <td th:class="${row.even}? 'even' : 'odd'" th:text="${trialRow.trialInstanceNo}"></td>
-                                    <td th:class="${row.even}? 'even' : 'odd'" th:if="*{isTrial == true}"
+                                    <td th:class="${row.even}? 'even' : 'odd'" 
                                         th:text="${trialRow.entryCount}"></td>
-                                    <td th:class="${row.even}? 'even' : 'odd'" th:if="*{isTrial == true}"
+                                    <td th:class="${row.even}? 'even' : 'odd'" 
                                         th:text="${trialRow.repCount}"></td>
                                     <td th:class="${row.even}? 'even' : 'odd'"
-                                        th:if="!(*{userLabelPrinting.isStockList()} and *{userLabelPrinting.isTrial()})"
+                                        th:if="!(*{userLabelPrinting.isStockList()})"
                                         th:text="${trialRow.plotCount}"></td>
                                     <td th:class="${row.even}? 'even' : 'odd'"
-                                        th:if="(*{userLabelPrinting.isStockList()} and *{userLabelPrinting.isTrial()})"
+                                        th:if="(*{userLabelPrinting.isStockList()})"
                                         th:text="${trialRow.labelsNeeded}"></td>
                                 </tr>
                             </table>
                         </div>
-                        <div class="col-xs-12 col-md-12" align="right" th:if="*{isTrial == true}">
+                        <div class="col-xs-12 col-md-12" align="right" >
                             <label class="control-label label-bold" th:text="#{label.printing.total.number.of.labels} + ':'"> Total # of
                                 Labels to Print: </label> &nbsp;
                             <span th:text="*{userLabelPrinting.totalNumberOfLabelToPrint}"></span>
@@ -290,12 +278,10 @@
                                     <thead>
                                     <th></th>
                                     <th th:text="#{fieldmap.trial.order}">Order</th>
-                                    <th th:if="*{isTrial == true}" th:text="#{fieldmap.trial}">Trial</th>
-                                    <th th:if="*{isTrial == false}" th:text="#{fieldmap.nursery}">Nursery</th>
-                                    <th th:if="*{isTrial == false}" th:text="#{fieldmap.dataset.name}">Dataset Name</th>
-                                    <th th:if="*{isTrial == true}" th:text="#{fieldmap.trial.instance}">Instance</th>
-                                    <th th:if="*{isTrial == true}" th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
-                                    <th th:if="*{isTrial == true}" th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
+                                    <th  th:text="#{fieldmap.trial}">Trial</th>
+                                    <th  th:text="#{fieldmap.trial.instance}">Instance</th>
+                                    <th  th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
+                                    <th  th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
                                     <th th:text="#{label.printing.labels.needed}">Labels Needed</th>
                                     </thead>
                                     <div th:each="map : *{userLabelPrinting.fieldMapInfoList}">
@@ -308,10 +294,9 @@
                                                     <span class="orderNo"></span>
                                                 </td>
                                                 <td th:text="${map.fieldbookName}"></td>
-                                                <td th:if="*{isTrial == false}" th:text="${dataset.datasetName}"></td>
-                                                <td th:if="*{isTrial == true}" th:text="${trial.trialInstanceNo}"></td>
-                                                <td th:if="*{isTrial == true}" class="entry-count" th:text="${trial.entryCount}"></td>
-                                                <td th:if="*{isTrial == true}" th:text="${trial.repCount}"></td>
+                                                <td  th:text="${trial.trialInstanceNo}"></td>
+                                                <td  class="entry-count" th:text="${trial.entryCount}"></td>
+                                                <td  th:text="${trial.repCount}"></td>
                                                 <td class="plot-count" th:text="${trial.plotCount}"></td>
                                             </tr>
                                         </div>
@@ -467,11 +452,6 @@
                         </div>
                         <div class="col-xs-12 col-md-12">
                             <div class="form-group">
-                                <div class="col-xs-6 col-md-6 lblprnt-study-choose-option-fields-label">
-                                    <label class="control-label"
-                                           th:utext="(*{isTrial})? #{label.printing.choose.option.fields.study}: #{label.printing.choose.option.fields.nursery}">Choose
-                                        up to six fields you would like printed on your labels.</label>
-                                </div>
                                 <div class="col-xs-6 col-md-6 lblprnt-germplasm-choose-option-fields-label">
                                     <label class="control-label" th:utext="#{label.printing.choose.option.fields.germplasm.list}"></label>
                                 </div>
@@ -486,7 +466,7 @@
                                     <div class="col-xs-6 col-md-6 lblprnt-study-details-fields">
                                         <ul class="list-group field-group">
                                             <li class="list-group-item"><label class="control-label label-bold"
-                                                                               th:text="(*{isTrial})? #{label.printing.trial.details}: #{label.printing.nursery.details}">Study
+                                                                               th:text="#{label.printing.trial.details}">Study
                                                 Details</label></li>
                                         </ul>
                                         <ul id="pdf-study-details-fields" class="list-group droptrue">
@@ -497,8 +477,7 @@
                                             <li class="list-group-item">
                                                 <label class="control-label label-bold lblprnt-study-list-details-label"
                                                        th:text="(*{isStockList})? #{label.printing.stock.list.details} :
-												(*{isTrial}? #{label.printing.trial.list.details} :
-													#{label.printing.nursery.list.details})">
+												#{label.printing.trial.list.details}">
                                                     Study List Details
                                                 </label>
                                                 <label class="control-label label-bold lblprnt-germplasm-list-details-label"
@@ -576,8 +555,8 @@
                             <div class="form-group">
                                 <div class="col-xs-6 col-md-6">
                                     <label class="control-label" th:utext="*{isStockList} ?
-																((*{isTrial}) ? #{label.printing.choose.option.fields.csv.xls.trial.stock}: #{label.printing.choose.option.fields.csv.xls.nursery.stock})
-																	: ((*{isTrial}) ? #{label.printing.choose.option.fields.csv.xls.trial}: #{label.printing.choose.option.fields.csv.xls.nursery}) ">.</label>
+																(#{label.printing.choose.option.fields.csv.xls.trial.stock})
+																	: (#{label.printing.choose.option.fields.csv.xls.trial}) ">.</label>
                                 </div>
                             </div>
                         </div>
@@ -597,7 +576,7 @@
                                     <div class="col-xs-6 col-md-6 lblprnt-study-details-fields">
                                         <ul class="list-group field-group">
                                             <li class="list-group-item"><label class="control-label label-bold"
-                                                                               th:text="(*{isTrial})? #{label.printing.trial.details}: #{label.printing.nursery.details}">Study
+                                                                               th:text="#{label.printing.trial.details}">Study
                                                 Details</label></li>
                                         </ul>
                                         <ul id="non-pdf-study-details-fields" class="list-group droptrue">
@@ -608,8 +587,7 @@
                                             <li class="list-group-item">
                                                 <label class="control-label label-bold lblprnt-study-list-details-label"
                                                        th:text="(*{isStockList})? #{label.printing.stock.list.details} :
-												(*{isTrial}? #{label.printing.trial.list.details} :
-													#{label.printing.nursery.list.details})">
+												#{label.printing.trial.list.details}">
                                                     Study List Details
                                                 </label>
                                                 <label class="control-label label-bold lblprnt-germplasm-list-details-label"
@@ -895,12 +873,11 @@
 $(function() {
 	'use strict';
 
-	var isTrial = /*[[${labelPrintingForm.isTrial}]]*/ false;
 	var excelOption = /*[[#{label.printing.export.excel}]]*/ false;
 	var availableFields = /*[[${availableFields}]]*/ [];
 	var unavailableFields = /*[[${unavailableFields}]]*/ [];
 
-	LabelPrinting.onPageLoad(isTrial, excelOption, availableFields, unavailableFields);
+	LabelPrinting.onPageLoad(excelOption, availableFields, unavailableFields);
 
 });
 

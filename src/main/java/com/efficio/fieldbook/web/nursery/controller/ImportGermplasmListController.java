@@ -291,7 +291,6 @@ public class ImportGermplasmListController extends SettingsController {
 				this.userSelection.getMeasurementRowList().clear();
 			}
 
-			//if (isNursery && !hasTemporaryWorkbook) {// VER COMO ARREGLAR ESTO. creo que se debe agregar
 			if (false && !hasTemporaryWorkbook) {// VER COMO ARREGLAR ESTO. creo que se debe agregar
 
 				this.validateEntryAndPlotNo(form);

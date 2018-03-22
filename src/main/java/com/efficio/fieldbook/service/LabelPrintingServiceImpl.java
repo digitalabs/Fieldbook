@@ -77,8 +77,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	public static final String LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_COORDINATES_KEY = "label.printing.available.fields.plot.coordinates";
 	public static final String LABEL_PRINTING_AVAILABLE_FIELDS_YEAR_KEY = "label.printing.available.fields.year";
 	public static final String LABEL_PRINTING_AVAILABLE_FIELDS_SEASON_KEY = "label.printing.available.fields.season";
-	public static final String LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY = "label.printing.available.fields.nursery.name";
-	public static final String LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY = "label.printing.available.fields.trial.name";
+	public static final String LABEL_PRINTING_AVAILABLE_FIELDS_STUDY_NAME_KEY = "label.printing.available.fields.study.name";
 	public static final String LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION_KEY = "label.printing.available.fields.location";
 	public static final String LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME_KEY = "label.printing.available.fields.block.name";
 
@@ -699,7 +698,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	/**
 	 * Gets the available label fields.
 	 *
-	 * @param isTrial the is trial
 	 * @param hasFieldMap the has field map
 	 * @param locale the locale
 	 * @return
@@ -728,15 +726,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt(), false));
 
 		labelFieldsList.add(new LabelFields(
-			this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null, locale),
-			AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt(), false));
+			this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_STUDY_NAME_KEY, null, locale),
+			AppConstants.AVAILABLE_LABEL_FIELDS_STUDY_NAME.getInt(), false));
 		labelFieldsList.add(
 			new LabelFields(this.messageSource.getMessage("label.printing.available.fields.trial.instance.num", null, locale),
 				AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt(), false));
-
-		labelFieldsList.add(new LabelFields(
-			this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY, null, locale),
-			AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt(), false));
 
 		labelFieldsList.add(
 			new LabelFields(this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_KEY, null, locale),
@@ -785,8 +779,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		Workbook workbook;
 
 		labelFieldsList.add(new LabelFields(
-			this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null, locale),
-			AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt(), false));
+			this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_STUDY_NAME_KEY, null, locale),
+			AppConstants.AVAILABLE_LABEL_FIELDS_STUDY_NAME.getInt(), false));
 
 		labelFieldsList
 			.add(new LabelFields(ColumnLabels.REP_NO.getTermNameFromOntology(this.ontologyDataManager), TermId.REP_NO.getId(), true));
@@ -798,9 +792,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		labelFieldsList.addAll(this.settingsService.retrieveExperimentalDesignFactorsAsLabels(workbook));
 		labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
 
-		labelFieldsList.add(new LabelFields(
-			this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY, null, locale),
-			AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt(), false));
 		try {
 			workbook = this.fieldbookMiddlewareService.getNurseryDataSet(studyID);
 
@@ -845,8 +836,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		final Workbook workbook;
 
 		labelFieldsList.add(new LabelFields(
-			this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null, locale),
-			AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt(), false));
+			this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_STUDY_NAME_KEY, null, locale),
+			AppConstants.AVAILABLE_LABEL_FIELDS_STUDY_NAME.getInt(), false));
 
 		workbook = this.fieldbookMiddlewareService.getTrialDataSet(studyID);
 

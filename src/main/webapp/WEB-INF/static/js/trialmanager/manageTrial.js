@@ -469,7 +469,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 
 				angular.forEach($scope.advanceTabs, function (value, index) {
-					if (!isAdvance && value.id === tabId) {
+					if (!isAdvance && value.id === parseInt(tabId)) {
 						isAdvance = true;
 					}
 

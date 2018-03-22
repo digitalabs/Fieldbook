@@ -1169,38 +1169,6 @@ public class SettingsUtil {
 		dataset.setTrialLevelFactor(SettingsUtil.convertMeasurementVariablesToFactors(workbook.getTrialConditions()));
 		dataset.setTreatmentFactors(treatmentFactors);
 
-/*		if (isNursery) {
-			final Dataset nurseryDataset = new Dataset();
-			final List<Condition> conditions = SettingsUtil.convertMeasurementVariablesToConditions(workbook.getConditions());
-			final List<Factor> factors = SettingsUtil.convertMeasurementVariablesToFactors(workbook.getFactors());
-			final List<Variate> variates = SettingsUtil.convertMeasurementVariablesToVariates(workbook.getVariates());
-			final List<Constant> constants = SettingsUtil.convertMeasurementVariablesToConstants(workbook.getConstants(), false);
-
-			nurseryDataset.setConditions(conditions);
-			nurseryDataset.setFactors(factors);
-			nurseryDataset.setVariates(variates);
-			nurseryDataset.setConstants(constants);
-			dataset = nurseryDataset;
-		} else {
-			final Dataset trialDataset = new Dataset();
-
-			final List<Condition> conditions = SettingsUtil.convertMeasurementVariablesToConditions(workbook.getStudyConditions());
-			final List<Factor> factors = SettingsUtil.convertMeasurementVariablesToFactors(workbook.getFactors());
-			final List<Variate> variates = SettingsUtil.convertMeasurementVariablesToVariates(workbook.getVariates());
-			final List<Constant> constants = SettingsUtil.convertMeasurementVariablesToConstants(workbook.getConstants(), true);
-			final List<TreatmentFactor> treatmentFactors =
-				SettingsUtil.convertTreatmentVariablesToTreatmentFactors(workbook.getTreatmentFactors());
-
-			trialDataset.setConditions(conditions);
-			trialDataset.setFactors(factors);
-			trialDataset.setVariates(variates);
-			trialDataset.setConstants(constants);
-			trialDataset.setTrialLevelFactor(SettingsUtil.convertMeasurementVariablesToFactors(workbook.getTrialConditions()));
-			trialDataset.setTreatmentFactors(treatmentFactors);
-
-			dataset = trialDataset;
-		}*/
-
 		return dataset;
 	}
 
@@ -1508,15 +1476,13 @@ public class SettingsUtil {
 		}
 
 		final List<SettingDetail> factors =
-				SettingsUtil.convertWorkbookFactorsToSettingDetails(workbook.getNonTrialFactors(), fieldbookMiddlewareService);
-		/*if (!workbook.isNursery()) {*/
-			final List<SettingDetail> germplasmDescriptors = new ArrayList<>();
-			SettingsUtil.rearrangeSettings(factors, germplasmDescriptors, PhenotypicType.GERMPLASM);
-			studyDetails.setGermplasmDescriptors(germplasmDescriptors);
-			final List<TreatmentFactorDetail> treatmentFactorDetails =
-					SettingsUtil.convertWorkbookFactorsToTreatmentDetailFactors(workbook.getTreatmentFactors());
-			studyDetails.setTreatmentFactorDetails(treatmentFactorDetails);
-		/*}*/
+			SettingsUtil.convertWorkbookFactorsToSettingDetails(workbook.getNonTrialFactors(), fieldbookMiddlewareService);
+		final List<SettingDetail> germplasmDescriptors = new ArrayList<>();
+		SettingsUtil.rearrangeSettings(factors, germplasmDescriptors, PhenotypicType.GERMPLASM);
+		studyDetails.setGermplasmDescriptors(germplasmDescriptors);
+		final List<TreatmentFactorDetail> treatmentFactorDetails =
+			SettingsUtil.convertWorkbookFactorsToTreatmentDetailFactors(workbook.getTreatmentFactors());
+		studyDetails.setTreatmentFactorDetails(treatmentFactorDetails);
 		studyDetails.setFactorDetails(factors);
 		final List<SettingDetail> traits = new ArrayList<>();
 		final List<SettingDetail> selectionVariateDetails = new ArrayList<>();
@@ -1544,11 +1510,7 @@ public class SettingsUtil {
 		List<SettingDetail> nurseryConditionDetails = new ArrayList<>();
 
 		final List<String> basicFields;
-		//if (workbook.isNursery()) {
-		//	basicFields = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
-		//} else {
-			basicFields = Arrays.asList(AppConstants.STUDY_BASIC_REQUIRED_FIELDS.getString().split(","));
-		//}
+		basicFields = Arrays.asList(AppConstants.STUDY_BASIC_REQUIRED_FIELDS.getString().split(","));
 
 		if (conditions != null) {
 			final String studyName = workbook.getStudyDetails().getStudyName();

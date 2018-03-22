@@ -614,9 +614,6 @@ public class LabelPrintingServiceImplTest {
 	@Test
 	public void testGetAvailableLabelFieldsForStockListForNursery() {
 
-		Mockito.when(this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY,
-				null, Locale.getDefault())).thenReturn("Nursery Name");
-
 		final Workbook workbook = Mockito.mock(Workbook.class);
 		Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(101)).thenReturn(workbook);
 
@@ -677,7 +674,7 @@ public class LabelPrintingServiceImplTest {
 	@Test
 	public void testGetAvailableLabelFieldsForStockListForTrial() {
 
-		Mockito.when(this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null,
+		Mockito.when(this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_STUDY_NAME_KEY, null,
 				Locale.getDefault())).thenReturn("Trial Name");
 
 		final Workbook workbook = Mockito.mock(Workbook.class);

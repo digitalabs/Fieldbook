@@ -2,7 +2,6 @@ var LabelPrinting;
 
 LabelPrinting = {
 	allPresets: [],
-	isTrial: '',
 	excelOption: '',
 	availableFieldIds: [],
 	labelPrintingFields: {},
@@ -33,8 +32,7 @@ LabelPrinting = {
 	/**
 	 * This is called when LabelPrinting page is initialized
 	 */
-	LabelPrinting.onPageLoad = function(isTrial, excelOption, availableFields, unavailableFields) {
-		LabelPrinting.isTrial = isTrial;
+	LabelPrinting.onPageLoad = function(excelOption, availableFields, unavailableFields) {
 		LabelPrinting.excelOption = excelOption;
 
 		// pluck only the ids

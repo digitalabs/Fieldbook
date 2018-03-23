@@ -521,39 +521,29 @@
 
 							}
 							case DESIGN_TYPE.ENTRY_LIST_ORDER: {
-								var totalChecks = countNumberOfAllChecks();
+								var totalTestEntries = countNumberOfTestEntries();
+								var totalChecks = $scope.totalGermplasmEntryListCount - totalTestEntries;
 								if (totalChecks > 0) {
-									var totalTestEntries = $scope.totalGermplasmEntryListCount - totalChecks;
+									if (totalTestEntries == 0) {
+										showErrorMessage('page-message', EXP_DESIGN_MSGS[33]);
+										return false
+									}
 									if ($scope.data.checkStartingPosition > totalTestEntries) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[30]);
 										return false;
 									}
 									if ($scope.data.checkStartingPosition < 1) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[29]);
+										showErrorMessage('page-message', EXP_DESIGN_MSGS[32]);
 										return false
 									}
 									if ($scope.data.checkSpacing > totalTestEntries) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[32]);
+										showErrorMessage('page-message', EXP_DESIGN_MSGS[29]);
 										return false
 									}
 									if ($scope.data.checkSpacing < 1) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[31]);
 										return false
 									}
-									if (totalTestEntries == 0) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[33]);
-										return false
-									}
-								}
-								break;
-							}
-							case 6: // TODO Remove cases for 6 and 7
-							case 7:
-							{
-								var actualNoOfGermplasmListEntries = $scope.currentDesignType.totalNoOfEntries;
-								if ($scope.totalGermplasmEntryListCount > 0 && $scope.totalGermplasmEntryListCount !== actualNoOfGermplasmListEntries) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[28]);
-									return false;
 								}
 								break;
 							}
@@ -627,26 +617,22 @@
 
 					}
 
-					function countNumberOfAllChecks() {
+					function countNumberOfTestEntries() {
 
-						// When the user changed the entry type of germplasm entries in Germplasm Tab, the changes are not yet saved in the database,
-						// so we can only count the number of checks through DataTable.
 						var germplasmListDataTable = $('.germplasm-list-items').DataTable();
 
 						if (germplasmListDataTable.rows().length !== 0) {
 
-							var numberOfChecksEntries = 0;
+							var numberOfTestEntries = 0;
 
 							$.each(germplasmListDataTable.rows().data(), function(index, obj) {
 								var entryCheckType = parseInt(obj[ENTRY_TYPE_COLUMN_DATA_KEY]);
-								if (entryCheckType === SYSTEM_DEFINED_ENTRY_TYPE.CHECK_ENTRY ||
-									entryCheckType === SYSTEM_DEFINED_ENTRY_TYPE.DISEASE_CHECK ||
-									entryCheckType === SYSTEM_DEFINED_ENTRY_TYPE.STRESS_CHECK) {
-									numberOfChecksEntries++;
+								if (entryCheckType === SYSTEM_DEFINED_ENTRY_TYPE.TEST_ENTRY) {
+									numberOfTestEntries++;
 								}
 							});
 
-							return numberOfChecksEntries;
+							return numberOfTestEntries;
 
 						} else if (TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount != null) {
 							// If the germplasmlistDataTable is not yet initialized, we should get the number of check entries of germplasm list in the database
@@ -659,7 +645,7 @@
 					}
 
 					$scope.showParamsWhenChecksAreSelected = function(designTypeId) {
-						if (designTypeId === DESIGN_TYPE.ENTRY_LIST_ORDER && countNumberOfAllChecks() == 0) {
+						if (designTypeId === DESIGN_TYPE.ENTRY_LIST_ORDER && countNumberOfTestEntries() == $scope.totalGermplasmEntryListCount) {
 							return false;
 						} else {
 							return true;

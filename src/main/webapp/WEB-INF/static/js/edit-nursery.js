@@ -1,6 +1,6 @@
 /*global showErrorMessage, measurementRowCount, showAlertMessage, ImportCrosses, ImportDesign*/
 var selectedTableIds = new Array();
-
+//TODO CUENYAD REMOVE JS.
 function submitEditWorkbook() {
 	'use strict';
 
@@ -115,14 +115,14 @@ $(document).ready(function() {
 		$(className).slideToggle();
 	});
 
-	// handler for the manualNamingSettings display
+/*	// handler for the manualNamingSettings display
 	$('input:radio[name=manualNamingSettings]').on('change', function() {
 		if ($('input:radio[name=manualNamingSettings]:checked').val() === 'true') {
 			$('#manualNamingSettingsPanel').removeClass('fbk-hide');
 		} else {
 			$('#manualNamingSettingsPanel').addClass('fbk-hide');
 		}
-	});
+	});*/
 
 	if ($('#folderId').val() === '1') {
 		$('#folderNameLabel').html(programNurseriesText);

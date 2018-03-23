@@ -48,7 +48,6 @@ import java.util.Locale;
 
 @Controller
 @RequestMapping(ExpDesignController.URL)
-@Transactional
 public class ExpDesignController extends BaseTrialController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignController.class);
@@ -69,9 +68,6 @@ public class ExpDesignController extends BaseTrialController {
 	private ResourceBundleMessageSource messageSource;
 	@Resource
 	private DesignLicenseUtil designLicenseUtil;
-
-	@Resource
-	private StudyDataManager studyDataManager;
 
 	@Override
 	public String getContentName() {

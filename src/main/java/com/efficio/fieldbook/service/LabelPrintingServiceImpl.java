@@ -427,19 +427,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			if (params.isStockList()) {
 
 				this.populateValuesForStockList(params, inventoryDetail, termID, values, populateHeaders);
-				this.populateValuesForNurseryManagement(params, workbook, termID, values, populateHeaders);
+				this.populateValuesForStudyManagement(params, workbook, termID, values, populateHeaders);
 
 			} else if (!this.populateValuesFromMeasurement(params, measurementRow, termID, values, populateHeaders)) {
-
-				if (workbook.isNursery()) {
-
-					this.populateValuesForNursery(params, workbook, termID, values, populateHeaders);
-
-				} else {
-
-					this.populateValuesForTrial(params, termID, values, populateHeaders);
-
-				}
+				this.populateValuesForStudy(params, termID, values, populateHeaders, workbook);
 
 			}
 
@@ -449,7 +440,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	}
 
-	private void populateValuesForNurseryManagement(final LabelPrintingProcessingParams params, final Workbook workbook,
+	private void populateValuesForStudyManagement(final LabelPrintingProcessingParams params, final Workbook workbook,
 			final Integer termID, final Map<Integer, String> values, final boolean populateHeaders) {
 		final List<MeasurementVariable> variables = new ArrayList<>();
 		variables.addAll(workbook.getConditions());
@@ -598,10 +589,25 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		}
 	}
 
-	protected void populateValuesForTrial(final LabelPrintingProcessingParams params, final Integer termID,
-			final Map<Integer, String> values, final boolean populateHeaders) {
+	protected void populateValuesForStudy(final LabelPrintingProcessingParams params, final Integer termID,
+			final Map<Integer, String> values, final boolean populateHeaders, final Workbook workbook) {
+
+		final List<MeasurementVariable> variables = new ArrayList<>();
+		variables.addAll(workbook.getFactors());
+		variables.addAll(workbook.getConditions());
+		variables.addAll(workbook.getConstants());
 
 		final Integer newTermId = this.getCounterpartTermId(termID);
+
+		final MeasurementVariable factorVariable = this.getMeasurementVariableByTermId(newTermId, variables);
+
+		if (factorVariable != null) {
+			values.put(newTermId, factorVariable.getValue());
+
+			if (populateHeaders) {
+				params.getLabelHeaders().put(newTermId, factorVariable.getName());
+			}
+		}
 
 		final MeasurementVariable conditionData = params.getVariableMap().get(newTermId);
 
@@ -626,30 +632,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				params.getLabelHeaders().put(newTermId, enviromentData.getLabel());
 			}
 		}
-
-	}
-
-	protected void populateValuesForNursery(final LabelPrintingProcessingParams params, final Workbook workbook, final Integer termID,
-			final Map<Integer, String> values, final boolean populateHeaders) {
-
-		final List<MeasurementVariable> variables = new ArrayList<>();
-		variables.addAll(workbook.getFactors());
-		variables.addAll(workbook.getConditions());
-		variables.addAll(workbook.getConstants());
-
-		final Integer newTermId = this.getCounterpartTermId(termID);
-
-		final MeasurementVariable factorVariable = this.getMeasurementVariableByTermId(newTermId, variables);
-
-		if (factorVariable != null) {
-			values.put(newTermId, factorVariable.getValue());
-
-			if (populateHeaders) {
-				params.getLabelHeaders().put(newTermId, factorVariable.getName());
-			}
-
-		}
-
 	}
 
 	private MeasurementVariable getMeasurementVariableByTermId(final Integer termId, final List<MeasurementVariable> measumentVariables) {
@@ -791,16 +773,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		labelFieldsList.addAll(this.settingsService.retrieveTrialEnvironmentConditionsAsLabels(workbook));
 		labelFieldsList.addAll(this.settingsService.retrieveExperimentalDesignFactorsAsLabels(workbook));
 		labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
-
-		try {
-			workbook = this.fieldbookMiddlewareService.getStudyDataSet(studyID);
-
-			labelFieldsList.addAll(this.settingsService.retrieveNurseryManagementDetailsAsLabels(workbook));
-			labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
-
-		} catch (final MiddlewareException e) {
-			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
-		}
 
 		labelFieldsList.add(new LabelFields(
 			this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE_KEY, null, locale),

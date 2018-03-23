@@ -356,7 +356,7 @@ public class LabelPrintingServiceImplTest {
 	}
 
 	@Test
-	public void testPopulateValuesForTrial() {
+	public void testPopulateValuesForStudy() {
 
 		final Integer testTermId = TermId.TRIAL_LOCATION.getId();
 
@@ -371,24 +371,10 @@ public class LabelPrintingServiceImplTest {
 
 		params.setEnvironmentData(MeasurementRowTestDataInitializer.createMeasurementRow());
 
-		this.labelPrintingServiceImpl.populateValuesForTrial(params, testTermId, values, true);
+		this.labelPrintingServiceImpl.populateValuesForStudy(params, testTermId, values, true, workbook);
 
 		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "Manila",
 				values.get(TermId.TRIAL_LOCATION.getId()));
-	}
-
-	@Test
-	public void testPopulateValuesForNursery() {
-
-		final Integer testTermId = TermId.TRIAL_LOCATION.getId();
-
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		final Map<Integer, String> values = new HashMap<>();
-		final LabelPrintingProcessingParams params = LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParams();
-
-		this.labelPrintingServiceImpl.populateValuesForNursery(params, workbook, testTermId, values, true);
-
-		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "", values.get(TermId.TRIAL_LOCATION.getId()));
 	}
 
 	@Test

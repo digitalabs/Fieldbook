@@ -62,16 +62,19 @@
                     <div class="col-xs-6 col-md-6">
                         <div class="form-group">
                             <div class="col-xs-12 col-md-12">
-                                <label class="control-label"><strong class="sub-content-heading"
-                                                                     th:text="#{label.printing.selected.study}">SELECTED
-                                    STUDY</strong></label>
+                                <label class="control-label">
+                                    <strong class="sub-content-heading" th:text="#{label.printing.selected.study}">
+                                        SELECTED STUDY
+                                    </strong>
+                                </label>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-xs-12 col-md-12">
-                                <label class="control-label" ><strong
-                                        th:text="#{label.printing.trial.name}+':'"></strong></label>
-                                <span th:text="*{userLabelPrinting.name}">Trial Name</span>
+                                <label class="control-label" >
+                                    <strong th:text="#{label.printing.study.name}+':'"></strong>
+                                </label>
+                                <span th:text="*{userLabelPrinting.name}">Study Name</span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -95,9 +98,11 @@
                     </div>
                     <div class="col-xs-6 col-md-6" th:if="(*{userLabelPrinting.isStockList()})">
                         <div class="col-xs-12 col-md-12">
-                            <label class="control-label"><strong class="sub-content-heading"
-                                                                 th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS
-                                NEEDED</strong></label>
+                            <label class="control-label">
+                                <strong class="sub-content-heading" th:text="#{label.printing.summary.of.labels.needed}">
+                                    SUMMARY OF LABELS NEEDED
+                                </strong>
+                            </label>
                         </div>
                         <div class="col-xs-12 col-md-12">
                             <table class="table table-curved table-condensed">
@@ -278,7 +283,7 @@
                                     <thead>
                                     <th></th>
                                     <th th:text="#{fieldmap.trial.order}">Order</th>
-                                    <th  th:text="#{fieldmap.trial}">Trial</th>
+                                    <th  th:text="#{fieldmap.trial}">Study</th>
                                     <th  th:text="#{fieldmap.trial.instance}">Instance</th>
                                     <th  th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
                                     <th  th:text="#{fieldmap.trial.reps.count}"># of Reps</th>

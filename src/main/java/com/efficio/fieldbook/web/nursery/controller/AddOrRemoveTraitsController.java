@@ -107,7 +107,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 		Workbook workbook = null;
 
 		try {
-			workbook = this.fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+			workbook = this.fieldbookMiddlewareService.getStudyDataSet(nurseryId);
 		} catch (MiddlewareException e) {
 			AddOrRemoveTraitsController.LOG.error(e.getMessage(), e);
 		}

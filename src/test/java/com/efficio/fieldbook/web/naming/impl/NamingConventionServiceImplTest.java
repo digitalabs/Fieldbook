@@ -220,7 +220,7 @@ public class NamingConventionServiceImplTest {
 		final StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setStudyType(new StudyTypeDto("N"));
 
-        Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(Matchers.anyInt())).thenReturn(workbook);
+        Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Matchers.anyInt())).thenReturn(workbook);
         final AdvancingSourceList rows = new AdvancingSourceList();
         rows.setRows(new ArrayList<AdvancingSource>());
 

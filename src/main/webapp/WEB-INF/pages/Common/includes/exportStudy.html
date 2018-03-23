@@ -6,7 +6,7 @@
 				<div class="modal-body" id="exportStudyModalBody">
 					<div class="row form-group">
 						<div class="col-xs-11 col-md-11">
-							<label class="modal-title fbk-modal-title" id="heading-modal"></label>
+							<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{study.export.header}">Export Study Book</label>
 						</div>
 						<div class="col-xs-1 col-md-1">
 							<button id="close" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"></button>
@@ -75,7 +75,7 @@
 					<div class="row form-group exportTrialInstanceSection fbk-hide">
 						<div class="col-xs-12 col-md-12">&nbsp;</div>
 						<div class="col-xs-12 col-md-12">
-							<label class="control-label h4" th:text="#{trial.export.choose.instance}"></label>
+							<label class="control-label h4" th:text="#{study.export.choose.instance}"></label>
 						</div>
 
 						<div class="col-xs-12 col-md-12">&nbsp;</div>
@@ -211,18 +211,16 @@ function doConfirmExport() {
 
 function showExportOptions() {
 	'use strict';
-	var heading_modal_label = exportHeader + " " + "Study" + " " + exportBookHeader,
-		studyId = '0';
+
 	if ($('.import-study-data').data('data-import') === '1') {
 		showErrorMessage('', needSaveImportDataError);
 		return;
 	}
 
-	$('#exportStudyModal #heading-modal').html(heading_modal_label);
 	StudyCustomExportReports.showReports();
 	$('#exportStudyModal').modal({backdrop: 'static', keyboard: true});
 
-	studyId = $('#studyId').val();
+	var studyId = $('#studyId').val();
 	$.ajax({
 		url: '/Fieldbook/ExportManager/trial/instances/' + studyId,
 		type: 'GET',

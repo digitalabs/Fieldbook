@@ -666,7 +666,7 @@ var ImportCrosses = {
 
 	isCrossImportSettingsValid: function(importSettings) {
 		'use strict';
-		var valid = true;
+		var valid = true;debugger;
 		if (!importSettings.crossNameSetting.prefix || importSettings.crossNameSetting.prefix === '') {
 			valid = false;
 			showErrorMessage('', $.fieldbookMessages.errorNoNamePrefix);
@@ -1003,5 +1003,14 @@ $(document).ready(function() {
 	$('.btn-import-crosses').on('click', ImportCrosses.doSubmitImport);
 	$('.import-crosses-section .modal').on('hide.bs.modal', function() {
 		$('div.import-crosses-file-upload').parent().parent().removeClass('has-error');
+	});
+
+	// handler for the manualNamingSettings display
+	$('input:radio[name=manualNamingSettings]').on('change', function() {
+		if ($('input:radio[name=manualNamingSettings]:checked').val() === 'true') {
+			$('#manualNamingSettingsPanel').removeClass('fbk-hide');
+		} else {
+			$('#manualNamingSettingsPanel').addClass('fbk-hide');
+		}
 	});
 });

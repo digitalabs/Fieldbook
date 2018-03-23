@@ -40,7 +40,6 @@ import java.util.Map;
 
 @Controller
 @RequestMapping(StudyTreeController.URL)
-@Transactional
 public class StudyTreeController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StudyTreeController.class);

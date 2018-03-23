@@ -39,7 +39,6 @@ import java.util.Set;
 /**
  * This parses a Crossing Template Excel file Note that this class is stateful, declare in spring app context as prototyped scope
  */
-@Transactional
 public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCrossesList> {
 
 	public static final String NO_REFERENCES_ERROR_DESC = "study.import.crosses.error.no.references";

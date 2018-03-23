@@ -189,7 +189,7 @@ public class EditNurseryControllerTest {
 		Mockito.when(workbook.getStudyDetails().getStartDate()).thenReturn("20120314");
 		Mockito.when(workbook.getStudyDetails().getEndDate()).thenReturn("20180314");
 		Mockito.doReturn(project).when(this.abstractBaseFieldbookController).getCurrentProject();
-		Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(Matchers.anyInt())).thenReturn(workbook);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Matchers.anyInt())).thenReturn(workbook);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString()))
 				.thenReturn(this.standardVariable);
 		Mockito.when(this.workBenchDataManager.getLastOpenedProjectAnyUser()).thenReturn(project);
@@ -199,7 +199,7 @@ public class EditNurseryControllerTest {
 				.useExistingNursery(this.createNurseryForm, this.importGermplasmListForm, EditNurseryControllerTest.NURSERY_ID,
 						"context-info", this.model, this.request, this.redirectAttributes, "");
 
-		Mockito.verify(this.fieldbookMiddlewareService).getNurseryDataSet(Matchers.anyInt());
+		Mockito.verify(this.fieldbookMiddlewareService).getStudyDataSet(Matchers.anyInt());
 		Assert.assertEquals("Should return the URL of the base_template", AbstractBaseFieldbookController.BASE_TEMPLATE_NAME, out);
 	}
 
@@ -213,7 +213,7 @@ public class EditNurseryControllerTest {
 		Mockito.doReturn(dmsProject).when(this.studyDataManagerImpl).getProject(Matchers.anyInt());
 		Mockito.when(dmsProject.getProgramUUID()).thenReturn("1002");
 		Mockito.when(this.request.getCookies()).thenReturn(new Cookie[] {});
-		Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(EditNurseryControllerTest.NURSERY_ID))
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(EditNurseryControllerTest.NURSERY_ID))
 				.thenThrow(MiddlewareQueryException.class);
 
 		final String out = this.editNurseryController

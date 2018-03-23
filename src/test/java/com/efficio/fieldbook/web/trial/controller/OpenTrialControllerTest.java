@@ -221,7 +221,7 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testOpenTrialRedirectForIncompatibleStudy() throws Exception {
 
-		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(OpenTrialControllerTest.TRIAL_ID))
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.TRIAL_ID))
 				.thenThrow(MiddlewareQueryException.class);
 
 		final String out = this.openTrialController.openTrial(this.createTrialForm, OpenTrialControllerTest.TRIAL_ID, this.model,
@@ -249,7 +249,7 @@ public class OpenTrialControllerTest {
 		mockSession.setAttribute(SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME, new ArrayList<Integer>());
 
 		try {
-			Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(Matchers.anyInt())).thenReturn(workbook);
+			Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Matchers.anyInt())).thenReturn(workbook);
 			this.mockStandardVariables(workbook.getAllVariables());
 			this.openTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.TRIAL_ID, new ExtendedModelMap(), mockSession,
 					Mockito.mock(RedirectAttributes.class), null);
@@ -278,7 +278,7 @@ public class OpenTrialControllerTest {
 
 		try {
 
-			Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(Matchers.anyInt())).thenReturn(workbook);
+			Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Matchers.anyInt())).thenReturn(workbook);
 			this.mockStandardVariables(workbook.getAllVariables());
 
 			this.openTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.TRIAL_ID, model, new MockHttpSession(),

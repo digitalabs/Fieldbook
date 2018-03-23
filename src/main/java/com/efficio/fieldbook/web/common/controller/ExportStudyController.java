@@ -249,7 +249,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		final String studyId = this.getStudyId(data);
 
-		final Workbook workbook = this.fieldbookMiddlewareService.getTrialDataSet(Integer.valueOf(studyId));
+		final Workbook workbook = this.fieldbookMiddlewareService.getStudyDataSet(Integer.valueOf(studyId));
 		userSelection.setWorkbook(workbook);
 
 		// workbook.observations() collection is no longer pre-loaded into user session when trial is opened. Load now as we need it to

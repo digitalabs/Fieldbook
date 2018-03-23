@@ -220,7 +220,7 @@ public class EditNurseryController extends SettingsController {
 
 	private Workbook setUpForWorkbook(final CreateNurseryForm form, final int nurseryId) {
 		final Workbook workbook;
-		workbook = this.fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+		workbook = this.fieldbookMiddlewareService.getStudyDataSet(nurseryId);
 
 		// workbook.observations collection is no longer loaded by default.
 		// Load it so that Nursery manager functionality that relies on it

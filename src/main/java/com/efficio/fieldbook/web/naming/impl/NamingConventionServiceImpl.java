@@ -119,11 +119,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		final Study study = advanceInfo.getStudy();
 		if (workbook == null) {
-			if (StudyType.N.equals(study.getType())) {
-				workbook = this.fieldbookMiddlewareService.getNurseryDataSet(study.getId());
-			} else if (StudyType.T.equals(study.getType())) {
-				workbook = this.fieldbookMiddlewareService.getTrialDataSet(study.getId());
-			}
+				workbook = this.fieldbookMiddlewareService.getStudyDataSet(study.getId());
 		}
 		return this.advancingSourceListFactory.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 	}

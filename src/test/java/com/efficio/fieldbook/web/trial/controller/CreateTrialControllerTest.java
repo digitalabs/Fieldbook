@@ -46,7 +46,7 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testUseExistingTrialWithError() throws Exception {
-		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(1))
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(1))
 				.thenThrow(new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
 
 		final Map<String, Object> tabDetails = this.controller.getExistingTrialDetails(1);
@@ -61,7 +61,7 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 	public void testUseExistingTrial() throws Exception {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
-		Mockito.doReturn(workbook).when(this.fieldbookMiddlewareService).getTrialDataSet(1);
+		Mockito.doReturn(workbook).when(this.fieldbookMiddlewareService).getStudyDataSet(1);
 		this.mockStandardVariables(workbook.getAllVariables());
 
 		// Verify that workbook has Analysis and/or Analysis Summary variables beforehand to check that they were later removed

@@ -615,7 +615,7 @@ public class LabelPrintingServiceImplTest {
 	public void testGetAvailableLabelFieldsForStockListForNursery() {
 
 		final Workbook workbook = Mockito.mock(Workbook.class);
-		Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(101)).thenReturn(workbook);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(101)).thenReturn(workbook);
 
 		final List<LabelFields> nurseryManagementLabelFields = LabelPrintingServiceDataInitializer.createNurseryManagementLabelFields();
 		Mockito.when(this.settingsService.retrieveNurseryManagementDetailsAsLabels(Matchers.isA(Workbook.class))).
@@ -678,7 +678,7 @@ public class LabelPrintingServiceImplTest {
 				Locale.getDefault())).thenReturn("Trial Name");
 
 		final Workbook workbook = Mockito.mock(Workbook.class);
-		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(101)).thenReturn(workbook);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(101)).thenReturn(workbook);
 
 		final List<LabelFields> trialSettingLabelFields = LabelPrintingServiceDataInitializer.createTrialSettingLabelFields();
 		Mockito.when(this.settingsService.retrieveTrialSettingsAsLabels(Matchers.isA(Workbook.class))).

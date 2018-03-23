@@ -769,10 +769,6 @@ public class OpenTrialController extends BaseTrialController {
 				this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 
 		final Workbook tempWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID());
-		final StudyDetails details = new StudyDetails();
-		details.setStudyType(new StudyTypeDto("T")); //TODO VER COMO ARREGLARLO.
-		tempWorkbook.setStudyDetails(details);
-
 		return tempWorkbook;
 	}
 

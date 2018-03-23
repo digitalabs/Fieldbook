@@ -785,7 +785,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		labelFieldsList
 			.add(new LabelFields(ColumnLabels.REP_NO.getTermNameFromOntology(this.ontologyDataManager), TermId.REP_NO.getId(), true));
 
-		workbook = this.fieldbookMiddlewareService.getTrialDataSet(studyID);
+		workbook = this.fieldbookMiddlewareService.getStudyDataSet(studyID);
 
 		labelFieldsList.addAll(this.settingsService.retrieveTrialSettingsAsLabels(workbook));
 		labelFieldsList.addAll(this.settingsService.retrieveTrialEnvironmentConditionsAsLabels(workbook));
@@ -793,7 +793,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
 
 		try {
-			workbook = this.fieldbookMiddlewareService.getNurseryDataSet(studyID);
+			workbook = this.fieldbookMiddlewareService.getStudyDataSet(studyID);
 
 			labelFieldsList.addAll(this.settingsService.retrieveNurseryManagementDetailsAsLabels(workbook));
 			labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
@@ -839,7 +839,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_STUDY_NAME_KEY, null, locale),
 			AppConstants.AVAILABLE_LABEL_FIELDS_STUDY_NAME.getInt(), false));
 
-		workbook = this.fieldbookMiddlewareService.getTrialDataSet(studyID);
+		workbook = this.fieldbookMiddlewareService.getStudyDataSet(studyID);
 
 		labelFieldsList.addAll(this.settingsService.retrieveTrialSettingsAsLabels(workbook));
 		labelFieldsList.addAll(this.settingsService.retrieveTrialEnvironmentConditionsAsLabels(workbook));

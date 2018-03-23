@@ -71,8 +71,7 @@ public class LabelPrintingServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(Matchers.anyInt())).thenReturn(this.workbook);
-		Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(Matchers.anyInt())).thenReturn(this.workbook);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Matchers.anyInt())).thenReturn(this.workbook);
 	}
 
 	@Test

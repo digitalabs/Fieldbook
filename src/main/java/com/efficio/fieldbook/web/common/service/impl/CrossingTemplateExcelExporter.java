@@ -54,7 +54,6 @@ import com.efficio.fieldbook.web.util.AppConstants;
 /**
  * The class providing export crossing template as an excel file function
  */
-@Transactional
 public class CrossingTemplateExcelExporter {
 
 	public static final String EXPORT_FILE_NAME_FORMAT = "CrossingTemplate-%s";

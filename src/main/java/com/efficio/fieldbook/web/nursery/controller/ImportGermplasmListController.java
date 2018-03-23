@@ -36,6 +36,7 @@ import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -1334,6 +1335,8 @@ public class ImportGermplasmListController extends SettingsController {
 				this.ontologyService.saveOrUpdateStandardVariableEnumeration(stdVar, enumeration);
 				final List<Enumeration> allEnumerations = this.ontologyService
 						.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID()).getEnumerations();
+				this.updateUserSelection();
+
 				result.put("checkTypes", this.convertObjectToJson(allEnumerations));
 
 				result.put(ImportGermplasmListController.SUCCESS, "1");
@@ -1350,6 +1353,36 @@ public class ImportGermplasmListController extends SettingsController {
 		}
 
 		return result;
+	}
+
+	private void updateUserSelection() {
+		for (final SettingDetail settingDetail: this.userSelection.getPlotsLevelList()) {
+			if (settingDetail.getVariable().getCvTermId().equals(TermId.ENTRY_TYPE.getId())) {
+				final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true);
+				settingDetail.setPossibleValues(possibleValues);
+
+				settingDetail.setPossibleValuesToJson(possibleValues);
+				final List<ValueReference> possibleValuesFavorite =
+						this.fieldbookService.getAllPossibleValuesFavorite(settingDetail.getVariable().getCvTermId(), this.getCurrentProject().getUniqueID(), true);
+				settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
+				settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+
+				final List<ValueReference> allValues = this.fieldbookService.getAllPossibleValuesWithFilter(settingDetail.getVariable().getCvTermId(), false);
+				settingDetail.setAllValues(allValues);
+				settingDetail.setAllValuesToJson(allValues);
+
+				final List<ValueReference> allFavoriteValues =
+						this.fieldbookService.getAllPossibleValuesFavorite(settingDetail.getVariable().getCvTermId(),
+								this.getCurrentProject().getUniqueID(), null);
+
+				final List<ValueReference> intersection = SettingsUtil.intersection(allValues, allFavoriteValues);
+
+				settingDetail.setAllFavoriteValues(intersection);
+				settingDetail.setAllFavoriteValuesToJson(intersection);
+
+				break;
+			}
+		}
 	}
 
 	/**

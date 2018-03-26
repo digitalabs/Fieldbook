@@ -105,7 +105,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	@Test
 	public void testFieldMapPropertiesOfNurseryWithoutFieldMap() {
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(false).get(0);
+		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList().get(0);
 		this.setFieldmapProperties(fieldMapInfoDetail, false, false);
 		final boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
 
@@ -116,7 +116,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	@Test
 	public void testFieldMapPropertiesOfNurseryWithFieldMap() {
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(false).get(0);
+		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList().get(0);
 		this.setFieldmapProperties(fieldMapInfoDetail, true, false);
 		final boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
 
@@ -127,7 +127,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	@Test
 	public void testFieldMapPropertiesOfTrialWithoutFieldMaps() {
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(true).get(0);
+		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList().get(0);
 		this.setFieldmapProperties(fieldMapInfoDetail, false, false);
 		final boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
 
@@ -138,7 +138,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	@Test
 	public void testFieldMapPropertiesOfTrialWithOneFieldMap() {
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(true).get(0);
+		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList().get(0);
 		this.setFieldmapProperties(fieldMapInfoDetail, false, true);
 		final boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
 
@@ -149,7 +149,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	@Test
 	public void testFieldMapPropertiesOfTrialWithFieldMaps() {
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(true).get(0);
+		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList().get(0);
 		this.setFieldmapProperties(fieldMapInfoDetail, true, false);
 		final boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
 

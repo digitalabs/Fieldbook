@@ -86,11 +86,11 @@ public class LabelPrintingDataUtil {
 
 	private static final int FIELDBOOK_ID = 100;
 
-	public static List<FieldMapInfo> createFieldMapInfoList(final boolean isTrial) {
+	public static List<FieldMapInfo> createFieldMapInfoList() {
 		final List<FieldMapInfo> fieldMapInfoList = new ArrayList<FieldMapInfo>();
 		final FieldMapInfo fieldMapInfo = new FieldMapInfo();
 
-		final ArrayList<FieldMapDatasetInfo> datasets = LabelPrintingDataUtil.createFieldMapDatasetInfo(isTrial);
+		final ArrayList<FieldMapDatasetInfo> datasets = LabelPrintingDataUtil.createFieldMapDatasetInfo();
 		fieldMapInfo.setDatasets(datasets);
 		fieldMapInfo.setFieldbookId(LabelPrintingDataUtil.FIELDBOOK_ID);
 		fieldMapInfo.setFieldbookName(LabelPrintingDataUtil.FIELDBOOK_NAME);
@@ -103,7 +103,7 @@ public class LabelPrintingDataUtil {
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 
 		final FieldMapInfo fieldMapInfo = new FieldMapInfo();
-		final ArrayList<FieldMapDatasetInfo> datasets = LabelPrintingDataUtil.createFieldMapDatasetInfo(false);
+		final ArrayList<FieldMapDatasetInfo> datasets = LabelPrintingDataUtil.createFieldMapDatasetInfo();
 
 		fieldMapInfo.setDatasets(datasets);
 
@@ -149,16 +149,14 @@ public class LabelPrintingDataUtil {
 		return userLabelPrinting;
 	}
 
-	public static ArrayList<FieldMapDatasetInfo> createFieldMapDatasetInfo(final boolean isTrial) {
+	public static ArrayList<FieldMapDatasetInfo> createFieldMapDatasetInfo() {
 		final ArrayList<FieldMapDatasetInfo> datasets = new ArrayList<FieldMapDatasetInfo>();
 
 		final FieldMapDatasetInfo dataset = new FieldMapDatasetInfo();
 
 		final ArrayList<FieldMapTrialInstanceInfo> trialInstances = new ArrayList<FieldMapTrialInstanceInfo>();
 		trialInstances.add(LabelPrintingDataUtil.createFieldMapTrialInstanceInfo());
-		if (isTrial) {
-			trialInstances.add(LabelPrintingDataUtil.createFieldMapSecondTrialInstanceInfo());
-		}
+		trialInstances.add(LabelPrintingDataUtil.createFieldMapSecondTrialInstanceInfo());
 
 		dataset.setDatasetId(LabelPrintingDataUtil.DATASET_ID);
 		dataset.setDatasetName(LabelPrintingDataUtil.DATASET_NAME);

@@ -10,7 +10,6 @@ import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -34,6 +33,8 @@ import java.util.Map;
 public class SettingsServiceImpl implements SettingsService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsServiceImpl.class);
+	private static final String TRIAL_INSTANCE = "TRIAL_INSTANCE";
+	private static final String STUDY_INSTANCE = "STUDY_INSTANCE";
 
 	/**
 	 * The fieldbook service.
@@ -222,8 +223,12 @@ public class SettingsServiceImpl implements SettingsService {
 		for (final MeasurementVariable var : workbook.getTrialConditions()) {
 
 			if (!hiddenFields.contains(var.getTermId()) && TermId.EXPERIMENT_DESIGN_FACTOR.getId() != var.getTermId()) {
+				String variableName = var.getName();
+				if(TRIAL_INSTANCE.equals(variableName)) {
+					variableName = STUDY_INSTANCE;
+				}
 				final LabelFields field =
-						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery()));
+						new LabelFields(variableName, var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery()));
 
 				// Set local name of ID variable to local name of NAME variable
 				final String nameTermId = SettingsUtil.getNameCounterpart(var.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());

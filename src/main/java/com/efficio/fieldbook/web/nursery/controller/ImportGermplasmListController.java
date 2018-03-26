@@ -287,20 +287,6 @@ public class ImportGermplasmListController extends SettingsController {
 				&& null != this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()) {
 			this.assignAndIncrementEntryNumberAndPlotNumber(form);
 
-			//TODO Remove commented code - Unneded if, getImportedGermplasmMainInfo is never null if passes previous if condition
-			// NOTE: clearing measurements if germplasm list is null
-//			if (this.userSelection.getImportedGermplasmMainInfo() == null && this.userSelection.getMeasurementRowList() != null) {
-//				this.userSelection.getMeasurementRowList().clear();
-//			}
-
-			//TODO Remove commented code - Never a nursery, so processing germplasms and checks is not needed when generating an experimental design
-//			if (false && !hasTemporaryWorkbook) {// VER COMO ARREGLAR ESTO. creo que se debe agregar
-//
-//				this.validateEntryAndPlotNo(form);
-//
-//				this.processImportedGermplasmAndChecks(this.userSelection, form);
-//
-//			} else
 			if (!hasTemporaryWorkbook) {
 				// this section of code is only called for existing trial
 				// without temporary workbook. No need for reset of measurement
@@ -791,56 +777,57 @@ public class ImportGermplasmListController extends SettingsController {
 	public String refreshListDetails(final Model model, @ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form) {
 
 		try {
-			final String type = StudyType.T.getName();
-			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
-			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
-			final List<ImportedGermplasm> list =
-					this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+			if (this.getUserSelection().getImportedGermplasmMainInfo() != null) {
+				final String type = GermplasmListType.STUDY.toString();
+				final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
+				final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
+				final List<ImportedGermplasm> list =
+						this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
 
-			// we need to take note of the check here
+				// we need to take note of the check here
 
-			for (final ImportedGermplasm germplasm : list) {
-				final Map<String, Object> dataMap = new HashMap<>();
-				dataMap.put(ImportGermplasmListController.POSITION, germplasm.getIndex().toString());
-				dataMap.put(ImportGermplasmListController.CHECK_OPTIONS, checkList);
-				dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryId().toString());
-				dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
-				dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
-				dataMap.put(ImportGermplasmListController.GROUP_ID, germplasm.getMgid());
+				for (final ImportedGermplasm germplasm : list) {
+					final Map<String, Object> dataMap = new HashMap<>();
+					dataMap.put(ImportGermplasmListController.POSITION, germplasm.getIndex().toString());
+					dataMap.put(ImportGermplasmListController.CHECK_OPTIONS, checkList);
+					dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryId().toString());
+					dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
+					dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
+					dataMap.put(ImportGermplasmListController.GROUP_ID, germplasm.getMgid());
 
-				final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
-				if (factorsList != null) {
-					// we iterate the map for dynamic header of trial
-					for (final SettingDetail factorDetail : factorsList) {
-						if (factorDetail != null && factorDetail.getVariable() != null) {
-							dataMap.put(factorDetail.getVariable().getCvTermId() + AppConstants.TABLE_HEADER_KEY_SUFFIX.getString(),
-									this.getGermplasmData(factorDetail.getVariable().getCvTermId().toString(), germplasm));
+					final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
+					if (factorsList != null) {
+						// we iterate the map for dynamic header of trial
+						for (final SettingDetail factorDetail : factorsList) {
+							if (factorDetail != null && factorDetail.getVariable() != null) {
+								dataMap.put(factorDetail.getVariable().getCvTermId() + AppConstants.TABLE_HEADER_KEY_SUFFIX.getString(),
+										this.getGermplasmData(factorDetail.getVariable().getCvTermId().toString(), germplasm));
+							}
 						}
 					}
+					dataMap.put(ImportGermplasmListController.CHECK,
+							germplasm.getEntryTypeValue() != null ? germplasm.getEntryTypeValue() : "");
+
+					dataTableDataList.add(dataMap);
 				}
-				dataMap.put(ImportGermplasmListController.CHECK,
-						germplasm.getEntryTypeValue() != null ? germplasm.getEntryTypeValue() : "");
 
-				dataTableDataList.add(dataMap);
+				model.addAttribute(ImportGermplasmListController.CHECK_LISTS, checkList);
+				model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
+				model.addAttribute(ImportGermplasmListController.TYPE2, type);
+				model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST, this.getGermplasmTableHeader(this.userSelection.getPlotsLevelList()));
+				model.addAttribute("hasMeasurement", this.hasMeasurement());
+
+				final Integer startingEntryNo = this.getUserSelection().getStartingEntryNo();
+
+				if (list.size() != 0) {
+					form.setStartingEntryNo(list.get(0).getEntryId().toString());
+				} else if (startingEntryNo != null) {
+					form.setStartingEntryNo(Integer.toString(startingEntryNo));
+				}
+
+				form.setImportedGermplasmMainInfo(this.getUserSelection().getImportedGermplasmMainInfo());
+				form.setImportedGermplasm(list);
 			}
-
-			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, checkList);
-			model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
-			model.addAttribute(ImportGermplasmListController.TYPE2, type);
-			model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST,
-					this.getGermplasmTableHeader(this.userSelection.getPlotsLevelList()));
-			model.addAttribute("hasMeasurement", this.hasMeasurement());
-
-			final Integer startingEntryNo = this.getUserSelection().getStartingEntryNo();
-
-			if (list.size() != 0) {
-				form.setStartingEntryNo(list.get(0).getEntryId().toString());
-			} else if (startingEntryNo != null) {
-				form.setStartingEntryNo(Integer.toString(startingEntryNo));
-			}
-
-			form.setImportedGermplasmMainInfo(this.getUserSelection().getImportedGermplasmMainInfo());
-			form.setImportedGermplasm(list);
 
 		} catch (final Exception e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);

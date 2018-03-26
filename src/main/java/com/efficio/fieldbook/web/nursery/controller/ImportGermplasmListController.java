@@ -257,7 +257,6 @@ public class ImportGermplasmListController extends SettingsController {
 		// start: section for taking note of the check germplasm
 		boolean isDeleteObservations = false;
 
-		final boolean isNursery = StudyType.nurseries().contains(this.userSelection.getWorkbook().getStudyDetails().getStudyType());//this.userSelection.getWorkbook().getStudyDetails().getStudyType() == StudyType.N;
 		boolean hasTemporaryWorkbook = false;
 
 		if (this.userSelection.getTemporaryWorkbook() != null) {
@@ -307,7 +306,7 @@ public class ImportGermplasmListController extends SettingsController {
 		this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
 
 		// for saving the list data project
-		this.saveListDataProject(isNursery, studyId);
+		this.saveListDataProject(studyId);
 
 		this.fieldbookService.saveStudyColumnOrdering(studyId, this.userSelection.getWorkbook().getStudyName(), form.getColumnOrders(),
 				this.userSelection.getWorkbook());
@@ -434,14 +433,13 @@ public class ImportGermplasmListController extends SettingsController {
 	}
 
 	/**
-	 * List data project data is the germplasm list that is attached to a nursery or a trial This method is saving the germplasm for this
+	 * List data project data is the germplasm list that is attached to a study This method is saving the germplasm for this
 	 * nursery/trial
 	 *
-	 * @param isNursery
 	 * @param studyId
 	 * @throws MiddlewareQueryException
 	 */
-	private void saveListDataProject(final boolean isNursery, final int studyId) {
+	private void saveListDataProject(final int studyId) {
 
 		final ImportedGermplasmMainInfo germplasmMainInfo = this.getUserSelection().getImportedGermplasmMainInfo();
 
@@ -453,11 +451,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 			final ImportedGermplasmList importedGermplasmList = germplasmMainInfo.getImportedGermplasmList();
 
-			if (isNursery && importedGermplasmList.getOriginalImportedGermplasms() != null) {
-				projectGermplasmList = importedGermplasmList.getOriginalImportedGermplasms();
-			} else {
-				projectGermplasmList = importedGermplasmList.getImportedGermplasms();
-			}
+			projectGermplasmList = importedGermplasmList.getImportedGermplasms();
 
 			final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(projectGermplasmList);
 			this.fieldbookMiddlewareService
@@ -467,35 +461,31 @@ public class ImportGermplasmListController extends SettingsController {
 			this.fieldbookMiddlewareService.deleteListDataProjects(studyId, GermplasmListType.STUDY);
 		}
 
-		if (this.getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
-			if (this.getUserSelection().getImportedCheckGermplasmMainInfo().getListId() != null) {
-				// came from a list
-				final Integer listId = this.getUserSelection().getImportedCheckGermplasmMainInfo().getListId();
-				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(
-						this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-				this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CHECK, listId, listDataProject,
-						this.getCurrentIbdbUserId());
-
-			} else if (this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null
-					&& this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-							.getImportedGermplasms() != null
-					&& !this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()
-							.isEmpty()) {
-				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(
-						this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-				this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CHECK, null, listDataProject,
-						this.getCurrentIbdbUserId());
-
-			} else {
-				// we delete it
-				this.fieldbookMiddlewareService.deleteListDataProjects(studyId, GermplasmListType.CHECK);
-			}
-		} else {
-			if (isNursery) {
-				// we delete it
-				this.fieldbookMiddlewareService.deleteListDataProjects(studyId, GermplasmListType.CHECK);
-			}
-		}
+		// TODO Remove code - Check list will not be supported in Manage studies
+//		if (this.getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
+//			if (this.getUserSelection().getImportedCheckGermplasmMainInfo().getListId() != null) {
+//				// came from a list
+//				final Integer listId = this.getUserSelection().getImportedCheckGermplasmMainInfo().getListId();
+//				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(
+//						this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+//				this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CHECK, listId, listDataProject,
+//						this.getCurrentIbdbUserId());
+//
+//			} else if (this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null
+//					&& this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
+//							.getImportedGermplasms() != null
+//					&& !this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()
+//							.isEmpty()) {
+//				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(
+//						this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+//				this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CHECK, null, listDataProject,
+//						this.getCurrentIbdbUserId());
+//
+//			} else {
+//				// we delete it
+//				this.fieldbookMiddlewareService.deleteListDataProjects(studyId, GermplasmListType.CHECK);
+//			}
+//		}
 	}
 
 	/**

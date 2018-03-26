@@ -106,7 +106,7 @@ public class SettingsServiceImpl implements SettingsService {
 		for (final MeasurementVariable var : measurementVariables) {
 			if (!basicDetailIDList.contains(var.getTermId()) && !hiddenFields.contains(var.getTermId())) {
 				final LabelFields field =
-						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery()));
+						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId()));
 
 				// set local name of id variable to local name of name variable
 				final String nameTermId = SettingsUtil.getNameCounterpart(var.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
@@ -121,17 +121,12 @@ public class SettingsServiceImpl implements SettingsService {
 		return details;
 	}
 
-	public boolean isGermplasmListField(final Integer id, final boolean isNursery) {
+	public boolean isGermplasmListField(final Integer id) {
 
 		try {
-			final StandardVariable stdVar = this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
-			if (isNursery && (SettingsUtil.hasVariableType(VariableType.GERMPLASM_DESCRIPTOR, stdVar.getVariableTypes()) || SettingsUtil
-					.hasVariableType(VariableType.EXPERIMENTAL_DESIGN, stdVar.getVariableTypes()))) {
-				return true;
-			} else if (!isNursery && SettingsUtil.hasVariableType(VariableType.GERMPLASM_DESCRIPTOR, stdVar.getVariableTypes())) {
-				return true;
-
-			}
+			final StandardVariable stdVar =
+				this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
+			return SettingsUtil.hasVariableType(VariableType.GERMPLASM_DESCRIPTOR, stdVar.getVariableTypes());
 
 		} catch (final MiddlewareException e) {
 			SettingsServiceImpl.LOG.error(e.getMessage(), e);
@@ -139,6 +134,8 @@ public class SettingsServiceImpl implements SettingsService {
 
 		return false;
 	}
+
+
 
 	@Override
 	public List<LabelFields> retrieveNurseryManagementDetailsAsLabels(final Workbook workbook) {
@@ -152,7 +149,7 @@ public class SettingsServiceImpl implements SettingsService {
 		for (final MeasurementVariable var : measurementVariables) {
 			if (!hiddenFields.contains(var.getTermId())) {
 				final LabelFields field =
-						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery()));
+						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId()));
 
 				// set local name of id variable to local name of name variable
 				final String nameTermId = SettingsUtil.getNameCounterpart(var.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
@@ -172,7 +169,7 @@ public class SettingsServiceImpl implements SettingsService {
 		final List<LabelFields> traitList = new ArrayList<>();
 		for (final MeasurementVariable var : workbook.getVariates()) {
 			traitList
-					.add(new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery())));
+					.add(new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId())));
 		}
 
 		return traitList;
@@ -200,7 +197,7 @@ public class SettingsServiceImpl implements SettingsService {
 			if (var.getRole() != PhenotypicType.TRIAL_DESIGN) {
 
 				final LabelFields field =
-						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery()));
+						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId()));
 				detailList.add(field);
 			}
 
@@ -228,7 +225,7 @@ public class SettingsServiceImpl implements SettingsService {
 					variableName = STUDY_INSTANCE;
 				}
 				final LabelFields field =
-						new LabelFields(variableName, var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery()));
+						new LabelFields(variableName, var.getTermId(), this.isGermplasmListField(var.getTermId()));
 
 				// Set local name of ID variable to local name of NAME variable
 				final String nameTermId = SettingsUtil.getNameCounterpart(var.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
@@ -252,7 +249,7 @@ public class SettingsServiceImpl implements SettingsService {
 		for (final MeasurementVariable var : workbook.getFactors()) {
 			if (TermId.BLOCK_NO.getId() == var.getTermId()) {
 				final LabelFields field =
-						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), true));
+						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId()));
 				field.setName(var.getName());
 				labelFieldsList.add(field);
 			}

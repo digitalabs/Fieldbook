@@ -10,13 +10,11 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -25,7 +23,6 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -68,7 +65,7 @@ public class SettingsServiceImplTest {
 		Mockito.when(fieldbookMiddlewareService.getStandardVariable(standardVariableId, PROGRAM_UUID)).thenReturn(standardVariable);
 
 		Assert.assertTrue("Expecting to return true when the variable exists from germplasm descriptor OR experimental design.",
-				this.serviceDUT.isGermplasmListField(standardVariableId, true));
+				this.serviceDUT.isGermplasmListField(standardVariableId));
 	}
 
 	@Test
@@ -83,7 +80,7 @@ public class SettingsServiceImplTest {
 		Mockito.when(fieldbookMiddlewareService.getStandardVariable(standardVariableId, PROGRAM_UUID)).thenReturn(standardVariable);
 
 		Assert.assertFalse("Expecting to return false when the variable do not exist from germplasm descriptor OR experimental design.",
-				this.serviceDUT.isGermplasmListField(standardVariableId, true));
+				this.serviceDUT.isGermplasmListField(standardVariableId));
 	}
 
 	@Test
@@ -96,12 +93,12 @@ public class SettingsServiceImplTest {
 
 		Mockito.when(fieldbookMiddlewareService.getStandardVariable(Mockito.anyInt(), Mockito.anyString())).thenReturn(standardVariable);
 
-		List<MeasurementVariable> traits = this.initializeListOfVariates();
+		final List<MeasurementVariable> traits = this.initializeListOfVariates();
 
 		Mockito.when(this.workbook.getVariates()).thenReturn(traits);
 		Mockito.when(this.workbook.isNursery()).thenReturn(true);
 
-		List<LabelFields> result = this.serviceDUT.retrieveTraitsAsLabels(this.workbook);
+		final List<LabelFields> result = this.serviceDUT.retrieveTraitsAsLabels(this.workbook);
 
 		Assert.assertEquals("equal results", this.initializeListOfVariates().size(), result.size());
 	}
@@ -123,7 +120,7 @@ public class SettingsServiceImplTest {
 
 		Mockito.when(workbook.getFactors()).thenReturn(factors);
 
-		List<LabelFields> result = this.serviceDUT.retrieveExperimentalDesignFactorsAsLabels(workbook);
+		final List<LabelFields> result = this.serviceDUT.retrieveExperimentalDesignFactorsAsLabels(workbook);
 
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(TermId.BLOCK_NO.getId(), result.get(0).getId());
@@ -142,7 +139,7 @@ public class SettingsServiceImplTest {
 
 		Mockito.when(workbook.getFactors()).thenReturn(factors);
 
-		List<LabelFields> result = this.serviceDUT.retrieveExperimentalDesignFactorsAsLabels(workbook);
+		final List<LabelFields> result = this.serviceDUT.retrieveExperimentalDesignFactorsAsLabels(workbook);
 
 		Assert.assertTrue(result.isEmpty());
 
@@ -150,10 +147,10 @@ public class SettingsServiceImplTest {
 	}
 
 	private List<MeasurementVariable> initializeListOfVariates() {
-		List<MeasurementVariable> traits = new ArrayList<>();
+		final List<MeasurementVariable> traits = new ArrayList<>();
 
 		for (int i = 99; i < 110; i++) {
-			MeasurementVariable variate = new MeasurementVariable();
+			final MeasurementVariable variate = new MeasurementVariable();
 			variate.setName("variate_name" + i);
 			variate.setTermId(i);
 			traits.add(variate);

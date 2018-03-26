@@ -15,7 +15,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -89,8 +88,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	@Deprecated
-	public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, HttpSession session)
-			throws MiddlewareQueryException {
+	public String show(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model, final HttpSession session) {
 
 		this.getUserSelection().setMeasurementRowList(
 				this.measurementsGeneratorService.generateRealMeasurementRows(this.getUserSelection()));
@@ -103,12 +101,12 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 	}
 
 	@RequestMapping(value = "/viewNursery/{nurseryId}", method = RequestMethod.GET)
-	public String viewNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, @PathVariable int nurseryId) {
+	public String viewNursery(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model, @PathVariable final int nurseryId) {
 		Workbook workbook = null;
 
 		try {
 			workbook = this.fieldbookMiddlewareService.getStudyDataSet(nurseryId);
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			AddOrRemoveTraitsController.LOG.error(e.getMessage(), e);
 		}
 
@@ -135,17 +133,17 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 	}
 
 	@RequestMapping(value = "/viewStudyAjax/{studyType}/{datasetId}", method = RequestMethod.GET)
-	public String viewNurseryAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, @PathVariable String studyType,
-			@PathVariable int datasetId) {
+	public String viewNurseryAjax(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model, @PathVariable
+	final String studyType,
+			@PathVariable final int datasetId) {
 
 		Workbook workbook = null;
 		try {
-			boolean isTrial = studyType != null && StudyType.T.getName().equalsIgnoreCase(studyType);
-			workbook = this.fieldbookMiddlewareService.getCompleteDataset(datasetId, isTrial);
+			workbook = this.fieldbookMiddlewareService.getCompleteDataset(datasetId);
 			this.fieldbookService.setAllPossibleValuesInWorkbook(workbook);
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
 					this.ontologyService, contextUtil.getCurrentProgramUUID());
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			AddOrRemoveTraitsController.LOG.error(e.getMessage(), e);
 		}
 		this.getUserSelection().setMeasurementRowList(workbook.arrangeMeasurementObservation(workbook.getObservations()));

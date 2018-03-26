@@ -1,18 +1,7 @@
 // This js file is used in seedInventoryPagination.html.
 var InventoryPage = {
     setupPage: function() {
-        var listDivIdentifier  = '';
-        if(isNursery()) {
-            if ($('#create-nursery-tab-headers .tabdrop').hasClass('active')) {
-                //means the active is in the tab drop
-                listDivIdentifier = $('#create-nursery-tab-headers .tabdrop li.active .fbk-close-tab').attr('id');
-            } else {
-                listDivIdentifier = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id');
-            }
-        } else {
-            listDivIdentifier = $('#manage-trial-tab-headers .active').children('a').attr('tab-data');
-        }
-
+        var listDivIdentifier = $('#manage-trial-tab-headers .active').children('a').attr('tab-data');
         var sectionContainerDiv = 'stock-content-pane' + listDivIdentifier;
         var inventoryTableId = 'inventory-table' + listDivIdentifier;
 

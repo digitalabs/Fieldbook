@@ -66,13 +66,8 @@ function showPopoverCheck(index, sectionContainer, bodyContainer) {
 	if (isShowPopOver) {
 		var currentCheckVal = $(sectionContainer + ' #selectedCheck' + index).val(),
 			realIndex = index,
-			suffix = '/N',
 			popoverOptions = {},
-			listDataTable = selectedCheckListDataTable;
-		if (!isNursery()) {
-			suffix = '/T';
 			listDataTable = germplasmDataTable;
-		}
 
 		//we need to get the real index of the check
 
@@ -85,31 +80,19 @@ function showPopoverCheck(index, sectionContainer, bodyContainer) {
 			});
 		}
 		$.ajax({
-			url: '/Fieldbook/NurseryManager/GermplasmList/edit/check/' + index + '/' + realIndex + suffix,
+			url: '/Fieldbook/NurseryManager/GermplasmList/edit/check/' + index + '/' + realIndex,
 			type: 'GET',
 			data: 'currentVal=' + currentCheckVal,
 			cache: false,
 			success: function(data) {
-
-				if (!isNursery()) {
-					popoverOptions = {
-						html: true,
-						title: 'Edit Check',
-						content: data,
-						trigger: 'manual',
-						placement: 'right',
-						container: 'body'
-					};
-				} else {
-					popoverOptions = {
-						html: true,
-						title: 'Edit Check',
-						content: data,
-						trigger: 'manual',
-						placement: 'left',
-						container: 'body'
-					};
-				}
+				popoverOptions = {
+					html: true,
+					title: 'Edit Check',
+					content: data,
+					trigger: 'manual',
+					placement: 'right',
+					container: 'body'
+				};
 				$('body .popover').remove();
 				$(sectionContainer + ' .edit-check' + index).popover('destroy');
 				$(sectionContainer + ' .edit-check' + index).popover(popoverOptions);

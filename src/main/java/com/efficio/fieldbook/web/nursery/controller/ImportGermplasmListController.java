@@ -1091,21 +1091,15 @@ public class ImportGermplasmListController extends SettingsController {
 		return ImportGermplasmListController.SUCCESS;
 	}
 
-	@RequestMapping(value = "/edit/check/{index}/{dataTableIndex}/{type}", method = RequestMethod.GET)
+	@RequestMapping(value = "/edit/check/{index}/{dataTableIndex}", method = RequestMethod.GET)
 	public String editCheck(@ModelAttribute("updatedGermplasmCheckForm") final UpdateGermplasmCheckForm form, final Model model,
-			@PathVariable final int index, @PathVariable final int dataTableIndex, @PathVariable final String type,
+			@PathVariable final int index, @PathVariable final int dataTableIndex,
 			@RequestParam(value = "currentVal") final String currentVal) {
 
 		try {
-			ImportedGermplasm importedCheckGermplasm = null;
-			if (type != null && type.equalsIgnoreCase(StudyType.T.getName())) {
-				importedCheckGermplasm = this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
-						.getImportedGermplasms().get(dataTableIndex);
-			} else if (type != null && type.equalsIgnoreCase(StudyType.N.getName())) {
-				importedCheckGermplasm = this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-						.getImportedGermplasms().get(dataTableIndex);
-			}
-			assert importedCheckGermplasm != null;
+			final ImportedGermplasm importedCheckGermplasm =
+					this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()
+							.get(dataTableIndex);
 			importedCheckGermplasm.setEntryTypeValue(currentVal);
 			final List<Enumeration> allEnumerations = this.fieldbookService.getCheckTypeList();
 

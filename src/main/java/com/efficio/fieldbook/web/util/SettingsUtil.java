@@ -72,8 +72,8 @@ import java.util.StringTokenizer;
  */
 public class SettingsUtil {
 
-	public static final List<String> HIDDEN_FIELDS = Arrays.asList(AppConstants.HIDDEN_FIELDS.getString().split(","));
-	public static final List<String> STUDY_BASIC_REQUIRED_FIELDS =
+	protected static final List<String> HIDDEN_FIELDS = Arrays.asList(AppConstants.HIDDEN_FIELDS.getString().split(","));
+	protected static final List<String> STUDY_BASIC_REQUIRED_FIELDS =
 		Arrays.asList(AppConstants.STUDY_BASIC_REQUIRED_FIELDS.getString().split(","));
 
 	/**
@@ -1466,7 +1466,7 @@ public class SettingsUtil {
 
 		final StudyDetails studyDetails =
 				SettingsUtil.convertWorkbookStudyLevelVariablesToStudyDetails(workbook, fieldbookMiddlewareService, fieldbookService,
-						userSelection, workbook.getStudyDetails().getId().toString(), programUUID, appConstantsProperties, createdBy);
+						userSelection, programUUID, appConstantsProperties, createdBy);
 
 		if (workbook.getTrialDatasetId() != null) {
 			studyDetails.setNumberOfEnvironments(
@@ -1496,7 +1496,7 @@ public class SettingsUtil {
 	}
 
 	private static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(final Workbook workbook, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-		final FieldbookService fieldbookService, final UserSelection userSelection, final String projectId, final String programUUID,
+		final FieldbookService fieldbookService, final UserSelection userSelection, final String programUUID,
 		final Properties appConstantsProperties, final String createdBy) {
 
 		final StudyDetails details = new StudyDetails();
@@ -1522,7 +1522,7 @@ public class SettingsUtil {
 			managementDetails = SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(),
 					userSelection, fieldbookMiddlewareService, fieldbookService, programUUID);
 			nurseryConditionDetails = SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(constants, 1, userSelection,
-					fieldbookMiddlewareService, fieldbookService, true, programUUID);
+					fieldbookMiddlewareService, fieldbookService, programUUID);
 		}
 
 		if (!workbook.isNursery()) {
@@ -1537,17 +1537,9 @@ public class SettingsUtil {
 	}
 
 	private static List<SettingDetail> convertWorkbookOtherStudyVariablesToSettingDetails(final List<MeasurementVariable> conditions,
-			final int index, final UserSelection userSelection,
-			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final String programUUID) {
-		return SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(conditions, index, userSelection, fieldbookMiddlewareService,
-				fieldbookService, false, programUUID);
-	}
-
-	private static List<SettingDetail> convertWorkbookOtherStudyVariablesToSettingDetails(final List<MeasurementVariable> conditions,
 			final int orderIndex, final UserSelection userSelection,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final boolean isVariate, final String programUUID) {
+			final FieldbookService fieldbookService, final String programUUID) {
 		int index = orderIndex;
 
 		final List<SettingDetail> details = new ArrayList<>();
@@ -1565,7 +1557,7 @@ public class SettingsUtil {
 		for (final MeasurementVariable condition : conditions) {
 			final String id = String.valueOf(condition.getTermId());
 			final String role = condition.getRole().name();
-			if (!SettingsUtil.isIdInFieldListForHiding(userSelection, id)
+			if (!SettingsUtil.isIdInFieldListForHiding(id)
 					// do not show breeding method id if code exists
 					&& !SettingsUtil.breedingCodeExists(condition.getTermId(), variableMap)) {
 				// do not name if code or id exists
@@ -1587,14 +1579,9 @@ public class SettingsUtil {
 		return details;
 	}
 
-	protected static boolean isIdInFieldListForHiding(final UserSelection userSelection, final String termId) {
+	protected static boolean isIdInFieldListForHiding(final String termId) {
 		final List<String> basicFields;
-//		if (userSelection.isTrial()) {
-			basicFields = SettingsUtil.STUDY_BASIC_REQUIRED_FIELDS;
-/*		} else {
-			basicFields = SettingsUtil.NURSERY_BASIC_REQUIRED_FIELDS;
-		}*/
-
+		basicFields = SettingsUtil.STUDY_BASIC_REQUIRED_FIELDS;
 		return basicFields.contains(termId) || SettingsUtil.HIDDEN_FIELDS.contains(termId);
 	}
 
@@ -1894,7 +1881,6 @@ public class SettingsUtil {
 			final StandardVariable standardVariable =
 					SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
 			variable.setPSMRFromStandardVariable(standardVariable, role);
-			stdVar = standardVariable.getId();
 		}
 
 		return variable;

@@ -289,7 +289,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 			//TODO Remove commented code - Unneded if, getImportedGermplasmMainInfo is never null if passes previous if condition
 			// NOTE: clearing measurements if germplasm list is null
-			//			if (this.userSelection.getImportedGermplasmMainInfo() == null && this.userSelection.getMeasurementRowList() != null) {
+//			if (this.userSelection.getImportedGermplasmMainInfo() == null && this.userSelection.getMeasurementRowList() != null) {
 //				this.userSelection.getMeasurementRowList().clear();
 //			}
 

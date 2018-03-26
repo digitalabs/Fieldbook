@@ -2,7 +2,6 @@
 /*exported confirmReplaceList,resetGermplasmList,removeCheckFromList,openListTree,viewGermplasmLitDetails */
 /*exported additionalLazyLoadUrl, chooseList*/
 /*globals angular, isNursery*/
-
 var addedGid = {},
 	listId = 0,
 	makeDraggableBool = true,
@@ -31,10 +30,8 @@ function resetGermplasmList() {
 	listId = 0;
 	lastDraggedPrimaryList = 0;
 
-	if (!isNursery()) {
-		var trialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
-		trialManagerDataService.indicateUnappliedChangesAvailable(true);
-	}
+	var trialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
+	trialManagerDataService.indicateUnappliedChangesAvailable(true);
 
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/importGermplasmList/resetNurseryGermplasmDetails',
@@ -44,28 +41,18 @@ function resetGermplasmList() {
 		success: function() {
 		}
 	});
-	if (isNursery()) {
-		addFakeCheckTable();
+	if (angular && angular.element("#manage-trial-tabs [ui-view='germplasm']").length === 1) {
+		var _scope = angular.element("#manage-trial-tabs [ui-view='germplasm']").scope();
 
-		// hide Import Crosses in Actions menu
-		if ($('#createNurseryMainForm #studyId').length === 1) {
-			$('#import-crosses').css('display', 'none');
-		} else {
-			$('#main-actions-btn').addClass('fbk-hide');
-		}
-	} else {
-		if (angular && angular.element("#manage-trial-tabs [ui-view='germplasm']").length === 1) {
-			var _scope = angular.element("#manage-trial-tabs [ui-view='germplasm']").scope();
+		setTimeout(function () {
+			_scope.$apply(function () {
+				_scope.germplasmListCleared();
+				_scope.updateOccurred = false;
+			});
+		}, 1);
 
-			setTimeout(function() {
-				_scope.$apply(function() {
-					_scope.germplasmListCleared();
-					_scope.updateOccurred = false;
-				});
-			}, 1);
-
-		}
 	}
+
 
 }
 

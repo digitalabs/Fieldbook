@@ -283,22 +283,25 @@ public class ImportGermplasmListController extends SettingsController {
 
 		// if we have no germplasm list available for the nursery, skip this
 		// validation flow
-		if (null != this.getUserSelection().getImportedGermplasmMainInfo()
-				&& null != this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()) {
+		if (null != this.userSelection.getImportedGermplasmMainInfo()
+				&& null != this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()) {
 			this.assignAndIncrementEntryNumberAndPlotNumber(form);
 
+			//TODO Remove commented code - Unneded if, getImportedGermplasmMainInfo is never null if passes previous if condition
 			// NOTE: clearing measurements if germplasm list is null
-			if (this.userSelection.getImportedGermplasmMainInfo() == null && this.userSelection.getMeasurementRowList() != null) {
-				this.userSelection.getMeasurementRowList().clear();
-			}
+			//			if (this.userSelection.getImportedGermplasmMainInfo() == null && this.userSelection.getMeasurementRowList() != null) {
+//				this.userSelection.getMeasurementRowList().clear();
+//			}
 
-			if (false && !hasTemporaryWorkbook) {// VER COMO ARREGLAR ESTO. creo que se debe agregar
-
-				this.validateEntryAndPlotNo(form);
-
-				this.processImportedGermplasmAndChecks(this.userSelection, form);
-
-			} else if (!hasTemporaryWorkbook) {
+			//TODO Remove commented code - Never a nursery, so processing germplasms and checks is not needed when generating an experimental design
+//			if (false && !hasTemporaryWorkbook) {// VER COMO ARREGLAR ESTO. creo que se debe agregar
+//
+//				this.validateEntryAndPlotNo(form);
+//
+//				this.processImportedGermplasmAndChecks(this.userSelection, form);
+//
+//			} else
+			if (!hasTemporaryWorkbook) {
 				// this section of code is only called for existing trial
 				// without temporary workbook. No need for reset of measurement
 				// row
@@ -1543,6 +1546,7 @@ public class ImportGermplasmListController extends SettingsController {
 		// end: section for taking note of the check germplasm
 	}
 
+	@Deprecated
 	protected void processImportedGermplasmAndChecks(final UserSelection userSelection, final ImportGermplasmListForm form) {
 
 		this.processChecks(userSelection, form);

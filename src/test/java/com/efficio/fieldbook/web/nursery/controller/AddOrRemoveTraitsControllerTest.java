@@ -38,6 +38,7 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 
+@Deprecated
 public class AddOrRemoveTraitsControllerTest extends AbstractBaseIntegrationTest {
 
 	/** The Constant log. */

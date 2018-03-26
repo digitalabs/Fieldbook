@@ -80,18 +80,18 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 				(StringUtils.isEmpty(parameter.getCheckInsertionManner())) ? null : Integer.parseInt(parameter.getCheckInsertionManner());
 
 		final List<ImportedGermplasm> mergedGermplasmList =
-				this.mergeGermplasmList(testEntryList, checkList, startingPosition, spacing, insertionManner);
+				this.mergeTestAndCheckEntries(testEntryList, checkList, startingPosition, spacing, insertionManner);
 
 		final int environments = Integer.valueOf(parameter.getNoOfEnvironments());
 
 		for (int instanceNumber = 1; instanceNumber <= environments; instanceNumber++) {
 
-			Integer plotNo = Integer.parseInt(parameter.getStartingPlotNo());
+			Integer plotNumber = Integer.parseInt(parameter.getStartingPlotNo());
 
 			for (final ImportedGermplasm germplasm : mergedGermplasmList) {
 
 				final MeasurementRow measurementRow =
-						this.createMeasurementRows(instanceNumber, germplasm, germplasm.getEntryId(), plotNo++, trialVariables, variates,
+						this.createMeasurementRow(instanceNumber, germplasm, germplasm.getEntryId(), plotNumber++, trialVariables, variates,
 								nonTrialFactors, factors);
 				measurementRows.add(measurementRow);
 			}
@@ -137,7 +137,10 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 
 					this.loadChecksAndTestEntries(germplasmList, checkList, testEntryList);
 
-					//Add Size of test list should be higher than zero
+					if (testEntryList.isEmpty()) {
+						return new ExpDesignValidationOutput(Boolean.FALSE,
+								this.messageSource.getMessage("germplasm.list.all.entries.can.not.be.checks", null, locale));
+					}
 
 					if (!checkList.isEmpty()) {
 						if (expDesignParameter.getCheckStartingPosition() == null || !NumberUtils
@@ -154,8 +157,12 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 							return new ExpDesignValidationOutput(Boolean.FALSE,
 									this.messageSource.getMessage("check.manner.of.insertion.invalid", null, locale));
 						}
-						final Integer checkStartingPosition = Integer.parseInt(expDesignParameter.getCheckStartingPosition());
-						final Integer checkSpacing = Integer.parseInt(expDesignParameter.getCheckSpacing());
+
+						final Integer checkStartingPosition =
+								(StringUtils.isEmpty(expDesignParameter.getCheckStartingPosition())) ? null : Integer.parseInt(expDesignParameter.getCheckStartingPosition());
+
+						final Integer checkSpacing = (StringUtils.isEmpty(expDesignParameter.getCheckSpacing())) ? null : Integer.parseInt(expDesignParameter.getCheckSpacing());
+
 						if (checkStartingPosition < 1) {
 							return new ExpDesignValidationOutput(Boolean.FALSE, this.messageSource
 									.getMessage("germplasm.list.starting.index.should.be.greater.than.zero", null, locale));
@@ -243,10 +250,10 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 		return newList;
 	}
 
-	private List<ImportedGermplasm> mergeGermplasmList(final List<ImportedGermplasm> testEntryList, final List<ImportedGermplasm> checkList,
-			final Integer startEntry, final Integer interval, final Integer manner) {
+	private List<ImportedGermplasm> mergeTestAndCheckEntries(final List<ImportedGermplasm> testEntryList,
+			final List<ImportedGermplasm> checkList, final Integer startingIndex, final Integer spacing, final Integer insertionManner) {
 
-		if (!this.isThereSomethingToMerge(testEntryList, checkList, startEntry, interval)) {
+		if (!this.isThereSomethingToMerge(testEntryList, checkList, startingIndex, spacing)) {
 			return testEntryList;
 		}
 
@@ -258,7 +265,7 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 		int checkIndex = 0;
 		int intervalEntry = 0;
 		for (final ImportedGermplasm primaryGermplasm : testEntryList) {
-			if (primaryEntry == startEntry || intervalEntry == interval) {
+			if (primaryEntry == startingIndex || intervalEntry == spacing) {
 				isStarted = Boolean.TRUE;
 				shouldInsert = Boolean.TRUE;
 				intervalEntry = 0;
@@ -270,7 +277,7 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 
 			if (shouldInsert) {
 				shouldInsert = Boolean.FALSE;
-				List<ImportedGermplasm> checks = this.generateChecksToInsert(checkList, checkIndex, manner);
+				List<ImportedGermplasm> checks = this.generateChecksToInsert(checkList, checkIndex, insertionManner);
 				checkIndex++;
 				newList.addAll(checks);
 			}
@@ -286,7 +293,7 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 		return newList;
 	}
 
-	private MeasurementRow createMeasurementRows(final int instanceNo, final ImportedGermplasm germplasm, final int entryNo,
+	private MeasurementRow createMeasurementRow(final int instanceNo, final ImportedGermplasm germplasm, final int entryNo,
 			final int plotNo, final List<MeasurementVariable> trialVariables, final List<MeasurementVariable> variates,
 			final List<MeasurementVariable> nonTrialFactors, final List<MeasurementVariable> factors) throws MiddlewareQueryException {
 

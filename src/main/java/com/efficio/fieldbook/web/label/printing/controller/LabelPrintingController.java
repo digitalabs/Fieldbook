@@ -420,7 +420,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		this.userLabelPrinting.setStudyId(null);
 		this.userLabelPrinting.setTitle(StringUtils.EMPTY);
-		this.userLabelPrinting.setName(StringUtils.EMPTY);
 		this.userLabelPrinting.setFieldMapInfo(null);
 		this.userLabelPrinting.setFieldMapInfoList(null);
 		this.userLabelPrinting.setBarcodeNeeded("0");

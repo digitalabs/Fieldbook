@@ -38,13 +38,7 @@ public class AttributeFemaleParentExpression extends BaseExpression {
 		final String attributeValue = germplasmDataManager.getAttributeValue(gpid1, attributeName);
 
 		for (final StringBuilder value : values) {
-
-			if (gpid1 != null && !gpid1.equals(0)) {
-				this.replaceExpressionWithValue(value, attributeValue);
-			} else {
-				this.replaceExpressionWithValue(value, "");
-			}
-
+			this.replaceExpressionWithValue(value, attributeValue);
 		}
 	}
 

@@ -392,26 +392,27 @@ public class ImportGermplasmListController extends SettingsController {
 				}
 			}
 
-			// This part of the code is only relevant when crating checks from
-			// an existing list.
-
-			// First calculate the number that needs to be added to existing
-			// check numbers.
-			final Integer differenceToAppendToChecks;
-			if (minOriginalEntryNumber == null) {
-				differenceToAppendToChecks = this.userSelection.getStartingEntryNo();
-			} else {
-				differenceToAppendToChecks = this.userSelection.getStartingEntryNo() - minOriginalEntryNumber;
-			}
-
-			final ImportedGermplasmMainInfo importedCheckGermplasmMainInfo = this.userSelection.getImportedCheckGermplasmMainInfo();
-			final List<ImportedGermplasm> checkList;
-			if (importedCheckGermplasmMainInfo != null && importedCheckGermplasmMainInfo.getImportedGermplasmList() != null
-					&& (checkList = importedCheckGermplasmMainInfo.getImportedGermplasmList().getImportedGermplasms()) != null) {
-				for (final ImportedGermplasm importedGermplasm : checkList) {
-					importedGermplasm.setEntryId(importedGermplasm.getEntryId() + differenceToAppendToChecks);
-				}
-			}
+			// TODO Remove code - Checks list will not be supported anymore
+//			// This part of the code is only relevant when crating checks from
+//			// an existing list.
+//
+//			// First calculate the number that needs to be added to existing
+//			// check numbers.
+//			final Integer differenceToAppendToChecks;
+//			if (minOriginalEntryNumber == null) {
+//				differenceToAppendToChecks = this.userSelection.getStartingEntryNo();
+//			} else {
+//				differenceToAppendToChecks = this.userSelection.getStartingEntryNo() - minOriginalEntryNumber;
+//			}
+//
+//			final ImportedGermplasmMainInfo importedCheckGermplasmMainInfo = this.userSelection.getImportedCheckGermplasmMainInfo();
+//			final List<ImportedGermplasm> checkList;
+//			if (importedCheckGermplasmMainInfo != null && importedCheckGermplasmMainInfo.getImportedGermplasmList() != null
+//				&& (checkList = importedCheckGermplasmMainInfo.getImportedGermplasmList().getImportedGermplasms()) != null) {
+//				for (final ImportedGermplasm importedGermplasm : checkList) {
+//					importedGermplasm.setEntryId(importedGermplasm.getEntryId() + differenceToAppendToChecks);
+//				}
+//			}
 
 		}
 	}
@@ -496,8 +497,8 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param model - the model
 	 * @return the string
 	 */
-	@RequestMapping(value = "/displayGermplasmDetails/{listId}/{type}", method = RequestMethod.GET)
-	public String displayGermplasmDetailsOfSelectedList(@PathVariable final Integer listId, @PathVariable final String type,
+	@RequestMapping(value = "/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
+	public String displayGermplasmDetailsOfSelectedList(@PathVariable final Integer listId,
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final Model model) {
 		try {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();

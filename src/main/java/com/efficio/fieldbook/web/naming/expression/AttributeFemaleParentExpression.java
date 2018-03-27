@@ -24,14 +24,27 @@ public class AttributeFemaleParentExpression extends BaseExpression {
 	@Override
 	public void apply(final List<StringBuilder> values, final AdvancingSource source, final String capturedText) {
 
-		final Method sourceMethod = source.getBreedingMethod();
+		final Method breedingMethod = source.getBreedingMethod();
 		Integer gpid1 = null;
-		if (AppConstants.METHOD_TYPE_GEN.getString().equals(sourceMethod.getMtype())) {
+		if (AppConstants.METHOD_TYPE_GEN.getString().equals(breedingMethod.getMtype())) {
 			// If the method is Generative, GPID1 refers to the GID of the female parent
 			gpid1 = Integer.valueOf(source.getFemaleGid());
-		} else if (AppConstants.METHOD_TYPE_DER.getString().equals(sourceMethod.getMtype())) {
-			// if the method is Derivative, GPID1 refers to the group source (the Female Parent GID of the previous advanced generation)
-			gpid1 = source.getGermplasm().getGpid1();
+		} else if (AppConstants.METHOD_TYPE_DER.getString().equals(breedingMethod.getMtype())) {
+
+			final Integer sourceGpid1 = source.getGermplasm().getGpid1();
+			final Integer sourceGpid2 = source.getGermplasm().getGpid2();
+			final Method sourceMethod = source.getSourceMethod();
+
+			if (sourceMethod != null && sourceMethod.getMtype() != null && AppConstants.METHOD_TYPE_GEN.getString()
+					.equals(sourceMethod.getMtype()) || source.getGermplasm().getGnpgs() < 0 && (sourceGpid1 != null && sourceGpid1
+					.equals(0)) && (sourceGpid2 != null && sourceGpid2.equals(0))) {
+				// If the source breeding method is generative or the source's gpid1 and gpid2 are 0, then gpid1 refers to the immediate source
+				gpid1 = Integer.valueOf(source.getGermplasm().getGid());
+			} else {
+				// if the method is Derivative, GPID1 refers to the group source (the Female Parent GID of the previous advanced generation)
+				gpid1 = source.getGermplasm().getGpid1();
+			}
+
 		}
 
 		final String attributeName = capturedText.substring(1, capturedText.length() - 1).split("\\.")[1];

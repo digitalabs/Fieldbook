@@ -65,9 +65,9 @@ public class AttributeFemaleParentExpressionTest extends TestExpression {
 	}
 
 	@Test
-	public void testAttributeAsPrefixGpid1UnknownDerivativeMethod() throws Exception {
+	public void testAttributeAsPrefixDerivativeMethodWithUnknownSourceGpid1andGpid2() throws Exception {
 
-		Mockito.when(germplasmDataManager.getAttributeValue(0, ATTRIBUTE_NAME)).thenReturn("");
+		Mockito.when(germplasmDataManager.getAttributeValue(1000, ATTRIBUTE_NAME)).thenReturn("Mexico");
 		final Method derivativeMethod = this.createDerivativeMethod(PREFIX, COUNT, null, "-", true);
 		final ImportedGermplasm importedGermplasm =
 				this.createImportedGermplasm(1, "(AA/ABC)", "1000", 0, 0, -1, derivativeMethod.getMid());
@@ -75,7 +75,22 @@ public class AttributeFemaleParentExpressionTest extends TestExpression {
 		List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source, PREFIX);
 
-		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-")));
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-Mexico")));
+	}
+
+	@Test
+	public void testAttributeAsPrefixDerivativeMethodWithSourceGermplasmIsGenerative() throws Exception {
+
+		Mockito.when(germplasmDataManager.getAttributeValue(1000, ATTRIBUTE_NAME)).thenReturn("Mexico");
+		final Method derivativeMethod = this.createDerivativeMethod(PREFIX, COUNT, null, "-", true);
+		final ImportedGermplasm importedGermplasm =
+				this.createImportedGermplasm(1, "(AA/ABC)", "1000", 0, 0, -1, derivativeMethod.getMid());
+		AdvancingSource source = this.createAdvancingSourceTestData(derivativeMethod, importedGermplasm, "(AA/ABC)", "Dry", "NurseryTest");
+		source.setSourceMethod(this.createGenerativeMethod(PREFIX, COUNT, null, "-", true));
+		List<StringBuilder> values = this.createInitialValues(source);
+		expression.apply(values, source, PREFIX);
+
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-Mexico")));
 	}
 
 	@Test

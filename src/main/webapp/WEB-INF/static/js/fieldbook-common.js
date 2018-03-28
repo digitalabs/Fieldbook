@@ -3415,20 +3415,7 @@ function hideClearChecksButton() {
 }
 function reloadCheckListTable() {
 	'use strict';
-	if (isNursery()) {
-		$.ajax({
-			url: '/Fieldbook/ListManager/GermplasmList/reload/check/list/N',
-			type: 'GET',
-			data: '',
-			async: false,
-			success: function(data) {
-				$('#check-germplasm-list').html(data);
-				hideClearChecksButton();
-			}
-		});
-	} else {
-		refreshListDetails();
-	}
+	refreshListDetails();
 }
 
 function refreshListDetails() {

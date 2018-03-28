@@ -15,8 +15,8 @@ import java.util.regex.Pattern;
 public class AttributeFemaleParentExpression extends BaseExpression {
 
 	// Example: ATTRFP.NOTES
-	public static final String PATTERN_KEY = "\\[ATTRFP\\.([^\\.]*)\\]";
-	private static final Pattern pattern = Pattern.compile(PATTERN_KEY);
+	public static final String ATTRIBUTE_KEY = "ATTRFP";
+	public static final String PATTERN_KEY = "\\[" + ATTRIBUTE_KEY + "\\.([^\\.]*)\\]";
 
 	@Autowired
 	private GermplasmDataManager germplasmDataManager;
@@ -51,7 +51,7 @@ public class AttributeFemaleParentExpression extends BaseExpression {
 		final String attributeValue = germplasmDataManager.getAttributeValue(gpid1, attributeName);
 
 		for (final StringBuilder value : values) {
-			this.replaceExpressionWithValue(value, attributeValue);
+			this.replaceAttributeExpressionWithValue(value, attributeName, attributeValue);
 		}
 	}
 
@@ -60,9 +60,9 @@ public class AttributeFemaleParentExpression extends BaseExpression {
 		return AttributeFemaleParentExpression.PATTERN_KEY;
 	}
 
-	@Override
-	protected void replaceExpressionWithValue(final StringBuilder container, final String value) {
-		final Matcher matcher = pattern.matcher(container.toString());
+	protected void replaceAttributeExpressionWithValue(final StringBuilder container, final String attributeName, final String value) {
+		final Pattern patternWithAttributeName = Pattern.compile("\\[" + ATTRIBUTE_KEY + "." + attributeName + "\\]");
+		final Matcher matcher = patternWithAttributeName.matcher(container.toString());
 		while (matcher.find()) {
 			container.replace(matcher.start(), matcher.end(), value);
 		}

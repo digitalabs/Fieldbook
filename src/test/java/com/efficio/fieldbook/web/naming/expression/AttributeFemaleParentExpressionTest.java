@@ -46,7 +46,7 @@ public class AttributeFemaleParentExpressionTest extends TestExpression {
 
 		expression.apply(values, source, PREFIX);
 
-		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-Mexico")));
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-Mexico[SEQUENCE]")));
 	}
 
 	@Test
@@ -61,7 +61,7 @@ public class AttributeFemaleParentExpressionTest extends TestExpression {
 
 		expression.apply(values, source, PREFIX);
 
-		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-")));
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-[SEQUENCE]")));
 	}
 
 	@Test
@@ -75,7 +75,7 @@ public class AttributeFemaleParentExpressionTest extends TestExpression {
 		List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source, PREFIX);
 
-		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-Mexico")));
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-Mexico[SEQUENCE]")));
 	}
 
 	@Test
@@ -90,7 +90,7 @@ public class AttributeFemaleParentExpressionTest extends TestExpression {
 		List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source, PREFIX);
 
-		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-Mexico")));
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-Mexico[SEQUENCE]")));
 	}
 
 	@Test
@@ -108,7 +108,7 @@ public class AttributeFemaleParentExpressionTest extends TestExpression {
 
 		expression.apply(values, source, PREFIX);
 
-		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-Mexico")));
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-Mexico[SEQUENCE]")));
 	}
 
 	@Test
@@ -126,7 +126,7 @@ public class AttributeFemaleParentExpressionTest extends TestExpression {
 
 		expression.apply(values, source, PREFIX);
 
-		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-")));
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-[SEQUENCE]")));
 	}
 
 	@Test
@@ -140,7 +140,7 @@ public class AttributeFemaleParentExpressionTest extends TestExpression {
 		List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source, PREFIX);
 
-		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-")));
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-[SEQUENCE]")));
 	}
 
 }

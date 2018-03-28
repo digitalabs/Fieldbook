@@ -132,9 +132,8 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 		return this.userSelection;
 	}
 
-	@RequestMapping(value = "/viewStudyAjax/{studyType}/{datasetId}", method = RequestMethod.GET)
-	public String viewNurseryAjax(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model, @PathVariable
-	final String studyType,
+	@RequestMapping(value = "/viewStudyAjax/{datasetId}", method = RequestMethod.GET)
+	public String viewStudyAjax(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
 			@PathVariable final int datasetId) {
 
 		Workbook workbook = null;

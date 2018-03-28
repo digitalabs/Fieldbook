@@ -3649,15 +3649,14 @@ function getCurrentStudyIdInTab() {
 	}
 }
 
-function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {// TODO CUENYAD
+function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 	'use strict';
-	var currentStudyId = getCurrentStudyIdInTab(),
-		studyType = isNursery() ? 'N' : 'T';
+	var currentStudyId = getCurrentStudyIdInTab();
 	if (datasetId == 'Please Choose' || $('#' + getJquerySafeId('dset-tab-') + datasetId).length !== 0) {
 		return;
 	}
 	$.ajax({
-		url: '/Fieldbook/NurseryManager/addOrRemoveTraits/viewStudyAjax/' + studyType + '/' + datasetId,
+		url: '/Fieldbook/NurseryManager/addOrRemoveTraits/viewStudyAjax/' + datasetId,
 		type: 'GET',
 		cache: false,
 		success: function(html) {

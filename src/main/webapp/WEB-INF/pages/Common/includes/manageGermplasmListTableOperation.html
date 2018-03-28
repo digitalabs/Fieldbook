@@ -137,15 +137,11 @@
 		}
 		function displayListDetails(listIdTemp) {
 			'use strict';
-			var suffix = '/N';
-			if(!isNursery()){
-				suffix = '/T';
-			}
 			listId = listIdTemp;
 			$('#'+getDisplayedTreeName()).find('*').removeClass('dynatree-selected');
 			
 			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/displayGermplasmDetails/' + listId + suffix,
+				url: '/Fieldbook/NurseryManager/importGermplasmList/displayGermplasmDetails/' + listId,
 				type: 'GET',
 				cache: false,
 				success: function(html) {

@@ -22,15 +22,15 @@
 			</div>
 			<div class="add-bottom-padding"
 				ng-show="data.noOfEnvironments &gt;= 0">
-				<b th:text="#{trial.experimental.design.number.of.environments}"></b>
+				<b th:text="#{study.experimental.design.number.of.environments}"></b>
 				<span>{{data.noOfEnvironments}}</span>
 			</div>
 			<div class="add-bottom-padding" ng-show="currentDesignType.id != 5">
-				<b th:text="#{trial.experimental.design.number.of.treatments}"></b>
+				<b th:text="#{study.experimental.design.number.of.treatments}"></b>
 				<span>{{totalGermplasmEntryListCount}}</span>
 			</div>
 			<div class="add-bottom-padding" ng-show="currentDesignType.id == 1">
-				<b th:text="#{trial.experimental.design.number.of.blocks}"></b> <span>{{(data.blockSize
+				<b th:text="#{study.experimental.design.number.of.blocks}"></b> <span>{{(data.blockSize
 					> 0) ? ((totalGermplasmEntryListCount % data.blockSize === 0) ?
 					totalGermplasmEntryListCount / data.blockSize : '') : 0}} <b
 					class="text-danger"

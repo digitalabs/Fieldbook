@@ -198,7 +198,7 @@ public class ImportGermplasmListControllerTest {
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, StudyType.N.getName(), form, model);
+		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, form, model);
 
 		Assert.assertTrue("If import is successful, isImportValid should be TRUE", this.userSelection.isImportValid());
 
@@ -240,7 +240,7 @@ public class ImportGermplasmListControllerTest {
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, StudyType.T.getName(),
+		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID,
 				form, model);
 
 		Assert.assertTrue("If import is successful, isImportValid should be TRUE", this.userSelection.isImportValid());
@@ -567,36 +567,6 @@ public class ImportGermplasmListControllerTest {
 
 		Assert.assertEquals("10180", importedGermplasmList.get(1).getEntryTypeValue());
 		Assert.assertEquals(10180, importedGermplasmList.get(1).getEntryTypeCategoricalID().intValue());
-
-	}
-
-	@Test
-	public void testProcessImportedGermplasmAndChecks() {
-
-		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		form.setImportedGermplasm(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList());
-		form.setImportedCheckGermplasm(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList());
-		form.setCheckVariables(this.createCheckVariables(true));
-
-		this.userSelection
-				.setImportedGermplasmMainInfo(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo());
-		this.userSelection.setImportedCheckGermplasmMainInfo(
-				ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo());
-		this.userSelection.setWorkbook(this.createWorkbook());
-
-		final List<ImportedGermplasm> mergedImportedGermplasm = this.createMergedImportedGermplasm();
-
-		Mockito.when(this.mergeCheckService.mergeGermplasmList(Matchers.anyList(), Matchers.anyList(),
-				Matchers.anyInt(), Matchers.anyInt(), Matchers.anyInt())).thenReturn(mergedImportedGermplasm);
-
-		this.importGermplasmListController.processImportedGermplasmAndChecks(this.userSelection, form);
-
-		Mockito.verify(this.importGermplasmFileService)
-				.validataAndAddCheckFactor(form.getImportedGermplasm(), this.userSelection
-						.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
-						this.userSelection);
-		Mockito.verify(this.measurementsGeneratorService).generateRealMeasurementRows(this.userSelection);
-		Mockito.verify(this.fieldbookService).manageCheckVariables(this.userSelection, form);
 
 	}
 

@@ -9,8 +9,8 @@
 						<div class="col-md-12">
 							<label class="control-label"
 								style="vertical-align: top; position: relative; top: 6px;"><strong
-								th:text="#{trial.experimental.design.select}">Select the
-									design type you would like to use for this trial:</strong></label>
+								th:text="#{study.experimental.design.select}">Select the
+									design type you would like to use for this study:</strong></label>
 				
 							<div style="display: inline-block">
 								<div style="width: 350px !important;">
@@ -28,7 +28,7 @@
 									<div class="col-xs-2 add-top-padding-small">
 										<span class="bms-fa-question-circle help-tooltip-nursery"
 											tooltip-placement="right" tooltip-append-to-body="true"
-											th:attr="tooltip=#{trial.experimental.design.incomplete.block.design.tooltip}"></span>
+											th:attr="tooltip=#{study.experimental.design.incomplete.block.design.tooltip}"></span>
 									</div>
 								</div>
 							</div>
@@ -98,13 +98,8 @@
 		if (customMessage !== '') {
 			showInvalidInputMessage(customMessage);
 		} else {
-			if (isNursery()) {
-				showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-					'To update the Measurements table, please save the Nursery', 10000);
-			} else {
-				showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-					'To update the Measurements table, please save the Trial', 10000);
-			}
+			showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+					'To update the Measurements table, please save the Study', 10000);
 		}
 
 	}

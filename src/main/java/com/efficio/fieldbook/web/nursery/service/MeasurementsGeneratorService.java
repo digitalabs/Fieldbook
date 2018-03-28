@@ -21,6 +21,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 /**
  * The Interface MeasurementsGeneratorService.
  */
+@Deprecated
 public interface MeasurementsGeneratorService {
 
 	/**

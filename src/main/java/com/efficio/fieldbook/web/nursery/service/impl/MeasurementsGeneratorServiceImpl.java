@@ -114,10 +114,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 			final MeasurementRow measurementRow = new MeasurementRow();
 			final List<MeasurementData> dataList = new ArrayList<>();
 
-			if (userSelection.isTrial()) {
-				this.createTrialInstanceDataList(dataList, userSelection, trialNo);
-			}
-
+			this.createTrialInstanceDataList(dataList, userSelection, trialNo);
 			this.createFactorDataList(dataList, userSelection, repNo, blockNo, germplasm, entryNo, plotNo, standardVariableMap);
 
 			if (treatmentFactorPermutations != null && treatmentFactorPermutations.length > 0) {

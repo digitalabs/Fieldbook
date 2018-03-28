@@ -3415,20 +3415,7 @@ function hideClearChecksButton() {
 }
 function reloadCheckListTable() {
 	'use strict';
-	if (isNursery()) {
-		$.ajax({
-			url: '/Fieldbook/ListManager/GermplasmList/reload/check/list/N',
-			type: 'GET',
-			data: '',
-			async: false,
-			success: function(data) {
-				$('#check-germplasm-list').html(data);
-				hideClearChecksButton();
-			}
-		});
-	} else {
-		refreshListDetails();
-	}
+	refreshListDetails();
 }
 
 function refreshListDetails() {
@@ -3662,15 +3649,14 @@ function getCurrentStudyIdInTab() {
 	}
 }
 
-function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {// TODO CUENYAD
+function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 	'use strict';
-	var currentStudyId = getCurrentStudyIdInTab(),
-		studyType = isNursery() ? 'N' : 'T';
+	var currentStudyId = getCurrentStudyIdInTab();
 	if (datasetId == 'Please Choose' || $('#' + getJquerySafeId('dset-tab-') + datasetId).length !== 0) {
 		return;
 	}
 	$.ajax({
-		url: '/Fieldbook/NurseryManager/addOrRemoveTraits/viewStudyAjax/' + studyType + '/' + datasetId,
+		url: '/Fieldbook/NurseryManager/addOrRemoveTraits/viewStudyAjax/' + datasetId,
 		type: 'GET',
 		cache: false,
 		success: function(html) {

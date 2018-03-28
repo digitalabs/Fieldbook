@@ -25,16 +25,10 @@
 //<![CDATA[
 function updateCheck(event) {
 	'use strict';
-	var suffix = '/N',
-	sectionContainer = '.check-germplasm-list-items';
-	if (!isNursery()) {
-		suffix = '/T';
-		sectionContainer = '.germplasm-list-items';
-	}
 	event.stopPropagation();
 
 	$.ajax({
-		url: '/Fieldbook/ListManager/GermplasmList/update/check' + suffix,
+		url: '/Fieldbook/ListManager/GermplasmList/update/check',
 		type: 'POST',
 		data: $('.editCheck').serialize(),
 		success: function(data) {

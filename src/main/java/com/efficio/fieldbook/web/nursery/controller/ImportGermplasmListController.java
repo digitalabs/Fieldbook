@@ -392,28 +392,6 @@ public class ImportGermplasmListController extends SettingsController {
 				}
 			}
 
-			// TODO Remove code - Checks list will not be supported anymore
-//			// This part of the code is only relevant when crating checks from
-//			// an existing list.
-//
-//			// First calculate the number that needs to be added to existing
-//			// check numbers.
-//			final Integer differenceToAppendToChecks;
-//			if (minOriginalEntryNumber == null) {
-//				differenceToAppendToChecks = this.userSelection.getStartingEntryNo();
-//			} else {
-//				differenceToAppendToChecks = this.userSelection.getStartingEntryNo() - minOriginalEntryNumber;
-//			}
-//
-//			final ImportedGermplasmMainInfo importedCheckGermplasmMainInfo = this.userSelection.getImportedCheckGermplasmMainInfo();
-//			final List<ImportedGermplasm> checkList;
-//			if (importedCheckGermplasmMainInfo != null && importedCheckGermplasmMainInfo.getImportedGermplasmList() != null
-//				&& (checkList = importedCheckGermplasmMainInfo.getImportedGermplasmList().getImportedGermplasms()) != null) {
-//				for (final ImportedGermplasm importedGermplasm : checkList) {
-//					importedGermplasm.setEntryId(importedGermplasm.getEntryId() + differenceToAppendToChecks);
-//				}
-//			}
-
 		}
 	}
 
@@ -435,7 +413,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/**
 	 * List data project data is the germplasm list that is attached to a study This method is saving the germplasm for this
-	 * nursery/trial
+	 * study
 	 *
 	 * @param studyId
 	 * @throws MiddlewareQueryException
@@ -462,31 +440,6 @@ public class ImportGermplasmListController extends SettingsController {
 			this.fieldbookMiddlewareService.deleteListDataProjects(studyId, GermplasmListType.STUDY);
 		}
 
-		// TODO Remove code - Check list will not be supported in Manage studies
-//		if (this.getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
-//			if (this.getUserSelection().getImportedCheckGermplasmMainInfo().getListId() != null) {
-//				// came from a list
-//				final Integer listId = this.getUserSelection().getImportedCheckGermplasmMainInfo().getListId();
-//				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(
-//						this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-//				this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CHECK, listId, listDataProject,
-//						this.getCurrentIbdbUserId());
-//
-//			} else if (this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null
-//					&& this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-//							.getImportedGermplasms() != null
-//					&& !this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()
-//							.isEmpty()) {
-//				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(
-//						this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-//				this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CHECK, null, listDataProject,
-//						this.getCurrentIbdbUserId());
-//
-//			} else {
-//				// we delete it
-//				this.fieldbookMiddlewareService.deleteListDataProjects(studyId, GermplasmListType.CHECK);
-//			}
-//		}
 	}
 
 	/**
@@ -898,6 +851,8 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param model
 	 * @return
 	 */
+	//TODO Remove this function
+	@Deprecated
 	@RequestMapping(value = "/reload/check/list/{type}", method = RequestMethod.GET)
 	public String reloadCheckList(@PathVariable final String type,
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final Model model) {
@@ -1105,20 +1060,14 @@ public class ImportGermplasmListController extends SettingsController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/update/check/{type}", method = RequestMethod.POST)
+	@RequestMapping(value = "/update/check", method = RequestMethod.POST)
 	public String updateCheck(@ModelAttribute("updatedGermplasmCheckForm") final UpdateGermplasmCheckForm form,
-			@PathVariable final String type, final Model model) {
+			final Model model) {
 
 		try {
-			ImportedGermplasm importedCheckGermplasm = null;
-			if (type != null && type.equalsIgnoreCase(StudyType.T.getName())) {
-				importedCheckGermplasm = this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
-						.getImportedGermplasms().get(form.getIndex());
-			} else if (type != null && type.equalsIgnoreCase(StudyType.N.getName())) {
-				importedCheckGermplasm = this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-						.getImportedGermplasms().get(form.getIndex());
-			}
-			assert importedCheckGermplasm != null;
+			ImportedGermplasm importedCheckGermplasm =
+					this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()
+							.get(form.getIndex());
 			importedCheckGermplasm.setEntryTypeValue(form.getCheckVal());
 			importedCheckGermplasm.setEntryTypeCategoricalID(Integer.valueOf(form.getCheckVal()));
 
@@ -1294,12 +1243,12 @@ public class ImportGermplasmListController extends SettingsController {
 			final String message;
 			if (operation == 1) {
 				enumeration = new Enumeration(null, form.getManageCheckCode(), form.getManageCheckValue(), 0);
-				message = this.messageSource.getMessage("nursery.manage.check.types.add.success", new Object[] {form.getManageCheckValue()},
+				message = this.messageSource.getMessage("study.manage.check.types.add.success", new Object[] {form.getManageCheckValue()},
 						local);
 			} else {
 				enumeration = stdVar.getEnumeration(Integer.parseInt(form.getManageCheckCode()));
 				enumeration.setDescription(form.getManageCheckValue());
-				message = this.messageSource.getMessage("nursery.manage.check.types.edit.success", new Object[] {enumeration.getName()},
+				message = this.messageSource.getMessage("study.manage.check.types.edit.success", new Object[] {enumeration.getName()},
 						local);
 			}
 			if (!this.validateEnumerationDescription(stdVar.getEnumerations(), enumeration)) {
@@ -1381,12 +1330,12 @@ public class ImportGermplasmListController extends SettingsController {
 					Integer.parseInt(form.getManageCheckCode()))) {
 				result.put(ImportGermplasmListController.SUCCESS, "-1");
 				result.put(ImportGermplasmListController.ERROR,
-						this.messageSource.getMessage("nursery.manage.check.types.delete.error", new Object[] {name}, local));
+						this.messageSource.getMessage("study.manage.check.types.delete.error", new Object[] {name}, local));
 			} else {
 				this.ontologyService.deleteStandardVariableValidValue(TermId.CHECK.getId(), Integer.parseInt(form.getManageCheckCode()));
 				result.put(ImportGermplasmListController.SUCCESS, "1");
 				result.put("successMessage",
-						this.messageSource.getMessage("nursery.manage.check.types.delete.success", new Object[] {name}, local));
+						this.messageSource.getMessage("study.manage.check.types.delete.success", new Object[] {name}, local));
 				final List<Enumeration> allEnumerations = this.ontologyService
 						.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID()).getEnumerations();
 				result.put("checkTypes", this.convertObjectToJson(allEnumerations));
@@ -1590,6 +1539,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param userSelection
 	 * @param form
 	 */
+	@Deprecated
 	protected void mergePrimaryAndCheckGermplasmList(final UserSelection userSelection, final ImportGermplasmListForm form) {
 
 		// merge primary and check germplasm list

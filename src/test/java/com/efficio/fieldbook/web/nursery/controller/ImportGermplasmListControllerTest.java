@@ -130,8 +130,6 @@ public class ImportGermplasmListControllerTest {
 
 	private final Integer LIST_ID = 1;
 
-	private SettingDetailTestDataInitializer settingDetailTestDataInitializer;
-
 	@InjectMocks
 	private ImportGermplasmListController importGermplasmListController;
 	private final String cropPrefix = "ABCD";
@@ -140,8 +138,6 @@ public class ImportGermplasmListControllerTest {
 
 	@Before
 	public void setUp() {
-
-		this.settingDetailTestDataInitializer = new SettingDetailTestDataInitializer();
 
 		final StandardVariable experimentalDesign = this.createStandardVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
 				"EXPT_DESIGN", new Term(2140, "Experimental design", "Experimental design"),
@@ -202,7 +198,8 @@ public class ImportGermplasmListControllerTest {
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, StudyType.N.getName(), form, model);
+		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, StudyType.N.getName(),
+				form, model);
 
 		Assert.assertTrue("If import is successful, isImportValid should be TRUE", this.userSelection.isImportValid());
 
@@ -244,7 +241,8 @@ public class ImportGermplasmListControllerTest {
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, StudyType.T.getName(), form, model);
+		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, StudyType.T.getName(),
+				form, model);
 
 		Assert.assertTrue("If import is successful, isImportValid should be TRUE", this.userSelection.isImportValid());
 
@@ -818,12 +816,12 @@ public class ImportGermplasmListControllerTest {
 	private List<SettingDetail> createCheckVariables(final boolean hasValue) {
 		final List<SettingDetail> checkVariables = new ArrayList<>();
 
-		checkVariables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_START.getId(),
+		checkVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_START.getId(),
 				"CHECK_START", hasValue ? "1" : null, "TRIAL"));
-		checkVariables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_INTERVAL.getId(),
+		checkVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_INTERVAL.getId(),
 				"CHECK_INTERVAL", hasValue ? "4" : null, "TRIAL"));
-		checkVariables.add(this.settingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_PLAN.getId(),
-				"CHECK_PLAN", hasValue ? "8414" : null, "TRIAL"));
+		checkVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_PLAN.getId(), "CHECK_PLAN",
+				hasValue ? "8414" : null, "TRIAL"));
 
 		return checkVariables;
 	}

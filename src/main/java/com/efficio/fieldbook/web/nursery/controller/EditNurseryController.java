@@ -624,25 +624,6 @@ public class EditNurseryController extends SettingsController {
 
 	}
 
-	List<SettingDetail> combineStudyLevelVariablesInNurseryForm(final CreateNurseryForm createNurseryForm) {
-
-		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
-
-		if (createNurseryForm.getStudyLevelVariables() != null && !createNurseryForm.getStudyLevelVariables().isEmpty()) {
-			for (final SettingDetail item: createNurseryForm.getStudyLevelVariables()) {
-				if (item != null && item.getVariable() != null)
-					studyLevelVariables.add(item);
-			}
-		}
-
-		if (createNurseryForm.getBasicDetails() != null && !createNurseryForm.getBasicDetails().isEmpty()) {
-			studyLevelVariables.addAll(createNurseryForm.getBasicDetails());
-		}
-
-		return studyLevelVariables;
-
-	}
-
 	List<SettingDetail> combineStudyLevelConditionsInUserSelection(final UserSelection userSelection) {
 
 		final List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
@@ -664,7 +645,7 @@ public class EditNurseryController extends SettingsController {
 		final Set<SettingDetail> studyLevelVariables = new HashSet<>();
 
 		// Add the SettingDetails from Nursery Form
-		studyLevelVariables.addAll(this.combineStudyLevelVariablesInNurseryForm(form));
+		studyLevelVariables.addAll(SettingsUtil.combineStudyLevelVariablesInNurseryForm(form));
 
 		final List<SettingDetail> studyLevelConditions = this.combineStudyLevelConditionsInUserSelection(userSelection);
 

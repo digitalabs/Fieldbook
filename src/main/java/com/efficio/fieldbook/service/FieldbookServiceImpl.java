@@ -183,7 +183,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 			}
 		}
 
-		final List<Integer> storedInIds = this.getStoredInIdsByMode(mode, true);
+		final List<Integer> storedInIds = this.getStoredInIdsByMode(mode);
 		final List<Integer> propertyIds = this.getPropertyIdsByMode(mode);
 
 		final List<StandardVariableReference> dbList = this.fieldbookMiddlewareService.filterStandardVariablesByMode(
@@ -234,19 +234,12 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return result;
 	}
 
-	private List<Integer> getStoredInIdsByMode(final int mode, final boolean isNursery) {
+	private List<Integer> getStoredInIdsByMode(final int mode) {
 		final List<Integer> list = new ArrayList<>();
 		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			list.addAll(PhenotypicType.STUDY.getTypeStorages());
-			if (isNursery) {
-				list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
-			}
-		} else if (isNursery && (mode == VariableType.GERMPLASM_DESCRIPTOR.getId()
-				|| mode == VariableType.EXPERIMENTAL_DESIGN.getId())) {
-			list.addAll(PhenotypicType.TRIAL_DESIGN.getTypeStorages());
-			list.addAll(PhenotypicType.GERMPLASM.getTypeStorages());
 		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()
-				|| mode == VariableType.NURSERY_CONDITION.getId()) {
+			|| mode == VariableType.NURSERY_CONDITION.getId()) {
 			list.addAll(PhenotypicType.VARIATE.getTypeStorages());
 		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
 			list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
@@ -938,7 +931,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 				}
 			}
 		}
-		if (workbook != null && !workbook.isNursery()) {
+		if (workbook != null) {
 			// to be only done when it is a trial
 			this.addConditionsToTrialObservationsIfNecessary(workbook);
 		} else {

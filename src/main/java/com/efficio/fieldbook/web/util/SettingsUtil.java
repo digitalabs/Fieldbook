@@ -1495,9 +1495,9 @@ public class SettingsUtil {
 		return studyDetails;
 	}
 
-	private static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(final Workbook workbook, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-		final FieldbookService fieldbookService, final UserSelection userSelection, final String programUUID,
-		final Properties appConstantsProperties, final String createdBy) {
+	private static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(final Workbook workbook,
+		final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final FieldbookService fieldbookService,
+		final UserSelection userSelection, final String programUUID, final Properties appConstantsProperties, final String createdBy) {
 
 		final StudyDetails details = new StudyDetails();
 		details.setId(workbook.getStudyDetails().getId());
@@ -1517,19 +1517,21 @@ public class SettingsUtil {
 			if (studyName != null) {
 				details.setName(studyName);
 			}
-			basicDetails = SettingsUtil.convertWorkbookToSettingDetails(basicFields, conditions, fieldbookMiddlewareService,
-					fieldbookService, userSelection, workbook, programUUID, appConstantsProperties, createdBy);
-			managementDetails = SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(),
-					userSelection, fieldbookMiddlewareService, fieldbookService, programUUID);
-			nurseryConditionDetails = SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(constants, 1, userSelection,
+			basicDetails = SettingsUtil
+				.convertWorkbookToSettingDetails(basicFields, conditions, fieldbookMiddlewareService, fieldbookService, userSelection,
+					workbook, programUUID, appConstantsProperties, createdBy);
+			managementDetails = SettingsUtil
+				.convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(), userSelection,
 					fieldbookMiddlewareService, fieldbookService, programUUID);
+			nurseryConditionDetails = SettingsUtil
+				.convertWorkbookOtherStudyVariablesToSettingDetails(constants, 1, userSelection, fieldbookMiddlewareService,
+					fieldbookService, programUUID);
 		}
 
-		if (!workbook.isNursery()) {
-			final List<SettingDetail> environmentManagementDetails = new ArrayList<>();
-			SettingsUtil.rearrangeSettings(managementDetails, environmentManagementDetails, PhenotypicType.TRIAL_ENVIRONMENT);
-			details.setEnvironmentManagementDetails(environmentManagementDetails);
-		}
+		final List<SettingDetail> environmentManagementDetails = new ArrayList<>();
+		SettingsUtil.rearrangeSettings(managementDetails, environmentManagementDetails, PhenotypicType.TRIAL_ENVIRONMENT);
+		details.setEnvironmentManagementDetails(environmentManagementDetails);
+
 		details.setBasicStudyDetails(basicDetails);
 		details.setManagementDetails(managementDetails);
 		details.setNurseryConditionDetails(nurseryConditionDetails);

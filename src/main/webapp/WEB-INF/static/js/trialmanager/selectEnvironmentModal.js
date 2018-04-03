@@ -1,11 +1,11 @@
-/*global angular, showAlertMessage, showErrorMessage, trialSelectEnvironmentContinueAdvancing*/
+/*global angular, showAlertMessage, showErrorMessage, selectEnvironmentContinueAdvancing*/
 (function() {
 	'use strict';
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'environmentService', '$http', function($scope,
-	TrialManagerDataService, environmentService, $http) {
+	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'environmentService', function($scope,
+	TrialManagerDataService, environmentService) {
 
 		$scope.settings = TrialManagerDataService.settings.environments;
 		if (Object.keys($scope.settings).length === 0) {
@@ -59,7 +59,7 @@
 		$scope.noOfReplications = TrialManagerDataService.currentData.experimentalDesign.replicationsCount;
 
 		//NOTE: Continue action for navigate from Locations to Advance Study Modal
-		$scope.trialSelectEnvironmentContinue = function() {
+		$scope.selectEnvironmentContinue = function() {
 
 			// Do not go ahead for Advancing unless trial has experimental design & number of replications variables
 			if (TrialManagerDataService.currentData.experimentalDesign.designType === null) {
@@ -87,7 +87,7 @@
 						.push($scope.settings.managementDetails.val($scope.PREFERRED_LOCATION_VARIABLE).variable.name);
 				}
 
-				angular.forEach($scope.trialInstances, function(trialInstanceNumber, idx) {
+				angular.forEach($scope.trialInstances, function(trialInstanceNumber) {
 					if (trialInstanceNumber) {
 						selectedTrialInstances.push(trialInstanceNumber);
 
@@ -108,7 +108,7 @@
 				if ($scope.PREFERRED_LOCATION_VARIABLE === 8170) {
 					isTrialInstanceNumberUsed = true;
 				}
-				trialSelectEnvironmentContinueAdvancing(selectedTrialInstances, $scope.noOfReplications, selectedLocationDetails,
+				selectEnvironmentContinueAdvancing(selectedTrialInstances, $scope.noOfReplications, selectedLocationDetails,
 					isTrialInstanceNumberUsed, $scope.applicationData.advanceType);
 			}
 
@@ -140,7 +140,6 @@
 		};
 
 		$scope.init = function() {
-
 			$scope.locationFromTrialSettings = false;
 			$scope.selectAll = true;
 			$scope.userInput = TrialManagerDataService.currentData.trialSettings.userInput;
@@ -175,8 +174,9 @@
 
 			var environmentListView = [];
 			angular.forEach(environments, function(environment) {
-				environmentListView.push({ name: environment.managementDetailValues[preferredLocationVariable]
-					, variableId: preferredLocationVariable, trialInstanceNumber: environment.managementDetailValues[trialInstanceIndex]});
+				environmentListView.push({
+					name: environment.managementDetailValues[preferredLocationVariable],
+					variableId: preferredLocationVariable, trialInstanceNumber: environment.managementDetailValues[trialInstanceIndex]});
 			});
 			return environmentListView;
 

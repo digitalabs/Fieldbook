@@ -1,4 +1,4 @@
-/*global angular, showAlertMessage, showErrorMessage, trialSelectedEnvironmentContinueCreatingSample*/
+/*global angular, showAlertMessage, showErrorMessage, selectedEnvironmentContinueCreatingSample*/
 (function () {
 	'use strict';
 

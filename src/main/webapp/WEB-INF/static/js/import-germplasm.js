@@ -75,15 +75,10 @@
 					var lowestEntryNo = window.ImportGermplasm.findLowestEntryNo(dataTableIdentifier, entryNoColIndex);
 					var diff = entryNo - lowestEntryNo;
 					window.ImportGermplasm.updateEntryNo(dataTableIdentifier, entryNoColIndex, diff);
-					if (isNursery()) {
-						showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-							'To update the Measurements table, please save the Nursery', 10000);
-					} else {
-						window.ImportGermplasm.setUnappliedChangesAvailable();
-						showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-							'To update the Measurements table, please review your settings and regenerate ' +
-							'the Experimental Design', 10000);
-					}
+					window.ImportGermplasm.setUnappliedChangesAvailable();
+					showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+						'To update the Measurements table, please review your settings and regenerate ' +
+						'the Experimental Design', 10000);
 				}
 
 			},

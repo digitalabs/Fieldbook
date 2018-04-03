@@ -264,7 +264,7 @@ public class DesignImportController extends SettingsController {
 			}
 		}
 		resultsMap.put(DesignImportController.SUCCESS,
-				this.messageSource.getMessage("design.import.change.design.success.message.trial", null, Locale.ENGLISH));
+				this.messageSource.getMessage("design.import.change.design.success.message.study", null, Locale.ENGLISH));
 
 		// handling for existing study
 		if (studyId != null && studyId != 0) {

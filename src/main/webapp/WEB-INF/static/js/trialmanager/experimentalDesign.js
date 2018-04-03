@@ -274,7 +274,7 @@
 
 						bootbox.dialog({
 							title: Messages.DESIGN_IMPORT_PRESET_DESIGN_CHANGE_DESIGN,
-							message: Messages.DESIGN_IMPORT_CHANGE_DESIGN_DESCRIPTION_TRIAL,
+							message: Messages.DESIGN_IMPORT_CHANGE_DESIGN_DESCRIPTION_STUDY,
 							closeButton: false,
 							onEscape: false,
 							buttons: {

@@ -292,10 +292,10 @@
 						<button id="nurseryModalCancel" type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">
 							Cancel
 						</button>
-                        <button id="nurseryModalBack" type="button" class="btn btn-default" onclick="javascript: backAdvanceTrial();" aria-hidden="true" th:text="#{common.form.back.text}">
+                        <button id="nurseryModalBack" type="button" class="btn btn-default" onclick="javascript: backAdvanceStudy();" aria-hidden="true" th:text="#{common.form.back.text}">
                             Back
                         </button>
-						<button type="button" class="btn btn-primary" aria-hidden="true" onclick="javascript: callAdvanceNursery();" th:text="#{common.form.finish.text}">
+						<button type="button" class="btn btn-primary" aria-hidden="true" onclick="javascript: callAdvanceStudy();" th:text="#{common.form.finish.text}">
 							Finish
 						</button>
 					</div>
@@ -520,20 +520,11 @@ $(function() {
 	});
 	advNurseryModalElm.data('open', '0');
 
-    if(!isNursery()){
-        $("#nurseryModalCancel").hide();
-        $("#reps-section").show();
+	$("#nurseryModalCancel").hide();
+	$("#reps-section").show();
 
-        $("#advanceNurseryModalHeader").hide();
-        $("#advanceTrialModalHeader").show();
-    }
-    else{
-        $("#reps-section").hide();
-        $("#nurseryModalBack").hide();
-
-        $("#advanceTrialModalHeader").hide();
-        $("#advanceNurseryModalHeader").show();
-    }
+	$("#advanceNurseryModalHeader").hide();
+	$("#advanceTrialModalHeader").show();
 
     // Select All Replication checkbox when click on select All
     $("#selectAllReps").change(function(){

@@ -940,14 +940,7 @@ function openDeleteConfirmation() {
 	deleteConfirmationText = deleteStudyConfirmation;
 
 	$('#deleteStudyModal').modal({backdrop: 'static', keyboard: true});
-	var idVal = getCurrentStudyIdInTab();
-	if (!idVal) {
-		idVal = $('#studyId').val();
-	}
-	var name = $('#study' + idVal + ' .fieldmap-study-name').text();
-	if (!name) {
-		name = $('.nursery-name-display .fieldmap-study-name').text();
-	}
+	var name = $('#studyName').val();
 	$('#delete-study-confirmation').html(deleteConfirmationText + ' ' + name + '?');
 }
 
@@ -1007,13 +1000,12 @@ function startAdvance(advanceType) {
 	if (advanceType == 'sample') {
 		advanceSample();
 	} else {
-		advanceTrial();
+		initSelectEnvironment();
 	}
 }
 
-function advanceTrial() {
+function initSelectEnvironment() {
 	'use strict';
-	var idVal = $('#studyId').val();
 	$('#advanceNurseryModal').modal('hide');
 
 	// we need to redraw the columns of the table
@@ -1053,7 +1045,7 @@ function advanceSample() {
 		if (data == false) {
 			showErrorMessage('', advanceSamplesError);
 		} else {
-			advanceTrial();
+			initSelectEnvironment();
 		}
 	}).fail(function (data) {
 		if (data.status == 401) {
@@ -1065,7 +1057,7 @@ function advanceSample() {
 
 }
 
-function backAdvanceTrial() {
+function backAdvanceStudy() {
 	'use strict';
 	$('#advanceNurseryModal').modal('hide');
 
@@ -1092,7 +1084,7 @@ function createSample() {
 	scope.$apply();
 }
 
-function trialSelectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, isTrialInstanceNumberUsed, advanceType) {
+function selectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, isTrialInstanceNumberUsed, advanceType) {
 	'use strict';
 	var idVal = $('#studyId').val();
 	$('#selectEnvironmentModal').modal('hide');
@@ -1101,7 +1093,7 @@ function trialSelectEnvironmentContinueAdvancing(trialInstances, noOfReplication
 }
 
 
-function trialSelectedEnvironmentContinueCreatingSample(trialInstances) {
+function selectedEnvironmentContinueCreatingSample(trialInstances) {
 	'use strict';
 	var idVal = $('#studyId').val();
 	$('#selectEnvironmentToSampleListModal').modal('hide');
@@ -1173,16 +1165,16 @@ function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailH
 	//TODO Should that be common then with the common path?
     var advanceStudyHref = '/Fieldbook/NurseryManager/advance/nursery';
     advanceStudyHref = advanceStudyHref + '/' + encodeURIComponent(idVal);
+	advanceStudyHref = advanceStudyHref + '?selectedInstances=' + encodeURIComponent(trialInstances.join(","));
 
-    if(!isNursery() || trialInstances !== undefined){
-        advanceStudyHref = advanceStudyHref + '?selectedTrialInstances=' + encodeURIComponent(trialInstances.join(","));
-        if(noOfReplications) {
-        	advanceStudyHref = advanceStudyHref + '&noOfReplications=' + encodeURIComponent(noOfReplications);
-        }
-        if (advanceType) {
-			advanceStudyHref = advanceStudyHref + '&advanceType=' + encodeURIComponent(advanceType);
-		}
-    }
+	if (noOfReplications) {
+		advanceStudyHref = advanceStudyHref + '&noOfReplications=' + encodeURIComponent(noOfReplications);
+	}
+
+	if (advanceType) {
+		advanceStudyHref = advanceStudyHref + '&advanceType=' + encodeURIComponent(advanceType);
+	}
+
 
     if (idVal != null) {
     	//TODO the failure of the ajax request should be processed and error shown
@@ -1888,7 +1880,7 @@ function validatePlantsSelected() {
 	return valid;
 }
 
-function callAdvanceNursery() {
+function callAdvanceStudy() {
 
 	var lines = $('#lineSelected').val();
 	var methdodId = $('#advanceBreedingMethodId').val();
@@ -1916,12 +1908,8 @@ function callAdvanceNursery() {
 		showErrorMessage('page-advance-modal-message', linesNotWholeNumberError);
 		return false;
 	} else if (validatePlantsSelected()) {
-		SaveAdvanceList.doAdvanceNursery();
+		SaveAdvanceList.doAdvanceStudy();
 	}
-}
-
-function showSelectedAdvanceTab(uniqueId) {
-	showSelectedTab('advance-list' + uniqueId);
 }
 
 function closeAdvanceListTab(uniqueId) {
@@ -3649,15 +3637,14 @@ function getCurrentStudyIdInTab() {
 	}
 }
 
-function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {// TODO CUENYAD
+function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 	'use strict';
-	var currentStudyId = getCurrentStudyIdInTab(),
-		studyType = isNursery() ? 'N' : 'T';
+	var currentStudyId = getCurrentStudyIdInTab();
 	if (datasetId == 'Please Choose' || $('#' + getJquerySafeId('dset-tab-') + datasetId).length !== 0) {
 		return;
 	}
 	$.ajax({
-		url: '/Fieldbook/NurseryManager/addOrRemoveTraits/viewStudyAjax/' + studyType + '/' + datasetId,
+		url: '/Fieldbook/NurseryManager/addOrRemoveTraits/viewStudyAjax/' + datasetId,
 		type: 'GET',
 		cache: false,
 		success: function(html) {

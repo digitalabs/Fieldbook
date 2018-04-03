@@ -1,7 +1,7 @@
 /*exported startIndex,germplasmStartingEntry,importLocationUrl,importIframeOpened,overwriteChecksList*/
 /*exported confirmReplaceList,resetGermplasmList,removeCheckFromList,openListTree,viewGermplasmLitDetails */
 /*exported additionalLazyLoadUrl, chooseList*/
-/*globals angular, isNursery*/
+/*globals angular*/
 var addedGid = {},
 	listId = 0,
 	makeDraggableBool = true,
@@ -68,7 +68,6 @@ function showPopoverCheck(index, sectionContainer, bodyContainer) {
 			realIndex = index,
 			popoverOptions = {},
 			listDataTable = germplasmDataTable;
-
 		//we need to get the real index of the check
 
 		if (listDataTable != null) {

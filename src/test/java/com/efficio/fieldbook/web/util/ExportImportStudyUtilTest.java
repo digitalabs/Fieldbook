@@ -163,7 +163,7 @@ public class ExportImportStudyUtilTest {
 		int index = 1;
 		for (final MeasurementRow row : this.workbook.getTrialObservations()) {
 			final FileExportInfo exportInfo = ExportImportStudyUtil.getFileNamePath(index, row, this.instances, this.fileNameWithExtension,
-					false, this.fieldbookMiddlewareService, this.contextUtil);
+					 this.fieldbookMiddlewareService, this.contextUtil);
 			
 			Assert.assertTrue("Expected location in filename but did not found one.",
 					exportInfo.getDownloadFileName().contains(WorkbookDataUtil.LNAME + "_" + index));
@@ -180,7 +180,7 @@ public class ExportImportStudyUtilTest {
 		this.instances = WorkbookDataUtil.getTrialInstances(this.workbook);
 
 		final FileExportInfo exportInfo =
-				ExportImportStudyUtil.getFileNamePath(1, this.workbook.getTrialObservations().get(0), this.instances, this.fileNameWithExtension, false,
+				ExportImportStudyUtil.getFileNamePath(1, this.workbook.getTrialObservations().get(0), this.instances, this.fileNameWithExtension,
 						this.fieldbookMiddlewareService, this.contextUtil);
 		Assert.assertTrue("Expected location in filename but did not found one.", exportInfo.getDownloadFileName().contains(WorkbookDataUtil.LNAME + "_1"));
 	}
@@ -195,7 +195,7 @@ public class ExportImportStudyUtilTest {
 		this.instances.add(1);
 
 		final FileExportInfo exportInfo = ExportImportStudyUtil.getFileNamePath(1, trialObservation, this.instances,
-				this.fileNameWithExtension, false, this.fieldbookMiddlewareService, this.contextUtil);
+				this.fileNameWithExtension,  this.fieldbookMiddlewareService, this.contextUtil);
 		Assert.assertTrue("Expected filename in output filename but found none.",
 				exportInfo.getDownloadFileName().contains(this.fileNameWithExtension.substring(0, this.fileNameWithExtension.lastIndexOf("."))));
 		final String processedFileName = exportInfo.getDownloadFileName().substring(0, this.fileNameWithExtension.lastIndexOf("."));

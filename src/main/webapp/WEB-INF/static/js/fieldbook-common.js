@@ -3814,21 +3814,6 @@ function showGermplasmDetailsSection() {
 	}
 	//flag to determine if existing measurements should be deleted
 	$('#chooseGermplasmAndChecks').data('replace', '1');
-	if (isNursery()) {
-		//enable drag and drop
-		makeGermplasmListDraggable(true);
-		makeCheckDraggable(true);
-		if ($('.check-germplasm-list-items tbody tr').length > 0) {
-			//show clear button and specify checks section
-			$('#check-germplasm-list-reset-button').show();
-			$('#specifyCheckSection').show();
-			//enable deletion of checks
-			if (selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null) {
-				selectedCheckListDataTable.getDataTable().$('.delete-check').show();
-			}
-		}
-		disableCheckVariables(false);
-	}
 }
 
 function displayCorrespondingGermplasmSections() {
@@ -3941,14 +3926,7 @@ function displaySelectedGermplasmDetails() {
 			}
 			$('#numberOfEntries').html($('#totalGermplasms').val());
 			$('#imported-germplasm-list-reset-button').css('opacity', '1');
-			if (isNursery()) {
-				itemsIndexAdded = [];
-				setSpinnerMaxValue();
-				makeGermplasmListDraggable(false);
-				lastDraggedPrimaryList = $('#lastDraggedPrimaryList').val();
-			} else {
-				$(document).trigger('germplasmListUpdated');
-			}
+			$(document).trigger('germplasmListUpdated');
 			listId = $('#lastDraggedPrimaryList').val();
 			if (listId === '') {
 				$('.view-header').hide();

@@ -151,29 +151,7 @@
 					$('#entries-details').css('display', 'block');
 					$('#numberOfEntries').html($('#totalGermplasms').val());
                     toggleControlsForGermplasmListManagement(true);
-					if(isNursery()){
-						makeGermplasmListDraggable(makeDraggableBool);
-						checksFromPrimary = 0;
-						setSpinnerMaxValue();
-	
-						itemsIndexAdded = [];
-	
-						if (lastDraggedChecksList == 0) {
-							// We clear the list in the check
-							resetCheckList();
-						}
-						addFakeCheckTable();
-						
-						// show Import Crosses in Actions menu
-						if($('#createNurseryMainForm #studyId').length == 1){
-							$('#import-crosses').css('display', 'block');
-						} else {
-							$('#main-actions-btn').removeClass('fbk-hide');
-						}
-						
-					} else {
-                        $(document).trigger('germplasmListUpdated');
-                    }
+					$(document).trigger('germplasmListUpdated');
 					$('.view-header').show();
 				}
 			});

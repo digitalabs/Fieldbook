@@ -1,22 +1,14 @@
 var ImportDesign = (function() {
 	'use strict';
 	return {
-
+        /*TODO check where this function is called and remove it*/
 		hasCheckListSelected: function() {
-			if (isNursery()) {
-				return $('.check-germplasm-list-items tbody tr').length !== 0;
-			} else {
-				return false;
-			}
+			return false;
 		},
 
 		hasGermplasmListSelected: function() {
-			if (isNursery()) {
-				return ($('#numberOfEntries').text() !== '');
-			} else {
-				return angular.element('#mainApp').injector().get(
-						'TrialManagerDataService').applicationData.germplasmListSelected;
-			}
+			return angular.element('#mainApp').injector().get(
+				'TrialManagerDataService').applicationData.germplasmListSelected;
 		},
 
 		getDesignImportNgApp: function() {
@@ -33,10 +25,7 @@ var ImportDesign = (function() {
 		},
 
 		getTrialManagerDataService: function() {
-			return isNursery() ? {
-				currentData: {},
-				applicationData: {}
-			} : angular.element('#mainApp').injector().get(
+			return angular.element('#mainApp').injector().get(
 					'TrialManagerDataService');
 		},
 
@@ -45,25 +34,21 @@ var ImportDesign = (function() {
 		},
 
 		reloadMeasurements: function() {
-			if (!isNursery()){
-				var angularElem = angular.element('#mainApp');
+			var angularElem = angular.element('#mainApp');
 
-				angularElem
-						.scope()
-						.$apply(
-								function() {
-									ImportDesign.getTrialManagerDataService().applicationData.isGeneratedOwnDesign = true;
-									ImportDesign.getTrialManagerDataService().applicationData.unsavedGeneratedDesign = true;
-								});
-			}
+			angularElem
+				.scope()
+				.$apply(
+				function () {
+					ImportDesign.getTrialManagerDataService().applicationData.isGeneratedOwnDesign = true;
+					ImportDesign.getTrialManagerDataService().applicationData.unsavedGeneratedDesign = true;
+				});
 		},
 
 		showPopup: function(hasGermplasmListSelected) {
 
-			var studyType = isNursery() ? 'Nursery' : 'Trial';
-
 			if (hasMeasurementData()) {
-				showErrorMessage(designImportErrorHeader, 'This ' + studyType + ' has saved observations, the experimental design can no longer be modified.');
+				showErrorMessage(designImportErrorHeader, 'This study has saved observations, the experimental design can no longer be modified.');
 			} else if (!hasGermplasmListSelected) {
 				showErrorMessage(designImportErrorHeader, 'Please choose a germplasm list before you can import a design.');
 			} else {
@@ -79,12 +64,9 @@ var ImportDesign = (function() {
 			setTimeout(function() {
 				$('#designMapModal').one('show.bs.modal', function() {
 					ImportDesign.initDesignMapPopup();
-
-					if (!isNursery()) {
-						setTimeout(function() {
-							ImportDesign.showDesignWarningMessage();
-						}, 200);
-					}
+					setTimeout(function () {
+						ImportDesign.showDesignWarningMessage();
+					}, 200);
 
 				}).modal();
 			}, 300);
@@ -167,13 +149,8 @@ var ImportDesign = (function() {
 					keyboard: true
 				});
 
-				if (!isNursery()) {
-					$('#change-design-description-nursery').hide();
-					$('#change-design-description-trial').show();
-				} else {
-					$('#change-design-description-nursery').show();
-					$('#change-design-description-trial').hide();
-				}
+				$('#change-design-description-nursery').hide();
+				$('#change-design-description-trial').show();
 			} else {
 				if (ImportDesign.hasCheckListSelected()) {
 					showErrorMessage(designImportErrorHeader,
@@ -193,8 +170,8 @@ var ImportDesign = (function() {
 			$body.addClass('preview-measurements-only');
 			//TODO Clear the style on Nursery save
 
-			var environmentData = isNursery() ? ImportDesign.nurseryEnvironmentDetails
-					: angular.copy(ImportDesign.trialManagerCurrentData().environments);
+			var environmentData =
+				angular.copy(ImportDesign.trialManagerCurrentData().environments);
 
 			$.each(environmentData.environments, function(key, data) {
 				$.each(data.managementDetailValues, function(key, value) {
@@ -207,12 +184,7 @@ var ImportDesign = (function() {
 			var service = ImportDesign.getTrialManagerDataService();
 			// custom import design type id
 			var designTypeId = 3;
-			var data = isNursery()? { 	environmentData: null, 
-									  	selectedDesignType: designTypeId,
-									  	startingEntryNo: $('#txtStartingEntryNo').val(),
-									  	startingPlotNo: $('#txtStartingPlotNo').val(),
-									  	hasNewEnvironmentAdded: false
-									} : service.retrieveGenerateDesignInput(designTypeId);
+			var data = service.retrieveGenerateDesignInput(designTypeId);
 			data.environmentData = environmentData;
 
 			$.ajax({
@@ -244,45 +216,36 @@ var ImportDesign = (function() {
 			ImportDesign.closeReviewModal();
 			ImportDesign.reloadMeasurements();
 
-			if (isNursery()) {
-				//TODO Localise the message
-				showSuccessfulMessage(
-						'',
-						'The nursery design was imported successfully. Please save your nursery before proceeding to Measurements tab.');
-				$('#nursery-experimental-design-li').show();
+			var environmentData = resp.environmentData, environmentSettings = resp.environmentSettings, trialService = ImportDesign
+				.getTrialManagerDataService();
 
-			} else {
-				var environmentData = resp.environmentData, environmentSettings = resp.environmentSettings, trialService = ImportDesign
-						.getTrialManagerDataService();
+			$.each(environmentSettings, function (key, value) {
+				trialService.settings.environments.managementDetails.push(
+					value.variable.cvTermId, trialService
+						.transformViewSettingsVariable(value));
+			});
 
-				$.each(environmentSettings, function(key, value) {
-					trialService.settings.environments.managementDetails.push(
-							value.variable.cvTermId, trialService
-									.transformViewSettingsVariable(value));
-				});
+			// Set the design type to Other Design Type
+			trialService.currentData.experimentalDesign.designType = 3;
+			trialService.updateCurrentData('environments', environmentData);
 
-				// Set the design type to Other Design Type
-				trialService.currentData.experimentalDesign.designType = 3;
-				trialService.updateCurrentData('environments', environmentData);
+			angular.element('#mainApp').scope().$apply();
 
-				angular.element('#mainApp').scope().$apply();
-
-				ImportDesign.getTrialManagerDataService().clearUnappliedChangesFlag();
-				//TODO Localise the message
-				showSuccessfulMessage(
-						'',
-						'The trial design was imported successfully. Please review the Measurements tab.');
-			}
+			ImportDesign.getTrialManagerDataService().clearUnappliedChangesFlag();
+			//TODO Localise the message
+			showSuccessfulMessage(
+				'',
+				'The study design was imported successfully. Please review the Measurements tab.');
 		},
 
 		loadReviewDesignData: function() {
 			setTimeout(
 					function() {
 
-						var environmentData = isNursery() ? ImportDesign.nurseryEnvironmentDetails
-								: angular
-										.copy(ImportDesign
-												.trialManagerCurrentData().environments);
+						var environmentData =
+							angular
+								.copy(ImportDesign
+									.trialManagerCurrentData().environments);
 						$.each(environmentData.environments,
 							function(key, data) {
 								$.each(data.managementDetailValues,
@@ -322,21 +285,16 @@ var ImportDesign = (function() {
 				return false;
 			}
 
-			if (isNursery()) {
-				$('#importDesignUploadForm').attr('action',
-						'/Fieldbook/DesignImport/import/N');
-			} else {
-				var TrialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
-				var hasNewEnvironmentAdded = TrialManagerDataService.applicationData.hasNewEnvironmentAdded;
-				var noOfEnvironments = parseInt(TrialManagerDataService.currentData.environments.noOfEnvironments);
+			var TrialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
+			var hasNewEnvironmentAdded = TrialManagerDataService.applicationData.hasNewEnvironmentAdded;
+			var noOfEnvironments = parseInt(TrialManagerDataService.currentData.environments.noOfEnvironments);
 
-				var actionURL = '/Fieldbook/DesignImport/import/T';
-				if(hasNewEnvironmentAdded){
-					actionURL += '/' + noOfEnvironments;
-				}
-
-				$('#importDesignUploadForm').attr('action',actionURL);
+			var actionURL = '/Fieldbook/DesignImport/import';
+			if (hasNewEnvironmentAdded) {
+				actionURL += '/' + noOfEnvironments;
 			}
+
+			$('#importDesignUploadForm').attr('action', actionURL);
 
 			ImportDesign.submitImport($('#importDesignUploadForm')).done(
 					function(resp) {
@@ -398,28 +356,15 @@ var ImportDesign = (function() {
 			}
 
 			$.ajax({
-				url: '/Fieldbook/DesignImport/import/change/' + studyId + '/' +
-						isNursery(),
+				url: '/Fieldbook/DesignImport/import/change/' + studyId,
 				type: 'POST',
 				data: '',
 				cache: false,
 				success: function(response) {
 					showSuccessfulMessage('', response.success);
 
-					if (isNursery()) {
-						// hide experimental design
-						$('#nursery-experimental-design-li').hide();
-						$('#nursery-experimental-design').hide();
-
-						// show measurement row
-						$('li#nursery-measurements-li a').tab('show');
-
-						// to enforce overwrite when the nursery is saved
-						$('#chooseGermplasmAndChecks').data('replace', '1');
-					} else {
-						angular.element('#mainApp').scope().$broadcast('importedDesignReset');
-						angular.element('#mainApp').scope().$apply();
-					}
+					angular.element('#mainApp').scope().$broadcast('importedDesignReset');
+					angular.element('#mainApp').scope().$apply();
 
 					$('#changeDesignModal').modal('hide');
 				}

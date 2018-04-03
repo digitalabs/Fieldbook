@@ -288,7 +288,7 @@ public class DesignImportControllerTest {
 		final ImportDesignForm form = new ImportDesignForm();
 		form.setFile(this.multiPartFile);
 		form.setFileType(DesignImportParser.FILE_TYPE_CSV);
-		final String resultsMap = this.designImportController.importFile(form, new StudyTypeDto("N").getName());
+		final String resultsMap = this.designImportController.importFile(form);
 
 		Mockito.verify(this.userSelection).setDesignImportData(Matchers.any(DesignImportData.class));
 
@@ -308,7 +308,7 @@ public class DesignImportControllerTest {
 		Mockito.when(this.designImportParser.parseFile(DesignImportParser.FILE_TYPE_CSV, this.multiPartFile))
 				.thenThrow(new FileParsingException("force file parse exception"));
 
-		final String resultsMap = this.designImportController.importFile(form, new StudyTypeDto("N").getName());
+		final String resultsMap = this.designImportController.importFile(form);
 
 		Assert.assertTrue(resultsMap.contains("{\"error\":[\"force file parse exception\"],\"isSuccess\":0}"));
 	}
@@ -915,7 +915,7 @@ public class DesignImportControllerTest {
 	@Test
 	public void testInitializeTemporaryWorkbookForTrial() {
 
-		this.designImportController.initializeTemporaryWorkbook(new StudyTypeDto("T").getName());
+		this.designImportController.initializeTemporaryWorkbook();
 		final ArgumentCaptor<Workbook> argument = ArgumentCaptor.forClass(Workbook.class);
 
 		Mockito.verify(this.userSelection).setTemporaryWorkbook(argument.capture());
@@ -927,7 +927,7 @@ public class DesignImportControllerTest {
 	@Test
 	public void testInitializeTemporaryWorkbookForNursery() {
 
-		this.designImportController.initializeTemporaryWorkbook(new StudyTypeDto("N").getName());
+		this.designImportController.initializeTemporaryWorkbook();
 		final ArgumentCaptor<Workbook> argument = ArgumentCaptor.forClass(Workbook.class);
 
 		Mockito.verify(this.userSelection).setTemporaryWorkbook(argument.capture());
@@ -1001,41 +1001,6 @@ public class DesignImportControllerTest {
 	}
 
 	@Test
-	public void testChangeDesignForNewNurseryWithImportedDesign() {
-
-		this.designImportController.changeDesign(0, true);
-
-		// the following fields are expected to be set to null
-		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);
-		Mockito.verify(this.userSelection).setDesignImportData(null);
-		Mockito.verify(this.userSelection).setExperimentalDesignVariables(new ArrayList<MeasurementVariable>());
-		Mockito.verify(this.userSelection).setExpDesignParams(null);
-		Mockito.verify(this.userSelection).setExpDesignVariables(new ArrayList<Integer>());
-	}
-
-	@Test
-	public void testChangeDesignForExistingNurseryWithImportedDesign() {
-		final Workbook nursery = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		nursery.getStudyDetails().setId(1);
-		final List<MeasurementRow> observations = nursery.getObservations();
-
-		Mockito.doReturn(nursery).when(this.userSelection).getWorkbook();
-
-		DesignImportTestDataInitializer.updatePlotNoValue(observations);
-
-		this.designImportController.changeDesign(nursery.getStudyDetails().getId(), true);
-
-		// the following fields are expected to be set to null
-		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);
-		Mockito.verify(this.userSelection).setDesignImportData(null);
-		Mockito.verify(this.userSelection).setExperimentalDesignVariables(new ArrayList<MeasurementVariable>());
-		Mockito.verify(this.userSelection).setExpDesignVariables(new ArrayList<Integer>());
-
-		this.assertIfDesignIsResetToDefault(observations);
-
-	}
-
-	@Test
 	public void testChangeDesignForNewTrialWithImportedDesign() {
 		final Workbook trial = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("T"));
 		trial.getStudyDetails().setId(1);
@@ -1045,7 +1010,7 @@ public class DesignImportControllerTest {
 
 		DesignImportTestDataInitializer.updatePlotNoValue(observations);
 
-		this.designImportController.changeDesign(trial.getStudyDetails().getId(), false);
+		this.designImportController.changeDesign(trial.getStudyDetails().getId());
 		Mockito.verify(this.userSelection).getExpDesignParams();
 		Mockito.verify(this.userSelection).setDesignImportData(null);
 		this.assertIfDesignIsResetToDefault(observations);
@@ -1062,7 +1027,7 @@ public class DesignImportControllerTest {
 
 		DesignImportTestDataInitializer.updatePlotNoValue(observations);
 
-		this.designImportController.changeDesign(trial.getStudyDetails().getId(), false);
+		this.designImportController.changeDesign(trial.getStudyDetails().getId());
 		Mockito.verify(this.userSelection).getExpDesignParams();
 		Mockito.verify(this.userSelection).setDesignImportData(null);
 		this.assertIfDesignIsResetToDefault(observations);

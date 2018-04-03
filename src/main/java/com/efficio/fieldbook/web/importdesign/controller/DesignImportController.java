@@ -149,21 +149,19 @@ public class DesignImportController extends SettingsController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/import/{studyType}", method = RequestMethod.POST, produces = "text/plain")
-	public String importFile(@ModelAttribute("importDesignForm") final ImportDesignForm form,
-			@PathVariable final String studyType) {
-		return this.importFile(form, studyType, 0);
+	@RequestMapping(value = "/import", method = RequestMethod.POST, produces = "text/plain")
+	public String importFile(@ModelAttribute("importDesignForm") final ImportDesignForm form) {
+		return this.importFile(form, 0);
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/import/{studyType}/{noOfEnvironments}", method = RequestMethod.POST, produces = "text/plain")
-	public String importFile(@ModelAttribute("importDesignForm") final ImportDesignForm form,
-			@PathVariable final String studyType, @PathVariable final Integer noOfEnvironments) {
+	@RequestMapping(value = "/import/{noOfEnvironments}", method = RequestMethod.POST, produces = "text/plain")
+	public String importFile(@ModelAttribute("importDesignForm") final ImportDesignForm form, @PathVariable final Integer noOfEnvironments) {
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 
 		try {
-			this.initializeTemporaryWorkbook(studyType);
+			this.initializeTemporaryWorkbook();
 
 			final DesignImportData designImportData = this.designImportParser.parseFile(form.getFileType(),
 					form.getFile());
@@ -233,54 +231,40 @@ public class DesignImportController extends SettingsController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/import/change/{studyId}/{isNursery}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-	public String changeDesign(@PathVariable final Integer studyId, @PathVariable final Boolean isNursery) {
+	@RequestMapping(value = "/import/change/{studyId}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+	public String changeDesign(@PathVariable final Integer studyId) {
 
 		final Map<String, Object> resultsMap = new HashMap<>();
-
-		if (isNursery) {
-			// reset
-			this.cancelImportDesign();
-			this.userSelection.setExperimentalDesignVariables(new ArrayList<MeasurementVariable>());
-			this.userSelection.setExpDesignParams(null);
-			this.userSelection.setExpDesignVariables(new ArrayList<Integer>());
-
-			resultsMap.put(DesignImportController.SUCCESS, this.messageSource
-					.getMessage("design.import.change.design.success.message.nursery", null, Locale.ENGLISH));
-		} else {
-			// For Trial
-			if (this.userSelection.getTemporaryWorkbook() != null) {
-				WorkbookUtil
-						.resetObservationToDefaultDesign(this.userSelection.getTemporaryWorkbook().getObservations());
-			}
-
-			this.userSelection.setDesignImportData(null);
-			this.userSelection.getExpDesignParams().setFileName(DesignImportController.DEFAULT_DESIGN);
-
-			Workbook wb = this.userSelection.getTemporaryWorkbook();
-			if (wb != null) {
-				for (final MeasurementRow row : wb.getTrialObservations()) {
-					for (final MeasurementData data : row.getDataList()) {
-						if (TermId.EXPT_DESIGN_SOURCE.name().equals(data.getLabel())) {
-							data.setValue(DesignImportController.DEFAULT_DESIGN);
-						}
-					}
-				}
-			}
-
-			wb = this.userSelection.getWorkbook();
-			if (wb != null) {
-				for (final MeasurementRow row : wb.getTrialObservations()) {
-					for (final MeasurementData data : row.getDataList()) {
-						if (TermId.EXPT_DESIGN_SOURCE.name().equals(data.getLabel())) {
-							data.setValue(DesignImportController.DEFAULT_DESIGN);
-						}
-					}
-				}
-			}
-			resultsMap.put(DesignImportController.SUCCESS, this.messageSource
-					.getMessage("design.import.change.design.success.message.trial", null, Locale.ENGLISH));
+		if (this.userSelection.getTemporaryWorkbook() != null) {
+			WorkbookUtil.resetObservationToDefaultDesign(this.userSelection.getTemporaryWorkbook().getObservations());
 		}
+
+		this.userSelection.setDesignImportData(null);
+		this.userSelection.getExpDesignParams().setFileName(DesignImportController.DEFAULT_DESIGN);
+
+		Workbook wb = this.userSelection.getTemporaryWorkbook();
+		if (wb != null) {
+			for (final MeasurementRow row : wb.getTrialObservations()) {
+				for (final MeasurementData data : row.getDataList()) {
+					if (TermId.EXPT_DESIGN_SOURCE.name().equals(data.getLabel())) {
+						data.setValue(DesignImportController.DEFAULT_DESIGN);
+					}
+				}
+			}
+		}
+
+		wb = this.userSelection.getWorkbook();
+		if (wb != null) {
+			for (final MeasurementRow row : wb.getTrialObservations()) {
+				for (final MeasurementData data : row.getDataList()) {
+					if (TermId.EXPT_DESIGN_SOURCE.name().equals(data.getLabel())) {
+						data.setValue(DesignImportController.DEFAULT_DESIGN);
+					}
+				}
+			}
+		}
+		resultsMap.put(DesignImportController.SUCCESS,
+				this.messageSource.getMessage("design.import.change.design.success.message.trial", null, Locale.ENGLISH));
 
 		// handling for existing study
 		if (studyId != null && studyId != 0) {
@@ -505,7 +489,6 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(),
-					this.userSelection.getTemporaryWorkbook().getStudyDetails().getStudyType(),
 					DesignTypeItem.CUSTOM_IMPORT, this.generateAdditionalParams(startingEntryNo, startingPlotNo));
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
@@ -575,14 +558,13 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
-			final StudyTypeDto studyType, final DesignTypeItem designTypeItem,
-			final Map<String, Integer> additionalParams) throws DesignValidationException {
+			final DesignTypeItem designTypeItem, final Map<String, Integer> additionalParams) throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
 
 		this.checkTheDeletedSettingDetails(this.userSelection, designImportData);
 
-		this.initializeTemporaryWorkbook(studyType.getName());
+		this.initializeTemporaryWorkbook();
 
 		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
 
@@ -752,7 +734,7 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	public void initializeTemporaryWorkbook(final String studyType) {
+	public void initializeTemporaryWorkbook() {
 
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
@@ -796,7 +778,8 @@ public class DesignImportController extends SettingsController {
 
 		workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID());
 
-		details.setStudyType(studyDataManager.getStudyTypeByName(studyType));
+		//TODO evaluate if we can get this info from userSelection if needed. By now it is not used anywhere
+//		details.setStudyType(studyDataManager.getStudyTypeByName(studyType));
 		workbook.setStudyDetails(details);
 
 		this.userSelection.setTemporaryWorkbook(workbook);

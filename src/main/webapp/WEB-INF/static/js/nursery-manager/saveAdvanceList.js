@@ -156,7 +156,7 @@ var SaveAdvanceList = {};
 		});
 	};
 
-	SaveAdvanceList.doAdvanceNursery = function() {
+	SaveAdvanceList.doAdvanceStudy = function() {
 
 		var serializedData;
 

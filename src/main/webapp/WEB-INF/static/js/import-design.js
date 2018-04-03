@@ -1,10 +1,6 @@
 var ImportDesign = (function() {
 	'use strict';
 	return {
-        /*TODO check where this function is called and remove it*/
-		hasCheckListSelected: function() {
-			return false;
-		},
 
 		hasGermplasmListSelected: function() {
 			return angular.element('#mainApp').injector().get(
@@ -29,7 +25,7 @@ var ImportDesign = (function() {
 					'TrialManagerDataService');
 		},
 
-		trialManagerCurrentData: function() {
+		studyManagerCurrentData: function() {
 			return ImportDesign.getTrialManagerDataService().currentData;
 		},
 
@@ -129,38 +125,29 @@ var ImportDesign = (function() {
 			return $.get('/Fieldbook/DesignImport/showDetails');
 		},
 
-		nurseryEnvironmentDetails: {
-			noOfEnvironments: 1,
-			environments: [{
-				stockId: 0,
-				locationId: 0,
-				experimentId: 0,
-				managementDetailValues: {},
-				trialDetailValues: {},
-				phenotypeIDMap: {}
-			}]
-		},
+		//nurseryEnvironmentDetails: {
+		//	noOfEnvironments: 1,
+		//	environments: [{
+		//		stockId: 0,
+		//		locationId: 0,
+		//		experimentId: 0,
+		//		managementDetailValues: {},
+		//		trialDetailValues: {},
+		//		phenotypeIDMap: {}
+		//	}]
+		//},
 
 		showChangeDesignPopup: function(hasGermplasmListSelected) {
-			if (hasGermplasmListSelected &&
-					!ImportDesign.hasCheckListSelected()) {
+			if (hasGermplasmListSelected) {
 				$('#changeDesignModal').modal({
 					backdrop: 'static',
 					keyboard: true
 				});
-
-				$('#change-design-description-nursery').hide();
-				$('#change-design-description-trial').show();
+				$('#change-design-description-study').show();
 			} else {
-				if (ImportDesign.hasCheckListSelected()) {
-					showErrorMessage(designImportErrorHeader,
-							'You cannot import a design if you have Selected Checks specified.');
-				} else {
-					showErrorMessage(designImportErrorHeader,
-							'Please choose a germplasm list before you can import a design.');
-				}
+				showErrorMessage(designImportErrorHeader,
+					'Please choose a germplasm list before you can import a design.');
 			}
-
 		},
 
 		generateDesign: function() {
@@ -171,7 +158,7 @@ var ImportDesign = (function() {
 			//TODO Clear the style on Nursery save
 
 			var environmentData =
-				angular.copy(ImportDesign.trialManagerCurrentData().environments);
+				angular.copy(ImportDesign.studyManagerCurrentData().environments);
 
 			$.each(environmentData.environments, function(key, data) {
 				$.each(data.managementDetailValues, function(key, value) {
@@ -245,7 +232,7 @@ var ImportDesign = (function() {
 						var environmentData =
 							angular
 								.copy(ImportDesign
-									.trialManagerCurrentData().environments);
+									.studyManagerCurrentData().environments);
 						$.each(environmentData.environments,
 							function(key, data) {
 								$.each(data.managementDetailValues,

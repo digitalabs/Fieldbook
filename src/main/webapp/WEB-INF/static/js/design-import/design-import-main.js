@@ -287,7 +287,7 @@
 				}
 			});
 
-			var envCnt = _isNursery() ? 1 : ImportDesign.trialManagerCurrentData().environments.environments.length;
+			var envCnt = ImportDesign.studyManagerCurrentData().environments.environments.length;
 
 			return $http.post('/Fieldbook/DesignImport/validateAndSaveNewMapping/' + envCnt, postData).then(function(result) {
 				var deferred = $q.defer();

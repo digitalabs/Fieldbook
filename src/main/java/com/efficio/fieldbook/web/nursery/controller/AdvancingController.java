@@ -11,30 +11,26 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.TableHeader;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.bean.AdvanceType;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -60,19 +56,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.TableHeader;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.google.common.collect.Sets;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequestMapping(AdvancingController.URL)
@@ -132,14 +130,14 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 * @param form the form
 	 * @param model the model
 	 * @param session the session
-	 * @param nurseryId the nursery id
-     * @param selectedTrialInstances Set of Trial Instances(Optional)
+	 * @param studyId the study id
+     * @param selectedInstances Set of Study Instances(Optional)
 	 * @return the string
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	@RequestMapping(value = "/{nurseryId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{studyId}", method = RequestMethod.GET)
 	public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, Model model, HttpServletRequest req,
-		HttpSession session, @PathVariable int nurseryId, @RequestParam(required = false) Set<String> selectedTrialInstances,
+		HttpSession session, @PathVariable int studyId, @RequestParam(required = false) Set<String> selectedInstances,
 		@RequestParam(required = false) String noOfReplications, @RequestParam(required = false) String advanceType)
 		throws MiddlewareException {
 
@@ -150,7 +148,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
         form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
         form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
         form.setSelectedReplications(Sets.newHashSet("1"));
-        form.setNurseryId(Integer.toString(nurseryId));
+        form.setNurseryId(Integer.toString(studyId));
 
 		form.setMethodVariates(this.filterVariablesByProperty(this.userSelection.getSelectionVariates(),
 				AppConstants.PROPERTY_BREEDING_METHOD.getString()));
@@ -165,7 +163,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		form.setHarvestYear(currentYear);
 		form.setHarvestMonth(sdfMonth.format(currentDate));
 		
-        form.setSelectedTrialInstances(selectedTrialInstances);
+        form.setSelectedTrialInstances(selectedInstances);
 
 		model.addAttribute("yearChoices", this.generateYearChoices(Integer.parseInt(currentYear)));
 		model.addAttribute("monthChoices", this.generateMonthChoices());
@@ -187,7 +185,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
         return replicationChoices;
     }
 	public List<ChoiceKeyVal> generateYearChoices(int currentYear) {
-		List<ChoiceKeyVal> yearList = new ArrayList<ChoiceKeyVal>();
+		List<ChoiceKeyVal> yearList = new ArrayList<>();
 		int startYear = currentYear - AppConstants.ADVANCING_YEAR_RANGE.getInt();
 		currentYear = currentYear + AppConstants.ADVANCING_YEAR_RANGE.getInt();
 		for (int i = startYear; i <= currentYear; i++) {
@@ -197,7 +195,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	}
 
 	public List<ChoiceKeyVal> generateMonthChoices() {
-		List<ChoiceKeyVal> monthList = new ArrayList<ChoiceKeyVal>();
+		List<ChoiceKeyVal> monthList = new ArrayList<>();
 		DecimalFormat df2 = new DecimalFormat("00");
 		for (double i = 1; i <= 12; i++) {
 			monthList.add(new ChoiceKeyVal(df2.format(i), df2.format(i)));

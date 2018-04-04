@@ -269,7 +269,7 @@ var SaveAdvanceList = {};
                     $('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').removeClass('selected');
                     $('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').removeClass('manual-selected');
                     $('#'+getJquerySafeId(sectionContainerDiv) + ' input.reviewAdvancingListGid').prop('checked', isChecked);
-                    $('input[type="checkbox"]', rows).prop('checked', isChecked).parent('td').parent('tr').removeClass('selected');
+                    $('input[type="checkbox"]', rows).prop('checked', isChecked).parent('td').parent('tr').removeClass('selected').removeClass('manual-selected');
                 }
 
                 // Display total number of selected entries
@@ -287,8 +287,8 @@ var SaveAdvanceList = {};
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr:not(.manual-selected) input.reviewAdvancingListGid:checked').parent().parent().addClass('selected');
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.selected input.reviewAdvancingListGid:not(:checked)').parent().parent().removeClass('selected');
 				} else {
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table input.reviewAdvancingListGid').prop('checked', false);
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected').removeClass('manual-selected');
+					var rows = $(".advance-nursery-list-table .advance-germplasm-items").DataTable().rows().nodes();
+					$('input[type="checkbox"]', rows).prop('checked', false).parent('td').parent('tr').removeClass('manual-selected');
 					if ($(row).hasClass('selected')) {
 						$(row).find('input.reviewAdvancingListGid').prop('checked', true);
 					} else {
@@ -325,11 +325,11 @@ var SaveAdvanceList = {};
 				SaveAdvanceList.verifyCheckboxesForSelectAll();
 			},
 			onShift: function() {
-				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected-dummy').addClass('selected');
-				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.selected input.reviewAdvancingListGid').prop('checked', true);
-				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr:not(.selected) input.reviewAdvancingListGid').prop('checked', false);
-                $('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected').removeClass('manual-selected');
-
+				var selectedRows = $(".advance-nursery-list-table .advance-germplasm-items").DataTable().rows(['.selected']).nodes();
+				$('input[type="checkbox"]', selectedRows).prop('checked', true).parent('td').parent('tr').addClass('selected').addClass('manual-selected');
+				var unselectedRows = $(".advance-nursery-list-table .advance-germplasm-items").DataTable().rows([':not(.selected)']).nodes();
+				$('input[type="checkbox"]', unselectedRows).prop('checked', false).removeClass('manual-selected');
+				
                 // Display total number of selected entries
                 var selectedRows = $('[type="checkbox"]:checked', $('.advance-nursery-list-table .advance-germplasm-items').DataTable().rows().nodes()).length;
                 $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(selectedRows);
@@ -410,9 +410,8 @@ var SaveAdvanceList = {};
 
 	SaveAdvanceList.deleteSelectedEntries = function() {
 		var entryNums = '',
-			sectionContainerDiv = 'reviewAdvanceNurseryModal',
 			uniqueId = $('.btn-save-advance-list').attr('id');
-		$('#' + sectionContainerDiv + ' .reviewAdvancingListGid:checked').each(function() {
+		$('[type="checkbox"]:checked', $('.advance-nursery-list-table .advance-germplasm-items').DataTable().rows().nodes()).each(function() {
 			if (entryNums !== '') {
 				entryNums += ',';
 			}

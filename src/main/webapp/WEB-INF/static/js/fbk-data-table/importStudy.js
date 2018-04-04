@@ -423,7 +423,7 @@ function revertStockListData(){
 }
 function revertData(showMessage) {
 	'use strict';
-	var revertUrl = isNursery() ? '/Fieldbook/ImportManager/revert/data/nursery' : '/Fieldbook/ImportManager/revert/data';
+	var revertUrl = '/Fieldbook/ImportManager/revert/data';
 	$.ajax({
 		url: revertUrl,
 		type: 'GET',
@@ -431,9 +431,6 @@ function revertData(showMessage) {
 		cache: false,
 		async: false,
 		success: function(html) {
-			if (isNursery()) {
-				$('#measurementsDiv').html(html);
-			}
 			$('body').removeClass('import-preview-measurements');
 			if (showMessage === true) {
 				showSuccessfulMessage('', 'Discarded imported data successfully');

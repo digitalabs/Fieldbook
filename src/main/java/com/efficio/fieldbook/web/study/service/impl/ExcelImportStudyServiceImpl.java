@@ -198,7 +198,7 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 		final Workbook originalWorkbook = workbook;
 
 		final List<MeasurementRow> trialObservations =
-				this.filterObservationsByTrialInstance(workbook.getTrialObservations(), getTrialInstanceNumber(workbook, parsedData));
+				this.filterObservationsByTrialInstance(workbook.getTrialObservations(), getTrialInstanceNumber(parsedData));
 		final Map<Object, String> originalValueMap = new HashMap<>();
 
 		if (workbook != null && descriptionWorkbook != null) {
@@ -211,7 +211,7 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 
 				} else if (var.getLabel() != null && var.getLabel().equalsIgnoreCase(ExcelImportStudyServiceImpl.TRIAL)) {
 					// trial level conditions
-					this.setDataToMatchingMeasurementData(trialObservations, var, originalWorkbook.isNursery(), originalValueMap,
+					this.setDataToMatchingMeasurementData(trialObservations, var,originalValueMap,
 							variableMap);
 				}
 
@@ -249,28 +249,10 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 							}
 						}
 					}
-					this.setDataToMatchingMeasurementData(trialObservations, var, originalWorkbook.isNursery(), originalValueMap,
-							variableMap);
+					this.setDataToMatchingMeasurementData(trialObservations, var, originalValueMap, variableMap);
 				}
 			}
 			this.setCorrectBreedingMethodInfo(variableMap);
-			// this would set info to location (trial level variable)
-			if (originalWorkbook.isNursery() && !originalWorkbook.getTrialObservations().isEmpty()
-					&& originalWorkbook.getTrialConditions() != null && !originalWorkbook.getTrialConditions().isEmpty()) {
-				final MeasurementVariable locationNameVar =
-						WorkbookUtil.getMeasurementVariable(originalWorkbook.getTrialConditions(), TermId.TRIAL_LOCATION.getId());
-				if (locationNameVar != null) {
-					// we set it to the trial observation level
-
-					for (final MeasurementRow row : originalWorkbook.getTrialObservations()) {
-						final MeasurementData data = row.getMeasurementData(locationNameVar.getTermId());
-						if (data != null) {
-							data.setValue(locationNameVar.getValue());
-						}
-					}
-
-				}
-			}
 
 		}
 	}
@@ -370,7 +352,7 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 	}
 
 	private void setDataToMatchingMeasurementData(final List<MeasurementRow> trialObservations, final MeasurementVariable var,
-			final boolean isNursery, final Map<Object, String> originalValueMap, final Map<String, Object> variableMap) {
+			final Map<Object, String> originalValueMap, final Map<String, Object> variableMap) {
 
 		for (final MeasurementRow temp : trialObservations) {
 
@@ -392,9 +374,6 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 
 					final String xlsValue = this.getXlsValue(var, temp, data, origVar);
 					data.setValue(xlsValue);
-					if (isNursery) {
-						origVar.setValue(xlsValue);
-					}
 
 					try {
 						if (this.validationService.isValidValue(origVar, xlsValue, true)) {
@@ -464,18 +443,7 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 		return result;
 	}
 
-	protected String getTrialInstanceNumber(final Workbook workbook, final org.apache.poi.ss.usermodel.Workbook xlsBook)
-			throws WorkbookParserException {
-
-		final String trialInstanceNumber = workbook != null && workbook.isNursery() ? "1" : this.getTrialInstanceNumber(xlsBook);
-		if (trialInstanceNumber == null || "".equalsIgnoreCase(trialInstanceNumber)) {
-			throw new WorkbookParserException("error.workbook.import.missing.trial.instance");
-		}
-
-		return trialInstanceNumber;
-	}
-
-	protected String getTrialInstanceNumber(final org.apache.poi.ss.usermodel.Workbook xlsBook) {
+	protected String getTrialInstanceNumber(final org.apache.poi.ss.usermodel.Workbook xlsBook) throws WorkbookParserException {
 		final Sheet descriptionSheet = xlsBook.getSheetAt(0);
 		final int conditionRow = this.findRow(descriptionSheet, ExcelImportStudyServiceImpl.TEMPLATE_SECTION_CONDITION);
 		final int factorRow = this.findRow(descriptionSheet, ExcelImportStudyServiceImpl.TEMPLATE_SECTION_FACTOR);
@@ -521,6 +489,10 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 				// we won't throw error, since we need to check other variable
 				ExcelImportStudyServiceImpl.LOG.error(e.getMessage(), e);
 			}
+		}
+
+		if (trialInstance == null || "".equalsIgnoreCase(trialInstance)) {
+			throw new WorkbookParserException("error.workbook.import.missing.trial.instance");
 		}
 
 		return trialInstance;

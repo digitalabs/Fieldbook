@@ -48,10 +48,13 @@ public class AttributeMaleParentExpression extends BaseExpression {
 	}
 
 	protected void replaceAttributeExpressionWithValue(final StringBuilder container, final String attributeName ,final String value) {
-		final Pattern patternWithAttributeName = Pattern.compile("\\[" + ATTRIBUTE_KEY + "." + attributeName + "\\]");
-		final Matcher matcher = patternWithAttributeName.matcher(container.toString());
-		while (matcher.find()) {
-			container.replace(matcher.start(), matcher.end(), value);
+		final String key = "[" + ATTRIBUTE_KEY + "." + attributeName + "]";
+		int start = container.indexOf(key, 0);
+		while (start > -1) {
+			int end = start + key.length();
+			int nextSearchStart = start + value.length();
+			container.replace(start, end, value);
+			start = container.indexOf(key, nextSearchStart);
 		}
 	}
 }

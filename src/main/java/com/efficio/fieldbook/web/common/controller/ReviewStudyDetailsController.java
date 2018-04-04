@@ -75,18 +75,6 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@Override
 	public String getContentName() {
-		return this.getContentName(this.userSelection.isTrial());
-	}
-
-	private String getContentName(final boolean isTrial) {
-		if (isTrial) {
-			return TRIAL_MANAGER_REVIEW_TRIAL_DETAILS;
-		} else {
-			return "NurseryManager/reviewNurseryDetails";
-		}
-	}
-
-	private String getContentStudy() {
 		return TRIAL_MANAGER_REVIEW_TRIAL_DETAILS;
 	}
 
@@ -118,7 +106,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		}
 
 		model.addAttribute("trialDetails", details);
-		return this.showAjaxPage(model, this.getContentStudy());
+		return this.showAjaxPage(model, this.getContentName());
 	}
 
 	protected void addErrorMessageToResult(final StudyDetails details, final MiddlewareException e, final int id) {

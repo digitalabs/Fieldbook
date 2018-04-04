@@ -450,17 +450,6 @@ public class UserSelection implements Serializable {
 		this.trialLevelVariableList = trialLevelVariableList;
 	}
 
-	/**
-	 * Checks if is trial.
-	 *
-	 * @return true, if is trial
-	 */
-	public boolean isTrial() {
-		if (this.workbook != null) {
-			return !this.workbook.isNursery();
-		}
-		return false;
-	}
 
 	/**
 	 * Gets the trial environment values.

@@ -74,6 +74,7 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		return null;
 	}
 
+	@Deprecated
 	@RequestMapping(value = "/inlineinput/single/{index}/{termId}", method = RequestMethod.GET)
 	public String inlineInputNurseryGet(@PathVariable int index, @PathVariable int termId, Model model) throws MiddlewareQueryException {
 
@@ -106,10 +107,11 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 				}
 			}
 		}
-		this.updateModel(model, userSelection.getWorkbook().isNursery(), editData, index, termId, possibleValues);
+		this.updateModel(model, false, editData, index, termId, possibleValues);// TODO CUENYAD REMOVING ISNURSERY CONDITION
 		return super.showAjaxPage(model, "/NurseryManager/inlineInputMeasurement");
 	}
 
+	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "/inlineinput/single", method = RequestMethod.POST)
 	public Map<String, Object> inlineInputNurseryPost(@RequestBody Map<String, String> data, HttpServletRequest req) {
@@ -207,7 +209,7 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
 		model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
 		model.addAttribute("numericVarId", TermId.NUMERIC_VARIABLE.getId());
-		model.addAttribute("isNursery", userSelection.getWorkbook().isNursery());
+		model.addAttribute("isNursery", false); // TODO CUENYAD REMOVING ISNURSERY CONDITION
 		return super.showAjaxPage(model, "/Common/updateExperimentModal");
 	}
 

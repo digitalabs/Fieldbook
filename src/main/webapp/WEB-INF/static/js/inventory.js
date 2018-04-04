@@ -151,18 +151,6 @@ function initializePossibleValuesComboInventory(possibleValues, name, showAllLoc
 	}
 }
 
-function displayAdvanceGermplasmDetails(listId) {
-	'use strict';
-	$.ajax({
-		url: '/Fieldbook/germplasm/list/advance/' + listId,
-		type: 'GET',
-		cache: false,
-		success: function(html) {
-			$('#advance-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
-		}
-	});
-}
-
 function showCorrectLocationInventoryCombo() {
 	'use strict';
 	var isChecked = $('#showFavoriteLocationInventory').is(':checked');

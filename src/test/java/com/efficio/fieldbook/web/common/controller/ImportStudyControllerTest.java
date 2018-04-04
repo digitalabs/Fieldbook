@@ -117,21 +117,6 @@ public class ImportStudyControllerTest {
 	}
 
 	@Test
-	public void testSaveImportedFilesNursery() {
-		final CreateNurseryForm form = Mockito.mock(CreateNurseryForm.class);
-		final Model model = Mockito.mock(Model.class);
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
-		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
-		this.unitUnderTest.saveImportedFilesNursery(form, model);
-		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(workbook,
-				this.contextUtil.getCurrentProgramUUID(), true);
-		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(
-				this.userSelection.getWorkbook().getStudyDetails().getId(),
-				this.userSelection.getWorkbook().getStudyDetails().getStudyName(), form.getColumnOrders(),
-				this.userSelection.getWorkbook());
-	}
-
-	@Test
 	public void testApplyChangeDetailsAddGidName() throws IOException, FieldbookException {
 		final String dummyUserResponse = "";
 		final GermplasmChangeDetail[] changeDetails = this.createTestChangeDetail();

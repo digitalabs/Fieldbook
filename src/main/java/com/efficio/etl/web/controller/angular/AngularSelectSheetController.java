@@ -447,7 +447,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 		final Map<String, String> studyTypes = new HashMap<>();
 
-		for (final StudyTypeDto type : studyDataManager.getAllStudyTypes()) {
+		for (final StudyTypeDto type : studyDataManager.getAllVisibleStudyTypes()) {
 			studyTypes.put(type.getName(), type.getLabel());
 		}
 

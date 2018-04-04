@@ -366,10 +366,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			});
 
 			var groupId = this._group,
-				url = '/Fieldbook/manageSettings/settings/properties?type=' + groupId + classReqStr;
-			if (!isNursery()) {
-				url += '&useTrialFiltering=true';
-			}
+				url = '/Fieldbook/manageSettings/settings/properties?type=' + groupId + classReqStr + '&useTrialFiltering=true';
 			$.getJSON(url, $.proxy(function(data) {
 
 				// Check we have not moved on by the time the call returns

@@ -135,8 +135,6 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 
 					this.loadChecksAndTestEntries(germplasmList, checkList, testEntryList);
 
-					this.loadChecksAndTestEntries(germplasmList, checkList, testEntryList);
-
 					if (testEntryList.isEmpty()) {
 						return new ExpDesignValidationOutput(Boolean.FALSE,
 								this.messageSource.getMessage("germplasm.list.all.entries.can.not.be.checks", null, locale));

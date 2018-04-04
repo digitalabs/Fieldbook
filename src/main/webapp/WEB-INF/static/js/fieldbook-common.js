@@ -1622,7 +1622,7 @@ function getMeasurementTableVisibleColumns(addPlotId) {
 
 function importNursery(type) {
 	'use strict';
-	var action = '/Fieldbook/ImportManager/import/' + (isNursery() ? 'Nursery' : 'Trial') + '/' + type,
+	var action = '/Fieldbook/ImportManager/import/' + type,
 		formName = '#importStudyUploadForm';
 
 	$(formName).attr('action', action);

@@ -1517,7 +1517,7 @@ function choosePreviousNursery(studyId) {
 		}
 	});
 }
-function isNurseryNameUnique() {
+function isStudyName_Unique() {
 	'use strict';
 	var studyId = '0';
 	if ($('#createNurseryMainForm #studyId').length !== 0) {
@@ -1548,7 +1548,7 @@ function validateCreateNursery() {
 	}else if ($.trim($('#' + getJquerySafeId('description')).val()) === '') {
 		hasError = true;
 		name = 'Description';
-	}else if (isNurseryNameUnique() === false) {
+	}else if (isStudyName_Unique() === false) {
 		hasError = true;
 		customMessage = 'Name should be unique';
 	} else if ($('#folderId').val() === '') {

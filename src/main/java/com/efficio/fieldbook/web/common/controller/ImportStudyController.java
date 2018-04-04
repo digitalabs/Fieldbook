@@ -278,6 +278,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		return isTrial ? "TrialManager/openTrial" : "NurseryManager/addOrRemoveTraits";
 	}
 
+	@Deprecated
 	@RequestMapping(value = "/revert/data/nursery", method = RequestMethod.GET)
 	public String revertDataNursery(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
 			final Model model) {
@@ -302,9 +303,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		// we should remove here the newly added traits
 		final List<MeasurementVariable> newVariableList = new ArrayList<>();
 
-		newVariableList.addAll(
-				userSelection.getWorkbook().isNursery() ? userSelection.getWorkbook().getMeasurementDatasetVariables()
-						: userSelection.getWorkbook().getMeasurementDatasetVariablesView());
+		newVariableList.addAll(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 		form.setMeasurementVariables(newVariableList);
 		final List<MeasurementRow> list = new ArrayList<>();
 		if (userSelection.getWorkbook().getOriginalObservations() != null) {
@@ -320,8 +319,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/apply/change/details", method = RequestMethod.POST)
-	public String applyChangeDetails(@RequestParam(value = "data") final String userResponses)
-			throws FieldbookException {
+	public String applyChangeDetails(@RequestParam(value = "data") final String userResponses) throws FieldbookException {
 		final UserSelection userSelection = this.getUserSelection();
 		final GermplasmChangeDetail[] responseDetails = this.getResponseDetails(userResponses);
 		final List<MeasurementRow> observations = userSelection.getWorkbook().getObservations();
@@ -348,25 +346,23 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 			if (responseDetail.getStatus() == ImportStudyController.STATUS_ADD_NAME_TO_GID) {
 				// add germplasm name to gid
-				final String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(),
-						responseDetail.getImportDate());
+				final String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
 				final Integer dateInteger = Integer.valueOf(gDate);
 				// instead of directly saving the new name value, store the name
 				// into the prepared list
-				namesForAdding.add(new Name(null, Integer.valueOf(responseDetail.getOriginalGid()),
-						responseDetail.getNameType(), 0, userId, responseDetail.getNewDesig(),
-						responseDetail.getImportLocationId(), dateInteger, 0));
+				namesForAdding.add(new Name(null, Integer.valueOf(responseDetail.getOriginalGid()), responseDetail.getNameType(), 0, userId,
+					responseDetail.getNewDesig(), responseDetail.getImportLocationId(), dateInteger, 0));
 				desigData.setValue(responseDetail.getNewDesig());
 				gidData.setValue(responseDetail.getOriginalGid());
 			} else if (responseDetail.getStatus() == ImportStudyController.STATUS_ADD_GERMPLASM_AND_NAME) {
 				// create new germlasm
-				final String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(),
-						responseDetail.getImportDate());
+				final String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
 				final Integer dateInteger = Integer.valueOf(gDate);
-				final Name name = new Name(null, null, responseDetail.getNameType(), 1, userId,
-						responseDetail.getNewDesig(), responseDetail.getImportLocationId(), dateInteger, 0);
-				final Germplasm germplasm = new Germplasm(null, responseDetail.getImportMethodId(), 0, 0, 0, userId, 0,
-						responseDetail.getImportLocationId(), dateInteger, name);
+				final Name name = new Name(null, null, responseDetail.getNameType(), 1, userId, responseDetail.getNewDesig(),
+					responseDetail.getImportLocationId(), dateInteger, 0);
+				final Germplasm germplasm =
+					new Germplasm(null, responseDetail.getImportMethodId(), 0, 0, 0, userId, 0, responseDetail.getImportLocationId(),
+						dateInteger, name);
 
 				// instead of directly saving into the database, store the
 				// germplasm - name pair into a list
@@ -419,8 +415,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 					final MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
 
 					gidData.setValue(newGid.toString());
-					changeMap.get(entryNumData.getValue()).put(Integer.toString(TermId.GID.getId()),
-							String.valueOf(newGid));
+					changeMap.get(entryNumData.getValue()).put(Integer.toString(TermId.GID.getId()), String.valueOf(newGid));
 
 				}
 			}
@@ -431,16 +426,14 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 		// we need to set the gid and desig for the trial with the same entry
 		// number
-		if (!userSelection.getWorkbook().isNursery()) {
-			for (final MeasurementRow row : observations) {
-				final MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
-				if (entryNumData != null && changeMap.containsKey(entryNumData.getValue())) {
-					final Map<String, String> tempMap = changeMap.get(entryNumData.getValue());
-					final MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
-					final MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
-					desigData.setValue(tempMap.get(Integer.toString(TermId.DESIG.getId())));
-					gidData.setValue(tempMap.get(Integer.toString(TermId.GID.getId())));
-				}
+		for (final MeasurementRow row : observations) {
+			final MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
+			if (entryNumData != null && changeMap.containsKey(entryNumData.getValue())) {
+				final Map<String, String> tempMap = changeMap.get(entryNumData.getValue());
+				final MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
+				final MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
+				desigData.setValue(tempMap.get(Integer.toString(TermId.DESIG.getId())));
+				gidData.setValue(tempMap.get(Integer.toString(TermId.GID.getId())));
 			}
 		}
 
@@ -506,13 +499,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		SettingsUtil.convertWorkbookVariatesToSettingDetails(traits, this.fieldbookMiddlewareService,
 				this.fieldbookService, newTraits, selectedVariates);
 
-		if (workbook.isNursery()) {
-			userSelection.getSelectionVariates().addAll(selectedVariates);
-			userSelection.setNewSelectionVariates(selectedVariates);
-			form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
-		} else {
-			form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
-		}
+		form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 		userSelection.getBaselineTraitsList().addAll(newTraits);
 		userSelection.setNewTraits(newTraits);
 
@@ -561,13 +548,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		SettingsUtil.convertWorkbookVariatesToSettingDetails(traits, this.fieldbookMiddlewareService,
 				this.fieldbookService, newTraits, selectedVariates);
 
-		if (workbook.isNursery()) {
-			userSelection.getSelectionVariates().addAll(selectedVariates);
-			userSelection.setNewSelectionVariates(selectedVariates);
-			form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
-		} else {
-			form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
-		}
+		form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 		userSelection.getBaselineTraitsList().addAll(newTraits);
 		userSelection.setNewTraits(newTraits);
 
@@ -602,9 +583,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 		form.setMeasurementVariables(newVariableList);
 
-		newVariableList.addAll(
-				userSelection.getWorkbook().isNursery() ? userSelection.getWorkbook().getMeasurementDatasetVariables()
-						: userSelection.getWorkbook().getMeasurementDatasetVariablesView());
+		newVariableList.addAll(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 		newVariableList.addAll(traits);
 		return super.showAjaxPage(model, ImportStudyController.ADD_OR_REMOVE_TRAITS_HTML);
 	}
@@ -622,9 +601,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 		form.setMeasurementVariables(newVariableList);
 
-		newVariableList.addAll(
-				userSelection.getWorkbook().isNursery() ? userSelection.getWorkbook().getMeasurementDatasetVariables()
-						: userSelection.getWorkbook().getMeasurementDatasetVariablesView());
+		newVariableList.addAll(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 		newVariableList.addAll(traits);
 
 		final List<MeasurementRow> tempList = new ArrayList<>();

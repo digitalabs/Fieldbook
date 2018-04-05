@@ -1146,16 +1146,16 @@ function advanceNursery() {
  * @param locationIds Location will be passed for Advance Trial only
  */
 function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailHtml, advanceType) {
-    'use strict';
-    var count = 0,
-        idVal = studyId;
+	'use strict';
+	var count = 0,
+		idVal = studyId;
 
-    if ($('.import-study-data').data('data-import') === '1') {
-        showErrorMessage('', needSaveImportDataError);
-        return;
-    }
+	if ($('.import-study-data').data('data-import') === '1') {
+		showErrorMessage('', needSaveImportDataError);
+		return;
+	}
 
-    count++;
+	count++;
 	if (count !== 1) {
 		showMessage(advanceStudyError);
 		return;
@@ -1163,8 +1163,8 @@ function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailH
 
 	//TODO do we advance the trial using the same ajax function as advancing the nursery from the nursery manager.
 	//TODO Should that be common then with the common path?
-    var advanceStudyHref = '/Fieldbook/NurseryManager/advance/nursery';
-    advanceStudyHref = advanceStudyHref + '/' + encodeURIComponent(idVal);
+	var advanceStudyHref = '/Fieldbook/NurseryManager/advance/nursery';
+	advanceStudyHref = advanceStudyHref + '/' + encodeURIComponent(idVal);
 	advanceStudyHref = advanceStudyHref + '?selectedInstances=' + encodeURIComponent(trialInstances.join(","));
 
 	if (noOfReplications) {
@@ -1176,34 +1176,32 @@ function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailH
 	}
 
 
-    if (idVal != null) {
-    	//TODO the failure of the ajax request should be processed and error shown
-        $.ajax({
-            url: advanceStudyHref,
-            type: 'GET',
-            aysnc: false,
-            success: function(html) {
-                $('#advance-nursery-modal-div').html(html);
-                $('#advanceNurseryModal')
-                	.one('shown.bs.modal', function() {
-                		$('body').addClass('modal-open');
-                	})
-                .modal({ backdrop: 'static', keyboard: true });
+	if (idVal != null) {
+		//TODO the failure of the ajax request should be processed and error shown
+		$.ajax({
+			url: advanceStudyHref,
+			type: 'GET',
+			aysnc: false,
+			success: function (html) {
+				$('#advance-nursery-modal-div').html(html);
+				$('#advanceNurseryModal')
+					.one('shown.bs.modal', function () {
+						$('body').addClass('modal-open');
+					})
+					.modal({backdrop: 'static', keyboard: true});
 
-                $('#advanceNurseryModal select').not('.fbk-harvest-year').each(function() {
-                    $(this).select2({minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});
-                });
-                $('#advanceNurseryModal select.fbk-harvest-year').each(function() {
-                    $(this).select2({minimumResultsForSearch: -1});
-                });
+				$('#advanceNurseryModal select').not('.fbk-harvest-year').each(function () {
+					$(this).select2({minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});
+				});
+				$('#advanceNurseryModal select.fbk-harvest-year').each(function () {
+					$(this).select2({minimumResultsForSearch: -1});
+				});
 
-                if(!isNursery()){
-                    $('#location-details-section').append(locationDetailHtml);
-                }
+				$('#location-details-section').append(locationDetailHtml);
 
-            }
-        });
-    }
+			}
+		});
+	}
 }
 function showInvalidInputMessage(message) {
 	'use strict';
@@ -1622,7 +1620,7 @@ function getMeasurementTableVisibleColumns(addPlotId) {
 
 function importNursery(type) {
 	'use strict';
-	var action = '/Fieldbook/ImportManager/import/' + (isNursery() ? 'Nursery' : 'Trial') + '/' + type,
+	var action = '/Fieldbook/ImportManager/import/' + type,
 		formName = '#importStudyUploadForm';
 
 	$(formName).attr('action', action);
@@ -1825,14 +1823,8 @@ function validatePlantsSelected() {
 				if (isMixed) {
 					if (data == 0) {
 						var param = $('#lineVariateId').select2('data').text + ' and/or ' + $('#plotVariateId').select2('data').text;
-                        if(isNursery()){
-                            var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
-                            showErrorMessage('page-advance-modal-message', newMessage);
-                        }
-                        else{
-                            var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
-                            showErrorMessage('page-advance-modal-message', newMessage);
-                        }
+						var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
+						showErrorMessage('page-advance-modal-message', newMessage);
 
 						valid = false;
 					}
@@ -1840,14 +1832,8 @@ function validatePlantsSelected() {
 					choice = !$('#plot-variates-section').is(':visible');
 					if (choice == false && data == '0') {
 						var param = $('#plotVariateId').select2('data').text;
-                        if(isNursery()){
-                            var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
-                            showErrorMessage('page-advance-modal-message', newMessage);
-                        }
-                        else{
-                            var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
-                            showErrorMessage('page-advance-modal-message', newMessage);
-                        }
+						var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
+						showErrorMessage('page-advance-modal-message', newMessage);
 
 						valid = false;
 					}
@@ -1856,15 +1842,8 @@ function validatePlantsSelected() {
 					lineSameForAll = $('input[type=checkbox][name=lineChoice]:checked').val() == 1;
 					if (lineSameForAll == false && choice == false && data == '0') {
 						var param = $('#lineVariateId').select2('data').text;
-                        if(isNursery()){
-                            var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
-                            showErrorMessage('page-advance-modal-message', newMessage);
-                        }
-                        else{
-                            var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
-                            showErrorMessage('page-advance-modal-message', newMessage);
-                        }
-
+						var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
+						showErrorMessage('page-advance-modal-message', newMessage);
 						valid = false;
 					}
 				}
@@ -1884,12 +1863,10 @@ function callAdvanceStudy() {
 
 	var lines = $('#lineSelected').val();
 	var methdodId = $('#advanceBreedingMethodId').val();
-	if (!isNursery()) {
-		var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
-	}
+	var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
 
 	var repsSectionIsDisplayed = $('#reps-section').length;
-    if(!isNursery() && repsSectionIsDisplayed) {
+    if(repsSectionIsDisplayed) {
         var selectedReps = [];
         $('#replications input:checked').each(function() {
             selectedReps.push($(this).val());
@@ -2008,14 +1985,8 @@ function validateBreedingMethod() {
 			async: false,
 			success: function(data) {
 				if (data == 0) {
-                    if(isNursery()){
-                        var newMessage = noMethodValueError.replace(new RegExp(/\{0\}/g), $('#methodVariateId').select2('data').text);
-                        showErrorMessage('page-advance-modal-message', newMessage);
-                    }
-                    else{
-                        var newMessage = noMethodValueErrorTrial.replace(new RegExp(/\{0\}/g), $('#methodVariateId').select2('data').text);
-                        showErrorMessage('page-advance-modal-message', newMessage);
-                    }
+					var newMessage = noMethodValueErrorTrial.replace(new RegExp(/\{0\}/g), $('#methodVariateId').select2('data').text);
+					showErrorMessage('page-advance-modal-message', newMessage);
 
 					valid = false;
 				}

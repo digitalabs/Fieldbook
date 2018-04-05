@@ -145,8 +145,6 @@ public class UserSelection implements Serializable {
 	/** The current page. */
 	private int currentPage;
 
-	private Integer nurseryTypeId;
-
 	/** The measurement row list. */
 	private List<MeasurementRow> measurementRowList;
 	private List<MeasurementVariable> measurementDatasetVariable;
@@ -450,17 +448,6 @@ public class UserSelection implements Serializable {
 		this.trialLevelVariableList = trialLevelVariableList;
 	}
 
-	/**
-	 * Checks if is trial.
-	 *
-	 * @return true, if is trial
-	 */
-	public boolean isTrial() {
-		if (this.workbook != null) {
-			return !this.workbook.isNursery();
-		}
-		return false;
-	}
 
 	/**
 	 * Gets the trial environment values.
@@ -927,16 +914,6 @@ public class UserSelection implements Serializable {
 		this.designImportData = designImportData;
 	}
 
-	public Integer getNurseryTypeForDesign() {
-		return this.nurseryTypeId;
-
-	}
-
-	public void setNurseryTypeForDesign(Integer nurseryTypeId) {
-		this.nurseryTypeId = nurseryTypeId;
-
-	}
-
 	public boolean isDesignGenerated() {
 		return this.getTemporaryWorkbook() != null;
 	}
@@ -987,14 +964,6 @@ public class UserSelection implements Serializable {
 
 	public void setFieldLayoutRandom(final boolean fieldLayoutRandom) {
 		this.fieldLayoutRandom = fieldLayoutRandom;
-	}
-
-	public Integer getNurseryTypeId() {
-		return nurseryTypeId;
-	}
-
-	public void setNurseryTypeId(final Integer nurseryTypeId) {
-		this.nurseryTypeId = nurseryTypeId;
 	}
 
 	public List<InventoryDetails> getPreviousInventoryDetails() {
@@ -1101,7 +1070,7 @@ public class UserSelection implements Serializable {
 			.equals(getRemovedConditions(), that.getRemovedConditions()) && Objects.equals(getNewTraits(), that.getNewTraits()) && Objects
 			.equals(getNewSelectionVariates(), that.getNewSelectionVariates()) && Objects.equals(getWorkbook(), that.getWorkbook())
 			&& Objects.equals(getTemporaryWorkbook(), that.getTemporaryWorkbook()) && Objects
-			.equals(getDesignImportData(), that.getDesignImportData()) && Objects.equals(getNurseryTypeId(), that.getNurseryTypeId())
+			.equals(getDesignImportData(), that.getDesignImportData())
 			&& Objects.equals(getMeasurementRowList(), that.getMeasurementRowList()) && Objects
 			.equals(getMeasurementDatasetVariable(), that.getMeasurementDatasetVariable()) && Objects
 			.equals(getConstantsWithLabels(), that.getConstantsWithLabels()) && Objects
@@ -1130,7 +1099,7 @@ public class UserSelection implements Serializable {
 			getTreatmentFactors(), getSelectionVariates(), getBasicDetails(), getNurseryConditions(), getDeletedStudyLevelConditions(),
 			getDeletedPlotLevelList(), getDeletedBaselineTraitsList(), getDeletedNurseryConditions(), getDeletedTrialLevelVariables(),
 			getDeletedTreatmentFactors(), getChangeDetails(), getRemovedFactors(), getRemovedConditions(), getNewTraits(),
-			getNewSelectionVariates(), getWorkbook(), getTemporaryWorkbook(), getDesignImportData(), getCurrentPage(), getNurseryTypeId(),
+			getNewSelectionVariates(), getWorkbook(), getTemporaryWorkbook(), getDesignImportData(), getCurrentPage(),
 			getMeasurementRowList(), getMeasurementDatasetVariable(), getConstantsWithLabels(), getExpDesignParams(),
 			getExpDesignVariables(), getExperimentalDesignVariables(), getImportedCrossesList(), getImportedCrossesId(), getCrossSettings(),
 			getListId(), getPreviousInventoryDetails(), getStartingEntryNo(), getStartingPlotNo(), getStudyName(), getStudyDescription(),
@@ -1154,7 +1123,7 @@ public class UserSelection implements Serializable {
 			+ ", changeDetails=" + changeDetails + ", removedFactors=" + removedFactors + ", removedConditions=" + removedConditions
 			+ ", newTraits=" + newTraits + ", newSelectionVariates=" + newSelectionVariates + ", workbook=" + workbook
 			+ ", temporaryWorkbook=" + temporaryWorkbook + ", designImportData=" + designImportData + ", currentPage=" + currentPage
-			+ ", nurseryTypeId=" + nurseryTypeId + ", measurementRowList=" + measurementRowList + ", measurementDatasetVariable="
+			+ ", measurementRowList=" + measurementRowList + ", measurementDatasetVariable="
 			+ measurementDatasetVariable + ", constantsWithLabels=" + constantsWithLabels + ", expDesignParams=" + expDesignParams
 			+ ", expDesignVariables=" + expDesignVariables + ", experimentalDesignVariables=" + experimentalDesignVariables
 			+ ", importedCrossesList=" + importedCrossesList + ", importedCrossesId=" + importedCrossesId + ", crossSettings="

@@ -96,7 +96,6 @@ public class SettingsServiceImplTest {
 		final List<MeasurementVariable> traits = this.initializeListOfVariates();
 
 		Mockito.when(this.workbook.getVariates()).thenReturn(traits);
-		Mockito.when(this.workbook.isNursery()).thenReturn(true);
 
 		final List<LabelFields> result = this.serviceDUT.retrieveTraitsAsLabels(this.workbook);
 
@@ -108,7 +107,7 @@ public class SettingsServiceImplTest {
 
 		final StandardVariable standardVariable = new StandardVariable();
 		final Set<VariableType> variableTypes = new HashSet<>();
-		variableTypes.add(VariableType.EXPERIMENTAL_DESIGN);
+		variableTypes.add(VariableType.GERMPLASM_DESCRIPTOR);
 		standardVariable.setVariableTypes(variableTypes);
 
 		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId(), PROGRAM_UUID)).thenReturn(standardVariable);

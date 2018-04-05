@@ -88,14 +88,11 @@ function doSaveImportedData() {
 	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 	var serializedData = 'columnOrders=' + encodeURIComponent(JSON.stringify(columnsOrder));
 	return $.ajax({
-		url: isNursery() ? '/Fieldbook/ImportManager/import/save/nursery' : '/Fieldbook/ImportManager/import/save',
+		url: '/Fieldbook/ImportManager/import/save',
 		type: 'POST',
 		data: serializedData,
 		async: true,
-		success: function(html) {
-			if(isNursery()) {
-				$('#measurementsDiv').html(html);
-			}
+		success: function (html) {
 			$('.import-study-data').data('data-import', '0');
 			$('.import-study-data').data('measurement-show-already', '0');
 			$('.fbk-discard-imported-data').addClass('fbk-hide');
@@ -104,52 +101,31 @@ function doSaveImportedData() {
 				type: 'REFRESH_AFTER_IMPORT_SAVE'
 			});
 
-			if (isNursery()) {
-				doRefreshNurserySettings();
-				updateMeasurementDataExistingValue(!hasMeasurementData());
-				displayEditFactorsAndGermplasmSection();
-			} else {
-				displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
-				$.ajax({
-					url: '/Fieldbook/ImportManager/import/preview',
-					type: 'POST',
-					success: function(html) {
-						onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
-                	}
-                });
-			}			
+			displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
+			$.ajax({
+				url: '/Fieldbook/ImportManager/import/preview',
+				type: 'POST',
+				success: function (html) {
+					onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
+				}
+			});
+
 		}
 	});
 }
 function doMeasurementsReload(hasDataOverwrite) {
 	'use strict';
 	$('.import-study-data').data('data-import', '1');
-	
-	if (isNursery()) {
-		$.ajax({
-			url: '/Fieldbook/ImportManager/import/preview/nursery',
-			type: 'POST',
-			success: function(html) {
-				$('#measurementsDiv').html(html);
-				$('.fbk-discard-imported-data').removeClass('fbk-hide');
-				if (hasDataOverwrite === '1') {
-					showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage, 5000);
-				} else {
-					showSuccessfulMessage('', importSuccessReminderToSaveMessage);
-				}
-			}
-		});
+
+	$('body').addClass('import-preview-measurements');
+	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+	new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
+
+	$('.fbk-discard-imported-data').removeClass('fbk-hide');
+	if (hasDataOverwrite === '1') {
+		showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage, 5000);
 	} else {
-		$('body').addClass('import-preview-measurements');
-		var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
-		new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
-	
-		$('.fbk-discard-imported-data').removeClass('fbk-hide');
-		if (hasDataOverwrite === '1') {
-			showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage, 5000);
-		} else {
-			showSuccessfulMessage('', importSuccessReminderToSaveMessage);
-		}
+		showSuccessfulMessage('', importSuccessReminderToSaveMessage);
 	}
 
 	$('#importStudyModal').modal('hide');
@@ -423,7 +399,7 @@ function revertStockListData(){
 }
 function revertData(showMessage) {
 	'use strict';
-	var revertUrl = isNursery() ? '/Fieldbook/ImportManager/revert/data/nursery' : '/Fieldbook/ImportManager/revert/data';
+	var revertUrl = '/Fieldbook/ImportManager/revert/data';
 	$.ajax({
 		url: revertUrl,
 		type: 'GET',
@@ -431,9 +407,6 @@ function revertData(showMessage) {
 		cache: false,
 		async: false,
 		success: function(html) {
-			if (isNursery()) {
-				$('#measurementsDiv').html(html);
-			}
 			$('body').removeClass('import-preview-measurements');
 			if (showMessage === true) {
 				showSuccessfulMessage('', 'Discarded imported data successfully');

@@ -271,17 +271,18 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testGetTrialInstanceNumberForNursery() throws WorkbookParserException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
+		this.setUpXLSWorkbookTestData();
+		Mockito.doReturn(TermId.TRIAL_INSTANCE_FACTOR.getId()).when(this.fieldbookMiddlewareService)
+			.getStandardVariableIdByPropertyScaleMethodRole(PROPERTY, SCALE, METHOD, PhenotypicType.getPhenotypicTypeForLabel(LABEL));
 
-		final org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
+		final String toBeReturned = "1";
+		Mockito.doReturn(toBeReturned).when(this.trialInstanceCell).getStringCellValue();
 		Assert.assertEquals("Expecting to return 1 for the value of trialInstance in Nursery but didn't.", TRIAL_INSTANCE_NO,
-				this.importStudy.getTrialInstanceNumber(workbook, xlsBook));
+				this.importStudy.getTrialInstanceNumber(this.xlsBook));
 	}
 
 	@Test
 	public void testGetTrialInstanceNumberForTrial() throws WorkbookParserException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("T"));
-
 		this.setUpXLSWorkbookTestData();
 		Mockito.doReturn(TermId.TRIAL_INSTANCE_FACTOR.getId()).when(this.fieldbookMiddlewareService)
 				.getStandardVariableIdByPropertyScaleMethodRole(PROPERTY, SCALE, METHOD, PhenotypicType.getPhenotypicTypeForLabel(LABEL));
@@ -290,7 +291,7 @@ public class ExcelImportStudyServiceImplTest {
 		Mockito.doReturn(toBeReturned).when(this.trialInstanceCell).getStringCellValue();
 
 		Assert.assertEquals("Expecting to return the value returned from the getTrialInstaceNumber method but didn't.", toBeReturned,
-				this.importStudy.getTrialInstanceNumber(workbook, this.xlsBook));
+				this.importStudy.getTrialInstanceNumber(this.xlsBook));
 	}
 
 	private void setUpXLSWorkbookTestData() {
@@ -323,14 +324,12 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testGetTrialInstanceNumberForTrial_ReturnsExceptionForNullTrialInstance() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("T"));
-
 		this.setUpXLSWorkbookTestData();
 		Mockito.doReturn(null).when(this.fieldbookMiddlewareService)
 				.getStandardVariableIdByPropertyScaleMethodRole(PROPERTY, SCALE, METHOD, PhenotypicType.getPhenotypicTypeForLabel(LABEL));
 
 		try {
-			this.importStudy.getTrialInstanceNumber(workbook, this.xlsBook);
+			this.importStudy.getTrialInstanceNumber(this.xlsBook);
 			Assert.fail("Expecting to return an exception when the trial instance from the xls file is null but didn't.");
 		} catch (final WorkbookParserException e) {
 			// do nothing

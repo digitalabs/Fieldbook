@@ -751,11 +751,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		Integer repFldNo = 0;
 		Integer plantNumberFldNo = 0;
 		// get FLDNOs for Attribute Objects to be created
-		if (this.userSelection.isTrial()) {
-			repFldNo = this.getPassportAttributeForCode("REP_NUMBER");
-			trialInstanceFldNo = this.getPassportAttributeForCode("INSTANCE_NUMBER");
-			plantNumberFldNo = this.getPassportAttributeForCode("PLANT_NUMBER");
-		}
+		repFldNo = this.getPassportAttributeForCode("REP_NUMBER");
+		trialInstanceFldNo = this.getPassportAttributeForCode("INSTANCE_NUMBER");
+		plantNumberFldNo = this.getPassportAttributeForCode("PLANT_NUMBER");
+
 
 		// Create germplasms to save - Map<Germplasm, List<Name>>
 		for (final ImportedGermplasm importedGermplasm : form.getGermplasmList()) {
@@ -792,9 +791,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final Integer trueGdate = !"".equals(harvestDate.trim()) ? Integer.valueOf(harvestDate) : gDate;
 			final Germplasm germplasm;
 			germplasm = new Germplasm(gid, methodId, gnpgs, gpid1, gpid2, currentUserID, lgid, locationId, trueGdate, preferredName);
-
 			germplasm.setMgid(mgid);
-
 			germplasms.add(new ImmutablePair<>(germplasm, names));
 
 			// Create list data items to save - Map<Germplasm,
@@ -811,8 +808,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			}
 
 			final GermplasmListData listData =
-					new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource, designation, groupName,
-							listDataStatus, localRecordId);
+				new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource, designation, groupName,
+					listDataStatus, localRecordId);
 
 			listDataItems.add(new ImmutablePair<>(germplasm, listData));
 
@@ -822,33 +819,30 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			// germplasm in FieldbookServiceImpl.advanceNursery().
 			// originAttribute gid will be set when saving once gid is known
 			final Attribute originAttribute =
-					this.createAttributeObject(currentUserID, importedGermplasm.getSource(), plotCodeFldNo, locationId, gDate);
+				this.createAttributeObject(currentUserID, importedGermplasm.getSource(), plotCodeFldNo, locationId, gDate);
 			attributesPerGermplasm.add(originAttribute);
 
 			final Attribute plotNumberAttribute =
-					this.createAttributeObject(currentUserID, importedGermplasm.getPlotNumber(), plotFldNo, locationId, gDate);
+				this.createAttributeObject(currentUserID, importedGermplasm.getPlotNumber(), plotFldNo, locationId, gDate);
 			attributesPerGermplasm.add(plotNumberAttribute);
 
 			// Adding Instance number and replication number as
 			// attributes of germplasm for trial advancing
-			if (this.userSelection.isTrial()) {
-				final String replicationNumber = importedGermplasm.getReplicationNumber();
-				if (StringUtils.isNotBlank(replicationNumber)) {
-					final Attribute repNoAttribute =
-							this.createAttributeObject(currentUserID, replicationNumber, repFldNo, locationId, gDate);
-					attributesPerGermplasm.add(repNoAttribute);
-				}
+			final String replicationNumber = importedGermplasm.getReplicationNumber();
+			if (StringUtils.isNotBlank(replicationNumber)) {
+				final Attribute repNoAttribute = this.createAttributeObject(currentUserID, replicationNumber, repFldNo, locationId, gDate);
+				attributesPerGermplasm.add(repNoAttribute);
+			}
 
-				final Attribute instanceNoAttribute =
-						this.createAttributeObject(currentUserID, importedGermplasm.getTrialInstanceNumber(), trialInstanceFldNo,
-								locationId, gDate);
-				attributesPerGermplasm.add(instanceNoAttribute);
+			final Attribute instanceNoAttribute =
+				this.createAttributeObject(currentUserID, importedGermplasm.getTrialInstanceNumber(), trialInstanceFldNo, locationId,
+					gDate);
+			attributesPerGermplasm.add(instanceNoAttribute);
 
-				if (importedGermplasm.getPlantNumber() != null) {
-					final Attribute plantNoAttribute = this.createAttributeObject(currentUserID,
-							importedGermplasm.getPlantNumber(), plantNumberFldNo, locationId, gDate);
-					attributesPerGermplasm.add(plantNoAttribute);
-				}
+			if (importedGermplasm.getPlantNumber() != null) {
+				final Attribute plantNoAttribute =
+					this.createAttributeObject(currentUserID, importedGermplasm.getPlantNumber(), plantNumberFldNo, locationId, gDate);
+				attributesPerGermplasm.add(plantNoAttribute);
 			}
 
 			germplasmAttributes.add(new ImmutablePair<Germplasm, List<Attribute>>(germplasm, Lists.newArrayList(attributesPerGermplasm)));

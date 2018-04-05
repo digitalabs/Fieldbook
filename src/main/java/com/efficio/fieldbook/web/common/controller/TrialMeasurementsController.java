@@ -137,10 +137,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		return resultMap;
 	}
 
-	private UserSelection getUserSelection() {
-		return this.userSelection;
-	}
-
 	protected void setUserSelection(final UserSelection userSelection) {
 		this.userSelection = userSelection;
 	}
@@ -442,7 +438,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
 		model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
 		model.addAttribute("numericVarId", TermId.NUMERIC_VARIABLE.getId());
-		model.addAttribute("isNursery", !this.getUserSelection().isTrial());
 		model.addAttribute("variable", variable);
 		model.addAttribute(TrialMeasurementsController.EXPERIMENT_ID, experimentId);
 
@@ -486,7 +481,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
 		model.addAttribute("numericVarId", TermId.NUMERIC_VARIABLE.getId());
 
-		this.updateModel(model, userSelection.getWorkbook().isNursery(), editData, index, termId);
+		this.updateModel(model, editData, index, termId);
 		return super.showAjaxPage(model, TrialMeasurementsController.EDIT_EXPERIMENT_CELL_TEMPLATE);
 	}
 
@@ -497,9 +492,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	private void updateModel(final Model model, final boolean isNursery, final MeasurementData measurementData,
-			final int index, final int termId) {
-		model.addAttribute("isNursery", isNursery);
+	private void updateModel(final Model model, final MeasurementData measurementData, final int index, final int termId) {
 		model.addAttribute("measurementData", measurementData);
 		model.addAttribute(TrialMeasurementsController.INDEX, index);
 		model.addAttribute(TrialMeasurementsController.TERM_ID, termId);

@@ -351,17 +351,6 @@ public class DesignImportController extends SettingsController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/postSelectedNurseryType")
-	public Boolean postSelectedNurseryType(@RequestBody final String nurseryTypeId) {
-		if (StringUtils.isNumeric(nurseryTypeId)) {
-			final Integer value = Integer.valueOf(nurseryTypeId);
-			this.userSelection.setNurseryTypeForDesign(value);
-		}
-
-		return true;
-	}
-
-	@ResponseBody
 	@RequestMapping(value = "/cancelImportDesign")
 	public void cancelImportDesign() {
 

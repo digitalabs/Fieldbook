@@ -470,7 +470,7 @@ function editExperiment(tableIdentifier, expId, rowIndex) {
 	'use strict';
 	var needToSaveFirst = $('body').data('needToSave') === '1' ? true : false;
 
-	if (!isNursery() && angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.unappliedChangesAvailable) {
+	if (angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.unappliedChangesAvailable) {
 		angular.element('#mainApp').injector().get('TrialManagerDataService').warnAboutUnappliedChanges();
 		return;
 	}

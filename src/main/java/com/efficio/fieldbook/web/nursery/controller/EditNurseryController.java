@@ -661,42 +661,12 @@ public class EditNurseryController extends SettingsController {
 		// by copying that information from SettingDetails in UserSelection.
 		this.copyTheRoleAndVariableType(studyLevelVariables, studyLevelConditions);
 
-		this.addNurseryTypeFromDesignImport(studyLevelVariables, userSelection);
-
 		this.addExperimentalDesignTypeFromDesignImport(studyLevelVariables, userSelection);
 
 		this.addHiddenVariablesToFactorsListInFormAndSession(form, userSelection);
 
 		// Return studyLevelVariables as an ArrayList.
 		return new ArrayList<>(studyLevelVariables);
-	}
-
-	void addNurseryTypeFromDesignImport(final Set<SettingDetail> studyLevelVariables, final UserSelection userSelection) {
-
-		final SettingDetail nurseryTypeSettingDetail = new SettingDetail();
-		final SettingVariable nurseryTypeSettingVariable = new SettingVariable();
-
-		final Integer nurseryTypeValue = userSelection.getNurseryTypeForDesign();
-
-		this.setUpForDesignImport(nurseryTypeSettingDetail, nurseryTypeSettingVariable, String.valueOf(nurseryTypeValue),
-				TermId.NURSERY_TYPE.getId(), "NURSERY_TYPE");
-
-		if (nurseryTypeValue != null) {
-
-			for (final SettingDetail settingDetail : studyLevelVariables) {
-				if (settingDetail.getVariable().getCvTermId() == TermId.NURSERY_TYPE.getId()) {
-					settingDetail.setValue(String.valueOf(nurseryTypeValue));
-					settingDetail.getVariable().setName("NURSERY_TYPE");
-					userSelection.setNurseryTypeForDesign(null);
-					return;
-				}
-			}
-
-			studyLevelVariables.add(nurseryTypeSettingDetail);
-		}
-
-		userSelection.setNurseryTypeForDesign(null);
-
 	}
 
 	void addExperimentalDesignTypeFromDesignImport(final Set<SettingDetail> studyLevelVariables, final UserSelection userSelection) {

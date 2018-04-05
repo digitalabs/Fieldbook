@@ -421,27 +421,39 @@ public class DesignImportController extends SettingsController {
 		final Map<PhenotypicType, List<DesignHeaderItem>> newMappingResults = new EnumMap<>(PhenotypicType.class);
 
 		for (final Map.Entry<String, List<DesignHeaderItem>> item : mappedHeaders.entrySet()) {
-			for (final DesignHeaderItem mappedHeader : item.getValue()) {
+			switch (item.getKey()) {
+				case DesignImportController.MAPPED_ENVIRONMENTAL_FACTORS:
+					newMappingResults.put(PhenotypicType.TRIAL_ENVIRONMENT, item.getValue());
+					break;
+				case DesignImportController.MAPPED_DESIGN_FACTORS:
+					newMappingResults.put(PhenotypicType.TRIAL_DESIGN, item.getValue());
+					break;
+				case DesignImportController.MAPPED_GERMPLASM_FACTORS:
+					newMappingResults.put(PhenotypicType.GERMPLASM, item.getValue());
+					break;
+				case DesignImportController.MAPPED_TRAITS:
+					newMappingResults.put(PhenotypicType.VARIATE, item.getValue());
+					break;
+				default:
 
+			}
+
+			for (final DesignHeaderItem mappedHeader : item.getValue()) {
 				final StandardVariable stdVar =
 					this.ontologyDataManager.getStandardVariable(mappedHeader.getId(), this.contextUtil.getCurrentProgramUUID());
 
 				switch (item.getKey()) {
 					case DesignImportController.MAPPED_ENVIRONMENTAL_FACTORS:
 						stdVar.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
-						newMappingResults.put(PhenotypicType.TRIAL_ENVIRONMENT, item.getValue());
 						break;
 					case DesignImportController.MAPPED_DESIGN_FACTORS:
 						stdVar.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
-						newMappingResults.put(PhenotypicType.TRIAL_DESIGN, item.getValue());
 						break;
 					case DesignImportController.MAPPED_GERMPLASM_FACTORS:
 						stdVar.setPhenotypicType(PhenotypicType.GERMPLASM);
-						newMappingResults.put(PhenotypicType.GERMPLASM, item.getValue());
 						break;
 					case DesignImportController.MAPPED_TRAITS:
 						stdVar.setPhenotypicType(PhenotypicType.VARIATE);
-						newMappingResults.put(PhenotypicType.VARIATE, item.getValue());
 						break;
 					default:
 

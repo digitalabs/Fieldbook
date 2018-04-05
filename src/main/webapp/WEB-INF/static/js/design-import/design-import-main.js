@@ -3,7 +3,7 @@
  * Created by cyrus on 05/12/15.
  */
 /* global $, _, angular, bootbox, createErrorNotification, showAlertMessage, ImportDesign, isNursery */
-(function(_isNursery) {
+(function() {
 	'use strict';
 
 	var app = angular.module('designImportApp', ['ui.bootstrap', 'ngLodash', 'ngResource', 'ui.sortable']);
@@ -96,18 +96,6 @@
 				showAlertMessage('', Messages.OWN_DESIGN_SELECT_WARNING);
 			}
 
-		};
-
-		// if nursery, set the nursery type
-		scope.hasNurseryType = _isNursery();
-		scope.selectedNurseryType = '';
-
-		DesignMappingService.getDistinctNurseryTypes().then(function(result) {
-			scope.nurseryTypeList = result;
-		});
-
-		scope.onNurseryTypeSelect = function() {
-			DesignMappingService.postSelectedNurseryType(scope.selectedNurseryType);
 		};
 
 	}]);
@@ -371,20 +359,6 @@
 			return deferred.promise;
 		}
 
-		function getDistinctNurseryTypes() {
-			return $http.get('/Fieldbook/OntologyBrowser/getDistinctValue/8065').then(function(result) {
-				if (result.data && result.data.constructor === Array) {
-					return result.data;
-				}
-
-				return false;
-			});
-		}
-
-		function postSelectedNurseryType(nurseryTypeId) {
-			return $http.post('/Fieldbook/DesignImport/postSelectedNurseryType', nurseryTypeId);
-		}
-
 		var service = {
 			data: {
 				unmappedHeaders: [],
@@ -394,8 +368,6 @@
 				mappedTraits: []
 			},
 			validateMapping: validateMapping,
-			getDistinctNurseryTypes: getDistinctNurseryTypes,
-			postSelectedNurseryType: postSelectedNurseryType,
 			showConfirmIfHasUnmapped: showConfirmIfHasUnmapped
 		};
 
@@ -427,4 +399,4 @@
 		return ImportDesign;
 	});
 
-})(isNursery);
+})();

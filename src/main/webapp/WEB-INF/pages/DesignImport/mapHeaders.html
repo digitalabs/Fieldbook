@@ -33,33 +33,6 @@
                         </div>
                     </div>
 
-                    <div class="row" ng-show="hasNurseryType">
-                        <div class="col-md-7">
-                            <form class="form-horizontal">
-                                <div class="form-group">
-                                    <strong class="sub-content-heading col-md-12" th:text="#{design.import.nursery.design.type}"></strong>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="design-type-select" class="col-md-7 col-sm-8 control-label"
-                                           th:text="#{design.import.nursery.design.type.select}"></label>
-
-                                    <div class="col-md-5 col-sm-4">
-                                        <select id="nursery-type-select" ng-model="selectedNurseryType" ng-change="onNurseryTypeSelect()">
-                                            <option value="">Please Choose</option>
-                                            <option ng-repeat="item in nurseryTypeList"
-                                                    value="{{item.id}}">
-                                                {{item.description}}
-                                            </option>
-                                            <option value="other-design">{{Messages.OWN_DESIGN}}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-
                     <div class="row">
                         <div class="col-md-12">
                             <strong class="sub-content-heading pull-left" th:text="#{design.import.map.column.header}"></strong>

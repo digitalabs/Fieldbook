@@ -868,22 +868,6 @@ public class DesignImportControllerTest {
 	}
 
 	@Test
-	public void testPostSelectedNurseryTypeNotNumeric() {
-
-		this.designImportController.postSelectedNurseryType("asd");
-
-		Mockito.verify(this.userSelection, Mockito.times(0)).setNurseryTypeForDesign(Matchers.anyInt());
-	}
-
-	@Test
-	public void testPostSelectedNurseryTypeNumeric() {
-
-		this.designImportController.postSelectedNurseryType("1");
-
-		Mockito.verify(this.userSelection).setNurseryTypeForDesign(1);
-	}
-
-	@Test
 	public void testCreateTrialObservationsForTrial() {
 
 		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);

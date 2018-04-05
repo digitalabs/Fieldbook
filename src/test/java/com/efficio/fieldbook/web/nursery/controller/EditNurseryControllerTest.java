@@ -341,7 +341,6 @@ public class EditNurseryControllerTest {
 		studyLevelConditions.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId()));
 		testUserSelection.setStudyLevelConditions(studyLevelConditions);
 		testUserSelection.setRemovedConditions(Arrays.asList(SettingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId())));
-		testUserSelection.setNurseryTypeForDesign(1);
 
 		final List<SettingDetail> result = this.editNurseryController.combineStudyConditions(createNurseryForm, testUserSelection);
 
@@ -352,44 +351,6 @@ public class EditNurseryControllerTest {
 		Assert.assertTrue(containsTermId(TermId.TRIAL_LOCATION.getId(), result));
 		Assert.assertTrue(containsTermId(TermId.NURSERY_TYPE.getId(), result));
 
-	}
-
-	@Test
-	public void testAddNurseryTypeFromDesignImportWhenNurseryTypeValueIsNull() {
-		final Set<SettingDetail> studyLevelVariables = new HashSet<SettingDetail>();
-		Mockito.doReturn(null).when(this.userSelection).getNurseryTypeForDesign();
-		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables, this.userSelection);
-
-		Assert.assertTrue("studyLevelVariables should not be null", studyLevelVariables.isEmpty());
-	}
-
-	@Test
-	public void testAddNurseryTypeFromDesignImportWhenNurseryTypeValueHasValue() {
-		final Set<SettingDetail> studyLevelVariables = new HashSet<SettingDetail>();
-		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables, this.userSelection);
-
-		Assert.assertNotNull("studyLevelVariables should not be null", studyLevelVariables);
-		final SettingDetail settingDetail = studyLevelVariables.iterator().next();
-
-		Assert.assertEquals("Value should be zero but " + settingDetail.getValue(), "0", settingDetail.getValue());
-		Assert.assertNotNull("settingDetail Variable should not be null ", settingDetail.getVariable());
-	}
-
-	@Test
-	public void testAddNurseryFromDesignImportWhenDesignImportHasValue() {
-		final Set<SettingDetail> studyLevelVariables = new HashSet<>(Arrays.asList(this.initializeSettingDetails(true)));
-		final List<Integer> expDesignVariables = new ArrayList<Integer>();
-		expDesignVariables.add(1);
-
-		Mockito.when(this.userSelection.getExpDesignVariables()).thenReturn(expDesignVariables);
-
-		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables, this.userSelection);
-
-		Assert.assertEquals("studyLevelVariables' size should be 1", studyLevelVariables.size(), 1);
-		final SettingDetail settingDetail = studyLevelVariables.iterator().next();
-
-		Assert.assertNull("SettingDetail value should be null but " + settingDetail.getValue(), settingDetail.getValue());
-		Assert.assertNotNull("settingDetail Variable should not be null ", settingDetail.getVariable());
 	}
 
 	@Test

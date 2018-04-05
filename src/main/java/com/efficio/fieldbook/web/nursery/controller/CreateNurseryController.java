@@ -292,7 +292,6 @@ public class CreateNurseryController extends SettingsController {
 
 		this.addStudyLevelVariablesFromUserSelectionIfNecessary(studyLevelVariables, this.userSelection);
 
-		this.addNurseryTypeFromDesignImport(studyLevelVariables);
 		this.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
 
 		final List<SettingDetail> studyLevelVariablesSession = this.userSelection.getBasicDetails();
@@ -360,37 +359,6 @@ public class CreateNurseryController extends SettingsController {
 			}
 
 		}
-
-	}
-
-	private void addNurseryTypeFromDesignImport(final List<SettingDetail> studyLevelVariables) {
-
-		final SettingDetail nurseryTypeSettingDetail = new SettingDetail();
-		final SettingVariable nurseryTypeSettingVariable = new SettingVariable();
-
-		final Integer nurseryTypeValue = this.userSelection.getNurseryTypeForDesign();
-
-		nurseryTypeSettingDetail.setValue(String.valueOf(nurseryTypeValue));
-		nurseryTypeSettingVariable.setCvTermId(TermId.NURSERY_TYPE.getId());
-		nurseryTypeSettingVariable.setName("NURSERY_TYPE");
-		nurseryTypeSettingVariable.setOperation(Operation.ADD);
-		nurseryTypeSettingDetail.setVariable(nurseryTypeSettingVariable);
-
-		if (this.userSelection.getNurseryTypeForDesign() != null && nurseryTypeValue != null) {
-
-			for (final SettingDetail settingDetail : studyLevelVariables) {
-				if (settingDetail.getVariable().getCvTermId() == TermId.NURSERY_TYPE.getId()) {
-					settingDetail.setValue(String.valueOf(nurseryTypeValue));
-					settingDetail.getVariable().setName("NURSERY_TYPE");
-					this.userSelection.setNurseryTypeForDesign(null);
-					return;
-				}
-			}
-
-			studyLevelVariables.add(nurseryTypeSettingDetail);
-		}
-
-		this.userSelection.setNurseryTypeForDesign(null);
 
 	}
 

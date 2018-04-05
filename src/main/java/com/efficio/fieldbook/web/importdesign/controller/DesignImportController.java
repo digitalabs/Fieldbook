@@ -547,7 +547,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
-			final DesignTypeItem designTypeItem, final Map<String, Integer> additionalParams) throws DesignValidationException {
+		final DesignTypeItem designTypeItem, final Map<String, Integer> additionalParams) throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
 
@@ -568,8 +568,7 @@ public class DesignImportController extends SettingsController {
 
 		workbook.setObservations(measurementRows);
 
-		measurementVariables = this.designImportService.getDesignMeasurementVariables(workbook, designImportData,
-				false);
+		measurementVariables = this.designImportService.getDesignMeasurementVariables(workbook, designImportData, false);
 
 		workbook.setMeasurementDatasetVariables(new ArrayList<>(measurementVariables));
 
@@ -577,16 +576,12 @@ public class DesignImportController extends SettingsController {
 
 		workbook.setExpDesignVariables(new ArrayList<>(expDesignVariables));
 
-		experimentalDesignMeasurementVariables = this.designImportService.getDesignRequiredMeasurementVariable(workbook,
-				designImportData);
+		experimentalDesignMeasurementVariables = this.designImportService.getDesignRequiredMeasurementVariable(workbook, designImportData);
 
 		this.userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
 
 		// Only for Trial
 		this.addFactorsIfNecessary(workbook, designImportData);
-
-		// Only for Nursery
-		this.addConditionsIfNecessary(workbook, designImportData);
 
 		this.addVariates(workbook, designImportData);
 
@@ -599,13 +594,10 @@ public class DesignImportController extends SettingsController {
 		// Only for Trial
 		this.populateTrialLevelVariableListIfNecessary(workbook);
 
-		// Only for Nursery
-		this.populateStudyLevelVariableListIfNecessary(workbook, environmentData, designImportData);
-
 		this.createTrialObservations(environmentData, workbook, designImportData);
 
 		// Only for Nursery
-		this.resetCheckList(workbook, this.userSelection);
+		this.resetCheckList(this.userSelection); // TODO Verify if necessary
 	}
 
 	/**
@@ -630,10 +622,9 @@ public class DesignImportController extends SettingsController {
 	 * Study. The system will automatically reset and override the Check List
 	 * after importing a Custom Design.
 	 *
-	 * @param workbook
 	 * @param userSelection
 	 */
-	protected void resetCheckList(final Workbook workbook, final UserSelection userSelection) {
+	protected void resetCheckList(final UserSelection userSelection) {
 
 		// Create an ImportedCheckGermplasmMainInfo with an EMPTY data so
 		// that it will be deleted on save.
@@ -655,18 +646,15 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void checkTheDeletedSettingDetails(final UserSelection userSelection,
-			final DesignImportData designImportData) {
+	protected void checkTheDeletedSettingDetails(final UserSelection userSelection, final DesignImportData designImportData) {
 
 		final Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
 		final Map<String, String> nameIdMap = this.switchKey(idNameMap);
 
-		for (final MeasurementVariable mvar : this.designImportService.getMeasurementVariablesFromDataFile(null,
-				designImportData)) {
+		for (final MeasurementVariable mvar : this.designImportService.getMeasurementVariablesFromDataFile(null, designImportData)) {
 
 			if (userSelection.getDeletedTrialLevelVariables() != null) {
-				final Iterator<SettingDetail> deletedTrialLevelVariables = userSelection.getDeletedTrialLevelVariables()
-						.iterator();
+				final Iterator<SettingDetail> deletedTrialLevelVariables = userSelection.getDeletedTrialLevelVariables().iterator();
 				while (deletedTrialLevelVariables.hasNext()) {
 					final SettingDetail deletedSettingDetail = deletedTrialLevelVariables.next();
 
@@ -679,12 +667,10 @@ public class DesignImportController extends SettingsController {
 
 					}
 
-					final String termIdOfName = idNameMap
-							.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
+					final String termIdOfName = idNameMap.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
 					if (termIdOfName != null) {
 
-						this.updateOperation(Integer.valueOf(termIdOfName), userSelection.getTrialLevelVariableList(),
-								Operation.UPDATE);
+						this.updateOperation(Integer.valueOf(termIdOfName), userSelection.getTrialLevelVariableList(), Operation.UPDATE);
 
 						deletedSettingDetail.getVariable().setOperation(Operation.UPDATE);
 						userSelection.getTrialLevelVariableList().add(deletedSettingDetail);
@@ -692,11 +678,9 @@ public class DesignImportController extends SettingsController {
 						deletedTrialLevelVariables.remove();
 					}
 
-					final String termIdOfId = nameIdMap
-							.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
+					final String termIdOfId = nameIdMap.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
 					if (termIdOfId != null) {
-						this.updateOperation(Integer.valueOf(termIdOfId), userSelection.getTrialLevelVariableList(),
-								Operation.UPDATE);
+						this.updateOperation(Integer.valueOf(termIdOfId), userSelection.getTrialLevelVariableList(), Operation.UPDATE);
 
 						deletedSettingDetail.getVariable().setOperation(Operation.UPDATE);
 						userSelection.getTrialLevelVariableList().add(deletedSettingDetail);

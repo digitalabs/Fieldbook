@@ -870,7 +870,13 @@ public class ETLServiceImpl implements ETLService {
 				continue;
 			}
 
-			if (!"OCC".equals(studyHeader) && fileHeaderMap.get(studyHeader.getName().toUpperCase()) == null) {
+			/* Check if the observation headers from imported file match the existing variables in the study.
+			Trial Environment variables will be ignored as they are not required in the observation
+			sheet of the workbook. */
+			// TODO: Verify if OCC variable is obsolete.
+			if (!"OCC".equalsIgnoreCase(studyHeader.getName())
+					&& studyHeader.getRole() != PhenotypicType.TRIAL_ENVIRONMENT
+					&& fileHeaderMap.get(studyHeader.getName().toUpperCase()) == null) {
 				missingHeaders.append(studyHeader.getName());
 				missingHeaders.append(delimeter);
 			}

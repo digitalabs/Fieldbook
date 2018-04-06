@@ -81,7 +81,7 @@
 									<li ng-show="hasGermplasmListSelected()">
 										<a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());"
 										   id="import-design-url-link"
-										   th:text="#{trial.trialdetails.action.import.design}">Import Design</a>
+										   th:text="#{study.studydetails.action.import.design}">Import Design</a>
 									</li>
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a href="" style="display: none" id="label-printing-url"
@@ -118,7 +118,7 @@
 								<ul class="dropdown-menu" style="margin-left: -14px;">
 									<li>
 										<a href="javascript: createSample();" id="sample-trial-link"
-										   th:text="#{trial.trialdetails.action.create.sample}">Create sample list</a>
+										   th:text="#{study.studydetails.action.create.sample}">Create sample list</a>
 									</li>
 								</ul>
 							</li>
@@ -151,16 +151,16 @@
 								<ul class="dropdown-menu" style="margin-left: -10px;">
 									<li>
 										<a href="javascript: startAdvance('trial');" id="advance-trial-link"
-										   th:text="#{trial.trialdetails.action.advance.trial}">Advance Study</a>
+										   th:text="#{study.studydetails.action.advance.study}">Advance Study</a>
 									</li>
 									<li>
 										<a href="javascript: startAdvance('sample');" id="advance-sample-link"
-										   th:text="#{trial.trialdetails.action.advance.sample}">Advance sampled plants</a>
+										   th:text="#{study.studydetails.action.advance.sample}">Advance sampled plants</a>
 									</li>
 								</ul>
                             </li>
 							<li>
-								<a th:href="@{/TrialManager}" th:text="#{trial.trialdetails.action.close.trial}">Close Study</a>
+								<a th:href="@{/TrialManager}" th:text="#{study.studydetails.action.close.study}">Close Study</a>
 							</li>
 							<li>
 								<a id="delete-success-return-url" style="display:none;" th:href="@{/TrialManager}"></a>

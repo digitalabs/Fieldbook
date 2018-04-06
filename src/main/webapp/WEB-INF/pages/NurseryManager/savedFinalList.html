@@ -2,9 +2,9 @@
 	<div class="col-xs-12 col-md-12">
 		<div class="col-xs-3 col-md-3">
 			<input type="hidden" id="listTypeLabel" th:value="*{listTypeLabel}"></input>
-			<strong th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS')}" class="sub-content-heading" th:text="#{crosses.nursery.header}">Crosses List</strong>
-			<strong th:if="*{listType =='ADVANCED'}" class="sub-content-heading" th:text="#{advancing.nursery.header}">Advance List</strong>
-			<strong th:if="*{listType =='STOCK'}" class="sub-content-heading" th:text="#{stock.nursery.header}">Stock List</strong>
+			<strong th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS')}" class="sub-content-heading" th:text="#{crosses.list.header}">Crosses List</strong>
+			<strong th:if="*{listType =='ADVANCED'}" class="sub-content-heading" th:text="#{advancing.list.header}">Advance List</strong>
+			<strong th:if="*{listType =='STOCK'}" class="sub-content-heading" th:text="#{stock.list.header}">Stock List</strong>
 			<strong th:if="*{listType =='SAMPLE_LIST'}" class="sub-content-heading" th:text="#{sample.list.header}">Sample List</strong>
 			<span
 				class="sub-content-heading control-label-bold control-label-italic"
@@ -54,7 +54,7 @@
 						class="btn btn-info dropdown-toggle fbk-action-btn"
 						data-toggle="dropdown">
 						<span th:text="#{advance.list.actions}" th:if="*{listType == 'ADVANCED'}">Advance List Actions</span>
-						<span th:text="#{crosses.nursery.list.actions}" th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS')}">Cross List Actions</span>
+						<span th:text="#{crosses.list.actions}" th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS')}">Cross List Actions</span>
 						<span th:text="#{stock.list.actions}" th:if="*{listType == 'STOCK'}">Stock List Actions</span>
 						<span th:text="#{sample.list.actions}" th:if="*{listType == 'SAMPLE_LIST'}">Sample List Actions</span>
 					</button>

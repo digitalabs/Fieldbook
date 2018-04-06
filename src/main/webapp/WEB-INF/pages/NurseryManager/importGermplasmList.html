@@ -199,16 +199,17 @@
 		
 		measurementRowCount = /*[[${createNurseryForm.measurementRowList.size()}]]*/ 0;
 
-		// FIXME There is a lot of repeated code in the next two functions
+		// TODO This function shoould not exist
 		function makeCheckDraggable(isDraggable) {
 			'use strict';
 
 			makeCheckDraggableBool = isDraggable;
-			
-			isDraggable = isDraggable 
-				&& (($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 
-				|| ($('#studyId').length === 0 && isNursery())) 
-				|| $('#studyId').length > 0 && isNursery() && measurementRowCount === 0) 
+
+			// isDraggable is always false, analyze to change this function
+			isDraggable = isDraggable
+				&& (($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1
+				|| ($('#studyId').length === 0 && false))
+				|| $('#studyId').length > 0 && false && measurementRowCount === 0)
 				&& (lastDraggedChecksList.toString() === '' || lastDraggedChecksList.toString() === '0');			
 
 			//enable drag and drop if replace is clicked and checks are from a list, 

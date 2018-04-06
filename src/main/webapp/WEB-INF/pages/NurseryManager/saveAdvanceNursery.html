@@ -91,22 +91,16 @@
     <script type="text/javascript" th:inline="javascript">
         var warningMessage = /*[[#{nursery.advancelist.updateinventory.error.message}]]*/;
 
-        if(!isNursery()){
-			var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
-			if (advanceType == 'sample') {
-				$("#reviewNurseryModalHeader").hide();
-				$("#reviewSamplesModalHeader").show();
-				$("#reviewTrialModalHeader").hide();
-			} else {
-				$("#reviewTrialModalHeader").show();
-				$("#reviewNurseryModalHeader").hide();
-				$("#reviewSamplesModalHeader").hide();
-			}
-        }
-        else{
-			$("#reviewNurseryModalHeader").show();
-			$("#reviewSamplesModalHeader").hide();
+		var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
+		if (advanceType == 'sample') {
+			$("#reviewNurseryModalHeader").hide();
+			$("#reviewSamplesModalHeader").show();
 			$("#reviewTrialModalHeader").hide();
-        }
+		} else {
+			$("#reviewTrialModalHeader").show();
+			$("#reviewNurseryModalHeader").hide();
+			$("#reviewSamplesModalHeader").hide();
+		}
+
     </script>
 </div>

@@ -336,6 +336,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 * @param session the session
 	 * @return the map
 	 */
+	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "/createNurseryFieldmap/{ids}", method = RequestMethod.GET)
 	public Map<String, String> determineNurseryFieldMapNavigation(@PathVariable

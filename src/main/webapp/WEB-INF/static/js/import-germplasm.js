@@ -1,4 +1,4 @@
-/* global angular, germplasmDataTable, BMS, isNursery, setSpinnerMaxValue, noNurseryGermplasmList, noTrialGermplasmList */
+/* global angular, germplasmDataTable, BMS, setSpinnerMaxValue, noNurseryGermplasmList, noTrialGermplasmList */
 /* global entryNoShouldBeInRange, plotNoShouldBeInRange, showAlertMessage, showInvalidInputMessage */
 (function() {
 	'use strict';
@@ -115,27 +115,6 @@
 
 				return !!inputNo.match(validNo);
 			},
-			//validateAndSetPlotNo: function () {
-			//	var customMessage = '';
-			//	var plotNo = $.trim($('#txtStartingPlotNo').val());
-            //
-			//	if (!window.ImportGermplasm.validatePlotNo(plotNo)) {
-			//		customMessage = plotNoShouldBeInRange;
-			//	}
-            //
-			//	if (customMessage !== '') {
-			//		showInvalidInputMessage(customMessage);
-			//	} else {
-			//		//if (isNursery()) {
-			//		//	showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-			//		//		'To update the Measurements table, please save the Nursery', 10000);
-			//		//} else {
-			//			showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-			//				'To update the Measurements table, please save the Trial', 10000);
-			//		//}
-			//	}
-            //
-			//},
 			setUnappliedChangesAvailable: function() {
 				var trialManager = angular.element('#mainApp').injector().get('TrialManagerDataService');
 				trialManager.setUnappliedChangesAvailable();

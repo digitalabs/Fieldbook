@@ -250,8 +250,7 @@ public class SettingsUtil {
 	}
 
 	protected static List<Constant> convertConditionsToConstants(final List<SettingDetail> nurseryConditions,
-			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final String programUUID) {
+		final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
 		final List<Constant> constants = new ArrayList<>();
 
 		if (nurseryConditions == null || nurseryConditions.isEmpty()) {
@@ -419,33 +418,21 @@ public class SettingsUtil {
 		final List<SettingDetail> nurseryConditions, final List<SettingDetail> trialLevelConditions, final String programUUID,
 		final String description, final String startDate, final String endDate, final String studyUpdate) {
 
-		// this block is necessary for the previous nursery code because the
-		// setting details passed in from nursery are mostly empty except
-		// for properties
-		// also stored in the HTML form; e.g., value
-
-		SettingsUtil.setNameAndOperationFromSession(studyLevelConditions, userSelection.getStudyLevelConditions(),
-			userSelection.isDesignGenerated());
-		SettingsUtil.setNameAndOperationFromSession(plotsLevelList, userSelection.getPlotsLevelList(), false);
-		SettingsUtil.setNameAndOperationFromSession(baselineTraitsList, userSelection.getBaselineTraitsList(), false);
-		SettingsUtil.setNameAndOperationFromSession(nurseryConditions, userSelection.getNurseryConditions(), false);
-
 		// name and operation setting are no longer performed on the other
 		// setting lists provided as params in this method
 		// because those are only defined for trials
 		// assumption is that params provided from trial management do not
 		// need this operation
 
-
 		final List<Condition> conditions =
-				SettingsUtil.convertDetailsToConditions(studyLevelConditions, fieldbookMiddlewareService, programUUID);
+			SettingsUtil.convertDetailsToConditions(studyLevelConditions, fieldbookMiddlewareService, programUUID);
 		final List<Factor> factors = SettingsUtil.convertDetailsToFactors(plotsLevelList, fieldbookMiddlewareService, programUUID);
 		final List<Variate> variates =
-				SettingsUtil.convertBaselineTraitsToVariates(baselineTraitsList, fieldbookMiddlewareService, programUUID);
+			SettingsUtil.convertBaselineTraitsToVariates(baselineTraitsList, fieldbookMiddlewareService, programUUID);
 		final List<Constant> constants =
-				SettingsUtil.convertConditionsToConstants(nurseryConditions, fieldbookMiddlewareService, programUUID);
+			SettingsUtil.convertConditionsToConstants(nurseryConditions, fieldbookMiddlewareService, programUUID);
 		final List<Factor> trialLevelVariables =
-				SettingsUtil.convertDetailsToFactors(trialLevelVariablesList, fieldbookMiddlewareService, programUUID);
+			SettingsUtil.convertDetailsToFactors(trialLevelVariablesList, fieldbookMiddlewareService, programUUID);
 
 		final List<TreatmentFactor> treatmentFactors = SettingsUtil.processTreatmentFactorItems(treatmentFactorDetails,
 				treatmentFactorItems, factors, fieldbookMiddlewareService, programUUID);
@@ -1121,7 +1108,6 @@ public class SettingsUtil {
 		final List<MeasurementVariable> allExpDesignVariables, final String programUUID) {
 
 		final Workbook workbook = new Workbook();
-
 		final Dataset studyDataSet = (Dataset) dataset;
 
 		workbook.setConditions(SettingsUtil.convertConditionsToMeasurementVariables(studyDataSet.getConditions()));

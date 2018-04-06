@@ -850,7 +850,7 @@ public class DesignImportControllerTest {
 		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(123, "FACTOR 1", "", "TRIAL"));
 		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(321, "FACTOR 2", "", "TRIAL"));
 
-		final String result = this.designImportController.getLocalNameFromSettingDetails(123, settingDetails);
+		final String result = this.designImportController.getVariableNameFromSettingDetails(123, settingDetails);
 
 		Assert.assertEquals("FACTOR 1", result);
 	}
@@ -862,7 +862,7 @@ public class DesignImportControllerTest {
 		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(123, "FACTOR 1", "", "TRIAL"));
 		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(321, "FACTOR 2", "", "TRIAL"));
 
-		final String result = this.designImportController.getLocalNameFromSettingDetails(567, settingDetails);
+		final String result = this.designImportController.getVariableNameFromSettingDetails(567, settingDetails);
 
 		Assert.assertEquals("", result);
 	}
@@ -878,46 +878,6 @@ public class DesignImportControllerTest {
 
 		Mockito.verify(workbook).setTrialObservations(Matchers.anyList());
 		Mockito.verify(this.fieldbookService).addConditionsToTrialObservationsIfNecessary(Matchers.any(Workbook.class));
-
-	}
-
-	@Test
-	public void testCreateTrialObservationsForNursery() {
-
-		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
-		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final Workbook workbook = Mockito.spy(WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto("N")));
-
-		this.designImportController.createTrialObservations(environmentData, workbook, designImportData);
-
-		Mockito.verify(workbook).setTrialObservations(Matchers.anyList());
-		Mockito.verify(this.fieldbookService, Mockito.times(0))
-				.addConditionsToTrialObservationsIfNecessary(Matchers.any(Workbook.class));
-
-	}
-
-	@Test
-	public void testInitializeTemporaryWorkbookForTrial() {
-
-		this.designImportController.initializeTemporaryWorkbook();
-		final ArgumentCaptor<Workbook> argument = ArgumentCaptor.forClass(Workbook.class);
-
-		Mockito.verify(this.userSelection).setTemporaryWorkbook(argument.capture());
-
-		final Workbook workbook = argument.getValue();
-		Assert.assertEquals(new StudyTypeDto("T"), workbook.getStudyDetails().getStudyType());
-	}
-
-	@Test
-	public void testInitializeTemporaryWorkbookForNursery() {
-
-		this.designImportController.initializeTemporaryWorkbook();
-		final ArgumentCaptor<Workbook> argument = ArgumentCaptor.forClass(Workbook.class);
-
-		Mockito.verify(this.userSelection).setTemporaryWorkbook(argument.capture());
-
-		final Workbook workbook = argument.getValue();
-		Assert.assertEquals(new StudyTypeDto("N"), workbook.getStudyDetails().getStudyType());
 
 	}
 
@@ -941,7 +901,7 @@ public class DesignImportControllerTest {
 
 		testUserSelection.setStudyLevelConditions(studyLevelConditions);
 
-		this.designImportController.resetCheckList(workbook, testUserSelection);
+		this.designImportController.resetCheckList(testUserSelection);
 
 		Assert.assertEquals(1, testUserSelection.getCurrentPageCheckGermplasmList());
 		Assert.assertNotNull(testUserSelection.getImportedCheckGermplasmMainInfo());
@@ -1189,17 +1149,18 @@ public class DesignImportControllerTest {
 	 * @throws DesignValidationException
 	 */
 	private Map<String, Object> verifyMapDesignImportData() throws DesignValidationException {
-		Mockito.when(DesignImportControllerTest.this.designImportService.areTrialInstancesMatchTheSelectedEnvironments(
-				3, DesignImportControllerTest.this.userSelection.getDesignImportData())).thenReturn(true);
+		Mockito.when(DesignImportControllerTest.this.designImportService
+			.areTrialInstancesMatchTheSelectedEnvironments(3, DesignImportControllerTest.this.userSelection.getDesignImportData()))
+			.thenReturn(true);
 
 		final Map<String, Object> results = DesignImportControllerTest.this.designImportController
-				.validateAndSaveNewMapping(DesignImportControllerTest.this.createTestMappedHeaders(), 3);
+			.validateAndSaveNewMapping(DesignImportControllerTest.this.createTestMappedHeaders(), 3);
 
 		Mockito.verify(DesignImportControllerTest.this.designImportValidator)
-				.validateDesignData(DesignImportControllerTest.this.userSelection.getDesignImportData());
+			.validateDesignData(DesignImportControllerTest.this.userSelection.getDesignImportData());
 
-		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = DesignImportControllerTest.this.userSelection
-				.getDesignImportData().getMappedHeaders();
+		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders =
+			DesignImportControllerTest.this.userSelection.getDesignImportData().getMappedHeaders();
 
 		Assert.assertEquals(1, mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).size());
 		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.GERMPLASM).size());
@@ -1207,8 +1168,8 @@ public class DesignImportControllerTest {
 		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.VARIATE).size());
 
 		final DesignHeaderItem designHeaderItem = mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).get(0);
-		Assert.assertEquals("The DesignHeaderItem SITE_NAME should be mapped to the SITE_NAME Standard Variable",
-				TermId.SITE_NAME.getId(), designHeaderItem.getVariable().getId());
+		Assert.assertEquals("The DesignHeaderItem SITE_NAME should be mapped to the SITE_NAME Standard Variable", TermId.SITE_NAME.getId(),
+			designHeaderItem.getVariable().getId());
 
 		return results;
 	}

@@ -2,7 +2,6 @@
 /*global isStudyNameUnique, validateStartDateEndDateBasic*/
 
 //Used globle variable to selected location for trial
-debugger;
 var selectedLocationForTrial;
 var possibleLocationsForTrial;
 

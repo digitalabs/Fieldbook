@@ -45,7 +45,7 @@
 						<select th:attrappend="data-cvalueid=${measurementData.cValueId},data-value=${measurementData.value}" class="variates-select" th:attr="data-type=${measurementData.dataType}" style="width: 100%;" size="1"
 						th:if="${measurementData.measurementVariable.dataTypeId == categoricalVarId or not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}"
 						th:field="*{updateObservation.dataList[__${rowIndex.index}__].cValueId}">
-							<option th:if="${measurementData.measurementVariable.termId != T(com.efficio.fieldbook.web.util.AppConstants).ENTRY_TYPE_ID.getInt() or isNursery == true}" value="" th:text="#{categorical.please.choose}">Please Choose</option>
+							<option th:if="${measurementData.measurementVariable.termId != T(com.efficio.fieldbook.web.util.AppConstants).ENTRY_TYPE_ID.getInt()}" value="" th:text="#{categorical.please.choose}">Please Choose</option>
 							<option th:each="refval : ${measurementData.measurementVariable.possibleValues}"
 							th:value="${refval.key}" th:text="${session.isCategoricalDescriptionView}? ${refval.displayDescription} : ${refval.name}"></option>
 							<option th:if="${measurementData.isCustomCategoricalValue}"

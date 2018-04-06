@@ -2,7 +2,7 @@
  * Angular JS codes for the OWN design function, contains services, directives, and controller mainly used in the mapping page/modal
  * Created by cyrus on 05/12/15.
  */
-/* global $, _, angular, bootbox, createErrorNotification, showAlertMessage, ImportDesign, isNursery */
+/* global $, _, angular, bootbox, createErrorNotification, showAlertMessage, ImportDesign */
 (function() {
 	'use strict';
 

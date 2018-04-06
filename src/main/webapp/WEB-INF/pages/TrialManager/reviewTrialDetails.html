@@ -6,6 +6,7 @@
 		<input type="hidden" id="study-type" name="study-type" value="Trial" />
 		<input type="hidden" id="has-measurements" name="has-measurements" th:value="*{hasMeasurements}" />
 		<input type="hidden" th:id="'review-study-error-' + *{id}" th:value="*{errorMessage}" />
+        <input type="hidden" id="studyName"  th:value="*{name}"/>
 
 		<div class="col-xs-12 col-md-12">
             <!-- Display Header: Basic Details -->
@@ -41,7 +42,7 @@
                         <!-- Make Field Map: will allow user to create Field Map from Summary view -->
 						<li>
 							<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
-							<a href="javascript: createFieldMap('trial-table');" id="fieldmap-url-link" th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
+							<a href="javascript: createFieldMap();" id="fieldmap-url-link" th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
 						</li>
                         <!-- Create Labels -->
 						<li>

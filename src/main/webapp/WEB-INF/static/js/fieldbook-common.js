@@ -307,21 +307,15 @@ function triggerFieldMapTableSelection(tableName) {
 	});
 }
 
-function createFieldMap(tableName) {
+function createFieldMap() {
 
 	if ($('.import-study-data').data('data-import') === '1') {
 		showErrorMessage('', needSaveImportDataError);
 		return;
 	}
-	var id = '',
-	name = '';
-	if ($('#createTrialMainForm #studyId').length  === 1) {
-		id = $('#studyId').val();
-		name = $('#studyName').val();
-	} else {
-		id = getCurrentStudyIdInTab();
-		name = $('#div-study-tab-' + getCurrentStudyIdInTab() + ' .fieldmap-study-name').html();
-	}
+	var id = $('#studyId').val(),
+	name = $('#studyName').val();
+
 	openStudyFieldmapTree(id, name);
 }
 

@@ -123,8 +123,8 @@
                            id="selectionSettingDetails">
                         <thead>
                         <tr>
-                            <th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
-                            <th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+                            <th width="45%" th:utext="#{study.studydetails.column.name}">.Name</th>
+                            <th width="55%" th:utext="#{study.studydetails.column.description}">.Description</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -167,8 +167,8 @@
                        id="germplasmDescriptors">
                     <thead>
                     <tr>
-                        <th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
-                        <th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+                        <th width="45%" th:utext="#{study.studydetails.column.name}">.Name</th>
+                        <th width="55%" th:utext="#{study.studydetails.column.description}">.Description</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -195,12 +195,12 @@
                 <span class="bms-environments fbk-trial-summary-icons"></span>
                 <img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
                 <img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
-                <strong class="sub-content-heading" th:text="#{trial.trialdetails.environments}">ENVIRONMENTS</strong>
+                <strong class="sub-content-heading" th:text="#{study.studydetails.environments}">ENVIRONMENTS</strong>
             </label>
         </div>
         <div class="col-md-12 sectionContainer collapse trialEnvironments">
             <div class="col-md-12">
-                <strong class="" th:text="#{trial.trialdetails.environment.count}">Number of environments for this trial:</strong>
+                <strong class="" th:text="#{study.studydetails.environment.count}">Number of environments for this trial:</strong>
                 <span th:text="*{numberOfEnvironments}" ></span>
             </div>
 
@@ -209,7 +209,7 @@
                     <!-- Sub Header of Environments: ENVIRONMENT DETAILS -->
                     <label  class="control-label">
                         <span class="bms-mgt-details fbk-trial-summary-icons"></span>
-                        <strong class="sub-content-heading" th:text="#{trial.trialdetails.environment.level.details}">ENVIRONMENT DETAILS</strong>
+                        <strong class="sub-content-heading" th:text="#{study.studydetails.environment.level.details}">ENVIRONMENT DETAILS</strong>
                     </label>
                 </div>
                 <div th:if="*{environmentManagementDetails != null and not #lists.isEmpty(environmentManagementDetails)}">
@@ -217,8 +217,8 @@
                            id="environmentManagementDetails">
                         <thead>
                         <tr>
-                            <th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
-                            <th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+                            <th width="45%" th:utext="#{study.studydetails.column.name}">.Name</th>
+                            <th width="55%" th:utext="#{study.studydetails.column.description}">.Description</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -246,7 +246,7 @@
                     <!-- Sub Header of Environments: STUDY CONDITIONS -->
                     <label  class="control-label">
                         <img th:src="@{/static/svg/conditions.svg}" style="margin: 3px 4px;" width="22" height="22" />
-                        <strong class="sub-content-heading" th:text="#{trial.trialdetails.trial.conditions}">STUDY CONDITIONS</strong>
+                        <strong class="sub-content-heading" th:text="#{study.studydetails.study.conditions}">STUDY CONDITIONS</strong>
                     </label>
                 </div>
 
@@ -255,8 +255,8 @@
                        id="nurseryConditionDetails">
                     <thead>
                     <tr>
-                        <th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
-                        <th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+                        <th width="45%" th:utext="#{study.studydetails.column.name}">.Name</th>
+                        <th width="55%" th:utext="#{study.studydetails.column.description}">.Description</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -480,8 +480,8 @@
                            id="variateDetails">
                         <thead>
                         <tr>
-                            <th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
-                            <th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+                            <th width="45%" th:utext="#{study.studydetails.column.name}">.Name</th>
+                            <th width="55%" th:utext="#{study.studydetails.column.description}">.Description</th>
                         </tr>
                         </thead>
                         <tbody>

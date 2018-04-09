@@ -34,7 +34,6 @@ public class SettingsServiceImpl implements SettingsService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsServiceImpl.class);
 	private static final String TRIAL_INSTANCE = "TRIAL_INSTANCE";
-	private static final String STUDY_INSTANCE = "STUDY_INSTANCE";
 
 	/**
 	 * The fieldbook service.
@@ -221,9 +220,7 @@ public class SettingsServiceImpl implements SettingsService {
 
 			if (!hiddenFields.contains(var.getTermId()) && TermId.EXPERIMENT_DESIGN_FACTOR.getId() != var.getTermId()) {
 				String variableName = var.getName();
-				if(TRIAL_INSTANCE.equals(variableName)) {
-					variableName = STUDY_INSTANCE;
-				}
+
 				final LabelFields field =
 						new LabelFields(variableName, var.getTermId(), this.isGermplasmListField(var.getTermId()));
 

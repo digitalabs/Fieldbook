@@ -19,8 +19,6 @@ import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 public class LabelPrintingForm {
 
 	private boolean isCustomReport;
-	/** The is trial. */
-	private boolean isTrial;
 
 	/** The user label printing. */
 	private UserLabelPrinting userLabelPrinting;
@@ -44,26 +42,8 @@ public class LabelPrintingForm {
 	 *
 	 * @param userLabelPrinting the new user label printing
 	 */
-	public void setUserLabelPrinting(UserLabelPrinting userLabelPrinting) {
+	public void setUserLabelPrinting(final UserLabelPrinting userLabelPrinting) {
 		this.userLabelPrinting = userLabelPrinting;
-	}
-
-	/**
-	 * Gets the checks if is trial.
-	 *
-	 * @return the checks if is trial
-	 */
-	public boolean getIsTrial() {
-		return this.isTrial;
-	}
-
-	/**
-	 * Sets the checks if is trial.
-	 *
-	 * @param isTrial the new checks if is trial
-	 */
-	public void setIsTrial(final boolean isTrial) {
-		this.isTrial = isTrial;
 	}
 
 	/**

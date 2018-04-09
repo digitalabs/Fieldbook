@@ -416,7 +416,6 @@ public class LabelPrintingServiceImplTest {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(2, 2);
 
 		// for trial with stock list
-		final boolean isTrial = true;
 		final boolean isStockList = true;
 
 		final List<FieldMapTrialInstanceInfo> trialFieldMap = FieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList();
@@ -453,7 +452,6 @@ public class LabelPrintingServiceImplTest {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(2, new StudyTypeDto("N"));
 
 		// for nursery with stock list
-		final boolean isTrial = false;
 		final boolean isStockList = true;
 
 		final List<FieldMapTrialInstanceInfo> trialFieldMap =
@@ -496,7 +494,6 @@ public class LabelPrintingServiceImplTest {
 	public void testCheckAndSetFieldMapInstanceInfoForGermplsmDescriptorsData() {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(2, 2);
 
-		final boolean isTrial = true;
 		final boolean isStockList = true;
 
 		final List<FieldMapTrialInstanceInfo> trialFieldMap = FieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList();
@@ -579,7 +576,6 @@ public class LabelPrintingServiceImplTest {
 		workbook.getStudyDetails().setId(LabelPrintingServiceImplTest.TEST_STUDY_ID);
 
 		// for nursery without stock list
-		final boolean isTrial = false;
 		final boolean isStockList = false;
 
 		final List<FieldMapTrialInstanceInfo> trialFieldMap = FieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList();

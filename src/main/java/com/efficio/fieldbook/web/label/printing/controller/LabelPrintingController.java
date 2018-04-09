@@ -170,7 +170,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	@Resource
 	private LabelPrintingUtil labelPrintingUtil;
 
-	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	/**
 	 * Show trial label details.
@@ -222,7 +222,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS,
 				this.labelPrintingService.getAvailableLabelFieldsForStudy(hasFieldMap, locale, id));
 
-		form.setIsTrial(true);
 		return super.show(model);
 	}
 
@@ -236,6 +235,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 * @param locale the locale
 	 * @return the string
 	 */
+	@Deprecated
 	@RequestMapping(value = "/nursery/{id}", method = RequestMethod.GET)
 	public String showNurseryLabelDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form, final Model model,
 			final HttpServletRequest req, final HttpSession session, @PathVariable final int id, final Locale locale) {
@@ -272,7 +272,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		form.setUserLabelPrinting(this.userLabelPrinting);
 		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS,
 				this.labelPrintingService.getAvailableLabelFieldsForStudy(hasFieldMap, locale, id));
-		form.setIsTrial(false);
 		return super.show(model);
 	}
 
@@ -317,8 +316,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS,
 				this.labelPrintingService.getAvailableLabelFieldsForFieldMap(true, locale));
-
-		form.setIsTrial(this.userFieldmap.isTrial());
 
 		return super.show(model);
 	}
@@ -425,7 +422,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS, this.labelPrintingService
 				.getAvailableLabelFieldsForInventory(locale));
 
-		form.setIsTrial(false);
 		form.setIsStockList(false);
 		
 		return super.show(model);

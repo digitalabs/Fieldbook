@@ -473,7 +473,11 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 						success : function(data) {
 							var childCount = $.parseJSON(data).length;
 							if (childCount === 0) {
-								moveSamplesListFolder(sourceNode, node);
+								moveSamplesListFolder(sourceNode, node).done(function () {
+									sourceNode.remove();
+									doSampleLazyLoad(node);
+									node.focus();
+								});
 							} else {
 								showErrorMessage(getMessageErrorDiv(),
 									cannotMove + ' '

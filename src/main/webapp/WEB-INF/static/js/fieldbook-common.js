@@ -2901,7 +2901,7 @@ function moveSamplesListFolder(sourceNode, targetNode) {
 
 	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
-	$.ajax({
+	return $.ajax({
 		url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + sourceId + '/move?newParentId=' + targetId
 		+ '&isCropList=' + isCropList + '&programUUID=' + currentProgramId,
 		type: 'PUT',
@@ -2914,12 +2914,6 @@ function moveSamplesListFolder(sourceNode, targetNode) {
 			} else {
 				showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
 			}
-		},
-		success: function() {
-			var node = targetNode;
-			sourceNode.remove();
-			doSampleLazyLoad(node);
-			node.focus();
 		}
 	});
 }

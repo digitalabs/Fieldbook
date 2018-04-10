@@ -13,6 +13,8 @@ import org.generationcp.middleware.pojos.SampleList;
 import org.generationcp.middleware.service.api.SampleListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +40,7 @@ import java.util.Map;
 public class SampleTreeController extends AbstractBaseFieldbookController {
 
 	/**
-	 * The default folder open state stored when closing the germplasm lists
+	 * The default folder open state stored when closing the lists
 	 * browser.
 	 */
 	static final String DEFAULT_STATE_SAVED_FOR_SAMPLE_LIST = "Lists";
@@ -47,8 +50,10 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(SampleTreeController.class);
 
-	private static final String GERMPLASM_LIST_TABLE_PAGE = "Common/includes/germplasmListTable";
-	public static final String GERMPLASM_LIST_ROOT_NODES = "germplasmListRootNodes";
+	private static final String LIST_TABLE_PAGE = "Common/includes/list/listTable";
+	public static final String LIST_ROOT_NODES = "listRootNodes";
+	private static final String LIST_TABLE_ROWS_PAGE = "Common/includes/list/listTableRows";
+	public static final String LIST_CHILD_NODES = "listChildNodes";
 	protected static final String PROGRAM_LISTS = "LISTS";
 	protected static final String CROP_LISTS = "CROPLISTS";
 
@@ -89,11 +94,12 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/loadInitTreeTable", method = RequestMethod.GET)
 	public String loadInitialSampleTreeTable(final Model model) {
 		final List<TreeTableNode> rootNodes = new ArrayList<>();
-		final TreeTableNode localNode =
-				new TreeTableNode(SampleTreeController.PROGRAM_LISTS, AppConstants.SAMPLE_LISTS.getString(), null, null, null, null, "1");
-		rootNodes.add(localNode);
-		model.addAttribute(SampleTreeController.GERMPLASM_LIST_ROOT_NODES, rootNodes);
-		return super.showAjaxPage(model, SampleTreeController.GERMPLASM_LIST_TABLE_PAGE);
+		rootNodes.add(new TreeTableNode(SampleTreeController.CROP_LISTS, AppConstants.CROP_LISTS.getString(),
+			null, null, null, null, "1"));
+		rootNodes.add(new TreeTableNode(SampleTreeController.PROGRAM_LISTS, AppConstants.SAMPLE_LISTS.getString(),
+			null, null, null, null, "1"));
+		model.addAttribute(SampleTreeController.LIST_ROOT_NODES, rootNodes);
+		return super.showAjaxPage(model, SampleTreeController.LIST_TABLE_PAGE);
 	}
 
 	protected List<TreeNode> getSampleChildNodes(final String parentKey, final boolean isFolderOnly, final String programUUID) {
@@ -119,7 +125,9 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 			final GermplasmFolderMetadata nodeMetaData = allListMetaData.get(Integer.parseInt(newNode.getKey()));
 			if (nodeMetaData != null && nodeMetaData.getNumberOfChildren() > 0) {
 				newNode.setIsLazy(true);
+				newNode.setNumOfChildren(nodeMetaData.getNumberOfChildren());
 			}
+			newNode.setParentId(parentKey);
 		}
 		return childNodes;
 	}
@@ -127,6 +135,24 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 	private List<SampleList> getSampleChildrenNode(final String parentKey, final String programUUID) {
 		final int parentId = Integer.parseInt(parentKey);
 		return this.sampleListService.getSampleListByParentFolderIdBatched(parentId, programUUID, SampleTreeController.BATCH_SIZE);
+	}
+
+	/**
+	 * Expand list folder.
+	 *
+	 * @param id the list ID
+	 * @return the response page
+	 */
+	@RequestMapping(value = "/expandGermplasmListFolder/{id}", method = RequestMethod.GET)
+	public String expandListFolder(@PathVariable final String id, final Model model) {
+		try {
+			final List<TreeNode> childNodes = this.getSampleChildNodes(id, false, this.getCurrentProgramUUID());
+			model.addAttribute(SampleTreeController.LIST_CHILD_NODES, TreeViewUtil.convertToTableNode(childNodes));
+		} catch (final Exception e) {
+			SampleTreeController.LOG.error(e.getMessage(), e);
+		}
+
+		return super.showAjaxPage(model, SampleTreeController.LIST_TABLE_ROWS_PAGE);
 	}
 
 	/**
@@ -147,6 +173,20 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 		}
 
 		return "[]";
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/expandTreeTable/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
+	public ResponseEntity<List<TreeTableNode>> expandSampleTreeTable(@PathVariable final String parentKey, @PathVariable final String isFolderOnly) {
+		final boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly);
+		try {
+			final List<TreeNode> childNodes = this.getSampleChildNodes(parentKey, isFolderOnlyBool, this.getCurrentProgramUUID());
+			return new ResponseEntity<>(TreeViewUtil.convertToTableNode(childNodes), HttpStatus.OK);
+		} catch (final Exception e) {
+			SampleTreeController.LOG.error(e.getMessage(), e);
+		}
+
+		return new ResponseEntity<>(Collections.<TreeTableNode>emptyList(), HttpStatus.OK);
 	}
 
 	@ResponseBody

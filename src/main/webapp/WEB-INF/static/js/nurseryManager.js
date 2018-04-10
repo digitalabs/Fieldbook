@@ -1573,7 +1573,7 @@ function validateCreateNursery() {
 	if (hasError) {
 		var errMsg = '';
 		if (name !== '') {
-			errMsg = name.replace('*', '').replace(':', '') + ' ' + nurseryFieldsIsRequired;
+			errMsg = name.replace('*', '').replace(':', '') + ' ' + studyFieldsIsRequired;
 		}
 		if (customMessage !== '') {
 			errMsg = customMessage;

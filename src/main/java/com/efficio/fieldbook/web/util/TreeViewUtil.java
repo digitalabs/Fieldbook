@@ -48,6 +48,24 @@ public class TreeViewUtil {
 
 	}
 
+	public static List<TreeTableNode> convertToTableNode(List<TreeNode> treeNodes) {
+		List<TreeTableNode> tableNodes = new ArrayList<>();
+		for (TreeNode treeNode : treeNodes) {
+			tableNodes.add(convertToTableNode(treeNode));
+		}
+		return tableNodes;
+	}
+
+	public static TreeTableNode convertToTableNode(TreeNode treeNode) {
+		TreeTableNode tableNode = new TreeTableNode();
+		tableNode.setId(treeNode.getKey());
+		tableNode.setName(treeNode.getTitle());
+		tableNode.setIsFolder(treeNode.getIsFolder());
+		tableNode.setParentId(treeNode.getParentId());
+		tableNode.setNumOfChildren(String.valueOf(treeNode.getNumOfChildren()));
+		return tableNode;
+	}
+
 	/**
 	 * Convert references to json.
 	 *
@@ -368,7 +386,7 @@ public class TreeViewUtil {
 		treeTableNode.setType(TreeViewUtil.getTypeString(germplasmList.getType(), listTypes));
 		treeTableNode.setOwner(listMetaData != null ? listMetaData.getOwnerName() : "");
 
-		treeTableNode.setIsFolder(germplasmList.isFolder() ? "1" : "0");
+		treeTableNode.setIsFolder(germplasmList.isFolder());
 		final long noOfEntries = listMetaData != null ? listMetaData.getNumberOfEntries() : 0;
 		treeTableNode.setNoOfEntries(noOfEntries == 0 ? "" : String.valueOf(noOfEntries));
 

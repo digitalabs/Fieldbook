@@ -101,4 +101,8 @@ public class TreeTableNode {
 	public void setNumOfChildren(String numOfChildren) {
 		this.numOfChildren = numOfChildren;
 	}
+
+	public void setIsFolder(boolean isFolder) {
+		this.setIsFolder(isFolder ? "1" : "0");
+	}
 }

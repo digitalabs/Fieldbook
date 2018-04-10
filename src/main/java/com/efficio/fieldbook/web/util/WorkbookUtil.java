@@ -221,7 +221,7 @@ public class WorkbookUtil {
 		// add new variables in measurement rows
 		if (observations != null && !observations.isEmpty()) {
 			for (final MeasurementVariable variable : variableList) {
-				if (variable.getOperation().equals(Operation.ADD)
+				if ((variable.getOperation().equals(Operation.ADD) || variable.getOperation().equals(Operation.UPDATE))
 						&& !WorkbookUtil.inMeasurementDataList(observations.get(0).getDataList(), variable.getTermId())) {
 					final StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(), programUUID);
 					for (final MeasurementRow row : observations) {

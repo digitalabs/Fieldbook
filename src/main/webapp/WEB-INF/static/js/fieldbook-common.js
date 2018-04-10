@@ -2938,6 +2938,21 @@ function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
 		cache: false,
 		success: function(html) {
 			var germplasmDetailsUrl = html;
+			showGermplasmDetailsPopUp(gid, desig, germplasmDetailsUrl);
+		}
+	});
+}
+
+function showGermplasmDetailsPopUp(gid, desig, germplasmDetailsUrl) {
+	'use strict';
+	var url = '/Fieldbook/ListTreeManager/getPreferredName/' + gid;
+	$.ajax({
+		url: url,
+		type: 'GET',
+		data: '',
+		cache: false,
+		success: function(preferredName) {
+			desig =  preferredName; 
 			$('#openGermplasmFrame').attr('src', germplasmDetailsUrl + gid);
 			$('#openGermplasmModal .modal-title').html(headerMsg1 + ' ' + desig + ' (' + headerMsg2 + ' ' + gid + ')');
 			$('#openGermplasmModal').modal({ backdrop: 'static', keyboard: true });

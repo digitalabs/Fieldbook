@@ -1,0 +1,23 @@
+<table id="treeTable" class="my-class table table-curved table-condensed">
+	<thead>
+		<tr>
+			<th th:utext="#{list.header.name}">NAME</th>
+			<th th:utext="#{list.header.owner}">OWNER</th>
+			<th th:utext="#{list.header.description}">DESCRIPTION</th>
+			<th th:utext="#{list.header.type}">TYPE</th>
+			<th th:utext="#{list.header.no.of.entries}"># OF ENTRIES</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="list-row" th:each="list, row : ${listRootNodes}"
+			th:attr="data-tt-id=${list.id},data-tt-parent-id=${list.parentId},is-folder=${list.isFolder},num-of-children=${list.numOfChildren}">
+			<td th:class="${row.even}? 'even' : 'odd'">
+				<span th:class="${list.isFolder=='1'}? 'folder name' : 'file name'" th:text="${list.name}"></span>
+			</td>
+			<td th:class="${row.even}? 'even' : 'odd'" th:text="${list.owner}"></td>
+			<td th:class="${row.even}? 'even' : 'odd'" th:text="${list.description}"></td>
+			<td th:class="${row.even}? 'even' : 'odd'" th:text="${list.type}"></td>
+			<td th:class="${row.even}? 'even' : 'odd'" th:text="${list.noOfEntries}"></td>
+		</tr>
+	</tbody>
+</table>

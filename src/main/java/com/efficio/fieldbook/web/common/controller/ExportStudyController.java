@@ -346,13 +346,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		return data.get("studyExportId");
 	}
 
-	protected String getOutputFileName(final boolean isNursery, final String outputFilename, final String filename) {
-		if (!isNursery) {
-			return outputFilename;
-		}
-		return filename;
-	}
-
 	protected UserSelection getUserSelection() {
 		return this.studySelection;
 	}

@@ -358,13 +358,13 @@ var TreeTable = (function () {
 				// TODO This validation should be in the server
 				var numOfChildren = sourceNodeObj.attr('num-of-children');
 				if (numOfChildren !== '0') {
-					showErrorMessage(getMessageErrorDiv(), cannotMove + ' ' + sourceNodeName + ' ' + hasChildrenString);
+					showErrorMessage('', cannotMove + ' ' + sourceNodeName + ' ' + hasChildrenString);
 					return false;
 				}
 
 				targetNode = _this.table.treetable('node', $(this).data('ttId'));
 				if (sourceNodeObj.attr('is-folder') === '1' && targetNode.id === 'CROPLISTS') {
-					showErrorMessage(getMessageErrorDiv(), cannotMoveFolderToCropListError);
+					showErrorMessage('', cannotMoveFolderToCropListError);
 					return false;
 				}
 				_this.move(sourceNode, targetNode, sourceParentId)

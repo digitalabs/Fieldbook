@@ -1,4 +1,4 @@
-/*global expandGermplasmListInTreeTable*/
+/*global germplasmTreetable*/
 var GERMPLASM_LIST_TYPE = 'GERMPLASM_LIST';
 var STUDY_LIST_TYPE = 'STUDY_LIST';
 var SAMPLE_LIST_TYPE = 'SAMPLE_LIST';
@@ -141,28 +141,34 @@ var TreePersist = {
 		return deferred.promise();
 	},
 
+	expandNode: function (id) {
+		$('#treeTable').treetable('expandNode', id);
+	},
+
 	preLoadTreeTableState: function(listType, isSaveList) {
 		'use strict';
 		TreePersist.retrievePreviousTreeState(listType, isSaveList).done(function(expandedNodes) {
-			TreePersist.traverseNodes(expandedNodes, listType, expandGermplasmListInTreeTable);
+			TreePersist.traverseNodes(expandedNodes, listType, TreePersist.expandNode);
 		}).fail(function () {
 			// If there's no previous tree state, the top level 'Lists' node should be expanded by default.
-			$('#germplasmTreeTable').treetable('expandNode', 'LISTS');
+			TreePersist.expandNode('LISTS');
 		});
-		
-		$('#germplasmTreeTable').treetable('expandNode', 'CROPLISTS');
+
+		// Removed in BMS-4659
+		// TreePersist.expandNode('CROPLISTS');
 	},
 
+	// TODO call in Sample Manager (Workbench)
 	preLoadTreeTableSampleListState: function(listType, isSaveList) {
 		'use strict';
 		TreePersist.retrievePreviousTreeSampleListState(listType, isSaveList).done(function(expandedNodes) {
-			TreePersist.traverseNodes(expandedNodes, listType, expandGermplasmListInTreeTable);
+			TreePersist.traverseNodes(expandedNodes, listType, TreePersist.expandNode);
 		}).fail(function () {
 			// If there's no previous tree state, the top level 'Lists' node should be expanded by default.
-			$('#germplasmTreeTable').treetable('expandNode', 'LISTS');
+			TreePersist.expandNode('LISTS');
 		});
 
-		$('#germplasmTreeTable').treetable('expandNode', 'CROPLISTS');
+		TreePersist.expandNode('CROPLISTS');
 	},
 
 	preLoadTreeState: function(containerSection, listType, isSaveList) {

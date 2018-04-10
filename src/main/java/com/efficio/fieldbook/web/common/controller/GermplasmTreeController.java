@@ -113,10 +113,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(GermplasmTreeController.class);
 
-	private static final String GERMPLASM_LIST_TABLE_PAGE = "Common/includes/germplasmListTable";
-	public static final String GERMPLASM_LIST_ROOT_NODES = "germplasmListRootNodes";
-	private static final String GERMPLASM_LIST_TABLE_ROWS_PAGE = "Common/includes/germplasmListTableRows";
-	public static final String GERMPLASM_LIST_CHILD_NODES = "germplasmListChildNodes";
+	private static final String GERMPLASM_LIST_TABLE_PAGE = "Common/includes/list/listTable";
+	public static final String GERMPLASM_LIST_ROOT_NODES = "listRootNodes";
+	private static final String GERMPLASM_LIST_TABLE_ROWS_PAGE = "Common/includes/list/listTableRows";
+	public static final String GERMPLASM_LIST_CHILD_NODES = "listChildNodes";
 	protected static final String PROGRAM_LISTS = "LISTS";
 	protected static final String CROP_LISTS = "CROPLISTS";
 
@@ -904,7 +904,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 *
 	 * @return the string
 	 */
-	@RequestMapping(value = "/loadInitGermplasmTreeTable", method = RequestMethod.GET)
+	@RequestMapping(value = "/loadInitTreeTable", method = RequestMethod.GET)
 	public String loadInitialGermplasmTreeTable(final Model model) {
 		final List<TreeTableNode> rootNodes = new ArrayList<>();
 		final TreeTableNode programListsNode =

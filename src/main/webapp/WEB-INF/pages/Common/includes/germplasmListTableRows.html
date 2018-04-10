@@ -1,8 +1,0 @@
-<tr class="germplasm-list-row" th:each="germplasmList : ${germplasmListChildNodes}" 
-	th:attr="data-tt-id=${germplasmList.id},data-tt-parent-id=${germplasmList.parentId},is-folder=${germplasmList.isFolder},num-of-children=${germplasmList.numOfChildren}">
-	<td><span th:class="${germplasmList.isFolder=='1'}? 'folder name' : 'file name'" th:text="${germplasmList.name}"></span></td>
-	<td th:text="${germplasmList.owner}"></td>  
-	<td th:text="${germplasmList.description}"></td> 
-	<td th:text="${germplasmList.type}"></td> 
-	<td th:text="${germplasmList.noOfEntries}"></td>           
-</tr>

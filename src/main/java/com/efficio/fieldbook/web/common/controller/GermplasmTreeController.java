@@ -898,7 +898,13 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return TreeViewUtil.convertTreeViewToJson(rootNodes);
 
 	}
-
+	
+	@ResponseBody
+	@RequestMapping(value = "/getPreferredName/{gid}", method = RequestMethod.GET)
+	public String getPreferredName(@PathVariable final String gid) {
+		return this.germplasmDataManager.getPreferredNameValueByGID(Integer.valueOf(gid));
+	}
+	
 	/**
 	 * Load initial germplasm tree table.
 	 *

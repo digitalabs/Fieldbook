@@ -8,7 +8,7 @@ import com.efficio.pojos.treeview.TreeTableNode;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.service.UserTreeStateService;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.GermplasmFolderMetadata;
+import org.generationcp.middleware.pojos.ListMetadata;
 import org.generationcp.middleware.pojos.SampleList;
 import org.generationcp.middleware.service.api.SampleListService;
 import org.slf4j.Logger;
@@ -119,13 +119,18 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 		}
 		final List<TreeNode> childNodes = TreeViewUtil.convertListToTreeView(rootLists, isFolderOnly);
 
-		final Map<Integer, GermplasmFolderMetadata> allListMetaData = this.sampleListService.getFolderMetadata(rootLists);
+		final Map<Integer, ListMetadata> allListMetaData = this.sampleListService.getListMetadata(rootLists);
 
 		for (final TreeNode newNode : childNodes) {
-			final GermplasmFolderMetadata nodeMetaData = allListMetaData.get(Integer.parseInt(newNode.getKey()));
-			if (nodeMetaData != null && nodeMetaData.getNumberOfChildren() > 0) {
-				newNode.setIsLazy(true);
-				newNode.setNumOfChildren(nodeMetaData.getNumberOfChildren());
+			final ListMetadata nodeMetaData = allListMetaData.get(Integer.parseInt(newNode.getKey()));
+			if (nodeMetaData != null) {
+				if (nodeMetaData.getNumberOfChildren() > 0) {
+					newNode.setIsLazy(true);
+					newNode.setNumOfChildren(nodeMetaData.getNumberOfChildren());
+				}
+				if (!newNode.getIsFolder()) {
+					newNode.setNoOfEntries(nodeMetaData.getNumberOfEntries());
+				}
 			}
 			newNode.setParentId(parentKey);
 		}

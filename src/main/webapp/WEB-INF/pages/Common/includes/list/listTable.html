@@ -17,7 +17,7 @@
 			<td th:class="${row.even}? 'even' : 'odd'" th:text="${list.owner}"></td>
 			<td th:class="${row.even}? 'even' : 'odd'" th:text="${list.description}"></td>
 			<td th:class="${row.even}? 'even' : 'odd'" th:text="${list.type}"></td>
-			<td th:class="${row.even}? 'even' : 'odd'" th:text="${list.noOfEntries}"></td>
+			<td th:class="${row.even}? 'even' : 'odd'" th:text="${list.isFolder != '1'} ? ${list.noOfEntries} : ''"></td>
 		</tr>
 	</tbody>
 </table>

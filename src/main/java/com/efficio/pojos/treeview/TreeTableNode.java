@@ -3,6 +3,7 @@ package com.efficio.pojos.treeview;
 
 /**
  * This class holds the data needed for rendering a tree table using jquery treetable.
+ * TODO can be merged with {@link TreeNode}?
  */
 public class TreeTableNode {
 

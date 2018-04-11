@@ -4,5 +4,5 @@
 	<td th:text="${list.owner}"></td>
 	<td th:text="${list.description}"></td>
 	<td th:text="${list.type}"></td>
-	<td th:text="${list.noOfEntries}"></td>
+	<td th:text="${list.isFolder != '1'} ? ${list.noOfEntries} : ''"></td>
 </tr>

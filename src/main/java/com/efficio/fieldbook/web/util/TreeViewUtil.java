@@ -337,7 +337,9 @@ public class TreeViewUtil {
 		treeNode.setIsFolder(sampleList.isFolder());
 		treeNode.setType(sampleList.getType().getDisplayName());
 		treeNode.setDescription(sampleList.getDescription());
-		treeNode.setOwner(sampleList.getCreatedBy().getPerson().getDisplayName());
+		if (sampleList.getCreatedBy() != null) {
+			treeNode.setOwner(sampleList.getCreatedBy().getPerson().getDisplayName());
+		}
 		treeNode.setIsLazy(false);
 		if (treeNode.getIsFolder()) {
 			treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());

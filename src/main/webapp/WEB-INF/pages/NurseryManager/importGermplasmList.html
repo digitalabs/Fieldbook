@@ -64,8 +64,8 @@
 			<table class="table table-curved table-condensed fake-check-germplasm-list-items fbk-hide">
 				<thead>
 					<tr>
-						<th style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.designation}">.Designation</th>
-						<th style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.check}">.Check</th>
+						<th style="text-align: left; vertical-align: middle" th:utext="#{study.import.header.designation}">.Designation</th>
+						<th style="text-align: left; vertical-align: middle" th:utext="#{study.import.header.check}">.Check</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -625,7 +625,7 @@
             });
             
             if ($('studyId') && measurementRowCount > 0) {
-            	displaySelectedGermplasmDetails();
+            	displaySelectedGermplasmDetails();debugger,
             	displaySelectedCheckGermplasmDetails();
             }
             

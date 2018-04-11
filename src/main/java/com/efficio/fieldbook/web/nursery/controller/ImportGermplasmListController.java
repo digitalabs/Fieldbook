@@ -661,7 +661,7 @@ public class ImportGermplasmListController extends SettingsController {
 		final List<TableHeader> tableHeaderList = new ArrayList<>();
 /*		if (type != null && type.equalsIgnoreCase(StudyType.N.getName())) {
 
-			tableHeaderList.add(new TableHeader(this.messageSource.getMessage("nursery.import.header.position", null, locale),
+			tableHeaderList.add(new TableHeader(this.messageSource.getMessage("study.import.header.position", null, locale),
 					ImportGermplasmListController.POSITION));
 			tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_CODE.getTermNameFromOntology(this.ontologyDataManager),
 					ImportGermplasmListController.ENTRY_CODE));

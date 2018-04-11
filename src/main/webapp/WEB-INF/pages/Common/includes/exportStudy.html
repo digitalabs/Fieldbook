@@ -19,7 +19,7 @@
 					</div>
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
-							<label class="control-label" th:text="#{nursery.export.note}"></label>
+							<label class="control-label" th:text="#{study.export.note}"></label>
 						</div>
 					</div>
 					<div class="row form-group">
@@ -42,10 +42,10 @@
 						<div class="report-type-section col-xs-4 col-md-4">
 							<select id="exportType">
 								<option value="0">Please Choose</option>
-								<option value="6" th:text="#{nursery.export.csv}"></option>
-								<option selected="selected"  value="2" th:text="#{nursery.export.excel}"></option>
-								<option value="5" th:text="#{nursery.export.ksu.fieldbook.csv}">KSU Fieldbook CSV</option>
-								<option value="4" th:text="#{nursery.export.ksu.fieldbook.excel}">KSU Fieldbook Excel</option>
+								<option value="6" th:text="#{study.export.csv}"></option>
+								<option selected="selected"  value="2" th:text="#{study.export.excel}"></option>
+								<option value="5" th:text="#{study.export.ksu.fieldbook.csv}">KSU Fieldbook CSV</option>
+								<option value="4" th:text="#{study.export.ksu.fieldbook.excel}">KSU Fieldbook Excel</option>
 							</select>
 						</div>
 					</div>
@@ -107,13 +107,13 @@
 					</div>
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
-							<label class="control-label" th:text="#{nursery.export.field.plan.confirmation}"></label>
+							<label class="control-label" th:text="#{study.export.field.plan.confirmation}"></label>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer addVariable-footer">
-					<button type="button" class="btn btn-default" aria-hidden="true" onclick="javascript:doConfirmGoBack();" th:text="#{nursery.go.back}">Cancel</button>
-					<button type="button" class="btn btn-primary" aria-hidden="true" onclick="javascript:doConfirmExport();" th:text="#{nursery.proceed}">Confirm</button>
+					<button type="button" class="btn btn-default" aria-hidden="true" onclick="javascript:doConfirmGoBack();" th:text="#{study.go.back}">Cancel</button>
+					<button type="button" class="btn btn-primary" aria-hidden="true" onclick="javascript:doConfirmExport();" th:text="#{study.proceed}">Confirm</button>
 				</div>
 			</div>
 		</div>

@@ -1,4 +1,4 @@
-/* global angular, germplasmDataTable, BMS, setSpinnerMaxValue, noNurseryGermplasmList, noTrialGermplasmList */
+/* global angular, germplasmDataTable, BMS, setSpinnerMaxValue, noStudyGermplasmList */
 /* global entryNoShouldBeInRange, plotNoShouldBeInRange, showAlertMessage, showInvalidInputMessage */
 (function() {
 	'use strict';
@@ -15,7 +15,7 @@
 
 				germplasmDataTable = new BMS.Fieldbook.TrialGermplasmListDataTable(gpListItemsClass, gpListDataTblClass, dataGermplasmList);
 				if ($noGermplasmListIndicator.length !== 0 && $('body').data('service.trialMeasurement.count') !== 0) {
-					$noGermplasmListIndicator.html(noTrialGermplasmList);//TODO MUESTRA MENSAJE CUENYAD
+					$noGermplasmListIndicator.html(noStudyGermplasmList);
 				}
 
 				// disable enter submit event on $('#txtStartingEntryNo') input box

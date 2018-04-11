@@ -11,12 +11,12 @@
 			<!-- case 1: if the data was generated from custom design -->
 			<div th:if="${hasExperimentalDesign}">
 				<span class="noSelectedGermplasmListIndicator"
-					  th:text="#{nursery.import.checks.defined.by.imported.design}">Checks for this nursery have been defined by the imported design file.</span>
+					  th:text="#{study.import.checks.defined.by.imported.design}">Checks for this nursery have been defined by the imported design file.</span>
 			</div>
 
 			<!-- case 2: no data means no table -->
 			<div th:if="*{importedCheckGermplasm == null or #lists.isEmpty(importedCheckGermplasm)} and ${hasExperimentalDesign} == false">
-			<span class="noSelectedGermplasmListIndicator" th:text="#{nursery.import.no.selected.check.germplasm.list}">No Selected Check list</span>
+			<span class="noSelectedGermplasmListIndicator" th:text="#{study.import.no.selected.check.germplasm.list}">No Selected Check list</span>
 		</div>
 
 		<!-- case 3: basic view of the importedGermplasm -->

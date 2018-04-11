@@ -1,5 +1,5 @@
 /*globals angular, displayStudyGermplasmSection, isStudyNameUnique, showSuccessfulMessage, isCategoricalDisplay,
- showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
+ showInvalidInputMessage, studyFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
  invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,validateAllDates, showErrorMessage*/
 (function() {
 	'use strict';
@@ -767,7 +767,7 @@
 					if (hasError) {
 						var errMsg = '';
 						if (name !== '') {
-							errMsg = name.replace('*', '').replace(':', '') + ' ' + nurseryFieldsIsRequired;
+							errMsg = name.replace('*', '').replace(':', '') + ' ' + studyFieldsIsRequired;
 						}
 
 						if (customMessage !== '') {

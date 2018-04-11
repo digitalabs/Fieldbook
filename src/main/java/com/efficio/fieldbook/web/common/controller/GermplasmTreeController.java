@@ -52,7 +52,7 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
-import org.generationcp.middleware.pojos.GermplasmFolderMetadata;
+import org.generationcp.middleware.pojos.ListMetadata;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
@@ -966,10 +966,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		}
 		final List<TreeNode> childNodes = TreeViewUtil.convertGermplasmListToTreeView(rootLists, isFolderOnly);
 
-		final Map<Integer, GermplasmFolderMetadata> allListMetaData = this.germplasmListManager.getGermplasmFolderMetadata(rootLists);
+		final Map<Integer, ListMetadata> allListMetaData = this.germplasmListManager.getGermplasmFolderMetadata(rootLists);
 
 		for (final TreeNode newNode : childNodes) {
-			final GermplasmFolderMetadata nodeMetaData = allListMetaData.get(Integer.parseInt(newNode.getKey()));
+			final ListMetadata nodeMetaData = allListMetaData.get(Integer.parseInt(newNode.getKey()));
 			if (nodeMetaData != null && nodeMetaData.getNumberOfChildren() > 0) {
 				newNode.setIsLazy(true);
 			}

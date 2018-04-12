@@ -2642,7 +2642,7 @@ function changeBuildOption() {
 function createFolder() {
 	'use strict';
 
-	var folderName = $.trim($('#addFolderName').val()),
+	var folderName = $.trim($('#addFolderName', '#studyTreeModal').val()),
 		parentFolderId;
 
 	if (folderName === '') {
@@ -2677,7 +2677,7 @@ function createFolder() {
 					doStudyLazyLoad(node, data.newFolderId);
 					node.focus();
 					node.expand();
-					$('#addFolderDiv').slideUp();
+					$('#addFolderDiv', '#studyTreeModal').slideUp();
 					showSuccessfulMessage('', addFolderSuccessful);
 				} else {
 					showErrorMessage('page-add-study-folder-message-modal', data.message);

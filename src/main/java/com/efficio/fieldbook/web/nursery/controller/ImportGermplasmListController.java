@@ -704,7 +704,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 			if (germplasmListCheck != null && !germplasmListCheck.isEmpty()) {
 				final GermplasmList checkList = germplasmListCheck.get(0);
-				if (checkList != null & checkList.getListRef() != null && !checkList.getListRef().equals(0)) {
+				if (checkList != null && checkList.getListRef() != null && !checkList.getListRef().equals(0)) {
 					form.setKeyForOverwrite(checkList.getListRef());
 					form.setLastCheckSourcePrimary(0);
 					form.setLastDraggedChecksList(checkList.getListRef().toString());
@@ -796,7 +796,7 @@ public class ImportGermplasmListController extends SettingsController {
 			} else if (term == TermId.GROUPGID.getId()) {
 				val = germplasm.getMgid().toString();
 			} else if (term == TermId.STOCKID.getId()) {
-				val = germplasm.getStockIDs().toString();
+				val = germplasm.getStockIDs();
 			}
 		}
 		return val;
@@ -848,7 +848,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 			final Integer startingEntryNo = this.getUserSelection().getStartingEntryNo();
 
-			if (list.size() != 0) {
+			if (!list.isEmpty()) {
 				form.setStartingEntryNo(list.get(0).getEntryId().toString());
 			} else if (startingEntryNo != null) {
 				form.setStartingEntryNo(Integer.toString(startingEntryNo));
@@ -1657,7 +1657,8 @@ public class ImportGermplasmListController extends SettingsController {
 
 		final int totalGermplasmCount =
 				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().size();
-		Integer checkInterval = null, startCheckFrom = null;
+		Integer checkInterval = null;
+		Integer startCheckFrom = null;
 
 		if (form.getCheckVariables() != null) {
 			for (final SettingDetail settingDetail : form.getCheckVariables()) {

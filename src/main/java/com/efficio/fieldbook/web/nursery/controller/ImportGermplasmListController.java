@@ -656,8 +656,11 @@ public class ImportGermplasmListController extends SettingsController {
 			final ImportedGermplasmMainInfo mainInfo, final List<ImportedGermplasm> list,
 			final List<Map<String, Object>> dataTableDataList) {
 		// Set first entry number from the list
-		if (list.size() != 0) {
+		if (!list.isEmpty()) {
 			form.setStartingEntryNo(list.get(0).getEntryId().toString());
+			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+			importedGermplasmList.setImportedGermplasms(list);
+			mainInfo.setImportedGermplasmList(importedGermplasmList);
 		}
 
 		if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()) {
@@ -668,10 +671,6 @@ public class ImportGermplasmListController extends SettingsController {
 		if (StringUtils.isEmpty(form.getStartingPlotNo())) {
 			form.setStartingPlotNo(ImportGermplasmListController.STARTING_PLOT_NO);
 		}
-
-		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
-		importedGermplasmList.setImportedGermplasms(list);
-		mainInfo.setImportedGermplasmList(importedGermplasmList);
 
 		form.changePage(1);
 		this.userSelection.setCurrentPageGermplasmList(form.getCurrentPage());

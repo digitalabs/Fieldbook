@@ -81,6 +81,13 @@ $(function() {
 			$(document.body).css('padding-right', 0);
 		});
 
+	/**
+	 * A modal open on top of another should not remove modal-open class
+	 */
+	$(document).on('hidden.bs.modal', '.modal-second-level', function () {
+		$(document.body).addClass('modal-open');
+	});
+
 	$('.fbk-help')
 		.click(function() {
 		   var helpModule = $(this).data().helpLink;

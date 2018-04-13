@@ -37,8 +37,7 @@
 			<input type="hidden" th:field="*{programLocationUrl}"/>
 
 			<div class="form-group col-xs-12 col-md-12" >
-				<strong class="sub-heading col-xs-12 col-md-12" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.to.be.mapped}">TRIAL TO BE MAPPED:</strong>
-				<strong class="sub-heading col-xs-12 col-md-12" th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.to.be.mapped}">NURSERY TO BE MAPPED:</strong>
+				<strong class="sub-heading col-xs-12 col-md-12" th:text="#{fieldmap.study.to.be.mapped}">STUDY TO BE MAPPED:</strong>
 			</div>
 			<div class="form-group col-xs-12 col-md-12" >
 				<div class="col-md-12">
@@ -47,8 +46,7 @@
 			</div>
 			<div class="form-group col-xs-12 col-md-12">
 				<strong class="col-xs-12 col-md-12">
-					<span class="sub-content-heading" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.selected.trial}">Selected Trial:</span>
-					<span class="sub-content-heading" th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.selected.nursery}">Selected Nursery:</span>
+					<span class="sub-content-heading" th:text="#{fieldmap.study.selected.studies}">Selected Studies:</span>
 				</strong>
 			</div>
 
@@ -62,12 +60,10 @@
 				<table class="table table-curved table-condensed" style="margin-left: 20px; width: 98%" id="selectedTrials">
 					<thead>
 						<th th:text="#{fieldmap.trial.order}">Order</th>
-						<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial}">Trial</th>
-						<th th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery}">Nursery</th>
-						<th th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.dataset.name}">Dataset Name</th>
-						<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.instance}">Instance</th>
-						<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
-						<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
+						<th th:text="#{fieldmap.study}">Study</th>
+						<th th:text="#{fieldmap.trial.instance}">Instance</th>
+						<th th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
+						<th th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
 						<th th:text="#{fieldmap.trial.plots.needed}">Plots Needed</th>
 					</thead>
 					<div th:each="map : *{userFieldmap.selectedFieldMaps}">
@@ -78,10 +74,9 @@
 									<span class="orderNo"></span>
 								</td>
 								<td th:text="${map.fieldbookName}"></td>
-								<td th:if="*{userFieldmap.trial == false}" th:text="${dataset.datasetName}"></td>
-								<td th:if="*{userFieldmap.trial == true}" th:text="${trial.trialInstanceNo}"></td>
-								<td th:if="*{userFieldmap.trial == true}" th:text="${trial.entryCount}"></td>
-								<td th:if="*{userFieldmap.trial == true}" th:text="${trial.repCount}"></td>
+								<td th:text="${trial.trialInstanceNo}"></td>
+								<td th:text="${trial.entryCount}"></td>
+								<td th:text="${trial.repCount}"></td>
 								<td th:text="${trial.plotCount}"></td>
 							</tr>
 						</div>
@@ -112,6 +107,7 @@
 							<input type="hidden" th:field="*{fieldLocationIdBreedingFavorites}" class="form-control select2" placeholder=""/>
 							<input type="hidden" th:field="*{userFieldmap.fieldLocationId}"/>
 							<input type="hidden" th:field="*{userFieldmap.locationName}" />
+							<input type="hidden" th:field="*{userFieldmap.studyId}" />
 						</div>
 					</div>
 					<div class="col-xs-4 col-md-4">
@@ -266,7 +262,6 @@ var locationSuggestionsBreeding_obj = [];
 var locationSuggestionsBreedingFav = /*[[${favoriteLocationList}]]*/ null;
 var locationSuggestionsBreedingFav_obj = [];
 
-var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
 var msgBlockSizeError;
 var isViewFieldmap = false;
 var entryLabel = /*[[#{fieldmap.trial.number.of.entries}]]*/;
@@ -297,11 +292,8 @@ var locationIframeOpened = false;
 
 var isNewBlock = false;
 
-if (trial) {
+
 	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.trial}]]*/;
-} else {
-	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.nursery}]]*/;
-}
 
 $( document ).ready(function() {
 	'use strict';

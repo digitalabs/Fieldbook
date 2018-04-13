@@ -13,6 +13,7 @@ package com.efficio.fieldbook.web.fieldmap.controller;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.trial.controller.OpenTrialController;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
@@ -77,13 +78,13 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController {
 	public String saveFieldMap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
 
 		try {
-			if (this.userFieldmap != null && this.userFieldmap.getSelectedFieldMaps() != null
-					&& !this.userFieldmap.getSelectedFieldMaps().isEmpty()) {
+			if (this.userFieldmap != null && this.userFieldmap.getSelectedFieldMaps() != null && !this.userFieldmap.getSelectedFieldMaps()
+				.isEmpty()) {
 
 				this.updateSelectedFieldMapInfo();
 				int userId = this.getCurrentIbdbUserId();
-				this.fieldbookMiddlewareService.saveOrUpdateFieldmapProperties(this.userFieldmap.getSelectedFieldMaps(), userId,
-						this.userFieldmap.isNew());
+				this.fieldbookMiddlewareService
+					.saveOrUpdateFieldmapProperties(this.userFieldmap.getSelectedFieldMaps(), userId, this.userFieldmap.isNew());
 			}
 
 		} catch (MiddlewareQueryException e) {
@@ -94,17 +95,12 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController {
 			return "redirect:" + LabelPrintingController.URL + "/fieldmap";
 		}
 
-		if (this.userFieldmap.isTrial()) {
-			return "redirect:" + ManageTrialController.URL;
-		} else {
-			return "redirect:" + ManageNurseriesController.URL;
-		}
+		return "redirect:" + OpenTrialController.URL + "/" + form.getUserFieldmap().getStudyId();
+
 	}
 
 	/**
 	 * Update selected field map info.
-	 *
-	 * @param fieldmapUUID the fieldmap uuid
 	 */
 	private void updateSelectedFieldMapInfo() {
 		for (FieldMapInfo info : this.userFieldmap.getSelectedFieldMaps()) {

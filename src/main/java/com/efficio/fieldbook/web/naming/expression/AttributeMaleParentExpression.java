@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class AttributeMaleParentExpression extends BaseExpression {
+public class AttributeMaleParentExpression extends AttributeExpression {
 
 	// Example: ATTRMP.NOTES
 	public static final String ATTRIBUTE_KEY = "ATTRMP";
@@ -32,37 +32,17 @@ public class AttributeMaleParentExpression extends BaseExpression {
 				.equals(breedingMethod.getMtype())) {
 
 			// If the method is Derivative or Maintenance, GPID2 refers to the male parent of the group source
-			final Integer groupSourceGid = this.getGroupSourceGid(source);
-			final Germplasm groupSource = this.germplasmDataManager.getGermplasmByGID(groupSourceGid);
-			if (groupSource != null) {
-				gpid2 = groupSource.getGpid2();
-			}
+			final Integer groupSourceGid = this.getGroupSourceGID(source);
+			gpid2 = this.getSourceParentGID(groupSourceGid);
+
 		}
 
 		final String attributeName = capturedText.substring(1, capturedText.length() - 1).split("\\.")[1];
 		final String attributeValue = germplasmDataManager.getAttributeValue(gpid2, attributeName);
 
 		for (final StringBuilder value : values) {
-			this.replaceAttributeExpressionWithValue(value, attributeName, attributeValue);
+			this.replaceAttributeExpressionWithValue(value, ATTRIBUTE_KEY, attributeName, attributeValue);
 		}
-	}
-
-	protected Integer getGroupSourceGid(final AdvancingSource source) {
-
-		final Integer sourceGpid1 = source.getGermplasm().getGpid1();
-		final Integer sourceGpid2 = source.getGermplasm().getGpid2();
-		final Method sourceMethod = source.getSourceMethod();
-
-		if (sourceMethod != null && sourceMethod.getMtype() != null && AppConstants.METHOD_TYPE_GEN.getString()
-				.equals(sourceMethod.getMtype()) || source.getGermplasm().getGnpgs() < 0 && (sourceGpid1 != null && sourceGpid1.equals(0))
-				&& (sourceGpid2 != null && sourceGpid2.equals(0))) {
-			// If the source germplasm is a new CROSS, then the group source is the cross itself
-			return Integer.valueOf(source.getGermplasm().getGid());
-		} else {
-			// Else group source gid is always the female parent of the source germplasm.
-			return source.getGermplasm().getGpid1();
-		}
-
 	}
 
 	@Override
@@ -70,14 +50,13 @@ public class AttributeMaleParentExpression extends BaseExpression {
 		return AttributeMaleParentExpression.PATTERN_KEY;
 	}
 
-	protected void replaceAttributeExpressionWithValue(final StringBuilder container, final String attributeName, final String value) {
-		final String key = "[" + ATTRIBUTE_KEY + "." + attributeName + "]";
-		int start = container.indexOf(key, 0);
-		while (start > -1) {
-			int end = start + key.length();
-			int nextSearchStart = start + value.length();
-			container.replace(start, end, value);
-			start = container.indexOf(key, nextSearchStart);
+	@Override
+	protected Integer getSourceParentGID(final Integer gid) {
+		final Germplasm groupSource = this.germplasmDataManager.getGermplasmByGID(gid);
+		if (groupSource != null) {
+			return groupSource.getGpid2();
+		} else {
+			return null;
 		}
 	}
 }

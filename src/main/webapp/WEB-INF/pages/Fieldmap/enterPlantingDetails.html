@@ -143,6 +143,7 @@
 		</div>
 	</div>
 	<input type="hidden" th:field="*{userFieldmap.new}"/>
+	<input type="hidden" th:field="*{userFieldmap.studyId}"/>
 </form>
 </div></div>
 </div>
@@ -166,7 +167,6 @@
 	var deletedPlotError = /*[[#{fieldmap.starting.coordinates.deleted}]]*/;
 	var plantedPlotError = /*[[#{fieldmap.starting.coordinates.planted}]]*/;
 	var totalBlocksError = /*[[#{fieldmap.plots.exceed.blocks.with.deleted}]]*/;
-	var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
 	var isHorizontal = true;
 
 	function setAllDeletedBox(){

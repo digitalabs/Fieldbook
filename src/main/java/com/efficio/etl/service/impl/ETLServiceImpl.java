@@ -769,14 +769,22 @@ public class ETLServiceImpl implements ETLService {
 		}
 
 		// set variables
-		wb.setFactors(this.getFactorsFromDatasets(datasetForImport));
+		wb.setFactors(this.getFactorsFromDatasets(trialDataset, datasetForImport));
 		wb.setVariates(this.getVariatesFromDatasets(trialDataset, datasetForImport));
-		wb.setConditions(this.getConditionsFromDatasets(trialDataset));
+		wb.setConditions(new ArrayList<MeasurementVariable>());
 		wb.setConstants(new ArrayList<MeasurementVariable>());
 	}
 
-	private List<MeasurementVariable> getFactorsFromDatasets(final DataSet nonTrialDataset) {
+	private List<MeasurementVariable> getFactorsFromDatasets(final DataSet trialDataset, final DataSet nonTrialDataset) {
 		final List<MeasurementVariable> factors = new ArrayList<>();
+
+		for (final DMSVariableType variableType : trialDataset.getVariableTypes().getVariableTypes()) {
+			final PhenotypicType pheno = variableType.getStandardVariable().getPhenotypicType();
+			if (PhenotypicType.TRIAL_ENVIRONMENT.compareTo(pheno) == 0) {
+				factors.add(this.convertToMeasurementVariable(variableType));
+			}
+		}
+
 		for (final DMSVariableType variableType : nonTrialDataset.getVariableTypes().getVariableTypes()) {
 			final PhenotypicType pheno = variableType.getStandardVariable().getPhenotypicType();
 			if (PhenotypicType.GERMPLASM.compareTo(pheno) == 0 || pheno.compareTo(PhenotypicType.TRIAL_DESIGN) == 0) {
@@ -784,17 +792,6 @@ public class ETLServiceImpl implements ETLService {
 			}
 		}
 		return factors;
-	}
-
-	private List<MeasurementVariable> getConditionsFromDatasets(final DataSet trialDataset) {
-		final List<MeasurementVariable> conditions = new ArrayList<>();
-		for (final DMSVariableType variableType : trialDataset.getVariableTypes().getVariableTypes()) {
-			final PhenotypicType pheno = variableType.getStandardVariable().getPhenotypicType();
-			if (PhenotypicType.TRIAL_ENVIRONMENT.compareTo(pheno) == 0) {
-				conditions.add(this.convertToMeasurementVariable(variableType));
-			}
-		}
-		return conditions;
 	}
 
 	private List<MeasurementVariable> getVariatesFromDatasets(final DataSet trialDataset,
@@ -872,7 +869,13 @@ public class ETLServiceImpl implements ETLService {
 				continue;
 			}
 
-			if (!"OCC".equals(studyHeader) && fileHeaderMap.get(studyHeader.getName().toUpperCase()) == null) {
+			/* Check if the observation headers from imported file match the existing variables in the study.
+			Trial Environment variables will be ignored as they are not required in the observation
+			sheet of the workbook. */
+			// TODO: Verify if OCC variable is obsolete.
+			if (!"OCC".equalsIgnoreCase(studyHeader.getName())
+					&& studyHeader.getRole() != PhenotypicType.TRIAL_ENVIRONMENT
+					&& fileHeaderMap.get(studyHeader.getName().toUpperCase()) == null) {
 				missingHeaders.append(studyHeader.getName());
 				missingHeaders.append(delimeter);
 			}

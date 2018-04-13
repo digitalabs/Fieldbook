@@ -159,9 +159,9 @@ public class KsuFieldbookUtilTest {
 		final List<String> headers = KsuFieldbookUtil.getHeaderNames(variables);
 		
 		Assert.assertNotNull("The headers should not be null", headers);
-		Assert.assertEquals("The number of headers should be 5", 5, headers.size());
+		Assert.assertEquals("The number of headers should be 6", 6, headers.size());
 		Assert.assertFalse(check.getName() + " should not be included in the headers list.", headers.contains(check.getName()));
-		Assert.assertFalse(TermId.CROSS.name() + " should not be included in the headers list.", headers.contains(TermId.CROSS.name()));
+		Assert.assertTrue(TermId.CROSS.name() + " should be included in the headers list.", headers.contains(TermId.CROSS.name()));
 		
 		// The variables list contains ENTRY, GID, DESIG, CROSS, SEED SOURCE, PLOT, BLOCK, REP,	and CHECK; only the following should be included in the resulting headers list
 		Assert.assertTrue(WorkbookDataUtil.ENTRY + " should be included in the headers list.", headers.contains(WorkbookDataUtil.ENTRY));

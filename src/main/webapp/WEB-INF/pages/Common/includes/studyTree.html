@@ -115,18 +115,18 @@ $(document).ready(function () {
     'use strict';
     displayStudyListTree('studyTree', 1);
     changeBrowseNurseryButtonBehavior(false);
-    $('#addFolderDiv').hide();
-    $('#renameFolderDiv').hide();
-    $('#addFolderOkButton').on('click', createFolder);
-    $('#addFolderCancelButton').on('click', hideAddFolderDiv);
-    $('#renameFolderOkButton').on('click', submitRenameFolder);
-    $('#renameFolderCancelButton').on('click', hideRenameFolderDiv);
-	$('#addFolderDiv #addFolderName').on('keypress', function(event){
+    $('#addFolderDiv', '#studyTreeModal').hide();
+    $('#renameFolderDiv', '#studyTreeModal').hide();
+    $('#addFolderOkButton', '#studyTreeModal').on('click', createFolder);
+    $('#addFolderCancelButton', '#studyTreeModal').on('click', hideAddFolderDiv);
+    $('#renameFolderOkButton', '#studyTreeModal').on('click', submitRenameFolder);
+    $('#renameFolderCancelButton', '#studyTreeModal').on('click', hideRenameFolderDiv);
+	$('#addFolderDiv #addFolderName', '#studyTreeModal').on('keypress', function(event){
 		if(event.keyCode == 13){
 			createFolder();
 		}
 	});
-	$('#renameFolderDiv #newFolderName').on('keypress', function(event){
+	$('#renameFolderDiv #newFolderName', '#studyTreeModal').on('keypress', function(event){
 		if(event.keyCode == 13){
 			submitRenameFolder();
 		}
@@ -231,7 +231,7 @@ function doStudyLazyLoad(node, preSelectId) {
                     node.expand();
                 }, 50);
                 if (node.hasChildren()) {
-                    $('.delete-folder').addClass('disable-image');
+                    $('.delete-folder', '#studyTreeModal').addClass('disable-image');
                 }
 
                 if (node.data.isFolder === false) {
@@ -240,8 +240,8 @@ function doStudyLazyLoad(node, preSelectId) {
                 } else {
                     if (node.data.key === 'LOCAL') {
                         changeBrowseNurseryButtonBehavior(true);
-                        $('.edit-folder').addClass('disable-image');
-                        $('.delete-folder').addClass('disable-image');
+                        $('.edit-folder', '#studyTreeModal').addClass('disable-image');
+                        $('.delete-folder', '#studyTreeModal').addClass('disable-image');
                     }
                     else {
                         changeBrowseNurseryButtonBehavior(true);
@@ -333,12 +333,12 @@ function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionPa
         onActivate: function (node) {
             if (node.data.isFolder === false) {
                 changeBrowseNurseryButtonBehavior(false);
-                $('.delete-folder').removeClass('disable-image');
+                $('.delete-folder', '#studyTreeModal').removeClass('disable-image');
             } else {
                 if (node.data.key === 'LOCAL') {
                     changeBrowseNurseryButtonBehavior(true);
-                    $('.edit-folder').addClass('disable-image');
-                    $('.delete-folder').addClass('disable-image');
+                    $('.edit-folder', '#studyTreeModal').addClass('disable-image');
+                    $('.delete-folder', '#studyTreeModal').addClass('disable-image');
                 }
                 else {
                     changeBrowseNurseryButtonBehavior(true);
@@ -356,7 +356,7 @@ function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionPa
             });
         },
         onClick: function (node, event) {
-            $('#newFolderName').val(node.data.title);
+            $('#newFolderName', '#studyTreeModal').val(node.data.title);
             var currentFolderName = node.data.title;
         },
         onDblClick: function (node, event) {            

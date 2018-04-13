@@ -39,6 +39,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.util.Message;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -122,6 +123,7 @@ public class ETLServiceTest {
 	private static final String TRIAL_INSTANCE = "TRIAL_INSTANCE";
 	private static final String ENTRY_NO = "ENTRY_NO";
 	private static final String PLOT_NO = "PLOT_NO";
+	private static final String REP_NO = "REP_NO";
 	private static final String ALEU_COL_1_5 = "ALEU_COL_1_5";
 
 	private static final int STUDY_ID = 1;
@@ -247,7 +249,7 @@ public class ETLServiceTest {
 		Assert.assertNotNull(workbook.getConstants());
 
 		Assert.assertNotNull(workbook.getFactors());
-		Assert.assertEquals("The number of factors must be 2", 2, workbook.getFactors().size());
+		Assert.assertEquals("The number of factors must be 5", 5, workbook.getFactors().size());
 		for (final MeasurementVariable measurementVariable : workbook.getFactors()) {
 			Assert.assertTrue("A factor should either have a trial environment, germplasm or trial design role",
 					measurementVariable.getRole() == PhenotypicType.TRIAL_ENVIRONMENT
@@ -316,7 +318,7 @@ public class ETLServiceTest {
 		Assert.assertNotNull(workbook.getConstants());
 
 		Assert.assertNotNull(workbook.getFactors());
-		Assert.assertEquals("The number of factors must be 2", 2, workbook.getFactors().size());
+		Assert.assertEquals("The number of factors must be 5", 5, workbook.getFactors().size());
 		for (final MeasurementVariable measurementVariable : workbook.getFactors()) {
 			Assert.assertTrue("A factor should either have a trial environment, germplasm or trial design role",
 					measurementVariable.getRole() == PhenotypicType.TRIAL_ENVIRONMENT
@@ -389,7 +391,7 @@ public class ETLServiceTest {
 		Assert.assertNotNull(workbook.getConstants());
 
 		Assert.assertNotNull(workbook.getFactors());
-		Assert.assertEquals("The number of factors must be 0", 0, workbook.getFactors().size());
+		Assert.assertEquals("The number of factors must be 3", 3, workbook.getFactors().size());
 
 		Assert.assertNotNull(workbook.getVariates());
 		Assert.assertEquals("The number of variates must be 2", 2, workbook.getVariates().size());
@@ -636,6 +638,114 @@ public class ETLServiceTest {
 		plotVariable.setTermId(TermId.PLOT_ID.getId());
 		testWorkbook.getFactors().add(plotVariable);
 		Assert.assertTrue(this.etlService.headersContainsPlotId(testWorkbook));
+	}
+
+	@Test
+	public void testCheckForMismatchedHeadersHeadersMatch() {
+
+		final List<MeasurementVariable> studyHeaders = new ArrayList<>();
+		final MeasurementVariable trialInstance = new MeasurementVariable();
+		trialInstance.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+		trialInstance.setName(TRIAL_INSTANCE);
+		final MeasurementVariable entryNo = new MeasurementVariable();
+		entryNo.setRole(PhenotypicType.GERMPLASM);
+		entryNo.setName(ENTRY_NO);
+		final MeasurementVariable repNo = new MeasurementVariable();
+		repNo.setRole(PhenotypicType.TRIAL_DESIGN);
+		repNo.setName(REP_NO);
+
+		studyHeaders.add(trialInstance);
+		studyHeaders.add(entryNo);
+		studyHeaders.add(repNo);
+
+		final List<String> fileHeaders = new ArrayList<>();
+		fileHeaders.add(TRIAL_INSTANCE);
+		fileHeaders.add(ENTRY_NO);
+		fileHeaders.add(REP_NO);
+
+		Map<String, List<Message>> errors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, false);
+		Assert.assertTrue(errors.isEmpty());
+
+	}
+
+	@Test
+	public void testCheckForMismatchedHeadersHeadersDoNotMatch() {
+
+		final List<MeasurementVariable> studyHeaders = new ArrayList<>();
+		final MeasurementVariable trialInstance = new MeasurementVariable();
+		trialInstance.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+		trialInstance.setName(TRIAL_INSTANCE);
+		final MeasurementVariable entryNo = new MeasurementVariable();
+		entryNo.setRole(PhenotypicType.GERMPLASM);
+		entryNo.setName(ENTRY_NO);
+		final MeasurementVariable repNo = new MeasurementVariable();
+		repNo.setRole(PhenotypicType.TRIAL_DESIGN);
+		repNo.setName(REP_NO);
+
+		studyHeaders.add(trialInstance);
+		studyHeaders.add(entryNo);
+		studyHeaders.add(repNo);
+
+		final List<String> fileHeaders = new ArrayList<>();
+		fileHeaders.add(TRIAL_INSTANCE);
+		fileHeaders.add(REP_NO);
+
+		Map<String, List<Message>> errors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, false);
+		Assert.assertFalse(errors.isEmpty());
+
+	}
+
+	@Test
+	public void testCheckForMismatchedHeadersHeadersNoTrialEnvironmentOnFileHeaders() {
+
+		final List<MeasurementVariable> studyHeaders = new ArrayList<>();
+		final MeasurementVariable trialInstance = new MeasurementVariable();
+		trialInstance.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+		trialInstance.setName(TRIAL_INSTANCE);
+		final MeasurementVariable entryNo = new MeasurementVariable();
+		entryNo.setRole(PhenotypicType.GERMPLASM);
+		entryNo.setName(ENTRY_NO);
+		final MeasurementVariable repNo = new MeasurementVariable();
+		repNo.setRole(PhenotypicType.TRIAL_DESIGN);
+		repNo.setName(REP_NO);
+
+		studyHeaders.add(trialInstance);
+		studyHeaders.add(entryNo);
+		studyHeaders.add(repNo);
+
+		final List<String> fileHeaders = new ArrayList<>();
+		fileHeaders.add(ENTRY_NO);
+		fileHeaders.add(REP_NO);
+
+		Map<String, List<Message>> errors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, false);
+		Assert.assertTrue("Trial environment variables are not required in file headers, there should be no mismatch error ", errors.isEmpty());
+
+	}
+
+	@Test
+	public void testCheckForMismatchedHeadersHeadersMeansDataImportIsTrue() {
+
+		final List<MeasurementVariable> studyHeaders = new ArrayList<>();
+		final MeasurementVariable trialInstance = new MeasurementVariable();
+		trialInstance.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+		trialInstance.setName(TRIAL_INSTANCE);
+		final MeasurementVariable entryNo = new MeasurementVariable();
+		entryNo.setRole(PhenotypicType.GERMPLASM);
+		entryNo.setName(ENTRY_NO);
+		final MeasurementVariable repNo = new MeasurementVariable();
+		repNo.setRole(PhenotypicType.TRIAL_DESIGN);
+		repNo.setName(REP_NO);
+
+		studyHeaders.add(trialInstance);
+		studyHeaders.add(entryNo);
+		studyHeaders.add(repNo);
+
+		final List<String> fileHeaders = new ArrayList<>();
+		fileHeaders.add(ENTRY_NO);
+
+		Map<String, List<Message>> errors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, true);
+		Assert.assertTrue("Trial design variables are not required in file headers if the dataset being imported is type 'Means', there should be no mismatch error ", errors.isEmpty());
+
 	}
 
 	protected Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> createPhenotyicMapTestData() {

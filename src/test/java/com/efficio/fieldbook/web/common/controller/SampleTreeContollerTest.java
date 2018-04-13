@@ -3,7 +3,7 @@ package com.efficio.fieldbook.web.common.controller;
 import com.efficio.pojos.treeview.TreeNode;
 import junit.framework.Assert;
 import org.generationcp.middleware.enumeration.SampleListType;
-import org.generationcp.middleware.pojos.GermplasmFolderMetadata;
+import org.generationcp.middleware.pojos.ListMetadata;
 import org.generationcp.middleware.pojos.SampleList;
 import org.generationcp.middleware.service.api.SampleListService;
 import org.junit.Test;
@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -43,10 +42,10 @@ public class SampleTreeContollerTest {
 
 		final List<SampleList> sampleLists = Arrays.asList(sampleList);
 
-		final Map<Integer, GermplasmFolderMetadata> sampleListsMetaData = new HashMap<>();
+		final Map<Integer, ListMetadata> sampleListsMetaData = new HashMap<>();
 
 		Mockito.when(sampleListService.getAllSampleTopLevelLists(PROGRAM_UUID)).thenReturn(sampleLists);
-		Mockito.when(sampleListService.getFolderMetadata(sampleLists)).thenReturn(sampleListsMetaData);
+		Mockito.when(sampleListService.getListMetadata(sampleLists)).thenReturn(sampleListsMetaData);
 
 		List<TreeNode> treeNodes = sampleTreeController.getSampleChildNodes(SampleTreeController.PROGRAM_LISTS, false, PROGRAM_UUID);
 
@@ -72,10 +71,10 @@ public class SampleTreeContollerTest {
 
 		final List<SampleList> sampleLists = Arrays.asList(sampleList);
 
-		final Map<Integer, GermplasmFolderMetadata> sampleListsMetaData = new HashMap<>();
+		final Map<Integer, ListMetadata> sampleListsMetaData = new HashMap<>();
 
 		Mockito.when(sampleListService.getAllSampleTopLevelLists(null)).thenReturn(sampleLists);
-		Mockito.when(sampleListService.getFolderMetadata(sampleLists)).thenReturn(sampleListsMetaData);
+		Mockito.when(sampleListService.getListMetadata(sampleLists)).thenReturn(sampleListsMetaData);
 
 		List<TreeNode> treeNodes = sampleTreeController.getSampleChildNodes(SampleTreeController.CROP_LISTS, false, PROGRAM_UUID);
 
@@ -102,10 +101,10 @@ public class SampleTreeContollerTest {
 
 		final List<SampleList> sampleLists = Arrays.asList(sampleList);
 
-		final Map<Integer, GermplasmFolderMetadata> sampleListsMetaData = new HashMap<>();
+		final Map<Integer, ListMetadata> sampleListsMetaData = new HashMap<>();
 
 		Mockito.when(sampleListService.getSampleListByParentFolderIdBatched(Integer.valueOf(parentFolderId), PROGRAM_UUID, SampleTreeController.BATCH_SIZE)).thenReturn(sampleLists);
-		Mockito.when(sampleListService.getFolderMetadata(sampleLists)).thenReturn(sampleListsMetaData);
+		Mockito.when(sampleListService.getListMetadata(sampleLists)).thenReturn(sampleListsMetaData);
 
 		List<TreeNode> treeNodes = sampleTreeController.getSampleChildNodes(parentFolderId, false, PROGRAM_UUID);
 
@@ -132,13 +131,13 @@ public class SampleTreeContollerTest {
 
 		final List<SampleList> sampleLists = Arrays.asList(sampleList);
 
-		final Map<Integer, GermplasmFolderMetadata> sampleListsMetaData = new HashMap<>();
-		GermplasmFolderMetadata germplasmFolderMetadata = new GermplasmFolderMetadata();
+		final Map<Integer, ListMetadata> sampleListsMetaData = new HashMap<>();
+		ListMetadata germplasmFolderMetadata = new ListMetadata();
 		germplasmFolderMetadata.setNumberOfChildren(123);
 		sampleListsMetaData.put(id, germplasmFolderMetadata);
 
 		Mockito.when(sampleListService.getSampleListByParentFolderIdBatched(Integer.valueOf(parentFolderId), PROGRAM_UUID, SampleTreeController.BATCH_SIZE)).thenReturn(sampleLists);
-		Mockito.when(sampleListService.getFolderMetadata(sampleLists)).thenReturn(sampleListsMetaData);
+		Mockito.when(sampleListService.getListMetadata(sampleLists)).thenReturn(sampleListsMetaData);
 
 		List<TreeNode> treeNodes = sampleTreeController.getSampleChildNodes(parentFolderId, false, PROGRAM_UUID);
 

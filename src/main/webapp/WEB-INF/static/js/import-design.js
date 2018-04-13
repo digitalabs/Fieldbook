@@ -135,7 +135,6 @@ var ImportDesign = (function() {
 			return ImportDesign.showReviewDesignData().then(function(html) {
 				$('#reviewDesignModal').one('shown.bs.modal', function() {
 					$('#divDesignMeasurements').html(html);
-					$('body').addClass('modal-open');
 				}).modal({
 					backdrop: 'static',
 					keyboard: true

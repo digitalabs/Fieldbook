@@ -57,6 +57,7 @@ $(function() {
 		return (w1 - w2);
 	}
 
+
 	$(document.body)
 		.on('show.bs.modal', function() {
 			if (this.clientHeight < window.innerHeight) {return;}
@@ -65,6 +66,16 @@ $(function() {
 			if (scrollbarWidth) {
 				$(document.body).css('padding-right', scrollbarWidth);
 			}
+		})
+		.on('shown.bs.modal', function () {
+			/**
+			 * XXX Multiple modals are not supported in bootstrap.
+			 * https://bootstrapdocs.com/v3.3.6/docs/javascript/#callout-stacked-modals
+			 * If we are opening two modals at the same time or chaining one after another,
+			 * the backdrop mechanism from the previous modal closing will remove
+			 * the modal-open class from the body, making the scrollbar disappear
+			 */
+			$(this).addClass('modal-open');
 		})
 		.on('hidden.bs.modal', function() {
 			$(document.body).css('padding-right', 0);
@@ -1203,9 +1214,6 @@ function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailH
             success: function(html) {
                 $('#advance-nursery-modal-div').html(html);
                 $('#advanceNurseryModal')
-                	.one('shown.bs.modal', function() {
-                		$('body').addClass('modal-open');
-                	})
                 .modal({ backdrop: 'static', keyboard: true });
 
                 $('#advanceNurseryModal select').not('.fbk-harvest-year').each(function() {
@@ -4271,9 +4279,7 @@ function displayDetailsOutOfBoundsData() {
 			success: function(html) {
 				$('#reviewOutOfBoundsDataModal').modal('hide');
 				$('#reviewDetailsOutOfBoundsDataModalBody').html(html);
-				$('#reviewDetailsOutOfBoundsDataModal').one('shown.bs.modal', function() {
-					$('body').addClass('modal-open');
-				}).modal({
+				$('#reviewDetailsOutOfBoundsDataModal').modal({
 					backdrop: 'static',
 					keyboard: true
 				});

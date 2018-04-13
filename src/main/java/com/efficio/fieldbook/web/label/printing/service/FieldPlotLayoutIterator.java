@@ -24,11 +24,10 @@ public interface FieldPlotLayoutIterator {
 	 * @param isSerpentine the is serpentine
 	 * @param deletedPlot the deleted plot
 	 * @param labels the labels
-	 * @param isTrial the is trial
 	 * @return the plot[][]
 	 */
 	Plot[][] createFieldMap(int col, int range, int startRange, int startCol, boolean isSerpentine, Map<String, String> deletedPlot,
-			List<FieldMapLabel> labels, boolean isTrial, Plot[][] currentPlots);
+		List<FieldMapLabel> labels, Plot[][] currentPlots);
 
 	/**
 	 * Sets the other field map information.

@@ -60,7 +60,7 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 		String summaryOfFieldbookFieldPlantingDetailsLabel =
 				this.messageSource.getMessage("fieldmap.header.summary.for.study", null, locale);
 		// SUMMARY OF TRIAL, FIELD AND PLANTING DETAILS
-		String selectedFieldbookLabel = this.messageSource.getMessage("fieldmap.study.selected.studies", null, locale); // Selected Trial:
+		String selectedFieldbookLabel = this.messageSource.getMessage("fieldmap.study.selected.studies", null, locale); // Selected Study:
 
 		String orderHeader = this.messageSource.getMessage("fieldmap.trial.order", null, locale);
 		String studyHeader = this.messageSource.getMessage("fieldmap.study", null, locale);

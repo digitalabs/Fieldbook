@@ -1,0 +1,8 @@
+<tr class="list-row" th:each="list : ${listChildNodes}"
+	th:attr="data-tt-id=${list.id},data-tt-parent-id=${list.parentId},is-folder=${list.isFolder},num-of-children=${list.numOfChildren}">
+	<td><span th:class="${list.isFolder=='1'}? 'folder name' : 'file name'" th:text="${list.name}"></span></td>
+	<td th:text="${list.owner}"></td>
+	<td th:text="${list.description}"></td>
+	<td th:text="${list.type}"></td>
+	<td th:text="${list.isFolder != '1'} ? ${list.noOfEntries} : ''"></td>
+</tr>

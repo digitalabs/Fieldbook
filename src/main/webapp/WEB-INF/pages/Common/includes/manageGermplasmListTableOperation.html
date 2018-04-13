@@ -1,4 +1,5 @@
 <!-- Modal -->
+<div class="manageGermplasmContext">
 <div class="modal fade" id="addGermplasmFolder" role="dialog" aria-labelledby="addGermplasmFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
 		<div class="modal-content">
@@ -70,7 +71,7 @@
 	</div>
 </div>
 
-<div class="modal fade" id="deleteGermplasmFolder" role="dialog" aria-labelledby="deleteGermplasmFolder" aria-hidden="true" style="overflow: hidden">
+<div class="modal fade" id="deleteFolder" role="dialog" aria-labelledby="deleteFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
 		<div class="modal-content">			
 			<div class="modal-body" id="manageCheckTypesModalBody">
@@ -79,7 +80,7 @@
 						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.delete.folder.name}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
-						<button  id="closeDeleteGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('deleteGermplasmFolder')"/>
+						<button  id="closeDeleteGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('deleteFolder')"/>
 					</div>										
 				</div>
 				
@@ -95,8 +96,8 @@
 
 			</div>
 			<div class="modal-footer addVariable-footer">
-				<button type="button" class="btn btn-default" onclick="javascript: closeModal('deleteGermplasmFolder')" th:text="#{common.form.no.text}">Cancel</button>
-				<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.yes.text}" onclick="javascript: submitDeleteGermplasmFolderInTreeTable();">Ok</button>
+				<button type="button" class="btn btn-default" onclick="javascript: closeModal('deleteFolder')" th:text="#{common.form.no.text}">Cancel</button>
+				<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.yes.text}" onclick="javascript: germplasmTreetable.submitDeleteFolderInTreeTable();">Ok</button>
 			</div>
 		</div>
 	</div>
@@ -126,6 +127,7 @@
 			</div>
 		</div>
 	</div>
+</div>
 </div>
 
 <div layout:fragment="page-script">
@@ -219,9 +221,9 @@
 			'use strict';
 			if(event.keyCode === 13){
 				if(type === '1'){
-					createGermplasmFolderInTreeTable();
+					germplasmTreetable.createFolderInTreeTable();
 				}else if(type === '2'){
-					submitRenameGermplasmFolderInTreeTable();
+					germplasmTreetable.submitRenameFolderInTreeTable();
 				}
 			}
 		}
@@ -229,19 +231,19 @@
 		var ListTable = {
 			chooseList: function(){
 				'use strict';
-				var node = getSelectedGermplasmList();
+				var node = germplasmTreetable.getSelectedList();
 				ListTable.chooseListNode(node, false);
 			},
 	
 			chooseListNode : function (node, fromEnterKey) {
 				'use strict';		
 	
-				if (node === null || isSelectedGermplasmListAFolder()) {
+				if (node === null || germplasmTreetable.isSelectedListAFolder()) {
 					if(fromEnterKey === false){
 						showErrorMessage('page-import-message-modal', pleaseChooseFolder);
 					}
 				} else {
-					var id = getSelectedGermplasmListId();
+					var id = germplasmTreetable.getSelectedListId();
 					if (openTreeType === 1) {
 						// Load in main list
 						if (lastDraggedChecksList != id) {

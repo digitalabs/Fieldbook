@@ -2642,7 +2642,7 @@ function changeBuildOption() {
 function createFolder() {
 	'use strict';
 
-	var folderName = $.trim($('#addFolderName').val()),
+	var folderName = $.trim($('#addFolderName', '#studyTreeModal').val()),
 		parentFolderId;
 
 	if (folderName === '') {
@@ -2677,7 +2677,7 @@ function createFolder() {
 					doStudyLazyLoad(node, data.newFolderId);
 					node.focus();
 					node.expand();
-					$('#addFolderDiv').slideUp();
+					$('#addFolderDiv', '#studyTreeModal').slideUp();
 					showSuccessfulMessage('', addFolderSuccessful);
 				} else {
 					showErrorMessage('page-add-study-folder-message-modal', data.message);
@@ -2901,7 +2901,7 @@ function moveSamplesListFolder(sourceNode, targetNode) {
 
 	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
-	$.ajax({
+	return $.ajax({
 		url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + sourceId + '/move?newParentId=' + targetId
 		+ '&isCropList=' + isCropList + '&programUUID=' + currentProgramId,
 		type: 'PUT',
@@ -2914,12 +2914,6 @@ function moveSamplesListFolder(sourceNode, targetNode) {
 			} else {
 				showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
 			}
-		},
-		success: function() {
-			var node = targetNode;
-			sourceNode.remove();
-			doSampleLazyLoad(node);
-			node.focus();
 		}
 	});
 }

@@ -52,7 +52,7 @@ public class SampleTreeControllerTestIT extends AbstractBaseIntegrationTest {
 	public void testLoadInitialGermplasmTreeTable() throws Exception {
 		ExtendedModelMap model = new ExtendedModelMap();
 		this.sampleTreeController.loadInitialSampleTreeTable(model);
-		List<TreeTableNode> treeNodes = (List<TreeTableNode>) model.get(SampleTreeController.GERMPLASM_LIST_ROOT_NODES);
+		List<TreeTableNode> treeNodes = (List<TreeTableNode>) model.get(SampleTreeController.LIST_ROOT_NODES);
 		int numberOfRootNodes = 0;
 		List<TreeTableNode> rootNodes = new ArrayList<TreeTableNode>();
 		for (TreeTableNode treeTableNode : treeNodes) {

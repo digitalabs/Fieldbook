@@ -52,7 +52,7 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
-import org.generationcp.middleware.pojos.GermplasmFolderMetadata;
+import org.generationcp.middleware.pojos.ListMetadata;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
@@ -113,10 +113,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(GermplasmTreeController.class);
 
-	private static final String GERMPLASM_LIST_TABLE_PAGE = "Common/includes/germplasmListTable";
-	public static final String GERMPLASM_LIST_ROOT_NODES = "germplasmListRootNodes";
-	private static final String GERMPLASM_LIST_TABLE_ROWS_PAGE = "Common/includes/germplasmListTableRows";
-	public static final String GERMPLASM_LIST_CHILD_NODES = "germplasmListChildNodes";
+	private static final String GERMPLASM_LIST_TABLE_PAGE = "Common/includes/list/listTable";
+	public static final String GERMPLASM_LIST_ROOT_NODES = "listRootNodes";
+	private static final String GERMPLASM_LIST_TABLE_ROWS_PAGE = "Common/includes/list/listTableRows";
+	public static final String GERMPLASM_LIST_CHILD_NODES = "listChildNodes";
 	protected static final String PROGRAM_LISTS = "LISTS";
 	protected static final String CROP_LISTS = "CROPLISTS";
 
@@ -904,7 +904,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 *
 	 * @return the string
 	 */
-	@RequestMapping(value = "/loadInitGermplasmTreeTable", method = RequestMethod.GET)
+	@RequestMapping(value = "/loadInitTreeTable", method = RequestMethod.GET)
 	public String loadInitialGermplasmTreeTable(final Model model) {
 		final List<TreeTableNode> rootNodes = new ArrayList<>();
 		final TreeTableNode programListsNode =
@@ -966,10 +966,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		}
 		final List<TreeNode> childNodes = TreeViewUtil.convertGermplasmListToTreeView(rootLists, isFolderOnly);
 
-		final Map<Integer, GermplasmFolderMetadata> allListMetaData = this.germplasmListManager.getGermplasmFolderMetadata(rootLists);
+		final Map<Integer, ListMetadata> allListMetaData = this.germplasmListManager.getGermplasmFolderMetadata(rootLists);
 
 		for (final TreeNode newNode : childNodes) {
-			final GermplasmFolderMetadata nodeMetaData = allListMetaData.get(Integer.parseInt(newNode.getKey()));
+			final ListMetadata nodeMetaData = allListMetaData.get(Integer.parseInt(newNode.getKey()));
 			if (nodeMetaData != null && nodeMetaData.getNumberOfChildren() > 0) {
 				newNode.setIsLazy(true);
 			}

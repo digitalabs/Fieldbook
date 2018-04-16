@@ -19,11 +19,11 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 public class RootNameExpression implements Expression {
 
 	@Override
-	public void apply(List<StringBuilder> values, AdvancingSource source, final String capturedText) {
-		for (StringBuilder value : values) {
-			Integer snametype = source.getBreedingMethod().getSnametype();
+	public void apply(final List<StringBuilder> values, final AdvancingSource source, final String capturedText) {
+		for (final StringBuilder value : values) {
+			final Integer snametype = source.getBreedingMethod().getSnametype();
 			Name name = null;
-			List<Name> names = source.getNames();
+			final List<Name> names = source.getNames();
 
 			// this checks the matching sname type of the method to the names
 			if (snametype != null) {
@@ -62,12 +62,12 @@ public class RootNameExpression implements Expression {
 		}
 	}
 
-	public Name findNameUsingNameType(Integer nameType, List<Name> names) {
+	public Name findNameUsingNameType(final Integer nameType, final List<Name> names) {
 		if (names == null) {
 			return null;
 		}
 
-		for (Name name : names) {
+		for (final Name name : names) {
 			if (name.getTypeId() != null && name.getTypeId().equals(nameType)) {
 				return name;
 			}
@@ -76,12 +76,12 @@ public class RootNameExpression implements Expression {
 		return null;
 	}
 
-	public Name findPreferredName(List<Name> names) {
+	public Name findPreferredName(final List<Name> names) {
 		if (names == null) {
 			return null;
 		}
 
-		for (Name name : names) {
+		for (final Name name : names) {
 			if (name.getNstat() != null && name.getNstat().equals(1)) {
 				return name;
 			}
@@ -95,7 +95,7 @@ public class RootNameExpression implements Expression {
 		return null;
 	}
 
-	private boolean checkNameIfEnclosed(String name) {
+	private boolean checkNameIfEnclosed(final String name) {
 		int index = name.indexOf("/", 0);
 		while (index > -1 && index < name.length()) {
 			if (!this.checkIfEnclosed(name, index)) {
@@ -107,12 +107,13 @@ public class RootNameExpression implements Expression {
 		return true;
 	}
 
-	private boolean checkIfEnclosed(String name, int index) {
+	private boolean checkIfEnclosed(final String name, final int index) {
 
 		return this.checkNeighbor(name, index, '(', -1, 0, ')') && this.checkNeighbor(name, index, ')', 1, name.length() - 1, '(');
 	}
 
-	private boolean checkNeighbor(String name, int index, char literal, int delta, int stopPoint, char oppositeLiteral) {
+	private boolean checkNeighbor(final String name, final int index, final char literal, final int delta, final int stopPoint,
+			final char oppositeLiteral) {
 		int oppositeCount = 0;
 		for (int i = index + delta; i != stopPoint + delta; i = i + delta) {
 			if (name.charAt(i) == literal) {

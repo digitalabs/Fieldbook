@@ -29,14 +29,14 @@ public class RootNameExpression implements Expression {
 			if (snametype != null) {
 				name = this.findNameUsingNameType(snametype, names);
 			}
-			// this checks the type id equal to 5
-			if (name == null) {
-				name = this.findNameUsingNameType(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), names);
-			}
 			// this checks the names with nstat == 1
 			if (name == null) {
 				// if no sname type defined or if no name found that matched the snametype
 				name = this.findPreferredName(names);
+			}
+			// this checks the type id equal to 5
+			if (name == null) {
+				name = this.findNameUsingNameType(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), names);
 			}
 			String nameString = "";
 			// the default is type id 5

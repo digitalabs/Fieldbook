@@ -304,7 +304,7 @@ var TreeTable = (function () {
 	}
 
 	function updateTools() {
-		_this.table.find('tbody').on('mousedown', 'tr', function () {
+		_this.table.find('tbody').off('mousedown', 'tr').on('mousedown', 'tr', function () {
 			$('tr.selected', _this.table).removeClass('selected');
 			$(this).addClass('selected');
 			changeBrowseButtonBehavior(true);

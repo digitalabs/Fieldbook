@@ -271,8 +271,8 @@ var ListTreeOperation = {};
 		var currentFolderName;
 		if (!$(object).hasClass('disable-image')) {
 			$('#deleteFolderModal').modal('show');
-			hideFolderDiv('#addGermplasmFolderDiv');
-			hideFolderDiv('#renameGermplasmFolderDiv');
+			ListTreeOperation.hideFolderDiv('#addGermplasmFolderDiv');
+			ListTreeOperation.hideFolderDiv('#renameGermplasmFolderDiv');
 			currentFolderName = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title;
 			$('#delete-folder-confirm').html(deleteConfirmation + ' ' + currentFolderName + '?');
 			$('#page-delete-germplasm-folder-message-modal').html('');
@@ -284,8 +284,8 @@ var ListTreeOperation = {};
 		var currentFolderName;
 		if (!$(object).hasClass('disable-image')) {
 			$('#deleteSampleListFolderModal').modal('show');
-			hideFolderDiv('#addSampleFolderDiv');
-			hideFolderDiv('#renameSampleFolderDiv');
+			ListTreeOperation.hideFolderDiv('#addSampleFolderDiv');
+			ListTreeOperation.hideFolderDiv('#renameSampleFolderDiv');
 			currentFolderName = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title;
 			$('#delete-SampleList-folder-confirm').html(deleteConfirmation + ' ' + currentFolderName + '?');
 			$('#page-delete-germplasm-folder-message-modal').html('');

@@ -330,6 +330,15 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 	var initLoadUrl = '/Fieldbook/SampleListTreeManager/loadInitTree';
 	initLoadUrl += '/' + isFolderOnly;
 
+	var authParams =
+		'authToken=' + authToken
+		+ '&selectedProjectId=' + selectedProjectId
+		+ '&loggedInUserId=' + loggedInUserId;
+
+	if (selectedProjectId) {
+		initLoadUrl += '?' + authParams
+	}
+
 	var dynaTreeOptions = {
 		title : treeName,
 		checkbox : false,
@@ -431,7 +440,7 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 				});
 		},
 		onDblClick : function(node, event) {
-			chooseList();
+			chooseList(node);
 		},
 		dnd : {
 			onDragStart : function(node) {
@@ -464,7 +473,11 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 						success : function(data) {
 							var childCount = $.parseJSON(data).length;
 							if (childCount === 0) {
-								moveSamplesListFolder(sourceNode, node);
+								moveSamplesListFolder(sourceNode, node).done(function () {
+									sourceNode.remove();
+									doSampleLazyLoad(node);
+									node.focus();
+								});
 							} else {
 								showErrorMessage(getMessageErrorDiv(),
 									cannotMove + ' '

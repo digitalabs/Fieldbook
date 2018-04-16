@@ -114,18 +114,87 @@
 				}
 				return msgDiv;
 			}
+			var germplasmTreetable;
 			function displayGermplasmListTreeTable(divId) {
-				'use strict';				
+				'use strict';
 
-				$.ajax({
-					url: '/Fieldbook/ListTreeManager/loadInitGermplasmTreeTable',
-					type: 'GET',
-					cache: false,
-					success: function(html) {
-						$('#'+divId).html(html);
+				var baseurl = '/Fieldbook/ListTreeManager';
+
+				germplasmTreetable = new TreeTable({
+					baseurl: baseurl,
+					treeTableSelector: '#treeTable',
+					tableContainer: $('#germplasmTree'),
+					authparams: {},
+					context: $('.manageGermplasmContext'),
+					crop: cropName,
+					ondblclick: function (elem) {
+						var id = elem.closest('[data-tt-id]').data('ttId');
+						ListTable.chooseList();
+					},
+					create: function (parentFolderId, folderName) {
+						return $.ajax({
+							url: baseurl + '/addGermplasmFolder',
+							type: 'POST',
+							data: { parentFolderId: parentFolderId, folderName: folderName },
+							cache: false,
+							error: null
+						}).then(function (data) {
+							if (data.isSuccess !== '1') {
+								showErrorMessage('page-add-germplasm-folder-message-modal', data.message);
+								return $.Deferred().reject(data).promise();
+							}
+							return $.Deferred().resolve(data).promise();
+						});
+					},
+					move: function (sourceNode, targetNode) {
+						var targetId = targetNode.id;
+						if (targetId === 'LISTS') {
+							targetId = 0;
+						}
+						return $.ajax({
+							url: baseurl + '/moveGermplasmFolder',
+							type: 'POST',
+							data: { sourceId: sourceNode.id, targetId: targetId },
+							cache: false,
+							error: null
+						});
+					},
+					rename: function (id, folderName) {
+						return $.ajax({
+							url: baseurl + '/renameGermplasmFolder',
+							type: 'POST',
+							data: { folderId: id, newFolderName: folderName },
+							cache: false,
+							error: null
+						}).then(function (data) {
+							if (data.isSuccess !== '1') {
+								showErrorMessage('page-rename-germplasm-folder-message-modal', data.message);
+								return $.Deferred().reject(data).promise();
+							}
+							return $.Deferred().resolve(data).promise();
+						});
+					},
+					delete: function (folderId) {
+						return $.ajax({
+							url: baseurl + '/deleteGermplasmFolder',
+							type: 'POST',
+							data: { folderId: folderId },
+							cache: false
+						}).then(function (data) {
+							if (data.isSuccess !== '1') {
+								showErrorMessage('page-delete-germplasm-folder-message-modal', data.message);
+								return $.Deferred().reject(data).promise();
+							}
+							return $.Deferred().resolve(data).promise();
+						});
 					}
 				});
+				germplasmTreetable.init().done(function () {
+					setTimeout(function () {
+						germplasmTreetable.expandListInTreeTable('LISTS');
+					});
+				});
 			}
-	//]]>
-	</script>
+//]]>
+</script>
 </div>

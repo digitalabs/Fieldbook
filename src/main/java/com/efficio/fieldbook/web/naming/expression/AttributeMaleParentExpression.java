@@ -3,16 +3,15 @@ package com.efficio.fieldbook.web.naming.expression;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.util.AppConstants;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
+import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component
-public class AttributeMaleParentExpression extends BaseExpression {
+public class AttributeMaleParentExpression extends AttributeExpression {
 
 	// Example: ATTRMP.NOTES
 	public static final String ATTRIBUTE_KEY = "ATTRMP";
@@ -24,21 +23,25 @@ public class AttributeMaleParentExpression extends BaseExpression {
 	@Override
 	public void apply(final List<StringBuilder> values, final AdvancingSource source, final String capturedText) {
 
-		final Method sourceMethod = source.getBreedingMethod();
+		final Method breedingMethod = source.getBreedingMethod();
 		Integer gpid2 = null;
-		if (AppConstants.METHOD_TYPE_GEN.getString().equals(sourceMethod.getMtype())) {
-			// If the method is Generative, GPID2 refers to the GID of the male parent
+		if (AppConstants.METHOD_TYPE_GEN.getString().equals(breedingMethod.getMtype())) {
+			// If the method is Generative, GPID2 refers to male parent of the cross
 			gpid2 = Integer.valueOf(source.getMaleGid());
-		} else if (AppConstants.METHOD_TYPE_DER.getString().equals(sourceMethod.getMtype())) {
-			// If the method is Derivative, GPID2 refers to the immediate source (the GID of the previous advanced generation)
-			gpid2 = Integer.valueOf(source.getGermplasm().getGid());
+		} else if (AppConstants.METHOD_TYPE_DER.getString().equals(breedingMethod.getMtype()) || AppConstants.METHOD_TYPE_MAN.getString()
+				.equals(breedingMethod.getMtype())) {
+
+			// If the method is Derivative or Maintenance, GPID2 refers to the male parent of the group source
+			final Integer groupSourceGid = this.getGroupSourceGID(source);
+			gpid2 = this.getSourceParentGID(groupSourceGid);
+
 		}
 
 		final String attributeName = capturedText.substring(1, capturedText.length() - 1).split("\\.")[1];
 		final String attributeValue = germplasmDataManager.getAttributeValue(gpid2, attributeName);
 
 		for (final StringBuilder value : values) {
-			this.replaceAttributeExpressionWithValue(value, attributeName ,attributeValue);
+			this.replaceAttributeExpressionWithValue(value, ATTRIBUTE_KEY, attributeName, attributeValue);
 		}
 	}
 
@@ -47,14 +50,13 @@ public class AttributeMaleParentExpression extends BaseExpression {
 		return AttributeMaleParentExpression.PATTERN_KEY;
 	}
 
-	protected void replaceAttributeExpressionWithValue(final StringBuilder container, final String attributeName ,final String value) {
-		final String key = "[" + ATTRIBUTE_KEY + "." + attributeName + "]";
-		int start = container.indexOf(key, 0);
-		while (start > -1) {
-			int end = start + key.length();
-			int nextSearchStart = start + value.length();
-			container.replace(start, end, value);
-			start = container.indexOf(key, nextSearchStart);
+	@Override
+	protected Integer getSourceParentGID(final Integer gid) {
+		final Germplasm groupSource = this.germplasmDataManager.getGermplasmByGID(gid);
+		if (groupSource != null) {
+			return groupSource.getGpid2();
+		} else {
+			return null;
 		}
 	}
 }

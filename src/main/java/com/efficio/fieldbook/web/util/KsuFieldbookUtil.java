@@ -46,21 +46,12 @@ public class KsuFieldbookUtil {
 
 	private static final Map<Integer, String> ID_NAME_MAP;
 
-	// August 2015 : KSU handheld does not process CROSS information, so using
-	// this list to handle omissions of standard Germplasm variables from the
-	// export
-	private static final List<Integer> fieldsToOmit = new ArrayList<>();
-
 	static {
 		ID_NAME_MAP = new HashMap<>();
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_PLOT_ID, KsuFieldbookUtil.PLOT_ID);
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_RANGE, KsuFieldbookUtil.RANGE);
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_PLOT1, KsuFieldbookUtil.PLOT);
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_PLOT2, KsuFieldbookUtil.PLOT);
-		// Aug 2015 : we are omitting the CROSS and CHECK columns for KSU - add
-		// further omissions here
-		KsuFieldbookUtil.fieldsToOmit.add(TermId.CROSS.getId());
-		KsuFieldbookUtil.fieldsToOmit.add(TermId.CHECK.getId());
 	}
 
 	public enum KsuRequiredColumnEnum {
@@ -148,9 +139,7 @@ public class KsuFieldbookUtil {
 
 		if (headers != null && !headers.isEmpty()) {
 			for (final MeasurementVariable header : headers) {
-				// checking first to see if we are omitting fields for KSU -
-				// currently 'CROSS' and 'CHECK' is omitted
-				if (!KsuFieldbookUtil.fieldsToOmit.contains(header.getTermId()) && header.isFactor()) {
+				if (header.isFactor()) {
 					if (KsuFieldbookUtil.ID_NAME_MAP.get(header.getTermId()) != null) {
 						names.add(KsuFieldbookUtil.ID_NAME_MAP.get(header.getTermId()));
 					} else {
@@ -185,7 +174,7 @@ public class KsuFieldbookUtil {
 		final List<MeasurementVariable> labels = new ArrayList<>();
 
 		for (final MeasurementVariable factor : variables) {
-			if (factor.isFactor() && !KsuFieldbookUtil.fieldsToOmit.contains(new Integer(factor.getTermId()))) {
+			if (factor.isFactor()) {
 				labels.add(factor);
 			}
 		}

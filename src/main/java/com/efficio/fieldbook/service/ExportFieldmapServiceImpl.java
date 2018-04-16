@@ -11,13 +11,11 @@
 
 package com.efficio.fieldbook.service;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Locale;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.api.ExportFieldmapService;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.fieldmap.bean.Plot;
+import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapRow;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
@@ -34,11 +32,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import com.efficio.fieldbook.service.api.ExportFieldmapService;
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.fieldmap.bean.Plot;
-import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapRow;
-import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import javax.annotation.Resource;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Locale;
 
 /**
  * The Class ExcelExportServiceImpl.
@@ -58,22 +56,14 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 	public FileOutputStream exportFieldMapToExcel(final String fileName, final UserFieldmap userFieldMap) throws FieldbookException {
 		Locale locale = LocaleContextHolder.getLocale();
 
-		boolean isTrial = userFieldMap.isTrial();
-
 		// Summary of Trial/Nursery, Field and Planting Details
 		String summaryOfFieldbookFieldPlantingDetailsLabel =
-				this.messageSource.getMessage("fieldmap.header.summary.for.trial", null, locale);
+				this.messageSource.getMessage("fieldmap.header.summary.for.study", null, locale);
 		// SUMMARY OF TRIAL, FIELD AND PLANTING DETAILS
-		String selectedFieldbookLabel = this.messageSource.getMessage("fieldmap.trial.selected.trial", null, locale); // Selected Trial:
-		if (!isTrial) {
-			summaryOfFieldbookFieldPlantingDetailsLabel =
-					this.messageSource.getMessage("fieldmap.header.summary.for.nursery", null, locale);
-			// SUMMARY OF NURSERY, FIELD AND PLANTING DETAILS
-			selectedFieldbookLabel = this.messageSource.getMessage("fieldmap.nursery.selected.nursery", null, locale); // Selected Nursery:
-		}
+		String selectedFieldbookLabel = this.messageSource.getMessage("fieldmap.study.selected.studies", null, locale); // Selected Study:
 
 		String orderHeader = this.messageSource.getMessage("fieldmap.trial.order", null, locale);
-		String studyHeader = this.messageSource.getMessage(isTrial ? "fieldmap.trial" : "fieldmap.nursery", null, locale);
+		String studyHeader = this.messageSource.getMessage("fieldmap.study", null, locale);
 		String instanceHeader = this.messageSource.getMessage("fieldmap.trial.instance", null, locale);
 		String entriesCountHeader = this.messageSource.getMessage("fieldmap.trial.entry.count", null, locale);
 		String repsCountHeader = this.messageSource.getMessage("fieldmap.trial.reps.count", null, locale);
@@ -201,21 +191,15 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 			headerCell = row.createCell(columnIndex++);
 			headerCell.setCellValue(studyHeader);
 			headerCell.setCellStyle(labelStyle);
-			if (isTrial) {
-				headerCell = row.createCell(columnIndex++);
-				headerCell.setCellValue(instanceHeader);
-				headerCell.setCellStyle(labelStyle);
-				headerCell = row.createCell(columnIndex++);
-				headerCell.setCellValue(entriesCountHeader);
-				headerCell.setCellStyle(labelStyle);
-				headerCell = row.createCell(columnIndex++);
-				headerCell.setCellValue(repsCountHeader);
-				headerCell.setCellStyle(labelStyle);
-			} else {
-				headerCell = row.createCell(columnIndex++);
-				headerCell.setCellValue(datasetNameHeader);
-				headerCell.setCellStyle(labelStyle);
-			}
+			headerCell = row.createCell(columnIndex++);
+			headerCell.setCellValue(instanceHeader);
+			headerCell.setCellStyle(labelStyle);
+			headerCell = row.createCell(columnIndex++);
+			headerCell.setCellValue(entriesCountHeader);
+			headerCell.setCellStyle(labelStyle);
+			headerCell = row.createCell(columnIndex++);
+			headerCell.setCellValue(repsCountHeader);
+			headerCell.setCellStyle(labelStyle);
 			headerCell = row.createCell(columnIndex++);
 			headerCell.setCellValue(plotsNeededHeader);
 			headerCell.setCellStyle(labelStyle);
@@ -226,15 +210,10 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 				columnIndex = 0;
 				row.createCell(columnIndex++).setCellValue(order++);
 				row.createCell(columnIndex++).setCellValue(rec.getStudyName());
-				if (isTrial) {
-					row.createCell(columnIndex++).setCellValue(rec.getTrialInstanceNo());
-					row.createCell(columnIndex++).setCellValue(String.valueOf(rec.getEntryCount()));
-					row.createCell(columnIndex++).setCellValue(String.valueOf(rec.getRepCount()));
-					row.createCell(columnIndex++).setCellValue(String.valueOf(rec.getPlotCount()));
-				} else {
-					row.createCell(columnIndex++).setCellValue(rec.getDatasetName());
-					row.createCell(columnIndex++).setCellValue(String.valueOf(rec.getPlotCount()));
-				}
+				row.createCell(columnIndex++).setCellValue(rec.getTrialInstanceNo());
+				row.createCell(columnIndex++).setCellValue(String.valueOf(rec.getEntryCount()));
+				row.createCell(columnIndex++).setCellValue(String.valueOf(rec.getRepCount()));
+				row.createCell(columnIndex++).setCellValue(String.valueOf(rec.getPlotCount()));
 			}
 
 			row = summarySheet.createRow(rowIndex++);

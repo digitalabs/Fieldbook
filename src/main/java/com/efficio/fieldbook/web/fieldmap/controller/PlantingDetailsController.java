@@ -92,10 +92,8 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController {
 			this.setOrder(toBeAdded, infos.size());
 
 			this.userFieldmap.setSelectedFieldMaps(fieldmapInfoList);
-			this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap
-					.isTrial()));
-			this.userFieldmap.setSelectedFieldmapListToBeAdded(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMapsToBeAdded(),
-					this.userFieldmap.isTrial()));
+			this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps()));
+			this.userFieldmap.setSelectedFieldmapListToBeAdded(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMapsToBeAdded()));
 			this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
 			FieldPlotLayoutIterator plotIterator = this.horizontalFieldMapLayoutIterator;
 

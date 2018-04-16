@@ -74,7 +74,7 @@ public class ExportFieldmapServiceImplTest extends AbstractBaseIntegrationTest {
 		fieldmapInfoList.add(new FieldMapInfo(Integer.parseInt("1"), "1", fieldMapLabels));
 		userFieldMap.setMachineRowCapacity(2);
 
-		userFieldMap.setSelectedFieldmapList(new SelectedFieldmapList(fieldmapInfoList, false));
+		userFieldMap.setSelectedFieldmapList(new SelectedFieldmapList(fieldmapInfoList));
 		Plot[][] plots =
 				this.fieldMapService.createDummyData(userFieldMap.getNumberOfColumnsInBlock(), userFieldMap.getNumberOfRangesInBlock(),
 						userFieldMap.getStartingRange(), userFieldMap.getStartingColumn(), userFieldMap.isSerpentine(), deletedPlot,
@@ -106,7 +106,7 @@ public class ExportFieldmapServiceImplTest extends AbstractBaseIntegrationTest {
 		fieldmapInfoList.add(new FieldMapInfo(Integer.parseInt("1"), "1", fieldMapLabels));
 		userFieldMap.setMachineRowCapacity(2);
 
-		userFieldMap.setSelectedFieldmapList(new SelectedFieldmapList(fieldmapInfoList, false));
+		userFieldMap.setSelectedFieldmapList(new SelectedFieldmapList(fieldmapInfoList));
 		Plot[][] plots =
 				this.fieldMapService.createDummyData(userFieldMap.getNumberOfColumnsInBlock(), userFieldMap.getNumberOfRangesInBlock(),
 						userFieldMap.getStartingRange(), userFieldMap.getStartingColumn(), userFieldMap.isSerpentine(), deletedPlot,
@@ -140,7 +140,7 @@ public class ExportFieldmapServiceImplTest extends AbstractBaseIntegrationTest {
 		fieldmapInfoList.add(new FieldMapInfo(Integer.parseInt("1"), "1", fieldMapLabels));
 		userFieldMap.setMachineRowCapacity(2);
 
-		userFieldMap.setSelectedFieldmapList(new SelectedFieldmapList(fieldmapInfoList, false));
+		userFieldMap.setSelectedFieldmapList(new SelectedFieldmapList(fieldmapInfoList));
 		Plot[][] plots =
 				this.fieldMapService.createDummyData(userFieldMap.getNumberOfColumnsInBlock(), userFieldMap.getNumberOfRangesInBlock(),
 						userFieldMap.getStartingRange(), userFieldMap.getStartingColumn(), userFieldMap.isSerpentine(), deletedPlot,
@@ -173,7 +173,7 @@ public class ExportFieldmapServiceImplTest extends AbstractBaseIntegrationTest {
 		fieldmapInfoList.add(new FieldMapInfo(Integer.parseInt("1"), "1", fieldMapLabels));
 		userFieldMap.setMachineRowCapacity(2);
 
-		userFieldMap.setSelectedFieldmapList(new SelectedFieldmapList(fieldmapInfoList, false));
+		userFieldMap.setSelectedFieldmapList(new SelectedFieldmapList(fieldmapInfoList));
 		Plot[][] plots =
 				this.fieldMapService.createDummyData(userFieldMap.getNumberOfColumnsInBlock(), userFieldMap.getNumberOfRangesInBlock(),
 						userFieldMap.getStartingRange(), userFieldMap.getStartingColumn(), userFieldMap.isSerpentine(), deletedPlot,

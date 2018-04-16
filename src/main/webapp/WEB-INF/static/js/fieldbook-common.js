@@ -495,26 +495,17 @@ function createHeader(hasFieldMap) {
 	var newRow = '<thead><tr>';
 
 	if (!hasFieldMap) {
-		if (trial) {
-			newRow = newRow + '<th style="width:45%">' + trialName + '</th>' +
-				'<th style="width:10%">' + entryLabel + '</th>' +
-				'<th style="width:10%">' + repLabel + '</th>' +
-				'<th style="width:20%">' + plotLabel + '</th>';
-		} else {
-			newRow = newRow + '<th style="width:65%">' + nurseryName + '</th>' +
-			'<th style="width:20%">' + entryPlotLabel + '</th>';
-		}
+		newRow = newRow + '<th style="width:35%">' + trialName + '</th>' +
+			'<th style="width:15%">' + entryLabel + '</th>' +
+			'<th style="width:10%">' + repLabel + '</th>' +
+			'<th style="width:20%">' + plotLabel + '</th>';
 		newRow = newRow + '<th style="width:15%">' + fieldmapLabel + '</th>';
 	} else {
-		if (trial) {
-			newRow = newRow + '<th style="width:40%"></th>' +
-				'<th style="width:20%">' + entryLabel + '</th>' +
-				'<th style="width:20%">' + repLabel + '</th>' +
-				'<th style="width:20%">' + plotLabel + '</th>';
-		} else {
-			newRow = newRow + '<th style="width:60%"></th>' +
-			'<th style="width:40%">' + entryPlotLabel + '</th>';
-		}
+		newRow = newRow + '<th style="width:40%"></th>' +
+			'<th style="width:20%">' + entryLabel + '</th>' +
+			'<th style="width:20%">' + repLabel + '</th>' +
+			'<th style="width:20%">' + plotLabel + '</th>';
+
 	}
 	newRow = newRow + '</tr></thead>';
 	$('#studyFieldMapTree').append(newRow + '<tbody></tbody>');
@@ -561,12 +552,8 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 	if (id.indexOf('study') > -1 || id.indexOf('dataset') > -1) {
 		// Study and dataset level
 		newRow = '<tr id="' + realId + '" class="tr-expander ' + genClassName + id + ' ' + genParentClassName + '">';
+		newCell = newCell + '<td>' + value + '</td><td></td><td></td><td></td>';
 
-		if (trial) {
-			newCell = newCell + '<td>' + value + '</td><td></td><td></td><td></td>';
-		} else {
-			newCell = newCell + '<td>' + value + '</td><td></td>';
-		}
 		if (!withFieldMap) {
 			newCell = newCell + '<td></td>';
 		}
@@ -576,9 +563,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 			// For view fieldmap
 			newRow = '<tr id="' + realId + '" class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
 			newCell = '<td>' + value.trialInstanceNo + '</td><td>' + value.entryCount + '</td>';
-			if (trial) {
-				newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
-			}
+			newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 		} else {
 			// For create new fieldmap
 			hasFieldMap = value.hasFieldMap ? 'Yes' : 'No';
@@ -588,9 +573,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 			newRow = '<tr class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
 			checkBox = '<input ' + disabledString + ' class="checkInstance" type="checkbox" id="' + realId + '" ' + checked + ' /> &nbsp;&nbsp;';
 			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + value.entryCount + '</td>';
-			if (trial) {
-				newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
-			}
+			newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 			newCell = newCell + '<td class="hasFieldMap">' + hasFieldMap + '</td>';
 		}
 	}
@@ -643,9 +626,6 @@ function createLabelPrinting(tableName) {
 
 	} else {
 		type = 'Trial';
-		if (tableName === 'nursery-table') {
-			type = 'Nursery';
-		}
 		showMessage(createLabelErrorMsg);
 	}
 }
@@ -707,10 +687,6 @@ function showFieldMapPopUp(tableName, id) {
 		data: '',
 		success: function(data) {
 			if (data.nav == '0') {
-                //if (tableName == 'nursery-table') {
-                //    $('#fieldmapDatasetId').val(data.datasetId);
-                //    $('#fieldmapGeolocationId').val(data.geolocationId);
-                //}
 				selectTrialInstance(tableName);
 			} else if (data.nav == '1') {
 				showMessage(noFieldMapExistsTrial);
@@ -720,7 +696,7 @@ function showFieldMapPopUp(tableName, id) {
 }
 
 function viewFieldMap() {
-	if (isViewFieldmap) {
+	if (isViewFieldmap) {debugger;
 		showGeneratedFieldMap();
 	} else {
 		showCreateFieldMap();
@@ -733,7 +709,7 @@ function showGeneratedFieldMap() {
 		if ($('#studyFieldMapTree .field-map-highlight').size() == 1) {
 			$('#selectTrialInstanceModal').modal('toggle');
 			var id = $('#studyFieldMapTree .field-map-highlight').attr('id');
-			var datasetId = $('#studyFieldMapTree .field-map-highlight').treegrid('getParentNode').attr('id');
+			var datasetId = $('#studyFieldMapTree .field-map-highlight').treegrid('getParentNode').attr('id');debugger;
 			location.href = '/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/trial/' + datasetId + '/' + id;
 		} else {
 			showMessage(multipleSelectError);
@@ -744,7 +720,7 @@ function showGeneratedFieldMap() {
 }
 
 function showCreateFieldMap() {
-
+debugger;
 	var selectedWithFieldMap,
 		id,
 		dataset,
@@ -765,12 +741,7 @@ function showCreateFieldMap() {
 				studyId = $(this).parent().parent().treegrid('getParentNode').treegrid('getParentNode').attr('id');
 			}
 			// Get value hasfieldmap column
-			if (trial) {
 				hasFieldMap = $(this).parent().next().next().next().next().html();
-			} else {
-				hasFieldMap = $(this).parent().next().next().html();
-			}
-
 			// Build id list of selected trials instances
 			fieldmapIds.push(studyId + '|' + datasetId + '|' + id);
 
@@ -792,7 +763,8 @@ function showCreateFieldMap() {
 }
 
 function redirectToFirstPage() {
-	location.href = $('#fieldmap-url').attr('href') + '/' + encodeURIComponent(fieldmapIds.join(','));
+	var studyId = $('#studyId').val()
+	location.href = $('#fieldmap-url').attr('href') + '/' + studyId + '/' + encodeURIComponent(fieldmapIds.join(','));
 }
 
 function setSelectedTrialsAsDraggable() {
@@ -2533,7 +2505,7 @@ function changeBuildOption() {
 function createFolder() {
 	'use strict';
 
-	var folderName = $.trim($('#addFolderName').val()),
+	var folderName = $.trim($('#addFolderName', '#studyTreeModal').val()),
 		parentFolderId;
 
 	if (folderName === '') {
@@ -2568,7 +2540,7 @@ function createFolder() {
 					doStudyLazyLoad(node, data.newFolderId);
 					node.focus();
 					node.expand();
-					$('#addFolderDiv').slideUp();
+					$('#addFolderDiv', '#studyTreeModal').slideUp();
 					showSuccessfulMessage('', addFolderSuccessful);
 				} else {
 					showErrorMessage('page-add-study-folder-message-modal', data.message);
@@ -2786,7 +2758,7 @@ function moveSamplesListFolder(sourceNode, targetNode) {
 
 	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
-	$.ajax({
+	return $.ajax({
 		url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + sourceId + '/move?newParentId=' + targetId
 		+ '&isCropList=' + isCropList + '&programUUID=' + currentProgramId,
 		type: 'PUT',
@@ -2799,12 +2771,6 @@ function moveSamplesListFolder(sourceNode, targetNode) {
 			} else {
 				showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
 			}
-		},
-		success: function() {
-			var node = targetNode;
-			sourceNode.remove();
-			doSampleLazyLoad(node);
-			node.focus();
 		}
 	});
 }

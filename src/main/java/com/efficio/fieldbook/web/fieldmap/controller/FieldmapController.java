@@ -128,10 +128,10 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.FIELDMAP_SESSION_NAME,
 				SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 		String nav = "1";
 		try {
-			final List<Integer> trialIds = new ArrayList<Integer>();
+			final List<Integer> trialIds = new ArrayList<>();
 			final String[] idList = ids.split(",");
 			for (final String id : idList) {
 				trialIds.add(Integer.parseInt(id));
@@ -140,7 +140,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 					this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties);
 
 			this.clearFields();
-			this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, true);
+			this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList);
 			// get trial instances with field map
 			for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 				final List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
@@ -167,7 +167,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/selectTrialInstance", method = RequestMethod.GET)
 	public Map<String, String> getFieldMapInfoData() {
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 		final List<FieldMapInfo> fieldMapInfoList = this.userFieldmap.getFieldMapInfo();
 		String size = "0";
 		String datasetId = null;
@@ -228,11 +228,12 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 * @param session the session
 	 * @return the string
 	 */
+	@Deprecated
 	@RequestMapping(value = "/trial/{id}", method = RequestMethod.GET)
 	public String showTrial(@ModelAttribute("fieldmapForm") final FieldmapForm form, @PathVariable
 	final String id, final Model model, final HttpSession session) {
 		try {
-			this.setSelectedFieldMapInfo(id, true);
+			this.setSelectedFieldMapInfo(id);
 			form.setUserFieldmap(this.userFieldmap);
 			form.setProjectId(this.getCurrentProjectId());
 		} catch (final NumberFormatException e) {
@@ -246,13 +247,12 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 * Sets the selected field map info.
 	 *
 	 * @param id the id
-	 * @param isTrial the is trial
 	 */
-	private void setSelectedFieldMapInfo(final String id, final boolean isTrial) {
+	private void setSelectedFieldMapInfo(final String id) {
 		final String[] groupId = id.split(",");
 		final List<FieldMapInfo> fieldMapInfoList = this.userFieldmap.getFieldMapInfo();
 
-		final List<FieldMapInfo> selectedFieldMapInfoList = new ArrayList<FieldMapInfo>();
+		final List<FieldMapInfo> selectedFieldMapInfoList = new ArrayList<>();
 		FieldMapInfo newFieldMapInfo = null;
 		List<FieldMapDatasetInfo> datasets = null;
 		FieldMapDatasetInfo dataset = null;
@@ -275,7 +275,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 				if (fieldMapInfo.getFieldbookId().equals(selectedStudyId)) {
 					if (datasetId == null) {
 						dataset = new FieldMapDatasetInfo();
-						trialInstances = new ArrayList<FieldMapTrialInstanceInfo>();
+						trialInstances = new ArrayList<>();
 					} else {
 						// if dataset has changed, add previously saved dataset to the list
 						if (!datasetId.equals(selectedDatasetId)) {
@@ -284,13 +284,13 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 							dataset.setTrialInstances(trialInstances);
 							datasets.add(dataset);
 							dataset = new FieldMapDatasetInfo();
-							trialInstances = new ArrayList<FieldMapTrialInstanceInfo>();
+							trialInstances = new ArrayList<>();
 						}
 					}
 
 					if (studyId == null) {
 						newFieldMapInfo = new FieldMapInfo();
-						datasets = new ArrayList<FieldMapDatasetInfo>();
+						datasets = new ArrayList<>();
 					} else {
 						// if study id has changed, add previously saved study to the list
 						if (!studyId.equals(selectedStudyId)) {
@@ -299,7 +299,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 							newFieldMapInfo.setDatasets(datasets);
 							selectedFieldMapInfoList.add(newFieldMapInfo);
 							newFieldMapInfo = new FieldMapInfo();
-							datasets = new ArrayList<FieldMapDatasetInfo>();
+							datasets = new ArrayList<>();
 						}
 					}
 
@@ -357,7 +357,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 			final List<FieldMapInfo> fieldMapInfoList =
 					this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(nurseryIds, this.crossExpansionProperties);
 
-			this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, false);
+			this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList);
 
 			for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 				final List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
@@ -389,16 +389,17 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 * @param session the session
 	 * @return the string
 	 */
-	@RequestMapping(value = "/nursery/{id}", method = RequestMethod.GET)
-	public String showNursery(@ModelAttribute("fieldmapForm") final FieldmapForm form, @PathVariable final String id, final Model model, final HttpSession session) {
+	@RequestMapping(value = "/nursery/{studyId}/{id}", method = RequestMethod.GET) //TODO CAMBIAR URL AND METHOD NAME
+	public String showNursery(@ModelAttribute("fieldmapForm") final FieldmapForm form, @PathVariable final Integer studyId, @PathVariable final String id, final Model model, final HttpSession session) {
 		try {
-			this.setSelectedFieldMapInfo(id, false);
+			this.setSelectedFieldMapInfo(id);
 			form.setUserFieldmap(this.userFieldmap);
 			form.setProjectId(this.getCurrentProjectId());
 		} catch (final NumberFormatException e) {
 			FieldmapController.LOG.error(e.toString());
 		}
 		form.setProgramLocationUrl(this.fieldbookProperties.getProgramLocationsUrl());
+		form.getUserFieldmap().setStudyId(studyId);
 		return super.show(model);
 	}
 
@@ -466,8 +467,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 				ctr++;
 			}
 		}
-		this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap
-				.isTrial()));
+		this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps()));
 	}
 
 	/*
@@ -684,7 +684,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	private void setUserFieldMapDetails(final FieldmapForm form) {
 		this.userFieldmap.setSelectedDatasetId(form.getUserFieldmap().getSelectedDatasetId());
 		this.userFieldmap.setSelectedGeolocationId(form.getUserFieldmap().getSelectedGeolocationId());
-		this.userFieldmap.setUserFieldmapInfo(this.userFieldmap.getFieldMapInfo(), this.userFieldmap.isTrial() ? true : false);
+		this.userFieldmap.setUserFieldmapInfo(this.userFieldmap.getFieldMapInfo());
 		this.userFieldmap.setNumberOfEntries(form.getUserFieldmap().getNumberOfEntries());
 		this.userFieldmap.setNumberOfReps(form.getUserFieldmap().getNumberOfReps());
 		this.userFieldmap.setTotalNumberOfPlots(form.getUserFieldmap().getTotalNumberOfPlots());
@@ -701,7 +701,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 		this.userFieldmap.setLocationName(form.getUserFieldmap().getLocationName());
 		this.userFieldmap.setFieldName(form.getUserFieldmap().getFieldName());
 		this.userFieldmap.setBlockName(form.getUserFieldmap().getBlockName());
-
+		this.userFieldmap.setStudyId(form.getUserFieldmap().getStudyId());
 	}
 
 	/**

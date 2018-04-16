@@ -178,7 +178,7 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 							return new ExpDesignValidationOutput(Boolean.FALSE,
 									this.messageSource.getMessage("germplasm.list.spacing.less.than.germplasm.error", null, locale));
 						}
-						if (testEntryList.size() - checkList.size() == 0) {
+						if (germplasmList.size() - checkList.size() == 0) {
 							return new ExpDesignValidationOutput(Boolean.FALSE,
 									this.messageSource.getMessage("germplasm.list.all.entries.can.not.be.checks", null, locale));
 						}

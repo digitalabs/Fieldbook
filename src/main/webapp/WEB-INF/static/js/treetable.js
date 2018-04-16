@@ -311,6 +311,9 @@ var TreeTable = (function () {
 			if ($(this).attr('data-tt-id') === 'LISTS' || $(this).attr('data-tt-id') === 'CROPLISTS') {
 				$('.edit-folder', _this.context).addClass('disable-image');
 				$('.delete-folder', _this.context).addClass('disable-image');
+				if ($(this).attr('data-tt-id') === 'CROPLISTS') {
+					$('.create-folder', _this.context).addClass('disable-image');
+				}
 				_this.hideFolderDiv('#renameFolderDiv');
 			} else if ($(this).attr('num-of-children') !== '0') {
 				$('.delete-folder', _this.context).addClass('disable-image');

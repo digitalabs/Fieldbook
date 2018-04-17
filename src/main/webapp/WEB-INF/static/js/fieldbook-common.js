@@ -645,13 +645,13 @@ function showFieldMap(tableName) {
 
 	if (idVal != null) {
 		if (count > 1) {
-			showMessage(fieldMapOneStudyErrorMsgTrial);
+			showMessage(fieldMapOneStudyErrorMsg);
 		} else {
 			$('#page-message').html('');
 			showFieldMapPopUp(tableName, idVal);
 		}
 	} else {
-		showMessage(fieldMapStudyRequiredTrial);
+		showMessage(fieldMapStudyRequired);
 	}
 }
 
@@ -689,7 +689,7 @@ function showFieldMapPopUp(tableName, id) {
 			if (data.nav == '0') {
 				selectTrialInstance(tableName);
 			} else if (data.nav == '1') {
-				showMessage(noFieldMapExistsTrial);
+				showMessage(noFieldMapExists);
 			}
 		}
 	});

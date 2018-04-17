@@ -1454,13 +1454,15 @@ function doFinalExport(paramUrl, additionalParams, exportWayType) {
 	newAction += exportWayType;
 	studyId = $('#studyId').val();
 
-	// the study is opened
-	var tableContainsPlotId = BMS.Fieldbook.MeasurementsTable.containsHeader('measurement-table', '8201');
-	visibleColumns = getMeasurementTableVisibleColumns(tableContainsPlotId);
-	var exportType = $('#exportType').val();
-	// excel or csv
-	if ((exportType == 6 || exportType == 2) && visibleColumns.length !== 0) {
-		showWarningMessageForRequiredColumns(visibleColumns);
+	if ($('#browser-studies').length === 0) {
+		// the study is opened
+		var tableContainsPlotId = BMS.Fieldbook.MeasurementsTable.containsHeader('measurement-table', '8201');
+		visibleColumns = getMeasurementTableVisibleColumns(tableContainsPlotId);
+		var exportType = $('#exportType').val();
+		// excel or csv
+		if ((exportType == 6 || exportType == 2) && visibleColumns.length !== 0) {
+			showWarningMessageForRequiredColumns(visibleColumns);
+		}
 	}
 
 	var columnOrders = '';

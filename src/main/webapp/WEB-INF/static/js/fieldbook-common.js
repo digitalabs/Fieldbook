@@ -72,21 +72,25 @@ $(function() {
 			 * XXX Multiple modals are not supported in bootstrap.
 			 * https://bootstrapdocs.com/v3.3.6/docs/javascript/#callout-stacked-modals
 			 * If we are opening two modals at the same time or chaining one after another,
-			 * the backdrop mechanism from the previous modal closing will remove
+			 * the closing modal will remove
 			 * the modal-open class from the body, making the scrollbar disappear
 			 */
 			$(this).addClass('modal-open');
 		})
 		.on('hidden.bs.modal', function() {
 			$(document.body).css('padding-right', 0);
-		});
 
-	/**
-	 * A modal open on top of another should not remove modal-open class
-	 */
-	$(document).on('hidden.bs.modal', '.modal-second-level', function () {
-		$(document.body).addClass('modal-open');
-	});
+			// is there any other modal open?
+			if ($('.modal.in').length > 0) {
+				/**
+				 * Bootstrap will remove modal-open on hide:
+				 * https://github.com/twbs/bootstrap/blob/81df608a40bf0629a1dc08e584849bb1e43e0b7a/dist/js/bootstrap.js#L1081
+				 * causing issues with the scroll of other modals
+				 * This is to avoid that
+				 */
+				$(document.body).addClass('modal-open');
+			}
+		});
 
 	$('.fbk-help')
 		.click(function() {

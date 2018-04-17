@@ -109,6 +109,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 				details.setHasMeasurements(false);
 			}
 
+			this.userSelection.setWorkbook(workbook);
 		} catch (final MiddlewareException e) {
 			ReviewStudyDetailsController.LOG.error(e.getMessage(), e);
 			details = new StudyDetails();

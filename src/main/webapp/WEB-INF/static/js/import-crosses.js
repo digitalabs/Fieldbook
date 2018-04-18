@@ -49,9 +49,7 @@ var ImportCrosses = {
 			$('#crossSetBreedingMethodModal').addClass('import-crosses-from-file');
 
 			if (resp.isChoosingListOwnerNeeded) {
-				$('#chooseListOwner').one('shown.bs.modal', function() {
-					$('body').addClass('modal-open');
-				}).modal({ backdrop: 'static', keyboard: true });
+				$('#chooseListOwner').modal({ backdrop: 'static', keyboard: true });
 				$('#chooseListOwner').addClass('import-crosses-from-file');
 
 				$('#goBackToImportFileCrossesButton').off('click');
@@ -182,12 +180,8 @@ var ImportCrosses = {
 		'use strict';
 
 		$('#openCrossesListModal').one('shown.bs.modal', function() {
-
-			$('body').addClass('modal-open');
-			
 			// After the modal window is shown, make sure that the table header is properly adjusted.
 			$('#preview-crosses-table').resize();
-
 		}).modal({ backdrop: 'static', keyboard: true });
 
 		if (ImportCrosses.isFileCrossesImport) {
@@ -248,7 +242,6 @@ var ImportCrosses = {
 		'use strict';
 		$(hiddenModalSelector).modal('hide');
 		$(shownModalSelector).one('shown.bs.modal', function() {
-			$('body').addClass('modal-open');
 			// The bootstrap modal intermittently adds extra padding from the left that makes the layout of dialog content inconsistent when loading.
 			// We add this line to prevent that inconsistency with padding.
 			$(shownModalSelector).addClass('remove-excess-padding');

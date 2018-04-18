@@ -54,7 +54,7 @@
 						$scope.currentDesignType = TrialManagerDataService.getDesignTypeById(newValue, $scope.designTypes);
 					});
 
-					// TODO : re run computeLocalData after loading of previous trial as template
+					// TODO : re run computeLocalData after loading of previous study as template
 					$scope.computeLocalData = function() {
 						$scope.data.designType = TrialManagerDataService.currentData.experimentalDesign.designType;
 
@@ -609,7 +609,7 @@
 
 						} else if (TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount != null) {
 							// If the germplasmlistDataTable is not yet initialized, we should get the number of check entries of germplasm list in the database
-							// when an existing trial is opened / loaded, only if available. experimentalDesign.germplasmTotalCheckCount contains the count of checks stored in the database.
+							// when an existing study is opened / loaded, only if available. experimentalDesign.germplasmTotalCheckCount contains the count of checks stored in the database.
 							return TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
 						}
 
@@ -636,7 +636,7 @@
 
 						} else if (TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount != null) {
 							// If the germplasmlistDataTable is not yet initialized, we should get the number of check entries of germplasm list in the database
-							// when an existing trial is opened / loaded, only if available. experimentalDesign.germplasmTotalCheckCount contains the count of checks stored in the database.
+							// when an existing study is opened / loaded, only if available. experimentalDesign.germplasmTotalCheckCount contains the count of checks stored in the database.
 							return TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
 						}
 

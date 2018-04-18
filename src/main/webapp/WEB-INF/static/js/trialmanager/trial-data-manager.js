@@ -190,7 +190,7 @@
 			var performDataCleanup = function() {
 				// TODO: delegate the task of cleaning up data to each tab that produces it, probably via listener
 
-				// perform cleanup of data for trial settings
+				// perform cleanup of data for study settings
 				// right now, just make sure that no objects are sent as user input for user-defined settings
 				cleanupData(service.currentData.trialSettings.userInput);
 				angular.forEach(service.currentData.environments.environments, function(environment) {
@@ -244,7 +244,7 @@
 					unsavedTraitsAvailable: false,
 					germplasmListCleared: false,
 					isGeneratedOwnDesign: false,
-					advanceType: 'trial',
+					advanceType: 'study',
 					hasNewEnvironmentAdded: false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
 					designTypes: [],
@@ -345,7 +345,7 @@
 					var refreshMeasurementDeferred = $q.defer();
 					var deleteMeasurementPossible = index !== 0;
 					// this scenario cover the update of measurement table
-					// when the user delete an environment for a existing trial with or wihout measurement data
+					// when the user delete an environment for a existing study with or wihout measurement data
 					if (deleteMeasurementPossible) {
 						service.applicationData.unsavedTraitsAvailable = true;
 
@@ -414,7 +414,7 @@
 					if (service.applicationData.unsavedTreatmentFactorsAvailable) {
 						showErrorMessage('', unsavedTreatmentFactor);
 					} else if (service.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial. Please ' +
+						showAlertMessage('', 'Changes have been made that may affect the experimental design of this study. Please ' +
 								'regenerate the design on the Experimental Design tab', 10000);
 					} else if (service.isCurrentTrialDataValid(service.isOpenStudy())) {
                         // Hide Discard Imported Data button when the user presses Save button
@@ -601,7 +601,7 @@
 					//check if the starting entry number is a number before calling the resource 
 					//for updating the starting entry number in the server
 					//as the server expects the parameter passed as an Integer
-					//the newCountValue becomes "" or null if the germplasm list is not yet selected for the trial
+					//the newCountValue becomes "" or null if the germplasm list is not yet selected for the study
 					if($.isNumeric(newCountValue)) {
 						UpdateStartingEntryNoService.save(newCountValue);
 					}
@@ -868,12 +868,12 @@
 							_.find(service.currentData.environments.environments, function(val, index) {
 								if (!!val.trialDetailValues[key]) {
 									if (item.variable.maxRange < Number(val.trialDetailValues[key])) {
-										results.customMessage = 'Invalid maximum range on trial details variable ' +
+										results.customMessage = 'Invalid maximum range on study details variable ' +
 											item.variable.name + ' at environment ' + (Number(index) + Number(1));
 										results.hasError = true;
 										return results.hasError;
 									} else if (item.variable.minRange > Number(val.trialDetailValues[key])) {
-										results.customMessage = 'Invalid minimum range on trial details variable ' +
+										results.customMessage = 'Invalid minimum range on study details variable ' +
 											item.variable.name + ' at environment ' + (Number(index) + Number(1));
 										results.hasError = true;
 										return results.hasError;

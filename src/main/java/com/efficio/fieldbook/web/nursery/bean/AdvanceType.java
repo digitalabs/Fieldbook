@@ -1,9 +1,8 @@
 package com.efficio.fieldbook.web.nursery.bean;
 
 public enum AdvanceType {
-	TRIAL("trial"), //
+	STUDY("study"), //
 	SAMPLE("sample"), //
-	NURSERY("nursery"), //
 	NONE("") //
 	;
 

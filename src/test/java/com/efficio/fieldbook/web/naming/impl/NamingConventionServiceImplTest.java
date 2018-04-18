@@ -278,7 +278,7 @@ public class NamingConventionServiceImplTest {
         info.setLineSelected("1");
         info.setAllPlotsChoice("1");
         info.setLineSelected("1");
-		info.setAdvanceType(AdvanceType.TRIAL);
+		info.setAdvanceType(AdvanceType.STUDY);
 
         final Study study = new Study();
         study.setId(2345);

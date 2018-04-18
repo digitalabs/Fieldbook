@@ -132,7 +132,7 @@ public class AdvancingSourceListFactoryTest {
 
         advanceInfo.setSelectedTrialInstances(Sets.newHashSet(ENV_NUMBER));
         advanceInfo.setSelectedReplications(Sets.newHashSet(REPLICATION_NUMBER));
-        advanceInfo.setAdvanceType(AdvanceType.TRIAL);
+        advanceInfo.setAdvanceType(AdvanceType.STUDY);
         
         final AdvancingSourceList advancingSourceList = factory.createAdvancingSourceList(workBook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 
@@ -247,7 +247,7 @@ public class AdvancingSourceListFactoryTest {
 
         advanceInfo.setSelectedTrialInstances(Sets.newHashSet(ENV_NUMBER));
         advanceInfo.setSelectedReplications(Sets.newHashSet(REPLICATION_NUMBER));
-        advanceInfo.setAdvanceType(AdvanceType.TRIAL);
+        advanceInfo.setAdvanceType(AdvanceType.STUDY);
 
         final AdvancingSourceList advancingSourceList = factory.createAdvancingSourceList(workBook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 

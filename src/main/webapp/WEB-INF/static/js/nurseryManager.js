@@ -1,7 +1,7 @@
 /*global getJquerySafeId, showErrorMessage, oldLineSelected, changeAdvanceBreedingMethod, setCorrecMethodValues, oldMethodSelected, msgSamplePlotError, msgHarvestDateError, methodSuggestionsFav_obj, isInt, breedingMethodId, oldMethodSelected*/
 /*global isStudyNameUnique, validateStartDateEndDateBasic*/
 
-//Used globle variable to selected location for trial
+//Used globle variable to selected location for study
 var selectedLocationForTrial;
 var possibleLocationsForTrial;
 
@@ -182,7 +182,7 @@ function showCorrectLocationCombo() {
 
 	}
 
-	//In case of trial we have to set selected location
+	//In case of study we have to set selected location
 	setSelectedLocation();
 }
 

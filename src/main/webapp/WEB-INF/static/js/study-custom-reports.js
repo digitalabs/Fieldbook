@@ -36,7 +36,7 @@ var StudyCustomExportReports = {
 	doExport: function() {
 		'use strict';
 		var studyId = 0;
-		if ($('#browser-nurseries').length !== 0) {
+		if ($('#browser-studies').length !== 0) {
 			// Meaning we are on the landing page
 			studyId = getCurrentStudyIdInTab();
 		}else if ($('#createNurseryMainForm #studyId').length === 1) {

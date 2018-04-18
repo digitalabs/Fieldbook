@@ -645,13 +645,13 @@ function showFieldMap(tableName) {
 
 	if (idVal != null) {
 		if (count > 1) {
-			showMessage(fieldMapOneStudyErrorMsgTrial);
+			showMessage(fieldMapOneStudyErrorMsg);
 		} else {
 			$('#page-message').html('');
 			showFieldMapPopUp(tableName, idVal);
 		}
 	} else {
-		showMessage(fieldMapStudyRequiredTrial);
+		showMessage(fieldMapStudyRequired);
 	}
 }
 
@@ -689,7 +689,7 @@ function showFieldMapPopUp(tableName, id) {
 			if (data.nav == '0') {
 				selectTrialInstance(tableName);
 			} else if (data.nav == '1') {
-				showMessage(noFieldMapExistsTrial);
+				showMessage(noFieldMapExists);
 			}
 		}
 	});
@@ -1454,13 +1454,15 @@ function doFinalExport(paramUrl, additionalParams, exportWayType) {
 	newAction += exportWayType;
 	studyId = $('#studyId').val();
 
-	// the study is opened
-	var tableContainsPlotId = BMS.Fieldbook.MeasurementsTable.containsHeader('measurement-table', '8201');
-	visibleColumns = getMeasurementTableVisibleColumns(tableContainsPlotId);
-	var exportType = $('#exportType').val();
-	// excel or csv
-	if ((exportType == 6 || exportType == 2) && visibleColumns.length !== 0) {
-		showWarningMessageForRequiredColumns(visibleColumns);
+	if ($('#browser-studies').length === 0) {
+		// the study is opened
+		var tableContainsPlotId = BMS.Fieldbook.MeasurementsTable.containsHeader('measurement-table', '8201');
+		visibleColumns = getMeasurementTableVisibleColumns(tableContainsPlotId);
+		var exportType = $('#exportType').val();
+		// excel or csv
+		if ((exportType == 6 || exportType == 2) && visibleColumns.length !== 0) {
+			showWarningMessageForRequiredColumns(visibleColumns);
+		}
 	}
 
 	var columnOrders = '';

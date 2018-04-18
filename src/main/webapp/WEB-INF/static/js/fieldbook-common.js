@@ -57,6 +57,7 @@ $(function() {
 		return (w1 - w2);
 	}
 
+
 	$(document.body)
 		.on('show.bs.modal', function() {
 			if (this.clientHeight < window.innerHeight) {return;}
@@ -66,8 +67,29 @@ $(function() {
 				$(document.body).css('padding-right', scrollbarWidth);
 			}
 		})
+		.on('shown.bs.modal', function () {
+			/**
+			 * XXX Multiple modals are not supported in bootstrap.
+			 * https://bootstrapdocs.com/v3.3.6/docs/javascript/#callout-stacked-modals
+			 * If we are opening two modals at the same time or chaining one after another,
+			 * the closing modal will remove
+			 * the modal-open class from the body, making the scrollbar disappear
+			 */
+			$(this).addClass('modal-open');
+		})
 		.on('hidden.bs.modal', function() {
 			$(document.body).css('padding-right', 0);
+
+			// is there any other modal open?
+			if ($('.modal.in').length > 0) {
+				/**
+				 * Bootstrap will remove modal-open on hide:
+				 * https://github.com/twbs/bootstrap/blob/81df608a40bf0629a1dc08e584849bb1e43e0b7a/dist/js/bootstrap.js#L1081
+				 * causing issues with the scroll of other modals
+				 * This is to avoid that
+				 */
+				$(document.body).addClass('modal-open');
+			}
 		});
 
 	$('.fbk-help')
@@ -1203,9 +1225,6 @@ function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailH
             success: function(html) {
                 $('#advance-nursery-modal-div').html(html);
                 $('#advanceNurseryModal')
-                	.one('shown.bs.modal', function() {
-                		$('body').addClass('modal-open');
-                	})
                 .modal({ backdrop: 'static', keyboard: true });
 
                 $('#advanceNurseryModal select').not('.fbk-harvest-year').each(function() {
@@ -4271,9 +4290,7 @@ function displayDetailsOutOfBoundsData() {
 			success: function(html) {
 				$('#reviewOutOfBoundsDataModal').modal('hide');
 				$('#reviewDetailsOutOfBoundsDataModalBody').html(html);
-				$('#reviewDetailsOutOfBoundsDataModal').one('shown.bs.modal', function() {
-					$('body').addClass('modal-open');
-				}).modal({
+				$('#reviewDetailsOutOfBoundsDataModal').modal({
 					backdrop: 'static',
 					keyboard: true
 				});

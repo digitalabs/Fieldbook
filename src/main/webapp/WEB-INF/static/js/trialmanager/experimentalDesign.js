@@ -544,6 +544,8 @@
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[31]);
 										return false
 									}
+								} else {
+									$scope.data.checkSpacing = '';
 								}
 								break;
 							}

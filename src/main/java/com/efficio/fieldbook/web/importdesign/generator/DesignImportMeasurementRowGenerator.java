@@ -76,7 +76,7 @@ public class DesignImportMeasurementRowGenerator {
 
 		final Map<Integer, DesignHeaderItem> trialEnvironmentHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT);
 
-		final List<MeasurementData> dataList = new ArrayList<MeasurementData>();
+		final List<MeasurementData> dataList = new ArrayList<>();
 		measurement.setDataList(dataList);
 
 		// only add record from file if the trial instance value within the row is selected/included in environment tab
@@ -110,7 +110,7 @@ public class DesignImportMeasurementRowGenerator {
 
 		final Map<Integer, DesignHeaderItem> trialDesignHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_DESIGN);
 		final Map<Integer, DesignHeaderItem> variateHeaders = this.mappedHeaders.get(PhenotypicType.VARIATE);
-		final List<DesignHeaderItem> remainingColumnHeaders = new ArrayList<DesignHeaderItem>();
+		final List<DesignHeaderItem> remainingColumnHeaders = new ArrayList<>();
 		remainingColumnHeaders.addAll(trialDesignHeaders.values());
 		remainingColumnHeaders.addAll(variateHeaders.values());
 
@@ -246,7 +246,7 @@ public class DesignImportMeasurementRowGenerator {
 		return data;
 	}
 
-	protected MeasurementVariable createMeasurementVariable(final StandardVariable standardVariable) {
+	private MeasurementVariable createMeasurementVariable(final StandardVariable standardVariable) {
 		return ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, this.fieldbookService);
 	}
 
@@ -262,7 +262,7 @@ public class DesignImportMeasurementRowGenerator {
 		}
 	}
 
-	protected void addFactorToDataListIfNecessary(final MeasurementVariable factor, final List<MeasurementData> dataList) {
+	private void addFactorToDataListIfNecessary(final MeasurementVariable factor, final List<MeasurementData> dataList) {
 		for (final MeasurementData data : dataList) {
 			if (data.getMeasurementVariable().equals(factor)) {
 				return;
@@ -283,7 +283,7 @@ public class DesignImportMeasurementRowGenerator {
 		}
 
 		WorkbookUtil
-				.addMeasurementDataToRowsIfNecessary(new ArrayList<MeasurementVariable>(temporaryList), measurements, true, ontologyService,
+				.addMeasurementDataToRowsIfNecessary(new ArrayList<>(temporaryList), measurements, true, ontologyService,
 						this.fieldbookService, contextUtil.getCurrentProgramUUID());
 
 	}

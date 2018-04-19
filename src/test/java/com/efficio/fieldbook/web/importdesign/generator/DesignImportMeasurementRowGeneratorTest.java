@@ -5,14 +5,12 @@ import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import junit.framework.Assert;
-import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -76,18 +74,12 @@ public class DesignImportMeasurementRowGeneratorTest {
 	private DesignImportMeasurementRowGenerator generator;
 
 	private DesignImportData designImportData;
-	private Workbook workbook;
-	private Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId;
 	private List<String> rowValues;
-	private Map<Integer, ImportedGermplasm> importedGermplasm;
-	private Map<Integer, StandardVariable> germplasmStandardVariables;
-	private Set<String> trialInstancesFromUI;
-	private final boolean isPreview = true;
-	private Map<String, Integer> availableCheckTypes;
 
 	@Before
 	public void setUp() {
-
+		Map<String, Integer> availableCheckTypes = new HashMap<>();
+		boolean isPreview = true;
 		this.userSelection = new UserSelection();
 		this.userSelection.setImportedGermplasmMainInfo(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo());
 
@@ -95,18 +87,18 @@ public class DesignImportMeasurementRowGeneratorTest {
 				.getProperty(Mockito.anyString());
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(DesignImportMeasurementRowGeneratorTest.PROGRAM_UUID);
 
-		this.workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 
 		this.designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
-		this.mappedHeadersWithStdVarId = this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
-		this.germplasmStandardVariables = new HashMap<Integer, StandardVariable>();
-		this.germplasmStandardVariables.put(TermId.ENTRY_NO.getId(), DesignImportTestDataInitializer
+		Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId = this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
+		Map<Integer, StandardVariable> germplasmStandardVariables = new HashMap<>();
+		germplasmStandardVariables.put(TermId.ENTRY_NO.getId(), DesignImportTestDataInitializer
 				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_NO.getId(), "ENTRY_NO", "", "", "",
 						TermId.NUMERIC_VARIABLE.getId(), "", "", ""));
 
-		this.rowValues = new ArrayList<String>();
+		this.rowValues = new ArrayList<>();
 
-		this.importedGermplasm = Maps.uniqueIndex(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList(),
+		Map<Integer, ImportedGermplasm> importedGermplasm = Maps.uniqueIndex(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList(),
 				new Function<ImportedGermplasm, Integer>() {
 
 					@Override
@@ -115,12 +107,12 @@ public class DesignImportMeasurementRowGeneratorTest {
 					}
 				});
 
-		this.trialInstancesFromUI = new HashSet<String>();
-		this.trialInstancesFromUI.add("1");
+		Set<String> trialInstancesFromUI = new HashSet<>();
+		trialInstancesFromUI.add("1");
 
-		this.generator = new DesignImportMeasurementRowGenerator(this.fieldbookService, this.workbook, this.mappedHeadersWithStdVarId,
-				this.importedGermplasm, this.germplasmStandardVariables, this.trialInstancesFromUI, this.isPreview,
-				this.availableCheckTypes);
+		this.generator =
+			new DesignImportMeasurementRowGenerator(this.fieldbookService, workbook, mappedHeadersWithStdVarId, importedGermplasm,
+				germplasmStandardVariables, trialInstancesFromUI, isPreview, availableCheckTypes);
 
 	}
 
@@ -134,7 +126,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 	}
 
 	@Test
-	public void testAddGermplasmDetailsToDataList() throws FileParsingException {
+	public void testAddGermplasmDetailsToDataList() {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 
@@ -200,13 +192,19 @@ public class DesignImportMeasurementRowGeneratorTest {
 			} else if (TermId.PLOT_ID.getId() == measurementData.getMeasurementVariable().getTermId()) {
 				Assert.assertEquals("The value of MeasurementData should be empty for " + TermId.PLOT_ID.toString() + " variable",
 						measurementData.getValue().toString(), "");
-			}
 
+			} else if (TermId.STOCKID.getId() == measurementData.getMeasurementVariable().getTermId()) {
+				Assert.assertEquals("The value of MeasurementData should be empty for " + TermId.STOCKID.toString() + " variable",
+					measurementData.getValue().toString(), "");
+			} else if (TermId.GROUPGID.getId() == measurementData.getMeasurementVariable().getTermId()) {
+				Assert.assertEquals("The value of MeasurementData should be empty for " + TermId.GROUPGID.toString() + " variable",
+					measurementData.getValue().toString(), "");
+			}
 		}
 	}
 
 	@Test
-	public void testAddVariatesToMeasurementRows() throws DesignValidationException {
+	public void testAddVariatesToMeasurementRows() {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
@@ -316,13 +314,13 @@ public class DesignImportMeasurementRowGeneratorTest {
 				"Expecting that all column values from imported design will be included to data list of the generated measurement row.",
 				dataList.size(), this.rowValues.size());
 
-		final Map<String, String> actualVariableValueMap = new HashMap<String, String>();
+		final Map<String, String> actualVariableValueMap = new HashMap<>();
 		for (final MeasurementData data : dataList) {
 			actualVariableValueMap.put(data.getMeasurementVariable().getName(), data.getValue());
 		}
 
 		final List<String> headerValues = this.designImportData.getRowDataMap().get(0);
-		final Map<String, String> expectedVariableValueMap = new HashMap<String, String>();
+		final Map<String, String> expectedVariableValueMap = new HashMap<>();
 		for (int i = 0; i < this.rowValues.size(); i++) {
 			expectedVariableValueMap.put(headerValues.get(i), this.rowValues.get(i));
 		}

@@ -237,6 +237,7 @@ var TreeTable = (function () {
 				$(this).attr('data-tt-branch', true);
 			}
 		});
+		changeBrowseButtonBehavior(false);
 		updateTools();
 		updateDraggableTableRows();
 		updateDroppableTableRows();

@@ -180,7 +180,7 @@ public class DesignImportMeasurementRowGenerator {
 
 		if (germplasmStandardVariables.get(TermId.ENTRY_NO.getId()) != null) {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_NO.getId()),
-					germplasmEntry.getEntryId().toString()));
+				germplasmEntry.getEntryId().toString()));
 		}
 		if (germplasmStandardVariables.get(TermId.GID.getId()) != null) {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.GID.getId()), germplasmEntry.getGid()));
@@ -192,24 +192,32 @@ public class DesignImportMeasurementRowGenerator {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.CROSS.getId()), germplasmEntry.getCross()));
 		}
 		if (germplasmStandardVariables.get(TermId.ENTRY_CODE.getId()) != null) {
-			dataList.add(
-					this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_CODE.getId()), germplasmEntry.getEntryCode()));
+			dataList
+				.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_CODE.getId()), germplasmEntry.getEntryCode()));
 		}
 		if (germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()) != null && !hasEntryTypeColumnFromTheImport) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()),
-					germplasmEntry.getEntryTypeValue()));
+			dataList.add(
+				this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), germplasmEntry.getEntryTypeValue()));
 		}
 		if (germplasmStandardVariables.get(TermId.GERMPLASM_SOURCE.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.GERMPLASM_SOURCE.getId()),
-					germplasmEntry.getSource()));
+			dataList.add(
+				this.createMeasurementData(germplasmStandardVariables.get(TermId.GERMPLASM_SOURCE.getId()), germplasmEntry.getSource()));
 		}
 		if (germplasmStandardVariables.get(TermId.SEED_SOURCE.getId()) != null) {
-			dataList.add(
-					this.createMeasurementData(germplasmStandardVariables.get(TermId.SEED_SOURCE.getId()), germplasmEntry.getSource()));
+			dataList
+				.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.SEED_SOURCE.getId()), germplasmEntry.getSource()));
 		}
 		if (germplasmStandardVariables.get(TermId.PLOT_ID.getId()) != null) {
 			// This will initially create blank values for PLOT_ID but the generation of plot IDs will be handled during the saving of Workbook.
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.PLOT_ID.getId()), ""));
+		}
+		if (germplasmStandardVariables.get(TermId.STOCKID.getId()) != null) {
+			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.STOCKID.getId()),
+				germplasmEntry.getStockIDs() != null ? germplasmEntry.getStockIDs() : ""));
+		}
+		if (germplasmStandardVariables.get(TermId.GROUPGID.getId()) != null) {
+			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.GROUPGID.getId()),
+				germplasmEntry.getGroupId() != null ? germplasmEntry.getGroupId().toString() : ""));
 		}
 	}
 

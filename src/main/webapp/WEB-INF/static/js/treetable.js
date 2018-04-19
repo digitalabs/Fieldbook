@@ -2,7 +2,7 @@
 // TODO Once a draggable approach is found, implement in angularjs for studies and angular 2 for new components
 var TreeTable = (function () {
 
-	var _this;
+	var self;
 	var resolved = $.Deferred().resolve().promise();
 
 
@@ -34,26 +34,26 @@ var TreeTable = (function () {
 		this.ondblclick = options.ondblclick;
 		this.create = options.create;
 		this.delete = options.delete;
-		_this = this;
+		self = this;
 	}
 
 	// public
 
 	TreeTable.prototype.init = function (id) {
 		return $.ajax({
-			url: _this.baseurl + '/loadInitTreeTable',
-			data: _this.authparams,
+			url: self.baseurl + '/loadInitTreeTable',
+			data: self.authparams,
 			type: 'GET',
 			cache: false
 		}).done(function (html) {
-			_this.tableContainer.html(html);
-			_this.table = $(_this.treeTableSelector);
+			self.tableContainer.html(html);
+			self.table = $(self.treeTableSelector);
 			// TODO TreePersist.preLoadTreeState
-			_this.table.treetable({
+			self.table.treetable({
 				expandable: true,
 				clickableNodeNames: true,
 				onNodeCollapse: function () {
-					_this.table.treetable("unloadBranch", this);
+					self.table.treetable("unloadBranch", this);
 				},
 				onNodeExpand: function () {
 					expandListNode(this);
@@ -66,27 +66,27 @@ var TreeTable = (function () {
 	};
 
 	TreeTable.prototype.expandListInTreeTable = function (id) {
-		_this.table.treetable('expandNode', id);
+		self.table.treetable('expandNode', id);
 	};
 
 	TreeTable.prototype.addFolderInTreeTable = function(elem) {
 		'use strict';
 		if (!$(elem).hasClass('disable-image')) {
-			_this.hideFolderDiv('#renameFolderDiv');
-			$('#addFolderName', _this.context).val('');
-			$('#addFolderDiv', _this.context).slideDown('fast');
+			self.hideFolderDiv('#renameFolderDiv');
+			$('#addFolderName', self.context).val('');
+			$('#addFolderDiv', self.context).slideDown('fast');
 		}
 	};
 
 	TreeTable.prototype.createFolderInTreeTable = function() {
 		'use strict';
 
-		if (!_this.getSelectedList()) {
+		if (!self.getSelectedList()) {
 			showErrorMessage('page-rename-folder-message-modal', invalidNodeTreeMessage);
 			return resolved;
 		}
 
-		var folderName = $.trim($('#addFolderName', _this.context).val()),
+		var folderName = $.trim($('#addFolderName', self.context).val()),
 			parentFolderId;
 
 		if (folderName === '') {
@@ -96,21 +96,21 @@ var TreeTable = (function () {
 			showErrorMessage('page-add-folder-message-modal', invalidFolderNameCharacterMessage);
 			return resolved;
 		} else {
-			parentFolderId = _this.getSelectedListId();
+			parentFolderId = self.getSelectedListId();
 			if (parentFolderId === 'LISTS' || parentFolderId === 'CROPLISTS') {
 				parentFolderId = 0;
 			}
 
 			var id;
-			return _this.create(parentFolderId, folderName)
+			return self.create(parentFolderId, folderName)
 				.then(function (data) {
 					id = data.id;
-					return expandListNode(_this.table.treetable('node', getParentOfNewlyAddedList()));
+					return expandListNode(self.table.treetable('node', getParentOfNewlyAddedList()));
 				})
 				.done(function () {
 					selectNode(id);
 					setAsDroppableAndDraggable(id);
-					_this.hideFolderDiv('#addFolderDiv');
+					self.hideFolderDiv('#addFolderDiv');
 					changeBrowseButtonBehavior(true);
 					showSuccessfulMessage('', addFolderSuccessful);
 				});
@@ -124,25 +124,25 @@ var TreeTable = (function () {
 		var currentFolderName;
 
 		if (!$(elem).hasClass('disable-image')) {
-			_this.hideFolderDiv('#addFolderDiv');
+			self.hideFolderDiv('#addFolderDiv');
 			currentFolderName = getSelectedListName();
-			$('#newFolderName', _this.context).val($.trim(currentFolderName));
+			$('#newFolderName', self.context).val($.trim(currentFolderName));
 
-			$('#renameFolderDiv', _this.context).slideDown('fast');
+			$('#renameFolderDiv', self.context).slideDown('fast');
 		}
 	};
 
 	TreeTable.prototype.submitRenameFolderInTreeTable = function() {
 		'use strict';
 
-		var folderName = $.trim($('#newFolderName', _this.context).val());
+		var folderName = $.trim($('#newFolderName', self.context).val());
 
-		if (!_this.getSelectedList()) {
+		if (!self.getSelectedList()) {
 			showErrorMessage('page-rename-folder-message-modal', invalidNodeTreeMessage);
 			return resolved;
 		}
 
-		var id = _this.getSelectedListId();
+		var id = self.getSelectedListId();
 
 		if (id === 'LISTS') {
 			showErrorMessage('page-rename-folder-message-modal', renameInvalidFolderMessage);
@@ -151,7 +151,7 @@ var TreeTable = (function () {
 
 		var name = getSelectedListName();
 		if (folderName === $.trim(name)) {
-			_this.hideFolderDiv('#renameFolderDiv');
+			self.hideFolderDiv('#renameFolderDiv');
 			return resolved;
 		}
 
@@ -162,9 +162,9 @@ var TreeTable = (function () {
 			showErrorMessage('page-rename-folder-message-modal', invalidFolderNameCharacterMessage);
 			return resolved;
 		} else {
-			return _this.rename(id, folderName)
+			return self.rename(id, folderName)
 				.done(function (data) {
-					_this.hideFolderDiv('#renameFolderDiv');
+					self.hideFolderDiv('#renameFolderDiv');
 					setSelectedListName(folderName);
 					showSuccessfulMessage('', renameItemSuccessful);
 				});
@@ -177,25 +177,25 @@ var TreeTable = (function () {
 		var currentFolderName;
 
 		if (!$(elem).hasClass('disable-image')) {
-			$('#deleteFolder', _this.context).modal('show');
-			$('#addFolderDiv', _this.context).slideUp('fast');
-			$('#renameFolderDiv', _this.context).slideUp('fast');
+			$('#deleteFolder', self.context).modal('show');
+			$('#addFolderDiv', self.context).slideUp('fast');
+			$('#renameFolderDiv', self.context).slideUp('fast');
 			currentFolderName = getSelectedListName();
-			$('#delete-folder-confirmation', _this.context).html(deleteConfirmation + ' ' + currentFolderName + '?');
+			$('#delete-folder-confirmation', self.context).html(deleteConfirmation + ' ' + currentFolderName + '?');
 
-			$('#page-delete-folder-message-modal', _this.context).html('');
+			$('#page-delete-folder-message-modal', self.context).html('');
 		}
 	};
 
 	TreeTable.prototype.submitDeleteFolderInTreeTable = function() {
 		'use strict';
 
-		var folderId = _this.getSelectedListId();
+		var folderId = self.getSelectedListId();
 
-		return _this.delete(folderId)
+		return self.delete(folderId)
 			.done(function () {
-				$('#deleteFolder', _this.context).modal('hide');
-				var node = _this.getSelectedList();
+				$('#deleteFolder', self.context).modal('hide');
+				var node = self.getSelectedList();
 				node.remove();
 				updateTableRowsBgColor();
 				changeBrowseButtonBehavior(false);
@@ -204,45 +204,46 @@ var TreeTable = (function () {
 	};
 
 	TreeTable.prototype.hideFolderDiv = function(selector) {
-		$(selector, _this.context).slideUp('fast');
+		$(selector, self.context).slideUp('fast');
 	};
 
 	TreeTable.prototype.getSelectedList = function() {
-		return $('tr.selected', _this.table);
+		return $('tr.selected', self.table);
 	}
 
 	TreeTable.prototype.getSelectedListId = function() {
-		return $('tr.selected', _this.table).attr('data-tt-id');
+		return $('tr.selected', self.table).attr('data-tt-id');
 	}
 
 	TreeTable.prototype.isSelectedListAFolder = function() {
-		return $('tr.selected', _this.table).attr('is-folder') === '1';
+		return $('tr.selected', self.table).attr('is-folder') === '1';
 	}
 
 	// private
 
 	function changeBrowseButtonBehavior(enable) {
 		if (enable) {
-			$('.browse-action', _this.context).removeClass('disable-image');
+			$('.browse-action', self.context).removeClass('disable-image');
 		} else {
-			$('.browse-action', _this.context).addClass('disable-image');
+			$('.browse-action', self.context).addClass('disable-image');
 		}
 	}
 
 	function initializeListTreeTable() {
-		$('.list-row', _this.context).each(function (index) {
+		$('.list-row', self.context).each(function (index) {
 			if ($(this).attr('num-of-children') === '0') {
 				$(this).attr('data-tt-branch', false);
 			} else {
 				$(this).attr('data-tt-branch', true);
 			}
 		});
+		changeBrowseButtonBehavior(false);
 		updateTools();
 		updateDraggableTableRows();
 		updateDroppableTableRows();
-		_this.table.treetable('unloadBranch', _this.table.treetable('node', 'LISTS'));
+		self.table.treetable('unloadBranch', self.table.treetable('node', 'LISTS'));
 		updateTableRowsBgColor();
-		_this.table.find('.file').each(function () {
+		self.table.find('.file').each(function () {
 			updateDoubleClickEvent($(this));
 		});
 	}
@@ -253,8 +254,8 @@ var TreeTable = (function () {
 		}
 		return $.ajax({
 			async: false,
-			url: _this.baseurl + '/expandGermplasmListFolder/' + node.id,
-			data: _this.authparams,
+			url: self.baseurl + '/expandGermplasmListFolder/' + node.id,
+			data: self.authparams,
 		}).done(function (html) {
 			var rows = $(html).filter('tr');
 
@@ -264,8 +265,8 @@ var TreeTable = (function () {
 			rows.find('.file').each(function () {
 				updateDoubleClickEvent($(this));
 			});
-			_this.table.treetable('unloadBranch', node);
-			_this.table.treetable('loadBranch', node, rows);
+			self.table.treetable('unloadBranch', node);
+			self.table.treetable('loadBranch', node, rows);
 
 			updateTableRowsBgColor();
 			updateTools();
@@ -285,12 +286,12 @@ var TreeTable = (function () {
 
 	function updateDoubleClickEvent(elem) {
 		elem.dblclick(function () {
-			_this.ondblclick(elem);
+			self.ondblclick(elem);
 		});
 	}
 
 	function updateTableRowsBgColor() {
-		$('.list-row', _this.table).each(function (index) {
+		$('.list-row', self.table).each(function (index) {
 			$('td', $(this)).each(function () {
 				$(this).removeClass('even');
 				$(this).removeClass('odd');
@@ -304,22 +305,25 @@ var TreeTable = (function () {
 	}
 
 	function updateTools() {
-		_this.table.find('tbody').on('mousedown', 'tr', function () {
-			$('tr.selected', _this.table).removeClass('selected');
+		self.table.find('tbody').off('mousedown', 'tr').on('mousedown', 'tr', function () {
+			$('tr.selected', self.table).removeClass('selected');
 			$(this).addClass('selected');
 			changeBrowseButtonBehavior(true);
 			if ($(this).attr('data-tt-id') === 'LISTS' || $(this).attr('data-tt-id') === 'CROPLISTS') {
-				$('.edit-folder', _this.context).addClass('disable-image');
-				$('.delete-folder', _this.context).addClass('disable-image');
-				_this.hideFolderDiv('#renameFolderDiv');
+				$('.edit-folder', self.context).addClass('disable-image');
+				$('.delete-folder', self.context).addClass('disable-image');
+				if ($(this).attr('data-tt-id') === 'CROPLISTS') {
+					$('.create-folder', self.context).addClass('disable-image');
+				}
+				self.hideFolderDiv('#renameFolderDiv');
 			} else if ($(this).attr('num-of-children') !== '0') {
-				$('.delete-folder', _this.context).addClass('disable-image');
+				$('.delete-folder', self.context).addClass('disable-image');
 			}
 		});
 	}
 
 	function updateDraggableTableRows() {
-		_this.table.find('.folder, .file').each(function () {
+		self.table.find('.folder, .file').each(function () {
 			var rowId = $(this).parents('tr').attr('data-tt-id');
 			if (rowId !== 'LISTS') {
 				treeTableDraggableSetup.apply(this);
@@ -339,7 +343,7 @@ var TreeTable = (function () {
 	}
 
 	function updateDroppableTableRows() {
-		_this.table.find('.folder').parents('tr').each(function () {
+		self.table.find('.folder').parents('tr').each(function () {
 			treeTableDroppableSetup.apply(this);
 		});
 	}
@@ -350,8 +354,8 @@ var TreeTable = (function () {
 			drop: function (e, ui) {
 				var droppedEl, sourceNode, targetNode;
 				droppedEl = ui.draggable.parents('tr');
-				sourceNode = _this.table.treetable('node', droppedEl.data('ttId'));
-				var sourceNodeObj = $('tr[data-tt-id=' + sourceNode.id + ']', _this.table);
+				sourceNode = self.table.treetable('node', droppedEl.data('ttId'));
+				var sourceNodeObj = $('tr[data-tt-id=' + sourceNode.id + ']', self.table);
 				var sourceParentId = sourceNodeObj.attr('data-tt-parent-id');
 				var sourceNodeName = sourceNodeObj.find('.name').first().text();
 
@@ -362,12 +366,12 @@ var TreeTable = (function () {
 					return false;
 				}
 
-				targetNode = _this.table.treetable('node', $(this).data('ttId'));
+				targetNode = self.table.treetable('node', $(this).data('ttId'));
 				if (sourceNodeObj.attr('is-folder') === '1' && targetNode.id === 'CROPLISTS') {
 					showErrorMessage('', cannotMoveFolderToCropListError);
 					return false;
 				}
-				_this.move(sourceNode, targetNode, sourceParentId)
+				self.move(sourceNode, targetNode, sourceParentId)
 					.done(function () {
 						moveCallBack(sourceNode, targetNode, sourceParentId)
 					});
@@ -377,24 +381,24 @@ var TreeTable = (function () {
 			over: function (e, ui) {
 				var droppedEl = ui.draggable.parents('tr');
 				if (this != droppedEl[0] && !$(this).is('.expanded')) {
-					_this.table.treetable('expandNode', $(this).data('ttId'));
+					self.table.treetable('expandNode', $(this).data('ttId'));
 				}
 			}
 		});
 	}
 
 	function moveCallBack(sourceNode, targetNode, sourceParentId) {
-		_this.table.treetable('move', sourceNode.id, targetNode.id);
+		self.table.treetable('move', sourceNode.id, targetNode.id);
 		updateTableRowsBgColor();
 
-		var sourceNodeObj = $('tr[data-tt-id=' + sourceNode.id + ']', _this.table);
+		var sourceNodeObj = $('tr[data-tt-id=' + sourceNode.id + ']', self.table);
 		updateParentId(sourceNodeObj, targetNode.id);
 
-		var targetNodeObj = $('tr[data-tt-id=' + targetNode.id + ']', _this.table);
+		var targetNodeObj = $('tr[data-tt-id=' + targetNode.id + ']', self.table);
 		incrementNumberOfChildren(targetNodeObj);
 		updateExpandEventIfHasChildren(targetNodeObj);
 
-		var sourceParentObj = $('tr[data-tt-id=' + sourceParentId + ']', _this.table);
+		var sourceParentObj = $('tr[data-tt-id=' + sourceParentId + ']', self.table);
 		decrementNumberOfChildren(sourceParentObj);
 		updateExpandEventIfHasChildren(sourceParentObj);
 	}
@@ -414,37 +418,37 @@ var TreeTable = (function () {
 	}
 
 	function setAsDroppableAndDraggable(id) {
-		$('tr[data-tt-id=' + id + ']', _this.table).each(function () {
+		$('tr[data-tt-id=' + id + ']', self.table).each(function () {
 			treeTableDroppableSetup.apply(this);
 		});
-		$('tr[data-tt-id=' + id + '] .folder', _this.table).each(function () {
+		$('tr[data-tt-id=' + id + '] .folder', self.table).each(function () {
 			treeTableDraggableSetup.apply(this);
 		});
 	}
 
 	function getParentOfNewlyAddedList() {
-		var parentId = _this.getSelectedListId();
-		if (!_this.isSelectedListAFolder()) {
+		var parentId = self.getSelectedListId();
+		if (!self.isSelectedListAFolder()) {
 			parentId = getSelectedListParentId();
 		}
 		return parentId;
 	}
 
 	function selectNode(id) {
-		$('tr.selected', _this.table).removeClass('selected');
-		$('tr[data-tt-id=' + id + ']', _this.table).addClass('selected');
+		$('tr.selected', self.table).removeClass('selected');
+		$('tr[data-tt-id=' + id + ']', self.table).addClass('selected');
 	}
 
 	function getSelectedListParentId() {
-		return $('tr.selected', _this.table).attr('data-tt-parent-id');
+		return $('tr.selected', self.table).attr('data-tt-parent-id');
 	}
 
 	function getSelectedListName() {
-		return $('tr.selected .name', _this.table).text();
+		return $('tr.selected .name', self.table).text();
 	}
 
 	function setSelectedListName(name) {
-		return $('tr.selected .name', _this.table).text(name);
+		return $('tr.selected .name', self.table).text(name);
 	}
 
 	return TreeTable;

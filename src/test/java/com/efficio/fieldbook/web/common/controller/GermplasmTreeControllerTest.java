@@ -49,7 +49,6 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
@@ -246,6 +245,14 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals(GermplasmTreeControllerTest.TEST_USER_NAME, form.getListOwner());
 	}
 
+	@Test
+	public void testGetPreferredName() {
+		final String name = "name";
+		Mockito.when(this.germplasmDataManager.getPreferredNameValueByGID(1)).thenReturn(name);
+		final String preferredName = this.controller.getPreferredName("1");
+		Assert.assertEquals(name, preferredName);
+	}
+	
 	@Test
 	public void testSaveCrossesListPostSuccessful() {
 		final SaveListForm form = createSaveListForm();

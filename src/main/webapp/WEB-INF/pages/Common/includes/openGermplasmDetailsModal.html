@@ -37,9 +37,7 @@ function openGermplasmDetailsPopop(aObject) {
 		cache: false,
 		success: function(html) {
 			var germplasmDetailsUrl = html;
-			$('#openGermplasmFrame').attr('src', germplasmDetailsUrl + gid);
-			$('#openGermplasmModal .modal-title').html(headerMsg1 + ' ' + desig + ' (' + headerMsg2 + ' ' + gid + ')');
-			$('#openGermplasmModal').modal({ backdrop: 'static', keyboard: true });
+			showGermplasmDetailsPopUp(gid, desig, germplasmDetailsUrl);
 		}
 	});
 }

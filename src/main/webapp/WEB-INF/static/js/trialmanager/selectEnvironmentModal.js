@@ -61,7 +61,7 @@
 		//NOTE: Continue action for navigate from Locations to Advance Study Modal
 		$scope.selectEnvironmentContinue = function() {
 
-			// Do not go ahead for Advancing unless trial has experimental design & number of replications variables
+			// Do not go ahead for Advancing unless study has experimental design & number of replications variables
 			if (TrialManagerDataService.currentData.experimentalDesign.designType === null) {
 				showAlertMessage('', $.fieldbookMessages.advanceListUnableToGenerateWarningMessage);
 				return;
@@ -147,14 +147,14 @@
 				// LOCATION_ABBR from environments
 				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_ABBR_INDEX;
 			} else if ($scope.trialSettings.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null) {
-				// LOCATION_ABBR from trial settings
+				// LOCATION_ABBR from study settings
 				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_ABBR_INDEX;
 				$scope.locationFromTrialSettings = true;
 			} else if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
 				// LOCATION_NAME from environments
 				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
 			} else if ($scope.trialSettings.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
-				// LOCATION_NAME from trial settings
+				// LOCATION_NAME from study settings
 				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
 				$scope.locationFromTrialSettings = true;
 			} else {

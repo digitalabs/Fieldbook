@@ -58,6 +58,7 @@ $(function() {
 		return (w1 - w2);
 	}
 
+
 	$(document.body)
 		.on('show.bs.modal', function() {
 			if (this.clientHeight < window.innerHeight) {return;}
@@ -67,8 +68,29 @@ $(function() {
 				$(document.body).css('padding-right', scrollbarWidth);
 			}
 		})
+		.on('shown.bs.modal', function () {
+			/**
+			 * XXX Multiple modals are not supported in bootstrap.
+			 * https://bootstrapdocs.com/v3.3.6/docs/javascript/#callout-stacked-modals
+			 * If we are opening two modals at the same time or chaining one after another,
+			 * the closing modal will remove
+			 * the modal-open class from the body, making the scrollbar disappear
+			 */
+			$(this).addClass('modal-open');
+		})
 		.on('hidden.bs.modal', function() {
 			$(document.body).css('padding-right', 0);
+
+			// is there any other modal open?
+			if ($('.modal.in').length > 0) {
+				/**
+				 * Bootstrap will remove modal-open on hide:
+				 * https://github.com/twbs/bootstrap/blob/81df608a40bf0629a1dc08e584849bb1e43e0b7a/dist/js/bootstrap.js#L1081
+				 * causing issues with the scroll of other modals
+				 * This is to avoid that
+				 */
+				$(document.body).addClass('modal-open');
+			}
 		});
 
 	$('.fbk-help')
@@ -183,8 +205,8 @@ function showPage(paginationUrl, pageNum, sectionDiv) {
 
 			$('#' + sectionDiv).html(html);
 
-			if (sectionDiv === 'trial-details-list' || sectionDiv === 'nursery-details-list') {
-				// We highlight the previously clicked
+			if (sectionDiv === 'trial-details-list') {
+			// We highlight the previously clicked
 				for (tableId in selectedTableIds) {
 					idVal = selectedTableIds[tableId];
 					if (idVal != null) {
@@ -267,8 +289,7 @@ function showPostPage(paginationUrl, previewPageNum, pageNum, sectionDiv, formNa
 		success: function(html) {
 			$(completeSectionDivName).empty().append(html);
 
-			if (sectionDiv == 'trial-details-list' || sectionDiv == 'nursery-details-list') {
-				// We highlight the previously clicked
+			if (sectionDiv === 'trial-details-list') {
 				for (var index in selectedTableIds) {
 					var idVal = selectedTableIds[index];
 					if (idVal != null) {
@@ -446,7 +467,7 @@ function createStudyTree(fieldMapInfoList, hasFieldMap) {
 		createRow(getPrefixName('study', fieldMapInfo.fieldbookId), '', fieldMapInfo.fieldbookName, fieldMapInfo.fieldbookId, hasFieldMap, hasOneInstance);
 		$.each(fieldMapInfo.datasets, function(index, value) {
 			hasOneInstance = fieldMapInfoList.length === 1 && fieldMapInfoList[0].datasets.length === 1 && fieldMapInfoList[0].datasets[0].trialInstances.length === 1;
-			// Create trial study tree up to instance level
+			// Create study tree up to instance level
 			createRow(getPrefixName('dataset', value.datasetId), getPrefixName('study', fieldMapInfo.fieldbookId), value.datasetName, value.datasetId, hasFieldMap, hasOneInstance);
 			$.each(value.trialInstances, function (index, childValue) {
 				if ((hasFieldMap && childValue.hasFieldMap) || !hasFieldMap) {
@@ -659,7 +680,6 @@ function showFieldMap(tableName) {
 function showFieldMapPopUpCreate(ids) {
 
     var link = '/Fieldbook/Fieldmap/enterFieldDetails/createFieldmap/';
-    trial = true;
 	$.ajax({
 		url: link + encodeURIComponent(ids),
 		type: 'GET',
@@ -675,12 +695,7 @@ function showFieldMapPopUpCreate(ids) {
 
 // Show popup to select field map to display
 function showFieldMapPopUp(tableName, id) {
-	//var link = '';
-	//if (tableName == 'trial-table') {
-		link = '/Fieldbook/Fieldmap/enterFieldDetails/createFieldmap/';
-	//} else {
-	//	link = '/Fieldbook/Fieldmap/enterFieldDetails/createNurseryFieldmap/';
-	//}
+	link = '/Fieldbook/Fieldmap/enterFieldDetails/createFieldmap/';
 	$.ajax({
 		url: link + id,
 		type: 'GET',
@@ -757,7 +772,7 @@ debugger;
 			redirectToFirstPage();
 		}
 	} else {
-		// No trial instance is selected
+		// No study instance is selected
 		showMessage(noSelectedTrialInstance);
 	}
 }
@@ -1081,7 +1096,7 @@ function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailH
 		return;
 	}
 
-	//TODO do we advance the trial using the same ajax function as advancing the nursery from the nursery manager.
+	//TODO do we advance the study using the same ajax function as advancing the nursery from the nursery manager.
 	//TODO Should that be common then with the common path?
 	var advanceStudyHref = '/Fieldbook/NurseryManager/advance/nursery';
 	advanceStudyHref = advanceStudyHref + '/' + encodeURIComponent(idVal);
@@ -1096,19 +1111,16 @@ function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailH
 	}
 
 
-	if (idVal != null) {
-		//TODO the failure of the ajax request should be processed and error shown
-		$.ajax({
-			url: advanceStudyHref,
-			type: 'GET',
-			aysnc: false,
-			success: function (html) {
-				$('#advance-nursery-modal-div').html(html);
-				$('#advanceNurseryModal')
-					.one('shown.bs.modal', function () {
-						$('body').addClass('modal-open');
-					})
-					.modal({backdrop: 'static', keyboard: true});
+    if (idVal != null) {
+    	//TODO the failure of the ajax request should be processed and error shown
+        $.ajax({
+            url: advanceStudyHref,
+            type: 'GET',
+            aysnc: false,
+            success: function(html) {
+                $('#advance-nursery-modal-div').html(html);
+                $('#advanceNurseryModal')
+                .modal({ backdrop: 'static', keyboard: true });
 
 				$('#advanceNurseryModal select').not('.fbk-harvest-year').each(function () {
 					$(this).select2({minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});
@@ -3580,7 +3592,7 @@ function showSelectedTabNursery(selectedTabName) {
 		}
 	}
 
-	if (selectedTabName === 'nursery-measurements' || selectedTabName === 'trial-measurements') {
+	if (selectedTabName === 'trial-measurements') {
 		var dataTable = $('#measurement-table').dataTable();
 		if (dataTable.length !== 0) {
 			dataTable.fnAdjustColumnSizing();
@@ -4062,9 +4074,7 @@ function displayDetailsOutOfBoundsData() {
 			success: function(html) {
 				$('#reviewOutOfBoundsDataModal').modal('hide');
 				$('#reviewDetailsOutOfBoundsDataModalBody').html(html);
-				$('#reviewDetailsOutOfBoundsDataModal').one('shown.bs.modal', function() {
-					$('body').addClass('modal-open');
-				}).modal({
+				$('#reviewDetailsOutOfBoundsDataModal').modal({
 					backdrop: 'static',
 					keyboard: true
 				});

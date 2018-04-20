@@ -113,7 +113,6 @@ var ImportDesign = (function() {
 			return ImportDesign.showReviewDesignData().then(function(html) {
 				$('#reviewDesignModal').one('shown.bs.modal', function() {
 					$('#divDesignMeasurements').html(html);
-					$('body').addClass('modal-open');
 				}).modal({
 					backdrop: 'static',
 					keyboard: true
@@ -155,7 +154,6 @@ var ImportDesign = (function() {
 
 			//if the design is generated but not saved, the measurements datatable is for preview only (edit is not allowed)
 			$body.addClass('preview-measurements-only');
-			//TODO Clear the style on Nursery save
 
 			var environmentData =
 				angular.copy(ImportDesign.studyManagerCurrentData().environments);

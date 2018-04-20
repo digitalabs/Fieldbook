@@ -215,7 +215,7 @@ function showWarningTraitsImport(resp) {
 	if (resp.deletedTraits !== ' ') {
 		warningTraitsMessage += '<li>';
 		warningTraitsMessage += '<b>' + 'Missing traits: ' + '</b>';
-		warningTraitsMessage += resp.deletedTraits + ' in the nursery are not present in the file.';
+		warningTraitsMessage += resp.deletedTraits + ' in the study are not present in the file.';
 		warningTraitsMessage += '</li>';
 		warningTraitsMessage += '<p>' + '</p>';
 	}
@@ -223,8 +223,8 @@ function showWarningTraitsImport(resp) {
 	if (resp.addedTraits !== ' ') {
 		warningTraitsMessage += '<li>';
 		warningTraitsMessage += '<b>' + 'Additional traits: ' + '</b>';
-		warningTraitsMessage += 'the file contains the trait(s) ' + resp.addedTraits + ', that are not present in the nursery. ';
-		warningTraitsMessage += 'This data will be discarded. if you wish to import additional traits, please add them to the nursery before ';
+		warningTraitsMessage += 'the file contains the trait(s) ' + resp.addedTraits + ', that are not present in the study. ';
+		warningTraitsMessage += 'This data will be discarded. if you wish to import additional traits, please add them to the study before ';
 		warningTraitsMessage += 'importing the data file.';
 		warningTraitsMessage += '</li>';
 	}

@@ -228,7 +228,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						$scope.data.environments.pop();
 					}
 
-					// Regenerate experimental design and measurement table when the trial is not saved yet
+					// Regenerate experimental design and measurement table when the study is not saved yet
 					if (!TrialManagerDataService.isOpenStudy() && TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
 						refreshMeasurementTableAfterDeletingEnvironment();
 					}
@@ -292,7 +292,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			function refreshMeasurementTableAfterDeletingEnvironment() {
 				$rootScope.$broadcast('previewMeasurements');
                 $('body').addClass('preview-measurements-only');
-				// Make sure that the measurement table will only refresh if there is a selected design type for the current trial
+				// Make sure that the measurement table will only refresh if there is a selected design type for the current study
 				var designTypeId = TrialManagerDataService.currentData.experimentalDesign.designType;
 				var designTypes = TrialManagerDataService.applicationData.designTypes;
 				var noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments;

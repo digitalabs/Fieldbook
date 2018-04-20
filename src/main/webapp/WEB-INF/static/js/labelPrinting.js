@@ -208,8 +208,8 @@ LabelPrinting = {
 					senderId = $(ui.sender).attr('id'),
 					stvarId = parseInt(ui.item.context.id);
 
-				// nursery/trial details items are not allowed to be dragged
-				// to nursery/trial list details and vice versa
+				// study details items are not allowed to be dragged
+				// to study list details and vice versa
 				// and pdf
 				if ((receiverId == 'pdf-study-details-fields'
 					&& senderId == 'pdf-study-list-details-fields')
@@ -462,7 +462,7 @@ LabelPrinting = {
 	 * @param checkbox
 	 */
 	LabelPrinting.setTotalLabels = function(checkbox) {
-		//count total number of labels to be generated based on selected trial/nursery instance
+		//count total number of labels to be generated based on selected study instance
 		var labelCount = '';
 		labelCount = $(checkbox).parents('tr').find('td.plot-count').html();
 		var totalCount = $('#totalLabelCount').text();

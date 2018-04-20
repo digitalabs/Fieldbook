@@ -194,7 +194,7 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 
 	@Override
 	public List<Integer> getExperimentalDesignVariables(final ExpDesignParameterUi params) {
-		if (!StringUtils.isEmpty(params.getCheckInsertionManner())){
+		if (!StringUtils.isEmpty(params.getCheckSpacing())){
 			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.CHECK_START.getId(), TermId.CHECK_INTERVAL.getId(),
 					TermId.CHECK_PLAN.getId());
 		} else {

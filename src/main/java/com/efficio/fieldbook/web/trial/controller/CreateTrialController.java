@@ -27,7 +27,6 @@ import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.context.ContextInfo;
-import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -142,8 +141,7 @@ public class CreateTrialController extends BaseTrialController {
 		CreateTrialForm form = new CreateTrialForm();
 		try {
 			if (studyId != null && studyId != 0) {
-				final Study study = this.fieldbookMiddlewareService.getStudy(studyId);
-				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(studyId, study.getType());
+				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(studyId);
 
 				this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
 

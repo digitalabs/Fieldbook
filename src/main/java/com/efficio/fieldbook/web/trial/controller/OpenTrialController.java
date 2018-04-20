@@ -234,9 +234,7 @@ public class OpenTrialController extends BaseTrialController {
 							+ dmsProject.getName();
 				}
 
-				final Workbook workbook = this.fieldbookMiddlewareService
-					.getStudyDataSet(trialId, studyTypeBuilder.createStudyTypeDto(dmsProject.getStudyType()));
-				// TODO VERIFICAR POR STUDY TYPE
+				final Workbook workbook = this.fieldbookMiddlewareService.getStudyDataSet(trialId);
 
 				// FIXME
 				// See setStartingEntryNoAndPlotNoFromObservations() in
@@ -562,8 +560,7 @@ public class OpenTrialController extends BaseTrialController {
 	@RequestMapping(value = "/updateSavedTrial", method = RequestMethod.GET)
 	public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") final int id) throws ParseException {
 		final Map<String, Object> returnVal = new HashMap<>();
-		final Study study = this.fieldbookMiddlewareService.getStudy(id);
-		final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(id,study.getType());
+		final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(id);
 		this.fieldbookMiddlewareService.loadAllObservations(trialWorkbook);
 
 		this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);

@@ -29,6 +29,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.reports.BuildReportException;
@@ -50,7 +51,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -132,6 +132,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private JasperReportService jasperReportService;
+
+	@Resource
+	private StudyDataManager studyDataManager;
 	
 	@Override
 	public String getContentName() {
@@ -438,15 +441,19 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/custom/nursery/reports", method = RequestMethod.GET)
-	public List<CustomReportType> getCustomNurseryReports() {
-		return this.getCustomReportTypes(ToolSection.FB_NURSE_MGR_CUSTOM_REPORT.name());
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "/custom/trial/reports", method = RequestMethod.GET)
-	public List<CustomReportType> getCustomTrialReports() {
-		return this.getCustomReportTypes(ToolSection.FB_TRIAL_MGR_CUSTOM_REPORT.name());
+	@RequestMapping(value = "/custom/{studyId}/reports", method = RequestMethod.GET)
+	public List<CustomReportType> getCustomReports(@PathVariable final int studyId) {
+		final StudyDetails studyDetails = studyDataManager.getStudyDetails(studyId);
+		// DO NOT remove this condition. Reports are organized based on the study type
+		// It needs to be discussed with IBP whenever they want to bring custom reports back
+		switch (studyDetails.getStudyType().getName()) {
+			case "N":
+				return this.getCustomReportTypes(ToolSection.FB_NURSE_MGR_CUSTOM_REPORT.name());
+			case "T":
+				return this.getCustomReportTypes(ToolSection.FB_TRIAL_MGR_CUSTOM_REPORT.name());
+			default:
+				return null;
+		}
 	}
 
 	public List<CustomReportType> getCustomReportTypes(final String name) {

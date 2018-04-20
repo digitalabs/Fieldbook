@@ -217,10 +217,12 @@ function showExportOptions() {
 		return;
 	}
 
-	StudyCustomExportReports.showReports();
+	var studyId = $('#studyId').val();
+
+	StudyCustomExportReports.showReports(studyId);
+
 	$('#exportStudyModal').modal({backdrop: 'static', keyboard: true});
 
-	var studyId = $('#studyId').val();
 	$.ajax({
 		url: '/Fieldbook/ExportManager/trial/instances/' + studyId,
 		type: 'GET',

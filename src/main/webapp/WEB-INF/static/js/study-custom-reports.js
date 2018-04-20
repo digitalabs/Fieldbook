@@ -1,12 +1,11 @@
 var StudyCustomExportReports = {
 	customReports: [],
-	showReports: function() {
+	showReports: function(studyId) {
 		'use strict';
 		if ($('#exportStudyModal').data('custom-report-loaded') !== '1') {
 			$('#exportStudyModal').data('custom-report-loaded', '1');
-			var type = isNursery() ? 'nursery' : 'trial';
 			$.ajax({
-				url: '/Fieldbook/ExportManager/custom/' + type + '/reports',
+				url: '/Fieldbook/ExportManager/custom/' + studyId + '/reports',
 				type: 'GET',
 				data: '',
 				cache: false,

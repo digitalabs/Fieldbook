@@ -2803,6 +2803,21 @@ function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
 		cache: false,
 		success: function(html) {
 			var germplasmDetailsUrl = html;
+			showGermplasmDetailsPopUp(gid, desig, germplasmDetailsUrl);
+		}
+	});
+}
+
+function showGermplasmDetailsPopUp(gid, desig, germplasmDetailsUrl) {
+	'use strict';
+	var url = '/Fieldbook/ListTreeManager/getPreferredName/' + gid;
+	$.ajax({
+		url: url,
+		type: 'GET',
+		data: '',
+		cache: false,
+		success: function(preferredName) {
+			desig =  preferredName; 
 			$('#openGermplasmFrame').attr('src', germplasmDetailsUrl + gid);
 			$('#openGermplasmModal .modal-title').html(headerMsg1 + ' ' + desig + ' (' + headerMsg2 + ' ' + gid + ')');
 			$('#openGermplasmModal').modal({ backdrop: 'static', keyboard: true });
@@ -3345,16 +3360,6 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 
 	$('.fbk-study-tree-title.trial').removeClass('fbk-hide');
 	TreePersist.preLoadStudyTreeState('#studyTree');
-}
-
-//TARGET
-function isNursery() {
-	'use strict';
-	if ($('#check-germplasm-list').length != 0 || $('.nursery-header').length != 0) {
-		return true;
-	} else {
-		return false;
-	}
 }
 
 function makeGermplasmListDraggable(isDraggable) {

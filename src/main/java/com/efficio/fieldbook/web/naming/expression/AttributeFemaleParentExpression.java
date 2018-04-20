@@ -50,7 +50,6 @@ public class AttributeFemaleParentExpression extends AttributeExpression {
 		return AttributeFemaleParentExpression.PATTERN_KEY;
 	}
 
-	@Override
 	protected Integer getSourceParentGID(final Integer gid) {
 		final Germplasm groupSource = this.germplasmDataManager.getGermplasmByGID(gid);
 		if (groupSource != null) {

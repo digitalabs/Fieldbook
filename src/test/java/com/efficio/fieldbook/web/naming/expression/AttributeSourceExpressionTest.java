@@ -45,7 +45,21 @@ public class AttributeSourceExpressionTest extends TestExpression {
 		final List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source, PREFIX);
 		this.printResult(values, source);
-		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-AA")));
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-AA[SEQUENCE]")));
+	}
+
+	@Test
+	public void testAttributeAsPrefixMultipleCopies() throws Exception {
+		Mockito.when(germplasmDataManager.getAttributeValue(1000, ATTRIBUTE_NAME)).thenReturn("AA");
+		final Method derivativeMethod = this.createDerivativeMethod(PREFIX + PREFIX, COUNT, null, "-", true);
+		final ImportedGermplasm importedGermplasm =
+			this.createImportedGermplasm(1, "(AA/ABC)", "1000", 104, 104, -1, derivativeMethod.getMid());
+		final AdvancingSource source =
+			this.createAdvancingSourceTestData(derivativeMethod, importedGermplasm, "(AA/ABC)", "Dry", "NurseryTest");
+		final List<StringBuilder> values = this.createInitialValues(source);
+		expression.apply(values, source, PREFIX);
+		this.printResult(values, source);
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-AAAA[SEQUENCE]")));
 	}
 
 	@Test
@@ -59,7 +73,7 @@ public class AttributeSourceExpressionTest extends TestExpression {
 		final List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source, PREFIX);
 		this.printResult(values, source);
-		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-")));
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-[SEQUENCE]")));
 	}
 
 	@Test
@@ -73,7 +87,7 @@ public class AttributeSourceExpressionTest extends TestExpression {
 		List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source, PREFIX);
 		this.printResult(values, source);
-		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-AA")));
+		assertThat(values.get(0).toString(), is(equalTo("(AA/ABC)-AA[SEQUENCE]")));
 	}
 
 	@Test
@@ -88,6 +102,6 @@ public class AttributeSourceExpressionTest extends TestExpression {
 		List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source, PREFIX);
 		this.printResult(values, source);
-		assertThat(values.get(0).toString(),is(equalTo("(AA/ABC)-")));
+		assertThat(values.get(0).toString(),is(equalTo("(AA/ABC)-[SEQUENCE]")));
 	}
 }

@@ -3362,16 +3362,6 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	TreePersist.preLoadStudyTreeState('#studyTree');
 }
 
-//TARGET
-function isNursery() {
-	'use strict';
-	if ($('#check-germplasm-list').length != 0 || $('.nursery-header').length != 0) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
 function makeGermplasmListDraggable(isDraggable) {
     'use strict';
 	// isDraggable is always false, analyze to refactor or remove this

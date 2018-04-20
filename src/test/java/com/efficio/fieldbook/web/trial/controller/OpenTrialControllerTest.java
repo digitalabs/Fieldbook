@@ -203,7 +203,7 @@ public class OpenTrialControllerTest {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, new StudyTypeDto("T"));
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 
-		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.TRIAL_ID, new StudyTypeDto("T"))).thenReturn(workbook);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
 		final Study study = new Study();
 		study.setStudyType(new StudyTypeDto("T"));
 		Mockito.when(this.fieldbookMiddlewareService.getStudy(Matchers.anyInt())).thenReturn(study);
@@ -213,7 +213,7 @@ public class OpenTrialControllerTest {
 		final String out = this.openTrialController.openTrial(this.createTrialForm, OpenTrialControllerTest.TRIAL_ID, this.model,
 				this.httpSession, this.redirectAttributes, null);
 
-		Mockito.verify(this.fieldbookMiddlewareService).getStudyDataSet(OpenTrialControllerTest.TRIAL_ID, new StudyTypeDto("T"));
+		Mockito.verify(this.fieldbookMiddlewareService).getStudyDataSet(OpenTrialControllerTest.TRIAL_ID);
 
 		Assert.assertEquals("should return the base angular template", AbstractBaseFieldbookController.ANGULAR_BASE_TEMPLATE_NAME, out);
 	}
@@ -1031,7 +1031,7 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testUpdateSavedTrial() throws ParseException {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, new StudyTypeDto("T"));
-		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.TRIAL_ID,new StudyTypeDto("T"))).thenReturn(workbook);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString()))
 			.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(1, "STD"));
 		final Study study = new Study();

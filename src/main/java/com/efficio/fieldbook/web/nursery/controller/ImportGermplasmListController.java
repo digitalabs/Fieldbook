@@ -591,9 +591,9 @@ public class ImportGermplasmListController extends SettingsController {
 		return dataTableDataList;
 	}
 
-	void initializeObjectsForGermplasmDetailsView(final ImportGermplasmListForm form, final Model model,
-			final ImportedGermplasmMainInfo mainInfo, final List<ImportedGermplasm> list,
-			final List<Map<String, Object>> dataTableDataList) {
+	void initializeObjectsForGermplasmDetailsView(final ImportGermplasmListForm form,
+		final Model model, final ImportedGermplasmMainInfo mainInfo, final List<ImportedGermplasm> list,
+		final List<Map<String, Object>> dataTableDataList) {
 		// Set first entry number from the list
 		if (!list.isEmpty()) {
 			form.setStartingEntryNo(list.get(0).getEntryId().toString());

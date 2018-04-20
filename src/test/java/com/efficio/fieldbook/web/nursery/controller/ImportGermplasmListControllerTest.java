@@ -403,8 +403,7 @@ public class ImportGermplasmListControllerTest {
 		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 		final List<ImportedGermplasm> list = new ArrayList<>();
 		final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
-		final String type = StudyType.T.getName();
-		this.importGermplasmListController.initializeObjectsForGermplasmDetailsView(type, form, model, mainInfo, list,
+		this.importGermplasmListController.initializeObjectsForGermplasmDetailsView(form, model, mainInfo, list,
 				dataTableDataList);
 
 		Assert.assertEquals("The current page should be " + ImportGermplasmListControllerTest.CURRENT_PAGE,
@@ -418,7 +417,6 @@ public class ImportGermplasmListControllerTest {
 				model.get(ImportGermplasmListController.CHECK_LISTS));
 		Assert.assertEquals("The data table list should be " + dataTableDataList, dataTableDataList,
 				model.get(ImportGermplasmListController.LIST_DATA_TABLE));
-		Assert.assertEquals("The type should be " + type, type, model.get(ImportGermplasmListController.TYPE2));
 		Assert.assertNotNull("The table header list should not be null",
 				ImportGermplasmListController.TABLE_HEADER_LIST);
 		Assert.assertEquals("The starting plot no should be " + ImportGermplasmListController.STARTING_PLOT_NO,

@@ -191,6 +191,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	}
 
+	/**
+	 * @deprecated it will be removed in
+	 */
 	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "/export/{exportType}/{exportWayType}", method = RequestMethod.POST)
@@ -452,7 +455,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			case "T":
 				return this.getCustomReportTypes(ToolSection.FB_TRIAL_MGR_CUSTOM_REPORT.name());
 			default:
-				return null;
+				return new ArrayList<>();
 		}
 	}
 

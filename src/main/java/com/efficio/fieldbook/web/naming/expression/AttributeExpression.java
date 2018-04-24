@@ -24,8 +24,6 @@ public abstract class AttributeExpression implements Expression {
 
 	}
 
-	protected abstract Integer getSourceParentGID(final Integer gid);
-
 	protected void replaceAttributeExpressionWithValue(final StringBuilder container, final String attributeKey, final String attributeName,
 			final String value) {
 		final String key = "[" + attributeKey + "." + attributeName + "]";

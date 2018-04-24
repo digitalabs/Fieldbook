@@ -11,24 +11,25 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class AttributeSourceExpression extends BaseExpression {
+public class AttributeSourceExpression extends AttributeExpression {
 
 	@Autowired
 	private GermplasmDataManager germplasmDataManager;
 
-	public static final String PATTERN_KEY = "\\[ATTRSC\\.([^\\.]*)\\]"; // Example: ATTRSC.NOTES
+	public static final String ATTRIBUTE_KEY = "ATTRSC";
+	public static final String PATTERN_KEY = "\\[" + ATTRIBUTE_KEY + "\\.([^\\.]*)\\]"; // Example: ATTRSC.NOTES
 	private static final Pattern pattern = Pattern.compile(PATTERN_KEY);
 
 	@Override
 	public void apply(final List<StringBuilder> values, final AdvancingSource source, final String capturedText) {
 		for (StringBuilder value : values) {
 			String newValue = "";
+			final String attributeName = capturedText.substring(1, capturedText.length() - 1).split("\\.")[1];
 			if (source.getBreedingMethod().getMtype().equals(AppConstants.METHOD_TYPE_DER.getString())
 				|| source.getBreedingMethod().getMtype().equals(AppConstants.METHOD_TYPE_MAN.getString())) {
-				final String attributeName = capturedText.substring(1, capturedText.length() - 1).split("\\.")[1];
 				newValue = germplasmDataManager.getAttributeValue(Integer.parseInt(source.getGermplasm().getGid()), attributeName);
 			}
-			this.replaceExpressionWithValue(value, newValue);
+			this.replaceAttributeExpressionWithValue(value, ATTRIBUTE_KEY, attributeName, newValue);
 		}
 	}
 
@@ -37,11 +38,4 @@ public class AttributeSourceExpression extends BaseExpression {
 		return AttributeSourceExpression.PATTERN_KEY;
 	}
 
-	@Override
-	protected void replaceExpressionWithValue(final StringBuilder container, final String value) {
-		final Matcher matcher = pattern.matcher(container.toString());
-		while (matcher.find()) {
-			container.replace(matcher.start(), matcher.end(), value);
-		}
-	}
 }

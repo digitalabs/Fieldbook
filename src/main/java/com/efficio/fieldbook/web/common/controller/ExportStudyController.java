@@ -1,23 +1,22 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
+import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
+import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
+import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
+import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
+import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
+import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl;
+import com.efficio.fieldbook.web.trial.bean.ExportTrialInstanceBean;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import net.sf.jasperreports.engine.JRException;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.pojo.FileExportInfo;
@@ -29,6 +28,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.ToolName;
@@ -51,23 +51,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
-import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
-import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
-import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
-import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
-import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
-import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
-import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
-import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl;
-import com.efficio.fieldbook.web.trial.bean.ExportTrialInstanceBean;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-
-import net.sf.jasperreports.engine.JRException;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 @Controller
 @RequestMapping(ExportStudyController.URL)
@@ -82,8 +80,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	static final String IS_SUCCESS = "isSuccess";
 	private static final Logger LOG = LoggerFactory.getLogger(ExportStudyController.class);
 	public static final String URL = "/ExportManager";
-	private static String EXPORT_TRIAL_INSTANCE = "Common/includes/exportTrialInstance";
-	private static String DISPLAY_ADVANCE_GERMPLASM_LIST = "Common/includes/displayListOfAdvanceGermplasmList";
+	private static final String EXPORT_TRIAL_INSTANCE = "Common/includes/exportTrialInstance";
+	private static final String DISPLAY_ADVANCE_GERMPLASM_LIST = "Common/includes/displayListOfAdvanceGermplasmList";
 
 	@Resource
 	private UserSelection studySelection;
@@ -163,7 +161,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		String fileName = "";
 		String outputFilename = "";
-		Reporter rep;
+		final Reporter rep;
 		final Map<String, Object> results = new HashMap<String, Object>();
 		try {
 
@@ -181,7 +179,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			results.put(ExportStudyController.FILENAME, SettingsUtil.cleanSheetAndFileName(fileName));
 			results.put(ExportStudyController.CONTENT_TYPE, response.getContentType());
 
-		} catch (NumberFormatException | JRException | IOException | BuildReportException e) {
+		} catch (final NumberFormatException | JRException | IOException | BuildReportException e) {
 			ExportStudyController.LOG.error(e.getMessage(), e);
 			results.put(ExportStudyController.IS_SUCCESS, false);
 			results.put(ExportStudyController.ERROR_MESSAGE, this.messageSource.getMessage("export.study.error", null, Locale.ENGLISH));
@@ -191,6 +189,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	}
 
+	/**
+	 * @deprecated it will be removed in
+	 */
 	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "/export/{exportType}/{exportWayType}", method = RequestMethod.POST)
@@ -257,7 +258,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		// workbook.observations() collection is no longer pre-loaded into user session when trial is opened. Load now as we need it to
 		// keep export functionality working.
-		boolean observationsLoaded = this.fieldbookMiddlewareService.loadAllObservations(userSelection.getWorkbook());
+		final boolean observationsLoaded = this.fieldbookMiddlewareService.loadAllObservations(userSelection.getWorkbook());
 
 		LOG.info("Export Study : doExport : getWorbook : end");
 		LOG.info("Export Study : doExport : processWorbook : start");
@@ -272,7 +273,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 			exportDataCollectionService.reorderWorkbook(userSelection.getWorkbook());
 
-			String studyName = FileUtils.sanitizeFileName(userSelection.getEscapedStudyName());
+			final String studyName = FileUtils.sanitizeFileName(userSelection.getEscapedStudyName());
 			FileExportInfo fileExportInfo = new FileExportInfo();
 			FieldbookUtil.setColumnOrderingOnWorkbook(userSelection.getWorkbook(), data.get("columnOrders"));
 			// By default the content type will be ZIP, unless only 1 instance being exported
@@ -349,13 +350,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		return data.get("studyExportId");
 	}
 
-	protected String getOutputFileName(final boolean isNursery, final String outputFilename, final String filename) {
-		if (!isNursery) {
-			return outputFilename;
-		}
-		return filename;
-	}
-
 	protected UserSelection getUserSelection() {
 		return this.studySelection;
 	}
@@ -426,7 +420,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final StudyDetails studyDetails = userSelection.getWorkbook().getStudyDetails();
 
 		final FileExportInfo exportInfo = this.exportAdvanceListItems(exportType, advancedListIds, studyDetails);
-		String outputFilename = exportInfo.getFilePath();
+		final String outputFilename = exportInfo.getFilePath();
 		final int extensionIndex = outputFilename.lastIndexOf(".");
 		final String extensionName = outputFilename.substring(extensionIndex, outputFilename.length());
 		String contentType = "";
@@ -453,14 +447,13 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final StudyDetails studyDetails = studyDataManager.getStudyDetails(studyId);
 		// DO NOT remove this condition. Reports are organized based on the study type
 		// It needs to be discussed with IBP whenever they want to bring custom reports back
-		switch (studyDetails.getStudyType().getName()) {
-			case "N":
-				return this.getCustomReportTypes(ToolSection.FB_NURSE_MGR_CUSTOM_REPORT.name());
-			case "T":
-				return this.getCustomReportTypes(ToolSection.FB_TRIAL_MGR_CUSTOM_REPORT.name());
-			default:
-				return null;
+		if (StudyType.N.getName().equalsIgnoreCase(studyDetails.getStudyType().getName())) {
+			return this.getCustomReportTypes(ToolSection.FB_NURSE_MGR_CUSTOM_REPORT.name());
+		} else if (StudyType.T.getName().equalsIgnoreCase(studyDetails.getStudyType().getName())) {
+			return this.getCustomReportTypes(ToolSection.FB_TRIAL_MGR_CUSTOM_REPORT.name());
 		}
+
+		return new ArrayList<>();
 	}
 
 	public List<CustomReportType> getCustomReportTypes(final String name) {
@@ -489,7 +482,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final String stockIds = req.getParameter("exportStockListId");
 
 		final FileExportInfo exportInfo = this.exportAdvanceListService.exportStockList(Integer.valueOf(stockIds), this.germplasmExportService);
-		String outputFilename = exportInfo.getFilePath();
+		final String outputFilename = exportInfo.getFilePath();
 		final String contentType = FileUtils.MIME_MS_EXCEL;
 		response.setContentType(contentType);
 		final Map<String, Object> results = new HashMap<String, Object>();

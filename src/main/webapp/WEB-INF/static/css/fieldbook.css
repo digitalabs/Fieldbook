@@ -116,6 +116,9 @@ table .odd{
 table .even{
     background-color: #f0eeee;
 }
+#treeTable td {
+    white-space: nowrap;
+}
 /*
 #studyTree tr:nth-child(even), #selectedTrials tr:nth-child(even), #catVarList tr:nth-child(even) {background-color: #DADADA}
 #studyTree tr:nth-child(odd), #selectedTrials tr:nth-child(odd), #catVarList tr:nth-child(odd) {background-color: #E9e9e9}

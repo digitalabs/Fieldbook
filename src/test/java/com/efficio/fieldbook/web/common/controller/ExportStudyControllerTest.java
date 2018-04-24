@@ -117,18 +117,6 @@ public class ExportStudyControllerTest {
 	}
 
 	@Test
-	public void testGetOutputFileNameValueChanged() {
-		final String fileName = this.exportStudyController.getOutputFileName(true, "trial-test_1.xls", "trial-test.xls");
-		Assert.assertEquals("Expected trial-test.xls but got trial-test_1.xls", "trial-test.xls", fileName);
-	}
-
-	@Test
-	public void testGetOutputFileNameValueRetained() {
-		final String fileName = this.exportStudyController.getOutputFileName(false, "trial-test_1.xls", "trial-test.xls");
-		Assert.assertEquals("Expected trial-test_1.xls but got trial-test.xls", "trial-test_1.xls", fileName);
-	}
-
-	@Test
 	public void testDoAdvanceExportCsvMoreThan1() throws JsonProcessingException, IOException {
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1|2|3", "TempName", this.germplasmExportService,

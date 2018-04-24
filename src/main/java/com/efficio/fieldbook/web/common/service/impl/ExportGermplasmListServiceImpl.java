@@ -1,10 +1,16 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.controller.ExportGermplasmListController;
-import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -33,14 +39,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.controller.ExportGermplasmListController;
+import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
 
 @Configurable
 public class ExportGermplasmListServiceImpl implements ExportGermplasmListService {
@@ -70,6 +72,9 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 	@Resource
 	private InventoryDataManager inventoryDataManager;
+
+	@Resource
+	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
 	public ExportGermplasmListServiceImpl() {
 
@@ -120,7 +125,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		this.setExportListTypeFromOriginalGermplasm(germplasmList);
 
 		final List<ValueReference> possibleValues =
-				this.getPossibleValues(this.userSelection.getPlotsLevelList(), TermId.ENTRY_TYPE.getId());
+				this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId());
 		this.processEntryTypeCode(germplasmlistData, possibleValues);
 
 		input.setGermplasmList(germplasmList);

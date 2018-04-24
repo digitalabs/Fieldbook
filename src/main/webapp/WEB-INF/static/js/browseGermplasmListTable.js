@@ -41,8 +41,8 @@ function resetGermplasmList() {
 		success: function() {
 		}
 	});
-	if (angular && angular.element("#manage-trial-tabs [ui-view='germplasm']").length === 1) {
-		var _scope = angular.element("#manage-trial-tabs [ui-view='germplasm']").scope();
+	if (angular && angular.element("#manage-study-tabs [ui-view='germplasm']").length === 1) {
+		var _scope = angular.element("#manage-study-tabs [ui-view='germplasm']").scope();
 
 		setTimeout(function () {
 			_scope.$apply(function () {

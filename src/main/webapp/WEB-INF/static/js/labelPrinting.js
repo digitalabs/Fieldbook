@@ -547,7 +547,7 @@ LabelPrinting = {
 		}
 		
 		if ($('#selectedTrials .includeTrial:checked').length == 0 && $('#selectedTrials .includeTrial').length > 0) {
-			showMessage(trialInstanceRequired);
+			showMessage(studyInstanceRequired);
 			moveToTopScreen();
 			return false;
 		}

@@ -41,7 +41,6 @@ import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -719,7 +718,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	private String getGermplasmData(final String termId, final ImportedGermplasm germplasm) {
 		String val = "";
-		if (termId != null && NumberUtils.isNumber(termId)) {
+		if (NumberUtils.isNumber(termId)) {
 			final Integer term = Integer.valueOf(termId);
 			if (term == TermId.GID.getId()) {
 				val = germplasm.getGid();
@@ -888,17 +887,10 @@ public class ImportGermplasmListController extends SettingsController {
 	@RequestMapping(value = "/reload/check/list/{type}", method = RequestMethod.GET)
 	public String reloadCheckList(@PathVariable final String type,
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final Model model) {
-		boolean isNursery = false;
-		if (type != null && type.equalsIgnoreCase(StudyType.N.getName())) {
-			isNursery = true;
-		} else if (type != null && type.equalsIgnoreCase(StudyType.T.getName())) {
-			isNursery = false;
-		}
 		try {
-
 			final List<Enumeration> checksList = this.fieldbookService.getCheckTypeList();
 			List<ImportedGermplasm> list = new ArrayList<>();
-			if (isNursery && this.userSelection.getImportedCheckGermplasmMainInfo() != null
+			if (this.userSelection.getImportedCheckGermplasmMainInfo() != null
 					&& this.userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null
 					&& this.userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
 							.getImportedGermplasms() != null) {
@@ -1109,7 +1101,7 @@ public class ImportGermplasmListController extends SettingsController {
 			final Model model) {
 
 		try {
-			ImportedGermplasm importedCheckGermplasm =
+			final ImportedGermplasm importedCheckGermplasm =
 					this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()
 							.get(form.getIndex());
 			importedCheckGermplasm.setEntryTypeValue(form.getCheckVal());

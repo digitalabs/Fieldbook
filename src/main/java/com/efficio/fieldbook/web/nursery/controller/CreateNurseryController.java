@@ -128,7 +128,7 @@ public class CreateNurseryController extends SettingsController {
 
 				final Dataset dataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
 				SettingsUtil.convertXmlDatasetToPojo(this.fieldbookMiddlewareService, this.fieldbookService, dataset, this.userSelection,
-						this.getCurrentProject().getUniqueID(), true, false);
+						this.getCurrentProject().getUniqueID(), true);
 
 				// nursery-level
 				final List<SettingDetail> nurseryLevelConditions =

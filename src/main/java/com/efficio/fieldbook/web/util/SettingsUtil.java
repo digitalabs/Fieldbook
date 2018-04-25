@@ -526,14 +526,9 @@ public class SettingsUtil {
 	 */
 	public static void convertXmlDatasetToPojo(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			final com.efficio.fieldbook.service.api.FieldbookService fieldbookService, final ParentDataset dataset,
-			final UserSelection userSelection, final String programUUID, final boolean isUsePrevious, final boolean isTrial) {
-		if (!isTrial) {
-			SettingsUtil.convertXmlNurseryDatasetToPojo(fieldbookMiddlewareService, fieldbookService, (Dataset) dataset, userSelection,
-					programUUID, isUsePrevious);
-		} else {
+			final UserSelection userSelection, final String programUUID, final boolean isUsePrevious) {
 			SettingsUtil.convertXmlTrialDatasetToPojo(fieldbookMiddlewareService, fieldbookService, (Dataset) dataset, userSelection,
 					programUUID);
-		}
 	}
 
 	private static boolean idCounterPartInList(final Integer stdVar, final Map<String, String> idCodeNameMap,
@@ -1843,7 +1838,7 @@ public class SettingsUtil {
 
 	private static List<String> getSelectedVariatesPropertyNames(final FieldbookService fieldbookService) {
 		final List<String> names = new ArrayList<>();
-		final List<String> ids = Arrays.asList(AppConstants.SELECTION_VARIATES_PROPERTIES.getString().split(","));
+		final String[] ids = AppConstants.SELECTION_VARIATES_PROPERTIES.getString().split(",");
 		for (final String id : ids) {
 			final Term term = fieldbookService.getTermById(Integer.valueOf(id));
 			if (term != null) {
@@ -1861,7 +1856,7 @@ public class SettingsUtil {
 		final SettingVariable variable =
 				new SettingVariable(name, description, property, scale, method, role, dataType, dataTypeId, minRange, maxRange);
 
-		Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+		final Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
 				HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
 				HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 		variable.setCvTermId(stdVar);

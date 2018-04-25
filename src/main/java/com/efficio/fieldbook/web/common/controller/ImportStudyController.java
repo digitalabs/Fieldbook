@@ -113,7 +113,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 			@PathVariable final int importType, final BindingResult result,
 			final Model model) {
 
-		ImportResult importResult = null;
+		ImportResult importResult;
 		final UserSelection userSelection = this.getUserSelection();
 		final ImportStudyType importStudyType = ImportStudyType.getImportType(importType);
 
@@ -266,16 +266,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	private UserSelection getUserSelection() {
 		return this.studySelection;
-	}
-
-	public String show(final Model model, final boolean isTrial) {
-		this.setupModelInfo(model);
-		model.addAttribute(AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, this.getContentName(isTrial));
-		return AbstractBaseFieldbookController.BASE_TEMPLATE_NAME;
-	}
-
-	private String getContentName(final boolean isTrial) {
-		return isTrial ? "TrialManager/openTrial" : "NurseryManager/addOrRemoveTraits";
 	}
 
 	@Deprecated

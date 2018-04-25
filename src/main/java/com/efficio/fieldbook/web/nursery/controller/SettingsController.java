@@ -552,7 +552,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	protected void resetSessionVariablesAfterSave(final Workbook workbook, final boolean isNursery) {
+	protected void resetSessionVariablesAfterSave(final Workbook workbook) {
 
 		// update variables in measurement rows
 		if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()) {
@@ -616,21 +616,19 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		final String variableIds = AppConstants.FIXED_NURSERY_VARIABLES.getString() + AppConstants.CHECK_VARIABLES.getString();
 		SettingsUtil.removeBasicDetailsVariables(this.userSelection.getStudyLevelConditions(), variableIds);
 
-		if (isNursery) {
-			this.removeHiddenVariables(this.userSelection.getStudyLevelConditions(), AppConstants.HIDE_NURSERY_FIELDS.getString());
-			this.removeRemovedVariablesFromSession(this.userSelection.getStudyLevelConditions(), this.userSelection.getRemovedConditions());
-			this.removeHiddenVariables(this.userSelection.getPlotsLevelList(), AppConstants.HIDE_PLOT_FIELDS.getString());
-			this.removeRemovedVariablesFromSession(this.userSelection.getPlotsLevelList(), this.userSelection.getRemovedFactors());
-			this.addNameVariables(this.userSelection.getRemovedConditions(), workbook,
-					AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
-			this.removeCodeVariablesIfNeeded(this.userSelection.getStudyLevelConditions(),
-					AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
-			// set value of breeding method code back to code after saving
-			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-					this.ontologyService, this.contextUtil.getCurrentProgramUUID());
-			// remove selection variates from traits list
-			this.removeSelectionVariatesFromTraits(this.userSelection.getBaselineTraitsList());
-		}
+		this.removeHiddenVariables(this.userSelection.getStudyLevelConditions(), AppConstants.HIDE_NURSERY_FIELDS.getString());
+		this.removeRemovedVariablesFromSession(this.userSelection.getStudyLevelConditions(), this.userSelection.getRemovedConditions());
+		this.removeHiddenVariables(this.userSelection.getPlotsLevelList(), AppConstants.HIDE_PLOT_FIELDS.getString());
+		this.removeRemovedVariablesFromSession(this.userSelection.getPlotsLevelList(), this.userSelection.getRemovedFactors());
+		this.addNameVariables(this.userSelection.getRemovedConditions(), workbook, AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+		this.removeCodeVariablesIfNeeded(this.userSelection.getStudyLevelConditions(),
+			AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+		// set value of breeding method code back to code after saving
+		SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false, this.ontologyService,
+			this.contextUtil.getCurrentProgramUUID());
+		// remove selection variates from traits list
+		this.removeSelectionVariatesFromTraits(this.userSelection.getBaselineTraitsList());
+
 	}
 
 	private void removeRemovedVariablesFromSession(final List<SettingDetail> variableList, final List<SettingDetail> removedVariableList) {

@@ -1,15 +1,13 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -38,14 +36,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -82,33 +80,33 @@ public class ManageSettingsController extends SettingsController {
 	@ResponseBody
 	@RequestMapping(value = "/settings/role/{roleId}", method = RequestMethod.GET,
 					produces = "application/json; charset=utf-8")
-	public List<PropertyTreeSummary> getOntologyPropertiesByRole(@PathVariable Integer roleId) {
+	public List<PropertyTreeSummary> getOntologyPropertiesByRole(@PathVariable final Integer roleId) {
 		assert !Objects.equals(roleId, null);
 
-		PhenotypicType phenotypicTypeById = PhenotypicType.getPhenotypicTypeById(roleId);
+		final PhenotypicType phenotypicTypeById = PhenotypicType.getPhenotypicTypeById(roleId);
 
 		assert !Objects.equals(phenotypicTypeById, null);
 
-		Set<Integer> variableTypes = VariableType.getVariableTypesIdsByPhenotype(phenotypicTypeById);
+		final Set<Integer> variableTypes = VariableType.getVariableTypesIdsByPhenotype(phenotypicTypeById);
 
-		return getOntologyPropertiesByVariableType(variableTypes.toArray(new Integer[variableTypes.size()]), null, false, true);
+		return getOntologyPropertiesByVariableType(variableTypes.toArray(new Integer[variableTypes.size()]), null, false);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/settings/properties", method = RequestMethod.GET,
 					produces = "application/json; charset=utf-8")
 	public List<PropertyTreeSummary> getOntologyPropertiesByVariableType(
-			@RequestParam(value = "type", required = true) Integer[] variableTypes,
-			@RequestParam(value = "classes", required = false) String[] classes, @RequestParam(required = false) boolean isTrial,
-			@RequestParam(required = false) boolean showHiddenVariables) {
+			@RequestParam(value = "type", required = true) final Integer[] variableTypes,
+			@RequestParam(value = "classes", required = false) final String[] classes,
+			@RequestParam(required = false) final boolean showHiddenVariables) {
 		
 		
 		// HACK! Workaround if callie is from design import
-		List<Integer> correctedVarTypes = new ArrayList<>();
-		for (Integer varType : variableTypes) {
+		final List<Integer> correctedVarTypes = new ArrayList<>();
+		for (final Integer varType : variableTypes) {
 			// this is not a varType but a phenotype
 			if (!varType.toString().startsWith("18")) {
-				PhenotypicType phenotypicTypeById = PhenotypicType.getPhenotypicTypeById(varType);
+				final PhenotypicType phenotypicTypeById = PhenotypicType.getPhenotypicTypeById(varType);
 				correctedVarTypes.addAll(VariableType
 						.getVariableTypesIdsByPhenotype(phenotypicTypeById));
 			} else {
@@ -116,34 +114,34 @@ public class ManageSettingsController extends SettingsController {
 			}
 		}
 		
-		List<PropertyTreeSummary> propertyTreeList = new ArrayList<>();
+		final List<PropertyTreeSummary> propertyTreeList = new ArrayList<>();
 
 		try {
-			Set<VariableType> selectedVariableTypes = new HashSet<>();
-			List<String> varTypeValues = new ArrayList<>();
-			for (Integer varType : correctedVarTypes) {
+			final Set<VariableType> selectedVariableTypes = new HashSet<>();
+			final List<String> varTypeValues = new ArrayList<>();
+			for (final Integer varType : correctedVarTypes) {
 				selectedVariableTypes.add(VariableType.getById(varType));
 				varTypeValues.add(VariableType.getById(varType).getName());
 			}
 
-			List<Property> properties;
+			final List<Property> properties;
 
 			properties = ontologyPropertyDataManager
 					.getAllPropertiesWithClassAndVariableType(classes, varTypeValues.toArray(new String[varTypeValues.size()]));
 
 			// fetch all standard variables given property
-			for (Property property : properties) {
-				VariableFilter variableFilterOptions = new VariableFilter();
+			for (final Property property : properties) {
+				final VariableFilter variableFilterOptions = new VariableFilter();
 				variableFilterOptions.setProgramUuid(contextUtil.getCurrentProgramUUID());
 				variableFilterOptions.addPropertyId(property.getId());
 
 				variableFilterOptions.getVariableTypes().addAll(selectedVariableTypes);
 
 				if (!showHiddenVariables) {
-					variableFilterOptions.getExcludedVariableIds().addAll(filterOutVariablesByVariableType(selectedVariableTypes, isTrial));
+					variableFilterOptions.getExcludedVariableIds().addAll(filterOutVariablesByVariableType(selectedVariableTypes));
 				}
 
-				List<Variable> ontologyList = ontologyVariableDataManager.getWithFilter(variableFilterOptions);
+				final List<Variable> ontologyList = ontologyVariableDataManager.getWithFilter(variableFilterOptions);
 
 				if (ontologyList.isEmpty()) {
 					continue;
@@ -155,14 +153,14 @@ public class ManageSettingsController extends SettingsController {
 				}
 
 
-				PropertyTreeSummary propertyTree = new PropertyTreeSummary(property, ontologyList);
+				final PropertyTreeSummary propertyTree = new PropertyTreeSummary(property, ontologyList);
 				propertyTreeList.add(propertyTree);
 
 			}
 
 			// Todo: what to make of this.fieldbookMiddlewareService.filterStandardVariablesByIsAIds(...)
 
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			LOG.error(e.getMessage(), e);
 		}
 
@@ -179,10 +177,10 @@ public class ManageSettingsController extends SettingsController {
 	 * @return detailTab.html
 	 */
 	@RequestMapping(value = "/settings/details/{variableTypeId}/{variableId}", method = RequestMethod.GET)
-	public String getOntologyDetails(@PathVariable int variableTypeId, @PathVariable int variableId, Model model,
-			@ModelAttribute("variableDetails") OntologyDetailsForm variableDetails) {
+	public String getOntologyDetails(@PathVariable final int variableTypeId, @PathVariable final int variableId, final Model model,
+			@ModelAttribute("variableDetails") final OntologyDetailsForm variableDetails) {
 		try {
-			Variable ontologyVariable =
+			final Variable ontologyVariable =
 					this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, true, false);
 
 			if (!Objects.equals(ontologyVariable, null)) {
@@ -191,16 +189,16 @@ public class ManageSettingsController extends SettingsController {
 
 			}
 
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			ManageSettingsController.LOG.error(e.getMessage(), e);
 		}
 		return super.showAjaxPage(model, ManageSettingsController.DETAILS_TEMPLATE);
 	}
 
-	private List<Integer> filterOutVariablesByVariableType(Set<VariableType> selectedVariableTypes, boolean isTrial) {
-		List<Integer> cvTermIDs = new ArrayList<>();
+	private List<Integer> filterOutVariablesByVariableType(final Set<VariableType> selectedVariableTypes) {
+		final List<Integer> cvTermIDs = new ArrayList<>();
 
-		for (VariableType varType : selectedVariableTypes) {
+		for (final VariableType varType : selectedVariableTypes) {
 			switch (varType) {
 				case STUDY_DETAIL:
 					cvTermIDs.addAll(AppConstants.HIDE_STUDY_DETAIL_VARIABLES.getIntegerList());
@@ -210,11 +208,8 @@ public class ManageSettingsController extends SettingsController {
 					break;
 				case ENVIRONMENT_DETAIL:
 					cvTermIDs.addAll(AppConstants.HIDE_TRIAL_VARIABLES.getIntegerList());
-
-					if (isTrial) {
-						cvTermIDs.addAll(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getIntegerList());
-						cvTermIDs.addAll(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS_FROM_POPUP.getIntegerList());
-					}
+					cvTermIDs.addAll(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getIntegerList());
+					cvTermIDs.addAll(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS_FROM_POPUP.getIntegerList());
 					break;
 				case TREATMENT_FACTOR:
 					cvTermIDs.addAll(AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
@@ -293,11 +288,11 @@ public class ManageSettingsController extends SettingsController {
 	 * @param newDetails the new details
 	 * @throws Exception the exception
 	 */
-	private void addNewSettingDetails(int mode, List<SettingDetail> newDetails) throws Exception {
+	private void addNewSettingDetails(final int mode, final List<SettingDetail> newDetails) throws Exception {
 		SettingsUtil.addNewSettingDetails(mode, newDetails, userSelection);
 	}
 
-	private Operation removeVarFromDeletedList(SettingVariable var, int mode) {
+	private Operation removeVarFromDeletedList(final SettingVariable var, final int mode) {
 		List<SettingDetail> settingsList = new ArrayList<SettingDetail>();
 		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			settingsList = this.userSelection.getDeletedStudyLevelConditions();
@@ -315,9 +310,9 @@ public class ManageSettingsController extends SettingsController {
 
 		Operation operation = Operation.ADD;
 		if (settingsList != null) {
-			Iterator<SettingDetail> iter = settingsList.iterator();
+			final Iterator<SettingDetail> iter = settingsList.iterator();
 			while (iter.hasNext()) {
-				SettingVariable deletedVariable = iter.next().getVariable();
+				final SettingVariable deletedVariable = iter.next().getVariable();
 				if (deletedVariable.getCvTermId().equals(Integer.valueOf(var.getCvTermId()))) {
 					operation = deletedVariable.getOperation();
 					iter.remove();
@@ -329,9 +324,9 @@ public class ManageSettingsController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/deleteVariable/{mode}", method = RequestMethod.POST)
-	public boolean deleteVariable(@PathVariable int mode, @RequestBody List<Integer> ids) {
+	public boolean deleteVariable(@PathVariable final int mode, @RequestBody final List<Integer> ids) {
 
-		for (Integer id : ids) {
+		for (final Integer id : ids) {
 			this.deleteVariable(mode, id);
 		}
 
@@ -340,9 +335,9 @@ public class ManageSettingsController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/deleteVariable/{mode}/{variableId}", method = RequestMethod.POST)
-	public ResponseEntity<String> deleteVariable(@PathVariable int mode, @PathVariable int variableId) {
+	public ResponseEntity<String> deleteVariable(@PathVariable final int mode, @PathVariable final int variableId) {
 		try {
-			Map<String, String> idNameRetrieveSaveMap = this.fieldbookService.getIdNamePairForRetrieveAndSave();
+			final Map<String, String> idNameRetrieveSaveMap = this.fieldbookService.getIdNamePairForRetrieveAndSave();
 			if (mode == VariableType.STUDY_DETAIL.getId()) {
 
 				this.addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, variableId, true);
@@ -373,7 +368,7 @@ public class ManageSettingsController extends SettingsController {
 				this.addVariableInDeletedList(this.userSelection.getTrialLevelVariableList(), mode, variableId, true);
 				SettingsUtil.deleteVariableInSession(this.userSelection.getTrialLevelVariableList(), variableId);
 			}
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			LOG.error(e.getMessage(), e);
 			return new ResponseEntity<>("", HttpStatus.BAD_REQUEST);
 		}
@@ -383,9 +378,9 @@ public class ManageSettingsController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/deleteTreatmentFactorVariable", method = RequestMethod.POST)
-	public String deleteTreatmentFactorVariable(@RequestBody Map<String, Integer> ids) {
-		Integer levelID = ids.get("levelID");
-		Integer valueID = ids.get("valueID");
+	public String deleteTreatmentFactorVariable(@RequestBody final Map<String, Integer> ids) {
+		final Integer levelID = ids.get("levelID");
+		final Integer valueID = ids.get("valueID");
 		if (levelID != null && levelID != 0) {
 			this.deleteVariable(VariableType.TREATMENT_FACTOR.getId(), levelID);
 		}
@@ -400,7 +395,7 @@ public class ManageSettingsController extends SettingsController {
 	@ResponseBody
 	@RequestMapping(value = "/hasMeasurementData/{mode}", method = RequestMethod.POST)
 	@Transactional
-	public boolean hasMeasurementData(@RequestBody List<Integer> ids, @PathVariable int mode) {
+	public boolean hasMeasurementData(@RequestBody final List<Integer> ids, @PathVariable final int mode) {
 		// if study is not yet saved, no measurement data yet
 		final Workbook savedWorkbook = this.userSelection.getWorkbook();
 		if (savedWorkbook == null) {
@@ -412,7 +407,7 @@ public class ManageSettingsController extends SettingsController {
 	@ResponseBody
 	@RequestMapping(value = "/hasMeasurementData/environmentNo/{environmentNo}", method = RequestMethod.POST)
 	@Transactional
-	public boolean hasMeasurementDataOnEnvironment(@RequestBody List<Integer> ids, @PathVariable int environmentNo) {
+	public boolean hasMeasurementDataOnEnvironment(@RequestBody final List<Integer> ids, @PathVariable final int environmentNo) {
 		// if study is not yet saved, no measurement data yet
 		final Workbook savedWorkbook = this.userSelection.getWorkbook();
 		if (savedWorkbook == null) {
@@ -422,7 +417,7 @@ public class ManageSettingsController extends SettingsController {
 			.hasMeasurementDataOnEnvironment(this.userSelection.getWorkbook().getStudyDetails().getId(), environmentNo);
 	}
 
-	protected boolean checkModeAndHasMeasurementData(int mode, int variableId) {
+	protected boolean checkModeAndHasMeasurementData(final int mode, final int variableId) {
 		return mode == VariableType.TRAIT.getId() && this.userSelection.getMeasurementRowList() != null && !this.userSelection
 				.getMeasurementRowList().isEmpty() && this.hasMeasurementDataEntered(variableId);
 	}

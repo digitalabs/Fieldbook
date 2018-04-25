@@ -237,7 +237,7 @@ public class EditNurseryController extends SettingsController {
 	}
 
 	private String getReturnValue(final Model model, final String isAjax) {
-		if (isAjax != null && EditNurseryController.SUCCESS.equalsIgnoreCase(isAjax)) {
+		if (EditNurseryController.SUCCESS.equalsIgnoreCase(isAjax)) {
 			return super.showAjaxPage(model, this.getContentName());
 		}
 
@@ -316,7 +316,7 @@ public class EditNurseryController extends SettingsController {
 		final Dataset dataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
 
 		SettingsUtil.convertXmlDatasetToPojo(this.fieldbookMiddlewareService, this.fieldbookService, dataset, this.userSelection,
-				this.getCurrentProject().getUniqueID(), false, false);
+				this.getCurrentProject().getUniqueID(), false);
 	}
 
 	protected void clearSessionData(final HttpSession session) {
@@ -802,7 +802,7 @@ public class EditNurseryController extends SettingsController {
 		form.setMeasurementDataExisting(this.fieldbookMiddlewareService
 				.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
 		this.fieldbookMiddlewareService.setOrderVariableByRank(workbook);
-		this.resetSessionVariablesAfterSave(workbook, true);
+		this.resetSessionVariablesAfterSave(workbook);
 
 		// set measurement session variables to form
 		this.setMeasurementsData(form, workbook);

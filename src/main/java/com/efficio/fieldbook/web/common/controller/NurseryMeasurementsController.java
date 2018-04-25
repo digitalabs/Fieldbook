@@ -76,23 +76,23 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 
 	@Deprecated
 	@RequestMapping(value = "/inlineinput/single/{index}/{termId}", method = RequestMethod.GET)
-	public String inlineInputNurseryGet(@PathVariable int index, @PathVariable int termId, Model model) throws MiddlewareQueryException {
+	public String inlineInputNurseryGet(@PathVariable final int index, @PathVariable final int termId, final Model model) throws MiddlewareQueryException {
 
-		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+		final List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
 
-		List<MeasurementRow> measurementRowList = this.userSelection.getMeasurementRowList();
+		final List<MeasurementRow> measurementRowList = this.userSelection.getMeasurementRowList();
 
 		tempList.addAll(measurementRowList);
 
-		MeasurementRow row = tempList.get(index);
-		MeasurementRow copyRow = row.copy();
+		final MeasurementRow row = tempList.get(index);
+		final MeasurementRow copyRow = row.copy();
 		this.copyMeasurementValue(copyRow, row);
 		MeasurementData editData = null;
 		List<ValueReference> possibleValues = new ArrayList<ValueReference>();
 		if (copyRow != null && copyRow.getMeasurementVariables() != null) {
-			for (MeasurementData var : copyRow.getDataList()) {
+			for (final MeasurementData var : copyRow.getDataList()) {
 				this.convertToUIDateIfDate(var);
-				MeasurementVariable variable = var.getMeasurementVariable();
+				final MeasurementVariable variable = var.getMeasurementVariable();
 				if (var != null && (variable.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
 						|| (variable.getPossibleValues() != null && !variable.getPossibleValues().isEmpty()))) {
 					possibleValues = variable.getPossibleValues();
@@ -107,34 +107,34 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 				}
 			}
 		}
-		this.updateModel(model, false, editData, index, termId, possibleValues);// TODO CUENYAD REMOVING ISNURSERY CONDITION
+		this.updateModel(model, editData, index, termId, possibleValues);
 		return super.showAjaxPage(model, "/NurseryManager/inlineInputMeasurement");
 	}
 
 	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "/inlineinput/single", method = RequestMethod.POST)
-	public Map<String, Object> inlineInputNurseryPost(@RequestBody Map<String, String> data, HttpServletRequest req) {
+	public Map<String, Object> inlineInputNurseryPost(@RequestBody final Map<String, String> data, final HttpServletRequest req) {
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
-		int index = Integer.valueOf(data.get(NurseryMeasurementsController.INDEX));
-		int termId = Integer.valueOf(data.get(NurseryMeasurementsController.TERM_ID));
-		String value = data.get("value");
+		final int index = Integer.valueOf(data.get(NurseryMeasurementsController.INDEX));
+		final int termId = Integer.valueOf(data.get(NurseryMeasurementsController.TERM_ID));
+		final String value = data.get("value");
 		// for categorical
-		int isNew = Integer.valueOf(data.get("isNew"));
-		boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard")) ? true : false;
+		final int isNew = Integer.valueOf(data.get("isNew"));
+		final boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard")) ? true : false;
 
 		map.put(NurseryMeasurementsController.INDEX, index);
 
-		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+		final List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
 		tempList.addAll(userSelection.getMeasurementRowList());
 
-		MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
+		final MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
 
 		try {
 			if (!isDiscard) {
-				MeasurementRow copyRow = originalRow.copy();
+				final MeasurementRow copyRow = originalRow.copy();
 				this.copyMeasurementValue(copyRow, originalRow, isNew == 1 ? true : false);
 				// we set the data to the copy row
 				if (copyRow != null && copyRow.getMeasurementVariables() != null) {
@@ -146,9 +146,9 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 				this.updateDates(originalRow);
 			}
 			map.put(NurseryMeasurementsController.SUCCESS, "1");
-			Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
+			final Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
 			map.put(NurseryMeasurementsController.DATA, dataMap);
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			NurseryMeasurementsController.LOG.error(e.getMessage(), e);
 			map.put(NurseryMeasurementsController.SUCCESS, "0");
 			map.put(NurseryMeasurementsController.ERROR_MESSAGE, e.getMessage());
@@ -159,8 +159,8 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET)
-	public List<Map<String, Object>> nurseryMeasurementsGet(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
-		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+	public List<Map<String, Object>> nurseryMeasurementsGet(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
+		final List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
 
 		if (this.userSelection.getTemporaryWorkbook() != null && this.userSelection.getMeasurementRowList() == null) {
 			tempList.addAll(this.userSelection.getTemporaryWorkbook().getObservations());
@@ -170,11 +170,11 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 
 		form.setMeasurementRowList(tempList);
 
-		List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
+		final List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
 
-		for (MeasurementRow row : tempList) {
+		for (final MeasurementRow row : tempList) {
 
-			Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
+			final Map<String, Object> dataMap = this.generateDatatableDataMap(row, "");
 
 			masterList.add(dataMap);
 		}
@@ -186,17 +186,17 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 	 * This is the GET call to open the action dialog to edit one row.
 	 */
 	@RequestMapping(value = "/inlineinput/multiple/{index}", method = RequestMethod.GET)
-	public String inlineInputNurseryMultipleGet(@PathVariable int index,
-			@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) throws MiddlewareQueryException {
+	public String inlineInputNurseryMultipleGet(@PathVariable final int index,
+			@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form, final Model model) throws MiddlewareQueryException {
 
-		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+		final List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
 		tempList.addAll(userSelection.getMeasurementRowList());
 
-		MeasurementRow row = tempList.get(index);
-		MeasurementRow copyRow = row.copy();
+		final MeasurementRow row = tempList.get(index);
+		final MeasurementRow copyRow = row.copy();
 		this.copyMeasurementValue(copyRow, row);
 		if (copyRow != null && copyRow.getMeasurementVariables() != null) {
-			for (MeasurementData var : copyRow.getDataList()) {
+			for (final MeasurementData var : copyRow.getDataList()) {
 				if (var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null
 						&& var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
 					// we change the date to the UI format
@@ -209,21 +209,20 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
 		model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
 		model.addAttribute("numericVarId", TermId.NUMERIC_VARIABLE.getId());
-		model.addAttribute("isNursery", false); // TODO CUENYAD REMOVING ISNURSERY CONDITION
 		return super.showAjaxPage(model, "/Common/updateExperimentModal");
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/inlineinput/multiple/{index}", method = RequestMethod.POST)
-	public Map<String, Object> inlineInputNurseryMultiplePost(@PathVariable int index,
-			@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+	public Map<String, Object> inlineInputNurseryMultiplePost(@PathVariable final int index,
+			@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form) {
+		final Map<String, Object> map = new HashMap<String, Object>();
+		final List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
 		tempList.addAll(userSelection.getMeasurementRowList());
 
-		MeasurementRow row = form.getUpdateObservation();
-		MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
-		MeasurementRow copyRow = originalRow.copy();
+		final MeasurementRow row = form.getUpdateObservation();
+		final MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
+		final MeasurementRow copyRow = originalRow.copy();
 		this.copyMeasurementValue(copyRow, row);
 
 		try {
@@ -232,11 +231,11 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 			this.copyMeasurementValue(originalRow, row);
 			this.updateDates(originalRow);
 			map.put(NurseryMeasurementsController.SUCCESS, "1");
-			for (MeasurementData data : originalRow.getDataList()) {
+			for (final MeasurementData data : originalRow.getDataList()) {
 				// we set the data accepted automatically to true, if value is out out limit
 				if (data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())) {
-					Double minRange = data.getMeasurementVariable().getMinRange();
-					Double maxRange = data.getMeasurementVariable().getMaxRange();
+					final Double minRange = data.getMeasurementVariable().getMinRange();
+					final Double maxRange = data.getMeasurementVariable().getMaxRange();
 					if (minRange != null && maxRange != null && NumberUtils.isNumber(data.getValue())
 							&& (Double.parseDouble(data.getValue()) < minRange || Double.parseDouble(data.getValue()) > maxRange)) {
 						data.setAccepted(true);
@@ -244,9 +243,9 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 				}
 			}
 
-			Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
+			final Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
 			map.put(NurseryMeasurementsController.DATA, dataMap);
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			NurseryMeasurementsController.LOG.error(e.getMessage(), e);
 			map.put(NurseryMeasurementsController.SUCCESS, "0");
 			map.put(NurseryMeasurementsController.ERROR_MESSAGE, e.getMessage());
@@ -257,19 +256,19 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 
 	@ResponseBody
 	@RequestMapping(value = "/inlineinput/accepted", method = RequestMethod.POST)
-	public Map<String, Object> markExperimentCellDataAsAccepted(@RequestBody Map<String, String> data, HttpServletRequest req) {
+	public Map<String, Object> markExperimentCellDataAsAccepted(@RequestBody final Map<String, String> data, final HttpServletRequest req) {
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
-		int index = Integer.valueOf(data.get(NurseryMeasurementsController.INDEX));
-		int termId = Integer.valueOf(data.get(NurseryMeasurementsController.TERM_ID));
+		final int index = Integer.valueOf(data.get(NurseryMeasurementsController.INDEX));
+		final int termId = Integer.valueOf(data.get(NurseryMeasurementsController.TERM_ID));
 
 		map.put(NurseryMeasurementsController.INDEX, index);
 
-		MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
+		final MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
 
 		if (originalRow != null && originalRow.getMeasurementVariables() != null) {
-			for (MeasurementData var : originalRow.getDataList()) {
+			for (final MeasurementData var : originalRow.getDataList()) {
 				if (var != null && var.getMeasurementVariable().getTermId() == termId
 						&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
 								|| !var.getMeasurementVariable().getPossibleValues().isEmpty())) {
@@ -290,7 +289,7 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		}
 
 		map.put(NurseryMeasurementsController.SUCCESS, "1");
-		Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
+		final Map<String, Object> dataMap = this.generateDatatableDataMap(originalRow, "");
 		map.put(NurseryMeasurementsController.DATA, dataMap);
 
 		return map;
@@ -300,9 +299,9 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 	@RequestMapping(value = "/inlineinput/accepted/all", method = RequestMethod.GET)
 	public Map<String, Object> markAllExperimentDataAsAccepted() {
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
-		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+		for (final MeasurementRow row : userSelection.getMeasurementRowList()) {
 			if (row != null && row.getMeasurementVariables() != null) {
 				this.markNonEmptyVariateValuesAsAccepted(row.getDataList());
 			}
@@ -314,15 +313,16 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 	}
 
 	@RequestMapping(value = "/pageView/{studyType}/{pageNum}", method = RequestMethod.GET)
-	public String getPaginatedListViewOnly(@PathVariable String studyType, @PathVariable int pageNum,
-			@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, @RequestParam("listIdentifier") String datasetId) {
+	public String getPaginatedListViewOnly(@PathVariable final String studyType, @PathVariable final int pageNum,
+			@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model, @RequestParam("listIdentifier")
+	final String datasetId) {
 
-		List<MeasurementRow> rows = this.paginationListSelection.getReviewDetailsList(datasetId);
+		final List<MeasurementRow> rows = this.paginationListSelection.getReviewDetailsList(datasetId);
 		if (rows != null) {
 			form.setMeasurementRowList(rows);
 			form.changePage(pageNum);
 		}
-		List<MeasurementVariable> variables = this.paginationListSelection.getReviewVariableList(datasetId);
+		final List<MeasurementVariable> variables = this.paginationListSelection.getReviewVariableList(datasetId);
 		if (variables != null) {
 			form.setMeasurementVariables(variables);
 		}
@@ -331,8 +331,8 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		return super.showAjaxPage(model, "/NurseryManager/datasetSummaryView");
 	}
 
-	private void markNonEmptyVariateValuesAsAccepted(List<MeasurementData> measurementDataList) {
-		for (MeasurementData var : measurementDataList) {
+	private void markNonEmptyVariateValuesAsAccepted(final List<MeasurementData> measurementDataList) {
+		for (final MeasurementData var : measurementDataList) {
 			if (var != null && !StringUtils.isEmpty(var.getValue())
 					&& var.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
 				if (this.isNumericalValueOutOfBounds(var.getValue(), var.getMeasurementVariable())) {
@@ -353,8 +353,8 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		}
 	}
 
-	private void markNonEmptyVariateValuesAsMissing(List<MeasurementData> measurementDataList) {
-		for (MeasurementData var : measurementDataList) {
+	private void markNonEmptyVariateValuesAsMissing(final List<MeasurementData> measurementDataList) {
+		for (final MeasurementData var : measurementDataList) {
 			if (var != null && !StringUtils.isEmpty(var.getValue())
 					&& var.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
 				if (this.isNumericalValueOutOfBounds(var.getValue(), var.getMeasurementVariable())) {
@@ -376,7 +376,7 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		}
 	}
 
-	protected boolean isNumericalValueOutOfBounds(String value, MeasurementVariable var) {
+	protected boolean isNumericalValueOutOfBounds(final String value, final MeasurementVariable var) {
 		return var.getMinRange() != null && var.getMaxRange() != null && NumberUtils.isNumber(value)
 				&& (Double.valueOf(value) < var.getMinRange() || Double.valueOf(value) > var.getMaxRange());
 	}
@@ -384,8 +384,8 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 	@ResponseBody
 	@RequestMapping(value = "/inlineinput/missing/all", method = RequestMethod.GET)
 	public Map<String, Object> markAllExperimentDataAsMissing() {
-		Map<String, Object> map = new HashMap<String, Object>();
-		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+		final Map<String, Object> map = new HashMap<String, Object>();
+		for (final MeasurementRow row : userSelection.getMeasurementRowList()) {
 			if (row != null && row.getMeasurementVariables() != null) {
 				this.markNonEmptyVariateValuesAsMissing(row.getDataList());
 			}
@@ -394,8 +394,8 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		return map;
 	}
 
-	private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix) {
-		Map<String, Object> dataMap = new HashMap<String, Object>();
+	private Map<String, Object> generateDatatableDataMap(final MeasurementRow row, String suffix) {
+		final Map<String, Object> dataMap = new HashMap<String, Object>();
 		// the 4 attributes are needed always
 		dataMap.put("Action", Integer.toString(row.getExperimentId()));
 		dataMap.put("experimentId", Integer.toString(row.getExperimentId()));
@@ -406,9 +406,9 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		suffix = null == suffix ? "" : suffix;
 
 		// generate measurement row data from dataList (existing / generated data)
-		for (MeasurementData data : row.getDataList()) {
+		for (final MeasurementData data : row.getDataList()) {
 			if (data.isCategorical()) {
-				CategoricalDisplayValue categoricalDisplayValue = data.getDisplayValueForCategoricalData();
+				final CategoricalDisplayValue categoricalDisplayValue = data.getDisplayValueForCategoricalData();
 
 				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {categoricalDisplayValue.getName() + suffix,
 						categoricalDisplayValue.getDescription() + suffix, data.isAccepted()});
@@ -423,7 +423,7 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		// generate measurement row data from newly added traits (no data yet)
 		if (this.userSelection != null && this.userSelection.getMeasurementDatasetVariable() != null
 				&& !this.userSelection.getMeasurementDatasetVariable().isEmpty()) {
-			for (MeasurementVariable var : this.userSelection.getMeasurementDatasetVariable()) {
+			for (final MeasurementVariable var : this.userSelection.getMeasurementDatasetVariable()) {
 				if (!dataMap.containsKey(var.getName())) {
 					if (var.getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
 						dataMap.put(var.getName(), new Object[] {"", "", true});
@@ -436,32 +436,31 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		return dataMap;
 	}
 
-	private void updateModel(Model model, boolean isNursery, MeasurementData measurementData, int index, int termId,
-			List<ValueReference> possibleValues) {
+	private void updateModel(final Model model, final MeasurementData measurementData, final int index, final int termId,
+			final List<ValueReference> possibleValues) {
 		model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
 		model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
 		model.addAttribute("numericVarId", TermId.NUMERIC_VARIABLE.getId());
-		model.addAttribute("isNursery", isNursery);
 		model.addAttribute("measurementData", measurementData);
 		model.addAttribute(NurseryMeasurementsController.INDEX, index);
 		model.addAttribute(NurseryMeasurementsController.TERM_ID, termId);
 		model.addAttribute("possibleValues", possibleValues);
 	}
 
-	protected void copyMeasurementValue(MeasurementRow origRow, MeasurementRow valueRow) {
+	protected void copyMeasurementValue(final MeasurementRow origRow, final MeasurementRow valueRow) {
 		this.copyMeasurementValue(origRow, valueRow, false);
 	}
 
-	protected void copyMeasurementValue(MeasurementRow origRow, MeasurementRow valueRow, boolean isNew) {
+	protected void copyMeasurementValue(final MeasurementRow origRow, final MeasurementRow valueRow, final boolean isNew) {
 
 		for (int index = 0; index < origRow.getDataList().size(); index++) {
-			MeasurementData data = origRow.getDataList().get(index);
-			MeasurementData valueRowData = valueRow.getDataList().get(index);
+			final MeasurementData data = origRow.getDataList().get(index);
+			final MeasurementData valueRowData = valueRow.getDataList().get(index);
 			this.copyMeasurementDataValue(data, valueRowData, isNew);
 		}
 	}
 
-	private void copyMeasurementDataValue(MeasurementData oldData, MeasurementData newData, boolean isNew) {
+	private void copyMeasurementDataValue(final MeasurementData oldData, final MeasurementData newData, final boolean isNew) {
 		if (oldData.getMeasurementVariable().getPossibleValues() != null
 				&& !oldData.getMeasurementVariable().getPossibleValues().isEmpty()) {
 			oldData.setAccepted(newData.isAccepted());
@@ -496,12 +495,12 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		}
 	}
 
-	private boolean isCategoricalValueOutOfBounds(String cValueId, String value, List<ValueReference> possibleValues) {
+	private boolean isCategoricalValueOutOfBounds(final String cValueId, final String value, final List<ValueReference> possibleValues) {
 		String val = cValueId;
 		if (val == null) {
 			val = value;
 		}
-		for (ValueReference ref : possibleValues) {
+		for (final ValueReference ref : possibleValues) {
 			if (ref.getKey().equals(val)) {
 				return false;
 			}
@@ -533,7 +532,7 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 		}
 	}
 
-	private void convertToUIDateIfDate(MeasurementData var) {
+	private void convertToUIDateIfDate(final MeasurementData var) {
 		if (var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null
 				&& var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
 			var.setValue(DateUtil.convertToUIDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));

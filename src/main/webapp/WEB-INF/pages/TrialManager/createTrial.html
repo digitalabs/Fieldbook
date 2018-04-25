@@ -367,7 +367,7 @@
 
 
 	<!-- CURRENT TAB CONTENT -->
-	<div class="row fb-tabs" id="manage-trial-tabs" style="padding-top: 15px;">
+	<div class="row fb-tabs" id="manage-study-tabs" style="padding-top: 15px;">
 		<div class="info">
 			<div class="col-xs-12" ui-view="" ng-show="isSettingsTab"></div>
 			<div class="col-xs-12" ui-view="germplasm" ng-show="tabSelected==='germplasm'"></div>
@@ -563,8 +563,8 @@
 		var addNurseryLevelSettings = /*[[#{trial.managesettings.add.trial.level.settings}]]*/ '';
 		var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '';
 		var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '';
-		var addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/ '';
-		var addTreatmentFactors = /*[[#{trial.managesettings.treatment.factors.add}]]*/ '';
+		var addStudyEnvironmentTraits = /*[[#{nursery.managesettings.add.study.environment.variable}]]*/ '';
+		var addTreatmentFactors = /*[[#{study.managesettings.treatment.factors.add}]]*/ '';
 		var deleteTemplateSettingError = /*[[#{manage.settings.delete.error}]]*/ '';
 		var deleteTemplateSettingSuccess = /*[[#{manage.settings.delete.success}]]*/ '';
 		var saveTemplateSettingSuccess = /*[[#{manage.settings.save.setting.success}]]*/ '';

@@ -524,7 +524,7 @@ tr.trialInstance {
 	padding-left: 20px;
 }
 
-#nursery-table, #trial-table{
+#trial-table{
     table-layout: fixed;
 }
 #ontology-tab-headers{
@@ -960,14 +960,14 @@ div.sectionContainer {
     margin-top: -2px;
 }
 
-#create-nursery-tabs, #manage-trial-tabs {
+#create-nursery-tabs, #manage-study-tabs {
     min-height: 460px;
     background-color: #f6f6f6;
     border:1px solid #e4e4e4;
     border-top: 0px;
 }
 
-#manage-trial-tabs .form-control[type=number] {
+#manage-study-tabs .form-control[type=number] {
     display: inline;
 
 }
@@ -2016,7 +2016,7 @@ input.select-all-margin{
 .ontology-no-range {
     margin-left: 5%;
 }
-#manage-trial-tabs #germplasm-list-pagination {
+#manage-study-tabs #germplasm-list-pagination {
     opacity: 1 !important;
 }
 

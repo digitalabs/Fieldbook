@@ -2,7 +2,7 @@
 // TODO Once a draggable approach is found, implement in angularjs for studies and angular 2 for new components
 var TreeTable = (function () {
 
-	var self;
+	var self; // FIXME self is static here. Rewrite to allow multiple copies of treetable
 	var resolved = $.Deferred().resolve().promise();
 
 

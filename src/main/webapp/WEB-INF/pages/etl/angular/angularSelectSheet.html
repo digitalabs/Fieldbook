@@ -135,7 +135,7 @@
                     </div>
                 </div>
                 
-                <div class="form-group" ng:show="trialIsSelected()">
+                <div class="form-group">
                     <label for="selectDatasetType" class="col-md-2 control-label required" th:text="#{study.name.dataset.type.label}">Dataset Type</label>
 
                     <div class="col-md-10">
@@ -454,10 +454,7 @@ angular.module('di-consolidatedStep', ['digitalabs-util','di-directives', 'digit
                 $scope.showError = function (ngModelController) {
                     return $scope.userAttemptedSubmission && $scope.currentErrorField === ngModelController;
                 };
-                
-                $scope.trialIsSelected = function () {
-                    return $scope.selected.studyDetails.studyType && $scope.selected.studyDetails.studyType == 'T';
-                };
+            
             }])
             .factory('Rows', ['resourceFactory', function (resourceFactory) {
                 return resourceFactory('step2/displayRow');

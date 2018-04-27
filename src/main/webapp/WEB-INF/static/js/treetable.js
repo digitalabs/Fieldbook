@@ -314,6 +314,7 @@ var TreeTable = (function () {
 				$('.delete-folder', self.context).addClass('disable-image');
 				if ($(this).attr('data-tt-id') === 'CROPLISTS') {
 					$('.create-folder', self.context).addClass('disable-image');
+					self.hideFolderDiv('#addFolderDiv');
 				}
 				self.hideFolderDiv('#renameFolderDiv');
 			} else if ($(this).attr('num-of-children') !== '0') {

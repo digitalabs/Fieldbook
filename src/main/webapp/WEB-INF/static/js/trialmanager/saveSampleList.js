@@ -19,6 +19,13 @@ var SaveSampleList = {};
 
 	SaveSampleList.initializeSampleListTree = function() {
 		displaySampleListTree('sampleFolderTree', true, 1);
+		$('#sampleFolderTree').off('bms.tree.node.activate').on('bms.tree.node.activate', function () {
+			var id = $('#sampleFolderTree').dynatree('getTree').getActiveNode().data.key;
+			if (id == 'CROPLISTS') {
+				ListTreeOperation.hideFolderDiv('#addSampleFolderDiv');
+				ListTreeOperation.hideFolderDiv('#renameSampleFolderDiv');
+			}
+		});
 		changeBrowseSampleButtonBehavior(false);
 		$('#saveSampleListTreeModal').off('hide.bs.modal');
 		$('#saveSampleListTreeModal').on('hide.bs.modal', function() {

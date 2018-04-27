@@ -283,6 +283,8 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 						+ hasChildrenString);
 				} else if (node.data.key === 'CROPLISTS' && sourceNode.data.isFolder) {
 					showErrorMessage(getMessageErrorDiv(), cannotMoveFolderToCropListError);
+                } else if (!node.data.isFolder) {
+                    showErrorMessage(getMessageErrorDiv(), cannotMoveItemToAListError);
 				} else {
 					$.ajax({
 						url : lazyLoadUrlGetChildren

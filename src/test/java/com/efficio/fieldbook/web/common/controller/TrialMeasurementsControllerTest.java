@@ -348,7 +348,6 @@ public class TrialMeasurementsControllerTest {
 		assertThat(TermId.CATEGORICAL_VARIABLE.getId(), is(equalTo(model.get("categoricalVarId"))));
 		assertThat(TermId.DATE_VARIABLE.getId(), is(equalTo(model.get("dateVarId"))));
 		assertThat(TermId.NUMERIC_VARIABLE.getId(), is(equalTo(model.get("numericVarId"))));
-		assertThat(false, is(equalTo(model.get("isNursery"))));
 		assertThat(variableText, is(equalTo(model.get("variable"))));
 		assertThat(experimentId, is(equalTo(model.get(EXPERIMENT_ID))));
 		assertThat((List<?>)model.get("possibleValues"), hasSize(0));
@@ -390,7 +389,6 @@ public class TrialMeasurementsControllerTest {
 		assertThat(TermId.CATEGORICAL_VARIABLE.getId(), is(equalTo(model.get("categoricalVarId"))));
 		assertThat(TermId.DATE_VARIABLE.getId(), is(equalTo(model.get("dateVarId"))));
 		assertThat(TermId.NUMERIC_VARIABLE.getId(), is(equalTo(model.get("numericVarId"))));
-		assertThat(false, is(equalTo(model.get("isNursery"))));
 		assertThat((List<?>)model.get("possibleValues"), hasSize(0));
 		assertThat(0, is(equalTo(model.get("phenotypeId"))));
 		assertThat(phenotpevalue, is(equalTo(model.get("phenotypeValue"))));

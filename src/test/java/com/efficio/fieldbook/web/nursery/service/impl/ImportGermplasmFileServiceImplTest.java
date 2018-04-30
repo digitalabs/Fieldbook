@@ -331,7 +331,7 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 		List<ImportedGermplasm> formImportedGermplasm = this.generateFormImportedGermplasmNoCheck();
 		List<ImportedGermplasm> sessionImportedGermplasm = this.generateImportedGermplasm();
 
-		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection, true);
+		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection, false);
 
 		for (ImportedGermplasm item : sessionImportedGermplasm) {
 			int index = sessionImportedGermplasm.indexOf(item);

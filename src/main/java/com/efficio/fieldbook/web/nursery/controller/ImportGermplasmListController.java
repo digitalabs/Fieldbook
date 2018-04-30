@@ -1632,17 +1632,16 @@ public class ImportGermplasmListController extends SettingsController {
 			final ImportGermplasmListForm form) {
 
 		this.processChecks(userSelection, form);
-
 		if (userSelection.getImportedGermplasmMainInfo() != null) {
 
 			this.copyImportedGermplasmFromUserSelectionToForm(userSelection, form);
 
 			this.mergePrimaryAndCheckGermplasmList(userSelection, form);
-
+			final boolean hasCheck = form.getSelectedCheck() != null && form.getSelectedCheck().length !=0;
 			// This would validate and add CHECK factor if necessary
 			this.importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(),
 					userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
-					userSelection);
+					userSelection, hasCheck);
 
 			if (userSelection.getStartingEntryNo() == null) {
 				userSelection.setStartingEntryNo(

@@ -541,16 +541,14 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 	 */
 	@Override
 	public void validataAndAddCheckFactor(List<ImportedGermplasm> formImportedGermplasmsm, List<ImportedGermplasm> importedGermplasms,
-			UserSelection userSelection) throws MiddlewareException {
+			UserSelection userSelection, boolean hasCheck) throws MiddlewareException {
 		long start = System.currentTimeMillis();
-		boolean hasCheck = false;
 		List<ImportedGermplasm> sessionImportedGermplasmList = importedGermplasms;
 		for (int i = 0; i < formImportedGermplasmsm.size(); i++) {
 			ImportedGermplasm germplasm = formImportedGermplasmsm.get(i);
 			String checkVal = "";
 			if (germplasm.getEntryTypeValue() != null && !"".equalsIgnoreCase(germplasm.getEntryTypeValue())) {
 				checkVal = germplasm.getEntryTypeValue();
-				hasCheck = true;
 			}
 			sessionImportedGermplasmList.get(i).setEntryTypeValue(checkVal);
 			sessionImportedGermplasmList.get(i).setEntryTypeCategoricalID(germplasm.getEntryTypeCategoricalID());

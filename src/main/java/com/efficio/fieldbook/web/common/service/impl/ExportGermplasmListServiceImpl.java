@@ -298,20 +298,35 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 		final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 		final List<ImportedGermplasm> listData = this.getImportedGermplasm();
-
+		final List<ValueReference> possibleValues =
+				this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId());
 		for (final ImportedGermplasm data : listData) {
 			final Map<Integer, ExportColumnValue> row = new HashMap<>();
 
 			for (final SettingDetail settingDetail : factorsList) {
 				final Integer termId = settingDetail.getVariable().getCvTermId();
-				row.put(termId, new ExportColumnValue(termId,
-						this.getGermplasmInfo(settingDetail.getVariable().getCvTermId().toString(), data, settingDetail)));
+				if(termId == TermId.ENTRY_TYPE.getId()) {
+					row.put(termId, new ExportColumnValue(termId,
+							this.getEntryTypeValue(data, possibleValues)));
+				} else {
+					row.put(termId, new ExportColumnValue(termId,
+							this.getGermplasmInfo(settingDetail.getVariable().getCvTermId().toString(), data, settingDetail)));
+				}
 			}
 
 			exportColumnValues.add(row);
 		}
 
 		return exportColumnValues;
+	}
+
+	protected String getEntryTypeValue(ImportedGermplasm germplasm, List<ValueReference> possibleValues) {
+		for (final ValueReference possibleValue : possibleValues) {
+			if (possibleValue.getId().equals(Integer.valueOf(germplasm.getEntryTypeValue()))) {
+				return possibleValue.getName();
+			}
+		}
+		return germplasm.getEntryTypeValue();
 	}
 
 	protected List<ImportedGermplasm> getImportedGermplasm() {
@@ -334,30 +349,12 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 				val = germplasm.getCross().toString();
 			} else if (term.intValue() == TermId.DESIG.getId()) {
 				val = germplasm.getDesig().toString();
-			} else if (term.intValue() == TermId.CHECK.getId()) {
-				// get the code of ENTRY_TYPE - CATEGORICAL FACTOR
-				val = this.getCategoricalCodeValue(germplasm, settingDetail);
 			} else if (term == TermId.GROUPGID.getId()) {
 				val = germplasm.getMgid().toString();
 			} else if (term == TermId.STOCKID.getId()) {
 				val = germplasm.getStockIDs().toString();
 			}
 		}
-		return val;
-	}
-
-	protected String getCategoricalCodeValue(final ImportedGermplasm germplasm, final SettingDetail settingDetail) {
-		String val = "";
-		if (settingDetail.getPossibleValues() != null) {
-			for (final ValueReference possibleValue : settingDetail.getPossibleValues()) {
-				if (possibleValue.getId().equals(Integer.valueOf(germplasm.getEntryTypeValue().toString()))) {
-					val = possibleValue.getName();
-				}
-			}
-		} else {
-			val = germplasm.getEntryTypeValue().toString();
-		}
-
 		return val;
 	}
 

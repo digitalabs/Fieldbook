@@ -348,6 +348,24 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
+			} else if ($(this).data('col-name') == '8255-key') {
+				// For check
+				columnsDef.push({
+					targets: columns.length - 1,
+					data: $(this).data('col-name'),
+					render: function(data, type, full, meta) {
+						var count = 0,
+							actualVal = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+						for (count = 0 ; count < full.checkOptions.length ; count++) {
+							if (full.checkOptions[count].id == full['8255-key']) {
+								actualVal = full.checkOptions[count].description;
+								break;
+							}
+						}
+
+						return actualVal;
+					}
+				});
 			}
 		});
 

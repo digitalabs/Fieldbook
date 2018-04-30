@@ -220,7 +220,7 @@ public class ImportGermplasmListControllerTest {
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListControllerTest.ENTRY_NO_FACTOR));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY_CODE));
-			Assert.assertEquals("", map.get(ImportGermplasmListController.CHECK));
+			Assert.assertEquals("1", map.get(ImportGermplasmListController.CHECK));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
 			x++;
 		}
@@ -311,7 +311,7 @@ public class ImportGermplasmListControllerTest {
 					map.get(ImportGermplasmListController.POSITION));
 			Assert.assertEquals("The entry code's value should be " + x, String.valueOf(x),
 					map.get(ImportGermplasmListController.ENTRY_CODE));
-			Assert.assertEquals("The check's value should be empty string", "",
+			Assert.assertEquals("The check's value should be 1", "1",
 					map.get(ImportGermplasmListController.CHECK));
 			Assert.assertEquals("The entry's value should be " + x, String.valueOf(x),
 					map.get(ImportGermplasmListController.ENTRY));
@@ -354,7 +354,7 @@ public class ImportGermplasmListControllerTest {
 		for (final Map<String, Object> map : listDataTable) {
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY_CODE));
-			Assert.assertEquals("", map.get(ImportGermplasmListController.CHECK));
+			Assert.assertEquals(1, map.get(ImportGermplasmListController.CHECK));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
 			Assert.assertEquals(this.checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
 			Assert.assertEquals("DESIGNATION" + x, map.get(ImportGermplasmListControllerTest.DESIGNATION_FACTOR));
@@ -598,10 +598,10 @@ public class ImportGermplasmListControllerTest {
 		final List<ImportedGermplasm> importedGermplasmList = this.userSelection.getImportedCheckGermplasmMainInfo()
 				.getImportedGermplasmList().getImportedGermplasms();
 
-		Assert.assertEquals("10180", importedGermplasmList.get(0).getEntryTypeValue());
+		Assert.assertEquals("C", importedGermplasmList.get(0).getEntryTypeValue());
 		Assert.assertEquals(10180, importedGermplasmList.get(0).getEntryTypeCategoricalID().intValue());
 
-		Assert.assertEquals("10180", importedGermplasmList.get(1).getEntryTypeValue());
+		Assert.assertEquals("C", importedGermplasmList.get(1).getEntryTypeValue());
 		Assert.assertEquals(10180, importedGermplasmList.get(1).getEntryTypeCategoricalID().intValue());
 
 	}
@@ -630,7 +630,7 @@ public class ImportGermplasmListControllerTest {
 		Mockito.verify(this.importGermplasmFileService)
 				.validataAndAddCheckFactor(form.getImportedGermplasm(), this.userSelection
 						.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
-						this.userSelection);
+						this.userSelection, false);
 		Mockito.verify(this.measurementsGeneratorService).generateRealMeasurementRows(this.userSelection);
 		Mockito.verify(this.fieldbookService).manageCheckVariables(this.userSelection, form);
 

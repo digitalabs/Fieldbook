@@ -56,5 +56,5 @@ public interface ImportGermplasmFileService {
 	void doProcessNow(Workbook workbook, ImportedGermplasmMainInfo mainInfo) throws Exception;
 
 	void validataAndAddCheckFactor(List<ImportedGermplasm> formImportedGermplasmsm, List<ImportedGermplasm> importedGermplasms,
-			UserSelection userSelection) throws MiddlewareException;
+			UserSelection userSelection, boolean hasCheck) throws MiddlewareException;
 }

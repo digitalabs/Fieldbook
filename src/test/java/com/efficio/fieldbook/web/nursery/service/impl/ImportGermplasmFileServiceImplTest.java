@@ -308,7 +308,7 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 		userSelection.getWorkbook().setVariates(new ArrayList<MeasurementVariable>());
 		userSelection.setImportedGermplasmMainInfo(mainInfo);
 		this.realImportGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), userSelection
-				.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
+				.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection, true);
 		// no check factor yet
 		Assert.assertEquals(0, userSelection.getWorkbook().getMeasurementDatasetVariables().size());
 		// we now need to add check
@@ -331,7 +331,7 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 		List<ImportedGermplasm> formImportedGermplasm = this.generateFormImportedGermplasmNoCheck();
 		List<ImportedGermplasm> sessionImportedGermplasm = this.generateImportedGermplasm();
 
-		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection);
+		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection, false);
 
 		for (ImportedGermplasm item : sessionImportedGermplasm) {
 			int index = sessionImportedGermplasm.indexOf(item);
@@ -354,7 +354,7 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 		List<ImportedGermplasm> formImportedGermplasm = this.generateFormImportedGermplasmNoCheck();
 		List<ImportedGermplasm> sessionImportedGermplasm = this.generateImportedGermplasm();
 
-		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection);
+		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection, false);
 
 		for (ImportedGermplasm item : sessionImportedGermplasm) {
 			int index = sessionImportedGermplasm.indexOf(item);
@@ -379,7 +379,7 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 		Mockito.doReturn(this.generateCheckStandardVariable()).when(this.fieldbookMiddlewareService)
 				.getStandardVariable(Matchers.anyInt(), Matchers.anyString());
 
-		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection);
+		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection, true);
 
 		for (ImportedGermplasm item : sessionImportedGermplasm) {
 			int index = sessionImportedGermplasm.indexOf(item);
@@ -409,7 +409,7 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 				.getStandardVariableIdByPropertyScaleMethodRole(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
 						Matchers.any(PhenotypicType.class));
 
-		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection);
+		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection, true);
 
 		for (ImportedGermplasm item : sessionImportedGermplasm) {
 			int index = sessionImportedGermplasm.indexOf(item);

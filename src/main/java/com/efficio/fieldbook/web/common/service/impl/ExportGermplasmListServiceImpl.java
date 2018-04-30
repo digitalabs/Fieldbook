@@ -1,10 +1,16 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.controller.ExportGermplasmListController;
-import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -33,14 +39,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.controller.ExportGermplasmListController;
+import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
 
 @Configurable
 public class ExportGermplasmListServiceImpl implements ExportGermplasmListService {
@@ -70,6 +72,9 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 	@Resource
 	private InventoryDataManager inventoryDataManager;
+
+	@Resource
+	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
 	public ExportGermplasmListServiceImpl() {
 
@@ -120,7 +125,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		this.setExportListTypeFromOriginalGermplasm(germplasmList);
 
 		final List<ValueReference> possibleValues =
-				this.getPossibleValues(this.userSelection.getPlotsLevelList(), TermId.ENTRY_TYPE.getId());
+				this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId());
 		this.processEntryTypeCode(germplasmlistData, possibleValues);
 
 		input.setGermplasmList(germplasmList);
@@ -293,20 +298,35 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 		final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 		final List<ImportedGermplasm> listData = this.getImportedGermplasm();
-
+		final List<ValueReference> possibleValues =
+				this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId());
 		for (final ImportedGermplasm data : listData) {
 			final Map<Integer, ExportColumnValue> row = new HashMap<>();
 
 			for (final SettingDetail settingDetail : factorsList) {
 				final Integer termId = settingDetail.getVariable().getCvTermId();
-				row.put(termId, new ExportColumnValue(termId,
-						this.getGermplasmInfo(settingDetail.getVariable().getCvTermId().toString(), data, settingDetail)));
+				if(termId == TermId.ENTRY_TYPE.getId()) {
+					row.put(termId, new ExportColumnValue(termId,
+							this.getEntryTypeValue(data, possibleValues)));
+				} else {
+					row.put(termId, new ExportColumnValue(termId,
+							this.getGermplasmInfo(settingDetail.getVariable().getCvTermId().toString(), data, settingDetail)));
+				}
 			}
 
 			exportColumnValues.add(row);
 		}
 
 		return exportColumnValues;
+	}
+
+	protected String getEntryTypeValue(ImportedGermplasm germplasm, List<ValueReference> possibleValues) {
+		for (final ValueReference possibleValue : possibleValues) {
+			if (possibleValue.getId().equals(Integer.valueOf(germplasm.getEntryTypeValue()))) {
+				return possibleValue.getName();
+			}
+		}
+		return germplasm.getEntryTypeValue();
 	}
 
 	protected List<ImportedGermplasm> getImportedGermplasm() {
@@ -329,30 +349,12 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 				val = germplasm.getCross().toString();
 			} else if (term.intValue() == TermId.DESIG.getId()) {
 				val = germplasm.getDesig().toString();
-			} else if (term.intValue() == TermId.CHECK.getId()) {
-				// get the code of ENTRY_TYPE - CATEGORICAL FACTOR
-				val = this.getCategoricalCodeValue(germplasm, settingDetail);
 			} else if (term == TermId.GROUPGID.getId()) {
 				val = germplasm.getMgid().toString();
 			} else if (term == TermId.STOCKID.getId()) {
 				val = germplasm.getStockIDs().toString();
 			}
 		}
-		return val;
-	}
-
-	protected String getCategoricalCodeValue(final ImportedGermplasm germplasm, final SettingDetail settingDetail) {
-		String val = "";
-		if (settingDetail.getPossibleValues() != null) {
-			for (final ValueReference possibleValue : settingDetail.getPossibleValues()) {
-				if (possibleValue.getId().equals(Integer.valueOf(germplasm.getEntryTypeValue().toString()))) {
-					val = possibleValue.getName();
-				}
-			}
-		} else {
-			val = germplasm.getEntryTypeValue().toString();
-		}
-
 		return val;
 	}
 

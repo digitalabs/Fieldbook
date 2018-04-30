@@ -20,6 +20,7 @@ import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.pojo.GermplasmListExportInputValues;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitializer;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -128,6 +129,9 @@ public class ExportGermplasmListServiceTest {
 
 	@Mock
 	InventoryDataManager inventoryDataManager;
+	
+	@Mock
+	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
 	@InjectMocks
 	private ExportGermplasmListServiceImpl exportGermplasmListServiceImpl;
@@ -176,6 +180,7 @@ public class ExportGermplasmListServiceTest {
 
 		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.STOCKID.getId(), false, false)).thenReturn(this.createVariable(TermId.STOCKID.getId()));
 		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.SEED_AMOUNT_G.getId(), false, false)).thenReturn(this.createVariable(TermId.SEED_AMOUNT_G.getId()));
+		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId())).thenReturn(ValueReferenceTestDataInitializer.createPossibleValues());
 
 	}
 
@@ -327,9 +332,7 @@ public class ExportGermplasmListServiceTest {
 	}
 
 	@Test
-	public void testGetCategoricalCodeValue() {
-		final SettingDetail settingDetail = this.generateSettingDetail(TermId.CHECK.getId());
-
+	public void testGetEntryTypeValue() {
 		final List<ValueReference> possibleValues = new ArrayList<>();
 		final ValueReference valReference = new ValueReference();
 		valReference.setId(Integer.valueOf(ExportGermplasmListServiceTest.CHECK_VALUE));
@@ -337,24 +340,11 @@ public class ExportGermplasmListServiceTest {
 		valReference.setName(ExportGermplasmListServiceTest.CATEG_CODE_VALUE);
 		possibleValues.add(valReference);
 
-		settingDetail.setPossibleValues(possibleValues);
-
 		final String categValue =
-				this.exportGermplasmListServiceImpl.getCategoricalCodeValue(this.generateImportedGermplasm(), settingDetail);
+				this.exportGermplasmListServiceImpl.getEntryTypeValue(this.generateImportedGermplasm(), possibleValues);
 
 		Assert.assertEquals(ExportGermplasmListServiceTest.CATEG_CODE_VALUE, categValue);
 
-	}
-
-	@Test
-	public void testGetCategoricalCodeValuePossibleValuesIsNull() {
-		final SettingDetail settingDetail = this.generateSettingDetail(TermId.CHECK.getId());
-		settingDetail.setPossibleValues(null);
-
-		final String categValue =
-				this.exportGermplasmListServiceImpl.getCategoricalCodeValue(this.generateImportedGermplasm(), settingDetail);
-
-		Assert.assertEquals(ExportGermplasmListServiceTest.CHECK_VALUE, categValue);
 	}
 
 	@Test
@@ -592,6 +582,7 @@ public class ExportGermplasmListServiceTest {
 		importedGermplasm.setSource(ExportGermplasmListServiceTest.SOURCE_VALUE);
 		importedGermplasm.setCross(ExportGermplasmListServiceTest.CROSS_VALUE);
 		importedGermplasm.setDesig(ExportGermplasmListServiceTest.DESIG_VALUE);
+		importedGermplasm.setEntryTypeValue("1");
 		importedGermplasms.add(importedGermplasm);
 
 		return importedGermplasms;

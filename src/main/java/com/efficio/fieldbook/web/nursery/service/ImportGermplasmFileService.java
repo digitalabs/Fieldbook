@@ -24,24 +24,28 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 
 /**
  * The Interface ImportGermplasmFileService.
- * 
+ *
  * @author Daniel Jao
  */
 public interface ImportGermplasmFileService {
 
 	/**
-	 * Takes in an MultipartFile that was uploaded by the user, and returns the ImportedGermplasmMainInfo for the information needed.
+	 * Takes in an MultipartFile that was uploaded by the user, and returns the
+	 * ImportedGermplasmMainInfo for the information needed.
 	 *
-	 * @param multipartFile the multipart file
+	 * @param multipartFile
+	 *            the multipart file
 	 * @return the imported germplasm main info
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	ImportedGermplasmMainInfo storeImportGermplasmWorkbook(MultipartFile multipartFile) throws IOException;
 
 	/**
 	 * Process workbook.
 	 *
-	 * @param mainInfo the main info
+	 * @param mainInfo
+	 *            the main info
 	 * @return the imported germplasm main info
 	 */
 	ImportedGermplasmMainInfo processWorkbook(ImportedGermplasmMainInfo mainInfo);
@@ -49,12 +53,16 @@ public interface ImportGermplasmFileService {
 	/**
 	 * Do process now.
 	 *
-	 * @param workbook the workbook
-	 * @param mainInfo the main info
-	 * @throws Exception the exception
+	 * @param workbook
+	 *            the workbook
+	 * @param mainInfo
+	 *            the main info
+	 * @throws Exception
+	 *             the exception
 	 */
 	void doProcessNow(Workbook workbook, ImportedGermplasmMainInfo mainInfo) throws Exception;
 
-	void validataAndAddCheckFactor(List<ImportedGermplasm> formImportedGermplasmsm, List<ImportedGermplasm> importedGermplasms,
-			UserSelection userSelection, boolean hasCheck) throws MiddlewareException;
+	void validataAndAddCheckFactor(List<ImportedGermplasm> formImportedGermplasmsm,
+			List<ImportedGermplasm> importedGermplasms, UserSelection userSelection, boolean hasCheck)
+			throws MiddlewareException;
 }

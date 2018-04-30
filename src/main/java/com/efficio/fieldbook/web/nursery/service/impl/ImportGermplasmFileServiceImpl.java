@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
+ *
+ *
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.nursery.service.impl;
@@ -52,8 +52,9 @@ import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The Class ImportGermplasmFileServiceImpl.
- * 
- * @author Daniel Jao This should parse the import file from the user. Can handle basic and advance file format
+ *
+ * @author Daniel Jao This should parse the import file from the user. Can
+ *         handle basic and advance file format
  */
 @SuppressWarnings("unused")
 public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileService {
@@ -118,16 +119,18 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
-	 * com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#storeImportGermplasmWorkbook(org.springframework.web.multipart
+	 * com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#
+	 * storeImportGermplasmWorkbook(org.springframework.web.multipart
 	 * .MultipartFile)
 	 */
 	@Override
-	public ImportedGermplasmMainInfo storeImportGermplasmWorkbook(MultipartFile multipartFile) throws IOException {
-		ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+	public ImportedGermplasmMainInfo storeImportGermplasmWorkbook(final MultipartFile multipartFile)
+			throws IOException {
+		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 
-		String filename = this.getFileService().saveTemporaryFile(multipartFile.getInputStream());
+		final String filename = this.getFileService().saveTemporaryFile(multipartFile.getInputStream());
 
 		mainInfo.setServerFilename(filename);
 		mainInfo.setOriginalFilename(multipartFile.getOriginalFilename());
@@ -137,7 +140,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/**
 	 * Gets the file service.
-	 * 
+	 *
 	 * @return the file service
 	 */
 	public FileService getFileService() {
@@ -146,18 +149,20 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#processWorkbook(org.generationcp.commons.parsing.pojo.
+	 *
+	 * @see
+	 * com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#
+	 * processWorkbook(org.generationcp.commons.parsing.pojo.
 	 * ImportedGermplasmMainInfo)
 	 */
 	@Override
-	public ImportedGermplasmMainInfo processWorkbook(ImportedGermplasmMainInfo mainInfo) {
+	public ImportedGermplasmMainInfo processWorkbook(final ImportedGermplasmMainInfo mainInfo) {
 
 		try {
 			this.wb = this.getFileService().retrieveWorkbook(mainInfo.getServerFilename());
 			this.doProcessNow(this.wb, mainInfo);
 
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			ImportGermplasmFileServiceImpl.LOG.error("File not found", e);
 		} catch (InvalidFormatException | IOException e) {
 			ImportGermplasmFileServiceImpl.LOG.error(e.getMessage(), e);
@@ -173,13 +178,16 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/**
 	 * Do process now. This would be used for the junit testing
-	 * 
-	 * @param workbook the workbook
-	 * @param mainInfo the main info
-	 * @throws Exception the exception
+	 *
+	 * @param workbook
+	 *            the workbook
+	 * @param mainInfo
+	 *            the main info
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Override
-	public void doProcessNow(Workbook workbook, ImportedGermplasmMainInfo mainInfo) {
+	public void doProcessNow(final Workbook workbook, final ImportedGermplasmMainInfo mainInfo) {
 		this.wb = workbook;
 		this.currentSheet = 0;
 		this.currentRow = 0;
@@ -234,22 +242,23 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 		// Check if columns ENTRY and DESIG is present
 		if (this.importedGermplasmList.getImportedFactors() != null) {
 			for (int col = 0; col < this.importedGermplasmList.getImportedFactors().size(); col++) {
-				if (this.getCellStringValue(this.currentSheet, this.currentRow, col, true).equalsIgnoreCase(AppConstants.ENTRY.getString())) {
+				if (this.getCellStringValue(this.currentSheet, this.currentRow, col, true)
+						.equalsIgnoreCase(AppConstants.ENTRY.getString())) {
 					entryColumnIsPresent = true;
-				} else if (this.getCellStringValue(this.currentSheet, this.currentRow, col, true).equalsIgnoreCase(
-						AppConstants.DESIGNATION.getString())) {
+				} else if (this.getCellStringValue(this.currentSheet, this.currentRow, col, true)
+						.equalsIgnoreCase(AppConstants.DESIGNATION.getString())) {
 					desigColumnIsPresent = true;
-				} else if (this.getCellStringValue(this.currentSheet, this.currentRow, col, true).equalsIgnoreCase(
-						AppConstants.GID.getString())) {
+				} else if (this.getCellStringValue(this.currentSheet, this.currentRow, col, true)
+						.equalsIgnoreCase(AppConstants.GID.getString())) {
 					desigGidIsPresent = true;
-				} else if (this.getCellStringValue(this.currentSheet, this.currentRow, col, true).equalsIgnoreCase(
-						AppConstants.CROSS.getString())) {
+				} else if (this.getCellStringValue(this.currentSheet, this.currentRow, col, true)
+						.equalsIgnoreCase(AppConstants.CROSS.getString())) {
 					desigCrossIsPresent = true;
-				} else if (this.getCellStringValue(this.currentSheet, this.currentRow, col, true).equalsIgnoreCase(
-						AppConstants.SOURCE.getString())) {
+				} else if (this.getCellStringValue(this.currentSheet, this.currentRow, col, true)
+						.equalsIgnoreCase(AppConstants.SOURCE.getString())) {
 					desigSourcePresent = true;
-				} else if (this.getCellStringValue(this.currentSheet, this.currentRow, col, true).equalsIgnoreCase(
-						AppConstants.ENTRY_CODE.getString())) {
+				} else if (this.getCellStringValue(this.currentSheet, this.currentRow, col, true)
+						.equalsIgnoreCase(AppConstants.ENTRY_CODE.getString())) {
 					desigEntryCodePresent = true;
 				}
 			}
@@ -266,7 +275,8 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 			} else if (!desigGidIsPresent && !desigCrossIsPresent && !desigSourcePresent && !desigEntryCodePresent) {
 				// do nothing
 			} else {
-				this.showInvalidFileError("CROSS or SOURCE or GID or ENTRY CODE column missing " + "from Observation sheet.");
+				this.showInvalidFileError(
+						"CROSS or SOURCE or GID or ENTRY CODE column missing " + "from Observation sheet.");
 				ImportGermplasmFileServiceImpl.LOG.debug("Invalid file on missing ENTRY or DESIG on readSheet2");
 			}
 		}
@@ -280,27 +290,32 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 				for (int col = 0; col < this.importedGermplasmList.getImportedFactors().size(); col++) {
 					if (this.importedGermplasmList.getImportedFactors().get(col).getFactor()
 							.equalsIgnoreCase(AppConstants.ENTRY.getString())) {
-						importedGermplasm
-								.setEntryId(Integer.valueOf(this.getCellStringValue(this.currentSheet, this.currentRow, col, true)));
+						importedGermplasm.setEntryId(Integer
+								.valueOf(this.getCellStringValue(this.currentSheet, this.currentRow, col, true)));
 					} else if (this.importedGermplasmList.getImportedFactors().get(col).getFactor()
 							.equalsIgnoreCase(AppConstants.DESIGNATION.getString())) {
-						importedGermplasm.setDesig(this.getCellStringValue(this.currentSheet, this.currentRow, col, true));
+						importedGermplasm
+								.setDesig(this.getCellStringValue(this.currentSheet, this.currentRow, col, true));
 					} else if (this.importedGermplasmList.getImportedFactors().get(col).getFactor()
 							.equalsIgnoreCase(AppConstants.GID.getString())) {
-						importedGermplasm.setGid(this.getCellStringValue(this.currentSheet, this.currentRow, col, true));
+						importedGermplasm
+								.setGid(this.getCellStringValue(this.currentSheet, this.currentRow, col, true));
 					} else if (this.importedGermplasmList.getImportedFactors().get(col).getFactor()
 							.equalsIgnoreCase(AppConstants.CROSS.getString())) {
-						importedGermplasm.setCross(this.getCellStringValue(this.currentSheet, this.currentRow, col, true));
+						importedGermplasm
+								.setCross(this.getCellStringValue(this.currentSheet, this.currentRow, col, true));
 					} else if (this.importedGermplasmList.getImportedFactors().get(col).getFactor()
 							.equalsIgnoreCase(AppConstants.SOURCE.getString())) {
-						importedGermplasm.setSource(this.getCellStringValue(this.currentSheet, this.currentRow, col, true));
+						importedGermplasm
+								.setSource(this.getCellStringValue(this.currentSheet, this.currentRow, col, true));
 					} else if (this.importedGermplasmList.getImportedFactors().get(col).getFactor()
 							.equalsIgnoreCase(AppConstants.ENTRY_CODE.getString())) {
-						importedGermplasm.setEntryCode(this.getCellStringValue(this.currentSheet, this.currentRow, col, true));
+						importedGermplasm
+								.setEntryCode(this.getCellStringValue(this.currentSheet, this.currentRow, col, true));
 					} else {
 						ImportGermplasmFileServiceImpl.LOG.debug("Unhandled Column - "
-								+ this.importedGermplasmList.getImportedFactors().get(col).getFactor().toUpperCase() + ":"
-								+ this.getCellStringValue(this.currentSheet, this.currentRow, col));
+								+ this.importedGermplasmList.getImportedFactors().get(col).getFactor().toUpperCase()
+								+ ":" + this.getCellStringValue(this.currentSheet, this.currentRow, col));
 					}
 				}
 				this.importedGermplasmList.addImportedGermplasm(importedGermplasm);
@@ -317,19 +332,21 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 			this.listName = this.getCellStringValue(0, 0, 1, true);
 			this.listTitle = this.getCellStringValue(0, 1, 1, true);
 
-			String labelIdentifier = this.getCellStringValue(0, 2, 0, true);
+			final String labelIdentifier = this.getCellStringValue(0, 2, 0, true);
 
 			if (AppConstants.LIST_DATE.getString().equalsIgnoreCase(labelIdentifier)) {
-				this.listDate = DateUtil.parseDate(this.getCellStringValue(0, 2, 1, true), DateUtil.DATE_AS_NUMBER_FORMAT);
+				this.listDate = DateUtil.parseDate(this.getCellStringValue(0, 2, 1, true),
+						DateUtil.DATE_AS_NUMBER_FORMAT);
 				this.listType = this.getCellStringValue(0, 3, 1, true);
 			} else if (AppConstants.LIST_TYPE.getString().equalsIgnoreCase(labelIdentifier)) {
 				this.listType = this.getCellStringValue(0, 2, 1, true);
-				this.listDate = DateUtil.parseDate(this.getCellStringValue(0, 3, 1, true), DateUtil.DATE_AS_NUMBER_FORMAT);
+				this.listDate = DateUtil.parseDate(this.getCellStringValue(0, 3, 1, true),
+						DateUtil.DATE_AS_NUMBER_FORMAT);
 			}
 
-			this.importedGermplasmList =
-					new ImportedGermplasmList(this.originalFilename, this.listName, this.listTitle, this.listType, this.listDate);
-		} catch (ParseException e) {
+			this.importedGermplasmList = new ImportedGermplasmList(this.originalFilename, this.listName, this.listTitle,
+					this.listType, this.listDate);
+		} catch (final ParseException e) {
 			ImportGermplasmFileServiceImpl.LOG.error(e.getMessage(), e);
 		}
 
@@ -349,20 +366,25 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 		this.currentRow++;
 
 		// Check if headers are correct
-		if (!this.getCellStringValue(this.currentSheet, this.currentRow, 0, true).equalsIgnoreCase(AppConstants.CONDITION.getString())
-				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 1, true).equalsIgnoreCase(
-						AppConstants.DESCRIPTION.getString())
-				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 6, true).equalsIgnoreCase(AppConstants.VALUE.getString())) {
+		if (!this.getCellStringValue(this.currentSheet, this.currentRow, 0, true)
+				.equalsIgnoreCase(AppConstants.CONDITION.getString())
+				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 1, true)
+						.equalsIgnoreCase(AppConstants.DESCRIPTION.getString())
+				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 6, true)
+						.equalsIgnoreCase(AppConstants.VALUE.getString())) {
 			// for now we dont flag as an error
 			// Skip row from file info
 			this.currentRow++;
 			return;
 		}
-		if (!this.getCellStringValue(this.currentSheet, this.currentRow, 2, true).equalsIgnoreCase(AppConstants.PROPERTY.getString())
-				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 3, true).equalsIgnoreCase(AppConstants.SCALE.getString())
-				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 4, true).equalsIgnoreCase(AppConstants.METHOD.getString())
-				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 5, true).equalsIgnoreCase(
-						AppConstants.DATA_TYPE.getString())) {
+		if (!this.getCellStringValue(this.currentSheet, this.currentRow, 2, true)
+				.equalsIgnoreCase(AppConstants.PROPERTY.getString())
+				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 3, true)
+						.equalsIgnoreCase(AppConstants.SCALE.getString())
+				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 4, true)
+						.equalsIgnoreCase(AppConstants.METHOD.getString())
+				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 5, true)
+						.equalsIgnoreCase(AppConstants.DATA_TYPE.getString())) {
 			// for now we dont flag as an error
 			// Skip row from file info
 			this.currentRow++;
@@ -373,13 +395,14 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 			ImportedCondition importedCondition;
 			this.currentRow++;
 			while (!this.rowIsEmpty()) {
-				importedCondition =
-						new ImportedCondition(this.getCellStringValue(this.currentSheet, this.currentRow, 0, true),
-								this.getCellStringValue(this.currentSheet, this.currentRow, 1, true), this.getCellStringValue(
-										this.currentSheet, this.currentRow, 2, true), this.getCellStringValue(this.currentSheet,
-										this.currentRow, 3, true), this.getCellStringValue(this.currentSheet, this.currentRow, 4, true),
-								this.getCellStringValue(this.currentSheet, this.currentRow, 5, true), this.getCellStringValue(
-										this.currentSheet, this.currentRow, 6, true), "");
+				importedCondition = new ImportedCondition(
+						this.getCellStringValue(this.currentSheet, this.currentRow, 0, true),
+						this.getCellStringValue(this.currentSheet, this.currentRow, 1, true),
+						this.getCellStringValue(this.currentSheet, this.currentRow, 2, true),
+						this.getCellStringValue(this.currentSheet, this.currentRow, 3, true),
+						this.getCellStringValue(this.currentSheet, this.currentRow, 4, true),
+						this.getCellStringValue(this.currentSheet, this.currentRow, 5, true),
+						this.getCellStringValue(this.currentSheet, this.currentRow, 6, true), "");
 				this.importedGermplasmList.addImportedCondition(importedCondition);
 				this.currentRow++;
 			}
@@ -395,17 +418,21 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 		Boolean desigColumnIsPresent = false;
 
 		// Check if headers are correct
-		if (!this.getCellStringValue(this.currentSheet, this.currentRow, 0, true).equalsIgnoreCase(AppConstants.FACTOR.getString())
-				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 1, true).equalsIgnoreCase(
-						AppConstants.DESCRIPTION.getString())) {
+		if (!this.getCellStringValue(this.currentSheet, this.currentRow, 0, true)
+				.equalsIgnoreCase(AppConstants.FACTOR.getString())
+				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 1, true)
+						.equalsIgnoreCase(AppConstants.DESCRIPTION.getString())) {
 			this.showInvalidFileError("Incorrect headers for factors.");
 			ImportGermplasmFileServiceImpl.LOG.debug("Invalid file on readFactors header");
 		}
-		if (!this.getCellStringValue(this.currentSheet, this.currentRow, 2, true).equalsIgnoreCase(AppConstants.PROPERTY.getString())
-				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 3, true).equalsIgnoreCase(AppConstants.SCALE.getString())
-				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 4, true).equalsIgnoreCase(AppConstants.METHOD.getString())
-				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 5, true).equalsIgnoreCase(
-						AppConstants.DATA_TYPE.getString())) {
+		if (!this.getCellStringValue(this.currentSheet, this.currentRow, 2, true)
+				.equalsIgnoreCase(AppConstants.PROPERTY.getString())
+				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 3, true)
+						.equalsIgnoreCase(AppConstants.SCALE.getString())
+				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 4, true)
+						.equalsIgnoreCase(AppConstants.METHOD.getString())
+				|| !this.getCellStringValue(this.currentSheet, this.currentRow, 5, true)
+						.equalsIgnoreCase(AppConstants.DATA_TYPE.getString())) {
 			this.showInvalidFileError("Incorrect headers for factors.");
 			ImportGermplasmFileServiceImpl.LOG.debug("Invalid file on readFactors header");
 		}
@@ -415,12 +442,13 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 			// skip header
 			this.currentRow++;
 			while (!this.rowIsEmpty()) {
-				importedFactor =
-						new ImportedFactor(this.getCellStringValue(this.currentSheet, this.currentRow, 0, true), this.getCellStringValue(
-								this.currentSheet, this.currentRow, 1, true), this.getCellStringValue(this.currentSheet, this.currentRow,
-								2, true), this.getCellStringValue(this.currentSheet, this.currentRow, 3, true), this.getCellStringValue(
-								this.currentSheet, this.currentRow, 4, true), this.getCellStringValue(this.currentSheet, this.currentRow,
-								5, true), "");
+				importedFactor = new ImportedFactor(
+						this.getCellStringValue(this.currentSheet, this.currentRow, 0, true),
+						this.getCellStringValue(this.currentSheet, this.currentRow, 1, true),
+						this.getCellStringValue(this.currentSheet, this.currentRow, 2, true),
+						this.getCellStringValue(this.currentSheet, this.currentRow, 3, true),
+						this.getCellStringValue(this.currentSheet, this.currentRow, 4, true),
+						this.getCellStringValue(this.currentSheet, this.currentRow, 5, true), "");
 				this.importedGermplasmList.addImportedFactor(importedFactor);
 
 				// Check if the current factor is ENTRY or DESIG
@@ -443,7 +471,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/**
 	 * Row is empty.
-	 * 
+	 *
 	 * @return the boolean
 	 */
 	private Boolean rowIsEmpty() {
@@ -452,24 +480,28 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/**
 	 * Row is empty.
-	 * 
-	 * @param row the row
+	 *
+	 * @param row
+	 *            the row
 	 * @return the boolean
 	 */
-	private Boolean rowIsEmpty(Integer row) {
+	private Boolean rowIsEmpty(final Integer row) {
 		return this.rowIsEmpty(this.currentSheet, row);
 	}
 
 	/**
 	 * Row is empty.
-	 * 
-	 * @param sheet the sheet
-	 * @param row the row
+	 *
+	 * @param sheet
+	 *            the sheet
+	 * @param row
+	 *            the row
 	 * @return the boolean
 	 */
-	private Boolean rowIsEmpty(Integer sheet, Integer row) {
+	private Boolean rowIsEmpty(final Integer sheet, final Integer row) {
 		for (int col = 0; col < 8; col++) {
-			if (this.getCellStringValue(sheet, row, col) != null && !"".equalsIgnoreCase(this.getCellStringValue(sheet, row, col))) {
+			if (this.getCellStringValue(sheet, row, col) != null
+					&& !"".equalsIgnoreCase(this.getCellStringValue(sheet, row, col))) {
 				return false;
 			}
 		}
@@ -478,23 +510,30 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/**
 	 * Gets the cell string value.
-	 * 
-	 * @param sheetNumber the sheet number
-	 * @param rowNumber the row number
-	 * @param columnNumber the column number
+	 *
+	 * @param sheetNumber
+	 *            the sheet number
+	 * @param rowNumber
+	 *            the row number
+	 * @param columnNumber
+	 *            the column number
 	 * @return the cell string value
 	 */
-	private String getCellStringValue(Integer sheetNumber, Integer rowNumber, Integer columnNumber) {
+	private String getCellStringValue(final Integer sheetNumber, final Integer rowNumber, final Integer columnNumber) {
 		return this.getCellStringValue(sheetNumber, rowNumber, columnNumber, false);
 	}
 
 	/**
 	 * Gets the cell string value.
-	 * 
-	 * @param sheetNumber the sheet number
-	 * @param rowNumber the row number
-	 * @param columnNumber the column number
-	 * @param followThisPosition the follow this position
+	 *
+	 * @param sheetNumber
+	 *            the sheet number
+	 * @param rowNumber
+	 *            the row number
+	 * @param columnNumber
+	 *            the column number
+	 * @param followThisPosition
+	 *            the follow this position
 	 * @return the cell string value
 	 */
 	private String getCellStringValue(final Integer sheetNumber, final Integer rowNumber, final Integer columnNumber,
@@ -523,10 +562,11 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/**
 	 * Show invalid file error.
-	 * 
-	 * @param message the message
+	 *
+	 * @param message
+	 *            the message
 	 */
-	private void showInvalidFileError(String message) {
+	private void showInvalidFileError(final String message) {
 		if (this.fileIsValid) {
 			this.errorMessages.add(ImportGermplasmFileServiceImpl.FILE_INVALID);
 			this.fileIsValid = false;
@@ -535,17 +575,20 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#validataAndAddCheckFactor(java.util.List,
+	 *
+	 * @see
+	 * com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#
+	 * validataAndAddCheckFactor(java.util.List,
 	 * com.efficio.fieldbook.web.nursery.bean.UserSelection)
 	 */
 	@Override
-	public void validataAndAddCheckFactor(List<ImportedGermplasm> formImportedGermplasmsm, List<ImportedGermplasm> importedGermplasms,
-			UserSelection userSelection, boolean hasCheck) throws MiddlewareException {
-		long start = System.currentTimeMillis();
-		List<ImportedGermplasm> sessionImportedGermplasmList = importedGermplasms;
+	public void validataAndAddCheckFactor(final List<ImportedGermplasm> formImportedGermplasmsm,
+			final List<ImportedGermplasm> importedGermplasms, final UserSelection userSelection, final boolean hasCheck)
+			throws MiddlewareException {
+		final long start = System.currentTimeMillis();
+		final List<ImportedGermplasm> sessionImportedGermplasmList = importedGermplasms;
 		for (int i = 0; i < formImportedGermplasmsm.size(); i++) {
-			ImportedGermplasm germplasm = formImportedGermplasmsm.get(i);
+			final ImportedGermplasm germplasm = formImportedGermplasmsm.get(i);
 			String checkVal = "";
 			if (germplasm.getEntryTypeValue() != null && !"".equalsIgnoreCase(germplasm.getEntryTypeValue())) {
 				checkVal = germplasm.getEntryTypeValue();
@@ -557,22 +600,22 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 		if (hasCheck) {
 			// we need to add the CHECK factor if its not existing
-			List<MeasurementVariable> measurementVariables = userSelection.getWorkbook().getFactors();
+			final List<MeasurementVariable> measurementVariables = userSelection.getWorkbook().getFactors();
 
-			Integer checkVariableTermId = TermId.CHECK.getId();
-			StandardVariable stdvar =
-					this.fieldbookMiddlewareService.getStandardVariable(checkVariableTermId, this.contextUtil.getCurrentProgramUUID());
-			MeasurementVariable checkVariable =
-					new MeasurementVariable(checkVariableTermId, "CHECK", stdvar.getDescription(), stdvar.getScale().getName(), stdvar
-							.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType().getName(), "",
-							AppConstants.ENTRY.getString());
+			final Integer checkVariableTermId = TermId.CHECK.getId();
+			final StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(checkVariableTermId,
+					this.contextUtil.getCurrentProgramUUID());
+			final MeasurementVariable checkVariable = new MeasurementVariable(checkVariableTermId, "CHECK",
+					stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
+					stdvar.getProperty().getName(), stdvar.getDataType().getName(), "", AppConstants.ENTRY.getString());
 			checkVariable.setRole(PhenotypicType.GERMPLASM);
 			boolean checkFactorExisting = false;
-			for (MeasurementVariable var : measurementVariables) {
-				Integer termId =
-						this.fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(),
-								var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
-				if (termId != null && checkVariableTermId != null && termId.intValue() == checkVariableTermId.intValue()) {
+			for (final MeasurementVariable var : measurementVariables) {
+				final Integer termId = this.fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+						var.getProperty(), var.getScale(), var.getMethod(),
+						PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
+				if (termId != null && checkVariableTermId != null
+						&& termId.intValue() == checkVariableTermId.intValue()) {
 					checkFactorExisting = true;
 					break;
 				}
@@ -588,15 +631,16 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 			if (userSelection.getWorkbook().isCheckFactorAddedOnly()) {
 				// we need to remove it
 				userSelection.getWorkbook().reset();
-				List<MeasurementVariable> factors = userSelection.getWorkbook().getFactors();
+				final List<MeasurementVariable> factors = userSelection.getWorkbook().getFactors();
 				factors.remove(factors.size() - 1);
 				userSelection.getWorkbook().setFactors(factors);
 			}
 		}
-		ImportGermplasmFileServiceImpl.LOG.info("validataAndAddCheckFactor Time duration: " + (System.currentTimeMillis() - start));
+		ImportGermplasmFileServiceImpl.LOG
+				.info("validataAndAddCheckFactor Time duration: " + (System.currentTimeMillis() - start));
 	}
 
-	public void setContextUtil(ContextUtil contextUtil) {
+	public void setContextUtil(final ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
 	}
 

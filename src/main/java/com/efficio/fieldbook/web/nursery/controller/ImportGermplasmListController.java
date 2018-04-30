@@ -662,7 +662,6 @@ public class ImportGermplasmListController extends SettingsController {
 			dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
 			dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
 
-			
 			if (isDefaultTestCheck || germplasm.getEntryTypeValue() == null
 					|| "0".equals(germplasm.getEntryTypeValue())) {
 				germplasm.setEntryTypeValue(defaultTestCheckId);
@@ -1582,7 +1581,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 		final String[] selectedCheck = form.getSelectedCheck();
 		final Map<String, ImportedGermplasm> checkGermplasmMap = new HashMap<>();
-		
+
 		if (selectedCheck != null && selectedCheck.length != 0) {
 
 			ImportedGermplasmMainInfo importedGermplasmMainInfoToUse = userSelection
@@ -1593,12 +1592,13 @@ public class ImportGermplasmListController extends SettingsController {
 				importedGermplasmMainInfoToUse = userSelection.getImportedGermplasmMainInfo();
 			}
 			if (importedGermplasmMainInfoToUse != null
-	 				&& importedGermplasmMainInfoToUse.getImportedGermplasmList() != null
-	 				&& importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms() != null
-	 				&& !importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().isEmpty()) {
+					&& importedGermplasmMainInfoToUse.getImportedGermplasmList() != null
+					&& importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms() != null
+					&& !importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().isEmpty()) {
 				for (int i = 0; i < selectedCheck.length; i++) {
 					if (NumberUtils.isNumber(selectedCheck[i])) {
-						final ImportedGermplasm importedGermplasm = importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(i);
+						final ImportedGermplasm importedGermplasm = importedGermplasmMainInfoToUse
+								.getImportedGermplasmList().getImportedGermplasms().get(i);
 						importedGermplasm.setEntryTypeValue(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeValue());
 						importedGermplasm.setEntryTypeCategoricalID(Integer.parseInt(selectedCheck[i]));
 						importedGermplasm.setEntryTypeName(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeName());
@@ -1607,23 +1607,24 @@ public class ImportGermplasmListController extends SettingsController {
 				}
 			}
 		}
-		
+
 		if (userSelection.getImportedGermplasmMainInfo() != null
- 				&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList() != null
- 				&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null) {
- 
- 			for (final ImportedGermplasm germplasm : userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()
- 					.getImportedGermplasms()) {
- 
- 				if (checkGermplasmMap.containsKey(germplasm.getGid())) {
- 					germplasm.setEntryTypeCategoricalID(checkGermplasmMap.get(germplasm.getGid()).getEntryTypeCategoricalID());
- 					germplasm.setEntryTypeValue(checkGermplasmMap.get(germplasm.getGid()).getEntryTypeValue());
- 				} else {
- 					germplasm.setEntryTypeCategoricalID(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId());
- 					germplasm.setEntryTypeValue(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeValue());
-  				}
-  			}
-  		}
+				&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList() != null && userSelection
+						.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null) {
+
+			for (final ImportedGermplasm germplasm : userSelection.getImportedGermplasmMainInfo()
+					.getImportedGermplasmList().getImportedGermplasms()) {
+
+				if (checkGermplasmMap.containsKey(germplasm.getGid())) {
+					germplasm.setEntryTypeCategoricalID(
+							checkGermplasmMap.get(germplasm.getGid()).getEntryTypeCategoricalID());
+					germplasm.setEntryTypeValue(checkGermplasmMap.get(germplasm.getGid()).getEntryTypeValue());
+				} else {
+					germplasm.setEntryTypeCategoricalID(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId());
+					germplasm.setEntryTypeValue(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeValue());
+				}
+			}
+		}
 
 		// end: section for taking note of the check germplasm
 	}
@@ -1637,7 +1638,7 @@ public class ImportGermplasmListController extends SettingsController {
 			this.copyImportedGermplasmFromUserSelectionToForm(userSelection, form);
 
 			this.mergePrimaryAndCheckGermplasmList(userSelection, form);
-			final boolean hasCheck = form.getSelectedCheck() != null && form.getSelectedCheck().length !=0;
+			final boolean hasCheck = form.getSelectedCheck() != null && form.getSelectedCheck().length != 0;
 			// This would validate and add CHECK factor if necessary
 			this.importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(),
 					userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),

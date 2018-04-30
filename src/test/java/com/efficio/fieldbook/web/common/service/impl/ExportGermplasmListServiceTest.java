@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,7 +128,7 @@ public class ExportGermplasmListServiceTest {
 
 	@Mock
 	InventoryDataManager inventoryDataManager;
-	
+
 	@Mock
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
@@ -146,23 +145,32 @@ public class ExportGermplasmListServiceTest {
 
 		Mockito.doReturn(ExportGermplasmListServiceTest.CURRENT_USER_ID).when(this.contextUtil).getCurrentUserLocalId();
 
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.ENTRY_NO.getId(), ExportGermplasmListServiceTest.ENTRY_NO));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.DESIG.getId(), this.contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.DESIG.getId(), ExportGermplasmListServiceTest.DESIGNATION));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.GID.getId(), this.contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.GID.getId(), ExportGermplasmListServiceTest.GID));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.CROSS.getId(), this.contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.CROSS.getId(), ExportGermplasmListServiceTest.PARENTAGE));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId(), this.contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.SEED_SOURCE.getId(), ExportGermplasmListServiceTest.SEED_SOURCE));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId(), this.contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.ENTRY_CODE.getId(), ExportGermplasmListServiceTest.ENTRY_CODE));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId(),
+				this.contextUtil.getCurrentProgramUUID())).thenReturn(
+						this.createStandardVariable(TermId.ENTRY_NO.getId(), ExportGermplasmListServiceTest.ENTRY_NO));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.DESIG.getId(),
+				this.contextUtil.getCurrentProgramUUID())).thenReturn(
+						this.createStandardVariable(TermId.DESIG.getId(), ExportGermplasmListServiceTest.DESIGNATION));
 		Mockito.when(
-				this.ontologyService.getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), this.contextUtil.getCurrentProgramUUID()))
+				this.ontologyService.getStandardVariable(TermId.GID.getId(), this.contextUtil.getCurrentProgramUUID()))
+				.thenReturn(this.createStandardVariable(TermId.GID.getId(), ExportGermplasmListServiceTest.GID));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.CROSS.getId(),
+				this.contextUtil.getCurrentProgramUUID())).thenReturn(
+						this.createStandardVariable(TermId.CROSS.getId(), ExportGermplasmListServiceTest.PARENTAGE));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId(),
+				this.contextUtil.getCurrentProgramUUID()))
+				.thenReturn(this.createStandardVariable(TermId.SEED_SOURCE.getId(),
+						ExportGermplasmListServiceTest.SEED_SOURCE));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId(),
+				this.contextUtil.getCurrentProgramUUID()))
+				.thenReturn(this.createStandardVariable(TermId.ENTRY_CODE.getId(),
+						ExportGermplasmListServiceTest.ENTRY_CODE));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),
+				this.contextUtil.getCurrentProgramUUID()))
 				.thenReturn(this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),
 						ExportGermplasmListServiceTest.ENTRY_NUMBER_STORAGE));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID()))
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.CHECK.getId(),
+				this.contextUtil.getCurrentProgramUUID()))
 				.thenReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportGermplasmListServiceTest.CHECK));
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(this.workbook);
 		Mockito.when(this.workbook.getStudyDetails()).thenReturn(this.studyDetails);
@@ -178,9 +186,13 @@ public class ExportGermplasmListServiceTest {
 				.getOwnerListName(ExportGermplasmListServiceTest.CURRENT_USER_ID);
 		Mockito.doReturn("1010").when(this.fieldbookMiddlewareService).getOwnerListName(Matchers.anyInt());
 
-		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.STOCKID.getId(), false, false)).thenReturn(this.createVariable(TermId.STOCKID.getId()));
-		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.SEED_AMOUNT_G.getId(), false, false)).thenReturn(this.createVariable(TermId.SEED_AMOUNT_G.getId()));
-		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId())).thenReturn(ValueReferenceTestDataInitializer.createPossibleValues());
+		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
+				TermId.STOCKID.getId(), false, false)).thenReturn(this.createVariable(TermId.STOCKID.getId()));
+		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
+				TermId.SEED_AMOUNT_G.getId(), false, false))
+				.thenReturn(this.createVariable(TermId.SEED_AMOUNT_G.getId()));
+		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId()))
+				.thenReturn(ValueReferenceTestDataInitializer.createPossibleValues());
 
 	}
 
@@ -188,7 +200,8 @@ public class ExportGermplasmListServiceTest {
 	public void testExportGermplasmListXLSForTrialManager() {
 
 		try {
-			this.exportGermplasmListServiceImpl.exportGermplasmListXLS(this.testFileName, 1, this.getVisibleColumnMap(), false);
+			this.exportGermplasmListServiceImpl.exportGermplasmListXLS(this.testFileName, 1, this.getVisibleColumnMap(),
+					false);
 			Mockito.verify(this.germplasmExportService, Mockito.times(1))
 					.generateGermplasmListExcelFile(Matchers.any(GermplasmListExportInputValues.class));
 		} catch (final GermplasmListExporterException e) {
@@ -201,7 +214,8 @@ public class ExportGermplasmListServiceTest {
 	public void testExportGermplasmListXLSForNurseryManager() {
 
 		try {
-			this.exportGermplasmListServiceImpl.exportGermplasmListXLS(this.testFileName, 1, this.getVisibleColumnMap(), true);
+			this.exportGermplasmListServiceImpl.exportGermplasmListXLS(this.testFileName, 1, this.getVisibleColumnMap(),
+					true);
 			Mockito.verify(this.germplasmExportService, Mockito.times(1))
 					.generateGermplasmListExcelFile(Matchers.any(GermplasmListExportInputValues.class));
 		} catch (final GermplasmListExporterException e) {
@@ -214,9 +228,10 @@ public class ExportGermplasmListServiceTest {
 	public void testExportGermplasmListCSVForTrialManager() {
 
 		try {
-			this.exportGermplasmListServiceImpl.exportGermplasmListCSV(this.testFileName, this.getVisibleColumnMap(), false);
-			Mockito.verify(this.germplasmExportService, Mockito.times(1)).generateCSVFile(Matchers.any(List.class), Matchers.any(List.class),
-					Matchers.anyString());
+			this.exportGermplasmListServiceImpl.exportGermplasmListCSV(this.testFileName, this.getVisibleColumnMap(),
+					false);
+			Mockito.verify(this.germplasmExportService, Mockito.times(1)).generateCSVFile(Matchers.any(List.class),
+					Matchers.any(List.class), Matchers.anyString());
 
 		} catch (final GermplasmListExporterException e) {
 			Assert.fail();
@@ -230,9 +245,10 @@ public class ExportGermplasmListServiceTest {
 	public void testExportGermplasmListCSVForNurseryManager() {
 
 		try {
-			this.exportGermplasmListServiceImpl.exportGermplasmListCSV(this.testFileName, this.getVisibleColumnMap(), true);
-			Mockito.verify(this.germplasmExportService, Mockito.times(1)).generateCSVFile(Matchers.any(List.class), Matchers.any(List.class),
-					Matchers.anyString());
+			this.exportGermplasmListServiceImpl.exportGermplasmListCSV(this.testFileName, this.getVisibleColumnMap(),
+					true);
+			Mockito.verify(this.germplasmExportService, Mockito.times(1)).generateCSVFile(Matchers.any(List.class),
+					Matchers.any(List.class), Matchers.anyString());
 		} catch (final GermplasmListExporterException e) {
 			Assert.fail();
 		} catch (final IOException e) {
@@ -250,8 +266,8 @@ public class ExportGermplasmListServiceTest {
 	@Test
 	public void testGetExportColumnHeadersFromTableTrial() {
 
-		final List<ExportColumnHeader> exportColumnHeaders =
-				this.exportGermplasmListServiceImpl.getExportColumnHeadersFromTable(this.getVisibleColumnMap(), false);
+		final List<ExportColumnHeader> exportColumnHeaders = this.exportGermplasmListServiceImpl
+				.getExportColumnHeadersFromTable(this.getVisibleColumnMap(), false);
 
 		Assert.assertEquals(6, exportColumnHeaders.size());
 		Assert.assertTrue(exportColumnHeaders.get(0).isDisplay());
@@ -273,8 +289,8 @@ public class ExportGermplasmListServiceTest {
 	@Test
 	public void testGetExportColumnHeadersFromTableNursery() {
 
-		final List<ExportColumnHeader> exportColumnHeaders =
-				this.exportGermplasmListServiceImpl.getExportColumnHeadersFromTable(this.getVisibleColumnMap(), true);
+		final List<ExportColumnHeader> exportColumnHeaders = this.exportGermplasmListServiceImpl
+				.getExportColumnHeadersFromTable(this.getVisibleColumnMap(), true);
 
 		Assert.assertEquals(6, exportColumnHeaders.size());
 		Assert.assertTrue(exportColumnHeaders.get(0).isDisplay());
@@ -296,16 +312,18 @@ public class ExportGermplasmListServiceTest {
 	@Test
 	public void testGetExportColumnValuesFromTableTrial() {
 
-		final List<Map<Integer, ExportColumnValue>> exportColumnValues =
-				this.exportGermplasmListServiceImpl.getExportColumnValuesFromTable(this.getVisibleColumnMap(), false);
+		final List<Map<Integer, ExportColumnValue>> exportColumnValues = this.exportGermplasmListServiceImpl
+				.getExportColumnValuesFromTable(this.getVisibleColumnMap(), false);
 
 		Assert.assertEquals(1, exportColumnValues.size());
 
 		final Map<Integer, ExportColumnValue> row = exportColumnValues.get(0);
 
 		Assert.assertEquals(ExportGermplasmListServiceTest.DESIG_VALUE, row.get(TermId.DESIG.getId()).getValue());
-		Assert.assertEquals(ExportGermplasmListServiceTest.SOURCE_VALUE, row.get(TermId.SEED_SOURCE.getId()).getValue());
-		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_CODE_VALUE, row.get(TermId.ENTRY_CODE.getId()).getValue());
+		Assert.assertEquals(ExportGermplasmListServiceTest.SOURCE_VALUE,
+				row.get(TermId.SEED_SOURCE.getId()).getValue());
+		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_CODE_VALUE,
+				row.get(TermId.ENTRY_CODE.getId()).getValue());
 		Assert.assertEquals(ExportGermplasmListServiceTest.CROSS_VALUE, row.get(TermId.CROSS.getId()).getValue());
 		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_NO_VALUE, row.get(TermId.ENTRY_NO.getId()).getValue());
 		Assert.assertEquals(ExportGermplasmListServiceTest.GID_VALUE, row.get(TermId.GID.getId()).getValue());
@@ -315,16 +333,18 @@ public class ExportGermplasmListServiceTest {
 	@Test
 	public void testGetExportColumnValuesFromTableNursery() {
 
-		final List<Map<Integer, ExportColumnValue>> exportColumnValues =
-				this.exportGermplasmListServiceImpl.getExportColumnValuesFromTable(this.getVisibleColumnMap(), false);
+		final List<Map<Integer, ExportColumnValue>> exportColumnValues = this.exportGermplasmListServiceImpl
+				.getExportColumnValuesFromTable(this.getVisibleColumnMap(), false);
 
 		Assert.assertEquals(1, exportColumnValues.size());
 
 		final Map<Integer, ExportColumnValue> row = exportColumnValues.get(0);
 
 		Assert.assertEquals(ExportGermplasmListServiceTest.DESIG_VALUE, row.get(TermId.DESIG.getId()).getValue());
-		Assert.assertEquals(ExportGermplasmListServiceTest.SOURCE_VALUE, row.get(TermId.SEED_SOURCE.getId()).getValue());
-		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_CODE_VALUE, row.get(TermId.ENTRY_CODE.getId()).getValue());
+		Assert.assertEquals(ExportGermplasmListServiceTest.SOURCE_VALUE,
+				row.get(TermId.SEED_SOURCE.getId()).getValue());
+		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_CODE_VALUE,
+				row.get(TermId.ENTRY_CODE.getId()).getValue());
 		Assert.assertEquals(ExportGermplasmListServiceTest.CROSS_VALUE, row.get(TermId.CROSS.getId()).getValue());
 		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_NO_VALUE, row.get(TermId.ENTRY_NO.getId()).getValue());
 		Assert.assertEquals(ExportGermplasmListServiceTest.GID_VALUE, row.get(TermId.GID.getId()).getValue());
@@ -340,8 +360,8 @@ public class ExportGermplasmListServiceTest {
 		valReference.setName(ExportGermplasmListServiceTest.CATEG_CODE_VALUE);
 		possibleValues.add(valReference);
 
-		final String categValue =
-				this.exportGermplasmListServiceImpl.getEntryTypeValue(this.generateImportedGermplasm(), possibleValues);
+		final String categValue = this.exportGermplasmListServiceImpl
+				.getEntryTypeValue(this.generateImportedGermplasm(), possibleValues);
 
 		Assert.assertEquals(ExportGermplasmListServiceTest.CATEG_CODE_VALUE, categValue);
 
@@ -353,21 +373,22 @@ public class ExportGermplasmListServiceTest {
 		final List<GermplasmList> germplasmLists = Arrays.asList(this.germplasmList);
 
 		Mockito.when(this.germplasmListManager.retrieveSnapshotListData(Matchers.anyInt())).thenReturn(listData);
-		Mockito.when(
-				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Matchers.anyInt(), Matchers.eq(GermplasmListType.NURSERY)))
-				.thenReturn(germplasmLists);
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt())).thenReturn(this.germplasmList);
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Matchers.anyInt(),
+				Matchers.eq(GermplasmListType.NURSERY))).thenReturn(germplasmLists);
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt()))
+				.thenReturn(this.germplasmList);
 
-		Map<Integer, String> mockData = Maps.newHashMap();
+		final Map<Integer, String> mockData = Maps.newHashMap();
 		mockData.put(0, "StockID101, StockID102");
-		Mockito.when(this.inventoryDataManager.retrieveStockIds(Mockito.anyList())).thenReturn(mockData);
+		Mockito.when(this.inventoryDataManager.retrieveStockIds(Matchers.anyList())).thenReturn(mockData);
 
 		// Assert
-		final GermplasmListExportInputValues input =
-				this.exportGermplasmListServiceImpl.setUpInput(this.testFileName, 80, this.getVisibleColumnMap(), true);
+		final GermplasmListExportInputValues input = this.exportGermplasmListServiceImpl.setUpInput(this.testFileName,
+				80, this.getVisibleColumnMap(), true);
 		Assert.assertEquals("The visible colum maps should be" + this.getVisibleColumnMap(), this.getVisibleColumnMap(),
 				input.getVisibleColumnMap());
-		Assert.assertEquals("The germplasm list should be " + this.germplasmList, this.germplasmList, input.getGermplasmList());
+		Assert.assertEquals("The germplasm list should be " + this.germplasmList, this.germplasmList,
+				input.getGermplasmList());
 		Assert.assertEquals("The germplasm list data should be " + listData, listData, input.getListData());
 	}
 
@@ -377,33 +398,38 @@ public class ExportGermplasmListServiceTest {
 		final List<GermplasmList> germplasmLists = Arrays.asList(this.germplasmList);
 
 		Mockito.when(this.germplasmListManager.retrieveSnapshotListData(Matchers.anyInt())).thenReturn(listData);
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Matchers.anyInt(), Matchers.eq(GermplasmListType.TRIAL)))
-				.thenReturn(germplasmLists);
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt())).thenReturn(this.germplasmList);
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Matchers.anyInt(),
+				Matchers.eq(GermplasmListType.TRIAL))).thenReturn(germplasmLists);
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt()))
+				.thenReturn(this.germplasmList);
 
-		Map<Integer, String> mockData = Maps.newHashMap();
+		final Map<Integer, String> mockData = Maps.newHashMap();
 		mockData.put(0, "StockID101, StockID102");
-		Mockito.when(this.inventoryDataManager.retrieveStockIds(Mockito.anyList())).thenReturn(mockData);
+		Mockito.when(this.inventoryDataManager.retrieveStockIds(Matchers.anyList())).thenReturn(mockData);
 
 		// Assert
-		final GermplasmListExportInputValues input =
-				this.exportGermplasmListServiceImpl.setUpInput(this.testFileName, 80, this.getVisibleColumnMap(), false);
+		final GermplasmListExportInputValues input = this.exportGermplasmListServiceImpl.setUpInput(this.testFileName,
+				80, this.getVisibleColumnMap(), false);
 		Assert.assertEquals("The visible colum maps should be" + this.getVisibleColumnMap(), this.getVisibleColumnMap(),
 				input.getVisibleColumnMap());
-		Assert.assertEquals("The germplasm list should be " + this.germplasmList, this.germplasmList, input.getGermplasmList());
+		Assert.assertEquals("The germplasm list should be " + this.germplasmList, this.germplasmList,
+				input.getGermplasmList());
 		Assert.assertEquals("The germplasm list data should be " + listData, listData, input.getListData());
 	}
 
 	@Test
 	public void testExtractInventoryVariableMapFromVisibleColumnsInventoryVariablesAreVisible() {
 
-		Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnMap();
+		final Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnMap();
 		visibleColumnsMap.put(String.valueOf(TermId.STOCKID.getId()), true);
 		visibleColumnsMap.put(String.valueOf(TermId.SEED_AMOUNT_G.getId()), true);
 
-		Map<Integer,Variable> result = exportGermplasmListServiceImpl.extractInventoryVariableMapFromVisibleColumns(visibleColumnsMap);
+		final Map<Integer, Variable> result = this.exportGermplasmListServiceImpl
+				.extractInventoryVariableMapFromVisibleColumns(visibleColumnsMap);
 
-		Assert.assertEquals("There are 2 inventory variables in visibleColumnsMap so the size of InventoryVariableMap should be 2.", 2, result.size());
+		Assert.assertEquals(
+				"There are 2 inventory variables in visibleColumnsMap so the size of InventoryVariableMap should be 2.",
+				2, result.size());
 		Assert.assertTrue(result.containsKey(TermId.STOCKID.getId()));
 		Assert.assertTrue(result.containsKey(TermId.SEED_AMOUNT_G.getId()));
 
@@ -412,13 +438,16 @@ public class ExportGermplasmListServiceTest {
 	@Test
 	public void testExtractInventoryVariableMapFromVisibleColumnsInventoryVariablesAreNotVisible() {
 
-		Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnMap();
+		final Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnMap();
 		visibleColumnsMap.put(String.valueOf(TermId.STOCKID.getId()), false);
 		visibleColumnsMap.put(String.valueOf(TermId.SEED_AMOUNT_G.getId()), false);
 
-		Map<Integer,Variable> result = exportGermplasmListServiceImpl.extractInventoryVariableMapFromVisibleColumns(visibleColumnsMap);
+		final Map<Integer, Variable> result = this.exportGermplasmListServiceImpl
+				.extractInventoryVariableMapFromVisibleColumns(visibleColumnsMap);
 
-		Assert.assertTrue("There are 2 inventory variables in visibleColumnsMap but they are not visible so the size of InventoryVariableMap should be empty", result.isEmpty());
+		Assert.assertTrue(
+				"There are 2 inventory variables in visibleColumnsMap but they are not visible so the size of InventoryVariableMap should be empty",
+				result.isEmpty());
 		Assert.assertFalse(result.containsKey(TermId.STOCKID.getId()));
 		Assert.assertFalse(result.containsKey(TermId.SEED_AMOUNT_G.getId()));
 
@@ -427,28 +456,30 @@ public class ExportGermplasmListServiceTest {
 	@Test
 	public void testRemoveInventoryVariableMapFromVisibleColumns() {
 
-		Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnMap();
+		final Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnMap();
 
-		// Get the size of visibleColumnsMap before adding the inventory variables so that
-		// we can compare the size of visibleColumnsMap after removing the inventory variables.
-		int visibleColumnsMapVariableCount = visibleColumnsMap.size();
+		// Get the size of visibleColumnsMap before adding the inventory
+		// variables so that
+		// we can compare the size of visibleColumnsMap after removing the
+		// inventory variables.
+		final int visibleColumnsMapVariableCount = visibleColumnsMap.size();
 
 		// Add inventory variables in visibleColumnsmap
 		visibleColumnsMap.put(String.valueOf(TermId.STOCKID.getId()), true);
 		visibleColumnsMap.put(String.valueOf(TermId.SEED_AMOUNT_G.getId()), true);
 
-		exportGermplasmListServiceImpl.removeInventoryVariableMapFromVisibleColumns(visibleColumnsMap);
+		this.exportGermplasmListServiceImpl.removeInventoryVariableMapFromVisibleColumns(visibleColumnsMap);
 
-		Assert.assertEquals("Expecting " + visibleColumnsMapVariableCount + " variables in visibleColumnsMap", visibleColumnsMapVariableCount, visibleColumnsMap.size());
+		Assert.assertEquals("Expecting " + visibleColumnsMapVariableCount + " variables in visibleColumnsMap",
+				visibleColumnsMapVariableCount, visibleColumnsMap.size());
 		Assert.assertFalse(visibleColumnsMap.containsKey(TermId.STOCKID.getId()));
 		Assert.assertFalse(visibleColumnsMap.containsKey(TermId.SEED_AMOUNT_G.getId()));
 
 	}
 
-
 	private Variable createVariable(final int termid) {
 
-		Variable variable = new Variable();
+		final Variable variable = new Variable();
 		variable.setId(termid);
 		return variable;
 

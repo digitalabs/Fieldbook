@@ -311,8 +311,7 @@ public class ImportGermplasmListControllerTest {
 					map.get(ImportGermplasmListController.POSITION));
 			Assert.assertEquals("The entry code's value should be " + x, String.valueOf(x),
 					map.get(ImportGermplasmListController.ENTRY_CODE));
-			Assert.assertEquals("The check's value should be 1", "1",
-					map.get(ImportGermplasmListController.CHECK));
+			Assert.assertEquals("The check's value should be 1", "1", map.get(ImportGermplasmListController.CHECK));
 			Assert.assertEquals("The entry's value should be " + x, String.valueOf(x),
 					map.get(ImportGermplasmListController.ENTRY));
 			Assert.assertEquals("The check option's value should be " + this.checkList, this.checkList,
@@ -394,11 +393,14 @@ public class ImportGermplasmListControllerTest {
 		Assert.assertEquals("The starting plot no should be " + ImportGermplasmListController.STARTING_PLOT_NO,
 				ImportGermplasmListController.STARTING_PLOT_NO, form.getStartingPlotNo());
 		Assert.assertEquals("The starting entry no should be 1", "1", form.getStartingEntryNo());
-		Assert.assertEquals("The main info should be" + mainInfo, mainInfo, this.userSelection.getImportedGermplasmMainInfo());
-		Assert.assertNotNull("The imported germplasm list should not be null", this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList());
-		Assert.assertEquals("The imported germplasm should be " + list, list, this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+		Assert.assertEquals("The main info should be" + mainInfo, mainInfo,
+				this.userSelection.getImportedGermplasmMainInfo());
+		Assert.assertNotNull("The imported germplasm list should not be null",
+				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList());
+		Assert.assertEquals("The imported germplasm should be " + list, list,
+				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
 	}
-	
+
 	@Test
 	public void testInitializeObjectsForGermplasmDetailsViewWhereListIsEmpty() {
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
@@ -427,8 +429,10 @@ public class ImportGermplasmListControllerTest {
 		Assert.assertEquals("The starting plot no should be " + ImportGermplasmListController.STARTING_PLOT_NO,
 				ImportGermplasmListController.STARTING_PLOT_NO, form.getStartingPlotNo());
 		Assert.assertNull("The starting entry no should be null", form.getStartingEntryNo());
-		Assert.assertEquals("The main info should be" + mainInfo, mainInfo, this.userSelection.getImportedGermplasmMainInfo());
-		Assert.assertNull("The imported germplasm list should be null", this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList());
+		Assert.assertEquals("The main info should be" + mainInfo, mainInfo,
+				this.userSelection.getImportedGermplasmMainInfo());
+		Assert.assertNull("The imported germplasm list should be null",
+				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList());
 	}
 
 	@Test

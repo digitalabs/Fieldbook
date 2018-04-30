@@ -73,14 +73,16 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 
 		try {
 
-			InputStream inp = this.getClass().getClassLoader().getResourceAsStream("GermplasmImportTemplate-Basic-rev4b-with_data.xls");
+			InputStream inp = this.getClass().getClassLoader()
+					.getResourceAsStream("GermplasmImportTemplate-Basic-rev4b-with_data.xls");
 
 			this.workbookBasic = WorkbookFactory.create(inp);
 
 			inp = this.getClass().getClassLoader().getResourceAsStream("GermplasmImportTemplate-Advanced-rev4.xls");
 			this.workbookAdvance = WorkbookFactory.create(inp);
 
-			inp = this.getClass().getClassLoader().getResourceAsStream("GermplasmImportTemplate-Basic-rev4b-with_data.xlsx");
+			inp = this.getClass().getClassLoader()
+					.getResourceAsStream("GermplasmImportTemplate-Basic-rev4b-with_data.xlsx");
 
 			this.workbookBasicXlsx = WorkbookFactory.create(inp);
 
@@ -93,7 +95,7 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 			Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn("");
 			this.importGermplasmFileService.setContextUtil(this.contextUtil);
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Assert.fail("Failed to load the template files for testing.");
 		}
 	}
@@ -101,14 +103,14 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 	/**
 	 * Test valid basic parse import gerplasm.
 	 */
-    @Ignore
+	@Ignore
 	@Test
 	public void testValidBasicParseImportGerplasm() {
 
-		ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 		try {
 			this.realImportGermplasmFileService.doProcessNow(this.workbookBasic, mainInfo);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Assert.fail();
 		}
 
@@ -122,25 +124,29 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 		Assert.assertFalse(mainInfo.isAdvanceImportType());
 		Assert.assertTrue(mainInfo.getFileIsValid());
 		// we check the parse data here
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(), Integer.valueOf(1));
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getDesig(), "IR 68835-58-1-1-B");
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(),
+				Integer.valueOf(1));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getDesig(),
+				"IR 68835-58-1-1-B");
 
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getEntryId(), Integer.valueOf(20));
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getDesig(), "IR 67632-14-2-5-1-2-B");
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getEntryId(),
+				Integer.valueOf(20));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getDesig(),
+				"IR 67632-14-2-5-1-2-B");
 	}
 
 	/**
 	 * Test valid advance parse import gerplasm.
 	 */
-    @Ignore
+	@Ignore
 	@Test
 	public void testValidAdvanceParseImportGerplasm() {
-		ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 		try {
 
 			this.realImportGermplasmFileService.doProcessNow(this.workbookAdvance, mainInfo);
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Assert.fail();
 		}
 
@@ -157,15 +163,19 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 		Assert.assertTrue(mainInfo.isAdvanceImportType());
 		Assert.assertTrue(mainInfo.getFileIsValid());
 		// test the parsing
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(), Integer.valueOf(1));
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getDesig(), "IR 68201-21-2-B-4-B-B");
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(),
+				Integer.valueOf(1));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getDesig(),
+				"IR 68201-21-2-B-4-B-B");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getGid(), "1");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getCross(), "1");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getSource(), "1");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryCode(), "1");
 
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getEntryId(), Integer.valueOf(2));
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getDesig(), "IR 67632-14-2-5-1-2-B");
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getEntryId(),
+				Integer.valueOf(2));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getDesig(),
+				"IR 67632-14-2-5-1-2-B");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getGid(), "2");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getCross(), "2");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getSource(), "2");
@@ -175,14 +185,14 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 	/**
 	 * Test valid basic parse import gerplasm xlsx.
 	 */
-    @Ignore
+	@Ignore
 	@Test
 	public void testValidBasicParseImportGerplasmXlsx() {
 
-		ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 		try {
 			this.realImportGermplasmFileService.doProcessNow(this.workbookBasicXlsx, mainInfo);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Assert.fail();
 		}
 
@@ -196,23 +206,27 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 		Assert.assertFalse(mainInfo.isAdvanceImportType());
 		Assert.assertTrue(mainInfo.getFileIsValid());
 		// we check the parse data here
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(), Integer.valueOf(1));
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getDesig(), "IR 68835-58-1-1-B");
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(),
+				Integer.valueOf(1));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getDesig(),
+				"IR 68835-58-1-1-B");
 
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getEntryId(), Integer.valueOf(20));
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getDesig(), "IR 67632-14-2-5-1-2-B");
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getEntryId(),
+				Integer.valueOf(20));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getDesig(),
+				"IR 67632-14-2-5-1-2-B");
 	}
 
 	/**
 	 * Test valid advance parse import gerplasm xlsx.
 	 */
-    @Ignore
+	@Ignore
 	@Test
 	public void testValidAdvanceParseImportGerplasmXlsx() {
-		ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 		try {
 			this.realImportGermplasmFileService.doProcessNow(this.workbookAdvanceXlsx, mainInfo);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Assert.fail();
 		}
 
@@ -229,15 +243,19 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 		Assert.assertTrue(mainInfo.isAdvanceImportType());
 		Assert.assertTrue(mainInfo.getFileIsValid());
 		// test the parsing
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(), Integer.valueOf(1));
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getDesig(), "IR 68201-21-2-B-4-B-B");
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(),
+				Integer.valueOf(1));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getDesig(),
+				"IR 68201-21-2-B-4-B-B");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getGid(), "1");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getCross(), "1");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getSource(), "1");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryCode(), "1");
 
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getEntryId(), Integer.valueOf(2));
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getDesig(), "IR 67632-14-2-5-1-2-B");
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getEntryId(),
+				Integer.valueOf(2));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getDesig(),
+				"IR 67632-14-2-5-1-2-B");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getGid(), "2");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getCross(), "2");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getSource(), "2");
@@ -247,73 +265,83 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 	/**
 	 * Test valid basic parse import gerplasm xls pagination.
 	 */
-    @Ignore
+	@Ignore
 	@Test
 	public void testValidBasicParseImportGerplasmXlsPagination() {
 		// testing when doing pagination, we simulate the pagination
-		ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-		ImportGermplasmListForm form = new ImportGermplasmListForm();
+		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		try {
 			this.realImportGermplasmFileService.doProcessNow(this.workbookBasic, mainInfo);
 			form.setImportedGermplasmMainInfo(mainInfo);
 			form.setImportedGermplasm(mainInfo.getImportedGermplasmList().getImportedGermplasms());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Assert.fail();
 		}
 		form.changePage(1);
 		Assert.assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(1));
-		Assert.assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68835-58-1-1-B"); // we check the parse data here
+		Assert.assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68835-58-1-1-B"); // we
+																											// check
+																											// the
+																											// parse
+																											// data
+																											// here
 	}
 
 	/**
 	 * Test valid advance parse import gerplasm xls pagination.
 	 */
-    @Ignore
+	@Ignore
 	@Test
 	public void testValidAdvanceParseImportGerplasmXlsPagination() {
 		// testing when doing pagination, we simulate the pagination
-		ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-		ImportGermplasmListForm form = new ImportGermplasmListForm();
+		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		try {
 			this.realImportGermplasmFileService.doProcessNow(this.workbookAdvance, mainInfo);
 			form.setImportedGermplasmMainInfo(mainInfo);
 			form.setImportedGermplasm(mainInfo.getImportedGermplasmList().getImportedGermplasms());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Assert.fail();
 		}
 		form.changePage(1);
 		Assert.assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(1));
-		Assert.assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68201-21-2-B-4-B-B"); // we check the parse data
+		Assert.assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68201-21-2-B-4-B-B"); // we
+																												// check
+																												// the
+																												// parse
+																												// data
 		// here
 	}
 
-    @Ignore
+	@Ignore
 	@Test
-    public void testValidAndAddCheckFactor() throws MiddlewareException {
+	public void testValidAndAddCheckFactor() throws MiddlewareException {
 		// testing when doing pagination, we simulate the pagination
-		ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-		ImportGermplasmListForm form = new ImportGermplasmListForm();
+		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		try {
 			this.realImportGermplasmFileService.doProcessNow(this.workbookAdvance, mainInfo);
 			form.setImportedGermplasmMainInfo(mainInfo);
 			form.setImportedGermplasm(mainInfo.getImportedGermplasmList().getImportedGermplasms());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Assert.fail();
 		}
-		UserSelection userSelection = new UserSelection();
+		final UserSelection userSelection = new UserSelection();
 		userSelection.setWorkbook(new org.generationcp.middleware.domain.etl.Workbook());
-		List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
 
 		userSelection.getWorkbook().setFactors(factors);
 		userSelection.getWorkbook().setVariates(new ArrayList<MeasurementVariable>());
 		userSelection.setImportedGermplasmMainInfo(mainInfo);
-		this.realImportGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), userSelection
-				.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection, true);
+		this.realImportGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(),
+				userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
+				userSelection, true);
 		// no check factor yet
 		Assert.assertEquals(0, userSelection.getWorkbook().getMeasurementDatasetVariables().size());
 		// we now need to add check
-		MeasurementVariable checkVariable =
-				new MeasurementVariable("CHECK", "TYPE OF ENTRY", "CODE", "ASSIGNED", "CHECK", "C", "", "ENTRY");
+		final MeasurementVariable checkVariable = new MeasurementVariable("CHECK", "TYPE OF ENTRY", "CODE", "ASSIGNED",
+				"CHECK", "C", "", "ENTRY");
 		factors.add(checkVariable);
 		userSelection.getWorkbook().reset();
 		userSelection.getWorkbook().setFactors(factors);
@@ -324,20 +352,22 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 	@Test
 	public void testValidataAndAddCheckFactorNoCheckAndWithCheckFactor() throws MiddlewareException {
 
-		Workbook workbook = this.generateWorkbookWithCheckFactor();
+		final Workbook workbook = this.generateWorkbookWithCheckFactor();
 		workbook.setCheckFactorAddedOnly(true);
 		Mockito.doReturn(workbook).when(this.userSelection).getWorkbook();
 
-		List<ImportedGermplasm> formImportedGermplasm = this.generateFormImportedGermplasmNoCheck();
-		List<ImportedGermplasm> sessionImportedGermplasm = this.generateImportedGermplasm();
+		final List<ImportedGermplasm> formImportedGermplasm = this.generateFormImportedGermplasmNoCheck();
+		final List<ImportedGermplasm> sessionImportedGermplasm = this.generateImportedGermplasm();
 
-		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection, false);
+		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm,
+				this.userSelection, false);
 
-		for (ImportedGermplasm item : sessionImportedGermplasm) {
-			int index = sessionImportedGermplasm.indexOf(item);
+		for (final ImportedGermplasm item : sessionImportedGermplasm) {
+			final int index = sessionImportedGermplasm.indexOf(item);
 			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeName(), item.getEntryTypeName());
 			Assert.assertEquals("", item.getEntryTypeValue());
-			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeCategoricalID(), item.getEntryTypeCategoricalID());
+			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeCategoricalID(),
+					item.getEntryTypeCategoricalID());
 		}
 
 		Assert.assertEquals(4, workbook.getFactors().size());
@@ -347,20 +377,22 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 	@Test
 	public void testValidataAndAddCheckFactorNoCheckAndWithoutCheckFactor() throws MiddlewareException {
 
-		Workbook workbook = this.generateWorkbook();
+		final Workbook workbook = this.generateWorkbook();
 		workbook.setCheckFactorAddedOnly(false);
 		Mockito.doReturn(workbook).when(this.userSelection).getWorkbook();
 
-		List<ImportedGermplasm> formImportedGermplasm = this.generateFormImportedGermplasmNoCheck();
-		List<ImportedGermplasm> sessionImportedGermplasm = this.generateImportedGermplasm();
+		final List<ImportedGermplasm> formImportedGermplasm = this.generateFormImportedGermplasmNoCheck();
+		final List<ImportedGermplasm> sessionImportedGermplasm = this.generateImportedGermplasm();
 
-		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection, false);
+		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm,
+				this.userSelection, false);
 
-		for (ImportedGermplasm item : sessionImportedGermplasm) {
-			int index = sessionImportedGermplasm.indexOf(item);
+		for (final ImportedGermplasm item : sessionImportedGermplasm) {
+			final int index = sessionImportedGermplasm.indexOf(item);
 			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeName(), item.getEntryTypeName());
 			Assert.assertEquals("", item.getEntryTypeValue());
-			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeCategoricalID(), item.getEntryTypeCategoricalID());
+			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeCategoricalID(),
+					item.getEntryTypeCategoricalID());
 		}
 
 		Assert.assertEquals(4, workbook.getFactors().size());
@@ -370,22 +402,24 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 	@Test
 	public void testValidataAndAddCheckFactorWithNoExistingCheckFactor() throws MiddlewareException {
 
-		Workbook workbook = this.generateWorkbook();
+		final Workbook workbook = this.generateWorkbook();
 
-		List<ImportedGermplasm> formImportedGermplasm = this.generateFormImportedGermplasm();
-		List<ImportedGermplasm> sessionImportedGermplasm = this.generateImportedGermplasm();
+		final List<ImportedGermplasm> formImportedGermplasm = this.generateFormImportedGermplasm();
+		final List<ImportedGermplasm> sessionImportedGermplasm = this.generateImportedGermplasm();
 
 		Mockito.doReturn(workbook).when(this.userSelection).getWorkbook();
 		Mockito.doReturn(this.generateCheckStandardVariable()).when(this.fieldbookMiddlewareService)
 				.getStandardVariable(Matchers.anyInt(), Matchers.anyString());
 
-		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection, true);
+		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm,
+				this.userSelection, true);
 
-		for (ImportedGermplasm item : sessionImportedGermplasm) {
-			int index = sessionImportedGermplasm.indexOf(item);
+		for (final ImportedGermplasm item : sessionImportedGermplasm) {
+			final int index = sessionImportedGermplasm.indexOf(item);
 			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeName(), item.getEntryTypeName());
 			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeValue(), item.getEntryTypeValue());
-			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeCategoricalID(), item.getEntryTypeCategoricalID());
+			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeCategoricalID(),
+					item.getEntryTypeCategoricalID());
 		}
 
 		Assert.assertEquals("CHECK", workbook.getFactors().get(4).getName());
@@ -395,27 +429,28 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 	@Test
 	public void testValidataAndAddCheckFactorWithExistingCheckFactor() throws MiddlewareException {
 
-		Workbook workbook = this.generateWorkbook();
-		StandardVariable checkStandardVariable = this.generateCheckStandardVariable();
+		final Workbook workbook = this.generateWorkbook();
+		final StandardVariable checkStandardVariable = this.generateCheckStandardVariable();
 
-		List<ImportedGermplasm> formImportedGermplasm = this.generateFormImportedGermplasm();
-		List<ImportedGermplasm> sessionImportedGermplasm = this.generateImportedGermplasm();
+		final List<ImportedGermplasm> formImportedGermplasm = this.generateFormImportedGermplasm();
+		final List<ImportedGermplasm> sessionImportedGermplasm = this.generateImportedGermplasm();
 
 		Mockito.doReturn(this.generateWorkbookWithCheckFactor()).when(this.userSelection).getWorkbook();
 		Mockito.doReturn(checkStandardVariable).when(this.fieldbookMiddlewareService)
 				.getStandardVariable(Matchers.anyInt(), Matchers.anyString());
-		Mockito.doReturn(TermId.CHECK.getId())
-				.when(this.fieldbookMiddlewareService)
-				.getStandardVariableIdByPropertyScaleMethodRole(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-						Matchers.any(PhenotypicType.class));
+		Mockito.doReturn(TermId.CHECK.getId()).when(this.fieldbookMiddlewareService)
+				.getStandardVariableIdByPropertyScaleMethodRole(Matchers.anyString(), Matchers.anyString(),
+						Matchers.anyString(), Matchers.any(PhenotypicType.class));
 
-		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection, true);
+		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm,
+				this.userSelection, true);
 
-		for (ImportedGermplasm item : sessionImportedGermplasm) {
-			int index = sessionImportedGermplasm.indexOf(item);
+		for (final ImportedGermplasm item : sessionImportedGermplasm) {
+			final int index = sessionImportedGermplasm.indexOf(item);
 			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeName(), item.getEntryTypeName());
 			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeValue(), item.getEntryTypeValue());
-			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeCategoricalID(), item.getEntryTypeCategoricalID());
+			Assert.assertEquals(formImportedGermplasm.get(index).getEntryTypeCategoricalID(),
+					item.getEntryTypeCategoricalID());
 		}
 
 		Assert.assertEquals(4, workbook.getFactors().size());
@@ -423,11 +458,11 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 	}
 
 	private List<ImportedGermplasm> generateFormImportedGermplasm() {
-		List<ImportedGermplasm> list = new ArrayList<>();
+		final List<ImportedGermplasm> list = new ArrayList<>();
 
 		for (int x = 0; x < 10; x++) {
 
-			ImportedGermplasm importedGermplasm = new ImportedGermplasm();
+			final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
 
 			importedGermplasm.setIndex(x);
 			importedGermplasm.setBreedingMethodId(1);
@@ -444,11 +479,11 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 	}
 
 	private List<ImportedGermplasm> generateFormImportedGermplasmNoCheck() {
-		List<ImportedGermplasm> list = new ArrayList<>();
+		final List<ImportedGermplasm> list = new ArrayList<>();
 
 		for (int x = 0; x < 10; x++) {
 
-			ImportedGermplasm importedGermplasm = new ImportedGermplasm();
+			final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
 
 			importedGermplasm.setIndex(x);
 			importedGermplasm.setBreedingMethodId(1);
@@ -463,11 +498,11 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 
 	private List<ImportedGermplasm> generateImportedGermplasm() {
 
-		List<ImportedGermplasm> list = new ArrayList<>();
+		final List<ImportedGermplasm> list = new ArrayList<>();
 
 		for (int x = 0; x < 10; x++) {
 
-			ImportedGermplasm importedGermplasm = new ImportedGermplasm();
+			final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
 			importedGermplasm.setIndex(x);
 			importedGermplasm.setBreedingMethodId(1);
 			importedGermplasm.setDesig("DESIG" + x);
@@ -481,7 +516,7 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 
 	private StandardVariable generateCheckStandardVariable() {
 
-		StandardVariable stdVar = new StandardVariable();
+		final StandardVariable stdVar = new StandardVariable();
 		stdVar.setId(TermId.CHECK.getId());
 		stdVar.setName("ENTRY_TYPE");
 		stdVar.setProperty(new Term(2209, "Entry type", "Entry type"));
@@ -494,21 +529,21 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 	}
 
 	private Workbook generateWorkbook() {
-		Workbook wb = new Workbook();
+		final Workbook wb = new Workbook();
 		wb.setFactors(this.generateFactors());
 		return wb;
 	}
 
 	private Workbook generateWorkbookWithCheckFactor() {
-		Workbook wb = new Workbook();
-		List<MeasurementVariable> factors = this.generateFactors();
+		final Workbook wb = new Workbook();
+		final List<MeasurementVariable> factors = this.generateFactors();
 		factors.add(this.createMeasurementVariable("ENTRY_TYPE"));
 		wb.setFactors(factors);
 		return wb;
 	}
 
 	private List<MeasurementVariable> generateFactors() {
-		List<MeasurementVariable> list = new ArrayList<>();
+		final List<MeasurementVariable> list = new ArrayList<>();
 		list.add(this.createMeasurementVariable("TRIAL_INSTANCE"));
 		list.add(this.createMeasurementVariable("ENTRY_NO"));
 		list.add(this.createMeasurementVariable("PLOT_NO"));
@@ -517,8 +552,8 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 
 	}
 
-	private MeasurementVariable createMeasurementVariable(String name) {
-		MeasurementVariable mv = new MeasurementVariable();
+	private MeasurementVariable createMeasurementVariable(final String name) {
+		final MeasurementVariable mv = new MeasurementVariable();
 		mv.setName(name);
 		return mv;
 	}

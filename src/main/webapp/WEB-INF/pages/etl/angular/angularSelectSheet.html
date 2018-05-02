@@ -333,7 +333,7 @@ angular.module('di-consolidatedStep', ['digitalabs-util','di-directives', 'digit
                     }}
                     
                     if (! $scope.selected.studyDetails.startDate || $scope.selected.studyDetails.startDate.trim() === '') {
-                        $scope.currentErrorField = $scope.selectSheetForm.studyDetails.startDate;
+                        $scope.currentErrorField = $scope.selectSheetForm.startDate;
                         $scope.messages.push([[#{error.start.date.is.empty}]]);
                         valid = false;
                     }

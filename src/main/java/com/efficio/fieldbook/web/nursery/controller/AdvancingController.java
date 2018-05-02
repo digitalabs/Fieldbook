@@ -131,7 +131,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 * @param model the model
 	 * @param session the session
 	 * @param studyId the study id
-     * @param selectedInstances Set of Study Instances(Optional)
+     * @param selectedInstances Set of Trial Instances(Optional)
 	 * @return the string
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */

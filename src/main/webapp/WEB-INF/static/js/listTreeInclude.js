@@ -258,6 +258,8 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 						chooseListNode(germplasmFocusNode, true);
 					}
 				});
+
+			$(node.span).trigger('bms.tree.node.activate');
 		},
 		onDblClick : function(node, event) {
 			chooseList();
@@ -283,6 +285,8 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 						+ hasChildrenString);
 				} else if (node.data.key === 'CROPLISTS' && sourceNode.data.isFolder) {
 					showErrorMessage(getMessageErrorDiv(), cannotMoveFolderToCropListError);
+                } else if (!node.data.isFolder) {
+                    showErrorMessage(getMessageErrorDiv(), cannotMoveItemToAListError);
 				} else {
 					$.ajax({
 						url : lazyLoadUrlGetChildren
@@ -438,6 +442,7 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 						chooseListNode(sampleFocusNode, true);
 					}
 				});
+			$(node.span).trigger('bms.tree.node.activate');
 		},
 		onDblClick : function(node, event) {
 			chooseList(node);

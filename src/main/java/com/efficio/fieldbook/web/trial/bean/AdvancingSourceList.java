@@ -9,7 +9,9 @@
  *
  *******************************************************************************/
 
-package com.efficio.fieldbook.web.nursery.bean;
+package com.efficio.fieldbook.web.trial.bean;
+
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 
 import java.util.List;
 

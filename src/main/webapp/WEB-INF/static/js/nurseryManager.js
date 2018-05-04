@@ -57,7 +57,7 @@ function displaySectionsPerMethodVariateValues() {
 	var id = $('#methodVariateId').val();
 	if (id !== '') {
 		$.ajax({
-			url: '/Fieldbook/NurseryManager/advance/nursery/checkMethodTypeMode/' + id,
+			url: '/Fieldbook/StudyManager/advance/study/checkMethodTypeMode/' + id,
 			type: 'GET',
 			cache: false,
 			success: function(data) {

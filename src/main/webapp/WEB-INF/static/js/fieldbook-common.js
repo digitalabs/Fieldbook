@@ -1098,7 +1098,7 @@ function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailH
 
 	//TODO do we advance the study using the same ajax function as advancing the nursery from the nursery manager.
 	//TODO Should that be common then with the common path?
-	var advanceStudyHref = '/Fieldbook/NurseryManager/advance/nursery';
+	var advanceStudyHref = '/Fieldbook/StudyManager/advance/study';
 	advanceStudyHref = advanceStudyHref + '/' + encodeURIComponent(idVal);
 	advanceStudyHref = advanceStudyHref + '?selectedInstances=' + encodeURIComponent(trialInstances.join(","));
 
@@ -1742,7 +1742,7 @@ function validatePlantsSelected() {
 	}
 	if (valid && ids !== '')	{
 		$.ajax({
-			url: '/Fieldbook/NurseryManager/advance/nursery/countPlots/' + ids,
+			url: '/Fieldbook/StudyManager/advance/study/countPlots/' + ids,
 			type: 'GET',
 			cache: false,
 			async: false,
@@ -1909,7 +1909,7 @@ function validateBreedingMethod() {
 
 	if ($('input[type=checkbox][name=methodChoice]:checked').val() !== '1' && id) {
 		$.ajax({
-			url: '/Fieldbook/NurseryManager/advance/nursery/countPlots/' + id,
+			url: '/Fieldbook/StudyManager/advance/study/countPlots/' + id,
 			type: 'GET',
 			cache: false,
 			async: false,

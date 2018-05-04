@@ -85,7 +85,7 @@ function applyAdvanceGermplasmChangeDetails() {
 	var data = JSON.stringify(advanceChangeConfirmationDetails),
 	listIdentifier = $('#advanceGermplasmChangeConfirmationModal').data('uniqueId');
 	$.ajax({
-		url: '/Fieldbook/NurseryManager/advance/nursery/apply/change/details',
+		url: '/Fieldbook/StudyManager/advance/study/apply/change/details',
 		type: 'POST',
 		data: 'data=' + data,
 		success: function(resp) {

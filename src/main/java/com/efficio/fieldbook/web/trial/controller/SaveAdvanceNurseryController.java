@@ -9,12 +9,13 @@
  *
  *******************************************************************************/
 
-package com.efficio.fieldbook.web.nursery.controller;
+package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,27 +25,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 
 @Controller
 @RequestMapping(SaveAdvanceNurseryController.URL)
 public class SaveAdvanceNurseryController extends AbstractBaseFieldbookController {
 
-	public static final String URL = "/NurseryManager/saveAdvanceNursery";
+	public static final String URL = "/StudyManager/saveAdvanceNursery";
 
-	public static final String PAGINATION_TEMPLATE = "/NurseryManager/showSaveAdvanceNurseryPagination";
+	public static final String PAGINATION_TEMPLATE = "/StudyManager/showSaveAdvanceNurseryPagination";
 
 	@Override
 	public String getContentName() {
-		return "NurseryManager/saveAdvanceNursery";
+		return "StudyManager/saveAdvanceNursery";
 	}
 
 	@RequestMapping(value = "/page/{pageNum}", method = RequestMethod.GET)
-	public String getPaginatedList(@PathVariable int pageNum, @ModelAttribute("advancingNurseryform") AdvancingNurseryForm form,
+	public String getPaginatedList(@PathVariable int pageNum, @ModelAttribute("advancingStudyForm") AdvancingStudyForm form,
 			Model model, HttpServletRequest req) {
 
 		String listIdentifier = req.getParameter("listIdentifier");
-		AdvancingNurseryForm formFromSession = this.getPaginationListSelection().getAdvanceDetails(listIdentifier);
+		AdvancingStudyForm formFromSession = this.getPaginationListSelection().getAdvanceDetails(listIdentifier);
 		List<ImportedGermplasm> importedAdvanceGermplasmList = formFromSession.getGermplasmList();
 
 		if (importedAdvanceGermplasmList != null) {

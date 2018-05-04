@@ -9,7 +9,7 @@
  *
  *******************************************************************************/
 
-package com.efficio.fieldbook.web.nursery.controller;
+package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
@@ -20,9 +20,9 @@ import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.AdvanceType;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
+import com.efficio.fieldbook.web.trial.bean.AdvanceType;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -79,10 +79,10 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	private static final String UNIQUE_ID = "uniqueId";
 
 	/** The Constant URL. */
-	public static final String URL = "/NurseryManager/advance/nursery";
+	public static final String URL = "/StudyManager/advance/study";
 
-	private static final String MODAL_URL = "NurseryManager/advanceNurseryModal";
-	private static final String SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE = "NurseryManager/saveAdvanceNursery";
+	private static final String MODAL_URL = "StudyManager/advanceNurseryModal";
+	private static final String SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE = "StudyManager/saveAdvanceNursery";
 
 	protected static final String TABLE_HEADER_LIST = "tableHeaderList";
 
@@ -121,7 +121,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 */
 	@Override
 	public String getContentName() {
-		return "NurseryManager/advancingNursery";
+		return "StudyManager/advancingNursery";
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@RequestMapping(value = "/{studyId}", method = RequestMethod.GET)
-	public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, Model model, HttpServletRequest req,
+	public String show(@ModelAttribute("advancingStudyForm") AdvancingStudyForm form, Model model, HttpServletRequest req,
 		HttpSession session, @PathVariable int studyId, @RequestParam(required = false) Set<String> selectedInstances,
 		@RequestParam(required = false) String noOfReplications, @RequestParam(required = false) String advanceType)
 		throws MiddlewareException {
@@ -225,36 +225,37 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public Map<String, Object> postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, BindingResult result,
+	public Map<String, Object> postAdvanceNursery(@ModelAttribute("advancingStudyForm") AdvancingStudyForm form, BindingResult result,
 			Model model) {
 		
 		Map<String, Object> results = new HashMap<>();
-		AdvancingNursery advancingNursery = new AdvancingNursery();
+		AdvancingStudy advancingStudy = new AdvancingStudy();
 		
 		Study study = this.fieldbookMiddlewareService.getStudy(Integer.valueOf(form.getNurseryId()));
-		advancingNursery.setStudy(study);	
-		advancingNursery.setMethodChoice(form.getMethodChoice());
-		advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
-		advancingNursery.setLineChoice(form.getLineChoice());
-		advancingNursery.setLineSelected(form.getLineSelected() != null ? form.getLineSelected().trim() : null);
-		advancingNursery.setHarvestDate(form.getHarvestDate());
-		advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
-		advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation() != null ? form.getHarvestLocationAbbreviation() : "");
-		advancingNursery.setAllPlotsChoice(form.getAllPlotsChoice());
-		advancingNursery.setLineVariateId(form.getLineVariateId());
-		advancingNursery.setPlotVariateId(form.getPlotVariateId());
-		advancingNursery.setMethodVariateId(form.getMethodVariateId());
+		advancingStudy.setStudy(study);
+		advancingStudy.setMethodChoice(form.getMethodChoice());
+		advancingStudy.setBreedingMethodId(form.getAdvanceBreedingMethodId());
+		advancingStudy.setLineChoice(form.getLineChoice());
+		advancingStudy.setLineSelected(form.getLineSelected() != null ? form.getLineSelected().trim() : null);
+		advancingStudy.setHarvestDate(form.getHarvestDate());
+		advancingStudy.setHarvestLocationId(form.getHarvestLocationId());
+		advancingStudy
+			.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation() != null ? form.getHarvestLocationAbbreviation() : "");
+		advancingStudy.setAllPlotsChoice(form.getAllPlotsChoice());
+		advancingStudy.setLineVariateId(form.getLineVariateId());
+		advancingStudy.setPlotVariateId(form.getPlotVariateId());
+		advancingStudy.setMethodVariateId(form.getMethodVariateId());
 		// Set to false till we figure out a more performat way to do unique name checking
-		advancingNursery.setCheckAdvanceLinesUnique(false);
-        advancingNursery.setSelectedReplications(form.getSelectedReplications());
-        advancingNursery.setSelectedTrialInstances(form.getSelectedTrialInstances());
-        advancingNursery.setAdvanceType(AdvanceType.fromLowerCaseName(form.getAdvanceType()));
+		advancingStudy.setCheckAdvanceLinesUnique(false);
+        advancingStudy.setSelectedReplications(form.getSelectedReplications());
+        advancingStudy.setSelectedTrialInstances(form.getSelectedTrialInstances());
+        advancingStudy.setAdvanceType(AdvanceType.fromLowerCaseName(form.getAdvanceType()));
 		boolean observationsLoaded = this.fieldbookMiddlewareService.loadAllObservations(this.userSelection.getWorkbook());
 
 		try {
 
-			if (advancingNursery.getMethodChoice() != null && !advancingNursery.getMethodChoice().isEmpty()) {
-				Method method = this.fieldbookMiddlewareService.getMethodById(Integer.valueOf(advancingNursery.getBreedingMethodId()));
+			if (advancingStudy.getMethodChoice() != null && !advancingStudy.getMethodChoice().isEmpty()) {
+				Method method = this.fieldbookMiddlewareService.getMethodById(Integer.valueOf(advancingStudy.getBreedingMethodId()));
 				if ("GEN".equals(method.getMtype())) {
 					form.setErrorInAdvance(this.messageSource.getMessage("nursery.save.advance.error.generative.method",
 							new String[] {}, LocaleContextHolder.getLocale()));
@@ -269,7 +270,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			}
 
 
-			AdvanceResult advanceResult = this.fieldbookService.advanceNursery(advancingNursery, this.userSelection.getWorkbook());
+			AdvanceResult advanceResult = this.fieldbookService.advanceNursery(advancingStudy, this.userSelection.getWorkbook());
 			List<ImportedGermplasm> importedGermplasmList = advanceResult.getAdvanceList();
 			long id = DateUtil.getCurrentDate().getTime();
 			this.getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
@@ -349,7 +350,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	}
 
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public String showAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, BindingResult result, Model model,
+	public String showAdvanceNursery(@ModelAttribute("advancingStudyForm") AdvancingStudyForm form, BindingResult result, Model model,
 			HttpServletRequest req) throws MiddlewareQueryException {
 
 		try {
@@ -376,7 +377,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	}
 
 	@RequestMapping(value = "/delete/entries", method = RequestMethod.POST)
-	public String deleteAdvanceNurseryEntries(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, BindingResult result,
+	public String deleteAdvanceNurseryEntries(@ModelAttribute("advancingStudyForm") AdvancingStudyForm form, BindingResult result,
 			Model model, HttpServletRequest req) throws MiddlewareQueryException {
 
 		try {

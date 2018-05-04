@@ -8,7 +8,7 @@
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  *******************************************************************************/
 
-package com.efficio.fieldbook.web.nursery.controller;
+package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
@@ -63,7 +63,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsController.class);
-	public static final String DESCRIPTION = "Description";
+
+	private static final String DESCRIPTION = "Description";
 	private static final String START_DATE = "startDate";
 	private static final String END_DATE = "endDate";
 	private static final String STUDY_UPDATE = "studyUpdate";
@@ -108,6 +109,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param variableId, List<MeasurementRow>
 	 * @return
 	 */
+	@Deprecated
 	public static boolean hasMeasurementDataEntered(final int variableId, final List<MeasurementRow> measurementRow) {
 		for (final MeasurementRow row : measurementRow) {
 			for (final MeasurementData data : row.getDataList()) {
@@ -126,6 +128,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param requiredFields the required fields
 	 * @return the list
 	 */
+	//TODO TRIAL
 	protected List<Integer> buildVariableIDList(final String requiredFields) {
 		return FieldbookUtil.getInstance().buildVariableIDList(requiredFields);
 	}
@@ -137,6 +140,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param hasLabels the has labels
 	 * @return the list
 	 */
+	@Deprecated
 	protected List<String> buildRequiredVariablesLabel(final String requiredFields, final boolean hasLabels) {
 
 		final List<String> requiredVariables = new ArrayList<>();
@@ -159,6 +163,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param requiredFields the required fields
 	 * @return the boolean[]
 	 */
+	@Deprecated
 	protected boolean[] buildRequiredVariablesFlag(final String requiredFields) {
 		final StringTokenizer token = new StringTokenizer(requiredFields, ",");
 		final boolean[] requiredVariablesFlag = new boolean[token.countTokens()];
@@ -168,6 +173,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		return requiredVariablesFlag;
 	}
 
+	@Deprecated
 	private String getCodeCounterpart(final String idCodeNameCombination) {
 		final StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, "|");
 		if (tokenizer.hasMoreTokens()) {
@@ -188,6 +194,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param hasLabels the has labels
 	 * @return the list
 	 */
+	@Deprecated
 	protected List<SettingDetail> updateRequiredFields(final List<Integer> requiredVariables, final List<String> requiredVariablesLabel,
 			final boolean[] requiredVariablesFlag, final List<SettingDetail> variables, final boolean hasLabels,
 			final String idCodeNameCombination, final String role) {
@@ -282,6 +289,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param requiredVariablesLabel the required variables label
 	 * @return the list
 	 */
+	@Deprecated
 	protected List<SettingDetail> buildDefaultVariables(final List<SettingDetail> defaults, final String requiredFields,
 			final List<String> requiredVariablesLabel, final String role) {
 		final StringTokenizer token = new StringTokenizer(requiredFields, ",");
@@ -306,7 +314,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param id the id
 	 * @param name the name
 	 * @return the setting detail
-	 */
+	 *///TODO TRIAL
 	protected SettingDetail createSettingDetail(final int id, final String name, final String role) {
 		final String variableName;
 		final StandardVariable stdVar = this.getStandardVariable(id);
@@ -369,7 +377,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param alias the variable alias
 	 * @param variableType the variable type
 	 * @return the setting detail
-	 */
+	 */// TODO TRIAL
 	protected SettingDetail createSettingDetailWithVariableType(final int id, final String alias, final VariableType variableType) {
 		final Variable variable = this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, false, false);
 
@@ -421,7 +429,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * Populates Setting Variable.
 	 *
 	 * @param var the var
-	 */
+	 *///TODO TRIAL
 	protected void populateSettingVariable(final SettingVariable var) {
 		final StandardVariable stdvar = this.getStandardVariable(var.getCvTermId());
 		if (stdvar != null) {
@@ -448,6 +456,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param id the id
 	 * @return the setting variable
 	 */
+	@Deprecated
 	protected SettingVariable getSettingVariable(final int id) {
 		final StandardVariable stdVar = this.getStandardVariable(id);
 		if (stdVar != null) {
@@ -487,6 +496,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param name
 	 * @param createdBy
 	 */
+	@Deprecated
 	public void createStudyDetails(final Workbook workbook, final Integer folderId, final Integer studyId, final String description,
 		final String startDate, final String endDate, final String studyUpdate, final String objective, final String name, final String createdBy) {
 		if (workbook.getStudyDetails() == null) {
@@ -519,6 +529,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param variableId
 	 * @return
 	 */
+	// TODO TRIAL
 	public boolean hasMeasurementDataEntered(final int variableId) {
 		for (final MeasurementRow row : this.userSelection.getMeasurementRowList()) {
 			for (final MeasurementData data : row.getDataList()) {
@@ -530,6 +541,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		return false;
 	}
 
+	@Deprecated
 	public boolean hasMeasurementDataEnteredForVariables(final List<Integer> variableIds, final UserSelection userSelectionTemp) {
 		for (final Integer variableId : variableIds) {
 			for (final MeasurementRow row : userSelectionTemp.getMeasurementRowList()) {
@@ -543,6 +555,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		return false;
 	}
 
+	// TODO TRIAL
 	protected void removeVariablesFromExistingNursery(final List<SettingDetail> settingList, final String variables) {
 		final Iterator<SettingDetail> variableList = settingList.iterator();
 		while (variableList.hasNext()) {
@@ -552,6 +565,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
+	//TODO TRIAL
 	protected void resetSessionVariablesAfterSave(final Workbook workbook) {
 
 		// update variables in measurement rows
@@ -631,6 +645,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	}
 
+	//TODO TRIAL
 	private void removeRemovedVariablesFromSession(final List<SettingDetail> variableList, final List<SettingDetail> removedVariableList) {
 		if (removedVariableList == null || variableList == null) {
 			return;
@@ -645,6 +660,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
+	//TODO TRIAL
 	private void removeDeletedVariablesInMeasurements(final List<SettingDetail> deletedList, final Workbook workbook) {
 		if (deletedList != null) {
 			for (final SettingDetail setting : deletedList) {
@@ -667,6 +683,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param settingList the setting list
 	 * @param variableList the variable list
 	 */
+	//TODO TRIAL
 	private void removeDeletedSetUpdate(final List<SettingDetail> settingList, final List<MeasurementVariable> variableList) {
 		if (settingList != null) {
 			// remove all variables having delete and add operation
@@ -698,6 +715,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	/**
 	 * Reset deleted lists.
 	 */
+	//TODO TRIAL
 	private void resetDeletedLists(final UserSelection userSelection) {
 		userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
 		userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
@@ -711,6 +729,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 *
 	 * @param traits the traits
 	 */
+	//TODO TRIAL
 	private void removeSelectionVariatesFromTraits(final List<SettingDetail> traits) {
 		if (traits != null) {
 			final Iterator<SettingDetail> iter = traits.iterator();
@@ -729,6 +748,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param settingList
 	 * @param hiddenVarList
 	 */
+	//TODO TRIAL
 	private void removeHiddenVariables(final List<SettingDetail> settingList, final String hiddenVarList) {
 		if (settingList != null) {
 
@@ -741,6 +761,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
+	//TODO TRIAL
 	private void addNameVariables(final List<SettingDetail> removedConditions, final Workbook workbook, final String idCodeNamePairs) {
 		final Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
 		final Map<String, SettingDetail> removedConditionsMap = new HashMap<>();
@@ -790,6 +811,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
+	//TODO TRIAL
 	protected Method getMethod(final Map<String, MeasurementVariable> studyConditionMap, final String idTermId, final String codeTermId,
 			final String programUUID) {
 		Method method = null;
@@ -803,6 +825,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		return method;
 	}
 
+	//TODO TRIAL
 	private void addSettingDetail(final List<SettingDetail> removedConditions, final Map<String, SettingDetail> removedConditionsMap,
 			final Map<String, MeasurementVariable> studyConditionMap, final String id, final String value) {
 		if (removedConditionsMap.get(id) == null) {
@@ -818,6 +841,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
+	//TODO TRIAL
 	private void removeCodeVariablesIfNeeded(final List<SettingDetail> variableList, final String idCodeNamePairs) {
 		final Map<String, SettingDetail> variableListMap = new HashMap<>();
 		if (variableList != null) {
@@ -848,6 +872,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
+	@Deprecated
 	protected List<SettingDetail> getCheckVariables(final List<SettingDetail> nurseryLevelConditions, final CreateNurseryForm form) {
 		final List<SettingDetail> checkVariables =
 				this.getSettingDetailsOfSection(nurseryLevelConditions, form, AppConstants.CHECK_VARIABLES.getString());
@@ -868,6 +893,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param nurseryLevelConditions the nursery level conditions
 	 * @return the basic details
 	 */
+	@Deprecated
 	protected List<SettingDetail> getSettingDetailsOfSection(final List<SettingDetail> nurseryLevelConditions, final CreateNurseryForm form,
 		final String variableList) {
 		final List<SettingDetail> settingDetails = new ArrayList<>();
@@ -891,6 +917,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		return settingDetails;
 	}
 
+	@Deprecated
 	private boolean searchAndSetValuesOfSpecialVariables(final List<SettingDetail> nurseryLevelConditions, final Integer termId,
 			final List<SettingDetail> settingDetails) {
 		boolean isFound = false;
@@ -903,6 +930,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		return isFound;
 	}
 
+	@Deprecated
 	private void addSettingDetails(final List<SettingDetail> settingDetails, final Integer termId, final CreateNurseryForm form) {
 		try {
 			settingDetails.add(this.createSettingDetail(termId, null, null));
@@ -916,6 +944,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		this.userSelection = userSelection;
 	}
 
+	//TODO TRIAL
 	protected void addVariableInDeletedList(final List<SettingDetail> currentList, final int mode, final int variableId,
 			final boolean createNewSettingIfNull) {
 		SettingDetail newSetting = null;
@@ -966,6 +995,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
+	//TODO TRIAL
 	private void addNewSettingToDeletedBaselineTraits(final SettingDetail newSetting) {
 		if (this.userSelection.getDeletedBaselineTraitsList() == null) {
 			this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
@@ -981,6 +1011,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * These model attributes are used in UI JS code e.g. in createNursery.html and editNursery.html to identify various sections on screen
 	 * where variables appear.
 	 */
+	@Deprecated
 	protected void addVariableSectionIdentifiers(final Model model) {
 		model.addAttribute("baselineTraitsSegment", VariableType.TRAIT.getId());
 		model.addAttribute("selectionVariatesSegment", VariableType.SELECTION_METHOD.getId());

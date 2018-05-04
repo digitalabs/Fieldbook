@@ -6,7 +6,7 @@ import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;

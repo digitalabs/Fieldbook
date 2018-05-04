@@ -17,7 +17,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.common.service.MergeCheckService;
 import com.efficio.fieldbook.web.exception.FieldbookRequestValidationException;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.form.UpdateGermplasmCheckForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;

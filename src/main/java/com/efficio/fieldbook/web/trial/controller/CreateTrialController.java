@@ -14,7 +14,7 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;

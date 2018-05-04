@@ -1,8 +1,8 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
 import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -23,7 +23,7 @@ public class LocationAbbreviationExpressionDataProcessor implements ExpressionDa
     LocationDataManager locationDataManager;
 
     @Override
-    public void processEnvironmentLevelData(AdvancingSource source, Workbook workbook, AdvancingNursery nurseryInfo, Study study) throws FieldbookException {
+    public void processEnvironmentLevelData(AdvancingSource source, Workbook workbook, AdvancingStudy nurseryInfo, Study study) throws FieldbookException {
         String locationAbbreviation = nurseryInfo.getHarvestLocationAbbreviation();
         source.setLocationAbbreviation(locationAbbreviation);
     }

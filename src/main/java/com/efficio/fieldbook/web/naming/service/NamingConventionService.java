@@ -20,8 +20,8 @@ import org.generationcp.middleware.domain.etl.Workbook;
 
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
 
 /**
  *
@@ -39,15 +39,15 @@ public interface NamingConventionService {
 	 * @throws RuleException
 	 * @throws FieldbookException
 	 */
-	AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws RuleException, FieldbookException;
+	AdvanceResult advanceNursery(AdvancingStudy info, Workbook workbook) throws RuleException, FieldbookException;
 
-	List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, AdvancingNursery advancingParameters, Workbook workbook)
+	List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, AdvancingStudy advancingParameters, Workbook workbook)
 			throws RuleException;
 
 	/*
 	* Generated the names for the list of crosses based on on rules setup for the breeding methods
 	*/
-	List<ImportedCrosses> generateCrossesList(List<ImportedCrosses> importedCrosses, AdvancingSourceList rows, AdvancingNursery
+	List<ImportedCrosses> generateCrossesList(List<ImportedCrosses> importedCrosses, AdvancingSourceList rows, AdvancingStudy
 			advancingParameters, Workbook workbook, List<Integer> gids) throws RuleException;
 
 }

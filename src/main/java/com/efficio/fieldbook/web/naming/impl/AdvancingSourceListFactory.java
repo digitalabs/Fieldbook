@@ -13,10 +13,10 @@ import javax.annotation.Resource;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessor;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory;
-import com.efficio.fieldbook.web.nursery.bean.AdvanceType;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
+import com.efficio.fieldbook.web.trial.bean.AdvanceType;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.Study;
@@ -55,7 +55,7 @@ public class AdvancingSourceListFactory {
 
 	private static final String DEFAULT_TEST_VALUE = "T";
 
-	public AdvancingSourceList createAdvancingSourceList(Workbook workbook, AdvancingNursery advanceInfo, Study nursery,
+	public AdvancingSourceList createAdvancingSourceList(Workbook workbook, AdvancingStudy advanceInfo, Study nursery,
 			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
 
 		Map<Integer, List<PlantDTO>> sampledPlantsMap = new HashMap<>();

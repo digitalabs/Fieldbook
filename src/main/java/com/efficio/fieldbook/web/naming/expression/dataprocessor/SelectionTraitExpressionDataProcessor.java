@@ -18,8 +18,8 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.springframework.stereotype.Component;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 
 @Component
 public class SelectionTraitExpressionDataProcessor implements ExpressionDataProcessor {
@@ -33,7 +33,7 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 	private ContextUtil contextUtil;
 
 	@Override
-	public void processEnvironmentLevelData(final AdvancingSource source, final Workbook workbook, final AdvancingNursery nurseryInfo,
+	public void processEnvironmentLevelData(final AdvancingSource source, final Workbook workbook, final AdvancingStudy nurseryInfo,
 			final Study study) {
         // management details / study details are stored within the workbook conditions. nursery conditions are stored in the workbook constants
         List<MeasurementVariable> possibleEnvironmentSources = new ArrayList<>(workbook.getConditions());

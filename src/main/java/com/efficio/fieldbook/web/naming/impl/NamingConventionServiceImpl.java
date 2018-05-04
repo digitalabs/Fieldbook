@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -23,7 +24,6 @@ import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.sample.PlantDTO;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -45,9 +45,8 @@ import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
 import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 @Service
@@ -85,7 +84,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private PedigreeDataManager pedigreeDataManager;
 
 	@Override
-	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException, FieldbookException {
+	public AdvanceResult advanceNursery(final AdvancingStudy info, final Workbook workbook) throws RuleException, FieldbookException {
 
 		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
 		final Map<String, Method> breedingMethodCodeMap = new HashMap<>();
@@ -114,7 +113,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		return result;
 	}
 
-	private AdvancingSourceList createAdvancingSourceList(final AdvancingNursery advanceInfo, Workbook workbook,
+	private AdvancingSourceList createAdvancingSourceList(final AdvancingStudy advanceInfo, Workbook workbook,
 			final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
 
 		final Study study = advanceInfo.getStudy();
@@ -124,7 +123,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		return this.advancingSourceListFactory.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 	}
 
-	private void updatePlantsSelectedIfNecessary(final AdvancingSourceList list, final AdvancingNursery info) {
+	private void updatePlantsSelectedIfNecessary(final AdvancingSourceList list, final AdvancingStudy info) {
 		boolean lineChoiceSame = info.getLineChoice() != null && "1".equals(info.getLineChoice());
 		final boolean allPlotsChoice = info.getAllPlotsChoice() != null && "1".equals(info.getAllPlotsChoice());
 		int plantsSelected = 0;
@@ -165,7 +164,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
-			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber, AdvancingNursery advancingParameters, final String plantNo) {
+			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber, AdvancingStudy advancingParameters, final String plantNo) {
 		
 		String selectionNumberToApply = null;
 		boolean allPlotsSelected = "1".equals(advancingParameters.getAllPlotsChoice());
@@ -229,7 +228,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final AdvancingNursery advancingParameters,
+	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final AdvancingStudy advancingParameters,
 			Workbook workbook) throws RuleException {
 
 		final List<ImportedGermplasm> list = new ArrayList<>();
@@ -270,7 +269,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	@Override
 	public List<ImportedCrosses> generateCrossesList(final List<ImportedCrosses> importedCrosses, final AdvancingSourceList rows,
-			final AdvancingNursery advancingParameters, final Workbook workbook, final List<Integer> gids) throws RuleException {
+			final AdvancingStudy advancingParameters, final Workbook workbook, final List<Integer> gids) throws RuleException {
 
 		final List<Method> methodList = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
 		final Map<Integer, Method> breedingMethodMap = new HashMap<>();

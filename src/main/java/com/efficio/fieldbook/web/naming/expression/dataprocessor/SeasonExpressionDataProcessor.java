@@ -16,14 +16,14 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.springframework.stereotype.Component;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 
 @Component
 public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 
 	@Override
-	public void processEnvironmentLevelData(final AdvancingSource source, final Workbook workbook, final AdvancingNursery nurseryInfo,
+	public void processEnvironmentLevelData(final AdvancingSource source, final Workbook workbook, final AdvancingStudy nurseryInfo,
 			final Study study) {
 		final Map<Integer, String> measurementVariablesValues = new HashMap<Integer, String>();
 		for (final MeasurementVariable mv : workbook.getConditions()) {

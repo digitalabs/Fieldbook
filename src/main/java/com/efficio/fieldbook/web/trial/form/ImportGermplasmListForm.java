@@ -9,7 +9,7 @@
  *
  *******************************************************************************/
 
-package com.efficio.fieldbook.web.nursery.form;
+package com.efficio.fieldbook.web.trial.form;
 
 import java.util.List;
 
@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ImportGermplasmListForm.
  */

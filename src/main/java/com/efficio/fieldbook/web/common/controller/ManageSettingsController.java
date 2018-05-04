@@ -3,7 +3,7 @@ package com.efficio.fieldbook.web.common.controller;
 import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.trial.controller.SettingsController;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
 import com.efficio.fieldbook.web.util.AppConstants;

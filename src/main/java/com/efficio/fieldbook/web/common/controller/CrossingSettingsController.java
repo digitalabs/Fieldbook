@@ -61,7 +61,7 @@ import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.trial.controller.SettingsController;
 import com.efficio.fieldbook.web.util.CrossesListUtil;
 import com.efficio.fieldbook.web.util.DuplicatesUtil;
 import com.google.common.base.Function;

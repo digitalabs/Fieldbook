@@ -1,5 +1,5 @@
 <div class="col-xs-10 col-md-10" xmlns:th="http://www.thymeleaf.org">
-	<form onsubmit="javascript: return validateAdvanceNursery();" id="advanceNurseryModalForm" role="form-horizontal" action="#" th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
+	<form onsubmit="javascript: return validateAdvanceNursery();" id="advanceNurseryModalForm" role="form-horizontal" action="#" th:action="@{/StudyManager/advance/study}" method="post" th:object="${advancingStudyForm}" enctype="multipart/form-data">
 
 		<input type="hidden" th:field="*{breedingMethodUrl}"/>
 		<input type="hidden" th:field="*{defaultMethodId}"/>

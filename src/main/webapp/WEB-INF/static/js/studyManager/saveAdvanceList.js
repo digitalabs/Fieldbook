@@ -164,7 +164,7 @@ var SaveAdvanceList = {};
 		serializedData = $('#advanceNurseryModalForm').serialize();
 
 		$.ajax({
-			url: '/Fieldbook/NurseryManager/advance/nursery',
+			url: '/Fieldbook/StudyManager/advance/study',
 			type: 'POST',
 			data: serializedData,
 			cache: false,
@@ -195,7 +195,7 @@ var SaveAdvanceList = {};
 
 	SaveAdvanceList.reviewAdvanceList = function(uniqueId) {
 		$.ajax({
-			url: '/Fieldbook/NurseryManager/advance/nursery/info?uniqueId=' + uniqueId,
+			url: '/Fieldbook/StudyManager/advance/study/info?uniqueId=' + uniqueId,
 			type: 'GET',
 			cache: false,
 			success: function(html) {
@@ -411,7 +411,7 @@ var SaveAdvanceList = {};
 		}
 
 		$.ajax({
-			url: '/Fieldbook/NurseryManager/advance/nursery/delete/entries',
+			url: '/Fieldbook/StudyManager/advance/study/delete/entries',
 			type: 'POST',
 			data: {
 				entryNums: entryNums,

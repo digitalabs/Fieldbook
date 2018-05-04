@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -33,7 +34,6 @@ import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
@@ -62,7 +62,7 @@ public interface FieldbookService {
 	 * @return the list
 	 * @throws RuleException
 	 */
-	AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws RuleException, FieldbookException;
+	AdvanceResult advanceNursery(AdvancingStudy advanceInfo, Workbook workbook) throws RuleException, FieldbookException;
 
 	/**
 	 * Filters the variables based on the current setting mode and excludes the selected ones.

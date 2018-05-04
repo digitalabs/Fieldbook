@@ -21,7 +21,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
@@ -164,7 +164,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	 * @throws FieldbookException
 	 */
 	@Override
-	public AdvanceResult advanceNursery(final AdvancingNursery advanceInfo, final Workbook workbook)
+	public AdvanceResult advanceNursery(final AdvancingStudy advanceInfo, final Workbook workbook)
 			throws RuleException, FieldbookException {
 
 		return this.namingConventionService.advanceNursery(advanceInfo, workbook);

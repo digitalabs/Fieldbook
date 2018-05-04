@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 
 public interface MergeCheckService {
 

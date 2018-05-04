@@ -19,10 +19,10 @@ import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
-import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
+import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
@@ -357,11 +357,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final Integer currentUserId = this.getCurrentIbdbUserId();
 		final GermplasmList germplasmList = this.createGermplasmList(form, currentUserId);
 		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(form.getGermplasmListType())) {
-			final AdvancingNurseryForm advancingNurseryForm = this.getPaginationListSelection().getAdvanceDetails(form.getListIdentifier());
+			final AdvancingStudyForm advancingStudyForm = this.getPaginationListSelection().getAdvanceDetails(form.getListIdentifier());
 			final List<Pair<Germplasm, List<Name>>> germplasms = new ArrayList<>();
 			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
 
-			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingNurseryForm, germplasms, listDataItems, currentUserId,
+			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingStudyForm, germplasms, listDataItems, currentUserId,
 					germplasmAttributes);
 			final Integer germplasmListId = this.fieldbookMiddlewareService
 					.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList, germplasmAttributes);
@@ -524,7 +524,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		list.setRows(rows);
 
-		final AdvancingNursery advancingParameters = new AdvancingNursery();
+		final AdvancingStudy advancingParameters = new AdvancingStudy();
 
 		advancingParameters.setCheckAdvanceLinesUnique(true);
 		final List<ImportedCrosses> crosses = this.namingConventionService
@@ -722,7 +722,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 * @return the germplasm list
 	 */
 
-	void populateGermplasmListDataFromAdvanced(final GermplasmList germplasmList, final AdvancingNurseryForm form,
+	void populateGermplasmListDataFromAdvanced(final GermplasmList germplasmList, final AdvancingStudyForm form,
 			final List<Pair<Germplasm, List<Name>>> germplasms, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
 			final Integer currentUserID, final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes) {
 

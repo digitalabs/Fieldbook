@@ -258,6 +258,8 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 						chooseListNode(germplasmFocusNode, true);
 					}
 				});
+
+			$(node.span).trigger('bms.tree.node.activate');
 		},
 		onDblClick : function(node, event) {
 			chooseList();
@@ -440,6 +442,7 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 						chooseListNode(sampleFocusNode, true);
 					}
 				});
+			$(node.span).trigger('bms.tree.node.activate');
 		},
 		onDblClick : function(node, event) {
 			chooseList(node);

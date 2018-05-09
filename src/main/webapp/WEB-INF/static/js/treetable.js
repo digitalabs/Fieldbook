@@ -2,7 +2,7 @@
 // TODO Once a draggable approach is found, implement in angularjs for studies and angular 2 for new components
 var TreeTable = (function () {
 
-	var self;
+	var self; // FIXME self is static here. Rewrite to allow multiple copies of treetable
 	var resolved = $.Deferred().resolve().promise();
 
 
@@ -314,6 +314,7 @@ var TreeTable = (function () {
 				$('.delete-folder', self.context).addClass('disable-image');
 				if ($(this).attr('data-tt-id') === 'CROPLISTS') {
 					$('.create-folder', self.context).addClass('disable-image');
+					self.hideFolderDiv('#addFolderDiv');
 				}
 				self.hideFolderDiv('#renameFolderDiv');
 			} else if ($(this).attr('num-of-children') !== '0') {

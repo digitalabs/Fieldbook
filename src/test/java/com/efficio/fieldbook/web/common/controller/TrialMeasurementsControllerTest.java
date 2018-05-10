@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
+import org.generationcp.middleware.data.initializer.ProjectPropertyTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -121,6 +122,9 @@ public class TrialMeasurementsControllerTest {
 	
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
+	
+	@Mock
+	private UserSelection userSelection;
 	
 	private List<MeasurementVariable> measurementVariables;
 
@@ -1193,6 +1197,21 @@ public class TrialMeasurementsControllerTest {
 
 		return measurementVariable;
 
+	}
+	
+	@Test
+	public void testCreateNameToAliasMap() {
+		Workbook workbook = Mockito.mock(Workbook.class);
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+		Mockito.when(workbook.getMeasurementDatasetVariablesView()).thenReturn(Arrays.asList(MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.PLOT_CODE.getId(), TermId.PLOT_CODE.name(), "1-1")));
+		Mockito.when(this.fieldbookMiddlewareService.getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString())).thenReturn(1);
+		final String alias= "PlotCode";
+		Mockito.when(this.ontologyDataManager.getProjectPropertiesByProjectId(Matchers.anyInt())).thenReturn(Arrays.asList(ProjectPropertyTestDataInitializer.createProjectProperty(alias, TermId.PLOT_CODE.getId())));
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.PLOT_CODE.getId())).thenReturn(new Term(TermId.PLOT_CODE.getId(), TermId.PLOT_CODE.name(), TermId.PLOT_CODE.name()));
+		final Map<String, String> nameToAliasMap = this.trialMeasurementsController.createNameToAliasMap(1);
+		Assert.assertTrue(nameToAliasMap.size()==1);
+		Assert.assertTrue(nameToAliasMap.keySet().contains(TermId.PLOT_CODE.name()));
+		Assert.assertEquals(alias, nameToAliasMap.get(TermId.PLOT_CODE.name()));
 	}
 
 	@Test

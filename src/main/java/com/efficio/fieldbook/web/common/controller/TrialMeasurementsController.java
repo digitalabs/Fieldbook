@@ -549,7 +549,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		return masterMap;
 	}
 
-	private Map<String, String> createNameToAliasMap(int studyId) {
+	Map<String, String> createNameToAliasMap(int studyId) {
 		Map<String, String> nameToAliasMap = new HashMap<>();
 		
 		final List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();

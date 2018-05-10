@@ -659,7 +659,7 @@ var ImportCrosses = {
 
 	isCrossImportSettingsValid: function(importSettings) {
 		'use strict';
-		var valid = true;debugger;
+		var valid = true;
 		if (!importSettings.crossNameSetting.prefix || importSettings.crossNameSetting.prefix === '') {
 			valid = false;
 			showErrorMessage('', $.fieldbookMessages.errorNoNamePrefix);

@@ -197,7 +197,7 @@
 		/*exported confirmReplaceList,resetGermplasmList,removeCheckFromList,openListTree,viewGermplasmLitDetails */
 		/*exported additionalLazyLoadUrl, chooseList*/
 		
-		measurementRowCount = /*[[${createNurseryForm.measurementRowList.size()}]]*/ 0;
+		measurementRowCount = /*[[${createTrialForm.measurementRowList.size()}]]*/ 0;
 
 		// TODO This function shoould not exist
 		function makeCheckDraggable(isDraggable) {
@@ -294,7 +294,7 @@
 			}
 
 			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/addCheckGermplasmDetails/' + entryNumber,
+				url: '/Fieldbook/StudyManager/importGermplasmList/addCheckGermplasmDetails/' + entryNumber,
 				type: 'GET',
 				data: 'selectedCheckVal='+selectedCheckVal,
 				cache: false,
@@ -347,7 +347,7 @@
 			$('#'+getDisplayedTreeName()).find('*').removeClass('dynatree-selected');
 			
 			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/displayCheckGermplasmDetails/' + listId,
+				url: '/Fieldbook/StudyManager/importGermplasmList/displayCheckGermplasmDetails/' + listId,
 				type: 'GET',
 				cache: false,
 
@@ -368,7 +368,7 @@
             $('#check-germplasm-list').html('');
 
 			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/resetCheckGermplasmDetails',
+				url: '/Fieldbook/StudyManager/importGermplasmList/resetCheckGermplasmDetails',
 				type: 'GET',
 				cache: false,
 				async: false,
@@ -404,7 +404,7 @@
 		function deleteCheckGermplasmList(entryNumber, gid, rowObj, isDropDelete) {
 			'use strict';
 			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/deleteCheckGermplasmDetails/' + gid,
+				url: '/Fieldbook/StudyManager/importGermplasmList/deleteCheckGermplasmDetails/' + gid,
 				type: 'GET',
 				cache: false,
 				async: false,

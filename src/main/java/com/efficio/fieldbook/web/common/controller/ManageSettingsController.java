@@ -3,9 +3,9 @@ package com.efficio.fieldbook.web.common.controller;
 import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.trial.controller.SettingsController;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
+import com.efficio.fieldbook.web.trial.controller.SettingsController;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -233,7 +233,7 @@ public class ManageSettingsController extends SettingsController {
 	@SuppressWarnings("unchecked")
 	@ResponseBody
 	@RequestMapping(value = "/addSettings/{mode}", method = RequestMethod.POST)
-	public List<SettingDetail> addSettings(@RequestBody final CreateNurseryForm form, @PathVariable final int mode) {
+	public List<SettingDetail> addSettings(@RequestBody final CreateTrialForm form, @PathVariable final int mode) {
 		final List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
 		try {
 			final List<SettingVariable> selectedVariables = form.getSelectedVariables();

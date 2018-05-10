@@ -249,7 +249,7 @@
 	</bean>
 
 	<bean id="possibleValuesCache"
-		class="com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache"
+		class="com.efficio.fieldbook.web.trial.bean.PossibleValuesCache"
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>

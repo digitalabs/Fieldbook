@@ -13,8 +13,6 @@ package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
@@ -22,6 +20,7 @@ import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -123,13 +122,13 @@ public class CreateTrialController extends BaseTrialController {
 		model.addAttribute("measurementRowCount", 0);
 
 		// so that we can reuse the same page being use for nursery
-		model.addAttribute("createNurseryForm", form);
+		model.addAttribute("createTrialForm", form);
 		return this.showAngularPage(model);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/columns", method = RequestMethod.POST)
-	public List<MeasurementVariable> getColumns(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
+	public List<MeasurementVariable> getColumns(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model,
 			final HttpServletRequest request) {
 		return this.getLatestMeasurements(form, request);
 	}
@@ -250,7 +249,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/measurements/variables", method = RequestMethod.POST, produces = "application/json")
-	public List<MeasurementVariable> showMeasurementsVariables(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
+	public List<MeasurementVariable> showMeasurementsVariables(@ModelAttribute("createTrialForm") final CreateTrialForm form,
 			final HttpServletRequest request) {
 		return this.getLatestMeasurements(form, request);
 	}

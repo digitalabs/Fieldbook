@@ -143,7 +143,7 @@
 			$('#'+getDisplayedTreeName()).find('*').removeClass('dynatree-selected');
 			
 			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/displayGermplasmDetails/' + listId,
+				url: '/Fieldbook/StudyManager/importGermplasmList/displayGermplasmDetails/' + listId,
 				type: 'GET',
 				cache: false,
 				success: function(html) {

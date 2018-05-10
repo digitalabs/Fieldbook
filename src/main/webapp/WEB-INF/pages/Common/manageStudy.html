@@ -41,11 +41,11 @@
 
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
-var openStudyError = /*[[#{common.error.open.study(#{fieldmap.nursery})}]]*/ '',
-	advanceStudyError = /*[[#{common.error.advance.study(#{fieldmap.nursery})}]]*/ '',
+var openStudyError = /*[[#{common.error.open.study}]]*/ '',
+	advanceStudyError = /*[[#{common.error.advance.study}]]*/ '',
 	paginationUrl = /*[[@{/NurseryManager/manageNurseries/page/}]]*/ '',
-	showText = /*[[#{nursery.nurserydetails.additional.show}]]*/ '',
-	hideText = /*[[#{nursery.nurserydetails.additional.hide}]]*/ '',
+	showText = /*[[#{study.studydetails.additional.show}]]*/ '',
+	hideText = /*[[#{study.studydetails.additional.hide}]]*/ '',
 	currentStudyId = getCurrentStudyIdInTab(),
 	selectedTableIds = [];
 

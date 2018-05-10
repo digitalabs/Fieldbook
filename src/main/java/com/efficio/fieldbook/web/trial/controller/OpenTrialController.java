@@ -5,10 +5,9 @@ import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
@@ -209,7 +208,7 @@ public class OpenTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/columns", method = RequestMethod.POST)
-	public List<MeasurementVariable> getColumns(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
+	public List<MeasurementVariable> getColumns(@ModelAttribute("createTrialForm") final CreateTrialForm form,
 			final Model model, final HttpServletRequest request) {
 		return this.getLatestMeasurements(form, request);
 	}
@@ -361,7 +360,7 @@ public class OpenTrialController extends BaseTrialController {
 				this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), false));
 
 		// so that we can reuse the same page being use for nursery
-		model.addAttribute("createNurseryForm", form);
+		model.addAttribute("createTrialForm", form);
 		model.addAttribute("experimentalDesignSpecialData", this.prepareExperimentalDesignSpecialData());
 		model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
 		model.addAttribute("description", trialWorkbook.getStudyDetails().getDescription());
@@ -612,7 +611,7 @@ public class OpenTrialController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(value = "/recreate/session/variables", method = RequestMethod.GET)
 	public Map<String, Object> resetSessionVariablesAfterSave(
-			@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
+			@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model) {
 		final Workbook workbook = this.userSelection.getWorkbook();
 		form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(
 				workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
@@ -624,7 +623,7 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	@RequestMapping(value = "/load/preview/measurement", method = RequestMethod.GET)
-	public String loadPreviewMeasurement(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
+	public String loadPreviewMeasurement(@ModelAttribute("createTrialForm") final CreateTrialForm form,
 			final Model model) {
 		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
 		final Workbook originalWorkbook = this.userSelection.getWorkbook();
@@ -645,7 +644,7 @@ public class OpenTrialController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(value = "/load/dynamic/change/measurement", method = RequestMethod.POST)
 	public Map<String, Object> loadDynamicChangeMeasurement(
-			@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
+			@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model,
 			final HttpServletRequest request) {
 		Workbook workbook = this.userSelection.getWorkbook();
 		if (this.userSelection.getTemporaryWorkbook() != null) {
@@ -673,7 +672,7 @@ public class OpenTrialController extends BaseTrialController {
 		return result;
 	}
 
-	private void processPreLoadingMeasurementDataPage(final boolean isTemporary, final CreateNurseryForm form,
+	private void processPreLoadingMeasurementDataPage(final boolean isTemporary, final CreateTrialForm form,
 			final Workbook workbook, final List<MeasurementVariable> measurementDatasetVariables, final Model model,
 			final String deletedEnvironments) {
 
@@ -701,7 +700,7 @@ public class OpenTrialController extends BaseTrialController {
 
 		form.setMeasurementVariables(measurementDatasetVariables);
 		this.userSelection.setMeasurementDatasetVariable(measurementDatasetVariables);
-		model.addAttribute("createNurseryForm", form);
+		model.addAttribute("createTrialForm", form);
 		model.addAttribute(OpenTrialController.IS_EXP_DESIGN_PREVIEW, this.isPreviewEditable(workbook));
 	}
 

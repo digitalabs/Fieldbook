@@ -79,12 +79,13 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	private static final String UNIQUE_ID = "uniqueId";
 
 	/** The Constant URL. */
-	public static final String URL = "/StudyManager/advance/study";
+	protected static final String URL = "/StudyManager/advance/study";
 
 	private static final String MODAL_URL = "StudyManager/advanceNurseryModal";
+
 	private static final String SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE = "StudyManager/saveAdvanceNursery";
 
-	protected static final String TABLE_HEADER_LIST = "tableHeaderList";
+	private static final String TABLE_HEADER_LIST = "tableHeaderList";
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(AdvancingController.class);

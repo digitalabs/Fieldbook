@@ -89,8 +89,8 @@ import java.util.Set;
  * @author Daniel Jao
  */
 @Controller
-@RequestMapping({ ImportGermplasmListController.URL, ImportGermplasmListController.URL_2,
-		ImportGermplasmListController.URL_3, ImportGermplasmListController.URL_4 })
+@RequestMapping({ ImportGermplasmListController.URL,
+		ImportGermplasmListController.URL_1, ImportGermplasmListController.URL_2 })
 public class ImportGermplasmListController extends SettingsController {
 
 	private static final String SUCCESS = "success";
@@ -135,17 +135,16 @@ public class ImportGermplasmListController extends SettingsController {
 	private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmListController.class);
 
 	/** The Constant URL. */
-	public static final String URL = "/NurseryManager/importGermplasmList";
-	public static final String URL_2 = "/NurseryManager/GermplasmList";
-	public static final String URL_3 = "/TrialManager/GermplasmList";
-	public static final String URL_4 = "/ListManager/GermplasmList";
+	public static final String URL = "/StudyManager/importGermplasmList";
+	public static final String URL_1 = "/TrialManager/GermplasmList";
+	public static final String URL_2 = "/ListManager/GermplasmList";
 
 	/** The Constant PAGINATION_TEMPLATE. */
-	public static final String PAGINATION_TEMPLATE = "/NurseryManager/showGermplasmPagination";
+	public static final String PAGINATION_TEMPLATE = "/StudyManager/showGermplasmPagination";
 	public static final String EDIT_CHECK = "/Common/editCheck";
 
 	/** The Constant CHECK_PAGINATION_TEMPLATE. */
-	public static final String CHECK_PAGINATION_TEMPLATE = "/NurseryManager/showCheckGermplasmPagination";
+	public static final String CHECK_PAGINATION_TEMPLATE = "/StudyManager/showCheckGermplasmPagination";
 
 	public static final int NO_ID = -1;
 

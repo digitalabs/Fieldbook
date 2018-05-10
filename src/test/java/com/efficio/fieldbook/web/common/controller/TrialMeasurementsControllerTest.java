@@ -1,6 +1,9 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,7 +58,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
@@ -374,7 +376,7 @@ public class TrialMeasurementsControllerTest {
 		MatcherAssert.assertThat(variableText, Is.is(CoreMatchers.equalTo(model.get("variable"))));
 		MatcherAssert.assertThat(experimentId,
 				Is.is(CoreMatchers.equalTo(model.get(TrialMeasurementsControllerTest.EXPERIMENT_ID))));
-		MatcherAssert.assertThat((List<?>) model.get("possibleValues"), Matchers.hasSize(0));
+		MatcherAssert.assertThat((List<?>) model.get("possibleValues"), hasSize(0));
 		MatcherAssert.assertThat("", Is.is(CoreMatchers.equalTo(model.get("phenotypeId"))));
 		MatcherAssert.assertThat("", Is.is(CoreMatchers.equalTo(model.get("phenotypeValue"))));
 	}
@@ -417,7 +419,7 @@ public class TrialMeasurementsControllerTest {
 		MatcherAssert.assertThat(TermId.NUMERIC_VARIABLE.getId(),
 				Is.is(CoreMatchers.equalTo(model.get("numericVarId"))));
 		MatcherAssert.assertThat(false, Is.is(CoreMatchers.equalTo(model.get("isNursery"))));
-		MatcherAssert.assertThat((List<?>) model.get("possibleValues"), Matchers.hasSize(0));
+		MatcherAssert.assertThat((List<?>) model.get("possibleValues"), hasSize(0));
 		MatcherAssert.assertThat(0, Is.is(CoreMatchers.equalTo(model.get("phenotypeId"))));
 		MatcherAssert.assertThat(phenotpevalue, Is.is(CoreMatchers.equalTo(model.get("phenotypeValue"))));
 	}
@@ -1083,9 +1085,6 @@ public class TrialMeasurementsControllerTest {
 
 	@Test
 	public void testConvertForCategoricalVariableBlankMeasurementDto() {
-
-		final Map<String, Object> dataMap = new HashMap<>();
-
 		final Variable measurementVariable = new Variable();
 		final int aleucolPhenotypeId = 456;
 		final String aleucolPhenotypeTraitValue = "";
@@ -1107,9 +1106,6 @@ public class TrialMeasurementsControllerTest {
 
 	@Test
 	public void testConvertForCategoricalVariableTraitValueIsOutOfRangeFromCategoricalValues() {
-
-		final Map<String, Object> dataMap = new HashMap<>();
-
 		final Variable measurementVariable = this.createTestCategoricalVariable();
 
 		final int aleucolPhenotypeId = 456;
@@ -1132,9 +1128,6 @@ public class TrialMeasurementsControllerTest {
 
 	@Test
 	public void testConvertForCategoricalVariableTraitValueIsWithinCategoricalValues() {
-
-		final Map<String, Object> dataMap = new HashMap<>();
-
 		final Variable measurementVariable = this.createTestCategoricalVariable();
 
 		final int aleucolPhenotypeId = 456;
@@ -1235,8 +1228,8 @@ public class TrialMeasurementsControllerTest {
 
 		// expecting CROSS and STOCK_ID to have been added
 		MatcherAssert.assertThat(this.standardFactors.length + 2, Is.is(CoreMatchers.equalTo(dataMap.size())));
-		MatcherAssert.assertThat(dataMap, Matchers.hasKey(TrialMeasurementsControllerTest.CROSS));
-		MatcherAssert.assertThat(dataMap, Matchers.hasKey(TrialMeasurementsControllerTest.STOCK_ID));
+		MatcherAssert.assertThat(dataMap, hasKey(TrialMeasurementsControllerTest.CROSS));
+		MatcherAssert.assertThat(dataMap, hasKey(TrialMeasurementsControllerTest.STOCK_ID));
 
 		final boolean isGidDesigFactorsIncluded = false;
 		this.verifyCorrectValuesForFactors(dataMap, observationDto, isGidDesigFactorsIncluded,
@@ -1261,10 +1254,10 @@ public class TrialMeasurementsControllerTest {
 
 		// expecting FIELDMAP_COLUMN and FIELDMAP_RANGE to have been added
 		MatcherAssert.assertThat(this.standardFactors.length + 2, Is.is(CoreMatchers.equalTo(dataMap.size())));
-		MatcherAssert.assertThat(dataMap, Matchers.hasKey(TrialMeasurementsControllerTest.FIELDMAP_COLUMN));
+		MatcherAssert.assertThat(dataMap, hasKey(TrialMeasurementsControllerTest.FIELDMAP_COLUMN));
 		MatcherAssert.assertThat(dataMap.get(TrialMeasurementsControllerTest.FIELDMAP_COLUMN),
 				Is.is(CoreMatchers.not(CoreMatchers.nullValue())));
-		MatcherAssert.assertThat(dataMap, Matchers.hasKey(TrialMeasurementsControllerTest.FIELDMAP_RANGE));
+		MatcherAssert.assertThat(dataMap, hasKey(TrialMeasurementsControllerTest.FIELDMAP_RANGE));
 		MatcherAssert.assertThat(dataMap.get(TrialMeasurementsControllerTest.FIELDMAP_RANGE),
 				Is.is(CoreMatchers.not(CoreMatchers.nullValue())));
 
@@ -1297,7 +1290,7 @@ public class TrialMeasurementsControllerTest {
 		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap,
 				this.measurementVariables, new HashMap<String, String>());
 
-		MatcherAssert.assertThat(dataMap, Matchers.hasKey(TrialMeasurementsControllerTest.ALEUCOL_1_5_TRAIT_NAME));
+		MatcherAssert.assertThat(dataMap, hasKey(TrialMeasurementsControllerTest.ALEUCOL_1_5_TRAIT_NAME));
 		MatcherAssert.assertThat(dataMap.get(TrialMeasurementsControllerTest.ALEUCOL_1_5_TRAIT_NAME),
 				Is.is(CoreMatchers.not(CoreMatchers.nullValue())));
 
@@ -1310,9 +1303,7 @@ public class TrialMeasurementsControllerTest {
 		userSelection.setWorkbook(workbook);
 		this.trialMeasurementsController.setUserSelection(userSelection);
 		final CreateNurseryForm form = new CreateNurseryForm();
-		final BindingResult bindingResult = Mockito.mock(BindingResult.class);
-		final Model model = Mockito.mock(Model.class);
-
+		
 		final Map<String, String> resultMap = this.trialMeasurementsController.updateTraits(form);
 
 		Assert.assertEquals("1", resultMap.get(TrialMeasurementsController.STATUS));

@@ -4,7 +4,6 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.trial.bean.AdvanceList;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
 import com.efficio.fieldbook.web.trial.bean.CrossesList;
@@ -17,6 +16,7 @@ import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -638,7 +638,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return output;
 	}
 
-	protected List<MeasurementVariable> getLatestMeasurements(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
+	protected List<MeasurementVariable> getLatestMeasurements(@ModelAttribute("createTrialForm") final CreateTrialForm form,
 			final HttpServletRequest request) {
 		Workbook workbook = this.userSelection.getWorkbook();
 		if (this.userSelection.getTemporaryWorkbook() != null) {

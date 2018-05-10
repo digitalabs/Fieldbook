@@ -30,6 +30,7 @@ import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.dms.Phenotype;
+import org.generationcp.middleware.pojos.dms.ProjectProperty;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.study.MeasurementDto;
 import org.generationcp.middleware.service.api.study.ObservationDto;
@@ -193,7 +194,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		final List<ObservationDto> singleObservation = this.studyService
 				.getSingleObservation(this.userSelection.getWorkbook().getStudyDetails().getId(), experimentId);
 		if (!singleObservation.isEmpty()) {
-			dataMap = this.generateDatatableDataMap(singleObservation.get(0));
+			dataMap = this.generateDatatableDataMap(singleObservation.get(0), new HashMap<String, String>());
 		}
 		map.put(TrialMeasurementsController.DATA, dataMap);
 		return map;
@@ -528,9 +529,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		final String sortOrder = req.getParameter("sortOrder");
 
 		final List<ObservationDto> pageResults = this.studyService.getObservations(studyId, instanceId, pageNumber, pageSize, sortBy, sortOrder);
-
+		Map<String, String> nameToAliasMap = this.createNameToAliasMap(studyId);
 		for (final ObservationDto row : pageResults) {
-			final Map<String, Object> dataMap = this.generateDatatableDataMap(row);
+			final Map<String, Object> dataMap = this.generateDatatableDataMap(row, nameToAliasMap);
 			masterDataList.add(dataMap);
 		}
 
@@ -546,6 +547,25 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		masterMap.put("data", masterDataList);
 
 		return masterMap;
+	}
+
+	private Map<String, String> createNameToAliasMap(int studyId) {
+		Map<String, String> nameToAliasMap = new HashMap<>();
+		
+		final List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
+		measurementDatasetVariables.addAll(this.userSelection.getWorkbook().getMeasurementDatasetVariablesView());
+		
+		final int measurementDatasetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, this.userSelection.getWorkbook().getStudyName());
+		List<ProjectProperty> projectProperties = this.ontologyDataManager.getProjectPropertiesByProjectId(measurementDatasetId);
+	
+		for(ProjectProperty projectProperty: projectProperties){
+			MeasurementVariable mvar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
+					projectProperty.getVariableId());
+			if(mvar != null) {
+				nameToAliasMap.put(this.ontologyDataManager.getTermById(mvar.getTermId()).getName(), projectProperty.getAlias());
+			}
+		}
+		return nameToAliasMap;
 	}
 
 	@ResponseBody
@@ -681,7 +701,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	Map<String, Object> generateDatatableDataMap(final ObservationDto row) {
+	Map<String, Object> generateDatatableDataMap(final ObservationDto row, Map<String, String> nameToAliasMap) {
 		final Map<String, Object> dataMap = new HashMap<>();
 		// the 4 attributes are needed always
 		dataMap.put("Action", Integer.toString(row.getMeasurementId()));
@@ -727,7 +747,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		// generate measurement row data for standard factors like
 		// TRIAL_INSTANCE, ENTRY_NO, ENTRY_TYPE, PLOT_NO, PLOT_ID, etc
-		this.addGermplasmAndPlotFactorsDataToDataMap(row, dataMap, measurementDatasetVariables);
+		this.addGermplasmAndPlotFactorsDataToDataMap(row, dataMap, measurementDatasetVariables, nameToAliasMap);
 
 		// generate measurement row data from newly added traits (no data yet)
 		if (userSelection != null && userSelection.getMeasurementDatasetVariable() != null
@@ -757,7 +777,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	 * as value in dataMap.
 	 */
 	void addGermplasmAndPlotFactorsDataToDataMap(final ObservationDto row, final Map<String, Object> dataMap,
-			final List<MeasurementVariable> measurementDatasetVariables) {
+			final List<MeasurementVariable> measurementDatasetVariables, Map<String, String> nameToAliasMap) {
 		final MeasurementVariable gidVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
 				TermId.GID.getId());
 
@@ -846,22 +866,21 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 
 		for (final Pair<String, String> additionalGermplasmAttrCols : row.getAdditionalGermplasmDescriptors()) {
-			dataMap.put(additionalGermplasmAttrCols.getLeft(), new Object[] { additionalGermplasmAttrCols.getRight() });
+			final String alias = nameToAliasMap.get(additionalGermplasmAttrCols.getLeft()) != null ? nameToAliasMap.get(additionalGermplasmAttrCols.getLeft()) : additionalGermplasmAttrCols.getLeft(); 
+			dataMap.put(alias, new Object[] { additionalGermplasmAttrCols.getRight() });
 		}
 		
 		for (final Pair<String, String> additionalDesignCols : row.getAdditionalDesignFactors()) {
-
-			final Optional<MeasurementVariable> columnVariable = WorkbookUtil.findMeasurementVariableByName(measurementDatasetVariables, additionalDesignCols.getLeft());
-
+			final String alias = nameToAliasMap.get(additionalDesignCols.getLeft()) != null ? nameToAliasMap.get(additionalDesignCols.getLeft()) : additionalDesignCols.getLeft();
+			final Optional<MeasurementVariable> columnVariable = WorkbookUtil.findMeasurementVariableByName(measurementDatasetVariables, alias);
 			if (columnVariable.isPresent()) {
-
 				final Variable variable = this.ontologyVariableDataManager
 						.getVariable(this.contextUtil.getCurrentProgramUUID(), columnVariable.get().getTermId(), true, false);
 
 				if (variable.getScale().getDataType().getId() == TermId.CATEGORICAL_VARIABLE.getId()) {
-					dataMap.put(additionalDesignCols.getLeft(), convertForCategoricalVariable(variable, additionalDesignCols.getRight(), null , true));
+					dataMap.put(alias, convertForCategoricalVariable(variable, additionalDesignCols.getRight(), null , true));
 				} else {
-					dataMap.put(additionalDesignCols.getLeft(), new Object[] { additionalDesignCols.getRight() });
+					dataMap.put(alias, new Object[] { additionalDesignCols.getRight() });
 				}
 
 

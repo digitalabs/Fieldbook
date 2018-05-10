@@ -1056,7 +1056,7 @@ public class TrialMeasurementsControllerTest {
 
 		// Method to test
 		final ObservationDto observationDto = observations.get(0);
-		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables);
+		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables, new HashMap<String, String>());
 
 		assertThat(this.standardFactors.length, is(equalTo(dataMap.size())));
 		// set to false because GID and DESIGNATION are not expected to be in map
@@ -1078,7 +1078,7 @@ public class TrialMeasurementsControllerTest {
 
 		// Method to test
 		final ObservationDto observationDto = observations.get(0);
-		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables);
+		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables, new HashMap<String, String>());
 
 		// Expecting that GID-local and DESIGNATION-local were added
 		assertThat(this.standardFactors.length + 2, is(equalTo(dataMap.size())));
@@ -1101,7 +1101,7 @@ public class TrialMeasurementsControllerTest {
 
 		// Method to test
 		final ObservationDto observationDto = observations.get(0);
-		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables);
+		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables, new HashMap<String, String>());
 
 		// expecting CROSS and STOCK_ID to have been added
 		assertThat(this.standardFactors.length + 2, is(equalTo(dataMap.size())));
@@ -1124,7 +1124,7 @@ public class TrialMeasurementsControllerTest {
 
 		// Method to test
 		final ObservationDto observationDto = observations.get(0);
-		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables);
+		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables, new HashMap<String, String>());
 
 		// expecting FIELDMAP_COLUMN and FIELDMAP_RANGE to have been added
 		assertThat(this.standardFactors.length + 2, is(equalTo(dataMap.size())));
@@ -1157,7 +1157,7 @@ public class TrialMeasurementsControllerTest {
 		observations.get(0).additionalDesignFactor(ALEUCOL_1_5_TRAIT_NAME, "1");
 
 		// Method to test
-		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables);
+		this.trialMeasurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables, new HashMap<String, String>());
 
 		assertThat(dataMap, hasKey(ALEUCOL_1_5_TRAIT_NAME));
 		assertThat(dataMap.get(ALEUCOL_1_5_TRAIT_NAME), is(not(nullValue())));
@@ -1207,7 +1207,7 @@ public class TrialMeasurementsControllerTest {
 		final ObservationDto observationDto = observations.get(0);
 
 		// Method to test
-		final Map<String, Object> dataMap = this.trialMeasurementsController.generateDatatableDataMap(observationDto);
+		final Map<String, Object> dataMap = this.trialMeasurementsController.generateDatatableDataMap(observationDto, new HashMap<String, String>());
 
 		assertThat("Expected a non-null data map.", dataMap.size(),is(not(equalTo(0))));
 		assertThat(String.valueOf(observationDto.getMeasurementId()), is(equalTo(dataMap.get(EXPERIMENT_ID))));
@@ -1233,7 +1233,7 @@ public class TrialMeasurementsControllerTest {
 		final ObservationDto observationDto = observations.get(0);
 
 		// Method to test
-		final Map<String, Object> dataMap = this.trialMeasurementsController.generateDatatableDataMap(observationDto);
+		final Map<String, Object> dataMap = this.trialMeasurementsController.generateDatatableDataMap(observationDto, new HashMap<String, String>());
 
 		// Verify that values exist for retained traits but deleted trait is not included in data map
 		assertThat(dataMap.get(this.measurementNumeric.getMeasurementVariable().getName()),is(not(nullValue())));

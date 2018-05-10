@@ -39,6 +39,8 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
  */
 public abstract class AbstractBaseFieldbookController {
 
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseFieldbookController.class);
+
 	public static final String BASE_TEMPLATE_NAME = "/template/base-template";
 	public static final String ANGULAR_BASE_TEMPLATE_NAME = "/template/ng-base-template";
 	public static final String ERROR_TEMPLATE_NAME = "/template/error-template";
@@ -52,8 +54,6 @@ public abstract class AbstractBaseFieldbookController {
 
 	@Resource
 	protected FieldbookProperties fieldbookProperties;
-
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseFieldbookController.class);
 
 	private static Tool oldFbTool = null;
 

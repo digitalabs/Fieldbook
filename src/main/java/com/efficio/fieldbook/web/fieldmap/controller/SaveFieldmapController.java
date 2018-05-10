@@ -11,8 +11,10 @@
 
 package com.efficio.fieldbook.web.fieldmap.controller;
 
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
+import com.efficio.fieldbook.web.label.printing.controller.LabelPrintingController;
 import com.efficio.fieldbook.web.trial.controller.OpenTrialController;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
@@ -27,12 +29,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
-import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
-import com.efficio.fieldbook.web.label.printing.controller.LabelPrintingController;
-import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
-import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
+import javax.annotation.Resource;
 
 /**
  * The Class SaveFieldmapController.

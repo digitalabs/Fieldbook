@@ -70,19 +70,7 @@ $(document).ready(function() {
 	$(document).off('location-update');
 	$(document).on('location-update', recreateLocationCombo);
 });
-function doRefreshNurserySettings() {
-	'use strict';
-	$.ajax({
-		url: '/Fieldbook/NurseryManager/createNursery/refresh/settings/tab',
-		type: 'GET',
-		cache: false,
-		async: false,
-		success: function(data) {
-			$('#chooseSettingsDiv').html(data);
-			displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
-		}
-	});
-}
+
 function doSaveImportedData() {
 	'use strict';
 	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');

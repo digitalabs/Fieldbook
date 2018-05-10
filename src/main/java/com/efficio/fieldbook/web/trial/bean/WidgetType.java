@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.nursery.bean;
+package com.efficio.fieldbook.web.trial.bean;
 
 public enum WidgetType {
 

@@ -1,7 +1,7 @@
 <div class="row form-group col-xs-12 col-md-12">
-<img th:src="@{/static/svg/measurements.svg}" style="position: relative; bottom: 3px;" width="22" height="22"/>
-<strong class="sub-content-heading" th:if="${isExpDesignPreview != '1'}" th:text="#{nursery.edit.nursery.measurements}"></strong>
-<strong class="sub-content-heading exp-design-preview" th:if="${isExpDesignPreview == '1'}" th:text="#{nursery.edit.nursery.preview.measurements}"></strong>
+	<img th:src="@{/static/svg/measurements.svg}" style="position: relative; bottom: 3px;" width="22" height="22"/>
+	<strong class="sub-content-heading" th:if="${isExpDesignPreview != '1'}" th:text="#{nursery.edit.nursery.measurements}"></strong>
+	<strong class="sub-content-heading exp-design-preview" th:if="${isExpDesignPreview == '1'}" th:text="#{nursery.edit.nursery.preview.measurements}"></strong>
 </div>
 
 
@@ -24,14 +24,14 @@
 
 <table th:object="${createTrialForm}" id="measurement-table" width="100%" class="table-curved table-condensed" >
 	<thead>
-		<tr>
-			<th th:if="${isExpDesignPreview != '1'}" nowrap="nowrap" data-term-id="Action" class="factors">Action</th>
-			<th nowrap="nowrap" th:attr="data-term-id=${measurementVariable.termId},data-term-data-type-id=${measurementVariable.dataTypeId},data-term-valid-values=${measurementVariable.possibleValuesString},data-min-range=${measurementVariable.minRange},data-max-range=${measurementVariable.maxRange}"
+	<tr>
+		<th th:if="${isExpDesignPreview != '1'}" nowrap="nowrap" data-term-id="Action" class="factors">Action</th>
+		<th nowrap="nowrap" th:attr="data-term-id=${measurementVariable.termId},data-term-data-type-id=${measurementVariable.dataTypeId},data-term-valid-values=${measurementVariable.possibleValuesString},data-min-range=${measurementVariable.minRange},data-max-range=${measurementVariable.maxRange}"
 			th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'"
 			th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}"
 			th:utext="${measurementVariable.name}">.variable name</th>
 
-		</tr>
+	</tr>
 	</thead>
 </table>
 
@@ -65,14 +65,14 @@
 </div>
 
 <script type="text/javascript" th:inline="javascript">
-//<![CDATA[
+	//<![CDATA[
 
-jQuery(function() {
-	'use strict';
-	var isCategoricalDisplay = /*[[${session.isCategoricalDescriptionView}]]*/ false;
-	initializeTraitsPaginationNursery(isCategoricalDisplay);
-});
+	jQuery(function() {
+		'use strict';
+		var isCategoricalDisplay = /*[[${session.isCategoricalDescriptionView}]]*/ false;
+		initializeTraitsPaginationNursery(isCategoricalDisplay);
+	});
 
-//]]>
+	//]]>
 </script>
 

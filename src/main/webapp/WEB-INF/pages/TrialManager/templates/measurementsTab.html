@@ -46,8 +46,8 @@
 		</div>
 
 		<div class="mdt-measurements-table-panel">
-			<table th:if="${createNurseryForm != null || createTrialForm != null}"
-			   th:object="${createNurseryForm != null ? createNurseryForm : createTrialForm}" id="measurement-table" width="100%"
+			<table th:if="${createTrialForm != null}"
+			   th:object="${createTrialForm}" id="measurement-table" width="100%"
 			   class="table-curved table-condensed">
 			</table>
 		</div>

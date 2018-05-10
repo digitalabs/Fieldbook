@@ -34,7 +34,7 @@ function resetGermplasmList() {
 	trialManagerDataService.indicateUnappliedChangesAvailable(true);
 
 	$.ajax({
-		url: '/Fieldbook/NurseryManager/importGermplasmList/resetNurseryGermplasmDetails',
+		url: '/Fieldbook/StudyManager/importGermplasmList/resetNurseryGermplasmDetails',
 		type: 'GET',
 		cache: false,
 		async: false,
@@ -79,7 +79,7 @@ function showPopoverCheck(index, sectionContainer, bodyContainer) {
 			});
 		}
 		$.ajax({
-			url: '/Fieldbook/NurseryManager/GermplasmList/edit/check/' + index + '/' + realIndex,
+			url: '/Fieldbook/TrialManager/GermplasmList/edit/check/' + index + '/' + realIndex,
 			type: 'GET',
 			data: 'currentVal=' + currentCheckVal,
 			cache: false,

@@ -2,7 +2,7 @@
     <!-- Modal -->
 
     <form id="importStudyUploadForm"
-          method="post" th:object="${createNurseryForm}"
+          method="post" th:object="${createTrialForm}"
           enctype="multipart/form-data">
 
 		<div class="modal fade import-study-data import-window" id="importStudyModal" role="dialog" aria-labelledby="importStudyModal" aria-hidden="true">
@@ -158,7 +158,7 @@
                     </div>
                 </div>
 
-                <form id="importStudyConfirmationForm" method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
+                <form id="importStudyConfirmationForm" method="post" th:object="${createTrialForm}" enctype="multipart/form-data">
                     <input type="hidden" class="hasCreateGermplasm"/>
                     <div class="row form-group create-germplasm add-desig-to-gid">
                         <div class="col-xs-4 col-md-4">

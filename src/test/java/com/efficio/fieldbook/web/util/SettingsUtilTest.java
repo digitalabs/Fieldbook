@@ -1,15 +1,15 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
+import com.efficio.fieldbook.web.trial.TestDataHelper;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import junit.framework.Assert;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -35,16 +35,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.trial.TestDataHelper;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-
-import junit.framework.Assert;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsUtilTest {
@@ -896,17 +894,4 @@ public class SettingsUtilTest {
 				cropSeasonCodeCondition.getPossibleValues(), measurementVariable.getPossibleValues());
 	}
 
-	@Test
-	public void testCombineStudyLevelVariablesInNurseryForm() {
-		final CreateNurseryForm createNurseryForm = new CreateNurseryForm();
-		createNurseryForm.setStudyLevelVariables(
-				Arrays.asList(SettingDetailTestDataInitializer.createSettingDetail(TermId.COOPERATOOR_ID.getId())));
-		createNurseryForm.setBasicDetails(
-				Arrays.asList(SettingDetailTestDataInitializer.createSettingDetail(TermId.DATASET_NAME.getId())));
-		final List<SettingDetail> result = SettingsUtil.combineStudyLevelVariablesInNurseryForm(createNurseryForm);
-
-		// The combined size of SettingDetails from Study Level Variables and
-		// Basic Details must equal to 2
-		Assert.assertEquals(2, result.size());
-	}
 }

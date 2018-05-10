@@ -326,13 +326,13 @@
 
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			<div id="showBaselineTraitDetails" th:include="/NurseryManager/includes/baselineTraitDetails"></div>
+			<div id="showBaselineTraitDetails" th:include="/StudyManager/includes/baselineTraitDetails"></div>
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			<div class="chs-vs-modal-container" th:include="/NurseryManager/includes/variableSelectionModal"></div>
+			<div class="chs-vs-modal-container" th:include="/StudyManager/includes/variableSelectionModal"></div>
 		</div>
 	</div>
 
@@ -444,7 +444,7 @@
 	</div>
 
 	<div class="row">
-		<div th:include="/NurseryManager/includes/deleteStudyConfirmation"></div>
+		<div th:include="/StudyManager/includes/deleteStudyConfirmation"></div>
 	</div>
 	<div class="row">
 		<div id="study-fieldmap" th:include="/Common/selectStudyFieldmap"></div>
@@ -503,7 +503,7 @@
 	</div>
 
 	<div class="row">
-		<div id="import-germplasm" th:include="/NurseryManager/includes/importGermplasmListDetailsModal"></div>
+		<div id="import-germplasm" th:include="/StudyManager/includes/importGermplasmListDetailsModal"></div>
 	</div>
 
 	<div class="row">
@@ -541,10 +541,10 @@
 
 	<!-- MAIN jS -->
 	<script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/nursery-manager/choose-settings.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/nursery-manager/property-select.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/nursery-manager/variable-selection.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/studyManager/nurseryManager.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/studyManager/choose-settings.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/studyManager/property-select.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/studyManager/variable-selection.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/trial-settings-manager.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/trial-data-manager.js}"></script>

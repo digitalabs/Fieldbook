@@ -1,7 +1,7 @@
 <div>
 	<div id="check-table">
 		<form  id="check-germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
-		th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
+		th:action="@{/StudyManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
 
 		<input type="hidden" th:field="*{keyForOverwrite}" />
 		<input type="hidden" th:field="*{lastCheckSourcePrimary}" />

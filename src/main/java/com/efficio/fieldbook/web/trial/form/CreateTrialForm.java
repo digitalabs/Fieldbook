@@ -13,7 +13,9 @@ package com.efficio.fieldbook.web.trial.form;
 
 import java.util.List;
 
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +23,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 
 /**
- * The Class CreateNurseryForm.
+ * The Class CreateTrialForm.
  */
 public class CreateTrialForm {
 
@@ -77,9 +79,7 @@ public class CreateTrialForm {
 	 */
 	private int trialInstances;
 
-	/**
-	 * The trial environment values.
-	 */
+	/** The trial environment values.*/
 	private List<List<ValueReference>> trialEnvironmentValues;
 
 	/** The measurement variables. */
@@ -114,6 +114,8 @@ public class CreateTrialForm {
 
 	private String description;
 
+	private String columnOrders;
+
 	/** The Id of Germplasm List. */
 	private Integer germplasmListId;
 
@@ -125,6 +127,51 @@ public class CreateTrialForm {
 	private String endDate;
 
 	private String studyUpdate;
+
+	/** The measurement row list. */
+	private List<MeasurementRow> measurementRowList;
+
+	/** The current page. */
+	private int currentPage;
+
+	/** The total pages. */
+	private int totalPages;
+
+	/** The result per page. */
+	private int resultPerPage = 100;
+	
+	/** The paginated imported germplasm. */
+	private List<MeasurementRow> paginatedMeasurementRowList;
+
+	/** The created by. */
+	private String createdBy;
+
+	/** The study name. */
+	private String studyName;
+
+	/** The selected variables. */
+	private List<SettingVariable> selectedVariables;
+
+	/** The basic details. */
+	private List<SettingDetail> basicDetails;
+
+	/** The import val. */
+	private int importVal;
+
+	/** The number of instances. */
+	private int numberOfInstances;
+
+	/** The export instance type. */
+	private String exportInstanceType;
+
+	/** The export trial instance start. */
+	private String exportTrialInstanceNumber;
+
+	/** The export trial instance start. */
+	private String exportTrialInstanceStart;
+
+	/** The export trial instance end. */
+	private String exportTrialInstanceEnd;
 
 	public String getStartDate() {
 		return this.startDate;
@@ -560,4 +607,308 @@ public class CreateTrialForm {
 	public void setStudyTypeName(String studyTypeName) {
 		this.studyTypeName = studyTypeName;
 	}
+
+	public String getColumnOrders() {
+		return columnOrders;
+	}
+
+	public void setColumnOrders(final String columnOrders) {
+		this.columnOrders = columnOrders;
+	}
+
+	/**
+	 * Gets the measurement row list.
+	 *
+	 * @return the measurementRowList
+	 */
+	public List<MeasurementRow> getMeasurementRowList() {
+		return this.measurementRowList;
+	}
+
+	/**
+	 * Sets the measurement row list.
+	 *
+	 * @param measurementRowList the measurementRowList to set
+	 */
+	public void setMeasurementRowList(final List<MeasurementRow> measurementRowList) {
+		this.measurementRowList = measurementRowList;
+	}
+
+	/**
+	 * Gets the current page.
+	 *
+	 * @return the currentPage
+	 */
+	public int getCurrentPage() {
+		return this.currentPage;
+	}
+
+	/**
+	 * Sets the current page.
+	 *
+	 * @param currentPage the currentPage to set
+	 */
+	public void setCurrentPage(final int currentPage) {
+		this.currentPage = currentPage;
+	}
+
+	/**
+	 * Gets the total pages.
+	 *
+	 * @return the totalPages
+	 */
+	public int getTotalPages() {
+		if (this.measurementRowList != null && !this.measurementRowList.isEmpty()) {
+			this.totalPages = (int) Math.ceil(this.measurementRowList.size() * 1f / this.getResultPerPage());
+		} else {
+			this.totalPages = 0;
+		}
+		return this.totalPages;
+	}
+
+	/**
+	 * Sets the total pages.
+	 *
+	 * @param totalPages the totalPages to set
+	 */
+	public void setTotalPages(final int totalPages) {
+		this.totalPages = totalPages;
+	}
+
+	/**
+	 * Gets the result per page.
+	 *
+	 * @return the resultPerPage
+	 */
+	public int getResultPerPage() {
+		return this.resultPerPage;
+	}
+
+	/**
+	 * Gets the paginated measurement row list.
+	 *
+	 * @return the paginatedMeasurementRowList
+	 */
+	public List<MeasurementRow> getPaginatedMeasurementRowList() {
+		return this.paginatedMeasurementRowList;
+	}
+
+	/**
+	 * Sets the paginated measurement row list.
+	 *
+	 * @param paginatedMeasurementRowList the paginatedMeasurementRowList to set
+	 */
+	public void setPaginatedMeasurementRowList(final List<MeasurementRow> paginatedMeasurementRowList) {
+		this.paginatedMeasurementRowList = paginatedMeasurementRowList;
+	}
+
+	/**
+	 * Sets the result per page.
+	 *
+	 * @param resultPerPage the resultPerPage to set
+	 */
+	public void setResultPerPage(final int resultPerPage) {
+		this.resultPerPage = resultPerPage;
+	}
+
+	/**
+	 * Change page.
+	 *
+	 * @param currentPage the current page
+	 */
+	public void changePage(final int currentPage) {
+		if (this.measurementRowList != null && !this.measurementRowList.isEmpty()) {
+			final int totalItemsPerPage = this.getResultPerPage();
+			final int start = (currentPage - 1) * totalItemsPerPage;
+			int end = start + totalItemsPerPage;
+			if (this.measurementRowList.size() < end) {
+				end = this.measurementRowList.size();
+			}
+			this.setPaginatedMeasurementRowList(this.measurementRowList.subList(start, end));
+			this.setCurrentPage(currentPage);
+		} else {
+			this.setCurrentPage(0);
+		}
+	}
+
+	/**
+	 * Gets the created by.
+	 *
+	 * @return the created by
+	 */
+	public String getCreatedBy() {
+		return this.createdBy;
+	}
+
+	/**
+	 * Sets the created by.
+	 *
+	 * @param createdBy the new created by
+	 */
+	public void setCreatedBy(final String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	/**
+	 * Gets the study name.
+	 *
+	 * @return the studyName
+	 */
+	public String getStudyName() {
+		return this.studyName;
+	}
+
+	/**
+	 * Sets the study name.
+	 *
+	 * @param studyName the studyName to set
+	 */
+	public void setStudyName(final String studyName) {
+		this.studyName = studyName;
+	}
+
+	/**
+	 * Gets the selected variables.
+	 *
+	 * @return the selected variables
+	 */
+	public List<SettingVariable> getSelectedVariables() {
+		return this.selectedVariables;
+	}
+
+	/**
+	 * Sets the selected variables.
+	 *
+	 * @param selectedVariables the new selected variables
+	 */
+	public void setSelectedVariables(final List<SettingVariable> selectedVariables) {
+		this.selectedVariables = selectedVariables;
+	}
+
+	/**
+	 * Gets the basic details.
+	 *
+	 * @return the basicDetails
+	 */
+	public List<SettingDetail> getBasicDetails() {
+		return this.basicDetails;
+	}
+
+	/**
+	 * Sets the basic details.
+	 *
+	 * @param basicDetails the basicDetails to set
+	 */
+	public void setBasicDetails(final List<SettingDetail> basicDetails) {
+		this.basicDetails = basicDetails;
+	}
+
+	/**
+	 * Gets the import val.
+	 *
+	 * @return the importVal
+	 */
+	public int getImportVal() {
+		return this.importVal;
+	}
+
+	/**
+	 * Sets the import val.
+	 *
+	 * @param importVal the importVal to set
+	 */
+	public void setImportVal(final int importVal) {
+		this.importVal = importVal;
+	}
+
+	/**
+	 * Gets the number of instances.
+	 *
+	 * @return the numberOfInstances
+	 */
+	public int getNumberOfInstances() {
+		return this.numberOfInstances;
+	}
+
+	/**
+	 * Sets the number of instances.
+	 *
+	 * @param numberOfInstances the numberOfInstances to set
+	 */
+	public void setNumberOfInstances(final int numberOfInstances) {
+		this.numberOfInstances = numberOfInstances;
+	}
+
+	/**
+	 * Gets the export instance type.
+	 *
+	 * @return the exportInstanceType
+	 */
+	public String getExportInstanceType() {
+		return this.exportInstanceType;
+	}
+
+	/**
+	 * Sets the export instance type.
+	 *
+	 * @param exportInstanceType the exportInstanceType to set
+	 */
+	public void setExportInstanceType(final String exportInstanceType) {
+		this.exportInstanceType = exportInstanceType;
+	}
+
+	/**
+	 * Gets the export trial instance number.
+	 *
+	 * @return the exportTrialInstanceNumber
+	 */
+	public String getExportTrialInstanceNumber() {
+		return this.exportTrialInstanceNumber;
+	}
+
+	/**
+	 * Sets the export trial instance number.
+	 *
+	 * @param exportTrialInstanceNumber the exportTrialInstanceNumber to set
+	 */
+	public void setExportTrialInstanceNumber(final String exportTrialInstanceNumber) {
+		this.exportTrialInstanceNumber = exportTrialInstanceNumber;
+	}
+
+	/**
+	 * Gets the export trial instance start.
+	 *
+	 * @return the exportTrialInstanceStart
+	 */
+	public String getExportTrialInstanceStart() {
+		return this.exportTrialInstanceStart;
+	}
+
+	/**
+	 * Sets the export trial instance start.
+	 *
+	 * @param exportTrialInstanceStart the exportTrialInstanceStart to set
+	 */
+	public void setExportTrialInstanceStart(final String exportTrialInstanceStart) {
+		this.exportTrialInstanceStart = exportTrialInstanceStart;
+	}
+
+	/**
+	 * Gets the export trial instance end.
+	 *
+	 * @return the exportTrialInstanceEnd
+	 */
+	public String getExportTrialInstanceEnd() {
+		return this.exportTrialInstanceEnd;
+	}
+
+	/**
+	 * Sets the export trial instance end.
+	 *
+	 * @param exportTrialInstanceEnd the exportTrialInstanceEnd to set
+	 */
+	public void setExportTrialInstanceEnd(final String exportTrialInstanceEnd) {
+		this.exportTrialInstanceEnd = exportTrialInstanceEnd;
+	}
+
 }

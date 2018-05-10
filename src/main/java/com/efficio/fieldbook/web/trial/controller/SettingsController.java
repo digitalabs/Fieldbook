@@ -17,9 +17,9 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -873,7 +873,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	@Deprecated
-	protected List<SettingDetail> getCheckVariables(final List<SettingDetail> nurseryLevelConditions, final CreateNurseryForm form) {
+	protected List<SettingDetail> getCheckVariables(final List<SettingDetail> nurseryLevelConditions, final CreateTrialForm form) {
 		final List<SettingDetail> checkVariables =
 				this.getSettingDetailsOfSection(nurseryLevelConditions, form, AppConstants.CHECK_VARIABLES.getString());
 		// set order by id
@@ -894,7 +894,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the basic details
 	 */
 	@Deprecated
-	protected List<SettingDetail> getSettingDetailsOfSection(final List<SettingDetail> nurseryLevelConditions, final CreateNurseryForm form,
+	protected List<SettingDetail> getSettingDetailsOfSection(final List<SettingDetail> nurseryLevelConditions, final CreateTrialForm form,
 		final String variableList) {
 		final List<SettingDetail> settingDetails = new ArrayList<>();
 
@@ -931,7 +931,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	@Deprecated
-	private void addSettingDetails(final List<SettingDetail> settingDetails, final Integer termId, final CreateNurseryForm form) {
+	private void addSettingDetails(final List<SettingDetail> settingDetails, final Integer termId, final CreateTrialForm form) {
 		try {
 			settingDetails.add(this.createSettingDetail(termId, null, null));
 			form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.contextUtil.getCurrentIbdbUserId()));

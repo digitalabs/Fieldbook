@@ -711,7 +711,7 @@ function showFieldMapPopUp(tableName, id) {
 }
 
 function viewFieldMap() {
-	if (isViewFieldmap) {debugger;
+	if (isViewFieldmap) {
 		showGeneratedFieldMap();
 	} else {
 		showCreateFieldMap();
@@ -724,7 +724,7 @@ function showGeneratedFieldMap() {
 		if ($('#studyFieldMapTree .field-map-highlight').size() == 1) {
 			$('#selectTrialInstanceModal').modal('toggle');
 			var id = $('#studyFieldMapTree .field-map-highlight').attr('id');
-			var datasetId = $('#studyFieldMapTree .field-map-highlight').treegrid('getParentNode').attr('id');debugger;
+			var datasetId = $('#studyFieldMapTree .field-map-highlight').treegrid('getParentNode').attr('id');
 			location.href = '/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/trial/' + datasetId + '/' + id;
 		} else {
 			showMessage(multipleSelectError);
@@ -735,7 +735,6 @@ function showGeneratedFieldMap() {
 }
 
 function showCreateFieldMap() {
-debugger;
 	var selectedWithFieldMap,
 		id,
 		dataset,

@@ -1,23 +1,23 @@
 <!-- This is the Measurements Tab -->
- <input type="hidden" id="study-type" name="study-type" value="Nursery" />
- <form role="form-horizontal" action="#" method="post" th:object="${createNurseryForm}">
-	 <div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
-	 	<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
-	 </div>
-	 <input type="hidden" th:field="*{measurementDataExisting}"/>
+<input type="hidden" id="study-type" name="study-type" value="Nursery" />
+<form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">
+	<div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
+		<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
+	</div>
+	<input type="hidden" th:field="*{measurementDataExisting}"/>
 </form>
 
-<div th:include="/NurseryManager/measurementTable"></div>
+<div th:include="/TrialManager/measurementTable"></div>
 
 <div layout:fragment="page-script">
-<script type='text/javascript' th:inline="javascript">
-//<![CDATA[
-/*globals newTraits, newSelectionVariates*/
-/*exported showImportResponse, importOptions, confirmDesignation, goBackToImport, doImportActionChange*/
+	<script type='text/javascript' th:inline="javascript">
+		//<![CDATA[
+		/*globals newTraits, newSelectionVariates*/
+		/*exported showImportResponse, importOptions, confirmDesignation, goBackToImport, doImportActionChange*/
 
-var newTraits = /*[[${newTraits}]]*/ [],
-	newSelectionVariates = /*[[${newSelectionVariates}]]*/ [];
+		var newTraits = /*[[${newTraits}]]*/ [],
+			newSelectionVariates = /*[[${newSelectionVariates}]]*/ [];
 
-//]]>
-</script>
+		//]]>
+	</script>
 </div>

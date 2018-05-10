@@ -5,8 +5,8 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.util.DateUtil;
@@ -25,7 +25,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -159,7 +165,7 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET)
-	public List<Map<String, Object>> nurseryMeasurementsGet(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model) {
+	public List<Map<String, Object>> nurseryMeasurementsGet(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model) {
 		final List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
 
 		if (this.userSelection.getTemporaryWorkbook() != null && this.userSelection.getMeasurementRowList() == null) {
@@ -314,7 +320,7 @@ public class NurseryMeasurementsController extends AbstractBaseFieldbookControll
 
 	@RequestMapping(value = "/pageView/{studyType}/{pageNum}", method = RequestMethod.GET)
 	public String getPaginatedListViewOnly(@PathVariable final String studyType, @PathVariable final int pageNum,
-			@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model, @RequestParam("listIdentifier")
+			@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model, @RequestParam("listIdentifier")
 	final String datasetId) {
 
 		final List<MeasurementRow> rows = this.paginationListSelection.getReviewDetailsList(datasetId);

@@ -46,11 +46,6 @@ public class ManageTrialController extends AbstractBaseFieldbookController {
 		return super.show(model);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
-	 */
 	@Override
 	public String getContentName() {
 		return "Common/manageStudy";

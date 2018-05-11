@@ -3541,7 +3541,7 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 		return;
 	}
 	$.ajax({
-		url: '/Fieldbook/TrialManager/addOrRemoveTraits/viewStudyAjax/' + datasetId,
+		url: '/Fieldbook/trial/measurements/viewStudyAjax/' + datasetId,
 		type: 'GET',
 		cache: false,
 		success: function(html) {

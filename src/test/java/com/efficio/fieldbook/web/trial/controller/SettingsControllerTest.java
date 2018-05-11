@@ -1,13 +1,11 @@
 
-package com.efficio.fieldbook.web.nursery.controller;
+package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import com.efficio.fieldbook.service.FieldbookServiceImpl;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import junit.framework.Assert;
 import org.generationcp.middleware.ContextHolder;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -21,11 +19,9 @@ import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.Project;
-import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,16 +32,10 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.ui.ExtendedModelMap;
 
-import com.efficio.fieldbook.service.FieldbookServiceImpl;
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-
-import junit.framework.Assert;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsControllerTest {
@@ -99,29 +89,6 @@ public class SettingsControllerTest {
 	}
 
 	@Test
-	public void testGetCheckVariables() {
-		final List<SettingDetail> nurseryLevelConditions = this.createSettingDetailVariables();
-		final CreateNurseryForm form = new CreateNurseryForm();
-
-		final List<SettingDetail> checkVariables = this.controller.getCheckVariables(nurseryLevelConditions, form);
-
-		Assert.assertTrue("Expected only check variables but the list has non check variables as well.",
-				WorkbookTestUtil.areDetailsFilteredVariables(checkVariables, AppConstants.CHECK_VARIABLES.getString()));
-	}
-
-	@Test
-	public void testGetBasicDetails() {
-		final List<SettingDetail> nurseryLevelConditions = this.createSettingDetailVariables();
-		final CreateNurseryForm form = new CreateNurseryForm();
-
-		final List<SettingDetail> basicDetails =
-				this.controller.getSettingDetailsOfSection(nurseryLevelConditions, form, AppConstants.FIXED_NURSERY_VARIABLES.getString());
-
-		Assert.assertTrue("Expected only basic detail variables but the list has non basic detail variables as well.",
-				WorkbookTestUtil.areDetailsFilteredVariables(basicDetails, AppConstants.FIXED_NURSERY_VARIABLES.getString()));
-	}
-
-	@Test
 	public void testHasMeasurementDataEnteredGivenAListOfMeasurementRowsWithData() {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto("N"));
 
@@ -141,44 +108,6 @@ public class SettingsControllerTest {
 
 		Assert.assertFalse("Expecting the measurement row list has no measurement data.",
 				SettingsController.hasMeasurementDataEntered(2, measurementRowList));
-	}
-
-	@Test
-	public void testHasMeasurementDataEnteredForVariablesWithAtLeast1WithData() {
-		final EditNurseryController editNurseryController = new EditNurseryController();
-		final List<Integer> variableIds = new ArrayList<>();
-		variableIds.add(1);
-		variableIds.add(2);
-		final UserSelection userSelection = new UserSelection();
-		final List<MeasurementRow> measurementRowList = new ArrayList<>();
-		final List<MeasurementData> dataList = new ArrayList<>();
-		final MeasurementRow measurementRow = new MeasurementRow();
-		dataList.add(this.getSampleMeasurementData(1, "Sample Data"));
-		dataList.add(this.getSampleMeasurementData(2, ""));
-		measurementRow.setDataList(dataList);
-		measurementRowList.add(measurementRow);
-		userSelection.setMeasurementRowList(measurementRowList);
-		final boolean hasMeasurementData = editNurseryController.hasMeasurementDataEnteredForVariables(variableIds, userSelection);
-		Assert.assertTrue("Should return true since there is measuredData", hasMeasurementData);
-	}
-
-	@Test
-	public void testHasMeasurementDataEnteredForVariablesWithNoData() {
-		final EditNurseryController editNurseryController = new EditNurseryController();
-		final List<Integer> variableIds = new ArrayList<>();
-		variableIds.add(1);
-		variableIds.add(2);
-		final UserSelection userSelection = new UserSelection();
-		final List<MeasurementRow> measurementRowList = new ArrayList<>();
-		final List<MeasurementData> dataList = new ArrayList<>();
-		final MeasurementRow measurementRow = new MeasurementRow();
-		dataList.add(this.getSampleMeasurementData(1, ""));
-		dataList.add(this.getSampleMeasurementData(2, ""));
-		measurementRow.setDataList(dataList);
-		measurementRowList.add(measurementRow);
-		userSelection.setMeasurementRowList(measurementRowList);
-		final boolean hasMeasurementData = editNurseryController.hasMeasurementDataEnteredForVariables(variableIds, userSelection);
-		Assert.assertFalse("Should return false since there is measuredData", hasMeasurementData);
 	}
 
 	private MeasurementData getSampleMeasurementData(final Integer variableTermId, final String data) {
@@ -207,90 +136,6 @@ public class SettingsControllerTest {
 		variable.setCvTermId(cvTermId);
 		final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
 		return settingDetail;
-	}
-
-	@Test
-	public void testGetMethod_ById() throws MiddlewareQueryException {
-		final CreateNurseryController createNurseryController = new CreateNurseryController();
-		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		createNurseryController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-		final int id = 70;
-		final String name = "Accession into genebank";
-		final String code = "AGB1";
-		final String programUUID = null;
-		final Method method = this.createMethod(id, name, code, programUUID);
-		Mockito.doReturn(method).when(fieldbookMiddlewareService).getMethodById(id);
-
-		final String idTermId = Integer.toString(id);
-		final Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
-		studyConditionMap.put(idTermId, this.createMeasurementVariable(idTermId));
-
-		final Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
-		Assert.assertEquals(method.getMid(), resultingMethod.getMid());
-	}
-
-	@Test
-	public void testGetMethod_ById_EmptyValue() throws MiddlewareQueryException {
-		final CreateNurseryController createNurseryController = new CreateNurseryController();
-		final int id = 70;
-		final String code = "AGB1";
-		final String programUUID = null;
-
-		final String idTermId = Integer.toString(id);
-		final Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
-		studyConditionMap.put(idTermId, this.createMeasurementVariable(""));
-
-		final Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
-		Assert.assertEquals(null, resultingMethod);
-	}
-
-	@Test
-	public void testGetMethod_ByCode() throws MiddlewareQueryException {
-		final CreateNurseryController createNurseryController = new CreateNurseryController();
-		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		createNurseryController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-		final int id = 70;
-		final String name = "Accession into genebank";
-		final String code = "AGB1";
-		final String programUUID = null;
-		final Method method = this.createMethod(id, name, code, programUUID);
-		Mockito.doReturn(method).when(fieldbookMiddlewareService).getMethodByCode(code, programUUID);
-
-		final String idTermId = Integer.toString(id);
-		final Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
-		studyConditionMap.put(code, this.createMeasurementVariable(code));
-
-		final Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
-		Assert.assertEquals(method.getMid(), resultingMethod.getMid());
-	}
-
-	@Test
-	public void testGetMethod_ByCode_EmptyValue() throws MiddlewareQueryException {
-		final CreateNurseryController createNurseryController = new CreateNurseryController();
-
-		final int id = 70;
-		final String code = "AGB1";
-		final String programUUID = null;
-
-		final String idTermId = Integer.toString(id);
-		final Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
-		studyConditionMap.put(code, this.createMeasurementVariable(""));
-
-		final Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
-		Assert.assertEquals(null, resultingMethod);
-	}
-
-	@Test
-	public void testGetMethod_IdAndCodeNotFound() throws MiddlewareQueryException {
-		final CreateNurseryController createNurseryController = new CreateNurseryController();
-		final int id = 70;
-		final String code = "AGB1";
-		final String programUUID = null;
-		final String idTermId = Integer.toString(id);
-		final Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
-
-		final Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
-		Assert.assertEquals(null, resultingMethod);
 	}
 
 	private Method createMethod(final int id, final String name, final String code, final String uniqueID) {

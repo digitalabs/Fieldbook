@@ -100,7 +100,8 @@ function lineMethod() { //TODO ADVANCE
 	}
 }
 
-function validateAdvanceNursery() { //TODO ADVANCE
+function validateAdvanceStudy() {
+
 	// validate number of sample per plot
 	var numberOfSamplePerPlot = $('#lineSelected').val();
 	if (numberOfSamplePerPlot === '') {

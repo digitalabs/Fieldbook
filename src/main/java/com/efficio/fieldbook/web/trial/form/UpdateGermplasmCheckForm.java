@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.nursery.form;
+package com.efficio.fieldbook.web.trial.form;
 
 public class UpdateGermplasmCheckForm {
 

@@ -7,6 +7,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.util.DataMapUtil;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.base.Optional;
 import org.apache.commons.lang.math.NumberUtils;
@@ -22,6 +23,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Variable;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -29,6 +31,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.study.MeasurementDto;
 import org.generationcp.middleware.service.api.study.ObservationDto;
 import org.generationcp.middleware.service.api.study.StudyService;
@@ -70,6 +73,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	private static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
 
+	private static final String OBSERVATIONS_HTML = "TrialManager/observations";
+
 	private static final Logger LOG = LoggerFactory.getLogger(TrialMeasurementsController.class);
 	public static final String STATUS = "status";
 	private static final String ERROR_MESSAGE = "errorMessage";
@@ -105,6 +110,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@Resource
 	private PaginationListSelection paginationListSelection;
 
+	@Resource
+	private OntologyService ontologyService;
+
 	@Override
 	public String getContentName() {
 		return null;
@@ -116,10 +124,10 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		final Map<String, String> resultMap = new HashMap<>();
 
-		final Workbook workbook = userSelection.getWorkbook();
+		final Workbook workbook = this.getUserSelection().getWorkbook();
 
-		form.setMeasurementRowList(userSelection.getMeasurementRowList());
-		form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
+		form.setMeasurementRowList(this.getUserSelection().getMeasurementRowList());
+		form.setMeasurementVariables(this.getUserSelection().getWorkbook().getMeasurementDatasetVariables());
 		form.setStudyName(workbook.getStudyDetails().getStudyName());
 
 		workbook.setObservations(form.getMeasurementRowList());
@@ -189,7 +197,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		Map<String, Object> dataMap = new HashMap<>();
 		final List<ObservationDto> singleObservation = this.studyService
-			.getSingleObservation(this.userSelection.getWorkbook().getStudyDetails().getId(), experimentId);
+			.getSingleObservation(this.getUserSelection().getWorkbook().getStudyDetails().getId(), experimentId);
 		if (!singleObservation.isEmpty()) {
 			dataMap = this.generateDatatableDataMap(singleObservation.get(0));
 		}
@@ -227,7 +235,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 			map.put(TrialMeasurementsController.INDEX, index);
 
-			final MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
+			final MeasurementRow originalRow = this.getUserSelection().getMeasurementRowList().get(index);
 
 			try {
 				if (!isDiscard) {
@@ -237,7 +245,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 					if (copyRow != null && copyRow.getMeasurementVariables() != null) {
 						this.updatePhenotypeValues(copyRow.getDataList(), value, termId, isNew);
 					}
-					this.validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
+					this.validationService.validateObservationValues(this.getUserSelection().getWorkbook(), copyRow);
 					// if there are no error, meaning everything is good, thats
 					// the time we copy it to the original
 					this.copyMeasurementValue(originalRow, copyRow, isNew == 1);
@@ -246,7 +254,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 				map.put(TrialMeasurementsController.SUCCESS, "1");
 				final DataMapUtil dataMapUtil = new DataMapUtil();
 				final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(originalRow, "",
-					this.userSelection);
+					this.getUserSelection());
 				map.put(TrialMeasurementsController.DATA, dataMap);
 			} catch (final MiddlewareQueryException e) {
 				TrialMeasurementsController.LOG.error(e.getMessage(), e);
@@ -308,7 +316,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		map.put(TrialMeasurementsController.INDEX, index);
 
-		final MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
+		final MeasurementRow originalRow = this.getUserSelection().getMeasurementRowList().get(index);
 
 		if (originalRow != null && originalRow.getMeasurementVariables() != null) {
 			for (final MeasurementData var : originalRow.getDataList()) {
@@ -333,7 +341,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		map.put(TrialMeasurementsController.SUCCESS, "1");
 		final DataMapUtil dataMapUtil = new DataMapUtil();
-		final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(originalRow, "", this.userSelection);
+		final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(originalRow, "", this.getUserSelection());
 		map.put(TrialMeasurementsController.DATA, dataMap);
 
 		return map;
@@ -366,7 +374,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/update/experiment/cell/missing/all", method = RequestMethod.GET)
 	public Map<String, Object> markAllExperimentDataAsMissing() {
 		final Map<String, Object> map = new HashMap<>();
-		for (final MeasurementRow row : userSelection.getMeasurementRowList()) {
+		for (final MeasurementRow row : this.getUserSelection().getMeasurementRowList()) {
 			if (row != null && row.getMeasurementVariables() != null) {
 				this.markNonEmptyVariateValuesAsMissing(row.getDataList());
 			}
@@ -381,7 +389,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+		for (MeasurementRow row : this.getUserSelection().getMeasurementRowList()) {
 			if (row != null && row.getMeasurementVariables() != null) {
 				this.markNonEmptyVariateValuesAsAccepted(row.getDataList());
 			}
@@ -457,7 +465,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	public String editExperimentCells(@PathVariable final int index, @PathVariable final int termId, final Model model) {
 
 		final List<MeasurementRow> tempList = new ArrayList<>();
-		tempList.addAll(userSelection.getMeasurementRowList());
+		tempList.addAll(this.getUserSelection().getMeasurementRowList());
 
 		final MeasurementRow row = tempList.get(index);
 		final MeasurementRow copyRow = row.copy();
@@ -549,17 +557,17 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		final List<MeasurementRow> tempList = new ArrayList<>();
 
-		if (userSelection.getTemporaryWorkbook() != null) {
-			tempList.addAll(userSelection.getTemporaryWorkbook().getObservations());
+		if (this.getUserSelection().getTemporaryWorkbook() != null) {
+			tempList.addAll(this.getUserSelection().getTemporaryWorkbook().getObservations());
 		} else {
-			tempList.addAll(userSelection.getWorkbook().getObservations());
+			tempList.addAll(this.getUserSelection().getWorkbook().getObservations());
 		}
 
 		final List<Map<String, Object>> masterList = new ArrayList<>();
 
 		final DataMapUtil dataMapUtil = new DataMapUtil();
 		for (final MeasurementRow row : tempList) {
-			final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(row, "", this.userSelection);
+			final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(row, "", this.getUserSelection());
 			masterList.add(dataMap);
 		}
 
@@ -618,8 +626,33 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			form.setMeasurementVariables(variables);
 		}
 		form.changePage(pageNum);
-		userSelection.setCurrentPage(form.getCurrentPage());
+		this.getUserSelection().setCurrentPage(form.getCurrentPage());
 		return super.showAjaxPage(model, "/TrialManager/datasetSummaryView");
+	}
+
+
+	@RequestMapping(value = "/viewStudyAjax/{datasetId}", method = RequestMethod.GET)
+	public String viewStudyAjax(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model,
+		@PathVariable final int datasetId) {
+
+		Workbook workbook = null;
+		try {
+			workbook = this.fieldbookMiddlewareService.getCompleteDataset(datasetId);
+			this.fieldbookService.setAllPossibleValuesInWorkbook(workbook);
+			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
+				this.ontologyService, contextUtil.getCurrentProgramUUID());
+		} catch (final MiddlewareException e) {
+			TrialMeasurementsController.LOG.error(e.getMessage(), e);
+		}
+		this.getUserSelection().setMeasurementRowList(workbook.arrangeMeasurementObservation(workbook.getObservations()));
+		form.setMeasurementRowList(this.getUserSelection().getMeasurementRowList());
+		form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+		this.paginationListSelection.addReviewDetailsList(String.valueOf(datasetId), form.getMeasurementRowList());
+		this.paginationListSelection.addReviewVariableList(String.valueOf(datasetId), form.getMeasurementVariables());
+		form.changePage(1);
+		this.getUserSelection().setCurrentPage(form.getCurrentPage());
+
+		return super.showAjaxPage(model, TrialMeasurementsController.OBSERVATIONS_HTML);
 	}
 
 	protected boolean isNumericalValueOutOfBounds(final String value, final MeasurementVariable var) {
@@ -708,7 +741,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		dataMap.put(String.valueOf(TermId.SAMPLES.getId()), new Object[] {row.getSamples(), row.getPlotId()});
 
 		final List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
-		measurementDatasetVariables.addAll(this.userSelection.getWorkbook().getMeasurementDatasetVariablesView());
+		measurementDatasetVariables.addAll(this.getUserSelection().getWorkbook().getMeasurementDatasetVariablesView());
 
 		// generate measurement row data from dataList (existing / generated
 		// data)
@@ -744,9 +777,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		this.addGermplasmAndPlotFactorsDataToDataMap(row, dataMap, measurementDatasetVariables);
 
 		// generate measurement row data from newly added traits (no data yet)
-		if (userSelection != null && userSelection.getMeasurementDatasetVariable() != null
-			&& !userSelection.getMeasurementDatasetVariable().isEmpty()) {
-			for (final MeasurementVariable var : userSelection.getMeasurementDatasetVariable()) {
+		if (this.getUserSelection() != null && this.getUserSelection().getMeasurementDatasetVariable() != null
+			&& !this.getUserSelection().getMeasurementDatasetVariable().isEmpty()) {
+			for (final MeasurementVariable var : this.getUserSelection().getMeasurementDatasetVariable()) {
 				if (!dataMap.containsKey(var.getName())) {
 					if (var.getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
 						dataMap.put(var.getName(), new Object[] { "", "", true });
@@ -941,5 +974,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	void setFieldbookService(final com.efficio.fieldbook.service.api.FieldbookService fieldbookService) {
 		this.fieldbookService = fieldbookService;
+	}
+
+	public UserSelection getUserSelection() {
+		return userSelection;
 	}
 }

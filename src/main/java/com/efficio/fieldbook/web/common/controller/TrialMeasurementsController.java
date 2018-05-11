@@ -2,6 +2,7 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.util.DataMapUtil;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
@@ -100,6 +101,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	@Resource
 	private OntologyDataManager ontologyDataManager;
+
+	@Resource
+	private PaginationListSelection paginationListSelection;
 
 	@Override
 	public String getContentName() {
@@ -599,6 +603,25 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		return isCategoricalDescriptionView;
 	}
 
+	@RequestMapping(value = "/pageView/{pageNum}", method = RequestMethod.GET)
+	public String getPaginatedListViewOnly(@PathVariable final int pageNum,
+		@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model, @RequestParam("listIdentifier")
+	final String datasetId) {
+
+		final List<MeasurementRow> rows = this.paginationListSelection.getReviewDetailsList(datasetId);
+		if (rows != null) {
+			form.setMeasurementRowList(rows);
+			form.changePage(pageNum);
+		}
+		final List<MeasurementVariable> variables = this.paginationListSelection.getReviewVariableList(datasetId);
+		if (variables != null) {
+			form.setMeasurementVariables(variables);
+		}
+		form.changePage(pageNum);
+		userSelection.setCurrentPage(form.getCurrentPage());
+		return super.showAjaxPage(model, "/TrialManager/datasetSummaryView");
+	}
+
 	protected boolean isNumericalValueOutOfBounds(final String value, final MeasurementVariable var) {
 		return var.getMinRange() != null && var.getMaxRange() != null && NumberUtils.isNumber(value)
 				&& (Double.valueOf(value) < var.getMinRange() || Double.valueOf(value) > var.getMaxRange());
@@ -839,7 +862,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		for (final Pair<String, String> additionalGermplasmAttrCols : row.getAdditionalGermplasmDescriptors()) {
 			dataMap.put(additionalGermplasmAttrCols.getLeft(), new Object[] { additionalGermplasmAttrCols.getRight() });
 		}
-		
+
 		for (final Pair<String, String> additionalDesignCols : row.getAdditionalDesignFactors()) {
 
 			final Optional<MeasurementVariable> columnVariable = WorkbookUtil.findMeasurementVariableByName(measurementDatasetVariables, additionalDesignCols.getLeft());

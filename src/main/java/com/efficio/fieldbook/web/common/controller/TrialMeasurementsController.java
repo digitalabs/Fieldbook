@@ -1,15 +1,12 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.util.DataMapUtil;
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.base.Optional;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,12 +45,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.util.DataMapUtil;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/trial/measurements")
@@ -110,7 +108,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	@ResponseBody
 	@RequestMapping(value = "/{studyType}/updateTraits", method = RequestMethod.POST)
-	public Map<String, String> updateTraits(@ModelAttribute("createNurseryForm") final CreateNurseryForm form) {
+	public Map<String, String> updateTraits(@ModelAttribute("createTrialForm") final CreateTrialForm form) {
 
 		final Map<String, String> resultMap = new HashMap<>();
 
@@ -507,7 +505,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/plotMeasurements/{studyId}/{instanceId}", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
 	public Map<String, Object> getPlotMeasurementsPaginated(@PathVariable final int studyId,
-			@PathVariable final int instanceId, @ModelAttribute("createNurseryForm") final CreateNurseryForm form,
+			@PathVariable final int instanceId, @ModelAttribute("createTrialForm") final CreateTrialForm form,
 			final Model model, final HttpServletRequest req) {
 
 		final List<Map<String, Object>> masterDataList = new ArrayList<>();

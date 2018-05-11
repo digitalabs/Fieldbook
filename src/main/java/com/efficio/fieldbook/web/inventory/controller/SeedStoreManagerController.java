@@ -27,7 +27,7 @@ import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
 import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
 
 /**
- * The Class ManageNurseriesController.
+ * The Class SeedStoreManagerController.
  */
 @Controller
 @RequestMapping({SeedStoreManagerController.URL})

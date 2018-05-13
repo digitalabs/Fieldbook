@@ -89,7 +89,7 @@ public class ManageSettingsController extends SettingsController {
 
 		final Set<Integer> variableTypes = VariableType.getVariableTypesIdsByPhenotype(phenotypicTypeById);
 
-		return getOntologyPropertiesByVariableType(variableTypes.toArray(new Integer[variableTypes.size()]), null, false);
+		return getOntologyPropertiesByVariableType(variableTypes.toArray(new Integer[0]), null, false);
 	}
 
 	@ResponseBody
@@ -127,7 +127,7 @@ public class ManageSettingsController extends SettingsController {
 			final List<Property> properties;
 
 			properties = ontologyPropertyDataManager
-					.getAllPropertiesWithClassAndVariableType(classes, varTypeValues.toArray(new String[varTypeValues.size()]));
+					.getAllPropertiesWithClassAndVariableType(classes, varTypeValues.toArray(new String[0]));
 
 			// fetch all standard variables given property
 			for (final Property property : properties) {
@@ -300,7 +300,7 @@ public class ManageSettingsController extends SettingsController {
 			settingsList = this.userSelection.getDeletedPlotLevelList();
 		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
 			settingsList = this.userSelection.getDeletedBaselineTraitsList();
-		} else if (mode == VariableType.NURSERY_CONDITION.getId()) {
+		} else if (mode == VariableType.STUDY_CONDITION.getId()) {
 			settingsList = this.userSelection.getDeletedNurseryConditions();
 		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
 			settingsList = this.userSelection.getDeletedTreatmentFactors();
@@ -358,7 +358,7 @@ public class ManageSettingsController extends SettingsController {
 			} else if (mode == VariableType.SELECTION_METHOD.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getSelectionVariates(), mode, variableId, true);
 				SettingsUtil.deleteVariableInSession(this.userSelection.getSelectionVariates(), variableId);
-			} else if (mode == VariableType.NURSERY_CONDITION.getId() || mode == VariableType.TRIAL_CONDITION.getId()) {
+			} else if (mode == VariableType.STUDY_CONDITION.getId() || mode == VariableType.STUDY_CONDITION.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getNurseryConditions(), mode, variableId, true);
 				SettingsUtil.deleteVariableInSession(this.userSelection.getNurseryConditions(), variableId);
 			} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {

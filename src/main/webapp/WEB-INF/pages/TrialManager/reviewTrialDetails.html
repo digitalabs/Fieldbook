@@ -260,11 +260,12 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <!-- Passing Nursery_Condition type id 1803 which will fetch & display particular condition's details, valid values & usage in popup -->
+                    <!-- Passing Nursery_Condition type id 1802 which will fetch & display particular condition's details, valid values &
+                     usage in popup -->
                     <tr th:each="nurseryConditionDetail, rowStat : *{nurseryConditionDetails}">
                         <td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
                             <a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-                            *{nurseryConditionDetails[__${rowStat.index}__].variable.cvTermId} + '\', 1803);'"
+                            *{nurseryConditionDetails[__${rowStat.index}__].variable.cvTermId} + '\', 1802);'"
                                th:text="${nurseryConditionDetail.variable.name}"></a>
                         </td>
                         <td width="55%" th:class="${rowStat.even}? 'even' : 'odd'"

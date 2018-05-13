@@ -977,7 +977,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			this.userSelection.getDeletedPlotLevelList().add(newSetting);
 		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
 			this.addNewSettingToDeletedBaselineTraits(newSetting);
-		} else if (mode == VariableType.NURSERY_CONDITION.getId() || mode == VariableType.TRIAL_CONDITION.getId()) {
+		} else if (mode == VariableType.STUDY_CONDITION.getId() || mode == VariableType.STUDY_CONDITION.getId()) {
 			if (this.userSelection.getDeletedNurseryConditions() == null) {
 				this.userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
 			}
@@ -1017,6 +1017,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		model.addAttribute("selectionVariatesSegment", VariableType.SELECTION_METHOD.getId());
 		model.addAttribute("studyLevelDetailType", VariableType.STUDY_DETAIL.getId());
 		model.addAttribute("plotLevelDetailType", VariableType.GERMPLASM_DESCRIPTOR.getId());
-		model.addAttribute("nurseryConditionsType", VariableType.NURSERY_CONDITION.getId());
+		model.addAttribute("nurseryConditionsType", VariableType.STUDY_CONDITION.getId());
 	}
 }

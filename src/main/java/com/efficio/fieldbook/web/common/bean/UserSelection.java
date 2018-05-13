@@ -67,7 +67,7 @@ public class UserSelection implements Serializable {
 	/** The current page check germplasm list. */
 	private int currentPageCheckGermplasmList;
 
-	/** Nursery level conditions in Manage Settings. */
+	/** study level conditions in Manage Settings. */
 	private List<SettingDetail> studyLevelConditions = new ArrayList<>();
 
 	/** Plot level factors in Manage Settings. */
@@ -97,7 +97,7 @@ public class UserSelection implements Serializable {
 	/** The basic details. */
 	private List<SettingDetail> basicDetails;
 
-	/** The nursery conditions. */
+	/** The study conditions. */
 	private List<SettingDetail> nurseryConditions;
 
 	/** The deleted study level conditions. */
@@ -109,7 +109,7 @@ public class UserSelection implements Serializable {
 	/** The deleted baseline traits list. */
 	private List<SettingDetail> deletedBaselineTraitsList;
 
-	/** The deleted nursery conditions. */
+	/** The deleted study conditions. */
 	private List<SettingDetail> deletedNurseryConditions;
 
 	/** The deleted trial level variables. */
@@ -192,7 +192,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param currentPageGermplasmList the new current page germplasm list
 	 */
-	public void setCurrentPageGermplasmList(int currentPageGermplasmList) {
+	public void setCurrentPageGermplasmList(final int currentPageGermplasmList) {
 		this.currentPageGermplasmList = currentPageGermplasmList;
 	}
 
@@ -210,7 +210,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param currentPageCheckGermplasmList the new current page check germplasm list
 	 */
-	public void setCurrentPageCheckGermplasmList(int currentPageCheckGermplasmList) {
+	public void setCurrentPageCheckGermplasmList(final int currentPageCheckGermplasmList) {
 		this.currentPageCheckGermplasmList = currentPageCheckGermplasmList;
 	}
 
@@ -228,7 +228,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param isImportValid the new import valid
 	 */
-	public void setImportValid(boolean isImportValid) {
+	public void setImportValid(final boolean isImportValid) {
 		this.isImportValid = isImportValid;
 	}
 
@@ -246,7 +246,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param importedGermplasmMainInfo the new imported germplasm main info
 	 */
-	public void setImportedGermplasmMainInfo(ImportedGermplasmMainInfo importedGermplasmMainInfo) {
+	public void setImportedGermplasmMainInfo(final ImportedGermplasmMainInfo importedGermplasmMainInfo) {
 		this.importedGermplasmMainInfo = importedGermplasmMainInfo;
 	}
 
@@ -264,7 +264,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param actualFileName the new actual file name
 	 */
-	public void setActualFileName(String actualFileName) {
+	public void setActualFileName(final String actualFileName) {
 		this.actualFileName = actualFileName;
 	}
 
@@ -282,7 +282,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param serverFileName the new server file name
 	 */
-	public void setServerFileName(String serverFileName) {
+	public void setServerFileName(final String serverFileName) {
 		this.serverFileName = serverFileName;
 	}
 
@@ -300,7 +300,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param workbook the new workbook
 	 */
-	public void setWorkbook(Workbook workbook) {
+	public void setWorkbook(final Workbook workbook) {
 		this.workbook = workbook;
 	}
 
@@ -318,7 +318,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param fieldLayoutRandom the new field layout random
 	 */
-	public void setFieldLayoutRandom(Boolean fieldLayoutRandom) {
+	public void setFieldLayoutRandom(final Boolean fieldLayoutRandom) {
 		this.fieldLayoutRandom = fieldLayoutRandom;
 	}
 
@@ -336,7 +336,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param studyDetailsList the new study details list
 	 */
-	public void setStudyDetailsList(List<StudyDetails> studyDetailsList) {
+	public void setStudyDetailsList(final List<StudyDetails> studyDetailsList) {
 		this.studyDetailsList = studyDetailsList;
 	}
 
@@ -354,7 +354,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param studyLevelConditions the new study level conditions
 	 */
-	public void setStudyLevelConditions(List<SettingDetail> studyLevelConditions) {
+	public void setStudyLevelConditions(final List<SettingDetail> studyLevelConditions) {
 		this.studyLevelConditions = studyLevelConditions;
 	}
 
@@ -372,7 +372,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param plotsLevelList the plotsLevelList to set
 	 */
-	public void setPlotsLevelList(List<SettingDetail> plotsLevelList) {
+	public void setPlotsLevelList(final List<SettingDetail> plotsLevelList) {
 		this.plotsLevelList = plotsLevelList;
 	}
 
@@ -390,7 +390,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param baselineTraitsList the baselineTraitsList to set
 	 */
-	public void setBaselineTraitsList(List<SettingDetail> baselineTraitsList) {
+	public void setBaselineTraitsList(final List<SettingDetail> baselineTraitsList) {
 		this.baselineTraitsList = baselineTraitsList;
 	}
 
@@ -408,7 +408,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param importedAdvancedGermplasmList the new imported advanced germplasm list
 	 */
-	public void setImportedAdvancedGermplasmList(List<ImportedGermplasm> importedAdvancedGermplasmList) {
+	public void setImportedAdvancedGermplasmList(final List<ImportedGermplasm> importedAdvancedGermplasmList) {
 		this.importedAdvancedGermplasmList = importedAdvancedGermplasmList;
 	}
 
@@ -426,7 +426,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param traitRefList the new trait ref list
 	 */
-	public void setTraitRefList(List<TraitClassReference> traitRefList) {
+	public void setTraitRefList(final List<TraitClassReference> traitRefList) {
 		this.traitRefList = traitRefList;
 	}
 
@@ -444,7 +444,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param trialLevelVariableList the new trial level variable list
 	 */
-	public void setTrialLevelVariableList(List<SettingDetail> trialLevelVariableList) {
+	public void setTrialLevelVariableList(final List<SettingDetail> trialLevelVariableList) {
 		this.trialLevelVariableList = trialLevelVariableList;
 	}
 
@@ -463,7 +463,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param trialEnvironmentValues the new trial environment values
 	 */
-	public void setTrialEnvironmentValues(List<List<ValueReference>> trialEnvironmentValues) {
+	public void setTrialEnvironmentValues(final List<List<ValueReference>> trialEnvironmentValues) {
 		this.trialEnvironmentValues = trialEnvironmentValues;
 	}
 
@@ -481,7 +481,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param importedCheckGermplasmMainInfo the new imported check germplasm main info
 	 */
-	public void setImportedCheckGermplasmMainInfo(ImportedGermplasmMainInfo importedCheckGermplasmMainInfo) {
+	public void setImportedCheckGermplasmMainInfo(final ImportedGermplasmMainInfo importedCheckGermplasmMainInfo) {
 		this.importedCheckGermplasmMainInfo = importedCheckGermplasmMainInfo;
 	}
 
@@ -499,7 +499,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param treatmentFactors the new treatment factors
 	 */
-	public void setTreatmentFactors(List<SettingDetail> treatmentFactors) {
+	public void setTreatmentFactors(final List<SettingDetail> treatmentFactors) {
 		this.treatmentFactors = treatmentFactors;
 	}
 
@@ -517,7 +517,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param selectionVariates the selectionVariates to set
 	 */
-	public void setSelectionVariates(List<SettingDetail> selectionVariates) {
+	public void setSelectionVariates(final List<SettingDetail> selectionVariates) {
 		this.selectionVariates = selectionVariates;
 	}
 
@@ -535,25 +535,25 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param basicDetails the basicDetails to set
 	 */
-	public void setBasicDetails(List<SettingDetail> basicDetails) {
+	public void setBasicDetails(final List<SettingDetail> basicDetails) {
 		this.basicDetails = basicDetails;
 	}
 
 	/**
-	 * Gets the nursery conditions.
+	 * Gets the study conditions.
 	 *
-	 * @return the nurseryConditions
+	 * @return the studyConditions
 	 */
 	public List<SettingDetail> getNurseryConditions() {
 		return this.nurseryConditions;
 	}
 
 	/**
-	 * Sets the nursery conditions.
+	 * Sets the study conditions.
 	 *
-	 * @param nurseryConditions the nurseryConditions to set
+	 * @param studyConditions the studyConditions to set
 	 */
-	public void setNurseryConditions(List<SettingDetail> nurseryConditions) {
+	public void setNurseryConditions(final List<SettingDetail> nurseryConditions) {
 		this.nurseryConditions = nurseryConditions;
 	}
 
@@ -571,7 +571,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param deletedStudyLevelConditions the deletedStudyLevelConditions to set
 	 */
-	public void setDeletedStudyLevelConditions(List<SettingDetail> deletedStudyLevelConditions) {
+	public void setDeletedStudyLevelConditions(final List<SettingDetail> deletedStudyLevelConditions) {
 		this.deletedStudyLevelConditions = deletedStudyLevelConditions;
 	}
 
@@ -589,25 +589,25 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param deletedBaselineTraitsList the deletedBaselineTraitsList to set
 	 */
-	public void setDeletedBaselineTraitsList(List<SettingDetail> deletedBaselineTraitsList) {
+	public void setDeletedBaselineTraitsList(final List<SettingDetail> deletedBaselineTraitsList) {
 		this.deletedBaselineTraitsList = deletedBaselineTraitsList;
 	}
 
 	/**
-	 * Gets the deleted nursery conditions.
+	 * Gets the deleted study conditions.
 	 *
-	 * @return the deletedNurseryConditions
+	 * @return the deletedStudyConditions
 	 */
 	public List<SettingDetail> getDeletedNurseryConditions() {
 		return this.deletedNurseryConditions;
 	}
 
 	/**
-	 * Sets the deleted nursery conditions.
+	 * Sets the deleted study conditions.
 	 *
-	 * @param deletedNurseryConditions the deletedNurseryConditions to set
+	 * @param deletedstudyConditions the deletedstudyConditions to set
 	 */
-	public void setDeletedNurseryConditions(List<SettingDetail> deletedNurseryConditions) {
+	public void setDeletedNurseryConditions(final List<SettingDetail> deletedNurseryConditions) {
 		this.deletedNurseryConditions = deletedNurseryConditions;
 	}
 
@@ -625,7 +625,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param deletedPlotLevelList the deletedPlotLevelList to set
 	 */
-	public void setDeletedPlotLevelList(List<SettingDetail> deletedPlotLevelList) {
+	public void setDeletedPlotLevelList(final List<SettingDetail> deletedPlotLevelList) {
 		this.deletedPlotLevelList = deletedPlotLevelList;
 	}
 
@@ -643,7 +643,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param changeDetails the changeDetails to set
 	 */
-	public void setChangeDetails(List<GermplasmChangeDetail> changeDetails) {
+	public void setChangeDetails(final List<GermplasmChangeDetail> changeDetails) {
 		this.changeDetails = changeDetails;
 	}
 
@@ -661,7 +661,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param removedFactors the new removed factors
 	 */
-	public void setRemovedFactors(List<SettingDetail> removedFactors) {
+	public void setRemovedFactors(final List<SettingDetail> removedFactors) {
 		this.removedFactors = removedFactors;
 	}
 
@@ -679,7 +679,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param removedConditions the new removed conditions
 	 */
-	public void setRemovedConditions(List<SettingDetail> removedConditions) {
+	public void setRemovedConditions(final List<SettingDetail> removedConditions) {
 		this.removedConditions = removedConditions;
 	}
 
@@ -697,7 +697,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param newTraits the newTraits to set
 	 */
-	public void setNewTraits(List<SettingDetail> newTraits) {
+	public void setNewTraits(final List<SettingDetail> newTraits) {
 		this.newTraits = newTraits;
 	}
 
@@ -715,7 +715,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param newSelectionVariates the newSelectionVariates to set
 	 */
-	public void setNewSelectionVariates(List<SettingDetail> newSelectionVariates) {
+	public void setNewSelectionVariates(final List<SettingDetail> newSelectionVariates) {
 		this.newSelectionVariates = newSelectionVariates;
 	}
 
@@ -733,7 +733,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param currentPage the currentPage to set
 	 */
-	public void setCurrentPage(int currentPage) {
+	public void setCurrentPage(final int currentPage) {
 		this.currentPage = currentPage;
 	}
 
@@ -751,7 +751,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param measurementRowList the measurementRowList to set
 	 */
-	public void setMeasurementRowList(List<MeasurementRow> measurementRowList) {
+	public void setMeasurementRowList(final List<MeasurementRow> measurementRowList) {
 		this.measurementRowList = measurementRowList;
 	}
 
@@ -813,7 +813,7 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param deletedTreatmentFactors the new deleted treatment factors
 	 */
-	public void setDeletedTreatmentFactors(List<SettingDetail> deletedTreatmentFactors) {
+	public void setDeletedTreatmentFactors(final List<SettingDetail> deletedTreatmentFactors) {
 		this.deletedTreatmentFactors = deletedTreatmentFactors;
 	}
 
@@ -827,7 +827,7 @@ public class UserSelection implements Serializable {
 	/**
 	 * @param constantsWithLabels the constantsWithLabels to set
 	 */
-	public void setConstantsWithLabels(List<MeasurementVariable> constantsWithLabels) {
+	public void setConstantsWithLabels(final List<MeasurementVariable> constantsWithLabels) {
 		this.constantsWithLabels = constantsWithLabels;
 	}
 
@@ -841,7 +841,7 @@ public class UserSelection implements Serializable {
 	/**
 	 * @param expDesignParams the expDesignParams to set
 	 */
-	public void setExpDesignParams(ExpDesignParameterUi expDesignParams) {
+	public void setExpDesignParams(final ExpDesignParameterUi expDesignParams) {
 		this.expDesignParams = expDesignParams;
 	}
 
@@ -855,7 +855,7 @@ public class UserSelection implements Serializable {
 	/**
 	 * @param expDesignVariables the expDesignVariables to set
 	 */
-	public void setExpDesignVariables(List<Integer> expDesignVariables) {
+	public void setExpDesignVariables(final List<Integer> expDesignVariables) {
 		this.expDesignVariables = expDesignVariables;
 	}
 
@@ -869,7 +869,7 @@ public class UserSelection implements Serializable {
 	/**
 	 * @param experimentalDesignVariables the experimentalDesignVariables to set
 	 */
-	public void setExperimentalDesignVariables(List<MeasurementVariable> experimentalDesignVariables) {
+	public void setExperimentalDesignVariables(final List<MeasurementVariable> experimentalDesignVariables) {
 		this.experimentalDesignVariables = experimentalDesignVariables;
 	}
 
@@ -877,7 +877,7 @@ public class UserSelection implements Serializable {
 		return this.importedCrossesList;
 	}
 
-	public void setImportedCrossesList(ImportedCrossesList importedCrossesList) {
+	public void setImportedCrossesList(final ImportedCrossesList importedCrossesList) {
 		this.importedCrossesList = importedCrossesList;
 	}
 
@@ -885,7 +885,7 @@ public class UserSelection implements Serializable {
 		return this.crossSettings;
 	}
 
-	public void setCrossSettings(CrossSetting crossSettings) {
+	public void setCrossSettings(final CrossSetting crossSettings) {
 		this.crossSettings = crossSettings;
 	}
 
@@ -893,11 +893,11 @@ public class UserSelection implements Serializable {
 		return this.importedCrossesId;
 	}
 
-	public void setImportedCrossesId(List<Integer> importedCrossesId) {
+	public void setImportedCrossesId(final List<Integer> importedCrossesId) {
 		this.importedCrossesId = importedCrossesId;
 	}
 
-	public void addImportedCrossesId(Integer crossesId) {
+	public void addImportedCrossesId(final Integer crossesId) {
 		if (this.importedCrossesId == null) {
 			this.importedCrossesId = new ArrayList<Integer>();
 		}
@@ -910,7 +910,7 @@ public class UserSelection implements Serializable {
 		return this.designImportData;
 	}
 
-	public void setDesignImportData(DesignImportData designImportData) {
+	public void setDesignImportData(final DesignImportData designImportData) {
 		this.designImportData = designImportData;
 	}
 
@@ -918,7 +918,7 @@ public class UserSelection implements Serializable {
 		return this.getTemporaryWorkbook() != null;
 	}
 
-	public void setListId(Integer listId) {
+	public void setListId(final Integer listId) {
 		this.listId = listId;
 	}
 
@@ -926,7 +926,7 @@ public class UserSelection implements Serializable {
 		return this.listId;
 	}
 
-	public void setInventoryDetails(List<InventoryDetails> inventoryDetailsList) {
+	public void setInventoryDetails(final List<InventoryDetails> inventoryDetailsList) {
 		this.previousInventoryDetails = inventoryDetailsList;
 	}
 
@@ -942,7 +942,7 @@ public class UserSelection implements Serializable {
 		return startingEntryNo;
 	}
 
-	public void setStartingEntryNo(Integer startingEntryNo) {
+	public void setStartingEntryNo(final Integer startingEntryNo) {
 		this.startingEntryNo = startingEntryNo;
 	}
 
@@ -950,7 +950,7 @@ public class UserSelection implements Serializable {
 		return startingPlotNo;
 	}
 
-	public void setStartingPlotNo(Integer startingPlotNo) {
+	public void setStartingPlotNo(final Integer startingPlotNo) {
 		this.startingPlotNo = startingPlotNo;
 	}
 
@@ -1116,9 +1116,9 @@ public class UserSelection implements Serializable {
 			+ ", plotsLevelList=" + plotsLevelList + ", baselineTraitsList=" + baselineTraitsList + ", trialLevelVariableList="
 			+ trialLevelVariableList + ", trialEnvironmentValues=" + trialEnvironmentValues + ", importedAdvancedGermplasmList="
 			+ importedAdvancedGermplasmList + ", traitRefList=" + traitRefList + ", treatmentFactors=" + treatmentFactors
-			+ ", selectionVariates=" + selectionVariates + ", basicDetails=" + basicDetails + ", nurseryConditions=" + nurseryConditions
+			+ ", selectionVariates=" + selectionVariates + ", basicDetails=" + basicDetails + ", studyConditions=" + nurseryConditions
 			+ ", deletedStudyLevelConditions=" + deletedStudyLevelConditions + ", deletedPlotLevelList=" + deletedPlotLevelList
-			+ ", deletedBaselineTraitsList=" + deletedBaselineTraitsList + ", deletedNurseryConditions=" + deletedNurseryConditions
+			+ ", deletedBaselineTraitsList=" + deletedBaselineTraitsList + ", deletedstudyConditions=" + deletedNurseryConditions
 			+ ", deletedTrialLevelVariables=" + deletedTrialLevelVariables + ", deletedTreatmentFactors=" + deletedTreatmentFactors
 			+ ", changeDetails=" + changeDetails + ", removedFactors=" + removedFactors + ", removedConditions=" + removedConditions
 			+ ", newTraits=" + newTraits + ", newSelectionVariates=" + newSelectionVariates + ", workbook=" + workbook

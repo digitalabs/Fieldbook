@@ -1190,7 +1190,7 @@ public class DesignImportController extends SettingsController {
 	 * If a variable(s) is expected to have a pair ID variable (e.g.
 	 * LOCATION_NAME has LOCATION_NAME_ID pair), the pair ID should be created
 	 * and added to setting details list in order for the system to properly
-	 * save the Trial.
+	 * save the study.
 	 *
 	 * @param environmentData
 	 * @param designImportData

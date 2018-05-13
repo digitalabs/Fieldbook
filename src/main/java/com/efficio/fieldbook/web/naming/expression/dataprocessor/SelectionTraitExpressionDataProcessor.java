@@ -35,8 +35,9 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 	@Override
 	public void processEnvironmentLevelData(final AdvancingSource source, final Workbook workbook, final AdvancingStudy nurseryInfo,
 			final Study study) {
-        // management details / study details are stored within the workbook conditions. nursery conditions are stored in the workbook constants
-        List<MeasurementVariable> possibleEnvironmentSources = new ArrayList<>(workbook.getConditions());
+        // management details / study details are stored within the workbook conditions. study conditions are stored in the workbook
+		// constants
+        final List<MeasurementVariable> possibleEnvironmentSources = new ArrayList<>(workbook.getConditions());
 		if (workbook.getConstants() != null) {
 			possibleEnvironmentSources.addAll(workbook.getConstants());
 		}
@@ -63,13 +64,13 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 		}
 	}
 
-	protected void setSelectionTraitValue(final String categoricalValue, final AdvancingSource source, final int termID, List<ValueReference> possibleValuesForSelectionTraitProperty){
+	protected void setSelectionTraitValue(final String categoricalValue, final AdvancingSource source, final int termID, final List<ValueReference> possibleValuesForSelectionTraitProperty){
 		if(StringUtils.isNumeric(categoricalValue)){
 			source.setSelectionTraitValue(extractValue(categoricalValue, termID));
 		}
 		else{
 			if(possibleValuesForSelectionTraitProperty != null && !possibleValuesForSelectionTraitProperty.isEmpty()){
-				for(ValueReference valueReference : possibleValuesForSelectionTraitProperty){
+				for(final ValueReference valueReference : possibleValuesForSelectionTraitProperty){
 					if(Objects.equals(valueReference.getDescription(), categoricalValue)){
 						source.setSelectionTraitValue(extractValue(String.valueOf(valueReference.getId()), termID));
 					}

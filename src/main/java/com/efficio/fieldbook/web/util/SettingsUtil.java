@@ -826,7 +826,7 @@ public class SettingsUtil {
 				}
 			}
 
-			// nursery conditions/constants
+			// study conditions/constants
 			if (dataset.getConstants() != null) {
 				for (final Constant constant : dataset.getConstants()) {
 					final SettingVariable variable =

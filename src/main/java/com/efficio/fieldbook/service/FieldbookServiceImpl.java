@@ -188,7 +188,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 		final List<StandardVariableReference> dbList = this.fieldbookMiddlewareService.filterStandardVariablesByMode(
 				storedInIds, propertyIds,
-				mode == VariableType.TRAIT.getId() || mode == VariableType.NURSERY_CONDITION.getId());
+				mode == VariableType.TRAIT.getId() || mode == VariableType.STUDY_CONDITION.getId());
 
 		if (dbList != null && !dbList.isEmpty()) {
 
@@ -239,7 +239,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			list.addAll(PhenotypicType.STUDY.getTypeStorages());
 		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()
-			|| mode == VariableType.NURSERY_CONDITION.getId()) {
+			|| mode == VariableType.STUDY_CONDITION.getId()) {
 			list.addAll(PhenotypicType.VARIATE.getTypeStorages());
 		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
 			list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
@@ -255,7 +255,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		final List<Integer> list = new ArrayList<>();
 
 		if (mode == VariableType.SELECTION_METHOD.getId() || mode == VariableType.TRAIT.getId()
-				|| mode == VariableType.NURSERY_CONDITION.getId()) {
+				|| mode == VariableType.STUDY_CONDITION.getId()) {
 
 			final StringTokenizer token = new StringTokenizer(AppConstants.SELECTION_VARIATES_PROPERTIES.getString(),
 					",");
@@ -747,7 +747,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 							}
 						}
 					} else {
-						Method method;
+						final Method method;
 						if (studyConditionMap.get(idTermId) != null) {
 							method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null
 									: this.fieldbookMiddlewareService.getMethodById(
@@ -1011,7 +1011,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 					if (data == null) {
 
 						String actualNameVal = "";
-						Integer idTerm = variable.getTermId();
+						Integer idTerm;
 						String pairId = idNameMap.get(String.valueOf(variable.getTermId()));
 						if (pairId == null) {
 							pairId = nameIdMap.get(String.valueOf(variable.getTermId()));

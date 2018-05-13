@@ -9,7 +9,7 @@ window.ChooseSettings = (function() {
 			FACTORS: 1804,
 			TRAITS: 1808,
 			SELECTION_VARIATES: 1807,
-			NURSERY_CONDITIONS: 1803
+			STUDY_CONDITIONS: 1802
 		},
 
 		dialogOpenSelector = '.chs-add-variable',

@@ -182,7 +182,7 @@ public abstract class BaseTrialController extends SettingsController {
 			data.setReplatinGroups(this.getExperimentalDesignData(xpDesignVariable.getNumberOfRepsInCols()));
 			final String replicationsMap = this.getExperimentalDesignData(xpDesignVariable.getReplicationsMap());
 
-			if (replicationsMap != null && NumberUtils.isNumber(replicationsMap)) {
+			if (NumberUtils.isNumber(replicationsMap)) {
 				final Integer repArrangementID = Integer.parseInt(replicationsMap);
 				if (TermId.REPS_IN_SINGLE_COL.getId() == repArrangementID) {
 					data.setReplicationsArrangement(1);
@@ -217,7 +217,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 			final String designTypeString =
 					xpDesignVariable.getExperimentalDesign() == null ? null : xpDesignVariable.getExperimentalDesign().getValue();
-			if (designTypeString != null && NumberUtils.isNumber(designTypeString)) {
+			if (NumberUtils.isNumber(designTypeString)) {
 				final Integer designTypeTermID = Integer.parseInt(designTypeString);
 
 				if (TermId.RANDOMIZED_COMPLETE_BLOCK.getId() == designTypeTermID) {
@@ -497,7 +497,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 		for (final MeasurementVariable var : workbook.getTrialConstants()) {
 			final SettingDetail detail =
-					this.createSettingDetail(var.getTermId(), var.getName(), VariableType.TRIAL_CONDITION.getRole().name());
+					this.createSettingDetail(var.getTermId(), var.getName(), VariableType.STUDY_CONDITION.getRole().name());
 
 			if (!isUsePrevious) {
 				detail.getVariable().setOperation(Operation.UPDATE);

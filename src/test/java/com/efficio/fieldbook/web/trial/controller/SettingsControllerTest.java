@@ -166,7 +166,7 @@ public class SettingsControllerTest {
 		Assert.assertEquals(VariableType.SELECTION_METHOD.getId(), model.get("selectionVariatesSegment"));
 		Assert.assertEquals(VariableType.STUDY_DETAIL.getId(), model.get("studyLevelDetailType"));
 		Assert.assertEquals(VariableType.GERMPLASM_DESCRIPTOR.getId(), model.get("plotLevelDetailType"));
-		Assert.assertEquals(VariableType.NURSERY_CONDITION.getId(), model.get("nurseryConditionsType"));
+		Assert.assertEquals(VariableType.STUDY_CONDITION.getId(), model.get("nurseryConditionsType"));
 	}
 
 	@Test

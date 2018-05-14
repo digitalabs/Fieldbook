@@ -4,10 +4,10 @@ package com.efficio.fieldbook.web.naming.impl;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessor;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory;
-import com.efficio.fieldbook.web.nursery.bean.AdvanceType;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
+import com.efficio.fieldbook.web.trial.bean.AdvanceType;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -77,7 +77,7 @@ public class AdvancingSourceListFactoryTest {
         Mockito.when(dataProcessorFactory.retrieveExecutorProcessor()).thenReturn(expressionDataProcessor);
 
         Mockito.doNothing().when(expressionDataProcessor).processEnvironmentLevelData(Matchers.isA(AdvancingSource.class),
-			Matchers.isA(Workbook.class), Matchers.isA(AdvancingNursery.class), Matchers.isNull(Study.class));
+			Matchers.isA(Workbook.class), Matchers.isA(AdvancingStudy.class), Matchers.isNull(Study.class));
         final Map<Integer,List<Name>> mapNames = Maps.newHashMap();
         final List<Name> nameList = Lists.newArrayList();
         final Name name = new Name();
@@ -108,7 +108,7 @@ public class AdvancingSourceListFactoryTest {
         workBook.setStudyDetails(studyDetails);
         workBook.setObservations(generateMeasurementRows());
 
-        final AdvancingNursery advanceInfo = new AdvancingNursery();
+        final AdvancingStudy advanceInfo = new AdvancingStudy();
         advanceInfo.setMethodVariateId(8262);
         advanceInfo.setLineVariateId(2);
         advanceInfo.setPlotVariateId(3);
@@ -175,7 +175,7 @@ public class AdvancingSourceListFactoryTest {
         Mockito.when(dataProcessorFactory.retrieveExecutorProcessor()).thenReturn(expressionDataProcessor);
 
         Mockito.doNothing().when(expressionDataProcessor).processEnvironmentLevelData(Matchers.isA(AdvancingSource.class),
-			Matchers.isA(Workbook.class), Matchers.isA(AdvancingNursery.class), Matchers.isNull(Study.class));
+			Matchers.isA(Workbook.class), Matchers.isA(AdvancingStudy.class), Matchers.isNull(Study.class));
         final Map<Integer,List<Name>> mapNames = Maps.newHashMap();
         final List<Name> nameList = Lists.newArrayList();
         final Name name = new Name();
@@ -221,7 +221,7 @@ public class AdvancingSourceListFactoryTest {
         measurementRows.add(row);
         workBook.setObservations(measurementRows);
 
-        final AdvancingNursery advanceInfo = new AdvancingNursery();
+        final AdvancingStudy advanceInfo = new AdvancingStudy();
         advanceInfo.setMethodVariateId(8252);
         advanceInfo.setLineVariateId(2);
         advanceInfo.setPlotVariateId(3);

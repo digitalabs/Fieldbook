@@ -4,10 +4,10 @@ package com.efficio.fieldbook.web.naming.impl;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.nursery.bean.AdvanceType;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
+import com.efficio.fieldbook.web.trial.bean.AdvanceType;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
 import com.google.common.collect.Lists;
 import junit.framework.Assert;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -149,7 +149,7 @@ public class NamingConventionServiceImplTest {
 				this.seedSourceGenerator.generateSeedSource(Matchers.any(Workbook.class), Matchers.anyString(), Matchers.anyString(),
 					Matchers.anyString(), Matchers.anyString(), Matchers.anyString())).thenReturn(testSeedSource);
 
-		final AdvancingNursery advancingParameters = new AdvancingNursery();
+		final AdvancingStudy advancingParameters = new AdvancingStudy();
 		advancingParameters.setCheckAdvanceLinesUnique(false);
 		final List<ImportedGermplasm> igList = this.namingConventionService.generateGermplasmList(rows, advancingParameters, this.workbook);
 		Assert.assertNotNull(igList);
@@ -260,7 +260,7 @@ public class NamingConventionServiceImplTest {
         rows.getRows().add(as1);
 
         Mockito.when(this.advancingSourceListFactory.createAdvancingSourceList(Matchers.isA(Workbook.class),
-			Matchers.isA(AdvancingNursery.class), Matchers.isA(Study.class), Matchers.isA(Map.class), Matchers.isA(Map.class)))
+			Matchers.isA(AdvancingStudy.class), Matchers.isA(Study.class), Matchers.isA(Map.class), Matchers.isA(Map.class)))
                 .thenReturn(rows);
 
         Mockito.when(this.ruleFactory.getRuleSequenceForNamespace(Matchers.eq("naming"))).thenReturn(new String[] {"RootNameGenerator"});
@@ -272,7 +272,7 @@ public class NamingConventionServiceImplTest {
 				this.seedSourceGenerator.generateSeedSource(Matchers.any(Workbook.class), Matchers.any(String.class),
 					Matchers.any(String.class), Matchers.any(String.class), Matchers.anyString(), Matchers.anyString())).thenReturn(testSeedSource);
 
-        final AdvancingNursery info = new AdvancingNursery();
+        final AdvancingStudy info = new AdvancingStudy();
         info.setMethodChoice("1");
         info.setLineChoice("1");
         info.setLineSelected("1");

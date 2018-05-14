@@ -2,8 +2,8 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.google.common.collect.Lists;
 import junit.framework.Assert;
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +57,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
@@ -786,7 +788,7 @@ public class TrialMeasurementsControllerTest {
 
 		// Method to test
 		final Map<String, Object> plotMeasurementsPaginated = this.trialMeasurementsController.getPlotMeasurementsPaginated(1, 1,
-				new CreateNurseryForm(), Mockito.mock(Model.class), request);
+				new CreateTrialForm(), Mockito.mock(Model.class), request);
 
 
 		// Expecting 4 keys returned by main map: draw, recordsTotal, recordsFiltered, data
@@ -1168,7 +1170,7 @@ public class TrialMeasurementsControllerTest {
 		final Workbook workbook= WorkbookTestDataInitializer.getTestWorkbook();
 		userSelection.setWorkbook(workbook);
 		this.trialMeasurementsController.setUserSelection(userSelection );
-		final CreateNurseryForm form = new CreateNurseryForm();
+		final CreateTrialForm form = new CreateTrialForm();
 		final BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		final Model model = Mockito.mock(Model.class);
 

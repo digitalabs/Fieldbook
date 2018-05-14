@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.constant.ListTreeState;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -57,7 +58,6 @@ import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
-import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.google.common.collect.Lists;
 
@@ -192,7 +192,7 @@ public class GermplasmTreeControllerTest {
 	public void testSaveAdvanceListPostSuccessful() {
 		final PaginationListSelection paginationListSelection = new PaginationListSelection();
 		paginationListSelection.addAdvanceDetails(GermplasmTreeControllerTest.LIST_IDENTIFIER,
-				this.createAdvancingNurseryForm(true));
+				this.createAdvancingStudyForm(true));
 
 		final SaveListForm form = createSaveListForm();
 		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE);
@@ -430,7 +430,7 @@ public class GermplasmTreeControllerTest {
 		final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
 		final Integer currentDate = DateUtil.getCurrentDateAsIntegerValue();
 
-		final AdvancingNurseryForm advancingForm = this.createAdvancingNurseryForm(true);
+		final AdvancingStudyForm advancingForm = this.createAdvancingStudyForm(true);
 
 		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames,
 				listDataItems, GermplasmTreeControllerTest.TEST_USER_ID, germplasmAttributes);
@@ -512,7 +512,7 @@ public class GermplasmTreeControllerTest {
 		final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
 		final Integer currentDate = DateUtil.getCurrentDateAsIntegerValue();
 
-		final AdvancingNurseryForm advancingForm = this.createAdvancingNurseryForm(false);
+		final AdvancingStudyForm advancingForm = this.createAdvancingStudyForm(false);
 
 		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames,
 				listDataItems, GermplasmTreeControllerTest.TEST_USER_ID, germplasmAttributes);
@@ -850,17 +850,17 @@ public class GermplasmTreeControllerTest {
 		return germplasmList;
 	}
 
-	private AdvancingNurseryForm createAdvancingNurseryForm(final boolean withReplicationNumber) {
-		final AdvancingNurseryForm advancingNurseryForm = new AdvancingNurseryForm();
+	private AdvancingStudyForm createAdvancingStudyForm(final boolean withReplicationNumber) {
+		final AdvancingStudyForm advancingStudyForm = new AdvancingStudyForm();
 		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
 		for (int i = 1; i <= 3; i++) {
 			importedGermplasmList.add(this.createImportedGermplasm(i, withReplicationNumber));
 		}
-		advancingNurseryForm.setHarvestYear("2015");
-		advancingNurseryForm.setHarvestMonth("08");
-		advancingNurseryForm.setHarvestLocationId("252");
-		advancingNurseryForm.setGermplasmList(importedGermplasmList);
-		return advancingNurseryForm;
+		advancingStudyForm.setHarvestYear("2015");
+		advancingStudyForm.setHarvestMonth("08");
+		advancingStudyForm.setHarvestLocationId("252");
+		advancingStudyForm.setGermplasmList(importedGermplasmList);
+		return advancingStudyForm;
 	}
 
 	private ImportedGermplasm createImportedGermplasm(final int gid, final boolean withReplicationNumber) {

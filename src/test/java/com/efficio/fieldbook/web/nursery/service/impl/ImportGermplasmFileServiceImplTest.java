@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 
 public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationTest {

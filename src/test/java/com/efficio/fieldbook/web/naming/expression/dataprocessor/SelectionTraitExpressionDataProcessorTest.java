@@ -1,8 +1,8 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 import com.google.common.collect.Lists;
 import junit.framework.Assert;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -59,7 +59,7 @@ public class SelectionTraitExpressionDataProcessorTest {
         workbook.getConditions().add(detail);
 
         final AdvancingSource source = Mockito.mock(AdvancingSource.class);
-        final AdvancingNursery nursery = Mockito.mock(AdvancingNursery.class);
+        final AdvancingStudy nursery = Mockito.mock(AdvancingStudy.class);
         final Study study = Mockito.mock(Study.class);
 
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt("1"), true)).thenReturn(testValue);
@@ -83,7 +83,7 @@ public class SelectionTraitExpressionDataProcessorTest {
         workbook.getConstants().add(detail);
 
         final AdvancingSource source = Mockito.mock(AdvancingSource.class);
-        final AdvancingNursery nursery = Mockito.mock(AdvancingNursery.class);
+        final AdvancingStudy nursery = Mockito.mock(AdvancingStudy.class);
         final Study study = Mockito.mock(Study.class);
 
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt("1"), true)).thenReturn(testValue);

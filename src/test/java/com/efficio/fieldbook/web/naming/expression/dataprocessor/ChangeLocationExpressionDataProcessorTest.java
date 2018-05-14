@@ -1,7 +1,7 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 import com.google.common.collect.Lists;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -26,19 +26,19 @@ public class ChangeLocationExpressionDataProcessorTest {
     @Test
     public void testProcessEnvironmentLevelDataWithHarvestLocationId() throws Exception {
         final AdvancingSource source = Mockito.mock(AdvancingSource.class);
-        final AdvancingNursery advancingNursery = new AdvancingNursery();
-        advancingNursery.setHarvestLocationId("205");
+        final AdvancingStudy advancingStudy = new AdvancingStudy();
+        advancingStudy.setHarvestLocationId("205");
 
-        changeLocationExpressionDataProcessor.processEnvironmentLevelData(source, null, advancingNursery , null);
+        changeLocationExpressionDataProcessor.processEnvironmentLevelData(source, null, advancingStudy, null);
         Mockito.verify(source).setHarvestLocationId(205);
     }
 
     @Test
     public void testProcessEnvironmentLevelDataWithNoHarvestLocationId() throws Exception {
         final AdvancingSource source = Mockito.mock(AdvancingSource.class);
-        final AdvancingNursery advancingNursery = new AdvancingNursery();
+        final AdvancingStudy advancingStudy = new AdvancingStudy();
 
-        changeLocationExpressionDataProcessor.processEnvironmentLevelData(source, null, advancingNursery , null);
+        changeLocationExpressionDataProcessor.processEnvironmentLevelData(source, null, advancingStudy, null);
         Mockito.verify(source).setHarvestLocationId(null);
     }
 

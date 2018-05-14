@@ -1,8 +1,8 @@
 package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
 import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 import com.google.common.collect.Lists;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -34,10 +34,10 @@ public class LocationAbbreviationExpressionDataProcessorTest {
     public void testProcessEnvironmentLevelDataWithHarvestLocationAbbr() throws FieldbookException {
 
         final AdvancingSource source = Mockito.mock(AdvancingSource.class);
-        final AdvancingNursery advancingNursery = new AdvancingNursery();
-        advancingNursery.setHarvestLocationAbbreviation("abbr");
+        final AdvancingStudy advancingStudy = new AdvancingStudy();
+        advancingStudy.setHarvestLocationAbbreviation("abbr");
 
-        locationAbbreviationExpressionDataProcessor.processEnvironmentLevelData(source, null, advancingNursery, null);
+        locationAbbreviationExpressionDataProcessor.processEnvironmentLevelData(source, null, advancingStudy, null);
         Mockito.verify(source).setLocationAbbreviation("abbr");
     }
 
@@ -45,9 +45,9 @@ public class LocationAbbreviationExpressionDataProcessorTest {
     public void testProcessEnvironmentLevelDataWithNoHarvestLocationAbbr() throws FieldbookException {
 
         final AdvancingSource source = Mockito.mock(AdvancingSource.class);
-        final AdvancingNursery advancingNursery = new AdvancingNursery();
+        final AdvancingStudy advancingStudy = new AdvancingStudy();
 
-        locationAbbreviationExpressionDataProcessor.processEnvironmentLevelData(source, null, advancingNursery, null);
+        locationAbbreviationExpressionDataProcessor.processEnvironmentLevelData(source, null, advancingStudy, null);
         Mockito.verify(source).setLocationAbbreviation(null);
 
     }

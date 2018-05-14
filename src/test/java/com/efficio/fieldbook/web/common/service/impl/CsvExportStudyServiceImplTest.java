@@ -51,12 +51,6 @@ public class CsvExportStudyServiceImplTest {
 	private OntologyService ontologyService;
 
 	@Mock
-	private static Property dummyProperty;
-
-	@Mock
-	private static Term dummyTerm;
-
-	@Mock
 	private GermplasmExportService germplasmExportService;
 
 	@Mock
@@ -141,7 +135,7 @@ public class CsvExportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testCSVStudyExportForNursery() throws IOException {
+	public void testCSVStudyExportForNurseryStusy() throws IOException {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		workbook.setExportArrangedObservations(workbook.getObservations());
 		final List<Integer> instances = new ArrayList<Integer>();
@@ -161,7 +155,8 @@ public class CsvExportStudyServiceImplTest {
 		final String filePath = filenameCaptor.getValue();
 		final File outputFile = new File(filePath);
 		Assert.assertTrue(outputDirectories.contains(outputFile.getParentFile()));
-		Assert.assertEquals(CsvExportStudyServiceImplTest.STUDY_NAME + CSV_EXT, exportInfo.getDownloadFileName());
+		Assert.assertEquals(CsvExportStudyServiceImplTest.STUDY_NAME + "-" + instances.get(0) + "_Location_1" + CSV_EXT,
+			exportInfo.getDownloadFileName());
 		Assert.assertEquals(filePath, exportInfo.getFilePath());
 	}
 

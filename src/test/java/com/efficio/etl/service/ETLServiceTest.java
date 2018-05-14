@@ -1,17 +1,10 @@
 
 package com.efficio.etl.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.efficio.etl.service.impl.ETLServiceImpl;
+import com.efficio.etl.web.bean.IndexValueDTO;
+import com.efficio.etl.web.bean.SheetDTO;
+import com.efficio.etl.web.bean.UserSelection;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -31,9 +24,9 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
@@ -54,10 +47,15 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.efficio.etl.service.impl.ETLServiceImpl;
-import com.efficio.etl.web.bean.IndexValueDTO;
-import com.efficio.etl.web.bean.SheetDTO;
-import com.efficio.etl.web.bean.UserSelection;
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -204,6 +202,7 @@ public class ETLServiceTest {
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
 		this.userSelection.setDatasetType(datasetType);
 
+		Mockito.doReturn(new StudyTypeDto(10010,"Trial","T")).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
 		final List<DataSet> plotDatasets = DataSetTestDataInitializer
 				.createPlotDatasetsTestData(this.userSelection.getStudyName() + "-PLOTDATA");
 		Mockito.doReturn(plotDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
@@ -269,9 +268,10 @@ public class ETLServiceTest {
 	@Test
 	public void testRetrieveAndSetProjectOntologyForPlotDataImportOldDatasetNames() {
 		final int datasetType = DataSetType.PLOT_DATA.getId();
-		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
+		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);//
 		this.userSelection.setDatasetType(datasetType);
 
+		Mockito.doReturn(new StudyTypeDto(10010,"Trial","T")).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
 		final List<DataSet> plotDatasets = DataSetTestDataInitializer
 				.createPlotDatasetsTestData("MEASUREMENT EFEC_" + this.userSelection.getStudyName());
 		plotDatasets.add(DataSetTestDataInitializer
@@ -341,6 +341,7 @@ public class ETLServiceTest {
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
 		this.userSelection.setDatasetType(datasetType);
 
+		Mockito.doReturn(new StudyTypeDto(10010,"Trial","T")).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
 		final List<DataSet> meansDatasets = DataSetTestDataInitializer
 				.createMeansDatasetsTestData(this.userSelection.getStudyName() + "-MEANS");
 		Mockito.doReturn(meansDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
@@ -808,7 +809,7 @@ public class ETLServiceTest {
 		userSelection.setStudyObjective("To test the data import tool");
 		userSelection.setStudyStartDate("09/01/2015");
 		userSelection.setStudyEndDate("10/01/2015");
-		userSelection.setStudyType(StudyType.T.getName());
+		userSelection.setStudyType("T");
 		userSelection.setStudyId(studyId);
 	}
 

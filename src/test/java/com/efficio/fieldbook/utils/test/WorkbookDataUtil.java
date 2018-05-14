@@ -170,9 +170,9 @@ public class WorkbookDataUtil {
 		workbook.setFactors(WorkbookDataUtil.createFactors());
 		workbook.setConstants(WorkbookDataUtil.createConstants());
 		workbook.setVariates(WorkbookDataUtil.createVariates());
-		workbook.setObservations(WorkbookDataUtil.createObservations(noOfObservations, studyType.equals(StudyType.N) ? 1 : noOfInstance,
+		workbook.setObservations(WorkbookDataUtil.createObservations(noOfObservations, noOfInstance,
 				workbook));
-		workbook.setTrialObservations(WorkbookDataUtil.createTrialObservations(studyType.equals(StudyType.N) ? 1 : noOfInstance, workbook));
+		workbook.setTrialObservations(WorkbookDataUtil.createTrialObservations(noOfInstance, workbook));
 		workbook.setMeasurementDatesetId(2);
 		workbook.setTrialDatasetId(3);
 		return workbook;
@@ -180,7 +180,7 @@ public class WorkbookDataUtil {
 
 	private static StudyDetails createStudyDetails(final StudyTypeDto studyType) {
 		final StudyDetails details = new StudyDetails();
-		details.setStudyName((studyType.equals(StudyType.N) ? WorkbookDataUtil.NURSERY_NAME : WorkbookDataUtil.TRIAL_NAME)
+		details.setStudyName((studyType.getName().equalsIgnoreCase("N") ? WorkbookDataUtil.NURSERY_NAME : WorkbookDataUtil.TRIAL_NAME)
 				+ new Random().nextInt(10000));
 		details.setDescription(WorkbookDataUtil.TITLE);
 		details.setObjective(WorkbookDataUtil.OBJECTIVE);
@@ -196,7 +196,7 @@ public class WorkbookDataUtil {
 
 	private static List<MeasurementVariable> createConditions() {
 		// Create measurement variables and set its dataTypeId
-		final List<MeasurementVariable> conditions = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> conditions = new ArrayList<>();
 
 		MeasurementVariable variable =
 				new MeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "TRIAL NUMBER", WorkbookDataUtil.NUMBER,
@@ -531,7 +531,7 @@ public class WorkbookDataUtil {
 
 		for (int i = 0; i < noOfTrialInstances; i++) {
 			row = new MeasurementRow();
-			dataList = new ArrayList<MeasurementData>();
+			dataList = new ArrayList<>();
 
 			MeasurementData data = new MeasurementData(WorkbookDataUtil.TRIAL_INSTANCE, String.valueOf(i + 1));
 			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),

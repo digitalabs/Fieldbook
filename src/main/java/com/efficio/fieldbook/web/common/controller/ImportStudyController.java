@@ -8,7 +8,6 @@ import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.util.DataMapUtil;
 import com.efficio.fieldbook.web.study.ImportStudyServiceFactory;
 import com.efficio.fieldbook.web.study.ImportStudyType;
@@ -106,7 +105,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/import/{importType}", method = RequestMethod.POST)
-	public String importFile(@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form,
+	public String importFile(@ModelAttribute("createTrialForm") final CreateTrialForm form,
 			@PathVariable final int importType, final BindingResult result,
 			final Model model) {
 

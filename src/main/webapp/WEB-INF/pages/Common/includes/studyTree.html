@@ -1,39 +1,45 @@
 <div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
-    <!-- Modal -->
-    <div class="modal fade" id="studyTreeModal" role="dialog" aria-labelledby="studyTreeModal" aria-hidden="true">
-        <div class="modal-dialog">
+	<!-- Modal -->
+	<div class="modal fade" id="studyTreeModal" role="dialog" aria-labelledby="studyTreeModal" aria-hidden="true">
+		<div class="modal-dialog">
 
-            <div class="modal-content modal-extra-small">
-                <div class="modal-body" id="studyTreeModalBody">
-                    <div class="row">
-                        <div id="page-study-tree-message-modal" class="col-xs-12 col-md-12">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-7 col-md-7">
-                            <img th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text"/>
-                            <label class="fbk-modal-title fbk-study-tree-title fbk-hide trial" th:text="#{browse.tree.studies.header}"></label>
-                        </div>
-                        <div class="col-xs-4 col-md-4">
-                            <div style="float: right; margin-top: 5px;">
-                                <img onclick="javascript: addFolder(this)" th:src="@{/static/img/add2.png}" class="image-padding browse-nursery-action"/>
-                                <img onclick="javascript: renameFolder(this)" th:src="@{/static/img/edit.png}" class="image-padding browse-nursery-action edit-folder"/>
-                                <img onclick="javascript: deleteFolder(this)" th:src="@{/static/img/delete.png}" class="image-padding browse-nursery-action delete-folder"/>
-                            </div>
-                        </div>
-                        <div class="col-xs-1 col-md-1">
-                            <button id="closeStudyTreeModal" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true" style="padding-top: 7px"></button>
-                        </div>
-                    </div>
-                    <div class="form-horizontal form-group">
-                        <div id="addFolderDiv">
-                            <div class="col-xs-4 nopadding" >
-                                <label class="control-label label-bold" th:utext="#{browse.nursery.add.folder.name}">Folder Name:</label>
-                            </div>
-                            <div class="col-xs-8">
-	                                <div class="input-group">
-	                                    	<input id="addFolderName" name="addFolderName" type="text" class="form-control" placeholder="Folder Name"/>
-	                                        <span class="input-group-btn">
+			<div class="modal-content modal-extra-small">
+				<div class="modal-body" id="studyTreeModalBody">
+					<div class="row">
+						<div id="page-study-tree-message-modal" class="col-xs-12 col-md-12">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-7 col-md-7">
+							<img th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text"/>
+							<label class="fbk-modal-title fbk-study-tree-title fbk-hide trial"
+								   th:text="#{browse.tree.studies.header}"></label>
+						</div>
+						<div class="col-xs-4 col-md-4">
+							<div style="float: right; margin-top: 5px;">
+								<img onclick="javascript: addFolder(this)" th:src="@{/static/img/add2.png}"
+									 class="image-padding browse-study-action"/>
+								<img onclick="javascript: renameFolder(this)" th:src="@{/static/img/edit.png}"
+									 class="image-padding browse-study-action edit-folder"/>
+								<img onclick="javascript: deleteFolder(this)" th:src="@{/static/img/delete.png}"
+									 class="image-padding browse-study-action delete-folder"/>
+							</div>
+						</div>
+						<div class="col-xs-1 col-md-1">
+							<button id="closeStudyTreeModal" type="button" class="close pull-right glyphicon glyphicon-remove"
+									data-dismiss="modal" aria-hidden="true" style="padding-top: 7px"></button>
+						</div>
+					</div>
+					<div class="form-horizontal form-group">
+						<div id="addFolderDiv">
+							<div class="col-xs-4 nopadding">
+								<label class="control-label label-bold" th:utext="#{browse.nursery.add.folder.name}">Folder Name:</label>
+							</div>
+							<div class="col-xs-8">
+								<div class="input-group">
+									<input id="addFolderName" name="addFolderName" type="text" class="form-control"
+										   placeholder="Folder Name"/>
+									<span class="input-group-btn">
 	                                            <button class="btn btn-success" id="addFolderOkButton">
 	                                                <span class="glyphicon glyphicon-ok"></span>
 	                                            </button>
@@ -41,64 +47,74 @@
 	                                                <span class="glyphicon glyphicon-remove"></span>
 	                                            </button>
 	                                        </span>
-	                                </div>
-                            </div>
-                        </div>
-                        <div id="renameFolderDiv">
-                            <div class="col-xs-4 nopadding">
-                                <label class="control-label  label-bold" th:utext="#{browse.nursery.rename.folder.input.label}">Folder Name:</label>
-                            </div>
-                            <div class="col-xs-8">
-                                	<div class="input-group">                                	
-                                    	<input id="newFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
-                                        <span class="input-group-btn">
+								</div>
+							</div>
+						</div>
+						<div id="renameFolderDiv">
+							<div class="col-xs-4 nopadding">
+								<label class="control-label  label-bold" th:utext="#{browse.nursery.rename.folder.input.label}">Folder
+									Name:</label>
+							</div>
+							<div class="col-xs-8">
+								<div class="input-group">
+									<input id="newFolderName" name="newFolderName" type="text" class="form-control select2"
+										   placeholder="Folder Name"/>
+									<span class="input-group-btn">
                                             <button class="btn btn-success" id="renameFolderOkButton">
                                                 <span class="glyphicon glyphicon-ok"></span>
                                             </button>
                                             <button class="btn btn-danger" id="renameFolderCancelButton">
                                                 <span class="glyphicon glyphicon-remove"></span>
                                             </button>
-                                        </span>                                   
-                                	</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="clearfix"></div>
-                    <div class="row">
-                        <div id="studyTree">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div th:include="/Common/includes/studyTreeManageNurseryOperation"/>
-                    </div>
-                </div>
+                                        </span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+					<div class="row">
+						<div id="studyTree">
+						</div>
+					</div>
+					<div class="row">
+						<div th:include="/Common/includes/studyTreeManageNurseryOperation"/>
+					</div>
+				</div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-                    <button type="button" class="btn btn-primary tree-select-button fbk-hide" th:text="#{common.form.select.text}" onclick="javascript: chooseStudy();">Ok</button>
-                    <button type="button" class="btn btn-primary tree-review-button fbk-hide" th:text="#{common.form.view.summary.text}" onclick="javascript: chooseStudy();">View Summary</button>
-                    <button type="button" class="btn btn-primary tree-review-button fbk-hide" th:text="#{common.form.open.text}" onclick="javascript: openStudyNode();">Open</button>
-                </div>
-            </div>
-        </div>
-    </div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true"
+							th:text="#{common.form.cancel.text}">Cancel
+					</button>
+					<button type="button" class="btn btn-primary tree-select-button fbk-hide" th:text="#{common.form.select.text}"
+							onclick="javascript: chooseStudy();">Ok
+					</button>
+					<button type="button" class="btn btn-primary tree-review-button fbk-hide" th:text="#{common.form.view.summary.text}"
+							onclick="javascript: chooseStudy();">View Summary
+					</button>
+					<button type="button" class="btn btn-primary tree-review-button fbk-hide" th:text="#{common.form.open.text}"
+							onclick="javascript: openStudyNode();">Open
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div layout:fragment="page-script">
-    <script type="text/javascript" th:src="@{/static/js/studyTree.js}"></script>
-    <script type="text/javascript" th:src="@{/static/js/studyTreeFolderOperations.js}"></script>
-<script type="text/javascript" th:inline="javascript">
-	var cannotMove = /*[[#{browse.nursery.move.can.not}]]*/ '',
-		hasChildrenString = /*[[#{browse.nursery.move.has.children}]]*/'',
-		isAStudy = /*[[#{browse.nursery.move.is.study}]]*/'',
-		chooseProgramStudyFolderError = /*[[#{browse.nursery.please.choose.program.study.folder}]]*/'',
-		chooseStudyError = /*[[#{browse.nursery.please.choose.program.study}]]*/'',
-		cannotMoveFolderToCropListError = /*[[#{cannot.move.folder.to.crop.lists.folder}]]*/ '',
-		cannotMoveItemToAListError = /*[[#{cannot.move.item.to.a.list}]]*/ '';
+	<script type="text/javascript" th:src="@{/static/js/studyTree.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/studyTreeFolderOperations.js}"></script>
+	<script type="text/javascript" th:inline="javascript">
+		var cannotMove = /*[[#{browse.nursery.move.can.not}]]*/ '',
+			hasChildrenString = /*[[#{browse.nursery.move.has.children}]]*/'',
+			isAStudy = /*[[#{browse.nursery.move.is.study}]]*/'',
+			chooseProgramStudyFolderError = /*[[#{browse.nursery.please.choose.program.study.folder}]]*/'',
+			chooseStudyError = /*[[#{browse.nursery.please.choose.program.study}]]*/'',
+			cannotMoveFolderToCropListError = /*[[#{cannot.move.folder.to.crop.lists.folder}]]*/ '',
+			cannotMoveItemToAListError = /*[[#{cannot.move.item.to.a.list}]]*/ '';
 
-$(document).ready(function () {
-    'use strict';
-	studyTreeInit();
-});
-</script>
+		$(document).ready(function () {
+			'use strict';
+			studyTreeInit();
+		});
+	</script>
 </div>

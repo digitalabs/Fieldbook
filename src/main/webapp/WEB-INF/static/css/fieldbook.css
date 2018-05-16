@@ -921,7 +921,7 @@ div.sectionContainer {
 .image-padding{
     padding-top:0px;
 }
-.browse-nursery-action, .browse-germplasm-action, .browse-sample-action{
+.browse-study-action, .browse-germplasm-action, .browse-sample-action{
     padding-left: 4px;
 }
 .image-padding-with-text{

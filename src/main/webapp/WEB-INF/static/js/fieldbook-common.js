@@ -2635,7 +2635,7 @@ function submitDeleteFolder() {
 					if (node != null) {
 						node.remove();
 					}
-					changeBrowseNurseryButtonBehavior(false);
+					changeBrowseStudyButtonBehavior(false);
 					showSuccessfulMessage('', deleteFolderSuccessful);
 				} else {
 					showErrorMessage('page-delete-study-folder-message-modal', data.message);
@@ -2651,7 +2651,7 @@ function submitDeleteFolder() {
 				if (node != null) {
 					node.remove();
 				}
-				changeBrowseNurseryButtonBehavior(false);
+				changeBrowseStudyButtonBehavior(false);
 				showSuccessfulMessage('', deleteStudySuccessful);
 			} else {
 				showErrorMessage('', data.message);
@@ -2957,7 +2957,7 @@ function doDeleteStudy(id, callback) {
 		}
 	});
 }
-function changeBrowseNurseryButtonBehavior(isEnable) {
+function changeBrowseStudyButtonBehavior(isEnable) {
 	'use strict';
 	if (isEnable) {
 		$('.browse-study-action').removeClass('disable-image');
@@ -3341,11 +3341,11 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	if ($('#create-nursery #studyTree').length !== 0) {
 		$('#studyTree').dynatree('destroy');
 		displayStudyListTree('studyTree', type, selectStudyFunction, isPreSelect);
-		changeBrowseNurseryButtonBehavior(false);
+		changeBrowseStudyButtonBehavior(false);
 	} else if ($('#create-trial #studyTree').length !== 0) {
 		$('#studyTree').dynatree('destroy');
 		displayStudyListTree('studyTree', type, selectStudyFunction, isPreSelect);
-		changeBrowseNurseryButtonBehavior(false);
+		changeBrowseStudyButtonBehavior(false);
 	}
 
 	$('#studyTreeModal').modal({

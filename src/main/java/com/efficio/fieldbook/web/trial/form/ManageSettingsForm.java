@@ -18,7 +18,7 @@ import org.generationcp.middleware.domain.oms.TraitClassReference;
 import java.util.List;
 
 /**
- * The Class AddOrRemoveTraitsForm.
+ * The Class ManageSettingsForm.
  */
 public class ManageSettingsForm {
 

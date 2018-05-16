@@ -2960,9 +2960,9 @@ function doDeleteStudy(id, callback) {
 function changeBrowseNurseryButtonBehavior(isEnable) {
 	'use strict';
 	if (isEnable) {
-		$('.browse-nursery-action').removeClass('disable-image');
+		$('.browse-study-action').removeClass('disable-image');
 	} else {
-		$('.browse-nursery-action').addClass('disable-image');
+		$('.browse-study-action').addClass('disable-image');
 	}
 }
 function changeBrowseGermplasmButtonBehavior(isEnable) {

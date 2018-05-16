@@ -383,6 +383,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			};
 
+			$scope.hasAdvanceListCreated = function () {
+				return $scope.addAdvanceTabData.length !== 0;
+			};
+
 			$scope.performFunctionOnTabChange = function(targetState) {
 				// do not switch tab if we have newly imported measurements or stock list is not saved
 				if (stockListImportNotSaved || $('.import-study-data').data('data-import') === '1') {

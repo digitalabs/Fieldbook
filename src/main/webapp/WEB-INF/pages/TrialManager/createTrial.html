@@ -89,6 +89,11 @@
 										<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link"
 										   th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
 									</li>
+									<!--Export advance list-->
+									<li ng-show="hasAdvanceListCreated()">
+									  <a href="javascript: showExportAdvanceOptions();" id="export-advance-list-url-link"
+										 th:text="#{nursery.nurserydetails.action.export.advance}">Export advance list</a>
+									</li>
 								</ul>
 							</li>
 

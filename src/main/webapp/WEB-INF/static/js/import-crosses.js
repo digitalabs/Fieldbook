@@ -864,7 +864,6 @@ var ImportCrosses = {
 			success: function(html) {
 				$('#saveListTreeModal').modal('hide');
 				$('#saveListTreeModal').data('is-save-crosses', '0');
-				$('#create-nursery-tabs .tab-pane.info').removeClass('active');
 				var uniqueId,
 					close,
 					aHtml;
@@ -874,14 +873,10 @@ var ImportCrosses = {
 					'class="advanceList crossesList crossesList' + uniqueId + '" data-toggle="tab" href="#advance-list' + uniqueId + '"' +
 					' data-list-id="' + uniqueId + '">' + $(html).find("#listTypeLabel").val() + ': [' + listName + ']' + close + '</a>';
 				var stockHtml = '<div id="stock-content-pane' + uniqueId + '" class="stock-list' + uniqueId + '"></div>';
-				$('#create-nursery-tab-headers').append('<li id="advance-list' + uniqueId + '-li" class="advance-germplasm-items crosses-list">' + aHtml + '</li>');
-				$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list' + uniqueId + '" id="advance-list' + uniqueId + '">' + html + '</div>');
-				$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list' + uniqueId + '" id="stock-tab-pane' + uniqueId + '">' + stockHtml + '</div>');
 				$('a#advance-list' + uniqueId).tab('show');
 				$('#advance-list' + uniqueId + '.tab-pane.info').addClass('active');
 				$('.nav-tabs').tabdrop('layout');
 				$('a#advance-list' + uniqueId).on('click', function() {
-					$('#create-nursery-tabs .tab-pane.info').removeClass('active');
 					$('#advance-list' + uniqueId + '.tab-pane.info').addClass('active');
 				});
 			},

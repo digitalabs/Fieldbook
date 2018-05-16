@@ -81,7 +81,6 @@ if (typeof StockIDFunctions === 'undefined') {
 							StockIDFunctions.generateStockListTabIfNecessary(listId).done(function() {
 								$('#generateStockIDModal').modal('hide');
 								// logic for displaying the stock list immediately after successful saving
-								$('#create-nursery-tabs .tab-pane.info').removeClass('active');
 								$('.advance-germplasm-items').removeClass('active');
 								$(this).data('has-loaded', '1');
 								StockIDFunctions.displayStockList(listId);

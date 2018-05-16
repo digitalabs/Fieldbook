@@ -1,4 +1,4 @@
-/*globals displaySaveSuccessMessage, createTableSettingVariables, importNursery, Spinner, showErrorMessage*/
+/*globals displaySaveSuccessMessage, createTableSettingVariables, importFormatType, Spinner, showErrorMessage*/
 /*globals recreateMethodCombo,showErrorMessage,showImportResponse,recreateLocationCombo, isCategoricalDisplay*/
 /*exported showImportResponse, importOptions, confirmDesignation, goBackToImport, doImportActionChange*/
 /*exported importStudyBookHeader, importStudyHeader*/
@@ -15,7 +15,7 @@ $(document).ready(function() {
 	$('.import-window select').select2({width: 'copy', minimumResultsForSearch: 20});
 	$('#importType').on('change', function() {
 		if ($(this).val() !== '0') {
-			importNursery($(this).val());
+			importFormatType($(this).val());
 		}
 	});
 

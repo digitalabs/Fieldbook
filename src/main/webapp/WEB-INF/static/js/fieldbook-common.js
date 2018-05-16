@@ -1550,7 +1550,7 @@ function getMeasurementTableVisibleColumns(addPlotId) {
 	return visibleColumns;
 }
 
-function importNursery(type) {
+function importFormatType(type) {
 	'use strict';
 	var action = '/Fieldbook/ImportManager/import/' + type,
 		formName = '#importStudyUploadForm';

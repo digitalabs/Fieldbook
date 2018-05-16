@@ -17,7 +17,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.generationcp.middleware.domain.dms.DatasetReference;
@@ -77,7 +77,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	}
 
 	@RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
-	public String show(@PathVariable final int id, @ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form,
+	public String show(@PathVariable final int id, @ModelAttribute("createTrialForm") final CreateTrialForm form,
 		final Model model) {
 
 		final Workbook workbook;

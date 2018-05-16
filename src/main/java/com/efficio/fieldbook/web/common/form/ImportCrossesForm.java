@@ -14,7 +14,7 @@ package com.efficio.fieldbook.web.common.form;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * The Class AddOrRemoveTraitsForm.
+ * The Class ImportCrossesForm.
  */
 public class ImportCrossesForm {
 

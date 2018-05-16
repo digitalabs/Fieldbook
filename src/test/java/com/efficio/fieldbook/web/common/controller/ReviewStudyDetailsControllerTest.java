@@ -11,10 +11,11 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import junit.framework.Assert;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -36,12 +37,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.StudyDetails;
-import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
-
-import junit.framework.Assert;
+import javax.annotation.Resource;
+import java.util.List;
 
 public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTest {
 
@@ -72,8 +69,8 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 			new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"), 1);
 
 		Assert.assertEquals("Expecting error message for nursery but got " + details.getErrorMessage() + " instead.",
-				"This nursery is in a format that cannot be opened in the Nursery Manager. Please use the Study Browser if you"
-						+ " wish to see the details of this nursery.",
+				"This study is in a format that cannot be opened in the Study Manager. Please use the Study Browser if you"
+						+ " wish to see the details of this study.",
 				details.getErrorMessage());
 	}
 
@@ -85,15 +82,15 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 			new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"), 1);
 
 		Assert.assertEquals("Expecting error message for nursery but got " + details.getErrorMessage() + " instead.",
-				"This trial is in a format that cannot be opened in the Trial Manager. Please use the Study Browser if you"
-						+ " wish to see the details of this trial.",
+				"This study is in a format that cannot be opened in the Study Manager. Please use the Study Browser if you"
+						+ " wish to see the details of this study.",
 				details.getErrorMessage());
 	}
 
 	@Test
 	public void testShowTrialSummaryEnvironmentsWithoutAnalysisVariables() {
 		final int id = 1;
-		final AddOrRemoveTraitsForm form = new AddOrRemoveTraitsForm();
+		final CreateTrialForm form = new CreateTrialForm();
 		final Model model = new ExtendedModelMap();
 
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);

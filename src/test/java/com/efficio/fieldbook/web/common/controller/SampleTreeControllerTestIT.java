@@ -54,7 +54,7 @@ public class SampleTreeControllerTestIT extends AbstractBaseIntegrationTest {
 		this.sampleTreeController.loadInitialSampleTreeTable(model);
 		List<TreeTableNode> treeNodes = (List<TreeTableNode>) model.get(SampleTreeController.LIST_ROOT_NODES);
 		int numberOfRootNodes = 0;
-		List<TreeTableNode> rootNodes = new ArrayList<TreeTableNode>();
+		List<TreeTableNode> rootNodes = new ArrayList<>();
 		for (TreeTableNode treeTableNode : treeNodes) {
 			if (treeTableNode.getParentId() == null) {
 				rootNodes.add(treeTableNode);
@@ -62,9 +62,9 @@ public class SampleTreeControllerTestIT extends AbstractBaseIntegrationTest {
 			}
 		}
 
-		Assert.assertEquals("The number of root nodes should be 1", 1, numberOfRootNodes);
-		Assert.assertEquals("The first root node should be have an id of " + SampleTreeController.PROGRAM_LISTS,
-				SampleTreeController.PROGRAM_LISTS, rootNodes.get(0).getId());
+		Assert.assertEquals("The number of root nodes should be 2", 2, numberOfRootNodes);
+		Assert.assertEquals("The first root node should be have an id of " + SampleTreeController.CROP_LISTS,
+				SampleTreeController.CROP_LISTS, rootNodes.get(0).getId());
 	}
 
 }

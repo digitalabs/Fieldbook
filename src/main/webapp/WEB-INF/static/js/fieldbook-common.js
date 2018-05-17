@@ -2706,26 +2706,6 @@ function truncateStudyVariableNames(domSelector, charLimit) {
 	});
 }
 
-function checkTraitsAndSelectionVariateTable(containerDiv, isLandingPage) {
-	'use strict';
-	if ($(containerDiv + ' .selection-variate-table tbody tr').length > 0) {
-		$(containerDiv + ' .selection-variate-table').removeClass('fbk-hide');
-	} else {
-		$(containerDiv + ' .selection-variate-table').addClass('fbk-hide');
-		if (isLandingPage) {
-			$(containerDiv + ' .selection-variate-table').parent().prev().addClass('fbk-hide');
-		}
-	}
-	if ($(containerDiv + ' .traits-table tbody tr').length > 0) {
-		$(containerDiv + ' .traits-table').removeClass('fbk-hide');
-	} else {
-		$(containerDiv + ' .traits-table ').addClass('fbk-hide');
-		if (isLandingPage) {
-			$(containerDiv + ' .traits-table').parent().prev().addClass('fbk-hide');
-		}
-	}
-}
-
 function isValidInput(input) {
 	'use strict';
 	var invalidInput = /[<>&=%;?]/.test(input);

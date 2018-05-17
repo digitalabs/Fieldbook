@@ -98,7 +98,7 @@ public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionCont
 			String offendingName = context.getCurrentData().get(0);
 			changeDetail = new AdvanceGermplasmChangeDetail();
 			changeDetail.setOldAdvanceName(offendingName);
-			changeDetail.setQuestionText(context.getMessageSource().getMessage("advance.nursery.duplicate.question.text",
+			changeDetail.setQuestionText(context.getMessageSource().getMessage("advance.study.duplicate.question.text",
 					new String[] {offendingName}, LocaleContextHolder.getLocale()));
 
 			context.getAdvancingSource().setChangeDetail(changeDetail);
@@ -114,7 +114,7 @@ public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionCont
 			String passingName = context.getCurrentData().get(0);
 			changeDetail.setNewAdvanceName(passingName);
 			Locale locale = LocaleContextHolder.getLocale();
-			changeDetail.setAddSequenceText(context.getMessageSource().getMessage("advance.nursery.duplicate.add.sequence.text",
+			changeDetail.setAddSequenceText(context.getMessageSource().getMessage("advance.study.duplicate.add.sequence.text",
 					new String[] {passingName}, locale));
 		}
 	}

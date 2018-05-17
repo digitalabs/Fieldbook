@@ -17,9 +17,8 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.trial.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -87,10 +86,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	/** The user selection. */
 	@Resource
 	protected UserSelection userSelection;
-
-	/** The measurements generator service. */
-	@Resource
-	protected MeasurementsGeneratorService measurementsGeneratorService;
 
 	/** The validation service. */
 	@Resource

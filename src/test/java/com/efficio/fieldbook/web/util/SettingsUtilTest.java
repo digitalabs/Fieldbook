@@ -4,11 +4,9 @@ package com.efficio.fieldbook.web.util;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
 import com.efficio.fieldbook.web.trial.TestDataHelper;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import junit.framework.Assert;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -123,7 +121,7 @@ public class SettingsUtilTest {
 
 	@Test
 	public void testIfCheckVariablesAreInFixedNurseryList() {
-		final String variableIds = AppConstants.FIXED_NURSERY_VARIABLES.getString()
+		final String variableIds = AppConstants.FIXED_STUDY_VARIABLES.getString()
 				+ AppConstants.CHECK_VARIABLES.getString()
 				+ AppConstants.BREEDING_METHOD_ID_CODE_NAME_COMBINATION.getString();
 		Assert.assertTrue(SettingsUtil.inVariableIds(TermId.CHECK_START.getId(), variableIds));

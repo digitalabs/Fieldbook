@@ -98,8 +98,8 @@ public class SettingsServiceImpl implements SettingsService {
 		final List<LabelFields> details = new ArrayList<>();
 		final FieldbookUtil util = FieldbookUtil.getInstance();
 
-		final List<Integer> hiddenFields = util.buildVariableIDList(AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
-		final List<Integer> basicDetailIDList = util.buildVariableIDList(AppConstants.HIDE_TRIAL_FIELDS.getString());
+		final List<Integer> hiddenFields = util.buildVariableIDList(AppConstants.HIDE_STUDY_VARIABLE_DBCV_FIELDS.getString());
+		final List<Integer> basicDetailIDList = util.buildVariableIDList(AppConstants.HIDE_STUDY_FIELDS.getString());
 		final List<MeasurementVariable> measurementVariables = workbook.getStudyConditions();
 		final Map<String, MeasurementVariable> settingsMap = SettingsUtil.buildMeasurementVariableMap(measurementVariables);
 		for (final MeasurementVariable var : measurementVariables) {
@@ -141,7 +141,7 @@ public class SettingsServiceImpl implements SettingsService {
 		final List<LabelFields> details = new ArrayList<>();
 		final FieldbookUtil util = FieldbookUtil.getInstance();
 
-		final List<Integer> hiddenFields = util.buildVariableIDList(AppConstants.NURSERY_BASIC_DETAIL_FIELDS_HIDDEN_LABELS.getString());
+		final List<Integer> hiddenFields = util.buildVariableIDList(AppConstants.STUDY_BASIC_DETAIL_FIELDS_HIDDEN_LABELS.getString());
 		final List<MeasurementVariable> measurementVariables = workbook.getStudyConditions();
 		measurementVariables.addAll(workbook.getTrialConditions());
 		final Map<String, MeasurementVariable> settingsMap = SettingsUtil.buildMeasurementVariableMap(measurementVariables);
@@ -211,7 +211,7 @@ public class SettingsServiceImpl implements SettingsService {
 		final List<LabelFields> labelFieldsList = new ArrayList<>();
 
 		final List<Integer> hiddenFields =
-				FieldbookUtil.getInstance().buildVariableIDList(AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
+				FieldbookUtil.getInstance().buildVariableIDList(AppConstants.HIDE_STUDY_VARIABLE_DBCV_FIELDS.getString());
 
 		final Map<String, MeasurementVariable> factorsMeasurementVariableMap =
 				SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
@@ -219,7 +219,7 @@ public class SettingsServiceImpl implements SettingsService {
 		for (final MeasurementVariable var : workbook.getTrialConditions()) {
 
 			if (!hiddenFields.contains(var.getTermId()) && TermId.EXPERIMENT_DESIGN_FACTOR.getId() != var.getTermId()) {
-				String variableName = var.getName();
+				final String variableName = var.getName();
 
 				final LabelFields field =
 						new LabelFields(variableName, var.getTermId(), this.isGermplasmListField(var.getTermId()));

@@ -48,7 +48,7 @@
 				<span name="action-buttons" ng-show="isOpenStudy()">
 					<div class="btn-group" style="padding-right: 36px">
 						<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
-							<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+							<span th:text="#{study.studydetails.actions}">Actions</span>
 						</button>
 						<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
 							<li>
@@ -62,11 +62,11 @@
 											<a href="" style="display: none" id="fieldmap-url"
 											   th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
 											<a href="javascript: createFieldMap();" id="fieldmap-url-link"
-											   th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
+											   th:text="#{study.studydetails.action.createFieldmap}">Make Field Map</a>
 										</li>
 										<li>
 											<a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link"
-											   th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</a>
+											   th:text="#{study.edit.study.view.field.map}">View Field Map</a>
 										</li>
 									</ul>
 								</li>
@@ -76,7 +76,7 @@
 								<ul class="dropdown-menu" style="margin-left: 29px;">
 									<li>
 										<a href="javascript: void(0)" onclick="exportDesignTemplate()" class="export-design-template-link"
-										   th:text="#{nursery.nurserydetails.action.export.design.template}">Export Design Template</a>
+										   th:text="#{study.studydetails.action.export.design.template}">Export Design Template</a>
 									</li>
 									<li ng-show="hasGermplasmListSelected()">
 										<a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());"
@@ -87,12 +87,12 @@
 										<a href="" style="display: none" id="label-printing-url"
 										   th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
 										<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link"
-										   th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
+										   th:text="#{study.studydetails.action.printLabels}">Print Labels</a>
 									</li>
 									<!--Export advance list-->
 									<li ng-show="hasAdvanceListCreated()">
 									  <a href="javascript: showExportAdvanceOptions();" id="export-advance-list-url-link"
-										 th:text="#{nursery.nurserydetails.action.export.advance}">Export advance list</a>
+										 th:text="#{study.studydetails.action.export.advance}">Export advance list</a>
 									</li>
 								</ul>
 							</li>
@@ -104,16 +104,16 @@
 									<!--Export crossing template-->
 									<li id="download-crosses-template">
 										<a href="javascript: void(0)" onclick="ImportCrosses.downloadCrosses()"
-										   class="export-crosses-action" th:text="#{nursery.nurserydetails.action.export.crosses}">Export crossing template</a>
+										   class="export-crosses-action" th:text="#{study.studydetails.action.export.crosses}">Export crossing template</a>
 									</li>
 									<!--Import crosses style="display:none;"-->
 									<li id="import-crosses">
-										<a href="javascript: void(0)"  onclick="ImportCrosses.showPopup()" class="import-crosses" th:text="#{nursery.nurserydetails.action.import.crosses}">Import crosses</a>
+										<a href="javascript: void(0)"  onclick="ImportCrosses.showPopup()" class="import-crosses" th:text="#{study.studydetails.action.import.crosses}">Import crosses</a>
 									</li>
 									<!--Design new crosses-->
 									<li id="create-new-crosses">
 										<a th:href="@{~/BreedingManager/main/createcrosses(studyid=*{studyId},germplasmlistid=*{germplasmListId},loggedInUserId=${loggedInUserId},selectedProjectId=${selectedProjectId},studyType=*{studyTypeName})}"
-										   class="create-new-crosses" th:text="#{nursery.nurserydetails.action.create.new.crosses}">Design new crosses</a>
+										   class="create-new-crosses" th:text="#{study.studydetails.action.create.new.crosses}">Design new crosses</a>
 									</li>
 								</ul>
 							</li>
@@ -138,15 +138,15 @@
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a href="" style="display: none" id="open-study-url"></a>
 										<a href="javascript: showImportOptions();" id="open-study-url-link"
-										   th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
+										   th:text="#{study.studydetails.action.import.study}">Import Measurements</a>
 									</li>
 									<li ng-show="hasGermplasmListSelected()">
 										<a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link"
-										   th:text="#{nursery.nurserydetails.action.export.germplasm.list}">Export Germplasm List</a>
+										   th:text="#{study.studydetails.action.export.germplasm.list}">Export Germplasm List</a>
 									</li>
 									<li id="review-out-of-bounds-data-list" style="display:none;">
 										<a href="javascript: reviewOutOfBoundsData();" id="review-out-of-bounds-data-link"
-										   th:text="#{nursery.nurserydetails.action.review.out.of.bounds.data}">Review out of bounds data</a>
+										   th:text="#{study.studydetails.action.review.out.of.bounds.data}">Review out of bounds data</a>
 									</li>
 								</ul>
 							</li>
@@ -563,11 +563,11 @@
 		//<![CDATA[
 		// TODO: move the ff later as constant in the angular app module
 		var studyFieldsIsRequired = /*[[#{study.create.is.required}]]*/ '';
-		var varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/ '';
-		var addNurseryLevelSettings = /*[[#{trial.managesettings.add.trial.level.settings}]]*/ '';
-		var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '';
-		var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '';
-		var addStudyEnvironmentTraits = /*[[#{nursery.managesettings.add.study.environment.variable}]]*/ '';
+		var varInListMessage = /*[[#{study.managesettings.variable.in.selected.list}]]*/ '';
+		var addNurseryLevelSettings = /*[[#{study.managesettings.add.study.level.settings}]]*/ '';
+		var addPlotLevelSettings = /*[[#{study.managesettings.add.plot.level.settings}]]*/ '';
+		var addBaselineTraits = /*[[#{study.managesettings.add.baseline.traits}]]*/ '';
+		var addStudyEnvironmentTraits = /*[[#{study.managesettings.add.study.environment.variable}]]*/ '';
 		var addTreatmentFactors = /*[[#{study.managesettings.treatment.factors.add}]]*/ '';
 		var deleteTemplateSettingError = /*[[#{manage.settings.delete.error}]]*/ '';
 		var deleteTemplateSettingSuccess = /*[[#{manage.settings.delete.success}]]*/ '';
@@ -577,12 +577,12 @@
 		var programMethodUrl = '';
 		var locationIframeOpened = false;
 		var methodIframeOpened = false;
-		var nurseryLevelValueEmpty = /*[[#{nursery.managesettings.nursery.level.value.empty}]]*/ '';
+		var nurseryLevelValueEmpty = /*[[#{study.managesettings.study.level.value.empty}]]*/ '';
 		var copyTemplateSettingError = /*[[#{manage.settings.copy.error}]]*/ '';
 		var copyTemplateSettingSuccess = /*[[#{manage.settings.copy.setting.success}]]*/ '';
-		var manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/ '';
-		var manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/ '';
-		var nurseryNumericError = /*[[#{manage.settings.nursery.numeric.error}]]*/ '';
+		var manageMethodLabel = /*[[#{study.managesettings.manage.method}]]*/ '';
+		var manageLocationLabel = /*[[#{study.managesettings.manage.location}]]*/ '';
+		var nurseryNumericError = /*[[#{manage.settings.study.numeric.error}]]*/ '';
 		var breedingMethodId = '';
 		var locationId = '';
 
@@ -592,11 +592,11 @@
 		var idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/ '';
 
 		var inputChange = false;
-		var reminderNursery = /*[[#{trial.reminder.add.trial.settings}]]*/ '';
-		var reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/ '';
-		var reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/ '';
-		var reminderTrialEnvironment = /*[[#{nursery.reminder.add.trial.environment.settings}]]*/ '';
-		var reminderTreatmentFactors = /*[[#{trial.reminder.add.treatment.factors}]]*/ '';
+		var reminderNursery = /*[[#{study.reminder.add.study.settings}]]*/ '';
+		var reminderPlot = /*[[#{study.reminder.add.plot.settings}]]*/ '';
+		var reminderTraits = /*[[#{study.reminder.add.trait.settings}]]*/ '';
+		var reminderTrialEnvironment = /*[[#{study.reminder.add.study.environment.settings}]]*/ '';
+		var reminderTreatmentFactors = /*[[#{study.reminder.add.treatment.factors}]]*/ '';
 
 		var noVariableNameError = /*[[#{manage.settings.no.variable.name.error}]]*/ '';
 		var noTreatmentFactorPairError = /*[[#{manage.settings.no.treatment.factor.pair.missing}]]*/ '';
@@ -611,7 +611,7 @@
 		var plotNoShouldBeInRange = /*[[#{plot.number.should.be.in.range}]]*/ '';
 		var ajaxGenericErrorMsg = /*[[#{ajax.generic.exception.error.message}]]*/ '';
 		var modalConfirmationTitle = /*[[#{common.form.confirmation.text}]]*/ '',
-			environmentModalConfirmationText = /*[[#{trial.change.environment.confirmation}]]*/ '',
+			environmentModalConfirmationText = /*[[#{study.change.environment.confirmation}]]*/ '',
 			environmentConfirmLabel = /*[[#{common.form.ok.text}]]*/ '',
 			operationMode = /*[[${operationMode}]]*/ '';
 
@@ -625,40 +625,40 @@
 		var translations = {
 			/*TRIAL SETTINGS*/
 			1805: {
-				label: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
-				placeholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ ''
+				label: /*[[#{study.managesettings.add.study.level.settings}]]*/ '',
+				placeholder: /*[[#{study.reminder.add.study.settings}]]*/ ''
 			},
 			/*GERMPLASM FACTORS*/
 			1804: {
-				label: /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
-				placeholder: /*[[#{nursery.reminder.add.plot.settings}]]*/ ''
+				label: /*[[#{study.managesettings.add.plot.level.settings}]]*/ '',
+				placeholder: /*[[#{study.reminder.add.plot.settings}]]*/ ''
 			},
 			/*MEASUREMENT TRAITS*/
 			1808: {
-				label: /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
-				placeholder: /*[[#{nursery.reminder.add.trait.settings}]]*/ ''
+				label: /*[[#{study.managesettings.add.baseline.traits}]]*/ '',
+				placeholder: /*[[#{study.reminder.add.trait.settings}]]*/ ''
 			},
 			/*TRIAL ENVIRONMENT MANAGEMENT DETAILS*/
 			1806: {
-				label: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
-				placeholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ ''
+				label: /*[[#{study.managesettings.add.study.level.settings}]]*/ '',
+				placeholder: /*[[#{study.reminder.add.study.settings}]]*/ ''
 			},
 			/* SELECTION VARIATES */
 			1807: {
-				label: /*[[#{trial.managesettings.add.selection.variates}]]*/ '',
-				placeholder: /*[[#{trial.reminder.add.selection.variates}]]*/ ''
+				label: /*[[#{study.managesettings.add.selection.variates}]]*/ '',
+				placeholder: /*[[#{study.reminder.add.selection.variates}]]*/ ''
 			},
 			/*TREATMENT FACTORS*/
 			1809: {
-				label: /*[[#{trial.managesettings.add.treatmentfactor}]]*/ '',
-				placeholder: /*[[#{trial.reminder.add.treatmentfactor}]]*/ ''
+				label: /*[[#{study.managesettings.add.treatmentfactor}]]*/ '',
+				placeholder: /*[[#{study.reminder.add.treatmentfactor}]]*/ ''
 			},
 			/*TRIAL CONDITIONS*/
 			1802: {
-				label: /*[[#{trial.managesettings.add.trialcondition}]]*/ '',
-				placeholder: /*[[#{trial.reminder.add.trialcondition}]]*/ ''
+				label: /*[[#{study.managesettings.add.studycondition}]]*/ '',
+				placeholder: /*[[#{study.reminder.add.studycondition}]]*/ ''
 			},
-			generalAjaxError: /*[[#{nursery.managesettings.variable.selection.error}]]*/ '',
+			generalAjaxError: /*[[#{study.managesettings.variable.selection.error}]]*/ '',
 			variableSelectedMessage: /*[[#{common.warning.variable.in.use}]]*/ '',
 			invalidAliasError: /*[[#{variable.selection.alias.error}]]*/ ''
 		};

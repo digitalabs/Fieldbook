@@ -484,7 +484,7 @@ public class FieldbookServiceTest {
 		boolean allIsHidden = true;
 		while (tokenizer.hasMoreTokens()) {
 			if (!FieldbookServiceImpl.inHideVariableFields(Integer.parseInt(tokenizer.nextToken()),
-					AppConstants.FILTER_NURSERY_FIELDS.getString())) {
+					AppConstants.FILTER_STUDY_FIELDS.getString())) {
 				allIsHidden = false;
 				break;
 			}

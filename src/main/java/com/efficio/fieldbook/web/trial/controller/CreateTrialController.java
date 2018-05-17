@@ -170,7 +170,7 @@ public class CreateTrialController extends BaseTrialController {
 	}
 
 	private CreateTrialForm addErrorMessageToResult(final MiddlewareException e) {
-		final String param = AppConstants.TRIAL.getString();
+		final String param = AppConstants.STUDY.getString();
 		final CreateTrialForm form = new CreateTrialForm();
 		form.setHasError(true);
 		if (e instanceof MiddlewareQueryException) {
@@ -209,7 +209,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	@ModelAttribute("trialEnvironmentHiddenFields")
 	public List<Integer> getTrialEnvironmentHiddenFields() {
-		return this.buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
+		return this.buildVariableIDList(AppConstants.HIDE_STUDY_ENVIRONMENT_FIELDS.getString());
 	}
 
 	@RequestMapping(value = "/trialSettings", method = RequestMethod.GET)
@@ -329,7 +329,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	protected TabInfo prepareGermplasmTabInfo(final boolean isClearSettings) {
 		final List<SettingDetail> initialDetailList = new ArrayList<>();
-		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
+		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_STUDY_PLOT_REQUIRED_FIELDS.getString());
 
 		for (final Integer initialSettingID : initialSettingIDs) {
 			try {
@@ -365,9 +365,9 @@ public class CreateTrialController extends BaseTrialController {
 
 		final Map<String, Object> settingMap = new HashMap<>();
 		final List<SettingDetail> managementDetailList = new ArrayList<>();
-		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
+		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_STUDY_ENVIRONMENT_FIELDS.getString());
 
-		for (final Integer id : this.buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString())) {
+		for (final Integer id : this.buildVariableIDList(AppConstants.CREATE_STUDY_ENVIRONMENT_REQUIRED_FIELDS.getString())) {
 			final SettingDetail detail = this.createSettingDetail(id, null, VariableType.ENVIRONMENT_DETAIL.getRole().name());
 			for (final Integer hiddenField : hiddenFields) {
 				if (id.equals(hiddenField)) {
@@ -392,7 +392,7 @@ public class CreateTrialController extends BaseTrialController {
 	protected TabInfo prepareBasicDetailsTabInfo() {
 		final Map<String, String> basicDetails = new HashMap<>();
 		final List<SettingDetail> initialDetailList = new ArrayList<>();
-		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
+		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_STUDY_REQUIRED_FIELDS.getString());
 
 		for (final Integer initialSettingID : initialSettingIDs) {
 			try {

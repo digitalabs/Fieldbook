@@ -32,7 +32,6 @@ import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
@@ -120,7 +119,7 @@ public class ExportStudyControllerTest {
 	public void testDoAdvanceExportCsvMoreThan1() throws JsonProcessingException, IOException {
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1|2|3", "TempName", this.germplasmExportService,
-				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new FileExportInfo("temp.zip", "temp.zip"));
+				AppConstants.EXPORT_ADVANCE_STUDY_CSV.getString())).thenReturn(new FileExportInfo("temp.zip", "temp.zip"));
 
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
@@ -143,7 +142,7 @@ public class ExportStudyControllerTest {
 	public void testDoAdvanceExportCsvOnly1() throws JsonParseException, JsonMappingException, IOException {
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1", "TempName", this.germplasmExportService,
-				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new FileExportInfo("temp.csv", "temp.csv"));
+				AppConstants.EXPORT_ADVANCE_STUDY_CSV.getString())).thenReturn(new FileExportInfo("temp.csv", "temp.csv"));
 
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
@@ -167,7 +166,7 @@ public class ExportStudyControllerTest {
 	public void testDoAdvanceExportXlsMoreThan1() throws JsonProcessingException, IOException {
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1|2|3", "TempName", this.germplasmExportService,
-				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString())).thenReturn(new FileExportInfo("temp.zip", "temp.zip"));
+				AppConstants.EXPORT_ADVANCE_STUDY_EXCEL.getString())).thenReturn(new FileExportInfo("temp.zip", "temp.zip"));
 
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
@@ -190,7 +189,7 @@ public class ExportStudyControllerTest {
 	public void testDoAdvanceExportXlsOnly1() throws JsonParseException, JsonMappingException, IOException {
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1", "TempName", this.germplasmExportService,
-				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString())).thenReturn(new FileExportInfo("temp.xls", "temp.xls"));
+				AppConstants.EXPORT_ADVANCE_STUDY_EXCEL.getString())).thenReturn(new FileExportInfo("temp.xls", "temp.xls"));
 
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
@@ -215,10 +214,10 @@ public class ExportStudyControllerTest {
 		details.setStudyName("TestStudy");
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1", details.getStudyName(), this.germplasmExportService,
-				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString())).thenReturn(new FileExportInfo("temp.xls", "temp.xls"));
+				AppConstants.EXPORT_ADVANCE_STUDY_EXCEL.getString())).thenReturn(new FileExportInfo("temp.xls", "temp.xls"));
 
 		final FileExportInfo fileExportInfo = this.exportStudyController.exportAdvanceListItems("1", "1", details);
-		Assert.assertTrue("Return file should not be null", fileExportInfo.getFilePath() != null);
+		Assert.assertNotNull("Return file should not be null", fileExportInfo.getFilePath());
 	}
 
 	@Test
@@ -227,11 +226,11 @@ public class ExportStudyControllerTest {
 		details.setStudyName("TestStudy");
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1", details.getStudyName(), this.germplasmExportService,
-				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new FileExportInfo("temp.csv", "temp.csv"));
+				AppConstants.EXPORT_ADVANCE_STUDY_CSV.getString())).thenReturn(new FileExportInfo("temp.csv", "temp.csv"));
 
 		final FileExportInfo exportInfo =
-				this.exportStudyController.exportAdvanceListItems(AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString(), "1", details);
-		Assert.assertTrue("Return file should not be null", exportInfo.getFilePath() != null);
+				this.exportStudyController.exportAdvanceListItems(AppConstants.EXPORT_ADVANCE_STUDY_CSV.getString(), "1", details);
+		Assert.assertNotNull("Return file should not be null", exportInfo.getFilePath());
 	}
 
 	@Test
@@ -240,7 +239,7 @@ public class ExportStudyControllerTest {
 		details.setStudyName("TestStudy");
 
 		Mockito.when(this.exportAdvanceListService.exportAdvanceGermplasmList("1", details.getStudyName(), this.germplasmExportService,
-				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new FileExportInfo("temp.csv", "temp.csv"));
+				AppConstants.EXPORT_ADVANCE_STUDY_CSV.getString())).thenReturn(new FileExportInfo("temp.csv", "temp.csv"));
 
 		final FileExportInfo exportInfo = this.exportStudyController.exportAdvanceListItems("3", "1", details);
 		Assert.assertTrue("Return file should be null", exportInfo.getDownloadFileName() == null && exportInfo.getFilePath() == null);
@@ -380,7 +379,7 @@ public class ExportStudyControllerTest {
 
 		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_MS_EXCEL);
 
-		final Integer exportType = AppConstants.EXPORT_NURSERY_EXCEL.getInt();
+		final Integer exportType = AppConstants.EXPORT_STUDY_EXCEL.getInt();
 		final Integer exportWayType = 1; // Plot Data
 		final Map<String, String> data = this.getData();
 		final String returnedValue = this.exportStudyController.exportFile(data, exportType, exportWayType, this.req, this.resp);
@@ -411,7 +410,7 @@ public class ExportStudyControllerTest {
 				.thenReturn(new FileExportInfo(outputFilename, downloadFilename));
 		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_ZIP);
 
-		final Integer exportType = AppConstants.EXPORT_NURSERY_EXCEL.getInt();
+		final Integer exportType = AppConstants.EXPORT_STUDY_EXCEL.getInt();
 		final Integer exportWayType = 1;
 		final Map<String, String> data = this.getData();
 		final String returnedValue = this.exportStudyController.exportFileStudy(data, exportType, "1", exportWayType, this.req, this.resp);
@@ -442,7 +441,7 @@ public class ExportStudyControllerTest {
 				.thenReturn(new FileExportInfo(outputFilename, downloadFilename));
 		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_ZIP);
 
-		final Integer exportType = AppConstants.EXPORT_NURSERY_EXCEL.getInt();
+		final Integer exportType = AppConstants.EXPORT_STUDY_EXCEL.getInt();
 		final Integer exportWayType = 1;
 		final Map<String, String> data = this.getData();
 		final String returnedValue = this.exportStudyController.exportFileStudy(data, exportType, this.getTrialInstanceString(instances),

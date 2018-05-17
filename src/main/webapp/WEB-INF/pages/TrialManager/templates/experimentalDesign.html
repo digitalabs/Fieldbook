@@ -45,7 +45,7 @@
 	            			<div class="add-bottom-padding"
 								ng-show="data.noOfEnvironments &gt;= 0">
 									<div ng-hide="currentDesignType.templateName =='Default Design'">
-										<b th:text="#{review.trial.design.source}"></b>
+										<b th:text="#{review.study.design.source}"></b>
 										<span>{{currentDesignType.templateName}}</span>
 		                            </div>
 		                            <span class="pull-right">
@@ -54,7 +54,7 @@
 		                            </span>
 		                            <div class="add-bottom-padding"
 										ng-show="data.noOfEnvironments &gt;= 0">
-										<b th:text="#{review.trial.design.type}"></b>
+										<b th:text="#{review.study.design.type}"></b>
 										<span ng-hide="currentDesignType.templateName =='Default Design'">{{currentDesignType.name}}</span>
 										<span ng-show="currentDesignType.templateName =='Default Design'">Default Design</span>
 									</div>

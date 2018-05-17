@@ -133,7 +133,7 @@ public class OpenTrialController extends BaseTrialController {
 
 	@ModelAttribute("trialEnvironmentHiddenFields")
 	public List<Integer> getTrialEnvironmentHiddenFields() {
-		return this.buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
+		return this.buildVariableIDList(AppConstants.HIDE_STUDY_ENVIRONMENT_FIELDS.getString());
 	}
 
 	@ModelAttribute("isCategoricalDescriptionView")

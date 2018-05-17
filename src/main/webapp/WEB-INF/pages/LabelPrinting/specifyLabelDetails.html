@@ -108,7 +108,7 @@
                             <table class="table table-curved table-condensed">
                                 <thead>
                                 <th th:text="#{fieldmap.trial.instance}">Instance</th>
-                                <th th:text="#{label.printing.nursery.entries.labels.count}"># of Entries / Labels Needed
+                                <th th:text="#{label.printing.study.entries.labels.count}"># of Entries / Labels Needed
                                 </th>
                                 </thead>
                                 <tr>
@@ -135,8 +135,8 @@
                             <table class="table table-curved table-condensed">
                                 <thead>
                                 <th th:text="#{fieldmap.trial.instance}">Instance</th>
-                                <th  th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
-                                <th  th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
+                                <th  th:text="#{fieldmap.studies.entry.count}"># of Entries</th>
+                                <th  th:text="#{fieldmap.studies.reps.count}"># of Reps</th>
                                 <th  th:text="#{label.printing.labels.needed}">Labels Needed</th>
                                 </thead>
                                 <tr th:each="trialRow, row : *{userLabelPrinting.fieldMapInfo.datasets[0].trialInstances}">
@@ -284,11 +284,11 @@
                                 <table class="table table-curved table-condensed" id="selectedTrials">
                                     <thead>
                                     <th></th>
-                                    <th th:text="#{fieldmap.trial.order}">Order</th>
+                                    <th th:text="#{fieldmap.studies.order}">Order</th>
                                     <th  th:text="#{fieldmap.study}">Study</th>
                                     <th  th:text="#{fieldmap.trial.instance}">Instance</th>
-                                    <th  th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
-                                    <th  th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
+                                    <th  th:text="#{fieldmap.studies.entry.count}"># of Entries</th>
+                                    <th  th:text="#{fieldmap.studies.reps.count}"># of Reps</th>
                                     <th th:text="#{label.printing.labels.needed}">Labels Needed</th>
                                     </thead>
                                     <div th:each="map : *{userLabelPrinting.fieldMapInfoList}">
@@ -473,7 +473,7 @@
                                     <div class="col-xs-6 col-md-6 lblprnt-study-details-fields">
                                         <ul class="list-group field-group">
                                             <li class="list-group-item"><label class="control-label label-bold"
-                                                                               th:text="#{label.printing.trial.details}">Study
+                                                                               th:text="#{label.printing.study.details}">Study
                                                 Details</label></li>
                                         </ul>
                                         <ul id="pdf-study-details-fields" class="list-group droptrue">
@@ -484,7 +484,7 @@
                                             <li class="list-group-item">
                                                 <label class="control-label label-bold lblprnt-study-list-details-label"
                                                        th:text="(*{isStockList})? #{label.printing.stock.list.details} :
-												#{label.printing.trial.list.details}">
+												#{label.printing.study.list.details}">
                                                     Study List Details
                                                 </label>
                                                 <label class="control-label label-bold lblprnt-germplasm-list-details-label"
@@ -562,8 +562,8 @@
                             <div class="form-group">
                                 <div class="col-xs-6 col-md-6">
                                     <label class="control-label" th:utext="*{isStockList} ?
-																(#{label.printing.choose.option.fields.csv.xls.trial.stock})
-																	: (#{label.printing.choose.option.fields.csv.xls.trial}) ">.</label>
+																(#{label.printing.choose.option.fields.csv.xls.study.stock})
+																	: (#{label.printing.choose.option.fields.csv.xls.study}) ">.</label>
                                 </div>
                             </div>
                         </div>
@@ -583,7 +583,7 @@
                                     <div class="col-xs-6 col-md-6 lblprnt-study-details-fields">
                                         <ul class="list-group field-group">
                                             <li class="list-group-item"><label class="control-label label-bold"
-                                                                               th:text="#{label.printing.trial.details}">Study
+                                                                               th:text="#{label.printing.study.details}">Study
                                                 Details</label></li>
                                         </ul>
                                         <ul id="non-pdf-study-details-fields" class="list-group droptrue">
@@ -594,7 +594,7 @@
                                             <li class="list-group-item">
                                                 <label class="control-label label-bold lblprnt-study-list-details-label"
                                                        th:text="(*{isStockList})? #{label.printing.stock.list.details} :
-												#{label.printing.trial.list.details}">
+												#{label.printing.study.list.details}">
                                                     Study List Details
                                                 </label>
                                                 <label class="control-label label-bold lblprnt-germplasm-list-details-label"

@@ -65,7 +65,7 @@ public class ExportAdvanceListServiceImplTest {
 	private String advancedListIds;
 	private final String studyName = "StudyName";
 	private List<InventoryDetails> inventoryDetailsList;
-	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	@Before
 	public void setUp() {
@@ -216,7 +216,7 @@ public class ExportAdvanceListServiceImplTest {
 		final String fileName = "TestName.xls";
 		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.getFileNamePath(fileName);
 
-		List<File> outputDirectoryFiles = this.getTempOutputDirectoriesGenerated();
+		final List<File> outputDirectoryFiles = this.getTempOutputDirectoriesGenerated();
 		Assert.assertEquals(1, outputDirectoryFiles.size());
 		Assert.assertEquals("Should have the same full file name path", outputDirectoryFiles.get(0).getAbsolutePath() + File.separator + fileName,
 				exportInfo.getFilePath());
@@ -227,9 +227,9 @@ public class ExportAdvanceListServiceImplTest {
 	private List<File> getTempOutputDirectoriesGenerated() {
 		final String genericOutputDirectoryPath = this.installationDirectoryUtil.getOutputDirectoryForProjectAndTool(this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 		final String toolDirectory = genericOutputDirectoryPath.substring(0, genericOutputDirectoryPath.indexOf(InstallationDirectoryUtil.OUTPUT));
-		File toolDirectoryFile = new File(toolDirectory);
+		final File toolDirectoryFile = new File(toolDirectory);
 		Assert.assertTrue(toolDirectoryFile.exists());
-		List<File> outputDirectoryFiles = new ArrayList<>();
+		final List<File> outputDirectoryFiles = new ArrayList<>();
 		for (final File file : toolDirectoryFile.listFiles()) {
 			if (file.getName().startsWith("output") && file.getName() != InstallationDirectoryUtil.OUTPUT && file.isDirectory()) {
 				outputDirectoryFiles.add(file);
@@ -274,7 +274,7 @@ public class ExportAdvanceListServiceImplTest {
 		final ExportAdvanceListServiceImpl spyComponent = Mockito.spy(this.exportAdvanceListServiceImpl);
 		Mockito.doReturn(expectedZipFilePath).when(spyComponent).zipFileNameList(Matchers.eq(filenameWithoutExtension), Matchers.anyListOf(String.class));
 		final FileExportInfo exportInfo = spyComponent.exportAdvanceGermplasmList(this.advancedListIds, this.studyName,
-				this.germplasmExportServiceImpl, AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString());
+				this.germplasmExportServiceImpl, AppConstants.EXPORT_ADVANCE_STUDY_CSV.getString());
 		final ArgumentCaptor<String> filenameCaptor = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(spyComponent).zipFileNameList(filenameCaptor.capture(), filenameListCaptor.capture());
 		Assert.assertEquals(filenameWithoutExtension, filenameCaptor.getValue());
@@ -298,7 +298,7 @@ public class ExportAdvanceListServiceImplTest {
 	public void testExportAdvanceGermplasmListInCsvOnly1Item() throws IOException {
 		final String listId = "1";
 		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList(listId, this.studyName, this.germplasmExportServiceImpl,
-				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString());
+				AppConstants.EXPORT_ADVANCE_STUDY_CSV.getString());
 		
 		final List<File> outputDirectories = this.getTempOutputDirectoriesGenerated();
 		Assert.assertEquals(1, outputDirectories.size());
@@ -317,7 +317,7 @@ public class ExportAdvanceListServiceImplTest {
 				.thenThrow(new IOException());
 		final String listId = "1";
 		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList(listId, this.studyName, this.germplasmExportServiceImpl,
-				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString());
+				AppConstants.EXPORT_ADVANCE_STUDY_CSV.getString());
 		
 		final List<File> outputDirectories = this.getTempOutputDirectoriesGenerated();
 		Assert.assertEquals(1, outputDirectories.size());
@@ -336,7 +336,7 @@ public class ExportAdvanceListServiceImplTest {
 				.thenThrow(new MiddlewareQueryException("error"));
 
 		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList("1", this.studyName, this.germplasmExportServiceImpl,
-				AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString());
+				AppConstants.EXPORT_ADVANCE_STUDY_CSV.getString());
 		Assert.assertEquals("Should return noFile since there was an error", ExportAdvanceListServiceImpl.NO_FILE, exportInfo.getFilePath());
 		Assert.assertNull(exportInfo.getDownloadFileName());
 	}
@@ -345,7 +345,7 @@ public class ExportAdvanceListServiceImplTest {
 	public void testExportAdvanceGermplasmListInXlsOnly1Item() throws IOException {
 		final String listId = "1";
 		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList(listId, this.studyName, this.germplasmExportServiceImpl,
-				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString());
+				AppConstants.EXPORT_ADVANCE_STUDY_EXCEL.getString());
 		
 		final List<File> outputDirectories = this.getTempOutputDirectoriesGenerated();
 		Assert.assertEquals(1, outputDirectories.size());
@@ -365,7 +365,7 @@ public class ExportAdvanceListServiceImplTest {
 
 		final String listId = "1";
 		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList(listId, this.studyName, this.germplasmExportServiceImpl,
-				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString());
+				AppConstants.EXPORT_ADVANCE_STUDY_EXCEL.getString());
 		final List<File> outputDirectories = this.getTempOutputDirectoriesGenerated();
 		Assert.assertEquals(1, outputDirectories.size());
 		final String filePath = exportInfo.getFilePath();
@@ -383,7 +383,7 @@ public class ExportAdvanceListServiceImplTest {
 				.thenThrow(new MiddlewareQueryException("error"));
 
 		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList("1", this.studyName, this.germplasmExportServiceImpl,
-				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString());
+				AppConstants.EXPORT_ADVANCE_STUDY_EXCEL.getString());
 		Assert.assertEquals("Should return noFile since there was an error", ExportAdvanceListServiceImpl.NO_FILE, exportInfo.getFilePath());
 		Assert.assertNull(exportInfo.getDownloadFileName());
 	}
@@ -398,7 +398,7 @@ public class ExportAdvanceListServiceImplTest {
 		final ExportAdvanceListServiceImpl spyComponent = Mockito.spy(this.exportAdvanceListServiceImpl);
 		Mockito.doReturn(expectedZipFilePath).when(spyComponent).zipFileNameList(Matchers.eq(filenameWithoutExtension), Matchers.anyListOf(String.class));
 		final FileExportInfo exportInfo = spyComponent.exportAdvanceGermplasmList(this.advancedListIds, this.studyName,
-				this.germplasmExportServiceImpl, AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString());
+				this.germplasmExportServiceImpl, AppConstants.EXPORT_ADVANCE_STUDY_EXCEL.getString());
 		final ArgumentCaptor<String> filenameCaptor = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(spyComponent).zipFileNameList(filenameCaptor.capture(), filenameListCaptor.capture());
 		Assert.assertEquals(filenameWithoutExtension, filenameCaptor.getValue());

@@ -2,10 +2,10 @@
     <div class="row" >
         <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
             <!-- title -->
-            <section-container collapsible="true" th:attr="heading=#{trial.managesettings.treatment.factors.title}">
+            <section-container collapsible="true" th:attr="heading=#{study.managesettings.treatment.factors.title}">
 
                 <section-container icon="bms-treatment-factors" name="content"
-                                   th:attr="heading=#{trial.managesettings.treatment.factors},help-tooltip=#{trial.managesettings.treatment.factors.notes}"
+                                   th:attr="heading=#{study.managesettings.treatment.factors},help-tooltip=#{study.managesettings.treatment.factors.notes}"
                                    add-variable="true" model-data="settings.details" variable-type="1809" callback="onAddVariable(result)"
                                    hide-variable="!trialMeasurement.hasMeasurement">
 
@@ -14,10 +14,10 @@
                             <thead>
                             <tr>
                                 <th>&nbsp;</th>
-                                <th th:text="#{trial.managesettings.treatment.factors.name}">Name</th>
-                                <th th:text="#{trial.managesettings.treatment.factors.description}">Description</th>
+                                <th th:text="#{study.managesettings.treatment.factors.name}">Name</th>
+                                <th th:text="#{study.managesettings.treatment.factors.description}">Description</th>
                                 <th>Treatment Level Factors</th>
-                                <th th:text="#{trial.managesettings.treatment.factors.level}">Levels</th>
+                                <th th:text="#{study.managesettings.treatment.factors.level}">Levels</th>
 
                             </tr>
                             </thead>
@@ -61,7 +61,7 @@
 
             <div id='treatment-levels' ng-hide="false" class="add_top_padding">
                 <!-- title -->
-                <div><strong class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors.specify.level}">Specify Treatment Factor Levels</strong></div>
+                <div><strong class="sub-content-heading" th:text="#{study.managesettings.treatment.factors.specify.level}">Specify Treatment Factor Levels</strong></div>
 
                 <div class='horizontal-level-item' ng-repeat="key in settings.details.keys() track by key">
                     <div class="row">
@@ -91,14 +91,14 @@
                         <div class="col-sm-6">
 
                             <div>
-                                <b th:text="#{trial.managesettings.treatment.factors.define.label}">Define the labels for this factor</b>:
+                                <b th:text="#{study.managesettings.treatment.factors.define.label}">Define the labels for this factor</b>:
                             </div>
                             <table class='factor-level-tbl table table-curved table-condensed'>
                                 <thead>
                                 <tr>
-                                    <th th:text="#{trial.managesettings.treatment.factors.level}">Level</th>
+                                    <th th:text="#{study.managesettings.treatment.factors.level}">Level</th>
                                     <th th:text="#{variable.details.scale}">Scale</th>
-                                    <th th:text="#{trial.managesettings.treatment.factors.label}">Label</th>
+                                    <th th:text="#{study.managesettings.treatment.factors.label}">Label</th>
                                 </tr>
                                 </thead>
                                 <tbody>

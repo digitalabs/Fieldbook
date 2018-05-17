@@ -23,7 +23,7 @@
 				<div class="btn-group">
                     <!-- Display Actions button in Summary view which will give option to Edit, Delete, Export Trial, Make Field Map as well as Create Labels. -->
 					<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-						<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+						<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;<span th:text="#{study.studydetails.actions}">Actions</span>
                 	</button>
 					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
                         <!-- Edit Trial: will open trial in details view and allow user to edit the trial -->
@@ -42,12 +42,12 @@
                         <!-- Make Field Map: will allow user to create Field Map from Summary view -->
 						<li>
 							<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
-							<a href="javascript: createFieldMap();" id="fieldmap-url-link" th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
+							<a href="javascript: createFieldMap();" id="fieldmap-url-link" th:text="#{study.studydetails.action.createFieldmap}">Make Field Map</a>
 						</li>
                         <!-- Create Labels -->
 						<li>
 							<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
-							<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
+							<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{study.studydetails.action.printLabels}">Print Labels</a>
 						</li>
 					</ul>
 				</div>
@@ -68,7 +68,7 @@
                     <span th:text="${basicDetail.value}" class="div-select-val "></span>
                     <span th:if="${basicDetail.variable.name == 'Field Map Created' and basicDetail.value == 'Yes'}">
                         <a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
-                        <a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link" th:text="#{nursery.nurserydetails.viewFieldMap}">View</a>
+                        <a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link" th:text="#{study.studydetails.viewFieldMap}">View</a>
                     </span>
                     <span th:if="${basicDetail.pairedVariable}">
                     	&nbsp;&nbsp;&nbsp;
@@ -85,7 +85,7 @@
                 <span class="bms-mgt-details fbk-trial-summary-icons"></span>
                 <img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}"/>
                 <img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}"/>
-                <strong class="sub-content-heading" th:text="#{fb.study.trialsettings}">STUDY SETTINGS</strong>
+                <strong class="sub-content-heading" th:text="#{fb.study.studysettings}">STUDY SETTINGS</strong>
             </label>
         </div>
         <div class="collapse col-md-12 trialSettings sectionContainer">
@@ -102,7 +102,7 @@
             </div>
             <!-- If trial has no settings variable found then display No Trial Settings -->
             <div th:if="*{managementDetails == null or #lists.isEmpty(managementDetails)}">
-                <div class="col-xs-12 col-md-12" th:text="#{no.available.trial.settings}">No Study Settings</div>
+                <div class="col-xs-12 col-md-12" th:text="#{no.available.study.settings}">No Study Settings</div>
             </div>
         </div>
 
@@ -112,7 +112,7 @@
                 <span class="bms-variates fbk-trial-summary-icons"></span>
                 <img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
                 <img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
-                <strong class="sub-content-heading" th:text="#{nursery.nurserydetails.variates}">SELECTION</strong>
+                <strong class="sub-content-heading" th:text="#{study.studydetails.variates}">SELECTION</strong>
             </label>
         </div>
         <div class="collapse selection col-md-12 sectionContainer">
@@ -145,7 +145,7 @@
             </div>
             <!-- If trial has no Selection variate then display No available trial selections -->
             <div th:if="*{selectionVariateDetails == null or #lists.isEmpty(selectionVariateDetails)}">
-                <div class="col-md-6 add_top_padding" th:text="#{no.available.trial.selection}">No available study selections</div>
+                <div class="col-md-6 add_top_padding" th:text="#{no.available.study.selection}">No available study selections</div>
             </div>
         </div>
         <br/>
@@ -157,7 +157,7 @@
                 <span class="bms-factors fbk-trial-summary-icons"></span>
                 <img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
                 <img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
-                <strong class="sub-content-heading" th:text="#{trial.trialdetails.germplasm.descriptors}">GERMPLASM DESCRIPTORS</strong>
+                <strong class="sub-content-heading" th:text="#{study.studydetails.germplasm.descriptors}">GERMPLASM DESCRIPTORS</strong>
             </label>
         </div>
         <div class="col-md-12 sectionContainer collapse germplasmDescriptors">
@@ -276,7 +276,7 @@
 
                 <!-- If trial has no Condition then display No available trial conditions -->
                 <div th:if="*{nurseryConditionDetails == null or #lists.isEmpty(nurseryConditionDetails)}">
-                    <div class="add_top_padding" th:text="#{no.available.trial.conditions}">No available study conditions</div>
+                    <div class="add_top_padding" th:text="#{no.available.study.conditions}">No available study conditions</div>
                 </div>
             </div>
 
@@ -289,7 +289,7 @@
                 <span class="bms-exp-design fbk-trial-summary-icons"></span>
                 <img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
                 <img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
-                <strong class="sub-content-heading" th:text="#{review.trial.experimental.design}">EXPERIMENTAL DESIGN</strong>
+                <strong class="sub-content-heading" th:text="#{review.study.experimental.design}">EXPERIMENTAL DESIGN</strong>
             </label>
         </div>
 
@@ -302,7 +302,7 @@
                 <div>
                     <!-- Display Sub-Header of Experimental Design: Design Parameters-->
                     <label  class="control-label">
-                        <strong class="sub-content-heading" th:text="#{review.trial.design.parameters}">Design Parameters</strong>
+                        <strong class="sub-content-heading" th:text="#{review.study.design.parameters}">Design Parameters</strong>
                     </label>
                 </div>
                 <div class="add_top_padding">
@@ -312,68 +312,68 @@
                     <table class="fbk-trial-summary-exp-design-section">
                         <tr>
                             <td>
-                                <strong th:text="#{review.trial.design.type}">Design type:</strong>
+                                <strong th:text="#{review.study.design.type}">Design type:</strong>
                                 <span th:text="*{experimentalDesignDetails.experimentalDesignDisplay}"></span>
                             </td>
                         </tr>
                         <tr th:if="*{experimentalDesignDetails.numberOfReplicates ne null}">
                             <td>
-                                <strong th:text="#{review.trial.number.of.replications}"></strong>
+                                <strong th:text="#{review.study.number.of.replications}"></strong>
                                 <span th:if="*{experimentalDesignDetails.numberOfReplicates ne null}"
                                       th:text="*{experimentalDesignDetails.numberOfReplicates.value}"></span>
                             </td>
                         </tr>
                         <tr th:if="*{experimentalDesignDetails.blockSize ne null}">
                             <td>
-                                <strong th:text="#{review.trial.block.size}"></strong>
+                                <strong th:text="#{review.study.block.size}"></strong>
                                 <span id="review-block-size" th:if="*{experimentalDesignDetails.blockSize ne null}"
                                       th:text="*{experimentalDesignDetails.blockSize.value}"></span>
                             </td>
                         </tr>
                         <tr th:if="*{experimentalDesignDetails.numberOfRowsInReps ne null}">
                             <td>
-                                <strong th:text="#{review.trial.rows.in.reps}"></strong>
+                                <strong th:text="#{review.study.rows.in.reps}"></strong>
                             <span th:if="*{experimentalDesignDetails.numberOfRowsInReps ne null}"
                                   th:text="*{experimentalDesignDetails.numberOfRowsInReps.value}"></span>
                             </td>
                         </tr>
                         <tr th:if="*{experimentalDesignDetails.numberOfColsInReps ne null}">
                             <td>
-                                <strong th:text="#{review.trial.cols.in.reps}"></strong>
+                                <strong th:text="#{review.study.cols.in.reps}"></strong>
                             <span th:if="*{experimentalDesignDetails.numberOfColsInReps ne null}"
                                   th:text="*{experimentalDesignDetails.numberOfColsInReps.value}"></span>
                             </td>
                         </tr>
                         <tr th:if="*{experimentalDesignDetails.replicationsMap ne null}">
                             <td>
-                                <strong th:text="#{review.trial.replication.arrangement}"></strong>
+                                <strong th:text="#{review.study.replication.arrangement}"></strong>
                                 <span th:text="*{experimentalDesignDetails.replicationsMapDisplay}"></span>
                             </td>
                         </tr>
                         <tr th:if="*{experimentalDesignDetails.numberOfRepsInCols ne null}">
                             <td>
-                                <strong th:text="#{review.trial.reps.in.column}"></strong>
+                                <strong th:text="#{review.study.reps.in.column}"></strong>
                             <span th:if="*{experimentalDesignDetails.numberOfRepsInCols ne null}"
                                   th:text="*{experimentalDesignDetails.numberOfRepsInCols.value}"></span>
                             </td>
                         </tr>
                         <tr th:if="*{experimentalDesignDetails.numberOfContiguousBlocksLatinize ne null}">
                             <td>
-                                <strong th:text="#{review.trial.number.contiguous.blocks.latinize}"></strong>
+                                <strong th:text="#{review.study.number.contiguous.blocks.latinize}"></strong>
                             <span th:if="*{experimentalDesignDetails.numberOfContiguousBlocksLatinize ne null}"
                                   th:text="*{experimentalDesignDetails.numberOfContiguousBlocksLatinize.value}"></span>
                             </td>
                         </tr>
                         <tr th:if="*{experimentalDesignDetails.numberOfContiguousRowsLatinize ne null}">
                             <td>
-                                <strong th:text="#{review.trial.number.contiguous.rows.latinize}"></strong>
+                                <strong th:text="#{review.study.number.contiguous.rows.latinize}"></strong>
                             <span th:if="*{experimentalDesignDetails.numberOfContiguousRowsLatinize ne null}"
                                   th:text="*{experimentalDesignDetails.numberOfContiguousRowsLatinize.value}"></span>
                             </td>
                         </tr>
                         <tr th:if="*{experimentalDesignDetails.numberOfContiguousColsLatinize ne null}">
                             <td>
-                                <strong th:text="#{review.trial.number.contiguous.cols.latinize}"></strong>
+                                <strong th:text="#{review.study.number.contiguous.cols.latinize}"></strong>
                             <span th:if="*{experimentalDesignDetails.numberOfContiguousColsLatinize ne null}"
                                   th:text="*{experimentalDesignDetails.numberOfContiguousColsLatinize.value}"></span>
                             </td>
@@ -399,20 +399,20 @@
                         </tr>
                         <tr>
                             <td>
-                                <strong th:text="#{review.trial.number.of.treatments}"></strong>
+                                <strong th:text="#{review.study.number.of.treatments}"></strong>
                                 <span id="review-treatment-count"></span>
                             </td>
                         </tr>
                         <tr id="row-review-number-of-blocks">
                             <td>
-                                <strong th:text="#{review.trial.number.of.blocks}"></strong>
+                                <strong th:text="#{review.study.number.of.blocks}"></strong>
                                 <span id="review-number-of-blocks"></span>
                             </td>
                         </tr>
                         <!-- Display ENTRY_NO(8230) in Treatment Factor and pass treatment factor's type id(1809) which will display Details, valid values and usage in popup -->
                         <tr>
                             <td>
-                                <strong th:text="#{review.trial.treatment.factor}"></strong>
+                                <strong th:text="#{review.study.treatment.factor}"></strong>
                                 <a th:if="*{factorsMap[8230] ne null}" th:text="*{factorsMap[8230].variable.name}"
                                    onclick="showBaselineTraitDetailsModal(8230,1809)" href="javascript:void(0);"></a>
                             </td>
@@ -420,7 +420,7 @@
                         <!-- Display REP_NO(8210) in Replicate Factor and pass Experimental design's type id(1810) which will display Details, valid values and usage in popup -->
                         <tr th:if="*{factorsMap[8210] ne null}">
                             <td>
-                                <strong th:text="#{review.trial.replicate.factor}"></strong>
+                                <strong th:text="#{review.study.replicate.factor}"></strong>
                                 <a th:if="*{factorsMap[8210] ne null}" href="javascript:void(0);"
                                    onclick="showBaselineTraitDetailsModal(8210,1810)" th:text="*{factorsMap[8210].variable.name}"></a>
                             </td>
@@ -428,7 +428,7 @@
                         <!-- Display BLOCK_NO(8220) in Block Factor and pass Experimental design's type id(1810) which will display Details, valid values and usage in popup -->
                         <tr th:if="*{factorsMap[8220] ne null}">
                             <td>
-                                <strong th:text="#{review.trial.block.factor}"></strong>
+                                <strong th:text="#{review.study.block.factor}"></strong>
                                 <a onclick="showBaselineTraitDetailsModal(8220,1810)" href="javascript:void(0);"
                                    th:if="*{factorsMap[8220] ne null}" th:text="*{factorsMap[8220].variable.name}"></a>
                             </td>
@@ -436,7 +436,7 @@
                         <!-- Display PLOT_NO(8200) in Plot Factor and pass Experimental design's type id(1810) which will display Details, valid values and usage in popup -->
                         <tr th:if="*{factorsMap[8200] ne null}">
                             <td>
-                                <strong th:text="#{review.trial.plot.factor}"></strong>
+                                <strong th:text="#{review.study.plot.factor}"></strong>
                                 <a onclick="showBaselineTraitDetailsModal(8200,1810)" href="javascript:void(0);"
                                    th:if="*{factorsMap[8200] ne null}" th:text="*{factorsMap[8200].variable.name}"></a>
                             </td>
@@ -444,7 +444,7 @@
                         <!-- Display ROW(8581) in Row Factor and pass Experimental design's type id(1810) which will display Details, valid values and usage in popup -->
                         <tr th:if="*{factorsMap[8581] ne null}">
                             <td>
-                                <strong th:text="#{review.trial.row.factor}"></strong>
+                                <strong th:text="#{review.study.row.factor}"></strong>
                                 <a onclick="showBaselineTraitDetailsModal(8581,1810)" href="javascript:void(0);"
                                    th:if="*{factorsMap[8581] ne null}" th:text="*{factorsMap[8581].variable.name}"></a>
                             </td>
@@ -452,7 +452,7 @@
                         <!-- Display COL(8582) in Column Factor and pass Experimental design's type id(1810) which will display Details, valid values and usage in popup -->
                         <tr th:if="*{factorsMap[8582] ne null}">
                             <td>
-                                <strong th:text="#{review.trial.col.factor}"></strong>
+                                <strong th:text="#{review.study.col.factor}"></strong>
                                 <a onclick="showBaselineTraitDetailsModal(8582,1810)" href="javascript:void(0);"
                                    th:if="*{factorsMap[8582] ne null}" th:text="*{factorsMap[8582].variable.name}"></a>
                             </td>
@@ -469,7 +469,7 @@
                 <img height="25" th:src="@{/static/img/baseline-traits.png}" class="lbl-img" />
                 <img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
                 <img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
-                <strong class="sub-content-heading" th:text="#{trial.trialdetails.traits}">TRAITS</strong>
+                <strong class="sub-content-heading" th:text="#{study.studydetails.traits}">TRAITS</strong>
             </label>
         </div>
 
@@ -511,12 +511,12 @@
                 <img th:src="@{/static/img/matching-nurseries.png}" />
                 <img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" style="display:none; margin-left: -10px" />
                 <img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" style=" margin-left: -7px"/>
-                <strong class="sub-content-heading" th:text="#{nursery.nurserydetails.datasets}">DATASETS</strong>
+                <strong class="sub-content-heading" th:text="#{study.studydetails.datasets}">DATASETS</strong>
             </label>
             <div class="collapse datasetDetails">
                 <div class="col-xs-12 col-md-12">
                     <label class="control-label">
-                        <strong><span th:text="#{nursery.nurserydetails.datasets.choose}"></span></strong>&nbsp;&nbsp;
+                        <strong><span th:text="#{study.studydetails.datasets.choose}"></span></strong>&nbsp;&nbsp;
                     </label>
                     <select style="width: 350px" id="dataset-selection">
                     </select>

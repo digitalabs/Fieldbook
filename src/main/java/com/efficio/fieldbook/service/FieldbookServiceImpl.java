@@ -197,7 +197,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 					if (mode == VariableType.STUDY_DETAIL.getId()) {
 						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(),
-								AppConstants.FILTER_NURSERY_FIELDS.getString())
+								AppConstants.FILTER_STUDY_FIELDS.getString())
 								|| ref.getId() == TermId.DATASET_NAME.getId()
 								|| ref.getId() == TermId.DATASET_TITLE.getId()
 								|| ref.getId() == TermId.DATASET_TYPE.getId()
@@ -213,7 +213,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 						}
 					} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
 						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(),
-								AppConstants.HIDE_TRIAL_VARIABLES.getString())) {
+								AppConstants.HIDE_STUDY_VARIABLES.getString())) {
 							continue;
 						}
 					} else {
@@ -548,7 +548,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		}
 
 		if (TermId.BREEDING_METHOD_ID.getId() == id) {
-			return this.getBreedingMethodById(valueId.intValue());
+			return this.getBreedingMethodById(valueId != null ? valueId.intValue() : 0);
 		} else if (TermId.BREEDING_METHOD_CODE.getId() == id) {
 			return this.getBreedingMethodByCode(valueOrId);
 		} else if (TermId.BREEDING_METHOD.getId() == id) {
@@ -1011,7 +1011,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 					if (data == null) {
 
 						String actualNameVal = "";
-						Integer idTerm;
+						final Integer idTerm;
 						String pairId = idNameMap.get(String.valueOf(variable.getTermId()));
 						if (pairId == null) {
 							pairId = nameIdMap.get(String.valueOf(variable.getTermId()));

@@ -162,7 +162,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		String fileName = "";
 		String outputFilename = "";
 		final Reporter rep;
-		final Map<String, Object> results = new HashMap<String, Object>();
+		final Map<String, Object> results = new HashMap<>();
 		try {
 
 			rep = this.reportService.getStreamReport(reportCode, Integer.parseInt(studyId),
@@ -278,7 +278,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			FieldbookUtil.setColumnOrderingOnWorkbook(userSelection.getWorkbook(), data.get("columnOrders"));
 			// By default the content type will be ZIP, unless only 1 instance being exported
 			response.setContentType(FileUtils.MIME_ZIP);
-			if (AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType) {
+			if (AppConstants.EXPORT_STUDY_EXCEL.getInt() == exportType) {
 				final List<Integer> visibleColumns = this.getVisibleColumns(data.get("visibleColumns"));
 				fileExportInfo = this.excelExportStudyService.export(userSelection.getWorkbook(), studyName, instances, visibleColumns);
 				if (instances != null && instances.size() == 1) {
@@ -397,8 +397,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/retrieve/advanced/lists/{studyId}", method = RequestMethod.GET)
 	public String getAdvanceListsOfStudy(@PathVariable final int studyId, final Model model, final HttpSession session) {
 
-		List<GermplasmList> germplasmList = new ArrayList<>();
-		germplasmList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(studyId), GermplasmListType.ADVANCED);
+		List<GermplasmList> germplasmList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.ADVANCED);
 		model.addAttribute("advancedList", germplasmList);
 		return super.showAjaxPage(model, ExportStudyController.DISPLAY_ADVANCE_GERMPLASM_LIST);
 	}
@@ -421,7 +420,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		final FileExportInfo exportInfo = this.exportAdvanceListItems(exportType, advancedListIds, studyDetails);
 		final String outputFilename = exportInfo.getFilePath();
-		final int extensionIndex = outputFilename.lastIndexOf(".");
+		final int extensionIndex = outputFilename.lastIndexOf('.');
 		final String extensionName = outputFilename.substring(extensionIndex, outputFilename.length());
 		String contentType = "";
 		if (extensionName.indexOf(AppConstants.ZIP_FILE_SUFFIX.getString()) != -1) {
@@ -461,8 +460,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	}
 
 	protected FileExportInfo exportAdvanceListItems(final String exportType, final String advancedListIds, final StudyDetails studyDetails) {
-		if (AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(exportType)
-				|| AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString().equalsIgnoreCase(exportType)) {
+		if (AppConstants.EXPORT_ADVANCE_STUDY_EXCEL.getString().equalsIgnoreCase(exportType)
+				|| AppConstants.EXPORT_ADVANCE_STUDY_CSV.getString().equalsIgnoreCase(exportType)) {
 			return this.exportAdvanceListService.exportAdvanceGermplasmList(advancedListIds, studyDetails.getStudyName(),
 					this.germplasmExportService, exportType);
 		}
@@ -485,7 +484,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final String outputFilename = exportInfo.getFilePath();
 		final String contentType = FileUtils.MIME_MS_EXCEL;
 		response.setContentType(contentType);
-		final Map<String, Object> results = new HashMap<String, Object>();
+		final Map<String, Object> results = new HashMap<>();
 		results.put(ExportStudyController.OUTPUT_FILENAME, outputFilename);
 		results.put(ExportStudyController.FILENAME, SettingsUtil.cleanSheetAndFileName(exportInfo.getDownloadFileName()));
 		results.put(ExportStudyController.CONTENT_TYPE, contentType);

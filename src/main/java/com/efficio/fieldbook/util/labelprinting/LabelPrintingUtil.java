@@ -248,8 +248,6 @@ public class LabelPrintingUtil {
 				buffer.append(fieldMapLabel.getStartYear());
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()) {
 				buffer.append(fieldMapLabel.getSeason());
-			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()) {
-				buffer.append(moreFieldInfo.get(LabelPrintingServiceImpl.SELECTED_NAME));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_STUDY_NAME.getInt()) {
 				buffer.append(moreFieldInfo.get(LabelPrintingServiceImpl.SELECTED_NAME));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()) {

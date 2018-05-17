@@ -113,26 +113,6 @@ public abstract class AbstractBaseFieldbookController {
 		return "";
 	}
 
-	public Tool getNurseryTool() {
-		Tool tool = null;
-		try {
-			tool = this.workbenchService.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB.getString());
-		} catch (final MiddlewareQueryException e) {
-			AbstractBaseFieldbookController.LOG.error(e.getMessage(), e);
-		}
-		return tool;
-	}
-
-	public Tool getTrialTool() {
-		Tool tool = null;
-		try {
-			tool = this.workbenchService.getToolWithName(AppConstants.TOOL_NAME_TRIAL_MANAGER_WEB.getString());
-		} catch (final MiddlewareQueryException e) {
-			AbstractBaseFieldbookController.LOG.error(e.getMessage(), e);
-		}
-		return tool;
-	}
-
 	/**
 	 * Base functionality for displaying the page.
 	 * 
@@ -206,7 +186,7 @@ public abstract class AbstractBaseFieldbookController {
 		this.paginationListSelection = paginationListSelection;
 	}
 
-	public void setContextUtil(ContextUtil contextUtil) {
+	public void setContextUtil(final ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
 	}
 
@@ -233,7 +213,7 @@ public abstract class AbstractBaseFieldbookController {
 		}
 	}
 
-	public void setVariableDataManager(OntologyVariableDataManager variableDataManager) {
+	public void setVariableDataManager(final OntologyVariableDataManager variableDataManager) {
 		this.variableDataManager = variableDataManager;
 	}
 

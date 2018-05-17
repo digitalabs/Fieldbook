@@ -667,7 +667,7 @@ public class SettingsUtil {
 									variable,
 									possibleValues,
 									HtmlUtils.htmlUnescape(condition.getValue()),
-									SettingsUtil.isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
+									SettingsUtil.isSettingVariableDeletable(stdVar, AppConstants.CREATE_STUDY_REQUIRED_FIELDS.getString()));
 					final PhenotypicType type =
 							StringUtils.isEmpty(HtmlUtils.htmlUnescape(variable.getRole())) ? null : PhenotypicType
 									.getPhenotypicTypeByName(HtmlUtils.htmlUnescape(variable.getRole()));
@@ -694,7 +694,7 @@ public class SettingsUtil {
 					variable.setPSMRFromStandardVariable(standardVariable, condition.getRole());
 					final Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(condition.getValue());
 
-					if (!SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())
+					if (!SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_STUDY_FIELDS.getString())
 							&& !SettingsUtil.idCounterPartInList(stdVar, idCodeNameMap, dataset.getConditions())) {
 						if (enumerationByDescription != null) {
 							if (standardVariable.getId() != TermId.NURSERY_TYPE.getId()) {
@@ -932,13 +932,13 @@ public class SettingsUtil {
 							HtmlUtils.htmlUnescape(variable.getMethod()),
 							PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 
-					if (!SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())
-							|| !SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString())) {
+					if (!SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_STUDY_FIELDS.getString())
+							|| !SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_STUDY_VARIABLE_DBCV_FIELDS.getString())) {
 						variable.setCvTermId(stdVar);
 						final List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, stdVar);
 						final SettingDetail settingDetail = new SettingDetail(variable, possibleValues,
 								HtmlUtils.htmlUnescape(condition.getValue()),
-								SettingsUtil.isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
+								SettingsUtil.isSettingVariableDeletable(stdVar, AppConstants.CREATE_STUDY_REQUIRED_FIELDS.getString()));
 
 						settingDetail.setPossibleValuesToJson(possibleValues);
 						final List<ValueReference> possibleValuesFavorite =
@@ -975,7 +975,7 @@ public class SettingsUtil {
 						if (!SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
 							variable.setCvTermId(stdVar);
 							final SettingDetail settingDetail = new SettingDetail(variable, null, null, SettingsUtil
-									.isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString()));
+									.isSettingVariableDeletable(stdVar, AppConstants.CREATE_STUDY_PLOT_REQUIRED_FIELDS.getString()));
 							plotsLevelList.add(settingDetail);
 						}
 					}
@@ -1007,12 +1007,12 @@ public class SettingsUtil {
 							HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
 							HtmlUtils.htmlUnescape(variable.getMethod()),
 							PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
-					if (!SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString())) {
+					if (!SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_STUDY_ENVIRONMENT_FIELDS.getString())) {
 						variable.setCvTermId(stdVar);
 
 						final List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, stdVar);
 						final SettingDetail settingDetail = new SettingDetail(variable, possibleValues, null, SettingsUtil
-								.isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()));
+								.isSettingVariableDeletable(stdVar, AppConstants.CREATE_STUDY_ENVIRONMENT_REQUIRED_FIELDS.getString()));
 
 						settingDetail.setPossibleValuesToJson(possibleValues);
 						final List<ValueReference> possibleValuesFavorite =

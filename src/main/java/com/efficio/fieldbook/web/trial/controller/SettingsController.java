@@ -622,10 +622,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			this.userSelection.setRemovedConditions(new ArrayList<SettingDetail>());
 		}
 		// remove basic details & hidden variables from study level variables
-		final String variableIds = AppConstants.FIXED_NURSERY_VARIABLES.getString() + AppConstants.CHECK_VARIABLES.getString();
+		final String variableIds = AppConstants.FIXED_STUDY_VARIABLES.getString() + AppConstants.CHECK_VARIABLES.getString();
 		SettingsUtil.removeBasicDetailsVariables(this.userSelection.getStudyLevelConditions(), variableIds);
 
-		this.removeHiddenVariables(this.userSelection.getStudyLevelConditions(), AppConstants.HIDE_NURSERY_FIELDS.getString());
+		this.removeHiddenVariables(this.userSelection.getStudyLevelConditions(), AppConstants.HIDE_STUDY_FIELDS.getString());
 		this.removeRemovedVariablesFromSession(this.userSelection.getStudyLevelConditions(), this.userSelection.getRemovedConditions());
 		this.removeHiddenVariables(this.userSelection.getPlotsLevelList(), AppConstants.HIDE_PLOT_FIELDS.getString());
 		this.removeRemovedVariablesFromSession(this.userSelection.getPlotsLevelList(), this.userSelection.getRemovedFactors());

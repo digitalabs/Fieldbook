@@ -22,14 +22,14 @@
 							</div>
 						</div>
 						<div class="form-group">
-								<label class="control-label col-xs-3"><b><span th:text="#{nursery.manager.manage.check.types.code}"></span> <span class="required">*</span></b></label>
+								<label class="control-label col-xs-3"><b><span th:text="#{study.manager.manage.check.types.code}"></span> <span class="required">*</span></b></label>
 
 								<div class="col-xs-8">
 									<input id="comboCheckCode" th:field="*{manageCheckCode}" type="hidden" class="form-control select2" placeholder=""/>
 								</div>
 						</div>
 						<div class="form-group">
-								<label class="control-label col-xs-3"><b><span th:text="#{nursery.manager.manage.check.types.value}"></span> <span class="required">*</span></b></label>
+								<label class="control-label col-xs-3"><b><span th:text="#{study.manager.manage.check.types.value}"></span> <span class="required">*</span></b></label>
 								<div class="col-xs-8">
 									<input type="text" th:field="*{manageCheckValue}" class="form-control" />
 								</div>
@@ -49,9 +49,9 @@
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
 		//<![CDATA[
-		var codeRequiredError = /*[[#{nursery.manager.manage.checks.code.required}]]*/;
-		var valueRequiredError = /*[[#{nursery.manager.manage.checks.value.required}]]*/;
-		var valueNotUniqueError = /*[[#{nursery.manager.manage.checks.value.not.unique}]]*/;
+		var codeRequiredError = /*[[#{study.manager.manage.checks.code.required}]]*/;
+		var valueRequiredError = /*[[#{study.manager.manage.checks.value.required}]]*/;
+		var valueNotUniqueError = /*[[#{study.manager.manage.checks.value.not.unique}]]*/;
 		var noCheckSelected = /*[[#{nursery.manager.manage.checks.no.check.selected}]]*/;
 		//]]>
 	</script>

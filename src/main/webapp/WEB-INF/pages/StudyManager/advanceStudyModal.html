@@ -14,7 +14,7 @@
 					<div class="modal-body">
 						<div class="row form-group">
 							<div class="col-xs-11 col-md-11" id="advanceNurseryModalHeader">
-								<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{nursery.nurserydetails.action.advance}"></label>
+								<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{study.studydetails.action.advance}"></label>
 							</div>
                             <div class="col-xs-11 col-md-11" id="advanceTrialModalHeader">
 								<label class="modal-title fbk-modal-title" th:if="${advanceType} == 'sample'"
@@ -55,7 +55,7 @@
 									</span>
 								</label>
 								<label th:if="${advanceType} == 'sample'" class="control-label col-xs-6">
-									<span class="label-bold" th:text="#{trial.advance.sample.breeding.method.label}">
+									<span class="label-bold" th:text="#{study.advance.sample.breeding.method.label}">
 										Breeding method
 									</span>
 								</label>
@@ -179,14 +179,14 @@
 							<!-- Functionality may be added in the future -->
 							<div class="row form-group">
 								<label class="control-label col-xs-12 add_top_padding"><strong class="sub-content-heading"
-																							   th:text="#{trial.advance.plants.label}">PLANTS</strong><span
+																							   th:text="#{study.advance.plants.label}">PLANTS</strong><span
 									class="required">*</span>
 								</label>
 							</div>
 							<div class="row form-group">
 								<label class="control-label col-xs-12 add_top_padding">
 									<input type="radio" checked="checked" th:disabled="true"/> <span
-									th:text="#{trial.advance.plants.all.radio}">All plants are selected</span>
+									th:text="#{study.advance.plants.all.radio}">All plants are selected</span>
 								</label>
 							</div>
 						</div>

@@ -2,7 +2,7 @@
 <div class="row" >
 	<div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
 
-		<section-container th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
+		<section-container th:attr="heading=#{study.managesettings.germplasm.factors.label}"
 						   collapsible="true">
 
 			<span name="action-buttons">
@@ -14,7 +14,7 @@
                 </span>
             </span>
 
-			<section-container icon="bms-factors" name="content" th:attr="heading=#{trial.trialdetails.germplasm.descriptors},help-tooltip=#{trial.reminder.add.germplasm.factors}">
+			<section-container icon="bms-factors" name="content" th:attr="heading=#{study.studydetails.germplasm.descriptors},help-tooltip=#{study.reminder.add.germplasm.factors}">
 				<display-settings hide-delete="trialMeasurement.hasMeasurement" settings="settings" variable-type="1804"
 								  name="content"></display-settings>
 			</section-container>
@@ -30,7 +30,7 @@
 		<label class="control-label" th:text="#{study.edit.study.overwrite.germplasm.list.message}">
 		</label>
 		&nbsp;&nbsp;&nbsp;
-		<button class="btn btn-primary show-germplasm-details"  th:text="#{trial.germplasm.replace}">Overwrite</button>
+		<button class="btn btn-primary show-germplasm-details"  th:text="#{study.germplasm.replace}">Overwrite</button>
 	</div>
 </div>
 <div class="row form-group observation-exists-notif">
@@ -54,7 +54,7 @@
 			<div  class="pull-right">
 				 <div class="btn-group">
 					<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
-						<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+						<span th:text="#{study.studydetails.actions}">Actions</span>
 					</button>
 					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
 						<li>

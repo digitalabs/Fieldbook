@@ -5,7 +5,7 @@
 			<div class="modal-body">
 				<div class="row form-group">
 					<div class="col-xs-11 col-md-11">
-						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{trial.sample.header}">Create sample
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{study.sample.header}">Create sample
 							list</label>
 					</div>
 					<div class="col-xs-1 col-md-1">
@@ -19,9 +19,9 @@
 				<div class="row form-group">
 					<div class="col-xs-11 col-md-11">
 						<br></br>
-						<label class="modal-title fbk-modal-title" id="sample-heading-modal" th:text="#{trial.sample.save.list.header}">SAVE SAMPLE LIST</label>
+						<label class="modal-title fbk-modal-title" id="sample-heading-modal" th:text="#{study.sample.save.list.header}">SAVE SAMPLE LIST</label>
 						<div>
-							<label class=""><em th:utext="#{trial.sample.list.mandatory.fields}">* Indicates mandatory
+							<label class=""><em th:utext="#{study.sample.list.mandatory.fields}">* Indicates mandatory
 								fields</em></label>
 						</div>
 					</div>
@@ -55,7 +55,7 @@
 						<div class="form-horizontal form-group">
 							<div id="addSampleFolderDiv" class="fbk-hide">
 								<div class="col-xs-4 col-md-4 nopadding">
-									<label class="control-label label-bold" th:utext="#{browse.nursery.add.folder.name}">Folder Name: <span class="required">*</span></label>
+									<label class="control-label label-bold" th:utext="#{browse.study.add.folder.name}">Folder Name: <span class="required">*</span></label>
 								</div>
 								<div class="col-xs-8 col-md-8 nopadding">
 									<div class="input-group">
@@ -74,7 +74,7 @@
 							</div>
 							<div id="renameSampleFolderDiv" class="fbk-hide">
 								<div class="col-xs-4 col-md-4 nopadding">
-									<label class="control-label  label-bold" th:utext="#{browse.nursery.rename.folder.input.label}">Folder
+									<label class="control-label  label-bold" th:utext="#{browse.study.rename.folder.input.label}">Folder
 										Name: <span class="required">*</span></label>
 								</div>
 								<div class="col-xs-8 col-md-8 nopadding">
@@ -170,7 +170,7 @@
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
 					<div class="col-xs-11 col-md-11">
-						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.delete.folder.name}"></label>
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.study.delete.folder.name}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button id="closeDeleteFolderModal" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('deleteSampleListFolderModal')"/>

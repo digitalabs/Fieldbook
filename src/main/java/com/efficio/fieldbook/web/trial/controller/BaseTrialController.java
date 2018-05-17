@@ -306,7 +306,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 	protected TabInfo prepareGermplasmTabInfo(final List<MeasurementVariable> measurementVariables, final boolean isUsePrevious) {
 		final List<SettingDetail> detailList = new ArrayList<>();
-		final List<Integer> requiredIDList = this.buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
+		final List<Integer> requiredIDList = this.buildVariableIDList(AppConstants.CREATE_STUDY_PLOT_REQUIRED_FIELDS.getString());
 
 		for (final MeasurementVariable var : measurementVariables) {
 			// this condition is required so that treatment factors are not
@@ -460,8 +460,8 @@ public abstract class BaseTrialController extends SettingsController {
 		final List<SettingDetail> managementDetailList = new ArrayList<>();
 		final List<SettingDetail> trialConditionsList = new ArrayList<>();
 		final List<Integer> hiddenFields = this.buildVariableIDList(
-				AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString() + "," + AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
-		final List<Integer> requiredFields = this.buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString());
+				AppConstants.HIDE_STUDY_ENVIRONMENT_FIELDS.getString() + "," + AppConstants.HIDE_STUDY_VARIABLE_DBCV_FIELDS.getString());
+		final List<Integer> requiredFields = this.buildVariableIDList(AppConstants.CREATE_STUDY_ENVIRONMENT_REQUIRED_FIELDS.getString());
 		final List<Integer> filterFields = this.buildVariableIDList(AppConstants.EXP_DESIGN_VARIABLES.getString());
 		final Map<String, MeasurementVariable> factorsMap = SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
 		for (final MeasurementVariable var : workbook.getTrialConditions()) {
@@ -625,7 +625,7 @@ public abstract class BaseTrialController extends SettingsController {
 			final StandardVariable variable = this.ontologyService.getStandardVariable(cvTermId, this.contextUtil.getCurrentProgramUUID());
 
 			final List<StandardVariable> pairs = this.fieldbookMiddlewareService.getPossibleTreatmentPairs(variable.getId(),
-					variable.getProperty().getId(), AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
+					variable.getProperty().getId(), AppConstants.CREATE_STUDY_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
 
 			for (final StandardVariable item : pairs) {
 				output.add(this.createSettingDetail(item.getId(), null, VariableType.TREATMENT_FACTOR.getRole().name()));
@@ -689,7 +689,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 		final String studyOwnerPersonName = this.fieldbookService.getPersonByUserId(studyOwnerPersonId);
 
-		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
+		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_STUDY_REQUIRED_FIELDS.getString());
 
 		for (final Integer initialSettingID : initialSettingIDs) {
 			try {
@@ -727,7 +727,7 @@ public abstract class BaseTrialController extends SettingsController {
 		final String folderName;
 
 		if (folderId == 1) {
-			folderName = AppConstants.TRIALS.getString();
+			folderName = AppConstants.STUDIES.getString();
 		} else {
 			folderName = this.fieldbookMiddlewareService.getFolderNameById(folderId);
 		}
@@ -770,8 +770,8 @@ public abstract class BaseTrialController extends SettingsController {
 		final Map<String, String> trialValues = new HashMap<>();
 		final List<SettingDetail> details = new ArrayList<>();
 
-		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
-		final List<Integer> basicDetailIDList = this.buildVariableIDList(AppConstants.HIDE_TRIAL_FIELDS.getString());
+		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_STUDY_VARIABLE_DBCV_FIELDS.getString());
+		final List<Integer> basicDetailIDList = this.buildVariableIDList(AppConstants.HIDE_STUDY_FIELDS.getString());
 		final Map<String, MeasurementVariable> settingsMap = SettingsUtil.buildMeasurementVariableMap(measurementVariables);
 		for (final MeasurementVariable var : measurementVariables) {
 			if (!basicDetailIDList.contains(var.getTermId())) {
@@ -822,7 +822,7 @@ public abstract class BaseTrialController extends SettingsController {
 		final ExpDesignData data = new ExpDesignData();
 		final List<ExpDesignDataDetail> detailList = new ArrayList<>();
 
-		final List<Integer> ids = this.buildVariableIDList(AppConstants.CREATE_TRIAL_EXP_DESIGN_DEFAULT_FIELDS.getString());
+		final List<Integer> ids = this.buildVariableIDList(AppConstants.CREATE_STUDY_EXP_DESIGN_DEFAULT_FIELDS.getString());
 		for (final Integer id : ids) {
 			// PLOT, REP, BLOCK, ENTRY NO
 			final StandardVariable stdvar =

@@ -23,8 +23,7 @@ import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitialize
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
 import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
-import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.efficio.fieldbook.web.trial.service.ImportGermplasmFileService;
 import com.google.common.collect.Lists;
 import org.generationcp.commons.data.initializer.ImportedGermplasmTestDataInitializer;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -100,9 +99,6 @@ public class ImportGermplasmListControllerTest {
 
 	@Mock
 	private MergeCheckService mergeCheckService;
-
-	@Mock
-	private MeasurementsGeneratorService measurementsGeneratorService;
 
 	@Mock
 	private Workbook workbook;

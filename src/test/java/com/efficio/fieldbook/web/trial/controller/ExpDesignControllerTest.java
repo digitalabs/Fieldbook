@@ -85,7 +85,7 @@ public class ExpDesignControllerTest {
 	@Test
 	public void testRetrieveDesignTypes() {
 		final List<DesignTypeItem> designTypes = this.expDesignController.retrieveDesignTypes();
-		Assert.assertEquals("5 core design types are expected to be returned.", 5, designTypes.size());
+		Assert.assertEquals("6 core design types are expected to be returned.", 6, designTypes.size());
 	}
 
 	@Test

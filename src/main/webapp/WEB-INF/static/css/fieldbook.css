@@ -566,13 +566,13 @@ tr.trialInstance {
 .help-tooltip-col {
     margin-top: 7px;
 }
-.help-tooltip, .help-tooltip-nursery {
+.help-tooltip, .help-tooltip-study {
     color: #7D7D7D;
     font-size: 13pt;
     vertical-align: middle;
     cursor: pointer;
 }
-.help-tooltip-nursery-advance{
+.help-tooltip-study-advance{
     cursor: pointer;
 }
 .germplasm-list-table, .germplasm-measurement-list-table, .check-germplasm-list-table,

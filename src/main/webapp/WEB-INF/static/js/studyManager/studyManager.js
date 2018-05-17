@@ -440,8 +440,8 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 				}).on('change', function() {
 					if ($('.breeding-method-tooltip')) {
 						$('.breeding-method-tooltip').attr('title', $(name).select2('data').description);
-						$('.help-tooltip-nursery').tooltip('destroy');
-						$('.help-tooltip-nursery').tooltip();
+						$('.help-tooltip-study').tooltip('destroy');
+						$('.help-tooltip-study').tooltip();
 						if ($(name).select2('data') != null && $(name).select2('data').id === '0') {
 							$('.breeding-method-tooltip').addClass('fbk-hide');
 						} else {

@@ -1111,8 +1111,8 @@ function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestio
 		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
 		if ($('#harvestloc-tooltip')) {
 			$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
-			$('.help-tooltip-nursery-advance').tooltip('destroy');
-			$('.help-tooltip-nursery-advance').tooltip();
+			$('.help-tooltip-study-advance').tooltip('destroy');
+			$('.help-tooltip-study-advance').tooltip();
 		}
 	});
 }
@@ -1144,8 +1144,8 @@ function initializeHarvestLocationBreedingFavoritesSelect2(locationSuggestionsBr
 		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdBreedingFavorites')).select2('data').abbr);
 		if ($('#harvestloc-tooltip')) {
 			$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('harvestLocationIdBreedingFavorites')).select2('data').abbr);
-			$('.help-tooltip-nursery-advance').tooltip('destroy');
-			$('.help-tooltip-nursery-advance').tooltip();
+			$('.help-tooltip-study-advance').tooltip('destroy');
+			$('.help-tooltip-study-advance').tooltip();
 		}
 	});
 }
@@ -1177,8 +1177,8 @@ function initializeHarvestLocationBreedingSelect2(locationSuggestionsBreeding, l
 		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdBreeding')).select2('data').abbr);
 		if ($('#harvestloc-tooltip')) {
 			$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('harvestLocationIdBreeding')).select2('data').abbr);
-			$('.help-tooltip-nursery-advance').tooltip('destroy');
-			$('.help-tooltip-nursery-advance').tooltip();
+			$('.help-tooltip-study-advance').tooltip('destroy');
+			$('.help-tooltip-study-advance').tooltip();
 		}
 	});
 }
@@ -1210,8 +1210,8 @@ function initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSug
 		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').abbr);
 		if ($('#harvestloc-tooltip')) {
 			$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').abbr);
-			$('.help-tooltip-nursery-advance').tooltip('destroy');
-			$('.help-tooltip-nursery-advance').tooltip();
+			$('.help-tooltip-study-advance').tooltip('destroy');
+			$('.help-tooltip-study-advance').tooltip();
 		}
 	});
 }
@@ -1243,8 +1243,8 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestionsObj, method
 			$('#' + getJquerySafeId('advanceBreedingMethodId')).val($('#' + getJquerySafeId(methodId)).select2('data').id);
 			if ($('#method-tooltip')) {
 				$('#method-tooltip').attr('title', $('#' + getJquerySafeId(methodId)).select2('data').tooltip);
-				$('.help-tooltip-nursery-advance').tooltip('destroy');
-				$('.help-tooltip-nursery-advance').tooltip();
+				$('.help-tooltip-study-advance').tooltip('destroy');
+				$('.help-tooltip-study-advance').tooltip();
 			}
 			$('#' + getJquerySafeId('advanceBreedingMethodId')).trigger('change');
 		}

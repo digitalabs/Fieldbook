@@ -2,7 +2,7 @@
 
 $(document).ready(function() {
 	$('.help-tooltip').tooltip();
-	$('.help-tooltip-nursery').tooltip();
+	$('.help-tooltip-study').tooltip();
 	//this would handle the closing of modal since some modal window wont close on esc
 	$('body').keydown(function(event) {
 		if (event.keyCode === 27) {

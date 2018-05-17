@@ -380,7 +380,7 @@ public class AdvancingControllerTest {
         Model model = new ExtendedModelMap();
 
         String templateUrl = this.advancingController.showAdvanceNursery(form,null,model,this.request);
-        Assert.assertEquals("NurseryManager/saveAdvanceNursery",templateUrl);
+        Assert.assertEquals("NurseryManager/saveAdvanceStudy",templateUrl);
         Map<String,Object> modelMap = model.asMap();
         List<Map<String, Object>> listOfGermPlasm = (List<Map<String, Object>>)modelMap.get("advanceDataList");
         Assert.assertEquals(10,listOfGermPlasm.size());
@@ -418,7 +418,7 @@ public class AdvancingControllerTest {
 
         String templateUrl = this.advancingController.deleteAdvanceNurseryEntries(form,null,model,this.request);
 
-        Assert.assertEquals("NurseryManager/saveAdvanceNursery",templateUrl);
+        Assert.assertEquals("NurseryManager/saveAdvanceStudy",templateUrl);
         Map<String,Object> modelMap = model.asMap();
         List<Map<String, Object>> listOfGermPlasm = (List<Map<String, Object>>)modelMap.get("advanceDataList");
         Assert.assertEquals(7,listOfGermPlasm.size());

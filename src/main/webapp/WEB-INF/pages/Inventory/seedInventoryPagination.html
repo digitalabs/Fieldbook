@@ -10,7 +10,7 @@
 	 </div>
 
 	 <!-- case 2: advanced view of the importedGermplasm -->
-	 <div  class="advance-nursery-list-table" th:if="*{germplasmList != null and not #lists.isEmpty(germplasmList)}">
+	 <div  class="advance-study-list-table" th:if="*{germplasmList != null and not #lists.isEmpty(germplasmList)}">
 		 <table th:id="'inventory-table' + *{listId}" th:if="*{not #lists.isEmpty(germplasmList)}" 
 		 class="table-curved table-condensed final-advance-list">
 		   <thead>

@@ -1233,16 +1233,16 @@ a.fbk-edit-experiment{
     opacity: 0.5;
 }
 
-.advance-nursery-list-table table {
+.advance-study-list-table table {
     width: 100%;
 }
 
-.advance-nursery-list-table table th, .advance-nursery-list-table table td{
+.advance-study-list-table table th, .advance-study-list-table table td{
     text-align: left;
     vertical-align: middle
 }
-table th.fbk-review-advance-check-box,table td.fbk-review-advance-check-box, .advance-nursery-list-table table td.fbk-advance-check-box,
-.advance-nursery-list-table table th.fbk-advance-check-box, .fbk-advance-check-box, .fbk-export-select-instance-check-box{
+table th.fbk-review-advance-check-box,table td.fbk-review-advance-check-box, .advance-study-list-table table td.fbk-advance-check-box,
+.advance-study-list-table table th.fbk-advance-check-box, .fbk-advance-check-box, .fbk-export-select-instance-check-box{
     text-align: center;
 }
 .enable-pointer-events {

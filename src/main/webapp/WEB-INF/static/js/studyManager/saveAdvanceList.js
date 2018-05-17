@@ -239,8 +239,8 @@ var SaveAdvanceList = {};
 
     // Select / Unselect checked entries while moving one page to another
     SaveAdvanceList.setSelectedEntries = function () {
-        $('[type="checkbox"]:not(:checked)', $('.advance-nursery-list-table .advance-germplasm-items').DataTable().rows().nodes()).parent().parent().removeClass('selected');
-        $('[type="checkbox"]:checked', $('.advance-nursery-list-table .advance-germplasm-items').DataTable().rows().nodes()).parent().parent().addClass('selected');
+        $('[type="checkbox"]:not(:checked)', $('.advance-study-list-table .advance-germplasm-items').DataTable().rows().nodes()).parent().parent().removeClass('selected');
+        $('[type="checkbox"]:checked', $('.advance-study-list-table .advance-germplasm-items').DataTable().rows().nodes()).parent().parent().addClass('selected');
     };
 
 	SaveAdvanceList.setupAdvanceListForReview = function() {
@@ -251,37 +251,37 @@ var SaveAdvanceList = {};
             //needed set time out since chrme is not able to rnder properly the checkbox if its checked or not
             setTimeout(function(){
 
-                var rows = $(".advance-nursery-list-table .advance-germplasm-items").DataTable().rows().nodes();
+                var rows = $(".advance-study-list-table .advance-germplasm-items").DataTable().rows().nodes();
 
                 var isChecked = $('#'+getJquerySafeId(sectionContainerDiv) + ' .review-select-all').prop('checked');
 
                 if(isChecked){
-                    $('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').addClass('selected');
-                    $('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').addClass('manual-selected');
+                    $('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-study-list-table tr').addClass('selected');
+                    $('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-study-list-table tr').addClass('manual-selected');
                     $('input[type="checkbox"]', rows).prop('checked', 'checked').parent('td').parent('tr').addClass('selected').addClass('manual-selected');
                 } else {
-                    $('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').removeClass('selected');
-                    $('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').removeClass('manual-selected');
+                    $('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-study-list-table tr').removeClass('selected');
+                    $('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-study-list-table tr').removeClass('manual-selected');
                     $('#'+getJquerySafeId(sectionContainerDiv) + ' input.reviewAdvancingListGid').prop('checked', isChecked);
                     $('input[type="checkbox"]', rows).prop('checked', isChecked).parent('td').parent('tr').removeClass('selected').removeClass('manual-selected');
                 }
 
                 // Display total number of selected entries
-                var selectedRows = $('[type="checkbox"]:checked', $('.advance-nursery-list-table .advance-germplasm-items').DataTable().rows().nodes()).length;
+                var selectedRows = $('[type="checkbox"]:checked', $('.advance-study-list-table .advance-germplasm-items').DataTable().rows().nodes()).length;
                 $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(selectedRows);
             },10);
         });
 		
-		$('#' + sectionContainerDiv + ' .advance-nursery-list-table').tableSelect({
+		$('#' + sectionContainerDiv + ' .advance-study-list-table').tableSelect({
 			onClick: function(row) {
 				//we clear all check
-				if ($('#' + sectionContainerDiv + ' .advance-nursery-list-table').data('check-click') === '1') {
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table').data('check-click', '0');
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected input.reviewAdvancingListGid:checked').parent().parent().addClass('selected');
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr:not(.manual-selected) input.reviewAdvancingListGid:checked').parent().parent().addClass('selected');
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.selected input.reviewAdvancingListGid:not(:checked)').parent().parent().removeClass('selected');
+				if ($('#' + sectionContainerDiv + ' .advance-study-list-table').data('check-click') === '1') {
+					$('#' + sectionContainerDiv + ' .advance-study-list-table').data('check-click', '0');
+					$('#' + sectionContainerDiv + ' .advance-study-list-table tr.manual-selected input.reviewAdvancingListGid:checked').parent().parent().addClass('selected');
+					$('#' + sectionContainerDiv + ' .advance-study-list-table tr:not(.manual-selected) input.reviewAdvancingListGid:checked').parent().parent().addClass('selected');
+					$('#' + sectionContainerDiv + ' .advance-study-list-table tr.selected input.reviewAdvancingListGid:not(:checked)').parent().parent().removeClass('selected');
 				} else {
-					var rows = $(".advance-nursery-list-table .advance-germplasm-items").DataTable().rows().nodes();
+					var rows = $(".advance-study-list-table .advance-germplasm-items").DataTable().rows().nodes();
 					$('input[type="checkbox"]', rows).prop('checked', false).parent('td').parent('tr').removeClass('manual-selected');
 					if ($(row).hasClass('selected')) {
 						$(row).find('input.reviewAdvancingListGid').prop('checked', true);
@@ -291,14 +291,14 @@ var SaveAdvanceList = {};
 				}
 
                 // Display total number of selected entries
-                var selectedRows = $('[type="checkbox"]:checked', $('.advance-nursery-list-table .advance-germplasm-items').DataTable().rows().nodes()).length;
+                var selectedRows = $('[type="checkbox"]:checked', $('.advance-study-list-table .advance-germplasm-items').DataTable().rows().nodes()).length;
                 $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(selectedRows);
 				SaveAdvanceList.verifyCheckboxesForSelectAll();
 			},
 			onCtrl: function(row) {
 
-				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.selected input.reviewAdvancingListGid').prop('checked', true);
-				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr:not(.selected) input.reviewAdvancingListGid').prop('checked', false);
+				$('#' + sectionContainerDiv + ' .advance-study-list-table tr.selected input.reviewAdvancingListGid').prop('checked', true);
+				$('#' + sectionContainerDiv + ' .advance-study-list-table tr:not(.selected) input.reviewAdvancingListGid').prop('checked', false);
 				if ($(row).hasClass('manual-selected') || $(row).hasClass('selected')) {
 					$(row).find('input.reviewAdvancingListGid').prop('checked', true);
 					$(row).addClass('selected');
@@ -306,33 +306,33 @@ var SaveAdvanceList = {};
 					$(row).find('input.reviewAdvancingListGid').prop('checked', false);
 					$(row).removeClass('selected');
 				}
-				if ($('#' + sectionContainerDiv + ' .advance-nursery-list-table').data('check-click') === '1') {
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table').data('check-click', '0');
+				if ($('#' + sectionContainerDiv + ' .advance-study-list-table').data('check-click') === '1') {
+					$('#' + sectionContainerDiv + ' .advance-study-list-table').data('check-click', '0');
 					if ($(row).hasClass('selected') && $(row).hasClass('manual-selected') === false) {
 						$(row).find('input.reviewAdvancingListGid').prop('checked', false);
 						$(row).removeClass('selected');
 					}
 				}
                 // Display total number of selected entries
-                var selectedRows = $('[type="checkbox"]:checked', $('.advance-nursery-list-table .advance-germplasm-items').DataTable().rows().nodes()).length;
+                var selectedRows = $('[type="checkbox"]:checked', $('.advance-study-list-table .advance-germplasm-items').DataTable().rows().nodes()).length;
                 $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(selectedRows);
 				SaveAdvanceList.verifyCheckboxesForSelectAll();
 			},
 			onShift: function() {
-				var selectedRows = $(".advance-nursery-list-table .advance-germplasm-items").DataTable().rows(['.selected']).nodes();
+				var selectedRows = $(".advance-study-list-table .advance-germplasm-items").DataTable().rows(['.selected']).nodes();
 				$('input[type="checkbox"]', selectedRows).prop('checked', true).parent('td').parent('tr').addClass('selected').addClass('manual-selected');
-				var unselectedRows = $(".advance-nursery-list-table .advance-germplasm-items").DataTable().rows([':not(.selected)']).nodes();
+				var unselectedRows = $(".advance-study-list-table .advance-germplasm-items").DataTable().rows([':not(.selected)']).nodes();
 				$('input[type="checkbox"]', unselectedRows).prop('checked', false).removeClass('manual-selected');
 				
                 // Display total number of selected entries
-                var selectedRows = $('[type="checkbox"]:checked', $('.advance-nursery-list-table .advance-germplasm-items').DataTable().rows().nodes()).length;
+                var selectedRows = $('[type="checkbox"]:checked', $('.advance-study-list-table .advance-germplasm-items').DataTable().rows().nodes()).length;
                 $('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html(selectedRows);
 				SaveAdvanceList.verifyCheckboxesForSelectAll();
 			}
 		});
 
-		$('#' + sectionContainerDiv + ' .advance-nursery-list-table input.reviewAdvancingListGid').on('click', function() {
-			$('#' + sectionContainerDiv + ' .advance-nursery-list-table').data('check-click', '1');
+		$('#' + sectionContainerDiv + ' .advance-study-list-table input.reviewAdvancingListGid').on('click', function() {
+			$('#' + sectionContainerDiv + ' .advance-study-list-table').data('check-click', '1');
 			if ($(this).is(':checked')) {
 				//we highlight
 				$(this).parent().parent().addClass('selected');
@@ -341,9 +341,9 @@ var SaveAdvanceList = {};
 				$(this).parent().parent().removeClass('selected');
 				$(this).parent().parent().removeClass('manual-selected');
 			}
-			$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected input.reviewAdvancingListGid').prop('checked', true);
-			$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected').addClass('selected');
-			$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr:not(.manual-selected)').remove('selected');
+			$('#' + sectionContainerDiv + ' .advance-study-list-table tr.manual-selected input.reviewAdvancingListGid').prop('checked', true);
+			$('#' + sectionContainerDiv + ' .advance-study-list-table tr.manual-selected').addClass('selected');
+			$('#' + sectionContainerDiv + ' .advance-study-list-table tr:not(.manual-selected)').remove('selected');
 			SaveAdvanceList.verifyCheckboxesForSelectAll();
 		});
 
@@ -386,15 +386,15 @@ var SaveAdvanceList = {};
 	SaveAdvanceList.selectAllReviewEntries = function() {
 		var sectionContainerDiv = 'reviewAdvanceStudyModal';
 		var isChecked = true;
-		$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').removeClass('selected');
-		$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').removeClass('manual-selected');
+		$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-study-list-table tr').removeClass('selected');
+		$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-study-list-table tr').removeClass('manual-selected');
 		$('#'+getJquerySafeId(sectionContainerDiv) + ' input.reviewAdvancingListGid').prop('checked', isChecked);
 
-        var rows = $(".advance-nursery-list-table .advance-germplasm-items").DataTable().rows().nodes();
+        var rows = $(".advance-study-list-table .advance-germplasm-items").DataTable().rows().nodes();
 
 		if(isChecked) {
-			$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').addClass('selected');
-			$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').addClass('manual-selected');
+			$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-study-list-table tr').addClass('selected');
+			$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-study-list-table tr').addClass('manual-selected');
             $('input[type="checkbox"]', rows).prop('checked', 'checked').parent('td').parent('tr').addClass('selected').addClass('manual-selected');
 		}
 		$('#' + getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#' + getJquerySafeId(sectionContainerDiv) +
@@ -405,7 +405,7 @@ var SaveAdvanceList = {};
 	SaveAdvanceList.deleteSelectedEntries = function() {
 		var entryNums = '',
 			uniqueId = $('.btn-save-advance-list').attr('id');
-		$('[type="checkbox"]:checked', $('.advance-nursery-list-table .advance-germplasm-items').DataTable().rows().nodes()).each(function() {
+		$('[type="checkbox"]:checked', $('.advance-study-list-table .advance-germplasm-items').DataTable().rows().nodes()).each(function() {
 			if (entryNums !== '') {
 				entryNums += ',';
 			}

@@ -375,7 +375,7 @@ var SaveAdvanceList = {};
 		});
 
 		new BMS.Fieldbook.AdvancedGermplasmListDataTable('#' + sectionContainerDiv + ' .advance-germplasm-items', '#' + sectionContainerDiv);
-		$('#advance-nursery-germplasm-list').css('opacity', '1');
+		$('#advance-study-germplasm-list').css('opacity', '1');
 		if ($('.total-review-items').html() === '0') {
 			$('.review-select-all-section').hide();
 		} else {

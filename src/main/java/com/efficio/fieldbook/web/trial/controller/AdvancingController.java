@@ -81,9 +81,9 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	/** The Constant URL. */
 	protected static final String URL = "/StudyManager/advance/study";
 
-	private static final String MODAL_URL = "StudyManager/advanceNurseryModal";
+	private static final String MODAL_URL = "StudyManager/advanceStudyModal";
 
-	private static final String SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE = "StudyManager/saveAdvanceNursery";
+	private static final String SAVE_ADVANCE_STUDY_PAGE_TEMPLATE = "StudyManager/saveAdvanceStudy";
 
 	private static final String TABLE_HEADER_LIST = "tableHeaderList";
 
@@ -374,7 +374,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			form.setEntries(0);
 		}
 
-		return super.showAjaxPage(model, AdvancingController.SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE);
+		return super.showAjaxPage(model, AdvancingController.SAVE_ADVANCE_STUDY_PAGE_TEMPLATE);
 	}
 
 	@RequestMapping(value = "/delete/entries", method = RequestMethod.POST)
@@ -408,7 +408,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			form.setEntries(0);
 		}
 
-		return super.showAjaxPage(model, AdvancingController.SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE);
+		return super.showAjaxPage(model, AdvancingController.SAVE_ADVANCE_STUDY_PAGE_TEMPLATE);
 	}
 
 	protected List<ImportedGermplasm> deleteImportedGermplasmEntries(List<ImportedGermplasm> importedGermplasmList, String[] entries) {

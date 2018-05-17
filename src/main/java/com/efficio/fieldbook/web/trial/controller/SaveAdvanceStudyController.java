@@ -28,18 +28,18 @@ import java.util.List;
 @RequestMapping(SaveAdvanceStudyController.URL)
 public class SaveAdvanceStudyController extends AbstractBaseFieldbookController {
 
-	public static final String URL = "/StudyManager/saveAdvanceNursery";
+	public static final String URL = "/StudyManager/saveAdvanceStudy";
 
-	public static final String PAGINATION_TEMPLATE = "/StudyManager/showSaveAdvanceNurseryPagination";
+	public static final String PAGINATION_TEMPLATE = "/StudyManager/showSaveAdvanceStudyPagination";
 
 	@Override
 	public String getContentName() {
-		return "StudyManager/saveAdvanceNursery";
+		return "StudyManager/saveAdvanceStudy";
 	}
 
 	@RequestMapping(value = "/page/{pageNum}", method = RequestMethod.GET)
 	public String getPaginatedList(@PathVariable int pageNum, @ModelAttribute("advancingStudyForm") AdvancingStudyForm form,
-			Model model, HttpServletRequest req) {
+		Model model, HttpServletRequest req) {
 
 		String listIdentifier = req.getParameter("listIdentifier");
 		AdvancingStudyForm formFromSession = this.getPaginationListSelection().getAdvanceDetails(listIdentifier);

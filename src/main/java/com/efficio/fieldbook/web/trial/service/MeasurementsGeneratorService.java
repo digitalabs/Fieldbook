@@ -9,27 +9,26 @@
  *
  *******************************************************************************/
 
-package com.efficio.fieldbook.web.nursery.service;
+package com.efficio.fieldbook.web.trial.service;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.List;
+
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 
 /**
- * File service for the dataset workbook import needs.
- *
- * @author Joyce Avestro
- *
+ * The Interface MeasurementsGeneratorService.
  */
-public interface ImportWorkbookFileService {
+public interface MeasurementsGeneratorService {
 
 	/**
-	 * Returns the File object based on the file name stored in UserSelection.
-	 * 
-	 * @param userSelection
-	 * @return
-	 * @throws IOException
+	 * Generate real measurement rows.
+	 *
+	 * @param userSelection the user selection
+	 * @return the list
 	 */
-	File retrieveCurrentWorkbookAsFile(UserSelection userSelection) throws IOException;
+	List<MeasurementRow> generateRealMeasurementRows(UserSelection userSelection) throws MiddlewareQueryException;
+
 }

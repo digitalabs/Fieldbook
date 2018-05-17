@@ -9,7 +9,7 @@
  * 
  *******************************************************************************/
 
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.trial.service.impl;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
+import com.efficio.fieldbook.web.trial.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 /**

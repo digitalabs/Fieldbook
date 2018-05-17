@@ -9,7 +9,7 @@
  *
  *******************************************************************************/
 
-package com.efficio.fieldbook.web.nursery.service;
+package com.efficio.fieldbook.web.trial.service;
 
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;

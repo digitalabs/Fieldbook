@@ -140,11 +140,11 @@
 
 
 	<bean id="measurementsGeneratorService"
-		class="com.efficio.fieldbook.web.nursery.service.impl.MeasurementsGeneratorServiceImpl" />
+		class="com.efficio.fieldbook.web.trial.service.impl.MeasurementsGeneratorServiceImpl" />
 
 
 	<bean id="importGermplasmfileService"
-		class="com.efficio.fieldbook.web.nursery.service.impl.ImportGermplasmFileServiceImpl" />
+		class="com.efficio.fieldbook.web.trial.service.impl.ImportGermplasmFileServiceImpl" />
 
 
 	<bean id="crossingService"
@@ -164,7 +164,7 @@
 
 
 	<bean id="importWorkbookFileService"
-		class="com.efficio.fieldbook.web.nursery.service.impl.ImportWorkbookFileServiceImpl" />
+		class="com.efficio.fieldbook.web.trial.service.impl.ImportWorkbookFileServiceImpl" />
 
 
 	<bean id="fieldmapService" class="com.efficio.fieldbook.service.FieldMapServiceImpl" />

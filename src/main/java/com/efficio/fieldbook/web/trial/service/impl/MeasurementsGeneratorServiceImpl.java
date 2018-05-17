@@ -9,7 +9,7 @@
  *
  *******************************************************************************/
 
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.trial.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,13 +39,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.efficio.fieldbook.web.trial.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 /**
  * The Class MeasurementsGeneratorServiceImpl.
  */
-@Deprecated
+
 @Service
 @Transactional
 public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorService {

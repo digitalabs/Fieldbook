@@ -9,7 +9,7 @@
  *
  *******************************************************************************/
 
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.trial.service.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 import org.generationcp.commons.service.FileService;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.service.ImportWorkbookFileService;
+import com.efficio.fieldbook.web.trial.service.ImportWorkbookFileService;
 
 /**
  * The Class ImportWorkbookFileServiceImpl.

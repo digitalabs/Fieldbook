@@ -8,7 +8,7 @@
         <input type="hidden" th:field="*{selectedTrialInstances}"/>
 		<input type="hidden" th:field="*{advanceType}"/>
 
-		<div class="modal fade" id="advanceNurseryModal" role="dialog" aria-labelledby="advanceNurseryModal" aria-hidden="true">
+		<div class="modal fade" id="advanceStudyModal" role="dialog" aria-labelledby="advanceStudyModal" aria-hidden="true">
 			<div class="modal-dialog modal-large">
 				<div class="modal-content">
 					<div class="modal-body">
@@ -69,7 +69,7 @@
 										<input type="hidden" th:field="*{advanceBreedingMethodId}"/>
 									</div>
 									<div class="col-xs-2 method-selection-div help-tooltip-col">
-										<span data-container="#advanceNurseryModal .modal-body" id="method-tooltip" class="bms-fa-question-circle help-tooltip-nursery help-tooltip-nursery-advance" data-placement="top" data-toggle="tooltip" style="display:inline;"></span>
+										<span data-container="#advanceStudyModal .modal-body" id="method-tooltip" class="bms-fa-question-circle help-tooltip-nursery help-tooltip-nursery-advance" data-placement="top" data-toggle="tooltip" style="display:inline;"></span>
 									</div>
 								</div>
 							</div>
@@ -227,7 +227,7 @@
 											<input type="hidden" th:field="*{harvestLocationAbbreviation}" />
 										</div>
 										<div class="col-xs-2 help-tooltip-col">
-											<span data-container="#advanceNurseryModal .modal-body" id="harvestloc-tooltip" class="bms-fa-question-circle help-tooltip-nursery help-tooltip-nursery-advance" data-placement="top" data-toggle="tooltip"></span>
+											<span data-container="#advanceStudyModal .modal-body" id="harvestloc-tooltip" class="bms-fa-question-circle help-tooltip-nursery help-tooltip-nursery-advance" data-placement="top" data-toggle="tooltip"></span>
 										</div>
 									</div>
 								</div>
@@ -497,7 +497,7 @@ $(function() {
 	$('#advanceBreedingMethodId').on('change', changeAdvanceBreedingMethod);
 	changeAdvanceBreedingMethod();
 
-	var advNurseryModalElm = $('#advanceNurseryModal');
+	var advNurseryModalElm = $('#advanceStudyModal');
 
 	// remove any other listeners for the location update
 	$(document).off('location-update');

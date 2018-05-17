@@ -33,9 +33,9 @@
 $(function() {
 	'use strict';
 	$('#manageLocationModal').on('hidden.bs.modal', function() {
-		if (LocationsFunctions.isModalAvailableAndForOpening('advanceNurseryModal')) {
+		if (LocationsFunctions.isModalAvailableAndForOpening('advanceStudyModal')) {
 			//we show the advance nursery modal
-			LocationsFunctions.openModal('advanceNurseryModal');
+			LocationsFunctions.openModal('advanceStudyModal');
 		} else if (LocationsFunctions.isModalAvailableAndForOpening('addLotsModal')) {
 			//we show the advance nursery modal
 			LocationsFunctions.openModal('addLotsModal');

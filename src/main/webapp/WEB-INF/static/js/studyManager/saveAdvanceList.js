@@ -184,7 +184,7 @@ var SaveAdvanceList = {};
 						showErrorMessage('page-advance-modal-message', listShouldNotBeEmptyError);
 					} else {
 						advanceGermplasmChangeDetail = (data.advanceGermplasmChangeDetails);
-						$('#advanceNurseryModal').modal('hide');
+						$('#advanceStudyModal').modal('hide');
 						if (advanceGermplasmChangeDetail.length === 0) {
 							SaveAdvanceList.reviewAdvanceList(data.uniqueId);
 						} else {
@@ -206,13 +206,13 @@ var SaveAdvanceList = {};
 			type: 'GET',
 			cache: false,
 			success: function(html) {
-				$('#advanceNurseryModal').modal('hide');
+				$('#advanceStudyModal').modal('hide');
 
 				$('#review-advance-nursery-modal-div').html(html);
 				$('.btn-cancel-review').off('click');
 				$('.btn-cancel-review').on('click', function() {
 						$('#reviewAdvanceNurseryModal').modal('hide');
-						setTimeout(function() {$('#advanceNurseryModal').modal({ backdrop: 'static', keyboard: true });}, 300);
+						setTimeout(function() {$('#advanceStudyModal').modal({ backdrop: 'static', keyboard: true });}, 300);
 					});
 				setTimeout(function() {
 					$('#reviewAdvanceNurseryModal').off('shown.bs.modal');
@@ -430,7 +430,7 @@ var SaveAdvanceList = {};
 				$('.btn-cancel-review').off('click');
 				$('.btn-cancel-review').on('click', function() {
 						$('#reviewAdvanceNurseryModal').modal('hide');
-						setTimeout(function() { $('#advanceNurseryModal').modal({ backdrop: 'static', keyboard: true });}, 300);
+						setTimeout(function() { $('#advanceStudyModal').modal({ backdrop: 'static', keyboard: true });}, 300);
 					});
 
 				setTimeout(function() { SaveAdvanceList.setupAdvanceListForReview();}, 300);

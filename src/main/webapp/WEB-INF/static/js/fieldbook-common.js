@@ -877,7 +877,7 @@ function startAdvance(advanceType) {
 
 function initSelectEnvironment() {
 	'use strict';
-	$('#advanceNurseryModal').modal('hide');
+	$('#advanceStudyModal').modal('hide');
 
 	// we need to redraw the columns of the table
 	if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
@@ -930,7 +930,7 @@ function advanceSample() {
 
 function backAdvanceStudy() {
 	'use strict';
-	$('#advanceNurseryModal').modal('hide');
+	$('#advanceStudyModal').modal('hide');
 
 	// we need to redraw the columns of the table
 	if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
@@ -1044,13 +1044,13 @@ function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailH
 			aysnc: false,
 			success: function(html) {
 				$('#advance-nursery-modal-div').html(html);
-				$('#advanceNurseryModal')
+				$('#advanceStudyModal')
 					.modal({ backdrop: 'static', keyboard: true });
 
-				$('#advanceNurseryModal select').not('.fbk-harvest-year').each(function () {
+				$('#advanceStudyModal select').not('.fbk-harvest-year').each(function () {
 					$(this).select2({minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});
 				});
-				$('#advanceNurseryModal select.fbk-harvest-year').each(function () {
+				$('#advanceStudyModal select.fbk-harvest-year').each(function () {
 					$(this).select2({minimumResultsForSearch: -1});
 				});
 
@@ -1854,7 +1854,7 @@ function recreateMethodCombo(possibleFavorite, url) {
 						setComboValues(methodSuggestionsObj, selectedMethodAll, 'methodIdAll');
 					}
 
-					if ($('#advanceNurseryModal').length > 0) {
+					if ($('#advanceStudyModal').length > 0) {
 						refreshMethodComboInSettings(data);
 					}
 				} else {
@@ -1992,7 +1992,7 @@ function recreateLocationCombo(possibleFavorite) {
 
 	if ($('#addLotsModal').length !== 0 && ($('#addLotsModal').data('open') === '1' ||  $('#addLotsModal').hasClass('in'))) {
 		inventoryPopup = true;
-	} else if ($('#advanceNurseryModal').length !== 0 && ($('#advanceNurseryModal').data('open') === '1' ||  $('#advanceNurseryModal').hasClass('in'))) {
+	} else if ($('#advanceStudyModal').length !== 0 && ($('#advanceStudyModal').data('open') === '1' ||  $('#advanceStudyModal').hasClass('in'))) {
 		advancePopup = true;
 	} else if ($('#enterFieldDetailsForm').length !== 0) {
 		fieldmapScreen = true;

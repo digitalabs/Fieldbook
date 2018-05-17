@@ -4,7 +4,7 @@
 			<div class="modal-content">					
 				<div class="modal-body">
 					<div class="row form-group">
-                        <div class="col-xs-11 col-md-11" id="reviewTrialModalHeader">
+                        <div class="col-xs-11 col-md-11" id="reviewAdvanceStudyModalHeader">
 							<label class="modal-title fbk-modal-title" th:text="#{study.studydetails.action.advance.study}"></label>
 						</div>
 
@@ -88,9 +88,9 @@
 		var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
 		if (advanceType == 'sample') {
 			$("#reviewSamplesModalHeader").show();
-			$("#reviewTrialModalHeader").hide();
+			$("#reviewAdvanceStudyModalHeader").hide();
 		} else {
-			$("#reviewTrialModalHeader").show();
+			$("#reviewAdvanceStudyModalHeader").show();
 			$("#reviewSamplesModalHeader").hide();
 		}
 

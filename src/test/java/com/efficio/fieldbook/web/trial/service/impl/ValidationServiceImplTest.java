@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.trial.service.impl;
 
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;

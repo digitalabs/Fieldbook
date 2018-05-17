@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.trial.service.impl;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
+import com.efficio.fieldbook.web.trial.service.ImportGermplasmFileService;
 
 public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationTest {
 

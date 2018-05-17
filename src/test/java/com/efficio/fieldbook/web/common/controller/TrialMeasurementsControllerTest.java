@@ -2,7 +2,7 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.trial.service.ValidationService;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.google.common.collect.Lists;
 import junit.framework.Assert;

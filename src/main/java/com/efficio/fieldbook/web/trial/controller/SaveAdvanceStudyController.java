@@ -11,10 +11,7 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.springframework.stereotype.Controller;
@@ -24,11 +21,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
-@RequestMapping(SaveAdvanceNurseryController.URL)
-public class SaveAdvanceNurseryController extends AbstractBaseFieldbookController {
+@RequestMapping(SaveAdvanceStudyController.URL)
+public class SaveAdvanceStudyController extends AbstractBaseFieldbookController {
 
 	public static final String URL = "/StudyManager/saveAdvanceNursery";
 
@@ -53,6 +51,6 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
 			form.changePage(pageNum);
 		}
 
-		return super.showAjaxPage(model, SaveAdvanceNurseryController.PAGINATION_TEMPLATE);
+		return super.showAjaxPage(model, SaveAdvanceStudyController.PAGINATION_TEMPLATE);
 	}
 }

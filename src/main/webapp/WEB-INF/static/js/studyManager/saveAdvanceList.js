@@ -31,11 +31,11 @@ var SaveAdvanceList = {};
 	};
 
 	SaveAdvanceList.openSaveListModal = function(object) {
-		if (parseInt($('#reviewAdvanceNurseryModal .total-review-items').html(), 10) < 1) {
+		if (parseInt($('#reviewAdvanceStudyModal .total-review-items').html(), 10) < 1) {
 			showErrorMessage('', saveGermplasmReviewError);
 			return false;
 		}
-		$('#reviewAdvanceNurseryModal').modal('hide');
+		$('#reviewAdvanceStudyModal').modal('hide');
 
 		var listIdentifier = $(object).attr('id'),
 		germplasmTreeNode = $('#germplasmFolderTree').dynatree('getTree'),
@@ -211,15 +211,15 @@ var SaveAdvanceList = {};
 				$('#review-advance-nursery-modal-div').html(html);
 				$('.btn-cancel-review').off('click');
 				$('.btn-cancel-review').on('click', function() {
-						$('#reviewAdvanceNurseryModal').modal('hide');
+						$('#reviewAdvanceStudyModal').modal('hide');
 						setTimeout(function() {$('#advanceStudyModal').modal({ backdrop: 'static', keyboard: true });}, 300);
 					});
 				setTimeout(function() {
-					$('#reviewAdvanceNurseryModal').off('shown.bs.modal');
-					$('#reviewAdvanceNurseryModal').on('shown.bs.modal', function() {
+					$('#reviewAdvanceStudyModal').off('shown.bs.modal');
+					$('#reviewAdvanceStudyModal').on('shown.bs.modal', function() {
 							SaveAdvanceList.setupAdvanceListForReview();
 						});
-					$('#reviewAdvanceNurseryModal').modal({ backdrop: 'static', keyboard: true });
+					$('#reviewAdvanceStudyModal').modal({ backdrop: 'static', keyboard: true });
 				}, 300);
 
 			},
@@ -244,7 +244,7 @@ var SaveAdvanceList = {};
     };
 
 	SaveAdvanceList.setupAdvanceListForReview = function() {
-		var sectionContainerDiv = 'reviewAdvanceNurseryModal';
+		var sectionContainerDiv = 'reviewAdvanceStudyModal';
 		
 		$('#'+getJquerySafeId(sectionContainerDiv) + ' .review-select-all').on('change', function(event){
 			//select all the checkbox in the section container div										
@@ -347,11 +347,11 @@ var SaveAdvanceList = {};
 			SaveAdvanceList.verifyCheckboxesForSelectAll();
 		});
 
-		$('#reviewAdvanceNurseryModal').off('shown.bs.modal');
-		$('#reviewAdvanceNurseryModal .delete-entries').off('click');
-		$('#reviewAdvanceNurseryModal .select-all-entries').off('click');
-		$('#reviewAdvanceNurseryModal .delete-entries').on('click', SaveAdvanceList.deleteSelectedEntries);
-		$('#reviewAdvanceNurseryModal .select-all-entries').on('click', SaveAdvanceList.selectAllReviewEntries);
+		$('#reviewAdvanceStudyModal').off('shown.bs.modal');
+		$('#reviewAdvanceStudyModal .delete-entries').off('click');
+		$('#reviewAdvanceStudyModal .select-all-entries').off('click');
+		$('#reviewAdvanceStudyModal .delete-entries').on('click', SaveAdvanceList.deleteSelectedEntries);
+		$('#reviewAdvanceStudyModal .select-all-entries').on('click', SaveAdvanceList.selectAllReviewEntries);
 
 		$('#' + sectionContainerDiv + ' .advance-germplasm-items').contextmenu({
 			delegate: 'tr',
@@ -384,7 +384,7 @@ var SaveAdvanceList = {};
 	};
 
 	SaveAdvanceList.selectAllReviewEntries = function() {
-		var sectionContainerDiv = 'reviewAdvanceNurseryModal';
+		var sectionContainerDiv = 'reviewAdvanceStudyModal';
 		var isChecked = true;
 		$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').removeClass('selected');
 		$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').removeClass('manual-selected');
@@ -429,7 +429,7 @@ var SaveAdvanceList = {};
 				$('#review-advance-nursery-modal-div .review-advance-records').html($(html).find('.review-advance-records').html());
 				$('.btn-cancel-review').off('click');
 				$('.btn-cancel-review').on('click', function() {
-						$('#reviewAdvanceNurseryModal').modal('hide');
+						$('#reviewAdvanceStudyModal').modal('hide');
 						setTimeout(function() { $('#advanceStudyModal').modal({ backdrop: 'static', keyboard: true });}, 300);
 					});
 

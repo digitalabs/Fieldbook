@@ -19,8 +19,7 @@ import com.efficio.fieldbook.web.common.service.MergeCheckService;
 import com.efficio.fieldbook.web.exception.FieldbookRequestValidationException;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.form.UpdateGermplasmCheckForm;
-import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
-import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.efficio.fieldbook.web.trial.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -161,10 +160,6 @@ public class ImportGermplasmListController extends SettingsController {
 	/** The data import service. */
 	@Resource
 	private DataImportService dataImportService;
-
-	/** The measurements generator service. */
-	@Resource
-	private MeasurementsGeneratorService measurementsGeneratorService;
 
 	/** The ontology service. */
 	@Resource
@@ -1526,45 +1521,6 @@ public class ImportGermplasmListController extends SettingsController {
 		}
 
 		// end: section for taking note of the check germplasm
-	}
-
-	@Deprecated
-	protected void processImportedGermplasmAndChecks(final UserSelection userSelection, final ImportGermplasmListForm form) {
-
-		this.processChecks(userSelection, form);
-
-		if (userSelection.getImportedGermplasmMainInfo() != null) {
-
-			this.copyImportedGermplasmFromUserSelectionToForm(userSelection, form);
-
-			this.mergePrimaryAndCheckGermplasmList(userSelection, form);
-
-			// This would validate and add CHECK factor if necessary
-			this.importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(),
-					userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
-					userSelection);
-
-			if (userSelection.getStartingEntryNo() == null) {
-				userSelection.setStartingEntryNo(
-						org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingEntryNo(), 1));
-			}
-
-			if (userSelection.getStartingPlotNo() == null) {
-				userSelection.setStartingPlotNo(
-						org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), 1));
-			}
-
-			userSelection.setMeasurementRowList(
-					this.measurementsGeneratorService.generateRealMeasurementRows(userSelection));
-
-			// add or remove check variables if needed
-			this.fieldbookService.manageCheckVariables(userSelection, form);
-
-			// remove the experimental design variable if the user changed or
-			// updated the germplasm/check list
-			this.addExperimentFactorToBeDeleted(userSelection.getWorkbook().getConditions());
-		}
-
 	}
 
 	/**

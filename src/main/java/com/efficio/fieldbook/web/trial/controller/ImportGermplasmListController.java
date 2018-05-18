@@ -192,7 +192,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 */
 	@Override
 	public String getContentName() {
-		return "NurseryManager/importGermplasmList";
+		return "StudyManager/importGermplasmList";
 	}
 
 	/*
@@ -285,7 +285,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 		}
 
-		// if we have no germplasm list available for the nursery, skip this
+		// if we have no germplasm list available for the study, skip this
 		// validation flow
 		if (null != this.userSelection.getImportedGermplasmMainInfo()
 				&& null != this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()) {
@@ -687,7 +687,7 @@ public class ImportGermplasmListController extends SettingsController {
 		}*/
 
 		if (factorsList != null) {
-			// we iterate the map for dynamic header of nursery and trial
+			// we iterate the map for dynamic header of studies
 			for (final SettingDetail factorDetail : factorsList) {
 				if (factorDetail != null && factorDetail.getVariable() != null
 						&& !SettingsUtil.inHideVariableFields(factorDetail.getVariable().getCvTermId(),

@@ -115,14 +115,10 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	@Resource
 	private OntologyDataManager ontologyDataManager;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
-	 */
+
 	@Override
 	public String getContentName() {
-		return "StudyManager/advancingNursery";
+		return "StudyManager/advanceStudyModal";
 	}
 
 	/**
@@ -149,7 +145,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
         form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
         form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
         form.setSelectedReplications(Sets.newHashSet("1"));
-        form.setNurseryId(Integer.toString(studyId));
+        form.setStudyId(Integer.toString(studyId));
 
 		form.setMethodVariates(this.filterVariablesByProperty(this.userSelection.getSelectionVariates(),
 				AppConstants.PROPERTY_BREEDING_METHOD.getString()));
@@ -215,7 +211,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	}
 
 	/**
-	 * Post advance nursery.
+	 * Post advance Study.
 	 *
 	 * @param form the form
 	 * @param result the result
@@ -226,13 +222,13 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public Map<String, Object> postAdvanceNursery(@ModelAttribute("advancingStudyForm") AdvancingStudyForm form, BindingResult result,
+	public Map<String, Object> postAdvanceStudy(@ModelAttribute("advancingStudyForm") AdvancingStudyForm form, BindingResult result,
 			Model model) {
 		
 		Map<String, Object> results = new HashMap<>();
 		AdvancingStudy advancingStudy = new AdvancingStudy();
 		
-		Study study = this.fieldbookMiddlewareService.getStudy(Integer.valueOf(form.getNurseryId()));
+		Study study = this.fieldbookMiddlewareService.getStudy(Integer.valueOf(form.getStudyId()));
 		advancingStudy.setStudy(study);
 		advancingStudy.setMethodChoice(form.getMethodChoice());
 		advancingStudy.setBreedingMethodId(form.getAdvanceBreedingMethodId());
@@ -271,7 +267,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			}
 
 
-			AdvanceResult advanceResult = this.fieldbookService.advanceNursery(advancingStudy, this.userSelection.getWorkbook());
+			AdvanceResult advanceResult = this.fieldbookService.advanceStudy(advancingStudy, this.userSelection.getWorkbook());
 			List<ImportedGermplasm> importedGermplasmList = advanceResult.getAdvanceList();
 			long id = DateUtil.getCurrentDate().getTime();
 			this.getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
@@ -351,7 +347,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	}
 
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public String showAdvanceNursery(@ModelAttribute("advancingStudyForm") AdvancingStudyForm form, BindingResult result, Model model,
+	public String showAdvanceStudy(@ModelAttribute("advancingStudyForm") AdvancingStudyForm form, BindingResult result, Model model,
 			HttpServletRequest req) throws MiddlewareQueryException {
 
 		try {
@@ -366,7 +362,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			List<Map<String, Object>> dataTableDataList = this.setupAdvanceReviewDataList(importedGermplasmList);
 
 			model.addAttribute("advanceDataList", dataTableDataList);
-			model.addAttribute(AdvancingController.TABLE_HEADER_LIST, this.getAdvancedNurseryTableHeader());
+			model.addAttribute(AdvancingController.TABLE_HEADER_LIST, this.getAdvancedStudyTableHeader());
 		} catch (Exception e) {
 			AdvancingController.LOG.error(e.getMessage(), e);
 			form.setErrorInAdvance(e.getMessage());
@@ -378,7 +374,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	}
 
 	@RequestMapping(value = "/delete/entries", method = RequestMethod.POST)
-	public String deleteAdvanceNurseryEntries(@ModelAttribute("advancingStudyForm") AdvancingStudyForm form, BindingResult result,
+	public String deleteAdvanceStudyEntries(@ModelAttribute("advancingStudyForm") AdvancingStudyForm form, BindingResult result,
 			Model model, HttpServletRequest req) throws MiddlewareQueryException {
 
 		try {
@@ -400,7 +396,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			// remove the entry numbers
 
 			model.addAttribute("advanceDataList", dataTableDataList);
-			model.addAttribute(AdvancingController.TABLE_HEADER_LIST, this.getAdvancedNurseryTableHeader());
+			model.addAttribute(AdvancingController.TABLE_HEADER_LIST, this.getAdvancedStudyTableHeader());
 		} catch (Exception e) {
 			AdvancingController.LOG.error(e.getMessage(), e);
 			form.setErrorInAdvance(e.getMessage());
@@ -458,7 +454,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		return dataTableDataList;
 	}
 
-	protected List<TableHeader> getAdvancedNurseryTableHeader() {
+	protected List<TableHeader> getAdvancedStudyTableHeader() {
 		List<TableHeader> tableHeaderList = new ArrayList<>();
 
 		tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_ID.getTermNameFromOntology(this.ontologyDataManager), "entry"));

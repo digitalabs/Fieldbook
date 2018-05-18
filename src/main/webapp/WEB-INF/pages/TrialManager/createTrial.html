@@ -16,15 +16,15 @@
 					<div class="pull-left">
 						<img height="30" width="30" src="/Fieldbook/static/img/new-nursery.png"/>
 
-						<span class="fbk-nursery-heading" ng-hide="isOpenStudy()">
+						<span class="fbk-study-heading" ng-hide="isOpenStudy()">
 						<span class="heading">Create Study</span>
 					</span>
 
-						<span class="fbk-nursery-heading" ng-show="isOpenStudy()">
+						<span class="fbk-study-heading" ng-show="isOpenStudy()">
 						<span class="heading" truncate-and-tooltip="data.studyName"></span>
 					</span>
 
-						<div class="fbk-nursery-heading-btns">
+						<div class="fbk-study-heading-btns">
 							<input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick=""
 								   type="button" value="Save"/>
 							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide"
@@ -34,7 +34,7 @@
 						</div>
 					</div>
 
-					<div class="pull-right fbk-nursery-heading-right">
+					<div class="pull-right fbk-study-heading-right">
 						<div style="padding-right: 24px">
 							<a href="/Fieldbook/TrialManager/manageTrial">Return to Manage Studies</a>
 						</div>

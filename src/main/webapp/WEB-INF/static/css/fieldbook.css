@@ -257,18 +257,18 @@ table.dataTable thead .sorting_desc {
 }
 
 
-.fbk-nursery-heading, .fbk-nursery-heading span {
+.fbk-study-heading, .fbk-study-heading span {
     vertical-align: bottom;
 }
 
-.fbk-nursery-heading-btns {
+.fbk-study-heading-btns {
     display: inline-block;
     margin-left: 40pt;
     position: relative;
     top: 5pt;
 }
 
-.fbk-nursery-heading-right {
+.fbk-study-heading-right {
     position: relative;
     top: 5pt;
 }
@@ -729,7 +729,7 @@ td.nurseryLevelVariableSetting {
 div.possibleValuesDiv{
     padding-bottom: 5px;
 }
-#addVariablesSettingBody #ontology-values-tab-li, #addVariablesSettingBody #ontology-usage-tab-li, #nursery-experimental-design-li {
+#addVariablesSettingBody #ontology-values-tab-li, #addVariablesSettingBody #ontology-usage-tab-li {
     display: none;
 }
 .select-variable{

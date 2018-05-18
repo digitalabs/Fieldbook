@@ -158,16 +158,16 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	/**
-	 * Advance Nursery
+	 * Advance Study
 	 *
 	 * @throws RuleException
 	 * @throws FieldbookException
 	 */
 	@Override
-	public AdvanceResult advanceNursery(final AdvancingStudy advanceInfo, final Workbook workbook)
+	public AdvanceResult advanceStudy(final AdvancingStudy advanceInfo, final Workbook workbook)
 			throws RuleException, FieldbookException {
 
-		return this.namingConventionService.advanceNursery(advanceInfo, workbook);
+		return this.namingConventionService.advanceStudy(advanceInfo, workbook);
 	}
 
 	@Override

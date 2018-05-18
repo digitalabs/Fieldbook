@@ -816,7 +816,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final List<Attribute> attributesPerGermplasm = Lists.newArrayList();
 			// Add the seed source/origin attribute (which is generated based on
 			// format strings configured in crossing.properties) to the
-			// germplasm in FieldbookServiceImpl.advanceNursery().
+			// germplasm in FieldbookServiceImpl.advanceStudy().
 			// originAttribute gid will be set when saving once gid is known
 			final Attribute originAttribute =
 				this.createAttributeObject(currentUserID, importedGermplasm.getSource(), plotCodeFldNo, locationId, gDate);

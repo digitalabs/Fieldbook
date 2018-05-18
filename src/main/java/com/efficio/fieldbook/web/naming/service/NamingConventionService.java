@@ -32,14 +32,14 @@ import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
 public interface NamingConventionService {
 
 	/**
-	 * Provides the service for advancing a nursery.
+	 * Provides the service for advancing a study.
 	 *
 	 * @param info
 	 * @return
 	 * @throws RuleException
 	 * @throws FieldbookException
 	 */
-	AdvanceResult advanceNursery(AdvancingStudy info, Workbook workbook) throws RuleException, FieldbookException;
+	AdvanceResult advanceStudy(AdvancingStudy info, Workbook workbook) throws RuleException, FieldbookException;
 
 	List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, AdvancingStudy advancingParameters, Workbook workbook)
 			throws RuleException;

@@ -84,7 +84,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private PedigreeDataManager pedigreeDataManager;
 
 	@Override
-	public AdvanceResult advanceNursery(final AdvancingStudy info, final Workbook workbook) throws RuleException, FieldbookException {
+	public AdvanceResult advanceStudy(final AdvancingStudy info, final Workbook workbook) throws RuleException, FieldbookException {
 
 		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
 		final Map<String, Method> breedingMethodCodeMap = new HashMap<>();

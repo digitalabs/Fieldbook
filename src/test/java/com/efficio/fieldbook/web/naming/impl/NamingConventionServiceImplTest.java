@@ -284,7 +284,7 @@ public class NamingConventionServiceImplTest {
         study.setId(2345);
         info.setStudy(study);
 
-		final AdvanceResult advanceResult = namingConventionService.advanceNursery(info, workbook);
+		final AdvanceResult advanceResult = namingConventionService.advanceStudy(info, workbook);
 
         Assert.assertNotNull(advanceResult);
         Assert.assertNotNull(advanceResult.getChangeDetails());

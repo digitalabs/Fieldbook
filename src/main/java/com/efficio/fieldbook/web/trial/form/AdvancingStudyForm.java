@@ -113,8 +113,8 @@ public class AdvancingStudyForm {
 	/** The breeding method url. */
 	private String breedingMethodUrl;
 
-	/** The nursery id. */
-	private String nurseryId;
+	/** The study id. */
+	private String studyId;
 
 	private Integer methodVariateId;
 
@@ -721,17 +721,17 @@ public class AdvancingStudyForm {
 	 *
 	 * @return the nursery id
 	 */
-	public String getNurseryId() {
-		return this.nurseryId;
+	public String getStudyId() {
+		return this.studyId;
 	}
 
 	/**
-	 * Sets the nursery id.
+	 * Sets the study id.
 	 *
-	 * @param nurseryId the new nursery id
+	 * @param studyId the new study id
 	 */
-	public void setNurseryId(String nurseryId) {
-		this.nurseryId = nurseryId;
+	public void setStudyId(final String studyId) {
+		this.studyId = studyId;
 	}
 
 	/**

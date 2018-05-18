@@ -497,22 +497,22 @@ $(function() {
 	$('#advanceBreedingMethodId').on('change', changeAdvanceBreedingMethod);
 	changeAdvanceBreedingMethod();
 
-	var advNurseryModalElm = $('#advanceStudyModal');
+	var advanceStudyModalElm = $('#advanceStudyModal');
 
 	// remove any other listeners for the location update
 	$(document).off('location-update');
 	$(document).on('location-update', recreateLocationCombo);
 	$('.advance-manage-method').on('click', function() {
-		advNurseryModalElm.modal('hide');
-		advNurseryModalElm.data('open', '1');
+		advanceStudyModalElm.modal('hide');
+		advanceStudyModalElm.data('open', '1');
 		setTimeout(openManageMethods, 500);
 	});
 	$('.advance-manage-location').on('click', function() {
-		advNurseryModalElm.modal('hide');
-		advNurseryModalElm.data('open', '1');
+		advanceStudyModalElm.modal('hide');
+		advanceStudyModalElm.data('open', '1');
 		setTimeout(openManageLocations, 500);
 	});
-	advNurseryModalElm.data('open', '0');
+	advanceStudyModalElm.data('open', '0');
 
 	$("#advanceStudyModalCancel").hide();
 	$("#reps-section").show();

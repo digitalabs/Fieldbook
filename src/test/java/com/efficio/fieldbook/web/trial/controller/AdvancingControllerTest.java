@@ -232,7 +232,7 @@ public class AdvancingControllerTest {
 		Mockito.when(this.fieldbookMiddlewareService.getMethodById(Matchers.anyInt())).thenReturn(method);
 		Mockito.when(this.fieldbookService.advanceStudy(Matchers.any(AdvancingStudy.class), Matchers.any(Workbook.class))).thenReturn(
 				result);
-		Mockito.when(this.messageSource.getMessage(Matchers.eq("nursery.save.advance.error.generative.method"),
+		Mockito.when(this.messageSource.getMessage(Matchers.eq("study.save.advance.error.generative.method"),
 				Matchers.any(String[].class), Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn("error.message");
 
 		Mockito.doNothing().when(this.paginationListSelection).addAdvanceDetails(Matchers.anyString(), Matchers.eq(form));

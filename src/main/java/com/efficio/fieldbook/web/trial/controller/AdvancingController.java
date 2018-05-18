@@ -254,7 +254,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			if (advancingStudy.getMethodChoice() != null && !advancingStudy.getMethodChoice().isEmpty()) {
 				Method method = this.fieldbookMiddlewareService.getMethodById(Integer.valueOf(advancingStudy.getBreedingMethodId()));
 				if ("GEN".equals(method.getMtype())) {
-					form.setErrorInAdvance(this.messageSource.getMessage("nursery.save.advance.error.generative.method",
+					form.setErrorInAdvance(this.messageSource.getMessage("study.save.advance.error.generative.method",
 							new String[] {}, LocaleContextHolder.getLocale()));
 					form.setGermplasmList(new ArrayList<ImportedGermplasm>());
 					form.setEntries(0);
@@ -540,6 +540,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 				break;
 			}
 		}
-		return this.messageSource.getMessage("nursery.advance.nursery.empty.method.error", new String[] {name}, locale);
+		return this.messageSource.getMessage("error.advancing.study.empty.method", new String[] {name}, locale);
 	}
 }

@@ -41,7 +41,7 @@ public class AdvancingSource {
 	private Integer breedingMethodId;
 	private boolean isCheck;
 	private boolean isBulk;
-	private String nurseryName;
+	private String studyName;
 	private String season;
 	private String locationAbbreviation;
 	private String rootName;
@@ -74,14 +74,14 @@ public class AdvancingSource {
 	private List<PlantDTO> plants = new ArrayList<>();
 
 	public AdvancingSource(final ImportedGermplasm germplasm, final List<Name> names, final Integer plantsSelected, final Method breedingMethod, final boolean isCheck,
-			final String nurseryName, final String plotNumber) {
+			final String studyName, final String plotNumber) {
 		super();
 		this.germplasm = germplasm;
 		this.names = names;
 		this.plantsSelected = plantsSelected;
 		this.breedingMethod = breedingMethod;
 		this.isCheck = isCheck;
-		this.nurseryName = nurseryName;
+		this.studyName = studyName;
 		this.plotNumber = plotNumber;
 	}
 
@@ -180,17 +180,17 @@ public class AdvancingSource {
 	}
 
 	/**
-	 * @return the nurseryName
+	 * @return the studyName
 	 */
-	public String getNurseryName() {
-		return this.nurseryName;
+	public String getStudyName() {
+		return this.studyName;
 	}
 
 	/**
-	 * @param nurseryName the nurseryName to set
+	 * @param studyName the studyName to set
 	 */
-	public void setNurseryName(final String nurseryName) {
-		this.nurseryName = nurseryName;
+	public void setStudyName(final String studyName) {
+		this.studyName = studyName;
 	}
 
 	/**
@@ -399,7 +399,7 @@ public class AdvancingSource {
 	}
 
 	public AdvancingSource copy() {
-        final AdvancingSource source = new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, isCheck, nurseryName, plotNumber);
+        final AdvancingSource source = new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, isCheck, studyName, plotNumber);
         source.setSeason(this.season);
         source.setLocationAbbreviation(this.locationAbbreviation);
         source.setRootName(this.rootName);

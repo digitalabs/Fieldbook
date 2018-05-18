@@ -116,13 +116,6 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 	@Resource
 	private ContextUtil contextUtil;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#storeImportGermplasmWorkbook(org.springframework.web.multipart
-	 * .MultipartFile)
-	 */
 	@Override
 	public ImportedGermplasmMainInfo storeImportGermplasmWorkbook(MultipartFile multipartFile) throws IOException {
 		ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
@@ -144,12 +137,6 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 		return this.fileService;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#processWorkbook(org.generationcp.commons.parsing.pojo.
-	 * ImportedGermplasmMainInfo)
-	 */
 	@Override
 	public ImportedGermplasmMainInfo processWorkbook(ImportedGermplasmMainInfo mainInfo) {
 
@@ -533,12 +520,6 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#validataAndAddCheckFactor(java.util.List,
-	 * com.efficio.fieldbook.web.nursery.bean.UserSelection)
-	 */
 	@Override
 	public void validataAndAddCheckFactor(List<ImportedGermplasm> formImportedGermplasmsm, List<ImportedGermplasm> importedGermplasms,
 			UserSelection userSelection) throws MiddlewareException {

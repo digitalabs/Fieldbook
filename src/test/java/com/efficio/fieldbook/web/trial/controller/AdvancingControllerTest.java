@@ -106,7 +106,7 @@ public class AdvancingControllerTest {
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.GID.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(fromOntology);
 
-		List<TableHeader> tableHeaderList = this.advancingController.getAdvancedNurseryTableHeader();
+		List<TableHeader> tableHeaderList = this.advancingController.getAdvancedStudyTableHeader();
 		Assert.assertEquals("Expecting to return 7 columns but returned " + tableHeaderList.size(), 7, tableHeaderList.size());
 
 		Assert.assertTrue("Expecting to have a column name ENTRY_ID.", this.hasColumnHeader(tableHeaderList, "ENTRY_ID"));
@@ -137,7 +137,7 @@ public class AdvancingControllerTest {
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.TRIAL_INSTANCE_FACTOR.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.REP_NO.getId())).thenReturn(fromOntology);
 
-		List<TableHeader> tableHeaderList = this.advancingController.getAdvancedNurseryTableHeader();
+		List<TableHeader> tableHeaderList = this.advancingController.getAdvancedStudyTableHeader();
 		Assert.assertEquals("Expecting to return 7 columns but returned " + tableHeaderList.size(), 7, tableHeaderList.size());
 
 		for (TableHeader tableHeader : tableHeaderList) {
@@ -150,7 +150,7 @@ public class AdvancingControllerTest {
 		// setup
 
 		AdvancingStudyForm form = new AdvancingStudyForm();
-		form.setNurseryId("1");
+		form.setStudyId("1");
 		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
 		importedGermplasm.add(Mockito.mock(ImportedGermplasm.class));
 
@@ -160,7 +160,7 @@ public class AdvancingControllerTest {
 		this.preparePostAdvanceNursery(form, method, importedGermplasm);
 
 		// scenario 1, has a method choice and breeding method not a Generative
-		Map<String, Object> output = this.advancingController.postAdvanceNursery(form, null, null);
+		Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
 
 		Assert.assertEquals("should be successful", "1", output.get("isSuccess"));
 		Assert.assertEquals("should have at least 1 imported germplasm list", importedGermplasm.size(), output.get("listSize"));
@@ -168,7 +168,7 @@ public class AdvancingControllerTest {
 		Assert.assertNotNull("should have generated unique id", output.get("uniqueId"));
 
 		form.setMethodChoice(null);
-		output = this.advancingController.postAdvanceNursery(form, null, null);
+		output = this.advancingController.postAdvanceStudy(form, null, null);
 		Assert.assertEquals("should be successful", "1", output.get("isSuccess"));
 
 	}
@@ -177,20 +177,20 @@ public class AdvancingControllerTest {
 	public void testPostAdvanceNurseryThrowsRuleException() throws MiddlewareException, RuleException, FieldbookException {
 		// setup
 		AdvancingStudyForm form = new AdvancingStudyForm();
-		form.setNurseryId("1");
+		form.setStudyId("1");
 		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
 		Method method = new Method();
 		method.setMtype("DER");
 
 		this.preparePostAdvanceNursery(form, method, importedGermplasm);
 
-		Mockito.when(this.fieldbookService.advanceNursery(Matchers.any(AdvancingStudy.class), Matchers.any(Workbook.class)))
+		Mockito.when(this.fieldbookService.advanceStudy(Matchers.any(AdvancingStudy.class), Matchers.any(Workbook.class)))
 				.thenThrow(Mockito.mock(RuleException.class));
 
 		Mockito.doNothing().when(this.paginationListSelection).addAdvanceDetails(Matchers.anyString(), Matchers.eq(form));
 
 		// scenario 2, has a method throwing exception
-		Map<String, Object> output = this.advancingController.postAdvanceNursery(form, null, null);
+		Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
 
 		Assert.assertEquals("should fail", "0", output.get("isSuccess"));
 		Assert.assertEquals("should have at least 0 imported germplasm list", Integer.valueOf(0), output.get("listSize"));
@@ -200,7 +200,7 @@ public class AdvancingControllerTest {
 	public void testPostAdvanceNurseryGenerativeMethodError() throws RuleException, MiddlewareException, FieldbookException {
 		// setup
 		AdvancingStudyForm form = new AdvancingStudyForm();
-		form.setNurseryId("1");
+		form.setStudyId("1");
 		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
 
 		Method method = new Method();
@@ -208,11 +208,11 @@ public class AdvancingControllerTest {
 
 		this.preparePostAdvanceNursery(form, method, importedGermplasm);
 
-		Mockito.when(this.fieldbookService.advanceNursery(Matchers.any(AdvancingStudy.class), Matchers.any(Workbook.class)))
+		Mockito.when(this.fieldbookService.advanceStudy(Matchers.any(AdvancingStudy.class), Matchers.any(Workbook.class)))
 				.thenThrow(Mockito.mock(RuleException.class));
 
 		// scenario 2, has a method throwing exception
-		Map<String, Object> output = this.advancingController.postAdvanceNursery(form, null, null);
+		Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
 
 		Assert.assertEquals("should fail", "0", output.get("isSuccess"));
 		Assert.assertEquals("should have at least 0 imported germplasm list", 0, output.get("listSize"));
@@ -230,7 +230,7 @@ public class AdvancingControllerTest {
 		result.setChangeDetails(new ArrayList<AdvanceGermplasmChangeDetail>());
 
 		Mockito.when(this.fieldbookMiddlewareService.getMethodById(Matchers.anyInt())).thenReturn(method);
-		Mockito.when(this.fieldbookService.advanceNursery(Matchers.any(AdvancingStudy.class), Matchers.any(Workbook.class))).thenReturn(
+		Mockito.when(this.fieldbookService.advanceStudy(Matchers.any(AdvancingStudy.class), Matchers.any(Workbook.class))).thenReturn(
 				result);
 		Mockito.when(this.messageSource.getMessage(Matchers.eq("nursery.save.advance.error.generative.method"),
 				Matchers.any(String[].class), Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn("error.message");
@@ -379,7 +379,7 @@ public class AdvancingControllerTest {
         AdvancingStudyForm form = new AdvancingStudyForm();
         Model model = new ExtendedModelMap();
 
-        String templateUrl = this.advancingController.showAdvanceNursery(form,null,model,this.request);
+        String templateUrl = this.advancingController.showAdvanceStudy(form,null,model,this.request);
         Assert.assertEquals("NurseryManager/saveAdvanceStudy",templateUrl);
         Map<String,Object> modelMap = model.asMap();
         List<Map<String, Object>> listOfGermPlasm = (List<Map<String, Object>>)modelMap.get("advanceDataList");
@@ -395,7 +395,7 @@ public class AdvancingControllerTest {
     @Test
     public void testShowAdvanceNurseryThrowNumberFormatException(){
         AdvancingStudyForm form = new AdvancingStudyForm();
-        String templateUrl = this.advancingController.showAdvanceNursery(form,null,null,this.request);
+        String templateUrl = this.advancingController.showAdvanceStudy(form,null,null,this.request);
 
         Assert.assertEquals(0,form.getEntries());
         Assert.assertEquals(0,form.getGermplasmList().size());
@@ -416,7 +416,7 @@ public class AdvancingControllerTest {
         AdvancingStudyForm form = new AdvancingStudyForm();
         Model model = new ExtendedModelMap();
 
-        String templateUrl = this.advancingController.deleteAdvanceNurseryEntries(form,null,model,this.request);
+        String templateUrl = this.advancingController.deleteAdvanceStudyEntries(form,null,model,this.request);
 
         Assert.assertEquals("NurseryManager/saveAdvanceStudy",templateUrl);
         Map<String,Object> modelMap = model.asMap();
@@ -431,7 +431,7 @@ public class AdvancingControllerTest {
     @Test
     public void testDeleteAdvanceNurseryEntriesSuccessThrowNumberFormatException(){
         AdvancingStudyForm form = new AdvancingStudyForm();
-        String templateUrl = this.advancingController.deleteAdvanceNurseryEntries(form,null,null,this.request);
+        String templateUrl = this.advancingController.deleteAdvanceStudyEntries(form,null,null,this.request);
 
         Assert.assertEquals(0,form.getEntries());
         Assert.assertEquals(0,form.getGermplasmList().size());

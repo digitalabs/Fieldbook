@@ -289,7 +289,7 @@
                         </div>
 					</div> <!-- Modal Body -->
 					<div class="modal-footer">
-						<button id="nurseryModalCancel" type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">
+						<button id="advanceStudyModalCancel" type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">
 							Cancel
 						</button>
                         <button id="nurseryModalBack" type="button" class="btn btn-default" onclick="javascript: backAdvanceStudy();" aria-hidden="true" th:text="#{common.form.back.text}">
@@ -514,7 +514,7 @@ $(function() {
 	});
 	advNurseryModalElm.data('open', '0');
 
-	$("#nurseryModalCancel").hide();
+	$("#advanceStudyModalCancel").hide();
 	$("#reps-section").show();
 
 	$("#advanceStudyModalHeader").hide();

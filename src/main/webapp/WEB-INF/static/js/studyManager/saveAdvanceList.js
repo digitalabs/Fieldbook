@@ -168,7 +168,7 @@ var SaveAdvanceList = {};
 		var serializedData;
 
 		$('input[type=checkbox][name=methodChoice]').prop('disabled', false);
-		serializedData = $('#advanceNurseryModalForm').serialize();
+		serializedData = $('#advanceStudyModalForm').serialize();
 
 		$.ajax({
 			url: '/Fieldbook/StudyManager/advance/study',

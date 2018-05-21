@@ -1115,8 +1115,8 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @return the string
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/resetNurseryGermplasmDetails", method = RequestMethod.GET)
-	public String resetNurseryGermplasmDetails(final Model model) {
+	@RequestMapping(value = "/resetStudyGermplasmDetails", method = RequestMethod.GET)
+	public String resetStudyGermplasmDetails(final Model model) {
 
 		try {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();

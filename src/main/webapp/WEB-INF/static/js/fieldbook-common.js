@@ -1043,7 +1043,7 @@ function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailH
 			type: 'GET',
 			aysnc: false,
 			success: function(html) {
-				$('#advance-nursery-modal-div').html(html);
+				$('#advance-study-modal-div').html(html);
 				$('#advanceStudyModal')
 					.modal({ backdrop: 'static', keyboard: true });
 

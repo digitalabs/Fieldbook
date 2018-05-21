@@ -1369,7 +1369,7 @@ function doFinalExport(paramUrl, additionalParams, exportWayType) {
 	}
 
 	var columnOrders = '';
-	if ($('.review-nursery-details').length == 0) {
+	if ($('.review-study-details').length == 0) {
 		var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true);
 		columnOrders = (JSON.stringify(columnsOrder));
 	}
@@ -3198,9 +3198,9 @@ function initializeStudyTabs() {
 function determineIfShowCloseAllStudyTabs() {
 	'use strict';
 	if ($('#study-tab-headers li').length > 1) {
-		$('.review-nursery-details').removeClass('fbk-hide');
+		$('.review-study-details').removeClass('fbk-hide');
 	} else {
-		$('.review-nursery-details').addClass('fbk-hide');
+		$('.review-study-details').addClass('fbk-hide');
 	}
 }
 

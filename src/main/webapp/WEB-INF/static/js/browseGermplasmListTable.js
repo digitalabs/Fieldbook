@@ -34,7 +34,7 @@ function resetGermplasmList() {
 	trialManagerDataService.indicateUnappliedChangesAvailable(true);
 
 	$.ajax({
-		url: '/Fieldbook/StudyManager/importGermplasmList/resetNurseryGermplasmDetails',
+		url: '/Fieldbook/StudyManager/importGermplasmList/resetStudyGermplasmDetails',
 		type: 'GET',
 		cache: false,
 		async: false,

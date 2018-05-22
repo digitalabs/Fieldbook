@@ -208,7 +208,7 @@ var SaveAdvanceList = {};
 			success: function(html) {
 				$('#advanceStudyModal').modal('hide');
 
-				$('#review-advance-nursery-modal-div').html(html);
+				$('#review-advance-study-modal-div').html(html);
 				$('.btn-cancel-review').off('click');
 				$('.btn-cancel-review').on('click', function() {
 						$('#reviewAdvanceStudyModal').modal('hide');
@@ -426,7 +426,7 @@ var SaveAdvanceList = {};
 			},
 			cache: false,
 			success: function(html) {
-				$('#review-advance-nursery-modal-div .review-advance-records').html($(html).find('.review-advance-records').html());
+				$('#review-advance-study-modal-div .review-advance-records').html($(html).find('.review-advance-records').html());
 				$('.btn-cancel-review').off('click');
 				$('.btn-cancel-review').on('click', function() {
 						$('#reviewAdvanceStudyModal').modal('hide');

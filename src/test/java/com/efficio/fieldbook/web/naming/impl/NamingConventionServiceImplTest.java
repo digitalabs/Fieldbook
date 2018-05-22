@@ -135,7 +135,7 @@ public class NamingConventionServiceImplTest {
 		advancingSource.setPlantsSelected(1);
 		advancingSource.setBulk(false);
 		advancingSource.setCheck(false);
-		advancingSource.setNurseryName("Test One");
+		advancingSource.setStudyName("Test One");
 		advancingSource.setSeason("201412");
 		advancingSource.setCurrentMaxSequence(0);
 		rows.getRows().add(advancingSource);
@@ -254,7 +254,7 @@ public class NamingConventionServiceImplTest {
         as1.setPlantsSelected(1);
         as1.setBulk(false);
         as1.setCheck(false);
-        as1.setNurseryName("Test One");
+        as1.setStudyName("Test One");
         as1.setSeason("201412");
         as1.setCurrentMaxSequence(0);
         rows.getRows().add(as1);

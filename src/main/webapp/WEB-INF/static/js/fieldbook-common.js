@@ -498,7 +498,7 @@ function createHeader(hasFieldMap) {
 	var newRow = '<thead><tr>';
 
 	if (!hasFieldMap) {
-		newRow = newRow + '<th style="width:35%">' + trialName + '</th>' +
+		newRow = newRow + '<th style="width:35%">' + studyName + '</th>' +
 			'<th style="width:15%">' + entryLabel + '</th>' +
 			'<th style="width:10%">' + repLabel + '</th>' +
 			'<th style="width:20%">' + plotLabel + '</th>';
@@ -1043,7 +1043,7 @@ function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailH
 			type: 'GET',
 			aysnc: false,
 			success: function(html) {
-				$('#advance-nursery-modal-div').html(html);
+				$('#advance-study-modal-div').html(html);
 				$('#advanceStudyModal')
 					.modal({ backdrop: 'static', keyboard: true });
 

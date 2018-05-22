@@ -55,7 +55,7 @@ public class AdvancingSourceListFactory {
 
 	private static final String DEFAULT_TEST_VALUE = "T";
 
-	public AdvancingSourceList createAdvancingSourceList(Workbook workbook, AdvancingStudy advanceInfo, Study nursery,
+	public AdvancingSourceList createAdvancingSourceList(Workbook workbook, AdvancingStudy advanceInfo, Study study,
 			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
 
 		Map<Integer, List<PlantDTO>> sampledPlantsMap = new HashMap<>();
@@ -76,12 +76,12 @@ public class AdvancingSourceListFactory {
 		Integer plotVariateId = advanceInfo.getPlotVariateId();
 		List<Name> names = null;
 
-		String nurseryName = null;
-		if (nursery != null) {
-			nurseryName = nursery.getName();
+		String studyName = null;
+		if (study != null) {
+			studyName = study.getName();
 		}
 
-		dataProcessor.processEnvironmentLevelData(environmentLevel, workbook, advanceInfo, nursery);
+		dataProcessor.processEnvironmentLevelData(environmentLevel, workbook, advanceInfo, study);
 
 		List<Integer> gids = new ArrayList<>();
 
@@ -189,7 +189,7 @@ public class AdvancingSourceListFactory {
 					advancingSourceCandidate.setPlantsSelected(plantsSelected);
 					advancingSourceCandidate.setBreedingMethod(breedingMethod);
 					advancingSourceCandidate.setCheck(isCheck);
-					advancingSourceCandidate.setNurseryName(nurseryName);
+					advancingSourceCandidate.setStudyName(studyName);
 
                     dataProcessor.processPlotLevelData(advancingSourceCandidate, row);
 

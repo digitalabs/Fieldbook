@@ -581,10 +581,7 @@ function createLabelPrinting(tableName) {
 		return;
 	}
 
-	if ($('#createNurseryMainForm #studyId').length === 1) {
-		idVal = ($('#createNurseryMainForm #studyId').val());
-		count++;
-	}else if ($('#createTrialMainForm #studyId').length === 1) {
+	if ($('#createTrialMainForm #studyId').length === 1) {
 		idVal = ($('#createTrialMainForm #studyId').val());
 		count++;
 	} else {
@@ -854,7 +851,7 @@ function deleteStudyInEdit() {
 		if (data.isSuccess === '1') {
 			showSuccessfulMessage('', deleteStudySuccessful);
 			setTimeout(function() {
-				//go back to review nursery page
+				//go back to review study page
 				location.href = $('#delete-success-return-url').attr('href');
 			}, 500);
 		} else {

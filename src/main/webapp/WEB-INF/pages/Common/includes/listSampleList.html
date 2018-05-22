@@ -21,7 +21,7 @@
 				</thead>
 				<tbody>
 				<tr class="primaryRow" th:each="sample, row : *{sampleList}" th:attr="data-gid=${sample.gid}">
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${row.index + 1}"></td>
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${sample.entryNumber}"></td>
 					<td th:class="${row.even}? 'even' : 'odd'">
 						<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${sample.designation}"
 						   th:attr="data-gid=${sample.gid}" th:attrappend="data-desig=${sample.designation}"></a>

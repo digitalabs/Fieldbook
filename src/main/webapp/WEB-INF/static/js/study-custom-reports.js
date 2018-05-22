@@ -38,10 +38,8 @@ var StudyCustomExportReports = {
 		if ($('#browser-studies').length !== 0) {
 			// Meaning we are on the landing page
 			studyId = getCurrentStudyIdInTab();
-		}else if ($('#createNurseryMainForm #studyId').length === 1) {
-			studyId = ($('#createNurseryMainForm #studyId').val());
 		}else if ($('#createTrialMainForm #studyId').length === 1) {
-			studyId = ($('#createTrialMainForm #studyId').val());
+				studyId = ($('#createTrialMainForm #studyId').val());
 		}
 
 		$.ajax('/Fieldbook/ExportManager/export/custom/report', {

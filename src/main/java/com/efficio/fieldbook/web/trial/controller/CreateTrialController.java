@@ -439,7 +439,7 @@ public class CreateTrialController extends BaseTrialController {
 			List<SettingDetail> detailList = new ArrayList<>();
 			this.userSelection.setBaselineTraitsList(detailList);
 			this.userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());
-			this.userSelection.setNurseryConditions(new ArrayList<SettingDetail>());
+			this.userSelection.setStudyConditions(new ArrayList<SettingDetail>());
 			detailList = new ArrayList<>();
 			this.userSelection.setTreatmentFactors(detailList);
 			if (this.userSelection.getTemporaryWorkbook() != null) {

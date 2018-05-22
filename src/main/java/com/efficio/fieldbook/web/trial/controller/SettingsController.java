@@ -589,7 +589,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		this.removeDeletedSetUpdate(this.userSelection.getStudyLevelConditions(), workbook.getConditions());
 		this.removeDeletedSetUpdate(this.userSelection.getPlotsLevelList(), workbook.getFactors());
 		this.removeDeletedSetUpdate(this.userSelection.getBaselineTraitsList(), workbook.getVariates());
-		this.removeDeletedSetUpdate(this.userSelection.getNurseryConditions(), workbook.getConstants());
+		this.removeDeletedSetUpdate(this.userSelection.getStudyConditions(), workbook.getConstants());
 		this.removeDeletedSetUpdate(this.userSelection.getTrialLevelVariableList(), null);
 		this.removeDeletedSetUpdate(this.userSelection.getSelectionVariates(), null);
 		workbook.reset();
@@ -715,7 +715,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
 		userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
 		userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-		userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
+		userSelection.setDeletedStudyConditions(new ArrayList<SettingDetail>());
 		userSelection.setDeletedTrialLevelVariables(new ArrayList<SettingDetail>());
 	}
 
@@ -973,10 +973,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
 			this.addNewSettingToDeletedBaselineTraits(newSetting);
 		} else if (mode == VariableType.STUDY_CONDITION.getId() || mode == VariableType.STUDY_CONDITION.getId()) {
-			if (this.userSelection.getDeletedNurseryConditions() == null) {
-				this.userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
+			if (this.userSelection.getDeletedStudyConditions() == null) {
+				this.userSelection.setDeletedStudyConditions(new ArrayList<SettingDetail>());
 			}
-			this.userSelection.getDeletedNurseryConditions().add(newSetting);
+			this.userSelection.getDeletedStudyConditions().add(newSetting);
 		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
 			if (this.userSelection.getDeletedTrialLevelVariables() == null) {
 				this.userSelection.setDeletedTrialLevelVariables(new ArrayList<SettingDetail>());
@@ -1012,6 +1012,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		model.addAttribute("selectionVariatesSegment", VariableType.SELECTION_METHOD.getId());
 		model.addAttribute("studyLevelDetailType", VariableType.STUDY_DETAIL.getId());
 		model.addAttribute("plotLevelDetailType", VariableType.GERMPLASM_DESCRIPTOR.getId());
-		model.addAttribute("nurseryConditionsType", VariableType.STUDY_CONDITION.getId());
+		model.addAttribute("studyConditionsType", VariableType.STUDY_CONDITION.getId());
 	}
 }

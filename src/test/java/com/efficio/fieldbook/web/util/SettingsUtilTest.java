@@ -656,7 +656,7 @@ public class SettingsUtilTest {
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.any(String.class)))
 				.thenReturn(standardVariable);
 		Mockito.when(this.userSelection.getPlotsLevelList()).thenReturn(basicDetails);
-		Mockito.when(this.userSelection.getNurseryConditions()).thenReturn(basicDetails);
+		Mockito.when(this.userSelection.getStudyConditions()).thenReturn(basicDetails);
 
 		final Dataset dataSet = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService,
 				dataSetName, this.userSelection, treatmentFactorItems, SettingsUtilTest.PROGRAM_UUID);

@@ -584,7 +584,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 		this.userSelection.setTrialLevelVariableList(managementDetailList);
 
-		this.userSelection.setNurseryConditions(trialConditionsList);
+		this.userSelection.setStudyConditions(trialConditionsList);
 
 		return info;
 	}

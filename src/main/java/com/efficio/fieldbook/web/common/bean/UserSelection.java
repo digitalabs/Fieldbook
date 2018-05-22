@@ -11,11 +11,7 @@
 
 package com.efficio.fieldbook.web.common.bean;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
@@ -29,7 +25,10 @@ import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.springframework.web.util.HtmlUtils;
 
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -98,7 +97,7 @@ public class UserSelection implements Serializable {
 	private List<SettingDetail> basicDetails;
 
 	/** The study conditions. */
-	private List<SettingDetail> nurseryConditions;
+	private List<SettingDetail> studyConditions;
 
 	/** The deleted study level conditions. */
 	private List<SettingDetail> deletedStudyLevelConditions;
@@ -110,7 +109,7 @@ public class UserSelection implements Serializable {
 	private List<SettingDetail> deletedBaselineTraitsList;
 
 	/** The deleted study conditions. */
-	private List<SettingDetail> deletedNurseryConditions;
+	private List<SettingDetail> deletedStudyConditions;
 
 	/** The deleted trial level variables. */
 	private List<SettingDetail> deletedTrialLevelVariables;
@@ -544,8 +543,8 @@ public class UserSelection implements Serializable {
 	 *
 	 * @return the studyConditions
 	 */
-	public List<SettingDetail> getNurseryConditions() {
-		return this.nurseryConditions;
+	public List<SettingDetail> getStudyConditions() {
+		return this.studyConditions;
 	}
 
 	/**
@@ -553,8 +552,8 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param studyConditions the studyConditions to set
 	 */
-	public void setNurseryConditions(final List<SettingDetail> nurseryConditions) {
-		this.nurseryConditions = nurseryConditions;
+	public void setStudyConditions(final List<SettingDetail> studyConditions) {
+		this.studyConditions = studyConditions;
 	}
 
 	/**
@@ -598,8 +597,8 @@ public class UserSelection implements Serializable {
 	 *
 	 * @return the deletedStudyConditions
 	 */
-	public List<SettingDetail> getDeletedNurseryConditions() {
-		return this.deletedNurseryConditions;
+	public List<SettingDetail> getDeletedStudyConditions() {
+		return this.deletedStudyConditions;
 	}
 
 	/**
@@ -607,8 +606,8 @@ public class UserSelection implements Serializable {
 	 *
 	 * @param deletedstudyConditions the deletedstudyConditions to set
 	 */
-	public void setDeletedNurseryConditions(final List<SettingDetail> deletedNurseryConditions) {
-		this.deletedNurseryConditions = deletedNurseryConditions;
+	public void setDeletedStudyConditions(final List<SettingDetail> deletedStudyConditions) {
+		this.deletedStudyConditions = deletedStudyConditions;
 	}
 
 	/**
@@ -1059,11 +1058,11 @@ public class UserSelection implements Serializable {
 			.equals(getImportedAdvancedGermplasmList(), that.getImportedAdvancedGermplasmList()) && Objects
 			.equals(getTraitRefList(), that.getTraitRefList()) && Objects.equals(getTreatmentFactors(), that.getTreatmentFactors())
 			&& Objects.equals(getSelectionVariates(), that.getSelectionVariates()) && Objects
-			.equals(getBasicDetails(), that.getBasicDetails()) && Objects.equals(getNurseryConditions(), that.getNurseryConditions())
+			.equals(getBasicDetails(), that.getBasicDetails()) && Objects.equals(getStudyConditions(), that.getStudyConditions())
 			&& Objects.equals(getDeletedStudyLevelConditions(), that.getDeletedStudyLevelConditions()) && Objects
 			.equals(getDeletedPlotLevelList(), that.getDeletedPlotLevelList()) && Objects
 			.equals(getDeletedBaselineTraitsList(), that.getDeletedBaselineTraitsList()) && Objects
-			.equals(getDeletedNurseryConditions(), that.getDeletedNurseryConditions()) && Objects
+			.equals(getDeletedStudyConditions(), that.getDeletedStudyConditions()) && Objects
 			.equals(getDeletedTrialLevelVariables(), that.getDeletedTrialLevelVariables()) && Objects
 			.equals(getDeletedTreatmentFactors(), that.getDeletedTreatmentFactors()) && Objects
 			.equals(getChangeDetails(), that.getChangeDetails()) && Objects.equals(getRemovedFactors(), that.getRemovedFactors()) && Objects
@@ -1096,8 +1095,8 @@ public class UserSelection implements Serializable {
 			getImportedCheckGermplasmMainInfo(), isImportValid(), getStudyDetailsList(), getCurrentPageGermplasmList(),
 			getCurrentPageCheckGermplasmList(), getStudyLevelConditions(), getPlotsLevelList(), getBaselineTraitsList(),
 			getTrialLevelVariableList(), getTrialEnvironmentValues(), getImportedAdvancedGermplasmList(), getTraitRefList(),
-			getTreatmentFactors(), getSelectionVariates(), getBasicDetails(), getNurseryConditions(), getDeletedStudyLevelConditions(),
-			getDeletedPlotLevelList(), getDeletedBaselineTraitsList(), getDeletedNurseryConditions(), getDeletedTrialLevelVariables(),
+			getTreatmentFactors(), getSelectionVariates(), getBasicDetails(), getStudyConditions(), getDeletedStudyLevelConditions(),
+			getDeletedPlotLevelList(), getDeletedBaselineTraitsList(), getDeletedStudyConditions(), getDeletedTrialLevelVariables(),
 			getDeletedTreatmentFactors(), getChangeDetails(), getRemovedFactors(), getRemovedConditions(), getNewTraits(),
 			getNewSelectionVariates(), getWorkbook(), getTemporaryWorkbook(), getDesignImportData(), getCurrentPage(),
 			getMeasurementRowList(), getMeasurementDatasetVariable(), getConstantsWithLabels(), getExpDesignParams(),
@@ -1116,9 +1115,9 @@ public class UserSelection implements Serializable {
 			+ ", plotsLevelList=" + plotsLevelList + ", baselineTraitsList=" + baselineTraitsList + ", trialLevelVariableList="
 			+ trialLevelVariableList + ", trialEnvironmentValues=" + trialEnvironmentValues + ", importedAdvancedGermplasmList="
 			+ importedAdvancedGermplasmList + ", traitRefList=" + traitRefList + ", treatmentFactors=" + treatmentFactors
-			+ ", selectionVariates=" + selectionVariates + ", basicDetails=" + basicDetails + ", studyConditions=" + nurseryConditions
+			+ ", selectionVariates=" + selectionVariates + ", basicDetails=" + basicDetails + ", studyConditions=" + studyConditions
 			+ ", deletedStudyLevelConditions=" + deletedStudyLevelConditions + ", deletedPlotLevelList=" + deletedPlotLevelList
-			+ ", deletedBaselineTraitsList=" + deletedBaselineTraitsList + ", deletedstudyConditions=" + deletedNurseryConditions
+			+ ", deletedBaselineTraitsList=" + deletedBaselineTraitsList + ", deletedstudyConditions=" + deletedStudyConditions
 			+ ", deletedTrialLevelVariables=" + deletedTrialLevelVariables + ", deletedTreatmentFactors=" + deletedTreatmentFactors
 			+ ", changeDetails=" + changeDetails + ", removedFactors=" + removedFactors + ", removedConditions=" + removedConditions
 			+ ", newTraits=" + newTraits + ", newSelectionVariates=" + newSelectionVariates + ", workbook=" + workbook

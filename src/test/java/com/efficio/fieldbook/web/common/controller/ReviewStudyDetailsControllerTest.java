@@ -111,7 +111,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 		final StudyDetails details = (StudyDetails) model.asMap().get("trialDetails");
 		Assert.assertNotNull(details);
-		final List<SettingDetail> conditionSettingDetails = details.getNurseryConditionDetails();
+		final List<SettingDetail> conditionSettingDetails = details.getStudyConditionDetails();
 		boolean hasAnalysisVariable = false;
 		for (final SettingDetail settingDetail : conditionSettingDetails) {
 			if (VariableType.getReservedVariableTypes().contains(settingDetail.getVariableType())) {

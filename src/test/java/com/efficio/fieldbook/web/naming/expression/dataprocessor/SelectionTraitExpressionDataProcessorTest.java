@@ -59,18 +59,18 @@ public class SelectionTraitExpressionDataProcessorTest {
         workbook.getConditions().add(detail);
 
         final AdvancingSource source = Mockito.mock(AdvancingSource.class);
-        final AdvancingStudy nursery = Mockito.mock(AdvancingStudy.class);
+        final AdvancingStudy advancingStudy = Mockito.mock(AdvancingStudy.class);
         final Study study = Mockito.mock(Study.class);
 
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt("1"), true)).thenReturn(testValue);
 
-        unitUnderTest.processEnvironmentLevelData(source, workbook, nursery, study);
+        unitUnderTest.processEnvironmentLevelData(source, workbook, advancingStudy, study);
         Mockito.verify(source).setSelectionTraitValue(testValue);
 
     }
 
     @Test
-    public void testRetrieveEnvironmentalValueNurseryCondition() {
+    public void testRetrieveEnvironmentalValueStudyCondition() {
         final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
         final String testValue = "test";
         final MeasurementVariable detail = new MeasurementVariable();
@@ -79,16 +79,16 @@ public class SelectionTraitExpressionDataProcessorTest {
         detail.setValue(testValue);
         detail.setTermId(1);
 
-        // nursery conditions are placed within the constants section of the workbook
+        // advancingStudy conditions are placed within the constants section of the workbook
         workbook.getConstants().add(detail);
 
         final AdvancingSource source = Mockito.mock(AdvancingSource.class);
-        final AdvancingStudy nursery = Mockito.mock(AdvancingStudy.class);
+        final AdvancingStudy advancingStudy = Mockito.mock(AdvancingStudy.class);
         final Study study = Mockito.mock(Study.class);
 
         Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt("1"), true)).thenReturn(testValue);
 
-        unitUnderTest.processEnvironmentLevelData(source, workbook, nursery, study);
+        unitUnderTest.processEnvironmentLevelData(source, workbook, advancingStudy, study);
         Mockito.verify(source).setSelectionTraitValue(testValue);
 
     }

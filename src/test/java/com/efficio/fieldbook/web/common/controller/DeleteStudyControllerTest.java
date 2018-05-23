@@ -1,16 +1,10 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-
+import junit.framework.Assert;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.GermplasmListTestDataInitializer;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.UnpermittedDeletionException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -26,9 +20,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.web.common.controller.DeleteStudyController;
-
-import junit.framework.Assert;
+import javax.servlet.http.HttpSession;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DeleteStudyControllerTest {

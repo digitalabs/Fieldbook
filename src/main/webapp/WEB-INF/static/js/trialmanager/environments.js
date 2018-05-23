@@ -67,7 +67,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			$scope.buttonsTopWithLocation = [{
 				//TODO disable?
-				text: $.fieldbookMessages.nurseryManageSettingsManageLocation,
+				text: $.fieldbookMessages.studyManageSettingsManageLocation,
 				className: 'fbk-buttons-no-border fbk-buttons-link',
 				action: function() {
 					$scope.initiateManageLocationModal();

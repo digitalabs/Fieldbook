@@ -3,7 +3,6 @@
 <div class="review-trial-page-identifier" style="padding-top: 10px;">
 	<div class="" th:object="${trialDetails}" th:id="'div-study-tab-' + *{id}">
 		<input type="hidden" id="studyId" class="field-map-highlight" th:value="*{id}" />
-		<input type="hidden" id="study-type" name="study-type" value="Trial" />
 		<input type="hidden" id="has-measurements" name="has-measurements" th:value="*{hasMeasurements}" />
 		<input type="hidden" th:id="'review-study-error-' + *{id}" th:value="*{errorMessage}" />
         <input type="hidden" id="studyName"  th:value="*{name}"/>

@@ -28,7 +28,7 @@ import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 public class CreateTrialForm {
 
 	/**
-	 * The nursery level variables.
+	 * The study level variables.
 	 */
 	private List<SettingDetail> studyLevelVariables;
 

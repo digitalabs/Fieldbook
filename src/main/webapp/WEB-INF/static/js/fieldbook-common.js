@@ -3077,11 +3077,7 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	$('#page-study-tree-message-modal').html('');
 	$('#addFolderDiv').hide();
 	$('#renameFolderDiv').hide();
-	if ($('#create-nursery #studyTree').length !== 0) {
-		$('#studyTree').dynatree('destroy');
-		displayStudyListTree('studyTree', type, selectStudyFunction, isPreSelect);
-		changeBrowseStudyButtonBehavior(false);
-	} else if ($('#create-trial #studyTree').length !== 0) {
+	if ($('#create-study #studyTree').length !== 0) {
 		$('#studyTree').dynatree('destroy');
 		displayStudyListTree('studyTree', type, selectStudyFunction, isPreSelect);
 		changeBrowseStudyButtonBehavior(false);

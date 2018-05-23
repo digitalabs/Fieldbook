@@ -8,7 +8,6 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.api.LocationDataManager;
 import org.generationcp.middleware.pojos.Location;
@@ -31,7 +30,7 @@ public class LocationAbbreviationExpressionDataProcessor implements ExpressionDa
     @Override
     public void processPlotLevelData(AdvancingSource source, MeasurementRow row) throws FieldbookException {
         // Trial Advancing does not have Harvest location so setting harvestLocationAbbr at plot level
-        if(source.getStudyType().equals(StudyType.T) && source.getTrailInstanceObservation() != null &&
+        if(source.getStudyType().getName().equals("T") && source.getTrailInstanceObservation() != null &&
                 source.getTrailInstanceObservation().getDataList() != null &&  !source.getTrailInstanceObservation().getDataList().isEmpty()){
                 for(MeasurementData measurementData : source.getTrailInstanceObservation().getDataList()){
                 if(measurementData.getMeasurementVariable().getTermId() == TermId.LOCATION_ID.getId()){

@@ -339,17 +339,7 @@ function createFieldMap() {
 	openStudyFieldmapTree(id, name);
 }
 
-function proceedToCreateFieldMap() {
-	$('#manageTrialConfirmation').modal('hide');
-	var fieldMapHref = $('#fieldmap-url').attr('href');
-	location.href = fieldMapHref + '/' + $('#fieldmapStudyId').val();
-}
 
-function proceedToGenerateFieldMap() {
-	$('#manageTrialConfirmation').modal('hide');
-	location.href = '/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/nursery/' +
-		$('#fieldmapDatasetId').val() + '/' + $('#fieldmapGeolocationId').val();
-}
 
 function $safeId(fieldId) {
 	return $(getJquerySafeId(fieldId));

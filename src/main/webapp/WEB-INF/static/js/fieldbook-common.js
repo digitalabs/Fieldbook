@@ -988,9 +988,9 @@ function generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUse
 /* END ADVANCING TRIAL SPECIFIC FUNCTIONS */
 
 /*
- * Section for Advancing Study (Common for Trial and Nursery)
- * @param studyId Nursery or Trial study Id
- * @param locationIds Location will be passed for Advance Trial only
+ * Section for Advancing Study
+ * @param studyId
+ * @param locationIds Location will be passed for Advance study
  */
 function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailHtml, advanceType) {
 	'use strict';
@@ -1008,8 +1008,6 @@ function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailH
 		return;
 	}
 
-	//TODO do we advance the study using the same ajax function as advancing the nursery from the nursery manager.
-	//TODO Should that be common then with the common path?
 	var advanceStudyHref = '/Fieldbook/StudyManager/advance/study';
 	advanceStudyHref = advanceStudyHref + '/' + encodeURIComponent(idVal);
 	advanceStudyHref = advanceStudyHref + '?selectedInstances=' + encodeURIComponent(trialInstances.join(","));
@@ -1360,6 +1358,7 @@ function doFinalExport(paramUrl, additionalParams, exportWayType) {
 		var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true);
 		columnOrders = (JSON.stringify(columnsOrder));
 	}
+
 	$.ajax(newAction, {
 		headers: {
 			'Accept': 'application/json',
@@ -1471,7 +1470,6 @@ function showImportOptions() {
 	$('#fileupload').val('');
 	$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
 	// Navigate to edit measurements tab when clicking on import measurements
-	// similar to the nursery
 	var scope = angular.element(document.getElementById("mainApp")).scope();
 	scope.$apply(function () {
 		scope.navigateToTab('editMeasurements');
@@ -1633,18 +1631,6 @@ function callAdvanceStudy() {
 	}
 }
 
-function closeAdvanceListTab(uniqueId) {
-	'use strict';
-	$('li#advance-list' + uniqueId + '-li').remove();
-	if ($('#list' + uniqueId).length === 1) {
-		$('#list' + uniqueId).remove();
-	}
-
-	setTimeout(function() {
-		$('#create-nursery-tab-headers li:eq(0) a').tab('show');
-		$('.nav-tabs').tabdrop('layout');
-	}, 100);
-}
 
 function displayAdvanceList(germplasmListId, listName, isDefault, advancedGermplasmListId, isPageLoading) {
 	'use script';

@@ -125,14 +125,22 @@ function padLeftByNumOfChars(value, toPad, numOfChars) {
 }
 
 function transformDate(dateString) {
+    var delim = '-';
+
+    // Transform '2018-1-1' into '2018-01-01'
 	var pattern = /\d{1,4}-\d{1,2}-\d{1,2}/.test(dateString);
 	if (pattern) {
-		var delim = '-';
 		var parts = dateString.split(delim);
 		var year = parseInt(parts[0], 10);
 		var month = parseInt(parts[1], 10);
 		var day = parseInt(parts[2], 10);
 		return padLeftByNumOfChars(year, '0', 4) + delim + padLeftByNumOfChars(month, '0', 2) + delim + padLeftByNumOfChars(day, '0', 2);
+	}
+
+	// Transform '20180101' into '2018-01-01'
+    var pattern2 = /\d{1,6}/.test(dateString);
+	if (pattern2) {
+		return dateString.substr(0, 4) + delim + dateString.substr(4, 2) + delim + dateString.substr(6, 2);
 	}
 	return dateString;
 }

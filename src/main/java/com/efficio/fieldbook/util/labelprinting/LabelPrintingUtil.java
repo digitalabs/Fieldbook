@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.inventory.GermplasmInventory;
 import org.generationcp.middleware.domain.inventory.ListEntryLotDetails;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.GermplasmListData;
@@ -58,17 +59,19 @@ public class LabelPrintingUtil {
 	 * @param listType the type of list to return. Available values: AVAILABLE_LABEL_SEED_LOT_ID, AVAILABLE_LABEL_FIELDS_STOCK_ID
 	 * @return comma separated string of ids (lotIds or stockIds)
 	 */
-	private String getListOfIDs(final List<ListEntryLotDetails> lotRows, final AppConstants listType) {
+	String getListOfIDs(final List<ListEntryLotDetails> lotRows, final AppConstants listType) {
 		String listIds = "";
 		for (final ListEntryLotDetails lotDetails : lotRows) {
-			if (listType.equals(AppConstants.AVAILABLE_LABEL_SEED_LOT_ID)){
-				listIds += lotDetails.getLotId() == null ? "" : lotDetails.getLotId().toString();
-			} else if (listType.equals(AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID)) {
-				listIds += lotDetails.getStockIds() == null ? "" : lotDetails.getStockIds();
-			} else {
-				throw new IllegalArgumentException("No such type of list. The lists available are: lotId and stockId");
+			if(lotDetails.getWithdrawalStatus().equalsIgnoreCase(GermplasmInventory.RESERVED)) {
+				if (listType.equals(AppConstants.AVAILABLE_LABEL_SEED_LOT_ID)){
+					listIds += lotDetails.getLotId() == null ? "" : lotDetails.getLotId().toString();
+				} else if (listType.equals(AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID)) {
+					listIds += lotDetails.getStockIds() == null ? "" : lotDetails.getStockIds();
+				} else {
+					throw new IllegalArgumentException("No such type of list. The lists available are: lotId and stockId");
+				}
+				listIds += ", ";
 			}
-			listIds += ", ";
 		}
 		// remove the trailing ', ' symbols if they were appended
 		return listIds.length() > 2 ? listIds.substring(0, listIds.length() - 2) : listIds;

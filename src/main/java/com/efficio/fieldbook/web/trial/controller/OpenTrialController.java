@@ -406,8 +406,8 @@ public class OpenTrialController extends BaseTrialController {
 		if (this.userSelection.getBaselineTraitsList() == null) {
 			this.userSelection.setBaselineTraitsList(new ArrayList<SettingDetail>());
 		}
-		if (this.userSelection.getNurseryConditions() == null) {
-			this.userSelection.setNurseryConditions(new ArrayList<SettingDetail>());
+		if (this.userSelection.getStudyConditions() == null) {
+			this.userSelection.setStudyConditions(new ArrayList<SettingDetail>());
 		}
 		if (this.userSelection.getTrialLevelVariableList() == null) {
 			this.userSelection.setTrialLevelVariableList(new ArrayList<SettingDetail>());
@@ -427,8 +427,8 @@ public class OpenTrialController extends BaseTrialController {
 				this.userSelection.getPlotsLevelList());
 		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedBaselineTraitsList(),
 				this.userSelection.getBaselineTraitsList());
-		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedNurseryConditions(),
-				this.userSelection.getNurseryConditions());
+		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedStudyConditions(),
+				this.userSelection.getStudyConditions());
 		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedTrialLevelVariables(),
 				this.userSelection.getTrialLevelVariableList());
 		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedTreatmentFactors(),
@@ -758,7 +758,7 @@ public class OpenTrialController extends BaseTrialController {
 		final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name,
 				combinedList, this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(),
 				this.userSelection, this.userSelection.getTrialLevelVariableList(),
-				this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(),
+				this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getStudyConditions(),
 				this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 
 		final Workbook tempWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID());

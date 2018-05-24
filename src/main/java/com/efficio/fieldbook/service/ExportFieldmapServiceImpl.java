@@ -54,96 +54,96 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 
 	@Override
 	public FileOutputStream exportFieldMapToExcel(final String fileName, final UserFieldmap userFieldMap) throws FieldbookException {
-		Locale locale = LocaleContextHolder.getLocale();
+		final Locale locale = LocaleContextHolder.getLocale();
 
-		// Summary of Trial/Nursery, Field and Planting Details
-		String summaryOfFieldbookFieldPlantingDetailsLabel =
+		// Summary of Study, Field and Planting Details
+		final String summaryOfFieldbookFieldPlantingDetailsLabel =
 				this.messageSource.getMessage("fieldmap.header.summary.for.study", null, locale);
-		// SUMMARY OF TRIAL, FIELD AND PLANTING DETAILS
-		String selectedFieldbookLabel = this.messageSource.getMessage("fieldmap.study.selected.studies", null, locale); // Selected Study:
+		// SUMMARY OF STUDY, FIELD AND PLANTING DETAILS
+		final String selectedFieldbookLabel = this.messageSource.getMessage("fieldmap.study.selected.studies", null, locale); // Selected Study:
 
-		String orderHeader = this.messageSource.getMessage("fieldmap.trial.order", null, locale);
-		String studyHeader = this.messageSource.getMessage("fieldmap.study", null, locale);
-		String instanceHeader = this.messageSource.getMessage("fieldmap.trial.instance", null, locale);
-		String entriesCountHeader = this.messageSource.getMessage("fieldmap.trial.entry.count", null, locale);
-		String repsCountHeader = this.messageSource.getMessage("fieldmap.trial.reps.count", null, locale);
-		String plotsNeededHeader = this.messageSource.getMessage("fieldmap.trial.plots.needed", null, locale);
-		String totalPlotsHeader = this.messageSource.getMessage("fieldmap.trial.total.number.of.plots", null, locale);
-		String datasetNameHeader = this.messageSource.getMessage("fieldmap.nursery.dataset", null, locale);
+		final String orderHeader = this.messageSource.getMessage("fieldmap.study.order", null, locale);
+		final String studyHeader = this.messageSource.getMessage("fieldmap.study", null, locale);
+		final String instanceHeader = this.messageSource.getMessage("fieldmap.trial.instance", null, locale);
+		final String entriesCountHeader = this.messageSource.getMessage("fieldmap.study.entry.count", null, locale);
+		final String repsCountHeader = this.messageSource.getMessage("fieldmap.study.reps.count", null, locale);
+		final String plotsNeededHeader = this.messageSource.getMessage("fieldmap.study.plots.needed", null, locale);
+		final String totalPlotsHeader = this.messageSource.getMessage("fieldmap.study.total.number.of.plots", null, locale);
+		final String datasetNameHeader = this.messageSource.getMessage("fieldmap.nursery.dataset", null, locale);
 
 		// Field And Block Details
-		String fieldAndBlockDetailsLabel = this.messageSource.getMessage("fieldmap.trial.field.and.block.details", null, locale);
+		final String fieldAndBlockDetailsLabel = this.messageSource.getMessage("fieldmap.study.field.and.block.details", null, locale);
 		// FIELD AND BLOCK DETAILS
-		String fieldLocationLabel = this.messageSource.getMessage("fieldmap.label.field.location", null, locale); // Field Location
-		String fieldLocationValue = userFieldMap.getLocationName();
-		String fieldNameLabel = this.messageSource.getMessage("fieldmap.label.field.name", null, locale); // Field Name
-		String fieldNameValue = userFieldMap.getFieldName();
-		String blockNameLabel = this.messageSource.getMessage("fieldmap.label.block.name", null, locale); // Block Name
-		String blockNameValue = userFieldMap.getBlockName();
+		final String fieldLocationLabel = this.messageSource.getMessage("fieldmap.label.field.location", null, locale); // Field Location
+		final String fieldLocationValue = userFieldMap.getLocationName();
+		final String fieldNameLabel = this.messageSource.getMessage("fieldmap.label.field.name", null, locale); // Field Name
+		final String fieldNameValue = userFieldMap.getFieldName();
+		final String blockNameLabel = this.messageSource.getMessage("fieldmap.label.block.name", null, locale); // Block Name
+		final String blockNameValue = userFieldMap.getBlockName();
 
 		// Row, Range & Plot Details
-		String rowRangePlotDetailsLabel = this.messageSource.getMessage("fieldmap.trial.row.and.range.and.plot.details", null, locale);
+		final String rowRangePlotDetailsLabel = this.messageSource.getMessage("fieldmap.study.row.and.range.and.plot.details", null, locale);
 		// ROW, RANGE AND PLOT DETAILS
-		String blockCapacityLabel = this.messageSource.getMessage("fieldmap.label.block.capacity", null, locale);
+		final String blockCapacityLabel = this.messageSource.getMessage("fieldmap.label.block.capacity", null, locale);
 		// Block Capacity
-		String blockCapacityValue = userFieldMap.getBlockCapacityString(this.messageSource); // e.g. "10 Columns, 10 Ranges"
-		String rowsPerPlotLabel = this.messageSource.getMessage("fieldmap.label.rows.per.plot", null, locale); // Rows per Plot
-		int rowsPerPlotValue = userFieldMap.getNumberOfRowsPerPlot();
-		String columnsLabel = this.messageSource.getMessage("fieldmap.label.columns", null, locale); // Columns
-		Integer columnsValue = userFieldMap.getNumberOfColumnsInBlock(); // 10
-		String machineCapacityLabel = this.messageSource.getMessage("fieldmap.label.row.capacity.machine", null, locale);
+		final String blockCapacityValue = userFieldMap.getBlockCapacityString(this.messageSource); // e.g. "10 Columns, 10 Ranges"
+		final String rowsPerPlotLabel = this.messageSource.getMessage("fieldmap.label.rows.per.plot", null, locale); // Rows per Plot
+		final int rowsPerPlotValue = userFieldMap.getNumberOfRowsPerPlot();
+		final String columnsLabel = this.messageSource.getMessage("fieldmap.label.columns", null, locale); // Columns
+		final Integer columnsValue = userFieldMap.getNumberOfColumnsInBlock(); // 10
+		final String machineCapacityLabel = this.messageSource.getMessage("fieldmap.label.row.capacity.machine", null, locale);
 		// machine row capacity
-		Integer machineCapacityValue = userFieldMap.getMachineRowCapacity();
+		final Integer machineCapacityValue = userFieldMap.getMachineRowCapacity();
 
 		// Planting Details
-		String plantingDetailsLabel = this.messageSource.getMessage("fieldmap.header.planting.details", null, locale);
+		final String plantingDetailsLabel = this.messageSource.getMessage("fieldmap.header.planting.details", null, locale);
 		// PLANTING DETAILS
-		String startingCoordinatesLabel = this.messageSource.getMessage("fieldmap.label.starting.coordinates", null, locale);
+		final String startingCoordinatesLabel = this.messageSource.getMessage("fieldmap.label.starting.coordinates", null, locale);
 		// Starting Coordinates
-		String startingCoordinatesValue = userFieldMap.getStartingCoordinateString(this.messageSource); // Column 1, Range 1
-		String plantingOrderLabel = this.messageSource.getMessage("fieldmap.label.planting.order", null, locale); // Planting Order
-		String plantingOrderValue = userFieldMap.getPlantingOrderString(this.messageSource); // "Row/Column" or "Serpentine"
+		final String startingCoordinatesValue = userFieldMap.getStartingCoordinateString(this.messageSource); // Column 1, Range 1
+		final String plantingOrderLabel = this.messageSource.getMessage("fieldmap.label.planting.order", null, locale); // Planting Order
+		final String plantingOrderValue = userFieldMap.getPlantingOrderString(this.messageSource); // "Row/Column" or "Serpentine"
 
 		// FieldMap
-		String fieldMapLabel = this.messageSource.getMessage("fieldmap.header.fieldmap", null, locale); // FIELD MAP
-		String rowsLabel = this.messageSource.getMessage("fieldmap.label.rows", null, locale); // Rows
-		String columnLabel = this.messageSource.getMessage("fieldmap.label.capitalized.column", null, locale); // Column
-		String rangeLabel = this.messageSource.getMessage("fieldmap.label.capitalized.range", null, locale); // Range
+		final String fieldMapLabel = this.messageSource.getMessage("fieldmap.header.fieldmap", null, locale); // FIELD MAP
+		final String rowsLabel = this.messageSource.getMessage("fieldmap.label.rows", null, locale); // Rows
+		final String columnLabel = this.messageSource.getMessage("fieldmap.label.capitalized.column", null, locale); // Column
+		final String rangeLabel = this.messageSource.getMessage("fieldmap.label.capitalized.range", null, locale); // Range
 
 		try {
 			// Create workbook
-			HSSFWorkbook workbook = new HSSFWorkbook();
-			String summaryLabelSheet = this.messageSource.getMessage("fieldmap.header.excel.summary", null, locale);
-			Sheet summarySheet = workbook.createSheet(summaryLabelSheet);
-			Sheet fieldMapSheet = workbook.createSheet(fieldMapLabel);
+			final HSSFWorkbook workbook = new HSSFWorkbook();
+			final String summaryLabelSheet = this.messageSource.getMessage("fieldmap.header.excel.summary", null, locale);
+			final Sheet summarySheet = workbook.createSheet(summaryLabelSheet);
+			final Sheet fieldMapSheet = workbook.createSheet(fieldMapLabel);
 
-			CellStyle labelStyle = workbook.createCellStyle();
+			final CellStyle labelStyle = workbook.createCellStyle();
 			HSSFFont font = workbook.createFont();
 			font.setBoldweight(Font.BOLDWEIGHT_BOLD);
 			labelStyle.setFont(font);
 
-			CellStyle wrapStyle = workbook.createCellStyle();
+			final CellStyle wrapStyle = workbook.createCellStyle();
 			wrapStyle.setWrapText(true);
 			wrapStyle.setAlignment(CellStyle.ALIGN_CENTER);
 
-			CellStyle mainHeaderStyle = workbook.createCellStyle();
+			final CellStyle mainHeaderStyle = workbook.createCellStyle();
 
-			HSSFPalette palette = workbook.getCustomPalette();
+			final HSSFPalette palette = workbook.getCustomPalette();
 			// get the color which most closely matches the color you want to use
-			HSSFColor myColor = palette.findSimilarColor(179, 165, 165);
+			final HSSFColor myColor = palette.findSimilarColor(179, 165, 165);
 			// get the palette index of that color
-			short palIndex = myColor.getIndex();
+			final short palIndex = myColor.getIndex();
 			// code to get the style for the cell goes here
 			mainHeaderStyle.setFillForegroundColor(palIndex);
 			mainHeaderStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
-			CellStyle mainSubHeaderStyle = workbook.createCellStyle();
+			final CellStyle mainSubHeaderStyle = workbook.createCellStyle();
 
-			HSSFPalette paletteSubHeader = workbook.getCustomPalette();
+			final HSSFPalette paletteSubHeader = workbook.getCustomPalette();
 			// get the color which most closely matches the color you want to use
-			HSSFColor myColorSubHeader = paletteSubHeader.findSimilarColor(190, 190, 186);
+			final HSSFColor myColorSubHeader = paletteSubHeader.findSimilarColor(190, 190, 186);
 			// get the palette index of that color
-			short palIndexSubHeader = myColorSubHeader.getIndex();
+			final short palIndexSubHeader = myColorSubHeader.getIndex();
 			// code to get the style for the cell goes here
 			mainSubHeaderStyle.setFillForegroundColor(palIndexSubHeader);
 			mainSubHeaderStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
@@ -154,15 +154,15 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 
 			// Create Header Information
 
-			// Row 1: SUMMARY OF TRIAL, FIELD AND PLANTING DETAILS
-			CellStyle headerLabelStyle = workbook.createCellStyle();
+			// Row 1: SUMMARY OF STUDY, FIELD AND PLANTING DETAILS
+			final CellStyle headerLabelStyle = workbook.createCellStyle();
 			font = workbook.createFont();
 			font.setBoldweight(Font.BOLDWEIGHT_BOLD);
 			headerLabelStyle.setFont(font);
 			headerLabelStyle.setAlignment(CellStyle.ALIGN_CENTER);
 
 			Row row = summarySheet.createRow(rowIndex++);
-			Cell summaryCell = row.createCell(columnIndex);
+			final Cell summaryCell = row.createCell(columnIndex);
 			summaryCell.setCellValue(summaryOfFieldbookFieldPlantingDetailsLabel);
 
 			summaryCell.setCellStyle(headerLabelStyle);
@@ -179,7 +179,7 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 			// Row 3: Fieldbook Name, Entries, Reps, Plots
 			row = summarySheet.createRow(rowIndex++);
 
-			// Selected Trial : [Fieldbook Name] TABLE SECTION
+			// Selected Study : [Fieldbook Name] TABLE SECTION
 			Cell labelCell = row.createCell(columnIndex++);
 			labelCell.setCellValue(selectedFieldbookLabel);
 
@@ -205,7 +205,7 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 			headerCell.setCellStyle(labelStyle);
 
 			int order = 1;
-			for (SelectedFieldmapRow rec : userFieldMap.getSelectedFieldmapList().getRows()) {
+			for (final SelectedFieldmapRow rec : userFieldMap.getSelectedFieldmapList().getRows()) {
 				row = summarySheet.createRow(rowIndex++);
 				columnIndex = 0;
 				row.createCell(columnIndex++).setCellValue(order++);
@@ -343,13 +343,13 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 			// Row 11: Space
 			row = fieldMapSheet.createRow(rowIndex++);
 
-			Plot[][] plots = userFieldMap.getFieldmap();
-			int range = userFieldMap.getNumberOfRangesInBlock();
-			int col = userFieldMap.getNumberOfColumnsInBlock();
-			int rowsPerPlot = userFieldMap.getNumberOfRowsPerPlot();
-			int machineRowCapacity = userFieldMap.getMachineRowCapacity();
-			int rows = userFieldMap.getNumberOfRowsInBlock();
-			boolean isSerpentine = userFieldMap.getPlantingOrder() == 2;
+			final Plot[][] plots = userFieldMap.getFieldmap();
+			final int range = userFieldMap.getNumberOfRangesInBlock();
+			final int col = userFieldMap.getNumberOfColumnsInBlock();
+			final int rowsPerPlot = userFieldMap.getNumberOfRowsPerPlot();
+			final int machineRowCapacity = userFieldMap.getMachineRowCapacity();
+			final int rows = userFieldMap.getNumberOfRowsInBlock();
+			final boolean isSerpentine = userFieldMap.getPlantingOrder() == 2;
 
 			for (int j = range - 1; j >= 0; j--) {
 
@@ -375,8 +375,8 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 				row = fieldMapSheet.createRow(rowIndex);
 				row.setHeightInPoints(45);
 				columnIndex = 0;
-				int rangeValue = j + 1;
-				Cell cellRange = row.createCell(columnIndex++);
+				final int rangeValue = j + 1;
+				final Cell cellRange = row.createCell(columnIndex++);
 				cellRange.setCellValue(rangeLabel + " " + rangeValue);
 				cellRange.setCellStyle(mainSubHeaderStyle);
 				for (int i = 0; i < col; i++) {
@@ -384,7 +384,7 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 					if (plots[i][j].isPlotDeleted()) {
 						displayString = "  X  ";
 					}
-					Cell dataCell = row.createCell(columnIndex++);
+					final Cell dataCell = row.createCell(columnIndex++);
 					dataCell.setCellValue(new HSSFRichTextString(displayString));
 					dataCell.setCellStyle(wrapStyle);
 
@@ -416,30 +416,30 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 			}
 
 			// Write the excel file
-			FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+			final FileOutputStream fileOutputStream = new FileOutputStream(fileName);
 			workbook.write(fileOutputStream);
 			fileOutputStream.close();
 			return fileOutputStream;
 
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			ExportFieldmapServiceImpl.LOG.error(e.getMessage(), e);
 			throw new FieldbookException("Error writing to file: " + fileName, e);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			ExportFieldmapServiceImpl.LOG.error(e.getMessage(), e);
 			throw new FieldbookException("Error writing to file: " + fileName, e);
 		}
 
 	}
 
-	private int printRowHeader(Sheet fieldMapSheet, int numOfRows, int rowIndex, String rowsLabel, CellStyle mainHeader,
-			CellStyle subHeaderStyle) {
-		Row row = fieldMapSheet.createRow(rowIndex++);
+	private int printRowHeader(final Sheet fieldMapSheet, final int numOfRows, int rowIndex, final String rowsLabel, final CellStyle mainHeader,
+			final CellStyle subHeaderStyle) {
+		final Row row = fieldMapSheet.createRow(rowIndex++);
 		int columnIndex = 0;
-		Cell cell = row.createCell(columnIndex++);
+		final Cell cell = row.createCell(columnIndex++);
 		cell.setCellValue(rowsLabel);
 		cell.setCellStyle(mainHeader);
 		for (int i = 0; i < numOfRows; i++) {
-			Cell tableCell = row.createCell(columnIndex++);
+			final Cell tableCell = row.createCell(columnIndex++);
 			tableCell.setCellValue(i + 1);
 			tableCell.setCellStyle(subHeaderStyle);
 		}
@@ -447,20 +447,20 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 
 	}
 
-	private int printColumnHeader(Sheet fieldMapSheet, int numberOfColumns, int rowIndex, String columnLabel, int rowsPerPlot,
-			CellStyle mainHeader, CellStyle subHeaderStyle) {
-		Row row = fieldMapSheet.createRow(rowIndex);
+	private int printColumnHeader(final Sheet fieldMapSheet, final int numberOfColumns, int rowIndex, final String columnLabel, final int rowsPerPlot,
+			final CellStyle mainHeader, final CellStyle subHeaderStyle) {
+		final Row row = fieldMapSheet.createRow(rowIndex);
 		int columnIndex = 0;
-		Cell mainCell = row.createCell(columnIndex++);
+		final Cell mainCell = row.createCell(columnIndex++);
 		mainCell.setCellValue("");
 		mainCell.setCellStyle(mainHeader);
 		for (int i = 0; i < numberOfColumns; i++) {
-			int columnValue = i + 1;
-			Cell cell = row.createCell(columnIndex++);
+			final int columnValue = i + 1;
+			final Cell cell = row.createCell(columnIndex++);
 			cell.setCellValue(columnLabel + " " + columnValue);
 			cell.setCellStyle(subHeaderStyle);
 			for (int j = 0; j < rowsPerPlot - 1; j++) {
-				Cell cell1 = row.createCell(columnIndex++);
+				final Cell cell1 = row.createCell(columnIndex++);
 				cell1.setCellValue("");
 				cell.setCellStyle(subHeaderStyle);
 			}
@@ -472,29 +472,29 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 
 	}
 
-	private int printDirectionHeader(Sheet fieldMapSheet, Plot[][] plots, int range, int numberOfRows, int rowIndex,
-			int machineRowCapacity, CellStyle mainHeader, CellStyle subHeaderStyle, boolean isSerpentine) {
+	private int printDirectionHeader(final Sheet fieldMapSheet, final Plot[][] plots, final int range, final int numberOfRows, int rowIndex,
+			final int machineRowCapacity, final CellStyle mainHeader, final CellStyle subHeaderStyle, final boolean isSerpentine) {
 
-		Row row = fieldMapSheet.createRow(rowIndex);
+		final Row row = fieldMapSheet.createRow(rowIndex);
 		int columnIndex = 0;
-		Cell cell1 = row.createCell(columnIndex++);
+		final Cell cell1 = row.createCell(columnIndex++);
 		cell1.setCellValue("");
 		cell1.setCellStyle(mainHeader);
 
 		int numberOfDirections = numberOfRows / machineRowCapacity;
-		int remainingRows = numberOfRows % machineRowCapacity;
+		final int remainingRows = numberOfRows % machineRowCapacity;
 		if (remainingRows > 0) {
 			numberOfDirections++;
 		}
 
 		for (int i = 0; i < numberOfDirections; i++) {
-			int startCol = machineRowCapacity * i + 1;
+			final int startCol = machineRowCapacity * i + 1;
 			if (i % 2 == 1) {
-				Cell cell = row.createCell(startCol);
+				final Cell cell = row.createCell(startCol);
 				cell.setCellValue(ExportFieldmapServiceImpl.DOWN);
 				cell.setCellStyle(subHeaderStyle);
 			} else {
-				Cell cell = row.createCell(startCol);
+				final Cell cell = row.createCell(startCol);
 				cell.setCellValue(ExportFieldmapServiceImpl.UP);
 				cell.setCellStyle(subHeaderStyle);
 			}

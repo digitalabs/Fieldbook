@@ -130,7 +130,7 @@ public class ExpDesignController extends BaseTrialController {
 		final Dataset dataset = (Dataset) SettingsUtil.
 				convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection.getPlotsLevelList(),
 						variatesList, this.userSelection, this.userSelection.getTrialLevelVariableList(),
-						this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(),
+						this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getStudyConditions(),
 						this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID());

@@ -249,9 +249,9 @@
                     </label>
                 </div>
 
-                <table th:if="*{nurseryConditionDetails != null and not #lists.isEmpty(nurseryConditionDetails)}"
+                <table th:if="*{studyConditionDetails != null and not #lists.isEmpty(studyConditionDetails)}"
                        style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table"
-                       id="nurseryConditionDetails">
+                       id="studyConditionDetails">
                     <thead>
                     <tr>
                         <th width="45%" th:utext="#{study.studydetails.column.name}">.Name</th>
@@ -261,20 +261,20 @@
                     <tbody>
                     <!-- Passing Nursery_Condition type id 1802 which will fetch & display particular condition's details, valid values &
                      usage in popup -->
-                    <tr th:each="nurseryConditionDetail, rowStat : *{nurseryConditionDetails}">
+                    <tr th:each="studyConditionDetail, rowStat : *{studyConditionDetails}">
                         <td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
                             <a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-                            *{nurseryConditionDetails[__${rowStat.index}__].variable.cvTermId} + '\', 1802);'"
-                               th:text="${nurseryConditionDetail.variable.name}"></a>
+                            *{studyConditionDetails[__${rowStat.index}__].variable.cvTermId} + '\', 1802);'"
+                               th:text="${studyConditionDetail.variable.name}"></a>
                         </td>
                         <td width="55%" th:class="${rowStat.even}? 'even' : 'odd'"
-                            th:text="${nurseryConditionDetail.variable.description}"></td>
+                            th:text="${studyConditionDetail.variable.description}"></td>
                     </tr>
                     </tbody>
                 </table>
 
                 <!-- If trial has no Condition then display No available trial conditions -->
-                <div th:if="*{nurseryConditionDetails == null or #lists.isEmpty(nurseryConditionDetails)}">
+                <div th:if="*{studyConditionDetails == null or #lists.isEmpty(studyConditionDetails)}">
                     <div class="add_top_padding" th:text="#{no.available.study.conditions}">No available study conditions</div>
                 </div>
             </div>

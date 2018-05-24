@@ -301,7 +301,7 @@ public class ManageSettingsController extends SettingsController {
 		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
 			settingsList = this.userSelection.getDeletedBaselineTraitsList();
 		} else if (mode == VariableType.STUDY_CONDITION.getId()) {
-			settingsList = this.userSelection.getDeletedNurseryConditions();
+			settingsList = this.userSelection.getDeletedStudyConditions();
 		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
 			settingsList = this.userSelection.getDeletedTreatmentFactors();
 		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
@@ -359,8 +359,8 @@ public class ManageSettingsController extends SettingsController {
 				this.addVariableInDeletedList(this.userSelection.getSelectionVariates(), mode, variableId, true);
 				SettingsUtil.deleteVariableInSession(this.userSelection.getSelectionVariates(), variableId);
 			} else if (mode == VariableType.STUDY_CONDITION.getId() || mode == VariableType.STUDY_CONDITION.getId()) {
-				this.addVariableInDeletedList(this.userSelection.getNurseryConditions(), mode, variableId, true);
-				SettingsUtil.deleteVariableInSession(this.userSelection.getNurseryConditions(), variableId);
+				this.addVariableInDeletedList(this.userSelection.getStudyConditions(), mode, variableId, true);
+				SettingsUtil.deleteVariableInSession(this.userSelection.getStudyConditions(), variableId);
 			} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getTreatmentFactors(), mode, variableId, true);
 				SettingsUtil.deleteVariableInSession(this.userSelection.getTreatmentFactors(), variableId);

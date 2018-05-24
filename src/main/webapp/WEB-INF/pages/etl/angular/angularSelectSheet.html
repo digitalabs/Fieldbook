@@ -331,6 +331,12 @@ angular.module('di-consolidatedStep', ['digitalabs-util','di-directives', 'digit
                         $scope.messages.push([[#{error.blank.study.name}]]);
                         valid = false;
                     }}
+                    
+                    if (! $scope.selected.studyDetails.startDate || $scope.selected.studyDetails.startDate.trim() === '') {
+                        $scope.currentErrorField = $scope.selectSheetForm.startDate;
+                        $scope.messages.push([[#{error.start.date.is.empty}]]);
+                        valid = false;
+                    }
 
                     if (valid) {
                     if (! $scope.selected.studyDetails.studyDescription || $scope.selected.studyDetails.studyDescription.trim() === '') {

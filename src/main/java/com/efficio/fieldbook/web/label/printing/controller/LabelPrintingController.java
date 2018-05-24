@@ -226,56 +226,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	}
 
 	/**
-	 * Show nursery label details.
-	 *
-	 * @param form the form
-	 * @param model the model
-	 * @param session the session
-	 * @param id the id
-	 * @param locale the locale
-	 * @return the string
-	 */
-	@Deprecated
-	@RequestMapping(value = "/nursery/{id}", method = RequestMethod.GET)
-	public String showNurseryLabelDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form, final Model model,
-			final HttpServletRequest req, final HttpSession session, @PathVariable final int id, final Locale locale) {
-		SessionUtility.clearSessionData(session, new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME,
-				SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-		Study study = null;
-		final List<FieldMapInfo> fieldMapInfoList;
-		FieldMapInfo fieldMapInfo = null;
-		boolean hasFieldMap = false;
-		try {
-			study = this.fieldbookMiddlewareService.getStudy(id);
-			final List<Integer> ids = new ArrayList<>();
-			ids.add(id);
-			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
-			for (final FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
-				fieldMapInfo = fieldMapInfoDetail;
-				hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
-			}
-		} catch (final MiddlewareException e) {
-			LabelPrintingController.LOG.error(e.getMessage(), e);
-		}
-		this.userLabelPrinting.setStudyId(id);
-		this.userLabelPrinting.setStudy(study);
-		this.userLabelPrinting.setTitle(study != null ? study.getDescription() : null);
-		this.userLabelPrinting.setName(study != null ? study.getName() : null);
-		this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
-		this.userLabelPrinting.setBarcodeNeeded("0");
-		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
-		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
-		this.userLabelPrinting.setNumberOfLabelPerRow("3");
-		this.userLabelPrinting.setIsStockList(false);
-
-		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting));
-		form.setUserLabelPrinting(this.userLabelPrinting);
-		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS,
-				this.labelPrintingService.getAvailableLabelFieldsForStudy(hasFieldMap, locale, id));
-		return super.show(model);
-	}
-
-	/**
 	 * Show fieldmap label details.
 	 *
 	 * @param form the form

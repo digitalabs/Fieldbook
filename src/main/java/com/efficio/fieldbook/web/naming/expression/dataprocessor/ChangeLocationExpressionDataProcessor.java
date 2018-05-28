@@ -8,8 +8,8 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.springframework.stereotype.Component;
 
 
@@ -28,7 +28,7 @@ public class ChangeLocationExpressionDataProcessor implements ExpressionDataProc
     public void processPlotLevelData(AdvancingSource source, MeasurementRow row) throws FieldbookException {
         // Trial Advancing does not have Harvest location so overriding/setting harvestLocationId at plot level
 
-        if(source.getStudyType().equals(StudyType.T) && source.getTrailInstanceObservation() != null &&
+		if(StudyTypeDto.TRIAL_NAME.equals(source.getStudyType().getName()) && source.getTrailInstanceObservation() != null &&
                 source.getTrailInstanceObservation().getDataList() != null &&  !source.getTrailInstanceObservation().getDataList().isEmpty()){
             for(MeasurementData measurementData : source.getTrailInstanceObservation().getDataList()){
                 if(measurementData.getMeasurementVariable().getTermId() == TermId.LOCATION_ID.getId()){

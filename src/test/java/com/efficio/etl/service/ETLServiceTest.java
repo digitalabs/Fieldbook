@@ -9,6 +9,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.DataSetTestDataInitializer;
@@ -24,6 +25,8 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
@@ -747,6 +750,19 @@ public class ETLServiceTest {
 		Map<String, List<Message>> errors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, true);
 		Assert.assertTrue("Trial design variables are not required in file headers if the dataset being imported is type 'Means', there should be no mismatch error ", errors.isEmpty());
 
+	}
+
+	@Test
+	public void testReadStudyDetails() {
+		final Sheet descriptionSheet = this.workbook.getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
+		StudyDetails studyDetails = this.etlService.readStudyDetails(descriptionSheet);
+		//expected values are from the modifiedTemplateFile.1.xls file in the test resources
+		Assert.assertEquals("pheno_t7", studyDetails.getStudyName());
+		Assert.assertEquals("Phenotyping trials of the Population 114", studyDetails.getDescription());
+		Assert.assertEquals("To evaluate the Population 114", studyDetails.getObjective());
+		Assert.assertEquals("20130805", studyDetails.getStartDate());
+		Assert.assertEquals("20130805", studyDetails.getEndDate());
+		Assert.assertEquals(StudyType.T, studyDetails.getStudyType());
 	}
 
 	protected Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> createPhenotyicMapTestData() {

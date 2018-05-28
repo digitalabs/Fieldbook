@@ -57,8 +57,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -938,7 +940,7 @@ public class ETLServiceImpl implements ETLService {
 		}
 		final String objective = this.getCellStringValue(sheet, ETLServiceImpl.OBJECTIVE_ROW_INDEX - rowAdjustMent,
 				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
-		final String startDateStr = this.getCellStringValue(sheet, ETLServiceImpl.START_DATE_ROW_INDEX - rowAdjustMent,
+		String startDateStr = this.getCellStringValue(sheet, ETLServiceImpl.START_DATE_ROW_INDEX - rowAdjustMent,
 				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
 		final String endDateStr = this.getCellStringValue(sheet, ETLServiceImpl.END_DATE_ROW_INDEX - rowAdjustMent,
 				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
@@ -948,6 +950,10 @@ public class ETLServiceImpl implements ETLService {
 		if (studyTypeValue == null) {
 			// TODO we need to change what to do when Study Type is not in the file
 			studyTypeValue = studyDataManager.getStudyTypeByName(StudyTypeDto.NURSERY_NAME);
+		}
+		if(startDateStr == null || startDateStr.isEmpty()) {
+			SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+			startDateStr = df.format(new Date());
 		}
 		return new StudyDetails(study, title, objective, startDateStr, endDateStr, studyTypeValue, 0, null,
 			null, Util.getCurrentDateAsStringValue(), null);

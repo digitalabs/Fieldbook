@@ -61,12 +61,12 @@
 							<div class="col-xs-12 col-md-12">
 								<table class="table table-curved table-condensed">
 									<thead>
-									<th th:text="#{fieldmap.studies.order}">Order</th>
+									<th th:text="#{fieldmap.study.order}">Order</th>
 									<th th:text="#{fieldmap.study}">Study</th>
 									<th th:text="#{fieldmap.trial.instance}">Instance</th>
-									<th th:text="#{fieldmap.studies.entry.count}"># of Entries</th>
-									<th th:text="#{fieldmap.studies.reps.count}"># of Reps</th>
-									<th th:text="#{fieldmap.studies.plots.needed}">Plots Needed</th>
+									<th th:text="#{fieldmap.study.entry.count}"># of Entries</th>
+									<th th:text="#{fieldmap.study.reps.count}"># of Reps</th>
+									<th th:text="#{fieldmap.study.plots.needed}">Plots Needed</th>
 									</thead>
 									<tr th:each="row, rowInd : *{userFieldmap.selectedFieldmapList.rows}">
 										<td th:class="${rowInd.even}? 'even ordering' : 'odd ordering'" th:text="${row.order}"></td>
@@ -79,7 +79,7 @@
 								</table>
 							</div>
 							<div class="col-xs-12 col-md-12">
-								<label class="control-label label-bold" th:text="#{fieldmap.studies.total.number.of.plots}"> Total # of Plots Needed: </label> &nbsp;:
+								<label class="control-label label-bold" th:text="#{fieldmap.study.total.number.of.plots}"> Total # of Plots Needed: </label> &nbsp;:
 								<span th:text="*{userFieldmap.selectedFieldmapList.totalNumberOfPlots}"></span>
 							</div>
 						</div>
@@ -91,12 +91,12 @@
 						<div class="col-xs-12 col-md-12">
 							<div class="form-group">
 								<div class="col-xs-4 col-md-4">
-									<label class="control-label" ><strong class="sub-content-heading" th:text="#{fieldmap.studies.field.and.block.details}">FIELD AND BLOCK DETAILS:</strong></label>
+									<label class="control-label" ><strong class="sub-content-heading" th:text="#{fieldmap.study.field.and.block.details}">FIELD AND BLOCK DETAILS:</strong></label>
 								</div>
 							</div>
 							<div class="form-group">
 								<div class="col-xs-4 col-md-4">
-									<label class="control-label" ><strong class="sub-content-heading" th:text="#{fieldmap.studies.row.and.range.and.plot.details}">ROW, RANGE AND PLOT DETAILS:</strong></label>
+									<label class="control-label" ><strong class="sub-content-heading" th:text="#{fieldmap.study.row.and.range.and.plot.details}">ROW, RANGE AND PLOT DETAILS:</strong></label>
 								</div>
 							</div>
 							<div class="form-group">
@@ -110,7 +110,7 @@
 						<div class="col-xs-12 col-md-12">
 							<div class="form-group">
 								<div class="col-xs-4 col-md-4">
-									<label class="control-label label-bold" th:text="#{fieldmap.studies.field.location}">Field Location:</label>
+									<label class="control-label label-bold" th:text="#{fieldmap.study.field.location}">Field Location:</label>
 									<span th:text="*{userFieldmap.locationName}"></span>
 								</div>
 							</div>
@@ -150,7 +150,7 @@
 							</div>
 							<div class="form-group">
 								<div class="col-xs-4 col-md-4">
-									<label class="control-label label-bold" th:text="#{fieldmap.studies.planting.order}">Planting Order:</label>
+									<label class="control-label label-bold" th:text="#{fieldmap.study.planting.order}">Planting Order:</label>
 									<span th:if="*{userFieldmap.plantingOrder == 1}" th:text="#{fieldmap.planting.order.row.column}">Row/Column</span>
 									<span th:if="*{userFieldmap.plantingOrder == 2}" th:text="#{fieldmap.planting.order.serpentine}">Serpentine</span>
 								</div>

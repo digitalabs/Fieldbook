@@ -135,8 +135,8 @@
                             <table class="table table-curved table-condensed">
                                 <thead>
                                 <th th:text="#{fieldmap.trial.instance}">Instance</th>
-                                <th  th:text="#{fieldmap.studies.entry.count}"># of Entries</th>
-                                <th  th:text="#{fieldmap.studies.reps.count}"># of Reps</th>
+                                <th  th:text="#{fieldmap.study.entry.count}"># of Entries</th>
+                                <th  th:text="#{fieldmap.study.reps.count}"># of Reps</th>
                                 <th  th:text="#{label.printing.labels.needed}">Labels Needed</th>
                                 </thead>
                                 <tr th:each="trialRow, row : *{userLabelPrinting.fieldMapInfo.datasets[0].trialInstances}">
@@ -284,11 +284,11 @@
                                 <table class="table table-curved table-condensed" id="selectedTrials">
                                     <thead>
                                     <th></th>
-                                    <th th:text="#{fieldmap.studies.order}">Order</th>
+                                    <th th:text="#{fieldmap.study.order}">Order</th>
                                     <th  th:text="#{fieldmap.study}">Study</th>
                                     <th  th:text="#{fieldmap.trial.instance}">Instance</th>
-                                    <th  th:text="#{fieldmap.studies.entry.count}"># of Entries</th>
-                                    <th  th:text="#{fieldmap.studies.reps.count}"># of Reps</th>
+                                    <th  th:text="#{fieldmap.study.entry.count}"># of Entries</th>
+                                    <th  th:text="#{fieldmap.study.reps.count}"># of Reps</th>
                                     <th th:text="#{label.printing.labels.needed}">Labels Needed</th>
                                     </thead>
                                     <div th:each="map : *{userLabelPrinting.fieldMapInfoList}">

@@ -189,21 +189,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	}
 
-	/**
-	 * @deprecated it will be removed in
-	 */
-	@Deprecated
-	@ResponseBody
-	@RequestMapping(value = "/export/{exportType}/{exportWayType}", method = RequestMethod.POST)
-	public String exportFile(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
-			@PathVariable final int exportWayType, final HttpServletRequest req, final HttpServletResponse response) throws IOException {
-		ExportStudyController.LOG.info("Entering Export Nursery:exportFile");
-		final List<Integer> instancesList = new ArrayList<>();
-		instancesList.add(1);
-		ExportStudyController.LOG.info("Leaving Export Nursery:exportFile");
-		return this.doExport(exportType, response, instancesList, exportWayType, data);
-	}
-
 	@ResponseBody
 	@RequestMapping(value = "/exportStudy/{exportType}/{instances}/{exportWayType}", method = RequestMethod.POST)
 	public String exportFileStudy(@RequestBody final Map<String, String> data, @PathVariable final int exportType,

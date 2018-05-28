@@ -29,7 +29,6 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
@@ -948,7 +947,7 @@ public class ETLServiceImpl implements ETLService {
 		StudyTypeDto studyTypeValue = studyDataManager.getStudyTypeByName(studyType);
 		if (studyTypeValue == null) {
 			// TODO we need to change what to do when Study Type is not in the file
-			studyTypeValue = studyDataManager.getStudyTypeByName(StudyType.N.getName());
+			studyTypeValue = studyDataManager.getStudyTypeByName(StudyTypeDto.NURSERY_NAME);
 		}
 		return new StudyDetails(study, title, objective, startDateStr, endDateStr, studyTypeValue, 0, null,
 			null, Util.getCurrentDateAsStringValue(), null);

@@ -47,6 +47,7 @@ import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataMana
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.dms.DmsProject;
+import org.generationcp.middleware.pojos.dms.StudyType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.SampleListService;
@@ -168,7 +169,10 @@ public class OpenTrialControllerTest {
 	public void setUp() {
 		final Project project = this.createProject();
 		final DmsProject dmsProject = this.createDmsProject();
-
+		final StudyType studyType = new StudyType();
+		studyType.setName(StudyTypeDto.TRIAL_NAME);
+		studyType.setLabel(StudyTypeDto.TRIAL_LABEL);
+		dmsProject.setStudyType(studyType);
 		Mockito.when(this.workbenchService.getCurrentIbdbUserId(1L, OpenTrialControllerTest.WORKBENCH_USER_ID))
 				.thenReturn(OpenTrialControllerTest.IBDB_USER_ID);
 		Mockito.when(this.workbenchDataManager.getLastOpenedProjectAnyUser()).thenReturn(project);
@@ -200,12 +204,12 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testOpenTrialNoRedirect() throws Exception {
 
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, new StudyTypeDto("T"));
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
 		final Study study = new Study();
-		study.setStudyType(new StudyTypeDto("T"));
+		study.setStudyType(new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
 		Mockito.when(this.fieldbookMiddlewareService.getStudy(Matchers.anyInt())).thenReturn(study);
 
 		this.mockStandardVariables(workbook.getAllVariables());
@@ -242,7 +246,7 @@ public class OpenTrialControllerTest {
 
 		final MockHttpSession mockSession = new MockHttpSession();
 
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, new StudyTypeDto("T"));
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 
 		mockSession.setAttribute(SessionUtility.USER_SELECTION_SESSION_NAME, new UserSelection());
@@ -268,7 +272,7 @@ public class OpenTrialControllerTest {
 
 		final Model model = new ExtendedModelMap();
 
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, new StudyTypeDto("T"));
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 
 		// Verify that workbook has Analysis and/or Analysis Summary variables
@@ -302,7 +306,7 @@ public class OpenTrialControllerTest {
 			Assert.assertTrue("Controller does not properly set into the model the data for the germplasm list size",
 					model.containsAttribute(OpenTrialControllerTest.GERMPLASM_LIST_SIZE));
 			Assert.assertTrue("Controller does not properly set into the model copy of the trial form",
-					model.containsAttribute("createNurseryForm"));
+					model.containsAttribute("createTrialForm"));
 			Assert.assertTrue("Controller does not properly set into the model special data required for experimental design tab",
 					model.containsAttribute("experimentalDesignSpecialData"));
 			Assert.assertTrue("Controller does not properly set into the model the study name", model.containsAttribute("studyName"));
@@ -1030,12 +1034,12 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testUpdateSavedTrial() throws ParseException {
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, new StudyTypeDto("T"));
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString()))
 			.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(1, "STD"));
 		final Study study = new Study();
-		study.setStudyType(new StudyTypeDto("T"));
+		study.setStudyType(new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
 		Mockito.when(this.fieldbookMiddlewareService.getStudy(Matchers.anyInt())).thenReturn(study);
 
 		Mockito.when(
@@ -1180,6 +1184,9 @@ public class OpenTrialControllerTest {
 		Mockito.when(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(Matchers.eq(1), Matchers.anyList())).thenReturn(true);
 		final long experimentCount = 10;
 		Mockito.when(this.studyDataManager.countExperiments(Matchers.eq(1))).thenReturn(experimentCount);
+
+		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
+		data.setBasicDetails(new BasicDetails());data.getBasicDetails().setStudyType(new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
 		final Map<String, Object> returnVal = this.openTrialController.submit(0, data);
 
 		Assert.assertNotNull("The environment data tab should not be null", returnVal.get(OpenTrialController.ENVIRONMENT_DATA_TAB));

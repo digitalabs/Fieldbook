@@ -58,7 +58,7 @@ public class SeasonExpressionDataProcessorTest {
 
 	@Test
 	public void testProcessEnvironmentLevelDataWithSeasonMonthVariable() {
-		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(new StudyTypeDto("N"));
+		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
 
 		final MeasurementVariable seasonMeasurementVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_MONTH.getId(),
 				SeasonExpressionDataProcessorTest.SEASON_MONTH_VALUE);
@@ -72,7 +72,7 @@ public class SeasonExpressionDataProcessorTest {
 
 	@Test
 	public void testProcessEnvironmentLevelDataWithSeasonVarTextVariable() {
-		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(new StudyTypeDto("N"));
+		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
 
 		final MeasurementVariable seasonMeasurementVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR_TEXT.getId(),
 				SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE);
@@ -86,7 +86,7 @@ public class SeasonExpressionDataProcessorTest {
 
 	@Test
 	public void testProcessEnvironmentLevelDataWithSeasonVarVariable() {
-		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(new StudyTypeDto("N"));
+		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
 
 		final MeasurementVariable seasonMeasurementVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR.getId(),
 				SeasonExpressionDataProcessorTest.SEASON_CATEGORY_VALUE);
@@ -100,7 +100,7 @@ public class SeasonExpressionDataProcessorTest {
 
 	@Test
 	public void testProcessEnvironmentLevelDataWithNumericSeasonVarVariable() {
-		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(new StudyTypeDto("N"));
+		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
 
 		final MeasurementVariable seasonMeasurementVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.SEASON_VAR.getId(),
 				SeasonExpressionDataProcessorTest.SEASON_CATEGORY_ID);
@@ -116,7 +116,7 @@ public class SeasonExpressionDataProcessorTest {
 
 	@Test
 	public void testProcessEnvironmentLevelDataWithNoSeasonVariable() {
-		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(new StudyTypeDto("N"));
+		final Workbook workbook = this.workbookTestDataInitializer.createWorkbook(new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
 		workbook.setConditions(new ArrayList<MeasurementVariable>());
 
 		this.seasonExpressionDataProcessor.processEnvironmentLevelData(this.advancingSource, workbook, null, null);
@@ -162,7 +162,7 @@ public class SeasonExpressionDataProcessorTest {
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(firstTrialInstanceMeasurementData, firstInstanceSeasonMeasurementData));
 
-		this.advancingSource.setStudyType(new StudyTypeDto("T"));
+		this.advancingSource.setStudyType(new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
 		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
@@ -185,7 +185,7 @@ public class SeasonExpressionDataProcessorTest {
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(firstTrialInstanceMeasurementData, firstInstanceSeasonMeasurementData));
 
-		this.advancingSource.setStudyType(new StudyTypeDto("T"));
+		this.advancingSource.setStudyType(new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
 		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
@@ -210,7 +210,7 @@ public class SeasonExpressionDataProcessorTest {
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(firstTrialInstanceMeasurementData, firstInstanceSeasonMeasurementData));
 
-		this.advancingSource.setStudyType(new StudyTypeDto("T"));
+		this.advancingSource.setStudyType(new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
 		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
@@ -227,7 +227,7 @@ public class SeasonExpressionDataProcessorTest {
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(firstTrialInstanceMeasurementData));
 
-		this.advancingSource.setStudyType(new StudyTypeDto("T"));
+		this.advancingSource.setStudyType(new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
 		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);

@@ -202,7 +202,7 @@ public class ETLServiceTest {
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
 		this.userSelection.setDatasetType(datasetType);
 
-		Mockito.doReturn(new StudyTypeDto(10010,"Trial","T")).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
+		Mockito.doReturn(new StudyTypeDto(10010,"Trial",StudyTypeDto.TRIAL_NAME)).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
 		final List<DataSet> plotDatasets = DataSetTestDataInitializer
 				.createPlotDatasetsTestData(this.userSelection.getStudyName() + "-PLOTDATA");
 		Mockito.doReturn(plotDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
@@ -271,7 +271,7 @@ public class ETLServiceTest {
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);//
 		this.userSelection.setDatasetType(datasetType);
 
-		Mockito.doReturn(new StudyTypeDto(10010,"Trial","T")).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
+		Mockito.doReturn(new StudyTypeDto(10010,"Trial",StudyTypeDto.TRIAL_NAME)).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
 		final List<DataSet> plotDatasets = DataSetTestDataInitializer
 				.createPlotDatasetsTestData("MEASUREMENT EFEC_" + this.userSelection.getStudyName());
 		plotDatasets.add(DataSetTestDataInitializer
@@ -341,7 +341,7 @@ public class ETLServiceTest {
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
 		this.userSelection.setDatasetType(datasetType);
 
-		Mockito.doReturn(new StudyTypeDto(10010,"Trial","T")).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
+		Mockito.doReturn(new StudyTypeDto(10010,StudyTypeDto.TRIAL_LABEL,StudyTypeDto.TRIAL_NAME)).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
 		final List<DataSet> meansDatasets = DataSetTestDataInitializer
 				.createMeansDatasetsTestData(this.userSelection.getStudyName() + "-MEANS");
 		Mockito.doReturn(meansDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
@@ -809,7 +809,7 @@ public class ETLServiceTest {
 		userSelection.setStudyObjective("To test the data import tool");
 		userSelection.setStudyStartDate("09/01/2015");
 		userSelection.setStudyEndDate("10/01/2015");
-		userSelection.setStudyType("T");
+		userSelection.setStudyType(StudyTypeDto.TRIAL_NAME);
 		userSelection.setStudyId(studyId);
 	}
 

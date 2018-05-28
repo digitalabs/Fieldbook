@@ -83,7 +83,7 @@ public class NamingConventionServiceImplTest {
 		this.row.setBreedingMethod(this.breedingMethod);
 		this.workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
-		studyDetails.setStudyType(new StudyTypeDto("N"));
+		studyDetails.setStudyType(new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
 		studyDetails.setStudyName("STUDY:ABC");
 		workbook.setStudyDetails(studyDetails);
 
@@ -218,7 +218,7 @@ public class NamingConventionServiceImplTest {
 
         final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
-		studyDetails.setStudyType(new StudyTypeDto("N"));
+		studyDetails.setStudyType(new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
 
         Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Matchers.anyInt())).thenReturn(workbook);
         final AdvancingSourceList rows = new AdvancingSourceList();

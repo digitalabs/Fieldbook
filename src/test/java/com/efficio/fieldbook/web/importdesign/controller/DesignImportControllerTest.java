@@ -567,7 +567,7 @@ public class DesignImportControllerTest {
 	public void testAddConditionsIfNecessaryVariablesToAddAlreadyExist()
 			throws URISyntaxException, FileParsingException {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto("N"));
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
 		final int originalConditionsSize = workbook.getConditions().size();
 
 		final Set<MeasurementVariable> measurementVariables = new HashSet<>();
@@ -594,7 +594,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
 				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto("N"));
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
 		final int originalConditionsSize = workbook.getConditions().size();
 
 		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData(1, 1);
@@ -646,7 +646,7 @@ public class DesignImportControllerTest {
 	public void testPopulateStudyLevelVariableListIfNecessary() throws URISyntaxException, FileParsingException {
 
 		final Project project = this.createProject();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto("N"));
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 
@@ -872,7 +872,7 @@ public class DesignImportControllerTest {
 
 		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final Workbook workbook = Mockito.spy(WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto("T")));
+		final Workbook workbook = Mockito.spy(WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto(StudyTypeDto.TRIAL_NAME)));
 
 		this.designImportController.createTrialObservations(environmentData, workbook, designImportData);
 
@@ -894,7 +894,7 @@ public class DesignImportControllerTest {
 	@Test
 	public void testResetCheckList() {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto("N"));
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
 		final UserSelection testUserSelection = new UserSelection();
 
 		final List<SettingDetail> studyLevelConditions = new ArrayList<>();
@@ -946,7 +946,7 @@ public class DesignImportControllerTest {
 
 	@Test
 	public void testChangeDesignForNewTrialWithImportedDesign() {
-		final Workbook trial = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("T"));
+		final Workbook trial = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
 		trial.getStudyDetails().setId(1);
 		final List<MeasurementRow> observations = trial.getObservations();
 
@@ -962,7 +962,7 @@ public class DesignImportControllerTest {
 
 	@Test
 	public void testChangeDesignForExistingTrialWithImportedDesign() {
-		final Workbook trial = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("T"));
+		final Workbook trial = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
 		trial.getStudyDetails().setId(1);
 		final List<MeasurementRow> observations = trial.getObservations();
 

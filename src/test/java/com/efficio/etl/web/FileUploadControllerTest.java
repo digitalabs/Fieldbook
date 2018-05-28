@@ -172,7 +172,7 @@ public class FileUploadControllerTest {
 	@Test
 	public void testStartProcessSuccessful() throws WorkbookParserException {
 
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto("T"), "Sample Study", 1,
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto(StudyTypeDto.TRIAL_NAME), "Sample Study", 1,
 				false);
 
 		Mockito.when(this.dataImportService.parseWorkbook(Matchers.any(File.class), Matchers.anyString(),
@@ -197,7 +197,7 @@ public class FileUploadControllerTest {
 	public void testStartProcessParserException() throws WorkbookParserException {
 
 		final String errorMessage = "sample message";
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto("T"), "Sample Study", 1,
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto(StudyTypeDto.TRIAL_NAME), "Sample Study", 1,
 				false);
 
 		Mockito.when(this.dataImportService.parseWorkbook(Matchers.any(File.class), Matchers.anyString(),
@@ -231,7 +231,7 @@ public class FileUploadControllerTest {
 	@Test
 	public void testStartProcessParserIOException() throws WorkbookParserException, IOException {
 
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto("T"), "Sample Study", 1,
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto(StudyTypeDto.TRIAL_NAME), "Sample Study", 1,
 				false);
 
 		Mockito.when(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection)).thenThrow(new IOException());

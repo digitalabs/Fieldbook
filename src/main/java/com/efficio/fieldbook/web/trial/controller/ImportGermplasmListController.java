@@ -83,7 +83,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * This controller handles the 2nd step in the nursery manager process.
+ * This controller handles the 2nd step in the study manager process.
  *
  * @author Daniel Jao
  */
@@ -868,41 +868,6 @@ public class ImportGermplasmListController extends SettingsController {
 		return super.showAjaxPage(model, ImportGermplasmListController.CHECK_PAGINATION_TEMPLATE);
 	}
 
-	/**
-	 * Display check germplasm details.
-	 *
-	 * @param type
-	 * @param form
-	 * @param model
-	 * @return
-	 */
-	//TODO Remove this function
-	@Deprecated
-	@RequestMapping(value = "/reload/check/list/{type}", method = RequestMethod.GET)
-	public String reloadCheckList(@PathVariable final String type,
-			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final Model model) {
-		try {
-			final List<Enumeration> checksList = this.fieldbookService.getCheckTypeList();
-			List<ImportedGermplasm> list = new ArrayList<>();
-			if (this.userSelection.getImportedCheckGermplasmMainInfo() != null
-					&& this.userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null
-					&& this.userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-							.getImportedGermplasms() != null) {
-				// we set it here
-				list = this.userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-						.getImportedGermplasms();
-				form.setImportedCheckGermplasm(list);
-			}
-			this.generateCheckListModel(model, list, checksList);
-
-			model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST, this.getGermplasmCheckTableHeader());
-
-		} catch (final Exception e) {
-			ImportGermplasmListController.LOG.error(e.getMessage(), e);
-		}
-		return super.showAjaxPage(model, ImportGermplasmListController.CHECK_PAGINATION_TEMPLATE);
-	}
-
 	private void generateCheckListModel(final Model model, final List<ImportedGermplasm> list,
 			final List<Enumeration> checksList) {
 		final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
@@ -1552,42 +1517,6 @@ public class ImportGermplasmListController extends SettingsController {
 			form.setImportedCheckGermplasmMainInfo(userSelection.getImportedCheckGermplasmMainInfo());
 			form.setImportedCheckGermplasm(userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
 					.getImportedGermplasms());
-		}
-
-	}
-
-	/**
-	 * This will merge the selected Germplasm List and Check list into one
-	 * Imported Germplasm list. This is necessary for generation of Observation
-	 * with checks.
-	 *
-	 * @param userSelection
-	 * @param form
-	 */
-	@Deprecated
-	protected void mergePrimaryAndCheckGermplasmList(final UserSelection userSelection, final ImportGermplasmListForm form) {
-
-		// merge primary and check germplasm list
-		if (userSelection.getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null
-				&& SettingsUtil.checkVariablesHaveValues(form.getCheckVariables())) {
-
-			this.mergeCheckService.updatePrimaryListAndChecksBeforeMerge(form);
-
-			final int interval = this.getIntervalValue(form);
-
-			final List<ImportedGermplasm> newImportedGermplasm = this.mergeCheckService.mergeGermplasmList(
-					form.getImportedGermplasm(), form.getImportedCheckGermplasm(),
-					Integer.parseInt(
-							SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_START.getId())),
-					interval,
-					SettingsUtil.getCodeInPossibleValues(
-							SettingsUtil.getFieldPossibleVales(this.fieldbookService, TermId.CHECK_PLAN.getId()),
-							SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId())));
-
-			userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()
-					.setImportedGermplasms(newImportedGermplasm);
-			form.setImportedGermplasm(
-					userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
 		}
 
 	}

@@ -28,7 +28,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.ToolName;
@@ -446,9 +446,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final StudyDetails studyDetails = studyDataManager.getStudyDetails(studyId);
 		// DO NOT remove this condition. Reports are organized based on the study type
 		// It needs to be discussed with IBP whenever they want to bring custom reports back
-		if (StudyType.N.getName().equalsIgnoreCase(studyDetails.getStudyType().getName())) {
+		if (StudyTypeDto.NURSERY_NAME.equalsIgnoreCase(studyDetails.getStudyType().getName())) {
 			return this.getCustomReportTypes(ToolSection.FB_NURSE_MGR_CUSTOM_REPORT.name());
-		} else if (StudyType.T.getName().equalsIgnoreCase(studyDetails.getStudyType().getName())) {
+		} else if (StudyTypeDto.TRIAL_NAME.equalsIgnoreCase(studyDetails.getStudyType().getName())) {
 			return this.getCustomReportTypes(ToolSection.FB_TRIAL_MGR_CUSTOM_REPORT.name());
 		}
 

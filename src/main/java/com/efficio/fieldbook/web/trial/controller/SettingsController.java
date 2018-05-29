@@ -98,24 +98,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	@Resource
 	protected OntologyService ontologyService;
 
-	/**
-	 * Checks if the measurement table has user input data for a particular variable id
-	 *
-	 * @param variableId, List<MeasurementRow>
-	 * @return
-	 */
-	@Deprecated
-	public static boolean hasMeasurementDataEntered(final int variableId, final List<MeasurementRow> measurementRow) {
-		for (final MeasurementRow row : measurementRow) {
-			for (final MeasurementData data : row.getDataList()) {
-				if (data.getMeasurementVariable() != null && data.getMeasurementVariable().getTermId() == variableId
-						&& data.getValue() != null && !data.getValue().isEmpty()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
 	
 	/**
 	 * Builds the required factors.
@@ -123,184 +105,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param requiredFields the required fields
 	 * @return the list
 	 */
-	//TODO TRIAL
 	protected List<Integer> buildVariableIDList(final String requiredFields) {
 		return FieldbookUtil.getInstance().buildVariableIDList(requiredFields);
-	}
-
-	/**
-	 * Builds the required factors label.
-	 *
-	 * @param requiredFields the required fields
-	 * @param hasLabels the has labels
-	 * @return the list
-	 */
-	@Deprecated
-	protected List<String> buildRequiredVariablesLabel(final String requiredFields, final boolean hasLabels) {
-
-		final List<String> requiredVariables = new ArrayList<>();
-		final StringTokenizer token = new StringTokenizer(requiredFields, ",");
-		while (token.hasMoreTokens()) {
-			if (hasLabels) {
-				requiredVariables.add(AppConstants.getString(token.nextToken() + AppConstants.LABEL.getString()));
-			} else {
-				requiredVariables.add(null);
-				token.nextToken();
-			}
-		}
-
-		return requiredVariables;
-	}
-
-	/**
-	 * Builds the required factors flag.
-	 *
-	 * @param requiredFields the required fields
-	 * @return the boolean[]
-	 */
-	@Deprecated
-	protected boolean[] buildRequiredVariablesFlag(final String requiredFields) {
-		final StringTokenizer token = new StringTokenizer(requiredFields, ",");
-		final boolean[] requiredVariablesFlag = new boolean[token.countTokens()];
-		for (int i = 0; i < requiredVariablesFlag.length; i++) {
-			requiredVariablesFlag[i] = false;
-		}
-		return requiredVariablesFlag;
-	}
-
-	@Deprecated
-	private String getCodeCounterpart(final String idCodeNameCombination) {
-		final StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, "|");
-		if (tokenizer.hasMoreTokens()) {
-			tokenizer.nextToken();
-			return tokenizer.nextToken();
-		} else {
-			return "0";
-		}
-	}
-
-	/**
-	 * Update required fields.
-	 *
-	 * @param requiredVariables the required variables
-	 * @param requiredVariablesLabel the required variables label
-	 * @param requiredVariablesFlag the required variables flag
-	 * @param variables the variables
-	 * @param hasLabels the has labels
-	 * @return the list
-	 */
-	@Deprecated
-	protected List<SettingDetail> updateRequiredFields(final List<Integer> requiredVariables, final List<String> requiredVariablesLabel,
-			final boolean[] requiredVariablesFlag, final List<SettingDetail> variables, final boolean hasLabels,
-			final String idCodeNameCombination, final String role) {
-
-		// create a map of id and its id-code-name combination
-		final Map<String, String> idCodeNameMap = new HashMap<>();
-		if (idCodeNameCombination != null && !idCodeNameCombination.isEmpty()) {
-			final StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, ",");
-			if (tokenizer.hasMoreTokens()) {
-				while (tokenizer.hasMoreTokens()) {
-					final String pair = tokenizer.nextToken();
-					final StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
-					idCodeNameMap.put(tokenizerPair.nextToken(), pair);
-				}
-			}
-		}
-
-		// save hidden conditions in a map
-		final Map<String, SettingDetail> variablesMap = new HashMap<>();
-		if (variables != null) {
-			for (final SettingDetail variable : this.userSelection.getRemovedConditions()) {
-				variablesMap.put(variable.getVariable().getCvTermId().toString(), variable);
-			}
-		}
-
-		for (final SettingDetail variable : variables != null ? variables : null) {
-			final Integer stdVar;
-			if (variable.getVariable().getCvTermId() != null) {
-				stdVar = variable.getVariable().getCvTermId();
-			} else {
-				stdVar = this.fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-						variable.getVariable().getProperty(), variable.getVariable().getScale(), variable.getVariable().getMethod(),
-						PhenotypicType.valueOf(variable.getVariable().getRole()));
-			}
-
-			// mark required variables that are already in the list
-			int ctr = 0;
-			for (final Integer requiredFactor : requiredVariables) {
-				String code = "0";
-				// if the variable is in the id-code-name combination list, get code counterpart of id
-				if (idCodeNameMap.get(String.valueOf(stdVar)) != null) {
-					code = this.getCodeCounterpart(idCodeNameMap.get(String.valueOf(stdVar)));
-				}
-				// if the id already exists do not add the code counterpart as a required field
-				if (requiredFactor.equals(stdVar) || requiredFactor.equals(Integer.parseInt(code))) {
-					requiredVariablesFlag[ctr] = true;
-					variable.setOrder((requiredVariables.size() - ctr) * -1);
-					if (hasLabels) {
-						variable.getVariable().setName(requiredVariablesLabel.get(ctr));
-					}
-				}
-				ctr++;
-			}
-		}
-
-		// add required variables that are not in existing nursery
-		for (int i = 0; i < requiredVariablesFlag.length; i++) {
-			if (!requiredVariablesFlag[i]) {
-				final SettingDetail newSettingDetail =
-						this.createSettingDetail(requiredVariables.get(i), requiredVariablesLabel.get(i), role);
-				newSettingDetail.setOrder((requiredVariables.size() - i) * -1);
-				// set value of breeding method code if name is provided but id is not
-				if (TermId.BREEDING_METHOD_CODE.getId() == requiredVariables.get(i)
-						&& variablesMap.get(String.valueOf(TermId.BREEDING_METHOD.getId())) != null
-						&& variablesMap.get(String.valueOf(TermId.BREEDING_METHOD_ID.getId())) == null) {
-					final Method method = this.fieldbookMiddlewareService
-							.getMethodByName(variablesMap.get(String.valueOf(TermId.BREEDING_METHOD.getId())).getValue());
-					newSettingDetail.setValue(method.getMid() == null ? "" : method.getMid().toString());
-				}
-
-				variables.add(newSettingDetail);
-			}
-		}
-
-		// sort by required fields
-		Collections.sort(variables, new Comparator<SettingDetail>() {
-
-			@Override
-			public int compare(final SettingDetail o1, final SettingDetail o2) {
-				return o1.getOrder() - o2.getOrder();
-			}
-		});
-
-		return variables;
-	}
-
-	/**
-	 * Builds the default variables.
-	 *
-	 * @param defaults the defaults
-	 * @param requiredFields the required fields
-	 * @param requiredVariablesLabel the required variables label
-	 * @return the list
-	 */
-	@Deprecated
-	protected List<SettingDetail> buildDefaultVariables(final List<SettingDetail> defaults, final String requiredFields,
-			final List<String> requiredVariablesLabel, final String role) {
-		final StringTokenizer token = new StringTokenizer(requiredFields, ",");
-		int ctr = 0;
-
-		while (token.hasMoreTokens()) {
-			final String s = token.nextToken();
-			// FIXME BMS-4397
-			if (!SettingsController.DESCRIPTION.equals(s) && !SettingsController.START_DATE.equals(s) && !SettingsController.END_DATE
-				.equals(s) && !SettingsController.STUDY_UPDATE.equals(s) && !SettingsController.OBJECTIVE.equals(s)
-				&& !SettingsController.STUDY_NAME.equals(s) && !SettingsController.CREATED_BY.equals(s)) {
-				defaults.add(this.createSettingDetail(Integer.valueOf(s), requiredVariablesLabel.get(ctr), role));
-				ctr++;
-			}
-		}
-		return defaults;
 	}
 
 	/**
@@ -309,7 +115,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param id the id
 	 * @param name the name
 	 * @return the setting detail
-	 *///TODO TRIAL
+	 */
 	protected SettingDetail createSettingDetail(final int id, final String name, final String role) {
 		final String variableName;
 		final StandardVariable stdVar = this.getStandardVariable(id);
@@ -446,31 +252,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	/**
-	 * Get setting variable.
-	 *
-	 * @param id the id
-	 * @return the setting variable
-	 */
-	@Deprecated
-	protected SettingVariable getSettingVariable(final int id) {
-		final StandardVariable stdVar = this.getStandardVariable(id);
-		if (stdVar != null) {
-			final SettingVariable svar = new SettingVariable(stdVar.getName(), stdVar.getDescription(), stdVar.getProperty().getName(),
-					stdVar.getScale().getName(), stdVar.getMethod().getName(), null, stdVar.getDataType().getName(),
-					stdVar.getDataType().getId(),
-					stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue()
-							: null,
-					stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints().getMaxValue()
-							: null);
-			svar.setCvTermId(stdVar.getId());
-			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
-			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
-			return svar;
-		}
-		return null;
-	}
-
-	/**
 	 * Get standard variable.
 	 *
 	 * @param id the id
@@ -478,44 +259,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 */
 	protected StandardVariable getStandardVariable(final int id) {
 		return this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
-	}
-
-	/**
-	 * Creates the study details.
-	 * @param conditions the conditions
-	 * @param workbook the workbook
-	 * @param folderId the folder id
-	 * @param description
-	 * @param studyUpdate
-	 * @param objective
-	 * @param name
-	 * @param createdBy
-	 */
-	@Deprecated
-	public void createStudyDetails(final Workbook workbook, final Integer folderId, final Integer studyId, final String description,
-		final String startDate, final String endDate, final String studyUpdate, final String objective, final String name, final String createdBy) {
-		if (workbook.getStudyDetails() == null) {
-			workbook.setStudyDetails(new StudyDetails());
-		}
-		final StudyDetails studyDetails = workbook.getStudyDetails();
-
-		if (studyId != null) {
-			studyDetails.setId(studyId);
-		}
-
-		studyDetails.setObjective(objective);
-		studyDetails.setStudyName(name);
-		studyDetails.setDescription(description);
-		studyDetails.setStartDate(startDate);
-		studyDetails.setEndDate(endDate);
-		studyDetails.setStudyUpdate(studyUpdate);
-		if(createdBy != null) {
-			studyDetails.setCreatedBy(createdBy);
-		}
-
-		if (folderId != null) {
-			studyDetails.setParentFolderId(folderId);
-		}
 	}
 
 	/**
@@ -530,20 +273,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			for (final MeasurementData data : row.getDataList()) {
 				if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
 					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	@Deprecated
-	public boolean hasMeasurementDataEnteredForVariables(final List<Integer> variableIds, final UserSelection userSelectionTemp) {
-		for (final Integer variableId : variableIds) {
-			for (final MeasurementRow row : userSelectionTemp.getMeasurementRowList()) {
-				for (final MeasurementData data : row.getDataList()) {
-					if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
-						return true;
-					}
 				}
 			}
 		}
@@ -867,74 +596,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	@Deprecated
-	protected List<SettingDetail> getCheckVariables(final List<SettingDetail> nurseryLevelConditions, final CreateTrialForm form) {
-		final List<SettingDetail> checkVariables =
-				this.getSettingDetailsOfSection(nurseryLevelConditions, form, AppConstants.CHECK_VARIABLES.getString());
-		// set order by id
-		Collections.sort(checkVariables, new Comparator<SettingDetail>() {
-
-			@Override
-			public int compare(final SettingDetail o1, final SettingDetail o2) {
-				return o1.getVariable().getCvTermId() - o2.getVariable().getCvTermId();
-			}
-		});
-		return checkVariables;
-	}
-
-	/**
-	 * Gets the basic details.
-	 *
-	 * @param nurseryLevelConditions the nursery level conditions
-	 * @return the basic details
-	 */
-	@Deprecated
-	protected List<SettingDetail> getSettingDetailsOfSection(final List<SettingDetail> nurseryLevelConditions, final CreateTrialForm form,
-		final String variableList) {
-		final List<SettingDetail> settingDetails = new ArrayList<>();
-
-		final StringTokenizer token = new StringTokenizer(variableList, ",");
-		while (token.hasMoreTokens()) {
-			final String s = token.nextToken();
-			// FIXME BMS-4397
-			if (!SettingsController.DESCRIPTION.equals(s) && !SettingsController.START_DATE.equals(s) && !SettingsController.END_DATE
-				.equals(s) && !SettingsController.STUDY_UPDATE.equals(s) && !SettingsController.OBJECTIVE.equals(s)
-				&& !SettingsController.STUDY_NAME.equals(s) && !SettingsController.CREATED_BY.equals(s)) {
-				final Integer termId = Integer.valueOf(s);
-				final boolean isFound = this.searchAndSetValuesOfSpecialVariables(nurseryLevelConditions, termId, settingDetails);
-				if (!isFound) {
-					this.addSettingDetails(settingDetails, termId, form);
-				}
-			}
-
-		}
-
-		return settingDetails;
-	}
-
-	@Deprecated
-	private boolean searchAndSetValuesOfSpecialVariables(final List<SettingDetail> nurseryLevelConditions, final Integer termId,
-			final List<SettingDetail> settingDetails) {
-		boolean isFound = false;
-		for (final SettingDetail setting : nurseryLevelConditions) {
-			if (termId.equals(setting.getVariable().getCvTermId())) {
-				isFound = true;
-				settingDetails.add(setting);
-			}
-		}
-		return isFound;
-	}
-
-	@Deprecated
-	private void addSettingDetails(final List<SettingDetail> settingDetails, final Integer termId, final CreateTrialForm form) {
-		try {
-			settingDetails.add(this.createSettingDetail(termId, null, null));
-			form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.contextUtil.getCurrentIbdbUserId()));
-		} catch (final MiddlewareException e) {
-			SettingsController.LOG.error(e.getMessage(), e);
-		}
-	}
-
 	protected void setUserSelection(final UserSelection userSelection) {
 		this.userSelection = userSelection;
 	}
@@ -1002,16 +663,4 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		this.fieldbookService = fieldbookService;
 	}
 
-	/**
-	 * These model attributes are used in UI JS code e.g. in createNursery.html and editNursery.html to identify various sections on screen
-	 * where variables appear.
-	 */
-	@Deprecated
-	protected void addVariableSectionIdentifiers(final Model model) {
-		model.addAttribute("baselineTraitsSegment", VariableType.TRAIT.getId());
-		model.addAttribute("selectionVariatesSegment", VariableType.SELECTION_METHOD.getId());
-		model.addAttribute("studyLevelDetailType", VariableType.STUDY_DETAIL.getId());
-		model.addAttribute("plotLevelDetailType", VariableType.GERMPLASM_DESCRIPTOR.getId());
-		model.addAttribute("studyConditionsType", VariableType.STUDY_CONDITION.getId());
-	}
 }

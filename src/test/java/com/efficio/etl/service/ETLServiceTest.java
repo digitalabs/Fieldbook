@@ -9,6 +9,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.DataSetTestDataInitializer;
@@ -24,6 +25,8 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
@@ -202,7 +205,7 @@ public class ETLServiceTest {
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
 		this.userSelection.setDatasetType(datasetType);
 
-		Mockito.doReturn(new StudyTypeDto(10010,"Trial","T")).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
+		Mockito.doReturn(new StudyTypeDto(10010,"Trial",StudyTypeDto.TRIAL_NAME)).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
 		final List<DataSet> plotDatasets = DataSetTestDataInitializer
 				.createPlotDatasetsTestData(this.userSelection.getStudyName() + "-PLOTDATA");
 		Mockito.doReturn(plotDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
@@ -271,7 +274,7 @@ public class ETLServiceTest {
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);//
 		this.userSelection.setDatasetType(datasetType);
 
-		Mockito.doReturn(new StudyTypeDto(10010,"Trial","T")).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
+		Mockito.doReturn(new StudyTypeDto(10010,"Trial",StudyTypeDto.TRIAL_NAME)).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
 		final List<DataSet> plotDatasets = DataSetTestDataInitializer
 				.createPlotDatasetsTestData("MEASUREMENT EFEC_" + this.userSelection.getStudyName());
 		plotDatasets.add(DataSetTestDataInitializer
@@ -341,7 +344,7 @@ public class ETLServiceTest {
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
 		this.userSelection.setDatasetType(datasetType);
 
-		Mockito.doReturn(new StudyTypeDto(10010,"Trial","T")).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
+		Mockito.doReturn(new StudyTypeDto(10010,StudyTypeDto.TRIAL_LABEL,StudyTypeDto.TRIAL_NAME)).when(this.studyDataManager).getStudyTypeByName(this.userSelection.getStudyType());
 		final List<DataSet> meansDatasets = DataSetTestDataInitializer
 				.createMeansDatasetsTestData(this.userSelection.getStudyName() + "-MEANS");
 		Mockito.doReturn(meansDatasets).when(this.studyDataManager).getDataSetsByType(this.userSelection.getStudyId(),
@@ -749,6 +752,19 @@ public class ETLServiceTest {
 
 	}
 
+	@Test
+	public void testReadStudyDetails() {
+		final Sheet descriptionSheet = this.workbook.getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
+		StudyDetails studyDetails = this.etlService.readStudyDetails(descriptionSheet);
+		//expected values are from the modifiedTemplateFile.1.xls file in the test resources
+		Assert.assertEquals("pheno_t7", studyDetails.getStudyName());
+		Assert.assertEquals("Phenotyping trials of the Population 114", studyDetails.getDescription());
+		Assert.assertEquals("To evaluate the Population 114", studyDetails.getObjective());
+		Assert.assertEquals("20130805", studyDetails.getStartDate());
+		Assert.assertEquals("20130805", studyDetails.getEndDate());
+		Assert.assertEquals(StudyType.T, studyDetails.getStudyType());
+	}
+
 	protected Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> createPhenotyicMapTestData() {
 
 		final Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> map = new HashMap<>();
@@ -809,7 +825,7 @@ public class ETLServiceTest {
 		userSelection.setStudyObjective("To test the data import tool");
 		userSelection.setStudyStartDate("09/01/2015");
 		userSelection.setStudyEndDate("10/01/2015");
-		userSelection.setStudyType("T");
+		userSelection.setStudyType(StudyTypeDto.TRIAL_NAME);
 		userSelection.setStudyId(studyId);
 	}
 

@@ -123,7 +123,7 @@ public class ImportStudyControllerTest {
 		}
 
 		final Workbook testWorkbook = WorkbookDataUtil
-				.getTestWorkbook(ImportStudyControllerTest.APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, new StudyTypeDto("N"));
+				.getTestWorkbook(ImportStudyControllerTest.APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
 		this.setTestMeasurementValues(testWorkbook);
 
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(testWorkbook);
@@ -180,7 +180,7 @@ public class ImportStudyControllerTest {
 		}
 
 		final Workbook testWorkbook = WorkbookDataUtil
-				.getTestWorkbook(ImportStudyControllerTest.APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, new StudyTypeDto("N"));
+				.getTestWorkbook(ImportStudyControllerTest.APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
 		this.setTestMeasurementValues(testWorkbook);
 
 		final List<Integer> newGids = new ArrayList<>();

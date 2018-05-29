@@ -28,7 +28,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.ToolName;
@@ -187,21 +187,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		return super.convertObjectToJson(results);
 
-	}
-
-	/**
-	 * @deprecated it will be removed in
-	 */
-	@Deprecated
-	@ResponseBody
-	@RequestMapping(value = "/export/{exportType}/{exportWayType}", method = RequestMethod.POST)
-	public String exportFile(@RequestBody final Map<String, String> data, @PathVariable final int exportType,
-			@PathVariable final int exportWayType, final HttpServletRequest req, final HttpServletResponse response) throws IOException {
-		ExportStudyController.LOG.info("Entering Export Nursery:exportFile");
-		final List<Integer> instancesList = new ArrayList<>();
-		instancesList.add(1);
-		ExportStudyController.LOG.info("Leaving Export Nursery:exportFile");
-		return this.doExport(exportType, response, instancesList, exportWayType, data);
 	}
 
 	@ResponseBody
@@ -446,9 +431,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final StudyDetails studyDetails = studyDataManager.getStudyDetails(studyId);
 		// DO NOT remove this condition. Reports are organized based on the study type
 		// It needs to be discussed with IBP whenever they want to bring custom reports back
-		if (StudyType.N.getName().equalsIgnoreCase(studyDetails.getStudyType().getName())) {
+		if (StudyTypeDto.NURSERY_NAME.equalsIgnoreCase(studyDetails.getStudyType().getName())) {
 			return this.getCustomReportTypes(ToolSection.FB_NURSE_MGR_CUSTOM_REPORT.name());
-		} else if (StudyType.T.getName().equalsIgnoreCase(studyDetails.getStudyType().getName())) {
+		} else if (StudyTypeDto.TRIAL_NAME.equalsIgnoreCase(studyDetails.getStudyType().getName())) {
 			return this.getCustomReportTypes(ToolSection.FB_TRIAL_MGR_CUSTOM_REPORT.name());
 		}
 

@@ -309,7 +309,7 @@ public class DesignImportServiceImplTest {
 	@Test
 	public void testGenerateDesignForNursery() throws DesignValidationException {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto("N"));
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
 
 		// Setting to 1 since there is only 1 environment for nursery
 		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
@@ -603,7 +603,7 @@ public class DesignImportServiceImplTest {
 				.createStandardVariable(VariableType.ENVIRONMENT_DETAIL, TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "", "", "",
 						"", "", "")));
 		map.put("SITE_NAME", this.createList(DesignImportTestDataInitializer
-				.createStandardVariable(VariableType.ENVIRONMENT_DETAIL, new StudyTypeDto("T").getId(), "SITE_NAME", "", "", "", "", "", "")));
+				.createStandardVariable(VariableType.ENVIRONMENT_DETAIL, new StudyTypeDto(StudyTypeDto.TRIAL_NAME).getId(), "SITE_NAME", "", "", "", "", "", "")));
 		map.put("ENTRY_NO", this.createList(DesignImportTestDataInitializer
 				.createStandardVariable(VariableType.GERMPLASM_DESCRIPTOR, TermId.ENTRY_NO.getId(), "ENTRY_NO", "", "", "", "", "", "")));
 		map.put("PLOT_NO", this.createList(DesignImportTestDataInitializer

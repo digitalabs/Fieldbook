@@ -88,28 +88,6 @@ public class SettingsControllerTest {
 				.thenReturn(Arrays.asList(this.testValueReference));
 	}
 
-	@Test
-	public void testHasMeasurementDataEnteredGivenAListOfMeasurementRowsWithData() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto("N"));
-
-		final List<MeasurementRow> measurementRowList = workbook.getObservations();
-
-		Assert.assertTrue(SettingsController.hasMeasurementDataEntered(WorkbookDataUtil.CHALK_PCT_ID, measurementRowList));
-	}
-
-	@Test
-	public void testHasMeasurementDataEnteredGivenAListOfMeasurementRowsWithoutData() {
-		final List<MeasurementRow> measurementRowList = new ArrayList<>();
-		final List<MeasurementData> dataList = new ArrayList<>();
-		final MeasurementRow measurementRow = new MeasurementRow();
-		dataList.add(this.getSampleMeasurementData(1, "Sample Data"));
-		measurementRow.setDataList(dataList);
-		measurementRowList.add(measurementRow);
-
-		Assert.assertFalse("Expecting the measurement row list has no measurement data.",
-				SettingsController.hasMeasurementDataEntered(2, measurementRowList));
-	}
-
 	private MeasurementData getSampleMeasurementData(final Integer variableTermId, final String data) {
 		final MeasurementData measurementData = new MeasurementData();
 		measurementData.setLabel("LABEL_" + variableTermId);
@@ -152,13 +130,6 @@ public class SettingsControllerTest {
 		measurementVariable.setName("TEST");
 		measurementVariable.setValue(value);
 		return measurementVariable;
-	}
-
-	@Test
-	public void testAddVariableSecionIdModelAttributes() {
-		final ExtendedModelMap model = new ExtendedModelMap();
-		this.controller.addVariableSectionIdentifiers(model);
-		SettingsControllerTest.checkVariableSecionIdModelAttributes(model);
 	}
 
 	public static void checkVariableSecionIdModelAttributes(final ExtendedModelMap model) {

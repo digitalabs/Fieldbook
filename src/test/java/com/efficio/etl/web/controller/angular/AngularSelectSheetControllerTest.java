@@ -28,8 +28,8 @@ public class AngularSelectSheetControllerTest {
 	@Before
 	public void init() {
 		List<StudyTypeDto> studyTypeDtoList = new ArrayList<>();
-		studyTypeDtoList.add(new StudyTypeDto(10000, "Nursery","N"));
-		studyTypeDtoList.add(new StudyTypeDto(10010, "Trial","T"));
+		studyTypeDtoList.add(new StudyTypeDto(10000, StudyTypeDto.NURSERY_LABEL,StudyTypeDto.NURSERY_NAME));
+		studyTypeDtoList.add(new StudyTypeDto(10010, StudyTypeDto.TRIAL_LABEL,StudyTypeDto.TRIAL_NAME));
 
 		Mockito.when(this.studyDataManager.getAllVisibleStudyTypes()).thenReturn(studyTypeDtoList);
 	}

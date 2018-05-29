@@ -13,6 +13,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
@@ -33,7 +34,7 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 
 	@Override
 	public void processPlotLevelData(final AdvancingSource source, final MeasurementRow row) {
-		if (source.getStudyType().getName().equals("T") && StringUtils.isBlank(source.getSeason())
+		if (StudyTypeDto.TRIAL_NAME.equals(source.getStudyType().getName()) && StringUtils.isBlank(source.getSeason())
 				&& source.getTrailInstanceObservation() != null && source.getTrailInstanceObservation().getDataList() != null) {
 			final Map<Integer, String> measurementVariablesValues = new HashMap<>();
 			for (final MeasurementData measurementData : source.getTrailInstanceObservation().getDataList()) {

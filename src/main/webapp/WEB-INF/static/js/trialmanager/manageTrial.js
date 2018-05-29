@@ -384,7 +384,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.hasAdvanceListCreated = function () {
-				return $scope.addAdvanceTabData.length !== 0;
+				return $scope.advanceTabsData.length !== 0;
 			};
 
 			$scope.performFunctionOnTabChange = function(targetState) {

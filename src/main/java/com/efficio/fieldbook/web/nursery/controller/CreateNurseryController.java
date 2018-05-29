@@ -34,6 +34,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -259,6 +260,11 @@ public class CreateNurseryController extends SettingsController {
 		plotDefaults = this.buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(),
 				this.buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false),
 				VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
+
+		final Term locationNameTerm = this.fieldbookService.getTermById(TermId.TRIAL_LOCATION.getId());
+		final SettingDetail locationNameSettingDetail = this.createSettingDetail(TermId.LOCATION_ID.getId(), locationNameTerm.getName(),
+				VariableType.STUDY_DETAIL.getRole().name());
+		nurseryDefaults.add(locationNameSettingDetail);
 
 		this.userSelection.setBasicDetails(basicDetails);
 		this.userSelection.setStudyLevelConditions(nurseryDefaults);

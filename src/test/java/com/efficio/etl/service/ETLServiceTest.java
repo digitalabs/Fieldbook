@@ -26,7 +26,6 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
@@ -666,7 +665,7 @@ public class ETLServiceTest {
 		fileHeaders.add(ENTRY_NO);
 		fileHeaders.add(REP_NO);
 
-		Map<String, List<Message>> errors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, false);
+		final Map<String, List<Message>> errors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, false);
 		Assert.assertTrue(errors.isEmpty());
 
 	}
@@ -693,7 +692,7 @@ public class ETLServiceTest {
 		fileHeaders.add(TRIAL_INSTANCE);
 		fileHeaders.add(REP_NO);
 
-		Map<String, List<Message>> errors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, false);
+		final Map<String, List<Message>> errors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, false);
 		Assert.assertFalse(errors.isEmpty());
 
 	}
@@ -720,7 +719,7 @@ public class ETLServiceTest {
 		fileHeaders.add(ENTRY_NO);
 		fileHeaders.add(REP_NO);
 
-		Map<String, List<Message>> errors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, false);
+		final Map<String, List<Message>> errors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, false);
 		Assert.assertTrue("Trial environment variables are not required in file headers, there should be no mismatch error ", errors.isEmpty());
 
 	}
@@ -746,7 +745,7 @@ public class ETLServiceTest {
 		final List<String> fileHeaders = new ArrayList<>();
 		fileHeaders.add(ENTRY_NO);
 
-		Map<String, List<Message>> errors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, true);
+		final Map<String, List<Message>> errors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, true);
 		Assert.assertTrue("Trial design variables are not required in file headers if the dataset being imported is type 'Means', there should be no mismatch error ", errors.isEmpty());
 
 	}
@@ -754,30 +753,14 @@ public class ETLServiceTest {
 	@Test
 	public void testReadStudyDetails() {
 		final Sheet descriptionSheet = this.workbook.getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
-		StudyDetails studyDetails = this.etlService.readStudyDetails(descriptionSheet);
+		final StudyDetails studyDetails = this.etlService.readStudyDetails(descriptionSheet);
 		//expected values are from the modifiedTemplateFile.1.xls file in the test resources
 		Assert.assertEquals("pheno_t7", studyDetails.getStudyName());
 		Assert.assertEquals("Phenotyping trials of the Population 114", studyDetails.getDescription());
 		Assert.assertEquals("To evaluate the Population 114", studyDetails.getObjective());
 		Assert.assertEquals("20130805", studyDetails.getStartDate());
 		Assert.assertEquals("20130805", studyDetails.getEndDate());
-		Assert.assertEquals(StudyType.T, studyDetails.getStudyType());
-	}
-
-	@Test
-	public void testReadStudyDetails() {
-		final Sheet descriptionSheet = this.workbook.getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
-		final StudyTypeDto studyTypeDto = new StudyTypeDto(StudyTypeDto.TRIAL_NAME);
-		Mockito.doReturn(studyTypeDto).when(this.studyDataManager).getStudyTypeByName(StudyTypeDto.NURSERY_NAME);
-		StudyDetails studyDetails = this.etlService.readStudyDetails(descriptionSheet);
-
-		//expected values are from the modifiedTemplateFile.1.xls file in the test resources
-		Assert.assertEquals("pheno_t7", studyDetails.getStudyName());
-		Assert.assertEquals("Phenotyping trials of the Population 114", studyDetails.getDescription());
-		Assert.assertEquals("To evaluate the Population 114", studyDetails.getObjective());
-		Assert.assertEquals("20130805", studyDetails.getStartDate());
-		Assert.assertEquals("20130805", studyDetails.getEndDate());
-		Assert.assertEquals(studyTypeDto, studyDetails.getStudyType());
+		Assert.assertEquals(StudyTypeDto.getTrialDto(), studyDetails.getStudyType());
 	}
 
 	protected Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> createPhenotyicMapTestData() {

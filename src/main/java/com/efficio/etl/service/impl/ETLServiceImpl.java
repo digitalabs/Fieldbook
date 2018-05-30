@@ -952,11 +952,11 @@ public class ETLServiceImpl implements ETLService {
 			studyTypeValue = studyDataManager.getStudyTypeByName(StudyTypeDto.NURSERY_NAME);
 		}
 		if(startDateStr == null || startDateStr.isEmpty()) {
-			SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+			final SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
 			startDateStr = df.format(new Date());
 		}
 		if(startDateStr == null || startDateStr.isEmpty()) {
-			SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+			final SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
 			startDateStr = df.format(new Date());
 		}
 		return new StudyDetails(study, title, objective, startDateStr, endDateStr, studyTypeValue, 0, null,

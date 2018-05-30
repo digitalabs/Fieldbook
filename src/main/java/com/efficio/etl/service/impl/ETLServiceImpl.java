@@ -955,6 +955,10 @@ public class ETLServiceImpl implements ETLService {
 			SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
 			startDateStr = df.format(new Date());
 		}
+		if(startDateStr == null || startDateStr.isEmpty()) {
+			SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+			startDateStr = df.format(new Date());
+		}
 		return new StudyDetails(study, title, objective, startDateStr, endDateStr, studyTypeValue, 0, null,
 			null, Util.getCurrentDateAsStringValue(), null);
 	}

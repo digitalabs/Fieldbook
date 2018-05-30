@@ -69,7 +69,7 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 		final String repsCountHeader = this.messageSource.getMessage("fieldmap.study.reps.count", null, locale);
 		final String plotsNeededHeader = this.messageSource.getMessage("fieldmap.study.plots.needed", null, locale);
 		final String totalPlotsHeader = this.messageSource.getMessage("fieldmap.study.total.number.of.plots", null, locale);
-		final String datasetNameHeader = this.messageSource.getMessage("fieldmap.nursery.dataset", null, locale);
+		final String datasetNameHeader = this.messageSource.getMessage("fieldmap.study.dataset", null, locale);
 
 		// Field And Block Details
 		final String fieldAndBlockDetailsLabel = this.messageSource.getMessage("fieldmap.study.field.and.block.details", null, locale);

@@ -27,7 +27,6 @@ public class ManageTrialControllerTest extends AbstractBaseIntegrationTest {
 		this.mockMvc.perform(MockMvcRequestBuilders.get(ManageTrialController.URL))
 				.andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.model().attribute("type", StudyTypeDto.TRIAL_NAME))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("preloadSummaryId"))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("preloadSummaryName"))
 				.andExpect(MockMvcResultMatchers.model().attribute(AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "Common/manageStudy"));

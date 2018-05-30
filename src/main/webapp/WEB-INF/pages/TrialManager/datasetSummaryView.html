@@ -45,7 +45,6 @@
 
 	convertToSelect2 = false;
 	var paginationUrl = '/Fieldbook/trial/measurements/pageView/';
-	//paginationUrl = paginationUrl + $('#study-type').val() + '/';
 
 	var options = {
 		currentPage: /*[[${createTrialForm.currentPage}]]*/,
@@ -66,8 +65,6 @@
 	}
 	$( document ).ready(function() {
 		'use strict';
-		$('#btnBack').attr('href', '/Fieldbook/' + $('#study-type').val() + 'Manager');
-
 		$('#div-study-tab-'+getCurrentStudyIdInTab()+' .desig-link').click(function() {
 			var gidValue = $(this).parent().parent().find('.gid-link').text();
 			$(this).data('gid', gidValue);
@@ -82,11 +79,6 @@
 			openGermplasmDetailsPopop($(this));
 		});
 	});
-
-	function doReturn() {
-		'use strict';
-		location.href = '/Fieldbook/' + $('#study-type').val() + 'Manager';
-	}
 
 	//]]>
 </script>

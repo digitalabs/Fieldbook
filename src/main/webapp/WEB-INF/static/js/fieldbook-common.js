@@ -339,17 +339,7 @@ function createFieldMap() {
 	openStudyFieldmapTree(id, name);
 }
 
-function proceedToCreateFieldMap() {
-	$('#manageTrialConfirmation').modal('hide');
-	var fieldMapHref = $('#fieldmap-url').attr('href');
-	location.href = fieldMapHref + '/' + $('#fieldmapStudyId').val();
-}
 
-function proceedToGenerateFieldMap() {
-	$('#manageTrialConfirmation').modal('hide');
-	location.href = '/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/nursery/' +
-		$('#fieldmapDatasetId').val() + '/' + $('#fieldmapGeolocationId').val();
-}
 
 function $safeId(fieldId) {
 	return $(getJquerySafeId(fieldId));
@@ -581,10 +571,7 @@ function createLabelPrinting(tableName) {
 		return;
 	}
 
-	if ($('#createNurseryMainForm #studyId').length === 1) {
-		idVal = ($('#createNurseryMainForm #studyId').val());
-		count++;
-	}else if ($('#createTrialMainForm #studyId').length === 1) {
+	if ($('#createTrialMainForm #studyId').length === 1) {
 		idVal = ($('#createTrialMainForm #studyId').val());
 		count++;
 	} else {
@@ -854,7 +841,7 @@ function deleteStudyInEdit() {
 		if (data.isSuccess === '1') {
 			showSuccessfulMessage('', deleteStudySuccessful);
 			setTimeout(function() {
-				//go back to review nursery page
+				//go back to review study page
 				location.href = $('#delete-success-return-url').attr('href');
 			}, 500);
 		} else {
@@ -1001,9 +988,9 @@ function generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUse
 /* END ADVANCING TRIAL SPECIFIC FUNCTIONS */
 
 /*
- * Section for Advancing Study (Common for Trial and Nursery)
- * @param studyId Nursery or Trial study Id
- * @param locationIds Location will be passed for Advance Trial only
+ * Section for Advancing Study
+ * @param studyId
+ * @param locationIds Location will be passed for Advance study
  */
 function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailHtml, advanceType) {
 	'use strict';
@@ -1021,8 +1008,6 @@ function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailH
 		return;
 	}
 
-	//TODO do we advance the study using the same ajax function as advancing the nursery from the nursery manager.
-	//TODO Should that be common then with the common path?
 	var advanceStudyHref = '/Fieldbook/StudyManager/advance/study';
 	advanceStudyHref = advanceStudyHref + '/' + encodeURIComponent(idVal);
 	advanceStudyHref = advanceStudyHref + '?selectedInstances=' + encodeURIComponent(trialInstances.join(","));
@@ -1369,10 +1354,11 @@ function doFinalExport(paramUrl, additionalParams, exportWayType) {
 	}
 
 	var columnOrders = '';
-	if ($('.review-nursery-details').length == 0) {
+	if ($('.review-study-details').length == 0) {
 		var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true);
 		columnOrders = (JSON.stringify(columnsOrder));
 	}
+
 	$.ajax(newAction, {
 		headers: {
 			'Accept': 'application/json',
@@ -1484,7 +1470,6 @@ function showImportOptions() {
 	$('#fileupload').val('');
 	$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
 	// Navigate to edit measurements tab when clicking on import measurements
-	// similar to the nursery
 	var scope = angular.element(document.getElementById("mainApp")).scope();
 	scope.$apply(function () {
 		scope.navigateToTab('editMeasurements');
@@ -1646,18 +1631,6 @@ function callAdvanceStudy() {
 	}
 }
 
-function closeAdvanceListTab(uniqueId) {
-	'use strict';
-	$('li#advance-list' + uniqueId + '-li').remove();
-	if ($('#list' + uniqueId).length === 1) {
-		$('#list' + uniqueId).remove();
-	}
-
-	setTimeout(function() {
-		$('#create-nursery-tab-headers li:eq(0) a').tab('show');
-		$('.nav-tabs').tabdrop('layout');
-	}, 100);
-}
 
 function displayAdvanceList(germplasmListId, listName, isDefault, advancedGermplasmListId, isPageLoading) {
 	'use script';
@@ -3090,11 +3063,7 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	$('#page-study-tree-message-modal').html('');
 	$('#addFolderDiv').hide();
 	$('#renameFolderDiv').hide();
-	if ($('#create-nursery #studyTree').length !== 0) {
-		$('#studyTree').dynatree('destroy');
-		displayStudyListTree('studyTree', type, selectStudyFunction, isPreSelect);
-		changeBrowseStudyButtonBehavior(false);
-	} else if ($('#create-trial #studyTree').length !== 0) {
+	if ($('#create-study #studyTree').length !== 0) {
 		$('#studyTree').dynatree('destroy');
 		displayStudyListTree('studyTree', type, selectStudyFunction, isPreSelect);
 		changeBrowseStudyButtonBehavior(false);
@@ -3198,9 +3167,9 @@ function initializeStudyTabs() {
 function determineIfShowCloseAllStudyTabs() {
 	'use strict';
 	if ($('#study-tab-headers li').length > 1) {
-		$('.review-nursery-details').removeClass('fbk-hide');
+		$('.review-study-details').removeClass('fbk-hide');
 	} else {
-		$('.review-nursery-details').addClass('fbk-hide');
+		$('.review-study-details').addClass('fbk-hide');
 	}
 }
 

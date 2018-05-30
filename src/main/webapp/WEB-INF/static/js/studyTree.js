@@ -212,7 +212,7 @@ function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionPa
 		// TODO : add functionality to update the value in the rename folder input field to match that of the newly active node
 		onPostInit: function () {
 			if (choosingType === 2) {
-				var prefixContainer = '#create-trial';
+				var prefixContainer = '#create-study';
 				if (isPreSelect) {
 					var programLocal = $(prefixContainer + ' #studyTree').dynatree('getTree').getNodeByKey('LOCAL');
 					if (programLocal != null) {

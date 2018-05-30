@@ -26,7 +26,6 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
@@ -141,7 +140,6 @@ public class ETLServiceTest {
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(ETLServiceTest.PROGRAM_UUID);
 		Mockito.when(this.fileService.retrieveWorkbook(Matchers.anyString())).thenReturn(this.workbook);
-
 		this.measurementDataTestDataInitializer = new MeasurementDataTestDataInitializer();
 
 		final StandardVariable standardVariable = Mockito.mock(StandardVariable.class);
@@ -755,14 +753,17 @@ public class ETLServiceTest {
 	@Test
 	public void testReadStudyDetails() {
 		final Sheet descriptionSheet = this.workbook.getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
+		final StudyTypeDto studyTypeDto = new StudyTypeDto(StudyTypeDto.TRIAL_NAME);
+		Mockito.doReturn(studyTypeDto).when(this.studyDataManager).getStudyTypeByName(StudyTypeDto.NURSERY_NAME);
 		StudyDetails studyDetails = this.etlService.readStudyDetails(descriptionSheet);
+
 		//expected values are from the modifiedTemplateFile.1.xls file in the test resources
 		Assert.assertEquals("pheno_t7", studyDetails.getStudyName());
 		Assert.assertEquals("Phenotyping trials of the Population 114", studyDetails.getDescription());
 		Assert.assertEquals("To evaluate the Population 114", studyDetails.getObjective());
 		Assert.assertEquals("20130805", studyDetails.getStartDate());
 		Assert.assertEquals("20130805", studyDetails.getEndDate());
-		Assert.assertEquals(StudyType.T, studyDetails.getStudyType());
+		Assert.assertEquals(studyTypeDto, studyDetails.getStudyType());
 	}
 
 	protected Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> createPhenotyicMapTestData() {

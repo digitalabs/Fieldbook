@@ -124,18 +124,6 @@ var ImportDesign = (function() {
 			return $.get('/Fieldbook/DesignImport/showDetails');
 		},
 
-		//nurseryEnvironmentDetails: {
-		//	noOfEnvironments: 1,
-		//	environments: [{
-		//		stockId: 0,
-		//		locationId: 0,
-		//		experimentId: 0,
-		//		managementDetailValues: {},
-		//		trialDetailValues: {},
-		//		phenotypeIDMap: {}
-		//	}]
-		//},
-
 		showChangeDesignPopup: function(hasGermplasmListSelected) {
 			if (hasGermplasmListSelected) {
 				$('#changeDesignModal').modal({

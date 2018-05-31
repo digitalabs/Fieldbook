@@ -139,7 +139,7 @@ public class SeasonExpressionDataProcessorTest {
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(firstInstanceMeasurementData, firstInstanceSeasonMeasurementData));
 
-		this.advancingSource.setStudyType(new StudyTypeDto("T"));
+		this.advancingSource.setStudyType(StudyTypeDto.getTrialDto());
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
 		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);

@@ -49,11 +49,9 @@ public class LabelPrintingServiceTest {
 	public static final String DUMMY_TRIAL_ENVIRONMENT_LABEL_NAME = "dummyTrialEnvironmentLabel";
 	public static final String DUMMY_TRIAL_EXPERIMENTAL_DESIGN_LABEL_NAME = "dummyExperimentalDesignLabel";
 	public static final String DUMMY_GERMPLASM_LABEL_NAME = "dummyGermplasmLabel";
-	public static final String DUMMY_NURSERY_LABEL_NAME = "dummyNurseryLabel";
 	public static final String DUMMY_TRAIT_LABEL_NAME = "dummyTrait";
 	public static final int DUMMY_TRIAL_SETTING_LABEL_TERM_ID = 1;
 	public static final int DUMMY_TRIAL_ENVIRONMENT_LABEL_TERM_ID = 2;
-	public static final int DUMMY_NURSERY_LABEL_TERM_ID = 3;
 	public static final int DUMMY_TRAIT_TERM_ID = 4;
 	public static final int DUMMY_GERMPLASM_TERM_ID = 5;
 	public static final int DUMMY_EXPERIMENTAL_DESIGN_TERM_ID = 6;
@@ -142,17 +140,13 @@ public class LabelPrintingServiceTest {
 
 	@Test
 	public void testGetAvailableFieldsForCrossStockList() {
-		final List<LabelFields> nurserySettingLabels = this.createDummyNurseryManagementLabels();
 		final List<LabelFields> germplasmLabels = this.createDummyGermplasmLabels();
 
-		Mockito.when(this.settingsService.retrieveNurseryManagementDetailsAsLabels(this.workbook)).thenReturn(nurserySettingLabels);
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
 
 		final List<LabelFields> retrieved =
 				this.unitUnderTest.getAvailableLabelFieldsForStockList(GermplasmListType.CROSSES, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_TRIAL_ID);
 
-		this.verifyLabelListContainsList(retrieved, nurserySettingLabels,
-				"Retrieved available label list does not contain all nursery management related labels");
 		this.verifyLabelListContainsList(retrieved, germplasmLabels,
 				"Retrieved available label list does not contain all germplasm related labels");
 
@@ -221,20 +215,10 @@ public class LabelPrintingServiceTest {
 				}
 			}
 			if(!found){
-				Assert.assertTrue("Base label field not present in values retrieved from service", false);
+				Assert.fail("Base label field not present in values retrieved from service");
 			}
 
 		}
-	}
-
-	protected List<LabelFields> createDummyNurseryManagementLabels() {
-		final List<LabelFields> labelFields = new ArrayList<>();
-
-		final LabelFields field =
-			new LabelFields(LabelPrintingServiceTest.DUMMY_NURSERY_LABEL_NAME, LabelPrintingServiceTest.DUMMY_NURSERY_LABEL_TERM_ID, false);
-		labelFields.add(field);
-
-		return labelFields;
 	}
 
 	protected List<LabelFields> createDummyTrialSettingLabels() {

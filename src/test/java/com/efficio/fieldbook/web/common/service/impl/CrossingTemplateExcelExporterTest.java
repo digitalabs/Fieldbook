@@ -91,7 +91,7 @@ public class CrossingTemplateExcelExporterTest {
 
 	private org.apache.poi.ss.usermodel.Workbook workbook;
 
-	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	@Before
 	public void setup() throws IOException, InvalidFormatException {
@@ -166,7 +166,7 @@ public class CrossingTemplateExcelExporterTest {
 		final Date todaysDate = new Date();
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		final String todaysDateText = dateFormat.format(todaysDate);
-		Assert.assertTrue(sheet.getRow(2).getCell(1).getNumericCellValue() == Long.parseLong(todaysDateText));
+		Assert.assertEquals(sheet.getRow(2).getCell(1).getNumericCellValue(), Long.parseLong(todaysDateText), 0.0);
 		Assert.assertEquals(sheet.getRow(2).getCell(3).getStringCellValue(), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
 	}
 
@@ -216,6 +216,8 @@ public class CrossingTemplateExcelExporterTest {
 
 		final List<Experiment> experiments = intializeExperiments();
 		Mockito.when(this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null)).thenReturn(experiments);
+		Mockito.when(this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE)).thenReturn
+			(experiments);
 
 		final Sheet sheet = this.workbook.getSheetAt(3);
 		this.exporter.writeStudyListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
@@ -243,7 +245,8 @@ public class CrossingTemplateExcelExporterTest {
 		final List<Experiment> experiments = intializeExperimentsWithAddUserDescriptors();
 
 		Mockito.when(this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null)).thenReturn(experiments);
-
+		Mockito.when(this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE)).thenReturn
+			(experiments);
 		final Sheet sheet = this.workbook.getSheetAt(3);
 		this.exporter.writeStudyListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
 				CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);

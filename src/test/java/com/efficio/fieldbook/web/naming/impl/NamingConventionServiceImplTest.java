@@ -218,7 +218,9 @@ public class NamingConventionServiceImplTest {
 
         final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setStudyName("Test1");
 		studyDetails.setStudyType(StudyTypeDto.getNurseryDto());
+		workbook.setStudyDetails(studyDetails);
 
         Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Matchers.anyInt())).thenReturn(workbook);
         final AdvancingSourceList rows = new AdvancingSourceList();

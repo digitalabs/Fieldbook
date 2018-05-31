@@ -18,7 +18,6 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.junit.After;
 import org.junit.Before;
@@ -44,8 +43,8 @@ public class ExcelExportStudyServiceImplTest {
 	private static final String MIN_ONLY = " and above";
 
 	private static final int TEST_VARIABLE_TERMID = 1;
-	private static String STUDY_NAME = "Test Study";
-	private static String ZIP_FILEPATH = "./someDirectory/output/TestFileName.zip";
+	private static final String STUDY_NAME = "Test Study";
+	private static final String ZIP_FILEPATH = "./someDirectory/output/TestFileName.zip";
 
 	@Mock
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
@@ -56,7 +55,7 @@ public class ExcelExportStudyServiceImplTest {
 	@InjectMocks
 	private ExcelExportStudyServiceImpl excelExportStudyService;
 	
-	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	@Before
 	public void init() {
@@ -357,30 +356,6 @@ public class ExcelExportStudyServiceImplTest {
 		Mockito.doReturn(ZIP_FILEPATH).when(spyComponent).createZipFile(Matchers.anyString(), Matchers.anyListOf(String.class));
 		return spyComponent;
 	}
-
-	@Test
-	public void testExportNursery() throws IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
-		workbook.setExportArrangedObservations(workbook.getObservations());
-		final List<Integer> instances = new ArrayList<Integer>();
-		instances.add(1);
-
-		final ExcelExportStudyServiceImpl spyComponent = this.setupExcelExportServiceSpy();
-		final FileExportInfo exportInfo =
-				spyComponent.export(workbook, ExcelExportStudyServiceImplTest.STUDY_NAME, instances);
-
-		final List<File> outputDirectories = this.getTempOutputDirectoriesGenerated();
-		Assert.assertEquals(1, outputDirectories.size());
-		final ArgumentCaptor<String> filenameCaptor = ArgumentCaptor.forClass(String.class);
-		Mockito.verify(spyComponent).writeOutputFile(Mockito.any(Workbook.class), Mockito.anyListOf(Integer.class),
-				Mockito.any(MeasurementRow.class), Mockito.anyListOf(MeasurementRow.class), filenameCaptor.capture());
-		final String filePath = filenameCaptor.getValue();
-		final File outputFile = new File(filePath);
-		Assert.assertTrue(outputDirectories.contains(outputFile.getParentFile()));
-		Assert.assertEquals(ExcelExportStudyServiceImplTest.STUDY_NAME + XLS_EXT, exportInfo.getDownloadFileName());
-		Assert.assertEquals(filePath, exportInfo.getFilePath());	
-	}
-	
 	@Test
 	public void testGetFileExtension() {
 		Assert.assertEquals(AppConstants.EXPORT_XLS_SUFFIX.getString(), this.excelExportStudyService.getFileExtension());
@@ -397,9 +372,9 @@ public class ExcelExportStudyServiceImplTest {
 	private List<File> getTempOutputDirectoriesGenerated() {
 		final String genericOutputDirectoryPath = this.installationDirectoryUtil.getOutputDirectoryForProjectAndTool(this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 		final String toolDirectory = genericOutputDirectoryPath.substring(0, genericOutputDirectoryPath.indexOf(InstallationDirectoryUtil.OUTPUT));
-		File toolDirectoryFile = new File(toolDirectory);
+		final File toolDirectoryFile = new File(toolDirectory);
 		Assert.assertTrue(toolDirectoryFile.exists());
-		List<File> outputDirectoryFiles = new ArrayList<>();
+		final List<File> outputDirectoryFiles = new ArrayList<>();
 		for (final File file : toolDirectoryFile.listFiles()) {
 			if (file.getName().startsWith("output") && file.getName() != InstallationDirectoryUtil.OUTPUT && file.isDirectory()) {
 				outputDirectoryFiles.add(file);

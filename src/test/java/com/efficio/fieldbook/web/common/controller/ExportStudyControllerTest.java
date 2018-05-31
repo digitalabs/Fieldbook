@@ -31,7 +31,6 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
@@ -285,6 +284,8 @@ public class ExportStudyControllerTest {
 		final Integer exportType = AppConstants.EXPORT_CSV.getInt();
 		final Integer exportWayType = 1;
 		final Map<String, String> data = this.getData();
+		this.exportStudyController.setUserSelection(this.userSelection);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Mockito.anyInt())).thenReturn(this.userSelection.getWorkbook());
 		final String returnedValue = this.exportStudyController.exportFileStudy(data, exportType, "1", exportWayType, this.req, this.resp);
 		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
 
@@ -316,6 +317,8 @@ public class ExportStudyControllerTest {
 		final Integer exportType = AppConstants.EXPORT_CSV.getInt();
 		final Integer exportWayType = 1;
 		final Map<String, String> data = this.getData();
+		this.exportStudyController.setUserSelection(this.userSelection);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Mockito.anyInt())).thenReturn(this.userSelection.getWorkbook());
 		final String returnedValue = this.exportStudyController.exportFileStudy(data, exportType, this.getTrialInstanceString(instances),
 				exportWayType, this.req, this.resp);
 
@@ -349,6 +352,8 @@ public class ExportStudyControllerTest {
 		final Integer exportType = AppConstants.EXPORT_STUDY_EXCEL.getInt();
 		final Integer exportWayType = 1;
 		final Map<String, String> data = this.getData();
+		this.exportStudyController.setUserSelection(this.userSelection);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Mockito.anyInt())).thenReturn(this.userSelection.getWorkbook());
 		final String returnedValue = this.exportStudyController.exportFileStudy(data, exportType, "1", exportWayType, this.req, this.resp);
 		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
 
@@ -380,6 +385,8 @@ public class ExportStudyControllerTest {
 		final Integer exportType = AppConstants.EXPORT_STUDY_EXCEL.getInt();
 		final Integer exportWayType = 1;
 		final Map<String, String> data = this.getData();
+		this.exportStudyController.setUserSelection(this.userSelection);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Mockito.anyInt())).thenReturn(this.userSelection.getWorkbook());
 		final String returnedValue = this.exportStudyController.exportFileStudy(data, exportType, this.getTrialInstanceString(instances),
 				exportWayType, this.req, this.resp);
 
@@ -414,6 +421,8 @@ public class ExportStudyControllerTest {
 		final Integer exportType = AppConstants.EXPORT_KSU_CSV.getInt();
 		final Integer exportWayType = 1;
 		final Map<String, String> data = this.getData();
+		this.exportStudyController.setUserSelection(this.userSelection);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Mockito.anyInt())).thenReturn(this.userSelection.getWorkbook());
 		final String returnedValue = this.exportStudyController.exportFileStudy(data, exportType, this.getTrialInstanceString(instances),
 				exportWayType, this.req, this.resp);
 		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
@@ -446,6 +455,8 @@ public class ExportStudyControllerTest {
 		final Integer exportType = AppConstants.EXPORT_KSU_EXCEL.getInt();
 		final Integer exportWayType = 1;
 		final Map<String, String> data = this.getData();
+		this.exportStudyController.setUserSelection(this.userSelection);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Mockito.anyInt())).thenReturn(this.userSelection.getWorkbook());
 		final String returnedValue = this.exportStudyController.exportFileStudy(data, exportType, this.getTrialInstanceString(instances),
 				exportWayType, this.req, this.resp);
 		final HashMap<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);

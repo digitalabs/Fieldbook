@@ -370,7 +370,6 @@ public class TrialMeasurementsControllerTest {
 		MatcherAssert.assertThat(TermId.DATE_VARIABLE.getId(), Is.is(CoreMatchers.equalTo(model.get("dateVarId"))));
 		MatcherAssert.assertThat(TermId.NUMERIC_VARIABLE.getId(),
 				Is.is(CoreMatchers.equalTo(model.get("numericVarId"))));
-		MatcherAssert.assertThat(false, Is.is(CoreMatchers.equalTo(model.get("isNursery"))));
 		MatcherAssert.assertThat(variableText, Is.is(CoreMatchers.equalTo(model.get("variable"))));
 		MatcherAssert.assertThat(experimentId,
 				Is.is(CoreMatchers.equalTo(model.get(TrialMeasurementsControllerTest.EXPERIMENT_ID))));
@@ -416,7 +415,6 @@ public class TrialMeasurementsControllerTest {
 		MatcherAssert.assertThat(TermId.DATE_VARIABLE.getId(), Is.is(CoreMatchers.equalTo(model.get("dateVarId"))));
 		MatcherAssert.assertThat(TermId.NUMERIC_VARIABLE.getId(),
 				Is.is(CoreMatchers.equalTo(model.get("numericVarId"))));
-		MatcherAssert.assertThat(false, Is.is(CoreMatchers.equalTo(model.get("isNursery"))));
 		MatcherAssert.assertThat((List<?>) model.get("possibleValues"), hasSize(0));
 		MatcherAssert.assertThat(0, Is.is(CoreMatchers.equalTo(model.get("phenotypeId"))));
 		MatcherAssert.assertThat(phenotpevalue, Is.is(CoreMatchers.equalTo(model.get("phenotypeValue"))));
@@ -1343,7 +1341,7 @@ public class TrialMeasurementsControllerTest {
 				.thenReturn(new Term(TermId.PLOT_CODE.getId(), TermId.PLOT_CODE.name(), TermId.PLOT_CODE.name()));
 
 		final Map<String, String> nameToAliasMap = this.trialMeasurementsController.createNameToAliasMap(1);
-		Assert.assertTrue(nameToAliasMap.size() == 1);
+		Assert.assertEquals(1, nameToAliasMap.size());
 		Assert.assertTrue(nameToAliasMap.keySet().contains(TermId.PLOT_CODE.name()));
 		Assert.assertEquals(alias, nameToAliasMap.get(TermId.PLOT_CODE.name()));
 	}

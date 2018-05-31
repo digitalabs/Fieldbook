@@ -1,15 +1,29 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
+import com.efficio.fieldbook.web.trial.TestDataHelper;
+import com.efficio.fieldbook.web.trial.bean.AdvanceList;
+import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
+import com.efficio.fieldbook.web.trial.bean.TrialData;
+import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -67,29 +81,13 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
-import com.efficio.fieldbook.web.trial.TestDataHelper;
-import com.efficio.fieldbook.web.trial.bean.AdvanceList;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
-import com.efficio.fieldbook.web.trial.bean.TrialData;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpenTrialControllerTest {
@@ -199,6 +197,7 @@ public class OpenTrialControllerTest {
 		this.createTestVariable();
 		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class), Matchers.anyBoolean(),
 				Matchers.anyBoolean())).thenReturn(this.testVariable);
+		Mockito.when(studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
 	}
 
 	@Test
@@ -1185,7 +1184,8 @@ public class OpenTrialControllerTest {
 		Mockito.when(this.studyDataManager.countExperiments(Matchers.eq(1))).thenReturn(experimentCount);
 
 		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
-		data.setBasicDetails(new BasicDetails());data.getBasicDetails().setStudyType(StudyTypeDto.getTrialDto());
+		data.setBasicDetails(new BasicDetails());
+		data.getBasicDetails().setStudyType(StudyTypeDto.getTrialDto());
 		final Map<String, Object> returnVal = this.openTrialController.submit(0, data);
 
 		Assert.assertNotNull("The environment data tab should not be null", returnVal.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
@@ -1207,6 +1207,7 @@ public class OpenTrialControllerTest {
 		final BasicDetails basicDetails = Mockito.mock(BasicDetails.class);
 		Mockito.when(basicDetails.getBasicDetails()).thenReturn(new HashMap<String, String>());
 		Mockito.when(data.getBasicDetails()).thenReturn(basicDetails);
+		Mockito.when(data.getBasicDetails().getStudyType()).thenReturn(StudyTypeDto.getTrialDto());
 		final TrialSettingsBean trialSettings = Mockito.mock(TrialSettingsBean.class);
 		Mockito.when(trialSettings.getUserInput()).thenReturn(new HashMap<String, String>());
 		Mockito.when(data.getTrialSettings()).thenReturn(trialSettings);

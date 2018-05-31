@@ -99,14 +99,14 @@ public class AdvancingControllerTest {
 
 	@Test
 	public void testGetAdvancedNurseryTableHeader_returnsTheValueFromColumLabelDefaultName() throws MiddlewareQueryException {
-		Term fromOntology = new Term();
+		final Term fromOntology = new Term();
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.DESIG.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.CROSS.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.GID.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(fromOntology);
 
-		List<TableHeader> tableHeaderList = this.advancingController.getAdvancedStudyTableHeader();
+		final List<TableHeader> tableHeaderList = this.advancingController.getAdvancedStudyTableHeader();
 		Assert.assertEquals("Expecting to return 7 columns but returned " + tableHeaderList.size(), 7, tableHeaderList.size());
 
 		Assert.assertTrue("Expecting to have a column name ENTRY_ID.", this.hasColumnHeader(tableHeaderList, "ENTRY_ID"));
@@ -116,8 +116,8 @@ public class AdvancingControllerTest {
 		Assert.assertTrue("Expecting to have a column name SEED SOURCE.", this.hasColumnHeader(tableHeaderList, "SEED SOURCE"));
 	}
 
-	private boolean hasColumnHeader(List<TableHeader> tableHeaderList, String columnName) {
-		for (TableHeader tableHeader : tableHeaderList) {
+	private boolean hasColumnHeader(final List<TableHeader> tableHeaderList, final String columnName) {
+		for (final TableHeader tableHeader : tableHeaderList) {
 			if (tableHeader.getColumnName().equals(columnName)) {
 				return true;
 			}
@@ -127,7 +127,7 @@ public class AdvancingControllerTest {
 
 	@Test
 	public void testGetAdvancedNurseryTableHeader_returnsTheValueFromOntology() throws MiddlewareQueryException {
-		Term fromOntology = new Term();
+		final Term fromOntology = new Term();
 		fromOntology.setName("Ontology Name");
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.DESIG.getId())).thenReturn(fromOntology);
@@ -137,10 +137,10 @@ public class AdvancingControllerTest {
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.TRIAL_INSTANCE_FACTOR.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.REP_NO.getId())).thenReturn(fromOntology);
 
-		List<TableHeader> tableHeaderList = this.advancingController.getAdvancedStudyTableHeader();
+		final List<TableHeader> tableHeaderList = this.advancingController.getAdvancedStudyTableHeader();
 		Assert.assertEquals("Expecting to return 7 columns but returned " + tableHeaderList.size(), 7, tableHeaderList.size());
 
-		for (TableHeader tableHeader : tableHeaderList) {
+		for (final TableHeader tableHeader : tableHeaderList) {
 			Assert.assertEquals("Expecting name from ontology but didn't.", fromOntology.getName(), tableHeader.getColumnName());
 		}
 	}
@@ -149,12 +149,12 @@ public class AdvancingControllerTest {
 	public void testPostAdvanceNursery() throws RuleException, MiddlewareException, FieldbookException {
 		// setup
 
-		AdvancingStudyForm form = new AdvancingStudyForm();
+		final AdvancingStudyForm form = new AdvancingStudyForm();
 		form.setStudyId("1");
-		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
+		final ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
 		importedGermplasm.add(Mockito.mock(ImportedGermplasm.class));
 
-		Method method = new Method();
+		final Method method = new Method();
 		method.setMtype("DER");
 
 		this.preparePostAdvanceNursery(form, method, importedGermplasm);
@@ -176,10 +176,10 @@ public class AdvancingControllerTest {
 	@Test
 	public void testPostAdvanceNurseryThrowsRuleException() throws MiddlewareException, RuleException, FieldbookException {
 		// setup
-		AdvancingStudyForm form = new AdvancingStudyForm();
+		final AdvancingStudyForm form = new AdvancingStudyForm();
 		form.setStudyId("1");
-		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
-		Method method = new Method();
+		final ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
+		final Method method = new Method();
 		method.setMtype("DER");
 
 		this.preparePostAdvanceNursery(form, method, importedGermplasm);
@@ -190,7 +190,7 @@ public class AdvancingControllerTest {
 		Mockito.doNothing().when(this.paginationListSelection).addAdvanceDetails(Matchers.anyString(), Matchers.eq(form));
 
 		// scenario 2, has a method throwing exception
-		Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
+		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
 
 		Assert.assertEquals("should fail", "0", output.get("isSuccess"));
 		Assert.assertEquals("should have at least 0 imported germplasm list", Integer.valueOf(0), output.get("listSize"));
@@ -199,11 +199,11 @@ public class AdvancingControllerTest {
 	@Test
 	public void testPostAdvanceNurseryGenerativeMethodError() throws RuleException, MiddlewareException, FieldbookException {
 		// setup
-		AdvancingStudyForm form = new AdvancingStudyForm();
+		final AdvancingStudyForm form = new AdvancingStudyForm();
 		form.setStudyId("1");
-		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
+		final ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
 
-		Method method = new Method();
+		final Method method = new Method();
 		method.setMtype("GEN");
 
 		this.preparePostAdvanceNursery(form, method, importedGermplasm);
@@ -212,20 +212,20 @@ public class AdvancingControllerTest {
 				.thenThrow(Mockito.mock(RuleException.class));
 
 		// scenario 2, has a method throwing exception
-		Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
+		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
 
 		Assert.assertEquals("should fail", "0", output.get("isSuccess"));
 		Assert.assertEquals("should have at least 0 imported germplasm list", 0, output.get("listSize"));
 		Assert.assertEquals("should have error message", "error.message", output.get("message"));
 	}
 
-	private void preparePostAdvanceNursery(AdvancingStudyForm form, Method method, ArrayList<ImportedGermplasm> importedGermplasm)
+	private void preparePostAdvanceNursery(final AdvancingStudyForm form, final Method method, final ArrayList<ImportedGermplasm> importedGermplasm)
 			throws RuleException, MiddlewareException, FieldbookException {
 		// setup
 		form.setMethodChoice("1");
 		form.setAdvanceBreedingMethodId("10");
 
-		AdvanceResult result = new AdvanceResult();
+		final AdvanceResult result = new AdvanceResult();
 		result.setAdvanceList(importedGermplasm);
 		result.setChangeDetails(new ArrayList<AdvanceGermplasmChangeDetail>());
 
@@ -243,19 +243,19 @@ public class AdvancingControllerTest {
 	public void testDeleteImportedGermplasmEntriesIfDeleted() {
 		List<ImportedGermplasm> importedGermplasms = new ArrayList<ImportedGermplasm>();
 		for (int i = 0; i < 10; i++) {
-			ImportedGermplasm germplasm = new ImportedGermplasm();
+			final ImportedGermplasm germplasm = new ImportedGermplasm();
 			germplasm.setEntryId(i);
 			importedGermplasms.add(germplasm);
 		}
-		String entries[] = {"1", "2", "3"};
+		final String[] entries = {"1", "2", "3"};
 		importedGermplasms = this.advancingController.deleteImportedGermplasmEntries(importedGermplasms, entries);
 		Assert.assertEquals("Should have a total of 7 germplasms remaining", 7, importedGermplasms.size());
 	}
 
 	private List<ImportedGermplasm> generateGermplasm() {
-		List<ImportedGermplasm> importedGermplasms = new ArrayList<ImportedGermplasm>();
+		final List<ImportedGermplasm> importedGermplasms = new ArrayList<ImportedGermplasm>();
 		for (int i = 0; i < 10; i++) {
-			ImportedGermplasm germplasm = new ImportedGermplasm();
+			final ImportedGermplasm germplasm = new ImportedGermplasm();
 			germplasm.setEntryId(i);
             germplasm.setDesig("Design"+i);
             germplasm.setGid(i+"");
@@ -269,21 +269,21 @@ public class AdvancingControllerTest {
 	@Test
 	public void testDeleteImportedGermplasmEntriesIfNoneDeleted() {
 		List<ImportedGermplasm> importedGermplasms = this.generateGermplasm();
-		String entries[] = {};
+		final String[] entries = {};
 		importedGermplasms = this.advancingController.deleteImportedGermplasmEntries(importedGermplasms, entries);
 		Assert.assertEquals("Should have a total of 10 germplasms, since nothing is deleted", 10, importedGermplasms.size());
 	}
 
 	@Test
 	public void testSetupAdvanceReviewDataList() {
-		List<ImportedGermplasm> importedGermplasms = this.generateGermplasm();
-		List<Map<String, Object>> mapInfos = this.advancingController.setupAdvanceReviewDataList(importedGermplasms);
+		final List<ImportedGermplasm> importedGermplasms = this.generateGermplasm();
+		final List<Map<String, Object>> mapInfos = this.advancingController.setupAdvanceReviewDataList(importedGermplasms);
 		Assert.assertEquals("Should have the same number of records", importedGermplasms.size(), mapInfos.size());
 	}
 
     @Test
     public void testShowAdvanceNurseryGetSuccess(){
-        Study study = new Study();
+        final Study study = new Study();
         Mockito.when(this.fieldbookMiddlewareService.getStudy(Mockito.anyInt())).thenReturn(study);
 
         Mockito.when(this.fieldbookProperties.getProgramBreedingMethodsUrl()).thenReturn("programBreedingMethodUrl");
@@ -292,16 +292,16 @@ public class AdvancingControllerTest {
         testProject.setProjectId(1L);
         Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
 
-        Project project = new Project();
-        CropType cropType = new CropType();
+        final Project project = new Project();
+        final CropType cropType = new CropType();
         cropType.setCropName("maize");
         project.setCropType(cropType);
         Mockito.when(this.workbenchService.getProjectById(Mockito.anyLong())).thenReturn(project);
 
 
-        List<SettingDetail> selectionVariates = Lists.newArrayList();
-        SettingDetail settingDetail = new SettingDetail();
-        SettingVariable settingVariable = new SettingVariable();
+        final List<SettingDetail> selectionVariates = Lists.newArrayList();
+        final SettingDetail settingDetail = new SettingDetail();
+        final SettingVariable settingVariable = new SettingVariable();
         settingVariable.setProperty("Breeding method");
         settingVariable.setCvTermId(205);
         settingVariable.setName("SinglePlant");
@@ -310,13 +310,13 @@ public class AdvancingControllerTest {
         selectionVariates.add(settingDetail);
         Mockito.when(this.userSelection.getSelectionVariates()).thenReturn(selectionVariates);
 
-        AdvancingStudyForm form = new AdvancingStudyForm();
-        Model model = new ExtendedModelMap();
+        final AdvancingStudyForm form = new AdvancingStudyForm();
+        final Model model = new ExtendedModelMap();
 
-		String returnTemplatePage = this.advancingController.show(form, model, this.request, this.session, 212, null, null, null);
+		final String returnTemplatePage = this.advancingController.show(form, model, this.request, this.session, 212, null, null, null);
 
-        Assert.assertEquals("TrialManager/advanceStudyModal",returnTemplatePage);
-        Map<String,Object> modelMap = model.asMap();
+        Assert.assertEquals("StudyManager/advanceStudyModal",returnTemplatePage);
+        final Map<String,Object> modelMap = model.asMap();
         Assert.assertEquals(21,((List<ChoiceKeyVal>)modelMap.get("yearChoices")).size());
         Assert.assertEquals(12,((List<ChoiceKeyVal>)modelMap.get("monthChoices")).size());
 
@@ -332,30 +332,30 @@ public class AdvancingControllerTest {
 
     @Test
     public void testApplyChangeDetailsSuccess() throws IOException {
-        List<ImportedGermplasm> importedGermplasmList = generateGermplasm();
+        final List<ImportedGermplasm> importedGermplasmList = generateGermplasm();
         Mockito.when(this.userSelection.getImportedAdvancedGermplasmList()).thenReturn(importedGermplasmList);
 
         Mockito.doNothing().when(this.userSelection).setImportedAdvancedGermplasmList(Lists.<ImportedGermplasm>newArrayList());
 
-        AdvanceGermplasmChangeDetail[] advanceGermplasmChangeDetailArray = generateAdvanceGermPlasmChangeDetails();
-        ObjectMapper mapper = new ObjectMapper();
-        String responseData = mapper.writeValueAsString(advanceGermplasmChangeDetailArray);
+        final AdvanceGermplasmChangeDetail[] advanceGermplasmChangeDetailArray = generateAdvanceGermPlasmChangeDetails();
+        final ObjectMapper mapper = new ObjectMapper();
+        final String responseData = mapper.writeValueAsString(advanceGermplasmChangeDetailArray);
 
 
-        Map<String, Object> response = this.advancingController.applyChangeDetails(responseData);
+        final Map<String, Object> response = this.advancingController.applyChangeDetails(responseData);
         Assert.assertEquals("1",response.get("isSuccess"));
         Assert.assertEquals(9,response.get("listSize"));
 
     }
 
     private AdvanceGermplasmChangeDetail[] generateAdvanceGermPlasmChangeDetails(){
-        List<AdvanceGermplasmChangeDetail> advanceGermplasmChangeDetailList = Lists.newArrayList();
+        final List<AdvanceGermplasmChangeDetail> advanceGermplasmChangeDetailList = Lists.newArrayList();
 
-        AdvanceGermplasmChangeDetail advanceGermplasmChangeDetail = new AdvanceGermplasmChangeDetail(1,1,"newAdvanceName","oldAdvanceName");
+        final AdvanceGermplasmChangeDetail advanceGermplasmChangeDetail = new AdvanceGermplasmChangeDetail(1,1,"newAdvanceName","oldAdvanceName");
 
         advanceGermplasmChangeDetailList.add(advanceGermplasmChangeDetail);
 
-        AdvanceGermplasmChangeDetail advanceGermplasmChangeDetailUpdated = new AdvanceGermplasmChangeDetail(3,1,"newAdvanceName","oldAdvanceName");
+        final AdvanceGermplasmChangeDetail advanceGermplasmChangeDetailUpdated = new AdvanceGermplasmChangeDetail(3,1,"newAdvanceName","oldAdvanceName");
 
         advanceGermplasmChangeDetailList.add(advanceGermplasmChangeDetailUpdated);
 
@@ -364,10 +364,10 @@ public class AdvancingControllerTest {
 
     @Test
     public void testShowAdvanceNurserySuccess(){
-        List<ImportedGermplasm> importedGermplasmList = generateGermplasm();
+        final List<ImportedGermplasm> importedGermplasmList = generateGermplasm();
         Mockito.when(this.userSelection.getImportedAdvancedGermplasmList()).thenReturn(importedGermplasmList);
 
-        Term fromOntology = new Term();
+        final Term fromOntology = new Term();
         Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(fromOntology);
         Mockito.when(this.ontologyDataManager.getTermById(TermId.DESIG.getId())).thenReturn(fromOntology);
         Mockito.when(this.ontologyDataManager.getTermById(TermId.CROSS.getId())).thenReturn(fromOntology);
@@ -376,13 +376,13 @@ public class AdvancingControllerTest {
 
         Mockito.when(this.request.getParameter("uniqueId")).thenReturn("123");
 
-        AdvancingStudyForm form = new AdvancingStudyForm();
-        Model model = new ExtendedModelMap();
+        final AdvancingStudyForm form = new AdvancingStudyForm();
+        final Model model = new ExtendedModelMap();
 
-        String templateUrl = this.advancingController.showAdvanceStudy(form,null,model,this.request);
-        Assert.assertEquals("NurseryManager/saveAdvanceStudy",templateUrl);
-        Map<String,Object> modelMap = model.asMap();
-        List<Map<String, Object>> listOfGermPlasm = (List<Map<String, Object>>)modelMap.get("advanceDataList");
+        final String templateUrl = this.advancingController.showAdvanceStudy(form,null,model,this.request);
+        Assert.assertEquals("StudyManager/saveAdvanceStudy",templateUrl);
+        final Map<String,Object> modelMap = model.asMap();
+        final List<Map<String, Object>> listOfGermPlasm = (List<Map<String, Object>>)modelMap.get("advanceDataList");
         Assert.assertEquals(10,listOfGermPlasm.size());
 
         this.assertGermPlasmList(listOfGermPlasm,0);
@@ -394,8 +394,8 @@ public class AdvancingControllerTest {
 
     @Test
     public void testShowAdvanceNurseryThrowNumberFormatException(){
-        AdvancingStudyForm form = new AdvancingStudyForm();
-        String templateUrl = this.advancingController.showAdvanceStudy(form,null,null,this.request);
+        final AdvancingStudyForm form = new AdvancingStudyForm();
+        final String templateUrl = this.advancingController.showAdvanceStudy(form,null,null,this.request);
 
         Assert.assertEquals(0,form.getEntries());
         Assert.assertEquals(0,form.getGermplasmList().size());
@@ -405,7 +405,7 @@ public class AdvancingControllerTest {
     @Test
     public void testDeleteAdvanceNurseryEntriesSuccess(){
 
-        List<ImportedGermplasm> importedGermplasmList = generateGermplasm();
+        final List<ImportedGermplasm> importedGermplasmList = generateGermplasm();
         Mockito.when(this.userSelection.getImportedAdvancedGermplasmList()).thenReturn(importedGermplasmList);
 
         Mockito.when(this.request.getParameter("entryNums")).thenReturn("0,1,2");
@@ -413,14 +413,14 @@ public class AdvancingControllerTest {
 
         Mockito.when(this.request.getParameter("uniqueId")).thenReturn("123");
 
-        AdvancingStudyForm form = new AdvancingStudyForm();
-        Model model = new ExtendedModelMap();
+        final AdvancingStudyForm form = new AdvancingStudyForm();
+        final Model model = new ExtendedModelMap();
 
-        String templateUrl = this.advancingController.deleteAdvanceStudyEntries(form,null,model,this.request);
+        final String templateUrl = this.advancingController.deleteAdvanceStudyEntries(form,null,model,this.request);
 
-        Assert.assertEquals("NurseryManager/saveAdvanceStudy",templateUrl);
-        Map<String,Object> modelMap = model.asMap();
-        List<Map<String, Object>> listOfGermPlasm = (List<Map<String, Object>>)modelMap.get("advanceDataList");
+        Assert.assertEquals("StudyManager/saveAdvanceStudy",templateUrl);
+        final Map<String,Object> modelMap = model.asMap();
+        final List<Map<String, Object>> listOfGermPlasm = (List<Map<String, Object>>)modelMap.get("advanceDataList");
         Assert.assertEquals(7,listOfGermPlasm.size());
         this.assertGermPlasmList(listOfGermPlasm,3);
         Assert.assertEquals(7,form.getEntries());
@@ -430,8 +430,8 @@ public class AdvancingControllerTest {
 
     @Test
     public void testDeleteAdvanceNurseryEntriesSuccessThrowNumberFormatException(){
-        AdvancingStudyForm form = new AdvancingStudyForm();
-        String templateUrl = this.advancingController.deleteAdvanceStudyEntries(form,null,null,this.request);
+        final AdvancingStudyForm form = new AdvancingStudyForm();
+        final String templateUrl = this.advancingController.deleteAdvanceStudyEntries(form,null,null,this.request);
 
         Assert.assertEquals(0,form.getEntries());
         Assert.assertEquals(0,form.getGermplasmList().size());
@@ -440,89 +440,89 @@ public class AdvancingControllerTest {
 
     @Test
     public void testCountPlotsSuccess(){
-        Workbook workBook = new Workbook();
+        final Workbook workBook = new Workbook();
         workBook.setMeasurementDatesetId(2);
         Mockito.when(this.userSelection.getWorkbook()).thenReturn(workBook);
         Mockito.when(this.fieldbookMiddlewareService.countPlotsWithRecordedVariatesInDataset(Mockito.anyInt(),Mockito.isA(List.class))).thenReturn(new Integer(2));
-        int plotCount = this.advancingController.countPlots("1,2");
+        final int plotCount = this.advancingController.countPlots("1,2");
         Assert.assertEquals(2,plotCount);
 
     }
 
     @Test
     public void testCheckMethodTypeModeLineSuccess(){
-        Workbook workBook = new Workbook();
-        List<MeasurementRow> observations = generateMeasurementRows();
+        final Workbook workBook = new Workbook();
+        final List<MeasurementRow> observations = generateMeasurementRows();
         workBook.setObservations(observations);
         Mockito.when(this.userSelection.getWorkbook()).thenReturn(workBook);
 
-        List<Method> methods = Lists.newArrayList();
-        Method nonBulkMethod = new Method();
+        final List<Method> methods = Lists.newArrayList();
+        final Method nonBulkMethod = new Method();
         nonBulkMethod.setGeneq(1510);
         methods.add(nonBulkMethod);
         Mockito.when(this.germplasmDataManager.getMethodsByIDs(Mockito.isA(List.class))).thenReturn(methods);
-        String methodType = this.advancingController.checkMethodTypeMode(12);
+        final String methodType = this.advancingController.checkMethodTypeMode(12);
         Assert.assertEquals("LINE",methodType);
     }
 
     @Test
     public void testCheckMethodTypeModeBulkSuccess(){
-        Workbook workBook = new Workbook();
-        List<MeasurementRow> observations = generateMeasurementRows();
+        final Workbook workBook = new Workbook();
+        final List<MeasurementRow> observations = generateMeasurementRows();
         workBook.setObservations(observations);
         Mockito.when(this.userSelection.getWorkbook()).thenReturn(workBook);
 
-        List<Method> methods = Lists.newArrayList();
-        Method bulkMethod = new Method();
+        final List<Method> methods = Lists.newArrayList();
+        final Method bulkMethod = new Method();
         bulkMethod.setGeneq(1490);
         methods.add(bulkMethod);
 
         Mockito.when(this.germplasmDataManager.getMethodsByIDs(Mockito.isA(List.class))).thenReturn(methods);
-        String methodType = this.advancingController.checkMethodTypeMode(12);
+        final String methodType = this.advancingController.checkMethodTypeMode(12);
         Assert.assertEquals("BULK",methodType);
     }
 
     @Test
     public void testCheckMethodTypeModeMixedSuccess(){
-        Workbook workBook = new Workbook();
-        List<MeasurementRow> observations = generateMeasurementRows();
+        final Workbook workBook = new Workbook();
+        final List<MeasurementRow> observations = generateMeasurementRows();
         workBook.setObservations(observations);
         Mockito.when(this.userSelection.getWorkbook()).thenReturn(workBook);
 
-        List<Method> methods = Lists.newArrayList();
+        final List<Method> methods = Lists.newArrayList();
 
-        Method nonBulkMethod = new Method();
+        final Method nonBulkMethod = new Method();
         nonBulkMethod.setGeneq(1490);
         methods.add(nonBulkMethod);
 
-        Method bulkMethod = new Method();
+        final Method bulkMethod = new Method();
         bulkMethod.setGeneq(1510);
         methods.add(bulkMethod);
 
 
         Mockito.when(this.germplasmDataManager.getMethodsByIDs(Mockito.isA(List.class))).thenReturn(methods);
-        String methodType = this.advancingController.checkMethodTypeMode(12);
+        final String methodType = this.advancingController.checkMethodTypeMode(12);
         Assert.assertEquals("MIXED",methodType);
     }
 
     @Test
     public void testCheckMethodTypeError(){
-        Workbook workBook = new Workbook();
-        List<MeasurementRow> observations = Lists.newArrayList();
+        final Workbook workBook = new Workbook();
+        final List<MeasurementRow> observations = Lists.newArrayList();
         workBook.setObservations(observations);
 
         Mockito.when(this.userSelection.getWorkbook()).thenReturn(workBook);
         Mockito.when(this.messageSource.getMessage(Mockito.isA(String.class),Mockito.any(Object[].class),Mockito.isA(Locale.class))).thenReturn("The nursery has no methods defined under");
-        List<Method> methods = Lists.newArrayList();
+        final List<Method> methods = Lists.newArrayList();
 
         Mockito.when(this.germplasmDataManager.getMethodsByIDs(Mockito.isA(List.class))).thenReturn(methods);
-        String methodType = this.advancingController.checkMethodTypeMode(12);
+        final String methodType = this.advancingController.checkMethodTypeMode(12);
         System.out.println(methodType);
         Assert.assertTrue(methodType.contains("The nursery has no methods defined under"));
     }
 
-    private void assertGermPlasmList( List<Map<String, Object>> listOfGermPlasm ,int position){
-        for(Map<String,Object> entryMap : listOfGermPlasm){
+    private void assertGermPlasmList( final List<Map<String, Object>> listOfGermPlasm ,int position){
+        for(final Map<String,Object> entryMap : listOfGermPlasm){
             Assert.assertEquals("Design"+position,entryMap.get("desig"));
             Assert.assertEquals("Source"+position,entryMap.get("source"));
             Assert.assertEquals("Cross"+position,entryMap.get("parentage"));
@@ -532,13 +532,13 @@ public class AdvancingControllerTest {
     }
 
     private List<MeasurementRow> generateMeasurementRows(){
-        List<MeasurementRow> observations = Lists.newArrayList();
-        MeasurementRow row1 = new MeasurementRow();
+        final List<MeasurementRow> observations = Lists.newArrayList();
+        final MeasurementRow row1 = new MeasurementRow();
 
-        List<MeasurementData> row1Data = Lists.newArrayList();
-        MeasurementData measurementData = new MeasurementData();
+        final List<MeasurementData> row1Data = Lists.newArrayList();
+        final MeasurementData measurementData = new MeasurementData();
         measurementData.setcValueId("13");
-        MeasurementVariable measurementVariable = new MeasurementVariable("name", "description", "scale", "method", "property", "dataType",
+        final MeasurementVariable measurementVariable = new MeasurementVariable("name", "description", "scale", "method", "property", "dataType",
                 "value", "label");
         measurementVariable.setTermId(12);
 

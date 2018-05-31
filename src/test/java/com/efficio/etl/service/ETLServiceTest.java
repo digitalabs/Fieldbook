@@ -147,6 +147,7 @@ public class ETLServiceTest {
 				.thenReturn(standardVariable);
 		Mockito.when(standardVariable.getEnumerations())
 				.thenReturn(Arrays.asList(new Enumeration(TermId.CHECK.getId(), TermId.CHECK.name(), "", 0)));
+		Mockito.when(studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
 	}
 
 	@Test
@@ -218,7 +219,7 @@ public class ETLServiceTest {
 				.retrieveAndSetProjectOntology(this.userSelection, false);
 
 		Assert.assertNotNull(workbook);
-		Assert.assertTrue("Imported type must be plot data", datasetType == workbook.getImportType());
+		Assert.assertEquals("Imported type must be plot data", datasetType, (int) workbook.getImportType());
 
 		Assert.assertNotNull(workbook.getStudyDetails());
 		Assert.assertEquals("Study id must be " + this.userSelection.getStudyId(), this.userSelection.getStudyId(),
@@ -240,10 +241,11 @@ public class ETLServiceTest {
 
 		Assert.assertEquals("Study id must be " + this.userSelection.getStudyId(), this.userSelection.getStudyId(),
 				workbook.getStudyDetails().getId());
-		Assert.assertTrue("Trial dataset id must be " + ETLServiceTest.TRIAL_DATASET_ID,
-				ETLServiceTest.TRIAL_DATASET_ID == workbook.getTrialDatasetId());
-		Assert.assertTrue("Measurement dataset id must be " + ETLServiceTest.MEASUREMENT_DATASET_ID,
-				ETLServiceTest.MEASUREMENT_DATASET_ID == workbook.getMeasurementDatesetId());
+		Assert.assertEquals("Trial dataset id must be " + ETLServiceTest.TRIAL_DATASET_ID, ETLServiceTest.TRIAL_DATASET_ID,
+			(int) workbook.getTrialDatasetId());
+		Assert
+			.assertEquals("Measurement dataset id must be " + ETLServiceTest.MEASUREMENT_DATASET_ID, ETLServiceTest.MEASUREMENT_DATASET_ID,
+				(int) workbook.getMeasurementDatesetId());
 
 		Assert.assertNotNull(workbook.getConditions());
 		Assert.assertNotNull(workbook.getConstants());
@@ -260,8 +262,7 @@ public class ETLServiceTest {
 		Assert.assertNotNull(workbook.getVariates());
 		Assert.assertEquals("The number of variates must be 2", 2, workbook.getVariates().size());
 		for (final MeasurementVariable measurementVariable : workbook.getVariates()) {
-			Assert.assertTrue("A variate should have a variate role",
-					measurementVariable.getRole() == PhenotypicType.VARIATE);
+			Assert.assertSame("A variate should have a variate role", measurementVariable.getRole(), PhenotypicType.VARIATE);
 		}
 
 	}
@@ -288,7 +289,7 @@ public class ETLServiceTest {
 				DataSetType.MEANS_DATA);
 
 		Assert.assertNotNull(workbook);
-		Assert.assertTrue("Imported type must be plot data", datasetType == workbook.getImportType());
+		Assert.assertEquals("Imported type must be plot data", datasetType, (int) workbook.getImportType());
 
 		Assert.assertNotNull(workbook.getStudyDetails());
 		Assert.assertEquals("Study id must be " + this.userSelection.getStudyId(), this.userSelection.getStudyId(),
@@ -310,10 +311,11 @@ public class ETLServiceTest {
 
 		Assert.assertEquals("Study id must be " + this.userSelection.getStudyId(), this.userSelection.getStudyId(),
 				workbook.getStudyDetails().getId());
-		Assert.assertTrue("Trial dataset id must be " + ETLServiceTest.TRIAL_DATASET_ID,
-				ETLServiceTest.TRIAL_DATASET_ID == workbook.getTrialDatasetId());
-		Assert.assertTrue("Measurement dataset id must be " + ETLServiceTest.MEASUREMENT_DATASET_ID,
-				ETLServiceTest.MEASUREMENT_DATASET_ID == workbook.getMeasurementDatesetId());
+		Assert.assertEquals("Trial dataset id must be " + ETLServiceTest.TRIAL_DATASET_ID, ETLServiceTest.TRIAL_DATASET_ID,
+			(int) workbook.getTrialDatasetId());
+		Assert
+			.assertEquals("Measurement dataset id must be " + ETLServiceTest.MEASUREMENT_DATASET_ID, ETLServiceTest.MEASUREMENT_DATASET_ID,
+				(int) workbook.getMeasurementDatesetId());
 
 		Assert.assertNotNull(workbook.getConditions());
 		Assert.assertNotNull(workbook.getConstants());
@@ -330,8 +332,7 @@ public class ETLServiceTest {
 		Assert.assertNotNull(workbook.getVariates());
 		Assert.assertEquals("The number of variates must be 2", 2, workbook.getVariates().size());
 		for (final MeasurementVariable measurementVariable : workbook.getVariates()) {
-			Assert.assertTrue("A variate should have a variate role",
-					measurementVariable.getRole() == PhenotypicType.VARIATE);
+			Assert.assertSame("A variate should have a variate role", measurementVariable.getRole(), PhenotypicType.VARIATE);
 		}
 
 	}
@@ -362,7 +363,7 @@ public class ETLServiceTest {
 				.retrieveAndSetProjectOntology(this.userSelection, true);
 
 		Assert.assertNotNull(workbook);
-		Assert.assertTrue("Imported type must be means data", datasetType == workbook.getImportType());
+		Assert.assertEquals("Imported type must be means data", datasetType, (int) workbook.getImportType());
 
 		Assert.assertNotNull(workbook.getStudyDetails());
 		Assert.assertEquals("Study id must be " + this.userSelection.getStudyId(), this.userSelection.getStudyId(),
@@ -384,10 +385,10 @@ public class ETLServiceTest {
 
 		Assert.assertEquals("Study id must be " + this.userSelection.getStudyId(), this.userSelection.getStudyId(),
 				workbook.getStudyDetails().getId());
-		Assert.assertTrue("Trial dataset id must be " + ETLServiceTest.TRIAL_DATASET_ID,
-				ETLServiceTest.TRIAL_DATASET_ID == workbook.getTrialDatasetId());
-		Assert.assertTrue("Means dataset id must be " + ETLServiceTest.MEANS_DATASET_ID,
-				ETLServiceTest.MEANS_DATASET_ID == workbook.getMeansDatasetId());
+		Assert.assertEquals("Trial dataset id must be " + ETLServiceTest.TRIAL_DATASET_ID, ETLServiceTest.TRIAL_DATASET_ID,
+			(int) workbook.getTrialDatasetId());
+		Assert.assertEquals("Means dataset id must be " + ETLServiceTest.MEANS_DATASET_ID, ETLServiceTest.MEANS_DATASET_ID,
+			(int) workbook.getMeansDatasetId());
 
 		Assert.assertNotNull(workbook.getConditions());
 		Assert.assertNotNull(workbook.getConstants());
@@ -398,8 +399,7 @@ public class ETLServiceTest {
 		Assert.assertNotNull(workbook.getVariates());
 		Assert.assertEquals("The number of variates must be 2", 2, workbook.getVariates().size());
 		for (final MeasurementVariable measurementVariable : workbook.getVariates()) {
-			Assert.assertTrue("A variate should have a variate role",
-					measurementVariable.getRole() == PhenotypicType.VARIATE);
+			Assert.assertSame("A variate should have a variate role", measurementVariable.getRole(), PhenotypicType.VARIATE);
 		}
 	}
 

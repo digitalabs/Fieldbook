@@ -249,10 +249,7 @@
 							if ($('.check-germplasm-list-items tbody tr').length > 0) {
 								$('#keyForOverwrite').val(id);
 								$('#confirmationModal').modal('show');
-							} else {
-								displayGermplasmCheckDetails(id);
 							}
-							makeCheckDraggable(false);
 						} else {
 							if(fromEnterKey === false){
 								showErrorMessage('page-import-message-modal', sameListErr);

@@ -259,53 +259,6 @@ function showMultiTabPage(paginationUrl, pageNum, sectionDiv, sectionContainerId
 	});
 }
 
-function showPostPage(paginationUrl, previewPageNum, pageNum, sectionDiv, formName) {
-	'use strict';
-	var $form,
-		completeSectionDivName,
-		serializedData;
-
-	if (formName.indexOf('#') > -1) {
-		$form = $(formName);
-	} else {
-		$form = $('#' + formName);
-	}
-
-	if (sectionDiv.indexOf('#') > -1) {
-		completeSectionDivName = sectionDiv;
-	} else {
-		completeSectionDivName = '#' + sectionDiv;
-	}
-
-	serializedData = $form.serialize();
-
-	$.ajax({
-		url: paginationUrl + pageNum + '/' + previewPageNum + '?r=' + (Math.random() * 999),
-		type: 'POST',
-		data: serializedData,
-		cache: false,
-		timeout: 70000,
-		success: function(html) {
-			$(completeSectionDivName).empty().append(html);
-
-			if (sectionDiv === 'trial-details-list') {
-				for (var index in selectedTableIds) {
-					var idVal = selectedTableIds[index];
-					if (idVal != null) {
-						// We need to highlight
-						$('tr.data-row#' + idVal).addClass('field-map-highlight');
-					}
-				}
-			}
-
-			if (sectionDiv == 'check-germplasm-list') {
-				makeCheckDraggable(makeCheckDraggableBool);
-			}
-
-		}
-	});
-}
-
 function triggerFieldMapTableSelection(tableName) {
 
 	var id;
@@ -2812,6 +2765,19 @@ function validateCheckFields() {
 	}
 
 	return true;
+}
+
+function isValueUnique() {
+	'use strict';
+	var isUnique = true;
+	$.each(checkTypesObj, function(index, item) {
+		if (item.description == $('#manageCheckValue').val()
+			&& item.id != $('#comboCheckCode').select2('data').id) {
+			isUnique = false;
+			return false;
+		}
+	});
+	return isUnique;
 }
 
 function resetButtonsAndFields() {

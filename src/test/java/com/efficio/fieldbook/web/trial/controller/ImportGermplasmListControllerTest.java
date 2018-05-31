@@ -838,11 +838,11 @@ public class ImportGermplasmListControllerTest {
 
 		// Since the entry number starts at 100 we expect the check id to be
 		// bumped to 100 too
-		this.checkNumberTest(1, 5, 1, 100, "100");
+		this.checkNumberTest(1, 5, 1, 1, "100");
 
 		// Since the entry number starts at 50 and our choosen check id is 52 we
 		// expect the check id to be bumped to 52 too
-		this.checkNumberTest(1, 5, 3, 52, "50");
+		this.checkNumberTest(1, 5, 3, 3, "50");
 
 	}
 

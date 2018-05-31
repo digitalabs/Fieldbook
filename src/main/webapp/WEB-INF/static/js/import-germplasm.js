@@ -7,8 +7,7 @@
 		window.ImportGermplasm = {
 			initialize: function(dataGermplasmList) {
 				var $noGermplasmListIndicator = $('.noGermplasmListIndicator'),
-					$txtStartingEntryNo = $('#txtStartingEntryNo'),
-					$txtStartingPlotNo = $('#txtStartingPlotNo');
+					$txtStartingEntryNo = $('#txtStartingEntryNo');
 
 				var gpListItemsClass = '.germplasm-list-items',
 					gpListDataTblClass = '.germplasm-list-data-table';

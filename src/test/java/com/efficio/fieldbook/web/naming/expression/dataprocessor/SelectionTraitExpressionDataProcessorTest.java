@@ -47,7 +47,7 @@ public class SelectionTraitExpressionDataProcessorTest {
 
     @Test
     public void testRetrieveEnvironmentalValueStudyDetail() {
-        final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
+        final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyTypeDto.getNurseryDto());
         final String testValue = "test";
         final MeasurementVariable detail = new MeasurementVariable();
         detail.setProperty(SelectionTraitExpressionDataProcessor.SELECTION_TRAIT_PROPERTY);
@@ -71,7 +71,7 @@ public class SelectionTraitExpressionDataProcessorTest {
 
     @Test
     public void testRetrieveEnvironmentalValueStudyCondition() {
-        final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
+        final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyTypeDto.getNurseryDto());
         final String testValue = "test";
         final MeasurementVariable detail = new MeasurementVariable();
         detail.setProperty(SelectionTraitExpressionDataProcessor.SELECTION_TRAIT_PROPERTY);

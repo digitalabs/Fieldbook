@@ -76,7 +76,7 @@ public class ExpDesignUtilTest {
 
 	@Test
 	public void testGenerateExperimentDesignMeasurements() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyTypeDto.getTrialDto());
 
 		final List<String> treatmentFactor = new ArrayList<String>();
 		final List<String> levels = new ArrayList<String>();

@@ -158,8 +158,8 @@ public class DesignImportServiceImplTest {
 		for (final MeasurementVariable measurementVar : workbook.getFactors()) {
 			final StandardVariable stdVar = result.get(measurementVar.getTermId());
 			if (stdVar != null) {
-				Assert.assertTrue("The standard variable id must be equal to the measurement variable id.",
-						stdVar.getId() == measurementVar.getTermId());
+				Assert.assertEquals("The standard variable id must be equal to the measurement variable id.", stdVar.getId(),
+					measurementVar.getTermId());
 				Assert.assertTrue("The standard variable phenotypic type must be equal to the measurement variable label.",
 						stdVar.getPhenotypicType().getLabelList().contains(measurementVar.getLabel()));
 			}
@@ -309,7 +309,7 @@ public class DesignImportServiceImplTest {
 	@Test
 	public void testGenerateDesignForNursery() throws DesignValidationException {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyTypeDto.getNurseryDto());
 
 		// Setting to 1 since there is only 1 environment for nursery
 		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
@@ -603,7 +603,7 @@ public class DesignImportServiceImplTest {
 				.createStandardVariable(VariableType.ENVIRONMENT_DETAIL, TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "", "", "",
 						"", "", "")));
 		map.put("SITE_NAME", this.createList(DesignImportTestDataInitializer
-				.createStandardVariable(VariableType.ENVIRONMENT_DETAIL, new StudyTypeDto(StudyTypeDto.TRIAL_NAME).getId(), "SITE_NAME", "", "", "", "", "", "")));
+				.createStandardVariable(VariableType.ENVIRONMENT_DETAIL, StudyTypeDto.getTrialDto().getId(), "SITE_NAME", "", "", "", "", "", "")));
 		map.put("ENTRY_NO", this.createList(DesignImportTestDataInitializer
 				.createStandardVariable(VariableType.GERMPLASM_DESCRIPTOR, TermId.ENTRY_NO.getId(), "ENTRY_NO", "", "", "", "", "", "")));
 		map.put("PLOT_NO", this.createList(DesignImportTestDataInitializer

@@ -204,12 +204,12 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testOpenTrialNoRedirect() throws Exception {
 
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyTypeDto.getTrialDto());
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
 		final Study study = new Study();
-		study.setStudyType(new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
+		study.setStudyType(StudyTypeDto.getTrialDto());
 		Mockito.when(this.fieldbookMiddlewareService.getStudy(Matchers.anyInt())).thenReturn(study);
 
 		this.mockStandardVariables(workbook.getAllVariables());
@@ -246,7 +246,7 @@ public class OpenTrialControllerTest {
 
 		final MockHttpSession mockSession = new MockHttpSession();
 
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyTypeDto.getTrialDto());
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 
 		mockSession.setAttribute(SessionUtility.USER_SELECTION_SESSION_NAME, new UserSelection());
@@ -272,7 +272,7 @@ public class OpenTrialControllerTest {
 
 		final Model model = new ExtendedModelMap();
 
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyTypeDto.getTrialDto());
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 
 		// Verify that workbook has Analysis and/or Analysis Summary variables
@@ -775,7 +775,7 @@ public class OpenTrialControllerTest {
 		Assert.assertEquals("Expecting trait alias to be used in Setting Detail.", OpenTrialControllerTest.SELECTION_TRAIT,
 				settings.get(0).getVariable().getName());
 		Assert.assertEquals("Operation should be UPDATE", Operation.UPDATE, settings.get(0).getVariable().getOperation());
-		Assert.assertEquals("Setting Detail should be deleteable", true, settings.get(0).isDeletable());
+		Assert.assertTrue("Setting Detail should be deleteable", settings.get(0).isDeletable());
 		Mockito.verify(this.userSelection).setSelectionVariates(settings);
 		Mockito.verify(this.userSelection, Mockito.never()).setBaselineTraitsList(Matchers.anyListOf(SettingDetail.class));
 	}
@@ -792,7 +792,7 @@ public class OpenTrialControllerTest {
 		Assert.assertEquals("Expecting trait alias to be used in Setting Detail.", OpenTrialControllerTest.TRAIT,
 				settings.get(0).getVariable().getName());
 		Assert.assertEquals("Operation should be UPDATE", Operation.UPDATE, settings.get(0).getVariable().getOperation());
-		Assert.assertEquals("Setting Detail should be deleteable", true, settings.get(0).isDeletable());
+		Assert.assertTrue("Setting Detail should be deleteable", settings.get(0).isDeletable());
 		Mockito.verify(this.userSelection).setBaselineTraitsList(settings);
 		Mockito.verify(this.userSelection, Mockito.never()).setSelectionVariates(Matchers.anyListOf(SettingDetail.class));
 	}
@@ -809,7 +809,7 @@ public class OpenTrialControllerTest {
 		Assert.assertEquals("Expecting trait alias to be used in Setting Detail.", OpenTrialControllerTest.TRAIT,
 				settings.get(0).getVariable().getName());
 		Assert.assertEquals("Operation should be ADD", Operation.ADD, settings.get(0).getVariable().getOperation());
-		Assert.assertEquals("Setting Detail should be deleteable", true, settings.get(0).isDeletable());
+		Assert.assertTrue("Setting Detail should be deleteable", settings.get(0).isDeletable());
 	}
 
 	@Test
@@ -1034,12 +1034,12 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testUpdateSavedTrial() throws ParseException {
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyTypeDto.getTrialDto());
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString()))
 			.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(1, "STD"));
 		final Study study = new Study();
-		study.setStudyType(new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
+		study.setStudyType(StudyTypeDto.getTrialDto());
 		Mockito.when(this.fieldbookMiddlewareService.getStudy(Matchers.anyInt())).thenReturn(study);
 
 		Mockito.when(
@@ -1078,8 +1078,7 @@ public class OpenTrialControllerTest {
 		this.openTrialController.assignOperationOnExpDesignVariables(conditions);
 
 		for (final MeasurementVariable var : conditions) {
-			Assert.assertTrue("Expecting that the experimental variable's operation still set to ADD",
-					var.getOperation().equals(Operation.ADD));
+			Assert.assertEquals("Expecting that the experimental variable's operation still set to ADD", var.getOperation(), Operation.ADD);
 		}
 	}
 
@@ -1093,8 +1092,8 @@ public class OpenTrialControllerTest {
 		this.openTrialController.assignOperationOnExpDesignVariables(conditions);
 
 		for (final MeasurementVariable var : conditions) {
-			Assert.assertTrue("Expecting that the experimental variable's operation is now set to UPDATE",
-					var.getOperation().equals(Operation.UPDATE));
+			Assert.assertEquals("Expecting that the experimental variable's operation is now set to UPDATE", var.getOperation(),
+				Operation.UPDATE);
 		}
 	}
 
@@ -1185,8 +1184,8 @@ public class OpenTrialControllerTest {
 		final long experimentCount = 10;
 		Mockito.when(this.studyDataManager.countExperiments(Matchers.eq(1))).thenReturn(experimentCount);
 
-		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
-		data.setBasicDetails(new BasicDetails());data.getBasicDetails().setStudyType(new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
+		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
+		data.setBasicDetails(new BasicDetails());data.getBasicDetails().setStudyType(StudyTypeDto.getTrialDto());
 		final Map<String, Object> returnVal = this.openTrialController.submit(0, data);
 
 		Assert.assertNotNull("The environment data tab should not be null", returnVal.get(OpenTrialController.ENVIRONMENT_DATA_TAB));

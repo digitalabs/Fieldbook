@@ -154,7 +154,7 @@ public class WorkbookDataUtil {
 	}
 
 	public static Workbook getTestWorkbookForTrial(final int noOfObservations, final int noOfInstance) {
-		return WorkbookDataUtil.createTestWorkbook(noOfObservations, new StudyTypeDto(StudyTypeDto.TRIAL_NAME), noOfInstance);
+		return WorkbookDataUtil.createTestWorkbook(noOfObservations, StudyTypeDto.getTrialDto(), noOfInstance);
 	}
 
 	private static Workbook createTestWorkbook(final int noOfObservations, final StudyTypeDto studyType) {
@@ -610,9 +610,9 @@ public class WorkbookDataUtil {
 	}
 
 	public static MeasurementRow createTrialObservationWithoutSite() {
-		final Workbook workbook = WorkbookDataUtil.createTestWorkbook(2, new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
+		final Workbook workbook = WorkbookDataUtil.createTestWorkbook(2, StudyTypeDto.getTrialDto());
 
-		WorkbookDataUtil.createStudyDetails(new StudyTypeDto(StudyTypeDto.TRIAL_NAME));
+		WorkbookDataUtil.createStudyDetails(StudyTypeDto.getTrialDto());
 		WorkbookDataUtil.createConditions();
 
 		final MeasurementRow row = new MeasurementRow();

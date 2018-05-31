@@ -458,41 +458,6 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	@Test
-	public void testDisplayCheckGermplasmDetails() throws MiddlewareException {
-		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final ExtendedModelMap model = new ExtendedModelMap();
-
-		Mockito.doReturn(null).when(this.ontologyDataManager).getTermById(Matchers.anyInt());
-
-		final List<GermplasmListData> list = this.createGermplasmListData();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
-		Mockito.doReturn((long) list.size()).when(this.germplasmListManager)
-				.countGermplasmListDataByListId(this.LIST_ID);
-
-		this.importGermplasmListController.displayCheckGermplasmDetails(this.LIST_ID, form, model);
-
-		Assert.assertTrue(this.userSelection.isImportValid());
-
-	}
-
-	@Test
-	public void testDisplaySelectedCheckGermplasmDetails() throws MiddlewareException {
-		Mockito.doReturn(null).when(this.ontologyDataManager).getTermById(Matchers.anyInt());
-
-		final List<GermplasmListData> list = this.createGermplasmListData();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
-		Mockito.doReturn((long) list.size()).when(this.germplasmListManager)
-				.countGermplasmListDataByListId(this.LIST_ID);
-
-		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displaySelectedCheckGermplasmDetails(form, model);
-
-		Assert.assertTrue(this.userSelection.isImportValid());
-
-	}
-
-	@Test
 	public void testCopyImportedGermplasmFromUserSelectionToForm() {
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();

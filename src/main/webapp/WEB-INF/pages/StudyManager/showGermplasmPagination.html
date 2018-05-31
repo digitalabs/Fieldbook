@@ -56,14 +56,6 @@
 						<input class="inputForNumberingAndChecks" id="txtStartingEntryNo" rows="1" th:field="*{startingEntryNo}"
 							   readonly="readonly" title="Click Replace button to edit entry number"/>
 					</div>
-
-					<div class="col-xs-6" th:if="${type == 'N'}">
-						<!-- Display this section for Nursery only -->
-						<label class="control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}"
-							   style="margin-left: 5px;">Specify Starting Plot Number</label>
-						<input class="inputForNumberingAndChecks" id="txtStartingPlotNo" rows="1" th:field="*{startingPlotNo}"
-							   readonly="readonly" title="Click Replace button to edit plot number"/>
-					</div>
 				</div>
 			</div>
 		</div>

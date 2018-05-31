@@ -53,7 +53,6 @@ import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -832,7 +831,6 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	@Test
-	@Ignore
 	public void testCheckNumbersUpdatedAppropriately() throws Exception {
 		// Unchanged check entry number if there are no new start entry number
 		this.checkNumberTest(1, 5, 1, 1, null);

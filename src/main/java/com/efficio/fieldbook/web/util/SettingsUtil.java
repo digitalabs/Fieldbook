@@ -382,8 +382,8 @@ public class SettingsUtil {
 
 		dataset.setVariates(SettingsUtil.convertBaselineTraitsToVariates(variates, fieldbookMiddlewareService, programUUID));
 
-		dataset.setConstants(SettingsUtil.convertConditionsToConstants(userSelection.getStudyConditions(), fieldbookMiddlewareService,
-				programUUID));
+		dataset.setConstants(
+				SettingsUtil.convertConditionsToConstants(userSelection.getStudyConditions(), fieldbookMiddlewareService, programUUID));
 
 		dataset.setTrialLevelFactor(
 				SettingsUtil.convertDetailsToFactors(userSelection.getTrialLevelVariableList(), fieldbookMiddlewareService, programUUID));
@@ -2333,6 +2333,8 @@ public class SettingsUtil {
 						param.setDesignType(DesignTypeItem.CUSTOM_IMPORT.getId());
 					} else if (String.valueOf(TermId.AUGMENTED_RANDOMIZED_BLOCK.getId()).equals(var.getValue())) {
 						param.setDesignType(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId());
+					} else if (String.valueOf(TermId.ENTRY_LIST_ORDER.getId()).equals(var.getValue())) {
+						param.setDesignType(DesignTypeItem.ENTRY_LIST_ORDER.getId());
 					}
 					if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())
 							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
@@ -2361,6 +2363,12 @@ public class SettingsUtil {
 				param.setFileName(var.getValue());
 			} else if (var.getTermId() == TermId.NBLKS.getId()) {
 				param.setNumberOfBlocks(var.getValue());
+			} else if (var.getTermId() == TermId.CHECK_PLAN.getId()) {
+				param.setCheckInsertionManner(var.getValue());
+			} else if (var.getTermId() == TermId.CHECK_INTERVAL.getId()) {
+				param.setCheckSpacing(var.getValue());
+			} else if (var.getTermId() == TermId.CHECK_START.getId()) {
+				param.setCheckStartingPosition(var.getValue());
 			}
 		}
 

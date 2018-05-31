@@ -157,6 +157,15 @@ public class EntryListOrderDesignServiceImplTest {
 		return null;
 	}
 
+	private String getGidValue(final MeasurementRow measurementRow) {
+		for (final MeasurementData measurementData : measurementRow.getDataList()) {
+			if (measurementData.getMeasurementVariable().getTermId() == TermId.GID.getId()) {
+				return measurementData.getValue();
+			}
+		}
+		return null;
+	}
+
 	@Test
 	public void generateDesignTest() throws BVDesignException {
 		final List<MeasurementRow> measurementRows = entryListOrderDesignServiceImpl
@@ -169,6 +178,13 @@ public class EntryListOrderDesignServiceImplTest {
 		assertThat(getCheckEntryTypeValue(measurementRows.get(3)), equalTo(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
 		assertThat(getCheckEntryTypeValue(measurementRows.get(4)), equalTo(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId()));
 		assertThat(getCheckEntryTypeValue(measurementRows.get(5)), equalTo(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId()));
+
+		assertThat(getGidValue(measurementRows.get(0)), equalTo(germplasmList.get(2).getGid()));
+		assertThat(getGidValue(measurementRows.get(1)), equalTo(germplasmList.get(0).getGid()));
+		assertThat(getGidValue(measurementRows.get(2)), equalTo(germplasmList.get(1).getGid()));
+		assertThat(getGidValue(measurementRows.get(3)), equalTo(germplasmList.get(2).getGid()));
+		assertThat(getGidValue(measurementRows.get(4)), equalTo(germplasmList.get(3).getGid()));
+		assertThat(getGidValue(measurementRows.get(5)), equalTo(germplasmList.get(4).getGid()));
 	}
 
 }

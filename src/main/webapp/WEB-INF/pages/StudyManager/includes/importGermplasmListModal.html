@@ -43,10 +43,7 @@ function closeImportFrame(listGermplasmId) {
 		if ($('.check-germplasm-list-items tbody tr').length > 0) {
 			$('#keyForOverwrite').val(listId);
 			$('#confirmationModal').modal('show');
-		} else {
-			displayGermplasmCheckDetails(listId);
 		}
-		makeCheckDraggable(false);
 	}
 }
 //]]>

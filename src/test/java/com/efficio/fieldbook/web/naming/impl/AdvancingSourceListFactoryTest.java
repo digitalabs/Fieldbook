@@ -104,7 +104,7 @@ public class AdvancingSourceListFactoryTest {
 
         final Workbook workBook = new Workbook();
         final StudyDetails studyDetails = new StudyDetails();
-        studyDetails.setStudyType(new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
+        studyDetails.setStudyType(StudyTypeDto.getNurseryDto());
         workBook.setStudyDetails(studyDetails);
         workBook.setObservations(generateMeasurementRows());
 
@@ -202,7 +202,7 @@ public class AdvancingSourceListFactoryTest {
 
         final Workbook workBook = new Workbook();
         final StudyDetails studyDetails = new StudyDetails();
-        studyDetails.setStudyType(new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
+        studyDetails.setStudyType(StudyTypeDto.getNurseryDto());
         workBook.setStudyDetails(studyDetails);
 
         final List<MeasurementRow> measurementRows = generateMeasurementRows();

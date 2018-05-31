@@ -123,7 +123,7 @@ public class ImportGermplasmListControllerTest {
 
 	private UserSelection userSelection;
 
-	private final Integer LIST_ID = 1;
+	private final static Integer LIST_ID = 1;
 
 	@InjectMocks
 	private ImportGermplasmListController importGermplasmListController;
@@ -508,17 +508,15 @@ public class ImportGermplasmListControllerTest {
 
 		this.importGermplasmListController.copyImportedGermplasmFromUserSelectionToForm(this.userSelection, form);
 
-		Assert.assertTrue(
-				this.userSelection.getImportedGermplasmMainInfo().equals(form.getImportedGermplasmMainInfo()));
-		Assert.assertTrue(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()
-				.getImportedGermplasms().equals(form.getImportedGermplasm()));
+		Assert.assertEquals(this.userSelection.getImportedGermplasmMainInfo(), form.getImportedGermplasmMainInfo());
+		Assert.assertEquals(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
+			form.getImportedGermplasm());
 		Assert.assertNotNull(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()
 				.getOriginalImportedGermplasms());
 
-		Assert.assertTrue(this.userSelection.getImportedCheckGermplasmMainInfo()
-				.equals(form.getImportedCheckGermplasmMainInfo()));
-		Assert.assertTrue(this.userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-				.getImportedGermplasms().equals(form.getImportedCheckGermplasm()));
+		Assert.assertEquals(this.userSelection.getImportedCheckGermplasmMainInfo(), form.getImportedCheckGermplasmMainInfo());
+		Assert.assertEquals(this.userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
+			form.getImportedCheckGermplasm());
 	}
 
 	@Test
@@ -600,7 +598,7 @@ public class ImportGermplasmListControllerTest {
 		form.setStartingEntryNo("801");
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
-		studyDetails.setStudyType(new StudyTypeDto(StudyTypeDto.NURSERY_NAME));
+		studyDetails.setStudyType(StudyTypeDto.getNurseryDto());
 
 		workbook.setStudyDetails(studyDetails);
 

@@ -85,7 +85,7 @@ public class NamingConventionServiceImplTest {
 		final StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setStudyType(StudyTypeDto.getNurseryDto());
 		studyDetails.setStudyName("STUDY:ABC");
-		workbook.setStudyDetails(studyDetails);
+		this.workbook.setStudyDetails(studyDetails);
 
 	}
 
@@ -215,14 +215,14 @@ public class NamingConventionServiceImplTest {
         methodList.add(breedingMethod);
 
         Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Matchers.anyBoolean())).thenReturn(methodList);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Matchers.anyInt())).thenReturn(workbook);
 
-        final Workbook workbook = new Workbook();
+		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setStudyName("Test1");
 		studyDetails.setStudyType(StudyTypeDto.getNurseryDto());
 		workbook.setStudyDetails(studyDetails);
 
-        Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Matchers.anyInt())).thenReturn(workbook);
         final AdvancingSourceList rows = new AdvancingSourceList();
         rows.setRows(new ArrayList<AdvancingSource>());
 
@@ -286,7 +286,7 @@ public class NamingConventionServiceImplTest {
         study.setId(2345);
         info.setStudy(study);
 
-		final AdvanceResult advanceResult = namingConventionService.advanceStudy(info, workbook);
+		final AdvanceResult advanceResult = namingConventionService.advanceStudy(info, this.workbook);
 
         Assert.assertNotNull(advanceResult);
         Assert.assertNotNull(advanceResult.getChangeDetails());

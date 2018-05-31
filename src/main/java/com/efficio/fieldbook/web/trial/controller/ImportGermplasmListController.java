@@ -102,8 +102,6 @@ public class ImportGermplasmListController extends SettingsController {
 
 	protected static final String LIST_DATA_TABLE = "listDataTable";
 
-	protected static final String HAS_EXPERIMENTAL_DESIGN = "hasExperimentalDesign";
-
 	protected static final String CHECK_LISTS = "checkLists";
 
 	protected static final String ENTRY_CODE = "entryCode";
@@ -142,9 +140,6 @@ public class ImportGermplasmListController extends SettingsController {
 	public static final String PAGINATION_TEMPLATE = "/StudyManager/showGermplasmPagination";
 	public static final String EDIT_CHECK = "/Common/editCheck";
 
-	/** The Constant CHECK_PAGINATION_TEMPLATE. */
-	public static final String CHECK_PAGINATION_TEMPLATE = "/StudyManager/showCheckGermplasmPagination";
-
 	public static final int NO_ID = -1;
 
 	static final String STARTING_PLOT_NO = "1";
@@ -152,10 +147,6 @@ public class ImportGermplasmListController extends SettingsController {
 	/** The germplasm list manager. */
 	@Resource
 	private GermplasmListManager germplasmListManager;
-
-	/** The import germplasm file service. */
-	@Resource
-	private ImportGermplasmFileService importGermplasmFileService;
 
 	/** The data import service. */
 	@Resource
@@ -165,13 +156,6 @@ public class ImportGermplasmListController extends SettingsController {
 	@Resource
 	private OntologyService ontologyService;
 
-	@Resource
-	private OntologyDataManager ontologyDataManager;
-
-	/** The merge check service. */
-	@Resource
-	private MergeCheckService mergeCheckService;
-
 	/** The message source. */
 	@Autowired
 	public MessageSource messageSource;
@@ -180,27 +164,13 @@ public class ImportGermplasmListController extends SettingsController {
 	@Resource
 	private InventoryDataManager inventoryDataManager;
 
-	private static final String DEFAULT_CHECK_VALUE = "C";
 	private static final String DEFAULT_TEST_VALUE = "T";
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName
-	 * ()
-	 */
 	@Override
 	public String getContentName() {
 		return "StudyManager/importGermplasmList";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#
-	 * getUserSelection ()
-	 */
 	/**
 	 * Gets the user selection.
 	 *
@@ -415,15 +385,6 @@ public class ImportGermplasmListController extends SettingsController {
 		return currentMinimumEntryNumber;
 	}
 
-	private int getIntervalValue(final ImportGermplasmListForm form) {
-		final String interval = SettingsUtil.getSettingDetailValue(form.getCheckVariables(),
-				TermId.CHECK_INTERVAL.getId());
-		if (interval != null && !"".equals(interval)) {
-			return Integer.parseInt(interval);
-		}
-		return 0;
-	}
-
 	/**
 	 * List data project data is the germplasm list that is attached to a study This method is saving the germplasm for this
 	 * study
@@ -619,73 +580,10 @@ public class ImportGermplasmListController extends SettingsController {
 				this.getGermplasmTableHeader(this.userSelection.getPlotsLevelList()));
 	}
 
-	@RequestMapping(value = "/displaySelectedCheckGermplasmDetails", method = RequestMethod.GET)
-	public String displaySelectedCheckGermplasmDetails(
-			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final Model model) {
-
-		try {
-			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-			mainInfo.setAdvanceImportType(true);
-			form.setImportedCheckGermplasmMainInfo(mainInfo);
-
-			final List<Enumeration> checksList = this.fieldbookService.getCheckTypeList();
-
-			final int studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
-			List<ImportedGermplasm> list = new ArrayList<>();
-
-			final List<GermplasmList> germplasmListCheck = this.fieldbookMiddlewareService
-					.getGermplasmListsByProjectId(studyId, GermplasmListType.CHECK);
-
-			if (germplasmListCheck != null && !germplasmListCheck.isEmpty()) {
-				final GermplasmList checkList = germplasmListCheck.get(0);
-				if (checkList != null && (checkList != null ? checkList.getListRef() : null) != null && !checkList.getListRef().equals(0)) {
-					form.setKeyForOverwrite(checkList.getListRef());
-					form.setLastCheckSourcePrimary(0);
-					form.setLastDraggedChecksList(checkList.getListRef().toString());
-				} else {
-					form.setLastCheckSourcePrimary(1);
-				}
-
-				final List<ListDataProject> data = this.fieldbookMiddlewareService.getListDataProject(
-					checkList != null ? checkList.getId() : null);
-				FieldbookListUtil.populateStockIdInListDataProject(data, this.inventoryDataManager);
-				list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
-			}
-
-			this.generateCheckListModel(model, list, checksList);
-
-			form.setImportedCheckGermplasm(list);
-
-			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
-			importedGermplasmList.setImportedGermplasms(list);
-			mainInfo.setImportedGermplasmList(importedGermplasmList);
-
-			form.changeCheckPage(1);
-			this.userSelection.setCurrentPageCheckGermplasmList(form.getCurrentCheckPage());
-
-			this.getUserSelection().setImportedCheckGermplasmMainInfo(mainInfo);
-			this.getUserSelection().setImportValid(true);
-
-			model.addAttribute(ImportGermplasmListController.HAS_EXPERIMENTAL_DESIGN,
-					this.hasExperimentalDesign(this.userSelection.getWorkbook()));
-			model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST, this.getGermplasmCheckTableHeader());
-
-		} catch (final Exception e) {
-			ImportGermplasmListController.LOG.error(e.getMessage(), e);
-		}
-		return super.showAjaxPage(model, ImportGermplasmListController.CHECK_PAGINATION_TEMPLATE);
-	}
 
 	private List<TableHeader> getGermplasmTableHeader(final List<SettingDetail> factorsList) {
 		final Locale locale = LocaleContextHolder.getLocale();
 		final List<TableHeader> tableHeaderList = new ArrayList<>();
-/*		if (type != null && type.equalsIgnoreCase(StudyType.N.getName())) {
-
-			tableHeaderList.add(new TableHeader(this.messageSource.getMessage("study.import.header.position", null, locale),
-					ImportGermplasmListController.POSITION));
-			tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_CODE.getTermNameFromOntology(this.ontologyDataManager),
-					ImportGermplasmListController.ENTRY_CODE));
-		}*/
 
 		if (factorsList != null) {
 			// we iterate the map for dynamic header of studies
@@ -699,15 +597,6 @@ public class ImportGermplasmListController extends SettingsController {
 				}
 			}
 		}
-		return tableHeaderList;
-	}
-
-	private List<TableHeader> getGermplasmCheckTableHeader() {
-		final List<TableHeader> tableHeaderList = new ArrayList<>();
-		tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_TYPE.getTermNameFromOntology(this.ontologyDataManager),
-				ImportGermplasmListController.CHECK));
-		tableHeaderList.add(new TableHeader(ColumnLabels.DESIGNATION.getTermNameFromOntology(this.ontologyDataManager),
-				ImportGermplasmListController.DESIG));
 		return tableHeaderList;
 	}
 
@@ -819,220 +708,6 @@ public class ImportGermplasmListController extends SettingsController {
 		return checkId;
 	}
 
-	/**
-	 * Display check germplasm details.
-	 *
-	 * @param listId
-	 *            the list id
-	 * @param form
-	 *            the form
-	 * @param model
-	 *            the model
-	 * @return the string
-	 */
-	@RequestMapping(value = "/displayCheckGermplasmDetails/{listId}", method = RequestMethod.GET)
-	public String displayCheckGermplasmDetails(@PathVariable final Integer listId,
-			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final Model model) {
-
-		try {
-			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-			mainInfo.setAdvanceImportType(true);
-			form.setImportedCheckGermplasmMainInfo(mainInfo);
-			this.germplasmListManager.countGermplasmListDataByListId(listId);
-			mainInfo.setListId(listId);
-
-			final List<Enumeration> checksList = this.fieldbookService.getCheckTypeList();
-			final String checkId = this.getCheckId(ImportGermplasmListController.DEFAULT_CHECK_VALUE, checksList);
-			final List<GermplasmListData> data = new ArrayList<>();
-			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId));
-			FieldbookListUtil.populateStockIdInGermplasmListData(data, this.inventoryDataManager);
-			final List<ImportedGermplasm> list = this.transformGermplasmListDataToImportedGermplasm(data, checkId);
-			this.generateCheckListModel(model, list, checksList);
-
-			form.setImportedCheckGermplasm(list);
-
-			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
-			importedGermplasmList.setImportedGermplasms(list);
-			mainInfo.setImportedGermplasmList(importedGermplasmList);
-
-			form.changeCheckPage(1);
-			this.userSelection.setCurrentPageCheckGermplasmList(form.getCurrentCheckPage());
-
-			this.getUserSelection().setImportedCheckGermplasmMainInfo(mainInfo);
-			this.getUserSelection().setImportValid(true);
-
-			model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST, this.getGermplasmCheckTableHeader());
-
-		} catch (final Exception e) {
-			ImportGermplasmListController.LOG.error(e.getMessage(), e);
-		}
-		return super.showAjaxPage(model, ImportGermplasmListController.CHECK_PAGINATION_TEMPLATE);
-	}
-
-	private void generateCheckListModel(final Model model, final List<ImportedGermplasm> list,
-			final List<Enumeration> checksList) {
-		final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
-		if (list != null) {
-			for (final ImportedGermplasm germplasm : list) {
-				final Map<String, Object> dataMap = new HashMap<>();
-				dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
-				dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
-				dataMap.put(ImportGermplasmListController.CHECK, germplasm.getEntryTypeValue());
-				dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryId());
-				dataMap.put("index", germplasm.getIndex());
-				dataMap.put(ImportGermplasmListController.CHECK_OPTIONS, checksList);
-				dataTableDataList.add(dataMap);
-			}
-		}
-		model.addAttribute(ImportGermplasmListController.CHECK_LISTS, checksList);
-		model.addAttribute("checkListDataTable", dataTableDataList);
-
-	}
-
-	/**
-	 * Delete check germplasm details.
-	 *
-	 * @param gid
-	 *            the gid
-	 * @param model
-	 *            the model
-	 * @return the string
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/deleteCheckGermplasmDetails/{gid}", method = RequestMethod.GET)
-	public String deleteCheckGermplasmDetails(@PathVariable final Integer gid, final Model model) {
-		try {
-
-			ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-			if (this.userSelection.getImportedCheckGermplasmMainInfo() != null) {
-				mainInfo = this.userSelection.getImportedCheckGermplasmMainInfo();
-			}
-			mainInfo.setAdvanceImportType(true);
-
-			final List<ImportedGermplasm> checkList = mainInfo.getImportedGermplasmList().getImportedGermplasms();
-			final Iterator<ImportedGermplasm> iter = checkList.iterator();
-			while (iter.hasNext()) {
-				if (iter.next().getGid().equalsIgnoreCase(gid.toString())) {
-					iter.remove();
-					break;
-				}
-			}
-
-			this.userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-					.setImportedGermplasms(checkList);
-		} catch (final Exception e) {
-			ImportGermplasmListController.LOG.error(e.getMessage(), e);
-		}
-		return ImportGermplasmListController.SUCCESS;
-	}
-
-	/**
-	 * Adds the check germplasm details.
-	 *
-	 * @param entryId
-	 *            the entry id
-	 * @param form
-	 *            the form
-	 * @param model
-	 *            the model
-	 * @return the string
-	 */
-	@RequestMapping(value = "/addCheckGermplasmDetails/{entryId}", method = RequestMethod.GET)
-	public String addCheckGermplasmDetails(@PathVariable final Integer entryId,
-			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form,
-			@RequestParam("selectedCheckVal") final String selectedCheckVal, final Model model) {
-
-		try {
-			ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-			if (this.userSelection.getImportedCheckGermplasmMainInfo() != null) {
-				mainInfo = this.userSelection.getImportedCheckGermplasmMainInfo();
-			}
-			mainInfo.setAdvanceImportType(true);
-			form.setImportedCheckGermplasmMainInfo(mainInfo);
-
-			final List<Enumeration> checksList = this.fieldbookService.getCheckTypeList();
-			final String checkId = this.getCheckId(ImportGermplasmListController.DEFAULT_CHECK_VALUE, checksList);
-
-			final List<ImportedGermplasm> primaryList = this.userSelection.getImportedGermplasmMainInfo()
-					.getImportedGermplasmList().getImportedGermplasms();
-			ImportedGermplasm importedGermplasm = null;
-			for (final ImportedGermplasm impGerm : primaryList) {
-				if (impGerm.getEntryId().intValue() == entryId.intValue()) {
-					importedGermplasm = impGerm.copy();
-					break;
-				}
-
-			}
-
-			assert importedGermplasm != null;
-			importedGermplasm.setEntryTypeValue(checkId);
-
-			List<ImportedGermplasm> list = new ArrayList<>();
-			if (this.userSelection.getImportedCheckGermplasmMainInfo() != null
-					&& this.userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null
-					&& this.userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-							.getImportedGermplasms() != null) {
-				// we set it here
-				list = this.userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-						.getImportedGermplasms();
-
-			}
-			list.add(importedGermplasm);
-
-			form.setImportedCheckGermplasm(list);
-
-			this.generateCheckListModel(model, list, checksList);
-
-			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
-			importedGermplasmList.setImportedGermplasms(list);
-			mainInfo.setImportedGermplasmList(importedGermplasmList);
-
-			form.changeCheckPage(1);
-			this.userSelection.setCurrentPageCheckGermplasmList(form.getCurrentCheckPage());
-
-			this.getUserSelection().setImportedCheckGermplasmMainInfo(mainInfo);
-			this.getUserSelection().setImportValid(true);
-
-			model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST, this.getGermplasmCheckTableHeader());
-
-		} catch (final Exception e) {
-			ImportGermplasmListController.LOG.error(e.getMessage(), e);
-		}
-		return super.showAjaxPage(model, ImportGermplasmListController.CHECK_PAGINATION_TEMPLATE);
-	}
-
-	/**
-	 * Reset check germplasm details.
-	 *
-	 * @param model
-	 *            the model
-	 * @return the string
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/resetCheckGermplasmDetails", method = RequestMethod.GET)
-	public String resetCheckGermplasmDetails(final Model model) {
-
-		try {
-			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-			mainInfo.setAdvanceImportType(true);
-
-			final List<ImportedGermplasm> list = new ArrayList<>();
-
-			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
-			importedGermplasmList.setImportedGermplasms(list);
-			mainInfo.setImportedGermplasmList(importedGermplasmList);
-
-			this.userSelection.setCurrentPageCheckGermplasmList(1);
-
-			this.getUserSelection().setImportedCheckGermplasmMainInfo(mainInfo);
-			this.getUserSelection().setImportValid(true);
-
-		} catch (final Exception e) {
-			ImportGermplasmListController.LOG.error(e.getMessage(), e);
-		}
-		return ImportGermplasmListController.SUCCESS;
-	}
-
 	@RequestMapping(value = "/edit/check/{index}/{dataTableIndex}", method = RequestMethod.GET)
 	public String editCheck(@ModelAttribute("updatedGermplasmCheckForm") final UpdateGermplasmCheckForm form, final Model model,
 			@PathVariable final int index, @PathVariable final int dataTableIndex,
@@ -1131,43 +806,6 @@ public class ImportGermplasmListController extends SettingsController {
 		return super.showAjaxPage(model, ImportGermplasmListController.PAGINATION_TEMPLATE);
 	}
 
-	/**
-	 * Gets the check paginated list.
-	 *
-	 * @param pageNum
-	 *            the page num
-	 * @param previewPageNum
-	 *            the preview page num
-	 * @param form
-	 *            the form
-	 * @param model
-	 *            the model
-	 * @return the check paginated list
-	 */
-	@RequestMapping(value = "/checkPage/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
-	public String getCheckPaginatedList(@PathVariable final int pageNum, @PathVariable final int previewPageNum,
-			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final Model model) {
-		// this set the necessary info from the session variable
-		// we need to set the data in the measurementList
-		for (int i = 0; i < form.getPaginatedImportedCheckGermplasm().size(); i++) {
-			final ImportedGermplasm importedGermplasm = form.getPaginatedImportedCheckGermplasm().get(i);
-			final int realIndex = (previewPageNum - 1) * form.getResultPerPage() + i;
-			this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-					.getImportedGermplasms().get(realIndex).setEntryTypeValue(importedGermplasm.getEntryTypeValue());
-		}
-
-		form.setImportedCheckGermplasmMainInfo(this.getUserSelection().getImportedCheckGermplasmMainInfo());
-		form.setImportedCheckGermplasm(this.getUserSelection().getImportedCheckGermplasmMainInfo()
-				.getImportedGermplasmList().getImportedGermplasms());
-		form.changeCheckPage(pageNum);
-		this.userSelection.setCurrentPageCheckGermplasmList(form.getCurrentCheckPage());
-		try {
-			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckTypeList());
-		} catch (final MiddlewareException e) {
-			ImportGermplasmListController.LOG.error(e.getMessage(), e);
-		}
-		return super.showAjaxPage(model, ImportGermplasmListController.CHECK_PAGINATION_TEMPLATE);
-	}
 
 	/**
 	 * Transform germplasm list data to imported germplasm.

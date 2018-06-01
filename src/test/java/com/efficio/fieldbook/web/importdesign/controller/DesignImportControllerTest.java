@@ -347,7 +347,7 @@ public class DesignImportControllerTest {
 		final Model model = Mockito.mock(Model.class);
 		final ImportDesignForm form = Mockito.mock(ImportDesignForm.class);
 		final EnvironmentData environmentData = Mockito.mock(EnvironmentData.class);
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 1);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(5, 1);
 
 		Mockito.when(this.userSelection.getTemporaryWorkbook()).thenReturn(workbook);
 		Mockito.doReturn(workbook.getObservations()).when(this.designImportService).generateDesign(
@@ -367,7 +367,7 @@ public class DesignImportControllerTest {
 		final Model model = Mockito.mock(Model.class);
 		final ImportDesignForm form = Mockito.mock(ImportDesignForm.class);
 		final EnvironmentData environmentData = Mockito.mock(EnvironmentData.class);
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 1);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(5, 1);
 
 		Mockito.when(this.userSelection.getTemporaryWorkbook()).thenReturn(workbook);
 		Mockito.doThrow(new DesignValidationException("")).when(this.designImportService).generateDesign(
@@ -397,28 +397,28 @@ public class DesignImportControllerTest {
 	}
 
 	@Test
-	public void testResolveIDNamePairingAndValuesForTrial() {
+	public void testResolveIDNamePairingAndValuesForStudy() {
 
-		final Set<MeasurementVariable> trialVariables = new HashSet<>();
+		final Set<MeasurementVariable> measurementVariables = new HashSet<>();
 
 		final DesignImportData designImportData = this.createDesignImportDataWithCooperatorVariable();
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
 		Mockito.doReturn(this.createSettingDetails()).when(this.userSelection).getTrialLevelVariableList();
 		this.designImportController.resolveIDNamePairingAndValuesForTrial(environmentData, designImportData,
-				trialVariables);
+				measurementVariables);
 
-		Assert.assertEquals(6, trialVariables.size());
-		Assert.assertEquals("LOCATION_ID should be added to the Trial Variables", "LOCATION_ID",
-				Objects.requireNonNull(this.getMeasurementVariable(TermId.LOCATION_ID.getId(), trialVariables)).getName());
-		Assert.assertEquals("COOPERATOR_ID should be added to the Trial Variables", "COOPERATOR_ID",
-				Objects.requireNonNull(this.getMeasurementVariable(TermId.COOPERATOOR_ID.getId(), trialVariables)).getName());
-		Assert.assertEquals("PI_NAME should be added to the Trial Variables", "PI_NAME",
-				Objects.requireNonNull(this.getMeasurementVariable(TermId.PI_NAME.getId(), trialVariables)).getName());
-		Assert.assertEquals("SITE_NAME should be added to the Trial Variables", DesignImportControllerTest.SITE_NAME,
-				Objects.requireNonNull(this.getMeasurementVariable(TermId.SITE_NAME.getId(), trialVariables)).getName());
-		Assert.assertEquals("TRIAL_INSTANCE should be added to the Trial Variables", "TRIAL_INSTANCE",
-				Objects.requireNonNull(this.getMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), trialVariables)).getName());
+		Assert.assertEquals(6, measurementVariables.size());
+		Assert.assertEquals("LOCATION_ID should be added to the Study Variables", "LOCATION_ID",
+				Objects.requireNonNull(this.getMeasurementVariable(TermId.LOCATION_ID.getId(), measurementVariables)).getName());
+		Assert.assertEquals("COOPERATOR_ID should be added to the Study Variables", "COOPERATOR_ID",
+				Objects.requireNonNull(this.getMeasurementVariable(TermId.COOPERATOOR_ID.getId(), measurementVariables)).getName());
+		Assert.assertEquals("PI_NAME should be added to the Study Variables", "PI_NAME",
+				Objects.requireNonNull(this.getMeasurementVariable(TermId.PI_NAME.getId(), measurementVariables)).getName());
+		Assert.assertEquals("SITE_NAME should be added to the Study Variables", DesignImportControllerTest.SITE_NAME,
+				Objects.requireNonNull(this.getMeasurementVariable(TermId.SITE_NAME.getId(), measurementVariables)).getName());
+		Assert.assertEquals("TRIAL_INSTANCE should be added to the Study Variables", "TRIAL_INSTANCE",
+				Objects.requireNonNull(this.getMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), measurementVariables)).getName());
 
 		Assert.assertEquals(1, environmentData.getNoOfEnvironments());
 		final Map<String, String> managementDetailValuesMap = environmentData.getEnvironments().get(0)
@@ -438,9 +438,9 @@ public class DesignImportControllerTest {
 	}
 
 	@Test
-	public void testResolveIDNamePairingAndValuesForTrialLocationVariableDoesNotExistInTrialLevelVariables() {
+	public void testResolveIDNamePairingAndValuesForStudyLocationVariableDoesNotExistInStudyLevelVariables() {
 
-		final Set<MeasurementVariable> trialVariables = new HashSet<>();
+		final Set<MeasurementVariable> measurementVariables = new HashSet<>();
 
 		final DesignImportData designImportData = this.createDesignImportDataWithCooperatorVariable();
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
@@ -455,14 +455,14 @@ public class DesignImportControllerTest {
 				.thenReturn(new Term(TermId.TRIAL_LOCATION.getId(), DesignImportControllerTest.LOCATION_NAME, ""));
 
 		this.designImportController.resolveIDNamePairingAndValuesForTrial(environmentData, designImportData,
-				trialVariables);
+				measurementVariables);
 
-		Assert.assertEquals(6, trialVariables.size());
+		Assert.assertEquals(6, measurementVariables.size());
 
-		Assert.assertEquals("LOCATION_NAME should be added to the Trial Variables", "LOCATION_NAME",
-				Objects.requireNonNull(this.getMeasurementVariable(TermId.TRIAL_LOCATION.getId(), trialVariables)).getName());
-		Assert.assertEquals("LOCATION_ID should be added to the Trial Variables", "LOCATION_ID",
-				Objects.requireNonNull(this.getMeasurementVariable(TermId.LOCATION_ID.getId(), trialVariables)).getName());
+		Assert.assertEquals("LOCATION_NAME should be added to the Study Variables", "LOCATION_NAME",
+				Objects.requireNonNull(this.getMeasurementVariable(TermId.TRIAL_LOCATION.getId(), measurementVariables)).getName());
+		Assert.assertEquals("LOCATION_ID should be added to the Study Variables", "LOCATION_ID",
+				Objects.requireNonNull(this.getMeasurementVariable(TermId.LOCATION_ID.getId(), measurementVariables)).getName());
 
 		Assert.assertEquals(1, environmentData.getNoOfEnvironments());
 		final Map<String, String> managementDetailValuesMap = environmentData.getEnvironments().get(0)
@@ -488,11 +488,11 @@ public class DesignImportControllerTest {
 				newDetails);
 
 		Assert.assertEquals(3, newDetails.size());
-		Assert.assertEquals("LOCATION_NAME_ID should be added to the Trial Variables", "LOCATION_NAME_ID",
+		Assert.assertEquals("LOCATION_NAME_ID should be added to the Study Variables", "LOCATION_NAME_ID",
 				Objects.requireNonNull(this.getSettingDetail(TermId.LOCATION_ID.getId(), newDetails)).getVariable().getName());
-		Assert.assertEquals("COOPERATOR_ID should be added to the Trial Variables", "COOPERATOR_ID",
+		Assert.assertEquals("COOPERATOR_ID should be added to the Study Variables", "COOPERATOR_ID",
 				Objects.requireNonNull(this.getSettingDetail(TermId.COOPERATOOR_ID.getId(), newDetails)).getVariable().getName());
-		Assert.assertEquals("PI_NAME_ID should be added to the Trial Variables", "PI_NAME_ID",
+		Assert.assertEquals("PI_NAME_ID should be added to the Study Variables", "PI_NAME_ID",
 				Objects.requireNonNull(this.getSettingDetail(TermId.PI_ID.getId(), newDetails)).getVariable().getName());
 
 		Assert.assertEquals(1, environmentData.getNoOfEnvironments());
@@ -522,7 +522,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
 				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 1);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(5, 1);
 
 		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 
@@ -543,7 +543,7 @@ public class DesignImportControllerTest {
 	@Test
 	public void testAddFactorsIfNecessaryVariablesToAddAlreadyExist() throws URISyntaxException, FileParsingException {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 1);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(5, 1);
 
 		final Set<MeasurementVariable> measurementVariables = new HashSet<>();
 		measurementVariables
@@ -609,7 +609,7 @@ public class DesignImportControllerTest {
 	}
 
 	@Test
-	public void testPopulateTrialLevelVariableListIfNecessary() {
+	public void testPopulateStudyLevelVariableListIfNecessary() {
 
 		final Project project = this.createProject();
 		final MeasurementVariable siteName = this.createMeasurementVariable(TermId.SITE_NAME.getId(),
@@ -623,9 +623,9 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(siteNameSettingDetail).when(this.settingsService).createSettingDetail(siteName.getTermId(),
 				siteName.getName(), this.userSelection, 1, project.getUniqueID());
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 3);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(5, 3);
 
-		// Add trial environment to Factors for testing
+		// Add study environment to Factors for testing
 		workbook.getFactors().add(siteName);
 
 		this.designImportController.populateTrialLevelVariableListIfNecessary(workbook);
@@ -642,7 +642,7 @@ public class DesignImportControllerTest {
 	}
 
 	@Test
-	public void testPopulateStudyLevelVariableListIfNecessary() throws URISyntaxException, FileParsingException {
+	public void testPopulateLevelVariableListIfNecessary() throws URISyntaxException, FileParsingException {
 
 		final Project project = this.createProject();
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyTypeDto.getNurseryDto());
@@ -695,27 +695,27 @@ public class DesignImportControllerTest {
 
 		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 		final Set<MeasurementVariable> measurementVariables = this.createMeasurementVariables();
-		final List<SettingDetail> deletedTrialLevelVariables = this.createDeletedTrialLevelVariables();
+		final List<SettingDetail> deletedStudyLevelVariables = this.createDeletedStudyLevelVariables();
 		final UserSelection selection = new UserSelection();
 
 		selection.setTrialLevelVariableList(new ArrayList<SettingDetail>());
-		selection.setDeletedTrialLevelVariables(deletedTrialLevelVariables);
+		selection.setDeletedTrialLevelVariables(deletedStudyLevelVariables);
 
 		Mockito.doReturn(measurementVariables).when(this.designImportService).getMeasurementVariablesFromDataFile(
 				Matchers.any(Workbook.class), Matchers.any(DesignImportData.class));
 
 		this.designImportController.checkTheDeletedSettingDetails(selection, designImportData);
 
-		// The deletedTrialLevelVariables tracks the list of variables that are
+		// The deletedStudyLevelVariables tracks the list of variables that are
 		// deleted by the user in the UI. So if the user re-imports a
 		// design file which has variables that are already in the deleted list,
 		// they should be removed in the deleted list.
 
-		Assert.assertEquals(0, deletedTrialLevelVariables.size());
+		Assert.assertEquals(0, deletedStudyLevelVariables.size());
 		Assert.assertEquals(3, selection.getTrialLevelVariableList().size());
 
-		// Make sure variables that were in the deletedTrialLevelVariables list
-		// are added in the TrialLevelVariableList
+		// Make sure variables that were in the deletedStudyLevelVariables list
+		// are added in the StudyLevelVariableList
 		final SettingDetail siteName = this.getSettingDetail(TermId.SITE_NAME.getId(),
 				selection.getTrialLevelVariableList());
 		Assert.assertNotNull(siteName);
@@ -737,7 +737,7 @@ public class DesignImportControllerTest {
 	public void testGenerateMeasurements() {
 
 		final Set<MeasurementVariable> measurementVariables = this.createMeasurementVariables();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 1);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(5, 1);
 
 		Mockito.doReturn(workbook).when(this.userSelection).getTemporaryWorkbook();
 		Mockito.doReturn(measurementVariables).when(this.designImportService).getMeasurementVariablesFromDataFile(
@@ -756,7 +756,7 @@ public class DesignImportControllerTest {
 	@Test
 	public void testGenerateMeasurementsFail() throws DesignValidationException {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 1);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(5, 1);
 
 		Mockito.doReturn(workbook).when(this.userSelection).getTemporaryWorkbook();
 
@@ -867,7 +867,7 @@ public class DesignImportControllerTest {
 	}
 
 	@Test
-	public void testCreateTrialObservationsForTrial() {
+	public void testCreateStudyObservationsForStudy() {
 
 		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
@@ -944,33 +944,33 @@ public class DesignImportControllerTest {
 	}
 
 	@Test
-	public void testChangeDesignForNewTrialWithImportedDesign() {
-		final Workbook trial = WorkbookDataUtil.getTestWorkbook(10, StudyTypeDto.getTrialDto());
-		trial.getStudyDetails().setId(1);
-		final List<MeasurementRow> observations = trial.getObservations();
+	public void testChangeDesignForNewStudyWithImportedDesign() {
+		final Workbook study = WorkbookDataUtil.getTestWorkbook(10, StudyTypeDto.getTrialDto());
+		study.getStudyDetails().setId(1);
+		final List<MeasurementRow> observations = study.getObservations();
 
-		Mockito.doReturn(trial).when(this.userSelection).getWorkbook();
+		Mockito.doReturn(study).when(this.userSelection).getWorkbook();
 
 		DesignImportTestDataInitializer.updatePlotNoValue(observations);
 
-		this.designImportController.changeDesign(trial.getStudyDetails().getId());
+		this.designImportController.changeDesign(study.getStudyDetails().getId());
 		Mockito.verify(this.userSelection).getExpDesignParams();
 		Mockito.verify(this.userSelection).setDesignImportData(null);
 		this.assertIfDesignIsResetToDefault(observations);
 	}
 
 	@Test
-	public void testChangeDesignForExistingTrialWithImportedDesign() {
-		final Workbook trial = WorkbookDataUtil.getTestWorkbook(10, StudyTypeDto.getTrialDto());
-		trial.getStudyDetails().setId(1);
-		final List<MeasurementRow> observations = trial.getObservations();
+	public void testChangeDesignForExistingStudyWithImportedDesign() {
+		final Workbook study = WorkbookDataUtil.getTestWorkbook(10, StudyTypeDto.getTrialDto());
+		study.getStudyDetails().setId(1);
+		final List<MeasurementRow> observations = study.getObservations();
 
-		Mockito.doReturn(trial).when(this.userSelection).getTemporaryWorkbook();
-		Mockito.doReturn(trial).when(this.userSelection).getWorkbook();
+		Mockito.doReturn(study).when(this.userSelection).getTemporaryWorkbook();
+		Mockito.doReturn(study).when(this.userSelection).getWorkbook();
 
 		DesignImportTestDataInitializer.updatePlotNoValue(observations);
 
-		this.designImportController.changeDesign(trial.getStudyDetails().getId());
+		this.designImportController.changeDesign(study.getStudyDetails().getId());
 		Mockito.verify(this.userSelection).getExpDesignParams();
 		Mockito.verify(this.userSelection).setDesignImportData(null);
 		this.assertIfDesignIsResetToDefault(observations);
@@ -1100,7 +1100,7 @@ public class DesignImportControllerTest {
 
 	@Test
 	public void testCustomImportDesignTypeDetails() throws Exception {
-		// case 1: new nursery or trial, has no imported design yet
+		// case 1: new study, has no imported design yet
 		Mockito.when(this.userSelection.getDesignImportData()).thenReturn(null);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(null);
 
@@ -1113,7 +1113,7 @@ public class DesignImportControllerTest {
 		final DesignImportData designImportData = new DesignImportData();
 		designImportData.setImportFileName(DesignImportControllerTest.TEST_IMPORT_FILE_NAME_CSV);
 
-		// case 2: new nursery or trial with user has already imported design to
+		// case 2: new study with user has already imported design to
 		// be saved yet
 		Mockito.when(this.userSelection.getDesignImportData()).thenReturn(designImportData);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(null);
@@ -1174,41 +1174,41 @@ public class DesignImportControllerTest {
 	}
 
 	@Test
-	public void testResolveLocalNameOfTheTrialEnvironmentVariable() {
+	public void testResolveLocalNameOfTheStudyEnvironmentVariable() {
 
-		final List<SettingDetail> trialLevelVariableList = new ArrayList<SettingDetail>();
+		final List<SettingDetail> settingDetails = new ArrayList<SettingDetail>();
 
-		trialLevelVariableList.add(SettingDetailTestDataInitializer
+		settingDetails.add(SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "", "TRIAL"));
-		trialLevelVariableList.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(),
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(),
 				DesignImportControllerTest.LOCATION_NAME, "", "TRIAL"));
 
 		final DesignImportData designImportData = this.userSelection.getDesignImportData();
 
 		Assert.assertEquals(
-				"Expecting a local name value 'LOCATION_NAME' because the variable exists in trial variable list",
+				"Expecting a local name value 'LOCATION_NAME' because the variable exists in study variable list",
 				DesignImportControllerTest.LOCATION_NAME,
 				this.designImportController.resolveLocalNameOfTheTrialEnvironmentVariable(TermId.TRIAL_LOCATION.getId(),
-						trialLevelVariableList, designImportData));
+						settingDetails, designImportData));
 		Assert.assertEquals(
 				"Expecting a local name value 'SITE_NAME' because the variable exists in the headers of design import data",
 				"SITE_NAME_LOCAL_NAME", this.designImportController.resolveLocalNameOfTheTrialEnvironmentVariable(
-						TermId.SITE_NAME.getId(), trialLevelVariableList, designImportData));
+						TermId.SITE_NAME.getId(), settingDetails, designImportData));
 		Assert.assertEquals(
 				"Expecting an empty value because COOPERATOR_ID does not exist in both trial variables and headers of design import data",
 				"", this.designImportController.resolveLocalNameOfTheTrialEnvironmentVariable(
-						TermId.COOPERATOOR_ID.getId(), trialLevelVariableList, designImportData));
+						TermId.COOPERATOOR_ID.getId(), settingDetails, designImportData));
 
 	}
 
 	@Test
-	public void testResolveStandardVariableNameOfTheTrialEnvironmentVariable() {
+	public void testResolveStandardVariableNameOfTheStudyEnvironmentVariable() {
 
-		final List<SettingDetail> trialLevelVariableList = new ArrayList<SettingDetail>();
+		final List<SettingDetail> settingDetails = new ArrayList<SettingDetail>();
 
-		trialLevelVariableList.add(SettingDetailTestDataInitializer
+		settingDetails.add(SettingDetailTestDataInitializer
 				.createSettingDetail(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "", "TRIAL"));
-		trialLevelVariableList.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(),
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.TRIAL_LOCATION.getId(),
 				DesignImportControllerTest.LOCATION_NAME, "", "TRIAL"));
 
 		final DesignImportData designImportData = this.userSelection.getDesignImportData();
@@ -1217,29 +1217,29 @@ public class DesignImportControllerTest {
 				"Expecting standard variable name 'LOCATION_NAME' because the variable exists in trial variable list",
 				DesignImportControllerTest.LOCATION_NAME,
 				this.designImportController.resolveStandardVariableNameOfTheTrialEnvironmentVariable(
-						TermId.TRIAL_LOCATION.getId(), trialLevelVariableList, designImportData));
+						TermId.TRIAL_LOCATION.getId(), settingDetails, designImportData));
 		Assert.assertEquals(
 				"Expecting standard variable name 'SITE_NAME' because the variable exists in the headers of design import data",
 				DesignImportControllerTest.SITE_NAME,
 				this.designImportController.resolveStandardVariableNameOfTheTrialEnvironmentVariable(
-						TermId.SITE_NAME.getId(), trialLevelVariableList, designImportData));
+						TermId.SITE_NAME.getId(), settingDetails, designImportData));
 
 		Assert.assertEquals("Expecting variable name COOPERATOR_ID because the variable exists in Ontology",
 				DesignImportControllerTest.COOPERATOR_ID,
 				this.designImportController.resolveStandardVariableNameOfTheTrialEnvironmentVariable(
-						TermId.COOPERATOOR_ID.getId(), trialLevelVariableList, designImportData));
+						TermId.COOPERATOOR_ID.getId(), settingDetails, designImportData));
 
 		Assert.assertEquals(
 				"Expecting an empty variable name because the term does not exist in trial variable list, headers of design "
 						+ "import data and ontology",
 				"", this.designImportController.resolveStandardVariableNameOfTheTrialEnvironmentVariable(
-						TermId.PLOT_ID.getId(), trialLevelVariableList, designImportData));
+						TermId.PLOT_ID.getId(), settingDetails, designImportData));
 
 	}
 
 	private MeasurementVariable getMeasurementVariable(final int termId,
-			final Set<MeasurementVariable> trialVariables) {
-		for (final MeasurementVariable mvar : trialVariables) {
+			final Set<MeasurementVariable> measurementVariables) {
+		for (final MeasurementVariable mvar : measurementVariables) {
 			if (termId == mvar.getTermId()) {
 				return mvar;
 			}
@@ -1524,18 +1524,18 @@ public class DesignImportControllerTest {
 		return measurementVariables;
 	}
 
-	private List<SettingDetail> createDeletedTrialLevelVariables() {
+	private List<SettingDetail> createDeletedStudyLevelVariables() {
 
-		final List<SettingDetail> deletedTrialLevelVariables = new ArrayList<>();
+		final List<SettingDetail> deletedStudyLevelVariables = new ArrayList<>();
 
-		deletedTrialLevelVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(),
+		deletedStudyLevelVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.SITE_NAME.getId(),
 				DesignImportControllerTest.SITE_NAME, "", "TRIAL"));
-		deletedTrialLevelVariables.add(SettingDetailTestDataInitializer.createSettingDetail(
+		deletedStudyLevelVariables.add(SettingDetailTestDataInitializer.createSettingDetail(
 				TermId.TRIAL_LOCATION.getId(), DesignImportControllerTest.LOCATION_NAME, "", "TRIAL"));
-		deletedTrialLevelVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId(),
+		deletedStudyLevelVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.LOCATION_ID.getId(),
 				"LOCATION_NAME_ID", "", "TRIAL"));
 
-		return deletedTrialLevelVariables;
+		return deletedStudyLevelVariables;
 	}
 
 	private Map<String, List<DesignHeaderItem>> createTestMappedHeaders() {

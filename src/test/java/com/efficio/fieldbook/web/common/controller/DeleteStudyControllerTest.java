@@ -60,7 +60,7 @@ public class DeleteStudyControllerTest {
 		this.germplasmListTestDataInitializer = new GermplasmListTestDataInitializer();
 		final GermplasmList nurseryList = this.germplasmListTestDataInitializer.createGermplasmListWithType(1,
 				GermplasmListType.STUDY.name());
-		final GermplasmList trialList = this.germplasmListTestDataInitializer.createGermplasmListWithType(1,
+		final GermplasmList germplasmListWithType = this.germplasmListTestDataInitializer.createGermplasmListWithType(1,
 				GermplasmListType.STUDY.name());
 
 		Mockito.when(this.fieldbookMiddlewareService
@@ -68,7 +68,7 @@ public class DeleteStudyControllerTest {
 				.thenReturn(Arrays.asList(nurseryList));
 		Mockito.when(this.fieldbookMiddlewareService
 				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.STUDY))
-				.thenReturn(Arrays.asList(trialList));
+				.thenReturn(Arrays.asList(germplasmListWithType));
 	}
 
 	@Test
@@ -138,7 +138,7 @@ public class DeleteStudyControllerTest {
 	}
 
 	@Test
-	public void testSubmitDeleteValidationTrialTemplate() throws UnpermittedDeletionException {
+	public void testSubmitDeleteValidationStudyTemplate() throws UnpermittedDeletionException {
 		final Study study = Mockito.mock(Study.class);
 		Mockito.when(study.getProgramUUID()).thenReturn(null);
 		Mockito.when(this.fieldbookMiddlewareService.getStudy(DeleteStudyControllerTest.PROJECT_ID))

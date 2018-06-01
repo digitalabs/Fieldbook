@@ -179,7 +179,7 @@ public class ExportGermplasmListServiceTest {
 	}
 
 	@Test
-	public void testExportGermplasmListXLSForTrialManager() {
+	public void testExportGermplasmListXLSForStudyManager() {
 
 		try {
 			this.exportGermplasmListServiceImpl.exportGermplasmListXLS(this.testFileName, 1, this.getVisibleColumnMap());
@@ -205,7 +205,7 @@ public class ExportGermplasmListServiceTest {
 	}
 
 	@Test
-	public void testExportGermplasmListCSVForTrialManager() {
+	public void testExportGermplasmListCSVForStudyManager() {
 
 		try {
 			this.exportGermplasmListServiceImpl.exportGermplasmListCSV(this.testFileName, this.getVisibleColumnMap());
@@ -242,7 +242,7 @@ public class ExportGermplasmListServiceTest {
 	}
 
 	@Test
-	public void testGetExportColumnHeadersFromTableTrial() {
+	public void testGetExportColumnHeadersFromTableStudy() {
 
 		final List<ExportColumnHeader> exportColumnHeaders =
 				this.exportGermplasmListServiceImpl.getExportColumnHeadersFromTable(this.getVisibleColumnMap());
@@ -288,7 +288,7 @@ public class ExportGermplasmListServiceTest {
 	}
 
 	@Test
-	public void testGetExportColumnValuesFromTableTrial() {
+	public void testGetExportColumnValuesFromTableStudy() {
 
 		final List<Map<Integer, ExportColumnValue>> exportColumnValues =
 				this.exportGermplasmListServiceImpl.getExportColumnValuesFromTable(this.getVisibleColumnMap());
@@ -381,7 +381,7 @@ public class ExportGermplasmListServiceTest {
 	}
 
 	@Test
-	public void testSetUpForInputWhereGemplasmListTypeIsTrial() {
+	public void testSetUpForInputWhereGemplasmListTypeIsStudy() {
 		final List<ListDataProject> listData = Arrays.asList(this.listDataProject);
 		final List<GermplasmList> germplasmLists = Arrays.asList(this.germplasmList);
 

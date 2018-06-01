@@ -55,7 +55,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 	// FIXME BMS-2360
 	// @Test
-	public void testShowReviewTrialSummaryWithError() throws Exception {
+	public void testShowReviewStudySummaryWithError() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get(ReviewStudyDetailsController.URL + "/show/T/1"))
 				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.model().attributeExists("trialDetails"));
@@ -75,7 +75,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	}
 
 	@Test
-	public void testAddErrorMessageToResultForTrial() throws Exception {
+	public void testAddErrorMessageToResultForStudy() throws Exception {
 		final StudyDetails details = new StudyDetails();
 
 		this.reviewStudyDetailsController.addErrorMessageToResult(details,
@@ -88,7 +88,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	}
 
 	@Test
-	public void testShowTrialSummaryEnvironmentsWithoutAnalysisVariables() {
+	public void testShowStudySummaryEnvironmentsWithoutAnalysisVariables() {
 		final int id = 1;
 		final CreateTrialForm form = new CreateTrialForm();
 		final Model model = new ExtendedModelMap();
@@ -119,7 +119,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 				break;
 			}
 		}
-		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be found under Trial Conditions of the Summary page.",
+		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be found under Study Conditions of the Summary page.",
 				hasAnalysisVariable);
 
 	}

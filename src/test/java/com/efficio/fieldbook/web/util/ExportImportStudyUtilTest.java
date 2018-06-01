@@ -64,7 +64,7 @@ public class ExportImportStudyUtilTest {
 	private Workbook workbook;
 	private List<Integer> instances;
 	
-	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	@Before
 	public void setUp() {
@@ -74,7 +74,7 @@ public class ExportImportStudyUtilTest {
 		Mockito.doReturn(new Term(1, ExportImportStudyUtilTest.PROPERTY_NAME, "Dummy defintion")).when(prop).getTerm();
 
 		this.locations = WorkbookDataUtil.createLocationData();
-		this.fileNameWithExtension = "trial_" + new Random().nextInt(1000) + ".xls";
+		this.fileNameWithExtension = "study_" + new Random().nextInt(1000) + ".xls";
 
 		// init test data initializers;
 		this.valueReferenceTestDataInitializer = new ValueReferenceTestDataInitializer();
@@ -87,8 +87,8 @@ public class ExportImportStudyUtilTest {
 		Assert.assertTrue("The site name is '' ", "".equalsIgnoreCase(siteName));
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
-		final MeasurementRow trialObservationWithTrialLocation = workbook.getTrialObservations().get(0);
-		siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(trialObservationWithTrialLocation, this.fieldbookMiddlewareService);
+		final MeasurementRow studyObservationWithStudyLocation = workbook.getTrialObservations().get(0);
+		siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(studyObservationWithStudyLocation, this.fieldbookMiddlewareService);
 		Assert.assertFalse("The site name for nursery is not empty.", "".equalsIgnoreCase(siteName));
 	}
 
@@ -157,7 +157,7 @@ public class ExportImportStudyUtilTest {
 		Mockito.when(this.fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_1)).thenReturn(this.locations.get(0));
 		Mockito.when(this.fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_2)).thenReturn(this.locations.get(1));
 
-		this.workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 2);
+		this.workbook = WorkbookDataUtil.getTestWorkbookForStudy(10, 2);
 		this.instances = WorkbookDataUtil.getTrialInstances(this.workbook);
 
 		int index = 1;
@@ -176,7 +176,7 @@ public class ExportImportStudyUtilTest {
 
 		Mockito.when(this.fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_1)).thenReturn(this.locations.get(0));
 
-		this.workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 1);
+		this.workbook = WorkbookDataUtil.getTestWorkbookForStudy(10, 1);
 		this.instances = WorkbookDataUtil.getTrialInstances(this.workbook);
 
 		final FileExportInfo exportInfo =
@@ -190,11 +190,11 @@ public class ExportImportStudyUtilTest {
 
 		Mockito.when(this.fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_1)).thenReturn(this.locations.get(0));
 
-		final MeasurementRow trialObservation = WorkbookDataUtil.createTrialObservationWithoutSite();
+		final MeasurementRow studyObservationWithoutSite = WorkbookDataUtil.createStudyObservationWithoutSite();
 		this.instances = new ArrayList<Integer>();
 		this.instances.add(1);
 
-		final FileExportInfo exportInfo = ExportImportStudyUtil.getFileNamePath(1, trialObservation, this.instances,
+		final FileExportInfo exportInfo = ExportImportStudyUtil.getFileNamePath(1, studyObservationWithoutSite, this.instances,
 				this.fileNameWithExtension,  this.fieldbookMiddlewareService, this.contextUtil);
 		Assert.assertTrue("Expected filename in output filename but found none.",
 				exportInfo.getDownloadFileName().contains(this.fileNameWithExtension.substring(0, this.fileNameWithExtension.lastIndexOf("."))));
@@ -216,7 +216,7 @@ public class ExportImportStudyUtilTest {
 		final List<ValueReference> possibleValues = new ArrayList<ValueReference>();
 		final String idValue = "1";
 		final String returnedValue = ExportImportStudyUtil.getCategoricalCellValue(idValue, possibleValues);
-		Assert.assertTrue("Expecting to return the exact id value when the there is no possible values.", returnedValue.equals(idValue));
+		Assert.assertEquals("Expecting to return the exact id value when the there is no possible values.", returnedValue, idValue);
 	}
 
 	@Test
@@ -236,8 +236,8 @@ public class ExportImportStudyUtilTest {
 		final String expectedValue = possibleValuesMap.get(Integer.valueOf(idValue)).getName();
 		final String returnedValue = ExportImportStudyUtil.getCategoricalCellValue(idValue, possibleValues);
 
-		Assert.assertTrue("Expecting to return the exact id value passed when the there is corresponding value from the possible values.",
-				expectedValue.equals(returnedValue));
+		Assert.assertEquals("Expecting to return the exact id value passed when the there is corresponding value from the possible values.",
+			expectedValue, returnedValue);
 	}
 
 	@Test
@@ -247,9 +247,9 @@ public class ExportImportStudyUtilTest {
 
 		final String idValue = "1.1";
 		final String returnedValue = ExportImportStudyUtil.getCategoricalCellValue(idValue, possibleValues);
-		Assert.assertTrue(
-				"Expecting to return the exact id value passed when the id value has decimal place and not part of possible values of the categorical variable.",
-				idValue.equals(returnedValue));
+		Assert.assertEquals(
+			"Expecting to return the exact id value passed when the id value has decimal place and not part of possible values of the categorical variable.",
+			idValue, returnedValue);
 
 	}
 

@@ -417,8 +417,8 @@ public class GermplasmTreeControllerTest {
 		Mockito.doReturn(listId).when(this.germplasmListManager).addGermplasmList(Matchers.any(GermplasmList.class));
 
 		final Map<String, Object> resultsMap = this.controller.addGermplasmFolder(req);
-		Assert.assertTrue("Expecting that Germplasm Folder is added successfully.",
-				resultsMap.get(GermplasmTreeController.IS_SUCCESS).equals("1"));
+		Assert.assertEquals("Expecting that Germplasm Folder is added successfully.", "1",
+			resultsMap.get(GermplasmTreeController.IS_SUCCESS));
 		Assert.assertTrue("Expecting that Germplasm Folder is added has id " + listId,
 				resultsMap.get("id").equals(listId));
 	}
@@ -441,7 +441,7 @@ public class GermplasmTreeControllerTest {
 				Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
 
 		// Check Attribute Objects created. Additional attributes are created
-		// for trials only
+		// for studies only
 		final List<ImportedGermplasm> inputGermplasmList = advancingForm.getGermplasmList();
 		for (int i = 0; i < inputGermplasmList.size(); i++) {
 			final List<Attribute> attributes = germplasmAttributes.get(i).getRight();
@@ -523,7 +523,7 @@ public class GermplasmTreeControllerTest {
 				Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
 
 		// Check Attribute Objects created. Additional attributes are created
-		// for trials only
+		// for studies only
 		final List<ImportedGermplasm> inputGermplasmList = advancingForm.getGermplasmList();
 		for (int i = 0; i < inputGermplasmList.size(); i++) {
 			final List<Attribute> attributes = germplasmAttributes.get(i).getRight();

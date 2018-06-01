@@ -27,7 +27,7 @@ public class AngularSelectSheetControllerTest {
 
 	@Before
 	public void init() {
-		List<StudyTypeDto> studyTypeDtoList = new ArrayList<>();
+		final List<StudyTypeDto> studyTypeDtoList = new ArrayList<>();
 		studyTypeDtoList.add(new StudyTypeDto(10000, StudyTypeDto.NURSERY_LABEL,StudyTypeDto.NURSERY_NAME));
 		studyTypeDtoList.add(new StudyTypeDto(10010, StudyTypeDto.TRIAL_LABEL,StudyTypeDto.TRIAL_NAME));
 
@@ -38,8 +38,8 @@ public class AngularSelectSheetControllerTest {
 	public void testGetStudyTypes() {
 
 		final Map<String, String> expectedStudyTypesMap = new HashMap<>();
-			expectedStudyTypesMap.put("N", "Nursery");
-			expectedStudyTypesMap.put("T", "Trial");
+			expectedStudyTypesMap.put(StudyTypeDto.getNurseryDto().getName(), StudyTypeDto.getNurseryDto().getLabel());
+			expectedStudyTypesMap.put(StudyTypeDto.getTrialDto().getName(), StudyTypeDto.getTrialDto().getLabel());
 
 		final Map<String, String> result = angularSelectSheetController.getStudyTypes();
 

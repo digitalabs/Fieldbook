@@ -39,14 +39,14 @@ public class WorkbookUtilTest {
 
 	@Test
 	public void testUpdateTrialObservations() {
-		final Workbook currentWorkbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
+		final Workbook currentWorkbook = WorkbookDataUtil.getTestWorkbookForStudy(10, 3);
 
-		final Workbook temporaryWorkbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 2);
+		final Workbook temporaryWorkbook = WorkbookDataUtil.getTestWorkbookForStudy(10, 2);
 
 		WorkbookUtil.updateTrialObservations(currentWorkbook, temporaryWorkbook);
 
 		Assert.assertEquals(
-				"Expecting that the trial observations of temporary workbook is copied to current workbook. ",
+				"Expecting that the study observations of temporary workbook is copied to current workbook. ",
 				currentWorkbook.getTrialObservations(), temporaryWorkbook.getTrialObservations());
 	}
 

@@ -153,7 +153,7 @@ public class WorkbookDataUtil {
 		return WorkbookDataUtil.createTestWorkbook(noOfObservations, studyType);
 	}
 
-	public static Workbook getTestWorkbookForTrial(final int noOfObservations, final int noOfInstance) {
+	public static Workbook getTestWorkbookForStudy(final int noOfObservations, final int noOfInstance) {
 		return WorkbookDataUtil.createTestWorkbook(noOfObservations, StudyTypeDto.getTrialDto(), noOfInstance);
 	}
 
@@ -171,7 +171,7 @@ public class WorkbookDataUtil {
 		workbook.setVariates(WorkbookDataUtil.createVariates());
 		workbook.setObservations(WorkbookDataUtil.createObservations(noOfObservations, noOfInstance,
 				workbook));
-		workbook.setTrialObservations(WorkbookDataUtil.createTrialObservations(noOfInstance, workbook));
+		workbook.setTrialObservations(WorkbookDataUtil.createStudyObservations(noOfInstance, workbook));
 		workbook.setMeasurementDatesetId(2);
 		workbook.setTrialDatasetId(3);
 		return workbook;
@@ -522,8 +522,8 @@ public class WorkbookDataUtil {
 		return observations;
 	}
 
-	public static List<MeasurementRow> createTrialObservations(final int noOfTrialInstances, final Workbook workbook) {
-		final List<MeasurementRow> trialObservations = new ArrayList<MeasurementRow>();
+	public static List<MeasurementRow> createStudyObservations(final int noOfTrialInstances, final Workbook workbook) {
+		final List<MeasurementRow> studyObservations = new ArrayList<MeasurementRow>();
 
 		MeasurementRow row;
 		List<MeasurementData> dataList;
@@ -569,10 +569,10 @@ public class WorkbookDataUtil {
 			dataList.add(data);
 
 			row.setDataList(dataList);
-			trialObservations.add(row);
+			studyObservations.add(row);
 		}
 
-		return trialObservations;
+		return studyObservations;
 	}
 
 	public static MeasurementVariable getMeasurementVariable(final int termId, final List<MeasurementVariable> variables) {
@@ -609,7 +609,7 @@ public class WorkbookDataUtil {
 		return locations;
 	}
 
-	public static MeasurementRow createTrialObservationWithoutSite() {
+	public static MeasurementRow createStudyObservationWithoutSite() {
 		final Workbook workbook = WorkbookDataUtil.createTestWorkbook(2, StudyTypeDto.getTrialDto());
 
 		WorkbookDataUtil.createStudyDetails(StudyTypeDto.getTrialDto());

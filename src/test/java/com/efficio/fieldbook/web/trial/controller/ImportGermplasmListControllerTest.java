@@ -157,7 +157,7 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	@Test
-	public void testHasMeasurementTrialWithMeasurement() {
+	public void testHasMeasurementStudyWithMeasurement() {
 
 		this.userSelection.setMeasurementRowList(WorkbookDataUtil.createNewObservations(1));
 		final Boolean result = this.importGermplasmListController.hasMeasurement();
@@ -174,7 +174,7 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	@Test
-	public void testHasMeasurementTrialWithoutMeasurement() {
+	public void testHasMeasurementStudyWithoutMeasurement() {
 
 		this.userSelection.setMeasurementRowList(new ArrayList<MeasurementRow>());
 
@@ -226,7 +226,7 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	@Test
-	public void testDisplayGermplasmDetailsOfSelectedListForTrial() throws MiddlewareException {
+	public void testDisplayGermplasmDetailsOfSelectedListForStudy() throws MiddlewareException {
 		final List<GermplasmListData> list = this.createGermplasmListData();
 		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn((long) list.size()).when(this.germplasmListManager)
@@ -268,7 +268,7 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	@Test
-	public void testGenerateGermplasmListDataTableForTrial() {
+	public void testGenerateGermplasmListDataTableForStudy() {
 		final List<ImportedGermplasm> list = ImportedGermplasmTestDataInitializer.createImportedGermplasmList();
 		final List<Map<String, Object>> dataTableDataList =
 			this.importGermplasmListController.generateGermplasmListDataTable(list, "1", false);
@@ -418,7 +418,7 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	@Test
-	public void testDisplayGermplasmDetailsOfCurrentStudyForTrial() throws MiddlewareException {
+	public void testDisplayGermplasmDetailsOfCurrentStudyForStudy() throws MiddlewareException {
 		final List<GermplasmListData> list = this.createGermplasmListData();
 		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
 		Mockito.doReturn((long) list.size()).when(this.germplasmListManager)

@@ -45,7 +45,7 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testUseExistingTrialWithError() throws Exception {
+	public void testUseExistingStudyWithError() throws Exception {
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(1))
 				.thenThrow(new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
 
@@ -58,7 +58,7 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testUseExistingTrial() throws Exception {
+	public void testUseExistingStudy() throws Exception {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 		Mockito.doReturn(workbook).when(this.fieldbookMiddlewareService).getStudyDataSet(1);

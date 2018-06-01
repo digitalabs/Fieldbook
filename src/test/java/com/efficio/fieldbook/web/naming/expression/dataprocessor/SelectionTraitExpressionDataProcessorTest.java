@@ -143,7 +143,7 @@ public class SelectionTraitExpressionDataProcessorTest {
     }
 
     @Test
-    public void testProcessPlotLevelDataWithMeasurementDataForTrialWithSamples(){
+    public void testProcessPlotLevelDataWithMeasurementDataForStudyWithSamples(){
         final String testValue = "test";
 
         final MeasurementRow measurementRow = new MeasurementRow();

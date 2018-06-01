@@ -35,9 +35,9 @@ public class EntryListOrderDesignServiceImplTest {
 
 	private ExpDesignParameterUi expDesignParameterUi;
 	private List<ImportedGermplasm> germplasmList;
-	private List<MeasurementVariable> trialVariables;
+	private List<MeasurementVariable> measurementVariables;
 	private List<MeasurementVariable> factors;
-	private List<MeasurementVariable> nonTrialFactors;
+	private List<MeasurementVariable> nonStudyFactors;
 	private List<MeasurementVariable> variates;
 	private List<TreatmentVariable> treatmentVariables;
 
@@ -117,10 +117,10 @@ public class EntryListOrderDesignServiceImplTest {
 		germplasmList.add(importedGermplasm4);
 		germplasmList.add(importedGermplasm5);
 
-		trialVariables = new ArrayList<>();
+		measurementVariables = new ArrayList<>();
 		final MeasurementVariable instanceFactorVariable =
 				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "Instance No", "");
-		trialVariables.add(instanceFactorVariable);
+		measurementVariables.add(instanceFactorVariable);
 
 		factors = new ArrayList<>();
 		final MeasurementVariable entryTypeMeasurementVariable =
@@ -138,7 +138,7 @@ public class EntryListOrderDesignServiceImplTest {
 		factors.add(designationMeasurementVariable);
 		factors.add(entryNoMeasurementVariable);
 		factors.add(plotIdMeasurementVariable);
-		nonTrialFactors = factors;
+		nonStudyFactors = factors;
 
 		variates = new ArrayList<>();
 		treatmentVariables = new ArrayList<>();
@@ -169,7 +169,7 @@ public class EntryListOrderDesignServiceImplTest {
 	@Test
 	public void generateDesignTest() throws BVDesignException {
 		final List<MeasurementRow> measurementRows = entryListOrderDesignServiceImpl
-				.generateDesign(germplasmList, expDesignParameterUi, trialVariables, factors, nonTrialFactors, variates,
+				.generateDesign(germplasmList, expDesignParameterUi, measurementVariables, factors, nonStudyFactors, variates,
 						treatmentVariables);
 		assertThat(measurementRows, hasSize(6));
 		assertThat(getCheckEntryTypeValue(measurementRows.get(0)), equalTo(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));

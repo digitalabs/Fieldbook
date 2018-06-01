@@ -72,6 +72,7 @@ import com.efficio.pojos.labelprinting.LabelPrintingProcessingParams;
 public class LabelPrintingServiceImplTest {
 
 	private static final int NO_OF_STOCK_LIST_ENTRIES = 20;
+
 	private static final int NO_OF_GERMPLASM_LIST_OBSERVATION = 10;
 	private static final Long TEST_PROJECT_ID = 1L;
 	private static final String MAIZE_CROP_STR = "maize";
@@ -412,14 +413,14 @@ public class LabelPrintingServiceImplTest {
 	}
 
 	@Test
-	public void testCheckAndSetFieldMapInstanceInfoForTrialEnvironmentDataOnly() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(2, 2);
+	public void testCheckAndSetFieldMapInstanceInfoForStudyEnvironmentDataOnly() {
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(2, 2);
 
-		// for trial with stock list
+		// for Study with stock list
 		final boolean isStockList = true;
 
-		final List<FieldMapTrialInstanceInfo> trialFieldMap = FieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList();
-		trialFieldMap.get(0).setTrialInstanceNo("1");
+		final List<FieldMapTrialInstanceInfo> fieldMapList = FieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList();
+		fieldMapList.get(0).setTrialInstanceNo("1");
 
 		final LabelPrintingProcessingParams params =
 				LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParamsWithAllFieldIDs();
@@ -437,7 +438,7 @@ public class LabelPrintingServiceImplTest {
 		term.setName("termName");
 		Mockito.when(this.ontologyDataManager.getTermById(Matchers.isA(Integer.class))).thenReturn(term);
 
-		this.labelPrintingServiceImpl.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isStockList, params,
+		this.labelPrintingServiceImpl.checkAndSetFieldMapInstanceInfo(fieldMapList, workbook, isStockList, params,
 				this.measurementData, this.environmentData, userLabelPrinting);
 		try {
 			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0))
@@ -492,7 +493,7 @@ public class LabelPrintingServiceImplTest {
 
 	@Test
 	public void testCheckAndSetFieldMapInstanceInfoForGermplsmDescriptorsData() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(2, 2);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(2, 2);
 
 		final boolean isStockList = true;
 
@@ -597,14 +598,14 @@ public class LabelPrintingServiceImplTest {
 	public void testGetAvailableLabelFieldsForStockListForStudy() {
 
 		Mockito.when(this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_STUDY_NAME_KEY, null,
-				Locale.getDefault())).thenReturn("Trial Name");
+				Locale.getDefault())).thenReturn("Study Name");
 
 		final Workbook workbook = Mockito.mock(Workbook.class);
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(101)).thenReturn(workbook);
 
-		final List<LabelFields> trialSettingLabelFields = LabelPrintingServiceDataInitializer.createTrialSettingLabelFields();
+		final List<LabelFields> studySettingLabelFields = LabelPrintingServiceDataInitializer.createStudySettingLabelFields();
 		Mockito.when(this.settingsService.retrieveTrialSettingsAsLabels(Matchers.isA(Workbook.class))).
-				thenReturn(trialSettingLabelFields);
+				thenReturn(studySettingLabelFields);
 
 		final List<LabelFields> environmentSettingsLabelFields =
 				LabelPrintingServiceDataInitializer.createEnvironmentSettingsLabelFields();
@@ -655,8 +656,8 @@ public class LabelPrintingServiceImplTest {
 			labelFieldsNames.add(labelFields.getName());
 		}
 
-		Assert.assertTrue(labelFieldsNames.contains("Trial Name"));
-		Assert.assertTrue(labelFieldsNames.contains(trialSettingLabelFields.get(0).getName()));
+		Assert.assertTrue(labelFieldsNames.contains("Study Name"));
+		Assert.assertTrue(labelFieldsNames.contains(studySettingLabelFields.get(0).getName()));
 		Assert.assertTrue(labelFieldsNames.contains(environmentSettingsLabelFields.get(0).getName()));
 		Assert.assertTrue(labelFieldsNames.contains(germplsmDescriptorsLabelFields.get(0).getName()));
 		Assert.assertTrue(labelFieldsNames.contains(repNoTerm.getName()));

@@ -41,8 +41,8 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	private static final String PROGRAM_UUID = "2191a54c-7d98-40d0-ae6f-6a400e4546ce";
 	public static final String DESIGN_ERROR_MESSAGE = "design error message";
 
-	private static int FIRST_CHECK_ENTRY = 0;
-	private static int THIRD_CHECK_ENTRY = 2;
+	private static final int FIRST_CHECK_ENTRY = 0;
+	private static final int THIRD_CHECK_ENTRY = 2;
 	
 	private StandardVariable entryNoVariable;
 	private StandardVariable blockNoVariable;
@@ -100,7 +100,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		experimentDesignParameterFromUI.setStartingEntryNo(String.valueOf(startingEntryNo));
 
 		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
-		final List<MeasurementVariable> trialVariables = new ArrayList<>();
+		final List<MeasurementVariable> variables = new ArrayList<>();
 		final List<MeasurementVariable> factors = new ArrayList<>();
 		final List<MeasurementVariable> nonTrialFactors = new ArrayList<>();
 		final List<MeasurementVariable> variates = new ArrayList<>();
@@ -120,7 +120,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 				.thenReturn(mainDesign);
 
 		augmentedRandomizedBlockDesignServiceImpl
-				.generateDesign(importedGermplasmList, experimentDesignParameterFromUI, trialVariables, factors, nonTrialFactors, variates,
+				.generateDesign(importedGermplasmList, experimentDesignParameterFromUI, variables, factors, nonTrialFactors, variates,
 						treatmentVariables);
 
 		Mockito.verify(this.experimentDesignGenerator)
@@ -128,7 +128,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 						startingPlotNo, startingEntryNo, entryNoVariable.getName(), blockNoVariable.getName(), plotNoVariable.getName());
 
 		Mockito.verify(this.experimentDesignGenerator)
-				.generateExperimentDesignMeasurements(noOfExistingEnvironments, noOfEnvironmentsToBeAdded, trialVariables, factors,
+				.generateExperimentDesignMeasurements(noOfExistingEnvironments, noOfEnvironmentsToBeAdded, variables, factors,
 						nonTrialFactors, variates, treatmentVariables, requiredVariables, importedGermplasmList, mainDesign,
 						entryNoVariable.getName(), null, designExpectedEntriesMap);
 
@@ -163,7 +163,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 	}
 
 	@Test
-	public void testCreateMapOfBreedingViewExpectedEntriesToGermplasmEntriesInTrial() {
+	public void testCreateMapOfBreedingViewExpectedEntriesToGermplasmEntriesInStudy() {
 
 		final List<ImportedGermplasm> importedGermplasmList = createImportedGermplasmList();
 
@@ -293,7 +293,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 
 		// Create 10 imported germpasm entries
 		for (int i = 1; i <= 10; i++) {
-			ImportedGermplasm importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasm(i);
+			final ImportedGermplasm importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasm(i);
 			importedGermplasm.setEntryTypeCategoricalID(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId());
 			importedGermplasmList.add(ImportedGermplasmMainInfoInitializer.createImportedGermplasm(i));
 		}

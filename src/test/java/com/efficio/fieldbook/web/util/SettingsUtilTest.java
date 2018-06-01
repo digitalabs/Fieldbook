@@ -617,7 +617,7 @@ public class SettingsUtilTest {
 	 */
 	@Test
 	public void testConvertPojoToXmlDataSet() {
-		final String dataSetName = "January Trial";
+		final String dataSetName = "January Study";
 
 		final List<SettingDetail> studyLevelConditions = new ArrayList<>();
 
@@ -662,7 +662,7 @@ public class SettingsUtilTest {
 				dataSetName, this.userSelection, treatmentFactorItems, SettingsUtilTest.PROGRAM_UUID);
 
 		Assert.assertEquals("DataSet Name", dataSetName, dataSet.getName());
-		Assert.assertEquals("DataSet Trial Level Factor", 0, dataSet.getTrialLevelFactor().size());
+		Assert.assertEquals("DataSet Study Level Factor", 0, dataSet.getTrialLevelFactor().size());
 		Assert.assertEquals("DataSet Treatment Factor", 0, dataSet.getTreatmentFactors().size());
 
 		int i = 0;

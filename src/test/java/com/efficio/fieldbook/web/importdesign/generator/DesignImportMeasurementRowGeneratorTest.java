@@ -79,8 +79,8 @@ public class DesignImportMeasurementRowGeneratorTest {
 
 	@Before
 	public void setUp() {
-		Map<String, Integer> availableCheckTypes = new HashMap<>();
-		boolean isPreview = true;
+		final Map<String, Integer> availableCheckTypes = new HashMap<>();
+		final boolean isPreview = true;
 		this.userSelection = new UserSelection();
 		this.userSelection.setImportedGermplasmMainInfo(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo());
 
@@ -88,18 +88,18 @@ public class DesignImportMeasurementRowGeneratorTest {
 				.getProperty(Matchers.anyString());
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(DesignImportMeasurementRowGeneratorTest.PROGRAM_UUID);
 
-		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(10, 3);
 
 		this.designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
-		Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId = this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
-		Map<Integer, StandardVariable> germplasmStandardVariables = new HashMap<>();
+		final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId = this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
+		final Map<Integer, StandardVariable> germplasmStandardVariables = new HashMap<>();
 		germplasmStandardVariables.put(TermId.ENTRY_NO.getId(), DesignImportTestDataInitializer
 				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_NO.getId(), "ENTRY_NO", "", "", "",
 						TermId.NUMERIC_VARIABLE.getId(), "", "", ""));
 
 		this.rowValues = new ArrayList<>();
 
-		Map<Integer, ImportedGermplasm> importedGermplasm = Maps.uniqueIndex(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList(),
+		final Map<Integer, ImportedGermplasm> importedGermplasm = Maps.uniqueIndex(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList(),
 				new Function<ImportedGermplasm, Integer>() {
 
 					@Override
@@ -108,7 +108,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 					}
 				});
 
-		Set<String> trialInstancesFromUI = new HashSet<>();
+		final Set<String> trialInstancesFromUI = new HashSet<>();
 		trialInstancesFromUI.add("1");
 
 		this.generator =
@@ -129,7 +129,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 	@Test
 	public void testAddGermplasmDetailsToDataList() {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(10, 3);
 
 		final Map<Integer, ImportedGermplasm> importedGermplasm =
 				Maps.uniqueIndex(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList(),
@@ -207,7 +207,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 	@Test
 	public void testAddVariatesToMeasurementRows() {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(10, 3);
 		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
 		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 		final List<MeasurementRow> measurements = workbook.getObservations();
@@ -242,7 +242,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 	@Test
 	public void testCreateMeasurementDataForMeasurementVariable() {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(10, 3);
 
 		final MeasurementVariable measurementVariable = workbook.getFactors().get(0);
 		this.generator.setWorkbook(workbook);

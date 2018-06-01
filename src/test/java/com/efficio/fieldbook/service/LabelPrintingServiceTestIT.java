@@ -47,14 +47,14 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	private MessageSource messageSource;
 
 	@Test
-	public void testGetAvailableLabelFieldsFromTrialWithoutFieldMap() {
+	public void testGetAvailableLabelFieldsFromStudyWithoutFieldMap() {
 		final Locale locale = new Locale("en", "US");
 		final List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap(false, locale);
 		Assert.assertFalse(this.areFieldsInLabelList(labels));
 	}
 
 	@Test
-	public void testGetAvailableLabelFieldsFromTrialWithFieldMap() {
+	public void testGetAvailableLabelFieldsFromStudyWithFieldMap() {
 		final Locale locale = new Locale("en", "US");
 		final List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap(true, locale);
 		Assert.assertTrue(this.areFieldsInLabelList(labels));
@@ -125,7 +125,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testFieldMapPropertiesOfTrialWithoutFieldMaps() {
+	public void testFieldMapPropertiesOfStudyWithoutFieldMaps() {
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList().get(0);
 		this.setFieldmapProperties(fieldMapInfoDetail, false, false);
@@ -136,7 +136,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testFieldMapPropertiesOfTrialWithOneFieldMap() {
+	public void testFieldMapPropertiesOfStudyWithOneFieldMap() {
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList().get(0);
 		this.setFieldmapProperties(fieldMapInfoDetail, false, true);
@@ -147,7 +147,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testFieldMapPropertiesOfTrialWithFieldMaps() {
+	public void testFieldMapPropertiesOfStudyWithFieldMaps() {
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList().get(0);
 		this.setFieldmapProperties(fieldMapInfoDetail, true, false);

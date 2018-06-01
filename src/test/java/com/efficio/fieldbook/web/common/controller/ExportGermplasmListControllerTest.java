@@ -237,7 +237,7 @@ public class ExportGermplasmListControllerTest {
 	}
 
 	@Test
-	public void test_getVisibleColumnsMapTrialStudy() {
+	public void test_getVisibleColumnsMapStudy() {
 
 		final String[] termIds = new String[] {String.valueOf(TermId.CHECK.getId())};
 		final Map<String, Boolean> result = this.exportGermplasmListController.getVisibleColumnsMap(termIds);

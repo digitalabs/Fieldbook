@@ -254,7 +254,7 @@ public class LabelPrintingDataUtil {
 		return trialInstances;
 	}
 
-	public static Map<Integer, String> createLabelHeadersForTrialStock() {
+	public static Map<Integer, String> createLabelHeadersForStudyStock() {
 		final Map<Integer, String> labelHeaders = Maps.newHashMap();
 		labelHeaders.put(8170, "TRIAL_INSTANCE");
 		labelHeaders.put(8210, "REP_NO");

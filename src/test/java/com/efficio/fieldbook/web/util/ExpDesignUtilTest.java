@@ -100,9 +100,9 @@ public class ExpDesignUtilTest {
 							germplasmList, mainDesign, ExpDesignUtilTest.ENTRY_NO,
 							treatmentFactorValues, new HashMap<Integer, Integer>());
 
-			Assert.assertTrue("Expected trial nos. from " + (environments - environmentsToAdd + 1) + "to " + environments
+			Assert.assertTrue("Expected study nos. from " + (environments - environmentsToAdd + 1) + "to " + environments
 					+ " for all measurement rows but found a different trial no.",
-					this.isTrialNoAssignedCorrect(measurementRowList, environments, environmentsToAdd));
+					this.isStudyNoAssignedCorrect(measurementRowList, environments, environmentsToAdd));
 		} catch (final BVDesignException e) {
 			ExpDesignUtilTest.LOG.error(e.getMessage(), e);
 			Assert.fail("Expected mock values but called original BV Design generator.");
@@ -211,7 +211,7 @@ public class ExpDesignUtilTest {
 		return entries;
 	}
 
-	private boolean isTrialNoAssignedCorrect(final List<MeasurementRow> measurementRowList, final int environments, final int environmentsToAdd) {
+	private boolean isStudyNoAssignedCorrect(final List<MeasurementRow> measurementRowList, final int environments, final int environmentsToAdd) {
 		for (final MeasurementRow row : measurementRowList) {
 			for (final MeasurementData data : row.getDataList()) {
 				if (data.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()

@@ -301,9 +301,9 @@ public class ExcelExportStudyServiceImplTest {
 	}
 	
 	@Test
-	public void testExportTrialMultipleInstances() throws IOException {
+	public void testExportStudyMultipleInstances() throws IOException {
 		final int numberOfInstances = 2;
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, numberOfInstances);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(20, numberOfInstances);
 		workbook.setExportArrangedObservations(workbook.getObservations());
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 	
@@ -328,8 +328,8 @@ public class ExcelExportStudyServiceImplTest {
 	}
 	
 	@Test
-	public void testExportTrialWith1Instance() throws IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, 1);
+	public void testExportStudyWith1Instance() throws IOException {
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(20, 1);
 		workbook.setExportArrangedObservations(workbook.getObservations());
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 

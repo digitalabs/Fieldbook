@@ -60,7 +60,7 @@ public class DesignImportValidatorTest {
 						this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 		Mockito.doReturn(trialInstanceHeaderItem).when(this.designImportService).validateIfStandardVariableExists(
 				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
-				"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
+				"design.import.error.study.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 
 		final DesignHeaderItem headerItem = DesignImportTestDataInitializer
 				.filterDesignHeaderItemsByTermId(TermId.ENTRY_NO, this.designImportData.getMappedHeaders().get(PhenotypicType.GERMPLASM));

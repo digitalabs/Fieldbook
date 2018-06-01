@@ -57,11 +57,11 @@ public class CsvExportStudyServiceImplTest {
 	protected ContextUtil contextUtil;
 
 	private CsvExportStudyServiceImpl csvExportStudyService;
-	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
-	private static String PROPERTY_NAME = "Property Name";
-	private static String STUDY_NAME = "Test Study";
-	private static String ZIP_FILEPATH = "./someDirectory/output/TestFileName.zip";
+	private static final String PROPERTY_NAME = "Property Name";
+	private static final String STUDY_NAME = "Test Study";
+	private static final String ZIP_FILEPATH = "./someDirectory/output/TestFileName.zip";
 
 	@Before
 	public void setUp() throws IOException {
@@ -84,9 +84,9 @@ public class CsvExportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testExportTrialMultipleInstances() throws IOException {
+	public void testExportStudyMultipleInstances() throws IOException {
 		final int numberOfInstances = 2;
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, numberOfInstances);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(20, numberOfInstances);
 		workbook.setExportArrangedObservations(workbook.getObservations());
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 		Mockito.doReturn(workbook.getObservations()).when(this.csvExportStudyService)
@@ -112,8 +112,8 @@ public class CsvExportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testExportTrialWith1Instance() throws IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, 1);
+	public void testExportStudyWith1Instance() throws IOException {
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(20, 1);
 		workbook.setExportArrangedObservations(workbook.getObservations());
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 		Mockito.doReturn(workbook.getObservations()).when(this.csvExportStudyService)
@@ -409,9 +409,9 @@ public class CsvExportStudyServiceImplTest {
 	private List<File> getTempOutputDirectoriesGenerated() {
 		final String genericOutputDirectoryPath = this.installationDirectoryUtil.getOutputDirectoryForProjectAndTool(this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 		final String toolDirectory = genericOutputDirectoryPath.substring(0, genericOutputDirectoryPath.indexOf(InstallationDirectoryUtil.OUTPUT));
-		File toolDirectoryFile = new File(toolDirectory);
+		final File toolDirectoryFile = new File(toolDirectory);
 		Assert.assertTrue(toolDirectoryFile.exists());
-		List<File> outputDirectoryFiles = new ArrayList<>();
+		final List<File> outputDirectoryFiles = new ArrayList<>();
 		for (final File file : toolDirectoryFile.listFiles()) {
 			if (file.getName().startsWith("output") && file.getName() != InstallationDirectoryUtil.OUTPUT && file.isDirectory()) {
 				outputDirectoryFiles.add(file);

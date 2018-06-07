@@ -113,6 +113,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 				}
 			} else if (isWorkbookHasObservationRecords && !isObservationOverMaxLimit) {
 
+				this.dataImportService.removeLocationNameVariableIfExists(importData);
 				importData.setObservations(this.etlService.extractExcelFileData(workbook, this.userSelection,
 						importData, confirmDiscard == 1 ? true : false));
 
@@ -181,6 +182,8 @@ public class ImportObservationsController extends AbstractBaseETLController {
 					this.contextUtil.getCurrentIbdbUserId());
 			importData.setConstants(referenceWorkbook.getConstants());
 			importData.setConditions(referenceWorkbook.getConditions());
+			this.dataImportService.addLocationIDVariableInFactorsIfNotExists(importData, programUUID);
+			this.dataImportService.removeLocationNameVariableIfExists(importData);
 			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getConditions(), programUUID);
 			this.etlService.saveProjectData(importData, programUUID);
 

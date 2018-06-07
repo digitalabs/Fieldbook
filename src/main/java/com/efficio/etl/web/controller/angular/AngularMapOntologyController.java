@@ -14,6 +14,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.WorkbenchAppPathResolver;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.Constants;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
@@ -178,6 +179,15 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 				}
 			}
 
+			boolean isLocationIDVariableExists = dataImportService.findMeasurementVariableByTermId(TermId.LOCATION_ID.getId(), importData.getFactors()).isPresent();
+			boolean isLocationNameVariableExists = dataImportService.findMeasurementVariableByTermId(TermId.TRIAL_LOCATION.getId(), importData.getFactors()).isPresent();
+			if (isLocationNameVariableExists && !isLocationIDVariableExists) {
+				final Message message = new Message("error.location.id.doesnt.exists");
+				final List<Message> messageList = new ArrayList<>();
+				messageList.add(message);
+				proxy.put("", this.etlService.convertMessageList(messageList));
+			}
+
 			if (messages != null) {
 				for (final Map.Entry<String, List<Message>> entry : messages.entrySet()) {
 					proxy.put(entry.getKey(), this.etlService.convertMessageList(entry.getValue()));
@@ -231,6 +241,8 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService
 					.convertToWorkbook(this.userSelection);
 
+			this.dataImportService.addLocationIDVariableInFactorsIfNotExists(importData, this.contextUtil.getCurrentProgramUUID());
+			this.dataImportService.removeLocationNameVariableIfExists(importData);
 			this.fieldbookService.addStudyUUIDConditionAndPlotIDFactorToWorkbook(importData, false);
 
 			final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService

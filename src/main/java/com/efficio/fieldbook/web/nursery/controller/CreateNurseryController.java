@@ -261,8 +261,7 @@ public class CreateNurseryController extends SettingsController {
 				this.buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false),
 				VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
 
-		final Term locationNameTerm = this.fieldbookService.getTermById(TermId.TRIAL_LOCATION.getId());
-		final SettingDetail locationNameSettingDetail = this.createSettingDetail(TermId.LOCATION_ID.getId(), locationNameTerm.getName(),
+		final SettingDetail locationNameSettingDetail = this.createSettingDetail(TermId.LOCATION_ID.getId(), Workbook.DEFAULT_LOCATION_ID_VARIABLE_ALIAS,
 				VariableType.STUDY_DETAIL.getRole().name());
 		nurseryDefaults.add(locationNameSettingDetail);
 

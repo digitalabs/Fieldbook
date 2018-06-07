@@ -30,6 +30,7 @@ import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -367,6 +368,11 @@ public class CreateTrialController extends BaseTrialController {
 
 		for (final Integer id : this.buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString())) {
 			final SettingDetail detail = this.createSettingDetail(id, null, VariableType.ENVIRONMENT_DETAIL.getRole().name());
+
+			if (TermId.LOCATION_ID.getId() == id) {
+				detail.getVariable().setName(Workbook.DEFAULT_LOCATION_ID_VARIABLE_ALIAS);
+			}
+
 			for (final Integer hiddenField : hiddenFields) {
 				if (id.equals(hiddenField)) {
 					detail.setHidden(true);

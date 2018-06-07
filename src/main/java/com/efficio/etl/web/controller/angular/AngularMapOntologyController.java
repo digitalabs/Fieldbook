@@ -241,15 +241,21 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService
 					.convertToWorkbook(this.userSelection);
 
-			this.dataImportService.addLocationIDVariableInFactorsIfNotExists(importData, this.contextUtil.getCurrentProgramUUID());
-			this.dataImportService.removeLocationNameVariableIfExists(importData);
-			this.fieldbookService.addStudyUUIDConditionAndPlotIDFactorToWorkbook(importData, false);
-
 			final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
-				.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection),
-					this.contextUtil.getCurrentIbdbUserId());
+					.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection),
+							this.contextUtil.getCurrentIbdbUserId());
 			importData.setConstants(referenceWorkbook.getConstants());
 			importData.setConditions(referenceWorkbook.getConditions());
+
+			if (importData.isNursery()) {
+				this.dataImportService.addLocationIDVariableInConditionsIfNotExists(importData, this.contextUtil.getCurrentProgramUUID());
+				this.dataImportService.assignLocationVariableWithUnspecifiedLocationIfEmpty(importData.getConditions());
+			} else {
+				this.dataImportService.addLocationIDVariableInFactorsIfNotExists(importData, this.contextUtil.getCurrentProgramUUID());
+			}
+
+			this.dataImportService.removeLocationNameVariableIfExists(importData);
+			this.fieldbookService.addStudyUUIDConditionAndPlotIDFactorToWorkbook(importData, false);
 			this.etlService.saveProjectOntology(importData, this.contextUtil.getCurrentProgramUUID());
 			this.userSelection.setStudyId(importData.getStudyDetails().getId());
 			this.userSelection.setTrialDatasetId(importData.getTrialDatasetId());

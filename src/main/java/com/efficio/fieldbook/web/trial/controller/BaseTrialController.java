@@ -46,7 +46,9 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.LocationDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.SampleService;
 import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
@@ -71,6 +73,9 @@ public abstract class BaseTrialController extends SettingsController {
 
 	@Resource
 	protected SampleService sampleService;
+
+	@Resource
+	protected LocationDataManager locationDataManager;
 
 	private static final Logger LOG = LoggerFactory.getLogger(BaseTrialController.class);
 
@@ -878,6 +883,16 @@ public abstract class BaseTrialController extends SettingsController {
 				}
 			}
 		}
+	}
+
+	protected Integer getUnspecifiedLocationId() {
+
+		final List<Location> locations = locationDataManager.getLocationsByName("Unspecified Location", Operation.EQUAL);
+		if (!locations.isEmpty()) {
+			return locations.get(0).getLocid();
+		}
+		return 0;
+
 	}
 
 	private ImmutableMap<Integer, SettingDetail> createMapOfTraitsAndSelectionVariatesFromUserSelection() {

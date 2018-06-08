@@ -212,6 +212,11 @@ public class CreateTrialController extends BaseTrialController {
 		return this.buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
 	}
 
+	@ModelAttribute("unspecifiedLocationId")
+	public Integer unspecifiedLocationId() {
+		return this.getUnspecifiedLocationId();
+	}
+
 	@RequestMapping(value = "/trialSettings", method = RequestMethod.GET)
 	public String showCreateTrial(final Model model) {
 		return this.showAjaxPage(model, BaseTrialController.URL_SETTINGS);

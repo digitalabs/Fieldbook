@@ -153,7 +153,7 @@ var SaveAdvanceList = {};
 						var id = data.advancedGermplasmListId ? data.advancedGermplasmListId : data.germplasmListId;
 
 						$('a#advanceHref' + id).tab('show');
-						displayAdvanceList(data.germplasmListId, $.trim(data.listName), false, data.advancedGermplasmListId, true);
+						displayAdvanceList(data.germplasmListId, $.trim(data.listName), false, data.advancedGermplasmListId, false);
 					}
 					showSuccessfulMessage('', saveListSuccessfullyMessage);
 				} else {

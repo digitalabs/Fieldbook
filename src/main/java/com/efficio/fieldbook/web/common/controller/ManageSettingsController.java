@@ -208,8 +208,6 @@ public class ManageSettingsController extends SettingsController {
 					break;
 				case ENVIRONMENT_DETAIL:
 					cvTermIDs.addAll(AppConstants.HIDE_STUDY_VARIABLES.getIntegerList());
-					cvTermIDs.addAll(AppConstants.HIDE_STUDY_ENVIRONMENT_FIELDS.getIntegerList());
-					cvTermIDs.addAll(AppConstants.HIDE_STUDY_ENVIRONMENT_FIELDS_FROM_POPUP.getIntegerList());
 					break;
 				case TREATMENT_FACTOR:
 					cvTermIDs.addAll(AppConstants.CREATE_STUDY_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());

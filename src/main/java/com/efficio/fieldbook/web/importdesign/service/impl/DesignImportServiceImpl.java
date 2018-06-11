@@ -239,16 +239,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		measurementVariables.addAll(workbook.getFactors());
 
-		// remove the trial instance factor if the Study is Nursery because it only has 1 trial instance by default
-		final Iterator<MeasurementVariable> iterator = measurementVariables.iterator();
-		while (iterator.hasNext()) {
-			final MeasurementVariable temp = iterator.next();
-			if (temp.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-				iterator.remove();
-				break;
-			}
-		}
-
 		return measurementVariables;
 	}
 

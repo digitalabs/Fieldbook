@@ -891,26 +891,6 @@ public class DesignImportControllerTest {
 	}
 
 	@Test
-	public void testResetCheckList() {
-
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyTypeDto.getNurseryDto());
-		final UserSelection testUserSelection = new UserSelection();
-
-		final List<SettingDetail> studyLevelConditions = new ArrayList<>();
-
-		testUserSelection.setStudyLevelConditions(studyLevelConditions);
-
-		this.designImportController.resetCheckList(testUserSelection);
-
-		Assert.assertEquals(1, testUserSelection.getCurrentPageCheckGermplasmList());
-		Assert.assertNotNull(testUserSelection.getImportedCheckGermplasmMainInfo());
-		Assert.assertTrue(testUserSelection.isImportValid());
-		Assert.assertEquals("Check Start, Interval and Plan variables should be added to the StudyLevelCondition ", 3,
-				studyLevelConditions.size());
-
-	}
-
-	@Test
 	public void testAddCheckVariablesToDeleted() {
 
 		final List<SettingDetail> studyLevelConditions = new ArrayList<>();

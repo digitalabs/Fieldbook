@@ -591,13 +591,10 @@ public class DesignImportController extends SettingsController {
 			this.updateTrialConditionVariables(workbook.getConditions());
 		}
 
-		// Only for Trial
 		this.populateTrialLevelVariableListIfNecessary(workbook);
 
 		this.createTrialObservations(environmentData, workbook, designImportData);
 
-		// TODO Only for Nursery {Verify if necessary}
-		this.resetCheckList(this.userSelection);
 	}
 
 	/**
@@ -615,35 +612,6 @@ public class DesignImportController extends SettingsController {
 				condition.setOperation(Operation.UPDATE);
 			}
 		}
-	}
-
-	/**
-	 * Resets the Check list and deletes all Check Variables previously saved in
-	 * Study. The system will automatically reset and override the Check List
-	 * after importing a Custom Design.
-	 *
-	 * @param userSelection
-	 */
-	protected void resetCheckList(final UserSelection userSelection) {
-
-		// Create an ImportedCheckGermplasmMainInfo with an EMPTY data so
-		// that it will be deleted on save.
-		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-		mainInfo.setAdvanceImportType(true);
-
-		final List<ImportedGermplasm> list = new ArrayList<>();
-
-		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
-		importedGermplasmList.setImportedGermplasms(list);
-		mainInfo.setImportedGermplasmList(importedGermplasmList);
-
-		userSelection.setCurrentPageCheckGermplasmList(1);
-		userSelection.setImportedCheckGermplasmMainInfo(mainInfo);
-		userSelection.setImportValid(true);
-
-		// Also delete the CHECK VARIABLES
-		this.addCheckVariablesToDeleted(userSelection.getStudyLevelConditions());
-
 	}
 
 	protected void checkTheDeletedSettingDetails(final UserSelection userSelection, final DesignImportData designImportData) {

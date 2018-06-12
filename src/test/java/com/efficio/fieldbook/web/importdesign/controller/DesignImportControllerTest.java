@@ -487,9 +487,7 @@ public class DesignImportControllerTest {
 		this.designImportController.resolveIDNamePairingAndValuesForNursery(environmentData, designImportData,
 				newDetails);
 
-		Assert.assertEquals(3, newDetails.size());
-		Assert.assertEquals("LOCATION_NAME_ID should be added to the Trial Variables", "LOCATION_NAME_ID",
-				this.getSettingDetail(TermId.LOCATION_ID.getId(), newDetails).getVariable().getName());
+		Assert.assertEquals(2, newDetails.size());
 		Assert.assertEquals("COOPERATOR_ID should be added to the Trial Variables", "COOPERATOR_ID",
 				this.getSettingDetail(TermId.COOPERATOOR_ID.getId(), newDetails).getVariable().getName());
 		Assert.assertEquals("PI_NAME_ID should be added to the Trial Variables", "PI_NAME_ID",
@@ -499,8 +497,6 @@ public class DesignImportControllerTest {
 		final Map<String, String> managementDetailValuesMap = environmentData.getEnvironments().get(0)
 				.getManagementDetailValues();
 
-		Assert.assertTrue("LOCATION_NAME_ID should be in Management Details",
-				managementDetailValuesMap.containsKey(String.valueOf(TermId.LOCATION_ID.getId())));
 		Assert.assertTrue("COOPERATOOR_ID should be in Management Details",
 				managementDetailValuesMap.containsKey(String.valueOf(TermId.COOPERATOOR_ID.getId())));
 		Assert.assertTrue("PI_ID should be in Management Details",
@@ -670,7 +666,7 @@ public class DesignImportControllerTest {
 		this.designImportController.populateStudyLevelVariableListIfNecessary(workbook, environmentData,
 				designImportData);
 
-		Assert.assertEquals(5, newSettingDetails.size());
+		Assert.assertEquals(4, newSettingDetails.size());
 
 		final SettingDetail settingDetail = this.getSettingDetail(TermId.SITE_NAME.getId(), newSettingDetails);
 

@@ -134,7 +134,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		final List<SettingDetail> newList = new ArrayList<>();
 
 		if (list != null && !list.isEmpty()) {
-			final int rows = Double.valueOf(Math.ceil(list.size() / ReviewStudyDetailsController.COLS)).intValue();
+			final int rows = Double.valueOf(Math.ceil(list.size() / (double) ReviewStudyDetailsController.COLS)).intValue();
 			final int extra = list.size() % ReviewStudyDetailsController.COLS;
 			for (int i = 0; i < list.size(); i++) {
 				int delta = 0;

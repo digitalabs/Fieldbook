@@ -61,7 +61,7 @@
                             (${rowStat.last and rowStat.size mod 3 ne 0} ?
                                 'col-sm-6 ' +
                                 'col-md-' + ${4*(4-(rowStat.size % 3))}
-                            : 'col-sm-6 col-md-4') + ' nursery-details-variable'">
+                            : 'col-sm-6 col-md-4') + ' study-details-variable'">
                     <strong th:text="${basicDetail.variable.name} + ':'" class="">:</strong>
                     <span th:if="${basicDetail.variable.name == '# of Entries'}" th:text="${basicDetail.value}" class="review-stocks-count fbk-hide"></span>
                     <span th:text="${basicDetail.value}" class="div-select-val "></span>
@@ -93,7 +93,7 @@
                         (${rowStat.last and rowStat.size mod 3 ne 0} ?
                                 'col-sm-6 ' +
                                 'col-md-' + ${4*(4-(rowStat.size % 3))}
-                            : 'col-sm-6 col-md-4') + ' nursery-details-variable'">
+                            : 'col-sm-6 col-md-4') + ' study-details-variable'">
 
                     <strong th:text="${managementDetail.variable.name} + ':'" class="">:</strong>
                     <span th:text="${managementDetail.value}" class="div-select-val "></span>

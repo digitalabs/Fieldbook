@@ -247,7 +247,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			importData.setConstants(referenceWorkbook.getConstants());
 			importData.setConditions(referenceWorkbook.getConditions());
 
-			if (importData.isNursery()) {
+			if (importData.getStudyDetails().getStudyType().getId() == 1) {
 				this.dataImportService.addLocationIDVariableInConditionsIfNotExists(importData, this.contextUtil.getCurrentProgramUUID());
 				this.dataImportService.assignLocationVariableWithUnspecifiedLocationIfEmpty(importData.getConditions());
 			} else {

@@ -13,8 +13,9 @@
 					$scope.$on('$viewContentLoaded', function(){
 						// This is to automatically refresh the design details for augmented design
 						// whenever the Experimental tab is viewed
-						if ($scope.data.designType === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
-							$scope.refreshDesignDetailsForAugmentedDesign();
+						if ($scope.data.designType === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK ||
+							$scope.data.designType === DESIGN_TYPE.ENTRY_LIST_ORDER ) {
+							$scope.refreshDesignDetailsForAumentedAndELODesign();
 						}
 					});
 
@@ -168,7 +169,7 @@
 							TrialManagerDataService.currentData.experimentalDesign.designType = $scope.data.designType;
 							$scope.applicationData.unappliedChangesAvailable = true;
 
-							$scope.refreshDesignDetailsForAugmentedDesign();
+							$scope.refreshDesignDetailsForAumentedAndELODesign();
 
 						} else {
 							$scope.currentDesignType = null;
@@ -521,14 +522,13 @@
 
 							}
 							case DESIGN_TYPE.ENTRY_LIST_ORDER: {
-								var totalTestEntries = countNumberOfTestEntries();
-								var totalChecks = $scope.totalGermplasmEntryListCount - totalTestEntries;
-								if (totalChecks > 0) {
-									if (totalTestEntries == 0) {
+
+								if ($scope.germplasmTotalCheckEntriesCount > 0) {
+									if ($scope.germplasmTotalTestEntriesCount == 0) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[33]);
 										return false
 									}
-									if ($scope.data.checkStartingPosition > totalTestEntries) {
+									if ($scope.data.checkStartingPosition > $scope.germplasmTotalTestEntriesCount) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[30]);
 										return false;
 									}
@@ -536,7 +536,7 @@
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[32]);
 										return false
 									}
-									if ($scope.data.checkSpacing > totalTestEntries) {
+									if ($scope.data.checkSpacing > $scope.germplasmTotalTestEntriesCount) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[29]);
 										return false
 									}
@@ -580,7 +580,8 @@
 
 					};
 
-					$scope.refreshDesignDetailsForAugmentedDesign = function() {
+					// TODO This function is being called when switching design types for all the types, not only for Augmented and ELO
+					$scope.refreshDesignDetailsForAumentedAndELODesign = function() {
 
 						$scope.germplasmTotalCheckEntriesCount = countCheckEntries();
 						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
@@ -619,39 +620,8 @@
 
 					}
 
-					function countNumberOfTestEntries() {
-
-						var germplasmListDataTable = $('.germplasm-list-items').DataTable();
-
-						if (germplasmListDataTable.rows().length !== 0) {
-
-							var numberOfTestEntries = 0;
-
-							$.each(germplasmListDataTable.rows().data(), function(index, obj) {
-								var entryCheckType = parseInt(obj[ENTRY_TYPE_COLUMN_DATA_KEY]);
-								if (entryCheckType === SYSTEM_DEFINED_ENTRY_TYPE.TEST_ENTRY) {
-									numberOfTestEntries++;
-								}
-							});
-
-							return numberOfTestEntries;
-
-						} else if (TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount != null) {
-							// If the germplasmlistDataTable is not yet initialized, we should get the number of check entries of germplasm list in the database
-							// when an existing study is opened / loaded, only if available. experimentalDesign.germplasmTotalCheckCount contains the count of checks stored in the database.
-							return TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
-						}
-
-						return 0;
-
-					}
-
 					$scope.showParamsWhenChecksAreSelected = function(designTypeId) {
-						if (designTypeId === DESIGN_TYPE.ENTRY_LIST_ORDER && countNumberOfTestEntries() == $scope.totalGermplasmEntryListCount) {
-							return false;
-						} else {
-							return true;
-						}
+						return !(designTypeId === DESIGN_TYPE.ENTRY_LIST_ORDER && $scope.germplasmTotalTestEntriesCount == $scope.totalGermplasmEntryListCount);
 					}
 
 					function validateNumberOfBlocks() {

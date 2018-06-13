@@ -443,7 +443,7 @@ angular.module('di-consolidatedStep', ['digitalabs-util','di-directives', 'digit
                     if (studyDetails.studyType) {
                         /*$scope.selected.studyDetails.studyType = studyDetails.studyType.$name;*/
                         $.each($scope.data.studyTypeList, function(key, value) {
-                            if (key === studyDetails.studyType.$name) {
+                            if (key === studyDetails.studyType.name) {
                                 $scope.selected.studyDetails.studyType = key;
                             }
                         })

@@ -176,17 +176,31 @@
 		};
 
 		function getPreferredEnvironmentName(environment, preferredLocationVariable) {
-            //create a map for location dropdown values
-            var locationMap = {};
-            angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].allValues, function(locationVariable) {
-                locationMap[locationVariable.id] = locationVariable;
-            });
 
-            var locationId = isNaN(environment.managementDetailValues[$scope.LOCATION_NAME_ID]) ?
-                environment.managementDetailValues[$scope.LOCATION_NAME_ID].id :
-                environment.managementDetailValues[$scope.LOCATION_NAME_ID];
+            var preferredLocation = '';
+            if ($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID] !== undefined) {
 
-            var preferredLocationVariableName = preferredLocationVariable === $scope.LOCATION_NAME_ID ? locationMap[locationId].name
+                //create a map for location dropdown values
+                var locationMap = {};
+
+                angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].allValues, function(locationVariable) {
+                    locationMap[locationVariable.id] = locationVariable;
+                });
+
+                var locationId = 0;
+                if (environment.managementDetailValues[$scope.LOCATION_NAME_ID] !== undefined) {
+                    locationId = isNaN(environment.managementDetailValues[$scope.LOCATION_NAME_ID]) ?
+                        environment.managementDetailValues[$scope.LOCATION_NAME_ID].id :
+                        environment.managementDetailValues[$scope.LOCATION_NAME_ID];
+				}
+
+				if (locationId !== 0) {
+                    preferredLocation = locationMap[locationId].name;
+				}
+
+            }
+
+            var preferredLocationVariableName = preferredLocationVariable === $scope.LOCATION_NAME_ID ? preferredLocation
                 : environment.managementDetailValues[preferredLocationVariable];
 
             return preferredLocationVariableName;

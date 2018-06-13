@@ -190,6 +190,7 @@ public class AdvancingSourceListFactory {
 					advancingSourceCandidate.setBreedingMethod(breedingMethod);
 					advancingSourceCandidate.setCheck(isCheck);
 					advancingSourceCandidate.setStudyName(studyName);
+					advancingSourceCandidate.setStudyId(workbook.getStudyDetails().getId());
 
                     dataProcessor.processPlotLevelData(advancingSourceCandidate, row);
 

@@ -27,8 +27,8 @@ public class BreedersCrossIDExpression extends BaseExpression{
 		 * Basic Implementation has been added to calculate SelectionNumber
 		 */
 		for (StringBuilder container : values) {
-			String newValue = this.breedersCrossIDGenerator.generateBreedersCrossID( source.getStudyType(), source.getConditions(),
-					source.getTrailInstanceObservation(), source.getBreedingMethod(), source.getGermplasm());
+			String newValue = this.breedersCrossIDGenerator.generateBreedersCrossID(source.getStudyId(), source.getStudyType(), source.getConditions(),
+					source.getTrailInstanceObservation());
 			this.replaceExpressionWithValue(container, newValue);
 		}
 	}

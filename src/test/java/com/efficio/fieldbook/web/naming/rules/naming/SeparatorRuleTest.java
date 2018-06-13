@@ -11,7 +11,7 @@ import org.generationcp.middleware.pojos.Method;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 
 public class SeparatorRuleTest extends BaseNamingRuleTest {
 

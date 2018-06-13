@@ -2,7 +2,7 @@
 <div class="row" >
 	<div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
 
-		<section-container th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
+		<section-container th:attr="heading=#{study.managesettings.germplasm.factors.label}"
 						   collapsible="true">
 
 			<span name="action-buttons">
@@ -14,7 +14,7 @@
                 </span>
             </span>
 
-			<section-container icon="bms-factors" name="content" th:attr="heading=#{trial.trialdetails.germplasm.descriptors},help-tooltip=#{trial.reminder.add.germplasm.factors}">
+			<section-container icon="bms-factors" name="content" th:attr="heading=#{study.studydetails.germplasm.descriptors},help-tooltip=#{study.reminder.add.germplasm.factors}">
 				<display-settings hide-delete="trialMeasurement.hasMeasurement" settings="settings" variable-type="1804"
 								  name="content"></display-settings>
 			</section-container>
@@ -27,16 +27,16 @@
 
 <div class="row form-group overwrite-germplasm-list">
 	<div class="col-xs-12 col-md-12">
-		<label class="control-label" th:text="#{trial.edit.trial.overwrite.germplasm.list.message}">
+		<label class="control-label" th:text="#{study.edit.study.overwrite.germplasm.list.message}">
 		</label>
 		&nbsp;&nbsp;&nbsp;
-		<button class="btn btn-primary show-germplasm-details"  th:text="#{trial.germplasm.replace}">Overwrite</button>
+		<button class="btn btn-primary show-germplasm-details"  th:text="#{study.germplasm.replace}">Overwrite</button>
 	</div>
 </div>
 <div class="row form-group observation-exists-notif">
 	<div class="col-xs-12 col-md-12">
 		<label class="control-label">
-			<strong class="sub-content-heading" th:text="#{trial.edit.trial.cannot.modify.germplasm.list.message}">This Trial has saved observations, germplasm list cannot be modified.</strong>
+			<strong class="sub-content-heading" th:text="#{study.edit.study.cannot.modify.germplasm.list.message}">This Study has saved observations, germplasm list cannot be modified.</strong>
 		</label>
 	</div>
 </div>
@@ -48,13 +48,13 @@
 	<div id="primary-section">
 		<div>
 			<img th:src="@{/static/img/review-list-details.png}" />
-			<label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Trial List</strong></label>
+			<label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Study List</strong></label>
 
 
 			<div  class="pull-right">
 				 <div class="btn-group">
 					<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
-						<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+						<span th:text="#{study.studydetails.actions}">Actions</span>
 					</button>
 					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
 						<li>
@@ -89,20 +89,16 @@
 <input type="hidden" id="keyForOverwrite" value=""/>
 <input type="hidden" id="lastCheckSourcePrimary" value=""/>
 
-<!-- 
-<div th:include="/Common/browseGermplasmListTable"></div>
- -->
-
 <div class="row">
-	<div th:include="/NurseryManager/includes/importGermplasmListModal"></div>
+	<div th:include="/StudyManager/includes/importGermplasmListModal"></div>
 </div>
 
 <div class="row">
-	<div th:include="/NurseryManager/includes/importGermplasmListManageCheckType"></div>
+	<div th:include="/StudyManager/includes/importGermplasmListManageCheckType"></div>
 </div>
 
 <div class="row">
-	<div th:include="/NurseryManager/includes/importGermplasmListDetailsModal"></div>
+	<div th:include="/StudyManager/includes/importGermplasmListDetailsModal"></div>
 </div>
 
 </div>

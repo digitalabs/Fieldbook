@@ -16,12 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
-
-import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 
 /**
  * The Class PaginationListSelection.
@@ -43,7 +42,7 @@ public class PaginationListSelection implements Serializable {
 	private final Map<String, List<MeasurementVariable>> reviewVariableList = new HashMap<String, List<MeasurementVariable>>();
 
 	/** The advance map. */
-	private final Map<String, AdvancingNurseryForm> advanceMap = new HashMap<String, AdvancingNurseryForm>();
+	private final Map<String, AdvancingStudyForm> advanceMap = new HashMap<String, AdvancingStudyForm>();
 
 	private final Map<String, Workbook> reviewWorkbookList = new HashMap<String, Workbook>();
 
@@ -113,7 +112,7 @@ public class PaginationListSelection implements Serializable {
 	 * @param id the id
 	 * @param form the form
 	 */
-	public void addAdvanceDetails(String id, AdvancingNurseryForm form) {
+	public void addAdvanceDetails(String id, AdvancingStudyForm form) {
 		this.advanceMap.put(id, form);
 	}
 
@@ -123,7 +122,7 @@ public class PaginationListSelection implements Serializable {
 	 * @param id the id
 	 * @return the advance details
 	 */
-	public AdvancingNurseryForm getAdvanceDetails(String id) {
+	public AdvancingStudyForm getAdvanceDetails(String id) {
 		return this.advanceMap.get(id);
 	}
 

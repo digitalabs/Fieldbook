@@ -1,14 +1,14 @@
 /*globals angular, displayStudyGermplasmSection, isStudyNameUnique, showSuccessfulMessage, isCategoricalDisplay,
- showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
+ showInvalidInputMessage, studyFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
  invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,validateAllDates, showErrorMessage*/
 (function() {
 	'use strict';
 	angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','GERMPLASM_CHECKS_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
-            'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'SAMPLE_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
+            'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'SAMPLE_LIST_DATA','CROSSES_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
 		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', '$q',
 		'TrialSettingsManager', '_', '$localStorage','$rootScope',
-		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA, SAMPLE_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
+		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA, SAMPLE_LIST_DATA, CROSSES_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
 					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
 					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, _, $localStorage, $rootScope) {
@@ -76,7 +76,7 @@
 					}
 
 				}).error(function() {
-					showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
+					showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 				});
 			};
 
@@ -149,12 +149,11 @@
 				$('#startIndex').val($('#startIndex2').val());
 				$('#interval').val($('#interval2').val());
 				$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
-				var columnsOrder = ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) ?
+				var columnsOrder = ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenStudy()) ?
 					BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table') : [];
 
 				var serializedData = $form.serializeArray();
 				serializedData[serializedData.length] = {name: 'columnOrders', value: (JSON.stringify(columnsOrder))};
-
 				var d = $q.defer();
 
 				$http.post('/Fieldbook/TrialManager/GermplasmList/next', $.param(serializedData),
@@ -191,7 +190,7 @@
 			var performDataCleanup = function() {
 				// TODO: delegate the task of cleaning up data to each tab that produces it, probably via listener
 
-				// perform cleanup of data for trial settings
+				// perform cleanup of data for study settings
 				// right now, just make sure that no objects are sent as user input for user-defined settings
 				cleanupData(service.currentData.trialSettings.userInput);
 				angular.forEach(service.currentData.environments.environments, function(environment) {
@@ -235,7 +234,8 @@
 					measurements: extractSettings(MEASUREMENTS_INITIAL_DATA),
 					basicDetails: extractSettings(BASIC_DETAILS_DATA),
 					advancedList: ADVANCE_LIST_DATA,
-					sampleList: SAMPLE_LIST_DATA
+					sampleList: SAMPLE_LIST_DATA,
+					crossesList: CROSSES_LIST_DATA
 				},
 				applicationData: {
 					unappliedChangesAvailable: false,
@@ -244,8 +244,7 @@
 					unsavedTraitsAvailable: false,
 					germplasmListCleared: false,
 					isGeneratedOwnDesign: false,
-					advanceType: 'trial',
-					hasGeneratedDesignPreset: false,
+					advanceType: 'study',
 					hasNewEnvironmentAdded: false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
 					designTypes: [],
@@ -305,6 +304,12 @@
 					});
 				},
 
+				retrieveInsertionManner: function () {
+					$http.get('/Fieldbook/TrialManager/experimental/design/retrieveInsertionManners').success(function(insertionManners) {
+						service.applicationData.insertionManners = insertionManners;
+					});
+				},
+
 				getDesignTypeById : function(designTypeId, designTypes) {
 					return _.find(designTypes, function (designType) { return designType.id === Number(designTypeId) });
 				},
@@ -331,7 +336,7 @@
 					return data;
 				},
 
-				isOpenTrial: function() {
+				isOpenStudy: function() {
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
 				},
@@ -340,7 +345,7 @@
 					var refreshMeasurementDeferred = $q.defer();
 					var deleteMeasurementPossible = index !== 0;
 					// this scenario cover the update of measurement table
-					// when the user delete an environment for a existing trial with or wihout measurement data
+					// when the user delete an environment for a existing study with or wihout measurement data
 					if (deleteMeasurementPossible) {
 						service.applicationData.unsavedTraitsAvailable = true;
 
@@ -415,17 +420,17 @@
 					if (service.applicationData.unsavedTreatmentFactorsAvailable) {
 						showErrorMessage('', unsavedTreatmentFactor);
 					} else if (service.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial. Please ' +
+						showAlertMessage('', 'Changes have been made that may affect the experimental design of this study. Please ' +
 								'regenerate the design on the Experimental Design tab', 10000);
-					} else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
+					} else if (service.isCurrentTrialDataValid(service.isOpenStudy())) {
                         // Hide Discard Imported Data button when the user presses Save button
                         $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
                         stockListImportNotSaved = false;
 						performDataCleanup();
-						var columnsOrder =  ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenTrial()) ?
+						var columnsOrder =  ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenStudy()) ?
 							BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table') : [];
 						var serializedData = (JSON.stringify(columnsOrder));
-						if (!service.isOpenTrial()) {
+						if (!service.isOpenStudy()) {
 							service.currentData.columnOrders = serializedData;
 							// we are receiving 'success' string message from server in a happy case, so the response should not be parsed
 							// as json, we set {{transformResponse: undefined}} to indicate that we don't need json transformation
@@ -451,7 +456,7 @@
 									showErrorMessage('', 'Trial could not be saved at the moment. Please try again later.');
 								}
 							}, function() {
-								showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
+								showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 							});
 						} else {
 
@@ -503,7 +508,7 @@
 									});
 
 								}).error(function() {
-									showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
+									showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 								});
 							} else {
 								service.currentData.columnOrders = serializedData;
@@ -521,10 +526,10 @@
 											onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
 											$('body').data('needToSave', '0');
 										}, function() {
-											showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
+											showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 										});
 									}).error(function() {
-										showErrorMessage('', $.fieldbookMessages.errorSaveTrial);
+										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 									});
 							}
 
@@ -602,7 +607,7 @@
 					//check if the starting entry number is a number before calling the resource 
 					//for updating the starting entry number in the server
 					//as the server expects the parameter passed as an Integer
-					//the newCountValue becomes "" or null if the germplasm list is not yet selected for the trial
+					//the newCountValue becomes "" or null if the germplasm list is not yet selected for the study
 					if($.isNumeric(newCountValue)) {
 						UpdateStartingEntryNoService.save(newCountValue);
 					}
@@ -693,7 +698,7 @@
 								return true;
 							} else if (key === 'treatmentFactors') {
 								settingsArray.push(value.details);
-							} else if (key === 'advancedList' || key === 'sampleList') {
+							} else if (key === 'advancedList' || key === 'sampleList' || key === 'crossesList' ) {
 								return true;
 							} else {
 								if (value) {
@@ -735,7 +740,18 @@
 						name = 'Creation Date';
 					} else if (service.currentData.environments.noOfEnvironments <= 0) {
 						hasError = true;
-						customMessage = 'Trials should have at least one environment';
+						customMessage = 'the study should have at least one environment';
+					} else if ($.trim(service.currentData.basicDetails.studyType) === '') {
+						hasError = true;
+						name = 'Study type';
+/*					} else if ($('.germplasm-list-items tbody tr').length === 0 ) {
+						hasError = true;
+						customMessage = 'should have at least a germplasm list in the study';*/
+					} else if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
+						hasError = true;
+						name = $('#folderLabel').text();
+						openStudyTree(2, service.updateSelectedFolder, true);
+						return false;
 					}
 
 					var invalidDateMsg = validateAllDates();
@@ -757,7 +773,7 @@
 					if (hasError) {
 						var errMsg = '';
 						if (name !== '') {
-							errMsg = name.replace('*', '').replace(':', '') + ' ' + nurseryFieldsIsRequired;
+							errMsg = name.replace('*', '').replace(':', '') + ' ' + studyFieldsIsRequired;
 						}
 
 						if (customMessage !== '') {
@@ -858,12 +874,12 @@
 							_.find(service.currentData.environments.environments, function(val, index) {
 								if (!!val.trialDetailValues[key]) {
 									if (item.variable.maxRange < Number(val.trialDetailValues[key])) {
-										results.customMessage = 'Invalid maximum range on trial details variable ' +
+										results.customMessage = 'Invalid maximum range on study details variable ' +
 											item.variable.name + ' at environment ' + (Number(index) + Number(1));
 										results.hasError = true;
 										return results.hasError;
 									} else if (item.variable.minRange > Number(val.trialDetailValues[key])) {
-										results.customMessage = 'Invalid minimum range on trial details variable ' +
+										results.customMessage = 'Invalid minimum range on study details variable ' +
 											item.variable.name + ' at environment ' + (Number(index) + Number(1));
 										results.hasError = true;
 										return results.hasError;
@@ -934,6 +950,7 @@
 			};
 
 			service.retrieveDesignType();
+			service.retrieveInsertionManner();
 
 			// store the initial values on some service properties so that we can revert to it later
 			$localStorage.serviceBackup = {

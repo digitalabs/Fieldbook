@@ -4,7 +4,6 @@ package com.efficio.fieldbook.web.common.controller;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.UnpermittedDeletionException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -55,8 +54,8 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/{studyId}/{studyType}", method = RequestMethod.POST)
-	public Map<String, Object> submitDelete(@PathVariable final int studyId, @PathVariable final String studyType,
+	@RequestMapping(value = "/{studyId}", method = RequestMethod.POST)
+	public Map<String, Object> submitDelete(@PathVariable final int studyId,
 			final Model model, final HttpSession session, final Locale locale) {
 		final Map<String, Object> results = new HashMap<>();
 		final List<GermplasmList> germplasmLists;
@@ -73,18 +72,12 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 
 			this.fieldbookMiddlewareService.deleteStudy(studyId, this.contextUtil.getCurrentUserLocalId());
 
-			if (StudyType.N.getName().equals(studyType)) {
-				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId,
-						GermplasmListType.NURSERY);
+			germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
 
-				// Also set the status of checklist to deleted
-				final List<GermplasmList> checkGermplasmLists =
-					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.CHECK);
-				this.deleteGermplasmList(checkGermplasmLists);
-			} else {
-				germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId,
-						GermplasmListType.TRIAL);
-			}
+			// Also set the status of checklist to deleted
+			final List<GermplasmList> checkGermplasmLists =
+				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.CHECK);
+			this.deleteGermplasmList(checkGermplasmLists);
 
 			// Set germplasm list status to deleted
 			this.deleteGermplasmList(germplasmLists);

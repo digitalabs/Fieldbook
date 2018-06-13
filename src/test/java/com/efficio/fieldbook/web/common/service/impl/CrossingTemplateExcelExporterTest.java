@@ -90,8 +90,8 @@ public class CrossingTemplateExcelExporterTest {
 	private CrossingTemplateExcelExporter exporter;
 
 	private org.apache.poi.ss.usermodel.Workbook workbook;
-	
-	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+
+	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	@Before
 	public void setup() throws IOException, InvalidFormatException {
@@ -110,7 +110,7 @@ public class CrossingTemplateExcelExporterTest {
 	@Test
 	public void testExport() throws Exception {
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
-				GermplasmListType.NURSERY)).thenReturn(this.initializeCrossesList());
+				GermplasmListType.STUDY)).thenReturn(this.initializeCrossesList());
 
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString());
 		Mockito.doReturn(this.intializeExperiments()).when(this.studyDataManager).getExperiments(Matchers.anyInt(), Matchers.anyInt(),
@@ -166,7 +166,7 @@ public class CrossingTemplateExcelExporterTest {
 		final Date todaysDate = new Date();
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		final String todaysDateText = dateFormat.format(todaysDate);
-		Assert.assertTrue(sheet.getRow(2).getCell(1).getNumericCellValue() == Long.parseLong(todaysDateText));
+		Assert.assertEquals(sheet.getRow(2).getCell(1).getNumericCellValue(), Long.parseLong(todaysDateText), 0.0);
 		Assert.assertEquals(sheet.getRow(2).getCell(3).getStringCellValue(), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
 	}
 
@@ -216,9 +216,12 @@ public class CrossingTemplateExcelExporterTest {
 
 		final List<Experiment> experiments = intializeExperiments();
 		Mockito.when(this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null)).thenReturn(experiments);
+		Mockito.when(this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE)).thenReturn
+			(experiments);
 
 		final Sheet sheet = this.workbook.getSheetAt(3);
-		this.exporter.writeNurseryListSheet(sheet, CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
+		this.exporter.writeStudyListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
+				CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
 
 		assertThat("studyname", equalTo(sheet.getRow(1).getCell(0).getStringCellValue()));
 		assertThat(1, equalTo((int) sheet.getRow(1).getCell(1).getNumericCellValue()));
@@ -242,10 +245,11 @@ public class CrossingTemplateExcelExporterTest {
 		final List<Experiment> experiments = intializeExperimentsWithAddUserDescriptors();
 
 		Mockito.when(this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null)).thenReturn(experiments);
-
+		Mockito.when(this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE)).thenReturn
+			(experiments);
 		final Sheet sheet = this.workbook.getSheetAt(3);
-		this.exporter.writeNurseryListSheet(sheet, CrossingTemplateExcelExporterTest.STUDY_ID,
-				CrossingTemplateExcelExporterTest.STUDY_NAME);
+		this.exporter.writeStudyListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
+				CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
 
 		// Header added//
 		assertThat("FIELDMAP COLUMN", equalTo(sheet.getRow(0).getCell(7).getStringCellValue()));
@@ -310,7 +314,7 @@ public class CrossingTemplateExcelExporterTest {
 		final String studyName = "Nueva Nursery \\ / : * ? \" \\&quot; &lt; &gt; | ,";
 		final String expectedBaseFilename = "CrossingTemplate-Nueva Nursery _ _ _ _ _ _ __ _ _ _ _";
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
-				GermplasmListType.NURSERY)).thenReturn(this.initializeCrossesList());
+				GermplasmListType.STUDY)).thenReturn(this.initializeCrossesList());
 
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString());
 		Mockito.doReturn(this.intializeExperiments()).when(this.studyDataManager).getExperiments(Matchers.anyInt(), Matchers.anyInt(),
@@ -323,7 +327,7 @@ public class CrossingTemplateExcelExporterTest {
 		// to test
 		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, studyName,
 				CrossingTemplateExcelExporterTest.CURRENT_USER_ID);
-		
+
 		// Check file is written in proper directory and with correct filename
 		final String outputDirectoryPath = this.installationDirectoryUtil
 				.getOutputDirectoryForProjectAndTool(this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
@@ -341,7 +345,7 @@ public class CrossingTemplateExcelExporterTest {
 	@SuppressWarnings("unchecked")
 	public void retrieveAndValidateIfHasGermplasmListExceptionHandling() throws Exception {
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
-				GermplasmListType.NURSERY)).thenReturn(Collections.EMPTY_LIST);
+				GermplasmListType.STUDY)).thenReturn(Collections.EMPTY_LIST);
 
 		this.exporter.retrieveAndValidateIfHasGermplasmList(CrossingTemplateExcelExporterTest.STUDY_ID);
 	}
@@ -405,12 +409,12 @@ public class CrossingTemplateExcelExporterTest {
 
 		return testVariable;
 	}
-	
+
 	@After
 	public void cleanup() {
 		this.deleteTestInstallationDirectory();
 	}
-	
+
 	private void deleteTestInstallationDirectory() {
 		// Delete test installation directory and its contents as part of cleanup
 		final File testInstallationDirectory = new File(InstallationDirectoryUtil.WORKSPACE_DIR);

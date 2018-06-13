@@ -1,6 +1,6 @@
 package com.efficio.fieldbook.web.naming.expression;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 import org.generationcp.middleware.IntegrationTestBase;
 import org.generationcp.middleware.service.api.KeySequenceRegisterService;
 import org.generationcp.middleware.service.impl.KeySequenceRegisterServiceImpl;

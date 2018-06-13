@@ -57,13 +57,13 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testResolvableIncompleteBlockExpDesignRunToBvDesign() {
 
-		MainDesign mainDesign = experimentDesignGenerator.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps",
+		final MainDesign mainDesign = experimentDesignGenerator.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps",
 				"Subblocks", "Plots", 301, null, "0", "", "", false);
 
 		try {
-			BVDesignOutput output = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
-			Assert.assertEquals(output.isSuccess(), true);
-		} catch (Exception e) {
+			final BVDesignOutput output = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+			Assert.assertTrue(output.isSuccess());
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -71,13 +71,13 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testResolvableRowColExpDesignRunToBvDesign() {
 
-		MainDesign mainDesign = experimentDesignGenerator.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns",
+		final MainDesign mainDesign = experimentDesignGenerator.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns",
 				"Plots", 301, null, "0", "0", "", "", false);
 
 		try {
-			BVDesignOutput output = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
-			Assert.assertEquals(output.isSuccess(), true);
-		} catch (Exception e) {
+			final BVDesignOutput output = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+			Assert.assertTrue(output.isSuccess());
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -85,20 +85,20 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testRandomizeCompleteBlockDesignExpDesignRunToBvDesign() {
 
-		List<String> treatmentFactor = new ArrayList<String>();
+		final List<String> treatmentFactor = new ArrayList<String>();
 		treatmentFactor.add("ENTRY_NO");
 		treatmentFactor.add("FERTILIZER");
 
-		List<String> levels = new ArrayList<String>();
+		final List<String> levels = new ArrayList<String>();
 		levels.add("24");
 		levels.add("3");
 
-		MainDesign mainDesign = experimentDesignGenerator.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, treatmentFactor, levels, "");
+		final MainDesign mainDesign = experimentDesignGenerator.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, treatmentFactor, levels, "");
 
 		try {
-			BVDesignOutput output = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
-			Assert.assertEquals(output.isSuccess(), true);
-		} catch (Exception e) {
+			final BVDesignOutput output = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+			Assert.assertTrue(output.isSuccess());
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -107,13 +107,13 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	public void testResolvableIncompleteBlockDesignService() {
 
 		try {
-			List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 24);
-			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
+			final List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 24);
+			final List<MeasurementVariable> measurementVariables = new ArrayList<MeasurementVariable>();
+			measurementVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),PROGRAM_UUID), Operation.ADD,
 					this.fieldbookService));
 
-			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
@@ -121,26 +121,26 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
 			variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(20368,PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			ExpDesignParameterUi param = new ExpDesignParameterUi();
+			final ExpDesignParameterUi param = new ExpDesignParameterUi();
 			param.setBlockSize("6");
 			param.setReplicationsCount("2");
 			param.setNoOfEnvironments("1");
 
-			ExpDesignValidationOutput output = this.resolveIncompleteBlockDesign.validate(param, germplasmList);
-			Assert.assertEquals(true, output.isValid());
+			final ExpDesignValidationOutput output = this.resolveIncompleteBlockDesign.validate(param, germplasmList);
+			Assert.assertTrue(output.isValid());
 
-			List<MeasurementRow> measurementRowList =
+			final List<MeasurementRow> measurementRowList =
 					this.resolveIncompleteBlockDesign
-							.generateDesign(germplasmList, param, trialVariables, factors, factors, variates, null);
-			for (MeasurementRow measurementRow : measurementRowList) {
+							.generateDesign(germplasmList, param, measurementVariables, factors, factors, variates, null);
+			for (final MeasurementRow measurementRow : measurementRowList) {
 				System.out.println(measurementRow.toString());
 			}
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -149,13 +149,13 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	public void testResolvableIncompleteBlockLatinizedAdjacentDesignService() {
 
 		try {
-			List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 24);
-			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
+			final List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 24);
+			final List<MeasurementVariable> measurementVariables = new ArrayList<MeasurementVariable>();
+			measurementVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),PROGRAM_UUID), Operation.ADD,
 					this.fieldbookService));
 
-			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
@@ -163,11 +163,11 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
 			variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(20368,PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			ExpDesignParameterUi param = new ExpDesignParameterUi();
+			final ExpDesignParameterUi param = new ExpDesignParameterUi();
 			param.setBlockSize("4");
 			param.setReplicationsCount("4");
 			param.setNoOfEnvironments("1");
@@ -176,17 +176,17 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			param.setReplatinGroups("1,1,2");
 			param.setNblatin("3"); // should be less than or equal the block level (ntreatment / blocksize)
 
-			ExpDesignValidationOutput output = this.resolveIncompleteBlockDesign.validate(param, germplasmList);
-			Assert.assertEquals(true, output.isValid());
+			final ExpDesignValidationOutput output = this.resolveIncompleteBlockDesign.validate(param, germplasmList);
+			Assert.assertTrue(output.isValid());
 
-			List<MeasurementRow> measurementRowList =
+			final List<MeasurementRow> measurementRowList =
 					this.resolveIncompleteBlockDesign
-							.generateDesign(germplasmList, param, trialVariables, factors, factors, variates, null);
-			for (MeasurementRow measurementRow : measurementRowList) {
+							.generateDesign(germplasmList, param, measurementVariables, factors, factors, variates, null);
+			for (final MeasurementRow measurementRow : measurementRowList) {
 				System.out.println(measurementRow.toString());
 			}
 			Assert.assertEquals(96, measurementRowList.size());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -195,13 +195,13 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	public void testResolvableIncompleteBlockLatinizedRowsDesignService() {
 
 		try {
-			List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 24);
-			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
+			final List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 24);
+			final List<MeasurementVariable> measurementVariables = new ArrayList<MeasurementVariable>();
+			measurementVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),PROGRAM_UUID), Operation.ADD,
 					this.fieldbookService));
 
-			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
@@ -209,11 +209,11 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
 			variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(20368,PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			ExpDesignParameterUi param = new ExpDesignParameterUi();
+			final ExpDesignParameterUi param = new ExpDesignParameterUi();
 			param.setBlockSize("4");
 			param.setReplicationsCount("4");
 			param.setNoOfEnvironments("1");
@@ -222,14 +222,14 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			param.setReplatinGroups("1,1,1,1");
 			param.setNblatin("3"); // should be less than or equal the block level (ntreatment / blocksize)
 
-			ExpDesignValidationOutput output = this.resolveIncompleteBlockDesign.validate(param, germplasmList);
-			Assert.assertEquals(true, output.isValid());
+			final ExpDesignValidationOutput output = this.resolveIncompleteBlockDesign.validate(param, germplasmList);
+			Assert.assertTrue(output.isValid());
 
-			List<MeasurementRow> measurementRowList =
+			final List<MeasurementRow> measurementRowList =
 					this.resolveIncompleteBlockDesign
-							.generateDesign(germplasmList, param, trialVariables, factors, factors, variates, null);
+							.generateDesign(germplasmList, param, measurementVariables, factors, factors, variates, null);
 			Assert.assertEquals(96, measurementRowList.size());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -238,13 +238,13 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	public void testResolvableIncompleteBlockLatinizedColsDesignService() {
 
 		try {
-			List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 24);
-			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
+			final List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 24);
+			final List<MeasurementVariable> measurementVariables = new ArrayList<MeasurementVariable>();
+			measurementVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),PROGRAM_UUID), Operation.ADD,
 					this.fieldbookService));
 
-			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
@@ -252,11 +252,11 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
 			variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(20368,PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			ExpDesignParameterUi param = new ExpDesignParameterUi();
+			final ExpDesignParameterUi param = new ExpDesignParameterUi();
 			param.setBlockSize("4");
 			param.setReplicationsCount("4");
 			param.setNoOfEnvironments("1");
@@ -265,14 +265,14 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			param.setReplatinGroups("4");
 			param.setNblatin("3"); // should be less than or equal the block level (ntreatment / blocksize)
 
-			ExpDesignValidationOutput output = this.resolveIncompleteBlockDesign.validate(param, germplasmList);
-			Assert.assertEquals(true, output.isValid());
+			final ExpDesignValidationOutput output = this.resolveIncompleteBlockDesign.validate(param, germplasmList);
+			Assert.assertTrue(output.isValid());
 
-			List<MeasurementRow> measurementRowList =
+			final List<MeasurementRow> measurementRowList =
 					this.resolveIncompleteBlockDesign
-							.generateDesign(germplasmList, param, trialVariables, factors, factors, variates, null);
+							.generateDesign(germplasmList, param, measurementVariables, factors, factors, variates, null);
 			Assert.assertEquals(96, measurementRowList.size());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -281,21 +281,21 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	public void testResolvableRowColumnDesignService() {
 
 		try {
-			List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 200);
+			final List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 200);
 
-			ExpDesignParameterUi param = new ExpDesignParameterUi();
+			final ExpDesignParameterUi param = new ExpDesignParameterUi();
 			param.setRowsPerReplications("2");
 			param.setColsPerReplications("100");
 			param.setReplicationsCount("2");
 			param.setNoOfEnvironments("2");
 
 			// number of replicates should be 2 or more
-			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
+			final List<MeasurementVariable> measurementVariables = new ArrayList<MeasurementVariable>();
+			measurementVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),PROGRAM_UUID), Operation.ADD,
 					this.fieldbookService));
 
-			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
@@ -303,22 +303,22 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
 			variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(20368,PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			ExpDesignValidationOutput output = this.resolveRowColumn.validate(param, germplasmList);
-			Assert.assertEquals(true, output.isValid());
+			final ExpDesignValidationOutput output = this.resolveRowColumn.validate(param, germplasmList);
+			Assert.assertTrue(output.isValid());
 
-			List<MeasurementRow> measurementRowList =
-					this.resolveRowColumn.generateDesign(germplasmList, param, trialVariables, factors, factors, variates, null);
-			for (MeasurementRow measurementRow : measurementRowList) {
+			final List<MeasurementRow> measurementRowList =
+					this.resolveRowColumn.generateDesign(germplasmList, param, measurementVariables, factors, factors, variates, null);
+			for (final MeasurementRow measurementRow : measurementRowList) {
 				System.out.println(measurementRow.toString());
 			}
 
 			Assert.assertEquals(800, measurementRowList.size());
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -327,9 +327,9 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	public void testResolvableRowColumnAdjacentDesignService() {
 
 		try {
-			List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 200);
+			final List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 200);
 
-			ExpDesignParameterUi param = new ExpDesignParameterUi();
+			final ExpDesignParameterUi param = new ExpDesignParameterUi();
 			param.setRowsPerReplications("4");
 			param.setColsPerReplications("50");
 			param.setReplicationsCount("2");
@@ -341,12 +341,12 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			param.setNclatin("2");
 
 			// number of replicates should be 2 or more
-			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
+			final List<MeasurementVariable> measurementVariables = new ArrayList<MeasurementVariable>();
+			measurementVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),PROGRAM_UUID), Operation.ADD,
 					this.fieldbookService));
 
-			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
@@ -354,19 +354,19 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
 			variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(20368,PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			ExpDesignValidationOutput output = this.resolveRowColumn.validate(param, germplasmList);
-			Assert.assertEquals(true, output.isValid());
+			final ExpDesignValidationOutput output = this.resolveRowColumn.validate(param, germplasmList);
+			Assert.assertTrue(output.isValid());
 
-			List<MeasurementRow> measurementRowList =
-					this.resolveRowColumn.generateDesign(germplasmList, param, trialVariables, factors, factors, variates, null);
+			final List<MeasurementRow> measurementRowList =
+					this.resolveRowColumn.generateDesign(germplasmList, param, measurementVariables, factors, factors, variates, null);
 
 			Assert.assertEquals(800, measurementRowList.size());
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -375,9 +375,9 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	public void testResolvableRowColumnColsDesignService() {
 
 		try {
-			List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 200);
+			final List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 200);
 
-			ExpDesignParameterUi param = new ExpDesignParameterUi();
+			final ExpDesignParameterUi param = new ExpDesignParameterUi();
 			param.setRowsPerReplications("4");
 			param.setColsPerReplications("50");
 			param.setReplicationsCount("2");
@@ -389,12 +389,12 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			param.setNclatin("2");
 
 			// number of replicates should be 2 or more
-			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
+			final List<MeasurementVariable> measurementVariables = new ArrayList<MeasurementVariable>();
+			measurementVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),PROGRAM_UUID), Operation.ADD,
 					this.fieldbookService));
 
-			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
@@ -402,19 +402,19 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
 			variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(20368,PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			ExpDesignValidationOutput output = this.resolveRowColumn.validate(param, germplasmList);
-			Assert.assertEquals(true, output.isValid());
+			final ExpDesignValidationOutput output = this.resolveRowColumn.validate(param, germplasmList);
+			Assert.assertTrue(output.isValid());
 
-			List<MeasurementRow> measurementRowList =
-					this.resolveRowColumn.generateDesign(germplasmList, param, trialVariables, factors, factors, variates, null);
+			final List<MeasurementRow> measurementRowList =
+					this.resolveRowColumn.generateDesign(germplasmList, param, measurementVariables, factors, factors, variates, null);
 
 			Assert.assertEquals(800, measurementRowList.size());
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -423,9 +423,9 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	public void testResolvableRowColumnRowsDesignService() {
 
 		try {
-			List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 200);
+			final List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 200);
 
-			ExpDesignParameterUi param = new ExpDesignParameterUi();
+			final ExpDesignParameterUi param = new ExpDesignParameterUi();
 			param.setRowsPerReplications("4");
 			param.setColsPerReplications("50");
 			param.setReplicationsCount("3");
@@ -437,12 +437,12 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			param.setNclatin("2");
 
 			// number of replicates should be 2 or more
-			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
+			final List<MeasurementVariable> measurementVariables = new ArrayList<MeasurementVariable>();
+			measurementVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),PROGRAM_UUID), Operation.ADD,
 					this.fieldbookService));
 
-			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
@@ -450,19 +450,19 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
 			variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(20368,PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			ExpDesignValidationOutput output = this.resolveRowColumn.validate(param, germplasmList);
-			Assert.assertEquals(true, output.isValid());
+			final ExpDesignValidationOutput output = this.resolveRowColumn.validate(param, germplasmList);
+			Assert.assertTrue(output.isValid());
 
-			List<MeasurementRow> measurementRowList =
-					this.resolveRowColumn.generateDesign(germplasmList, param, trialVariables, factors, factors, variates, null);
+			final List<MeasurementRow> measurementRowList =
+					this.resolveRowColumn.generateDesign(germplasmList, param, measurementVariables, factors, factors, variates, null);
 
 			Assert.assertEquals(1200, measurementRowList.size());
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -471,17 +471,17 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	public void testRandomizeCompleteBlockDesignService() {
 
 		try {
-			List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 200);
+			final List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 200);
 
-			List<TreatmentVariable> treatmentVarList = new ArrayList<TreatmentVariable>();
+			final List<TreatmentVariable> treatmentVarList = new ArrayList<TreatmentVariable>();
 
-			TreatmentVariable treatmentVar1 = new TreatmentVariable();
+			final TreatmentVariable treatmentVar1 = new TreatmentVariable();
 			treatmentVar1.setLevelVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(8284,PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 			treatmentVar1.setValueVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(8282,PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			TreatmentVariable treatmentVar2 = new TreatmentVariable();
+			final TreatmentVariable treatmentVar2 = new TreatmentVariable();
 			treatmentVar2.setLevelVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(8377,PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 			treatmentVar2.setValueVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
@@ -489,14 +489,14 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 
 			treatmentVarList.add(treatmentVar2);
 
-			ExpDesignParameterUi param = new ExpDesignParameterUi();
+			final ExpDesignParameterUi param = new ExpDesignParameterUi();
 			param.setReplicationsCount("2");
 			param.setNoOfEnvironments("2");
 
-			Map<String, Map<String, List<String>>> treatmentFactorValues = new HashMap<String, Map<String, List<String>>>(); // Key - CVTerm
+			final Map<String, Map<String, List<String>>> treatmentFactorValues = new HashMap<String, Map<String, List<String>>>(); // Key - CVTerm
 																																// ID , List
 																																// of values
-			Map<String, List<String>> treatmentData = new HashMap<String, List<String>>();
+			final Map<String, List<String>> treatmentData = new HashMap<String, List<String>>();
 			treatmentData.put("labels", Arrays.asList("100", "200", "300"));
 
 			treatmentFactorValues.put("8284", treatmentData);
@@ -505,12 +505,12 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			param.setTreatmentFactorsData(treatmentFactorValues);
 
 			// number of replicates should be 2 or more
-			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
+			final List<MeasurementVariable> measurementVariables = new ArrayList<MeasurementVariable>();
+			measurementVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),PROGRAM_UUID), Operation.ADD,
 					this.fieldbookService));
 
-			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
@@ -518,29 +518,29 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId(),PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
+			final List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
 			variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(
 					this.fieldbookMiddlewareService.getStandardVariable(20368,PROGRAM_UUID), Operation.ADD, this.fieldbookService));
 
-			ExpDesignValidationOutput output = this.randomizeBlockDesign.validate(param, germplasmList);
-			Assert.assertEquals(true, output.isValid());
+			final ExpDesignValidationOutput output = this.randomizeBlockDesign.validate(param, germplasmList);
+			Assert.assertTrue(output.isValid());
 
-			List<MeasurementRow> measurementRowList =
-					this.randomizeBlockDesign.generateDesign(germplasmList, param, trialVariables, factors, factors, variates,
+			final List<MeasurementRow> measurementRowList =
+					this.randomizeBlockDesign.generateDesign(germplasmList, param, measurementVariables, factors, factors, variates,
 							treatmentVarList);
 
 			Assert.assertEquals(7200, measurementRowList.size());
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private List<ImportedGermplasm> createGermplasmList(String prefix, int size) {
-		List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
+	private List<ImportedGermplasm> createGermplasmList(final String prefix, final int size) {
+		final List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
 
 		for (int i = 0; i < size; i++) {
-			ImportedGermplasm germplasm = new ImportedGermplasm(i + 1, prefix + (i + 1), null);
+			final ImportedGermplasm germplasm = new ImportedGermplasm(i + 1, prefix + (i + 1), null);
 			list.add(germplasm);
 		}
 

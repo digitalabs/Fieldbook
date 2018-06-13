@@ -11,7 +11,7 @@ import org.generationcp.middleware.pojos.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 
 public class TestExpression {
 
@@ -34,13 +34,13 @@ public class TestExpression {
 	}
 
 	public AdvancingSource createAdvancingSourceTestData(final Method method,final ImportedGermplasm germplasm, final String name, final String season,
-		final String nurseryName) {
+		final String studyName) {
 		final List<Name> names = new ArrayList<>();
 		names.add(new Name(1, 1, 3, 0, 1, name + "_three", 0, 0, 0));
 		names.add(new Name(1, 1, 5, 0, 1, name + "_five", 0, 0, 0));
 		names.add(new Name(1, 1, 2, 1, 1, name + "_two", 0, 0, 0));
 
-		final AdvancingSource source = new AdvancingSource(germplasm, names, 2, method, false, nurseryName, "1");
+		final AdvancingSource source = new AdvancingSource(germplasm, names, 2, method, false, studyName, "1");
 		source.setRootName(name);
 		source.setSeason(season);
 		return source;
@@ -71,7 +71,7 @@ public class TestExpression {
 		final AdvancingSource source = new AdvancingSource(germplasm, names, 2, method, false, "MNL", "1");
 		source.setRootName(name);
 		source.setSeason("Dry");
-		source.setNurseryName("NurseryTest");
+		source.setStudyName("NurseryTest");
 		return source;
 	}
 

@@ -6,7 +6,7 @@
 				<div class="modal-body" id="exportStudyModalBody">
 					<div class="row form-group">
 						<div class="col-xs-11 col-md-11">
-							<label class="modal-title fbk-modal-title" id="heading-modal"></label>
+							<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{study.export.header}">Export Study Book</label>
 						</div>
 						<div class="col-xs-1 col-md-1">
 							<button id="close" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"></button>
@@ -19,7 +19,7 @@
 					</div>
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
-							<label class="control-label" th:text="#{nursery.export.note}"></label>
+							<label class="control-label" th:text="#{study.export.note}"></label>
 						</div>
 					</div>
 					<div class="row form-group">
@@ -42,10 +42,10 @@
 						<div class="report-type-section col-xs-4 col-md-4">
 							<select id="exportType">
 								<option value="0">Please Choose</option>
-								<option value="6" th:text="#{nursery.export.csv}"></option>
-								<option selected="selected"  value="2" th:text="#{nursery.export.excel}"></option>
-								<option value="5" th:text="#{nursery.export.ksu.fieldbook.csv}">KSU Fieldbook CSV</option>
-								<option value="4" th:text="#{nursery.export.ksu.fieldbook.excel}">KSU Fieldbook Excel</option>
+								<option value="6" th:text="#{study.export.csv}"></option>
+								<option selected="selected"  value="2" th:text="#{study.export.excel}"></option>
+								<option value="5" th:text="#{study.export.ksu.fieldbook.csv}">KSU Fieldbook CSV</option>
+								<option value="4" th:text="#{study.export.ksu.fieldbook.excel}">KSU Fieldbook Excel</option>
 							</select>
 						</div>
 					</div>
@@ -68,14 +68,14 @@
 							</select>
 						</div>
 						<div style="padding-top: 7px">
-							<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{study.export.data.collection.serpentine.tool.tip}"></span>
+							<span class="bms-fa-question-circle help-tooltip-study" data-placement="right" data-toggle="tooltip" th:title="#{study.export.data.collection.serpentine.tool.tip}"></span>
 						</div>
 					</div>
 
 					<div class="row form-group exportTrialInstanceSection fbk-hide">
 						<div class="col-xs-12 col-md-12">&nbsp;</div>
 						<div class="col-xs-12 col-md-12">
-							<label class="control-label h4" th:text="#{trial.export.choose.instance}"></label>
+							<label class="control-label h4" th:text="#{study.export.choose.instance}"></label>
 						</div>
 
 						<div class="col-xs-12 col-md-12">&nbsp;</div>
@@ -107,13 +107,13 @@
 					</div>
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
-							<label class="control-label" th:text="#{nursery.export.field.plan.confirmation}"></label>
+							<label class="control-label" th:text="#{study.export.field.plan.confirmation}"></label>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer addVariable-footer">
-					<button type="button" class="btn btn-default" aria-hidden="true" onclick="javascript:doConfirmGoBack();" th:text="#{nursery.go.back}">Cancel</button>
-					<button type="button" class="btn btn-primary" aria-hidden="true" onclick="javascript:doConfirmExport();" th:text="#{nursery.proceed}">Confirm</button>
+					<button type="button" class="btn btn-default" aria-hidden="true" onclick="javascript:doConfirmGoBack();" th:text="#{study.go.back}">Cancel</button>
+					<button type="button" class="btn btn-primary" aria-hidden="true" onclick="javascript:doConfirmExport();" th:text="#{study.proceed}">Confirm</button>
 				</div>
 			</div>
 		</div>
@@ -137,23 +137,21 @@ var submitExportUrl = '/Fieldbook/ExportManager/',
 $(document).ready(function() {
 	'use strict';
 	$('#exportStudyModal select').select2({width: 'copy', minimumResultsForSearch: 20});
-	$('#exportType').on('change', function() {
+	$('#exportType').on('change', function () {
 		if (StudyCustomExportReports.isCustomReport()) {
 			$('.data-collection-section').hide();
 			$('.exportTrialInstanceSection').addClass('fbk-hide');
 			$('.exportRSection').css('display', 'none');
-		}else if ($(this).val() === '2') {
+		} else if ($(this).val() === '2') {
 			$('.data-collection-section').show();
 			$('.exportRSection').css('display', 'block');
-			if (!isNursery()) {
-				$('.exportTrialInstanceSection').removeClass('fbk-hide');
-			}
+			$('.exportTrialInstanceSection').removeClass('fbk-hide');
+
 		} else {
 			$('.data-collection-section').show();
 			$('.exportRSection').css('display', 'none');
-			if (!isNursery()) {
-				$('.exportTrialInstanceSection').removeClass('fbk-hide');
-			}
+			$('.exportTrialInstanceSection').removeClass('fbk-hide');
+
 		}
 	});
 
@@ -165,60 +163,36 @@ $(document).ready(function() {
 
 function checkBeforeExport() {
 	'use strict';
-	var studyId = '0',
-	checkedInstance = getExportCheckedInstances(),
-	counter = 0,
-	hasNoFieldmap = false;
+	var checkedInstance = getExportCheckedInstances(),
+		counter = 0,
+		hasNoFieldmap = false;
 
-	if ($('#browser-nurseries').length !== 0) {
-		// We are on the landing page
-		studyId = getCurrentStudyIdInTab();
-	}
 
 	if (StudyCustomExportReports.isCustomReport()) {
 		StudyCustomExportReports.doExport();
 		return true;
 	}
 
-	if (!isNursery()) {
-		if (checkedInstance !== null && checkedInstance.length === 0) {
-			showErrorMessage('', 'Please select at least 1 instance');
-			return false;
-		}
+
+	if (checkedInstance !== null && checkedInstance.length === 0) {
+		showErrorMessage('', 'Please select at least 1 instance');
+		return false;
 	}
 
 	if ($('#exportWayType').val() === '1') {
 		exportStudy();
-	}else {
-		if (isNursery()) {
-			$.ajax({
-				url: '/Fieldbook/ExportManager/study/hasFieldMap?studyId=' + studyId,
-				type: 'GET',
-				cache: false,
-				success: function(data) {
-					if (data === "0") {
-						// Disable the export order of serpentine
-						$('#exportStudyModal').modal('hide');
-						$('#exportStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });
-					} else {
-						exportStudy();
-					}
-
-				}
-			});
+	} else {
+		for (counter = 0; counter < checkedInstance.length; counter++) {
+			if (checkedInstance[counter].hasFieldmap === 'No') {
+				hasNoFieldmap = true;
+				break;
+			}
+		}
+		if (hasNoFieldmap) {
+			$('#exportStudyModal').modal('hide');
+			$('#exportStudyConfirmationModal').modal({backdrop: 'static', keyboard: true});
 		} else {
-			for (counter = 0 ; counter < checkedInstance.length ; counter++) {
-				if (checkedInstance[counter].hasFieldmap === 'No') {
-					hasNoFieldmap = true;
-					break;
-				}
-			}
-			if (hasNoFieldmap) {
-				$('#exportStudyModal').modal('hide');
-				$('#exportStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });
-			} else {
-				exportStudy();
-			}
+			exportStudy();
 		}
 	}
 }
@@ -237,44 +211,34 @@ function doConfirmExport() {
 
 function showExportOptions() {
 	'use strict';
-	var studyType = '',
-		studyId = '0';
 
 	if ($('.import-study-data').data('data-import') === '1') {
 		showErrorMessage('', needSaveImportDataError);
 		return;
 	}
 
-	if ($('#browser-nurseries').length !== 0) {
-		// We are on the landing page
-		studyType = $("#study" + getCurrentStudyIdInTab() + " #study-type").val();
-		studyId = getCurrentStudyIdInTab();
-	} else {
-		studyType = isNursery() ? 'Nursery' : 'Trial';
-	}
+	var studyId = $('#studyId').val();
 
-	$('#exportStudyModal #heading-modal').html(exportHeader + " " + studyType + " " + exportBookHeader);
-	StudyCustomExportReports.showReports();
-	$('#exportStudyModal').modal({ backdrop: 'static', keyboard: true });
+	StudyCustomExportReports.showReports(studyId);
 
-	if (!isNursery()) {
-		//we call an ajax to display the table of instances
-		studyId = $('#studyId').val();
-		$.ajax({
-			url: '/Fieldbook/ExportManager/trial/instances/' + studyId,
-			type: 'GET',
-			cache: false,
-			success: function(data) {
-				$('.exportTrialInstanceSection .trial-instance').html(data);
-				if (StudyCustomExportReports.isCustomReport()) {
-					$('.exportTrialInstanceSection').addClass('fbk-hide');
-				} else {
-					$('.exportTrialInstanceSection').removeClass('fbk-hide');
-				}
+	$('#exportStudyModal').modal({backdrop: 'static', keyboard: true});
+
+	$.ajax({
+		url: '/Fieldbook/ExportManager/trial/instances/' + studyId,
+		type: 'GET',
+		cache: false,
+		success: function (data) {
+			$('.exportTrialInstanceSection .trial-instance').html(data);
+			if (StudyCustomExportReports.isCustomReport()) {
+				$('.exportTrialInstanceSection').addClass('fbk-hide');
+			} else {
+				$('.exportTrialInstanceSection').removeClass('fbk-hide');
 			}
-		});
-	}
+		}
+	});
+
 }
+
 function showExportResponse(responseText, statusText, xhr, $form) {
 	'use strict';
 	var resp = $.parseJSON(responseText);
@@ -289,7 +253,6 @@ function showExportResponse(responseText, statusText, xhr, $form) {
 	}
 
 	$('#exportStudyModal').modal('hide');
-
 }
 
 //]]>

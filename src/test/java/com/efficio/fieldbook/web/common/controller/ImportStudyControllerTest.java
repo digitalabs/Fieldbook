@@ -1,11 +1,17 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.study.ImportStudyType;
+import com.efficio.fieldbook.web.study.service.ExcelImportStudyService;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.lowagie.text.pdf.codec.Base64.InputStream;
+import junit.framework.Assert;
 import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.service.FileService;
@@ -14,8 +20,8 @@ import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -34,18 +40,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.study.ImportStudyType;
-import com.efficio.fieldbook.web.study.service.ExcelImportStudyService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.lowagie.text.pdf.codec.Base64.InputStream;
-
-import junit.framework.Assert;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ImportStudyControllerTest {
 
@@ -102,27 +100,12 @@ public class ImportStudyControllerTest {
 
 	@Test
 	public void testSaveImportedFiles() {
-		final CreateNurseryForm form = Mockito.mock(CreateNurseryForm.class);
+		final CreateTrialForm form = Mockito.mock(CreateTrialForm.class);
 		final Model model = Mockito.mock(Model.class);
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 		final Map<String, Object> result = this.unitUnderTest.saveImportedFiles(form, model);
 		Assert.assertEquals("1", result.get(ImportStudyController.SUCCESS));
-		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(workbook,
-				this.contextUtil.getCurrentProgramUUID(), true);
-		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(
-				this.userSelection.getWorkbook().getStudyDetails().getId(),
-				this.userSelection.getWorkbook().getStudyDetails().getStudyName(), form.getColumnOrders(),
-				this.userSelection.getWorkbook());
-	}
-
-	@Test
-	public void testSaveImportedFilesNursery() {
-		final CreateNurseryForm form = Mockito.mock(CreateNurseryForm.class);
-		final Model model = Mockito.mock(Model.class);
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
-		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
-		this.unitUnderTest.saveImportedFilesNursery(form, model);
 		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(workbook,
 				this.contextUtil.getCurrentProgramUUID(), true);
 		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(
@@ -140,7 +123,7 @@ public class ImportStudyControllerTest {
 		}
 
 		final Workbook testWorkbook = WorkbookDataUtil
-				.getTestWorkbook(ImportStudyControllerTest.APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, StudyType.N);
+				.getTestWorkbook(ImportStudyControllerTest.APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, StudyTypeDto.getNurseryDto());
 		this.setTestMeasurementValues(testWorkbook);
 
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(testWorkbook);
@@ -167,7 +150,14 @@ public class ImportStudyControllerTest {
 		// verify that the values in observation data are equal to expected
 		// values coming from the GermplasmChangeDetail object
 		int i = 0;
+		String instanceNumber = "1";
 		for (final MeasurementRow row : testWorkbook.getObservations()) {
+			final MeasurementData trialInst = row.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId());
+			if (!instanceNumber.equals(trialInst.getValue())) {
+				i = 0;
+				instanceNumber = trialInst.getValue();
+			}
+
 			final MeasurementData desig = row.getMeasurementData(TermId.DESIG.getId());
 			Assert.assertEquals(changeDetails[i].getNewDesig(), desig.getValue());
 
@@ -190,7 +180,7 @@ public class ImportStudyControllerTest {
 		}
 
 		final Workbook testWorkbook = WorkbookDataUtil
-				.getTestWorkbook(ImportStudyControllerTest.APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, StudyType.N);
+				.getTestWorkbook(ImportStudyControllerTest.APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, StudyTypeDto.getNurseryDto());
 		this.setTestMeasurementValues(testWorkbook);
 
 		final List<Integer> newGids = new ArrayList<>();

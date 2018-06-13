@@ -2,7 +2,6 @@ package com.efficio.fieldbook.web.importdesign.generator;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -14,7 +13,6 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -127,13 +125,7 @@ public class DesignImportMeasurementRowGenerator {
 			final DesignHeaderItem headerItem = trialEnvironmentHeader.getValue();
 
 			// add trial instance factor
-			if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
-					&& this.workbook.getStudyDetails().getStudyType() == StudyType.N) {
-				// do not add the trial instance to measurement data list if the workbook is Nursery
-				LOG.debug("Study Type is Nursery - did not add Trial Instance Factor");
-				continue;
-			} else if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
-					&& this.workbook.getStudyDetails().getStudyType() == StudyType.T) {
+			if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				LOG.debug("Study Type is Trial - adding Trial Instance Factor");
 				final String value = rowValues.get(headerItem.getColumnIndex());
 				dataList.add(this.createMeasurementData(headerItem.getVariable(), value));
@@ -252,13 +244,11 @@ public class DesignImportMeasurementRowGenerator {
 
 	public void addFactorsToMeasurementRows(final List<MeasurementRow> measurements) {
 
-		if (this.workbook.getStudyDetails().getStudyType() == StudyType.N) {
-			for (final MeasurementVariable factor : this.workbook.getFactors()) {
-				for (final MeasurementRow row : measurements) {
-					this.addFactorToDataListIfNecessary(factor, row.getDataList());
-				}
-
+		for (final MeasurementVariable factor : this.workbook.getFactors()) {
+			for (final MeasurementRow row : measurements) {
+				this.addFactorToDataListIfNecessary(factor, row.getDataList());
 			}
+
 		}
 	}
 
@@ -271,8 +261,8 @@ public class DesignImportMeasurementRowGenerator {
 		dataList.add(this.createMeasurementData(factor, ""));
 	}
 
-	public void addVariatesToMeasurementRows(final List<MeasurementRow> measurements, final UserSelection userSelection,
-			final OntologyService ontologyService, final ContextUtil contextUtil) {
+	public void addVariatesToMeasurementRows(final List<MeasurementRow> measurements, final OntologyService ontologyService,
+		final ContextUtil contextUtil) {
 
 		final Set<MeasurementVariable> temporaryList = new HashSet<>();
 		for (final MeasurementVariable mvar : this.workbook.getVariates()) {

@@ -13,10 +13,10 @@ import javax.annotation.Resource;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessor;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory;
-import com.efficio.fieldbook.web.nursery.bean.AdvanceType;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
+import com.efficio.fieldbook.web.trial.bean.AdvanceType;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.Study;
@@ -55,7 +55,7 @@ public class AdvancingSourceListFactory {
 
 	private static final String DEFAULT_TEST_VALUE = "T";
 
-	public AdvancingSourceList createAdvancingSourceList(Workbook workbook, AdvancingNursery advanceInfo, Study nursery,
+	public AdvancingSourceList createAdvancingSourceList(Workbook workbook, AdvancingStudy advanceInfo, Study study,
 			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
 
 		Map<Integer, List<PlantDTO>> sampledPlantsMap = new HashMap<>();
@@ -76,12 +76,12 @@ public class AdvancingSourceListFactory {
 		Integer plotVariateId = advanceInfo.getPlotVariateId();
 		List<Name> names = null;
 
-		String nurseryName = null;
-		if (nursery != null) {
-			nurseryName = nursery.getName();
+		String studyName = null;
+		if (study != null) {
+			studyName = study.getName();
 		}
 
-		dataProcessor.processEnvironmentLevelData(environmentLevel, workbook, advanceInfo, nursery);
+		dataProcessor.processEnvironmentLevelData(environmentLevel, workbook, advanceInfo, study);
 
 		List<Integer> gids = new ArrayList<>();
 
@@ -189,7 +189,7 @@ public class AdvancingSourceListFactory {
 					advancingSourceCandidate.setPlantsSelected(plantsSelected);
 					advancingSourceCandidate.setBreedingMethod(breedingMethod);
 					advancingSourceCandidate.setCheck(isCheck);
-					advancingSourceCandidate.setNurseryName(nurseryName);
+					advancingSourceCandidate.setStudyName(studyName);
 
                     dataProcessor.processPlotLevelData(advancingSourceCandidate, row);
 

@@ -97,11 +97,11 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 	void writeOutputFile(Workbook workbook, List<Integer> visibleColumns, MeasurementRow instanceLevelObservation,
 			List<MeasurementRow> plotLevelObservations, String fileNamePath) throws IOException {
 		FileOutputStream fos = null;
-		
+
 		final HSSFWorkbook xlsBook = new HSSFWorkbook();
 		this.writeDescriptionSheet(xlsBook, workbook, instanceLevelObservation, visibleColumns);
 		this.writeObservationSheet(xlsBook, workbook, plotLevelObservations, visibleColumns, BREEDING_METHOD_PROPERTY_NAME);
-	
+
 		try {
 			fos = new FileOutputStream(new File(fileNamePath));
 			xlsBook.write(fos);
@@ -111,14 +111,14 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 			}
 		}
 
-		
+
 	}
 
 	@Override
 	String getFileExtension() {
 		return AppConstants.EXPORT_XLS_SUFFIX.getString();
 	}
-	
+
 	protected void writeDescriptionSheet(final HSSFWorkbook xlsBook, final Workbook workbook, final MeasurementRow trialObservation,
 			final List<Integer> visibleColumns) {
 		final Locale locale = LocaleContextHolder.getLocale();
@@ -196,7 +196,7 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.startdate", startDate);
 		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.enddate", endDate);
 		this.writeStudyDetailRow(xlsBook, xlsSheet, rowNumIndex++, "export.study.description.details.studytype",
-				studyDetails.getStudyType().name());
+				studyDetails.getStudyType().getName());
 
 		return rowNumIndex;
 	}
@@ -210,7 +210,7 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 				}
 			}
 		}
-		return variable.getRole();
+		return variable != null ? variable.getRole() : null;
 	}
 
 	/**
@@ -648,5 +648,5 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
-	
+
 }

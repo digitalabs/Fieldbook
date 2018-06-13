@@ -1,6 +1,6 @@
 /*global angular, openStudyTree, showErrorMessage, operationMode, resetGermplasmList,
 showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
-stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, InventoryPage*/
+stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, InventoryPage, ImportCrosses*/
 //TODO move this messages under a namespace
 /* global addEnvironmentsImportDesignMessage, importSaveDataWarningMessage*/
 
@@ -144,7 +144,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				{   name: 'Settings',
 					state: 'trialSettings'
 				},
-				{   name: 'Germplasm',
+				{   name: 'Germplasm & Checks',
 					state: 'germplasm'
 				},
 				{   name: 'Environments',
@@ -165,19 +165,49 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			$scope.isSettingsTab = true;
 			$location.path('/trialSettings');
 			$scope.advanceTabsData = [];
-			$scope.advanceTrialTabs = [];
-			$scope.sampleListData = [];
-			$scope.sampleListTabs = [];
-			$scope.isOpenTrial = TrialManagerDataService.isOpenTrial;
+			$scope.advanceTabs = [];
+			$scope.sampleTabsData = [];
+			$scope.sampleTabs = [];
+			$scope.crossesTabsData = [];
+			$scope.crossesTabs = [];
+			$scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
+			$scope.studyTypes = [];
+			$scope.studyTypeSelected = undefined;
+			$scope.isChoosePreviousStudy = false;
 
-			$scope.isChoosePreviousTrial = false;
+			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
-			$scope.toggleChoosePreviousTrial = function() {
-				$scope.isChoosePreviousTrial = !$scope.isChoosePreviousTrial;
+			var config = {
+				headers: {
+					'X-Auth-Token': xAuthToken
+				}
+			};
+
+			$http.get('/bmsapi/studytype/' + cropName + '/allVisible', config).success(function (data) {
+				$scope.studyTypes = data;
+
+			}).error(function (data) {
+				if (data.status == 401) {
+					bmsAuth.handleReAuthentication();
+				}
+				showErrorMessage('', data.error.message);
+			});
+
+			$scope.changeSelectStudyType = function (studyTypeSelected) {
+				angular.forEach($scope.studyTypes, function (studyType) {
+					if (studyType.id == studyTypeSelected) {
+						$scope.data.studyType = studyType.name;
+						return;
+					}
+				});
+			};
+
+			$scope.toggleChoosePreviousStudy = function() {
+				$scope.isChoosePreviousStudy = !$scope.isChoosePreviousStudy;
 			};
 
 			$scope.resetTabsData = function() {
-				// reset the service data to initial state (for untick of user previous trial)
+				// reset the service data to initial state (for untick of user previous study)
 				_.each(_.keys($localStorage.serviceBackup.settings), function(key) {
 					if ('basicDetails' !== key) {
 						TrialManagerDataService.updateSettings(key, angular.copy($localStorage.serviceBackup.settings[key]));
@@ -200,7 +230,7 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 					transformResponse: undefined
 				}).then(function(response) {
 					if (response.data !== 'success' || response.status !== 200) {
-						showErrorMessage('', 'Your trial settings could not be cleared at the moment. Please try again later.');
+						showErrorMessage('', 'Your study settings could not be cleared at the moment. Please try again later.');
 					}
 				});
 
@@ -208,7 +238,6 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				if (measurementDiv.length !== 0) {
 					//measurementDiv.html('');
 				}
-
 				if (typeof resetGermplasmList !== 'undefined') {
 					resetGermplasmList();
 				}
@@ -229,16 +258,16 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 			$scope.saveCurrentTrialData = TrialManagerDataService.saveCurrentData;
 
-			$scope.selectPreviousTrial = function() {
-				openStudyTree(3, $scope.useExistingTrial);
+			$scope.selectPreviousStudy = function() {
+				openStudyTree(3, $scope.useExistingStudy);
 			};
 
 			$scope.changeFolderLocation = function() {
 				openStudyTree(2, TrialManagerDataService.updateSelectedFolder);
 			};
 
-			$scope.useExistingTrial = function(existingTrialID) {
-				$http.get('/Fieldbook/TrialManager/createTrial/useExistingTrial?trialID=' + existingTrialID).success(function(data) {
+			$scope.useExistingStudy = function(existingStudyId) {
+				$http.get('/Fieldbook/TrialManager/createTrial/useExistingStudy?studyId=' + existingStudyId).success(function(data) {
 					// update data and settings
 					if (data.createTrialForm !== null && data.createTrialForm.hasError === true) {
 						$scope.resetTabsData();
@@ -257,6 +286,16 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 								});
 							}
 						}
+
+						// update Select StudyType.
+						angular.forEach($scope.studyTypes, function(studyType) {
+								if (studyType.label === data.createTrialForm.studyTypeName ) {
+									$scope.changeSelectStudyType(studyType.id);
+									$('#studyTypeId').val("number:"+studyType.id.toString());
+									return;
+								}
+							}
+						);
 
 						TrialManagerDataService.updateCurrentData('trialSettings',
 							TrialManagerDataService.extractData(data.trialSettingsData));
@@ -308,16 +347,13 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 				TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 
-				//enable the user to regenerate preset design when the user adds new environment
-				TrialManagerDataService.applicationData.hasGeneratedDesignPreset = false;
-
 				$state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments, timestamp: new Date()});
 				$scope.performFunctionOnTabChange('environment');
 
 			};
 
 			$scope.loadMeasurementsTabInBackground = function() {
-				if (isOpenTrial()) {
+				if (isOpenStudy()) {
 					$state.go('editMeasurements', {}, { location: false });
 				}
 
@@ -332,12 +368,12 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 					TrialManagerDataService.trialMeasurement.count > 0;
 			};
 
-			$scope.displayGermplasmOnlyActions = function() {
+			$scope.hasGermplasmListSelected = function() {
 				return TrialManagerDataService.applicationData.germplasmListSelected;
 			};
 
 			$scope.displayGermplasmOrMeasurmentOnlyActions = function() {
-				return this.displayGermplasmOnlyActions() || this.displayMeasurementOnlyActions();
+				return this.hasGermplasmListSelected() || this.displayMeasurementOnlyActions();
 			};
 
 			// Programatically navigate to specified tab state
@@ -345,6 +381,10 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				$state.go(targetState);
 				$scope.performFunctionOnTabChange(targetState);
 
+			};
+
+			$scope.hasAdvanceListCreated = function () {
+				return $scope.advanceTabsData.length !== 0;
 			};
 
 			$scope.performFunctionOnTabChange = function(targetState) {
@@ -375,20 +415,20 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 					}
 
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial.' +
+						showAlertMessage('', 'Changes have been made that may affect the experimental design of this study.' +
 							'Please regenerate the design on the Experimental Design tab', 10000);
 					}
 				} else if (targetState === 'experimentalDesign') {
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Trial settings have been updated since the experimental design was generated. ' +
-							'Please select a design type and specify the parameters for your trial again', 10000);
+						showAlertMessage('', 'Study settings have been updated since the experimental design was generated. ' +
+							'Please select a design type and specify the parameters for your study again', 10000);
 					}
 				} else if (targetState === 'createMeasurements') {
 					if (TrialManagerDataService.applicationData.unsavedGeneratedDesign) {
 						$rootScope.$broadcast('previewMeasurements');
                     }
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial.' +
+						showAlertMessage('', 'Changes have been made that may affect the experimental design of this study.' +
 							'Please regenerate the design on the Experimental Design tab', 10000);
 					}
 
@@ -419,59 +459,119 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				}
 			};
 
-			$scope.addAdvanceTabData = function(tabId, tabData, listName, isPageLoading) {
-				//TODO remove this global
-				isAdvanceListGeneratedForTrial = true;
-				var isSwap = false;
+			$scope.addStockTabData = function (tabId, tabData, listName, isPageLoading) {
+				var isAdvanceStock = false;
+				var isCrossesStock = false;
+				var isAdvance = false;
+
+				if (isPageLoading === undefined) {
+					isPageLoading = false;
+				}
+
+				if ($scope.stockListTabs === undefined) {
+					$scope.stockListTabs = [];
+				}
+
+				angular.forEach($scope.advanceTabs, function (value, index) {
+					if (!isAdvance && value.id === parseInt(tabId)) {
+						isAdvance = true;
+					}
+
+					if (!isAdvanceStock && value.state === 'stock-list' + tabId + '-li') {
+						isAdvanceStock = true;
+					}
+
+					if(isAdvance && isAdvanceStock){
+						$scope.advanceTabsData[index].data = tabData;
+					}
+				});
+
+				angular.forEach($scope.crossesTabs, function (value, index) {
+					if (!isCrossesStock && value.state === 'stock-list' + tabId + '-li') {
+						$scope.crossesTabsData[index].data = tabData;
+						isCrossesStock = true;
+					}
+				});
+
+				if (!isAdvanceStock && isAdvance) {
+					angular.forEach($scope.advanceTabs, function (value, index) {
+						if (!isAdvanceStock) {
+							if (parseInt(value.id) === parseInt(tabId)) {
+								$scope.advanceTabs.splice(index + 1, 0, {
+									name: listName,
+									state: 'stock-list' + tabId + '-li',
+									id: tabId,
+									displayName: 'Stock List:[' + $scope.advanceTabs[index].name + ']'
+								});
+
+								$scope.advanceTabsData.splice(index + 1, 0, {
+									name: 'stock-list' + tabId + '-li',
+									data: tabData,
+									id: 'stock-content-pane' + tabId
+								});
+								isAdvanceStock = true;
+							}
+						}
+					});
+
+				} else if (!isCrossesStock && !isAdvance) {
+					angular.forEach($scope.crossesTabs, function (value, index) {
+						if (!isCrossesStock) {
+							if (parseInt(value.id) === parseInt(tabId)) {
+								$scope.crossesTabs.splice(index + 1, 0, {
+									name: listName,
+									state: 'stock-list' + tabId + '-li',
+									id: tabId,
+									displayName: 'Stock List:[' + $scope.crossesTabs[index].name + ']'
+								});
+
+								$scope.crossesTabsData.splice(index + 1, 0, {
+									name: 'stock-list' + tabId + '-li',
+									data: tabData,
+									id: 'stock-content-pane' + tabId
+								});
+								isCrossesStock = true;
+							}
+						}
+					});
+				}
+
+				if (isPageLoading !== true) {
+					$scope.tabSelected = 'stock-list' + tabId + '-li';
+				}
+
+				$('#listActionButton' + tabId).addClass('disabled');
+			};
+
+			$scope.addAdvanceTabData = function (tabId, tabData, listName, isPageLoading) {
 				var isUpdate = false;
 				if (isPageLoading === undefined) {
 					isPageLoading = false;
 				}
-				angular.forEach($scope.advanceTrialTabs, function(value, index) {
-					if (value.name === listName && parseInt(value.id) === parseInt(tabId)) {
-						isUpdate = true;
-						$scope.advanceTabsData[index].data = tabData;
-						return;
-					}
-				}
-				);
 
-				$scope.stockListTabs = [];
-				angular.forEach($scope.advanceTrialTabs, function(value, index) {
-					if (!isSwap && !isUpdate) {
-						if (parseInt(value.id) === parseInt(tabId)) {
-							$scope.advanceTrialTabs.splice(index + 1, 0, {
-								name: listName,
-								state: 'stock-list' + tabId + '-li',
-								id: tabId,
-								displayName: 'Stock List:[' + $scope.advanceTrialTabs[index].name + ']'
-							});
+				angular.forEach($scope.advanceTabs, function (value, index) {
+						if (!isUpdate && value.name === listName && parseInt(value.id) === parseInt(tabId)) {
+							isUpdate = true;
+							$scope.advanceTabsData[index].data = tabData;
 
-							$scope.advanceTabsData.splice(index + 1, 0, {
-								name: 'stock-list' + tabId + '-li',
-								data: tabData,
-								id: 'stock-content-pane' + tabId
-							});
-							isSwap = true;
-							if (isPageLoading !== true) {
-								$scope.tabSelected = 'stock-list' + tabId + '-li';
-							}
-							$('#listActionButton' + tabId).addClass('disabled');
 						}
 					}
-				});
-				if (!isSwap && !isUpdate) {
-					$scope.advanceTrialTabs.push({
+				);
+
+				if (!isUpdate) {
+					$scope.advanceTabs.push({
 						name: listName,
 						state: 'advance-list' + tabId + '-li',
 						id: tabId,
 						displayName: 'Advance List: [' + listName + ']'
 					});
+
 					$scope.advanceTabsData.push({
 						name: 'advance-list' + tabId + '-li',
 						data: tabData,
 						id: 'advance-list' + tabId + '-li'
 					});
+
 					if (isPageLoading !== true) {
 						$scope.tabSelected = 'advance-list' + tabId + '-li';
 						$scope.isSettingsTab = false;
@@ -480,53 +580,29 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 
 			};
 
-			$scope.addSampleListTabData = function(tabId, tabData, listName, isPageLoading) {
+			$scope.addSampleTabData = function (tabId, tabData, listName, isPageLoading) {
 				var isSwap = false;
 				var isUpdate = false;
 				if (isPageLoading === undefined) {
 					isPageLoading = false;
 				}
-				angular.forEach($scope.sampleListTabs, function(value, index) {
-						if (value.name === listName && parseInt(value.id) === parseInt(tabId)) {
+				angular.forEach($scope.sampleTabs, function (value, index) {
+						if (!isUpdate && value.name === listName && parseInt(value.id) === parseInt(tabId)) {
 							isUpdate = true;
-							$scope.sampleListData[index].data = tabData;
-							return;
+							$scope.sampleTabsData[index].data = tabData;
+
 						}
 					}
 				);
 
-				angular.forEach($scope.sampleListTabs, function(value, index) {
-					if (!isSwap && !isUpdate) {
-						if (parseInt(value.id) === parseInt(tabId)) {
-							$scope.sampleListTabs.splice(index + 1, 0, {
-								name: listName,
-								state: 'sample-list' + tabId + '-li',
-								id: tabId,
-								displayName: 'Sample List:[' + $scope.sampleListTabs[index].name + ']'
-							});
-
-							$scope.sampleListData.splice(index + 1, 0, {
-								name: 'stample-list' + tabId + '-li',
-								data: tabData,
-								id: 'sample-content-pane' + tabId
-							});
-							isSwap = true;
-							if (isPageLoading !== true) {
-								$scope.tabSelected = 'sample-list' + tabId + '-li';
-							}
-							$('#listActionButton' + tabId).addClass('disabled');
-						}
-					}
-				});
-
 				if (!isSwap && !isUpdate) {
-					$scope.sampleListTabs.push({
+					$scope.sampleTabs.push({
 						name: listName,
 						state: 'sample-list' + tabId + '-li',
 						id: tabId,
 						displayName: 'Sample List: [' + listName + ']'
 					});
-					$scope.sampleListData.push({
+					$scope.sampleTabsData.push({
 						name: 'sample-list' + tabId + '-li',
 						data: tabData,
 						id: 'sample-list' + tabId + '-li'
@@ -538,16 +614,55 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 				}
 			};
 
+			$scope.addCrossesTabData = function (tabId, tabData, listName, crossesType, isPageLoading) {
+				var isUpdate = false;
+				if (isPageLoading === undefined) {
+					isPageLoading = false;
+				}
+				angular.forEach($scope.crossesTabs, function (value, index) {
+						if (!isUpdate && value.name === listName && parseInt(value.id) === parseInt(tabId)) {
+							isUpdate = true;
+							$scope.crossesTabsData[index].data = tabData;
+
+						}
+					}
+				);
+
+				if (!isUpdate) {
+					$scope.crossesTabs.push({
+						name: listName,
+						state: 'crosses-list' + tabId + '-li',
+						id: tabId,
+						displayName: crossesType + ': [' + listName + ']'
+					});
+					$scope.crossesTabsData.push({
+						name: 'crosses-list' + tabId + '-li',
+						data: tabData,
+						id: 'crosses-list' + tabId + '-li'
+					});
+					if (isPageLoading !== true) {
+						$scope.tabSelected = 'crosses-list' + tabId + '-li';
+						$scope.isSettingsTab = false;
+					}
+				}
+			};
+
 			$scope.advancedTrialList = TrialManagerDataService.settings.advancedList;
 
 			angular.forEach($scope.advancedTrialList, function(value) {
-				displayAdvanceList('', value.id, value.name, false, '', true);
+				displayAdvanceList(value.id, value.name, false, '', true);
 			});
 
 			$scope.sampleList = TrialManagerDataService.settings.sampleList;
 
 			angular.forEach($scope.sampleList, function(value) {
 				displaySampleList(value.listId, value.listName, true);
+			});
+
+			$scope.crossesList = TrialManagerDataService.settings.crossesList;
+
+			angular.forEach($scope.crossesList, function(value) {
+				displayCrossesList(value.id, value.name, value.crossesType, true, '', true);
 			});
 
 			$scope.tabChange = function(selectedTab) {
@@ -571,22 +686,30 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 			};
 
 			$scope.closeAdvanceListTab = function(tab) {
-				var index = $scope.findIndexByKeyValue($scope.advanceTrialTabs, 'state', tab);
-				$scope.advanceTrialTabs.splice(index, 1);
+				var index = $scope.findIndexByKeyValue($scope.advanceTabs, 'state', tab);
+				$scope.advanceTabs.splice(index, 1);
 				$scope.advanceTabsData.splice(index, 1);
 				$scope.tabSelected = 'trialSettings';
 				$scope.isSettingsTab = true;
 			};
 
 			$scope.closeSampleListTab = function(tab) {
-				var index = $scope.findIndexByKeyValue($scope.sampleListTabs, 'state', tab);
-				$scope.sampleListTabs.splice(index, 1);
-				$scope.sampleListData.splice(index, 1);
+				var index = $scope.findIndexByKeyValue($scope.sampleTabs, 'state', tab);
+				$scope.sampleTabs.splice(index, 1);
+				$scope.sampleTabsData.splice(index, 1);
 				$scope.tabSelected = 'trialSettings';
 				$scope.isSettingsTab = true;
 			};
 
-			$scope.initSampleListTab = function(tab) {
+			$scope.closeCrossesListTab = function(tab) {
+				var index = $scope.findIndexByKeyValue($scope.crossesTabs, 'state', tab);
+				$scope.crossesTabs.splice(index, 1);
+				$scope.crossesTabsData.splice(index, 1);
+				$scope.tabSelected = 'trialSettings';
+				$scope.isSettingsTab = true;
+			};
+
+			$scope.initSampleTab = function(tab) {
 				$timeout(function() {
 					$('#sample-list-' + tab.id).dataTable().fnAdjustColumnSizing();
 				}, 1);
@@ -609,15 +732,15 @@ stockListImportNotSaved, ImportDesign, isOpenTrial, displayAdvanceList, Inventor
 		}]);
 
 	manageTrialApp.filter('filterMeasurementState', function() {
-			return function(tabs, isOpenTrial) {
+			return function(tabs, isOpenStudy) {
 				var filtered = angular.copy(tabs);
 
 				for (var i = 0; i < filtered.length; i++) {
-					if (filtered[i].state === 'editMeasurements' && isOpenTrial) {
+					if (filtered[i].state === 'editMeasurements' && isOpenStudy) {
 						filtered.splice(i, 1);
 
 						break;
-					} else if (filtered[i].state === 'openMeasurements' && !isOpenTrial) {
+					} else if (filtered[i].state === 'openMeasurements' && !isOpenStudy) {
 						filtered.splice(i, 1);
 
 						break;

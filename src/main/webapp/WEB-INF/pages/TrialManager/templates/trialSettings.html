@@ -3,7 +3,7 @@
         <!-- management details title -->
 
         <section-container icon="bms-mgt-details"
-                           th:attr="heading=#{trial.managesettings.settings},reminder=#{section.reminder.to.add.records},help-tooltip=#{trial.managesettings.settings.tooltip}"
+                           th:attr="heading=#{study.managesettings.settings},reminder=#{section.reminder.to.add.records},help-tooltip=#{study.managesettings.settings.tooltip}"
                            show-reminder="managementDetails.keys().length &lt;= 0" add-variable="true" hide-variable="addVariable"
                            model-data="managementDetails" variable-type="1805">
             <div name="content">
@@ -40,7 +40,7 @@
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
 
         <section-container icon="bms-variates" add-variable="true" hide-variable="addVariable" model-data="selectionVariables" variable-type="1807"
-                           th:attr="heading=#{nursery.create.nursery.selection.variates},help-tooltip=#{trial.managesettings.selection.tooltip}">
+                           th:attr="heading=#{study.create.study.selection.variates},help-tooltip=#{study.managesettings.selection.tooltip}">
             <div name="content" class="">
                 <table style="table-layout: fixed;" class="my-class table table-curved table-condensed selection-variate-table" id="selectionVariablesSettings">
                     <thead>

@@ -81,11 +81,11 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@ModelAttribute("locationList")
 	public List<Location> getLocationList() {
 		try {
-			List<Location> dataTypesOrig = this.fieldbookMiddlewareService.getAllBreedingLocations();
-			List<Location> dataTypes = dataTypesOrig;
+			final List<Location> dataTypesOrig = this.fieldbookMiddlewareService.getAllBreedingLocations();
+			final List<Location> dataTypes = dataTypesOrig;
 
 			return dataTypes;
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			FieldmapController.LOG.error(e.getMessage(), e);
 		}
 
@@ -101,12 +101,12 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	public List<Location> getFavoriteLocationList() {
 		try {
 
-			List<Integer> locationsIds =
+			final List<Integer> locationsIds =
 					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
-			List<Location> dataTypes = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds);
+			final List<Location> dataTypes = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds);
 
 			return dataTypes;
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			FieldmapController.LOG.error(e.getMessage(), e);
 		}
 
@@ -123,35 +123,35 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/createFieldmap/{ids}", method = RequestMethod.GET)
-	public Map<String, String> determineFieldMapNavigation(@PathVariable String ids, Model model, HttpServletRequest req,
-			HttpSession session) {
+	public Map<String, String> determineFieldMapNavigation(@PathVariable final String ids, final Model model, final HttpServletRequest req,
+			final HttpSession session) {
 
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.FIELDMAP_SESSION_NAME,
 				SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-		Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 		String nav = "1";
 		try {
-			List<Integer> trialIds = new ArrayList<Integer>();
-			String[] idList = ids.split(",");
-			for (String id : idList) {
+			final List<Integer> trialIds = new ArrayList<>();
+			final String[] idList = ids.split(",");
+			for (final String id : idList) {
 				trialIds.add(Integer.parseInt(id));
 			}
-			List<FieldMapInfo> fieldMapInfoList =
+			final List<FieldMapInfo> fieldMapInfoList =
 					this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties);
 
 			this.clearFields();
-			this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, true);
+			this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList);
 			// get trial instances with field map
-			for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
-				List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
+			for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+				final List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
 				if (datasetList != null && !datasetList.isEmpty()) {
-					List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
+					final List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
 					if (trials != null && !trials.isEmpty()) {
 						nav = "0";
 					}
 				}
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			FieldmapController.LOG.error(e.getMessage(), e);
 		}
 		result.put("nav", nav);
@@ -167,17 +167,17 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/selectTrialInstance", method = RequestMethod.GET)
 	public Map<String, String> getFieldMapInfoData() {
-		Map<String, String> result = new HashMap<String, String>();
-		List<FieldMapInfo> fieldMapInfoList = this.userFieldmap.getFieldMapInfo();
+		final Map<String, String> result = new HashMap<>();
+		final List<FieldMapInfo> fieldMapInfoList = this.userFieldmap.getFieldMapInfo();
 		String size = "0";
 		String datasetId = null;
 		String geolocationId = null;
-		String fieldMapInfoJson = null;
-		for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+		final String fieldMapInfoJson;
+		for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 			// for viewing of fieldmaps
-			List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
+			final List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
 			if (datasetList != null && !datasetList.isEmpty()) {
-				List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
+				final List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
 				if (trials != null && !trials.isEmpty()) {
 					size = String.valueOf(trials.size());
 					if (trials.size() == 1) {
@@ -207,12 +207,12 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 * @param fieldMapInfo the field map info
 	 * @return the string
 	 */
-	private String convertFieldMapInfoToJson(List<FieldMapInfo> fieldMapInfo) {
+	private String convertFieldMapInfoToJson(final List<FieldMapInfo> fieldMapInfo) {
 		if (fieldMapInfo != null) {
 			try {
-				ObjectMapper mapper = new ObjectMapper();
+				final ObjectMapper mapper = new ObjectMapper();
 				return mapper.writeValueAsString(fieldMapInfo);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				FieldmapController.LOG.error(e.getMessage(), e);
 			}
 		}
@@ -228,13 +228,15 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 * @param session the session
 	 * @return the string
 	 */
+	@Deprecated
 	@RequestMapping(value = "/trial/{id}", method = RequestMethod.GET)
-	public String showTrial(@ModelAttribute("fieldmapForm") FieldmapForm form, @PathVariable String id, Model model, HttpSession session) {
+	public String showTrial(@ModelAttribute("fieldmapForm") final FieldmapForm form, @PathVariable
+	final String id, final Model model, final HttpSession session) {
 		try {
-			this.setSelectedFieldMapInfo(id, true);
+			this.setSelectedFieldMapInfo(id);
 			form.setUserFieldmap(this.userFieldmap);
 			form.setProjectId(this.getCurrentProjectId());
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			FieldmapController.LOG.error(e.toString());
 		}
 		form.setProgramLocationUrl(this.fieldbookProperties.getProgramLocationsUrl());
@@ -245,36 +247,35 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 * Sets the selected field map info.
 	 *
 	 * @param id the id
-	 * @param isTrial the is trial
 	 */
-	private void setSelectedFieldMapInfo(String id, boolean isTrial) {
-		String[] groupId = id.split(",");
-		List<FieldMapInfo> fieldMapInfoList = this.userFieldmap.getFieldMapInfo();
+	private void setSelectedFieldMapInfo(final String id) {
+		final String[] groupId = id.split(",");
+		final List<FieldMapInfo> fieldMapInfoList = this.userFieldmap.getFieldMapInfo();
 
-		List<FieldMapInfo> selectedFieldMapInfoList = new ArrayList<FieldMapInfo>();
+		final List<FieldMapInfo> selectedFieldMapInfoList = new ArrayList<>();
 		FieldMapInfo newFieldMapInfo = null;
 		List<FieldMapDatasetInfo> datasets = null;
 		FieldMapDatasetInfo dataset = null;
 		List<FieldMapTrialInstanceInfo> trialInstances = null;
-		FieldMapTrialInstanceInfo trialInstance = null;
+		FieldMapTrialInstanceInfo trialInstance;
 
 		Integer studyId = null;
 		Integer datasetId = null;
 		String fieldbookName = null;
 		String datasetName = null;
 		// build the selectedFieldMaps
-		for (String group : groupId) {
-			String[] ids = group.split("\\|");
-			int selectedStudyId = Integer.parseInt(ids[0]);
-			int selectedDatasetId = Integer.parseInt(ids[1]);
-			int selectedGeolocationId = Integer.parseInt(ids[2]);
+		for (final String group : groupId) {
+			final String[] ids = group.split("\\|");
+			final int selectedStudyId = Integer.parseInt(ids[0]);
+			final int selectedDatasetId = Integer.parseInt(ids[1]);
+			final int selectedGeolocationId = Integer.parseInt(ids[2]);
 
-			for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+			for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 				// if current study id is equal to the selected study id
 				if (fieldMapInfo.getFieldbookId().equals(selectedStudyId)) {
 					if (datasetId == null) {
 						dataset = new FieldMapDatasetInfo();
-						trialInstances = new ArrayList<FieldMapTrialInstanceInfo>();
+						trialInstances = new ArrayList<>();
 					} else {
 						// if dataset has changed, add previously saved dataset to the list
 						if (!datasetId.equals(selectedDatasetId)) {
@@ -283,23 +284,22 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 							dataset.setTrialInstances(trialInstances);
 							datasets.add(dataset);
 							dataset = new FieldMapDatasetInfo();
-							trialInstances = new ArrayList<FieldMapTrialInstanceInfo>();
+							trialInstances = new ArrayList<>();
 						}
 					}
 
 					if (studyId == null) {
 						newFieldMapInfo = new FieldMapInfo();
-						datasets = new ArrayList<FieldMapDatasetInfo>();
+						datasets = new ArrayList<>();
 					} else {
 						// if study id has changed, add previously saved study to the list
 						if (!studyId.equals(selectedStudyId)) {
 							newFieldMapInfo.setFieldbookId(studyId);
 							newFieldMapInfo.setFieldbookName(fieldbookName);
 							newFieldMapInfo.setDatasets(datasets);
-							newFieldMapInfo.setTrial(isTrial);
 							selectedFieldMapInfoList.add(newFieldMapInfo);
 							newFieldMapInfo = new FieldMapInfo();
-							datasets = new ArrayList<FieldMapDatasetInfo>();
+							datasets = new ArrayList<>();
 						}
 					}
 
@@ -317,12 +317,12 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 		dataset.setDatasetId(datasetId);
 		dataset.setDatasetName(datasetName);
 		dataset.setTrialInstances(trialInstances);
+		assert datasets != null;
 		datasets.add(dataset);
 
 		newFieldMapInfo.setFieldbookId(studyId);
 		newFieldMapInfo.setFieldbookName(fieldbookName);
 		newFieldMapInfo.setDatasets(datasets);
-		newFieldMapInfo.setTrial(isTrial);
 		selectedFieldMapInfoList.add(newFieldMapInfo);
 
 		this.userFieldmap.setSelectedFieldMaps(selectedFieldMapInfoList);
@@ -336,33 +336,35 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 * @param session the session
 	 * @return the map
 	 */
+	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "/createNurseryFieldmap/{ids}", method = RequestMethod.GET)
-	public Map<String, String> determineNurseryFieldMapNavigation(@PathVariable String ids, HttpServletRequest req, HttpSession session) {
+	public Map<String, String> determineNurseryFieldMapNavigation(@PathVariable
+	final String ids, final HttpServletRequest req, final HttpSession session) {
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.FIELDMAP_SESSION_NAME,
 				SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-		Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<String, String>();
 
 		String nav = "1";
 		try {
-			List<Integer> nurseryIds = new ArrayList<Integer>();
-			String[] idList = ids.split(",");
-			for (String id : idList) {
+			final List<Integer> nurseryIds = new ArrayList<Integer>();
+			final String[] idList = ids.split(",");
+			for (final String id : idList) {
 				nurseryIds.add(Integer.parseInt(id));
 			}
 
 			this.clearFields();
-			List<FieldMapInfo> fieldMapInfoList =
+			final List<FieldMapInfo> fieldMapInfoList =
 					this.fieldbookMiddlewareService.getFieldMapInfoOfNursery(nurseryIds, this.crossExpansionProperties);
 
-			this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, false);
+			this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList);
 
-			for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
-				List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
+			for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+				final List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
 				if (datasetList != null && !datasetList.isEmpty()) {
-					List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
+					final List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
 					if (trials != null && !trials.isEmpty()) {
-						FieldMapDatasetInfo dataset = datasetList.get(0);
+						final FieldMapDatasetInfo dataset = datasetList.get(0);
 						nav = "0";
 						this.userFieldmap.setSelectedDatasetId(dataset.getDatasetId());
 						this.userFieldmap.setSelectedGeolocationId(dataset.getTrialInstancesWithFieldMap().get(0).getGeolocationId());
@@ -371,7 +373,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 					}
 				}
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			FieldmapController.LOG.error(e.getMessage(), e);
 		}
 		result.put("nav", nav);
@@ -387,16 +389,17 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 * @param session the session
 	 * @return the string
 	 */
-	@RequestMapping(value = "/nursery/{id}", method = RequestMethod.GET)
-	public String showNursery(@ModelAttribute("fieldmapForm") FieldmapForm form, @PathVariable String id, Model model, HttpSession session) {
+	@RequestMapping(value = "/nursery/{studyId}/{id}", method = RequestMethod.GET) //TODO CAMBIAR URL AND METHOD NAME
+	public String showNursery(@ModelAttribute("fieldmapForm") final FieldmapForm form, @PathVariable final Integer studyId, @PathVariable final String id, final Model model, final HttpSession session) {
 		try {
-			this.setSelectedFieldMapInfo(id, false);
+			this.setSelectedFieldMapInfo(id);
 			form.setUserFieldmap(this.userFieldmap);
 			form.setProjectId(this.getCurrentProjectId());
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			FieldmapController.LOG.error(e.toString());
 		}
 		form.setProgramLocationUrl(this.fieldbookProperties.getProgramLocationsUrl());
+		form.getUserFieldmap().setStudyId(studyId);
 		return super.show(model);
 	}
 
@@ -409,7 +412,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 * @return the string
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public String submitDetails(@ModelAttribute("fieldmapForm") FieldmapForm form, BindingResult result, Model model) {
+	public String submitDetails(@ModelAttribute("fieldmapForm") final FieldmapForm form, final BindingResult result, final Model model) {
 		this.setTrialInstanceOrder(form);
 		if (form.getUserFieldmap().getFieldmap() != null) {
 			form.getUserFieldmap().setFieldmap(null);
@@ -418,11 +421,11 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 		this.userFieldmap.setFieldMapLabels(null);
 
 		if (this.userFieldmap.getSelectedFieldMapsToBeAdded() != null) {
-			for (FieldMapInfo info : this.userFieldmap.getSelectedFieldMapsToBeAdded()) {
-				for (FieldMapDatasetInfo dataset : info.getDatasets()) {
-					for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+			for (final FieldMapInfo info : this.userFieldmap.getSelectedFieldMapsToBeAdded()) {
+				for (final FieldMapDatasetInfo dataset : info.getDatasets()) {
+					for (final FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
 						if (trial.getFieldMapLabels() != null) {
-							for (FieldMapLabel label : trial.getFieldMapLabels()) {
+							for (final FieldMapLabel label : trial.getFieldMapLabels()) {
 								label.setColumn(null);
 								label.setRange(null);
 							}
@@ -441,17 +444,21 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 *
 	 * @param form the new trial instance order
 	 */
-	private void setTrialInstanceOrder(FieldmapForm form) {
-		String[] orderList = form.getUserFieldmap().getOrder().split(",");
-		List<FieldMapInfo> fieldMapInfoList = this.userFieldmap.getSelectedFieldMaps();
-		for (String order : orderList) {
-			String ids[] = order.split("\\|");
-			int orderId, fieldbookId, datasetId, geolocationId, ctr = 0;
+	private void setTrialInstanceOrder(final FieldmapForm form) {
+		final String[] orderList = form.getUserFieldmap().getOrder().split(",");
+		final List<FieldMapInfo> fieldMapInfoList = this.userFieldmap.getSelectedFieldMaps();
+		for (final String order : orderList) {
+			final String[] ids = order.split("\\|");
+			final int orderId;
+			final int fieldbookId;
+			final int datasetId;
+			final int geolocationId;
+			int ctr = 0;
 			orderId = Integer.parseInt(ids[0]);
 			fieldbookId = Integer.parseInt(ids[1]);
 			datasetId = Integer.parseInt(ids[2]);
 			geolocationId = Integer.parseInt(ids[3]);
-			for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+			for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 				if (fieldMapInfo.getFieldbookId().equals(fieldbookId)) {
 					this.userFieldmap.getSelectedFieldMaps().get(ctr).getDataSet(datasetId).getTrialInstance(geolocationId)
 							.setOrder(orderId);
@@ -460,8 +467,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 				ctr++;
 			}
 		}
-		this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap
-				.isTrial()));
+		this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps()));
 	}
 
 	/*
@@ -491,15 +497,15 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getFields/{locationId}", method = RequestMethod.GET)
-	public Map<String, String> getFieldLocations(@PathVariable int locationId) {
-		Map<String, String> result = new HashMap<String, String>();
+	public Map<String, String> getFieldLocations(@PathVariable final int locationId) {
+		final Map<String, String> result = new HashMap<String, String>();
 
 		try {
-			List<Location> allFields = this.fieldbookMiddlewareService.getAllFieldLocations(locationId);
+			final List<Location> allFields = this.fieldbookMiddlewareService.getAllFieldLocations(locationId);
 			result.put("success", "1");
 
 			result.put("allFields", this.convertObjectToJson(allFields));
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			FieldmapController.LOG.error(e.getMessage(), e);
 			result.put("success", "-1");
 		}
@@ -515,16 +521,16 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getBlocks/{fieldId}", method = RequestMethod.GET)
-	public Map<String, String> getBlockFields(@PathVariable int fieldId) {
-		Map<String, String> result = new HashMap<String, String>();
+	public Map<String, String> getBlockFields(@PathVariable final int fieldId) {
+		final Map<String, String> result = new HashMap<String, String>();
 
 		try {
 
-			List<Location> allBlocks = this.fieldbookMiddlewareService.getAllBlockLocations(fieldId);
+			final List<Location> allBlocks = this.fieldbookMiddlewareService.getAllBlockLocations(fieldId);
 			result.put("success", "1");
 			result.put("allBlocks", this.convertObjectToJson(allBlocks));
 
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			FieldmapController.LOG.error(e.getMessage(), e);
 			result.put("success", "-1");
 		}
@@ -540,16 +546,16 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getBlockInformation/{blockId}", method = RequestMethod.GET)
-	public Map<String, String> getBlockInfo(@PathVariable int blockId) {
-		Map<String, String> result = new HashMap<String, String>();
+	public Map<String, String> getBlockInfo(@PathVariable final int blockId) {
+		final Map<String, String> result = new HashMap<String, String>();
 
 		try {
 
-			FieldmapBlockInfo blockInfo = this.fieldbookMiddlewareService.getBlockInformation(blockId);
+			final FieldmapBlockInfo blockInfo = this.fieldbookMiddlewareService.getBlockInformation(blockId);
 			result.put("success", "1");
 			result.put("blockInfo", this.convertObjectToJson(blockInfo));
 
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			FieldmapController.LOG.error(e.getMessage(), e);
 			result.put("success", "-1");
 		}
@@ -567,54 +573,54 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/addNewField", method = RequestMethod.POST)
-	public String addNewField(@ModelAttribute("fieldmapForm") FieldmapForm form, BindingResult result, Model model) {
-		String fieldName = form.getNewFieldName();
-		Integer locationId = form.getParentLocationId();
+	public String addNewField(@ModelAttribute("fieldmapForm") final FieldmapForm form, final BindingResult result, final Model model) {
+		final String fieldName = form.getNewFieldName();
+		final Integer locationId = form.getParentLocationId();
 		String msg = "success";
 		try {
-			Integer currentUserId = this.getCurrentIbdbUserId();
+			final Integer currentUserId = this.getCurrentIbdbUserId();
 			if (this.isFieldNameUnique(fieldName, locationId)) {
 				this.fieldbookMiddlewareService.addFieldLocation(fieldName, locationId, currentUserId);
 			} else {
 				msg = "error";
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			FieldmapController.LOG.error(e.getMessage(), e);
 		}
 		return msg;
 	}
 
-	private boolean isFieldNameUnique(String fieldName, Integer locationId) {
+	private boolean isFieldNameUnique(final String fieldName, final Integer locationId) {
 		boolean isUnique = true;
 		try {
-			List<Location> allFields = this.fieldbookMiddlewareService.getAllFieldLocations(locationId);
+			final List<Location> allFields = this.fieldbookMiddlewareService.getAllFieldLocations(locationId);
 			if (allFields != null && !allFields.isEmpty()) {
-				for (Location loc : allFields) {
+				for (final Location loc : allFields) {
 					if (fieldName.equalsIgnoreCase(loc.getLname())) {
 						isUnique = false;
 						break;
 					}
 				}
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			FieldmapController.LOG.error(e.getMessage(), e);
 		}
 		return isUnique;
 	}
 
-	private boolean isBlockNameUnique(String blockName, Integer fieldId) {
+	private boolean isBlockNameUnique(final String blockName, final Integer fieldId) {
 		boolean isUnique = true;
 		try {
-			List<Location> allBlocks = this.fieldbookMiddlewareService.getAllBlockLocations(fieldId);
+			final List<Location> allBlocks = this.fieldbookMiddlewareService.getAllBlockLocations(fieldId);
 			if (allBlocks != null && !allBlocks.isEmpty()) {
-				for (Location loc : allBlocks) {
+				for (final Location loc : allBlocks) {
 					if (blockName.equalsIgnoreCase(loc.getLname())) {
 						isUnique = false;
 						break;
 					}
 				}
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			FieldmapController.LOG.error(e.getMessage(), e);
 		}
 		return isUnique;
@@ -630,18 +636,18 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/addNewBlock", method = RequestMethod.POST)
-	public String addNewBlock(@ModelAttribute("fieldmapForm") FieldmapForm form, BindingResult result, Model model) {
-		String blockName = form.getNewBlockName();
-		Integer parentFieldId = form.getParentFieldId();
+	public String addNewBlock(@ModelAttribute("fieldmapForm") final FieldmapForm form, final BindingResult result, final Model model) {
+		final String blockName = form.getNewBlockName();
+		final Integer parentFieldId = form.getParentFieldId();
 		String msg = "success";
 		try {
-			Integer currentUserId = this.getCurrentIbdbUserId();
+			final Integer currentUserId = this.getCurrentIbdbUserId();
 			if (this.isBlockNameUnique(blockName, parentFieldId)) {
 				this.fieldbookMiddlewareService.addBlockLocation(blockName, parentFieldId, currentUserId);
 			} else {
 				msg = "error";
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			FieldmapController.LOG.error(e.getMessage(), e);
 		}
 		return msg;
@@ -655,14 +661,14 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/getFields", method = RequestMethod.GET)
 	public Map<String, String> getFieldLocations() {
-		Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<String, String>();
 
 		try {
-			List<Location> allLocations = this.fieldbookMiddlewareService.getAllFields();
+			final List<Location> allLocations = this.fieldbookMiddlewareService.getAllFields();
 			result.put("success", "1");
 			result.put("allFields", this.convertObjectToJson(allLocations));
 
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			FieldmapController.LOG.error(e.getMessage(), e);
 			result.put("success", "-1");
 		}
@@ -675,10 +681,10 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 *
 	 * @param form the new user field map details
 	 */
-	private void setUserFieldMapDetails(FieldmapForm form) {
+	private void setUserFieldMapDetails(final FieldmapForm form) {
 		this.userFieldmap.setSelectedDatasetId(form.getUserFieldmap().getSelectedDatasetId());
 		this.userFieldmap.setSelectedGeolocationId(form.getUserFieldmap().getSelectedGeolocationId());
-		this.userFieldmap.setUserFieldmapInfo(this.userFieldmap.getFieldMapInfo(), this.userFieldmap.isTrial() ? true : false);
+		this.userFieldmap.setUserFieldmapInfo(this.userFieldmap.getFieldMapInfo());
 		this.userFieldmap.setNumberOfEntries(form.getUserFieldmap().getNumberOfEntries());
 		this.userFieldmap.setNumberOfReps(form.getUserFieldmap().getNumberOfReps());
 		this.userFieldmap.setTotalNumberOfPlots(form.getUserFieldmap().getTotalNumberOfPlots());
@@ -695,7 +701,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 		this.userFieldmap.setLocationName(form.getUserFieldmap().getLocationName());
 		this.userFieldmap.setFieldName(form.getUserFieldmap().getFieldName());
 		this.userFieldmap.setBlockName(form.getUserFieldmap().getBlockName());
-
+		this.userFieldmap.setStudyId(form.getUserFieldmap().getStudyId());
 	}
 
 	/**

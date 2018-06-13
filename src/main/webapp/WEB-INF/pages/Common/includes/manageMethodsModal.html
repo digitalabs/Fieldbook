@@ -35,8 +35,8 @@
 $(function() {
 	'use strict';
 	$('#manageMethodModal').on('hidden.bs.modal', function() {
-		if (BreedingMethodsFunctions.isModalAvailableAndForOpening('advanceNurseryModal')) {
-			BreedingMethodsFunctions.openModal('advanceNurseryModal');
+		if (BreedingMethodsFunctions.isModalAvailableAndForOpening('advanceStudyModal')) {
+			BreedingMethodsFunctions.openModal('advanceStudyModal');
 			recreateMethodCombo(null, getAdvanceBreedingMethodURL());
 		} else if (BreedingMethodsFunctions.isModalAvailableAndForOpening('importStudyDesigConfirmationModal')) {
 			BreedingMethodsFunctions.openModal('importStudyDesigConfirmationModal');

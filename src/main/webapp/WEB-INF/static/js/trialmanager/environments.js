@@ -67,7 +67,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			$scope.buttonsTopWithLocation = [{
 				//TODO disable?
-				text: $.fieldbookMessages.nurseryManageSettingsManageLocation,
+				text: $.fieldbookMessages.studyManageSettingsManageLocation,
 				className: 'fbk-buttons-no-border fbk-buttons-link',
 				action: function() {
 					$scope.initiateManageLocationModal();
@@ -176,7 +176,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			};
 
 			$scope.deleteEnvironment = function(index) {
-				if (!TrialManagerDataService.isOpenTrial()) {
+				if (!TrialManagerDataService.isOpenStudy()) {
 					// For New Trial
 					confirmDeleteEnvironment(index);
 
@@ -228,8 +228,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						$scope.data.environments.pop();
 					}
 
-					// Regenerate experimental design and measurement table when the trial is not saved yet
-					if (!TrialManagerDataService.isOpenTrial() && TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
+					// Regenerate experimental design and measurement table when the study is not saved yet
+					if (!TrialManagerDataService.isOpenStudy() && TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
 						refreshMeasurementTableAfterDeletingEnvironment();
 					}
 
@@ -292,7 +292,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			function refreshMeasurementTableAfterDeletingEnvironment() {
 				$rootScope.$broadcast('previewMeasurements');
                 $('body').addClass('preview-measurements-only');
-				// Make sure that the measurement table will only refresh if there is a selected design type for the current trial
+				// Make sure that the measurement table will only refresh if there is a selected design type for the current study
 				var designTypeId = TrialManagerDataService.currentData.experimentalDesign.designType;
 				var designTypes = TrialManagerDataService.applicationData.designTypes;
 				var noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments;

@@ -7,7 +7,7 @@
                     <div class="col-xs-6 col-md-6">
 
                         <section-container icon="bms-mgt-details"
-                                           th:attr="heading=#{trial.managesettings.trial.environment.management.details},help-tooltip=#{trial.managesettings.environment.management.details.tooltip}"
+                                           th:attr="heading=#{study.managesettings.environment.management.details},help-tooltip=#{study.managesettings.environment.management.details.tooltip}"
                                            add-variable="true" hide-variable="addVariable" model-data="settings.managementDetails"
                                            variable-type="1806" callback="onAddVariable(result)">
                             <display-settings hide-delete="isHideDelete" name="content" settings="settings.managementDetails"
@@ -17,7 +17,7 @@
                     </div>
                     <div class="col-xs-6 col-md-6">
                         <section-container
-                                th:attr="heading=#{trial.managesettings.trial.environment.trial.condition.details},help-tooltip=#{trial.managesettings.trial.conditions.tooltip},icon-img=@{/static/svg/conditions.svg}"
+                                th:attr="heading=#{study.managesettings.environment.condition.details},help-tooltip=#{study.managesettings.conditions.tooltip},icon-img=@{/static/svg/conditions.svg}"
                                 icon-size="22" add-variable="true" hide-variable="addVariable" model-data="settings.trialConditionDetails"
                                 variable-type="1802" callback="onAddVariable(result)">
                             <display-settings hide-delete="isHideDelete" name="content" settings="settings.trialConditionDetails"
@@ -31,7 +31,7 @@
 
                         <div class="form-horizontal">
                             <div class="form-group form-group-sm">
-                                <label class="control-label label-bold add_top_padding col-xs-8" style="text-align: left" th:text="#{trial.managesettings.trial.environment.specify.level.no}">Specify the number of environments for this trial:</label>
+                                <label class="control-label label-bold add_top_padding col-xs-8" style="text-align: left" th:text="#{study.managesettings.environment.specify.level.no}">Specify the number of environments for this study:</label>
                                 <div class="col-xs-4">
                                     <div class="input-group">
                                         <input maxlength="3" valid-number="" class="form-control input-sm" ng-model="temp.noOfEnvironments" ng-disabled="shouldDisableEnvironmentCountUpdate()"/>
@@ -53,7 +53,7 @@
         </div>
     </section-container>
 
-    <section-container th:attr="heading=#{trial.managesettings.trial.environment.specify.level}">
+    <section-container th:attr="heading=#{study.managesettings.environment.specify.level}">
         <div name="content">
 
             <table datatable="ng" dt-options="dtOptions" dt-instance="nested.dtInstance"
@@ -61,7 +61,7 @@
                 <thead>
                 <tr>
                     <th data-sortable="false" class="fbk-delete-link"></th>
-                    <th data-sortable="false" th:text="#{trial.managesettings.trial.environment.label}">Environment</th>
+                    <th data-sortable="false" th:text="#{study.managesettings.environment.label}">Environment</th>
                     <th data-sortable="false" ng-repeat="key in settings.managementDetails.keys() track by $index"
                         ng-hide="settings.managementDetails.val(key).hidden">
                         {{settings.managementDetails.val(key).variable.name}}</th>

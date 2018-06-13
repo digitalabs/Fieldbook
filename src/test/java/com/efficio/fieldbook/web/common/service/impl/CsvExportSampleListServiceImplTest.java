@@ -26,7 +26,7 @@ import com.efficio.fieldbook.web.util.SampleListUtilTest;
 
 public class CsvExportSampleListServiceImplTest {
 	
-	private static String FILENAME = "Trial 33-Sample List Name";
+	private static final String FILENAME = "Study 33-Sample List Name";
 
 	@Mock
 	private ContextUtil contextUtil;
@@ -36,7 +36,7 @@ public class CsvExportSampleListServiceImplTest {
 	private CsvExportSampleListServiceImpl csvExportSampleListService;
 
 
-	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 	
 	@Before
 	public void setUp() throws IOException {

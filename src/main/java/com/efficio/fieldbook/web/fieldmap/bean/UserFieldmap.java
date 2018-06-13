@@ -36,7 +36,7 @@ public class UserFieldmap implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-	/** The trial id or nursery id. */
+	/** The Study id. */
 	private Integer studyId;
 
 	/** The selected dataset id. */
@@ -80,9 +80,6 @@ public class UserFieldmap implements Serializable {
 
 	/** The planting order. */
 	private int plantingOrder;
-
-	/** The is trial. */
-	private boolean isTrial;
 
 	/** The entry numbers. */
 	private List<String> entryNumbers;
@@ -163,10 +160,9 @@ public class UserFieldmap implements Serializable {
 	 * Instantiates a new user fieldmap.
 	 *
 	 * @param fieldMapInfo the field map info
-	 * @param isTrial the is trial
 	 */
-	public UserFieldmap(List<FieldMapInfo> fieldMapInfo, boolean isTrial) {
-		this.setUserFieldmapInfo(fieldMapInfo, isTrial);
+	public UserFieldmap(List<FieldMapInfo> fieldMapInfo) {
+		this.setUserFieldmapInfo(fieldMapInfo);
 	}
 
 	/**
@@ -191,9 +187,8 @@ public class UserFieldmap implements Serializable {
 	 * Sets the user fieldmap info.
 	 *
 	 * @param fieldMapInfoList the field map info list
-	 * @param isTrial the is trial
 	 */
-	public void setUserFieldmapInfo(List<FieldMapInfo> fieldMapInfoList, boolean isTrial) {
+	public void setUserFieldmapInfo(List<FieldMapInfo> fieldMapInfoList) {
 
 		if (this.getSelectedDatasetId() != null && this.getSelectedGeolocationId() != null) {
 
@@ -212,12 +207,7 @@ public class UserFieldmap implements Serializable {
 			}
 		}
 
-		this.setTrial(isTrial);
-		if (isTrial) {
-			this.setNumberOfRowsPerPlot(2);
-		} else {
-			this.setNumberOfRowsPerPlot(1);
-		}
+		this.setNumberOfRowsPerPlot(2);
 		this.setFieldMapInfo(fieldMapInfoList);
 
 	}
@@ -229,7 +219,7 @@ public class UserFieldmap implements Serializable {
 	 * @return the all selected field map labels
 	 */
 	public List<FieldMapLabel> getAllSelectedFieldMapLabels(boolean isSorted) {
-		List<FieldMapLabel> allLabels = new ArrayList<FieldMapLabel>();
+		List<FieldMapLabel> allLabels = new ArrayList<>();
 
 		if (isSorted) {
 			if (this.getSelectedFieldmapList() != null && !this.getSelectedFieldmapList().isEmpty()) {
@@ -367,23 +357,6 @@ public class UserFieldmap implements Serializable {
 		this.reps = reps;
 	}
 
-	/**
-	 * Checks if is trial.
-	 *
-	 * @return true, if is trial
-	 */
-	public boolean isTrial() {
-		return this.isTrial;
-	}
-
-	/**
-	 * Sets the trial.
-	 *
-	 * @param isTrial the new trial
-	 */
-	public void setTrial(boolean isTrial) {
-		this.isTrial = isTrial;
-	}
 
 	/**
 	 * Gets the number of entries.

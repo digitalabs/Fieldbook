@@ -129,8 +129,6 @@ public class UserLabelPrinting implements Serializable {
 
 	private boolean isStockList;
 
-	private boolean isTrial;
-
 	private Integer stockListId;
 
     private String stockListTypeName;
@@ -662,14 +660,6 @@ public class UserLabelPrinting implements Serializable {
 
 	public void setIsStockList(final boolean isStockList) {
 		this.isStockList = isStockList;
-	}
-
-	public boolean isTrial() {
-		return this.isTrial;
-	}
-
-	public void setIsTrial(final boolean trial) {
-		this.isTrial = trial;
 	}
 
 	public Integer getStudyId() {

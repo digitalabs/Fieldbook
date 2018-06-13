@@ -46,7 +46,7 @@ public class UserSelection implements Serializable {
 	private Boolean initialCategorizationDone = false;
 
 	private Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> giantMap =
-			new LinkedHashMap<PhenotypicType, LinkedHashMap<String, MeasurementVariable>>();
+			new LinkedHashMap<>();
 
 	private Map<PhenotypicType, List<String>> headerCategorization = new LinkedHashMap<>();
 
@@ -169,7 +169,7 @@ public class UserSelection implements Serializable {
 
 	public String getStudyType() {
 		return this.studyType;
-	}
+}
 
 	public void setStudyType(final String studyType) {
 		this.studyType = studyType;
@@ -190,7 +190,7 @@ public class UserSelection implements Serializable {
 		}
 	}
 
-	public LinkedHashMap<String, MeasurementVariable> getMeasurementVariablesByPhenotypic(final PhenotypicType phenotypickey) {
+	public Map<String, MeasurementVariable> getMeasurementVariablesByPhenotypic(final PhenotypicType phenotypickey) {
 
 		return this.giantMap.get(phenotypickey);
 	}

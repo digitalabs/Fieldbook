@@ -2,7 +2,7 @@ package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.List;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 import org.generationcp.commons.service.impl.BreedersCrossIDGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,7 @@ public class BreedersCrossIDExpression extends BaseExpression{
 
 		/**
 		 * Refer NamingConventionServiceImpl.addImportedGermplasmToList method
-		 * It requires AdvancingNursery as well, here we are not able to get AdvancingNursery instance
+		 * It requires AdvancingStudy as well, here we are not able to get AdvancingStudy instance
 		 * Basic Implementation has been added to calculate SelectionNumber
 		 */
 		for (StringBuilder container : values) {

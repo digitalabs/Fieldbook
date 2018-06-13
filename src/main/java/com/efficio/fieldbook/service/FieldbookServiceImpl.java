@@ -21,9 +21,9 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.PossibleValuesCache;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -158,16 +158,16 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	/**
-	 * Advance Nursery
+	 * Advance Study
 	 *
 	 * @throws RuleException
 	 * @throws FieldbookException
 	 */
 	@Override
-	public AdvanceResult advanceNursery(final AdvancingNursery advanceInfo, final Workbook workbook)
+	public AdvanceResult advanceStudy(final AdvancingStudy advanceInfo, final Workbook workbook)
 			throws RuleException, FieldbookException {
 
-		return this.namingConventionService.advanceNursery(advanceInfo, workbook);
+		return this.namingConventionService.advanceStudy(advanceInfo, workbook);
 	}
 
 	@Override
@@ -183,12 +183,12 @@ public class FieldbookServiceImpl implements FieldbookService {
 			}
 		}
 
-		final List<Integer> storedInIds = this.getStoredInIdsByMode(mode, true);
+		final List<Integer> storedInIds = this.getStoredInIdsByMode(mode);
 		final List<Integer> propertyIds = this.getPropertyIdsByMode(mode);
 
 		final List<StandardVariableReference> dbList = this.fieldbookMiddlewareService.filterStandardVariablesByMode(
 				storedInIds, propertyIds,
-				mode == VariableType.TRAIT.getId() || mode == VariableType.NURSERY_CONDITION.getId());
+				mode == VariableType.TRAIT.getId() || mode == VariableType.STUDY_CONDITION.getId());
 
 		if (dbList != null && !dbList.isEmpty()) {
 
@@ -197,7 +197,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 					if (mode == VariableType.STUDY_DETAIL.getId()) {
 						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(),
-								AppConstants.FILTER_NURSERY_FIELDS.getString())
+								AppConstants.FILTER_STUDY_FIELDS.getString())
 								|| ref.getId() == TermId.DATASET_NAME.getId()
 								|| ref.getId() == TermId.DATASET_TITLE.getId()
 								|| ref.getId() == TermId.DATASET_TYPE.getId()
@@ -213,7 +213,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 						}
 					} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
 						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(),
-								AppConstants.HIDE_TRIAL_VARIABLES.getString())) {
+								AppConstants.HIDE_STUDY_VARIABLES.getString())) {
 							continue;
 						}
 					} else {
@@ -234,19 +234,12 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return result;
 	}
 
-	private List<Integer> getStoredInIdsByMode(final int mode, final boolean isNursery) {
+	private List<Integer> getStoredInIdsByMode(final int mode) {
 		final List<Integer> list = new ArrayList<>();
 		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			list.addAll(PhenotypicType.STUDY.getTypeStorages());
-			if (isNursery) {
-				list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
-			}
-		} else if (isNursery && (mode == VariableType.GERMPLASM_DESCRIPTOR.getId()
-				|| mode == VariableType.EXPERIMENTAL_DESIGN.getId())) {
-			list.addAll(PhenotypicType.TRIAL_DESIGN.getTypeStorages());
-			list.addAll(PhenotypicType.GERMPLASM.getTypeStorages());
 		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()
-				|| mode == VariableType.NURSERY_CONDITION.getId()) {
+			|| mode == VariableType.STUDY_CONDITION.getId()) {
 			list.addAll(PhenotypicType.VARIATE.getTypeStorages());
 		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
 			list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
@@ -262,7 +255,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		final List<Integer> list = new ArrayList<>();
 
 		if (mode == VariableType.SELECTION_METHOD.getId() || mode == VariableType.TRAIT.getId()
-				|| mode == VariableType.NURSERY_CONDITION.getId()) {
+				|| mode == VariableType.STUDY_CONDITION.getId()) {
 
 			final StringTokenizer token = new StringTokenizer(AppConstants.SELECTION_VARIATES_PROPERTIES.getString(),
 					",");
@@ -555,7 +548,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		}
 
 		if (TermId.BREEDING_METHOD_ID.getId() == id) {
-			return this.getBreedingMethodById(valueId.intValue());
+			return this.getBreedingMethodById(valueId != null ? valueId.intValue() : 0);
 		} else if (TermId.BREEDING_METHOD_CODE.getId() == id) {
 			return this.getBreedingMethodByCode(valueOrId);
 		} else if (TermId.BREEDING_METHOD.getId() == id) {
@@ -754,7 +747,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 							}
 						}
 					} else {
-						Method method;
+						final Method method;
 						if (studyConditionMap.get(idTermId) != null) {
 							method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null
 									: this.fieldbookMiddlewareService.getMethodById(
@@ -940,7 +933,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 				}
 			}
 		}
-		if (workbook != null && !workbook.isNursery()) {
+		if (workbook != null) {
 			// to be only done when it is a trial
 			this.addConditionsToTrialObservationsIfNecessary(workbook);
 		} else {
@@ -1000,7 +993,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 					if (data == null) {
 
 						String actualNameVal = "";
-						Integer idTerm = variable.getTermId();
+						final Integer idTerm;
 						String pairId = idNameMap.get(String.valueOf(variable.getTermId()));
 						if (pairId == null) {
 							pairId = nameIdMap.get(String.valueOf(variable.getTermId()));

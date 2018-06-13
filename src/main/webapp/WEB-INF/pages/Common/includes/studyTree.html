@@ -1,40 +1,45 @@
 <div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
-    <!-- Modal -->
-    <div class="modal fade" id="studyTreeModal" role="dialog" aria-labelledby="studyTreeModal" aria-hidden="true">
-        <div class="modal-dialog">
+	<!-- Modal -->
+	<div class="modal fade" id="studyTreeModal" role="dialog" aria-labelledby="studyTreeModal" aria-hidden="true">
+		<div class="modal-dialog">
 
-            <div class="modal-content modal-extra-small">
-                <div class="modal-body" id="studyTreeModalBody">
-                    <div class="row">
-                        <div id="page-study-tree-message-modal" class="col-xs-12 col-md-12">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-7 col-md-7">
-                            <img th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text"/>
-                            <label class="fbk-modal-title fbk-study-tree-title fbk-hide nursery" th:text="#{browse.nurseries.header}"></label>
-                            <label class="fbk-modal-title fbk-study-tree-title fbk-hide trial" th:text="#{browse.trial.header}"></label>
-                        </div>
-                        <div class="col-xs-4 col-md-4">
-                            <div style="float: right; margin-top: 5px;">
-                                <img onclick="javascript: addFolder(this)" th:src="@{/static/img/add2.png}" class="image-padding browse-nursery-action"/>
-                                <img onclick="javascript: renameFolder(this)" th:src="@{/static/img/edit.png}" class="image-padding browse-nursery-action edit-folder"/>
-                                <img onclick="javascript: deleteFolder(this)" th:src="@{/static/img/delete.png}" class="image-padding browse-nursery-action delete-folder"/>
-                            </div>
-                        </div>
-                        <div class="col-xs-1 col-md-1">
-                            <button id="closeStudyTreeModal" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true" style="padding-top: 7px"></button>
-                        </div>
-                    </div>
-                    <div class="form-horizontal form-group">
-                        <div id="addFolderDiv">
-                            <div class="col-xs-4 nopadding" >
-                                <label class="control-label label-bold" th:utext="#{browse.nursery.add.folder.name}">Folder Name:</label>
-                            </div>
-                            <div class="col-xs-8">
-	                                <div class="input-group">
-	                                    	<input id="addFolderName" name="addFolderName" type="text" class="form-control" placeholder="Folder Name"/>
-	                                        <span class="input-group-btn">
+			<div class="modal-content modal-extra-small">
+				<div class="modal-body" id="studyTreeModalBody">
+					<div class="row">
+						<div id="page-study-tree-message-modal" class="col-xs-12 col-md-12">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-7 col-md-7">
+							<img th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text"/>
+							<label class="fbk-modal-title fbk-study-tree-title fbk-hide trial"
+								   th:text="#{browse.tree.studies.header}"></label>
+						</div>
+						<div class="col-xs-4 col-md-4">
+							<div style="float: right; margin-top: 5px;">
+								<img onclick="javascript: addFolder(this)" th:src="@{/static/img/add2.png}"
+									 class="image-padding browse-study-action"/>
+								<img onclick="javascript: renameFolder(this)" th:src="@{/static/img/edit.png}"
+									 class="image-padding browse-study-action edit-folder"/>
+								<img onclick="javascript: deleteFolder(this)" th:src="@{/static/img/delete.png}"
+									 class="image-padding browse-study-action delete-folder"/>
+							</div>
+						</div>
+						<div class="col-xs-1 col-md-1">
+							<button id="closeStudyTreeModal" type="button" class="close pull-right glyphicon glyphicon-remove"
+									data-dismiss="modal" aria-hidden="true" style="padding-top: 7px"></button>
+						</div>
+					</div>
+					<div class="form-horizontal form-group">
+						<div id="addFolderDiv">
+							<div class="col-xs-4 nopadding">
+								<label class="control-label label-bold" th:utext="#{browse.study.add.folder.name}">Folder Name:</label>
+							</div>
+							<div class="col-xs-8">
+								<div class="input-group">
+									<input id="addFolderName" name="addFolderName" type="text" class="form-control"
+										   placeholder="Folder Name"/>
+									<span class="input-group-btn">
 	                                            <button class="btn btn-success" id="addFolderOkButton">
 	                                                <span class="glyphicon glyphicon-ok"></span>
 	                                            </button>
@@ -42,389 +47,74 @@
 	                                                <span class="glyphicon glyphicon-remove"></span>
 	                                            </button>
 	                                        </span>
-	                                </div>
-                            </div>
-                        </div>
-                        <div id="renameFolderDiv">
-                            <div class="col-xs-4 nopadding">
-                                <label class="control-label  label-bold" th:utext="#{browse.nursery.rename.folder.input.label}">Folder Name:</label>
-                            </div>
-                            <div class="col-xs-8">
-                                	<div class="input-group">                                	
-                                    	<input id="newFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
-                                        <span class="input-group-btn">
+								</div>
+							</div>
+						</div>
+						<div id="renameFolderDiv">
+							<div class="col-xs-4 nopadding">
+								<label class="control-label  label-bold" th:utext="#{browse.study.rename.folder.input.label}">Folder
+									Name:</label>
+							</div>
+							<div class="col-xs-8">
+								<div class="input-group">
+									<input id="newFolderName" name="newFolderName" type="text" class="form-control select2"
+										   placeholder="Folder Name"/>
+									<span class="input-group-btn">
                                             <button class="btn btn-success" id="renameFolderOkButton">
                                                 <span class="glyphicon glyphicon-ok"></span>
                                             </button>
                                             <button class="btn btn-danger" id="renameFolderCancelButton">
                                                 <span class="glyphicon glyphicon-remove"></span>
                                             </button>
-                                        </span>                                   
-                                	</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="clearfix"></div>
-                    <div class="row">
-                        <div id="studyTree">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div th:include="/Common/includes/studyTreeManageNurseryOperation"/>
-                    </div>
-                </div>
+                                        </span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+					<div class="row">
+						<div id="studyTree">
+						</div>
+					</div>
+					<div class="row">
+						<div th:include="/Common/includes/studyTreeManageNurseryOperation"/>
+					</div>
+				</div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-                    <button type="button" class="btn btn-primary tree-select-button fbk-hide" th:text="#{common.form.select.text}" onclick="javascript: chooseStudy();">Ok</button>
-                    <button type="button" class="btn btn-primary tree-review-button fbk-hide" th:text="#{common.form.view.summary.text}" onclick="javascript: chooseStudy();">View Summary</button>
-                    <button type="button" class="btn btn-primary tree-review-button fbk-hide" th:text="#{common.form.open.text}" onclick="javascript: openStudyNode();">Open</button>
-                </div>
-            </div>
-        </div>
-    </div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true"
+							th:text="#{common.form.cancel.text}">Cancel
+					</button>
+					<button type="button" class="btn btn-primary tree-select-button fbk-hide" th:text="#{common.form.select.text}"
+							onclick="javascript: chooseStudy();">Ok
+					</button>
+					<button type="button" class="btn btn-primary tree-review-button fbk-hide" th:text="#{common.form.view.summary.text}"
+							onclick="javascript: chooseStudy();">View Summary
+					</button>
+					<button type="button" class="btn btn-primary tree-review-button fbk-hide" th:text="#{common.form.open.text}"
+							onclick="javascript: openStudyNode();">Open
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div layout:fragment="page-script">
-<script type="text/javascript" th:src="@{/static/js/studyTreeFolderOperations.js}"></script>
-<script type="text/javascript" th:inline="javascript">
-//<![CDATA[
-/*globals Spinner,console,displayStudyListTree, changeBrowseNurseryButtonBehavior, showErrorMessage*/
-/*globals addDetailsTab, moveStudy*/
-/*exported displayStudyListTree*/
-var url = '',
-        lazyReadUrl = '',
-        lazyReadAllUrl = '/Fieldbook/StudyTreeManager/retrieveChildren/',
-        focusNode = null;
+	<script type="text/javascript" th:src="@{/static/js/studyTree.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/studyTreeFolderOperations.js}"></script>
+	<script type="text/javascript" th:inline="javascript">
+		var cannotMove = /*[[#{browse.study.move.can.not}]]*/ '',
+			hasChildrenString = /*[[#{browse.study.move.has.children}]]*/'',
+			isAStudy = /*[[#{browse.study.move.is.study}]]*/'',
+			chooseProgramStudyFolderError = /*[[#{browse.study.please.choose.program.study.folder}]]*/'',
+			chooseStudyError = /*[[#{browse.study.please.choose.program.study}]]*/'',
+			cannotMoveFolderToCropListError = /*[[#{cannot.move.folder.to.crop.lists.folder}]]*/ '',
+			cannotMoveItemToAListError = /*[[#{cannot.move.item.to.a.list}]]*/ '';
 
-var cannotMove = /*[[#{browse.nursery.move.can.not}]]*/ '',
-        hasChildrenString = /*[[#{browse.nursery.move.has.children}]]*/'',
-        isAStudy = /*[[#{browse.nursery.move.is.study}]]*/'',
-        chooseProgramStudyFolderError = /*[[#{browse.nursery.please.choose.program.study.folder}]]*/'',
-        chooseStudyError = /*[[#{browse.nursery.please.choose.program.study}]]*/'',
-        cannotMoveFolderToCropListError = /*[[#{cannot.move.folder.to.crop.lists.folder}]]*/ '',
-        cannotMoveItemToAListError = /*[[#{cannot.move.item.to.a.list}]]*/ '';
-/*
- 1 - Can choose folder / study
- 2 - Can choose folder only
- 3 - Can choose study only
- */
-var choosingType = 1;
-var selectStudyFunction = null;
-
-
-$(document).ready(function () {
-    'use strict';
-    displayStudyListTree('studyTree', isNursery() ? 'N' : 'T', 1);
-    changeBrowseNurseryButtonBehavior(false);
-    $('#addFolderDiv', '#studyTreeModal').hide();
-    $('#renameFolderDiv', '#studyTreeModal').hide();
-    $('#addFolderOkButton', '#studyTreeModal').on('click', createFolder);
-    $('#addFolderCancelButton', '#studyTreeModal').on('click', hideAddFolderDiv);
-    $('#renameFolderOkButton', '#studyTreeModal').on('click', submitRenameFolder);
-    $('#renameFolderCancelButton', '#studyTreeModal').on('click', hideRenameFolderDiv);
-	$('#addFolderDiv #addFolderName', '#studyTreeModal').on('keypress', function(event){
-		if(event.keyCode == 13){
-			createFolder();
-		}
-	});
-	$('#renameFolderDiv #newFolderName', '#studyTreeModal').on('keypress', function(event){
-		if(event.keyCode == 13){
-			submitRenameFolder();
-		}
-	});
-	if($('.landing-page').length !== 0){
-		//means we are in the landing page
-		$('.tree-review-button').removeClass('fbk-hide');
-	}else{
-		$('.tree-select-button').removeClass('fbk-hide');
-	}
-});
-
-
-
-function chooseStudyNode(node, fromEnterKey) {
-    'use strict';
-
-    if (!node) {
-    	showErrorMessage('page-study-tree-message-modal', choosingType === 2 ? chooseProgramStudyFolderError : chooseStudyError);
-    	return;
-    }
-    if (choosingType === 1 || choosingType === 3) {
-        if (node.data.isFolder === false) {
-            if (choosingType === 1){
-            	if($('#studyTreeModal').data('open') === '1' 
-            			&& node.data.programUUID != null){
-            		$('#studyTreeModal').data('open', '0'); 
-            		openTreeStudy(node.data.key);
-            	}else{
-                	addDetailsTab(node.data.key, node.data.title);
-            	}
-            }
-            else {
-                if (selectStudyFunction) {
-                    selectStudyFunction(node.data.key);
-                } else {
-                    choosePreviousNursery(node.data.key);
-                }
-            }
-
-            $('#studyTreeModal').modal('hide');
-        } else {
-            if (fromEnterKey === false) {
-                showErrorMessage('page-study-tree-message-modal', chooseStudyError);
-            }
-        }
-    } else if (choosingType === 2) {
-        if (node.data.isFolder === true) {
-            var folderDataId = node.data.key === 'LOCAL' ? 1 : node.data.key;
-
-            if (selectStudyFunction) {
-                selectStudyFunction(folderDataId);
-            }
-
-            $('#folderId').val(folderDataId);
-            $('#folderName').val(node.data.title);
-            $('#folderNameLabel').html(node.data.title);
-
-            $('#studyTreeModal').modal('hide');
-            if($('body').data('doAutoSave') === '1'){
-            	$('body').trigger({
-					type: 'DO_AUTO_SAVE'
-				});
-            	$('body').data('doAutoSave', '0'); 
-            }
-        } else {
-            if (fromEnterKey === false) {
-                showErrorMessage('page-study-tree-message-modal', chooseProgramStudyFolderError);
-            }
-        }
-    }
-}
-
-function chooseStudy() {
-    'use strict';
-    var node = $('#studyTree').dynatree('getTree').getActiveNode();
-    chooseStudyNode(node, false);
-}
-
-function openStudyNode(){
-	'use strict';
-	$('#studyTreeModal').data('open', '1');
-	chooseStudy();
-}
-
-function doStudyLazyLoad(node, preSelectId) {
-    'use strict';
-    var additionalUrl = '/0';
-    if (choosingType === 2) {
-        additionalUrl = '/1';
-    }
-    if (node.data.isFolder === true) {
-
-        node.appendAjax({
-            url: lazyReadUrl + node.data.key + additionalUrl,
-            dataType: 'json',
-            async: false,
-            success: function (node) {
-                //do nothing
-
-                setTimeout(function () {
-                    node.expand();
-                }, 50);
-                if (node.hasChildren()) {
-                    $('.delete-folder', '#studyTreeModal').addClass('disable-image');
-                }
-
-                if (node.data.isFolder === false) {
-                    addDetailsTab(node.data.key, node.data.title);
-                    changeBrowseNurseryButtonBehavior(false);
-                } else {
-                    if (node.data.key === 'LOCAL') {
-                        changeBrowseNurseryButtonBehavior(true);
-                        $('.edit-folder', '#studyTreeModal').addClass('disable-image');
-                        $('.delete-folder', '#studyTreeModal').addClass('disable-image');
-                    }
-                    else {
-                        changeBrowseNurseryButtonBehavior(true);
-                    }
-                }
-                if(preSelectId !== null){                	
-                	var newNode = $('#studyTree').dynatree('getTree').getNodeByKey(preSelectId);
-                	if(newNode !== null){
-                		newNode.activate();
-                		newNode.focus();
-                	}
-
-                }
-            },
-            error: function (node, XMLHttpRequest, textStatus, errorThrown) {
-
-                console.log('The following error occured: ' + textStatus, errorThrown);
-            },
-            cache: false
-        });
-        node.expand();
-    }
-}
-/** Germplasm Tree **/
-function displayStudyListTree(treeName, studyType, choosingTypeParam, selectStudyFunctionParam, isPreSelect, postInitFunction) {
-    'use strict';
-
-    if (selectStudyFunctionParam) {
-        selectStudyFunction = selectStudyFunctionParam;
-    }
-
-    url = '/Fieldbook/StudyTreeManager/loadInitialTree';
-    lazyReadUrl = '/Fieldbook/StudyTreeManager/expandTree/'+studyType+'/';
-    
-    choosingType = choosingTypeParam;
-    var additionalUrl = '/0';
-    if (choosingType === 2) {
-        additionalUrl = '/1';
-    }
-	
-    url = url + additionalUrl + '/' + studyType;
-
-    $('#' + treeName).dynatree({
-        title: treeName,
-        checkbox: false,
-        noLink: false,
-        autoFocus: false,
-        imagePath: '/Fieldbook/static/img/',
-        activeVisible: true,
-        initAjax: {url: url,
-            dataType: 'json',
-            async: false
-        },
-
-        onLazyRead: function (node) {
-            doStudyLazyLoad(node);
-        },
-        classNames: {
-            container: 'fbtree-container',
-            expander: 'fbtree-expander',
-            nodeIcon: 'fbtree-icon',
-            combinedIconPrefix: 'fbtree-ico-',
-            focused: 'fbtree-focused',
-            active: 'fbtree-active',
-            nodeLoading: ''
-        },
-        // TODO : add functionality to update the value in the rename folder input field to match that of the newly active node
-        onPostInit: function () {
-            if (choosingType === 2) {
-            	var prefixContainer = isNursery() ? '#create-nursery' : '#create-trial';
-                if(isPreSelect){
-                	var programLocal = $(prefixContainer + ' #studyTree').dynatree('getTree').getNodeByKey('LOCAL');
-                	if(programLocal != null){
-                		programLocal.activate();
-                		programLocal.focus();
-                	}
-                }
-            }
-
-            if (postInitFunction) {
-                postInitFunction();
-            }
-
-        },
-        onFocus: function (node) {
-            focusNode = node;
-        },
-
-        onActivate: function (node) {
-            if (node.data.isFolder === false) {
-                changeBrowseNurseryButtonBehavior(false);
-                $('.delete-folder', '#studyTreeModal').removeClass('disable-image');
-            } else {
-                if (node.data.key === 'LOCAL') {
-                    changeBrowseNurseryButtonBehavior(true);
-                    $('.edit-folder', '#studyTreeModal').addClass('disable-image');
-                    $('.delete-folder', '#studyTreeModal').addClass('disable-image');
-                }
-                else {
-                    changeBrowseNurseryButtonBehavior(true);
-                }
-            }
-            $('#studyTreeModalBody a.dynatree-title').off('keyup');
-            $('#studyTreeModalBody a.dynatree-title').on('keyup', function (e) {
-                if (e.keyCode === 13) {
-                	if($('.landing-page').length !== 0){
-                		//means we are in the landing page
-               			$('#studyTreeModal').data('open', '1');                		
-                	}
-					chooseStudyNode(focusNode, true);                	
-                }
-            });
-        },
-        onClick: function (node, event) {
-            $('#newFolderName', '#studyTreeModal').val(node.data.title);
-            var currentFolderName = node.data.title;
-        },
-        onDblClick: function (node, event) {            
-            openStudyNode();
-        },
-        dnd: {
-            onDragStart: function (node) {
-                /** This function MUST be defined to enable dragging for the tree.
-                 * Return false to cancel dragging of node.
-                 */
-                if (node.data.key === 'LOCAL') {
-                    return false;
-                }
-                return true;
-            },
-            onDragStop: function (node) {
-                // This function is optional.
-            },
-
-            preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
-
-            onDragEnter: function (node, sourceNode) {
-                /** sourceNode may be null for non-dynatree droppables.
-                 * Return false to disallow dropping on node. In this case
-                 * onDragOver and onDragLeave are not called.
-                 * Return 'over', 'before, or 'after' to force a hitMode.
-                 * Return ['before', 'after'] to restrict available hitModes.
-                 * Any other return value will calc the hitMode from the cursor position.
-                 */
-                return true;
-            },
-            onDragOver: function (node, sourceNode, hitMode) {
-            },
-
-            onDrop: function (node, sourceNode, hitMode, ui, draggable) {
-                /** This function MUST be defined to enable dropping of items on
-                 * the tree.
-                 */
-                if (sourceNode.hasChildren()) {
-                    showErrorMessage('page-study-tree-message-modal', cannotMove + ' ' + sourceNode.data.title + ' ' + hasChildrenString);
-                } else if (node.data.isFolder === false) {
-                    showErrorMessage('page-study-tree-message-modal', cannotMove + ' ' + node.data.title + ' ' + isAStudy);
-                } else {
-                    $.ajax({
-                        url: lazyReadAllUrl + sourceNode.data.key + additionalUrl,
-                        type: 'GET',
-                        cache: false,
-                        aysnc: false,
-                        success: function (data) {
-                            var childCount = $.parseJSON(data).length;
-                            if (childCount === 0) {
-                                moveStudy(sourceNode, node);
-                            } else {
-                                showErrorMessage('page-study-tree-message-modal', cannotMove + ' ' + sourceNode.data.title + ' ' + hasChildrenString);
-                            }
-                        }
-                    });
-                }
-            },
-            onDragLeave: function (node, sourceNode) {
-            }
-        }
-    });
-}
-
-
-//]]>
-</script>
+		$(document).ready(function () {
+			'use strict';
+			studyTreeInit();
+		});
+	</script>
 </div>

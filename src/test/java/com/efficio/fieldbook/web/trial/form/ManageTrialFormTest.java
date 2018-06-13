@@ -11,13 +11,13 @@ import org.junit.Test;
 public class ManageTrialFormTest {
 
 	@Test
-	public void testManageTrialFormPagination() {
+	public void testManageStudyFormPagination() {
 
-		ManageTrialForm form = new ManageTrialForm();
-		List<StudyDetails> nurseryDetailsList = new ArrayList<StudyDetails>();
+		final ManageTrialForm form = new ManageTrialForm();
+		final List<StudyDetails> nurseryDetailsList = new ArrayList<StudyDetails>();
 
 		for (int i = 0; i < 25; i++) {
-			StudyDetails studyDetail = new StudyDetails();
+			final StudyDetails studyDetail = new StudyDetails();
 			studyDetail.setStudyName("Study " + i);
 			studyDetail.setId(i);
 			nurseryDetailsList.add(studyDetail);

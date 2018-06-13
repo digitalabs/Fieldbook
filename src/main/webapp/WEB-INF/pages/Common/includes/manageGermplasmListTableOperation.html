@@ -8,7 +8,7 @@
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
 					<div class="col-xs-11 col-md-11">
-						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.add.folder.name}"></label>
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.study.add.folder.name}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button id="closeAddGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove" onclick="javascript: closeModal('addGermplasmFolder')"/>
@@ -21,7 +21,7 @@
 				</div>
 				<div class="row form-group">
 						<div class="col-xs-5 col-md-5 add_top_padding">
-							<label class="control-label label-bold" th:text="#{browse.nursery.folder.name}">Folder Name:</label><span class="required">*</span>
+							<label class="control-label label-bold" th:text="#{browse.study.folder.name}">Folder Name:</label><span class="required">*</span>
 						</div>
 						<div class="col-xs-7 col-md-7">
 							<input id="addGermplasmFolderName" name="addGermplasmFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
@@ -43,7 +43,7 @@
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
 					<div class="col-xs-11 col-md-11">					
-						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.rename.folder.name}"></label>
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.study.rename.folder.name}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button  id="closeRenameGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('renameGermplasmFolder')"/>
@@ -55,7 +55,7 @@
 				</div>
 				<div class="row form-group">
 						<div class="col-xs-5 col-md-5 add_top_padding">
-							<label class="control-label  label-bold" th:text="#{browse.nursery.folder.name}">Folder Name:</label><span class="required">*</span>
+							<label class="control-label  label-bold" th:text="#{browse.study.folder.name}">Folder Name:</label><span class="required">*</span>
 						</div>
 						<div class="col-xs-7 col-md-7">
 							<input id="newGermplasmFolderName" name="newGermplasmFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
@@ -77,7 +77,7 @@
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
 					<div class="col-xs-11 col-md-11">					
-						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.delete.folder.name}"></label>
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.study.delete.folder.name}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button  id="closeDeleteGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('deleteFolder')"/>
@@ -133,22 +133,17 @@
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
-		
 		function viewGermplasmLitDetails() {
 			'use strict';
 			openGermplasmListDetailsPopop(listId);
 		}
 		function displayListDetails(listIdTemp) {
 			'use strict';
-			var suffix = '/N';
-			if(!isNursery()){
-				suffix = '/T';
-			}
 			listId = listIdTemp;
 			$('#'+getDisplayedTreeName()).find('*').removeClass('dynatree-selected');
 			
 			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/displayGermplasmDetails/' + listId + suffix,
+				url: '/Fieldbook/StudyManager/importGermplasmList/displayGermplasmDetails/' + listId,
 				type: 'GET',
 				cache: false,
 				success: function(html) {
@@ -158,29 +153,7 @@
 					$('#entries-details').css('display', 'block');
 					$('#numberOfEntries').html($('#totalGermplasms').val());
                     toggleControlsForGermplasmListManagement(true);
-					if(isNursery()){
-						makeGermplasmListDraggable(makeDraggableBool);
-						checksFromPrimary = 0;
-						setSpinnerMaxValue();
-	
-						itemsIndexAdded = [];
-	
-						if (lastDraggedChecksList == 0) {
-							// We clear the list in the check
-							resetCheckList();
-						}
-						addFakeCheckTable();
-						
-						// show Import Crosses in Actions menu
-						if($('#createNurseryMainForm #studyId').length == 1){
-							$('#import-crosses').css('display', 'block');
-						} else {
-							$('#main-actions-btn').removeClass('fbk-hide');
-						}
-						
-					} else {
-                        $(document).trigger('germplasmListUpdated');
-                    }
+					$(document).trigger('germplasmListUpdated');
 					$('.view-header').show();
 				}
 			});
@@ -276,10 +249,7 @@
 							if ($('.check-germplasm-list-items tbody tr').length > 0) {
 								$('#keyForOverwrite').val(id);
 								$('#confirmationModal').modal('show');
-							} else {
-								displayGermplasmCheckDetails(id);
 							}
-							makeCheckDraggable(false);
 						} else {
 							if(fromEnterKey === false){
 								showErrorMessage('page-import-message-modal', sameListErr);

@@ -1,17 +1,13 @@
 package com.efficio.etl.web.controller.angular;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.service.impl.ETLServiceImpl;
+import com.efficio.etl.web.AbstractBaseETLController;
+import com.efficio.etl.web.bean.ConsolidatedStepForm;
+import com.efficio.etl.web.bean.RowDTO;
+import com.efficio.etl.web.bean.SheetDTO;
+import com.efficio.etl.web.bean.StudyDetailsForm;
+import com.efficio.etl.web.bean.UserSelection;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -21,7 +17,8 @@ import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,14 +31,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.service.impl.ETLServiceImpl;
-import com.efficio.etl.web.AbstractBaseETLController;
-import com.efficio.etl.web.bean.ConsolidatedStepForm;
-import com.efficio.etl.web.bean.RowDTO;
-import com.efficio.etl.web.bean.SheetDTO;
-import com.efficio.etl.web.bean.StudyDetailsForm;
-import com.efficio.etl.web.bean.UserSelection;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(AngularSelectSheetController.URL)
@@ -67,6 +66,9 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 	@Resource
 	private ContextUtil contextUtil;
+
+	@Resource
+	private StudyDataManager studyDataManager;
 
 	@Override
 	public String getContentName() {
@@ -144,8 +146,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		details.setObjective(this.userSelection.getStudyObjective());
 		details.setEndDate(this.userSelection.getStudyEndDate());
 		details.setStartDate(this.userSelection.getStudyStartDate());
-		details.setStartDate(this.userSelection.getCreatedBy());
-		details.setStudyType(StudyType.getStudyTypeByName(this.userSelection.getStudyType()));
+		details.setStudyType(studyDataManager.getStudyTypeByName(this.userSelection.getStudyType()));
 		details.setLabel(this.etlService.convertMessage(new Message(AngularSelectSheetController.ADD_TO_NEW_STUDY)));
 		previousStudies.add(details);
 	}
@@ -288,7 +289,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		final String startDateString = form.getStudyDetails().getStartDate();
 		final String endDateString = form.getStudyDetails().getEndDate();
 		Date startDate = null;
-		Date endDate = null;
+		final Date endDate;
 		final List<Message> messageList = new ArrayList<>();
 
 		if (!StringUtils.isEmpty(startDateString)) {
@@ -446,7 +447,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 		final Map<String, String> studyTypes = new HashMap<>();
 
-		for (final StudyType type : StudyType.values()) {
+		for (final StudyTypeDto type : studyDataManager.getAllVisibleStudyTypes()) {
 			studyTypes.put(type.getName(), type.getLabel());
 		}
 

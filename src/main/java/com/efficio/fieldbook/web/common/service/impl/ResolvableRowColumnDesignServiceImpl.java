@@ -292,4 +292,13 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 		}
 	}
 
+	/**
+	 * Defines if the experimental design requires breeding view licence to run
+	 *
+	 * @return
+	 */
+	@Override
+	public Boolean requiresBreedingViewLicence() {
+		return Boolean.TRUE;
+	}
 }

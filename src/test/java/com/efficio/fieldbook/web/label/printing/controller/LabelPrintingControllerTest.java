@@ -85,7 +85,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 	public static final int SAMPLE_STUDY_ID = 25004;
 	public static final String WLBL_21_JASPER_REPORT = "WLBL21";
 	public static final String RETURN_VALUE = "/template/base-template";
-	public static final String FILE_NAME = "Trial-Field-Map-Labels-";
+	public static final String FILE_NAME = "Study-Field-Map-Labels-";
 	public static final int FAIL_VAL = 0;
 
 	@Resource
@@ -322,8 +322,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		final UserLabelPrinting userLabelPrinting =
 				LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_PDF.getString());
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
-		this.userFieldmap.setSelectedFieldMaps(LabelPrintingControllerTest.fieldMapInfoTDI.createFieldMapInfoList(true, 1));
-		this.userFieldmap.setTrial(true);
+		this.userFieldmap.setSelectedFieldMaps(LabelPrintingControllerTest.fieldMapInfoTDI.createFieldMapInfoList( 1));
 		final LabelPrintingForm form = Mockito.mock(LabelPrintingForm.class);
 		final Model model = Mockito.mock(Model.class);
 		final HttpSession session = Mockito.mock(HttpSession.class);

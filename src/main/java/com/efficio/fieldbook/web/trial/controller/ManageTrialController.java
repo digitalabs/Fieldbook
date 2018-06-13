@@ -11,17 +11,15 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.generationcp.middleware.domain.oms.StudyType;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * The Class ManageTrialController.
@@ -41,17 +39,11 @@ public class ManageTrialController extends AbstractBaseFieldbookController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(@ModelAttribute("manageTrialForm") ManageTrialForm form, Model model, HttpServletRequest request) {
-		model.addAttribute("type", StudyType.T.getName());
 		model.addAttribute("preloadSummaryId", request.getParameter("summaryId") != null ? request.getParameter("summaryId") : "");
 		model.addAttribute("preloadSummaryName", request.getParameter("summaryName") != null ? request.getParameter("summaryName") : "");
 		return super.show(model);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
-	 */
 	@Override
 	public String getContentName() {
 		return "Common/manageStudy";

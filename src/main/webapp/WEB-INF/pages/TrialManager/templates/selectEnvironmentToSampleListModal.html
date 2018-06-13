@@ -7,7 +7,7 @@
 					<div class="row form-group">
 						<div class="col-xs-11 col-md-11">
 							<label class="modal-title fbk-modal-title" id="heading-modal"
-								   th:text="#{trial.sample.header}">Create sample list</label>
+								   th:text="#{study.sample.header}">Create sample list</label>
 						</div>
 						<div class="col-xs-1 col-md-1">
 							<button id="closeAdvanceTrialModal" type="button" class="close  pull-right glyphicon glyphicon-remove"
@@ -23,9 +23,9 @@
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 							<br></br>
-							<label class="" ng-show="locationFromTrial" th:utext="#{trial.select.locations.sample.list}"> Select the
+							<label class="" ng-show="locationFromTrial" th:utext="#{study.select.locations.sample.list}"> Select the
 								locations you would like to sample:</label>
-							<label class="" ng-hide="locationFromTrial" th:utext="#{trial.select.instances.sample.list}"> Select the
+							<label class="" ng-hide="locationFromTrial" th:utext="#{study.select.instances.sample.list}"> Select the
 								instances you would like to sample:</label>
 						</div>
 					</div>
@@ -63,7 +63,7 @@
 							th:text="#{common.form.cancel.text}">
 						Cancel
 					</button>
-					<button type="button" class="btn btn-primary" ng-disabled="selectedTrialInstancesBySampleList.length === 0"
+					<button type="button" class="btn btn-primary" ng-disabled="selectedInstancesBySampleList.length === 0"
 							ng-click="continueCreatingSampleList()" th:text="#{common.form.continue.text}">
 						Continue
 					</button>

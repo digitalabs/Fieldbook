@@ -1,24 +1,32 @@
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.internal.DesignLicenseUtil;
+import com.efficio.fieldbook.service.internal.breedingview.BVDesignLicenseInfo;
+import com.efficio.fieldbook.service.internal.breedingview.BVLicenseParseException;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
+import com.efficio.fieldbook.web.common.service.AugmentedRandomizedBlockDesignService;
+import com.efficio.fieldbook.web.common.service.EntryListOrderDesignService;
+import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
+import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
+import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
+import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.dms.InsertionMannerItem;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.util.ResourceFinder;
 import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,24 +39,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.internal.DesignLicenseUtil;
-import com.efficio.fieldbook.service.internal.breedingview.BVDesignLicenseInfo;
-import com.efficio.fieldbook.service.internal.breedingview.BVLicenseParseException;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.common.service.AugmentedRandomizedBlockDesignService;
-import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
-import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
-import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
-import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
-import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 @Controller
 @RequestMapping(ExpDesignController.URL)
@@ -66,6 +60,9 @@ public class ExpDesignController extends BaseTrialController {
 	@Resource
 	private AugmentedRandomizedBlockDesignService augmentedRandomizedBlockDesignService;
 	@Resource
+	private EntryListOrderDesignService entryListOrderDesignService;
+
+	@Resource
 	private ResourceBundleMessageSource messageSource;
 	@Resource
 	private DesignLicenseUtil designLicenseUtil;
@@ -78,6 +75,7 @@ public class ExpDesignController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(value = "/retrieveDesignTypes", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	public List<DesignTypeItem> retrieveDesignTypes() {
+
 		final List<DesignTypeItem> designTypes = new ArrayList<>();
 
 		designTypes.add(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK);
@@ -85,8 +83,15 @@ public class ExpDesignController extends BaseTrialController {
 		designTypes.add(DesignTypeItem.ROW_COL);
 		designTypes.add(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK);
 		designTypes.add(DesignTypeItem.CUSTOM_IMPORT);
+		designTypes.add(DesignTypeItem.ENTRY_LIST_ORDER);
 
 		return designTypes;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/retrieveInsertionManners", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	public List<TermSummary> retrieveInsertionManners() {
+		return InsertionMannerItem.getInsertionManners();
 	}
 
 	@ResponseBody
@@ -116,28 +121,23 @@ public class ExpDesignController extends BaseTrialController {
 			variatesList.addAll(this.userSelection.getSelectionVariates());
 		}
 
-		final String name = "";
-
-		final String description = "";
-		final String startDate = "";
-		final String endDate = "";
-		final String studyUpdate = "";
+		final String name = this.userSelection.getStudyName();
+		final String description = this.userSelection.getStudyDescription();
+		final String startDate = this.userSelection.getStudyStartDate();
+		final String endDate = this.userSelection.getStudyEndDate();
+		final String studyUpdate = this.userSelection.getStudyUpdate();
 
 		final Dataset dataset = (Dataset) SettingsUtil.
 				convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection.getPlotsLevelList(),
 						variatesList, this.userSelection, this.userSelection.getTrialLevelVariableList(),
-						this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getNurseryConditions(), false,
+						this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getStudyConditions(),
 						this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 
-
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.contextUtil.getCurrentProgramUUID());
-		final StudyDetails details = new StudyDetails();
-		details.setStudyType(StudyType.T);
-		workbook.setStudyDetails(details);
+		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID());
 		this.userSelection.setTemporaryWorkbook(workbook);
 
 		if (this.userSelection.getWorkbook() != null) {
-			int persistedNumberOfEnvironments = this.userSelection.getWorkbook().getTotalNumberOfInstances();
+			final int persistedNumberOfEnvironments = this.userSelection.getWorkbook().getTotalNumberOfInstances();
 			if (persistedNumberOfEnvironments < Integer.parseInt(expDesign.getNoOfEnvironments())) {
 				// This means we are adding new environments.
 				// workbook.observations() collection is no longer pre-loaded into user session when trial is opened.
@@ -156,7 +156,7 @@ public class ExpDesignController extends BaseTrialController {
 		final Locale locale = LocaleContextHolder.getLocale();
 		try {
 
-			// we validate here if there is gerplasm
+			// we validate here if there is germplasm
 			if (germplasmList == null) {
 				expParameterOutput = new ExpDesignValidationOutput(false,
 						this.messageSource.getMessage("experiment.design.generate.no.germplasm", null, locale));
@@ -188,9 +188,9 @@ public class ExpDesignController extends BaseTrialController {
 							}
 						}
 
-						BVDesignLicenseInfo bvDesignLicenseInfo = designLicenseUtil.retrieveLicenseInfo();
+						final BVDesignLicenseInfo bvDesignLicenseInfo = designLicenseUtil.retrieveLicenseInfo();
 
-						if (this.designLicenseUtil.isExpired(bvDesignLicenseInfo)) {
+						if (designService.requiresBreedingViewLicence() && this.designLicenseUtil.isExpired(bvDesignLicenseInfo)) {
 							expParameterOutput =
 									new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.license.expired",
 											null, locale));
@@ -229,15 +229,13 @@ public class ExpDesignController extends BaseTrialController {
 								deletedFactors.add(var);
 							}
 						}
-						if (oldFactors != null) {
-							for (final MeasurementVariable var : deletedFactors) {
-								oldFactors.remove(var);
-							}
+						for (final MeasurementVariable var : deletedFactors) {
+							oldFactors.remove(var);
 						}
 
 						workbook.setExpDesignVariables(designService.getRequiredDesignVariables());
 
-						if (this.designLicenseUtil.isExpiringWithinThirtyDays(bvDesignLicenseInfo)) {
+						if (designService.requiresBreedingViewLicence() && this.designLicenseUtil.isExpiringWithinThirtyDays(bvDesignLicenseInfo)) {
 							final int daysBeforeExpiration = Integer.parseInt(bvDesignLicenseInfo.getStatus().getLicense().getExpiryDays());
 							expParameterOutput =
 									new ExpDesignValidationOutput(true, this.messageSource.getMessage("experiment.design.license.expiring",
@@ -265,7 +263,7 @@ public class ExpDesignController extends BaseTrialController {
 
 	protected List<MeasurementRow> combineNewlyGeneratedMeasurementsWithExisting(final List<MeasurementRow> measurementRows,
 			final UserSelection userSelection, final boolean hasMeasurementData) {
-		Workbook workbook = null;
+		final Workbook workbook;
 		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null
 				&& !userSelection.getTemporaryWorkbook().getObservations().isEmpty()) {
 			workbook = userSelection.getTemporaryWorkbook();
@@ -283,7 +281,7 @@ public class ExpDesignController extends BaseTrialController {
 
 	protected String countNewEnvironments(final String noOfEnvironments, final UserSelection userSelection,
 			final boolean hasMeasurementData) {
-		Workbook workbook = null;
+		final Workbook workbook;
 		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null
 				&& !userSelection.getTemporaryWorkbook().getObservations().isEmpty()) {
 			workbook = userSelection.getTemporaryWorkbook();
@@ -330,6 +328,8 @@ public class ExpDesignController extends BaseTrialController {
 			return this.resolvableRowColumnDesign;
 		} else if (designType == DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId()) {
 			return this.augmentedRandomizedBlockDesignService;
+		} else if (designType == DesignTypeItem.ENTRY_LIST_ORDER.getId()) {
+			return this.entryListOrderDesignService;
 		}
 		return null;
 	}

@@ -6,7 +6,7 @@ import java.util.List;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.springframework.stereotype.Component;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 
 @Component
 public class BracketsExpression extends BaseExpression {

@@ -23,11 +23,13 @@ import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.reports.service.JasperReportService;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.util.FileUtils;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -62,6 +64,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -239,6 +242,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		final String studyId = this.getStudyId(data);
 
 		final Workbook workbook = this.fieldbookMiddlewareService.getStudyDataSet(Integer.valueOf(studyId));
+		this.removeAnalysisAndAnalysisSummaryVariables(workbook);
 		userSelection.setWorkbook(workbook);
 
 		// workbook.observations() collection is no longer pre-loaded into user session when trial is opened. Load now as we need it to
@@ -306,6 +310,30 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		}
 		LOG.info("Exiting Export Study : doExport");
 		return super.convertObjectToJson(results);
+	}
+
+
+	/**
+	 * Remove variables with variable types 'Analysis' and 'Analysis Summary' in the workbook's conditions, constants, factors and variates
+	 */
+	protected void removeAnalysisAndAnalysisSummaryVariables(final Workbook workbook) {
+		this.removeAnalysisVariables(workbook.getConditions());
+		this.removeAnalysisVariables(workbook.getConstants());
+		this.removeAnalysisVariables(workbook.getFactors());
+		this.removeAnalysisVariables(workbook.getVariates());
+	}
+
+	/**
+	 * Remove variables with variable types 'Analysis' and 'Analysis Summary' in the list of measurement variables
+	 */
+	private void removeAnalysisVariables(final List<MeasurementVariable> measurementVariables) {
+		final Iterator<MeasurementVariable> measurementVariablesIterator = measurementVariables.iterator();
+		while (measurementVariablesIterator.hasNext()) {
+			final MeasurementVariable measurementVariable = measurementVariablesIterator.next();
+			if (measurementVariable != null && VariableType.getReservedVariableTypes().contains(measurementVariable.getVariableType())) {
+				measurementVariablesIterator.remove();
+			}
+		}
 	}
 
 	/***
@@ -382,7 +410,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/retrieve/advanced/lists/{studyId}", method = RequestMethod.GET)
 	public String getAdvanceListsOfStudy(@PathVariable final int studyId, final Model model, final HttpSession session) {
 
-		List<GermplasmList> germplasmList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.ADVANCED);
+		final List<GermplasmList> germplasmList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.ADVANCED);
 		model.addAttribute("advancedList", germplasmList);
 		return super.showAjaxPage(model, ExportStudyController.DISPLAY_ADVANCE_GERMPLASM_LIST);
 	}

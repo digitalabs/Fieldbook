@@ -13,9 +13,11 @@
 					$scope.$on('$viewContentLoaded', function(){
 						// This is to automatically refresh the design details for augmented design
 						// whenever the Experimental tab is viewed
-						if ($scope.data.designType === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK ||
-							$scope.data.designType === DESIGN_TYPE.ENTRY_LIST_ORDER ) {
-							$scope.refreshDesignDetailsForAumentedAndELODesign();
+						if ($scope.data.designType === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
+							$scope.refreshDesignDetailsForAumentedDesign();
+						}
+						if ($scope.data.designType === DESIGN_TYPE.ENTRY_LIST_ORDER ) {
+							$scope.refreshDesignDetailsForELODesign();
 						}
 					});
 
@@ -168,9 +170,11 @@
 							$scope.data.designType = $scope.currentDesignType.id;
 							TrialManagerDataService.currentData.experimentalDesign.designType = $scope.data.designType;
 							$scope.applicationData.unappliedChangesAvailable = true;
-
-							$scope.refreshDesignDetailsForAumentedAndELODesign();
-
+							if ($scope.data.designType === DESIGN_TYPE.ENTRY_LIST_ORDER ) {
+								$scope.refreshDesignDetailsForELODesign();
+							} else {
+								$scope.refreshDesignDetailsForAumentedDesign();
+							}
 						} else {
 							$scope.currentDesignType = null;
 							$scope.data.designType = '';
@@ -580,8 +584,7 @@
 
 					};
 
-					// TODO This function is being called when switching design types for all the types, not only for Augmented and ELO
-					$scope.refreshDesignDetailsForAumentedAndELODesign = function() {
+					$scope.refreshDesignDetailsForAumentedDesign = function() {
 
 						$scope.germplasmTotalCheckEntriesCount = countCheckEntries();
 						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
@@ -591,6 +594,37 @@
 
 					}
 
+					$scope.refreshDesignDetailsForELODesign = function() {
+						$scope.germplasmTotalTestEntriesCount = countNumberOfTestEntries();
+						$scope.germplasmTotalCheckEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalTestEntriesCount;
+					}
+
+
+					function countNumberOfTestEntries() {
+						var germplasmListDataTable = $('.germplasm-list-items').DataTable();
+
+						if (germplasmListDataTable.rows().length !== 0) {
+
+							var numberOfTestEntries = 0;
+
+							$.each(germplasmListDataTable.rows().data(), function(index, obj) {
+								var entryCheckType = parseInt(obj[ENTRY_TYPE_COLUMN_DATA_KEY]);
+								if (entryCheckType === SYSTEM_DEFINED_ENTRY_TYPE.TEST_ENTRY) {
+									numberOfTestEntries++;
+								}
+							});
+
+							return numberOfTestEntries;
+
+						} else if (TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount != null) {
+							// If the germplasmlistDataTable is not yet initialized, we should get the number of check entries of germplasm list in the database
+							// when an existing study is opened / loaded, only if available. experimentalDesign.germplasmTotalCheckCount contains the count of checks stored in the database.
+							return TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
+						}
+
+						return 0;
+
+					}
 
 					function countCheckEntries() {
 

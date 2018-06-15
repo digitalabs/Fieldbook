@@ -49,6 +49,9 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 	public static final String URL = "/etl/workbook/mapOntology";
 	private static final Logger LOG = LoggerFactory.getLogger(AngularMapOntologyController.class);
+	public static final String ERROR_HEADER_NO_MAPPING = "error.header.no.mapping";
+	public static final String ERROR_DUPLICATE_LOCAL_VARIABLE = "error.duplicate.local.variable";
+	public static final String ERROR_LOCATION_ID_DOESNT_EXISTS = "error.location.id.doesnt.exists";
 
 	@Resource
 	private FieldbookService fieldbookService;
@@ -143,8 +146,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public Map<String, List<String>> processImport(@RequestBody final VariableDTO[] variables,
-			final HttpSession session, final HttpServletRequest request) {
+	public Map<String, List<String>> processImport(@RequestBody final VariableDTO[] variables) {
 
 		try {
 
@@ -163,14 +165,14 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			final Set<String> vars = new HashSet<>();
 			for (final VariableDTO variable : variables) {
 				if (variable.getId() == null) {
-					final Message message = new Message("error.header.no.mapping");
+					final Message message = new Message(ERROR_HEADER_NO_MAPPING);
 					message.setMessageParams(new String[] { variable.getHeaderName() });
 					final List<Message> messageList = new ArrayList<>();
 					messageList.add(message);
 					proxy.put(variable.getHeaderName(), this.etlService.convertMessageList(messageList));
 				}
 				if (!vars.add(variable.getHeaderName())) {// duplicate
-					final Message message = new Message("error.duplicate.local.variable");
+					final Message message = new Message(ERROR_DUPLICATE_LOCAL_VARIABLE);
 					message.setMessageParams(new String[] { variable.getHeaderName() });
 					final List<Message> messageList = new ArrayList<>();
 					messageList.add(message);
@@ -182,7 +184,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			boolean isLocationIDVariableExists = dataImportService.findMeasurementVariableByTermId(TermId.LOCATION_ID.getId(), importData.getFactors()).isPresent();
 			boolean isLocationNameVariableExists = dataImportService.findMeasurementVariableByTermId(TermId.TRIAL_LOCATION.getId(), importData.getFactors()).isPresent();
 			if (isLocationNameVariableExists && !isLocationIDVariableExists) {
-				final Message message = new Message("error.location.id.doesnt.exists");
+				final Message message = new Message(ERROR_LOCATION_ID_DOESNT_EXISTS);
 				final List<Message> messageList = new ArrayList<>();
 				messageList.add(message);
 				proxy.put("", this.etlService.convertMessageList(messageList));

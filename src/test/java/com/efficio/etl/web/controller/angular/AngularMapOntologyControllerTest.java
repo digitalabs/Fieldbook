@@ -1,22 +1,29 @@
 package com.efficio.etl.web.controller.angular;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.google.common.base.Optional;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.DataImportService;
+import org.generationcp.middleware.util.Message;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -73,6 +80,85 @@ public class AngularMapOntologyControllerTest {
 	}
 
 	@Test
+	public void testProcessImporHeaderWithErrors() throws IOException {
+		final org.apache.poi.ss.usermodel.Workbook apacheWorkbook = Mockito
+				.mock(org.apache.poi.ss.usermodel.Workbook.class);
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto("T"), "Sample Study", 1,
+				false);
+
+		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(apacheWorkbook);
+		Mockito.when(this.etlService.convertToWorkbook(this.userSelection)).thenReturn(workbook);
+
+		// Add Variable with no header mapping
+		VariableDTO variableWithNoHeaderMapping = new VariableDTO();
+		variableWithNoHeaderMapping.setId(null);
+
+		// Add duplicate variables
+		VariableDTO variableDuplicate1 = new VariableDTO();
+		variableDuplicate1.setHeaderName("SOME_VARIABLE");
+		VariableDTO variableDuplicate2 = new VariableDTO();
+		variableDuplicate2.setHeaderName("SOME_VARIABLE");
+
+		//
+		Mockito.when(dataImportService.findMeasurementVariableByTermId(TermId.LOCATION_ID.getId(), workbook.getFactors())).thenReturn(Optional.<MeasurementVariable>absent());
+		Mockito.when(dataImportService.findMeasurementVariableByTermId(TermId.TRIAL_LOCATION.getId(), workbook.getFactors())).thenReturn(Optional.of(new MeasurementVariable()));
+
+		final VariableDTO[] variables = { variableWithNoHeaderMapping, variableDuplicate1, variableDuplicate2 } ;
+
+		this.controller.processImport(variables);
+
+		final ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
+
+
+		Mockito.verify(etlService).mergeVariableData(variables, apacheWorkbook, this.userSelection);
+		Mockito.verify(etlService).validateProjectOntology(workbook);
+
+		Mockito.verify(etlService, Mockito.times(5)).convertMessageList(captor.capture());
+
+		List<List> messages = captor.getAllValues();
+		List<String> messageKeys = new ArrayList<>();
+		for (List<Message> message : messages) {
+			messageKeys.add(message.get(0).getMessageKey());
+		}
+
+		Assert.assertTrue(messageKeys.contains(AngularMapOntologyController.ERROR_HEADER_NO_MAPPING));
+		Assert.assertTrue(messageKeys.contains(AngularMapOntologyController.ERROR_DUPLICATE_LOCAL_VARIABLE));
+		Assert.assertTrue(messageKeys.contains(AngularMapOntologyController.ERROR_LOCATION_ID_DOESNT_EXISTS));
+
+	}
+
+	@Test
+	public void testProcessImporHeaderSuccess() throws IOException {
+		final org.apache.poi.ss.usermodel.Workbook apacheWorkbook = Mockito
+				.mock(org.apache.poi.ss.usermodel.Workbook.class);
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto("T"), "Sample Study", 1,
+				false);
+
+		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(apacheWorkbook);
+		Mockito.when(this.etlService.convertToWorkbook(this.userSelection)).thenReturn(workbook);
+
+		VariableDTO variable1 = new VariableDTO();
+		variable1.setId(101);
+		variable1.setHeaderName("VARIABLE1");
+		VariableDTO variable2 = new VariableDTO();
+		variable2.setId(102);
+		variable2.setHeaderName("VARIABLE2");
+
+		Mockito.when(dataImportService.findMeasurementVariableByTermId(TermId.LOCATION_ID.getId(), workbook.getFactors())).thenReturn(Optional.of(new MeasurementVariable()));
+		Mockito.when(dataImportService.findMeasurementVariableByTermId(TermId.TRIAL_LOCATION.getId(), workbook.getFactors())).thenReturn(Optional.of(new MeasurementVariable()));
+
+		final VariableDTO[] variables = { variable1, variable2 } ;
+
+		this.controller.processImport(variables);
+
+		Mockito.verify(etlService).mergeVariableData(variables, apacheWorkbook, this.userSelection);
+		Mockito.verify(etlService).validateProjectOntology(workbook);
+
+		Mockito.verify(etlService, Mockito.times(0)).convertMessageList(Mockito.anyList());
+
+	}
+
+	@Test
 	public void testConfirmImport() throws IOException, WorkbookParserException {
 		final org.apache.poi.ss.usermodel.Workbook apacheWorkbook = Mockito
 				.mock(org.apache.poi.ss.usermodel.Workbook.class);
@@ -89,6 +175,8 @@ public class AngularMapOntologyControllerTest {
 
 		Mockito.verify(this.userSelection).clearMeasurementVariables();
 		Mockito.verify(this.etlService).mergeVariableData(variables, apacheWorkbook, this.userSelection);
+		Mockito.verify(this.dataImportService).addLocationIDVariableInFactorsIfNotExists(workbook, PROGRAM_UUID);
+		Mockito.verify(this.dataImportService).removeLocationNameVariableIfExists(workbook);
 		Mockito.verify(this.fieldbookService).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, false);
 		Mockito.verify(this.etlService).saveProjectOntology(workbook, AngularMapOntologyControllerTest.PROGRAM_UUID);
 

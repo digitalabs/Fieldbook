@@ -96,6 +96,7 @@ public class ImportObservationsControllerTest {
 		Mockito.verify(this.etlService).createWorkbookFromUserSelection(Matchers.eq(this.userSelection),
 				Matchers.anyBoolean());
 		Mockito.verify(this.dataImportService).parseWorkbookDescriptionSheet(workbook, CURRENT_IBDB_USER_ID);
+		Mockito.verify(this.dataImportService).assignLocationIdVariableToEnvironmentDetailSection(importData);
 		Mockito.verify(this.etlService).saveProjectData(importData, ImportObservationsControllerTest.PROGRAM_UUID);
 		Mockito.verify(this.dataImportService).removeLocationNameVariableIfExists(importData);
 	}
@@ -118,6 +119,7 @@ public class ImportObservationsControllerTest {
 		Mockito.verify(this.etlService).createWorkbookFromUserSelection(Matchers.eq(this.userSelection),
 				Matchers.anyBoolean());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).removeLocationNameVariableIfExists(importData);
+		Mockito.verify(this.dataImportService, Mockito.times(0)).assignLocationIdVariableToEnvironmentDetailSection(importData);
 	}
 
 	@Test
@@ -135,6 +137,7 @@ public class ImportObservationsControllerTest {
 
 		Assert.assertEquals("redirect:/etl/fileUpload", returnValue);
 		Mockito.verify(this.dataImportService).addLocationIDVariableInFactorsIfNotExists(importData, PROGRAM_UUID);
+		Mockito.verify(this.dataImportService).assignLocationIdVariableToEnvironmentDetailSection(importData);
 		Mockito.verify(this.dataImportService).removeLocationNameVariableIfExists(importData);
 		Mockito.verify(this.dataImportService).parseWorkbookDescriptionSheet(workbook, CURRENT_IBDB_USER_ID);
 		Mockito.verify(this.etlService).saveProjectData(importData, ImportObservationsControllerTest.PROGRAM_UUID);

@@ -100,8 +100,8 @@ public class AngularMapOntologyControllerTest {
 		variableDuplicate2.setHeaderName("SOME_VARIABLE");
 
 		//
-		Mockito.when(dataImportService.findMeasurementVariableByTermId(TermId.LOCATION_ID.getId(), workbook.getFactors())).thenReturn(Optional.<MeasurementVariable>absent());
-		Mockito.when(dataImportService.findMeasurementVariableByTermId(TermId.TRIAL_LOCATION.getId(), workbook.getFactors())).thenReturn(Optional.of(new MeasurementVariable()));
+		Mockito.when(dataImportService.findMeasurementVariableByTermId(Matchers.eq(TermId.LOCATION_ID.getId()), Mockito.anyList())).thenReturn(Optional.<MeasurementVariable>absent());
+		Mockito.when(dataImportService.findMeasurementVariableByTermId(Matchers.eq(TermId.TRIAL_LOCATION.getId()), Mockito.anyList())).thenReturn(Optional.of(new MeasurementVariable()));
 
 		final VariableDTO[] variables = { variableWithNoHeaderMapping, variableDuplicate1, variableDuplicate2 } ;
 
@@ -145,8 +145,8 @@ public class AngularMapOntologyControllerTest {
 		variable2.setId(102);
 		variable2.setHeaderName("VARIABLE2");
 
-		Mockito.when(dataImportService.findMeasurementVariableByTermId(TermId.LOCATION_ID.getId(), workbook.getFactors())).thenReturn(Optional.of(new MeasurementVariable()));
-		Mockito.when(dataImportService.findMeasurementVariableByTermId(TermId.TRIAL_LOCATION.getId(), workbook.getFactors())).thenReturn(Optional.of(new MeasurementVariable()));
+		Mockito.when(dataImportService.findMeasurementVariableByTermId(Matchers.eq(TermId.LOCATION_ID.getId()), Matchers.anyList())).thenReturn(Optional.of(new MeasurementVariable()));
+		Mockito.when(dataImportService.findMeasurementVariableByTermId(Matchers.eq(TermId.TRIAL_LOCATION.getId()), Matchers.anyList())).thenReturn(Optional.of(new MeasurementVariable()));
 
 		final VariableDTO[] variables = { variable1, variable2 } ;
 

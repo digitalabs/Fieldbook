@@ -14,7 +14,9 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.WorkbenchAppPathResolver;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.Constants;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
@@ -52,6 +54,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 	public static final String ERROR_HEADER_NO_MAPPING = "error.header.no.mapping";
 	public static final String ERROR_DUPLICATE_LOCAL_VARIABLE = "error.duplicate.local.variable";
 	public static final String ERROR_LOCATION_ID_DOESNT_EXISTS = "error.location.id.doesnt.exists";
+	public static final int NURSERY_TYPE_ID = 1;
 
 	@Resource
 	private FieldbookService fieldbookService;
@@ -181,9 +184,8 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 				}
 			}
 
-			boolean isLocationIDVariableExists = dataImportService.findMeasurementVariableByTermId(TermId.LOCATION_ID.getId(), importData.getFactors()).isPresent();
-			boolean isLocationNameVariableExists = dataImportService.findMeasurementVariableByTermId(TermId.TRIAL_LOCATION.getId(), importData.getFactors()).isPresent();
-			if (isLocationNameVariableExists && !isLocationIDVariableExists) {
+			// If Location Name variable is present in the imported file, then the Location ID variable is required.
+			if (this.checkIfLocationIdVariableExists(importData)) {
 				final Message message = new Message(ERROR_LOCATION_ID_DOESNT_EXISTS);
 				final List<Message> messageList = new ArrayList<>();
 				messageList.add(message);
@@ -198,7 +200,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			return proxy;
 
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			AngularMapOntologyController.LOG.error(e.getMessage(), e);
 			final Map<String, List<String>> errorMap = new HashMap<>();
 			final List<Message> error = new ArrayList<>();
@@ -207,6 +209,31 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			return errorMap;
 		}
 	}
+
+	protected boolean checkIfLocationIdVariableExists(final org.generationcp.middleware.domain.etl.Workbook importData) throws IOException, WorkbookParserException {
+
+		final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
+				.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection),
+						this.contextUtil.getCurrentIbdbUserId());
+		importData.setConstants(referenceWorkbook.getConstants());
+		importData.setConditions(referenceWorkbook.getConditions());
+
+		final List<MeasurementVariable> measurementVariables = new ArrayList<>();
+
+		if (importData.getStudyDetails().getStudyType().getId() == NURSERY_TYPE_ID) {
+			measurementVariables.addAll(importData.getConditions());
+		} else {
+			measurementVariables.addAll(importData.getFactors());
+		}
+
+		final boolean isLocationIDVariableExists = dataImportService.findMeasurementVariableByTermId(TermId.LOCATION_ID.getId(), measurementVariables).isPresent();
+		final boolean isLocationNameVariableExists = dataImportService.findMeasurementVariableByTermId(TermId.TRIAL_LOCATION.getId(), measurementVariables).isPresent();
+
+		// If Location Name variable is present in the imported file, then the Location ID variable is required.
+		return isLocationNameVariableExists && !isLocationIDVariableExists;
+
+	}
+
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	public String uploadFile(@ModelAttribute("uploadForm") final FileUploadForm uploadForm, final BindingResult result,

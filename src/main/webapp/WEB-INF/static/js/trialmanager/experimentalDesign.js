@@ -619,7 +619,8 @@
 						} else if (TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount != null) {
 							// If the germplasmlistDataTable is not yet initialized, we should get the number of check entries of germplasm list in the database
 							// when an existing study is opened / loaded, only if available. experimentalDesign.germplasmTotalCheckCount contains the count of checks stored in the database.
-							return TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
+							return TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount -
+								TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
 						}
 
 						return 0;

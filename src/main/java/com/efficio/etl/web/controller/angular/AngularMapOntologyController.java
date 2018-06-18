@@ -223,6 +223,9 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 		if (importData.getStudyDetails().getStudyType().getId() == NURSERY_TYPE_ID) {
 			measurementVariables.addAll(importData.getConditions());
 		} else {
+			// The location name/id can be found on either conditions
+			// or factors section of the fieldbook file if the study is Trial
+			measurementVariables.addAll(importData.getConditions());
 			measurementVariables.addAll(importData.getFactors());
 		}
 

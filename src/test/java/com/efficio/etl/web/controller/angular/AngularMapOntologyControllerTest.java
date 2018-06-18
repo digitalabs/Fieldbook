@@ -213,8 +213,13 @@ public class AngularMapOntologyControllerTest {
 		Mockito.verify(this.dataImportService).findMeasurementVariableByTermId(Matchers.eq(TermId.LOCATION_ID.getId()), captor1.capture());
 		Mockito.verify(this.dataImportService).findMeasurementVariableByTermId(Matchers.eq(TermId.LOCATION_ID.getId()), captor2.capture());
 
-		Assert.assertEquals(workbook.getFactors(), captor1.getValue());
-		Assert.assertEquals(workbook.getFactors(), captor2.getValue());
+		List<MeasurementVariable> measurementVariables = new ArrayList<>();
+
+		measurementVariables.addAll(workbook.getConditions());
+		measurementVariables.addAll(workbook.getFactors());
+
+		Assert.assertEquals(measurementVariables, captor1.getValue());
+		Assert.assertEquals(measurementVariables, captor2.getValue());
 
 	}
 

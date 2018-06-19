@@ -220,14 +220,10 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 		final List<MeasurementVariable> measurementVariables = new ArrayList<>();
 
-		if (importData.getStudyDetails().getStudyType().getId() == NURSERY_TYPE_ID) {
-			measurementVariables.addAll(importData.getConditions());
-		} else {
-			// The location name/id can be found on either conditions
-			// or factors section of the fieldbook file if the study is Trial
-			measurementVariables.addAll(importData.getConditions());
-			measurementVariables.addAll(importData.getFactors());
-		}
+		// The location name/id can be found on either conditions
+		// or factors section of the fieldbook file if the study is Trial
+		measurementVariables.addAll(importData.getConditions());
+		measurementVariables.addAll(importData.getFactors());
 
 		final boolean isLocationIDVariableExists = dataImportService.findMeasurementVariableByTermId(TermId.LOCATION_ID.getId(), measurementVariables).isPresent();
 		final boolean isLocationNameVariableExists = dataImportService.findMeasurementVariableByTermId(TermId.TRIAL_LOCATION.getId(), measurementVariables).isPresent();

@@ -39,8 +39,7 @@ public class AngularMapOntologyControllerTest {
 	private static final String PROGRAM_UUID = "55bd5dde-3a68-4dcd-bdda-d2301eff9e16";
 	public static final String CONTEXT_PATH = "contextPath";
 	public static final int CURRENT_IBDB_USER_ID = 1;
-	public static final int NURSERY_TYPE_ID = 1;
-	public static final int STUDY_TYPE_ID = 6;
+	public static final int TRIAL_TYPE_ID = 6;
 
 	@Mock
 	private HttpServletRequest request;
@@ -131,7 +130,7 @@ public class AngularMapOntologyControllerTest {
 	public void testProcessImporHeaderSuccess() throws IOException, WorkbookParserException {
 		final org.apache.poi.ss.usermodel.Workbook apacheWorkbook = Mockito
 				.mock(org.apache.poi.ss.usermodel.Workbook.class);
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto(6,"","T"), "Sample Study", 1,
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto(TRIAL_TYPE_ID,"","T"), "Sample Study", 1,
 				false);
 
 		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(apacheWorkbook);
@@ -163,7 +162,7 @@ public class AngularMapOntologyControllerTest {
 	public void testConfirmImport() throws IOException, WorkbookParserException {
 		final org.apache.poi.ss.usermodel.Workbook apacheWorkbook = Mockito
 				.mock(org.apache.poi.ss.usermodel.Workbook.class);
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto(6,"","T"), "Sample Study", 1,
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto(TRIAL_TYPE_ID,"","T"), "Sample Study", 1,
 				false);
 		workbook.getStudyDetails().getStudyType().setId(1);
 		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(apacheWorkbook);
@@ -194,11 +193,11 @@ public class AngularMapOntologyControllerTest {
 	}
 
 	@Test
-	public void testCheckIfLocationIdVariableExistsTrial() throws IOException, WorkbookParserException {
+	public void testCheckIfLocationIdVariableExists() throws IOException, WorkbookParserException {
 
 		final org.apache.poi.ss.usermodel.Workbook apacheWorkbook = Mockito
 				.mock(org.apache.poi.ss.usermodel.Workbook.class);
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(6, new StudyTypeDto(STUDY_TYPE_ID,"","T"), "Sample Study", 1,
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(6, new StudyTypeDto(TRIAL_TYPE_ID,"","T"), "Sample Study", 1,
 				false);
 
 		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(apacheWorkbook);
@@ -224,29 +223,5 @@ public class AngularMapOntologyControllerTest {
 
 	}
 
-	@Test
-	public void testCheckIfLocationIdVariableExistsNursery() throws IOException, WorkbookParserException {
-
-		final org.apache.poi.ss.usermodel.Workbook apacheWorkbook = Mockito
-				.mock(org.apache.poi.ss.usermodel.Workbook.class);
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(6, new StudyTypeDto(NURSERY_TYPE_ID,"","N"), "Sample Study", 1,
-				false);
-
-		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(apacheWorkbook);
-		Mockito.when(this.etlService.convertToWorkbook(this.userSelection)).thenReturn(workbook);
-		Mockito.when(this.dataImportService.parseWorkbookDescriptionSheet(apacheWorkbook, CURRENT_IBDB_USER_ID)).thenReturn(workbook);
-		Mockito.when(this.dataImportService.findMeasurementVariableByTermId(Matchers.eq(TermId.LOCATION_ID.getId()), Matchers.anyList())).thenReturn(Optional.<MeasurementVariable>absent());
-		Mockito.when(this.dataImportService.findMeasurementVariableByTermId(Matchers.eq(TermId.TRIAL_LOCATION.getId()), Matchers.anyList())).thenReturn(Optional.of(new MeasurementVariable()));
-
-		Assert.assertTrue(this.controller.checkIfLocationIdVariableExists(workbook));
-
-		final ArgumentCaptor<List> captor1 = ArgumentCaptor.forClass(List.class);
-		final ArgumentCaptor<List> captor2 = ArgumentCaptor.forClass(List.class);
-		Mockito.verify(this.dataImportService).findMeasurementVariableByTermId(Matchers.eq(TermId.LOCATION_ID.getId()), captor1.capture());
-		Mockito.verify(this.dataImportService).findMeasurementVariableByTermId(Matchers.eq(TermId.LOCATION_ID.getId()), captor2.capture());
-		Assert.assertEquals(workbook.getConditions(), captor1.getValue());
-		Assert.assertEquals(workbook.getConditions(), captor2.getValue());
-
-	}
 
 }

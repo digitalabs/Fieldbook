@@ -1,4 +1,3 @@
-
 package com.efficio.etl.web.controller.angular;
 
 import com.efficio.etl.service.ETLService;
@@ -54,7 +53,6 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 	public static final String ERROR_HEADER_NO_MAPPING = "error.header.no.mapping";
 	public static final String ERROR_DUPLICATE_LOCAL_VARIABLE = "error.duplicate.local.variable";
 	public static final String ERROR_LOCATION_ID_DOESNT_EXISTS = "error.location.id.doesnt.exists";
-	public static final int NURSERY_TYPE_ID = 1;
 
 	@Resource
 	private FieldbookService fieldbookService;
@@ -81,7 +79,6 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 		return this.userSelection;
 	}
 
-
 	@Resource
 	protected WorkbenchService workbenchService;
 
@@ -90,11 +87,10 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 		try {
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
-			final List<String> headers = this.etlService.retrieveColumnHeaders(workbook, this.userSelection,
-					Boolean.FALSE);
+			final List<String> headers = this.etlService.retrieveColumnHeaders(workbook, this.userSelection, Boolean.FALSE);
 
-			final Map<PhenotypicType, List<VariableDTO>> headerMap = this.etlService
-					.prepareInitialCategorization(headers, this.userSelection);
+			final Map<PhenotypicType, List<VariableDTO>> headerMap =
+					this.etlService.prepareInitialCategorization(headers, this.userSelection);
 
 			// null key is used to store variabledtos not initially mapped to
 			// any standard variable (and thus, any phenotypic type)
@@ -159,8 +155,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			this.etlService.mergeVariableData(variables, workbook, this.userSelection);
 
-			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService
-					.convertToWorkbook(this.userSelection);
+			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService.convertToWorkbook(this.userSelection);
 
 			final Map<String, List<Message>> messages = this.etlService.validateProjectOntology(importData);
 			final Map<String, List<String>> proxy = new HashMap<>();
@@ -169,18 +164,17 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			for (final VariableDTO variable : variables) {
 				if (variable.getId() == null) {
 					final Message message = new Message(ERROR_HEADER_NO_MAPPING);
-					message.setMessageParams(new String[] { variable.getHeaderName() });
+					message.setMessageParams(new String[] {variable.getHeaderName()});
 					final List<Message> messageList = new ArrayList<>();
 					messageList.add(message);
 					proxy.put(variable.getHeaderName(), this.etlService.convertMessageList(messageList));
 				}
 				if (!vars.add(variable.getHeaderName())) {// duplicate
 					final Message message = new Message(ERROR_DUPLICATE_LOCAL_VARIABLE);
-					message.setMessageParams(new String[] { variable.getHeaderName() });
+					message.setMessageParams(new String[] {variable.getHeaderName()});
 					final List<Message> messageList = new ArrayList<>();
 					messageList.add(message);
-					proxy.put(variable.getHeaderName() + ":" + variable.getId(),
-							this.etlService.convertMessageList(messageList));
+					proxy.put(variable.getHeaderName() + ":" + variable.getId(), this.etlService.convertMessageList(messageList));
 				}
 			}
 
@@ -210,7 +204,8 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 		}
 	}
 
-	protected boolean checkIfLocationIdVariableExists(final org.generationcp.middleware.domain.etl.Workbook importData) throws IOException, WorkbookParserException {
+	protected boolean checkIfLocationIdVariableExists(final org.generationcp.middleware.domain.etl.Workbook importData)
+			throws IOException, WorkbookParserException {
 
 		final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
 				.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection),
@@ -225,18 +220,18 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 		measurementVariables.addAll(importData.getConditions());
 		measurementVariables.addAll(importData.getFactors());
 
-		final boolean isLocationIDVariableExists = dataImportService.findMeasurementVariableByTermId(TermId.LOCATION_ID.getId(), measurementVariables).isPresent();
-		final boolean isLocationNameVariableExists = dataImportService.findMeasurementVariableByTermId(TermId.TRIAL_LOCATION.getId(), measurementVariables).isPresent();
+		final boolean isLocationIDVariableExists =
+				dataImportService.findMeasurementVariableByTermId(TermId.LOCATION_ID.getId(), measurementVariables).isPresent();
+		final boolean isLocationNameVariableExists =
+				dataImportService.findMeasurementVariableByTermId(TermId.TRIAL_LOCATION.getId(), measurementVariables).isPresent();
 
 		// If Location Name variable is present in the imported file, then the Location ID variable is required.
 		return isLocationNameVariableExists && !isLocationIDVariableExists;
 
 	}
 
-
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public String uploadFile(@ModelAttribute("uploadForm") final FileUploadForm uploadForm, final BindingResult result,
-			final Model model) {
+	public String uploadFile(@ModelAttribute("uploadForm") final FileUploadForm uploadForm, final BindingResult result, final Model model) {
 		final FileUploadFormValidator validator = new FileUploadFormValidator();
 		validator.validate(uploadForm, result);
 
@@ -266,8 +261,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 			this.etlService.mergeVariableData(variables, workbook, this.userSelection);
-			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService
-					.convertToWorkbook(this.userSelection);
+			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService.convertToWorkbook(this.userSelection);
 
 			final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
 					.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection),

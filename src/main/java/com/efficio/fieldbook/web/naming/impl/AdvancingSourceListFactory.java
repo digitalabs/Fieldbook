@@ -1,4 +1,3 @@
-
 package com.efficio.fieldbook.web.naming.impl;
 
 import java.util.ArrayList;
@@ -55,8 +54,8 @@ public class AdvancingSourceListFactory {
 
 	private static final String DEFAULT_TEST_VALUE = "T";
 
-	public AdvancingSourceList createAdvancingSourceList(Workbook workbook, AdvancingStudy advanceInfo, Study study,
-			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
+	public AdvancingSourceList createAdvancingSourceList(final Workbook workbook, final AdvancingStudy advanceInfo, final Study study,
+			final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
 
 		Map<Integer, List<PlantDTO>> sampledPlantsMap = new HashMap<>();
 		if (advanceInfo.getAdvanceType().equals(AdvanceType.SAMPLE)) {
@@ -64,17 +63,17 @@ public class AdvancingSourceListFactory {
 			sampledPlantsMap = this.studyDataManager.getSampledPlants(studyId);
 		}
 
-		AdvancingSource environmentLevel = new AdvancingSource();
-		ExpressionDataProcessor dataProcessor = dataProcessorFactory.retrieveExecutorProcessor();
+		final AdvancingSource environmentLevel = new AdvancingSource();
+		final ExpressionDataProcessor dataProcessor = dataProcessorFactory.retrieveExecutorProcessor();
 
-		AdvancingSourceList advancingSourceList = new AdvancingSourceList();
+		final AdvancingSourceList advancingSourceList = new AdvancingSourceList();
 
-		List<AdvancingSource> advancingPlotRows = new ArrayList<>();
+		final List<AdvancingSource> advancingPlotRows = new ArrayList<>();
 
-		Integer methodVariateId = advanceInfo.getMethodVariateId();
-		Integer lineVariateId = advanceInfo.getLineVariateId();
-		Integer plotVariateId = advanceInfo.getPlotVariateId();
-		List<Name> names = null;
+		final Integer methodVariateId = advanceInfo.getMethodVariateId();
+		final Integer lineVariateId = advanceInfo.getLineVariateId();
+		final Integer plotVariateId = advanceInfo.getPlotVariateId();
+		final List<Name> names = null;
 
 		String studyName = null;
 		if (study != null) {
@@ -83,13 +82,13 @@ public class AdvancingSourceListFactory {
 
 		dataProcessor.processEnvironmentLevelData(environmentLevel, workbook, advanceInfo, study);
 
-		List<Integer> gids = new ArrayList<>();
+		final List<Integer> gids = new ArrayList<>();
 
 		if (workbook != null && workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
-			for (MeasurementRow row : workbook.getObservations()) {
-                AdvancingSource advancingSourceCandidate = environmentLevel.copy();
-                
-                // Only advance entries for selected trial instances (environments) 
+			for (final MeasurementRow row : workbook.getObservations()) {
+				final AdvancingSource advancingSourceCandidate = environmentLevel.copy();
+
+				// Only advance entries for selected trial instances (environments)
 				advancingSourceCandidate.setTrialInstanceNumber(row.getMeasurementDataValue(TermId.TRIAL_INSTANCE_FACTOR.getId()));
 				if (advancingSourceCandidate.getTrialInstanceNumber() != null && advanceInfo.getSelectedTrialInstances() != null
 						&& !advanceInfo.getSelectedTrialInstances().contains(advancingSourceCandidate.getTrialInstanceNumber())) {
@@ -97,9 +96,9 @@ public class AdvancingSourceListFactory {
 				}
 
 				// If study is Trail then setting data if trail instance is not null
-				if(advancingSourceCandidate.getTrialInstanceNumber() != null){
-					MeasurementRow trialInstanceObservations =
-							workbook.getTrialObservationByTrialInstanceNo(Integer.valueOf(advancingSourceCandidate.getTrialInstanceNumber()));
+				if (advancingSourceCandidate.getTrialInstanceNumber() != null) {
+					final MeasurementRow trialInstanceObservations = workbook.getTrialObservationByTrialInstanceNo(
+							Integer.valueOf(advancingSourceCandidate.getTrialInstanceNumber()));
 
 					advancingSourceCandidate.setTrailInstanceObservation(trialInstanceObservations);
 				}
@@ -111,14 +110,14 @@ public class AdvancingSourceListFactory {
 
 				// Only advance entries for selected replications within an environment
 				advancingSourceCandidate.setReplicationNumber(row.getMeasurementDataValue(TermId.REP_NO.getId()));
-				if (advancingSourceCandidate.getReplicationNumber() != null && advanceInfo.getSelectedReplications() != null
-						&& !advanceInfo.getSelectedReplications().contains(advancingSourceCandidate.getReplicationNumber())) {
+				if (advancingSourceCandidate.getReplicationNumber() != null && advanceInfo.getSelectedReplications() != null && !advanceInfo
+						.getSelectedReplications().contains(advancingSourceCandidate.getReplicationNumber())) {
 					continue;
 				}
 
 				Integer methodId = null;
 				if ((advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) && !advanceInfo.getAdvanceType()
-					.equals(AdvanceType.SAMPLE)) {
+						.equals(AdvanceType.SAMPLE)) {
 					if (methodVariateId != null) {
 						methodId = this.getBreedingMethodId(methodVariateId, row, breedingMethodCodeMap);
 					}
@@ -130,21 +129,20 @@ public class AdvancingSourceListFactory {
 					continue;
 				}
 
-				ImportedGermplasm germplasm = this.createGermplasm(row);
+				final ImportedGermplasm germplasm = this.createGermplasm(row);
 				if (germplasm.getGid() != null && NumberUtils.isNumber(germplasm.getGid())) {
 					gids.add(Integer.valueOf(germplasm.getGid()));
 				}
 
-				MeasurementData checkData = row.getMeasurementData(TermId.CHECK.getId());
+				final MeasurementData checkData = row.getMeasurementData(TermId.CHECK.getId());
 				String check = null;
 				if (checkData != null) {
 					check = checkData.getcValueId();
 					if (checkData != null && checkData.getMeasurementVariable() != null
-							&& checkData.getMeasurementVariable().getPossibleValues() != null
-							&& !checkData.getMeasurementVariable().getPossibleValues().isEmpty() && check != null
-							&& NumberUtils.isNumber(check)) {
+							&& checkData.getMeasurementVariable().getPossibleValues() != null && !checkData.getMeasurementVariable()
+							.getPossibleValues().isEmpty() && check != null && NumberUtils.isNumber(check)) {
 
-						for (ValueReference valref : checkData.getMeasurementVariable().getPossibleValues()) {
+						for (final ValueReference valref : checkData.getMeasurementVariable().getPossibleValues()) {
 							if (valref.getId().equals(Double.valueOf(check).intValue())) {
 								check = valref.getName();
 								break;
@@ -153,16 +151,16 @@ public class AdvancingSourceListFactory {
 					}
 				}
 
-				boolean isCheck =
+				final boolean isCheck =
 						check != null && !"".equals(check) && !AdvancingSourceListFactory.DEFAULT_TEST_VALUE.equalsIgnoreCase(check);
 
-				MeasurementData plotNumberData = row.getMeasurementData(TermId.PLOT_NO.getId());
+				final MeasurementData plotNumberData = row.getMeasurementData(TermId.PLOT_NO.getId());
 				if (plotNumberData != null) {
 					advancingSourceCandidate.setPlotNumber(plotNumberData.getValue());
 				}
-				
+
 				Integer plantsSelected = null;
-				Method breedingMethod = breedingMethodMap.get(methodId);
+				final Method breedingMethod = breedingMethodMap.get(methodId);
 				if (advanceInfo.getAdvanceType().equals(AdvanceType.SAMPLE)) {
 					if (sampledPlantsMap.containsKey(row.getExperimentId())) {
 						plantsSelected = sampledPlantsMap.get(row.getExperimentId()).size();
@@ -171,7 +169,7 @@ public class AdvancingSourceListFactory {
 						continue;
 					}
 				}
-				Boolean isBulk = breedingMethod.isBulkingMethod();
+				final Boolean isBulk = breedingMethod.isBulkingMethod();
 				if (isBulk != null) {
 					if (plantsSelected == null) {
 						if (isBulk && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
@@ -192,7 +190,7 @@ public class AdvancingSourceListFactory {
 					advancingSourceCandidate.setStudyName(studyName);
 					advancingSourceCandidate.setStudyId(workbook.getStudyDetails().getId());
 
-                    dataProcessor.processPlotLevelData(advancingSourceCandidate, row);
+					dataProcessor.processPlotLevelData(advancingSourceCandidate, row);
 
 					advancingPlotRows.add(advancingSourceCandidate);
 				}
@@ -206,13 +204,13 @@ public class AdvancingSourceListFactory {
 		return advancingSourceList;
 	}
 
-	private void setNamesToGermplasm(List<AdvancingSource> rows, List<Integer> gids) throws MiddlewareQueryException {
+	private void setNamesToGermplasm(final List<AdvancingSource> rows, final List<Integer> gids) throws MiddlewareQueryException {
 		if (rows != null && !rows.isEmpty()) {
-			Map<Integer, List<Name>> map = this.fieldbookMiddlewareService.getNamesByGids(gids);
-			for (AdvancingSource row : rows) {
-				String gid = row.getGermplasm().getGid();
+			final Map<Integer, List<Name>> map = this.fieldbookMiddlewareService.getNamesByGids(gids);
+			for (final AdvancingSource row : rows) {
+				final String gid = row.getGermplasm().getGid();
 				if (gid != null && NumberUtils.isNumber(gid)) {
-					List<Name> names = map.get(Integer.valueOf(gid));
+					final List<Name> names = map.get(Integer.valueOf(gid));
 					if (names != null && !names.isEmpty()) {
 						row.setNames(names);
 					}
@@ -221,7 +219,7 @@ public class AdvancingSourceListFactory {
 		}
 	}
 
-	private Integer getIntegerValue(String value) {
+	private Integer getIntegerValue(final String value) {
 		Integer integerValue = null;
 
 		if (NumberUtils.isNumber(value)) {
@@ -231,8 +229,8 @@ public class AdvancingSourceListFactory {
 		return integerValue;
 	}
 
-	private ImportedGermplasm createGermplasm(MeasurementRow row) {
-		ImportedGermplasm germplasm = new ImportedGermplasm();
+	private ImportedGermplasm createGermplasm(final MeasurementRow row) {
+		final ImportedGermplasm germplasm = new ImportedGermplasm();
 		germplasm.setCross(row.getMeasurementDataValue(TermId.CROSS.getId()));
 		germplasm.setDesig(row.getMeasurementDataValue(TermId.DESIG.getId()));
 		germplasm.setEntryCode(row.getMeasurementDataValue(TermId.ENTRY_CODE.getId()));
@@ -242,39 +240,39 @@ public class AdvancingSourceListFactory {
 		return germplasm;
 	}
 
-	private void assignSourceGermplasms(AdvancingSourceList list, Map<Integer, Method> breedingMethodMap) throws FieldbookException {
-		List<Integer> gidList = new ArrayList<>();
+	private void assignSourceGermplasms(final AdvancingSourceList list, final Map<Integer, Method> breedingMethodMap) throws FieldbookException {
+		final List<Integer> gidList = new ArrayList<>();
 
 		if (list != null && list.getRows() != null && !list.getRows().isEmpty()) {
-			for (AdvancingSource source : list.getRows()) {
-				if (source.getGermplasm() != null && source.getGermplasm().getGid() != null
-						&& NumberUtils.isNumber(source.getGermplasm().getGid())) {
+			for (final AdvancingSource source : list.getRows()) {
+				if (source.getGermplasm() != null && source.getGermplasm().getGid() != null && NumberUtils
+						.isNumber(source.getGermplasm().getGid())) {
 
 					gidList.add(Integer.valueOf(source.getGermplasm().getGid()));
 				}
 			}
-			List<Germplasm> germplasmList = this.fieldbookMiddlewareService.getGermplasms(gidList);
-			Map<String, Germplasm> germplasmMap = new HashMap<>();
-			for (Germplasm germplasm : germplasmList) {
+			final List<Germplasm> germplasmList = this.fieldbookMiddlewareService.getGermplasms(gidList);
+			final Map<String, Germplasm> germplasmMap = new HashMap<>();
+			for (final Germplasm germplasm : germplasmList) {
 				germplasmMap.put(germplasm.getGid().toString(), germplasm);
 			}
-			for (AdvancingSource source : list.getRows()) {
-				if (source.getGermplasm() != null && source.getGermplasm().getGid() != null
-						&& NumberUtils.isNumber(source.getGermplasm().getGid())) {
-					Germplasm germplasm = germplasmMap.get(source.getGermplasm().getGid().toString());
+			for (final AdvancingSource source : list.getRows()) {
+				if (source.getGermplasm() != null && source.getGermplasm().getGid() != null && NumberUtils
+						.isNumber(source.getGermplasm().getGid())) {
+					final Germplasm germplasm = germplasmMap.get(source.getGermplasm().getGid().toString());
 
 					if (germplasm == null) {
 						// we throw exception because germplasm is not existing
-						Locale locale = LocaleContextHolder.getLocale();
-						throw new FieldbookException(this.messageSource.getMessage("error.advancing.germplasm.not.existing",
-								new String[] {}, locale));
+						final Locale locale = LocaleContextHolder.getLocale();
+						throw new FieldbookException(
+								this.messageSource.getMessage("error.advancing.germplasm.not.existing", new String[] {}, locale));
 					}
 
 					source.getGermplasm().setGpid1(germplasm.getGpid1());
 					source.getGermplasm().setGpid2(germplasm.getGpid2());
 					source.getGermplasm().setGnpgs(germplasm.getGnpgs());
 					source.getGermplasm().setMgid(germplasm.getMgid());
-					Method sourceMethod = breedingMethodMap.get(germplasm.getMethodId());
+					final Method sourceMethod = breedingMethodMap.get(germplasm.getMethodId());
 					if (sourceMethod != null) {
 						source.setSourceMethod(sourceMethod);
 					}
@@ -285,28 +283,31 @@ public class AdvancingSourceListFactory {
 		}
 	}
 
-	private Integer getBreedingMethodId(Integer methodVariateId, MeasurementRow row, Map<String, Method> breedingMethodCodeMap) {
+	private Integer getBreedingMethodId(final Integer methodVariateId, final MeasurementRow row, final Map<String, Method> breedingMethodCodeMap) {
 		Integer methodId = null;
 		if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE.getId())) {
 			methodId = this.getIntegerValue(row.getMeasurementDataValue(methodVariateId));
-		} else if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_TEXT.getId()) || methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_CODE.getId())) {
-			String methodName = row.getMeasurementDataValue(methodVariateId);
+		} else if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_TEXT.getId()) || methodVariateId
+				.equals(TermId.BREEDING_METHOD_VARIATE_CODE.getId())) {
+			final String methodName = row.getMeasurementDataValue(methodVariateId);
 			if (NumberUtils.isNumber(methodName)) {
 				methodId = Double.valueOf(methodName).intValue();
 			} else {
 				// coming from old fb or other sources
-				Set<String> keys = breedingMethodCodeMap.keySet();
-				Iterator<String> iterator = keys.iterator();
+				final Set<String> keys = breedingMethodCodeMap.keySet();
+				final Iterator<String> iterator = keys.iterator();
 				while (iterator.hasNext()) {
-					String code = iterator.next();
-					Method method = breedingMethodCodeMap.get(code);
-					if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_TEXT.getId()) && methodName != null && methodName.equalsIgnoreCase(method.getMname())) {
+					final String code = iterator.next();
+					final Method method = breedingMethodCodeMap.get(code);
+					if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_TEXT.getId()) && methodName != null && methodName
+							.equalsIgnoreCase(method.getMname())) {
 						methodId = method.getMid();
 						break;
 					}
-					if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_CODE.getId()) && methodName != null && methodName.equalsIgnoreCase(method.getMcode())) {
+					if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_CODE.getId()) && methodName != null && methodName
+							.equalsIgnoreCase(method.getMcode())) {
 						methodId = method.getMid();
-					  	break;
+						break;
 					}
 				}
 			}

@@ -8,27 +8,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BreedersCrossIDExpression extends BaseExpression{
+public class BreedersCrossIDExpression extends BaseExpression {
 
 	@Autowired
 	private BreedersCrossIDGenerator breedersCrossIDGenerator;
 
 	public static final String KEY = "[CIMCRS]";
 
-	public BreedersCrossIDExpression(){
+	public BreedersCrossIDExpression() {
 	}
 
 	@Override
-	public void apply(List<StringBuilder> values, AdvancingSource source, final String capturedText) {
+	public void apply(final List<StringBuilder> values, final AdvancingSource source, final String capturedText) {
 
 		/**
 		 * Refer NamingConventionServiceImpl.addImportedGermplasmToList method
 		 * It requires AdvancingStudy as well, here we are not able to get AdvancingStudy instance
 		 * Basic Implementation has been added to calculate SelectionNumber
 		 */
-		for (StringBuilder container : values) {
-			String newValue = this.breedersCrossIDGenerator.generateBreedersCrossID(source.getStudyId(), source.getStudyType(), source.getConditions(),
-					source.getTrailInstanceObservation());
+		for (final StringBuilder container : values) {
+			final String newValue = this.breedersCrossIDGenerator
+					.generateBreedersCrossID(source.getStudyId(), source.getStudyType(), source.getConditions(),
+							source.getTrailInstanceObservation());
 			this.replaceExpressionWithValue(container, newValue);
 		}
 	}

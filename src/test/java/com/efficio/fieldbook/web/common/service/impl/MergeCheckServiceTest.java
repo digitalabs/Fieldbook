@@ -13,7 +13,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 
 @Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class MergeCheckServiceTest extends AbstractBaseIntegrationTest {

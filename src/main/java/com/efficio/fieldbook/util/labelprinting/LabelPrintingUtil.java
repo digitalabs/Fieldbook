@@ -124,11 +124,8 @@ public class LabelPrintingUtil {
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()) {
 				buffer.append(
 						this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_SEASON_KEY, null, locale));
-			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()) {
-				buffer.append(this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY, null,
-						locale));
-			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()) {
-				buffer.append(this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null,
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_STUDY_NAME.getInt()) {
+				buffer.append(this.messageSource.getMessage(LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_STUDY_NAME_KEY, null,
 						locale));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()) {
 				buffer.append(this.messageSource.getMessage("label.printing.available.fields.trial.instance.num", null, locale));
@@ -254,9 +251,7 @@ public class LabelPrintingUtil {
 				buffer.append(fieldMapLabel.getStartYear());
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()) {
 				buffer.append(fieldMapLabel.getSeason());
-			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()) {
-				buffer.append(moreFieldInfo.get(LabelPrintingServiceImpl.SELECTED_NAME));
-			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()) {
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_STUDY_NAME.getInt()) {
 				buffer.append(moreFieldInfo.get(LabelPrintingServiceImpl.SELECTED_NAME));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()) {
 				buffer.append(moreFieldInfo.get("trialInstanceNumber"));

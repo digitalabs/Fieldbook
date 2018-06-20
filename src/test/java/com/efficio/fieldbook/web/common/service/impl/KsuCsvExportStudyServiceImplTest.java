@@ -3,7 +3,6 @@ package com.efficio.fieldbook.web.common.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.generationcp.commons.pojo.FileExportInfo;
@@ -30,8 +29,8 @@ public class KsuCsvExportStudyServiceImplTest {
 	private static final String CSV_EXT = ".csv";
 
 	private static final String ZIP_EXT = ".zip";
-	private static String STUDY_NAME = "Test Study";
-	private static String ZIP_FILEPATH = "./someDirectory/output/TestFileName.zip";
+	private static final String STUDY_NAME = "Test Study";
+	private static final String ZIP_FILEPATH = "./someDirectory/output/TestFileName.zip";
 	
 	@Mock
 	protected ContextUtil contextUtil;
@@ -40,7 +39,7 @@ public class KsuCsvExportStudyServiceImplTest {
 	private OntologyService ontologyService;
 	
 	private KsuCsvExportStudyServiceImpl ksuCsvExportStudyService;
-	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 	
 	@Before
 	public void setUp() throws IOException {
@@ -60,7 +59,7 @@ public class KsuCsvExportStudyServiceImplTest {
 	@Test
 	public void testDoExport() throws IOException {
 		final int numberOfInstances = 3;
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, numberOfInstances);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(20, numberOfInstances);
 		workbook.setExportArrangedObservations(workbook.getObservations());
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 
@@ -101,9 +100,9 @@ public class KsuCsvExportStudyServiceImplTest {
 	private List<File> getTempOutputDirectoriesGenerated() {
 		final String genericOutputDirectoryPath = this.installationDirectoryUtil.getOutputDirectoryForProjectAndTool(this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 		final String toolDirectory = genericOutputDirectoryPath.substring(0, genericOutputDirectoryPath.indexOf(InstallationDirectoryUtil.OUTPUT));
-		File toolDirectoryFile = new File(toolDirectory);
+		final File toolDirectoryFile = new File(toolDirectory);
 		Assert.assertTrue(toolDirectoryFile.exists());
-		List<File> outputDirectoryFiles = new ArrayList<>();
+		final List<File> outputDirectoryFiles = new ArrayList<>();
 		for (final File file : toolDirectoryFile.listFiles()) {
 			if (file.getName().startsWith("output") && file.getName() != InstallationDirectoryUtil.OUTPUT && file.isDirectory()) {
 				outputDirectoryFiles.add(file);

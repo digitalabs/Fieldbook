@@ -48,6 +48,7 @@ import org.generationcp.middleware.util.PoiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import org.springframework.transaction.annotation.Transactional;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
@@ -99,28 +100,29 @@ public class CrossingTemplateExcelExporter {
 			// 4. update codes
 			this.updateCodesSection(excelWorkbook.getSheetAt(2));
 
-			// 5. write Nursery List Sheet
-			this.writeNurseryListSheet(excelWorkbook.getSheetAt(3), studyId, studyName);
+			// 5. write Study List Sheet
+			this.writeStudyListSheet(excelWorkbook.getSheetAt(3), new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook), studyId,
+					studyName);
 
 			// return the resulting file back to the user
 			return this.createExcelOutputFile(studyName, excelWorkbook);
 
-		} catch (MiddlewareException | IOException | InvalidFormatException e) {
+		} catch (MiddlewareException | IOException | InvalidFormatException | NullPointerException e) {
 			throw new CrossingTemplateExportException(e.getMessage(), e);
 		}
 	}
 
-	void writeNurseryListSheet(final Sheet nurseryListSheet, final int studyId, final String studyName) {
+	void writeStudyListSheet(Sheet studyListSheet, final ExcelCellStyleBuilder sheetStyles, final int studyId, final String studyName) {
 
 		final int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
-		final List<Experiment> experiments = this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null);
+		final List<Experiment> experiments = this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE);
 		int rowIndex = 1;
 		int columSheet = 6;
 		ArrayList<String> localNameList = new ArrayList<>();
 
-		final CellStyle methodCellStyle = nurseryListSheet.getWorkbook().createCellStyle();
-		methodCellStyle.cloneStyleFrom(nurseryListSheet.getRow(0).getCell(0).getCellStyle());
-		final Row row = nurseryListSheet.getRow(0);
+		final CellStyle methodCellStyle = studyListSheet.getWorkbook().createCellStyle();
+		methodCellStyle.cloneStyleFrom(studyListSheet.getRow(0).getCell(0).getCellStyle());
+		final Row row = studyListSheet.getRow(0);
 
 		if (!experiments.isEmpty()) {
 			localNameList = getTermIdList(experiments.get(0).getFactors());
@@ -128,41 +130,46 @@ public class CrossingTemplateExcelExporter {
 
 		for (Experiment gpData : experiments) {
 			columSheet = 6;
-			PoiUtil.setCellValue(nurseryListSheet, 0, rowIndex, studyName);
-			PoiUtil.setCellValue(nurseryListSheet, 1, rowIndex, Integer.parseInt(gpData.getFactors().findById(TermId.PLOT_NO).getValue()));
+			PoiUtil.setCellValue(studyListSheet, 0, rowIndex, studyName);
+			PoiUtil.setCellValue(studyListSheet, 1, rowIndex, Integer.parseInt(gpData.getFactors().findById(TermId.PLOT_NO).getValue()));
 			if (gpData.getFactors().findById(TermId.ENTRY_TYPE) != null) {
 				int entryType = Integer.parseInt(gpData.getFactors().findById(TermId.ENTRY_TYPE).getValue());
-				PoiUtil.setCellValue(nurseryListSheet, 2, rowIndex, getEntryTypeName(entryType));
+				PoiUtil.setCellValue(studyListSheet, 2, rowIndex, getEntryTypeName(entryType));
 			}
-			PoiUtil.setCellValue(nurseryListSheet, 3, rowIndex, gpData.getFactors().findById(TermId.GID).getValue());
-			PoiUtil.setCellValue(nurseryListSheet, 4, rowIndex, gpData.getFactors().findById(TermId.GID).getValue());
-			PoiUtil.setCellValue(nurseryListSheet, 5, rowIndex, gpData.getFactors().findById(TermId.DESIG).getValue());
-			PoiUtil.setCellValue(nurseryListSheet, 6, rowIndex, gpData.getFactors().findById(TermId.CROSS).getValue());
+			PoiUtil.setCellValue(studyListSheet, 3, rowIndex, gpData.getFactors().findById(TermId.GID).getValue());
+			PoiUtil.setCellValue(studyListSheet, 4, rowIndex, gpData.getFactors().findById(TermId.GID).getValue());
+			PoiUtil.setCellValue(studyListSheet, 5, rowIndex, gpData.getFactors().findById(TermId.DESIG).getValue());
+
+			if (gpData.getFactors().findById(TermId.CROSS) != null) {
+				PoiUtil.setCellValue(studyListSheet, 6, rowIndex, gpData.getFactors().findById(TermId.CROSS).getValue());
+			}else{
+				PoiUtil.setCellValue(studyListSheet, 6, rowIndex, "-");
+			}
 
 			if (gpData.getFactors().findById(TermId.FIELDMAP_COLUMN) != null) {
 				if (rowIndex == 1) {
 					addHeaderToRow(row, methodCellStyle, FIELDMAP_COLUMN);
 				}
-				PoiUtil.setCellValue(nurseryListSheet, 7, rowIndex, gpData.getFactors().findById(TermId.FIELDMAP_COLUMN).getValue());
+				PoiUtil.setCellValue(studyListSheet, 7, rowIndex, gpData.getFactors().findById(TermId.FIELDMAP_COLUMN).getValue());
 			}
 			if (gpData.getFactors().findById(TermId.FIELDMAP_RANGE) != null) {
 				if (rowIndex == 1) {
 					addHeaderToRow(row, methodCellStyle, FIELDMAP_RANGE);
 				}
-				PoiUtil.setCellValue(nurseryListSheet, 8, rowIndex, gpData.getFactors().findById(TermId.FIELDMAP_RANGE).getValue());
+				PoiUtil.setCellValue(studyListSheet, 8, rowIndex, gpData.getFactors().findById(TermId.FIELDMAP_RANGE).getValue());
 				columSheet = 8;
 			}
 			for (String localname : localNameList) {
 				if (rowIndex == 1) {
 					addHeaderToRow(row, methodCellStyle, localname);
 				}
-				PoiUtil.setCellValue(nurseryListSheet, ++columSheet, rowIndex, gpData.getFactors().findByLocalName(localname).getValue());
+				PoiUtil.setCellValue(studyListSheet, ++columSheet, rowIndex, gpData.getFactors().findByLocalName(localname).getValue());
 			}
 			rowIndex++;
 		}
 		// AutoSizeColumn
 		for (int i = 0; i <= columSheet; i++) {
-			nurseryListSheet.autoSizeColumn(i);
+			studyListSheet.autoSizeColumn(i);
 		}
 	}
 
@@ -304,7 +311,7 @@ public class CrossingTemplateExcelExporter {
 	}
 
 	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId) throws CrossingTemplateExportException {
-		List<GermplasmList> crossesList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY);
+		List<GermplasmList> crossesList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
 
 		if (crossesList.isEmpty()) {
 			throw new CrossingTemplateExportException("study.export.crosses.no.germplasm.list.available");

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.naming.expression.Expression;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 
 @Service
 @Transactional

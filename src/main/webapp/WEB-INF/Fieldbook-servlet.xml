@@ -139,12 +139,8 @@
 		class="com.efficio.fieldbook.web.common.service.impl.ExportAdvanceListServiceImpl" />
 
 
-	<bean id="measurementsGeneratorService"
-		class="com.efficio.fieldbook.web.nursery.service.impl.MeasurementsGeneratorServiceImpl" />
-
-
 	<bean id="importGermplasmfileService"
-		class="com.efficio.fieldbook.web.nursery.service.impl.ImportGermplasmFileServiceImpl" />
+		class="com.efficio.fieldbook.web.trial.service.impl.ImportGermplasmFileServiceImpl" />
 
 
 	<bean id="crossingService"
@@ -164,7 +160,7 @@
 
 
 	<bean id="importWorkbookFileService"
-		class="com.efficio.fieldbook.web.nursery.service.impl.ImportWorkbookFileServiceImpl" />
+		class="com.efficio.fieldbook.web.trial.service.impl.ImportWorkbookFileServiceImpl" />
 
 
 	<bean id="fieldmapService" class="com.efficio.fieldbook.service.FieldMapServiceImpl" />
@@ -249,7 +245,7 @@
 	</bean>
 
 	<bean id="possibleValuesCache"
-		class="com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache"
+		class="com.efficio.fieldbook.web.trial.bean.PossibleValuesCache"
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>
@@ -509,15 +505,10 @@
 	
 	<!-- Singleton bean as there is nothing request specific in here. -->
 	<bean id="germplasmNamingProperties" class="org.generationcp.commons.service.GermplasmNamingProperties">
-		<property name="germplasmOriginNurseriesDefault" value="${germplasm.origin.nurseries.default}"/>
-		<property name="germplasmOriginNurseriesWheat" value="${germplasm.origin.nurseries.wheat}"/>
-		<property name="germplasmOriginNurseriesMaize" value="${germplasm.origin.nurseries.maize}"/>
-		
-		<property name="germplasmOriginTrialsDefault" value="${germplasm.origin.trials.default}"/>
-		<property name="germplasmOriginTrialsWheat" value="${germplasm.origin.trials.wheat}"/>
-		<property name="germplasmOriginTrialsMaize" value="${germplasm.origin.trials.maize}"/>
-        <property name="breedersCrossIDNursery" value="${breeders.cross.id.nursery}" />
-        <property name="breedersCrossIDTrial" value="${breeders.cross.id.trial}" />
+		<property name="germplasmOriginStudiesDefault" value="${germplasm.origin.studies.default}"/>
+		<property name="germplasmOriginStudiesWheat" value="${germplasm.origin.studies.wheat}"/>
+		<property name="germplasmOriginStudiesMaize" value="${germplasm.origin.studies.maize}"/>
+        <property name="breedersCrossIDStudy" value="${breeders.cross.id.study}" />
 	</bean>
 	
 	<bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil"

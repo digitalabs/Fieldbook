@@ -4,7 +4,7 @@ package com.efficio.fieldbook.web.study.service.impl;
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.trial.service.ValidationService;
 import com.efficio.fieldbook.web.study.service.ImportStudyService;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;

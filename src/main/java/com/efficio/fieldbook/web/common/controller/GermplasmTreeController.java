@@ -19,10 +19,10 @@ import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
-import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
+import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
@@ -357,11 +357,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final Integer currentUserId = this.getCurrentIbdbUserId();
 		final GermplasmList germplasmList = this.createGermplasmList(form, currentUserId);
 		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(form.getGermplasmListType())) {
-			final AdvancingNurseryForm advancingNurseryForm = this.getPaginationListSelection().getAdvanceDetails(form.getListIdentifier());
+			final AdvancingStudyForm advancingStudyForm = this.getPaginationListSelection().getAdvanceDetails(form.getListIdentifier());
 			final List<Pair<Germplasm, List<Name>>> germplasms = new ArrayList<>();
 			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
 
-			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingNurseryForm, germplasms, listDataItems, currentUserId,
+			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingStudyForm, germplasms, listDataItems, currentUserId,
 					germplasmAttributes);
 			final Integer germplasmListId = this.fieldbookMiddlewareService
 					.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList, germplasmAttributes);
@@ -524,7 +524,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		list.setRows(rows);
 
-		final AdvancingNursery advancingParameters = new AdvancingNursery();
+		final AdvancingStudy advancingParameters = new AdvancingStudy();
 
 		advancingParameters.setCheckAdvanceLinesUnique(true);
 		final List<ImportedCrosses> crosses = this.namingConventionService
@@ -722,7 +722,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 * @return the germplasm list
 	 */
 
-	void populateGermplasmListDataFromAdvanced(final GermplasmList germplasmList, final AdvancingNurseryForm form,
+	void populateGermplasmListDataFromAdvanced(final GermplasmList germplasmList, final AdvancingStudyForm form,
 			final List<Pair<Germplasm, List<Name>>> germplasms, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
 			final Integer currentUserID, final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes) {
 
@@ -751,11 +751,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		Integer repFldNo = 0;
 		Integer plantNumberFldNo = 0;
 		// get FLDNOs for Attribute Objects to be created
-		if (this.userSelection.isTrial()) {
-			repFldNo = this.getPassportAttributeForCode("REP_NUMBER");
-			trialInstanceFldNo = this.getPassportAttributeForCode("INSTANCE_NUMBER");
-			plantNumberFldNo = this.getPassportAttributeForCode("PLANT_NUMBER");
-		}
+		repFldNo = this.getPassportAttributeForCode("REP_NUMBER");
+		trialInstanceFldNo = this.getPassportAttributeForCode("INSTANCE_NUMBER");
+		plantNumberFldNo = this.getPassportAttributeForCode("PLANT_NUMBER");
+
 
 		// Create germplasms to save - Map<Germplasm, List<Name>>
 		for (final ImportedGermplasm importedGermplasm : form.getGermplasmList()) {
@@ -792,9 +791,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final Integer trueGdate = !"".equals(harvestDate.trim()) ? Integer.valueOf(harvestDate) : gDate;
 			final Germplasm germplasm;
 			germplasm = new Germplasm(gid, methodId, gnpgs, gpid1, gpid2, currentUserID, lgid, locationId, trueGdate, preferredName);
-
 			germplasm.setMgid(mgid);
-
 			germplasms.add(new ImmutablePair<>(germplasm, names));
 
 			// Create list data items to save - Map<Germplasm,
@@ -811,44 +808,41 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			}
 
 			final GermplasmListData listData =
-					new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource, designation, groupName,
-							listDataStatus, localRecordId);
+				new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource, designation, groupName,
+					listDataStatus, localRecordId);
 
 			listDataItems.add(new ImmutablePair<>(germplasm, listData));
 
 			final List<Attribute> attributesPerGermplasm = Lists.newArrayList();
 			// Add the seed source/origin attribute (which is generated based on
 			// format strings configured in crossing.properties) to the
-			// germplasm in FieldbookServiceImpl.advanceNursery().
+			// germplasm in FieldbookServiceImpl.advanceStudy().
 			// originAttribute gid will be set when saving once gid is known
 			final Attribute originAttribute =
-					this.createAttributeObject(currentUserID, importedGermplasm.getSource(), plotCodeFldNo, locationId, gDate);
+				this.createAttributeObject(currentUserID, importedGermplasm.getSource(), plotCodeFldNo, locationId, gDate);
 			attributesPerGermplasm.add(originAttribute);
 
 			final Attribute plotNumberAttribute =
-					this.createAttributeObject(currentUserID, importedGermplasm.getPlotNumber(), plotFldNo, locationId, gDate);
+				this.createAttributeObject(currentUserID, importedGermplasm.getPlotNumber(), plotFldNo, locationId, gDate);
 			attributesPerGermplasm.add(plotNumberAttribute);
 
 			// Adding Instance number and replication number as
 			// attributes of germplasm for trial advancing
-			if (this.userSelection.isTrial()) {
-				final String replicationNumber = importedGermplasm.getReplicationNumber();
-				if (StringUtils.isNotBlank(replicationNumber)) {
-					final Attribute repNoAttribute =
-							this.createAttributeObject(currentUserID, replicationNumber, repFldNo, locationId, gDate);
-					attributesPerGermplasm.add(repNoAttribute);
-				}
+			final String replicationNumber = importedGermplasm.getReplicationNumber();
+			if (StringUtils.isNotBlank(replicationNumber)) {
+				final Attribute repNoAttribute = this.createAttributeObject(currentUserID, replicationNumber, repFldNo, locationId, gDate);
+				attributesPerGermplasm.add(repNoAttribute);
+			}
 
-				final Attribute instanceNoAttribute =
-						this.createAttributeObject(currentUserID, importedGermplasm.getTrialInstanceNumber(), trialInstanceFldNo,
-								locationId, gDate);
-				attributesPerGermplasm.add(instanceNoAttribute);
+			final Attribute instanceNoAttribute =
+				this.createAttributeObject(currentUserID, importedGermplasm.getTrialInstanceNumber(), trialInstanceFldNo, locationId,
+					gDate);
+			attributesPerGermplasm.add(instanceNoAttribute);
 
-				if (importedGermplasm.getPlantNumber() != null) {
-					final Attribute plantNoAttribute = this.createAttributeObject(currentUserID,
-							importedGermplasm.getPlantNumber(), plantNumberFldNo, locationId, gDate);
-					attributesPerGermplasm.add(plantNoAttribute);
-				}
+			if (importedGermplasm.getPlantNumber() != null) {
+				final Attribute plantNoAttribute =
+					this.createAttributeObject(currentUserID, importedGermplasm.getPlantNumber(), plantNumberFldNo, locationId, gDate);
+				attributesPerGermplasm.add(plantNoAttribute);
 			}
 
 			germplasmAttributes.add(new ImmutablePair<Germplasm, List<Attribute>>(germplasm, Lists.newArrayList(attributesPerGermplasm)));
@@ -1024,9 +1018,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			dataResults.put("date", germplasmList.getDate());
 			dataResults.put("owner", this.fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
 			dataResults.put("notes", germplasmList.getNotes());
-			if (germplasmList.getType() != null && (germplasmList.getType().equalsIgnoreCase(GermplasmListType.NURSERY.toString())
-					|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.TRIAL.toString())) || germplasmList.getType()
-					.equalsIgnoreCase(GermplasmListType.CHECK.toString()) || GermplasmListType.isCrosses(germplasmList.getType())
+			if (germplasmList.getType() != null && (germplasmList.getType().equalsIgnoreCase(GermplasmListType.STUDY.toString()))
+				|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.CHECK.toString()) || GermplasmListType.isCrosses(germplasmList.getType())
 					|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.ADVANCED.toString())) {
 				dataResults.put("totalEntries", this.fieldbookMiddlewareService.countListDataProjectGermplasmListDataByListId(listId));
 			} else {

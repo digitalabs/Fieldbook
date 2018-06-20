@@ -16,9 +16,9 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.Tool;
@@ -59,7 +59,7 @@ public class ExpDesignUtilTest {
 	private static final String TEST_VARIABLE_DESCRIPTION = "TEST DESCRIPTION";
 	private static final String TEST_VARIABLE_NAME = "TEST VARIABLE";
 
-	/** The Constant LOG. */
+	/** The Constant log. */
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignUtil.class);
 
 	@Mock
@@ -76,33 +76,34 @@ public class ExpDesignUtilTest {
 
 	@Test
 	public void testGenerateExperimentDesignMeasurements() {
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyTypeDto.getTrialDto());
 
-		List<String> treatmentFactor = new ArrayList<String>();
-		List<String> levels = new ArrayList<String>();
-		MainDesign mainDesign =
+		final List<String> treatmentFactor = new ArrayList<String>();
+		final List<String> levels = new ArrayList<String>();
+		final MainDesign mainDesign =
 				experimentDesignGenerator.createRandomizedCompleteBlockDesign("2", ExpDesignUtilTest.REP_NO, ExpDesignUtilTest.PLOT_NO,
 						301, 201, treatmentFactor, levels, "");
 
 		this.setMockValues(mainDesign);
 
-		List<ImportedGermplasm> germplasmList = this.createImportedGermplasms();
+		final List<ImportedGermplasm> germplasmList = this.createImportedGermplasms();
 
-		List<StandardVariable> requiredExpDesignVariable = this.createRequiredVariables();
-		Map<String, List<String>> treatmentFactorValues = new HashMap<String, List<String>>();
-		int environments = 3, environmentsToAdd = 1;
+		final List<StandardVariable> requiredExpDesignVariable = this.createRequiredVariables();
+		final Map<String, List<String>> treatmentFactorValues = new HashMap<String, List<String>>();
+		final int environments = 3;
+		final int environmentsToAdd = 1;
 
 		try {
-			List<MeasurementRow> measurementRowList =
+			final List<MeasurementRow> measurementRowList =
 					experimentDesignGenerator.generateExperimentDesignMeasurements(environments, environmentsToAdd, workbook.getTrialVariables(),
 							workbook.getFactors(), workbook.getNonTrialFactors(), workbook.getVariates(), null, requiredExpDesignVariable,
 							germplasmList, mainDesign, ExpDesignUtilTest.ENTRY_NO,
 							treatmentFactorValues, new HashMap<Integer, Integer>());
 
-			Assert.assertTrue("Expected trial nos. from " + (environments - environmentsToAdd + 1) + "to " + environments
+			Assert.assertTrue("Expected study nos. from " + (environments - environmentsToAdd + 1) + "to " + environments
 					+ " for all measurement rows but found a different trial no.",
-					this.isTrialNoAssignedCorrect(measurementRowList, environments, environmentsToAdd));
-		} catch (BVDesignException e) {
+					this.isStudyNoAssignedCorrect(measurementRowList, environments, environmentsToAdd));
+		} catch (final BVDesignException e) {
 			ExpDesignUtilTest.LOG.error(e.getMessage(), e);
 			Assert.fail("Expected mock values but called original BV Design generator.");
 		}
@@ -111,11 +112,11 @@ public class ExpDesignUtilTest {
 	@Test
 	public void testConvertStandardVariableToMeasurementVariable() {
 
-		FieldbookService mockFieldbookService = Mockito.mock(FieldbookService.class);
+		final FieldbookService mockFieldbookService = Mockito.mock(FieldbookService.class);
 
 		Mockito.when(mockFieldbookService.getAllPossibleValues(TEST_STANDARD_VARIABLE_TERMID)).thenReturn(new ArrayList<ValueReference>());
 
-		StandardVariable standardVariable = new StandardVariable();
+		final StandardVariable standardVariable = new StandardVariable();
 		standardVariable.setId(TEST_STANDARD_VARIABLE_TERMID);
 		standardVariable.setName(TEST_VARIABLE_NAME);
 		standardVariable.setDescription(TEST_VARIABLE_DESCRIPTION);
@@ -124,7 +125,7 @@ public class ExpDesignUtilTest {
 		standardVariable.setMethod(new Term(TEST_METHOD_TERMID, TEST_METHOD_NAME, ""));
 		standardVariable.setDataType(new Term(TEST_DATATYPE_TERMID, TEST_DATATYPE_DESCRIPTION, ""));
 
-		MeasurementVariable measurementVariable =
+		final MeasurementVariable measurementVariable =
 				ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, mockFieldbookService);
 
 		Assert.assertEquals(standardVariable.getId(), measurementVariable.getTermId());
@@ -141,11 +142,11 @@ public class ExpDesignUtilTest {
 	@Test
 	public void testConvertStandardVariableToMeasurementVariableStandardVariableHasPhenotypicType() {
 
-		FieldbookService mockFieldbookService = Mockito.mock(FieldbookService.class);
+		final FieldbookService mockFieldbookService = Mockito.mock(FieldbookService.class);
 
 		Mockito.when(mockFieldbookService.getAllPossibleValues(TEST_STANDARD_VARIABLE_TERMID)).thenReturn(new ArrayList<ValueReference>());
 
-		StandardVariable standardVariable = new StandardVariable();
+		final StandardVariable standardVariable = new StandardVariable();
 		standardVariable.setId(TEST_STANDARD_VARIABLE_TERMID);
 		standardVariable.setName(TEST_VARIABLE_NAME);
 		standardVariable.setDescription(TEST_VARIABLE_DESCRIPTION);
@@ -155,7 +156,7 @@ public class ExpDesignUtilTest {
 		standardVariable.setDataType(new Term(TEST_DATATYPE_TERMID, TEST_DATATYPE_DESCRIPTION, ""));
 		standardVariable.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
 
-		MeasurementVariable measurementVariable =
+		final MeasurementVariable measurementVariable =
 				ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, mockFieldbookService);
 
 		Assert.assertEquals(standardVariable.getId(), measurementVariable.getTermId());
@@ -169,7 +170,7 @@ public class ExpDesignUtilTest {
 		Assert.assertEquals(PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0), measurementVariable.getLabel());
 	}
 
-	private void setMockValues(MainDesign design) {
+	private void setMockValues(final MainDesign design) {
 
 		try {
 			Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.REP_NO.getId())).thenReturn(null);
@@ -178,41 +179,41 @@ public class ExpDesignUtilTest {
 					this.createBvOutput());
 
 			Mockito.when(this.workbenchService.getToolWithName(AppConstants.TOOL_NAME_BREEDING_VIEW.getString())).thenReturn(new Tool());
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			ExpDesignUtilTest.LOG.error(e.getMessage(), e);
 			Assert.fail("Expected mock values but called original Middleware method.");
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			ExpDesignUtilTest.LOG.error(e.getMessage(), e);
 			Assert.fail("Expected mock values but called original method.");
 		}
 	}
 
 	private BVDesignOutput createBvOutput() {
-		BVDesignOutput bvOutput = new BVDesignOutput(0);
+		final BVDesignOutput bvOutput = new BVDesignOutput(0);
 
-		List<String[]> entries = this.createEntries();
+		final List<String[]> entries = this.createEntries();
 		bvOutput.setResults(entries);
 
 		return bvOutput;
 	}
 
 	private List<String[]> createEntries() {
-		List<String[]> entries = new ArrayList<String[]>();
-		String[] headers = new String[] {ExpDesignUtilTest.PLOT_NO, ExpDesignUtilTest.REP_NO, ExpDesignUtilTest.ENTRY_NO};
+		final List<String[]> entries = new ArrayList<String[]>();
+		final String[] headers = new String[] {ExpDesignUtilTest.PLOT_NO, ExpDesignUtilTest.REP_NO, ExpDesignUtilTest.ENTRY_NO};
 
 		entries.add(headers);
 
 		for (int i = 1; i <= 6; i++) {
-			String value = String.valueOf(i);
-			String[] data = new String[] {value, value, value};
+			final String value = String.valueOf(i);
+			final String[] data = new String[] {value, value, value};
 			entries.add(data);
 		}
 		return entries;
 	}
 
-	private boolean isTrialNoAssignedCorrect(List<MeasurementRow> measurementRowList, int environments, int environmentsToAdd) {
-		for (MeasurementRow row : measurementRowList) {
-			for (MeasurementData data : row.getDataList()) {
+	private boolean isStudyNoAssignedCorrect(final List<MeasurementRow> measurementRowList, final int environments, final int environmentsToAdd) {
+		for (final MeasurementRow row : measurementRowList) {
+			for (final MeasurementData data : row.getDataList()) {
 				if (data.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
 						&& (Integer.parseInt(data.getValue()) > environments || Integer.parseInt(data.getValue()) < environments
 								- environmentsToAdd + 1)) {
@@ -224,7 +225,7 @@ public class ExpDesignUtilTest {
 	}
 
 	private List<ImportedGermplasm> createImportedGermplasms() {
-		List<ImportedGermplasm> germplasms = new ArrayList<ImportedGermplasm>();
+		final List<ImportedGermplasm> germplasms = new ArrayList<ImportedGermplasm>();
 
 		germplasms.add(new ImportedGermplasm(1, "CLA35", "87395", "", "", "", ""));
 		germplasms.add(new ImportedGermplasm(2, "CLA12", "134287", "", "", "", ""));
@@ -237,7 +238,7 @@ public class ExpDesignUtilTest {
 	}
 
 	private List<StandardVariable> createRequiredVariables() {
-		List<StandardVariable> reqVariables = new ArrayList<StandardVariable>();
+		final List<StandardVariable> reqVariables = new ArrayList<StandardVariable>();
 
 		reqVariables.add(this.createStandardVariable(TermId.REP_NO.getId(), ExpDesignUtilTest.REP_NO));
 		reqVariables.add(this.createStandardVariable(TermId.PLOT_NO.getId(), ExpDesignUtilTest.PLOT_NO));
@@ -245,8 +246,8 @@ public class ExpDesignUtilTest {
 		return reqVariables;
 	}
 
-	private StandardVariable createStandardVariable(int id, String name) {
-		StandardVariable var = new StandardVariable();
+	private StandardVariable createStandardVariable(final int id, final String name) {
+		final StandardVariable var = new StandardVariable();
 		var.setId(id);
 		var.setName(name);
 		return var;

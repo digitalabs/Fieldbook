@@ -8,8 +8,7 @@
 					<div class="row">
 						<div class="col-xs-6 col-md-6">
 							<img th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text"/>
-							<label class="fbk-modal-title fbk-study-tree-title fbk-hide nursery" th:text="#{browse.nurseries.header}"></label>
-							<label class="fbk-modal-title fbk-study-tree-title fbk-hide trial" th:text="#{browse.trial.header}"></label>
+							<label class="fbk-modal-title fbk-study-tree-title fbk-hide trial" th:text="#{browse.studies.header}"></label>
 						</div>
 						<div class="col-xs-6 col-md-6">
 							<label class="fbk-modal-title fbk-study-tree-title fbk-field-map-selected-header"></label>
@@ -44,7 +43,7 @@
 
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-					<button type="button" class="btn btn-primary generate-study-field-map" th:text="#{common.form.next.text}">Ok</button>
+					<button type="button" class="btn btn-primary generate-study-field-map" th:text="#{common.form.next.text}">Next</button>
 				</div>
 			</div>
 		</div>
@@ -62,11 +61,11 @@ focusNodeFieldmap = null;
 
 $(document).ready(function() {
 	'use strict';
-	displayStudyFieldMapListTree('selectStudyFieldMapTree', isNursery() ? 'N' : 'T');
+	displayStudyFieldMapListTree('selectStudyFieldMapTree');
 	$('.choose-study-field-map').click('click', chooseStudyFieldMap);
 	$('.generate-study-field-map').on('click', function() {
 		if ($('table.selected-study-fieldmap-table tbody tr').length === 0) {
-			showErrorMessage('', isNursery() ? fieldmapRequireOneNursery : fieldmapRequireOneTrial );
+			showErrorMessage('', fieldmapRequireOneTrial );
 		} else {
 			var ids = [],
 				idList;
@@ -89,26 +88,18 @@ function openStudyFieldmapTree(id, name) {
 	$("#selectStudyFieldMapTree").dynatree("getTree").reload();
 	$('#studyTreeFieldmapModal').modal({ backdrop: 'static', keyboard: true });
 	$('table.selected-study-fieldmap-table tbody').html('');
-	if (isNursery()) {
-		$('.fbk-study-tree-title.nursery').removeClass('fbk-hide');
-		$('.fbk-study-tree-title.trial').addClass('fbk-hide');
-		$('#table-field-map-header').html('Selected Nursery');
-		$('.fbk-field-map-selected-header').html(nurserySelectedFieldPlan);
-		$('.fbk-field-map-selected-sub-header').html(additionalNurseriesForFieldPlan);
-	} else {
-		$('.fbk-study-tree-title.trial').removeClass('fbk-hide');
-		$('.fbk-study-tree-title.nursery').addClass('fbk-hide');
-		$('#table-field-map-header').html('Selected Trial');
-		$('.fbk-field-map-selected-header').html(trialSelectedFieldPlan);
-		$('.fbk-field-map-selected-sub-header').html(additionalTrialsForFieldPlan);
-	}
+	$('.fbk-study-tree-title.trial').removeClass('fbk-hide');
+	$('.fbk-study-tree-title.nursery').addClass('fbk-hide');
+	$('#table-field-map-header').html('Selected Study');
+	$('.fbk-field-map-selected-header').html(studiesSelectedFieldPlan);
+	$('.fbk-field-map-selected-sub-header').html(additionalStudiesForFieldPlan);
 	addStudyInFieldMap(id, name);
 
 }
 function addStudyInFieldMap(id, name) {
 	'use strict';
 	if ($('table.selected-study-fieldmap-table tbody tr.' + id).length !== 0) {
-		showAlertMessage('', isNursery() ? nurseryAlreadyAdded : trialAlreadyAdded);
+		showAlertMessage('', trialAlreadyAdded);
 	} else {
 		$.ajax({
 			url: '/Fieldbook/StudyTreeManager/has/observations/' + id + '/' + name,
@@ -117,7 +108,7 @@ function addStudyInFieldMap(id, name) {
 			cache: false,
 			success: function(data) {
 				if (data.hasObservations === '0') {
-					showErrorMessage('', isNursery() ? nurseryNoObservations : trialNoObservations);
+					showErrorMessage('', trialNoObservations);
 				} else {
 					var className = $('table.selected-study-fieldmap-table tbody tr').length % 2 == 0 ? 'even' : 'odd',
 						deleteButton = '<span onclick="javascript: deleteStudyFieldMapRow(' + id + ')" style="font-size: 16px;" class="delete-icon delete-study-field-map" id="' + id + '"></span>';
@@ -193,14 +184,14 @@ function doStudyFieldmapLazyLoad(node) {
 	}
 }
 /** Germplasm Tree **/
-function displayStudyFieldMapListTree(treeName, studyType) {
+function displayStudyFieldMapListTree(treeName) {
 	'use strict';
 	urlFieldmap = '/Fieldbook/StudyTreeManager/loadInitialTree';
-	lazyReadUrlFieldmap = '/Fieldbook/StudyTreeManager/expandTree/' + studyType + '/';
+	lazyReadUrlFieldmap = '/Fieldbook/StudyTreeManager/expandTree/';
 
 	var additionalUrlFieldmap = '/0';
 
-	urlFieldmap = urlFieldmap + additionalUrlFieldmap + '/' + studyType + '?hasCentral=0';
+	urlFieldmap = urlFieldmap + additionalUrlFieldmap + '?hasCentral=0';
 
 	$('#' + treeName).dynatree({
 		title: treeName,

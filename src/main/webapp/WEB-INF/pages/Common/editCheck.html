@@ -25,16 +25,10 @@
 //<![CDATA[
 function updateCheck(event) {
 	'use strict';
-	var suffix = '/N',
-	sectionContainer = '.check-germplasm-list-items';
-	if (!isNursery()) {
-		suffix = '/T';
-		sectionContainer = '.germplasm-list-items';
-	}
 	event.stopPropagation();
 
 	$.ajax({
-		url: '/Fieldbook/ListManager/GermplasmList/update/check' + suffix,
+		url: '/Fieldbook/ListManager/GermplasmList/update/check',
 		type: 'POST',
 		data: $('.editCheck').serialize(),
 		success: function(data) {
@@ -51,14 +45,8 @@ function updateCheck(event) {
 			$('.edit-check' + $('.editCheck #index').val()).data('code',  $('.editCheck #checkVal option:selected').data('code'));
 			$('.editCheck #checkVal').select2('destroy');
 
-			var listDataTable = selectedCheckListDataTable,
-			columnIndex = -1;
-			if (!isNursery()) {
-				listDataTable = germplasmDataTable;
-				columnIndex = listDataTable.getDataTableColumnIndex('8255-key');
-			} else {
-				columnIndex = listDataTable.getDataTableColumnIndex('check');
-			}
+			var listDataTable = germplasmDataTable;
+			var columnIndex = listDataTable.getDataTableColumnIndex('8255-key');
 			//we need to get the real index of the check
 
 			if (listDataTable != null) {

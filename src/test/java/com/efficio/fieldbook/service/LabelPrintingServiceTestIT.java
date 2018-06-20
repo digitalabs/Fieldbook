@@ -1,21 +1,14 @@
 
 package com.efficio.fieldbook.service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
 import junit.framework.Assert;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -25,7 +18,6 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -33,17 +25,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 
-import com.csvreader.CsvReader;
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.LabelPrintingService;
-import com.efficio.fieldbook.utils.test.ExcelImportUtil;
 import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
-import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
-import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.lowagie.text.pdf.PdfReader;
 
 public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 
@@ -60,46 +47,46 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	private MessageSource messageSource;
 
 	@Test
-	public void testGetAvailableLabelFieldsFromTrialWithoutFieldMap() {
-		Locale locale = new Locale("en", "US");
-		List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap(true, false, locale);
+	public void testGetAvailableLabelFieldsFromStudyWithoutFieldMap() {
+		final Locale locale = new Locale("en", "US");
+		final List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap(false, locale);
 		Assert.assertFalse(this.areFieldsInLabelList(labels));
 	}
 
 	@Test
-	public void testGetAvailableLabelFieldsFromTrialWithFieldMap() {
-		Locale locale = new Locale("en", "US");
-		List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap(true, true, locale);
+	public void testGetAvailableLabelFieldsFromStudyWithFieldMap() {
+		final Locale locale = new Locale("en", "US");
+		final List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap(true, locale);
 		Assert.assertTrue(this.areFieldsInLabelList(labels));
 	}
 
 	@Test
 	public void testGetAvailableLabelFieldsFromNurseryWithoutFieldMap() {
-		Locale locale = new Locale("en", "US");
-		List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap(false, false, locale);
+		final Locale locale = new Locale("en", "US");
+		final List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap( false, locale);
 		Assert.assertFalse(this.areFieldsInLabelList(labels));
 	}
 
 	@Test
 	public void testGetAvailableLabelFieldsFromNurseryWithFieldMap() {
-		Locale locale = new Locale("en", "US");
-		List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap(false, true, locale);
+		final Locale locale = new Locale("en", "US");
+		final List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap( true, locale);
 		Assert.assertTrue(this.areFieldsInLabelList(labels));
 	}
 
 	@Test
 	public void testGetAvailableLabelFieldsFromFieldMap() {
-		Locale locale = new Locale("en", "US");
-		List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap(false, true, locale);
+		final Locale locale = new Locale("en", "US");
+		final List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap( true, locale);
 		Assert.assertTrue(this.areFieldsInLabelList(labels));
 	}
 
-	private boolean areFieldsInLabelList(List<LabelFields> labels) {
+	private boolean areFieldsInLabelList(final List<LabelFields> labels) {
 		int fieldMapLabelCount = 0;
 
 		if (labels != null) {
-			for (LabelFields label : labels) {
-				for (int fieldMapLabel : LabelPrintingServiceTestIT.FIELD_MAP_LABELS) {
+			for (final LabelFields label : labels) {
+				for (final int fieldMapLabel : LabelPrintingServiceTestIT.FIELD_MAP_LABELS) {
 					if (label.getId() == fieldMapLabel) {
 						fieldMapLabelCount++;
 					}
@@ -117,10 +104,10 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testFieldMapPropertiesOfNurseryWithoutFieldMap() {
-		UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-		FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(false).get(0);
+		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
+		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList().get(0);
 		this.setFieldmapProperties(fieldMapInfoDetail, false, false);
-		boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
+		final boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
 
 		Assert.assertFalse(hasFieldMap);
 		Assert.assertFalse(userLabelPrinting.isFieldMapsExisting());
@@ -128,58 +115,58 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testFieldMapPropertiesOfNurseryWithFieldMap() {
-		UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-		FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(false).get(0);
+		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
+		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList().get(0);
 		this.setFieldmapProperties(fieldMapInfoDetail, true, false);
-		boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
+		final boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
 
 		Assert.assertTrue(hasFieldMap);
 		Assert.assertTrue(userLabelPrinting.isFieldMapsExisting());
 	}
 
 	@Test
-	public void testFieldMapPropertiesOfTrialWithoutFieldMaps() {
-		UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-		FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(true).get(0);
+	public void testFieldMapPropertiesOfStudyWithoutFieldMaps() {
+		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
+		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList().get(0);
 		this.setFieldmapProperties(fieldMapInfoDetail, false, false);
-		boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
+		final boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
 
 		Assert.assertFalse(hasFieldMap);
 		Assert.assertFalse(userLabelPrinting.isFieldMapsExisting());
 	}
 
 	@Test
-	public void testFieldMapPropertiesOfTrialWithOneFieldMap() {
-		UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-		FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(true).get(0);
+	public void testFieldMapPropertiesOfStudyWithOneFieldMap() {
+		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
+		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList().get(0);
 		this.setFieldmapProperties(fieldMapInfoDetail, false, true);
-		boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
+		final boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
 
 		Assert.assertTrue(hasFieldMap);
 		Assert.assertFalse(userLabelPrinting.isFieldMapsExisting());
 	}
 
 	@Test
-	public void testFieldMapPropertiesOfTrialWithFieldMaps() {
-		UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-		FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(true).get(0);
+	public void testFieldMapPropertiesOfStudyWithFieldMaps() {
+		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
+		final FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList().get(0);
 		this.setFieldmapProperties(fieldMapInfoDetail, true, false);
-		boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
+		final boolean hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
 
 		Assert.assertTrue(hasFieldMap);
 		Assert.assertTrue(userLabelPrinting.isFieldMapsExisting());
 	}
 
-	private void setFieldmapProperties(FieldMapInfo fieldMapInfoDetail, boolean hasFieldMap, boolean hasOneTrialInstanceWithFieldMap) {
+	private void setFieldmapProperties(final FieldMapInfo fieldMapInfoDetail, final boolean hasFieldMap, final boolean hasOneTrialInstanceWithFieldMap) {
 		// set column to null and hasFieldMap to false if study has no fieldmap at all
 		// else, don't change the values
-		for (FieldMapDatasetInfo dataset : fieldMapInfoDetail.getDatasetsWithFieldMap()) {
+		for (final FieldMapDatasetInfo dataset : fieldMapInfoDetail.getDatasetsWithFieldMap()) {
 			int ctr = 0;
-			for (FieldMapTrialInstanceInfo trialInstance : dataset.getTrialInstances()) {
+			for (final FieldMapTrialInstanceInfo trialInstance : dataset.getTrialInstances()) {
 				if (ctr == 0 && hasOneTrialInstanceWithFieldMap || !hasOneTrialInstanceWithFieldMap) {
 					trialInstance.setHasFieldMap(hasFieldMap);
 					if (!hasFieldMap) {
-						for (FieldMapLabel label : trialInstance.getFieldMapLabels()) {
+						for (final FieldMapLabel label : trialInstance.getFieldMapLabels()) {
 							label.setColumn(null);
 						}
 					}
@@ -192,14 +179,14 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	@Ignore(value = "Needs to resolve NPE and other data issues. Method under test is a highly likely candidate for refactoring, given complex logic path")
 	@Test
 	public void testPopulateUserSpecifiedLabelFieldsForNurseryEnvironmentDataOnly() {
-		String testDesigValue = "123";
+		final String testDesigValue = "123";
 
-		String testSelectedFields = Integer.toString(TermId.DESIG.getId()) + "," + Integer.toString(TermId.ENTRY_NO.getId());
+		final String testSelectedFields = Integer.toString(TermId.DESIG.getId()) + "," + Integer.toString(TermId.ENTRY_NO.getId());
 
-		List<FieldMapTrialInstanceInfo> input = new ArrayList<>();
+		final List<FieldMapTrialInstanceInfo> input = new ArrayList<>();
 		input.add(LabelPrintingDataUtil.createFieldMapTrialInstanceInfo());
 
-		this.labelPrintingService.populateUserSpecifiedLabelFields(input, this.setupTestWorkbook(), testSelectedFields, false, false, null);
+		this.labelPrintingService.populateUserSpecifiedLabelFields(input, this.setupTestWorkbook(), testSelectedFields, false, null);
 
 		Assert.assertEquals(testDesigValue,
 				input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.DESIG.getId()));
@@ -208,19 +195,19 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	}
 
 	protected Workbook setupTestWorkbook() {
-        Workbook workbook = Mockito.mock(Workbook.class);
+        final Workbook workbook = Mockito.mock(Workbook.class);
         Mockito.doReturn(new ArrayList<MeasurementVariable>()).when(workbook).getStudyConditions();
         Mockito.doReturn(new ArrayList<MeasurementVariable>()).when(workbook).getFactors();
 
         // prepare measurement rows simulating experiment data
-        List<MeasurementRow> sampleData = new ArrayList<>();
+        final List<MeasurementRow> sampleData = new ArrayList<>();
 
         // add a row with measurement data for the DESIG and ENTRY_NO terms
-        MeasurementRow row = new MeasurementRow();
+        final MeasurementRow row = new MeasurementRow();
         // experiment ID here is set to be the same as the one used when creating the sample instance data, since they need to correlate.
         row.setExperimentId(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO);
 
-        List<MeasurementData> dataList = new ArrayList<>();
+        final List<MeasurementData> dataList = new ArrayList<>();
         MeasurementData data = new MeasurementData();
         MeasurementVariable var = new MeasurementVariable();
         var.setTermId(TermId.DESIG.getId());

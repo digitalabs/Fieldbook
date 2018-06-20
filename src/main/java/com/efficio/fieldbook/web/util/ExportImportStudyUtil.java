@@ -186,14 +186,14 @@ public class ExportImportStudyUtil {
 	}
 
 	public static FileExportInfo getFileNamePath(final int trialInstanceNo, final MeasurementRow trialObservation, final List<Integer> instances,
-			final String filename, final boolean isNursery, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final ContextUtil contextUtil) throws IOException {
+			final String filename, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final ContextUtil contextUtil) throws IOException {
 
 		final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 		final String cleanFilename = SettingsUtil.cleanSheetAndFileName(filename);
 		String downloadFilename = cleanFilename;
 
 		// For Trial, include the trial instance # and site name (if existing)
-		if (!isNursery && instances != null && !instances.isEmpty()) {
+		if (instances != null && !instances.isEmpty()) {
 
 			final int fileExtensionIndex = cleanFilename.lastIndexOf(".");
 			final String siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(trialObservation, fieldbookMiddlewareService);

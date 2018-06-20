@@ -277,7 +277,7 @@ public class WorkbookUtil {
 		}
 	}
 
-	public static void addFactorsToMeasurementRowDataList(final MeasurementRow row, StandardVariable stdVariable, final boolean isVariate,
+	public static void addFactorsToMeasurementRowDataList(final MeasurementRow row, final StandardVariable stdVariable, final boolean isVariate,
 			final MeasurementVariable variable, final UserSelection userSelection ) {
 
 		MeasurementData measurementData = null;
@@ -285,7 +285,7 @@ public class WorkbookUtil {
 		ImportedGermplasm importedGermplasm = null;
 		String gid = null;
 
-		for(MeasurementData measureData : row.getDataList()) {
+		for(final MeasurementData measureData : row.getDataList()) {
 			if(measureData.getMeasurementVariable().getTermId() == TermId.GID.getId()) {
 				gid = measureData.getValue();
 				break;
@@ -295,10 +295,10 @@ public class WorkbookUtil {
 		if(userSelection.getImportedGermplasmMainInfo() != null && userSelection.getImportedGermplasmMainInfo()
 				.getImportedGermplasmList() != null && !CollectionUtils.isEmpty(userSelection.getImportedGermplasmMainInfo()
 				.getImportedGermplasmList().getImportedGermplasms())) {
-			List<ImportedGermplasm> importedGermplasms =
+			final List<ImportedGermplasm> importedGermplasms =
 					userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
 
-			for(ImportedGermplasm importedGermplsm : importedGermplasms) {
+			for(final ImportedGermplasm importedGermplsm : importedGermplasms) {
 				if(importedGermplsm.getGid().equals(gid)) {
 					importedGermplasm = importedGermplsm;
 					break;
@@ -534,7 +534,7 @@ public class WorkbookUtil {
 
 	// we would validate all conditions except for name and the study type
 	public static boolean isConditionValidate(final Integer cvTermId) {
-		if (cvTermId != null && !AppConstants.HIDE_TRIAL_VARIABLE_SETTINGS_FIELDS.getString().contains(cvTermId.toString())) {
+		if (cvTermId != null && !AppConstants.HIDE_STUDY_VARIABLE_SETTINGS_FIELDS.getString().contains(cvTermId.toString())) {
 			return true;
 		}
 		return false;

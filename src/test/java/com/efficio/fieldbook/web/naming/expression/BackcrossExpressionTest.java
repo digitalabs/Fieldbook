@@ -1,6 +1,6 @@
 package com.efficio.fieldbook.web.naming.expression;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 import junit.framework.Assert;
 import org.generationcp.middleware.manager.api.PedigreeDataManager;
 import org.junit.Test;

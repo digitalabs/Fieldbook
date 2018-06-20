@@ -18,17 +18,17 @@ public class ObjectMapperTest {
 
 	@Test
 	public void testMappingOfConsolidatedForm() {
-		ObjectMapper mapper = new ObjectMapper();
+		final ObjectMapper mapper = new ObjectMapper();
 
 		try {
-			TrialData data = mapper.readValue(
+			final TrialData data = mapper.readValue(
 				"{\"trialSettings\":{\"userInput\":{}},\"environments\":{\"environments\":[{\"managementDetailValues\":{\"8170\":null,\"8192\":\"2\",\"8194\":\"1\"},\""
 					+ "trialDetailValues\":{}},{\"managementDetailValues\":{\"8170\":null,\"8192\":\"4\",\"8194\":\"3\"},\"trialDetailValues\":{}},{\"managementDetailValues\":{\"8170\":null,\"8192\":\""
 					+ "6\",\"8194\":\"5\"},\"trialDetailValues\":{}}],\"noOfEnvironments\":\"3\"},\"basicDetails\":{\"folderId\":1,\"folderName\":\"Program Trials\",\"folderNameLabel\":\"Program Trials\",\"userID\":-1,\"userName\":\"Daniel Villafuerte\"}}",
 				TrialData.class);
 
 			Assert.assertNotNull(data);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			Assert.fail(e.getMessage());
 		}
 

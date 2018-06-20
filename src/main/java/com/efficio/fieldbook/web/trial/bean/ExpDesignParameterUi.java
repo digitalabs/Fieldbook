@@ -30,6 +30,10 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private String startingEntryNo;
 	private String fileName;
 	private String numberOfBlocks;
+	private String checkStartingPosition;
+	private String checkSpacing;
+	private String checkInsertionManner;
+
 	/*
 	 * 1 - single col 2 - single row 3 - adjacent
 	 */
@@ -201,5 +205,29 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 
 	public void setNumberOfBlocks(final String numberOfBlocks) {
 		this.numberOfBlocks = numberOfBlocks;
+	}
+
+	public String getCheckStartingPosition() {
+		return checkStartingPosition;
+	}
+
+	public void setCheckStartingPosition(final String checkStartingPosition) {
+		this.checkStartingPosition = checkStartingPosition;
+	}
+
+	public String getCheckSpacing() {
+		return checkSpacing;
+	}
+
+	public void setCheckSpacing(final String checkSpacing) {
+		this.checkSpacing = checkSpacing;
+	}
+
+	public String getCheckInsertionManner() {
+		return checkInsertionManner;
+	}
+
+	public void setCheckInsertionManner(final String checkInsertionManner) {
+		this.checkInsertionManner = checkInsertionManner;
 	}
 }

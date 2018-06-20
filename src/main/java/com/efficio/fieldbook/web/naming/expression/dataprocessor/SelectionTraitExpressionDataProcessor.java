@@ -18,8 +18,8 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.springframework.stereotype.Component;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 
 @Component
 public class SelectionTraitExpressionDataProcessor implements ExpressionDataProcessor {
@@ -33,10 +33,11 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 	private ContextUtil contextUtil;
 
 	@Override
-	public void processEnvironmentLevelData(final AdvancingSource source, final Workbook workbook, final AdvancingNursery nurseryInfo,
+	public void processEnvironmentLevelData(final AdvancingSource source, final Workbook workbook, final AdvancingStudy nurseryInfo,
 			final Study study) {
-        // management details / study details are stored within the workbook conditions. nursery conditions are stored in the workbook constants
-        List<MeasurementVariable> possibleEnvironmentSources = new ArrayList<>(workbook.getConditions());
+        // management details / study details are stored within the workbook conditions. study conditions are stored in the workbook
+		// constants
+        final List<MeasurementVariable> possibleEnvironmentSources = new ArrayList<>(workbook.getConditions());
 		if (workbook.getConstants() != null) {
 			possibleEnvironmentSources.addAll(workbook.getConstants());
 		}
@@ -63,13 +64,13 @@ public class SelectionTraitExpressionDataProcessor implements ExpressionDataProc
 		}
 	}
 
-	protected void setSelectionTraitValue(final String categoricalValue, final AdvancingSource source, final int termID, List<ValueReference> possibleValuesForSelectionTraitProperty){
+	protected void setSelectionTraitValue(final String categoricalValue, final AdvancingSource source, final int termID, final List<ValueReference> possibleValuesForSelectionTraitProperty){
 		if(StringUtils.isNumeric(categoricalValue)){
 			source.setSelectionTraitValue(extractValue(categoricalValue, termID));
 		}
 		else{
 			if(possibleValuesForSelectionTraitProperty != null && !possibleValuesForSelectionTraitProperty.isEmpty()){
-				for(ValueReference valueReference : possibleValuesForSelectionTraitProperty){
+				for(final ValueReference valueReference : possibleValuesForSelectionTraitProperty){
 					if(Objects.equals(valueReference.getDescription(), categoricalValue)){
 						source.setSelectionTraitValue(extractValue(String.valueOf(valueReference.getId()), termID));
 					}

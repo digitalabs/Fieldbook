@@ -7,19 +7,19 @@ import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
 
 /**
- * Helper class for trial controller test to build test data
+ * Helper class for Study controller test to build test data
  */
 public class TestDataHelper {
 
 	public static Method createMethod() {
-		Method method = new Method();
+		final Method method = new Method();
 		method.setId(UnitTestDaoIDGenerator.generateId(Method.class));
 		method.setName("Method Name");
 		return method;
 	}
 
 	public static Property createProperty() {
-		Property property = new Property();
+		final Property property = new Property();
 		property.setName("Property Name");
 		property.setCropOntologyId("CO:501");
 		property.addClass("Class1");
@@ -29,7 +29,7 @@ public class TestDataHelper {
 	}
 
 	public static Scale createScale() {
-		Scale scale = new Scale();
+		final Scale scale = new Scale();
 		scale.setId(UnitTestDaoIDGenerator.generateId(Scale.class));
 		scale.setName("Scale Name");
 		scale.setDataType(DataType.NUMERIC_VARIABLE);

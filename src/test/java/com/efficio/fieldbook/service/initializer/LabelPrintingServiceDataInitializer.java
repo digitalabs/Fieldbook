@@ -27,11 +27,11 @@ public class LabelPrintingServiceDataInitializer {
 	public static final String GERMPLSM_DESCRIPTOR_LABEL_NAME = "germplsmDescriptorLabelName";
 	public static final int GERMPLSM_DESCRIPTOR_TERM_ID = 101;
 
-	public static final String TRIAL_SETTING_LABEL_NAME = "trialSettingLabelName";
-	public static final int TRIAL_SETTING_TERM_ID = 102;
+	public static final String STUDY_SETTING_LABEL_NAME = "studySettingLabelName";
+	public static final int STUDY_SETTING_TERM_ID = 102;
 
-	public static final String TRIAL_ENVIRONMENT_DESIGN_LABEL_NAME = "trialEnvironmentDesignLabelName";
-	public static final int TRIAL_ENVIRONMENT_DESIGN_TERM_ID = 103;
+	public static final String STUDY_ENVIRONMENT_DESIGN_LABEL_NAME = "studyEnvironmentDesignLabelName";
+	public static final int STUDY_ENVIRONMENT_DESIGN_TERM_ID = 103;
 
 	public static final String EXPERIMENTAL_DESIGN_LABEL_NAME = "experimentalDesignLabelName";
 	public static final int EXPERIMENTAL_DESIGN_TERM_ID = 104;
@@ -86,12 +86,12 @@ public class LabelPrintingServiceDataInitializer {
 		return labelFields;
 	}
 
-	public static List<LabelFields> createTrialSettingLabelFields() {
+	public static List<LabelFields> createStudySettingLabelFields() {
 		final List<LabelFields> labelFields = new ArrayList<>();
 
 		final LabelFields field =
-				new LabelFields(LabelPrintingServiceDataInitializer.TRIAL_SETTING_LABEL_NAME,
-						LabelPrintingServiceDataInitializer.TRIAL_SETTING_TERM_ID, false);
+				new LabelFields(LabelPrintingServiceDataInitializer.STUDY_SETTING_LABEL_NAME,
+						LabelPrintingServiceDataInitializer.STUDY_SETTING_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;
@@ -101,8 +101,8 @@ public class LabelPrintingServiceDataInitializer {
 		final List<LabelFields> labelFields = new ArrayList<>();
 
 		final LabelFields field =
-				new LabelFields(LabelPrintingServiceDataInitializer.TRIAL_ENVIRONMENT_DESIGN_LABEL_NAME,
-						LabelPrintingServiceDataInitializer.TRIAL_ENVIRONMENT_DESIGN_TERM_ID, false);
+				new LabelFields(LabelPrintingServiceDataInitializer.STUDY_ENVIRONMENT_DESIGN_LABEL_NAME,
+						LabelPrintingServiceDataInitializer.STUDY_ENVIRONMENT_DESIGN_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;

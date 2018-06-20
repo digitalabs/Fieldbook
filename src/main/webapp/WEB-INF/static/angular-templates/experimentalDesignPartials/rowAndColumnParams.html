@@ -49,7 +49,7 @@
             <label class=" control-label"><strong style="display: inline-block; width: 270px;">Please enter the number of reps in each column, running from left to right:</strong></label>
             <div style="display: inline-block; vertical-align: top">
                 <input name="replatinGroups" ng-pattern="/^[1-9][0-9]*(,[1-9][0-9]*)*$/" ng-disabled="!data.useLatenized || data.replicationsArrangement != 3 || measurementDetails.hasMeasurement" ng-model="$parent.data.replatinGroups" style="width: 100px" type="text" class="form-control"/>
-                <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-append-to-body="true" uib-tooltip="The number of reps in each column should be noted as numbers separated by columns, e.g. 1,1,1"></span>
+                <span class="bms-fa-question-circle help-tooltip-study" tooltip-placement="right" tooltip-append-to-body="true" uib-tooltip="The number of reps in each column should be noted as numbers separated by columns, e.g. 1,1,1"></span>
             </div>
         </div>
 

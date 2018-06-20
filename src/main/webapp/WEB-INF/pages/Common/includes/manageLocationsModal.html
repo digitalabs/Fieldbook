@@ -33,11 +33,11 @@
 $(function() {
 	'use strict';
 	$('#manageLocationModal').on('hidden.bs.modal', function() {
-		if (LocationsFunctions.isModalAvailableAndForOpening('advanceNurseryModal')) {
-			//we show the advance nursery modal
-			LocationsFunctions.openModal('advanceNurseryModal');
+		if (LocationsFunctions.isModalAvailableAndForOpening('advanceStudyModal')) {
+			//we show the advance study modal
+			LocationsFunctions.openModal('advanceStudyModal');
 		} else if (LocationsFunctions.isModalAvailableAndForOpening('addLotsModal')) {
-			//we show the advance nursery modal
+			//we show the advance study modal
 			LocationsFunctions.openModal('addLotsModal');
 		} else if (LocationsFunctions.isModalAvailableAndForOpening('importStudyDesigConfirmationModal')) {
 			LocationsFunctions.openModal('importStudyDesigConfirmationModal');

@@ -41,7 +41,7 @@ public class GermplasmListController {
 
 	private static final String GERMPLASM_LIST_DUPLICATE = "germplasm.list.duplicate";
 
-	private static final String NURSERY_MANAGER_SAVED_FINAL_LIST = "/NurseryManager/savedFinalList";
+	private static final String STUDY_MANAGER_SAVED_FINAL_LIST = "/StudyManager/savedFinalList";
 
 	public static final String URL = "/germplasm/list";
 
@@ -81,13 +81,13 @@ public class GermplasmListController {
 	@RequestMapping(value = "/advance/{listId}", method = RequestMethod.GET)
 	public String displayAdvanceGermplasmList(@PathVariable Integer listId, HttpServletRequest req, Model model) {
 		this.processGermplasmList(listId, GermplasmListType.ADVANCED.name(), req, model);
-		return GermplasmListController.NURSERY_MANAGER_SAVED_FINAL_LIST;
+		return GermplasmListController.STUDY_MANAGER_SAVED_FINAL_LIST;
 	}
 
 	@RequestMapping(value = "/crosses/{listId}", method = RequestMethod.GET)
 	public String displayCrossGermplasmList(@PathVariable Integer listId, HttpServletRequest req, Model model) {
 		this.processGermplasmList(listId, GermplasmListType.CROSSES.name(), req, model);
-		return GermplasmListController.NURSERY_MANAGER_SAVED_FINAL_LIST;
+		return GermplasmListController.STUDY_MANAGER_SAVED_FINAL_LIST;
 	}
 
 	@RequestMapping(value = "/stock/{listId}", method = RequestMethod.GET)
@@ -110,7 +110,7 @@ public class GermplasmListController {
 			GermplasmListController.LOG.error(e.getMessage(), e);
 		}
 
-		return GermplasmListController.NURSERY_MANAGER_SAVED_FINAL_LIST;
+		return GermplasmListController.STUDY_MANAGER_SAVED_FINAL_LIST;
 	}
 
 	@RequestMapping(value = "/stockinventory/{listId}", method = RequestMethod.GET)
@@ -127,7 +127,7 @@ public class GermplasmListController {
 			GermplasmListController.LOG.error(e.getMessage(), e);
 		}
 
-		return GermplasmListController.NURSERY_MANAGER_SAVED_FINAL_LIST;
+		return GermplasmListController.STUDY_MANAGER_SAVED_FINAL_LIST;
 	}
 
 	protected void prepareStockList(Model model, Integer listId, List<InventoryDetails> detailList, GermplasmList germplasmList) {

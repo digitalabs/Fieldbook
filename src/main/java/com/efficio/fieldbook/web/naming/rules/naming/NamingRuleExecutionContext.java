@@ -8,7 +8,7 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.springframework.context.MessageSource;
 
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 2/14/2015 Time: 12:53 AM

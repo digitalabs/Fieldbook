@@ -17,12 +17,11 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -51,6 +50,8 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	private static final int COLS = 3;
 
+	public static final String TRIAL_MANAGER_REVIEW_TRIAL_DETAILS = "TrialManager/reviewTrialDetails";
+
 	@Resource
 	private UserSelection userSelection;
 
@@ -72,26 +73,17 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@Override
 	public String getContentName() {
-		return this.getContentName(this.userSelection.isTrial());
+		return TRIAL_MANAGER_REVIEW_TRIAL_DETAILS;
 	}
 
-	private String getContentName(final boolean isTrial) {
-		if (isTrial) {
-			return "TrialManager/reviewTrialDetails";
-		} else {
-			return "NurseryManager/reviewNurseryDetails";
-		}
-	}
+	@RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
+	public String show(@PathVariable final int id, @ModelAttribute("createTrialForm") final CreateTrialForm form,
+		final Model model) {
 
-	@RequestMapping(value = "/show/{studyType}/{id}", method = RequestMethod.GET)
-	public String show(@PathVariable final String studyType, @PathVariable final int id,
-			@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form, final Model model) {
-
-		final boolean isNursery = StudyType.N.getName().equalsIgnoreCase(studyType);
 		final Workbook workbook;
 		StudyDetails details;
 		try {
-			workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(id, isNursery);
+			workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(id);
 			workbook.getStudyDetails().setId(id);
 			this.removeAnalysisAndAnalysisSummaryVariables(workbook);
 			final String createdBy = this.fieldbookService.getPersonByUserId(Integer.valueOf(workbook.getStudyDetails().getCreatedBy()));
@@ -109,30 +101,20 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		} catch (final MiddlewareException e) {
 			ReviewStudyDetailsController.LOG.error(e.getMessage(), e);
 			details = new StudyDetails();
-			this.addErrorMessageToResult(details, e, isNursery, id);
+			this.addErrorMessageToResult(details, e, id);
 		}
 
-		if (isNursery) {
-			model.addAttribute("nurseryDetails", details);
-		} else {
-			model.addAttribute("trialDetails", details);
-		}
-
-		return this.showAjaxPage(model, this.getContentName(!isNursery));
+		model.addAttribute("trialDetails", details);
+		return this.showAjaxPage(model, this.getContentName());
 	}
 
-	protected void addErrorMessageToResult(final StudyDetails details, final MiddlewareException e, final boolean isNursery, final int id) {
-		final String param;
-		if (isNursery) {
-			param = AppConstants.NURSERY.getString();
-		} else {
-			param = AppConstants.TRIAL.getString();
-		}
+	protected void addErrorMessageToResult(final StudyDetails details, final MiddlewareException e, final int id) {
+		final String param = AppConstants.STUDY.getString();
 		details.setId(id);
 		String errorMessage = e.getMessage();
 		if (e instanceof MiddlewareQueryException) {
 			errorMessage = this.errorHandlerService.getErrorMessagesAsString(((MiddlewareQueryException) e).getCode(),
-					new Object[] {param, param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n");
+				new Object[] {param, param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n");
 		}
 		details.setErrorMessage(errorMessage);
 	}

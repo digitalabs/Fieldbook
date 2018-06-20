@@ -418,12 +418,12 @@
 							}
 						};
 
-						$scope.updateLocationValues = function() {
+						$scope.updateLocationValues = function () {
 							if (!$scope.variableDefinition.locationUpdated) {
 								$http
 									.get('/Fieldbook/locations/getLocations')
 									.then(
-										function(returnVal) {
+										function (returnVal) {
 											if (returnVal.data.success === '1') {
 												$scope.variableDefinition.locationUpdated = true;
 												// clear and copy of array is performed so as to preserve previous reference
@@ -433,7 +433,7 @@
 												$scope.clearArray($scope.variableDefinition.possibleValues);
 												$scope.clearArray($scope.variableDefinition.possibleValuesFavorite);
 												$scope.clearArray($scope.variableDefinition.allFavoriteValues);
-	
+
 												$scope.variableDefinition.allValues.push.apply(
 													$scope.variableDefinition.allValues, $scope
 														.convertLocationsToPossibleValues(returnVal.data.allLocations));
@@ -451,7 +451,6 @@
 												$scope.updateDropdownValuesFavorites();
 											}
 										});
-	
 							}
 						};
 
@@ -492,30 +491,6 @@
 			};
 		})
 
-		.directive('truncateAndTooltip', ['$compile', function($compile) {
-			return {
-				restrict: 'A',
-				link: function(scope, element, attrs) {
-					var length = 30;
-					scope.$watch(attrs.truncateAndTooltip, function(newValue) {
-						if (newValue.length > length) {
-							element.attr('tooltip', newValue);
-							element.attr('tooltip-placement', 'right');
-							element.attr('tooltip-append-to-body', true);
-							element.html(newValue.substring(0, length) + '...');
-
-						} else {
-							element.html(newValue);
-						}
-
-						// remove truncateAndTooltip attr so no infinite loop
-						element.removeAttr('truncate-and-tooltip');
-
-						$compile(element)(scope);
-					});
-				}
-			};
-		}])
 
 		.directive('inputType', function() {
 			return {
@@ -539,7 +514,30 @@
 				}
 			};
 		})
+		.directive('truncateAndTooltip', ['$compile', function($compile) {
+			return {
+				restrict: 'A',
+				link: function(scope, element, attrs) {
+					var length = 30;
+					scope.$watch(attrs.truncateAndTooltip, function(newValue) {
+						if (newValue && newValue.length > length) {
+							element.attr('tooltip', newValue);
+							element.attr('tooltip-placement', 'right');
+							element.attr('tooltip-append-to-body', true);
+							element.html(newValue.substring(0, length) + '...');
 
+						} else {
+							element.html(newValue);
+						}
+
+						// remove truncateAndTooltip attr so no infinite loop
+						element.removeAttr('truncate-and-tooltip');
+
+						$compile(element)(scope);
+					});
+				}
+			};
+		}])
 		.directive('minVal', function() {
 			return {
 				require: 'ngModel',

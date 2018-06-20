@@ -264,4 +264,13 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 		return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId());
 	}
 
+	/**
+	 * Defines if the experimental design requires breeding view licence to run
+	 *
+	 * @return
+	 */
+	@Override
+	public Boolean requiresBreedingViewLicence() {
+		return Boolean.TRUE;
+	}
 }

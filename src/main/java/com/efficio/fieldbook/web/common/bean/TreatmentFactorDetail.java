@@ -15,7 +15,7 @@ import java.io.Serializable;
 
 import org.generationcp.middleware.domain.oms.TermId;
 
-import com.efficio.fieldbook.web.nursery.bean.WidgetType;
+import com.efficio.fieldbook.web.trial.bean.WidgetType;
 
 // TODO: Auto-generated Javadoc
 /**

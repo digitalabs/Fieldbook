@@ -257,18 +257,18 @@ table.dataTable thead .sorting_desc {
 }
 
 
-.fbk-nursery-heading, .fbk-nursery-heading span {
+.fbk-study-heading, .fbk-study-heading span {
     vertical-align: bottom;
 }
 
-.fbk-nursery-heading-btns {
+.fbk-study-heading-btns {
     display: inline-block;
     margin-left: 40pt;
     position: relative;
     top: 5pt;
 }
 
-.fbk-nursery-heading-right {
+.fbk-study-heading-right {
     position: relative;
     top: 5pt;
 }
@@ -524,7 +524,7 @@ tr.trialInstance {
 	padding-left: 20px;
 }
 
-#nursery-table, #trial-table{
+#trial-table{
     table-layout: fixed;
 }
 #ontology-tab-headers{
@@ -566,13 +566,13 @@ tr.trialInstance {
 .help-tooltip-col {
     margin-top: 7px;
 }
-.help-tooltip, .help-tooltip-nursery {
+.help-tooltip, .help-tooltip-study {
     color: #7D7D7D;
     font-size: 13pt;
     vertical-align: middle;
     cursor: pointer;
 }
-.help-tooltip-nursery-advance{
+.help-tooltip-study-advance{
     cursor: pointer;
 }
 .germplasm-list-table, .germplasm-measurement-list-table, .check-germplasm-list-table,
@@ -729,7 +729,7 @@ td.nurseryLevelVariableSetting {
 div.possibleValuesDiv{
     padding-bottom: 5px;
 }
-#addVariablesSettingBody #ontology-values-tab-li, #addVariablesSettingBody #ontology-usage-tab-li, #nursery-experimental-design-li {
+#addVariablesSettingBody #ontology-values-tab-li, #addVariablesSettingBody #ontology-usage-tab-li {
     display: none;
 }
 .select-variable{
@@ -921,7 +921,7 @@ div.sectionContainer {
 .image-padding{
     padding-top:0px;
 }
-.browse-nursery-action, .browse-germplasm-action, .browse-sample-action{
+.browse-study-action, .browse-germplasm-action, .browse-sample-action{
     padding-left: 4px;
 }
 .image-padding-with-text{
@@ -960,14 +960,14 @@ div.sectionContainer {
     margin-top: -2px;
 }
 
-#create-nursery-tabs, #manage-trial-tabs {
+#manage-study-tabs {
     min-height: 460px;
     background-color: #f6f6f6;
     border:1px solid #e4e4e4;
     border-top: 0px;
 }
 
-#manage-trial-tabs .form-control[type=number] {
+#manage-study-tabs .form-control[type=number] {
     display: inline;
 
 }
@@ -1233,23 +1233,23 @@ a.fbk-edit-experiment{
     opacity: 0.5;
 }
 
-.advance-nursery-list-table table {
+.advance-study-list-table table {
     width: 100%;
 }
 
-.advance-nursery-list-table table th, .advance-nursery-list-table table td{
+.advance-study-list-table table th, .advance-study-list-table table td{
     text-align: left;
     vertical-align: middle
 }
-table th.fbk-review-advance-check-box,table td.fbk-review-advance-check-box, .advance-nursery-list-table table td.fbk-advance-check-box,
-.advance-nursery-list-table table th.fbk-advance-check-box, .fbk-advance-check-box, .fbk-export-select-instance-check-box{
+table th.fbk-review-advance-check-box,table td.fbk-review-advance-check-box, .advance-study-list-table table td.fbk-advance-check-box,
+.advance-study-list-table table th.fbk-advance-check-box, .fbk-advance-check-box, .fbk-export-select-instance-check-box{
     text-align: center;
 }
 .enable-pointer-events {
     pointer-events: initial !important;
 }
 
-.nursery-details-variable {
+.study-details-variable {
     word-wrap: break-word;
     padding-left: 3pt; padding-right: 3pt; padding-bottom: 6pt;
 }
@@ -2016,7 +2016,7 @@ input.select-all-margin{
 .ontology-no-range {
     margin-left: 5%;
 }
-#manage-trial-tabs #germplasm-list-pagination {
+#manage-study-tabs #germplasm-list-pagination {
     opacity: 1 !important;
 }
 

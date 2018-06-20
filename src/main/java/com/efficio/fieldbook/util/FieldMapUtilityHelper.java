@@ -49,11 +49,10 @@ public class FieldMapUtilityHelper {
 	 * @param startRange the start range
 	 * @param isStartOk the is start ok
 	 * @param deletedPlot the deleted plot
-	 * @param isTrial the is trial
 	 * @return the int
 	 */
 	public static int populatePlotData(int counter, List<FieldMapLabel> labels, int col, int range, Plot[][] plots, boolean isUpward,
-			int startCol, int startRange, boolean isStartOk, Map<String, String> deletedPlot, boolean isTrial) {
+			int startCol, int startRange, boolean isStartOk, Map<String, String> deletedPlot) {
 
 		String stringToDisplay = "";
 		int i = col;
@@ -61,7 +60,7 @@ public class FieldMapUtilityHelper {
 		boolean hasAvailableEntries = true;
 
 		if (counter < labels.size()) {
-			stringToDisplay = FieldMapUtilityHelper.getDisplayString(labels.get(counter), isTrial);
+			stringToDisplay = FieldMapUtilityHelper.getDisplayString(labels.get(counter));
 		} else {
 			hasAvailableEntries = false;
 		}
@@ -142,17 +141,14 @@ public class FieldMapUtilityHelper {
 	 * Gets the display string.
 	 *
 	 * @param label the label
-	 * @param isTrial the is trial
 	 * @return the display string
 	 */
-	public static String getDisplayString(FieldMapLabel label, boolean isTrial) {
+	public static String getDisplayString(FieldMapLabel label) {
 		StringBuilder textLabel = new StringBuilder();
 		textLabel.append(label.getStudyName());
 		textLabel.append("-" + label.getPlotNo());
 		textLabel.append(FieldMapUtilityHelper.NEXT_LINE + "Entry " + label.getEntryNumber());
-		if (isTrial) {
-			textLabel.append(FieldMapUtilityHelper.NEXT_LINE + "Rep " + label.getRep());
-		}
+		textLabel.append(FieldMapUtilityHelper.NEXT_LINE + "Rep " + label.getRep());
 		return textLabel.toString();
 	}
 

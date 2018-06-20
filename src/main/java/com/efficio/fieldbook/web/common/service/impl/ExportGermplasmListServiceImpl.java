@@ -76,11 +76,10 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	}
 
 	@Override
-	public void exportGermplasmListXLS(final String fileNamePath, final int listId, final Map<String, Boolean> visibleColumns,
-			final Boolean isNursery) throws GermplasmListExporterException {
+	public void exportGermplasmListXLS(final String fileNamePath, final int listId, final Map<String, Boolean> visibleColumns) throws GermplasmListExporterException {
 
 		try {
-			final GermplasmListExportInputValues input = this.setUpInput(fileNamePath, listId, visibleColumns, isNursery);
+			final GermplasmListExportInputValues input = this.setUpInput(fileNamePath, listId, visibleColumns);
 
 			this.germplasmExportService.generateGermplasmListExcelFile(input);
 
@@ -90,20 +89,15 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 	}
 
-	GermplasmListExportInputValues setUpInput(final String fileNamePath, final int listId, final Map<String, Boolean> visibleColumns,
-			final Boolean isNursery) {
+	GermplasmListExportInputValues setUpInput(final String fileNamePath, final int listId, final Map<String, Boolean> visibleColumns) {
 		final GermplasmListExportInputValues input = new GermplasmListExportInputValues();
 		input.setFileName(fileNamePath);
 		GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
 
 		final int studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
-		GermplasmListType germplasmListType = GermplasmListType.NURSERY;
-		if (!isNursery) {
-			germplasmListType = GermplasmListType.TRIAL;
-		}
 
 		// retrieval of germplasm list data from snapshot list
-		final List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, germplasmListType);
+		final List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
 		List<? extends GermplasmExportSource> germplasmlistData = new ArrayList<>();
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
 			germplasmList = germplasmLists.get(0);
@@ -112,7 +106,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 				// set the ImportedGermplasmListMainInfo to the List reference of the list, so that it still points to the original list
 				this.userSelection.getImportedGermplasmMainInfo().setListId(germplasmList.getListRef());
 			}
-			List<ListDataProject> listDataProjects = this.germplasmListManager.retrieveSnapshotListData(germplasmList.getId());
+			final List<ListDataProject> listDataProjects = this.germplasmListManager.retrieveSnapshotListData(germplasmList.getId());
 			FieldbookListUtil.populateStockIdInListDataProject(listDataProjects, inventoryDataManager);
 			germplasmlistData = listDataProjects;
 		}
@@ -141,7 +135,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		// GermplasmListExportInputValues.InventoryVariableMap.
 		this.removeInventoryVariableMapFromVisibleColumns(visibleColumns);
 
-		input.setColumnTermMap(this.generateColumnStandardVariableMap(visibleColumns, isNursery));
+		input.setColumnTermMap(this.generateColumnStandardVariableMap(visibleColumns));
 		return input;
 	}
 
@@ -153,15 +147,15 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	 */
 	Map<Integer,Variable> extractInventoryVariableMapFromVisibleColumns(final Map<String, Boolean> visibleColumns) {
 
-		Map<Integer, Variable> inventontoryVariableMap = new HashMap<>();
+		final Map<Integer, Variable> inventontoryVariableMap = new HashMap<>();
 
-		Iterator<Map.Entry<String, Boolean>> iterator = visibleColumns.entrySet().iterator();
+		final Iterator<Map.Entry<String, Boolean>> iterator = visibleColumns.entrySet().iterator();
 
 		while (iterator.hasNext()) {
 
-			Map.Entry<String, Boolean> entry = iterator.next();
-			String termId = entry.getKey();
-			Boolean isVisible = entry.getValue();
+			final Map.Entry<String, Boolean> entry = iterator.next();
+			final String termId = entry.getKey();
+			final Boolean isVisible = entry.getValue();
 			if (isVisible && isInventoryVariable(termId)) {
 				addVariableToMap(inventontoryVariableMap, Integer.valueOf(termId));
 			}
@@ -178,12 +172,12 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	 */
 	void removeInventoryVariableMapFromVisibleColumns(final Map<String, Boolean> visibleColumns) {
 
-		Iterator<Map.Entry<String, Boolean>> iterator = visibleColumns.entrySet().iterator();
+		final Iterator<Map.Entry<String, Boolean>> iterator = visibleColumns.entrySet().iterator();
 
 		while (iterator.hasNext()) {
 
-			Map.Entry<String, Boolean> entry = iterator.next();
-			String termId = entry.getKey();
+			final Map.Entry<String, Boolean> entry = iterator.next();
+			final String termId = entry.getKey();
 			if (isInventoryVariable(termId)) {
 				iterator.remove();
 			}
@@ -205,7 +199,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 	}
 
-	private Map<Integer, Term> generateColumnStandardVariableMap(final Map<String, Boolean> visibleColumnMap, final Boolean isNursery) {
+	private Map<Integer, Term> generateColumnStandardVariableMap(final Map<String, Boolean> visibleColumnMap) {
 
 		final Map<Integer, Term> standardVariableMap = new HashMap<>();
 
@@ -253,11 +247,10 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	}
 
 	@Override
-	public void exportGermplasmListCSV(final String fileNamePath, final Map<String, Boolean> visibleColumns, final Boolean isNursery)
-			throws GermplasmListExporterException {
+	public void exportGermplasmListCSV(final String fileNamePath, final Map<String, Boolean> visibleColumns) throws GermplasmListExporterException {
 
-		final List<Map<Integer, ExportColumnValue>> exportColumnValues = this.getExportColumnValuesFromTable(visibleColumns, isNursery);
-		final List<ExportColumnHeader> exportColumnHeaders = this.getExportColumnHeadersFromTable(visibleColumns, isNursery);
+		final List<Map<Integer, ExportColumnValue>> exportColumnValues = this.getExportColumnValuesFromTable(visibleColumns);
+		final List<ExportColumnHeader> exportColumnHeaders = this.getExportColumnHeadersFromTable(visibleColumns);
 
 		try {
 
@@ -269,7 +262,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 	}
 
-	protected List<ExportColumnHeader> getExportColumnHeadersFromTable(final Map<String, Boolean> visibleColumns, final Boolean isNursery) {
+	protected List<ExportColumnHeader> getExportColumnHeadersFromTable(final Map<String, Boolean> visibleColumns) {
 
 		final List<ExportColumnHeader> exportColumnHeaders = new ArrayList<>();
 
@@ -286,8 +279,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		return exportColumnHeaders;
 	}
 
-	protected List<Map<Integer, ExportColumnValue>> getExportColumnValuesFromTable(final Map<String, Boolean> visibleColumns,
-			final Boolean isNursery) {
+	protected List<Map<Integer, ExportColumnValue>> getExportColumnValuesFromTable(final Map<String, Boolean> visibleColumns) {
 
 		final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
 

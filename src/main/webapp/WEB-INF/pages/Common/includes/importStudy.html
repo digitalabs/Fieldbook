@@ -2,7 +2,7 @@
     <!-- Modal -->
 
     <form id="importStudyUploadForm"
-          method="post" th:object="${createNurseryForm}"
+          method="post" th:object="${createTrialForm}"
           enctype="multipart/form-data">
 
 		<div class="modal fade import-study-data import-window" id="importStudyModal" role="dialog" aria-labelledby="importStudyModal" aria-hidden="true">
@@ -37,10 +37,10 @@
                             <div class="col-xs-5 col-md-5">
                                 <select style="width: 205px" id="importType">
                                     <option value="0">Please Choose</option>
-                                    <option value="7" th:text="#{nursery.import.csv}"></option>
-                                    <option selected="selected" value="3" th:text="#{nursery.import.excel}"></option>
-                                    <option value="5" th:text="#{nursery.import.ksu.fieldbook.excel}"></option>
-                                    <option value="6" th:text="#{nursery.import.ksu.fieldbook.csv}"></option>
+                                    <option value="7" th:text="#{study.import.csv}"></option>
+                                    <option selected="selected" value="3" th:text="#{study.import.excel}"></option>
+                                    <option value="5" th:text="#{study.import.ksu.fieldbook.excel}"></option>
+                                    <option value="6" th:text="#{study.import.ksu.fieldbook.csv}"></option>
                                 </select>
                             </div>
                         </div>
@@ -50,7 +50,7 @@
                             <div class="col-md-12">
                                 <div class="fileupload fileupload-new fbk-import-upload-file" data-provides="fileupload">
 											<span class="btn btn-info btn-file ">
-												<span class="fileupload-new" th:text="#{nursery.import.germplasm.browse.file}">Browse</span>
+												<span class="fileupload-new" th:text="#{common.import.browse.file}">Browse</span>
 												<input id="fileupload" th:field="*{file}" type="file" class="file-input"/>
 											</span>
                                     <span class="fileupload-preview-wrap"><b><span
@@ -58,7 +58,7 @@
                                             class="fileupload-preview"></i></span>
                                     <span style="display: inline-block; margin-left: 15px">
 										<a href="#" class="btn btn-default fileupload-exists" data-dismiss="fileupload"
-                                           th:text="#{nursery.managesettings.clear.settings}">Clear</a>
+                                           th:text="#{study.managesettings.clear.settings}">Clear</a>
 									</span>
 
                                 </div>
@@ -100,10 +100,10 @@
 
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" onclick="javascript:goBackToImport();" th:text="#{nursery.go.back}">
+                    <button type="button" class="btn btn-default" onclick="javascript:goBackToImport();" th:text="#{study.go.back}">
                         Cancel
                     </button>
-                    <button type="button" class="btn btn-primary" id="studyConfirmationButton" th:text="#{nursery.proceed}">Import</button>
+                    <button type="button" class="btn btn-primary" id="studyConfirmationButton" th:text="#{study.proceed}">Import</button>
                 </div>
             </div>
         </div>
@@ -158,11 +158,11 @@
                     </div>
                 </div>
 
-                <form id="importStudyConfirmationForm" method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
+                <form id="importStudyConfirmationForm" method="post" th:object="${createTrialForm}" enctype="multipart/form-data">
                     <input type="hidden" class="hasCreateGermplasm"/>
                     <div class="row form-group create-germplasm add-desig-to-gid">
                         <div class="col-xs-4 col-md-4">
-                            <label class="control-label label-bold" th:text="#{nursery.import.excel.breeding.method}+':'">Breeding
+                            <label class="control-label label-bold" th:text="#{study.import.excel.breeding.method}+':'">Breeding
                                 Method</label>&nbsp;<span class="required">*</span>
                         </div>
                         <div class="col-xs-8 col-md-8">
@@ -192,7 +192,7 @@
                                 &nbsp;&nbsp;
                                 <span th:text="#{show.favorite.method}">Show Favorite Method</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <a class='import-manage-method' href="javascript: void(0)"
-                                   th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
+                                   th:text="#{study.managesettings.manage.method}">Manage Method</a>
                             </div>
                             <!-- store possible values of variable -->
                             <div id="possibleValuesJsonMethod"
@@ -213,7 +213,7 @@
                     </div>
                     <div class="row form-group create-germplasm">
                         <div class="col-xs-4 col-md-4">
-                            <label class="control-label label-bold" th:text="#{nursery.import.excel.date}+':'">Date</label>&nbsp;<span
+                            <label class="control-label label-bold" th:text="#{study.import.excel.date}+':'">Date</label>&nbsp;<span
                                 class="required">*</span>
                         </div>
                         <div class="col-xs-7 col-md-7">
@@ -226,7 +226,7 @@
                     <div class="row form-group create-germplasm">
                         <div class="col-xs-4 col-md-4">
                             <label class="control-label label-bold"
-                                   th:text="#{nursery.import.excel.location}+':'">Location</label>&nbsp;<span class="required">*</span>
+                                   th:text="#{study.import.excel.location}+':'">Location</label>&nbsp;<span class="required">*</span>
                         </div>
                         <div class="col-xs-8 col-md-8">
                             <input class="selectedValue" type="hidden"/>
@@ -256,7 +256,7 @@
                                 &nbsp;&nbsp;
                                 <span th:text="#{show.favorite.location}">Show Favorite Location</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <a class='import-manage-location' href="javascript: void(0)"
-                                   th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
+                                   th:text="#{study.managesettings.manage.location}">Manage Location</a>
                             </div>
                             <!-- store possible values of variable -->
                             <div id="possibleValuesJsonLocation"
@@ -277,7 +277,7 @@
                     </div>
                     <div class="row form-group create-germplasm">
                         <div class="col-xs-4 col-md-4">
-                            <label class="control-label label-bold" th:text="#{nursery.import.excel.name.type}+':'">Name
+                            <label class="control-label label-bold" th:text="#{study.import.excel.name.type}+':'">Name
                                 Type</label>&nbsp;<span class="required">*</span>
                         </div>
                         <div class="col-xs-7 col-md-7">

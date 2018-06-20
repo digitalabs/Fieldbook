@@ -1,0 +1,51 @@
+<div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
+	<!-- Modal -->
+	<div class="modal fade" id="importGermplasmModal"  role="dialog" aria-labelledby="manageLocationModal" aria-hidden="true">
+		<div class="modal-dialog" style="width: 950px">
+			<div class="modal-content" >
+				<div class="modal-body" id="manageLocationBody fbk-import-body">
+					<button id="closeImportGermplasmModal" type="button" class="close fbk-import-close-button pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true" onClick="cancelImportGermplasm();"/>
+					<iframe class="fbk-import-popup" id="importFrame" name="myframe" width="900" height="500" frameborder="0"></iframe>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+</div>
+
+<div layout:fragment="page-script">
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
+function cancelImportGermplasm() {
+	'use strict';
+	$('#importGermplasmModal').modal('hide');
+}
+function cancelImportFrameEvent() {
+	$('#importGermplasmModal').modal('hide');
+}
+function closeImportFrame(listGermplasmId) {
+	'use strict';
+	$('#importGermplasmModal').modal('hide');
+	listId = listGermplasmId;
+	var importFromType = $('.germplasmAndCheckSection').data('import-from');
+	if (importFromType === '1') {
+		//from study list
+		lastDraggedPrimaryList = listId;
+		displayGermplasmDetails(listId);
+	} else if (importFromType === '2') {
+			// Loads the check list
+		$('#lastCheckSourcePrimary').val(0);
+		lastDraggedChecksList = listId;
+
+		// Set primary germplasm list rows' opacity to 1
+		$('.germplasm-list-items tbody tr').css('opacity', '1');
+
+		// If there is an existing list already, ask user if data should be overwritten
+		if ($('.check-germplasm-list-items tbody tr').length > 0) {
+			$('#keyForOverwrite').val(listId);
+			$('#confirmationModal').modal('show');
+		}
+	}
+}
+//]]>
+</script>
+</div>

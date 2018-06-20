@@ -2,17 +2,17 @@
 	<div class="row form-group col-xs-12 col-md-12" th:if="${createTrialForm != null and measurementRowCount != 0}">
 		<!-- TODO Remove inlined styles-->
 		<img th:src="@{/static/svg/measurements.svg}" style="position: relative; bottom: 3px;" width="22" height="22"/>
-		<strong class="sub-content-heading measurements-header" th:text="#{nursery.edit.nursery.measurements}"></strong>
-		<strong class="sub-content-heading preview-measurements-header" th:text="#{nursery.edit.nursery.preview.measurements}"></strong>
+		<strong class="sub-content-heading measurements-header" th:text="#{study.edit.study.measurements}"></strong>
+		<strong class="sub-content-heading preview-measurements-header" th:text="#{study.edit.study.preview.measurements}"></strong>
 	</div>
 
 	<div class="no-measurements-table">
-		<span th:text="#{nursery.edit.nursery.preview.genearate.design.message}">Please generate the design to see the measurements</span>
+		<span th:text="#{study.edit.study.preview.genearate.design.message}">Please generate the design to see the measurements</span>
 	</div>
 
 	<div class="preview-measurements-panel">
 		<div class="preview-measurements-message">
-			<span th:text="#{nursery.edit.nursery.preview.save.message}">Please save the study to be able to edit measurements</span>
+			<span th:text="#{study.edit.study.preview.save.message}">Please save the study to be able to edit measurements</span>
 		</div>
 		<div class="preview-measurements-table">
 			<table id="preview-measurement-table" width="100%" th:object="${createTrialForm}" class="table-curved table-condensed">
@@ -46,8 +46,8 @@
 		</div>
 
 		<div class="mdt-measurements-table-panel">
-			<table th:if="${createNurseryForm != null || createTrialForm != null}"
-			   th:object="${createNurseryForm != null ? createNurseryForm : createTrialForm}" id="measurement-table" width="100%"
+			<table th:if="${createTrialForm != null}"
+			   th:object="${createTrialForm}" id="measurement-table" width="100%"
 			   class="table-curved table-condensed">
 			</table>
 		</div>

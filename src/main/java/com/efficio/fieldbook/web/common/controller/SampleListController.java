@@ -32,7 +32,7 @@ public class SampleListController {
 	private static final Logger LOG = LoggerFactory.getLogger(SampleListController.class);
 
 	public static final String URL = "/sample/list";
-	private static final String SAVED_FINAL_LIST = "/NurseryManager/savedFinalList";
+	private static final String SAVED_FINAL_LIST = "/StudyManager/savedFinalList";
 	private static final String TABLE_HEADER_LIST = "tableHeaderList";
 	private static final String SAMPLE_LIST = "sampleList";
 	private static final String SAMPLE_NAME = "sample.list.sample.name";

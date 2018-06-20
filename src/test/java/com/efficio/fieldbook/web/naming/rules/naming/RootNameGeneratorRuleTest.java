@@ -12,7 +12,7 @@ import org.generationcp.middleware.pojos.Name;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 
 public class RootNameGeneratorRuleTest extends BaseNamingRuleTest {
 

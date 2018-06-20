@@ -4,7 +4,7 @@ package com.efficio.fieldbook.web.naming.expression;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 
 public abstract class NumberSequenceExpression extends BaseExpression {
 

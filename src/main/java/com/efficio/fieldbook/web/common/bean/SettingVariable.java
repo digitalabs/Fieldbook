@@ -21,7 +21,7 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.manager.Operation;
 import org.springframework.web.util.HtmlUtils;
 
-import com.efficio.fieldbook.web.nursery.bean.WidgetType;
+import com.efficio.fieldbook.web.trial.bean.WidgetType;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 public class SettingVariable implements Serializable {

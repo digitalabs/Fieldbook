@@ -31,12 +31,11 @@ public class VerticalFieldMapLayoutIterator implements FieldPlotLayoutIterator {
 	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see com.efficio.fieldbook.service.api.FieldMapService#createFieldMap(int, int, int, int, boolean, java.util.Map, java.util.List,
-	 *      boolean)
+	 * @see com.efficio.fieldbook.service.api.FieldMapService#createFieldMap(int, int, int, int, boolean, java.util.Map, java.util.List, com.efficio.fieldbook.web.fieldmap.bean.Plot)
 	 */
 	@Override
 	public Plot[][] createFieldMap(int col, int range, int startRange, int startCol, boolean isSerpentine, Map<String, String> deletedPlot,
-			List<FieldMapLabel> labels, boolean isTrial, Plot[][] currentPlots) {
+		List<FieldMapLabel> labels, Plot[][] currentPlots) {
 
 		Plot[][] plots = FieldMapUtilityHelper.initializePlots(col, range);
 
@@ -58,7 +57,7 @@ public class VerticalFieldMapLayoutIterator implements FieldPlotLayoutIterator {
 					}
 					counter =
 							FieldMapUtilityHelper.populatePlotData(counter, labels, x, y, plots, false, startCol, startRange, isStartOk,
-									deletedPlot, isTrial);
+									deletedPlot);
 				}
 			} else {
 				for (int y = range - 1; y >= 0; y--) {
@@ -69,7 +68,7 @@ public class VerticalFieldMapLayoutIterator implements FieldPlotLayoutIterator {
 					}
 					counter =
 							FieldMapUtilityHelper.populatePlotData(counter, labels, x, y, plots, false, startCol, startRange, isStartOk,
-									deletedPlot, isTrial);
+									deletedPlot);
 
 				}
 			}
@@ -110,6 +109,6 @@ public class VerticalFieldMapLayoutIterator implements FieldPlotLayoutIterator {
 				downToUp = !downToUp;
 			}
 		}
-		info.setSelectedFieldmapList(new SelectedFieldmapList(info.getSelectedFieldMaps(), info.isTrial()));
+		info.setSelectedFieldmapList(new SelectedFieldmapList(info.getSelectedFieldMaps()));
 	}
 }

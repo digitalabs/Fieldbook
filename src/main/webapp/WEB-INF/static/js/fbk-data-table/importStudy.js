@@ -1,4 +1,4 @@
-/*globals displaySaveSuccessMessage, createTableSettingVariables, importNursery, Spinner, showErrorMessage*/
+/*globals displaySaveSuccessMessage, createTableSettingVariables, importFormatType, Spinner, showErrorMessage*/
 /*globals recreateMethodCombo,showErrorMessage,showImportResponse,recreateLocationCombo, isCategoricalDisplay*/
 /*exported showImportResponse, importOptions, confirmDesignation, goBackToImport, doImportActionChange*/
 /*exported importStudyBookHeader, importStudyHeader*/
@@ -15,7 +15,7 @@ $(document).ready(function() {
 	$('.import-window select').select2({width: 'copy', minimumResultsForSearch: 20});
 	$('#importType').on('change', function() {
 		if ($(this).val() !== '0') {
-			importNursery($(this).val());
+			importFormatType($(this).val());
 		}
 	});
 
@@ -70,32 +70,17 @@ $(document).ready(function() {
 	$(document).off('location-update');
 	$(document).on('location-update', recreateLocationCombo);
 });
-function doRefreshNurserySettings() {
-	'use strict';
-	$.ajax({
-		url: '/Fieldbook/NurseryManager/createNursery/refresh/settings/tab',
-		type: 'GET',
-		cache: false,
-		async: false,
-		success: function(data) {
-			$('#chooseSettingsDiv').html(data);
-			displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
-		}
-	});
-}
+
 function doSaveImportedData() {
 	'use strict';
 	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 	var serializedData = 'columnOrders=' + encodeURIComponent(JSON.stringify(columnsOrder));
 	return $.ajax({
-		url: isNursery() ? '/Fieldbook/ImportManager/import/save/nursery' : '/Fieldbook/ImportManager/import/save',
+		url: '/Fieldbook/ImportManager/import/save',
 		type: 'POST',
 		data: serializedData,
 		async: true,
-		success: function(html) {
-			if(isNursery()) {
-				$('#measurementsDiv').html(html);
-			}
+		success: function (html) {
 			$('.import-study-data').data('data-import', '0');
 			$('.import-study-data').data('measurement-show-already', '0');
 			$('.fbk-discard-imported-data').addClass('fbk-hide');
@@ -104,52 +89,31 @@ function doSaveImportedData() {
 				type: 'REFRESH_AFTER_IMPORT_SAVE'
 			});
 
-			if (isNursery()) {
-				doRefreshNurserySettings();
-				updateMeasurementDataExistingValue(!hasMeasurementData());
-				displayEditFactorsAndGermplasmSection();
-			} else {
-				displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
-				$.ajax({
-					url: '/Fieldbook/ImportManager/import/preview',
-					type: 'POST',
-					success: function(html) {
-						onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
-                	}
-                });
-			}			
+			displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
+			$.ajax({
+				url: '/Fieldbook/ImportManager/import/preview',
+				type: 'POST',
+				success: function (html) {
+					onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
+				}
+			});
+
 		}
 	});
 }
 function doMeasurementsReload(hasDataOverwrite) {
 	'use strict';
 	$('.import-study-data').data('data-import', '1');
-	
-	if (isNursery()) {
-		$.ajax({
-			url: '/Fieldbook/ImportManager/import/preview/nursery',
-			type: 'POST',
-			success: function(html) {
-				$('#measurementsDiv').html(html);
-				$('.fbk-discard-imported-data').removeClass('fbk-hide');
-				if (hasDataOverwrite === '1') {
-					showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage, 5000);
-				} else {
-					showSuccessfulMessage('', importSuccessReminderToSaveMessage);
-				}
-			}
-		});
+
+	$('body').addClass('import-preview-measurements');
+	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+	new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
+
+	$('.fbk-discard-imported-data').removeClass('fbk-hide');
+	if (hasDataOverwrite === '1') {
+		showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage, 5000);
 	} else {
-		$('body').addClass('import-preview-measurements');
-		var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
-		new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
-	
-		$('.fbk-discard-imported-data').removeClass('fbk-hide');
-		if (hasDataOverwrite === '1') {
-			showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage, 5000);
-		} else {
-			showSuccessfulMessage('', importSuccessReminderToSaveMessage);
-		}
+		showSuccessfulMessage('', importSuccessReminderToSaveMessage);
 	}
 
 	$('#importStudyModal').modal('hide');
@@ -239,7 +203,7 @@ function showWarningTraitsImport(resp) {
 	if (resp.deletedTraits !== ' ') {
 		warningTraitsMessage += '<li>';
 		warningTraitsMessage += '<b>' + 'Missing traits: ' + '</b>';
-		warningTraitsMessage += resp.deletedTraits + ' in the nursery are not present in the file.';
+		warningTraitsMessage += resp.deletedTraits + ' in the study are not present in the file.';
 		warningTraitsMessage += '</li>';
 		warningTraitsMessage += '<p>' + '</p>';
 	}
@@ -247,8 +211,8 @@ function showWarningTraitsImport(resp) {
 	if (resp.addedTraits !== ' ') {
 		warningTraitsMessage += '<li>';
 		warningTraitsMessage += '<b>' + 'Additional traits: ' + '</b>';
-		warningTraitsMessage += 'the file contains the trait(s) ' + resp.addedTraits + ', that are not present in the nursery. ';
-		warningTraitsMessage += 'This data will be discarded. if you wish to import additional traits, please add them to the nursery before ';
+		warningTraitsMessage += 'the file contains the trait(s) ' + resp.addedTraits + ', that are not present in the study. ';
+		warningTraitsMessage += 'This data will be discarded. if you wish to import additional traits, please add them to the study before ';
 		warningTraitsMessage += 'importing the data file.';
 		warningTraitsMessage += '</li>';
 	}
@@ -423,7 +387,7 @@ function revertStockListData(){
 }
 function revertData(showMessage) {
 	'use strict';
-	var revertUrl = isNursery() ? '/Fieldbook/ImportManager/revert/data/nursery' : '/Fieldbook/ImportManager/revert/data';
+	var revertUrl = '/Fieldbook/ImportManager/revert/data';
 	$.ajax({
 		url: revertUrl,
 		type: 'GET',
@@ -431,9 +395,6 @@ function revertData(showMessage) {
 		cache: false,
 		async: false,
 		success: function(html) {
-			if (isNursery()) {
-				$('#measurementsDiv').html(html);
-			}
 			$('body').removeClass('import-preview-measurements');
 			if (showMessage === true) {
 				showSuccessfulMessage('', 'Discarded imported data successfully');

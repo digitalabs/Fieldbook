@@ -11,17 +11,17 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import junit.framework.Assert;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -37,12 +37,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.StudyDetails;
-import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
-
-import junit.framework.Assert;
+import javax.annotation.Resource;
+import java.util.List;
 
 public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTest {
 
@@ -59,7 +55,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 	// FIXME BMS-2360
 	// @Test
-	public void testShowReviewTrialSummaryWithError() throws Exception {
+	public void testShowReviewStudySummaryWithError() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get(ReviewStudyDetailsController.URL + "/show/T/1"))
 				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.model().attributeExists("trialDetails"));
@@ -70,31 +66,31 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		final StudyDetails details = new StudyDetails();
 
 		this.reviewStudyDetailsController.addErrorMessageToResult(details,
-				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"), true, 1);
+			new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"), 1);
 
 		Assert.assertEquals("Expecting error message for nursery but got " + details.getErrorMessage() + " instead.",
-				"This nursery is in a format that cannot be opened in the Nursery Manager. Please use the Study Browser if you"
-						+ " wish to see the details of this nursery.",
+				"This study is in a format that cannot be opened in the Study Manager. Please use the Study Browser if you"
+						+ " wish to see the details of this study.",
 				details.getErrorMessage());
 	}
 
 	@Test
-	public void testAddErrorMessageToResultForTrial() throws Exception {
+	public void testAddErrorMessageToResultForStudy() throws Exception {
 		final StudyDetails details = new StudyDetails();
 
 		this.reviewStudyDetailsController.addErrorMessageToResult(details,
-				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"), false, 1);
+			new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"), 1);
 
 		Assert.assertEquals("Expecting error message for nursery but got " + details.getErrorMessage() + " instead.",
-				"This trial is in a format that cannot be opened in the Trial Manager. Please use the Study Browser if you"
-						+ " wish to see the details of this trial.",
+				"This study is in a format that cannot be opened in the Study Manager. Please use the Study Browser if you"
+						+ " wish to see the details of this study.",
 				details.getErrorMessage());
 	}
 
 	@Test
-	public void testShowTrialSummaryEnvironmentsWithoutAnalysisVariables() {
+	public void testShowStudySummaryEnvironmentsWithoutAnalysisVariables() {
 		final int id = 1;
-		final AddOrRemoveTraitsForm form = new AddOrRemoveTraitsForm();
+		final CreateTrialForm form = new CreateTrialForm();
 		final Model model = new ExtendedModelMap();
 
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
@@ -103,7 +99,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 				Mockito.mock(com.efficio.fieldbook.service.api.FieldbookService.class);
 		this.reviewStudyDetailsController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
 		this.reviewStudyDetailsController.setFieldbookService(fieldbookService);
-		Mockito.doReturn(workbook).when(fieldbookMiddlewareService).getStudyVariableSettings(id, false);
+		Mockito.doReturn(workbook).when(fieldbookMiddlewareService).getStudyVariableSettings(id);
 		this.mockStandardVariables(workbook.getAllVariables(), fieldbookMiddlewareService, fieldbookService);
 		this.mockContextUtil();
 
@@ -111,11 +107,11 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConditions()));
 		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConstants()));
 
-		this.reviewStudyDetailsController.show(StudyType.T.toString(), id, form, model);
+		this.reviewStudyDetailsController.show(id, form, model);
 
 		final StudyDetails details = (StudyDetails) model.asMap().get("trialDetails");
 		Assert.assertNotNull(details);
-		final List<SettingDetail> conditionSettingDetails = details.getNurseryConditionDetails();
+		final List<SettingDetail> conditionSettingDetails = details.getStudyConditionDetails();
 		boolean hasAnalysisVariable = false;
 		for (final SettingDetail settingDetail : conditionSettingDetails) {
 			if (VariableType.getReservedVariableTypes().contains(settingDetail.getVariableType())) {
@@ -123,7 +119,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 				break;
 			}
 		}
-		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be found under Trial Conditions of the Summary page.",
+		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be found under Study Conditions of the Summary page.",
 				hasAnalysisVariable);
 
 	}

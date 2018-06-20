@@ -33,33 +33,6 @@
                         </div>
                     </div>
 
-                    <div class="row" ng-show="hasNurseryType">
-                        <div class="col-md-7">
-                            <form class="form-horizontal">
-                                <div class="form-group">
-                                    <strong class="sub-content-heading col-md-12" th:text="#{design.import.nursery.design.type}"></strong>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="design-type-select" class="col-md-7 col-sm-8 control-label"
-                                           th:text="#{design.import.nursery.design.type.select}"></label>
-
-                                    <div class="col-md-5 col-sm-4">
-                                        <select id="nursery-type-select" ng-model="selectedNurseryType" ng-change="onNurseryTypeSelect()">
-                                            <option value="">Please Choose</option>
-                                            <option ng-repeat="item in nurseryTypeList"
-                                                    value="{{item.id}}">
-                                                {{item.description}}
-                                            </option>
-                                            <option value="other-design">{{Messages.OWN_DESIGN}}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-
                     <div class="row">
                         <div class="col-md-12">
                             <strong class="sub-content-heading pull-left" th:text="#{design.import.map.column.header}"></strong>
@@ -143,7 +116,7 @@
                             label: /*[[#{design.import.traits}]]*/ '',
                             placeholder: /*[[#{design.import.traits.placeholder}]]*/ ''
                         },
-                        generalAjaxError: /*[[#{nursery.managesettings.variable.selection.error}]]*/ '',
+                        generalAjaxError: /*[[#{study.managesettings.variable.selection.error}]]*/ '',
                         variableSelectedMessage: /*[[#{common.warning.variable.in.use}]]*/ '',
                         invalidAliasError: /*[[#{variable.selection.alias.error}]]*/ ''
                     })
@@ -165,10 +138,7 @@
                         DESIGN_IMPORT_UNMAPPED_PROMPT_TITLE: /*[[#{design.import.unmapped.prompt.title}]]*/ '',
                         DESIGN_IMPORT_UNMAPPED_PROMPT_TEXT: /*[[#{design.import.unmapped.prompt.text}]]*/ '',
                         DESIGN_IMPORT_CHANGE_DESIGN: /*[[#{design.import.change.design}]]*/ '',
-                        DESIGN_IMPORT_CHANGE_DESIGN_DESCRIPTION_NURSERY: /*[[#{design.import.change.design.description.nursery}]]*/ '',
-                        DESIGN_IMPORT_CHANGE_DESIGN_DESCRIPTION_TRIAL: /*[[#{design.import.change.design.description.trial}]]*/ '',
-                       	DESIGN_IMPORT_CHANGE_DESIGN_SUCCESS_NURSERY: /*[[#{design.import.change.design.success.message.nursery}]]*/ '',
-                        DESIGN_IMPORT_CHANGE_DESIGN_SUCCESS_TRIAL: /*[[#{design.import.change.design.success.message.trial}]]*/ '',
+                        DESIGN_IMPORT_CHANGE_DESIGN_DESCRIPTION_STUDY: /*[[#{design.import.change.design.description.study}]]*/ '',
                         DESIGN_IMPORT_PRESET_DESIGN_CHANGE_DESIGN: /*[[#{design.import.preset.design.change.design}]]*/ ''
                     });
         })();

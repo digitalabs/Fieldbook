@@ -449,7 +449,7 @@ public class CrossingServiceImpl implements CrossingService {
 			Germplasm germplasm = null;
 			Name name = null;
 
-			// Retrieve the germplasm (cross) from database: In case of Nursery
+			// Retrieve the germplasm (cross) from database: In case of Study
 			// -> Crossing workflows, we expect the GID to always
 			// exist as crosses are created in crossing manager and persisted.
 			if (cross.getGid() != null) {

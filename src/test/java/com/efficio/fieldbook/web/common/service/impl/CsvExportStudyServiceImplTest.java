@@ -20,9 +20,9 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Property;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.After;
@@ -51,23 +51,17 @@ public class CsvExportStudyServiceImplTest {
 	private OntologyService ontologyService;
 
 	@Mock
-	private static Property DUMMY_PROPERTY;
-
-	@Mock
-	private static Term DUMMY_TERM;
-
-	@Mock
 	private GermplasmExportService germplasmExportService;
-	
+
 	@Mock
 	protected ContextUtil contextUtil;
 
 	private CsvExportStudyServiceImpl csvExportStudyService;
-	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
-	
-	private static String PROPERTY_NAME = "Property Name";
-	private static String STUDY_NAME = "Test Study";
-	private static String ZIP_FILEPATH = "./someDirectory/output/TestFileName.zip";
+	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+
+	private static final String PROPERTY_NAME = "Property Name";
+	private static final String STUDY_NAME = "Test Study";
+	private static final String ZIP_FILEPATH = "./someDirectory/output/TestFileName.zip";
 
 	@Before
 	public void setUp() throws IOException {
@@ -85,14 +79,14 @@ public class CsvExportStudyServiceImplTest {
 		Mockito.doReturn(Mockito.mock(File.class)).when(this.germplasmExportService)
 				.generateCSVFile(Matchers.any(List.class), Matchers.any(List.class), Matchers.anyString());
 		Mockito.doReturn(ZIP_FILEPATH).when(this.csvExportStudyService).createZipFile(Matchers.anyString(), Matchers.anyListOf(String.class));
-		
+
 		Mockito.doReturn(ProjectTestDataInitializer.createProject()).when(this.contextUtil).getProjectInContext();
 	}
 
 	@Test
-	public void testExportTrialMultipleInstances() throws IOException {
+	public void testExportStudyMultipleInstances() throws IOException {
 		final int numberOfInstances = 2;
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, numberOfInstances);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(20, numberOfInstances);
 		workbook.setExportArrangedObservations(workbook.getObservations());
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 		Mockito.doReturn(workbook.getObservations()).when(this.csvExportStudyService)
@@ -116,10 +110,10 @@ public class CsvExportStudyServiceImplTest {
 		Assert.assertEquals(CsvExportStudyServiceImplTest.STUDY_NAME + ZIP_EXT, exportInfo.getDownloadFileName());
 		Assert.assertEquals(ZIP_FILEPATH, exportInfo.getFilePath());
 	}
-	
+
 	@Test
-	public void testExportTrialWith1Instance() throws IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, 1);
+	public void testExportStudyWith1Instance() throws IOException {
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(20, 1);
 		workbook.setExportArrangedObservations(workbook.getObservations());
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 		Mockito.doReturn(workbook.getObservations()).when(this.csvExportStudyService)
@@ -141,8 +135,8 @@ public class CsvExportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testExportNursery() throws IOException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+	public void testCSVStudyExportForNurseryStusy() throws IOException {
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		workbook.setExportArrangedObservations(workbook.getObservations());
 		final List<Integer> instances = new ArrayList<Integer>();
 		instances.add(1);
@@ -161,13 +155,14 @@ public class CsvExportStudyServiceImplTest {
 		final String filePath = filenameCaptor.getValue();
 		final File outputFile = new File(filePath);
 		Assert.assertTrue(outputDirectories.contains(outputFile.getParentFile()));
-		Assert.assertEquals(CsvExportStudyServiceImplTest.STUDY_NAME + CSV_EXT, exportInfo.getDownloadFileName());
-		Assert.assertEquals(filePath, exportInfo.getFilePath());	
+		Assert.assertEquals(CsvExportStudyServiceImplTest.STUDY_NAME + "-" + instances.get(0) + "_Location_1" + CSV_EXT,
+			exportInfo.getDownloadFileName());
+		Assert.assertEquals(filePath, exportInfo.getFilePath());
 	}
 
 	@Test
 	public void testGetExportColumnHeadersWhenVisibleColumnsIsNull() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 
 		this.csvExportStudyService.getExportColumnHeaders(null, variables);
@@ -178,7 +173,7 @@ public class CsvExportStudyServiceImplTest {
 
 	@Test
 	public void testGetExportColumnHeadersWhenVisibleColumnsHasValues() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 
 		final List<Integer> visibleColumns = this.getVisibleColumnListWithOutRequiredColumns();
@@ -193,7 +188,7 @@ public class CsvExportStudyServiceImplTest {
 	@Test
 	public void testGetColumnsBasedOnVisibilityWhenTheColumnHeadersIncludeAllRequiredFields() {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 
 		final List<Integer> visibleColumns = this.getVisibleColumnListWithRequiredColumns();
@@ -218,7 +213,7 @@ public class CsvExportStudyServiceImplTest {
 	@Test
 	public void testGetColumnsBasedOnVisibilityWhenSomeRequiredColumnHeadersIsNotIncluded() {
 
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 
 		final List<Integer> visibleColumns = this.getVisibleColumnListWithSomeRequiredColumns();
@@ -292,7 +287,7 @@ public class CsvExportStudyServiceImplTest {
 
 	@Test
 	public void testGetExportColumnValues() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 		final List<Integer> visibleColumns = this.getVisibleColumnListWithRequiredColumns();
 		final List<ExportColumnHeader> columnHeaders =
@@ -308,7 +303,7 @@ public class CsvExportStudyServiceImplTest {
 
 	@Test
 	public void testGetColumnValueMap() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, new StudyTypeDto("N"));
 		final List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
 		final List<Integer> visibleColumns = this.getVisibleColumnListWithRequiredColumns();
 		final List<ExportColumnHeader> columnHeaders =
@@ -373,7 +368,7 @@ public class CsvExportStudyServiceImplTest {
 		final ExportColumnValue columnValue = this.csvExportStudyService.getNumericColumnValue(dataCell, termId);
 		Assert.assertEquals("Value should be 20", Double.valueOf("20").toString(), columnValue.getValue());
 	}
-	
+
 	@Test
 	public void testGetFileExtension() {
 		Assert.assertEquals(AppConstants.EXPORT_CSV_SUFFIX.getString(), this.csvExportStudyService.getFileExtension());
@@ -410,13 +405,13 @@ public class CsvExportStudyServiceImplTest {
 		}
 		return possibleValues;
 	}
-	
+
 	private List<File> getTempOutputDirectoriesGenerated() {
 		final String genericOutputDirectoryPath = this.installationDirectoryUtil.getOutputDirectoryForProjectAndTool(this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 		final String toolDirectory = genericOutputDirectoryPath.substring(0, genericOutputDirectoryPath.indexOf(InstallationDirectoryUtil.OUTPUT));
-		File toolDirectoryFile = new File(toolDirectory);
+		final File toolDirectoryFile = new File(toolDirectory);
 		Assert.assertTrue(toolDirectoryFile.exists());
-		List<File> outputDirectoryFiles = new ArrayList<>();
+		final List<File> outputDirectoryFiles = new ArrayList<>();
 		for (final File file : toolDirectoryFile.listFiles()) {
 			if (file.getName().startsWith("output") && file.getName() != InstallationDirectoryUtil.OUTPUT && file.isDirectory()) {
 				outputDirectoryFiles.add(file);
@@ -424,12 +419,12 @@ public class CsvExportStudyServiceImplTest {
 		}
 		return outputDirectoryFiles;
 	}
-	
+
 	@After
 	public void cleanup() {
 		this.deleteTestInstallationDirectory();
 	}
-	
+
 	private void deleteTestInstallationDirectory() {
 		// Delete test installation directory and its contents as part of cleanup
 		final File testInstallationDirectory = new File(InstallationDirectoryUtil.WORKSPACE_DIR);

@@ -11,7 +11,6 @@ import com.efficio.fieldbook.web.util.AppConstants;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.junit.Assert;
@@ -46,61 +45,54 @@ public class LabelPrintingServiceTest {
 	@InjectMocks
 	private LabelPrintingServiceImpl unitUnderTest;
 
-	public static final String DUMMY_TRIAL_SETTING_LABEL_NAME = "dummyTrialSettingLabel";
-	public static final String DUMMY_TRIAL_ENVIRONMENT_LABEL_NAME = "dummyTrialEnvironmentLabel";
-	public static final String DUMMY_TRIAL_EXPERIMENTAL_DESIGN_LABEL_NAME = "dummyExperimentalDesignLabel";
+	public static final String DUMMY_STUDY_SETTING_LABEL_NAME = "dummyTrialSettingLabel";
+	public static final String DUMMY_STUDY_ENVIRONMENT_LABEL_NAME = "dummyTrialEnvironmentLabel";
+	public static final String DUMMY_STUDY_EXPERIMENTAL_DESIGN_LABEL_NAME = "dummyExperimentalDesignLabel";
 	public static final String DUMMY_GERMPLASM_LABEL_NAME = "dummyGermplasmLabel";
-	public static final String DUMMY_NURSERY_LABEL_NAME = "dummyNurseryLabel";
 	public static final String DUMMY_TRAIT_LABEL_NAME = "dummyTrait";
-	public static final int DUMMY_TRIAL_SETTING_LABEL_TERM_ID = 1;
-	public static final int DUMMY_TRIAL_ENVIRONMENT_LABEL_TERM_ID = 2;
-	public static final int DUMMY_NURSERY_LABEL_TERM_ID = 3;
+	public static final int DUMMY_STUDY_SETTING_LABEL_TERM_ID = 1;
+	public static final int DUMMY_STUDY_ENVIRONMENT_LABEL_TERM_ID = 2;
 	public static final int DUMMY_TRAIT_TERM_ID = 4;
 	public static final int DUMMY_GERMPLASM_TERM_ID = 5;
 	public static final int DUMMY_EXPERIMENTAL_DESIGN_TERM_ID = 6;
 
-	public static final int DUMMY_TRIAL_ID = 10;
+	public static final int DUMMY_STUDY_ID = 10;
 	public static final int DUMMY_NURSERY_ID = 11;
 
-	public static final Integer[] BASE_LABEL_PRINTING_FIELD_IDS = new Integer[] {
-		AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt(),
-		 AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()};
-
-	public static final Integer[] BASE_LABEL_PRINTING_FIELD_TRIAL_IDS = new Integer[] {
+	public static final Integer[] BASE_LABEL_PRINTING_FIELD_STUDY_IDS = new Integer[] {
 			AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt(),
 			AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()};
 
 	@Before
 	public void setUp() throws Exception {
-		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(Matchers.anyInt())).thenReturn(this.workbook);
-		Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(Matchers.anyInt())).thenReturn(this.workbook);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Matchers.anyInt())).thenReturn(this.workbook);
 	}
 
 	@Test
-	public void testGetAvailableFieldsTrialNoFieldMap() {
-		final List<LabelFields> trialSettingLabels = this.createDummyTrialSettingLabels();
-		final List<LabelFields> trialEnvironmentLabels = this.createDummyTrialEnvironmentLabels();
+	public void testGetAvailableFieldsStudyNoFieldMap() {
+		final List<LabelFields> studySettingLabels = this.createDummyStudySettingLabels();
+		final List<LabelFields> studyEnvironmentLabels = this.createDummyStudyEnvironmentLabels();
 		final List<LabelFields> trialExperimentalDesignLabels = this.createExperimentalDesignLabels();
 		final List<LabelFields> traitLabels = this.createDummyTraitLabels();
 		final List<LabelFields> germplasmLabels = this.createDummyGermplasmLabels();
 
-		Mockito.when(this.settingsService.retrieveTrialSettingsAsLabels(this.workbook)).thenReturn(trialSettingLabels);
+		Mockito.when(this.settingsService.retrieveTrialSettingsAsLabels(this.workbook)).thenReturn(studySettingLabels);
 		Mockito.when(this.settingsService.retrieveTrialEnvironmentConditionsAsLabels(this.workbook)).thenReturn(
-				trialEnvironmentLabels);
+				studyEnvironmentLabels);
 		Mockito.when(this.settingsService.retrieveExperimentalDesignFactorsAsLabels(this.workbook)).thenReturn(
 				trialExperimentalDesignLabels);
 		Mockito.when(this.settingsService.retrieveTraitsAsLabels(this.workbook)).thenReturn(traitLabels);
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
 
 		final List<LabelFields> retrieved =
-				this.unitUnderTest.getAvailableLabelFieldsForStudy(true, false, Locale.getDefault(),
-						LabelPrintingServiceTest.DUMMY_TRIAL_ID);
+				this.unitUnderTest.getAvailableLabelFieldsForStudy( false, Locale.getDefault(),
+						LabelPrintingServiceTest.DUMMY_STUDY_ID);
 
 		Assert.assertNotNull(retrieved);
-		this.verifyBaseLabelFieldsPresent(retrieved, LabelPrintingServiceTest.BASE_LABEL_PRINTING_FIELD_TRIAL_IDS);
-		this.verifyLabelListContainsList(retrieved, trialSettingLabels,
+		this.verifyBaseLabelFieldsPresent(retrieved, LabelPrintingServiceTest.BASE_LABEL_PRINTING_FIELD_STUDY_IDS);
+		this.verifyLabelListContainsList(retrieved, studySettingLabels,
 				"Retrieved available label list does not contain all trial setting related labels");
-		this.verifyLabelListContainsList(retrieved, trialEnvironmentLabels,
+		this.verifyLabelListContainsList(retrieved, studyEnvironmentLabels,
 				"Retrieved available label list does not contain all environment related labels");
 		this.verifyLabelListContainsList(retrieved, trialExperimentalDesignLabels,
 				"Retrieved available label list does not contain all experimental design related labels");
@@ -112,16 +104,16 @@ public class LabelPrintingServiceTest {
 	}
 
 	@Test
-	public void testGetAvailableFieldsTrialWithFieldMap() {
-		final List<LabelFields> trialSettingLabels = this.createDummyTrialSettingLabels();
-		final List<LabelFields> trialEnvironmentLabels = this.createDummyTrialEnvironmentLabels();
+	public void testGetAvailableFieldsStudyWithFieldMap() {
+		final List<LabelFields> studySettingLabels = this.createDummyStudySettingLabels();
+		final List<LabelFields> studyEnvironmentLabels = this.createDummyStudyEnvironmentLabels();
 		final List<LabelFields> trialExperimentalDesignLabels = this.createExperimentalDesignLabels();
 		final List<LabelFields> traitLabels = this.createDummyTraitLabels();
 		final List<LabelFields> germplasmLabels = this.createDummyGermplasmLabels();
 
-		Mockito.when(this.settingsService.retrieveTrialSettingsAsLabels(this.workbook)).thenReturn(trialSettingLabels);
+		Mockito.when(this.settingsService.retrieveTrialSettingsAsLabels(this.workbook)).thenReturn(studySettingLabels);
 		Mockito.when(this.settingsService.retrieveTrialEnvironmentConditionsAsLabels(this.workbook)).thenReturn(
-				trialEnvironmentLabels);
+				studyEnvironmentLabels);
 		Mockito.when(this.settingsService.retrieveExperimentalDesignFactorsAsLabels(this.workbook)).thenReturn(
 				trialExperimentalDesignLabels);
 		Mockito.when(this.settingsService.retrieveTraitsAsLabels(this.workbook)).thenReturn(traitLabels);
@@ -129,13 +121,13 @@ public class LabelPrintingServiceTest {
 
 		final List<LabelFields> retrieved =
 				this.unitUnderTest
-						.getAvailableLabelFieldsForStudy(true, true, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_TRIAL_ID);
+						.getAvailableLabelFieldsForStudy(true, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_STUDY_ID);
 
 		Assert.assertNotNull(retrieved);
-		this.verifyBaseLabelFieldsPresent(retrieved , LabelPrintingServiceTest.BASE_LABEL_PRINTING_FIELD_TRIAL_IDS);
-		this.verifyLabelListContainsList(retrieved, trialSettingLabels,
+		this.verifyBaseLabelFieldsPresent(retrieved , LabelPrintingServiceTest.BASE_LABEL_PRINTING_FIELD_STUDY_IDS);
+		this.verifyLabelListContainsList(retrieved, studySettingLabels,
 				"Retrieved available label list does not contain all trial setting related labels");
-		this.verifyLabelListContainsList(retrieved, trialEnvironmentLabels,
+		this.verifyLabelListContainsList(retrieved, studyEnvironmentLabels,
 				"Retrieved available label list does not contain all environment related labels");
 		this.verifyLabelListContainsList(retrieved, trialExperimentalDesignLabels,
 				"Retrieved available label list does not contain all experimental design related labels");
@@ -147,73 +139,14 @@ public class LabelPrintingServiceTest {
 	}
 
 	@Test
-	public void testGetAvailableFieldsNurseryWithFieldMap() {
-		final List<LabelFields> nurserySettingLabels = this.createDummyNurseryManagementLabels();
-		final List<LabelFields> traitLabels = this.createDummyTraitLabels();
-		final List<LabelFields> germplasmLabels = this.createDummyGermplasmLabels();
-
-		Mockito.when(this.settingsService.retrieveNurseryManagementDetailsAsLabels(this.workbook)).thenReturn(nurserySettingLabels);
-		Mockito.when(this.settingsService.retrieveTraitsAsLabels(this.workbook)).thenReturn(traitLabels);
-		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
-
-		final List<LabelFields> retrieved =
-				this.unitUnderTest.getAvailableLabelFieldsForStudy(false, true, Locale.getDefault(),
-						LabelPrintingServiceTest.DUMMY_NURSERY_ID);
-
-		Assert.assertNotNull(retrieved);
-		this.verifyBaseLabelFieldsPresent(retrieved , LabelPrintingServiceTest.BASE_LABEL_PRINTING_FIELD_IDS);
-		this.verifyLabelListContainsList(retrieved, nurserySettingLabels,
-				"Retrieved available label list does not contain all nursery management related labels");
-		this.verifyLabelListContainsList(retrieved, traitLabels, "Retrieved available label list does not contain all trait related labels");
-		this.verifyLabelListContainsList(retrieved, germplasmLabels,
-				"Retrieved available label list does not contain all germplasm related labels");
-
-		Mockito.verify(this.settingsService, Mockito.times(0)).retrieveExperimentalDesignFactorsAsLabels(this.workbook);
-
-		this.verifyFieldMapLabelsPresent(retrieved);
-	}
-
-	@Test
-	public void testGetAvailableFieldsNurseryNoFieldMap() {
-		final List<LabelFields> nurserySettingLabels = this.createDummyNurseryManagementLabels();
-		final List<LabelFields> traitLabels = this.createDummyTraitLabels();
-		final List<LabelFields> germplasmLabels = this.createDummyGermplasmLabels();
-
-		Mockito.when(this.settingsService.retrieveNurseryManagementDetailsAsLabels(this.workbook)).thenReturn(nurserySettingLabels);
-		Mockito.when(this.settingsService.retrieveTraitsAsLabels(this.workbook)).thenReturn(traitLabels);
-		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
-
-		final List<LabelFields> retrieved =
-				this.unitUnderTest.getAvailableLabelFieldsForStudy(false, false, Locale.getDefault(),
-						LabelPrintingServiceTest.DUMMY_NURSERY_ID);
-
-		Assert.assertNotNull(retrieved);
-		this.verifyBaseLabelFieldsPresent(retrieved, LabelPrintingServiceTest.BASE_LABEL_PRINTING_FIELD_IDS);
-		this.verifyLabelListContainsList(retrieved, nurserySettingLabels,
-				"Retrieved available label list does not contain all nursery management related labels");
-		this.verifyLabelListContainsList(retrieved, traitLabels, "Retrieved available label list does not contain all trait related labels");
-		this.verifyLabelListContainsList(retrieved, germplasmLabels,
-				"Retrieved available label list does not contain all germplasm related labels");
-
-		Mockito.verify(this.settingsService, Mockito.times(0)).retrieveExperimentalDesignFactorsAsLabels(this.workbook);
-
-		this.verifyNoFieldMapLabels(retrieved);
-	}
-
-	@Test
 	public void testGetAvailableFieldsForCrossStockList() {
-		final List<LabelFields> nurserySettingLabels = this.createDummyNurseryManagementLabels();
 		final List<LabelFields> germplasmLabels = this.createDummyGermplasmLabels();
 
-		Mockito.when(this.settingsService.retrieveNurseryManagementDetailsAsLabels(this.workbook)).thenReturn(nurserySettingLabels);
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
 
 		final List<LabelFields> retrieved =
-				this.unitUnderTest.getAvailableLabelFieldsForStockList(GermplasmListType.CROSSES, Locale.getDefault(), StudyType.N,
-						LabelPrintingServiceTest.DUMMY_NURSERY_ID);
+				this.unitUnderTest.getAvailableLabelFieldsForStockList(GermplasmListType.CROSSES, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_STUDY_ID);
 
-		this.verifyLabelListContainsList(retrieved, nurserySettingLabels,
-				"Retrieved available label list does not contain all nursery management related labels");
 		this.verifyLabelListContainsList(retrieved, germplasmLabels,
 				"Retrieved available label list does not contain all germplasm related labels");
 
@@ -267,12 +200,12 @@ public class LabelPrintingServiceTest {
 
 	protected void verifyLabelListContainsList(final List<LabelFields> forVerification, final List<LabelFields> expectedContained,
 			final String errorMessage) {
-		for (final LabelFields trialSettingLabel : expectedContained) {
-			Assert.assertTrue(errorMessage, forVerification.contains(trialSettingLabel));
+		for (final LabelFields studySettingLabel : expectedContained) {
+			Assert.assertTrue(errorMessage, forVerification.contains(studySettingLabel));
 		}
 	}
 
-	protected void verifyBaseLabelFieldsPresent(final List<LabelFields> forVerification , Integer[] baseFieldIDs) {
+	protected void verifyBaseLabelFieldsPresent(final List<LabelFields> forVerification , final Integer[] baseFieldIDs) {
 		for (final Integer baseLabelPrintingFieldId : baseFieldIDs) {
 			boolean found = false;
 
@@ -282,40 +215,27 @@ public class LabelPrintingServiceTest {
 				}
 			}
 			if(!found){
-				Assert.assertTrue("Base label field not present in values retrieved from service", found);
+				Assert.fail("Base label field not present in values retrieved from service");
 			}
 
 		}
 	}
 
-	protected List<LabelFields> createDummyNurseryManagementLabels() {
+	protected List<LabelFields> createDummyStudySettingLabels() {
 		final List<LabelFields> labelFields = new ArrayList<>();
 
-		final LabelFields field =
-				new LabelFields(LabelPrintingServiceTest.DUMMY_NURSERY_LABEL_NAME, LabelPrintingServiceTest.DUMMY_NURSERY_LABEL_TERM_ID,
-						false);
+		final LabelFields field = new LabelFields(LabelPrintingServiceTest.DUMMY_STUDY_SETTING_LABEL_NAME,
+			LabelPrintingServiceTest.DUMMY_STUDY_SETTING_LABEL_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;
 	}
 
-	protected List<LabelFields> createDummyTrialSettingLabels() {
+	protected List<LabelFields> createDummyStudyEnvironmentLabels() {
 		final List<LabelFields> labelFields = new ArrayList<>();
 
-		final LabelFields field =
-				new LabelFields(LabelPrintingServiceTest.DUMMY_TRIAL_SETTING_LABEL_NAME,
-						LabelPrintingServiceTest.DUMMY_TRIAL_SETTING_LABEL_TERM_ID, false);
-		labelFields.add(field);
-
-		return labelFields;
-	}
-
-	protected List<LabelFields> createDummyTrialEnvironmentLabels() {
-		final List<LabelFields> labelFields = new ArrayList<>();
-
-		final LabelFields field =
-				new LabelFields(LabelPrintingServiceTest.DUMMY_TRIAL_ENVIRONMENT_LABEL_NAME,
-						LabelPrintingServiceTest.DUMMY_TRIAL_ENVIRONMENT_LABEL_TERM_ID, false);
+		final LabelFields field = new LabelFields(LabelPrintingServiceTest.DUMMY_STUDY_ENVIRONMENT_LABEL_NAME,
+			LabelPrintingServiceTest.DUMMY_STUDY_ENVIRONMENT_LABEL_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;
@@ -324,9 +244,8 @@ public class LabelPrintingServiceTest {
 	protected List<LabelFields> createExperimentalDesignLabels() {
 		final List<LabelFields> labelFields = new ArrayList<>();
 
-		final LabelFields field =
-				new LabelFields(LabelPrintingServiceTest.DUMMY_TRIAL_EXPERIMENTAL_DESIGN_LABEL_NAME,
-						LabelPrintingServiceTest.DUMMY_EXPERIMENTAL_DESIGN_TERM_ID, false);
+		final LabelFields field = new LabelFields(LabelPrintingServiceTest.DUMMY_STUDY_EXPERIMENTAL_DESIGN_LABEL_NAME,
+			LabelPrintingServiceTest.DUMMY_EXPERIMENTAL_DESIGN_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;
@@ -336,7 +255,7 @@ public class LabelPrintingServiceTest {
 		final List<LabelFields> labelFields = new ArrayList<>();
 
 		final LabelFields field =
-				new LabelFields(LabelPrintingServiceTest.DUMMY_TRAIT_LABEL_NAME, LabelPrintingServiceTest.DUMMY_TRAIT_TERM_ID, false);
+			new LabelFields(LabelPrintingServiceTest.DUMMY_TRAIT_LABEL_NAME, LabelPrintingServiceTest.DUMMY_TRAIT_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;
@@ -346,8 +265,7 @@ public class LabelPrintingServiceTest {
 		final List<LabelFields> labelFields = new ArrayList<>();
 
 		final LabelFields field =
-				new LabelFields(LabelPrintingServiceTest.DUMMY_GERMPLASM_LABEL_NAME, LabelPrintingServiceTest.DUMMY_GERMPLASM_TERM_ID,
-						false);
+			new LabelFields(LabelPrintingServiceTest.DUMMY_GERMPLASM_LABEL_NAME, LabelPrintingServiceTest.DUMMY_GERMPLASM_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;

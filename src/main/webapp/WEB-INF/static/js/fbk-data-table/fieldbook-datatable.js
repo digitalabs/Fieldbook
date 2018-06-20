@@ -562,147 +562,6 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 
 })(jQuery);
 
-BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
-
-	
-	/**
-	 * Creates a new SelectedCheckListDataTable.
-	 *
-	 * @constructor
-	 * @alias module:fieldbook-datatable
-	 * @param {string} tableIdentifier the id of the table container
-	 * @param {string} parentDiv parentdiv of that contains the table
-	 * @param {dataList} json representation of the data to be displayed
-	 */
-	var dataTableConstructor = function SelectedCheckListDataTable(tableIdentifier, parentDiv, dataList) {
-		'use strict';
-
-		var columns = [],
-		columnsDef = [],
-		checkDataTable;
-
-		$(tableIdentifier + ' thead tr th').each(function() {
-			columns.push({data: $(this).data('col-name')});
-			if ($(this).data('col-name') == 'desig') {
-				// For designation
-				columnsDef.push({
-					targets: columns.length - 1,
-					data: $(this).html(),
-					render: function(data, type, full, meta) {
-						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
-					}
-				});
-			}else if ($(this).data('col-name') == 'check') {
-				// For designation
-				columnsDef.push({
-					targets: columns.length - 1,
-					data: $(this).html(),
-					render: function(data, type, full, meta) {
-						var fieldName = 'selectedCheck',
-							count = 0,
-							isSelected = '',
-							actualVal = '',
-							actualCode = '',
-							domElem = '';
-
-						for (count = 0 ; count < full.checkOptions.length ; count++) {
-							isSelected = '';
-							if (full.checkOptions[count].id == full.check) {
-								actualVal = full.checkOptions[count].description;
-								actualCode = full.checkOptions[count].name;
-								domElem = '<input data-index="' + meta.row + '" class="check-hidden" type="hidden"  data-code="' + actualCode + '" value="' + full.check + '" id="selectedCheck' + (meta.row) + '" name="' + fieldName + '">';
-								break;
-							}
-						}
-
-						return '<a data-index="' + meta.row + '" class="check-href edit-check' + meta.row + '" data-code="' + actualCode + '" href="javascript: showPopoverCheck(&quot;' + (meta.row) + '&quot;, &quot;.check-germplasm-list-items&quot;, &quot;edit-check' + meta.row + '&quot;)">' + actualVal + '</a>' + domElem;
-					}
-				});
-			} else if ($(this).data('col-name') == 'action') {
-				// For delete
-				columnsDef.push({
-					targets: columns.length - 1,
-					width: '20px',
-					data: $(this).html(),
-					render: function(data, type, full, meta) {
-						return '<span class="delete-icon delete-check" data-index="' + meta.row + '"></span>';
-					}
-				});
-			}
-		});
-
-		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
-			this.checkDataTable = $(tableIdentifier).DataTable();
-			this.checkDataTable.clear();
-			this.checkDataTable.rows.add(dataList).draw();
-		} else {
-			this.checkDataTable = $(tableIdentifier).dataTable({
-				data: dataList,
-				columns: columns,
-				columnDefs: columnsDef,
-				retrieve: true,
-				scrollY: '500px',
-				scrollX: '100%',
-				bSort: false,
-				scrollCollapse: true,
-				dom: 'R<t><"fbk-page-div"p>',
-				iDisplayLength: 100,
-				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-					$(nRow).addClass('checkRow');
-					$(nRow).data('entry', aData.entry);
-					$(nRow).data('gid', aData.gid);
-					$(nRow).data('index', aData.index);
-
-					$('td', nRow).attr('nowrap', 'nowrap');
-					setTimeout(function() {makeCheckDraggable(makeCheckDraggableBool);}, 300);
-					return nRow;
-				},
-				fnInitComplete: function(oSettings, json) {
-
-					var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
-					if (totalPages === 1) {
-						$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
-					}
-					setTimeout(function() {oSettings.oInstance.fnAdjustColumnSizing();}, 1);
-					//hide delete icon for read only view
-					if ($('#chooseGermplasmAndChecks').data('replace') !== undefined && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 0 && measurementRowCount > 0) {
-						oSettings.oInstance.$('.delete-check').hide();
-					}
-
-				}
-			});
-		}
-		$(parentDiv + ' div.dataTables_scrollBody').scroll(
-				function() {
-					$(parentDiv + ' .popover').remove();
-				});
-		this.checkDataTable.$('.delete-check').on('click', function() {
-			var entryNumber = $(this).parent().parent().data('entry'),
-			gid = '' + $(this).parent().parent().data('gid');
-			deleteCheckGermplasmList(entryNumber, gid, $(this).parent().parent());
-		});
-		SelectedCheckListDataTable.prototype.getDataTable = function()
-		{
-			return this.checkDataTable;
-		};
-		SelectedCheckListDataTable.prototype.getDataTableColumnIndex = function(colName)
-		{
-			var colNames = this.checkDataTable.fnSettings().aoColumns;
-			for (var counter = 0 ; counter < colNames.length ; counter++) {
-				if (colNames[counter].data === colName) {
-					return colNames[counter].idx;
-				}
-			}
-			return -1;
-		};
-	};
-
-	return dataTableConstructor;
-
-})(jQuery);
-
 BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 
 	
@@ -720,11 +579,11 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 
 		var germplasmDataTable;
 		var _columnDefs = [
-			// Column defs for trialInstanceNumber and replicationNumber (hide if current study is nursery)
+			// Column defs for trialInstanceNumber and replicationNumber will be visible for all studies
 			// From Datatable API, using negative index counts from the last index of the columns (n-1)
 			{
 				targets: [ -1, -2 ],
-				visible: !isNursery()
+				visible: true
 			},
 			// column defs for the entry checkbox selection, fix width
 			{
@@ -1213,6 +1072,57 @@ BMS.Fieldbook.FinalSampleListDataTable = (function($) {
 		});
 
 		FinalSampleListDataTable.prototype.getDataTable = function()
+		{
+			return table;
+		};
+	};
+
+	return dataTableConstructor;
+
+})(jQuery);
+
+BMS.Fieldbook.FinalCrossesListDataTable = (function($) {
+	/**
+	 * Creates a new CrossesListDataTable.
+	 *
+	 * @constructor
+	 * @alias module:fieldbook-datatable
+	 * @param {string} tableIdentifier the id of the table container
+	 * @param {string} parentDiv parentdiv of that contains the table
+	 * @param {dataList} json representation of the data to be displayed
+	 */
+	var dataTableConstructor = function FinalCrossesListDataTable(tableIdentifier, parentDiv, dataList, tableAutoWidth) {
+		'use strict';
+
+		var columns = [],
+			aoColumnsDef = [],
+			table;
+
+		$(tableIdentifier + ' thead tr th').each(function(index) {
+			columns.push({data: $(this).data('col-name')});
+			aoColumnsDef.push({bSortable: false, bVisible: $(this).data('col-visible')});
+		});
+
+		table = $(tableIdentifier).dataTable({
+			autoWidth: tableAutoWidth,
+			scrollY: '500px',
+			scrollX: '100%',
+			scrollCollapse: true,
+			columns: columns,
+			aoColumns: aoColumnsDef,
+			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+			dom: 'R<"mdt-header" rli<"mdt-columns"B>><t><"fbk-page-div"p>',
+			iDisplayLength: 100,
+			buttons: [
+				{
+					extend: 'colvis',
+					className: 'fbk-buttons-no-border fbk-colvis-button',
+					text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>'
+				}
+			]
+		});
+
+		FinalCrossesListDataTable.prototype.getDataTable = function()
 		{
 			return table;
 		};

@@ -21,16 +21,13 @@ public class SelectedFieldmapList implements Serializable {
 	/** The rows. */
 	private List<SelectedFieldmapRow> rows = new ArrayList<SelectedFieldmapRow>();
 
-	/** The is trial. */
-	private boolean isTrial;
 
 	/**
 	 * Instantiates a new selected fieldmap list.
 	 *
 	 * @param studies the studies
-	 * @param isTrial the is trial
 	 */
-	public SelectedFieldmapList(List<FieldMapInfo> studies, boolean isTrial) {
+	public SelectedFieldmapList(List<FieldMapInfo> studies) {
 		if (studies != null && !studies.isEmpty()) {
 			for (FieldMapInfo study : studies) {
 				if (study.getDatasets() != null) {
@@ -57,26 +54,8 @@ public class SelectedFieldmapList implements Serializable {
 			Collections.sort(this.rows);
 		}
 
-		this.setTrial(isTrial);
 	}
 
-	/**
-	 * Checks if is trial.
-	 *
-	 * @return true, if is trial
-	 */
-	public boolean isTrial() {
-		return this.isTrial;
-	}
-
-	/**
-	 * Sets the trial.
-	 *
-	 * @param isTrial the new trial
-	 */
-	public void setTrial(boolean isTrial) {
-		this.isTrial = isTrial;
-	}
 
 	/**
 	 * Gets the rows.

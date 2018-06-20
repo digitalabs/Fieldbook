@@ -3,15 +3,15 @@
 
 		<div class="modal fade" id="selectEnvironmentModal" role="dialog" aria-labelledby="selectEnvironmentModal"
 			 ng-controller="SelectEnvironmentModalCtrl" aria-hidden="true">
-			<div class="modal-dialog modal-large">
+			<div class="modal-dialog modal-medium">
 				<div class="modal-content">
 					<div class="modal-body">
 						<div class="row form-group">
 							<div class="col-xs-11 col-md-11">
 								<label ng-show="applicationData.advanceType != 'sample'" class="modal-title fbk-modal-title"
-									   id="heading-modal" th:text="#{trial.trialdetails.action.advance.trial}">Advance trial</label>
+									   id="heading-modal" th:text="#{study.studydetails.action.advance.study}">Advance study</label>
 								<label ng-show="applicationData.advanceType == 'sample'" class="modal-title fbk-modal-title"
-									   id="heading-modal" th:text="#{trial.trialdetails.action.advance.sample}">Advance sampled
+									   id="heading-modal" th:text="#{study.studydetails.action.advance.sample}">Advance sampled
 									plants</label>
 							</div>
 							<div class="col-xs-1 col-md-1">
@@ -56,7 +56,7 @@
                             </div>
 
                         <div class="col-md-12">
-                            <input type="checkbox" ng-model="selectAll" ng-change="doSelectAll()"/>&nbsp;&nbsp;<label class="fbk-selectall-chk" th:text="#{advancing.trial.select.all}"></label>
+                            <input type="checkbox" ng-model="selectAll" ng-change="doSelectAll()"/>&nbsp;&nbsp;<label class="fbk-selectall-chk" th:text="#{advancing.study.select.all}"></label>
                         </div>
 
 
@@ -67,7 +67,7 @@
 							Cancel
 						</button>
 						<button type="button" class="btn btn-primary" ng-disabled="trialInstances.length === 0"
-								aria-hidden="true" ng-click="trialSelectEnvironmentContinue()" th:text="#{common.form.continue.text}">
+								aria-hidden="true" ng-click="selectEnvironmentContinue()" th:text="#{common.form.continue.text}">
 							Continue
 						</button>
 					</div>
@@ -79,6 +79,6 @@
 <div layout:fragment="page-script">
 
 <script type='text/javascript' th:inline="javascript">
-    var selectOneLocationErrorMessageForAdvancing = /*[[#{error.advancing.trial.instance.selected.atleast.one.location.selected}]]*/ '';
+    var selectOneLocationErrorMessageForAdvancing = /*[[#{error.advancing.study.instance.selected.atleast.one.location.selected}]]*/ '';
 </script>
 </div>

@@ -54,7 +54,7 @@ public class StudyDetails {
 
 	private List<SettingDetail> managementDetails;
 
-	private List<SettingDetail> nurseryConditionDetails;
+	private List<SettingDetail> studyConditionDetails;
 
 	private List<SettingDetail> factorDetails;
 
@@ -96,8 +96,9 @@ public class StudyDetails {
 	 * @param principalInvestigator the principal investigator
 	 * @param siteName the site name
 	 */
-	public StudyDetails(String name, String title, String objective, String startDate, String endDate, String principalInvestigator,
-			String siteName) {
+	public StudyDetails(
+		final String name, final String title, final String objective, final String startDate, final String endDate, final String principalInvestigator,
+			final String siteName) {
 		this.name = name;
 		this.title = title;
 		this.objective = objective;
@@ -121,7 +122,7 @@ public class StudyDetails {
 	 *
 	 * @param name the new name
 	 */
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -139,7 +140,7 @@ public class StudyDetails {
 	 *
 	 * @param title the new title
 	 */
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		this.title = title;
 	}
 
@@ -157,7 +158,7 @@ public class StudyDetails {
 	 *
 	 * @param objective the new objective
 	 */
-	public void setObjective(String objective) {
+	public void setObjective(final String objective) {
 		this.objective = objective;
 	}
 
@@ -175,7 +176,7 @@ public class StudyDetails {
 	 *
 	 * @param startDate the new start date
 	 */
-	public void setStartDate(String startDate) {
+	public void setStartDate(final String startDate) {
 		this.startDate = startDate;
 	}
 
@@ -193,7 +194,7 @@ public class StudyDetails {
 	 *
 	 * @param endDate the new end date
 	 */
-	public void setEndDate(String endDate) {
+	public void setEndDate(final String endDate) {
 		this.endDate = endDate;
 	}
 
@@ -211,7 +212,7 @@ public class StudyDetails {
 	 *
 	 * @param principalInvestigator the new principal investigator
 	 */
-	public void setPrincipalInvestigator(String principalInvestigator) {
+	public void setPrincipalInvestigator(final String principalInvestigator) {
 		this.principalInvestigator = principalInvestigator;
 	}
 
@@ -229,7 +230,7 @@ public class StudyDetails {
 	 *
 	 * @param siteName the new site name
 	 */
-	public void setSiteName(String siteName) {
+	public void setSiteName(final String siteName) {
 		this.siteName = siteName;
 	}
 
@@ -243,7 +244,7 @@ public class StudyDetails {
 	/**
 	 * @param basicStudyDetails the basicStudyDetails to set
 	 */
-	public void setBasicStudyDetails(List<SettingDetail> basicStudyDetails) {
+	public void setBasicStudyDetails(final List<SettingDetail> basicStudyDetails) {
 		this.basicStudyDetails = basicStudyDetails;
 	}
 
@@ -257,7 +258,7 @@ public class StudyDetails {
 	/**
 	 * @param managementDetails the managementDetails to set
 	 */
-	public void setManagementDetails(List<SettingDetail> managementDetails) {
+	public void setManagementDetails(final List<SettingDetail> managementDetails) {
 		this.managementDetails = managementDetails;
 	}
 
@@ -271,7 +272,7 @@ public class StudyDetails {
 	/**
 	 * @param factorDetails the factorDetails to set
 	 */
-	public void setFactorDetails(List<SettingDetail> factorDetails) {
+	public void setFactorDetails(final List<SettingDetail> factorDetails) {
 		this.factorDetails = factorDetails;
 	}
 
@@ -285,7 +286,7 @@ public class StudyDetails {
 	/**
 	 * @param variateDetails the variateDetails to set
 	 */
-	public void setVariateDetails(List<SettingDetail> variateDetails) {
+	public void setVariateDetails(final List<SettingDetail> variateDetails) {
 		this.variateDetails = variateDetails;
 	}
 
@@ -299,22 +300,22 @@ public class StudyDetails {
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(Integer id) {
+	public void setId(final Integer id) {
 		this.id = id;
 	}
 
 	/**
-	 * @return the nurseryConditionDetails
+	 * @return the studyConditionDetails
 	 */
-	public List<SettingDetail> getNurseryConditionDetails() {
-		return this.nurseryConditionDetails;
+	public List<SettingDetail> getStudyConditionDetails() {
+		return this.studyConditionDetails;
 	}
 
 	/**
-	 * @param nurseryConditionDetails the nurseryConditionDetails to set
+	 * @param studyConditionDetails the studyConditionDetails to set
 	 */
-	public void setNurseryConditionDetails(List<SettingDetail> nurseryConditionDetails) {
-		this.nurseryConditionDetails = nurseryConditionDetails;
+	public void setStudyConditionDetails(final List<SettingDetail> studyConditionDetails) {
+		this.studyConditionDetails = studyConditionDetails;
 	}
 
 	/**
@@ -327,7 +328,7 @@ public class StudyDetails {
 	/**
 	 * @param selectionVariateDetails the selectionVariateDetails to set
 	 */
-	public void setSelectionVariateDetails(List<SettingDetail> selectionVariateDetails) {
+	public void setSelectionVariateDetails(final List<SettingDetail> selectionVariateDetails) {
 		this.selectionVariateDetails = selectionVariateDetails;
 	}
 
@@ -341,7 +342,7 @@ public class StudyDetails {
 	/**
 	 * @param hasMeasurements the hasMeasurements to set
 	 */
-	public void setHasMeasurements(boolean hasMeasurements) {
+	public void setHasMeasurements(final boolean hasMeasurements) {
 		this.hasMeasurements = hasMeasurements;
 	}
 
@@ -355,7 +356,7 @@ public class StudyDetails {
 	/**
 	 * @param environmentManagementDetails the environmentManagementDetails to set
 	 */
-	public void setEnvironmentManagementDetails(List<SettingDetail> environmentManagementDetails) {
+	public void setEnvironmentManagementDetails(final List<SettingDetail> environmentManagementDetails) {
 		this.environmentManagementDetails = environmentManagementDetails;
 	}
 
@@ -369,7 +370,7 @@ public class StudyDetails {
 	/**
 	 * @param germplasmDescriptors the germplasmDescriptors to set
 	 */
-	public void setGermplasmDescriptors(List<SettingDetail> germplasmDescriptors) {
+	public void setGermplasmDescriptors(final List<SettingDetail> germplasmDescriptors) {
 		this.germplasmDescriptors = germplasmDescriptors;
 	}
 
@@ -383,7 +384,7 @@ public class StudyDetails {
 	/**
 	 * @param treatmentFactorDetails the treatmentFactorDetails to set
 	 */
-	public void setTreatmentFactorDetails(List<TreatmentFactorDetail> treatmentFactorDetails) {
+	public void setTreatmentFactorDetails(final List<TreatmentFactorDetail> treatmentFactorDetails) {
 		this.treatmentFactorDetails = treatmentFactorDetails;
 	}
 
@@ -397,7 +398,7 @@ public class StudyDetails {
 	/**
 	 * @param numberOfEnvironments the numberOfEnvironments to set
 	 */
-	public void setNumberOfEnvironments(int numberOfEnvironments) {
+	public void setNumberOfEnvironments(final int numberOfEnvironments) {
 		this.numberOfEnvironments = numberOfEnvironments;
 	}
 
@@ -411,7 +412,7 @@ public class StudyDetails {
 	/**
 	 * @param experimentalDesignDetails the experimentalDesignDetails to set
 	 */
-	public void setExperimentalDesignDetails(ExperimentalDesignVariable experimentalDesignDetails) {
+	public void setExperimentalDesignDetails(final ExperimentalDesignVariable experimentalDesignDetails) {
 		this.experimentalDesignDetails = experimentalDesignDetails;
 	}
 
@@ -428,8 +429,8 @@ public class StudyDetails {
 		return this.factorsMap;
 	}
 
-	private void buildFactorsMapFromSettingDetailsList(List<SettingDetail> settingDetails) {
-		for (SettingDetail settingDetail : settingDetails) {
+	private void buildFactorsMapFromSettingDetailsList(final List<SettingDetail> settingDetails) {
+		for (final SettingDetail settingDetail : settingDetails) {
 			if (settingDetail.getVariable() != null) {
 				this.factorsMap.put(settingDetail.getVariable().getCvTermId(), settingDetail);
 			}
@@ -440,7 +441,7 @@ public class StudyDetails {
 		return this.errorMessage;
 	}
 
-	public void setErrorMessage(String errorMessage) {
+	public void setErrorMessage(final String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
 
@@ -448,7 +449,7 @@ public class StudyDetails {
 		return this.programUUID;
 	}
 
-	public void setProgramUUID(String programUUID) {
+	public void setProgramUUID(final String programUUID) {
 		this.programUUID = programUUID;
 	}
 

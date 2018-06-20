@@ -41,7 +41,7 @@
 					<div class="form-horizontal form-group">
                     <div id="addGermplasmFolderDiv" class="fbk-hide">
                         <div class="col-xs-4 col-md-4 nopadding">
-                            <label class="control-label label-bold" th:utext="#{browse.nursery.add.folder.name}">Folder Name: <span class="required">*</span></label>
+                            <label class="control-label label-bold" th:utext="#{browse.study.add.folder.name}">Folder Name: <span class="required">*</span></label>
                         </div>
                         <div class="col-xs-8 col-md-8 nopadding">
                             <div class="input-group">
@@ -60,7 +60,7 @@
                     </div>
                     <div id="renameGermplasmFolderDiv" class="fbk-hide">
                         <div class="col-xs-4 col-md-4 nopadding">
-                            <label class="control-label  label-bold" th:utext="#{browse.nursery.rename.folder.input.label}">Folder Name: <span class="required">*</span></label>
+                            <label class="control-label  label-bold" th:utext="#{browse.study.rename.folder.input.label}">Folder Name: <span class="required">*</span></label>
                         </div>
                         <div class="col-xs-8 col-md-8 nopadding">
                             <div class="input-group">
@@ -99,7 +99,7 @@
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
 					<div class="col-xs-11 col-md-11">
-						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.delete.folder.name}"></label>
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.study.delete.folder.name}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button id="closeDeleteFolderModal" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('deleteFolderModal')"/>
@@ -127,8 +127,8 @@
 <div id="list-tree-include" th:include="/Common/includes/listTreeInclude"></div>
 
 <div layout:fragment="page-script">
-<script type="text/javascript" th:src="@{/static/js/nursery-manager/saveAdvanceList.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/nursery-manager/listTreeOperation.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/studyManager/saveAdvanceList.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/studyManager/listTreeOperation.js}"></script>
 <script type="text/javascript" th:inline="javascript">
 $(document).ready(function() {
 	SaveAdvanceList.initializeGermplasmListTree();

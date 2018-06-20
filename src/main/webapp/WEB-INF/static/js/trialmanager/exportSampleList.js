@@ -55,7 +55,7 @@ var ExportSampleList = {};
 	ExportSampleList.doExport = function (exportType) {
 		'use strict';
 		var newAction,
-			studyName = $('.fieldmap-study-name').html(),
+			studyName = $('#studyName').val(),
 			visibleColumns;
 
 		newAction = submitExportUrl + 'exportSampleList/' + exportType;

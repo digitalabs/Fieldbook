@@ -22,7 +22,6 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.manager.Operation;
@@ -82,7 +81,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		 * this will add the trial environment factors and their values to ManagementDetailValues so we can pass them to the UI and reflect
 		 * the values in the Environments Tab.
 		 **/
-		this.populateEnvironmentDataWithValuesFromCsvFile(environmentData, workbook, designImportData);
+		this.populateEnvironmentDataWithValuesFromCsvFile(environmentData, designImportData);
 
 		final Map<Integer, ImportedGermplasm> importedGermplasm =
 				Maps.uniqueIndex(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
@@ -126,7 +125,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		measurementRowGenerator.addFactorsToMeasurementRows(measurements);
 
 		// add trait data to the list of measurement row
-		measurementRowGenerator.addVariatesToMeasurementRows(measurements, this.userSelection, this.ontologyService, this.contextUtil);
+		measurementRowGenerator.addVariatesToMeasurementRows(measurements, this.ontologyService, this.contextUtil);
 
 		// if there is added environments
 		if (additionalParams.get(ADDTL_PARAMS_NO_OF_ADDED_ENVIRONMENTS) != null
@@ -179,7 +178,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	}
 
 	Map<Integer, MeasurementData> getMeasurementDataMap(final List<MeasurementData> dataList) {
-		final Map<Integer, MeasurementData> measurementDataMap = new HashMap<Integer, MeasurementData>();
+		final Map<Integer, MeasurementData> measurementDataMap = new HashMap<>();
 		for (final MeasurementData measurementData : dataList) {
 			measurementDataMap.put(measurementData.getMeasurementVariable().getTermId(), measurementData);
 		}
@@ -192,7 +191,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	 * @return map <Name, CVTermId>
 	 */
 	private Map<String, Integer> retrieveAvailableCheckTypes() {
-		final Map<String, Integer> checkTypeMap = new HashMap<String, Integer>();
+		final Map<String, Integer> checkTypeMap = new HashMap<>();
 		final List<Enumeration> checkTypes = this.fieldbookService.getCheckTypeList();
 
 		for (final Enumeration checkType : checkTypes) {
@@ -204,7 +203,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	@Override
 	public Set<MeasurementVariable> getDesignMeasurementVariables(final Workbook workbook, final DesignImportData designImportData,
-			final boolean isPreview) {
+		final boolean isPreview) {
 
 		final Set<MeasurementVariable> measurementVariables = new LinkedHashSet<>();
 		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
@@ -238,20 +237,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		// Add the variates from the added traits in workbook
 		measurementVariables.addAll(workbook.getVariates());
 
-		if (workbook.getStudyDetails().getStudyType() == StudyType.N) {
-
-			measurementVariables.addAll(workbook.getFactors());
-
-			// remove the trial instance factor if the Study is Nursery because it only has 1 trial instance by default
-			final Iterator<MeasurementVariable> iterator = measurementVariables.iterator();
-			while (iterator.hasNext()) {
-				final MeasurementVariable temp = iterator.next();
-				if (temp.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-					iterator.remove();
-					break;
-				}
-			}
-		}
+		measurementVariables.addAll(workbook.getFactors());
 
 		return measurementVariables;
 	}
@@ -350,9 +336,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		// ok, so these variables dont have Phenotypic information, we need to
 		// assign it via proj-prop or cvtermid
-		final Set<PhenotypicType> designImportRoles = new HashSet<>(Arrays.asList(
-				new PhenotypicType[] {PhenotypicType.TRIAL_ENVIRONMENT, PhenotypicType.TRIAL_DESIGN, PhenotypicType.GERMPLASM,
-						PhenotypicType.VARIATE}));
+		final Set<PhenotypicType> designImportRoles = new HashSet<>(
+			Arrays.asList(PhenotypicType.TRIAL_ENVIRONMENT, PhenotypicType.TRIAL_DESIGN, PhenotypicType.GERMPLASM, PhenotypicType.VARIATE));
 		for (final Entry<String, List<StandardVariable>> entryVar : variables.entrySet()) {
 			for (final StandardVariable sv : entryVar.getValue()) {
 				for (final VariableType variableType : sv.getVariableTypes()) {
@@ -462,8 +447,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return generatedTrialInstancesFromUI;
 	}
 
-	protected void populateEnvironmentDataWithValuesFromCsvFile(final EnvironmentData environmentData, final Workbook workbook,
-			final DesignImportData designImportData) throws DesignValidationException {
+	protected void populateEnvironmentDataWithValuesFromCsvFile(final EnvironmentData environmentData,
+		final DesignImportData designImportData) throws DesignValidationException {
 
 		final List<DesignHeaderItem> trialEnvironmentsDesignHeaderItems =
 				designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT);

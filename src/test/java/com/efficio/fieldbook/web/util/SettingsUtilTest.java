@@ -1,15 +1,13 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.TestDataHelper;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import junit.framework.Assert;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -35,16 +33,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.trial.TestDataHelper;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-
-import junit.framework.Assert;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsUtilTest {
@@ -88,8 +84,7 @@ public class SettingsUtilTest {
 		variate.setVariableType(VariableType.TRAIT.getName());
 		dataset.getVariates().add(variate);
 
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true,
-				SettingsUtilTest.PROGRAM_UUID);
+		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, SettingsUtilTest.PROGRAM_UUID);
 		Debug.println(0, workbook);
 
 		final Dataset newDataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
@@ -126,7 +121,7 @@ public class SettingsUtilTest {
 
 	@Test
 	public void testIfCheckVariablesAreInFixedNurseryList() {
-		final String variableIds = AppConstants.FIXED_NURSERY_VARIABLES.getString()
+		final String variableIds = AppConstants.FIXED_STUDY_VARIABLES.getString()
 				+ AppConstants.CHECK_VARIABLES.getString()
 				+ AppConstants.BREEDING_METHOD_ID_CODE_NAME_COMBINATION.getString();
 		Assert.assertTrue(SettingsUtil.inVariableIds(TermId.CHECK_START.getId(), variableIds));
@@ -404,7 +399,7 @@ public class SettingsUtilTest {
 
 		expDesignParameterUi.setUseLatenized(false);
 		expDesignParameterUi.setDesignType(5);
-		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
+		Assert.assertEquals(String.valueOf(TermId.ENTRY_LIST_ORDER.getId()),
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 
 		expDesignParameterUi.setDesignType(6);
@@ -622,7 +617,7 @@ public class SettingsUtilTest {
 	 */
 	@Test
 	public void testConvertPojoToXmlDataSet() {
-		final String dataSetName = "January Trial";
+		final String dataSetName = "January Study";
 
 		final List<SettingDetail> studyLevelConditions = new ArrayList<>();
 
@@ -661,13 +656,13 @@ public class SettingsUtilTest {
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.any(String.class)))
 				.thenReturn(standardVariable);
 		Mockito.when(this.userSelection.getPlotsLevelList()).thenReturn(basicDetails);
-		Mockito.when(this.userSelection.getNurseryConditions()).thenReturn(basicDetails);
+		Mockito.when(this.userSelection.getStudyConditions()).thenReturn(basicDetails);
 
 		final Dataset dataSet = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService,
 				dataSetName, this.userSelection, treatmentFactorItems, SettingsUtilTest.PROGRAM_UUID);
 
 		Assert.assertEquals("DataSet Name", dataSetName, dataSet.getName());
-		Assert.assertEquals("DataSet Trial Level Factor", 0, dataSet.getTrialLevelFactor().size());
+		Assert.assertEquals("DataSet Study Level Factor", 0, dataSet.getTrialLevelFactor().size());
 		Assert.assertEquals("DataSet Treatment Factor", 0, dataSet.getTreatmentFactors().size());
 
 		int i = 0;
@@ -897,17 +892,4 @@ public class SettingsUtilTest {
 				cropSeasonCodeCondition.getPossibleValues(), measurementVariable.getPossibleValues());
 	}
 
-	@Test
-	public void testCombineStudyLevelVariablesInNurseryForm() {
-		final CreateNurseryForm createNurseryForm = new CreateNurseryForm();
-		createNurseryForm.setStudyLevelVariables(
-				Arrays.asList(SettingDetailTestDataInitializer.createSettingDetail(TermId.COOPERATOOR_ID.getId())));
-		createNurseryForm.setBasicDetails(
-				Arrays.asList(SettingDetailTestDataInitializer.createSettingDetail(TermId.DATASET_NAME.getId())));
-		final List<SettingDetail> result = SettingsUtil.combineStudyLevelVariablesInNurseryForm(createNurseryForm);
-
-		// The combined size of SettingDetails from Study Level Variables and
-		// Basic Details must equal to 2
-		Assert.assertEquals(2, result.size());
-	}
 }

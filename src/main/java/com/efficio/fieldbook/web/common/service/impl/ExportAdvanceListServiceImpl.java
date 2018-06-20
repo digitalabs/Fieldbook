@@ -60,7 +60,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 	private static final String STOCK_LIST_EXPORT_SHEET_NAME = "Inventory List";
 	
-	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	@Override
 	public FileExportInfo exportAdvanceGermplasmList(final String delimitedAdvanceGermplasmListIds, final String studyName,
@@ -69,7 +69,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		final List<String> filenameList = new ArrayList<>();
 		String downloadFilename = null;
 		String outputFilename = ExportAdvanceListServiceImpl.NO_FILE;
-		final String suffix = AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)
+		final String suffix = AppConstants.EXPORT_ADVANCE_STUDY_EXCEL.getString().equalsIgnoreCase(type)
 				? AppConstants.EXPORT_XLS_SUFFIX.getString() : AppConstants.EXPORT_CSV_SUFFIX.getString();
 
 		try {
@@ -120,9 +120,9 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 			final String sheetName =
 					org.apache.poi.ss.util.WorkbookUtil.createSafeSheetName(ExportAdvanceListServiceImpl.STOCK_LIST_EXPORT_SHEET_NAME);
 			this.exportList(inventoryDetailList, outputFilename, sheetName, germplasmExportServiceImpl,
-					AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString(), GermplasmListType.isCrosses(germplasmListType));
+					AppConstants.EXPORT_ADVANCE_STUDY_EXCEL.getString(), GermplasmListType.isCrosses(germplasmListType));
 
-		} catch (IOException | MiddlewareQueryException e) {
+		} catch (final IOException | MiddlewareQueryException e) {
 			ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
 		}
 
@@ -140,7 +140,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 			throws IOException {
 		final List<ExportColumnHeader> exportColumnHeaders =
 				this.generateAdvanceListColumnHeaders(displayCrossRelatedColumns, this.getAmountsHeader(inventoryDetailList));
-		if (AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)) {
+		if (AppConstants.EXPORT_ADVANCE_STUDY_EXCEL.getString().equalsIgnoreCase(type)) {
 			germplasmExportServiceImpl.generateExcelFileForSingleSheet(
 					this.generateAdvanceListColumnValues(inventoryDetailList, exportColumnHeaders), exportColumnHeaders, filenamePath,
 					sheetName);

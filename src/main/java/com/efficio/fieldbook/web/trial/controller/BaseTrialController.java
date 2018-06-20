@@ -4,10 +4,9 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.trial.bean.AdvanceList;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.CrossesList;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
@@ -17,6 +16,7 @@ import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -40,12 +40,13 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.operation.builder.StudyTypeBuilder;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.SampleService;
 import org.generationcp.middleware.util.Util;
@@ -59,9 +60,11 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -72,6 +75,9 @@ public abstract class BaseTrialController extends SettingsController {
 	@Resource
 	protected SampleService sampleService;
 
+	@Resource
+	protected StudyDataManager studyDataManager;
+
 	private static final Logger LOG = LoggerFactory.getLogger(BaseTrialController.class);
 
 	public static final String URL_SETTINGS = "TrialManager/templates/trialSettings";
@@ -81,6 +87,8 @@ public abstract class BaseTrialController extends SettingsController {
 	public static final String URL_EXPERIMENTAL_DESIGN = "TrialManager/templates/experimentalDesign";
 	public static final String URL_MEASUREMENT = "TrialManager/templates/measurements";
 	public static final String URL_DATATABLE = "Common/showAddOrRemoveTraitsPagination";
+
+	protected StudyTypeBuilder studyTypeBuilder = new StudyTypeBuilder();
 
 	protected void createStudyDetails(final Workbook workbook, final BasicDetails detailBean) {
 		if (workbook.getStudyDetails() == null) {
@@ -96,7 +104,7 @@ public abstract class BaseTrialController extends SettingsController {
 		studyDetails.setStartDate(detailBean.getStartDate());
 		studyDetails.setEndDate(detailBean.getEndDate());
 		studyDetails.setStudyUpdate(Util.getCurrentDateAsStringValue(Util.DATE_AS_NUMBER_FORMAT));
-		studyDetails.setStudyType(StudyType.T);
+		studyDetails.setStudyType(studyDataManager.getStudyTypeByName(detailBean.getStudyType().getName()));
 
 		if (detailBean.getCreatedBy() != null) {
 			studyDetails.setCreatedBy(detailBean.getCreatedBy());
@@ -174,7 +182,7 @@ public abstract class BaseTrialController extends SettingsController {
 			data.setReplatinGroups(this.getExperimentalDesignData(xpDesignVariable.getNumberOfRepsInCols()));
 			final String replicationsMap = this.getExperimentalDesignData(xpDesignVariable.getReplicationsMap());
 
-			if (replicationsMap != null && NumberUtils.isNumber(replicationsMap)) {
+			if (NumberUtils.isNumber(replicationsMap)) {
 				final Integer repArrangementID = Integer.parseInt(replicationsMap);
 				if (TermId.REPS_IN_SINGLE_COL.getId() == repArrangementID) {
 					data.setReplicationsArrangement(1);
@@ -209,7 +217,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 			final String designTypeString =
 					xpDesignVariable.getExperimentalDesign() == null ? null : xpDesignVariable.getExperimentalDesign().getValue();
-			if (designTypeString != null && NumberUtils.isNumber(designTypeString)) {
+			if (NumberUtils.isNumber(designTypeString)) {
 				final Integer designTypeTermID = Integer.parseInt(designTypeString);
 
 				if (TermId.RANDOMIZED_COMPLETE_BLOCK.getId() == designTypeTermID) {
@@ -233,10 +241,16 @@ public abstract class BaseTrialController extends SettingsController {
 				} else if (TermId.AUGMENTED_RANDOMIZED_BLOCK.getId() == designTypeTermID) {
 					data.setDesignType(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId());
 					data.setUseLatenized(false);
+				} else if (TermId.ENTRY_LIST_ORDER.getId() == designTypeTermID) {
+					data.setDesignType(DesignTypeItem.ENTRY_LIST_ORDER.getId());
+					data.setUseLatenized(false);
 				}
 			}
 
 			data.setNumberOfBlocks(this.getExperimentalDesignData(xpDesignVariable.getNumberOfBlocks()));
+			data.setCheckInsertionManner(this.getExperimentalDesignData(xpDesignVariable.getChecksMannerOfInsertion()));
+			data.setCheckSpacing(this.getExperimentalDesignData(xpDesignVariable.getChecksSpacing()));
+			data.setCheckStartingPosition(this.getExperimentalDesignData(xpDesignVariable.getChecksStartingPosition()));
 
 			tabInfo.setData(data);
 		}
@@ -292,7 +306,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 	protected TabInfo prepareGermplasmTabInfo(final List<MeasurementVariable> measurementVariables, final boolean isUsePrevious) {
 		final List<SettingDetail> detailList = new ArrayList<>();
-		final List<Integer> requiredIDList = this.buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
+		final List<Integer> requiredIDList = this.buildVariableIDList(AppConstants.CREATE_STUDY_PLOT_REQUIRED_FIELDS.getString());
 
 		for (final MeasurementVariable var : measurementVariables) {
 			// this condition is required so that treatment factors are not
@@ -446,8 +460,8 @@ public abstract class BaseTrialController extends SettingsController {
 		final List<SettingDetail> managementDetailList = new ArrayList<>();
 		final List<SettingDetail> trialConditionsList = new ArrayList<>();
 		final List<Integer> hiddenFields = this.buildVariableIDList(
-				AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString() + "," + AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
-		final List<Integer> requiredFields = this.buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString());
+				AppConstants.HIDE_STUDY_ENVIRONMENT_FIELDS.getString() + "," + AppConstants.HIDE_STUDY_VARIABLE_DBCV_FIELDS.getString());
+		final List<Integer> requiredFields = this.buildVariableIDList(AppConstants.CREATE_STUDY_ENVIRONMENT_REQUIRED_FIELDS.getString());
 		final List<Integer> filterFields = this.buildVariableIDList(AppConstants.EXP_DESIGN_VARIABLES.getString());
 		final Map<String, MeasurementVariable> factorsMap = SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
 		for (final MeasurementVariable var : workbook.getTrialConditions()) {
@@ -483,7 +497,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 		for (final MeasurementVariable var : workbook.getTrialConstants()) {
 			final SettingDetail detail =
-					this.createSettingDetail(var.getTermId(), var.getName(), VariableType.TRIAL_CONDITION.getRole().name());
+					this.createSettingDetail(var.getTermId(), var.getName(), VariableType.STUDY_CONDITION.getRole().name());
 
 			if (!isUsePrevious) {
 				detail.getVariable().setOperation(Operation.UPDATE);
@@ -570,7 +584,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 		this.userSelection.setTrialLevelVariableList(managementDetailList);
 
-		this.userSelection.setNurseryConditions(trialConditionsList);
+		this.userSelection.setStudyConditions(trialConditionsList);
 
 		return info;
 	}
@@ -587,6 +601,22 @@ public abstract class BaseTrialController extends SettingsController {
 		return advanceList;
 	}
 
+	protected List<CrossesList> getCrossesList(final Integer trialId) {
+		final List<GermplasmList> crossList =
+			this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.CROSSES);
+
+		crossList.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.IMP_CROSS));
+		crossList.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.CRT_CROSS));
+
+		final List<CrossesList> crossesList = new ArrayList<>();
+
+		for (final GermplasmList g : crossList) {
+			crossesList.add(new CrossesList(g.getId(), g.getName(),g.getType().equalsIgnoreCase(GermplasmListType.IMP_CROSS.toString())?GermplasmList.IMP_CROSS:GermplasmList.CRT_CROSS));
+		}
+
+		return crossesList;
+	}
+
 	public List<SettingDetail> retrieveVariablePairs(final int cvTermId) {
 		final List<SettingDetail> output = new ArrayList<>();
 
@@ -595,7 +625,7 @@ public abstract class BaseTrialController extends SettingsController {
 			final StandardVariable variable = this.ontologyService.getStandardVariable(cvTermId, this.contextUtil.getCurrentProgramUUID());
 
 			final List<StandardVariable> pairs = this.fieldbookMiddlewareService.getPossibleTreatmentPairs(variable.getId(),
-					variable.getProperty().getId(), AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
+					variable.getProperty().getId(), AppConstants.CREATE_STUDY_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
 
 			for (final StandardVariable item : pairs) {
 				output.add(this.createSettingDetail(item.getId(), null, VariableType.TREATMENT_FACTOR.getRole().name()));
@@ -608,7 +638,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return output;
 	}
 
-	protected List<MeasurementVariable> getLatestMeasurements(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
+	protected List<MeasurementVariable> getLatestMeasurements(@ModelAttribute("createTrialForm") final CreateTrialForm form,
 			final HttpServletRequest request) {
 		Workbook workbook = this.userSelection.getWorkbook();
 		if (this.userSelection.getTemporaryWorkbook() != null) {
@@ -659,7 +689,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 		final String studyOwnerPersonName = this.fieldbookService.getPersonByUserId(studyOwnerPersonId);
 
-		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
+		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_STUDY_REQUIRED_FIELDS.getString());
 
 		for (final Integer initialSettingID : initialSettingIDs) {
 			try {
@@ -688,7 +718,7 @@ public abstract class BaseTrialController extends SettingsController {
 		basic.setEndDate(studyDetails.getEndDate() != null && !studyDetails.getEndDate().isEmpty() ?
 			Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT) :
 			StringUtils.EMPTY);
-		basic.setStudyUpdate(			studyDetails.getStudyUpdate() != null && !studyDetails.getStudyUpdate().isEmpty() ?
+		basic.setStudyUpdate(studyDetails.getStudyUpdate() != null && !studyDetails.getStudyUpdate().isEmpty() ?
 			Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT)
 			: StringUtils.EMPTY);
 		basic.setObjective(studyDetails.getObjective());
@@ -697,7 +727,7 @@ public abstract class BaseTrialController extends SettingsController {
 		final String folderName;
 
 		if (folderId == 1) {
-			folderName = AppConstants.TRIALS.getString();
+			folderName = AppConstants.STUDIES.getString();
 		} else {
 			folderName = this.fieldbookMiddlewareService.getFolderNameById(folderId);
 		}
@@ -707,13 +737,23 @@ public abstract class BaseTrialController extends SettingsController {
 		basic.setFolderNameLabel(folderName);
 		basic.setUserID(studyOwnerPersonId);
 		basic.setUserName(studyOwnerPersonName);
-
+		basic.setStudyType(studyDetails.getStudyType());
 		final TabInfo tab = new TabInfo();
 		tab.setData(basic);
 
-		this.userSelection.setBasicDetails(initialDetailList);
-
+		setUserSelectionBasicInformation(studyDetails, initialDetailList);
 		return tab;
+	}
+
+	protected void setUserSelectionBasicInformation(final StudyDetails studyDetails, final List<SettingDetail> initialDetailList) {
+		this.userSelection.setBasicDetails(initialDetailList);
+		this.userSelection.setStudyName(studyDetails.getStudyName());
+		this.userSelection.setStudyDescription(studyDetails.getDescription());
+		this.userSelection.setStudyStartDate(studyDetails.getStartDate());
+		this.userSelection.setStudyEndDate(studyDetails.getEndDate());
+		this.userSelection.setStudyUpdate(studyDetails.getStudyUpdate());
+		this.userSelection.setStudyObjective(studyDetails.getObjective());
+		this.userSelection.setStudyType(studyDetails.getStudyType().getName());
 	}
 
 	protected String convertDateStringForUI(final String value) {
@@ -730,8 +770,8 @@ public abstract class BaseTrialController extends SettingsController {
 		final Map<String, String> trialValues = new HashMap<>();
 		final List<SettingDetail> details = new ArrayList<>();
 
-		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
-		final List<Integer> basicDetailIDList = this.buildVariableIDList(AppConstants.HIDE_TRIAL_FIELDS.getString());
+		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_STUDY_VARIABLE_DBCV_FIELDS.getString());
+		final List<Integer> basicDetailIDList = this.buildVariableIDList(AppConstants.HIDE_STUDY_FIELDS.getString());
 		final Map<String, MeasurementVariable> settingsMap = SettingsUtil.buildMeasurementVariableMap(measurementVariables);
 		for (final MeasurementVariable var : measurementVariables) {
 			if (!basicDetailIDList.contains(var.getTermId())) {
@@ -782,7 +822,7 @@ public abstract class BaseTrialController extends SettingsController {
 		final ExpDesignData data = new ExpDesignData();
 		final List<ExpDesignDataDetail> detailList = new ArrayList<>();
 
-		final List<Integer> ids = this.buildVariableIDList(AppConstants.CREATE_TRIAL_EXP_DESIGN_DEFAULT_FIELDS.getString());
+		final List<Integer> ids = this.buildVariableIDList(AppConstants.CREATE_STUDY_EXP_DESIGN_DEFAULT_FIELDS.getString());
 		for (final Integer id : ids) {
 			// PLOT, REP, BLOCK, ENTRY NO
 			final StandardVariable stdvar =
@@ -881,7 +921,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	private ImmutableMap<Integer, SettingDetail> createMapOfTraitsAndSelectionVariatesFromUserSelection() {
-		final List<SettingDetail> variates = new ArrayList<>();
+		final Set<SettingDetail> variates = new HashSet<>();
 		if (CollectionUtils.isNotEmpty(this.userSelection.getBaselineTraitsList())) {
 			variates.addAll(this.userSelection.getBaselineTraitsList());
 		}

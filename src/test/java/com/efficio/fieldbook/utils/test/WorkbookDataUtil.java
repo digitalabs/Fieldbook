@@ -11,13 +11,9 @@
 
 package com.efficio.fieldbook.utils.test;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.util.AppConstants;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -25,15 +21,18 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.operation.builder.WorkbookBuilder;
 import org.generationcp.middleware.pojos.Location;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.util.AppConstants;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * The Class SettingsUtil.
@@ -150,19 +149,19 @@ public class WorkbookDataUtil {
 	private static final String TEST_DESCRIPTION = "TEST DESCRIPTION";
 	private static final String CREATED_BY = "1" ;
 
-	public static Workbook getTestWorkbook(final int noOfObservations, final StudyType studyType) {
+	public static Workbook getTestWorkbook(final int noOfObservations, final StudyTypeDto studyType) {
 		return WorkbookDataUtil.createTestWorkbook(noOfObservations, studyType);
 	}
 
-	public static Workbook getTestWorkbookForTrial(final int noOfObservations, final int noOfInstance) {
-		return WorkbookDataUtil.createTestWorkbook(noOfObservations, StudyType.T, noOfInstance);
+	public static Workbook getTestWorkbookForStudy(final int noOfObservations, final int noOfInstance) {
+		return WorkbookDataUtil.createTestWorkbook(noOfObservations, StudyTypeDto.getTrialDto(), noOfInstance);
 	}
 
-	private static Workbook createTestWorkbook(final int noOfObservations, final StudyType studyType) {
+	private static Workbook createTestWorkbook(final int noOfObservations, final StudyTypeDto studyType) {
 		return WorkbookDataUtil.createTestWorkbook(noOfObservations, studyType, 2);
 	}
 
-	private static Workbook createTestWorkbook(final int noOfObservations, final StudyType studyType, final int noOfInstance) {
+	private static Workbook createTestWorkbook(final int noOfObservations, final StudyTypeDto studyType, final int noOfInstance) {
 		final Workbook workbook = new Workbook();
 
 		workbook.setStudyDetails(WorkbookDataUtil.createStudyDetails(studyType));
@@ -170,17 +169,17 @@ public class WorkbookDataUtil {
 		workbook.setFactors(WorkbookDataUtil.createFactors());
 		workbook.setConstants(WorkbookDataUtil.createConstants());
 		workbook.setVariates(WorkbookDataUtil.createVariates());
-		workbook.setObservations(WorkbookDataUtil.createObservations(noOfObservations, studyType.equals(StudyType.N) ? 1 : noOfInstance,
+		workbook.setObservations(WorkbookDataUtil.createObservations(noOfObservations, noOfInstance,
 				workbook));
-		workbook.setTrialObservations(WorkbookDataUtil.createTrialObservations(studyType.equals(StudyType.N) ? 1 : noOfInstance, workbook));
+		workbook.setTrialObservations(WorkbookDataUtil.createStudyObservations(noOfInstance, workbook));
 		workbook.setMeasurementDatesetId(2);
 		workbook.setTrialDatasetId(3);
 		return workbook;
 	}
 
-	private static StudyDetails createStudyDetails(final StudyType studyType) {
+	private static StudyDetails createStudyDetails(final StudyTypeDto studyType) {
 		final StudyDetails details = new StudyDetails();
-		details.setStudyName((studyType.equals(StudyType.N) ? WorkbookDataUtil.NURSERY_NAME : WorkbookDataUtil.TRIAL_NAME)
+		details.setStudyName((studyType.getName().equalsIgnoreCase("N") ? WorkbookDataUtil.NURSERY_NAME : WorkbookDataUtil.TRIAL_NAME)
 				+ new Random().nextInt(10000));
 		details.setDescription(WorkbookDataUtil.TITLE);
 		details.setObjective(WorkbookDataUtil.OBJECTIVE);
@@ -196,7 +195,7 @@ public class WorkbookDataUtil {
 
 	private static List<MeasurementVariable> createConditions() {
 		// Create measurement variables and set its dataTypeId
-		final List<MeasurementVariable> conditions = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> conditions = new ArrayList<>();
 
 		MeasurementVariable variable =
 				new MeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "TRIAL NUMBER", WorkbookDataUtil.NUMBER,
@@ -523,15 +522,15 @@ public class WorkbookDataUtil {
 		return observations;
 	}
 
-	public static List<MeasurementRow> createTrialObservations(final int noOfTrialInstances, final Workbook workbook) {
-		final List<MeasurementRow> trialObservations = new ArrayList<MeasurementRow>();
+	public static List<MeasurementRow> createStudyObservations(final int noOfTrialInstances, final Workbook workbook) {
+		final List<MeasurementRow> studyObservations = new ArrayList<MeasurementRow>();
 
 		MeasurementRow row;
 		List<MeasurementData> dataList;
 
 		for (int i = 0; i < noOfTrialInstances; i++) {
 			row = new MeasurementRow();
-			dataList = new ArrayList<MeasurementData>();
+			dataList = new ArrayList<>();
 
 			MeasurementData data = new MeasurementData(WorkbookDataUtil.TRIAL_INSTANCE, String.valueOf(i + 1));
 			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),
@@ -570,10 +569,10 @@ public class WorkbookDataUtil {
 			dataList.add(data);
 
 			row.setDataList(dataList);
-			trialObservations.add(row);
+			studyObservations.add(row);
 		}
 
-		return trialObservations;
+		return studyObservations;
 	}
 
 	public static MeasurementVariable getMeasurementVariable(final int termId, final List<MeasurementVariable> variables) {
@@ -610,10 +609,10 @@ public class WorkbookDataUtil {
 		return locations;
 	}
 
-	public static MeasurementRow createTrialObservationWithoutSite() {
-		final Workbook workbook = WorkbookDataUtil.createTestWorkbook(2, StudyType.T);
+	public static MeasurementRow createStudyObservationWithoutSite() {
+		final Workbook workbook = WorkbookDataUtil.createTestWorkbook(2, StudyTypeDto.getTrialDto());
 
-		WorkbookDataUtil.createStudyDetails(StudyType.T);
+		WorkbookDataUtil.createStudyDetails(StudyTypeDto.getTrialDto());
 		WorkbookDataUtil.createConditions();
 
 		final MeasurementRow row = new MeasurementRow();

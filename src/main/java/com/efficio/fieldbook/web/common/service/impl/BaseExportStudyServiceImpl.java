@@ -53,7 +53,7 @@ public abstract class BaseExportStudyServiceImpl implements ExportStudyService {
 			final MeasurementRow instanceLevelObservation = workbook.getTrialObservationByTrialInstanceNo(trialInstanceNo);
 			
 			final FileExportInfo exportInfo = ExportImportStudyUtil.getFileNamePath(trialInstanceNo, instanceLevelObservation, instances,
-					studyName + this.getFileExtension(), workbook.isNursery(), this.fieldbookMiddlewareService, this.contextUtil);
+					studyName + this.getFileExtension(), this.fieldbookMiddlewareService, this.contextUtil);
 			outputFilename = exportInfo.getFilePath();
 			downloadFilename = exportInfo.getDownloadFileName();
 			this.writeOutputFile(workbook, visibleColumns, instanceLevelObservation, plotLevelObservations, outputFilename);

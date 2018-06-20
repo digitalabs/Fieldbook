@@ -42,9 +42,9 @@ public class ExportSampleListControllerTest {
 	private static final String LIST_ID = "listId";
 	private static final String LISTNAME = "listname";
 	private static final String VISIBLE_COLUMNS = "visibleColumns";
-	private static final String SAMPLE_TRIAL_FILENAME = "Trial33-SampleList";
+	private static final String SAMPLE_STUDY_FILENAME = "Study33-SampleList";
 	private static final String CSV_EXT = ".csv";
-	private static String UPLOAD_DIRECTORY = "";
+	private static final String UPLOAD_DIRECTORY = "";
 
 	@Mock
 	private FieldbookProperties fieldbookProperties;
@@ -72,9 +72,9 @@ public class ExportSampleListControllerTest {
 	@Test
 	public void testDoExportSampleListInCSVFormat()
 		throws IOException {
-		List<SampleDetailsDTO> sampleDetailsDTOs = SampleListUtilTest.initSampleDetailsDTOs();
+		final List<SampleDetailsDTO> sampleDetailsDTOs = SampleListUtilTest.initSampleDetailsDTOs();
 		Mockito.doReturn(sampleDetailsDTOs).when(this.sampleListService).getSampleDetailsDTOs(Matchers.anyInt());
-		final String downloadFilename = ExportSampleListControllerTest.SAMPLE_TRIAL_FILENAME + ExportSampleListControllerTest.CSV_EXT;
+		final String downloadFilename = ExportSampleListControllerTest.SAMPLE_STUDY_FILENAME + ExportSampleListControllerTest.CSV_EXT;
 		final String outputFilename = "./someDirectory/output" + downloadFilename;
 		Mockito.when(this.csvExportSampleListService.export(Matchers.any(List.class), Matchers.anyString(), Matchers.any(List.class)))
 			.thenReturn(new FileExportInfo(outputFilename, downloadFilename));

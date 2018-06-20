@@ -216,14 +216,14 @@ public class StockController extends AbstractBaseFieldbookController {
 				model.addAttribute("listName", germplasmList.getName());
 				model.addAttribute("listId", listId);
 
-				return "/NurseryManager/stockTab";
+				return "/StudyManager/stockTab";
 			}
 
 		} catch (final MiddlewareQueryException e) {
 			StockController.LOG.error(e.getMessage(), e);
 		}
 
-		return "/NurseryManager/blank";
+		return "StudyManager/blank";
 	}
 
 	protected Map<String, String> prepareValidationErrorMessages(final Integer validationResult) {

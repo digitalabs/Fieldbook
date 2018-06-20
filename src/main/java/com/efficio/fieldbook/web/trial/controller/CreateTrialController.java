@@ -13,8 +13,6 @@ package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
@@ -22,6 +20,7 @@ import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -123,25 +122,26 @@ public class CreateTrialController extends BaseTrialController {
 		model.addAttribute("measurementRowCount", 0);
 
 		// so that we can reuse the same page being use for nursery
-		model.addAttribute("createNurseryForm", form);
+		model.addAttribute("createTrialForm", form);
 		return this.showAngularPage(model);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/columns", method = RequestMethod.POST)
-	public List<MeasurementVariable> getColumns(@ModelAttribute("createNurseryForm") final CreateNurseryForm form, final Model model,
+	public List<MeasurementVariable> getColumns(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model,
 			final HttpServletRequest request) {
 		return this.getLatestMeasurements(form, request);
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/useExistingTrial", method = RequestMethod.GET)
-	public Map<String, Object> getExistingTrialDetails(@RequestParam(value = "trialID") final Integer trialID) {
+	@RequestMapping(value = "/useExistingStudy", method = RequestMethod.GET)
+	public Map<String, Object> getExistingTrialDetails(@RequestParam(value = "studyId") final Integer studyId) {
 		final Map<String, Object> tabDetails = new HashMap<>();
 		CreateTrialForm form = new CreateTrialForm();
 		try {
-			if (trialID != null && trialID != 0) {
-				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(trialID);
+			if (studyId != null && studyId != 0) {
+				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(studyId);
+
 				this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
 
 				this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
@@ -158,6 +158,7 @@ public class CreateTrialController extends BaseTrialController {
 				this.fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(),
 						trialWorkbook.getMeasurementDatesetId());
 				tabDetails.put("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));
+				form.setStudyTypeName(trialWorkbook.getStudyDetails().getStudyType().getName());
 			}
 		} catch (final MiddlewareException e) {
 			CreateTrialController.LOG.error(e.getMessage(), e);
@@ -169,7 +170,7 @@ public class CreateTrialController extends BaseTrialController {
 	}
 
 	private CreateTrialForm addErrorMessageToResult(final MiddlewareException e) {
-		final String param = AppConstants.TRIAL.getString();
+		final String param = AppConstants.STUDY.getString();
 		final CreateTrialForm form = new CreateTrialForm();
 		form.setHasError(true);
 		if (e instanceof MiddlewareQueryException) {
@@ -208,7 +209,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	@ModelAttribute("trialEnvironmentHiddenFields")
 	public List<Integer> getTrialEnvironmentHiddenFields() {
-		return this.buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
+		return this.buildVariableIDList(AppConstants.HIDE_STUDY_ENVIRONMENT_FIELDS.getString());
 	}
 
 	@RequestMapping(value = "/trialSettings", method = RequestMethod.GET)
@@ -248,7 +249,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/measurements/variables", method = RequestMethod.POST, produces = "application/json")
-	public List<MeasurementVariable> showMeasurementsVariables(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
+	public List<MeasurementVariable> showMeasurementsVariables(@ModelAttribute("createTrialForm") final CreateTrialForm form,
 			final HttpServletRequest request) {
 		return this.getLatestMeasurements(form, request);
 	}
@@ -298,9 +299,10 @@ public class CreateTrialController extends BaseTrialController {
 				data.getTreatmentFactors().getCurrentData(), this.contextUtil.getCurrentProgramUUID());
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.userSelection.getExpDesignParams(),
-				this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
-				this.userSelection.getExperimentalDesignVariables(), this.contextUtil.getCurrentProgramUUID());
+		final Workbook workbook = SettingsUtil
+			.convertXmlDatasetToWorkbook(dataset, this.userSelection.getExpDesignParams(), this.userSelection.getExpDesignVariables(),
+				this.fieldbookMiddlewareService, this.userSelection.getExperimentalDesignVariables(),
+				this.contextUtil.getCurrentProgramUUID());
 
 		if (this.userSelection.getTemporaryWorkbook() != null) {
 			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments(), workbook,
@@ -327,7 +329,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	protected TabInfo prepareGermplasmTabInfo(final boolean isClearSettings) {
 		final List<SettingDetail> initialDetailList = new ArrayList<>();
-		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
+		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_STUDY_PLOT_REQUIRED_FIELDS.getString());
 
 		for (final Integer initialSettingID : initialSettingIDs) {
 			try {
@@ -363,9 +365,9 @@ public class CreateTrialController extends BaseTrialController {
 
 		final Map<String, Object> settingMap = new HashMap<>();
 		final List<SettingDetail> managementDetailList = new ArrayList<>();
-		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
+		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_STUDY_ENVIRONMENT_FIELDS.getString());
 
-		for (final Integer id : this.buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString())) {
+		for (final Integer id : this.buildVariableIDList(AppConstants.CREATE_STUDY_ENVIRONMENT_REQUIRED_FIELDS.getString())) {
 			final SettingDetail detail = this.createSettingDetail(id, null, VariableType.ENVIRONMENT_DETAIL.getRole().name());
 			for (final Integer hiddenField : hiddenFields) {
 				if (id.equals(hiddenField)) {
@@ -390,7 +392,7 @@ public class CreateTrialController extends BaseTrialController {
 	protected TabInfo prepareBasicDetailsTabInfo() {
 		final Map<String, String> basicDetails = new HashMap<>();
 		final List<SettingDetail> initialDetailList = new ArrayList<>();
-		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
+		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_STUDY_REQUIRED_FIELDS.getString());
 
 		for (final Integer initialSettingID : initialSettingIDs) {
 			try {
@@ -437,7 +439,7 @@ public class CreateTrialController extends BaseTrialController {
 			List<SettingDetail> detailList = new ArrayList<>();
 			this.userSelection.setBaselineTraitsList(detailList);
 			this.userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());
-			this.userSelection.setNurseryConditions(new ArrayList<SettingDetail>());
+			this.userSelection.setStudyConditions(new ArrayList<SettingDetail>());
 			detailList = new ArrayList<>();
 			this.userSelection.setTreatmentFactors(detailList);
 			if (this.userSelection.getTemporaryWorkbook() != null) {

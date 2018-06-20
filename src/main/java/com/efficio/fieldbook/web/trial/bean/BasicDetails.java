@@ -1,6 +1,8 @@
 
 package com.efficio.fieldbook.web.trial.bean;
 
+import org.generationcp.middleware.domain.study.StudyTypeDto;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +20,7 @@ public class BasicDetails implements TabInfoBean {
 	private Integer userID;
 	private Integer studyID;
 	private String description;
+	private StudyTypeDto studyType;
 	private String startDate;
 	private String endDate;
 	private String studyUpdate;
@@ -93,6 +96,7 @@ public class BasicDetails implements TabInfoBean {
 		this.description = description;
 	}
 
+
 	public String getStartDate() {
 		return startDate;
 	}
@@ -140,4 +144,13 @@ public class BasicDetails implements TabInfoBean {
 	public void setCreatedBy(final String createdBy) {
 		this.createdBy = createdBy;
 	}
+
+	public void setStudyType(final StudyTypeDto studyType) {
+		this.studyType = studyType;
+	}
+
+	public StudyTypeDto getStudyType() {
+		return studyType;
+	}
+
 }

@@ -1,0 +1,149 @@
+<div class="modal fade vs-modal" tabindex="-1" role="dialog" aria-labelledby="vs-modal-title" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<!-- Title will get inserted here -->
+			</div>
+			<div class="modal-body">
+				<div class="vs-ps-container"></div>
+				<div class="vs-content-container">
+					<div class="vs-property-container"></div>
+					<div class="vs-related-props-container"></div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal" th:text="#{common.form.close}">Close</button>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" value="Variable icon modified from original retrieved from http://www.visualpharm.com."/>
+</div>
+
+<!-- Renders a property's information and list of variables. The service we use strips out properties with no variables, so it should never
+be empty. -->
+<script id="vs-property-template" type="text/x-handlebars-template">
+
+<!-- Property Information -->
+<div>
+	<img class="vs-icon vs-icon-lg" th:src="@{/static/img/vs/property.svg}" alt="Property"/>
+	<h2 class="vs-title">{{propertyName}} <span class="vs-class-name">({{className}})</span></h2>
+</div>
+
+<!-- Variable List -->
+<div class="vs-variable-list-container">
+	<ul>
+		{{#each variables}}
+		<li class="vs-variable">
+			<span class="vs-variable-select-container">
+				<span class="vs-variable-name-container">
+					{{> variable-name}}
+				</span>
+				{{#if selected}}
+					<button type="button" class="btn btn-default btn-xs icon-btn icon-btn vs-variable-button"
+                            th:attr="title=#{common.warning.variable.in.use},onclick='showAlertMessage(\'\', \'' + #{common.warning.variable.in.use} + '\')'">
+						<span class="glyphicon glyphicon-ok"></span>
+					</button>
+				{{else}}
+                    {{#if showTreatmentFactorValidationMessage}}
+						<span class="pull-right label-error-bold" th:text="#{study.validation.treatmentfactor.nopair}"></span>
+                    {{else}}
+					<button type="button" class="btn btn-default btn-xs vs-variable-select icon-btn icon-btn">
+						<span class="vs-variable-select-icon glyphicon glyphicon-plus"></span>
+						<span class="vs-variable-select-label" th:text="#{common.form.add.text}">Add</span>
+					</button>
+                    {{/if}}
+				{{/if}}
+			</span>
+			<div class="vs-variable-description">
+				<span class="vs-variable-description-label" th:text="#{variable.details.label.method}">Method:</span>
+				<span title="{{method.definition}}">{{method.name}}</span>
+				<span class="vs-variable-description-scale">
+					<span class="vs-variable-description-label" th:text="#{variable.details.label.scale}">Method:</span>
+					<span title="{{scale.definition}}">{{scale.name}}</span>
+				</span>
+			</div>
+		</li>
+		{{/each}}
+	</ul>
+</div>
+</script>
+
+<script id="related-prop-template" type="text/x-handlebars-template">
+
+{{#if column1}}
+<h3>Related Properties</h3>
+<div class="vs-related-props-list">
+    <div class="vs-related-prop">
+        <ul>
+            {{#each column1}}
+			<li>
+				<a href="#" class="vs-related-prop-name" data-id="{{propertyId}}">{{name}}</a>
+			</li>
+			{{/each}}
+        </ul>
+    </div>
+    <div class="vs-related-prop">
+        <ul>
+            {{#each column2}}
+			<li>
+				<a href="#" class="vs-related-prop-name" data-id="{{propertyId}}">{{name}}</a>
+			</li>
+			{{/each}}
+        </ul>
+    </div>
+</div>
+
+{{/if}}
+</script>
+
+<!-- Renders a variable name. Expects a variable object with a name and optional alias property. -->
+<script id="vs-variable-name-partial" type="text/x-handlebars-template">
+	<span class="vs-variable-name" title="{{description}}">{{name}}</span>
+	{{#if alias}}
+		<span> ({{alias}})</span>
+	{{/if}}
+
+	{{#unless selected}}
+		<button type="button" class="btn btn-default btn-xs vs-alias-edit icon-btn icon-btn-sm">
+			<span class="glyphicon glyphicon-pencil"></span>
+		</button>
+	{{/unless}}
+</script>
+
+<!-- Renders an input that allows a user to provide an alias for a variable. Expects an object with a placeholder and optional alias.-->
+<script id="vs-alias-edit-template" type="text/x-handlebars-template">
+	<input class="vs-alias-input" placeholder="Enter an alias" th:placeholder="#{variable.selection.alias}" type="text" data-index="{{index}}" value="{{alias}}"></input>
+	<button type="button" class="btn btn-default btn-xs vs-alias-save icon-btn">
+		<span class="glyphicon glyphicon-ok"></span>
+	</button>
+	<button type="button" class="btn btn-default btn-xs vs-alias-cancel icon-btn">
+		<span class="glyphicon glyphicon-remove"></span>
+	</button>
+</script>
+
+<!-- Also expose the variable name partial as a template for standalone use.-->
+<script id="vs-variable-name-template" type="text/x-handlebars-template">
+	{{> variable-name}}
+</script>
+
+<!-- Property Select Templates-->
+<script id="vs-property-select-template" type="text/x-handlebars-template">
+	<input class="ps-input" type="hidden"></input>
+</script>
+
+<script id="vs-property-result-template" type="text/x-handlebars-template">
+	<div class="ps-item-property-info">
+		<img class="vs-icon" th:src="@{/static/img/vs/property.svg}" alt="Property"/>
+		<span class="ps-item-attr ps-item-prop-name">{{{searchTermHighlight propertyName searchTerm}}}</span>
+		(<span class="ps-item-class-name">{{{searchTermHighlight className searchTerm}}}</span>)
+	</div>
+
+	<div class="ps-item-variables">
+		<img class="vs-icon vs-icon-sm" th:src="@{/static/img/vs/variable.png}" alt="Variable"/>
+		<span class="ps-item-attr">
+			{{#each variables}}
+				{{{searchTermHighlight name ../searchTerm}}}{{#unless @last}}, {{/unless}}
+			{{/each}}
+		</span>
+	</div>
+</script>

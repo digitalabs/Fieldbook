@@ -28,12 +28,11 @@ public class HorizontalFieldMapLayoutIterator implements FieldPlotLayoutIterator
 	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see com.efficio.fieldbook.service.api.FieldMapService#createFieldMap(int, int, int, int, boolean, java.util.Map, java.util.List,
-	 *      boolean)
+	 * @see com.efficio.fieldbook.service.api.FieldMapService#createFieldMap(int, int, int, int, boolean, java.util.Map, java.util.List)
 	 */
 	@Override
 	public Plot[][] createFieldMap(int col, int range, int startRange, int startCol, boolean isSerpentine, Map<String, String> deletedPlot,
-			List<FieldMapLabel> labels, boolean isTrial, Plot[][] currentPlots) {
+			List<FieldMapLabel> labels, Plot[][] currentPlots) {
 
 		Plot[][] plots = FieldMapUtilityHelper.initializePlots(col, range);
 		if (currentPlots != null) {
@@ -54,7 +53,7 @@ public class HorizontalFieldMapLayoutIterator implements FieldPlotLayoutIterator
 					}
 					counter =
 							FieldMapUtilityHelper.populatePlotData(counter, labels, x, y, plots, false, startCol, startRange, isStartOk,
-									deletedPlot, isTrial);
+									deletedPlot);
 				}
 			} else {
 				for (int x = col - 1; x >= 0; x--) {
@@ -65,7 +64,7 @@ public class HorizontalFieldMapLayoutIterator implements FieldPlotLayoutIterator
 					}
 					counter =
 							FieldMapUtilityHelper.populatePlotData(counter, labels, x, y, plots, false, startCol, startRange, isStartOk,
-									deletedPlot, isTrial);
+									deletedPlot);
 				}
 			}
 			if (isSerpentine) {
@@ -88,7 +87,7 @@ public class HorizontalFieldMapLayoutIterator implements FieldPlotLayoutIterator
 	@Override
 	public void setOtherFieldMapInformation(UserFieldmap info, Plot[][] plots, int totalColumns, int totalRanges, boolean isSerpentine) {
 		boolean isStarted = false;
-		List<String> possiblyDeletedCoordinates = new ArrayList<String>();
+		List<String> possiblyDeletedCoordinates = new ArrayList<>();
 		int[] order = {1};
 		boolean leftToRight = true;
 		for (int y = 0; y < totalRanges; y++) {
@@ -105,7 +104,7 @@ public class HorizontalFieldMapLayoutIterator implements FieldPlotLayoutIterator
 				leftToRight = !leftToRight;
 			}
 		}
-		info.setSelectedFieldmapList(new SelectedFieldmapList(info.getSelectedFieldMaps(), info.isTrial()));
+		info.setSelectedFieldmapList(new SelectedFieldmapList(info.getSelectedFieldMaps()));
 	}
 
 }

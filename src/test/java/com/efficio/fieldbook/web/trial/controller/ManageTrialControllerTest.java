@@ -11,14 +11,13 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import org.generationcp.middleware.domain.oms.StudyType;
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.junit.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 public class ManageTrialControllerTest extends AbstractBaseIntegrationTest {
 
@@ -28,7 +27,6 @@ public class ManageTrialControllerTest extends AbstractBaseIntegrationTest {
 		this.mockMvc.perform(MockMvcRequestBuilders.get(ManageTrialController.URL))
 				.andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.model().attribute("type", StudyType.T.getName()))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("preloadSummaryId"))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("preloadSummaryName"))
 				.andExpect(MockMvcResultMatchers.model().attribute(AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "Common/manageStudy"));

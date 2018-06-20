@@ -21,12 +21,12 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
@@ -49,8 +49,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.PossibleValuesCache;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 import junit.framework.Assert;
@@ -75,13 +75,13 @@ public class FieldbookServiceTest {
 	private static final String ED_CHECK_INTERVAL = "ED - Check Interval";
 	private static final String CHECK_INTERVAL = "CHECK_INTERVAL";
 	private static final String CHECK_START = "CHECK_START";
-	private static final String TRIAL_DESIGN = "Trial Design";
-	private static final int TRIAL_DESIGN_ID = 1100;
-	private static final String TRIAL_ENVIRONMENT_INFORMATION = "Trial Environment Information";
-	private static final int TRIAL_ENV_ID = 1020;
+	private static final String STUDY_DESIGN = "Study Design";
+	private static final int STUDY_DESIGN_ID = 1100;
+	private static final String STUDY_ENVIRONMENT_INFORMATION = "Study Environment Information";
+	private static final int ENV_ID = 1020;
 	private static final String NUMERIC_VARIABLE = "Numeric variable";
-	private static final String FIELD_TRIAL = "Field trial";
-	private static final int FIELD_TRIAL_ID = 4100;
+	private static final String FIELD_STUDY = "Field study";
+	private static final int FIELD_STUDY_ID = 4100;
 	private static final String NUMBER = "Number";
 	private static final int NUMBER_ID = 6040;
 	private static final String ED_CHECK_START = "ED - Check Start";
@@ -150,14 +150,14 @@ public class FieldbookServiceTest {
 								FieldbookServiceTest.ED_CHECK_START),
 						new Term(FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER,
 								FieldbookServiceTest.NUMBER),
-						new Term(FieldbookServiceTest.FIELD_TRIAL_ID, FieldbookServiceTest.FIELD_TRIAL,
-								FieldbookServiceTest.FIELD_TRIAL),
+						new Term(FieldbookServiceTest.FIELD_STUDY_ID, FieldbookServiceTest.FIELD_STUDY,
+								FieldbookServiceTest.FIELD_STUDY),
 						new Term(TermId.NUMERIC_VARIABLE.getId(), FieldbookServiceTest.NUMERIC_VARIABLE,
 								FieldbookServiceTest.NUMERIC_VARIABLE),
-						new Term(FieldbookServiceTest.TRIAL_ENV_ID, FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION,
-								FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION),
-						new Term(FieldbookServiceTest.TRIAL_DESIGN_ID, FieldbookServiceTest.TRIAL_DESIGN,
-								FieldbookServiceTest.TRIAL_DESIGN),
+						new Term(FieldbookServiceTest.ENV_ID, FieldbookServiceTest.STUDY_ENVIRONMENT_INFORMATION,
+								FieldbookServiceTest.STUDY_ENVIRONMENT_INFORMATION),
+						new Term(FieldbookServiceTest.STUDY_DESIGN_ID, FieldbookServiceTest.STUDY_DESIGN,
+								FieldbookServiceTest.STUDY_DESIGN),
 						PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_START.getId(),
 						FieldbookServiceTest.CHECK_START));
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_INTERVAL.getId(),
@@ -167,13 +167,13 @@ public class FieldbookServiceTest {
 								FieldbookServiceTest.ED_CHECK_INTERVAL, FieldbookServiceTest.ED_CHECK_INTERVAL),
 						new Term(FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER,
 								FieldbookServiceTest.NUMBER),
-						new Term(FieldbookServiceTest.FIELD_TRIAL_ID, FieldbookServiceTest.FIELD_TRIAL,
-								FieldbookServiceTest.FIELD_TRIAL),
+						new Term(FieldbookServiceTest.FIELD_STUDY_ID, FieldbookServiceTest.FIELD_STUDY,
+								FieldbookServiceTest.FIELD_STUDY),
 						new Term(TermId.NUMERIC_VARIABLE.getId(), FieldbookServiceTest.NUMERIC_VARIABLE,
 								FieldbookServiceTest.NUMERIC_VARIABLE),
-						new Term(FieldbookServiceTest.TRIAL_ENV_ID, FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION,
-								FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION),
-						new Term(1100, FieldbookServiceTest.TRIAL_DESIGN, FieldbookServiceTest.TRIAL_DESIGN),
+						new Term(FieldbookServiceTest.ENV_ID, FieldbookServiceTest.STUDY_ENVIRONMENT_INFORMATION,
+								FieldbookServiceTest.STUDY_ENVIRONMENT_INFORMATION),
+						new Term(1100, FieldbookServiceTest.STUDY_DESIGN, FieldbookServiceTest.STUDY_DESIGN),
 						PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_INTERVAL.getId(),
 						FieldbookServiceTest.CHECK_INTERVAL));
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_PLAN.getId(),
@@ -186,10 +186,10 @@ public class FieldbookServiceTest {
 								FieldbookServiceTest.ASSIGNED),
 						new Term(TermId.CATEGORICAL_VARIABLE.getId(), FieldbookServiceTest.CATEGORICAL_VARIABLE,
 								FieldbookServiceTest.CATEGORICAL_VARIABLE),
-						new Term(FieldbookServiceTest.TRIAL_ENV_ID, FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION,
-								FieldbookServiceTest.TRIAL_ENVIRONMENT_INFORMATION),
-						new Term(FieldbookServiceTest.TRIAL_DESIGN_ID, FieldbookServiceTest.TRIAL_DESIGN,
-								FieldbookServiceTest.TRIAL_DESIGN),
+						new Term(FieldbookServiceTest.ENV_ID, FieldbookServiceTest.STUDY_ENVIRONMENT_INFORMATION,
+								FieldbookServiceTest.STUDY_ENVIRONMENT_INFORMATION),
+						new Term(FieldbookServiceTest.STUDY_DESIGN_ID, FieldbookServiceTest.STUDY_DESIGN,
+								FieldbookServiceTest.STUDY_DESIGN),
 						PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_PLAN.getId(), "CHECK_PLAN"));
 	}
 
@@ -259,7 +259,7 @@ public class FieldbookServiceTest {
 		// prepare test data
 		final UserSelection userSelection = new UserSelection();
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 
 		userSelection.setImportedCheckGermplasmMainInfo(null);
 		userSelection.setWorkbook(workbook);
@@ -280,7 +280,7 @@ public class FieldbookServiceTest {
 		// prepare test data
 		final UserSelection userSelection = new UserSelection();
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 
 		userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
 		userSelection.setWorkbook(workbook);
@@ -301,7 +301,7 @@ public class FieldbookServiceTest {
 		// prepare test data
 		final UserSelection userSelection = new UserSelection();
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 
 		userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
 		userSelection.setWorkbook(workbook);
@@ -329,8 +329,8 @@ public class FieldbookServiceTest {
 		// prepare test data
 		final UserSelection userSelection = new UserSelection();
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
-		WorkbookDataUtil.createTrialObservations(1, workbook);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
+		WorkbookDataUtil.createStudyObservations(1, workbook);
 		try {
 			userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
 			userSelection.setWorkbook(workbook);
@@ -350,11 +350,11 @@ public class FieldbookServiceTest {
 	}
 
 	@Test
-	public void testManageCheckVariablesForUpdateWithNoTrialObservations() {
+	public void testManageCheckVariablesForUpdateWithNoStudyObservations() {
 		// prepare test data
 		final UserSelection userSelection = new UserSelection();
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 		workbook.setTrialObservations(null);
 		try {
 			this.addCheckVariables(workbook.getConditions());
@@ -402,7 +402,7 @@ public class FieldbookServiceTest {
 		// prepare test data
 		final UserSelection userSelection = new UserSelection();
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 
 		try {
 			this.addCheckVariables(workbook.getConditions());
@@ -437,7 +437,7 @@ public class FieldbookServiceTest {
 		// prepare test data
 		final UserSelection userSelection = new UserSelection();
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 
 		userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
 		userSelection.setWorkbook(workbook);
@@ -455,7 +455,7 @@ public class FieldbookServiceTest {
 
 	@Test
 	public void testCheckingOfCheckVariablesIfConditionsIsNotNullAndNotEmpty() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 
 		Assert.assertFalse("Expected no check variables in the conditions but found one.",
 				this.fieldbookServiceImpl.hasCheckVariables(workbook.getConditions()));
@@ -484,7 +484,7 @@ public class FieldbookServiceTest {
 		boolean allIsHidden = true;
 		while (tokenizer.hasMoreTokens()) {
 			if (!FieldbookServiceImpl.inHideVariableFields(Integer.parseInt(tokenizer.nextToken()),
-					AppConstants.FILTER_NURSERY_FIELDS.getString())) {
+					AppConstants.FILTER_STUDY_FIELDS.getString())) {
 				allIsHidden = false;
 				break;
 			}
@@ -721,7 +721,7 @@ public class FieldbookServiceTest {
 
 	@Test
 	public void testaddSTUDY_UIDVariableToWorkbookConditionsFalse() {
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1,
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto("T"), "Sample Study", 1,
 				false);
 		// Set lists to empty lists for easier testing
 		workbook.setConditions(new ArrayList<MeasurementVariable>());
@@ -745,7 +745,7 @@ public class FieldbookServiceTest {
 
 	@Test
 	public void testAddStudyUUIDConditionAndPlotIDFactorToWorkbookTrue() {
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1,
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto("T"), "Sample Study", 1,
 				false);
 		// Set lists to empty lists for easier testing
 		workbook.setConditions(new ArrayList<MeasurementVariable>());

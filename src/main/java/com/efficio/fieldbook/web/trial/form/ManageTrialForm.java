@@ -16,7 +16,7 @@ import java.util.List;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 
 /**
- * The Class ManageNurseriesForm.
+ * The Class ManageTrialForm.
  */
 public class ManageTrialForm {
 

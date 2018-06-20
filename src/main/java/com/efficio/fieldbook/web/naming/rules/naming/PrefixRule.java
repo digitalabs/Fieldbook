@@ -8,7 +8,7 @@ import org.generationcp.commons.ruleengine.RuleException;
 import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 
 /**
  * The Prefix provided in this Rule refers to the prefix of the 'generated and appended generational tail' of a Germplasm name

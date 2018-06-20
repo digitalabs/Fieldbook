@@ -11,7 +11,7 @@ import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.trial.controller.SettingsController;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
@@ -20,7 +20,6 @@ import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
-import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -35,7 +34,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -43,7 +41,6 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.util.ResourceFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -128,6 +125,7 @@ public class DesignImportController extends SettingsController {
 	@Resource
 	private SettingsService settingsService;
 
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -146,21 +144,19 @@ public class DesignImportController extends SettingsController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/import/{studyType}", method = RequestMethod.POST, produces = "text/plain")
-	public String importFile(@ModelAttribute("importDesignForm") final ImportDesignForm form,
-			@PathVariable final String studyType) {
-		return this.importFile(form, studyType, 0);
+	@RequestMapping(value = "/import", method = RequestMethod.POST, produces = "text/plain")
+	public String importFile(@ModelAttribute("importDesignForm") final ImportDesignForm form) {
+		return this.importFile(form, 0);
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/import/{studyType}/{noOfEnvironments}", method = RequestMethod.POST, produces = "text/plain")
-	public String importFile(@ModelAttribute("importDesignForm") final ImportDesignForm form,
-			@PathVariable final String studyType, @PathVariable final Integer noOfEnvironments) {
+	@RequestMapping(value = "/import/{noOfEnvironments}", method = RequestMethod.POST, produces = "text/plain")
+	public String importFile(@ModelAttribute("importDesignForm") final ImportDesignForm form, @PathVariable final Integer noOfEnvironments) {
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 
 		try {
-			this.initializeTemporaryWorkbook(studyType);
+			this.initializeTemporaryWorkbook();
 
 			final DesignImportData designImportData = this.designImportParser.parseFile(form.getFileType(),
 					form.getFile());
@@ -230,54 +226,21 @@ public class DesignImportController extends SettingsController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/import/change/{studyId}/{isNursery}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-	public String changeDesign(@PathVariable final Integer studyId, @PathVariable final Boolean isNursery) {
+	@RequestMapping(value = "/import/change/{studyId}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+	public String changeDesign(@PathVariable final Integer studyId) {
 
 		final Map<String, Object> resultsMap = new HashMap<>();
-
-		if (isNursery) {
-			// reset
-			this.cancelImportDesign();
-			this.userSelection.setExperimentalDesignVariables(new ArrayList<MeasurementVariable>());
-			this.userSelection.setExpDesignParams(null);
-			this.userSelection.setExpDesignVariables(new ArrayList<Integer>());
-
-			resultsMap.put(DesignImportController.SUCCESS, this.messageSource
-					.getMessage("design.import.change.design.success.message.nursery", null, Locale.ENGLISH));
-		} else {
-			// For Trial
-			if (this.userSelection.getTemporaryWorkbook() != null) {
-				WorkbookUtil
-						.resetObservationToDefaultDesign(this.userSelection.getTemporaryWorkbook().getObservations());
-			}
-
-			this.userSelection.setDesignImportData(null);
-			this.userSelection.getExpDesignParams().setFileName(DesignImportController.DEFAULT_DESIGN);
-
-			Workbook wb = this.userSelection.getTemporaryWorkbook();
-			if (wb != null) {
-				for (final MeasurementRow row : wb.getTrialObservations()) {
-					for (final MeasurementData data : row.getDataList()) {
-						if (TermId.EXPT_DESIGN_SOURCE.name().equals(data.getLabel())) {
-							data.setValue(DesignImportController.DEFAULT_DESIGN);
-						}
-					}
-				}
-			}
-
-			wb = this.userSelection.getWorkbook();
-			if (wb != null) {
-				for (final MeasurementRow row : wb.getTrialObservations()) {
-					for (final MeasurementData data : row.getDataList()) {
-						if (TermId.EXPT_DESIGN_SOURCE.name().equals(data.getLabel())) {
-							data.setValue(DesignImportController.DEFAULT_DESIGN);
-						}
-					}
-				}
-			}
-			resultsMap.put(DesignImportController.SUCCESS, this.messageSource
-					.getMessage("design.import.change.design.success.message.trial", null, Locale.ENGLISH));
+		if (this.userSelection.getTemporaryWorkbook() != null) {
+			WorkbookUtil.resetObservationToDefaultDesign(this.userSelection.getTemporaryWorkbook().getObservations());
 		}
+
+		this.userSelection.setDesignImportData(null);
+		this.userSelection.getExpDesignParams().setFileName(DesignImportController.DEFAULT_DESIGN);
+
+		this.setDefaultDesign(this.userSelection.getTemporaryWorkbook());
+		this.setDefaultDesign(this.userSelection.getWorkbook());
+		resultsMap.put(DesignImportController.SUCCESS,
+				this.messageSource.getMessage("design.import.change.design.success.message.study", null, Locale.ENGLISH));
 
 		// handling for existing study
 		if (studyId != null && studyId != 0) {
@@ -288,6 +251,18 @@ public class DesignImportController extends SettingsController {
 
 		// we return string instead of json to fix IE issue rel. DataTable
 		return this.convertObjectToJson(resultsMap);
+	}
+
+	private void setDefaultDesign(final Workbook workbook) {
+		if (workbook != null) {
+			for (final MeasurementRow row : workbook.getTrialObservations()) {
+				for (final MeasurementData data : row.getDataList()) {
+					if (TermId.EXPT_DESIGN_SOURCE.name().equals(data.getLabel())) {
+						data.setValue(DesignImportController.DEFAULT_DESIGN);
+					}
+				}
+			}
+		}
 	}
 
 	@ResponseBody
@@ -364,17 +339,6 @@ public class DesignImportController extends SettingsController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/postSelectedNurseryType")
-	public Boolean postSelectedNurseryType(@RequestBody final String nurseryTypeId) {
-		if (StringUtils.isNumeric(nurseryTypeId)) {
-			final Integer value = Integer.valueOf(nurseryTypeId);
-			this.userSelection.setNurseryTypeForDesign(value);
-		}
-
-		return true;
-	}
-
-	@ResponseBody
 	@RequestMapping(value = "/cancelImportDesign")
 	public void cancelImportDesign() {
 
@@ -434,8 +398,8 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected boolean hasConflict(final Set<MeasurementVariable> setA, final Set<MeasurementVariable> setB) {
-		Set<MeasurementVariable> a;
-		Set<MeasurementVariable> b;
+		final Set<MeasurementVariable> a;
+		final Set<MeasurementVariable> b;
 
 		if (setA.size() <= setB.size()) {
 			a = setA;
@@ -457,32 +421,44 @@ public class DesignImportController extends SettingsController {
 		final Map<PhenotypicType, List<DesignHeaderItem>> newMappingResults = new EnumMap<>(PhenotypicType.class);
 
 		for (final Map.Entry<String, List<DesignHeaderItem>> item : mappedHeaders.entrySet()) {
-			for (final DesignHeaderItem mappedHeader : item.getValue()) {
+			switch (item.getKey()) {
+				case DesignImportController.MAPPED_ENVIRONMENTAL_FACTORS:
+					newMappingResults.put(PhenotypicType.TRIAL_ENVIRONMENT, item.getValue());
+					break;
+				case DesignImportController.MAPPED_DESIGN_FACTORS:
+					newMappingResults.put(PhenotypicType.TRIAL_DESIGN, item.getValue());
+					break;
+				case DesignImportController.MAPPED_GERMPLASM_FACTORS:
+					newMappingResults.put(PhenotypicType.GERMPLASM, item.getValue());
+					break;
+				case DesignImportController.MAPPED_TRAITS:
+					newMappingResults.put(PhenotypicType.VARIATE, item.getValue());
+					break;
+				default:
 
-				final StandardVariable stdVar = this.ontologyDataManager.getStandardVariable(mappedHeader.getId(),
-						this.contextUtil.getCurrentProgramUUID());
-
-				if (DesignImportController.MAPPED_ENVIRONMENTAL_FACTORS.equals(item.getKey())) {
-					stdVar.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
-				} else if (DesignImportController.MAPPED_DESIGN_FACTORS.equals(item.getKey())) {
-					stdVar.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
-				} else if (DesignImportController.MAPPED_GERMPLASM_FACTORS.equals(item.getKey())) {
-					stdVar.setPhenotypicType(PhenotypicType.GERMPLASM);
-				} else if (DesignImportController.MAPPED_TRAITS.equals(item.getKey())) {
-					stdVar.setPhenotypicType(PhenotypicType.VARIATE);
-				}
-
-				mappedHeader.setVariable(stdVar);
 			}
 
-			if (DesignImportController.MAPPED_ENVIRONMENTAL_FACTORS.equals(item.getKey())) {
-				newMappingResults.put(PhenotypicType.TRIAL_ENVIRONMENT, item.getValue());
-			} else if (DesignImportController.MAPPED_DESIGN_FACTORS.equals(item.getKey())) {
-				newMappingResults.put(PhenotypicType.TRIAL_DESIGN, item.getValue());
-			} else if (DesignImportController.MAPPED_GERMPLASM_FACTORS.equals(item.getKey())) {
-				newMappingResults.put(PhenotypicType.GERMPLASM, item.getValue());
-			} else if (DesignImportController.MAPPED_TRAITS.equals(item.getKey())) {
-				newMappingResults.put(PhenotypicType.VARIATE, item.getValue());
+			for (final DesignHeaderItem mappedHeader : item.getValue()) {
+				final StandardVariable stdVar =
+					this.ontologyDataManager.getStandardVariable(mappedHeader.getId(), this.contextUtil.getCurrentProgramUUID());
+
+				switch (item.getKey()) {
+					case DesignImportController.MAPPED_ENVIRONMENTAL_FACTORS:
+						stdVar.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
+						break;
+					case DesignImportController.MAPPED_DESIGN_FACTORS:
+						stdVar.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
+						break;
+					case DesignImportController.MAPPED_GERMPLASM_FACTORS:
+						stdVar.setPhenotypicType(PhenotypicType.GERMPLASM);
+						break;
+					case DesignImportController.MAPPED_TRAITS:
+						stdVar.setPhenotypicType(PhenotypicType.VARIATE);
+						break;
+					default:
+
+				}
+				mappedHeader.setVariable(stdVar);
 			}
 		}
 
@@ -502,7 +478,6 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(),
-					this.userSelection.getTemporaryWorkbook().getStudyDetails().getStudyType(),
 					DesignTypeItem.CUSTOM_IMPORT, this.generateAdditionalParams(startingEntryNo, startingPlotNo));
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
@@ -572,30 +547,28 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
-			final StudyType studyType, final DesignTypeItem designTypeItem,
-			final Map<String, Integer> additionalParams) throws DesignValidationException {
+		final DesignTypeItem designTypeItem, final Map<String, Integer> additionalParams) throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
 
 		this.checkTheDeletedSettingDetails(this.userSelection, designImportData);
 
-		this.initializeTemporaryWorkbook(studyType.name());
+		this.initializeTemporaryWorkbook();
 
 		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
 
 		this.removeExperimentDesignVariables(workbook.getFactors());
 
-		List<MeasurementRow> measurementRows;
-		Set<MeasurementVariable> measurementVariables;
-		Set<StandardVariable> expDesignVariables;
-		Set<MeasurementVariable> experimentalDesignMeasurementVariables;
+		final List<MeasurementRow> measurementRows;
+		final Set<MeasurementVariable> measurementVariables;
+		final Set<StandardVariable> expDesignVariables;
+		final Set<MeasurementVariable> experimentalDesignMeasurementVariables;
 
 		measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false, additionalParams);
 
 		workbook.setObservations(measurementRows);
 
-		measurementVariables = this.designImportService.getDesignMeasurementVariables(workbook, designImportData,
-				false);
+		measurementVariables = this.designImportService.getDesignMeasurementVariables(workbook, designImportData, false);
 
 		workbook.setMeasurementDatasetVariables(new ArrayList<>(measurementVariables));
 
@@ -603,16 +576,12 @@ public class DesignImportController extends SettingsController {
 
 		workbook.setExpDesignVariables(new ArrayList<>(expDesignVariables));
 
-		experimentalDesignMeasurementVariables = this.designImportService.getDesignRequiredMeasurementVariable(workbook,
-				designImportData);
+		experimentalDesignMeasurementVariables = this.designImportService.getDesignRequiredMeasurementVariable(workbook, designImportData);
 
 		this.userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
 
 		// Only for Trial
 		this.addFactorsIfNecessary(workbook, designImportData);
-
-		// Only for Nursery
-		this.addConditionsIfNecessary(workbook, designImportData);
 
 		this.addVariates(workbook, designImportData);
 
@@ -622,16 +591,10 @@ public class DesignImportController extends SettingsController {
 			this.updateTrialConditionVariables(workbook.getConditions());
 		}
 
-		// Only for Trial
 		this.populateTrialLevelVariableListIfNecessary(workbook);
-
-		// Only for Nursery
-		this.populateStudyLevelVariableListIfNecessary(workbook, environmentData, designImportData);
 
 		this.createTrialObservations(environmentData, workbook, designImportData);
 
-		// Only for Nursery
-		this.resetCheckList(workbook, this.userSelection);
 	}
 
 	/**
@@ -651,54 +614,15 @@ public class DesignImportController extends SettingsController {
 		}
 	}
 
-	/**
-	 * Resets the Check list and deletes all Check Variables previously saved in
-	 * Nursery. The system will automatically reset and override the Check List
-	 * after importing a Custom Design.
-	 *
-	 * @param workbook
-	 * @param userSelection
-	 */
-	protected void resetCheckList(final Workbook workbook, final UserSelection userSelection) {
-
-		// This is only applicable in Nursery since there's no Check List in
-		// Trial.
-		if (workbook.getStudyDetails().getStudyType() == StudyType.N) {
-
-			// Create an ImportedCheckGermplasmMainInfo with an EMPTY data so
-			// that it will be deleted on save.
-			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-			mainInfo.setAdvanceImportType(true);
-
-			final List<ImportedGermplasm> list = new ArrayList<>();
-
-			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
-			importedGermplasmList.setImportedGermplasms(list);
-			mainInfo.setImportedGermplasmList(importedGermplasmList);
-
-			userSelection.setCurrentPageCheckGermplasmList(1);
-			userSelection.setImportedCheckGermplasmMainInfo(mainInfo);
-			userSelection.setImportValid(true);
-
-			// Also delete the CHECK VARIABLES
-			this.addCheckVariablesToDeleted(userSelection.getStudyLevelConditions());
-
-		}
-
-	}
-
-	protected void checkTheDeletedSettingDetails(final UserSelection userSelection,
-			final DesignImportData designImportData) {
+	protected void checkTheDeletedSettingDetails(final UserSelection userSelection, final DesignImportData designImportData) {
 
 		final Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
 		final Map<String, String> nameIdMap = this.switchKey(idNameMap);
 
-		for (final MeasurementVariable mvar : this.designImportService.getMeasurementVariablesFromDataFile(null,
-				designImportData)) {
+		for (final MeasurementVariable mvar : this.designImportService.getMeasurementVariablesFromDataFile(null, designImportData)) {
 
 			if (userSelection.getDeletedTrialLevelVariables() != null) {
-				final Iterator<SettingDetail> deletedTrialLevelVariables = userSelection.getDeletedTrialLevelVariables()
-						.iterator();
+				final Iterator<SettingDetail> deletedTrialLevelVariables = userSelection.getDeletedTrialLevelVariables().iterator();
 				while (deletedTrialLevelVariables.hasNext()) {
 					final SettingDetail deletedSettingDetail = deletedTrialLevelVariables.next();
 
@@ -711,12 +635,10 @@ public class DesignImportController extends SettingsController {
 
 					}
 
-					final String termIdOfName = idNameMap
-							.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
+					final String termIdOfName = idNameMap.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
 					if (termIdOfName != null) {
 
-						this.updateOperation(Integer.valueOf(termIdOfName), userSelection.getTrialLevelVariableList(),
-								Operation.UPDATE);
+						this.updateOperation(Integer.valueOf(termIdOfName), userSelection.getTrialLevelVariableList(), Operation.UPDATE);
 
 						deletedSettingDetail.getVariable().setOperation(Operation.UPDATE);
 						userSelection.getTrialLevelVariableList().add(deletedSettingDetail);
@@ -724,11 +646,9 @@ public class DesignImportController extends SettingsController {
 						deletedTrialLevelVariables.remove();
 					}
 
-					final String termIdOfId = nameIdMap
-							.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
+					final String termIdOfId = nameIdMap.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
 					if (termIdOfId != null) {
-						this.updateOperation(Integer.valueOf(termIdOfId), userSelection.getTrialLevelVariableList(),
-								Operation.UPDATE);
+						this.updateOperation(Integer.valueOf(termIdOfId), userSelection.getTrialLevelVariableList(), Operation.UPDATE);
 
 						deletedSettingDetail.getVariable().setOperation(Operation.UPDATE);
 						userSelection.getTrialLevelVariableList().add(deletedSettingDetail);
@@ -743,8 +663,7 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void updateOperation(final int termId, final List<SettingDetail> settingDetails,
-			final Operation operation) {
+	protected void updateOperation(final int termId, final List<SettingDetail> settingDetails, final Operation operation) {
 
 		for (final SettingDetail sd : settingDetails) {
 			if (sd.getVariable().getCvTermId().intValue() == termId) {
@@ -755,7 +674,7 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	public void initializeTemporaryWorkbook(final String studyType) {
+	public void initializeTemporaryWorkbook() {
 
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
@@ -778,47 +697,29 @@ public class DesignImportController extends SettingsController {
 		final String endDate = "";
 		final String studyUpdate = "";
 
-		Workbook workbook;
+		final Workbook workbook;
 		final StudyDetails details = new StudyDetails();
 
-		if (StudyType.T.getName().equalsIgnoreCase(studyType)) {
+		final List<SettingDetail> variatesList = new ArrayList<>();
 
-			final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService,
-					name, combinedList, this.userSelection.getPlotsLevelList(),
-					this.userSelection.getBaselineTraitsList(), this.userSelection,
-					this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null,
-					null, this.userSelection.getNurseryConditions(), false, this.contextUtil.getCurrentProgramUUID(), description,
-				startDate, endDate, studyUpdate);
-
-			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false,
-					this.contextUtil.getCurrentProgramUUID());
-
-			details.setStudyType(StudyType.T);
-
-		} else {
-
-			final List<SettingDetail> variatesList = new ArrayList<>();
-
-			if (this.userSelection.getBaselineTraitsList() != null) {
-				variatesList.addAll(this.userSelection.getBaselineTraitsList());
-			}
-
-			if (this.userSelection.getSelectionVariates() != null) {
-				variatesList.addAll(this.userSelection.getSelectionVariates());
-			}
-
-			final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService,
-					name, combinedList, this.userSelection.getPlotsLevelList(), variatesList, this.userSelection,
-					this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null,
-					null, this.userSelection.getNurseryConditions(), true, this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
-
-			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true,
-					this.contextUtil.getCurrentProgramUUID());
-
-			details.setStudyType(StudyType.N);
-
+		if (this.userSelection.getBaselineTraitsList() != null) {
+			variatesList.addAll(this.userSelection.getBaselineTraitsList());
 		}
 
+		if (this.userSelection.getSelectionVariates() != null) {
+			variatesList.addAll(this.userSelection.getSelectionVariates());
+		}
+
+		final Dataset dataset = (Dataset) SettingsUtil
+			.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection.getPlotsLevelList(),
+				variatesList, this.userSelection, this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(),
+				null, null, this.userSelection.getStudyConditions(), this.contextUtil.getCurrentProgramUUID(), description, startDate,
+				endDate, studyUpdate);
+
+		workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID());
+
+		//TODO evaluate if we can get this info from userSelection if needed. By now it is not used anywhere
+//		details.setStudyType(studyDataManager.getStudyTypeByName(studyType));
 		workbook.setStudyDetails(details);
 
 		this.userSelection.setTemporaryWorkbook(workbook);
@@ -835,12 +736,12 @@ public class DesignImportController extends SettingsController {
 		final List<Integer> expDesignTermIds = new ArrayList<>();
 		expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
 
-		if (designTypeItem != null && designTypeItem.getRepNo() > 0) {
+		if (designTypeItem.getRepNo() > 0) {
 			designParam.setReplicationsCount(Integer.toString(designTypeItem.getRepNo()));
 			expDesignTermIds.add(TermId.NUMBER_OF_REPLICATES.getId());
 		}
 
-		if (designTypeItem != null && designTypeItem.getTemplateName() != null) {
+		if (designTypeItem.getTemplateName() != null) {
 			designParam.setFileName(designTypeItem.getTemplateName());
 
 			if (designTypeItem.getName().equals(DesignTypeItem.CUSTOM_IMPORT.getName())) {
@@ -874,45 +775,35 @@ public class DesignImportController extends SettingsController {
 
 	protected void addFactorsIfNecessary(final Workbook workbook, final DesignImportData designImportData) {
 
-		if (workbook.getStudyDetails().getStudyType() == StudyType.T) {
+		final Set<MeasurementVariable> uniqueFactors = new HashSet<>(workbook.getFactors());
+		uniqueFactors.addAll(
+			this.designImportService.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT, designImportData.getMappedHeaders()));
 
-			final Set<MeasurementVariable> uniqueFactors = new HashSet<>(workbook.getFactors());
-			uniqueFactors.addAll(this.designImportService.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT,
-					designImportData.getMappedHeaders()));
-
-			for (final MeasurementVariable mvar : uniqueFactors) {
-				final MeasurementVariable tempMvar = this.getMeasurementVariableInListByTermId(mvar.getTermId(),
-						workbook.getConditions());
-				if (tempMvar != null) {
-					mvar.setOperation(tempMvar.getOperation());
-					mvar.setName(tempMvar.getName());
-				}
+		for (final MeasurementVariable mvar : uniqueFactors) {
+			final MeasurementVariable tempMvar = this.getMeasurementVariableInListByTermId(mvar.getTermId(), workbook.getConditions());
+			if (tempMvar != null) {
+				mvar.setOperation(tempMvar.getOperation());
+				mvar.setName(tempMvar.getName());
 			}
-
-			workbook.getFactors().clear();
-			workbook.getFactors().addAll(new ArrayList<>(uniqueFactors));
-
 		}
 
+		workbook.getFactors().clear();
+		workbook.getFactors().addAll(new ArrayList<>(uniqueFactors));
 	}
 
 	protected void addConditionsIfNecessary(final Workbook workbook, final DesignImportData designImportData) {
 
-		if (workbook.getStudyDetails().getStudyType() == StudyType.N) {
+		final Set<MeasurementVariable> uniqueConditions = new HashSet<>(workbook.getConditions());
 
-			final Set<MeasurementVariable> uniqueConditions = new HashSet<>(workbook.getConditions());
-
-			for (final MeasurementVariable mvar : this.designImportService.extractMeasurementVariable(
-					PhenotypicType.TRIAL_ENVIRONMENT, designImportData.getMappedHeaders())) {
-				if (mvar.getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-					uniqueConditions.add(mvar);
-				}
+		for (final MeasurementVariable mvar : this.designImportService
+			.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT, designImportData.getMappedHeaders())) {
+			if (mvar.getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+				uniqueConditions.add(mvar);
 			}
-
-			workbook.getConditions().clear();
-			workbook.getConditions().addAll(new ArrayList<>(uniqueConditions));
-
 		}
+
+		workbook.getConditions().clear();
+		workbook.getConditions().addAll(new ArrayList<>(uniqueConditions));
 
 	}
 
@@ -948,37 +839,32 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void populateStudyLevelVariableListIfNecessary(final Workbook workbook,
-			final EnvironmentData environmentData, final DesignImportData designImportData) {
-		if (workbook.getStudyDetails().getStudyType() == StudyType.N) {
+	protected void populateStudyLevelVariableListIfNecessary(final Workbook workbook, final EnvironmentData environmentData,
+		final DesignImportData designImportData) {
 
-			final Map<String, String> managementDetailValues = environmentData.getEnvironments().get(0)
-					.getManagementDetailValues();
+		final Map<String, String> managementDetailValues = environmentData.getEnvironments().get(0).getManagementDetailValues();
 
-			final List<SettingDetail> newDetails = new ArrayList<>();
+		final List<SettingDetail> newDetails = new ArrayList<>();
 
-			for (final MeasurementVariable mvar : workbook.getConditions()) {
-				final SettingDetail newDetail = this.createSettingDetail(mvar.getTermId(), mvar.getName(),
-						PhenotypicType.STUDY.name());
-				newDetail.setRole(mvar.getRole());
+		for (final MeasurementVariable mvar : workbook.getConditions()) {
+			final SettingDetail newDetail = this.createSettingDetail(mvar.getTermId(), mvar.getName(), PhenotypicType.STUDY.name());
+			newDetail.setRole(mvar.getRole());
 
-				final String value = managementDetailValues.get(String.valueOf(newDetail.getVariable().getCvTermId()));
-				if (value != null) {
-					newDetail.setValue(value);
-				} else {
-					newDetail.setValue("");
-				}
-
-				newDetail.getVariable().setOperation(mvar.getOperation());
-				newDetails.add(newDetail);
+			final String value = managementDetailValues.get(String.valueOf(newDetail.getVariable().getCvTermId()));
+			if (value != null) {
+				newDetail.setValue(value);
+			} else {
+				newDetail.setValue("");
 			}
 
-			this.resolveIDNamePairingAndValuesForNursery(environmentData, designImportData, newDetails);
-
-			this.userSelection.getStudyLevelConditions().clear();
-			this.userSelection.getStudyLevelConditions().addAll(newDetails);
+			newDetail.getVariable().setOperation(mvar.getOperation());
+			newDetails.add(newDetail);
 		}
 
+		this.resolveIDNamePairingAndValuesForNursery(environmentData, designImportData, newDetails);
+
+		this.userSelection.getStudyLevelConditions().clear();
+		this.userSelection.getStudyLevelConditions().addAll(newDetails);
 	}
 
 	protected void addNewSettingDetailsIfNecessary(final List<SettingDetail> newDetails) {
@@ -1008,7 +894,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void createTrialObservations(final EnvironmentData environmentData, final Workbook workbook,
-			final DesignImportData designImportData) {
+		final DesignImportData designImportData) {
 
 		// get the Experiment Design MeasurementVariable
 		final Set<MeasurementVariable> trialVariables = new HashSet<>(workbook.getTrialFactors());
@@ -1017,24 +903,21 @@ public class DesignImportController extends SettingsController {
 
 		for (final MeasurementVariable trialCondition : workbook.getTrialConditions()) {
 			if (trialCondition.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()
-					|| trialCondition.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
-					|| trialCondition.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
+				|| trialCondition.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
+				|| trialCondition.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
 				trialVariables.add(trialCondition);
 			}
 		}
 
 		this.resolveIDNamePairingAndValuesForTrial(environmentData, designImportData, trialVariables);
 
-		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(
-				environmentData.getEnvironments(), new ArrayList<>(trialVariables),
+		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil
+			.createMeasurementRowsFromEnvironments(environmentData.getEnvironments(), new ArrayList<>(trialVariables),
 				this.userSelection.getExpDesignParams());
 
 		workbook.setTrialObservations(trialEnvironmentValues);
 
-		if (workbook.getStudyDetails().getStudyType() == StudyType.T) {
-			this.fieldbookService.addConditionsToTrialObservationsIfNecessary(workbook);
-		}
-
+		this.fieldbookService.addConditionsToTrialObservationsIfNecessary(workbook);
 	}
 
 	protected Map<String, Object> generateDatatableDataMap(final MeasurementRow row, final String suffix) {
@@ -1113,9 +996,7 @@ public class DesignImportController extends SettingsController {
 
 		for (final Environment environment : environmentData.getEnvironments()) {
 
-			final Map<String, String> copyOfManagementDetailValues = new HashMap<>();
-			copyOfManagementDetailValues.putAll(environment.getManagementDetailValues());
-
+			final Map<String, String> copyOfManagementDetailValues = new HashMap<>(environment.getManagementDetailValues());
 			for (final Entry<String, String> managementDetail : environment.getManagementDetailValues().entrySet()) {
 
 				final Integer resolvingTermIdKey = Integer.valueOf(managementDetail.getKey());
@@ -1156,7 +1037,7 @@ public class DesignImportController extends SettingsController {
 
 					trialVariables.add(measurementVariable);
 
-					copyOfManagementDetailValues.remove(resolvingTermIdKey);
+					copyOfManagementDetailValues.remove(resolvingTermIdKey.toString());
 
 					SettingsUtil.hideVariableInSession(this.userSelection.getTrialLevelVariableList(),
 							resolvingTermIdKey);
@@ -1189,7 +1070,7 @@ public class DesignImportController extends SettingsController {
 
 						trialVariables.add(measurementVariable);
 
-						copyOfManagementDetailValues.remove(resolvingTermIdKey);
+						copyOfManagementDetailValues.remove(resolvingTermIdKey.toString());
 
 						SettingsUtil.hideVariableInSession(this.userSelection.getTrialLevelVariableList(),
 								resolvingTermIdKey);
@@ -1230,7 +1111,7 @@ public class DesignImportController extends SettingsController {
 	String resolveLocalNameOfTheTrialEnvironmentVariable(final int termId,
 			final List<SettingDetail> trialLevelVariableList, final DesignImportData designImportData) {
 
-		String variableLocalName = this.getLocalNameFromSettingDetails(termId, trialLevelVariableList);
+		String variableLocalName = this.getVariableNameFromSettingDetails(termId, trialLevelVariableList);
 
 		if ("".equals(variableLocalName)) {
 
@@ -1265,7 +1146,7 @@ public class DesignImportController extends SettingsController {
 		// Get the standard variable name from the Ontology if the term is not available from both trialLevelVariableList
 		// and mapped header of Design Import Data
 		if ("".equals(standardVariableName)) {
-			Term term = this.ontologyDataManager.getTermById(termId);
+			final Term term = this.ontologyDataManager.getTermById(termId);
 			return term != null ? term.getName() : "";
 		}
 
@@ -1277,7 +1158,7 @@ public class DesignImportController extends SettingsController {
 	 * If a variable(s) is expected to have a pair ID variable (e.g.
 	 * LOCATION_NAME has LOCATION_NAME_ID pair), the pair ID should be created
 	 * and added to setting details list in order for the system to properly
-	 * save the Trial.
+	 * save the study.
 	 *
 	 * @param environmentData
 	 * @param designImportData
@@ -1291,9 +1172,7 @@ public class DesignImportController extends SettingsController {
 
 		final Environment environment = environmentData.getEnvironments().get(0);
 
-		final Map<String, String> copyOfManagementDetailValues = new HashMap<>();
-		copyOfManagementDetailValues.putAll(environment.getManagementDetailValues());
-
+		final Map<String, String> copyOfManagementDetailValues = new HashMap<>(environment.getManagementDetailValues());
 		for (final Entry<String, String> managementDetail : environment.getManagementDetailValues().entrySet()) {
 
 			final Integer resolvingTermIdKey = Integer.valueOf(managementDetail.getKey());
@@ -1326,7 +1205,7 @@ public class DesignImportController extends SettingsController {
 
 					this.addSettingOrUpdateDetailToTargetListIfNecessary(settingDetail, newDetails);
 
-					copyOfManagementDetailValues.remove(resolvingTermIdKey);
+					copyOfManagementDetailValues.remove(resolvingTermIdKey.toString());
 
 				}
 			}
@@ -1349,7 +1228,7 @@ public class DesignImportController extends SettingsController {
 
 					this.addSettingOrUpdateDetailToTargetListIfNecessary(settingDetail, newDetails);
 
-					copyOfManagementDetailValues.remove(resolvingTermIdKey);
+					copyOfManagementDetailValues.remove(resolvingTermIdKey.toString());
 
 				}
 
@@ -1447,21 +1326,6 @@ public class DesignImportController extends SettingsController {
 		}
 	}
 
-	// FIXME: getLocalNameFromSettingDetails and
-	// getVariableNameFromSettingDetails have same code. Review and modify
-	// appropriately.
-	protected String getLocalNameFromSettingDetails(final int termId, final List<SettingDetail> settingDetails) {
-		for (final SettingDetail detail : settingDetails) {
-			if (detail.getVariable().getCvTermId().intValue() == termId) {
-				return detail.getVariable().getName();
-			}
-		}
-		return "";
-	}
-
-	// FIXME: getLocalNameFromSettingDetails and
-	// getVariableNameFromSettingDetails have same code. Review and modify
-	// appropriately.
 	protected String getVariableNameFromSettingDetails(final int termId, final List<SettingDetail> settingDetails) {
 		for (final SettingDetail detail : settingDetails) {
 			if (detail.getVariable().getCvTermId().intValue() == termId) {
@@ -1474,7 +1338,7 @@ public class DesignImportController extends SettingsController {
 	protected MeasurementVariable createMeasurementVariableFromStandardVariable(final String localName,
 			final int termId, final PhenotypicType phenotypicType) {
 
-		MeasurementVariable measurementVariable = null;
+		final MeasurementVariable measurementVariable;
 
 		final StandardVariable var = this.ontologyDataManager.getStandardVariable(termId,
 				this.getCurrentProject().getUniqueID());
@@ -1554,7 +1418,7 @@ public class DesignImportController extends SettingsController {
 			// Extract first the termIds of the check variables
 			final StringTokenizer tokenizer = new StringTokenizer(AppConstants.CHECK_VARIABLES.getString(), ",");
 			while (tokenizer.hasMoreTokens()) {
-				checkTermIds.add(Integer.valueOf(tokenizer.nextToken()).intValue());
+				checkTermIds.add(Integer.parseInt(tokenizer.nextToken()));
 			}
 
 			for (final MeasurementVariable var : conditions) {

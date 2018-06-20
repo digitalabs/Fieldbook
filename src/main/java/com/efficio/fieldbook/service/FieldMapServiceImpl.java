@@ -11,20 +11,19 @@
 
 package com.efficio.fieldbook.service;
 
-import java.util.List;
-import java.util.Map;
-
+import com.efficio.fieldbook.service.api.FieldMapService;
+import com.efficio.fieldbook.util.FieldMapUtilityHelper;
+import com.efficio.fieldbook.web.fieldmap.bean.Plot;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.efficio.fieldbook.service.api.FieldMapService;
-import com.efficio.fieldbook.util.FieldMapUtilityHelper;
-import com.efficio.fieldbook.web.fieldmap.bean.Plot;
-import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
-import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class FieldMapServiceImpl.
@@ -45,7 +44,7 @@ public class FieldMapServiceImpl implements FieldMapService {
 		startCol--;
 		// for testing only
 		Plot[][] plots =
-				plotLayouIterator.createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, fieldMapLabels, true, null);
+			plotLayouIterator.createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, fieldMapLabels, null);
 		return plots;
 	}
 
@@ -84,7 +83,7 @@ public class FieldMapServiceImpl implements FieldMapService {
 					plot.setGeolocationId(label.getGeolocationId());
 					if (isSerpentine && column % 2 == 0) {
 					}
-					plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label, info.isTrial()));
+					plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label));
 					plot.setNotStarted(false);
 					plot.setSavedAlready(isSavedAlready);
 				} else {

@@ -6,11 +6,11 @@
 
 	<!-- case 1: no data means no table -->
 	 <div th:if="*{germplasmList == null or #lists.isEmpty(germplasmList)}">
-	   <span class="noGermplasmListIndicator" th:text="#{nursery.import.no.germplasm.list}">No Germplasm list</span>
+	   <span class="noGermplasmListIndicator" th:text="#{study.import.no.germplasm.list}">No Germplasm list</span>
 	 </div>
 
 	 <!-- case 2: advanced view of the importedGermplasm -->
-	 <div  class="advance-nursery-list-table" th:if="*{germplasmList != null and not #lists.isEmpty(germplasmList)}">
+	 <div  class="advance-study-list-table" th:if="*{germplasmList != null and not #lists.isEmpty(germplasmList)}">
 		 <table id="inventory-table" th:if="*{not #lists.isEmpty(germplasmList)}" width="100%"
 		 class="table-curved table-condensed final-advance-list">
 		   <thead>
@@ -78,7 +78,7 @@ var ListPage = {
 
 		var sectionContainerDiv = 'advance-list' + listDivIdentifier;
 
-		truncateStudyVariableNames('#' + sectionContainerDiv + ' .advance-nursery-list-table .advance-list-comment', 30);
+		truncateStudyVariableNames('#' + sectionContainerDiv + ' .advance-study-list-table .advance-list-comment', 30);
 
 		new BMS.Fieldbook.FinalAdvancedGermplasmListDataTable('#' + sectionContainerDiv + ' .final-advance-list', '#' + sectionContainerDiv, null, true);
 		$('#' + sectionContainerDiv + ' .main-inventory').css('opacity', 1);

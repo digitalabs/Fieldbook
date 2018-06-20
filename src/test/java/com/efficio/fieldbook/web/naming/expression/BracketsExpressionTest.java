@@ -8,7 +8,7 @@ import org.generationcp.middleware.manager.GermplasmNameType;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 
 public class BracketsExpressionTest extends TestExpression {
 

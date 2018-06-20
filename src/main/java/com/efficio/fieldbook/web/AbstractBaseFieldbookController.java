@@ -39,6 +39,8 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
  */
 public abstract class AbstractBaseFieldbookController {
 
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseFieldbookController.class);
+
 	public static final String BASE_TEMPLATE_NAME = "/template/base-template";
 	public static final String ANGULAR_BASE_TEMPLATE_NAME = "/template/ng-base-template";
 	public static final String ERROR_TEMPLATE_NAME = "/template/error-template";
@@ -52,8 +54,6 @@ public abstract class AbstractBaseFieldbookController {
 
 	@Resource
 	protected FieldbookProperties fieldbookProperties;
-
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseFieldbookController.class);
 
 	private static Tool oldFbTool = null;
 
@@ -111,26 +111,6 @@ public abstract class AbstractBaseFieldbookController {
 			return AbstractBaseFieldbookController.oldFbTool.getPath();
 		}
 		return "";
-	}
-
-	public Tool getNurseryTool() {
-		Tool tool = null;
-		try {
-			tool = this.workbenchService.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB.getString());
-		} catch (final MiddlewareQueryException e) {
-			AbstractBaseFieldbookController.LOG.error(e.getMessage(), e);
-		}
-		return tool;
-	}
-
-	public Tool getTrialTool() {
-		Tool tool = null;
-		try {
-			tool = this.workbenchService.getToolWithName(AppConstants.TOOL_NAME_TRIAL_MANAGER_WEB.getString());
-		} catch (final MiddlewareQueryException e) {
-			AbstractBaseFieldbookController.LOG.error(e.getMessage(), e);
-		}
-		return tool;
 	}
 
 	/**
@@ -206,7 +186,7 @@ public abstract class AbstractBaseFieldbookController {
 		this.paginationListSelection = paginationListSelection;
 	}
 
-	public void setContextUtil(ContextUtil contextUtil) {
+	public void setContextUtil(final ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
 	}
 
@@ -233,7 +213,7 @@ public abstract class AbstractBaseFieldbookController {
 		}
 	}
 
-	public void setVariableDataManager(OntologyVariableDataManager variableDataManager) {
+	public void setVariableDataManager(final OntologyVariableDataManager variableDataManager) {
 		this.variableDataManager = variableDataManager;
 	}
 

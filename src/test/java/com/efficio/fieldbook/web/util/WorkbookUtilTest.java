@@ -18,11 +18,11 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Property;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -39,20 +39,20 @@ public class WorkbookUtilTest {
 
 	@Test
 	public void testUpdateTrialObservations() {
-		final Workbook currentWorkbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
+		final Workbook currentWorkbook = WorkbookDataUtil.getTestWorkbookForStudy(10, 3);
 
-		final Workbook temporaryWorkbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 2);
+		final Workbook temporaryWorkbook = WorkbookDataUtil.getTestWorkbookForStudy(10, 2);
 
 		WorkbookUtil.updateTrialObservations(currentWorkbook, temporaryWorkbook);
 
 		Assert.assertEquals(
-				"Expecting that the trial observations of temporary workbook is copied to current workbook. ",
+				"Expecting that the study observations of temporary workbook is copied to current workbook. ",
 				currentWorkbook.getTrialObservations(), temporaryWorkbook.getTrialObservations());
 	}
 
 	@Test
 	public void testResetObservationToDefaultDesign() {
-		final Workbook nursery = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final Workbook nursery = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
 		final List<MeasurementRow> observations = nursery.getObservations();
 
 		DesignImportTestDataInitializer.updatePlotNoValue(observations);

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,8 +22,8 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
@@ -173,7 +172,7 @@ public class FileUploadControllerTest {
 	@Test
 	public void testStartProcessSuccessful() throws WorkbookParserException {
 
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1,
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyTypeDto.getTrialDto(), "Sample Study", 1,
 				false);
 
 		Mockito.when(this.dataImportService.parseWorkbook(Matchers.any(File.class), Matchers.anyString(),
@@ -198,7 +197,7 @@ public class FileUploadControllerTest {
 	public void testStartProcessParserException() throws WorkbookParserException {
 
 		final String errorMessage = "sample message";
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1,
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyTypeDto.getTrialDto(), "Sample Study", 1,
 				false);
 
 		Mockito.when(this.dataImportService.parseWorkbook(Matchers.any(File.class), Matchers.anyString(),
@@ -232,7 +231,7 @@ public class FileUploadControllerTest {
 	@Test
 	public void testStartProcessParserIOException() throws WorkbookParserException, IOException {
 
-		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyType.T, "Sample Study", 1,
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, StudyTypeDto.getTrialDto(), "Sample Study", 1,
 				false);
 
 		Mockito.when(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection)).thenThrow(new IOException());

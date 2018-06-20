@@ -12,7 +12,6 @@ import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.exceptions.PhenotypeException;
-import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
@@ -176,7 +175,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 							this.contextUtil.getCurrentIbdbUserId());
 			importData.setConstants(referenceWorkbook.getConstants());
 			importData.setConditions(referenceWorkbook.getConditions());
-			this.dataImportService.addLocationIDVariableInFactorsIfNotExists(importData, programUUID);
+			this.dataImportService.addLocationIDVariableIfNotExists(importData, importData.getFactors(), programUUID);
 			this.dataImportService.assignLocationIdVariableToEnvironmentDetailSection(importData);
 			this.dataImportService.removeLocationNameVariableIfExists(importData);
 			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getConditions(), programUUID);

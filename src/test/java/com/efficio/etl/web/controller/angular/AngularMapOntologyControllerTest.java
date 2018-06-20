@@ -175,7 +175,7 @@ public class AngularMapOntologyControllerTest {
 
 		Mockito.verify(this.userSelection).clearMeasurementVariables();
 		Mockito.verify(this.etlService).mergeVariableData(variables, apacheWorkbook, this.userSelection);
-		Mockito.verify(this.dataImportService).addLocationIDVariableInFactorsIfNotExists(workbook, PROGRAM_UUID);
+		Mockito.verify(this.dataImportService).addLocationIDVariableIfNotExists(workbook, workbook.getFactors(), PROGRAM_UUID);
 		Mockito.verify(this.dataImportService).assignLocationIdVariableToEnvironmentDetailSection(workbook);
 		Mockito.verify(this.dataImportService).removeLocationNameVariableIfExists(workbook);
 		Mockito.verify(this.fieldbookService).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, false);

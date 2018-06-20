@@ -940,21 +940,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 			// no adding, just setting of data
 			if (!workbook.getTrialObservations().isEmpty() && workbook.getTrialConditions() != null
 					&& !workbook.getTrialConditions().isEmpty()) {
-				final MeasurementVariable locationNameVar = WorkbookUtil
-						.getMeasurementVariable(workbook.getTrialConditions(), TermId.TRIAL_LOCATION.getId());
 				final MeasurementVariable cooperatorNameVar = WorkbookUtil
 						.getMeasurementVariable(workbook.getTrialConditions(), AppConstants.COOPERATOR_NAME.getInt());
-				if (locationNameVar != null) {
-					// we set it to the trial observation level
-
-					for (final MeasurementRow row : workbook.getTrialObservations()) {
-						final MeasurementData data = row.getMeasurementData(locationNameVar.getTermId());
-						if (data != null) {
-							data.setValue(locationNameVar.getValue());
-						}
-					}
-
-				}
 
 				if (cooperatorNameVar != null) {
 					// we set it to the trial observation level
@@ -974,11 +961,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 	public String resolveNameVarValue(final MeasurementVariable tempVarId) {
 		String actualNameVal = "";
 		if (tempVarId.getValue() != null && !"".equalsIgnoreCase(tempVarId.getValue())) {
-			if (TermId.LOCATION_ID.getId() == tempVarId.getTermId()) {
-				final Location loc = this.fieldbookMiddlewareService
-						.getLocationById(Integer.valueOf(tempVarId.getValue()));
-				return this.getDisplayName(loc);
-			}
 
 			final List<ValueReference> possibleValues = this.getAllPossibleValues(tempVarId.getTermId(), true);
 

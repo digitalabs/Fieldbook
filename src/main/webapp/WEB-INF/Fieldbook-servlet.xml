@@ -517,15 +517,9 @@
 	</bean>
 	
 	<bean id="seedSourceGenerator" class="org.generationcp.commons.service.impl.SeedSourceGenerator">
-		<constructor-arg name="germplasmNamingProperties" ref="germplasmNamingProperties"/>
-		<constructor-arg name="contextUtil" ref="contextUtil"/>
-		<constructor-arg name="ontologyVariableDataManager" ref="ontologyVariableManager"/>
 	</bean>
 
     <bean id="breedersCrossIDGenerator" class="org.generationcp.commons.service.impl.BreedersCrossIDGenerator">
-		<constructor-arg name="germplasmNamingProperties" ref="germplasmNamingProperties"/>
-		<constructor-arg name="contextUtil" ref="contextUtil"/>
-		<constructor-arg name="ontologyVariableDataManager" ref="ontologyVariableManager"/>
 	</bean>
 	
 	<bean id="jasperReportService" class="org.generationcp.commons.reports.service.impl.JasperReportServiceImpl"

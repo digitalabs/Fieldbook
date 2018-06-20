@@ -42,6 +42,7 @@ public class AdvancingSource {
 	private boolean isCheck;
 	private boolean isBulk;
 	private String studyName;
+	private Integer studyId;
 	private String season;
 	private String locationAbbreviation;
 	private String rootName;
@@ -191,6 +192,14 @@ public class AdvancingSource {
 	 */
 	public void setStudyName(final String studyName) {
 		this.studyName = studyName;
+	}
+
+	public Integer getStudyId() {
+		return studyId;
+	}
+
+	public void setStudyId(final Integer studyId) {
+		this.studyId = studyId;
 	}
 
 	/**

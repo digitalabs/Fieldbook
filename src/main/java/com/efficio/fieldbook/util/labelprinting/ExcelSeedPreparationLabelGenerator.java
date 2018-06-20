@@ -1,7 +1,9 @@
 package com.efficio.fieldbook.util.labelprinting;
 
 import java.io.FileOutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -14,6 +16,8 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.WorkbookUtil;
+import org.generationcp.middleware.domain.inventory.GermplasmInventory;
+import org.generationcp.middleware.domain.inventory.ListEntryLotDetails;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,20 +105,26 @@ class ExcelSeedPreparationLabelGenerator implements SeedPreparationLabelGenerato
 
 			// we populate the info now
 			// Values in the columns
-			// TODO leave this specific logic in class and remove the rest to the utility class
+			Map<Integer, Boolean> printedGermplasmListDataMap = new HashMap<>();
 			for (final GermplasmListData germplasmListData : germplasmListDataList){
-
-
-				// excel row
-				row = labelPrintingSheet.createRow(rowIndex++);
-				columnIndex = 0;
-
-				for (final Integer selectedFieldId : selectedFieldIDs) {
-					// excel cell setting the value
-					final Cell summaryCell = row.createCell(columnIndex++);
-					summaryCell.setCellValue(this.labelPrintingUtil.getSelectedFieldValue(selectedFieldId, germplasmListData,
-							userLabelPrinting));
+				if(printedGermplasmListDataMap.get(germplasmListData.getGid()) != null) continue;
+				
+				@SuppressWarnings("unchecked")
+				final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData.getInventoryInfo().getLotRows();
+				for(ListEntryLotDetails lotRow: lotRows) {
+					if(!lotRow.getWithdrawalStatus().equalsIgnoreCase(GermplasmInventory.RESERVED)) continue;
+					// excel row
+					row = labelPrintingSheet.createRow(rowIndex++);
+					columnIndex = 0;
+	
+					for (final Integer selectedFieldId : selectedFieldIDs) {
+						// excel cell setting the value
+						final Cell summaryCell = row.createCell(columnIndex++);
+						summaryCell.setCellValue(this.labelPrintingUtil.getSelectedFieldValue(selectedFieldId, germplasmListData,
+								userLabelPrinting, lotRow));
+					}
 				}
+				printedGermplasmListDataMap.put(germplasmListData.getGid(), true);
 			}
 
 			for (int columnPosition = 0; columnPosition < columnIndex; columnPosition++) {

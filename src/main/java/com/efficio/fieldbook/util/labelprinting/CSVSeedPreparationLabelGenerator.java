@@ -2,6 +2,7 @@ package com.efficio.fieldbook.util.labelprinting;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,8 @@ import javax.annotation.Resource;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.GermplasmExportService;
+import org.generationcp.middleware.domain.inventory.GermplasmInventory;
+import org.generationcp.middleware.domain.inventory.ListEntryLotDetails;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,15 +56,23 @@ public class CSVSeedPreparationLabelGenerator implements SeedPreparationLabelGen
 		final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
 
 		// Values in the columns
+		Map<Integer, Boolean> printedGermplasmListDataMap = new HashMap<>();
 		for (final GermplasmListData germplasmListData : germplasmListDataList){
-			final Map<Integer, ExportColumnValue> exportColumnValueMap = Maps.newHashMap();
-
-			for (final Integer selectedFieldId : selectedFieldIDs) {
-				exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, this.labelPrintingUtil
-						.getSelectedFieldValue(selectedFieldId, germplasmListData, userLabelPrinting)));
+			if(printedGermplasmListDataMap.get(germplasmListData.getGid()) != null) continue;
+			
+			@SuppressWarnings("unchecked")
+			final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData.getInventoryInfo().getLotRows();
+			for(ListEntryLotDetails lotRow: lotRows) {
+				if(!lotRow.getWithdrawalStatus().equalsIgnoreCase(GermplasmInventory.RESERVED)) continue;
+				final Map<Integer, ExportColumnValue> exportColumnValueMap = Maps.newHashMap();
+	
+				for (final Integer selectedFieldId : selectedFieldIDs) {
+					exportColumnValueMap.put(selectedFieldId, new ExportColumnValue(selectedFieldId, this.labelPrintingUtil
+							.getSelectedFieldValue(selectedFieldId, germplasmListData, userLabelPrinting, lotRow)));
+				}
+				exportColumnValues.add(exportColumnValueMap);
 			}
-
-			exportColumnValues.add(exportColumnValueMap);
+			printedGermplasmListDataMap.put(germplasmListData.getGid(), true);
 		}
 
 		try {

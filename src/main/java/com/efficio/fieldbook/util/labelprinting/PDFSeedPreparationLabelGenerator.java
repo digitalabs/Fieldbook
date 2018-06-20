@@ -4,10 +4,14 @@ import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.inventory.GermplasmInventory;
+import org.generationcp.middleware.domain.inventory.ListEntryLotDetails;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,134 +72,141 @@ class PDFSeedPreparationLabelGenerator implements SeedPreparationLabelGenerator 
 
 			final List<File> filesToBeDeleted = new ArrayList<File>();
 			final float cellHeight = paper.getCellHeight();
-
+			
+			Map<Integer, Boolean> printedGermplasmListDataMap = new HashMap<>();
 			for (final GermplasmListData germplasmListData : germplasmListDataList) {
-
-				i++;
-				String barcodeLabelForCode = " ";
-				String barcodeLabel = " ";
-
-				if (LabelPrintingServiceImpl.BARCODE_NEEDED.equalsIgnoreCase(barcodeNeeded)) {
-					barcodeLabel = this.labelPrintingUtil.getBarcodeString(germplasmListData, userLabelPrinting);
-					barcodeLabelForCode = this.labelPrintingUtil.getBarcodeString(germplasmListData, userLabelPrinting, true);
-				}
-
-				barcodeLabelForCode = this.labelPrintingPDFUtil.truncateBarcodeLabelForCode(barcodeLabelForCode);
-
-				final Image mainImage = this.labelPrintingPDFUtil.getBarcodeImage(filesToBeDeleted, barcodeLabelForCode);
-
-				final PdfPCell cell = new PdfPCell();
-				cell.setFixedHeight(cellHeight);
-				cell.setNoWrap(false);
-				cell.setPadding(5f);
-				cell.setPaddingBottom(1f);
-
-				final PdfPTable innerImageTableInfo = new PdfPTable(1);
-				innerImageTableInfo.setWidths(new float[] {1});
-				innerImageTableInfo.setWidthPercentage(82);
-				final PdfPCell cellImage = new PdfPCell();
-				if (LabelPrintingServiceImpl.BARCODE_NEEDED.equalsIgnoreCase(barcodeNeeded)) {
-					cellImage.addElement(mainImage);
-				} else {
-					cellImage.addElement(new Paragraph(" "));
-				}
-				cellImage.setBorder(Rectangle.NO_BORDER);
-				cellImage.setBackgroundColor(Color.white);
-				cellImage.setPadding(1.5f);
-
-				innerImageTableInfo.addCell(cellImage);
-
-				final float fontSize = paper.getFontSize();
-
-				final BaseFont unicode = BaseFont.createFont(LabelPrintingPDFUtil.ARIAL_UNI, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-				final com.lowagie.text.Font fontNormal = new com.lowagie.text.Font(unicode, fontSize);
-				fontNormal.setStyle(com.lowagie.text.Font.NORMAL);
-
-				cell.addElement(innerImageTableInfo);
-				cell.addElement(new Paragraph());
-				for (int row = 0; row < 5; row++) {
-					if (row == 0) {
-						final PdfPTable innerDataTableInfo = new PdfPTable(1);
-						innerDataTableInfo.setWidths(new float[] {1});
-						innerDataTableInfo.setWidthPercentage(85);
-
-						final com.lowagie.text.Font fontNormalData = new com.lowagie.text.Font(unicode, 5.0f);
-						fontNormal.setStyle(com.lowagie.text.Font.NORMAL);
-
-						final PdfPCell cellInnerData = new PdfPCell(new Phrase(barcodeLabel, fontNormalData));
-
-						cellInnerData.setBorder(Rectangle.NO_BORDER);
-						cellInnerData.setBackgroundColor(Color.white);
-						cellInnerData.setPaddingBottom(0.2f);
-						cellInnerData.setPaddingTop(0.2f);
-						cellInnerData.setHorizontalAlignment(Element.ALIGN_MIDDLE);
-
-						innerDataTableInfo.addCell(cellInnerData);
-						innerDataTableInfo.setHorizontalAlignment(Element.ALIGN_MIDDLE);
-						cell.addElement(innerDataTableInfo);
+				if(printedGermplasmListDataMap.get(germplasmListData.getGid()) != null) continue;
+				@SuppressWarnings("unchecked")
+				final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData.getInventoryInfo().getLotRows();
+				for(ListEntryLotDetails lotRow: lotRows) {
+					if(!lotRow.getWithdrawalStatus().equalsIgnoreCase(GermplasmInventory.RESERVED)) continue;
+					i++;
+					String barcodeLabelForCode = " ";
+					String barcodeLabel = " ";
+	
+					if (LabelPrintingServiceImpl.BARCODE_NEEDED.equalsIgnoreCase(barcodeNeeded)) {
+						barcodeLabel = this.labelPrintingUtil.getBarcodeStringForSeedPrep(germplasmListData, userLabelPrinting, false, lotRow);
+						barcodeLabelForCode = this.labelPrintingUtil.getBarcodeStringForSeedPrep(germplasmListData, userLabelPrinting, true, lotRow);
 					}
-					final PdfPTable innerTableInfo = new PdfPTable(2);
-					innerTableInfo.setWidths(new float[] {1, 1});
-					innerTableInfo.setWidthPercentage(85);
-					final List<Integer> leftSelectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(leftSelectedFields);
-					final String leftText = this.generateBarcodeLabel(leftSelectedFieldIDs, row, germplasmListData, userLabelPrinting);
-					final PdfPCell cellInnerLeft = new PdfPCell(new Paragraph(leftText, fontNormal));
-
-					cellInnerLeft.setBorder(Rectangle.NO_BORDER);
-					cellInnerLeft.setBackgroundColor(Color.white);
-					cellInnerLeft.setPaddingBottom(0.5f);
-					cellInnerLeft.setPaddingTop(0.5f);
-
-					innerTableInfo.addCell(cellInnerLeft);
-
-					final List<Integer> rightSelectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(rightSelectedFields);
-					final String rightText = this.generateBarcodeLabel(rightSelectedFieldIDs, row, germplasmListData, userLabelPrinting);
-					final PdfPCell cellInnerRight = new PdfPCell(new Paragraph(rightText, fontNormal));
-
-					cellInnerRight.setBorder(Rectangle.NO_BORDER);
-					cellInnerRight.setBackgroundColor(Color.white);
-					cellInnerRight.setPaddingBottom(0.5f);
-					cellInnerRight.setPaddingTop(0.5f);
-
-					innerTableInfo.addCell(cellInnerRight);
-
-					cell.addElement(innerTableInfo);
-				}
-
-				cell.setBorder(Rectangle.NO_BORDER);
-				cell.setBackgroundColor(Color.white);
-
-				table.addCell(cell);
-
-				if (i % numberOfLabelPerRow == 0) {
-					// we go the next line
-					final int needed = fixTableRowSize - numberOfLabelPerRow;
-
-					for (int neededCount = 0; neededCount < needed; neededCount++) {
-						final PdfPCell cellNeeded = new PdfPCell();
-
-						cellNeeded.setBorder(Rectangle.NO_BORDER);
-						cellNeeded.setBackgroundColor(Color.white);
-
-						table.addCell(cellNeeded);
+	
+					barcodeLabelForCode = this.labelPrintingPDFUtil.truncateBarcodeLabelForCode(barcodeLabelForCode);
+	
+					final Image mainImage = this.labelPrintingPDFUtil.getBarcodeImage(filesToBeDeleted, barcodeLabelForCode);
+	
+					final PdfPCell cell = new PdfPCell();
+					cell.setFixedHeight(cellHeight);
+					cell.setNoWrap(false);
+					cell.setPadding(5f);
+					cell.setPaddingBottom(1f);
+	
+					final PdfPTable innerImageTableInfo = new PdfPTable(1);
+					innerImageTableInfo.setWidths(new float[] {1});
+					innerImageTableInfo.setWidthPercentage(82);
+					final PdfPCell cellImage = new PdfPCell();
+					if (LabelPrintingServiceImpl.BARCODE_NEEDED.equalsIgnoreCase(barcodeNeeded)) {
+						cellImage.addElement(mainImage);
+					} else {
+						cellImage.addElement(new Paragraph(" "));
 					}
-
-					table.completeRow();
-					if (numberOfRowsPerPageOfLabel == 10) {
-						table.setSpacingAfter(paper.getSpacingAfter());
+					cellImage.setBorder(Rectangle.NO_BORDER);
+					cellImage.setBackgroundColor(Color.white);
+					cellImage.setPadding(1.5f);
+	
+					innerImageTableInfo.addCell(cellImage);
+	
+					final float fontSize = paper.getFontSize();
+	
+					final BaseFont unicode = BaseFont.createFont(LabelPrintingPDFUtil.ARIAL_UNI, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+					final com.lowagie.text.Font fontNormal = new com.lowagie.text.Font(unicode, fontSize);
+					fontNormal.setStyle(com.lowagie.text.Font.NORMAL);
+	
+					cell.addElement(innerImageTableInfo);
+					cell.addElement(new Paragraph());
+					for (int row = 0; row < 5; row++) {
+						if (row == 0) {
+							final PdfPTable innerDataTableInfo = new PdfPTable(1);
+							innerDataTableInfo.setWidths(new float[] {1});
+							innerDataTableInfo.setWidthPercentage(85);
+	
+							final com.lowagie.text.Font fontNormalData = new com.lowagie.text.Font(unicode, 5.0f);
+							fontNormal.setStyle(com.lowagie.text.Font.NORMAL);
+	
+							final PdfPCell cellInnerData = new PdfPCell(new Phrase(barcodeLabel, fontNormalData));
+	
+							cellInnerData.setBorder(Rectangle.NO_BORDER);
+							cellInnerData.setBackgroundColor(Color.white);
+							cellInnerData.setPaddingBottom(0.2f);
+							cellInnerData.setPaddingTop(0.2f);
+							cellInnerData.setHorizontalAlignment(Element.ALIGN_MIDDLE);
+	
+							innerDataTableInfo.addCell(cellInnerData);
+							innerDataTableInfo.setHorizontalAlignment(Element.ALIGN_MIDDLE);
+							cell.addElement(innerDataTableInfo);
+						}
+						final PdfPTable innerTableInfo = new PdfPTable(2);
+						innerTableInfo.setWidths(new float[] {1, 1});
+						innerTableInfo.setWidthPercentage(85);
+						final List<Integer> leftSelectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(leftSelectedFields);
+						final String leftText = this.generateBarcodeLabel(leftSelectedFieldIDs, row, germplasmListData, userLabelPrinting, lotRow);
+						final PdfPCell cellInnerLeft = new PdfPCell(new Paragraph(leftText, fontNormal));
+	
+						cellInnerLeft.setBorder(Rectangle.NO_BORDER);
+						cellInnerLeft.setBackgroundColor(Color.white);
+						cellInnerLeft.setPaddingBottom(0.5f);
+						cellInnerLeft.setPaddingTop(0.5f);
+	
+						innerTableInfo.addCell(cellInnerLeft);
+	
+						final List<Integer> rightSelectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(rightSelectedFields);
+						final String rightText = this.generateBarcodeLabel(rightSelectedFieldIDs, row, germplasmListData, userLabelPrinting, lotRow);
+						final PdfPCell cellInnerRight = new PdfPCell(new Paragraph(rightText, fontNormal));
+	
+						cellInnerRight.setBorder(Rectangle.NO_BORDER);
+						cellInnerRight.setBackgroundColor(Color.white);
+						cellInnerRight.setPaddingBottom(0.5f);
+						cellInnerRight.setPaddingTop(0.5f);
+	
+						innerTableInfo.addCell(cellInnerRight);
+	
+						cell.addElement(innerTableInfo);
 					}
-
-					document.add(table);
-
-					table = new PdfPTable(fixTableRowSize);
-					table.setWidths(widthColumns);
-					table.setWidthPercentage(100);
-
-				}
-
-				if (i % totalPerPage == 0) {
-					// we go the next page
-					document.newPage();
+	
+					cell.setBorder(Rectangle.NO_BORDER);
+					cell.setBackgroundColor(Color.white);
+	
+					table.addCell(cell);
+	
+					if (i % numberOfLabelPerRow == 0) {
+						// we go the next line
+						final int needed = fixTableRowSize - numberOfLabelPerRow;
+	
+						for (int neededCount = 0; neededCount < needed; neededCount++) {
+							final PdfPCell cellNeeded = new PdfPCell();
+	
+							cellNeeded.setBorder(Rectangle.NO_BORDER);
+							cellNeeded.setBackgroundColor(Color.white);
+	
+							table.addCell(cellNeeded);
+						}
+	
+						table.completeRow();
+						if (numberOfRowsPerPageOfLabel == 10) {
+							table.setSpacingAfter(paper.getSpacingAfter());
+						}
+	
+						document.add(table);
+	
+						table = new PdfPTable(fixTableRowSize);
+						table.setWidths(widthColumns);
+						table.setWidthPercentage(100);
+	
+					}
+	
+					if (i % totalPerPage == 0) {
+						// we go the next page
+						document.newPage();
+					}
+					printedGermplasmListDataMap.put(germplasmListData.getGid(), true);
 				}
 			}
 			// we need to add the last row
@@ -218,13 +229,13 @@ class PDFSeedPreparationLabelGenerator implements SeedPreparationLabelGenerator 
 		return fileName;
 	}
 
-	private String generateBarcodeLabel(final List<Integer> selectedFieldIDs, final int rowNumber, final GermplasmListData
-			germplasmListData, final UserLabelPrinting userLabelPrinting) {
+	String generateBarcodeLabel(final List<Integer> selectedFieldIDs, final int rowNumber, final GermplasmListData
+			germplasmListData, final UserLabelPrinting userLabelPrinting, ListEntryLotDetails lotRow) {
 		int i = 0;
 
 		for (final Integer selectedFieldID : selectedFieldIDs) {
 			if (i == rowNumber) {
-				return this.labelPrintingUtil.getSelectedFieldValue(selectedFieldID, germplasmListData, userLabelPrinting, true);
+				return this.labelPrintingUtil.getSelectedFieldValue(selectedFieldID, germplasmListData, userLabelPrinting, lotRow, true);
 			}
 			i++;
 		}

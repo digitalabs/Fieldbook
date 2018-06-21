@@ -39,9 +39,9 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
-import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.ToolName;
+import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -118,7 +118,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(Matchers.anyInt())).thenReturn(new ArrayList<ListDataProject>());
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
-		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(new ArrayList<User>());
+		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(new ArrayList<WorkbenchUser>());
 
 		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID,
 				CrossingTemplateExcelExporterTest.STUDY_NAME, CrossingTemplateExcelExporterTest.CURRENT_USER_ID);
@@ -184,8 +184,8 @@ public class CrossingTemplateExcelExporterTest {
 		final Person mockPerson = Mockito.mock(Person.class);
 		Mockito.when(this.workbenchDataManager.getPersonById(Matchers.anyInt())).thenReturn(mockPerson);
 
-		final ArrayList<User> users = new ArrayList<User>();
-		final User mockUser = Mockito.mock(User.class);
+		final ArrayList<WorkbenchUser> users = new ArrayList<WorkbenchUser>();
+		final WorkbenchUser mockUser = Mockito.mock(WorkbenchUser.class);
 		Mockito.when(mockUser.getUserid()).thenReturn(userId);
 		users.add(mockUser);
 		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(users);
@@ -322,7 +322,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(Matchers.anyInt())).thenReturn(new ArrayList<ListDataProject>());
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
-		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(new ArrayList<User>());
+		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(new ArrayList<WorkbenchUser>());
 
 		// to test
 		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, studyName,

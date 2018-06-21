@@ -91,15 +91,12 @@
 					if (trialInstanceNumber) {
 						selectedTrialInstances.push(trialInstanceNumber);
 
-						if ($scope.locationFromTrialSettings) {
-							selectedLocationDetails.push($scope.userInput[$scope.PREFERRED_LOCATION_VARIABLE]);
-						} else {
-							angular.forEach($scope.data.environments, function(environment) {
-								if (environment.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX] === trialInstanceNumber) {
-									selectedLocationDetails.push(environment.managementDetailValues[$scope.PREFERRED_LOCATION_VARIABLE]);
-								}
-							});
-						}
+						angular.forEach($scope.data.environments, function(environment) {
+							if (environment.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX] === trialInstanceNumber) {
+								selectedLocationDetails.push(getPreferredEnvironmentName(environment, $scope.PREFERRED_LOCATION_VARIABLE));
+							}
+						});
+
 
 					}
 				});
@@ -150,13 +147,9 @@
 				// LOCATION_ABBR from study settings
 				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_ABBR_INDEX;
 				$scope.locationFromTrialSettings = true;
-			} else if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
-				// LOCATION_NAME from environments
-				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
-			} else if ($scope.trialSettings.val($scope.TRIAL_LOCATION_NAME_INDEX) != null) {
-				// LOCATION_NAME from study settings
-				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_NAME_INDEX;
-				$scope.locationFromTrialSettings = true;
+			} else if ($scope.settings.managementDetails.val($scope.LOCATION_NAME_ID) != null) {
+				// LOCATION_NAME_ID from environments
+				$scope.PREFERRED_LOCATION_VARIABLE = $scope.LOCATION_NAME_ID;
 			} else {
 				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_INSTANCE_INDEX;
 			}
@@ -174,13 +167,45 @@
 
 			var environmentListView = [];
 			angular.forEach(environments, function(environment) {
-				environmentListView.push({
-					name: environment.managementDetailValues[preferredLocationVariable],
-					variableId: preferredLocationVariable, trialInstanceNumber: environment.managementDetailValues[trialInstanceIndex]});
+                environmentListView.push({ name: getPreferredEnvironmentName(environment, preferredLocationVariable)
+					, variableId: preferredLocationVariable, trialInstanceNumber: environment.managementDetailValues[trialInstanceIndex]});
+
 			});
 			return environmentListView;
 
 		};
+
+		function getPreferredEnvironmentName(environment, preferredLocationVariable) {
+
+            var preferredLocation = '';
+            if ($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID] !== undefined) {
+
+                //create a map for location dropdown values
+                var locationMap = {};
+
+                angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].allValues, function(locationVariable) {
+                    locationMap[locationVariable.id] = locationVariable;
+                });
+
+                var locationId = 0;
+                if (environment.managementDetailValues[$scope.LOCATION_NAME_ID] !== undefined) {
+                    locationId = isNaN(environment.managementDetailValues[$scope.LOCATION_NAME_ID]) ?
+                        environment.managementDetailValues[$scope.LOCATION_NAME_ID].id :
+                        environment.managementDetailValues[$scope.LOCATION_NAME_ID];
+				}
+
+				if (locationId !== 0) {
+                    preferredLocation = locationMap[locationId].name;
+				}
+
+            }
+
+            var preferredLocationVariableName = preferredLocationVariable === $scope.LOCATION_NAME_ID ? preferredLocation
+                : environment.managementDetailValues[preferredLocationVariable];
+
+            return preferredLocationVariableName;
+
+		}
 	}]);
 
 })();

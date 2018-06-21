@@ -1,4 +1,3 @@
-
 package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.util.FieldbookUtil;
@@ -45,9 +44,11 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.LocationDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.operation.builder.StudyTypeBuilder;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.SampleService;
 import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
@@ -74,6 +75,9 @@ public abstract class BaseTrialController extends SettingsController {
 
 	@Resource
 	protected SampleService sampleService;
+
+	@Resource
+	protected LocationDataManager locationDataManager;
 
 	@Resource
 	protected StudyDataManager studyDataManager;
@@ -121,8 +125,8 @@ public abstract class BaseTrialController extends SettingsController {
 		for (int i = 0; i < data.getEnvironments().size(); i++) {
 			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
 			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))
-					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null
-					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
+					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null || values
+					.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
 				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
 			}
 		}
@@ -603,7 +607,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 	protected List<CrossesList> getCrossesList(final Integer trialId) {
 		final List<GermplasmList> crossList =
-			this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.CROSSES);
+				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.CROSSES);
 
 		crossList.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.IMP_CROSS));
 		crossList.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.CRT_CROSS));
@@ -611,7 +615,9 @@ public abstract class BaseTrialController extends SettingsController {
 		final List<CrossesList> crossesList = new ArrayList<>();
 
 		for (final GermplasmList g : crossList) {
-			crossesList.add(new CrossesList(g.getId(), g.getName(),g.getType().equalsIgnoreCase(GermplasmListType.IMP_CROSS.toString())?GermplasmList.IMP_CROSS:GermplasmList.CRT_CROSS));
+			crossesList.add(new CrossesList(g.getId(), g.getName(), g.getType().equalsIgnoreCase(GermplasmListType.IMP_CROSS.toString()) ?
+					GermplasmList.IMP_CROSS :
+					GermplasmList.CRT_CROSS));
 		}
 
 		return crossesList;
@@ -624,8 +630,9 @@ public abstract class BaseTrialController extends SettingsController {
 
 			final StandardVariable variable = this.ontologyService.getStandardVariable(cvTermId, this.contextUtil.getCurrentProgramUUID());
 
-			final List<StandardVariable> pairs = this.fieldbookMiddlewareService.getPossibleTreatmentPairs(variable.getId(),
-					variable.getProperty().getId(), AppConstants.CREATE_STUDY_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
+			final List<StandardVariable> pairs = this.fieldbookMiddlewareService
+					.getPossibleTreatmentPairs(variable.getId(), variable.getProperty().getId(),
+							AppConstants.CREATE_STUDY_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
 
 			for (final StandardVariable item : pairs) {
 				output.add(this.createSettingDetail(item.getId(), null, VariableType.TREATMENT_FACTOR.getRole().name()));
@@ -679,7 +686,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final boolean isUsePrevious, final int trialID)
-		throws ParseException {
+			throws ParseException {
 		final Map<String, String> basicDetails = new HashMap<>();
 		final List<SettingDetail> initialDetailList = new ArrayList<>();
 
@@ -716,11 +723,11 @@ public abstract class BaseTrialController extends SettingsController {
 		basic.setDescription(studyDetails.getDescription());
 		basic.setStartDate(Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT));
 		basic.setEndDate(studyDetails.getEndDate() != null && !studyDetails.getEndDate().isEmpty() ?
-			Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT) :
-			StringUtils.EMPTY);
+				Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT) :
+				StringUtils.EMPTY);
 		basic.setStudyUpdate(studyDetails.getStudyUpdate() != null && !studyDetails.getStudyUpdate().isEmpty() ?
-			Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT)
-			: StringUtils.EMPTY);
+				Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT) :
+				StringUtils.EMPTY);
 		basic.setObjective(studyDetails.getObjective());
 
 		final int folderId = (int) studyDetails.getParentFolderId();
@@ -868,8 +875,9 @@ public abstract class BaseTrialController extends SettingsController {
 						val = managementDetailValue;
 					}
 
-					final MeasurementData newData = new MeasurementData(measurementVariable.getName(), val, false,
-							measurementVariable.getDataType(), measurementVariable);
+					final MeasurementData newData =
+							new MeasurementData(measurementVariable.getName(), val, false, measurementVariable.getDataType(),
+									measurementVariable);
 					row.getDataList().add(newData);
 				}
 
@@ -918,6 +926,16 @@ public abstract class BaseTrialController extends SettingsController {
 				}
 			}
 		}
+	}
+
+	protected Integer getUnspecifiedLocationId() {
+
+		final List<Location> locations = locationDataManager.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
+		if (!locations.isEmpty()) {
+			return locations.get(0).getLocid();
+		}
+		return 0;
+
 	}
 
 	private ImmutableMap<Integer, SettingDetail> createMapOfTraitsAndSelectionVariatesFromUserSelection() {

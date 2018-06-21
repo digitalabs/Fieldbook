@@ -42,8 +42,8 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
-import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.pojos.workbench.ToolName;
+import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
 import org.generationcp.middleware.util.PoiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -219,14 +219,14 @@ public class CrossingTemplateExcelExporter {
 
 		// Users
 
-		final List<User> allProgramMembers =
+		final List<WorkbenchUser> allProgramMembers =
 				this.workbenchDataManager.getUsersByProjectId(this.contextUtil.getProjectInContext().getProjectId());
 
 		final CellStyle userCellStyle = codesSheet.getWorkbook().createCellStyle();
 		userCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 		userCellStyle.setFillForegroundColor(IndexedColors.VIOLET.getIndex());
 
-		for (final User user : allProgramMembers) {
+		for (final WorkbenchUser user : allProgramMembers) {
 			final Row row = codesSheet.createRow(++startingRow);
 			row.createCell(0).setCellValue(GermplasmExportedWorkbook.CONDITION);
 			row.createCell(1).setCellValue(GermplasmExportedWorkbook.USER);

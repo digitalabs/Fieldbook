@@ -37,12 +37,14 @@ class ExcelSeedPreparationLabelGenerator implements SeedPreparationLabelGenerato
 	private LabelPrintingUtil labelPrintingUtil;
 
 	@Override
-	public String generateLabels(final List<GermplasmListData> germplasmListDataList, final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
+	public String generateLabels(final List<GermplasmListData> germplasmListDataList,
+			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
 
 		String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
-		final boolean includeHeader =
-				LabelPrintingServiceImpl.INCLUDE_NON_PDF_HEADERS.equalsIgnoreCase(userLabelPrinting.getIncludeColumnHeadinginNonPdf());
-		final boolean isBarcodeNeeded = LabelPrintingServiceImpl.BARCODE_NEEDED.equalsIgnoreCase(userLabelPrinting.getBarcodeNeeded());
+		final boolean includeHeader = LabelPrintingServiceImpl.INCLUDE_NON_PDF_HEADERS
+				.equalsIgnoreCase(userLabelPrinting.getIncludeColumnHeadinginNonPdf());
+		final boolean isBarcodeNeeded = LabelPrintingServiceImpl.BARCODE_NEEDED
+				.equalsIgnoreCase(userLabelPrinting.getBarcodeNeeded());
 		final String fileName = userLabelPrinting.getFilenameDLLocation();
 
 		try {
@@ -63,7 +65,8 @@ class ExcelSeedPreparationLabelGenerator implements SeedPreparationLabelGenerato
 			final CellStyle mainHeaderStyle = workbook.createCellStyle();
 
 			final HSSFPalette palette = workbook.getCustomPalette();
-			// get the color which most closely matches the color you want to use
+			// get the color which most closely matches the color you want to
+			// use
 			final HSSFColor myColor = palette.findSimilarColor(179, 165, 165);
 			// get the palette index of that color
 			final short palIndex = myColor.getIndex();
@@ -74,7 +77,8 @@ class ExcelSeedPreparationLabelGenerator implements SeedPreparationLabelGenerato
 			final CellStyle mainSubHeaderStyle = workbook.createCellStyle();
 
 			final HSSFPalette paletteSubHeader = workbook.getCustomPalette();
-			// get the color which most closely matches the color you want to use
+			// get the color which most closely matches the color you want to
+			// use
 			final HSSFColor myColorSubHeader = paletteSubHeader.findSimilarColor(190, 190, 186);
 			// get the palette index of that color
 			final short palIndexSubHeader = myColorSubHeader.getIndex();
@@ -94,34 +98,41 @@ class ExcelSeedPreparationLabelGenerator implements SeedPreparationLabelGenerato
 
 			final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvertToListOfIDs(mainSelectedFields);
 
-			// TODO leave this specific logic in class and remove the rest to the utility class
-			//Label Headers
+			// TODO leave this specific logic in class and remove the rest to
+			// the utility class
+			// Label Headers
 			if (includeHeader) {
 				row = labelPrintingSheet.createRow(rowIndex++);
 				// we add all the selected fields header
-				this.labelPrintingUtil.printHeaderFields(this.labelPrintingUtil.getLabelHeadersForSeedPreparation(selectedFieldIDs), true,
+				this.labelPrintingUtil.printHeaderFields(
+						this.labelPrintingUtil.getLabelHeadersForSeedPreparation(selectedFieldIDs), true,
 						selectedFieldIDs, row, columnIndex, labelStyle);
 			}
 
 			// we populate the info now
 			// Values in the columns
-			Map<Integer, Boolean> printedGermplasmListDataMap = new HashMap<>();
-			for (final GermplasmListData germplasmListData : germplasmListDataList){
-				if(printedGermplasmListDataMap.get(germplasmListData.getGid()) != null) continue;
-				
+			final Map<Integer, Boolean> printedGermplasmListDataMap = new HashMap<>();
+			for (final GermplasmListData germplasmListData : germplasmListDataList) {
+				if (printedGermplasmListDataMap.get(germplasmListData.getGid()) != null) {
+					continue;
+				}
+
 				@SuppressWarnings("unchecked")
-				final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData.getInventoryInfo().getLotRows();
-				for(ListEntryLotDetails lotRow: lotRows) {
-					if(!lotRow.getWithdrawalStatus().equalsIgnoreCase(GermplasmInventory.RESERVED)) continue;
+				final List<ListEntryLotDetails> lotRows = (List<ListEntryLotDetails>) germplasmListData
+						.getInventoryInfo().getLotRows();
+				for (final ListEntryLotDetails lotRow : lotRows) {
+					if (!lotRow.getWithdrawalStatus().equalsIgnoreCase(GermplasmInventory.RESERVED)) {
+						continue;
+					}
 					// excel row
 					row = labelPrintingSheet.createRow(rowIndex++);
 					columnIndex = 0;
-	
+
 					for (final Integer selectedFieldId : selectedFieldIDs) {
 						// excel cell setting the value
 						final Cell summaryCell = row.createCell(columnIndex++);
-						summaryCell.setCellValue(this.labelPrintingUtil.getSelectedFieldValue(selectedFieldId, germplasmListData,
-								userLabelPrinting, lotRow));
+						summaryCell.setCellValue(this.labelPrintingUtil.getSelectedFieldValue(selectedFieldId,
+								germplasmListData, userLabelPrinting, lotRow));
 					}
 				}
 				printedGermplasmListDataMap.put(germplasmListData.getGid(), true);
@@ -137,7 +148,7 @@ class ExcelSeedPreparationLabelGenerator implements SeedPreparationLabelGenerato
 			fileOutputStream.close();
 
 		} catch (final Exception e) {
-			LOG.error(e.getMessage(), e);
+			ExcelSeedPreparationLabelGenerator.LOG.error(e.getMessage(), e);
 			throw new LabelPrintingException(e.getMessage());
 		}
 		return fileName;

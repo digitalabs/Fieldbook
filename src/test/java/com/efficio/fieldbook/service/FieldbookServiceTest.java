@@ -814,17 +814,6 @@ public class FieldbookServiceTest {
 	}
 
 	@Test
-	public void testResolveNameVarValueWhereIdVariableIsLocationId() {
-		Mockito.when(this.fieldbookMiddlewareService.getLocationById(1)).thenReturn(LocationTestDataInitializer
-				.createLocationWithLabbr(1, FieldbookServiceTest.LOCATION_NAME, FieldbookServiceTest.LABBR));
-		final MeasurementVariable mvar = MeasurementVariableTestDataInitializer
-				.createMeasurementVariable(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "1");
-		final String result = this.fieldbookServiceImpl.resolveNameVarValue(mvar);
-		final String displayName = FieldbookServiceTest.LOCATION_NAME + " - (" + FieldbookServiceTest.LABBR + ")";
-		Assert.assertEquals("The result's value should be " + displayName, displayName, result);
-	}
-
-	@Test
 	public void testResolveNameVarValueWhereIdVariableIsNotLocationId() {
 		final MeasurementVariable mvar = MeasurementVariableTestDataInitializer
 				.createMeasurementVariable(TermId.BREEDING_METHOD.getId(), TermId.BREEDING_METHOD.name(), "4");

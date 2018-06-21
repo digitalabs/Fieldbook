@@ -29,6 +29,7 @@ import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -104,15 +105,16 @@ public class CreateTrialController extends BaseTrialController {
 	/**
 	 * Show.
 	 *
-	 * @param model the model
+	 * @param model   the model
 	 * @param session the session
 	 * @return the string
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model, final HttpSession session) {
 
-		SessionUtility.clearSessionData(session, new String[] {SessionUtility.USER_SELECTION_SESSION_NAME,
-				SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+		SessionUtility.clearSessionData(session,
+				new String[] {SessionUtility.USER_SELECTION_SESSION_NAME, SessionUtility.POSSIBLE_VALUES_SESSION_NAME,
+						SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
 
 		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo());
 		model.addAttribute("germplasmData", this.prepareGermplasmTabInfo(false));
@@ -155,8 +157,8 @@ public class CreateTrialController extends BaseTrialController {
 				tabDetails.put("selectionVariableData",
 						this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
 
-				this.fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(),
-						trialWorkbook.getMeasurementDatesetId());
+				this.fieldbookMiddlewareService
+						.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
 				tabDetails.put("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));
 				form.setStudyTypeName(trialWorkbook.getStudyDetails().getStudyType().getName());
 			}
@@ -210,6 +212,11 @@ public class CreateTrialController extends BaseTrialController {
 	@ModelAttribute("trialEnvironmentHiddenFields")
 	public List<Integer> getTrialEnvironmentHiddenFields() {
 		return this.buildVariableIDList(AppConstants.HIDE_STUDY_ENVIRONMENT_FIELDS.getString());
+	}
+
+	@ModelAttribute("unspecifiedLocationId")
+	public Integer unspecifiedLocationId() {
+		return this.getUnspecifiedLocationId();
 	}
 
 	@RequestMapping(value = "/trialSettings", method = RequestMethod.GET)
@@ -300,9 +307,9 @@ public class CreateTrialController extends BaseTrialController {
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 		final Workbook workbook = SettingsUtil
-			.convertXmlDatasetToWorkbook(dataset, this.userSelection.getExpDesignParams(), this.userSelection.getExpDesignVariables(),
-				this.fieldbookMiddlewareService, this.userSelection.getExperimentalDesignVariables(),
-				this.contextUtil.getCurrentProgramUUID());
+				.convertXmlDatasetToWorkbook(dataset, this.userSelection.getExpDesignParams(), this.userSelection.getExpDesignVariables(),
+						this.fieldbookMiddlewareService, this.userSelection.getExperimentalDesignVariables(),
+						this.contextUtil.getCurrentProgramUUID());
 
 		if (this.userSelection.getTemporaryWorkbook() != null) {
 			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments(), workbook,
@@ -312,8 +319,9 @@ public class CreateTrialController extends BaseTrialController {
 		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<>();
 		variablesForEnvironment.addAll(workbook.getTrialVariables());
 
-		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(
-				data.getEnvironments().getEnvironments(), variablesForEnvironment, this.userSelection.getExpDesignParams());
+		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil
+				.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment,
+						this.userSelection.getExpDesignParams());
 		workbook.setTrialObservations(trialEnvironmentValues);
 		data.getBasicDetails().setCreatedBy(this.contextUtil.getCurrentIbdbUserId().toString());
 		this.createStudyDetails(workbook, data.getBasicDetails());
@@ -369,6 +377,11 @@ public class CreateTrialController extends BaseTrialController {
 
 		for (final Integer id : this.buildVariableIDList(AppConstants.CREATE_STUDY_ENVIRONMENT_REQUIRED_FIELDS.getString())) {
 			final SettingDetail detail = this.createSettingDetail(id, null, VariableType.ENVIRONMENT_DETAIL.getRole().name());
+
+			if (TermId.LOCATION_ID.getId() == id) {
+				detail.getVariable().setName(Workbook.DEFAULT_LOCATION_ID_VARIABLE_ALIAS);
+			}
+
 			for (final Integer hiddenField : hiddenFields) {
 				if (id.equals(hiddenField)) {
 					detail.setHidden(true);

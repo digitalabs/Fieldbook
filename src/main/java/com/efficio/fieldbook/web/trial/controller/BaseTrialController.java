@@ -930,7 +930,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 	protected Integer getUnspecifiedLocationId() {
 
-		final List<Location> locations = locationDataManager.getLocationsByName("Unspecified Location", Operation.EQUAL);
+		final List<Location> locations = locationDataManager.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
 		if (!locations.isEmpty()) {
 			return locations.get(0).getLocid();
 		}

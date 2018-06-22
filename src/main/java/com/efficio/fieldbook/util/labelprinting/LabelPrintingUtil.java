@@ -379,6 +379,15 @@ public class LabelPrintingUtil {
 		return this.getSelectedFieldValue(selectedFieldId, germplasmListData, userLabelPrinting, false);
 	}
 	
+	/**
+	 * This method is only called by Inventory View Label Printing classes. Handles the special case for getting the values of LOTS, STOCKID, and BARCODE
+	 * @param selectedFieldId
+	 * @param germplasmListData
+	 * @param userLabelPrinting
+	 * @param lotRow
+	 * @param includeHeaderLabel
+	 * @return
+	 */
 	String getSelectedFieldValue(final int selectedFieldId, final GermplasmListData germplasmListData, final UserLabelPrinting
 			userLabelPrinting, ListEntryLotDetails lotRow, final boolean includeHeaderLabel) {
 		final StringBuilder selectedValueFieldBuffer = new StringBuilder();

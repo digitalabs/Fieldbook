@@ -129,15 +129,14 @@ BMS.NurseryManager.PropertySelect = (function($) {
 					// Also include the object if any of the property's variables have the search term in their name
 					$.each(prop.standardVariables, function(index, variable) {
 						varNameContainsTerm = variable.name.toLocaleLowerCase().indexOf(searchTerm) > -1;
+						varAliasContainsTerm = false;
 						if (!varNameContainsTerm && variable.alias != null) {
 							varAliasContainsTerm = variable.alias.toLocaleLowerCase().indexOf(searchTerm) > -1;
-						} else {
-							varAliasContainsTerm = false;
 						}
 
 						// Returning false will stop the loop - we want to stop when we've found the first variable
 						// in this property that contains the search term
-						return !(varNameContainsTerm || varAliasContainsTerm);
+						return !varNameContainsTerm && !varAliasContainsTerm;
 					});
 
 					return varNameContainsTerm || varAliasContainsTerm;

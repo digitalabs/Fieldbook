@@ -12,6 +12,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -37,10 +37,15 @@ public class DerivedVariableController {
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
+	@Resource
+	private FormulaService formulaService;
+
 	private String getMessage(final String code) {
 		return this.messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
 	}
 
+	// TODO remove transational, see FormulaServiceImpl#getByTargetId
+	@Transactional
 	@ResponseBody
 	@RequestMapping(value = "/derived-variable/execute", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> execute(@RequestBody final CalculateVariableRequest request, final BindingResult result) {
@@ -64,6 +69,8 @@ public class DerivedVariableController {
 		 * should move here that part the copies it to the original observation
 		 */
 		WorkbookUtil.resetWorkbookObservations(workbook);
+
+		final Formula formula = this.formulaService.getByTargetId(request.getVariableId());
 
 		final Map<String, MeasurementRow> measurementRowsMap = new LinkedHashMap<>();
 		if (workbook.getObservations() != null) {

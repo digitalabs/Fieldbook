@@ -39,6 +39,7 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.oms.CVTerm;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -137,6 +138,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
 			svar.setOperation(Operation.ADD);
+			svar.setFormulaInputVariables(stdVar.getFormula() != null ? stdVar.getFormula().getInputs() : new ArrayList<CVTerm>());
 			final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id, true);
 			final SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
 			final PhenotypicType type = StringUtils.isEmpty(role) ? null : PhenotypicType.getPhenotypicTypeByName(role);
@@ -203,6 +205,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 		settingVariable.setCvTermId(variable.getId());
 		settingVariable.setCropOntologyId(property.getCropOntologyId());
+
+		if (variable.getFormula() != null) {
+			settingVariable.setFormulaInputVariables(variable.getFormulaInputVariables());
+		}
 
 		if (!property.getClasses().isEmpty()) {
 			settingVariable.setTraitClass(property.getClasses().iterator().next());

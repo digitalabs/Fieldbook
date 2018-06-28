@@ -55,25 +55,10 @@
 								<a href="javascript: void(0);" ng-click="saveCurrentTrialData()"
 								   th:text="#{study.option.save}">Save Study</a>
 							</li>
-							<li ng-show="displayMeasurementOnlyActions()" class="dropdown-submenu pull-left">
-								<a tabindex="-1" href="#">Field map options</a>
-									<ul class="dropdown-menu" style="margin-left: -20px;">
-										<li>
-											<a href="" style="display: none" id="fieldmap-url"
-											   th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
-											<a href="javascript: createFieldMap();" id="fieldmap-url-link"
-											   th:text="#{study.studydetails.action.createFieldmap}">Make Field Map</a>
-										</li>
-										<li>
-											<a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link"
-											   th:text="#{study.edit.study.view.field.map}">View Field Map</a>
-										</li>
-									</ul>
-								</li>
 
 							<li class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Design and planning options</a>
-								<ul class="dropdown-menu" style="margin-left: 29px;">
+								<ul class="dropdown-menu" style="margin-left: 28px;">
 									<li>
 										<a href="javascript: void(0)" onclick="exportDesignTemplate()" class="export-design-template-link"
 										   th:text="#{study.studydetails.action.export.design.template}">Export Design Template</a>
@@ -98,9 +83,9 @@
 							</li>
 
 							<!--Crossing options-->
-							<li  ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
+							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Crossing options</a>
-								<ul class="dropdown-menu" style="margin-left: -46px;">
+								<ul class="dropdown-menu" style="margin-left: -47px;">
 									<!--Export crossing template-->
 									<li id="download-crosses-template">
 										<a href="javascript: void(0)" onclick="ImportCrosses.downloadCrosses()"
@@ -108,7 +93,8 @@
 									</li>
 									<!--Import crosses style="display:none;"-->
 									<li id="import-crosses">
-										<a href="javascript: void(0)"  onclick="ImportCrosses.showPopup()" class="import-crosses" th:text="#{study.studydetails.action.import.crosses}">Import crosses</a>
+										<a href="javascript: void(0)" onclick="ImportCrosses.showPopup()" class="import-crosses"
+										   th:text="#{study.studydetails.action.import.crosses}">Import crosses</a>
 									</li>
 									<!--Design new crosses-->
 									<li id="create-new-crosses">
@@ -118,19 +104,25 @@
 								</ul>
 							</li>
 
-							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
-								<a tabindex="-1" href="#">Plant level options</a>
-								<ul class="dropdown-menu" style="margin-left: -14px;">
+							<li ng-show="displayMeasurementOnlyActions()" class="dropdown-submenu pull-left">
+								<a tabindex="-1" href="#">Field map options</a>
+								<ul class="dropdown-menu" style="margin-left: -20px;">
 									<li>
-										<a href="javascript: createSample();" id="sample-trial-link"
-										   th:text="#{study.studydetails.action.create.sample}">Create sample list</a>
+										<a href="" style="display: none" id="fieldmap-url"
+										   th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+										<a href="javascript: createFieldMap();" id="fieldmap-url-link"
+										   th:text="#{study.studydetails.action.createFieldmap}">Make Field Map</a>
+									</li>
+									<li>
+										<a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link"
+										   th:text="#{study.edit.study.view.field.map}">View Field Map</a>
 									</li>
 								</ul>
 							</li>
 
 							<li ng-show="displayGermplasmOrMeasurmentOnlyActions()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Data collection options</a>
-								<ul class="dropdown-menu" style="margin-left: 4px;">
+								<ul class="dropdown-menu" style="margin-left: 0px;">
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a href="javascript: showExportOptions();" id="export-study-link"
 										   th:text="#{study.studydetails.action.export.study}">Export Study Book</a>
@@ -157,8 +149,18 @@
 							</li>
 
 							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
+								<a tabindex="-1" href="#">Plant level options</a>
+								<ul class="dropdown-menu" style="margin-left: -18px;">
+									<li>
+										<a href="javascript: createSample();" id="sample-trial-link"
+										   th:text="#{study.studydetails.action.create.sample}">Create sample list</a>
+									</li>
+								</ul>
+							</li>
+
+							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Advance study options</a>
-								<ul class="dropdown-menu" style="margin-left: -10px;">
+								<ul class="dropdown-menu" style="margin-left: -12px;">
 									<li>
 										<a href="javascript: startAdvance('trial');" id="advance-trial-link"
 										   th:text="#{study.studydetails.action.advance.study}">Advance Study</a>

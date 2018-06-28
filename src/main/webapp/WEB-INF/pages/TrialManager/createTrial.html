@@ -128,7 +128,7 @@
 								</ul>
 							</li>
 
-							<li class="dropdown-submenu pull-left" ng-show="displayGermplasmOrMeasurmentOnlyActions()">
+							<li ng-show="displayGermplasmOrMeasurmentOnlyActions()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Data collection options</a>
 								<ul class="dropdown-menu" style="margin-left: 4px;">
 									<li ng-show="displayMeasurementOnlyActions()">
@@ -151,7 +151,12 @@
 								</ul>
 							</li>
 
-							<li class="dropdown-submenu pull-left" ng-show="hasMeasurementData()">
+							<li ng-show="displayGermplasmOrMeasurmentOnlyActions()">
+								<a href="javascript: executeCalculatedVariable()" id="calculatedVariable-link"
+								   th:text="#{study.option.execute.calculated.variable}">Execute calculated variable</a>
+							</li>
+
+							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Advance study options</a>
 								<ul class="dropdown-menu" style="margin-left: -10px;">
 									<li>
@@ -480,6 +485,18 @@
 	</div>
 
 	<div class="row">
+		<div class="col-xs-6 col-md-6">
+			<div id="study-executeCalculatedVariable" th:include="/TrialManager/templates/executeCalculatedVariableModal"></div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div id="study-executeCalculatedVariable" th:include="/TrialManager/templates/executeCalculatedVariableModal"></div>
+		</div>
+	</div>
+
+	<div class="row">
 		<div th:include="/TrialManager/templates/samplesSummary"></div>
 	</div>
 
@@ -557,6 +574,8 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentToSampleList.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/fbk-data-table/samples-summary.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/executeCalculatedVariableModal.js}"></script>
+
 
 	<!-- constants here -->
 	<script type="text/javascript" th:inline="javascript">

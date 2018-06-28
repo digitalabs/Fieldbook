@@ -180,6 +180,8 @@ function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionPa
 	choosingType = choosingTypeParam;
 	var additionalUrl = '/0';
 	if (choosingType === 2) {
+		// Hide Study Type filter when tree is meant to show only folder
+		$('#studyTypeFilter').hide();
 		additionalUrl = '/1';
 	}
 

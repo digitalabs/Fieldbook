@@ -10,33 +10,34 @@
 
 package com.efficio.fieldbook.web.util;
 
-import com.efficio.pojos.treeview.TreeNode;
-import com.efficio.pojos.treeview.TreeTableNode;
-import com.efficio.pojos.treeview.TypeAheadSearchTreeNode;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.workbook.generator.RowColumnType;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
+import org.generationcp.middleware.domain.dms.StudyReference;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.pojos.ListMetadata;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListMetadata;
+import org.generationcp.middleware.pojos.ListMetadata;
 import org.generationcp.middleware.pojos.SampleList;
-import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.efficio.pojos.treeview.TreeNode;
+import com.efficio.pojos.treeview.TreeTableNode;
+import com.efficio.pojos.treeview.TypeAheadSearchTreeNode;
 
 /**
  * The Class TreeViewUtil.
@@ -319,6 +320,8 @@ public class TreeViewUtil {
 			treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
 		} else {
 			treeNode.setIcon(AppConstants.STUDY_ICON_PNG.getString());
+			final StudyReference studyReference = (StudyReference) reference;
+			treeNode.setType(studyReference.getStudyType().getName());
 		}
 		return treeNode;
 	}

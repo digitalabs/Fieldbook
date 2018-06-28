@@ -31,6 +31,18 @@
 						</div>
 					</div>
 					<div class="form-horizontal form-group">
+						<div id="studyTypeDiv">
+							<div class="col-xs-4 nopadding">
+								<label class="control-label label-bold" th:utext="#{browse.study.study.type}">Study Type:</label>
+							</div>
+							<div class="col-xs-8">
+								<select class="form-control" id="studyTypeFilter" onchange="filterByStudyType()">
+									<option value="All">All</option>
+									<option value="N">Nursery</option>
+									<option value="T">Trial</option>
+								</select>
+							</div>
+						</div>
 						<div id="addFolderDiv">
 							<div class="col-xs-4 nopadding">
 								<label class="control-label label-bold" th:utext="#{browse.study.add.folder.name}">Folder Name:</label>

@@ -134,6 +134,7 @@ function doStudyLazyLoad(node, preSelectId) {
 				}
 
 				if (node.data.isFolder === false) {
+					filterNodeByStudyType(node);
 					addDetailsTab(node.data.key, node.data.title);
 					changeBrowseStudyButtonBehavior(false);
 				} else {
@@ -165,7 +166,7 @@ function doStudyLazyLoad(node, preSelectId) {
 	}
 }
 
-/** Germplasm Tree **/
+/** Study Tree **/
 function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionParam, isPreSelect, postInitFunction) {
 	'use strict';
 
@@ -364,4 +365,27 @@ function addDetailsTab(studyId, title) {
 	}
 	determineIfShowCloseAllStudyTabs();
 	// if not we get the info
+}
+
+function filterByStudyType(){
+	// TODO Toggle caption of root node
+	$('#studyTree').dynatree('getTree').visit(function(node){
+		filterNodeByStudyType(node);
+	});
+}
+
+function filterNodeByStudyType(node) {
+	var studyType = $('#studyTypeFilter').val();
+	// Show node if "All" study type filter is chosen or if node is folder
+	if (studyType === 'All' || node.data.isFolder === true){
+		$(node.li).show();
+	// Otherwise filter study by chosen type
+	} else {
+		if (node.data.type === studyType) {
+			$(node.li).show(); 
+		} else {
+			$(node.li).hide();
+		}
+	}
+	
 }

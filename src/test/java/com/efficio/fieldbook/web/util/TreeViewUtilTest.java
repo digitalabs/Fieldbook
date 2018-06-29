@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.generationcp.middleware.domain.dms.FolderReference;
+import org.generationcp.middleware.domain.dms.Reference;
+import org.generationcp.middleware.domain.dms.StudyReference;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
@@ -15,9 +19,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.efficio.pojos.treeview.TreeNode;
 import com.efficio.pojos.treeview.TreeTableNode;
 
 public class TreeViewUtilTest {
+
+	private static final String PROGRAM_UUID = "abcd-efgh-12345";
 
 	private static final Integer LIST_USER_ID = 1;
 
@@ -35,10 +42,13 @@ public class TreeViewUtilTest {
 	/** The Constant GERMPLASM_LIST_TEST_DATA. */
 	private static final List<GermplasmList> GERMPLASM_LIST_TEST_DATA = Arrays.asList(TreeViewUtilTest.LIST_1, TreeViewUtilTest.LIST_2,
 			TreeViewUtilTest.LIST_3);
-
-	private static final List<GermplasmList> EMPTY_GERMPLASM_LIST_TEST_DATA = new ArrayList<GermplasmList>();
-
-	private static final List<GermplasmList> NULL_GERMPLASM_LIST_TEST_DATA = null;
+	
+	// Study Tree test data
+	private static final FolderReference FOLDER = new FolderReference(1, "Folder 1", "Folder 1 Description", PROGRAM_UUID);
+	private static final StudyReference TRIAL = new StudyReference(100, "F1 Trial", "Trial Description", PROGRAM_UUID, StudyTypeDto.getTrialDto());
+	private static final StudyReference NURSERY = new StudyReference(101, "F2 Nusery", "Nursery Description", PROGRAM_UUID, StudyTypeDto.getNurseryDto());
+	private static final List<Reference> STUDY_REFERENCES = Arrays.asList(FOLDER, TRIAL, NURSERY);
+	
 	private static GermplasmListManager germplasmListManager;
 	private static GermplasmDataManager germplasmDataManager;
 	private static UserDataManager userDataManager;
@@ -155,7 +165,7 @@ public class TreeViewUtilTest {
 	public void testConvertGermplasmListToTreeTableNodes_NullList() {
 		String folderParentId = "123";
 		List<TreeTableNode> treeTableNodes =
-				TreeViewUtil.convertGermplasmListToTreeTableNodes(folderParentId, TreeViewUtilTest.NULL_GERMPLASM_LIST_TEST_DATA,
+				TreeViewUtil.convertGermplasmListToTreeTableNodes(folderParentId, null,
 						TreeViewUtilTest.germplasmListManager, TreeViewUtilTest.germplasmDataManager);
 		Assert.assertTrue("The list should be empty", treeTableNodes.isEmpty());
 	}
@@ -164,8 +174,52 @@ public class TreeViewUtilTest {
 	public void testConvertGermplasmListToTreeTableNodes_EmptyList() {
 		String folderParentId = "123";
 		List<TreeTableNode> treeTableNodes =
-				TreeViewUtil.convertGermplasmListToTreeTableNodes(folderParentId, TreeViewUtilTest.EMPTY_GERMPLASM_LIST_TEST_DATA,
+				TreeViewUtil.convertGermplasmListToTreeTableNodes(folderParentId, new ArrayList<GermplasmList>(),
 						TreeViewUtilTest.germplasmListManager, TreeViewUtilTest.germplasmDataManager);
 		Assert.assertTrue("The list should be empty", treeTableNodes.isEmpty());
+	}
+	
+	@Test
+	public void testConvertStudyFolderReferencesToTreeView() {
+		final boolean isLazy = false;
+		final boolean isFolderOnly = false;
+		final List<TreeNode> treeNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(STUDY_REFERENCES, isLazy, isFolderOnly);
+		Assert.assertEquals(STUDY_REFERENCES.size(), treeNodes.size());
+		assertTreeNodeExpectedValues(FOLDER, treeNodes.get(0), AppConstants.FOLDER_ICON_PNG.getString(), isLazy);
+		assertTreeNodeExpectedValues(TRIAL, treeNodes.get(1), AppConstants.STUDY_ICON_PNG.getString(), isLazy);
+		assertTreeNodeExpectedValues(NURSERY, treeNodes.get(2), AppConstants.STUDY_ICON_PNG.getString(), isLazy);
+	}
+	
+	@Test
+	public void testConvertStudyFolderReferencesToTreeView_IsFolderOnly() {
+		final boolean isLazy = false;
+		final boolean isFolderOnly = true;
+		final List<TreeNode> treeNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(STUDY_REFERENCES, isLazy, isFolderOnly);
+		Assert.assertEquals(STUDY_REFERENCES.size()-2, treeNodes.size());
+		assertTreeNodeExpectedValues(FOLDER, treeNodes.get(0), AppConstants.FOLDER_ICON_PNG.getString(), isLazy);
+	}
+	
+	@Test
+	public void testConvertStudyFolderReferencesToTreeView_IsLazy() {
+		final boolean isLazy = true;
+		final boolean isFolderOnly = false;
+		final List<TreeNode> treeNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(STUDY_REFERENCES, isLazy, isFolderOnly);
+		Assert.assertEquals(STUDY_REFERENCES.size(), treeNodes.size());
+		assertTreeNodeExpectedValues(FOLDER, treeNodes.get(0), AppConstants.FOLDER_ICON_PNG.getString(), isLazy);
+		assertTreeNodeExpectedValues(TRIAL, treeNodes.get(1), AppConstants.STUDY_ICON_PNG.getString(), isLazy);
+		assertTreeNodeExpectedValues(NURSERY, treeNodes.get(2), AppConstants.STUDY_ICON_PNG.getString(), isLazy);
+	}
+
+	private void assertTreeNodeExpectedValues(final Reference source, final TreeNode node, final Object icon, final Boolean isLazy) {
+		Assert.assertEquals(source.getId().toString(), node.getKey());
+		Assert.assertEquals(source.getName(), node.getTitle());
+		Assert.assertEquals(source.isFolder(), node.getIsFolder());
+		Assert.assertEquals(isLazy, node.getIsLazy());
+		Assert.assertEquals(source.getProgramUUID(), node.getProgramUUID());
+		Assert.assertEquals(icon, node.getIcon());
+		if (!source.isFolder()) {
+			final StudyReference studyReference = (StudyReference) source;
+			Assert.assertEquals(studyReference.getStudyType().getName(), node.getType());
+		}
 	}
 }

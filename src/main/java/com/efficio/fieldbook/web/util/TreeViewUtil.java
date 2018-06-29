@@ -91,9 +91,9 @@ public class TreeViewUtil {
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertStudyFolderReferencesToJson(final List<Reference> references, final boolean isAll, final boolean isLazy,
+	public static String convertStudyFolderReferencesToJson(final List<Reference> references, final boolean isLazy,
 			final boolean isFolderOnly) {
-		final List<TreeNode> treeNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(references, isAll, isLazy, isFolderOnly);
+		final List<TreeNode> treeNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(references, isLazy, isFolderOnly);
 		return TreeViewUtil.convertTreeViewToJson(treeNodes);
 	}
 
@@ -173,8 +173,8 @@ public class TreeViewUtil {
 		return treeNodes;
 	}
 
-	public static List<TreeNode> convertStudyFolderReferencesToTreeView(final List<Reference> references, final boolean isAll,
-			final boolean isLazy, final boolean isFolderOnly) {
+	public static List<TreeNode> convertStudyFolderReferencesToTreeView(final List<Reference> references, final boolean isLazy,
+			final boolean isFolderOnly) {
 		final List<TreeNode> treeNodes = new ArrayList<>();
 		if (references != null && !references.isEmpty()) {
 			for (final Reference reference : references) {
@@ -491,7 +491,7 @@ public class TreeViewUtil {
 
 	private static List<TypeAheadSearchTreeNode> getTypeAheadTreeNodes(final String parentId,
 			final List<TraitClassReference> traitClassReferences, final Map<String, StandardVariableReference> mapVariableRef) {
-		final List<TypeAheadSearchTreeNode> treeNodes = new ArrayList<TypeAheadSearchTreeNode>();
+		final List<TypeAheadSearchTreeNode> treeNodes = new ArrayList<>();
 
 		if (traitClassReferences != null && !traitClassReferences.isEmpty()) {
 			for (final TraitClassReference reference : traitClassReferences) {
@@ -574,7 +574,7 @@ public class TreeViewUtil {
 	 */
 	private static List<TreeNode> convertTraitClassReferencesToTreeView(final List<TraitClassReference> traitClassReferences,
 			final Map<String, StandardVariableReference> mapVariableRef) {
-		final List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+		final List<TreeNode> treeNodes = new ArrayList<>();
 		if (traitClassReferences != null && !traitClassReferences.isEmpty()) {
 			for (final TraitClassReference reference : traitClassReferences) {
 				treeNodes.add(TreeViewUtil.convertTraitClassReferenceToTreeNode("", reference, mapVariableRef));

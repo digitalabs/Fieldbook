@@ -814,6 +814,11 @@ function executeCalculatedVariable() {
 		$(e.target).removeData('bs.modal');
 	});
 
+	var scope = angular.element("#mainApp").scope();
+	scope.$apply(function () {
+		scope.navigateToTab('editMeasurements');
+	});
+
 	var $scope = angular.element('#executeCalculatedVariableModal').scope();
 	$scope.init();
 	$scope.$apply();

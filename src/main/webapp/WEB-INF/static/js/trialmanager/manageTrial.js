@@ -376,6 +376,21 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				return this.hasGermplasmListSelected() || this.displayMeasurementOnlyActions();
 			};
 
+			$scope.displayExecuteCalculatedVariableOnlyActions = function () {
+				return this.hasCalculatedVariable() && this.displayMeasurementOnlyActions();
+			};
+
+			$scope.hasCalculatedVariable = function () {
+				var CalculatedVariable = false;
+				angular.forEach(TrialManagerDataService.settings.measurements.m_keys, function (id) {
+					var variable = TrialManagerDataService.settings.measurements.m_vals[id].variable;
+					if (variable.formula) {
+						CalculatedVariable = true;
+					}
+				});
+				return CalculatedVariable;
+			};
+
 			// Programatically navigate to specified tab state
 			$scope.navigateToTab = function(targetState) {
 				$state.go(targetState);

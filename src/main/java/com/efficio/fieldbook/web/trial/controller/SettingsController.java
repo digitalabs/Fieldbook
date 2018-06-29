@@ -138,7 +138,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
 			svar.setOperation(Operation.ADD);
-			svar.setFormulaInputVariables(stdVar.getFormula() != null ? stdVar.getFormula().getInputs() : new ArrayList<CVTerm>());
 			final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id, true);
 			final SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
 			final PhenotypicType type = StringUtils.isEmpty(role) ? null : PhenotypicType.getPhenotypicTypeByName(role);

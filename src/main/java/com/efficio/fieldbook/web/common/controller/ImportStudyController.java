@@ -295,7 +295,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		WorkbookUtil.revertImportedConditionAndConstantsData(userSelection.getWorkbook());
 	}
 
-	//TODO REVISAR MEJOR
+	// TODO finish review of BMS-4886
 	@ResponseBody
 	@RequestMapping(value = "/apply/change/details", method = RequestMethod.POST)
 	public String applyChangeDetails(@RequestParam(value = "data") final String userResponses) throws FieldbookException {

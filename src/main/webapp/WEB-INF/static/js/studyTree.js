@@ -1,6 +1,6 @@
-/*globals Spinner,console,displayStudyListTree, changeBrowseStudyButtonBehavior, showErrorMessage*/
+/*globals Spinner,console,displayStudyListTree, filterByStudyType, changeBrowseStudyButtonBehavior, showErrorMessage*/
 /*globals addDetailsTab, moveStudy*/
-/*exported displayStudyListTree*/
+/*exported displayStudyListTree, filterByStudyType */
 
 
 /*
@@ -180,8 +180,8 @@ function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionPa
 	choosingType = choosingTypeParam;
 	var additionalUrl = '/0';
 	if (choosingType === 2) {
-		// Hide Study Type filter when tree is meant to show only folder
-		$('#studyTypeFilter').hide();
+		// Hide Study Type filter when tree is meant to show only folders
+		$('#studyTypeDiv').hide();
 		additionalUrl = '/1';
 	}
 
@@ -370,7 +370,18 @@ function addDetailsTab(studyId, title) {
 }
 
 function filterByStudyType(){
-	// TODO Toggle caption of root node
+	var rootNode = $('#studyTree').dynatree('getTree').getNodeByKey('LOCAL');
+	var studyType = $('#studyTypeFilter').val();
+	// Update label of root node based on filter
+	if (studyType === 'All') {
+		rootNode.data.title = "Studies";
+	} else if (studyType === 'T') {
+		rootNode.data.title = "Trials";
+	} else if (studyType === 'N') {
+		rootNode.data.title = "Nurseries";
+	}
+	rootNode.render();
+	// Toggle visibility of study nodes based on filter
 	$('#studyTree').dynatree('getTree').visit(function(node){
 		filterNodeByStudyType(node);
 	});

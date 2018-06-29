@@ -3033,6 +3033,10 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 		$('#studyTree').dynatree('destroy');
 		displayStudyListTree('studyTree', type, selectStudyFunction, isPreSelect);
 		changeBrowseStudyButtonBehavior(false);
+	// Reset study filter to show all studies
+	} else {
+		$('#studyTypeFilter').val("All");
+		filterByStudyType();	
 	}
 
 	$('#studyTreeModal').modal({

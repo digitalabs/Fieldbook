@@ -206,7 +206,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		settingVariable.setCropOntologyId(property.getCropOntologyId());
 
 		if (variable.getFormula() != null) {
-			settingVariable.setFormulaInputVariables(variable.getFormulaInputVariables());
+			settingVariable.setFormula(variable.getFormula());
 		}
 
 		if (!property.getClasses().isEmpty()) {

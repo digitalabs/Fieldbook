@@ -2,8 +2,10 @@ package com.efficio.fieldbook.web.common.controller.derived_variables;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.google.common.base.Optional;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.ontology.FormulaDto;
 import org.generationcp.middleware.pojos.derived_variables.Formula;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.derived_variables.FormulaService;
@@ -70,7 +72,7 @@ public class DerivedVariableController {
 		 */
 		WorkbookUtil.resetWorkbookObservations(workbook);
 
-		final Formula formula = this.formulaService.getByTargetId(request.getVariableId());
+		final Optional<FormulaDto> formula = this.formulaService.getByTargetId(request.getVariableId());
 
 		final Map<String, MeasurementRow> measurementRowsMap = new LinkedHashMap<>();
 		if (workbook.getObservations() != null) {

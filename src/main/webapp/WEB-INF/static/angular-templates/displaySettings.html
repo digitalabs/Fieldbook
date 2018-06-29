@@ -20,14 +20,15 @@
             </td>
             <td style="width: auto" ng-class="{even : $even, odd : $odd}">{{settings.val(key).variable.description}}</td>
             <td style="width: auto" ng-if="variableType == 1808" width="50%" ng-class="{even : $even, odd : $odd}">
-                <a ng-repeat="formulaInputVariable in settings.val(key).variable.formulaInputVariables" href="javascript: void(0);">
-                    <span class="var-names" show-details-modal="formulaInputVariable.cvTermId"
-                          variable-type="{{variableType}}">{{formulaInputVariable.name}}</span>
+                <a ng-repeat="formulaVariable in settings.val(key).variable.formula.inputs" href="javascript: void(0);">
+                    <span class="var-names" show-details-modal="formulaVariable.id"
+                          variable-type="{{variableType}}">{{formulaVariable.name}}</span>
                     {{$last ? '' : ', '}}
                 </a>
             </td>
         </tr>
         <tr ng-hide="filteredKeys.length &gt; 0">
+            <td class="odd">&nbsp;</td>
             <td class="odd">&nbsp;</td>
             <td class="odd">&nbsp;</td>
             <td class="odd">&nbsp;</td>

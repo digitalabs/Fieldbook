@@ -4,8 +4,8 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('ExecuteCalculatedVariableModalCtrl', ['$scope', 'TrialManagerDataService','$http', function ($scope,
-																																  TrialManagerDataService,$http) {
+	manageTrialApp.controller('ExecuteCalculatedVariableModalCtrl',
+		['$scope', 'TrialManagerDataService', '$http', function ($scope, TrialManagerDataService, $http) {
 
 		$scope.settings = TrialManagerDataService.settings.environments;
 		$scope.LOCATION_NAME_ID = 8190;
@@ -34,42 +34,37 @@
 		};
 
 		$scope.execute = function () {
-			var hasDataOverwrite = '0';
 			var calculateData = {
 				variableId: $scope.variableSelected.cvTermId
 				, geoLocationId: $scope.locationSelected.locationId
 			};
 
 			$http.post('/Fieldbook/DerivedVariableController/derived-variable/execute', JSON.stringify(calculateData))
-				.success(function (data) {
-					hasDataOverwrite = data.hasDataOverwrite;
-				}).error(function (data) {
+				.then(function (data) {
+					$('#executeCalculatedVariableModal').modal('hide');
+					if (data.hasDataOverwrite === '1') {
+						$('#confirmOverrideCalculatedVariableModal').modal({backdrop: 'static', keyboard: true});
 
-				if (data.status == 401) {
-					bmsAuth.handleReAuthentication();
-				}
-				if (data.status == 400) {
-					showErrorMessage('', data.errorMessage);
-				}
-				if (data.status === 500) {
-					showErrorMessage('', ajaxGenericErrorMsg);
-				}
-			});
-
-			$('#executeCalculatedVariableModal').modal('hide');
-			if (hasDataOverwrite === '1') {
-				$('#confirmOverrideCalculatedVariableModal').modal({backdrop: 'static', keyboard: true});
-
-				// Add hide listener to confirmOverrideCalculatedVariableModal
-				$('#confirmOverrideCalculatedVariableModal').one('hidden.bs.modal', function (e) {
-					// When the confirmOverrideCalculatedVariableModal is closed, remove the bs.modal data
-					// so that the modal content is refreshed when it is opened again.
-					$(e.target).removeData('bs.modal');
+						// Add hide listener to confirmOverrideCalculatedVariableModal
+						$('#confirmOverrideCalculatedVariableModal').one('hidden.bs.modal', function (e) {
+							// When the confirmOverrideCalculatedVariableModal is closed, remove the bs.modal data
+							// so that the modal content is refreshed when it is opened again.
+							$(e.target).removeData('bs.modal');
+						});
+						angular.element('#confirmOverrideCalculatedVariableModal').scope();
+					} else {
+						$scope.proceedExecution();
+					}
+				}, function (response) {
+					if (!response || !response.status || response.status === 500) {
+						showErrorMessage('', ajaxGenericErrorMsg);
+					} else if (response.status == 401) {
+						bmsAuth.handleReAuthentication();
+					} else if (response.status == 400 && response.data.errorMessage) {
+						showErrorMessage('', response.data.errorMessage);
+					}
 				});
-				angular.element('#confirmOverrideCalculatedVariableModal').scope();
-			} else {
-				$scope.proceedExecution();
-			}
+
 		};
 
 		function convertTraitsVariablesToListView(traitIdList) {
@@ -83,7 +78,8 @@
 			return variableListView;
 		};
 
-		// Converts the environments data (($scope.data.environments) for UI usage.
+		// TODO extract method shared with other controllers
+		// Converts the environments data (($scope.environments) for UI usage.
 		function convertToEnvironmentListView(environments, preferredLocationVariable, trialInstanceIndex) {
 
 			var environmentListView = [];
@@ -127,24 +123,20 @@
 	manageTrialApp.controller('ConfirmOverrideCalculatedVariableModalCtrl', ['$scope', '$http', function ($scope, $http) {
 
 		$scope.goBack = function () {
-			$http.get('/Fieldbook/ImportManager/revert/data').success(function (data) {
-
-			}).error(function (data) {
-
-				if (data.status === 401) {
-					bmsAuth.handleReAuthentication();
-				}
-				if (data.status === 400) {
-					showErrorMessage('', data.errorMessage);
-				}
-				if (data.status === 500) {
-					showErrorMessage('', ajaxGenericErrorMsg);
-				}
-			});
-
-			$scope.revertData();
-			$('#confirmOverrideCalculatedVariableModal').modal('hide');
-			$('#executeCalculatedVariableModal').modal('show');
+			$http.get('/Fieldbook/ImportManager/revert/data')
+				.then(function (data) {
+					$scope.revertData();
+					$('#confirmOverrideCalculatedVariableModal').modal('hide');
+					$('#executeCalculatedVariableModal').modal('show');
+				}, function (response) {
+					if (!response || !response.status || response.status === 500) {
+						showErrorMessage('', ajaxGenericErrorMsg);
+					} else if (response.status == 401) {
+						bmsAuth.handleReAuthentication();
+					} else if (response.status == 400 && response.data.errorMessage) {
+						showErrorMessage('', response.data.errorMessage);
+					}
+				});
 
 		};
 

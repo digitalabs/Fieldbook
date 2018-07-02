@@ -338,16 +338,15 @@
 
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			<div id="showBaselineTraitDetails" th:include="/StudyManager/includes/baselineTraitDetails"></div>
+			<div class="chs-vs-modal-container" th:include="/StudyManager/includes/variableSelectionModal"></div>
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			<div class="chs-vs-modal-container" th:include="/StudyManager/includes/variableSelectionModal"></div>
+			<div id="showBaselineTraitDetails" th:include="/StudyManager/includes/baselineTraitDetails"></div>
 		</div>
 	</div>
-
 
 	<ul class="nav nav-tabs row fb-tabs-headers" id="manage-trial-tab-headers">
 		<li ng-repeat="tab in trialTabs" ng-class="{active: tabSelected===tab.state}"

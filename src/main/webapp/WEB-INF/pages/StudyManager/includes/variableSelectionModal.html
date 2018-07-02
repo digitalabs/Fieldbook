@@ -55,12 +55,44 @@ be empty. -->
 				{{/if}}
 			</span>
 			<div class="vs-variable-description">
-				<span class="vs-variable-description-label" th:text="#{variable.details.label.method}">Method:</span>
-				<span title="{{method.definition}}">{{method.name}}</span>
-				<span class="vs-variable-description-scale">
-					<span class="vs-variable-description-label" th:text="#{variable.details.label.scale}">Method:</span>
-					<span title="{{scale.definition}}">{{scale.name}}</span>
-				</span>
+				<table id="variableDetailsTable">
+					<tr>
+						<td>
+							<span class="vs-variable-description-label" th:text="#{variable.details.label.method}">Method:</span>
+							<span title="{{method.definition}}">{{method.name}}</span>
+						</td>
+						<td>
+							<span class="vs-variable-description-label" th:text="#{variable.details.label.scale}">Scale:</span>
+							<span title="{{scale.definition}}">{{scale.name}}</span>
+						</td>
+					</tr>
+					{{#if formula.definition}}
+					<tr>
+						<td>
+							<span class="vs-variable-description-label" th:text="#{variable.details.label.formula.definition}">Calculation:</span>
+						</td>
+						<td>
+							<span class="vs-variable-description-label" th:text="#{variable.details.label.formula.input.variables}">Input Variables:</span>
+						</td>
+					</tr>
+					<tr style="border-top: #e4e4e4 solid 1px">
+						<td>
+							<span style="float: left; width: 50%">{{formula.definition}}</span>
+						</td>
+						<td>
+							<span style="float: left; width: 50%">
+								{{#each formula.inputs}}
+								<!-- Passing Trait variabletTypeId (1808) because only traits variable are used in derived traits. -->
+								<a href="#" onclick="showBaselineTraitDetailsModal({{id}}, 1808)">{{name}}</a>
+									{{#unless @last}}
+										,
+									{{/unless}}
+								{{/each}}
+							</span>
+						</td>
+					</tr>
+					{{/if}}
+				</table>
 			</div>
 		</li>
 		{{/each}}

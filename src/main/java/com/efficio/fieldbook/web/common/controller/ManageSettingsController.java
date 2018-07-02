@@ -8,10 +8,12 @@ import com.efficio.fieldbook.web.trial.controller.SettingsController;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.google.common.base.Optional;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.ontology.FormulaDto;
 import org.generationcp.middleware.domain.ontology.Property;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -20,6 +22,7 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.ontology.api.OntologyPropertyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.manager.ontology.daoElements.VariableFilter;
+import org.generationcp.middleware.service.api.derived_variables.FormulaService;
 import org.generationcp.middleware.service.api.study.StudyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +79,9 @@ public class ManageSettingsController extends SettingsController {
 
 	@Resource
 	protected StudyService studyService;
+
+	@Resource
+	protected FormulaService formulaService;
 
 	@ResponseBody
 	@RequestMapping(value = "/settings/role/{roleId}", method = RequestMethod.GET,
@@ -242,6 +248,12 @@ public class ManageSettingsController extends SettingsController {
 					var.setOperation(operation);
 					this.populateSettingVariable(var);
 					final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(var.getCvTermId());
+					final Optional<FormulaDto> formula = this.formulaService.getByTargetId(var.getCvTermId());
+
+					if (formula.isPresent()) {
+						var.setFormula(formula.get());
+					}
+
 					final SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
 					final List<ValueReference> possibleValuesFavoriteFiltered = this.fieldbookService
 							.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID(), true);

@@ -82,6 +82,10 @@ public class DerivedVariableController {
 		// Calculate
 
 		for (final MeasurementRow row : workbook.getObservations()) {
+			if (!request.getGeoLocationId().equals((int)row.getLocationId())) {
+				continue;
+			}
+
 			final DerivedVariableProcessor processor = new DerivedVariableProcessor();
 			final Map<String, Object> terms = processor.extractTermsFromFormula(formula.get().getDefinition());;
 

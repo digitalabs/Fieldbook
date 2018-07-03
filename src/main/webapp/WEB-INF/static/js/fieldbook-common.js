@@ -2264,7 +2264,8 @@ function createFolder() {
 					doStudyLazyLoad(node, data.newFolderId);
 					node.focus();
 					node.expand();
-					$('#addFolderDiv', '#studyTreeModal').slideUp();
+					$('#addFolderDiv', '#studyTreeModal').slideUp('fast');
+					$('#studyTypeDiv', '#studyTreeModal').slideDown('fast');
 					showSuccessfulMessage('', addFolderSuccessful);
 				} else {
 					showErrorMessage('page-add-study-folder-message-modal', data.message);
@@ -3029,6 +3030,7 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	$('#page-study-tree-message-modal').html('');
 	$('#addFolderDiv').hide();
 	$('#renameFolderDiv').hide();
+	
 	if ($('#create-study #studyTree').length !== 0) {
 		$('#studyTree').dynatree('destroy');
 		displayStudyListTree('studyTree', type, selectStudyFunction, isPreSelect);

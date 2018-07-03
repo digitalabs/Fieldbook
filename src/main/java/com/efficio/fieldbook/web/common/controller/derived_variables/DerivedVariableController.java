@@ -4,6 +4,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.base.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.derivedvariable.DerivedVariableProcessor;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -25,7 +26,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequestMapping("DerivedVariableController")
@@ -47,6 +50,10 @@ public class DerivedVariableController {
 		return this.messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
 	}
 
+	private String getMessage(final String code, final Object[] args) {
+		return this.messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
+	}
+
 	@ResponseBody
 	@RequestMapping(value = "/derived-variable/execute", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> execute(@RequestBody final CalculateVariableRequest request, final BindingResult result) {
@@ -55,10 +62,9 @@ public class DerivedVariableController {
 		final Workbook workbook = studySelection.getWorkbook();
 
 		final Map<String, Object> results = new HashMap<>();
-		results.put("hasDataOverwrite", workbook.hasExistingDataOverwrite() ? "1" : "0");
 
 		if (request == null || request.getGeoLocationId() == null || request.getVariableId() == null) {
-			results.put("errorMessage", getMessage("study.derived_variables.execute.invalid.request"));
+			results.put("errorMessage", getMessage("study.execute.calculation.invalid.request"));
 			return new ResponseEntity<>(results, HttpStatus.BAD_REQUEST);
 		}
 
@@ -75,11 +81,13 @@ public class DerivedVariableController {
 
 		if (!formula.isPresent()) {
 			// TODO
-			results.put("errorMessage", getMessage(""));
+			results.put("errorMessage", getMessage("study.execute.calculation.formula.not.found"));
 			return new ResponseEntity<>(results, HttpStatus.BAD_REQUEST);
 		}
 
 		// Calculate
+
+		Set<String> inputMissingData = new HashSet<>();
 
 		for (final MeasurementRow row : workbook.getObservations()) {
 			if (!request.getGeoLocationId().equals((int)row.getLocationId())) {
@@ -87,11 +95,13 @@ public class DerivedVariableController {
 			}
 
 			final DerivedVariableProcessor processor = new DerivedVariableProcessor();
-			final Map<String, Object> terms = processor.extractTermsFromFormula(formula.get().getDefinition());;
+			final Map<String, Object> terms = processor.extractTerms(formula.get().getDefinition());;
 
-			processor.fetchTermValuesFromMeasurement(terms, row);
+			processor.extractValues(terms, row, inputMissingData);
 
 			String value = processor.evaluateFormula(formula.get().getDefinition(), terms, null);
+
+			// Process calculation result
 
 			final MeasurementData target = row.getMeasurementData(formula.get().getTargetTermId());
 
@@ -122,6 +132,12 @@ public class DerivedVariableController {
 		}
 
 		// Process response
+
+		results.put("hasDataOverwrite", workbook.hasExistingDataOverwrite());
+		if (!inputMissingData.isEmpty()) {
+			results.put( "inputMissingData",
+				getMessage("study.execute.calculation.missing.data", new String[] {StringUtils.join(inputMissingData.toArray(), ", ")}));
+		}
 
 		return new ResponseEntity<>(results, HttpStatus.OK);
 	}

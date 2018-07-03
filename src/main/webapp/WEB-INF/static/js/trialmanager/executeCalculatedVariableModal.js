@@ -40,9 +40,12 @@
 			};
 
 			$http.post('/Fieldbook/DerivedVariableController/derived-variable/execute', JSON.stringify(calculateData))
-				.then(function (data) {
+				.then(function (response) {
 					$('#executeCalculatedVariableModal').modal('hide');
-					if (data.hasDataOverwrite === '1') {
+					if (response.data && response.data.inputMissingData) {
+						showAlertMessage('', response.data.inputMissingData, 15000);
+					}
+					if (response.data && response.data.hasDataOverwrite) {
 						$('#confirmOverrideCalculatedVariableModal').modal({backdrop: 'static', keyboard: true});
 
 						// Add hide listener to confirmOverrideCalculatedVariableModal
@@ -124,7 +127,7 @@
 
 		$scope.goBack = function () {
 			$http.get('/Fieldbook/ImportManager/revert/data')
-				.then(function (data) {
+				.then(function (response) {
 					$scope.revertData();
 					$('#confirmOverrideCalculatedVariableModal').modal('hide');
 					$('#executeCalculatedVariableModal').modal('show');

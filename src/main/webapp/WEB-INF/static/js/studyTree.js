@@ -134,10 +134,12 @@ function doStudyLazyLoad(node, preSelectId) {
 				}
 
 				if (node.data.isFolder === false) {
-					filterNodeByStudyType(node);
 					addDetailsTab(node.data.key, node.data.title);
 					changeBrowseStudyButtonBehavior(false);
 				} else {
+					node.visit(function(child){
+						filterNodeByStudyType(child);
+					});
 					if (node.data.key === 'LOCAL') {
 						changeBrowseStudyButtonBehavior(true);
 						$('.edit-folder', '#studyTreeModal').addClass('disable-image');

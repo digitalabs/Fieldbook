@@ -157,7 +157,7 @@
 
 		$scope.proceed = function () {
 			$('#confirmOverrideCalculatedVariableModal').modal('hide');
-			angular.element('#executeCalculatedVariableModal').scope().proceedExecution();
+			$scope.proceedExecution();
 		};
 
 	}]);

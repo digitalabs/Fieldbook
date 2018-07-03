@@ -88,6 +88,7 @@ public class DerivedVariableController {
 		// Calculate
 
 		Set<String> inputMissingData = new HashSet<>();
+		workbook.setHasExistingDataOverwrite(false);
 
 		for (final MeasurementRow row : workbook.getObservations()) {
 			if (!request.getGeoLocationId().equals((int)row.getLocationId())) {
@@ -100,6 +101,10 @@ public class DerivedVariableController {
 			processor.extractValues(terms, row, inputMissingData);
 
 			String value = processor.evaluateFormula(formula.get().getDefinition(), terms, null);
+
+			if (StringUtils.isBlank(value)) {
+				continue;
+			}
 
 			// Process calculation result
 

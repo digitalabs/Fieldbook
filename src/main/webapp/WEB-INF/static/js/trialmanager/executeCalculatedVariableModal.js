@@ -59,12 +59,12 @@
 						$scope.proceedExecution();
 					}
 				}, function (response) {
-					if (!response || !response.status || response.status === 500) {
-						showErrorMessage('', ajaxGenericErrorMsg);
-					} else if (response.status == 401) {
+					if (response.status == 401) {
 						bmsAuth.handleReAuthentication();
-					} else if (response.status == 400 && response.data.errorMessage) {
+					} else if (response.data.errorMessage) {
 						showErrorMessage('', response.data.errorMessage);
+					} else {
+						showErrorMessage('', ajaxGenericErrorMsg);
 					}
 				});
 
@@ -132,12 +132,12 @@
 					$('#confirmOverrideCalculatedVariableModal').modal('hide');
 					$('#executeCalculatedVariableModal').modal('show');
 				}, function (response) {
-					if (!response || !response.status || response.status === 500) {
-						showErrorMessage('', ajaxGenericErrorMsg);
-					} else if (response.status == 401) {
+					if (response.status == 401) {
 						bmsAuth.handleReAuthentication();
-					} else if (response.status == 400 && response.data.errorMessage) {
+					} else if (response.data.errorMessage) {
 						showErrorMessage('', response.data.errorMessage);
+					} else {
+						showErrorMessage('', ajaxGenericErrorMsg);
 					}
 				});
 

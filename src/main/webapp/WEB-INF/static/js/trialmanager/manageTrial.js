@@ -401,14 +401,9 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.hasCalculatedVariable = function () {
-				var CalculatedVariable = false;
-				angular.forEach(TrialManagerDataService.settings.measurements.m_keys, function (id) {
-					var variable = TrialManagerDataService.settings.measurements.m_vals[id].variable;
-					if (variable.formula) {
-						CalculatedVariable = true;
-					}
+			 	return TrialManagerDataService.settings.measurements.m_keys.some(function (key) {
+					return TrialManagerDataService.settings.measurements.m_vals[key].variable.formula;
 				});
-				return CalculatedVariable;
 			};
 
 			// Programatically navigate to specified tab state

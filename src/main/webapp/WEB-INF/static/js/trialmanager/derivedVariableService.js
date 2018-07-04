@@ -8,11 +8,7 @@
         var derivedVariableService = {};
 
         derivedVariableService.getDependencies = function () {
-            var deferred = $q.defer();
-            $http.get('/Fieldbook/DerivedVariableController/derived-variable/dependencies').success(function(data) {
-                deferred.resolve(data);
-            });
-            return deferred.promise;
+            return $http.get('/Fieldbook/DerivedVariableController/derived-variable/dependencies');
         };
 
         return derivedVariableService;

@@ -15,6 +15,8 @@ import org.generationcp.middleware.domain.ontology.FormulaDto;
 import org.generationcp.middleware.domain.ontology.FormulaVariable;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.derived_variables.FormulaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
@@ -36,6 +38,8 @@ import java.util.Set;
 @Controller
 @RequestMapping("DerivedVariableController")
 public class DerivedVariableController {
+
+	private static final Logger LOG = LoggerFactory.getLogger(DerivedVariableController.class);
 
 	@Resource
 	private UserSelection studySelection;
@@ -62,6 +66,7 @@ public class DerivedVariableController {
 	public ResponseEntity<Map<String, Object>> execute(@RequestBody final CalculateVariableRequest request, final BindingResult result) {
 
 		// Process request
+
 		final Workbook workbook = studySelection.getWorkbook();
 
 		final Map<String, Object> results = new HashMap<>();
@@ -98,12 +103,23 @@ public class DerivedVariableController {
 				continue;
 			}
 
+			// Get input data
+
 			final DerivedVariableProcessor processor = new DerivedVariableProcessor();
 			final Map<String, Object> terms = processor.extractTerms(formula.get().getDefinition());;
 
 			processor.extractValues(terms, row, inputMissingData);
 
-			String value = processor.evaluateFormula(formula.get().getDefinition(), terms, null);
+			// Evaluate
+
+			String value;
+			try {
+				value = processor.evaluateFormula(formula.get().getDefinition(), terms, null);
+			} catch (Exception e) {
+				LOG.error("Error evaluating formula " + formula.get() + " with inputs " + terms, e);
+				results.put("errorMessage", getMessage("study.execute.calculation.engine.exception"));
+				return new ResponseEntity<>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 
 			if (StringUtils.isBlank(value)) {
 				continue;
@@ -112,7 +128,6 @@ public class DerivedVariableController {
 			// Process calculation result
 
 			final MeasurementData target = row.getMeasurementData(formula.get().getTargetTermId());
-
 			target.setAccepted(false);
 
 			// Process categorical data

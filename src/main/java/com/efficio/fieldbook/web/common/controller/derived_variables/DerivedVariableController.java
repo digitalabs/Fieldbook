@@ -106,9 +106,15 @@ public class DerivedVariableController {
 			// Get input data
 
 			final DerivedVariableProcessor processor = new DerivedVariableProcessor();
-			final Map<String, Object> terms = processor.extractTerms(formula.get().getDefinition());;
+			final Map<String, Object> terms = processor.extractTerms(formula.get().getDefinition());
 
-			processor.extractValues(terms, row, inputMissingData);
+			final Set<String> rowInputMissingData = new HashSet<>();
+			processor.extractValues(terms, row, rowInputMissingData);
+			inputMissingData.addAll(rowInputMissingData);
+
+			if (!rowInputMissingData.isEmpty()) {
+				continue;
+			}
 
 			// Evaluate
 

@@ -29,6 +29,7 @@ public class ManageTrialControllerTest extends AbstractBaseIntegrationTest {
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.model().attributeExists("preloadSummaryId"))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("preloadSummaryName"))
+				.andExpect(MockMvcResultMatchers.model().attributeExists("studyTypes"))
 				.andExpect(MockMvcResultMatchers.model().attribute(AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "Common/manageStudy"));
 	}
 }

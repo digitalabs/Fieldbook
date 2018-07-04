@@ -180,6 +180,7 @@ function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionPa
 	lazyReadUrl = '/Fieldbook/StudyTreeManager/expandTree/';
 
 	choosingType = choosingTypeParam;
+	$('#choosingType').val(choosingType);
 	var additionalUrl = '/0';
 	if (choosingType === 2) {
 		// Hide Study Type filter when tree is meant to show only folders
@@ -421,12 +422,17 @@ function showStudyTypeDiv() {
 	$('#studyTypeDiv', '#studyTreeModal').slideDown('fast');
 }
 
-function hideAddFolderSection() {
+function hideAddFolderSection() {	
 	hideAddFolderDiv();
-	showStudyTypeDiv();
+	if ($('#choosingType').val() !== "2"){
+		showStudyTypeDiv();		
+	}
+
 }
 
 function hideRenameFolderSection() {
 	hideRenameFolderDiv()
-	showStudyTypeDiv();
+	if ($('#choosingType').val() !== "2"){
+		showStudyTypeDiv();
+	}
 }

@@ -33,7 +33,7 @@ public class ManageTrialControllerTest {
 	@InjectMocks
 	private ManageTrialController controller;
 	
-	 private MockMvc mockMvc;
+	private MockMvc mockMvc;
 	
 	@Before
 	public void setup() {

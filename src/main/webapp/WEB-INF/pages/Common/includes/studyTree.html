@@ -38,8 +38,7 @@
 							<div class="col-xs-8">
 								<select class="form-control" id="studyTypeFilter" onchange="filterByStudyType()">
 									<option value="All">All</option>
-									<option value="N">Nursery</option>
-									<option value="T">Trial</option>
+									<option th:each="studyType : ${studyTypes}" th:value="${studyType.name}" th:text="${studyType.label}"></option>
 								</select>
 							</div>
 						</div>

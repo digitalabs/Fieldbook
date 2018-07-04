@@ -13,12 +13,15 @@ package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
+
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -30,6 +33,9 @@ public class ManageTrialController extends AbstractBaseFieldbookController {
 
 	/** The Constant URL. */
 	public static final String URL = "/TrialManager/manageTrial";
+	
+	@Resource
+	protected StudyDataManager studyDataManager;
 
 	/**
 	 *
@@ -41,6 +47,7 @@ public class ManageTrialController extends AbstractBaseFieldbookController {
 	public String show(@ModelAttribute("manageTrialForm") ManageTrialForm form, Model model, HttpServletRequest request) {
 		model.addAttribute("preloadSummaryId", request.getParameter("summaryId") != null ? request.getParameter("summaryId") : "");
 		model.addAttribute("preloadSummaryName", request.getParameter("summaryName") != null ? request.getParameter("summaryName") : "");
+		model.addAttribute("studyTypes", this.studyDataManager.getAllVisibleStudyTypes());
 		return super.show(model);
 	}
 

@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.common.controller.derived_variables;
 
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
@@ -11,6 +12,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.FormulaDto;
+import org.generationcp.middleware.domain.ontology.FormulaVariable;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.derived_variables.FormulaService;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -145,6 +148,29 @@ public class DerivedVariableController {
 		}
 
 		return new ResponseEntity<>(results, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/derived-variable/dependencies", method = RequestMethod.GET)
+	public ResponseEntity<Set<String>> dependencyVariables() {
+
+		final Set<Integer> variableIdsOfTraitsInStudy = new HashSet<>();
+		final Set<String> derivedVariablesDependencies = new HashSet<>();
+
+		if (studySelection.getBaselineTraitsList() != null) {
+			for (final SettingDetail settingDetail : studySelection.getBaselineTraitsList()) {
+				variableIdsOfTraitsInStudy.add(settingDetail.getVariable().getCvTermId());
+			}
+		}
+
+		final List<FormulaVariable> formulaVariables = this.formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy);
+		for (final FormulaVariable formulaVariable : formulaVariables) {
+			if (!variableIdsOfTraitsInStudy.contains(formulaVariable.getId())) {
+				derivedVariablesDependencies.add(formulaVariable.getName());
+			}
+		}
+
+		return new ResponseEntity<>(derivedVariablesDependencies, HttpStatus.OK);
 	}
 
 }

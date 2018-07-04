@@ -138,8 +138,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout', '_',
-		'$localStorage', '$state', '$location', function($scope, $rootScope, TrialManagerDataService, $http, $timeout, _, $localStorage,
-			$state, $location) {
+		'$localStorage', '$state', '$location', 'derivedVariableService', '$uibModal', function($scope, $rootScope, TrialManagerDataService, $http, $timeout, _, $localStorage,
+			$state, $location, derivedVariableService, $uibModal) {
 			$scope.trialTabs = [
 				{   name: 'Settings',
 					state: 'trialSettings'
@@ -256,7 +256,27 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 			$scope.data = TrialManagerDataService.currentData.basicDetails;
 
-			$scope.saveCurrentTrialData = TrialManagerDataService.saveCurrentData;
+			$scope.saveCurrentTrialData = function() {
+
+                derivedVariableService.getDependencies().then(function(dependencyVariables) {
+                	if (dependencyVariables.length > 0) {
+                        $uibModal.open({
+							animation: true,
+                            templateUrl: '/Fieldbook/static/angular-templates/derivedTraitsValidationModal.html',
+                            size: 'md',
+                            controller: function($scope, $uibModalInstance) {
+                                $scope.dependencyVariables = dependencyVariables;
+                                $scope.continue = function() {
+                                    $uibModalInstance.close();
+                                	TrialManagerDataService.saveCurrentData();
+                                };
+                            }
+                        });
+                    } else {
+                        TrialManagerDataService.saveCurrentData();
+					}
+                });
+			};
 
 			$scope.selectPreviousStudy = function() {
 				openStudyTree(3, $scope.useExistingStudy);

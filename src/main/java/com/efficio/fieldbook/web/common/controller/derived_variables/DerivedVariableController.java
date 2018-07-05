@@ -15,6 +15,7 @@ import org.generationcp.middleware.domain.ontology.FormulaDto;
 import org.generationcp.middleware.domain.ontology.FormulaVariable;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.derived_variables.FormulaService;
+import org.generationcp.middleware.service.api.study.StudyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -52,6 +54,9 @@ public class DerivedVariableController {
 
 	@Resource
 	private FormulaService formulaService;
+
+	@Resource
+	protected StudyService studyService;
 
 	private String getMessage(final String code) {
 		return this.messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
@@ -175,14 +180,8 @@ public class DerivedVariableController {
 	@RequestMapping(value = "/derived-variable/dependencies", method = RequestMethod.GET)
 	public ResponseEntity<Set<String>> dependencyVariables() {
 
-		final Set<Integer> variableIdsOfTraitsInStudy = new HashSet<>();
+		final Set<Integer> variableIdsOfTraitsInStudy = this.getVariableIdsOfTraitsInStudy();
 		final Set<String> derivedVariablesDependencies = new HashSet<>();
-
-		if (studySelection.getBaselineTraitsList() != null) {
-			for (final SettingDetail settingDetail : studySelection.getBaselineTraitsList()) {
-				variableIdsOfTraitsInStudy.add(settingDetail.getVariable().getCvTermId());
-			}
-		}
 
 		final List<FormulaVariable> formulaVariables = this.formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy);
 		for (final FormulaVariable formulaVariable : formulaVariables) {
@@ -192,6 +191,60 @@ public class DerivedVariableController {
 		}
 
 		return new ResponseEntity<>(derivedVariablesDependencies, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/derived-variable/dependencyVariableHasMeasurementData", method = RequestMethod.POST)
+	public ResponseEntity<Boolean> dependencyVariableHasMeasurementData(@RequestBody final List<Integer> ids) {
+
+		// if study is not yet saved, no measurement data yet
+		final Workbook savedWorkbook = this.studySelection.getWorkbook();
+
+		if (savedWorkbook == null) {
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+		}
+
+		final boolean hasMeasurementData =
+				this.checkDependencyVariableHasMeasurementDataEntered(ids, savedWorkbook.getStudyDetails().getId());
+
+		return new ResponseEntity<Boolean>(hasMeasurementData, HttpStatus.OK);
+	}
+
+	protected boolean checkDependencyVariableHasMeasurementDataEntered(final List<Integer> ids, final Integer studyId) {
+
+		final Set<Integer> variableIdsOfTraitsInStudy = this.getVariableIdsOfTraitsInStudy();
+		final List<Integer> derivedVariablesDependencies = new ArrayList<>();
+
+		final List<FormulaVariable> formulaVariables = formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy);
+
+		// Determine which of the ids are dependency (argument) variables. If a derived variable and its dependency variables
+		// are removed in a study then there's no need to check if they have measurement data.
+		for (final FormulaVariable formulaVariable : formulaVariables) {
+			if (ids.contains(formulaVariable.getId()) && !ids.contains(formulaVariable.getTargetTermId())) {
+				derivedVariablesDependencies.add(formulaVariable.getId());
+			}
+		}
+
+		if (!derivedVariablesDependencies.isEmpty()) {
+			// Then check if the dependency variables contain measurement data.
+			return this.studyService.hasMeasurementDataEntered(derivedVariablesDependencies, studyId);
+		}
+
+		return false;
+	}
+
+	protected Set<Integer> getVariableIdsOfTraitsInStudy() {
+
+		final Set<Integer> variableIdsOfTraitsInStudy = new HashSet<>();
+
+		if (this.studySelection.getBaselineTraitsList() != null) {
+			for (final SettingDetail settingDetail : this.studySelection.getBaselineTraitsList()) {
+				variableIdsOfTraitsInStudy.add(settingDetail.getVariable().getCvTermId());
+			}
+		}
+
+		return variableIdsOfTraitsInStudy;
+
 	}
 
 }

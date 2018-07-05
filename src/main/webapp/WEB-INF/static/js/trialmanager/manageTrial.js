@@ -767,6 +767,28 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 				return null;
 			};
+
+            $rootScope.openConfirmModal = function(message, confirmButtonLabel) {
+
+                var modalInstance = $uibModal.open({
+					animation: true,
+                    templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
+                    controller: function($scope, $uibModalInstance) {
+                        $scope.text = message;
+                        $scope.confirmButtonLabel = confirmButtonLabel;
+
+                        $scope.confirm = function () {
+                            $uibModalInstance.close(true);
+                        };
+
+                        $scope.cancel = function () {
+                            $uibModalInstance.close(false);
+                        };
+                    }
+                });
+                return modalInstance;
+            };
+
 		}]);
 
 	manageTrialApp.filter('filterMeasurementState', function() {
@@ -786,20 +808,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 
 				return filtered;
-			};
-		});
-
-	manageTrialApp.controller('ConfirmModalController', function($scope, $uibModalInstance, MODAL_TITLE, MODAL_TEXT, CONFIRM_BUTTON_LABEL) {
-			$scope.title = MODAL_TITLE;
-			$scope.text = MODAL_TEXT;
-			$scope.confirmButtonLabel = CONFIRM_BUTTON_LABEL;
-
-			$scope.confirm = function() {
-				$uibModalInstance.close(true);
-			};
-
-			$scope.cancel = function() {
-				$uibModalInstance.close(false);
 			};
 		});
 

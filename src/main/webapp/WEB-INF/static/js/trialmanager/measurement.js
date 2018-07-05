@@ -3,10 +3,10 @@
 	'use strict';
 
 	angular.module('manageTrialApp').controller('MeasurementsCtrl',
-		['$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http', 'DTOptionsBuilder', 'DTColumnBuilder',
-		'DTColumnDefBuilder', '$filter',
-			function($scope, TrialManagerDataService, $uibModal, $q, debounce, $http, DTOptionsBuilder, DTColumnBuilder,
-				DTColumnDefBuilder, $filter) {
+		['$rootScope', '$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http', 'DTOptionsBuilder', 'DTColumnBuilder',
+		'DTColumnDefBuilder', '$filter', 'derivedVariableService',
+			function($rootScope, $scope, TrialManagerDataService, $uibModal, $q, debounce, $http, DTOptionsBuilder, DTColumnBuilder,
+				DTColumnDefBuilder, $filter, derivedVariableService) {
 				var DELAY = 1500; // 1.5 secs
 				var studyId = $('#studyId').val();
 
@@ -86,34 +86,30 @@
 
 				/* Scope functions */
 				$scope.beforeDelete = function(variableType, variableIds) {
-					var deferred = $q.defer();
 
-					$http.post('/Fieldbook/manageSettings/hasMeasurementData/' + variableType, variableIds, {cache: false})
-						.success(function(hasMeasurementData) {
-							if (hasMeasurementData) {
-								var modalInstance = $uibModal.open({
-									templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
-									controller: 'ConfirmModalController',
-									resolve: {
-										MODAL_TITLE: function() {
-											return modalConfirmationTitle;
-										},
-										MODAL_TEXT: function() {
-											return measurementModalConfirmationText;
-										},
-										CONFIRM_BUTTON_LABEL: function() {
-											return environmentConfirmLabel;
-										}
-									}
-								});
+                    var deferred = $q.defer();
+					derivedVariableService.hasMeasurementData(variableIds).then(function (response) {
+                        var dependencyVariableHasMeasurementData = response.data;
 
-								modalInstance.result.then(deferred.resolve);
-
-							} else {
-								deferred.resolve(true);
-							}
-						});
-
+                        // Check first if any of removed dependency variables has measurement data.
+						if (dependencyVariableHasMeasurementData) {
+                            var modalInstance = $rootScope.openConfirmModal(removeVariableDependencyConfirmationText,
+								environmentConfirmLabel);
+                            modalInstance.result.then(deferred.resolve);
+						} else {
+                            // else, check if any of the selected variables for deletion has measurement data.
+                            $http.post('/Fieldbook/manageSettings/hasMeasurementData/' + variableType, variableIds, {cache: false})
+                                .success(function(hasMeasurementData) {
+                                    if (hasMeasurementData) {
+                                        var modalInstance = $rootScope.openConfirmModal(measurementModalConfirmationText,
+											environmentConfirmLabel);
+                                        modalInstance.result.then(deferred.resolve);
+                                    } else {
+                                        deferred.resolve(true);
+                                    }
+                                });
+						}
+					});
 					return deferred.promise;
 				};
 

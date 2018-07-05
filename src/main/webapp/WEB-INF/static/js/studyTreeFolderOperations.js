@@ -76,8 +76,7 @@ function submitRenameFolder() {
 			success: function(data) {
 				var node;
 				if (data.isSuccess === '1') {
-					hideRenameFolderDiv();
-					showStudyTypeDiv();
+					hideRenameFolderSection();
 					node = $('#studyTree').dynatree('getTree').getActiveNode();
 					node.data.title = folderName;
 					$(node.span).find('a').html(folderName);

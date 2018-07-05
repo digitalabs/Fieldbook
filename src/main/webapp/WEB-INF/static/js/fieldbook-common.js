@@ -2264,8 +2264,7 @@ function createFolder() {
 					doStudyLazyLoad(node, data.newFolderId);
 					node.focus();
 					node.expand();
-					$('#addFolderDiv', '#studyTreeModal').slideUp('fast');
-					$('#studyTypeDiv', '#studyTreeModal').slideDown('fast');
+					hideAddFolderSection();
 					showSuccessfulMessage('', addFolderSuccessful);
 				} else {
 					showErrorMessage('page-add-study-folder-message-modal', data.message);

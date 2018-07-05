@@ -1,6 +1,6 @@
 /*globals Spinner,console,displayStudyListTree, filterByStudyType, changeBrowseStudyButtonBehavior, showErrorMessage*/
 /*globals addDetailsTab, moveStudy*/
-/*exported displayStudyListTree, filterByStudyType, hideStudyTypeDiv, showStudyTypeDiv */
+/*exported displayStudyListTree, filterByStudyType, hideRenameFolderSection, hideAddFolderSection */
 
 
 /*

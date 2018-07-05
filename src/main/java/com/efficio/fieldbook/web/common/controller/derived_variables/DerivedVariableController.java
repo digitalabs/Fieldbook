@@ -23,6 +23,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,7 +57,7 @@ public class DerivedVariableController {
 	private FormulaService formulaService;
 
 	@Resource
-	protected StudyService studyService;
+	private StudyService studyService;
 
 	private String getMessage(final String code) {
 		return this.messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
@@ -195,6 +196,7 @@ public class DerivedVariableController {
 
 	@ResponseBody
 	@RequestMapping(value = "/derived-variable/dependencyVariableHasMeasurementData", method = RequestMethod.POST)
+	@Transactional
 	public ResponseEntity<Boolean> dependencyVariableHasMeasurementData(@RequestBody final List<Integer> ids) {
 
 		// if study is not yet saved, no measurement data yet

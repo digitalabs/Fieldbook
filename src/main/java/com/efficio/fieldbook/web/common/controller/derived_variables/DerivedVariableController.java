@@ -118,7 +118,7 @@ public class DerivedVariableController {
 			processor.extractValues(terms, row, rowInputMissingData);
 			inputMissingData.addAll(rowInputMissingData);
 
-			if (!rowInputMissingData.isEmpty()) {
+			if (!rowInputMissingData.isEmpty() || terms.values().contains("")) {
 				continue;
 			}
 

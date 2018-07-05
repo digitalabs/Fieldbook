@@ -186,6 +186,8 @@ function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionPa
 		// Hide Study Type filter when tree is meant to show only folders
 		$('#studyTypeDiv').hide();
 		additionalUrl = '/1';
+	} else {
+		$('#studyTypeDiv').show();
 	}
 
 	url = url + additionalUrl;

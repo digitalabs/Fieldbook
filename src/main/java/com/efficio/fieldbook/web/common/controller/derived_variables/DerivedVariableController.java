@@ -7,6 +7,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.base.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.derivedvariable.DerivedVariableProcessor;
+import org.generationcp.commons.derivedvariable.DerivedVariableUtils;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -112,10 +113,10 @@ public class DerivedVariableController {
 			// Get input data
 
 			final DerivedVariableProcessor processor = new DerivedVariableProcessor();
-			final Map<String, Object> terms = processor.extractTerms(formula.get().getDefinition());
+			final Map<String, Object> terms = DerivedVariableUtils.extractTerms(formula.get().getDefinition());
 
 			final Set<String> rowInputMissingData = new HashSet<>();
-			processor.extractValues(terms, row, rowInputMissingData);
+			DerivedVariableUtils.extractValues(terms, row, rowInputMissingData);
 			inputMissingData.addAll(rowInputMissingData);
 
 			if (!rowInputMissingData.isEmpty() || terms.values().contains("")) {

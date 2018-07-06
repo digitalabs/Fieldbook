@@ -127,7 +127,8 @@ public class DerivedVariableController {
 
 			String value;
 			try {
-				value = processor.evaluateFormula(formula.get().getDefinition(), terms, null);
+				String executableFormula = DerivedVariableUtils.replaceDelimiters(formula.get().getDefinition());
+				value = processor.evaluateFormula(executableFormula, terms, null);
 			} catch (Exception e) {
 				LOG.error("Error evaluating formula " + formula.get() + " with inputs " + terms, e);
 				results.put("errorMessage", getMessage("study.execute.calculation.engine.exception"));

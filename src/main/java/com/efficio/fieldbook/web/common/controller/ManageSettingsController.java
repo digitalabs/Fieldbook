@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.common.controller;
 
+import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -8,12 +9,16 @@ import com.efficio.fieldbook.web.trial.controller.SettingsController;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
+import org.generationcp.commons.derivedvariable.DerivedVariableUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.ontology.FormulaDto;
+import org.generationcp.middleware.domain.ontology.FormulaVariable;
 import org.generationcp.middleware.domain.ontology.Property;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -75,17 +80,16 @@ public class ManageSettingsController extends SettingsController {
 	private OntologyPropertyDataManager ontologyPropertyDataManager;
 
 	@Resource
-	private ContextUtil contextUtil;
+	protected StudyService studyService;
 
 	@Resource
-	protected StudyService studyService;
+	protected SettingsService settingsService;
 
 	@Resource
 	protected FormulaService formulaService;
 
 	@ResponseBody
-	@RequestMapping(value = "/settings/role/{roleId}", method = RequestMethod.GET,
-					produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/settings/role/{roleId}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	public List<PropertyTreeSummary> getOntologyPropertiesByRole(@PathVariable final Integer roleId) {
 		assert !Objects.equals(roleId, null);
 
@@ -99,27 +103,24 @@ public class ManageSettingsController extends SettingsController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/settings/properties", method = RequestMethod.GET,
-					produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/settings/properties", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	public List<PropertyTreeSummary> getOntologyPropertiesByVariableType(
 			@RequestParam(value = "type", required = true) final Integer[] variableTypes,
 			@RequestParam(value = "classes", required = false) final String[] classes,
 			@RequestParam(required = false) final boolean showHiddenVariables) {
-		
-		
+
 		// HACK! Workaround if callie is from design import
 		final List<Integer> correctedVarTypes = new ArrayList<>();
 		for (final Integer varType : variableTypes) {
 			// this is not a varType but a phenotype
 			if (!varType.toString().startsWith("18")) {
 				final PhenotypicType phenotypicTypeById = PhenotypicType.getPhenotypicTypeById(varType);
-				correctedVarTypes.addAll(VariableType
-						.getVariableTypesIdsByPhenotype(phenotypicTypeById));
+				correctedVarTypes.addAll(VariableType.getVariableTypesIdsByPhenotype(phenotypicTypeById));
 			} else {
 				correctedVarTypes.add(varType);
 			}
 		}
-		
+
 		final List<PropertyTreeSummary> propertyTreeList = new ArrayList<>();
 
 		try {
@@ -132,8 +133,8 @@ public class ManageSettingsController extends SettingsController {
 
 			final List<Property> properties;
 
-			properties = ontologyPropertyDataManager
-					.getAllPropertiesWithClassAndVariableType(classes, varTypeValues.toArray(new String[0]));
+			properties =
+					ontologyPropertyDataManager.getAllPropertiesWithClassAndVariableType(classes, varTypeValues.toArray(new String[0]));
 
 			// fetch all standard variables given property
 			for (final Property property : properties) {
@@ -173,7 +174,6 @@ public class ManageSettingsController extends SettingsController {
 					ontologyVariableDataManager.processTreatmentFactorHasPairValue(ontologyList,
 							AppConstants.CREATE_STUDY_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
 				}
-
 
 				final PropertyTreeSummary propertyTree = new PropertyTreeSummary(property, ontologyList);
 				propertyTreeList.add(propertyTree);
@@ -256,32 +256,38 @@ public class ManageSettingsController extends SettingsController {
 	public List<SettingDetail> addSettings(@RequestBody final CreateTrialForm form, @PathVariable final int mode) {
 		final List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
 		try {
-			final List<SettingVariable> selectedVariables = form.getSelectedVariables();
-			if (selectedVariables != null && !selectedVariables.isEmpty()) {
-				for (final SettingVariable var : selectedVariables) {
-					final Operation operation = this.removeVarFromDeletedList(var, mode);
 
-					var.setOperation(operation);
-					this.populateSettingVariable(var);
-					final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(var.getCvTermId());
-					final Optional<FormulaDto> formula = this.formulaService.getByTargetId(var.getCvTermId());
+			final String programUUID = this.contextUtil.getCurrentProgramUUID();
+			final List<SettingVariable> selectedVariables = form.getSelectedVariables();
+
+			if (selectedVariables != null && !selectedVariables.isEmpty()) {
+
+				for (final SettingVariable settingVariable : selectedVariables) {
+					final Operation operation = this.removeVarFromDeletedList(settingVariable, mode);
+
+					settingVariable.setOperation(operation);
+
+					this.settingsService.populateSettingVariable(settingVariable);
+
+					final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(settingVariable.getCvTermId());
+					final Optional<FormulaDto> formula = this.formulaService.getByTargetId(settingVariable.getCvTermId());
 
 					if (formula.isPresent()) {
-						var.setFormula(formula.get());
+						settingVariable.setFormula(formula.get());
 					}
 
-					final SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
-					final List<ValueReference> possibleValuesFavoriteFiltered = this.fieldbookService
-							.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID(), true);
+					final SettingDetail newSetting = new SettingDetail(settingVariable, possibleValues, null, true);
+					final List<ValueReference> possibleValuesFavoriteFiltered =
+							this.fieldbookService.getAllPossibleValuesFavorite(settingVariable.getCvTermId(), programUUID, true);
 
-					final List<ValueReference> allValues = this.fieldbookService.getAllPossibleValuesWithFilter(var.getCvTermId(), false);
+					final List<ValueReference> allValues =
+							this.fieldbookService.getAllPossibleValuesWithFilter(settingVariable.getCvTermId(), false);
 
-					final List<ValueReference> allFavoriteValues = this.fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(),
-							this.getCurrentProject().getUniqueID(), null);
-					
-					
-					final List<ValueReference>  intersection = SettingsUtil.intersection(allValues, allFavoriteValues);
-					
+					final List<ValueReference> allFavoriteValues =
+							this.fieldbookService.getAllPossibleValuesFavorite(settingVariable.getCvTermId(), programUUID, null);
+
+					final List<ValueReference> intersection = SettingsUtil.intersection(allValues, allFavoriteValues);
+
 					newSetting.setAllFavoriteValues(intersection);
 					newSetting.setAllFavoriteValuesToJson(intersection);
 
@@ -296,7 +302,7 @@ public class ManageSettingsController extends SettingsController {
 			}
 
 			if (newSettings != null && !newSettings.isEmpty()) {
-				this.addNewSettingDetails(mode, newSettings);
+				this.settingsService.addNewSettingDetails(mode, newSettings);
 				return newSettings;
 			}
 
@@ -305,17 +311,6 @@ public class ManageSettingsController extends SettingsController {
 		}
 
 		return new ArrayList<SettingDetail>();
-	}
-
-	/**
-	 * Adds the new setting details.
-	 *
-	 * @param mode       the mode
-	 * @param newDetails the new details
-	 * @throws Exception the exception
-	 */
-	private void addNewSettingDetails(final int mode, final List<SettingDetail> newDetails) throws Exception {
-		SettingsUtil.addNewSettingDetails(mode, newDetails, userSelection);
 	}
 
 	private Operation removeVarFromDeletedList(final SettingVariable var, final int mode) {
@@ -439,8 +434,7 @@ public class ManageSettingsController extends SettingsController {
 		if (savedWorkbook == null) {
 			return false;
 		}
-		return this.studyService
-			.hasMeasurementDataOnEnvironment(this.userSelection.getWorkbook().getStudyDetails().getId(), environmentNo);
+		return this.studyService.hasMeasurementDataOnEnvironment(this.userSelection.getWorkbook().getStudyDetails().getId(), environmentNo);
 	}
 
 	protected boolean checkModeAndHasMeasurementData(final int mode, final int variableId) {

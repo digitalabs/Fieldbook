@@ -186,7 +186,7 @@ public class DerivedVariableController {
 		final Set<Integer> variableIdsOfTraitsInStudy = this.getVariableIdsOfTraitsInStudy();
 		final Set<String> derivedVariablesDependencies = new HashSet<>();
 
-		final List<FormulaVariable> formulaVariables = this.formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy);
+		final Set<FormulaVariable> formulaVariables = this.formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy);
 		for (final FormulaVariable formulaVariable : formulaVariables) {
 			if (!variableIdsOfTraitsInStudy.contains(formulaVariable.getId())) {
 				derivedVariablesDependencies.add(formulaVariable.getName());
@@ -219,7 +219,7 @@ public class DerivedVariableController {
 		final Set<Integer> variableIdsOfTraitsInStudy = this.getVariableIdsOfTraitsInStudy();
 		final List<Integer> derivedVariablesDependencies = new ArrayList<>();
 
-		final List<FormulaVariable> formulaVariables = formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy);
+		final Set<FormulaVariable> formulaVariables = formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy);
 
 		// Determine which of the ids are dependency (argument) variables. If a derived variable and its dependency variables
 		// are removed in a study then there's no need to check if they have measurement data.

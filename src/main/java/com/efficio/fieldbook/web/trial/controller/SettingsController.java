@@ -232,31 +232,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	/**
-	 * Populates Setting Variable.
-	 *
-	 * @param var the var
-	 *///TODO TRIAL
-	protected void populateSettingVariable(final SettingVariable var) {
-		final StandardVariable stdvar = this.getStandardVariable(var.getCvTermId());
-		if (stdvar != null) {
-			var.setDescription(stdvar.getDescription());
-			var.setProperty(stdvar.getProperty().getName());
-			var.setScale(stdvar.getScale().getName());
-			var.setMethod(stdvar.getMethod().getName());
-			var.setDataType(stdvar.getDataType().getName());
-			var.setVariableTypes(stdvar.getVariableTypes());
-			var.setCropOntologyId(stdvar.getCropOntologyId() != null ? stdvar.getCropOntologyId() : "");
-			var.setTraitClass(stdvar.getIsA() != null ? stdvar.getIsA().getName() : "");
-			var.setDataTypeId(stdvar.getDataType().getId());
-			var.setMinRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMinValue() != null
-					? stdvar.getConstraints().getMinValue() : null);
-			var.setMaxRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMaxValue() != null
-					? stdvar.getConstraints().getMaxValue() : null);
-			var.setWidgetType();
-		}
-	}
-
-	/**
 	 * Get standard variable.
 	 *
 	 * @param id the id

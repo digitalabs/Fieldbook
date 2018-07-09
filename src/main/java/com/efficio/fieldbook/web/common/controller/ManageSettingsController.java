@@ -153,6 +153,22 @@ public class ManageSettingsController extends SettingsController {
 					continue;
 				}
 
+				for (final Variable variable : ontologyList) {
+					final FormulaDto formula = variable.getFormula();
+					if (formula != null) {
+						final Map<String, FormulaVariable> formulaVariableMap =
+								Maps.uniqueIndex(formula.getInputs(), new Function<FormulaVariable, String>() {
+
+									public String apply(FormulaVariable from) {
+										return String.valueOf(from.getId());
+									}
+								});
+						// Convert the termids in formula definition to variable names.
+						formula.setDefinition(
+								DerivedVariableUtils.replaceTermIdsWithVariableNames(formula.getDefinition(), formulaVariableMap));
+					}
+				}
+
 				if (selectedVariableTypes.contains(VariableType.TREATMENT_FACTOR)) {
 					ontologyVariableDataManager.processTreatmentFactorHasPairValue(ontologyList,
 							AppConstants.CREATE_STUDY_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());

@@ -19,6 +19,7 @@ import org.generationcp.middleware.service.api.derived_variables.FormulaService;
 import org.generationcp.middleware.service.api.study.StudyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
@@ -49,7 +50,7 @@ public class DerivedVariableController {
 	private UserSelection studySelection;
 
 	@Resource
-	private ResourceBundleMessageSource messageSource;
+	private MessageSource messageSource;
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;

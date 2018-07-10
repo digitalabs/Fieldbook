@@ -70,12 +70,12 @@ public class DerivedVariableController {
 
 		// Process request
 
-		final Workbook workbook = studySelection.getWorkbook();
+		final Workbook workbook = this.studySelection.getWorkbook();
 
 		final Map<String, Object> results = new HashMap<>();
 
 		if (request == null || request.getGeoLocationId() == null || request.getVariableId() == null) {
-			results.put("errorMessage", getMessage("study.execute.calculation.invalid.request"));
+			results.put("errorMessage", this.getMessage("study.execute.calculation.invalid.request"));
 			return new ResponseEntity<>(results, HttpStatus.BAD_REQUEST);
 		}
 
@@ -91,13 +91,13 @@ public class DerivedVariableController {
 		final Optional<FormulaDto> formula = this.formulaService.getByTargetId(request.getVariableId());
 
 		if (!formula.isPresent()) {
-			results.put("errorMessage", getMessage("study.execute.calculation.formula.not.found"));
+			results.put("errorMessage", this.getMessage("study.execute.calculation.formula.not.found"));
 			return new ResponseEntity<>(results, HttpStatus.BAD_REQUEST);
 		}
 
 		// Calculate
 
-		Set<String> inputMissingData = new HashSet<>();
+		final Set<String> inputMissingData = new HashSet<>();
 		workbook.setHasExistingDataOverwrite(false);
 
 		for (final MeasurementRow row : workbook.getObservations()) {
@@ -121,11 +121,11 @@ public class DerivedVariableController {
 
 			String value;
 			try {
-				String executableFormula = DerivedVariableUtils.replaceDelimiters(formula.get().getDefinition());
+				final String executableFormula = DerivedVariableUtils.replaceDelimiters(formula.get().getDefinition());
 				value = this.processor.evaluateFormula(executableFormula, terms);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				LOG.error("Error evaluating formula " + formula.get() + " with inputs " + terms, e);
-				results.put("errorMessage", getMessage("study.execute.calculation.engine.exception"));
+				results.put("errorMessage", this.getMessage("study.execute.calculation.engine.exception"));
 				return new ResponseEntity<>(results, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 
@@ -167,7 +167,7 @@ public class DerivedVariableController {
 		results.put("hasDataOverwrite", workbook.hasExistingDataOverwrite());
 		if (!inputMissingData.isEmpty()) {
 			results.put( "inputMissingData",
-				getMessage("study.execute.calculation.missing.data", new String[] {StringUtils.join(inputMissingData.toArray(), ", ")}));
+				this.getMessage("study.execute.calculation.missing.data", new String[] {StringUtils.join(inputMissingData.toArray(), ", ")}));
 		}
 
 		return new ResponseEntity<>(results, HttpStatus.OK);
@@ -213,7 +213,7 @@ public class DerivedVariableController {
 		final Set<Integer> variableIdsOfTraitsInStudy = this.getVariableIdsOfTraitsInStudy();
 		final List<Integer> derivedVariablesDependencies = new ArrayList<>();
 
-		final Set<FormulaVariable> formulaVariables = formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy);
+		final Set<FormulaVariable> formulaVariables = this.formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy);
 
 		// Determine which of the ids are dependency (argument) variables. If a derived variable and its dependency variables
 		// are removed in a study then there's no need to check if they have measurement data.

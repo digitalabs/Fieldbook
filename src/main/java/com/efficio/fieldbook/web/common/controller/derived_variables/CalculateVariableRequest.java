@@ -5,7 +5,7 @@ public class CalculateVariableRequest {
 	private Integer geoLocationId;
 
 	public Integer getVariableId() {
-		return variableId;
+		return this.variableId;
 	}
 
 	public void setVariableId(final Integer variableId) {
@@ -13,7 +13,7 @@ public class CalculateVariableRequest {
 	}
 
 	public Integer getGeoLocationId() {
-		return geoLocationId;
+		return this.geoLocationId;
 	}
 
 	public void setGeoLocationId(final Integer geoLocationId) {

@@ -561,6 +561,12 @@
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 
+	<bean id="derivedVariableProcessor"
+		  class="org.generationcp.commons.derivedvariable.DerivedVariableProcessor"
+		  scope="request">
+		<aop:scoped-proxy/>
+	</bean>
+
 	<!-- Data Source and Transaction Configuration -->
 
 	<bean id="xaDataSources" class="org.generationcp.middleware.hibernate.XADataSources" />

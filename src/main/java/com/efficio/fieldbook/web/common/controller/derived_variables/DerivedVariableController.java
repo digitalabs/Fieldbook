@@ -60,13 +60,8 @@ public class DerivedVariableController {
 	@Resource
 	private StudyService studyService;
 
-	private String getMessage(final String code) {
-		return this.messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
-	}
-
-	private String getMessage(final String code, final Object[] args) {
-		return this.messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
-	}
+	@Resource
+	private DerivedVariableProcessor processor;
 
 	@ResponseBody
 	@RequestMapping(value = "/derived-variable/execute", method = RequestMethod.POST)
@@ -95,7 +90,6 @@ public class DerivedVariableController {
 		final Optional<FormulaDto> formula = this.formulaService.getByTargetId(request.getVariableId());
 
 		if (!formula.isPresent()) {
-			// TODO
 			results.put("errorMessage", getMessage("study.execute.calculation.formula.not.found"));
 			return new ResponseEntity<>(results, HttpStatus.BAD_REQUEST);
 		}
@@ -112,7 +106,6 @@ public class DerivedVariableController {
 
 			// Get input data
 
-			final DerivedVariableProcessor processor = new DerivedVariableProcessor();
 			final Map<String, Object> terms = DerivedVariableUtils.extractTerms(formula.get().getDefinition());
 
 			final Set<String> rowInputMissingData = new HashSet<>();
@@ -128,7 +121,7 @@ public class DerivedVariableController {
 			String value;
 			try {
 				String executableFormula = DerivedVariableUtils.replaceDelimiters(formula.get().getDefinition());
-				value = processor.evaluateFormula(executableFormula, terms, null);
+				value = this.processor.evaluateFormula(executableFormula, terms);
 			} catch (Exception e) {
 				LOG.error("Error evaluating formula " + formula.get() + " with inputs " + terms, e);
 				results.put("errorMessage", getMessage("study.execute.calculation.engine.exception"));
@@ -251,4 +244,11 @@ public class DerivedVariableController {
 
 	}
 
+	private String getMessage(final String code) {
+		return this.messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
+	}
+
+	private String getMessage(final String code, final Object[] args) {
+		return this.messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
+	}
 }

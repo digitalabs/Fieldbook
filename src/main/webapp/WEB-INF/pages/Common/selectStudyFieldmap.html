@@ -16,11 +16,25 @@
 						</div>
 					</div>
 					<div class="row">
-						<div id="selectStudyFieldMapTree" class="study-field-map-tree col-xs-6 col-md-6">
+						<div class="col-xs-6 col-md-6">
+							<div class="col-xs-4 nopadding">
+								<label class="control-label label-bold" th:utext="#{browse.study.study.type}" style="padding-top: 10px">Study Type:</label>
+							</div>
+							<div class="col-xs-8" style="padding-right:0px">
+								<select class="form-control" id="fieldMapStudyTypeFilter" onchange="filterFieldmapTreeByStudyType()">
+									<option value="All">All</option>
+									<option th:each="studyType : ${studyTypes}" th:value="${studyType.name}" th:text="${studyType.label}"></option>
+								</select>
+							</div>
 						</div>
 						<div class="col-xs-6 col-md-6">
 							<label class="fbk-field-map-selected-sub-header"></label>
-
+						</div>
+					</div>
+					<div class="row">
+						<div id="selectStudyFieldMapTree" class="study-field-map-tree col-xs-6 col-md-6">
+						</div>
+						<div class="col-xs-6 col-md-6">
 							<table class="my-class table table-curved table-condensed selected-study-fieldmap-table">
 								  <thead>
 									<tr>
@@ -83,8 +97,33 @@ $(document).ready(function() {
 
 	});
 });
+
+function filterFieldmapTreeByStudyType(){
+	// Toggle visibility of study nodes based on filter
+	$('#selectStudyFieldMapTree').dynatree('getTree').visit(function(node){
+		filterFieldmapTreeNodeByStudyType(node);
+	});
+}
+
+function filterFieldmapTreeNodeByStudyType(node) {
+	var studyType = $('#fieldMapStudyTypeFilter').val();
+	// Show node if "All" study type filter is chosen or if node is folder
+	if (studyType === 'All' || node.data.isFolder === true){
+		$(node.li).show();
+	// Otherwise filter study by chosen type
+	} else {
+		if (node.data.type === studyType) {
+			$(node.li).show(); 
+		} else {
+			$(node.li).hide();
+		}
+	}
+	
+}
+
 function openStudyFieldmapTree(id, name) {
 	'use strict';
+    $('#fieldMapStudyTypeFilter').val("All");
 	$("#selectStudyFieldMapTree").dynatree("getTree").reload();
 	$('#studyTreeFieldmapModal').modal({ backdrop: 'static', keyboard: true });
 	$('table.selected-study-fieldmap-table tbody').html('');
@@ -171,6 +210,10 @@ function doStudyFieldmapLazyLoad(node) {
 
 				if (node.data.isFolder === false) {
 					addStudyInFieldMap(node.data.key, node.data.title);
+				} else {
+					node.visit(function(child){
+						filterFieldmapTreeNodeByStudyType(child);
+					});
 				}
 
 			},
@@ -183,7 +226,7 @@ function doStudyFieldmapLazyLoad(node) {
 		node.expand();
 	}
 }
-/** Germplasm Tree **/
+/** Study Tree **/
 function displayStudyFieldMapListTree(treeName) {
 	'use strict';
 	urlFieldmap = '/Fieldbook/StudyTreeManager/loadInitialTree';

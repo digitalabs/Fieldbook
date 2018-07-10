@@ -353,6 +353,7 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT,
 				this.studyDataManager.countExperiments(trialWorkbook.getMeasurementDatesetId()));
 		model.addAttribute("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), false));
+        model.addAttribute("studyTypes", this.studyDataManager.getAllVisibleStudyTypes());
 		
 		// so that we can reuse the same page being use for nursery
 		model.addAttribute("createTrialForm", form);

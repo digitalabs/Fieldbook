@@ -374,24 +374,7 @@ function addDetailsTab(studyId, title) {
 	// if not we get the info
 }
 
-function generateRootNodeLabel(label) {
-	if (label.endsWith("y")){
-			return label.substring(0, label.length-1) + "ies";
-		}
-	return label + "s";
-}
-
 function filterByStudyType(){
-	var rootNode = $('#studyTree').dynatree('getTree').getNodeByKey('LOCAL');
-	var studyType = $('#studyTypeFilter').val();
-	// Update label of root node based on filter
-	if (studyType === 'All') {
-		rootNode.data.title = "Studies";
-	} else {
-		var label = $('#studyTypeFilter option:selected').text()
-		rootNode.data.title = generateRootNodeLabel(label);
-	}
-	rootNode.render();
 	// Toggle visibility of study nodes based on filter
 	$('#studyTree').dynatree('getTree').visit(function(node){
 		filterNodeByStudyType(node);

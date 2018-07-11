@@ -49,6 +49,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.operation.builder.StudyTypeBuilder;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Location;
+import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.service.api.SampleService;
 import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
@@ -689,13 +690,7 @@ public abstract class BaseTrialController extends SettingsController {
 			throws ParseException {
 		final Map<String, String> basicDetails = new HashMap<>();
 		final List<SettingDetail> initialDetailList = new ArrayList<>();
-
-		// find out who created the study
-		// if no owner found default to the current user
-		final Integer studyOwnerPersonId = this.contextUtil.getCurrentIbdbUserId();
-
-		final String studyOwnerPersonName = this.fieldbookService.getPersonByUserId(studyOwnerPersonId);
-
+		 
 		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_STUDY_REQUIRED_FIELDS.getString());
 
 		for (final Integer initialSettingID : initialSettingIDs) {
@@ -733,7 +728,7 @@ public abstract class BaseTrialController extends SettingsController {
 		final int folderId = (int) studyDetails.getParentFolderId();
 		final String folderName;
 
-		if (folderId == 1) {
+		if (DmsProject.SYSTEM_FOLDER_ID.equals(folderId)) {
 			folderName = AppConstants.STUDIES.getString();
 		} else {
 			folderName = this.fieldbookMiddlewareService.getFolderNameById(folderId);
@@ -742,7 +737,15 @@ public abstract class BaseTrialController extends SettingsController {
 		basic.setFolderId(folderId);
 		basic.setFolderName(folderName);
 		basic.setFolderNameLabel(folderName);
-		basic.setUserID(studyOwnerPersonId);
+		
+		String studyOwnerPersonName = StringUtils.EMPTY;
+		Integer studyOwnerUserId = null;
+		final String createdBy = studyDetails.getCreatedBy();
+		if (!StringUtils.isEmpty(createdBy)) {
+			studyOwnerUserId = Integer.valueOf(createdBy);
+			studyOwnerPersonName = this.fieldbookService.getPersonByUserId(Integer.valueOf(createdBy));
+		}
+		basic.setUserID(studyOwnerUserId);
 		basic.setUserName(studyOwnerPersonName);
 		basic.setStudyType(studyDetails.getStudyType());
 		final TabInfo tab = new TabInfo();

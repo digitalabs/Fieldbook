@@ -410,7 +410,6 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 					} else {
 						// meaning non factor
 						measurementData = new MeasurementData(var.getName(), StringUtils.EMPTY, Boolean.TRUE, var.getDataType(), var);
-						var.setFactor(Boolean.FALSE);
 					}
 				}
 

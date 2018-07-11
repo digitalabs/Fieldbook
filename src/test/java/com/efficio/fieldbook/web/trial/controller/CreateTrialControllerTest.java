@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
@@ -15,13 +16,17 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.ErrorCode;
+import org.generationcp.middleware.pojos.dms.StudyType;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -160,5 +165,32 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 				this.controller.inRequiredExpDesignVar(TermId.COL.getId()));
 		Assert.assertFalse("Expected term to NOT be in the required var list but did not found it.",
 				this.controller.inRequiredExpDesignVar(TermId.LOCATION_ID.getId()));
+	}
+	
+	@Test
+	public void testShow() {
+		final CreateTrialController spy = Mockito.spy(new CreateTrialController());
+		final StudyDataManager studyDataManager = Mockito.mock(StudyDataManager.class);
+		spy.setStudyDataManager(studyDataManager);
+		Mockito.doReturn(new TabInfo()).when(spy).prepareBasicDetailsTabInfo();
+		Mockito.doReturn(new TabInfo()).when(spy).prepareGermplasmTabInfo(false);
+		Mockito.doReturn(new TabInfo()).when(spy).prepareEnvironmentsTabInfo(false);
+		Mockito.doReturn(new TabInfo()).when(spy).prepareTrialSettingsTabInfo();
+		Mockito.doReturn(new TabInfo()).when(spy).prepareExperimentalDesignSpecialData();
+		
+		final Model model = Mockito.mock(Model.class);
+		final CreateTrialForm form = Mockito.mock(CreateTrialForm.class);
+		final HttpSession session = Mockito.mock(HttpSession.class);
+		spy.show(form, model, session);
+		
+		// Verify model attributes
+		Mockito.verify(model).addAttribute(Matchers.eq("basicDetailsData"), Matchers.any(TabInfo.class));
+		Mockito.verify(model).addAttribute(Matchers.eq("germplasmData"), Matchers.any(TabInfo.class));
+		Mockito.verify(model).addAttribute(Matchers.eq(CreateTrialController.ENVIRONMENT_DATA_TAB), Matchers.any(TabInfo.class));
+		Mockito.verify(model).addAttribute(Matchers.eq(CreateTrialController.TRIAL_SETTINGS_DATA_TAB), Matchers.any(TabInfo.class));
+		Mockito.verify(model).addAttribute(Matchers.eq("experimentalDesignSpecialData"), Matchers.any(TabInfo.class));
+		Mockito.verify(model).addAttribute("measurementRowCount", 0);
+		Mockito.verify(model).addAttribute(Matchers.eq("studyTypes"), Matchers.anyListOf(StudyType.class));
+		Mockito.verify(model).addAttribute("createTrialForm", form);
 	}
 }

@@ -954,4 +954,9 @@ public abstract class BaseTrialController extends SettingsController {
 			}
 		});
 	}
+
+	
+	protected void setStudyDataManager(StudyDataManager studyDataManager) {
+		this.studyDataManager = studyDataManager;
+	}
 }

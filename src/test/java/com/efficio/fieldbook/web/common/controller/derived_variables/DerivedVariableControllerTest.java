@@ -58,20 +58,19 @@ public class DerivedVariableControllerTest {
 	public static final int VARIABLE2_TERMID = 456;
 	public static final int VARIABLE3_TERMID = 789;
 	public static final int VARIABLE4_TERMID = 999;
+	public static final int VARIABLE5_TERMID = 20439; // MRFVInc_Cmp_pct
 
 	private static final String INVALID_REQUEST = "invalid request";
 	private static final String NOT_FOUND = "not found";
 	private static final String ENGINE_EXCEPTION = "engine exception";
 	private static final String MISSING_DATA = "missing data";
 
-	private static final String TERM_1 = "51496"; // GW_DW_g100grn - Grain weight BY GW DW - Measurement IN G/100grain
-	private static final String TERM_2 = "50889"; // GMoi_NIRS_pct - Grain moisture BY NIRS Moi - Measurement IN %
-	private static final String TERM_3 = "20358"; // PlotArea_m2 - Plot size
-	private static final String TERM_4_EMPTY_VALUE = "20439"; // MRFVInc_Cmp_pct
 	private static final String TERM_VALUE_1 = "1000";
 	private static final String TERM_VALUE_2 = "12.5";
 	private static final String TERM_VALUE_3 = "10";
-	private static final String FORMULA = "({{" + TERM_1 + "}}/100)*((100-{{" + TERM_2 + "}})/(100-12.5))*(10/{{" + TERM_3 + "}})";
+
+	private static final String FORMULA = "({{" + VARIABLE1_TERMID + "}}/100)*((100-{{" + VARIABLE2_TERMID + "}})/(100-12.5))*(10/{{"
+		+ VARIABLE3_TERMID + "}})";
 	private static final String FORMULA_RESULT = "10";
 
 	private FormulaDto formulaDTO;
@@ -124,7 +123,12 @@ public class DerivedVariableControllerTest {
 
 		formulaDTO = new FormulaDto();
 		formulaDTO.setDefinition(FORMULA);
-		formulaDTO.setTargetTermId(Integer.valueOf(TERM_1));
+		final ArrayList<FormulaVariable> inputs = new ArrayList<>();
+		inputs.add(new FormulaVariable(VARIABLE1_TERMID, String.valueOf(VARIABLE1_TERMID), VARIABLE1_TERMID));
+		inputs.add(new FormulaVariable(VARIABLE2_TERMID, String.valueOf(VARIABLE2_TERMID), VARIABLE1_TERMID));
+		inputs.add(new FormulaVariable(VARIABLE3_TERMID, String.valueOf(VARIABLE3_TERMID), VARIABLE1_TERMID));
+		formulaDTO.setInputs(inputs);
+		formulaDTO.setTargetTermId(Integer.valueOf(VARIABLE1_TERMID));
 		Mockito.when(formulaOptional.get()).thenReturn(formulaDTO);
 	}
 
@@ -181,8 +185,12 @@ public class DerivedVariableControllerTest {
 
 		ResponseEntity<Map<String, Object>> response = this.derivedVariableController.execute(request, bindingResult);
 
+		for (MeasurementRow measurementRow : this.studySelection.getWorkbook().getObservations()) {
+			Assert.assertEquals(FORMULA_RESULT, measurementRow.getMeasurementData(VARIABLE1_TERMID).getValue());
+		}
+
 		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-		Assert.assertFalse(response.getBody().containsKey("inputMissingData"));
+		Assert.assertFalse("Should not have missing data", response.getBody().containsKey("inputMissingData"));
 	}
 
 	@Test
@@ -193,7 +201,7 @@ public class DerivedVariableControllerTest {
 		request.setGeoLocationId(locationId);
 		request.setVariableId(RandomUtils.nextInt());
 		List<MeasurementRow> observations = this.studySelection.getWorkbook().getObservations();
-		MeasurementData measurementData = observations.get(0).getMeasurementData(Integer.valueOf(TERM_1));
+		MeasurementData measurementData = observations.get(0).getMeasurementData(Integer.valueOf(VARIABLE1_TERMID));
 		measurementData.setValue("");
 
 		for (MeasurementRow observation : this.studySelection.getWorkbook().getObservations()) {
@@ -206,6 +214,27 @@ public class DerivedVariableControllerTest {
 
 		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
 		Assert.assertTrue(response.getBody().containsKey("inputMissingData"));
+	}
+
+	@Test
+	public void testExecute_EvaluateMissingVariable() {
+		final BindingResult bindingResult = Mockito.mock(BindingResult.class);
+		final CalculateVariableRequest request = new CalculateVariableRequest();
+		int locationId = RandomUtils.nextInt();
+		request.setGeoLocationId(locationId);
+		request.setVariableId(RandomUtils.nextInt());
+
+		for (MeasurementRow observation : this.studySelection.getWorkbook().getObservations()) {
+			observation.setLocationId(locationId);
+		}
+
+		when(this.studySelection.getBaselineTraitsList()).thenReturn(java.util.Collections.<SettingDetail>emptyList());
+		when(this.processor.evaluateFormula(anyString(), any(Map.class))).thenReturn(FORMULA_RESULT);
+
+		ResponseEntity<Map<String, Object>> response = this.derivedVariableController.execute(request, bindingResult);
+
+		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+		Assert.assertTrue("Should have missing variables", response.getBody().containsKey("inputMissingData"));
 	}
 
 	@Test
@@ -350,10 +379,10 @@ public class DerivedVariableControllerTest {
 
 	private List<MeasurementData> createMeasurementDataListTestData() {
 		List<MeasurementData> measurementDataList = new ArrayList<>();
-		measurementDataList.add(this.createMeasurementDataTestData(TERM_1, TERM_VALUE_1, null));
-		measurementDataList.add(this.createMeasurementDataTestData(TERM_2, TERM_VALUE_2, null));
-		measurementDataList.add(this.createMeasurementDataTestData(TERM_3, TERM_VALUE_3, null));
-		measurementDataList.add(this.createMeasurementDataTestData(TERM_4_EMPTY_VALUE, "", ""));
+		measurementDataList.add(this.createMeasurementDataTestData(String.valueOf(VARIABLE1_TERMID), TERM_VALUE_1, null));
+		measurementDataList.add(this.createMeasurementDataTestData(String.valueOf(VARIABLE2_TERMID), TERM_VALUE_2, null));
+		measurementDataList.add(this.createMeasurementDataTestData(String.valueOf(VARIABLE3_TERMID), TERM_VALUE_3, null));
+		measurementDataList.add(this.createMeasurementDataTestData(String.valueOf(VARIABLE5_TERMID), "", ""));
 		return measurementDataList;
 	}
 

@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -88,17 +87,27 @@ public class DerivedVariableController {
 		 */
 		WorkbookUtil.resetWorkbookObservations(workbook);
 
-		final Optional<FormulaDto> formula = this.formulaService.getByTargetId(request.getVariableId());
-
-		if (!formula.isPresent()) {
+		final Optional<FormulaDto> formulaOptional = this.formulaService.getByTargetId(request.getVariableId());
+		if (!formulaOptional.isPresent()) {
 			results.put("errorMessage", this.getMessage("study.execute.calculation.formula.not.found"));
 			return new ResponseEntity<>(results, HttpStatus.BAD_REQUEST);
 		}
-
-		// Calculate
+		final FormulaDto formula = formulaOptional.get();
 
 		final Set<String> inputMissingData = new HashSet<>();
 		workbook.setHasExistingDataOverwrite(false);
+		final Map<String, Object> terms = DerivedVariableUtils.extractTerms(formula.getDefinition());
+
+		// Verify that variables are present
+
+		final Set<Integer> variableIdsOfTraitsInStudy = this.getVariableIdsOfTraitsInStudy();
+		for (final FormulaVariable formulaVariable : formula.getInputs()) {
+			if (!variableIdsOfTraitsInStudy.contains(formulaVariable.getId())) {
+				inputMissingData.add(formulaVariable.getName());
+			}
+		}
+
+		// Calculate
 
 		for (final MeasurementRow row : workbook.getObservations()) {
 			if (!request.getGeoLocationId().equals((int)row.getLocationId())) {
@@ -106,8 +115,6 @@ public class DerivedVariableController {
 			}
 
 			// Get input data
-
-			final Map<String, Object> terms = DerivedVariableUtils.extractTerms(formula.get().getDefinition());
 
 			final Set<String> rowInputMissingData = new HashSet<>();
 			DerivedVariableUtils.extractValues(terms, row, rowInputMissingData);
@@ -121,10 +128,10 @@ public class DerivedVariableController {
 
 			String value;
 			try {
-				final String executableFormula = DerivedVariableUtils.replaceDelimiters(formula.get().getDefinition());
+				final String executableFormula = DerivedVariableUtils.replaceDelimiters(formula.getDefinition());
 				value = this.processor.evaluateFormula(executableFormula, terms);
 			} catch (final Exception e) {
-				LOG.error("Error evaluating formula " + formula.get() + " with inputs " + terms, e);
+				LOG.error("Error evaluating formula " + formula + " with inputs " + terms, e);
 				results.put("errorMessage", this.getMessage("study.execute.calculation.engine.exception"));
 				return new ResponseEntity<>(results, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
@@ -135,7 +142,7 @@ public class DerivedVariableController {
 
 			// Process calculation result
 
-			final MeasurementData target = row.getMeasurementData(formula.get().getTargetTermId());
+			final MeasurementData target = row.getMeasurementData(formula.getTargetTermId());
 			target.setAccepted(false);
 
 			// Process categorical data

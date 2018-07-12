@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.service.CsvExportSampleListService;
+import org.generationcp.commons.service.CsvExportSampleListService;
 import com.google.common.collect.Lists;
 
 @Controller

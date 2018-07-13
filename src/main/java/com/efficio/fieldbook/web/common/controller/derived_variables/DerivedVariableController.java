@@ -94,20 +94,27 @@ public class DerivedVariableController {
 		}
 		final FormulaDto formula = formulaOptional.get();
 
-		final Set<String> inputMissingData = new HashSet<>();
 		workbook.setHasExistingDataOverwrite(false);
 		final Map<String, Object> terms = DerivedVariableUtils.extractTerms(formula.getDefinition());
 
 		// Verify that variables are present
 
 		final Set<Integer> variableIdsOfTraitsInStudy = this.getVariableIdsOfTraitsInStudy();
+		final Set<String> inputMissingVariables = new HashSet<>();
 		for (final FormulaVariable formulaVariable : formula.getInputs()) {
 			if (!variableIdsOfTraitsInStudy.contains(formulaVariable.getId())) {
-				inputMissingData.add(formulaVariable.getName());
+				inputMissingVariables.add(formulaVariable.getName());
 			}
+		}
+		if (!inputMissingVariables.isEmpty()) {
+			results.put("errorMessage", this.getMessage("study.execute.calculation.missing.variables",
+				new String[] {StringUtils.join(inputMissingVariables.toArray(), ", ")}));
+			return new ResponseEntity<>(results, HttpStatus.BAD_REQUEST);
 		}
 
 		// Calculate
+
+		final Set<String> inputMissingData = new HashSet<>();
 
 		for (final MeasurementRow row : workbook.getObservations()) {
 			if (!request.getGeoLocationId().equals((int)row.getLocationId())) {

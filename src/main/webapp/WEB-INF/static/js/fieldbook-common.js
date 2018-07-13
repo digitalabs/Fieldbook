@@ -2264,7 +2264,7 @@ function createFolder() {
 					doStudyLazyLoad(node, data.newFolderId);
 					node.focus();
 					node.expand();
-					$('#addFolderDiv', '#studyTreeModal').slideUp();
+					hideAddFolderSection();
 					showSuccessfulMessage('', addFolderSuccessful);
 				} else {
 					showErrorMessage('page-add-study-folder-message-modal', data.message);
@@ -3029,10 +3029,15 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	$('#page-study-tree-message-modal').html('');
 	$('#addFolderDiv').hide();
 	$('#renameFolderDiv').hide();
+	
 	if ($('#create-study #studyTree').length !== 0) {
 		$('#studyTree').dynatree('destroy');
 		displayStudyListTree('studyTree', type, selectStudyFunction, isPreSelect);
 		changeBrowseStudyButtonBehavior(false);
+	// Reset study filter to show all studies
+	} else {
+		$('#studyTypeFilter').val("All");
+		filterByStudyType();	
 	}
 
 	$('#studyTreeModal').modal({

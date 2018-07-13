@@ -2,7 +2,7 @@
 	<!-- Modal -->
 	<div class="modal fade" id="studyTreeModal" role="dialog" aria-labelledby="studyTreeModal" aria-hidden="true">
 		<div class="modal-dialog">
-
+		<input type="hidden" name="choosingType" id="choosingType" value=""/>
 			<div class="modal-content modal-extra-small">
 				<div class="modal-body" id="studyTreeModalBody">
 					<div class="row">
@@ -31,6 +31,17 @@
 						</div>
 					</div>
 					<div class="form-horizontal form-group">
+						<div id="studyTypeDiv">
+							<div class="col-xs-4 nopadding">
+								<label class="control-label label-bold" th:utext="#{browse.study.study.type}">Study Type:</label>
+							</div>
+							<div class="col-xs-8">
+								<select class="form-control" id="studyTypeFilter" onchange="filterByStudyType()">
+									<option value="All">All</option>
+									<option th:each="studyType : ${studyTypes}" th:value="${studyType.name}" th:text="${studyType.label}"></option>
+								</select>
+							</div>
+						</div>
 						<div id="addFolderDiv">
 							<div class="col-xs-4 nopadding">
 								<label class="control-label label-bold" th:utext="#{browse.study.add.folder.name}">Folder Name:</label>

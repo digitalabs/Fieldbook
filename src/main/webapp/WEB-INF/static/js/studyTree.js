@@ -1,6 +1,6 @@
-/*globals Spinner,console,displayStudyListTree, changeBrowseStudyButtonBehavior, showErrorMessage*/
+/*globals Spinner,console,displayStudyListTree, filterByStudyType, changeBrowseStudyButtonBehavior, showErrorMessage*/
 /*globals addDetailsTab, moveStudy*/
-/*exported displayStudyListTree*/
+/*exported displayStudyListTree, filterByStudyType, hideRenameFolderSection, hideAddFolderSection */
 
 
 /*
@@ -22,9 +22,9 @@ function studyTreeInit() {
 	$('#addFolderDiv', '#studyTreeModal').hide();
 	$('#renameFolderDiv', '#studyTreeModal').hide();
 	$('#addFolderOkButton', '#studyTreeModal').on('click', createFolder);
-	$('#addFolderCancelButton', '#studyTreeModal').on('click', hideAddFolderDiv);
+	$('#addFolderCancelButton', '#studyTreeModal').on('click', hideAddFolderSection);
 	$('#renameFolderOkButton', '#studyTreeModal').on('click', submitRenameFolder);
-	$('#renameFolderCancelButton', '#studyTreeModal').on('click', hideRenameFolderDiv);
+	$('#renameFolderCancelButton', '#studyTreeModal').on('click', hideRenameFolderSection);
 	$('#addFolderDiv #addFolderName', '#studyTreeModal').on('keypress', function (event) {
 		if (event.keyCode == 13) {
 			createFolder();
@@ -137,6 +137,9 @@ function doStudyLazyLoad(node, preSelectId) {
 					addDetailsTab(node.data.key, node.data.title);
 					changeBrowseStudyButtonBehavior(false);
 				} else {
+					node.visit(function(child){
+						filterNodeByStudyType(child);
+					});
 					if (node.data.key === 'LOCAL') {
 						changeBrowseStudyButtonBehavior(true);
 						$('.edit-folder', '#studyTreeModal').addClass('disable-image');
@@ -165,7 +168,7 @@ function doStudyLazyLoad(node, preSelectId) {
 	}
 }
 
-/** Germplasm Tree **/
+/** Study Tree **/
 function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionParam, isPreSelect, postInitFunction) {
 	'use strict';
 
@@ -177,9 +180,14 @@ function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionPa
 	lazyReadUrl = '/Fieldbook/StudyTreeManager/expandTree/';
 
 	choosingType = choosingTypeParam;
+	$('#choosingType').val(choosingType);
 	var additionalUrl = '/0';
 	if (choosingType === 2) {
+		// Hide Study Type filter when tree is meant to show only folders
+		$('#studyTypeDiv').hide();
 		additionalUrl = '/1';
+	} else {
+		$('#studyTypeDiv').show();
 	}
 
 	url = url + additionalUrl;
@@ -364,4 +372,52 @@ function addDetailsTab(studyId, title) {
 	}
 	determineIfShowCloseAllStudyTabs();
 	// if not we get the info
+}
+
+function filterByStudyType(){
+	// Toggle visibility of study nodes based on filter
+	$('#studyTree').dynatree('getTree').visit(function(node){
+		filterNodeByStudyType(node);
+	});
+}
+
+function filterNodeByStudyType(node) {
+	var studyType = $('#studyTypeFilter').val();
+	// Show node if "All" study type filter is chosen or if node is folder
+	if (studyType === 'All' || node.data.isFolder === true){
+		$(node.li).show();
+	// Otherwise filter study by chosen type
+	} else {
+		if (node.data.type === studyType) {
+			$(node.li).show(); 
+		} else {
+			$(node.li).hide();
+		}
+	}
+	
+}
+
+function hideStudyTypeDiv() {
+	'use strict';
+	$('#studyTypeDiv', '#studyTreeModal').slideUp('fast');
+}
+
+function showStudyTypeDiv() {
+	'use strict';
+	$('#studyTypeDiv', '#studyTreeModal').slideDown('fast');
+}
+
+function hideAddFolderSection() {	
+	hideAddFolderDiv();
+	if ($('#choosingType').val() !== "2"){
+		showStudyTypeDiv();		
+	}
+
+}
+
+function hideRenameFolderSection() {
+	hideRenameFolderDiv()
+	if ($('#choosingType').val() !== "2"){
+		showStudyTypeDiv();
+	}
 }

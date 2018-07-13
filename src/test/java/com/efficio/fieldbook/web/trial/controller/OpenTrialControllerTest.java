@@ -12,6 +12,7 @@ import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitialize
 import com.efficio.fieldbook.web.trial.TestDataHelper;
 import com.efficio.fieldbook.web.trial.bean.AdvanceList;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.CrossesList;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.bean.TabInfoBean;
@@ -65,6 +66,7 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.pojos.SampleList;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.dms.StudyType;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -1271,6 +1273,35 @@ public class OpenTrialControllerTest {
 		Assert.assertFalse(this.model.containsAttribute(OpenTrialControllerTest.GERMPLASM_LIST_SIZE));
 		Assert.assertFalse(this.model.containsAttribute(OpenTrialControllerTest.GERMPLASM_CHECKS_SIZE));
 
+	}
+	
+	@Test
+	public void testSetModelAttributes() throws ParseException {
+		final Workbook testWorkbook = WorkbookTestDataInitializer.getTestWorkbook();
+		this.openTrialController.setModelAttributes(createTrialForm, 1010, model, testWorkbook);
+		Mockito.verify(this.model).addAttribute(Matchers.eq("basicDetailsData"), Matchers.any(TabInfo.class));
+		Mockito.verify(this.model).addAttribute(Matchers.eq("germplasmData"), Matchers.any(TabInfo.class));
+		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.ENVIRONMENT_DATA_TAB), Matchers.any(TabInfo.class));
+		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.TRIAL_SETTINGS_DATA),
+				Matchers.any(TabInfo.class));
+		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENTS_DATA),
+				Matchers.any(TabInfo.class));
+		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.SELECTION_VARIABLE_DATA),
+				Matchers.any(TabInfo.class));
+		Mockito.verify(this.model).addAttribute(Matchers.eq("experimentalDesignData"), Matchers.any(TabInfo.class));
+		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENT_DATA_EXISTING), Matchers.anyBoolean());
+		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENT_ROW_COUNT),
+				Matchers.anyInt());
+		Mockito.verify(this.model).addAttribute(Matchers.eq("treatmentFactorsData"), Matchers.any(TabInfo.class));
+        Mockito.verify(this.model).addAttribute(Matchers.eq("studyTypes"), Matchers.anyListOf(StudyType.class));
+		Mockito.verify(this.model).addAttribute("createTrialForm", createTrialForm);
+		Mockito.verify(this.model).addAttribute(Matchers.eq("experimentalDesignSpecialData"), Matchers.any(TabInfo.class));
+		Mockito.verify(this.model).addAttribute("studyName", testWorkbook.getStudyDetails().getLabel());
+		Mockito.verify(this.model).addAttribute("description", testWorkbook.getStudyDetails().getDescription());
+		Mockito.verify(this.model).addAttribute(Matchers.eq("advancedList"), Matchers.anyListOf(AdvanceList.class));
+		Mockito.verify(this.model).addAttribute(Matchers.eq("sampleList"), Matchers.anyListOf(SampleListDTO.class));
+		Mockito.verify(this.model).addAttribute(Matchers.eq("crossesList"), Matchers.anyListOf(CrossesList.class));
+		Mockito.verify(this.model).addAttribute("germplasmListSize", 0);
 	}
 	
 	@Test

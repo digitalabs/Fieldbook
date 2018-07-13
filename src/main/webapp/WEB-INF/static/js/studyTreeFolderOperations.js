@@ -8,6 +8,7 @@ function addFolder(object) {
 	'use strict';
 	if (!$(object).hasClass('disable-image')) {
 		hideRenameFolderDiv();
+		hideStudyTypeDiv();
 		$('#addFolderName', '#studyTreeModal').val('');
 		$('#addFolderDiv', '#studyTreeModal').slideDown('fast');
 	}
@@ -30,6 +31,7 @@ function renameFolder(object) {
 
 	if (!$(object).hasClass('disable-image')) {
 		hideAddFolderDiv();
+		hideStudyTypeDiv();
 		$('#renameFolderDiv', '#studyTreeModal').slideDown('fast');
 		currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
 		$('#newFolderName', '#studyTreeModal').val(currentFolderName);
@@ -74,7 +76,7 @@ function submitRenameFolder() {
 			success: function(data) {
 				var node;
 				if (data.isSuccess === '1') {
-					hideRenameFolderDiv();
+					hideRenameFolderSection();
 					node = $('#studyTree').dynatree('getTree').getActiveNode();
 					node.data.title = folderName;
 					$(node.span).find('a').html(folderName);

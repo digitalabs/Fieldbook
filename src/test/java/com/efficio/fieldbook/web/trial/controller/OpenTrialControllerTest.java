@@ -15,16 +15,21 @@ import com.efficio.fieldbook.web.trial.bean.BasicDetails;
 import com.efficio.fieldbook.web.trial.bean.CrossesList;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.bean.TabInfoBean;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -67,6 +72,7 @@ import org.generationcp.middleware.pojos.dms.StudyType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.SampleListService;
+import org.generationcp.middleware.util.Util;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
 import org.junit.Assert;
 import org.junit.Before;
@@ -1296,6 +1302,134 @@ public class OpenTrialControllerTest {
 		Mockito.verify(this.model).addAttribute(Matchers.eq("sampleList"), Matchers.anyListOf(SampleListDTO.class));
 		Mockito.verify(this.model).addAttribute(Matchers.eq("crossesList"), Matchers.anyListOf(CrossesList.class));
 		Mockito.verify(this.model).addAttribute("germplasmListSize", 0);
+	}
+	
+	@Test
+	public void testPrepareBasicDetailsTabInfo() throws ParseException {
+		final Integer trialID = 1011;
+		final StudyDetails studyDetails = createTestStudyDetails(trialID);
+		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
+		final String endDate = Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
+		final String updateDate = Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
+		final String ownerName = RandomStringUtils.randomAlphanumeric(20);
+		final String folderName = RandomStringUtils.randomAlphanumeric(20);
+		Mockito.doReturn(folderName).when(this.fieldbookMiddlewareService).getFolderNameById(Matchers.anyInt());
+		Mockito.doReturn(ownerName).when(this.fieldbookService).getPersonByUserId(Matchers.anyInt());
+		
+		final TabInfo tabInfo = this.openTrialController.prepareBasicDetailsTabInfo(studyDetails, false, trialID);
+		final BasicDetails basicData = (BasicDetails) tabInfo.getData();
+		Assert.assertNotNull(basicData);
+		this.verifyBasicDetailsInfo(studyDetails, startDate, endDate, updateDate, Integer.valueOf(studyDetails.getCreatedBy()), ownerName,
+				folderName, basicData);
+
+		this.verifyUserSelectionUponBasicDetailsPreparation(studyDetails);
+	}
+	
+	@Test
+	public void testPrepareBasicDetailsTabInfoWithNullDates() throws ParseException {
+		final Integer trialID = 1011;
+		final StudyDetails studyDetails = createTestStudyDetails(trialID);
+		studyDetails.setEndDate(null);
+		studyDetails.setStudyUpdate(null);
+		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
+		final String ownerName = RandomStringUtils.randomAlphanumeric(20);
+		final String folderName = RandomStringUtils.randomAlphanumeric(20);
+		Mockito.doReturn(folderName).when(this.fieldbookMiddlewareService).getFolderNameById(Matchers.anyInt());
+		Mockito.doReturn(ownerName).when(this.fieldbookService).getPersonByUserId(Matchers.anyInt());
+		
+		final TabInfo tabInfo = this.openTrialController.prepareBasicDetailsTabInfo(studyDetails, false, trialID);
+		final BasicDetails basicData = (BasicDetails) tabInfo.getData();
+		Assert.assertNotNull(basicData);
+		this.verifyBasicDetailsInfo(studyDetails, startDate, StringUtils.EMPTY, StringUtils.EMPTY,
+				Integer.valueOf(studyDetails.getCreatedBy()), ownerName, folderName, basicData);
+
+		this.verifyUserSelectionUponBasicDetailsPreparation(studyDetails);
+	}
+	
+	@Test
+	public void testPrepareBasicDetailsTabInfoWithNoCreatorInfo() throws ParseException {
+		final Integer trialID = 1011;
+		final StudyDetails studyDetails = createTestStudyDetails(trialID);
+		studyDetails.setCreatedBy("");
+		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
+		final String endDate = Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
+		final String updateDate = Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
+		final String folderName = RandomStringUtils.randomAlphanumeric(20);
+		Mockito.doReturn(folderName).when(this.fieldbookMiddlewareService).getFolderNameById(Matchers.anyInt());
+		
+		final TabInfo tabInfo = this.openTrialController.prepareBasicDetailsTabInfo(studyDetails, false, trialID);
+		final BasicDetails basicData = (BasicDetails) tabInfo.getData();
+		Assert.assertNotNull(basicData);
+		this.verifyBasicDetailsInfo(studyDetails, startDate, endDate, updateDate, null, StringUtils.EMPTY, folderName, basicData);
+		
+		this.verifyUserSelectionUponBasicDetailsPreparation(studyDetails);
+	}
+	
+	@Test
+	public void testPrepareBasicDetailsTabInfoWhenParentFolderIsRootFolder() throws ParseException {
+		final Integer trialID = 1011;
+		final StudyDetails studyDetails = createTestStudyDetails(trialID);
+		studyDetails.setParentFolderId(DmsProject.SYSTEM_FOLDER_ID);
+		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
+		final String endDate = Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
+		final String updateDate = Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
+		final String ownerName = RandomStringUtils.randomAlphanumeric(20);
+		Mockito.doReturn(ownerName).when(this.fieldbookService).getPersonByUserId(Matchers.anyInt());
+		
+		final TabInfo tabInfo = this.openTrialController.prepareBasicDetailsTabInfo(studyDetails, false, trialID);
+		final BasicDetails basicData = (BasicDetails) tabInfo.getData();
+		Assert.assertNotNull(basicData);
+		this.verifyBasicDetailsInfo(studyDetails, startDate, endDate, updateDate, Integer.valueOf(studyDetails.getCreatedBy()), ownerName,
+				AppConstants.STUDIES.getString(), basicData);
+
+		this.verifyUserSelectionUponBasicDetailsPreparation(studyDetails);
+	}
+
+	private void verifyUserSelectionUponBasicDetailsPreparation(final StudyDetails studyDetails) {
+		Mockito.verify(this.userSelection).setBasicDetails(Matchers.anyListOf(SettingDetail.class));
+		Mockito.verify(this.userSelection).setStudyName(studyDetails.getStudyName());
+		Mockito.verify(this.userSelection).setStudyDescription(studyDetails.getDescription());
+		Mockito.verify(this.userSelection).setStudyStartDate(studyDetails.getStartDate());
+		Mockito.verify(this.userSelection).setStudyEndDate(studyDetails.getEndDate());
+		Mockito.verify(this.userSelection).setStudyUpdate(studyDetails.getStudyUpdate());
+		Mockito.verify(this.userSelection).setStudyObjective(studyDetails.getObjective());
+		Mockito.verify(this.userSelection).setStudyType(studyDetails.getStudyType().getName());
+	}
+
+	private void verifyBasicDetailsInfo(final StudyDetails studyDetails, final String startDate, final String endDate,
+			final String updateDate, final Integer userId, final String ownerName, final String folderName, final BasicDetails basicData) {
+		// for this test asserting empty as all required fields are present
+		Assert.assertTrue(basicData.getBasicDetails().isEmpty());
+		Assert.assertEquals(studyDetails.getId(), basicData.getStudyID());
+		Assert.assertEquals(studyDetails.getStudyName(), basicData.getStudyName());
+		Assert.assertEquals(studyDetails.getDescription(), basicData.getDescription());
+		Assert.assertEquals(studyDetails.getObjective(), basicData.getObjective());
+		Assert.assertEquals(startDate, basicData.getStartDate());
+		Assert.assertEquals(endDate, basicData.getEndDate());
+		Assert.assertEquals(updateDate, basicData.getStudyUpdate());
+		Assert.assertEquals(studyDetails.getStudyType(), basicData.getStudyType());
+		Assert.assertEquals(studyDetails.getParentFolderId(), basicData.getFolderId().longValue());
+		Assert.assertEquals(folderName, basicData.getFolderName());
+		Assert.assertEquals(folderName, basicData.getFolderNameLabel());
+		Assert.assertEquals(userId, basicData.getUserID());
+		Assert.assertEquals(ownerName, basicData.getUserName());
+	}
+
+	private StudyDetails createTestStudyDetails(final int trialID) {
+		final StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setId(trialID);
+		studyDetails.setStudyName(RandomStringUtils.randomAlphanumeric(20));
+		studyDetails.setDescription(RandomStringUtils.randomAlphanumeric(20));
+		studyDetails.setObjective(RandomStringUtils.randomAlphanumeric(20));
+		studyDetails.setStartDate("20110915");
+		studyDetails.setEndDate("20140421");
+		studyDetails.setStudyUpdate("20160601");
+		studyDetails.setStudyType(StudyTypeDto.getNurseryDto());
+		final int parentFolderId = 125;
+		studyDetails.setParentFolderId(parentFolderId);
+		final String createdBy = "210";
+		studyDetails.setCreatedBy(createdBy);
+		return studyDetails;
 	}
 
 	private List<MeasurementVariable> initMeasurementVariableList() {

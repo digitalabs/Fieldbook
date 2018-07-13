@@ -107,7 +107,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	private static final Integer LIST_DATA_STATUS = 0;
 	private static final Integer LIST_DATA_LRECID = 0;
-
+	public static final Integer LOCKED_LIST_STATUS = 101;
 	/**
 	 * The Constant LOG.
 	 */
@@ -128,8 +128,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 * The Constant BATCH_SIZE.
 	 */
 	public static final int BATCH_SIZE = 500;
-	public static final int LOCKED_LIST_STATUS = 101;
-
+	
 	/**
 	 * The germplasm list manager.
 	 */
@@ -1239,6 +1238,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 			if (CROP_LISTS.equals(targetId)) {
 				gpList.setProgramUUID(null);
+				gpList.setStatus(LOCKED_LIST_STATUS);
 			} else {
 				gpList.setProgramUUID(this.contextUtil.getCurrentProgramUUID());
 			}

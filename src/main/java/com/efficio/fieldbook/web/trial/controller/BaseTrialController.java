@@ -1,28 +1,20 @@
+
 package com.efficio.fieldbook.web.trial.controller;
 
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.trial.bean.AdvanceList;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.CrossesList;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignDataDetail;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -49,24 +41,36 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.operation.builder.StudyTypeBuilder;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Location;
+import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.service.api.SampleService;
 import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringTokenizer;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.trial.bean.AdvanceList;
+import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.CrossesList;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignDataDetail;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
+import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -108,7 +112,7 @@ public abstract class BaseTrialController extends SettingsController {
 		studyDetails.setStartDate(detailBean.getStartDate());
 		studyDetails.setEndDate(detailBean.getEndDate());
 		studyDetails.setStudyUpdate(Util.getCurrentDateAsStringValue(Util.DATE_AS_NUMBER_FORMAT));
-		studyDetails.setStudyType(studyDataManager.getStudyTypeByName(detailBean.getStudyType().getName()));
+		studyDetails.setStudyType(this.studyDataManager.getStudyTypeByName(detailBean.getStudyType().getName()));
 
 		if (detailBean.getCreatedBy() != null) {
 			studyDetails.setCreatedBy(detailBean.getCreatedBy());
@@ -125,8 +129,8 @@ public abstract class BaseTrialController extends SettingsController {
 		for (int i = 0; i < data.getEnvironments().size(); i++) {
 			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
 			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))
-					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null || values
-					.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
+					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null
+					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
 				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
 			}
 		}
@@ -615,9 +619,8 @@ public abstract class BaseTrialController extends SettingsController {
 		final List<CrossesList> crossesList = new ArrayList<>();
 
 		for (final GermplasmList g : crossList) {
-			crossesList.add(new CrossesList(g.getId(), g.getName(), g.getType().equalsIgnoreCase(GermplasmListType.IMP_CROSS.toString()) ?
-					GermplasmList.IMP_CROSS :
-					GermplasmList.CRT_CROSS));
+			crossesList.add(new CrossesList(g.getId(), g.getName(), g.getType().equalsIgnoreCase(GermplasmListType.IMP_CROSS.toString())
+					? GermplasmList.IMP_CROSS : GermplasmList.CRT_CROSS));
 		}
 
 		return crossesList;
@@ -630,9 +633,8 @@ public abstract class BaseTrialController extends SettingsController {
 
 			final StandardVariable variable = this.ontologyService.getStandardVariable(cvTermId, this.contextUtil.getCurrentProgramUUID());
 
-			final List<StandardVariable> pairs = this.fieldbookMiddlewareService
-					.getPossibleTreatmentPairs(variable.getId(), variable.getProperty().getId(),
-							AppConstants.CREATE_STUDY_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
+			final List<StandardVariable> pairs = this.fieldbookMiddlewareService.getPossibleTreatmentPairs(variable.getId(),
+					variable.getProperty().getId(), AppConstants.CREATE_STUDY_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
 
 			for (final StandardVariable item : pairs) {
 				output.add(this.createSettingDetail(item.getId(), null, VariableType.TREATMENT_FACTOR.getRole().name()));
@@ -690,12 +692,6 @@ public abstract class BaseTrialController extends SettingsController {
 		final Map<String, String> basicDetails = new HashMap<>();
 		final List<SettingDetail> initialDetailList = new ArrayList<>();
 
-		// find out who created the study
-		// if no owner found default to the current user
-		final Integer studyOwnerPersonId = this.contextUtil.getCurrentIbdbUserId();
-
-		final String studyOwnerPersonName = this.fieldbookService.getPersonByUserId(studyOwnerPersonId);
-
 		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_STUDY_REQUIRED_FIELDS.getString());
 
 		for (final Integer initialSettingID : initialSettingIDs) {
@@ -722,18 +718,17 @@ public abstract class BaseTrialController extends SettingsController {
 		basic.setStudyID(trialID);
 		basic.setDescription(studyDetails.getDescription());
 		basic.setStartDate(Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT));
-		basic.setEndDate(studyDetails.getEndDate() != null && !studyDetails.getEndDate().isEmpty() ?
-				Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT) :
-				StringUtils.EMPTY);
-		basic.setStudyUpdate(studyDetails.getStudyUpdate() != null && !studyDetails.getStudyUpdate().isEmpty() ?
-				Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT) :
-				StringUtils.EMPTY);
+		basic.setEndDate(studyDetails.getEndDate() != null && !studyDetails.getEndDate().isEmpty()
+				? Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT) : StringUtils.EMPTY);
+		basic.setStudyUpdate(studyDetails.getStudyUpdate() != null && !studyDetails.getStudyUpdate().isEmpty()
+				? Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT)
+				: StringUtils.EMPTY);
 		basic.setObjective(studyDetails.getObjective());
 
 		final int folderId = (int) studyDetails.getParentFolderId();
 		final String folderName;
 
-		if (folderId == 1) {
+		if (DmsProject.SYSTEM_FOLDER_ID.equals(folderId)) {
 			folderName = AppConstants.STUDIES.getString();
 		} else {
 			folderName = this.fieldbookMiddlewareService.getFolderNameById(folderId);
@@ -742,13 +737,21 @@ public abstract class BaseTrialController extends SettingsController {
 		basic.setFolderId(folderId);
 		basic.setFolderName(folderName);
 		basic.setFolderNameLabel(folderName);
-		basic.setUserID(studyOwnerPersonId);
+
+		String studyOwnerPersonName = StringUtils.EMPTY;
+		Integer studyOwnerUserId = null;
+		final String createdBy = studyDetails.getCreatedBy();
+		if (!StringUtils.isEmpty(createdBy)) {
+			studyOwnerUserId = Integer.valueOf(createdBy);
+			studyOwnerPersonName = this.fieldbookService.getPersonByUserId(Integer.valueOf(createdBy));
+		}
+		basic.setUserID(studyOwnerUserId);
 		basic.setUserName(studyOwnerPersonName);
 		basic.setStudyType(studyDetails.getStudyType());
 		final TabInfo tab = new TabInfo();
 		tab.setData(basic);
 
-		setUserSelectionBasicInformation(studyDetails, initialDetailList);
+		this.setUserSelectionBasicInformation(studyDetails, initialDetailList);
 		return tab;
 	}
 
@@ -875,9 +878,8 @@ public abstract class BaseTrialController extends SettingsController {
 						val = managementDetailValue;
 					}
 
-					final MeasurementData newData =
-							new MeasurementData(measurementVariable.getName(), val, false, measurementVariable.getDataType(),
-									measurementVariable);
+					final MeasurementData newData = new MeasurementData(measurementVariable.getName(), val, false,
+							measurementVariable.getDataType(), measurementVariable);
 					row.getDataList().add(newData);
 				}
 
@@ -930,7 +932,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 	protected Integer getUnspecifiedLocationId() {
 
-		final List<Location> locations = locationDataManager.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
+		final List<Location> locations = this.locationDataManager.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
 		if (!locations.isEmpty()) {
 			return locations.get(0).getLocid();
 		}

@@ -64,6 +64,7 @@ public class DerivedVariableControllerTest {
 	private static final String NOT_FOUND = "not found";
 	private static final String ENGINE_EXCEPTION = "engine exception";
 	private static final String MISSING_DATA = "missing data";
+	private static final String MISSING_VARIABLES = "missing variables";
 
 	private static final String TERM_VALUE_1 = "1000";
 	private static final String TERM_VALUE_2 = "12.5";
@@ -72,6 +73,8 @@ public class DerivedVariableControllerTest {
 	private static final String FORMULA = "({{" + VARIABLE1_TERMID + "}}/100)*((100-{{" + VARIABLE2_TERMID + "}})/(100-12.5))*(10/{{"
 		+ VARIABLE3_TERMID + "}})";
 	private static final String FORMULA_RESULT = "10";
+
+	private static final Locale locale = Locale.getDefault();
 
 	private FormulaDto formulaDTO;
 
@@ -111,7 +114,6 @@ public class DerivedVariableControllerTest {
 		when(this.studySelection.getBaselineTraitsList()).thenReturn(this.createSettingDetails());
 		when(this.studySelection.getWorkbook()).thenReturn(workbook);
 
-		Locale locale = Locale.getDefault();
 		when(this.messageSource.getMessage("study.execute.calculation.invalid.request", null, locale)).thenReturn(INVALID_REQUEST);
 		when(this.messageSource.getMessage("study.execute.calculation.formula.not.found", null, locale)).thenReturn(NOT_FOUND);
 		when(this.messageSource.getMessage("study.execute.calculation.engine.exception", null, locale)).thenReturn(ENGINE_EXCEPTION);
@@ -230,11 +232,14 @@ public class DerivedVariableControllerTest {
 
 		when(this.studySelection.getBaselineTraitsList()).thenReturn(java.util.Collections.<SettingDetail>emptyList());
 		when(this.processor.evaluateFormula(anyString(), any(Map.class))).thenReturn(FORMULA_RESULT);
+		when(this.messageSource.getMessage(
+			"study.execute.calculation.missing.variables",
+			new String[] {VARIABLE1_TERMID + ", " + VARIABLE2_TERMID + ", " + VARIABLE3_TERMID}, locale)).thenReturn(MISSING_VARIABLES);
 
 		ResponseEntity<Map<String, Object>> response = this.derivedVariableController.execute(request, bindingResult);
 
-		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-		Assert.assertTrue("Should have missing variables", response.getBody().containsKey("inputMissingData"));
+		Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		Assert.assertEquals(MISSING_VARIABLES, response.getBody().get("errorMessage"));
 	}
 
 	@Test

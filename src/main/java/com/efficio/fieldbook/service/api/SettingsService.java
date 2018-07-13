@@ -3,6 +3,7 @@ package com.efficio.fieldbook.service.api;
 
 import java.util.List;
 
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -30,4 +31,8 @@ public interface SettingsService {
 			int currentIbDbUserId, String programUUID) throws MiddlewareException;
 
 	public List<LabelFields> retrieveExperimentalDesignFactorsAsLabels(Workbook workbook);
+
+	void populateSettingVariable(SettingVariable var);
+
+	void addNewSettingDetails(int mode, List<SettingDetail> newDetails) throws Exception;
 }

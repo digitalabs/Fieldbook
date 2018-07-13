@@ -40,8 +40,12 @@ public class SettingsServiceImpl implements SettingsService {
 	 */
 	@Resource
 	protected FieldbookService fieldbookService;
+
 	@Resource
 	private ContextUtil contextUtil;
+
+	@Resource
+	private UserSelection studySelection;
 
 	/**
 	 * The fieldbook middleware service.
@@ -254,5 +258,44 @@ public class SettingsServiceImpl implements SettingsService {
 
 		return labelFieldsList;
 
+	}
+
+	/**
+	 * Populates Setting Variable.
+	 *
+	 * @param var the var
+	 *///TODO TRIAL
+	@Override
+	public void populateSettingVariable(final SettingVariable var) {
+
+		final StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(var.getCvTermId(), this.contextUtil.getCurrentProgramUUID());
+		if (stdvar != null) {
+			var.setDescription(stdvar.getDescription());
+			var.setProperty(stdvar.getProperty().getName());
+			var.setScale(stdvar.getScale().getName());
+			var.setMethod(stdvar.getMethod().getName());
+			var.setDataType(stdvar.getDataType().getName());
+			var.setVariableTypes(stdvar.getVariableTypes());
+			var.setCropOntologyId(stdvar.getCropOntologyId() != null ? stdvar.getCropOntologyId() : "");
+			var.setTraitClass(stdvar.getIsA() != null ? stdvar.getIsA().getName() : "");
+			var.setDataTypeId(stdvar.getDataType().getId());
+			var.setMinRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMinValue() != null
+					? stdvar.getConstraints().getMinValue() : null);
+			var.setMaxRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMaxValue() != null
+					? stdvar.getConstraints().getMaxValue() : null);
+			var.setWidgetType();
+		}
+	}
+
+	/**
+	 * Adds the new setting details.
+	 *
+	 * @param mode       the mode
+	 * @param newDetails the new details
+	 * @throws Exception the exception
+	 */
+	@Override
+	public void addNewSettingDetails(final int mode, final List<SettingDetail> newDetails) throws Exception {
+		SettingsUtil.addNewSettingDetails(mode, newDetails, studySelection);
 	}
 }

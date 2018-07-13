@@ -138,8 +138,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout', '_',
-		'$localStorage', '$state', '$location', function($scope, $rootScope, TrialManagerDataService, $http, $timeout, _, $localStorage,
-			$state, $location) {
+		'$localStorage', '$state', '$location', 'derivedVariableService', '$uibModal', '$q', function($scope, $rootScope, TrialManagerDataService, $http, $timeout, _, $localStorage,
+			$state, $location, derivedVariableService, $uibModal, $q) {
 			$scope.trialTabs = [
 				{   name: 'Settings',
 					state: 'trialSettings'
@@ -256,7 +256,35 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 			$scope.data = TrialManagerDataService.currentData.basicDetails;
 
-			$scope.saveCurrentTrialData = TrialManagerDataService.saveCurrentData;
+			$scope.warnMissingInputData = function(response) {
+				var deferred = $q.defer();
+				var dependencyVariables = response.data;
+				if (dependencyVariables.length > 0) {
+					$uibModal.open({
+						animation: true,
+						templateUrl: '/Fieldbook/static/angular-templates/derivedTraitsValidationModal.html',
+						size: 'md',
+						controller: function ($scope, $uibModalInstance) {
+							$scope.dependencyVariables = dependencyVariables;
+							$scope.continue = function () {
+								$uibModalInstance.close();
+								deferred.resolve();
+							};
+						}
+					});
+				} else {
+					deferred.resolve();
+				}
+				return deferred.promise;
+			};
+
+			$scope.saveCurrentTrialData = function() {
+				derivedVariableService.getDependencies().then(function (response) {
+					return $scope.warnMissingInputData(response);
+				}).then(function () {
+					TrialManagerDataService.saveCurrentData();
+				});
+			};
 
 			$scope.selectPreviousStudy = function() {
 				openStudyTree(3, $scope.useExistingStudy);
@@ -374,6 +402,16 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.displayGermplasmOrMeasurmentOnlyActions = function() {
 				return this.hasGermplasmListSelected() || this.displayMeasurementOnlyActions();
+			};
+
+			$scope.displayExecuteCalculatedVariableOnlyActions = function () {
+				return this.hasCalculatedVariable() && this.displayMeasurementOnlyActions();
+			};
+
+			$scope.hasCalculatedVariable = function () {
+			 	return TrialManagerDataService.settings.measurements.m_keys.some(function (key) {
+					return TrialManagerDataService.settings.measurements.m_vals[key].variable.formula;
+				});
 			};
 
 			// Programatically navigate to specified tab state
@@ -729,6 +767,28 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 				return null;
 			};
+
+            $rootScope.openConfirmModal = function(message, confirmButtonLabel) {
+
+                var modalInstance = $uibModal.open({
+					animation: true,
+                    templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
+                    controller: function($scope, $uibModalInstance) {
+                        $scope.text = message;
+                        $scope.confirmButtonLabel = confirmButtonLabel;
+
+                        $scope.confirm = function () {
+                            $uibModalInstance.close(true);
+                        };
+
+                        $scope.cancel = function () {
+                            $uibModalInstance.close(false);
+                        };
+                    }
+                });
+                return modalInstance;
+            };
+
 		}]);
 
 	manageTrialApp.filter('filterMeasurementState', function() {
@@ -748,20 +808,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 
 				return filtered;
-			};
-		});
-
-	manageTrialApp.controller('ConfirmModalController', function($scope, $uibModalInstance, MODAL_TITLE, MODAL_TEXT, CONFIRM_BUTTON_LABEL) {
-			$scope.title = MODAL_TITLE;
-			$scope.text = MODAL_TEXT;
-			$scope.confirmButtonLabel = CONFIRM_BUTTON_LABEL;
-
-			$scope.confirm = function() {
-				$uibModalInstance.close(true);
-			};
-
-			$scope.cancel = function() {
-				$uibModalInstance.close(false);
 			};
 		});
 

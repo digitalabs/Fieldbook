@@ -1,5 +1,5 @@
 
-/*global angular, modalConfirmationTitle, openManageLocations,
+/*global angular, openManageLocations,
 environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, showErrorMessage*/
 
 (function() {
@@ -144,29 +144,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				return TrialManagerDataService.trialMeasurement.hasMeasurement;
 			};
 
-			$scope.getModalInstance = function() {
-				return $uibModal.open({
-					templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
-					controller: 'ConfirmModalController',
-					resolve: {
-						MODAL_TITLE: function() {
-							return modalConfirmationTitle;
-						},
-						MODAL_TEXT: function() {
-							return environmentModalConfirmationText;
-						},
-						CONFIRM_BUTTON_LABEL: function() {
-							return environmentConfirmLabel;
-						}
-					}
-				});
-			};
-
 			$scope.updateEnvironmentCount = function() {
 				if ($scope.temp.noOfEnvironments > $scope.data.environments.length) {
 					$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
 				} else if ($scope.temp.noOfEnvironments < $scope.data.environments.length) {
-					var modalInstance = $scope.getModalInstance();
+					var modalInstance = $rootScope.openConfirmModal(environmentModalConfirmationText, environmentConfirmLabel);
 					modalInstance.result.then(function(shouldContinue) {
 						if (shouldContinue) {
 							$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;

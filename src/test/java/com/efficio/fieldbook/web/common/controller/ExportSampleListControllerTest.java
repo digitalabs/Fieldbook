@@ -27,10 +27,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.efficio.fieldbook.web.common.service.CsvExportSampleListService;
+import org.generationcp.commons.service.CsvExportSampleListService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.SampleListUtilTest;
+import org.generationcp.commons.util.SampleListUtilTest;
 
 import junit.framework.Assert;
 

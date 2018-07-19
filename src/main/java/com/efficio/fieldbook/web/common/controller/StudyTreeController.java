@@ -1,9 +1,15 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
-import com.efficio.pojos.treeview.TreeNode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Reference;
@@ -20,7 +26,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,13 +35,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.TreeViewUtil;
+import com.efficio.pojos.treeview.TreeNode;
 
 @Controller
 @RequestMapping(StudyTreeController.URL)
@@ -90,7 +91,7 @@ public class StudyTreeController {
 			try {
 				if (StudyTreeController.LOCAL.equals(parentKey)) {
 					final List<Reference> rootFolders = this.studyDataManager.getRootFolders(this.getCurrentProgramUUID());
-					childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, false, true, isFolderOnly);
+					childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, true, isFolderOnly);
 				} else if (NumberUtils.isNumber(parentKey)) {
 					childNodes = this.getChildrenTreeNodes(parentKey, isFolderOnly);
 				} else {
@@ -107,7 +108,7 @@ public class StudyTreeController {
 		final int parentId = Integer.parseInt(parentKey);
 		final List<Reference> folders = this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
 
-		final List<TreeNode> childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(folders, false, true, isFolderOnly);
+		final List<TreeNode> childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(folders, true, isFolderOnly);
 		return childNodes;
 	}
 
@@ -136,7 +137,7 @@ public class StudyTreeController {
 				final int parentId = Integer.parseInt(parentKey);
 				final List<Reference> folders =
 						this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
-				return TreeViewUtil.convertStudyFolderReferencesToJson(folders, false, true, isFolderOnlyBool);
+				return TreeViewUtil.convertStudyFolderReferencesToJson(folders, true, isFolderOnlyBool);
 
 			} else {
 				StudyTreeController.LOG.error("parentKey = " + parentKey + " is not a number");
@@ -153,7 +154,7 @@ public class StudyTreeController {
 		try {
 			final List<Reference> rootFolders =
 					this.studyDataManager.getRootFolders(this.getCurrentProgramUUID());
-			return TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, false, true, isFolderOnly);
+			return TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, true, isFolderOnly);
 		} catch (final Exception e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
 		}

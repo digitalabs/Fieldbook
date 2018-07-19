@@ -12,13 +12,16 @@
 package com.efficio.fieldbook.web.common.bean;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.FormulaDto;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.oms.CVTerm;
 import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.web.trial.bean.WidgetType;
@@ -44,6 +47,9 @@ public class SettingVariable implements Serializable {
 	private WidgetType widgetType;
 	private Operation operation;
 	private Integer storedInId;
+
+	private FormulaDto formula;
+
 	private Set<VariableType> variableTypes;
 
 	public SettingVariable() {
@@ -316,6 +322,14 @@ public class SettingVariable implements Serializable {
 	
 	public Set<VariableType> getVariableTypes() {
 		return this.variableTypes;
+	}
+
+	public FormulaDto getFormula() {
+		return formula;
+	}
+
+	public void setFormula(final FormulaDto formula) {
+		this.formula = formula;
 	}
 
 }

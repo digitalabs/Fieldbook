@@ -803,6 +803,28 @@ function deleteStudyInEdit() {
 	});
 }
 
+/* EXECUTE CALCULATION */
+function executeCalculatedVariable() {
+	$('#executeCalculatedVariableModal').modal({ backdrop: 'static', keyboard: true });
+
+	// Add hide listener to executeCalculatedVariableModal
+	$('#executeCalculatedVariableModal').one('hidden.bs.modal', function (e) {
+		// When the executeCalculatedVariableModal is closed, remove the bs.modal data
+		// so that the modal content is refreshed when it is opened again.
+		$(e.target).removeData('bs.modal');
+	});
+
+	var scope = angular.element("#mainApp").scope();
+	scope.$apply(function () {
+		scope.navigateToTab('editMeasurements');
+	});
+
+	var $scope = angular.element('#executeCalculatedVariableModal').scope();
+	$scope.init();
+	$scope.$apply();
+}
+/* END EXECUTE CALCULATION */
+
 /* ADVANCING SPECIFIC FUNCTIONS */
 
 function startAdvance(advanceType) {
@@ -2264,7 +2286,7 @@ function createFolder() {
 					doStudyLazyLoad(node, data.newFolderId);
 					node.focus();
 					node.expand();
-					$('#addFolderDiv', '#studyTreeModal').slideUp();
+					hideAddFolderSection();
 					showSuccessfulMessage('', addFolderSuccessful);
 				} else {
 					showErrorMessage('page-add-study-folder-message-modal', data.message);
@@ -3029,10 +3051,15 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	$('#page-study-tree-message-modal').html('');
 	$('#addFolderDiv').hide();
 	$('#renameFolderDiv').hide();
+	
 	if ($('#create-study #studyTree').length !== 0) {
 		$('#studyTree').dynatree('destroy');
 		displayStudyListTree('studyTree', type, selectStudyFunction, isPreSelect);
 		changeBrowseStudyButtonBehavior(false);
+	// Reset study filter to show all studies
+	} else {
+		$('#studyTypeFilter').val("All");
+		filterByStudyType();	
 	}
 
 	$('#studyTreeModal').modal({

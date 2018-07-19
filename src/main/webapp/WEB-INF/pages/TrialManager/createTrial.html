@@ -55,25 +55,10 @@
 								<a href="javascript: void(0);" ng-click="saveCurrentTrialData()"
 								   th:text="#{study.option.save}">Save Study</a>
 							</li>
-							<li ng-show="displayMeasurementOnlyActions()" class="dropdown-submenu pull-left">
-								<a tabindex="-1" href="#">Field map options</a>
-									<ul class="dropdown-menu" style="margin-left: -20px;">
-										<li>
-											<a href="" style="display: none" id="fieldmap-url"
-											   th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
-											<a href="javascript: createFieldMap();" id="fieldmap-url-link"
-											   th:text="#{study.studydetails.action.createFieldmap}">Make Field Map</a>
-										</li>
-										<li>
-											<a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link"
-											   th:text="#{study.edit.study.view.field.map}">View Field Map</a>
-										</li>
-									</ul>
-								</li>
 
 							<li class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Design and planning options</a>
-								<ul class="dropdown-menu" style="margin-left: 29px;">
+								<ul class="dropdown-menu" style="margin-left: 28px;">
 									<li>
 										<a href="javascript: void(0)" onclick="exportDesignTemplate()" class="export-design-template-link"
 										   th:text="#{study.studydetails.action.export.design.template}">Export Design Template</a>
@@ -98,9 +83,9 @@
 							</li>
 
 							<!--Crossing options-->
-							<li  ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
+							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Crossing options</a>
-								<ul class="dropdown-menu" style="margin-left: -46px;">
+								<ul class="dropdown-menu" style="margin-left: -47px;">
 									<!--Export crossing template-->
 									<li id="download-crosses-template">
 										<a href="javascript: void(0)" onclick="ImportCrosses.downloadCrosses()"
@@ -108,7 +93,8 @@
 									</li>
 									<!--Import crosses style="display:none;"-->
 									<li id="import-crosses">
-										<a href="javascript: void(0)"  onclick="ImportCrosses.showPopup()" class="import-crosses" th:text="#{study.studydetails.action.import.crosses}">Import crosses</a>
+										<a href="javascript: void(0)" onclick="ImportCrosses.showPopup()" class="import-crosses"
+										   th:text="#{study.studydetails.action.import.crosses}">Import crosses</a>
 									</li>
 									<!--Design new crosses-->
 									<li id="create-new-crosses">
@@ -118,19 +104,25 @@
 								</ul>
 							</li>
 
-							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
-								<a tabindex="-1" href="#">Plant level options</a>
-								<ul class="dropdown-menu" style="margin-left: -14px;">
+							<li ng-show="displayMeasurementOnlyActions()" class="dropdown-submenu pull-left">
+								<a tabindex="-1" href="#">Field map options</a>
+								<ul class="dropdown-menu" style="margin-left: -20px;">
 									<li>
-										<a href="javascript: createSample();" id="sample-trial-link"
-										   th:text="#{study.studydetails.action.create.sample}">Create sample list</a>
+										<a href="" style="display: none" id="fieldmap-url"
+										   th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+										<a href="javascript: createFieldMap();" id="fieldmap-url-link"
+										   th:text="#{study.studydetails.action.createFieldmap}">Make Field Map</a>
+									</li>
+									<li>
+										<a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link"
+										   th:text="#{study.edit.study.view.field.map}">View Field Map</a>
 									</li>
 								</ul>
 							</li>
 
-							<li class="dropdown-submenu pull-left" ng-show="displayGermplasmOrMeasurmentOnlyActions()">
+							<li ng-show="displayGermplasmOrMeasurmentOnlyActions()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Data collection options</a>
-								<ul class="dropdown-menu" style="margin-left: 4px;">
+								<ul class="dropdown-menu" style="margin-left: 0px;">
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a href="javascript: showExportOptions();" id="export-study-link"
 										   th:text="#{study.studydetails.action.export.study}">Export Study Book</a>
@@ -151,9 +143,24 @@
 								</ul>
 							</li>
 
-							<li class="dropdown-submenu pull-left" ng-show="hasMeasurementData()">
+							<li ng-show="displayExecuteCalculatedVariableOnlyActions()">
+								<a href="javascript: executeCalculatedVariable()" id="calculatedVariable-link"
+								   th:text="#{study.option.execute.calculated.variable}">Execute calculated variable</a>
+							</li>
+
+							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
+								<a tabindex="-1" href="#">Plant level options</a>
+								<ul class="dropdown-menu" style="margin-left: -18px;">
+									<li>
+										<a href="javascript: createSample();" id="sample-trial-link"
+										   th:text="#{study.studydetails.action.create.sample}">Create sample list</a>
+									</li>
+								</ul>
+							</li>
+
+							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Advance study options</a>
-								<ul class="dropdown-menu" style="margin-left: -10px;">
+								<ul class="dropdown-menu" style="margin-left: -12px;">
 									<li>
 										<a href="javascript: startAdvance('trial');" id="advance-trial-link"
 										   th:text="#{study.studydetails.action.advance.study}">Advance Study</a>
@@ -331,16 +338,15 @@
 
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			<div id="showBaselineTraitDetails" th:include="/StudyManager/includes/baselineTraitDetails"></div>
+			<div class="chs-vs-modal-container" th:include="/StudyManager/includes/variableSelectionModal"></div>
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			<div class="chs-vs-modal-container" th:include="/StudyManager/includes/variableSelectionModal"></div>
+			<div id="showBaselineTraitDetails" th:include="/StudyManager/includes/baselineTraitDetails"></div>
 		</div>
 	</div>
-
 
 	<ul class="nav nav-tabs row fb-tabs-headers" id="manage-trial-tab-headers">
 		<li ng-repeat="tab in trialTabs" ng-class="{active: tabSelected===tab.state}"
@@ -480,6 +486,12 @@
 	</div>
 
 	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div id="study-executeCalculatedVariable" th:include="/TrialManager/templates/executeCalculatedVariableModal"></div>
+		</div>
+	</div>
+
+	<div class="row">
 		<div th:include="/TrialManager/templates/samplesSummary"></div>
 	</div>
 
@@ -557,6 +569,8 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentToSampleList.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/fbk-data-table/samples-summary.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/executeCalculatedVariableModal.js}"></script>
+
 
 	<!-- constants here -->
 	<script type="text/javascript" th:inline="javascript">
@@ -610,8 +624,7 @@
 		var entryNoShouldBeInRange = /*[[#{entry.number.should.be.in.range}]]*/ '';
 		var plotNoShouldBeInRange = /*[[#{plot.number.should.be.in.range}]]*/ '';
 		var ajaxGenericErrorMsg = /*[[#{ajax.generic.exception.error.message}]]*/ '';
-		var modalConfirmationTitle = /*[[#{common.form.confirmation.text}]]*/ '',
-			environmentModalConfirmationText = /*[[#{study.change.environment.confirmation}]]*/ '',
+		var environmentModalConfirmationText = /*[[#{study.change.environment.confirmation}]]*/ '',
 			environmentConfirmLabel = /*[[#{common.form.ok.text}]]*/ '',
 			operationMode = /*[[${operationMode}]]*/ '';
 
@@ -747,6 +760,7 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/environments.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/derivedVariableService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-tabdrop.js}"></script>
 

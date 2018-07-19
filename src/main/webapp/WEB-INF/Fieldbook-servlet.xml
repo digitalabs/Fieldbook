@@ -555,6 +555,18 @@
 		  factory-method="getPlantService" scope="request">
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
+
+	<bean id="formulaService" factory-bean="managerFactory"
+		  factory-method="getFormulaService" scope="request">
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<bean id="derivedVariableProcessor"
+		  class="org.generationcp.commons.derivedvariable.DerivedVariableProcessor"
+		  scope="request">
+		<aop:scoped-proxy/>
+	</bean>
+
 	<!-- Data Source and Transaction Configuration -->
 
 	<bean id="xaDataSources" class="org.generationcp.middleware.hibernate.XADataSources" />
@@ -625,6 +637,10 @@
     	factory-method="getStudyService" scope="request">
         <aop:scoped-proxy />
     </bean>
+
+	<bean id="csvExportSampleListService" class="org.generationcp.commons.service.impl.CsvExportSampleListServiceImpl" scope="request">
+		<aop:scoped-proxy />
+	</bean>
 
     <!-- Nested <beans> elements can only be at the end. -->
 

@@ -2212,3 +2212,16 @@ input.select-all-margin{
 .label-italic{
     font-style: italic;
 }
+
+#variableDetailsTable {
+    width: 100%;
+}
+
+#variableDetailsTable tr {
+    height: 25px;
+}
+
+#variableDetailsTable td {
+    padding: 5px;
+    width: 50%;
+}

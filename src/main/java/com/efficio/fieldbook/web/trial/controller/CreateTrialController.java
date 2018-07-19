@@ -122,6 +122,7 @@ public class CreateTrialController extends BaseTrialController {
 		model.addAttribute(CreateTrialController.TRIAL_SETTINGS_DATA_TAB, this.prepareTrialSettingsTabInfo());
 		model.addAttribute("experimentalDesignSpecialData", this.prepareExperimentalDesignSpecialData());
 		model.addAttribute("measurementRowCount", 0);
+		model.addAttribute("studyTypes", this.studyDataManager.getAllVisibleStudyTypes());
 
 		// so that we can reuse the same page being use for nursery
 		model.addAttribute("createTrialForm", form);

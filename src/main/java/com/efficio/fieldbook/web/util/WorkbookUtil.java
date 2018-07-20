@@ -603,7 +603,10 @@ public class WorkbookUtil {
 		});
 
 		for (final MeasurementVariable row : variates) {
-			map.put(row.getTermId(), WorkbookUtil.getFormulasFromCVTermId(row.getTermId(), formulas));
+			final List<Integer> formulasFromCVTermId = WorkbookUtil.getFormulasFromCVTermId(row.getTermId(), formulas);
+			if (formulasFromCVTermId.size() > 0) {
+				map.put(row.getTermId(), formulasFromCVTermId);
+			}
 		}
 		return map;
 	}
@@ -614,6 +617,37 @@ public class WorkbookUtil {
 		for (final MeasurementVariable measurementVariable : measurementVariables) {
 			if (measurementVariable.getFormula().isInputVariablePresent(inputCvTermId)) {
 				result.add(measurementVariable.getTermId());
+			}
+		}
+		return result;
+	}
+
+	public static Map<MeasurementVariable, List<MeasurementVariable>> getVariatesMapUsedInFormulas(final List<MeasurementVariable> variates) {
+		Map<MeasurementVariable, List<MeasurementVariable>> map = new HashMap<>();
+
+		final Collection<MeasurementVariable> formulas = CollectionUtils.select(variates, new Predicate() {
+
+			public boolean evaluate(Object o) {
+				MeasurementVariable measurementVariable = (MeasurementVariable) o;
+				return measurementVariable.getFormula() != null;
+			}
+		});
+
+		for (final MeasurementVariable row : variates) {
+			final List<MeasurementVariable> formulasFromCVTermId = WorkbookUtil.getFormulasFromCVTermId(row, formulas);
+			if (formulasFromCVTermId.size() > 0) {
+				map.put(row, formulasFromCVTermId);
+			}
+		}
+		return map;
+	}
+
+	private static List<MeasurementVariable> getFormulasFromCVTermId(
+		final MeasurementVariable variable, final Collection<MeasurementVariable> measurementVariables) {
+		final List<MeasurementVariable> result = new ArrayList<>();
+		for (final MeasurementVariable measurementVariable : measurementVariables) {
+			if (measurementVariable.getFormula().isInputVariablePresent(variable.getTermId())) {
+				result.add(measurementVariable);
 			}
 		}
 		return result;

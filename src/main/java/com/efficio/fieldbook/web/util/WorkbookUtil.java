@@ -592,12 +592,12 @@ public class WorkbookUtil {
 	}
 
 	public static Map<Integer, List<Integer>> getVariatesUsedInFormulas(final List<MeasurementVariable> variates) {
-		Map<Integer, List<Integer>> map = new HashMap<>();
+		final Map<Integer, List<Integer>> map = new HashMap<>();
 
 		final Collection<MeasurementVariable> formulas = CollectionUtils.select(variates, new Predicate() {
 
-			public boolean evaluate(Object o) {
-				MeasurementVariable measurementVariable = (MeasurementVariable) o;
+			public boolean evaluate(final Object o) {
+				final MeasurementVariable measurementVariable = (MeasurementVariable) o;
 				return measurementVariable.getFormula() != null;
 			}
 		});
@@ -623,12 +623,12 @@ public class WorkbookUtil {
 	}
 
 	public static Map<MeasurementVariable, List<MeasurementVariable>> getVariatesMapUsedInFormulas(final List<MeasurementVariable> variates) {
-		Map<MeasurementVariable, List<MeasurementVariable>> map = new HashMap<>();
+		final Map<MeasurementVariable, List<MeasurementVariable>> map = new HashMap<>();
 
 		final Collection<MeasurementVariable> formulas = CollectionUtils.select(variates, new Predicate() {
 
-			public boolean evaluate(Object o) {
-				MeasurementVariable measurementVariable = (MeasurementVariable) o;
+			public boolean evaluate(final Object o) {
+				final MeasurementVariable measurementVariable = (MeasurementVariable) o;
 				return measurementVariable.getFormula() != null;
 			}
 		});

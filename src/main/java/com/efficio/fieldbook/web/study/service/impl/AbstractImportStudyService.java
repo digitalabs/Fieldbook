@@ -69,8 +69,8 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 		try {
 			// prior to continuing import, we create a copy of the current conditions and constants of the workbook, to simplify reset
 			// operation later on
-			this.copyConditionsAndConstants(workbook);
-            parseAndLoadObservationData();
+			this.copyConditionsAndConstants(this.workbook);
+			this.parseAndLoadObservationData();
 			this.validateObservationColumns();
 			this.validateImportMetadata();
 
@@ -85,27 +85,27 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 
 			this.performWorkbookMetadataUpdate();
 			final Map<String, MeasurementRow> measurementRowsMap =
-				this.createMeasurementRowsMap(workbook.getObservations());
-			this.performStudyDataImport(modes, parsedData, measurementRowsMap, changeDetailsList, workbook);
-
-			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService, 
-					workbook.getStudyDetails().getProgramUUID());
+				this.createMeasurementRowsMap(this.workbook.getObservations());
+			this.performStudyDataImport(modes, this.parsedData, measurementRowsMap, changeDetailsList, this.workbook);
+			SettingsUtil.resetBreedingMethodValueToId(
+				this.fieldbookMiddlewareService, this.workbook.getObservations(), true, this.ontologyService,
+				this.workbook.getStudyDetails().getProgramUUID());
 
 			try {
-				this.validationService.validateObservationValues(workbook);
+				this.validationService.validateObservationValues(this.workbook);
 			} catch (final MiddlewareQueryException e) {
 				AbstractImportStudyService.LOG.error(e.getMessage(), e);
-				WorkbookUtil.resetWorkbookObservations(workbook);
+				WorkbookUtil.resetWorkbookObservations(this.workbook);
 				return new ImportResult(e.getMessage());
 			}
 
 			String conditionsAndConstantsErrorMessage = "";
 
 			try {
-				this.validationService.validateConditionAndConstantValues(workbook);
+				this.validationService.validateConditionAndConstantValues(this.workbook);
 			} catch (final MiddlewareQueryException e) {
 				conditionsAndConstantsErrorMessage = e.getMessage();
-				WorkbookUtil.revertImportedConditionAndConstantsData(workbook);
+				WorkbookUtil.revertImportedConditionAndConstantsData(this.workbook);
 				AbstractImportStudyService.LOG.error(e.getMessage(), e);
 			}
 
@@ -172,7 +172,7 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 			final Map<String, MeasurementRow> rowsMap,
 			final List<GermplasmChangeDetail> changeDetailsList, final Workbook workbook) throws WorkbookParserException;
 
-	protected void setNewDesignation(MeasurementRow measurementRow, String newDesig) {
+	protected void setNewDesignation(final MeasurementRow measurementRow, final String newDesig) {
 		final String originalDesig = measurementRow.getMeasurementDataValue(TermId.DESIG.getId());
 		final String originalGid = measurementRow.getMeasurementDataValue(TermId.GID.getId());
 
@@ -189,7 +189,7 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
 		return this.fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
 	}
 
-	public Map<String, MeasurementRow> createMeasurementRowsMap(List<MeasurementRow> observations) {
+	public Map<String, MeasurementRow> createMeasurementRowsMap(final List<MeasurementRow> observations) {
 		final Map<String, MeasurementRow> map = new HashMap<>();
 		if (observations != null && !observations.isEmpty()) {
 			for (final MeasurementRow row : observations) {
@@ -243,15 +243,15 @@ public abstract class AbstractImportStudyService<T> implements ImportStudyServic
         this.fieldbookMiddlewareService = fieldbookMiddlewareService;
     }
 
-    void setOntologyService(OntologyService ontologyService) {
+    void setOntologyService(final OntologyService ontologyService) {
         this.ontologyService = ontologyService;
     }
 
-    void setValidationService(ValidationService validationService) {
+    void setValidationService(final ValidationService validationService) {
         this.validationService = validationService;
     }
 
-    void setParsedData(T parsedData) {
+    void setParsedData(final T parsedData) {
         this.parsedData = parsedData;
     }
 }

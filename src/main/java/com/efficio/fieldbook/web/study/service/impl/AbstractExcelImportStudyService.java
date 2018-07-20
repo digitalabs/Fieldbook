@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
@@ -23,7 +24,9 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.FormulaDto;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.util.PoiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,11 +56,11 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 	protected Workbook parseObservationData() throws IOException {
 
 		try {
-			return new HSSFWorkbook(new FileInputStream(new File(currentFile)));
+			return new HSSFWorkbook(new FileInputStream(new File(this.currentFile)));
 		} catch (final OfficeXmlFileException officeException) {
 			LOG.error(officeException.getMessage(), officeException);
 
-			return new XSSFWorkbook(new FileInputStream(new File(currentFile)));
+			return new XSSFWorkbook(new FileInputStream(new File(this.currentFile)));
 
 		}
 
@@ -70,8 +73,11 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 		final List<GermplasmChangeDetail> changeDetailsList,
 		final org.generationcp.middleware.domain.etl.Workbook workbook) throws WorkbookParserException {
 
+		final Map<MeasurementVariable, List<MeasurementVariable>> formulasMap =
+			WorkbookUtil.getVariatesMapUsedInFormulas(workbook.getVariates());
+
 		final List<MeasurementVariable> variablesFactors = workbook.getFactors();
-		final Sheet observationSheet = parsedData.getSheetAt(getObservationSheetNumber());
+		final Sheet observationSheet = parsedData.getSheetAt(this.getObservationSheetNumber());
 
 		final Map<Integer, MeasurementVariable> factorVariableMap = new HashMap<>();
 		for (final MeasurementVariable var : variablesFactors) {
@@ -111,11 +117,23 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 						this.importDataCellValues(wData, xlsRow, j, workbook, factorVariableMap);
 					}
 				}
+
+				for (final MeasurementVariable measurementVariable : formulasMap.keySet()) {
+					final MeasurementData key = measurementRow.getMeasurementData(measurementVariable.getTermId());
+					final List<MeasurementVariable> formulas = formulasMap.get(measurementVariable);
+					for (final MeasurementVariable formula : formulas) {
+						final MeasurementData value = measurementRow.getMeasurementData(formula.getTermId());
+						if (key != null && key.isChanged()) {
+							value.setValueStatus(Phenotype.ValueStatus.OUT_OF_SYNC);
+						}
+					}
+				}
 			}
 
 			if (countPlotIdNotFound != 0) {
 				workbook.setPlotsIdNotfound(countPlotIdNotFound);
 			}
+
 		}
 	}
 
@@ -154,8 +172,9 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 		return plotId;
 	}
 
-	protected void importDataCellValues(final MeasurementData workbookMeasurementData, final Row xlsRow, final int columnIndex,
-			final org.generationcp.middleware.domain.etl.Workbook workbook, final Map<Integer, MeasurementVariable> factorVariableMap) {
+	protected void importDataCellValues(
+		final MeasurementData workbookMeasurementData, final Row xlsRow, final int columnIndex,
+		final org.generationcp.middleware.domain.etl.Workbook workbook, final Map<Integer, MeasurementVariable> factorVariableMap) {
 		if (workbookMeasurementData != null && workbookMeasurementData.isEditable()) {
 			final Cell cell = xlsRow.getCell(columnIndex);
 			final String xlsValue;
@@ -164,7 +183,6 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 						&& !workbookMeasurementData.getMeasurementVariable().getPossibleValues().isEmpty()) {
 
 					workbookMeasurementData.setAccepted(false);
-
 					String tempVal;
 
 					if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
@@ -207,8 +225,12 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 					if (!workbookMeasurementData.getValue().isEmpty()) {
 						workbook.setHasExistingDataOverwrite(true);
 					}
+					if (workbookMeasurementData.getMeasurementVariable().getFormula() != null) {
+						workbookMeasurementData.setValueStatus(Phenotype.ValueStatus.MANUALLY_EDITED);
+					}
 					workbookMeasurementData.setValue(xlsValue);
 					workbookMeasurementData.setOldValue(xlsValue);
+					workbookMeasurementData.setChanged(true);
 				}
 			}
 		}

@@ -180,8 +180,10 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		if (!isDiscard) {
 			Phenotype existingPhenotype = null;
+			String oldValue = null;
 			if (phenotypeId != null) {
 				existingPhenotype = this.studyDataManager.getPhenotypeById(phenotypeId);
+				oldValue = existingPhenotype.getValue();
 			}
 
 			final Variable trait = this.ontologyVariableDataManager
@@ -192,10 +194,10 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 				map.put(TrialMeasurementsController.ERROR_MESSAGE, "Invalid value.");
 				return map;
 			}
-			boolean isACalculatedValueBeingEdited = isBeingACalculatedValueEdited(trait, existingPhenotype.getValue(), value);
+			boolean isACalculatedValueBeingEdited = isBeingACalculatedValueEdited(trait, existingPhenotype, value);
 			this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, trait.getId(), value, existingPhenotype,
 					trait.getScale().getDataType().getId(), isACalculatedValueBeingEdited? Phenotype.ValueStatus.MANUALLY_EDITED : null);
-//			this.verifyAndUpdateValueStatus(existingPhenotype, trait.getId(), value);
+			this.verifyAndUpdateValueStatus(oldValue, trait.getId(), value, experimentId);
 		}
 		map.put(TrialMeasurementsController.SUCCESS, "1");
 
@@ -253,6 +255,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 					// if there are no error, meaning everything is good, thats
 					// the time we copy it to the original
 					this.copyMeasurementValue(originalRow, copyRow, isNew == 1);
+					this.processVisualStatusForImportedTable();
 					this.updateDates(originalRow);
 				}
 				map.put(TrialMeasurementsController.SUCCESS, "1");
@@ -1006,28 +1009,24 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		return userSelection;
 	}
 
-	public List<SettingDetail> getVariablesThatContainsTraitsInAFormula (final Integer traitId) {
-		final List<SettingDetail> settingDetails = new ArrayList<>();
-		for (final SettingDetail settingDetail: userSelection.getBaselineTraitsList()) {
-			if (settingDetail.getVariable().getCvTermId().equals(traitId) || settingDetail.getVariable().getFormula() == null)
-				continue;
-			if (settingDetail.getVariable().getFormula().isInputVariablePresent(traitId))
-				settingDetails.add(settingDetail);
-		}
-		return settingDetails;
+	public boolean isBeingACalculatedValueEdited(final Variable variable, Phenotype oldPhenotype, String newValue) {
+		return ((oldPhenotype == null || !oldPhenotype.getValue().equals(newValue)) && variable.getFormula() != null) ? true : false;
 	}
 
-	public boolean isBeingACalculatedValueEdited(final Variable variable, String oldValue, String newValue) {
-		return (!oldValue.equals(newValue) && variable.getFormula() == null) ? false : true;
-	}
-
-	public void verifyAndUpdateValueStatus(final Phenotype oldPhenotype, final Integer termId, final String newValue) {
-		if (!oldPhenotype.getValue().equals(newValue)) {
-			final List<SettingDetail> settingDetails = getVariablesThatContainsTraitsInAFormula (termId);
-			if (!settingDetails.isEmpty()){
-
+	public void verifyAndUpdateValueStatus(final String oldValue, final Integer termId, final String newValue, final Integer experimentId) {
+		if (oldValue == null || !oldValue.equals(newValue)) {
+			final Map<Integer, List<Integer>> usages = WorkbookUtil.getVariatesUsedInFormulas(this.getUserSelection().getWorkbook().getVariates());
+			if (usages.containsKey(termId)) {
+				for (final Integer targetTermId : usages.get(termId)) {
+					final Phenotype phenotype = this.studyDataManager.getPhenotype(experimentId, targetTermId);
+					phenotype.setValueStatus(Phenotype.ValueStatus.OUT_OF_SYNC);
+					this.studyDataManager.updatePhenotype(phenotype);
+				}
 			}
 		}
+	}
+
+	private void processVisualStatusForImportedTable(){
 	}
 
 }

@@ -461,7 +461,7 @@ public class MeasurementsControllerTest {
 		// off.
 		Mockito.verify(mockValidationService).validateObservationValue(variableText, newValue);
 		Mockito.verify(this.studyDataManager).saveOrUpdatePhenotypeValue(Matchers.anyInt(), Matchers.anyInt(),
-				Matchers.anyString(), Matchers.any(Phenotype.class), Matchers.anyInt());
+				Matchers.anyString(), Matchers.any(Phenotype.class), Matchers.anyInt(), Matchers.any(Phenotype.ValueStatus.class));
 
 	}
 
@@ -508,7 +508,7 @@ public class MeasurementsControllerTest {
 		Mockito.verify(mockValidationService, Mockito.never()).validateObservationValue(variableText, newValue);
 		// But save step must be invoked.
 		Mockito.verify(this.studyDataManager).saveOrUpdatePhenotypeValue(Matchers.anyInt(), Matchers.anyInt(),
-				Matchers.anyString(), Matchers.any(Phenotype.class), Matchers.anyInt());
+				Matchers.anyString(), Matchers.any(Phenotype.class), Matchers.anyInt(), Matchers.any(Phenotype.ValueStatus.class));
 	}
 
 	@Test
@@ -554,7 +554,7 @@ public class MeasurementsControllerTest {
 		// is on.
 		Mockito.verify(mockValidationService, Mockito.never()).validateObservationValue(variableText, newValue);
 		Mockito.verify(this.studyDataManager, Mockito.never()).saveOrUpdatePhenotypeValue(Matchers.anyInt(),
-				Matchers.anyInt(), Matchers.anyString(), Matchers.any(Phenotype.class), Matchers.anyInt());
+				Matchers.anyInt(), Matchers.anyString(), Matchers.any(Phenotype.class), Matchers.anyInt(), Matchers.any(Phenotype.ValueStatus.class));
 	}
 
 	@Test

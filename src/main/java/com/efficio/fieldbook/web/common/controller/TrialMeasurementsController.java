@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.util.DataMapUtil;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
@@ -191,8 +192,10 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 				map.put(TrialMeasurementsController.ERROR_MESSAGE, "Invalid value.");
 				return map;
 			}
+			boolean isACalculatedValueBeingEdited = isBeingACalculatedValueEdited(trait, existingPhenotype.getValue(), value);
 			this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, trait.getId(), value, existingPhenotype,
-				trait.getScale().getDataType().getId());
+					trait.getScale().getDataType().getId(), isACalculatedValueBeingEdited? Phenotype.ValueStatus.MANUALLY_EDITED : null);
+//			this.verifyAndUpdateValueStatus(existingPhenotype, trait.getId(), value);
 		}
 		map.put(TrialMeasurementsController.SUCCESS, "1");
 
@@ -431,7 +434,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/edit/experiment/cell/{experimentId}/{termId}", method = RequestMethod.GET)
 	public String editExperimentCells(@PathVariable final int experimentId, @PathVariable final int termId,
 		@RequestParam(required = false) final Integer phenotypeId, final Model model) {
-
 		if (phenotypeId != null) {
 			final Phenotype phenotype = this.studyDataManager.getPhenotypeById(phenotypeId);
 			model.addAttribute(TrialMeasurementsController.PHENOTYPE_ID, phenotype.getPhenotypeId());
@@ -1003,4 +1005,29 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	public UserSelection getUserSelection() {
 		return userSelection;
 	}
+
+	public List<SettingDetail> getVariablesThatContainsTraitsInAFormula (final Integer traitId) {
+		final List<SettingDetail> settingDetails = new ArrayList<>();
+		for (final SettingDetail settingDetail: userSelection.getBaselineTraitsList()) {
+			if (settingDetail.getVariable().getCvTermId().equals(traitId) || settingDetail.getVariable().getFormula() == null)
+				continue;
+			if (settingDetail.getVariable().getFormula().isInputVariablePresent(traitId))
+				settingDetails.add(settingDetail);
+		}
+		return settingDetails;
+	}
+
+	public boolean isBeingACalculatedValueEdited(final Variable variable, String oldValue, String newValue) {
+		return (!oldValue.equals(newValue) && variable.getFormula() == null) ? false : true;
+	}
+
+	public void verifyAndUpdateValueStatus(final Phenotype oldPhenotype, final Integer termId, final String newValue) {
+		if (!oldPhenotype.getValue().equals(newValue)) {
+			final List<SettingDetail> settingDetails = getVariablesThatContainsTraitsInAFormula (termId);
+			if (!settingDetails.isEmpty()){
+
+			}
+		}
+	}
+
 }

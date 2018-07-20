@@ -591,10 +591,10 @@ public class WorkbookUtil {
 		}
 	}
 
-	public static Map<MeasurementVariable, List<MeasurementVariable>> getVariatesUsedInFormulas(final List<MeasurementVariable> variates) {
-		Map<MeasurementVariable, List<MeasurementVariable>> map = new HashMap<>();
+	public static Map<Integer, List<Integer>> getVariatesUsedInFormulas(final List<MeasurementVariable> variates) {
+		Map<Integer, List<Integer>> map = new HashMap<>();
 
-		Collection<MeasurementVariable> formulas = CollectionUtils.select(variates, new Predicate() {
+		final Collection<MeasurementVariable> formulas = CollectionUtils.select(variates, new Predicate() {
 
 			public boolean evaluate(Object o) {
 				MeasurementVariable measurementVariable = (MeasurementVariable) o;
@@ -603,18 +603,17 @@ public class WorkbookUtil {
 		});
 
 		for (final MeasurementVariable row : variates) {
-			map.put(row, WorkbookUtil.getFormulasFromCVTermId(row.getTermId(), formulas));
+			map.put(row.getTermId(), WorkbookUtil.getFormulasFromCVTermId(row.getTermId(), formulas));
 		}
 		return map;
 	}
 
-	public static List<MeasurementVariable> getFormulasFromCVTermId(
+	private static List<Integer> getFormulasFromCVTermId(
 		final Integer inputCvTermId, final Collection<MeasurementVariable> measurementVariables) {
-		List<MeasurementVariable> result = new ArrayList<>();
+		final List<Integer> result = new ArrayList<>();
 		for (final MeasurementVariable measurementVariable : measurementVariables) {
-			for (final FormulaVariable formulaVariable : measurementVariable.getFormula().getInputs()) {
-				if (formulaVariable.getTargetTermId().equals(inputCvTermId))
-					result.add(measurementVariable);
+			if (measurementVariable.getFormula().isInputVariablePresent(inputCvTermId)) {
+				result.add(measurementVariable.getTermId());
 			}
 		}
 		return result;

@@ -95,7 +95,7 @@ public class DerivedVariableController {
 		final FormulaDto formula = formulaOptional.get();
 
 		workbook.setHasExistingDataOverwrite(false);
-		final Map<String, Object> terms = DerivedVariableUtils.extractTerms(formula.getDefinition());
+		final Map<String, Object> parameters = DerivedVariableUtils.extractParameters(formula.getDefinition());
 
 		// Verify that variables are present
 
@@ -124,10 +124,10 @@ public class DerivedVariableController {
 			// Get input data
 
 			final Set<String> rowInputMissingData = new HashSet<>();
-			DerivedVariableUtils.extractValues(terms, row, rowInputMissingData);
+			DerivedVariableUtils.extractValues(parameters, row, rowInputMissingData);
 			inputMissingData.addAll(rowInputMissingData);
 
-			if (!rowInputMissingData.isEmpty() || terms.values().contains("")) {
+			if (!rowInputMissingData.isEmpty() || parameters.values().contains("")) {
 				continue;
 			}
 
@@ -136,9 +136,9 @@ public class DerivedVariableController {
 			String value;
 			try {
 				final String executableFormula = DerivedVariableUtils.replaceDelimiters(formula.getDefinition());
-				value = this.processor.evaluateFormula(executableFormula, terms);
+				value = this.processor.evaluateFormula(executableFormula, parameters);
 			} catch (final Exception e) {
-				LOG.error("Error evaluating formula " + formula + " with inputs " + terms, e);
+				LOG.error("Error evaluating formula " + formula + " with inputs " + parameters, e);
 				results.put("errorMessage", this.getMessage("study.execute.calculation.engine.exception"));
 				return new ResponseEntity<>(results, HttpStatus.INTERNAL_SERVER_ERROR);
 			}

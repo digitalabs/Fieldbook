@@ -246,6 +246,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			try {
 				if (!isDiscard) {
 					final MeasurementRow copyRow = originalRow.copy();
+					final String oldValue = WorkbookUtil.getValueByIdInRow(originalRow.getMeasurementVariables(),termId,originalRow);
 					this.copyMeasurementValue(copyRow, originalRow, isNew == 1);
 					// we set the data to the copy row
 					if (copyRow != null && copyRow.getMeasurementVariables() != null) {
@@ -255,7 +256,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 					// if there are no error, meaning everything is good, thats
 					// the time we copy it to the original
 					this.copyMeasurementValue(originalRow, copyRow, isNew == 1);
-					this.processVisualStatusForImportedTable();
+					this.processVisualStatusForImportedTable(originalRow, oldValue, value, termId);
 					this.updateDates(originalRow);
 				}
 				map.put(TrialMeasurementsController.SUCCESS, "1");
@@ -291,6 +292,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		final int termId, final int isNew) {
 		for (final MeasurementData var : measurementDataList) {
 			if (var != null && var.getMeasurementVariable().getTermId() == termId) {
+				if (isBeingACalculatedValueEdited(var.getMeasurementVariable(), var.getValue(), value)){
+					var.setValueStatus(Phenotype.ValueStatus.MANUALLY_EDITED);
+				}
 				if (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
 					|| !var.getMeasurementVariable().getPossibleValues().isEmpty()) {
 					if (isNew == 1) {
@@ -1013,6 +1017,10 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		return ((oldPhenotype == null || !oldPhenotype.getValue().equals(newValue)) && variable.getFormula() != null) ? true : false;
 	}
 
+	public boolean isBeingACalculatedValueEdited(final MeasurementVariable variable, String oldValue, String newValue) {
+		return ((oldValue == null || !oldValue.equals(newValue)) && variable.getFormula() != null) ? true : false;
+	}
+
 	public void verifyAndUpdateValueStatus(final String oldValue, final Integer termId, final String newValue, final Integer experimentId) {
 		if (oldValue == null || !oldValue.equals(newValue)) {
 			final Map<Integer, List<Integer>> usages = WorkbookUtil.getVariatesUsedInFormulas(this.getUserSelection().getWorkbook().getVariates());
@@ -1026,7 +1034,17 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	private void processVisualStatusForImportedTable(){
+	private void processVisualStatusForImportedTable(final MeasurementRow row, final String oldValue, final String newValue, final Integer termId) {
+		if (oldValue == null || !oldValue.equals(newValue)) {
+			final Map<Integer, List<Integer>> usages = WorkbookUtil.getVariatesUsedInFormulas(this.getUserSelection().getWorkbook().getVariates());
+			if (usages.containsKey(termId)) {
+				for (final MeasurementData measurementData : row.getDataList()) {
+					if (usages.get(termId).contains(measurementData.getMeasurementVariable().getTermId())) {
+						measurementData.setValueStatus(Phenotype.ValueStatus.OUT_OF_SYNC);
+					}
+				}
+			}
+		}
 	}
 
 }

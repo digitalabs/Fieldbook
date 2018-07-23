@@ -194,7 +194,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 				map.put(TrialMeasurementsController.ERROR_MESSAGE, "Invalid value.");
 				return map;
 			}
-			boolean isACalculatedValueBeingEdited = isBeingACalculatedValueEdited(trait, existingPhenotype, value);
+			final boolean isACalculatedValueBeingEdited = this.isBeingACalculatedValueEdited(trait, existingPhenotype, value);
 			this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, trait.getId(), value, existingPhenotype,
 					trait.getScale().getDataType().getId(), isACalculatedValueBeingEdited? Phenotype.ValueStatus.MANUALLY_EDITED : null);
 			this.verifyAndUpdateValueStatus(oldValue, trait.getId(), value, experimentId);
@@ -292,7 +292,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		final int termId, final int isNew) {
 		for (final MeasurementData var : measurementDataList) {
 			if (var != null && var.getMeasurementVariable().getTermId() == termId) {
-				if (isBeingACalculatedValueEdited(var.getMeasurementVariable(), var.getValue(), value)){
+				if (this.isBeingACalculatedValueEdited(var.getMeasurementVariable(), var.getValue(), value)){
 					var.setValueStatus(Phenotype.ValueStatus.MANUALLY_EDITED);
 				}
 				if (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
@@ -672,7 +672,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			workbook = this.fieldbookMiddlewareService.getCompleteDataset(datasetId);
 			this.fieldbookService.setAllPossibleValuesInWorkbook(workbook);
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-				this.ontologyService, contextUtil.getCurrentProgramUUID());
+				this.ontologyService, this.contextUtil.getCurrentProgramUUID());
 		} catch (final MiddlewareException e) {
 			TrialMeasurementsController.LOG.error(e.getMessage(), e);
 		}
@@ -1010,14 +1010,14 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	}
 
 	public UserSelection getUserSelection() {
-		return userSelection;
+		return this.userSelection;
 	}
 
-	public boolean isBeingACalculatedValueEdited(final Variable variable, Phenotype oldPhenotype, String newValue) {
+	public boolean isBeingACalculatedValueEdited(final Variable variable, final Phenotype oldPhenotype, final String newValue) {
 		return ((oldPhenotype == null || !oldPhenotype.getValue().equals(newValue)) && variable.getFormula() != null) ? true : false;
 	}
 
-	public boolean isBeingACalculatedValueEdited(final MeasurementVariable variable, String oldValue, String newValue) {
+	public boolean isBeingACalculatedValueEdited(final MeasurementVariable variable, final String oldValue, final String newValue) {
 		return ((oldValue == null || !oldValue.equals(newValue)) && variable.getFormula() != null) ? true : false;
 	}
 
@@ -1027,8 +1027,10 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			if (usages.containsKey(termId)) {
 				for (final Integer targetTermId : usages.get(termId)) {
 					final Phenotype phenotype = this.studyDataManager.getPhenotype(experimentId, targetTermId);
-					phenotype.setValueStatus(Phenotype.ValueStatus.OUT_OF_SYNC);
-					this.studyDataManager.updatePhenotype(phenotype);
+					if (phenotype != null) {
+						phenotype.setValueStatus(Phenotype.ValueStatus.OUT_OF_SYNC);
+						this.studyDataManager.updatePhenotype(phenotype);
+					}
 				}
 			}
 		}

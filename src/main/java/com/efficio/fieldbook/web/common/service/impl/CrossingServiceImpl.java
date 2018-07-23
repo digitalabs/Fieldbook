@@ -34,6 +34,7 @@ import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.PedigreeService;
 import org.generationcp.middleware.service.pedigree.PedigreeFactory;
 import org.generationcp.middleware.util.CrossExpansionProperties;
@@ -48,9 +49,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class CrossingServiceImpl implements CrossingService {
 
@@ -67,6 +70,9 @@ public class CrossingServiceImpl implements CrossingService {
 	private static final Integer PREFERRED_NAME = 1;
 	public static final int MAX_CROSS_NAME_SIZE = 240;
 	public static final String TRUNCATED = "(truncated)";
+
+	@Resource
+	private FieldbookService fieldbookMiddlewareService;
 
 	@Autowired
 	private GermplasmDataManager germplasmDataManager;
@@ -95,6 +101,8 @@ public class CrossingServiceImpl implements CrossingService {
 
 	@Resource
 	private SeedSourceGenerator seedSourceGenerator;
+
+	private Map<String, Workbook> workbookMap = new HashMap<>();
 
 	@Override
 	public ImportedCrossesList parseFile(final MultipartFile file) throws FileParsingException {
@@ -160,12 +168,19 @@ public class CrossingServiceImpl implements CrossingService {
 	public void populateSeedSource(final ImportedCrosses importedCross, final Workbook workbook) {
 		if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource()) || importedCross.getSource()
 				.equalsIgnoreCase(ImportedCrosses.SEED_SOURCE_PENDING)) {
-
+			final Workbook maleStudyWorkbook = this.getMaleStudyWorkbook(importedCross.getMaleStudyName(), workbook);
 			final String generatedSource = this.seedSourceGenerator
 					.generateSeedSourceForCross(workbook, importedCross.getMalePlotNo(), importedCross.getFemalePlotNo(),
-							importedCross.getMaleStudyName(), importedCross.getFemaleStudyName());
+							importedCross.getMaleStudyName(), importedCross.getFemaleStudyName(), maleStudyWorkbook);
 			importedCross.setSource(generatedSource);
 		}
+	}
+	
+	protected Workbook getMaleStudyWorkbook(final String maleStudyName, final Workbook workbook) {
+		if(workbookMap.get(maleStudyName) !=  null) return workbookMap.get(maleStudyName);
+		final Workbook maleStudyWorkbook = workbook.getStudyName().equals(maleStudyName)? workbook : this.fieldbookMiddlewareService.getStudyByNameAndProgramUUID(maleStudyName, this.contextUtil.getCurrentProgramUUID());
+		workbookMap.put(maleStudyName, maleStudyWorkbook);
+		return maleStudyWorkbook;
 	}
 
 	/**

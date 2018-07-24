@@ -118,22 +118,27 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 					}
 				}
 
-				for (final MeasurementVariable measurementVariable : formulasMap.keySet()) {
-					final MeasurementData key = measurementRow.getMeasurementData(measurementVariable.getTermId());
-					final List<MeasurementVariable> formulas = formulasMap.get(measurementVariable);
-					for (final MeasurementVariable formula : formulas) {
-						final MeasurementData value = measurementRow.getMeasurementData(formula.getTermId());
-						if (key != null && key.isChanged()) {
-							value.setValueStatus(Phenotype.ValueStatus.OUT_OF_SYNC);
-						}
-					}
-				}
+				this.setMesarumentDataAsOutOfSync(formulasMap, measurementRow);
 			}
 
 			if (countPlotIdNotFound != 0) {
 				workbook.setPlotsIdNotfound(countPlotIdNotFound);
 			}
 
+		}
+	}
+
+	private void setMesarumentDataAsOutOfSync(final Map<MeasurementVariable, List<MeasurementVariable>> formulasMap,
+		final MeasurementRow measurementRow) {
+		for (final MeasurementVariable measurementVariable : formulasMap.keySet()) {
+			final MeasurementData key = measurementRow.getMeasurementData(measurementVariable.getTermId());
+			final List<MeasurementVariable> formulas = formulasMap.get(measurementVariable);
+			for (final MeasurementVariable formula : formulas) {
+				final MeasurementData value = measurementRow.getMeasurementData(formula.getTermId());
+				if (key != null && key.isChanged()) {
+					value.setValueStatus(Phenotype.ValueStatus.OUT_OF_SYNC);
+				}
+			}
 		}
 	}
 

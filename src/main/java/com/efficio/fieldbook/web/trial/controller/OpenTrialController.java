@@ -12,6 +12,7 @@ import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -34,6 +35,7 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.dms.DmsProject;
+import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.util.FieldbookListUtil;
@@ -57,6 +59,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -627,6 +630,8 @@ public class OpenTrialController extends BaseTrialController {
 	@RequestMapping(value = "/load/dynamic/change/measurement", method = RequestMethod.POST)
 	public Map<String, Object> loadDynamicChangeMeasurement(@ModelAttribute("createTrialForm") final CreateTrialForm form,
 			final Model model, final HttpServletRequest request) {
+		List<MeasurementVariable> removedTraits = new ArrayList();
+		Map<Integer, List<Integer>> usages = new HashMap<>();
 		Workbook workbook = this.userSelection.getWorkbook();
 		if (this.userSelection.getTemporaryWorkbook() != null) {
 			workbook = this.userSelection.getTemporaryWorkbook();
@@ -640,9 +645,13 @@ public class OpenTrialController extends BaseTrialController {
 		if (!measurementDatasetVariables.isEmpty()) {
 			final List<MeasurementVariable> newMeasurementDatasetVariables = this.getMeasurementVariableFactor(measurementDatasetVariables);
 			this.getTraitsAndSelectionVariates(measurementDatasetVariables, newMeasurementDatasetVariables, listCsv);
+			removedTraits =
+				(List<MeasurementVariable>) CollectionUtils.subtract(measurementDatasetVariables, newMeasurementDatasetVariables);
+			usages = WorkbookUtil.getVariatesUsedInFormulas(measurementDatasetVariables);
 			measurementDatasetVariables = newMeasurementDatasetVariables;
 		}
 
+		this.setOutOfSyncVariables(removedTraits, usages);
 		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, form.getColumnOrders());
 		measurementDatasetVariables = workbook.arrangeMeasurementVariables(measurementDatasetVariables);
 		this.processPreLoadingMeasurementDataPage(true, form, workbook, measurementDatasetVariables, model,
@@ -650,6 +659,27 @@ public class OpenTrialController extends BaseTrialController {
 		final Map<String, Object> result = new HashMap<>();
 		result.put("success", "1");
 		return result;
+	}
+
+	private void setOutOfSyncVariables(final List<MeasurementVariable> removedTraits,
+		final Map<Integer, List<Integer>> usages) {
+
+		for (final MeasurementVariable variable : removedTraits) {
+			final Integer termId = variable.getTermId();
+			if (usages.containsKey(termId)) {
+				for (final Integer targetTermId : usages.get(termId)) {
+					final List<MeasurementRow> rows = this.userSelection.getMeasurementRowList();
+					for (final MeasurementRow row : rows) {
+						final MeasurementData value = row.getMeasurementData(targetTermId);
+						if (value != null && value.getPhenotypeId() != null) {
+							value.setValueStatus(Phenotype.ValueStatus.OUT_OF_SYNC);
+							value.setChanged(true);
+						}
+					}
+
+				}
+			}
+		}
 	}
 
 	private void processPreLoadingMeasurementDataPage(final boolean isTemporary, final CreateTrialForm form, final Workbook workbook,

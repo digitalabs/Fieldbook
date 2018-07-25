@@ -365,6 +365,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 				if (this.isNumericalValueOutOfBounds(var.getValue(), var.getMeasurementVariable())) {
 					var.setAccepted(true);
 					var.setValue(MeasurementData.MISSING_VALUE);
+					if (var.getMeasurementVariable().getFormula() != null) {
+						var.setValueStatus(Phenotype.ValueStatus.MANUALLY_EDITED);
+					}
 				}
 			} else if (var != null && !StringUtils.isEmpty(var.getValue())
 				&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
@@ -374,6 +377,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 					var.getMeasurementVariable().getPossibleValues())) {
 					var.setValue(MeasurementData.MISSING_VALUE);
 					var.setCustomCategoricalValue(true);
+					if (var.getMeasurementVariable().getFormula() != null) {
+						var.setValueStatus(Phenotype.ValueStatus.MANUALLY_EDITED);
+					}
 				} else {
 					var.setCustomCategoricalValue(false);
 				}

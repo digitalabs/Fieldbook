@@ -173,6 +173,7 @@ public class DerivedVariableController {
 				}
 				target.setValue(value);
 				target.setOldValue(value);
+				target.setValueStatus(null);
 			}
 		}
 

@@ -654,10 +654,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	}
 
 
-	@RequestMapping(value = "/viewStudyAjax/{datasetId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/viewStudyAjax/{datasetId}/{studyId}", method = RequestMethod.GET)
 	public String viewStudyAjax(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model,
-		@PathVariable final int datasetId) {
-
+		@PathVariable final int datasetId, @PathVariable final int studyId) {
 		Workbook workbook = null;
 		try {
 			workbook = this.fieldbookMiddlewareService.getCompleteDataset(datasetId);
@@ -670,12 +669,28 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		this.getUserSelection().setMeasurementRowList(workbook.arrangeMeasurementObservation(workbook.getObservations()));
 		form.setMeasurementRowList(this.getUserSelection().getMeasurementRowList());
 		form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+		this.changeLocationValueToName(form.getMeasurementRowList(), workbook.getMeasurementDatasetVariablesMap(), studyId);
 		this.paginationListSelection.addReviewDetailsList(String.valueOf(datasetId), form.getMeasurementRowList());
 		this.paginationListSelection.addReviewVariableList(String.valueOf(datasetId), form.getMeasurementVariables());
 		form.changePage(1);
 		this.getUserSelection().setCurrentPage(form.getCurrentPage());
 
 		return super.showAjaxPage(model, TrialMeasurementsController.OBSERVATIONS_HTML);
+	}
+
+	private void changeLocationValueToName(List<MeasurementRow> measurementRowList,
+			Map<String, MeasurementVariable> measurementDatasetVariablesMap, final int studyId) {
+		if(measurementDatasetVariablesMap.get(String.valueOf(TermId.LOCATION_ID.getId())) != null) {
+			final Map<String, String> locationNameMap = this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(studyId);
+			for(MeasurementRow row: measurementRowList) {
+				for(MeasurementData data: row.getDataList()) {
+					if(TermId.LOCATION_ID.getId() == data.getMeasurementVariable().getTermId()) {
+						data.setValue(locationNameMap.get(data.getValue()));
+					}
+				}
+			}
+		}
+		
 	}
 
 	protected boolean isNumericalValueOutOfBounds(final String value, final MeasurementVariable var) {

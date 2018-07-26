@@ -220,7 +220,8 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 				} else {
 
 					if (workbookMeasurementData.getMeasurementVariable() != null
-						&& workbookMeasurementData.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
+						&& workbookMeasurementData.getMeasurementVariable().getDataTypeId() != null &&
+							workbookMeasurementData.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())) {
 						workbookMeasurementData.setAccepted(false);
 					}
 					xlsValue = this.getCellValue(cell);

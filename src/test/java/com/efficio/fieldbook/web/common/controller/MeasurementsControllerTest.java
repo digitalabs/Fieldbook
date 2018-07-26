@@ -429,6 +429,7 @@ public class MeasurementsControllerTest {
 		final StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setId(1234);
 		workbook.setStudyDetails(studyDetails);
+		workbook.setVariates(new ArrayList<MeasurementVariable>());
 		userSelection.setWorkbook(workbook);
 		this.measurementsController.setUserSelection(userSelection);
 
@@ -474,6 +475,7 @@ public class MeasurementsControllerTest {
 		final StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setId(1234);
 		workbook.setStudyDetails(studyDetails);
+		workbook.setVariates(new ArrayList<MeasurementVariable>());
 		userSelection.setWorkbook(workbook);
 		this.measurementsController.setUserSelection(userSelection);
 

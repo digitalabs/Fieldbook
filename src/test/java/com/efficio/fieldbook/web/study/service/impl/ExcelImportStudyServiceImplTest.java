@@ -114,7 +114,7 @@ public class ExcelImportStudyServiceImplTest {
 		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
 		Mockito.when(this.cell.getStringCellValue()).thenReturn(this.testValue);
 
-		this.wData.setMeasurementVariable(null);
+		this.wData.setMeasurementVariable(new MeasurementVariable());
 
 		this.importStudy.importDataCellValues(this.wData, this.xlsRow, this.columnIndex, this.workbook,
 				new HashMap<Integer, MeasurementVariable>());
@@ -129,7 +129,7 @@ public class ExcelImportStudyServiceImplTest {
 		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
 		Mockito.when(this.cell.getStringCellValue()).thenReturn(this.testValue);
 
-		this.wData.setMeasurementVariable(null);
+		this.wData.setMeasurementVariable(new MeasurementVariable());
 
 		this.importStudy.importDataCellValues(this.wData, this.xlsRow, this.columnIndex, this.workbook,
 				new HashMap<Integer, MeasurementVariable>());
@@ -226,7 +226,7 @@ public class ExcelImportStudyServiceImplTest {
 		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
 		Mockito.when(this.cell.getStringCellValue()).thenReturn(this.testValue);
 
-		this.wData.setMeasurementVariable(null);
+		this.wData.setMeasurementVariable(new MeasurementVariable());
 
 		this.importStudy.importDataCellValues(this.wData, this.xlsRow, this.columnIndex, this.workbook,
 				new HashMap<Integer, MeasurementVariable>());

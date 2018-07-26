@@ -669,7 +669,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		this.getUserSelection().setMeasurementRowList(workbook.arrangeMeasurementObservation(workbook.getObservations()));
 		form.setMeasurementRowList(this.getUserSelection().getMeasurementRowList());
 		form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
-		this.changeLocationValueToName(form.getMeasurementRowList(), workbook.getMeasurementDatasetVariablesMap(), studyId);
+		this.changeLocationIdToName(form.getMeasurementRowList(), workbook.getMeasurementDatasetVariablesMap(), studyId);
 		this.paginationListSelection.addReviewDetailsList(String.valueOf(datasetId), form.getMeasurementRowList());
 		this.paginationListSelection.addReviewVariableList(String.valueOf(datasetId), form.getMeasurementVariables());
 		form.changePage(1);
@@ -678,7 +678,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		return super.showAjaxPage(model, TrialMeasurementsController.OBSERVATIONS_HTML);
 	}
 
-	private void changeLocationValueToName(List<MeasurementRow> measurementRowList,
+	void changeLocationIdToName(List<MeasurementRow> measurementRowList,
 			Map<String, MeasurementVariable> measurementDatasetVariablesMap, final int studyId) {
 		if(measurementDatasetVariablesMap.get(String.valueOf(TermId.LOCATION_ID.getId())) != null) {
 			final Map<String, String> locationNameMap = this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(studyId);
@@ -1017,5 +1017,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	public UserSelection getUserSelection() {
 		return userSelection;
+	}
+	
+	public void setPaginationListSelection(final PaginationListSelection paginationListSelection) {
+		this.paginationListSelection = paginationListSelection;
 	}
 }

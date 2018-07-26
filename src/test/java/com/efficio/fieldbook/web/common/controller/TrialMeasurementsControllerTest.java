@@ -1,14 +1,23 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.trial.service.ValidationService;
-import com.google.common.collect.Lists;
-import junit.framework.Assert;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
+import org.generationcp.middleware.data.initializer.MeasurementRowTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.ProjectPropertyTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
@@ -31,6 +40,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.study.MeasurementDto;
 import org.generationcp.middleware.service.api.study.MeasurementVariableDto;
 import org.generationcp.middleware.service.api.study.ObservationDto;
@@ -50,19 +60,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.trial.service.ValidationService;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Lists;
 
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.hasSize;
+import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TrialMeasurementsControllerTest {
@@ -115,7 +122,13 @@ public class TrialMeasurementsControllerTest {
 
 	@Mock
 	private OntologyDataManager ontologyDataManager;
+	
+	@Mock
+	private OntologyService ontologyService;
 
+	@Mock
+	private PaginationListSelection paginationListSelection;
+	
 	@Mock
 	private ValidationService validationService;
 
@@ -1300,8 +1313,6 @@ public class TrialMeasurementsControllerTest {
 		userSelection.setWorkbook(workbook);
 		this.measurementsController.setUserSelection(userSelection );
 		final CreateTrialForm form = new CreateTrialForm();
-		final BindingResult bindingResult = Mockito.mock(BindingResult.class);
-		final Model model = Mockito.mock(Model.class);
 
 		final Map<String, String> resultMap = this.measurementsController.updateTraits(form);
 
@@ -1344,6 +1355,35 @@ public class TrialMeasurementsControllerTest {
 		Assert.assertEquals(1, nameToAliasMap.size());
 		Assert.assertTrue(nameToAliasMap.keySet().contains(TermId.PLOT_CODE.name()));
 		Assert.assertEquals(alias, nameToAliasMap.get(TermId.PLOT_CODE.name()));
+	}
+	
+	@Test
+	public void testViewStudyAjax() {
+		CreateTrialForm form = new CreateTrialForm();
+		Model model = Mockito.mock(Model.class);
+		Mockito.when(this.fieldbookMiddlewareService.getCompleteDataset(1)).thenReturn(WorkbookTestDataInitializer.getTestWorkbook());
+		this.measurementsController.setPaginationListSelection(this.paginationListSelection);
+		this.measurementsController.viewStudyAjax(form, model, 1, 1);
+		Assert.assertNotNull(form.getMeasurementRowList());
+		Assert.assertNotNull(form.getMeasurementVariables());
+		Mockito.verify(this.fieldbookMiddlewareService).getCompleteDataset(1);
+		Mockito.verify(this.fieldbookService).setAllPossibleValuesInWorkbook(Matchers.any(Workbook.class));
+		Mockito.verify(this.paginationListSelection).addReviewDetailsList(String.valueOf(1), form.getMeasurementRowList());
+		Mockito.verify(this.paginationListSelection).addReviewVariableList(String.valueOf(1), form.getMeasurementVariables());
+	}
+	
+	@Test
+	public void testChangeLocationIdToName() {
+        final BiMap<String, String> locationNameMap = HashBiMap.create();
+        locationNameMap.put("9015", "INT WATER MANAGEMENT INSTITUTE");
+        Mockito.when(this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(1)).thenReturn(locationNameMap);
+        final MeasurementVariable locationVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.LOCATION_ID.getId(), "9015");
+		List<MeasurementRow> measurementRowList = MeasurementRowTestDataInitializer.createMeasurementRowList(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "9015", locationVariable);
+		Map<String, MeasurementVariable> measurementDatasetVariablesMap = new HashMap<>();
+		measurementDatasetVariablesMap.put(String.valueOf(TermId.LOCATION_ID.getId()), locationVariable);
+		this.measurementsController.changeLocationIdToName(measurementRowList, measurementDatasetVariablesMap, 1);
+		final MeasurementData data = measurementRowList.get(0).getDataList().get(0);
+		Assert.assertEquals("INT WATER MANAGEMENT INSTITUTE", data.getValue());
 	}
 
 	@Test

@@ -1094,7 +1094,7 @@ public class MeasurementsControllerTest {
 				aleucolPhenotypeId, aleucolPhenotypeTraitValue, Phenotype.ValueStatus.OUT_OF_SYNC);
 
 		final Object[] values = this.measurementsController.convertForCategoricalVariable(measurementVariable,
-				measurementDto.getVariableValue(), measurementDto.getPhenotypeId(), false);
+				measurementDto.getVariableValue(), measurementDto.getPhenotypeId(), false, null);
 
 		MatcherAssert.assertThat("", Is.is(CoreMatchers.equalTo(values[0])));
 		MatcherAssert.assertThat("", Is.is(CoreMatchers.equalTo(values[1])));
@@ -1116,7 +1116,7 @@ public class MeasurementsControllerTest {
 				aleucolPhenotypeId, aleucolPhenotypeTraitValue, Phenotype.ValueStatus.MANUALLY_EDITED);
 
 		final Object[] values = this.measurementsController.convertForCategoricalVariable(measurementVariable,
-				measurementDto.getVariableValue(), measurementDto.getPhenotypeId(), false);
+				measurementDto.getVariableValue(), measurementDto.getPhenotypeId(), false, null);
 
 		MatcherAssert.assertThat(aleucolPhenotypeTraitValue, Is.is(CoreMatchers.equalTo(values[0])));
 		MatcherAssert.assertThat(aleucolPhenotypeTraitValue, Is.is(CoreMatchers.equalTo(values[1])));
@@ -1138,7 +1138,7 @@ public class MeasurementsControllerTest {
 				aleucolPhenotypeId, aleucolPhenotypeTraitValue, Phenotype.ValueStatus.OUT_OF_SYNC);
 
 		final Object[] values = this.measurementsController.convertForCategoricalVariable(measurementVariable,
-				measurementDto.getVariableValue(), measurementDto.getPhenotypeId(), false);
+				measurementDto.getVariableValue(), measurementDto.getPhenotypeId(), false, null);
 
 		MatcherAssert.assertThat(aleucolPhenotypeTraitValue, Is.is(CoreMatchers.equalTo(values[0])));
 		MatcherAssert.assertThat("AAA Definition 1", Is.is(CoreMatchers.equalTo(values[1])));

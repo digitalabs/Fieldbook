@@ -797,16 +797,16 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 				if (variable.getScale().getDataType().equals(DataType.CATEGORICAL_VARIABLE)) {
 
 					dataMap.put(measurementVariable.getName(), this.convertForCategoricalVariable(variable,
-							data.getVariableValue(), data.getPhenotypeId(), false));
+							data.getVariableValue(), data.getPhenotypeId(), false, (data.getValueStatus() != null) ? data.getValueStatus().toString() : null ));
 
 				} else if (variable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
 					dataMap.put(measurementVariable.getName(),
 						new Object[] { data.getVariableValue() != null ? data.getVariableValue() : "", true,
-							data.getPhenotypeId() != null ? data.getPhenotypeId() : "" });
+							data.getPhenotypeId() != null ? data.getPhenotypeId() : "", (data.getValueStatus() != null) ? data.getValueStatus().toString() : null });
 				} else {
 					dataMap.put(measurementVariable.getName(),
 						new Object[] { data.getVariableValue() != null ? data.getVariableValue() : "",
-							data.getPhenotypeId() != null ? data.getPhenotypeId() : "" });
+							data.getPhenotypeId() != null ? data.getPhenotypeId() : "", (data.getValueStatus() != null) ? data.getValueStatus().toString() : null  });
 				}
 			}
 		}
@@ -821,7 +821,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			for (final MeasurementVariable var : this.getUserSelection().getMeasurementDatasetVariable()) {
 				if (!dataMap.containsKey(var.getName())) {
 					if (var.getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
-						dataMap.put(var.getName(), new Object[] { "", "", true });
+						dataMap.put(var.getName(), new Object[] { "", "", true, null});
 					} else {
 						dataMap.put(var.getName(), "");
 					}
@@ -948,7 +948,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 				if (variable.getScale().getDataType().getId() == TermId.CATEGORICAL_VARIABLE.getId()) {
 					dataMap.put(alias,
-							this.convertForCategoricalVariable(variable, additionalDesignCols.getRight(), null, true));
+							this.convertForCategoricalVariable(variable, additionalDesignCols.getRight(), null, true, null));
 				} else {
 					dataMap.put(alias, new Object[] { additionalDesignCols.getRight() });
 				}
@@ -959,10 +959,10 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	}
 
 	Object[] convertForCategoricalVariable(final Variable variable, final String variableValue,
-			final Integer phenotypeId, final boolean isFactor) {
+			final Integer phenotypeId, final boolean isFactor, final String valueStatus) {
 
 		if (StringUtils.isBlank(variableValue)) {
-			return new Object[] { "", "", false, phenotypeId != null ? phenotypeId : "" };
+			return new Object[] { "", "", false, phenotypeId != null ? phenotypeId : "", null };
 		} else {
 			boolean isCategoricalValueFound = false;
 			String catName = "";
@@ -990,7 +990,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 				catDisplayValue = variableValue;
 			}
 
-			return new Object[] { catName, catDisplayValue, true, phenotypeId != null ? phenotypeId : "" };
+			return new Object[] { catName, catDisplayValue, true, phenotypeId != null ? phenotypeId : "", valueStatus };
 		}
 
 	}

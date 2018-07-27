@@ -27,13 +27,13 @@ public class DataMapUtil {
 				final CategoricalDisplayValue categoricalDisplayValue = data.getDisplayValueForCategoricalData();
 
 				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {categoricalDisplayValue.getName() + suffix,
-						categoricalDisplayValue.getDescription() + suffix, data.isAccepted()});
+						categoricalDisplayValue.getDescription() + suffix, data.isAccepted(), (data.getValueStatus() != null) ? data.getValueStatus().toString() : null });
 
 			} else if (data.isNumeric()) {
-				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {data.getDisplayValue() + suffix, data.isAccepted()});
+				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {data.getDisplayValue() + suffix, data.isAccepted(), (data.getValueStatus() != null) ? data.getValueStatus().toString() : null });
 			} else {
 				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {data.getDisplayValue() != null ? data.getDisplayValue() : "",
-						data.getPhenotypeId() != null ? data.getPhenotypeId() : ""});
+						data.getPhenotypeId() != null ? data.getPhenotypeId() : "", (data.getValueStatus() != null) ? data.getValueStatus().toString() : null });
 			}
 		}
 
@@ -46,7 +46,7 @@ public class DataMapUtil {
 			for (final MeasurementVariable var : userSelection.getMeasurementDatasetVariable()) {
 				if (!dataMap.containsKey(var.getName())) {
 					if (var.getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
-						dataMap.put(var.getName(), new Object[] {"", "", true});
+						dataMap.put(var.getName(), new Object[] {"", "", true, null});
 					} else {
 						dataMap.put(var.getName(), "");
 					}

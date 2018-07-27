@@ -506,6 +506,8 @@ public class OpenTrialController extends BaseTrialController {
 				// Set the flag that indicates whether the variates will be save
 				// or not to false since it's already save after inline edit
 				this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(), false);
+				this.fieldbookMiddlewareService.saveChangedPhenotypes(workbook.getObservations());
+
 				returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService
 						.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(),
 								SettingsUtil.buildVariates(workbook.getVariates())));
@@ -514,7 +516,9 @@ public class OpenTrialController extends BaseTrialController {
 				this.fieldbookService
 						.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), workbook.getStudyName(), data.getColumnOrders(),
 								workbook);
-				returnVal.put(OpenTrialController.CONTAINS_OUT_OF_SYNC_VALUES, Boolean.TRUE);
+				final Boolean hasOutOfSyncObervations =
+					this.fieldbookMiddlewareService.hasOutOfSyncObervations(workbook.getMeasurementDatesetId());
+				returnVal.put(OpenTrialController.CONTAINS_OUT_OF_SYNC_VALUES, hasOutOfSyncObervations);
 				return returnVal;
 			} catch (final MiddlewareQueryException e) {
 				OpenTrialController.LOG.error(e.getMessage(), e);

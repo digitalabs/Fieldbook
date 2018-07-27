@@ -128,11 +128,11 @@ public class MeasurementsControllerTest {
 	private List<MeasurementVariable> measurementVariables;
 
 	private final MeasurementDto measurementText = new MeasurementDto(new MeasurementVariableDto(1, "NOTES"), 1,
-			"Text Notes");
+			"Text Notes", null);
 	private final MeasurementDto measurementNumeric = new MeasurementDto(new MeasurementVariableDto(2, "Grain Yield"),
-			2, "500");
+			2, "500", null);
 	private final MeasurementDto measurementCategorical = new MeasurementDto(
-			new MeasurementVariableDto(3, "CategoricalTrait"), 3, "CategoryValue1");
+			new MeasurementVariableDto(3, "CategoricalTrait"), 3, "CategoryValue1", null);
 
 	private final TermId[] standardFactors = { TermId.GID, TermId.ENTRY_NO, TermId.ENTRY_TYPE, TermId.ENTRY_CODE,
 			TermId.PLOT_NO, TermId.PLOT_ID, TermId.BLOCK_NO, TermId.REP_NO, TermId.ROW, TermId.COL,
@@ -1091,7 +1091,7 @@ public class MeasurementsControllerTest {
 		final MeasurementDto measurementDto = new MeasurementDto(
 				new MeasurementVariableDto(MeasurementsControllerTest.ALEUCOL_1_5_TERM_ID,
 						MeasurementsControllerTest.ALEUCOL_1_5_TRAIT_NAME),
-				aleucolPhenotypeId, aleucolPhenotypeTraitValue);
+				aleucolPhenotypeId, aleucolPhenotypeTraitValue, Phenotype.ValueStatus.OUT_OF_SYNC);
 
 		final Object[] values = this.measurementsController.convertForCategoricalVariable(measurementVariable,
 				measurementDto.getVariableValue(), measurementDto.getPhenotypeId(), false);
@@ -1113,7 +1113,7 @@ public class MeasurementsControllerTest {
 		final MeasurementDto measurementDto = new MeasurementDto(
 				new MeasurementVariableDto(MeasurementsControllerTest.ALEUCOL_1_5_TERM_ID,
 						MeasurementsControllerTest.ALEUCOL_1_5_TRAIT_NAME),
-				aleucolPhenotypeId, aleucolPhenotypeTraitValue);
+				aleucolPhenotypeId, aleucolPhenotypeTraitValue, Phenotype.ValueStatus.MANUALLY_EDITED);
 
 		final Object[] values = this.measurementsController.convertForCategoricalVariable(measurementVariable,
 				measurementDto.getVariableValue(), measurementDto.getPhenotypeId(), false);
@@ -1135,7 +1135,7 @@ public class MeasurementsControllerTest {
 		final MeasurementDto measurementDto = new MeasurementDto(
 				new MeasurementVariableDto(MeasurementsControllerTest.ALEUCOL_1_5_TERM_ID,
 						MeasurementsControllerTest.ALEUCOL_1_5_TRAIT_NAME),
-				aleucolPhenotypeId, aleucolPhenotypeTraitValue);
+				aleucolPhenotypeId, aleucolPhenotypeTraitValue, Phenotype.ValueStatus.OUT_OF_SYNC);
 
 		final Object[] values = this.measurementsController.convertForCategoricalVariable(measurementVariable,
 				measurementDto.getVariableValue(), measurementDto.getPhenotypeId(), false);

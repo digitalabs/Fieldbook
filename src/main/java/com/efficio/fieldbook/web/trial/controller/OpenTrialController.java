@@ -78,6 +78,7 @@ public class OpenTrialController extends BaseTrialController {
 	public static final String URL = "/TrialManager/openTrial";
 	@Deprecated
 	public static final String IS_EXP_DESIGN_PREVIEW = "isExpDesignPreview";
+	public static final String CONTAINS_OUT_OF_SYNC_VALUES = "containsOutOfSyncValues";
 	public static final String MEASUREMENT_ROW_COUNT = "measurementRowCount";
 	public static final String ENVIRONMENT_DATA_TAB = "environmentData";
 	public static final String MEASUREMENT_DATA_EXISTING = "measurementDataExisting";
@@ -513,7 +514,7 @@ public class OpenTrialController extends BaseTrialController {
 				this.fieldbookService
 						.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), workbook.getStudyName(), data.getColumnOrders(),
 								workbook);
-
+				returnVal.put(OpenTrialController.CONTAINS_OUT_OF_SYNC_VALUES, Boolean.TRUE);
 				return returnVal;
 			} catch (final MiddlewareQueryException e) {
 				OpenTrialController.LOG.error(e.getMessage(), e);

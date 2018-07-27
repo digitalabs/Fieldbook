@@ -187,6 +187,13 @@
 				});
 			};
 
+			var showOutOfSyncWarningMessage = function (data) {
+				if (data.containsOutOfSyncValues == true) {
+					showAlertMessage('', outOfSyncWarningMessage);
+				}
+			}
+
+
 			var performDataCleanup = function() {
 				// TODO: delegate the task of cleaning up data to each tab that produces it, probably via listener
 
@@ -483,8 +490,9 @@
 								service.applicationData.unsavedGeneratedDesign === false)
 							) {
 								service.currentData.columnOrders = serializedData;
-								$http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function() {
+								$http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function(data) {
 									recreateSessionVariablesTrial();
+									showOutOfSyncWarningMessage(data);
 									notifySaveEventListeners();
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(updatedData) {
 										service.trialMeasurement.hasMeasurement = (updatedData.measurementDataExisting);

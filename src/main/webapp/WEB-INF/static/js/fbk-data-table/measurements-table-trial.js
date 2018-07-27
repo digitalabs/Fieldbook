@@ -88,7 +88,8 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 			termId: displayColumn.termId,
 			defaultContent: '',
 			orderable: displayColumn.variableType === "TRAIT" ? true : $.inArray(displayColumn.termId, sortableColumnIDs) > -1,
-			className: displayColumn.factor === true ? 'factors' : 'variates'
+			className: displayColumn.factor === true ? 'factors' : 'variates',
+			isDerivedTrait: displayColumn.formula != null
 		});
 
 		var termId = displayColumn.termId;
@@ -353,6 +354,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 							$(table.column(column).header()).attr('data-term-id', settings.aoColumns[ column ].termId);
 						}
 						$(table.column(column).header()).addClass(settings.aoColumns[ column ].factor === true ? 'factors' : 'variates');
+						if (settings.aoColumns[ column ].isDerivedTrait == true) {
+							$(table.column(column).header()).addClass('derived-trait-column-header');
+						}
 					});
 				},
 				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -527,6 +531,15 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
 					type: 'GET',
 					cache: false
 				},
+				headerCallback: function(thead, data, start, end, display) {
+					setTimeout( function (){
+						table.columns().iterator('column', function(settings, column) {
+							if (settings.aoColumns[ column ].isDerivedTrait == true) {
+								$(table.column(column).header()).addClass('derived-trait-column-header');
+							}
+						});
+					});
+				},
 				fnInitComplete: function(oSettings, json) {
 					$(tableIdentifier + '_wrapper .mdt-length .dataTables_length select').select2({minimumResultsForSearch: 10});
 					oSettings.oInstance.fnAdjustColumnSizing();
@@ -648,6 +661,15 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 					url: '/Fieldbook/ImportManager/import/preview',
 					type: 'POST',
 					cache: false
+				},
+				headerCallback: function(thead, data, start, end, display) {
+					setTimeout( function (){
+						table.columns().iterator('column', function(settings, column) {
+							if (settings.aoColumns[ column ].isDerivedTrait == true) {
+								$(table.column(column).header()).addClass('derived-trait-column-header');
+							}
+						});
+					});
 				},
 				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 					measurementsTableRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull, tableIdentifier, this);

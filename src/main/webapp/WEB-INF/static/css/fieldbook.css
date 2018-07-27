@@ -2225,3 +2225,7 @@ input.select-all-margin{
     padding: 5px;
     width: 50%;
 }
+
+table.dataTable thead .derived-trait-column-header {
+    background-color: #bdd9b4;
+}

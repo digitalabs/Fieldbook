@@ -106,6 +106,11 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 				visible: termId === 8170 && !displayTrialInstance ? false : true, // do not display TRIAL_INSTANCE column, [0] column
 				createdCell: function(td, cellData, rowData, row, col) {
 					if (isVariates) {
+						if (cellData[cellData.length-1] == 'MANUALLY_EDITED') {
+							$(td).addClass('manually-edited-value');
+						} if (cellData[cellData.length-1] == 'OUT_OF_SYNC') {
+							$(td).addClass('out-of-sync-value');
+						}
 						$(td).addClass('numeric-variable');
 						var cellText = $(td).text();
 						if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellText) || parseFloat(cellText) > parseFloat(maxVal))) {
@@ -139,6 +144,11 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 				targets: columns.length - 1,
 				visible: !isPlotId,
 				createdCell: function(td, cellData, rowData, row, col) {
+					if (cellData[cellData.length-1] == 'MANUALLY_EDITED') {
+						$(td).addClass('manually-edited-value');
+					} if (cellData[cellData.length-1] == 'OUT_OF_SYNC') {
+						$(td).addClass('out-of-sync-value');
+					}
 					$(td).data('term-id', termId);
 					$(td).data('phenotype-id', cellData[1]);
 				},
@@ -202,6 +212,11 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 					$(td).data('term-id', termId);
 					$(td).data('phenotype-id', cellData[3]);
 					$(td).data('term-valid-values', displayColumn.possibleValuesString);
+					if (cellData[cellData.length-1] == 'MANUALLY_EDITED') {
+						$(td).addClass('manually-edited-value');
+					} if (cellData[cellData.length-1] == 'OUT_OF_SYNC') {
+						$(td).addClass('out-of-sync-value');
+					}
 				},
 				render: function(data, type, full, meta) {
 					if (data !== undefined) {

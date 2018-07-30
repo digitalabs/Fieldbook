@@ -162,14 +162,22 @@ table .even{
     border-bottom: none;
 }
 
-td.invalid-value {
-  background-color: #ffdfdf;
-  color: #7f484a;
+td.manually-edited-value {
+    background-color: #c5c6de;
 }
 
 td.accepted-value {
-  background-color: #E6F5FF;
-  color: #3366CC;
+    background-color: #E6F5FF;
+    color: #3366CC;
+}
+
+td.out-of-sync-value {
+    background-color: #ffffcd;
+}
+
+td.invalid-value {
+  background-color: #ffdfdf;
+  color: #7f484a;
 }
 
 table .highlight, table .field-map-highlight {

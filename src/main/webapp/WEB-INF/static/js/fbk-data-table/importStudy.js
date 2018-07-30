@@ -88,7 +88,7 @@ function doSaveImportedData() {
 			$('body').trigger({
 				type: 'REFRESH_AFTER_IMPORT_SAVE'
 			});
-
+			showOutOfSyncWarningMessage(html);
 			displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
 			$.ajax({
 				url: '/Fieldbook/ImportManager/import/preview',
@@ -101,6 +101,13 @@ function doSaveImportedData() {
 		}
 	});
 }
+
+function showOutOfSyncWarningMessage(data) {
+	if (data.containsOutOfSyncValues == true) {
+		showAlertMessage('', outOfSyncWarningMessage);
+	}
+}
+
 function doMeasurementsReload(hasDataOverwrite) {
 	'use strict';
 	$('.import-study-data').data('data-import', '1');

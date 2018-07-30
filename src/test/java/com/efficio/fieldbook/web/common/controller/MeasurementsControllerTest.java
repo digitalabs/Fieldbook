@@ -1416,7 +1416,7 @@ public class MeasurementsControllerTest {
 				.assertThat(
 						Arrays.equals(
 								new Object[] { this.measurementText.getVariableValue(),
-										this.measurementText.getPhenotypeId() },
+										this.measurementText.getPhenotypeId(), this.measurementText.getValueStatus() },
 								(Object[]) dataMap.get(this.measurementText.getMeasurementVariable().getName())),
 						Is.is(true));
 
@@ -1424,7 +1424,7 @@ public class MeasurementsControllerTest {
 		MatcherAssert.assertThat(
 				Arrays.equals(
 						new Object[] { this.measurementNumeric.getVariableValue(), true,
-								this.measurementNumeric.getPhenotypeId() },
+								this.measurementNumeric.getPhenotypeId(), this.measurementNumeric.getValueStatus() },
 						(Object[]) dataMap.get(this.measurementNumeric.getMeasurementVariable().getName())),
 				Is.is(true));
 
@@ -1432,7 +1432,7 @@ public class MeasurementsControllerTest {
 		MatcherAssert.assertThat(
 				Arrays.equals(
 						new Object[] { category1.getName(), category1.getDefinition(), true,
-								this.measurementCategorical.getPhenotypeId() },
+								this.measurementCategorical.getPhenotypeId(), this.measurementCategorical.getValueStatus() },
 						(Object[]) dataMap.get(this.measurementCategorical.getMeasurementVariable().getName())),
 				Is.is(true));
 	}

@@ -13,7 +13,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import org.generationcp.commons.derivedvariable.DerivedVariableUtils;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -166,7 +165,7 @@ public class ManageSettingsController extends SettingsController {
 								});
 						// Convert the termids in formula definition to variable names.
 						formula.setDefinition(
-								DerivedVariableUtils.replaceTermIdsWithVariableNames(formula.getDefinition(), formulaVariableMap));
+								DerivedVariableUtils.getDisplayableFormat(formula.getDefinition(), formulaVariableMap));
 					}
 				}
 

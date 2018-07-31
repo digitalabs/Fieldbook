@@ -173,6 +173,10 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 					// cellData[0] : categorical name
 					// cellData[1] : categorical display description
 
+					if (cellData != "" || cellData[3] != "") {
+						$(td).data('phenotype-id', cellData[3]);
+					}
+
 					// current measurementData has no value thus no need to check if out-of-bounds
 					if (cellData === "" || cellData[1] === "") {
 						return;
@@ -210,7 +214,6 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 					}
 
 					$(td).data('term-id', termId);
-					$(td).data('phenotype-id', cellData[3]);
 					$(td).data('term-valid-values', displayColumn.possibleValuesString);
 					if (cellData[cellData.length-1] == 'MANUALLY_EDITED') {
 						$(td).addClass('manually-edited-value');

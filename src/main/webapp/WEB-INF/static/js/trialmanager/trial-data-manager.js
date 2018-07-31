@@ -938,12 +938,15 @@
 
 					var locationNameIsUnspecified = false;
 					_.each(service.currentData.environments.environments, function(item, key) {
-                        var locationId = isNaN(item.managementDetailValues[LOCATION_NAME_ID]) ?
-                            item.managementDetailValues[LOCATION_NAME_ID].id :
-                            item.managementDetailValues[LOCATION_NAME_ID];
-						if (locationId === '' || locationId === UNSPECIFIED_LOCATION_ID) {
-                            locationNameIsUnspecified = true;
+                        var locationId = '';
+						if (item.managementDetailValues[LOCATION_NAME_ID]) {
+                            locationId = isNaN(item.managementDetailValues[LOCATION_NAME_ID]) ?
+                                item.managementDetailValues[LOCATION_NAME_ID].id :
+                                item.managementDetailValues[LOCATION_NAME_ID];
 						}
+                        if (locationId === '' || locationId === UNSPECIFIED_LOCATION_ID) {
+                            locationNameIsUnspecified = true;
+                        }
 					});
 					return locationNameIsUnspecified;
 				}

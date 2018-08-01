@@ -80,6 +80,7 @@ public class DerivedVariableController {
 
 		// FIXME BMS-4454
 		workbook.setObservations(null);
+		workbook.setOriginalObservations(null);
 		this.fieldbookMiddlewareService.loadAllObservations(workbook);
 
 		/**

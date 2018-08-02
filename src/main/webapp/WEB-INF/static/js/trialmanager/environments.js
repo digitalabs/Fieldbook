@@ -6,8 +6,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 	'use strict';
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
-	'$http', 'DTOptionsBuilder', 'LOCATION_ID','UNSPECIFIED_LOCATION_ID', '$timeout', 'environmentService','$rootScope',
-		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID,UNSPECIFIED_LOCATION_ID, $timeout, environmentService, $rootScope) {
+	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService','$rootScope',
+		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService, $rootScope) {
 
 			// preload the measurements tab, if the measurements tab is not yet loaded 
 			// to make sure deleting environments will still works
@@ -33,7 +33,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				}
 				if (!$scope.data.environments[0].managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX]) {
 					$scope.data.environments[0].managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = 1;
-                    $scope.data.environments[0].managementDetailValues[8190] = UNSPECIFIED_LOCATION_ID;
 				}
 			};
 

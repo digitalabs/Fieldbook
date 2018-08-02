@@ -23,7 +23,7 @@
     						uiSelect2.compile(tElement, tAttrs);
     					}
     				},
-    				controller: function($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http) {
+    				controller: function($scope, LOCATION_ID, UNSPECIFIED_LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http) {
     					if ($scope.settingkey === undefined) {
     						$scope.settingkey = $scope.targetkey;
     					}
@@ -109,8 +109,14 @@
     					if ($scope.hasDropdownOptions) {
     						var currentVal = $scope.valuecontainer[$scope.targetkey];
 
+                            if (!currentVal && $scope.targetkey === LOCATION_ID) {
+                                currentVal = UNSPECIFIED_LOCATION_ID;
+                                $scope.valuecontainer[$scope.targetkey] = UNSPECIFIED_LOCATION_ID;
+                                $scope.locationLookup = 2;
+                            }
+
     						// lets fix current val if its an object so that valuecontainer only contains the id
-    						if (typeof currentVal !== 'undefined' && currentVal !== null && typeof currentVal.id !== 'undefined' && currentVal.id) {
+    						if (currentVal && currentVal.id) {
     							currentVal = currentVal.id;
     							$scope.valuecontainer[$scope.targetkey] = currentVal;
     						}

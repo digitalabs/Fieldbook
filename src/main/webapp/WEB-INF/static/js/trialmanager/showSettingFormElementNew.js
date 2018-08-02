@@ -50,7 +50,7 @@
     					$scope.isBreedingMethod = parseInt(BREEDING_METHOD_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10) ||
     						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
-    					$scope.localData = {};					
+    					$scope.localData = {};
 						var showAll = $scope.valuecontainer[$scope.targetkey];
 						if (showAll != null && showAll !='' && showAll != undefined) {
 							$scope.localData.useFavorites = false;
@@ -59,10 +59,8 @@
 						else{
 							$scope.locationLookup =  1;
 						}
-						
 
 						$scope.updateDropdownValuesFavorites = function() { // Change state for favorite checkbox
-							
 								if ($scope.localData.useFavorites) {
 									if ($scope.locationLookup == 1) {
 										$scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
@@ -77,7 +75,6 @@
 										$scope.dropdownValues = $scope.variableDefinition.allValues;
 									}
 								}
-					
 						};
 
 						$scope.updateDropdownValuesBreedingLocation = function() { // Change state for breeding
@@ -107,6 +104,7 @@
 						};
 
     					if ($scope.hasDropdownOptions) {
+
     						var currentVal = $scope.valuecontainer[$scope.targetkey];
 
                             if (!currentVal && $scope.targetkey === LOCATION_ID) {
@@ -129,7 +127,6 @@
 								if($scope.dropdownValues != null) {
 									return $scope.dropdownValues.length > 0 ? 20 : -1;
 								}
-									
 								return -1;
 							};
 
@@ -203,7 +200,6 @@
     										$scope.clearArray($scope.variableDefinition.possibleValuesFavorite);
 											$scope.clearArray($scope.variableDefinition.allFavoriteValues);
 											$scope.clearArray($scope.variableDefinition.allValues);
-    										
 
     										$scope.variableDefinition.possibleValues.push.apply($scope.variableDefinition.possibleValues,
     											$scope.convertLocationsToPossibleValues(returnVal.data.allBreedingLocations));
@@ -245,5 +241,5 @@
     					}
     				}
     			};
-    		}])
+    		}]);
 }());

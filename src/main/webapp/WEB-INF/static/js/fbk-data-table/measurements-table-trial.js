@@ -17,32 +17,6 @@ var getCurrentEnvironmentNumber = function() {
 	}
 };
 
-var previewMeasurementsTableRowCallback = function (nRow, aData, iDisplayIndex, iDisplayIndexFull, tableIdentifier, _this) {
-
-	$(nRow).find('.variates').each(function () {
-		var colIndex = $(this).index() + 1;
-		var varName = $(tableIdentifier + " thead tr th:nth-child(" + colIndex + ")").text();
-		if (colIndex !== undefined) {
-			var dataArray = aData[varName];
-			if (dataArray !== undefined) {
-				var status = dataArray[dataArray.length - 1];
-				var cellData = $(this).text();
-				if (status == null) {
-					$(this).removeClass('manually-edited-value');
-					$(this).removeClass('out-of-sync-value');
-				} else if ((cellData != "" || $(this).hasClass('out-of-sync-value')) && status == 'MANUALLY_EDITED') {
-					$(this).removeClass('out-of-sync-value');
-					$(this).addClass('manually-edited-value');
-				} else if ((cellData != "" || $(this).hasClass('manually-edited-value')) && status == 'OUT_OF_SYNC') {
-					$(this).removeClass('manually-edited-value');
-					$(this).addClass('out-of-sync-value');
-				}
-			}
-		}
-	});
-	return nRow;
-};
-
 var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplayIndexFull, tableIdentifier, _this) {
 	var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
 	// Assuming ID is in last column
@@ -93,6 +67,33 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 							$(this).addClass('invalid-value');
 						}
 						$(this).data('term-id', $(this).data('term-id'));
+					}
+				}
+			}
+		}
+	});
+	$(nRow).find('.variates').each(function () {
+		var nRowTitle = $(nRow).attr('title');
+		var colIndex = $(this).index() + 1;
+		var varName = $(tableIdentifier + " thead tr th:nth-child(" + colIndex + ")").text();
+		if (varName !== undefined) {
+			var dataArray = aData[varName];
+			if (dataArray !== undefined) {
+				var status = dataArray[dataArray.length - 1];
+				var cellData = $(this).text();
+				var wasCellShadowed = $(this).hasClass('out-of-sync-value') || $(this).hasClass('manually-edited-value');
+				$(this).removeClass('manually-edited-value');
+				$(this).removeClass('out-of-sync-value');
+				$(this).removeAttr('title');
+				if (status == 'MANUALLY_EDITED') {
+					$(this).attr('title', nRowTitle + ' manually-edited');
+					if (cellData != "" || wasCellShadowed) {
+						$(this).addClass('manually-edited-value');
+					}
+				} else if (status == 'OUT_OF_SYNC') {
+					$(this).attr('title', nRowTitle + ' out-of-sync');
+					if (cellData != "" || wasCellShadowed) {
+						$(this).addClass('out-of-sync-value');
 					}
 				}
 			}
@@ -242,11 +243,6 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 
 					$(td).data('term-id', termId);
 					$(td).data('term-valid-values', displayColumn.possibleValuesString);
-					if (cellData[cellData.length-1] == 'MANUALLY_EDITED') {
-						$(td).addClass('manually-edited-value');
-					} if (cellData[cellData.length-1] == 'OUT_OF_SYNC') {
-						$(td).addClass('out-of-sync-value');
-					}
 				},
 				render: function(data, type, full, meta) {
 					if (data !== undefined) {
@@ -718,7 +714,6 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 				},
 				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 					measurementsTableRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull, tableIdentifier, this);
-					previewMeasurementsTableRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull, tableIdentifier, this);
 				},
 				fnInitComplete: function(oSettings, json) {
 					$(tableIdentifier + '_wrapper .mdt-length .dataTables_length select').select2({minimumResultsForSearch: 10});

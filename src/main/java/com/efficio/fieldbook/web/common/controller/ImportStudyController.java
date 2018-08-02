@@ -121,8 +121,12 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		 * Should always revert the data first to the original data here we
 		 * should move here that part the copies it to the original observation
 		 */
-		this.getUserSelection().getWorkbook().getObservations().clear();
-		this.getUserSelection().getWorkbook().getOriginalObservations().clear();
+		if (this.getUserSelection().getWorkbook().getObservations() != null) {
+			this.getUserSelection().getWorkbook().getObservations().clear();
+		}
+		if (this.getUserSelection().getWorkbook().getOriginalObservations() != null) {
+			this.getUserSelection().getWorkbook().getOriginalObservations().clear();
+		}
 		this.fieldbookMiddlewareService.loadAllObservations(userSelection.getWorkbook());
 		WorkbookUtil.resetWorkbookObservations(userSelection.getWorkbook());
 

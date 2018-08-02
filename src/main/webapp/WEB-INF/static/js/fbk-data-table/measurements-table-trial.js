@@ -581,6 +581,9 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
 						});
 					});
 				},
+				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+					measurementsTableRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull, tableIdentifier, this);
+				},
 				fnInitComplete: function(oSettings, json) {
 					$(tableIdentifier + '_wrapper .mdt-length .dataTables_length select').select2({minimumResultsForSearch: 10});
 					oSettings.oInstance.fnAdjustColumnSizing();

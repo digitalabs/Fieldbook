@@ -17,6 +17,31 @@ var getCurrentEnvironmentNumber = function() {
 	}
 };
 
+var previewMeasurementsTableRowCallback = function (nRow, aData, iDisplayIndex, iDisplayIndexFull, tableIdentifier, _this) {
+
+	$(nRow).find('.variates').each(function () {
+		var colIndex = $(this).index() + 1;
+		var varName = $(tableIdentifier + " thead tr th:nth-child(" + colIndex + ")").text();
+		if (colIndex !== undefined) {
+			var dataArray = aData[varName];
+			if (dataArray !== undefined) {
+				var status = dataArray[dataArray.length - 1];
+				if (status == null) {
+					$(this).removeClass('manually-edited-value');
+					$(this).removeClass('out-of-sync-value');
+				} else if (status == 'MANUALLY_EDITED') {
+					$(this).removeClass('out-of-sync-value');
+					$(this).addClass('manually-edited-value');
+				} else if (status == 'OUT_OF_SYNC') {
+					$(this).removeClass('manually-edited-value');
+					$(this).addClass('out-of-sync-value');
+				}
+			}
+		}
+	});
+	return nRow;
+};
+
 var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplayIndexFull, tableIdentifier, _this) {
 	var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
 	// Assuming ID is in last column
@@ -28,6 +53,7 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 	$(nRow).find('.accepted-value, .invalid-value, .numeric-variable').each(function() {
 		var termId = $(this).data('term-id');
 		var cellData = $(this).text();
+		//FIXME dataTypeID is always undefined
 		if (termId !== undefined) {
 			var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
 			var dataTypeId = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-data-type-id');
@@ -691,6 +717,7 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 				},
 				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 					measurementsTableRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull, tableIdentifier, this);
+					previewMeasurementsTableRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull, tableIdentifier, this);
 				},
 				fnInitComplete: function(oSettings, json) {
 					$(tableIdentifier + '_wrapper .mdt-length .dataTables_length select').select2({minimumResultsForSearch: 10});

@@ -735,6 +735,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		final boolean isNew) {
 		if (oldData.getMeasurementVariable().getPossibleValues() != null
 			&& !oldData.getMeasurementVariable().getPossibleValues().isEmpty()) {
+			oldData.setValueStatus(newData.getValueStatus());
 			oldData.setAccepted(newData.isAccepted());
 			if (!StringUtils.isEmpty(oldData.getValue()) && oldData.isAccepted() && this.isCategoricalValueOutOfBounds(
 				oldData.getcValueId(), oldData.getValue(), oldData.getMeasurementVariable().getPossibleValues())) {
@@ -762,6 +763,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 				oldData.setValue(newData.getValue());
 			}
 		} else {
+			oldData.setValueStatus(newData.getValueStatus());
 			oldData.setValue(newData.getValue());
 			oldData.setAccepted(newData.isAccepted());
 		}

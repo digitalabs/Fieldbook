@@ -149,7 +149,7 @@ public class DerivedVariableController {
 
 			// Process calculation result
 
-			final MeasurementData target = row.getMeasurementData(formula.getTargetTermId());
+			final MeasurementData target = row.getMeasurementData(formula.getTarget().getId());
 			target.setAccepted(false);
 
 			// Process categorical data

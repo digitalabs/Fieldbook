@@ -165,6 +165,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		final Map<String, Object> map = new HashMap<>();
 		Integer phenotypeId = null;
+		final Phenotype.ValueStatus status;
 		if (StringUtils.isNotBlank(data.get(TrialMeasurementsController.PHENOTYPE_ID))) {
 			phenotypeId = Integer.valueOf(data.get(TrialMeasurementsController.PHENOTYPE_ID));
 		}
@@ -195,8 +196,18 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 				return map;
 			}
 			final boolean isACalculatedValueBeingEdited = this.isBeingACalculatedValueEdited(trait, existingPhenotype, value);
+
+			if (isACalculatedValueBeingEdited) {
+				status = Phenotype.ValueStatus.MANUALLY_EDITED;
+			}
+			else if (existingPhenotype != null && existingPhenotype.getValueStatus() != null) {
+				status = existingPhenotype.getValueStatus();
+			}
+			else {
+				status = null;
+			}
 			this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, trait.getId(), value, existingPhenotype,
-					trait.getScale().getDataType().getId(), isACalculatedValueBeingEdited? Phenotype.ValueStatus.MANUALLY_EDITED : null);
+					trait.getScale().getDataType().getId(), status);
 			this.verifyAndUpdateValueStatus(oldValue, trait.getId(), value, experimentId);
 		}
 		map.put(TrialMeasurementsController.SUCCESS, "1");
@@ -1022,7 +1033,18 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	}
 
 	public boolean isBeingACalculatedValueEdited(final Variable variable, final Phenotype oldPhenotype, final String newValue) {
-		return ((oldPhenotype == null || !oldPhenotype.getValue().equals(newValue)) && variable.getFormula() != null) ? true : false;
+		String value = null;
+		if (oldPhenotype != null && variable.getFormula() != null) {
+			if (TermId.CATEGORICAL_VARIABLE.getId() == variable.getScale().getDataType().getId()) {
+				value = oldPhenotype.getcValueId().toString();
+			}
+			else {
+				value = oldPhenotype.getValue();
+			}
+			return !newValue.equals(value);
+		}
+
+		return oldPhenotype == null && variable.getFormula() != null;
 	}
 
 	public boolean isBeingACalculatedValueEdited(final MeasurementVariable variable, final String oldValue, final String newValue) {

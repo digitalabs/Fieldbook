@@ -79,7 +79,13 @@ public class DerivedVariableController {
 		}
 
 		// FIXME BMS-4454
-		workbook.setObservations(null);
+		if (workbook.getObservations() != null) {
+			workbook.getObservations().clear();
+		}
+		if (workbook.getOriginalObservations() != null) {
+			workbook.getOriginalObservations().clear();
+		}
+
 		this.fieldbookMiddlewareService.loadAllObservations(workbook);
 
 		/**

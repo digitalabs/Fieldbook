@@ -30,10 +30,10 @@ var previewMeasurementsTableRowCallback = function (nRow, aData, iDisplayIndex, 
 				if (status == null) {
 					$(this).removeClass('manually-edited-value');
 					$(this).removeClass('out-of-sync-value');
-				} else if (cellData != "" && status == 'MANUALLY_EDITED') {
+				} else if ((cellData != "" || $(this).hasClass('out-of-sync-value')) && status == 'MANUALLY_EDITED') {
 					$(this).removeClass('out-of-sync-value');
 					$(this).addClass('manually-edited-value');
-				} else if (cellData != "" && status == 'OUT_OF_SYNC') {
+				} else if ((cellData != "" || $(this).hasClass('manually-edited-value')) && status == 'OUT_OF_SYNC') {
 					$(this).removeClass('manually-edited-value');
 					$(this).addClass('out-of-sync-value');
 				}

@@ -164,6 +164,7 @@ table .even{
 
 td.manually-edited-value {
     background-color: #c5c6de;
+    color: black;
 }
 
 td.accepted-value {
@@ -173,6 +174,7 @@ td.accepted-value {
 
 td.out-of-sync-value {
     background-color: #ffffcd;
+    color: black;
 }
 
 td.invalid-value {
@@ -1861,10 +1863,6 @@ div.variable-details-popup {
 	left: -5px; 
 	top: 2px; 
 	position:relative;
-}
-td.accepted-value {
-  background-color: #E6F5FF;
-  color: #3366CC;
 }
 .fb-delete-settings{
 	color: #000000;

@@ -46,10 +46,10 @@ public class DataMapUtil {
 				final CategoricalDisplayValue categoricalDisplayValue = data.getDisplayValueForCategoricalData();
 
 				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {categoricalDisplayValue.getName() + suffix,
-						categoricalDisplayValue.getDescription() + suffix, data.isAccepted(), (data.getValueStatus() != null) ? data.getValueStatus().toString() : null });
+						categoricalDisplayValue.getDescription() + suffix, data.isAccepted(), data.getPhenotypeId() != null ? data.getPhenotypeId() : "", (data.getValueStatus() != null) ? data.getValueStatus().toString() : null });
 
 			} else if (data.isNumeric()) {
-				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {data.getDisplayValue() + suffix, data.isAccepted(), (data.getValueStatus() != null) ? data.getValueStatus().toString() : null });
+				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {data.getDisplayValue() + suffix, data.isAccepted(), data.getPhenotypeId() != null ? data.getPhenotypeId() : "", (data.getValueStatus() != null) ? data.getValueStatus().toString() : null });
 			} else {
 				dataMap.put(data.getMeasurementVariable().getName(), new Object[] {data.getDisplayValue() != null ? data.getDisplayValue() : "",
 						data.getPhenotypeId() != null ? data.getPhenotypeId() : "", (data.getValueStatus() != null) ? data.getValueStatus().toString() : null });

@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -45,6 +46,8 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.manager.api.LocationDataManager;
+import org.generationcp.middleware.pojos.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -87,6 +90,9 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 
 	@Resource
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+
+	@Resource
+	LocationDataManager locationDataManager;
 
 	private static final String BREEDING_METHOD_PROPERTY_NAME = "";
 
@@ -227,8 +233,8 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 	 */
 	private int writeConditions(final int currentRowNum, final HSSFWorkbook xlsBook, final HSSFSheet xlsSheet,
 			final List<MeasurementVariable> conditions, final MeasurementRow trialObservation, final Workbook workbook) {
-		final List<MeasurementVariable> arrangedConditions = new ArrayList<MeasurementVariable>();
-		List<MeasurementVariable> filteredConditions = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> arrangedConditions = new ArrayList<>();
+		List<MeasurementVariable> filteredConditions = new ArrayList<>();
 		if (conditions != null) {
 			arrangedConditions.addAll(conditions);
 			Collections.sort(arrangedConditions, new Comparator<MeasurementVariable>() {
@@ -243,10 +249,19 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 				if (!ExcelExportStudyServiceImpl.STUDY_DETAILS_IDS.contains(variable.getTermId())) {
 					filteredConditions.add(variable);
 					if (PhenotypicType.TRIAL_ENVIRONMENT == this.getRoleOfVariableInTrialObservations(variable, trialObservation)) {
+						if (variable.getTermId() == 8190) {
+							final String locationAlias = variable.getName();
+							variable.setName("LOCATION_ID");
+							final Integer locationId = new Integer( trialObservation.getMeasurementDataValue(variable.getTermId()));
+							filteredConditions.add(createLocationNameVariable(locationId,locationAlias));
+
+						}
 						variable.setValue(trialObservation.getMeasurementDataValue(variable.getTermId()));
+
 						if (variable.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
 							variable.setPossibleValues(this.fieldbookService.getAllPossibleValues(variable.getTermId()));
 						}
+
 					}
 				}
 			}
@@ -254,6 +269,24 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 		filteredConditions = workbook.arrangeMeasurementVariables(filteredConditions);
 		return this.writeSection(currentRowNum, xlsBook, xlsSheet, filteredConditions, "export.study.description.column.condition", 51, 153,
 				102);
+	}
+
+	private MeasurementVariable createLocationNameVariable(final Integer locationId, final String locationAlias) {
+		final MeasurementVariable locationNameVariable = new MeasurementVariable();
+
+		final Location location = this.locationDataManager.getLocationByID(locationId);
+		final StandardVariable standardVariable = this.fieldbookService.getStandardVariable(TermId.TRIAL_LOCATION.getId());
+		locationNameVariable.setName(locationAlias);
+		locationNameVariable.setDescription(standardVariable.getDescription());
+		locationNameVariable.setProperty(standardVariable.getProperty().getName());
+		locationNameVariable.setScale(standardVariable.getScale().getName());
+		locationNameVariable.setMethod(standardVariable.getMethod().getName());
+		locationNameVariable.setDataType(standardVariable.getDataType().getName());
+		locationNameVariable.setDataTypeId(standardVariable.getDataType().getId());
+		locationNameVariable.setValue(location.getLname());
+		locationNameVariable.setLabel("TRIAL");
+		locationNameVariable.setTermId(8180);
+		return locationNameVariable;
 	}
 
 	/**

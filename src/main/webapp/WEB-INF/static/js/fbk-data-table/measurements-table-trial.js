@@ -88,10 +88,10 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 					return;
 				}
 				if (status == 'MANUALLY_EDITED') {
-					$(this).attr('title', toolTip + ' manually-edited');
+					$(this).attr('title', toolTip + ' manually-edited-value');
 					$(this).addClass('manually-edited-value');
 				} else if (status == 'OUT_OF_SYNC') {
-					$(this).attr('title', toolTip + ' out-of-sync');
+					$(this).attr('title', toolTip + ' out-of-sync-value');
 					$(this).addClass('out-of-sync-value');
 				}
 			}

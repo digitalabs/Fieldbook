@@ -73,7 +73,6 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 		}
 	});
 	$(nRow).find('.variates').each(function () {
-		var nRowTitle = $(nRow).attr('title');
 		var colIndex = $(this).index() + 1;
 		var varName = $(tableIdentifier + " thead tr th:nth-child(" + colIndex + ")").text();
 		if (varName !== undefined) {
@@ -81,20 +80,19 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 			if (dataArray !== undefined) {
 				var status = dataArray[dataArray.length - 1];
 				var cellData = $(this).text();
-				var wasCellShadowed = $(this).hasClass('out-of-sync-value') || $(this).hasClass('manually-edited-value');
+				var phenotypeId = dataArray[dataArray.length - 2];
 				$(this).removeClass('manually-edited-value');
 				$(this).removeClass('out-of-sync-value');
 				$(this).removeAttr('title');
+				if (!cellData && !phenotypeId) {
+					return;
+				}
 				if (status == 'MANUALLY_EDITED') {
-					$(this).attr('title', nRowTitle + ' manually-edited');
-					if (cellData != "" || wasCellShadowed) {
-						$(this).addClass('manually-edited-value');
-					}
+					$(this).attr('title', toolTip + ' manually-edited');
+					$(this).addClass('manually-edited-value');
 				} else if (status == 'OUT_OF_SYNC') {
-					$(this).attr('title', nRowTitle + ' out-of-sync');
-					if (cellData != "" || wasCellShadowed) {
-						$(this).addClass('out-of-sync-value');
-					}
+					$(this).attr('title', toolTip + ' out-of-sync');
+					$(this).addClass('out-of-sync-value');
 				}
 			}
 		}

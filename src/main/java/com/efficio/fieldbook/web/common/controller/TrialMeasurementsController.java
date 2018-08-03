@@ -3,17 +3,14 @@ package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.util.DataMapUtil;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.trial.service.ValidationService;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.google.common.base.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -21,8 +18,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.oms.TermSummary;
-import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -34,7 +29,6 @@ import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.pojos.dms.ProjectProperty;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.service.api.study.MeasurementDto;
 import org.generationcp.middleware.service.api.study.ObservationDto;
 import org.generationcp.middleware.service.api.study.StudyService;
 import org.generationcp.middleware.service.impl.study.StudyInstance;
@@ -68,10 +62,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	private static final String EXPERIMENT_ID = "experimentId";
 
 	private static final String PHENOTYPE_ID = "phenotypeId";
-
-	public static final String DESIGNATION = "DESIGNATION";
-
-	public static final String GID = "GID";
 
 	private static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
 
@@ -115,6 +105,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@Resource
 	private OntologyService ontologyService;
 
+	private DataMapUtil dataMapUtil = new DataMapUtil();
+
 	@Override
 	public String getContentName() {
 		return null;
@@ -149,7 +141,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		return resultMap;
 	}
 
-	protected void setUserSelection(final UserSelection userSelection) {
+	public void setUserSelection(final UserSelection userSelection) {
 		this.userSelection = userSelection;
 	}
 
@@ -216,7 +208,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		final List<ObservationDto> singleObservation = this.studyService
 			.getSingleObservation(this.getUserSelection().getWorkbook().getStudyDetails().getId(), experimentId);
 		if (!singleObservation.isEmpty()) {
-			dataMap = this.generateDatatableDataMap(singleObservation.get(0), new HashMap<String, String>());
+			dataMap = dataMapUtil.generateDatatableDataMap(singleObservation.get(0), new HashMap<String, String>(), userSelection,
+					ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
 		}
 		map.put(TrialMeasurementsController.DATA, dataMap);
 		return map;
@@ -415,7 +408,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/update/experiment/cell/accepted/all", method = RequestMethod.GET)
 	public Map<String, Object> markAllExperimentDataAsAccepted() {
 
-		final Map<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<>();
 
 		for (final MeasurementRow row : this.userSelection.getMeasurementRowList()) {
 			if (row != null && row.getMeasurementVariables() != null) {
@@ -560,7 +553,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 				pageSize, sortBy, sortOrder);
 		final Map<String, String> nameToAliasMap = this.createNameToAliasMap(studyId);
 		for (final ObservationDto row : pageResults) {
-			final Map<String, Object> dataMap = this.generateDatatableDataMap(row, nameToAliasMap);
+			final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(row, nameToAliasMap, userSelection,
+					ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
 			masterDataList.add(dataMap);
 		}
 
@@ -780,239 +774,11 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	Map<String, Object> generateDatatableDataMap(final ObservationDto row, final Map<String, String> nameToAliasMap) {
-		final Map<String, Object> dataMap = new HashMap<>();
-		// the 4 attributes are needed always
-		dataMap.put("Action", Integer.toString(row.getMeasurementId()));
-		dataMap.put(TrialMeasurementsController.EXPERIMENT_ID, Integer.toString(row.getMeasurementId()));
-		// We always need to return GID and DESIGNATION as keys as they are
-		// expected for tooltip in table
-		dataMap.put(TrialMeasurementsController.GID, row.getGid());
-		dataMap.put(TrialMeasurementsController.DESIGNATION, row.getDesignation());
-
-		dataMap.put(String.valueOf(TermId.SAMPLES.getId()), new Object[] { row.getSamples(), row.getPlotId() });
-
-		final List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
-		measurementDatasetVariables.addAll(this.getUserSelection().getWorkbook().getMeasurementDatasetVariablesView());
-
-		// generate measurement row data from dataList (existing / generated
-		// data)
-		for (final MeasurementDto data : row.getVariableMeasurements()) {
-
-			final Integer variableId = data.getMeasurementVariable().getId();
-			final Variable variable = this.ontologyVariableDataManager
-				.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, true, false);
-			final MeasurementVariable measurementVariable = WorkbookUtil
-				.getMeasurementVariable(measurementDatasetVariables, variableId);
-
-			// measurementVariable could be null if the trait was deleted
-			if (measurementVariable != null) {
-				if (variable.getScale().getDataType().equals(DataType.CATEGORICAL_VARIABLE)) {
-
-					dataMap.put(measurementVariable.getName(), this.convertForCategoricalVariable(variable,
-							data.getVariableValue(), data.getPhenotypeId(), false, (data.getValueStatus() != null) ? data.getValueStatus().toString() : null ));
-
-				} else if (variable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
-					dataMap.put(measurementVariable.getName(),
-						new Object[] { data.getVariableValue() != null ? data.getVariableValue() : "", true,
-							data.getPhenotypeId() != null ? data.getPhenotypeId() : "", (data.getValueStatus() != null) ? data.getValueStatus().toString() : null });
-				} else {
-					dataMap.put(measurementVariable.getName(),
-						new Object[] { data.getVariableValue() != null ? data.getVariableValue() : "",
-							data.getPhenotypeId() != null ? data.getPhenotypeId() : "", (data.getValueStatus() != null) ? data.getValueStatus().toString() : null  });
-				}
-			}
-		}
-
-		// generate measurement row data for standard factors like
-		// TRIAL_INSTANCE, ENTRY_NO, ENTRY_TYPE, PLOT_NO, PLOT_ID, etc
-		this.addGermplasmAndPlotFactorsDataToDataMap(row, dataMap, measurementDatasetVariables, nameToAliasMap);
-
-		// generate measurement row data from newly added traits (no data yet)
-		if (this.getUserSelection() != null && this.getUserSelection().getMeasurementDatasetVariable() != null
-			&& !this.getUserSelection().getMeasurementDatasetVariable().isEmpty()) {
-			for (final MeasurementVariable var : this.getUserSelection().getMeasurementDatasetVariable()) {
-				if (!dataMap.containsKey(var.getName())) {
-					if (var.getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
-						dataMap.put(var.getName(), new Object[] { "", "", true, null});
-					} else {
-						dataMap.put(var.getName(), "");
-					}
-				}
-			}
-		}
-		return dataMap;
-	}
-
-	/*
-	 * 1. Generate measurement row data for standard factors like
-	 * TRIAL_INSTANCE, ENTRY_NO, ENTRY_TYPE, PLOT_NO, REP_NO, BLOCK_NO, ROW,
-	 * COL, PLOT_ID and add to dataMap. 2. Also adds additonal germplasm
-	 * descriptors (eg. StockID) to dataMap 3. If local variable name for GID
-	 * and DESIGNATION are not equal to "GID" and "DESIGNATION" respectively,
-	 * add them to map as well
-	 *
-	 * Use the local name of the variable as key and the value of the variable
-	 * as value in dataMap.
-	 */
-	void addGermplasmAndPlotFactorsDataToDataMap(final ObservationDto row, final Map<String, Object> dataMap,
-			final List<MeasurementVariable> measurementDatasetVariables, final Map<String, String> nameToAliasMap) {
-		final MeasurementVariable gidVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.GID.getId());
-
-		// Add local variable names of GID and DESIGNATiON variables if they are
-		// not equal to "GID" and "DESIGNATION"
-		// "GID" and "DESIGNATION" are assumed to be added beforehand to dataMap
-		if (gidVar != null && !TrialMeasurementsController.GID.equals(gidVar.getName())) {
-			dataMap.put(gidVar.getName(), row.getGid());
-		}
-		final MeasurementVariable desigVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.DESIG.getId());
-		if (desigVar != null && !TrialMeasurementsController.DESIGNATION.equals(desigVar.getName())) {
-			dataMap.put(desigVar.getName(), row.getDesignation());
-		}
-
-		final MeasurementVariable entryNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.ENTRY_NO.getId());
-		if (entryNoVar != null) {
-			dataMap.put(entryNoVar.getName(), new Object[] { row.getEntryNo(), false });
-		}
-
-		final MeasurementVariable entryCodeVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.ENTRY_CODE.getId());
-		if (entryCodeVar != null) {
-			dataMap.put(entryCodeVar.getName(), new Object[] { row.getEntryCode(), false });
-		}
-
-		final MeasurementVariable entryTypeVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.ENTRY_TYPE.getId());
-		if (entryTypeVar != null) {
-			dataMap.put(entryTypeVar.getName(), new Object[] { row.getEntryType(), row.getEntryType(), false });
-		}
-
-		final MeasurementVariable plotNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.PLOT_NO.getId());
-		if (plotNoVar != null) {
-			dataMap.put(plotNoVar.getName(), new Object[] { row.getPlotNumber(), false });
-		}
-
-		final MeasurementVariable repNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.REP_NO.getId());
-		if (repNoVar != null) {
-			dataMap.put(repNoVar.getName(), new Object[] { row.getRepitionNumber(), false });
-		}
-
-		final MeasurementVariable blockNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.BLOCK_NO.getId());
-		if (blockNoVar != null) {
-			dataMap.put(blockNoVar.getName(), new Object[] { row.getBlockNumber(), false });
-		}
-
-		final MeasurementVariable rowVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.ROW.getId());
-		if (rowVar != null) {
-			dataMap.put(rowVar.getName(), new Object[] { row.getRowNumber(), false });
-		}
-
-		final MeasurementVariable colVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.COL.getId());
-		if (colVar != null) {
-			dataMap.put(colVar.getName(), new Object[] { row.getColumnNumber(), false });
-		}
-
-		final MeasurementVariable trialInstanceVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.TRIAL_INSTANCE_FACTOR.getId());
-		if (trialInstanceVar != null) {
-			dataMap.put(trialInstanceVar.getName(), new Object[] { row.getTrialInstance(), false });
-		}
-
-		final MeasurementVariable plotIdVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.PLOT_ID.getId());
-		if (plotIdVar != null) {
-			dataMap.put(plotIdVar.getName(), new Object[] { row.getPlotId(), false });
-		}
-
-		final MeasurementVariable fieldMapcolumVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.FIELDMAP_COLUMN.getId());
-		if (fieldMapcolumVar != null) {
-			dataMap.put(fieldMapcolumVar.getName(), new Object[] { row.getFieldMapColumn(), false });
-		}
-
-		final MeasurementVariable fieldMapRangevar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.FIELDMAP_RANGE.getId());
-		if (fieldMapRangevar != null) {
-			dataMap.put(fieldMapRangevar.getName(), new Object[] { row.getFieldMapRange(), false });
-		}
-
-		for (final Pair<String, String> additionalGermplasmAttrCols : row.getAdditionalGermplasmDescriptors()) {
-			final String alias = nameToAliasMap.get(additionalGermplasmAttrCols.getLeft()) != null
-					? nameToAliasMap.get(additionalGermplasmAttrCols.getLeft()) : additionalGermplasmAttrCols.getLeft();
-			dataMap.put(alias, new Object[] { additionalGermplasmAttrCols.getRight() });
-		}
-
-		for (final Pair<String, String> additionalDesignCols : row.getAdditionalDesignFactors()) {
-			final String alias = nameToAliasMap.get(additionalDesignCols.getLeft()) != null
-					? nameToAliasMap.get(additionalDesignCols.getLeft()) : additionalDesignCols.getLeft();
-			final Optional<MeasurementVariable> columnVariable = WorkbookUtil
-					.findMeasurementVariableByName(measurementDatasetVariables, alias);
-			if (columnVariable.isPresent()) {
-				final Variable variable = this.ontologyVariableDataManager.getVariable(
-						this.contextUtil.getCurrentProgramUUID(), columnVariable.get().getTermId(), true, false);
-
-				if (variable.getScale().getDataType().getId() == TermId.CATEGORICAL_VARIABLE.getId()) {
-					dataMap.put(alias,
-							this.convertForCategoricalVariable(variable, additionalDesignCols.getRight(), null, true, null));
-				} else {
-					dataMap.put(alias, new Object[] { additionalDesignCols.getRight() });
-				}
-
-			}
-
-		}
-	}
-
-	Object[] convertForCategoricalVariable(final Variable variable, final String variableValue,
-			final Integer phenotypeId, final boolean isFactor, final String valueStatus) {
-
-		if (StringUtils.isBlank(variableValue)) {
-			return new Object[] { "", "", false, phenotypeId != null ? phenotypeId : "", null };
-		} else {
-			boolean isCategoricalValueFound = false;
-			String catName = "";
-			String catDisplayValue = "";
-
-			// Find the categorical value (possible value) of the measurement
-			// data, so we can get its name and definition.
-			for (final TermSummary category : variable.getScale().getCategories()) {
-
-				final String compareValue = isFactor ? String.valueOf(category.getId()) : category.getName();
-
-				if (compareValue.equalsIgnoreCase(variableValue)) {
-					catName = category.getName();
-					catDisplayValue = category.getDefinition();
-					isCategoricalValueFound = true;
-					break;
-				}
-			}
-
-			// If the measurement value is out of range from categorical values,
-			// then the assumption is, it is custom value.
-			// For this case, just display the measurement data as is.
-			if (!isCategoricalValueFound) {
-				catName = variableValue;
-				catDisplayValue = variableValue;
-			}
-
-			return new Object[] { catName, catDisplayValue, true, phenotypeId != null ? phenotypeId : "", valueStatus };
-		}
-
-	}
-
 	void setValidationService(final ValidationService validationService) {
 		this.validationService = validationService;
 	}
 
-	void setStudyService(final StudyService studyService) {
+	public void setStudyService(final StudyService studyService) {
 		this.studyService = studyService;
 	}
 

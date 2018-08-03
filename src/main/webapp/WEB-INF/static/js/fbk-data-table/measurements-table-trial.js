@@ -80,7 +80,7 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 			if (dataArray !== undefined) {
 				var status = dataArray[dataArray.length - 1];
 				var cellData = $(this).text();
-				var phenotypeId = dataArray[dataArray.length - 2];
+				var phenotypeId = $(this).data('phenotypeId');
 				$(this).removeClass('manually-edited-value');
 				$(this).removeClass('out-of-sync-value');
 				$(this).removeAttr('title');

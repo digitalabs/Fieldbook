@@ -1445,13 +1445,18 @@ function continueStudyImport(doDataRevert) {
 
 function showImportOptions() {
 	'use strict';
-	$('#fileupload').val('');
-	$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
-	// Navigate to edit measurements tab when clicking on import measurements
 	var scope = angular.element(document.getElementById("mainApp")).scope();
 	scope.$apply(function () {
 		scope.navigateToTab('editMeasurements');
 	});
+
+	if ($('body').hasClass('import-preview-measurements')) {
+		return;
+	}
+	$('#fileupload').val('');
+	$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
+	// Navigate to edit measurements tab when clicking on import measurements
+
 
 	if ($('.import-study-data').data('data-import') === '1') {
 		showAlertMessage('', importDataWarningNotification);

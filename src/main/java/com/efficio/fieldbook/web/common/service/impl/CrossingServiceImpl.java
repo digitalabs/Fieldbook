@@ -187,7 +187,7 @@ public class CrossingServiceImpl implements CrossingService {
 		this.saveAttributes(crossSetting, importedCrossesList, savedGermplasmIds);
 	}
 
-	private void saveAttributes(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
+	void saveAttributes(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 			final List<Integer> savedGermplasmIds) {
 		if (crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString()) {
 			this.savePedigreeDesignationName(importedCrossesList, savedGermplasmIds, crossSetting);
@@ -218,7 +218,7 @@ public class CrossingServiceImpl implements CrossingService {
 			plotCodeAttribute.setGermplasmId(newGid);
 			plotCodeAttribute.setTypeId(this.germplasmDataManager.getPlotCodeField().getFldno());
 			plotCodeAttribute.setAval(cross.getSource());
-			plotCodeAttribute.setUserId(this.contextUtil.getCurrentWorkbenchUserId());
+			plotCodeAttribute.setUserId(this.contextUtil.getCurrentUserLocalId());
 
 			attributeList.add(plotCodeAttribute);
 		}

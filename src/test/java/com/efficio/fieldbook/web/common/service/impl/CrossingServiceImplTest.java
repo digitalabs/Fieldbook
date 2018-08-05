@@ -41,13 +41,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
+import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingServiceImplTest {
@@ -688,27 +682,27 @@ public class CrossingServiceImplTest {
 		// Case 1 - No seed source present. Generate new.
 		final ImportedCrosses importedCross1 = new ImportedCrosses();
 		importedCross1.setSource(null);
-		this.crossingService.populateSeedSource(importedCross1, workbook);
+		this.crossingService.populateSeedSource(importedCross1, workbook, new HashMap<String, Workbook>());
 		Assert.assertEquals(newSeedSource, importedCross1.getSource());
 
 		// Case 2 - Seed source is present. Keep.
 		final ImportedCrosses importedCross2 = new ImportedCrosses();
 		final String existingSeedSource = "existingSeedSource";
 		importedCross2.setSource(existingSeedSource);
-		this.crossingService.populateSeedSource(importedCross2, workbook);
+		this.crossingService.populateSeedSource(importedCross2, workbook, new HashMap<String, Workbook>());
 		Assert.assertEquals(existingSeedSource, importedCross2.getSource());
 
 		// Case 3 - Seed source is presend but is PENDING indicator. Generate
 		// new.
 		final ImportedCrosses importedCross3 = new ImportedCrosses();
 		importedCross3.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
-		this.crossingService.populateSeedSource(importedCross3, workbook);
+		this.crossingService.populateSeedSource(importedCross3, workbook, new HashMap<String, Workbook>());
 		Assert.assertEquals(newSeedSource, importedCross3.getSource());
 
 		// Case 4 - Seed source is present but empty string. Generate new.
 		final ImportedCrosses importedCross4 = new ImportedCrosses();
 		importedCross4.setSource("");
-		this.crossingService.populateSeedSource(importedCross4, workbook);
+		this.crossingService.populateSeedSource(importedCross4, workbook, new HashMap<String, Workbook>());
 		Assert.assertEquals(newSeedSource, importedCross4.getSource());
 
 	}

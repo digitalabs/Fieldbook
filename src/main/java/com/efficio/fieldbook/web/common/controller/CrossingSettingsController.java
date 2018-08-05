@@ -22,6 +22,7 @@ import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -391,9 +392,10 @@ public class CrossingSettingsController extends SettingsController {
 
 		this.crossingService.processCrossBreedingMethod(this.studySelection.getCrossSettings(), importedCrossesList);
 
+		Map<String, Workbook> workbookMap = new HashMap<>();
 		// TODO decouple save and apply settings and then replace this for for the apply settings method
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
-			this.crossingService.populateSeedSource(importedCross, this.userSelection.getWorkbook());
+			this.crossingService.populateSeedSource(importedCross, this.userSelection.getWorkbook(), workbookMap);
 		}
 
 		final List<Map<String, Object>> masterList = new ArrayList<>();

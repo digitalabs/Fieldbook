@@ -19,6 +19,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
@@ -32,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -40,12 +42,17 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingServiceImplTest {
 
+	private static final int PLOT_CODE_FLD_NO = 1552;
 	private static final String SUFFIX = "SUFFIX";
 	private static final String PREFIX = "PREFIX";
 	private static final int BREEDING_METHOD_ID = 1;
@@ -62,6 +69,9 @@ public class CrossingServiceImplTest {
 	private static final Integer NEXT_NUMBER = 100;
 
 	private ImportedCrossesList importedCrossesList;
+	
+	@Captor
+	private ArgumentCaptor<List<Attribute>> attributesListCaptor;
 
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
@@ -94,6 +104,8 @@ public class CrossingServiceImplTest {
 	private CrossingServiceImpl crossingService;
 
 	private CrossSetting crossSetting;
+	
+	private Integer localUserId;
 
 	@Before
 	public void setUp() throws MiddlewareQueryException {
@@ -109,7 +121,7 @@ public class CrossingServiceImplTest {
 		Mockito.doReturn("generatedSourceString").when(this.seedSourceGenertor)
 				.generateSeedSourceForCross(Matchers.any(Workbook.class), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
 						Matchers.anyString());
-		Mockito.doReturn(new UserDefinedField(1552)).when(this.germplasmDataManager).getPlotCodeField();
+		Mockito.doReturn(new UserDefinedField(PLOT_CODE_FLD_NO)).when(this.germplasmDataManager).getPlotCodeField();
 
 		this.crossSetting = new CrossSetting();
 		this.crossSetting.setCrossNameSetting(this.createCrossNameSetting());
@@ -118,6 +130,9 @@ public class CrossingServiceImplTest {
 
 		Mockito.doReturn(String.valueOf(CrossingServiceImplTest.NEXT_NUMBER)).when(this.germplasmDataManager)
 				.getNextSequenceNumberForCrossName(Matchers.anyString(), Matchers.anyString());
+		
+		this.localUserId = new Random().nextInt(Integer.MAX_VALUE);
+		Mockito.doReturn(this.localUserId).when(this.contextUtil).getCurrentUserLocalId();
 	}
 
 	private Project createProject() {
@@ -778,7 +793,78 @@ public class CrossingServiceImplTest {
 		final int startingSequenceNumber = this.crossingService.getStartingSequenceNumber(setting);
 		Assert.assertEquals("The starting sequence number should be " + startingSequenceNumber, CrossingServiceImplTest.NEXT_NUMBER.intValue(), startingSequenceNumber); 
 	}
+	
+	@Test
+	public void testSaveAttributes() {
+		final List<Integer> germplasmIds = Arrays.asList(101, 102);
+		this.crossingService.saveAttributes(crossSetting, importedCrossesList, germplasmIds);
+		Mockito.verify(this.germplasmDataManager).addAttributes(attributesListCaptor.capture());
+		
+		final List<Attribute> attributesList = attributesListCaptor.getValue();
+		Assert.assertEquals(germplasmIds.size(), attributesList.size());
+		final Iterator<Integer> idsIterator = germplasmIds.iterator();
+		final Iterator<ImportedCrosses> crossesIterator = importedCrossesList.getImportedCrosses().iterator();
+		for (final Attribute attribute : attributesList) {
+			final Integer gid = idsIterator.next();
+			final ImportedCrosses cross = crossesIterator.next();
+			this.verifyPlotCodeAttributeValues(attribute, gid, cross);
+		}
+	}
+	
+	@Test
+	public void testSaveAttributesWhenMergingPlotDuplicates() {
+		final ImportedCrosses secondCross = this.importedCrossesList.getImportedCrosses().get(1);
+		// Set 2nd cross as plot duplicate of first cross
+		secondCross.setDuplicateEntries(new HashSet<>(Arrays.asList(1)));
+		secondCross.setDuplicatePrefix(ImportedCrosses.PLOT_DUPE_PREFIX);
+		this.crossSetting.setPreservePlotDuplicates(false);
+		
+		final List<Integer> germplasmIds = Arrays.asList(101, 102);
+		this.crossingService.saveAttributes(crossSetting, importedCrossesList, germplasmIds);
+		Mockito.verify(this.germplasmDataManager).addAttributes(attributesListCaptor.capture());
+		final List<Attribute> attributesList = attributesListCaptor.getValue();
+		Assert.assertEquals("Attribute will be saved only for first entry",  1, attributesList.size());
+		final ImportedCrosses firstCross = this.importedCrossesList.getImportedCrosses().get(0);
+		this.verifyPlotCodeAttributeValues(attributesList.get(0), germplasmIds.get(0),
+				firstCross);
+		// Verify that gid, cross and designation from 1st cross was copied to 2nd cross
+		Assert.assertEquals(firstCross.getGid(), secondCross.getGid());
+		Assert.assertEquals(firstCross.getCross(), secondCross.getCross());
+		Assert.assertEquals(firstCross.getDesig(), secondCross.getDesig());
+	}
+	
+	@Test
+	public void testSaveAttributesWhenPreservingPlotDuplicates() {
+		final ImportedCrosses secondCross = this.importedCrossesList.getImportedCrosses().get(1);
+		// Set 2nd cross as plot duplicate of first cross
+		secondCross.setDuplicateEntries(new HashSet<>(Arrays.asList(1)));
+		secondCross.setDuplicatePrefix(ImportedCrosses.PLOT_DUPE_PREFIX);
+		this.crossSetting.setPreservePlotDuplicates(true);
+		
+		final List<Integer> germplasmIds = Arrays.asList(101, 102);
+		this.crossingService.saveAttributes(crossSetting, importedCrossesList, germplasmIds);
+		Mockito.verify(this.germplasmDataManager).addAttributes(attributesListCaptor.capture());
+		final List<Attribute> attributesList = attributesListCaptor.getValue();
+		Assert.assertEquals("Expecting plot duplicate crosses to be preserved", germplasmIds.size(), attributesList.size());
+		final Iterator<Integer> idsIterator = germplasmIds.iterator();
+		final Iterator<ImportedCrosses> crossesIterator = importedCrossesList.getImportedCrosses().iterator();
+		for (final Attribute attribute : attributesList) {
+			final Integer gid = idsIterator.next();
+			final ImportedCrosses cross = crossesIterator.next();
+			this.verifyPlotCodeAttributeValues(attribute, gid, cross);
+		}
+	}
 
+	private void verifyPlotCodeAttributeValues(final Attribute attribute, final Integer gid, final ImportedCrosses cross) {
+		Assert.assertEquals(Integer.valueOf(DateUtil.getCurrentDateAsStringValue()), attribute.getAdate());
+		Assert.assertEquals(gid, attribute.getGermplasmId());
+		Assert.assertEquals(gid.toString(), cross.getGid());
+		Assert.assertEquals(cross.getSource(), attribute.getAval());
+		Assert.assertEquals(PLOT_CODE_FLD_NO, attribute.getTypeId().intValue());
+		Assert.assertEquals(this.localUserId, attribute.getUserId());
+	}
+	
+	
 	private ImportedCrossesList createImportedCrossesList() {
 
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
@@ -796,10 +882,11 @@ public class CrossingServiceImplTest {
 		cross.setFemaleGid(CrossingServiceImplTest.TEST_FEMALE_GID_1);
 		cross.setMaleDesig("MALE-54321");
 		cross.setMaleGid(CrossingServiceImplTest.TEST_MALE_GID_1);
-		cross.setCross("CROSS");
+		cross.setCross("CROSS 1");
 		cross.setSource("MALE:1:FEMALE:1");
 		cross.setDesig(
 				"G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B/((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML161xCML451)-B-18-1-BBB/CML1612345");
+		cross.setEntryId(1);
 		importedCrosses.add(cross);
 		final ImportedCrosses cross2 = this.createSecondCross();
 		importedCrosses.add(cross2);
@@ -814,10 +901,11 @@ public class CrossingServiceImplTest {
 		cross2.setFemaleGid(CrossingServiceImplTest.TEST_FEMALE_GID_2);
 		cross2.setMaleDesig("MALE-8888");
 		cross2.setMaleGid(CrossingServiceImplTest.TEST_MALE_GID_2);
-		cross2.setCross("CROSS");
+		cross2.setCross("CROSS 2");
 		cross2.setSource("MALE:2:FEMALE:2");
 		cross2.setDesig(
 				"((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B/((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML161xCML451)-B-18-1-BBB/CML161");
+		cross2.setEntryId(2);
 		return cross2;
 	}
 

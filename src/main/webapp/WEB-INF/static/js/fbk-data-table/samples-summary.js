@@ -37,9 +37,11 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 				{data: 'sampleList'},
 				{data: 'plantNumber'},
 				{data: 'plantBusinessKey'},
+				{data: 'plateId'},
+				{data: 'well'},
 				{data: 'datasets',
 					render: function (data, type, row) {
-						if (!data || !data.length || data.length == 0) {
+						if (!data || !data.length || data.length === 0) {
 							return '-';
 						}
 						var authParams =

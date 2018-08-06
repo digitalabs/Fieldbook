@@ -24,7 +24,6 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.ontology.FormulaDto;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.util.PoiUtil;
@@ -118,7 +117,7 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 					}
 				}
 
-				this.setMesarumentDataAsOutOfSync(formulasMap, measurementRow);
+				this.setMeasurementDataAsOutOfSync(formulasMap, measurementRow);
 			}
 
 			if (countPlotIdNotFound != 0) {
@@ -128,7 +127,7 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 		}
 	}
 
-	private void setMesarumentDataAsOutOfSync(final Map<MeasurementVariable, List<MeasurementVariable>> formulasMap,
+	private void setMeasurementDataAsOutOfSync(final Map<MeasurementVariable, List<MeasurementVariable>> formulasMap,
 		final MeasurementRow measurementRow) {
 		for (final MeasurementVariable measurementVariable : formulasMap.keySet()) {
 			final MeasurementData key = measurementRow.getMeasurementData(measurementVariable.getTermId());

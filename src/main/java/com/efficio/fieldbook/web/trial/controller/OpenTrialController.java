@@ -516,9 +516,9 @@ public class OpenTrialController extends BaseTrialController {
 				this.fieldbookService
 						.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), workbook.getStudyName(), data.getColumnOrders(),
 								workbook);
-				final Boolean hasOutOfSyncObervations =
+				final Boolean hasOutOfSyncObservations =
 					this.fieldbookMiddlewareService.hasOutOfSyncObervations(workbook.getMeasurementDatesetId());
-				returnVal.put(OpenTrialController.CONTAINS_OUT_OF_SYNC_VALUES, hasOutOfSyncObervations);
+				returnVal.put(OpenTrialController.CONTAINS_OUT_OF_SYNC_VALUES, hasOutOfSyncObservations);
 				return returnVal;
 			} catch (final MiddlewareQueryException e) {
 				OpenTrialController.LOG.error(e.getMessage(), e);

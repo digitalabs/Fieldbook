@@ -105,7 +105,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@Resource
 	private OntologyService ontologyService;
 
-	private DataMapUtil dataMapUtil = new DataMapUtil();
+	private final DataMapUtil dataMapUtil = new DataMapUtil();
 
 	@Override
 	public String getContentName() {
@@ -208,8 +208,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		final List<ObservationDto> singleObservation = this.studyService
 			.getSingleObservation(this.getUserSelection().getWorkbook().getStudyDetails().getId(), experimentId);
 		if (!singleObservation.isEmpty()) {
-			dataMap = dataMapUtil.generateDatatableDataMap(singleObservation.get(0), new HashMap<String, String>(), userSelection,
-					ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
+			dataMap = this.dataMapUtil.generateDatatableDataMap(singleObservation.get(0), new HashMap<String, String>(), this.userSelection,
+				this.ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
 		}
 		map.put(TrialMeasurementsController.DATA, dataMap);
 		return map;
@@ -553,8 +553,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 				pageSize, sortBy, sortOrder);
 		final Map<String, String> nameToAliasMap = this.createNameToAliasMap(studyId);
 		for (final ObservationDto row : pageResults) {
-			final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(row, nameToAliasMap, userSelection,
-					ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
+			final Map<String, Object> dataMap = this.dataMapUtil.generateDatatableDataMap(row, nameToAliasMap, this.userSelection,
+				this.ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
 			masterDataList.add(dataMap);
 		}
 
@@ -801,10 +801,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	public boolean isBeingACalculatedValueEdited(final Variable variable, final Phenotype oldPhenotype, final String newValue) {
 		String value = null;
 		if (oldPhenotype != null && variable.getFormula() != null) {
-			if (TermId.CATEGORICAL_VARIABLE.getId() == variable.getScale().getDataType().getId()) {
+			if (TermId.CATEGORICAL_VARIABLE.getId() == variable.getScale().getDataType().getId() && oldPhenotype.getcValueId() != null) {
 				value = oldPhenotype.getcValueId().toString();
-			}
-			else {
+			} else {
 				value = oldPhenotype.getValue();
 			}
 			return !newValue.equals(value);

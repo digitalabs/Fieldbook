@@ -130,7 +130,7 @@ public class DerivedVariableControllerTest {
 		inputs.add(new FormulaVariable(VARIABLE2_TERMID, String.valueOf(VARIABLE2_TERMID), VARIABLE1_TERMID));
 		inputs.add(new FormulaVariable(VARIABLE3_TERMID, String.valueOf(VARIABLE3_TERMID), VARIABLE1_TERMID));
 		formulaDTO.setInputs(inputs);
-		formulaDTO.setTargetTermId(Integer.valueOf(VARIABLE1_TERMID));
+		formulaDTO.setTarget(new FormulaVariable(Integer.valueOf(VARIABLE1_TERMID), "", null));
 		Mockito.when(formulaOptional.get()).thenReturn(formulaDTO);
 	}
 

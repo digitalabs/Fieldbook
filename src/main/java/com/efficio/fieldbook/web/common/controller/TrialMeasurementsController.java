@@ -1,15 +1,15 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.util.DataMapUtil;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.trial.service.ValidationService;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.google.common.base.Optional;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -50,13 +50,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.util.DataMapUtil;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.trial.service.ValidationService;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.google.common.base.Optional;
 
 @Controller
 @RequestMapping("/trial/measurements")
@@ -137,7 +139,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		try {
 			this.validationService.validateObservationValues(workbook);
 			this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(),
-				true);
+					true);
 			resultMap.put(TrialMeasurementsController.STATUS, "1");
 		} catch (final WorkbookParserException e) {
 			TrialMeasurementsController.LOG.error(e.getMessage(), e);
@@ -160,7 +162,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/update/experiment/cell/data", method = RequestMethod.POST)
 	@Transactional
 	public Map<String, Object> updateExperimentCellData(@RequestBody final Map<String, String> data,
-		final HttpServletRequest req) {
+			final HttpServletRequest req) {
 
 		final Map<String, Object> map = new HashMap<>();
 		Integer phenotypeId = null;
@@ -184,7 +186,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			}
 
 			final Variable trait = this.ontologyVariableDataManager
-				.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true, false);
+					.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true, false);
 
 			if (!invalidButKeep && !this.validationService.validateObservationValue(trait, value)) {
 				map.put(TrialMeasurementsController.SUCCESS, "0");
@@ -192,13 +194,13 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 				return map;
 			}
 			this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, trait.getId(), value, existingPhenotype,
-				trait.getScale().getDataType().getId());
+					trait.getScale().getDataType().getId());
 		}
 		map.put(TrialMeasurementsController.SUCCESS, "1");
 
 		Map<String, Object> dataMap = new HashMap<>();
 		final List<ObservationDto> singleObservation = this.studyService
-			.getSingleObservation(this.getUserSelection().getWorkbook().getStudyDetails().getId(), experimentId);
+				.getSingleObservation(this.getUserSelection().getWorkbook().getStudyDetails().getId(), experimentId);
 		if (!singleObservation.isEmpty()) {
 			dataMap = this.generateDatatableDataMap(singleObservation.get(0), new HashMap<String, String>());
 		}
@@ -216,7 +218,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/updateByIndex/experiment/cell/data", method = RequestMethod.POST)
 	@Transactional
 	public Map<String, Object> updateExperimentCellDataByIndex(@RequestBody final Map<String, String> data,
-		final HttpServletRequest req) {
+			final HttpServletRequest req) {
 
 		final Map<String, Object> map = new HashMap<>();
 
@@ -255,7 +257,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 				map.put(TrialMeasurementsController.SUCCESS, "1");
 				final DataMapUtil dataMapUtil = new DataMapUtil();
 				final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(originalRow, "",
-					this.getUserSelection());
+						this.getUserSelection());
 				map.put(TrialMeasurementsController.DATA, dataMap);
 			} catch (final MiddlewareQueryException e) {
 				TrialMeasurementsController.LOG.error(e.getMessage(), e);
@@ -276,17 +278,17 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	private void convertToDBDateIfDate(final MeasurementData var) {
 		if (var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null
-			&& var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
+				&& var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
 			var.setValue(DateUtil.convertToDBDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
 		}
 	}
 
 	private void updatePhenotypeValues(final List<MeasurementData> measurementDataList, final String value,
-		final int termId, final int isNew) {
+			final int termId, final int isNew) {
 		for (final MeasurementData var : measurementDataList) {
 			if (var != null && var.getMeasurementVariable().getTermId() == termId) {
 				if (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
-					|| !var.getMeasurementVariable().getPossibleValues().isEmpty()) {
+						|| !var.getMeasurementVariable().getPossibleValues().isEmpty()) {
 					if (isNew == 1) {
 						var.setcValueId(null);
 						var.setCustomCategoricalValue(true);
@@ -308,7 +310,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@ResponseBody
 	@RequestMapping(value = "/update/experiment/cell/accepted", method = RequestMethod.POST)
 	public Map<String, Object> markExperimentCellDataAsAccepted(@RequestBody final Map<String, String> data,
-		final HttpServletRequest req) {
+			final HttpServletRequest req) {
 
 		final Map<String, Object> map = new HashMap<>();
 
@@ -322,18 +324,18 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		if (originalRow != null && originalRow.getMeasurementVariables() != null) {
 			for (final MeasurementData var : originalRow.getDataList()) {
 				if (var != null && var.getMeasurementVariable().getTermId() == termId
-					&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
-					|| !var.getMeasurementVariable().getPossibleValues().isEmpty())) {
+						&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
+								|| !var.getMeasurementVariable().getPossibleValues().isEmpty())) {
 					var.setAccepted(true);
 					if (this.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(),
-						var.getMeasurementVariable().getPossibleValues())) {
+							var.getMeasurementVariable().getPossibleValues())) {
 						var.setCustomCategoricalValue(true);
 					} else {
 						var.setCustomCategoricalValue(false);
 					}
 					break;
 				} else if (var != null && var.getMeasurementVariable().getTermId() == termId
-					&& var.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
+						&& var.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
 					var.setAccepted(true);
 					break;
 				}
@@ -342,7 +344,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		map.put(TrialMeasurementsController.SUCCESS, "1");
 		final DataMapUtil dataMapUtil = new DataMapUtil();
-		final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(originalRow, "", this.getUserSelection());
+		final Map<String, Object> dataMap = dataMapUtil.generateDatatableDataMap(originalRow, "",
+				this.getUserSelection());
 		map.put(TrialMeasurementsController.DATA, dataMap);
 
 		return map;
@@ -351,17 +354,17 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	private void markNonEmptyVariateValuesAsMissing(final List<MeasurementData> measurementDataList) {
 		for (final MeasurementData var : measurementDataList) {
 			if (var != null && !StringUtils.isEmpty(var.getValue())
-				&& var.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
+					&& var.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
 				if (this.isNumericalValueOutOfBounds(var.getValue(), var.getMeasurementVariable())) {
 					var.setAccepted(true);
 					var.setValue(MeasurementData.MISSING_VALUE);
 				}
 			} else if (var != null && !StringUtils.isEmpty(var.getValue())
-				&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
-				|| !var.getMeasurementVariable().getPossibleValues().isEmpty())) {
+					&& (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()
+							|| !var.getMeasurementVariable().getPossibleValues().isEmpty())) {
 				var.setAccepted(true);
 				if (this.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(),
-					var.getMeasurementVariable().getPossibleValues())) {
+						var.getMeasurementVariable().getPossibleValues())) {
 					var.setValue(MeasurementData.MISSING_VALUE);
 					var.setCustomCategoricalValue(true);
 				} else {
@@ -388,7 +391,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/update/experiment/cell/accepted/all", method = RequestMethod.GET)
 	public Map<String, Object> markAllExperimentDataAsAccepted() {
 
-		final Map<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<>();
 
 		for (final MeasurementRow row : this.userSelection.getMeasurementRowList()) {
 			if (row != null && row.getMeasurementVariables() != null) {
@@ -430,7 +433,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	 */
 	@RequestMapping(value = "/edit/experiment/cell/{experimentId}/{termId}", method = RequestMethod.GET)
 	public String editExperimentCells(@PathVariable final int experimentId, @PathVariable final int termId,
-		@RequestParam(required = false) final Integer phenotypeId, final Model model) {
+			@RequestParam(required = false) final Integer phenotypeId, final Model model) {
 
 		if (phenotypeId != null) {
 			final Phenotype phenotype = this.studyDataManager.getPhenotypeById(phenotypeId);
@@ -442,7 +445,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 
 		final Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-			termId, true, false);
+				termId, true, false);
 
 		model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
 		model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
@@ -482,7 +485,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 
 		final Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-			termId, true, false);
+				termId, true, false);
 		model.addAttribute("variable", variable);
 		model.addAttribute(TrialMeasurementsController.PHENOTYPE_ID, editData.getPhenotypeId());
 		model.addAttribute(TrialMeasurementsController.PHENOTYPE_VALUE, editData.getValue());
@@ -497,12 +500,13 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	private void convertToUIDateIfDate(final MeasurementData var) {
 		if (var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null
-			&& var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
+				&& var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
 			var.setValue(DateUtil.convertToUIDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
 		}
 	}
 
-	private void updateModel(final Model model, final MeasurementData measurementData, final int index, final int termId) {
+	private void updateModel(final Model model, final MeasurementData measurementData, final int index,
+			final int termId) {
 		model.addAttribute("measurementData", measurementData);
 		model.addAttribute(TrialMeasurementsController.INDEX, index);
 		model.addAttribute(TrialMeasurementsController.TERM_ID, termId);
@@ -517,8 +521,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/plotMeasurements/{studyId}/{instanceId}", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
 	public Map<String, Object> getPlotMeasurementsPaginated(@PathVariable final int studyId,
-		@PathVariable final int instanceId, @ModelAttribute("createTrialForm") final CreateTrialForm form,
-		final Model model, final HttpServletRequest req) {
+			@PathVariable final int instanceId, @ModelAttribute("createTrialForm") final CreateTrialForm form,
+			final Model model, final HttpServletRequest req) {
 
 		final List<Map<String, Object>> masterDataList = new ArrayList<>();
 		final Map<String, Object> masterMap = new HashMap<>();
@@ -620,7 +624,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@ResponseBody
 	@RequestMapping(value = "/setCategoricalDisplayType", method = RequestMethod.GET)
 	public Boolean setCategoricalDisplayType(@RequestParam final Boolean showCategoricalDescriptionView,
-		final HttpSession session) {
+			final HttpSession session) {
 		Boolean isCategoricalDescriptionView = (Boolean) session.getAttribute("isCategoricalDescriptionView");
 
 		if (null != showCategoricalDescriptionView) {
@@ -636,8 +640,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	@RequestMapping(value = "/pageView/{pageNum}", method = RequestMethod.GET)
 	public String getPaginatedListViewOnly(@PathVariable final int pageNum,
-		@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model, @RequestParam("listIdentifier")
-	final String datasetId) {
+			@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model,
+			@RequestParam("listIdentifier") final String datasetId) {
 
 		final List<MeasurementRow> rows = this.paginationListSelection.getReviewDetailsList(datasetId);
 		if (rows != null) {
@@ -653,23 +657,24 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		return super.showAjaxPage(model, "/TrialManager/datasetSummaryView");
 	}
 
-
-	@RequestMapping(value = "/viewStudyAjax/{datasetId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/viewStudyAjax/{datasetId}/{studyId}", method = RequestMethod.GET)
 	public String viewStudyAjax(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model,
-		@PathVariable final int datasetId) {
-
+			@PathVariable final int datasetId, @PathVariable final int studyId) {
 		Workbook workbook = null;
 		try {
 			workbook = this.fieldbookMiddlewareService.getCompleteDataset(datasetId);
 			this.fieldbookService.setAllPossibleValuesInWorkbook(workbook);
-			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-				this.ontologyService, contextUtil.getCurrentProgramUUID());
+			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(),
+					false, this.ontologyService, this.contextUtil.getCurrentProgramUUID());
 		} catch (final MiddlewareException e) {
 			TrialMeasurementsController.LOG.error(e.getMessage(), e);
 		}
-		this.getUserSelection().setMeasurementRowList(workbook.arrangeMeasurementObservation(workbook.getObservations()));
+		this.getUserSelection()
+				.setMeasurementRowList(workbook.arrangeMeasurementObservation(workbook.getObservations()));
 		form.setMeasurementRowList(this.getUserSelection().getMeasurementRowList());
 		form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+		this.changeLocationIdToName(form.getMeasurementRowList(), workbook.getMeasurementDatasetVariablesMap(),
+				studyId);
 		this.paginationListSelection.addReviewDetailsList(String.valueOf(datasetId), form.getMeasurementRowList());
 		this.paginationListSelection.addReviewVariableList(String.valueOf(datasetId), form.getMeasurementVariables());
 		form.changePage(1);
@@ -678,13 +683,29 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		return super.showAjaxPage(model, TrialMeasurementsController.OBSERVATIONS_HTML);
 	}
 
+	void changeLocationIdToName(final List<MeasurementRow> measurementRowList,
+			final Map<String, MeasurementVariable> measurementDatasetVariablesMap, final int studyId) {
+		if (measurementDatasetVariablesMap.get(String.valueOf(TermId.LOCATION_ID.getId())) != null) {
+			final Map<String, String> locationNameMap = this.studyDataManager
+					.createInstanceLocationIdToNameMapFromStudy(studyId);
+			for (final MeasurementRow row : measurementRowList) {
+				for (final MeasurementData data : row.getDataList()) {
+					if (TermId.LOCATION_ID.getId() == data.getMeasurementVariable().getTermId()) {
+						data.setValue(locationNameMap.get(data.getValue()));
+					}
+				}
+			}
+		}
+
+	}
+
 	protected boolean isNumericalValueOutOfBounds(final String value, final MeasurementVariable var) {
 		return var.getMinRange() != null && var.getMaxRange() != null && NumberUtils.isNumber(value)
-			&& (Double.valueOf(value) < var.getMinRange() || Double.valueOf(value) > var.getMaxRange());
+				&& (Double.valueOf(value) < var.getMinRange() || Double.valueOf(value) > var.getMaxRange());
 	}
 
 	protected boolean isCategoricalValueOutOfBounds(final String cValueId, final String value,
-		final List<ValueReference> possibleValues) {
+			final List<ValueReference> possibleValues) {
 		String val = cValueId;
 		if (val == null) {
 			val = value;
@@ -702,7 +723,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	}
 
 	protected void copyMeasurementValue(final MeasurementRow origRow, final MeasurementRow valueRow,
-		final boolean isNew) {
+			final boolean isNew) {
 
 		for (int index = 0; index < origRow.getDataList().size(); index++) {
 			final MeasurementData data = origRow.getDataList().get(index);
@@ -717,12 +738,12 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	}
 
 	private void copyMeasurementDataValue(final MeasurementData oldData, final MeasurementData newData,
-		final boolean isNew) {
+			final boolean isNew) {
 		if (oldData.getMeasurementVariable().getPossibleValues() != null
-			&& !oldData.getMeasurementVariable().getPossibleValues().isEmpty()) {
+				&& !oldData.getMeasurementVariable().getPossibleValues().isEmpty()) {
 			oldData.setAccepted(newData.isAccepted());
 			if (!StringUtils.isEmpty(oldData.getValue()) && oldData.isAccepted() && this.isCategoricalValueOutOfBounds(
-				oldData.getcValueId(), oldData.getValue(), oldData.getMeasurementVariable().getPossibleValues())) {
+					oldData.getcValueId(), oldData.getValue(), oldData.getMeasurementVariable().getPossibleValues())) {
 				oldData.setCustomCategoricalValue(true);
 			} else {
 				oldData.setCustomCategoricalValue(false);
@@ -773,9 +794,9 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 			final Integer variableId = data.getMeasurementVariable().getId();
 			final Variable variable = this.ontologyVariableDataManager
-				.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, true, false);
+					.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, true, false);
 			final MeasurementVariable measurementVariable = WorkbookUtil
-				.getMeasurementVariable(measurementDatasetVariables, variableId);
+					.getMeasurementVariable(measurementDatasetVariables, variableId);
 
 			// measurementVariable could be null if the trait was deleted
 			if (measurementVariable != null) {
@@ -786,12 +807,12 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 				} else if (variable.getScale().getDataType().equals(DataType.NUMERIC_VARIABLE)) {
 					dataMap.put(measurementVariable.getName(),
-						new Object[] { data.getVariableValue() != null ? data.getVariableValue() : "", true,
-							data.getPhenotypeId() != null ? data.getPhenotypeId() : "" });
+							new Object[] { data.getVariableValue() != null ? data.getVariableValue() : "", true,
+									data.getPhenotypeId() != null ? data.getPhenotypeId() : "" });
 				} else {
 					dataMap.put(measurementVariable.getName(),
-						new Object[] { data.getVariableValue() != null ? data.getVariableValue() : "",
-							data.getPhenotypeId() != null ? data.getPhenotypeId() : "" });
+							new Object[] { data.getVariableValue() != null ? data.getVariableValue() : "",
+									data.getPhenotypeId() != null ? data.getPhenotypeId() : "" });
 				}
 			}
 		}
@@ -802,7 +823,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		// generate measurement row data from newly added traits (no data yet)
 		if (this.getUserSelection() != null && this.getUserSelection().getMeasurementDatasetVariable() != null
-			&& !this.getUserSelection().getMeasurementDatasetVariable().isEmpty()) {
+				&& !this.getUserSelection().getMeasurementDatasetVariable().isEmpty()) {
 			for (final MeasurementVariable var : this.getUserSelection().getMeasurementDatasetVariable()) {
 				if (!dataMap.containsKey(var.getName())) {
 					if (var.getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
@@ -830,7 +851,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	void addGermplasmAndPlotFactorsDataToDataMap(final ObservationDto row, final Map<String, Object> dataMap,
 			final List<MeasurementVariable> measurementDatasetVariables, final Map<String, String> nameToAliasMap) {
 		final MeasurementVariable gidVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.GID.getId());
+				TermId.GID.getId());
 
 		// Add local variable names of GID and DESIGNATiON variables if they are
 		// not equal to "GID" and "DESIGNATION"
@@ -839,79 +860,79 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			dataMap.put(gidVar.getName(), row.getGid());
 		}
 		final MeasurementVariable desigVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.DESIG.getId());
+				TermId.DESIG.getId());
 		if (desigVar != null && !TrialMeasurementsController.DESIGNATION.equals(desigVar.getName())) {
 			dataMap.put(desigVar.getName(), row.getDesignation());
 		}
 
 		final MeasurementVariable entryNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.ENTRY_NO.getId());
+				TermId.ENTRY_NO.getId());
 		if (entryNoVar != null) {
 			dataMap.put(entryNoVar.getName(), new Object[] { row.getEntryNo(), false });
 		}
 
 		final MeasurementVariable entryCodeVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.ENTRY_CODE.getId());
+				TermId.ENTRY_CODE.getId());
 		if (entryCodeVar != null) {
 			dataMap.put(entryCodeVar.getName(), new Object[] { row.getEntryCode(), false });
 		}
 
 		final MeasurementVariable entryTypeVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.ENTRY_TYPE.getId());
+				TermId.ENTRY_TYPE.getId());
 		if (entryTypeVar != null) {
 			dataMap.put(entryTypeVar.getName(), new Object[] { row.getEntryType(), row.getEntryType(), false });
 		}
 
 		final MeasurementVariable plotNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.PLOT_NO.getId());
+				TermId.PLOT_NO.getId());
 		if (plotNoVar != null) {
 			dataMap.put(plotNoVar.getName(), new Object[] { row.getPlotNumber(), false });
 		}
 
 		final MeasurementVariable repNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.REP_NO.getId());
+				TermId.REP_NO.getId());
 		if (repNoVar != null) {
 			dataMap.put(repNoVar.getName(), new Object[] { row.getRepitionNumber(), false });
 		}
 
 		final MeasurementVariable blockNoVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.BLOCK_NO.getId());
+				TermId.BLOCK_NO.getId());
 		if (blockNoVar != null) {
 			dataMap.put(blockNoVar.getName(), new Object[] { row.getBlockNumber(), false });
 		}
 
 		final MeasurementVariable rowVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.ROW.getId());
+				TermId.ROW.getId());
 		if (rowVar != null) {
 			dataMap.put(rowVar.getName(), new Object[] { row.getRowNumber(), false });
 		}
 
 		final MeasurementVariable colVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.COL.getId());
+				TermId.COL.getId());
 		if (colVar != null) {
 			dataMap.put(colVar.getName(), new Object[] { row.getColumnNumber(), false });
 		}
 
 		final MeasurementVariable trialInstanceVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.TRIAL_INSTANCE_FACTOR.getId());
+				TermId.TRIAL_INSTANCE_FACTOR.getId());
 		if (trialInstanceVar != null) {
 			dataMap.put(trialInstanceVar.getName(), new Object[] { row.getTrialInstance(), false });
 		}
 
 		final MeasurementVariable plotIdVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.PLOT_ID.getId());
+				TermId.PLOT_ID.getId());
 		if (plotIdVar != null) {
 			dataMap.put(plotIdVar.getName(), new Object[] { row.getPlotId(), false });
 		}
 
 		final MeasurementVariable fieldMapcolumVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.FIELDMAP_COLUMN.getId());
+				TermId.FIELDMAP_COLUMN.getId());
 		if (fieldMapcolumVar != null) {
 			dataMap.put(fieldMapcolumVar.getName(), new Object[] { row.getFieldMapColumn(), false });
 		}
 
 		final MeasurementVariable fieldMapRangevar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables,
-			TermId.FIELDMAP_RANGE.getId());
+				TermId.FIELDMAP_RANGE.getId());
 		if (fieldMapRangevar != null) {
 			dataMap.put(fieldMapRangevar.getName(), new Object[] { row.getFieldMapRange(), false });
 		}
@@ -1001,6 +1022,11 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	}
 
 	public UserSelection getUserSelection() {
-		return userSelection;
+		return this.userSelection;
+	}
+
+	@Override
+	public void setPaginationListSelection(final PaginationListSelection paginationListSelection) {
+		this.paginationListSelection = paginationListSelection;
 	}
 }

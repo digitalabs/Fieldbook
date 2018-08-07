@@ -162,14 +162,24 @@ table .even{
     border-bottom: none;
 }
 
-td.invalid-value {
-  background-color: #ffdfdf;
-  color: #7f484a;
+td.manually-edited-value {
+    background-color: #c5c6de;
+    color: black;
 }
 
 td.accepted-value {
-  background-color: #E6F5FF;
-  color: #3366CC;
+    background-color: #E6F5FF;
+    color: #3366CC;
+}
+
+td.out-of-sync-value {
+    background-color: #ffffcd;
+    color: black;
+}
+
+td.invalid-value {
+  background-color: #ffdfdf;
+  color: #7f484a;
 }
 
 table .highlight, table .field-map-highlight {
@@ -1854,10 +1864,6 @@ div.variable-details-popup {
 	top: 2px; 
 	position:relative;
 }
-td.accepted-value {
-  background-color: #E6F5FF;
-  color: #3366CC;
-}
 .fb-delete-settings{
 	color: #000000;
 }
@@ -2224,4 +2230,8 @@ input.select-all-margin{
 #variableDetailsTable td {
     padding: 5px;
     width: 50%;
+}
+
+table.dataTable thead .derived-trait-column-header {
+    background-color: #bdd9b4;
 }

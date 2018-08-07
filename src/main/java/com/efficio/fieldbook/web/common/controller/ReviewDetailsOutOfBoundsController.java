@@ -16,6 +16,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -212,6 +213,9 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 			} else if (value.getAction().equals(ReviewDetailsOutOfBoundsController.SET_SELECTED_VALUES_TO_MISSING)) {
 				measurementData.setAccepted(true);
 				measurementData.setValue(MeasurementData.MISSING_VALUE);
+				if (measurementData.getMeasurementVariable().getFormula() != null) {
+					measurementData.setValueStatus(Phenotype.ValueStatus.MANUALLY_EDITED);
+				}
 			}
 		} else {
 			this.setMeasurementDataValue(possibleValueId, measurementData, value);
@@ -230,6 +234,9 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 					measurementData.setAccepted(true);
 				}
 				measurementData.setValue(possibleValueId);
+			}
+			if (measurementData.getMeasurementVariable().getFormula() != null) {
+				measurementData.setValueStatus(Phenotype.ValueStatus.MANUALLY_EDITED);
 			}
 		}
 	}

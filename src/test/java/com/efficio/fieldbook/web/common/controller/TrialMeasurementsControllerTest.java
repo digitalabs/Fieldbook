@@ -1,7 +1,6 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
 
 import java.util.ArrayList;
@@ -92,14 +91,11 @@ public class TrialMeasurementsControllerTest {
 	private static final String TERM_ID = "termId";
 	private static final String IS_DISCARD = "isDiscard";
 	private static final String EXPERIMENT_ID = "experimentId";
-	private static final String ACTION = "Action";
 	private static final String CROSS = "CROSS";
 	private static final String STOCK_ID = "StockID";
 	private static final String ALEUCOL_1_5_TRAIT_NAME = "ALEUCOL_1_5";
 	private static final int ALEUCOL_1_5_TERM_ID = 123;
 	private static final String LOCAL = "-Local";
-	private static final String FIELDMAP_COLUMN = "FIELDMAP_COLUMN";
-	private static final String FIELDMAP_RANGE = "FIELDMAP_RANGE";
 
 	@InjectMocks
 	private TrialMeasurementsController measurementsController;
@@ -141,11 +137,11 @@ public class TrialMeasurementsControllerTest {
 	private List<MeasurementVariable> measurementVariables;
 
 	private final MeasurementDto measurementText = new MeasurementDto(new MeasurementVariableDto(1, "NOTES"), 1,
-			"Text Notes");
+			"Text Notes", null);
 	private final MeasurementDto measurementNumeric = new MeasurementDto(new MeasurementVariableDto(2, "Grain Yield"),
-			2, "500");
+			2, "500", null);
 	private final MeasurementDto measurementCategorical = new MeasurementDto(
-			new MeasurementVariableDto(3, "CategoricalTrait"), 3, "CategoryValue1");
+			new MeasurementVariableDto(3, "CategoricalTrait"), 3, "CategoryValue1", null);
 
 	private final TermId[] standardFactors = { TermId.GID, TermId.ENTRY_NO, TermId.ENTRY_TYPE, TermId.ENTRY_CODE,
 			TermId.PLOT_NO, TermId.PLOT_ID, TermId.BLOCK_NO, TermId.REP_NO, TermId.ROW, TermId.COL,
@@ -442,6 +438,7 @@ public class TrialMeasurementsControllerTest {
 		final StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setId(1234);
 		workbook.setStudyDetails(studyDetails);
+		workbook.setVariates(new ArrayList<MeasurementVariable>());
 		userSelection.setWorkbook(workbook);
 		this.measurementsController.setUserSelection(userSelection);
 
@@ -474,7 +471,7 @@ public class TrialMeasurementsControllerTest {
 		// off.
 		Mockito.verify(mockValidationService).validateObservationValue(variableText, newValue);
 		Mockito.verify(this.studyDataManager).saveOrUpdatePhenotypeValue(Matchers.anyInt(), Matchers.anyInt(),
-				Matchers.anyString(), Matchers.any(Phenotype.class), Matchers.anyInt());
+				Matchers.anyString(), Matchers.any(Phenotype.class), Matchers.anyInt(), Matchers.any(Phenotype.ValueStatus.class));
 
 	}
 
@@ -487,6 +484,7 @@ public class TrialMeasurementsControllerTest {
 		final StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setId(1234);
 		workbook.setStudyDetails(studyDetails);
+		workbook.setVariates(new ArrayList<MeasurementVariable>());
 		userSelection.setWorkbook(workbook);
 		this.measurementsController.setUserSelection(userSelection);
 
@@ -521,7 +519,7 @@ public class TrialMeasurementsControllerTest {
 		Mockito.verify(mockValidationService, Mockito.never()).validateObservationValue(variableText, newValue);
 		// But save step must be invoked.
 		Mockito.verify(this.studyDataManager).saveOrUpdatePhenotypeValue(Matchers.anyInt(), Matchers.anyInt(),
-				Matchers.anyString(), Matchers.any(Phenotype.class), Matchers.anyInt());
+				Matchers.anyString(), Matchers.any(Phenotype.class), Matchers.anyInt(), Matchers.any(Phenotype.ValueStatus.class));
 	}
 
 	@Test
@@ -567,7 +565,7 @@ public class TrialMeasurementsControllerTest {
 		// is on.
 		Mockito.verify(mockValidationService, Mockito.never()).validateObservationValue(variableText, newValue);
 		Mockito.verify(this.studyDataManager, Mockito.never()).saveOrUpdatePhenotypeValue(Matchers.anyInt(),
-				Matchers.anyInt(), Matchers.anyString(), Matchers.any(Phenotype.class), Matchers.anyInt());
+				Matchers.anyInt(), Matchers.anyString(), Matchers.any(Phenotype.class), Matchers.anyInt(), Matchers.any(Phenotype.ValueStatus.class));
 	}
 
 	@Test
@@ -1094,219 +1092,6 @@ public class TrialMeasurementsControllerTest {
 	}
 
 	@Test
-	public void testConvertForCategoricalVariableBlankMeasurementDto() {
-		final Variable measurementVariable = new Variable();
-		final int aleucolPhenotypeId = 456;
-		final String aleucolPhenotypeTraitValue = "";
-
-		final MeasurementDto measurementDto = new MeasurementDto(
-				new MeasurementVariableDto(TrialMeasurementsControllerTest.ALEUCOL_1_5_TERM_ID,
-						TrialMeasurementsControllerTest.ALEUCOL_1_5_TRAIT_NAME),
-				aleucolPhenotypeId, aleucolPhenotypeTraitValue);
-
-		final Object[] values = this.measurementsController.convertForCategoricalVariable(measurementVariable,
-				measurementDto.getVariableValue(), measurementDto.getPhenotypeId(), false);
-
-		MatcherAssert.assertThat("", Is.is(CoreMatchers.equalTo(values[0])));
-		MatcherAssert.assertThat("", Is.is(CoreMatchers.equalTo(values[1])));
-		MatcherAssert.assertThat(false, Is.is(CoreMatchers.equalTo(values[2])));
-		MatcherAssert.assertThat(aleucolPhenotypeId, Is.is(CoreMatchers.equalTo(values[3])));
-
-	}
-
-	@Test
-	public void testConvertForCategoricalVariableTraitValueIsOutOfRangeFromCategoricalValues() {
-		final Variable measurementVariable = this.createTestCategoricalVariable();
-
-		final int aleucolPhenotypeId = 456;
-		final String aleucolPhenotypeTraitValue = "DDD";
-
-		final MeasurementDto measurementDto = new MeasurementDto(
-				new MeasurementVariableDto(TrialMeasurementsControllerTest.ALEUCOL_1_5_TERM_ID,
-						TrialMeasurementsControllerTest.ALEUCOL_1_5_TRAIT_NAME),
-				aleucolPhenotypeId, aleucolPhenotypeTraitValue);
-
-		final Object[] values = this.measurementsController.convertForCategoricalVariable(measurementVariable,
-				measurementDto.getVariableValue(), measurementDto.getPhenotypeId(), false);
-
-		MatcherAssert.assertThat(aleucolPhenotypeTraitValue, Is.is(CoreMatchers.equalTo(values[0])));
-		MatcherAssert.assertThat(aleucolPhenotypeTraitValue, Is.is(CoreMatchers.equalTo(values[1])));
-		MatcherAssert.assertThat(true, Is.is(CoreMatchers.equalTo(values[2])));
-		MatcherAssert.assertThat(aleucolPhenotypeId, Is.is(CoreMatchers.equalTo(values[3])));
-
-	}
-
-	@Test
-	public void testConvertForCategoricalVariableTraitValueIsWithinCategoricalValues() {
-		final Variable measurementVariable = this.createTestCategoricalVariable();
-
-		final int aleucolPhenotypeId = 456;
-		final String aleucolPhenotypeTraitValue = "AAA";
-
-		final MeasurementDto measurementDto = new MeasurementDto(
-				new MeasurementVariableDto(TrialMeasurementsControllerTest.ALEUCOL_1_5_TERM_ID,
-						TrialMeasurementsControllerTest.ALEUCOL_1_5_TRAIT_NAME),
-				aleucolPhenotypeId, aleucolPhenotypeTraitValue);
-
-		final Object[] values = this.measurementsController.convertForCategoricalVariable(measurementVariable,
-				measurementDto.getVariableValue(), measurementDto.getPhenotypeId(), false);
-
-		MatcherAssert.assertThat(aleucolPhenotypeTraitValue, Is.is(CoreMatchers.equalTo(values[0])));
-		MatcherAssert.assertThat("AAA Definition 1", Is.is(CoreMatchers.equalTo(values[1])));
-		MatcherAssert.assertThat(true, Is.is(CoreMatchers.equalTo(values[2])));
-		MatcherAssert.assertThat(aleucolPhenotypeId, Is.is(CoreMatchers.equalTo(values[3])));
-
-	}
-
-	@Test
-	public void testAddGermplasmAndPlotFactorsDataToDataMap() {
-		final Map<String, Object> dataMap = new HashMap<>();
-		final boolean useDifferentLocalNames = false;
-		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
-
-		final boolean doAddNewGermplasmDescriptors = false;
-		// null because we are not interested in categorical traits for this
-		// test method
-		final List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
-
-		// Method to test
-		final ObservationDto observationDto = observations.get(0);
-		this.measurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap,
-				this.measurementVariables, new HashMap<String, String>());
-
-		MatcherAssert.assertThat(this.standardFactors.length, Is.is(CoreMatchers.equalTo(dataMap.size())));
-		// set to false because GID and DESIGNATION are not expected to be in
-		// map
-		final boolean isGidDesigFactorsIncluded = false;
-		this.verifyCorrectValuesForFactors(dataMap, observationDto, isGidDesigFactorsIncluded,
-				doAddNewGermplasmDescriptors, useDifferentLocalNames);
-		MatcherAssert.assertThat("GID should not be a key in data map.", dataMap.get(TermId.GID.name()),
-				Is.is(CoreMatchers.nullValue()));
-		MatcherAssert.assertThat("DESIGNATION should not be a key in data map.",
-				dataMap.get(TrialMeasurementsControllerTest.DESIGNATION), Is.is(CoreMatchers.nullValue()));
-	}
-
-	@Test
-	public void testAddGermplasmAndPlotFactorsDataToDataMapWithDifferentLocalNames() {
-		final Map<String, Object> dataMap = new HashMap<>();
-		final boolean useDifferentLocalNames = true;
-		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
-
-		final boolean doAddNewGermplasmDescriptors = false;
-		// null because we are not interested in categorical traits for this
-		// test method
-		final List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
-
-		// Method to test
-		final ObservationDto observationDto = observations.get(0);
-		this.measurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap,
-				this.measurementVariables, new HashMap<String, String>());
-
-		// Expecting that GID-local and DESIGNATION-local were added
-		MatcherAssert.assertThat(this.standardFactors.length + 2, Is.is(CoreMatchers.equalTo(dataMap.size())));
-		MatcherAssert.assertThat(
-				TermId.GID.name() + TrialMeasurementsControllerTest.LOCAL
-						+ " was expected as key in data map but wasn't.",
-				dataMap.get(TermId.GID.name() + TrialMeasurementsControllerTest.LOCAL),
-				Is.is(CoreMatchers.not(CoreMatchers.nullValue())));
-		MatcherAssert.assertThat(
-				TrialMeasurementsControllerTest.DESIGNATION + TrialMeasurementsControllerTest.LOCAL
-						+ " was expected as key in data map but wasn't.",
-				dataMap.get(TrialMeasurementsControllerTest.DESIGNATION) + TrialMeasurementsControllerTest.LOCAL,
-				Is.is(CoreMatchers.not(CoreMatchers.nullValue())));
-
-		final boolean isGidDesigFactorsIncluded = true;
-		this.verifyCorrectValuesForFactors(dataMap, observationDto, isGidDesigFactorsIncluded,
-				doAddNewGermplasmDescriptors, useDifferentLocalNames);
-	}
-
-	@Test
-	public void testAddGermplasmAndPlotFactorsDataToDataMapWithAdditionalGermplasmDescriptors() {
-		final Map<String, Object> dataMap = new HashMap<>();
-		final boolean useDifferentLocalNames = false;
-		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
-
-		final boolean doAddNewGermplasmDescriptors = true;
-		// null because we are not interested in categorical traits for this
-		// test method
-		final List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
-
-		// Method to test
-		final ObservationDto observationDto = observations.get(0);
-		this.measurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap,
-				this.measurementVariables, new HashMap<String, String>());
-
-		// expecting CROSS and STOCK_ID to have been added
-		MatcherAssert.assertThat(this.standardFactors.length + 2, Is.is(CoreMatchers.equalTo(dataMap.size())));
-		MatcherAssert.assertThat(dataMap, hasKey(TrialMeasurementsControllerTest.CROSS));
-		MatcherAssert.assertThat(dataMap, hasKey(TrialMeasurementsControllerTest.STOCK_ID));
-
-		final boolean isGidDesigFactorsIncluded = false;
-		this.verifyCorrectValuesForFactors(dataMap, observationDto, isGidDesigFactorsIncluded,
-				doAddNewGermplasmDescriptors, useDifferentLocalNames);
-	}
-
-	@Test
-	public void testAddGermplasmAndPlotFactorsDataToDataMapWithFieldMap() {
-		final Map<String, Object> dataMap = new HashMap<>();
-		final boolean useDifferentLocalNames = false;
-		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
-
-		final boolean doAddNewGermplasmDescriptors = true;
-		// null because we are not interested in categorical traits for this
-		// test method
-		final List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
-
-		// Method to test
-		final ObservationDto observationDto = observations.get(0);
-		this.measurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap,
-				this.measurementVariables, new HashMap<String, String>());
-
-		// expecting FIELDMAP_COLUMN and FIELDMAP_RANGE to have been added
-		MatcherAssert.assertThat(this.standardFactors.length + 2, Is.is(CoreMatchers.equalTo(dataMap.size())));
-		MatcherAssert.assertThat(dataMap, hasKey(TrialMeasurementsControllerTest.FIELDMAP_COLUMN));
-		MatcherAssert.assertThat(dataMap.get(TrialMeasurementsControllerTest.FIELDMAP_COLUMN),
-				Is.is(CoreMatchers.not(CoreMatchers.nullValue())));
-		MatcherAssert.assertThat(dataMap, hasKey(TrialMeasurementsControllerTest.FIELDMAP_RANGE));
-		MatcherAssert.assertThat(dataMap.get(TrialMeasurementsControllerTest.FIELDMAP_RANGE),
-				Is.is(CoreMatchers.not(CoreMatchers.nullValue())));
-
-		final boolean isGidDesigFactorsIncluded = false;
-		this.verifyCorrectValuesForFactors(dataMap, observationDto, isGidDesigFactorsIncluded,
-				doAddNewGermplasmDescriptors, useDifferentLocalNames);
-	}
-
-	@Test
-	public void testAddGermplasmAndPlotFactorsDataToDataMapWithAdditionalDesignFactors() {
-
-		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-				TrialMeasurementsControllerTest.ALEUCOL_1_5_TERM_ID, true, false))
-				.thenReturn(this.createTestCategoricalVariable());
-
-		final Map<String, Object> dataMap = new HashMap<>();
-		final boolean useDifferentLocalNames = false;
-		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
-
-		final boolean doAddNewGermplasmDescriptors = true;
-		// null because we are not interested in categorical traits for this
-		// test method
-		final List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
-
-		final ObservationDto observationDto = observations.get(0);
-		// Add categorical design factor
-		observations.get(0).additionalDesignFactor(TrialMeasurementsControllerTest.ALEUCOL_1_5_TRAIT_NAME, "1");
-
-		// Method to test
-		this.measurementsController.addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap,
-				this.measurementVariables, new HashMap<String, String>());
-
-		MatcherAssert.assertThat(dataMap, hasKey(TrialMeasurementsControllerTest.ALEUCOL_1_5_TRAIT_NAME));
-		MatcherAssert.assertThat(dataMap.get(TrialMeasurementsControllerTest.ALEUCOL_1_5_TRAIT_NAME),
-				Is.is(CoreMatchers.not(CoreMatchers.nullValue())));
-
-	}
-
-	@Test
 	public void testUpdateTraits() throws WorkbookParserException {
 		final UserSelection userSelection = new UserSelection();
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
@@ -1320,20 +1105,6 @@ public class TrialMeasurementsControllerTest {
 		Mockito.verify(this.validationService).validateObservationValues(workbook);
 		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(workbook,
 				this.contextUtil.getCurrentProgramUUID(), true);
-	}
-
-	private Variable createTestCategoricalVariable() {
-
-		final Variable measurementVariable = new Variable();
-		final Scale scale = new Scale();
-		scale.setDataType(DataType.CATEGORICAL_VARIABLE);
-		scale.addCategory(new TermSummary(1, "AAA", "AAA Definition 1"));
-		scale.addCategory(new TermSummary(2, "BBB", "AAA Definition 2"));
-		scale.addCategory(new TermSummary(3, "CCC", "AAA Definition 3"));
-		measurementVariable.setScale(scale);
-
-		return measurementVariable;
-
 	}
 
 	@Test
@@ -1386,75 +1157,13 @@ public class TrialMeasurementsControllerTest {
 		Assert.assertEquals("INT WATER MANAGEMENT INSTITUTE", data.getValue());
 	}
 
-	@Test
-	public void testGenerateDatatableDataMap() {
-		final boolean useDifferentLocalNames = false;
-		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
-
-		final int recordsCount = 1;
-		final TermSummary category1 = new TermSummary(111, this.measurementCategorical.getVariableValue(),
-				"CategoryValue1Definition");
-		final boolean doAddNewGermplasmDescriptors = false;
-		final List<ObservationDto> observations = this.setupTestObservations(recordsCount, category1,
-				doAddNewGermplasmDescriptors);
-		final ObservationDto observationDto = observations.get(0);
-
-		// Method to test
-		final Map<String, Object> dataMap = this.measurementsController.generateDatatableDataMap(observationDto,
-				new HashMap<String, String>());
-
-		MatcherAssert.assertThat("Expected a non-null data map.", dataMap.size(),
-				Is.is(CoreMatchers.not(CoreMatchers.equalTo(0))));
-		MatcherAssert.assertThat(String.valueOf(observationDto.getMeasurementId()),
-				Is.is(CoreMatchers.equalTo(dataMap.get(TrialMeasurementsControllerTest.EXPERIMENT_ID))));
-		MatcherAssert.assertThat(String.valueOf(observationDto.getMeasurementId()),
-				Is.is(CoreMatchers.equalTo(dataMap.get(TrialMeasurementsControllerTest.ACTION))));
-
-		// Verify the factor and trait names and values were included properly
-		// in data map
-		final boolean isGidDesigFactorsIncluded = true;
-		this.verifyCorrectValuesForFactors(dataMap, observationDto, isGidDesigFactorsIncluded,
-				doAddNewGermplasmDescriptors, useDifferentLocalNames);
-		this.verifyCorrectValuesForTraits(category1, dataMap);
-	}
-
-	@Test
-	public void testGenerateDatatableDataMapWithDeletedTrait() {
-		final boolean useDifferentLocalNames = false;
-		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
-		// Remove from measurement variables the character trait, but it is
-		// still in test observations
-		this.measurementVariables.remove(0);
-
-		final int recordsCount = 1;
-		final TermSummary category1 = new TermSummary(111, this.measurementCategorical.getVariableValue(),
-				"CategoryValue1Definition");
-		final boolean doAddNewGermplasmDescriptors = false;
-		final List<ObservationDto> observations = this.setupTestObservations(recordsCount, category1,
-				doAddNewGermplasmDescriptors);
-		final ObservationDto observationDto = observations.get(0);
-
-		// Method to test
-		final Map<String, Object> dataMap = this.measurementsController.generateDatatableDataMap(observationDto,
-				new HashMap<String, String>());
-
-		// Verify that values exist for retained traits but deleted trait is not
-		// included in data map
-		MatcherAssert.assertThat(dataMap.get(this.measurementNumeric.getMeasurementVariable().getName()),
-				Is.is(CoreMatchers.not(CoreMatchers.nullValue())));
-		MatcherAssert.assertThat(dataMap.get(this.measurementCategorical.getMeasurementVariable().getName()),
-				Is.is(CoreMatchers.not(CoreMatchers.nullValue())));
-		MatcherAssert.assertThat(dataMap.get(this.measurementText.getMeasurementVariable().getName()),
-				Is.is(CoreMatchers.nullValue()));
-	}
-
 	private void verifyCorrectValuesForTraits(final TermSummary category1, final Map<String, Object> dataMap) {
 		// Character Trait
 		MatcherAssert
 				.assertThat(
 						Arrays.equals(
 								new Object[] { this.measurementText.getVariableValue(),
-										this.measurementText.getPhenotypeId() },
+										this.measurementText.getPhenotypeId(), this.measurementText.getValueStatus() },
 								(Object[]) dataMap.get(this.measurementText.getMeasurementVariable().getName())),
 						Is.is(true));
 
@@ -1462,7 +1171,7 @@ public class TrialMeasurementsControllerTest {
 		MatcherAssert.assertThat(
 				Arrays.equals(
 						new Object[] { this.measurementNumeric.getVariableValue(), true,
-								this.measurementNumeric.getPhenotypeId() },
+								this.measurementNumeric.getPhenotypeId(), this.measurementNumeric.getValueStatus() },
 						(Object[]) dataMap.get(this.measurementNumeric.getMeasurementVariable().getName())),
 				Is.is(true));
 
@@ -1470,7 +1179,7 @@ public class TrialMeasurementsControllerTest {
 		MatcherAssert.assertThat(
 				Arrays.equals(
 						new Object[] { category1.getName(), category1.getDefinition(), true,
-								this.measurementCategorical.getPhenotypeId() },
+								this.measurementCategorical.getPhenotypeId(), this.measurementCategorical.getValueStatus() },
 						(Object[]) dataMap.get(this.measurementCategorical.getMeasurementVariable().getName())),
 				Is.is(true));
 	}

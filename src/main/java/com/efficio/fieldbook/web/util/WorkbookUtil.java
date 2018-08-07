@@ -2,12 +2,14 @@
 package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Optional;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -19,6 +21,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.FormulaVariable;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
 
@@ -586,5 +589,67 @@ public class WorkbookUtil {
 			// make the PLOT_NO equal to ENTRY_NO
 			plotNoData.setValue(entryNoData.getValue());
 		}
+	}
+
+	public static Map<Integer, List<Integer>> getVariatesUsedInFormulas(final List<MeasurementVariable> variates) {
+		final Map<Integer, List<Integer>> map = new HashMap<>();
+
+		final Collection<MeasurementVariable> formulas = CollectionUtils.select(variates, new Predicate() {
+
+			public boolean evaluate(final Object o) {
+				final MeasurementVariable measurementVariable = (MeasurementVariable) o;
+				return measurementVariable.getFormula() != null;
+			}
+		});
+
+		for (final MeasurementVariable row : variates) {
+			final List<Integer> formulasFromCVTermId = WorkbookUtil.getFormulasFromCVTermId(row.getTermId(), formulas);
+			if (formulasFromCVTermId.size() > 0) {
+				map.put(row.getTermId(), formulasFromCVTermId);
+			}
+		}
+		return map;
+	}
+
+	private static List<Integer> getFormulasFromCVTermId(
+		final Integer inputCvTermId, final Collection<MeasurementVariable> measurementVariables) {
+		final List<Integer> result = new ArrayList<>();
+		for (final MeasurementVariable measurementVariable : measurementVariables) {
+			if (measurementVariable.getFormula().isInputVariablePresent(inputCvTermId)) {
+				result.add(measurementVariable.getTermId());
+			}
+		}
+		return result;
+	}
+
+	public static Map<MeasurementVariable, List<MeasurementVariable>> getVariatesMapUsedInFormulas(final List<MeasurementVariable> variates) {
+		final Map<MeasurementVariable, List<MeasurementVariable>> map = new HashMap<>();
+
+		final Collection<MeasurementVariable> formulas = CollectionUtils.select(variates, new Predicate() {
+
+			public boolean evaluate(final Object o) {
+				final MeasurementVariable measurementVariable = (MeasurementVariable) o;
+				return measurementVariable.getFormula() != null;
+			}
+		});
+
+		for (final MeasurementVariable row : variates) {
+			final List<MeasurementVariable> formulasFromCVTermId = WorkbookUtil.getFormulasFromCVTermId(row, formulas);
+			if (formulasFromCVTermId.size() > 0) {
+				map.put(row, formulasFromCVTermId);
+			}
+		}
+		return map;
+	}
+
+	private static List<MeasurementVariable> getFormulasFromCVTermId(
+		final MeasurementVariable variable, final Collection<MeasurementVariable> measurementVariables) {
+		final List<MeasurementVariable> result = new ArrayList<>();
+		for (final MeasurementVariable measurementVariable : measurementVariables) {
+			if (measurementVariable.getFormula().isInputVariablePresent(variable.getTermId())) {
+				result.add(measurementVariable);
+			}
+		}
+		return result;
 	}
 }

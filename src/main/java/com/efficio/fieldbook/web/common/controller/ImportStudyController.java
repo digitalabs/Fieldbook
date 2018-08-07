@@ -72,6 +72,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	public static final int STATUS_ADD_NAME_TO_GID = 1;
 	public static final int STATUS_ADD_GERMPLASM_AND_NAME = 2;
 	public static final int STATUS_SELECT_GID = 3;
+	public static final String CONTAINS_OUT_OF_SYNC_VALUES = "containsOutOfSyncValues";
 
 	@Resource
 	private UserSelection studySelection;
@@ -109,7 +110,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 			@PathVariable final int importType, final BindingResult result,
 			final Model model) {
 
-		ImportResult importResult;
+		final ImportResult importResult;
 		final UserSelection userSelection = this.getUserSelection();
 		final ImportStudyType importStudyType = ImportStudyType.getImportType(importType);
 
@@ -119,6 +120,12 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		 * Should always revert the data first to the original data here we
 		 * should move here that part the copies it to the original observation
 		 */
+		if (this.getUserSelection().getWorkbook().getObservations() != null) {
+			this.getUserSelection().getWorkbook().getObservations().clear();
+		}
+		if (this.getUserSelection().getWorkbook().getOriginalObservations() != null) {
+			this.getUserSelection().getWorkbook().getOriginalObservations().clear();
+		}
 		this.fieldbookMiddlewareService.loadAllObservations(userSelection.getWorkbook());
 		WorkbookUtil.resetWorkbookObservations(userSelection.getWorkbook());
 
@@ -496,9 +503,12 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		this.fieldbookService.saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(),
 				userSelection.getWorkbook().getStudyDetails().getStudyName(), form.getColumnOrders(),
 				userSelection.getWorkbook());
+		final Boolean hasOutOfSyncObservations =
+			this.fieldbookMiddlewareService.hasOutOfSyncObservations(workbook.getMeasurementDatesetId());
 
 		final Map<String, Object> result = new HashMap<>();
 		result.put(ImportStudyController.SUCCESS, "1");
+		result.put(ImportStudyController.CONTAINS_OUT_OF_SYNC_VALUES, hasOutOfSyncObservations);
 		return result;
 	}
 

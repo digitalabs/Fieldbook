@@ -28,6 +28,7 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 	$(nRow).find('.accepted-value, .invalid-value, .numeric-variable').each(function() {
 		var termId = $(this).data('term-id');
 		var cellData = $(this).text();
+		//FIXME dataTypeID is always undefined
 		if (termId !== undefined) {
 			var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
 			var dataTypeId = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-data-type-id');
@@ -71,6 +72,31 @@ var measurementsTableRowCallback = function(nRow, aData, iDisplayIndex, iDisplay
 			}
 		}
 	});
+	$(nRow).find('.variates').each(function () {
+		var colIndex = $(this).index() + 1;
+		var varName = $(tableIdentifier + " thead tr th:nth-child(" + colIndex + ")").text();
+		if (varName !== undefined) {
+			var dataArray = aData[varName];
+			if (dataArray !== undefined) {
+				var status = dataArray[dataArray.length - 1];
+				var cellData = $(this).text();
+				var phenotypeId = $(this).data('phenotypeId');
+				$(this).removeClass('manually-edited-value');
+				$(this).removeClass('out-of-sync-value');
+				$(this).removeAttr('title');
+				if (!cellData && !phenotypeId) {
+					return;
+				}
+				if (status == 'MANUALLY_EDITED') {
+					$(this).attr('title', toolTip + ' manually-edited-value');
+					$(this).addClass('manually-edited-value');
+				} else if (status == 'OUT_OF_SYNC') {
+					$(this).attr('title', toolTip + ' out-of-sync-value');
+					$(this).addClass('out-of-sync-value');
+				}
+			}
+		}
+	});
 	return nRow;
 };
 
@@ -88,7 +114,8 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 			termId: displayColumn.termId,
 			defaultContent: '',
 			orderable: displayColumn.variableType === "TRAIT" ? true : $.inArray(displayColumn.termId, sortableColumnIDs) > -1,
-			className: displayColumn.factor === true ? 'factors' : 'variates'
+			className: displayColumn.factor === true ? 'factors' : 'variates',
+			isDerivedTrait: displayColumn.formula != null
 		});
 
 		var termId = displayColumn.termId;
@@ -138,6 +165,11 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 				targets: columns.length - 1,
 				visible: !isPlotId,
 				createdCell: function(td, cellData, rowData, row, col) {
+					if (cellData[cellData.length-1] == 'MANUALLY_EDITED') {
+						$(td).addClass('manually-edited-value');
+					} if (cellData[cellData.length-1] == 'OUT_OF_SYNC') {
+						$(td).addClass('out-of-sync-value');
+					}
 					$(td).data('term-id', termId);
 					$(td).data('phenotype-id', cellData[1]);
 				},
@@ -161,6 +193,10 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 				createdCell: function(td, cellData, rowData, row, col) {
 					// cellData[0] : categorical name
 					// cellData[1] : categorical display description
+
+					if (cellData != "" || cellData[3] != "") {
+						$(td).data('phenotype-id', cellData[3]);
+					}
 
 					// current measurementData has no value thus no need to check if out-of-bounds
 					if (cellData === "" || cellData[1] === "") {
@@ -199,7 +235,6 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 					}
 
 					$(td).data('term-id', termId);
-					$(td).data('phenotype-id', cellData[3]);
 					$(td).data('term-valid-values', displayColumn.possibleValuesString);
 				},
 				render: function(data, type, full, meta) {
@@ -353,6 +388,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 							$(table.column(column).header()).attr('data-term-id', settings.aoColumns[ column ].termId);
 						}
 						$(table.column(column).header()).addClass(settings.aoColumns[ column ].factor === true ? 'factors' : 'variates');
+						if (settings.aoColumns[ column ].isDerivedTrait == true) {
+							$(table.column(column).header()).addClass('derived-trait-column-header');
+						}
 					});
 				},
 				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -527,6 +565,18 @@ BMS.Fieldbook.PreviewMeasurementsDataTable = (function($) {
 					type: 'GET',
 					cache: false
 				},
+				headerCallback: function(thead, data, start, end, display) {
+					setTimeout( function (){
+						table.columns().iterator('column', function(settings, column) {
+							if (settings.aoColumns[ column ].isDerivedTrait == true) {
+								$(table.column(column).header()).addClass('derived-trait-column-header');
+							}
+						});
+					});
+				},
+				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+					measurementsTableRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull, tableIdentifier, this);
+				},
 				fnInitComplete: function(oSettings, json) {
 					$(tableIdentifier + '_wrapper .mdt-length .dataTables_length select').select2({minimumResultsForSearch: 10});
 					oSettings.oInstance.fnAdjustColumnSizing();
@@ -648,6 +698,15 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 					url: '/Fieldbook/ImportManager/import/preview',
 					type: 'POST',
 					cache: false
+				},
+				headerCallback: function(thead, data, start, end, display) {
+					setTimeout( function (){
+						table.columns().iterator('column', function(settings, column) {
+							if (settings.aoColumns[ column ].isDerivedTrait == true) {
+								$(table.column(column).header()).addClass('derived-trait-column-header');
+							}
+						});
+					});
 				},
 				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 					measurementsTableRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull, tableIdentifier, this);

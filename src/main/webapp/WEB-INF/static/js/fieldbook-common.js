@@ -805,18 +805,21 @@ function deleteStudyInEdit() {
 
 /* EXECUTE CALCULATION */
 function executeCalculatedVariable() {
-	$('#executeCalculatedVariableModal').modal({ backdrop: 'static', keyboard: true });
+	var scope = angular.element("#mainApp").scope();
+	scope.$apply(function () {
+		scope.navigateToTab('editMeasurements');
+	});
+
+	if ($('body').hasClass('import-preview-measurements')) {
+		return;
+	}
+	$('#executeCalculatedVariableModal').modal({backdrop: 'static', keyboard: true});
 
 	// Add hide listener to executeCalculatedVariableModal
 	$('#executeCalculatedVariableModal').one('hidden.bs.modal', function (e) {
 		// When the executeCalculatedVariableModal is closed, remove the bs.modal data
 		// so that the modal content is refreshed when it is opened again.
 		$(e.target).removeData('bs.modal');
-	});
-
-	var scope = angular.element("#mainApp").scope();
-	scope.$apply(function () {
-		scope.navigateToTab('editMeasurements');
 	});
 
 	var $scope = angular.element('#executeCalculatedVariableModal').scope();
@@ -1442,13 +1445,18 @@ function continueStudyImport(doDataRevert) {
 
 function showImportOptions() {
 	'use strict';
-	$('#fileupload').val('');
-	$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
-	// Navigate to edit measurements tab when clicking on import measurements
 	var scope = angular.element(document.getElementById("mainApp")).scope();
 	scope.$apply(function () {
 		scope.navigateToTab('editMeasurements');
 	});
+
+	if ($('body').hasClass('import-preview-measurements')) {
+		return;
+	}
+	$('#fileupload').val('');
+	$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
+	// Navigate to edit measurements tab when clicking on import measurements
+
 
 	if ($('.import-study-data').data('data-import') === '1') {
 		showAlertMessage('', importDataWarningNotification);

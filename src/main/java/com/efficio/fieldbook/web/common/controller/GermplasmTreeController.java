@@ -512,6 +512,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			cross.setNames(names);
 			final AdvancingSource advancingSource = new AdvancingSource(cross);
 			// TODO add trail instance number
+			advancingSource.setStudyId(this.userSelection.getWorkbook().getStudyDetails().getId());
 			advancingSource.setConditions(this.userSelection.getWorkbook().getConditions());
 			advancingSource.setStudyType(this.userSelection.getWorkbook().getStudyDetails().getStudyType());
 			advancingSource.setBreedingMethodId(cross.getBreedingMethodId());

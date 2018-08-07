@@ -3222,7 +3222,7 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 		return;
 	}
 	$.ajax({
-		url: '/Fieldbook/trial/measurements/viewStudyAjax/' + datasetId,
+		url: '/Fieldbook/trial/measurements/viewStudyAjax/' + datasetId + '/' + currentStudyId,
 		type: 'GET',
 		cache: false,
 		success: function(html) {

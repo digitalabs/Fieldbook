@@ -141,7 +141,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		return resultMap;
 	}
 
-	public void setUserSelection(final UserSelection userSelection) {
+	protected void setUserSelection(final UserSelection userSelection) {
 		this.userSelection = userSelection;
 	}
 
@@ -180,7 +180,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			}
 
 			final Variable trait = this.ontologyVariableDataManager
-				.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true, false);
+					.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true, false);
 
 			if (!invalidButKeep && !this.validationService.validateObservationValue(trait, value)) {
 				map.put(TrialMeasurementsController.SUCCESS, "0");
@@ -206,7 +206,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		Map<String, Object> dataMap = new HashMap<>();
 		final List<ObservationDto> singleObservation = this.studyService
-			.getSingleObservation(this.getUserSelection().getWorkbook().getStudyDetails().getId(), experimentId);
+				.getSingleObservation(this.getUserSelection().getWorkbook().getStudyDetails().getId(), experimentId);
 		if (!singleObservation.isEmpty()) {
 			dataMap = this.dataMapUtil.generateDatatableDataMap(singleObservation.get(0), new HashMap<String, String>(), this.userSelection,
 				this.ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
@@ -225,7 +225,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/updateByIndex/experiment/cell/data", method = RequestMethod.POST)
 	@Transactional
 	public Map<String, Object> updateExperimentCellDataByIndex(@RequestBody final Map<String, String> data,
-		final HttpServletRequest req) {
+			final HttpServletRequest req) {
 
 		final Map<String, Object> map = new HashMap<>();
 
@@ -451,6 +451,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	@RequestMapping(value = "/edit/experiment/cell/{experimentId}/{termId}", method = RequestMethod.GET)
 	public String editExperimentCells(@PathVariable final int experimentId, @PathVariable final int termId,
 		@RequestParam(required = false) final Integer phenotypeId, final Model model) {
+
 		if (phenotypeId != null) {
 			final Phenotype phenotype = this.studyDataManager.getPhenotypeById(phenotypeId);
 			model.addAttribute(TrialMeasurementsController.PHENOTYPE_ID, phenotype.getPhenotypeId());
@@ -656,8 +657,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	@RequestMapping(value = "/pageView/{pageNum}", method = RequestMethod.GET)
 	public String getPaginatedListViewOnly(@PathVariable final int pageNum,
-		@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model, @RequestParam("listIdentifier")
-	final String datasetId) {
+			@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model,
+			@RequestParam("listIdentifier") final String datasetId) {
 
 		final List<MeasurementRow> rows = this.paginationListSelection.getReviewDetailsList(datasetId);
 		if (rows != null) {
@@ -673,29 +674,46 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		return super.showAjaxPage(model, "/TrialManager/datasetSummaryView");
 	}
 
-
-	@RequestMapping(value = "/viewStudyAjax/{datasetId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/viewStudyAjax/{datasetId}/{studyId}", method = RequestMethod.GET)
 	public String viewStudyAjax(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model,
-		@PathVariable final int datasetId) {
-
+			@PathVariable final int datasetId, @PathVariable final int studyId) {
 		Workbook workbook = null;
 		try {
 			workbook = this.fieldbookMiddlewareService.getCompleteDataset(datasetId);
 			this.fieldbookService.setAllPossibleValuesInWorkbook(workbook);
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-				this.ontologyService, this.contextUtil.getCurrentProgramUUID());
+				this.ontologyService, contextUtil.getCurrentProgramUUID());
 		} catch (final MiddlewareException e) {
 			TrialMeasurementsController.LOG.error(e.getMessage(), e);
 		}
-		this.getUserSelection().setMeasurementRowList(workbook.arrangeMeasurementObservation(workbook.getObservations()));
+		this.getUserSelection()
+				.setMeasurementRowList(workbook.arrangeMeasurementObservation(workbook.getObservations()));
 		form.setMeasurementRowList(this.getUserSelection().getMeasurementRowList());
 		form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+		this.changeLocationIdToName(form.getMeasurementRowList(), workbook.getMeasurementDatasetVariablesMap(),
+				studyId);
 		this.paginationListSelection.addReviewDetailsList(String.valueOf(datasetId), form.getMeasurementRowList());
 		this.paginationListSelection.addReviewVariableList(String.valueOf(datasetId), form.getMeasurementVariables());
 		form.changePage(1);
 		this.getUserSelection().setCurrentPage(form.getCurrentPage());
 
 		return super.showAjaxPage(model, TrialMeasurementsController.OBSERVATIONS_HTML);
+	}
+
+	void changeLocationIdToName(final List<MeasurementRow> measurementRowList,
+			final Map<String, MeasurementVariable> measurementDatasetVariablesMap, final int studyId) {
+		if (measurementDatasetVariablesMap.get(String.valueOf(TermId.LOCATION_ID.getId())) != null) {
+			final Map<String, String> locationNameMap = this.studyDataManager
+					.createInstanceLocationIdToNameMapFromStudy(studyId);
+			for (final MeasurementRow row : measurementRowList) {
+				for (final MeasurementData data : row.getDataList()) {
+					if (TermId.LOCATION_ID.getId() == data.getMeasurementVariable().getTermId()) {
+						data.setValue(locationNameMap.get(data.getValue()));
+					}
+				}
+			}
+		}
+
 	}
 
 	protected boolean isNumericalValueOutOfBounds(final String value, final MeasurementVariable var) {
@@ -742,8 +760,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			&& !oldData.getMeasurementVariable().getPossibleValues().isEmpty()) {
 			oldData.setValueStatus(newData.getValueStatus());
 			oldData.setAccepted(newData.isAccepted());
-			if (!StringUtils.isEmpty(oldData.getValue()) && oldData.isAccepted() && this.isCategoricalValueOutOfBounds(
-				oldData.getcValueId(), oldData.getValue(), oldData.getMeasurementVariable().getPossibleValues())) {
+			if (!StringUtils.isEmpty(oldData.getValue()) && oldData.isAccepted() && this.isCategoricalValueOutOfBounds(oldData.getcValueId(), oldData.getValue(), oldData.getMeasurementVariable().getPossibleValues())) {
 				oldData.setCustomCategoricalValue(true);
 			} else {
 				oldData.setCustomCategoricalValue(false);
@@ -772,30 +789,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			oldData.setValue(newData.getValue());
 			oldData.setAccepted(newData.isAccepted());
 		}
-	}
-
-	void setValidationService(final ValidationService validationService) {
-		this.validationService = validationService;
-	}
-
-	public void setStudyService(final StudyService studyService) {
-		this.studyService = studyService;
-	}
-
-	void setOntologyVariableDataManager(final OntologyVariableDataManager ontologyVariableDataManager) {
-		this.ontologyVariableDataManager = ontologyVariableDataManager;
-	}
-
-	void setStudyDataManager(final StudyDataManager studyDataManager) {
-		this.studyDataManager = studyDataManager;
-	}
-
-	void setFieldbookService(final com.efficio.fieldbook.service.api.FieldbookService fieldbookService) {
-		this.fieldbookService = fieldbookService;
-	}
-
-	public UserSelection getUserSelection() {
-		return this.userSelection;
 	}
 
 	public boolean isBeingACalculatedValueEdited(final Variable variable, final Phenotype oldPhenotype, final String newValue) {
@@ -844,4 +837,32 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 	}
 
+	void setValidationService(final ValidationService validationService) {
+		this.validationService = validationService;
+	}
+
+	void setStudyService(final StudyService studyService) {
+		this.studyService = studyService;
+	}
+
+	void setOntologyVariableDataManager(final OntologyVariableDataManager ontologyVariableDataManager) {
+		this.ontologyVariableDataManager = ontologyVariableDataManager;
+	}
+
+	void setStudyDataManager(final StudyDataManager studyDataManager) {
+		this.studyDataManager = studyDataManager;
+	}
+
+	void setFieldbookService(final com.efficio.fieldbook.service.api.FieldbookService fieldbookService) {
+		this.fieldbookService = fieldbookService;
+	}
+
+	public UserSelection getUserSelection() {
+		return userSelection;
+	}
+
+	@Override
+	public void setPaginationListSelection(final PaginationListSelection paginationListSelection) {
+		this.paginationListSelection = paginationListSelection;
+	}
 }

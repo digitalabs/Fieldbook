@@ -1,14 +1,22 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.trial.service.ValidationService;
-import com.google.common.collect.Lists;
-import junit.framework.Assert;
+import static org.hamcrest.Matchers.hasSize;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
+import org.generationcp.middleware.data.initializer.MeasurementRowTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.ProjectPropertyTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
@@ -31,6 +39,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.study.MeasurementDto;
 import org.generationcp.middleware.service.api.study.MeasurementVariableDto;
 import org.generationcp.middleware.service.api.study.ObservationDto;
@@ -50,21 +59,19 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.trial.service.ValidationService;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Lists;
 
-import static org.hamcrest.Matchers.hasSize;
+import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MeasurementsControllerTest {
+public class TrialMeasurementsControllerTest {
 
 	private static final String CROSS_VALUE = "ABC12/XYZ34";
 	private static final String STOCK_ID_VALUE = "STCK-123";
@@ -111,7 +118,13 @@ public class MeasurementsControllerTest {
 
 	@Mock
 	private OntologyDataManager ontologyDataManager;
+	
+	@Mock
+	private OntologyService ontologyService;
 
+	@Mock
+	private PaginationListSelection paginationListSelection;
+	
 	@Mock
 	private ValidationService validationService;
 
@@ -368,7 +381,7 @@ public class MeasurementsControllerTest {
 				Is.is(CoreMatchers.equalTo(model.get("numericVarId"))));
 		MatcherAssert.assertThat(variableText, Is.is(CoreMatchers.equalTo(model.get("variable"))));
 		MatcherAssert.assertThat(experimentId,
-				Is.is(CoreMatchers.equalTo(model.get(MeasurementsControllerTest.EXPERIMENT_ID))));
+				Is.is(CoreMatchers.equalTo(model.get(TrialMeasurementsControllerTest.EXPERIMENT_ID))));
 		MatcherAssert.assertThat((List<?>) model.get("possibleValues"), hasSize(0));
 		MatcherAssert.assertThat("", Is.is(CoreMatchers.equalTo(model.get("phenotypeId"))));
 		MatcherAssert.assertThat("", Is.is(CoreMatchers.equalTo(model.get("phenotypeValue"))));
@@ -442,12 +455,12 @@ public class MeasurementsControllerTest {
 				Matchers.eq(true), Matchers.eq(false))).thenReturn(variableText);
 
 		final Map<String, String> data = new HashMap<String, String>();
-		data.put(MeasurementsControllerTest.EXPERIMENT_ID, "1");
-		data.put(MeasurementsControllerTest.TERM_ID, Integer.toString(termId));
-		data.put(MeasurementsControllerTest.VALUE, newValue);
+		data.put(TrialMeasurementsControllerTest.EXPERIMENT_ID, "1");
+		data.put(TrialMeasurementsControllerTest.TERM_ID, Integer.toString(termId));
+		data.put(TrialMeasurementsControllerTest.VALUE, newValue);
 
 		final HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
-		Mockito.when(req.getParameter(MeasurementsControllerTest.IS_DISCARD)).thenReturn("0");
+		Mockito.when(req.getParameter(TrialMeasurementsControllerTest.IS_DISCARD)).thenReturn("0");
 
 		final Map<String, Object> results = this.measurementsController.updateExperimentCellData(data, req);
 
@@ -488,12 +501,12 @@ public class MeasurementsControllerTest {
 				Matchers.eq(true), Matchers.eq(false))).thenReturn(variableText);
 
 		final Map<String, String> data = new HashMap<String, String>();
-		data.put(MeasurementsControllerTest.EXPERIMENT_ID, "1");
-		data.put(MeasurementsControllerTest.TERM_ID, Integer.toString(termId));
-		data.put(MeasurementsControllerTest.VALUE, newValue);
+		data.put(TrialMeasurementsControllerTest.EXPERIMENT_ID, "1");
+		data.put(TrialMeasurementsControllerTest.TERM_ID, Integer.toString(termId));
+		data.put(TrialMeasurementsControllerTest.VALUE, newValue);
 
 		final HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
-		Mockito.when(req.getParameter(MeasurementsControllerTest.IS_DISCARD)).thenReturn("0");
+		Mockito.when(req.getParameter(TrialMeasurementsControllerTest.IS_DISCARD)).thenReturn("0");
 		Mockito.when(req.getParameter("invalidButKeep")).thenReturn("1");
 
 		final Map<String, Object> results = this.measurementsController.updateExperimentCellData(data, req);
@@ -536,12 +549,12 @@ public class MeasurementsControllerTest {
 				Matchers.eq(true), Matchers.eq(false))).thenReturn(variableText);
 
 		final Map<String, String> data = new HashMap<String, String>();
-		data.put(MeasurementsControllerTest.EXPERIMENT_ID, "1");
-		data.put(MeasurementsControllerTest.TERM_ID, Integer.toString(termId));
-		data.put(MeasurementsControllerTest.VALUE, newValue);
+		data.put(TrialMeasurementsControllerTest.EXPERIMENT_ID, "1");
+		data.put(TrialMeasurementsControllerTest.TERM_ID, Integer.toString(termId));
+		data.put(TrialMeasurementsControllerTest.VALUE, newValue);
 
 		final HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
-		Mockito.when(req.getParameter(MeasurementsControllerTest.IS_DISCARD)).thenReturn("1");
+		Mockito.when(req.getParameter(TrialMeasurementsControllerTest.IS_DISCARD)).thenReturn("1");
 
 		final Map<String, Object> results = this.measurementsController.updateExperimentCellData(data, req);
 
@@ -579,8 +592,8 @@ public class MeasurementsControllerTest {
 		this.measurementsController.setValidationService(Mockito.mock(ValidationService.class));
 		final Map<String, String> data = new HashMap<>();
 
-		data.put(MeasurementsControllerTest.INDEX, "1");
-		data.put(MeasurementsControllerTest.TERM_ID, Integer.toString(termId));
+		data.put(TrialMeasurementsControllerTest.INDEX, "1");
+		data.put(TrialMeasurementsControllerTest.TERM_ID, Integer.toString(termId));
 
 		final HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 
@@ -588,7 +601,7 @@ public class MeasurementsControllerTest {
 				req);
 
 		@SuppressWarnings("unchecked")
-		final Map<String, Object> dataMap = (Map<String, Object>) results.get(MeasurementsControllerTest.DATA);
+		final Map<String, Object> dataMap = (Map<String, Object>) results.get(TrialMeasurementsControllerTest.DATA);
 
 		MatcherAssert.assertThat("The Accepted flag should be true",
 				(boolean) ((Object[]) dataMap.get("TestVarName2"))[2], Is.is(true));
@@ -618,8 +631,8 @@ public class MeasurementsControllerTest {
 		this.measurementsController.setValidationService(Mockito.mock(ValidationService.class));
 		final Map<String, String> data = new HashMap<>();
 
-		data.put(MeasurementsControllerTest.INDEX, "1");
-		data.put(MeasurementsControllerTest.TERM_ID, Integer.toString(termId));
+		data.put(TrialMeasurementsControllerTest.INDEX, "1");
+		data.put(TrialMeasurementsControllerTest.TERM_ID, Integer.toString(termId));
 
 		final HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 
@@ -627,7 +640,7 @@ public class MeasurementsControllerTest {
 				req);
 
 		@SuppressWarnings("unchecked")
-		final Map<String, Object> dataMap = (Map<String, Object>) results.get(MeasurementsControllerTest.DATA);
+		final Map<String, Object> dataMap = (Map<String, Object>) results.get(TrialMeasurementsControllerTest.DATA);
 
 		MatcherAssert.assertThat("The Accepted flag should be true",
 				(boolean) ((Object[]) dataMap.get("TestVarName2"))[1], Is.is(true));
@@ -785,12 +798,12 @@ public class MeasurementsControllerTest {
 		// initial value for the isCategoricalDescriptionView is FALSE, the
 		// session value will be toggled
 		final HttpSession session = Mockito.mock(HttpSession.class);
-		Mockito.when(session.getAttribute(MeasurementsControllerTest.IS_CATEGORICAL_DESCRIPTION_VIEW))
+		Mockito.when(session.getAttribute(TrialMeasurementsControllerTest.IS_CATEGORICAL_DESCRIPTION_VIEW))
 				.thenReturn(Boolean.FALSE);
 
 		final Boolean result = this.measurementsController.setCategoricalDisplayType(null, session);
 		Mockito.verify(session, Mockito.times(1))
-				.setAttribute(MeasurementsControllerTest.IS_CATEGORICAL_DESCRIPTION_VIEW, Boolean.TRUE);
+				.setAttribute(TrialMeasurementsControllerTest.IS_CATEGORICAL_DESCRIPTION_VIEW, Boolean.TRUE);
 		MatcherAssert.assertThat("should be true", result);
 	}
 
@@ -800,12 +813,12 @@ public class MeasurementsControllerTest {
 		// the session to this value then
 		// return this
 		final HttpSession session = Mockito.mock(HttpSession.class);
-		Mockito.when(session.getAttribute(MeasurementsControllerTest.IS_CATEGORICAL_DESCRIPTION_VIEW))
+		Mockito.when(session.getAttribute(TrialMeasurementsControllerTest.IS_CATEGORICAL_DESCRIPTION_VIEW))
 				.thenReturn(Boolean.FALSE);
 
 		final Boolean result = this.measurementsController.setCategoricalDisplayType(Boolean.FALSE, session);
 		Mockito.verify(session, Mockito.times(1))
-				.setAttribute(MeasurementsControllerTest.IS_CATEGORICAL_DESCRIPTION_VIEW, Boolean.FALSE);
+				.setAttribute(TrialMeasurementsControllerTest.IS_CATEGORICAL_DESCRIPTION_VIEW, Boolean.FALSE);
 		MatcherAssert.assertThat("should be false", true, Is.is(CoreMatchers.not(result)));
 	}
 
@@ -813,13 +826,13 @@ public class MeasurementsControllerTest {
 	@Test
 	public void testGetPlotMeasurementsPaginated() {
 		final MockHttpServletRequest request = new MockHttpServletRequest();
-		request.addParameter(MeasurementsControllerTest.PAGE_NUMBER, "1");
-		request.addParameter(MeasurementsControllerTest.PAGE_SIZE, "10");
-		request.addParameter(MeasurementsControllerTest.SORT_BY, String.valueOf(TermId.ENTRY_NO.getId()));
-		request.addParameter(MeasurementsControllerTest.SORT_ORDER, "desc");
+		request.addParameter(TrialMeasurementsControllerTest.PAGE_NUMBER, "1");
+		request.addParameter(TrialMeasurementsControllerTest.PAGE_SIZE, "10");
+		request.addParameter(TrialMeasurementsControllerTest.SORT_BY, String.valueOf(TermId.ENTRY_NO.getId()));
+		request.addParameter(TrialMeasurementsControllerTest.SORT_ORDER, "desc");
 
 		final String drawParamValue = "drawParamValue";
-		request.addParameter(MeasurementsControllerTest.DRAW, drawParamValue);
+		request.addParameter(TrialMeasurementsControllerTest.DRAW, drawParamValue);
 
 		final boolean useDifferentLocalNames = false;
 		this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
@@ -849,16 +862,16 @@ public class MeasurementsControllerTest {
 
 		MatcherAssert.assertThat("'draw' parameter should be returned in map as per value of request parameter 'draw'.",
 				drawParamValue,
-				Is.is(CoreMatchers.equalTo(plotMeasurementsPaginated.get(MeasurementsControllerTest.DRAW))));
+				Is.is(CoreMatchers.equalTo(plotMeasurementsPaginated.get(TrialMeasurementsControllerTest.DRAW))));
 		MatcherAssert.assertThat(
 				"Record count should be returned as per what is returned by studyService.countTotalObservationUnits()",
 				recordsCount, Is.is(CoreMatchers
-						.equalTo(plotMeasurementsPaginated.get(MeasurementsControllerTest.RECORDS_TOTAL))));
+						.equalTo(plotMeasurementsPaginated.get(TrialMeasurementsControllerTest.RECORDS_TOTAL))));
 		MatcherAssert.assertThat("Records filtered should be returned as per number of plots on page.",
 				observations.size(), Is.is(CoreMatchers
-						.equalTo(plotMeasurementsPaginated.get(MeasurementsControllerTest.RECORDS_FILTERED))));
+						.equalTo(plotMeasurementsPaginated.get(TrialMeasurementsControllerTest.RECORDS_FILTERED))));
 		final List<Map<String, Object>> allMeasurementData = (List<Map<String, Object>>) plotMeasurementsPaginated
-				.get(MeasurementsControllerTest.DATA);
+				.get(TrialMeasurementsControllerTest.DATA);
 		MatcherAssert.assertThat("Expected a non-null data map.", allMeasurementData,
 				Is.is(CoreMatchers.not(CoreMatchers.nullValue())));
 
@@ -867,7 +880,7 @@ public class MeasurementsControllerTest {
 
 		// Verify the factor names and values were included properly in data map
 		MatcherAssert.assertThat(String.valueOf(observationDto.getMeasurementId()),
-				Is.is(CoreMatchers.equalTo(onePlotMeasurementData.get(MeasurementsControllerTest.EXPERIMENT_ID))));
+				Is.is(CoreMatchers.equalTo(onePlotMeasurementData.get(TrialMeasurementsControllerTest.EXPERIMENT_ID))));
 		final boolean isGidDesigFactorsIncluded = true;
 		this.verifyCorrectValuesForFactors(onePlotMeasurementData, observationDto, isGidDesigFactorsIncluded,
 				doAddNewGermplasmDescriptors, useDifferentLocalNames);
@@ -894,85 +907,85 @@ public class MeasurementsControllerTest {
 		// expected to be present
 		if (isGidDesigFactorsIncluded) {
 			final String designationMapKey = useDifferentLocalNames
-					? MeasurementsControllerTest.DESIGNATION + MeasurementsControllerTest.LOCAL
-					: MeasurementsControllerTest.DESIGNATION;
+					? TrialMeasurementsControllerTest.DESIGNATION + TrialMeasurementsControllerTest.LOCAL
+					: TrialMeasurementsControllerTest.DESIGNATION;
 			MatcherAssert.assertThat(observationDto.getDesignation(),
 					Is.is(CoreMatchers.equalTo(onePlotMeasurementData.get(designationMapKey))));
-			final String gidMapKey = useDifferentLocalNames ? TermId.GID.name() + MeasurementsControllerTest.LOCAL
+			final String gidMapKey = useDifferentLocalNames ? TermId.GID.name() + TrialMeasurementsControllerTest.LOCAL
 					: TermId.GID.name();
 			MatcherAssert.assertThat(observationDto.getGid(),
 					Is.is(CoreMatchers.equalTo(onePlotMeasurementData.get(gidMapKey))));
 		}
 
 		final String entryNoMapKey = useDifferentLocalNames
-				? TermId.ENTRY_NO.name() + MeasurementsControllerTest.LOCAL : TermId.ENTRY_NO.name();
+				? TermId.ENTRY_NO.name() + TrialMeasurementsControllerTest.LOCAL : TermId.ENTRY_NO.name();
 		MatcherAssert.assertThat(Arrays.equals(new Object[] { observationDto.getEntryNo(), false },
 				(Object[]) onePlotMeasurementData.get(entryNoMapKey)), Is.is(true));
 
 		final String entryCodeMapKey = useDifferentLocalNames
-				? TermId.ENTRY_CODE.name() + MeasurementsControllerTest.LOCAL : TermId.ENTRY_CODE.name();
+				? TermId.ENTRY_CODE.name() + TrialMeasurementsControllerTest.LOCAL : TermId.ENTRY_CODE.name();
 		MatcherAssert.assertThat(Arrays.equals(new Object[] { observationDto.getEntryCode(), false },
 				(Object[]) onePlotMeasurementData.get(entryCodeMapKey)), Is.is(true));
 
 		if (isNewGermplasmDescriptorsAdded) {
 			MatcherAssert.assertThat(
-					Arrays.equals(new Object[] { MeasurementsControllerTest.STOCK_ID_VALUE },
-							(Object[]) onePlotMeasurementData.get(MeasurementsControllerTest.STOCK_ID)),
+					Arrays.equals(new Object[] { TrialMeasurementsControllerTest.STOCK_ID_VALUE },
+							(Object[]) onePlotMeasurementData.get(TrialMeasurementsControllerTest.STOCK_ID)),
 					Is.is(true));
-			MatcherAssert.assertThat(Arrays.equals(new Object[] { MeasurementsControllerTest.CROSS_VALUE },
-					(Object[]) onePlotMeasurementData.get(MeasurementsControllerTest.CROSS)), Is.is(true));
+			MatcherAssert.assertThat(Arrays.equals(new Object[] { TrialMeasurementsControllerTest.CROSS_VALUE },
+					(Object[]) onePlotMeasurementData.get(TrialMeasurementsControllerTest.CROSS)), Is.is(true));
 		}
 
 		final String entryTypeMapKey = useDifferentLocalNames
-				? TermId.ENTRY_TYPE.name() + MeasurementsControllerTest.LOCAL : TermId.ENTRY_TYPE.name();
+				? TermId.ENTRY_TYPE.name() + TrialMeasurementsControllerTest.LOCAL : TermId.ENTRY_TYPE.name();
 		MatcherAssert.assertThat(
 				Arrays.equals(new Object[] { observationDto.getEntryType(), observationDto.getEntryType(), false },
 						(Object[]) onePlotMeasurementData.get(entryTypeMapKey)),
 				Is.is(true));
 
 		final String plotNoMapKey = useDifferentLocalNames
-				? TermId.PLOT_NO.name() + MeasurementsControllerTest.LOCAL : TermId.PLOT_NO.name();
+				? TermId.PLOT_NO.name() + TrialMeasurementsControllerTest.LOCAL : TermId.PLOT_NO.name();
 		MatcherAssert.assertThat(Arrays.equals(new Object[] { observationDto.getPlotNumber(), false },
 				(Object[]) onePlotMeasurementData.get(plotNoMapKey)), Is.is(true));
 
 		final String blockNoMapKey = useDifferentLocalNames
-				? TermId.BLOCK_NO.name() + MeasurementsControllerTest.LOCAL : TermId.BLOCK_NO.name();
+				? TermId.BLOCK_NO.name() + TrialMeasurementsControllerTest.LOCAL : TermId.BLOCK_NO.name();
 		MatcherAssert.assertThat(Arrays.equals(new Object[] { observationDto.getBlockNumber(), false },
 				(Object[]) onePlotMeasurementData.get(blockNoMapKey)), Is.is(true));
 
-		final String repNoMapKey = useDifferentLocalNames ? TermId.REP_NO.name() + MeasurementsControllerTest.LOCAL
+		final String repNoMapKey = useDifferentLocalNames ? TermId.REP_NO.name() + TrialMeasurementsControllerTest.LOCAL
 				: TermId.REP_NO.name();
 		MatcherAssert.assertThat(Arrays.equals(new Object[] { observationDto.getRepitionNumber(), false },
 				(Object[]) onePlotMeasurementData.get(repNoMapKey)), Is.is(true));
 
 		final String trialInstanceMapKey = useDifferentLocalNames
-				? MeasurementsControllerTest.TRIAL_INSTANCE + MeasurementsControllerTest.LOCAL
-				: MeasurementsControllerTest.TRIAL_INSTANCE;
+				? TrialMeasurementsControllerTest.TRIAL_INSTANCE + TrialMeasurementsControllerTest.LOCAL
+				: TrialMeasurementsControllerTest.TRIAL_INSTANCE;
 		MatcherAssert.assertThat(Arrays.equals(new Object[] { observationDto.getTrialInstance(), false },
 				(Object[]) onePlotMeasurementData.get(trialInstanceMapKey)), Is.is(true));
 
-		final String rowMapKey = useDifferentLocalNames ? TermId.ROW.name() + MeasurementsControllerTest.LOCAL
+		final String rowMapKey = useDifferentLocalNames ? TermId.ROW.name() + TrialMeasurementsControllerTest.LOCAL
 				: TermId.ROW.name();
 		MatcherAssert.assertThat(Arrays.equals(new Object[] { observationDto.getRowNumber(), false },
 				(Object[]) onePlotMeasurementData.get(rowMapKey)), Is.is(true));
 
-		final String colMapKey = useDifferentLocalNames ? TermId.COL.name() + MeasurementsControllerTest.LOCAL
+		final String colMapKey = useDifferentLocalNames ? TermId.COL.name() + TrialMeasurementsControllerTest.LOCAL
 				: TermId.COL.name();
 		MatcherAssert.assertThat(Arrays.equals(new Object[] { observationDto.getColumnNumber(), false },
 				(Object[]) onePlotMeasurementData.get(colMapKey)), Is.is(true));
 
 		final String plotIdMapKey = useDifferentLocalNames
-				? TermId.PLOT_ID.name() + MeasurementsControllerTest.LOCAL : TermId.PLOT_ID.name();
+				? TermId.PLOT_ID.name() + TrialMeasurementsControllerTest.LOCAL : TermId.PLOT_ID.name();
 		MatcherAssert.assertThat(Arrays.equals(new Object[] { observationDto.getPlotId(), false },
 				(Object[]) onePlotMeasurementData.get(plotIdMapKey)), Is.is(true));
 
 		final String fieldMapColumnMapKey = useDifferentLocalNames
-				? TermId.FIELDMAP_COLUMN.name() + MeasurementsControllerTest.LOCAL : TermId.FIELDMAP_COLUMN.name();
+				? TermId.FIELDMAP_COLUMN.name() + TrialMeasurementsControllerTest.LOCAL : TermId.FIELDMAP_COLUMN.name();
 		MatcherAssert.assertThat(Arrays.equals(new Object[] { observationDto.getFieldMapColumn(), false },
 				(Object[]) onePlotMeasurementData.get(fieldMapColumnMapKey)), Is.is(true));
 
 		final String fieldMapRangeMapKey = useDifferentLocalNames
-				? TermId.FIELDMAP_RANGE.name() + MeasurementsControllerTest.LOCAL : TermId.FIELDMAP_COLUMN.name();
+				? TermId.FIELDMAP_RANGE.name() + TrialMeasurementsControllerTest.LOCAL : TermId.FIELDMAP_COLUMN.name();
 		MatcherAssert.assertThat(Arrays.equals(new Object[] { observationDto.getFieldMapRange(), false },
 				(Object[]) onePlotMeasurementData.get(fieldMapRangeMapKey)), Is.is(true));
 	}
@@ -985,10 +998,10 @@ public class MeasurementsControllerTest {
 				"Entry Code", "2", "10", "3", measurements);
 
 		if (doAddNewGermplasmDescriptors) {
-			testObservationDto.additionalGermplasmDescriptor(MeasurementsControllerTest.STOCK_ID,
-					MeasurementsControllerTest.STOCK_ID_VALUE);
-			testObservationDto.additionalGermplasmDescriptor(MeasurementsControllerTest.CROSS,
-					MeasurementsControllerTest.CROSS_VALUE);
+			testObservationDto.additionalGermplasmDescriptor(TrialMeasurementsControllerTest.STOCK_ID,
+					TrialMeasurementsControllerTest.STOCK_ID_VALUE);
+			testObservationDto.additionalGermplasmDescriptor(TrialMeasurementsControllerTest.CROSS,
+					TrialMeasurementsControllerTest.CROSS_VALUE);
 		}
 
 		testObservationDto.setRowNumber("11");
@@ -1039,39 +1052,39 @@ public class MeasurementsControllerTest {
 		final String trait1Name = this.measurementText.getMeasurementVariable().getName();
 		this.measurementVariables.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(
 				this.measurementText.getMeasurementVariable().getId(),
-				useDifferentLocalName ? trait1Name + MeasurementsControllerTest.LOCAL : trait1Name, null));
+				useDifferentLocalName ? trait1Name + TrialMeasurementsControllerTest.LOCAL : trait1Name, null));
 		final String trait2Name = this.measurementNumeric.getMeasurementVariable().getName();
 		this.measurementVariables.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(
 				this.measurementNumeric.getMeasurementVariable().getId(),
-				useDifferentLocalName ? trait2Name + MeasurementsControllerTest.LOCAL : trait2Name, null));
+				useDifferentLocalName ? trait2Name + TrialMeasurementsControllerTest.LOCAL : trait2Name, null));
 		final String trait3Name = this.measurementCategorical.getMeasurementVariable().getName();
 		this.measurementVariables.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(
 				this.measurementCategorical.getMeasurementVariable().getId(),
-				useDifferentLocalName ? trait3Name + MeasurementsControllerTest.LOCAL : trait3Name, null));
+				useDifferentLocalName ? trait3Name + TrialMeasurementsControllerTest.LOCAL : trait3Name, null));
 
 		this.measurementVariables.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(
-				MeasurementsControllerTest.ALEUCOL_1_5_TERM_ID,
-				MeasurementsControllerTest.ALEUCOL_1_5_TRAIT_NAME, null));
+				TrialMeasurementsControllerTest.ALEUCOL_1_5_TERM_ID,
+				TrialMeasurementsControllerTest.ALEUCOL_1_5_TRAIT_NAME, null));
 
 		this.measurementVariables.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(
 				this.measurementCategorical.getMeasurementVariable().getId(),
-				useDifferentLocalName ? trait3Name + MeasurementsControllerTest.LOCAL : trait3Name, null));
+				useDifferentLocalName ? trait3Name + TrialMeasurementsControllerTest.LOCAL : trait3Name, null));
 
 		for (final TermId term : this.standardFactors) {
 			this.measurementVariables.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(term.getId(),
-					useDifferentLocalName ? term.name() + MeasurementsControllerTest.LOCAL : term.name(), null));
+					useDifferentLocalName ? term.name() + TrialMeasurementsControllerTest.LOCAL : term.name(), null));
 		}
 		this.measurementVariables
 				.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.DESIG.getId(),
 						useDifferentLocalName
-								? MeasurementsControllerTest.DESIGNATION + MeasurementsControllerTest.LOCAL
-								: MeasurementsControllerTest.DESIGNATION,
+								? TrialMeasurementsControllerTest.DESIGNATION + TrialMeasurementsControllerTest.LOCAL
+								: TrialMeasurementsControllerTest.DESIGNATION,
 						null));
 		this.measurementVariables.add(
 				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),
 						useDifferentLocalName
-								? MeasurementsControllerTest.TRIAL_INSTANCE + MeasurementsControllerTest.LOCAL
-								: MeasurementsControllerTest.TRIAL_INSTANCE,
+								? TrialMeasurementsControllerTest.TRIAL_INSTANCE + TrialMeasurementsControllerTest.LOCAL
+								: TrialMeasurementsControllerTest.TRIAL_INSTANCE,
 						null));
 
 		Mockito.when(workbook.getMeasurementDatasetVariablesView()).thenReturn(this.measurementVariables);
@@ -1085,8 +1098,6 @@ public class MeasurementsControllerTest {
 		userSelection.setWorkbook(workbook);
 		this.measurementsController.setUserSelection(userSelection );
 		final CreateTrialForm form = new CreateTrialForm();
-		final BindingResult bindingResult = Mockito.mock(BindingResult.class);
-		final Model model = Mockito.mock(Model.class);
 
 		final Map<String, String> resultMap = this.measurementsController.updateTraits(form);
 
@@ -1115,6 +1126,35 @@ public class MeasurementsControllerTest {
 		Assert.assertEquals(1, nameToAliasMap.size());
 		Assert.assertTrue(nameToAliasMap.keySet().contains(TermId.PLOT_CODE.name()));
 		Assert.assertEquals(alias, nameToAliasMap.get(TermId.PLOT_CODE.name()));
+	}
+	
+	@Test
+	public void testViewStudyAjax() {
+		CreateTrialForm form = new CreateTrialForm();
+		Model model = Mockito.mock(Model.class);
+		Mockito.when(this.fieldbookMiddlewareService.getCompleteDataset(1)).thenReturn(WorkbookTestDataInitializer.getTestWorkbook());
+		this.measurementsController.setPaginationListSelection(this.paginationListSelection);
+		this.measurementsController.viewStudyAjax(form, model, 1, 1);
+		Assert.assertNotNull(form.getMeasurementRowList());
+		Assert.assertNotNull(form.getMeasurementVariables());
+		Mockito.verify(this.fieldbookMiddlewareService).getCompleteDataset(1);
+		Mockito.verify(this.fieldbookService).setAllPossibleValuesInWorkbook(Matchers.any(Workbook.class));
+		Mockito.verify(this.paginationListSelection).addReviewDetailsList(String.valueOf(1), form.getMeasurementRowList());
+		Mockito.verify(this.paginationListSelection).addReviewVariableList(String.valueOf(1), form.getMeasurementVariables());
+	}
+	
+	@Test
+	public void testChangeLocationIdToName() {
+        final BiMap<String, String> locationNameMap = HashBiMap.create();
+        locationNameMap.put("9015", "INT WATER MANAGEMENT INSTITUTE");
+        Mockito.when(this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(1)).thenReturn(locationNameMap);
+        final MeasurementVariable locationVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.LOCATION_ID.getId(), "9015");
+		List<MeasurementRow> measurementRowList = MeasurementRowTestDataInitializer.createMeasurementRowList(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "9015", locationVariable);
+		Map<String, MeasurementVariable> measurementDatasetVariablesMap = new HashMap<>();
+		measurementDatasetVariablesMap.put(String.valueOf(TermId.LOCATION_ID.getId()), locationVariable);
+		this.measurementsController.changeLocationIdToName(measurementRowList, measurementDatasetVariablesMap, 1);
+		final MeasurementData data = measurementRowList.get(0).getDataList().get(0);
+		Assert.assertEquals("INT WATER MANAGEMENT INSTITUTE", data.getValue());
 	}
 
 	private void verifyCorrectValuesForTraits(final TermSummary category1, final Map<String, Object> dataMap) {

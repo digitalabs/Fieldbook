@@ -841,7 +841,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		this.validationService = validationService;
 	}
 
-	void setStudyService(final StudyService studyService) {
+	public void setStudyService(final StudyService studyService) {
 		this.studyService = studyService;
 	}
 

@@ -3,7 +3,9 @@ package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.generationcp.commons.data.initializer.ImportedGermplasmTestDataInitializer;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -20,6 +22,8 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.FormulaDto;
+import org.generationcp.middleware.domain.ontology.FormulaVariable;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
@@ -34,6 +38,7 @@ import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitialize
 import com.google.common.base.Optional;
 
 import junit.framework.Assert;
+import org.mockito.stubbing.OngoingStubbing;
 
 public class WorkbookUtilTest {
 
@@ -231,4 +236,68 @@ public class WorkbookUtilTest {
 		return importedGermplasm;
 	}
 
+	@Test
+	public void testGetVariatesMapUsedInFormulas() {
+		final FormulaDto formula = new FormulaDto();
+		final Map<MeasurementVariable, List<MeasurementVariable>> map = new HashMap<>();
+		final List<MeasurementVariable> measurementVariables = new ArrayList<>();
+		final List<FormulaVariable> inputs = new ArrayList<>();
+
+		final MeasurementVariable measurementVariable1 = new MeasurementVariable();
+		final String variable1 = "VARIABLE1";
+		measurementVariable1.setName(variable1);
+		measurementVariable1.setTermId(1);
+		measurementVariables.add(measurementVariable1);
+
+		final MeasurementVariable measurementVariable2 = new MeasurementVariable();
+		final String variable2 = "VARIABLE2";
+		measurementVariable2.setName(variable2);
+		measurementVariable2.setTermId(2);
+		measurementVariables.add(measurementVariable2);
+
+		final FormulaVariable formulaVariable = new FormulaVariable(1, measurementVariable1.getName(), measurementVariable1.getTermId());
+		inputs.add(formulaVariable);
+		formula.setInputs(inputs);
+		measurementVariable2.setFormula(formula);
+
+		final Map<MeasurementVariable, List<MeasurementVariable>> variatesMapUsedInFormulas =
+			WorkbookUtil.getVariatesMapUsedInFormulas(measurementVariables);
+		Assert.assertEquals(variatesMapUsedInFormulas.size(), 1);
+		Assert.assertTrue(variatesMapUsedInFormulas.containsKey(measurementVariable1));
+		final List<MeasurementVariable> measurementVariableList = variatesMapUsedInFormulas.get(measurementVariable1);
+		Assert.assertTrue(measurementVariableList.get(0).equals(measurementVariable2));
+	}
+
+	@Test
+	public void testGetVariatesUsedInFormulas() {
+		final FormulaDto formula = new FormulaDto();
+		final Map<MeasurementVariable, List<MeasurementVariable>> map = new HashMap<>();
+		final List<MeasurementVariable> measurementVariables = new ArrayList<>();
+		final List<FormulaVariable> inputs = new ArrayList<>();
+
+		final MeasurementVariable measurementVariable1 = new MeasurementVariable();
+		final String variable1 = "VARIABLE1";
+		measurementVariable1.setName(variable1);
+		measurementVariable1.setTermId(1);
+		measurementVariables.add(measurementVariable1);
+
+		final MeasurementVariable measurementVariable2 = new MeasurementVariable();
+		final String variable2 = "VARIABLE2";
+		measurementVariable2.setName(variable2);
+		measurementVariable2.setTermId(2);
+		measurementVariables.add(measurementVariable2);
+
+		final FormulaVariable formulaVariable = new FormulaVariable(1, measurementVariable1.getName(), measurementVariable1.getTermId());
+		inputs.add(formulaVariable);
+		formula.setInputs(inputs);
+		measurementVariable2.setFormula(formula);
+
+		final Map<Integer, List<Integer>> variatesMapUsedInFormulas =
+			WorkbookUtil.getVariatesUsedInFormulas(measurementVariables);
+		Assert.assertEquals(variatesMapUsedInFormulas.size(), 1);
+		Assert.assertTrue(variatesMapUsedInFormulas.containsKey(measurementVariable1.getTermId()));
+		final List<Integer> measurementVariableList = variatesMapUsedInFormulas.get(measurementVariable1.getTermId());
+		Assert.assertTrue(measurementVariableList.get(0).equals(measurementVariable2.getTermId()));
+
+	}
 }

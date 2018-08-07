@@ -505,7 +505,7 @@ public class OpenTrialController extends BaseTrialController {
 				// Set the flag that indicates whether the variates will be save
 				// or not to false since it's already save after inline edit
 				this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(), false);
-				this.fieldbookMiddlewareService.saveChangedPhenotypes(workbook.getObservations());
+				this.fieldbookMiddlewareService.updatePhenotypeStatus(workbook.getObservations());
 
 				returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService
 						.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(),

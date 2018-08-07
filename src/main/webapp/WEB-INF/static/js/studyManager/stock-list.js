@@ -138,6 +138,11 @@ if (typeof StockIDFunctions === 'undefined') {
 				type: 'GET',
 				cache: false,
 				success: function (html) {
+					$('#stock-content-pane' + listId).html(html);
+		            //we just show the button
+		            $('.export-advance-list-action-button').removeClass('fbk-hide');
+		            $('#stock-list' + listId + '-li').addClass('advance-germplasm-items');
+		            $('#stock-list' + listId + '-li').data('advance-germplasm-list-id', listId);
 					var element = angular.element(document.getElementById("mainApp")).scope();
 					// To apply scope safely
 					element.safeApply(function () {

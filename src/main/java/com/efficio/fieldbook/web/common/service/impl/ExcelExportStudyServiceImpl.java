@@ -249,9 +249,9 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 				if (!ExcelExportStudyServiceImpl.STUDY_DETAILS_IDS.contains(variable.getTermId())) {
 					filteredConditions.add(variable);
 					if (PhenotypicType.TRIAL_ENVIRONMENT == this.getRoleOfVariableInTrialObservations(variable, trialObservation)) {
-						if (variable.getTermId() == 8190) {
+						if (variable.getTermId() == TermId.LOCATION_ID.getId()) {
 							final String locationAlias = variable.getName();
-							variable.setName("LOCATION_ID");
+							variable.setName(TermId.LOCATION_ID.name());
 							final Integer locationId = new Integer( trialObservation.getMeasurementDataValue(variable.getTermId()));
 							filteredConditions.add(createLocationNameVariable(locationId,locationAlias));
 
@@ -285,7 +285,7 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 		locationNameVariable.setDataTypeId(standardVariable.getDataType().getId());
 		locationNameVariable.setValue(location.getLname());
 		locationNameVariable.setLabel("TRIAL");
-		locationNameVariable.setTermId(8180);
+		locationNameVariable.setTermId(TermId.TRIAL_LOCATION.getId());
 		return locationNameVariable;
 	}
 

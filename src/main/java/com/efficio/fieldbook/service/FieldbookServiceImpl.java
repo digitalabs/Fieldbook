@@ -1307,4 +1307,17 @@ public class FieldbookServiceImpl implements FieldbookService {
 	void setOntologyVariableDataManager(final OntologyVariableDataManager ontologyVariableDataManager) {
 		this.ontologyVariableDataManager = ontologyVariableDataManager;
 	}
+
+	public OntologyService getOntologyService() {
+		return ontologyService;
+	}
+
+	public void setOntologyService(OntologyService ontologyService) {
+		this.ontologyService = ontologyService;
+	}
+
+	@Override
+	public StandardVariable getStandardVariable(final Integer termId) {
+		return this.getOntologyService().getStandardVariable(termId, this.contextUtil.getCurrentProgramUUID());
+	}
 }

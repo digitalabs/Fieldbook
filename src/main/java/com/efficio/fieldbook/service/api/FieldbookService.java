@@ -21,6 +21,7 @@ import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -246,4 +247,6 @@ public interface FieldbookService {
 	 * @param observations
 	 */
 	void addMeasurementVariableToMeasurementRows(MeasurementVariable measurementVariable, List<MeasurementRow> observations);
+
+	StandardVariable getStandardVariable(final Integer termId);
 }

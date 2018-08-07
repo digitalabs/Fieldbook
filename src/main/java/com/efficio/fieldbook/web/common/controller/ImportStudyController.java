@@ -11,7 +11,6 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.util.DataMapUtil;
 import com.efficio.fieldbook.web.study.ImportStudyServiceFactory;
 import com.efficio.fieldbook.web.study.ImportStudyType;
-import com.efficio.fieldbook.web.trial.controller.OpenTrialController;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -504,12 +503,12 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		this.fieldbookService.saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(),
 				userSelection.getWorkbook().getStudyDetails().getStudyName(), form.getColumnOrders(),
 				userSelection.getWorkbook());
-		final Boolean hasOutOfSyncObervations =
-			this.fieldbookMiddlewareService.hasOutOfSyncObervations(workbook.getMeasurementDatesetId());
+		final Boolean hasOutOfSyncObservations =
+			this.fieldbookMiddlewareService.hasOutOfSyncObservations(workbook.getMeasurementDatesetId());
 
 		final Map<String, Object> result = new HashMap<>();
 		result.put(ImportStudyController.SUCCESS, "1");
-		result.put(ImportStudyController.CONTAINS_OUT_OF_SYNC_VALUES, hasOutOfSyncObervations);
+		result.put(ImportStudyController.CONTAINS_OUT_OF_SYNC_VALUES, hasOutOfSyncObservations);
 		return result;
 	}
 

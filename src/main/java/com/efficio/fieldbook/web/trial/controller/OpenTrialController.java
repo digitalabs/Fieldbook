@@ -59,7 +59,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -517,7 +516,7 @@ public class OpenTrialController extends BaseTrialController {
 						.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), workbook.getStudyName(), data.getColumnOrders(),
 								workbook);
 				final Boolean hasOutOfSyncObservations =
-					this.fieldbookMiddlewareService.hasOutOfSyncObervations(workbook.getMeasurementDatesetId());
+					this.fieldbookMiddlewareService.hasOutOfSyncObservations(workbook.getMeasurementDatesetId());
 				returnVal.put(OpenTrialController.CONTAINS_OUT_OF_SYNC_VALUES, hasOutOfSyncObservations);
 				return returnVal;
 			} catch (final MiddlewareQueryException e) {

@@ -14,6 +14,7 @@ import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -25,6 +26,7 @@ import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,13 +41,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
+import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingServiceImplTest {
@@ -71,6 +67,9 @@ public class CrossingServiceImplTest {
 	@Captor
 	private ArgumentCaptor<List<Attribute>> attributesListCaptor;
 
+	@Mock
+	private FieldbookService fieldbookMiddlewareService;
+	
 	@Mock
 	private GermplasmListManager germplasmListManager;
 
@@ -676,32 +675,34 @@ public class CrossingServiceImplTest {
 		final String newSeedSource = "newSeedSource";
 		Mockito.doReturn(newSeedSource).when(this.seedSourceGenertor)
 				.generateSeedSourceForCross(Matchers.any(Workbook.class), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-						Matchers.anyString());
+						Matchers.anyString(), Matchers.any(Workbook.class));
 
+		Mockito.when(this.fieldbookMiddlewareService.getStudyByNameAndProgramUUID(Matchers.anyString(), Matchers.anyString())).thenReturn(Mockito.mock(Workbook.class));
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
 		// Case 1 - No seed source present. Generate new.
 		final ImportedCrosses importedCross1 = new ImportedCrosses();
 		importedCross1.setSource(null);
-		this.crossingService.populateSeedSource(importedCross1, Mockito.mock(Workbook.class));
+		this.crossingService.populateSeedSource(importedCross1, workbook, new HashMap<String, Workbook>());
 		Assert.assertEquals(newSeedSource, importedCross1.getSource());
 
 		// Case 2 - Seed source is present. Keep.
 		final ImportedCrosses importedCross2 = new ImportedCrosses();
 		final String existingSeedSource = "existingSeedSource";
 		importedCross2.setSource(existingSeedSource);
-		this.crossingService.populateSeedSource(importedCross2, Mockito.mock(Workbook.class));
+		this.crossingService.populateSeedSource(importedCross2, workbook, new HashMap<String, Workbook>());
 		Assert.assertEquals(existingSeedSource, importedCross2.getSource());
 
 		// Case 3 - Seed source is presend but is PENDING indicator. Generate
 		// new.
 		final ImportedCrosses importedCross3 = new ImportedCrosses();
 		importedCross3.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
-		this.crossingService.populateSeedSource(importedCross3, Mockito.mock(Workbook.class));
+		this.crossingService.populateSeedSource(importedCross3, workbook, new HashMap<String, Workbook>());
 		Assert.assertEquals(newSeedSource, importedCross3.getSource());
 
 		// Case 4 - Seed source is present but empty string. Generate new.
 		final ImportedCrosses importedCross4 = new ImportedCrosses();
 		importedCross4.setSource("");
-		this.crossingService.populateSeedSource(importedCross4, Mockito.mock(Workbook.class));
+		this.crossingService.populateSeedSource(importedCross4, workbook, new HashMap<String, Workbook>());
 		Assert.assertEquals(newSeedSource, importedCross4.getSource());
 
 	}

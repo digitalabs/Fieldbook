@@ -11,6 +11,8 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 public interface CrossingService {
 
 	ImportedCrossesList parseFile(MultipartFile file) throws FileParsingException;
@@ -26,7 +28,7 @@ public interface CrossingService {
 
 	void processCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList);
 
-	void populateSeedSource(ImportedCrosses importedCross, Workbook workbook);
+	void populateSeedSource(ImportedCrosses importedCross, Workbook workbook, Map<String, Workbook> workbookMap);
 	
 	String getNextNameInSequence(final CrossNameSetting setting) throws InvalidInputException;
 }

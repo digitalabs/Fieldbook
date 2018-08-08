@@ -173,6 +173,7 @@ public class DerivedVariableController {
 			}
 
 			// Set overwrite info
+			target.setValueStatus(null);
 
 			if (!target.getValue().equals(value)) {
 				if (!target.getValue().isEmpty()) {
@@ -180,7 +181,6 @@ public class DerivedVariableController {
 				}
 				target.setValue(value);
 				target.setOldValue(value);
-				target.setValueStatus(null);
 			}
 		}
 

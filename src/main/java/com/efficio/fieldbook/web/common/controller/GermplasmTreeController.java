@@ -43,6 +43,7 @@ import org.generationcp.commons.ruleengine.RulesNotConfiguredException;
 import org.generationcp.commons.service.UserTreeStateService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -480,7 +481,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(), this.userSelection.getWorkbook());
 			isTrimed = isTrimed || this.populateGermplasmListData(germplasmList, listDataItems, importedCrossesList.getImportedCrosses());
 		} else {
-			final ImportedCrossesList importedCrossesListWithNamingSettings = this.applyNamingRules(crossSetting, importedCrossesList);
+			final ImportedCrossesList importedCrossesListWithNamingSettings = this.applyNamingRules(importedCrossesList);
 			// this line of code is where the creation of new germplasm takes
 			// place
 			isTrimed = this.crossingService
@@ -493,46 +494,55 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return isTrimed;
 	}
 
-	private ImportedCrossesList applyNamingRules(final CrossSetting setting, final ImportedCrossesList importedCrossesList)
+	protected ImportedCrossesList applyNamingRules(final ImportedCrossesList importedCrossesList)
 			throws RuleException {
 
-		// TODO REFACTOR THIS
-
-		final AdvancingSourceList list = new AdvancingSourceList();
-		final List<AdvancingSource> rows = new ArrayList<>();
-
+		final List<AdvancingSource> advancingSources = new ArrayList<>();
 		final List<Integer> gids = new ArrayList<>();
 		final List<ImportedCrosses> importedCrosses = importedCrossesList.getImportedCrosses();
+
 		for (final ImportedCrosses cross : importedCrosses) {
-			final Name name = new Name();
-			name.setNstat(1);
-			name.setNval(cross.getCross());
-			final List<Name> names = new ArrayList<>();
-			names.add(name);
-			cross.setNames(names);
-			final AdvancingSource advancingSource = new AdvancingSource(cross);
-			// TODO add trail instance number
-			advancingSource.setConditions(this.userSelection.getWorkbook().getConditions());
-			advancingSource.setStudyType(this.userSelection.getWorkbook().getStudyDetails().getStudyType());
-			advancingSource.setBreedingMethodId(cross.getBreedingMethodId());
-			rows.add(advancingSource);
+
+			this.assignCrossNames(cross);
+			advancingSources.add(this.createAdvancingSource(cross));
 			if (cross.getGid() != null && NumberUtils.isNumber(cross.getGid())) {
 				gids.add(Integer.valueOf(cross.getGid()));
 			}
 		}
 
-		list.setRows(rows);
+		final AdvancingSourceList advancingSourceList = new AdvancingSourceList();
+		advancingSourceList.setRows(advancingSources);
 
 		final AdvancingStudy advancingParameters = new AdvancingStudy();
-
 		advancingParameters.setCheckAdvanceLinesUnique(true);
+
 		final List<ImportedCrosses> crosses = this.namingConventionService
-				.generateCrossesList(importedCrosses, list, advancingParameters, this.userSelection.getWorkbook(), gids);
+				.generateCrossesList(importedCrosses, advancingSourceList, advancingParameters, this.userSelection.getWorkbook(), gids);
 
 		importedCrossesList.setImportedGermplasms(crosses);
 		this.userSelection.setImportedCrossesList(importedCrossesList);
 
 		return importedCrossesList;
+	}
+
+	protected void assignCrossNames(final ImportedCrosses cross) {
+		final Name name = new Name();
+		name.setNstat(1);
+		name.setNval(cross.getCross());
+		final List<Name> names = new ArrayList<>();
+		names.add(name);
+		cross.setNames(names);
+	}
+
+	protected AdvancingSource createAdvancingSource(final ImportedCrosses cross) {
+		final AdvancingSource advancingSource = new AdvancingSource(cross);
+		// TODO add trail instance number
+		final Workbook workbook = this.userSelection.getWorkbook();
+		advancingSource.setStudyId(workbook.getStudyDetails().getId());
+		advancingSource.setConditions(workbook.getConditions());
+		advancingSource.setStudyType(workbook.getStudyDetails().getStudyType());
+		advancingSource.setBreedingMethodId(cross.getBreedingMethodId());
+		return advancingSource;
 	}
 
 	protected Integer saveListDataProjectList(final String germplasmListType, final Integer germplasmListId,

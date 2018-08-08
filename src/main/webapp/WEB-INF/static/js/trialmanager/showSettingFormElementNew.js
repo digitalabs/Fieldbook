@@ -23,7 +23,7 @@
     						uiSelect2.compile(tElement, tAttrs);
     					}
     				},
-    				controller: function($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http) {
+    				controller: function($scope, LOCATION_ID, UNSPECIFIED_LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http) {
     					if ($scope.settingkey === undefined) {
     						$scope.settingkey = $scope.targetkey;
     					}
@@ -50,7 +50,7 @@
     					$scope.isBreedingMethod = parseInt(BREEDING_METHOD_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10) ||
     						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
-    					$scope.localData = {};					
+    					$scope.localData = {};
 						var showAll = $scope.valuecontainer[$scope.targetkey];
 						if (showAll != null && showAll !='' && showAll != undefined) {
 							$scope.localData.useFavorites = false;
@@ -59,10 +59,8 @@
 						else{
 							$scope.locationLookup =  1;
 						}
-						
 
 						$scope.updateDropdownValuesFavorites = function() { // Change state for favorite checkbox
-							
 								if ($scope.localData.useFavorites) {
 									if ($scope.locationLookup == 1) {
 										$scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
@@ -77,7 +75,6 @@
 										$scope.dropdownValues = $scope.variableDefinition.allValues;
 									}
 								}
-					
 						};
 
 						$scope.updateDropdownValuesBreedingLocation = function() { // Change state for breeding
@@ -107,10 +104,17 @@
 						};
 
     					if ($scope.hasDropdownOptions) {
+
     						var currentVal = $scope.valuecontainer[$scope.targetkey];
 
+                            if (!currentVal && $scope.targetkey === LOCATION_ID) {
+                                currentVal = UNSPECIFIED_LOCATION_ID;
+                                $scope.valuecontainer[$scope.targetkey] = UNSPECIFIED_LOCATION_ID;
+                                $scope.locationLookup = 2;
+                            }
+
     						// lets fix current val if its an object so that valuecontainer only contains the id
-    						if (typeof currentVal !== 'undefined' && currentVal !== null && typeof currentVal.id !== 'undefined' && currentVal.id) {
+    						if (currentVal && currentVal.id) {
     							currentVal = currentVal.id;
     							$scope.valuecontainer[$scope.targetkey] = currentVal;
     						}
@@ -123,7 +127,6 @@
 								if($scope.dropdownValues != null) {
 									return $scope.dropdownValues.length > 0 ? 20 : -1;
 								}
-									
 								return -1;
 							};
 
@@ -197,7 +200,6 @@
     										$scope.clearArray($scope.variableDefinition.possibleValuesFavorite);
 											$scope.clearArray($scope.variableDefinition.allFavoriteValues);
 											$scope.clearArray($scope.variableDefinition.allValues);
-    										
 
     										$scope.variableDefinition.possibleValues.push.apply($scope.variableDefinition.possibleValues,
     											$scope.convertLocationsToPossibleValues(returnVal.data.allBreedingLocations));
@@ -239,5 +241,5 @@
     					}
     				}
     			};
-    		}])
+    		}]);
 }());

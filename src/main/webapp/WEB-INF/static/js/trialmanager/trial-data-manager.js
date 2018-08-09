@@ -407,11 +407,6 @@
 						return false;
 					}
 
-					if (service.isLocationNameUnspecified()) {
-                        showErrorMessage('', 'Location name needs to be specified for all the instances of the study. Please review your Environment Details.');
-                        return false;
-					}
-
 					if (hasOutOfBoundValues()) {
 						//we check if there is invalid value in the measurements
 						showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
@@ -935,23 +930,6 @@
 							return results;
 						}('on Treatment Factors'));
 					}
-				},
-
-				isLocationNameUnspecified: function() {
-
-					var locationNameIsUnspecified = false;
-					_.each(service.currentData.environments.environments, function(item, key) {
-                        var locationId = '';
-						if (item.managementDetailValues[LOCATION_NAME_ID]) {
-                            locationId = isNaN(item.managementDetailValues[LOCATION_NAME_ID]) ?
-                                item.managementDetailValues[LOCATION_NAME_ID].id :
-                                item.managementDetailValues[LOCATION_NAME_ID];
-						}
-                        if (locationId === '' || locationId === UNSPECIFIED_LOCATION_ID) {
-                            locationNameIsUnspecified = true;
-                        }
-					});
-					return locationNameIsUnspecified;
 				}
 			};
 

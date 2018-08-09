@@ -172,7 +172,8 @@ public class DerivedVariableController {
 				target.setcValueId(null);
 			}
 
-			// Set overwrite info
+			// Process value info
+
 			target.setValueStatus(null);
 
 			if (!target.getValue().equals(value)) {

@@ -361,6 +361,7 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 
 				var.setFactor(Boolean.TRUE);
 
+				// FIXME excessive duplication, most of this constructors share the same data. switch only over that changes and call the constructor at the end
 				if (termId == null) {
 					// we default if null, but should not happen
 					measurementData = new MeasurementData(var.getName(), StringUtils.EMPTY, Boolean.TRUE, var.getDataType(), var);

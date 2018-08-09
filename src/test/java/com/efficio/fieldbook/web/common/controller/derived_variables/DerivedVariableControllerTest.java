@@ -21,6 +21,7 @@ import org.generationcp.middleware.domain.ontology.FormulaVariable;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.operation.builder.DataSetBuilder;
 import org.generationcp.middleware.operation.builder.WorkbookBuilder;
+import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.derived_variables.FormulaService;
 import org.generationcp.middleware.service.api.study.StudyService;
@@ -50,6 +51,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -68,6 +70,7 @@ public class DerivedVariableControllerTest {
 	public static final int VARIABLE3_TERMID = 789;
 	public static final int VARIABLE4_TERMID = 999;
 	public static final int VARIABLE5_TERMID = 20439; // MRFVInc_Cmp_pct
+	public static final int TARGET_VARIABLE_TERMID = 321;
 
 	private static final String INVALID_REQUEST = "invalid request";
 	private static final String NOT_FOUND = "not found";
@@ -119,10 +122,17 @@ public class DerivedVariableControllerTest {
 		workbook.getStudyDetails().setId(STUDY_ID);
 
 		final List<MeasurementRow> observations = new ArrayList<>();
-		final List<MeasurementRow> observationsCopy = new ArrayList<>();
 		final MeasurementRow measurementRow = this.createMeasurementRowTestData();
 		observations.add(measurementRow);
-		observationsCopy.add(measurementRow);
+
+		final MeasurementRow secondRow = this.createMeasurementRowTestData();
+		final MeasurementData secondRowTarget = secondRow.getDataList().get(0);
+		secondRowTarget.setValue(FORMULA_RESULT);
+		secondRowTarget.setValueStatus(Phenotype.ValueStatus.OUT_OF_SYNC);
+		observations.add(secondRow);
+
+		final List<MeasurementRow> observationsCopy = new ArrayList<>(observations);
+
 		workbook.setObservations(observations);
 		workbook.setOriginalObservations(observations);
 
@@ -150,11 +160,11 @@ public class DerivedVariableControllerTest {
 		this.formulaDTO = new FormulaDto();
 		this.formulaDTO.setDefinition(FORMULA);
 		final ArrayList<FormulaVariable> inputs = new ArrayList<>();
-		inputs.add(new FormulaVariable(VARIABLE1_TERMID, String.valueOf(VARIABLE1_TERMID), VARIABLE1_TERMID));
-		inputs.add(new FormulaVariable(VARIABLE2_TERMID, String.valueOf(VARIABLE2_TERMID), VARIABLE1_TERMID));
-		inputs.add(new FormulaVariable(VARIABLE3_TERMID, String.valueOf(VARIABLE3_TERMID), VARIABLE1_TERMID));
+		inputs.add(new FormulaVariable(VARIABLE1_TERMID, String.valueOf(VARIABLE1_TERMID), TARGET_VARIABLE_TERMID));
+		inputs.add(new FormulaVariable(VARIABLE2_TERMID, String.valueOf(VARIABLE2_TERMID), TARGET_VARIABLE_TERMID));
+		inputs.add(new FormulaVariable(VARIABLE3_TERMID, String.valueOf(VARIABLE3_TERMID), TARGET_VARIABLE_TERMID));
 		formulaDTO.setInputs(inputs);
-		formulaDTO.setTarget(new FormulaVariable(Integer.valueOf(VARIABLE1_TERMID), "", null));
+		formulaDTO.setTarget(new FormulaVariable(Integer.valueOf(TARGET_VARIABLE_TERMID), "", null));
 		Mockito.when(formulaOptional.get()).thenReturn(formulaDTO);
 	}
 
@@ -212,7 +222,9 @@ public class DerivedVariableControllerTest {
 		final ResponseEntity<Map<String, Object>> response = this.derivedVariableController.execute(request, bindingResult);
 
 		for (final MeasurementRow measurementRow : this.studySelection.getWorkbook().getObservations()) {
-			Assert.assertEquals(FORMULA_RESULT, measurementRow.getMeasurementData(VARIABLE1_TERMID).getValue());
+			final MeasurementData target = measurementRow.getMeasurementData(TARGET_VARIABLE_TERMID);
+			Assert.assertEquals(FORMULA_RESULT, target.getValue());
+			Assert.assertThat(target.getValueStatus(), nullValue());
 		}
 
 		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -408,6 +420,7 @@ public class DerivedVariableControllerTest {
 
 	private List<MeasurementData> createMeasurementDataListTestData() {
 		final List<MeasurementData> measurementDataList = new ArrayList<>();
+		measurementDataList.add(this.createMeasurementDataTestData(String.valueOf(TARGET_VARIABLE_TERMID), null, null));
 		measurementDataList.add(this.createMeasurementDataTestData(String.valueOf(VARIABLE1_TERMID), TERM_VALUE_1, null));
 		measurementDataList.add(this.createMeasurementDataTestData(String.valueOf(VARIABLE2_TERMID), TERM_VALUE_2, null));
 		measurementDataList.add(this.createMeasurementDataTestData(String.valueOf(VARIABLE3_TERMID), TERM_VALUE_3, null));

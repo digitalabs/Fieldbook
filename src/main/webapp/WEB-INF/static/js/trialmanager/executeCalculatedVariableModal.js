@@ -14,12 +14,12 @@
 		$scope.init = function () {
 			$scope.calculateVariableLocationForm.$setPristine();
 
-			$scope.locationSelected = undefined;
+			$scope.environmentSelected = undefined;
 			$scope.variableSelected = undefined;
 			$scope.data = TrialManagerDataService.currentData.environments;
 
 			$scope.variableListView = convertTraitsVariablesToListView(TrialManagerDataService.settings.measurements.m_keys);
-			$scope.locationListView = convertToEnvironmentListView($scope.data.environments, $scope.LOCATION_NAME_ID, $scope.TRIAL_INSTANCE_INDEX);
+			$scope.environmentListView = convertToEnvironmentListView($scope.data.environments, $scope.LOCATION_NAME_ID, $scope.TRIAL_INSTANCE_INDEX);
 		//	$scope.variableSelected = $scope.variableListView[0]; //TODO select the first Variable
 
 		};
@@ -36,7 +36,7 @@
 		$scope.execute = function () {
 			var calculateData = {
 				variableId: $scope.variableSelected.cvTermId
-				, geoLocationId: $scope.locationSelected.locationId
+				, geoLocationId: $scope.environmentSelected.locationId
 			};
 
 			$http.post('/Fieldbook/DerivedVariableController/derived-variable/execute', JSON.stringify(calculateData))

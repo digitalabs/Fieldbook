@@ -87,7 +87,7 @@
 
 			var environmentListView = [];
 			angular.forEach(environments, function(environment) {
-				environmentListView.push({ name: getPreferredEnvironmentName(environment, preferredLocationVariable)
+				environmentListView.push({ name: environment.managementDetailValues[trialInstanceIndex] + " - " + getPreferredEnvironmentName(environment, preferredLocationVariable)
 					,trialInstanceNumber: environment.managementDetailValues[trialInstanceIndex]
 				,locationId:environment.locationId});
 			});

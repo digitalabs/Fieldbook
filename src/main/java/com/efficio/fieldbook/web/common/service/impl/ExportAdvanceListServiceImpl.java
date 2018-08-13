@@ -200,6 +200,8 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.LOCATION_ID.getId(),
 				this.messageSource.getMessage("seed.inventory.table.location", null, locale), true, ExportColumnHeader.BLUE));
+		exportColumnHeaders.add(new ExportColumnHeader(TermId.LOCATION_ABBR.getId(),
+			this.messageSource.getMessage("seed.inventory.table.location.abbr", null, locale), true, ExportColumnHeader.BLUE));
 		// Always use TermId.SEED_AMOUNT_G for inventory amount id to align with expected id in GermplasmExportService in Commons
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.SEED_AMOUNT_G.getId(), amountHeader, true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.STOCKID.getId(),

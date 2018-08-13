@@ -126,6 +126,30 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 	}
 
+	@Test
+	public void testShowStudySummaryViewTemplateWithNullCreatedBy() {
+		final int id = 1;
+		final CreateTrialForm form = new CreateTrialForm();
+		final Model model = new ExtendedModelMap();
+
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
+		workbook.getStudyDetails().setCreatedBy(null);
+
+		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		final com.efficio.fieldbook.service.api.FieldbookService fieldbookService =
+				Mockito.mock(com.efficio.fieldbook.service.api.FieldbookService.class);
+		this.reviewStudyDetailsController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		this.reviewStudyDetailsController.setFieldbookService(fieldbookService);
+		Mockito.doReturn(workbook).when(fieldbookMiddlewareService).getStudyVariableSettings(id);
+		this.mockStandardVariables(workbook.getAllVariables(), fieldbookMiddlewareService, fieldbookService);
+		this.mockContextUtil();
+
+		this.reviewStudyDetailsController.show(id, form, model);
+
+		Mockito.verify(fieldbookService).getPersonByUserId(0);
+
+	}
+
 	private boolean hasAnalysisVariables(final List<MeasurementVariable> variables) {
 		boolean analysisVariableFound = false;
 		for (final MeasurementVariable variable : variables) {

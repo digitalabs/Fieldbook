@@ -14,14 +14,20 @@
 		$scope.init = function () {
 			$scope.calculateVariableLocationForm.$setPristine();
 
-			$scope.locationSelected = undefined;
+			$scope.environmentSelected = undefined;
 			$scope.variableSelected = undefined;
 			$scope.data = TrialManagerDataService.currentData.environments;
 
 			$scope.variableListView = convertTraitsVariablesToListView(TrialManagerDataService.settings.measurements.m_keys);
-			$scope.locationListView = convertToEnvironmentListView($scope.data.environments, $scope.LOCATION_NAME_ID, $scope.TRIAL_INSTANCE_INDEX);
+			$scope.environmentListView = convertToEnvironmentListView($scope.data.environments, $scope.LOCATION_NAME_ID, $scope.TRIAL_INSTANCE_INDEX);
 		//	$scope.variableSelected = $scope.variableListView[0]; //TODO select the first Variable
 
+			if ($('#mdt-environment-list .ng-scope') && $('#mdt-environment-list .ng-scope').text().trim() !== "") {
+				var instance = $('#mdt-environment-list .ng-scope').text().trim()[0];
+				$scope.environmentSelected = $scope.environmentListView[parseInt(instance) - 1];
+			} else {
+				$scope.environmentSelected = $scope.environmentListView[0];
+			}
 		};
 
 		$scope.proceedExecution = function () {
@@ -36,7 +42,7 @@
 		$scope.execute = function () {
 			var calculateData = {
 				variableId: $scope.variableSelected.cvTermId
-				, geoLocationId: $scope.locationSelected.locationId
+				, geoLocationId: $scope.environmentSelected.locationId
 			};
 
 			$http.post('/Fieldbook/DerivedVariableController/derived-variable/execute', JSON.stringify(calculateData))
@@ -87,7 +93,7 @@
 
 			var environmentListView = [];
 			angular.forEach(environments, function(environment) {
-				environmentListView.push({ name: getPreferredEnvironmentName(environment, preferredLocationVariable)
+				environmentListView.push({ name: environment.managementDetailValues[trialInstanceIndex] + " - " + getPreferredEnvironmentName(environment, preferredLocationVariable)
 					,trialInstanceNumber: environment.managementDetailValues[trialInstanceIndex]
 				,locationId:environment.locationId});
 			});

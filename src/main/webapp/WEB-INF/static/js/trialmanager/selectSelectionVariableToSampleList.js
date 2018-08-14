@@ -55,7 +55,7 @@
 				$scope.sampleForm.selectVariableManageSample.$setDirty();
 			}
 
-			$http.get('/bmsapi/user/list?projectUUID=' + currentProgramId, config).success(function (data) {
+			$http.get('/bmsapi/projects/' + currentProgramId + '/users', config).success(function (data) {
 				$scope.users = data;
 
 				angular.forEach($scope.users, function (user) {

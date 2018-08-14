@@ -141,14 +141,14 @@ public class InventoryImportParserTest {
 	public void testSetupParsingValidations() {
 		this.generateHeaders(GermplasmListType.CROSSES);
 		final ParseValidationMap map = this.parser.setupIndividualColumnValidation();
-		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION)).isEmpty());
+		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION_ABBR)).isEmpty());
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT)).isEmpty());
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY)).isEmpty());
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID)).isEmpty());
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_WITH)).isEmpty());
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL)).isEmpty());
 
-		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION))
+		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION_ABBR))
 				.get(0) instanceof ValueRangeValidator);
 		Assert.assertTrue(
 				map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT)).get(0) instanceof ValueTypeValidator);
@@ -200,7 +200,7 @@ public class InventoryImportParserTest {
 		final Map<Integer, String> testRowValue = new HashMap<>();
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
-		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "TEST1");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION_ABBR), "TEST1");
 
 		final InventoryDetails details = rowConverter.convertToObject(testRowValue);
 
@@ -219,7 +219,7 @@ public class InventoryImportParserTest {
 		final Map<Integer, String> testRowValue = new HashMap<>();
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
-		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "TEST1");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION_ABBR), "TEST1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT), "0");
 
 		final InventoryDetails details = rowConverter.convertToObject(testRowValue);
@@ -255,7 +255,7 @@ public class InventoryImportParserTest {
 		final Map<Integer, String> testRowValue = new HashMap<>();
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
-		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "TEST1");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION_ABBR), "TEST1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT), "15");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL), "y");
 
@@ -300,7 +300,7 @@ public class InventoryImportParserTest {
 	@Test
 	public void testParseWorkbook_Crosses() throws Exception {
 		final GermplasmListType germplasmListType = GermplasmListType.CROSSES;
-		final Map<String, Object> additionalParams = new HashMap<String, Object>();
+		final Map<String, Object> additionalParams = new HashMap<>();
 		additionalParams.put(InventoryImportParser.HEADERS_MAP_PARAM_KEY, InventoryHeaderLabels.headers(GermplasmListType.CROSSES));
 		additionalParams.put(InventoryImportParser.LIST_ID_PARAM_KEY, InventoryImportParserTest.TEST_LIST_ID);
 		additionalParams.put(InventoryImportParser.GERMPLASM_LIST_TYPE_PARAM_KEY, InventoryImportParserTest.TEST_GERMPLASM_LIST_TYPE);

@@ -214,7 +214,7 @@ public class ExcelExportStudyServiceImplTest {
 
 		// If the datatype is categorical then the variable's value (which is categorical id) must be converted to
 		// categorical name it represents
-		Assert.assertEquals("A", cellValueCaptor.getValue().toString());
+		Assert.assertEquals("A", cellValueCaptor.getValue());
 
 	}
 
@@ -233,7 +233,7 @@ public class ExcelExportStudyServiceImplTest {
 		Mockito.verify(cell).setCellValue(cellValueCaptor.capture());
 
 		// If the datatype is not categorical or numeruc then the variable's value should be set to the cell's value
-		Assert.assertEquals("1", cellValueCaptor.getValue().toString());
+		Assert.assertEquals("1", cellValueCaptor.getValue());
 
 	}
 
@@ -315,12 +315,12 @@ public class ExcelExportStudyServiceImplTest {
 	@Test
 	public void testPopulateFilteredConditionsForLocationID() {
 
-		MeasurementVariable variable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.LOCATION_ID.getId(), "LOCATION_NAME", "1990");
+		final MeasurementVariable variable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.LOCATION_ID.getId(), "LOCATION_NAME", "1990");
 		variable.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
-		MeasurementRow trialObservation = Mockito.mock(MeasurementRow.class);
-		List<MeasurementVariable> filteredConditions = new ArrayList<>();
+		final MeasurementRow trialObservation = Mockito.mock(MeasurementRow.class);
+		final List<MeasurementVariable> filteredConditions = new ArrayList<>();
 
-		Location location = LocationTestDataInitializer.createLocation(1990, "WARDA");
+		final Location location = LocationTestDataInitializer.createLocation(1990, "WARDA");
 		Mockito.when(trialObservation.getMeasurementDataValue(variable.getTermId())).thenReturn("1990");
 		Mockito.when(this.locationDataManager.getLocationByID(1990)).thenReturn(location);
 		Mockito.when(this.fieldbookService.getStandardVariable(TermId.TRIAL_LOCATION.getId())).thenReturn(
@@ -336,15 +336,15 @@ public class ExcelExportStudyServiceImplTest {
 
 	@Test
 	public void testPopulateFilteredConditions() {
-	  MeasurementRow trialObservation = Mockito.mock(MeasurementRow.class);
-	  List<MeasurementVariable> filteredConditions = new ArrayList<>();
-	  MeasurementVariable variable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "1");
-	  variable.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+		final MeasurementRow trialObservation = Mockito.mock(MeasurementRow.class);
+		final List<MeasurementVariable> filteredConditions = new ArrayList<>();
+		final MeasurementVariable variable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "1");
+		variable.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
 
-	  this.excelExportStudyService.populateFilteredConditions(trialObservation, filteredConditions, variable);
-	  Assert.assertEquals(1, filteredConditions.size());
-	  Assert.assertEquals(TermId.TRIAL_INSTANCE_FACTOR.getId(), filteredConditions.get(0).getTermId());
-	  Assert.assertEquals("TRIAL_INSTANCE", filteredConditions.get(0).getName());
+		this.excelExportStudyService.populateFilteredConditions(trialObservation, filteredConditions, variable);
+		Assert.assertEquals(1, filteredConditions.size());
+		Assert.assertEquals(TermId.TRIAL_INSTANCE_FACTOR.getId(), filteredConditions.get(0).getTermId());
+		Assert.assertEquals("TRIAL_INSTANCE", filteredConditions.get(0).getName());
 	}
 	
 	@Test

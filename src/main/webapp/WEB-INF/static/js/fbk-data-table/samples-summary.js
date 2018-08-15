@@ -3,61 +3,96 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 		'use strict';
 
 		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+		var sortKeys = [
+			'sampleName',
+			'sampleBusinessKey',
+			'takenBy',
+			'samplingDate',
+			'sampleList',
+			'plant.plantNumber',
+			'plant.plantBusinessKey',
+			'plateId',
+			'well',
+			''
+		];
 
-		$(tableIdentifier).DataTable({
-			destroy: true,
-			ajax: {
-				url: '/bmsapi/sample/' + cropName + '/samples?plotId=' + plotId,
-				dataSrc: '',
-				beforeSend: function (xhr) {
-					xhr.setRequestHeader('X-Auth-Token', xAuthToken);
-				}
-			},
-			columns: [
-				{data: 'sampleName'},
-				{data: 'sampleBusinessKey'},
-				{data: 'takenBy',
-					render: function (data) {
-						if (!data) {
-							return '-';
-						}
-						return data;
-					}},
-				{data: 'samplingDate',
-					render: function (data, type, row) {
-						if (!data) {
-							return '-';
-						}
-						if (type === 'sort') {
-							return data.split("/").reverse().join();
-						}
-						return data;
+		$(tableIdentifier)
+			.on('xhr.dt', function (e, settings, json, xhr) {
+				json.recordsTotal = json.recordsFiltered = xhr.getResponseHeader('X-Total-Count');
+			})
+			.DataTable({
+				destroy: true,
+				serverSide: true,
+				lengthMenu: [10, 50, 75, 100],
+				iDisplayLength: 10,
+				ajax: {
+					url: '/bmsapi/sample/' + cropName + '/samples?plotId=' + plotId,
+					dataSrc: '',
+					beforeSend: function (xhr) {
+						xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+					},
+					data: function (d) {
+						var order = d.order && d.order[0];
+						var sort = order && sortKeys[order.column] && (sortKeys[order.column] + ',' + order.dir)
+
+						return {
+							size: d.length,
+							page: d.length ? d.start / d.length : 0,
+							sort: sort || ''
+						};
 					}
 				},
-				{data: 'sampleList'},
-				{data: 'plantNumber'},
-				{data: 'plantBusinessKey'},
-				{data: 'plateId'},
-				{data: 'well'},
-				{data: 'datasets',
-					render: function (data, type, row) {
-						if (!data || !data.length || data.length === 0) {
-							return '-';
+				columns: [
+					{data: 'sampleName'},
+					{data: 'sampleBusinessKey'},
+					{
+						data: 'takenBy',
+						render: function (data) {
+							if (!data) {
+								return '-';
+							}
+							return data;
 						}
-						var authParams =
-							'&authToken=' + authToken
-							+ '&selectedProjectId=' + selectedProjectId
-							+ '&loggedInUserId=' + loggedInUserId;
-						return data.map(function (dataset) {
-							return "<a href='/GDMS/main/?restartApplication&datasetId=" + dataset.datasetId
-								+ authParams
-								+ "'>" + dataset.name + "</a>"
-						}).join(", ");
+					},
+					{
+						data: 'samplingDate',
+						render: function (data, type, row) {
+							if (!data) {
+								return '-';
+							}
+							if (type === 'sort') {
+								return data.split("/").reverse().join();
+							}
+							return data;
+						}
+					},
+					{data: 'sampleList'},
+					{data: 'plantNumber'},
+					{data: 'plantBusinessKey'},
+					{data: 'plateId'},
+					{data: 'well'},
+					{
+						data: 'datasets',
+						orderable: false,
+						render: function (data, type, row) {
+							if (!data || !data.length || data.length === 0) {
+								return '-';
+							}
+							var authParams =
+								'&authToken=' + authToken
+								+ '&selectedProjectId=' + selectedProjectId
+								+ '&loggedInUserId=' + loggedInUserId;
+							return data.map(function (dataset) {
+								return "<a href='/GDMS/main/?restartApplication&datasetId=" + dataset.datasetId
+									+ authParams
+									+ "'>" + dataset.name + "</a>"
+							}).join(", ");
+						}
 					}
-				}
-			],
-			// dom: "t" // display only the table, without pagination
-		});
+				],
+				// TODO hide search box as it's server side now
+				// dom: "t" // display only the table, without pagination
+			});
 
 		$(tableIdentifier).closest('.modal').find('.modal-title span').text(plotNumber);
 	};

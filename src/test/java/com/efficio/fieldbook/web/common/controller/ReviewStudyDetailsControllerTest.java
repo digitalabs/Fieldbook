@@ -16,6 +16,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import junit.framework.Assert;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -121,6 +122,31 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		}
 		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be found under Study Conditions of the Summary page.",
 				hasAnalysisVariable);
+		Mockito.verify(fieldbookService).getPersonByUserId(NumberUtils.toInt(workbook.getStudyDetails().getCreatedBy()));
+
+	}
+
+	@Test
+	public void testShowStudySummaryViewTemplateWithNullCreatedBy() {
+		final int id = 1;
+		final CreateTrialForm form = new CreateTrialForm();
+		final Model model = new ExtendedModelMap();
+
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
+		workbook.getStudyDetails().setCreatedBy(null);
+
+		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		final com.efficio.fieldbook.service.api.FieldbookService fieldbookService =
+				Mockito.mock(com.efficio.fieldbook.service.api.FieldbookService.class);
+		this.reviewStudyDetailsController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		this.reviewStudyDetailsController.setFieldbookService(fieldbookService);
+		Mockito.doReturn(workbook).when(fieldbookMiddlewareService).getStudyVariableSettings(id);
+		this.mockStandardVariables(workbook.getAllVariables(), fieldbookMiddlewareService, fieldbookService);
+		this.mockContextUtil();
+
+		this.reviewStudyDetailsController.show(id, form, model);
+
+		Mockito.verify(fieldbookService).getPersonByUserId(0);
 
 	}
 

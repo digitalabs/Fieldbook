@@ -556,7 +556,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		} else if (DataType.LOCATION.equals(variable.getScale().getDataType())) {
 			return this.getLocationById(valueId.intValue());
 		} else if (DataType.PERSON.equals(variable.getScale().getDataType())) {
-			return this.getPersonByUserId(valueId.intValue());
+			return this.getPersonNameByPersonId(valueId.intValue());
 		} else if (isCategorical) {
 			final Term term = this.ontologyService.getTermById(valueId.intValue());
 			if (term != null) {
@@ -1309,10 +1309,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	public OntologyService getOntologyService() {
-		return ontologyService;
+		return this.ontologyService;
 	}
 
-	public void setOntologyService(OntologyService ontologyService) {
+	public void setOntologyService(final OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
 	}
 

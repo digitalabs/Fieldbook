@@ -90,8 +90,15 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 						}
 					}
 				],
-				// TODO hide search box as it's server side now
-				// dom: "t" // display only the table, without pagination
+				// TODO server side filtering
+				// dom: "<'row'<'col-sm-6'l><'col-sm-6'>f>" +
+				//      "<'row'<'col-sm-12'tr>>" +
+				//      "<'row'<'col-sm-5'i><'col-sm-7'>>" +
+				//      "<'row'<'col-sm-12'p>>"
+				dom: "<'row'<'col-sm-6'l><'col-sm-6'>>" +
+				     "<'row'<'col-sm-12'tr>>" +
+				     "<'row'<'col-sm-5'i><'col-sm-7'>>" +
+				     "<'row'<'col-sm-12'p>>"
 			});
 
 		$(tableIdentifier).closest('.modal').find('.modal-title span').text(plotNumber);

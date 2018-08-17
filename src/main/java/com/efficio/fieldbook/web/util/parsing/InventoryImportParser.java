@@ -141,7 +141,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 			if (InventoryHeaderLabels.ENTRY.getName().equals(header) || InventoryHeaderLabels.GID.getName().equals(header)) {
 				validationMap.addValidation(index, new ValueTypeValidator(Integer.class));
 				validationMap.addValidation(index, new NonEmptyValidator());
-			} else if (InventoryHeaderLabels.LOCATION.getName().equals(header)) {
+			} else if (InventoryHeaderLabels.LOCATION_ABBR.getName().equals(header)) {
 				final ValueRangeValidator locationValidator = new ValueRangeValidator(this.buildAllowedLocationsList());
 				locationValidator.setValidationErrorMessage("error.import.location.invalid.value");
 				validationMap.addValidation(index, locationValidator);
@@ -214,7 +214,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 			final String name = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.DESIGNATION));
 			final String parentage = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.PARENTAGE));
 			final String source = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SOURCE));
-			final String locationAbbr = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION));
+			final String locationAbbr = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION_ABBR));
 			final String amountString = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT));
 			final String comment = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.COMMENT));
 			final String duplicate = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.DUPLICATE));

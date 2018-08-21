@@ -233,7 +233,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			/* Controller Utility functions */
 			function confirmDeleteEnvironment(index) {
 				// Existing Trial with measurement data
-				var modalInstance = $scope.getModalInstance();
+				var modalInstance = $rootScope.openConfirmModal(environmentModalConfirmationText, environmentConfirmLabel);
 				modalInstance.result.then(function(shouldContinue) {
 					if (shouldContinue) {
 						updateDeletedEnvironment(index);

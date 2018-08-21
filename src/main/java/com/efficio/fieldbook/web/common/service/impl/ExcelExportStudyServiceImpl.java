@@ -100,8 +100,8 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 		Arrays.asList(TermId.PM_KEY.getId());
 
 	@Override
-	void writeOutputFile(Workbook workbook, List<Integer> visibleColumns, MeasurementRow instanceLevelObservation,
-			List<MeasurementRow> plotLevelObservations, String fileNamePath) throws IOException {
+	void writeOutputFile(final Workbook workbook, final List<Integer> visibleColumns, final MeasurementRow instanceLevelObservation,
+			final List<MeasurementRow> plotLevelObservations, final String fileNamePath) throws IOException {
 		FileOutputStream fos = null;
 
 		final HSSFWorkbook xlsBook = new HSSFWorkbook();
@@ -246,29 +246,39 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 			});
 
 			for (final MeasurementVariable variable : arrangedConditions) {
-				if (!ExcelExportStudyServiceImpl.STUDY_DETAILS_IDS.contains(variable.getTermId())) {
-					filteredConditions.add(variable);
-					if (PhenotypicType.TRIAL_ENVIRONMENT == this.getRoleOfVariableInTrialObservations(variable, trialObservation)) {
-						if (variable.getTermId() == TermId.LOCATION_ID.getId()) {
-							final String locationAlias = variable.getName();
-							variable.setName(TermId.LOCATION_ID.name());
-							final Integer locationId = new Integer( trialObservation.getMeasurementDataValue(variable.getTermId()));
-							filteredConditions.add(createLocationNameVariable(locationId,locationAlias));
-
-						}
-						variable.setValue(trialObservation.getMeasurementDataValue(variable.getTermId()));
-
-						if (variable.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
-							variable.setPossibleValues(this.fieldbookService.getAllPossibleValues(variable.getTermId()));
-						}
-
-					}
-				}
+				this.populateFilteredConditions(trialObservation, filteredConditions, variable);
 			}
 		}
 		filteredConditions = workbook.arrangeMeasurementVariables(filteredConditions);
 		return this.writeSection(currentRowNum, xlsBook, xlsSheet, filteredConditions, "export.study.description.column.condition", 51, 153,
 				102);
+	}
+
+	void populateFilteredConditions(final MeasurementRow trialObservation, final List<MeasurementVariable> filteredConditions,
+			final MeasurementVariable variable) {
+	  if (!ExcelExportStudyServiceImpl.STUDY_DETAILS_IDS.contains(variable.getTermId())) {
+			Integer locationId = null;
+			MeasurementVariable variableCopy = variable;
+			if (PhenotypicType.TRIAL_ENVIRONMENT == this.getRoleOfVariableInTrialObservations(variable, trialObservation)) {
+				if (variable.getTermId() == TermId.LOCATION_ID.getId()) {
+					variableCopy = variable.copy();
+					variableCopy.setName(TermId.LOCATION_ID.name());
+					locationId = new Integer( trialObservation.getMeasurementDataValue(variable.getTermId()));
+					//Add the LOCATION_ID variable here to make sure it's added before the LOCATION_NAME variable
+					filteredConditions.add(variableCopy);
+					filteredConditions.add(this.createLocationNameVariable(locationId,variable.getName()));
+
+				}
+				variableCopy.setValue(trialObservation.getMeasurementDataValue(variable.getTermId()));
+
+				if (variable.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
+					variableCopy.setPossibleValues(this.fieldbookService.getAllPossibleValues(variable.getTermId()));
+				}
+			}
+			if (locationId == null) {
+				  filteredConditions.add(variableCopy);
+			}
+	  }
 	}
 
 	private MeasurementVariable createLocationNameVariable(final Integer locationId, final String locationAlias) {
@@ -494,7 +504,7 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 		cell.setCellValue(measurementVariable.getDataTypeCode());
 
 		cell = row.createCell(VARIABLE_VALUE_COLUMN_INDEX, Cell.CELL_TYPE_STRING);
-		setContentOfVariableValueColumn(cell, measurementVariable);
+		this.setContentOfVariableValueColumn(cell, measurementVariable);
 
 		cell = row.createCell(LABEL_COLUMN_INDEX, Cell.CELL_TYPE_STRING);
 		cell.setCellValue(this.getLabel(measurementVariable));
@@ -525,11 +535,11 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 			 for character/text variables: will remain empty
 			 **/
 
-			cell.setCellValue(getPossibleValueDetailAsStringBasedOnDataType(measurementVariable));
+			cell.setCellValue(this.getPossibleValueDetailAsStringBasedOnDataType(measurementVariable));
 
 		} else {
 
-			setVariableValueBasedOnDataType(cell, measurementVariable);
+			this.setVariableValueBasedOnDataType(cell, measurementVariable);
 
 		}
 
@@ -559,11 +569,11 @@ public class ExcelExportStudyServiceImpl extends BaseExportStudyServiceImpl impl
 
 		if (DataType.CATEGORICAL_VARIABLE.getId().equals(measurementVariable.getDataTypeId())) {
 
-			return convertPossibleValuesToString(measurementVariable.getPossibleValues(), POSSIBLE_VALUES_AS_STRING_DELIMITER);
+			return this.convertPossibleValuesToString(measurementVariable.getPossibleValues(), POSSIBLE_VALUES_AS_STRING_DELIMITER);
 
 		} else if (DataType.NUMERIC_VARIABLE.getId().equals(measurementVariable.getDataTypeId())) {
 
-			return concatenateMinMaxValueIfAvailable(measurementVariable);
+			return this.concatenateMinMaxValueIfAvailable(measurementVariable);
 
 		} else {
 

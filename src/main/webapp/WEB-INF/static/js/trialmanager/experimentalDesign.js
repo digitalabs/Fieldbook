@@ -14,7 +14,7 @@
 						// This is to automatically refresh the design details for augmented design
 						// whenever the Experimental tab is viewed
 						if ($scope.data.designType === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
-							$scope.refreshDesignDetailsForAumentedDesign();
+							$scope.refreshDesignDetailsForAugmentedDesign();
 						}
 						if ($scope.data.designType === DESIGN_TYPE.ENTRY_LIST_ORDER ) {
 							$scope.refreshDesignDetailsForELODesign();
@@ -173,7 +173,7 @@
 							if ($scope.data.designType === DESIGN_TYPE.ENTRY_LIST_ORDER ) {
 								$scope.refreshDesignDetailsForELODesign();
 							} else {
-								$scope.refreshDesignDetailsForAumentedDesign();
+								$scope.refreshDesignDetailsForAugmentedDesign();
 							}
 						} else {
 							$scope.currentDesignType = null;
@@ -584,7 +584,7 @@
 
 					};
 
-					$scope.refreshDesignDetailsForAumentedDesign = function() {
+					$scope.refreshDesignDetailsForAugmentedDesign = function() {
 
 						$scope.germplasmTotalCheckEntriesCount = countCheckEntries();
 						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;

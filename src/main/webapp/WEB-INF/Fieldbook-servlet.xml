@@ -592,7 +592,7 @@
 	</bean>
 
 	<bean id="atomikosUserTransactionFieldbook" class="com.atomikos.icatch.jta.J2eeUserTransaction">
-		<property name="transactionTimeout" value="300" />
+		<property name="transactionTimeout" value="${atomikos.transaction.timeout}" />
 	</bean>
 
 	<tx:annotation-driven/>

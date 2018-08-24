@@ -24,6 +24,7 @@
 						$http.get('/Fieldbook/trial/measurements/instanceMetadata/' + studyId).success(function(data) {
 							$scope.environmentsList = data;
 							$scope.selectedEnvironment = data[0];
+							TrialManagerDataService.selectedEnviromentOnMeasurementTab = $scope.selectedEnvironment;
 						});
 					} else {
 						$scope.environmentsList = [{}];
@@ -35,6 +36,7 @@
 					$('#measurement-table').DataTable().ajax.url('/Fieldbook/trial/measurements/plotMeasurements/' + studyId + '/' +
 						$item.instanceDbId).load();
 					$scope.selectedEnvironment = $item;
+					TrialManagerDataService.selectedEnviromentOnMeasurementTab = $scope.selectedEnvironment;
 				};
 
 				$scope.getListOfAdditionalColumns = function() {

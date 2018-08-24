@@ -930,6 +930,49 @@
 							return results;
 						}('on Treatment Factors'));
 					}
+				},
+				getEnvironments: function (preferredLocationVariable, managementDetails) {
+					var environmentListView = [];
+					angular.forEach(this.currentData.environments.environments, function (environment) {
+						environmentListView.push({
+							name: service.getPreferredEnvironmentName(environment, preferredLocationVariable, managementDetails)
+							,
+							variableId: preferredLocationVariable,
+							trialInstanceNumber: environment.managementDetailValues[TRIAL_INSTANCE_INDEX]
+						});
+					});
+					return environmentListView;
+				},
+
+				getPreferredEnvironmentName: function (environment, preferredLocationVariable, managementDetails) {
+					var preferredLocation = '';
+					if (managementDetails.vals()[LOCATION_NAME_ID] !== undefined) {
+
+						//create a map for location dropdown values
+						var locationMap = {};
+
+						angular.forEach(managementDetails.vals()[LOCATION_NAME_ID].allValues, function (locationVariable) {
+							locationMap[locationVariable.id] = locationVariable;
+						});
+
+						var locationId = 0;
+						if (environment.managementDetailValues[LOCATION_NAME_ID] !== undefined) {
+							locationId = isNaN(environment.managementDetailValues[LOCATION_NAME_ID]) ?
+								environment.managementDetailValues[LOCATION_NAME_ID].id :
+								environment.managementDetailValues[LOCATION_NAME_ID];
+						}
+
+						if (locationId !== 0) {
+							preferredLocation = locationMap[locationId].name;
+						}
+
+					}
+
+					var preferredLocationVariableName = preferredLocationVariable === LOCATION_NAME_ID ? preferredLocation
+						: environment.managementDetailValues[preferredLocationVariable];
+
+					return preferredLocationVariableName;
+
 				}
 			};
 

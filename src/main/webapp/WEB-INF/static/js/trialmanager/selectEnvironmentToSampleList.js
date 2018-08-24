@@ -4,8 +4,8 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('selectEnvironmentToSampleListModalCtrl', ['$scope', 'TrialManagerDataService', 'environmentService', function ($scope,
-																																			  TrialManagerDataService, environmentService) {
+	manageTrialApp.controller('selectEnvironmentToSampleListModalCtrl', ['$scope', 'TrialManagerDataService', function ($scope,
+																														TrialManagerDataService) {
 
 		$scope.settings = TrialManagerDataService.settings.environments;
 

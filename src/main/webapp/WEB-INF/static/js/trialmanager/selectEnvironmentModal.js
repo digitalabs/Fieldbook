@@ -93,7 +93,7 @@
 
 						angular.forEach($scope.data.environments, function(environment) {
 							if (environment.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX] === trialInstanceNumber) {
-								selectedLocationDetails.push(getPreferredEnvironmentName(environment, $scope.PREFERRED_LOCATION_VARIABLE));
+								selectedLocationDetails.push(TrialManagerDataService.getPreferredEnvironmentName(environment, $scope.PREFERRED_LOCATION_VARIABLE, $scope.settings.managementDetails));
 							}
 						});
 
@@ -154,58 +154,12 @@
 				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_INSTANCE_INDEX;
 			}
 
-			$scope.environmentListView = convertToEnvironmentListView($scope.data.environments,
-				$scope.PREFERRED_LOCATION_VARIABLE, $scope.TRIAL_INSTANCE_INDEX);
-
-			$scope.doSelectAll();
+			$scope.environmentListView = TrialManagerDataService.getEnvironments($scope.PREFERRED_LOCATION_VARIABLE, $scope.settings.managementDetails);
+				$scope.doSelectAll();
 		};
 
 		$scope.init();
 
-		// Converts the environments data (($scope.data.environments) for UI usage.
-		function convertToEnvironmentListView(environments, preferredLocationVariable, trialInstanceIndex) {
-
-			var environmentListView = [];
-			angular.forEach(environments, function(environment) {
-                environmentListView.push({ name: getPreferredEnvironmentName(environment, preferredLocationVariable)
-					, variableId: preferredLocationVariable, trialInstanceNumber: environment.managementDetailValues[trialInstanceIndex]});
-
-			});
-			return environmentListView;
-
-		};
-
-		function getPreferredEnvironmentName(environment, preferredLocationVariable) {
-
-            var preferredLocation = '';
-            if ($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID] !== undefined) {
-
-                //create a map for location dropdown values
-                var locationMap = {};
-
-                angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].allValues, function(locationVariable) {
-                    locationMap[locationVariable.id] = locationVariable;
-                });
-
-                var locationId = 0;
-                if (environment.managementDetailValues[$scope.LOCATION_NAME_ID] !== undefined) {
-                    locationId = isNaN(environment.managementDetailValues[$scope.LOCATION_NAME_ID]) ?
-                        environment.managementDetailValues[$scope.LOCATION_NAME_ID].id :
-                        environment.managementDetailValues[$scope.LOCATION_NAME_ID];
-				}
-
-				if (locationId !== 0) {
-                    preferredLocation = locationMap[locationId].name;
-				}
-
-            }
-
-            var preferredLocationVariableName = preferredLocationVariable === $scope.LOCATION_NAME_ID ? preferredLocation
-                : environment.managementDetailValues[preferredLocationVariable];
-
-            return preferredLocationVariableName;
-
-		}
 	}]);
 
 })();

@@ -272,7 +272,8 @@ public class WorkbookUtil {
 
 				}
 
-				if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
+				final String property = HtmlUtils.htmlUnescape(variable.getProperty());
+				if (ontologyService.getProperty(property).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
 						&& isVariate) {
 					variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
 				} else {
@@ -379,7 +380,8 @@ public class WorkbookUtil {
 				}
 			}
 
-			if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId() && isVariate) {
+			final String property = HtmlUtils.htmlUnescape(variable.getProperty());
+			if (ontologyService.getProperty(property).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId() && isVariate) {
 				variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
 			} else {
 				variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));

@@ -24,6 +24,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.FormulaVariable;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -237,7 +238,8 @@ public class WorkbookUtil {
 						row.getDataList().add(insertIndex, measurementData);
 					}
 
-					if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
+					final String property = HtmlUtils.htmlUnescape(variable.getProperty());
+					if (ontologyService.getProperty(property).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
 							&& isVariate) {
 						variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
 					} else {

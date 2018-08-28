@@ -238,15 +238,21 @@ public class WorkbookUtil {
 						row.getDataList().add(insertIndex, measurementData);
 					}
 
-					final String property = HtmlUtils.htmlUnescape(variable.getProperty());
-					if (ontologyService.getProperty(property).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
-							&& isVariate) {
-						variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
-					} else {
-						variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
-					}
+					setVariablePossibleValues(isVariate, ontologyService, fieldbookService, programUUID, variable, stdVariable);
 				}
 			}
+		}
+	}
+
+	static void setVariablePossibleValues(final boolean isVariate, final OntologyService ontologyService,
+			final FieldbookService fieldbookService, final String programUUID, final MeasurementVariable variable,
+			final StandardVariable stdVariable) {
+		final String property = HtmlUtils.htmlUnescape(variable.getProperty());
+		if (ontologyService.getProperty(property).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
+				&& isVariate) {
+			variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
+		} else {
+			variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
 		}
 	}
 
@@ -272,13 +278,7 @@ public class WorkbookUtil {
 
 				}
 
-				final String property = HtmlUtils.htmlUnescape(variable.getProperty());
-				if (ontologyService.getProperty(property).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
-						&& isVariate) {
-					variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
-				} else {
-					variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
-				}
+				setVariablePossibleValues(isVariate, ontologyService, fieldbookService, programUUID, variable, stdVariable);
 			}
 		}
 	}
@@ -380,12 +380,7 @@ public class WorkbookUtil {
 				}
 			}
 
-			final String property = HtmlUtils.htmlUnescape(variable.getProperty());
-			if (ontologyService.getProperty(property).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId() && isVariate) {
-				variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
-			} else {
-				variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
-			}
+			setVariablePossibleValues(isVariate, ontologyService, fieldbookService, programUUID, variable, stdVariable);
 		}
 
 	}

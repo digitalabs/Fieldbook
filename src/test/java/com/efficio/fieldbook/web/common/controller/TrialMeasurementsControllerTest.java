@@ -32,6 +32,7 @@ import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.Variable;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -1127,7 +1128,34 @@ public class TrialMeasurementsControllerTest {
 		Assert.assertTrue(nameToAliasMap.keySet().contains(TermId.PLOT_CODE.name()));
 		Assert.assertEquals(alias, nameToAliasMap.get(TermId.PLOT_CODE.name()));
 	}
-	
+
+	@Test
+	public void testRoundNumericValues() {
+		final MeasurementVariable measurementVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable();
+		measurementVariable.setVariableType(VariableType.TRAIT);
+		measurementVariable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
+
+		// Value: 1.999 - round up
+		List<MeasurementRow> measurementRows = MeasurementRowTestDataInitializer.createMeasurementRowList(1, "numeric", "1.999", measurementVariable);
+		this.measurementsController.roundNumericValues(measurementRows);
+		Assert.assertEquals("2", measurementRows.get(0).getDataList().get(0).getValue());
+
+		// Value: 1.444 - round down
+		measurementRows = MeasurementRowTestDataInitializer.createMeasurementRowList(1, "numeric", "1.444", measurementVariable);
+		this.measurementsController.roundNumericValues(measurementRows);
+		Assert.assertEquals("1.44", measurementRows.get(0).getDataList().get(0).getValue());
+
+		// Value: 1.445 - round up
+		measurementRows = MeasurementRowTestDataInitializer.createMeasurementRowList(1, "numeric", "1.445", measurementVariable);
+		this.measurementsController.roundNumericValues(measurementRows);
+		Assert.assertEquals("1.45", measurementRows.get(0).getDataList().get(0).getValue());
+
+		// Value: 2 - no rounding needed
+		measurementRows = MeasurementRowTestDataInitializer.createMeasurementRowList(1, "numeric", "2", measurementVariable);
+		this.measurementsController.roundNumericValues(measurementRows);
+		Assert.assertEquals("2", measurementRows.get(0).getDataList().get(0).getValue());
+	}
+
 	@Test
 	public void testViewStudyAjax() {
 		CreateTrialForm form = new CreateTrialForm();

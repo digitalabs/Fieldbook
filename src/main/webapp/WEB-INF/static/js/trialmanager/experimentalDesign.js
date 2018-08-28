@@ -658,7 +658,7 @@
 					$scope.showParamsWhenChecksAreSelected = function(designTypeId) {
 						return !(designTypeId === DESIGN_TYPE.ENTRY_LIST_ORDER &&
 							($scope.germplasmTotalTestEntriesCount === $scope.totalGermplasmEntryListCount
-								|| $scope.totalGermplasmEntryListCount === 0));
+								|| $scope.totalGermplasmEntryListCount === 0  || $scope.totalGermplasmEntryListCount === null));
 					}
 
 					function validateNumberOfBlocks() {

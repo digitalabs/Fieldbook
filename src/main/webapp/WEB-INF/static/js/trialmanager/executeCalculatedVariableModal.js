@@ -20,10 +20,9 @@
 
 			$scope.variableListView = convertTraitsVariablesToListView(TrialManagerDataService.settings.measurements.m_keys);
 			$scope.environmentListView = convertToEnvironmentListView($scope.data.environments, $scope.LOCATION_NAME_ID, $scope.TRIAL_INSTANCE_INDEX);
-		//	$scope.variableSelected = $scope.variableListView[0]; //TODO select the first Variable
 
-			if ($('#mdt-environment-list .ng-scope') && $('#mdt-environment-list .ng-scope').text().trim() !== "") {
-				var instance = $('#mdt-environment-list .ng-scope').text().trim()[0];
+			if(TrialManagerDataService.selectedEnviromentOnMeasurementTab){
+				var instance = TrialManagerDataService.selectedEnviromentOnMeasurementTab.instanceNumber;
 				$scope.environmentSelected = $scope.environmentListView[parseInt(instance) - 1];
 			} else {
 				$scope.environmentSelected = $scope.environmentListView[0];
@@ -87,45 +86,14 @@
 			return variableListView;
 		};
 
-		// TODO extract method shared with other controllers
-		// Converts the environments data (($scope.environments) for UI usage.
 		function convertToEnvironmentListView(environments, preferredLocationVariable, trialInstanceIndex) {
-
 			var environmentListView = [];
 			angular.forEach(environments, function(environment) {
-				environmentListView.push({ name: environment.managementDetailValues[trialInstanceIndex] + " - " + getPreferredEnvironmentName(environment, preferredLocationVariable)
+				environmentListView.push({ name: environment.managementDetailValues[trialInstanceIndex] + " - " + TrialManagerDataService.getPreferredEnvironmentName(environment, preferredLocationVariable)
 					,trialInstanceNumber: environment.managementDetailValues[trialInstanceIndex]
 				,locationId:environment.locationId});
 			});
 			return environmentListView;
-
-			function getPreferredEnvironmentName(environment, preferredLocationVariable) {
-				var preferredLocation = '';
-				if ($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID] !== undefined) {
-					//create a map for location dropdown values
-					var locationMap = {};
-
-					angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].allValues, function(locationVariable) {
-						locationMap[locationVariable.id] = locationVariable;
-					});
-
-					var locationId = 0;
-					if (environment.managementDetailValues[$scope.LOCATION_NAME_ID] !== undefined) {
-						locationId = isNaN(environment.managementDetailValues[$scope.LOCATION_NAME_ID]) ?
-							environment.managementDetailValues[$scope.LOCATION_NAME_ID].id :
-							environment.managementDetailValues[$scope.LOCATION_NAME_ID];
-					}
-
-					if (locationId !== 0) {
-						preferredLocation = locationMap[locationId].name;
-					}
-
-				}
-
-				var preferredLocationVariableName = preferredLocationVariable === $scope.LOCATION_NAME_ID ? preferredLocation
-					: environment.managementDetailValues[preferredLocationVariable];
-				return preferredLocationVariableName;
-			}
 		};
 	}]);
 

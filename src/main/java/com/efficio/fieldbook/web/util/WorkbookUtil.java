@@ -21,7 +21,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.ontology.FormulaVariable;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.web.util.HtmlUtils;
@@ -536,10 +535,7 @@ public class WorkbookUtil {
 
 	// we would validate all conditions except for name and the study type
 	public static boolean isConditionValidate(final Integer cvTermId) {
-		if (cvTermId != null && !AppConstants.HIDE_STUDY_VARIABLE_SETTINGS_FIELDS.getString().contains(cvTermId.toString())) {
-			return true;
-		}
-		return false;
+		return (cvTermId != null && !AppConstants.HIDE_STUDY_VARIABLE_SETTINGS_FIELDS.getString().contains(cvTermId.toString()));
 	}
 
 	public static List<MeasurementVariable> getExperimentalDesignVariables(final List<MeasurementVariable> conditions) {
@@ -603,7 +599,7 @@ public class WorkbookUtil {
 
 		for (final MeasurementVariable row : variates) {
 			final List<Integer> formulasFromCVTermId = WorkbookUtil.getFormulasFromCVTermId(row.getTermId(), formulas);
-			if (formulasFromCVTermId.size() > 0) {
+			if (!formulasFromCVTermId.isEmpty()) {
 				map.put(row.getTermId(), formulasFromCVTermId);
 			}
 		}
@@ -634,7 +630,7 @@ public class WorkbookUtil {
 
 		for (final MeasurementVariable row : variates) {
 			final List<MeasurementVariable> formulasFromCVTermId = WorkbookUtil.getFormulasFromCVTermId(row, formulas);
-			if (formulasFromCVTermId.size() > 0) {
+			if (!formulasFromCVTermId.isEmpty()) {
 				map.put(row, formulasFromCVTermId);
 			}
 		}

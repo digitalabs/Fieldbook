@@ -30,8 +30,7 @@ public class LocationAbbreviationExpressionDataProcessor implements ExpressionDa
 
     @Override
     public void processPlotLevelData(AdvancingSource source, MeasurementRow row) throws FieldbookException {
-        // Trial Advancing does not have Harvest location so setting harvestLocationAbbr at plot level
-        if(StudyTypeDto.TRIAL_NAME.equals(source.getStudyType().getName()) && source.getTrailInstanceObservation() != null &&
+        if(source.getTrailInstanceObservation() != null &&
                 source.getTrailInstanceObservation().getDataList() != null &&  !source.getTrailInstanceObservation().getDataList().isEmpty()){
                 for(MeasurementData measurementData : source.getTrailInstanceObservation().getDataList()){
                 if(measurementData.getMeasurementVariable().getTermId() == TermId.LOCATION_ID.getId()){

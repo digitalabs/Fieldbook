@@ -424,7 +424,7 @@ public class WorkbookUtil {
 	 * @param enumerations the enumerations
 	 * @return the list
 	 */
-	private static List<ValueReference> transformPossibleValues(final List<Enumeration> enumerations) {
+	static List<ValueReference> transformPossibleValues(final List<Enumeration> enumerations) {
 		final List<ValueReference> list = new ArrayList<>();
 
 		if (enumerations != null) {

@@ -40,17 +40,17 @@ public class SampleListControllerTest {
 
 	@Test
 	public void testDisplaySampleList(){
-		SampleList sampleList = Mockito.mock(SampleList.class);
+		final SampleList sampleList = Mockito.mock(SampleList.class);
 		Mockito.when(sampleList.getListName()).thenReturn(SampleListControllerTest.TEST_LIST_NAME);
 		Mockito.when(sampleList.getNotes()).thenReturn(SampleListControllerTest.TEST_LIST_NAME);
 		Mockito.when(sampleList.getType()).thenReturn(SampleListType.SAMPLE_LIST);
 
 		Mockito.doReturn(sampleList).when(this.sampleListService).getSampleList(SampleListControllerTest.TEST_SAMPLE_LIST_ID);
 
-		List<SampleDetailsDTO> sampleDetailsDTOs = GenerateASampleDetails(10);
+		final List<SampleDetailsDTO> sampleDetailsDTOs = buildSampleDetailsList(10);
 		Mockito.doReturn(sampleDetailsDTOs).when(this.sampleListService).getSampleDetailsDTOs(SampleListControllerTest.TEST_SAMPLE_LIST_ID);
 
-		Model model = Mockito.mock(Model.class);
+		final Model model = Mockito.mock(Model.class);
 		this.slc.displaySampleList(SampleListControllerTest.TEST_SAMPLE_LIST_ID, Mockito.mock(HttpServletRequest.class), model);
 		Mockito.verify(model).addAttribute(SampleListController.SAMPLE_LIST, sampleDetailsDTOs);
 		Mockito.verify(model).addAttribute(SampleListController.TOTAL_NUMBER_OF_GERMPLASMS, sampleDetailsDTOs.size());
@@ -61,8 +61,8 @@ public class SampleListControllerTest {
 		Mockito.verify(model).addAttribute("listType", sampleList.getType().name());
 	}
 
-	private List<SampleDetailsDTO> GenerateASampleDetails(final int numOfsamples) {
-		List<SampleDetailsDTO> sampleDetailsDTOs = new ArrayList<>();
+	private List<SampleDetailsDTO> buildSampleDetailsList(final int numOfsamples) {
+		final List<SampleDetailsDTO> sampleDetailsDTOs = new ArrayList<>();
 		for (int i = 0; i < numOfsamples; i++) {
 			final SampleDetailsDTO sample = new SampleDetailsDTO();
 			sample.setGid(i);

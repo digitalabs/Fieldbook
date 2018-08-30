@@ -2,6 +2,7 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -112,11 +113,11 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 			@ModelAttribute("reviewDetailsOutOfBoundsForm") ReviewDetailsOutOfBoundsForm form, Model model) {
 
 		UserSelection userSelection = this.getUserSelection();
-		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+		List<MeasurementRow> tempList = new ArrayList<>();
 		Map<String, String> trialInstanceLocationMap = this.getTrialInstanceLocationMap();
 		tempList.addAll(userSelection.getMeasurementRowList());
 
-		List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> masterList = new ArrayList<>();
 
 		int rowIndex = 0;
 		for (MeasurementRow row : tempList) {
@@ -164,7 +165,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 	@RequestMapping(value = "/submitDetails", method = RequestMethod.POST)
 	public Map<String, String> processOutOfBoundsChanges(@RequestBody ReviewOutOfBoundsChanges changes) {
 
-		Map<String, String> resultMap = new HashMap<String, String>();
+		Map<String, String> resultMap = new HashMap<>();
 
 		UserSelection userSelection = this.getUserSelection();
 		List<MeasurementRow> measurementRows = userSelection.getMeasurementRowList();
@@ -266,7 +267,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 
 	protected Boolean checkIfNumericalTraitHasOutOfBoundsData(Integer termId) {
 		UserSelection userSelection = this.getUserSelection();
-		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+		List<MeasurementRow> tempList = new ArrayList<>();
 		tempList.addAll(userSelection.getMeasurementRowList());
 
 		for (MeasurementRow row : tempList) {
@@ -284,7 +285,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 
 	protected Boolean checkIfCategoricalTraitHasOutOfBoundsData(Integer termId) {
 		UserSelection userSelection = this.getUserSelection();
-		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+		List<MeasurementRow> tempList = new ArrayList<>();
 		tempList.addAll(userSelection.getMeasurementRowList());
 
 		for (MeasurementRow row : tempList) {
@@ -302,20 +303,12 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		List<MeasurementVariable> variables = new ArrayList<>();
 		Boolean locationExists = false;
 		for (MeasurementVariable var : measurementVariables) {
-			if (var.getTermId() == TermId.ENTRY_NO.getId()) {
+			if (Arrays.asList(TermId.ENTRY_NO.getId(), TermId.PLOT_NO.getId(), TermId.TRIAL_INSTANCE_FACTOR.getId(), traitTermId)
+					.contains(var.getTermId())) {
 				variables.add(var);
-			}
-			if (var.getTermId() == TermId.PLOT_NO.getId()) {
-				variables.add(var);
-			}
-			if (var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-				variables.add(var);
-			}
-			if (var.getTermId() == TermId.LOCATION_ID.getId()) {
+
+			} else if (var.getTermId() == TermId.LOCATION_ID.getId()) {
 				locationExists = true;
-				variables.add(var);
-			}
-			if (var.getTermId() == traitTermId) {
 				variables.add(var);
 			}
 		}
@@ -335,7 +328,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 	protected Map<String, Object> generateDatatableDataMap(int rowIndex, MeasurementRow row, Integer targetTraitTermId,
 			Map<String, String> trialInstanceLocationMap) {
 
-		Map<String, Object> dataMap = new HashMap<String, Object>();
+		Map<String, Object> dataMap = new HashMap<>();
 		// the 4 attributes are needed always
 		String trialInstanceValue = row.getMeasurementDataValue(TermId.TRIAL_INSTANCE_FACTOR.getId());
 
@@ -369,7 +362,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		if (isTraitCustomValue) {
 			return dataMap;
 		} else {
-			return new HashMap<String, Object>();
+			return new HashMap<>();
 		}
 
 	}
@@ -420,28 +413,22 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		if (data.isAccepted()) {
 			return false;
 		}
-		if (data.getMeasurementVariable().getMinRange() != null && data.getMeasurementVariable().getMaxRange() != null
-				&& this.isValueOutOfRange(value, data)) {
-			return true;
-		}
-		return false;
+		return (data.getMeasurementVariable().getMinRange() != null && data.getMeasurementVariable().getMaxRange() != null
+				&& this.isValueOutOfRange(value, data));
 	}
 
 	protected boolean isValueOutOfRange(String value, MeasurementData data) {
 		if (MeasurementData.MISSING_VALUE.equalsIgnoreCase(value)) {
 			return true;
-		} else if (NumberUtils.isNumber(value)
-				&& (Double.valueOf(value) < data.getMeasurementVariable().getMinRange() || Double.valueOf(value) > data
-						.getMeasurementVariable().getMaxRange())) {
-			return true;
-		}
-		return false;
+		} 
+		return (NumberUtils.isNumber(value) && (Double.valueOf(value) < data.getMeasurementVariable().getMinRange()
+				|| Double.valueOf(value) > data.getMeasurementVariable().getMaxRange()));
 	}
 
 	protected String getPossibleValueIDByValue(String value, List<ValueReference> possibleValues) {
 		for (ValueReference ref : possibleValues) {
 			if (ref.getName().equalsIgnoreCase(value)) {
-				return ref.getKey().toString();
+				return ref.getKey();
 			}
 		}
 		return value;

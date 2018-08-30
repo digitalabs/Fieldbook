@@ -80,7 +80,7 @@ function doSaveImportedData() {
 		type: 'POST',
 		data: serializedData,
 		async: true,
-		success: function (html) {
+		success: function (data) {
 			$('.import-study-data').data('data-import', '0');
 			$('.import-study-data').data('measurement-show-already', '0');
 			$('.fbk-discard-imported-data').addClass('fbk-hide');
@@ -88,14 +88,14 @@ function doSaveImportedData() {
 			$('body').trigger({
 				type: 'REFRESH_AFTER_IMPORT_SAVE'
 			});
-			if (html.containsOutOfSyncValues == true) {
+			if (data.containsOutOfSyncValues) {
 				showAlertMessage('', outOfSyncWarningMessage);
 			}
 			displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
 			$.ajax({
 				url: '/Fieldbook/ImportManager/import/preview',
 				type: 'POST',
-				success: function (html) {
+				success: function () {
 					onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
 				}
 			});

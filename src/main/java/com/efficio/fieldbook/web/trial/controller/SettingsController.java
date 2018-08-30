@@ -45,6 +45,7 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -434,12 +435,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param traits the traits
 	 */
 	//TODO TRIAL
-	private void removeSelectionVariatesFromTraits(final List<SettingDetail> traits) {
+	void removeSelectionVariatesFromTraits(final List<SettingDetail> traits) {
 		if (traits != null) {
 			final Iterator<SettingDetail> iter = traits.iterator();
 			while (iter.hasNext()) {
 				final SettingDetail var = iter.next();
-				if (SettingsUtil.inPropertyList(this.ontologyService.getProperty(var.getVariable().getProperty()).getId())) {
+				final String property = HtmlUtils.htmlUnescape(var.getVariable().getProperty());
+				if (SettingsUtil.inPropertyList(this.ontologyService.getProperty(property).getId())) {
 					iter.remove();
 				}
 			}
@@ -641,6 +643,11 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	public void setFieldbookService(final FieldbookService fieldbookService) {
 		this.fieldbookService = fieldbookService;
+	}
+
+	
+	public void setOntologyService(OntologyService ontologyService) {
+		this.ontologyService = ontologyService;
 	}
 
 }

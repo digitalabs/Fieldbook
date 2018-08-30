@@ -56,7 +56,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 
 	@Resource
 	private UserSelection studySelection;
-	
+
 	@Resource
 	private StudyDataManager studyDataManager;
 
@@ -66,63 +66,64 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 	}
 
 	@RequestMapping(value = "/showDetails", method = RequestMethod.GET)
-	public String showDetails(@ModelAttribute("reviewDetailsOutOfBoundsForm") ReviewDetailsOutOfBoundsForm form, Model model) {
+	public String showDetails(@ModelAttribute("reviewDetailsOutOfBoundsForm") final ReviewDetailsOutOfBoundsForm form, final Model model) {
 
-		UserSelection userSelection = this.getUserSelection();
-		List<MeasurementVariable> measurementVariables =
+		final UserSelection userSelection = this.getUserSelection();
+		final List<MeasurementVariable> measurementVariables =
 				this.getTraitsWithOutOfBoundsOnly(userSelection.getWorkbook().getMeasurementDatasetVariables());
 		form.setMeasurementVariable(measurementVariables.get(0));
 		form.setTraitSize(measurementVariables.size());
-		form.setMeasurementVariables(this.filterColumnsForReviewDetailsTable(userSelection.getWorkbook().getAllVariables(), form
-				.getMeasurementVariable().getTermId()));
+		form.setMeasurementVariables(this.filterColumnsForReviewDetailsTable(userSelection.getWorkbook().getAllVariables(),
+				form.getMeasurementVariable().getTermId()));
 
-		return super.showAjaxPage(model, REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_TRIAL);
+		return super.showAjaxPage(model, ReviewDetailsOutOfBoundsController.REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_TRIAL);
 	}
 
 	@RequestMapping(value = "/showDetails/{action}", method = RequestMethod.POST)
-	public String submitDetails(@PathVariable String action,
-			@ModelAttribute("reviewDetailsOutOfBoundsForm") ReviewDetailsOutOfBoundsForm form, Model model) {
+	public String submitDetails(@PathVariable final String action,
+			@ModelAttribute("reviewDetailsOutOfBoundsForm") final ReviewDetailsOutOfBoundsForm form, final Model model) {
 
-		UserSelection userSelection = this.getUserSelection();
-		List<MeasurementVariable> measurementVariablesCategorical =
+		final UserSelection userSelection = this.getUserSelection();
+		final List<MeasurementVariable> measurementVariablesCategorical =
 				this.getTraitsWithOutOfBoundsOnly(userSelection.getWorkbook().getMeasurementDatasetVariables());
 
 		if ("next".equals(action)) {
 			if (form.getTraitIndex() < measurementVariablesCategorical.size() - 1) {
-				int nextIndex = form.getTraitIndex() + 1;
+				final int nextIndex = form.getTraitIndex() + 1;
 				form.setMeasurementVariable(measurementVariablesCategorical.get(nextIndex));
 				form.setTraitIndex(nextIndex);
 			}
 		} else if ("previous".equals(action) && form.getTraitIndex() > 0) {
 
-			int prevIndex = form.getTraitIndex() - 1;
+			final int prevIndex = form.getTraitIndex() - 1;
 			form.setMeasurementVariable(measurementVariablesCategorical.get(prevIndex));
 			form.setTraitIndex(prevIndex);
 
 		}
 		form.setTraitSize(measurementVariablesCategorical.size());
-		form.setMeasurementVariables(this.filterColumnsForReviewDetailsTable(userSelection.getWorkbook().getAllVariables(),
-				form.getTraitTermId()));
+		form.setMeasurementVariables(
+				this.filterColumnsForReviewDetailsTable(userSelection.getWorkbook().getAllVariables(), form.getTraitTermId()));
 
-		return super.showAjaxPage(model, REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_TRIAL);
+		return super.showAjaxPage(model, ReviewDetailsOutOfBoundsController.REVIEW_DETAILS_OUT_OF_BOUNDS_PER_TRAIT_TEMPLATE_TRIAL);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/data/table/ajax", method = RequestMethod.POST)
 	public List<Map<String, Object>> getPageDataTablesAjax(
-			@ModelAttribute("reviewDetailsOutOfBoundsForm") ReviewDetailsOutOfBoundsForm form, Model model) {
+			@ModelAttribute("reviewDetailsOutOfBoundsForm") final ReviewDetailsOutOfBoundsForm form, final Model model) {
 
-		UserSelection userSelection = this.getUserSelection();
-		List<MeasurementRow> tempList = new ArrayList<>();
-		Map<String, String> trialInstanceLocationMap = this.getTrialInstanceLocationMap();
+		final UserSelection userSelection = this.getUserSelection();
+		final List<MeasurementRow> tempList = new ArrayList<>();
+		final Map<String, String> trialInstanceLocationMap = this.getTrialInstanceLocationMap();
 		tempList.addAll(userSelection.getMeasurementRowList());
 
-		List<Map<String, Object>> masterList = new ArrayList<>();
+		final List<Map<String, Object>> masterList = new ArrayList<>();
 
 		int rowIndex = 0;
-		for (MeasurementRow row : tempList) {
+		for (final MeasurementRow row : tempList) {
 
-			Map<String, Object> dataMap = this.generateDatatableDataMap(rowIndex, row, form.getTraitTermId(), trialInstanceLocationMap);
+			final Map<String, Object> dataMap =
+					this.generateDatatableDataMap(rowIndex, row, form.getTraitTermId(), trialInstanceLocationMap);
 			if (!dataMap.isEmpty()) {
 				masterList.add(dataMap);
 			}
@@ -135,14 +136,14 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 
 	@RequestMapping(value = "/hasOutOfBoundValues", method = RequestMethod.GET)
 	public ResponseEntity<Boolean> hasOutOfBoundValues() {
-		List<MeasurementRow> measurementRowList = this.getUserSelection().getMeasurementRowList();
+		final List<MeasurementRow> measurementRowList = this.getUserSelection().getMeasurementRowList();
 		if (null == measurementRowList) {
 			return new ResponseEntity<>(false, HttpStatus.OK);
 		}
 
-		for (MeasurementRow row : measurementRowList) {
-			for (MeasurementData data : row.getDataList()) {
-				if (isValueOutOfBound(data)) {
+		for (final MeasurementRow row : measurementRowList) {
+			for (final MeasurementData data : row.getDataList()) {
+				if (this.isValueOutOfBound(data)) {
 					return new ResponseEntity<>(true, HttpStatus.OK);
 				}
 			}
@@ -151,38 +152,34 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 	}
 
 	private boolean isValueOutOfBound(final MeasurementData data) {
-		return data != null
-			&& !data.isAccepted()
-			&& (
-				data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())
-				&& this.isNumericalValueOutOfBounds(data))
-				|| (
-				data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())
-				&& this.isCategoricalValueOutOfBounds(data));
+		return data != null && !data.isAccepted() && data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())
+				&& this.isNumericalValueOutOfBounds(data)
+				|| data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())
+						&& this.isCategoricalValueOutOfBounds(data);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/submitDetails", method = RequestMethod.POST)
-	public Map<String, String> processOutOfBoundsChanges(@RequestBody ReviewOutOfBoundsChanges changes) {
+	public Map<String, String> processOutOfBoundsChanges(@RequestBody final ReviewOutOfBoundsChanges changes) {
 
-		Map<String, String> resultMap = new HashMap<>();
+		final Map<String, String> resultMap = new HashMap<>();
 
-		UserSelection userSelection = this.getUserSelection();
-		List<MeasurementRow> measurementRows = userSelection.getMeasurementRowList();
+		final UserSelection userSelection = this.getUserSelection();
+		final List<MeasurementRow> measurementRows = userSelection.getMeasurementRowList();
 
 		try {
 
-			for (Datum datum : changes.getData()) {
-				Integer termId = datum.getTermId();
-				for (Value val : datum.getValues()) {
-					MeasurementData measurementData = measurementRows.get(val.getRowIndex()).getMeasurementData(termId);
+			for (final Datum datum : changes.getData()) {
+				final Integer termId = datum.getTermId();
+				for (final Value val : datum.getValues()) {
+					final MeasurementData measurementData = measurementRows.get(val.getRowIndex()).getMeasurementData(termId);
 					this.updateMeasurementData(measurementData, val);
 				}
 
 			}
 
 			resultMap.put(ReviewDetailsOutOfBoundsController.SUCCESS, "1");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ReviewDetailsOutOfBoundsController.LOG.error(e.getMessage(), e);
 			resultMap.put(ReviewDetailsOutOfBoundsController.SUCCESS, "-1");
 			resultMap.put(ReviewDetailsOutOfBoundsController.ERROR_MESSAGE, e.getMessage());
@@ -192,12 +189,12 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 	}
 
 	protected Map<String, String> getTrialInstanceLocationMap() {
-		Map<String, String> map = new HashMap<>();
-		UserSelection userSelection = this.getUserSelection();
-		final Integer studyId = studySelection.getWorkbook().getStudyDetails().getId();
+		final Map<String, String> map = new HashMap<>();
+		final UserSelection userSelection = this.getUserSelection();
+		final Integer studyId = this.studySelection.getWorkbook().getStudyDetails().getId();
 		final Map<String, String> locationNameMap = this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(studyId);
-		for (MeasurementRow row : userSelection.getWorkbook().getTrialObservations()) {
-			String trialInstanceValue = row.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
+		for (final MeasurementRow row : userSelection.getWorkbook().getTrialObservations()) {
+			final String trialInstanceValue = row.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
 			String locationValue = "";
 			if (row.getMeasurementData(TermId.LOCATION_ID.getId()) != null) {
 				final String locationId = row.getMeasurementData(TermId.LOCATION_ID.getId()).getValue();
@@ -208,9 +205,9 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		return map;
 	}
 
-	protected void updateMeasurementData(MeasurementData measurementData, Value value) {
+	protected void updateMeasurementData(final MeasurementData measurementData, final Value value) {
 
-		String possibleValueId =
+		final String possibleValueId =
 				this.getPossibleValueIDByValue(value.getNewValue(), measurementData.getMeasurementVariable().getPossibleValues());
 
 		if (value.isSelected()) {
@@ -230,7 +227,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		}
 	}
 
-	protected void setMeasurementDataValue(String possibleValueId, MeasurementData measurementData, Value value) {
+	protected void setMeasurementDataValue(final String possibleValueId, final MeasurementData measurementData, final Value value) {
 		if (!value.getNewValue().isEmpty()) {
 
 			if (measurementData.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
@@ -249,9 +246,9 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		}
 	}
 
-	protected List<MeasurementVariable> getTraitsWithOutOfBoundsOnly(List<MeasurementVariable> measurementVariables) {
-		List<MeasurementVariable> variables = new ArrayList<>();
-		for (MeasurementVariable var : measurementVariables) {
+	protected List<MeasurementVariable> getTraitsWithOutOfBoundsOnly(final List<MeasurementVariable> measurementVariables) {
+		final List<MeasurementVariable> variables = new ArrayList<>();
+		for (final MeasurementVariable var : measurementVariables) {
 			if (var.getDataTypeId() != null && var.getDataTypeId() == TermId.NUMERIC_VARIABLE.getId() && !var.isFactor()
 					&& this.checkIfNumericalTraitHasOutOfBoundsData(var.getTermId())) {
 				variables.add(var);
@@ -265,15 +262,15 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 
 	}
 
-	protected Boolean checkIfNumericalTraitHasOutOfBoundsData(Integer termId) {
-		UserSelection userSelection = this.getUserSelection();
-		List<MeasurementRow> tempList = new ArrayList<>();
+	protected Boolean checkIfNumericalTraitHasOutOfBoundsData(final Integer termId) {
+		final UserSelection userSelection = this.getUserSelection();
+		final List<MeasurementRow> tempList = new ArrayList<>();
 		tempList.addAll(userSelection.getMeasurementRowList());
 
-		for (MeasurementRow row : tempList) {
-			MeasurementData data = row.getMeasurementData(termId);
+		for (final MeasurementRow row : tempList) {
+			final MeasurementData data = row.getMeasurementData(termId);
 			if (data != null) {
-				Boolean isNumericalValueOutOfBounds = this.isNumericalValueOutOfBounds(data);
+				final Boolean isNumericalValueOutOfBounds = this.isNumericalValueOutOfBounds(data);
 				if (isNumericalValueOutOfBounds) {
 					return isNumericalValueOutOfBounds;
 				}
@@ -283,14 +280,14 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		return false;
 	}
 
-	protected Boolean checkIfCategoricalTraitHasOutOfBoundsData(Integer termId) {
-		UserSelection userSelection = this.getUserSelection();
-		List<MeasurementRow> tempList = new ArrayList<>();
+	protected Boolean checkIfCategoricalTraitHasOutOfBoundsData(final Integer termId) {
+		final UserSelection userSelection = this.getUserSelection();
+		final List<MeasurementRow> tempList = new ArrayList<>();
 		tempList.addAll(userSelection.getMeasurementRowList());
 
-		for (MeasurementRow row : tempList) {
-			MeasurementData data = row.getMeasurementData(termId);
-			Boolean isCategoricalValueOutOfBounds = this.isCategoricalValueOutOfBounds(data);
+		for (final MeasurementRow row : tempList) {
+			final MeasurementData data = row.getMeasurementData(termId);
+			final Boolean isCategoricalValueOutOfBounds = this.isCategoricalValueOutOfBounds(data);
 			if (isCategoricalValueOutOfBounds) {
 				return isCategoricalValueOutOfBounds;
 			}
@@ -299,10 +296,11 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		return false;
 	}
 
-	protected List<MeasurementVariable> filterColumnsForReviewDetailsTable(List<MeasurementVariable> measurementVariables, int traitTermId) {
-		List<MeasurementVariable> variables = new ArrayList<>();
+	protected List<MeasurementVariable> filterColumnsForReviewDetailsTable(final List<MeasurementVariable> measurementVariables,
+			final int traitTermId) {
+		final List<MeasurementVariable> variables = new ArrayList<>();
 		Boolean locationExists = false;
-		for (MeasurementVariable var : measurementVariables) {
+		for (final MeasurementVariable var : measurementVariables) {
 			if (Arrays.asList(TermId.ENTRY_NO.getId(), TermId.PLOT_NO.getId(), TermId.TRIAL_INSTANCE_FACTOR.getId(), traitTermId)
 					.contains(var.getTermId())) {
 				variables.add(var);
@@ -314,7 +312,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		}
 
 		if (locationExists) {
-			Iterator<MeasurementVariable> iterator = variables.iterator();
+			final Iterator<MeasurementVariable> iterator = variables.iterator();
 			while (iterator.hasNext()) {
 				if (iterator.next().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 					iterator.remove();
@@ -325,10 +323,10 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 
 	}
 
-	protected Map<String, Object> generateDatatableDataMap(int rowIndex, MeasurementRow row, Integer targetTraitTermId,
-			Map<String, String> trialInstanceLocationMap) {
+	protected Map<String, Object> generateDatatableDataMap(final int rowIndex, final MeasurementRow row, final Integer targetTraitTermId,
+			final Map<String, String> trialInstanceLocationMap) {
 
-		Map<String, Object> dataMap = new HashMap<>();
+		final Map<String, Object> dataMap = new HashMap<>();
 		// the 4 attributes are needed always
 		String trialInstanceValue = row.getMeasurementDataValue(TermId.TRIAL_INSTANCE_FACTOR.getId());
 
@@ -342,19 +340,19 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		dataMap.put("MEASUREMENT_ROW_INDEX", rowIndex);
 
 		boolean isTraitCustomValue = false;
-		for (MeasurementData data : row.getDataList()) {
-			String displayVal = data.getDisplayValue();
+		for (final MeasurementData data : row.getDataList()) {
+			final String displayVal = data.getDisplayValue();
 			if (data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())
 					&& data.getMeasurementVariable().getTermId() == targetTraitTermId) {
 
 				isTraitCustomValue = this.isNumericalValueOutOfBounds(data);
-				Object[] categArray = new Object[] {displayVal, data.isAccepted()};
+				final Object[] categArray = new Object[] {displayVal, data.isAccepted()};
 				dataMap.put("OLD VALUE", categArray);
 			} else if (data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())
 					&& data.getMeasurementVariable().getTermId() == targetTraitTermId) {
 
 				isTraitCustomValue = this.isCategoricalValueOutOfBounds(data);
-				Object[] categArray = new Object[] {displayVal, data.isAccepted()};
+				final Object[] categArray = new Object[] {displayVal, data.isAccepted()};
 				dataMap.put("OLD VALUE", categArray);
 			}
 		}
@@ -371,20 +369,19 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		return this.studySelection;
 	}
 
-	protected void setStudySelection(UserSelection userSelection) {
+	protected void setStudySelection(final UserSelection userSelection) {
 		this.studySelection = userSelection;
 	}
 
-	
-	public void setStudyDataManager(StudyDataManager studyDataManager) {
+	public void setStudyDataManager(final StudyDataManager studyDataManager) {
 		this.studyDataManager = studyDataManager;
 	}
 
-	protected boolean isCategoricalValueOutOfBounds(MeasurementData data) {
+	protected boolean isCategoricalValueOutOfBounds(final MeasurementData data) {
 
-		String cValueId = data.getcValueId();
-		String value = data.getValue();
-		List<ValueReference> possibleValues = data.getMeasurementVariable().getPossibleValues();
+		final String cValueId = data.getcValueId();
+		final String value = data.getValue();
+		final List<ValueReference> possibleValues = data.getMeasurementVariable().getPossibleValues();
 
 		if (data.isAccepted()) {
 			return false;
@@ -399,7 +396,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 			val = value;
 		}
 
-		for (ValueReference ref : possibleValues) {
+		for (final ValueReference ref : possibleValues) {
 			if (ref.getKey().equals(val)) {
 				return false;
 			}
@@ -408,25 +405,25 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		return true;
 	}
 
-	protected boolean isNumericalValueOutOfBounds(MeasurementData data) {
-		String value = data.getValue();
+	protected boolean isNumericalValueOutOfBounds(final MeasurementData data) {
+		final String value = data.getValue();
 		if (data.isAccepted()) {
 			return false;
 		}
-		return (data.getMeasurementVariable().getMinRange() != null && data.getMeasurementVariable().getMaxRange() != null
-				&& this.isValueOutOfRange(value, data));
+		return data.getMeasurementVariable().getMinRange() != null && data.getMeasurementVariable().getMaxRange() != null
+				&& this.isValueOutOfRange(value, data);
 	}
 
-	protected boolean isValueOutOfRange(String value, MeasurementData data) {
+	protected boolean isValueOutOfRange(final String value, final MeasurementData data) {
 		if (MeasurementData.MISSING_VALUE.equalsIgnoreCase(value)) {
 			return true;
-		} 
-		return (NumberUtils.isNumber(value) && (Double.valueOf(value) < data.getMeasurementVariable().getMinRange()
-				|| Double.valueOf(value) > data.getMeasurementVariable().getMaxRange()));
+		}
+		return NumberUtils.isNumber(value) && (Double.valueOf(value) < data.getMeasurementVariable().getMinRange()
+				|| Double.valueOf(value) > data.getMeasurementVariable().getMaxRange());
 	}
 
-	protected String getPossibleValueIDByValue(String value, List<ValueReference> possibleValues) {
-		for (ValueReference ref : possibleValues) {
+	protected String getPossibleValueIDByValue(final String value, final List<ValueReference> possibleValues) {
+		for (final ValueReference ref : possibleValues) {
 			if (ref.getName().equalsIgnoreCase(value)) {
 				return ref.getKey();
 			}

@@ -382,6 +382,11 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		this.studySelection = userSelection;
 	}
 
+	
+	public void setStudyDataManager(StudyDataManager studyDataManager) {
+		this.studyDataManager = studyDataManager;
+	}
+
 	protected boolean isCategoricalValueOutOfBounds(MeasurementData data) {
 
 		String cValueId = data.getcValueId();

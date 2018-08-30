@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
@@ -21,14 +20,15 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.ontology.FormulaVariable;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.google.common.base.Optional;
 
 public class WorkbookUtil {
 
@@ -74,7 +74,8 @@ public class WorkbookUtil {
 		return null;
 	}
 
-	public static List<MeasurementRow> filterObservationsByTrialInstance(final List<MeasurementRow> observations, final String trialInstance) {
+	public static List<MeasurementRow> filterObservationsByTrialInstance(final List<MeasurementRow> observations,
+			final String trialInstance) {
 		final List<MeasurementRow> list = new ArrayList<>();
 
 		if (StringUtils.isBlank(trialInstance)) {
@@ -104,7 +105,8 @@ public class WorkbookUtil {
 		return null;
 	}
 
-	public static Optional<MeasurementVariable> findMeasurementVariableByName(final List<MeasurementVariable> variables, final String variableName) {
+	public static Optional<MeasurementVariable> findMeasurementVariableByName(final List<MeasurementVariable> variables,
+			final String variableName) {
 		if (variables != null && !variables.isEmpty()) {
 			for (final MeasurementVariable variable : variables) {
 				if (variable != null && variableName.equalsIgnoreCase(variable.getName())) {
@@ -219,8 +221,8 @@ public class WorkbookUtil {
 	}
 
 	public static void addMeasurementDataToRowsExp(final List<MeasurementVariable> variableList, final List<MeasurementRow> observations,
-			final boolean isVariate, final OntologyService ontologyService,
-			final FieldbookService fieldbookService, final String programUUID) {
+			final boolean isVariate, final OntologyService ontologyService, final FieldbookService fieldbookService,
+			final String programUUID) {
 		// add new variables in measurement rows
 		if (observations != null && !observations.isEmpty()) {
 			for (final MeasurementVariable variable : variableList) {
@@ -228,23 +230,29 @@ public class WorkbookUtil {
 						&& !WorkbookUtil.inMeasurementDataList(observations.get(0).getDataList(), variable.getTermId())) {
 					final StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(), programUUID);
 					for (final MeasurementRow row : observations) {
-						final MeasurementData measurementData =
-								new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()),
-										variable);
+						final MeasurementData measurementData = new MeasurementData(variable.getName(), "", true,
+								WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 
 						measurementData.setPhenotypeId(null);
 						final int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
 						row.getDataList().add(insertIndex, measurementData);
 					}
 
-					if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
-							&& isVariate) {
-						variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
-					} else {
-						variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
-					}
+					WorkbookUtil.setVariablePossibleValues(isVariate, ontologyService, fieldbookService, programUUID, variable,
+							stdVariable);
 				}
 			}
+		}
+	}
+
+	static void setVariablePossibleValues(final boolean isVariate, final OntologyService ontologyService,
+			final FieldbookService fieldbookService, final String programUUID, final MeasurementVariable variable,
+			final StandardVariable stdVariable) {
+		final String property = HtmlUtils.htmlUnescape(variable.getProperty());
+		if (ontologyService.getProperty(property).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId() && isVariate) {
+			variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
+		} else {
+			variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
 		}
 	}
 
@@ -257,11 +265,11 @@ public class WorkbookUtil {
 				final StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(), programUUID);
 				for (final MeasurementRow row : userSelection.getMeasurementRowList()) {
 
-					if(!isVariate) {
-						addFactorsToMeasurementRowDataList(row, stdVariable, isVariate, variable, userSelection);
+					if (!isVariate) {
+						WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, isVariate, variable, userSelection);
 					} else {
-						final MeasurementData measurementData =
-								new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
+						final MeasurementData measurementData = new MeasurementData(variable.getName(), "", true,
+								WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 
 						measurementData.setPhenotypeId(null);
 						final int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
@@ -270,79 +278,74 @@ public class WorkbookUtil {
 
 				}
 
-				if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
-						&& isVariate) {
-					variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
-				} else {
-					variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
-				}
+				WorkbookUtil.setVariablePossibleValues(isVariate, ontologyService, fieldbookService, programUUID, variable, stdVariable);
 			}
 		}
 	}
 
-	public static void addFactorsToMeasurementRowDataList(final MeasurementRow row, final StandardVariable stdVariable, final boolean isVariate,
-			final MeasurementVariable variable, final UserSelection userSelection ) {
+	public static void addFactorsToMeasurementRowDataList(final MeasurementRow row, final StandardVariable stdVariable,
+			final boolean isVariate, final MeasurementVariable variable, final UserSelection userSelection) {
 
 		MeasurementData measurementData = null;
 		String value = "";
 		ImportedGermplasm importedGermplasm = null;
 		String gid = null;
 
-		for(final MeasurementData measureData : row.getDataList()) {
-			if(measureData.getMeasurementVariable().getTermId() == TermId.GID.getId()) {
+		for (final MeasurementData measureData : row.getDataList()) {
+			if (measureData.getMeasurementVariable().getTermId() == TermId.GID.getId()) {
 				gid = measureData.getValue();
 				break;
 			}
 		}
 
-		if(userSelection.getImportedGermplasmMainInfo() != null && userSelection.getImportedGermplasmMainInfo()
-				.getImportedGermplasmList() != null && !CollectionUtils.isEmpty(userSelection.getImportedGermplasmMainInfo()
-				.getImportedGermplasmList().getImportedGermplasms())) {
+		if (userSelection.getImportedGermplasmMainInfo() != null
+				&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList() != null && !CollectionUtils
+						.isEmpty(userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms())) {
 			final List<ImportedGermplasm> importedGermplasms =
 					userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
 
-			for(final ImportedGermplasm importedGermplsm : importedGermplasms) {
-				if(importedGermplsm.getGid().equals(gid)) {
+			for (final ImportedGermplasm importedGermplsm : importedGermplasms) {
+				if (importedGermplsm.getGid().equals(gid)) {
 					importedGermplasm = importedGermplsm;
 					break;
 				}
 			}
 		}
 
-		if(importedGermplasm != null) {
-			if(stdVariable.getId() == TermId.GROUPGID.getId()) {
+		if (importedGermplasm != null) {
+			if (stdVariable.getId() == TermId.GROUPGID.getId()) {
 				value = importedGermplasm.getGroupId() != null ? importedGermplasm.getGroupId().toString() : "";
 				measurementData =
 						new MeasurementData(variable.getName(), value, false, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 			}
 
-			if(stdVariable.getId() == TermId.SEED_SOURCE.getId() || stdVariable.getId() == TermId.GERMPLASM_SOURCE.getId()) {
+			if (stdVariable.getId() == TermId.SEED_SOURCE.getId() || stdVariable.getId() == TermId.GERMPLASM_SOURCE.getId()) {
 				value = importedGermplasm.getSource() != null ? importedGermplasm.getSource() : "";
 				measurementData =
 						new MeasurementData(variable.getName(), value, false, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 			}
 
-			if(stdVariable.getId() == TermId.STOCKID.getId()) {
+			if (stdVariable.getId() == TermId.STOCKID.getId()) {
 				value = importedGermplasm.getStockIDs() != null ? importedGermplasm.getStockIDs() : "";
 				measurementData =
 						new MeasurementData(variable.getName(), value, false, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 			}
-			
-			if(stdVariable.getId() == TermId.ENTRY_CODE.getId()) {
+
+			if (stdVariable.getId() == TermId.ENTRY_CODE.getId()) {
 				value = importedGermplasm.getEntryCode() != null ? importedGermplasm.getEntryCode() : "";
 				measurementData =
 						new MeasurementData(variable.getName(), value, false, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 			}
-			
-			if(stdVariable.getId() == TermId.CROSS.getId()) {
+
+			if (stdVariable.getId() == TermId.CROSS.getId()) {
 				value = importedGermplasm.getCross() != null ? importedGermplasm.getCross() : "";
 				measurementData =
 						new MeasurementData(variable.getName(), value, false, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 			}
-			
+
 		}
 
-		if(measurementData == null) {
+		if (measurementData == null) {
 			measurementData =
 					new MeasurementData(variable.getName(), value, true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 		}
@@ -354,8 +357,8 @@ public class WorkbookUtil {
 	}
 
 	public static void addMeasurementDataToRowsIfNecessary(final List<MeasurementVariable> variableList,
-			final List<MeasurementRow> measurementRowList, final boolean isVariate,
-			final OntologyService ontologyService, final FieldbookService fieldbookService, final String programUUID) {
+			final List<MeasurementRow> measurementRowList, final boolean isVariate, final OntologyService ontologyService,
+			final FieldbookService fieldbookService, final String programUUID) {
 
 		// add new variables in measurement rows
 		for (final MeasurementVariable variable : variableList) {
@@ -377,18 +380,14 @@ public class WorkbookUtil {
 				}
 			}
 
-			if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId() && isVariate) {
-				variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
-			} else {
-				variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
-			}
+			WorkbookUtil.setVariablePossibleValues(isVariate, ontologyService, fieldbookService, programUUID, variable, stdVariable);
 		}
 
 	}
 
 	/**
 	 * Gets the data type.
-	 * 
+	 *
 	 * @param dataTypeId the data type id
 	 * @return the data type
 	 */
@@ -421,11 +420,11 @@ public class WorkbookUtil {
 
 	/**
 	 * Transform possible values.
-	 * 
+	 *
 	 * @param enumerations the enumerations
 	 * @return the list
 	 */
-	private static List<ValueReference> transformPossibleValues(final List<Enumeration> enumerations) {
+	static List<ValueReference> transformPossibleValues(final List<Enumeration> enumerations) {
 		final List<ValueReference> list = new ArrayList<>();
 
 		if (enumerations != null) {
@@ -463,8 +462,7 @@ public class WorkbookUtil {
 		}
 
 		for (final MeasurementVariable var : tempWorkbook.getFactors()) {
-			if (factorsMap.get(var.getTermId()) == null
-					&& expDesignVariablesMap.get(var.getTermId()) != null) {
+			if (factorsMap.get(var.getTermId()) == null && expDesignVariablesMap.get(var.getTermId()) != null) {
 				var.setOperation(Operation.ADD);
 				workbook.getFactors().add(var);
 			}
@@ -508,39 +506,36 @@ public class WorkbookUtil {
 				}
 			}
 		}
-        for (final Integer termId : deletedList) {
-            // remove from measurement rows
-            int index = 0;
-            int varIndex = 0;
-            boolean found = false;
-            if (observations != null) {
-                for (final MeasurementRow row : observations) {
-                    if (index == 0) {
-                        for (final MeasurementData var : row.getDataList()) {
-                            if (var.getMeasurementVariable().getTermId() == termId) {
-                                found = true;
-                                break;
-                            }
-                            varIndex++;
-                        }
-                    }
-                    if (found) {
-                        row.getDataList().remove(varIndex);
-                    } else {
-                        break;
-                    }
-                    index++;
-                }
-            }
-        }
-    }
+		for (final Integer termId : deletedList) {
+			// remove from measurement rows
+			int index = 0;
+			int varIndex = 0;
+			boolean found = false;
+			if (observations != null) {
+				for (final MeasurementRow row : observations) {
+					if (index == 0) {
+						for (final MeasurementData var : row.getDataList()) {
+							if (var.getMeasurementVariable().getTermId() == termId) {
+								found = true;
+								break;
+							}
+							varIndex++;
+						}
+					}
+					if (found) {
+						row.getDataList().remove(varIndex);
+					} else {
+						break;
+					}
+					index++;
+				}
+			}
+		}
+	}
 
 	// we would validate all conditions except for name and the study type
 	public static boolean isConditionValidate(final Integer cvTermId) {
-		if (cvTermId != null && !AppConstants.HIDE_STUDY_VARIABLE_SETTINGS_FIELDS.getString().contains(cvTermId.toString())) {
-			return true;
-		}
-		return false;
+		return cvTermId != null && !AppConstants.HIDE_STUDY_VARIABLE_SETTINGS_FIELDS.getString().contains(cvTermId.toString());
 	}
 
 	public static List<MeasurementVariable> getExperimentalDesignVariables(final List<MeasurementVariable> conditions) {
@@ -577,7 +572,7 @@ public class WorkbookUtil {
 
 	/**
 	 * NOTE: Default Design is when the PLOT NO and ENTRY NO has equal value.
-	 * 
+	 *
 	 * @param observations
 	 */
 	public static void resetObservationToDefaultDesign(final List<MeasurementRow> observations) {
@@ -596,6 +591,7 @@ public class WorkbookUtil {
 
 		final Collection<MeasurementVariable> formulas = CollectionUtils.select(variates, new Predicate() {
 
+			@Override
 			public boolean evaluate(final Object o) {
 				final MeasurementVariable measurementVariable = (MeasurementVariable) o;
 				return measurementVariable.getFormula() != null;
@@ -604,15 +600,15 @@ public class WorkbookUtil {
 
 		for (final MeasurementVariable row : variates) {
 			final List<Integer> formulasFromCVTermId = WorkbookUtil.getFormulasFromCVTermId(row.getTermId(), formulas);
-			if (formulasFromCVTermId.size() > 0) {
+			if (!formulasFromCVTermId.isEmpty()) {
 				map.put(row.getTermId(), formulasFromCVTermId);
 			}
 		}
 		return map;
 	}
 
-	private static List<Integer> getFormulasFromCVTermId(
-		final Integer inputCvTermId, final Collection<MeasurementVariable> measurementVariables) {
+	private static List<Integer> getFormulasFromCVTermId(final Integer inputCvTermId,
+			final Collection<MeasurementVariable> measurementVariables) {
 		final List<Integer> result = new ArrayList<>();
 		for (final MeasurementVariable measurementVariable : measurementVariables) {
 			if (measurementVariable.getFormula().isInputVariablePresent(inputCvTermId)) {
@@ -622,11 +618,13 @@ public class WorkbookUtil {
 		return result;
 	}
 
-	public static Map<MeasurementVariable, List<MeasurementVariable>> getVariatesMapUsedInFormulas(final List<MeasurementVariable> variates) {
+	public static Map<MeasurementVariable, List<MeasurementVariable>> getVariatesMapUsedInFormulas(
+			final List<MeasurementVariable> variates) {
 		final Map<MeasurementVariable, List<MeasurementVariable>> map = new HashMap<>();
 
 		final Collection<MeasurementVariable> formulas = CollectionUtils.select(variates, new Predicate() {
 
+			@Override
 			public boolean evaluate(final Object o) {
 				final MeasurementVariable measurementVariable = (MeasurementVariable) o;
 				return measurementVariable.getFormula() != null;
@@ -635,15 +633,15 @@ public class WorkbookUtil {
 
 		for (final MeasurementVariable row : variates) {
 			final List<MeasurementVariable> formulasFromCVTermId = WorkbookUtil.getFormulasFromCVTermId(row, formulas);
-			if (formulasFromCVTermId.size() > 0) {
+			if (!formulasFromCVTermId.isEmpty()) {
 				map.put(row, formulasFromCVTermId);
 			}
 		}
 		return map;
 	}
 
-	private static List<MeasurementVariable> getFormulasFromCVTermId(
-		final MeasurementVariable variable, final Collection<MeasurementVariable> measurementVariables) {
+	private static List<MeasurementVariable> getFormulasFromCVTermId(final MeasurementVariable variable,
+			final Collection<MeasurementVariable> measurementVariables) {
 		final List<MeasurementVariable> result = new ArrayList<>();
 		for (final MeasurementVariable measurementVariable : measurementVariables) {
 			if (measurementVariable.getFormula().isInputVariablePresent(variable.getTermId())) {

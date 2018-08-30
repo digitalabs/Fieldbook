@@ -1,41 +1,44 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import com.efficio.fieldbook.service.FieldbookServiceImpl;
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import junit.framework.Assert;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.middleware.ContextHolder;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Property;
 import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.ui.ExtendedModelMap;
+import org.springframework.web.util.HtmlUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import com.efficio.fieldbook.service.FieldbookServiceImpl;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+
+import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsControllerTest {
@@ -69,6 +72,9 @@ public class SettingsControllerTest {
 
 	@Mock
 	private FieldbookServiceImpl fieldbookService;
+	
+	@Mock
+	private OntologyService ontologyService;
 
 	private final String programUUID = UUID.randomUUID().toString();
 
@@ -78,6 +84,7 @@ public class SettingsControllerTest {
 		this.controller.setContextUtil(this.contextUtil);
 		this.controller.setVariableDataManager(this.variableDataManager);
 		this.controller.setFieldbookService(this.fieldbookService);
+		this.controller.setOntologyService(this.ontologyService);
 
 		this.createTestVariable();
 		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class), Matchers.anyBoolean(),
@@ -111,6 +118,7 @@ public class SettingsControllerTest {
 
 	private SettingDetail createSettingDetail(final Integer cvTermId, final String value) {
 		final SettingVariable variable = new SettingVariable();
+		variable.setProperty(RandomStringUtils.randomAlphabetic(20));
 		variable.setCvTermId(cvTermId);
 		final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
 		return settingDetail;
@@ -209,6 +217,52 @@ public class SettingsControllerTest {
 		Assert.assertEquals("Expecting variable description to be used but was not.", SettingsControllerTest.TRAIT_DESCRIPTION,
 				settingDetail.getVariable().getDescription());
 		Assert.assertNull("Error in Value", settingDetail.getValue());
+	}
+	
+	@Test
+	public void testRemoveSelectionVariatesFromTraitsWithoutSelectionVariate() {
+		final List<SettingDetail> variables = this.createSettingDetailVariables();
+		final String originalProperty = "Pórtúgêsê Própêrty";
+		final SettingDetail specialVariable = this.createSettingDetail(TermId.SEED_SOURCE.getId(), "");
+		specialVariable.getVariable().setProperty(HtmlUtils.htmlEscape(originalProperty));
+		variables.add(specialVariable);
+		final int originalSize = variables.size();
+		final List<String> properties = new ArrayList<>();
+		for (final SettingDetail detail : variables) {
+			properties.add(HtmlUtils.htmlUnescape(detail.getVariable().getProperty()));
+		}
+		Mockito.when(this.ontologyService.getProperty(Matchers.anyString()))
+				.thenReturn(new org.generationcp.middleware.domain.oms.Property(new Term(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "definition")));
+
+		this.controller.removeSelectionVariatesFromTraits(variables);
+		Assert.assertEquals(originalSize, variables.size());
+		final ArgumentCaptor<String> propertiesCaptor = ArgumentCaptor.forClass(String.class);
+		Mockito.verify(this.ontologyService, Mockito.times(originalSize)).getProperty(propertiesCaptor.capture());
+		Assert.assertEquals(properties, propertiesCaptor.getAllValues());
+	}
+	
+	@Test
+	public void testRemoveSelectionVariatesFromTraitsWithSelectionVariate() {
+		final List<SettingDetail> variables = this.createSettingDetailVariables();
+		final int originalSize = variables.size();
+		final List<SettingDetail> expectedVariables = new ArrayList<>();
+		for (final SettingDetail detail : variables) {
+			final String property = HtmlUtils.htmlUnescape(detail.getVariable().getProperty());
+			expectedVariables.add(detail);
+			Mockito.when(this.ontologyService.getProperty(property)).thenReturn(new org.generationcp.middleware.domain.oms.Property(
+					new Term(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "definition")));
+		}
+		// Setup first setting detail as selection variate
+		final SettingDetail firstVariable = variables.get(0);
+		Mockito.when(this.ontologyService.getProperty(HtmlUtils.htmlUnescape(firstVariable.getVariable().getProperty())))
+				.thenReturn(new org.generationcp.middleware.domain.oms.Property(
+						new Term(TermId.BREEDING_METHOD_PROP.getId(), TermId.BREEDING_METHOD_PROP.name(), "definition")));
+		expectedVariables.remove(firstVariable);
+		
+		this.controller.removeSelectionVariatesFromTraits(variables);
+		// Expecting first variable to have been removed
+		Assert.assertEquals(originalSize - 1, variables.size());
+		Assert.assertFalse(variables.contains(firstVariable));
 	}
 
 	private void createTestProject() {

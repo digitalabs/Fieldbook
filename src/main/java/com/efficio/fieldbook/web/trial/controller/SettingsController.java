@@ -10,17 +10,16 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.trial.service.ValidationService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -28,33 +27,31 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.Property;
 import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.oms.CVTerm;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ui.Model;
+import org.springframework.web.util.HtmlUtils;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.service.ValidationService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
  * The Class SettingsController.
@@ -63,14 +60,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsController.class);
-
-	private static final String DESCRIPTION = "Description";
-	private static final String START_DATE = "startDate";
-	private static final String END_DATE = "endDate";
-	private static final String STUDY_UPDATE = "studyUpdate";
-	private static final String OBJECTIVE = "Objective";
-	private static final String STUDY_NAME = "Name";
-	private static final String CREATED_BY = "createdBy";
 
 	/** The workbench service. */
 	@Resource
@@ -434,12 +423,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param traits the traits
 	 */
 	//TODO TRIAL
-	private void removeSelectionVariatesFromTraits(final List<SettingDetail> traits) {
+	void removeSelectionVariatesFromTraits(final List<SettingDetail> traits) {
 		if (traits != null) {
 			final Iterator<SettingDetail> iter = traits.iterator();
 			while (iter.hasNext()) {
 				final SettingDetail var = iter.next();
-				if (SettingsUtil.inPropertyList(this.ontologyService.getProperty(var.getVariable().getProperty()).getId())) {
+				final String property = HtmlUtils.htmlUnescape(var.getVariable().getProperty());
+				if (SettingsUtil.inPropertyList(this.ontologyService.getProperty(property).getId())) {
 					iter.remove();
 				}
 			}
@@ -613,7 +603,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			this.userSelection.getDeletedPlotLevelList().add(newSetting);
 		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
 			this.addNewSettingToDeletedBaselineTraits(newSetting);
-		} else if (mode == VariableType.STUDY_CONDITION.getId() || mode == VariableType.STUDY_CONDITION.getId()) {
+		} else if (mode == VariableType.STUDY_CONDITION.getId()) {
 			if (this.userSelection.getDeletedStudyConditions() == null) {
 				this.userSelection.setDeletedStudyConditions(new ArrayList<SettingDetail>());
 			}
@@ -641,6 +631,11 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	public void setFieldbookService(final FieldbookService fieldbookService) {
 		this.fieldbookService = fieldbookService;
+	}
+
+	
+	public void setOntologyService(OntologyService ontologyService) {
+		this.ontologyService = ontologyService;
 	}
 
 }

@@ -705,8 +705,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	void roundNumericValues(final List<MeasurementRow> measurementRowList) {
 	  	for (final MeasurementRow row : measurementRowList) {
 	  	  	for (final MeasurementData data : row.getDataList()) {
-		  		if (data.getMeasurementVariable().getVariableType().getId() == VariableType.TRAIT.getId() && data.isNumeric()) {
-		    		String value = StringUtils.stripEnd(String.format ("%,.2f", Double.parseDouble(data.getValue())), "0");
+		  		if (data.getMeasurementVariable().getVariableType().getId() == VariableType.TRAIT.getId() && data.isNumeric() && data.getValue() != null && !data.getValue().isEmpty()) {
+		    		String value = StringUtils.stripEnd(String.format ("%.2f", Double.parseDouble(data.getValue())), "0");
 					data.setValue(StringUtils.stripEnd(value, "."));
 		  		}
 			}

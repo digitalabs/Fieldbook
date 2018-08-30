@@ -33,18 +33,20 @@ public class SampleListController {
 
 	public static final String URL = "/sample/list";
 	private static final String SAVED_FINAL_LIST = "/StudyManager/savedFinalList";
-	private static final String TABLE_HEADER_LIST = "tableHeaderList";
-	private static final String SAMPLE_LIST = "sampleList";
+	protected static final String TABLE_HEADER_LIST = "tableHeaderList";
+	protected static final String SAMPLE_LIST = "sampleList";
 	private static final String SAMPLE_NAME = "sample.list.sample.name";
 	private static final String TAKEN_BY = "sample.list.taken.by";
 	private static final String SAMPLING_DATE = "sample.list.sampling.date";
 	private static final String SAMPLE_UID = "sample.list.sample.uid";
+	private static final String PLATE_ID = "sample.list.sample.plate.id";
+	private static final String WELL = "sample.list.sample.well";
 	private static final String PLANT_UID = "sample.list.plant.uid";
 	private static final String PLANT_NO = "sample.list.plant.no";
 	private static final String PLOT_ID = "sample.list.plot.id";
 	private static final String PLOT_NO = "sample.list.plot.no";
 	private static final String DESIGNATION = "seed.entry.designation";
-	private static final String TOTAL_NUMBER_OF_GERMPLASMS = "totalNumberOfGermplasms";
+	protected static final String TOTAL_NUMBER_OF_GERMPLASMS = "totalNumberOfGermplasms";
 	private static final String SAMPLE_ENTRY = "sample.list.sample.entry.no";
 
 	@Resource
@@ -71,7 +73,7 @@ public class SampleListController {
 			final String type = sampleList.getType().name();
 			final List<SampleDetailsDTO> sampleDetailsDTOs = this.sampleListService.getSampleDetailsDTOs(listId);
 			model.addAttribute(SampleListController.SAMPLE_LIST, sampleDetailsDTOs);
-			model.addAttribute(TOTAL_NUMBER_OF_GERMPLASMS, sampleDetailsDTOs.size());
+			model.addAttribute(SampleListController.TOTAL_NUMBER_OF_GERMPLASMS, sampleDetailsDTOs.size());
 			model.addAttribute(SampleListController.TABLE_HEADER_LIST, this.getSampleListTableHeaders());
 
 			model.addAttribute("listId", listId);
@@ -104,6 +106,10 @@ public class SampleListController {
 			this.messageSource.getMessage(SampleListController.SAMPLING_DATE, null, locale)));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_UID, null, locale),
 			this.messageSource.getMessage(SampleListController.SAMPLE_UID, null, locale), false));
+		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.PLATE_ID, null, locale),
+			this.messageSource.getMessage(SampleListController.PLATE_ID, null, locale), false));
+		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.WELL, null, locale),
+			this.messageSource.getMessage(SampleListController.WELL, null, locale), false));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.PLANT_UID, null, locale),
 			this.messageSource.getMessage(SampleListController.PLANT_UID, null, locale), false));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.PLOT_ID, null, locale),

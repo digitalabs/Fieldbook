@@ -48,15 +48,7 @@ public class GermplasmListController {
 	private static final Logger LOG = LoggerFactory.getLogger(GermplasmListController.class);
 	public static final String TABLE_HEADER_LIST = "tableHeaderList";
 	public static final String GERMPLASM_LIST = "germplasmList";
-	public static final String SAMPLE_LIST = "sampleList";
 	public static final String INVENTORY_VIEW_TOGGLED = "inventoryViewToggled";
-	private static final String SAMPLE_NAME = "sample.list.sample.name";
-	private static final String TAKEN_BY = "sample.list.taken.by";
-	private static final String SAMPLING_DATE = "sample.list.sampling.date";
-	private static final String SAMPLE_UID = "sample.list.sample.uid";
-	private static final String PLANT_UID = "sample.list.plant.uid";
-	private static final String PLANT_NO = "sample.list.plant.no";
-	private static final String PLOT_ID = "sample.list.plot.id";
 	public static final String TOTAL_NUMBER_OF_GERMPLASMS = "totalNumberOfGermplasms";
 
 	@Resource
@@ -320,32 +312,6 @@ public class GermplasmListController {
 				new TableHeader(this.messageSource.getMessage(GermplasmListController.GERMPLASM_LIST_DUPLICATE, null, locale),
 					this.messageSource.getMessage(GermplasmListController.GERMPLASM_LIST_DUPLICATE, null, locale)));
 		}
-
-		return tableHeaderList;
-	}
-
-	protected List<TableHeader> getSampleListTableHeaders() {
-		Locale locale = LocaleContextHolder.getLocale();
-		List<TableHeader> tableHeaderList = new ArrayList<>();
-
-		this.getCommonHeaders(locale, tableHeaderList);
-
-		tableHeaderList.add(new TableHeader(ColumnLabels.PLOT_NO.getTermNameFromOntology(this.ontologyDataManager),
-			this.messageSource.getMessage("sample.list.plot.no", null, locale)));
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.PLANT_NO, null, locale),
-			this.messageSource.getMessage(GermplasmListController.PLANT_NO, null, locale)));
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.SAMPLE_NAME, null, locale),
-			this.messageSource.getMessage(GermplasmListController.SAMPLE_NAME, null, locale)));
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.TAKEN_BY, null, locale),
-			this.messageSource.getMessage(GermplasmListController.TAKEN_BY, null, locale)));
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.SAMPLING_DATE, null, locale),
-			this.messageSource.getMessage(GermplasmListController.SAMPLING_DATE, null, locale)));
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.SAMPLE_UID, null, locale),
-			this.messageSource.getMessage(GermplasmListController.SAMPLE_UID, null, locale), false));
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.PLANT_UID, null, locale),
-			this.messageSource.getMessage(GermplasmListController.PLANT_UID, null, locale), false));
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.PLOT_ID, null, locale),
-			this.messageSource.getMessage(GermplasmListController.PLOT_ID, null, locale), false));
 
 		return tableHeaderList;
 	}

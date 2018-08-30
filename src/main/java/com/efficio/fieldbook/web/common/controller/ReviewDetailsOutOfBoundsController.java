@@ -16,6 +16,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,9 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 
 	@Resource
 	private UserSelection studySelection;
+	
+	@Resource
+	private StudyDataManager studyDataManager;
 
 	@Override
 	public String getContentName() {
@@ -189,11 +193,14 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 	protected Map<String, String> getTrialInstanceLocationMap() {
 		Map<String, String> map = new HashMap<>();
 		UserSelection userSelection = this.getUserSelection();
+		final Integer studyId = studySelection.getWorkbook().getStudyDetails().getId();
+		final Map<String, String> locationNameMap = this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(studyId);
 		for (MeasurementRow row : userSelection.getWorkbook().getTrialObservations()) {
 			String trialInstanceValue = row.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
 			String locationValue = "";
-			if (row.getMeasurementData(TermId.TRIAL_LOCATION.getId()) != null) {
-				locationValue = row.getMeasurementData(TermId.TRIAL_LOCATION.getId()).getValue();
+			if (row.getMeasurementData(TermId.LOCATION_ID.getId()) != null) {
+				final String locationId = row.getMeasurementData(TermId.LOCATION_ID.getId()).getValue();
+				locationValue = locationNameMap.get(locationId);
 			}
 			map.put(trialInstanceValue, locationValue);
 		}
@@ -304,7 +311,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 			if (var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				variables.add(var);
 			}
-			if (var.getTermId() == TermId.TRIAL_LOCATION.getId()) {
+			if (var.getTermId() == TermId.LOCATION_ID.getId()) {
 				locationExists = true;
 				variables.add(var);
 			}

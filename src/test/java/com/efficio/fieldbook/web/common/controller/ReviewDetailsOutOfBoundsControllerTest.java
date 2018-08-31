@@ -3,17 +3,19 @@ package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Assert;
-
+import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -25,13 +27,30 @@ import com.efficio.fieldbook.web.common.bean.ReviewOutOfBoundsChanges;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.bean.Value;
 import com.efficio.fieldbook.web.common.form.ReviewDetailsOutOfBoundsForm;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
+import junit.framework.Assert;
 
 public class ReviewDetailsOutOfBoundsControllerTest {
+
+
+	private static final int STUDY_ID = 10101;
+	private static final String LOCATION_ID1 = "7001";
+	private static final String LOCATION_ID2 = "7002";
+	private static final String LOCATION_ID3 = "7003";
+	private static final String LOCATION_ID4 = "7004";
+	private static final String LOCATION_ID5 = "7005";
 
 	private ReviewDetailsOutOfBoundsController reviewDetailsOutOfBoundsController;
 
 	@Mock
 	private Workbook workbook;
+	
+	@Mock
+	private StudyDataManager studyDataManager;
+	
+	private BiMap<String, String> studyLocationsMap;
 
 	@Before
 	public void setUp() {
@@ -39,10 +58,23 @@ public class ReviewDetailsOutOfBoundsControllerTest {
 		MockitoAnnotations.initMocks(this);
 
 		this.reviewDetailsOutOfBoundsController = Mockito.spy(new ReviewDetailsOutOfBoundsController());
-		this.reviewDetailsOutOfBoundsController.setStudySelection(this.generateUserSelection());
-
+		final UserSelection userSelection = this.generateUserSelection();
+		this.reviewDetailsOutOfBoundsController.setStudySelection(userSelection);
+		this.reviewDetailsOutOfBoundsController.setStudyDataManager(this.studyDataManager);
+		
+		this.studyLocationsMap = HashBiMap.create();
+		this.studyLocationsMap.put(LOCATION_ID1, RandomStringUtils.randomAlphabetic(20));
+		this.studyLocationsMap.put(LOCATION_ID2, RandomStringUtils.randomAlphabetic(20));
+		this.studyLocationsMap.put(LOCATION_ID3, RandomStringUtils.randomAlphabetic(20));
+		this.studyLocationsMap.put(LOCATION_ID4, RandomStringUtils.randomAlphabetic(20));
+		this.studyLocationsMap.put(LOCATION_ID5, RandomStringUtils.randomAlphabetic(20));
+		Mockito.when(this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(STUDY_ID))
+				.thenReturn(this.studyLocationsMap);
+		Mockito.when(this.workbook.getTrialObservations()).thenReturn(userSelection.getMeasurementRowList());
 		Mockito.when(this.workbook.getMeasurementDatasetVariables()).thenReturn(this.generateMeasurementVariables());
-
+		final StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setId(STUDY_ID);
+		Mockito.when(this.workbook.getStudyDetails()).thenReturn(studyDetails);
 	}
 
 	@Test
@@ -100,16 +132,35 @@ public class ReviewDetailsOutOfBoundsControllerTest {
 	}
 
 	@Test
-	public void testFilterColumnsForReviewDetailsTable() {
+	public void testFilterColumnsForReviewDetailsTableWithLocationIdPresent() {
 
 		List<MeasurementVariable> measurementVariables =
 				this.reviewDetailsOutOfBoundsController.filterColumnsForReviewDetailsTable(this.generateMeasurementVariables(), 1001);
 		Assert.assertEquals(4, measurementVariables.size());
 		Assert.assertEquals(TermId.ENTRY_NO.getId(), measurementVariables.get(0).getTermId());
 		Assert.assertEquals(TermId.PLOT_NO.getId(), measurementVariables.get(1).getTermId());
-		Assert.assertEquals(TermId.TRIAL_LOCATION.getId(), measurementVariables.get(2).getTermId());
+		Assert.assertEquals(TermId.LOCATION_ID.getId(), measurementVariables.get(2).getTermId());
 		Assert.assertEquals(1001, measurementVariables.get(3).getTermId());
 
+	}
+	
+	@Test
+	public void testFilterColumnsForReviewDetailsTableWithoutLocationIdPresent() {
+
+		final List<MeasurementVariable> variables = this.generateMeasurementVariables();
+		Iterator<MeasurementVariable> iterator = variables.iterator();
+		while (iterator.hasNext()) {
+			if (iterator.next().getTermId() == TermId.LOCATION_ID.getId()) {
+				iterator.remove();
+			}
+		}
+		List<MeasurementVariable> measurementVariables =
+				this.reviewDetailsOutOfBoundsController.filterColumnsForReviewDetailsTable(variables, 1001);
+		Assert.assertEquals(4, measurementVariables.size());
+		Assert.assertEquals(TermId.TRIAL_INSTANCE_FACTOR.getId(), measurementVariables.get(0).getTermId());
+		Assert.assertEquals(TermId.ENTRY_NO.getId(), measurementVariables.get(1).getTermId());
+		Assert.assertEquals(TermId.PLOT_NO.getId(), measurementVariables.get(2).getTermId());
+		Assert.assertEquals(1001, measurementVariables.get(3).getTermId());
 	}
 
 	@Test
@@ -325,6 +376,16 @@ public class ReviewDetailsOutOfBoundsControllerTest {
 		Assert.assertTrue("Should return True since value is out of range",
 				this.reviewDetailsOutOfBoundsController.isValueOutOfRange("13", data));
 	}
+	
+	@Test
+	public void testGetTrialInstanceLocationMap() {
+		final Map<String, String> map = this.reviewDetailsOutOfBoundsController.getTrialInstanceLocationMap();
+		Assert.assertEquals(2, map.size());
+		Assert.assertNotNull(map.get("1"));
+		Assert.assertEquals(this.studyLocationsMap.get(LOCATION_ID4), map.get("1"));
+		Assert.assertNotNull(map.get("2"));
+		Assert.assertEquals(this.studyLocationsMap.get(LOCATION_ID5), map.get("2"));
+	}
 
 	private UserSelection generateUserSelection() {
 		UserSelection userSelection = new UserSelection();
@@ -338,6 +399,10 @@ public class ReviewDetailsOutOfBoundsControllerTest {
 				"CategVar"));
 		dataList1.add(this.generateTestMeasurementData(1002, "1", TermId.CATEGORICAL_VARIABLE.getId(), this.generatePossibleValues(),
 				"CategVar2"));
+		dataList1.add(this.generateTestMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId(), "1", TermId.NUMERIC_VARIABLE.getId(),
+				new ArrayList<ValueReference>(), TermId.TRIAL_INSTANCE_FACTOR.name()));
+		dataList1.add(this.generateTestMeasurementData(TermId.LOCATION_ID.getId(), LOCATION_ID4, TermId.NUMERIC_VARIABLE.getId(),
+				new ArrayList<ValueReference>(), "LOCATION_NAME"));
 		row1.setDataList(dataList1);
 		measurementRowList.add(row1);
 
@@ -349,6 +414,10 @@ public class ReviewDetailsOutOfBoundsControllerTest {
 				"CategVar"));
 		dataList2.add(this.generateTestMeasurementData(1002, "5002", TermId.CATEGORICAL_VARIABLE.getId(), this.generatePossibleValues(),
 				"CategVar2"));
+		dataList2.add(this.generateTestMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId(), "2", TermId.NUMERIC_VARIABLE.getId(),
+				new ArrayList<ValueReference>(), TermId.TRIAL_INSTANCE_FACTOR.name()));
+		dataList2.add(this.generateTestMeasurementData(TermId.LOCATION_ID.getId(), LOCATION_ID5, TermId.NUMERIC_VARIABLE.getId(),
+				new ArrayList<ValueReference>(), "LOCATION_NAME"));
 		row2.setDataList(dataList2);
 		measurementRowList.add(row2);
 
@@ -404,7 +473,7 @@ public class ReviewDetailsOutOfBoundsControllerTest {
 		measurementVariables.add(var3);
 
 		MeasurementVariable var4 = new MeasurementVariable();
-		var4.setTermId(TermId.TRIAL_LOCATION.getId());
+		var4.setTermId(TermId.LOCATION_ID.getId());
 		var4.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		measurementVariables.add(var4);
 

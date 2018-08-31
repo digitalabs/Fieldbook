@@ -1154,6 +1154,11 @@ public class TrialMeasurementsControllerTest {
 		measurementRows = MeasurementRowTestDataInitializer.createMeasurementRowList(1, "numeric", "2", measurementVariable);
 		this.measurementsController.roundNumericValues(measurementRows);
 		Assert.assertEquals("2", measurementRows.get(0).getDataList().get(0).getValue());
+
+		// Value: 0.4 - no rounding needed
+		measurementRows = MeasurementRowTestDataInitializer.createMeasurementRowList(1, "numeric", "0.4", measurementVariable);
+		this.measurementsController.roundNumericValues(measurementRows);
+		Assert.assertEquals("0.4", measurementRows.get(0).getDataList().get(0).getValue());
 	}
 
 	@Test

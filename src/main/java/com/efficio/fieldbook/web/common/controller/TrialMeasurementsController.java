@@ -19,6 +19,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.Variable;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
@@ -692,12 +693,24 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
 		this.changeLocationIdToName(form.getMeasurementRowList(), workbook.getMeasurementDatasetVariablesMap(),
 				studyId);
+		this.roundNumericValues(form.getMeasurementRowList());
 		this.paginationListSelection.addReviewDetailsList(String.valueOf(datasetId), form.getMeasurementRowList());
 		this.paginationListSelection.addReviewVariableList(String.valueOf(datasetId), form.getMeasurementVariables());
 		form.changePage(1);
 		this.getUserSelection().setCurrentPage(form.getCurrentPage());
 
 		return super.showAjaxPage(model, TrialMeasurementsController.OBSERVATIONS_HTML);
+	}
+
+	void roundNumericValues(final List<MeasurementRow> measurementRowList) {
+	  	for (final MeasurementRow row : measurementRowList) {
+	  	  	for (final MeasurementData data : row.getDataList()) {
+		  		if (data.getMeasurementVariable().getVariableType().getId().equals(VariableType.TRAIT.getId()) && data.isNumeric() && data.getValue() != null && !data.getValue().isEmpty()) {
+		    		String value = StringUtils.stripEnd(String.format ("%.2f", Double.parseDouble(data.getValue())), "0");
+					data.setValue(StringUtils.stripEnd(value, "."));
+		  		}
+			}
+	  	}
 	}
 
 	void changeLocationIdToName(final List<MeasurementRow> measurementRowList,

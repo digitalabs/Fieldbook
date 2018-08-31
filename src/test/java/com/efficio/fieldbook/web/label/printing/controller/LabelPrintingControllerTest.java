@@ -27,10 +27,12 @@ import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.data.initializer.FieldMapInfoTestDataInitializer;
 import org.generationcp.middleware.data.initializer.ProjectTestDataInitializer;
+import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.GermplasmInventory;
 import org.generationcp.middleware.domain.inventory.ListDataInventory;
@@ -438,6 +440,25 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		dataToTest.add(listEntry4);
 
 		Assert.assertEquals(1, this.labelPrintingController.getGermplasmListDataListWithExistingReservations(dataToTest).size());
+	}
+
+	@Test
+	public void testGenerateDefaultFilenameForFieldmapLabels() {
+
+		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
+		userLabelPrinting.setFieldMapInfoList(new ArrayList<FieldMapInfo>());
+		Assert.assertEquals("Study-Field-Map-Labels-" + DateUtil.getCurrentDateAsStringValue(), this.labelPrintingController.generateDefaultFilename(userLabelPrinting));
+
+	}
+
+	@Test
+	public void testGenerateDefaultFilename() {
+		final String currentDate = DateUtil.getCurrentDateAsStringValue();
+		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
+		userLabelPrinting.setName("Name");
+		Assert.assertEquals("Labels-for-Name-" + currentDate, this.labelPrintingController.generateDefaultFilename(userLabelPrinting));
+		userLabelPrinting.setNumberOfInstances("2");
+		Assert.assertEquals("Labels-for-Name-2-"  +  currentDate, this.labelPrintingController.generateDefaultFilename(userLabelPrinting));
 	}
 
 	private GermplasmListData getTestGermplasmListData(final GermplasmList germplasmList, final Integer listDataId, final Integer gid,

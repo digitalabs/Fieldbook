@@ -3,11 +3,38 @@ package com.efficio.fieldbook.web.util.parsing;
 
 import java.util.Map;
 
+import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class InventoryHeaderLabelsTest {
+
+  	@Mock
+	public OntologyDataManager ontologyDataManager;
+
+  	@Before
+	public void setUp() {
+	  	Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.ENTRY_ID.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.ENTRY.getName(), null));
+	  	Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.DESIGNATION.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.DESIGNATION.getName(), null));
+	  	Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.PARENTAGE.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.PARENTAGE.getName(), null));
+	  	Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.GID.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.GID.getName(), null));
+	  	Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.SEED_SOURCE.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.SOURCE.getName(), null));
+	  	Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.LOT_LOCATION.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.LOCATION.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.BULK_WITH.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.BULK_WITH.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.BULK_COMPL.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.BULK_COMPL.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.DUPLICATE.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.DUPLICATE.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.STOCKID_INVENTORY.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.STOCKID.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.COMMENT.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.COMMENT.getName(), null));
+	}
 
 	@Test
 	public void testHeaders_Advanced() {
@@ -55,7 +82,7 @@ public class InventoryHeaderLabelsTest {
 	@Test
 	public void testGetHeaderNames_Advanced() {
 		final Map<InventoryHeaderLabels, Integer> advancedHeadersMap = this.createInventoryHeaderLabelsMap(GermplasmListType.ADVANCED);
-		final String[] headers = InventoryHeaderLabels.getHeaderNames(advancedHeadersMap);
+		final String[] headers = InventoryHeaderLabels.getHeaderNames(advancedHeadersMap, this.ontologyDataManager);
 		Assert.assertEquals(advancedHeadersMap.keySet().size(), headers.length);
 		Assert.assertEquals(10, headers.length);
 		Assert.assertTrue(headers[0].equals(InventoryHeaderLabels.ENTRY.getName()));
@@ -73,7 +100,7 @@ public class InventoryHeaderLabelsTest {
 	@Test
 	public void testGetHeaderNames_Crosses() {
 		final Map<InventoryHeaderLabels, Integer> crossesHeadersMap = this.createInventoryHeaderLabelsMap(GermplasmListType.CROSSES);
-		final String[] headers = InventoryHeaderLabels.getHeaderNames(crossesHeadersMap);
+		final String[] headers = InventoryHeaderLabels.getHeaderNames(crossesHeadersMap, this.ontologyDataManager);
 		Assert.assertEquals(crossesHeadersMap.keySet().size(), headers.length);
 		Assert.assertEquals(13, headers.length);
 		Assert.assertTrue(headers[0].equals(InventoryHeaderLabels.ENTRY.getName()));
@@ -95,7 +122,7 @@ public class InventoryHeaderLabelsTest {
 	public void testGetRequiredHeaderNames_Advanced() {
 		final Map<InventoryHeaderLabels, Integer> advancedHeadersMap =
 				this.createInventoryRequiredHeaderLabelsMap(GermplasmListType.ADVANCED);
-		final String[] headers = InventoryHeaderLabels.getHeaderNames(advancedHeadersMap);
+		final String[] headers = InventoryHeaderLabels.getHeaderNames(advancedHeadersMap, this.ontologyDataManager);
 		Assert.assertEquals(advancedHeadersMap.keySet().size(), headers.length);
 		Assert.assertEquals(9, headers.length);
 		Assert.assertTrue(headers[0].equals(InventoryHeaderLabels.ENTRY.getName()));
@@ -113,7 +140,7 @@ public class InventoryHeaderLabelsTest {
 	public void testGetRequiredHeaderNames_Crosses() {
 		final Map<InventoryHeaderLabels, Integer> crossesHeadersMap =
 				this.createInventoryRequiredHeaderLabelsMap(GermplasmListType.CROSSES);
-		final String[] headers = InventoryHeaderLabels.getRequiredHeaderNames(crossesHeadersMap);
+		final String[] headers = InventoryHeaderLabels.getRequiredHeaderNames(crossesHeadersMap, this.ontologyDataManager);
 		Assert.assertEquals(crossesHeadersMap.keySet().size(), headers.length);
 		Assert.assertEquals(12, headers.length);
 		Assert.assertTrue(headers[0].equals(InventoryHeaderLabels.ENTRY.getName()));

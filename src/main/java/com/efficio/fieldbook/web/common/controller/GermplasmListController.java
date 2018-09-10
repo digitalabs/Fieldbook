@@ -224,19 +224,19 @@ public class GermplasmListController {
 			this.messageSource.getMessage("seed.entry.parentage", null, locale)));
 		tableHeaderList.add(new TableHeader(ColumnLabels.GID.getTermNameFromOntology(this.ontologyDataManager),
 			this.messageSource.getMessage("seed.inventory.gid", null, locale)));
-		tableHeaderList.add(new TableHeader(ColumnLabels.STOCKID.getTermNameFromOntology(this.ontologyDataManager),
+		tableHeaderList.add(new TableHeader(ColumnLabels.STOCKID_INVENTORY.getTermNameFromOntology(this.ontologyDataManager),
 			this.messageSource.getMessage("germplasm.stock.list.stockid", null, locale)));
 		tableHeaderList.add(new TableHeader(ColumnLabels.SEED_SOURCE.getTermNameFromOntology(this.ontologyDataManager),
 			this.messageSource.getMessage("seed.inventory.source", null, locale)));
 		tableHeaderList.add(new TableHeader(ColumnLabels.GROUP_ID.getTermNameFromOntology(this.ontologyDataManager),
 			this.messageSource.getMessage("germplasm.list.group.id", null, locale)));
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(GermplasmListController.GERMPLASM_LIST_DUPLICATE, null, locale),
+		tableHeaderList.add(new TableHeader(ColumnLabels.DUPLICATE.getTermNameFromOntology(this.ontologyDataManager),
 			this.messageSource.getMessage(GermplasmListController.GERMPLASM_LIST_DUPLICATE, null, locale)));
 
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage("germplasm.list.bulk.with", null, locale),
+		tableHeaderList.add(new TableHeader(ColumnLabels.BULK_WITH.getTermNameFromOntology(this.ontologyDataManager),
 			this.messageSource.getMessage("germplasm.list.bulk.with", null, locale)));
 
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage("germplasm.list.bulk.complete", null, locale),
+		tableHeaderList.add(new TableHeader(ColumnLabels.BULK_COMPL.getTermNameFromOntology(this.ontologyDataManager),
 			this.messageSource.getMessage("germplasm.list.bulk.complete", null, locale)));
 
 		tableHeaderList.add(new TableHeader(ColumnLabels.LOT_LOCATION.getTermNameFromOntology(this.ontologyDataManager),
@@ -268,7 +268,7 @@ public class GermplasmListController {
 		tableHeaderList.add(new TableHeader(ColumnLabels.UNITS.getTermNameFromOntology(this.ontologyDataManager),
 			this.messageSource.getMessage("germplasm.list.scale", null, locale)));
 
-		tableHeaderList.add(new TableHeader(ColumnLabels.STOCKID.getTermNameFromOntology(this.ontologyDataManager),
+		tableHeaderList.add(new TableHeader(ColumnLabels.STOCKID_INVENTORY.getTermNameFromOntology(this.ontologyDataManager),
 			this.messageSource.getMessage("germplasm.stock.list.stockid", null, locale)));
 
 		tableHeaderList.add(new TableHeader(ColumnLabels.COMMENT.getTermNameFromOntology(this.ontologyDataManager),

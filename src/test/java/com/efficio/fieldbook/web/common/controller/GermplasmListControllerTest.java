@@ -6,14 +6,18 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
+import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.service.api.InventoryService;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -97,6 +101,26 @@ public class GermplasmListControllerTest {
 
 		Mockito.verify(this.germplasmListManager).retrieveSnapshotListDataWithParents(Matchers.anyInt());
 
+	}
+
+	@Test
+	public void testGetCrossStockListTableHeaders() {
+		final List<TableHeader> tableHeaders = this.dut.getCrossStockListTableHeaders();
+		Mockito.verify(this.ontologyDataManager).getTermById(ColumnLabels.ENTRY_ID.getTermId().getId());
+		Mockito.verify(this.ontologyDataManager).getTermById(ColumnLabels.DESIGNATION.getTermId().getId());
+		Mockito.verify(this.ontologyDataManager).getTermById(ColumnLabels.PARENTAGE.getTermId().getId());
+		Mockito.verify(this.ontologyDataManager).getTermById(ColumnLabels.GID.getTermId().getId());
+		Mockito.verify(this.ontologyDataManager).getTermById(ColumnLabels.GROUP_ID.getTermId().getId());
+		Mockito.verify(this.ontologyDataManager).getTermById(ColumnLabels.SEED_SOURCE.getTermId().getId());
+		Mockito.verify(this.ontologyDataManager).getTermById(ColumnLabels.LOT_LOCATION.getTermId().getId());
+		Mockito.verify(this.ontologyDataManager).getTermById(ColumnLabels.BULK_COMPL.getTermId().getId());
+		Mockito.verify(this.ontologyDataManager).getTermById(ColumnLabels.BULK_WITH.getTermId().getId());
+		Mockito.verify(this.ontologyDataManager).getTermById(ColumnLabels.DUPLICATE.getTermId().getId());
+		Mockito.verify(this.ontologyDataManager).getTermById(ColumnLabels.AMOUNT.getTermId().getId());
+		Mockito.verify(this.ontologyDataManager).getTermById(ColumnLabels.UNITS.getTermId().getId());
+		Mockito.verify(this.ontologyDataManager).getTermById(ColumnLabels.STOCKID_INVENTORY.getTermId().getId());
+		Mockito.verify(this.ontologyDataManager).getTermById(ColumnLabels.COMMENT.getTermId().getId());
+		Assert.assertEquals(14, tableHeaders.size());
 	}
 
 	@Test

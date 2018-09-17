@@ -34,7 +34,7 @@ public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {
 
 	@Override
 	public void processPlotLevelData(final AdvancingSource source, final MeasurementRow row) {
-		if (StudyTypeDto.TRIAL_NAME.equals(source.getStudyType().getName()) && StringUtils.isBlank(source.getSeason())
+		if (StringUtils.isBlank(source.getSeason())
 				&& source.getTrailInstanceObservation() != null && source.getTrailInstanceObservation().getDataList() != null) {
 			final Map<Integer, String> measurementVariablesValues = new HashMap<>();
 			for (final MeasurementData measurementData : source.getTrailInstanceObservation().getDataList()) {

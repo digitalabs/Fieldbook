@@ -5,10 +5,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.pojo.ExportColumnHeader;
-import org.generationcp.commons.pojo.ExportColumnValue;
+import org.generationcp.commons.pojo.ExportRow;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -294,7 +294,7 @@ public class CsvExportStudyServiceImplTest {
 				this.csvExportStudyService.getExportColumnHeaders(visibleColumns, variables);
 		final List<MeasurementRow> observations = workbook.getObservations();
 
-		final List<Map<Integer, ExportColumnValue>> columnValuesForAllRows =
+		final List<ExportRow> columnValuesForAllRows =
 				this.csvExportStudyService.getExportColumnValues(columnHeaders, observations);
 
 		Assert.assertEquals("Expecting the no of entries of column values equal to the original no of observatios but didn't. ",
@@ -310,15 +310,15 @@ public class CsvExportStudyServiceImplTest {
 				this.csvExportStudyService.getExportColumnHeaders(visibleColumns, variables);
 		final MeasurementRow row = workbook.getObservations().get(0);
 
-		final Map<Integer, ExportColumnValue> columnValuesInARow =
+		final ExportRow exportRow =
 				this.csvExportStudyService.getColumnValueMap(columnHeaders, row);
 
 		Assert.assertEquals("Expecting the number of generated column values in a row "
-				+ "is equal to the number of visible column headers but didn't.", columnValuesInARow.size(),
+				+ "is equal to the number of visible column headers but didn't.",exportRow.size(),
 				this.getNoOfVisibleColumns(columnHeaders));
 
 		for (final ExportColumnHeader columnHeader : columnHeaders) {
-			if (columnHeader.isDisplay() && !columnValuesInARow.containsKey(columnHeader.getId())) {
+			if (columnHeader.isDisplay() && StringUtils.isEmpty(exportRow.getValueForColumn(columnHeader.getId()))) {
 				Assert.fail("Expecting that the ids of visibleColumnHeaders can be found in the generated list of column values in a row but didn't.");
 			}
 		}
@@ -330,7 +330,7 @@ public class CsvExportStudyServiceImplTest {
 		final MeasurementData data = this.getMeasurementData();
 		data.setMeasurementVariable(this.getMeasurementVariableForCategoricalVariable()); // set categorical values
 
-		ExportColumnValue columnValue = this.csvExportStudyService.getColumnValue(data, TermId.ENTRY_NO.getId());
+		String columnValue = this.csvExportStudyService.getColumnValue(data, TermId.ENTRY_NO.getId());
 		Assert.assertNotNull("Expected that there is a newly created ExportColumnValue object but didn't.", columnValue);
 
 		// For non-categorical variables
@@ -356,8 +356,8 @@ public class CsvExportStudyServiceImplTest {
 		final MeasurementData dataCell = new MeasurementData();
 		dataCell.setValue(MeasurementData.MISSING_VALUE);
 		final Integer termId = 2001;
-		final ExportColumnValue columnValue = this.csvExportStudyService.getNumericColumnValue(dataCell, termId);
-		Assert.assertEquals("Value should be missing", MeasurementData.MISSING_VALUE, columnValue.getValue());
+		final String columnValue = this.csvExportStudyService.getNumericColumnValue(dataCell, termId);
+		Assert.assertEquals("Value should be missing", MeasurementData.MISSING_VALUE, columnValue);
 	}
 
 	@Test
@@ -365,8 +365,8 @@ public class CsvExportStudyServiceImplTest {
 		final MeasurementData dataCell = new MeasurementData();
 		dataCell.setValue("20");
 		final Integer termId = 2001;
-		final ExportColumnValue columnValue = this.csvExportStudyService.getNumericColumnValue(dataCell, termId);
-		Assert.assertEquals("Value should be 20", Double.valueOf("20").toString(), columnValue.getValue());
+		final String columnValue = this.csvExportStudyService.getNumericColumnValue(dataCell, termId);
+		Assert.assertEquals("Value should be 20", Double.valueOf("20").toString(), columnValue);
 	}
 
 	@Test

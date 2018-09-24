@@ -382,19 +382,20 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 * @param userLabelPrinting the user label printing
 	 * @return the string
 	 */
-	private String generateDefaultFilename(final UserLabelPrinting userLabelPrinting) {
+	protected String generateDefaultFilename(final UserLabelPrinting userLabelPrinting) {
 		final String currentDate = DateUtil.getCurrentDateAsStringValue();
 		String fileName = "Labels-for-" + userLabelPrinting.getName();
 
-		if (this.userLabelPrinting.getFieldMapInfoList() != null) {
+		if (userLabelPrinting.getFieldMapInfoList() != null) {
 			fileName = "Study-Field-Map-Labels-" + currentDate;
 		} else {
 			// changed selected name to block name for now
-			fileName += "-" + userLabelPrinting.getNumberOfInstances() + "-" + currentDate;
+			if (!StringUtils.isEmpty(userLabelPrinting.getNumberOfInstances())) {
+				fileName += "-" + userLabelPrinting.getNumberOfInstances();
+			}
+			fileName += "-" + currentDate;
 		}
-
 		fileName = SettingsUtil.cleanSheetAndFileName(fileName);
-
 		return fileName;
 	}
 

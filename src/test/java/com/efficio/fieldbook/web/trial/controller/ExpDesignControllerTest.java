@@ -6,6 +6,7 @@ import com.efficio.fieldbook.service.internal.breedingview.BVLicenseParseExcepti
 import com.efficio.fieldbook.service.internal.breedingview.License;
 import com.efficio.fieldbook.service.internal.breedingview.Status;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.service.EntryListOrderDesignService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
@@ -45,6 +46,9 @@ public class ExpDesignControllerTest {
 
 	@Mock
 	private ResolvableIncompleteBlockDesignService resolveIncompleteBlockDesign;
+
+	@Mock
+	private EntryListOrderDesignService entryListOrderDesignService;
 
 	@Mock
 	private ResolvableRowColumnDesignService resolvableRowColumnDesign;
@@ -198,6 +202,30 @@ public class ExpDesignControllerTest {
 				output.isValid());
 
 		Assert.assertEquals("The message should be empty", "", output.getMessage());
+	}
 
+	@Test
+	public void testShowMeasurementsBreedingViewLicenseNotRequired () throws BVLicenseParseException {
+		final Model model = Mockito.mock(Model.class);
+		final ExpDesignParameterUi expDesignParameterUi = this.createExpDesignParameterUiTestData();
+		expDesignParameterUi.setDesignType(5);
+		final List<ImportedGermplasm> germplasmList = this.mockGermplasmList();
+		this.mockDesignValidation(expDesignParameterUi, germplasmList);
+
+		Mockito.when(entryListOrderDesignService.requiresBreedingViewLicence()).thenReturn(Boolean.FALSE);
+		final ExpDesignValidationOutput expParameterOutput = new ExpDesignValidationOutput(true, "");
+		Mockito.doReturn(expParameterOutput).when(this.entryListOrderDesignService).validate(expDesignParameterUi, germplasmList);
+
+		final ExpDesignValidationOutput output = this.expDesignController.showMeasurements(model, expDesignParameterUi);
+
+		Mockito.verify(this.entryListOrderDesignService, Mockito.times(2)).requiresBreedingViewLicence();
+		Mockito.verify(this.designLicenseUtil, Mockito.never()).isExpired(Mockito.any(BVDesignLicenseInfo.class));
+		Mockito.verify(this.designLicenseUtil, Mockito.never()).isExpiringWithinThirtyDays(Mockito.any(BVDesignLicenseInfo.class));
+		Mockito.verify(this.designLicenseUtil, Mockito.never()).retrieveLicenseInfo();
+
+		Assert.assertTrue("The output should be valid because the license is valid. This means the generation of design still executed.",
+				output.isValid());
+
+		Assert.assertEquals("The message should be empty", "", output.getMessage());
 	}
 }

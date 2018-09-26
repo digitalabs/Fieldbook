@@ -11,8 +11,6 @@
 			$scope.subObservation = $stateParams.subObservation;
 			$scope.title = $scope.subObservation.name;
 
-			// TODO lazy load content
-
 		}]);
 
 })();

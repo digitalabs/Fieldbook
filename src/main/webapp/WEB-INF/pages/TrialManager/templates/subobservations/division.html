@@ -1,5 +1,11 @@
 <div class="row" ng-cloak="">
 	<div class="col-xs-12">
 		<h1>Division title: {{division.name}}</h1>
+		<div>
+			<button ng-click="addDataTable()">addDataTable</button>
+			<table id="subobservation-table-{{subObservation.id}}-{{division.id}}" width="100%"
+				   class="table-curved table-condensed">
+			</table>
+		</div>
 	</div>
 </div>

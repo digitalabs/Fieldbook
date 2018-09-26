@@ -86,7 +86,23 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				},
 				deepStateRedirect: true, sticky: true
-			});
+			})
+
+			.state('subobservations', {
+				url: '/subobservations/:id',
+				views: {
+					subobservation: {
+						controller: 'SubObservationCtrl',
+						templateUrl: '/Fieldbook/TrialManager/openTrial/subobservations'
+					}
+				},
+				params: {
+					id: null,
+					subObservation: null
+				},
+				deepStateRedirect: true, sticky: true
+			})
+		;
 
 	});
 
@@ -161,6 +177,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					state: 'editMeasurements'
 				}
 			];
+			$scope.subObservations = [];
 			$scope.tabSelected = 'trialSettings';
 			$scope.isSettingsTab = true;
 			$location.path('/trialSettings');
@@ -788,6 +805,17 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
                 });
                 return modalInstance;
             };
+
+			$scope.addSubObservation = function () {
+				var name = 'tab' + Math.random();
+				var state = name.replace(/\./g, "");
+				$scope.subObservations.push({
+						name: name,
+						id: state,
+						state: '/subobservations/' + state // arbitrary prefix to filter tab content
+					}
+				)
+			};
 
 		}]);
 

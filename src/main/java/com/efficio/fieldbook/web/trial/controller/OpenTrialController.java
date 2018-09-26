@@ -225,6 +225,11 @@ public class OpenTrialController extends BaseTrialController {
 		return this.showAjaxPage(model, BaseTrialController.URL_SUB_OBSERVATIONS);
 	}
 
+	@RequestMapping(value = "/subobservations/division", method = RequestMethod.GET)
+	public String showSubObservationDivision(final Model model) {
+		return this.showAjaxPage(model, BaseTrialController.URL_SUB_OBSERVATIONS_DIVISION);
+	}
+
 	@RequestMapping(value = "/{trialId}", method = RequestMethod.GET)
 	public String openTrial(@ModelAttribute("createTrialForm") final CreateTrialForm form, @PathVariable final Integer trialId,
 			final Model model, final HttpSession session, final RedirectAttributes redirectAttributes,

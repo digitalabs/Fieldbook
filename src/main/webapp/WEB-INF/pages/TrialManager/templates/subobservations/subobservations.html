@@ -1,0 +1,19 @@
+<div class="row" ng-cloak="">
+	<div class="col-xs-12">
+		<h1>{{title}}</h1>
+
+		<ul class="nav nav-tabs fb-tabs-headers">
+			<li ng-repeat="division in subObservation.divisions">
+				<a ui-sref="subobservations.division({ divisionId: division.id, division: division })">{{division.name}}</a>
+			</li>
+		</ul>
+
+		<div class="fb-tabs" style="padding-top: 15px;">
+			<div class="info">
+				<div class="col-xs-12" ui-view=""></div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</div>
+</div>
+

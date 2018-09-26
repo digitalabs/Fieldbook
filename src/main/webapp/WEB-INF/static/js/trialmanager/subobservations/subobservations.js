@@ -8,11 +8,11 @@
 	manageTrialApp.controller('SubObservationCtrl', ['$scope', 'TrialManagerDataService', '$stateParams',
 		function ($scope, TrialManagerDataService, $stateParams) {
 
-		// On route transition
-		$scope.title = $stateParams.subObservation.name;
+			$scope.subObservation = $stateParams.subObservation;
+			$scope.title = $scope.subObservation.name;
 
-		// TODO lazy load content
+			// TODO lazy load content
 
-	}]);
+		}]);
 
 })();

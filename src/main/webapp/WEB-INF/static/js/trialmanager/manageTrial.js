@@ -89,7 +89,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			})
 
 			.state('subobservations', {
-				url: '/subobservations/:id',
+				url: '/subobservations/:subObservationId',
 				views: {
 					subobservation: {
 						controller: 'SubObservationCtrl',
@@ -97,10 +97,18 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				},
 				params: {
-					id: null,
 					subObservation: null
 				},
-				deepStateRedirect: true, sticky: true
+				sticky: true
+			})
+			.state('subobservations.division', {
+				url: '/division/:divisionId',
+				controller: 'SubObservationDivisionCtrl',
+				templateUrl: '/Fieldbook/TrialManager/openTrial/subobservations/division',
+				params: {
+					division: null
+				},
+				sticky: true
 			})
 		;
 
@@ -807,12 +815,22 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
             };
 
 			$scope.addSubObservation = function () {
+
+				// Test data
 				var name = 'tab' + Math.random();
 				var state = name.replace(/\./g, "");
+				var divisions = [1, 2, 3].map(function (id) {
+					return {
+						id: id,
+						name: 'division-' + Math.random()
+					}
+				})
+
 				$scope.subObservations.push({
 						name: name,
 						id: state,
-						state: '/subobservations/' + state // arbitrary prefix to filter tab content
+						state: '/subobservations/' + state, // arbitrary prefix to filter tab content
+						divisions: divisions
 					}
 				)
 			};

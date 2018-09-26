@@ -96,7 +96,8 @@ public abstract class BaseTrialController extends SettingsController {
 	public static final String URL_MEASUREMENT = "TrialManager/templates/measurements";
 	public static final String URL_DATATABLE = "Common/showAddOrRemoveTraitsPagination";
 
-	public static final String URL_SUB_OBSERVATIONS = "TrialManager/templates/subobservations";
+	public static final String URL_SUB_OBSERVATIONS = "TrialManager/templates/subobservations/subobservations";
+	public static final String URL_SUB_OBSERVATIONS_DIVISION = "TrialManager/templates/subobservations/division";
 
 	protected StudyTypeBuilder studyTypeBuilder = new StudyTypeBuilder();
 

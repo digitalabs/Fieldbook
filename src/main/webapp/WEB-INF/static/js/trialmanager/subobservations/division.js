@@ -3,37 +3,50 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('SubObservationDivisionCtrl', ['$scope', 'TrialManagerDataService', '$stateParams'/*, 'subObservation'*/,
-		function ($scope, TrialManagerDataService, $stateParams/*, subObservation*/) {
+	manageTrialApp.controller('SubObservationDivisionCtrl', ['$scope', 'TrialManagerDataService', '$stateParams',
+		function ($scope, TrialManagerDataService, $stateParams) {
 
 			$scope.division = $stateParams.division;
-			// $scope.subObservation = subObservation;
+
+			var subObservation = $scope.subObservation,
+				division = $scope.division,
+				dataTable = $scope.division.dataTable
+			;
+
+			if (dataTable) {
+				dataTable.reload();
+			}
 
 			$scope.addDataTable = function () {
 
-				// for testing
-				var tableIdentifier = '#subobservation-table-' + $scope.subObservation.id + '-' + $scope.division.id;
-				new BMS.Fieldbook.MeasurementsDataTable(tableIdentifier);
+				if (dataTable) {
+					return;
+				}
 
-				/*
-				TODO
-				new DataTable({
-					tableIdentifier: 'subobservation-table-' + subObservation.id + '-' + division.id
+				// for testing
+				var tableIdentifier = '#subobservation-table-' + subObservation.id + '-' + division.id;
+
+				division.dataTable = new DataTable({
+					tableIdentifier: tableIdentifier
 				})
-				 */
 			}
 		}]);
 
 	// TODO
 	function DataTable(options) {
-		var tableIdentifier = options.tableIdentifier;
+		this.tableIdentifier = options.tableIdentifier;
 
 		// recreate a table if exists
-		if ($(tableIdentifier).html() && !!$(tableIdentifier).html().trim()) {
-			$(tableIdentifier).dataTable().fnDestroy();
-			$(tableIdentifier).empty();
+		if ($(this.tableIdentifier).html() && !!$(this.tableIdentifier).html().trim()) {
+			$(this.tableIdentifier).dataTable().fnDestroy();
+			$(this.tableIdentifier).empty();
 		}
 
-
+		this.table = new BMS.Fieldbook.MeasurementsDataTable(this.tableIdentifier);
 	}
+
+	DataTable.prototype.reload = function () {
+		this.table = new BMS.Fieldbook.MeasurementsDataTable(this.tableIdentifier);
+	};
+
 })();

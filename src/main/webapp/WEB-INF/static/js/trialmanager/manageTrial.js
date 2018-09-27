@@ -99,13 +99,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				},
 				params: {
 					subObservation: null
-				},
-				resolve: {
-					subObservation: ['$stateParams', function ($stateParams) {
-						return $stateParams.subObservation;
-					}]
-				},
-				sticky: true
+				}
 			})
 			.state('subobservations.division', {
 				url: '/division/:divisionId',
@@ -114,7 +108,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				params: {
 					division: null
 				},
-				sticky: true
 			})
 		;
 

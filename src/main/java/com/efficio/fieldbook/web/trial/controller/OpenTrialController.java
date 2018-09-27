@@ -368,6 +368,7 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("crossesList", this.getCrossesList(trialId));
 
 		model.addAttribute("germplasmListSize", 0);
+		setIsSuperAdminAttribute(model);
 	}
 
 	protected void clearSessionData(final HttpSession session) {

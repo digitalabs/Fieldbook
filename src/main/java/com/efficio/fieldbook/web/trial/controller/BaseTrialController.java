@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.security.AuthorizationUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -46,7 +47,9 @@ import org.generationcp.middleware.service.api.SampleService;
 import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.thymeleaf.extras.springsecurity3.auth.Authorization;
 
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -724,6 +727,7 @@ public abstract class BaseTrialController extends SettingsController {
 				? Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT)
 				: StringUtils.EMPTY);
 		basic.setObjective(studyDetails.getObjective());
+		basic.setisLocked(studyDetails.getIsLocked());
 
 		final int folderId = (int) studyDetails.getParentFolderId();
 		final String folderName;
@@ -955,6 +959,10 @@ public abstract class BaseTrialController extends SettingsController {
 				return setting.getVariable().getCvTermId();
 			}
 		});
+	}
+	
+	protected void setIsSuperAdminAttribute(final Model model) {
+		model.addAttribute("isSuperAdmin", AuthorizationUtil.isSuperAdminUser());
 	}
 
 	

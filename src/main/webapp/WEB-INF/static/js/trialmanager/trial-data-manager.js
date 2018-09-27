@@ -342,7 +342,11 @@
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
 				},
-
+				
+				isLockedStudy: function() {
+					return service.currentData.basicDetails.isLocked;
+				},
+				
 				deleteEnvironment: function(index) {
 					var refreshMeasurementDeferred = $q.defer();
 					var deleteMeasurementPossible = index !== 0;

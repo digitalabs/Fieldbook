@@ -8,7 +8,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	'use strict';
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
-		'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
+		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
 		'showSettingFormElementNew', 'ngSanitize', 'ui.select']);
 
 	/*** Added to prevent Unsecured HTML error
@@ -19,9 +19,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	// routing configuration
 	// TODO: if possible, retrieve the template urls from the list of constants
-	manageTrialApp.config(function($stateProvider, $urlRouterProvider, $stickyStateProvider) {
+	manageTrialApp.config(function($uiRouterProvider, $stateProvider, $urlRouterProvider) {
 
-		$stickyStateProvider.enableDebug(false);
+		var StickyStates = window['@uirouter/sticky-states'];
+		$uiRouterProvider.plugin(StickyStates.StickyStatesPlugin);
 
 		$urlRouterProvider.otherwise('/trialSettings');
 		$stateProvider

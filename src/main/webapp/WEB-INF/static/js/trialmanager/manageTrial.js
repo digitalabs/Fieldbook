@@ -22,7 +22,9 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	manageTrialApp.config(function($uiRouterProvider, $stateProvider, $urlRouterProvider) {
 
 		var StickyStates = window['@uirouter/sticky-states'];
+		var DSRPlugin = window['@uirouter/dsr'].DSRPlugin;
 		$uiRouterProvider.plugin(StickyStates.StickyStatesPlugin);
+		$uiRouterProvider.plugin(DSRPlugin);
 
 		$urlRouterProvider.otherwise('/trialSettings');
 		$stateProvider

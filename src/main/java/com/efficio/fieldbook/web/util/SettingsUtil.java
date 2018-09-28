@@ -1482,6 +1482,11 @@ public class SettingsUtil {
 		final StudyDetails details = new StudyDetails();
 		details.setId(workbook.getStudyDetails().getId());
 		details.setProgramUUID(workbook.getStudyDetails() != null ? workbook.getStudyDetails().getProgramUUID() : null);
+		details.setIsLocked(workbook.getStudyDetails().getIsLocked());
+		if (workbook.getStudyDetails().getCreatedBy() != null) {
+			details.setOwnerId(Integer.valueOf(workbook.getStudyDetails().getCreatedBy()));
+		}
+		
 		final List<MeasurementVariable> conditions = workbook.getConditions();
 		final List<MeasurementVariable> constants = workbook.getConstants();
 

@@ -175,7 +175,9 @@ function deleteStudyFieldMapRow(id) {
 function chooseStudyNodeInFieldMap(node, fromEnterKey) {
 	'use strict';
 
-	if (node.data.isFolder === false) {
+	if (userLacksPermissionForStudy(node)) {
+		showStudyIsLockedError(node);
+	} else if (node.data.isFolder === false) {
 		addStudyInFieldMap(node.data.key, node.data.title);
 	} else {
 		if (fromEnterKey === false) {

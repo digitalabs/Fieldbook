@@ -107,6 +107,12 @@ function chooseStudy() {
 
 function openStudyNode() {
 	'use strict';
+	var node = $('#studyTree').dynatree('getTree').getActiveNode();
+	if (userLacksPermissionForStudy(node)) {
+		showStudyIsLockedError(node);
+		return;
+	}
+
 	$('#studyTreeModal').data('open', '1');
 	chooseStudy();
 }
@@ -306,6 +312,8 @@ function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionPa
 				 */
 				if (sourceNode.hasChildren()) {
 					showErrorMessage('page-study-tree-message-modal', cannotMove + ' ' + sourceNode.data.title + ' ' + hasChildrenString);
+				} else if (sourceNode.data.isFolder === false && userLacksPermissionForStudy(sourceNode)) { 
+					showStudyIsLockedError(sourceNode);
 				} else if (node.data.isFolder === false) {
 					showErrorMessage('page-study-tree-message-modal', cannotMove + ' ' + node.data.title + ' ' + isAStudy);
 				} else {
@@ -420,4 +428,13 @@ function hideRenameFolderSection() {
 	if ($('#choosingType').val() !== "2"){
 		showStudyTypeDiv();
 	}
+}
+
+function userLacksPermissionForStudy(node) {
+	return node.data.isLocked && node.data.ownerId !== loggedInUserId && !isSuperAdmin;
+}
+
+function showStudyIsLockedError(node) {
+	showErrorMessage('page-study-tree-message-modal',
+			noPermissionForLockedStudyError.replace('{0}', node.data.owner));
 }

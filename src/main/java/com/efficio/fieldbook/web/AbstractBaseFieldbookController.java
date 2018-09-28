@@ -17,6 +17,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.security.AuthorizationUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -211,6 +212,10 @@ public abstract class AbstractBaseFieldbookController {
 				measurementVariablesIterator.remove();
 			}
 		}
+	}
+	
+	protected void setIsSuperAdminAttribute(final Model model) {
+		model.addAttribute("isSuperAdmin", AuthorizationUtil.isSuperAdminUser());
 	}
 
 	public void setVariableDataManager(final OntologyVariableDataManager variableDataManager) {

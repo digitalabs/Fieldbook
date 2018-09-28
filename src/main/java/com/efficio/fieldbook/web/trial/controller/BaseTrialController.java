@@ -961,11 +961,6 @@ public abstract class BaseTrialController extends SettingsController {
 		});
 	}
 	
-	protected void setIsSuperAdminAttribute(final Model model) {
-		model.addAttribute("isSuperAdmin", AuthorizationUtil.isSuperAdminUser());
-	}
-
-	
 	protected void setStudyDataManager(StudyDataManager studyDataManager) {
 		this.studyDataManager = studyDataManager;
 	}

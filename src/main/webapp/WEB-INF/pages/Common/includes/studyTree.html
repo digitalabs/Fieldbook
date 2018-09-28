@@ -115,17 +115,23 @@
 	<script type="text/javascript" th:src="@{/static/js/studyTree.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/studyTreeFolderOperations.js}"></script>
 	<script type="text/javascript" th:inline="javascript">
+		//<![CDATA[
 		var cannotMove = /*[[#{browse.study.move.can.not}]]*/ '',
 			hasChildrenString = /*[[#{browse.study.move.has.children}]]*/'',
 			isAStudy = /*[[#{browse.study.move.is.study}]]*/'',
 			chooseProgramStudyFolderError = /*[[#{browse.study.please.choose.program.study.folder}]]*/'',
 			chooseStudyError = /*[[#{browse.study.please.choose.program.study}]]*/'',
 			cannotMoveFolderToCropListError = /*[[#{cannot.move.folder.to.crop.lists.folder}]]*/ '',
-			cannotMoveItemToAListError = /*[[#{cannot.move.item.to.a.list}]]*/ '';
+			cannotDeleteStudyError = /*[[#{study.delete.not.permitted}]]*/ '',
+			cannotMoveItemToAListError = /*[[#{cannot.move.item.to.a.list}]]*/ '',
+			noPermissionForLockedStudyError = /*[[#{browse.study.no.permission.for.locked.study}]]*/ '',
+			loggedInUserId = /*[[${contextInfo.loggedInUserId}]]*/ '',
+			isSuperAdmin = /*[[${isSuperAdmin}]]*/ '';
 
 		$(document).ready(function () {
 			'use strict';
 			studyTreeInit();
 		});
+		//]]>
 	</script>
 </div>

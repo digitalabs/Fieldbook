@@ -50,6 +50,12 @@ function chooseStudyNode(node, fromEnterKey) {
 		showErrorMessage('page-study-tree-message-modal', choosingType === 2 ? chooseProgramStudyFolderError : chooseStudyError);
 		return;
 	}
+
+	if (userLacksPermissionForStudy(node)) {
+		showStudyIsLockedError(node);
+		return;
+	}
+	
 	if (choosingType === 1 || choosingType === 3) {
 		if (node.data.isFolder === false) {
 			if (choosingType === 1) {
@@ -107,12 +113,6 @@ function chooseStudy() {
 
 function openStudyNode() {
 	'use strict';
-	var node = $('#studyTree').dynatree('getTree').getActiveNode();
-	if (userLacksPermissionForStudy(node)) {
-		showStudyIsLockedError(node);
-		return;
-	}
-
 	$('#studyTreeModal').data('open', '1');
 	chooseStudy();
 }

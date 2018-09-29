@@ -484,7 +484,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			}
 
 			return this.generateLabels(trialInstances, form.isCustomReport());
-		} finally {//TODO VER ESTO!
+		} finally {
+			// TODO See BMS-4454
 			// Important to clear out the observations collection from user session, once we are done with it to keep heap memory under
 			// control. For large trials/nurseries the observations collection can be huge.
 			this.userSelection.getWorkbook().getObservations().clear();

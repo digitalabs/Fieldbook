@@ -606,7 +606,38 @@
 
 				return keys;
 			};
-		});
+		})
+		.directive('environmentDetails', function () {
+			return {
+				restrict: 'E',
+				templateUrl: '/Fieldbook/static/angular-templates/environmentDetails.html',
+				controller: function ($scope) {
+					$scope.doSelectAll = function () {
+						$scope.trialInstances = [];
+						var i = 1;
+						angular.forEach($scope.environmentListView, function (environment) {
+							if ($scope.selectAll) {
+								environment.selected = i;
+								i = i + 1;
+								$scope.trialInstances.push(environment.trialInstanceNumber);
+							} else {
+								environment.selected = undefined;
+							}
+						});
+					};
 
-}
+					$scope.doSelectInstance = function (index) {
+						var environment = $scope.environmentListView[index];
+						if (environment.selected != undefined) {
+							$scope.trialInstances.push(environment.trialInstanceNumber);
+						} else {
+							$scope.selectAll = false;
+							var idx = $scope.trialInstances.indexOf(environment.trialInstanceNumber);
+							$scope.trialInstances.splice(idx, 1);
+						}
+					};
+				}
+			};
+		});
+	}
 )();

@@ -497,7 +497,7 @@
 
 										//refresh the environments list in measurements tab
 										$rootScope.$broadcast('refreshEnvironmentListInMeasurementTable');
-
+										$rootScope.$broadcast('refreshEnvironmentService');
 										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 											service.trialMeasurement.count);
 										service.applicationData.unsavedGeneratedDesign = false;

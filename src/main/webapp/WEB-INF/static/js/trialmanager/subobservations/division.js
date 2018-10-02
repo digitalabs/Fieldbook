@@ -3,50 +3,77 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('SubObservationDivisionCtrl', ['$scope', 'TrialManagerDataService', '$stateParams',
-		function ($scope, TrialManagerDataService, $stateParams) {
+	manageTrialApp.controller('SubObservationDivisionCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
+		'DTColumnBuilder', '$http', "$q",
+		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q) {
 
 			$scope.division = $stateParams.division;
 
-			var subObservation = $scope.subObservation,
-				division = $scope.division,
-				dataTable = $scope.division.dataTable
+			var subObservation = $scope.subObservation;
+			var division = $scope.division;
+			var dataTable = $scope.division.dataTable;
+			var tableIdentifier = '#subobservation-table-' + subObservation.id + '-' + division.id;
+			var studyId = $('#studyId').val();
+			var environmentId = getCurrentEnvironmentNumber();
+			var dtColumnsPromise = $q.defer();
+
+			$scope.dtColumns = dtColumnsPromise.promise;
+
+			$scope.dtOptions = DTOptionsBuilder.newOptions()
+				.withOption('ajax', {
+					url: '/Fieldbook/trial/measurements/plotMeasurements/' + studyId + '/' + environmentId,
+					type: 'GET',
+					data: function(d) {
+						// TODO
+						// var sortedColIndex = $(tableIdentifier).dataTable().fnSettings().aaSorting[0][0];
+						// var sortDirection = $(tableIdentifier).dataTable().fnSettings().aaSorting[0][1];
+						// var sortedColTermId = displayColumns[sortedColIndex].termId;
+
+						return {
+							draw: d.draw,
+							pageSize: d.length,
+							pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
+							// sortBy : sortedColTermId,
+							// sortOrder : sortDirection
+							sortBy : 8230,
+							sortOrder : "asc"
+						};
+					}
+				})
+				// FIXME buttons
+			 // .withDOM('<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp')
+			    .withDOM('<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info">>tp')
+				.withDataProp('data')
+				.withOption('processing', true)
+				.withOption('serverSide', true)
+				.withPaginationType('full_numbers')
 			;
 
 			if (dataTable) {
-				dataTable.reload();
+				reload()
 			}
 
 			$scope.addDataTable = function () {
-
-				if (dataTable) {
-					return;
-				}
-
-				// for testing
-				var tableIdentifier = '#subobservation-table-' + subObservation.id + '-' + division.id;
-
-				division.dataTable = new DataTable({
-					tableIdentifier: tableIdentifier
-				})
+				division.dataTable = {};
+				reload();
 			}
+
+			function reload() {
+				var studyId = $('#studyId').val();
+				var environmentId = getCurrentEnvironmentNumber();
+
+				$http.post('/Fieldbook/TrialManager/openTrial/columns', {
+					data: 'variableList=' + TrialManagerDataService
+						.settings
+						.measurements.m_keys.concat(TrialManagerDataService.settings.selectionVariables.m_keys).join()
+				}).then(function (displayColumns) {
+					var columnsObj = getColumns(displayColumns.data, false);
+
+					dtColumnsPromise.resolve(columnsObj.columns.map(function (col) {
+						return DTColumnBuilder.newColumn(col.data, col.title)
+					}));
+				});
+			};
+
 		}]);
-
-	// TODO
-	function DataTable(options) {
-		this.tableIdentifier = options.tableIdentifier;
-
-		// recreate a table if exists
-		if ($(this.tableIdentifier).html() && !!$(this.tableIdentifier).html().trim()) {
-			$(this.tableIdentifier).dataTable().fnDestroy();
-			$(this.tableIdentifier).empty();
-		}
-
-		this.table = new BMS.Fieldbook.MeasurementsDataTable(this.tableIdentifier);
-	}
-
-	DataTable.prototype.reload = function () {
-		this.table = new BMS.Fieldbook.MeasurementsDataTable(this.tableIdentifier);
-	};
-
 })();

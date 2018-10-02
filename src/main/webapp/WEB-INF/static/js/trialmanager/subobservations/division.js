@@ -16,8 +16,10 @@
 			var studyId = $('#studyId').val();
 			var environmentId = getCurrentEnvironmentNumber();
 			var dtColumnsPromise = $q.defer();
+			var dtColumnDefsPromise = $q.defer();
 
 			$scope.dtColumns = dtColumnsPromise.promise;
+			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 
 			$scope.dtOptions = DTOptionsBuilder.newOptions()
 				.withOption('ajax', {
@@ -69,9 +71,8 @@
 				}).then(function (displayColumns) {
 					var columnsObj = getColumns(displayColumns.data, false);
 
-					dtColumnsPromise.resolve(columnsObj.columns.map(function (col) {
-						return DTColumnBuilder.newColumn(col.data, col.title)
-					}));
+					dtColumnsPromise.resolve(columnsObj.columns);
+					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
 				});
 			};
 

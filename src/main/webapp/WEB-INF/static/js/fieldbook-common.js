@@ -843,12 +843,6 @@ function startAdvance(advanceType) {
 function initSelectEnvironment() {
 	'use strict';
 	$('#advanceStudyModal').modal('hide');
-
-	// we need to redraw the columns of the table
-	if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
-		$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
-	}
-
 	$('#selectEnvironmentModal').modal({ backdrop: 'static', keyboard: true });
 
 	// Add hide listener to selectEnvironmentModal
@@ -861,6 +855,11 @@ function initSelectEnvironment() {
 	var $scope = angular.element('#selectEnvironmentModal').scope();
 	$scope.init();
 	$scope.$apply();
+
+	// we need to redraw the columns of the table
+	if ($('#selectEnvironmentModal .fbk-datatable-environments').length !== 0 && $('#selectEnvironmentModal .fbk-datatable-environments').DataTable() !== null) {
+		$('#selectEnvironmentModal .fbk-datatable-environments').DataTable().columns.adjust().draw();
+	}
 }
 
 function advanceSample() {
@@ -896,11 +895,6 @@ function advanceSample() {
 function backAdvanceStudy() {
 	'use strict';
 	$('#advanceStudyModal').modal('hide');
-
-	// we need to redraw the columns of the table
-	if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
-		$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
-	}
 	$('#selectEnvironmentModal').modal('show');
 }
 
@@ -912,12 +906,16 @@ function createSample() {
 	}
 
 	$('#selectSelectionVariableToSampleListModal').modal('hide');
-	$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
 	$('#selectEnvironmentToSampleListModal').modal({ backdrop: 'static', keyboard: true });
 
 	var scope = angular.element('#selectEnvironmentToSampleListModal').scope();
 	scope.init();
 	scope.$apply();
+
+	// we need to redraw the columns of the table
+	if ($('#selectEnvironmentToSampleListModal .fbk-datatable-environments').length !== 0 && $('#selectEnvironmentToSampleListModal .fbk-datatable-environments').DataTable() !== null) {
+		$('#selectEnvironmentToSampleListModal .fbk-datatable-environments').DataTable().columns.adjust().draw();
+	}
 }
 
 function selectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, isTrialInstanceNumberUsed, advanceType) {

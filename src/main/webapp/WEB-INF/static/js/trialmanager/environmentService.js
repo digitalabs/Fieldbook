@@ -11,7 +11,7 @@
 		var service = {
 			environments: []
 			, getEnvironments: function () {
-				var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+				var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
 				var config = {
 					headers: {
 						'X-Auth-Token': xAuthToken
@@ -23,7 +23,7 @@
 
 				}).error(function (data) {
 
-					if (data.status == 401) {
+					if (data.status === 401) {
 						bmsAuth.handleReAuthentication();
 					}
 

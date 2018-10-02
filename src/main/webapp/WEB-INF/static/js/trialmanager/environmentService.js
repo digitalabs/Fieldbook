@@ -33,7 +33,10 @@
 			}
 		};
 
-		service.getEnvironments();
+		if(!!TrialManagerDataService.currentData.basicDetails.studyID){
+			service.getEnvironments();
+		}
+
 		environmentService.environments = TrialManagerDataService.currentData.environments;
 
 		environmentService.changeEnvironments = function () {

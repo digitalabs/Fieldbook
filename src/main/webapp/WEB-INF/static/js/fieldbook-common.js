@@ -918,21 +918,21 @@ function createSample() {
 	}
 }
 
-function selectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, isTrialInstanceNumberUsed, advanceType) {
+function selectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, advanceType) {
 	'use strict';
-	var idVal = $('#studyId').val();
+	var studyId = $('#studyId').val();
 	$('#selectEnvironmentModal').modal('hide');
-	var locationDetailHtml = generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed);
-	advanceStudy(idVal, trialInstances, noOfReplications, locationDetailHtml, advanceType);
+	var locationDetailHtml = generateLocationDetailTable(selectedLocations);
+	advanceStudy(studyId, trialInstances, noOfReplications, locationDetailHtml, advanceType);
 }
 
 function selectedEnvironmentContinueCreatingSample(trialInstances) {
 	'use strict';
-	var idVal = $('#studyId').val();
+	var studyId = $('#studyId').val();
 	$('#selectEnvironmentToSampleListModal').modal('hide');
 
 	var scope = angular.element('#selectSelectionVariableToSampleListModal').scope();
-	scope.init(idVal, trialInstances);
+	scope.init(studyId, trialInstances);
 	$('#selectSelectionVariableToSampleListModal').modal('show');
 }
 
@@ -943,13 +943,10 @@ function openSampleSummary(plotId, plotNumber) {
 	$('#samples-summary-table').wrap('<div style="overflow-x: auto" />');
 }
 
-function generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed) {
+function generateLocationDetailTable(selectedLocations) {
 	//TODO Why do we generate an html code here in js?
 	//FIXME The caption is not localised
 	var result = "<table class='table table-curved table-condensed'>";
-	if (isTrialInstanceNumberUsed) {
-		result += "<caption>Update Location Name or Location Abbr in Environment Details.</caption>";
-	}
 	result += "<thead><tr><th>" + selectedLocations[0] + "</th></tr></thead>";
 
 	for (var i = 1; i < selectedLocations.length; i++) {

@@ -29,38 +29,7 @@
 							</div>
 						</div>
 						<br/>
-                        <div id="location-selection">
-
-                                <table class="table table-curved table-condensed fbk-table-with-check fbk-datatable-environments"
-										width="100%">
-                                    <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th ng-show="!locationFromTrialSettings">{{settings.managementDetails.val(PREFERRED_LOCATION_VARIABLE).variable.name}}</th>
-                                        <th ng-show="locationFromTrialSettings">{{trialSettings.val(PREFERRED_LOCATION_VARIABLE).variable.name}}</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr ng-repeat="environment in environmentListView track by environment.trialInstanceNumber" ng-class="{even : $even, odd : $odd}">
-                                        <td><input type="checkbox" name="location"
-												   ng-model="environment.selected"
-												   ng-change="doSelectInstance($index)"
-												   ng-true-value="{{environment.trialInstanceNumber}}"
-												   ng-false-value="{{undefined}}"/></td>
-                                        <td ng-show="!locationFromTrialSettings">{{ environment.name }} </td>
-                                        <td ng-show="locationFromTrialSettings">{{ userInput[environment.variableId] }}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-
-                            </div>
-
-                        <div class="col-md-12">
-                            <input type="checkbox" ng-model="selectAll" ng-change="doSelectAll()"/>&nbsp;&nbsp;<label class="fbk-selectall-chk" th:text="#{advancing.study.select.all}"></label>
-                        </div>
-
-
-
+							<environment-details></environment-details>
 					</div> <!-- Modal Body -->
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">
@@ -77,8 +46,9 @@
 </div>
 
 <div layout:fragment="page-script">
-
-<script type='text/javascript' th:inline="javascript">
-    var selectOneLocationErrorMessageForAdvancing = /*[[#{error.advancing.study.instance.selected.atleast.one.location.selected}]]*/ '';
-</script>
+	<script type='text/javascript' th:inline="javascript">
+		//<![CDATA[
+		var selectOneLocationErrorMessageForAdvancing = /*[[#{error.advancing.study.instance.selected.atleast.one.location.selected}]]*/ '';
+		//]]>
+	</script>
 </div>

@@ -237,7 +237,7 @@ public interface FieldbookService {
 	 * Add the STUDY_UID condition and Plot ID factor to workbook
 	 * @param workbook
 	 */
-	void addStudyUUIDConditionAndPlotIDFactorToWorkbook(Workbook workbook, boolean addPlotIdToMeasurementRows);
+	void addStudyUUIDConditionAndObsUnitIDFactorToWorkbook(Workbook workbook, boolean addObsUnitIdToMeasurementRows);
 	
 	/**
 	 * Adds the specified variable to the measurementRows. This will add a blank measurementData on each measurement row for the specified variable.

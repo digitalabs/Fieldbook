@@ -36,12 +36,12 @@ public class KsuExcelImportStudyServiceImplTest {
 
     @Before
 	public void setup() {
-        fbWorkbook = Mockito.mock(Workbook.class);
+		this.fbWorkbook = Mockito.mock(Workbook.class);
         final ContextUtil util = Mockito.mock(ContextUtil.class);
         Mockito.doReturn(TEST_PROGRAM_UUID).when(util).getCurrentProgramUUID();
-        ontologyDataManager = Mockito.mock(OntologyDataManager.class);
-		this.ksuExcelImportStudy = new KsuExcelImportStudyServiceImpl(fbWorkbook, "", "");
-        this.ksuExcelImportStudy.setOntologyDataManager(ontologyDataManager);
+		this.ontologyDataManager = Mockito.mock(OntologyDataManager.class);
+		this.ksuExcelImportStudy = new KsuExcelImportStudyServiceImpl(this.fbWorkbook, "", "");
+        this.ksuExcelImportStudy.setOntologyDataManager(this.ontologyDataManager);
 
         this.ksuExcelImportStudy.setContextUtil(util);
 	}
@@ -58,12 +58,12 @@ public class KsuExcelImportStudyServiceImplTest {
         final List<MeasurementVariable> measurementVariableList = new ArrayList<>();
         for (int i=0; i < TEST_COLUMN_HEADER_COUNT; i++) {
             final MeasurementVariable mvar = new MeasurementVariable();
-            mvar.setName(constructHeaderName(i));
+            mvar.setName(this.constructHeaderName(i));
             measurementVariableList.add(mvar);
         }
 
-        Mockito.doReturn(sheet).when(workbook).getSheetAt(0);
-        Mockito.doReturn(measurementVariableList).when(fbWorkbook).getMeasurementDatasetVariablesView();
+        Mockito.doReturn(this.sheet).when(workbook).getSheetAt(0);
+        Mockito.doReturn(measurementVariableList).when(this.fbWorkbook).getMeasurementDatasetVariablesView();
 
         this.ksuExcelImportStudy.setParsedData(workbook);
         this.ksuExcelImportStudy.detectAddedTraitsAndPerformRename(modes);
@@ -83,15 +83,15 @@ public class KsuExcelImportStudyServiceImplTest {
         final List<MeasurementVariable> measurementVariableList = new ArrayList<>();
         for (int i=0; i < TEST_COLUMN_HEADER_COUNT - 1; i++) {
             final MeasurementVariable mvar = new MeasurementVariable();
-            mvar.setName(constructHeaderName(i));
+            mvar.setName(this.constructHeaderName(i));
             measurementVariableList.add(mvar);
         }
 
-        Mockito.doReturn(new HashSet<StandardVariable>()).when(ontologyDataManager).
+        Mockito.doReturn(new HashSet<StandardVariable>()).when(this.ontologyDataManager).
                 findStandardVariablesByNameOrSynonym(Mockito.anyString(), Mockito.eq(TEST_PROGRAM_UUID));
 
-        Mockito.doReturn(sheet).when(workbook).getSheetAt(0);
-        Mockito.doReturn(measurementVariableList).when(fbWorkbook).getMeasurementDatasetVariablesView();
+        Mockito.doReturn(this.sheet).when(workbook).getSheetAt(0);
+        Mockito.doReturn(measurementVariableList).when(this.fbWorkbook).getMeasurementDatasetVariablesView();
 
         this.ksuExcelImportStudy.setParsedData(workbook);
         this.ksuExcelImportStudy.detectAddedTraitsAndPerformRename(modes);
@@ -101,20 +101,20 @@ public class KsuExcelImportStudyServiceImplTest {
     }
 
     protected void setupColumnHeaderMocks() {
-        sheet = Mockito.mock(Sheet.class);
-        row = Mockito.mock(Row.class);
-        Mockito.doReturn(row).when(sheet).getRow(0);
+		this.sheet = Mockito.mock(Sheet.class);
+		this.row = Mockito.mock(Row.class);
+        Mockito.doReturn(this.row).when(this.sheet).getRow(0);
 
-        Mockito.doReturn((short) (TEST_COLUMN_HEADER_COUNT + 1)).when(row).getLastCellNum();
+        Mockito.doReturn((short) (TEST_COLUMN_HEADER_COUNT + 1)).when(this.row).getLastCellNum();
 
         for (int i = 0; i < TEST_COLUMN_HEADER_COUNT; i++) {
             final Cell cell = Mockito.mock(Cell.class);
-            Mockito.doReturn(cell).when(row).getCell(i);
-            Mockito.doReturn(constructHeaderName(i)).when(cell).getStringCellValue();
+            Mockito.doReturn(cell).when(this.row).getCell(i);
+            Mockito.doReturn(this.constructHeaderName(i)).when(cell).getStringCellValue();
         }
 
         final Cell cell = Mockito.mock(Cell.class);
-        Mockito.doReturn(cell).when(row).getCell(TEST_COLUMN_HEADER_COUNT);
+        Mockito.doReturn(cell).when(this.row).getCell(TEST_COLUMN_HEADER_COUNT);
         Mockito.doReturn(KsuFieldbookUtil.PLOT).when(cell).getStringCellValue();
     }
 
@@ -126,7 +126,7 @@ public class KsuExcelImportStudyServiceImplTest {
 	public void testGetColumnHeaders() throws WorkbookParserException {
 		this.setupColumnHeaderMocks();
 
-		final String[] headerNames = this.ksuExcelImportStudy.getColumnHeaders(sheet);
+		final String[] headerNames = this.ksuExcelImportStudy.getColumnHeaders(this.sheet);
         // in our column header setup, last column is the plot column, with the other columns dynamically generated
 		for (int i = 0; i < headerNames.length - 1; i++) {
 			Assert.assertEquals("Expecting to return TempValue" + i + " but returned " + headerNames[i], "TempValue" + i, headerNames[i]);
@@ -173,7 +173,7 @@ public class KsuExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testValidateReturnsNoExceptionForValidHeaderNames() {
-		final String[] headerNames = {"PLOT_NO", "ENTRY_NO", "GID", "DESIGNATION", "PLOT_ID"};
+		final String[] headerNames = {"PLOT_NO", "ENTRY_NO", "GID", "DESIGNATION", "OBS_UNIT_ID"};
 
 		final boolean result = this.ksuExcelImportStudy.isValidHeaderNames(headerNames);
 		Assert.assertTrue("Expecting to a positive result for valid header names", result);

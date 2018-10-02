@@ -195,7 +195,7 @@ public class ETLServiceImpl implements ETLService {
 
 		studyDetails.setObjective(userSelection.getStudyObjective());
 		if (userSelection.getStudyType() != null && !StringUtils.isEmpty(userSelection.getStudyType())) {
-			studyDetails.setStudyType(studyDataManager.getStudyTypeByName(userSelection.getStudyType()));
+			studyDetails.setStudyType(this.studyDataManager.getStudyTypeByName(userSelection.getStudyType()));
 		} else {
 			studyDetails.setStudyType(StudyTypeDto.getNurseryDto());
 		}
@@ -213,7 +213,7 @@ public class ETLServiceImpl implements ETLService {
 			studyDetails.setCreatedBy(userSelection.getCreatedBy());
 		}
 		else {
-			studyDetails.setCreatedBy(contextUtil.getCurrentIbdbUserId().toString());
+			studyDetails.setCreatedBy(this.contextUtil.getCurrentIbdbUserId().toString());
 		}
 
 		if (userSelection.getStudyId() != null) {
@@ -308,14 +308,14 @@ public class ETLServiceImpl implements ETLService {
 
 	@Override
 	public List<String> retrieveColumnHeaders(final Workbook workbook, final UserSelection userSelection,
-			final Boolean addPlotId) {
+			final Boolean addObsUnitId) {
 		final Sheet sheet = workbook.getSheetAt(userSelection.getSelectedSheet());
 		final String[] headerArray = PoiUtil.rowAsStringArray(sheet, userSelection.getHeaderRowIndex());
 
 		final List<String> headers = new ArrayList<>();
 		headers.addAll(Arrays.asList(headerArray));
-		if (addPlotId && !headers.contains(TermId.PLOT_ID.name())) {
-			headers.add(TermId.PLOT_ID.name());
+		if (addObsUnitId && !headers.contains(TermId.OBS_UNIT_ID.name())) {
+			headers.add(TermId.OBS_UNIT_ID.name());
 		}
 		// Trim all header names before returning
 		return Lists.transform(headers, new Function<String, String>() {
@@ -528,7 +528,7 @@ public class ETLServiceImpl implements ETLService {
 		final List<MeasurementVariable> variableList = importData.getAllVariables();
 
 		final List<String> columnHeaders = this.retrieveColumnHeaders(workbook, userSelection,
-				this.headersContainsPlotId(importData));
+				this.headersContainsObsUnitId(importData));
 		// DMV : a linkedhashmap is used to preserve insert order
 		final Map<Integer, MeasurementVariable> variableIndexMap = new LinkedHashMap<>();
 
@@ -947,10 +947,10 @@ public class ETLServiceImpl implements ETLService {
 				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
 		final String studyType = this.getCellStringValue(sheet, ETLServiceImpl.STUDY_TYPE_ROW_INDEX - rowAdjustMent,
 				ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
-		StudyTypeDto studyTypeValue = studyDataManager.getStudyTypeByName(studyType);
+		StudyTypeDto studyTypeValue = this.studyDataManager.getStudyTypeByName(studyType);
 		if (studyTypeValue == null) {
 			// TODO we need to change what to do when Study Type is not in the file
-			studyTypeValue = studyDataManager.getStudyTypeByName(StudyTypeDto.NURSERY_NAME);
+			studyTypeValue = this.studyDataManager.getStudyTypeByName(StudyTypeDto.NURSERY_NAME);
 		}
 		if(startDateStr == null || startDateStr.isEmpty()) {
 			final SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
@@ -1100,15 +1100,15 @@ public class ETLServiceImpl implements ETLService {
 	}
 
 	@Override
-	public boolean headersContainsPlotId(final org.generationcp.middleware.domain.etl.Workbook importData) {
-		boolean hasPlotId = false;
+	public boolean headersContainsObsUnitId(final org.generationcp.middleware.domain.etl.Workbook importData) {
+		boolean hasObsUnitId = false;
 		for (final MeasurementVariable mv : importData.getAllVariables()) {
-			if (mv.getTermId() == TermId.PLOT_ID.getId()) {
-				hasPlotId = true;
+			if (mv.getTermId() == TermId.OBS_UNIT_ID.getId()) {
+				hasObsUnitId = true;
 				break;
 			}
 		}
-		return hasPlotId;
+		return hasObsUnitId;
 	}
 
 	/**

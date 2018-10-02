@@ -87,25 +87,25 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 
 			workbook.setHasExistingDataOverwrite(false);
 			workbook.setPlotsIdNotfound(0);
-			int countPlotIdNotFound = 0;
+			int countObsUnitIdNotFound = 0;
 
 			final int lastXlsRowIndex = observationSheet.getLastRowNum();
-			final String plotIdIndex = this.getIndexOfPlotIdFromXlsSheet(observationSheet, variablesFactors);
+			final String obsUnitIdIndex = this.getIndexOfObsUnitIdFromXlsSheet(observationSheet, variablesFactors);
 			final int desigColumn = this.findColumn(observationSheet, this.getColumnLabel(variablesFactors, TermId.DESIG.getId()));
 			final Row headerRow = observationSheet.getRow(0);
 			final int lastXlsColIndex = headerRow.getLastCellNum();
 
 			for (int i = 1; i <= lastXlsRowIndex; i++) {
 				final Row xlsRow = observationSheet.getRow(i);
-				final String plotId = this.getPlotIdFromRow(xlsRow, plotIdIndex);
-				final MeasurementRow measurementRow = measurementRowsMap.get(plotId);
+				final String obsUnitId = this.getObsUnitIdFromRow(xlsRow, obsUnitIdIndex);
+				final MeasurementRow measurementRow = measurementRowsMap.get(obsUnitId);
 
 				if (measurementRow == null) {
-					countPlotIdNotFound++;
+					countObsUnitIdNotFound++;
 					continue;
 				}
 
-				measurementRowsMap.remove(plotId);
+				measurementRowsMap.remove(obsUnitId);
 
 				this.validateAndSetNewDesignation(desigColumn, xlsRow, measurementRow);
 
@@ -120,8 +120,8 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 				this.setMeasurementDataAsOutOfSync(formulasMap, measurementRow);
 			}
 
-			if (countPlotIdNotFound != 0) {
-				workbook.setPlotsIdNotfound(countPlotIdNotFound);
+			if (countObsUnitIdNotFound != 0) {
+				workbook.setPlotsIdNotfound(countObsUnitIdNotFound);
 			}
 
 		}
@@ -149,31 +149,31 @@ public abstract class AbstractExcelImportStudyService extends AbstractImportStud
 		this.setNewDesignation(measurementRow, newDesig);
 	}
 
-	protected String getIndexOfPlotIdFromXlsSheet(final Sheet observationSheet, final List<MeasurementVariable> variables)
+	protected String getIndexOfObsUnitIdFromXlsSheet(final Sheet observationSheet, final List<MeasurementVariable> variables)
 		throws WorkbookParserException {
-		String plotIdLabel = null;
+		String obsUnitIdLabel = null;
 		for (final MeasurementVariable variable : variables) {
-			if (variable.getTermId() == TermId.PLOT_ID.getId()) {
-				plotIdLabel = variable.getName();
+			if (variable.getTermId() == TermId.OBS_UNIT_ID.getId()) {
+				obsUnitIdLabel = variable.getName();
 				break;
 			}
 		}
 
-		if (plotIdLabel != null) {
-			return this.findColumns(observationSheet, plotIdLabel);
+		if (obsUnitIdLabel != null) {
+			return this.findColumns(observationSheet, obsUnitIdLabel);
 		}
 
 		throw new WorkbookParserException("error.workbook.import.plot.id.empty.cell");
 	}
 
-	private String getPlotIdFromRow(final Row xlsRow, final String index) throws WorkbookParserException {
-		final String plotId = this.getCellValue(xlsRow.getCell(Integer.valueOf(index)));
+	private String getObsUnitIdFromRow(final Row xlsRow, final String index) throws WorkbookParserException {
+		final String obsUnitId = this.getCellValue(xlsRow.getCell(Integer.valueOf(index)));
 
-		if (StringUtils.isBlank(plotId)) {
+		if (StringUtils.isBlank(obsUnitId)) {
 			throw new WorkbookParserException("error.workbook.import.plot.id.empty.cell");
 		}
 
-		return plotId;
+		return obsUnitId;
 	}
 
 	protected void importDataCellValues(

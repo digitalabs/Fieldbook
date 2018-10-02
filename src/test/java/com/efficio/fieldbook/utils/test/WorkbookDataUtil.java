@@ -340,7 +340,7 @@ public class WorkbookDataUtil {
 		factors.add(variable);
 
 		variable =
-				new MeasurementVariable(TermId.PLOT_ID.getId(), WorkbookDataUtil.PLOT, "Field plot id - assigned (text)", WorkbookDataUtil.TEXT,
+				new MeasurementVariable(TermId.OBS_UNIT_ID.getId(), WorkbookDataUtil.PLOT, "Field plot id - assigned (text)", WorkbookDataUtil.TEXT,
 						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.FIELD_PLOT, WorkbookDataUtil.CHAR, "",
 						WorkbookDataUtil.ENTRY);
 		variable.setFactor(true);

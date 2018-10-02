@@ -1236,28 +1236,28 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public void addStudyUUIDConditionAndPlotIDFactorToWorkbook(final Workbook workbook,
-			final boolean addPlotIdToMeasurementRows) {
-		final MeasurementVariable plotIdMeasurementVariable = this.createMeasurementVariable(
-				String.valueOf(TermId.PLOT_ID.getId()), "", Operation.ADD, PhenotypicType.GERMPLASM);
-		plotIdMeasurementVariable.setFactor(true);
+	public void addStudyUUIDConditionAndObsUnitIDFactorToWorkbook(final Workbook workbook,
+			final boolean addObsUnitIdToMeasurementRows) {
+		final MeasurementVariable obsUnitIdMeasurementVariable = this.createMeasurementVariable(
+				String.valueOf(TermId.OBS_UNIT_ID.getId()), "", Operation.ADD, PhenotypicType.GERMPLASM);
+		obsUnitIdMeasurementVariable.setFactor(true);
 
-		// PLOT_ID is not required in processing the Fieldbook data file,
+		// OBS_UNIT_ID is not required in processing the Fieldbook data file,
 		// but we need to add it in the background
 		// if it is not available as it is necessary in displaying the
-		// PLOT_ID column in measurements table.
-		this.addMeasurementVariableToList(plotIdMeasurementVariable, workbook.getFactors());
+		// OBS_UNIT_ID column in measurements table.
+		this.addMeasurementVariableToList(obsUnitIdMeasurementVariable, workbook.getFactors());
 
 		// Skip addition of Plot ID to measurement rows for Import Excel using
 		// Data Import Wizard option. It will be added in the later steps.
-		if (addPlotIdToMeasurementRows) {
-			// It is important to add the PLOT_ID measurement data in
+		if (addObsUnitIdToMeasurementRows) {
+			// It is important to add the OBS_UNIT_ID measurement data in
 			// measurement rows to make sure that variables
 			// in Workbook match the variables in measurement rows. This will
-			// initially creates blank values for PLOT_ID
+			// initially creates blank values for OBS_UNIT_ID
 			// but the generation of plot IDs will be handled during the saving
 			// of Workbook.
-			this.addMeasurementVariableToMeasurementRows(plotIdMeasurementVariable, workbook.getObservations());
+			this.addMeasurementVariableToMeasurementRows(obsUnitIdMeasurementVariable, workbook.getObservations());
 		}
 	}
 

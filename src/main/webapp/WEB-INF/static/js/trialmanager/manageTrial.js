@@ -489,9 +489,9 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				} else if (targetState === 'environment') {
 					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
                 	// of the table if we do not do that
-					if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
+					if ($('#environment-table .fbk-datatable-environments').length !== 0 && $('#environment-table .fbk-datatable-environments').DataTable() !== null) {
 					 	$timeout(function() {
-					 		$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
+					 		$('#environment-table .fbk-datatable-environments').DataTable().columns.adjust().draw();
 					 	}, 1);
 					}
 				}

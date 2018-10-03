@@ -3,15 +3,42 @@
 		<h1>Division title: {{division.name}}</h1>
 		<div>
 			<button ng-click="addDataTable()">addDataTable</button>
-			<table
-				   id="subobservation-table-{{subObservation.id}}-{{division.id}}"
-				   datatable=""
-				   dt-options="dtOptions"
-				   dt-columns="dtColumns"
-				   dt-column-defs="dtColumnDefs"
-				   width="100%"
-				   class="table-curved table-condensed">
-			</table>
+			<button ng-click="togglePreviewMode()">Toggle Preview mode</button>
+			<div ng-if="!preview">
+				<table id="subobservation-table-{{subObservation.id}}-{{division.id}}"
+					   datatable=""
+					   dt-options="dtOptions"
+					   dt-columns="dtColumns"
+					   dt-column-defs="dtColumnDefs"
+					   width="100%"
+					   class="table-curved table-condensed">
+				</table>
+			</div>
+			<!-- Preview Table -->
+			<div ng-if="preview">
+				<table id="preview-subobservation-table-{{subObservation.id}}-{{division.id}}"
+					   datatable="ng"
+					   dt-options="dtOptionsPreview"
+					   width="100%"
+					   class="table-curved table-condensed">
+					<!-- TODO column defs: links, etc -->
+					<!--dt-column-defs="dtColumnDefsPreview"-->
+					<thead>
+					<tr>
+						<th ng-repeat="column in columnsObj.columns">{{column.title}}</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr ng-repeat="row in rows">
+						<td ng-repeat="column in columnsObj.columns">
+							<span ng-if="!row[column.title].edit" ng-click="row[column.title].edit = true">{{row[column.title].data}}</span>
+							<input ng-if="row[column.title].edit" ng-blur="row[column.title].edit = false"
+								   ng-model="row[column.title].data"></input>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>

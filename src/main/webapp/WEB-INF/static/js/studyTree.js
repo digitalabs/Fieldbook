@@ -431,7 +431,7 @@ function hideRenameFolderSection() {
 }
 
 function userLacksPermissionForStudy(node) {
-	return node.data.isLocked && node.data.ownerId !== loggedInUserId && !isSuperAdmin;
+	return node.data.isLocked && parseInt(node.data.ownerId) !== loggedInUserId && !isSuperAdmin;
 }
 
 function showStudyIsLockedError(node) {

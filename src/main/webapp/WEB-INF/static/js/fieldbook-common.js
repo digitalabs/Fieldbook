@@ -2340,7 +2340,10 @@ function deleteFolder(object) {
 					}
 				}
 			});
-		} else if (node.data.ownerId === loggedInUserId || isSuperAdmin) {
+		} else if (node.data.programUUID === null) {
+			showErrorMessage('page-study-tree-message-modal', cannotDeleteTemplateError);
+		
+		} else if (parseInt(node.data.ownerId) === loggedInUserId || isSuperAdmin) {
 
 			$('#delete-heading-modal').text(deleteStudyTitle);
 			deleteConfirmationText = deleteStudyConfirmation;

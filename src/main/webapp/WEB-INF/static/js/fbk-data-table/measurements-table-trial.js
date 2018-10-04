@@ -115,7 +115,9 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 			defaultContent: '',
 			orderable: displayColumn.variableType === "TRAIT" ? true : $.inArray(displayColumn.termId, sortableColumnIDs) > -1,
 			className: displayColumn.factor === true ? 'factors' : 'variates',
-			isDerivedTrait: displayColumn.formula != null
+			isDerivedTrait: displayColumn.formula != null,
+			possibleValues: displayColumn.possibleValues,
+			dataTypeCode: displayColumn.dataTypeCode
 		});
 
 		var termId = displayColumn.termId;

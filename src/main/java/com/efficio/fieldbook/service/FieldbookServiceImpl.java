@@ -1248,14 +1248,14 @@ public class FieldbookServiceImpl implements FieldbookService {
 		// OBS_UNIT_ID column in measurements table.
 		this.addMeasurementVariableToList(obsUnitIdMeasurementVariable, workbook.getFactors());
 
-		// Skip addition of Plot ID to measurement rows for Import Excel using
+		// Skip addition of Observation Unit ID to measurement rows for Import Excel using
 		// Data Import Wizard option. It will be added in the later steps.
 		if (addObsUnitIdToMeasurementRows) {
 			// It is important to add the OBS_UNIT_ID measurement data in
 			// measurement rows to make sure that variables
 			// in Workbook match the variables in measurement rows. This will
 			// initially creates blank values for OBS_UNIT_ID
-			// but the generation of plot IDs will be handled during the saving
+			// but the generation of Observation Unit IDs will be handled during the saving
 			// of Workbook.
 			this.addMeasurementVariableToMeasurementRows(obsUnitIdMeasurementVariable, workbook.getObservations());
 		}

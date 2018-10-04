@@ -739,7 +739,7 @@ public class FieldbookServiceTest {
 		Assert.assertEquals(TermId.OBS_UNIT_ID.getId(), obsUnitIdVariable.getTermId());
 		Assert.assertEquals(TermId.OBS_UNIT_ID.name(), obsUnitIdVariable.getName());
 
-		// Plot id should not be added in the datalist
+		// Observation Unit id should not be added in the datalist
 		Assert.assertTrue(workbook.getObservations().get(0).getDataList().isEmpty());
 	}
 
@@ -763,7 +763,7 @@ public class FieldbookServiceTest {
 		Assert.assertEquals(TermId.OBS_UNIT_ID.getId(), obsUnitIdVariable.getTermId());
 		Assert.assertEquals(TermId.OBS_UNIT_ID.name(), obsUnitIdVariable.getName());
 
-		// Plot id should be added in the datalist
+		// Observation Unit id should be added in the datalist
 		Assert.assertFalse(workbook.getObservations().get(0).getDataList().isEmpty());
 		final MeasurementData mData = workbook.getObservations().get(0).getDataList().get(0);
 		Assert.assertEquals(TermId.OBS_UNIT_ID.name(), mData.getLabel());

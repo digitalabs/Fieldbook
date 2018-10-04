@@ -132,7 +132,7 @@ public class EntryListOrderDesignServiceImplTest {
 		final MeasurementVariable entryNoMeasurementVariable =
 				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.ENTRY_NO.getId(), "Entry No", "");
 		final MeasurementVariable obsUnitIdMeasurementVariable =
-				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.OBS_UNIT_ID.getId(), "Plot ID", "");
+				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.OBS_UNIT_ID.getId(), "Observation Unit ID", "");
 		this.factors.add(entryTypeMeasurementVariable);
 		this.factors.add(gidMeasurementVariable);
 		this.factors.add(designationMeasurementVariable);

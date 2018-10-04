@@ -234,7 +234,7 @@ public interface FieldbookService {
 	void addMeasurementVariableToList(MeasurementVariable measurementVariable, List<MeasurementVariable> measurementVariables);
 	
 	/**
-	 * Add the STUDY_UID condition and Plot ID factor to workbook
+	 * Add the STUDY_UID condition and Observation Unit ID factor to workbook
 	 * @param workbook
 	 */
 	void addStudyUUIDConditionAndObsUnitIDFactorToWorkbook(Workbook workbook, boolean addObsUnitIdToMeasurementRows);

@@ -1,0 +1,10 @@
+<input ng-if="column.dataTypeCode === 'N'"
+	   ng-blur="observation.edit = false"
+	   ng-model="observation.value"></input>
+<select ng-if="column.dataTypeCode === 'C'" ng-model="observation.value">
+	<option ng-repeat="value in column.possibleValues"
+			value="value.name"
+			title="value.description">
+		{{value.name}}
+	</option>
+</select>

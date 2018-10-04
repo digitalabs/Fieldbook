@@ -102,18 +102,19 @@
 					.get('/Fieldbook/trial/measurements/plotMeasurements/' + studyId + '/' + environmentId, {
 						// TODO
 						params: {
-							pageSize: 1000,
+							pageSize: 10000,
 							pageNumber: 0,
 							sortBy : 8230,
 							sortOrder : "asc"
 						}
 					}).then(function (resp) {
-						// Wrap each element of the matrix in an object
+						// Wrap array data type from server to add properties
 						angular.forEach(resp.data.data, function (row) {
 							angular.forEach(row, function (value, key) {
 								row[key] = {
-									edit: false, // edit mode for the cell
-									data: row[key]
+									edit: false, // cell edit mode
+									data: row[key]	,
+									value: row[key][0]
 								}
 							})
 						})
@@ -125,7 +126,10 @@
 				var studyId = $('#studyId').val();
 				var environmentId = getCurrentEnvironmentNumber();
 
-				$http.post('/Fieldbook/TrialManager/openTrial/columns', {
+				$http({
+					method: 'POST',
+					url: '/Fieldbook/TrialManager/openTrial/columns',
+					headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
 					data: 'variableList=' + TrialManagerDataService
 						.settings
 						.measurements.m_keys.concat(TrialManagerDataService.settings.selectionVariables.m_keys).join()
@@ -137,5 +141,16 @@
 				});
 			};
 
-		}]);
+		}])
+		.directive('observationInlineEditor', function () {
+			return {
+				restrict: 'E',
+				templateUrl: '/Fieldbook/static/angular-templates/observationInlineEditor.html',
+				scope: {
+					observation: '=',
+					column: '=' // TODO upgrade angular to > 1.5 to use one-way binding
+				}
+			}
+		})
+	;
 })();

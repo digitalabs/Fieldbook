@@ -30,10 +30,13 @@
 					</thead>
 					<tbody>
 					<tr ng-repeat="row in rows">
-						<td ng-repeat="column in columnsObj.columns">
-							<span ng-if="!row[column.title].edit" ng-click="row[column.title].edit = true">{{row[column.title].data}}</span>
-							<input ng-if="row[column.title].edit" ng-blur="row[column.title].edit = false"
-								   ng-model="row[column.title].data"></input>
+						<!--FIXME doesn't scale-->
+						<td ng-repeat="column in columnsObj.columns"  ng-click="row[column.title].edit = true">
+							<span ng-if="!row[column.title].edit">{{row[column.title].value}}</span>
+							<observation-inline-editor
+								ng-if="row[column.title].edit"
+								column="column"
+								observation="row[column.title]"></observation-inline-editor>
 						</td>
 					</tr>
 					</tbody>

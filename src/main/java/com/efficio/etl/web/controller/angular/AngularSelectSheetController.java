@@ -11,9 +11,11 @@ import com.efficio.etl.web.bean.UserSelection;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.security.AuthorizationUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DataSetType;
+import org.generationcp.middleware.domain.dms.StudyReference;
 import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -60,6 +62,9 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 	@Resource
 	private ETLService etlService;
+	
+	@Resource
+	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
 	@Resource(name = "etlUserSelection")
 	private UserSelection userSelection;
@@ -87,7 +92,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		// has not yet selected a sheet
 
 		model.addAttribute("displayedRows", AngularSelectSheetController.ROW_COUNT_PER_SCREEN);
-		final List<StudyDetails> previousStudies = this.getPreviousStudies();
+		final List<StudyDetails> previousStudies = this.getPreviousStudies(model);
 
 		for (final StudyDetails previousStudy : previousStudies) {
 			if (!StringUtils.isEmpty(previousStudy.getStartDate())) {
@@ -465,7 +470,24 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		return datasetTypes;
 	}
 
-	public List<StudyDetails> getPreviousStudies() {
-		return this.etlService.retrieveExistingStudyDetails(this.contextUtil.getCurrentProgramUUID());
+	public List<StudyDetails> getPreviousStudies(final Model model) {
+		final List<String> restrictedStudies = new ArrayList<>();
+		final List<StudyDetails> finalStudies = new ArrayList<>();
+		final List<StudyDetails> existingStudies = this.etlService.retrieveExistingStudyDetails(this.contextUtil.getCurrentProgramUUID());
+		for (final StudyDetails study : existingStudies) {
+			final StudyReference reference = new StudyReference(study.getId(), study.getStudyName());
+			reference.setIsLocked(study.getIsLocked());
+			final String createdBy = study.getCreatedBy();
+			if (createdBy != null) {
+				reference.setOwnerId(Integer.valueOf(createdBy));
+			}
+			if (!AuthorizationUtil.userLacksPermissionForStudy(reference, this.contextUtil.getContextInfoFromSession().getLoggedInUserId())) {
+				finalStudies.add(study);
+			} else {
+				restrictedStudies.add(study.getStudyName());
+			}
+		}
+		model.addAttribute("restrictedStudies", restrictedStudies);
+		return finalStudies;
 	}
 }

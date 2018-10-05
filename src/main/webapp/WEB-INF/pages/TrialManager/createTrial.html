@@ -502,6 +502,12 @@
 	</div>
 
 	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div id="sub-observation-unit-dataset-builder" th:include="/TrialManager/templates/SubObservationUnitDatasetBuilder"></div>
+		</div>
+	</div>
+
+	<div class="row">
 		<div th:include="/TrialManager/templates/samplesSummary"></div>
 	</div>
 
@@ -580,6 +586,8 @@
 	<script type="text/javascript" th:src="@{/static/js/fbk-data-table/samples-summary.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/executeCalculatedVariableModal.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/SubObservationUnitDatasetBuilder.js}"></script>
+
 
 
 	<!-- constants here -->

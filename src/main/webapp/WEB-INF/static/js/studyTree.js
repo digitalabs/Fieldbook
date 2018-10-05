@@ -43,15 +43,16 @@ function studyTreeInit() {
 	}
 }
 
-function chooseStudyNode(node, fromEnterKey) {
+function chooseStudyNode(fromEnterKey, restrictLockedStudy) {
 	'use strict';
 
+	var node = focusNode;
 	if (!node) {
 		showErrorMessage('page-study-tree-message-modal', choosingType === 2 ? chooseProgramStudyFolderError : chooseStudyError);
 		return;
 	}
 
-	if (userLacksPermissionForStudy(node)) {
+	if (restrictLockedStudy && userLacksPermissionForStudy(node)) {
 		showStudyIsLockedError(node);
 		return;
 	}
@@ -107,14 +108,13 @@ function chooseStudyNode(node, fromEnterKey) {
 
 function chooseStudy() {
 	'use strict';
-	var node = $('#studyTree').dynatree('getTree').getActiveNode();
-	chooseStudyNode(node, false);
+	chooseStudyNode(false, false);
 }
 
 function openStudyNode() {
 	'use strict';
 	$('#studyTreeModal').data('open', '1');
-	chooseStudy();
+	chooseStudyNode(false, true);
 }
 
 function doStudyLazyLoad(node, preSelectId) {
@@ -262,11 +262,13 @@ function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionPa
 			$('#studyTreeModalBody a.dynatree-title').off('keyup');
 			$('#studyTreeModalBody a.dynatree-title').on('keyup', function (e) {
 				if (e.keyCode === 13) {
+					var restrictLockedStudy = false;
 					if ($('.landing-page').length !== 0) {
 						//means we are in the landing page
 						$('#studyTreeModal').data('open', '1');
+						restrictLockedStudy = true;
 					}
-					chooseStudyNode(focusNode, true);
+					chooseStudyNode(true, restrictLockedStudy);
 				}
 			});
 		},

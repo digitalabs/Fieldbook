@@ -1,0 +1,113 @@
+<div class="modal fade" id="SubObservationUnitDatasetSelectorModal" role="dialog" aria-labelledby="SubObservationUnitDatasetSelectorModal"
+	 ng-controller="SubObservationUnitDatasetSelectorCtrl" aria-hidden="true">
+	<div class="modal-dialog modal-medium">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">
+						<label class="modal-title fbk-modal-title"
+							   id="heading-subdivide-observation-modal" th:text="#{study.studydetails.action.create.subdivide.observation.header}">Subdivide Observations</label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button  id="closeCreateSubObservationUnitsModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+					</div>
+				</div>
+
+				<div class="row form-group">
+					<div id="page-advance-modal-message"></div>
+				</div>
+				<div class="separator"></div>
+				<br/>
+				<div class="row form-group">
+					<div class="col-xs-12 col-md-12" >
+						<label class="control-label label-bold"><em th:utext="#{study.studydetails.action.create.subdivide.observation.question}"> How would you like to define the number of sub-observations per parent unit? *</em></label>
+					</div>
+				</div>
+<!--
+				<form name="myForm">
+-->
+					<div class="col-xs-11  col-xs-offset-0">
+						<div class="col-xs-12 col-md-12">
+							<label>
+								<input type="radio" ng-model="option.name" value="plants"/>
+								Plants
+							</label></div>
+						<div class="col-xs-12 col-md-12"></div>
+						<div class="col-xs-12 col-md-12"><label>
+							<input type="radio" ng-model="option.name" value="quadrats"/>
+							Quadrats
+						</label></div>
+						<div class="col-xs-12 col-md-12"></div>
+						<div class="col-xs-12 col-md-12"><label>
+							<input type="radio" ng-model="option.name" value="timeSeries"/>
+							Time Series
+						</label></div>
+						<div class="col-xs-12 col-md-12"></div>
+						<div class="col-xs-12 col-md-12"><label>
+							<input type="radio" ng-model="option.name" value="custom"/>
+							Custom
+						</label></div>
+					</div>
+<!--
+				</form>
+-->
+				<div class="row">
+					<div class="col-xs-12 col-md-12"><br></br></div>
+					<div class="col-xs-12 col-md-12"><br></br></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">
+						Cancel
+					</button>
+					<button type="button" class="btn btn-primary" ng-disabled="option.name === ''"
+							aria-hidden="true" ng-click="selectEnvironmentContinue()" th:text="#{common.form.continue.text}">
+						Continue
+					</button>
+				</div>
+			</div> <!-- Modal Content -->
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="SubObservationUnitDatasetBuildModal" role="dialog" aria-labelledby="SubObservationUnitDatasetBuildModal"
+	 ng-controller="SubObservationUnitDatasetBuildCtrl" aria-hidden="true">
+	<div class="modal-dialog modal-medium">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">
+						<label class="modal-title fbk-modal-title" id="heading-modal">{{header}}</label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button  id="closeSubObservationUnitDatasetBuildModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+					</div>
+				</div>
+
+				<div class="row form-group">
+					<div id="page-advance-modal-message"></div>
+				</div>
+				<div class="separator"></div>
+				<br/>
+				<div class="row form-group">
+					<div class="col-xs-12 col-md-12" >
+						<label class="control-label label-bold"><em th:utext="#{study.studydetails.action.create.subdivide.observation.question}"> How would you like to define the number of sub-observations per parent unit? *</em></label>
+					</div>
+				</div>
+					<environment-details></environment-details>
+				<div class="row">
+					<div class="col-xs-12 col-md-12"><br></br></div>
+					<div class="col-xs-12 col-md-12"><br></br></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="backToSubObservationUnitDatasetSelector()" th:text="#{common.form.back.text}">
+						Cancel
+					</button>
+					<button type="button" class="btn btn-primary" aria-hidden="true" ng-click="saveDataset()" th:text="#{common.form.save.text}">
+						Continue
+					</button>
+				</div>
+			</div> <!-- Modal Content -->
+		</div>
+	</div>
+</div>

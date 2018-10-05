@@ -104,6 +104,16 @@
 								</ul>
 							</li>
 
+							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
+								<a tabindex="-1" href="#">Observation unit options</a>
+								<ul class="dropdown-menu" style="margin-left: -25px;">
+									<li>
+										<a href="javascript: subObservationUnitDatasetSelector();" id="create-sub-Observation-link"
+										   th:text="#{study.studydetails.action.create.sub.observation.units}">Create sub-observation units</a>
+									</li>
+								</ul>
+                            </li>
+
 							<li ng-show="displayMeasurementOnlyActions()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Field map options</a>
 								<ul class="dropdown-menu" style="margin-left: -20px;">

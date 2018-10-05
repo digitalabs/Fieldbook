@@ -1,5 +1,5 @@
 BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
-	var dataTableConstructor = function SamplesSummaryDataTable(tableIdentifier, plotId, plotNumber) {
+	var dataTableConstructor = function SamplesSummaryDataTable(tableIdentifier, obsUnitId, plotNumber) {
 		'use strict';
 
 		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
@@ -26,7 +26,7 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 				lengthMenu: [10, 50, 75, 100],
 				iDisplayLength: 10,
 				ajax: {
-					url: '/bmsapi/sample/' + cropName + '/samples?plotId=' + plotId,
+					url: '/bmsapi/sample/' + cropName + '/samples?obsUnitId=' + obsUnitId,
 					dataSrc: '',
 					beforeSend: function (xhr) {
 						xhr.setRequestHeader('X-Auth-Token', xAuthToken);

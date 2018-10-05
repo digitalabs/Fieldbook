@@ -5,7 +5,6 @@ import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.SettingsUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -119,14 +118,14 @@ public class ExcelLabelGenerator implements LabelGenerator {
                     row = labelPrintingSheet.createRow(rowIndex++);
                     columnIndex = 0;
 
-                    String barcodeLabelForCode;
+                    final String barcodeLabelForCode;
 
                     if (!generateAutomatically) {
                         barcodeLabelForCode = this.labelPrintingUtil
                                 .generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField,
                                         thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
                     } else {
-                        barcodeLabelForCode = fieldMapLabel.getPlotId();
+                        barcodeLabelForCode = fieldMapLabel.getObsUnitId();
                     }
                     moreFieldInfo.put(LabelPrintingServiceImpl.BARCODE, barcodeLabelForCode);
 

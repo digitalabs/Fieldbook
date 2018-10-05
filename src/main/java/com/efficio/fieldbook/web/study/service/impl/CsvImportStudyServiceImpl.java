@@ -27,7 +27,7 @@ public class CsvImportStudyServiceImpl  extends AbstractCSVImportStudyService im
 
     public enum CsvRequiredColumnEnum {
         ENTRY_NO(TermId.ENTRY_NO.getId(), "ENTRY_NO"), PLOT_NO(TermId.PLOT_NO.getId(), "PLOT_NO"), GID(TermId.GID.getId(),
-                "GID"), DESIGNATION(TermId.DESIG.getId(), "DESIGNATION"), PLOT_ID(TermId.PLOT_ID.getId(), "PLOT_ID");
+                "GID"), DESIGNATION(TermId.DESIG.getId(), "DESIGNATION"), OBS_UNIT_ID(TermId.OBS_UNIT_ID.getId(), "OBS_UNIT_ID");
 
         private final Integer id;
         private final String label;
@@ -80,7 +80,7 @@ public class CsvImportStudyServiceImpl  extends AbstractCSVImportStudyService im
     @Override
     void validateObservationColumns() throws WorkbookParserException {
         // validate headers
-        final String[] rowHeaders = parsedData.get(0).toArray(new String[parsedData.get(0).size()]);
+        final String[] rowHeaders = this.parsedData.get(0).toArray(new String[this.parsedData.get(0).size()]);
 
         if (!this.isValidHeaderNames(rowHeaders)) {
             throw new WorkbookParserException("error.workbook.import.requiredColumnsMissing");
@@ -99,8 +99,8 @@ public class CsvImportStudyServiceImpl  extends AbstractCSVImportStudyService im
     }
 
 	@Override
-	protected void detectAddedTraitsAndPerformRename(Set<ChangeType> modes, List<String> addedVariates,
-			List<String> removedVariates) {
+	protected void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes, final List<String> addedVariates,
+			final List<String> removedVariates) {
 		// NO-OP
 		
 	}

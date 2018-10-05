@@ -33,7 +33,7 @@ public class DataMapUtil {
 
 
 	public Map<String, Object> generateDatatableDataMap(final MeasurementRow row, String suffix, final UserSelection userSelection) {
-		Map<String, Object> dataMap = new HashMap<String, Object>();
+		final Map<String, Object> dataMap = new HashMap<String, Object>();
 		// the 3 attributes are needed always
 		dataMap.put(DataMapUtil.EXPERIMENT_ID, Integer.toString(row.getExperimentId()));
 
@@ -86,7 +86,7 @@ public class DataMapUtil {
 		dataMap.put(DataMapUtil.GID, row.getGid());
 		dataMap.put(DataMapUtil.DESIGNATION, row.getDesignation());
 
-		dataMap.put(String.valueOf(TermId.SAMPLES.getId()), new Object[] { row.getSamples(), row.getPlotId() });
+		dataMap.put(String.valueOf(TermId.SAMPLES.getId()), new Object[] { row.getSamples(), row.getObsUnitId() });
 
 		final List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
 		measurementDatasetVariables.addAll(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
@@ -121,7 +121,7 @@ public class DataMapUtil {
 		}
 
 		// generate measurement row data for standard factors like
-		// TRIAL_INSTANCE, ENTRY_NO, ENTRY_TYPE, PLOT_NO, PLOT_ID, etc
+		// TRIAL_INSTANCE, ENTRY_NO, ENTRY_TYPE, PLOT_NO, OBS_UNIT_ID, etc
 		this.addGermplasmAndPlotFactorsDataToDataMap(row, dataMap, measurementDatasetVariables, nameToAliasMap, ontologyVariableDataManager,
 				programUUID);
 
@@ -144,7 +144,7 @@ public class DataMapUtil {
 	/*
 	 * 1. Generate measurement row data for standard factors like
 	 * TRIAL_INSTANCE, ENTRY_NO, ENTRY_TYPE, PLOT_NO, REP_NO, BLOCK_NO, ROW,
-	 * COL, PLOT_ID and add to dataMap. 2. Also adds additonal germplasm
+	 * COL, OBS_UNIT_ID and add to dataMap. 2. Also adds additonal germplasm
 	 * descriptors (eg. StockID) to dataMap 3. If local variable name for GID
 	 * and DESIGNATION are not equal to "GID" and "DESIGNATION" respectively,
 	 * add them to map as well
@@ -216,9 +216,9 @@ public class DataMapUtil {
 			dataMap.put(trialInstanceVar.getName(), new Object[] {row.getTrialInstance(), false});
 		}
 
-		final MeasurementVariable plotIdVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.PLOT_ID.getId());
-		if (plotIdVar != null) {
-			dataMap.put(plotIdVar.getName(), new Object[] {row.getPlotId(), false});
+		final MeasurementVariable obsUnitIdVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, TermId.OBS_UNIT_ID.getId());
+		if (obsUnitIdVar != null) {
+			dataMap.put(obsUnitIdVar.getName(), new Object[] {row.getObsUnitId(), false});
 		}
 
 		final MeasurementVariable fieldMapcolumVar =

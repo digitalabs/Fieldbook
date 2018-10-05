@@ -147,7 +147,7 @@ public class ETLServiceTest {
 				.thenReturn(standardVariable);
 		Mockito.when(standardVariable.getEnumerations())
 				.thenReturn(Arrays.asList(new Enumeration(TermId.CHECK.getId(), TermId.CHECK.name(), "", 0)));
-		Mockito.when(studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
+		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
 	}
 
 	@Test
@@ -625,21 +625,21 @@ public class ETLServiceTest {
 	}
 
 	@Test
-	public void testHeadersContainsPlotIdFalse() {
+	public void testHeadersContainsObsUnitIdFalse() {
 		this.userSelection.setObservationRows(1);
 		final org.generationcp.middleware.domain.etl.Workbook testWorkbook = this.createTestWorkbook();
 
-		Assert.assertFalse(this.etlService.headersContainsPlotId(testWorkbook));
+		Assert.assertFalse(this.etlService.headersContainsObsUnitId(testWorkbook));
 	}
 
 	@Test
-	public void testHeadersContainsPlotIdTrue() {
+	public void testHeadersContainsObsUnitIdTrue() {
 		this.userSelection.setObservationRows(1);
 		final org.generationcp.middleware.domain.etl.Workbook testWorkbook = this.createTestWorkbook();
 		final MeasurementVariable plotVariable = new MeasurementVariable();
-		plotVariable.setTermId(TermId.PLOT_ID.getId());
+		plotVariable.setTermId(TermId.OBS_UNIT_ID.getId());
 		testWorkbook.getFactors().add(plotVariable);
-		Assert.assertTrue(this.etlService.headersContainsPlotId(testWorkbook));
+		Assert.assertTrue(this.etlService.headersContainsObsUnitId(testWorkbook));
 	}
 
 	@Test

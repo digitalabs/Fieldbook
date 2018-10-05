@@ -29,11 +29,11 @@ public class KsuFieldbookUtil {
 
 	private static final Logger LOG = LoggerFactory.getLogger(KsuFieldbookUtil.class);
 
-	private static final String PLOT_ID = "plot_id";
+	private static final String OBS_UNIT_ID = "obs_unit_id";
 	private static final String RANGE = "range";
 	public static final String PLOT = "PLOT_NO";
 
-	private static final int TERM_PLOT_ID = TermId.PLOT_CODE.getId();
+	private static final int TERM_PLOT_CODE = TermId.PLOT_CODE.getId();
 	private static final int TERM_RANGE = TermId.RANGE_NO.getId();
 	private static final int TERM_PLOT1 = TermId.PLOT_NO.getId();
 	private static final int TERM_PLOT2 = TermId.PLOT_NNO.getId();
@@ -48,7 +48,7 @@ public class KsuFieldbookUtil {
 
 	static {
 		ID_NAME_MAP = new HashMap<>();
-		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_PLOT_ID, KsuFieldbookUtil.PLOT_ID);
+		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_PLOT_CODE, KsuFieldbookUtil.OBS_UNIT_ID);
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_RANGE, KsuFieldbookUtil.RANGE);
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_PLOT1, KsuFieldbookUtil.PLOT);
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_PLOT2, KsuFieldbookUtil.PLOT);
@@ -57,7 +57,7 @@ public class KsuFieldbookUtil {
 	public enum KsuRequiredColumnEnum {
 		ENTRY_NO(TermId.ENTRY_NO.getId(), "ENTRY_NO"), PLOT_NO(TermId.PLOT_NO.getId(), KsuFieldbookUtil.PLOT), GID(
 				TermId.GID.getId(),
-				"GID"), DESIGNATION(TermId.DESIG.getId(), "DESIGNATION"), PLOT_ID(TermId.PLOT_ID.getId(), "PLOT_ID");
+				"GID"), DESIGNATION(TermId.DESIG.getId(), "DESIGNATION"), OBS_UNIT_ID(TermId.OBS_UNIT_ID.getId(), "OBS_UNIT_ID");
 
 		private final Integer id;
 		private final String label;
@@ -88,7 +88,7 @@ public class KsuFieldbookUtil {
 		}
 	}
 
-	private static ImmutableMap<Integer, String> dataTypeFormats = ImmutableMap.<Integer, String> builder()
+	private static final ImmutableMap<Integer, String> dataTypeFormats = ImmutableMap.<Integer, String> builder()
 			.put(TermId.CATEGORICAL_VARIABLE.getId(), "categorical").put(TermId.NUMERIC_VARIABLE.getId(), "numeric")
 			.put(TermId.DATE_VARIABLE.getId(), "date").put(TermId.CHARACTER_VARIABLE.getId(), "text")
 			.put(0, "unrecognized").build();
@@ -277,7 +277,7 @@ public class KsuFieldbookUtil {
 	}
 
 	static String getDataTypeDescription(final MeasurementVariable trait) {
-		Integer dataType;
+		final Integer dataType;
 		if (trait.getDataTypeId() == null || !KsuFieldbookUtil.dataTypeList.contains(trait.getDataTypeId())) {
 			dataType = 0;
 		} else {

@@ -14,7 +14,7 @@
 				</div>
 
 				<div class="row form-group">
-					<div id="page-advance-modal-message"></div>
+					<div></div>
 				</div>
 				<div class="separator"></div>
 				<br/>
@@ -77,7 +77,7 @@
 			<div class="modal-body">
 				<div class="row form-group">
 					<div class="col-xs-11 col-md-11">
-						<label class="modal-title fbk-modal-title" id="heading-modal">{{header}}</label>
+						<label class="modal-title fbk-modal-title" id="heading-modal"> Specify {{header | capitalize}}</label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button  id="closeSubObservationUnitDatasetBuildModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
@@ -90,15 +90,41 @@
 				<div class="separator"></div>
 				<br/>
 				<div class="row form-group">
-					<div class="col-xs-12 col-md-12" >
-						<label class="control-label label-bold"><em th:utext="#{study.studydetails.action.create.subdivide.observation.question}"> How would you like to define the number of sub-observations per parent unit? *</em></label>
+					<label class="control-label label-bold col-sm-6" style="width: 270px;"> Name for {{header}} dataset: <span class="required">*</span></label>
+					<div class="col-sm-6">
+						<input type="text" ng-model="datasetName" maxlength="225"/>
+					</div>
+					<div class="col-xs-12 col-md-12"><br></br></div>
+				</div>
+				<div class="row form-group">
+					<label class="control-label label-bold col-sm-11" style="width: 545px;">Specify a maximun number of {{header}} for each parent unit (up to 25): <span class="required">*</span></label>
+					<div class="col-sm-1">
+						<input type="text" ng-model="parentUnitNumber" maxlength="225" style="width: 60px;"/>
+					</div>
+					<div class="col-xs-12 col-md-12"><br></br></div>
+				</div>
+				<div class="row form-group">
+					<label class="control-label label-bold col-sm-8" style="width: 380px;">Choose a variable to number the {{header}}:<span class="required">*</span></label>
+					<div>
+						<span class="bms-fa-question-circle help-tooltip-study" data-placement="right" data-toggle="tooltip" th:title="#{study.export.data.collection.serpentine.tool.tip}"></span>
+					</div>
+					<div class="report-type-section col-xs-6 col-md-5">
+						<select id="variableDatasetBuilder" name="selectVariableDatasetBuilder"
+								ng-options="variable.name for variable in variables" ng-model="variableSelected" required="">
+							<option value="">Please Choose</option>
+						</select>
 					</div>
 				</div>
-					<environment-details></environment-details>
 				<div class="row">
 					<div class="col-xs-12 col-md-12"><br></br></div>
 					<div class="col-xs-12 col-md-12"><br></br></div>
 				</div>
+				<div class="row form-group">
+					<div class="col-xs-12 col-md-12" >
+						<label class="control-label label-bold">Select the environments for which you would like to generate {{header}}:<span class='required'>*</span></label>
+					</div>
+				</div>
+				<environment-details></environment-details>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="backToSubObservationUnitDatasetSelector()" th:text="#{common.form.back.text}">
 						Cancel
@@ -110,4 +136,22 @@
 			</div> <!-- Modal Content -->
 		</div>
 	</div>
+</div>
+<div layout:fragment="page-script">
+	<script type='text/javascript' th:inline="javascript">
+		//<![CDATA[
+		$(document).ready(function () {
+			$('#SubObservationUnitDatasetBuildModal').on('shown.bs.modal', function () {
+				// we need to redraw the columns of the table
+				$('#SubObservationUnitDatasetBuildModal .fbk-datatable-environments').DataTable().columns.adjust().draw();
+				// center the paginate
+				$('#SubObservationUnitDatasetBuildModal .dataTables_paginate').closest('.col-xs-6').attr('class', 'col-xs-12');
+
+				$('#selectVariableDatasetBuilder').on('shown.bs.modal', function () {
+					$('#variableDatasetBuilder').select2();
+				});
+			});
+		});
+		//]]>
+	</script>
 </div>

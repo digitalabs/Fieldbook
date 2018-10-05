@@ -26,6 +26,17 @@
 	manageTrialApp.controller('SubObservationUnitDatasetBuildCtrl', ['$scope', 'environmentService', '$timeout', function ($scope, environmentService, $timeout) {
 
 		$scope.trialInstances = [];
+
+		$scope.backToSubObservationUnitDatasetSelector = function () {
+			$('#SubObservationUnitDatasetSelectorModal').modal('show');
+			$('#SubObservationUnitDatasetBuildModal').modal('hide');
+
+		};
+
+		$scope.saveDataset = function(){
+
+		};
+
 		$scope.doSelectAll = function () {
 			$scope.trialInstances = [];
 			var i = 1;
@@ -40,27 +51,43 @@
 			});
 		};
 
-		$scope.backToSubObservationUnitDatasetSelector = function () {
-			$('#SubObservationUnitDatasetSelectorModal').modal('show');
-			$('#SubObservationUnitDatasetBuildModal').modal('hide');
-
-		};
-
-		$scope.saveDataset = function(){
-
-		};
-
 		$scope.init = function (option) {
-			$scope.trialInstances = [];
-			$scope.environmentListView = [];
-			$scope.header = option;
-
 			$scope.selectAll = true;
-			$scope.environmentListView = environmentService.getEnvironmentDetails();
-			$scope.doSelectAll();
+			$scope.header = option;
+			environmentService.getEnvironments().then(function(environmentDetails){
+				try {
+					$scope.environmentListView = [];
+
+					angular.forEach(environmentDetails, function (environment) {
+						$scope.environmentListView.push({
+							name: environment.locationName + ' - (' + environment.locationAbbreviation + ')',
+							abbrName: environment.locationAbbreviation,
+							customAbbrName: environment.customLocationAbbreviation,
+							trialInstanceNumber: environment.instanceNumber,
+							instanceDbId: environment.instanceDbId
+						});
+					});
+
+				} catch (e) {
+					//TODO
+				}
+
+			}, function() {
+				//TODO
+			}).finally (function() {
+				if($scope.selectAll){
+					$scope.doSelectAll();
+				}
+			});
+
 		};
 		$scope.init();
 	}]);
+	manageTrialApp.filter('capitalize', function() {
+		return function(input) {
+			return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
+		}
+	});
 })();
 
 

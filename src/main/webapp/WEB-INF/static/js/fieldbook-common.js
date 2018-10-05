@@ -827,6 +827,48 @@ function executeCalculatedVariable() {
 	$scope.$apply();
 }
 /* END EXECUTE CALCULATION */
+/* CREATE SUB OBSERVATION UNIT SPECIFIC FUNCTIONS */
+
+function subObservationUnitDatasetSelector() {
+	'use strict';
+	$('#SubObservationUnitDatasetBuildModal').modal('hide');
+	$('#SubObservationUnitDatasetSelectorModal').modal({ backdrop: 'static', keyboard: true });
+
+	// Add hide listener to selectEnvironmentModal
+	$('#SubObservationUnitDatasetSelectorModal').one('hidden.bs.modal', function (e) {
+		// When the selectEnvironmentModal is closed, remove the bs.modal data
+		// so that the modal content is refreshed when it is opened again.
+		$(e.target).removeData('bs.modal');
+	});
+
+	var $scope = angular.element('#SubObservationUnitDatasetSelectorModal').scope();
+	$scope.init();
+	//$scope.$apply();
+}
+
+function subObservationUnitDatasetbuild(option) {
+	'use strict';
+	$('#SubObservationUnitDatasetSelectorModal').modal('hide');
+	$('#SubObservationUnitDatasetBuildModal').modal({ backdrop: 'static', keyboard: true });
+
+	// Add hide listener to selectEnvironmentModal
+	$('#SubObservationUnitDatasetBuildModal').one('hidden.bs.modal', function (e) {
+		// When the selectEnvironmentModal is closed, remove the bs.modal data
+		// so that the modal content is refreshed when it is opened again.
+		$(e.target).removeData('bs.modal');
+	});
+
+	var $scope = angular.element('#SubObservationUnitDatasetBuildModal').scope();
+	$scope.init(option);
+	//$scope.$apply();
+
+	// we need to redraw the columns of the table
+	if ($('#SubObservationUnitDatasetBuildModal .fbk-datatable-environments').length !== 0 && $('#SubObservationUnitDatasetBuildModal .fbk-datatable-environments').DataTable() !== null) {
+		$('#SubObservationUnitDatasetBuildModal .fbk-datatable-environments').DataTable().columns.adjust().draw();
+		$('#DataTables_Table_0_filter').remove();
+	}
+}
+/* END SUB OBSERVATION UNIT SPECIFIC FUNCTIONS */
 
 /* ADVANCING SPECIFIC FUNCTIONS */
 

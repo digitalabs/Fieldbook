@@ -1,10 +1,14 @@
 <input ng-if="column.dataTypeCode === 'N'"
-	   ng-blur="observation.edit = false"
+	   ng-blur="observation.change()"
 	   ng-model="observation.value"></input>
-<select ng-if="column.dataTypeCode === 'C'" ng-model="observation.value">
+<select ng-if="column.dataTypeCode === 'C'"
+		ng-blur="observation.change()"
+		ng-model="observation.value">
+	<!--FIXME add outliers-->
+	<!--FIXME Notes not working-->
 	<option ng-repeat="value in column.possibleValues"
-			value="value.name"
-			title="value.description">
+			value="{{value.name}}"
+			title="{{value.description}}">
 		{{value.name}}
 	</option>
 </select>

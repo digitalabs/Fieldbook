@@ -11,6 +11,9 @@
 			$scope.preview = Boolean(division.preview);
 			$scope.columnsObj = division.columnsObj;
 			$scope.rows = division.rows;
+			$scope.nested = {};
+			$scope.nested.dtInstance = null;
+			$scope.observationInlineEditor = {};
 
 			var subObservation = $scope.subObservation;
 			var dataTable = $scope.division.dataTable;
@@ -28,19 +31,16 @@
 					url: '/Fieldbook/trial/measurements/plotMeasurements/' + studyId + '/' + environmentId,
 					type: 'GET',
 					data: function(d) {
-						// TODO
-						// var sortedColIndex = $(tableIdentifier).dataTable().fnSettings().aaSorting[0][0];
-						// var sortDirection = $(tableIdentifier).dataTable().fnSettings().aaSorting[0][1];
-						// var sortedColTermId = displayColumns[sortedColIndex].termId;
+						var sortedColIndex = $(tableIdentifier).dataTable().fnSettings().aaSorting[0][0];
+						var sortDirection = $(tableIdentifier).dataTable().fnSettings().aaSorting[0][1];
+						var sortedColTermId = division.displayColumns[sortedColIndex].termId;
 
 						return {
 							draw: d.draw,
 							pageSize: d.length,
 							pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
-							// sortBy : sortedColTermId,
-							// sortOrder : sortDirection
-							sortBy : 8230,
-							sortOrder : "asc"
+							sortBy : sortedColTermId,
+							sortOrder : sortDirection
 						};
 					}
 				})
@@ -52,9 +52,6 @@
 				.withOption('serverSide', true)
 				.withPaginationType('full_numbers')
 			;
-
-			var dtColumnDefsPreviewPromise = $q.defer();
-			$scope.dtColumnDefsPreview = dtColumnDefsPreviewPromise.promise;
 
 			if (dataTable) {
 				reload()
@@ -77,21 +74,71 @@
 				renderPreview();
 			}
 
+			$scope.resetPreview = function () {
+				$scope.rows = division.rows = null;
+				$scope.nested.dtInstance.changeData(getPreview());
+			}
+
 			function renderPreview() {
-				getPreview()
-					.then(function (rows) {
-						$scope.rows = division.rows = rows;
+				$scope.dtOptionsPreview = DTOptionsBuilder
+					.fromFnPromise(getPreview())
+					.withOption('rowCallback', function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+						var experimentId = aData.experimentId;
 
-						$scope.dtOptionsPreview = DTOptionsBuilder.newOptions()
-							// FIXME buttons
-						 // .withDOM('<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp')
-							.withDOM('<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info">>tp')
-							.withPaginationType('full_numbers')
-						;
+						$('td.variates', nRow).off().on('click', function() {
+							var termId = $(this).data('term-id'),
+								phenotypeId = $(this).data('phenotype-id'),
+								that = this;
 
-						// TODO
-						// dtColumnDefsPreviewPromise.resolve(division.columnsObj.columnsDef);
+							// FIXME BMS-4453
+							if (!termId || !phenotypeId) return;
+
+							/**
+							 * Remove handler to not interfere with inline editor
+							 * fnUpdate will trigger rowCallback and restore it
+							 */
+							$(this).off('click');
+
+							$scope.$apply(function () {
+								var data = division.rowMap[experimentId][termId];
+
+								/*
+								FIXME change json response for an object with named properties
+									Current structure is an array
+										AleuCol_E_1to5: ["7", "7", true, "", null]
+									where the first item is the value
+								 */
+
+								$scope.observationInlineEditor.observation = {
+									value: data[0],
+									change: function () {
+										updateInline();
+									}
+								};
+
+								function updateInline() {
+									data[0] = $scope.observationInlineEditor.observation.value;
+
+									$('#observation-inline-editor').detach().appendTo($('#observation-inline-editor-container'))
+
+									$('#preview-subobservation-table-' + subObservation.id + '-' + division.id)
+										.dataTable()
+										.fnUpdate(division.rows[iDisplayIndexFull], iDisplayIndexFull, null, true);
+								}
+
+								$scope.observationInlineEditor.column = division.columnMap[termId];
+
+								$(that).html('');
+								$('#observation-inline-editor').detach().appendTo($(that))
+							});
+						})
 					})
+					// FIXME buttons
+				 // .withDOM('<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp')
+					.withDOM('<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info">>tp')
+					.withPaginationType('full_numbers')
+				;
+
 			}
 
 			function getPreview() {
@@ -99,26 +146,20 @@
 					return $q.resolve(division.rows);
 				}
 				return $http
-					.get('/Fieldbook/trial/measurements/plotMeasurements/' + studyId + '/' + environmentId, {
-						// TODO
-						params: {
-							pageSize: 10000,
-							pageNumber: 0,
-							sortBy : 8230,
-							sortOrder : "asc"
-						}
-					}).then(function (resp) {
-						// Wrap array data type from server to add properties
-						angular.forEach(resp.data.data, function (row) {
-							angular.forEach(row, function (value, key) {
-								row[key] = {
-									edit: false, // cell edit mode
-									data: row[key]	,
-									value: row[key][0]
-								}
+					.post('/Fieldbook/ImportManager/import/preview')
+					.then(function (resp) {
+
+						// Create map for easy access on review
+						var rowMap = $scope.rowMap = division.rowMap = {};
+						angular.forEach(resp.data, function (row) {
+							rowMap[row.experimentId] = {};
+							angular.forEach(division.columnsObj.columns, function (column) {
+								rowMap[row.experimentId][column.termId] = row[column.title];
 							})
-						})
-						return $q.resolve(resp.data.data);
+						});
+
+						$scope.rows = division.rows = resp.data;
+						return $q.resolve(resp.data);
 					})
 			}
 
@@ -133,8 +174,14 @@
 					data: 'variableList=' + TrialManagerDataService
 						.settings
 						.measurements.m_keys.concat(TrialManagerDataService.settings.selectionVariables.m_keys).join()
-				}).then(function (displayColumns) {
-					var columnsObj = $scope.columnsObj = division.columnsObj = getColumns(displayColumns.data, false);
+				}).then(function (response) {
+					division.displayColumns = response.data;
+					var columnsObj = $scope.columnsObj = division.columnsObj = getColumns(response.data, false);
+
+					division.columnMap = {};
+					angular.forEach(response.data, function (column) {
+						division.columnMap[column.termId] = column;
+					});
 
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);

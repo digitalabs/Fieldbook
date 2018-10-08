@@ -34,8 +34,23 @@
 
 		$scope.init = function () {
 			$scope.selectAll = true;
-			$scope.environmentListView = environmentService.getEnvironmentDetails();
-			$scope.doSelectAll();
+			environmentService.getEnvironments().then(function (environmentDetails) {
+				$scope.environmentListView = [];
+
+				angular.forEach(environmentDetails, function (environment) {
+					$scope.environmentListView.push({
+						name: environment.locationName + ' - (' + environment.locationAbbreviation + ')',
+						abbrName: environment.locationAbbreviation,
+						customAbbrName: environment.customLocationAbbreviation,
+						trialInstanceNumber: environment.instanceNumber,
+						instanceDbId: environment.instanceDbId
+					});
+				});
+			}).finally(function () {
+				if ($scope.selectAll) {
+					$scope.doSelectAll();
+				}
+			});
 		};
 
 		$scope.init();

@@ -221,9 +221,9 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 		measurementVariables.addAll(importData.getFactors());
 
 		final boolean isLocationIDVariableExists =
-				dataImportService.findMeasurementVariableByTermId(TermId.LOCATION_ID.getId(), measurementVariables).isPresent();
+			this.dataImportService.findMeasurementVariableByTermId(TermId.LOCATION_ID.getId(), measurementVariables).isPresent();
 		final boolean isLocationNameVariableExists =
-				dataImportService.findMeasurementVariableByTermId(TermId.TRIAL_LOCATION.getId(), measurementVariables).isPresent();
+			this.dataImportService.findMeasurementVariableByTermId(TermId.TRIAL_LOCATION.getId(), measurementVariables).isPresent();
 
 		// If Location Name variable is present in the imported file, then the Location ID variable is required.
 		return isLocationNameVariableExists && !isLocationIDVariableExists;
@@ -272,7 +272,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			this.dataImportService.addLocationIDVariableIfNotExists(importData, importData.getFactors(), this.contextUtil.getCurrentProgramUUID());
 			this.dataImportService.assignLocationIdVariableToEnvironmentDetailSection(importData);
 			this.dataImportService.removeLocationNameVariableIfExists(importData);
-			this.fieldbookService.addStudyUUIDConditionAndPlotIDFactorToWorkbook(importData, false);
+			this.fieldbookService.addStudyUUIDConditionAndObsUnitIDFactorToWorkbook(importData, false);
 
 			this.etlService.saveProjectOntology(importData, this.contextUtil.getCurrentProgramUUID());
 			this.userSelection.setStudyId(importData.getStudyDetails().getId());

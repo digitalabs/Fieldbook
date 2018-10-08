@@ -63,18 +63,18 @@ public class EntryListOrderDesignServiceImplTest {
 		final StandardVariable plotNoVariable =
 				StandardVariableTestDataInitializer.createStandardVariable(TermId.PLOT_NO.getId(), "Plot No");
 
-		expDesignParameterUi = new ExpDesignParameterUi();
-		expDesignParameterUi.setNoOfEnvironments("1");
-		expDesignParameterUi.setNoOfEnvironmentsToAdd("1");
-		expDesignParameterUi.setDesignType(5);
-		expDesignParameterUi.setTotalGermplasmListCount("5");
-		expDesignParameterUi.setStartingPlotNo("1");
-		expDesignParameterUi.setStartingEntryNo("1");
-		expDesignParameterUi.setCheckStartingPosition("1");
-		expDesignParameterUi.setCheckSpacing("2");
-		expDesignParameterUi.setCheckInsertionManner(InsertionMannerItem.INSERT_EACH_IN_TURN.getId().toString());
+		this.expDesignParameterUi = new ExpDesignParameterUi();
+		this.expDesignParameterUi.setNoOfEnvironments("1");
+		this.expDesignParameterUi.setNoOfEnvironmentsToAdd("1");
+		this.expDesignParameterUi.setDesignType(5);
+		this.expDesignParameterUi.setTotalGermplasmListCount("5");
+		this.expDesignParameterUi.setStartingPlotNo("1");
+		this.expDesignParameterUi.setStartingEntryNo("1");
+		this.expDesignParameterUi.setCheckStartingPosition("1");
+		this.expDesignParameterUi.setCheckSpacing("2");
+		this.expDesignParameterUi.setCheckInsertionManner(InsertionMannerItem.INSERT_EACH_IN_TURN.getId().toString());
 
-		germplasmList = new ArrayList<>();
+		this.germplasmList = new ArrayList<>();
 
 		final ImportedGermplasm importedGermplasm1 = new ImportedGermplasm();
 		importedGermplasm1.setEntryId(1);
@@ -111,18 +111,18 @@ public class EntryListOrderDesignServiceImplTest {
 		importedGermplasm5.setEntryTypeValue(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeValue());
 		importedGermplasm5.setEntryTypeName(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeName());
 
-		germplasmList.add(importedGermplasm1);
-		germplasmList.add(importedGermplasm2);
-		germplasmList.add(importedGermplasm3);
-		germplasmList.add(importedGermplasm4);
-		germplasmList.add(importedGermplasm5);
+		this.germplasmList.add(importedGermplasm1);
+		this.germplasmList.add(importedGermplasm2);
+		this.germplasmList.add(importedGermplasm3);
+		this.germplasmList.add(importedGermplasm4);
+		this.germplasmList.add(importedGermplasm5);
 
-		measurementVariables = new ArrayList<>();
+		this.measurementVariables = new ArrayList<>();
 		final MeasurementVariable instanceFactorVariable =
 				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "Instance No", "");
-		measurementVariables.add(instanceFactorVariable);
+		this.measurementVariables.add(instanceFactorVariable);
 
-		factors = new ArrayList<>();
+		this.factors = new ArrayList<>();
 		final MeasurementVariable entryTypeMeasurementVariable =
 				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.ENTRY_TYPE.getId(), "Entry type", "");
 		final MeasurementVariable gidMeasurementVariable =
@@ -131,20 +131,20 @@ public class EntryListOrderDesignServiceImplTest {
 				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.DESIG.getId(), "Designation", "");
 		final MeasurementVariable entryNoMeasurementVariable =
 				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.ENTRY_NO.getId(), "Entry No", "");
-		final MeasurementVariable plotIdMeasurementVariable =
-				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.PLOT_ID.getId(), "Plot ID", "");
-		factors.add(entryTypeMeasurementVariable);
-		factors.add(gidMeasurementVariable);
-		factors.add(designationMeasurementVariable);
-		factors.add(entryNoMeasurementVariable);
-		factors.add(plotIdMeasurementVariable);
-		nonStudyFactors = factors;
+		final MeasurementVariable obsUnitIdMeasurementVariable =
+				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.OBS_UNIT_ID.getId(), "Observation Unit ID", "");
+		this.factors.add(entryTypeMeasurementVariable);
+		this.factors.add(gidMeasurementVariable);
+		this.factors.add(designationMeasurementVariable);
+		this.factors.add(entryNoMeasurementVariable);
+		this.factors.add(obsUnitIdMeasurementVariable);
+		this.nonStudyFactors = this.factors;
 
-		variates = new ArrayList<>();
-		treatmentVariables = new ArrayList<>();
+		this.variates = new ArrayList<>();
+		this.treatmentVariables = new ArrayList<>();
 
-		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
-		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), PROGRAM_UUID)).thenReturn(plotNoVariable);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), PROGRAM_UUID)).thenReturn(plotNoVariable);
 
 	}
 
@@ -168,23 +168,25 @@ public class EntryListOrderDesignServiceImplTest {
 
 	@Test
 	public void generateDesignTest() throws BVDesignException {
-		final List<MeasurementRow> measurementRows = entryListOrderDesignServiceImpl
-				.generateDesign(germplasmList, expDesignParameterUi, measurementVariables, factors, nonStudyFactors, variates,
-						treatmentVariables);
+		final List<MeasurementRow> measurementRows = this.entryListOrderDesignServiceImpl
+				.generateDesign(
+					this.germplasmList, this.expDesignParameterUi,
+					this.measurementVariables, this.factors, this.nonStudyFactors, this.variates,
+					this.treatmentVariables);
 		assertThat(measurementRows, hasSize(6));
-		assertThat(getCheckEntryTypeValue(measurementRows.get(0)), equalTo(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
-		assertThat(getCheckEntryTypeValue(measurementRows.get(1)), equalTo(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId()));
-		assertThat(getCheckEntryTypeValue(measurementRows.get(2)), equalTo(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId()));
-		assertThat(getCheckEntryTypeValue(measurementRows.get(3)), equalTo(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
-		assertThat(getCheckEntryTypeValue(measurementRows.get(4)), equalTo(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId()));
-		assertThat(getCheckEntryTypeValue(measurementRows.get(5)), equalTo(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId()));
+		assertThat(this.getCheckEntryTypeValue(measurementRows.get(0)), equalTo(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
+		assertThat(this.getCheckEntryTypeValue(measurementRows.get(1)), equalTo(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId()));
+		assertThat(this.getCheckEntryTypeValue(measurementRows.get(2)), equalTo(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId()));
+		assertThat(this.getCheckEntryTypeValue(measurementRows.get(3)), equalTo(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
+		assertThat(this.getCheckEntryTypeValue(measurementRows.get(4)), equalTo(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId()));
+		assertThat(this.getCheckEntryTypeValue(measurementRows.get(5)), equalTo(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId()));
 
-		assertThat(getGidValue(measurementRows.get(0)), equalTo(germplasmList.get(2).getGid()));
-		assertThat(getGidValue(measurementRows.get(1)), equalTo(germplasmList.get(0).getGid()));
-		assertThat(getGidValue(measurementRows.get(2)), equalTo(germplasmList.get(1).getGid()));
-		assertThat(getGidValue(measurementRows.get(3)), equalTo(germplasmList.get(2).getGid()));
-		assertThat(getGidValue(measurementRows.get(4)), equalTo(germplasmList.get(3).getGid()));
-		assertThat(getGidValue(measurementRows.get(5)), equalTo(germplasmList.get(4).getGid()));
+		assertThat(this.getGidValue(measurementRows.get(0)), equalTo(this.germplasmList.get(2).getGid()));
+		assertThat(this.getGidValue(measurementRows.get(1)), equalTo(this.germplasmList.get(0).getGid()));
+		assertThat(this.getGidValue(measurementRows.get(2)), equalTo(this.germplasmList.get(1).getGid()));
+		assertThat(this.getGidValue(measurementRows.get(3)), equalTo(this.germplasmList.get(2).getGid()));
+		assertThat(this.getGidValue(measurementRows.get(4)), equalTo(this.germplasmList.get(3).getGid()));
+		assertThat(this.getGidValue(measurementRows.get(5)), equalTo(this.germplasmList.get(4).getGid()));
 	}
 
 }

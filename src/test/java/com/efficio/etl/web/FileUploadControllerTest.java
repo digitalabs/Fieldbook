@@ -97,7 +97,7 @@ public class FileUploadControllerTest {
 	private HttpSession session;
 	private HttpServletRequest request;
 	private HttpServletResponse response;
-	private MeasurementVariable plotIdMeasurementVariable;
+	private MeasurementVariable obsUnitIdMeasurementVariable;
 
 	@InjectMocks
 	private FileUploadController fileUploadController;
@@ -124,10 +124,10 @@ public class FileUploadControllerTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(FileUploadControllerTest.PROGRAM_UUID);
 
-		this.plotIdMeasurementVariable = MeasurementVariableTestDataInitializer
-				.createMeasurementVariable(TermId.PLOT_ID.getId(), TermId.PLOT_ID.name(), null);
-		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.PLOT_ID.getId()), "",
-				Operation.ADD, PhenotypicType.GERMPLASM)).thenReturn(this.plotIdMeasurementVariable);
+		this.obsUnitIdMeasurementVariable = MeasurementVariableTestDataInitializer
+				.createMeasurementVariable(TermId.OBS_UNIT_ID.getId(), TermId.OBS_UNIT_ID.name(), null);
+		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.OBS_UNIT_ID.getId()), "",
+				Operation.ADD, PhenotypicType.GERMPLASM)).thenReturn(this.obsUnitIdMeasurementVariable);
 
 		Mockito.when(this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(
 				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class),
@@ -181,7 +181,7 @@ public class FileUploadControllerTest {
 		final Map<String, String> returnMessage = this.fileUploadController.startProcess(0, this.session, this.request,
 				this.response, this.model);
 
-		Mockito.verify(this.fieldbookService).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, true);
+		Mockito.verify(this.fieldbookService).addStudyUUIDConditionAndObsUnitIDFactorToWorkbook(workbook, true);
 		Mockito.verify(this.dataImportService).saveDataset(workbook, FileUploadControllerTest.PROGRAM_UUID,
 				FileUploadControllerTest.PROJECT_CODE_PREFIX);
 		Mockito.verify(this.httpSessionUtil).clearSessionData(this.session,
@@ -210,11 +210,11 @@ public class FileUploadControllerTest {
 				this.response, this.model);
 
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
-				.addMeasurementVariableToList(this.plotIdMeasurementVariable, workbook.getFactors());
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook,
+				.addMeasurementVariableToList(this.obsUnitIdMeasurementVariable, workbook.getFactors());
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).addStudyUUIDConditionAndObsUnitIDFactorToWorkbook(workbook,
 				false);
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
-				.addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable, workbook.getObservations());
+				.addMeasurementVariableToMeasurementRows(this.obsUnitIdMeasurementVariable, workbook.getObservations());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook,
 				FileUploadControllerTest.PROGRAM_UUID, FileUploadControllerTest.PROJECT_CODE_PREFIX);
 		Mockito.verify(this.httpSessionUtil, Mockito.times(0)).clearSessionData(this.session,
@@ -240,11 +240,11 @@ public class FileUploadControllerTest {
 				this.response, this.model);
 
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
-				.addMeasurementVariableToList(this.plotIdMeasurementVariable, workbook.getFactors());
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook,
+				.addMeasurementVariableToList(this.obsUnitIdMeasurementVariable, workbook.getFactors());
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).addStudyUUIDConditionAndObsUnitIDFactorToWorkbook(workbook,
 				false);
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
-				.addMeasurementVariableToMeasurementRows(this.plotIdMeasurementVariable, workbook.getObservations());
+				.addMeasurementVariableToMeasurementRows(this.obsUnitIdMeasurementVariable, workbook.getObservations());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook,
 				FileUploadControllerTest.PROGRAM_UUID, FileUploadControllerTest.PROJECT_CODE_PREFIX);
 		Mockito.verify(this.httpSessionUtil, Mockito.times(0)).clearSessionData(this.session,

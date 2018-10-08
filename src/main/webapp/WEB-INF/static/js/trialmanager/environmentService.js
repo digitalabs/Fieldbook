@@ -45,6 +45,7 @@
 			restFailureHandler: function (response) {
 				return $q.reject({
 					status: response.status,
+					data: response.data,
 					errors: response.data && response.data.errors
 				});
 			}

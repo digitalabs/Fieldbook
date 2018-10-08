@@ -10,9 +10,8 @@
 	<tr ng-repeat="environment in environmentListView track by environment.trialInstanceNumber" ng-class="{even : $even, odd : $odd}">
 		<td><input type="checkbox" name="location"
 				   ng-model="environment.selected"
-				   ng-change="doSelectInstance($index)"
-				   ng-true-value="{{environment.trialInstanceNumber}}"
-				   ng-false-value="{{undefined}}"/></td>
+				   ng-change="doSelectInstance(environment)"/>
+		</td>
 		<td>{{ environment.trialInstanceNumber }} </td>
 		<td>{{ environment.name }} </td>
 	</tr>

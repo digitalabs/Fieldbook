@@ -55,7 +55,7 @@
 			$('#selectEnvironmentToSampleListModal').on('shown.bs.modal', function () {
 				// we need to redraw the columns of the table
 				$('#selectEnvironmentToSampleListModal .fbk-datatable-environments').DataTable().columns.adjust().draw();
-				// center the paginate
+				// center pagination controls - FIXME replace with datatables dom options
 				$('#selectEnvironmentToSampleListModal .dataTables_paginate').closest('.col-xs-6').attr('class', 'col-xs-12');
 			});
 		});

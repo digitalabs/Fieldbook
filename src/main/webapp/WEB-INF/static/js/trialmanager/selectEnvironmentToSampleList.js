@@ -21,6 +21,7 @@
 		$scope.init = function () {
 			$scope.selectAll = true;
 			environmentService.getEnvironments().then(function (environmentDetails) {
+				$scope.trialInstances = [];
 				$scope.environmentListView = [];
 
 				angular.forEach(environmentDetails, function (environment) {
@@ -30,9 +31,9 @@
 						customAbbrName: environment.customLocationAbbreviation,
 						trialInstanceNumber: environment.instanceNumber,
 						instanceDbId: environment.instanceDbId,
-						selected: $scope.selectAll?environment.instanceNumber:undefined
-
+						selected: $scope.selectAll
 					});
+					$scope.trialInstances.push(environment.instanceNumber)
 				});
 			});
 		};

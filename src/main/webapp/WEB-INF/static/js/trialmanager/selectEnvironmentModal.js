@@ -17,6 +17,7 @@
 		$scope.TRIAL_LOCATION_NAME_INDEX = 8180;
 		$scope.TRIAL_LOCATION_ABBR_INDEX = 8189;
 		$scope.LOCATION_NAME_ID = 8190;
+		$scope.trialInstances = [];
 		$scope.environmentListView = [];
 		$scope.applicationData = TrialManagerDataService.applicationData;
 		$scope.data = TrialManagerDataService.currentData.environments;
@@ -47,8 +48,6 @@
 				}
 			});
 		});
-
-		$scope.trialInstances = [];
 
 		$scope.noOfReplications = TrialManagerDataService.currentData.experimentalDesign.replicationsCount;
 
@@ -102,6 +101,7 @@
 			$scope.selectAll = true;
 			environmentService.getEnvironments().then(function (environmentDetails) {
 				$scope.environmentListView = [];
+				$scope.trialInstances = [];
 				angular.forEach(environmentDetails, function (environment) {
 					$scope.environmentListView.push({
 						name: environment.locationName + ' - (' + environment.locationAbbreviation + ')',
@@ -109,8 +109,9 @@
 						customAbbrName: environment.customLocationAbbreviation,
 						trialInstanceNumber: environment.instanceNumber,
 						instanceDbId: environment.instanceDbId,
-						selected: $scope.selectAll?environment.instanceNumber:undefined
+						selected: $scope.selectAll
 					});
+					$scope.trialInstances.push(environment.instanceNumber);
 				});
 			});
 		};

@@ -855,11 +855,6 @@ function initSelectEnvironment() {
 	var $scope = angular.element('#selectEnvironmentModal').scope();
 	$scope.init();
 	$scope.$apply();
-
-	// we need to redraw the columns of the table
-	if ($('#selectEnvironmentModal .fbk-datatable-environments').length !== 0 && $('#selectEnvironmentModal .fbk-datatable-environments').DataTable() !== null) {
-		$('#selectEnvironmentModal .fbk-datatable-environments').DataTable().columns.adjust().draw();
-	}
 }
 
 function advanceSample() {
@@ -911,11 +906,6 @@ function createSample() {
 	var scope = angular.element('#selectEnvironmentToSampleListModal').scope();
 	scope.init();
 	scope.$apply();
-
-	// we need to redraw the columns of the table
-	if ($('#selectEnvironmentToSampleListModal .fbk-datatable-environments').length !== 0 && $('#selectEnvironmentToSampleListModal .fbk-datatable-environments').DataTable() !== null) {
-		$('#selectEnvironmentToSampleListModal .fbk-datatable-environments').DataTable().columns.adjust().draw();
-	}
 }
 
 function selectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, advanceType) {

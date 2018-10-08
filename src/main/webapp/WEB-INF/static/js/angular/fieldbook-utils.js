@@ -618,7 +618,7 @@
 						angular.forEach($scope.environmentListView, function (environment) {
 							if ($scope.selectAll) {
 								environment.selected = i;
-								i = i + 1;
+								i++;
 								$scope.trialInstances.push(environment.trialInstanceNumber);
 							} else {
 								environment.selected = undefined;

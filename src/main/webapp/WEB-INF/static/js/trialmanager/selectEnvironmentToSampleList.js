@@ -18,20 +18,6 @@
 			}
 		};
 
-		$scope.doSelectAll = function () {
-			$scope.trialInstances = [];
-			var i = 1;
-			angular.forEach($scope.environmentListView, function (environment) {
-				if ($scope.selectAll) {
-					environment.Selected = i;
-					i++;
-					$scope.trialInstances.push(environment.trialInstanceNumber);
-				} else {
-					environment.Selected = undefined;
-				}
-			});
-		};
-
 		$scope.init = function () {
 			$scope.selectAll = true;
 			environmentService.getEnvironments().then(function (environmentDetails) {
@@ -43,13 +29,11 @@
 						abbrName: environment.locationAbbreviation,
 						customAbbrName: environment.customLocationAbbreviation,
 						trialInstanceNumber: environment.instanceNumber,
-						instanceDbId: environment.instanceDbId
+						instanceDbId: environment.instanceDbId,
+						selected: $scope.selectAll?environment.instanceNumber:undefined
+
 					});
 				});
-			}).finally(function () {
-				if ($scope.selectAll) {
-					$scope.doSelectAll();
-				}
 			});
 		};
 

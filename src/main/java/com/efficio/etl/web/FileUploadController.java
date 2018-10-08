@@ -171,7 +171,7 @@ public class FileUploadController extends AbstractBaseETLController {
 		try {
 
 			final String programUUID = this.contextUtil.getCurrentProgramUUID();
-			org.generationcp.middleware.domain.etl.Workbook wb;
+			final org.generationcp.middleware.domain.etl.Workbook wb;
 
 			wb = this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
 				confirmDiscard == 1 ? true : false, new WorkbookParser(), this.contextUtil.getCurrentIbdbUserId());
@@ -181,7 +181,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			this.convertEntryTypeNameToID(programUUID, wb.getObservations(),
 					this.etlService.retrieveAvailableEntryTypes(programUUID));
 
-			this.fieldbookService.addStudyUUIDConditionAndPlotIDFactorToWorkbook(wb, true);
+			this.fieldbookService.addStudyUUIDConditionAndObsUnitIDFactorToWorkbook(wb, true);
 			this.dataImportService.populatePossibleValuesForCategoricalVariates(wb.getConditions(), programUUID);
 			this.dataImportService.saveDataset(wb, programUUID,
 					this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());

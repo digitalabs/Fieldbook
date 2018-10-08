@@ -557,9 +557,9 @@ public class DesignImportServiceImplTest {
 				.getStandardVariable(TermId.DESIG.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
 
 		Mockito.doReturn(DesignImportTestDataInitializer
-				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.PLOT_ID.getId(), "PLOT_ID", "", "", "",
+				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.OBS_UNIT_ID.getId(), "OBS_UNIT_ID", "", "", "",
 						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
-				.getStandardVariable(TermId.PLOT_ID.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
+				.getStandardVariable(TermId.OBS_UNIT_ID.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
 
 		Mockito.doReturn(DesignImportTestDataInitializer
 				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_TYPE.getId(), "ENTRY_TYPE", "", "", "",

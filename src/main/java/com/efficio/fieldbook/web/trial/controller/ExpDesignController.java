@@ -188,13 +188,14 @@ public class ExpDesignController extends BaseTrialController {
 							}
 						}
 
-						final BVDesignLicenseInfo bvDesignLicenseInfo = designLicenseUtil.retrieveLicenseInfo();
-
-						if (designService.requiresBreedingViewLicence() && this.designLicenseUtil.isExpired(bvDesignLicenseInfo)) {
-							expParameterOutput =
-									new ExpDesignValidationOutput(false, this.messageSource.getMessage("experiment.design.license.expired",
-											null, locale));
-							return expParameterOutput;
+						BVDesignLicenseInfo bvDesignLicenseInfo = null;
+						if (designService.requiresBreedingViewLicence()) {
+							bvDesignLicenseInfo = this.designLicenseUtil.retrieveLicenseInfo();
+							if(this.designLicenseUtil.isExpired(bvDesignLicenseInfo)) {
+							  expParameterOutput = new ExpDesignValidationOutput(false,
+									  this.messageSource.getMessage("experiment.design.license.expired", null, locale));
+							  return expParameterOutput;
+							}
 						}
 
 						final List<MeasurementRow> measurementRows =

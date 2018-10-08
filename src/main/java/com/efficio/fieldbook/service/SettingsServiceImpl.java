@@ -192,7 +192,7 @@ public class SettingsServiceImpl implements SettingsService {
 				continue;
 			}
 
-			if (var.getTermId() == TermId.PLOT_ID.getId()) {
+			if (var.getTermId() == TermId.OBS_UNIT_ID.getId()) {
 				continue;
 			}
 
@@ -296,6 +296,6 @@ public class SettingsServiceImpl implements SettingsService {
 	 */
 	@Override
 	public void addNewSettingDetails(final int mode, final List<SettingDetail> newDetails) throws Exception {
-		SettingsUtil.addNewSettingDetails(mode, newDetails, studySelection);
+		SettingsUtil.addNewSettingDetails(mode, newDetails, this.studySelection);
 	}
 }

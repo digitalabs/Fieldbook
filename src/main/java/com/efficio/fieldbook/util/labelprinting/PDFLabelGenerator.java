@@ -18,7 +18,6 @@ import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 
-import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.slf4j.Logger;
@@ -127,7 +126,7 @@ public class PDFLabelGenerator implements LabelGenerator {
 									.generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField,
 											thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), true);
 						} else {
-							barcodeLabel = fieldMapLabel.getPlotId();
+							barcodeLabel = fieldMapLabel.getObsUnitId();
 							barcodeLabelForCode = barcodeLabel;
 						}
 					}

@@ -145,13 +145,13 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		details.setId(this.userSelection.getStudyId() != null ? this.userSelection.getStudyId() : 0);
 		details.setStudyName(this.userSelection.getStudyName());
 		details.setDescription(this.userSelection.getStudyDescription());
-		details.setStartDate(ETLServiceImpl.formatDate(userSelection.getStudyStartDate()));
-		details.setEndDate(ETLServiceImpl.formatDate(userSelection.getStudyEndDate()));
-		details.setStudyUpdate(ETLServiceImpl.formatDate(userSelection.getStudyUpdate()));
+		details.setStartDate(ETLServiceImpl.formatDate(this.userSelection.getStudyStartDate()));
+		details.setEndDate(ETLServiceImpl.formatDate(this.userSelection.getStudyEndDate()));
+		details.setStudyUpdate(ETLServiceImpl.formatDate(this.userSelection.getStudyUpdate()));
 		details.setObjective(this.userSelection.getStudyObjective());
 		details.setEndDate(this.userSelection.getStudyEndDate());
 		details.setStartDate(this.userSelection.getStudyStartDate());
-		details.setStudyType(studyDataManager.getStudyTypeByName(this.userSelection.getStudyType()));
+		details.setStudyType(this.studyDataManager.getStudyTypeByName(this.userSelection.getStudyType()));
 		details.setLabel(this.etlService.convertMessage(new Message(AngularSelectSheetController.ADD_TO_NEW_STUDY)));
 		previousStudies.add(details);
 	}
@@ -395,7 +395,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			final List<MeasurementVariable> studyHeaders = importData.getFactors();
 
 			final List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection,
-					this.etlService.headersContainsPlotId(importData));
+					this.etlService.headersContainsObsUnitId(importData));
 
 			mismatchErrors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, isMeansDataImport);
 		} catch (final Exception e) {
@@ -452,7 +452,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 		final Map<String, String> studyTypes = new HashMap<>();
 
-		for (final StudyTypeDto type : studyDataManager.getAllVisibleStudyTypes()) {
+		for (final StudyTypeDto type : this.studyDataManager.getAllVisibleStudyTypes()) {
 			studyTypes.put(type.getName(), type.getLabel());
 		}
 

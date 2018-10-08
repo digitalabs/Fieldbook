@@ -69,7 +69,7 @@
 			var selectedLocationDetails = [];
 			var locationAbbr = false;
 
-			if (!$scope.trialInstances) {
+			if ($scope.trialInstances.length === 0) {
 				showErrorMessage('', selectOneLocationErrorMessageForAdvancing);
 			} else {
 				if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX)) {

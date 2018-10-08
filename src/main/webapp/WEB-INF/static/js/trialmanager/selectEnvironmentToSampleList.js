@@ -11,7 +11,7 @@
 		$scope.environmentListView = [];
 
 		$scope.continueCreatingSampleList = function () {
-			if (!$scope.trialInstances) {
+			if ($scope.trialInstances.length === 0) {
 				showErrorMessage('', selectOneLocationErrorMessageForSampleList);
 			} else {
 				selectedEnvironmentContinueCreatingSample($scope.trialInstances);

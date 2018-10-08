@@ -77,7 +77,11 @@
 			$scope.resetPreview = function () {
 				$scope.rows = division.rows = null;
 				$scope.nested.dtInstance.changeData(getPreview());
-			}
+			};
+
+			$scope.savePreview = function () {
+				$http.post('sub-observation-set/preview/save/', division.rows);
+			};
 
 			function renderPreview() {
 				$scope.dtOptionsPreview = DTOptionsBuilder

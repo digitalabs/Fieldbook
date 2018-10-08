@@ -1,11 +1,14 @@
 <div class="row" ng-cloak="">
 	<div class="col-xs-12">
 		<h1>Division title: {{division.name}}</h1>
-		<h2 ng-if="preview" >Preview</h2>
+		<div ng-if="preview">
+			<h2>Preview</h2>
+			<button ng-click="resetPreview()">Reset Preview</button>
+			<button ng-click="savePreview()">Save Preview</button>
+		</div>
 		<div>
 			<button ng-click="addDataTable()">addDataTable</button>
 			<button ng-click="togglePreviewMode()">Toggle Preview mode</button>
-			<button ng-click="resetPreview()">Reset Preview</button>
 			<div ng-if="!preview">
 				<table id="subobservation-table-{{subObservation.id}}-{{division.id}}"
 					   datatable=""

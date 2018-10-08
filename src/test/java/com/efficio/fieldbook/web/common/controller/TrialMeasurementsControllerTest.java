@@ -145,7 +145,7 @@ public class TrialMeasurementsControllerTest {
 			new MeasurementVariableDto(3, "CategoricalTrait"), 3, "CategoryValue1", null);
 
 	private final TermId[] standardFactors = { TermId.GID, TermId.ENTRY_NO, TermId.ENTRY_TYPE, TermId.ENTRY_CODE,
-			TermId.PLOT_NO, TermId.PLOT_ID, TermId.BLOCK_NO, TermId.REP_NO, TermId.ROW, TermId.COL,
+			TermId.PLOT_NO, TermId.OBS_UNIT_ID, TermId.BLOCK_NO, TermId.REP_NO, TermId.ROW, TermId.COL,
 			TermId.FIELDMAP_COLUMN, TermId.FIELDMAP_RANGE };
 
 	@Before
@@ -975,10 +975,10 @@ public class TrialMeasurementsControllerTest {
 		MatcherAssert.assertThat(Arrays.equals(new Object[] { observationDto.getColumnNumber(), false },
 				(Object[]) onePlotMeasurementData.get(colMapKey)), Is.is(true));
 
-		final String plotIdMapKey = useDifferentLocalNames
-				? TermId.PLOT_ID.name() + TrialMeasurementsControllerTest.LOCAL : TermId.PLOT_ID.name();
-		MatcherAssert.assertThat(Arrays.equals(new Object[] { observationDto.getPlotId(), false },
-				(Object[]) onePlotMeasurementData.get(plotIdMapKey)), Is.is(true));
+		final String obsUnitIdMapKey = useDifferentLocalNames
+				? TermId.OBS_UNIT_ID.name() + TrialMeasurementsControllerTest.LOCAL : TermId.OBS_UNIT_ID.name();
+		MatcherAssert.assertThat(Arrays.equals(new Object[] { observationDto.getObsUnitId(), false },
+				(Object[]) onePlotMeasurementData.get(obsUnitIdMapKey)), Is.is(true));
 
 		final String fieldMapColumnMapKey = useDifferentLocalNames
 				? TermId.FIELDMAP_COLUMN.name() + TrialMeasurementsControllerTest.LOCAL : TermId.FIELDMAP_COLUMN.name();
@@ -1007,7 +1007,7 @@ public class TrialMeasurementsControllerTest {
 
 		testObservationDto.setRowNumber("11");
 		testObservationDto.setColumnNumber("22");
-		testObservationDto.setPlotId("9CVRPNHaSlCE1");
+		testObservationDto.setObsUnitId("9CVRPNHaSlCE1");
 
 		final List<ObservationDto> observations = Lists.newArrayList(testObservationDto);
 		Mockito.when(this.studyService.getObservations(Matchers.anyInt(), Matchers.anyInt(), Matchers.anyInt(),
@@ -1163,8 +1163,8 @@ public class TrialMeasurementsControllerTest {
 
 	@Test
 	public void testViewStudyAjax() {
-		CreateTrialForm form = new CreateTrialForm();
-		Model model = Mockito.mock(Model.class);
+		final CreateTrialForm form = new CreateTrialForm();
+		final Model model = Mockito.mock(Model.class);
 		Mockito.when(this.fieldbookMiddlewareService.getCompleteDataset(1)).thenReturn(WorkbookTestDataInitializer.getTestWorkbook());
 		this.measurementsController.setPaginationListSelection(this.paginationListSelection);
 		this.measurementsController.viewStudyAjax(form, model, 1, 1);
@@ -1182,8 +1182,8 @@ public class TrialMeasurementsControllerTest {
         locationNameMap.put("9015", "INT WATER MANAGEMENT INSTITUTE");
         Mockito.when(this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(1)).thenReturn(locationNameMap);
         final MeasurementVariable locationVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.LOCATION_ID.getId(), "9015");
-		List<MeasurementRow> measurementRowList = MeasurementRowTestDataInitializer.createMeasurementRowList(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "9015", locationVariable);
-		Map<String, MeasurementVariable> measurementDatasetVariablesMap = new HashMap<>();
+		final List<MeasurementRow> measurementRowList = MeasurementRowTestDataInitializer.createMeasurementRowList(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "9015", locationVariable);
+		final Map<String, MeasurementVariable> measurementDatasetVariablesMap = new HashMap<>();
 		measurementDatasetVariablesMap.put(String.valueOf(TermId.LOCATION_ID.getId()), locationVariable);
 		this.measurementsController.changeLocationIdToName(measurementRowList, measurementDatasetVariablesMap, 1);
 		final MeasurementData data = measurementRowList.get(0).getDataList().get(0);

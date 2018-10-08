@@ -513,7 +513,7 @@ public class FieldbookServiceTest {
 		final List<Integer> crossesIds = new ArrayList<Integer>();
 		crossesIds.add(1);
 		crossesIds.add(2);
-		final Integer studyId = 5;
+		final int studyId = 5;
 
 		fieldbookService.setFieldbookMiddlewareService(fieldbookMiddlewareService);
 		fieldbookService.saveStudyImportedCrosses(crossesIds, studyId);
@@ -573,7 +573,7 @@ public class FieldbookServiceTest {
 		final UserDataManager userDataManager = Mockito.mock(UserDataManager.class);
 		fieldbookService.setUserDataManager(userDataManager);
 
-		final Integer userId = 1;
+		final int userId = 1;
 
 		Mockito.doReturn(null).when(userDataManager).getUserById(userId);
 
@@ -588,7 +588,7 @@ public class FieldbookServiceTest {
 		final UserDataManager userDataManager = Mockito.mock(UserDataManager.class);
 		fieldbookService.setUserDataManager(userDataManager);
 
-		final Integer userId = 1;
+		final int userId = 1;
 		final int personId = 1;
 		final User user = new User();
 		user.setPersonid(personId);
@@ -606,7 +606,7 @@ public class FieldbookServiceTest {
 		final UserDataManager userDataManager = Mockito.mock(UserDataManager.class);
 		fieldbookService.setUserDataManager(userDataManager);
 
-		final Integer userId = 1;
+		final int userId = 1;
 		final int personId = 1;
 		final User user = new User();
 		user.setPersonid(personId);
@@ -705,17 +705,17 @@ public class FieldbookServiceTest {
 	public void testAddMeasurementVariableToList() {
 
 		final MeasurementVariable measurementVariableToAdd = new MeasurementVariable();
-		measurementVariableToAdd.setTermId(TermId.PLOT_ID.getId());
-		measurementVariableToAdd.setName(TermId.PLOT_ID.name());
+		measurementVariableToAdd.setTermId(TermId.OBS_UNIT_ID.getId());
+		measurementVariableToAdd.setName(TermId.OBS_UNIT_ID.name());
 
 		final List<MeasurementVariable> measurementVariables = new ArrayList<>();
 		this.fieldbookServiceImpl.addMeasurementVariableToList(measurementVariableToAdd, measurementVariables);
 
-		final MeasurementVariable plotIdMeasurementVariabe = measurementVariables.get(0);
+		final MeasurementVariable obsUnitIdMeasurementVariabe = measurementVariables.get(0);
 
-		Assert.assertNotNull(plotIdMeasurementVariabe);
-		Assert.assertEquals(TermId.PLOT_ID.getId(), plotIdMeasurementVariabe.getTermId());
-		Assert.assertEquals(TermId.PLOT_ID.name(), plotIdMeasurementVariabe.getName());
+		Assert.assertNotNull(obsUnitIdMeasurementVariabe);
+		Assert.assertEquals(TermId.OBS_UNIT_ID.getId(), obsUnitIdMeasurementVariabe.getTermId());
+		Assert.assertEquals(TermId.OBS_UNIT_ID.name(), obsUnitIdMeasurementVariabe.getName());
 
 	}
 
@@ -728,23 +728,23 @@ public class FieldbookServiceTest {
 		workbook.setFactors(new ArrayList<MeasurementVariable>());
 		workbook.getObservations().get(0).setDataList(new ArrayList<MeasurementData>());
 
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.PLOT_ID.getId()),
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.OBS_UNIT_ID.getId()),
 				Matchers.anyString()))
-				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.PLOT_ID.getId(),
-						TermId.PLOT_ID.name()));
+				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.OBS_UNIT_ID.getId(),
+						TermId.OBS_UNIT_ID.name()));
 
-		this.fieldbookServiceImpl.addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, false);
+		this.fieldbookServiceImpl.addStudyUUIDConditionAndObsUnitIDFactorToWorkbook(workbook, false);
 
-		final MeasurementVariable plotIdVariable = workbook.getFactors().get(0);
-		Assert.assertEquals(TermId.PLOT_ID.getId(), plotIdVariable.getTermId());
-		Assert.assertEquals(TermId.PLOT_ID.name(), plotIdVariable.getName());
+		final MeasurementVariable obsUnitIdVariable = workbook.getFactors().get(0);
+		Assert.assertEquals(TermId.OBS_UNIT_ID.getId(), obsUnitIdVariable.getTermId());
+		Assert.assertEquals(TermId.OBS_UNIT_ID.name(), obsUnitIdVariable.getName());
 
-		// Plot id should not be added in the datalist
+		// Observation Unit id should not be added in the datalist
 		Assert.assertTrue(workbook.getObservations().get(0).getDataList().isEmpty());
 	}
 
 	@Test
-	public void testAddStudyUUIDConditionAndPlotIDFactorToWorkbookTrue() {
+	public void testAddStudyUUIDConditionAndObsUnitIDFactorToWorkbookTrue() {
 		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto("T"), "Sample Study", 1,
 				false);
 		// Set lists to empty lists for easier testing
@@ -752,31 +752,31 @@ public class FieldbookServiceTest {
 		workbook.setFactors(new ArrayList<MeasurementVariable>());
 		workbook.getObservations().get(0).setDataList(new ArrayList<MeasurementData>());
 
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.PLOT_ID.getId()),
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.OBS_UNIT_ID.getId()),
 				Matchers.anyString()))
-				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.PLOT_ID.getId(),
-						TermId.PLOT_ID.name()));
+				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.OBS_UNIT_ID.getId(),
+						TermId.OBS_UNIT_ID.name()));
 
-		this.fieldbookServiceImpl.addStudyUUIDConditionAndPlotIDFactorToWorkbook(workbook, true);
+		this.fieldbookServiceImpl.addStudyUUIDConditionAndObsUnitIDFactorToWorkbook(workbook, true);
 
-		final MeasurementVariable plotIdVariable = workbook.getFactors().get(0);
-		Assert.assertEquals(TermId.PLOT_ID.getId(), plotIdVariable.getTermId());
-		Assert.assertEquals(TermId.PLOT_ID.name(), plotIdVariable.getName());
+		final MeasurementVariable obsUnitIdVariable = workbook.getFactors().get(0);
+		Assert.assertEquals(TermId.OBS_UNIT_ID.getId(), obsUnitIdVariable.getTermId());
+		Assert.assertEquals(TermId.OBS_UNIT_ID.name(), obsUnitIdVariable.getName());
 
-		// Plot id should be added in the datalist
+		// Observation Unit id should be added in the datalist
 		Assert.assertFalse(workbook.getObservations().get(0).getDataList().isEmpty());
 		final MeasurementData mData = workbook.getObservations().get(0).getDataList().get(0);
-		Assert.assertEquals(TermId.PLOT_ID.name(), mData.getLabel());
+		Assert.assertEquals(TermId.OBS_UNIT_ID.name(), mData.getLabel());
 		Assert.assertTrue(mData.getValue().isEmpty());
-		Assert.assertEquals(plotIdVariable, mData.getMeasurementVariable());
+		Assert.assertEquals(obsUnitIdVariable, mData.getMeasurementVariable());
 	}
 
 	@Test
 	public void testAddMeasurementVariableToMeasurementRows() {
 
 		final MeasurementVariable measurementVariableToAdd = new MeasurementVariable();
-		measurementVariableToAdd.setTermId(TermId.PLOT_ID.getId());
-		measurementVariableToAdd.setName(TermId.PLOT_ID.name());
+		measurementVariableToAdd.setTermId(TermId.OBS_UNIT_ID.getId());
+		measurementVariableToAdd.setName(TermId.OBS_UNIT_ID.name());
 
 		final List<MeasurementRow> measurementRows = new ArrayList<>();
 		final MeasurementRow measurementRow = new MeasurementRow();
@@ -786,13 +786,13 @@ public class FieldbookServiceTest {
 		this.fieldbookServiceImpl.addMeasurementVariableToMeasurementRows(measurementVariableToAdd, measurementRows);
 
 		final List<MeasurementData> measurementDataList = measurementRows.get(0).getDataList();
-		final MeasurementData plotIdMeasurementData = measurementDataList.get(0);
+		final MeasurementData obsUnitIdMeasurementData = measurementDataList.get(0);
 
 		Assert.assertNotNull(
-				"Expecting that PLOT_ID measurementData is added in the measurementData list of the measurement",
-				plotIdMeasurementData);
-		Assert.assertEquals(TermId.PLOT_ID.getId(), plotIdMeasurementData.getMeasurementVariable().getTermId());
-		Assert.assertEquals(TermId.PLOT_ID.name(), plotIdMeasurementData.getLabel());
+				"Expecting that OBS_UNIT_ID measurementData is added in the measurementData list of the measurement",
+				obsUnitIdMeasurementData);
+		Assert.assertEquals(TermId.OBS_UNIT_ID.getId(), obsUnitIdMeasurementData.getMeasurementVariable().getTermId());
+		Assert.assertEquals(TermId.OBS_UNIT_ID.name(), obsUnitIdMeasurementData.getLabel());
 
 	}
 
@@ -800,15 +800,15 @@ public class FieldbookServiceTest {
 	public void testIsVariableExistsInList() {
 
 		final List<MeasurementVariable> measurementVariables = new ArrayList<>();
-		final MeasurementVariable plotIdMeasurementVariable = new MeasurementVariable();
+		final MeasurementVariable obsUnitIdMeasurementVariable = new MeasurementVariable();
 
-		plotIdMeasurementVariable.setName(TermId.PLOT_ID.name());
-		plotIdMeasurementVariable.setTermId(TermId.PLOT_ID.getId());
+		obsUnitIdMeasurementVariable.setName(TermId.OBS_UNIT_ID.name());
+		obsUnitIdMeasurementVariable.setTermId(TermId.OBS_UNIT_ID.getId());
 
-		measurementVariables.add(plotIdMeasurementVariable);
+		measurementVariables.add(obsUnitIdMeasurementVariable);
 
-		Assert.assertTrue("Expecting that PLOT_ID variable exists in the list",
-				this.fieldbookServiceImpl.isVariableExistsInList(TermId.PLOT_ID.getId(), measurementVariables));
+		Assert.assertTrue("Expecting that OBS_UNIT_ID variable exists in the list",
+				this.fieldbookServiceImpl.isVariableExistsInList(TermId.OBS_UNIT_ID.getId(), measurementVariables));
 		Assert.assertFalse("Expecting that ENTRY_NO variable does not exist in the list",
 				this.fieldbookServiceImpl.isVariableExistsInList(TermId.ENTRY_NO.getId(), measurementVariables));
 	}

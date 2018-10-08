@@ -43,7 +43,7 @@ public class SampleListController {
 	private static final String WELL = "sample.list.sample.well";
 	private static final String PLANT_UID = "sample.list.plant.uid";
 	private static final String PLANT_NO = "sample.list.plant.no";
-	private static final String PLOT_ID = "sample.list.plot.id";
+	private static final String OBS_UNIT_ID = "sample.list.obs.unit.id";
 	private static final String PLOT_NO = "sample.list.plot.no";
 	private static final String DESIGNATION = "seed.entry.designation";
 	protected static final String TOTAL_NUMBER_OF_GERMPLASMS = "totalNumberOfGermplasms";
@@ -59,12 +59,12 @@ public class SampleListController {
 	private SampleListService sampleListService;
 
 	@RequestMapping(value = "/sampleList/{listId}", method = RequestMethod.GET)
-	public String displaySampleList(@PathVariable Integer listId, HttpServletRequest req, Model model) {
+	public String displaySampleList(@PathVariable final Integer listId, final HttpServletRequest req, final Model model) {
 		this.processSampleList(listId, req, model);
 		return SampleListController.SAVED_FINAL_LIST;
 	}
 
-	private void processSampleList(Integer listId, HttpServletRequest req, Model model) {
+	private void processSampleList(final Integer listId, final HttpServletRequest req, final Model model) {
 		try {
 
 			final SampleList sampleList = this.sampleListService.getSampleList(listId);
@@ -81,14 +81,14 @@ public class SampleListController {
 			model.addAttribute("listNotes", notes);
 			model.addAttribute("listType", type);
 
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			SampleListController.LOG.error(e.getMessage(), e);
 		}
 	}
 
 	private List<TableHeader> getSampleListTableHeaders() {
-		Locale locale = LocaleContextHolder.getLocale();
-		List<TableHeader> tableHeaderList = new ArrayList<>();
+		final Locale locale = LocaleContextHolder.getLocale();
+		final List<TableHeader> tableHeaderList = new ArrayList<>();
 
 
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_ENTRY, null, locale),
@@ -112,8 +112,8 @@ public class SampleListController {
 			this.messageSource.getMessage(SampleListController.WELL, null, locale), false));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.PLANT_UID, null, locale),
 			this.messageSource.getMessage(SampleListController.PLANT_UID, null, locale), false));
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.PLOT_ID, null, locale),
-			this.messageSource.getMessage(SampleListController.PLOT_ID, null, locale), false));
+		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.OBS_UNIT_ID, null, locale),
+			this.messageSource.getMessage(SampleListController.OBS_UNIT_ID, null, locale), false));
 
 		return tableHeaderList;
 	}

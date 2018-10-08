@@ -160,12 +160,12 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 				}
 			});
 		} else if (displayColumn.dataTypeId === 1120 || displayColumn.dataTypeId === 1117) {
-			var isPlotId = displayColumn.termId === 8201;
+			var isObsUnitId = displayColumn.termId === 8201;
 			// Column definition for Character and date data type
 			columnsDef.push({
 				defaultContent: '',
 				targets: columns.length - 1,
-				visible: !isPlotId,
+				visible: !isObsUnitId,
 				createdCell: function(td, cellData, rowData, row, col) {
 					if (cellData[cellData.length-1] == 'MANUALLY_EDITED') {
 						$(td).addClass('manually-edited-value');
@@ -292,7 +292,7 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 							return data[0];
 						}
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="openSampleSummary(\'' + full.PLOT_ID[0] + '\',\'' +  + full.PLOT_NO[0] + '\''
+							'onclick="openSampleSummary(\'' + full.OBS_UNIT_ID[0] + '\',\'' +  + full.PLOT_NO[0] + '\''
 							+ ')">' + data[0] + '</a>';
 					}
 				}

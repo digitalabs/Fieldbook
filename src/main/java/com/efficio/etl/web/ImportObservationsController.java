@@ -92,7 +92,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 			final List<MeasurementVariable> studyHeaders = importData.getFactors();
 
 			final List<String> fileHeaders =
-					this.etlService.retrieveColumnHeaders(workbook, this.userSelection, this.etlService.headersContainsPlotId(importData));
+					this.etlService.retrieveColumnHeaders(workbook, this.userSelection, this.etlService.headersContainsObsUnitId(importData));
 
 			final Map<String, List<Message>> mismatchErrors =
 					this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, isMeansDataImport);

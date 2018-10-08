@@ -32,10 +32,10 @@ public class CsvImportStudyServiceImplTest {
 
     private static final String GID = "GID";
 
-	private static final String PLOT_ID = "PLOT_ID";
+	private static final String OBS_UNIT_ID = "OBS_UNIT_ID";
 
     private final String[] rowHeaders = {"ENTRY_TYPE", this.GID, "DESIGNATION", this.ENTRY_NO, "REP_NO",
-		this.PLOT_NO, this.PLOT_ID};
+		this.PLOT_NO, this.OBS_UNIT_ID};
     @Mock
     private Map<Integer, List<String>> csvMap;
 
@@ -48,8 +48,8 @@ public class CsvImportStudyServiceImplTest {
     @Before
 	public void setUp() {
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(1, new StudyTypeDto("N"));
-        this.csvImport = new CsvImportStudyServiceImpl(workbook, "", "");
-		this.rowsMap = csvImport.createMeasurementRowsMap(this.workbook.getObservations());
+        this.csvImport = new CsvImportStudyServiceImpl(this.workbook, "", "");
+		this.rowsMap = this.csvImport.createMeasurementRowsMap(this.workbook.getObservations());
 
 	}
 
@@ -74,11 +74,11 @@ public class CsvImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testGetLabelFromKsuRequiredColumnPlotIdPresentInEnum() {
+	public void testGetLabelFromKsuRequiredColumnObsUnitIdPresentInEnum() {
 		final MeasurementTestDataInitializer measurementTestDataInitializer = new MeasurementTestDataInitializer();
-		final MeasurementVariable mVar = measurementTestDataInitializer.createMeasurementVariable(TermId.PLOT_ID.getId(), 1);
+		final MeasurementVariable mVar = measurementTestDataInitializer.createMeasurementVariable(TermId.OBS_UNIT_ID.getId(), 1);
 		final String label = this.csvImport.getLabelFromRequiredColumn(mVar);
-		Assert.assertEquals("The label should be PLOT_ID", CsvImportStudyServiceImplTest.PLOT_ID, label);
+		Assert.assertEquals("The label should be OBS_UNIT_ID", CsvImportStudyServiceImplTest.OBS_UNIT_ID, label);
 
 	}
 
@@ -91,9 +91,9 @@ public class CsvImportStudyServiceImplTest {
 	}
 
 	@Test
-	public void testGetPlotIdFromRow() throws WorkbookParserException {
+	public void testGetObsUnitIdFromRow() throws WorkbookParserException {
 		final List<String> row = Arrays.asList("1", "1", "1","PLOT123P123456");
-		final String keyIdentifier = this.csvImport.getPlotIdFromRow(row, 3);
+		final String keyIdentifier = this.csvImport.getObsUnitIdFromRow(row, 3);
 		Assert.assertEquals("KeyIdendtifier should be PLOT123P123456", "PLOT123P123456", keyIdentifier);
 	}
 

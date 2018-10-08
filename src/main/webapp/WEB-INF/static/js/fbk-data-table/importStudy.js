@@ -155,7 +155,7 @@ function showImportResponse(responseText) {
     	if (resp.deletedTraits !== ' ' || resp.addedTraits !== ' ') {
 			showWarningTraitsImport(resp);
     	} else if (resp.plotsNotFound !== ' ') {
-    		ShowWarningPlotIdNotFound(resp);
+    		ShowWarningObsUnitIdNotFound(resp);
         } else {
 			showWarningImport(resp);
     	}
@@ -165,7 +165,7 @@ function showImportResponse(responseText) {
 	}
 }
 
- function ShowWarningPlotIdNotFound(resp) {
+ function ShowWarningObsUnitIdNotFound(resp) {
  	'use strict';
  	setTimeout(function () {
  		$('#importStudyConfirmationModal').modal({

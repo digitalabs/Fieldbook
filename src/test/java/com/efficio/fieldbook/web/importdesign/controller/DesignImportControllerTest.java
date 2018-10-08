@@ -1093,18 +1093,18 @@ public class DesignImportControllerTest {
 	 * @throws DesignValidationException
 	 */
 	private Map<String, Object> verifyMapDesignImportData() throws DesignValidationException {
-		Mockito.when(DesignImportControllerTest.this.designImportService
-				.areTrialInstancesMatchTheSelectedEnvironments(3, DesignImportControllerTest.this.userSelection.getDesignImportData()))
+		Mockito.when(this.designImportService
+				.areTrialInstancesMatchTheSelectedEnvironments(3, this.userSelection.getDesignImportData()))
 				.thenReturn(true);
 
-		final Map<String, Object> results = DesignImportControllerTest.this.designImportController
-				.validateAndSaveNewMapping(DesignImportControllerTest.this.createTestMappedHeaders(), 3);
+		final Map<String, Object> results = this.designImportController
+				.validateAndSaveNewMapping(this.createTestMappedHeaders(), 3);
 
-		Mockito.verify(DesignImportControllerTest.this.designImportValidator)
-				.validateDesignData(DesignImportControllerTest.this.userSelection.getDesignImportData());
+		Mockito.verify(this.designImportValidator)
+				.validateDesignData(this.userSelection.getDesignImportData());
 
 		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders =
-				DesignImportControllerTest.this.userSelection.getDesignImportData().getMappedHeaders();
+			this.userSelection.getDesignImportData().getMappedHeaders();
 
 		Assert.assertEquals(1, mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).size());
 		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.GERMPLASM).size());
@@ -1171,7 +1171,7 @@ public class DesignImportControllerTest {
 
 		Assert.assertEquals("Expecting an empty variable name because the term does not exist in trial variable list, headers of design "
 				+ "import data and ontology", "", this.designImportController
-				.resolveStandardVariableNameOfTheTrialEnvironmentVariable(TermId.PLOT_ID.getId(), settingDetails, designImportData));
+				.resolveStandardVariableNameOfTheTrialEnvironmentVariable(TermId.OBS_UNIT_ID.getId(), settingDetails, designImportData));
 
 	}
 

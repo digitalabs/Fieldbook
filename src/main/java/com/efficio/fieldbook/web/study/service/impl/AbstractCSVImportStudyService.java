@@ -52,8 +52,8 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 
 	@Override
 	protected void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes) throws IOException {
-		final List<String> measurementHeaders = this.getMeasurementHeaders(workbook);
-		final List<String> headers = parseObservationData().get(0);
+		final List<String> measurementHeaders = this.getMeasurementHeaders(this.workbook);
+		final List<String> headers = this.parseObservationData().get(0);
 		for (int i = 0; i < headers.size(); i++) {
 			final String header = headers.get(i);
 			if (header.equals(KsuFieldbookUtil.PLOT) || measurementHeaders.contains(header)) {
@@ -61,8 +61,8 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 			}
 
 			final Set<StandardVariable> standardVariables =
-					ontologyDataManager.findStandardVariablesByNameOrSynonym(header, contextUtil.getCurrentProgramUUID());
-			Boolean found = false;
+				this.ontologyDataManager.findStandardVariablesByNameOrSynonym(header, this.contextUtil.getCurrentProgramUUID());
+			boolean found = false;
 			for (final StandardVariable standardVariable : standardVariables) {
 				if (measurementHeaders.contains(standardVariable.getName())) {
 					headers.set(i, standardVariable.getName());
@@ -76,7 +76,7 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 			}
 
 		}
-		parsedData.put(0, headers);
+		this.parsedData.put(0, headers);
 	}
 
 
@@ -84,7 +84,7 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 	@Override
 	protected Map<Integer, List<String>> parseObservationData() throws IOException {
         try {
-            return csvFileParser.parseFile(currentFile);
+            return this.csvFileParser.parseFile(this.currentFile);
         } catch (final FileParsingException e) {
             throw new IOException(e.getMessage(), e);
         }
@@ -105,23 +105,23 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 		if (!Objects.equals(measurementRowsMap, null) && !measurementRowsMap.isEmpty()) {
 			workbook.setHasExistingDataOverwrite(false);
 			workbook.setPlotsIdNotfound(0);
-			int countPlotIdNotFound = 0;
+			int countObsUnitIdNotFound = 0;
 			final List<String> headerRowData = parsedData.get(0);
-			final Integer plotIdIndex = this.getIndexOfPlotIdFromObservation(parsedData, variablesFactors);
+			final Integer obsUnitIdIndex = this.getIndexOfObsUnitIdFromObservation(parsedData, variablesFactors);
 			final Integer desigIndex =
 				this.findIndexOfColumn(headerRowData, this.getColumnLabel(variablesFactors, TermId.DESIG.getId())).get(0);
 
 			for (int i = 1; i < parsedData.size(); i++) {
 				final List<String> rowData = parsedData.get(i);
-				final String plotId = this.getPlotIdFromRow(rowData, plotIdIndex);
-				final MeasurementRow measurementRow = measurementRowsMap.get(plotId);
+				final String obsUnitId = this.getObsUnitIdFromRow(rowData, obsUnitIdIndex);
+				final MeasurementRow measurementRow = measurementRowsMap.get(obsUnitId);
 
 				if (measurementRow == null) {
-					countPlotIdNotFound++;
+					countObsUnitIdNotFound++;
 					continue;
 				}
 
-				measurementRowsMap.remove(plotId);
+				measurementRowsMap.remove(obsUnitId);
 
 				if (desigIndex == null) {
 					throw new WorkbookParserException("error.workbook.import.designation.empty.cell");
@@ -136,8 +136,8 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 				}
 			}
 
-			if (countPlotIdNotFound != 0) {
-				workbook.setPlotsIdNotfound(countPlotIdNotFound);
+			if (countObsUnitIdNotFound != 0) {
+				workbook.setPlotsIdNotfound(countObsUnitIdNotFound);
 			}
 		}
 	}
@@ -148,19 +148,19 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 		this.setNewDesignation(measurementRow, newDesig);
 	}
 
-	protected Integer getIndexOfPlotIdFromObservation(final Map<Integer, List<String>> csvMap,
+	protected Integer getIndexOfObsUnitIdFromObservation(final Map<Integer, List<String>> csvMap,
 			final List<MeasurementVariable> variables) throws WorkbookParserException {
 
-		String plotIdLabel = null;
+		String obsUnitIdLabel = null;
 
 		for (final MeasurementVariable variable : variables) {
-			if (variable.getTermId() == TermId.PLOT_ID.getId()) {
-				plotIdLabel = this.getLabelFromRequiredColumn(variable);
+			if (variable.getTermId() == TermId.OBS_UNIT_ID.getId()) {
+				obsUnitIdLabel = this.getLabelFromRequiredColumn(variable);
 				break;
 			}
 		}
 
-		final List<Integer> indexes = this.findIndexOfColumn(csvMap.get(0), plotIdLabel);
+		final List<Integer> indexes = this.findIndexOfColumn(csvMap.get(0), obsUnitIdLabel);
 		if (indexes.size() == 0 || indexes.get(0) == -1) {
 			throw new WorkbookParserException("error.workbook.import.plot.id.empty.cell");
 		}
@@ -186,14 +186,14 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 		return "";
 	}
 
-	String getPlotIdFromRow(final List<String> row, final Integer index) throws WorkbookParserException{
-		final String plotId = row.get(index);
+	String getObsUnitIdFromRow(final List<String> row, final Integer index) throws WorkbookParserException{
+		final String obsUnitId = row.get(index);
 
-		if (StringUtils.isBlank(plotId)) {
+		if (StringUtils.isBlank(obsUnitId)) {
 			throw new WorkbookParserException("error.workbook.import.plot.id.empty.cell");
 		}
 
-		return plotId;
+		return obsUnitId;
 	}
 
 	protected void importDataCellValues(final MeasurementData wData, final List<String> row, final int columnIndex,
@@ -249,7 +249,7 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 
         final Integer termId = wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : new Integer(0);
         if (!factorVariableMap.containsKey(termId) && (!"".equalsIgnoreCase(wData.getValue()) || wData.getcValueId() != null)) {
-            workbook.setHasExistingDataOverwrite(true);
+			this.workbook.setHasExistingDataOverwrite(true);
         }
 
         if (TermId.CATEGORICAL_VARIABLE.getId() == wData.getMeasurementVariable().getDataTypeId() && !csvValue.equals(tempVal)) {
@@ -267,10 +267,10 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 
 		if (NumberUtils.isNumber(cell)) {
 			final Double doubleVal = NumberUtils.createDouble(cell);
-			final Integer intVal = doubleVal.intValue();
+			final int intVal = doubleVal.intValue();
 			// trim zeroes
 			if (doubleVal == Math.ceil(doubleVal)) {
-				realValue = intVal.toString();
+				realValue = Integer.toString(intVal);
 			} else {
 				realValue = doubleVal.toString();
 			}
@@ -280,8 +280,8 @@ public abstract class AbstractCSVImportStudyService extends AbstractImportStudyS
 	}
 
 	@Override
-	protected void detectAddedTraitsAndPerformRename(Set<ChangeType> modes, List<String> addedVariates,
-			List<String> removedVariates) throws IOException {
+	protected void detectAddedTraitsAndPerformRename(final Set<ChangeType> modes, final List<String> addedVariates,
+			final List<String> removedVariates) throws IOException {
 		this.detectAddedTraitsAndPerformRename(modes);
 
 	}

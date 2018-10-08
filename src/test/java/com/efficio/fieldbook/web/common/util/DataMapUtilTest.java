@@ -101,7 +101,7 @@ public class DataMapUtilTest {
 			new MeasurementVariableDto(3, "CategoricalTrait"), 3, "CategoryValue1", null);
 
 	private final TermId[] standardFactors = { TermId.GID, TermId.ENTRY_NO, TermId.ENTRY_TYPE, TermId.ENTRY_CODE,
-			TermId.PLOT_NO, TermId.PLOT_ID, TermId.BLOCK_NO, TermId.REP_NO, TermId.ROW, TermId.COL,
+			TermId.PLOT_NO, TermId.OBS_UNIT_ID, TermId.BLOCK_NO, TermId.REP_NO, TermId.ROW, TermId.COL,
 			TermId.FIELDMAP_COLUMN, TermId.FIELDMAP_RANGE };
 
 	@Before
@@ -126,7 +126,7 @@ public class DataMapUtilTest {
 
 		testObservationDto.setRowNumber("11");
 		testObservationDto.setColumnNumber("22");
-		testObservationDto.setPlotId("9CVRPNHaSlCE1");
+		testObservationDto.setObsUnitId("9CVRPNHaSlCE1");
 
 		final List<ObservationDto> observations = Lists.newArrayList(testObservationDto);
 		Mockito.when(this.studyService.getObservations(Matchers.anyInt(), Matchers.anyInt(), Matchers.anyInt(),
@@ -240,10 +240,10 @@ public class DataMapUtilTest {
 				Arrays.equals(new Object[] {observationDto.getColumnNumber(), false}, (Object[]) onePlotMeasurementData.get(colMapKey)),
 				Is.is(true));
 
-		final String plotIdMapKey = useDifferentLocalNames
-				? TermId.PLOT_ID.name() + DataMapUtilTest.LOCAL : TermId.PLOT_ID.name();
+		final String obsUnitIdMapKey = useDifferentLocalNames
+				? TermId.OBS_UNIT_ID.name() + DataMapUtilTest.LOCAL : TermId.OBS_UNIT_ID.name();
 		MatcherAssert.assertThat(
-				Arrays.equals(new Object[] {observationDto.getPlotId(), false}, (Object[]) onePlotMeasurementData.get(plotIdMapKey)),
+				Arrays.equals(new Object[] {observationDto.getObsUnitId(), false}, (Object[]) onePlotMeasurementData.get(obsUnitIdMapKey)),
 				Is.is(true));
 
 		final String fieldMapColumnMapKey = useDifferentLocalNames
@@ -379,7 +379,7 @@ public class DataMapUtilTest {
 		// Method to test
 		final ObservationDto observationDto = observations.get(0);
 		(new DataMapUtil()).addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables,
-				new HashMap<String, String>(), ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
+				new HashMap<String, String>(), this.ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
 
 		MatcherAssert.assertThat(this.standardFactors.length, Is.is(CoreMatchers.equalTo(dataMap.size())));
 		// set to false because GID and DESIGNATION are not expected to be in
@@ -407,7 +407,7 @@ public class DataMapUtilTest {
 		// Method to test
 		final ObservationDto observationDto = observations.get(0);
 		(new DataMapUtil()).addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables,
-				new HashMap<String, String>(), ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
+				new HashMap<String, String>(), this.ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
 
 		// Expecting that GID-local and DESIGNATION-local were added
 		MatcherAssert.assertThat(this.standardFactors.length + 2, Is.is(CoreMatchers.equalTo(dataMap.size())));
@@ -438,7 +438,7 @@ public class DataMapUtilTest {
 		// Method to test
 		final ObservationDto observationDto = observations.get(0);
 		(new DataMapUtil()).addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables,
-				new HashMap<String, String>(), ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
+				new HashMap<String, String>(), this.ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
 
 		// expecting CROSS and STOCK_ID to have been added
 		MatcherAssert.assertThat(this.standardFactors.length + 2, Is.is(CoreMatchers.equalTo(dataMap.size())));
@@ -464,7 +464,7 @@ public class DataMapUtilTest {
 		// Method to test
 		final ObservationDto observationDto = observations.get(0);
 		(new DataMapUtil()).addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables,
-				new HashMap<String, String>(), ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
+				new HashMap<String, String>(), this.ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
 
 		// expecting FIELDMAP_COLUMN and FIELDMAP_RANGE to have been added
 		MatcherAssert.assertThat(this.standardFactors.length + 2, Is.is(CoreMatchers.equalTo(dataMap.size())));
@@ -502,7 +502,7 @@ public class DataMapUtilTest {
 
 		// Method to test
 		(new DataMapUtil()).addGermplasmAndPlotFactorsDataToDataMap(observationDto, dataMap, this.measurementVariables,
-				new HashMap<String, String>(), ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
+				new HashMap<String, String>(), this.ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
 
 		MatcherAssert.assertThat(dataMap, hasKey(DataMapUtilTest.ALEUCOL_1_5_TRAIT_NAME));
 		MatcherAssert.assertThat(dataMap.get(DataMapUtilTest.ALEUCOL_1_5_TRAIT_NAME), Is.is(CoreMatchers.not(CoreMatchers.nullValue())));
@@ -526,7 +526,7 @@ public class DataMapUtilTest {
 
 		// Method to test
 		final Map<String, Object> dataMap = (new DataMapUtil()).generateDatatableDataMap(observationDto, new HashMap<String, String>(),
-				userSelection, ontologyVariableDataManager, contextUtil.getCurrentProgramUUID());
+				userSelection, this.ontologyVariableDataManager, this.contextUtil.getCurrentProgramUUID());
 
 		MatcherAssert.assertThat("Expected a non-null data map.", dataMap.size(),
 				Is.is(CoreMatchers.not(CoreMatchers.equalTo(0))));
@@ -561,7 +561,7 @@ public class DataMapUtilTest {
 
 		// Method to test
 		final Map<String, Object> dataMap = (new DataMapUtil())
-				.generateDatatableDataMap(observationDto, new HashMap<String, String>(), userSelection, ontologyVariableDataManager,
+				.generateDatatableDataMap(observationDto, new HashMap<String, String>(), userSelection, this.ontologyVariableDataManager,
 						this.contextUtil.getCurrentProgramUUID());
 
 		// Verify that values exist for retained traits but deleted trait is not

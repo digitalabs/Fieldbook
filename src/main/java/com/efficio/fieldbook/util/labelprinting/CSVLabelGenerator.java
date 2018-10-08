@@ -6,7 +6,6 @@ import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
-import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.GermplasmExportService;
@@ -74,13 +73,13 @@ public class CSVLabelGenerator implements LabelGenerator {
 
             final Map<String, String> moreFieldInfo = this.labelPrintingUtil.generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, "");
             for (final FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
-                String barcodeLabelForCode;
+                final String barcodeLabelForCode;
                 if (!generateAutomatically ) {
                     barcodeLabelForCode = this.labelPrintingUtil
                             .generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField,
                                     fieldMapTrialInstanceInfo.getLabelHeaders(), false);
                 } else {
-                    barcodeLabelForCode = fieldMapLabel.getPlotId();
+                    barcodeLabelForCode = fieldMapLabel.getObsUnitId();
                 }
                 moreFieldInfo.put(LabelPrintingServiceImpl.BARCODE, barcodeLabelForCode);
 

@@ -978,9 +978,9 @@ function selectedEnvironmentContinueCreatingSample(trialInstances) {
 	$('#selectSelectionVariableToSampleListModal').modal('show');
 }
 
-function openSampleSummary(plotId, plotNumber) {
+function openSampleSummary(obsUnitId, plotNumber) {
 	'use strict';
-	BMS.Fieldbook.SamplesSummaryDataTable('#samples-summary-table', plotId, plotNumber);
+	BMS.Fieldbook.SamplesSummaryDataTable('#samples-summary-table', obsUnitId, plotNumber);
 	$('#samplesSummaryModal').modal({ backdrop: 'static', keyboard: true });
 	$('#samples-summary-table').wrap('<div style="overflow-x: auto" />');
 }
@@ -1359,8 +1359,8 @@ function doFinalExport(paramUrl, additionalParams, exportWayType) {
 
 	if ($('#browser-studies').length === 0) {
 		// the study is opened
-		var tableContainsPlotId = BMS.Fieldbook.MeasurementsTable.containsHeader('measurement-table', '8201');
-		visibleColumns = getMeasurementTableVisibleColumns(tableContainsPlotId);
+		var tableContainsObsUnitId = BMS.Fieldbook.MeasurementsTable.containsHeader('measurement-table', '8201');
+		visibleColumns = getMeasurementTableVisibleColumns(tableContainsObsUnitId);
 		var exportType = $('#exportType').val();
 		// excel or csv
 		if ((exportType == 6 || exportType == 2) && visibleColumns.length !== 0) {
@@ -1415,7 +1415,7 @@ function showWarningMessageForRequiredColumns(visibleColumns) {
 	}
 }
 
-function getMeasurementTableVisibleColumns(addPlotId) {
+function getMeasurementTableVisibleColumns(addObsUnitId) {
 	'use strict';
 	var visibleColumns = '';
 	if ($('[ui-view="editMeasurements"]').text().length === 0) {
@@ -1424,12 +1424,12 @@ function getMeasurementTableVisibleColumns(addPlotId) {
 	var headers = $('#measurement-table_wrapper .dataTables_scrollHead [data-term-id]');
 	var headerCount = headers.size();
 	var i = 0;
-	var plotIdFound = false;
+	var obsUnitIdFound = false;
 	for (i = 0; i < headerCount; i++) {
 		var headerId = $('#measurement-table_wrapper .dataTables_scrollHead [data-term-id]:eq(' + i + ')').attr('data-term-id');
 		if ($.isNumeric(headerId)) {
 			if (headerId == '8201'){
-				plotIdFound = true;
+				obsUnitIdFound = true;
 			}
 			if (visibleColumns.length == 0) {
 				visibleColumns = headerId;
@@ -1438,7 +1438,7 @@ function getMeasurementTableVisibleColumns(addPlotId) {
 			}
 		}
 	}
-	if (addPlotId && !plotIdFound) {
+	if (addObsUnitId && !obsUnitIdFound) {
 		visibleColumns = visibleColumns + ',' + '8201';
 	}
 	return visibleColumns;

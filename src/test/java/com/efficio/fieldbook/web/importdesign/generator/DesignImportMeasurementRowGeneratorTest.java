@@ -190,8 +190,8 @@ public class DesignImportMeasurementRowGeneratorTest {
 				Assert.assertEquals(
 						"The value of MeasurementData should match the germplasm value for " + TermId.SEED_SOURCE.toString() + " variable.",
 						measurementData.getValue().toString(), germplasmEntry.getSource().toString());
-			} else if (TermId.PLOT_ID.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should be empty for " + TermId.PLOT_ID.toString() + " variable",
+			} else if (TermId.OBS_UNIT_ID.getId() == measurementData.getMeasurementVariable().getTermId()) {
+				Assert.assertEquals("The value of MeasurementData should be empty for " + TermId.OBS_UNIT_ID.toString() + " variable",
 						measurementData.getValue().toString(), "");
 
 			} else if (TermId.STOCKID.getId() == measurementData.getMeasurementVariable().getTermId()) {
@@ -232,7 +232,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 		this.generator.addVariatesToMeasurementRows(measurements, this.ontologyService, this.contextUtil);
 
 		final Integer actualSize = measurements.get(0).getDataList().size();
-		final Integer noOfAddedVariates = 1;
+		final int noOfAddedVariates = 1;
 		final Integer expectedSize = beforeSize + noOfAddedVariates;
 		Assert.assertEquals("The size of the data list should be " + expectedSize + " since " + noOfAddedVariates + " variates are added",
 				expectedSize, actualSize);

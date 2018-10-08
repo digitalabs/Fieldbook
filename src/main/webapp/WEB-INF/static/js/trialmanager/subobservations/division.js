@@ -82,63 +82,65 @@
 			function renderPreview() {
 				$scope.dtOptionsPreview = DTOptionsBuilder
 					.fromFnPromise(getPreview())
-					.withOption('rowCallback', function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-						var experimentId = aData.experimentId;
-
-						$('td.variates', nRow).off().on('click', function() {
-							var termId = $(this).data('term-id'),
-								phenotypeId = $(this).data('phenotype-id'),
-								that = this;
-
-							// FIXME BMS-4453
-							if (!termId || !phenotypeId) return;
-
-							/**
-							 * Remove handler to not interfere with inline editor
-							 * fnUpdate will trigger rowCallback and restore it
-							 */
-							$(this).off('click');
-
-							$scope.$apply(function () {
-								var data = division.rowMap[experimentId][termId];
-
-								/*
-								FIXME change json response for an object with named properties
-									Current structure is an array
-										AleuCol_E_1to5: ["7", "7", true, "", null]
-									where the first item is the value
-								 */
-
-								$scope.observationInlineEditor.observation = {
-									value: data[0],
-									change: function () {
-										updateInline();
-									}
-								};
-
-								function updateInline() {
-									data[0] = $scope.observationInlineEditor.observation.value;
-
-									$('#observation-inline-editor').detach().appendTo($('#observation-inline-editor-container'))
-
-									$('#preview-subobservation-table-' + subObservation.id + '-' + division.id)
-										.dataTable()
-										.fnUpdate(division.rows[iDisplayIndexFull], iDisplayIndexFull, null, true);
-								}
-
-								$scope.observationInlineEditor.column = division.columnMap[termId];
-
-								$(that).html('');
-								$('#observation-inline-editor').detach().appendTo($(that))
-							});
-						})
-					})
+					.withOption('rowCallback', previewRowCallback)
 					// FIXME buttons
 				 // .withDOM('<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp')
 					.withDOM('<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info">>tp')
 					.withPaginationType('full_numbers')
 				;
 
+			}
+
+			function previewRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+				var experimentId = aData.experimentId;
+
+				$('td.variates', nRow).off().on('click', function () {
+					var termId = $(this).data('term-id'),
+						phenotypeId = $(this).data('phenotype-id'),
+						that = this;
+
+					// FIXME BMS-4453
+					if (!termId || !phenotypeId) return;
+
+					/**
+					 * Remove handler to not interfere with inline editor
+					 * fnUpdate will trigger rowCallback and restore it
+					 */
+					$(this).off('click');
+
+					$scope.$apply(function () {
+						var data = division.rowMap[experimentId][termId];
+
+						/*
+						FIXME change json response for an object with named properties
+							Current structure is an array
+								AleuCol_E_1to5: ["7", "7", true, "", null]
+							where the first item is the value
+						 */
+
+						$scope.observationInlineEditor.observation = {
+							value: data[0],
+							change: function () {
+								updateInline();
+							}
+						};
+
+						function updateInline() {
+							data[0] = $scope.observationInlineEditor.observation.value;
+
+							$('#observation-inline-editor').detach().appendTo($('#observation-inline-editor-container'))
+
+							$('#preview-subobservation-table-' + subObservation.id + '-' + division.id)
+								.dataTable()
+								.fnUpdate(division.rows[iDisplayIndexFull], iDisplayIndexFull, null, true);
+						}
+
+						$scope.observationInlineEditor.column = division.columnMap[termId];
+
+						$(that).html('');
+						$('#observation-inline-editor').detach().appendTo($(that))
+					});
+				})
 			}
 
 			function getPreview() {

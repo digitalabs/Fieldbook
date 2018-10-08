@@ -21,10 +21,6 @@
 		$scope.applicationData = TrialManagerDataService.applicationData;
 		$scope.data = TrialManagerDataService.currentData.environments;
 
-		$scope.$on('refreshEnvironmentService', function() {
-			environmentService.updateEnvironmentData();
-		});
-
 		$scope.$on('changeEnvironments', function () {
 			$scope.data = environmentService.environments;
 

@@ -497,8 +497,6 @@
 
 										//refresh the environments list in measurements tab
 										$rootScope.$broadcast('refreshEnvironmentListInMeasurementTable');
-										//refresh the refreshEnvironmentService. //TODO Find another way to update the data of the service.
-										$rootScope.$broadcast('refreshEnvironmentService');
 										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 											service.trialMeasurement.count);
 										service.applicationData.unsavedGeneratedDesign = false;

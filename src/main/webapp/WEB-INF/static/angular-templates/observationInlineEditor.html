@@ -1,10 +1,7 @@
 <input type="text"
-	   ng-if="column.dataTypeCode === 'N'"
+	   ng-if="column.dataTypeCode !== 'C'"
 	   ng-blur="observation.change()"
 	   ng-model="observation.value"></input>
-
-<!--FIXME add outliers-->
-<!--FIXME Notes not working-->
 
 <ui-select ng-model="observation.value"
 		   ng-if="column.dataTypeCode === 'C'"

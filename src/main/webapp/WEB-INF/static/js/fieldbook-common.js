@@ -843,7 +843,6 @@ function subObservationUnitDatasetSelector() {
 
 	var $scope = angular.element('#SubObservationUnitDatasetSelectorModal').scope();
 	$scope.init();
-	//$scope.$apply();
 }
 
 function subObservationUnitDatasetbuild(option) {

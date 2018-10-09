@@ -1,14 +1,19 @@
-<input ng-if="column.dataTypeCode === 'N'"
+<input type="text"
+	   ng-if="column.dataTypeCode === 'N'"
 	   ng-blur="observation.change()"
 	   ng-model="observation.value"></input>
-<select ng-if="column.dataTypeCode === 'C'"
-		ng-blur="observation.change()"
-		ng-model="observation.value">
-	<!--FIXME add outliers-->
-	<!--FIXME Notes not working-->
-	<option ng-repeat="value in column.possibleValues"
-			value="{{value.name}}"
-			title="{{value.description}}">
-		{{value.name}}
-	</option>
-</select>
+
+<!--FIXME add outliers-->
+<!--FIXME Notes not working-->
+
+<ui-select ng-model="observation.value"
+		   ng-if="column.dataTypeCode === 'C'"
+		   uis-open-close="observation.onOpenClose(isOpen)"
+		   theme="select2">
+	<ui-select-match class="ui-select-match">
+		<span ng-bind="$select.selected.name"></span>
+	</ui-select-match>
+	<ui-select-choices repeat="value.name as value in (column.possibleValues | filter: $select.search) track by value.name">
+		<span ng-bind="value.name"></span>
+	</ui-select-choices>
+</ui-select>

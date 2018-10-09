@@ -4,8 +4,8 @@
 	var manageTrialApp = angular.module('manageTrialApp');
 
 	manageTrialApp.controller('SubObservationDivisionCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
-		'DTColumnBuilder', '$http', "$q",
-		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q) {
+		'DTColumnBuilder', '$http', "$q", "$compile",
+		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile) {
 
 			var division = $scope.division = $stateParams.division;
 			$scope.preview = Boolean(division.preview);
@@ -13,7 +13,6 @@
 			$scope.rows = division.rows;
 			$scope.nested = {};
 			$scope.nested.dtInstance = null;
-			$scope.observationInlineEditor = {};
 
 			var subObservation = $scope.subObservation;
 			var dataTable = $scope.division.dataTable;
@@ -122,27 +121,44 @@
 							where the first item is the value
 						 */
 
-						$scope.observationInlineEditor.observation = {
+						var $inlineScope = $scope.$new(true)
+
+						$inlineScope.observation = {
 							value: data[0],
 							change: function () {
 								updateInline();
+							},
+							// FIXME altenative to blur bug https://github.com/angular-ui/ui-select/issues/499
+							onOpenClose: function(isOpen) {
+								if (!isOpen) updateInline();
 							}
 						};
 
-						function updateInline() {
-							data[0] = $scope.observationInlineEditor.observation.value;
+						var column = $inlineScope.column = division.columnMap[termId];
 
-							$('#observation-inline-editor').detach().appendTo($('#observation-inline-editor-container'))
+						$(that).html('');
+						var editor = $compile(
+							" <observation-inline-editor " +
+							" column='column' " +
+							" observation='observation'></observation-inline-editor> "
+						)($inlineScope);
+
+						$(that).append(editor);
+
+						function updateInline() {
+							data[0] = $inlineScope.observation.value;
+
+							$inlineScope.$destroy();
+							editor.remove();
 
 							$('#preview-subobservation-table-' + subObservation.id + '-' + division.id)
 								.dataTable()
 								.fnUpdate(division.rows[iDisplayIndexFull], iDisplayIndexFull, null, true);
 						}
 
-						$scope.observationInlineEditor.column = division.columnMap[termId];
+						// FIXME
+						$(that).css('overflow', 'visible')
 
-						$(that).html('');
-						$('#observation-inline-editor').detach().appendTo($(that))
 					});
 				})
 			}

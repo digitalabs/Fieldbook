@@ -4,8 +4,8 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'environmentService', function($scope,
-	TrialManagerDataService, environmentService) {
+	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'environmentService', function ($scope,
+																																  TrialManagerDataService, environmentService) {
 
 		$scope.settings = TrialManagerDataService.settings.environments;
 		if (Object.keys($scope.settings).length === 0) {
@@ -13,33 +13,26 @@
 			$scope.settings.managementDetails = [];
 			$scope.settings.trialConditionDetails = [];
 		}
-		$scope.userInput = TrialManagerDataService.currentData.trialSettings.userInput;
-		$scope.trialSettings = TrialManagerDataService.settings.trialSettings;
 
 		$scope.TRIAL_LOCATION_NAME_INDEX = 8180;
 		$scope.TRIAL_LOCATION_ABBR_INDEX = 8189;
-		$scope.TRIAL_INSTANCE_INDEX = 8170;
-		$scope.PREFERRED_LOCATION_VARIABLE = 8170;
 		$scope.LOCATION_NAME_ID = 8190;
+		$scope.trialInstances = [];
 		$scope.environmentListView = [];
 		$scope.applicationData = TrialManagerDataService.applicationData;
-
-
 		$scope.data = TrialManagerDataService.currentData.environments;
 
-		$scope.$on('changeEnvironments', function() {
+		$scope.$on('changeEnvironments', function () {
 			$scope.data = environmentService.environments;
-			
+
 			//create a map for location dropdown values
 			var locationMap = {};
-			angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].allValues, function(locationVariable) {
-            	locationMap[locationVariable.id] = locationVariable;
-            });
+			angular.forEach($scope.settings.managementDetails.vals()[$scope.LOCATION_NAME_ID].allValues, function (locationVariable) {
+				locationMap[locationVariable.id] = locationVariable;
+			});
 
-
-
-			angular.forEach($scope.data.environments, function(environment) {
-				if(locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]]) {
+			angular.forEach($scope.data.environments, function (environment) {
+				if (locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]]) {
 
 					// Ensure that the location id and location name details of the $scope.data.environments
 					// are updated with values from Location json object
@@ -48,13 +41,13 @@
 					environment.managementDetailValues[$scope.TRIAL_LOCATION_NAME_INDEX]
 						= locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].name;
 
-					selectedLocationForTrial = {id: environment.managementDetailValues[$scope.LOCATION_NAME_ID]
-						, name: locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].name};
+					selectedLocationForTrial = {
+						id: environment.managementDetailValues[$scope.LOCATION_NAME_ID]
+						, name: locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].name
+					};
 				}
 			});
 		});
-
-		$scope.trialInstances = [];
 
 		$scope.noOfReplications = TrialManagerDataService.currentData.experimentalDesign.replicationsCount;
 
@@ -67,99 +60,62 @@
 				return;
 			}
 
-			var isTrialInstanceSelected = false;
 			var selectedTrialInstances = [];
 			var selectedLocationDetails = [];
-			angular.forEach($scope.trialInstances, function(id) {
-				if (id && !isTrialInstanceSelected) {
-					isTrialInstanceSelected = true;
-				}
-			});
+			var locationAbbr = false;
 
-			if (!isTrialInstanceSelected) {
+			if ($scope.trialInstances.length === 0) {
 				showErrorMessage('', selectOneLocationErrorMessageForAdvancing);
 			} else {
-				if ($scope.locationFromTrialSettings) {
+				if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX)) {
 					selectedLocationDetails
-						.push($scope.trialSettings.val($scope.PREFERRED_LOCATION_VARIABLE).variable.name);
+						.push($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX).variable.name);
+					locationAbbr = true;
 				} else {
 					selectedLocationDetails
-						.push($scope.settings.managementDetails.val($scope.PREFERRED_LOCATION_VARIABLE).variable.name);
+						.push($scope.settings.managementDetails.val($scope.LOCATION_NAME_ID).variable.name);
 				}
 
 				angular.forEach($scope.trialInstances, function(trialInstanceNumber) {
 					if (trialInstanceNumber) {
 						selectedTrialInstances.push(trialInstanceNumber);
-
-						angular.forEach($scope.data.environments, function(environment) {
-							if (environment.managementDetailValues[$scope.TRIAL_INSTANCE_INDEX] === trialInstanceNumber) {
-								selectedLocationDetails.push(TrialManagerDataService.getPreferredEnvironmentName(environment, $scope.PREFERRED_LOCATION_VARIABLE, $scope.settings.managementDetails));
+						angular.forEach($scope.environmentListView, function(environment) {
+							if (environment.trialInstanceNumber === trialInstanceNumber) {
+								if(locationAbbr){
+									selectedLocationDetails.push(environment.customAbbrName);
+								}else{
+									selectedLocationDetails.push(environment.name);
+								}
 							}
 						});
-
-
 					}
 				});
 
-				var isTrialInstanceNumberUsed = false;
-				if ($scope.PREFERRED_LOCATION_VARIABLE === 8170) {
-					isTrialInstanceNumberUsed = true;
-				}
 				selectEnvironmentContinueAdvancing(selectedTrialInstances, $scope.noOfReplications, selectedLocationDetails,
-					isTrialInstanceNumberUsed, $scope.applicationData.advanceType);
+					$scope.applicationData.advanceType);
 			}
 
 		};
 
-		$scope.doSelectAll = function () {
-			$scope.trialInstances = [];
-			var i = 1;
-			angular.forEach($scope.environmentListView, function (environment) {
-				if ($scope.selectAll) {
-					environment.selected = i;
-					i = i + 1;
-					$scope.trialInstances.push(environment.trialInstanceNumber);
-				} else {
-					environment.selected = undefined;
-				}
+		$scope.init = function () {
+			$scope.selectAll = true;
+			environmentService.getEnvironments().then(function (environmentDetails) {
+				$scope.environmentListView = [];
+				$scope.trialInstances = [];
+				angular.forEach(environmentDetails, function (environment) {
+					$scope.environmentListView.push({
+						name: environment.locationName + ' - (' + environment.locationAbbreviation + ')',
+						abbrName: environment.locationAbbreviation,
+						customAbbrName: environment.customLocationAbbreviation,
+						trialInstanceNumber: environment.instanceNumber,
+						instanceDbId: environment.instanceDbId,
+						selected: $scope.selectAll
+					});
+					$scope.trialInstances.push(environment.instanceNumber);
+				});
 			});
 		};
-
-		$scope.doSelectInstance = function (index) {
-			var environment = $scope.environmentListView[index];
-			if (environment.selected != undefined) {
-				$scope.trialInstances.push(environment.trialInstanceNumber);
-			} else {
-				$scope.selectAll = false;
-				var idx = $scope.trialInstances.indexOf(environment.trialInstanceNumber);
-				$scope.trialInstances.splice(idx, 1);
-			}
-		};
-
-		$scope.init = function() {
-			$scope.locationFromTrialSettings = false;
-			$scope.selectAll = true;
-			$scope.userInput = TrialManagerDataService.currentData.trialSettings.userInput;
-			if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null) {
-				// LOCATION_ABBR from environments
-				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_ABBR_INDEX;
-			} else if ($scope.trialSettings.val($scope.TRIAL_LOCATION_ABBR_INDEX) != null) {
-				// LOCATION_ABBR from study settings
-				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_LOCATION_ABBR_INDEX;
-				$scope.locationFromTrialSettings = true;
-			} else if ($scope.settings.managementDetails.val($scope.LOCATION_NAME_ID) != null) {
-				// LOCATION_NAME_ID from environments
-				$scope.PREFERRED_LOCATION_VARIABLE = $scope.LOCATION_NAME_ID;
-			} else {
-				$scope.PREFERRED_LOCATION_VARIABLE = $scope.TRIAL_INSTANCE_INDEX;
-			}
-
-			$scope.environmentListView = TrialManagerDataService.getEnvironments($scope.PREFERRED_LOCATION_VARIABLE, $scope.settings.managementDetails);
-				$scope.doSelectAll();
-		};
-
 		$scope.init();
 
 	}]);
-
 })();

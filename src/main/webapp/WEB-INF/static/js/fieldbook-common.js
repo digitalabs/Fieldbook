@@ -843,12 +843,6 @@ function startAdvance(advanceType) {
 function initSelectEnvironment() {
 	'use strict';
 	$('#advanceStudyModal').modal('hide');
-
-	// we need to redraw the columns of the table
-	if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
-		$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
-	}
-
 	$('#selectEnvironmentModal').modal({ backdrop: 'static', keyboard: true });
 
 	// Add hide listener to selectEnvironmentModal
@@ -896,11 +890,6 @@ function advanceSample() {
 function backAdvanceStudy() {
 	'use strict';
 	$('#advanceStudyModal').modal('hide');
-
-	// we need to redraw the columns of the table
-	if ($('.fbk-datatable-environments').length !== 0 && $('.fbk-datatable-environments').DataTable() !== null) {
-		$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
-	}
 	$('#selectEnvironmentModal').modal('show');
 }
 
@@ -912,7 +901,6 @@ function createSample() {
 	}
 
 	$('#selectSelectionVariableToSampleListModal').modal('hide');
-	$('.fbk-datatable-environments').DataTable().columns.adjust().draw();
 	$('#selectEnvironmentToSampleListModal').modal({ backdrop: 'static', keyboard: true });
 
 	var scope = angular.element('#selectEnvironmentToSampleListModal').scope();
@@ -920,21 +908,21 @@ function createSample() {
 	scope.$apply();
 }
 
-function selectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, isTrialInstanceNumberUsed, advanceType) {
+function selectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, advanceType) {
 	'use strict';
-	var idVal = $('#studyId').val();
+	var studyId = $('#studyId').val();
 	$('#selectEnvironmentModal').modal('hide');
-	var locationDetailHtml = generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed);
-	advanceStudy(idVal, trialInstances, noOfReplications, locationDetailHtml, advanceType);
+	var locationDetailHtml = generateLocationDetailTable(selectedLocations);
+	advanceStudy(studyId, trialInstances, noOfReplications, locationDetailHtml, advanceType);
 }
 
 function selectedEnvironmentContinueCreatingSample(trialInstances) {
 	'use strict';
-	var idVal = $('#studyId').val();
+	var studyId = $('#studyId').val();
 	$('#selectEnvironmentToSampleListModal').modal('hide');
 
 	var scope = angular.element('#selectSelectionVariableToSampleListModal').scope();
-	scope.init(idVal, trialInstances);
+	scope.init(studyId, trialInstances);
 	$('#selectSelectionVariableToSampleListModal').modal('show');
 }
 
@@ -945,13 +933,10 @@ function openSampleSummary(obsUnitId, plotNumber) {
 	$('#samples-summary-table').wrap('<div style="overflow-x: auto" />');
 }
 
-function generateLocationDetailTable(selectedLocations, isTrialInstanceNumberUsed) {
+function generateLocationDetailTable(selectedLocations) {
 	//TODO Why do we generate an html code here in js?
 	//FIXME The caption is not localised
 	var result = "<table class='table table-curved table-condensed'>";
-	if (isTrialInstanceNumberUsed) {
-		result += "<caption>Update Location Name or Location Abbr in Environment Details.</caption>";
-	}
 	result += "<thead><tr><th>" + selectedLocations[0] + "</th></tr></thead>";
 
 	for (var i = 1; i < selectedLocations.length; i++) {

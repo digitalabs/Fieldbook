@@ -23,34 +23,12 @@
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 							<br></br>
-							<label class="" ng-show="locationFromTrial" th:utext="#{study.select.locations.sample.list}"> Select the
-								locations you would like to sample:</label>
-							<label class="" ng-hide="locationFromTrial" th:utext="#{study.select.instances.sample.list}"> Select the
-								instances you would like to sample:</label>
+							<label class="" th:utext="#{study.select.locations.sample.list}"> Select the location you would like to sample:</label>
 						</div>
 					</div>
 					<br/>
-					<div id="location-selection">
-						<table class="table table-curved table-condensed fbk-table-with-check fbk-datatable-environments" width="100%">
-							<thead>
-							<tr>
-								<th data-sortable="false" class="fbk-delete-link"><input type="checkbox" ng-model="selectAll" ng-change="doSelectAll()"/></th>
-								<th ng-if="!locationFromTrialSettings"> {{settings.managementDetails.val(PREFERRED_LOCATION_VARIABLE).variable.name}}</th>
-								<th ng-if="locationFromTrialSettings">{{trialSettings.val(PREFERRED_LOCATION_VARIABLE).variable.name}}</th>
-							</tr>
-							</thead>
-							<tbody>
-							<tr ng-repeat="environment in environmentListView track by environment.trialInstanceNumber" ng-class="{even : $even, odd : $odd}">
-								<td><input type="checkbox" name="location"
-										   ng-model="environment.Selected"
-										   ng-change="doSelectInstance($index)"
-										   ng-true-value="{{environment.trialInstanceNumber}}"
-										   ng-false-value="{{undefined}}"/></td>
-								<td ng-if="!locationFromTrialSettings">{{ environment.name }}</td>
-								<td ng-if="locationFromTrialSettings">{{ userInput[environment.variableId] }}</td>
-							</tr>
-							</tbody>
-						</table>
+					<div id="location-selection-createSample">
+						<environment-details></environment-details>
 					</div>
 				</div> <!-- Modal Body -->
 				<div class="modal-footer">
@@ -58,7 +36,7 @@
 							th:text="#{common.form.cancel.text}">
 						Cancel
 					</button>
-					<button type="button" class="btn btn-primary" ng-disabled="selectedInstancesBySampleList.length === 0"
+					<button type="button" class="btn btn-primary" ng-disabled="trialInstances.length === 0"
 							ng-click="continueCreatingSampleList()" th:text="#{common.form.continue.text}">
 						Continue
 					</button>
@@ -71,6 +49,16 @@
 <div layout:fragment="page-script">
 
 	<script type='text/javascript' th:inline="javascript">
+		//<![CDATA[
 		var selectOneLocationErrorMessageForSampleList = /*[[#{error.creating.sample.list.trial.instance.selected.at.least.one.location.selected}]]*/ '';
+		$(document).ready(function () {
+			$('#selectEnvironmentToSampleListModal').on('shown.bs.modal', function () {
+				// we need to redraw the columns of the table
+				$('#selectEnvironmentToSampleListModal .fbk-datatable-environments').DataTable().columns.adjust().draw();
+				// center pagination controls - FIXME replace with datatables dom options
+				$('#selectEnvironmentToSampleListModal .dataTables_paginate').closest('.col-xs-6').attr('class', 'col-xs-12');
+			});
+		});
+		//]]>
 	</script>
 </div>

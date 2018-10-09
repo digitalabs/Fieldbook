@@ -497,7 +497,6 @@
 
 										//refresh the environments list in measurements tab
 										$rootScope.$broadcast('refreshEnvironmentListInMeasurementTable');
-
 										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 											service.trialMeasurement.count);
 										service.applicationData.unsavedGeneratedDesign = false;
@@ -933,19 +932,6 @@
 						}('on Treatment Factors'));
 					}
 				},
-				getEnvironments: function (preferredLocationVariable, managementDetails) {
-					var environmentListView = [];
-					angular.forEach(this.currentData.environments.environments, function (environment) {
-						environmentListView.push({
-							name: service.getPreferredEnvironmentName(environment, preferredLocationVariable, managementDetails)
-							,
-							variableId: preferredLocationVariable,
-							trialInstanceNumber: environment.managementDetailValues[TRIAL_INSTANCE_INDEX]
-						});
-					});
-					return environmentListView;
-				},
-
 				getPreferredEnvironmentName: function (environment, preferredLocationVariable, managementDetails) {
 					var preferredLocation = '';
 					if (managementDetails.vals()[LOCATION_NAME_ID] !== undefined) {

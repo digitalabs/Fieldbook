@@ -1,3 +1,5 @@
+package com.efficio.fieldbook.web.trial.controller;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 @Controller
-@RequestMapping({"/TrialManager", LockUnlockStudyController.URL})
+@RequestMapping({LockUnlockStudyController.URL})
 public class LockUnlockStudyController extends AbstractBaseFieldbookController {
 
 	public static final String URL = "/TrialManager/changeLockedStatus";

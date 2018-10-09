@@ -9,11 +9,14 @@
 <ui-select ng-model="observation.value"
 		   ng-if="column.dataTypeCode === 'C'"
 		   uis-open-close="observation.onOpenClose(isOpen)"
+		   tagging="observation.newInlineValue"
+		   tagging-label="false"
 		   theme="select2">
-	<ui-select-match class="ui-select-match">
+	<ui-select-match
+		class="ui-select-match">
 		<span ng-bind="$select.selected.name"></span>
 	</ui-select-match>
-	<ui-select-choices repeat="value.name as value in (column.possibleValues | filter: $select.search) track by value.name">
+	<ui-select-choices repeat="value.name as value in (column.possibleValues | filter: { name: $select.search }) track by value.name">
 		<span ng-bind="value.name"></span>
 	</ui-select-choices>
 </ui-select>

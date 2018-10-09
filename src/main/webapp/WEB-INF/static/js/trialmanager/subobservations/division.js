@@ -131,6 +131,9 @@
 							// FIXME altenative to blur bug https://github.com/angular-ui/ui-select/issues/499
 							onOpenClose: function(isOpen) {
 								if (!isOpen) updateInline();
+							},
+							newInlineValue: function (newValue) {
+								return {name: newValue}
 							}
 						};
 

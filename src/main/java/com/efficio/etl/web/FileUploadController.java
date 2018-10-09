@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.generationcp.commons.security.AuthorizationUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.HTTPSessionUtil;
+import org.generationcp.commons.util.StudyPermissionValidator;
 import org.generationcp.middleware.domain.dms.StudyReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -93,6 +93,9 @@ public class FileUploadController extends AbstractBaseETLController {
 
 	@Resource
 	private ContextUtil contextUtil;
+	
+	@Resource
+	private StudyPermissionValidator studyPermissionValidator;
 
 	@Resource
 	protected WorkbenchService workbenchService;
@@ -263,8 +266,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			// if appending to existing study, check if user has permission to modify study
 			} else {
 				final Optional<StudyReference> studyOptional = this.fieldbookMiddlewareService.getStudyReferenceByNameAndProgramUUID(workbook.getStudyName(), this.contextUtil.getCurrentProgramUUID());
-				if (studyOptional.isPresent() && AuthorizationUtil.userLacksPermissionForStudy(studyOptional.get(),
-						this.contextUtil.getContextInfoFromSession().getLoggedInUserId())) {
+				if (studyOptional.isPresent() && this.studyPermissionValidator.userLacksPermissionForStudy(studyOptional.get())) {
 					this.returnMessage.put(FileUploadController.STATUS_CODE, FileUploadController.STATUS_CODE_LACKS_PERMISSION);
 					this.returnMessage.put(FileUploadController.STATUS_MESSAGE, this.messageSource.getMessage(
 							FileUploadController.USER_LACKS_PERMISSION_MESSAGE, new String[] {studyOptional.get().getOwnerName()}, locale));

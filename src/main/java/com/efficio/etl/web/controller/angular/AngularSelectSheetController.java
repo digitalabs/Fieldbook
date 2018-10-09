@@ -1,19 +1,23 @@
 package com.efficio.etl.web.controller.angular;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.service.impl.ETLServiceImpl;
-import com.efficio.etl.web.AbstractBaseETLController;
-import com.efficio.etl.web.bean.ConsolidatedStepForm;
-import com.efficio.etl.web.bean.RowDTO;
-import com.efficio.etl.web.bean.SheetDTO;
-import com.efficio.etl.web.bean.StudyDetailsForm;
-import com.efficio.etl.web.bean.UserSelection;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.generationcp.commons.security.AuthorizationUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.commons.util.StudyPermissionValidator;
 import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.dms.StudyReference;
 import org.generationcp.middleware.domain.etl.Constants;
@@ -33,16 +37,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.service.impl.ETLServiceImpl;
+import com.efficio.etl.web.AbstractBaseETLController;
+import com.efficio.etl.web.bean.ConsolidatedStepForm;
+import com.efficio.etl.web.bean.RowDTO;
+import com.efficio.etl.web.bean.SheetDTO;
+import com.efficio.etl.web.bean.StudyDetailsForm;
+import com.efficio.etl.web.bean.UserSelection;
 
 @Controller
 @RequestMapping(AngularSelectSheetController.URL)
@@ -74,6 +76,9 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 	@Resource
 	private StudyDataManager studyDataManager;
+	
+	@Resource
+	private StudyPermissionValidator studyPermissionValidator;
 
 	@Override
 	public String getContentName() {
@@ -88,32 +93,26 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(final Model model, final HttpServletRequest request) {
 
-		// removed code for initial retrieval of rows since at this point, user
-		// has not yet selected a sheet
-
 		model.addAttribute("displayedRows", AngularSelectSheetController.ROW_COUNT_PER_SCREEN);
 		final List<StudyDetails> previousStudies = this.getPreviousStudies(model);
 
-		for (final StudyDetails previousStudy : previousStudies) {
-			if (!StringUtils.isEmpty(previousStudy.getStartDate())) {
-				try {
-					final Date date = AngularSelectSheetController.DB_FORMAT.parse(previousStudy.getStartDate());
-					previousStudy.setStartDate(AngularSelectSheetController.DATE_PICKER_FORMAT.format(date));
-				} catch (final ParseException e) {
-					AngularSelectSheetController.LOG.error(e.getMessage(), e);
+		try {
+			for (final StudyDetails previousStudy : previousStudies) {
+				if (!StringUtils.isEmpty(previousStudy.getStartDate())) {
+						final Date date = AngularSelectSheetController.DB_FORMAT.parse(previousStudy.getStartDate());
+						previousStudy.setStartDate(AngularSelectSheetController.DATE_PICKER_FORMAT.format(date));
+				}
+	
+				if (!StringUtils.isEmpty(previousStudy.getEndDate())) {
+						final Date date = AngularSelectSheetController.DB_FORMAT.parse(previousStudy.getEndDate());
+						previousStudy.setEndDate(AngularSelectSheetController.DATE_PICKER_FORMAT.format(date));
 				}
 			}
 
-			if (!StringUtils.isEmpty(previousStudy.getEndDate())) {
-				try {
-					final Date date = AngularSelectSheetController.DB_FORMAT.parse(previousStudy.getEndDate());
-					previousStudy.setEndDate(AngularSelectSheetController.DATE_PICKER_FORMAT.format(date));
-				} catch (final ParseException e) {
-					AngularSelectSheetController.LOG.error(e.getMessage(), e);
-				}
-			}
+		} catch (final ParseException e) {
+			AngularSelectSheetController.LOG.error(e.getMessage(), e);
 		}
-
+		
 		if ((this.userSelection.getStudyId() == null || this.userSelection.getStudyId() == 0
 				|| this.userSelection.getStudyId() == AngularSelectSheetController.FIELDBOOK_DEFAULT_STUDY_ID)
 				&& !StringUtils.isEmpty(this.userSelection.getStudyName())) {
@@ -290,38 +289,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	public Map<String, Object> processForm(@RequestBody final ConsolidatedStepForm form,
 			final HttpServletRequest request) {
 
-		// validation routine
-		final String startDateString = form.getStudyDetails().getStartDate();
-		final String endDateString = form.getStudyDetails().getEndDate();
-		Date startDate = null;
-		final Date endDate;
-		final List<Message> messageList = new ArrayList<>();
-
-		if (!StringUtils.isEmpty(startDateString)) {
-			// check if date is later than current date
-			try {
-				startDate = AngularSelectSheetController.DATE_PICKER_FORMAT.parse(startDateString);
-				if (startDate.after(new Date())) {
-					messageList.add(new Message("error.start.is.after.current.date"));
-				}
-			} catch (final ParseException e) {
-				AngularSelectSheetController.LOG.error(e.getMessage(), e);
-			}
-		}
-
-		if (!StringUtils.isEmpty(endDateString)) {
-			try {
-				endDate = AngularSelectSheetController.DATE_PICKER_FORMAT.parse(endDateString);
-
-				if (startDate == null) {
-					messageList.add(new Message("error.date.startdate.required"));
-				} else if (endDate.before(startDate)) {
-					messageList.add(new Message("error.date.enddate.invalid"));
-				}
-			} catch (final ParseException e) {
-				AngularSelectSheetController.LOG.error(e.getMessage(), e);
-			}
-		}
+		final List<Message> messageList = validateFormInput(form);
 
 		if (!messageList.isEmpty()) {
 			return this.wrapFormResult(this.etlService.convertMessageList(messageList));
@@ -381,6 +349,39 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			return this.wrapFormResult(AngularMapOntologyController.URL, request);
 		}
 
+	}
+
+	private List<Message> validateFormInput(final ConsolidatedStepForm form) {
+		final String startDateString = form.getStudyDetails().getStartDate();
+		final String endDateString = form.getStudyDetails().getEndDate();
+		Date startDate = null;
+		final Date endDate;
+		final List<Message> messageList = new ArrayList<>();
+
+		try {
+			if (!StringUtils.isEmpty(startDateString)) {
+				// check if date is later than current date
+					startDate = AngularSelectSheetController.DATE_PICKER_FORMAT.parse(startDateString);
+					if (startDate.after(new Date())) {
+						messageList.add(new Message("error.start.is.after.current.date"));
+					}
+			}
+
+			if (!StringUtils.isEmpty(endDateString)) {
+				endDate = AngularSelectSheetController.DATE_PICKER_FORMAT.parse(endDateString);
+				
+				if (startDate == null) {
+					messageList.add(new Message("error.date.startdate.required"));
+				} else if (endDate.before(startDate)) {
+					messageList.add(new Message("error.date.enddate.invalid"));
+				}
+				
+			}
+
+		} catch (final ParseException e) {
+			AngularSelectSheetController.LOG.error(e.getMessage(), e);
+		}
+		return messageList;
 	}
 
 	private Map<String, List<Message>> checkForMismatchedHeaders(final List<String> errors,
@@ -481,7 +482,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			if (createdBy != null) {
 				reference.setOwnerId(Integer.valueOf(createdBy));
 			}
-			if (!AuthorizationUtil.userLacksPermissionForStudy(reference, this.contextUtil.getContextInfoFromSession().getLoggedInUserId())) {
+			if (!this.studyPermissionValidator.userLacksPermissionForStudy(reference)) {
 				finalStudies.add(study);
 			} else {
 				restrictedStudies.add(study.getStudyName());

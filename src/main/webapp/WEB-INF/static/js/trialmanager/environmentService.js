@@ -5,37 +5,22 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.factory('environmentService', ['$rootScope', 'TrialManagerDataService', '$http', function ($rootScope, TrialManagerDataService, $http) {
+	manageTrialApp.factory('environmentService', ['$rootScope', 'TrialManagerDataService', '$http', 'serviceUtilities', function ($rootScope, TrialManagerDataService, $http, serviceUtilities) {
 
 		var environmentService = {};
-		var service = {
-			environments: []
-			, getEnvironments: function () {
-				var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
-				var config = {
-					headers: {
-						'X-Auth-Token': xAuthToken
-					}
-				};
+		var successHandler = serviceUtilities.restSuccessHandler,
+			failureHandler = serviceUtilities.restFailureHandler;
 
-				$http.get('/bmsapi/study/' + cropName + '/' + TrialManagerDataService.currentData.basicDetails.studyID + '/instances', config).success(function (data) {
-					service.environments = data;
-
-				}).error(function (data) {
-
-					if (data.status === 401) {
-						bmsAuth.handleReAuthentication();
-					}
-
-					showErrorMessage('', data.errors[0].message);
-					service.environments = [];
-				});
-			}
+		environmentService.getEnvironments = function () {
+			var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
+			var config = {
+				headers: {
+					'X-Auth-Token': xAuthToken
+				}
+			};
+			var request = $http.get('/bmsapi/study/' + cropName + '/' + TrialManagerDataService.currentData.basicDetails.studyID + '/instances', config);
+			return request.then(successHandler, failureHandler);
 		};
-
-		if(!!TrialManagerDataService.currentData.basicDetails.studyID){
-			service.getEnvironments();
-		}
 
 		environmentService.environments = TrialManagerDataService.currentData.environments;
 
@@ -47,28 +32,23 @@
 			$rootScope.$broadcast('changeEnvironments');
 		};
 
-		environmentService.getEnvironmentDetails = function () {
-			var environmentListView = [];
-
-			angular.forEach(service.environments, function (environment) {
-				environmentListView.push({
-					name: environment.locationName + ' - (' + environment.locationAbbreviation + ')',
-					abbrName: environment.locationAbbreviation,
-					customAbbrName: environment.customLocationAbbreviation,
-					trialInstanceNumber: environment.instanceNumber,
-					instanceDbId: environment.instanceDbId
-
-				});
-			});
-			return environmentListView;
-		};
-
-		environmentService.updateEnvironmentData = function(){
-			service.getEnvironments();
-		};
-
 		return environmentService;
 
 	}]);
 
+	manageTrialApp.factory('serviceUtilities', ['$q', function ($q) {
+		return {
+			restSuccessHandler: function (response) {
+				return response.data;
+			},
+
+			restFailureHandler: function (response) {
+				return $q.reject({
+					status: response.status,
+					data: response.data,
+					errors: response.data && response.data.errors
+				});
+			}
+		};
+	}]);
 })();

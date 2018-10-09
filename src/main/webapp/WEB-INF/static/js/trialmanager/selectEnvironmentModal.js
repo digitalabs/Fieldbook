@@ -4,8 +4,8 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'environmentService', '$http', function ($scope,
-																																		   TrialManagerDataService, environmentService, $http) {
+	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'environmentService', function ($scope,
+																																  TrialManagerDataService, environmentService) {
 
 		$scope.settings = TrialManagerDataService.settings.environments;
 		if (Object.keys($scope.settings).length === 0) {
@@ -17,13 +17,10 @@
 		$scope.TRIAL_LOCATION_NAME_INDEX = 8180;
 		$scope.TRIAL_LOCATION_ABBR_INDEX = 8189;
 		$scope.LOCATION_NAME_ID = 8190;
+		$scope.trialInstances = [];
 		$scope.environmentListView = [];
 		$scope.applicationData = TrialManagerDataService.applicationData;
 		$scope.data = TrialManagerDataService.currentData.environments;
-
-		$scope.$on('refreshEnvironmentService', function() {
-			environmentService.updateEnvironmentData();
-		});
 
 		$scope.$on('changeEnvironments', function () {
 			$scope.data = environmentService.environments;
@@ -52,8 +49,6 @@
 			});
 		});
 
-		$scope.trialInstances = [];
-
 		$scope.noOfReplications = TrialManagerDataService.currentData.experimentalDesign.replicationsCount;
 
 		//NOTE: Continue action for navigate from Locations to Advance Study Modal
@@ -69,7 +64,7 @@
 			var selectedLocationDetails = [];
 			var locationAbbr = false;
 
-			if (!$scope.trialInstances) {
+			if ($scope.trialInstances.length === 0) {
 				showErrorMessage('', selectOneLocationErrorMessageForAdvancing);
 			} else {
 				if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX)) {
@@ -102,24 +97,23 @@
 
 		};
 
-		$scope.doSelectAll = function () {
-			$scope.trialInstances = [];
-			var i = 1;
-			angular.forEach($scope.environmentListView, function (environment) {
-				if ($scope.selectAll) {
-					environment.selected = i;
-					i++;
-					$scope.trialInstances.push(environment.trialInstanceNumber);
-				} else {
-					environment.selected = undefined;
-				}
-			});
-		};
-
 		$scope.init = function () {
 			$scope.selectAll = true;
-			$scope.environmentListView = environmentService.getEnvironmentDetails();
-			$scope.doSelectAll();
+			environmentService.getEnvironments().then(function (environmentDetails) {
+				$scope.environmentListView = [];
+				$scope.trialInstances = [];
+				angular.forEach(environmentDetails, function (environment) {
+					$scope.environmentListView.push({
+						name: environment.locationName + ' - (' + environment.locationAbbreviation + ')',
+						abbrName: environment.locationAbbreviation,
+						customAbbrName: environment.customLocationAbbreviation,
+						trialInstanceNumber: environment.instanceNumber,
+						instanceDbId: environment.instanceDbId,
+						selected: $scope.selectAll
+					});
+					$scope.trialInstances.push(environment.instanceNumber);
+				});
+			});
 		};
 		$scope.init();
 

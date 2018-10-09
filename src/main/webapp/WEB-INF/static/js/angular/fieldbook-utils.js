@@ -614,21 +614,16 @@
 				controller: function ($scope) {
 					$scope.doSelectAll = function () {
 						$scope.trialInstances = [];
-						var i = 1;
 						angular.forEach($scope.environmentListView, function (environment) {
+							environment.selected = $scope.selectAll;
 							if ($scope.selectAll) {
-								environment.selected = i;
-								i = i + 1;
 								$scope.trialInstances.push(environment.trialInstanceNumber);
-							} else {
-								environment.selected = undefined;
 							}
 						});
 					};
 
-					$scope.doSelectInstance = function (index) {
-						var environment = $scope.environmentListView[index];
-						if (environment.selected != undefined) {
+					$scope.doSelectInstance = function (environment) {
+						if (environment.selected) {
 							$scope.trialInstances.push(environment.trialInstanceNumber);
 						} else {
 							$scope.selectAll = false;

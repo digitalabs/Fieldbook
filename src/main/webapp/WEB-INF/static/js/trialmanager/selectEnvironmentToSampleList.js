@@ -11,31 +11,31 @@
 		$scope.environmentListView = [];
 
 		$scope.continueCreatingSampleList = function () {
-			if (!$scope.trialInstances) {
+			if ($scope.trialInstances.length === 0) {
 				showErrorMessage('', selectOneLocationErrorMessageForSampleList);
 			} else {
 				selectedEnvironmentContinueCreatingSample($scope.trialInstances);
 			}
 		};
 
-		$scope.doSelectAll = function () {
-			$scope.trialInstances = [];
-			var i = 1;
-			angular.forEach($scope.environmentListView, function (environment) {
-				if ($scope.selectAll) {
-					environment.Selected = i;
-					i++;
-					$scope.trialInstances.push(environment.trialInstanceNumber);
-				} else {
-					environment.Selected = undefined;
-				}
-			});
-		};
-
 		$scope.init = function () {
 			$scope.selectAll = true;
-			$scope.environmentListView = environmentService.getEnvironmentDetails();
-			$scope.doSelectAll();
+			environmentService.getEnvironments().then(function (environmentDetails) {
+				$scope.trialInstances = [];
+				$scope.environmentListView = [];
+
+				angular.forEach(environmentDetails, function (environment) {
+					$scope.environmentListView.push({
+						name: environment.locationName + ' - (' + environment.locationAbbreviation + ')',
+						abbrName: environment.locationAbbreviation,
+						customAbbrName: environment.customLocationAbbreviation,
+						trialInstanceNumber: environment.instanceNumber,
+						instanceDbId: environment.instanceDbId,
+						selected: $scope.selectAll
+					});
+					$scope.trialInstances.push(environment.instanceNumber)
+				});
+			});
 		};
 
 		$scope.init();

@@ -757,6 +757,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.userHasLockPermission = function() {
 				return $scope.data.userID === loggedInUserId || isSuperAdmin;
 			};
+			
+			$scope.changeLockedStatus = function(doLock) {
+				TrialManagerDataService.changeLockedStatus(doLock);
+			};
 
 			$('body').on('DO_AUTO_SAVE', function() {
 				TrialManagerDataService.saveCurrentData();

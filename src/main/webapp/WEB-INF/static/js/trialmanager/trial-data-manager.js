@@ -347,6 +347,22 @@
 					return service.currentData.basicDetails.isLocked;
 				},
 				
+				changeLockedStatus : function(doLock) {
+					
+					var studyId = service.currentData.basicDetails.studyID;
+					$http
+						.post('/Fieldbook/TrialManager/changeLockedStatus/' + studyId + '?doLock=' + doLock, null)
+						.success(function(data) {
+							if (doLock) {
+								showSuccessfulMessage('', lockStudySuccessMessage);
+							} else {
+								showSuccessfulMessage('', unlockStudySuccessMessage);
+							}
+							service.currentData.basicDetails.isLocked = doLock;
+						});
+				
+				},
+				
 				deleteEnvironment: function(index) {
 					var refreshMeasurementDeferred = $q.defer();
 					var deleteMeasurementPossible = index !== 0;

@@ -26,10 +26,10 @@ public class LockUnlockStudyController extends AbstractBaseFieldbookController {
 	private StudyDataManager studyDataManager;
 	
 	@ResponseBody
-	@RequestMapping(value = "/lock/{studyId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/{studyId}", method = RequestMethod.POST)
 	public Map<String, Object> changeLockedStatus(@PathVariable final int studyId, final HttpServletRequest req) {
 		final Map<String, Object> results = new HashMap<>();
-		final boolean isLocked = "1".equalsIgnoreCase(req.getParameter("isLocked"));
+		final boolean isLocked = "1".equalsIgnoreCase(req.getParameter("doLock"));
 		this.studyDataManager.updateStudyLockedStatus(studyId, isLocked);
 		
 		results.put(LockUnlockStudyController.IS_SUCCESS, "1");

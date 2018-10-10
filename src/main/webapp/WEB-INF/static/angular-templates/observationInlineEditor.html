@@ -1,6 +1,10 @@
 <input type="text"
-	   ng-if="column.dataTypeCode !== 'C'"
+	   ng-if="column.dataTypeCode === 'N' || column.dataTypeCode === 'T'"
 	   ng-blur="observation.change()"
+	   ng-model="observation.value"></input>
+
+<input type="text"
+	   ng-if="column.dataTypeCode === 'D'"
 	   ng-model="observation.value"></input>
 
 <ui-select ng-model="observation.value"

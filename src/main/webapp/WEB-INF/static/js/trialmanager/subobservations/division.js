@@ -97,7 +97,14 @@
 			function previewRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 				var experimentId = aData.experimentId;
 
-				$('td.variates', nRow).off().on('click', function () {
+
+				// FIXME attach to table instead? prevent multiple cells click?
+				$('td.variates', nRow).off().on('click', cellClickHandler)
+
+				/**
+				 * Keep a closure with experimentId, iDisplayIndexFull, etc
+				 */
+				function cellClickHandler() {
 					var termId = $(this).data('term-id'),
 						phenotypeId = $(this).data('phenotype-id'),
 						that = this;
@@ -151,19 +158,37 @@
 						function updateInline() {
 							data[0] = $inlineScope.observation.value;
 
-							$inlineScope.$destroy();
-							editor.remove();
+							setTimeout(function () {
+								$inlineScope.$destroy();
+								editor.remove();
 
-							$('#preview-subobservation-table-' + subObservation.id + '-' + division.id)
-								.dataTable()
-								.fnUpdate(division.rows[iDisplayIndexFull], iDisplayIndexFull, null, true);
+								$('#preview-subobservation-table-' + subObservation.id + '-' + division.id)
+									.dataTable()
+									.fnUpdate(division.rows[iDisplayIndexFull], iDisplayIndexFull, null, false);
+
+								/**
+								 * Restore cell click handler
+								 */
+								$(that).off().on('click', cellClickHandler);
+							});
+
+						}
+
+						if (column.dataTypeCode === 'D') {
+							setTimeout(function () {
+								$('input', that).datepicker({
+									'format': 'yyyymmdd'
+								}).on('hide', function () {
+									updateInline();
+								});
+							});
 						}
 
 						// FIXME
 						$(that).css('overflow', 'visible')
 
 					});
-				})
+				}
 			}
 
 			function getPreview() {

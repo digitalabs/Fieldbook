@@ -3,7 +3,7 @@
 		<h1>{{title}}</h1>
 
 		<ul class="nav nav-tabs fb-tabs-headers">
-			<li ng-repeat="division in subObservation.divisions">
+			<li ng-repeat="division in subObservation.divisions" ui-sref-active="active">
 				<a ui-sref="subobservations.division({ divisionId: division.id, division: division })">{{division.name}}</a>
 			</li>
 		</ul>

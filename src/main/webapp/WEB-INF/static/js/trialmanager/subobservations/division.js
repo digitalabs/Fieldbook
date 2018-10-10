@@ -53,16 +53,16 @@
 			;
 
 			if (dataTable) {
-				reload()
+				loadDataTable()
 			}
 
 			if ($scope.preview) {
-				renderPreview();
+				loadPreview();
 			}
 
 			$scope.addDataTable = function () {
 				division.dataTable = {};
-				reload();
+				loadDataTable();
 			}
 
 			$scope.togglePreviewMode = function () {
@@ -70,7 +70,7 @@
 				if (!$scope.preview) {
 					return;
 				}
-				renderPreview();
+				loadPreview();
 			}
 
 			$scope.resetPreview = function () {
@@ -82,7 +82,7 @@
 				$http.post('sub-observation-set/preview/save/', division.rows);
 			};
 
-			function renderPreview() {
+			function loadPreview() {
 				$scope.dtOptionsPreview = DTOptionsBuilder
 					.fromFnPromise(getPreview())
 					.withOption('rowCallback', previewRowCallback)
@@ -184,7 +184,7 @@
 							});
 						}
 
-						// FIXME
+						// FIXME show combobox for categorical traits
 						$(that).css('overflow', 'visible')
 
 					});
@@ -213,7 +213,7 @@
 					})
 			}
 
-			function reload() {
+			function loadDataTable() {
 				var studyId = $('#studyId').val();
 				var environmentId = getCurrentEnvironmentNumber();
 

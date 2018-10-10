@@ -219,7 +219,7 @@
 
 				$http({
 					method: 'POST',
-					url: '/Fieldbook/TrialManager/openTrial/columns',
+					url: '/Fieldbook/TrialManager/createTrial/columns',
 					headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
 					data: 'variableList=' + TrialManagerDataService
 						.settings

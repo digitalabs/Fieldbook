@@ -13,12 +13,14 @@ import org.generationcp.commons.parsing.validation.ParsingValidator;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.Scale;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -37,12 +39,15 @@ public class WorkbookRowConverterTest {
 	public static final String TEST_VALUE = "TEST VALUE";
 	public static final String TEST_COLUMN = "TEST_COLUMN";
 
+	@Mock
+	public OntologyDataManager ontologyDataManager;
+
 	@Before
 	public void setUp() throws Exception {
 		Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap = InventoryHeaderLabels.headers(GermplasmListType.CROSSES);
 		this.dut =
 				new InventoryImportParser.InventoryRowConverter(Mockito.mock(Workbook.class), 0, 0, inventoryHeaderLabelsMap.size(),
-						inventoryHeaderLabelsMap, new HashMap<String, Location>(), new Scale());
+						inventoryHeaderLabelsMap, new HashMap<String, Location>(), new Scale(), this.ontologyDataManager);
 	}
 
 	@SuppressWarnings("unchecked")

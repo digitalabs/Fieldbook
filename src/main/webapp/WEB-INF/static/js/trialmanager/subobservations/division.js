@@ -4,7 +4,7 @@
 	var manageTrialApp = angular.module('manageTrialApp');
 
 	manageTrialApp.controller('SubObservationDivisionCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
-		'DTColumnBuilder', '$http', "$q", "$compile",
+		'DTColumnBuilder', '$http', '$q', '$compile',
 		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile) {
 
 			var division = $scope.division = $stateParams.division;
@@ -53,7 +53,7 @@
 			;
 
 			if (dataTable) {
-				loadDataTable()
+				loadDataTable();
 			}
 
 			if ($scope.preview) {
@@ -63,7 +63,7 @@
 			$scope.addDataTable = function () {
 				division.dataTable = {};
 				loadDataTable();
-			}
+			};
 
 			$scope.togglePreviewMode = function () {
 				$scope.preview = division.preview = !$scope.preview;
@@ -71,7 +71,7 @@
 					return;
 				}
 				loadPreview();
-			}
+			};
 
 			$scope.resetPreview = function () {
 				$scope.rows = division.rows = null;
@@ -99,7 +99,7 @@
 
 
 				// FIXME attach to table instead? prevent multiple cells click?
-				$('td.variates', nRow).off().on('click', cellClickHandler)
+				$('td.variates', nRow).off().on('click', cellClickHandler);
 
 				/**
 				 * Keep a closure with experimentId, iDisplayIndexFull, etc
@@ -128,7 +128,7 @@
 							where the first item is the value
 						 */
 
-						var $inlineScope = $scope.$new(true)
+						var $inlineScope = $scope.$new(true);
 
 						$inlineScope.observation = {
 							value: data[0],
@@ -140,7 +140,7 @@
 								if (!isOpen) updateInline();
 							},
 							newInlineValue: function (newValue) {
-								return {name: newValue}
+								return {name: newValue};
 							}
 						};
 
@@ -185,7 +185,7 @@
 						}
 
 						// FIXME show combobox for categorical traits
-						$(that).css('overflow', 'visible')
+						$(that).css('overflow', 'visible');
 
 					});
 				}
@@ -205,18 +205,15 @@
 							rowMap[row.experimentId] = {};
 							angular.forEach(division.columnsObj.columns, function (column) {
 								rowMap[row.experimentId][column.termId] = row[column.title];
-							})
+							});
 						});
 
 						$scope.rows = division.rows = resp.data;
 						return $q.resolve(resp.data);
-					})
+					});
 			}
 
 			function loadDataTable() {
-				var studyId = $('#studyId').val();
-				var environmentId = getCurrentEnvironmentNumber();
-
 				$http({
 					method: 'POST',
 					url: '/Fieldbook/TrialManager/createTrial/columns',
@@ -245,9 +242,10 @@
 				templateUrl: '/Fieldbook/static/angular-templates/observationInlineEditor.html',
 				scope: {
 					observation: '=',
-					column: '=' // TODO upgrade angular to > 1.5 to use one-way binding
+					// TODO upgrade angular to > 1.5 to use one-way binding
+					column: '='
 				}
-			}
+			};
 		})
 	;
 })();

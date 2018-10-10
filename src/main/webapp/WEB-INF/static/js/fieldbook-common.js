@@ -843,6 +843,8 @@ function subObservationUnitDatasetSelector() {
 
 	var $scope = angular.element('#SubObservationUnitDatasetSelectorModal').scope();
 	$scope.init();
+	$scope.$apply();
+
 }
 
 function subObservationUnitDatasetbuild(option) {
@@ -859,13 +861,7 @@ function subObservationUnitDatasetbuild(option) {
 
 	var $scope = angular.element('#SubObservationUnitDatasetBuildModal').scope();
 	$scope.init(option);
-	//$scope.$apply();
 
-	// we need to redraw the columns of the table
-	if ($('#SubObservationUnitDatasetBuildModal .fbk-datatable-environments').length !== 0 && $('#SubObservationUnitDatasetBuildModal .fbk-datatable-environments').DataTable() !== null) {
-		$('#SubObservationUnitDatasetBuildModal .fbk-datatable-environments').DataTable().columns.adjust().draw();
-		$('#DataTables_Table_0_filter').remove();
-	}
 }
 /* END SUB OBSERVATION UNIT SPECIFIC FUNCTIONS */
 

@@ -18,6 +18,7 @@ import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -63,6 +64,9 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 	@Resource
 	private ContextUtil contextUtil;
 
+	@Resource
+	private OntologyDataManager ontologyDataManager;
+
 	private List<Location> locations;
 
 	private Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap;
@@ -84,9 +88,9 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		this.inventoryHeaderLabelsMap =
 				(Map<InventoryHeaderLabels, Integer>) additionalParams.get(InventoryImportParser.HEADERS_MAP_PARAM_KEY);
 
-		this.headers = InventoryHeaderLabels.getHeaderNames(this.inventoryHeaderLabelsMap);
+		this.headers = InventoryHeaderLabels.getHeaderNames(this.inventoryHeaderLabelsMap, this.ontologyDataManager);
 
-		this.requiredHeaders = InventoryHeaderLabels.getRequiredHeaderNames(this.inventoryHeaderLabelsMap);
+		this.requiredHeaders = InventoryHeaderLabels.getRequiredHeaderNames(this.inventoryHeaderLabelsMap, this.ontologyDataManager);
 		this.listId = (Integer) additionalParams.get(InventoryImportParser.LIST_ID_PARAM_KEY);
 		this.listType = (GermplasmListType) additionalParams.get(InventoryImportParser.GERMPLASM_LIST_TYPE_PARAM_KEY);
 		this.validateFileHeader();
@@ -115,7 +119,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		final ParseValidationMap parseValidationMap = this.setupIndividualColumnValidation();
 		final InventoryRowConverter inventoryDetailsConverter =
 				new InventoryRowConverter(this.workbook, this.currentParseIndex, InventoryImportParser.INVENTORY_SHEET, this.headers.length,
-						this.inventoryHeaderLabelsMap, this.convertToLocationMap(this.locations), this.scale);
+						this.inventoryHeaderLabelsMap, this.convertToLocationMap(this.locations), this.scale, this.ontologyDataManager);
 		inventoryDetailsConverter.setValidationMap(parseValidationMap);
 
 		final List<InventoryDetails> detailList =
@@ -199,8 +203,8 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 		public InventoryRowConverter(final Workbook workbook, final int startingIndex, final int targetSheetIndex, final int columnCount,
 				final Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap, final Map<String, Location> locationValidationMap,
-				final Scale scale) {
-			super(workbook, startingIndex, targetSheetIndex, columnCount, InventoryHeaderLabels.getHeaderNames(inventoryHeaderLabelsMap));
+				final Scale scale, final OntologyDataManager ontologyDataManager) {
+			super(workbook, startingIndex, targetSheetIndex, columnCount, InventoryHeaderLabels.getHeaderNames(inventoryHeaderLabelsMap, ontologyDataManager));
 			this.inventoryHeaderLabelsMap = inventoryHeaderLabelsMap;
 			this.locationValidationMap = locationValidationMap;
 			this.scale = scale;

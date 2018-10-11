@@ -1,24 +1,16 @@
-/*global angular, showAlertMessage, showErrorMessage*/
+/*global angular, showAlertMessage, showErrorMessage, showSuccessfulMessage*/
 (function() {
 	'use strict';
 
 	var manageTrialApp = angular.module('manageTrialApp');
 	manageTrialApp.controller('SubObservationUnitDatasetSelectorCtrl', ['$scope', function ($scope) {
 
-		$scope.option = {
-			name: ''
-		};
-
-		$scope.selectEnvironmentContinue = function () {
-			console.log($scope.option.name);
-			subObservationUnitDatasetbuild($scope.option.name);
-
+		$scope.continue = function () {
+			subObservationUnitDatasetbuild($scope.selectedDatasetType);
 		};
 
 		$scope.init = function () {
-			$scope.option = {
-				name: ''
-			};
+			$scope.selectedDatasetType = '';
 		};
 		$scope.init();
 	}]);

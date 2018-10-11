@@ -635,7 +635,7 @@ public class OpenTrialController extends BaseTrialController {
 	@RequestMapping(value = "/load/dynamic/change/measurement", method = RequestMethod.POST)
 	public Map<String, Object> loadDynamicChangeMeasurement(@ModelAttribute("createTrialForm") final CreateTrialForm form,
 			final Model model, final HttpServletRequest request) {
-		List<MeasurementVariable> removedTraits = new ArrayList();
+		List<MeasurementVariable> removedTraits = new ArrayList<>();
 		Map<Integer, List<Integer>> usages = new HashMap<>();
 		Workbook workbook = this.userSelection.getWorkbook();
 		if (this.userSelection.getTemporaryWorkbook() != null) {

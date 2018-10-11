@@ -25,14 +25,12 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.workbench.Project;
-import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 /**
@@ -55,8 +53,6 @@ public abstract class AbstractBaseFieldbookController {
 
 	@Resource
 	protected FieldbookProperties fieldbookProperties;
-
-	private static Tool oldFbTool = null;
 
 	@Resource
 	private PaginationListSelection paginationListSelection;
@@ -96,22 +92,6 @@ public abstract class AbstractBaseFieldbookController {
 		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
 				this.contextUtil.getCurrentWorkbenchUserId());
 
-	}
-
-	public String getOldFieldbookPath() {
-
-		if (AbstractBaseFieldbookController.oldFbTool == null) {
-			try {
-				AbstractBaseFieldbookController.oldFbTool =
-						this.workbenchService.getToolWithName(AppConstants.TOOL_NAME_OLD_FIELDBOOK.getString());
-			} catch (final MiddlewareQueryException e) {
-				AbstractBaseFieldbookController.LOG.error(e.getMessage(), e);
-			}
-		}
-		if (AbstractBaseFieldbookController.oldFbTool != null) {
-			return AbstractBaseFieldbookController.oldFbTool.getPath();
-		}
-		return "";
 	}
 
 	/**

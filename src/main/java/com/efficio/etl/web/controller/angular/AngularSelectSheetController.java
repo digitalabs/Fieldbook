@@ -398,7 +398,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			final List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection,
 					this.etlService.headersContainsObsUnitId(importData));
 
-			mismatchErrors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, isMeansDataImport);
+			return this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, isMeansDataImport);
 		} catch (final Exception e) {
 			AngularSelectSheetController.LOG.error(e.getMessage(), e);
 			final List<Message> error = new ArrayList<>();

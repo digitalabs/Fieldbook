@@ -697,8 +697,10 @@
 		(function () {
 
 			angular.module('manageTrialApp')
-				.constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
-				).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
+			 .constant('MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS.getInt()}]]*/ ''
+			).constant('MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT.getInt()}]]*/ ''
+			).constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
+			).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
 			).constant('BREEDING_METHOD_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''
 			).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
 			).constant('SELECTION_VARIABLE_INITIAL_DATA', /*[[${selectionVariableData}]]*/ ''

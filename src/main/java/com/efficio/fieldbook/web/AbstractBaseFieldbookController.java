@@ -214,7 +214,7 @@ public abstract class AbstractBaseFieldbookController {
 		}
 	}
 	
-	protected void setIsSuperAdminAttribute(final Model model) {
+	public void setIsSuperAdminAttribute(final Model model) {
 		model.addAttribute("isSuperAdmin", AuthorizationUtil.isSuperAdminUser());
 	}
 

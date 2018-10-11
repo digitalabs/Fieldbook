@@ -1475,16 +1475,17 @@ public class SettingsUtil {
 		return studyDetails;
 	}
 
-	private static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(final Workbook workbook,
+	static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(final Workbook workbook,
 		final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final FieldbookService fieldbookService,
 		final UserSelection userSelection, final String programUUID, final Properties appConstantsProperties, final String createdBy) {
 
 		final StudyDetails details = new StudyDetails();
-		details.setId(workbook.getStudyDetails().getId());
-		details.setProgramUUID(workbook.getStudyDetails() != null ? workbook.getStudyDetails().getProgramUUID() : null);
-		details.setIsLocked(workbook.getStudyDetails().getIsLocked());
-		if (workbook.getStudyDetails().getCreatedBy() != null) {
-			details.setOwnerId(Integer.valueOf(workbook.getStudyDetails().getCreatedBy()));
+		final org.generationcp.middleware.domain.etl.StudyDetails sourceStudyDetails = workbook.getStudyDetails();
+		details.setId(sourceStudyDetails.getId());
+		details.setProgramUUID(sourceStudyDetails.getProgramUUID());
+		details.setIsLocked(sourceStudyDetails.getIsLocked());
+		if (sourceStudyDetails.getCreatedBy() != null) {
+			details.setOwnerId(Integer.valueOf(sourceStudyDetails.getCreatedBy()));
 		}
 		
 		final List<MeasurementVariable> conditions = workbook.getConditions();
@@ -1498,7 +1499,7 @@ public class SettingsUtil {
 		basicFields = Arrays.asList(AppConstants.STUDY_BASIC_REQUIRED_FIELDS.getString().split(","));
 
 		if (conditions != null) {
-			final String studyName = workbook.getStudyDetails().getStudyName();
+			final String studyName = sourceStudyDetails.getStudyName();
 			if (studyName != null) {
 				details.setName(studyName);
 			}

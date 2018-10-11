@@ -351,7 +351,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 	}
 
-	private List<Message> validateFormInput(final ConsolidatedStepForm form) {
+	List<Message> validateFormInput(final ConsolidatedStepForm form) {
 		final String startDateString = form.getStudyDetails().getStartDate();
 		final String endDateString = form.getStudyDetails().getEndDate();
 		Date startDate = null;

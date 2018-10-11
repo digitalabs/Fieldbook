@@ -285,9 +285,9 @@ public class FileUploadController extends AbstractBaseETLController {
 		} catch (final WorkbookParserException e) {
 
 			FileUploadController.LOG.error(e.getMessage(), e);
+			this.returnMessage.clear();
 			Boolean isMaxLimitException = buildWorkbookParserExceptionMessages(e);
 
-			this.returnMessage.clear();
 			this.returnMessage.put(FileUploadController.STATUS_CODE, FileUploadController.STATUS_CODE_HAS_ERROR);
 			if (isMaxLimitException) {
 				this.returnMessage.put(FileUploadController.ERROR_TYPE, "WorkbookParserException-OverMaxLimit");
@@ -351,6 +351,16 @@ public class FileUploadController extends AbstractBaseETLController {
 	@Override
 	public UserSelection getUserSelection() {
 		return this.userSelection;
+	}
+
+	
+	public void setStudyPermissionValidator(StudyPermissionValidator studyPermissionValidator) {
+		this.studyPermissionValidator = studyPermissionValidator;
+	}
+
+	
+	public void setMessageSource(ResourceBundleMessageSource messageSource) {
+		this.messageSource = messageSource;
 	}
 
 }

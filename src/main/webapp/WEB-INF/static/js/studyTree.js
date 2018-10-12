@@ -43,7 +43,7 @@ function studyTreeInit() {
 	}
 }
 
-function chooseStudyNode(fromEnterKey, restrictLockedStudy) {
+function chooseStudyNode(fromEnterKey, doOpenStudy) {
 	'use strict';
 
 	var node = focusNode;
@@ -52,7 +52,7 @@ function chooseStudyNode(fromEnterKey, restrictLockedStudy) {
 		return;
 	}
 
-	if (restrictLockedStudy && userLacksPermissionForStudy(node)) {
+	if (doOpenStudy && userLacksPermissionForStudy(node)) {
 		showStudyIsLockedError(node);
 		return;
 	}
@@ -60,9 +60,7 @@ function chooseStudyNode(fromEnterKey, restrictLockedStudy) {
 	if (choosingType === 1 || choosingType === 3) {
 		if (node.data.isFolder === false) {
 			if (choosingType === 1) {
-				if ($('#studyTreeModal').data('open') === '1'
-					&& node.data.programUUID != null) {
-					$('#studyTreeModal').data('open', '0');
+				if (doOpenStudy && node.data.programUUID != null) {
 					openTreeStudy(node.data.key);
 				} else {
 					addDetailsTab(node.data.key, node.data.title);
@@ -113,7 +111,6 @@ function chooseStudy() {
 
 function openStudyNode() {
 	'use strict';
-	$('#studyTreeModal').data('open', '1');
 	chooseStudyNode(false, true);
 }
 
@@ -265,7 +262,6 @@ function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionPa
 					var restrictLockedStudy = false;
 					if ($('.landing-page').length !== 0) {
 						//means we are in the landing page
-						$('#studyTreeModal').data('open', '1');
 						restrictLockedStudy = true;
 					}
 					chooseStudyNode(true, restrictLockedStudy);

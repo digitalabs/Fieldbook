@@ -9,7 +9,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
 		'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
-		'showSettingFormElementNew', 'ngSanitize', 'ui.select']);
+		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'blockUI']);
+
+	manageTrialApp.config(['blockUIConfig', function(blockUIConfig) {
+		blockUIConfig.template = '<div id="spinner-wrap" style="text-align: center"><img src="/Fieldbook/static/img/loading-animation.gif"/></div>';
+	}]);
 
 	/*** Added to prevent Unsecured HTML error
 	   It is used by ng-bind-html ***/

@@ -1061,6 +1061,7 @@ public class OpenTrialControllerTest {
 		final Map<String, Object> resultMap = this.openTrialController.updateSavedTrial(OpenTrialControllerTest.STUDY_ID);
 		Assert.assertNotNull(resultMap.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
 		Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));
+		Assert.assertNotNull(resultMap.get(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST));
 		Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENT_ROW_COUNT));
 		Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENTS_DATA));
 		Assert.assertNotNull(resultMap.get(OpenTrialController.SELECTION_VARIABLE_DATA));
@@ -1072,6 +1073,7 @@ public class OpenTrialControllerTest {
 				.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(workbook.getConditions()));
 		Mockito.verify(this.userSelection, Mockito.times(1))
 				.setExpDesignParams(SettingsUtil.convertToExpDesignParamsUi(this.userSelection.getExperimentalDesignVariables()));
+		Mockito.verify(this.fieldbookMiddlewareService).hasAdvancedOrCrossesList(Matchers.anyInt());
 
 		// Verify that Analysis and/or Analysis Summary variables are removed
 		Assert.assertFalse(this.hasAnalysisVariables(workbook.getConditions()));
@@ -1175,6 +1177,8 @@ public class OpenTrialControllerTest {
 		Assert.assertNotNull("The environment data tab should not be null", returnVal.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
 		Assert.assertEquals("The measurement data flag should be false", false,
 				returnVal.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));
+		Assert.assertEquals("There should be no advanced or crosses list.", false,
+				returnVal.get(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST));
 		Assert.assertEquals("The measurement row count should be zero", 0, returnVal.get(OpenTrialController.MEASUREMENT_ROW_COUNT));
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).saveMeasurementRows(Matchers.any(Workbook.class),
 				Matchers.anyString(), Matchers.anyBoolean());
@@ -1207,6 +1211,7 @@ public class OpenTrialControllerTest {
 				Matchers.anyString(), Matchers.anyBoolean());
 		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(Matchers.anyInt(), Matchers.anyString(), Matchers.anyString(),
 				Matchers.any(Workbook.class));
+		Mockito.verify(this.fieldbookMiddlewareService).hasAdvancedOrCrossesList(Matchers.anyInt());
 	}
 
 	private TrialData setUpTrialData() {
@@ -1290,6 +1295,7 @@ public class OpenTrialControllerTest {
 				Matchers.any(TabInfo.class));
 		Mockito.verify(this.model).addAttribute(Matchers.eq("experimentalDesignData"), Matchers.any(TabInfo.class));
 		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENT_DATA_EXISTING), Matchers.anyBoolean());
+		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST), Matchers.anyBoolean());
 		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENT_ROW_COUNT),
 				Matchers.anyInt());
 		Mockito.verify(this.model).addAttribute(Matchers.eq("treatmentFactorsData"), Matchers.any(TabInfo.class));

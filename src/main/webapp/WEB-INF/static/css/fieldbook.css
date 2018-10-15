@@ -381,6 +381,22 @@ div.DTFC_RightWrapper table.table-curved {
 #spinner-wrap img{
     padding-top: 45px;
 }
+#spinner-wrap-angular {
+    width:150px;
+    height:150px;
+    background:#e9e9e9;
+    opacity:1;
+    filter:alpha(opacity=80); /* For IE8 and earlier */
+    border-radius: 15px;
+    text-align: center;
+
+}
+#spinner-wrap-angular img {
+    padding-top: 45px;
+}
+.block-ui-message-custom {
+    display: inline-block;
+}
 .modal-autofit {
 	width: 90%;
 }

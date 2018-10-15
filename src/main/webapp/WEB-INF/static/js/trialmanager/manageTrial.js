@@ -12,7 +12,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'blockUI']);
 
 	manageTrialApp.config(['blockUIConfig', function(blockUIConfig) {
-		blockUIConfig.template = '<div id="spinner-wrap" style="text-align: center"><img src="/Fieldbook/static/img/loading-animation.gif"/></div>';
+		blockUIConfig.templateUrl = '/Fieldbook/static/angular-templates/blockUiTemplate.html';
 	}]);
 
 	/*** Added to prevent Unsecured HTML error

@@ -2293,10 +2293,11 @@ function createFolder() {
 function deleteFolder(object) {
 	'use strict';
 	if (!$(object).hasClass('disable-image')) {
-		var currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title,
-			isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder,
+		var node = $('#studyTree').dynatree('getTree').getActiveNode();
+		var currentFolderName = node.data.title,
+			isFolder = node.data.isFolder,
 			deleteConfirmationText,
-			folderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key,
+			folderId = node.data.key,
 			folderName = JSON.stringify({'folderName': currentFolderName});
 
 		if (isFolder) {
@@ -2324,11 +2325,16 @@ function deleteFolder(object) {
 					}
 				}
 			});
-		} else {
+		} else if (node.data.programUUID === null) {
+			showErrorMessage('page-study-tree-message-modal', cannotDeleteTemplateError);
+		
+		} else if (parseInt(node.data.ownerId) === loggedInUserId || isSuperAdmin) {
 
 			$('#delete-heading-modal').text(deleteStudyTitle);
 			deleteConfirmationText = deleteStudyConfirmation;
 			showDeleteStudyFolderDiv(deleteConfirmationText);
+		} else {
+			showErrorMessage('page-study-tree-message-modal', cannotDeleteStudyError.replace('{0}', node.data.owner));
 		}
 	}
 }

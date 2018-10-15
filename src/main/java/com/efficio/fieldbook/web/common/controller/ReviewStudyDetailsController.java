@@ -21,6 +21,7 @@ import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -106,6 +107,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		}
 
 		model.addAttribute("trialDetails", details);
+		setIsSuperAdminAttribute(model);
 		return this.showAjaxPage(model, this.getContentName());
 	}
 
@@ -152,6 +154,11 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 			}
 		}
 		return newList;
+	}
+	
+	@ModelAttribute("contextInfo")
+	public ContextInfo getContextInfo() {
+		return this.contextUtil.getContextInfoFromSession();
 	}
 
 	protected void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {

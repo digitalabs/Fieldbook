@@ -14,6 +14,7 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
 
+import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,6 +49,7 @@ public class ManageTrialController extends AbstractBaseFieldbookController {
 		model.addAttribute("preloadSummaryId", request.getParameter("summaryId") != null ? request.getParameter("summaryId") : "");
 		model.addAttribute("preloadSummaryName", request.getParameter("summaryName") != null ? request.getParameter("summaryName") : "");
 		model.addAttribute("studyTypes", this.studyDataManager.getAllVisibleStudyTypes());
+		setIsSuperAdminAttribute(model);
 		return super.show(model);
 	}
 
@@ -55,5 +57,12 @@ public class ManageTrialController extends AbstractBaseFieldbookController {
 	public String getContentName() {
 		return "Common/manageStudy";
 	}
+	
+	@ModelAttribute("contextInfo")
+	public ContextInfo getContextInfo() {
+		return this.contextUtil.getContextInfoFromSession();
+	}
+	
+	
 
 }

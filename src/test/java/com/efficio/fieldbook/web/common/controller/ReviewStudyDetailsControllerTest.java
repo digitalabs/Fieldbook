@@ -11,12 +11,12 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.StudyDetails;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import junit.framework.Assert;
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.security.SecurityUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -27,52 +27,56 @@ import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.ErrorCode;
+import org.generationcp.middleware.pojos.workbench.Role;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.mockito.MockitoAnnotations;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import javax.annotation.Resource;
-import java.util.List;
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.google.common.collect.Lists;
+
+import junit.framework.Assert;
 
 public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTest {
 
 	@Resource
 	private ReviewStudyDetailsController reviewStudyDetailsController;
-
-	@Ignore("This test fails intermittently in CI. Needs re-evaluated for its value and be rewritten altogether.")
-	@Test
-	public void testShowReviewNurserySummaryWithError() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get(ReviewStudyDetailsController.URL + "/show/N/1"))
-				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.model().attributeExists("nurseryDetails"));
-	}
-
-	// FIXME BMS-2360
-	// @Test
-	public void testShowReviewStudySummaryWithError() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get(ReviewStudyDetailsController.URL + "/show/T/1"))
-				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.model().attributeExists("trialDetails"));
-	}
-
-	@Test
-	public void testAddErrorMessageToResultForNursery() throws Exception {
-		final StudyDetails details = new StudyDetails();
-
-		this.reviewStudyDetailsController.addErrorMessageToResult(details,
-			new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"), 1);
-
-		Assert.assertEquals("Expecting error message for nursery but got " + details.getErrorMessage() + " instead.",
-				"This study is in a format that cannot be opened in the Study Manager. Please use the Study Browser if you"
-						+ " wish to see the details of this study.",
-				details.getErrorMessage());
+	
+	@Mock
+	private FieldbookService fieldbookMWService;
+	
+	@Mock
+	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+	
+	@Mock
+	private ContextUtil contextUtil;
+	
+	private Workbook workbook;
+	
+	@Before
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+		
+		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
+		this.reviewStudyDetailsController.setFieldbookMiddlewareService(this.fieldbookMWService);
+		this.reviewStudyDetailsController.setFieldbookService(this.fieldbookService);
+		Mockito.doReturn(workbook).when(this.fieldbookMWService).getStudyVariableSettings(1);
+		this.mockStandardVariables(workbook.getAllVariables(), this.fieldbookMWService, this.fieldbookService);
+		
+		this.reviewStudyDetailsController.setContextUtil(this.contextUtil);
+		Mockito.doReturn(this.PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
 	}
 
 	@Test
@@ -87,26 +91,16 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 						+ " wish to see the details of this study.",
 				details.getErrorMessage());
 	}
-
+	
 	@Test
 	public void testShowStudySummaryEnvironmentsWithoutAnalysisVariables() {
 		final int id = 1;
 		final CreateTrialForm form = new CreateTrialForm();
 		final Model model = new ExtendedModelMap();
 
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
-		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		final com.efficio.fieldbook.service.api.FieldbookService fieldbookService =
-				Mockito.mock(com.efficio.fieldbook.service.api.FieldbookService.class);
-		this.reviewStudyDetailsController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-		this.reviewStudyDetailsController.setFieldbookService(fieldbookService);
-		Mockito.doReturn(workbook).when(fieldbookMiddlewareService).getStudyVariableSettings(id);
-		this.mockStandardVariables(workbook.getAllVariables(), fieldbookMiddlewareService, fieldbookService);
-		this.mockContextUtil();
-
-		// Verify that workbook has Analysis and/or Analysis Summary variables beforehand to check that they were later removed
-		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConditions()));
-		Assert.assertTrue(this.hasAnalysisVariables(workbook.getConstants()));
+		// Verify that this.workbook has Analysis and/or Analysis Summary variables beforehand to check that they were later removed
+		Assert.assertTrue(this.hasAnalysisVariables(this.workbook.getConditions()));
+		Assert.assertTrue(this.hasAnalysisVariables(this.workbook.getConstants()));
 
 		this.reviewStudyDetailsController.show(id, form, model);
 
@@ -122,8 +116,22 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		}
 		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be found under Study Conditions of the Summary page.",
 				hasAnalysisVariable);
-		Mockito.verify(fieldbookService).getPersonByUserId(NumberUtils.toInt(workbook.getStudyDetails().getCreatedBy()));
+		Mockito.verify(fieldbookService).getPersonByUserId(NumberUtils.toInt(this.workbook.getStudyDetails().getCreatedBy()));
 
+	}
+
+	@Test
+	public void testShowStudySummary() {
+		final int id = 1;
+		final CreateTrialForm form = new CreateTrialForm();
+		final Model model = new ExtendedModelMap();
+
+		this.reviewStudyDetailsController.show(id, form, model);
+
+		final StudyDetails details = (StudyDetails) model.asMap().get("trialDetails");
+		Assert.assertNotNull(details);
+		final Boolean isSuperAdmin =  (Boolean) model.asMap().get("isSuperAdmin");
+		Assert.assertNotNull(isSuperAdmin);
 	}
 
 	@Test
@@ -132,22 +140,33 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		final CreateTrialForm form = new CreateTrialForm();
 		final Model model = new ExtendedModelMap();
 
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
-		workbook.getStudyDetails().setCreatedBy(null);
-
-		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		final com.efficio.fieldbook.service.api.FieldbookService fieldbookService =
-				Mockito.mock(com.efficio.fieldbook.service.api.FieldbookService.class);
-		this.reviewStudyDetailsController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-		this.reviewStudyDetailsController.setFieldbookService(fieldbookService);
-		Mockito.doReturn(workbook).when(fieldbookMiddlewareService).getStudyVariableSettings(id);
-		this.mockStandardVariables(workbook.getAllVariables(), fieldbookMiddlewareService, fieldbookService);
-		this.mockContextUtil();
-
+		this.workbook.getStudyDetails().setCreatedBy(null);
 		this.reviewStudyDetailsController.show(id, form, model);
 
 		Mockito.verify(fieldbookService).getPersonByUserId(0);
 
+	}
+	
+	@Test
+	public void testSetIsSuperAdminAttributeForNonSuperAdminUser() {
+		final Model model = new ExtendedModelMap();
+		
+		SimpleGrantedAuthority roleAuthority = new SimpleGrantedAuthority(SecurityUtil.ROLE_PREFIX + Role.ADMIN);
+		UsernamePasswordAuthenticationToken loggedInUser = new UsernamePasswordAuthenticationToken("", "", Lists.newArrayList(roleAuthority));
+		SecurityContextHolder.getContext().setAuthentication(loggedInUser);
+		this.reviewStudyDetailsController.setIsSuperAdminAttribute(model);
+		Assert.assertFalse((Boolean)model.asMap().get("isSuperAdmin")); 
+	}
+	
+	@Test
+	public void testSetIsSuperAdminAttributeForSuperAdminUser() {
+		final Model model = new ExtendedModelMap();
+		
+		SimpleGrantedAuthority roleAuthority = new SimpleGrantedAuthority(SecurityUtil.ROLE_PREFIX + Role.SUPERADMIN);
+		UsernamePasswordAuthenticationToken loggedInUser = new UsernamePasswordAuthenticationToken("", "", Lists.newArrayList(roleAuthority));
+		SecurityContextHolder.getContext().setAuthentication(loggedInUser);
+		this.reviewStudyDetailsController.setIsSuperAdminAttribute(model);
+		Assert.assertTrue((Boolean)model.asMap().get("isSuperAdmin")); 
 	}
 
 	private boolean hasAnalysisVariables(final List<MeasurementVariable> variables) {
@@ -159,12 +178,6 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 			}
 		}
 		return analysisVariableFound;
-	}
-
-	private void mockContextUtil() {
-		final ContextUtil contextUtil = Mockito.mock(ContextUtil.class);
-		this.reviewStudyDetailsController.setContextUtil(contextUtil);
-		Mockito.doReturn(this.PROGRAM_UUID).when(contextUtil).getCurrentProgramUUID();
 	}
 
 	private void mockStandardVariables(final List<MeasurementVariable> allVariables, final FieldbookService fieldbookMiddlewareService,

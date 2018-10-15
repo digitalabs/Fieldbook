@@ -960,8 +960,10 @@ public class ETLServiceImpl implements ETLService {
 			final SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
 			startDateStr = df.format(new Date());
 		}
+		
+		// Always assumes that study is not locked
 		return new StudyDetails(study, title, objective, startDateStr, endDateStr, studyTypeValue, 0, null,
-			null, Util.getCurrentDateAsStringValue(), null);
+			null, Util.getCurrentDateAsStringValue(), null, false);
 	}
 
 	private String getCellStringValue(final Sheet sheet, final Integer rowNumber, final Integer columnNumber) {

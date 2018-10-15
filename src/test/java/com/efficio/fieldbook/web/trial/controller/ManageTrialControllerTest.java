@@ -11,11 +11,13 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -29,6 +31,9 @@ public class ManageTrialControllerTest {
 	
 	@Mock
 	private StudyDataManager studyDataManager;
+	
+	@Mock
+	private ContextUtil contextUtil;
 	
 	@InjectMocks
 	private ManageTrialController controller;
@@ -52,6 +57,10 @@ public class ManageTrialControllerTest {
 				.andExpect(MockMvcResultMatchers.model().attributeExists("preloadSummaryId"))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("preloadSummaryName"))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("studyTypes"))
+				.andExpect(MockMvcResultMatchers.model().attributeExists("isSuperAdmin"))
 				.andExpect(MockMvcResultMatchers.model().attribute(AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "Common/manageStudy"));
+		
+		// Used ModelAttribute annotation for this so cannot assert above so verify mock interaction instead
+		Mockito.verify(this.contextUtil).getContextInfoFromSession();
 	}
 }

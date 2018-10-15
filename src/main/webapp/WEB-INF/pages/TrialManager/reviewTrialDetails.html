@@ -16,8 +16,9 @@
 				<strong class="sub-content-heading" th:text="#{study.studydetails.header}">BASIC DETAILS</strong>
 			</label>
 
-            <!-- Displaying Open button to open trial in details view -->
-			<a th:if="${trialDetails.programUUID!=null}" class="btn btn-info fbk-open-button-left-margin" href="javascript: openStudy('trial-table');" th:text="#{common.form.open}">Open</a>
+            <!-- Displaying Open button to edit trial if study is not a crop template and if:
+               1) study is not locked OR 2) user is owner of study OR 3) user is superadmin -->
+			<a th:if="${trialDetails.programUUID!=null} AND (!${trialDetails.isLocked} OR ${trialDetails.ownerId} == ${contextInfo.loggedInUserId} OR ${isSuperAdmin})" class="btn btn-info fbk-open-button-left-margin" href="javascript: openStudy('trial-table');" th:text="#{common.form.open}">Open</a>
 			<div th:if="${trialDetails.programUUID!=null}" style="float:right;">
 				<div class="btn-group">
                     <!-- Display Actions button in Summary view which will give option to Edit, Delete, Export Trial, Make Field Map as well as Create Labels. -->
@@ -28,11 +29,11 @@
                         <!-- Edit Trial: will open trial in details view and allow user to edit the trial -->
 						<li>
 							<a href="" style="display: none" id="open-study-url" th:href="@{/TrialManager/openTrial}"></a>
-							<a href="javascript: openStudy('trial-table');" id="open-study-url-link" th:text="#{study.studydetails.action.edit}">Edit Study</a>
+							<a th:if="!${trialDetails.isLocked} OR ${trialDetails.ownerId} == ${contextInfo.loggedInUserId} OR ${isSuperAdmin}" href="javascript: openStudy('trial-table');" id="open-study-url-link" th:text="#{study.studydetails.action.edit}">Edit Study</a>
 						</li>
 						<!-- Delete Study -->
 						<li>
-							<a href="javascript: openDeleteConfirmation();" th:text="#{browse.study.delete.study.name}">Delete Study</a>
+							<a th:if="!${trialDetails.isLocked} OR ${trialDetails.ownerId} == ${contextInfo.loggedInUserId} OR ${isSuperAdmin}" href="javascript: openDeleteConfirmation();" th:text="#{browse.study.delete.study.name}">Delete Study</a>
 						</li>
                         <!-- Export Study book: will display export format & Data collection order options -->
 						<li>
@@ -41,7 +42,7 @@
                         <!-- Make Field Map: will allow user to create Field Map from Summary view -->
 						<li>
 							<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
-							<a href="javascript: createFieldMap();" id="fieldmap-url-link" th:text="#{study.studydetails.action.createFieldmap}">Make Field Map</a>
+							<a th:if="!${trialDetails.isLocked} OR ${trialDetails.ownerId} == ${contextInfo.loggedInUserId} OR ${isSuperAdmin}" href="javascript: createFieldMap();" id="fieldmap-url-link" th:text="#{study.studydetails.action.createFieldmap}">Make Field Map</a>
 						</li>
                         <!-- Create Labels -->
 						<li>

@@ -1,32 +1,14 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
-import com.efficio.fieldbook.web.trial.TestDataHelper;
-import com.efficio.fieldbook.web.trial.bean.AdvanceList;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.CrossesList;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TabInfoBean;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
-import com.efficio.fieldbook.web.trial.bean.TrialData;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -66,7 +48,6 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
-import org.generationcp.middleware.pojos.SampleList;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.dms.StudyType;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -89,13 +70,31 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
+import com.efficio.fieldbook.web.trial.TestDataHelper;
+import com.efficio.fieldbook.web.trial.bean.AdvanceList;
+import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.CrossesList;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
+import com.efficio.fieldbook.web.trial.bean.TrialData;
+import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpenTrialControllerTest {
@@ -1308,6 +1307,7 @@ public class OpenTrialControllerTest {
 		Mockito.verify(this.model).addAttribute(Matchers.eq("sampleList"), Matchers.anyListOf(SampleListDTO.class));
 		Mockito.verify(this.model).addAttribute(Matchers.eq("crossesList"), Matchers.anyListOf(CrossesList.class));
 		Mockito.verify(this.model).addAttribute("germplasmListSize", 0);
+		Mockito.verify(this.model).addAttribute(Matchers.eq("isSuperAdmin"), Matchers.anyBoolean());
 	}
 	
 	@Test
@@ -1419,6 +1419,7 @@ public class OpenTrialControllerTest {
 		Assert.assertEquals(folderName, basicData.getFolderNameLabel());
 		Assert.assertEquals(userId, basicData.getUserID());
 		Assert.assertEquals(ownerName, basicData.getUserName());
+		Assert.assertTrue(basicData.getIsLocked());
 	}
 
 	private StudyDetails createTestStudyDetails(final int trialID) {
@@ -1431,6 +1432,7 @@ public class OpenTrialControllerTest {
 		studyDetails.setEndDate("20140421");
 		studyDetails.setStudyUpdate("20160601");
 		studyDetails.setStudyType(StudyTypeDto.getNurseryDto());
+		studyDetails.setIsLocked(true);
 		final int parentFolderId = 125;
 		studyDetails.setParentFolderId(parentFolderId);
 		final String createdBy = "210";

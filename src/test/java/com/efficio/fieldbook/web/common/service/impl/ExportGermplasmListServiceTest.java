@@ -15,7 +15,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.pojo.ExportColumnHeader;
-import org.generationcp.commons.pojo.ExportColumnValue;
+import org.generationcp.commons.pojo.ExportRow;
 import org.generationcp.commons.pojo.GermplasmListExportInputValues;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -290,38 +290,38 @@ public class ExportGermplasmListServiceTest {
 	@Test
 	public void testGetExportColumnValuesFromTableStudy() {
 
-		final List<Map<Integer, ExportColumnValue>> exportColumnValues =
+		final List<ExportRow> exportColumnValues =
 				this.exportGermplasmListServiceImpl.getExportColumnValuesFromTable(this.getVisibleColumnMap());
 
 		Assert.assertEquals(1, exportColumnValues.size());
 
-		final Map<Integer, ExportColumnValue> row = exportColumnValues.get(0);
+		final ExportRow row = exportColumnValues.get(0);
 
-		Assert.assertEquals(ExportGermplasmListServiceTest.DESIG_VALUE, row.get(TermId.DESIG.getId()).getValue());
-		Assert.assertEquals(ExportGermplasmListServiceTest.SOURCE_VALUE, row.get(TermId.SEED_SOURCE.getId()).getValue());
-		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_CODE_VALUE, row.get(TermId.ENTRY_CODE.getId()).getValue());
-		Assert.assertEquals(ExportGermplasmListServiceTest.CROSS_VALUE, row.get(TermId.CROSS.getId()).getValue());
-		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_NO_VALUE, row.get(TermId.ENTRY_NO.getId()).getValue());
-		Assert.assertEquals(ExportGermplasmListServiceTest.GID_VALUE, row.get(TermId.GID.getId()).getValue());
+		Assert.assertEquals(ExportGermplasmListServiceTest.DESIG_VALUE, row.getValueForColumn(TermId.DESIG.getId()));
+		Assert.assertEquals(ExportGermplasmListServiceTest.SOURCE_VALUE, row.getValueForColumn(TermId.SEED_SOURCE.getId()));
+		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_CODE_VALUE, row.getValueForColumn(TermId.ENTRY_CODE.getId()));
+		Assert.assertEquals(ExportGermplasmListServiceTest.CROSS_VALUE, row.getValueForColumn(TermId.CROSS.getId()));
+		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_NO_VALUE, row.getValueForColumn(TermId.ENTRY_NO.getId()));
+		Assert.assertEquals(ExportGermplasmListServiceTest.GID_VALUE, row.getValueForColumn(TermId.GID.getId()));
 
 	}
 
 	@Test
 	public void testGetExportColumnValuesFromTableNursery() {
 
-		final List<Map<Integer, ExportColumnValue>> exportColumnValues =
+		final List<ExportRow> exportRows =
 				this.exportGermplasmListServiceImpl.getExportColumnValuesFromTable(this.getVisibleColumnMap());
 
-		Assert.assertEquals(1, exportColumnValues.size());
+		Assert.assertEquals(1, exportRows.size());
 
-		final Map<Integer, ExportColumnValue> row = exportColumnValues.get(0);
+		final ExportRow row = exportRows.get(0);
 
-		Assert.assertEquals(ExportGermplasmListServiceTest.DESIG_VALUE, row.get(TermId.DESIG.getId()).getValue());
-		Assert.assertEquals(ExportGermplasmListServiceTest.SOURCE_VALUE, row.get(TermId.SEED_SOURCE.getId()).getValue());
-		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_CODE_VALUE, row.get(TermId.ENTRY_CODE.getId()).getValue());
-		Assert.assertEquals(ExportGermplasmListServiceTest.CROSS_VALUE, row.get(TermId.CROSS.getId()).getValue());
-		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_NO_VALUE, row.get(TermId.ENTRY_NO.getId()).getValue());
-		Assert.assertEquals(ExportGermplasmListServiceTest.GID_VALUE, row.get(TermId.GID.getId()).getValue());
+		Assert.assertEquals(ExportGermplasmListServiceTest.DESIG_VALUE, row.getValueForColumn(TermId.DESIG.getId()));
+		Assert.assertEquals(ExportGermplasmListServiceTest.SOURCE_VALUE, row.getValueForColumn(TermId.SEED_SOURCE.getId()));
+		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_CODE_VALUE, row.getValueForColumn(TermId.ENTRY_CODE.getId()));
+		Assert.assertEquals(ExportGermplasmListServiceTest.CROSS_VALUE, row.getValueForColumn(TermId.CROSS.getId()));
+		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_NO_VALUE, row.getValueForColumn(TermId.ENTRY_NO.getId()));
+		Assert.assertEquals(ExportGermplasmListServiceTest.GID_VALUE, row.getValueForColumn(TermId.GID.getId()));
 
 	}
 

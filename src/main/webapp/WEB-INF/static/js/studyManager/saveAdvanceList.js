@@ -155,6 +155,7 @@ var SaveAdvanceList = {};
 						$('a#advanceHref' + id).tab('show');
 						displayAdvanceList(data.germplasmListId, $.trim(data.listName), false, data.advancedGermplasmListId, false);
 					}
+                    angular.element('#mainApp').injector().get('TrialManagerDataService').trialMeasurement.hasAdvancedOrCrossesList = true;
 					showSuccessfulMessage('', saveListSuccessfullyMessage);
 				} else {
 					showErrorMessage('page-save-list-message-modal', data.message);

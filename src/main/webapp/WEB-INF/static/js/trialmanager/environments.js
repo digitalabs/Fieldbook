@@ -141,7 +141,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			/* Scope Functions */
 			$scope.shouldDisableEnvironmentCountUpdate = function() {
-				return TrialManagerDataService.trialMeasurement.hasMeasurement;
+				return TrialManagerDataService.trialMeasurement.hasMeasurement || TrialManagerDataService.trialMeasurement.hasAdvancedOrCrossesList;
 			};
 
 			$scope.updateEnvironmentCount = function() {
@@ -241,34 +241,43 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				});
 			}
 
-			function hasMeasurementDataOnEnvironment(environmentNo) {
-				var variableIds = TrialManagerDataService.settings.measurements.keys();
-				var dfd = $.Deferred();
-				$.ajax({
-					url: '/Fieldbook/trial/measurements/instanceMetadata/' + $('#studyId').val(),
-					success: function (data) {
-						var envList;
-						envList = data;
-						if (envList[environmentNo] == undefined) {
-							confirmDeleteEnvironment(environmentNo);
-						}
-						else {
-							$http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' +
-								envList[environmentNo].instanceDbId, variableIds, {cache: false}).success(function (data) {
-								if (true === data) {
-									var warningMessage = 'This environment cannot be removed because it contains measurement data.';
-									showAlertMessage('', warningMessage);
-								} else {
-									confirmDeleteEnvironment(environmentNo);
-								}
-								dfd.resolve();
-							});
-						}
+            function hasMeasurementDataOnEnvironment(environmentNo) {
+                var variableIds = TrialManagerDataService.settings.measurements.keys();
+                var dfd = $.Deferred();
+                $.ajax({
+                    url: '/Fieldbook/trial/measurements/instanceMetadata/' + $('#studyId').val(),
+                    success: function (data) {
+                        var envList;
+                        envList = data;
+                        if (envList[environmentNo] == undefined) {
+                            hasAdvancedOrCrossesListOnStudy();
+                        }
+                        else {
+                            $http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' +
+                                envList[environmentNo].instanceDbId, variableIds, {cache: false}).success(function (data) {
+                                if (true === data) {
+                                    var warningMessage = 'This environment cannot be removed because it contains measurement data.';
+                                    showAlertMessage('', warningMessage);
+                                } else {
+                                    hasAdvancedOrCrossesListOnStudy();
+                                }
+                                dfd.resolve();
+                            });
+                        }
 
-					}
-				});
-				return dfd.promise();
-			}
+                    }
+                });
+                return dfd.promise();
+            }
+
+            function hasAdvancedOrCrossesListOnStudy() {
+                if(TrialManagerDataService.trialMeasurement.hasAdvancedOrCrossesList) {
+                    var warningMessage = 'This environment cannot be removed because the study has Advance/Cross List.';
+                    showAlertMessage('', warningMessage);
+                } else {
+                    confirmDeleteEnvironment(environmentNo);
+                }
+            }
 
 			// on click generate design button
 			function refreshMeasurementTableAfterDeletingEnvironment() {

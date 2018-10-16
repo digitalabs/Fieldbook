@@ -131,9 +131,9 @@
 				alias: 'time points'
 			}), ({
 				label:'Custom',
-				name: 'sub-observation unit',
+				name: 'sub-observation units',
 				defaultVariable: 20325,
-				alias: 'sub-observation unit'
+				alias: 'sub-observation units'
 			})];
 		};
 

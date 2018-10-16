@@ -60,9 +60,6 @@
 								<a tabindex="-1" href="#">Design and planning options</a>
 								<ul class="dropdown-menu" style="margin-left: 28px;">
 									<li>
-										<a ng-click="addSubObservation()">tab</a>
-									</li>
-									<li>
 										<a href="javascript: void(0)" onclick="exportDesignTemplate()" class="export-design-template-link"
 										   th:text="#{study.studydetails.action.export.design.template}">Export Design Template</a>
 									</li>
@@ -106,6 +103,19 @@
 									</li>
 								</ul>
 							</li>
+
+							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
+								<a tabindex="-1" href="#">Observation unit options</a>
+								<ul class="dropdown-menu" style="margin-left: -25px;">
+									<li>
+										<a ng-click="addSubObservation()" id="create-sub-Observation-link"
+										   th:text="#{study.studydetails.action.create.sub.observation.units}">Create sub-observation units</a>
+									</li>
+									<li>
+										<a ng-click="addSubObservation()">Sub-observation Tab POC</a>
+									</li>
+								</ul>
+                            </li>
 
 							<li ng-show="displayMeasurementOnlyActions()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Field map options</a>

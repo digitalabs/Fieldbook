@@ -94,6 +94,15 @@
 				$('.dataTables_processing', $(previewTableId).closest('.dataTables_wrapper')).show();
 			};
 
+			$scope.subDivide = function () {
+				var id = $scope.subObservation.divisions.length + 1;
+				var name = 'Sub-observation set ' + $scope.subObservation.id + ' - division ' + id;
+				$scope.subObservation.divisions.push({
+					id: id,
+					name: name
+				});
+			};
+
 			function addCommonOptions(options) {
 				return options
 					.withOption('processing', true)

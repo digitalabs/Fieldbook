@@ -818,22 +818,18 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.addSubObservation = function () {
 
 				// Test data
-				var name = 'tab' + Math.random();
-				var state = name.replace(/\./g, "");
-				var divisions = [1, 2, 3].map(function (id) {
-					return {
-						id: id,
-						name: 'division-' + Math.random()
-					}
-				})
+				var id = $scope.subObservations.length + 1;
+				var name = 'Sub-observation set ' + id;
 
 				$scope.subObservations.push({
-						name: name,
-						id: state,
-						state: '/subobservations/' + state, // arbitrary prefix to filter tab content
-						divisions: divisions
-					}
-				)
+					name: name,
+					id: id,
+					state: '/subobservations/' + id, // arbitrary prefix to filter tab content
+					divisions: [{
+						id: id,
+						name: name
+					}]
+				});
 			};
 
 		}]);

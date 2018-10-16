@@ -12,10 +12,6 @@
 						<button  id="closeCreateSubObservationUnitsModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
 					</div>
 				</div>
-
-				<div class="row form-group">
-					<div></div>
-				</div>
 				<div class="separator"></div>
 				<br/>
 				<div class="row form-group">
@@ -30,36 +26,22 @@
 				</div>
 					<div class="col-xs-11  col-xs-offset-0">
 						<form name="datasetOptions" novalidate="" class="simple-form">
-							<div class="col-xs-12 col-md-12"><label>
-								<input type="radio" ng-model="selectedDatasetType" value="plants" required=""/>
-								Plants
-							</label></div>
-							<div class="col-xs-12 col-md-12"></div>
-							<div class="col-xs-12 col-md-12"><label>
-								<input type="radio" ng-model="selectedDatasetType" value="quadrats" required=""/>
-								Quadrats
-							</label></div>
-							<div class="col-xs-12 col-md-12"></div>
-							<div class="col-xs-12 col-md-12"><label>
-								<input type="radio" ng-model="selectedDatasetType" value="timeSeries" required=""/>
-								Time Series
-							</label></div>
-							<div class="col-xs-12 col-md-12"></div>
-							<div class="col-xs-12 col-md-12"><label>
-								<input type="radio" ng-model="selectedDatasetType" value="custom" required=""/>
-								Custom
-							</label></div>
+							<div ng-repeat="datasetType in datasetTypes">
+								<label class="col-xs-12 col-md-12">
+									<input type="radio" ng-model="$parent.selected" ng-value="datasetType" ng-click="dataSetTypeSelected(datasetType)"/>
+									{{datasetType.label}}
+								</label>
+							</div>
 						</form>
 					</div>
 				<div class="row">
-					<div class="col-xs-12 col-md-12"><br></br></div>
 					<div class="col-xs-12 col-md-12"><br></br></div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">
 						Cancel
 					</button>
-					<button type="button" class="btn btn-primary" ng-disabled="selectedDatasetType === ''"
+					<button type="button" class="btn btn-primary" ng-disabled="!datasetType"
 							aria-hidden="true" ng-click="continue()" th:text="#{common.form.continue.text}">
 						Continue
 					</button>

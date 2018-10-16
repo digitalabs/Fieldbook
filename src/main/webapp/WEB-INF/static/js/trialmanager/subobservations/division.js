@@ -13,10 +13,12 @@
 			$scope.rows = division.rows;
 			$scope.nested = {};
 			$scope.nested.dtInstance = null;
+			$scope.nested.reviewVariable = null;
 
 			var subObservation = $scope.subObservation;
 			var dataTable = $scope.division.dataTable;
-			var tableIdentifier = '#subobservation-table-' + subObservation.id + '-' + division.id;
+			var tableId = '#subobservation-table-' + subObservation.id + '-' + division.id;
+			var previewTableId = '#preview-subobservation-table-' + subObservation.id + '-' + division.id;
 			var studyId = $('#studyId').val();
 			var environmentId = getCurrentEnvironmentNumber();
 			var dtColumnsPromise = $q.defer();
@@ -25,13 +27,13 @@
 			$scope.dtColumns = dtColumnsPromise.promise;
 			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 
-			$scope.dtOptions = DTOptionsBuilder.newOptions()
+			$scope.dtOptions = addCommonOptions(DTOptionsBuilder.newOptions()
 				.withOption('ajax', {
 					url: '/Fieldbook/trial/measurements/plotMeasurements/' + studyId + '/' + environmentId,
 					type: 'GET',
 					data: function(d) {
-						var sortedColIndex = $(tableIdentifier).dataTable().fnSettings().aaSorting[0][0];
-						var sortDirection = $(tableIdentifier).dataTable().fnSettings().aaSorting[0][1];
+						var sortedColIndex = $(tableId).dataTable().fnSettings().aaSorting[0][0];
+						var sortDirection = $(tableId).dataTable().fnSettings().aaSorting[0][1];
 						var sortedColTermId = division.displayColumns[sortedColIndex].termId;
 
 						return {
@@ -43,14 +45,8 @@
 						};
 					}
 				})
-				// FIXME buttons
-			 // .withDOM('<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp')
-			    .withDOM('<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info">>tp')
 				.withDataProp('data')
-				.withOption('processing', true)
-				.withOption('serverSide', true)
-				.withPaginationType('full_numbers')
-			;
+				.withOption('serverSide', true));
 
 			if (dataTable) {
 				loadDataTable();
@@ -82,21 +78,56 @@
 				$http.post('sub-observation-set/preview/save/', division.rows);
 			};
 
-			function loadPreview() {
-				$scope.dtOptionsPreview = DTOptionsBuilder
-					.fromFnPromise(getPreview())
-					.withOption('rowCallback', previewRowCallback)
-					// FIXME buttons
-				 // .withDOM('<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info"B>>tp')
-					.withDOM('<"mdt-header"<"mdt-length dataTables_info"l>ir<"mdt-filtering dataTables_info">>tp')
-					.withPaginationType('full_numbers')
-				;
+			$scope.filterVariable = function () {
 
+				angular.forEach($scope.columnsObj.columns, function (col) {
+					if (col.className === 'variates') {
+						col.visible = false;
+					}
+					if (col.title === $scope.nested.reviewVariable.title) {
+						col.visible = true;
+					}
+				});
+				// FIXME is there a faster way?
+				$scope.dtColumns = $scope.columnsObj.columns;
+				// FIXME is there a better way?
+				$('.dataTables_processing', $(previewTableId).closest('.dataTables_wrapper')).show();
+			};
+
+			function addCommonOptions(options) {
+				return options
+					.withOption('processing', true)
+					.withOption('language', {
+						processing: '<span class="throbber throbber-2x"></span>',
+						lengthMenu: 'Records per page: _MENU_'
+					})
+					.withDOM('<"row"' + //
+						'<"col-sm-2"l>' + //
+						'<"col-sm-2"i>' + //
+						'<"col-sm-1"r>' + //
+						'<"col-sm-1">' + //
+						'<"col-sm-5">' + //
+						'<"col-sm-1"<"pull-right"B>>' + //
+						'>' + //
+						'<"row"<"col-sm-12"t>>' + //
+						'<"row"<"col-sm-12"p>>')
+					.withButtons([{
+						extend: 'colvis',
+						className: 'fbk-buttons-no-border fbk-colvis-button',
+						text: '<i class="glyphicon glyphicon-th"></i>',
+						columns: ':gt(0):not(.ng-hide)'
+					}])
+					.withPaginationType('full_numbers');
+			}
+
+			function loadPreview() {
+				$scope.dtOptionsPreview = addCommonOptions(DTOptionsBuilder
+					.fromFnPromise(getPreview())
+					.withOption('rowCallback', previewRowCallback));
 			}
 
 			function previewRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 				var experimentId = aData.experimentId;
-
 
 				// FIXME attach to table instead? prevent multiple cells click?
 				$('td.variates', nRow).off().on('click', cellClickHandler);
@@ -236,6 +267,11 @@
 			};
 
 		}])
+		.factory('DTLoadingTemplate', function() {
+			return {
+				html: '<span class="throbber throbber-2x"></span>'
+			};
+		})
 		.directive('observationInlineEditor', function () {
 			return {
 				restrict: 'E',

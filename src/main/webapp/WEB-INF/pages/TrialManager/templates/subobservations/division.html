@@ -1,58 +1,96 @@
 <div class="row" ng-cloak="">
 	<div class="col-xs-12">
-		<h1>Division title: {{division.name}}</h1>
-		<div>
-
-			<button class="btn btn-info" ng-click="addDataTable()">addDataTable</button>
-			<button class="btn btn-info" ng-click="togglePreviewMode()">Toggle Preview mode</button>
-
-			<br/>
-
-			<div ng-if="preview" class="add_top_padding_small">
-				<h2>Preview</h2>
-
-				<button class="btn btn-info" ng-click="resetPreview()">Reset Preview</button>
-				<button class="btn btn-info" ng-click="savePreview()">Save Preview</button>
-
-				<label>Review Variable</label>
-				<ui-select ng-model="nested.reviewVariable" style="width: 200px;"
-						   ng-if="columnsObj"
-						   ng-change="filterVariable()"
-						   theme="select2">
-					<ui-select-match class="ui-select-match">
-						<span ng-bind="$select.selected.title"></span>
-					</ui-select-match>
-					<ui-select-choices repeat="column in (columnsObj.columns | filter: { title: $select.search, className: 'variates' }) track by column.termId">
-						<span ng-bind="column.title"></span>
-					</ui-select-choices>
-				</ui-select>
-
+		<div class="row">
+			<div class="col-xs-12">
+				<h1>Division title: {{division.name}}</h1>
 			</div>
-
-			<div ng-if="!preview">
-				<table id="subobservation-table-{{subObservation.id}}-{{division.id}}"
-					   datatable=""
-					   dt-options="dtOptions"
-					   dt-columns="dtColumns"
-					   dt-column-defs="dtColumnDefs"
-					   width="100%"
-					   class="table-curved table-condensed">
-				</table>
-			</div>
-
-			<!-- Preview Table -->
-			<div ng-if="preview">
-				<table id="preview-subobservation-table-{{subObservation.id}}-{{division.id}}"
-					   datatable=""
-					   dt-instance="nested.dtInstance"
-					   dt-options="dtOptionsPreview"
-					   width="100%"
-					   dt-columns="dtColumns"
-					   dt-column-defs="dtColumnDefs"
-					   class="table-curved table-condensed">
-				</table>
-			</div>
-
 		</div>
+	</div>
+	<div class="col-xs-12">
+		<div class="row">
+			<div class="col-xs-12">
+
+				<div class="btn-group pull-right">
+					<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+						<span>Actions</span>
+					</button>
+					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+						<li>
+							<a ng-click="addDataTable()">addDataTable</a>
+						</li>
+						<li>
+							<a ng-click="togglePreviewMode()">Toggle Preview</a>
+						</li>
+						<li class="dropdown-submenu pull-left" ng-if="preview">
+							<a tabindex="-1" href="#">Preview options</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a ng-click="savePreview()">Save Preview</a>
+								</li>
+								<li>
+									<a ng-click="resetPreview()">Reset Preview</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xs-12 add-top-padding-small">
+
+		<div class="row">
+			<div class="col-xs-12">
+
+				<div ng-if="preview">
+					<h2>Preview Mode</h2>
+
+					<div class="add-top-padding-small">
+						<label>Review Variable</label>
+						<ui-select ng-model="nested.reviewVariable" style="width: 200px;"
+								   ng-if="columnsObj"
+								   ng-change="filterVariable()"
+								   theme="select2">
+							<ui-select-match class="ui-select-match">
+								<span ng-bind="$select.selected.title"></span>
+							</ui-select-match>
+							<ui-select-choices repeat="column in (columnsObj.columns | filter: { title: $select.search, className: 'variates' }) track by column.termId">
+								<span ng-bind="column.title"></span>
+							</ui-select-choices>
+						</ui-select>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div ng-if="!preview" class="add-top-padding-small">
+			<table id="subobservation-table-{{subObservation.id}}-{{division.id}}"
+				   datatable=""
+				   ng-if="division.dataTable"
+				   dt-options="dtOptions"
+				   dt-columns="dtColumns"
+				   dt-column-defs="dtColumnDefs"
+				   width="100%"
+				   class="table-curved table-condensed">
+			</table>
+		</div>
+
+		<!-- Preview Table -->
+		<div ng-if="preview" class="add-top-padding-small">
+			<table id="preview-subobservation-table-{{subObservation.id}}-{{division.id}}"
+				   datatable=""
+				   dt-instance="nested.dtPreviewInstance"
+				   ng-if="dtOptionsPreview"
+				   dt-options="dtOptionsPreview"
+				   width="100%"
+				   dt-columns="dtColumns"
+				   dt-column-defs="dtColumnDefs"
+				   class="table-curved table-condensed">
+			</table>
+		</div>
+
 	</div>
 </div>

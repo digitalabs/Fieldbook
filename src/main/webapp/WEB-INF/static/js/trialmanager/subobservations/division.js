@@ -12,7 +12,7 @@
 			$scope.columnsObj = division.columnsObj;
 			$scope.rows = division.rows;
 			$scope.nested = {};
-			$scope.nested.dtInstance = null;
+			$scope.nested.dtPreviewInstance = null;
 			$scope.nested.reviewVariable = null;
 
 			var subObservation = $scope.subObservation;
@@ -71,7 +71,7 @@
 
 			$scope.resetPreview = function () {
 				$scope.rows = division.rows = null;
-				$scope.nested.dtInstance.changeData(getPreview());
+				$scope.nested.dtPreviewInstance.changeData(getPreview());
 			};
 
 			$scope.savePreview = function () {

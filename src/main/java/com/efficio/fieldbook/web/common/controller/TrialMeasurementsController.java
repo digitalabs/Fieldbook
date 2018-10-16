@@ -75,6 +75,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	static final String SUCCESS = "success";
 	private static final String TERM_ID = "termId";
 	static final String DATA = "data";
+	static final String MISSING_VALUE = "missing";
 
 	@Resource
 	private UserSelection userSelection;
@@ -705,7 +706,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	void roundNumericValues(final List<MeasurementRow> measurementRowList) {
 	  	for (final MeasurementRow row : measurementRowList) {
 	  	  	for (final MeasurementData data : row.getDataList()) {
-		  		if (data.getMeasurementVariable().getVariableType().getId().equals(VariableType.TRAIT.getId()) && data.isNumeric() && data.getValue() != null && !data.getValue().isEmpty()) {
+		  		if (data.getMeasurementVariable().getVariableType().getId().equals(VariableType.TRAIT.getId()) && data.isNumeric() && data.getValue() != null && !data.getValue().isEmpty() && !data.getValue().equals(TrialMeasurementsController.MISSING_VALUE)) {
 		    		String value = StringUtils.stripEnd(String.format ("%.2f", Double.parseDouble(data.getValue())), "0");
 					data.setValue(StringUtils.stripEnd(value, "."));
 		  		}

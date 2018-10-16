@@ -842,25 +842,9 @@ function subObservationUnitDatasetSelector() {
 	});
 
 	var $scope = angular.element('#SubObservationUnitDatasetSelectorModal').scope();
-	$scope.init();
-	$scope.$apply();
-
-}
-
-function subObservationUnitDatasetbuild(option) {
-	'use strict';
-	$('#SubObservationUnitDatasetSelectorModal').modal('hide');
-	$('#SubObservationUnitDatasetBuildModal').modal({ backdrop: 'static', keyboard: true });
-
-	// Add hide listener to selectEnvironmentModal
-	$('#SubObservationUnitDatasetBuildModal').one('hidden.bs.modal', function (e) {
-		// When the selectEnvironmentModal is closed, remove the bs.modal data
-		// so that the modal content is refreshed when it is opened again.
-		$(e.target).removeData('bs.modal');
+	$scope.$apply(function(){
+		$scope.init();
 	});
-
-	var $scope = angular.element('#SubObservationUnitDatasetBuildModal').scope();
-	$scope.init(option);
 
 }
 /* END SUB OBSERVATION UNIT SPECIFIC FUNCTIONS */

@@ -1,5 +1,5 @@
-<div class="modal fade" id="SubObservationUnitDatasetSelectorModal" role="dialog" aria-labelledby="SubObservationUnitDatasetSelectorModal"
-	 ng-controller="SubObservationUnitDatasetSelectorCtrl" aria-hidden="true">
+<div ng-controller="SubObservationUnitDatasetBuildCtrl">
+<div class="modal fade" id="SubObservationUnitDatasetSelectorModal" role="dialog" aria-labelledby="SubObservationUnitDatasetSelectorModal" aria-hidden="true">
 	<div class="modal-dialog modal-medium">
 		<div class="modal-content">
 			<div class="modal-body">
@@ -70,72 +70,112 @@
 </div>
 
 
-<div class="modal fade" id="SubObservationUnitDatasetBuildModal" role="dialog" aria-labelledby="SubObservationUnitDatasetBuildModal"
-	 ng-controller="SubObservationUnitDatasetBuildCtrl" aria-hidden="true">
-	<div class="modal-dialog modal-medium">
-		<div class="modal-content">
-			<div class="modal-body">
-				<div class="row form-group">
-					<div class="col-xs-11 col-md-11">
-						<label class="modal-title fbk-modal-title" id="heading-modal"> Specify {{header | capitalize}}</label>
+<div class="modal fade" id="SubObservationUnitDatasetBuildModal" role="dialog" aria-labelledby="SubObservationUnitDatasetBuildModal" aria-hidden="true">
+	<form class="simple-form" name="dtForm" ng-submit="saveDataset()" novalidate="">
+		<div class="modal-dialog modal-medium">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="row form-group">
+						<div class="col-xs-11 col-md-11">
+							<label class="modal-title fbk-modal-title" id="heading-modal"> Specify {{datasetType.name | capitalize}}</label>
+						</div>
+						<div class="col-xs-1 col-md-1">
+							<button id="closeSubObservationUnitDatasetBuildModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+						</div>
 					</div>
-					<div class="col-xs-1 col-md-1">
-						<button  id="closeSubObservationUnitDatasetBuildModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+					<div class="separator"></div>
+					<br/>
+					<div class="row form-group">
+						<div class="col-xs-12 col-md-12">
+							<label class=""><em th:utext="#{label.indicate.mandatory.fields}"> indicates a mandatory field</em></label>
+						</div>
 					</div>
-				</div>
+					<div class="row form-group" ng-class="formGroupClass('datsetName', 'name')">
+						<div class="col-sm-6" style="padding-right: 0px;">
+						<label class="control-label label-bold"> Name for {{datasetType.name}} dataset: <span
+							class="required">*</span></label>
+						</div>
+						<div class="col-sm-6" style="padding-left: 0px;">
+							<input type="text" name="datsetName" ng-model="name" ng-maxlength="100" pattern="^[a-zA-Z][a-zA-Z0-9]*$"
+								   required="true"/>
+						</div>
+						<div class="col-sm-12">
+							<div class="text-danger" ng-messages="dtForm.datsetName.$error" ng-if="dtForm.$submitted || dtForm.datsetName.$touched">
+								<p ng-message="required">Name for (plants/quadrats/time series/custom)* dataset must be provided</p>
+								<p ng-message="pattern">Name for dataset should contain numbers and letter</p>
+								<p ng-message="maxlength">Name for dataset must not exceed 100 characters</p>
+							</div>
+						</div>
+					</div>
+					<br></br>
+					<div class="row form-group" ng-class="formGroupClass('unitNumber', 'parentUnitNumber')">
+						<div class="col-sm-10">
+						<label class="control-label label-bold">Specify a maximum number of {{datasetType.alias}} for
+							each parent unit (up to {{maximunNumForEachParentUnit}}): <span class="required">*</span></label>
+						</div>
+						<div class="col-sm-2" style="padding-left: 0px;">
+							<input type="number" name="unitNumber" ng-model="parentUnitNumber" ng-min="1" ng-max="{{maximunNumForEachParentUnit}}"
+								   pattern="^[0-9]*$" style="width: 74px;" required="true"/>
+						</div>
+						<div class="col-sm-12">
+							<div class="text-danger" ng-messages="dtForm.unitNumber.$error"
+								 ng-if="dtForm.$submitted || dtForm.unitNumber.$touched">
+								<p ng-message="min">"The number of sub-observations per parent unit should not be lower than 1 or greater than {{maximunNumForEachParentUnit}}"</p>
+								<p ng-message="max">"The number of sub-observations per parent unit should not be lower than 1 or greater than {{maximunNumForEachParentUnit}}"</p>
+								<p ng-message="required">The number of sub-observations per each parent unit to generate was not defined</p>
+							</div>
+						</div>
+					</div>
+					<br></br>
+					<div class="row form-group" ng-class="formGroupClass('selectVariableDatasetBuilder', 'selectedVariable')">
+						<div class="report-type-section col-xs-6 col-md-12"  style="height: 30px;">
+						<label class="control-label label-bold">Choose a variable to number the
+							{{datasetType.alias}}:<span class="required">*</span></label>
+						<span class="bms-fa-question-circle help-tooltip-study" data-placement="right" style="padding-left: 15px;" data-toggle="tooltip" th:title="@{{{selectedVariable.description}}}"></span>
 
-				<div class="row form-group">
-					<div id="page-advance-modal-message"></div>
-				</div>
-				<div class="separator"></div>
-				<br/>
-				<div class="row form-group">
-					<label class="control-label label-bold col-sm-6" style="width: 270px;"> Name for {{header}} dataset: <span class="required">*</span></label>
-					<div class="col-sm-6">
-						<input type="text" ng-model="datasetName" maxlength="225"/>
+						</div>
+						<div class="report-type-section col-xs-6 col-md-5">
+							<select id="variableDatasetBuilder" name="selectVariableDatasetBuilder" ng-change="change()"
+									ng-options="variable as variable.name for variable in variables" ng-model="selectedVariable" required="true">
+								<option value="">Please Choose</option>
+							</select>
+						</div>
+						<div class="col-sm-12">
+							<div class="text-danger" ng-messages="dtForm.selectVariableDatasetBuilder.$error"
+								 ng-if="dtForm.$submitted || dtForm.selectVariableDatasetBuilder.$touched">
+								<p ng-message="required">A variable to number the sub-observations units for data collection should be specified</p>
+							</div>
+						</div>
 					</div>
-					<div class="col-xs-12 col-md-12"><br></br></div>
-				</div>
-				<div class="row form-group">
-					<label class="control-label label-bold col-sm-11" style="width: 545px;">Specify a maximun number of {{header}} for each parent unit (up to 25): <span class="required">*</span></label>
-					<div class="col-sm-1">
-						<input type="text" ng-model="parentUnitNumber" maxlength="225" style="width: 60px;"/>
+					<br></br>
+					<div class="row form-group" ng-class="trialInstances.length === 0 ? 'row form-group has-error':'row form-group'">
+						<div class="col-xs-12 col-md-12">
+							<label class="control-label label-bold">Select the environments for which you would like to generate
+								{{datasetType.name}}:<span class='required'>*</span></label>
+						</div>
+						<div class="col-sm-12">
+							<div class="text-danger" ng-if="trialInstances.length === 0">
+								<p>The environment(s) to which you would like to apply the sub-observations must be selected</p>
+							</div>
+						</div>
 					</div>
-					<div class="col-xs-12 col-md-12"><br></br></div>
-				</div>
-				<div class="row form-group">
-					<label class="control-label label-bold col-sm-8" style="width: 380px;">Choose a variable to number the {{header}}:<span class="required">*</span></label>
-					<div>
-						<span class="bms-fa-question-circle help-tooltip-study" data-placement="right" data-toggle="tooltip" th:title="#{study.export.data.collection.serpentine.tool.tip}"></span>
+					<environment-details></environment-details>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true"
+								ng-click="backToSubObservationUnitDatasetSelector()" th:text="#{common.form.back.text}">
+							Back
+						</button>
+						<button class="btn btn-primary" type="submit" th:text="#{common.form.save.text}"> Save
+							<span ng-show="submitted" class="throbber-btn-wrapper">
+								<span class="throbber throbber-btn throbber-white"></span>
+							</span>
+						</button>
 					</div>
-					<div class="report-type-section col-xs-6 col-md-5">
-						<select id="variableDatasetBuilder" name="selectVariableDatasetBuilder"
-								ng-options="variable.name for variable in variables" ng-model="variableSelected" required="">
-							<option value="">Please Choose</option>
-						</select>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-xs-12 col-md-12"><br></br></div>
-					<div class="col-xs-12 col-md-12"><br></br></div>
-				</div>
-				<div class="row form-group">
-					<div class="col-xs-12 col-md-12" >
-						<label class="control-label label-bold">Select the environments for which you would like to generate {{header}}:<span class='required'>*</span></label>
-					</div>
-				</div>
-				<environment-details></environment-details>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="backToSubObservationUnitDatasetSelector()" th:text="#{common.form.back.text}">
-						Cancel
-					</button>
-					<button type="button" class="btn btn-primary" aria-hidden="true" ng-click="saveDataset()" th:text="#{common.form.save.text}">
-						Continue
-					</button>
-				</div>
-			</div> <!-- Modal Content -->
+				</div> <!-- Modal Content -->
+			</div>
 		</div>
-	</div>
+	</form>
+</div>
 </div>
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">

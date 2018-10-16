@@ -755,7 +755,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.userHasLockPermission = function() {
-				return $scope.data.userID === loggedInUserId || isSuperAdmin;
+				return $scope.data.userID === currentCropUserId || isSuperAdmin;
 			};
 			
 			$scope.changeLockedStatus = function(doLock) {

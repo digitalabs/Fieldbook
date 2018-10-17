@@ -5,20 +5,23 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipFile;
 
+import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
 import org.generationcp.commons.pojo.ExportColumnHeader;
-import org.generationcp.commons.pojo.ExportColumnValue;
+import org.generationcp.commons.pojo.ExportRow;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
+import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.data.initializer.ProjectTestDataInitializer;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -56,6 +59,9 @@ public class ExportAdvanceListServiceImplTest {
 	@Mock
 	private ContextUtil contextUtil;
 
+	@Mock
+	public OntologyDataManager ontologyDataManager;
+
 	@Captor
 	private ArgumentCaptor<List<String>> filenameListCaptor;
 	
@@ -90,6 +96,17 @@ public class ExportAdvanceListServiceImplTest {
 		this.exportAdvanceListServiceImpl.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
 		
 		Mockito.doReturn(ProjectTestDataInitializer.createProject()).when(this.contextUtil).getProjectInContext();
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.ENTRY_ID.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.ENTRY.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.DESIGNATION.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.DESIGNATION.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.PARENTAGE.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.PARENTAGE.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.GID.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.GID.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.SEED_SOURCE.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.SOURCE.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.LOT_LOCATION.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.LOCATION.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.BULK_WITH.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.BULK_WITH.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.BULK_COMPL.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.BULK_COMPL.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.DUPLICATE.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.DUPLICATE.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.STOCKID_INVENTORY.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.STOCKID.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.COMMENT.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.COMMENT.getName(), null));
 	}
 
 	@Test
@@ -103,16 +120,16 @@ public class ExportAdvanceListServiceImplTest {
 
 	@Test
 	public void testGenerateAdvanceListColumnValues() {
-		final List<Map<Integer, ExportColumnValue>> exportColumnsValuesList =
+		final List<ExportRow> exportRows =
 				this.exportAdvanceListServiceImpl.generateAdvanceListColumnValues(this.inventoryDetailsList,
 						this.exportAdvanceListServiceImpl.generateAdvanceListColumnHeaders(false, ""));
-		Assert.assertEquals("There should be 5 set of column values", 5, exportColumnsValuesList.size());
+		Assert.assertEquals("There should be 5 set of column values", 5, exportRows.size());
 		// we check random data
-		Assert.assertEquals("The 1st GID should be 0", "0", exportColumnsValuesList.get(0).get(TermId.GID.getId()).getValue());
-		Assert.assertEquals("The 2nd GID should be 1", "1", exportColumnsValuesList.get(1).get(TermId.GID.getId()).getValue());
-		Assert.assertEquals("The 3rd GID should be 2", "2", exportColumnsValuesList.get(2).get(TermId.GID.getId()).getValue());
-		Assert.assertEquals("The 4th GID should be 3", "3", exportColumnsValuesList.get(3).get(TermId.GID.getId()).getValue());
-		Assert.assertEquals("The 5th GID should be 4", "4", exportColumnsValuesList.get(4).get(TermId.GID.getId()).getValue());
+		Assert.assertEquals("The 1st GID should be 0", "0", exportRows.get(0).getValueForColumn(TermId.GID.getId()));
+		Assert.assertEquals("The 2nd GID should be 1", "1", exportRows.get(1).getValueForColumn(TermId.GID.getId()));
+		Assert.assertEquals("The 3rd GID should be 2", "2", exportRows.get(2).getValueForColumn(TermId.GID.getId()));
+		Assert.assertEquals("The 4th GID should be 3", "3", exportRows.get(3).getValueForColumn(TermId.GID.getId()));
+		Assert.assertEquals("The 5th GID should be 4", "4", exportRows.get(4).getValueForColumn(TermId.GID.getId()));
 	}
 
 	@Test

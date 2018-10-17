@@ -248,6 +248,7 @@ angular.module('di-consolidatedStep', ['digitalabs-util','di-directives', 'digit
                 $scope.data = {};
                 $scope.data.sheetList = [[${sheetList}]];
                 $scope.data.previousStudyList = [[${previousStudies}]];
+                $scope.data.restrictedStudies = [[${restrictedStudies}]];
                 $scope.data.studyTypeList = [[${studyTypeList}]];
                 $scope.data.datasetTypeList = [[${datasetTypeList}]];
                 $scope.filteredStudyTitleList = [];
@@ -351,6 +352,14 @@ angular.module('di-consolidatedStep', ['digitalabs-util','di-directives', 'digit
                         $scope.messages.push([[#{error.blank.study.type}]]);
                         valid = false;
                     }}
+
+                    if (valid) {
+                    	if ($scope.data.restrictedStudies.indexOf($scope.selected.studyDetails.studyName) >= 0){
+                    		var errorMsg = [[#{browse.study.no.permission.for.locked.study}]];
+                    		$scope.messages.push(errorMsg.replace('by {0} ', ''));
+                    		valid = false;
+                    	}
+                    }
 
                     return $scope.messages.length == 0;
                 };

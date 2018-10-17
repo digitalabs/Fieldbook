@@ -11,10 +11,13 @@ import org.generationcp.commons.parsing.validation.ValueRangeValidator;
 import org.generationcp.commons.parsing.validation.ValueTypeValidator;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.data.initializer.ScaleTestDataInitializer;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -65,6 +68,9 @@ public class InventoryImportParserTest {
 	@Mock
 	private ContextUtil contextUtil;
 
+	@Mock
+	public OntologyDataManager ontologyDataManager;
+
 	@InjectMocks
 	private InventoryImportParser parser;
 
@@ -96,6 +102,18 @@ public class InventoryImportParserTest {
 				.getInventoryScaleByName(InventoryImportParserTest.AMOUNT_HEADER);
 		Mockito.doReturn(this.testStockIds).when(this.inventoryDataManager)
 				.getStockIdsByListDataProjectListId(InventoryImportParserTest.TEST_LIST_ID);
+
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.ENTRY_ID.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.ENTRY.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.DESIGNATION.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.DESIGNATION.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.PARENTAGE.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.PARENTAGE.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.GID.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.GID.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.SEED_SOURCE.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.SOURCE.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.LOT_LOCATION.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.LOCATION.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.BULK_WITH.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.BULK_WITH.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.BULK_COMPL.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.BULK_COMPL.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.DUPLICATE.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.DUPLICATE.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.STOCKID_INVENTORY.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.STOCKID.getName(), null));
+		Mockito.when(this.ontologyDataManager.getTermById(ColumnLabels.COMMENT.getTermId().getId())).thenReturn(new Term(1, InventoryHeaderLabels.COMMENT.getName(), null));
 	}
 
 	private Workbook createWorkbook(final GermplasmListType germplasmListType) throws Exception {
@@ -168,7 +186,7 @@ public class InventoryImportParserTest {
 
 	private void generateHeaders(final GermplasmListType crosses) {
 		this.inventoryHeaderLabelsMap = InventoryHeaderLabels.headers(GermplasmListType.CROSSES);
-		this.headers = InventoryHeaderLabels.getHeaderNames(this.inventoryHeaderLabelsMap);
+		this.headers = InventoryHeaderLabels.getHeaderNames(this.inventoryHeaderLabelsMap, this.ontologyDataManager);
 		this.parser.setInventoryHeaderLabelsMap(this.inventoryHeaderLabelsMap);
 		this.parser.setHeaders(this.headers);
 	}
@@ -276,7 +294,7 @@ public class InventoryImportParserTest {
 		final Map<String, Location> locationMap = this.parser.convertToLocationMap(this.testLocationList);
 		return new InventoryImportParser.InventoryRowConverter(workbook, InventoryImportParserTest.DUMMY_INDEX,
 				InventoryImportParser.INVENTORY_SHEET, this.inventoryHeaderLabelsMap.size(), this.inventoryHeaderLabelsMap, locationMap,
-				this.scaleTDI.createScale());
+				this.scaleTDI.createScale(), this.ontologyDataManager);
 	}
 
 	protected List<Location> createDummyLocationList() {

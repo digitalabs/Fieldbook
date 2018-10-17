@@ -1,14 +1,21 @@
 
 package com.efficio.etl.web;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.web.bean.FileUploadForm;
-import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.validators.FileUploadFormValidator;
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.HTTPSessionUtil;
+import org.generationcp.commons.util.StudyPermissionValidator;
+import org.generationcp.middleware.domain.dms.StudyReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -29,14 +36,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.web.bean.FileUploadForm;
+import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.validators.FileUploadFormValidator;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.google.common.base.Optional;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -55,8 +61,11 @@ public class FileUploadController extends AbstractBaseETLController {
 	protected static final String ERROR_TYPE = "errorType";
 
 	protected static final String STATUS_MESSAGE = "statusMessage";
+	
+	protected static final String USER_LACKS_PERMISSION_MESSAGE = "browse.study.no.permission.for.locked.study";
 
 	private static final String UPLOAD_FORM_FILE = "uploadForm.file";
+	public static final String STATUS_CODE_LACKS_PERMISSION = "3";
 	public static final String STATUS_CODE_HAS_OUT_OF_BOUNDS = "2";
 	public static final String STATUS_CODE_SUCCESSFUL = "1";
 	public static final String STATUS_CODE_HAS_ERROR = "-1";
@@ -84,6 +93,9 @@ public class FileUploadController extends AbstractBaseETLController {
 
 	@Resource
 	private ContextUtil contextUtil;
+	
+	@Resource
+	private StudyPermissionValidator studyPermissionValidator;
 
 	@Resource
 	protected WorkbenchService workbenchService;
@@ -228,7 +240,7 @@ public class FileUploadController extends AbstractBaseETLController {
 	@ResponseBody
 	@RequestMapping(value = "validateAndParseWorkbook", method = RequestMethod.POST)
 	public Map<String, String> validateAndParseWorkbook(final HttpSession session, final HttpServletRequest request,
-			final HttpServletResponse response, final Model model) {
+			final HttpServletResponse response, final Model model, final Locale locale) {
 
 		// HTTP 1.1
 		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -237,6 +249,9 @@ public class FileUploadController extends AbstractBaseETLController {
 		// Proxies
 		response.setDateHeader("Expires", 0);
 
+		// Assumes successful, otherwise status code and message will be overwritten when error occurs
+		this.returnMessage.put(FileUploadController.STATUS_CODE, FileUploadController.STATUS_CODE_SUCCESSFUL);
+		this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "");
 		try {
 
 			final String programUUID = this.contextUtil.getCurrentProgramUUID();
@@ -247,10 +262,15 @@ public class FileUploadController extends AbstractBaseETLController {
 			if (workbook.hasOutOfBoundsData()) {
 				this.returnMessage.put(FileUploadController.STATUS_CODE,
 						FileUploadController.STATUS_CODE_HAS_OUT_OF_BOUNDS);
-				this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "");
+			
+			// if appending to existing study, check if user has permission to modify study
 			} else {
-				this.returnMessage.put(FileUploadController.STATUS_CODE, FileUploadController.STATUS_CODE_SUCCESSFUL);
-				this.returnMessage.put(FileUploadController.STATUS_MESSAGE, "");
+				final Optional<StudyReference> studyOptional = this.fieldbookMiddlewareService.getStudyReferenceByNameAndProgramUUID(workbook.getStudyName(), this.contextUtil.getCurrentProgramUUID());
+				if (studyOptional.isPresent() && this.studyPermissionValidator.userLacksPermissionForStudy(studyOptional.get())) {
+					this.returnMessage.put(FileUploadController.STATUS_CODE, FileUploadController.STATUS_CODE_LACKS_PERMISSION);
+					this.returnMessage.put(FileUploadController.STATUS_MESSAGE, this.messageSource.getMessage(
+							FileUploadController.USER_LACKS_PERMISSION_MESSAGE, new String[] {studyOptional.get().getOwnerName()}, locale));
+				}			
 			}
 
 		} catch (final IOException e) {
@@ -265,31 +285,10 @@ public class FileUploadController extends AbstractBaseETLController {
 		} catch (final WorkbookParserException e) {
 
 			FileUploadController.LOG.error(e.getMessage(), e);
-			boolean isMaxLimitException = false;
-			final StringBuilder builder = new StringBuilder();
-			builder.append("The system detected format errors in the file:<br/><br/>");
-			if (e.getErrorMessages() != null) {
-				for (final Message m : e.getErrorMessages()) {
-					if (m != null) {
-						try {
-							builder.append(this.messageSource.getMessage(m.getMessageKey(), m.getMessageParams(), null)
-									+ "<br />");
-							if ("error.observation.over.maximum.limit".equals(m.getMessageKey())
-									|| "error.file.is.too.large".equals(m.getMessageKey())) {
-								isMaxLimitException = true;
-							}
-						} catch (final Exception ex) {
-							FileUploadController.LOG.error(ex.getMessage(), ex);
-						}
-					}
-				}
-			} else {
-				builder.append(e.getMessage());
-			}
-
 			this.returnMessage.clear();
+			Boolean isMaxLimitException = buildWorkbookParserExceptionMessages(e);
+
 			this.returnMessage.put(FileUploadController.STATUS_CODE, FileUploadController.STATUS_CODE_HAS_ERROR);
-			this.returnMessage.put(FileUploadController.STATUS_MESSAGE, builder.toString());
 			if (isMaxLimitException) {
 				this.returnMessage.put(FileUploadController.ERROR_TYPE, "WorkbookParserException-OverMaxLimit");
 			} else {
@@ -307,6 +306,28 @@ public class FileUploadController extends AbstractBaseETLController {
 		}
 		return this.returnMessage;
 
+	}
+
+	Boolean buildWorkbookParserExceptionMessages(final WorkbookParserException e) {
+		boolean isMaxLimitException = false;
+		final StringBuilder builder = new StringBuilder();
+		builder.append("The system detected format errors in the file:<br/><br/>");
+		if (e.getErrorMessages() != null) {
+			for (final Message m : e.getErrorMessages()) {
+				if (m != null) {
+					builder.append(this.messageSource.getMessage(m.getMessageKey(), m.getMessageParams(), null)
+							+ "<br />");
+					if ("error.observation.over.maximum.limit".equals(m.getMessageKey())
+							|| "error.file.is.too.large".equals(m.getMessageKey())) {
+						isMaxLimitException = true;
+					}
+				}
+			}
+		} else {
+			builder.append(e.getMessage());
+		}
+		this.returnMessage.put(FileUploadController.STATUS_MESSAGE, builder.toString());
+		return isMaxLimitException;
 	}
 
 	@Override
@@ -330,6 +351,16 @@ public class FileUploadController extends AbstractBaseETLController {
 	@Override
 	public UserSelection getUserSelection() {
 		return this.userSelection;
+	}
+
+	
+	public void setStudyPermissionValidator(StudyPermissionValidator studyPermissionValidator) {
+		this.studyPermissionValidator = studyPermissionValidator;
+	}
+
+	
+	public void setMessageSource(ResourceBundleMessageSource messageSource) {
+		this.messageSource = messageSource;
 	}
 
 }

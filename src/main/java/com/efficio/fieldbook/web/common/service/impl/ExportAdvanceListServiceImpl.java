@@ -3,26 +3,26 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.generationcp.commons.pojo.ExportColumnHeader;
-import org.generationcp.commons.pojo.ExportColumnValue;
+import org.generationcp.commons.pojo.ExportRow;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.commons.util.ZipUtil;
+import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -53,6 +53,9 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	
 	@Resource
 	private ContextUtil contextUtil;
+
+	@Resource
+	private OntologyDataManager ontologyDataManager;
 
 	protected static final String NO_FILE = "noFile";
 
@@ -179,50 +182,50 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		final Locale locale = LocaleContextHolder.getLocale();
 
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.ENTRY_NO.getId(),
-				this.messageSource.getMessage("seed.entry.number", null, locale), true, ExportColumnHeader.GREEN));
+				ColumnLabels.ENTRY_ID.getTermNameFromOntology(this.ontologyDataManager), true, ExportColumnHeader.GREEN));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.DESIG.getId(),
-				this.messageSource.getMessage("seed.entry.designation", null, locale), true, ExportColumnHeader.GREEN));
+				ColumnLabels.DESIGNATION.getTermNameFromOntology(this.ontologyDataManager), true, ExportColumnHeader.GREEN));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.CROSS.getId(),
-				this.messageSource.getMessage("seed.entry.parentage", null, locale), true, ExportColumnHeader.GREEN));
+				ColumnLabels.PARENTAGE.getTermNameFromOntology(this.ontologyDataManager), true, ExportColumnHeader.GREEN));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.GID.getId(),
-				this.messageSource.getMessage("seed.inventory.gid", null, locale), true, ExportColumnHeader.GREEN));
+				ColumnLabels.GID.getTermNameFromOntology(this.ontologyDataManager), true, ExportColumnHeader.GREEN));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.SOURCE.getId(),
-				this.messageSource.getMessage("seed.inventory.source", null, locale), true, ExportColumnHeader.GREEN));
+				ColumnLabels.SEED_SOURCE.getTermNameFromOntology(this.ontologyDataManager), true, ExportColumnHeader.GREEN));
 
 		if (displayCrossRelatedColumns) {
 			exportColumnHeaders.add(new ExportColumnHeader(TermId.DUPLICATE.getId(),
-					this.messageSource.getMessage("seed.inventory.duplicate", null, locale), true, ExportColumnHeader.BLUE));
+					ColumnLabels.DUPLICATE.getTermNameFromOntology(this.ontologyDataManager), true, ExportColumnHeader.BLUE));
 			exportColumnHeaders.add(new ExportColumnHeader(TermId.BULK_WITH.getId(),
-					this.messageSource.getMessage("seed.inventory.bulk.with", null, locale), true, ExportColumnHeader.BLUE));
+					ColumnLabels.BULK_WITH.getTermNameFromOntology(this.ontologyDataManager), true, ExportColumnHeader.BLUE));
 			exportColumnHeaders.add(new ExportColumnHeader(TermId.BULK_COMPL.getId(),
-					this.messageSource.getMessage("seed.inventory.bulk.compl", null, locale), true, ExportColumnHeader.BLUE));
+					ColumnLabels.BULK_COMPL.getTermNameFromOntology(this.ontologyDataManager), true, ExportColumnHeader.BLUE));
 		}
 
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.LOCATION_ID.getId(),
-				this.messageSource.getMessage("seed.inventory.table.location", null, locale), true, ExportColumnHeader.BLUE));
+				ColumnLabels.LOT_LOCATION.getTermNameFromOntology(this.ontologyDataManager), true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.LOCATION_ABBR.getId(),
 			this.messageSource.getMessage("seed.inventory.table.location.abbr", null, locale), true, ExportColumnHeader.BLUE));
 		// Always use TermId.SEED_AMOUNT_G for inventory amount id to align with expected id in GermplasmExportService in Commons
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.SEED_AMOUNT_G.getId(), amountHeader, true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.STOCKID.getId(),
-				this.messageSource.getMessage("seed.inventory.stockid", null, locale), true, ExportColumnHeader.BLUE));
+				ColumnLabels.STOCKID_INVENTORY.getTermNameFromOntology(this.ontologyDataManager), true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt(),
-				this.messageSource.getMessage("seed.inventory.comment", null, locale), true, ExportColumnHeader.BLUE));
+				ColumnLabels.COMMENT.getTermNameFromOntology(this.ontologyDataManager), true, ExportColumnHeader.BLUE));
 		return exportColumnHeaders;
 	}
 
-	protected List<Map<Integer, ExportColumnValue>> generateAdvanceListColumnValues(final List<InventoryDetails> inventoryDetailList,
+	protected List<ExportRow> generateAdvanceListColumnValues(final List<InventoryDetails> inventoryDetailList,
 			final List<ExportColumnHeader> exportColumnHeaders) {
-		final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
+		final List<ExportRow> exportRows = new ArrayList<>();
 		for (final InventoryDetails inventoryDetails : inventoryDetailList) {
-			final Map<Integer, ExportColumnValue> dataMap = new HashMap<>();
+			final ExportRow row = new ExportRow();
 			for (final ExportColumnHeader columnHeader : exportColumnHeaders) {
-				dataMap.put(columnHeader.getId(), new ExportColumnValue(columnHeader.getId(),
-						this.getInventoryDetailValueInfo(inventoryDetails, columnHeader.getId())));
+				row.addColumnValue(columnHeader.getId(), 
+						this.getInventoryDetailValueInfo(inventoryDetails, columnHeader.getId()));
 			}
-			exportColumnValues.add(dataMap);
+			exportRows.add(row);
 		}
-		return exportColumnValues;
+		return exportRows;
 	}
 
 	protected String getInventoryDetailValueInfo(final InventoryDetails inventoryDetails, final int columnHeaderId) {

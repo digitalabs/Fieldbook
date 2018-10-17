@@ -115,22 +115,26 @@
 		$scope.init = function () {
 			$scope.datasetType = undefined;
 			$scope.datasetTypes = [({
-				label:'Plants',
+				id: 1,
+				label: 'Plants',
 				name: 'plants',
 				defaultVariable: 20428,
 				alias: 'plants'
 			}), ({
-				label:'Quadrats',
+				id: 2,
+				label: 'Quadrats',
 				name: 'quadrats',
 				defaultVariable: 62556,
 				alias: 'quadrats'
 			}), ({
-				label:'Time Series',
+				id: 3,
+				label: 'Time Series',
 				name: 'time series',
 				defaultVariable: 20350,
 				alias: 'time points'
 			}), ({
-				label:'Custom',
+				id: 4,
+				label: 'Custom',
 				name: 'sub-observation units',
 				defaultVariable: 20325,
 				alias: 'sub-observation units'

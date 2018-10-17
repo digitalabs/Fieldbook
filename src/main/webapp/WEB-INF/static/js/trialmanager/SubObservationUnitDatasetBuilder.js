@@ -172,46 +172,6 @@
 		};
 
 	}]);
-
-	manageTrialApp.filter('capitalize', function() {
-		return function (input) {
-			if (input !== undefined) {
-				if (input.indexOf(' ') !== -1) {
-					var inputPieces, i;
-
-					input = input.toLowerCase();
-					inputPieces = input.split(' ');
-
-					for (i = 0; i < inputPieces.length; i++) {
-						inputPieces[i] = capitalizeString(inputPieces[i]);
-					}
-					return inputPieces.toString().replace(/,/g, ' ');
-				}
-				else {
-					input = input.toLowerCase();
-					return capitalizeString(input);
-				}
-			} else {
-				return input;
-			}
-
-			function capitalizeString(inputString) {
-				if (inputString.indexOf('-') !== -1) {
-					var inputPieces, i;
-
-					inputString = inputString.toLowerCase();
-					inputPieces = inputString.split('-');
-
-					for (i = 0; i < inputPieces.length; i++) {
-						inputPieces[i] = capitalizeString(inputPieces[i]);
-					}
-					return inputPieces.toString().replace(/,/g, '-');
-				}
-				return inputString.substring(0, 1).toUpperCase() + inputString.substring(1);
-			}
-
-		};
-	});
 })();
 
 

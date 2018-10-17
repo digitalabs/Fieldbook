@@ -107,6 +107,8 @@
 			function addCommonOptions(options) {
 				return options
 					.withOption('processing', true)
+					.withOption('lengthMenu', [[50, 75, 100], [50, 75, 100]])
+					.withOption('scrollY', '500px')
 					.withOption('language', {
 						processing: '<span class="throbber throbber-2x"></span>',
 						lengthMenu: 'Records per page: _MENU_'

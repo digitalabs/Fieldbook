@@ -107,8 +107,8 @@
 			}
 
 			$scope.header = $scope.datasetType.name;
-			$scope.name = '';
-			$scope.parentUnitNumber = '';
+			$scope.datasetName = '';
+			$scope.numberOfSubObservationUnits = '';
 			$scope.selectedVariable = undefined;
 			$scope.trialInstances = [];
 			$scope.selectAll = true;
@@ -167,7 +167,7 @@
 			})];
 		};
 
-		$scope.dataSetTypeSelected= function (datasetType) {
+		$scope.dataSetTypeSelected = function (datasetType) {
 			$scope.datasetType = datasetType;
 		};
 

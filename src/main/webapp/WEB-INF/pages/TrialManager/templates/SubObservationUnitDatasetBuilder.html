@@ -72,17 +72,17 @@
 							<label class=""><em th:utext="#{label.indicate.mandatory.fields}"> indicates a mandatory field</em></label>
 						</div>
 					</div>
-					<div class="row form-group" ng-class="formGroupClass('datsetName', 'name')">
+					<div class="row form-group" ng-class="formGroupClass('name')">
 						<div class="col-sm-6" style="padding-right: 0px;">
 						<label class="control-label label-bold"> Name for {{datasetType.name}} dataset: <span
 							class="required">*</span></label>
 						</div>
 						<div class="col-sm-6" style="padding-left: 0px;">
-							<input type="text" name="datsetName" ng-model="name" ng-maxlength="100" pattern="^[a-zA-Z][a-zA-Z0-9]*$"
-								   required="true"/>
+							<input type="text" name="name" ng-model="datasetName" ng-maxlength="100" pattern="^[a-zA-Z][a-zA-Z0-9]*$"
+								   class="form-control" required="true"/>
 						</div>
 						<div class="col-sm-12">
-							<div class="text-danger" ng-messages="dtForm.datsetName.$error" ng-if="dtForm.$submitted || dtForm.datsetName.$touched">
+							<div class="text-danger" ng-messages="dtForm.name.$error" ng-if="dtForm.$submitted || dtForm.name.$touched">
 								<p ng-message="required">Name for (plants/quadrats/time series/custom)* dataset must be provided</p>
 								<p ng-message="pattern">Name for dataset should contain numbers and letter</p>
 								<p ng-message="maxlength">Name for dataset must not exceed 100 characters</p>
@@ -90,18 +90,18 @@
 						</div>
 					</div>
 					<br></br>
-					<div class="row form-group" ng-class="formGroupClass('unitNumber', 'parentUnitNumber')">
+					<div class="row form-group" ng-class="formGroupClass('SubObservationUnits')">
 						<div class="col-sm-10">
 						<label class="control-label label-bold">Specify a maximum number of {{datasetType.alias}} for
 							each parent unit (up to {{maximunNumForEachParentUnit}}): <span class="required">*</span></label>
 						</div>
 						<div class="col-sm-2" style="padding-left: 0px;">
-							<input type="number" name="unitNumber" ng-model="parentUnitNumber" ng-min="1" ng-max="{{maximunNumForEachParentUnit}}"
-								   pattern="^[0-9]*$" style="width: 74px;" required="true"/>
+							<input type="number" name="SubObservationUnits" ng-model="numberOfSubObservationUnits" ng-min="1" ng-max="{{maximunNumForEachParentUnit}}"
+								   pattern="^[0-9]*$" style="width: 74px;" class="form-control" required="true"/>
 						</div>
 						<div class="col-sm-12">
-							<div class="text-danger" ng-messages="dtForm.unitNumber.$error"
-								 ng-if="dtForm.$submitted || dtForm.unitNumber.$touched">
+							<div class="text-danger" ng-messages="dtForm.SubObservationUnits.$error"
+								 ng-if="dtForm.$submitted || dtForm.SubObservationUnits.$touched">
 								<p ng-message="min">"The number of sub-observations per parent unit should not be lower than 1 or greater than {{maximunNumForEachParentUnit}}"</p>
 								<p ng-message="max">"The number of sub-observations per parent unit should not be lower than 1 or greater than {{maximunNumForEachParentUnit}}"</p>
 								<p ng-message="required">The number of sub-observations per each parent unit to generate was not defined</p>
@@ -109,7 +109,7 @@
 						</div>
 					</div>
 					<br></br>
-					<div class="row form-group" ng-class="formGroupClass('selectVariableDatasetBuilder', 'selectedVariable')">
+					<div class="row form-group" ng-class="formGroupClass('selectVariableDatasetBuilder')">
 						<div class="report-type-section col-xs-6 col-md-12"  style="height: 30px;">
 						<label class="control-label label-bold">Choose a variable to number the
 							{{datasetType.alias}}:<span class="required">*</span></label>
@@ -118,7 +118,7 @@
 						</div>
 						<div class="report-type-section col-xs-6 col-md-5">
 							<select id="variableDatasetBuilder" name="selectVariableDatasetBuilder" ng-change="change()"
-									ng-options="variable as variable.name for variable in variables" ng-model="selectedVariable" required="true">
+									ng-options="variable as variable.name for variable in variables" ng-model="selectedVariable" class="form-control" required="true">
 								<option value="">Please Choose</option>
 							</select>
 						</div>

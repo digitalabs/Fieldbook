@@ -90,7 +90,7 @@
 				});
 				// FIXME is there a faster way?
 				$scope.dtColumns = $scope.columnsObj.columns;
-				// FIXME is there a better way?
+				// FIXME Loading gif doesn't show immediately - is there a better way?
 				$('.dataTables_processing', $(previewTableId).closest('.dataTables_wrapper')).show();
 			};
 
@@ -111,11 +111,7 @@
 						lengthMenu: 'Records per page: _MENU_'
 					})
 					.withDOM('<"row"' + //
-						'<"col-sm-2"l>' + //
-						'<"col-sm-2"i>' + //
-						'<"col-sm-1"r>' + //
-						'<"col-sm-1">' + //
-						'<"col-sm-5">' + //
+						'<"col-sm-11"<"pull-left"l><"pull-left"i><"pull-left fbk-left-padding"r>>' + //
 						'<"col-sm-1"<"pull-right"B>>' + //
 						'>' + //
 						'<"row"<"col-sm-12"t>>' + //
@@ -188,9 +184,9 @@
 
 						$(that).html('');
 						var editor = $compile(
-							" <observation-inline-editor " +
-							" column='column' " +
-							" observation='observation'></observation-inline-editor> "
+							' <observation-inline-editor ' +
+							' column="column" ' +
+							' observation="observation"></observation-inline-editor> '
 						)($inlineScope);
 
 						$(that).append(editor);
@@ -276,11 +272,6 @@
 			};
 
 		}])
-		.factory('DTLoadingTemplate', function() {
-			return {
-				html: '<span class="throbber throbber-2x"></span>'
-			};
-		})
 		.directive('observationInlineEditor', function () {
 			return {
 				restrict: 'E',

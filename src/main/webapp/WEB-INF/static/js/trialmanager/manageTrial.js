@@ -91,24 +91,24 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				deepStateRedirect: true, sticky: true
 			})
 
-			.state('subobservations', {
-				url: '/subobservations/:subObservationId',
+			.state('subObservationTabs', {
+				url: '/subObservationTabs/:subObservationTabId',
 				views: {
-					subobservation: {
-						controller: 'SubObservationCtrl',
-						templateUrl: '/Fieldbook/TrialManager/openTrial/subobservations'
+					subObservationTab: {
+						controller: 'SubObservationTabCtrl',
+						templateUrl: '/Fieldbook/TrialManager/openTrial/subObservationTab'
 					}
 				},
 				params: {
-					subObservation: null
+					subObservationTab: null
 				}
 			})
-			.state('subobservations.division', {
-				url: '/division/:divisionId',
-				controller: 'SubObservationDivisionCtrl',
-				templateUrl: '/Fieldbook/TrialManager/openTrial/subobservations/division',
+			.state('subObservationTabs.subObservationSets', {
+				url: '/subObservationSets/:subObservationSetId',
+				controller: 'SubObservationSetCtrl',
+				templateUrl: '/Fieldbook/TrialManager/openTrial/subObservationSet',
 				params: {
-					division: null
+					subObservationSet: null
 				},
 			})
 		;
@@ -186,7 +186,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					state: 'editMeasurements'
 				}
 			];
-			$scope.subObservations = [];
+			$scope.subObservationTabs = [];
 			$scope.tabSelected = 'trialSettings';
 			$scope.isSettingsTab = true;
 			$location.path('/trialSettings');
@@ -827,14 +827,14 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.addSubObservation = function () {
 
 				// Test data
-				var id = $scope.subObservations.length + 1;
+				var id = $scope.subObservationTabs.length + 1;
 				var name = 'Sub-observation set ' + id;
 
-				$scope.subObservations.push({
+				$scope.subObservationTabs.push({
 					name: name,
 					id: id,
-					state: '/subobservations/' + id, // arbitrary prefix to filter tab content
-					divisions: [{
+					state: '/subObservationTabs/' + id, // arbitrary prefix to filter tab content
+					subObservationSets: [{
 						id: id,
 						name: name
 					}]

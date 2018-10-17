@@ -227,14 +227,14 @@ public class OpenTrialController extends BaseTrialController {
 		return this.getLatestMeasurements(form, request);
 	}
 
-	@RequestMapping(value = "/subobservations", method = RequestMethod.GET)
-	public String showSubObservations(final Model model) {
-		return this.showAjaxPage(model, BaseTrialController.URL_SUB_OBSERVATIONS);
+	@RequestMapping(value = "/subObservationTab", method = RequestMethod.GET)
+	public String showSubObservationTab(final Model model) {
+		return this.showAjaxPage(model, BaseTrialController.URL_SUB_OBSERVATION_TAB);
 	}
 
-	@RequestMapping(value = "/subobservations/division", method = RequestMethod.GET)
-	public String showSubObservationDivision(final Model model) {
-		return this.showAjaxPage(model, BaseTrialController.URL_SUB_OBSERVATIONS_DIVISION);
+	@RequestMapping(value = "/subObservationSet", method = RequestMethod.GET)
+	public String showSubObservationSet(final Model model) {
+		return this.showAjaxPage(model, BaseTrialController.URL_SUB_OBSERVATION_SET);
 	}
 
 	@RequestMapping(value = "/{trialId}", method = RequestMethod.GET)

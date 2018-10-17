@@ -374,8 +374,9 @@
 			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
 			<a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
 		</li>
-		<li ng-repeat="subObservation in subObservations" ng-class="{active: tabSelected===subObservation.state}">
-			<a ui-sref="subobservations({ subObservationId: subObservation.id, subObservation: subObservation })" ng-click="performFunctionOnTabChange(subObservation.state)">{{subObservation.name}}</a>
+		<li ng-repeat="tab in subObservationTabs" ng-class="{active: tabSelected===tab.state}">
+			<a ui-sref="subObservationTabs({ subObservationTabId: tab.id, subObservationTab: tab })"
+			   ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
 		</li>
 		<li ng-repeat="tab in advanceTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
 			ng-click="tabChange(tab.state)"
@@ -409,7 +410,7 @@
 			<div class="col-xs-12" ui-view="environment" ng-show="tabSelected==='environment'"></div>
 			<div class="col-xs-12" ui-view="createMeasurements" ng-show="tabSelected==='createMeasurements'"></div>
 			<div class="col-xs-12" ui-view="editMeasurements" ng-show="tabSelected==='editMeasurements'"></div>
-			<div class="col-xs-12" ui-view="subobservation" ng-show="tabSelected.indexOf('/subobservations/') === 0"></div>
+			<div class="col-xs-12" ui-view="subObservationTab" ng-show="tabSelected.indexOf('/subObservationTabs/') === 0"></div>
 			<div class="col-xs-12" ng-repeat="advancetab in advanceTabsData track by $index" id="{{advancetab.id}}"
 				 ng-show="tabSelected===advancetab.name">
 				<div ng-bind-html="advancetab.data"></div>
@@ -791,8 +792,8 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/derivedVariableService.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subobservations.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/division.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationTab.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationSet.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-tabdrop.js}"></script>
 

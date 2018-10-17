@@ -3,22 +3,22 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('SubObservationDivisionCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
+	manageTrialApp.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
 		'DTColumnBuilder', '$http', '$q', '$compile',
 		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile) {
 
-			var division = $scope.division = $stateParams.division;
-			$scope.preview = Boolean(division.preview);
-			$scope.columnsObj = division.columnsObj;
-			$scope.rows = division.rows;
+			var subObservationSet = $scope.subObservationSet = $stateParams.subObservationSet;
+			$scope.preview = Boolean(subObservationSet.preview);
+			$scope.columnsObj = subObservationSet.columnsObj;
+			$scope.rows = subObservationSet.rows;
 			$scope.nested = {};
 			$scope.nested.dtPreviewInstance = null;
 			$scope.nested.reviewVariable = null;
 
-			var subObservation = $scope.subObservation;
-			var dataTable = $scope.division.dataTable;
-			var tableId = '#subobservation-table-' + subObservation.id + '-' + division.id;
-			var previewTableId = '#preview-subobservation-table-' + subObservation.id + '-' + division.id;
+			var subObservationTab = $scope.subObservationTab;
+			var dataTable = $scope.subObservationSet.dataTable;
+			var tableId = '#subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
+			var previewTableId = '#preview-subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
 			var studyId = $('#studyId').val();
 			var environmentId = getCurrentEnvironmentNumber();
 			var dtColumnsPromise = $q.defer();
@@ -34,7 +34,7 @@
 					data: function(d) {
 						var sortedColIndex = $(tableId).dataTable().fnSettings().aaSorting[0][0];
 						var sortDirection = $(tableId).dataTable().fnSettings().aaSorting[0][1];
-						var sortedColTermId = division.displayColumns[sortedColIndex].termId;
+						var sortedColTermId = subObservationSet.displayColumns[sortedColIndex].termId;
 
 						return {
 							draw: d.draw,
@@ -57,12 +57,12 @@
 			}
 
 			$scope.addDataTable = function () {
-				division.dataTable = {};
+				subObservationSet.dataTable = {};
 				loadDataTable();
 			};
 
 			$scope.togglePreviewMode = function () {
-				$scope.preview = division.preview = !$scope.preview;
+				$scope.preview = subObservationSet.preview = !$scope.preview;
 				if (!$scope.preview) {
 					return;
 				}
@@ -70,12 +70,13 @@
 			};
 
 			$scope.resetPreview = function () {
-				$scope.rows = division.rows = null;
+				$scope.rows = subObservationSet.rows = null;
 				$scope.nested.dtPreviewInstance.changeData(getPreview());
 			};
 
 			$scope.savePreview = function () {
-				$http.post('sub-observation-set/preview/save/', division.rows);
+				// TODO implement call
+				$http.post('sub-observation-set/preview/save/', subObservationSet.rows);
 			};
 
 			$scope.filterVariable = function () {
@@ -95,9 +96,9 @@
 			};
 
 			$scope.subDivide = function () {
-				var id = $scope.subObservation.divisions.length + 1;
-				var name = 'Sub-observation set ' + $scope.subObservation.id + ' - division ' + id;
-				$scope.subObservation.divisions.push({
+				var id = $scope.subObservationTab.subObservationSets.length + 1;
+				var name = 'Sub-observation set ' + $scope.subObservationTab.id + ' - subObservationSet ' + id;
+				$scope.subObservationTab.subObservationSets.push({
 					id: id,
 					name: name
 				});
@@ -155,7 +156,7 @@
 					$(this).off('click');
 
 					$scope.$apply(function () {
-						var data = division.rowMap[experimentId][termId];
+						var data = subObservationSet.rowMap[experimentId][termId];
 
 						/*
 						FIXME change json response for an object with named properties
@@ -180,7 +181,7 @@
 							}
 						};
 
-						var column = $inlineScope.column = division.columnMap[termId];
+						var column = $inlineScope.column = subObservationSet.columnMap[termId];
 
 						$(that).html('');
 						var editor = $compile(
@@ -198,9 +199,9 @@
 								$inlineScope.$destroy();
 								editor.remove();
 
-								$('#preview-subobservation-table-' + subObservation.id + '-' + division.id)
+								$('#preview-subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id)
 									.dataTable()
-									.fnUpdate(division.rows[iDisplayIndexFull], iDisplayIndexFull, null, false);
+									.fnUpdate(subObservationSet.rows[iDisplayIndexFull], iDisplayIndexFull, null, false);
 
 								/**
 								 * Restore cell click handler
@@ -228,23 +229,23 @@
 			}
 
 			function getPreview() {
-				if (division.rows) {
-					return $q.resolve(division.rows);
+				if (subObservationSet.rows) {
+					return $q.resolve(subObservationSet.rows);
 				}
 				return $http
 					.post('/Fieldbook/ImportManager/import/preview')
 					.then(function (resp) {
 
 						// Create map for easy access on review
-						var rowMap = $scope.rowMap = division.rowMap = {};
+						var rowMap = $scope.rowMap = subObservationSet.rowMap = {};
 						angular.forEach(resp.data, function (row) {
 							rowMap[row.experimentId] = {};
-							angular.forEach(division.columnsObj.columns, function (column) {
+							angular.forEach(subObservationSet.columnsObj.columns, function (column) {
 								rowMap[row.experimentId][column.termId] = row[column.title];
 							});
 						});
 
-						$scope.rows = division.rows = resp.data;
+						$scope.rows = subObservationSet.rows = resp.data;
 						return $q.resolve(resp.data);
 					});
 			}
@@ -258,12 +259,12 @@
 						.settings
 						.measurements.m_keys.concat(TrialManagerDataService.settings.selectionVariables.m_keys).join()
 				}).then(function (response) {
-					division.displayColumns = response.data;
-					var columnsObj = $scope.columnsObj = division.columnsObj = getColumns(response.data, false);
+					subObservationSet.displayColumns = response.data;
+					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = getColumns(response.data, false);
 
-					division.columnMap = {};
+					subObservationSet.columnMap = {};
 					angular.forEach(response.data, function (column) {
-						division.columnMap[column.termId] = column;
+						subObservationSet.columnMap[column.termId] = column;
 					});
 
 					dtColumnsPromise.resolve(columnsObj.columns);

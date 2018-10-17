@@ -139,7 +139,6 @@ public class SeasonExpressionDataProcessorTest {
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(firstInstanceMeasurementData, firstInstanceSeasonMeasurementData));
 
-		this.advancingSource.setStudyType(StudyTypeDto.getTrialDto());
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
 		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
@@ -162,7 +161,6 @@ public class SeasonExpressionDataProcessorTest {
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(firstTrialInstanceMeasurementData, firstInstanceSeasonMeasurementData));
 
-		this.advancingSource.setStudyType(StudyTypeDto.getTrialDto());
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
 		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
@@ -185,7 +183,6 @@ public class SeasonExpressionDataProcessorTest {
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(firstTrialInstanceMeasurementData, firstInstanceSeasonMeasurementData));
 
-		this.advancingSource.setStudyType(StudyTypeDto.getTrialDto());
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
 		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
@@ -210,7 +207,6 @@ public class SeasonExpressionDataProcessorTest {
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(firstTrialInstanceMeasurementData, firstInstanceSeasonMeasurementData));
 
-		this.advancingSource.setStudyType(StudyTypeDto.getTrialDto());
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
 		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);
@@ -227,7 +223,6 @@ public class SeasonExpressionDataProcessorTest {
 		final MeasurementRow trialInstanceObservation = new MeasurementRow();
 		trialInstanceObservation.setDataList(Lists.newArrayList(firstTrialInstanceMeasurementData));
 
-		this.advancingSource.setStudyType(StudyTypeDto.getTrialDto());
 		this.advancingSource.setTrailInstanceObservation(trialInstanceObservation);
 
 		this.seasonExpressionDataProcessor.processPlotLevelData(this.advancingSource, trialInstanceObservation);

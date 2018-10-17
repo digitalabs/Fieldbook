@@ -197,6 +197,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.crossesTabsData = [];
 			$scope.crossesTabs = [];
 			$scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
+			$scope.isLockedStudy = TrialManagerDataService.isLockedStudy;
 			$scope.studyTypes = [];
 			$scope.studyTypeSelected = undefined;
 			$scope.isChoosePreviousStudy = false;
@@ -777,6 +778,14 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				$timeout(function() {
 					$('#sample-list-' + tab.id).dataTable().fnAdjustColumnSizing();
 				}, 1);
+			};
+
+			$scope.userHasLockPermission = function() {
+				return $scope.data.userID === currentCropUserId || isSuperAdmin;
+			};
+			
+			$scope.changeLockedStatus = function(doLock) {
+				TrialManagerDataService.changeLockedStatus(doLock);
 			};
 
 			$('body').on('DO_AUTO_SAVE', function() {

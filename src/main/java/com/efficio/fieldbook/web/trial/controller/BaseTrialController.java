@@ -727,6 +727,7 @@ public abstract class BaseTrialController extends SettingsController {
 				? Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT)
 				: StringUtils.EMPTY);
 		basic.setObjective(studyDetails.getObjective());
+		basic.setisLocked(studyDetails.getIsLocked());
 
 		final int folderId = (int) studyDetails.getParentFolderId();
 		final String folderName;
@@ -959,7 +960,6 @@ public abstract class BaseTrialController extends SettingsController {
 			}
 		});
 	}
-
 	
 	protected void setStudyDataManager(StudyDataManager studyDataManager) {
 		this.studyDataManager = studyDataManager;

@@ -46,6 +46,8 @@
 			<div class="col-md-12 nopadding-right">
 				<section-container heading="BASIC DETAILS" collapsible="isOpenStudy()" start-collapsed="true">
 				<span name="action-buttons" ng-show="isOpenStudy()">
+					<span class='bms-locked' style='position: relative; top:7px; right: 5px; color: #666666;font-size: 23px; font-weight: bold;' ng-show="isLockedStudy() &amp;&amp;  userHasLockPermission()" ng-click="changeLockedStatus(0)"/>
+					<span class='bms-lock-open' style='position: relative; top:7px; right: 5px; color: #666666;font-size: 23px; font-weight: bold;' ng-show="!isLockedStudy() &amp;&amp; userHasLockPermission()" ng-click="changeLockedStatus(1)"/>
 					<div class="btn-group" style="padding-right: 36px">
 						<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
 							<span th:text="#{study.studydetails.actions}">Actions</span>
@@ -190,6 +192,12 @@
 							<li>
 								<a id="delete-success-return-url" style="display:none;" th:href="@{/TrialManager}"></a>
 								<a href="javascript: openDeleteConfirmation();" th:text="#{browse.study.delete.study.name}">Delete Study</a>
+							</li>
+							<li>
+								<a href="" th:text="#{study.studydetails.action.lock.study}" ng-show="!isLockedStudy() &amp;&amp;  userHasLockPermission()" ng-click="changeLockedStatus(1)">Lock Study</a>
+							</li>
+							<li>
+								<a href="" th:text="#{study.studydetails.action.unlock.study}" ng-show="isLockedStudy() &amp;&amp;  userHasLockPermission()" ng-click="changeLockedStatus(0)">Unlock Study</a>
 							</li>
 						</ul>
 					</div>
@@ -649,8 +657,13 @@
 			authToken = /*[[${contextInfo.authToken}]]*/ '',
 			selectedProjectId = /*[[${contextInfo.selectedProjectId}]]*/ '',
 			currentProgramId = /*[[${currentProgramId}]]*/ '',
+			isSuperAdmin = /*[[${isSuperAdmin}]]*/ '',
+			currentCropUserId = /*[[${currentCropUserId}]]*/ '',
 			cropName = /*[[${cropName}]]*/ '',
 			createdCrossesListId = /*[[${createdCrossesListId}]]*/ '';
+		
+		var lockStudySuccessMessage = /*[[#{lock.study.success.message}]]*/ '';
+		var unlockStudySuccessMessage = /*[[#{unlock.study.success.message}]]*/ '';
 
 		var translations = {
 			/*TRIAL SETTINGS*/

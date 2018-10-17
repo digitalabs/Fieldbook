@@ -1,15 +1,21 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.controller.ExportGermplasmListController;
-import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.pojo.ExportColumnHeader;
-import org.generationcp.commons.pojo.ExportColumnValue;
+import org.generationcp.commons.pojo.ExportRow;
 import org.generationcp.commons.pojo.GermplasmListExportInputValues;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -29,23 +35,15 @@ import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.util.FieldbookListUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.controller.ExportGermplasmListController;
+import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
 
 @Configurable
 public class ExportGermplasmListServiceImpl implements ExportGermplasmListService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(ExportGermplasmListServiceImpl.class);
 
 	@Resource
 	private OntologyService ontologyService;
@@ -249,12 +247,12 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	@Override
 	public void exportGermplasmListCSV(final String fileNamePath, final Map<String, Boolean> visibleColumns) throws GermplasmListExporterException {
 
-		final List<Map<Integer, ExportColumnValue>> exportColumnValues = this.getExportColumnValuesFromTable(visibleColumns);
+		final List<ExportRow> exportRows = this.getExportColumnValuesFromTable(visibleColumns);
 		final List<ExportColumnHeader> exportColumnHeaders = this.getExportColumnHeadersFromTable(visibleColumns);
 
 		try {
 
-			this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileNamePath);
+			this.germplasmExportService.generateCSVFile(exportRows, exportColumnHeaders, fileNamePath);
 
 		} catch (final IOException e) {
 			throw new GermplasmListExporterException("Error with exporting list to CSV File.", e);
@@ -279,20 +277,20 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		return exportColumnHeaders;
 	}
 
-	protected List<Map<Integer, ExportColumnValue>> getExportColumnValuesFromTable(final Map<String, Boolean> visibleColumns) {
+	protected List<ExportRow> getExportColumnValuesFromTable(final Map<String, Boolean> visibleColumns) {
 
-		final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
+		final List<ExportRow> exportColumnValues = new ArrayList<>();
 
 		final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 		final List<ImportedGermplasm> listData = this.getImportedGermplasm();
 
 		for (final ImportedGermplasm data : listData) {
-			final Map<Integer, ExportColumnValue> row = new HashMap<>();
+			final ExportRow row = new ExportRow();
 
 			for (final SettingDetail settingDetail : factorsList) {
 				final Integer termId = settingDetail.getVariable().getCvTermId();
-				row.put(termId, new ExportColumnValue(termId,
-						this.getGermplasmInfo(settingDetail.getVariable().getCvTermId().toString(), data, settingDetail)));
+				row.addColumnValue(termId, 
+						this.getGermplasmInfo(settingDetail.getVariable().getCvTermId().toString(), data, settingDetail));
 			}
 
 			exportColumnValues.add(row);

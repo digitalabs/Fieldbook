@@ -3,14 +3,12 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.generationcp.commons.pojo.ExportColumnHeader;
-import org.generationcp.commons.pojo.ExportColumnValue;
+import org.generationcp.commons.pojo.ExportRow;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -40,10 +38,10 @@ public class CsvExportStudyServiceImpl extends BaseExportStudyServiceImpl implem
 			List<MeasurementRow> plotLevelObservations, String fileNamePath) throws IOException {
 		final List<ExportColumnHeader> exportColumnHeaders =
 				this.getExportColumnHeaders(visibleColumns, workbook.getMeasurementDatasetVariables());
-		final List<Map<Integer, ExportColumnValue>> exportColumnValues =
+		final List<ExportRow> exportRows =
 				this.getExportColumnValues(exportColumnHeaders, plotLevelObservations);
 
-		this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileNamePath);
+		this.germplasmExportService.generateCSVFile(exportRows, exportColumnHeaders, fileNamePath);
 	}
 
 	@Override
@@ -81,20 +79,20 @@ public class CsvExportStudyServiceImpl extends BaseExportStudyServiceImpl implem
 		}
 	}
 
-	protected List<Map<Integer, ExportColumnValue>> getExportColumnValues(final List<ExportColumnHeader> columns,
+	protected List<ExportRow> getExportColumnValues(final List<ExportColumnHeader> columns,
 			final List<MeasurementRow> observations) {
 
-		final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
+		final List<ExportRow> exportRows = new ArrayList<>();
 
 		for (final MeasurementRow dataRow : observations) {
-			exportColumnValues.add(this.getColumnValueMap(columns, dataRow));
+			exportRows.add(this.getColumnValueMap(columns, dataRow));
 		}
 
-		return exportColumnValues;
+		return exportRows;
 	}
 
-	protected Map<Integer, ExportColumnValue> getColumnValueMap(final List<ExportColumnHeader> columns, final MeasurementRow dataRow) {
-		final Map<Integer, ExportColumnValue> columnValueMap = new HashMap<>();
+	protected ExportRow getColumnValueMap(final List<ExportColumnHeader> columns, final MeasurementRow dataRow) {
+		final ExportRow row = new ExportRow();
 
 		for (final ExportColumnHeader column : columns) {
 			final Integer termId = column.getId();
@@ -107,24 +105,23 @@ public class CsvExportStudyServiceImpl extends BaseExportStudyServiceImpl implem
 				}
 				
 				// FIXME : DB visit IN LOOP
-				columnValueMap.put(termId, this.getColumnValue(dataCell, termId));
+				row.addColumnValue(termId, this.getColumnValue(dataCell, termId));
 
 			}
 		}
 
-		return columnValueMap;
+		return row;
 	}
 
-	protected ExportColumnValue getColumnValue(final MeasurementData dataCell, final Integer termId) {
-		ExportColumnValue columnValue = null;
+	protected String getColumnValue(final MeasurementData dataCell, final Integer termId) {
+		String columnValue = null;
 
 		if (ExportImportStudyUtil.measurementVariableHasValue(dataCell) && !dataCell.getMeasurementVariable().getPossibleValues().isEmpty()
 				&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
 				&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
 				&& !dataCell.getMeasurementVariable().getProperty().equals(ExportImportStudyUtil.getPropertyName(this.ontologyService))) {
 
-			final String value = this.getCategoricalCellValue(dataCell);
-			columnValue = new ExportColumnValue(termId, value);
+			columnValue = this.getCategoricalCellValue(dataCell);
 
 		} else {
 
@@ -133,24 +130,23 @@ public class CsvExportStudyServiceImpl extends BaseExportStudyServiceImpl implem
 				columnValue = this.getNumericColumnValue(dataCell, termId);
 
 			} else {
-				columnValue = new ExportColumnValue(termId, dataCell.getValue());
+				columnValue = dataCell.getValue();
 			}
 
 		}
 		return columnValue;
 	}
 
-	protected ExportColumnValue getNumericColumnValue(final MeasurementData dataCell, final Integer termId) {
-		ExportColumnValue columnValue = null;
+	protected String getNumericColumnValue(final MeasurementData dataCell, final Integer termId) {
+		String columnValue = null;
 		String cellVal = "";
 
 		if (dataCell.getValue() != null && !"".equalsIgnoreCase(dataCell.getValue())) {
 			if (MeasurementData.MISSING_VALUE.equalsIgnoreCase(dataCell.getValue())) {
-				cellVal = dataCell.getValue();
+				columnValue = dataCell.getValue();
 			} else {
-				cellVal = Double.valueOf(dataCell.getValue()).toString();
+				columnValue = Double.valueOf(dataCell.getValue()).toString();
 			}
-			columnValue = new ExportColumnValue(termId, cellVal);
 		}
 		return columnValue;
 	}

@@ -322,6 +322,9 @@ public class TreeViewUtil {
 			treeNode.setIcon(AppConstants.STUDY_ICON_PNG.getString());
 			final StudyReference studyReference = (StudyReference) reference;
 			treeNode.setType(studyReference.getStudyType().getName());
+			treeNode.setIsLocked(studyReference.getIsLocked());
+			treeNode.setOwnerId(String.valueOf(studyReference.getOwnerId()));
+			treeNode.setOwner(studyReference.getOwnerName());
 		}
 		return treeNode;
 	}

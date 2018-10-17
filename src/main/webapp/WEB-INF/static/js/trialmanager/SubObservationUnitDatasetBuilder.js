@@ -26,9 +26,35 @@
 
 		$scope.saveDataset = function(){
 			if ($scope.dtForm.$valid) {
-				showSuccessfulMessage('', 'The Sub-Observation Set was created successfully. You can review the details and begin working with these observation units in the new tab that has been added to the study.');
-				$('#SubObservationUnitDatasetBuildModal').modal('hide');
-				$scope.submitted = false;
+				var instanceIds = [];
+
+				angular.forEach($scope.trialInstances, function (trialInstanceNumber) {
+					angular.forEach($scope.environmentListView, function (environment) {
+						if (environment.trialInstanceNumber === trialInstanceNumber) {
+							instanceIds.push(environment.instanceDbId);
+
+						}
+					});
+				});
+
+				var newDataset = {
+					"datasetTypeId": $scope.datasetType.id,
+					"datasetName": $scope.datasetName,
+					"instanceIds": instanceIds,
+					"sequenceVariableId": parseInt($scope.selectedVariable.id),
+					"numberOfSubObservationUnits": $scope.numberOfSubObservationUnits
+				};
+
+				$http.get(/bmsapi/+cropName+'/studies/'+studyId+'/datasets/generation', config).success(function (data) {
+					showSuccessfulMessage('', subObservationDatasetBuiltSuccessMessage);
+					$('#SubObservationUnitDatasetBuildModal').modal('hide');
+					$scope.submitted = false;
+				}).error(function (data) {
+					if (data.status == 401) {
+						bmsAuth.handleReAuthentication();
+					}
+					showErrorMessage('', data.message);
+				});
 			}
 		};
 

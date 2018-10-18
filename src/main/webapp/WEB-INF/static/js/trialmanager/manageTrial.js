@@ -128,11 +128,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	});
 
 	manageTrialApp.run(
-		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES',
-			function($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES) {
+		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES', '$transitions',
+			function($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES, $transitions) {
 				$rootScope.VARIABLE_TYPES = VARIABLE_TYPES;
 
-				$rootScope.$on('$stateChangeStart',
+				$transitions.onEnter({},
 					function(event) {
 						if ($('.import-study-data').data('data-import') === '1' || stockListImportNotSaved) {
 							event.preventDefault();
@@ -141,9 +141,9 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					});
 				
 				$rootScope.stateSuccessfullyLoaded = {};
-				$rootScope.$on('$stateChangeSuccess',
-					function(event, toState, toParams, fromState, fromParams) {
-						$rootScope.stateSuccessfullyLoaded[toState.name] = true;
+				$transitions.onSuccess({},
+					function (transition) {
+						$rootScope.stateSuccessfullyLoaded[transition.from().name] = true;
 					});
 
 				// It's very handy to add references to $state and $stateParams to the $rootScope

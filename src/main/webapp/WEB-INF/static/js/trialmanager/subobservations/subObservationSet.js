@@ -111,7 +111,13 @@
 					.withOption('scrollY', '500px')
 					.withOption('language', {
 						processing: '<span class="throbber throbber-2x"></span>',
-						lengthMenu: 'Records per page: _MENU_'
+						lengthMenu: 'Records per page: _MENU_',
+						paginate: {
+							next: '>',
+							previous: '<',
+							first: '<<',
+							last: '>>'
+						}
 					})
 					.withDOM('<"row"' + //
 						'<"col-sm-11"<"pull-left"l><"pull-left"i><"pull-left fbk-left-padding"r>>' + //

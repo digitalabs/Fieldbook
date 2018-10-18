@@ -135,7 +135,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				$rootScope.$on('$stateChangeStart',
 					function(event) {
 						if ($('.import-study-data').data('data-import') === '1' || stockListImportNotSaved) {
-							showAlertMessage('', importSaveDataWarningMessage);
 							event.preventDefault();
 						}
 						// a 'transition prevented' error

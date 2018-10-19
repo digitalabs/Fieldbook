@@ -16,6 +16,7 @@ import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -39,6 +40,7 @@ import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -101,6 +103,9 @@ public class OpenTrialController extends BaseTrialController {
 
 	@Resource
 	private SampleListService sampleListService;
+
+	@Autowired
+	private ContextUtil context;
 
 	@Override
 	public String getContentName() {
@@ -271,6 +276,14 @@ public class OpenTrialController extends BaseTrialController {
 				form.setStudyTypeName(dmsProject.getStudyType().getName());
 				this.setModelAttributes(form, trialId, model, workbook);
 				this.setUserSelectionImportedGermplasmMainInfo(this.userSelection, trialId, model);
+
+				model.addAttribute("currentCrop", this.context.getProjectInContext().getCropType().getCropName());
+				model.addAttribute("currentProgramId", this.context.getProjectInContext().getUniqueID());
+				model.addAttribute("selectedProjectId", this.context.getProjectInContext().getProjectId());
+				model.addAttribute("authToken", this.context.getContextInfoFromSession().getAuthToken());
+				model.addAttribute("loggedInUserId", this.context.getContextInfoFromSession().getLoggedInUserId());
+				model.addAttribute("studyId", trialId);
+
 			}
 			return this.showAngularPage(model);
 

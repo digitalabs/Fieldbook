@@ -26,6 +26,7 @@ import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -36,6 +37,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -102,6 +104,9 @@ public class CreateTrialController extends BaseTrialController {
 		return false;
 	}
 
+	@Autowired
+	private ContextUtil context;
+
 	/**
 	 * Show.
 	 *
@@ -123,6 +128,14 @@ public class CreateTrialController extends BaseTrialController {
 		model.addAttribute("experimentalDesignSpecialData", this.prepareExperimentalDesignSpecialData());
 		model.addAttribute("measurementRowCount", 0);
 		model.addAttribute("studyTypes", this.studyDataManager.getAllVisibleStudyTypes());
+
+
+		model.addAttribute("currentCrop", this.context.getProjectInContext().getCropType().getCropName());
+		model.addAttribute("currentProgramId", this.context.getProjectInContext().getUniqueID());
+		model.addAttribute("selectedProjectId", this.context.getProjectInContext().getProjectId());
+		model.addAttribute("authToken", this.context.getContextInfoFromSession().getAuthToken());
+		model.addAttribute("loggedInUserId", this.context.getContextInfoFromSession().getLoggedInUserId());
+		model.addAttribute("studyId", "");
 
 		// so that we can reuse the same page being use for nursery
 		model.addAttribute("createTrialForm", form);

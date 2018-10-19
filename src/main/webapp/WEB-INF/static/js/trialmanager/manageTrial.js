@@ -825,16 +825,18 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.addSubObservation = function () {
 
-				// Test data
+				/**
+				 * Artificial id for subObs tabs, that do not exists on db
+				 */
 				var id = $scope.subObservationTabs.length + 1;
-				var name = 'Sub-observation set ' + id;
+				var name = 'Sub-observation set ' + id; // TODO use first subObsSet name
 
 				$scope.subObservationTabs.push({
 					name: name,
 					id: id,
 					state: '/subObservationTabs/' + id, // arbitrary prefix to filter tab content
 					subObservationSets: [{
-						id: id,
+						id: 1, // TODO use subObservationSetDbId
 						name: name
 					}]
 				});

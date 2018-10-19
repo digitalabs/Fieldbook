@@ -101,7 +101,23 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				},
 				params: {
 					subObservationTab: null
+				},
+				redirectTo: function (trans) {
+					var tab = trans.params().subObservationTab;
+					if (tab && tab.subObservationSets.length) {
+						var subObservationSet = tab.subObservationSets[0];
+						return {
+							state: 'subObservationTabs.subObservationSets',
+							params: {
+								subObservationTabId: tab.id,
+								subObservationTab: tab,
+								subObservationSetId: subObservationSet.id,
+								subObservationSet: subObservationSet
+							}
+						}
+					}
 				}
+				// , deepStateRedirect: { params: true } // TODO
 			})
 			.state('subObservationTabs.subObservationSets', {
 				url: '/subObservationSets/:subObservationSetId',

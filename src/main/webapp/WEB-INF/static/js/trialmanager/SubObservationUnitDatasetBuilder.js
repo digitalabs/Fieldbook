@@ -3,7 +3,7 @@
 	'use strict';
 
 	var manageTrialApp = angular.module('manageTrialApp');
-	manageTrialApp.controller('SubObservationUnitDatasetBuildCtrl', ['$scope', 'environmentService', '$http', 'formUtilities', 'MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS', 'MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT', function ($scope, environmentService, $http, formUtilities, MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS, MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT) {
+	manageTrialApp.controller('SubObservationUnitDatasetBuildCtrl', ['$scope', 'environmentService', '$http', 'formUtilities', 'MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS', 'MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT', 'configService', 'variableService', function ($scope, environmentService, $http, formUtilities, MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS, MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT, configService, variableService) {
 
 		// TODO see Workbench/src/main/web/src/apps/ontology/app-services/bmsAuth.js
 		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
@@ -45,7 +45,7 @@
 					"numberOfSubObservationUnits": $scope.numberOfSubObservationUnits
 				};
 
-				$http.get(/bmsapi/+cropName+'/studies/'+studyId+'/datasets/generation', config).success(function (data) {
+				$http.get(/bmsapi/+configService.getCropName()+'/studies/'+configService.getStudyId()+'/datasets/generation', config).success(function (data) {
 					showSuccessfulMessage('', subObservationDatasetBuiltSuccessMessage);
 					$('#SubObservationUnitDatasetBuildModal').modal('hide');
 					$scope.submitted = false;
@@ -57,34 +57,6 @@
 				});
 			}
 		};
-
-		$http.get('/bmsapi/ontology/maize/filtervariables?programId='+currentProgramId+'&variableTypeIds=1808', config).success(function (data) {
-			$scope.variables = data;
-		}).error(function (data) {
-			if (data.status == 401) {
-				bmsAuth.handleReAuthentication();
-			}
-			showErrorMessage('', data.errors[0].message);
-			$scope.variables = [];
-		});
-
-		$scope.selectAll = true;
-		environmentService.getEnvironments().then(function (environmentDetails) {
-			$scope.environmentListView = [];
-
-			angular.forEach(environmentDetails, function (environment) {
-				$scope.environmentListView.push({
-					name: environment.locationName + ' - (' + environment.locationAbbreviation + ')',
-					abbrName: environment.locationAbbreviation,
-					customAbbrName: environment.customLocationAbbreviation,
-					trialInstanceNumber: environment.instanceNumber,
-					instanceDbId: environment.instanceDbId,
-					selected: $scope.selectAll
-				});
-				$scope.trialInstances.push(environment.instanceNumber);
-			});
-
-		});
 
 		$scope.continue = function () {
 			$('#SubObservationUnitDatasetSelectorModal').modal('hide');
@@ -129,11 +101,14 @@
 				});
 			});
 
-			angular.forEach($scope.variables,function (variable) {
-				if ($scope.datasetType.defaultVariable === parseInt(variable.id)) {
-					$scope.selectedVariable = variable;
-				}
-			})
+			variableService.getVariablesByFilter(null, null, 4040, 6040, null, null, null, 1812, null).then(function (variablesFiltered) {
+				$scope.variables = variablesFiltered;
+				angular.forEach($scope.variables, function (variable) {
+					if ($scope.datasetType.defaultVariableId === parseInt(variable.id)) {
+						$scope.selectedVariable = variable;
+					}
+				});
+			});
 		};
 
 		$scope.formGroupClass = formUtilities.formGroupClassGenerator($scope, 'dtForm');

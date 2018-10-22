@@ -104,9 +104,6 @@ public class OpenTrialController extends BaseTrialController {
 	@Resource
 	private SampleListService sampleListService;
 
-	@Autowired
-	private ContextUtil context;
-
 	@Override
 	public String getContentName() {
 		return "TrialManager/createTrial";
@@ -286,14 +283,6 @@ public class OpenTrialController extends BaseTrialController {
 				form.setStudyTypeName(dmsProject.getStudyType().getName());
 				this.setModelAttributes(form, trialId, model, workbook);
 				this.setUserSelectionImportedGermplasmMainInfo(this.userSelection, trialId, model);
-
-				model.addAttribute("currentCrop", this.context.getProjectInContext().getCropType().getCropName());
-				model.addAttribute("currentProgramId", this.context.getProjectInContext().getUniqueID());
-				model.addAttribute("selectedProjectId", this.context.getProjectInContext().getProjectId());
-				model.addAttribute("authToken", this.context.getContextInfoFromSession().getAuthToken());
-				model.addAttribute("loggedInUserId", this.context.getContextInfoFromSession().getLoggedInUserId());
-				model.addAttribute("studyId", trialId);
-
 			}
 			return this.showAngularPage(model);
 

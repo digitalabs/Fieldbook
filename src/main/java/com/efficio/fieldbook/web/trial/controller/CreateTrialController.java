@@ -104,9 +104,6 @@ public class CreateTrialController extends BaseTrialController {
 		return false;
 	}
 
-	@Autowired
-	private ContextUtil context;
-
 	/**
 	 * Show.
 	 *
@@ -128,14 +125,6 @@ public class CreateTrialController extends BaseTrialController {
 		model.addAttribute("experimentalDesignSpecialData", this.prepareExperimentalDesignSpecialData());
 		model.addAttribute("measurementRowCount", 0);
 		model.addAttribute("studyTypes", this.studyDataManager.getAllVisibleStudyTypes());
-
-
-		model.addAttribute("currentCrop", this.context.getProjectInContext().getCropType().getCropName());
-		model.addAttribute("currentProgramId", this.context.getProjectInContext().getUniqueID());
-		model.addAttribute("selectedProjectId", this.context.getProjectInContext().getProjectId());
-		model.addAttribute("authToken", this.context.getContextInfoFromSession().getAuthToken());
-		model.addAttribute("loggedInUserId", this.context.getContextInfoFromSession().getLoggedInUserId());
-		model.addAttribute("studyId", "");
 
 		// so that we can reuse the same page being use for nursery
 		model.addAttribute("createTrialForm", form);

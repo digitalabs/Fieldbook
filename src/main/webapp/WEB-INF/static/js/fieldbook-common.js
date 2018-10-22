@@ -751,7 +751,8 @@ function openDeleteConfirmation() {
 	deleteConfirmationText = deleteStudyConfirmation;
 
 	$('#deleteStudyModal').modal({backdrop: 'static', keyboard: true});
-	var name = $('#studyName').val();
+	var active = ($('.review-trial-page-identifier').length) ? '.active' : '';
+	var name = $(active + ' #studyName').val();
 	$('#delete-study-confirmation').html(deleteConfirmationText + ' ' + name + '?');
 }
 

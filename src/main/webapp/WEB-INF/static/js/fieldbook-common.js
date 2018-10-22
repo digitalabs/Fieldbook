@@ -1303,8 +1303,10 @@ function doFinalExport(paramUrl, additionalParams, exportWayType) {
 
 	newAction = action + 'exportStudy/' + paramUrl + '/' + additionalParams;
 	newAction += exportWayType;
-	studyId = $('#studyId').val();
-
+	
+	var mode = ($('.review-trial-page-identifier').length) ?  '.active .review-trial-page-identifier' : '#createTrialMainForm' ;
+	studyId = $(mode + ' #studyId').val();
+	
 	if ($('#browser-studies').length === 0) {
 		// the study is opened
 		var tableContainsObsUnitId = BMS.Fieldbook.MeasurementsTable.containsHeader('measurement-table', '8201');

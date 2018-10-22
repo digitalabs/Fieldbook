@@ -683,7 +683,8 @@ function showCreateFieldMap() {
 }
 
 function redirectToFirstPage() {
-	var studyId = $('#studyId').val()
+	var mode = ($('.review-trial-page-identifier').length) ?  '.active .review-trial-page-identifier' : '#createTrialMainForm' ;
+	var studyId = $(mode + ' #studyId').val();
 	location.href = $('#fieldmap-url').attr('href') + '/' + studyId + '/' + encodeURIComponent(fieldmapIds.join(','));
 }
 

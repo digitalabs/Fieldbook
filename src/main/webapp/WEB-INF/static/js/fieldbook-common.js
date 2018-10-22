@@ -286,8 +286,17 @@ function createFieldMap() {
 		showErrorMessage('', needSaveImportDataError);
 		return;
 	}
-	var id = $('#studyId').val(),
-		name = $('#studyName').val();
+	
+	if( ($('.review-trial-page-identifier').length) ) {
+		var mode = '.active .review-trial-page-identifier';
+		var active = '.active';
+	}
+	else {
+		var mode = '#createTrialMainForm';
+		var active = '';
+	}
+	var id = $(mode + ' #studyId').val(),
+		name = $(active + ' #studyName').val();
 
 	openStudyFieldmapTree(id, name);
 }

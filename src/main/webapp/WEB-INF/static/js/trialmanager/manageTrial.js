@@ -8,7 +8,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	'use strict';
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
-		'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
+		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
 		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'config']);
 
 	/*** Added to prevent Unsecured HTML error
@@ -19,9 +19,12 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	// routing configuration
 	// TODO: if possible, retrieve the template urls from the list of constants
-	manageTrialApp.config(function($stateProvider, $urlRouterProvider, $stickyStateProvider) {
+	manageTrialApp.config(function($uiRouterProvider, $stateProvider, $urlRouterProvider) {
 
-		$stickyStateProvider.enableDebug(false);
+		var StickyStates = window['@uirouter/sticky-states'];
+		var DSRPlugin = window['@uirouter/dsr'].DSRPlugin;
+		$uiRouterProvider.plugin(StickyStates.StickyStatesPlugin);
+		$uiRouterProvider.plugin(DSRPlugin);
 
 		$urlRouterProvider.otherwise('/trialSettings');
 		$stateProvider
@@ -86,7 +89,45 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				},
 				deepStateRedirect: true, sticky: true
-			});
+			})
+
+			.state('subObservationTabs', {
+				url: '/subObservationTabs/:subObservationTabId',
+				views: {
+					subObservationTab: {
+						controller: 'SubObservationTabCtrl',
+						templateUrl: '/Fieldbook/TrialManager/openTrial/subObservationTab'
+					}
+				},
+				params: {
+					subObservationTab: null
+				},
+				redirectTo: function (trans) {
+					var tab = trans.params().subObservationTab;
+					if (tab && tab.subObservationSets.length) {
+						var subObservationSet = tab.subObservationSets[0];
+						return {
+							state: 'subObservationTabs.subObservationSets',
+							params: {
+								subObservationTabId: tab.id,
+								subObservationTab: tab,
+								subObservationSetId: subObservationSet.id,
+								subObservationSet: subObservationSet
+							}
+						}
+					}
+				}
+				// , deepStateRedirect: { params: true } // TODO
+			})
+			.state('subObservationTabs.subObservationSets', {
+				url: '/subObservationSets/:subObservationSetId',
+				controller: 'SubObservationSetCtrl',
+				templateUrl: '/Fieldbook/TrialManager/openTrial/subObservationSet',
+				params: {
+					subObservationSet: null
+				},
+			})
+		;
 
 	});
 
@@ -103,23 +144,22 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	});
 
 	manageTrialApp.run(
-		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES',
-			function($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES) {
+		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES', '$transitions',
+			function($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES, $transitions) {
 				$rootScope.VARIABLE_TYPES = VARIABLE_TYPES;
 
-				$rootScope.$on('$stateChangeStart',
+				$transitions.onEnter({},
 					function(event) {
 						if ($('.import-study-data').data('data-import') === '1' || stockListImportNotSaved) {
-							showAlertMessage('', importSaveDataWarningMessage);
 							event.preventDefault();
 						}
 						// a 'transition prevented' error
 					});
 				
 				$rootScope.stateSuccessfullyLoaded = {};
-				$rootScope.$on('$stateChangeSuccess',
-					function(event, toState, toParams, fromState, fromParams) {
-						$rootScope.stateSuccessfullyLoaded[toState.name] = true;
+				$transitions.onSuccess({},
+					function (transition) {
+						$rootScope.stateSuccessfullyLoaded[transition.from().name] = true;
 					});
 
 				// It's very handy to add references to $state and $stateParams to the $rootScope
@@ -161,6 +201,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					state: 'editMeasurements'
 				}
 			];
+			$scope.subObservationTabs = [];
 			$scope.tabSelected = 'trialSettings';
 			$scope.isSettingsTab = true;
 			$location.path('/trialSettings');
@@ -797,6 +838,25 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
                 });
                 return modalInstance;
             };
+
+			$scope.addSubObservation = function () {
+
+				/**
+				 * Artificial id for subObs tabs, that do not exists on db
+				 */
+				var id = $scope.subObservationTabs.length + 1;
+				var name = 'Sub-observation set ' + id; // TODO use first subObsSet name
+
+				$scope.subObservationTabs.push({
+					name: name,
+					id: id,
+					state: '/subObservationTabs/' + id, // arbitrary prefix to filter tab content
+					subObservationSets: [{
+						id: 1, // TODO use subObservationSetDbId
+						name: name
+					}]
+				});
+			};
 
 		}]);
 

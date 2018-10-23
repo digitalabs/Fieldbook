@@ -28,36 +28,15 @@
 				return request.then(successHandler, failureHandler);
 			},
 
-			getVariablesByFilter: function (id, propertyIds, methodIds, scaleIds, variableIds, exclusionVariableIds, dataTypeIds, variableTypeIds, propertyClasses) {
-
-				var filter = '';
-				if (propertyIds) {
-					filter += '&propertyIds=' + propertyIds;
-				}
-				if (methodIds) {
-					filter += '&methodIds=' + methodIds;
-				}
-				if (scaleIds) {
-					filter += '&scaleIds=' + scaleIds;
-				}
-				if (variableIds) {
-					filter += '&variableIds=' + variableIds;
-				}
-				if (exclusionVariableIds) {
-					filter += '&exclusionVariableIds=' + exclusionVariableIds;
-				}
-				if (dataTypeIds) {
-					filter += '&dataTypeIds=' + dataTypeIds;
-				}
-				if (variableTypeIds) {
-					filter += '&variableTypeIds=' + variableTypeIds;
-				}
-				if (propertyClasses) {
-					filter += '&propertyClasses=' + propertyClasses;
-				}
-
-				var request = $http.get('/bmsapi/ontology/' + configService.getCropName() + '/filtervariables?programId=' +
-					configService.getProgramId() + filter, config);
+			getVariablesByFilter: function (filter) {
+				/**
+				 * See org.ibp.api.rest.ontology.VariableFilterResource.listAllVariablesUsingFilter
+				 */
+				var request = $http.get('/bmsapi/ontology/' + configService.getCropName() + '/filtervariables', angular.merge({
+					params: angular.merge({
+						programId: configService.getProgramId()
+					}, filter)
+				}, config));
 				return request.then(successHandler, failureHandler);
 			}
 		};

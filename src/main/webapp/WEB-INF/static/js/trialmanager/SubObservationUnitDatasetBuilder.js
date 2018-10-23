@@ -101,7 +101,11 @@
 				});
 			});
 
-			variableService.getVariablesByFilter(null, null, 4040, 6040, null, null, null, 1812, null).then(function (variablesFiltered) {
+			variableService.getVariablesByFilter({
+				methodIds: 4040,
+				scaleIds: 6040,
+				variableTypeIds: 1812
+			}).then(function (variablesFiltered) {
 				$scope.variables = variablesFiltered;
 				angular.forEach($scope.variables, function (variable) {
 					if ($scope.datasetType.defaultVariableId === parseInt(variable.id)) {

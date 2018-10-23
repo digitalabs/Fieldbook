@@ -4,8 +4,9 @@
 	var manageTrialApp = angular.module('manageTrialApp');
 
 	manageTrialApp.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
-		'DTColumnBuilder', '$http', '$q', '$compile',
-		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile) {
+		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService',
+		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService
+		) {
 
 			var subObservationSet = $scope.subObservationSet = $stateParams.subObservationSet;
 			$scope.preview = Boolean(subObservationSet.preview);
@@ -15,42 +16,31 @@
 			$scope.nested.dtPreviewInstance = null;
 			$scope.nested.reviewVariable = null;
 
+			// TODO use dataset envs
+			environmentService.getEnvironments().then(function (environments) {
+				if (!environments || !environments.length) {
+					return;
+				}
+				$scope.environments = environments;
+				$scope.nested.selectedEnvironment = environments[0];
+
+				$scope.dtOptions = getDtOptions();
+
+				if (dataTable) {
+					loadDataTable();
+				}
+			});
+
 			var subObservationTab = $scope.subObservationTab;
 			var dataTable = $scope.subObservationSet.dataTable;
 			var tableId = '#subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
 			var previewTableId = '#preview-subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
 			var studyId = $('#studyId').val();
-			var environmentId = getCurrentEnvironmentNumber();
 			var dtColumnsPromise = $q.defer();
 			var dtColumnDefsPromise = $q.defer();
 
 			$scope.dtColumns = dtColumnsPromise.promise;
 			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
-
-			$scope.dtOptions = addCommonOptions(DTOptionsBuilder.newOptions()
-				.withOption('ajax', {
-					url: '/Fieldbook/trial/measurements/plotMeasurements/' + studyId + '/' + environmentId,
-					type: 'GET',
-					data: function(d) {
-						var sortedColIndex = $(tableId).dataTable().fnSettings().aaSorting[0][0];
-						var sortDirection = $(tableId).dataTable().fnSettings().aaSorting[0][1];
-						var sortedColTermId = subObservationSet.displayColumns[sortedColIndex].termId;
-
-						return {
-							draw: d.draw,
-							pageSize: d.length,
-							pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
-							sortBy : sortedColTermId,
-							sortOrder : sortDirection
-						};
-					}
-				})
-				.withDataProp('data')
-				.withOption('serverSide', true));
-
-			if (dataTable) {
-				loadDataTable();
-			}
 
 			if ($scope.preview) {
 				loadPreview();
@@ -104,6 +94,33 @@
 				});
 			};
 
+			$scope.changeEnvironment = function () {
+				$scope.dtOptions = getDtOptions();
+			};
+
+			function getDtOptions() {
+				return addCommonOptions(DTOptionsBuilder.newOptions()
+					.withOption('ajax', {
+						url: '/Fieldbook/trial/measurements/plotMeasurements/' + studyId + '/' + $scope.nested.selectedEnvironment.instanceDbId,
+						type: 'GET',
+						data: function (d) {
+							var sortedColIndex = $(tableId).dataTable().fnSettings().aaSorting[0][0];
+							var sortDirection = $(tableId).dataTable().fnSettings().aaSorting[0][1];
+							var sortedColTermId = subObservationSet.displayColumns[sortedColIndex].termId;
+
+							return {
+								draw: d.draw,
+								pageSize: d.length,
+								pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
+								sortBy: sortedColTermId,
+								sortOrder: sortDirection
+							};
+						}
+					})
+					.withDataProp('data')
+					.withOption('serverSide', true));
+			}
+
 			function addCommonOptions(options) {
 				return options
 					.withOption('processing', true)
@@ -119,11 +136,12 @@
 							last: '>>'
 						}
 					})
-					.withDOM('<"row"' + //
-						'<"col-sm-11"<"pull-left"l><"pull-left"i><"pull-left fbk-left-padding"r>>' + //
-						'<"col-sm-1"<"pull-right"B>>' + //
-						'>' + //
-						'<"row"<"col-sm-12"t>>' + //
+					.withDOM('"<"pull-left fbk-left-padding"l>' + //
+						'<"pull-left"i>' + //
+						'<"pull-left fbk-left-padding"r>' + //
+						'<"pull-right"B>' + //
+						'<"clearfix">' + //
+						'<"row add-top-padding-small"<"col-sm-12"t>>' + //
 						'<"row"<"col-sm-12"p>>')
 					.withButtons([{
 						extend: 'colvis',

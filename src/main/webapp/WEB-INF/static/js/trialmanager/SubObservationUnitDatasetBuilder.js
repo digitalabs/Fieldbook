@@ -14,8 +14,8 @@
 
 		$scope.backToSubObservationUnitDatasetSelector = function () {
 			$scope.submitted = false;
-			$('#SubObservationUnitDatasetSelectorModal').modal('show');
-			$('#SubObservationUnitDatasetBuildModal').modal('hide');
+			angular.element('#SubObservationUnitDatasetSelectorModal').modal('show');
+			angular.element('#SubObservationUnitDatasetBuildModal').modal('hide');
 
 		};
 
@@ -47,7 +47,7 @@
 
 				$http.get(/bmsapi/+configService.getCropName()+'/studies/'+configService.getStudyId()+'/datasets/generation', config).success(function (data) {
 					showSuccessfulMessage('', subObservationDatasetBuiltSuccessMessage);
-					$('#SubObservationUnitDatasetBuildModal').modal('hide');
+					angular.element('#SubObservationUnitDatasetBuildModal').modal('hide');
 					$scope.submitted = false;
 				}).error(function (data) {
 					if (data.status == 401) {
@@ -59,14 +59,14 @@
 		};
 
 		$scope.continue = function () {
-			$('#SubObservationUnitDatasetSelectorModal').modal('hide');
-			$('#SubObservationUnitDatasetBuildModal').modal({backdrop: 'static', keyboard: true});
+			angular.element('#SubObservationUnitDatasetSelectorModal').modal('hide');
+			angular.element('#SubObservationUnitDatasetBuildModal').modal({backdrop: 'static', keyboard: true});
 
 			// Add hide listener to selectEnvironmentModal
-			$('#SubObservationUnitDatasetBuildModal').one('hidden.bs.modal', function (e) {
+			angular.element('#SubObservationUnitDatasetBuildModal').one('hidden.bs.modal', function (e) {
 				// When the selectEnvironmentModal is closed, remove the bs.modal data
 				// so that the modal content is refreshed when it is opened again.
-				$(e.target).removeData('bs.modal');
+				angular.element(e.target).removeData('bs.modal');
 			});
 				$scope.initDatasetBuild();
 		};
@@ -120,8 +120,29 @@
 		};
 
 		$scope.init = function () {
-			$scope.datasetType = undefined;
-			$scope.datasetTypes = [({
+
+			if ($scope.validation()) {
+				showErrorMessage('', 'A study cannot have more than ' + MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS + ' Sub-Observation Tabs');
+
+			} else {
+
+				angular.element('#SubObservationUnitDatasetBuildModal').modal('hide');
+				angular.element('#SubObservationUnitDatasetSelectorModal').modal({backdrop: 'static', keyboard: true});
+
+				// Add hide listener to selectEnvironmentModal
+				angular.element('#SubObservationUnitDatasetSelectorModal').one('hidden.bs.modal', function (e) {
+					// When the selectEnvironmentModal is closed, remove the bs.modal data
+					// so that the modal content is refreshed when it is opened again.
+					angular.element(e.target).removeData('bs.modal');
+				});
+
+				$scope.datasetType = undefined;
+				$scope.datasetTypes = $scope.getDatasetTypes();
+			}
+		};
+
+		$scope.getDatasetTypes = function () {
+			return [({
 				id: 10094,
 				label: 'Plants',
 				name: 'plants',

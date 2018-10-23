@@ -831,16 +831,6 @@ function executeCalculatedVariable() {
 
 function subObservationUnitDatasetSelector() {
 	'use strict';
-	$('#SubObservationUnitDatasetBuildModal').modal('hide');
-	$('#SubObservationUnitDatasetSelectorModal').modal({ backdrop: 'static', keyboard: true });
-
-	// Add hide listener to selectEnvironmentModal
-	$('#SubObservationUnitDatasetSelectorModal').one('hidden.bs.modal', function (e) {
-		// When the selectEnvironmentModal is closed, remove the bs.modal data
-		// so that the modal content is refreshed when it is opened again.
-		$(e.target).removeData('bs.modal');
-	});
-
 	var $scope = angular.element('#SubObservationUnitDatasetSelectorModal').scope();
 	$scope.$apply(function(){
 		$scope.init();

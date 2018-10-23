@@ -119,23 +119,19 @@
 
 		$scope.validation = function () {
 			if ($scope.subObservationTabs.length === MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS) {
-				return true;
+				showErrorMessage('', 'A study cannot have more than ' + MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS + ' Sub-Observation Tabs');
+				return false;
 			}
+			return true;
 		};
 
 		$scope.init = function () {
-
 			if ($scope.validation()) {
-				showErrorMessage('', 'A study cannot have more than ' + MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS + ' Sub-Observation Tabs');
-
-			} else {
-
 				angular.element('#SubObservationUnitDatasetBuildModal').modal('hide');
 				angular.element('#SubObservationUnitDatasetSelectorModal').modal({backdrop: 'static', keyboard: true});
-
-				// Add hide listener to selectEnvironmentModal
+				// Add hide listener to SubObservationUnitDatasetSelectorModal
 				angular.element('#SubObservationUnitDatasetSelectorModal').one('hidden.bs.modal', function (e) {
-					// When the selectEnvironmentModal is closed, remove the bs.modal data
+					// When the SubObservationUnitDatasetSelectorModal is closed, remove the bs.modal data
 					// so that the modal content is refreshed when it is opened again.
 					angular.element(e.target).removeData('bs.modal');
 				});

@@ -113,6 +113,12 @@
 
 		$scope.formGroupClass = formUtilities.formGroupClassGenerator($scope, 'dtForm');
 
+		$scope.validation = function () {
+			if ($scope.subObservationTabs.length === MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS) {
+				return true;
+			}
+		};
+
 		$scope.init = function () {
 			$scope.datasetType = undefined;
 			$scope.datasetTypes = [({

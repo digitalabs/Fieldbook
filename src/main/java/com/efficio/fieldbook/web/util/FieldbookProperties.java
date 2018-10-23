@@ -12,6 +12,9 @@ public class FieldbookProperties {
 	private String bvDesignPath;
 	
 	private String uploadDirectory;
+	private Integer maxNumOfSubObsSetsPerStudy;
+	private Integer maxNumOfSubObsPerParentUnit;
+
 
 	public String getProgramLocationsUrl() {
 		return WorkbenchAppPathResolver.getFullWebAddress(this.programLocationsUrl);
@@ -53,4 +56,19 @@ public class FieldbookProperties {
 		this.bvDesignPath = bvDesignPath;
 	}
 
+	public Integer getMaxNumOfSubObsSetsPerStudy() {
+		return maxNumOfSubObsSetsPerStudy;
+	}
+
+	public void setMaxNumOfSubObsSetsPerStudy(Integer maxNumOfSubObsSetsPerStudy) {
+		this.maxNumOfSubObsSetsPerStudy = maxNumOfSubObsSetsPerStudy;
+	}
+
+	public Integer getMaxNumOfSubObsPerParentUnit() {
+		return maxNumOfSubObsPerParentUnit;
+	}
+
+	public void setMaxNumOfSubObsPerParentUnit(Integer maxNumOfSubObsPerParentUnit) {
+		this.maxNumOfSubObsPerParentUnit = maxNumOfSubObsPerParentUnit;
+	}
 }

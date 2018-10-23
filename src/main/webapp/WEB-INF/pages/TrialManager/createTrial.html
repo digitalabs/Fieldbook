@@ -1,4 +1,6 @@
 <div ng-cloak="" ng-app="manageTrialApp" id="mainApp" ng-controller="manageTrialCtrl" style="margin-bottom: 15px">
+	 <div ng-strict-di="" sm-config=""
+		  data-th-attr="sm-crop=${cropName}, sm-program-id=${currentProgramId}, sm-selected-project-id=${contextInfo.selectedProjectId}, sm-auth-token=${contextInfo.authToken}, sm-logged-in-user-id=${currentCropUserId}, sm-selected-study-id=${createTrialForm.studyId}"></div>
 	<!-- header -->
 	<div class="row col-xs-12">
 		<h1 class="page-header col-xs-12 edit-trial-page-identifier">
@@ -110,7 +112,7 @@
 								<a tabindex="-1" href="#">Observation unit options</a>
 								<ul class="dropdown-menu" style="margin-left: -25px;">
 									<li>
-										<a ng-click="addSubObservation()" id="create-sub-Observation-link"
+										<a href="javascript: subObservationUnitDatasetSelector();" id="create-sub-Observation-link"
 										   th:text="#{study.studydetails.action.create.sub.observation.units}">Create sub-observation units</a>
 									</li>
 									<li>
@@ -518,6 +520,12 @@
 	</div>
 
 	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div id="sub-observation-unit-dataset-builder" th:include="/TrialManager/templates/SubObservationUnitDatasetBuilder"></div>
+		</div>
+	</div>
+
+	<div class="row">
 		<div th:include="/TrialManager/templates/samplesSummary"></div>
 	</div>
 
@@ -596,6 +604,8 @@
 	<script type="text/javascript" th:src="@{/static/js/fbk-data-table/samples-summary.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/executeCalculatedVariableModal.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/SubObservationUnitDatasetBuilder.js}"></script>
+
 
 
 	<!-- constants here -->
@@ -665,6 +675,7 @@
 		
 		var lockStudySuccessMessage = /*[[#{lock.study.success.message}]]*/ '';
 		var unlockStudySuccessMessage = /*[[#{unlock.study.success.message}]]*/ '';
+		var subObservationDatasetBuiltSuccessMessage =/*[[#{sub.observation.dataset.built.successfully}]]*/'';
 
 		var translations = {
 			/*TRIAL SETTINGS*/
@@ -710,8 +721,10 @@
 		(function () {
 
 			angular.module('manageTrialApp')
-				.constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
-				).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
+			 .constant('MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS', /*[[${maxNumOfSubObsSets}]]*/''
+			).constant('MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT', /*[[${maxNumOfSubObsSetsPerParentUnit}]]*/''
+			).constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
+			).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
 			).constant('BREEDING_METHOD_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''
 			).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
 			).constant('SELECTION_VARIABLE_INITIAL_DATA', /*[[${selectionVariableData}]]*/ ''
@@ -796,5 +809,6 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationSet.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-tabdrop.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/variableService.js}"></script>
 
 </div>

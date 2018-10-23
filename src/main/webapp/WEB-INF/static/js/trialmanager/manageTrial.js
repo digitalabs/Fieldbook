@@ -9,7 +9,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
-		'showSettingFormElementNew', 'ngSanitize', 'ui.select']);
+		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'config']);
 
 	/*** Added to prevent Unsecured HTML error
 	   It is used by ng-bind-html ***/

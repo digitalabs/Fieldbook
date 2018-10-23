@@ -633,6 +633,87 @@
 					};
 				}
 			};
-		});
+		})
+		.factory('formUtilities', function() {
+
+			var formUtilities = {
+
+				formGroupClassGenerator: function ($scope, formName) {
+					return function (fieldName) {
+						var className = 'form-group';
+
+						// If the field hasn't been initialised yet, don't do anything!
+
+						if ($scope[formName] && $scope[formName][fieldName]) {
+
+							// Don't mark as invalid until we are relatively sure the user is finished doing things
+							if ($scope[formName].$submitted || $scope[formName][fieldName].$touched) {
+
+								// Only mark as invalid if the field is.. well, invalid
+								if ($scope[formName][fieldName].$invalid) {
+									className += ' has-error';
+								}
+							}
+						}
+						return className;
+					};
+				}
+			}
+			return formUtilities;
+		})
+		.filter('capitalize', function () {
+			return function (inputString) {
+				if (inputString !== undefined) {
+					inputString = inputString.toLowerCase();
+					if (inputString.indexOf(' ') !== -1) {
+						return splitAndCapitalizeString(inputString, ' ');
+					}
+					else {
+						return capitalizeString(inputString);
+					}
+				} else {
+					return inputString;
+				}
+
+				function capitalizeString(inputString) {
+					if (inputString.indexOf('-') !== -1) {
+						return splitAndCapitalizeString(inputString, '-');
+					}
+					return inputString.substring(0, 1).toUpperCase() + inputString.substring(1);
+				}
+
+				function splitAndCapitalizeString(inputString, splitBy) {
+					var inputPieces, i;
+					inputString = inputString.toLowerCase();
+					inputPieces = inputString.split(splitBy);
+
+					for (i = 0; i < inputPieces.length; i++) {
+						inputPieces[i] = capitalizeString(inputPieces[i]);
+					}
+					return inputPieces.toString().replace(/,/g, splitBy);
+
+				}
+
+			};
+		})
+		.factory('serviceUtilities', ['$q', function ($q) {
+			return {
+				restSuccessHandler: function (response) {
+					return response.data;
+				},
+
+				restFailureHandler: function (response) {
+					if (response.status == 401) {
+						bmsAuth.handleReAuthentication();
+					}else{
+					return $q.reject({
+						status: response.status,
+						data: response.data,
+						errors: response.data && response.data.errors
+					});
+					}
+				}
+			};
+		}]);
 	}
 )();

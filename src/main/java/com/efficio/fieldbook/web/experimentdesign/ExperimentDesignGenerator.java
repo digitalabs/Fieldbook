@@ -94,7 +94,8 @@ public class ExperimentDesignGenerator {
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM,
 				getPlotNumberStringValueOrDefault(initialPlotNumber), null));
 
-		addInitialTreatmenNumberIfAvailable(initialEntryNumber, paramList);
+		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM, null,
+				getInitialTreatNumList(treatmentFactor.size())));
 
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.TREATMENTFACTORS_PARAM, null,
 				convertToListItemList(treatmentFactor)));
@@ -480,8 +481,17 @@ public class ExperimentDesignGenerator {
 
 		final List<ListItem> listItemList = new ArrayList<ListItem>();
 		for (final String value : listString) {
-			final ListItem listItem = new ListItem(value);
-			listItemList.add(listItem);
+			listItemList.add(new ListItem(value));
+		}
+		return listItemList;
+
+	}
+
+	List<ListItem> getInitialTreatNumList(final int size) {
+
+		final List<ListItem> listItemList = new ArrayList<ListItem>();
+		for (int i=0; i<size; i++) {
+			listItemList.add(new ListItem("1"));
 		}
 		return listItemList;
 

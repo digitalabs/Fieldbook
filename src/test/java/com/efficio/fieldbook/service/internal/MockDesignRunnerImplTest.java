@@ -31,7 +31,7 @@ public class MockDesignRunnerImplTest {
 	public void testMockDesignRunnerRCBD() {
 
 		final MainDesign mainDesign = experimentDesignGenerator
-				.createRandomizedCompleteBlockDesign("2", "REP_NO", "PLOT_NO", 200, 100, Arrays.asList("ENTRY_NO"), Arrays.asList("20"),
+				.createRandomizedCompleteBlockDesign("2", "REP_NO", "PLOT_NO", 200, Arrays.asList("ENTRY_NO"), Arrays.asList("20"),
 						"mock-bv-out.csv");
 		try {
 			final BVDesignOutput output = this.mockDesignRunner.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);

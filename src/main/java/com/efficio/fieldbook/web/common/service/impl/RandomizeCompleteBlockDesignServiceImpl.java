@@ -170,7 +170,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			}
 
 			final MainDesign mainDesign = experimentDesignGenerator
-					.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), plotNo, entryNo, treatmentFactor,
+					.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), plotNo, treatmentFactor,
 							levels, "");
 
 			measurementRowList = experimentDesignGenerator

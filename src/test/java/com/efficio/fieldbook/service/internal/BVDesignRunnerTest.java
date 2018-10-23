@@ -270,6 +270,6 @@ public class BVDesignRunnerTest {
 		levels.add("24");
 		levels.add("3");
 
-		return experimentDesignGenerator.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, treatmentFactor, levels, "");
+		return experimentDesignGenerator.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, treatmentFactor, levels, "");
 	}
 }

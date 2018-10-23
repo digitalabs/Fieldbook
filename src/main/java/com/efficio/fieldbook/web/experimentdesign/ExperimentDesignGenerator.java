@@ -81,7 +81,7 @@ public class ExperimentDesignGenerator {
 	private FieldbookService fieldbookService;
 
 	public MainDesign createRandomizedCompleteBlockDesign(final String nBlock, final String blockFactor, final String plotFactor,
-			final Integer initialPlotNumber, final Integer initialEntryNumber, final List<String> treatmentFactor,
+			final Integer initialPlotNumber, final List<String> treatmentFactor,
 			final List<String> levels, final String outputfile) {
 
 		final String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();

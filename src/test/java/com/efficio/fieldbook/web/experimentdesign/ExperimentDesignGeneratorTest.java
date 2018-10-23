@@ -61,7 +61,7 @@ public class ExperimentDesignGeneratorTest {
 		final Integer initialEntryNumber = 100;
 
 		final MainDesign mainDesign = experimentDesignGenerator
-				.createRandomizedCompleteBlockDesign(NBLOCK, BLOCK_NO, PLOT_NO, initialPlotNumber, initialEntryNumber, treatmentFactor,
+				.createRandomizedCompleteBlockDesign(NBLOCK, BLOCK_NO, PLOT_NO, initialPlotNumber, treatmentFactor,
 						levels, OUTPUT_FILE);
 
 		final ExpDesign expDesign = mainDesign.getDesign();

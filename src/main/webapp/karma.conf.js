@@ -76,10 +76,10 @@ module.exports = function(config) {
         preprocessors: {},
         reporters: ['dots'],
         port: 9876,
-        colors: true,
+        colors: false,
         logLevel: config.LOG_INFO,
-        autoWatch: true,
+        autoWatch: false,
         browsers: ['PhantomJS'],
-        singleRun: false
+        singleRun: true
     });
 };

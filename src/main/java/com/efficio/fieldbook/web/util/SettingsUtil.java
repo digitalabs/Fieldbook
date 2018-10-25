@@ -312,6 +312,13 @@ public class SettingsUtil {
 			return treatmentFactors;
 		}
 
+		final Map<Integer, Factor> factorsMap = new HashMap<>();
+		for(Factor factor: factorList) {
+			if(factorsMap.get(factor.getId()) == null) {
+				factorsMap.put(factor.getId(), factor);
+			}
+		}
+
 		for (final SettingDetail detail : treatmentFactorDetails) {
 			final Integer termId = detail.getVariable().getCvTermId();
 			final StandardVariable levelVariable = SettingsUtil.getStandardVariable(termId, fieldbookMiddlewareService, programUUID);
@@ -340,15 +347,22 @@ public class SettingsUtil {
 					index++;
 				}
 				valueFactor.setRole(detail.getRole().name());
-				factorList.add(valueFactor);
+				SettingsUtil.addFactor(factorsMap, valueFactor, factorList);
 			}
 			levelFactor.setRole(detail.getRole().name());
-			factorList.add(levelFactor);
+			SettingsUtil.addFactor(factorsMap, levelFactor, factorList);
 		}
 
 		return treatmentFactors;
 	}
 
+	private static void addFactor(final Map<Integer, Factor> factorsMap, final Factor factor, final List<Factor> factorList) {
+		if(factorsMap.get(factor.getId()) == null) {
+			factorList.add(factor);
+			factorsMap.put(factor.getId(), factor);
+		}
+	}
+	
 	/**
 	 * Convert pojo to xml dataset.
 	 *

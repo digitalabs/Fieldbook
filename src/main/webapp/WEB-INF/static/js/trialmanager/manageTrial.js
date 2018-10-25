@@ -137,9 +137,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	);
 
 	// THE parent controller for the manageTrial (create/edit) page
-	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout', '_',
-		'$localStorage', '$state', '$location', 'derivedVariableService', '$uibModal', '$q', function($scope, $rootScope, TrialManagerDataService, $http, $timeout, _, $localStorage,
-			$state, $location, derivedVariableService, $uibModal, $q) {
+	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService' ,'TrialManagerDataService', '$http',
+		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', '$uibModal', '$q',
+		function($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
+				 derivedVariableService, $uibModal, $q) {
 			$scope.trialTabs = [
 				{   name: 'Settings',
 					state: 'trialSettings'
@@ -175,6 +176,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.studyTypes = [];
 			$scope.studyTypeSelected = undefined;
 			$scope.isChoosePreviousStudy = false;
+			$scope.hasUnsavedData = studyStateService.hasUnsavedData;
 
 			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 

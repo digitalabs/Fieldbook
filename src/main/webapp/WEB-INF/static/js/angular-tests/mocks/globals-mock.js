@@ -225,3 +225,6 @@ window.measurementObservationMessages = {
     showCategoricalDescription : /*[[#{measurements.show.categorical.description}]]*/ '',
     hideCategoricalDescription : /*[[#{measurements.hide.categorical.description}]]*/ ''
 };
+
+var cropName = 'maize';
+var environmentConfirmLabel = '';

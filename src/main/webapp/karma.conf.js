@@ -65,6 +65,7 @@ module.exports = function(config) {
             'WEB-INF/static/js/trialmanager/measurement.js',
             'WEB-INF/static/js/trialmanager/showSettingFormElementNew.js',
             'WEB-INF/static/js/trialmanager/germplasm.js',
+            'WEB-INF/static/js/trialmanager/datasetService.js',
             'WEB-INF/static/js/design-import/design-import-main.js',
 
             // unit test files

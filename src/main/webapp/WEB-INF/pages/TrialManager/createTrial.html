@@ -583,6 +583,7 @@
 	<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/executeCalculatedVariableModal.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/studyStateService.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/datasetService.js}"></script>
 
 
 	<!-- constants here -->
@@ -744,7 +745,10 @@
 					STRESS_CHECK: /*[[${T(org.generationcp.middleware.domain.gms.SystemDefinedEntryType).STRESS_CHECK.getEntryTypeCategoricalId()}]]*/ 10200
 
 				}
-			);
+			).value('studyContext', {
+                studyId: /*[[${studyId}]]*/ '',
+			    measurementDatasetId: /*[[${measurementDatasetId}]]*/ ''
+			});
 
 			$(document).ready(function () {
 				document.onInitManageTrial();

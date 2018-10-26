@@ -4,11 +4,10 @@
 
 	angular.module('manageTrialApp').controller('MeasurementsCtrl',
 		['$rootScope', '$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http', 'DTOptionsBuilder', 'DTColumnBuilder',
-		'DTColumnDefBuilder', '$filter', 'derivedVariableService',
+		'DTColumnDefBuilder', '$filter', 'derivedVariableService', 'datasetService', 'studyContext',
 			function($rootScope, $scope, TrialManagerDataService, $uibModal, $q, debounce, $http, DTOptionsBuilder, DTColumnBuilder,
-				DTColumnDefBuilder, $filter, derivedVariableService) {
+				DTColumnDefBuilder, $filter, derivedVariableService, datasetService, studyContext) {
 				var DELAY = 1500; // 1.5 secs
-				var studyId = $('#studyId').val();
 
 				$scope.settings = TrialManagerDataService.settings.measurements;
 
@@ -16,12 +15,12 @@
 				$scope.updateOccurred = false;
 				$scope.addVariable = true;
 				$scope.isNewStudy = function() {
-					return ($('#studyId').val() === '');
+					return !studyContext.studyId;
 				};
 
 				$scope.initEnvironmentList = function() {
 					if (!$scope.isNewStudy()) {
-						$http.get('/Fieldbook/trial/measurements/instanceMetadata/' + studyId).success(function(data) {
+						$http.get('/Fieldbook/trial/measurements/instanceMetadata/' + studyContext.studyId).success(function(data) {
 							$scope.environmentsList = data;
 							$scope.selectedEnvironment = data[0];
 							TrialManagerDataService.selectedEnviromentOnMeasurementTab = $scope.selectedEnvironment;
@@ -33,7 +32,7 @@
 				};
 
 				$scope.changeEnvironmentForMeasurementDataTable = function($item, $model) {
-					$('#measurement-table').DataTable().ajax.url('/Fieldbook/trial/measurements/plotMeasurements/' + studyId + '/' +
+					$('#measurement-table').DataTable().ajax.url('/Fieldbook/trial/measurements/plotMeasurements/' + studyContext.studyId + '/' +
 						$item.instanceDbId).load();
 					$scope.selectedEnvironment = $item;
 					TrialManagerDataService.selectedEnviromentOnMeasurementTab = $scope.selectedEnvironment;
@@ -89,30 +88,39 @@
 				/* Scope functions */
 				$scope.beforeDelete = function(variableType, variableIds) {
 
-                    var deferred = $q.defer();
-					derivedVariableService.hasMeasurementData(variableIds).then(function (response) {
-                        var dependencyVariableHasMeasurementData = response.data;
+                    // Only check for measurement data if the study is already created.
+                    if (!$scope.isNewStudy()) {
 
-                        // Check first if any of removed dependency variables has measurement data.
-						if (dependencyVariableHasMeasurementData) {
-                            var modalInstance = $rootScope.openConfirmModal(removeVariableDependencyConfirmationText,
-								environmentConfirmLabel);
-                            modalInstance.result.then(deferred.resolve);
-						} else {
-                            // else, check if any of the selected variables for deletion has measurement data.
-                            $http.post('/Fieldbook/manageSettings/hasMeasurementData/' + variableType, variableIds, {cache: false})
-                                .success(function(hasMeasurementData) {
-                                    if (hasMeasurementData) {
+                        var deferred = $q.defer();
+
+                        derivedVariableService.hasMeasurementData(variableIds).then(function (response) {
+                            var dependencyVariableHasMeasurementData = response.data;
+
+                            // Check first if any of removed dependency variables has measurement data.
+                            if (dependencyVariableHasMeasurementData) {
+                                var modalInstance = $rootScope.openConfirmModal(removeVariableDependencyConfirmationText,
+                                    environmentConfirmLabel);
+                                modalInstance.result.then(deferred.resolve);
+                            } else {
+                                // else, check if any of the selected variables for deletion has measurement data.
+                                datasetService.observationCount(studyContext.studyId, studyContext.measurementDatasetId, variableIds).then(function (response) {
+                                    var count = response.headers('X-Total-Count');
+                                    if (count > 0) {
                                         var modalInstance = $rootScope.openConfirmModal(measurementModalConfirmationText,
-											environmentConfirmLabel);
+                                            environmentConfirmLabel);
                                         modalInstance.result.then(deferred.resolve);
                                     } else {
                                         deferred.resolve(true);
                                     }
                                 });
-						}
-					});
-					return deferred.promise;
+                            }
+                        });
+
+                        return deferred.promise;
+
+                    } else {
+                        return $q.resolve(true);
+                    }
 				};
 
 				/* Event Handlers */

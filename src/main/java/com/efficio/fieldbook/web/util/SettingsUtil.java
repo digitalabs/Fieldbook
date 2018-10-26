@@ -314,9 +314,7 @@ public class SettingsUtil {
 
 		final Map<Integer, Factor> factorsMap = new HashMap<>();
 		for(Factor factor: factorList) {
-			if(factorsMap.get(factor.getId()) == null) {
-				factorsMap.put(factor.getId(), factor);
-			}
+			factorsMap.put(factor.getId(), factor);
 		}
 
 		for (final SettingDetail detail : treatmentFactorDetails) {

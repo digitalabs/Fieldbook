@@ -28,7 +28,7 @@ describe('Dataset Service', function() {
             var datasetId = 2;
             var variableIds = [888, 999];
 
-            $httpBackend.whenHEAD('/bmsapi/crops/maize/studies' + studyId + '/datasets/' +
+            $httpBackend.whenHEAD('/bmsapi/crops/maize/studies/' + studyId + '/datasets/' +
                 datasetId + '/variables/observations?variableIds=' + variableIds.join(','))
                 .respond({}, {'X-Total-Count': '100'});
 

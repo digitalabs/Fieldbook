@@ -33,6 +33,24 @@
     						};
     					}
 
+                        $scope.isFavoriteLocation = function(currentVal) {
+                            var favorite = false;
+                            angular.forEach($scope.variableDefinition.possibleValuesFavorite, function(value, key) {
+                                if (currentVal == value.id)
+                                    console.log(currentVal + " " + value.id);
+                            });
+                            return favorite;
+                        }
+
+                        $scope.isBreedingLocation = function(currentVal) {
+                           var breedingLocation = false;
+                            angular.forEach($scope.variableDefinition.possibleValues, function(value) {
+                                if (currentVal == value.id) 
+                                    breedingLocation =  true;
+                            });
+                            return breedingLocation;
+                        }
+
     					$scope.variableDefinition = $scope.settings.val($scope.settingkey);
     					$scope.widgetType = $scope.variableDefinition.variable.widgetType.$name ?
     						$scope.variableDefinition.variable.widgetType.$name : $scope.variableDefinition.variable.widgetType;

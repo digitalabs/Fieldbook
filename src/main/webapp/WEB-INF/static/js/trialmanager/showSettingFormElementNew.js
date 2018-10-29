@@ -124,6 +124,8 @@
     					if ($scope.hasDropdownOptions) {
 
     						var currentVal = $scope.valuecontainer[$scope.targetkey];
+                            $scope.locationLookup = $scope.isBreedingLocation($scope.valuecontainer[LOCATION_ID]);
+                            $scope.localData.useFavorites = $scope.isFavoriteLocation($scope.valuecontainer[LOCATION_ID]);
 
                             if (!currentVal && $scope.targetkey === LOCATION_ID) {
                                 currentVal = UNSPECIFIED_LOCATION_ID;

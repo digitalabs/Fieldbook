@@ -5,7 +5,7 @@
 
     datasetsApiModule.factory('datasetService', ['$http', '$q',  function($http, $q) {
 
-        var BASE_URL = '/bmsapi/crops/' + cropName + '/';
+        var BASE_URL = '/bmsapi/crops/' + cropName + '/studies';
         var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
         var config = {
             headers: {

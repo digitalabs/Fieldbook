@@ -2,7 +2,7 @@
 
 describe('Measurement Controller', function() {
 
-    var createController, scope;
+    var createController, scope, q;
     var studyContext = {
         studyId : 1,
         measurementDatasetId : 2009
@@ -41,9 +41,10 @@ describe('Measurement Controller', function() {
     });
 
     beforeEach(function() {
-        inject(function(_$rootScope_, $controller) {
+        inject(function(_$rootScope_, $controller, $q) {
 
             scope = _$rootScope_.$new();
+            q = $q;
             createController = function() {
                 return $controller('MeasurementsCtrl', {
                     $rootScope: rootScopeMock,
@@ -65,7 +66,7 @@ describe('Measurement Controller', function() {
 
             it('it should open the confirmation modal', function() {
 
-                derivedVariableServiceMock.hasMeasurementData.and.returnValue(Promise.resolve({data: true}));
+                derivedVariableServiceMock.hasMeasurementData.and.returnValue(q.resolve({data: true}));
                 datasetServiceMock.observationCount.and.returnValue()
 
                 var variableIds = [1, 2, 3];
@@ -85,8 +86,8 @@ describe('Measurement Controller', function() {
 
             it('it should open the confirmation modal', function() {
 
-                derivedVariableServiceMock.hasMeasurementData.and.returnValue(Promise.resolve({data: false}));
-                datasetServiceMock.observationCount.and.returnValue(Promise.resolve(responseMock));
+                derivedVariableServiceMock.hasMeasurementData.and.returnValue(q.resolve({data: false}));
+                datasetServiceMock.observationCount.and.returnValue(q.resolve(responseMock));
                 responseMock.headers.withArgs('X-Total-Count').and.returnValue(100);
 
                 var variableIds = [1, 2, 3];
@@ -106,8 +107,8 @@ describe('Measurement Controller', function() {
 
             it('it should open the confirmation modal', function() {
 
-                derivedVariableServiceMock.hasMeasurementData.and.returnValue(Promise.resolve({data: false}));
-                datasetServiceMock.observationCount.and.returnValue(Promise.resolve(responseMock));
+                derivedVariableServiceMock.hasMeasurementData.and.returnValue(q.resolve({data: false}));
+                datasetServiceMock.observationCount.and.returnValue(q.resolve(responseMock));
                 responseMock.headers.withArgs('X-Total-Count').and.returnValue(0);
 
                 var variableIds = [1, 2, 3];

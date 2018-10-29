@@ -37,16 +37,16 @@
                             var favorite = false;
                             angular.forEach($scope.variableDefinition.possibleValuesFavorite, function(value, key) {
                                 if (currentVal == value.id)
-                                    console.log(currentVal + " " + value.id);
+                                    favorite = true;
                             });
                             return favorite;
                         }
 
                         $scope.isBreedingLocation = function(currentVal) {
-                           var breedingLocation = false;
+                           var breedingLocation = 2;
                             angular.forEach($scope.variableDefinition.possibleValues, function(value) {
                                 if (currentVal == value.id) 
-                                    breedingLocation =  true;
+                                    breedingLocation =  1;
                             });
                             return breedingLocation;
                         }
@@ -99,7 +99,7 @@
 								: $scope.variableDefinition.allValues;
 							$scope.locationLookup = 2;
 						};
-                        
+
     					if ($scope.hasDropdownOptions) {
 
     						var currentVal = $scope.valuecontainer[$scope.targetkey];

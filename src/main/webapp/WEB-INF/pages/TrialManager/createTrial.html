@@ -650,7 +650,7 @@
 			currentCropUserId = /*[[${currentCropUserId}]]*/ '',
 			cropName = /*[[${cropName}]]*/ '',
 			createdCrossesListId = /*[[${createdCrossesListId}]]*/ '';
-		
+
 		var lockStudySuccessMessage = /*[[#{lock.study.success.message}]]*/ '';
 		var unlockStudySuccessMessage = /*[[#{unlock.study.success.message}]]*/ '';
 
@@ -719,7 +719,7 @@
 			).constant('TRIAL_HAS_MEASUREMENT', /*[[${measurementDataExisting}]]*/ ''
 			).constant('TRIAL_MEASUREMENT_COUNT', /*[[${measurementRowCount}]]*/ ''
 			).constant('EXPERIMENTAL_DESIGN_SPECIAL_DATA', /*[[${experimentalDesignSpecialData}]]*/ ''
-            ).constant('UNSPECIFIED_LOCATION_ID', /*[[${unspecifiedLocationId}]]*/ ''
+			).constant('UNSPECIFIED_LOCATION_ID', /*[[${unspecifiedLocationId}]]*/ ''
 			).constant('DESIGN_TYPE',
 				{
 					RANDOMIZED_COMPLETE_BLOCK: /*[[${T(org.generationcp.middleware.domain.dms.DesignTypeItem).RANDOMIZED_COMPLETE_BLOCK.getId()}]]*/ 0
@@ -746,8 +746,8 @@
 
 				}
 			).value('studyContext', {
-                studyId: /*[[${studyId}]]*/ '',
-			    measurementDatasetId: /*[[${measurementDatasetId}]]*/ ''
+				studyId: /*[[${studyId}]]*/ '',
+				measurementDatasetId: /*[[${measurementDatasetId}]]*/ ''
 			});
 
 			$(document).ready(function () {

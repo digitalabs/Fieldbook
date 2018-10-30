@@ -583,6 +583,7 @@
 	<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/executeCalculatedVariableModal.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/studyStateService.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/datasetService.js}"></script>
 
 
 	<!-- constants here -->
@@ -649,7 +650,7 @@
 			currentCropUserId = /*[[${currentCropUserId}]]*/ '',
 			cropName = /*[[${cropName}]]*/ '',
 			createdCrossesListId = /*[[${createdCrossesListId}]]*/ '';
-		
+
 		var lockStudySuccessMessage = /*[[#{lock.study.success.message}]]*/ '';
 		var unlockStudySuccessMessage = /*[[#{unlock.study.success.message}]]*/ '';
 
@@ -718,7 +719,7 @@
 			).constant('TRIAL_HAS_MEASUREMENT', /*[[${measurementDataExisting}]]*/ ''
 			).constant('TRIAL_MEASUREMENT_COUNT', /*[[${measurementRowCount}]]*/ ''
 			).constant('EXPERIMENTAL_DESIGN_SPECIAL_DATA', /*[[${experimentalDesignSpecialData}]]*/ ''
-            ).constant('UNSPECIFIED_LOCATION_ID', /*[[${unspecifiedLocationId}]]*/ ''
+			).constant('UNSPECIFIED_LOCATION_ID', /*[[${unspecifiedLocationId}]]*/ ''
 			).constant('DESIGN_TYPE',
 				{
 					RANDOMIZED_COMPLETE_BLOCK: /*[[${T(org.generationcp.middleware.domain.dms.DesignTypeItem).RANDOMIZED_COMPLETE_BLOCK.getId()}]]*/ 0
@@ -744,7 +745,10 @@
 					STRESS_CHECK: /*[[${T(org.generationcp.middleware.domain.gms.SystemDefinedEntryType).STRESS_CHECK.getEntryTypeCategoricalId()}]]*/ 10200
 
 				}
-			);
+			).value('studyContext', {
+				studyId: /*[[${studyId}]]*/ '',
+				measurementDatasetId: /*[[${measurementDatasetId}]]*/ ''
+			});
 
 			$(document).ready(function () {
 				document.onInitManageTrial();

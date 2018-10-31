@@ -6,10 +6,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 	'use strict';
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
-	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService','studyStateService','$rootScope',
+	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService','studyStateService','$rootScope', 'studyContext', 'datasetService',
 		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService,
-				 studyStateService, $rootScope) {
+				 studyStateService, $rootScope, studyContext, datasetService) {
 
+			var ctrl = this;
 			// preload the measurements tab, if the measurements tab is not yet loaded 
 			// to make sure deleting environments will still works
 		    // since environments are directly correlated to their measurement rows
@@ -165,7 +166,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 				} else {
 					// For Existing Trial
-					hasMeasurementDataOnEnvironment(index);
+					ctrl.hasMeasurementDataOnEnvironment(index);
 				}
 			};
 
@@ -228,15 +229,15 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			});
 
 			$scope.$watch('settings.managementDetails', function(newVal, oldVal) {
-				updateEnvironmentVariables('managementDetails', newVal.length > oldVal.length);
+				ctrl.updateEnvironmentVariables('managementDetails', newVal.length > oldVal.length);
 			}, true);
 
 			$scope.$watch('settings.trialConditionDetails', function(newVal, oldVal) {
-				updateEnvironmentVariables('trialConditionDetails', newVal.length > oldVal.length);
+				ctrl.updateEnvironmentVariables('trialConditionDetails', newVal.length > oldVal.length);
 			}, true);
 
 			/* Controller Utility functions */
-			function confirmDeleteEnvironment(index) {
+			ctrl.confirmDeleteEnvironment = function (index) {
 				// Existing Trial with measurement data
 				var modalInstance = $rootScope.openConfirmModal(environmentModalConfirmationText, environmentConfirmLabel);
 				modalInstance.result.then(function(shouldContinue) {
@@ -246,33 +247,34 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				});
 			}
 
-			function hasMeasurementDataOnEnvironment(environmentNo) {
-				var variableIds = TrialManagerDataService.settings.measurements.keys();
-				var dfd = $.Deferred();
-				$.ajax({
-					url: '/Fieldbook/trial/measurements/instanceMetadata/' + $('#studyId').val(),
-					success: function (data) {
-						var envList;
-						envList = data;
-						if (envList[environmentNo] == undefined) {
-							confirmDeleteEnvironment(environmentNo);
-						}
-						else {
-							$http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' +
-								envList[environmentNo].instanceDbId, variableIds, {cache: false}).success(function (data) {
-								if (true === data) {
-									var warningMessage = 'This environment cannot be removed because it contains measurement data.';
-									showAlertMessage('', warningMessage);
-								} else {
-									confirmDeleteEnvironment(environmentNo);
-								}
-								dfd.resolve();
-							});
-						}
+			ctrl.hasMeasurementDataOnEnvironment = function (environmentNo) {
+				var deferred = $.Deferred();
 
+				$http.get('/Fieldbook/trial/measurements/instanceMetadata/' + studyContext.studyId, {cache: false}).success(function (environmentList) {
+					if (environmentList[environmentNo] === undefined) {
+						ctrl.confirmDeleteEnvironment(environmentNo);
 					}
+					else {
+
+						var instanceId = environmentList[environmentNo].instanceDbId;
+						var datasetId = studyContext.measurementDatasetId;
+						var studyId = studyContext.studyId;
+
+						datasetService.observationCountByInstance(studyId, datasetId, instanceId).then(function (response) {
+							var count = response.headers('X-Total-Count');
+							if (count > 0) {
+								var warningMessage = 'This environment cannot be removed because it contains measurement data.';
+								showAlertMessage('', warningMessage);
+							} else {
+								ctrl.confirmDeleteEnvironment(environmentNo);
+							}
+							deferred.resolve();
+						});
+					}
+
 				});
-				return dfd.promise();
+
+				return deferred.promise();
 			}
 
 			// on click generate design button
@@ -322,7 +324,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				TrialManagerDataService.indicateUnappliedChangesAvailable(displayWarningMessage);
 			}
 
-			function updateEnvironmentVariables(type, entriesIncreased) {
+			ctrl.updateEnvironmentVariables = function (type, entriesIncreased) {
 
 				var settingDetailSource = null;
 				var targetKey = null;

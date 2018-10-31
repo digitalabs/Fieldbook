@@ -3,7 +3,7 @@
 	'use strict';
 
 	var manageTrialApp = angular.module('manageTrialApp');
-	manageTrialApp.controller('SubObservationUnitDatasetBuildCtrl', ['$scope', 'environmentService', '$http', 'formUtilities', 'MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS', 'MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT', 'configService', 'variableService', function ($scope, environmentService, $http, formUtilities, MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS, MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT, configService, variableService) {
+	manageTrialApp.controller('SubObservationUnitDatasetBuildCtrl', ['$scope', 'environmentService', '$http', 'formUtilities', 'MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS', 'MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT', 'configService', 'variableService', 'studyContext', function ($scope, environmentService, $http, formUtilities, MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS, MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT, configService, variableService, studyContext) {
 
 		// TODO see Workbench/src/main/web/src/apps/ontology/app-services/bmsAuth.js
 		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
@@ -45,7 +45,7 @@
 					"numberOfSubObservationUnits": $scope.numberOfSubObservationUnits
 				};
 
-				$http.get(/bmsapi/+configService.getCropName()+'/studies/'+configService.getStudyId()+'/datasets/generation',angular.merge({params: newDataset}, config)).success(function (data) {
+				$http.get(/bmsapi/ + configService.getCropName() + '/studies/' + configService.getStudyId() + '/datasets/' + studyContext.measurementDatasetId + '/generation', angular.merge({params: newDataset}, config)).success(function (data) {
 					showSuccessfulMessage('', subObservationDatasetBuiltSuccessMessage);
 					angular.element('#SubObservationUnitDatasetBuildModal').modal('hide');
 					$scope.submitted = false;

@@ -70,7 +70,8 @@
 	angular.module('fieldbook-utils', ['ui.select2'])
 		.constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
 		.constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
-		.directive('displaySettings', ['TrialManagerDataService', '$filter', '_', function(TrialManagerDataService, $filter, _) {
+		.directive('displaySettings', ['TrialManagerDataService', '$filter', '_', 'studyStateService',
+			function(TrialManagerDataService, $filter, _, studyStateService) {
 			return {
 				restrict: 'E',
 				scope: {
@@ -80,6 +81,16 @@
 				},
 				templateUrl: '/Fieldbook/static/angular-templates/displaySettings.html',
 				controller: function($scope, $element, $attrs) {
+
+
+					$scope.$watch('settings', function(newValue, oldValue) {
+                        // Watch the settings variable if it has changed (triggered by adding/removing variables). if changed, then
+                        // tell the studyStateService that the study has been updated.
+						if (oldValue.m_keys.length !== newValue.m_keys.length) {
+                            studyStateService.updateOccurred();
+						}
+					}, true);
+
 					$scope.variableType = $attrs.variableType;
 					$scope.options = {
 						selectAll: false

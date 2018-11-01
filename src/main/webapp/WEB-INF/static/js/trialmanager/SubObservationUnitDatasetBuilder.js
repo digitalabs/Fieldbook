@@ -45,7 +45,7 @@
 					"numberOfSubObservationUnits": $scope.numberOfSubObservationUnits
 				};
 
-				$http.get(/bmsapi/ + configService.getCropName() + '/studies/' + configService.getStudyId() + '/datasets/' + studyContext.measurementDatasetId + '/generation', angular.merge({params: newDataset}, config)).success(function (data) {
+				$http.post('/bmsapi/crops/' + configService.getCropName() + '/studies/' + configService.getStudyId() + '/datasets/' + studyContext.measurementDatasetId + '/generation' ,newDataset, config).success(function (data) {
 					showSuccessfulMessage('', subObservationDatasetBuiltSuccessMessage);
 					angular.element('#SubObservationUnitDatasetBuildModal').modal('hide');
 					$scope.submitted = false;

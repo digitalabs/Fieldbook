@@ -3,7 +3,10 @@
 	'use strict';
 
 	var manageTrialApp = angular.module('manageTrialApp');
-	manageTrialApp.controller('SubObservationUnitDatasetBuildCtrl', ['$scope', 'environmentService', '$http', 'formUtilities', 'MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS', 'MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT', 'configService', 'variableService', 'studyContext', function ($scope, environmentService, $http, formUtilities, MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS, MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT, configService, variableService, studyContext) {
+	manageTrialApp.controller('SubObservationUnitDatasetBuildCtrl', ['$scope', 'environmentService', '$http', 'formUtilities',
+		'MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS', 'MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT', 'configService', 'variableService', 'studyContext',
+		'DATASET_TYPES', function ($scope, environmentService, $http, formUtilities, MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS,
+								   MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT, configService, variableService, studyContext, DATASET_TYPES) {
 
 		// TODO see Workbench/src/main/web/src/apps/ontology/app-services/bmsAuth.js
 		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
@@ -143,25 +146,25 @@
 
 		$scope.getDatasetTypes = function () {
 			return [({
-				id: 10094,
+				id: DATASET_TYPES.PLANT_SUBOBSERVATIONS,
 				label: 'Plants',
 				name: 'plants',
 				defaultVariableId: 8206,
 				alias: 'plants'
 			}), ({
-				id: 10095,
+				id: DATASET_TYPES.QUADRAT_SUBOBSERVATIONS,
 				label: 'Quadrats',
 				name: 'quadrats',
 				defaultVariableId: 8207,
 				alias: 'quadrats'
 			}), ({
-				id: 10096,
+				id: DATASET_TYPES.TIME_SERIES_SUBOBSERVATIONS,
 				label: 'Time Series',
 				name: 'time series',
 				defaultVariableId: 8205,
 				alias: 'time points'
 			}), ({
-				id: 10097,
+				id: DATASET_TYPES.CUSTOM_SUBOBSERVATIONS,
 				label: 'Custom',
 				name: 'sub-observation units',
 				defaultVariableId: undefined,

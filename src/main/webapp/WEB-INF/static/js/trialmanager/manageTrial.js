@@ -149,9 +149,9 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				$rootScope.VARIABLE_TYPES = VARIABLE_TYPES;
 
 				$transitions.onEnter({},
-					function (event) {
+					function (transition) {
 						if ($('.import-study-data').data('data-import') === '1' || stockListImportNotSaved) {
-							event.preventDefault();
+							transition.abort();
 						}
 						// a 'transition prevented' error
 					});

@@ -78,11 +78,11 @@ public class ExpDesignUtilTest {
 	public void testGenerateExperimentDesignMeasurements() {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyTypeDto.getTrialDto());
 
-		final List<String> treatmentFactor = new ArrayList<String>();
+		final List<String> treatmentFactors = new ArrayList<String>();
 		final List<String> levels = new ArrayList<String>();
 		final MainDesign mainDesign =
 				experimentDesignGenerator.createRandomizedCompleteBlockDesign("2", ExpDesignUtilTest.REP_NO, ExpDesignUtilTest.PLOT_NO,
-						301, treatmentFactor, levels, "");
+						301, 201, treatmentFactors, levels, "");
 
 		this.setMockValues(mainDesign);
 

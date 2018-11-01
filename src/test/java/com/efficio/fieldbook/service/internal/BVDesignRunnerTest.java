@@ -262,14 +262,14 @@ public class BVDesignRunnerTest {
 
 	private MainDesign createRandomizedCompleteBlockDesign() {
 
-		final List<String> treatmentFactor = new ArrayList<>();
-		treatmentFactor.add("ENTRY_NO");
-		treatmentFactor.add("FERTILIZER");
+		final List<String> treatmentFactors = new ArrayList<>();
+		treatmentFactors.add("ENTRY_NO");
+		treatmentFactors.add("FERTILIZER");
 
 		final List<String> levels = new ArrayList<>();
 		levels.add("24");
 		levels.add("3");
 
-		return experimentDesignGenerator.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, treatmentFactor, levels, "");
+		return experimentDesignGenerator.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, treatmentFactors, levels, "");
 	}
 }

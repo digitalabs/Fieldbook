@@ -79,7 +79,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 
 		try {
 
-			final List<String> treatmentFactor = new ArrayList<>();
+			final List<String> treatmentFactors = new ArrayList<>();
 			final List<String> levels = new ArrayList<>();
 
 			// Key - CVTerm ID , List of values
@@ -137,7 +137,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 				final Set<String> keySet = treatmentFactorValues.keySet();
 				for (final String key : keySet) {
 					final int level = treatmentFactorValues.get(key).size();
-					treatmentFactor.add(ExpDesignUtil.cleanBVDesingKey(key));
+					treatmentFactors.add(ExpDesignUtil.cleanBVDesingKey(key));
 					levels.add(Integer.toString(level));
 				}
 			}
@@ -146,7 +146,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(), contextUtil.getCurrentProgramUUID());
 
 			treatmentFactorValues.put(stdvarTreatment.getName(), Arrays.asList(Integer.toString(germplasmList.size())));
-			treatmentFactor.add(stdvarTreatment.getName());
+			treatmentFactors.add(stdvarTreatment.getName());
 			levels.add(Integer.toString(germplasmList.size()));
 
 			StandardVariable stdvarRep = null;
@@ -170,7 +170,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			}
 
 			final MainDesign mainDesign = experimentDesignGenerator
-					.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), plotNo, treatmentFactor,
+					.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), plotNo, entryNo, treatmentFactors,
 							levels, "");
 
 			measurementRowList = experimentDesignGenerator

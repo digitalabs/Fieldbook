@@ -55,13 +55,13 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testCreateRandomizedCompleteBlockDesign() {
 
-		final List<String> treatmentFactor = new ArrayList(Arrays.asList("FACTOR_1", "FACTOR_2"));
+		final List<String> treatmentFactors = new ArrayList(Arrays.asList("FACTOR_1", "FACTOR_2"));
 		final List<String> levels = new ArrayList(Arrays.asList("Level1", "Level2"));
 		final Integer initialPlotNumber = 99;
 		final Integer initialEntryNumber = 100;
 
 		final MainDesign mainDesign = experimentDesignGenerator
-				.createRandomizedCompleteBlockDesign(NBLOCK, BLOCK_NO, PLOT_NO, initialPlotNumber, treatmentFactor,
+				.createRandomizedCompleteBlockDesign(NBLOCK, BLOCK_NO, PLOT_NO, initialPlotNumber, initialEntryNumber, treatmentFactors,
 						levels, OUTPUT_FILE);
 
 		final ExpDesign expDesign = mainDesign.getDesign();
@@ -75,7 +75,7 @@ public class ExperimentDesignGeneratorTest {
 				expDesign.getParameterValue(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM));
 		Assert.assertEquals(String.valueOf(initialEntryNumber),
 				expDesign.getParameterValue(ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM));
-		Assert.assertEquals(treatmentFactor.size(), expDesign.getParameterList(ExperimentDesignGenerator.TREATMENTFACTORS_PARAM).size());
+		Assert.assertEquals(treatmentFactors.size(), expDesign.getParameterList(ExperimentDesignGenerator.TREATMENTFACTORS_PARAM).size());
 		Assert.assertEquals(levels.size(), expDesign.getParameterList(ExperimentDesignGenerator.LEVELS_PARAM).size());
 		Assert.assertEquals(AppConstants.EXP_DESIGN_TIME_LIMIT.getString(),
 				expDesign.getParameterValue(ExperimentDesignGenerator.TIMELIMIT_PARAM));

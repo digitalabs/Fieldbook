@@ -81,7 +81,7 @@ public class ExperimentDesignGenerator {
 	private FieldbookService fieldbookService;
 
 	public MainDesign createRandomizedCompleteBlockDesign(final String nBlock, final String blockFactor, final String plotFactor,
-			final Integer initialPlotNumber, final List<String> treatmentFactor,
+			final Integer initialPlotNumber, final Integer initialEntryNumber, final List<String> treatmentFactors,
 			final List<String> levels, final String outputfile) {
 
 		final String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
@@ -95,10 +95,10 @@ public class ExperimentDesignGenerator {
 				getPlotNumberStringValueOrDefault(initialPlotNumber), null));
 
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM, null,
-				getInitialTreatNumList(treatmentFactor.size())));
+				getInitialTreatNumList(treatmentFactors.size())));
 
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.TREATMENTFACTORS_PARAM, null,
-				convertToListItemList(treatmentFactor)));
+				convertToListItemList(treatmentFactors)));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.LEVELS_PARAM, null, convertToListItemList(levels)));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.TIMELIMIT_PARAM, timeLimit, null));
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.OUTPUTFILE_PARAM, outputfile, null));

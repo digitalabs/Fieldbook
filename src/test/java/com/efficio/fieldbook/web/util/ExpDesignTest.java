@@ -85,15 +85,15 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testRandomizeCompleteBlockDesignExpDesignRunToBvDesign() {
 
-		final List<String> treatmentFactor = new ArrayList<String>();
-		treatmentFactor.add("ENTRY_NO");
-		treatmentFactor.add("FERTILIZER");
+		final List<String> treatmentFactors = new ArrayList<String>();
+		treatmentFactors.add("ENTRY_NO");
+		treatmentFactors.add("FERTILIZER");
 
 		final List<String> levels = new ArrayList<String>();
 		levels.add("24");
 		levels.add("3");
 
-		final MainDesign mainDesign = experimentDesignGenerator.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, treatmentFactor, levels, "");
+		final MainDesign mainDesign = experimentDesignGenerator.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, treatmentFactors, levels, "");
 
 		try {
 			final BVDesignOutput output = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);

@@ -1,15 +1,18 @@
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.TrialData;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.ListDataProjectUtil;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.context.ContextInfo;
@@ -52,18 +55,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.TrialData;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ListDataProjectUtil;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(OpenTrialController.URL)
@@ -101,6 +100,9 @@ public class OpenTrialController extends BaseTrialController {
 
 	@Resource
 	private SampleListService sampleListService;
+
+	@Resource
+	protected FieldbookProperties fieldbookProperties;
 
 	@Override
 	public String getContentName() {
@@ -160,6 +162,16 @@ public class OpenTrialController extends BaseTrialController {
 	@ModelAttribute("currentCropUserId")
 	public Integer getCurrentCropUserId() {
 		return this.contextUtil.getCurrentIbdbUserId();
+	}
+
+	@ModelAttribute("maxNumOfSubObsSets")
+	public Integer getMaxNumOfSubObsSets() {
+		return this.fieldbookProperties.getMaxNumOfSubObsSetsPerStudy();
+	}
+
+	@ModelAttribute("maxNumOfSubObsSetsPerParentUnit")
+	public Integer getMaxNumOfSubObsSetsPerParentunit() {
+		return this.fieldbookProperties.getMaxNumOfSubObsPerParentUnit();
 	}
 
 	@RequestMapping(value = "/trialSettings", method = RequestMethod.GET)
@@ -385,6 +397,9 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("crossesList", this.getCrossesList(trialId));
 
 		model.addAttribute("germplasmListSize", 0);
+		model.addAttribute("studyId", trialWorkbook.getStudyDetails().getId());
+		model.addAttribute("measurementDatasetId", trialWorkbook.getMeasurementDatesetId());
+
 		setIsSuperAdminAttribute(model);
 	}
 

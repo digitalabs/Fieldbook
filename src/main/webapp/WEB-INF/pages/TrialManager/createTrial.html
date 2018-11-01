@@ -1,4 +1,6 @@
 <div ng-cloak="" ng-app="manageTrialApp" id="mainApp" ng-controller="manageTrialCtrl" style="margin-bottom: 15px">
+	 <div ng-strict-di="" sm-config=""
+		  data-th-attr="sm-crop=${cropName}, sm-program-id=${currentProgramId}, sm-selected-project-id=${contextInfo.selectedProjectId}, sm-auth-token=${contextInfo.authToken}, sm-logged-in-user-id=${currentCropUserId}, sm-selected-study-id=${createTrialForm.studyId}"></div>
 	<!-- header -->
 	<div class="row col-xs-12">
 		<h1 class="page-header col-xs-12 edit-trial-page-identifier">
@@ -34,6 +36,10 @@
 						</div>
 					</div>
 
+					<div ng-show="hasUnsavedData()" style="margin-top: 10px; margin-left: 10px; display: inline-block;">
+						<span class="label label-warning">unsaved data</span>
+					</div>
+
 					<div class="pull-right fbk-study-heading-right">
 						<div style="padding-right: 24px">
 							<a href="/Fieldbook/TrialManager/manageTrial">Return to Manage Studies</a>
@@ -45,7 +51,7 @@
 
 			<div class="col-md-12 nopadding-right">
 				<section-container heading="BASIC DETAILS" collapsible="isOpenStudy()" start-collapsed="true">
-				<span name="action-buttons" ng-show="isOpenStudy()">
+				<span name="action-buttons" ng-show="isOpenStudy() &amp;&amp; !hasUnsavedData()">
 					<span class='bms-locked' style='position: relative; top:7px; right: 5px; color: #666666;font-size: 23px; font-weight: bold;' ng-show="isLockedStudy() &amp;&amp;  userHasLockPermission()" ng-click="changeLockedStatus(0)"/>
 					<span class='bms-lock-open' style='position: relative; top:7px; right: 5px; color: #666666;font-size: 23px; font-weight: bold;' ng-show="!isLockedStudy() &amp;&amp; userHasLockPermission()" ng-click="changeLockedStatus(1)"/>
 					<div class="btn-group" style="padding-right: 36px">
@@ -110,7 +116,7 @@
 								<a tabindex="-1" href="#">Observation unit options</a>
 								<ul class="dropdown-menu" style="margin-left: -25px;">
 									<li>
-										<a ng-click="addSubObservation()" id="create-sub-Observation-link"
+										<a href="javascript: subObservationUnitDatasetSelector();" id="create-sub-Observation-link"
 										   th:text="#{study.studydetails.action.create.sub.observation.units}">Create sub-observation units</a>
 									</li>
 									<li>
@@ -518,6 +524,12 @@
 	</div>
 
 	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div id="sub-observation-unit-dataset-builder" th:include="/TrialManager/templates/SubObservationUnitDatasetBuilder"></div>
+		</div>
+	</div>
+
+	<div class="row">
 		<div th:include="/TrialManager/templates/samplesSummary"></div>
 	</div>
 
@@ -596,6 +608,10 @@
 	<script type="text/javascript" th:src="@{/static/js/fbk-data-table/samples-summary.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/executeCalculatedVariableModal.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/studyStateService.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/datasetService.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/SubObservationUnitDatasetBuilder.js}"></script>
+
 
 
 	<!-- constants here -->
@@ -662,9 +678,10 @@
 			currentCropUserId = /*[[${currentCropUserId}]]*/ '',
 			cropName = /*[[${cropName}]]*/ '',
 			createdCrossesListId = /*[[${createdCrossesListId}]]*/ '';
-		
+
 		var lockStudySuccessMessage = /*[[#{lock.study.success.message}]]*/ '';
 		var unlockStudySuccessMessage = /*[[#{unlock.study.success.message}]]*/ '';
+		var subObservationDatasetBuiltSuccessMessage =/*[[#{sub.observation.dataset.built.successfully}]]*/'';
 
 		var translations = {
 			/*TRIAL SETTINGS*/
@@ -710,8 +727,10 @@
 		(function () {
 
 			angular.module('manageTrialApp')
-				.constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
-				).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
+			 .constant('MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS', /*[[${maxNumOfSubObsSets}]]*/''
+			).constant('MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT', /*[[${maxNumOfSubObsSetsPerParentUnit}]]*/''
+			).constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
+			).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
 			).constant('BREEDING_METHOD_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''
 			).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
 			).constant('SELECTION_VARIABLE_INITIAL_DATA', /*[[${selectionVariableData}]]*/ ''
@@ -731,7 +750,7 @@
 			).constant('TRIAL_HAS_MEASUREMENT', /*[[${measurementDataExisting}]]*/ ''
 			).constant('TRIAL_MEASUREMENT_COUNT', /*[[${measurementRowCount}]]*/ ''
 			).constant('EXPERIMENTAL_DESIGN_SPECIAL_DATA', /*[[${experimentalDesignSpecialData}]]*/ ''
-            ).constant('UNSPECIFIED_LOCATION_ID', /*[[${unspecifiedLocationId}]]*/ ''
+			).constant('UNSPECIFIED_LOCATION_ID', /*[[${unspecifiedLocationId}]]*/ ''
 			).constant('DESIGN_TYPE',
 				{
 					RANDOMIZED_COMPLETE_BLOCK: /*[[${T(org.generationcp.middleware.domain.dms.DesignTypeItem).RANDOMIZED_COMPLETE_BLOCK.getId()}]]*/ 0
@@ -757,7 +776,10 @@
 					STRESS_CHECK: /*[[${T(org.generationcp.middleware.domain.gms.SystemDefinedEntryType).STRESS_CHECK.getEntryTypeCategoricalId()}]]*/ 10200
 
 				}
-			);
+			).value('studyContext', {
+				studyId: /*[[${studyId}]]*/ '',
+				measurementDatasetId: /*[[${measurementDatasetId}]]*/ ''
+			});
 
 			$(document).ready(function () {
 				document.onInitManageTrial();
@@ -796,5 +818,6 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationSet.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-tabdrop.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/variableService.js}"></script>
 
 </div>

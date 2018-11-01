@@ -1,0 +1,182 @@
+<div ng-controller="SubObservationUnitDatasetBuildCtrl">
+<div class="modal fade" id="SubObservationUnitDatasetSelectorModal" role="dialog" aria-labelledby="SubObservationUnitDatasetSelectorModal" aria-hidden="true">
+	<div class="modal-dialog modal-medium">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">
+						<label class="modal-title fbk-modal-title"
+							   id="heading-subdivide-observation-modal" th:text="#{study.studydetails.action.create.subdivide.observation.header}">Subdivide Observations</label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button  id="closeCreateSubObservationUnitsModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+					</div>
+				</div>
+				<div class="separator"></div>
+				<br/>
+				<div class="row form-group">
+					<div class="col-xs-12 col-md-12" >
+						<label class=""><em th:utext="#{label.indicate.mandatory.fields}"> indicates a mandatory field</em></label>
+					</div>
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-12 col-md-12" >
+						<label class="control-label label-bold"><em th:utext="#{study.studydetails.action.create.subdivide.observation.question}"> How would you like to define the number of sub-observations per parent unit? *</em> <span class='required'>*</span></label>
+					</div>
+				</div>
+					<div class="col-xs-11  col-xs-offset-0">
+						<form name="datasetOptions" novalidate="" class="simple-form">
+							<div ng-repeat="datasetType in datasetTypes">
+								<label class="col-xs-12 col-md-12">
+									<input type="radio" ng-model="$parent.selected" ng-value="datasetType" ng-click="dataSetTypeSelected(datasetType)"/>
+									{{datasetType.label}}
+								</label>
+							</div>
+						</form>
+					</div>
+				<div class="row">
+					<div class="col-xs-12 col-md-12"><br></br></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">
+						Cancel
+					</button>
+					<button type="button" class="btn btn-primary" ng-disabled="!datasetType"
+							aria-hidden="true" ng-click="continue()" th:text="#{common.form.continue.text}">
+						Continue
+					</button>
+				</div>
+			</div> <!-- Modal Content -->
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="SubObservationUnitDatasetBuildModal" role="dialog" aria-labelledby="SubObservationUnitDatasetBuildModal" aria-hidden="true">
+	<form class="simple-form" name="dtForm" ng-submit="saveDataset()" novalidate="">
+		<div class="modal-dialog modal-medium">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="row form-group">
+						<div class="col-xs-11 col-md-11">
+							<label class="modal-title fbk-modal-title" id="heading-modal"> Specify {{datasetType.name | capitalize}}</label>
+						</div>
+						<div class="col-xs-1 col-md-1">
+							<button id="closeSubObservationUnitDatasetBuildModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+						</div>
+					</div>
+					<div class="separator"></div>
+					<br/>
+					<div class="row form-group">
+						<div class="col-xs-12 col-md-12">
+							<label class=""><em th:utext="#{label.indicate.mandatory.fields}"> indicates a mandatory field</em></label>
+						</div>
+					</div>
+					<div class="row form-group" ng-class="formGroupClass('name')">
+						<div class="col-sm-6" style="padding-right: 0px;">
+						<label class="control-label label-bold"> Name for {{datasetType.name}} dataset: <span
+							class="required">*</span></label>
+						</div>
+						<div class="col-sm-6" style="padding-left: 0px;">
+							<input type="text" name="name" ng-model="datasetName" ng-maxlength="100" pattern="^[a-zA-Z0-9]*$"
+								   class="form-control" required="true"/>
+						</div>
+						<div class="col-sm-12">
+							<div class="text-danger" ng-messages="dtForm.name.$error" ng-if="dtForm.$submitted || dtForm.name.$touched">
+								<p ng-message="required">Name for (plants/quadrats/time series/custom)* dataset must be provided</p>
+								<p ng-message="pattern">Name for dataset should contain numbers and letter</p>
+								<p ng-message="maxlength">Name for dataset must not exceed 100 characters</p>
+							</div>
+						</div>
+					</div>
+					<br></br>
+					<div class="row form-group" ng-class="formGroupClass('SubObservationUnits')">
+						<div class="col-sm-10">
+						<label class="control-label label-bold">Specify a maximum number of {{datasetType.alias}} for
+							each parent unit (up to {{maximunNumForEachParentUnit}}): <span class="required">*</span></label>
+						</div>
+						<div class="col-sm-2" style="padding-left: 0px;">
+							<input type="number" name="SubObservationUnits" ng-model="numberOfSubObservationUnits" ng-min="1" ng-max="{{maximunNumForEachParentUnit}}"
+								   pattern="^[0-9]*$" style="width: 90px;" class="form-control" required="true"/>
+						</div>
+						<div class="col-sm-12">
+							<div class="text-danger" ng-messages="dtForm.SubObservationUnits.$error"
+								 ng-if="dtForm.$submitted || dtForm.SubObservationUnits.$touched">
+								<p ng-message="min">"The number of sub-observations per parent unit should not be lower than 1 or greater than {{maximunNumForEachParentUnit}}"</p>
+								<p ng-message="max">"The number of sub-observations per parent unit should not be lower than 1 or greater than {{maximunNumForEachParentUnit}}"</p>
+								<p ng-message="required">The number of sub-observations per each parent unit to generate was not defined</p>
+							</div>
+						</div>
+					</div>
+					<br></br>
+					<div class="row form-group" ng-class="formGroupClass('selectVariableDatasetBuilder')">
+						<div class="report-type-section col-xs-6 col-md-12"  style="height: 30px;">
+						<label class="control-label label-bold">Choose a variable to number the
+							{{datasetType.alias}}: <span class="required">*</span></label>
+						<span class="bms-fa-question-circle help-tooltip-study" data-placement="right" style="padding-left: 15px;" data-toggle="tooltip" th:title="@{{{selectedVariable.description}}}"></span>
+
+						</div>
+						<div class="report-type-section col-xs-6 col-md-5">
+							<select id="variableDatasetBuilder" name="selectVariableDatasetBuilder" ng-change="change()"
+									ng-options="variable as variable.name for variable in variables" ng-model="selectedVariable" class="form-control" required="true">
+								<option value="">Please Choose</option>
+							</select>
+						</div>
+						<div class="col-sm-12">
+							<div class="text-danger" ng-messages="dtForm.selectVariableDatasetBuilder.$error"
+								 ng-if="dtForm.$submitted || dtForm.selectVariableDatasetBuilder.$touched">
+								<p ng-message="required">A variable to number the sub-observations units for data collection should be specified</p>
+							</div>
+						</div>
+					</div>
+					<br></br>
+					<div class="row form-group" ng-class="trialInstances.length === 0 ? 'row form-group has-error':'row form-group'">
+						<div class="col-xs-12 col-md-12">
+							<label class="control-label label-bold">Select the environments for which you would like to generate
+								{{datasetType.name}}: <span class='required'>*</span></label>
+						</div>
+						<div class="col-sm-12">
+							<div class="text-danger" ng-if="trialInstances.length === 0">
+								<p>The environment(s) to which you would like to apply the sub-observations must be selected</p>
+							</div>
+						</div>
+					</div>
+					<environment-details></environment-details>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true"
+								ng-click="backToSubObservationUnitDatasetSelector()" th:text="#{common.form.back.text}">
+							Back
+						</button>
+						<button class="btn btn-primary" type="submit" th:text="#{common.form.save.text}"> Save
+							<span ng-show="submitted" class="throbber-btn-wrapper">
+								<span class="throbber throbber-btn throbber-white"></span>
+							</span>
+						</button>
+					</div>
+				</div> <!-- Modal Content -->
+			</div>
+		</div>
+	</form>
+</div>
+</div>
+<div layout:fragment="page-script">
+	<script type='text/javascript' th:inline="javascript">
+		//<![CDATA[
+		$(document).ready(function () {
+			$('#SubObservationUnitDatasetBuildModal').on('shown.bs.modal', function () {
+				//This can be used to check if a table is a DataTable or not already.
+				if(!$.fn.dataTable.isDataTable( '#SubObservationUnitDatasetBuildModal .fbk-datatable-environments')){
+					// we need to redraw the columns of the table
+					$('#SubObservationUnitDatasetBuildModal .fbk-datatable-environments').DataTable({
+						dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+							"<'row'<'col-sm-12'tr>>" +
+							"<'row'<'col-sm-5'i><'col-sm-7'>>" +
+							"<'row'<'col-sm-12'p>>"
+					}).columns.adjust().draw();
+				}
+				$('#variableDatasetBuilder').select2();
+			});
+		});
+		//]]>
+	</script>
+</div>

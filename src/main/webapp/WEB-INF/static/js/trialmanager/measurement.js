@@ -1,27 +1,26 @@
 /* global angular */
-(function() {
+(function () {
 	'use strict';
 
 	angular.module('manageTrialApp').controller('MeasurementsCtrl',
 		['$rootScope', '$scope', 'TrialManagerDataService', '$uibModal', '$q', 'debounce', '$http', 'DTOptionsBuilder', 'DTColumnBuilder',
-		'DTColumnDefBuilder', '$filter', 'derivedVariableService',
-			function($rootScope, $scope, TrialManagerDataService, $uibModal, $q, debounce, $http, DTOptionsBuilder, DTColumnBuilder,
-				DTColumnDefBuilder, $filter, derivedVariableService) {
+			'DTColumnDefBuilder', '$filter', 'derivedVariableService', 'datasetService', 'studyContext',
+			function ($rootScope, $scope, TrialManagerDataService, $uibModal, $q, debounce, $http, DTOptionsBuilder, DTColumnBuilder,
+					  DTColumnDefBuilder, $filter, derivedVariableService, datasetService, studyContext) {
 				var DELAY = 1500; // 1.5 secs
-				var studyId = $('#studyId').val();
 
 				$scope.settings = TrialManagerDataService.settings.measurements;
 
 				$scope.isHideDelete = false;
 				$scope.updateOccurred = false;
 				$scope.addVariable = true;
-				$scope.isNewStudy = function() {
-					return ($('#studyId').val() === '');
+				$scope.isNewStudy = function () {
+					return !studyContext.studyId;
 				};
 
-				$scope.initEnvironmentList = function() {
+				$scope.initEnvironmentList = function () {
 					if (!$scope.isNewStudy()) {
-						$http.get('/Fieldbook/trial/measurements/instanceMetadata/' + studyId).success(function(data) {
+						$http.get('/Fieldbook/trial/measurements/instanceMetadata/' + studyContext.studyId).success(function (data) {
 							$scope.environmentsList = data;
 							$scope.selectedEnvironment = data[0];
 							TrialManagerDataService.selectedEnviromentOnMeasurementTab = $scope.selectedEnvironment;
@@ -32,28 +31,28 @@
 					}
 				};
 
-				$scope.changeEnvironmentForMeasurementDataTable = function($item, $model) {
-					$('#measurement-table').DataTable().ajax.url('/Fieldbook/trial/measurements/plotMeasurements/' + studyId + '/' +
+				$scope.changeEnvironmentForMeasurementDataTable = function ($item, $model) {
+					$('#measurement-table').DataTable().ajax.url('/Fieldbook/trial/measurements/plotMeasurements/' + studyContext.studyId + '/' +
 						$item.instanceDbId).load();
 					$scope.selectedEnvironment = $item;
 					TrialManagerDataService.selectedEnviromentOnMeasurementTab = $scope.selectedEnvironment;
 				};
 
-				$scope.getListOfAdditionalColumns = function() {
+				$scope.getListOfAdditionalColumns = function () {
 					if (!$scope.settings.keys()) {
 						return [];
 					}
 					return $filter('removeHiddenVariableFilter')($scope.settings.keys(), $scope.settings.vals());
 				};
 
-				$scope.previewMeasurements = function() {			
-					 new BMS.Fieldbook.PreviewMeasurementsDataTable('#preview-measurement-table',
-					 	encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns())));
+				$scope.previewMeasurements = function () {
+					new BMS.Fieldbook.PreviewMeasurementsDataTable('#preview-measurement-table',
+						encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns())));
 				};
 
-				$scope.reloadMeasurements = function() {
+				$scope.reloadMeasurements = function () {
 					new BMS.Fieldbook.MeasurementsDataTable('#measurement-table',
-							encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns())));
+						encodeURIComponent(JSON.stringify($scope.getListOfAdditionalColumns())));
 				};
 
 				if ($('body').hasClass('preview-measurements-only')) {
@@ -61,62 +60,70 @@
 				}
 
 				/* Watchers */
-				$scope.$watch(function() {
+				$scope.$watch(function () {
 					return TrialManagerDataService.settings.measurements;
-				}, function(newValue) {
+				}, function (newValue) {
 					if ($scope.settings !== newValue) {
 						angular.copy(newValue, $scope.settings);
 					}
 				});
 
-				$scope.$watch(function() {
-					return TrialManagerDataService.applicationData.isGeneratedOwnDesign;
-				}, function(newValue) {
-					if (newValue === true) {
-						$scope.updateOccurred = true;
-						TrialManagerDataService.clearUnappliedChangesFlag();
-						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
-						TrialManagerDataService.applicationData.isGeneratedOwnDesign = false;
+				$scope.$watch(function () {
+						return TrialManagerDataService.applicationData.isGeneratedOwnDesign;
+					}, function (newValue) {
+						if (newValue === true) {
+							$scope.updateOccurred = true;
+							TrialManagerDataService.clearUnappliedChangesFlag();
+							TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
+							TrialManagerDataService.applicationData.isGeneratedOwnDesign = false;
 
-						reloadMeasurementPage(0, $scope.getListOfAdditionalColumns());
+							reloadMeasurementPage(0, $scope.getListOfAdditionalColumns());
+
+						}
 
 					}
-
-				}
-
 				);
 
 				/* Scope functions */
-				$scope.beforeDelete = function(variableType, variableIds) {
+				$scope.beforeDelete = function (variableType, variableIds) {
 
-                    var deferred = $q.defer();
-					derivedVariableService.hasMeasurementData(variableIds).then(function (response) {
-                        var dependencyVariableHasMeasurementData = response.data;
+					// Only check for measurement data if the study is already created.
+					if (!$scope.isNewStudy()) {
 
-                        // Check first if any of removed dependency variables has measurement data.
-						if (dependencyVariableHasMeasurementData) {
-                            var modalInstance = $rootScope.openConfirmModal(removeVariableDependencyConfirmationText,
-								environmentConfirmLabel);
-                            modalInstance.result.then(deferred.resolve);
-						} else {
-                            // else, check if any of the selected variables for deletion has measurement data.
-                            $http.post('/Fieldbook/manageSettings/hasMeasurementData/' + variableType, variableIds, {cache: false})
-                                .success(function(hasMeasurementData) {
-                                    if (hasMeasurementData) {
-                                        var modalInstance = $rootScope.openConfirmModal(measurementModalConfirmationText,
+						var deferred = $q.defer();
+
+						derivedVariableService.hasMeasurementData(variableIds).then(function (response) {
+							var dependencyVariableHasMeasurementData = response.data;
+
+							// Check first if any of removed dependency variables has measurement data.
+							if (dependencyVariableHasMeasurementData) {
+								var modalInstance = $rootScope.openConfirmModal(removeVariableDependencyConfirmationText,
+									environmentConfirmLabel);
+								modalInstance.result.then(deferred.resolve);
+							} else {
+								// else, check if any of the selected variables for deletion has measurement data.
+								datasetService.observationCount(studyContext.studyId, studyContext.measurementDatasetId, variableIds).then(function (response) {
+									var count = response.headers('X-Total-Count');
+									if (count > 0) {
+										var modalInstance = $rootScope.openConfirmModal(measurementModalConfirmationText,
 											environmentConfirmLabel);
-                                        modalInstance.result.then(deferred.resolve);
-                                    } else {
-                                        deferred.resolve(true);
-                                    }
-                                });
-						}
-					});
-					return deferred.promise;
+										modalInstance.result.then(deferred.resolve);
+									} else {
+										deferred.resolve(true);
+									}
+								});
+							}
+						});
+
+						return deferred.promise;
+
+					} else {
+						return $q.resolve(true);
+					}
 				};
 
 				/* Event Handlers */
-				$scope.$on('deleteOccurred', function() {
+				$scope.$on('deleteOccurred', function () {
 					$scope.updateOccurred = true;
 					TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
 
@@ -125,12 +132,12 @@
 					$('body').addClass('measurements-traits-changed');
 				});
 
-				$scope.$on('previewMeasurements', function() {
+				$scope.$on('previewMeasurements', function () {
 					$('body').addClass('preview-measurements-only');
 					$scope.previewMeasurements();
 				});
 
-				$scope.$on('onDeleteEnvironment', function(event, result) {
+				$scope.$on('onDeleteEnvironment', function (event, result) {
 					// result object contains deletedEnvironmentIndex and result.deferred object that need to be resolved after the reload
 					$scope.updateOccurred = true;
 					TrialManagerDataService.clearUnappliedChangesFlag();
@@ -141,17 +148,17 @@
 					$scope.selectedEnvironment = $scope.environmentsList[0];
 				});
 
-				$scope.$on('refreshEnvironmentListInMeasurementTable', function() {
+				$scope.$on('refreshEnvironmentListInMeasurementTable', function () {
 					$scope.initEnvironmentList();
 				});
 
-				$scope.$on('variableAdded', function() {
+				$scope.$on('variableAdded', function () {
 					$scope.updateOccurred = true;
 					TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
 
 					reloadMeasurementPage(0, $scope.getListOfAdditionalColumns());
 
-                    $('body').addClass('measurements-traits-changed');
+					$('body').addClass('measurements-traits-changed');
 				});
 
 				/* Controller Utility functions */
@@ -168,7 +175,7 @@
 							'&deletedEnvironment=' + deletedEnvironmentIndex + addedData;
 
 						return $http.post('/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement', dataParam,
-                            {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).success(function(data) {
+							{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).success(function (data) {
 							//$measurementContainer.html(data);
 							// TODO Change that global to the dirty study flag
 							$body.data('needToSave', '1');

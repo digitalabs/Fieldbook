@@ -4,13 +4,9 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 	manageTrialApp.controller('SubObservationUnitDatasetBuildCtrl', ['$scope', 'environmentService', '$http', 'formUtilities',
-		'MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS', 'MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT', 'configService', 'variableService', 'studyContext',
-		'DATASET_TYPES', function ($scope, environmentService, $http, formUtilities, MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS,
-								   MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT, configService, variableService, studyContext, DATASET_TYPES) {
-
-		// TODO see Workbench/src/main/web/src/apps/ontology/app-services/bmsAuth.js
-		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
-		var config = { headers: { 'X-Auth-Token': xAuthToken } };
+		'MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS', 'MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT', 'variableService', 'studyContext',
+		'DATASET_TYPES', 'datasetService', function ($scope, environmentService, $http, formUtilities, MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS,
+													 MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT, variableService, studyContext, DATASET_TYPES, datasetService) {
 
 		$scope.trialInstances = [];
 		$scope.maximunNumForEachParentUnit = MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT;
@@ -21,7 +17,6 @@
 			angular.element('#SubObservationUnitDatasetBuildModal').modal('hide');
 
 		};
-
 
 		$scope.change = function () {
 			$scope.submitted = false;
@@ -56,7 +51,6 @@
 					if (data.status == 401) {
 						bmsAuth.handleReAuthentication();
 					}
-					showErrorMessage('', data.message);
 				});
 			}
 		};

@@ -5,7 +5,7 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.factory('environmentService', ['$rootScope', 'TrialManagerDataService', '$http', 'serviceUtilities', 'configService', function ($rootScope, TrialManagerDataService, $http, serviceUtilities, configService) {
+	manageTrialApp.factory('environmentService', ['$rootScope', 'TrialManagerDataService', '$http', 'serviceUtilities', 'studyContext', function ($rootScope, TrialManagerDataService, $http, serviceUtilities, studyContext) {
 
 		var environmentService = {};
 		var successHandler = serviceUtilities.restSuccessHandler,
@@ -18,7 +18,7 @@
 					'X-Auth-Token': xAuthToken
 				}
 			};
-			var request = $http.get('/bmsapi/study/' + configService.getCropName() + '/' + configService.getStudyId() + '/instances', config);
+			var request = $http.get('/bmsapi/study/' + studyContext.cropName + '/' + studyContext.studyId + '/instances', config);
 			return request.then(successHandler, failureHandler);
 		};
 

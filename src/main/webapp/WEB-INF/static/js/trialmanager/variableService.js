@@ -3,7 +3,7 @@
 
 (function() {
 	var manageTrialApp = angular.module('manageTrialApp');
-	manageTrialApp.service('variableService', ['$http', 'serviceUtilities', 'configService', function($http, serviceUtilities, configService) {
+	manageTrialApp.service('variableService', ['$http', 'serviceUtilities', 'studyContext', function($http, serviceUtilities, studyContext) {
 
 		var successHandler = serviceUtilities.restSuccessHandler,
 			failureHandler = serviceUtilities.restFailureHandler;
@@ -17,14 +17,14 @@
 		return {
 
 			getVariable: function (id) {
-				var request = $http.get('/bmsapi/ontology/' + configService.getCropName() + '/variables/' + id + '?programId=' +
-					configService.getProgramId(), config);
+				var request = $http.get('/bmsapi/ontology/' + studyContext.cropName + '/variables/' + id + '?programId=' +
+					studyContext.programId, config);
 				return request.then(successHandler, failureHandler);
 			},
 
 			getVariables: function () {
-				var request = $http.get('/bmsapi/ontology/' + configService.getCropName() + '/variables?programId=' +
-					configService.getProgramId(), config);
+				var request = $http.get('/bmsapi/ontology/' + studyContext.cropName + '/variables?programId=' +
+					studyContext.programId, config);
 				return request.then(successHandler, failureHandler);
 			},
 
@@ -32,9 +32,9 @@
 				/**
 				 * See org.ibp.api.rest.ontology.VariableFilterResource.listAllVariablesUsingFilter
 				 */
-				var request = $http.get('/bmsapi/ontology/' + configService.getCropName() + '/filtervariables', angular.merge({
+				var request = $http.get('/bmsapi/ontology/' + studyContext.cropName + '/filtervariables', angular.merge({
 					params: angular.merge({
-						programId: configService.getProgramId()
+						programId: studyContext.programId
 					}, filter)
 				}, config));
 				return request.then(successHandler, failureHandler);

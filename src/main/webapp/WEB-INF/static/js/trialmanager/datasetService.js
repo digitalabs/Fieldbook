@@ -6,7 +6,7 @@
 	datasetsApiModule.factory('datasetService', ['$http', '$q', 'studyContext', 'DATASET_TYPES_SUBOBSERVATION_IDS', 'serviceUtilities',
 		function ($http, $q, studyContext, DATASET_TYPES_SUBOBSERVATION_IDS, serviceUtilities) {
 
-			var BASE_URL = '/bmsapi/crops/' + cropName + '/studies/';
+			var BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/studies/';
 			var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
 			var config = {
 				headers: {

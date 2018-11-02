@@ -70,6 +70,23 @@
 		</div>
 
 		<div ng-if="!preview" class="add-top-padding-small">
+
+			<div ng-if="subObservationSet.dataTable" class="pull-left">
+				<div class="dataTables_info fbk-std-padding-right pull-left">Select Environment: </div>
+				<ui-select ng-model="nested.selectedEnvironment"
+						   style="width: 200px;"
+						   class="pull-left fbk-left-padding"
+						   ng-change="changeEnvironment()"
+						   theme="select2">
+					<ui-select-match class="ui-select-match">
+						{{nested.selectedEnvironment.instanceNumber + ' - ' + (nested.selectedEnvironment.locationName || nested.selectedEnvironment.locationAbbreviation || nested.selectedEnvironment.instanceNumber)}}
+					</ui-select-match>
+					<ui-select-choices repeat="env in (environments | filter: { locationName: $select.search}) track by env.instanceDbId">
+						{{env.instanceNumber + ' - ' + (env.locationName || env.locationAbbreviation || env.instanceNumber)}}
+					</ui-select-choices>
+				</ui-select>
+			</div>
+
 			<table id="subobservation-table-{{subObservationTab.id}}-{{subObservationSet.id}}"
 				   datatable=""
 				   ng-if="subObservationSet.dataTable"

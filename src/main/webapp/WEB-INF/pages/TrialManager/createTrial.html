@@ -776,6 +776,12 @@
 					STRESS_CHECK: /*[[${T(org.generationcp.middleware.domain.gms.SystemDefinedEntryType).STRESS_CHECK.getEntryTypeCategoricalId()}]]*/ 10200
 
 				}
+			).constant('DATASET_TYPES', {
+				PLANT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).PLANT_SUBOBSERVATIONS.getId()}]]*/ null,
+				QUADRAT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).QUADRAT_SUBOBSERVATIONS.getId()}]]*/ null,
+				TIME_SERIES_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).TIME_SERIES_SUBOBSERVATIONS.getId()}]]*/ null,
+				CUSTOM_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).CUSTOM_SUBOBSERVATIONS.getId()}]]*/ null
+			}).constant('DATASET_TYPES_SUBOBSERVATION_IDS', /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).SUBOBSERVATION_IDS}]]*/ null
 			).value('studyContext', {
 				studyId: /*[[${studyId}]]*/ '',
 				measurementDatasetId: /*[[${measurementDatasetId}]]*/ ''

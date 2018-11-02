@@ -3,30 +3,47 @@
 
 	var datasetsApiModule = angular.module('datasets-api', []);
 
-	datasetsApiModule.factory('datasetService', ['$http', '$q', function ($http, $q) {
+	datasetsApiModule.factory('datasetService', ['$http', '$q', 'studyContext', 'DATASET_TYPES_SUBOBSERVATION_IDS', 'serviceUtilities',
+		function ($http, $q, studyContext, DATASET_TYPES_SUBOBSERVATION_IDS, serviceUtilities) {
 
-		var BASE_URL = '/bmsapi/crops/' + cropName + '/studies/';
-		var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
-		var config = {
-			headers: {
-				'X-Auth-Token': xAuthToken
-			},
-			cache: false
-		};
+			var BASE_URL = '/bmsapi/crops/' + cropName + '/studies/';
+			var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
+			var config = {
+				headers: {
+					'X-Auth-Token': xAuthToken
+				},
+				cache: false
+			};
 
-		var datasetService = {};
+			var datasetService = {};
+			var successHandler = serviceUtilities.restSuccessHandler,
+				failureHandler = serviceUtilities.restFailureHandler;
 
-		datasetService.observationCount = function (studyId, datasetId, variableIds) {
+			datasetService.observationCount = function (studyId, datasetId, variableIds) {
 
-			if (studyId && datasetId && variableIds) {
-				return $http.head(BASE_URL + studyId + '/datasets/' + datasetId + '/variables/observations?variableIds=' + variableIds.join(','), config);
-			}
+				if (studyId && datasetId && variableIds) {
+					return $http.head(BASE_URL + studyId + '/datasets/' + datasetId + '/variables/observations?variableIds=' + variableIds.join(','), config);
+				}
 
-			return $q.reject('studyId, datasetId and variableIds are not defined.');
+				return $q.reject('studyId, datasetId and variableIds are not defined.');
 
-		};
+			};
 
-		return datasetService;
+			datasetService.getDatasets = function () {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets', angular.merge({
+					params: {
+						datasetTypeIds: DATASET_TYPES_SUBOBSERVATION_IDS.join(",")
+					}
+				}, config));
+				return request.then(successHandler, failureHandler);
+			};
+
+			datasetService.getColumns = function (datasetId) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/table/columns', config);
+				return request.then(successHandler, failureHandler);
+			};
+
+			return datasetService;
 
 	}]);
 

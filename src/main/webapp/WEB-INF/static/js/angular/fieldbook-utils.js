@@ -714,15 +714,14 @@
 				},
 
 				restFailureHandler: function (response) {
-					if (response.status == 401) {
+					if (response.status === 401) {
 						bmsAuth.handleReAuthentication();
-					}else{
+					}
 					return $q.reject({
 						status: response.status,
 						data: response.data,
 						errors: response.data && response.data.errors
 					});
-					}
 				}
 			};
 		}]);

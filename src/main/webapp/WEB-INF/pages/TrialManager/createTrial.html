@@ -781,7 +781,8 @@
 				QUADRAT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).QUADRAT_SUBOBSERVATIONS.getId()}]]*/ null,
 				TIME_SERIES_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).TIME_SERIES_SUBOBSERVATIONS.getId()}]]*/ null,
 				CUSTOM_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).CUSTOM_SUBOBSERVATIONS.getId()}]]*/ null
-			}).value('studyContext', {
+			}).constant('DATASET_TYPES_SUBOBSERVATION_IDS', /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).SUBOBSERVATION_IDS}]]*/ null
+			).value('studyContext', {
 				studyId: /*[[${studyId}]]*/ '',
 				measurementDatasetId: /*[[${measurementDatasetId}]]*/ ''
 			});

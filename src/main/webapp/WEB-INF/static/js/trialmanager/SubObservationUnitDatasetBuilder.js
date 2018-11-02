@@ -43,17 +43,38 @@
 					"numberOfSubObservationUnits": $scope.numberOfSubObservationUnits
 				};
 
-				$http.post('/bmsapi/crops/' + configService.getCropName() + '/studies/' + configService.getStudyId() + '/datasets/' + studyContext.measurementDatasetId + '/generation' ,newDataset, config).success(function (data) {
+				datasetService.generation(newDataset).then(function (response) {
 					showSuccessfulMessage('', subObservationDatasetBuiltSuccessMessage);
 					angular.element('#SubObservationUnitDatasetBuildModal').modal('hide');
 					$scope.submitted = false;
-				}).error(function (data) {
-					if (data.status == 401) {
+					$scope.subObservationTab(response.datasetId, response.name);
+				}, function (response) {
+					if (response.status == 401) {
 						bmsAuth.handleReAuthentication();
+					} else if (response.data.errors) {
+						showErrorMessage('', response.data.errors[0].message);
+					} else {
+						showErrorMessage('', ajaxGenericErrorMsg);
 					}
 				});
 			}
 		};
+
+			$scope.subObservationTab = function (id, name) {
+				/**
+				 * Artificial id for subObs tabs, that do not exists on db
+				 */
+				$scope.subObservationTabs.push({
+					name: name,
+					id: id,
+					state: '/subObservationTabs/' + id, // arbitrary prefix to filter tab content
+					subObservationSets: [{
+						id: id,
+						name: name
+					}]
+				});
+
+			};
 
 		$scope.continue = function () {
 			angular.element('#SubObservationUnitDatasetSelectorModal').modal('hide');

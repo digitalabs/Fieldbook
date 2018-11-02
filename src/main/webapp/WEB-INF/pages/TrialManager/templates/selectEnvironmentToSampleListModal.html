@@ -54,9 +54,15 @@
 		$(document).ready(function () {
 			$('#selectEnvironmentToSampleListModal').on('shown.bs.modal', function () {
 				// we need to redraw the columns of the table
-				$('#selectEnvironmentToSampleListModal .fbk-datatable-environments').DataTable().columns.adjust().draw();
-				// center pagination controls - FIXME replace with datatables dom options
-				$('#selectEnvironmentToSampleListModal .dataTables_paginate').closest('.col-xs-6').attr('class', 'col-xs-12');
+				if(!$.fn.dataTable.isDataTable( '#selectEnvironmentToSampleListModal .fbk-datatable-environments')){
+					// we need to redraw the columns of the table
+					$('#selectEnvironmentToSampleListModal .fbk-datatable-environments').DataTable({
+						dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+							"<'row'<'col-sm-12'tr>>" +
+							"<'row'<'col-sm-5'i><'col-sm-7'>>" +
+							"<'row'<'col-sm-12'p>>"
+					}).columns.adjust().draw();
+				}
 			});
 		});
 		//]]>

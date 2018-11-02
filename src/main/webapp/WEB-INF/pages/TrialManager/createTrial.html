@@ -1,6 +1,4 @@
 <div ng-cloak="" ng-app="manageTrialApp" id="mainApp" ng-controller="manageTrialCtrl" style="margin-bottom: 15px">
-	 <div ng-strict-di="" sm-config=""
-		  data-th-attr="sm-crop=${cropName}, sm-program-id=${currentProgramId}, sm-selected-project-id=${contextInfo.selectedProjectId}, sm-auth-token=${contextInfo.authToken}, sm-logged-in-user-id=${currentCropUserId}, sm-selected-study-id=${createTrialForm.studyId}"></div>
 	<!-- header -->
 	<div class="row col-xs-12">
 		<h1 class="page-header col-xs-12 edit-trial-page-identifier">
@@ -783,6 +781,11 @@
 				CUSTOM_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).CUSTOM_SUBOBSERVATIONS.getId()}]]*/ null
 			}).constant('DATASET_TYPES_SUBOBSERVATION_IDS', /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).SUBOBSERVATION_IDS}]]*/ null
 			).value('studyContext', {
+				cropName: /*[[${cropName}]]*/ '',
+				programId: /*[[${currentProgramId}]]*/ '',
+				selectedProjectId: /*[[${contextInfo.selectedProjectId}]]*/ '',
+				authToken: /*[[${contextInfo.authToken}]]*/ '',
+				loggedInUserId: /*[[${currentCropUserId}]]*/ '',
 				studyId: /*[[${studyId}]]*/ '',
 				measurementDatasetId: /*[[${measurementDatasetId}]]*/ ''
 			});

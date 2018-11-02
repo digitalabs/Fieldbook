@@ -81,7 +81,7 @@ public class ExperimentDesignGenerator {
 	private FieldbookService fieldbookService;
 
 	public MainDesign createRandomizedCompleteBlockDesign(final String nBlock, final String blockFactor, final String plotFactor,
-			final Integer initialPlotNumber, final Integer initialEntryNumber, final List<String> treatmentFactors,
+			final Integer initialPlotNumber, final Integer initialEntryNumber, final String entryNoVarName, final List<String> treatmentFactors,
 			final List<String> levels, final String outputfile) {
 
 		final String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
@@ -95,7 +95,7 @@ public class ExperimentDesignGenerator {
 				getPlotNumberStringValueOrDefault(initialPlotNumber), null));
 
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM, null,
-				getInitialTreatNumList(treatmentFactors.size())));
+				getInitialTreatNumList(treatmentFactors, initialEntryNumber, entryNoVarName)));
 
 		paramList.add(createExpDesignParameter(ExperimentDesignGenerator.TREATMENTFACTORS_PARAM, null,
 				convertToListItemList(treatmentFactors)));
@@ -487,11 +487,15 @@ public class ExperimentDesignGenerator {
 
 	}
 
-	List<ListItem> getInitialTreatNumList(final int size) {
+	List<ListItem> getInitialTreatNumList(final List<String> treatmentFactors, final Integer initialTreatNum, final String entryNoVarName) {
 
 		final List<ListItem> listItemList = new ArrayList<ListItem>();
-		for (int i=0; i<size; i++) {
-			listItemList.add(new ListItem("1"));
+		for(String treatmentFactor: treatmentFactors) {
+			if(treatmentFactor.equals(entryNoVarName)) {
+				listItemList.add(new ListItem(String.valueOf(initialTreatNum)));
+			} else {
+				listItemList.add(new ListItem("1"));
+			}
 		}
 		return listItemList;
 

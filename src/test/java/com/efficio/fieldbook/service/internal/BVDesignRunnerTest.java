@@ -8,6 +8,7 @@ import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import junit.framework.Assert;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -270,6 +271,6 @@ public class BVDesignRunnerTest {
 		levels.add("24");
 		levels.add("3");
 
-		return experimentDesignGenerator.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, treatmentFactors, levels, "");
+		return experimentDesignGenerator.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, TermId.ENTRY_NO.name(), treatmentFactors, levels, "");
 	}
 }

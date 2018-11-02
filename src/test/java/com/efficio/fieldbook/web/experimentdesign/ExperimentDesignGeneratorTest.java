@@ -12,6 +12,7 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.google.common.base.Optional;
 import junit.framework.Assert;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -61,7 +62,7 @@ public class ExperimentDesignGeneratorTest {
 		final Integer initialEntryNumber = 100;
 
 		final MainDesign mainDesign = experimentDesignGenerator
-				.createRandomizedCompleteBlockDesign(NBLOCK, BLOCK_NO, PLOT_NO, initialPlotNumber, initialEntryNumber, treatmentFactors,
+				.createRandomizedCompleteBlockDesign(NBLOCK, BLOCK_NO, PLOT_NO, initialPlotNumber, initialEntryNumber, TermId.ENTRY_NO.name(),treatmentFactors,
 						levels, OUTPUT_FILE);
 
 		final ExpDesign expDesign = mainDesign.getDesign();

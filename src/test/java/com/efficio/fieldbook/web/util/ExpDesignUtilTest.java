@@ -82,7 +82,7 @@ public class ExpDesignUtilTest {
 		final List<String> levels = new ArrayList<String>();
 		final MainDesign mainDesign =
 				experimentDesignGenerator.createRandomizedCompleteBlockDesign("2", ExpDesignUtilTest.REP_NO, ExpDesignUtilTest.PLOT_NO,
-						301, 201, treatmentFactors, levels, "");
+						301, 201, TermId.ENTRY_NO.name(), treatmentFactors, levels, "");
 
 		this.setMockValues(mainDesign);
 

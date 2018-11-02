@@ -165,10 +165,6 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			final Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
 			Integer entryNo = StringUtil.parseInt(parameter.getStartingEntryNo(), null);
 
-			if (!Objects.equals(stdvarTreatment.getId(), TermId.ENTRY_NO.getId())) {
-				entryNo = null;
-			}
-
 			final MainDesign mainDesign = experimentDesignGenerator
 					.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), plotNo, entryNo, stdvarTreatment.getName(), treatmentFactors,
 							levels, "");

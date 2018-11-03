@@ -178,9 +178,9 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
-		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', '$uibModal', '$q',
+		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', '$uibModal', '$q', 'datasetService',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
-				  derivedVariableService, $uibModal, $q) {
+				  derivedVariableService, $uibModal, $q, datasetService) {
 			$scope.trialTabs = [
 				{
 					name: 'Settings',
@@ -735,6 +735,83 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				}
 			};
+
+			datasetService.getDatasets().then(function (data) {
+				/**
+				 * Restructure list from server based on parentDatasetId (can be null)
+				 * Example:
+				 *
+				 *         plotdata+--------------------+
+				 *            +                         |
+				 *            v                         v
+				 *    plants-dataset+---+        timeseries-dataset
+				 *            +         |
+				 *            v         v
+				 *  fruits-dataset    leafs-datasets
+				 *
+				 *                          +
+				 *                          |   transform into tabs
+				 *                          v
+				 *
+				 * +-------------+-----------------+---------------------+
+				 * |   plotdata  |  plants-dataset | timeseries-dataset  |
+				 * +-------------+----------+------+---------------------+
+				 *                          |
+				 *  +-----------------------+
+				 *  |
+				 * +v--------------+-----------------+----------------+
+				 * |plants-dataset |  fruits-dataset | leafs-datasets |
+				 * +---------------+-----------------+----------------+
+				 *
+				 */
+
+				// utility maps to easily get what we want
+				var datasetByParent = {};
+				var datasetById = {};
+				angular.forEach(data, function (dataset) {
+					datasetByParent[dataset.parentDatasetId] = dataset;
+					datasetById[dataset.datasetId] = dataset;
+				});
+
+				// restructure in tabs - a second iteration is needed once we have the full byParent map
+				var datasetByTabs = {};
+				angular.forEach(data, function (dataset) {
+					var parent = dataset;
+					// subobservation sets can be nested
+					while (parent.parentDatasetId && datasetById[parent.parentDatasetId]) {
+						parent = datasetById[parent.parentDatasetId];
+					}
+					datasetByTabs[parent.datasetId] = datasetByTabs[parent.datasetId] || [];
+					datasetByTabs[parent.datasetId].push(dataset);
+				});
+
+				var subObservationTabs = data.filter(function (dataset) {
+					// those whose parent is not in the list are considered roots
+					return !datasetById[dataset.parentDatasetId];
+				});
+
+				angular.forEach(subObservationTabs, function (datasetTab) {
+					$scope.subObservationTabs.push({
+						id: datasetTab.datasetId,
+						name: datasetTab.name,
+						state: '/subObservationTabs/' + datasetTab.datasetId, // arbitrary prefix to filter tab content
+						subObservationSets: datasetByTabs[datasetTab.datasetId].map(function (dataset) {
+							return {
+								id: dataset.datasetId,
+								name: dataset.name,
+								datasetTypeId: dataset.datasetTypeId,
+								parentDatasetId: dataset.parentDatasetId
+							}
+						})
+					});
+				});
+			}, function (response) {
+				if (response.errors[0] && response.errors[0].message) {
+					showErrorMessage('', response.errors[0].message);
+				} else {
+					showErrorMessage('', ajaxGenericErrorMsg);
+				}
+			});
 
 			$scope.advancedTrialList = TrialManagerDataService.settings.advancedList;
 

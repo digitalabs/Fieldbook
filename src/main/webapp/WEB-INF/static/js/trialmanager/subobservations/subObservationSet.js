@@ -256,6 +256,7 @@
 			}
 
 			function getPreview() {
+				// TODO check memory consumption
 				if (subObservationSet.rows) {
 					return $q.resolve(subObservationSet.rows);
 				}

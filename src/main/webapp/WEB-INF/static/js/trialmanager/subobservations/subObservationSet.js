@@ -4,8 +4,9 @@
 	var manageTrialApp = angular.module('manageTrialApp');
 
 	manageTrialApp.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
-		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService',
-		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService
+		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService',
+		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
+				  datasetService
 		) {
 
 			var subObservationSet = $scope.subObservationSet = $stateParams.subObservationSet;
@@ -277,26 +278,19 @@
 			}
 
 			function loadDataTable() {
-				$http({
-					method: 'POST',
-					url: '/Fieldbook/TrialManager/createTrial/columns',
-					headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
-					data: 'variableList=' + TrialManagerDataService
-						.settings
-						.measurements.m_keys.concat(TrialManagerDataService.settings.selectionVariables.m_keys).join()
-				}).then(function (response) {
-					subObservationSet.displayColumns = response.data;
-					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = getColumns(response.data, false);
+				return datasetService.getColumns(subObservationSet.id).then(function (data) {
+					subObservationSet.displayColumns = data;
+					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = getColumns(data, false);
 
 					subObservationSet.columnMap = {};
-					angular.forEach(response.data, function (column) {
+					angular.forEach(data, function (column) {
 						subObservationSet.columnMap[column.termId] = column;
 					});
 
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
 				});
-			};
+			}
 
 		}])
 		.directive('observationInlineEditor', function () {

@@ -16,6 +16,17 @@
 			$scope.nested.dtPreviewInstance = null;
 			$scope.nested.reviewVariable = null;
 
+			var subObservationTab = $scope.subObservationTab;
+			var dataTable = $scope.subObservationSet.dataTable;
+			var tableId = '#subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
+			var previewTableId = '#preview-subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
+			var dtColumnsPromise = $q.defer();
+			var dtColumnDefsPromise = $q.defer();
+
+			$scope.dtColumns = dtColumnsPromise.promise;
+			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
+			$scope.dtOptions = null;
+
 			// TODO use dataset envs
 			environmentService.getEnvironments().then(function (environments) {
 				if (!environments || !environments.length) {
@@ -30,17 +41,6 @@
 					loadDataTable();
 				}
 			});
-
-			var subObservationTab = $scope.subObservationTab;
-			var dataTable = $scope.subObservationSet.dataTable;
-			var tableId = '#subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
-			var previewTableId = '#preview-subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
-			var studyId = $('#studyId').val();
-			var dtColumnsPromise = $q.defer();
-			var dtColumnDefsPromise = $q.defer();
-
-			$scope.dtColumns = dtColumnsPromise.promise;
-			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 
 			if ($scope.preview) {
 				loadPreview();

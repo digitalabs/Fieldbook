@@ -43,6 +43,10 @@
 				return request.then(successHandler, failureHandler);
 			};
 
+			datasetService.getObservationTableUrl = function(datasetId, instanceId) {
+				return BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/instances/' + instanceId + '/observationUnits/table';
+			};
+
 			datasetService.generation = function (newDataset) {
 				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + studyContext.measurementDatasetId + '/generation', newDataset, config);
 				return request.then(successHandler, failureHandler);

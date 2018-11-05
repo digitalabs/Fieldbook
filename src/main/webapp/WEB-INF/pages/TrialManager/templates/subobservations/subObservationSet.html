@@ -71,7 +71,7 @@
 
 		<div ng-if="!preview" class="add-top-padding-small">
 
-			<div ng-if="subObservationSet.dataTable" class="pull-left">
+			<div class="pull-left">
 				<div class="dataTables_info fbk-std-padding-right pull-left">Select Environment: </div>
 				<ui-select ng-model="nested.selectedEnvironment"
 						   style="width: 200px;"
@@ -89,7 +89,6 @@
 
 			<table id="subobservation-table-{{subObservationTab.id}}-{{subObservationSet.id}}"
 				   datatable=""
-				   ng-if="subObservationSet.dataTable"
 				   dt-options="dtOptions"
 				   dt-columns="dtColumns"
 				   dt-column-defs="dtColumnDefs"

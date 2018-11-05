@@ -18,7 +18,6 @@
 			$scope.nested.reviewVariable = null;
 
 			var subObservationTab = $scope.subObservationTab;
-			var dataTable = $scope.subObservationSet.dataTable;
 			var tableId = '#subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
 			var previewTableId = '#preview-subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
 			var dtColumnsPromise = $q.defer();
@@ -38,9 +37,7 @@
 
 				$scope.dtOptions = getDtOptions();
 
-				if (dataTable) {
-					loadDataTable();
-				}
+				loadDataTable();
 			});
 
 			if ($scope.preview) {
@@ -48,7 +45,6 @@
 			}
 
 			$scope.addDataTable = function () {
-				subObservationSet.dataTable = {};
 				loadDataTable();
 			};
 
@@ -102,8 +98,11 @@
 			function getDtOptions() {
 				return addCommonOptions(DTOptionsBuilder.newOptions()
 					.withOption('ajax', {
-						url: '/Fieldbook/trial/measurements/plotMeasurements/' + studyId + '/' + $scope.nested.selectedEnvironment.instanceDbId,
+						url: datasetService.getObservationTableUrl(subObservationSet.id, $scope.nested.selectedEnvironment.instanceDbId),
 						type: 'GET',
+						beforeSend: function (xhr) {
+							xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
+						},
 						data: function (d) {
 							var sortedColIndex = $(tableId).dataTable().fnSettings().aaSorting[0][0];
 							var sortDirection = $(tableId).dataTable().fnSettings().aaSorting[0][1];
@@ -281,7 +280,7 @@
 			function loadDataTable() {
 				return datasetService.getColumns(subObservationSet.id).then(function (data) {
 					subObservationSet.displayColumns = data;
-					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = getColumns(data, false);
+					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(data);
 
 					subObservationSet.columnMap = {};
 					angular.forEach(data, function (column) {
@@ -291,6 +290,31 @@
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
 				});
+			}
+
+			// TODO merge with measurements-table-trial.js#getColumns
+			function mapColumns(data) {
+				var columns = [],
+					columnsDef = [];
+
+				// TODO complete column definitions (highlighting, links, etc)
+
+				angular.forEach(data, function (col) {
+					columns.push({
+						title: col.name,
+						data: function (row) {
+							if (row.variables[col.name]) {
+								return row.variables[col.name].value;
+							}
+							return "";
+						}
+					});
+				});
+
+				return {
+					columns: columns,
+					columnsDef: columnsDef
+				};
 			}
 
 		}])

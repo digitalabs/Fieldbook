@@ -299,16 +299,27 @@
 
 				// TODO complete column definitions (highlighting, links, etc)
 
-				angular.forEach(data, function (col) {
+				angular.forEach(data, function (displayColumn) {
 					columns.push({
-						title: col.name,
+						title: displayColumn.name,
 						data: function (row) {
-							if (row.variables[col.name]) {
-								return row.variables[col.name].value;
+							if (row.variables[displayColumn.name]) {
+								return row.variables[displayColumn.name].value;
 							}
 							return "";
 						}
 					});
+					// GID or DESIGNATION
+					if (displayColumn.termId === 8240 || displayColumn.termId === 8250) {
+						columnsDef.push({
+							targets: columns.length - 1,
+							render: function(data, type, full, meta) {
+								return '<a class="gid-link" href="javascript: void(0)" ' +
+									'onclick="openGermplasmDetailsPopopWithGidAndDesig(\'' +
+									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data) + '</a>';
+							}
+						});
+					}
 				});
 
 				return {

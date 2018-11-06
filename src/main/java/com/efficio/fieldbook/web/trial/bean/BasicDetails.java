@@ -26,7 +26,8 @@ public class BasicDetails implements TabInfoBean {
 	private String studyUpdate;
 	private String objective;
 	private String studyName;
-	private String createdBy;
+	private String createdBy;  
+	private Boolean isLocked;
 
 	public BasicDetails() {
 		this.basicDetails = new HashMap<>();
@@ -151,6 +152,16 @@ public class BasicDetails implements TabInfoBean {
 
 	public StudyTypeDto getStudyType() {
 		return studyType;
+	}
+
+	
+	public Boolean getIsLocked() {
+		return isLocked;
+	}
+
+	
+	public void setisLocked(Boolean isLocked) {
+		this.isLocked = isLocked;
 	}
 
 }

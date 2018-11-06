@@ -3,17 +3,15 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.generationcp.commons.pojo.ExportColumnHeader;
-import org.generationcp.commons.pojo.ExportColumnValue;
+import org.generationcp.commons.pojo.ExportRow;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -216,18 +214,18 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		return exportColumnHeaders;
 	}
 
-	protected List<Map<Integer, ExportColumnValue>> generateAdvanceListColumnValues(final List<InventoryDetails> inventoryDetailList,
+	protected List<ExportRow> generateAdvanceListColumnValues(final List<InventoryDetails> inventoryDetailList,
 			final List<ExportColumnHeader> exportColumnHeaders) {
-		final List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<>();
+		final List<ExportRow> exportRows = new ArrayList<>();
 		for (final InventoryDetails inventoryDetails : inventoryDetailList) {
-			final Map<Integer, ExportColumnValue> dataMap = new HashMap<>();
+			final ExportRow row = new ExportRow();
 			for (final ExportColumnHeader columnHeader : exportColumnHeaders) {
-				dataMap.put(columnHeader.getId(), new ExportColumnValue(columnHeader.getId(),
-						this.getInventoryDetailValueInfo(inventoryDetails, columnHeader.getId())));
+				row.addColumnValue(columnHeader.getId(), 
+						this.getInventoryDetailValueInfo(inventoryDetails, columnHeader.getId()));
 			}
-			exportColumnValues.add(dataMap);
+			exportRows.add(row);
 		}
-		return exportColumnValues;
+		return exportRows;
 	}
 
 	protected String getInventoryDetailValueInfo(final InventoryDetails inventoryDetails, final int columnHeaderId) {

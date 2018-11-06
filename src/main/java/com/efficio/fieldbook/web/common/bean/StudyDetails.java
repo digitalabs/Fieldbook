@@ -49,6 +49,10 @@ public class StudyDetails {
 
 	/** The site name. */
 	private String siteName;
+	
+	private Boolean isLocked;
+	
+	private Integer ownerId;
 
 	private List<SettingDetail> basicStudyDetails;
 
@@ -451,6 +455,26 @@ public class StudyDetails {
 
 	public void setProgramUUID(final String programUUID) {
 		this.programUUID = programUUID;
+	}
+
+	
+	public Boolean getIsLocked() {
+		return isLocked;
+	}
+
+	
+	public void setIsLocked(Boolean isLocked) {
+		this.isLocked = isLocked;
+	}
+
+	
+	public Integer getOwnerId() {
+		return ownerId;
+	}
+
+	
+	public void setOwnerId(Integer ownerId) {
+		this.ownerId = ownerId;
 	}
 
 }

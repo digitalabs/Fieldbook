@@ -7,11 +7,11 @@
             'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'SAMPLE_LIST_DATA','CROSSES_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
 		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', '$q',
-		'TrialSettingsManager', '_', '$localStorage','$rootScope',
+		'TrialSettingsManager','studyStateService', '_', '$localStorage','$rootScope',
 		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA, SAMPLE_LIST_DATA, CROSSES_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
 					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, _, $localStorage, $rootScope) {
+					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope) {
 
 			// TODO: clean up data service, at the very least arrange the functions in alphabetical order
 			var extractData = function(initialData, initializeProperty) {
@@ -342,7 +342,27 @@
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
 				},
-
+				
+				isLockedStudy: function() {
+					return service.currentData.basicDetails.isLocked;
+				},
+				
+				changeLockedStatus : function(doLock) {
+					
+					var studyId = service.currentData.basicDetails.studyID;
+					$http
+						.post('/Fieldbook/TrialManager/changeLockedStatus/' + studyId + '?doLock=' + doLock, null)
+						.success(function(data) {
+							if (doLock) {
+								showSuccessfulMessage('', lockStudySuccessMessage);
+							} else {
+								showSuccessfulMessage('', unlockStudySuccessMessage);
+							}
+							service.currentData.basicDetails.isLocked = doLock;
+						});
+				
+				},
+				
 				deleteEnvironment: function(index) {
 					var refreshMeasurementDeferred = $q.defer();
 					var deleteMeasurementPossible = index !== 0;
@@ -448,6 +468,7 @@
 										service.applicationData.unsavedGeneratedDesign = false;
 										service.applicationData.unsavedTraitsAvailable = false;
 										$('body').data('needToSave', '0');
+                                        studyStateService.resetState();
 									});
 								} else {
 									showErrorMessage('', 'Trial could not be saved at the moment. Please try again later.');
@@ -504,6 +525,7 @@
 										setupSettingsVariables();
 										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
 										$('body').data('needToSave', '0');
+                                        studyStateService.resetState();
 									});
 
 								}).error(function() {

@@ -23,6 +23,7 @@ public class TreeNode {
 	private String title;
 	private String key;
 	private String owner;
+	private String ownerId;
 	private String description;
 	private String type;
 	private Integer noOfEntries;
@@ -36,6 +37,7 @@ public class TreeNode {
 	private String parentTitle;
 	private String parentId;
 	private boolean includeInSearch;
+	private boolean isLocked;
 
 	/**
 	 * set icon to Boolean(false) to suppress icon. set icon to null to use default icon. set icon to an image file name relative the the
@@ -195,6 +197,16 @@ public class TreeNode {
 		this.owner = owner;
 	}
 
+	
+	public String getOwnerId() {
+		return ownerId;
+	}
+
+	
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -213,6 +225,16 @@ public class TreeNode {
 
 	public Integer getNoOfEntries() {
 		return this.noOfEntries;
+	}
+
+	
+	public boolean getIsLocked() {
+		return isLocked;
+	}
+
+	
+	public void setIsLocked(boolean isLocked) {
+		this.isLocked = isLocked;
 	}
 
 }

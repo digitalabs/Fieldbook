@@ -1,13 +1,14 @@
 package com.efficio.fieldbook.util.labelprinting;
 
-import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
-import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
-import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
-import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.util.SettingsUtil;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 import org.generationcp.commons.pojo.ExportColumnHeader;
-import org.generationcp.commons.pojo.ExportColumnValue;
+import org.generationcp.commons.pojo.ExportRow;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
@@ -15,12 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
+import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 @Component
 public class CSVLabelGenerator implements LabelGenerator {
@@ -46,11 +46,11 @@ public class CSVLabelGenerator implements LabelGenerator {
         final List<ExportColumnHeader> exportColumnHeaders =
                 this.generateColumnHeaders(selectedFieldIDs, this.labelPrintingUtil.getLabelHeadersFromTrialInstances(trialInstances));
 
-        final List<Map<Integer, ExportColumnValue>> exportColumnValues =
-                this.generateColumnValues(trialInstances, selectedFieldIDs, userLabelPrinting);
+        final List<ExportRow> exportRows =
+                this.generateRows(trialInstances, selectedFieldIDs, userLabelPrinting);
 
         try {
-            this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileName, includeHeader);
+            this.germplasmExportService.generateCSVFile(exportRows, exportColumnHeaders, fileName, includeHeader);
         } catch (final IOException e) {
             throw new LabelPrintingException(e);
         }
@@ -58,9 +58,9 @@ public class CSVLabelGenerator implements LabelGenerator {
         return fileName;
     }
 
-    private List<Map<Integer, ExportColumnValue>> generateColumnValues(final List<StudyTrialInstanceInfo> trialInstances,
-                                                                       final List<Integer> selectedFieldIDs, final UserLabelPrinting userLabelPrinting) {
-        final List<Map<Integer, ExportColumnValue>> columnValues = new ArrayList<>();
+	private List<ExportRow> generateRows(final List<StudyTrialInstanceInfo> trialInstances, final List<Integer> selectedFieldIDs,
+			final UserLabelPrinting userLabelPrinting) {
+	      final List<ExportRow> exportRows = new ArrayList<>();
 
         final String firstBarcodeField = userLabelPrinting.getFirstBarcodeField();
         final String secondBarcodeField = userLabelPrinting.getSecondBarcodeField();
@@ -83,13 +83,13 @@ public class CSVLabelGenerator implements LabelGenerator {
                 }
                 moreFieldInfo.put(LabelPrintingServiceImpl.BARCODE, barcodeLabelForCode);
 
-                final Map<Integer, ExportColumnValue> rowMap =
-                        this.generateRowMap(fieldMapTrialInstanceInfo.getLabelHeaders(), selectedFieldIDs, moreFieldInfo, fieldMapLabel);
-                columnValues.add(rowMap);
+				final ExportRow row =
+						this.generateExportRow(fieldMapTrialInstanceInfo.getLabelHeaders(), selectedFieldIDs, moreFieldInfo, fieldMapLabel);
+				 exportRows.add(row);
             }
         }
 
-        return columnValues;
+        return exportRows;
     }
 
     private List<ExportColumnHeader> generateColumnHeaders(final List<Integer> selectedFieldIDs, final Map<Integer, String> labelHeaders) {
@@ -104,22 +104,21 @@ public class CSVLabelGenerator implements LabelGenerator {
         return columnHeaders;
     }
 
-    private Map<Integer, ExportColumnValue> generateRowMap(final Map<Integer, String> labelHeaders, final List<Integer> selectedFieldIDs,
+    private ExportRow generateExportRow(final Map<Integer, String> labelHeaders, final List<Integer> selectedFieldIDs,
                                                            final Map<String, String> moreFieldInfo, final FieldMapLabel fieldMapLabel) {
-        final Map<Integer, ExportColumnValue> rowMap = new HashMap<>();
+        final ExportRow exportRow = new ExportRow();
 
         for (final Integer selectedFieldID : selectedFieldIDs) {
 
             try {
 
                 final String value = this.labelPrintingUtil.getValueFromSpecifiedColumn(moreFieldInfo, fieldMapLabel, selectedFieldID, labelHeaders, false);
-                final ExportColumnValue columnValue = new ExportColumnValue(selectedFieldID, value);
-                rowMap.put(selectedFieldID, columnValue);
+                exportRow.addColumnValue(selectedFieldID, value);
             } catch (final NumberFormatException e) {
                 CSVLabelGenerator.LOG.error(e.getMessage(), e);
             }
         }
 
-        return rowMap;
+        return exportRow;
     }
 }

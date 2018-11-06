@@ -413,18 +413,6 @@ public class ManageSettingsController extends SettingsController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/hasMeasurementData/{mode}", method = RequestMethod.POST)
-	@Transactional
-	public boolean hasMeasurementData(@RequestBody final List<Integer> ids, @PathVariable final int mode) {
-		// if study is not yet saved, no measurement data yet
-		final Workbook savedWorkbook = this.userSelection.getWorkbook();
-		if (savedWorkbook == null) {
-			return false;
-		}
-		return this.checkModeAndHasMeasurementDataEntered(mode, ids, this.userSelection.getWorkbook().getStudyDetails().getId());
-	}
-
-	@ResponseBody
 	@RequestMapping(value = "/hasMeasurementData/environmentNo/{environmentNo}", method = RequestMethod.POST)
 	@Transactional
 	public boolean hasMeasurementDataOnEnvironment(@RequestBody final List<Integer> ids, @PathVariable final int environmentNo) {
@@ -439,10 +427,6 @@ public class ManageSettingsController extends SettingsController {
 	protected boolean checkModeAndHasMeasurementData(final int mode, final int variableId) {
 		return mode == VariableType.TRAIT.getId() && this.userSelection.getMeasurementRowList() != null && !this.userSelection
 				.getMeasurementRowList().isEmpty() && this.hasMeasurementDataEntered(variableId);
-	}
-
-	protected boolean checkModeAndHasMeasurementDataEntered(final int mode, final List<Integer> ids, final Integer studyId) {
-		return mode == VariableType.TRAIT.getId() && this.studyService.hasMeasurementDataEntered(ids, studyId);
 	}
 
 	@Override

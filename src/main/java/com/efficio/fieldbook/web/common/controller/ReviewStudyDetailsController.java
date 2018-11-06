@@ -11,15 +11,12 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.StudyDetails;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -36,10 +33,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 @Controller
 @RequestMapping(ReviewStudyDetailsController.URL)
@@ -106,6 +108,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		}
 
 		model.addAttribute("trialDetails", details);
+		setIsSuperAdminAttribute(model);
 		return this.showAjaxPage(model, this.getContentName());
 	}
 
@@ -152,6 +155,11 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 			}
 		}
 		return newList;
+	}
+	
+	@ModelAttribute("currentCropUserId")
+	public Integer getCurrentCropUserId() {
+		return this.contextUtil.getCurrentIbdbUserId();
 	}
 
 	protected void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {

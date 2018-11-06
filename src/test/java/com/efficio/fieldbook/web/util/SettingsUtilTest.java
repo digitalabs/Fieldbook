@@ -1,13 +1,16 @@
 
 package com.efficio.fieldbook.web.util;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.TestDataHelper;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import junit.framework.Assert;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -23,31 +26,36 @@ import org.generationcp.middleware.pojos.workbench.settings.Constant;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
-import org.generationcp.middleware.util.Debug;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.TestDataHelper;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 
-@RunWith(MockitoJUnitRunner.class)
+import junit.framework.Assert;
+
 public class SettingsUtilTest {
 
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+	
+	@Mock
+	private FieldbookService fieldbookService;
 
+	@Mock
+	private Properties properties;
+	
 	@Mock
 	private UserSelection userSelection;
 
@@ -63,7 +71,7 @@ public class SettingsUtilTest {
 
 	@Before
 	public void setUp() {
-
+		MockitoAnnotations.initMocks(this);
 	}
 
 	@Test
@@ -85,7 +93,6 @@ public class SettingsUtilTest {
 		dataset.getVariates().add(variate);
 
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, SettingsUtilTest.PROGRAM_UUID);
-		Debug.println(0, workbook);
 
 		final Dataset newDataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
 		Assert.assertEquals(dataset.getConditions().get(0).getName(), newDataset.getConditions().get(0).getName());
@@ -526,8 +533,6 @@ public class SettingsUtilTest {
 	public void testConvertBaselineTraitsToVariatesWithEmptyBaselineTraits() {
 		final List<SettingDetail> baselineTraits = new ArrayList<>();
 
-		final UserSelection userSelection = new UserSelection();
-
 		final List<Variate> baselineVariates = SettingsUtil.convertBaselineTraitsToVariates(baselineTraits,
 				this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
 		Assert.assertEquals(baselineTraits.size(), baselineVariates.size());
@@ -774,6 +779,21 @@ public class SettingsUtilTest {
 						TermId.CATEGORICAL_VARIABLE.getId(), condition.getDataTypeId().intValue());
 			}
 		}
+	}
+	
+	@Test
+	public void testConvertWorkbookStudyLevelVariablesToStudyDetails() {
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		workbook.getStudyDetails().setIsLocked(true);
+		final String createdBy = "123";
+		
+		final StudyDetails studyDetails = SettingsUtil.convertWorkbookStudyLevelVariablesToStudyDetails(workbook, this.fieldbookMiddlewareService, this.fieldbookService, this.userSelection, PROGRAM_UUID, this.properties, createdBy);
+		final org.generationcp.middleware.domain.etl.StudyDetails sourceStudyDetails = workbook.getStudyDetails();
+		Assert.assertEquals(sourceStudyDetails.getId(), studyDetails.getId());
+		Assert.assertEquals(sourceStudyDetails.getProgramUUID(), studyDetails.getProgramUUID());
+		Assert.assertTrue(studyDetails.getIsLocked());
+		Assert.assertEquals(sourceStudyDetails.getCreatedBy(), studyDetails.getOwnerId().toString());
+		Assert.assertEquals(sourceStudyDetails.getStudyName(), studyDetails.getName());
 	}
 
 	private void mockGetStandardVariable(final List<SettingDetail> conditionSettingDetails) {

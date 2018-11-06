@@ -11,23 +11,22 @@
 
 package com.efficio.fieldbook.web.util;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.PairedVariable;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.StudyDetails;
-import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.hazelcast.util.StringUtil;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
-import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -55,16 +54,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.PairedVariable;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.hazelcast.util.StringUtil;
 
 /**
  * The Class SettingsUtil.
@@ -296,7 +295,7 @@ public class SettingsUtil {
 					variable.setOperation(detailFromSession.getVariable().getOperation());
 
 					if (isDesignGenerated && !StringUtil.isNullOrEmpty(detailFromSession.getValue())
-							&& !detailFromSession.getValue().equalsIgnoreCase("Please Choose")) {
+							&& !"Please Choose".equalsIgnoreCase(detailFromSession.getValue())) {
 						detailWithValue.setValue(detailFromSession.getValue());
 					}
 				}
@@ -525,25 +524,9 @@ public class SettingsUtil {
 	 */
 	public static void convertXmlDatasetToPojo(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			final com.efficio.fieldbook.service.api.FieldbookService fieldbookService, final ParentDataset dataset,
-			final UserSelection userSelection, final String programUUID, final boolean isUsePrevious) {
+			final UserSelection userSelection, final String programUUID) {
 			SettingsUtil.convertXmlTrialDatasetToPojo(fieldbookMiddlewareService, fieldbookService, (Dataset) dataset, userSelection,
 					programUUID);
-	}
-
-	private static boolean idCounterPartInList(final Integer stdVar, final Map<String, String> idCodeNameMap,
-			final List<Condition> conditions) {
-		boolean inList = false;
-
-		if (idCodeNameMap.get(String.valueOf(stdVar)) != null) {
-			final StringTokenizer tokenizerPair = new StringTokenizer(idCodeNameMap.get(String.valueOf(stdVar)), "|");
-			final String idTermId = tokenizerPair.nextToken();
-			for (final Condition condition : conditions) {
-				if (Integer.parseInt(idTermId) == condition.getId()) {
-					inList = true;
-				}
-			}
-		}
-		return inList;
 	}
 
 	public static Map<String, MeasurementVariable> buildMeasurementVariableMap(final List<MeasurementVariable> factors) {
@@ -597,290 +580,6 @@ public class SettingsUtil {
 		}
 
 		return selectedFieldIDs;
-	}
-
-	/**
-	 * Convert xml study dataset to pojo.
-	 *
-	 * @param fieldbookMiddlewareService the fieldbook middleware service
-	 * @param fieldbookService the fieldbook service
-	 * @param dataset the dataset
-	 * @param userSelection the user selection
-	 * @param programUUID the project id
-	 * @throws MiddlewareQueryException the middleware query exception
-	 */
-	private static void convertXmlStudyDatasetToPojo(
-			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final com.efficio.fieldbook.service.api.FieldbookService fieldbookService, final Dataset dataset,
-			final UserSelection userSelection, final String programUUID, final boolean isUsePrevious) {
-		final Operation operation = isUsePrevious ? Operation.ADD : Operation.UPDATE;
-		if (dataset != null && userSelection != null) {
-			// we copy it to User session object
-			// study level
-			final List<SettingDetail> studyLevelConditions = new ArrayList<>();
-			final List<SettingDetail> plotsLevelList = new ArrayList<>();
-			final List<SettingDetail> baselineTraitsList = new ArrayList<>();
-			final List<SettingDetail> studyConditions = new ArrayList<>();
-			final List<SettingDetail> selectionVariates = new ArrayList<>();
-			final List<SettingDetail> removedFactors = new ArrayList<>();
-			final List<SettingDetail> removedConditions = new ArrayList<>();
-
-			if (dataset.getConditions() != null) {
-				// create a map of code and its id-code-name combination
-				final Map<String, String> idCodeNameMap = new HashMap<>();
-				final String idCodeNameCombination = AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString();
-				if (idCodeNameCombination != null && !idCodeNameCombination.isEmpty()) {
-					final StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, ",");
-					if (tokenizer.hasMoreTokens()) {
-						while (tokenizer.hasMoreTokens()) {
-							final String pair = tokenizer.nextToken();
-							final StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
-							tokenizerPair.nextToken();
-							idCodeNameMap.put(tokenizerPair.nextToken(), pair);
-						}
-					}
-				}
-
-				final Map<String, Condition> conditionsMap = SettingsUtil.buildConditionsMap(dataset.getConditions());
-
-				for (final Condition condition : dataset.getConditions()) {
-					final SettingVariable variable =
-							new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
-									condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype(),
-									condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange());
-					variable.setOperation(operation);
-					final Integer stdVar;
-					if (condition.getId() != 0) {
-						stdVar = condition.getId();
-					} else {
-						stdVar =
-								fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-										HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
-										HtmlUtils.htmlUnescape(variable.getMethod()),
-										PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
-					}
-
-					variable.setCvTermId(stdVar);
-					final List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, stdVar);
-					final SettingDetail settingDetail =
-							new SettingDetail(
-									variable,
-									possibleValues,
-									HtmlUtils.htmlUnescape(condition.getValue()),
-									SettingsUtil.isSettingVariableDeletable(stdVar, AppConstants.CREATE_STUDY_REQUIRED_FIELDS.getString()));
-					final PhenotypicType type =
-							StringUtils.isEmpty(HtmlUtils.htmlUnescape(variable.getRole())) ? null : PhenotypicType
-									.getPhenotypicTypeByName(HtmlUtils.htmlUnescape(variable.getRole()));
-					settingDetail.setRole(type);
-					settingDetail.setPossibleValuesToJson(possibleValues);
-					final List<ValueReference> possibleValuesFavorite =
-							SettingsUtil.getFieldPossibleValuesFavorite(fieldbookService, stdVar, programUUID);
-					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-
-					final List<ValueReference> allValues = fieldbookService.getAllPossibleValuesWithFilter(variable.getCvTermId(), false);
-					settingDetail.setAllValues(allValues);
-					settingDetail.setAllValuesToJson(allValues);
-
-					final List<ValueReference> allFavoriteValues =
-							fieldbookService.getAllPossibleValuesFavorite(variable.getCvTermId(), programUUID, null);
-
-					final List<ValueReference> intersection = SettingsUtil.intersection(allValues, allFavoriteValues);
-
-					settingDetail.setAllFavoriteValues(intersection);
-					settingDetail.setAllFavoriteValuesToJson(intersection);
-
-					final StandardVariable standardVariable =
-							SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
-					variable.setPSMRFromStandardVariable(standardVariable, condition.getRole());
-					final Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(condition.getValue());
-
-					if (!SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_STUDY_FIELDS.getString())
-							&& !SettingsUtil.idCounterPartInList(stdVar, idCodeNameMap, dataset.getConditions())) {
-						if (enumerationByDescription != null) {
-							if (standardVariable.getId() != TermId.NURSERY_TYPE.getId()) {
-								settingDetail.setValue(enumerationByDescription.getName());
-							} else {
-								if (enumerationByDescription.getId() != null
-										&& NumberUtils.isNumber(Integer.toString(enumerationByDescription.getId()))) {
-									settingDetail.setValue(Integer.toString(enumerationByDescription.getId()));
-								}
-							}
-						}
-						if ((variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) || variable
-								.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId())))
-								&& (condition.getValue() == null || condition.getValue().isEmpty())) {
-							// if method has no value, auto select the
-							// Please Choose option
-							settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
-						} else if (variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId()))
-								&& condition.getValue() != null && !condition.getValue().isEmpty()) {
-							// set the value of code to ID for it to be
-							// selected in the popup
-
-							final Method method = fieldbookMiddlewareService.getMethodByCode(condition.getValue(), programUUID);
-
-							if (method != null) {
-								settingDetail.setValue(String.valueOf(method.getMid()));
-							} else {
-								settingDetail.setValue("");
-							}
-						}
-
-						// set local name of id variable to local name of
-						// name variable
-						final String nameTermId =
-								SettingsUtil.getNameCounterpart(variable.getCvTermId(), AppConstants.ID_NAME_COMBINATION.getString());
-						if (conditionsMap.get(nameTermId) != null) {
-							settingDetail.getVariable().setName(conditionsMap.get(nameTermId).getName());
-						}
-
-						studyLevelConditions.add(settingDetail);
-					} else {
-						if (enumerationByDescription != null) {
-							settingDetail.setValue(enumerationByDescription.getId().toString());
-						}
-						removedConditions.add(settingDetail);
-					}
-					if (settingDetail.getVariable().getDataTypeId() != null
-							&& settingDetail.getVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
-						settingDetail.setValue(DateUtil.convertToUIDateFormat(variable.getDataTypeId(),
-								HtmlUtils.htmlUnescape(condition.getValue())));
-					}
-				}
-			}
-			// plot level
-			// always allowed to be deleted
-			if (dataset.getFactors() != null) {
-				for (final Factor factor : dataset.getFactors()) {
-					final SettingVariable variable =
-							new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(), factor.getScale(),
-									factor.getMethod(), factor.getRole(), factor.getDatatype());
-					variable.setOperation(operation);
-					final Integer stdVar;
-					if (factor.getTermId() != null) {
-						stdVar = factor.getTermId();
-					} else {
-						stdVar =
-								fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-										HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
-										HtmlUtils.htmlUnescape(variable.getMethod()),
-										PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
-					}
-
-					variable.setCvTermId(stdVar);
-					final SettingDetail settingDetail =
-							new SettingDetail(variable, null, null, SettingsUtil.isSettingVariableDeletable(stdVar,
-									AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
-					final PhenotypicType type =
-							StringUtils.isEmpty(HtmlUtils.htmlUnescape(variable.getRole())) ? null : PhenotypicType
-									.getPhenotypicTypeByName(HtmlUtils.htmlUnescape(variable.getRole()));
-					settingDetail.setRole(type);
-					if (factor.getRole() != null && !factor.getRole().equals(PhenotypicType.TRIAL_ENVIRONMENT.name())
-							&& !SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
-						plotsLevelList.add(settingDetail);
-					} else {
-						removedFactors.add(settingDetail);
-					}
-				}
-			}
-			// baseline traits
-			// always allowed to be deleted
-			if (dataset.getVariates() != null) {
-				for (final Variate variate : dataset.getVariates()) {
-
-					final SettingVariable variable =
-							new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(), variate.getScale(),
-									variate.getMethod(), variate.getRole(), variate.getDatatype());
-					variable.setOperation(operation);
-					final Integer stdVar;
-					if (variate.getId() != 0) {
-						stdVar = variate.getId();
-					} else {
-						stdVar =
-								fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-										HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
-										HtmlUtils.htmlUnescape(variable.getMethod()),
-										PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
-					}
-					variable.setCvTermId(stdVar);
-
-					SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
-
-					final List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, stdVar);
-
-					final SettingDetail settingDetail = new SettingDetail(variable, possibleValues, null, true);
-					final PhenotypicType type =
-							StringUtils.isEmpty(HtmlUtils.htmlUnescape(variable.getRole())) ? null : PhenotypicType
-									.getPhenotypicTypeByName(HtmlUtils.htmlUnescape(variable.getRole()));
-					settingDetail.setRole(type);
-					settingDetail.setPossibleValuesToJson(possibleValues);
-					final List<ValueReference> possibleValuesFavorite =
-							SettingsUtil.getFieldPossibleValuesFavorite(fieldbookService, stdVar, programUUID);
-					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-
-					if (Objects.equals(VariableType.getByName(variate.getVariableType()), VariableType.SELECTION_METHOD)) {
-						selectionVariates.add(settingDetail);
-					} else {
-						baselineTraitsList.add(settingDetail);
-					}
-				}
-			}
-
-			// study conditions/constants
-			if (dataset.getConstants() != null) {
-				for (final Constant constant : dataset.getConstants()) {
-					final SettingVariable variable =
-							new SettingVariable(constant.getName(), constant.getDescription(), constant.getProperty(), constant.getScale(),
-									constant.getMethod(), constant.getRole(), constant.getDatatype(), constant.getDataTypeId(),
-									constant.getMinRange(), constant.getMaxRange());
-					variable.setOperation(operation);
-					final Integer stdVar;
-					if (constant.getId() != 0) {
-						stdVar = constant.getId();
-					} else {
-						stdVar =
-								fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-										HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
-										HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.VARIATE);
-					}
-
-					variable.setCvTermId(stdVar);
-
-					final List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, stdVar);
-					final SettingDetail settingDetail =
-							new SettingDetail(variable, possibleValues, HtmlUtils.htmlUnescape(constant.getValue()), true);
-					final PhenotypicType type =
-							StringUtils.isEmpty(HtmlUtils.htmlUnescape(variable.getRole())) ? null : PhenotypicType
-									.getPhenotypicTypeByName(HtmlUtils.htmlUnescape(variable.getRole()));
-					settingDetail.setRole(type);
-					settingDetail.setPossibleValuesToJson(possibleValues);
-					final List<ValueReference> possibleValuesFavorite =
-							SettingsUtil.getFieldPossibleValuesFavorite(fieldbookService, stdVar, programUUID);
-					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-					studyConditions.add(settingDetail);
-					final StandardVariable standardVariable =
-							SettingsUtil.getStandardVariable(variable.getCvTermId(), fieldbookMiddlewareService, programUUID);
-					variable.setPSMRFromStandardVariable(standardVariable, constant.getRole());
-					final Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(constant.getValue());
-					if (enumerationByDescription != null) {
-						settingDetail.setValue(enumerationByDescription.getName());
-					}
-					if (settingDetail.getVariable().getDataTypeId() != null
-							&& settingDetail.getVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
-						settingDetail.setValue(DateUtil.convertToUIDateFormat(variable.getDataTypeId(),
-								HtmlUtils.htmlUnescape(constant.getValue())));
-					}
-				}
-			}
-
-			userSelection.setStudyLevelConditions(studyLevelConditions);
-			userSelection.setPlotsLevelList(plotsLevelList);
-			userSelection.setBaselineTraitsList(baselineTraitsList);
-			userSelection.setStudyConditions(studyConditions);
-			userSelection.setSelectionVariates(selectionVariates);
-			userSelection.setRemovedFactors(removedFactors);
-			userSelection.setRemovedConditions(removedConditions);
-		}
 	}
 
 	public static boolean inPropertyList(final int propertyId) {
@@ -1037,9 +736,9 @@ public class SettingsUtil {
 				for (final TreatmentFactor treatmentFactor : dataset.getTreatmentFactors()) {
 
 					treatmentFactors.add(SettingsUtil.createTreatmentFactor(treatmentFactor.getLevelFactor(), fieldbookMiddlewareService,
-							fieldbookService, group, userSelection, programUUID));
+							fieldbookService, group, programUUID));
 					treatmentFactors.add(SettingsUtil.createTreatmentFactor(treatmentFactor.getValueFactor(), fieldbookMiddlewareService,
-							fieldbookService, group, userSelection, programUUID));
+							fieldbookService, group, programUUID));
 
 					group++;
 				}
@@ -1114,14 +813,8 @@ public class SettingsUtil {
 			workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
 		}
 		workbook.getTreatmentFactors().addAll(SettingsUtil.convertTreatmentFactorsToTreatmentVariables(studyDataSet.getTreatmentFactors()));
-		try {
-			SettingsUtil.setExperimentalDesignToWorkbook(param, variables, workbook, allExpDesignVariables, fieldbookMiddlewareService,
+		SettingsUtil.setExperimentalDesignToWorkbook(param, variables, workbook, allExpDesignVariables, fieldbookMiddlewareService,
 				programUUID);
-		} catch (final MiddlewareException e) {
-			SettingsUtil.LOG.error(e.getMessage(), e);
-			// TODO: Why are we swallowing this exception?
-		}
-
 
 		return workbook;
 	}
@@ -1218,7 +911,8 @@ public class SettingsUtil {
 		final List<TreatmentFactor> factors = new ArrayList<>();
 
 		if (mlist != null && !mlist.isEmpty()) {
-			Factor levelFactor, valueFactor;
+			Factor levelFactor; 
+			Factor valueFactor;
 			for (final TreatmentVariable var : mlist) {
 				final MeasurementVariable mvar = var.getLevelVariable();
 				final MeasurementVariable vvar = var.getValueVariable();
@@ -1423,7 +1117,7 @@ public class SettingsUtil {
 
 	private static SettingDetail createTreatmentFactor(final Factor factor,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			final FieldbookService fieldbookService, final int group, final UserSelection userSelection, final String programUUID) {
+			final FieldbookService fieldbookService, final int group, final String programUUID) {
 
 		final SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
 				factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
@@ -1475,13 +1169,19 @@ public class SettingsUtil {
 		return studyDetails;
 	}
 
-	private static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(final Workbook workbook,
+	static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(final Workbook workbook,
 		final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final FieldbookService fieldbookService,
 		final UserSelection userSelection, final String programUUID, final Properties appConstantsProperties, final String createdBy) {
 
 		final StudyDetails details = new StudyDetails();
-		details.setId(workbook.getStudyDetails().getId());
-		details.setProgramUUID(workbook.getStudyDetails() != null ? workbook.getStudyDetails().getProgramUUID() : null);
+		final org.generationcp.middleware.domain.etl.StudyDetails sourceStudyDetails = workbook.getStudyDetails();
+		details.setId(sourceStudyDetails.getId());
+		details.setProgramUUID(sourceStudyDetails.getProgramUUID());
+		details.setIsLocked(sourceStudyDetails.getIsLocked());
+		if (sourceStudyDetails.getCreatedBy() != null) {
+			details.setOwnerId(Integer.valueOf(sourceStudyDetails.getCreatedBy()));
+		}
+		
 		final List<MeasurementVariable> conditions = workbook.getConditions();
 		final List<MeasurementVariable> constants = workbook.getConstants();
 
@@ -1493,7 +1193,7 @@ public class SettingsUtil {
 		basicFields = Arrays.asList(AppConstants.STUDY_BASIC_REQUIRED_FIELDS.getString().split(","));
 
 		if (conditions != null) {
-			final String studyName = workbook.getStudyDetails().getStudyName();
+			final String studyName = sourceStudyDetails.getStudyName();
 			if (studyName != null) {
 				details.setName(studyName);
 			}
@@ -2018,7 +1718,8 @@ public class SettingsUtil {
 	private static List<TreatmentFactorDetail> convertWorkbookFactorsToTreatmentDetailFactors(final List<TreatmentVariable> factors) {
 		final List<TreatmentFactorDetail> details = new ArrayList<>();
 		if (factors != null && !factors.isEmpty()) {
-			MeasurementVariable levelFactor, amountFactor;
+			MeasurementVariable levelFactor;
+			MeasurementVariable amountFactor;
 			final ObjectMapper objectMapper = new ObjectMapper();
 			for (final TreatmentVariable factor : factors) {
 				try {

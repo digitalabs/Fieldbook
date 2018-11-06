@@ -6,8 +6,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 	'use strict';
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
-	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService','$rootScope',
-		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService, $rootScope) {
+	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService','studyStateService','$rootScope',
+		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService,
+				 studyStateService, $rootScope) {
 
 			// preload the measurements tab, if the measurements tab is not yet loaded 
 			// to make sure deleting environments will still works
@@ -219,6 +220,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				} else if (Number(newVal) > Number(oldVal)) {
 					addNewEnvironments(newVal - oldVal);
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
+				}
+
+				if (newVal !== oldVal) {
+                    studyStateService.updateOccurred();
 				}
 			});
 

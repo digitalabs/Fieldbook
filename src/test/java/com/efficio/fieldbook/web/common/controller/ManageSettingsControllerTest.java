@@ -57,8 +57,6 @@ public class ManageSettingsControllerTest {
 
 	private static final int STUDY_ID = 2020;
 	public static final int TEST_VARIABLE_ID_0 = 1234;
-	public static final int TEST_VARIABLE_ID_1 = 3456;
-	public static final int TEST_VARIABLE_ID_2 = 4567;
 	public static final String PROGRAM_UUID = "749782348-823asdasd-782364casd";
 
 	@Mock
@@ -107,30 +105,6 @@ public class ManageSettingsControllerTest {
 			spyController.deleteVariable(VariableType.TRAIT.getId(), Arrays.asList(ManageSettingsControllerTest.TEST_VARIABLE_ID_0)));
 
 		Mockito.verify(spyController).deleteVariable(VariableType.TRAIT.getId(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
-	}
-
-	@Test
-	public void testHasMeasurementData() throws Exception {
-		final ManageSettingsController spyController = this.initializeMockMeasurementRows();
-		Mockito.doReturn(true).when(this.studyService).hasMeasurementDataEntered(Matchers.anyList(), Matchers.anyInt());
-		assertThat(true, is(equalTo(spyController.hasMeasurementData(Arrays
-			.asList(ManageSettingsControllerTest.TEST_VARIABLE_ID_0, ManageSettingsControllerTest.TEST_VARIABLE_ID_1,
-				ManageSettingsControllerTest.TEST_VARIABLE_ID_2), VariableType.TRAIT.getId()))));
-	}
-	
-	@Test
-	public void testHasMeasurementDataWithNullWorkbook() throws Exception {
-		final ManageSettingsController spyController = this.initializeMockMeasurementRows();
-		// Returning null workbook means Study is unsaved yet
-		Mockito.when(this.userSelection.getWorkbook()).thenReturn(null);
-		
-		final boolean hasMeasurementData = spyController.hasMeasurementData(Arrays
-			.asList(ManageSettingsControllerTest.TEST_VARIABLE_ID_0, ManageSettingsControllerTest.TEST_VARIABLE_ID_1,
-				ManageSettingsControllerTest.TEST_VARIABLE_ID_2), VariableType.TRAIT.getId());
-		
-		// Unsaved Study will have no measurement data
-		assertThat(false, is(equalTo(hasMeasurementData)));
-		Mockito.verify(this.studyService, Mockito.never()).hasMeasurementDataEntered(Matchers.anyListOf(Integer.class), Matchers.anyInt());
 	}
 	
 	@Test
@@ -198,28 +172,6 @@ public class ManageSettingsControllerTest {
 
 		assertThat(false, is(equalTo(
 			spyController.checkModeAndHasMeasurementData(VariableType.TRAIT.getId(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0))));
-	}
-
-	@Test
-	public void testCheckhasMeasurementDataEntered() throws Exception {
-
-		final ManageSettingsController spyController = Mockito.spy(this.controller);
-		Mockito.doReturn(true).when(this.studyService).hasMeasurementDataEntered(Matchers.anyList(), Matchers.anyInt());
-
-		final List<Integer> ids = new ArrayList<>();
-		ids.add(ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
-		assertThat(true, is(equalTo(spyController.checkModeAndHasMeasurementDataEntered(VariableType.TRAIT.getId(), ids, 2020))));
-	}
-
-	@Test
-	public void testCheckhasMeasurementDataEnteredFailScenario() throws Exception {
-
-		final ManageSettingsController spyController = Mockito.spy(this.controller);
-		Mockito.doReturn(false).when(this.studyService).hasMeasurementDataEntered(Matchers.anyList(), Matchers.anyInt());
-
-		final List<Integer> ids = new ArrayList<>();
-		ids.add(ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
-		assertThat(false, is(equalTo(spyController.checkModeAndHasMeasurementDataEntered(VariableType.TRAIT.getId(), ids, 2020))));
 	}
 
 	@Test

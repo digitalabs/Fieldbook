@@ -5,13 +5,16 @@
 	<artifactId>Fieldbook</artifactId>
 	<packaging>war</packaging>
 	<name>Fieldbook</name>
-        <version>10.1</version>
+        <version>10.2</version>
 
 	<properties>
         <ibpcommons.version>${project.version}</ibpcommons.version>
 		<spring.version>3.2.11.RELEASE</spring.version>
 		<spring.security.version>3.2.5.RELEASE</spring.security.version>
 		<envConfig>${user.name}</envConfig>
+		<node.version>v6.9.1</node.version>
+		<yarn.version>v1.3.2</yarn.version>
+		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -457,6 +460,44 @@
 			</testResource>
 		</testResources>
 		<plugins>
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>${frontend-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>install node and yarn</id>
+						<goals>
+							<goal>install-node-and-yarn</goal>
+						</goals>
+						<configuration>
+							<workingDirectory>src/main/webapp</workingDirectory>
+							<nodeVersion>${node.version}</nodeVersion>
+							<yarnVersion>${yarn.version}</yarnVersion>
+						</configuration>
+					</execution>
+					<execution>
+						<id>yarn install</id>
+						<goals>
+							<goal>yarn</goal>
+						</goals>
+						<configuration>
+							<workingDirectory>src/main/webapp</workingDirectory>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>javascript tests</id>
+						<goals>
+							<goal>karma</goal>
+						</goals>
+						<configuration>
+							<workingDirectory>src/main/webapp</workingDirectory>
+							<karmaConfPath>karma.conf.js</karmaConfPath>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12.4</version>

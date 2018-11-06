@@ -34,6 +34,10 @@
 						</div>
 					</div>
 
+					<div ng-show="hasUnsavedData()" style="margin-top: 10px; margin-left: 10px; display: inline-block;">
+						<span class="label label-warning">unsaved data</span>
+					</div>
+
 					<div class="pull-right fbk-study-heading-right">
 						<div style="padding-right: 24px">
 							<a href="/Fieldbook/TrialManager/manageTrial">Return to Manage Studies</a>
@@ -45,7 +49,9 @@
 
 			<div class="col-md-12 nopadding-right">
 				<section-container heading="BASIC DETAILS" collapsible="isOpenStudy()" start-collapsed="true">
-				<span name="action-buttons" ng-show="isOpenStudy()">
+				<span name="action-buttons" ng-show="isOpenStudy() &amp;&amp; !hasUnsavedData()">
+					<span class='bms-locked' style='position: relative; top:7px; right: 5px; color: #666666;font-size: 23px; font-weight: bold;' ng-show="isLockedStudy() &amp;&amp;  userHasLockPermission()" ng-click="changeLockedStatus(0)"/>
+					<span class='bms-lock-open' style='position: relative; top:7px; right: 5px; color: #666666;font-size: 23px; font-weight: bold;' ng-show="!isLockedStudy() &amp;&amp; userHasLockPermission()" ng-click="changeLockedStatus(1)"/>
 					<div class="btn-group" style="padding-right: 36px">
 						<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
 							<span th:text="#{study.studydetails.actions}">Actions</span>
@@ -177,6 +183,12 @@
 							<li>
 								<a id="delete-success-return-url" style="display:none;" th:href="@{/TrialManager}"></a>
 								<a href="javascript: openDeleteConfirmation();" th:text="#{browse.study.delete.study.name}">Delete Study</a>
+							</li>
+							<li>
+								<a href="" th:text="#{study.studydetails.action.lock.study}" ng-show="!isLockedStudy() &amp;&amp;  userHasLockPermission()" ng-click="changeLockedStatus(1)">Lock Study</a>
+							</li>
+							<li>
+								<a href="" th:text="#{study.studydetails.action.unlock.study}" ng-show="isLockedStudy() &amp;&amp;  userHasLockPermission()" ng-click="changeLockedStatus(0)">Unlock Study</a>
 							</li>
 						</ul>
 					</div>
@@ -570,6 +582,8 @@
 	<script type="text/javascript" th:src="@{/static/js/fbk-data-table/samples-summary.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/executeCalculatedVariableModal.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/studyStateService.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/datasetService.js}"></script>
 
 
 	<!-- constants here -->
@@ -632,8 +646,13 @@
 			authToken = /*[[${contextInfo.authToken}]]*/ '',
 			selectedProjectId = /*[[${contextInfo.selectedProjectId}]]*/ '',
 			currentProgramId = /*[[${currentProgramId}]]*/ '',
+			isSuperAdmin = /*[[${isSuperAdmin}]]*/ '',
+			currentCropUserId = /*[[${currentCropUserId}]]*/ '',
 			cropName = /*[[${cropName}]]*/ '',
 			createdCrossesListId = /*[[${createdCrossesListId}]]*/ '';
+
+		var lockStudySuccessMessage = /*[[#{lock.study.success.message}]]*/ '';
+		var unlockStudySuccessMessage = /*[[#{unlock.study.success.message}]]*/ '';
 
 		var translations = {
 			/*TRIAL SETTINGS*/
@@ -700,7 +719,7 @@
 			).constant('TRIAL_HAS_MEASUREMENT', /*[[${measurementDataExisting}]]*/ ''
 			).constant('TRIAL_MEASUREMENT_COUNT', /*[[${measurementRowCount}]]*/ ''
 			).constant('EXPERIMENTAL_DESIGN_SPECIAL_DATA', /*[[${experimentalDesignSpecialData}]]*/ ''
-            ).constant('UNSPECIFIED_LOCATION_ID', /*[[${unspecifiedLocationId}]]*/ ''
+			).constant('UNSPECIFIED_LOCATION_ID', /*[[${unspecifiedLocationId}]]*/ ''
 			).constant('DESIGN_TYPE',
 				{
 					RANDOMIZED_COMPLETE_BLOCK: /*[[${T(org.generationcp.middleware.domain.dms.DesignTypeItem).RANDOMIZED_COMPLETE_BLOCK.getId()}]]*/ 0
@@ -726,7 +745,10 @@
 					STRESS_CHECK: /*[[${T(org.generationcp.middleware.domain.gms.SystemDefinedEntryType).STRESS_CHECK.getEntryTypeCategoricalId()}]]*/ 10200
 
 				}
-			);
+			).value('studyContext', {
+				studyId: /*[[${studyId}]]*/ '',
+				measurementDatasetId: /*[[${measurementDatasetId}]]*/ ''
+			});
 
 			$(document).ready(function () {
 				document.onInitManageTrial();

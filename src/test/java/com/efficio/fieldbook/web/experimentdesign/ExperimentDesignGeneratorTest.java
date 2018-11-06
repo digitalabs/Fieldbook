@@ -74,8 +74,7 @@ public class ExperimentDesignGeneratorTest {
 		Assert.assertEquals(PLOT_NO, expDesign.getParameterValue(ExperimentDesignGenerator.PLOTFACTOR_PARAM));
 		Assert.assertEquals(String.valueOf(initialPlotNumber),
 				expDesign.getParameterValue(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM));
-		Assert.assertEquals(String.valueOf(initialEntryNumber),
-				expDesign.getParameterValue(ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM));
+		Assert.assertEquals(treatmentFactors.size(), expDesign.getParameterList(ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM).size());
 		Assert.assertEquals(treatmentFactors.size(), expDesign.getParameterList(ExperimentDesignGenerator.TREATMENTFACTORS_PARAM).size());
 		Assert.assertEquals(levels.size(), expDesign.getParameterList(ExperimentDesignGenerator.LEVELS_PARAM).size());
 		Assert.assertEquals(AppConstants.EXP_DESIGN_TIME_LIMIT.getString(),
@@ -283,6 +282,14 @@ public class ExperimentDesignGeneratorTest {
 
 	}
 
+	@Test
+	public void testGetInitialTreatNumList() {
+		final List<String> treatmentFactors = Arrays.asList(TermId.ENTRY_NO.name(), "NFERT_NO");
+		final List<ListItem> listItems = this.experimentDesignGenerator.getInitialTreatNumList(treatmentFactors, 5, TermId.ENTRY_NO.name());
+		Assert.assertEquals("5", listItems.get(0).getValue());
+		Assert.assertEquals("1", listItems.get(1).getValue());
+	}
+	
 	@Test
 	public void testResolveMappedEntryNumber() {
 

@@ -354,7 +354,7 @@ public class SettingsUtil {
 		return treatmentFactors;
 	}
 
-	private static void addFactor(final Map<Integer, Factor> factorsMap, final Factor factor, final List<Factor> factorList) {
+	static void addFactor(final Map<Integer, Factor> factorsMap, final Factor factor, final List<Factor> factorList) {
 		if(factorsMap.get(factor.getId()) == null) {
 			factorList.add(factor);
 			factorsMap.put(factor.getId(), factor);

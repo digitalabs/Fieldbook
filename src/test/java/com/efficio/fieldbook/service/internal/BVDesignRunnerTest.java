@@ -110,7 +110,8 @@ public class BVDesignRunnerTest {
 						+ ExperimentDesignGenerator.BLOCKFACTOR_PARAM + "\" value=\"Reps\"/>" + "<Parameter name=\""
 						+ ExperimentDesignGenerator.PLOTFACTOR_PARAM + "\" value=\"Plots\"/>" + "<Parameter name=\""
 						+ ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM + "\" value=\"301\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM + "\" value=\"201\"/>" + "<Parameter name=\""
+						+ ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM + "\">"
+						+ "<ListItem value=\"201\"/><ListItem value=\"1\"/></Parameter>"+"<Parameter name=\""
 						+ ExperimentDesignGenerator.TREATMENTFACTORS_PARAM
 						+ "\"><ListItem value=\"ENTRY_NO\"/><ListItem value=\"FERTILIZER\"/></Parameter>"
 						+ "<Parameter name=\"levels\"><ListItem value=\"24\"/><ListItem value=\"3\"/></Parameter>" + "<Parameter name=\""

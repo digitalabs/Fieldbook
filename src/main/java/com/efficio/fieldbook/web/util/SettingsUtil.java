@@ -313,7 +313,7 @@ public class SettingsUtil {
 		}
 
 		final Map<Integer, Factor> factorsMap = new HashMap<>();
-		for(Factor factor: factorList) {
+		for(final Factor factor: factorList) {
 			factorsMap.put(factor.getId(), factor);
 		}
 

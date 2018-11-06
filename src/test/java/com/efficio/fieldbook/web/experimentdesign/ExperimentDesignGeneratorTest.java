@@ -61,7 +61,7 @@ public class ExperimentDesignGeneratorTest {
 		final Integer initialPlotNumber = 99;
 		final Integer initialEntryNumber = 100;
 
-		final MainDesign mainDesign = experimentDesignGenerator
+		final MainDesign mainDesign = this.experimentDesignGenerator
 				.createRandomizedCompleteBlockDesign(NBLOCK, BLOCK_NO, PLOT_NO, initialPlotNumber, initialEntryNumber, TermId.ENTRY_NO.name(),treatmentFactors,
 						levels, OUTPUT_FILE);
 
@@ -96,7 +96,7 @@ public class ExperimentDesignGeneratorTest {
 		final String nBLatin = "";
 		final String replatinGroups = "sample1,sample2";
 
-		final MainDesign mainDesign = experimentDesignGenerator
+		final MainDesign mainDesign = this.experimentDesignGenerator
 				.createResolvableIncompleteBlockDesign(blockSize, numberOfTreatments, numberOfReplicates, ENTRY_NO, REP_NO, BLOCK_NO,
 						PLOT_NO, initialPlotNumber, initialEntryNumber, nBLatin, replatinGroups, OUTPUT_FILE, false);
 
@@ -136,7 +136,7 @@ public class ExperimentDesignGeneratorTest {
 		final String nBLatin = "";
 		final String replatinGroups = "sample1,sample2";
 
-		final MainDesign mainDesign = experimentDesignGenerator
+		final MainDesign mainDesign = this.experimentDesignGenerator
 				.createResolvableIncompleteBlockDesign(blockSize, numberOfTreatments, numberOfReplicates, ENTRY_NO, REP_NO, BLOCK_NO,
 						PLOT_NO, initialPlotNumber, initialEntryNumber, nBLatin, replatinGroups, OUTPUT_FILE, true);
 
@@ -174,7 +174,7 @@ public class ExperimentDesignGeneratorTest {
 		final Integer startingPlotNumber = 1;
 		final Integer startingEntryNumber = 2;
 
-		final MainDesign mainDesign = experimentDesignGenerator
+		final MainDesign mainDesign = this.experimentDesignGenerator
 				.createAugmentedRandomizedBlockDesign(numberOfBlocks, numberOfTreatments, numberOfControls, startingPlotNumber, startingEntryNumber, ENTRY_NO, BLOCK_NO, PLOT_NO);
 
 		final ExpDesign expDesign = mainDesign.getDesign();
@@ -197,7 +197,7 @@ public class ExperimentDesignGeneratorTest {
 
 		final Integer initialEntryNumber = null;
 
-		experimentDesignGenerator.addInitialTreatmenNumberIfAvailable(initialEntryNumber, paramList);
+		this.experimentDesignGenerator.addInitialTreatmenNumberIfAvailable(initialEntryNumber, paramList);
 
 		Assert.assertEquals("Initial Treatment Number param should not be added to the param list.", 0, paramList.size());
 
@@ -210,7 +210,7 @@ public class ExperimentDesignGeneratorTest {
 
 		final Integer initialEntryNumber = 2;
 
-		experimentDesignGenerator.addInitialTreatmenNumberIfAvailable(initialEntryNumber, paramList);
+		this.experimentDesignGenerator.addInitialTreatmenNumberIfAvailable(initialEntryNumber, paramList);
 
 		Assert.assertEquals("Initial Treatment Number param should  be added to the param list.", 1, paramList.size());
 		Assert.assertEquals(String.valueOf(initialEntryNumber), paramList.get(0).getValue());
@@ -228,7 +228,7 @@ public class ExperimentDesignGeneratorTest {
 		listOfString.add(sampleText1);
 		listOfString.add(sampleText2);
 
-		final List<ListItem> listItems = experimentDesignGenerator.convertToListItemList(listOfString);
+		final List<ListItem> listItems = this.experimentDesignGenerator.convertToListItemList(listOfString);
 
 		Assert.assertEquals(2, listItems.size());
 		Assert.assertEquals(sampleText1, listItems.get(0).getValue());
@@ -240,14 +240,14 @@ public class ExperimentDesignGeneratorTest {
 	public void testGetPlotNumberStringValue() {
 
 		Assert.assertEquals("If the initialPlotNumber is null, it should return the default plot number which is '1'.", "1",
-				experimentDesignGenerator.getPlotNumberStringValueOrDefault(null));
-		Assert.assertEquals("99", experimentDesignGenerator.getPlotNumberStringValueOrDefault(99));
+			this.experimentDesignGenerator.getPlotNumberStringValueOrDefault(null));
+		Assert.assertEquals("99", this.experimentDesignGenerator.getPlotNumberStringValueOrDefault(99));
 	}
 
 	@Test
 	public void testFindImportedGermplasmByEntryNumberAndChecksEntryNumberExistsInImportedGermplasmMap() {
 
-		final Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
+		final Map<Integer, ImportedGermplasm> importedGermplasmMap = this.createImportedGermplasmMap();
 
 		final Map<Integer, Integer> designExpectedEntriesMap = new HashMap<>();
 		// Test Entry No 9 is mapped to Check Entry No 3
@@ -256,7 +256,7 @@ public class ExperimentDesignGeneratorTest {
 		designExpectedEntriesMap.put(ENTRY_NO_10, ENTRY_NO_5);
 
 
-		final Optional<ImportedGermplasm> optionalImportedGermplasm = experimentDesignGenerator
+		final Optional<ImportedGermplasm> optionalImportedGermplasm = this.experimentDesignGenerator
 				.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 1, designExpectedEntriesMap);
 
 		Assert.assertTrue(optionalImportedGermplasm.isPresent());
@@ -267,7 +267,7 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testFindImportedGermplasmByEntryNumberAndChecksEntryNumberDoesNotExistInImportedGermplasmMap() {
 
-		final Map<Integer, ImportedGermplasm> importedGermplasmMap = createImportedGermplasmMap();
+		final Map<Integer, ImportedGermplasm> importedGermplasmMap = this.createImportedGermplasmMap();
 
 		final Map<Integer, Integer> designExpectedEntriesMap = new HashMap<>();
 		// Test Entry No 9 is mapped to Check Entry No 3
@@ -275,7 +275,7 @@ public class ExperimentDesignGeneratorTest {
 		// Test Entry No 10 is mapped to Check Entry No 5
 		designExpectedEntriesMap.put(ENTRY_NO_10, ENTRY_NO_5);
 
-		final Optional<ImportedGermplasm> optionalImportedGermplasm = experimentDesignGenerator
+		final Optional<ImportedGermplasm> optionalImportedGermplasm = this.experimentDesignGenerator
 				.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, 9999, designExpectedEntriesMap);
 
 		Assert.assertFalse(optionalImportedGermplasm.isPresent());
@@ -300,15 +300,15 @@ public class ExperimentDesignGeneratorTest {
 		designExpectedEntriesMap.put(ENTRY_NO_10, ENTRY_NO_5);
 
 		final Integer result1 =
-				experimentDesignGenerator.resolveMappedEntryNumber(9, designExpectedEntriesMap);
+			this.experimentDesignGenerator.resolveMappedEntryNumber(9, designExpectedEntriesMap);
 		Assert.assertEquals("Lookup value 9 should return 3", Integer.valueOf(3), result1);
 
 		final Integer result2 =
-				experimentDesignGenerator.resolveMappedEntryNumber(10, designExpectedEntriesMap);
+			this.experimentDesignGenerator.resolveMappedEntryNumber(10, designExpectedEntriesMap);
 		Assert.assertEquals("Lookup value 10 should return 5", Integer.valueOf(5), result2);
 
 		final Integer result5 =
-				experimentDesignGenerator.resolveMappedEntryNumber(9999, designExpectedEntriesMap);
+			this.experimentDesignGenerator.resolveMappedEntryNumber(9999, designExpectedEntriesMap);
 		Assert.assertEquals("9999 is not in map of checks, the return value should be the same number", Integer.valueOf(9999), result5);
 	}
 

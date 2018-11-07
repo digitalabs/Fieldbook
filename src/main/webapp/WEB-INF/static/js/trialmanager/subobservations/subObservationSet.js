@@ -27,13 +27,12 @@
 			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 			$scope.dtOptions = null;
 
-			// TODO use dataset envs
-			environmentService.getEnvironments().then(function (environments) {
-				if (!environments || !environments.length) {
+			datasetService.getDataset(subObservationTab.id).then(function (dataset) {
+				if (!dataset.instances || !dataset.instances.length) {
 					return;
 				}
-				$scope.environments = environments;
-				$scope.nested.selectedEnvironment = environments[0];
+				$scope.environments = dataset.instances;
+				$scope.nested.selectedEnvironment = dataset.instances[0];
 
 				$scope.dtOptions = getDtOptions();
 

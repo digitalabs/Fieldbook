@@ -1,68 +1,47 @@
-
-<div class="col-xs-10 col-md-10" xmlns:th="http://www.thymeleaf.org" >
-
-		<div class="modal fade" id="selectEnvironmentModal" role="dialog" aria-labelledby="selectEnvironmentModal"
-			 ng-controller="SelectEnvironmentModalCtrl" aria-hidden="true">
-			<div class="modal-dialog modal-medium">
-				<div class="modal-content">
-					<div class="modal-body">
-						<div class="row form-group">
-							<div class="col-xs-11 col-md-11">
-								<label ng-show="applicationData.advanceType != 'sample'" class="modal-title fbk-modal-title"
-									   id="heading-modal" th:text="#{study.studydetails.action.advance.study}">Advance study</label>
-								<label ng-show="applicationData.advanceType == 'sample'" class="modal-title fbk-modal-title"
-									   id="heading-modal" th:text="#{study.studydetails.action.advance.sample}">Advance sampled
-									plants</label>
-							</div>
-							<div class="col-xs-1 col-md-1">
-								<button  id="closeAdvanceTrialModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
-							</div>
+<div class="col-xs-10 col-md-10" xmlns:th="http://www.thymeleaf.org">
+	<div class="modal fade" id="selectEnvironmentModal" role="dialog" aria-labelledby="selectEnvironmentModal"
+		 ng-controller="SelectEnvironmentModalCtrl" aria-hidden="true">
+		<div class="modal-dialog modal-medium">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="row form-group">
+						<div class="col-xs-11 col-md-11">
+							<label ng-show="applicationData.advanceType != 'sample'" class="modal-title fbk-modal-title"
+								   id="heading-modal" th:text="#{study.studydetails.action.advance.study}">Advance study</label>
+							<label ng-show="applicationData.advanceType == 'sample'" class="modal-title fbk-modal-title"
+								   id="heading-modal" th:text="#{study.studydetails.action.advance.sample}">Advance sampled
+								plants</label>
 						</div>
-
-						<div class="row form-group">
-							<div id="page-advance-modal-message"></div>
+						<div class="col-xs-1 col-md-1">
+							<button id="closeAdvanceTrialModal" type="button" class="close  pull-right glyphicon glyphicon-remove"
+									data-dismiss="modal" aria-hidden="true"/>
 						</div>
-
-						<div class="row form-group">
-							<div class="col-xs-12 col-md-12" >
-								<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
-							</div>
-						</div>
-						<br/>
-							<environment-details></environment-details>
-					</div> <!-- Modal Body -->
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">
-							Cancel
-						</button>
-						<button type="button" class="btn btn-primary" ng-disabled="trialInstances.length === 0"
-								aria-hidden="true" ng-click="selectEnvironmentContinue()" th:text="#{common.form.continue.text}">
-							Continue
-						</button>
 					</div>
-				</div> <!-- Modal Content -->
-			</div>
+
+					<div class="row form-group">
+						<div id="page-advance-modal-message"></div>
+					</div>
+
+					<div class="row form-group">
+						<div class="col-xs-12 col-md-12">
+							<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+						</div>
+					</div>
+					<br/>
+					<environment-details></environment-details>
+				</div> <!-- Modal Body -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true"
+							th:text="#{common.form.cancel.text}">
+						Cancel
+					</button>
+					<button type="button" class="btn btn-primary" ng-disabled="trialInstances.length === 0"
+							aria-hidden="true" ng-click="selectEnvironmentContinue()" th:text="#{common.form.continue.text}">
+						Continue
+					</button>
+				</div>
+			</div> <!-- Modal Content -->
 		</div>
+	</div>
 </div>
 
-<div layout:fragment="page-script">
-	<script type='text/javascript' th:inline="javascript">
-		//<![CDATA[
-		var selectOneLocationErrorMessageForAdvancing = /*[[#{error.advancing.study.instance.selected.atleast.one.location.selected}]]*/ '';
-		$(document).ready(function () {
-			$('#selectEnvironmentModal').on('shown.bs.modal', function () {
-				// we need to redraw the columns of the table
-				if(!$.fn.dataTable.isDataTable( '#selectEnvironmentModal .fbk-datatable-environments')){
-					// we need to redraw the columns of the table
-					$('#selectEnvironmentModal .fbk-datatable-environments').DataTable({
-						dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
-							"<'row'<'col-sm-12'tr>>" +
-							"<'row'<'col-sm-5'i><'col-sm-7'>>" +
-							"<'row'<'col-sm-12'p>>"
-					}).columns.adjust().draw();
-				}
-			});
-		});
-		//]]>
-	</script>
-</div>

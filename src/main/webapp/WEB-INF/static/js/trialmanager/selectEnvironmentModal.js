@@ -4,8 +4,8 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'environmentService', function ($scope,
-																																  TrialManagerDataService, environmentService) {
+	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'environmentService', '$timeout', function ($scope,
+																																			  TrialManagerDataService, environmentService, $timeout) {
 
 		$scope.settings = TrialManagerDataService.settings.environments;
 		if (Object.keys($scope.settings).length === 0) {
@@ -113,6 +113,18 @@
 					});
 					$scope.trialInstances.push(environment.instanceNumber);
 				});
+
+				//This can be used to check if a table is a DataTable or not already.
+				if (!$.fn.dataTable.isDataTable('#selectEnvironmentModal .fbk-datatable-environments')) {
+					$timeout(function () {
+						angular.element('#selectEnvironmentModal .fbk-datatable-environments').DataTable({
+							dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+								"<'row'<'col-sm-12'tr>>" +
+								"<'row'<'col-sm-5'i><'col-sm-7'>>" +
+								"<'row'<'col-sm-12'p>>"
+						}).columns.adjust().draw();
+					}, 1);
+				}
 			});
 		};
 	}]);

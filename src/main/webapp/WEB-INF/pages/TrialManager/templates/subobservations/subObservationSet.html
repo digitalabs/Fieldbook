@@ -74,10 +74,8 @@
 			<div class="pull-left">
 				<div class="dataTables_info fbk-std-padding-right pull-left">Select Environment: </div>
 				<ui-select ng-model="nested.selectedEnvironment"
-						   style="width: 200px;"
-						   class="pull-left fbk-left-padding"
-						   ng-change="changeEnvironment()"
-						   theme="select2">
+						   class="input-sm form-control fbk-std-padding-right inline-select"
+						   ng-change="changeEnvironment()" search-enabled="false" theme="select2">
 					<ui-select-match class="ui-select-match">
 						{{nested.selectedEnvironment.instanceNumber + ' - ' + (nested.selectedEnvironment.locationName || nested.selectedEnvironment.locationAbbreviation || nested.selectedEnvironment.instanceNumber)}}
 					</ui-select-match>

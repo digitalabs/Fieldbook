@@ -60,21 +60,20 @@
 			}
 		};
 
-			$scope.subObservationTab = function (id, name) {
-				/**
-				 * Artificial id for subObs tabs, that do not exists on db
-				 */
-				$scope.subObservationTabs.push({
-					name: name,
+		$scope.subObservationTab = function (id, name) {
+			/**
+			 * Artificial id for subObs tabs, that do not exists on db
+			 */
+			$scope.subObservationTabs.push({
+				name: name,
+				id: id,
+				state: '/subObservationTabs/' + id, // arbitrary prefix to filter tab content
+				subObservationSets: [{
 					id: id,
-					state: '/subObservationTabs/' + id, // arbitrary prefix to filter tab content
-					subObservationSets: [{
-						id: id,
-						name: name
-					}]
-				});
-
-			};
+					name: name
+				}]
+			});
+		};
 
 		$scope.continue = function () {
 			angular.element('#SubObservationUnitDatasetSelectorModal').modal('hide');

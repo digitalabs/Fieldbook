@@ -45,26 +45,3 @@
 		</div>
 	</div>
 </div>
-
-<div layout:fragment="page-script">
-
-	<script type='text/javascript' th:inline="javascript">
-		//<![CDATA[
-		var selectOneLocationErrorMessageForSampleList = /*[[#{error.creating.sample.list.trial.instance.selected.at.least.one.location.selected}]]*/ '';
-		$(document).ready(function () {
-			$('#selectEnvironmentToSampleListModal').on('shown.bs.modal', function () {
-				// we need to redraw the columns of the table
-				if(!$.fn.dataTable.isDataTable( '#selectEnvironmentToSampleListModal .fbk-datatable-environments')){
-					// we need to redraw the columns of the table
-					$('#selectEnvironmentToSampleListModal .fbk-datatable-environments').DataTable({
-						dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
-							"<'row'<'col-sm-12'tr>>" +
-							"<'row'<'col-sm-5'i><'col-sm-7'>>" +
-							"<'row'<'col-sm-12'p>>"
-					}).columns.adjust().draw();
-				}
-			});
-		});
-		//]]>
-	</script>
-</div>

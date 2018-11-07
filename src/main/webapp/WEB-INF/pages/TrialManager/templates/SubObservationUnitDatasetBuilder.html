@@ -94,8 +94,7 @@
 								each parent unit (up to {{maximunNumForEachParentUnit}}): <span class="required">*</span></label>
 							</div>
 							<div class="col-sm-2" style="padding-left: 0px;">
-								<input type="number" name="SubObservationUnits" ng-model="numberOfSubObservationUnits" ng-min="1" ng-max="{{maximunNumForEachParentUnit}}"
-									   pattern="^[0-9]*$" style="width: 90px;" class="form-control" required="true"/>
+								<input type="number" name="SubObservationUnits" ng-model="numberOfSubObservationUnits" ng-min="1" min="0" ng-max="{{maximunNumForEachParentUnit}}" style="width: 90px;" class="form-control" required="true"/>
 							</div>
 							<div class="col-sm-12">
 								<div class="text-danger" ng-messages="dtForm.SubObservationUnits.$error"

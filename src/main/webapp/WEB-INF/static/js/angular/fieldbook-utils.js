@@ -361,24 +361,22 @@
 
 						$scope.updateDropdownValuesFavorites();
 						$scope.lookUpValues = [];
-						if ($scope.valuecontainer[$scope.targetkey]) {
-							angular.forEach($scope.dropdownValues, function(value) {
-								var idNumber;
-								if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
-									idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
+
+						angular.forEach($scope.dropdownValues, function(value) {
+							var idNumber;
+							if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
+								idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
+							}
+							$scope.lookUpValues[value.id] = value;
+							$scope.lookUpValues[value.description] = value;
+							if (value.description === $scope.valuecontainer[$scope.targetkey] ||
+								value.id === idNumber) {
+								$scope.valuecontainer[$scope.targetkey] = value;
+								if ($scope.isLocation){
+									selectedLocation(value, $scope.dropdownValues);
 								}
-                                $scope.lookUpValues[value.id] = value;
-                                $scope.lookUpValues[value.description] = value;
-								if (value.description === $scope.valuecontainer[$scope.targetkey] ||
-									value.id === idNumber) {
-                                    $scope.valuecontainer[$scope.targetkey] = value;
-                                    if ($scope.isLocation){
-                                        selectedLocation(value, $scope.dropdownValues);
-                                    }
-									return false;
-								}
-							});
-						}
+							}
+						});
 
                         $scope.$watch('valuecontainer[targetkey]', function() {
                         	if($scope.lookUpValues[$scope.valuecontainer[$scope.targetkey]]) {

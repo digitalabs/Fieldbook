@@ -5,8 +5,8 @@
 	var manageTrialApp = angular.module('manageTrialApp');
 	manageTrialApp.controller('SubObservationUnitDatasetBuildCtrl', ['$scope', 'environmentService', '$http', 'formUtilities',
 		'MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS', 'MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT', 'variableService', 'studyContext',
-		'DATASET_TYPES', 'datasetService', function ($scope, environmentService, $http, formUtilities, MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS,
-													 MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT, variableService, studyContext, DATASET_TYPES, datasetService) {
+		'DATASET_TYPES', 'datasetService', '$timeout', function ($scope, environmentService, $http, formUtilities, MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS,
+																 MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT, variableService, studyContext, DATASET_TYPES, datasetService, $timeout) {
 
 		$scope.trialInstances = [];
 		$scope.maximunNumForEachParentUnit = MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT;
@@ -117,6 +117,18 @@
 					});
 					$scope.trialInstances.push(environment.instanceNumber);
 				});
+
+				//This can be used to check if a table is a DataTable or not already.
+				if (!$.fn.dataTable.isDataTable('#SubObservationUnitDatasetBuildModal .fbk-datatable-environments')) {
+					$timeout(function () {
+						angular.element('#SubObservationUnitDatasetBuildModal .fbk-datatable-environments').DataTable({
+							dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+								"<'row'<'col-sm-12'tr>>" +
+								"<'row'<'col-sm-5'i><'col-sm-7'>>" +
+								"<'row'<'col-sm-12'p>>"
+						}).columns.adjust().draw();
+					}, 1);
+				}
 			});
 
 			variableService.getVariablesByFilter({
@@ -128,6 +140,9 @@
 				angular.forEach($scope.variables, function (variable) {
 					if ($scope.datasetType.defaultVariableId === parseInt(variable.id)) {
 						$scope.selectedVariable = variable;
+						$timeout(function () {
+							angular.element('#variableDatasetBuilder').select2();
+						}, 1);
 					}
 				});
 			});

@@ -12,6 +12,11 @@ describe('Dataset Service', function () {
 			return {token: 734789327};
 		});
 
+		module(function ($provide) {
+			$provide.value("studyContext", {});
+			$provide.value("serviceUtilities", {});
+			$provide.value("DATASET_TYPES_SUBOBSERVATION_IDS", {});
+		});
 	});
 
 	beforeEach(inject(function ($injector) {

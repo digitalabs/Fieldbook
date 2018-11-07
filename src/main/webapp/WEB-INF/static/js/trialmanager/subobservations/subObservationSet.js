@@ -27,7 +27,7 @@
 			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 			$scope.dtOptions = null;
 
-			datasetService.getDataset(subObservationTab.id).then(function (dataset) {
+			datasetService.getDataset(subObservationSet.id).then(function (dataset) {
 				if (!dataset.instances || !dataset.instances.length) {
 					return;
 				}

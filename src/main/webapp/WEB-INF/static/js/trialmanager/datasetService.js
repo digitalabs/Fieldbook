@@ -52,8 +52,12 @@
 				return request.then(successHandler, failureHandler);
 			};
 
-			return datasetService;
+			datasetService.getDataset = function (datasetId) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId, config);
+				return request.then(successHandler, failureHandler);
+			};
 
+			return datasetService;
 	}]);
 
 })();

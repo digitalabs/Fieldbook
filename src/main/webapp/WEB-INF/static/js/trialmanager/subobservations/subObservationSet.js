@@ -16,6 +16,7 @@
 			$scope.nested = {};
 			$scope.nested.dtPreviewInstance = null;
 			$scope.nested.reviewVariable = null;
+			$scope.enableActions = false;
 
 			var subObservationTab = $scope.subObservationTab;
 			var tableId = '#subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
@@ -43,10 +44,7 @@
 				loadPreview();
 			}
 
-			$scope.addDataTable = function () {
-				loadDataTable();
-			};
-
+			// Review prototype - remove when done
 			$scope.togglePreviewMode = function () {
 				$scope.preview = subObservationSet.preview = !$scope.preview;
 				if (!$scope.preview) {
@@ -55,6 +53,7 @@
 				loadPreview();
 			};
 
+			// Review prototype - remove when done
 			$scope.resetPreview = function () {
 				$scope.rows = subObservationSet.rows = null;
 				$scope.nested.dtPreviewInstance.changeData(getPreview());
@@ -82,12 +81,13 @@
 			};
 
 			$scope.subDivide = function () {
-				var id = $scope.subObservationTab.subObservationSets.length + 1;
-				var name = 'Sub-observation set ' + $scope.subObservationTab.id + ' - subObservationSet ' + id;
-				$scope.subObservationTab.subObservationSets.push({
-					id: id,
-					name: name
-				});
+				// TODO
+				// var id = $scope.subObservationTab.subObservationSets.length + 1;
+				// var name = 'Sub-observation set ' + $scope.subObservationTab.id + ' - subObservationSet ' + id;
+				// $scope.subObservationTab.subObservationSets.push({
+				// 	id: id,
+				// 	name: name
+				// });
 			};
 
 			$scope.changeEnvironment = function () {

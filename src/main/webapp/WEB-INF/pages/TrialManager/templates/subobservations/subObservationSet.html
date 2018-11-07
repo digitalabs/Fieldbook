@@ -10,17 +10,15 @@
 		<div class="row">
 			<div class="col-xs-12">
 
-				<div class="btn-group pull-right">
+				<div class="btn-group pull-right" ng-if="enableActions">
 					<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
 						<span>Observation set Actions</span>
 					</button>
 					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
 						<li>
-							<a ng-click="addDataTable()">addDataTable</a>
+							<a ng-click="subDivide()">Subdivide Sub-observation units</a>
 						</li>
-						<li>
-							<a ng-click="subDivide()">Subdivide observation</a>
-						</li>
+						<!--
 						<li>
 							<a ng-click="togglePreviewMode()">Toggle Review out-of-bound data</a>
 						</li>
@@ -35,6 +33,7 @@
 								</li>
 							</ul>
 						</li>
+						-->
 					</ul>
 				</div>
 

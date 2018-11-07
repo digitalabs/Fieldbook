@@ -925,25 +925,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				return modalInstance;
 			};
 
-			$scope.addSubObservation = function () {
-
-				/**
-				 * Artificial id for subObs tabs, that do not exists on db
-				 */
-				var id = $scope.subObservationTabs.length + 1;
-				var name = 'Sub-observation set ' + id; // TODO use first subObsSet name
-
-				$scope.subObservationTabs.push({
-					name: name,
-					id: id,
-					state: '/subObservationTabs/' + id, // arbitrary prefix to filter tab content
-					subObservationSets: [{
-						id: 1, // TODO use subObservationSetDbId
-						name: name
-					}]
-				});
-			};
-
 		}]);
 
 	manageTrialApp.filter('filterMeasurementState', function () {

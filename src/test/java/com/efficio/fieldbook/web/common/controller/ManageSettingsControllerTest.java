@@ -106,28 +106,6 @@ public class ManageSettingsControllerTest {
 
 		Mockito.verify(spyController).deleteVariable(VariableType.TRAIT.getId(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
 	}
-	
-	@Test
-	public void testHasMeasurementDataOnEnvironment() throws Exception {
-		final int environmentNo = 1;
-		final ManageSettingsController spyController = this.initializeMockMeasurementRows();
-		Mockito.doReturn(true).when(this.studyService).hasMeasurementDataOnEnvironment(STUDY_ID, environmentNo);
-		
-		assertThat(true, is(equalTo(spyController.hasMeasurementDataOnEnvironment(new ArrayList<Integer>(), environmentNo))));
-	}
-	
-	@Test
-	public void testHasMeasurementDataOnEnvironmentWithNullWorkbook() throws Exception {
-		final ManageSettingsController spyController = this.initializeMockMeasurementRows();
-		// Returning null workbook means Study is unsaved yet
-		Mockito.when(this.userSelection.getWorkbook()).thenReturn(null);
-		
-		final boolean hasMeasurementData = spyController.hasMeasurementDataOnEnvironment(new ArrayList<Integer>(), 1);
-		
-		// Unsaved Study will have no measurement data
-		assertThat(false, is(equalTo(hasMeasurementData)));
-		Mockito.verify(this.studyService, Mockito.never()).hasMeasurementDataOnEnvironment(Matchers.anyInt(), Matchers.anyInt());
-	}
 
 	@Test
 	public void testHasMeasurementFailScenario() throws Exception {

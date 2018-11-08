@@ -26,6 +26,16 @@
 
 		};
 
+		datasetService.observationCountByInstance = function (studyId, datasetId, instanceId) {
+
+			if (studyId && instanceId && datasetId) {
+				return $http.head(BASE_URL + studyId + '/datasets/' + datasetId + '/observationUnits/' + instanceId, config);
+			}
+
+			return $q.reject('studyId, instanceId and datasetId are not defined.');
+
+		};
+
 		return datasetService;
 
 	}]);

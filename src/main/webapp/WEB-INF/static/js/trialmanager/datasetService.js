@@ -3,8 +3,8 @@
 
 	var datasetsApiModule = angular.module('datasets-api', []);
 
-	datasetsApiModule.factory('datasetService', ['$http', '$q', 'studyContext', 'DATASET_TYPES_SUBOBSERVATION_IDS', 'serviceUtilities',
-		function ($http, $q, studyContext, DATASET_TYPES_SUBOBSERVATION_IDS, serviceUtilities) {
+	datasetsApiModule.factory('datasetService', ['$http', '$q', 'studyContext', 'DATASET_TYPES_SUBOBSERVATION_IDS', 'serviceUtilities', 'DATASET_TYPES',
+		function ($http, $q, studyContext, DATASET_TYPES_SUBOBSERVATION_IDS, serviceUtilities, DATASET_TYPES) {
 
 			var BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/studies/';
 			var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
@@ -14,6 +14,30 @@
 				},
 				cache: false
 			};
+
+			var datasetTypeMap = {};
+			var datasetTypes = [{
+				id: DATASET_TYPES.PLANT_SUBOBSERVATIONS,
+				name: 'Plants',
+				abbr: 'Plants'
+			}, {
+				id: DATASET_TYPES.QUADRAT_SUBOBSERVATIONS,
+				name: 'Quadrats',
+				abbr: 'Quadrats'
+			}, {
+				id: DATASET_TYPES.TIME_SERIES_SUBOBSERVATIONS,
+				name: 'Time Series',
+				abbr: 'Time Series'
+			}, {
+				id: DATASET_TYPES.CUSTOM_SUBOBSERVATIONS,
+				name: 'Sub-Observation Units',
+				abbr: 'SOUs'
+			}];
+
+			angular.forEach(datasetTypes, function(datasetType) {
+				datasetTypeMap[datasetType.id] = datasetType;
+			});
+
 
 			var datasetService = {};
 			var successHandler = serviceUtilities.restSuccessHandler,
@@ -58,6 +82,11 @@
 			datasetService.getDataset = function (datasetId) {
 				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId, config);
 				return request.then(successHandler, failureHandler);
+			};
+
+			datasetService.getDatasetType = function (datasetTypeId) {
+				return datasetTypeMap[datasetTypeId];
+
 			};
 
 			return datasetService;

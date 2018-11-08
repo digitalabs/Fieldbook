@@ -791,9 +791,12 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				});
 
 				angular.forEach(subObservationTabs, function (datasetTab) {
+					var datasetType = datasetService.getDatasetType(datasetTab.datasetTypeId);
 					$scope.subObservationTabs.push({
 						id: datasetTab.datasetId,
 						name: datasetTab.name,
+						tabName: datasetType.abbr + ': ' + datasetTab.name,
+						titleName: datasetType.name + ': ' + datasetTab.name,
 						state: '/subObservationTabs/' + datasetTab.datasetId, // arbitrary prefix to filter tab content
 						subObservationSets: datasetByTabs[datasetTab.datasetId].map(function (dataset) {
 							return {

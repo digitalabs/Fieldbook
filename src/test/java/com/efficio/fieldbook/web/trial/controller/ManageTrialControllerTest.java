@@ -61,6 +61,6 @@ public class ManageTrialControllerTest {
 				.andExpect(MockMvcResultMatchers.model().attribute(AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "Common/manageStudy"));
 		
 		// Used ModelAttribute annotation for this so cannot assert above so verify mock interaction instead
-		Mockito.verify(this.contextUtil).getContextInfoFromSession();
+		Mockito.verify(this.contextUtil).getCurrentIbdbUserId();
 	}
 }

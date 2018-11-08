@@ -1,25 +1,26 @@
-
 /*global angular, openManageLocations,
 environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, showErrorMessage*/
 
-(function() {
+(function () {
 	'use strict';
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
-	'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService','$rootScope',
-		function($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService, $rootScope) {
+		'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService', 'studyStateService', '$rootScope', 'studyContext', 'datasetService',
+		function ($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService,
+				  studyStateService, $rootScope, studyContext, datasetService) {
 
+			var ctrl = this;
 			// preload the measurements tab, if the measurements tab is not yet loaded 
 			// to make sure deleting environments will still works
-		    // since environments are directly correlated to their measurement rows
+			// since environments are directly correlated to their measurement rows
 			// NOTE: $rootScope.stateSuccessfullyLoaded will only have value once the specific tab is successfully loaded
-		    if( $rootScope.stateSuccessfullyLoaded['createMeasurements'] === undefined 
-		    		&& $rootScope.stateSuccessfullyLoaded['editMeasurements'] === undefined){
+			if ($rootScope.stateSuccessfullyLoaded['createMeasurements'] === undefined
+				&& $rootScope.stateSuccessfullyLoaded['editMeasurements'] === undefined) {
 				$scope.loadMeasurementsTabInBackground();
-			}	
+			}
 
 			// at least one environment should be in the datatable, so we are prepopulating the table with the first environment
-			var populateDatatableWithDefaultValues = function() {
+			var populateDatatableWithDefaultValues = function () {
 				$scope.data = TrialManagerDataService.currentData.environments;
 
 				if (!$scope.data.environments) {
@@ -55,13 +56,18 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			}
 
 			$scope.ifLocationAddedToTheDataTable = function () {
-				return $scope.settings.managementDetails.keys().indexOf(parseInt(LOCATION_ID)) > -1;
+				if (Object.keys($scope.settings.managementDetails).length !== 0) {
+					return $scope.settings.managementDetails.keys().indexOf(parseInt(LOCATION_ID)) > -1;
+				} else {
+					return false;
+				}
+
 			};
 
 			//the flag to determine if we have a location variable in the datatable
 			$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 
-			$scope.onLocationChange = function(data){
+			$scope.onLocationChange = function (data) {
 				environmentService.changeEnvironments(data);
 			}
 
@@ -69,21 +75,21 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				//TODO disable?
 				text: $.fieldbookMessages.studyManageSettingsManageLocation,
 				className: 'fbk-buttons-no-border fbk-buttons-link',
-				action: function() {
+				action: function () {
 					$scope.initiateManageLocationModal();
 				}
 			},
-			{
-				extend:'colvis',
-				className: 'fbk-buttons-no-border fbk-colvis-button',
-				text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>',
-				columns: ':gt(0):not(.ng-hide)'
-			}];
+				{
+					extend: 'colvis',
+					className: 'fbk-buttons-no-border fbk-colvis-button',
+					text: '<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>',
+					columns: ':gt(0):not(.ng-hide)'
+				}];
 
 			$scope.buttonsTop = [{
-				extend:'colvis',
+				extend: 'colvis',
 				className: 'fbk-buttons-no-border fbk-colvis-button',
-				text:'<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>',
+				text: '<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>',
 				columns: ':gt(0):not(.ng-hide)'
 			}];
 
@@ -93,7 +99,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				.withOption('scrollCollapse', true)
 				.withOption('deferRender', true);
 
-			$scope.dtOptions.drawCallback =  function() {
+			$scope.dtOptions.drawCallback = function () {
 				var api = $(this).DataTable();
 
 				//temporary fix in buttons disappear bug,
@@ -111,23 +117,23 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				}
 			};
 
-			$scope.onAddVariable = function() {
+			$scope.onAddVariable = function () {
 				$scope.nested.dtInstance.rerender();
 				// update the location flag, as it could have been added
 				$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 			};
 
-			$scope.$on('deleteOccurred', function() {
+			$scope.$on('deleteOccurred', function () {
 				$scope.nested.dtInstance.rerender();
 				// update the location flag, as it could have been deleted
 				$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 			});
-			
-			$scope.$on('rerenderEnvironmentTable', function(event, args) {
+
+			$scope.$on('rerenderEnvironmentTable', function (event, args) {
 				$scope.nested.dtInstance.rerender();
 			});
 
-			$scope.initiateManageLocationModal = function() {
+			$scope.initiateManageLocationModal = function () {
 				//TODO $scope.variableDefinition.locationUpdated = false;
 				openManageLocations();
 			};
@@ -135,7 +141,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			//prepopulate the datatable
 			populateDatatableWithDefaultValues();
 
-			TrialManagerDataService.onUpdateData('environments', function() {
+			TrialManagerDataService.onUpdateData('environments', function () {
 				$scope.temp.noOfEnvironments = $scope.data.noOfEnvironments;
 			});
 
@@ -144,12 +150,12 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				return TrialManagerDataService.trialMeasurement.hasMeasurement || TrialManagerDataService.trialMeasurement.hasAdvancedOrCrossesList;
 			};
 
-			$scope.updateEnvironmentCount = function() {
+			$scope.updateEnvironmentCount = function () {
 				if ($scope.temp.noOfEnvironments > $scope.data.environments.length) {
 					$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
 				} else if ($scope.temp.noOfEnvironments < $scope.data.environments.length) {
 					var modalInstance = $rootScope.openConfirmModal(environmentModalConfirmationText, environmentConfirmLabel);
-					modalInstance.result.then(function(shouldContinue) {
+					modalInstance.result.then(function (shouldContinue) {
 						if (shouldContinue) {
 							$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
 						}
@@ -157,19 +163,19 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				}
 			};
 
-			$scope.deleteEnvironment = function(index) {
+			$scope.deleteEnvironment = function (index) {
 				if (!TrialManagerDataService.isOpenStudy()) {
 					// For New Trial
 					confirmDeleteEnvironment(index);
 
 				} else {
 					// For Existing Trial
-					hasMeasurementDataOnEnvironment(index);
+					ctrl.hasMeasurementDataOnEnvironment(index);
 				}
 			};
 
-			$scope.updateTrialInstanceNo = function(environments, index) {
-				for (var i = 0; i <  environments.length; i++) {
+			$scope.updateTrialInstanceNo = function (environments, index) {
+				for (var i = 0; i < environments.length; i++) {
 					var environment = environments[i];
 					var trialInstanceNo = environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX];
 					if (trialInstanceNo > index) {
@@ -180,8 +186,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			};
 
 			$scope.addVariable = true;
-			$scope.findSetting = function(targetKey, type) {
-				if (! $scope.temp.settingMap[targetKey]) {
+			$scope.findSetting = function (targetKey, type) {
+				if (!$scope.temp.settingMap[targetKey]) {
 					var targetSettingList = null;
 
 					if (type === 'managementDetails') {
@@ -190,7 +196,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						targetSettingList = $scope.settings.trialConditionDetails;
 					}
 
-					$.each(targetSettingList, function(key, value) {
+					$.each(targetSettingList, function (key, value) {
 						if (value.variable.cvTermId === targetKey) {
 							$scope.temp.settingMap[targetKey] = value;
 							return false;
@@ -202,7 +208,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			};
 
 			/* Watchers */
-			$scope.$watch('data.noOfEnvironments', function(newVal, oldVal) {
+			$scope.$watch('data.noOfEnvironments', function (newVal, oldVal) {
 				$scope.temp.noOfEnvironments = newVal;
 				if (Number(newVal) < Number(oldVal)) {
 					// if new environment count is less than previous value, splice array
@@ -220,69 +226,81 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					addNewEnvironments(newVal - oldVal);
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 				}
+
+				if (newVal !== oldVal) {
+					studyStateService.updateOccurred();
+				}
 			});
 
-			$scope.$watch('settings.managementDetails', function(newVal, oldVal) {
-				updateEnvironmentVariables('managementDetails', newVal.length > oldVal.length);
+			$scope.$watch('settings.managementDetails', function (newVal, oldVal) {
+				ctrl.updateEnvironmentVariables('managementDetails', newVal.length > oldVal.length);
 			}, true);
 
-			$scope.$watch('settings.trialConditionDetails', function(newVal, oldVal) {
-				updateEnvironmentVariables('trialConditionDetails', newVal.length > oldVal.length);
+			$scope.$watch('settings.trialConditionDetails', function (newVal, oldVal) {
+				ctrl.updateEnvironmentVariables('trialConditionDetails', newVal.length > oldVal.length);
 			}, true);
 
 			/* Controller Utility functions */
-			function confirmDeleteEnvironment(index) {
+			ctrl.confirmDeleteEnvironment = function (index) {
 				// Existing Trial with measurement data
 				var modalInstance = $rootScope.openConfirmModal(environmentModalConfirmationText, environmentConfirmLabel);
-				modalInstance.result.then(function(shouldContinue) {
+				modalInstance.result.then(function (shouldContinue) {
 					if (shouldContinue) {
 						updateDeletedEnvironment(index);
 					}
 				});
 			}
 
-            function hasMeasurementDataOnEnvironment(environmentNo) {
-                var variableIds = TrialManagerDataService.settings.measurements.keys();
-                var dfd = $.Deferred();
-                $.ajax({
-                    url: '/Fieldbook/trial/measurements/instanceMetadata/' + $('#studyId').val(),
-                    success: function (data) {
-                        var envList;
-                        envList = data;
-                        if (envList[environmentNo] == undefined) {
-                            hasAdvancedOrCrossesListOnStudy();
-                        }
-                        else {
-                            $http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' +
-                                envList[environmentNo].instanceDbId, variableIds, {cache: false}).success(function (data) {
-                                if (true === data) {
-                                    var warningMessage = 'This environment cannot be removed because it contains measurement data.';
-                                    showAlertMessage('', warningMessage);
-                                } else {
-                                    hasAdvancedOrCrossesListOnStudy();
-                                }
-                                dfd.resolve();
-                            });
-                        }
+			ctrl.hasMeasurementDataOnEnvironment = function (environmentNo) {
+				var deferred = $.Deferred();
 
-                    }
-                });
-                return dfd.promise();
-            }
+				$http.get('/Fieldbook/trial/measurements/instanceMetadata/' + studyContext.studyId, {cache: false}).success(function (environmentList) {
+					if (environmentList[environmentNo] === undefined) {
+						ctrl.hasAdvancedOrCrossesListOnStudy(environmentNo);
+						deferred.resolve();
+					}
+					else {
 
-            function hasAdvancedOrCrossesListOnStudy() {
-                if(TrialManagerDataService.trialMeasurement.hasAdvancedOrCrossesList) {
-                    var warningMessage = 'This environment cannot be removed because the study has Advance/Cross List.';
-                    showAlertMessage('', warningMessage);
-                } else {
-                    confirmDeleteEnvironment(environmentNo);
-                }
-            }
+						var instanceId = environmentList[environmentNo].instanceDbId;
+						var datasetId = studyContext.measurementDatasetId;
+						var studyId = studyContext.studyId;
+
+						datasetService.observationCountByInstance(studyId, datasetId, instanceId).then(function (response) {
+							var count = response.headers('X-Total-Count');
+							if (count > 0) {
+								var warningMessage = 'This environment cannot be removed because it contains measurement data.';
+								ctrl.showAlertMessage('', warningMessage);
+							} else {
+								ctrl.hasAdvancedOrCrossesListOnStudy(environmentNo);
+							}
+							deferred.resolve();
+						});
+					}
+
+				});
+
+				return deferred.promise();
+			}
+
+			ctrl.hasAdvancedOrCrossesListOnStudy = function(environmentNo) {
+				if(TrialManagerDataService.trialMeasurement.hasAdvancedOrCrossesList) {
+					var warningMessage = 'This environment cannot be removed because the study has Advance/Cross List.';
+					ctrl.showAlertMessage('', warningMessage);
+				} else {
+					ctrl.confirmDeleteEnvironment(environmentNo);
+				}
+			}
+
+			// Wrap 'showAlertMessage' global function to a controller function so that
+			// we can mock it in unit test.
+			ctrl.showAlertMessage = function (title, message) {
+				showAlertMessage(title, message);
+			}
 
 			// on click generate design button
 			function refreshMeasurementTableAfterDeletingEnvironment() {
 				$rootScope.$broadcast('previewMeasurements');
-                $('body').addClass('preview-measurements-only');
+				$('body').addClass('preview-measurements-only');
 				// Make sure that the measurement table will only refresh if there is a selected design type for the current study
 				var designTypeId = TrialManagerDataService.currentData.experimentalDesign.designType;
 				var designTypes = TrialManagerDataService.applicationData.designTypes;
@@ -292,7 +310,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				data.noOfEnvironments = noOfEnvironments;
 
 				TrialManagerDataService.generateExpDesign(data).then(
-					function(response) {
+					function (response) {
 						if (response.valid === true) {
 							TrialManagerDataService.clearUnappliedChangesFlag();
 							TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
@@ -301,7 +319,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 							showErrorMessage('', response.message);
 							$body.removeClass('preview-measurements-only');
 						}
-					}, function(errResponse) {
+					}, function (errResponse) {
 						showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
 						$body.removeClass('preview-measurements-only');
 					}
@@ -317,7 +335,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					});
 				}
 				// we need to assign the TrialInstanceNumber and set it equal to index when new environments were added to the list
-				for (var i = 0; i <  $scope.data.environments.length; i++) {
+				for (var i = 0; i < $scope.data.environments.length; i++) {
 					var environment = $scope.data.environments[i];
 					if (!environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX]) {
 						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = i + 1;
@@ -326,7 +344,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				TrialManagerDataService.indicateUnappliedChangesAvailable(displayWarningMessage);
 			}
 
-			function updateEnvironmentVariables(type, entriesIncreased) {
+			ctrl.updateEnvironmentVariables = function (type, entriesIncreased) {
 
 				var settingDetailSource = null;
 				var targetKey = null;
@@ -339,17 +357,17 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					targetKey = 'trialDetailValues';
 				}
 
-				$.each($scope.data.environments, function(key, value) {
+				$.each($scope.data.environments, function (key, value) {
 					var subList = value[targetKey];
 
 					if (entriesIncreased) {
-						$.each(settingDetailSource.keys(), function(key, value) {
+						$.each(settingDetailSource.keys(), function (key, value) {
 							if (subList[value] === undefined) {
 								subList[value] = null;
 							}
 						});
 					} else {
-						$.each(subList, function(idKey) {
+						$.each(subList, function (idKey) {
 							if (!settingDetailSource.vals().hasOwnProperty(idKey)) {
 								delete subList[idKey];
 							}
@@ -380,9 +398,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
 				addNewEnvironments(addtlNumOfEnvironments, 'true');
 			}
-		}]).factory('DTLoadingTemplate', function() {
-			return {
-				html: '<span class="throbber throbber-2x"></span>'
-			};
-		});
+		}]).factory('DTLoadingTemplate', function () {
+		return {
+			html: '<span class="throbber throbber-2x"></span>'
+		};
+	});
 })();

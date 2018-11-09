@@ -303,7 +303,7 @@
 						title: displayColumn.name,
 						data: function (row) {
 							if (row.variables[displayColumn.name]) {
-								return row.variables[displayColumn.name].value;
+								return row.variables[displayColumn.name].value || "";
 							}
 							return "";
 						}

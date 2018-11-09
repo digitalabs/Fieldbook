@@ -150,8 +150,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					name: 'Germplasm & Checks',
 					state: 'germplasm'
 				},
-				{
-					name: 'Environments',
+                {   name: 'Treatment Factors',
+                    state: 'treatment'
+                },
+				{   name: 'Environments',
 					state: 'environment'
 				},
 				{

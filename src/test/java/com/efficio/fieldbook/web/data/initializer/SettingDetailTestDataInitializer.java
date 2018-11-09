@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.data.initializer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.TermId;
 
@@ -12,6 +13,13 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 
 public class SettingDetailTestDataInitializer {
 
+	public static SettingDetail createSettingDetail(final int cvTermId, final String name, final String value,
+			final PhenotypicType role) {
+		final SettingDetail settingDetail = SettingDetailTestDataInitializer.createSettingDetail(cvTermId, name, value, role.name());
+		settingDetail.setRole(role);
+		return settingDetail;
+	}
+	
 	public static SettingDetail createSettingDetail(final int cvTermId, final String name, final String value,
 			final String label) {
 

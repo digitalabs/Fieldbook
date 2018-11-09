@@ -16,6 +16,7 @@ describe('Dataset Service', function () {
 			$provide.value("studyContext", {});
 			$provide.value("serviceUtilities", {});
 			$provide.value("DATASET_TYPES_SUBOBSERVATION_IDS", {});
+			$provide.value("DATASET_TYPES", {});
 		});
 	});
 
@@ -40,8 +41,6 @@ describe('Dataset Service', function () {
 			datasetService.observationCount(studyId, datasetId, variableIds).then(function (response) {
 				expect(response.headers('X-Total-Count')).toEqual('100');
 			});
-
-			$httpBackend.flush();
 
 		});
 
@@ -71,8 +70,6 @@ describe('Dataset Service', function () {
 			datasetService.observationCountByInstance(studyId, datasetId, instanceId).then(function (response) {
 				expect(response.headers('X-Total-Count')).toEqual('200');
 			});
-
-			$httpBackend.flush();
 
 		});
 

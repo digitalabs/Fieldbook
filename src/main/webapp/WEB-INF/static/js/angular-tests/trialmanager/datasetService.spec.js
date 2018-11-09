@@ -3,6 +3,11 @@
 describe('Dataset Service', function () {
 
 	var datasetService, $httpBackend, $q;
+	var studyContext = {
+		studyId: 1,
+		cropName: 'maize',
+		measurementDatasetId: 2009
+	};
 
 	beforeEach(function () {
 
@@ -13,7 +18,7 @@ describe('Dataset Service', function () {
 		});
 
 		module(function ($provide) {
-			$provide.value("studyContext", {});
+			$provide.value("studyContext", studyContext);
 			$provide.value("serviceUtilities", {});
 			$provide.value("DATASET_TYPES_SUBOBSERVATION_IDS", {});
 			$provide.value("DATASET_TYPES", {});

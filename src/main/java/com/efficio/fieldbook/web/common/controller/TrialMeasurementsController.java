@@ -683,7 +683,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			workbook = this.fieldbookMiddlewareService.getCompleteDataset(datasetId);
 			this.fieldbookService.setAllPossibleValuesInWorkbook(workbook);
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-				this.ontologyService, contextUtil.getCurrentProgramUUID());
+				this.ontologyService, this.contextUtil.getCurrentProgramUUID());
 		} catch (final MiddlewareException e) {
 			TrialMeasurementsController.LOG.error(e.getMessage(), e);
 		}
@@ -705,8 +705,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	void roundNumericValues(final List<MeasurementRow> measurementRowList) {
 	  	for (final MeasurementRow row : measurementRowList) {
 	  	  	for (final MeasurementData data : row.getDataList()) {
-		  		if (data.getMeasurementVariable().getVariableType().getId().equals(VariableType.TRAIT.getId()) && data.isNumeric() && data.getValue() != null && !data.getValue().isEmpty()) {
-		    		String value = StringUtils.stripEnd(String.format ("%.2f", Double.parseDouble(data.getValue())), "0");
+		  		if (data.getMeasurementVariable().getVariableType() != null && data.getMeasurementVariable().getVariableType().getId().equals(VariableType.TRAIT.getId()) && data.isNumeric() && data.getValue() != null && !data.getValue().isEmpty()) {
+		    		final String value = StringUtils.stripEnd(String.format ("%.2f", Double.parseDouble(data.getValue())), "0");
 					data.setValue(StringUtils.stripEnd(value, "."));
 		  		}
 			}
@@ -871,7 +871,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	}
 
 	public UserSelection getUserSelection() {
-		return userSelection;
+		return this.userSelection;
 	}
 
 	@Override

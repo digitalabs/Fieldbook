@@ -78,11 +78,11 @@ public class ExpDesignUtilTest {
 	public void testGenerateExperimentDesignMeasurements() {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyTypeDto.getTrialDto());
 
-		final List<String> treatmentFactor = new ArrayList<String>();
+		final List<String> treatmentFactors = new ArrayList<String>();
 		final List<String> levels = new ArrayList<String>();
 		final MainDesign mainDesign =
-				experimentDesignGenerator.createRandomizedCompleteBlockDesign("2", ExpDesignUtilTest.REP_NO, ExpDesignUtilTest.PLOT_NO,
-						301, 201, treatmentFactor, levels, "");
+			this.experimentDesignGenerator.createRandomizedCompleteBlockDesign("2", ExpDesignUtilTest.REP_NO, ExpDesignUtilTest.PLOT_NO,
+						301, 201, TermId.ENTRY_NO.name(), treatmentFactors, levels, "");
 
 		this.setMockValues(mainDesign);
 
@@ -95,7 +95,7 @@ public class ExpDesignUtilTest {
 
 		try {
 			final List<MeasurementRow> measurementRowList =
-					experimentDesignGenerator.generateExperimentDesignMeasurements(environments, environmentsToAdd, workbook.getTrialVariables(),
+				this.experimentDesignGenerator.generateExperimentDesignMeasurements(environments, environmentsToAdd, workbook.getTrialVariables(),
 							workbook.getFactors(), workbook.getNonTrialFactors(), workbook.getVariates(), null, requiredExpDesignVariable,
 							germplasmList, mainDesign, ExpDesignUtilTest.ENTRY_NO,
 							treatmentFactorValues, new HashMap<Integer, Integer>());

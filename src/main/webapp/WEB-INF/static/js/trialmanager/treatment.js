@@ -18,7 +18,7 @@
 			$scope.data = TrialManagerDataService.currentData.treatmentFactors;
 
 			// watch $scope.settings, since we are sure that $scope.settings is an orderedhash even empty, we could just
-			// use $watchCollection, for every added change we retrieve the 'AMOUNT ' pairs dynamically. also creat a
+			// use $watchCollection, for every added change we retrieve the 'AMOUNT' pairs dynamically. also create a
 			// store to $scope.currentData for the variable levels.
 
 			$scope.trialMeasurement = TrialManagerDataService.trialMeasurement;

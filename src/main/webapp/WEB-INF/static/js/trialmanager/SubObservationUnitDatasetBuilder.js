@@ -143,10 +143,10 @@
 				angular.forEach($scope.variables, function (variable) {
 					if ($scope.datasetType.defaultVariableId === parseInt(variable.id)) {
 						$scope.selectedVariable = variable;
-						$timeout(function () {
-							angular.element('#variableDatasetBuilder').select2();
-						}, 1);
 					}
+					$timeout(function () {
+						angular.element('#variableDatasetBuilder').select2();
+					}, 1);
 				});
 			});
 		};
@@ -178,31 +178,31 @@
 		};
 
 		$scope.getDatasetTypes = function () {
-			return [({
+			return [{
 				id: DATASET_TYPES.PLANT_SUBOBSERVATIONS,
 				label: 'Plants',
 				name: 'plants',
 				defaultVariableId: 8206,
 				alias: 'plants'
-			}), ({
+			}, {
 				id: DATASET_TYPES.QUADRAT_SUBOBSERVATIONS,
 				label: 'Quadrats',
 				name: 'quadrats',
 				defaultVariableId: 8207,
 				alias: 'quadrats'
-			}), ({
+			}, {
 				id: DATASET_TYPES.TIME_SERIES_SUBOBSERVATIONS,
 				label: 'Time Series',
 				name: 'time series',
 				defaultVariableId: 8205,
 				alias: 'time points'
-			}), ({
+			}, {
 				id: DATASET_TYPES.CUSTOM_SUBOBSERVATIONS,
 				label: 'Custom',
 				name: 'sub-observation units',
 				defaultVariableId: undefined,
 				alias: 'sub-observation units'
-			})];
+			}];
 		};
 
 		$scope.dataSetTypeSelected = function (datasetType) {

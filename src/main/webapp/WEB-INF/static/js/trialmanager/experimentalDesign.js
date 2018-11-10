@@ -200,7 +200,7 @@
 						if (!$scope.doValidate()) {
 							return;
 						}
-
+                        TrialManagerDataService.performDataCleanup();
 						var environmentData = angular.copy($scope.data);
 						environmentData.startingEntryNo = TrialManagerDataService.currentData.experimentalDesign.startingEntryNo;
 

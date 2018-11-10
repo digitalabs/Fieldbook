@@ -94,3 +94,7 @@ FieldMapHorizontalRowColumn_*.xls
 FieldMapVertical_*.xls
 FieldMapVerticalRowColumn_*.xls
 temp
+
+node_modules
+node
+package-lock.json

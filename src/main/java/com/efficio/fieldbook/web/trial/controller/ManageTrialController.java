@@ -58,11 +58,10 @@ public class ManageTrialController extends AbstractBaseFieldbookController {
 		return "Common/manageStudy";
 	}
 	
-	@ModelAttribute("contextInfo")
-	public ContextInfo getContextInfo() {
-		return this.contextUtil.getContextInfoFromSession();
+	@ModelAttribute("currentCropUserId")
+	public Integer getCurrentCropUserId() {
+		return this.contextUtil.getCurrentIbdbUserId();
 	}
-	
 	
 
 }

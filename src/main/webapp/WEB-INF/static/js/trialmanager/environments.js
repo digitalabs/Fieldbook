@@ -282,13 +282,16 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				return deferred.promise();
 			}
 
-			ctrl.hasAdvancedOrCrossesListOnStudy = function(environmentNo) {
+			ctrl.hasAdvancedOrCrossesListOnStudy = function (environmentNo) {
+				var deferred = $.Deferred();
 				if(TrialManagerDataService.trialMeasurement.hasAdvancedOrCrossesList) {
 					var warningMessage = 'This environment cannot be removed because the study has Advance/Cross List.';
 					ctrl.showAlertMessage('', warningMessage);
 				} else {
 					ctrl.confirmDeleteEnvironment(environmentNo);
 				}
+				deferred.resolve();
+				return deferred.promise();
 			}
 
 			// Wrap 'showAlertMessage' global function to a controller function so that

@@ -13,7 +13,7 @@ describe('Measurement Controller', function () {
 			then: jasmine.createSpy('then')
 		}
 	};
-	var rootScopeMock = jasmine.createSpyObj('$rootScope', {openConfirmModal: modalInstanceMock})
+	var rootScopeMock = jasmine.createSpyObj('$rootScope', {openConfirmModal: modalInstanceMock});
 	var trialManagerServiceMock = {settings: {measurements: {}}};
 	var derivedVariableServiceMock = {hasMeasurementData: jasmine.createSpy('hasMeasurementData')};
 	var datasetServiceMock = {observationCount: jasmine.createSpy('observationCount')};
@@ -32,7 +32,6 @@ describe('Measurement Controller', function () {
 		module('ui.select2');
 		module('ngSanitize');
 		module('ui.router');
-		module('ct.ui.router.extras');
 		module('designImportApp');
 		module('ngLodash');
 		module('showSettingFormElementNew');

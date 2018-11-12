@@ -1,4 +1,5 @@
 {
+  "name": "Fieldbook",
   "devDependencies": {
     "jasmine-core": "^3.2.1",
     "jasmine-jquery": "^2.1.1",
@@ -6,5 +7,9 @@
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.2",
     "karma-phantomjs-launcher": "^1.0.4"
+  },
+  "scripts": {
+    "test": "karma start karma.conf.js",
+    "test:watch": "yarn test --watch"
   }
 }

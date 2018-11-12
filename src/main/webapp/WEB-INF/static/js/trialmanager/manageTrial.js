@@ -9,7 +9,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
-		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'datasets-api']);
+		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'datasets-api', 'export-study']);
 
 	/*** Added to prevent Unsecured HTML error
 	 It is used by ng-bind-html ***/
@@ -178,9 +178,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
-		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', '$uibModal', '$q', 'datasetService',
+		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService' ,'$uibModal', '$q', 'datasetService',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
-				  derivedVariableService, $uibModal, $q, datasetService) {
+				  derivedVariableService, exportStudyModalService, $uibModal, $q, datasetService) {
+
 			$scope.trialTabs = [
 				{
 					name: 'Settings',
@@ -929,6 +930,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				});
 				return modalInstance;
 			};
+
+			$scope.showExportStudyModal = function() {
+				exportStudyModalService.openDatasetOptionModal();
+			}
 
 		}]);
 

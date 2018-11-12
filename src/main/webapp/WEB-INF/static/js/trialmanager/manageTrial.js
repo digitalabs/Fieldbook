@@ -8,8 +8,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	'use strict';
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
-		'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
-		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'datasets-api']);
+		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
+		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'datasets-api']);
 
 	/*** Added to prevent Unsecured HTML error
 	 It is used by ng-bind-html ***/
@@ -19,9 +19,12 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	// routing configuration
 	// TODO: if possible, retrieve the template urls from the list of constants
-	manageTrialApp.config(function ($stateProvider, $urlRouterProvider, $stickyStateProvider) {
+	manageTrialApp.config(function ($uiRouterProvider, $stateProvider, $urlRouterProvider) {
 
-		$stickyStateProvider.enableDebug(false);
+		var StickyStates = window['@uirouter/sticky-states'];
+		var DSRPlugin = window['@uirouter/dsr'].DSRPlugin;
+		$uiRouterProvider.plugin(StickyStates.StickyStatesPlugin);
+		$uiRouterProvider.plugin(DSRPlugin);
 
 		$urlRouterProvider.otherwise('/trialSettings');
 		$stateProvider
@@ -86,7 +89,45 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				},
 				deepStateRedirect: true, sticky: true
-			});
+			})
+
+			.state('subObservationTabs', {
+				url: '/subObservationTabs/:subObservationTabId',
+				views: {
+					subObservationTab: {
+						controller: 'SubObservationTabCtrl',
+						templateUrl: '/Fieldbook/TrialManager/openTrial/subObservationTab'
+					}
+				},
+				params: {
+					subObservationTab: null
+				},
+				redirectTo: function (trans) {
+					var tab = trans.params().subObservationTab;
+					if (tab && tab.subObservationSets.length) {
+						var subObservationSet = tab.subObservationSets[0];
+						return {
+							state: 'subObservationTabs.subObservationSets',
+							params: {
+								subObservationTabId: tab.id,
+								subObservationTab: tab,
+								subObservationSetId: subObservationSet.id,
+								subObservationSet: subObservationSet
+							}
+						}
+					}
+				}
+				// , deepStateRedirect: { params: true } // TODO
+			})
+			.state('subObservationTabs.subObservationSets', {
+				url: '/subObservationSets/:subObservationSetId',
+				controller: 'SubObservationSetCtrl',
+				templateUrl: '/Fieldbook/TrialManager/openTrial/subObservationSet',
+				params: {
+					subObservationSet: null
+				},
+			})
+		;
 
 	});
 
@@ -103,23 +144,22 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	});
 
 	manageTrialApp.run(
-		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES',
-			function ($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES) {
+		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES', '$transitions',
+			function ($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES, $transitions) {
 				$rootScope.VARIABLE_TYPES = VARIABLE_TYPES;
 
-				$rootScope.$on('$stateChangeStart',
-					function (event) {
+				$transitions.onEnter({},
+					function (transition) {
 						if ($('.import-study-data').data('data-import') === '1' || stockListImportNotSaved) {
-							showAlertMessage('', importSaveDataWarningMessage);
-							event.preventDefault();
+							transition.abort();
 						}
 						// a 'transition prevented' error
 					});
 
 				$rootScope.stateSuccessfullyLoaded = {};
-				$rootScope.$on('$stateChangeSuccess',
-					function (event, toState, toParams, fromState, fromParams) {
-						$rootScope.stateSuccessfullyLoaded[toState.name] = true;
+				$transitions.onSuccess({},
+					function (transition) {
+						$rootScope.stateSuccessfullyLoaded[transition.from().name] = true;
 					});
 
 				// It's very handy to add references to $state and $stateParams to the $rootScope
@@ -138,9 +178,9 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
-		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', '$uibModal', '$q',
+		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', '$uibModal', '$q', 'datasetService',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
-				  derivedVariableService, $uibModal, $q) {
+				  derivedVariableService, $uibModal, $q, datasetService) {
 			$scope.trialTabs = [
 				{
 					name: 'Settings',
@@ -169,6 +209,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					state: 'editMeasurements'
 				}
 			];
+			$scope.subObservationTabs = [];
 			$scope.tabSelected = 'trialSettings';
 			$scope.isSettingsTab = true;
 			$location.path('/trialSettings');
@@ -696,6 +737,115 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				}
 			};
+
+			$scope.addSubObservationTabData = function (id, name, datasetTypeId, parentDatasetId) {
+				var datasetType = datasetService.getDatasetType(datasetTypeId);
+
+				/**
+				 * Artificial id for subObs tabs, that do not exists on db
+				 */
+				var newSubObsTab = {
+					id: id,
+					name: name,
+					tabName: datasetType.abbr + ': ' + name,
+					titleName: datasetType.name + ': ' + name,
+					state: '/subObservationTabs/' + id, // arbitrary prefix to filter tab content
+					subObservationSets: [{
+						id: id,
+						name: name,
+						datasetTypeId: datasetTypeId,
+						parentDatasetId: parentDatasetId
+					}]
+				};
+
+				$scope.subObservationTabs.push(newSubObsTab);
+				var params = {subObservationTabId: id, subObservationTab: newSubObsTab};
+
+				$scope.isSettingsTab = false;
+				$scope.tabSelected = newSubObsTab.state;
+				$state.go('subObservationTabs', params);
+
+			};
+
+			datasetService.getDatasets().then(function (data) {
+				/**
+				 * Restructure list from server based on parentDatasetId (can be null)
+				 * Example:
+				 *
+				 *         plotdata+--------------------+
+				 *            +                         |
+				 *            v                         v
+				 *    plants-dataset+---+        timeseries-dataset
+				 *            +         |
+				 *            v         v
+				 *  fruits-dataset    leafs-datasets
+				 *
+				 *                          +
+				 *                          |   transform into tabs
+				 *                          v
+				 *
+				 * +-------------+-----------------+---------------------+
+				 * |   plotdata  |  plants-dataset | timeseries-dataset  |
+				 * +-------------+----------+------+---------------------+
+				 *                          |
+				 *  +-----------------------+
+				 *  |
+				 * +v--------------+-----------------+----------------+
+				 * |plants-dataset |  fruits-dataset | leafs-datasets |
+				 * +---------------+-----------------+----------------+
+				 *
+				 */
+
+				// utility maps to easily get what we want
+				var datasetByParent = {};
+				var datasetById = {};
+				angular.forEach(data, function (dataset) {
+					datasetByParent[dataset.parentDatasetId] = dataset;
+					datasetById[dataset.datasetId] = dataset;
+				});
+
+				// restructure in tabs - a second iteration is needed once we have the full byParent map
+				var datasetByTabs = {};
+				angular.forEach(data, function (dataset) {
+					var parent = dataset;
+					// subobservation sets can be nested
+					while (parent.parentDatasetId && datasetById[parent.parentDatasetId]) {
+						parent = datasetById[parent.parentDatasetId];
+					}
+					datasetByTabs[parent.datasetId] = datasetByTabs[parent.datasetId] || [];
+					datasetByTabs[parent.datasetId].push(dataset);
+				});
+
+				var subObservationTabs = data.filter(function (dataset) {
+					// those whose parent is not in the list are considered roots
+					return !datasetById[dataset.parentDatasetId];
+				});
+
+				angular.forEach(subObservationTabs, function (datasetTab) {
+					var datasetType = datasetService.getDatasetType(datasetTab.datasetTypeId);
+					$scope.subObservationTabs.push({
+						id: datasetTab.datasetId,
+						name: datasetTab.name,
+						tabName: datasetType.abbr + ': ' + datasetTab.name,
+						titleName: datasetType.name + ': ' + datasetTab.name,
+						state: '/subObservationTabs/' + datasetTab.datasetId, // arbitrary prefix to filter tab content
+						subObservationSets: datasetByTabs[datasetTab.datasetId].map(function (dataset) {
+							return {
+								id: dataset.datasetId,
+								name: dataset.name,
+								datasetTypeId: dataset.datasetTypeId,
+								parentDatasetId: dataset.parentDatasetId
+							}
+						})
+					});
+				});
+			}, function (response) {
+				if (response.errors[0] && response.errors[0].message) {
+					showErrorMessage('', response.errors[0].message);
+				} else {
+					showErrorMessage('', ajaxGenericErrorMsg);
+				}
+			});
 
 			$scope.advancedTrialList = TrialManagerDataService.settings.advancedList;
 

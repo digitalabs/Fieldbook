@@ -38,7 +38,6 @@ describe('Measurement Controller', function () {
 		module('ui.select2');
 		module('ngSanitize');
 		module('ui.router');
-		module('ct.ui.router.extras');
 		module('designImportApp');
 		module('ngLodash');
 		module('showSettingFormElementNew');
@@ -91,8 +90,6 @@ describe('Measurement Controller', function () {
 				expect(controller.confirmDeleteEnvironment).toHaveBeenCalled();
 			});
 
-			httpBackend.flush();
-
 		});
 
 	});
@@ -116,8 +113,6 @@ describe('Measurement Controller', function () {
 					expect(controller.confirmDeleteEnvironment).toHaveBeenCalled();
 				});
 
-				httpBackend.flush();
-
 			});
 
 		});
@@ -139,8 +134,6 @@ describe('Measurement Controller', function () {
 					expect(controller.showAlertMessage)
 						.toHaveBeenCalledWith('', 'This environment cannot be removed because it contains measurement data.');
 				});
-
-				httpBackend.flush();
 
 			});
 

@@ -25,6 +25,11 @@
 			});
 		};
 
+		exportStudyModalService.redirectToOldExportModal = function () {
+			// Call the global function to show the old export study modal
+			showExportStudyModal();
+		};
+
 		return exportStudyModalService;
 
 	}]);
@@ -42,19 +47,27 @@
 				datasetService.getDatasets().then(function (datasets) {
 					$scope.datasets = datasets;
 				});
-			}
+			};
 
 			$scope.cancel = function () {
 				$uibModalInstance.dismiss();
-			}
+			};
 
 			$scope.continue = function () {
 				$scope.showExportOptions();
 				$uibModalInstance.close();
-			}
+			};
 
 			$scope.showExportOptions = function () {
-				exportStudyModalService.openExportStudyModal();
+
+				if ($scope.measurementDatasetId === $scope.selectedDatasetId) {
+					// If the selected dataset is a PLOT OBSERVATION, then use the old
+					// export study modal (non-Angular)
+					exportStudyModalService.redirectToOldExportModal();
+				} else {
+					exportStudyModalService.openExportStudyModal();
+				}
+
 			};
 
 			$scope.getDatasetType = datasetService.getDatasetType;

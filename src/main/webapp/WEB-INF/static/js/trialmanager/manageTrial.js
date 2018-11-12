@@ -738,6 +738,35 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 			};
 
+			$scope.addSubObservationTabData = function (id, name, datasetTypeId, parentDatasetId) {
+				var datasetType = datasetService.getDatasetType(datasetTypeId);
+
+				/**
+				 * Artificial id for subObs tabs, that do not exists on db
+				 */
+				var newSubObsTab = {
+					id: id,
+					name: name,
+					tabName: datasetType.abbr + ': ' + name,
+					titleName: datasetType.name + ': ' + name,
+					state: '/subObservationTabs/' + id, // arbitrary prefix to filter tab content
+					subObservationSets: [{
+						id: id,
+						name: name,
+						datasetTypeId: datasetTypeId,
+						parentDatasetId: parentDatasetId
+					}]
+				};
+
+				$scope.subObservationTabs.push(newSubObsTab);
+				var params = {subObservationTabId: id, subObservationTab: newSubObsTab};
+
+				$scope.isSettingsTab = false;
+				$scope.tabSelected = newSubObsTab.state;
+				$state.go('subObservationTabs', params);
+
+			};
+
 			datasetService.getDatasets().then(function (data) {
 				/**
 				 * Restructure list from server based on parentDatasetId (can be null)

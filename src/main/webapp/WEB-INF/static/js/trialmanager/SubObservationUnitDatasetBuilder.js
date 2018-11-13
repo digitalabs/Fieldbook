@@ -47,7 +47,7 @@
 					showSuccessfulMessage('', subObservationDatasetBuiltSuccessMessage);
 					angular.element('#SubObservationUnitDatasetBuildModal').modal('hide');
 					$scope.submitted = false;
-					$scope.subObservationTab(response.datasetId, response.name,response.datasetTypeId);
+					$scope.addSubObservationTabData(response.datasetId, response.name,response.datasetTypeId,response.parentDatasetId);
 				}, function (response) {
 					if (response.status == 401) {
 						bmsAuth.handleReAuthentication();
@@ -58,25 +58,6 @@
 					}
 				});
 			}
-		};
-
-		$scope.subObservationTab = function (id, name, datasetTypeId) {
-			var datasetType = datasetService.getDatasetType(datasetTypeId);
-
-			/**
-			 * Artificial id for subObs tabs, that do not exists on db
-			 */
-			$scope.subObservationTabs.push({
-				name: name,
-				id: id,
-				tabName: datasetType.abbr + ': ' + name,
-				titleName: datasetType.name + ': ' + name,
-				state: '/subObservationTabs/' + id, // arbitrary prefix to filter tab content
-				subObservationSets: [{
-					id: id,
-					name: name
-				}]
-			});
 		};
 
 		$scope.continue = function () {

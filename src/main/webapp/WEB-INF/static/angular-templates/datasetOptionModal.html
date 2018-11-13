@@ -1,8 +1,7 @@
 <div class="modal-body">
-
 	<div class="row form-group">
 		<div class="col-xs-11 col-md-11">
-			<label class="modal-title fbk-modal-title" id="heading-modal">Export study book</label>
+			<label class="modal-title fbk-modal-title" id="heading-modal">{{title}}</label>
 		</div>
 		<div class="col-xs-1 col-md-1">
 			<button ng-click="cancel()" type="button" class="close pull-right glyphicon glyphicon-remove"></button>
@@ -18,11 +17,15 @@
 	<b>DATASET</b>
 	<br>
 	<div class="form-group">
-		<label for="selDatasetType">Please choose the dataset you would like to export:</label>
-		<select class="form-control" id="selDatasetType" ng-model="selectedDatasetId">
-			<option value="{{measurementDatasetId}}" ng-selected="true">Plots: Observation</option>
-			<option ng-repeat="dataset in datasets" value="{{dataset.datasetId}}">{{getDatasetType(dataset.datasetTypeId).name}}: {{dataset.name}}</option>
-		</select>
+		<label>{{message}}</label> <span class="required">*</span>
+		<ui-select ng-model="selected.datasetId" theme="select2" search-enabled="false" style="min-width: 200px;">
+			<ui-select-match placeholder="Choose a dataset">{{getDatasetType($select.selected.datasetTypeId).name}}: {{$select.selected.name}}</ui-select-match>
+			<ui-select-choices repeat="dataset.datasetId as dataset in datasets">
+				<small>
+					{{getDatasetType(dataset.datasetTypeId).name}}: {{dataset.name}}
+				</small>
+			</ui-select-choices>
+		</ui-select>
 	</div>
 </div>
 <div class="modal-footer">

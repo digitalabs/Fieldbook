@@ -32,9 +32,13 @@
 				id: DATASET_TYPES.CUSTOM_SUBOBSERVATIONS,
 				name: 'Sub-Observation Units',
 				abbr: 'SOUs'
+			}, {
+				id: DATASET_TYPES.PLOT_OBSERVATIONS,
+				name: 'Plots',
+				abbr: 'Plots'
 			}];
 
-			angular.forEach(datasetTypes, function(datasetType) {
+			angular.forEach(datasetTypes, function (datasetType) {
 				datasetTypeMap[datasetType.id] = datasetType;
 			});
 
@@ -75,12 +79,25 @@
 				return request.then(successHandler, failureHandler);
 			};
 
+			datasetService.getPlotAndSubobservationDatasets = function () {
+				if (!studyContext.studyId) {
+					return $q.resolve([]);
+				}
+				var datasetTypeIds = DATASET_TYPES_SUBOBSERVATION_IDS.concat(DATASET_TYPES.PLOT_OBSERVATIONS);
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets', angular.merge({
+					params: {
+						datasetTypeIds: datasetTypeIds.join(",")
+					}
+				}, config));
+				return request.then(successHandler, failureHandler);
+			};
+
 			datasetService.getColumns = function (datasetId) {
 				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/table/columns', config);
 				return request.then(successHandler, failureHandler);
 			};
 
-			datasetService.getObservationTableUrl = function(datasetId, instanceId) {
+			datasetService.getObservationTableUrl = function (datasetId, instanceId) {
 				return BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/instances/' + instanceId + '/observationUnits/table';
 			};
 
@@ -100,6 +117,6 @@
 			};
 
 			return datasetService;
-	}]);
+		}]);
 
 })();

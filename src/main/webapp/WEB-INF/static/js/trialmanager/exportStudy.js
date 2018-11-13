@@ -2,16 +2,16 @@
 	'use strict';
 
 
-	var exportStudyModule = angular.module('export-study', ['ui.bootstrap', 'datasets-api']);
+	var exportStudyModule = angular.module('export-study', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal']);
 
 	exportStudyModule.factory('exportStudyModalService', ['$uibModal', function ($uibModal) {
 
-		var BASE_URL = '/Fieldbook/static/angular-templates/exportStudy/';
 		var exportStudyModalService = {};
 
 		exportStudyModalService.openDatasetOptionModal = function () {
 			$uibModal.open({
-				templateUrl: BASE_URL + 'exportDatasetOptionModal.html',
+				template: '<dataset-option-modal title="title" message="message"' +
+				'selected="selected" on-continue="showExportOptions()"></dataset-option-modal>',
 				controller: 'exportDatasetOptionCtrl',
 				size: 'md'
 			});
@@ -19,7 +19,7 @@
 
 		exportStudyModalService.openExportStudyModal = function () {
 			$uibModal.open({
-				templateUrl: BASE_URL + "exportStudyModal.html",
+				templateUrl: '/Fieldbook/static/angular-templates/exportStudy/exportStudyModal.html',
 				controller: "exportStudyCtrl",
 				size: 'md'
 			});
@@ -27,7 +27,7 @@
 
 		exportStudyModalService.redirectToOldExportModal = function () {
 			// Call the global function to show the old export study modal
-			showExportStudyModal();
+			showExportOptions();
 		};
 
 		return exportStudyModalService;
@@ -37,30 +37,14 @@
 	exportStudyModule.controller('exportDatasetOptionCtrl', ['$scope', '$uibModal', '$uibModalInstance', 'studyContext', 'exportStudyModalService',
 		'datasetService', function ($scope, $uibModal, $uibModalInstance, studyContext, exportStudyModalService, datasetService) {
 
-			var ctrl = this;
-
-			$scope.measurementDatasetId = studyContext.measurementDatasetId
-			$scope.selectedDatasetId = $scope.measurementDatasetId;
-			$scope.datasets;
-
-			ctrl.init = function () {
-				datasetService.getDatasets().then(function (datasets) {
-					$scope.datasets = datasets;
-				});
-			};
-
-			$scope.cancel = function () {
-				$uibModalInstance.dismiss();
-			};
-
-			$scope.continue = function () {
-				$scope.showExportOptions();
-				$uibModalInstance.close();
-			};
+			$scope.title = 'Export study book';
+			$scope.message = 'Please choose the dataset you would like to export:';
+			$scope.measurementDatasetId = studyContext.measurementDatasetId;
+			$scope.selected = {datasetId: $scope.measurementDatasetId};
 
 			$scope.showExportOptions = function () {
 
-				if ($scope.measurementDatasetId === $scope.selectedDatasetId) {
+				if ($scope.measurementDatasetId === $scope.selected.datasetId) {
 					// If the selected dataset is a PLOT OBSERVATION, then use the old
 					// export study modal (non-Angular)
 					exportStudyModalService.redirectToOldExportModal();
@@ -69,10 +53,6 @@
 				}
 
 			};
-
-			$scope.getDatasetType = datasetService.getDatasetType;
-
-			ctrl.init();
 
 		}]);
 

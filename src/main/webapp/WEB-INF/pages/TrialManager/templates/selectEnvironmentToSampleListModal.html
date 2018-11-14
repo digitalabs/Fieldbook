@@ -28,7 +28,7 @@
 					</div>
 					<br/>
 					<div id="location-selection-createSample">
-						<environment-details></environment-details>
+						<instances-table instances="instances" selected-instances="selectedInstances" instance-id-property="instanceNumber"></instances-table>
 					</div>
 				</div> <!-- Modal Body -->
 				<div class="modal-footer">
@@ -36,7 +36,7 @@
 							th:text="#{common.form.cancel.text}">
 						Cancel
 					</button>
-					<button type="button" class="btn btn-primary" ng-disabled="trialInstances.length === 0"
+					<button type="button" class="btn btn-primary" ng-disabled="instances.length === 0"
 							ng-click="continueCreatingSampleList()" th:text="#{common.form.continue.text}">
 						Continue
 					</button>

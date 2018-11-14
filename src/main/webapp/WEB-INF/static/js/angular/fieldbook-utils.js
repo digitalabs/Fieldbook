@@ -67,7 +67,7 @@
 
 	})();
 
-	angular.module('fieldbook-utils', ['ui.select2', 'ui.select'])
+	angular.module('fieldbook-utils', ['ui.select2', 'ui.select', 'datatables'])
 		.constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
 		.constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
 		.directive('displaySettings', ['TrialManagerDataService', '$filter', '_', 'studyStateService',
@@ -310,7 +310,7 @@
 					var showAll = $scope.valuecontainer[$scope.targetkey];
 					$scope.localData.useFavorites = !showAll;
 					$scope.lookupLocation =  showAll ? 2 : 1;
-					
+
 					$scope.updateDropdownValuesFavorites = function() {
 						if ($scope.localData.useFavorites) {
 							if ($scope.lookupLocation == 1) {
@@ -326,12 +326,12 @@
 							}
 						}
 					};
-			
+
 					$scope.updateDropdownValuesBreedingLocation = function() { // Change state for breeding
 						$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.possibleValuesFavorite : $scope.variableDefinition.possibleValues;
 						$scope.lookupLocation = 1;
 					};
-					
+
 					$scope.updateDropdownValuesAllLocation = function() { // Change state for all locations radio
 						$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.allFavoriteValues : $scope.variableDefinition.allValues;
 						$scope.lookupLocation = 2;
@@ -610,8 +610,37 @@
 					};
 				}
 			};
-		})
-		.factory('formUtilities', function() {
+		}).directive('instancesTable', ['DTOptionsBuilder', 'DTColumnBuilder', function (DTOptionsBuilder, DTColumnBuilder) {
+
+			return {
+				restrict: 'E',
+				require: '?ngModel',
+				scope: {
+					instances: '=',
+					selectedInstances: '=',
+					instanceIdProperty: '@'
+				},
+				templateUrl: '/Fieldbook/static/angular-templates/instancesTable.html',
+				controller: function ($scope) {
+
+					$scope.isSelectAll = true;
+					$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<\'row\'<\'col-sm-6\'l><\'col-sm-6\'f>>' +
+						'<\'row\'<\'col-sm-12\'tr>>' +
+						'<\'row\'<\'col-sm-5\'i><\'col-sm-7\'>>' +
+						'<\'row\'<\'col-sm-12\'p>>');
+
+					$scope.toggleSelect = function(checked) {
+						$.each($scope.instances, function( key, value ) {
+							$scope.selectedInstances[value[$scope.instanceIdProperty]] = checked;
+						});
+					};
+
+					// Select All Checkbox by default.
+					$scope.toggleSelect($scope.isSelectAll);
+
+				}
+			};
+		}]).factory('formUtilities', function() {
 
 			var formUtilities = {
 

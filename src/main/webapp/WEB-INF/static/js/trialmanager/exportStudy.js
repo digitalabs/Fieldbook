@@ -2,7 +2,7 @@
 	'use strict';
 
 
-	var exportStudyModule = angular.module('export-study', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal']);
+	var exportStudyModule = angular.module('export-study', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal', 'fieldbook-utils']);
 
 	exportStudyModule.factory('exportStudyModalService', ['$uibModal', function ($uibModal) {
 
@@ -17,11 +17,16 @@
 			});
 		};
 
-		exportStudyModalService.openExportStudyModal = function () {
+		exportStudyModalService.openExportStudyModal = function (datasetId) {
 			$uibModal.open({
 				templateUrl: '/Fieldbook/static/angular-templates/exportStudy/exportStudyModal.html',
 				controller: "exportStudyCtrl",
-				size: 'md'
+				size: 'md',
+				resolve: {
+					datasetId: function () {
+						return datasetId;
+					}
+				}
 			});
 		};
 
@@ -56,17 +61,33 @@
 
 		}]);
 
-	exportStudyModule.controller('exportStudyCtrl', ['$scope', '$uibModalInstance', function ($scope, $uibModalInstance) {
+	exportStudyModule.controller('exportStudyCtrl', ['datasetId', '$scope', '$uibModalInstance', 'datasetService',
+		function (datasetId, $scope, $uibModalInstance, datasetService) {
 
-		$scope.cancel = function () {
-			$uibModalInstance.dismiss();
-		}
+			var ctrl = this;
 
-		$scope.export = function () {
-			$uibModalInstance.close();
-		}
+			$scope.exportFormat = '';
+			$scope.collectionOrder = '';
+			$scope.instances = [];
+			$scope.selectedInstances = {};
 
-	}]);
+			$scope.cancel = function () {
+				$uibModalInstance.dismiss();
+			};
 
+			$scope.export = function () {
+				console.log($scope.selectedInstances);
+				$uibModalInstance.close();
+			};
+
+			ctrl.init = function () {
+				datasetService.getDatasetInstances(datasetId).then(function (instances) {
+					$scope.instances = instances;
+				});
+			};
+
+			ctrl.init();
+
+		}]);
 
 })();

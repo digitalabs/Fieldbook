@@ -43,9 +43,9 @@
 		</div>
 		<div class="col-xs-4 col-md-4">
 			<select id="exportWayType" style="width: 170px">
-				<option value="1" th:text="#{study.export.data.collection.row.col}">Plot Order</option>
-				<option value="2" th:text="#{study.export.data.collection.serpentine.along.rows}">Serpentine - Along Rows</option>
-				<option value="3" th:text="#{study.export.data.collection.serpentine.along.columns}">Serpentine - Along columns</option>
+				<option value="1">Plot Order</option>
+				<option value="2">Serpentine - Along Rows</option>
+				<option value="3">Serpentine - Along columns</option>
 
 			</select>
 		</div>
@@ -59,10 +59,9 @@
 		<div class="col-xs-12 col-md-12">
 			<label class="control-label h4">STUDY ENVIRONMENT</label>
 		</div>
-
 		<div class="col-xs-12 col-md-12">&nbsp;</div>
-		<div class="col-xs-12 col-md-12 trial-instance">
-
+		<div class="col-xs-12 col-md-12">
+			<instances-table instances="instances" selected-instances="selectedInstances" instance-id-property="instanceId"></instances-table>
 		</div>
 
 	</div>

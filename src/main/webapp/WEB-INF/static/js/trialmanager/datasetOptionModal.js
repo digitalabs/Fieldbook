@@ -3,7 +3,7 @@
 
 	var datasetOptionModal = angular.module('datasetOptionModal', ['ui.bootstrap', 'ngSanitize', 'ui.select', 'datasets-api']);
 
-	datasetOptionModal.directive('datasetOptionModal', ['datasetService', 'studyContext', function (datasetService, studyContext) {
+	datasetOptionModal.directive('datasetOptionModal', ['datasetService', function (datasetService) {
 		return {
 			restrict: 'E',
 			require: '?ngModel',

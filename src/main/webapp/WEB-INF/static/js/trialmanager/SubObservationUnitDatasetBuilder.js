@@ -49,10 +49,8 @@
 					$scope.submitted = false;
 					$scope.addSubObservationTabData(response.datasetId, response.name,response.datasetTypeId,response.parentDatasetId);
 				}, function (response) {
-					if (response.status == 401) {
-						bmsAuth.handleReAuthentication();
-					} else if (response.data.errors) {
-						showErrorMessage('', response.data.errors[0].message);
+					if (response.errors) {
+						showErrorMessage('', response.errors[0].message);
 					} else {
 						showErrorMessage('', ajaxGenericErrorMsg);
 					}

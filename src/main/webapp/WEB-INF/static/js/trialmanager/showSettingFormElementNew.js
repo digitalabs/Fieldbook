@@ -68,15 +68,7 @@
     						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
     					$scope.localData = {};
-						var showAll = $scope.valuecontainer[$scope.targetkey];
-						if (showAll != null && showAll !='' && showAll != undefined) {
-							$scope.localData.useFavorites = false;
-							$scope.locationLookup =  2;
-						}
-						else{
-							$scope.locationLookup =  1;
-						}
-
+						
 						$scope.updateDropdownValuesFavorites = function() { // Change state for favorite checkbox
 								if ($scope.localData.useFavorites) {
 									if ($scope.locationLookup == 1) {
@@ -107,27 +99,17 @@
 							$scope.locationLookup = 2;
 						};
 
-						// if the list of favorites has any element, we set the checkbox
-						var useFavorites = function(currentVal) {
-							if(currentVal){
-								return false;
-							}
-
-							if ($scope.variableDefinition.possibleValuesFavorite !== null) {
-								return $scope.variableDefinition.possibleValuesFavorite.length > 0;
-							}
-
-							return $scope.localData.useFavorites;
-						};
-
     					if ($scope.hasDropdownOptions) {
 
     						var currentVal = $scope.valuecontainer[$scope.targetkey];
+                            $scope.locationLookup = $scope.isBreedingLocation($scope.valuecontainer[LOCATION_ID]);
+                            $scope.localData.useFavorites = $scope.isFavoriteLocation($scope.valuecontainer[LOCATION_ID]);
 
                             if (!currentVal && $scope.targetkey === LOCATION_ID) {
                                 currentVal = UNSPECIFIED_LOCATION_ID;
                                 $scope.valuecontainer[$scope.targetkey] = UNSPECIFIED_LOCATION_ID;
-                                $scope.locationLookup = 2;
+                                $scope.locationLookup =  $scope.isBreedingLocation(UNSPECIFIED_LOCATION_ID);
+                                $scope.localData.useFavorites = $scope.isFavoriteLocation(UNSPECIFIED_LOCATION_ID);
                             }
 
     						// lets fix current val if its an object so that valuecontainer only contains the id
@@ -135,8 +117,6 @@
     							currentVal = currentVal.id;
     							$scope.valuecontainer[$scope.targetkey] = currentVal;
     						}
-
-    						$scope.localData.useFavorites = useFavorites(currentVal);
 
     						$scope.updateDropdownValuesFavorites();
 

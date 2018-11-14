@@ -3,6 +3,11 @@
 describe('Dataset Service', function () {
 
 	var datasetService, $httpBackend, $q;
+	var studyContext = {
+		studyId: 1,
+		cropName: 'maize',
+		measurementDatasetId: 2009
+	};
 
 	beforeEach(function () {
 
@@ -12,6 +17,12 @@ describe('Dataset Service', function () {
 			return {token: 734789327};
 		});
 
+		module(function ($provide) {
+			$provide.value("studyContext", studyContext);
+			$provide.value("serviceUtilities", {});
+			$provide.value("DATASET_TYPES_SUBOBSERVATION_IDS", {});
+			$provide.value("DATASET_TYPES", {});
+		});
 	});
 
 	beforeEach(inject(function ($injector) {
@@ -33,7 +44,7 @@ describe('Dataset Service', function () {
 				.respond({}, {'X-Total-Count': '100'});
 
 			datasetService.observationCount(studyId, datasetId, variableIds).then(function (response) {
-				expect(response.headers('response')).toEqual('100');
+				expect(response.headers('X-Total-Count')).toEqual('100');
 			});
 
 		});
@@ -43,6 +54,35 @@ describe('Dataset Service', function () {
 			datasetService.observationCount(undefined, undefined, undefined).then(function (response) {
 			}).catch(function (reason) {
 				expect(reason).toEqual('studyId, datasetId and variableIds are not defined.');
+			});
+
+		});
+
+	});
+
+	describe('observationCountByInstance', function () {
+
+		it('should call the correct web api', function () {
+
+			var studyId = 1;
+			var datasetId = 2;
+			var instanceId = 3;
+
+			$httpBackend.whenHEAD('/bmsapi/crops/maize/studies/' + studyId + '/datasets/' +
+				datasetId + '/observationUnits/' + instanceId)
+				.respond({}, {'X-Total-Count': '200'});
+
+			datasetService.observationCountByInstance(studyId, datasetId, instanceId).then(function (response) {
+				expect(response.headers('X-Total-Count')).toEqual('200');
+			});
+
+		});
+
+		it('should return reject if any of the parameters are undefined', function () {
+
+			datasetService.observationCountByInstance(undefined, undefined, undefined).then(function (response) {
+			}).catch(function (reason) {
+				expect(reason).toEqual('studyId, instanceId and datasetId are not defined.');
 			});
 
 		});

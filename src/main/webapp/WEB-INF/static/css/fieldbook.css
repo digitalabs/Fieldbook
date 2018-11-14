@@ -212,6 +212,48 @@ table.dataTable thead .sorting_desc {
 .pagination > li > a{
     cursor: pointer; cursor: hand;
 }
+
+/* FIXME upgrade datatables? standardize? */
+.dataTables_paginate.paging_full_numbers {
+    font-size: 10px;
+}
+.dataTables_paginate.paging_full_numbers .paginate_button,
+.dataTables_paginate.paging_full_numbers .ellipsis
+{
+    cursor: pointer;
+    position: relative;
+    padding: 6px 12px;
+    margin-left: -1px;
+    line-height: 1.42857143;
+    color: #337ab7;
+    text-decoration: none;
+    background-color: #fff;
+    border: 1px solid #ddd;
+
+}
+.dataTables_paginate.paging_full_numbers .paginate_button.current,
+.dataTables_paginate.paging_full_numbers .paginate_button.current:hover {
+    z-index: 3;
+    color: #fff;
+    cursor: default;
+    background-color: #337ab7;
+    border-color: #337ab7;
+}
+.dataTables_paginate.paging_full_numbers .paginate_button.disabled,
+.dataTables_paginate.paging_full_numbers .paginate_button.disabled:hover,
+.dataTables_paginate.paging_full_numbers .paginate_button.disabled:active {
+    cursor: default;
+    color: #666 !important;
+    background: transparent;
+    box-shadow: none;
+}
+.dataTables_paginate.paging_full_numbers .paginate_button:hover {
+    z-index: 2;
+    color: #23527c;
+    background-color: #eee;
+    border-color: #ddd;
+}
+
 .dropdown-menu {
     font-size: 12px;
 }

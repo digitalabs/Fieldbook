@@ -67,7 +67,7 @@
 
 	})();
 
-	angular.module('fieldbook-utils', ['ui.select2'])
+	angular.module('fieldbook-utils', ['ui.select2', 'ui.select'])
 		.constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
 		.constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
 		.directive('displaySettings', ['TrialManagerDataService', '$filter', '_', 'studyStateService',
@@ -350,75 +350,41 @@
 					};
 
 					if ($scope.hasDropdownOptions) {
-						var currentVal = $scope.valuecontainer[$scope.targetkey];
+                        var currentVal = $scope.valuecontainer[$scope.targetkey];
 
-						// lets fix current val if its an object so that valuecontainer only contains the id
+						// lets fix current val if its an object so that it only contains the id
 						if (typeof currentVal !== 'undefined' && currentVal !== null && typeof currentVal.id !== 'undefined' && currentVal.id) {
 							currentVal = currentVal.id;
-							$scope.valuecontainer[$scope.targetkey] = currentVal;
 						}
 
 						$scope.localData.useFavorites = useFavorites(currentVal);
 
 						$scope.updateDropdownValuesFavorites();
+						$scope.lookUpValues = [];
 
-						$scope.computeMinimumSearchResults = function() {
-							if($scope.dropdownValues != null)
-								return ($scope.dropdownValues.length > 0) ? 20 : -1;
-							return -1;
-						};
-
-						$scope.dropdownOptions = {
-							data: function() {
-								return {results: $scope.dropdownValues};
-							},
-							formatResult: function(value) {
-								// TODO: add code that can handle display of methods
-								return value.description;
-							},
-							formatSelection: function(value) {
-								// TODO: add code that can handle display of methods
-								return value.description;
-							},
-							minimumResultsForSearch: $scope.computeMinimumSearchResults(),
-							query: function(query) {
-								var data = {
-									results: $scope.dropdownValues
-								};
-
-								// return the array that matches
-								data.results = $.grep(data.results, function(item) {
-									return ($.fn.select2.defaults.matcher(query.term,
-										item.name));
-
-								});
-
-								query.callback(data);
+						angular.forEach($scope.dropdownValues, function(value) {
+							var idNumber;
+							if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
+								idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
 							}
+							$scope.lookUpValues[value.id] = value;
+							$scope.lookUpValues[value.description] = value;
+							if (value.description === $scope.valuecontainer[$scope.targetkey] ||
+								value.id === idNumber) {
+								$scope.valuecontainer[$scope.targetkey] = value;
+								if ($scope.isLocation){
+									selectedLocation(value, $scope.dropdownValues);
+								}
+							}
+						});
 
-						};
+                        $scope.$watch('valuecontainer[targetkey]', function() {
+                        	if($scope.lookUpValues[$scope.valuecontainer[$scope.targetkey]]) {
+                                $scope.valuecontainer[$scope.targetkey] = $scope.lookUpValues[$scope.valuecontainer[$scope.targetkey]];
+							}
+                        });
 
-						if ($scope.valuecontainer[$scope.targetkey]) {
-							$scope.dropdownOptions.initSelection = function(element, callback) {
-								angular.forEach($scope.dropdownValues, function(value) {
-									var idNumber;
-
-									if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
-										idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
-									}
-
-									if (value.description === $scope.valuecontainer[$scope.targetkey] ||
-										value.id === idNumber) {
-										if ($scope.isLocation){
-											selectedLocation(value, $scope.dropdownValues);
-										}
-										callback(value);
-										return false;
-									}
-								});
-							};
-						}
-					}
+                    }
 
 					// TODO: add code that can handle display of favorite methods, as well as update of possible values in case of click of manage methods
 					if ($scope.isLocation) {
@@ -644,6 +610,86 @@
 					};
 				}
 			};
-		});
+		})
+		.factory('formUtilities', function() {
+
+			var formUtilities = {
+
+				formGroupClassGenerator: function ($scope, formName) {
+					return function (fieldName) {
+						var className = 'form-group';
+
+						// If the field hasn't been initialised yet, don't do anything!
+
+						if ($scope[formName] && $scope[formName][fieldName]) {
+
+							// Don't mark as invalid until we are relatively sure the user is finished doing things
+							if ($scope[formName].$submitted || $scope[formName][fieldName].$touched) {
+
+								// Only mark as invalid if the field is.. well, invalid
+								if ($scope[formName][fieldName].$invalid) {
+									className += ' has-error';
+								}
+							}
+						}
+						return className;
+					};
+				}
+			}
+			return formUtilities;
+		})
+		.filter('capitalize', function () {
+			return function (inputString) {
+				if (inputString !== undefined) {
+					inputString = inputString.toLowerCase();
+					if (inputString.indexOf(' ') !== -1) {
+						return splitAndCapitalizeString(inputString, ' ');
+					}
+					else {
+						return capitalizeString(inputString);
+					}
+				} else {
+					return inputString;
+				}
+
+				function capitalizeString(inputString) {
+					if (inputString.indexOf('-') !== -1) {
+						return splitAndCapitalizeString(inputString, '-');
+					}
+					return inputString.substring(0, 1).toUpperCase() + inputString.substring(1);
+				}
+
+				function splitAndCapitalizeString(inputString, splitBy) {
+					var inputPieces, i;
+					inputString = inputString.toLowerCase();
+					inputPieces = inputString.split(splitBy);
+
+					for (i = 0; i < inputPieces.length; i++) {
+						inputPieces[i] = capitalizeString(inputPieces[i]);
+					}
+					return inputPieces.toString().replace(/,/g, splitBy);
+
+				}
+
+			};
+		})
+		.factory('serviceUtilities', ['$q', function ($q) {
+			return {
+				restSuccessHandler: function (response) {
+					return response.data;
+				},
+
+				restFailureHandler: function (response) {
+					if (response.status === 401) {
+						bmsAuth.handleReAuthentication();
+					}
+					return $q.reject({
+						status: response.status,
+						data: response.data,
+						errors: response.data && response.data.errors
+					});
+				}
+			};
+		}]);
 	}
 )();

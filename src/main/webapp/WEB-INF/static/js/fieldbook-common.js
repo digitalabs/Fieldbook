@@ -819,6 +819,17 @@ function executeCalculatedVariable() {
 	$scope.$apply();
 }
 /* END EXECUTE CALCULATION */
+/* CREATE SUB OBSERVATION UNIT SPECIFIC FUNCTIONS */
+
+function subObservationUnitDatasetSelector() {
+	'use strict';
+	var $scope = angular.element('#SubObservationUnitDatasetSelectorModal').scope();
+	$scope.$apply(function(){
+		$scope.init();
+	});
+
+}
+/* END SUB OBSERVATION UNIT SPECIFIC FUNCTIONS */
 
 /* ADVANCING SPECIFIC FUNCTIONS */
 

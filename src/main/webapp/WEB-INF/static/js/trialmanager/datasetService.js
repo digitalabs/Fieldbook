@@ -63,6 +63,18 @@
 
 			};
 
+			datasetService.addObservation = function (datasetId, observationUnitId, observation) {
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/' +
+					observationUnitId, observation, config);
+				return request.then(successHandler, failureHandler);
+			};
+
+			datasetService.updateObservation = function (datasetId, observationUnitId, observationId, observationValue) {
+				var request = $http.patch(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/' +
+					observationUnitId + '/observations/' + observationId, observationValue, config);
+				return request.then(successHandler, failureHandler);
+			};
+
 			datasetService.getDatasets = function () {
 				if (!studyContext.studyId) {
 					return $q.resolve([]);

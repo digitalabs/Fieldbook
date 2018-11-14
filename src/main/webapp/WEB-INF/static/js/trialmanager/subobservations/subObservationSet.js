@@ -4,9 +4,9 @@
 	var manageTrialApp = angular.module('manageTrialApp');
 
 	manageTrialApp.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
-		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService',
+		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout',
 		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
-				  datasetService
+				  datasetService, $timeout
 		) {
 
 			var subObservationSet = $scope.subObservationSet = $stateParams.subObservationSet;
@@ -117,7 +117,8 @@
 						}
 					})
 					.withDataProp('data')
-					.withOption('serverSide', true));
+					.withOption('serverSide', true))
+					.withOption('initComplete', initComplete);
 			}
 
 			function addCommonOptions(options) {
@@ -157,6 +158,116 @@
 					.withOption('rowCallback', previewRowCallback));
 			}
 
+			function initComplete() {
+				var $table = angular.element(tableId);
+				$table.off().on('click', 'td.variates', clickHandler);
+
+				function clickHandler() {
+					var cell = this;
+
+					var table = $table.DataTable();
+					var rowIndex = cell.parentNode.rowIndex - 1;
+					var row = table.row(rowIndex).data();
+					var cellData = table.cell({row: rowIndex, column: cell.cellIndex}).data();
+					var column = subObservationSet.columnsObj.columns[cell.cellIndex];
+					var termId = column.termId;
+
+					if (!termId) return;
+
+					/**
+					 * Remove handler to not interfere with inline editor
+					 * fnUpdate will trigger rowCallback and restore it
+					 */
+					$table.off('click');
+
+					$scope.$apply(function () {
+
+						var $inlineScope = $scope.$new(true);
+
+						$inlineScope.observation = {
+							value: cellData.value,
+							change: function () {
+								updateInline();
+							},
+							// FIXME altenative to blur bug https://github.com/angular-ui/ui-select/issues/499
+							onOpenClose: function(isOpen) {
+								if (!isOpen) updateInline();
+							},
+							newInlineValue: function (newValue) {
+								return {name: newValue};
+							}
+						};
+
+						var column = $inlineScope.column = subObservationSet.columnMap[termId];
+
+						$(cell).html('');
+						var editor = $compile(
+							' <observation-inline-editor ' +
+							' column="column" ' +
+							' observation="observation"></observation-inline-editor> '
+						)($inlineScope);
+
+						$(cell).append(editor);
+
+						function updateInline() {
+							cellData.value = $inlineScope.observation.value;
+
+							var addOrUpdate;
+							if (cellData.observationId) {
+								addOrUpdate = datasetService.updateObservation(subObservationSet.id, row.observationUnitId,
+									cellData.observationId, {
+										categoricalValueId: null,
+										value: cellData.value
+									})
+							} else {
+								addOrUpdate = datasetService.addObservation(subObservationSet.id, row.observationUnitId, {
+									observationUnitId: row.observationUnitId,
+									categoricalValueId: null,
+									variableId: termId,
+									value: cellData.value
+								})
+							}
+							addOrUpdate.then(function (data) {
+								cellData.observationId = data.observationId;
+
+								$inlineScope.$destroy();
+								editor.remove();
+
+								// TODO
+								$(tableId).dataTable().fnUpdate(row, rowIndex, null, false);
+
+								/**
+								 * Restore cell click handler
+								 */
+								$table.on('click', 'td', clickHandler);
+							}, function (response) {
+								if (response.errors) {
+									showErrorMessage('', response.errors[0].message);
+								} else {
+									showErrorMessage('', ajaxGenericErrorMsg);
+								}
+							});
+
+						}
+
+						if (column.dataTypeCode === 'D') {
+							setTimeout(function () {
+								$('input', cell).datepicker({
+									'format': 'yyyymmdd'
+								}).on('hide', function () {
+									updateInline();
+								});
+							});
+						}
+
+						// FIXME show combobox for categorical traits
+						$(cell).css('overflow', 'visible');
+
+					});
+				}
+			}
+
+			// TODO 1) extract common logic rowCallback 2) use datatable api to store data 3) use DataTable().rows().data() to save
 			function previewRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 				var experimentId = aData.experimentId;
 
@@ -253,6 +364,7 @@
 				}
 			}
 
+			// FIXME 1) adapt to subobs 2) See previewRowCallback
 			function getPreview() {
 				// TODO check memory consumption
 				if (subObservationSet.rows) {

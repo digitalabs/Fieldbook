@@ -60,7 +60,6 @@
 				}
 
 				return $q.reject('studyId, instanceId and datasetId are not defined.');
-
 			};
 
 			datasetService.getDatasets = function () {
@@ -91,6 +90,20 @@
 
 			datasetService.getDataset = function (datasetId) {
 				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId, config);
+				return request.then(successHandler, failureHandler);
+			};
+
+			datasetService.addVariables = function (datasetId, newVariable) {
+				var request = $http.put(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables', newVariable, config);
+				return request.then(successHandler, failureHandler);
+			};
+
+			datasetService.removeVariables = function (datasetId, variableIds) {
+				var request = $http.delete(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables?', angular.merge({
+					params: {
+						variableIds: variableIds.join(",")
+					}
+				}, config));
 				return request.then(successHandler, failureHandler);
 			};
 

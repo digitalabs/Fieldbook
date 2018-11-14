@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +73,8 @@ public class ExperimentDesignGenerator {
 	public static final String AUGMENTED_RANDOMIZED_BLOCK_DESIGN = "Augmented";
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExperimentDesignGenerator.class);
+	private static final List<Integer> EXP_DESIGN_VARIABLE_IDS =
+			Arrays.asList(TermId.PLOT_NO.getId(), TermId.REP_NO.getId(), TermId.BLOCK_NO.getId(), TermId.ROW.getId(), TermId.COL.getId());
 
 	@Resource
 	private WorkbenchService workbenchService;
@@ -117,7 +120,7 @@ public class ExperimentDesignGenerator {
 
 		final String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 
-		final List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
+		final List<ExpDesignParameter> paramList = new ArrayList<>();
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.SEED_PARAM, "", null));
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.BLOCKSIZE_PARAM, blockSize, null));
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.NTREATMENTS_PARAM, nTreatments, null));
@@ -151,7 +154,7 @@ public class ExperimentDesignGenerator {
 
 		final String plotNumberStrValue = (initialPlotNumber == null) ? "1" : String.valueOf(initialPlotNumber);
 
-		final List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
+		final List<ExpDesignParameter> paramList = new ArrayList<>();
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.SEED_PARAM, "", null));
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.NTREATMENTS_PARAM, nTreatments, null));
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.NREPLICATES_PARAM, nReplicates, null));
@@ -322,7 +325,7 @@ public class ExperimentDesignGenerator {
 			final Map<String, String> bvEntryMap, final Map<String, List<String>> treatmentFactorValues,
 			final List<MeasurementVariable> trialVariables, final int trialNo) {
 		final MeasurementRow measurementRow = new MeasurementRow();
-		final List<MeasurementData> dataList = new ArrayList<MeasurementData>();
+		final List<MeasurementData> dataList = new ArrayList<>();
 		MeasurementData treatmentLevelData = null;
 		MeasurementData measurementData = null;
 
@@ -359,24 +362,13 @@ public class ExperimentDesignGenerator {
 				measurementData = new MeasurementData(var.getName(), germplasm.getGid(), false, var.getDataType(), var);
 			} else if (termId.intValue() == TermId.ENTRY_CODE.getId()) {
 				measurementData = new MeasurementData(var.getName(), germplasm.getEntryCode(), false, var.getDataType(), var);
-			} else if (termId.intValue() == TermId.PLOT_NO.getId()) {
+			} else if (EXP_DESIGN_VARIABLE_IDS.contains(termId)) {
 				measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
+			
 			} else if (termId.intValue() == TermId.CHECK.getId()) {
 				measurementData = new MeasurementData(var.getName(), Integer.toString(germplasm.getEntryTypeCategoricalID()), false,
 						var.getDataType(), germplasm.getEntryTypeCategoricalID(), var);
-
-			} else if (termId.intValue() == TermId.REP_NO.getId()) {
-				measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
-
-			} else if (termId.intValue() == TermId.BLOCK_NO.getId()) {
-				measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
-
-			} else if (termId.intValue() == TermId.ROW.getId()) {
-				measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
-
-			} else if (termId.intValue() == TermId.COL.getId()) {
-				measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
-
+			
 			} else if (termId.intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				measurementData = new MeasurementData(var.getName(), Integer.toString(trialNo), false, var.getDataType(), var);
 
@@ -450,7 +442,7 @@ public class ExperimentDesignGenerator {
 			// we add the string tokenize replating groups
 			// we tokenize the replating groups
 			final StringTokenizer tokenizer = new StringTokenizer(replatingGroups, ",");
-			final List<ListItem> replatingList = new ArrayList<ListItem>();
+			final List<ListItem> replatingList = new ArrayList<>();
 			while (tokenizer.hasMoreTokens()) {
 				replatingList.add(new ListItem(tokenizer.nextToken()));
 			}
@@ -469,7 +461,7 @@ public class ExperimentDesignGenerator {
 			paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.NCLATIN_PARAM, ncLatin, null));
 			// we tokenize the replating groups
 			final StringTokenizer tokenizer = new StringTokenizer(replatingGroups, ",");
-			final List<ListItem> replatingList = new ArrayList<ListItem>();
+			final List<ListItem> replatingList = new ArrayList<>();
 			while (tokenizer.hasMoreTokens()) {
 				replatingList.add(new ListItem(tokenizer.nextToken()));
 			}
@@ -483,7 +475,7 @@ public class ExperimentDesignGenerator {
 
 	List<ListItem> convertToListItemList(final List<String> listString) {
 
-		final List<ListItem> listItemList = new ArrayList<ListItem>();
+		final List<ListItem> listItemList = new ArrayList<>();
 		for (final String value : listString) {
 			listItemList.add(new ListItem(value));
 		}
@@ -493,7 +485,7 @@ public class ExperimentDesignGenerator {
 
 	List<ListItem> getInitialTreatNumList(final List<String> treatmentFactors, final Integer initialTreatNum, final String entryNoVarName) {
 
-		final List<ListItem> listItemList = new ArrayList<ListItem>();
+		final List<ListItem> listItemList = new ArrayList<>();
 		for(final String treatmentFactor: treatmentFactors) {
 			if(treatmentFactor.equals(entryNoVarName)) {
 				listItemList.add(new ListItem(String.valueOf(initialTreatNum)));

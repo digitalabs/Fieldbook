@@ -8,7 +8,9 @@
 		'DATASET_TYPES', 'datasetService', '$timeout', function ($scope, environmentService, $http, formUtilities, MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS,
 																 MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT, variableService, studyContext, DATASET_TYPES, datasetService, $timeout) {
 
-		$scope.trialInstances = [];
+		$scope.instances = [];
+		$scope.selectedInstances = {};
+
 		$scope.maximunNumForEachParentUnit = MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT;
 
 		$scope.backToSubObservationUnitDatasetSelector = function () {
@@ -24,15 +26,14 @@
 
 		$scope.saveDataset = function(){
 			if ($scope.dtForm.$valid) {
+
 				var instanceIds = [];
 
-				angular.forEach($scope.trialInstances, function (trialInstanceNumber) {
-					angular.forEach($scope.environmentListView, function (environment) {
-						if (environment.trialInstanceNumber === trialInstanceNumber) {
-							instanceIds.push(environment.instanceDbId);
-
-						}
-					});
+				Object.keys($scope.selectedInstances).forEach(function(instanceId) {
+					var isSelected = $scope.selectedInstances[instanceId];
+					if (isSelected) {
+						instanceIds.push(instanceId);
+					}
 				});
 
 				var newDataset = {
@@ -84,35 +85,14 @@
 			$scope.datasetName = '';
 			$scope.numberOfSubObservationUnits = '';
 			$scope.selectedVariable = undefined;
-			$scope.trialInstances = [];
-			$scope.selectAll = true;
 
 			environmentService.getEnvironments().then(function (environmentDetails) {
-				$scope.environmentListView = [];
+				$scope.instances = environmentDetails;
 
-				angular.forEach(environmentDetails, function (environment) {
-					$scope.environmentListView.push({
-						name: environment.locationName + ' - (' + environment.locationAbbreviation + ')',
-						abbrName: environment.locationAbbreviation,
-						customAbbrName: environment.customLocationAbbreviation,
-						trialInstanceNumber: environment.instanceNumber,
-						instanceDbId: environment.instanceDbId,
-						selected: $scope.selectAll
-					});
-					$scope.trialInstances.push(environment.instanceNumber);
+				// Select All instances by default
+				$.each($scope.instances, function( key, value ) {
+					$scope.selectedInstances[value.instanceDbId] = true;
 				});
-
-				//This can be used to check if a table is a DataTable or not already.
-				if (!$.fn.dataTable.isDataTable('#SubObservationUnitDatasetBuildModal .fbk-datatable-environments')) {
-					$timeout(function () {
-						angular.element('#SubObservationUnitDatasetBuildModal .fbk-datatable-environments').DataTable({
-							dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
-								"<'row'<'col-sm-12'tr>>" +
-								"<'row'<'col-sm-5'i><'col-sm-7'>>" +
-								"<'row'<'col-sm-12'p>>"
-						}).columns.adjust().draw();
-					}, 1);
-				}
 			});
 
 			variableService.getVariablesByFilter({

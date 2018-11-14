@@ -32,16 +32,4 @@ public class BVDesignTrialInstance {
 		return rows;
 	}
 	
-	public Optional<Integer> getNumberValue(final String header, final Map<String, String> rowValues) {
-		final String stringValue = rowValues.get(header);
-		if (stringValue != null) {
-			try {
-				return Optional.of(Integer.parseInt(stringValue));
-			} catch (NumberFormatException e) {
-				return Optional.absent();
-			}
-		}
-		return Optional.absent();
-	}
-
 }

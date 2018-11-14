@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.trial.bean;
+package com.efficio.fieldbook.web.trial.bean.bvdesign;
 
 import java.io.Serializable;
 import java.util.ArrayList;

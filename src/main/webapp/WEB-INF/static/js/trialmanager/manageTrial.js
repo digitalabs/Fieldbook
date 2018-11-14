@@ -741,9 +741,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.addSubObservationTabData = function (id, name, datasetTypeId, parentDatasetId) {
 				var datasetType = datasetService.getDatasetType(datasetTypeId);
 
-				/**
-				 * Artificial id for subObs tabs, that do not exists on db
-				 */
 				var newSubObsTab = {
 					id: id,
 					name: name,

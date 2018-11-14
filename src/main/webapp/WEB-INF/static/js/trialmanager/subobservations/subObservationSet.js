@@ -301,9 +301,12 @@
 				angular.forEach(data, function (displayColumn) {
 					columns.push({
 						title: displayColumn.name,
+						termId: displayColumn.termId,
+						factor: displayColumn.factor,
+						className: displayColumn.factor === true ? 'factors' : 'variates',
 						data: function (row) {
 							if (row.variables[displayColumn.name]) {
-								return row.variables[displayColumn.name].value || "";
+								return row.variables[displayColumn.name];
 							}
 							return "";
 						}
@@ -315,7 +318,14 @@
 							render: function(data, type, full, meta) {
 								return '<a class="gid-link" href="javascript: void(0)" ' +
 									'onclick="openGermplasmDetailsPopopWithGidAndDesig(\'' +
-									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data) + '</a>';
+									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
+							}
+						});
+					} else {
+						columnsDef.push({
+							targets: columns.length - 1,
+							render: function(data, type, full, meta) {
+								return data && data.value || '';
 							}
 						});
 					}

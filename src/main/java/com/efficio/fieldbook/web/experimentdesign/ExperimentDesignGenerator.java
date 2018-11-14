@@ -211,13 +211,58 @@ public class ExperimentDesignGenerator {
 			final List<ImportedGermplasm> germplasmList, final MainDesign mainDesign, final String entryNumberIdentifier,
 			final Map<String, List<String>> treatmentFactorValues, final Map<Integer, Integer> designExpectedEntriesMap) throws BVDesignException {
 
+		// Specify number of study instances for BVDesign generation
+		mainDesign.getDesign().getParameters()
+		.add(this.createExpDesignParameter(NUMBER_TRIALS_PARAM, String.valueOf(noOfEnvironmentsToAdd), null));
+		BVDesignOutput bvOutput = null;
+		try {
+			bvOutput = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+		} catch (final Exception e) {
+			ExperimentDesignGenerator.LOG.error(e.getMessage(), e);
+			throw new BVDesignException("experiment.design.bv.exe.error.generate.generic.error");
+		}
+
+		if (bvOutput == null || !bvOutput.isSuccess()) {
+			throw new BVDesignException("experiment.design.generate.generic.error");
+		}
+				
 		//Converting germplasm List to map
 		final Map<Integer, ImportedGermplasm> importedGermplasmMap = new HashMap<>();
 		for (final ImportedGermplasm ig : germplasmList) {
 			importedGermplasmMap.put(ig.getEntryId(), ig);
 		}
 
+		final List<MeasurementVariable> varList =
+				constructStudyVariableList(factors, nonTrialFactors, variates, treatmentVariables, requiredExpDesignVariable);
+		
+
 		final List<MeasurementRow> measurementRowList = new ArrayList<>();
+		Integer trialInstanceNumber = noOfExistingEnvironments - noOfEnvironmentsToAdd + 1;
+		for (final BVDesignTrialInstance instance : bvOutput.getTrialInstances()) {
+			for (final Map<String,String> row : instance.getRows()) {
+				final String entryNoValue = row.get(entryNumberIdentifier);
+				final Integer entryNumber = StringUtil.parseInt(entryNoValue, null);
+				if (entryNumber == null) {
+					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
+				}
+				final Optional<ImportedGermplasm> importedGermplasm =
+						this.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, entryNumber, designExpectedEntriesMap);
+				
+				if (!importedGermplasm.isPresent()) {
+					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
+				}
+				final MeasurementRow measurementRow = this.createMeasurementRow(varList, importedGermplasm.get(), row,
+						treatmentFactorValues, trialVariables, trialInstanceNumber);
+				measurementRowList.add(measurementRow);
+			}
+			trialInstanceNumber++;
+		}
+		return measurementRowList;
+	}
+
+	private List<MeasurementVariable> constructStudyVariableList(final List<MeasurementVariable> factors,
+			final List<MeasurementVariable> nonTrialFactors, final List<MeasurementVariable> variates,
+			final List<TreatmentVariable> treatmentVariables, final List<StandardVariable> requiredExpDesignVariable) {
 		final List<MeasurementVariable> varList = new ArrayList<>();
 		varList.addAll(nonTrialFactors);
 		for (final StandardVariable var : requiredExpDesignVariable) {
@@ -248,45 +293,8 @@ public class ExperimentDesignGenerator {
 		for (final MeasurementVariable var : varList) {
 			var.setFactor(true);
 		}
-
 		varList.addAll(variates);
-
-		// Specify number of trial instances for generation
-		mainDesign.getDesign().getParameters()
-		.add(this.createExpDesignParameter(NUMBER_TRIALS_PARAM, String.valueOf(noOfEnvironmentsToAdd), null));
-		BVDesignOutput bvOutput = null;
-		try {
-			bvOutput = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
-		} catch (final Exception e) {
-			ExperimentDesignGenerator.LOG.error(e.getMessage(), e);
-			throw new BVDesignException("experiment.design.bv.exe.error.generate.generic.error");
-		}
-
-		if (bvOutput == null || !bvOutput.isSuccess()) {
-			throw new BVDesignException("experiment.design.generate.generic.error");
-		}
-
-		Integer trialInstanceNumber = noOfExistingEnvironments - noOfEnvironmentsToAdd + 1;
-		for (final BVDesignTrialInstance instance : bvOutput.getTrialInstances()) {
-			for (final Map<String,String> row : instance.getRows()) {
-				final String entryNoValue = row.get(entryNumberIdentifier);
-				final Integer entryNumber = StringUtil.parseInt(entryNoValue, null);
-				if (entryNumber == null) {
-					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
-				}
-				final Optional<ImportedGermplasm> importedGermplasm =
-						this.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, entryNumber, designExpectedEntriesMap);
-				
-				if (!importedGermplasm.isPresent()) {
-					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
-				}
-				final MeasurementRow measurementRow = this.createMeasurementRow(varList, importedGermplasm.get(), row,
-						treatmentFactorValues, trialVariables, trialInstanceNumber);
-				measurementRowList.add(measurementRow);
-			}
-			trialInstanceNumber++;
-		}
-		return measurementRowList;
+		return varList;
 	}
 
 	ExpDesignParameter createExpDesignParameter(final String name, final String value, final List<ListItem> items) {

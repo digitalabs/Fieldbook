@@ -9,47 +9,42 @@ import java.util.Map;
 
 public class BVDesignOutput implements Serializable {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -1079217702697901056L;
 	private int returnCode;
 	private String[] bvHeaders;
-	private List<String[]> bvResultList;
-	private List<Map<String, String>> bvResultMap;
+	private List<BVDesignTrialInstance> trialInstances;
 
 	public BVDesignOutput(int returnCode) {
 		super();
 		this.returnCode = returnCode;
 	}
 
-	public void setResults(List<String[]> entries) {
-		// 1st entry is always the header
+	public void setResults(final List<String[]> entries) {
 		if (entries != null && !entries.isEmpty()) {
-			this.bvResultList = new ArrayList<String[]>();
+			this.trialInstances = new ArrayList<>();
+			// 1st row is always the header row
+			this.setBvHeaders(entries.get(0));
+			Integer currentTrialInstance = 1;
 
-			this.bvResultMap = new ArrayList<Map<String, String>>();
-			for (int i = 0; i < entries.size(); i++) {
-				if (i == 0) {
-					// this is the header
-					this.setBvHeaders(entries.get(i));
-				} else {
-					Map<String, String> dataMap = new HashMap<String, String>();
-					this.bvResultList.add(entries.get(i));
-					for (int index = 0; index < this.bvHeaders.length; index++) {
-						dataMap.put(this.bvHeaders[index], entries.get(i)[index]);
-					}
-					this.bvResultMap.add(dataMap);
+			List<Map<String, String>> trialInstanceRows = new ArrayList<>();
+			for (int i = 1; i < entries.size(); i++) {
+				final String[] currentRow = entries.get(i);
+				final Integer latestTrialInstance = Integer.valueOf(currentRow[0]);
+				if (latestTrialInstance > currentTrialInstance) {
+					this.trialInstances.add(new BVDesignTrialInstance(currentTrialInstance, trialInstanceRows));
+					trialInstanceRows = new ArrayList<>();
+					currentTrialInstance = latestTrialInstance;
 				}
+				final Map<String, String> rowValues = new HashMap<>();
+				// Exclude the 1st column, which is the trial instance #
+				for (int index = 1; index < this.bvHeaders.length; index++) {
+					rowValues.put(this.bvHeaders[index], currentRow[index]);
+				}
+				trialInstanceRows.add(rowValues);	
 			}
+			// add the last trial instance to list
+			this.trialInstances.add(new BVDesignTrialInstance(currentTrialInstance, trialInstanceRows));
 		}
-	}
-
-	public Map<String, String> getEntryMap(int index) {
-		if (index < this.bvResultMap.size() && index >= 0) {
-			return this.bvResultMap.get(index);
-		}
-		return null;
 	}
 
 	public int getReturnCode() {
@@ -68,33 +63,12 @@ public class BVDesignOutput implements Serializable {
 		this.bvHeaders = bvHeaders;
 	}
 
-	public List<String[]> getBvResultList() {
-		return this.bvResultList;
-	}
-
-	public void setBvResultList(List<String[]> bvResultList) {
-		this.bvResultList = bvResultList;
-	}
-
-	public String getEntryValue(String header, int index) {
-		String val = null;
-		if (header != null && this.bvResultList != null && index < this.bvResultList.size() && index > -1) {
-
-			for (int headerIndex = 0; headerIndex < this.bvHeaders.length; headerIndex++) {
-				if (header.equalsIgnoreCase(this.bvHeaders[headerIndex]) && this.bvResultList.get(index) != null
-						&& headerIndex < this.bvResultList.get(index).length) {
-					return this.bvResultList.get(index)[headerIndex];
-				}
-			}
-		}
-		return val;
-	}
-
 	public boolean isSuccess() {
-		if (this.returnCode == 0) {
-			return true;
-		}
-		return false;
+		return (this.returnCode == 0);
+	}
+	
+	public List<BVDesignTrialInstance> getTrialInstances() {
+		return trialInstances;
 	}
 
 }

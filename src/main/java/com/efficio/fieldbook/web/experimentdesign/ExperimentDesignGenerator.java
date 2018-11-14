@@ -4,6 +4,7 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignTrialInstance;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesign;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesignParameter;
 import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
@@ -63,6 +64,7 @@ public class ExperimentDesignGenerator {
 	public static final String OUTPUTFILE_PARAM = "outputfile";
 	public static final String SEED_PARAM = "seed";
 	public static final String NCONTROLS_PARAM = "ncontrols";
+	public static final String NUMBER_TRIALS_PARAM = "numbertrials";
 
 	public static final String RANDOMIZED_COMPLETE_BLOCK_DESIGN = "RandomizedBlock";
 	public static final String RESOLVABLE_INCOMPLETE_BLOCK_DESIGN = "ResolvableIncompleteBlock";
@@ -199,7 +201,7 @@ public class ExperimentDesignGenerator {
 		return new MainDesign(design);
 	}
 
-	public List<MeasurementRow> generateExperimentDesignMeasurements(final int noOfExistingEnvironments, final int noOfEnvironmentsToAdded,
+	public List<MeasurementRow> generateExperimentDesignMeasurements(final int noOfExistingEnvironments, final int noOfEnvironmentsToAdd,
 			final List<MeasurementVariable> trialVariables, final List<MeasurementVariable> factors,
 			final List<MeasurementVariable> nonTrialFactors, final List<MeasurementVariable> variates,
 			final List<TreatmentVariable> treatmentVariables, final List<StandardVariable> requiredExpDesignVariable,
@@ -212,8 +214,8 @@ public class ExperimentDesignGenerator {
 			importedGermplasmMap.put(ig.getEntryId(), ig);
 		}
 
-		final List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
-		final List<MeasurementVariable> varList = new ArrayList<MeasurementVariable>();
+		final List<MeasurementRow> measurementRowList = new ArrayList<>();
+		final List<MeasurementVariable> varList = new ArrayList<>();
 		varList.addAll(nonTrialFactors);
 		for (final StandardVariable var : requiredExpDesignVariable) {
 			if (WorkbookUtil.getMeasurementVariable(nonTrialFactors, var.getId()) == null) {
@@ -246,38 +248,40 @@ public class ExperimentDesignGenerator {
 
 		varList.addAll(variates);
 
-		final int trialInstanceStart = noOfExistingEnvironments - noOfEnvironmentsToAdded + 1;
-		for (int trialNo = trialInstanceStart; trialNo <= noOfExistingEnvironments; trialNo++) {
+		// Specify number of trial instances for generation
+		mainDesign.getDesign().getParameters()
+		.add(this.createExpDesignParameter(NUMBER_TRIALS_PARAM, String.valueOf(noOfEnvironmentsToAdd), null));
+		BVDesignOutput bvOutput = null;
+		try {
+			bvOutput = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+		} catch (final Exception e) {
+			ExperimentDesignGenerator.LOG.error(e.getMessage(), e);
+			throw new BVDesignException("experiment.design.bv.exe.error.generate.generic.error");
+		}
 
-			BVDesignOutput bvOutput = null;
-			try {
-				bvOutput = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
-			} catch (final Exception e) {
-				ExperimentDesignGenerator.LOG.error(e.getMessage(), e);
-				throw new BVDesignException("experiment.design.bv.exe.error.generate.generic.error");
-			}
+		if (bvOutput == null || !bvOutput.isSuccess()) {
+			throw new BVDesignException("experiment.design.generate.generic.error");
+		}
 
-			if (bvOutput == null || !bvOutput.isSuccess()) {
-				throw new BVDesignException("experiment.design.generate.generic.error");
-			}
-
-			for (int counter = 0; counter < bvOutput.getBvResultList().size(); counter++) {
-				final String entryNoValue = bvOutput.getEntryValue(entryNumberIdentifier, counter);
+		Integer trialInstanceNumber = noOfExistingEnvironments - noOfEnvironmentsToAdd + 1;
+		for (final BVDesignTrialInstance instance : bvOutput.getTrialInstances()) {
+			for (final Map<String,String> row : instance.getRows()) {
+				final String entryNoValue = row.get(entryNumberIdentifier);
 				final Integer entryNumber = StringUtil.parseInt(entryNoValue, null);
 				if (entryNumber == null) {
 					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
 				}
 				final Optional<ImportedGermplasm> importedGermplasm =
-					this.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, entryNumber, designExpectedEntriesMap);
-
+						this.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, entryNumber, designExpectedEntriesMap);
+				
 				if (!importedGermplasm.isPresent()) {
 					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
 				}
-				final MeasurementRow row =
-						this.createMeasurementRow(varList, importedGermplasm.get(), bvOutput.getEntryMap(counter), treatmentFactorValues,
-								trialVariables, trialNo);
-				measurementRowList.add(row);
+				final MeasurementRow measurementRow = this.createMeasurementRow(varList, importedGermplasm.get(), row,
+						treatmentFactorValues, trialVariables, trialInstanceNumber);
+				measurementRowList.add(measurementRow);
 			}
+			trialInstanceNumber++;
 		}
 		return measurementRowList;
 	}

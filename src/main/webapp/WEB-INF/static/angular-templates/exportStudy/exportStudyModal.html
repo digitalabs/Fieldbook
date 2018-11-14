@@ -22,13 +22,13 @@
 
 	<div class="row form-group">
 		<div class="col-xs-5 col-md-5">
-			<label class="control-label add_top_padding label-bold">Choose an export format:</label><span class="required">*</span>
+			<label class="control-label add_top_padding label-bold">Choose an export format:</label> <span class="required">*</span>
 		</div>
 		<div class="report-type-section col-xs-4 col-md-4">
-			<select id="exportType">
-				<option value="0">Please Choose</option>
-				<option value="1">CSV</option>
-			</select>
+			<ui-select ng-model="ctrl.selectedExportFormatId" theme="select2" search-enabled="false" style="min-width: 200px;">
+				<ui-select-choices repeat="format.itemId as format in exportFormats">{{format.name}}</ui-select-choices>
+				<ui-select-match placeholder="Choose an export type">{{format.name}}</ui-select-match>
+			</ui-select>
 		</div>
 	</div>
 	<div class="row  form-group">&nbsp;</div>
@@ -39,15 +39,15 @@
 	</div>
 	<div class="row form-group data-collection-section">
 		<div class="col-xs-5 col-md-5">
-			<label class="control-label add_top_padding label-bold">Choose a data collection order</label><span class="required">*</span>
+			<label class="control-label add_top_padding label-bold">Choose a data collection order</label> <span class="required">*</span>
 		</div>
 		<div class="col-xs-4 col-md-4">
-			<select id="exportWayType" style="width: 170px">
-				<option value="1">Plot Order</option>
-				<option value="2">Serpentine - Along Rows</option>
-				<option value="3">Serpentine - Along columns</option>
-
-			</select>
+			<ui-select ng-model="ctrl.selectedCollectionOrderId" theme="select2" search-enabled="false" style="min-width: 200px;">
+				<ui-select-match placeholder="Choose a data collection order">{{collectionOrder.name}}</ui-select-match>
+				<ui-select-choices repeat="collectionOrder.itemId as collectionOrder in collectionOrders">
+					{{collectionOrder.name}}
+				</ui-select-choices>
+			</ui-select>
 		</div>
 		<div style="padding-top: 7px">
 			<span class="bms-fa-question-circle help-tooltip-study" data-placement="right" data-toggle="tooltip"></span>
@@ -57,7 +57,11 @@
 	<div class="row form-group">
 		<div class="col-xs-12 col-md-12">&nbsp;</div>
 		<div class="col-xs-12 col-md-12">
-			<label class="control-label h4">STUDY ENVIRONMENT</label>
+			<label class="control-label h4 label-bold">STUDY ENVIRONMENT</label>
+		</div>
+		<div class="col-xs-12 col-md-12">&nbsp;</div>
+		<div class="col-xs-12 col-md-12">
+			<label class="control-label label-bold">Choose the study environment you would like to export: <span class="required">*</span></label>
 		</div>
 		<div class="col-xs-12 col-md-12">&nbsp;</div>
 		<div class="col-xs-12 col-md-12">

@@ -26,7 +26,8 @@
 					datasetId: function () {
 						return datasetId;
 					}
-				}
+				},
+				controllerAs: 'ctrl'
 			});
 		};
 
@@ -66,8 +67,16 @@
 
 			var ctrl = this;
 
-			$scope.exportFormat = '';
-			$scope.collectionOrder = '';
+			ctrl.selectedExportFormatId = '1';
+			ctrl.selectedCollectionOrderId = '1';
+
+			$scope.exportFormats = [{ itemId: '1' , name: 'CSV'}];
+			$scope.collectionOrders = [
+				{ itemId: '1' , name: 'Plot Order'},
+				{ itemId: '2' , name: 'Serpentine - Along Rows'},
+				{ itemId: '3' , name: 'Serpentine - Along columns'}
+			];
+
 			$scope.instances = [];
 			$scope.selectedInstances = {};
 
@@ -76,7 +85,7 @@
 			};
 
 			$scope.export = function () {
-				console.log($scope.selectedInstances);
+				console.log(ctrl.selectedCollectionOrderId);
 				$uibModalInstance.close();
 			};
 

@@ -15,17 +15,19 @@
 	</div>
 
 	<b>DATASET</b>
-	<br>
-	<div class="form-group">
-		<label>{{message}}</label> <span class="required">*</span>
-		<ui-select ng-model="selected.datasetId" theme="select2" search-enabled="false" style="min-width: 200px;">
-			<ui-select-match placeholder="Choose a dataset">{{getDatasetType($select.selected.datasetTypeId).name}}: {{$select.selected.name}}</ui-select-match>
-			<ui-select-choices repeat="dataset.datasetId as dataset in datasets">
-				<small>
+	<div class="row">&nbsp;</div>
+	<div class="row form-group">
+		<div class="col-xs-7 col-md-7">
+			<label class="label-bold">{{message}} <span class="required">*</span></label>
+		</div>
+		<div class="col-xs-5 col-md-5">
+			<ui-select ng-model="selected.datasetId" theme="select2" search-enabled="false" style="min-width: 200px;">
+				<ui-select-match placeholder="Choose a dataset">{{getDatasetType($select.selected.datasetTypeId).name}}: {{$select.selected.name}}</ui-select-match>
+				<ui-select-choices repeat="dataset.datasetId as dataset in datasets">
 					{{getDatasetType(dataset.datasetTypeId).name}}: {{dataset.name}}
-				</small>
-			</ui-select-choices>
-		</ui-select>
+				</ui-select-choices>
+			</ui-select>
+		</div>
 	</div>
 </div>
 <div class="modal-footer">

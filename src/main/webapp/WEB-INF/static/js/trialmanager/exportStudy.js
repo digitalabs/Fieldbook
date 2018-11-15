@@ -36,6 +36,11 @@
 			showExportOptions();
 		};
 
+		exportStudyModalService.showAlertMessage = function (title, message) {
+			// Call the global function to show alert message
+			showAlertMessage(title, message);
+		};
+
 		return exportStudyModalService;
 
 	}]);
@@ -62,19 +67,19 @@
 
 		}]);
 
-	exportStudyModule.controller('exportStudyCtrl', ['datasetId', '$scope', '$uibModalInstance', 'datasetService',
-		function (datasetId, $scope, $uibModalInstance, datasetService) {
+	exportStudyModule.controller('exportStudyCtrl', ['datasetId', '$scope', '$uibModalInstance', 'datasetService', 'exportStudyModalService',
+		'TrialManagerDataService', function (datasetId, $scope, $uibModalInstance, datasetService, exportStudyModalService, TrialManagerDataService) {
 
 			var ctrl = this;
 
 			ctrl.selectedExportFormatId = '1';
 			ctrl.selectedCollectionOrderId = '1';
 
-			$scope.exportFormats = [{ itemId: '1' , name: 'CSV'}];
+			$scope.exportFormats = [{itemId: '1', name: 'CSV'}];
 			$scope.collectionOrders = [
-				{ itemId: '1' , name: 'Plot Order'},
-				{ itemId: '2' , name: 'Serpentine - Along Rows'},
-				{ itemId: '3' , name: 'Serpentine - Along columns'}
+				{itemId: '1', name: 'Plot Order'},
+				{itemId: '2', name: 'Serpentine - Along Rows'},
+				{itemId: '3', name: 'Serpentine - Along columns'}
 			];
 
 			$scope.instances = [];
@@ -90,7 +95,15 @@
 
 			ctrl.init = function () {
 				datasetService.getDatasetInstances(datasetId).then(function (instances) {
+
 					$scope.instances = instances;
+
+					var noOfEnvironments = parseInt(TrialManagerDataService.currentData.environments.noOfEnvironments);
+
+					if (noOfEnvironments !== $scope.instances.length) {
+						exportStudyModalService.showAlertMessage('','Some instances do not have sub observation units associated and can not be' +
+							' selected to export.');
+					}
 				});
 			};
 

@@ -623,22 +623,37 @@
 				templateUrl: '/Fieldbook/static/angular-templates/instancesTable.html',
 				controller: function ($scope) {
 
-					$scope.isSelectAll = true;
+					var ctrl = this;
+
+					var watchInstances = $scope.$watch('instances', function (newValue, oldValue, scope) {
+						if (newValue.length !== oldValue.length) {
+							// Select All Checkbox by default.
+							$scope.toggleSelect(true);
+							// unregister watch once instances is initialized
+							watchInstances();
+						}
+					});
+
+					ctrl.isSelectAll = true;
 					$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<\'row\'<\'col-sm-6\'l><\'col-sm-6\'f>>' +
 						'<\'row\'<\'col-sm-12\'tr>>' +
 						'<\'row\'<\'col-sm-5\'i><\'col-sm-7\'>>' +
 						'<\'row\'<\'col-sm-12\'p>>');
 
-					$scope.toggleSelect = function(checked) {
-						$.each($scope.instances, function( key, value ) {
+					$scope.toggleSelect = function (checked) {
+						$.each($scope.instances, function (key, value) {
 							$scope.selectedInstances[value[$scope.instanceIdProperty]] = checked;
 						});
 					};
 
-					// Select All Checkbox by default.
-					$scope.toggleSelect($scope.isSelectAll);
+					$scope.select = function (itemId) {
+						if (!$scope.selectedInstances[itemId]) {
+							ctrl.isSelectAll = false;
+						}
+					};
 
-				}
+				},
+				controllerAs: 'ctrl'
 			};
 		}]).factory('formUtilities', function() {
 

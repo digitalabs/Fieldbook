@@ -88,11 +88,6 @@
 
 			environmentService.getEnvironments().then(function (environmentDetails) {
 				$scope.instances = environmentDetails;
-
-				// Select All instances by default
-				$.each($scope.instances, function( key, value ) {
-					$scope.selectedInstances[value.instanceDbId] = true;
-				});
 			});
 
 			variableService.getVariablesByFilter({

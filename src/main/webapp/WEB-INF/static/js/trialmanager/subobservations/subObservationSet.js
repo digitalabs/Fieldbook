@@ -75,6 +75,84 @@
 				return TrialManagerDataService.extractSettings(traitVariables);
 			};
 
+			$scope.onAddVariable = function () {
+				if ($scope.subObsSettings.m_keys.length != 0) {
+					var pos = $scope.subObsSettings.m_keys.length - 1;
+					var variableId = $scope.subObsSettings.m_keys[pos];
+					var variable = $scope.subObsSettings.m_vals[variableId];
+					datasetService.addVariables($scope.subObservationSet.dataset.datasetId,
+						{
+							"variableTypeId": 1808,
+							"variableId": variableId,
+							"studyAlias": variable.name
+						}
+					).then(function () {
+						$scope.subObsSettings.allSettings = $scope.selectedVariables();
+						reloadTable();
+					});
+				}
+			};
+
+			$scope.selectedVariables = function() {
+				var selected = {};
+				angular.forEach($scope.subObsSettings.m_keys, function (key) {
+					$scope.subObsSettings.m_vals[key].variable.cvTermId
+					selected[$scope.subObsSettings.m_vals[key].variable.cvTermId] = $scope.subObsSettings.m_vals[key].variable.name;
+
+				});
+				return selected;
+			};
+
+			$scope.onRemoveVariable = function () {
+				var deleteVariables = [];
+				angular.forEach($scope.subObsSettings.m_keys, function (key) {
+					if ($scope.subObsSettings.m_vals[key].isChecked) {
+						deleteVariables.push($scope.subObsSettings.m_vals[key].variable.cvTermId);
+					}
+				});
+				var promise = $scope.validateRemoveVariable(deleteVariables);
+
+				promise.then(function (doContinue) {
+					if (doContinue) {
+						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, deleteVariables).then(function () {
+							angular.forEach(deleteVariables, function (cvtermId) {
+								$scope.subObsSettings.remove(cvtermId);
+							});
+							$scope.subObsSettingsOptions.selectAll = false;
+							reloadTable();
+							$scope.subObsSettings.allSettings = $scope.selectedVariables();
+						});
+					}
+				});
+			};
+
+			$scope.validateRemoveVariable = function (deleteVariables) {
+				var deferred = $q.defer();
+				if (deleteVariables.length != 0) {
+					datasetService.observationCount(studyContext.studyId, $scope.subObservationSet.dataset.datasetId, deleteVariables).then(function (response) {
+						var count = response.headers('X-Total-Count');
+						if (count > 0) {
+							var modalInstance = $rootScope.openConfirmModal(measurementModalConfirmationText,
+								environmentConfirmLabel);
+							modalInstance.result.then(deferred.resolve);
+						} else {
+							deferred.resolve(true);
+						}
+					});
+				}
+				return deferred.promise;
+			};
+
+			$scope.subObsSettingsOptions = {
+				selectAll: false
+			};
+
+			$scope.doSelectAll = function(variables, options) {
+				var filteredVariables = $filter('removeHiddenAndDeletablesVariableFilter')(variables.keys(), variables.vals());
+				_.each(filteredVariables, function(variableId) {
+					$scope.subObsSettings.m_vals[variableId].isChecked = options.selectAll;
+				});
+			};
 
 			if ($scope.preview) {
 				loadPreview();

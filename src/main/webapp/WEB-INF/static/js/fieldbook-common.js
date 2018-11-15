@@ -21,14 +21,6 @@ $(function() {
 		}
 	});
 
-	// COMMENTED BROKE ANGULAR COMBO
-	/*	if (typeof convertToSelect2 === 'undefined' || convertToSelect2) {
-			// Variable is undefined
-			$('select').each(function() {
-				$(this).select2({minimumResultsForSearch: 20});
-			});
-		}*/
-
 	function measureScrollBar() {
 		// david walsh
 		var inner = document.createElement('p');

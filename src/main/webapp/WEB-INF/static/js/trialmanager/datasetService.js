@@ -111,6 +111,11 @@
 				return request.then(successHandler, failureHandler);
 			};
 
+			datasetService.getDatasetInstances = function (datasetId) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/instances', config);
+				return request.then(successHandler, failureHandler);
+			};
+
 			datasetService.getDatasetType = function (datasetTypeId) {
 				return datasetTypeMap[datasetTypeId];
 

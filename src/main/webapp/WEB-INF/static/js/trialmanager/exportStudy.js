@@ -55,7 +55,7 @@
 					// export study modal (non-Angular)
 					exportStudyModalService.redirectToOldExportModal();
 				} else {
-					exportStudyModalService.openExportStudyModal();
+					exportStudyModalService.openExportStudyModal($scope.selected.datasetId);
 				}
 
 			};
@@ -85,7 +85,6 @@
 			};
 
 			$scope.export = function () {
-				console.log(ctrl.selectedCollectionOrderId);
 				$uibModalInstance.close();
 			};
 

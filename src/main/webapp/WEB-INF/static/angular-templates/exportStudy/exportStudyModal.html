@@ -7,7 +7,8 @@
 			<button ng-click="cancel()" type="button" class="close pull-right glyphicon glyphicon-remove"></button>
 		</div>
 	</div>
-
+	<div class="separator"></div>
+	<br/>
 	<div class="row form-group">
 		<div class="col-xs-12 col-md-12">
 			<label class=""><em> <span class="required">*</span> indicates a mandatory field</em></label>
@@ -26,8 +27,8 @@
 		</div>
 		<div class="report-type-section col-xs-4 col-md-4">
 			<ui-select ng-model="ctrl.selectedExportFormatId" theme="select2" search-enabled="false" style="min-width: 200px;">
+				<ui-select-match placeholder="Choose an export type">{{$select.selected.name}}</ui-select-match>
 				<ui-select-choices repeat="format.itemId as format in exportFormats">{{format.name}}</ui-select-choices>
-				<ui-select-match placeholder="Choose an export type">{{format.name}}</ui-select-match>
 			</ui-select>
 		</div>
 	</div>
@@ -43,7 +44,7 @@
 		</div>
 		<div class="col-xs-4 col-md-4">
 			<ui-select ng-model="ctrl.selectedCollectionOrderId" theme="select2" search-enabled="false" style="min-width: 200px;">
-				<ui-select-match placeholder="Choose a data collection order">{{collectionOrder.name}}</ui-select-match>
+				<ui-select-match placeholder="Choose a data collection order">{{$select.selected.name}}</ui-select-match>
 				<ui-select-choices repeat="collectionOrder.itemId as collectionOrder in collectionOrders">
 					{{collectionOrder.name}}
 				</ui-select-choices>
@@ -65,7 +66,7 @@
 		</div>
 		<div class="col-xs-12 col-md-12">&nbsp;</div>
 		<div class="col-xs-12 col-md-12">
-			<instances-table instances="instances" selected-instances="selectedInstances" instance-id-property="instanceId"></instances-table>
+			<instances-table instances="instances" selected-instances="selectedInstances" instance-id-property="instanceDbId"></instances-table>
 		</div>
 
 	</div>

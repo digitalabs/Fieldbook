@@ -1,7 +1,7 @@
 <input type="text"
 	   ng-if="column.dataTypeCode === 'N' || column.dataTypeCode === 'T'"
 	   ng-blur="observation.change()"
-	   ng-keyup="$event.keyCode == 13 && observation.change()"
+	   ng-keyup="doBlur($event)"
 	   ng-model="observation.value" />
 
 <input type="text"

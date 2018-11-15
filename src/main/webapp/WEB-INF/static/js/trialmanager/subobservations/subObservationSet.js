@@ -467,6 +467,13 @@
 					observation: '=',
 					// TODO upgrade angular to > 1.5 to use one-way binding
 					column: '='
+				},
+				controller: function($scope) {
+					$scope.doBlur = function ($event) {
+						if ($event.keyCode == 13) {
+							$event.target.blur();
+						}
+					}
 				}
 			};
 		})

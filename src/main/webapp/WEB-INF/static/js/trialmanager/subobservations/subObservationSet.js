@@ -37,7 +37,10 @@
 
 				$scope.dtOptions = getDtOptions();
 
-				loadDataTable();
+				loadColumns().then(function (columnsObj) {
+					dtColumnsPromise.resolve(columnsObj.columns);
+					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
+				});
 			});
 
 			if ($scope.preview) {
@@ -276,7 +279,14 @@
 					});
 			}
 
-			function loadDataTable() {
+			function reloadTable() {
+				loadColumns().then(function (columnsObj) {
+					$scope.dtColumns = columnsObj.columns;
+					$scope.dtColumnDefs = columnsObj.columnsDef;
+				});
+			}
+
+			function loadColumns() {
 				return datasetService.getColumns(subObservationSet.id).then(function (data) {
 					subObservationSet.displayColumns = data;
 					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(data);
@@ -286,8 +296,7 @@
 						subObservationSet.columnMap[column.termId] = column;
 					});
 
-					dtColumnsPromise.resolve(columnsObj.columns);
-					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
+					return columnsObj;
 				});
 			}
 

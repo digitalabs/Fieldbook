@@ -422,21 +422,22 @@
 				angular.forEach(data, function (displayColumn) {
 					columns.push({
 						title: displayColumn.name,
-						termId: displayColumn.termId,
-						factor: displayColumn.factor,
-						className: displayColumn.factor === true ? 'factors' : 'variates',
 						data: function (row) {
-							if (row.variables[displayColumn.name]) {
-								return row.variables[displayColumn.name];
-							}
-							return "";
-						}
+							return row.variables[displayColumn.name];
+						},
+						termId: displayColumn.termId,
+						defaultContent: '',
+						className: displayColumn.factor === true ? 'factors' : 'variates',
+						isDerivedTrait: Boolean(displayColumn.formula),
+						factor: displayColumn.factor,
+						possibleValues: displayColumn.possibleValues,
+						dataTypeCode: displayColumn.dataTypeCode
 					});
 					// GID or DESIGNATION
 					if (displayColumn.termId === 8240 || displayColumn.termId === 8250) {
 						columnsDef.push({
 							targets: columns.length - 1,
-							render: function(data, type, full, meta) {
+							render: function (data, type, full, meta) {
 								return '<a class="gid-link" href="javascript: void(0)" ' +
 									'onclick="openGermplasmDetailsPopopWithGidAndDesig(\'' +
 									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
@@ -446,7 +447,7 @@
 						columnsDef.push({
 							targets: columns.length - 1,
 							render: function(data, type, full, meta) {
-								return data && data.value || '';
+								return data && EscapeHTML.escape(data.value);
 							}
 						});
 					}

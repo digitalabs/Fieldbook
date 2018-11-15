@@ -4,11 +4,11 @@
 	var manageTrialApp = angular.module('manageTrialApp');
 
 	manageTrialApp.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
-		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService',
+		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', 'studyContext', '$rootScope', '$filter', '_',
 		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
-				  datasetService
+				  datasetService, studyContext, $rootScope, $filter, _
 		) {
-
+			$scope.subObsSettings = new angular.OrderedHash();
 			var subObservationSet = $scope.subObservationSet = $stateParams.subObservationSet;
 			$scope.preview = Boolean(subObservationSet.preview);
 			$scope.columnsObj = subObservationSet.columnsObj;
@@ -29,6 +29,7 @@
 			$scope.dtOptions = null;
 
 			datasetService.getDataset(subObservationSet.id).then(function (dataset) {
+				$scope.subObservationSet.dataset = dataset;
 				if (!dataset.instances || !dataset.instances.length) {
 					return;
 				}
@@ -36,12 +37,44 @@
 				$scope.nested.selectedEnvironment = dataset.instances[0];
 
 				$scope.dtOptions = getDtOptions();
-
+				$scope.subObsSettings = $scope.getTraitVariablesFromDataset();
+				$scope.subObsSettings.allSettings = $scope.selectedVariables();
 				loadColumns().then(function (columnsObj) {
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
 				});
 			});
+
+			$scope.getTraitVariablesFromDataset = function () {
+				var traitVariables = {settings: []};
+				angular.forEach($scope.subObservationSet.dataset.variables, function (variable) {
+
+					var traitVariable = {
+						cvTermId: variable.termId,
+						name: variable.name,
+						description: variable.description,
+						property: variable.property,
+						scale: variable.scale,
+						//role:null,
+						method: variable.method,
+						dataType: variable.dataType,
+						dataTypeId: variable.dataTypeId,
+						minRange: null,
+						maxRange: null,
+						operation: null,
+						formula: variable.formula
+					};
+					var SettingDetail = {
+						variable: traitVariable,
+						hidden: variable.variableType === 'TRAIT' ? false : true,
+						deletable: true
+					};
+					traitVariables.settings.push(SettingDetail);
+
+				});
+				return TrialManagerDataService.extractSettings(traitVariables);
+			};
+
 
 			if ($scope.preview) {
 				loadPreview();

@@ -1,10 +1,59 @@
 <div class="row" ng-cloak="">
-	<div class="col-xs-12">
-		<div class="row">
-			<div class="col-xs-12">
-				<!--<h1>{{subObservationSet.name}}</h1>-->
-			</div>
-		</div>
+	<div class="col-lg-8 col-md-8 col-sm-10 col-xs-12">
+		<section-container collapsible="true" th:attr="heading=#{study.managesettings.observation.details}">
+			<section-container name="content" th:attr="heading=#{study.managesettings.baseline.traits},
+							   help-tooltip=#{study.managesettings.trait.notes},icon-img=@{/static/img/baseline-traits.png}"
+							   icon-size="22" add-variable="true" model-data="subObsSettings" variable-type="1808"
+							   callback="onAddVariable(result)" hide-variable="true">
+				<div name="content">
+					<table class='factor-opts-tbl table table-curved table-condensed'>
+						<thead>
+						<tr>
+							<th style="width: 20px" class="fbk-delete-link"></th>
+							<th style="width: auto; min-width: 150px;">Name</th>
+							<th style="width: auto">Description</th>
+							<th style="width: auto; white-space: nowrap;">Input Variables</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr ng-repeat="key in filteredKeys = ( subObsSettings.keys() | removeHiddenVariableFilter: subObsSettings.vals() ) track by key">
+							<td style="width: auto;" ng-class="{even : $even, odd : $odd}" class="fbk-delete-link">
+								<input type="checkbox" ng-model="subObsSettings.val(key).isChecked"/>
+							</td>
+							<td style="width: auto; min-width: 150px;" ng-class="{even : $even, odd : $odd}">
+								<a href="javascript: void(0);">
+									<span class="var-names" show-details-modal="key" variable-type="1808">{{subObsSettings.val(key).variable.name}}</span>
+								</a>
+							</td>
+							<td style="width: auto" ng-class="{even : $even, odd : $odd}">{{subObsSettings.val(key).variable.description}}
+							</td>
+							<td style="width: auto" width="50%" ng-class="{even : $even, odd : $odd}">
+								<span ng-repeat="formulaVariable in subObsSettings.val(key).variable.formula.inputs">
+									<a href="javascript: void(0);">
+									<span class="var-names" show-details-modal="formulaVariable.id" variable-type="1808">{{formulaVariable.name}}</span>
+									</a>{{$last ? '' : ', '}}
+								</span>
+							</td>
+						</tr>
+						<tr ng-hide="filteredKeys.length &gt; 0">
+							<td class="odd">&nbsp;</td>
+							<td class="odd">&nbsp;</td>
+							<td class="odd">&nbsp;</td>
+							<td class="odd">&nbsp;</td>
+						</tr>
+						</tbody>
+					</table>
+					<div class="row form-group"
+						 ng-show="((subObsSettings.keys() | removeHiddenAndDeletablesVariableFilter: subObsSettings.vals()).length &gt; 0)">
+						<div class="col-md-12">
+							<label class="fbk-selectall-chk"><input type="checkbox" ng-model="subObsSettingsOptions.selectAll"
+																	ng-change="doSelectAll(subObsSettings,subObsSettingsOptions)"/>Select All</label>
+							<a class="fbk-remove-link fbk-remove-traits-link" href="javascript: void(0);" ng-click="onRemoveVariable()">Remove</a>
+						</div>
+					</div>
+				</div>
+			</section-container>
+		</section-container>
 	</div>
 	<div class="col-xs-12">
 		<div class="row">

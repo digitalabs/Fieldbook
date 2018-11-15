@@ -245,17 +245,20 @@
 
 							var params = {
 								variableType: attrs.variableType,
-								retrieveSelectedVariableFunction: function() {
-									var allSettings = TrialManagerDataService.getSettingsArray();
-									var selected = {};
+								retrieveSelectedVariableFunction: function () {
+									if (!scope.modeldata.allSettings) {
+										var allSettings = TrialManagerDataService.getSettingsArray();
+										var selected = {};
 
-									angular.forEach(allSettings, function(tabSettings) {
-										angular.forEach(tabSettings.vals(), function(value) {
-											selected[value.variable.cvTermId] = value.variable.name;
+										angular.forEach(allSettings, function (tabSettings) {
+											angular.forEach(tabSettings.vals(), function (value) {
+												selected[value.variable.cvTermId] = value.variable.name;
+											});
 										});
-									});
 
-									return selected;
+										return selected;
+									}
+									return scope.modeldata.allSettings;
 								}
 							};
 

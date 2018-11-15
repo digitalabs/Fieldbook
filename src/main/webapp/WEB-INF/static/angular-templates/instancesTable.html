@@ -7,7 +7,7 @@
 	</tr>
 	</thead>
 	<tbody>
-	<tr ng-repeat="instance in ::instances">
+	<tr ng-repeat="instance in instances">
 		<td><input type="checkbox" ng-model="selectedInstances[instance[instanceIdProperty]]"/></td>
 		<td>{{::instance.instanceNumber}}</td>
 		<td>{{::instance.locationName}} - ({{::instance.locationAbbreviation}})</td>

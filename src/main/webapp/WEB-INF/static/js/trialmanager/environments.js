@@ -147,7 +147,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			/* Scope Functions */
 			$scope.shouldDisableEnvironmentCountUpdate = function () {
-				return TrialManagerDataService.trialMeasurement.hasMeasurement;
+				return $scope.subObservationTabs.length > 0 || TrialManagerDataService.trialMeasurement.hasMeasurement;
 			};
 
 			$scope.updateEnvironmentCount = function () {

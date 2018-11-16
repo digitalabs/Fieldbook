@@ -256,8 +256,12 @@
 						}
 
 						if (column.dataTypeCode === 'D') {
-							setTimeout(function () {
-								$('input', cell).datepicker({
+							$timeout(function () {
+								angular.element('input', cell).on('keydown', function (e) {
+									if (e.keyCode === 13) {
+										e.stopImmediatePropagation();
+									}
+								}).datepicker({
 									'format': 'yyyymmdd'
 								}).on('hide', function () {
 									updateInline();

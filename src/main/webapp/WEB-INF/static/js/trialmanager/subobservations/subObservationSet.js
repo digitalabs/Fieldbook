@@ -108,7 +108,7 @@
 						data: function (d) {
 							var sortedColIndex = $(tableId).dataTable().fnSettings().aaSorting[0][0];
 							var sortDirection = $(tableId).dataTable().fnSettings().aaSorting[0][1];
-							var sortedColTermId = subObservationSet.displayColumns[sortedColIndex].termId;
+							var sortedColTermId = subObservationSet.columnsData[sortedColIndex].termId;
 
 							return {
 								draw: d.draw,
@@ -175,7 +175,7 @@
 					var row = table.row(rowIndex).data();
 					var cellData = table.cell({row: rowIndex, column: cell.cellIndex}).data();
 					var column = subObservationSet.columnsObj.columns[cell.cellIndex];
-					var termId = column.termId;
+					var termId = column.columnData.termId;
 
 					if (!termId) return;
 
@@ -203,7 +203,7 @@
 							}
 						};
 
-						var column = $inlineScope.column = subObservationSet.columnMap[termId];
+						$inlineScope.column = column.columnData;
 
 						$(cell).html('');
 						var editor = $compile(
@@ -255,7 +255,7 @@
 
 						}
 
-						if (column.dataTypeCode === 'D') {
+						if (column.columnData.dataTypeCode === 'D') {
 							$timeout(function () {
 								angular.element('input', cell).on('keydown', function (e) {
 									if (e.keyCode === 13) {
@@ -308,13 +308,13 @@
 			}
 
 			function loadColumns() {
-				return datasetService.getColumns(subObservationSet.id).then(function (data) {
-					subObservationSet.displayColumns = data;
-					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(data);
+				return datasetService.getColumns(subObservationSet.id).then(function (columnsData) {
+					subObservationSet.columnsData = columnsData;
+					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(columnsData);
 
 					subObservationSet.columnMap = {};
-					angular.forEach(data, function (column) {
-						subObservationSet.columnMap[column.termId] = column;
+					angular.forEach(columnsData, function (columnData) {
+						subObservationSet.columnMap[columnData.termId] = columnData;
 					});
 
 					return columnsObj;
@@ -322,28 +322,24 @@
 			}
 
 			// TODO merge with measurements-table-trial.js#getColumns
-			function mapColumns(data) {
+			function mapColumns(columnsData) {
 				var columns = [],
 					columnsDef = [];
 
 				// TODO complete column definitions (highlighting, links, etc)
 
-				angular.forEach(data, function (displayColumn) {
+				angular.forEach(columnsData, function (columnData) {
 					columns.push({
-						title: displayColumn.name,
+						title: columnData.name,
 						data: function (row) {
-							return row.variables[displayColumn.name];
+							return row.variables[columnData.name];
 						},
-						termId: displayColumn.termId,
 						defaultContent: '',
-						className: displayColumn.factor === true ? 'factors' : 'variates',
-						isDerivedTrait: Boolean(displayColumn.formula),
-						factor: displayColumn.factor,
-						possibleValues: displayColumn.possibleValues,
-						dataTypeCode: displayColumn.dataTypeCode
+						className: columnData.factor === true ? 'factors' : 'variates',
+						columnData: columnData
 					});
 					// GID or DESIGNATION
-					if (displayColumn.termId === 8240 || displayColumn.termId === 8250) {
+					if (columnData.termId === 8240 || columnData.termId === 8250) {
 						columnsDef.push({
 							targets: columns.length - 1,
 							render: function (data, type, full, meta) {
@@ -380,7 +376,7 @@
 				},
 				controller: function($scope) {
 					$scope.doBlur = function ($event) {
-						if ($event.keyCode == 13) {
+						if ($event.keyCode === 13) {
 							$event.target.blur();
 						}
 					}

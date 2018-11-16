@@ -68,7 +68,7 @@
 		}]);
 
 	exportStudyModule.controller('exportStudyCtrl', ['datasetId', '$scope', '$uibModalInstance', 'datasetService', 'exportStudyModalService',
-		'TrialManagerDataService', function (datasetId, $scope, $uibModalInstance, datasetService, exportStudyModalService, TrialManagerDataService) {
+		'TrialManagerDataService', 'fileDownloadHelper', function (datasetId, $scope, $uibModalInstance, datasetService, exportStudyModalService, TrialManagerDataService, fileDownloadHelper) {
 
 			var ctrl = this;
 
@@ -90,7 +90,21 @@
 			};
 
 			$scope.export = function () {
-				$uibModalInstance.close();
+
+				var instanceIds = [];
+
+				Object.keys($scope.selectedInstances).forEach(function (instanceId) {
+					var isSelected = $scope.selectedInstances[instanceId];
+					if (isSelected) {
+						instanceIds.push(instanceId);
+					}
+				});
+
+				datasetService.exportDataset(datasetId, instanceIds).then(function (response) {
+					var fileName = fileDownloadHelper.getFileNameFromResponseContentDisposition(response);
+					fileDownloadHelper.save(response.data, fileName);
+					$uibModalInstance.close();
+				});
 			};
 
 			ctrl.init = function () {
@@ -101,7 +115,7 @@
 					var noOfEnvironments = parseInt(TrialManagerDataService.currentData.environments.noOfEnvironments);
 
 					if (noOfEnvironments !== $scope.instances.length) {
-						exportStudyModalService.showAlertMessage('','Some instances do not have sub observation units associated and can not be' +
+						exportStudyModalService.showAlertMessage('', 'Some instances do not have sub observation units associated and can not be' +
 							' selected to export.');
 					}
 				});

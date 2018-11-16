@@ -734,6 +734,36 @@
 					});
 				}
 			};
+		}]).service('fileDownloadHelper', [function () {
+
+			var fileDownloadHelper = {};
+
+			fileDownloadHelper.save = function (blob, fileName) {
+
+				var url = window.URL.createObjectURL(blob);
+
+				// For IE 10 or later
+				if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+					window.navigator.msSaveOrOpenBlob(url, fileName);
+				} else { // For Chrome/Safari/Firefox and other browsers with HTML5 support
+					var link = document.createElement('a');
+					link.href = url;
+					link.download = fileName;
+					document.body.appendChild(link);
+					link.click();
+					document.body.removeChild(link);
+				}
+			};
+
+			fileDownloadHelper.getFileNameFromResponseContentDisposition = function (response) {
+
+				var contentDisposition = response.headers('content-disposition') || '';
+				var matches = /filename=([^;]+)/ig.exec(contentDisposition);
+				var fileName = (matches[1] || 'untitled').trim();
+				return fileName;
+			};
+
+			return fileDownloadHelper;
 		}]);
 	}
 )();

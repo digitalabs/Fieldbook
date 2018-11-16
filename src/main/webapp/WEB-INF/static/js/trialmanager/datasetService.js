@@ -121,6 +121,18 @@
 
 			};
 
+			datasetService.exportDataset = function (datasetId, instanceIds) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/csv', angular.merge({
+					params: {
+						instanceIds: instanceIds.join(",")
+					},
+					responseType: 'blob'
+				}, config));
+				return request.then(function (response) {
+					return response;
+				}, failureHandler);
+			};
+
 			return datasetService;
 		}]);
 

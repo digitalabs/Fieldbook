@@ -167,6 +167,7 @@
 					iconImg: '@',
 					iconSize: '@',
 					modelData: '=',
+					selectedVariables: '=',
 					variableType: '@',
 					showReminder: '=',
 					enableUpdate: '=',

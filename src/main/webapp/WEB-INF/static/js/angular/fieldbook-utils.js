@@ -208,7 +208,8 @@
 					restrict: 'A',
 					scope: {
 						modeldata: '=',
-						callback: '&'
+						callback: '&',
+						selectedvariables: '='
 					},
 
 					link: function(scope, elem, attrs) {
@@ -246,7 +247,7 @@
 							var params = {
 								variableType: attrs.variableType,
 								retrieveSelectedVariableFunction: function () {
-									if (!scope.modeldata.allSettings) {
+									if (!scope.selectedvariables) {
 										var allSettings = TrialManagerDataService.getSettingsArray();
 										var selected = {};
 
@@ -258,7 +259,7 @@
 
 										return selected;
 									}
-									return scope.modeldata.allSettings;
+									return scope.selectedvariables;
 								}
 							};
 

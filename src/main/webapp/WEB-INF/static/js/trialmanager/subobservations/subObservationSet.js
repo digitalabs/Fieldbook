@@ -38,7 +38,7 @@
 
 				$scope.dtOptions = getDtOptions();
 				$scope.subObsSettings = $scope.getTraitVariablesFromDataset();
-				$scope.subObsSettings.allSettings = $scope.selectedVariables();
+				$scope.selectedTraits = $scope.selectedVariables();
 				loadColumns().then(function (columnsObj) {
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
@@ -87,7 +87,7 @@
 							"studyAlias": variable.name
 						}
 					).then(function () {
-						$scope.subObsSettings.allSettings = $scope.selectedVariables();
+						$scope.selectedTraits = $scope.selectedVariables();
 						reloadTable();
 					});
 				}
@@ -120,7 +120,7 @@
 							});
 							$scope.subObsSettingsOptions.selectAll = false;
 							reloadTable();
-							$scope.subObsSettings.allSettings = $scope.selectedVariables();
+							$scope.selectedTraits = $scope.selectedVariables();
 						});
 					}
 				});

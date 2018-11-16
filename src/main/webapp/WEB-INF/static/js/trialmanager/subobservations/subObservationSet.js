@@ -158,7 +158,9 @@
 			function loadPreview() {
 				$scope.dtOptionsPreview = addCommonOptions(DTOptionsBuilder
 					.fromFnPromise(getPreview())
-					.withOption('rowCallback', previewRowCallback));
+					// TODO 1) extract common logic rowCallback 2) use datatable api to store data 3) use DataTable().rows().data() to save
+					// .withOption('rowCallback', previewRowCallback)
+				);
 			}
 
 			function initComplete() {
@@ -265,103 +267,6 @@
 
 						// FIXME show combobox for categorical traits
 						$(cell).css('overflow', 'visible');
-
-					});
-				}
-			}
-
-			// TODO 1) extract common logic rowCallback 2) use datatable api to store data 3) use DataTable().rows().data() to save
-			function previewRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-				var experimentId = aData.experimentId;
-
-				// FIXME attach to table instead? prevent multiple cells click?
-				$('td.variates', nRow).off().on('click', cellClickHandler);
-
-				/**
-				 * Keep a closure with experimentId, iDisplayIndexFull, etc
-				 */
-				function cellClickHandler() {
-					var termId = $(this).data('term-id'),
-						phenotypeId = $(this).data('phenotype-id'),
-						that = this;
-
-					// FIXME BMS-4453
-					if (!termId || !phenotypeId) return;
-
-					/**
-					 * Remove handler to not interfere with inline editor
-					 * fnUpdate will trigger rowCallback and restore it
-					 */
-					$(this).off('click');
-
-					$scope.$apply(function () {
-						var data = subObservationSet.rowMap[experimentId][termId];
-
-						/*
-						FIXME change json response for an object with named properties
-							Current structure is an array
-								AleuCol_E_1to5: ["7", "7", true, "", null]
-							where the first item is the value
-						 */
-
-						var $inlineScope = $scope.$new(true);
-
-						$inlineScope.observation = {
-							value: data[0],
-							change: function () {
-								updateInline();
-							},
-							// FIXME altenative to blur bug https://github.com/angular-ui/ui-select/issues/499
-							onOpenClose: function(isOpen) {
-								if (!isOpen) updateInline();
-							},
-							newInlineValue: function (newValue) {
-								return {name: newValue};
-							}
-						};
-
-						var column = $inlineScope.column = subObservationSet.columnMap[termId];
-
-						$(that).html('');
-						var editor = $compile(
-							' <observation-inline-editor ' +
-							' column="column" ' +
-							' observation="observation"></observation-inline-editor> '
-						)($inlineScope);
-
-						$(that).append(editor);
-
-						function updateInline() {
-							data[0] = $inlineScope.observation.value;
-
-							setTimeout(function () {
-								$inlineScope.$destroy();
-								editor.remove();
-
-								$('#preview-subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id)
-									.dataTable()
-									.fnUpdate(subObservationSet.rows[iDisplayIndexFull], iDisplayIndexFull, null, false);
-
-								/**
-								 * Restore cell click handler
-								 */
-								$(that).off().on('click', cellClickHandler);
-							});
-
-						}
-
-						if (column.dataTypeCode === 'D') {
-							setTimeout(function () {
-								$('input', that).datepicker({
-									'format': 'yyyymmdd'
-								}).on('hide', function () {
-									updateInline();
-								});
-							});
-						}
-
-						// FIXME show combobox for categorical traits
-						$(that).css('overflow', 'visible');
 
 					});
 				}

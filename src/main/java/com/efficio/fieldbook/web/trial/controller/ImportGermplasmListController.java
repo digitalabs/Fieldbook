@@ -585,7 +585,7 @@ public class ImportGermplasmListController extends SettingsController {
 			for (final SettingDetail factorDetail : factorsList) {
 				if (factorDetail != null && factorDetail.getVariable() != null
 						&& !SettingsUtil.inHideVariableFields(factorDetail.getVariable().getCvTermId(),
-								AppConstants.HIDE_GERMPLASM_DESCRIPTOR_HEADER_TABLE.getString())) {
+								AppConstants.HIDE_GERMPLASM_DESCRIPTOR_HEADER_TABLE.getString()) && !factorDetail.isHidden()) {
 					tableHeaderList.add(new TableHeader(factorDetail.getVariable().getName(),
 							factorDetail.getVariable().getCvTermId()
 									+ AppConstants.TABLE_HEADER_KEY_SUFFIX.getString()));

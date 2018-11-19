@@ -27,6 +27,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/lib/angular/ui-router-dsr.min.js',
 			'WEB-INF/static/js/lib/angular/ui-router-sticky-states.js',
 			'WEB-INF/static/js/lib/angular/ui-router-angularjs.min.js',
+			'WEB-INF/static/js/lib/angular/angular-block-ui.min.js',
 			'WEB-INF/static/js/lib/angular/ng-lodash.min.js',
 			'WEB-INF/static/js/lib/angular/sanitize.js',
 			'WEB-INF/static/js/lib/angular/select.js',

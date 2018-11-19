@@ -121,10 +121,11 @@
 
 			};
 
-			datasetService.exportDataset = function (datasetId, instanceIds) {
+			datasetService.exportDataset = function (datasetId, instanceIds, collectionOrderId) {
 				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/csv', angular.merge({
 					params: {
-						instanceIds: instanceIds.join(",")
+						instanceIds: instanceIds.join(","),
+						collectionOrderId: collectionOrderId
 					},
 					responseType: 'blob'
 				}, config));

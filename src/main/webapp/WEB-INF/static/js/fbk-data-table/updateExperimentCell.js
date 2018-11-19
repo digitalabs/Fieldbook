@@ -9,6 +9,7 @@ function initializeInlineMeasurementInput(possibleValuesSuggestions) {
 	$('.inline-input input').on('click', function() {
 		$('body').data('last-td-time-clicked', new Date().getTime());
 	});
+	// FIXME why is this needed?
 	$('body').on('click', function() {
 		var lastTdClicked = $('body').data('last-td-time-clicked') !== null ? $('body').data('last-td-time-clicked') : 0;
 		var timeDiff = new Date().getTime() - lastTdClicked;

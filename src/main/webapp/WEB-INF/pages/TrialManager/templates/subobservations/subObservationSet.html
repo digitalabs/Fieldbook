@@ -18,7 +18,7 @@
 						<tbody>
 						<tr ng-repeat="key in filteredKeys = ( traitVariables.keys() | removeHiddenVariableFilter: traitVariables.vals() ) track by key">
 							<td style="width: auto;" ng-class="{even : $even, odd : $odd}" class="fbk-delete-link">
-								<input type="checkbox" ng-model="subObsSettings.val(key).isChecked"/>
+								<input type="checkbox" ng-model="traitVariables.val(key).isChecked" ng-change="selectTrait(traitVariables.val(key).isChecked)"/>
 							</td>
 							<td style="width: auto; min-width: 150px;" ng-class="{even : $even, odd : $odd}">
 								<a href="javascript: void(0);">

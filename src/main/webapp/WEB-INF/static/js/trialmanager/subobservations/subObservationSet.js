@@ -118,7 +118,7 @@
 							angular.forEach(deleteVariables, function (cvtermId) {
 								$scope.traitVariables.remove(cvtermId);
 							});
-							$scope.subObsSettingsOptions.selectAll = false;
+							$scope.traitsVariableSelected.selectAll = false;
 							reloadTable();
 							$scope.selectedTraits = $scope.selectedVariables();
 						});
@@ -143,8 +143,14 @@
 				return deferred.promise;
 			};
 
-			$scope.subObsSettingsOptions = {
+			$scope.traitsVariableSelected = {
 				selectAll: false
+			};
+
+			$scope.selectTrait = function (isChecked) {
+				if (!isChecked) {
+					$scope.traitsVariableSelected.selectAll = false;
+				}
 			};
 
 			$scope.doSelectAll = function(variables, options) {

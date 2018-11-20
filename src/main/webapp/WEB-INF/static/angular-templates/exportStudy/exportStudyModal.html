@@ -25,7 +25,7 @@
 		<div class="col-xs-5 col-md-5">
 			<label class="control-label add_top_padding label-bold">Choose an export format:</label> <span class="required">*</span>
 		</div>
-		<div class="report-type-section col-xs-4 col-md-4">
+		<div class="report-type-section col-xs-6 col-md-6">
 			<ui-select ng-model="ctrl.selectedExportFormatId" theme="select2" search-enabled="false" style="min-width: 200px;">
 				<ui-select-match placeholder="Choose an export type">{{$select.selected.name}}</ui-select-match>
 				<ui-select-choices repeat="format.itemId as format in exportFormats">{{format.name}}</ui-select-choices>
@@ -42,7 +42,7 @@
 		<div class="col-xs-5 col-md-5">
 			<label class="control-label add_top_padding label-bold">Choose a data collection order</label> <span class="required">*</span>
 		</div>
-		<div class="col-xs-4 col-md-4">
+		<div class="col-xs-6 col-md-6">
 			<ui-select ng-model="ctrl.selectedCollectionOrderId" theme="select2" search-enabled="false" style="min-width: 200px;">
 				<ui-select-match placeholder="Choose a data collection order">{{$select.selected.name}}</ui-select-match>
 				<ui-select-choices repeat="collectionOrder.itemId as collectionOrder in collectionOrders">
@@ -50,8 +50,10 @@
 				</ui-select-choices>
 			</ui-select>
 		</div>
-		<div style="padding-top: 7px">
-			<span class="bms-fa-question-circle help-tooltip-study" data-placement="right" data-toggle="tooltip"></span>
+		<div class="col-xs-1 col-md-1" style="padding-top: 7px">
+				<span class="bms-fa-question-circle help-tooltip-study"
+					  tooltip-placement="bottom" tooltip-class="medium" uib-tooltip="Serpentine order options are only available after you have generated a Field Plan for this Study.">
+			</span>
 		</div>
 	</div>
 

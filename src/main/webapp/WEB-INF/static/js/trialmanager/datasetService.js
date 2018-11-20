@@ -43,29 +43,25 @@
 			var successHandler = serviceUtilities.restSuccessHandler,
 				failureHandler = serviceUtilities.restFailureHandler;
 
-			datasetService.observationCount = function (studyId, datasetId, variableIds) {
+			datasetService.observationCount = function (datasetId, variableIds) {
 
-				if (studyId && datasetId && variableIds) {
-					return $http.head(BASE_URL + studyId + '/datasets/' + datasetId + '/variables/observations?variableIds=' + variableIds.join(','), config);
+				if (datasetId && variableIds) {
+					return $http.head(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables/observations?variableIds=' + variableIds.join(','), config);
 				}
 
 				return $q.reject('studyId, datasetId and variableIds are not defined.');
-
 			};
 
-			datasetService.observationCountByInstance = function (studyId, datasetId, instanceId) {
+			datasetService.observationCountByInstance = function (datasetId, instanceId) {
 
-				if (studyId && instanceId && datasetId) {
-					return $http.head(BASE_URL + studyId + '/datasets/' + datasetId + '/observationUnits/' + instanceId, config);
+				if (datasetId && instanceId) {
+					return $http.head(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/' + instanceId, config);
 				}
 
-				return $q.reject('studyId, instanceId and datasetId are not defined.');
+				return $q.reject('instanceId and datasetId are not defined.');
 			};
 
 			datasetService.getDatasets = function () {
-				if (!studyContext.studyId) {
-					return $q.resolve([]);
-				}
 				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets', angular.merge({
 					params: {
 						datasetTypeIds: DATASET_TYPES_SUBOBSERVATION_IDS.join(",")

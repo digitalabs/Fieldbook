@@ -3,7 +3,7 @@
 		<section-container collapsible="true" th:attr="heading=#{study.managesettings.observation.details}">
 			<section-container name="content" th:attr="heading=#{study.managesettings.baseline.traits},
 							   help-tooltip=#{study.managesettings.trait.notes},icon-img=@{/static/img/baseline-traits.png}"
-							   icon-size="22" add-variable="true" model-data="subObsSettings" variable-type="1808"
+							   icon-size="22" add-variable="true" model-data="subObsSettings" selected-variables="selectedTraits" variable-type="1808"
 							   callback="onAddVariable(result)" hide-variable="true">
 				<div name="content">
 					<table class='factor-opts-tbl table table-curved table-condensed'>

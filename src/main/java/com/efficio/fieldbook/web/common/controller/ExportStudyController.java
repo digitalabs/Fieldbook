@@ -505,6 +505,17 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		return super.convertObjectToJson(results);
 	}
 
+	/**
+	 * Get a map of instancesId and boolean value to determine if an instance has fieldmap or not.
+	 *
+	 * @return the map
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/trial/hasFieldMap/{studyId}", method = RequestMethod.GET)
+	public Map<Integer, Boolean> hasFieldMap(@PathVariable final int studyId) {
+		return this.studyDataManager.hasFieldMap(studyId);
+	}
+
 	protected void setExportAdvanceListService(final ExportAdvanceListService exportAdvanceListService) {
 		this.exportAdvanceListService = exportAdvanceListService;
 	}

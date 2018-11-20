@@ -4,46 +4,52 @@
 
 	var exportStudyModule = angular.module('export-study', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal', 'fieldbook-utils']);
 
-	exportStudyModule.factory('exportStudyModalService', ['$uibModal', function ($uibModal) {
+	exportStudyModule.factory('exportStudyModalService', ['$uibModal', '$http', 'studyContext', 'serviceUtilities',
+		function ($uibModal, $http, studyContext, serviceUtilities) {
 
-		var exportStudyModalService = {};
+			var exportStudyModalService = {};
 
-		exportStudyModalService.openDatasetOptionModal = function () {
-			$uibModal.open({
-				template: '<dataset-option-modal title="title" message="message"' +
-				'selected="selected" on-continue="showExportOptions()"></dataset-option-modal>',
-				controller: 'exportDatasetOptionCtrl',
-				size: 'md'
-			});
-		};
+			exportStudyModalService.openDatasetOptionModal = function () {
+				$uibModal.open({
+					template: '<dataset-option-modal title="title" message="message"' +
+					'selected="selected" on-continue="showExportOptions()"></dataset-option-modal>',
+					controller: 'exportDatasetOptionCtrl',
+					size: 'md'
+				});
+			};
 
-		exportStudyModalService.openExportStudyModal = function (datasetId) {
-			$uibModal.open({
-				templateUrl: '/Fieldbook/static/angular-templates/exportStudy/exportStudyModal.html',
-				controller: "exportStudyCtrl",
-				size: 'md',
-				resolve: {
-					datasetId: function () {
-						return datasetId;
-					}
-				},
-				controllerAs: 'ctrl'
-			});
-		};
+			exportStudyModalService.openExportStudyModal = function (datasetId) {
+				$uibModal.open({
+					templateUrl: '/Fieldbook/static/angular-templates/exportStudy/exportStudyModal.html',
+					controller: "exportStudyCtrl",
+					size: 'md',
+					resolve: {
+						datasetId: function () {
+							return datasetId;
+						}
+					},
+					controllerAs: 'ctrl'
+				});
+			};
 
-		exportStudyModalService.redirectToOldExportModal = function () {
-			// Call the global function to show the old export study modal
-			showExportOptions();
-		};
+			exportStudyModalService.redirectToOldExportModal = function () {
+				// Call the global function to show the old export study modal
+				showExportOptions();
+			};
 
-		exportStudyModalService.showAlertMessage = function (title, message) {
-			// Call the global function to show alert message
-			showAlertMessage(title, message);
-		};
+			exportStudyModalService.showAlertMessage = function (title, message) {
+				// Call the global function to show alert message
+				showAlertMessage(title, message);
+			};
 
-		return exportStudyModalService;
+			exportStudyModalService.hasFieldMap = function () {
+				var request = $http.get('/Fieldbook/ExportManager/trial/hasFieldMap/' + studyContext.studyId);
+				return request.then(serviceUtilities.restSuccessHandler, serviceUtilities.restFailureHandler);
+			}
 
-	}]);
+			return exportStudyModalService;
+
+		}]);
 
 	exportStudyModule.controller('exportDatasetOptionCtrl', ['$scope', '$uibModal', '$uibModalInstance', 'studyContext', 'exportStudyModalService',
 		'datasetService', function ($scope, $uibModal, $uibModalInstance, studyContext, exportStudyModalService, datasetService) {
@@ -67,8 +73,14 @@
 
 		}]);
 
-	exportStudyModule.controller('exportStudyCtrl', ['datasetId', '$scope', '$uibModalInstance', 'datasetService', 'exportStudyModalService',
-		'TrialManagerDataService', 'fileDownloadHelper', function (datasetId, $scope, $uibModalInstance, datasetService, exportStudyModalService, TrialManagerDataService, fileDownloadHelper) {
+	exportStudyModule.controller('exportStudyCtrl', ['datasetId', '$scope', '$rootScope', '$uibModalInstance', 'datasetService', 'exportStudyModalService',
+		'TrialManagerDataService', 'fileDownloadHelper',
+		function (datasetId, $scope, $rootScope, $uibModalInstance, datasetService, exportStudyModalService, TrialManagerDataService, fileDownloadHelper) {
+
+
+			var PLOT_ORDER = '1';
+			var SERPENTINE_ALONG_ROWS_ORDER = '2';
+			var SERPENTINE_ALONG_COLUMNS_ORDER = '3';
 
 			var ctrl = this;
 
@@ -77,9 +89,9 @@
 
 			$scope.exportFormats = [{itemId: '1', name: 'CSV'}];
 			$scope.collectionOrders = [
-				{itemId: '1', name: 'Plot Order'},
-				{itemId: '2', name: 'Serpentine - Along Rows'},
-				{itemId: '3', name: 'Serpentine - Along columns'}
+				{itemId: PLOT_ORDER, name: 'Plot Order'},
+				{itemId: SERPENTINE_ALONG_ROWS_ORDER, name: 'Serpentine - Along Rows'},
+				{itemId: SERPENTINE_ALONG_COLUMNS_ORDER, name: 'Serpentine - Along columns'}
 			];
 
 			$scope.instances = [];
@@ -89,7 +101,19 @@
 				$uibModalInstance.dismiss();
 			};
 
-			$scope.export = function () {
+			$scope.proceed = function () {
+
+				var instanceIds = ctrl.getSelectedInstanceIds();
+
+				if (ctrl.selectedCollectionOrderId !== PLOT_ORDER) {
+					ctrl.checkIfInstancesHaveFieldMap(instanceIds);
+				} else {
+					ctrl.export(instanceIds);
+				}
+
+			};
+
+			ctrl.getSelectedInstanceIds = function () {
 
 				var instanceIds = [];
 
@@ -100,11 +124,50 @@
 					}
 				});
 
+				return instanceIds;
+
+			};
+
+
+			ctrl.checkIfInstancesHaveFieldMap = function (instanceIds) {
+
+				exportStudyModalService.hasFieldMap().then(function (data) {
+					var fieldMap = data;
+					var hasFieldMap = true;
+					$.each(instanceIds, function (index, value) {
+						if (!fieldMap[value]) {
+							hasFieldMap = false;
+						}
+					});
+
+					// If any of the selected instances don't have fieldmap, show the confirm popup.
+					if (!hasFieldMap) {
+						ctrl.showConfirmModal(instanceIds);
+					} else {
+						ctrl.export(instanceIds);
+					}
+				});
+
+			};
+
+			ctrl.showConfirmModal = function (instanceIds) {
+				// Existing Trial with measurement data
+				var modalInstance = $rootScope.openConfirmModal('Some of the environments you selected do not have field plans and so must ' +
+					'be exported in plot order. Do you want to proceed?', 'Proceed');
+				modalInstance.result.then(function (shouldContinue) {
+					if (shouldContinue) {
+						ctrl.export(instanceIds);
+					}
+				});
+			};
+
+			ctrl.export = function (instanceIds) {
 				datasetService.exportDataset(datasetId, instanceIds, ctrl.selectedCollectionOrderId).then(function (response) {
 					var fileName = fileDownloadHelper.getFileNameFromResponseContentDisposition(response);
 					fileDownloadHelper.save(response.data, fileName);
 					$uibModalInstance.close();
 				});
+
 			};
 
 			ctrl.init = function () {

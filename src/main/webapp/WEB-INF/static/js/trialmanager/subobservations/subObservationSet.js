@@ -15,6 +15,7 @@
 			$scope.rows = subObservationSet.rows;
 			$scope.nested = {};
 			$scope.nested.dtPreviewInstance = null;
+			$scope.nested.dtInstance = null;
 			$scope.nested.reviewVariable = null;
 			$scope.enableActions = false;
 
@@ -120,8 +121,9 @@
 						}
 					})
 					.withDataProp('data')
-					.withOption('serverSide', true))
-					.withOption('initComplete', initComplete);
+					.withOption('serverSide', true)
+					.withOption('headerCallback', headerCallback)
+					.withOption('initComplete', initComplete));
 			}
 
 			function addCommonOptions(options) {
@@ -163,6 +165,16 @@
 				);
 			}
 
+			function headerCallback(thead, data, start, end, display) {
+				var table = $scope.nested.dtInstance.DataTable;
+				table.columns().every(function() {
+					var column = $scope.columnsObj.columns[this.index()];
+					if (column.columnData.formula) {
+						$(this.header()).addClass('derived-trait-column-header');
+					}
+				});
+			}
+
 			function initComplete() {
 				var $table = angular.element(tableId);
 				$table.off().on('click', 'td.variates', clickHandler);
@@ -172,16 +184,17 @@
 
 					var table = $table.DataTable();
 					var rowIndex = cell.parentNode.rowIndex - 1;
-					var row = table.row(rowIndex).data();
-					var cellData = table.cell({row: rowIndex, column: cell.cellIndex}).data();
-					var column = subObservationSet.columnsObj.columns[cell.cellIndex];
+					var rowData = table.row(rowIndex).data();
+					var dtCell = table.cell({row: rowIndex, column: cell.cellIndex});
+					var cellData = dtCell.data();
+					var column = $scope.columnsObj.columns[cell.cellIndex];
 					var termId = column.columnData.termId;
 
 					if (!termId) return;
 
 					/**
 					 * Remove handler to not interfere with inline editor
-					 * fnUpdate will trigger rowCallback and restore it
+					 * will be restored after fnUpdate
 					 */
 					$table.off('click');
 
@@ -219,14 +232,14 @@
 
 							var addOrUpdate;
 							if (cellData.observationId) {
-								addOrUpdate = datasetService.updateObservation(subObservationSet.id, row.observationUnitId,
+								addOrUpdate = datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
 									cellData.observationId, {
 										categoricalValueId: null,
 										value: cellData.value
 									})
 							} else {
-								addOrUpdate = datasetService.addObservation(subObservationSet.id, row.observationUnitId, {
-									observationUnitId: row.observationUnitId,
+								addOrUpdate = datasetService.addObservation(subObservationSet.id, rowData.observationUnitId, {
+									observationUnitId: rowData.observationUnitId,
 									categoricalValueId: null,
 									variableId: termId,
 									value: cellData.value
@@ -238,13 +251,14 @@
 								$inlineScope.$destroy();
 								editor.remove();
 
-								// TODO
-								$(tableId).dataTable().fnUpdate(row, rowIndex, null, false);
+								dtCell.data(cellData);
 
 								/**
 								 * Restore cell click handler
 								 */
-								$table.on('click', 'td', clickHandler);
+								$table.on('click', 'td.variates', clickHandler);
+
+								processCell(cell, cellData, rowData, column.columnData);
 							}, function (response) {
 								if (response.errors) {
 									showErrorMessage('', response.errors[0].message);
@@ -351,7 +365,10 @@
 					} else {
 						columnsDef.push({
 							targets: columns.length - 1,
-							render: function(data, type, full, meta) {
+							createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
+								processCell(td, cellData, rowData, columnData);
+							},
+							render: function (data, type, full, meta) {
 								return data && EscapeHTML.escape(data.value);
 							}
 						});
@@ -362,6 +379,54 @@
 					columns: columns,
 					columnsDef: columnsDef
 				};
+			}
+
+			function processCell(td, cellData, rowData, columnData) {
+				$(td).removeClass('accepted-value');
+				$(td).removeClass('invalid-value');
+				$(td).removeClass('manually-edited-value');
+
+				// TODO filter TRAITs only by variableType
+				if (cellData.value) {
+					var value = cellData.value;
+					var minVal = columnData.minRange;
+					var maxVal = columnData.maxRange;
+
+					var invalid = false;
+					// Numeric
+					if (minVal && maxVal
+						&& (parseFloat(value) < parseFloat(minVal) || parseFloat(value) > parseFloat(maxVal))) {
+
+						invalid = true;
+					}
+					// Categorical
+					if (columnData.possibleValues
+						&& columnData.possibleValues.find(function (possibleValue) {
+							return possibleValue.name === cellData.value;
+						}) === undefined
+						&& cellData.value !== 'missing') {
+
+						invalid = true;
+					}
+					if (invalid) {
+						$(td).addClass($scope.preview ? 'invalid-value' : 'accepted-value');
+					}
+				}
+				if (cellData.status) {
+					var status = cellData.status;
+					if (!cellData.observationId) {
+						return;
+					}
+					$(td).removeAttr('title');
+					var toolTip = 'GID: ' + rowData.variables.GID.value + ' Designation: ' + rowData.variables.DESIGNATION.value;
+					if (status == 'MANUALLY_EDITED') {
+						$(td).attr('title', toolTip + ' manually-edited-value');
+						$(td).addClass('manually-edited-value');
+					} else if (status == 'OUT_OF_SYNC') {
+						$(td).attr('title', toolTip + ' out-of-sync-value');
+						$(td).addClass('out-of-sync-value');
+					}
+				}
 			}
 
 		}])

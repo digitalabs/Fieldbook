@@ -8,7 +8,7 @@
 		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
 				  datasetService, studyContext, $rootScope, $filter, _
 		) {
-			$scope.subObsSettings = new angular.OrderedHash();
+			$scope.traitVariables = new angular.OrderedHash();
 			var subObservationSet = $scope.subObservationSet = $stateParams.subObservationSet;
 			$scope.preview = Boolean(subObservationSet.preview);
 			$scope.columnsObj = subObservationSet.columnsObj;
@@ -37,7 +37,7 @@
 				$scope.nested.selectedEnvironment = dataset.instances[0];
 
 				$scope.dtOptions = getDtOptions();
-				$scope.subObsSettings = $scope.getTraitVariablesFromDataset();
+				$scope.traitVariables = $scope.getTraitVariablesFromDataset();
 				$scope.selectedTraits = $scope.selectedVariables();
 				loadColumns().then(function (columnsObj) {
 					dtColumnsPromise.resolve(columnsObj.columns);
@@ -76,10 +76,10 @@
 			};
 
 			$scope.onAddVariable = function () {
-				if ($scope.subObsSettings.m_keys.length != 0) {
-					var pos = $scope.subObsSettings.m_keys.length - 1;
-					var variableId = $scope.subObsSettings.m_keys[pos];
-					var variable = $scope.subObsSettings.m_vals[variableId];
+				if ($scope.traitVariables.m_keys.length != 0) {
+					var pos = $scope.traitVariables.m_keys.length - 1;
+					var variableId = $scope.traitVariables.m_keys[pos];
+					var variable = $scope.traitVariables.m_vals[variableId];
 					datasetService.addVariables($scope.subObservationSet.dataset.datasetId,
 						{
 							"variableTypeId": 1808,
@@ -95,9 +95,9 @@
 
 			$scope.selectedVariables = function() {
 				var selected = {};
-				angular.forEach($scope.subObsSettings.m_keys, function (key) {
-					$scope.subObsSettings.m_vals[key].variable.cvTermId
-					selected[$scope.subObsSettings.m_vals[key].variable.cvTermId] = $scope.subObsSettings.m_vals[key].variable.name;
+				angular.forEach($scope.traitVariables.m_keys, function (key) {
+					$scope.traitVariables.m_vals[key].variable.cvTermId
+					selected[$scope.traitVariables.m_vals[key].variable.cvTermId] = $scope.traitVariables.m_vals[key].variable.name;
 
 				});
 				return selected;
@@ -105,9 +105,9 @@
 
 			$scope.onRemoveVariable = function () {
 				var deleteVariables = [];
-				angular.forEach($scope.subObsSettings.m_keys, function (key) {
-					if ($scope.subObsSettings.m_vals[key].isChecked) {
-						deleteVariables.push($scope.subObsSettings.m_vals[key].variable.cvTermId);
+				angular.forEach($scope.traitVariables.m_keys, function (key) {
+					if ($scope.traitVariables.m_vals[key].isChecked) {
+						deleteVariables.push($scope.traitVariables.m_vals[key].variable.cvTermId);
 					}
 				});
 				var promise = $scope.validateRemoveVariable(deleteVariables);
@@ -116,7 +116,7 @@
 					if (doContinue) {
 						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, deleteVariables).then(function () {
 							angular.forEach(deleteVariables, function (cvtermId) {
-								$scope.subObsSettings.remove(cvtermId);
+								$scope.traitVariables.remove(cvtermId);
 							});
 							$scope.subObsSettingsOptions.selectAll = false;
 							reloadTable();
@@ -150,7 +150,7 @@
 			$scope.doSelectAll = function(variables, options) {
 				var filteredVariables = $filter('removeHiddenAndDeletablesVariableFilter')(variables.keys(), variables.vals());
 				_.each(filteredVariables, function(variableId) {
-					$scope.subObsSettings.m_vals[variableId].isChecked = options.selectAll;
+					$scope.traitVariables.m_vals[variableId].isChecked = options.selectAll;
 				});
 			};
 

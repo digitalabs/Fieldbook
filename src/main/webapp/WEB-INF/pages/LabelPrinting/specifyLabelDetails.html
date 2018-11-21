@@ -767,7 +767,7 @@
                                                th:text="#{label.printing.save.label.settings.name.note}"></label>
                                     </div>
                                     <div class="pull-left" style="width: 300px; padding-left: 10px">
-                                        <input type="text" class="form-control" th:field="*{userLabelPrinting.settingsName}"
+                                        <input type="text" class="form-control" th:field="*{userLabelPrinting.settingsName}" maxlength="50" 
                                                th:placeholder="${labelPrintingForm.germplasmListId != null} ? 'Seed Shipment Labels' : 'Settings Name'"/>
                                     </div>
                                 </div>

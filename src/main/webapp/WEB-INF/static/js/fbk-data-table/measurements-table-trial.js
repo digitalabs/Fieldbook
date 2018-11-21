@@ -153,7 +153,7 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 				},
 				render: function(data, type, full, meta) {
 					if (data !== undefined) {
-						var displayData = EscapeHTML.escape((data[0] !== undefined && data[0] !== null && data[0] !== "")? Number(Math.round(data[0]+'e2')+'e-2'): '');
+						var displayData = getDisplayValueForNumericalValue(data[0]);
 						var hiddenData = EscapeHTML.escape(data[1]);
 						return displayData + '<input type="hidden" value="' + hiddenData + '" />';
 					}
@@ -822,6 +822,13 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 	return dataTableConstructor;
 })(jQuery);
 
+function getDisplayValueForNumericalValue(numericValue) {
+	if(numericValue === "missing" || numericValue === "") {
+		return numericValue;
+	} else {
+        return EscapeHTML.escape((numericValue !== undefined && numericValue !== null)? Number(Math.round(numericValue+'e2')+'e-2'): '');
+	}
+}
 
 function markCellAsAccepted(indexElem, indexTermId, elem) {
 	'use strict';

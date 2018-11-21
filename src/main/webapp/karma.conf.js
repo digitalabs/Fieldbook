@@ -47,6 +47,9 @@ module.exports = function (config) {
 			'WEB-INF/static/js/lib/datatable/dataTables.fixedColumns.js',
 			'WEB-INF/static/js/lib/datatable/dataTables.scroller.js',
 
+			'WEB-INF/static/js/angular/angular-local-storage.min.js',
+			'WEB-INF/static/js/angular/bmsAuthentication.js',
+
 			// Modules to test
 			'WEB-INF/static/js/angular/angular-utilities.js',
 			'WEB-INF/static/js/angular/fieldbook-utils.js',

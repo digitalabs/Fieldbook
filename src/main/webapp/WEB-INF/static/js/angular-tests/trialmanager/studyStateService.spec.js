@@ -17,7 +17,6 @@ describe('Study State Service', function() {
         module('ui.select2');
         module('ngSanitize');
         module('ui.router');
-        module('ct.ui.router.extras');
         module('designImportApp');
         module('ngLodash');
         module('showSettingFormElementNew');

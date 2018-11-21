@@ -1,0 +1,29 @@
+<div class="row" ng-cloak="">
+	<div class="col-xs-12">
+		<div class="form-group col-xs-12 col-md-12" style="padding-left: 0px;">
+			<label  class="control-label section-toggle toggle-icon">
+<!--env
+				<img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+-->
+				<span class="bms-exp-design fbk-trial-summary-icons"></span>
+				<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+				<strong class="sub-content-heading">{{title}}</strong>
+			</label>
+		</div>
+
+		<ul class="nav nav-tabs fb-tabs-headers">
+			<li ng-repeat="subObservationSet in subObservationTab.subObservationSets" ui-sref-active="active">
+				<a ui-sref="subObservationTabs.subObservationSets({ subObservationSetId: subObservationSet.id, subObservationSet: subObservationSet })">
+					{{subObservationSet.name}}</a>
+			</li>
+		</ul>
+
+		<div class="fb-tabs" style="padding-top: 15px;">
+			<div class="info">
+				<div class="col-xs-12" ui-view=""></div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</div>
+</div>
+

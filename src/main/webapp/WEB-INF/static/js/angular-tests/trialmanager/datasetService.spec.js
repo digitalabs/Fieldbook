@@ -3,6 +3,11 @@
 describe('Dataset Service', function () {
 
 	var datasetService, $httpBackend, $q;
+	var studyContext = {
+		studyId: 1,
+		cropName: 'maize',
+		measurementDatasetId: 2009
+	};
 
 	beforeEach(function () {
 
@@ -12,6 +17,12 @@ describe('Dataset Service', function () {
 			return {token: 734789327};
 		});
 
+		module(function ($provide) {
+			$provide.value("studyContext", studyContext);
+			$provide.value("serviceUtilities", {});
+			$provide.value("DATASET_TYPES_SUBOBSERVATION_IDS", {});
+			$provide.value("DATASET_TYPES", {});
+		});
 	});
 
 	beforeEach(inject(function ($injector) {
@@ -35,8 +46,6 @@ describe('Dataset Service', function () {
 			datasetService.observationCount(studyId, datasetId, variableIds).then(function (response) {
 				expect(response.headers('X-Total-Count')).toEqual('100');
 			});
-
-			$httpBackend.flush();
 
 		});
 
@@ -66,8 +75,6 @@ describe('Dataset Service', function () {
 			datasetService.observationCountByInstance(studyId, datasetId, instanceId).then(function (response) {
 				expect(response.headers('X-Total-Count')).toEqual('200');
 			});
-
-			$httpBackend.flush();
 
 		});
 

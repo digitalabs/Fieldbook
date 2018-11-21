@@ -1,4 +1,4 @@
-<div ng-cloak="" ng-app="manageTrialApp" id="mainApp" ng-controller="manageTrialCtrl" style="margin-bottom: 15px">
+<div ng-cloak="" ng-app="manageTrialApp"  id="mainApp" ng-controller="manageTrialCtrl" block-ui="main" class="block-ui-main" style="margin-bottom: 15px">
 	<!-- header -->
 	<div class="row col-xs-12">
 		<h1 class="page-header col-xs-12 edit-trial-page-identifier">
@@ -109,6 +109,16 @@
 									</li>
 								</ul>
 							</li>
+
+							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
+								<a tabindex="-1" href="#">Observation unit options</a>
+								<ul class="dropdown-menu" style="margin-left: -25px;">
+									<li>
+										<a href="javascript: subObservationUnitDatasetSelector();" id="create-sub-Observation-link"
+										   th:text="#{study.studydetails.action.create.sub.observation.units}">Create sub-observation units</a>
+									</li>
+								</ul>
+                            </li>
 
 							<li ng-show="displayMeasurementOnlyActions()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Field map options</a>
@@ -365,6 +375,10 @@
 			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
 			<a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
 		</li>
+		<li ng-repeat="tab in subObservationTabs" ng-class="{active: tabSelected===tab.state}">
+			<a ui-sref="subObservationTabs({ subObservationTabId: tab.id, subObservationTab: tab })"
+			   ng-click="performFunctionOnTabChange(tab.state)">{{tab.tabName}}</a>
+		</li>
 		<li ng-repeat="tab in advanceTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
 			ng-click="tabChange(tab.state)"
 			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
@@ -397,6 +411,7 @@
 			<div class="col-xs-12" ui-view="environment" ng-show="tabSelected==='environment'"></div>
 			<div class="col-xs-12" ui-view="createMeasurements" ng-show="tabSelected==='createMeasurements'"></div>
 			<div class="col-xs-12" ui-view="editMeasurements" ng-show="tabSelected==='editMeasurements'"></div>
+			<div class="col-xs-12" ui-view="subObservationTab" ng-show="tabSelected.indexOf('/subObservationTabs/') === 0"></div>
 			<div class="col-xs-12" ng-repeat="advancetab in advanceTabsData track by $index" id="{{advancetab.id}}"
 				 ng-show="tabSelected===advancetab.name">
 				<div ng-bind-html="advancetab.data"></div>
@@ -504,6 +519,12 @@
 	</div>
 
 	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div id="sub-observation-unit-dataset-builder" th:include="/TrialManager/templates/SubObservationUnitDatasetBuilder"></div>
+		</div>
+	</div>
+
+	<div class="row">
 		<div th:include="/TrialManager/templates/samplesSummary"></div>
 	</div>
 
@@ -584,6 +605,8 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/executeCalculatedVariableModal.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/studyStateService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/datasetService.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/SubObservationUnitDatasetBuilder.js}"></script>
+
 
 
 	<!-- constants here -->
@@ -653,6 +676,7 @@
 
 		var lockStudySuccessMessage = /*[[#{lock.study.success.message}]]*/ '';
 		var unlockStudySuccessMessage = /*[[#{unlock.study.success.message}]]*/ '';
+		var subObservationDatasetBuiltSuccessMessage =/*[[#{sub.observation.dataset.built.successfully}]]*/'';
 
 		var translations = {
 			/*TRIAL SETTINGS*/
@@ -698,8 +722,10 @@
 		(function () {
 
 			angular.module('manageTrialApp')
-				.constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
-				).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
+			 .constant('MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS', /*[[${maxNumOfSubObsSets}]]*/''
+			).constant('MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT', /*[[${maxNumOfSubObsSetsPerParentUnit}]]*/''
+			).constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
+			).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
 			).constant('BREEDING_METHOD_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''
 			).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
 			).constant('SELECTION_VARIABLE_INITIAL_DATA', /*[[${selectionVariableData}]]*/ ''
@@ -745,7 +771,18 @@
 					STRESS_CHECK: /*[[${T(org.generationcp.middleware.domain.gms.SystemDefinedEntryType).STRESS_CHECK.getEntryTypeCategoricalId()}]]*/ 10200
 
 				}
+			).constant('DATASET_TYPES', {
+				PLANT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).PLANT_SUBOBSERVATIONS.getId()}]]*/ null,
+				QUADRAT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).QUADRAT_SUBOBSERVATIONS.getId()}]]*/ null,
+				TIME_SERIES_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).TIME_SERIES_SUBOBSERVATIONS.getId()}]]*/ null,
+				CUSTOM_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).CUSTOM_SUBOBSERVATIONS.getId()}]]*/ null
+			}).constant('DATASET_TYPES_SUBOBSERVATION_IDS', /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).SUBOBSERVATION_IDS}]]*/ null
 			).value('studyContext', {
+				cropName: /*[[${cropName}]]*/ '',
+				programId: /*[[${currentProgramId}]]*/ '',
+				selectedProjectId: /*[[${contextInfo.selectedProjectId}]]*/ '',
+				authToken: /*[[${contextInfo.authToken}]]*/ '',
+				loggedInUserId: /*[[${currentCropUserId}]]*/ '',
 				studyId: /*[[${studyId}]]*/ '',
 				measurementDatasetId: /*[[${measurementDatasetId}]]*/ ''
 			});
@@ -783,7 +820,10 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/derivedVariableService.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationTab.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationSet.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-tabdrop.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/variableService.js}"></script>
 
 </div>

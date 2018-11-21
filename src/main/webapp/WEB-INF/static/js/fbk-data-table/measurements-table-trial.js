@@ -110,12 +110,14 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 	jQuery.each(displayColumns, function(i, displayColumn) {
 		columns.push({
 			title: displayColumn.name,
-			data: displayColumn.termId < 0 ? displayColumn.termId : displayColumn.name, // FIXME handle collisions between real and virtual variables when they have the same name. I.e: special column SAMPLES
+			data: displayColumn.termId < 0 ? displayColumn.termId : displayColumn.name, // FIXME BMS-4397 handle collisions between real and virtual variables when they have the same name. I.e: special column SAMPLES
 			termId: displayColumn.termId,
 			defaultContent: '',
 			orderable: displayColumn.variableType === "TRAIT" ? true : $.inArray(displayColumn.termId, sortableColumnIDs) > -1,
 			className: displayColumn.factor === true ? 'factors' : 'variates',
-			isDerivedTrait: displayColumn.formula != null
+			isDerivedTrait: displayColumn.formula != null,
+			possibleValues: displayColumn.possibleValues,
+			dataTypeCode: displayColumn.dataTypeCode
 		});
 
 		var termId = displayColumn.termId;
@@ -425,7 +427,11 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				]
 			});
 
-			new $.fn.dataTable.ColReorder(table);
+			try {
+				new $.fn.dataTable.ColReorder(table);
+			} catch (e) {
+				console.log(e)
+			}
 
 			if (studyId !== '') {
 				// Activate an inline edit on click of a table cell

@@ -9,7 +9,19 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
-		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api']);
+		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'bmsAuthentication']);
+
+	manageTrialApp.config(['$httpProvider', function($httpProvider) {
+		$httpProvider.interceptors.push('authInterceptor');
+		$httpProvider.interceptors.push('authExpiredInterceptor');
+	}]);
+
+	manageTrialApp.config(['localStorageServiceProvider', function(localStorageServiceProvider){
+		/**
+		 * BMSAPI x-auth-token is stored in local storage service as bms.xAuthToken see login.js
+		 */
+		localStorageServiceProvider.setPrefix('bms');
+	}]);
 
 	manageTrialApp.config(['blockUIConfig', function(blockUIConfig) {
 		blockUIConfig.templateUrl = '/Fieldbook/static/angular-templates/blockUiTemplate.html';
@@ -238,7 +250,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 			};
 
-			$http.get('/bmsapi/studytype/' + cropName + '/allVisible', config).success(function (data) {
+			$http.get('/bmsapi/studytype/' + cropName + '/allVisible').success(function (data) {
 				$scope.studyTypes = data;
 
 			}).error(function (data) {

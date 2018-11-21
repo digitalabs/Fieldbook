@@ -7,13 +7,6 @@
 		function ($http, $q, studyContext, DATASET_TYPES_SUBOBSERVATION_IDS, serviceUtilities, DATASET_TYPES) {
 
 			var BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/studies/';
-			var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
-			var config = {
-				headers: {
-					'X-Auth-Token': xAuthToken
-				},
-				cache: false
-			};
 
 			var datasetTypeMap = {};
 			var datasetTypes = [{
@@ -46,7 +39,7 @@
 			datasetService.observationCount = function (datasetId, variableIds) {
 
 				if (datasetId && variableIds) {
-					return $http.head(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables/observations?variableIds=' + variableIds.join(','), config);
+					return $http.head(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables/observations?variableIds=' + variableIds.join(','));
 				}
 
 				return $q.reject('studyId, datasetId and variableIds are not defined.');
@@ -55,7 +48,7 @@
 			datasetService.observationCountByInstance = function (datasetId, instanceId) {
 
 				if (datasetId && instanceId) {
-					return $http.head(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/' + instanceId, config);
+					return $http.head(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/' + instanceId);
 				}
 
 				return $q.reject('instanceId and datasetId are not defined.');
@@ -69,12 +62,12 @@
 					params: {
 						datasetTypeIds: DATASET_TYPES_SUBOBSERVATION_IDS.join(",")
 					}
-				}, config));
+				}));
 				return request.then(successHandler, failureHandler);
 			};
 
 			datasetService.getColumns = function (datasetId) {
-				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/table/columns', config);
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/table/columns');
 				return request.then(successHandler, failureHandler);
 			};
 
@@ -83,17 +76,17 @@
 			};
 
 			datasetService.generation = function (newDataset) {
-				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + studyContext.measurementDatasetId + '/generation', newDataset, config);
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + studyContext.measurementDatasetId + '/generation', newDataset);
 				return request.then(successHandler, failureHandler);
 			};
 
 			datasetService.getDataset = function (datasetId) {
-				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId, config);
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId);
 				return request.then(successHandler, failureHandler);
 			};
 
 			datasetService.addVariables = function (datasetId, newVariable) {
-				var request = $http.put(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables', newVariable, config);
+				var request = $http.put(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables', newVariable);
 				return request.then(successHandler, failureHandler);
 			};
 
@@ -102,7 +95,7 @@
 					params: {
 						variableIds: variableIds.join(",")
 					}
-				}, config));
+				}));
 				return request.then(successHandler, failureHandler);
 			};
 

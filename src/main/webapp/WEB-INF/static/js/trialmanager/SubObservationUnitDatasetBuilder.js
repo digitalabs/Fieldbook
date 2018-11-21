@@ -10,6 +10,7 @@
 
 		$scope.instances = [];
 		$scope.selectedInstances = {};
+		$scope.isEmptySelection = false;
 
 		$scope.maximunNumForEachParentUnit = MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT;
 

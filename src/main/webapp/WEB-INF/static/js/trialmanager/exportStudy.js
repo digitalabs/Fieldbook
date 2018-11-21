@@ -96,6 +96,7 @@
 
 			$scope.instances = [];
 			$scope.selectedInstances = {};
+			$scope.isEmptySelection = false;
 
 			$scope.cancel = function () {
 				$uibModalInstance.dismiss();

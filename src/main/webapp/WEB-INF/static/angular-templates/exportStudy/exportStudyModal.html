@@ -68,12 +68,12 @@
 		</div>
 		<div class="col-xs-12 col-md-12">&nbsp;</div>
 		<div class="col-xs-12 col-md-12">
-			<instances-table instances="instances" selected-instances="selectedInstances" instance-id-property="instanceDbId"></instances-table>
+			<instances-table instances="instances" selected-instances="selectedInstances" instance-id-property="instanceDbId" is-empty-selection="isEmptySelection"></instances-table>
 		</div>
 
 	</div>
 </div>
 <div class="modal-footer">
 	<button class="btn btn-default" ng-click="cancel()">Cancel</button>
-	<button class="btn btn-primary" ng-click="proceed()">Export</button>
+	<button class="btn btn-primary" ng-disabled="isEmptySelection" ng-click="proceed()">Export</button>
 </div>

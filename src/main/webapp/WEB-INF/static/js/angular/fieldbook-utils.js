@@ -618,6 +618,7 @@
 				scope: {
 					instances: '=',
 					selectedInstances: '=',
+					isEmptySelection: '=',
 					instanceIdProperty: '@'
 				},
 				templateUrl: '/Fieldbook/static/angular-templates/instancesTable.html',
@@ -644,12 +645,21 @@
 						$.each($scope.instances, function (key, value) {
 							$scope.selectedInstances[value[$scope.instanceIdProperty]] = checked;
 						});
+						$scope.selectionChanged();
 					};
 
 					$scope.select = function (itemId) {
 						if (!$scope.selectedInstances[itemId]) {
 							ctrl.isSelectAll = false;
 						}
+						$scope.selectionChanged();
+					};
+
+					$scope.selectionChanged = function() {
+						// Returns true if all instances are not selected
+						$scope.isEmptySelection = Object.values($scope.selectedInstances).every(function (value) {
+							return value === false;
+						});
 					};
 
 				},

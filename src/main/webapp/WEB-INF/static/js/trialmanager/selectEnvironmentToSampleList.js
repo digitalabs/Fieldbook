@@ -9,6 +9,7 @@
 
 		$scope.instances = [];
 		$scope.selectedInstances = {};
+		$scope.isEmptySelection = false;
 
 		$scope.continueCreatingSampleList = function () {
 

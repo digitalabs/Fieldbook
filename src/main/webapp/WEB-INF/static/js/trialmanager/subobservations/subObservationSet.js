@@ -258,7 +258,7 @@
 								 */
 								$table.on('click', 'td.variates', clickHandler);
 
-								processCell(cell, cellData, rowData, column.columnData);
+								applyCellColor(cell, cellData, rowData, column.columnData);
 							}, function (response) {
 								if (response.errors) {
 									showErrorMessage('', response.errors[0].message);
@@ -362,12 +362,19 @@
 									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
 							}
 						});
-					} else {
+					} else if (!columnData.factor) {
 						columnsDef.push({
 							targets: columns.length - 1,
 							createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
-								processCell(td, cellData, rowData, columnData);
+								applyCellColor(td, cellData, rowData, columnData);
 							},
+							render: function (data, type, full, meta) {
+								return data && EscapeHTML.escape(data.value);
+							}
+						});
+					} else {
+						columnsDef.push({
+							targets: columns.length - 1,
 							render: function (data, type, full, meta) {
 								return data && EscapeHTML.escape(data.value);
 							}
@@ -381,12 +388,11 @@
 				};
 			}
 
-			function processCell(td, cellData, rowData, columnData) {
+			function applyCellColor(td, cellData, rowData, columnData) {
 				$(td).removeClass('accepted-value');
 				$(td).removeClass('invalid-value');
 				$(td).removeClass('manually-edited-value');
 
-				// TODO filter TRAITs only by variableType
 				if (cellData.value) {
 					var value = cellData.value;
 					var minVal = columnData.minRange;

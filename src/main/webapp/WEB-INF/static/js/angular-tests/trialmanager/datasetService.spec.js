@@ -13,14 +13,10 @@ describe('Dataset Service', function () {
 
 		module('datasets-api');
 
-		spyOn(JSON, 'parse').and.callFake(function (key) {
-			return {token: 734789327};
-		});
-
 		module(function ($provide) {
 			$provide.value("studyContext", studyContext);
 			$provide.value("serviceUtilities", {});
-			$provide.value("DATASET_TYPES_SUBOBSERVATION_IDS", {});
+			$provide.value("DATASET_TYPES_SUBOBSERVATION_IDS", [10094,10095,10096,10097]);
 			$provide.value("DATASET_TYPES", {});
 		});
 	});

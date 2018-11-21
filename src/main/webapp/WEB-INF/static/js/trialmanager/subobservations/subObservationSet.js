@@ -79,7 +79,7 @@
 				if ($scope.traitVariables.m_keys.length != 0) {
 					var pos = $scope.traitVariables.m_keys.length - 1;
 					var variableId = $scope.traitVariables.m_keys[pos];
-					var variable = $scope.traitVariables.m_vals[variableId];
+					var variable = $scope.traitVariables.m_vals[variableId].variable;
 					datasetService.addVariables($scope.subObservationSet.dataset.datasetId,
 						{
 							"variableTypeId": 1808,

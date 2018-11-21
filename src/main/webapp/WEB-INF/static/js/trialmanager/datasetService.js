@@ -62,6 +62,9 @@
 			};
 
 			datasetService.getDatasets = function () {
+				if (!studyContext.studyId) {
+					return $q.resolve([]);
+				}
 				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets', angular.merge({
 					params: {
 						datasetTypeIds: DATASET_TYPES_SUBOBSERVATION_IDS.join(",")

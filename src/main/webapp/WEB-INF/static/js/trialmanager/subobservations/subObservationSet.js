@@ -228,24 +228,39 @@
 						$(cell).append(editor);
 
 						function updateInline() {
-							cellData.value = $inlineScope.observation.value;
+							var promise;
 
-							var addOrUpdate;
-							if (cellData.observationId) {
-								addOrUpdate = datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
-									cellData.observationId, {
-										categoricalValueId: null,
-										value: cellData.value
-									})
+							if (cellData.value === $inlineScope.observation.value) {
+								promise = $q.resolve(cellData);
 							} else {
-								addOrUpdate = datasetService.addObservation(subObservationSet.id, rowData.observationUnitId, {
-									observationUnitId: rowData.observationUnitId,
-									categoricalValueId: null,
-									variableId: termId,
-									value: cellData.value
-								})
+								cellData.value = $inlineScope.observation.value;
+
+								if (cellData.observationId) {
+									if (cellData.value) {
+										promise = datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
+											cellData.observationId, {
+												categoricalValueId: null,
+												value: cellData.value
+											});
+									} else {
+										promise = datasetService.deleteObservation(subObservationSet.id, rowData.observationUnitId,
+											cellData.observationId);
+									}
+								} else {
+									if (cellData.value) {
+										promise = datasetService.addObservation(subObservationSet.id, rowData.observationUnitId, {
+											observationUnitId: rowData.observationUnitId,
+											categoricalValueId: null,
+											variableId: termId,
+											value: cellData.value
+										});
+									} else {
+										promise = $q.resolve(cellData);
+									}
+								}
 							}
-							addOrUpdate.then(function (data) {
+
+							promise.then(function (data) {
 								cellData.observationId = data.observationId;
 
 								$inlineScope.$destroy();

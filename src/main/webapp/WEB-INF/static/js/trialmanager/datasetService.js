@@ -75,6 +75,12 @@
 				return request.then(successHandler, failureHandler);
 			};
 
+			datasetService.deleteObservation = function (datasetId, observationUnitId, observationId) {
+				var request = $http.delete(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/' +
+					observationUnitId + '/observations/' + observationId, config);
+				return request.then(successHandler, failureHandler);
+			};
+
 			datasetService.getDatasets = function () {
 				if (!studyContext.studyId) {
 					return $q.resolve([]);

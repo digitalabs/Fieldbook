@@ -414,8 +414,15 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				//TODO localise messages
 				language: {
 					processing: '<span class="throbber throbber-2x"></span>',
-					lengthMenu: 'Records per page: _MENU_'
+					lengthMenu: 'Records per page: _MENU_',
+					paginate: {
+						next: '>',
+						previous: '<',
+						first: '<<',
+						last: '>>'
+					}
 				},
+				paginationType: 'full_numbers',
 				// For column visibility
 				buttons: [
 				{

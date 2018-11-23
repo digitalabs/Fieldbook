@@ -474,15 +474,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 					}
 				}
 			}).done(function (data) {
-				/**
-				 * Variable select event.
-				 *
-				 * @event VariableSelection#variable-select
-				 * @type {object}
-				 * @property {number} group the group the variable belongs to
-				 * @property {object} responseData data returned from a successful call to /Fieldbook/manageSettings/addSettings/
-				 */
-
 				if (data[0] && data[0].variable.dataTypeId === 1130 &&  data[0].variable.widgetType === 'DROPDOWN' && data[0]
 					.possibleValues.length === 0) {
 					showAlertMessage('', variableNoValidValueNotification);
@@ -511,6 +502,15 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			// Change the add button to a tick to indicate success
 			iconContainer.removeClass('glyphicon-plus').addClass('glyphicon-ok');
 			selectButton.children('.vs-variable-select-label').text('');
+
+			/**
+			 * Variable select event.
+			 *
+			 * @event VariableSelection#variable-select
+			 * @type {object}
+			 * @property {number} group the group the variable belongs to
+			 * @property {object} responseData data returned from a successful call to /Fieldbook/manageSettings/addSettings/ or callback
+			 */
 
 			this._$modal.trigger({
 				type: VARIABLE_SELECT_EVENT,

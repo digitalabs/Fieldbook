@@ -14,7 +14,7 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-default" ng-click="cancel()" th:text="#{common.form.no.text}">Cancel</button>
+    <button class="btn btn-default" ng-click="cancel()" ng-bind="cancelButtonLabel">Cancel</button>
     <button class="btn btn-primary" ng-click="confirm()" ng-bind="confirmButtonLabel">OK</button>
 
 </div>

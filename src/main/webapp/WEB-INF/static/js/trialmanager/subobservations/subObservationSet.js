@@ -233,26 +233,38 @@
 							if (cellData.value === $inlineScope.observation.value) {
 								promise = $q.resolve(cellData);
 							} else {
-								cellData.value = $inlineScope.observation.value;
+								var value = $inlineScope.observation.value;
 
 								if (cellData.observationId) {
-									if (cellData.value) {
-										promise = datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
-											cellData.observationId, {
-												categoricalValueId: null,
-												value: cellData.value
-											});
+									if (value) {
+										promise = confirmOutOfBoundData(value, column.columnData).then(function(doContinue) {
+											if (!doContinue) {
+												$inlineScope.observation.value = cellData.value;
+												return {observationId: cellData.observationId};
+											}
+											return datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
+												cellData.observationId, {
+													categoricalValueId: null,
+													value: value
+												});
+										});
 									} else {
 										promise = datasetService.deleteObservation(subObservationSet.id, rowData.observationUnitId,
 											cellData.observationId);
 									}
 								} else {
-									if (cellData.value) {
-										promise = datasetService.addObservation(subObservationSet.id, rowData.observationUnitId, {
-											observationUnitId: rowData.observationUnitId,
-											categoricalValueId: null,
-											variableId: termId,
-											value: cellData.value
+									if (value) {
+										promise = confirmOutOfBoundData(value, column.columnData).then(function(doContinue) {
+											if (!doContinue) {
+												$inlineScope.observation.value = cellData.value;
+												return {observationId: cellData.observationId};
+											}
+											return datasetService.addObservation(subObservationSet.id, rowData.observationUnitId, {
+												observationUnitId: rowData.observationUnitId,
+												categoricalValueId: null,
+												variableId: termId,
+												value: value
+											});
 										});
 									} else {
 										promise = $q.resolve(cellData);
@@ -261,6 +273,7 @@
 							}
 
 							promise.then(function (data) {
+								cellData.value = $inlineScope.observation.value;
 								cellData.observationId = data.observationId;
 
 								$inlineScope.$destroy();
@@ -303,6 +316,21 @@
 
 					});
 				}
+			}
+			
+			function confirmOutOfBoundData(cellDataValue, columnData) {
+				var deferred = $q.defer();
+
+				var invalid = validateOutOfBoundData(cellDataValue, columnData);
+
+				if (invalid) {
+					var confirmModal = $scope.openConfirmModal(observationOutOfRange, keepLabel, discardLabel);
+					confirmModal.result.then(deferred.resolve);
+				} else {
+					deferred.resolve(true);
+				}
+
+				return deferred.promise;
 			}
 
 			// FIXME 1) adapt to subobs 2) See previewRowCallback
@@ -403,32 +431,39 @@
 				};
 			}
 
+			function validateOutOfBoundData(cellDataValue, columnData) {
+				var invalid = false;
+
+				var value = cellDataValue;
+				var minVal = columnData.minRange;
+				var maxVal = columnData.maxRange;
+
+				// Numeric
+				if (minVal && maxVal
+					&& (parseFloat(value) < parseFloat(minVal) || parseFloat(value) > parseFloat(maxVal))) {
+
+					invalid = true;
+				}
+				// Categorical
+				if (columnData.possibleValues
+					&& columnData.possibleValues.find(function (possibleValue) {
+						return possibleValue.name === cellDataValue;
+					}) === undefined
+					&& cellDataValue !== 'missing') {
+
+					invalid = true;
+				}
+				return invalid;
+			}
+
 			function applyCellColor(td, cellData, rowData, columnData) {
 				$(td).removeClass('accepted-value');
 				$(td).removeClass('invalid-value');
 				$(td).removeClass('manually-edited-value');
 
 				if (cellData.value) {
-					var value = cellData.value;
-					var minVal = columnData.minRange;
-					var maxVal = columnData.maxRange;
+					var invalid = validateOutOfBoundData(cellData.value, columnData);
 
-					var invalid = false;
-					// Numeric
-					if (minVal && maxVal
-						&& (parseFloat(value) < parseFloat(minVal) || parseFloat(value) > parseFloat(maxVal))) {
-
-						invalid = true;
-					}
-					// Categorical
-					if (columnData.possibleValues
-						&& columnData.possibleValues.find(function (possibleValue) {
-							return possibleValue.name === cellData.value;
-						}) === undefined
-						&& cellData.value !== 'missing') {
-
-						invalid = true;
-					}
 					if (invalid) {
 						$(td).addClass($scope.preview ? 'invalid-value' : 'accepted-value');
 					}

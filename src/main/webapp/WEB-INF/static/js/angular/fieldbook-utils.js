@@ -147,6 +147,12 @@
 					$scope.size = function() {
 						return Object.keys($scope.settings).length;
 					};
+
+					$scope.doSelect = function (isChecked) {
+						if (!isChecked) {
+							$scope.options.selectAll = false;
+						}
+					};
 				}
 			};
 		}])

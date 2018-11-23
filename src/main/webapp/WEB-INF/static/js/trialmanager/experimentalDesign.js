@@ -101,7 +101,7 @@
 
 					};
 
-					$scope.disableGenerateDesign = TrialManagerDataService.trialMeasurement.hasMeasurement && !TrialManagerDataService.applicationData.unappliedChangesAvailable;
+					$scope.disableGenerateDesign = $scope.subObservationTabs.length > 0 || (TrialManagerDataService.trialMeasurement.hasMeasurement && !TrialManagerDataService.applicationData.unappliedChangesAvailable);
 
 					//FIXME: cheating a bit for the meantime.
 					var totalGermplasms = countGermplasms();

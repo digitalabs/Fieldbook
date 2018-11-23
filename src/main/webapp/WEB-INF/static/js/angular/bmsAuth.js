@@ -3,10 +3,9 @@
 
 (function() {
 
-	// LocalStorageModule is an Angular module we depend on: https://github.com/grevory/angular-local-storage.
-	var bmsAuthentication = angular.module('bmsAuthentication', ['LocalStorageModule']);
+	var bmsAuth = angular.module('bmsAuth', ['LocalStorageModule']);
 
-	bmsAuthentication.factory('authInterceptor', ['localStorageService', function(localStorageService) {
+	bmsAuth.factory('authInterceptor', ['localStorageService', function(localStorageService) {
 		return {
 			// Add authorization token to headers
 			request: function(config) {
@@ -27,17 +26,12 @@
 		};
 	}]);
 
-	bmsAuthentication.factory('authExpiredInterceptor', ['$q', 'localStorageService', 'reAuthenticationService', function($q, localStorageService,
+	bmsAuth.factory('authExpiredInterceptor', ['$q', 'localStorageService', 'reAuthenticationService', function($q, localStorageService,
 																														  reAuthenticationService) {
 		return {
 			responseError: function(response) {
 				// Token has expired or is invalid.
-				if (response.status === 401 && (response.data.error === 'invalid_token' || response.data.error === 'Unauthorized')) {
-					/**
-					 * BMSAPI x-auth-token is stored in local storage service as "bms.xAuthToken" see login.js.
-					 * The prefix "bms" is configured in ontology.js as part of app.config:
-					 *     localStorageServiceProvider.setPrefix('bms');
-					 */
+				if (response.status === 401) {
 					localStorageService.remove('xAuthToken');
 					reAuthenticationService.handleReAuthentication();
 				}
@@ -46,7 +40,7 @@
 		};
 	}]);
 
-	bmsAuthentication.service('reAuthenticationService', function() {
+	bmsAuth.service('reAuthenticationService', function() {
 		var hasBeenHandled = false;
 		return {
 			// Current strategy to re-authenticate is to log the user out from Workbench by hitting Spring security internal logout endpoint

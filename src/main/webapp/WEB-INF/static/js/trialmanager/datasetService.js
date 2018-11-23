@@ -91,11 +91,11 @@
 			};
 
 			datasetService.removeVariables = function (datasetId, variableIds) {
-				var request = $http.delete(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables?', angular.merge({
+				var request = $http.delete(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables?', {
 					params: {
 						variableIds: variableIds.join(",")
 					}
-				}));
+				});
 				return request.then(successHandler, failureHandler);
 			};
 

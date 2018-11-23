@@ -278,8 +278,17 @@ function createFieldMap() {
 		showErrorMessage('', needSaveImportDataError);
 		return;
 	}
-	var id = $('#studyId').val(),
-		name = $('#studyName').val();
+	
+	if( ($('.review-trial-page-identifier').length) ) {
+		var mode = '.active .review-trial-page-identifier';
+		var active = '.active';
+	}
+	else {
+		var mode = '#createTrialMainForm';
+		var active = '';
+	}
+	var id = $(mode + ' #studyId').val(),
+		name = $(active + ' #studyName').val();
 
 	openStudyFieldmapTree(id, name);
 }
@@ -666,7 +675,8 @@ function showCreateFieldMap() {
 }
 
 function redirectToFirstPage() {
-	var studyId = $('#studyId').val()
+	var mode = ($('.review-trial-page-identifier').length) ?  '.active .review-trial-page-identifier' : '#createTrialMainForm' ;
+	var studyId = $(mode + ' #studyId').val();
 	location.href = $('#fieldmap-url').attr('href') + '/' + studyId + '/' + encodeURIComponent(fieldmapIds.join(','));
 }
 
@@ -743,7 +753,8 @@ function openDeleteConfirmation() {
 	deleteConfirmationText = deleteStudyConfirmation;
 
 	$('#deleteStudyModal').modal({backdrop: 'static', keyboard: true});
-	var name = $('#studyName').val();
+	var active = ($('.review-trial-page-identifier').length) ? '.active' : '';
+	var name = $(active + ' #studyName').val();
 	$('#delete-study-confirmation').html(deleteConfirmationText + ' ' + name + '?');
 }
 
@@ -1306,8 +1317,10 @@ function doFinalExport(paramUrl, additionalParams, exportWayType) {
 
 	newAction = action + 'exportStudy/' + paramUrl + '/' + additionalParams;
 	newAction += exportWayType;
-	studyId = $('#studyId').val();
-
+	
+	var mode = ($('.review-trial-page-identifier').length) ?  '.active .review-trial-page-identifier' : '#createTrialMainForm' ;
+	studyId = $(mode + ' #studyId').val();
+	
 	if ($('#browser-studies').length === 0) {
 		// the study is opened
 		var tableContainsObsUnitId = BMS.Fieldbook.MeasurementsTable.containsHeader('measurement-table', '8201');

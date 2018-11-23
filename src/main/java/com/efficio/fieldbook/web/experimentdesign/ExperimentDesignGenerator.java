@@ -3,7 +3,8 @@ package com.efficio.fieldbook.web.experimentdesign;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignTrialInstance;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesign;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesignParameter;
 import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +65,7 @@ public class ExperimentDesignGenerator {
 	public static final String OUTPUTFILE_PARAM = "outputfile";
 	public static final String SEED_PARAM = "seed";
 	public static final String NCONTROLS_PARAM = "ncontrols";
+	public static final String NUMBER_TRIALS_PARAM = "numbertrials";
 
 	public static final String RANDOMIZED_COMPLETE_BLOCK_DESIGN = "RandomizedBlock";
 	public static final String RESOLVABLE_INCOMPLETE_BLOCK_DESIGN = "ResolvableIncompleteBlock";
@@ -70,6 +73,8 @@ public class ExperimentDesignGenerator {
 	public static final String AUGMENTED_RANDOMIZED_BLOCK_DESIGN = "Augmented";
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExperimentDesignGenerator.class);
+	private static final List<Integer> EXP_DESIGN_VARIABLE_IDS =
+			Arrays.asList(TermId.PLOT_NO.getId(), TermId.REP_NO.getId(), TermId.BLOCK_NO.getId(), TermId.ROW.getId(), TermId.COL.getId());
 
 	@Resource
 	private WorkbenchService workbenchService;
@@ -115,7 +120,7 @@ public class ExperimentDesignGenerator {
 
 		final String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 
-		final List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
+		final List<ExpDesignParameter> paramList = new ArrayList<>();
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.SEED_PARAM, "", null));
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.BLOCKSIZE_PARAM, blockSize, null));
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.NTREATMENTS_PARAM, nTreatments, null));
@@ -149,7 +154,7 @@ public class ExperimentDesignGenerator {
 
 		final String plotNumberStrValue = (initialPlotNumber == null) ? "1" : String.valueOf(initialPlotNumber);
 
-		final List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
+		final List<ExpDesignParameter> paramList = new ArrayList<>();
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.SEED_PARAM, "", null));
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.NTREATMENTS_PARAM, nTreatments, null));
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.NREPLICATES_PARAM, nReplicates, null));
@@ -199,21 +204,66 @@ public class ExperimentDesignGenerator {
 		return new MainDesign(design);
 	}
 
-	public List<MeasurementRow> generateExperimentDesignMeasurements(final int noOfExistingEnvironments, final int noOfEnvironmentsToAdded,
+	public List<MeasurementRow> generateExperimentDesignMeasurements(final int noOfExistingEnvironments, final int noOfEnvironmentsToAdd,
 			final List<MeasurementVariable> trialVariables, final List<MeasurementVariable> factors,
 			final List<MeasurementVariable> nonTrialFactors, final List<MeasurementVariable> variates,
 			final List<TreatmentVariable> treatmentVariables, final List<StandardVariable> requiredExpDesignVariable,
 			final List<ImportedGermplasm> germplasmList, final MainDesign mainDesign, final String entryNumberIdentifier,
 			final Map<String, List<String>> treatmentFactorValues, final Map<Integer, Integer> designExpectedEntriesMap) throws BVDesignException {
 
+		// Specify number of study instances for BVDesign generation
+		mainDesign.getDesign().getParameters()
+		.add(this.createExpDesignParameter(NUMBER_TRIALS_PARAM, String.valueOf(noOfEnvironmentsToAdd), null));
+		BVDesignOutput bvOutput = null;
+		try {
+			bvOutput = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+		} catch (final Exception e) {
+			ExperimentDesignGenerator.LOG.error(e.getMessage(), e);
+			throw new BVDesignException("experiment.design.bv.exe.error.generate.generic.error");
+		}
+
+		if (bvOutput == null || !bvOutput.isSuccess()) {
+			throw new BVDesignException("experiment.design.generate.generic.error");
+		}
+				
 		//Converting germplasm List to map
 		final Map<Integer, ImportedGermplasm> importedGermplasmMap = new HashMap<>();
 		for (final ImportedGermplasm ig : germplasmList) {
 			importedGermplasmMap.put(ig.getEntryId(), ig);
 		}
 
-		final List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
-		final List<MeasurementVariable> varList = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> varList =
+				constructStudyVariableList(factors, nonTrialFactors, variates, treatmentVariables, requiredExpDesignVariable);
+		
+
+		final List<MeasurementRow> measurementRowList = new ArrayList<>();
+		Integer trialInstanceNumber = noOfExistingEnvironments - noOfEnvironmentsToAdd + 1;
+		for (final BVDesignTrialInstance instance : bvOutput.getTrialInstances()) {
+			for (final Map<String,String> row : instance.getRows()) {
+				final String entryNoValue = row.get(entryNumberIdentifier);
+				final Integer entryNumber = StringUtil.parseInt(entryNoValue, null);
+				if (entryNumber == null) {
+					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
+				}
+				final Optional<ImportedGermplasm> importedGermplasm =
+						this.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, entryNumber, designExpectedEntriesMap);
+				
+				if (!importedGermplasm.isPresent()) {
+					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
+				}
+				final MeasurementRow measurementRow = this.createMeasurementRow(varList, importedGermplasm.get(), row,
+						treatmentFactorValues, trialVariables, trialInstanceNumber);
+				measurementRowList.add(measurementRow);
+			}
+			trialInstanceNumber++;
+		}
+		return measurementRowList;
+	}
+
+	private List<MeasurementVariable> constructStudyVariableList(final List<MeasurementVariable> factors,
+			final List<MeasurementVariable> nonTrialFactors, final List<MeasurementVariable> variates,
+			final List<TreatmentVariable> treatmentVariables, final List<StandardVariable> requiredExpDesignVariable) {
+		final List<MeasurementVariable> varList = new ArrayList<>();
 		varList.addAll(nonTrialFactors);
 		for (final StandardVariable var : requiredExpDesignVariable) {
 			if (WorkbookUtil.getMeasurementVariable(nonTrialFactors, var.getId()) == null) {
@@ -243,43 +293,8 @@ public class ExperimentDesignGenerator {
 		for (final MeasurementVariable var : varList) {
 			var.setFactor(true);
 		}
-
 		varList.addAll(variates);
-
-		final int trialInstanceStart = noOfExistingEnvironments - noOfEnvironmentsToAdded + 1;
-		for (int trialNo = trialInstanceStart; trialNo <= noOfExistingEnvironments; trialNo++) {
-
-			BVDesignOutput bvOutput = null;
-			try {
-				bvOutput = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
-			} catch (final Exception e) {
-				ExperimentDesignGenerator.LOG.error(e.getMessage(), e);
-				throw new BVDesignException("experiment.design.bv.exe.error.generate.generic.error");
-			}
-
-			if (bvOutput == null || !bvOutput.isSuccess()) {
-				throw new BVDesignException("experiment.design.generate.generic.error");
-			}
-
-			for (int counter = 0; counter < bvOutput.getBvResultList().size(); counter++) {
-				final String entryNoValue = bvOutput.getEntryValue(entryNumberIdentifier, counter);
-				final Integer entryNumber = StringUtil.parseInt(entryNoValue, null);
-				if (entryNumber == null) {
-					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
-				}
-				final Optional<ImportedGermplasm> importedGermplasm =
-					this.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, entryNumber, designExpectedEntriesMap);
-
-				if (!importedGermplasm.isPresent()) {
-					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
-				}
-				final MeasurementRow row =
-						this.createMeasurementRow(varList, importedGermplasm.get(), bvOutput.getEntryMap(counter), treatmentFactorValues,
-								trialVariables, trialNo);
-				measurementRowList.add(row);
-			}
-		}
-		return measurementRowList;
+		return varList;
 	}
 
 	ExpDesignParameter createExpDesignParameter(final String name, final String value, final List<ListItem> items) {
@@ -318,7 +333,7 @@ public class ExperimentDesignGenerator {
 			final Map<String, String> bvEntryMap, final Map<String, List<String>> treatmentFactorValues,
 			final List<MeasurementVariable> trialVariables, final int trialNo) {
 		final MeasurementRow measurementRow = new MeasurementRow();
-		final List<MeasurementData> dataList = new ArrayList<MeasurementData>();
+		final List<MeasurementData> dataList = new ArrayList<>();
 		MeasurementData treatmentLevelData = null;
 		MeasurementData measurementData = null;
 
@@ -355,24 +370,13 @@ public class ExperimentDesignGenerator {
 				measurementData = new MeasurementData(var.getName(), germplasm.getGid(), false, var.getDataType(), var);
 			} else if (termId.intValue() == TermId.ENTRY_CODE.getId()) {
 				measurementData = new MeasurementData(var.getName(), germplasm.getEntryCode(), false, var.getDataType(), var);
-			} else if (termId.intValue() == TermId.PLOT_NO.getId()) {
+			} else if (EXP_DESIGN_VARIABLE_IDS.contains(termId)) {
 				measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
+			
 			} else if (termId.intValue() == TermId.CHECK.getId()) {
 				measurementData = new MeasurementData(var.getName(), Integer.toString(germplasm.getEntryTypeCategoricalID()), false,
 						var.getDataType(), germplasm.getEntryTypeCategoricalID(), var);
-
-			} else if (termId.intValue() == TermId.REP_NO.getId()) {
-				measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
-
-			} else if (termId.intValue() == TermId.BLOCK_NO.getId()) {
-				measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
-
-			} else if (termId.intValue() == TermId.ROW.getId()) {
-				measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
-
-			} else if (termId.intValue() == TermId.COL.getId()) {
-				measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
-
+			
 			} else if (termId.intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				measurementData = new MeasurementData(var.getName(), Integer.toString(trialNo), false, var.getDataType(), var);
 
@@ -446,7 +450,7 @@ public class ExperimentDesignGenerator {
 			// we add the string tokenize replating groups
 			// we tokenize the replating groups
 			final StringTokenizer tokenizer = new StringTokenizer(replatingGroups, ",");
-			final List<ListItem> replatingList = new ArrayList<ListItem>();
+			final List<ListItem> replatingList = new ArrayList<>();
 			while (tokenizer.hasMoreTokens()) {
 				replatingList.add(new ListItem(tokenizer.nextToken()));
 			}
@@ -465,7 +469,7 @@ public class ExperimentDesignGenerator {
 			paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.NCLATIN_PARAM, ncLatin, null));
 			// we tokenize the replating groups
 			final StringTokenizer tokenizer = new StringTokenizer(replatingGroups, ",");
-			final List<ListItem> replatingList = new ArrayList<ListItem>();
+			final List<ListItem> replatingList = new ArrayList<>();
 			while (tokenizer.hasMoreTokens()) {
 				replatingList.add(new ListItem(tokenizer.nextToken()));
 			}
@@ -479,7 +483,7 @@ public class ExperimentDesignGenerator {
 
 	List<ListItem> convertToListItemList(final List<String> listString) {
 
-		final List<ListItem> listItemList = new ArrayList<ListItem>();
+		final List<ListItem> listItemList = new ArrayList<>();
 		for (final String value : listString) {
 			listItemList.add(new ListItem(value));
 		}
@@ -489,7 +493,7 @@ public class ExperimentDesignGenerator {
 
 	List<ListItem> getInitialTreatNumList(final List<String> treatmentFactors, final Integer initialTreatNum, final String entryNoVarName) {
 
-		final List<ListItem> listItemList = new ArrayList<ListItem>();
+		final List<ListItem> listItemList = new ArrayList<>();
 		for(final String treatmentFactor: treatmentFactors) {
 			if(treatmentFactor.equals(entryNoVarName)) {
 				listItemList.add(new ListItem(String.valueOf(initialTreatNum)));

@@ -2,7 +2,11 @@ package com.efficio.fieldbook.web.experimentdesign;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
+import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutputTest;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesign;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesignParameter;
 import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
@@ -11,20 +15,30 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.google.common.base.Optional;
 import junit.framework.Assert;
+
+import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExperimentDesignGeneratorTest {
@@ -56,8 +70,8 @@ public class ExperimentDesignGeneratorTest {
 	@Test
 	public void testCreateRandomizedCompleteBlockDesign() {
 
-		final List<String> treatmentFactors = new ArrayList(Arrays.asList("FACTOR_1", "FACTOR_2"));
-		final List<String> levels = new ArrayList(Arrays.asList("Level1", "Level2"));
+		final List<String> treatmentFactors = new ArrayList<>(Arrays.asList("FACTOR_1", "FACTOR_2"));
+		final List<String> levels = new ArrayList<>(Arrays.asList("Level1", "Level2"));
 		final Integer initialPlotNumber = 99;
 		final Integer initialEntryNumber = 100;
 
@@ -89,8 +103,6 @@ public class ExperimentDesignGeneratorTest {
 		final String numberOfTreatments = "30";
 		final String numberOfReplicates = "31";
 		final String blockSize = "22";
-		final List<String> treatmentFactor = new ArrayList(Arrays.asList("FACTOR_1", "FACTOR_2"));
-		final List<String> levels = new ArrayList(Arrays.asList("Level1", "Level2"));
 		final Integer initialPlotNumber = 99;
 		final Integer initialEntryNumber = 100;
 		final String nBLatin = "";
@@ -129,8 +141,6 @@ public class ExperimentDesignGeneratorTest {
 		final String numberOfTreatments = "30";
 		final String numberOfReplicates = "31";
 		final String blockSize = "22";
-		final List<String> treatmentFactor = new ArrayList(Arrays.asList("FACTOR_1", "FACTOR_2"));
-		final List<String> levels = new ArrayList(Arrays.asList("Level1", "Level2"));
 		final Integer initialPlotNumber = 99;
 		final Integer initialEntryNumber = 100;
 		final String nBLatin = "";
@@ -310,6 +320,173 @@ public class ExperimentDesignGeneratorTest {
 		final Integer result5 =
 			this.experimentDesignGenerator.resolveMappedEntryNumber(9999, designExpectedEntriesMap);
 		Assert.assertEquals("9999 is not in map of checks, the return value should be the same number", Integer.valueOf(9999), result5);
+	}
+	
+	@Test
+	public void testGenerateExperimentDesignMeasurements() throws IOException, BVDesignException {
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyTypeDto.getTrialDto());
+		final MainDesign mainDesign =
+			this.experimentDesignGenerator.createRandomizedCompleteBlockDesign("2", ExperimentDesignGeneratorTest.REP_NO, ExperimentDesignGeneratorTest.PLOT_NO,
+						301, 201, TermId.ENTRY_NO.name(), new ArrayList<String>(), new ArrayList<String>(), "");
+
+		final int environments = 7;
+		final int environmentsToAdd = 4;
+		this.setMockValues(mainDesign, environmentsToAdd);
+
+		final List<ImportedGermplasm> germplasmList = this.createImportedGermplasms(5);
+		final List<StandardVariable> requiredExpDesignVariable = this.createRequiredVariables();
+		final Map<String, List<String>> treatmentFactorValues = new HashMap<String, List<String>>();
+
+		final List<MeasurementRow> measurementRowList =
+			this.experimentDesignGenerator.generateExperimentDesignMeasurements(environments, environmentsToAdd, workbook.getTrialVariables(),
+						workbook.getFactors(), workbook.getNonTrialFactors(), workbook.getVariates(), null, requiredExpDesignVariable,
+						germplasmList, mainDesign, ExperimentDesignGeneratorTest.ENTRY_NO,
+						treatmentFactorValues, new HashMap<Integer, Integer>());
+		
+		Assert.assertEquals(String.valueOf(environmentsToAdd),
+				mainDesign.getDesign().getParameterValue(ExperimentDesignGenerator.NUMBER_TRIALS_PARAM));
+		Mockito.verify(this.fieldbookService, Mockito.times(1)).runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+		Assert.assertTrue("Expected study instances nos. from " + (environments - environmentsToAdd + 1) + " to " + environments
+				+ " for all measurement rows but found a different trial no.",
+				this.isStudyInstanceNumbersAssignedCorrectly(measurementRowList, environments, environmentsToAdd));
+		
+	}
+	
+	@Test
+	public void testGenerateMeasurementsBVDesignError() throws IOException {
+		final MainDesign mainDesign =
+				this.experimentDesignGenerator.createRandomizedCompleteBlockDesign("2", ExperimentDesignGeneratorTest.REP_NO, ExperimentDesignGeneratorTest.PLOT_NO,
+							301, 201, TermId.ENTRY_NO.name(), new ArrayList<String>(), new ArrayList<String>(), "");
+		Mockito.doReturn(new BVDesignOutput(1)).when(this.fieldbookService).runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+		try {
+			this.experimentDesignGenerator.generateExperimentDesignMeasurements(5, 3, null, null, null, null, null, null, null, mainDesign, null, null, null);
+			Assert.fail("Expected to throw BVDesignException but didn't.");
+		} catch (final BVDesignException e) {
+			Assert.assertEquals("experiment.design.generate.generic.error", e.getBvErrorCode());
+		}
+	}
+	
+	@Test
+	public void testGenerateMeasurementsBVDesignIOException() throws IOException {
+		final MainDesign mainDesign =
+				this.experimentDesignGenerator.createRandomizedCompleteBlockDesign("2", ExperimentDesignGeneratorTest.REP_NO, ExperimentDesignGeneratorTest.PLOT_NO,
+							301, 201, TermId.ENTRY_NO.name(), new ArrayList<String>(), new ArrayList<String>(), "");
+		Mockito.doThrow(new IOException()).when(this.fieldbookService).runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+		try {
+			this.experimentDesignGenerator.generateExperimentDesignMeasurements(5, 3, null, null, null, null, null, null, null, mainDesign, null, null, null);
+			Assert.fail("Expected to throw BVDesignException but didn't.");
+		} catch (final BVDesignException e) {
+			Assert.assertEquals("experiment.design.bv.exe.error.generate.generic.error", e.getBvErrorCode());
+		}
+	}
+	
+	@Test
+	public void testGenerateExperimentDesignInvalidEntryNo() throws IOException {
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyTypeDto.getTrialDto());
+		final MainDesign mainDesign =
+			this.experimentDesignGenerator.createRandomizedCompleteBlockDesign("2", ExperimentDesignGeneratorTest.REP_NO, ExperimentDesignGeneratorTest.PLOT_NO,
+						301, 201, TermId.ENTRY_NO.name(), new ArrayList<String>(), new ArrayList<String>(), "");
+
+		final int environments = 7;
+		final int environmentsToAdd = 4;
+		this.setMockValues(mainDesign, environmentsToAdd);
+
+		final List<ImportedGermplasm> germplasmList = this.createImportedGermplasms(5);
+		final List<StandardVariable> requiredExpDesignVariable = this.createRequiredVariables();
+		final Map<String, List<String>> treatmentFactorValues = new HashMap<String, List<String>>();
+
+		// Make sure that specified entry number header does not exist in BVOutput headers
+		final String entryNumberHeader = RandomStringUtils.randomAlphabetic(10);
+		try {
+			this.experimentDesignGenerator.generateExperimentDesignMeasurements(
+					environments, environmentsToAdd, workbook.getTrialVariables(), workbook.getFactors(), workbook.getNonTrialFactors(),
+					workbook.getVariates(), null, requiredExpDesignVariable, germplasmList, mainDesign, entryNumberHeader,
+					treatmentFactorValues, new HashMap<Integer, Integer>());
+			Assert.fail("Expected to throw BVDesignException but didn't.");
+		} catch (BVDesignException e) {
+			Assert.assertEquals("experiment.design.bv.exe.error.output.invalid.error", e.getBvErrorCode());
+		}
+	}
+	
+	@Test
+	public void testGenerateExperimentDesignInvalidEntryID() throws IOException {
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyTypeDto.getTrialDto());
+		final MainDesign mainDesign =
+			this.experimentDesignGenerator.createRandomizedCompleteBlockDesign("2", ExperimentDesignGeneratorTest.REP_NO, ExperimentDesignGeneratorTest.PLOT_NO,
+						301, 201, TermId.ENTRY_NO.name(), new ArrayList<String>(), new ArrayList<String>(), "");
+
+		final int environments = 7;
+		final int environmentsToAdd = 4;
+		this.setMockValues(mainDesign, environmentsToAdd);
+
+		// There are fewer entries in the germplasm list than the one returned by mock BVOutput, hence germplasm will not be found
+		final List<ImportedGermplasm> germplasmList = this.createImportedGermplasms(3);
+		final List<StandardVariable> requiredExpDesignVariable = this.createRequiredVariables();
+		final Map<String, List<String>> treatmentFactorValues = new HashMap<String, List<String>>();
+
+		final String entryNumberHeader = RandomStringUtils.randomAlphabetic(10);
+		try {
+			this.experimentDesignGenerator.generateExperimentDesignMeasurements(
+					environments, environmentsToAdd, workbook.getTrialVariables(), workbook.getFactors(), workbook.getNonTrialFactors(),
+					workbook.getVariates(), null, requiredExpDesignVariable, germplasmList, mainDesign, entryNumberHeader,
+					treatmentFactorValues, new HashMap<Integer, Integer>());
+			Assert.fail("Expected to throw BVDesignException but didn't.");
+		} catch (BVDesignException e) {
+			Assert.assertEquals("experiment.design.bv.exe.error.output.invalid.error", e.getBvErrorCode());
+		}
+	}
+	
+	private void setMockValues(final MainDesign design, final Integer numberOfInstances) throws IOException {
+		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.REP_NO.getId())).thenReturn(null);
+		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.PLOT_NO.getId())).thenReturn(null);
+		Mockito.when(this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, design))
+				.thenReturn(this.createBvOutput(numberOfInstances));
+	}
+
+	private BVDesignOutput createBvOutput(int numberOfInstances) {
+		final BVDesignOutput bvOutput = new BVDesignOutput(0);
+		bvOutput.setResults(BVDesignOutputTest.createEntries(numberOfInstances, 2, 5));
+		return bvOutput;
+	}
+	
+	private List<ImportedGermplasm> createImportedGermplasms(final Integer numberOfGermplasm) {
+		final List<ImportedGermplasm> germplasms = new ArrayList<ImportedGermplasm>();
+
+		for (int i=1; i <= numberOfGermplasm; i++) {			
+			germplasms.add(new ImportedGermplasm(i, RandomStringUtils.randomAlphabetic(20), String.valueOf(new Random().nextInt()), "", "",
+					"", ""));
+		}
+
+		return germplasms;
+	}
+
+	private List<StandardVariable> createRequiredVariables() {
+		final List<StandardVariable> reqVariables = new ArrayList<StandardVariable>();
+
+		reqVariables.add(this.createStandardVariable(TermId.REP_NO.getId(), ExperimentDesignGeneratorTest.REP_NO));
+		reqVariables.add(this.createStandardVariable(TermId.PLOT_NO.getId(), ExperimentDesignGeneratorTest.PLOT_NO));
+
+		return reqVariables;
+	}
+	
+	private StandardVariable createStandardVariable(final int id, final String name) {
+		final StandardVariable var = new StandardVariable();
+		var.setId(id);
+		var.setName(name);
+		return var;
+	}
+	
+	private boolean isStudyInstanceNumbersAssignedCorrectly(final List<MeasurementRow> measurementRowList, final int environments, final int environmentsToAdd) {
+		for (final MeasurementRow row : measurementRowList) {
+			for (final MeasurementData data : row.getDataList()) {
+				if (data.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
+						&& (Integer.parseInt(data.getValue()) > environments || Integer.parseInt(data.getValue()) < environments
+								- environmentsToAdd + 1)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	private Map<Integer, ImportedGermplasm> createImportedGermplasmMap() {

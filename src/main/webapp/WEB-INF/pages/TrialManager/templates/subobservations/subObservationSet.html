@@ -4,54 +4,10 @@
 			<section-container name="content" th:attr="heading=#{study.managesettings.baseline.traits},
 							   help-tooltip=#{study.managesettings.trait.notes},icon-img=@{/static/img/baseline-traits.png}"
 							   icon-size="22" add-variable="true" model-data="traitVariables" selected-variables="selectedTraits" variable-type="1808"
-							   callback="onAddVariable(result)" select-variable-callback="selectVariableCallback" hide-variable="true">
-				<div name="content">
-					<table class='factor-opts-tbl table table-curved table-condensed'>
-						<thead>
-						<tr>
-							<th style="width: 20px" class="fbk-delete-link"></th>
-							<th style="width: auto; min-width: 150px;">Name</th>
-							<th style="width: auto">Description</th>
-							<th style="width: auto; white-space: nowrap;">Input Variables</th>
-						</tr>
-						</thead>
-						<tbody>
-						<tr ng-repeat="key in filteredKeys = ( traitVariables.keys() | removeHiddenVariableFilter: traitVariables.vals() ) track by key">
-							<td style="width: auto;" ng-class="{even : $even, odd : $odd}" class="fbk-delete-link">
-								<input type="checkbox" ng-model="traitVariables.val(key).isChecked" ng-change="selectTrait(traitVariables.val(key).isChecked)"/>
-							</td>
-							<td style="width: auto; min-width: 150px;" ng-class="{even : $even, odd : $odd}">
-								<a href="javascript: void(0);">
-									<span class="var-names" show-details-modal="key" variable-type="1808">{{traitVariables.val(key).variable.name}}</span>
-								</a>
-							</td>
-							<td style="width: auto" ng-class="{even : $even, odd : $odd}">{{traitVariables.val(key).variable.description}}
-							</td>
-							<td style="width: auto" width="50%" ng-class="{even : $even, odd : $odd}">
-								<span ng-repeat="formulaVariable in traitVariables.val(key).variable.formula.inputs">
-									<a href="javascript: void(0);">
-									<span class="var-names" show-details-modal="formulaVariable.id" variable-type="1808">{{formulaVariable.name}}</span>
-									</a>{{$last ? '' : ', '}}
-								</span>
-							</td>
-						</tr>
-						<tr ng-hide="filteredKeys.length &gt; 0">
-							<td class="odd">&nbsp;</td>
-							<td class="odd">&nbsp;</td>
-							<td class="odd">&nbsp;</td>
-							<td class="odd">&nbsp;</td>
-						</tr>
-						</tbody>
-					</table>
-					<div class="row form-group"
-						 ng-show="((traitVariables.keys() | removeHiddenAndDeletablesVariableFilter: traitVariables.vals()).length &gt; 0)">
-						<div class="col-md-12">
-							<label class="fbk-selectall-chk"><input type="checkbox" ng-model="traitsVariableSelected.selectAll"
-																	ng-change="doSelectAll(traitVariables,traitsVariableSelected)"/> Select All</label>
-							<a class="fbk-remove-link fbk-remove-traits-link" href="javascript: void(0);" ng-click="onRemoveVariable()">Remove</a>
-						</div>
-					</div>
-				</div>
+							   callback="onAddVariable(result)" select-variable-callback="selectVariableCallback" hide-variable="addVariable">
+
+				<dataset-settings hide-delete="isHideDelete" name="content" settings="traitVariables" variable-type="1808"
+								  predelete-function="onRemoveVariable"></dataset-settings>
 			</section-container>
 		</section-container>
 	</div>

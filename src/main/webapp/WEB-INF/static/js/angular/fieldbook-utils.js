@@ -150,6 +150,71 @@
 				}
 			};
 		}])
+		.directive('datasetSettings', ['$filter', '_',
+			function($filter, _) {
+				return {
+					restrict: 'E',
+					scope: {
+						settings: '=',
+						hideDelete: '=',
+						predeleteFunction: '&'
+					},
+					templateUrl: '/Fieldbook/static/angular-templates/displaySettings.html',
+					controller: function($scope, $element, $attrs) {
+
+						$scope.variableType = $attrs.variableType;
+						$scope.options = {
+							selectAll: false
+						};
+
+						$scope.doSelect = function (isChecked) {
+							if (!isChecked) {
+								$scope.options.selectAll = false;
+							}
+						};
+
+						// when the selectAll checkbox is clicked, do this
+						$scope.doSelectAll = function() {
+							var filteredVariables = $filter('removeHiddenAndDeletablesVariableFilter')($scope.settings.keys(), $scope.settings.vals());
+
+							_.each(filteredVariables, function(cvTermID) {
+								$scope.settings.val(cvTermID).isChecked = $scope.options.selectAll;
+							});
+
+						};
+
+						// when the delete button is clicked do this
+						$scope.removeSettings = function() {
+
+							if (typeof $scope.predeleteFunction() === 'undefined') {
+								$scope.doDeleteSelectedSettings();
+							} else {
+								var checkedVariableTermIds = $scope.retrieveCheckedVariableTermIds($scope.settings);
+								$scope.predeleteFunction()(checkedVariableTermIds);
+							}
+						};
+
+						$scope.retrieveCheckedVariableTermIds = function(_settings) {
+							var checkedCvtermIds = _.pairs(_settings.vals())
+								.filter(function(val) {
+									return _.last(val).isChecked;
+								})
+								.map(function(val) {
+									return parseInt(_.first(val));
+								});
+							return checkedCvtermIds;
+						};
+
+						$scope.doDeleteSelectedSettings = function() {
+
+						};
+
+						$scope.size = function() {
+							return Object.keys($scope.settings).length;
+						};
+					}
+				};
+			}])
 		.directive('validNumber', function() {
 
 			return {

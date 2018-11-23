@@ -75,6 +75,10 @@
 				return TrialManagerDataService.extractSettings(traitVariables);
 			};
 
+			$scope.selectVariableCallback = function(responseData) {
+				// just override default callback (see VariableSelection.prototype._selectVariable)
+			};
+
 			$scope.onAddVariable = function () {
 				if ($scope.traitVariables.m_keys.length != 0) {
 					var pos = $scope.traitVariables.m_keys.length - 1;

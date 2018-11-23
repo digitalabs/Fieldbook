@@ -245,7 +245,7 @@
 											}
 											return datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
 												cellData.observationId, {
-													categoricalValueId: null,
+													categoricalValueId: getCategoricalValueId(value, column.columnData),
 													value: value
 												});
 										});
@@ -262,7 +262,7 @@
 											}
 											return datasetService.addObservation(subObservationSet.id, rowData.observationUnitId, {
 												observationUnitId: rowData.observationUnitId,
-												categoricalValueId: null,
+												categoricalValueId: getCategoricalValueId(value, column.columnData),
 												variableId: termId,
 												value: value
 											});
@@ -318,7 +318,22 @@
 					});
 				}
 			}
-			
+
+			function getCategoricalValueId(cellDataValue, columnData) {
+				if (columnData.possibleValues
+					&& cellDataValue !== 'missing') {
+
+					var categoricalValue = columnData.possibleValues.find(function (possibleValue) {
+						return possibleValue.name === cellDataValue;
+					});
+					if (categoricalValue !== undefined) {
+						return categoricalValue.id;
+					}
+
+				}
+				return null;
+			}
+
 			function confirmOutOfBoundData(cellDataValue, columnData) {
 				var deferred = $q.defer();
 

@@ -56,19 +56,19 @@
 
 			datasetService.addObservation = function (datasetId, observationUnitId, observation) {
 				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/' +
-					observationUnitId, observation, config);
+					observationUnitId, observation);
 				return request.then(successHandler, failureHandler);
 			};
 
 			datasetService.updateObservation = function (datasetId, observationUnitId, observationId, observationValue) {
 				var request = $http.patch(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/' +
-					observationUnitId + '/observations/' + observationId, observationValue, config);
+					observationUnitId + '/observations/' + observationId, observationValue);
 				return request.then(successHandler, failureHandler);
 			};
 
 			datasetService.deleteObservation = function (datasetId, observationUnitId, observationId) {
 				var request = $http.delete(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/' +
-					observationUnitId + '/observations/' + observationId, config);
+					observationUnitId + '/observations/' + observationId);
 				return request.then(successHandler, failureHandler);
 			};
 

@@ -1,6 +1,7 @@
 (function() {
     'use strict';
-    angular.module('manageTrialApp').service('studyStateService', [
+	var app = angular.module('studyState', []);
+	app.service('studyStateService', [
         function() {
             var service = {
                 state: {

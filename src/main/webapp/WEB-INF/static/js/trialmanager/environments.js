@@ -267,9 +267,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						} else {
 							var instanceId = environmentList[environmentNo].instanceDbId;
 							var datasetId = studyContext.measurementDatasetId;
-							var studyId = studyContext.studyId;
 
-							datasetService.observationCountByInstance(studyId, datasetId, instanceId).then(function (response) {
+							datasetService.observationCountByInstance(datasetId, instanceId).then(function (response) {
 								var count = response.headers('X-Total-Count');
 								if (count > 0) {
 									var warningMessage = 'This environment cannot be removed because it contains measurement data.';

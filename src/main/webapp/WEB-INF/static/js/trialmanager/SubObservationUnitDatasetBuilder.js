@@ -23,7 +23,7 @@
 		};
 
 		$scope.saveDataset = function(){
-			if ($scope.dtForm.$valid) {
+			if ($scope.dtForm.$valid && $scope.trialInstances != 0) {
 				var instanceIds = [];
 
 				angular.forEach($scope.trialInstances, function (trialInstanceNumber) {

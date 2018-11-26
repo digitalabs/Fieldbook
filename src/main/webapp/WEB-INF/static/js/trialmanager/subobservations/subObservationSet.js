@@ -96,16 +96,15 @@
 					var pos = $scope.traitVariables.m_keys.length - 1;
 					var variableId = $scope.traitVariables.m_keys[pos];
 					var m_vals = $scope.traitVariables.m_vals[variableId];
-					m_vals.deletable= true;
+					m_vals.deletable = true;
 					m_vals.variable.description = m_vals.variable.definition;
+					m_vals.variable.name = m_vals.variable.alias || m_vals.variable.name;
 
-					datasetService.addVariables($scope.subObservationSet.dataset.datasetId,
-						{
-							"variableTypeId": 1808,
-							"variableId": variableId,
-							"studyAlias": m_vals.variable.name
-						}
-					).then(function () {
+					datasetService.addVariables($scope.subObservationSet.dataset.datasetId, {
+						variableTypeId: 1808,
+						variableId: variableId,
+						studyAlias: m_vals.variable.name
+					}).then(function () {
 						$scope.selectedTraits = $scope.getSelectedVariables();
 						reloadTable();
 					});

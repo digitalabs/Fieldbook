@@ -437,3 +437,179 @@ function doImportActionChange() {
 		$('#matching-gid').change();
 	}
 }
+
+
+(function () {
+	'use strict';
+
+	var importStudyModule = angular.module('import-study', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal', 'fieldbook-utils']);
+
+	importStudyModule.factory('importStudyModalService', ['$uibModal',
+		function ($uibModal) {
+
+			var importStudyModalService = {};
+
+			importStudyModalService.openDatasetOptionModal = function () {
+				$uibModal.open({
+					template: '<dataset-option-modal title="title" message="message"' +
+						'selected="selected" on-continue="showImportOptions()"></dataset-option-modal>',
+					controller: 'importDatasetOptionCtrl',
+					size: 'md'
+				});
+			};
+
+			importStudyModalService.openImportStudyModal = function (datasetId) {
+				$uibModal.open({
+					templateUrl: '/Fieldbook/static/angular-templates/importStudy/ImportStudyModal.html',
+					controller: "importStudyCtrl",
+					size: 'md',
+					resolve: {
+						datasetId: function () {
+							return datasetId;
+						}
+					},
+					controllerAs: 'ctrl'
+				});
+			};
+
+			importStudyModalService.redirectToOldImportModal = function () {
+				// Call the global function to show the old import study modal
+				setTimeout(function () {
+					showImportOptions();
+				});
+			};
+
+			importStudyModalService.showAlertMessage = function (title, message) {
+				// Call the global function to show alert message
+				showAlertMessage(title, message);
+			};
+
+			return importStudyModalService;
+
+		}]);
+
+	importStudyModule.controller('importDatasetOptionCtrl', ['$scope', '$uibModal', '$uibModalInstance', 'studyContext', 'importStudyModalService',
+		function ($scope, $uibModal, $uibModalInstance, studyContext, importStudyModalService) {
+
+			$scope.title = 'Import measurements';
+			$scope.message = 'Please choose the dataset you would like to import:';
+			$scope.measurementDatasetId = studyContext.measurementDatasetId;
+			$scope.selected = {datasetId: $scope.measurementDatasetId};
+
+			$scope.showImportOptions = function () {
+
+				if ($scope.measurementDatasetId === $scope.selected.datasetId) {
+					importStudyModalService.redirectToOldImportModal();
+				} else {
+					importStudyModalService.openImportStudyModal($scope.selected.datasetId);
+				}
+
+			};
+
+		}]);
+
+	importStudyModule.controller('importStudyCtrl', ['datasetId', '$scope', '$rootScope', '$uibModalInstance', 'datasetService', 'importStudyModalService',
+		'TrialManagerDataService','importSheetJs',
+		function (datasetId, $scope, $rootScope, $uibModalInstance, datasetService, importStudyModalService, importSheetJs ) {
+
+			$scope.title = 'Import measurements';
+			var ctrl = this;
+
+			ctrl.selectedImportFormatId = '1';
+
+			$scope.importFormats = [{itemId: '1', name: 'CSV'}];
+
+
+			$scope.backToDatasetOptionModal = function () {
+				$uibModalInstance.close();
+				importStudyModalService.openDatasetOptionModal();
+			};
+
+			$scope.onFileChange = function (evt) {
+				var file = evt.target.files[0];
+				$scope.fileName = file.name;
+
+			}
+
+			$scope.clearSelectedFile = function () {
+				console.log("import");
+
+			}
+
+			$scope.importMeasurements = function () {
+				console.log("import");
+
+			};
+
+			$scope.cancel = function () {
+				$uibModalInstance.close();
+			};
+
+			ctrl.showConfirmModal = function (instanceIds) {
+				// Existing Trial with measurement data
+				var modalInstance = $rootScope.openConfirmModal('Some of the environments you selected do not have field plans and so must ' +
+					'be exported in plot order. Do you want to proceed?', 'Proceed');
+				modalInstance.result.then(function (shouldContinue) {
+					if (shouldContinue) {
+						ctrl.export(instanceIds);
+					}
+				});
+			};
+
+
+			ctrl.init = function () {
+
+			};
+
+			ctrl.init();
+
+		}]);
+
+/*	importStudyModule.directive('importSheetJs', ['SheetJSImportDirective', function (SheetJSImportDirective) {
+
+			function SheetJSImportDirective() {
+				return {
+					scope: {opts: '='},
+					link: function ($scope, $elm) {
+						$elm.on('change', function (changeEvent) {
+							var reader = new FileReader();
+
+							reader.onload = function (e) {
+								/!* read workbook *!/
+								var bstr = e.target.result;
+								var workbook = XLSX.read(bstr, {type: 'binary'});
+
+								/!* DO SOMETHING WITH workbook HERE *!/
+							};
+
+							reader.readAsBinaryString(changeEvent.target.files[0]);
+						});
+					}
+				};
+			}
+		}]
+	);*/
+	importStudyModule.directive("importSheetJs", [SheetJSImportDirective]);
+
+	function SheetJSImportDirective() {
+		return {
+			scope: { opts: '=' },
+			link: function ($scope, $elm) {
+				$elm.on('change', function (changeEvent) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+						/* read workbook */
+						var bstr = e.target.result;
+						var workbook = XLSX.read(bstr, {type:'binary'});
+
+						/* DO SOMETHING WITH workbook HERE */
+					};
+
+					reader.readAsBinaryString(changeEvent.target.files[0]);
+				});
+			}
+		};
+	}
+
+})();

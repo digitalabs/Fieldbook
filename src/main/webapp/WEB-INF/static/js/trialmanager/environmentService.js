@@ -12,13 +12,7 @@
 			failureHandler = serviceUtilities.restFailureHandler;
 
 		environmentService.getEnvironments = function () {
-			var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
-			var config = {
-				headers: {
-					'X-Auth-Token': xAuthToken
-				}
-			};
-			var request = $http.get('/bmsapi/study/' + studyContext.cropName + '/' + studyContext.studyId + '/instances', config);
+			var request = $http.get('/bmsapi/study/' + studyContext.cropName + '/' + studyContext.studyId + '/instances');
 			return request.then(successHandler, failureHandler);
 		};
 

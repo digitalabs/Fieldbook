@@ -439,25 +439,20 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			}
 		}
 
-		// remove the click functionality to avoid selecting twice
-		selectButton.off('click');
-		selectButton.on('click', function() {
-			showAlertMessage('', variableSelectedMessage);
-		});
-		selectButton.attr('title', variableSelectedMessage);
-		selectButton.removeClass('vs-variable-select');
-		selectButton.addClass('vs-variable-button');
-
 		variableId = _convertVariableId(selectedVariable.id);
 
+		var promise;
 		if (callback) {
 			selectedVariable.cvTermId = variableId;
 
+			var responseData = [{variable: selectedVariable}];
 			callback({
-				responseData: [{variable: selectedVariable}]
+				responseData: responseData
 			});
+			promise = $.Deferred().resolve(responseData).promise();
+
 		} else {
-			$.ajax({
+			promise = $.ajax({
 				url: '/Fieldbook/manageSettings/addSettings/' + this._group,
 				type: 'POST',
 				data: JSON.stringify({
@@ -468,89 +463,95 @@ BMS.NurseryManager.VariableSelection = (function($) {
 					Accept: 'application/json',
 					'Content-Type': 'application/json'
 				},
-				success: $.proxy(function(data) {
-					// Prevent this variable from being selected again
-					this._currentlySelectedVariables[selectedVariable.id] = selectedVariable.alias || selectedVariable.name;
-
-					// Remove the edit button
-					selectButton.parents('.vs-variable').find(aliasVariableButtonSelector).remove();
-
-					// Change the add button to a tick to indicate success
-					iconContainer.removeClass('glyphicon-plus').addClass('glyphicon-ok');
-					selectButton.children('.vs-variable-select-label').text('');
-
-					/**
-					 * Variable select event.
-					 *
-					 * @event VariableSelection#variable-select
-					 * @type {object}
-					 * @property {number} group the group the variable belongs to
-					 * @property {object} responseData data returned from a successful call to /Fieldbook/manageSettings/addSettings/
-					 */
-
-					this._$modal.trigger({
-						type: VARIABLE_SELECT_EVENT,
-						group: this._group,
-						responseData: data
-					});
-
-					if (data[0] && data[0].variable.dataTypeId === 1130 &&  data[0].variable.widgetType === 'DROPDOWN' && data[0]
-					.possibleValues.length === 0) {
-						showAlertMessage('', variableNoValidValueNotification);
-					}
-
-					/**
-					 * Remove variable from VariableCache
-					 * across all BMS applications
-					 * It's straightforward to do this here
-					 * while doing it at the moment of saving
-					 * could be a bit more tricky
-					 *
-					 */
-					var authParams =
-					   'authToken=' + authToken
-					   + '&selectedProjectId=' + selectedProjectId
-					   + '&loggedInUserId=' + loggedInUserId;
-
-					var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
-
-					$.each(
-						['/bmsapi/' + 'variableCache/' + cropName + '/' + variableId + '?programId=' + currentProgramId,
-						 '/BreedingManager/main/'    + 'variableCache/' + variableId + '?' + authParams,
-						 '/ibpworkbench/controller/' + 'variableCache/' + variableId + '?' + authParams],
-					 function (i, v) {
-						$.ajax({
-							url: v,
-							type: 'DELETE',
-							beforeSend: function(xhr) {
-								xhr.setRequestHeader('X-Auth-Token', xAuthToken);
-							},
-							error: function(jqxhr, textStatus, error) {
-								if (jqxhr.status == 401) {
-									bmsAuth.handleReAuthentication();
-								}
-							}
-						});
-					 });
-
-
-				}, this),
-				error: function(jqxhr, textStatus, error) {
+				error: function (jqxhr, textStatus, error) {
 
 					var errorMessage;
 
-					showErrorMessage(null, generalErrorMessage);
-
+					showErrorMessage(null, ajaxGenericErrorMsg);
 					if (console) {
 						errorMessage = textStatus + ', ' + error;
 						console.error('Failed to add variable with id ' + variableId + '. Error was: ' + errorMessage);
 					}
-
-					// Re-enable the add button
-					selectButton.removeAttr('disabled');
 				}
+			}).done(function (data) {
+				if (data[0] && data[0].variable.dataTypeId === 1130 &&  data[0].variable.widgetType === 'DROPDOWN' && data[0]
+					.possibleValues.length === 0) {
+					showAlertMessage('', variableNoValidValueNotification);
+				}
+
+				return data
 			});
 		}
+		promise.done($.proxy(function (data) {
+
+			// remove the click functionality to avoid selecting twice
+			selectButton.off('click');
+			selectButton.on('click', function () {
+				showAlertMessage('', variableSelectedMessage);
+			});
+			selectButton.attr('title', variableSelectedMessage);
+			selectButton.removeClass('vs-variable-select');
+			selectButton.addClass('vs-variable-button');
+
+			// Prevent this variable from being selected again
+			this._currentlySelectedVariables[selectedVariable.id] = selectedVariable.alias || selectedVariable.name;
+
+			// Remove the edit button
+			selectButton.parents('.vs-variable').find(aliasVariableButtonSelector).remove();
+
+			// Change the add button to a tick to indicate success
+			iconContainer.removeClass('glyphicon-plus').addClass('glyphicon-ok');
+			selectButton.children('.vs-variable-select-label').text('');
+
+			/**
+			 * Variable select event.
+			 *
+			 * @event VariableSelection#variable-select
+			 * @type {object}
+			 * @property {number} group the group the variable belongs to
+			 * @property {object} responseData data returned from a successful call to /Fieldbook/manageSettings/addSettings/ or callback
+			 */
+
+			this._$modal.trigger({
+				type: VARIABLE_SELECT_EVENT,
+				group: this._group,
+				responseData: data
+			});
+
+			/**
+			 * Remove variable from VariableCache
+			 * across all BMS applications
+			 * It's straightforward to do this here
+			 * while doing it at the moment of saving
+			 * could be a bit more tricky
+			 *
+			 */
+			var authParams =
+				'authToken=' + authToken
+				+ '&selectedProjectId=' + selectedProjectId
+				+ '&loggedInUserId=' + loggedInUserId;
+
+			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+
+			$.each(
+				['/bmsapi/' + 'variableCache/' + cropName + '/' + variableId + '?programId=' + currentProgramId,
+					'/BreedingManager/main/'    + 'variableCache/' + variableId + '?' + authParams,
+					'/ibpworkbench/controller/' + 'variableCache/' + variableId + '?' + authParams],
+				function (i, v) {
+					$.ajax({
+						url: v,
+						type: 'DELETE',
+						beforeSend: function(xhr) {
+							xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+						},
+						error: function(jqxhr, textStatus, error) {
+							if (jqxhr.status == 401) {
+								bmsAuth.handleReAuthentication();
+							}
+						}
+					});
+				});
+		}, this));
 
 	};
 

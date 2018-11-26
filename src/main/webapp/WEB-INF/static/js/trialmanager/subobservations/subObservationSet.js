@@ -4,11 +4,13 @@
 	var manageTrialApp = angular.module('manageTrialApp');
 
 	manageTrialApp.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
-		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService',
+		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', 'studyContext', '$rootScope', '$filter', '_',
 		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
-				  datasetService
+				  datasetService, studyContext, $rootScope, $filter, _
 		) {
-
+			$scope.traitVariables = new angular.OrderedHash();
+			$scope.isHideDelete = false;
+			$scope.addVariable = true;
 			var subObservationSet = $scope.subObservationSet = $stateParams.subObservationSet;
 			$scope.preview = Boolean(subObservationSet.preview);
 			$scope.columnsObj = subObservationSet.columnsObj;
@@ -29,6 +31,7 @@
 			$scope.dtOptions = null;
 
 			datasetService.getDataset(subObservationSet.id).then(function (dataset) {
+				$scope.subObservationSet.dataset = dataset;
 				if (!dataset.instances || !dataset.instances.length) {
 					return;
 				}
@@ -36,9 +39,120 @@
 				$scope.nested.selectedEnvironment = dataset.instances[0];
 
 				$scope.dtOptions = getDtOptions();
-
-				loadDataTable();
+				$scope.traitVariables = $scope.getTraitVariablesFromDataset();
+				$scope.selectedTraits = $scope.getSelectedVariables();
+				loadColumns().then(function (columnsObj) {
+					dtColumnsPromise.resolve(columnsObj.columns);
+					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
+				});
 			});
+
+			$scope.getTraitVariablesFromDataset = function () {
+				var traitVariables = {settings: []};
+				angular.forEach($scope.subObservationSet.dataset.variables, function (datasetVariable) {
+					var variableType = 'TRAIT';
+					var SettingDetail = $scope.transformSettingDetails(datasetVariable, variableType);
+					traitVariables.settings.push(SettingDetail);
+
+				});
+				return TrialManagerDataService.extractSettings(traitVariables);
+			};
+
+			$scope.transformVariable = function (datasetVariable) {
+				var variable = {
+					cvTermId: datasetVariable.termId,
+					name: datasetVariable.name,
+					description: datasetVariable.description,
+					property: datasetVariable.property,
+					scale: datasetVariable.scale,
+					//role:null,
+					method: datasetVariable.method,
+					dataType: datasetVariable.dataType,
+					dataTypeId: datasetVariable.dataTypeId,
+					minRange: null,
+					maxRange: null,
+					operation: null,
+					formula: datasetVariable.formula
+				};
+				return variable;
+			};
+
+			$scope.transformSettingDetails = function (datasetVariable, variableType) {
+				var variable = $scope.transformVariable(datasetVariable);
+				var SettingDetail = {
+					variable: variable,
+					hidden: datasetVariable.variableType != variableType,
+					deletable: true
+				};
+				return SettingDetail;
+			};
+
+			$scope.selectVariableCallback = function(responseData) {
+				// just override default callback (see VariableSelection.prototype._selectVariable)
+			};
+
+			$scope.onAddVariable = function () {
+				if ($scope.traitVariables.length()) {
+					var pos = $scope.traitVariables.m_keys.length - 1;
+					var variableId = $scope.traitVariables.m_keys[pos];
+					var m_vals = $scope.traitVariables.m_vals[variableId];
+					m_vals.deletable = true;
+					m_vals.variable.description = m_vals.variable.definition;
+					m_vals.variable.name = m_vals.variable.alias || m_vals.variable.name;
+
+					datasetService.addVariables($scope.subObservationSet.dataset.datasetId, {
+						variableTypeId: 1808,
+						variableId: variableId,
+						studyAlias: m_vals.variable.name
+					}).then(function () {
+						$scope.selectedTraits = $scope.getSelectedVariables();
+						reloadTable();
+					});
+				}
+			};
+
+			$scope.getSelectedVariables = function() {
+				var selected = {};
+				angular.forEach($scope.traitVariables.m_keys, function (key) {
+					$scope.traitVariables.m_vals[key].variable.cvTermId
+					selected[$scope.traitVariables.m_vals[key].variable.cvTermId] = $scope.traitVariables.m_vals[key].variable.name;
+
+				});
+				return selected;
+			};
+
+			$scope.onRemoveVariable = function (variableIds) {
+				var promise = $scope.validateRemoveVariable(variableIds);
+
+				promise.then(function (doContinue) {
+					if (doContinue) {
+						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, variableIds).then(function () {
+							angular.forEach(variableIds, function (cvtermId) {
+								$scope.traitVariables.remove(cvtermId);
+							});
+							reloadTable();
+							$scope.selectedTraits = $scope.getSelectedVariables();
+						});
+					}
+				});
+			};
+
+			$scope.validateRemoveVariable = function (deleteVariables) {
+				var deferred = $q.defer();
+				if (deleteVariables.length != 0) {
+					datasetService.observationCount($scope.subObservationSet.dataset.datasetId, deleteVariables).then(function (response) {
+						var count = response.headers('X-Total-Count');
+						if (count > 0) {
+							var modalInstance = $rootScope.openConfirmModal(measurementModalConfirmationText,
+								environmentConfirmLabel);
+							modalInstance.result.then(deferred.resolve);
+						} else {
+							deferred.resolve(true);
+						}
+					});
+				}
+				return deferred.promise;
+			};
 
 			if ($scope.preview) {
 				loadPreview();
@@ -276,7 +390,14 @@
 					});
 			}
 
-			function loadDataTable() {
+			function reloadTable() {
+				loadColumns().then(function (columnsObj) {
+					$scope.dtColumns = columnsObj.columns;
+					$scope.dtColumnDefs = columnsObj.columnsDef;
+				});
+			}
+
+			function loadColumns() {
 				return datasetService.getColumns(subObservationSet.id).then(function (data) {
 					subObservationSet.displayColumns = data;
 					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(data);
@@ -286,8 +407,7 @@
 						subObservationSet.columnMap[column.termId] = column;
 					});
 
-					dtColumnsPromise.resolve(columnsObj.columns);
-					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
+					return columnsObj;
 				});
 			}
 

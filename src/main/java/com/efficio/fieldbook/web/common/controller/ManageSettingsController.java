@@ -253,9 +253,8 @@ public class ManageSettingsController extends SettingsController {
 	@ResponseBody
 	@RequestMapping(value = "/addSettings/{mode}", method = RequestMethod.POST)
 	public List<SettingDetail> addSettings(@RequestBody final CreateTrialForm form, @PathVariable final int mode) {
-		final List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
+		final List<SettingDetail> newSettings = new ArrayList<>();
 		try {
-
 			final String programUUID = this.contextUtil.getCurrentProgramUUID();
 			final List<SettingVariable> selectedVariables = form.getSelectedVariables();
 
@@ -307,9 +306,11 @@ public class ManageSettingsController extends SettingsController {
 
 		} catch (final Exception e) {
 			ManageSettingsController.LOG.error(e.getMessage(), e);
+			throw new RuntimeException("Something went wrong",e);
+
 		}
 
-		return new ArrayList<SettingDetail>();
+		return new ArrayList<>();
 	}
 
 	private Operation removeVarFromDeletedList(final SettingVariable var, final int mode) {

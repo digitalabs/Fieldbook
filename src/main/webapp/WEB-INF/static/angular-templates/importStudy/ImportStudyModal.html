@@ -1,0 +1,65 @@
+<div class="modal-body">
+	<div class="row form-group">
+		<div class="col-xs-11 col-md-11">
+			<label class="modal-title fbk-modal-title" id="heading-modal">{{title}}</label>
+		</div>
+		<div class="col-xs-1 col-md-1">
+			<button ng-click="cancel()" type="button" class="close pull-right glyphicon glyphicon-remove"></button>
+		</div>
+	</div>
+	<div class="separator"></div>
+	<br/>
+
+	<div class="row form-group">
+		<div class="col-xs-12 col-md-12">
+			<label class=""><em> <span class='required'>*</span> indicates a mandatory field</em></label>
+		</div>
+	</div>
+
+	<div class="row form-group">
+		<div class="col-xs-12 col-md-12">
+			<label class="control-label h4 label-bold">EXPORT FORMAT</label>
+		</div>
+	</div>
+
+	<div class="row form-group">
+		<div class="col-xs-8 col-md-8">
+			<label class="control-label add_top_padding label-bold">Please specify the format you are importing: </label><span
+			class="required">*</span>
+		</div>
+		<div class="report-type-section col-xs-3 col-md-3" style="padding-left: 0px;">
+			<ui-select ng-model="ctrl.selectedImportFormatId" theme="select2" search-enabled="false">
+				<ui-select-match placeholder="Choose an import type">{{$select.selected.name}}</ui-select-match>
+				<ui-select-choices repeat="format.itemId as format in importFormats">{{format.name}}</ui-select-choices>
+			</ui-select>
+		</div>
+	</div>
+
+	<div class='row form-group add_top_padding'>
+		<div class="col-xs-12 col-md-12">
+			<label class="control-label h4 label-bold">SELECT FILE</label>
+		</div>
+		<div class="fileupload fileupload-new fbk-import-upload-file" data-provides="fileupload">
+			<div class="col-xs-8 col-md-8">
+				<label class="control-label add_top_padding label-bold">Please choose the file you would like to import: </label><span
+				class="required">*</span>
+			</div>
+			<div class="report-type-section col-xs-3 col-md-3">
+				<div class="fileupload fileupload-new fbk-import-upload-file" data-provides="fileupload">
+							<span ng-style="{'display': fileName ? 'none' : ''}" class="btn btn-info btn-file"
+								  ng-Class="{ 'disabled': ctrl.selectedImportFormatId === '' }">
+								<span class="fileupload-new">Browse</span>
+								<input fileUpload id="fileupload" import-sheet-js="" type="file" multiple="false">file</input>
+							</span>
+					<span ng-if="fileName"><b><span>Selected import file</span>:</b> <i>{{fileName}}</i></span>
+					<span ng-if="fileName" style="display: inline-block; margin-left: 15px"><button (click)="clearSelectedFile()" class="close pull-right glyphicon glyphicon-remove" data-dismiss="fileupload"></button></span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-footer">
+		<button type="button" class="btn btn-default" ng-click="backToDatasetOptionModal()">Back</button>
+		<button type="button" class="btn btn-primary" ng-click="importMeasurements()" aria-hidden="true" #importButton>Import</button>
+	</div>
+</div>

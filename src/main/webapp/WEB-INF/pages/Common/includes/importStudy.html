@@ -1,6 +1,5 @@
 <div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
     <!-- Modal -->
-
     <form id="importStudyUploadForm"
           method="post" th:object="${createTrialForm}"
           enctype="multipart/form-data">
@@ -67,8 +66,8 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true"
-                                th:text="#{common.form.cancel.text}">Cancel
+                        <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" onclick="javascript:backShowImportStudyModal();"
+                                th:text="#{common.form.back.text}">Back
                         </button>
                         <button type="button" class="btn btn-primary" aria-hidden="true" onclick="javascript:submitImportStudy();">Import
                         </button>
@@ -406,7 +405,7 @@
 
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-fileupload.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/fbk-data-table/importStudy.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/importStudy.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
 var importStudyHeader = /*[[#{study.import.study.header}]]*/ '',

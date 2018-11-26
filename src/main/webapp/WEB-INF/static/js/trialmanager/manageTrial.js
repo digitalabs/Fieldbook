@@ -754,9 +754,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.addSubObservationTabData = function (id, name, datasetTypeId, parentDatasetId) {
 				var datasetType = datasetService.getDatasetType(datasetTypeId);
 
-				/**
-				 * Artificial id for subObs tabs, that do not exists on db
-				 */
 				var newSubObsTab = {
 					id: id,
 					name: name,
@@ -951,7 +948,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				return null;
 			};
 
-			$rootScope.openConfirmModal = function (message, confirmButtonLabel) {
+			$rootScope.openConfirmModal = function (message, confirmButtonLabel, cancelButtonLabel) {
 
 				var modalInstance = $uibModal.open({
 					animation: true,
@@ -959,6 +956,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					controller: function ($scope, $uibModalInstance) {
 						$scope.text = message;
 						$scope.confirmButtonLabel = confirmButtonLabel;
+						$scope.cancelButtonLabel = cancelButtonLabel || cancelLabel;
 
 						$scope.confirm = function () {
 							$uibModalInstance.close(true);

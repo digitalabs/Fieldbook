@@ -4,9 +4,9 @@
 	var manageTrialApp = angular.module('manageTrialApp');
 
 	manageTrialApp.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
-		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', 'studyContext', '$rootScope', '$filter', '_',
+		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout',
 		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
-				  datasetService, studyContext, $rootScope, $filter, _
+				  datasetService, $timeout
 		) {
 			$scope.traitVariables = new angular.OrderedHash();
 			$scope.isHideDelete = false;
@@ -17,6 +17,7 @@
 			$scope.rows = subObservationSet.rows;
 			$scope.nested = {};
 			$scope.nested.dtPreviewInstance = null;
+			$scope.nested.dtInstance = null;
 			$scope.nested.reviewVariable = null;
 			$scope.enableActions = false;
 
@@ -143,7 +144,7 @@
 					datasetService.observationCount($scope.subObservationSet.dataset.datasetId, deleteVariables).then(function (response) {
 						var count = response.headers('X-Total-Count');
 						if (count > 0) {
-							var modalInstance = $rootScope.openConfirmModal(measurementModalConfirmationText,
+							var modalInstance = $scope.openConfirmModal(measurementModalConfirmationText,
 								environmentConfirmLabel);
 							modalInstance.result.then(deferred.resolve);
 						} else {
@@ -219,7 +220,7 @@
 						data: function (d) {
 							var sortedColIndex = $(tableId).dataTable().fnSettings().aaSorting[0][0];
 							var sortDirection = $(tableId).dataTable().fnSettings().aaSorting[0][1];
-							var sortedColTermId = subObservationSet.displayColumns[sortedColIndex].termId;
+							var sortedColTermId = subObservationSet.columnsData[sortedColIndex].termId;
 
 							return {
 								draw: d.draw,
@@ -231,7 +232,9 @@
 						}
 					})
 					.withDataProp('data')
-					.withOption('serverSide', true));
+					.withOption('serverSide', true)
+					.withOption('headerCallback', headerCallback)
+					.withOption('initComplete', initComplete));
 			}
 
 			function addCommonOptions(options) {
@@ -239,6 +242,7 @@
 					.withOption('processing', true)
 					.withOption('lengthMenu', [[50, 75, 100], [50, 75, 100]])
 					.withOption('scrollY', '500px')
+					.withOption('scrollX', '100%')
 					.withOption('language', {
 						processing: '<span class="throbber throbber-2x"></span>',
 						lengthMenu: 'Records per page: _MENU_',
@@ -268,46 +272,50 @@
 			function loadPreview() {
 				$scope.dtOptionsPreview = addCommonOptions(DTOptionsBuilder
 					.fromFnPromise(getPreview())
-					.withOption('rowCallback', previewRowCallback));
+					// TODO 1) extract common logic rowCallback 2) use datatable api to store data 3) use DataTable().rows().data() to save
+					// .withOption('rowCallback', previewRowCallback)
+				);
 			}
 
-			function previewRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-				var experimentId = aData.experimentId;
+			function headerCallback(thead, data, start, end, display) {
+				var table = $scope.nested.dtInstance.DataTable;
+				table.columns().every(function() {
+					var column = $scope.columnsObj.columns[this.index()];
+					if (column.columnData.formula) {
+						$(this.header()).addClass('derived-trait-column-header');
+					}
+				});
+			}
 
-				// FIXME attach to table instead? prevent multiple cells click?
-				$('td.variates', nRow).off().on('click', cellClickHandler);
+			function initComplete() {
+				var $table = angular.element(tableId);
+				$table.off().on('click', 'td.variates', clickHandler);
 
-				/**
-				 * Keep a closure with experimentId, iDisplayIndexFull, etc
-				 */
-				function cellClickHandler() {
-					var termId = $(this).data('term-id'),
-						phenotypeId = $(this).data('phenotype-id'),
-						that = this;
+				function clickHandler() {
+					var cell = this;
 
-					// FIXME BMS-4453
-					if (!termId || !phenotypeId) return;
+					var table = $table.DataTable();
+					var rowIndex = cell.parentNode.rowIndex - 1;
+					var rowData = table.row(rowIndex).data();
+					var dtCell = table.cell({row: rowIndex, column: cell.cellIndex});
+					var cellData = dtCell.data();
+					var column = $scope.columnsObj.columns[cell.cellIndex];
+					var termId = column.columnData.termId;
+
+					if (!termId) return;
 
 					/**
 					 * Remove handler to not interfere with inline editor
-					 * fnUpdate will trigger rowCallback and restore it
+					 * will be restored after fnUpdate
 					 */
-					$(this).off('click');
+					$table.off('click');
 
 					$scope.$apply(function () {
-						var data = subObservationSet.rowMap[experimentId][termId];
-
-						/*
-						FIXME change json response for an object with named properties
-							Current structure is an array
-								AleuCol_E_1to5: ["7", "7", true, "", null]
-							where the first item is the value
-						 */
 
 						var $inlineScope = $scope.$new(true);
 
 						$inlineScope.observation = {
-							value: data[0],
+							value: cellData.value,
 							change: function () {
 								updateInline();
 							},
@@ -320,39 +328,94 @@
 							}
 						};
 
-						var column = $inlineScope.column = subObservationSet.columnMap[termId];
+						$inlineScope.column = column.columnData;
 
-						$(that).html('');
+						$(cell).html('');
 						var editor = $compile(
 							' <observation-inline-editor ' +
 							' column="column" ' +
 							' observation="observation"></observation-inline-editor> '
 						)($inlineScope);
 
-						$(that).append(editor);
+						$(cell).append(editor);
 
 						function updateInline() {
-							data[0] = $inlineScope.observation.value;
+							var promise;
 
-							setTimeout(function () {
+							if (cellData.value === $inlineScope.observation.value) {
+								promise = $q.resolve(cellData);
+							} else {
+								var value = $inlineScope.observation.value;
+
+								if (cellData.observationId) {
+									if (value) {
+										promise = confirmOutOfBoundData(value, column.columnData).then(function(doContinue) {
+											if (!doContinue) {
+												$inlineScope.observation.value = cellData.value;
+												return {observationId: cellData.observationId};
+											}
+											return datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
+												cellData.observationId, {
+													categoricalValueId: getCategoricalValueId(value, column.columnData),
+													value: value
+												});
+										});
+									} else {
+										promise = datasetService.deleteObservation(subObservationSet.id, rowData.observationUnitId,
+											cellData.observationId);
+									}
+								} else {
+									if (value) {
+										promise = confirmOutOfBoundData(value, column.columnData).then(function(doContinue) {
+											if (!doContinue) {
+												$inlineScope.observation.value = cellData.value;
+												return {observationId: cellData.observationId};
+											}
+											return datasetService.addObservation(subObservationSet.id, rowData.observationUnitId, {
+												observationUnitId: rowData.observationUnitId,
+												categoricalValueId: getCategoricalValueId(value, column.columnData),
+												variableId: termId,
+												value: value
+											});
+										});
+									} else {
+										promise = $q.resolve(cellData);
+									}
+								}
+							}
+
+							promise.then(function (data) {
+								cellData.value = $inlineScope.observation.value;
+								cellData.observationId = data.observationId;
+
 								$inlineScope.$destroy();
 								editor.remove();
 
-								$('#preview-subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id)
-									.dataTable()
-									.fnUpdate(subObservationSet.rows[iDisplayIndexFull], iDisplayIndexFull, null, false);
+								dtCell.data(cellData);
 
 								/**
 								 * Restore cell click handler
 								 */
-								$(that).off().on('click', cellClickHandler);
+								$table.on('click', 'td.variates', clickHandler);
+
+								applyCellColor(cell, cellData, rowData, column.columnData);
+							}, function (response) {
+								if (response.errors) {
+									showErrorMessage('', response.errors[0].message);
+								} else {
+									showErrorMessage('', ajaxGenericErrorMsg);
+								}
 							});
 
 						}
 
-						if (column.dataTypeCode === 'D') {
-							setTimeout(function () {
-								$('input', that).datepicker({
+						if (column.columnData.dataTypeCode === 'D') {
+							$timeout(function () {
+								angular.element('input', cell).on('keydown', function (e) {
+									if (e.keyCode === 13) {
+										e.stopImmediatePropagation();
+									}
+								}).datepicker({
 									'format': 'yyyymmdd'
 								}).on('hide', function () {
 									updateInline();
@@ -361,12 +424,43 @@
 						}
 
 						// FIXME show combobox for categorical traits
-						$(that).css('overflow', 'visible');
+						$(cell).css('overflow', 'visible');
 
 					});
 				}
 			}
 
+			function getCategoricalValueId(cellDataValue, columnData) {
+				if (columnData.possibleValues
+					&& cellDataValue !== 'missing') {
+
+					var categoricalValue = columnData.possibleValues.find(function (possibleValue) {
+						return possibleValue.name === cellDataValue;
+					});
+					if (categoricalValue !== undefined) {
+						return categoricalValue.id;
+					}
+
+				}
+				return null;
+			}
+
+			function confirmOutOfBoundData(cellDataValue, columnData) {
+				var deferred = $q.defer();
+
+				var invalid = validateOutOfBoundData(cellDataValue, columnData);
+
+				if (invalid) {
+					var confirmModal = $scope.openConfirmModal(observationOutOfRange, keepLabel, discardLabel);
+					confirmModal.result.then(deferred.resolve);
+				} else {
+					deferred.resolve(true);
+				}
+
+				return deferred.promise;
+			}
+
+			// FIXME 1) adapt to subobs 2) See previewRowCallback
 			function getPreview() {
 				// TODO check memory consumption
 				if (subObservationSet.rows) {
@@ -398,13 +492,13 @@
 			}
 
 			function loadColumns() {
-				return datasetService.getColumns(subObservationSet.id).then(function (data) {
-					subObservationSet.displayColumns = data;
-					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(data);
+				return datasetService.getColumns(subObservationSet.id).then(function (columnsData) {
+					subObservationSet.columnsData = columnsData;
+					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(columnsData);
 
 					subObservationSet.columnMap = {};
-					angular.forEach(data, function (column) {
-						subObservationSet.columnMap[column.termId] = column;
+					angular.forEach(columnsData, function (columnData) {
+						subObservationSet.columnMap[columnData.termId] = columnData;
 					});
 
 					return columnsObj;
@@ -412,30 +506,47 @@
 			}
 
 			// TODO merge with measurements-table-trial.js#getColumns
-			function mapColumns(data) {
+			function mapColumns(columnsData) {
 				var columns = [],
 					columnsDef = [];
 
 				// TODO complete column definitions (highlighting, links, etc)
 
-				angular.forEach(data, function (displayColumn) {
+				angular.forEach(columnsData, function (columnData) {
 					columns.push({
-						title: displayColumn.name,
+						title: columnData.name,
 						data: function (row) {
-							if (row.variables[displayColumn.name]) {
-								return row.variables[displayColumn.name].value || "";
-							}
-							return "";
-						}
+							return row.variables[columnData.name];
+						},
+						defaultContent: '',
+						className: columnData.factor === true ? 'factors' : 'variates',
+						columnData: columnData
 					});
 					// GID or DESIGNATION
-					if (displayColumn.termId === 8240 || displayColumn.termId === 8250) {
+					if (columnData.termId === 8240 || columnData.termId === 8250) {
 						columnsDef.push({
 							targets: columns.length - 1,
-							render: function(data, type, full, meta) {
+							render: function (data, type, full, meta) {
 								return '<a class="gid-link" href="javascript: void(0)" ' +
 									'onclick="openGermplasmDetailsPopopWithGidAndDesig(\'' +
-									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data) + '</a>';
+									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
+							}
+						});
+					} else if (!columnData.factor) {
+						columnsDef.push({
+							targets: columns.length - 1,
+							createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
+								applyCellColor(td, cellData, rowData, columnData);
+							},
+							render: function (data, type, full, meta) {
+								return data && EscapeHTML.escape(data.value);
+							}
+						});
+					} else {
+						columnsDef.push({
+							targets: columns.length - 1,
+							render: function (data, type, full, meta) {
+								return data && EscapeHTML.escape(data.value);
 							}
 						});
 					}
@@ -447,6 +558,60 @@
 				};
 			}
 
+			function validateOutOfBoundData(cellDataValue, columnData) {
+				var invalid = false;
+
+				var value = cellDataValue;
+				var minVal = columnData.minRange;
+				var maxVal = columnData.maxRange;
+
+				// Numeric
+				if (minVal && maxVal
+					&& (parseFloat(value) < parseFloat(minVal) || parseFloat(value) > parseFloat(maxVal))) {
+
+					invalid = true;
+				}
+				// Categorical
+				if (columnData.possibleValues
+					&& columnData.possibleValues.find(function (possibleValue) {
+						return possibleValue.name === cellDataValue;
+					}) === undefined
+					&& cellDataValue !== 'missing') {
+
+					invalid = true;
+				}
+				return invalid;
+			}
+
+			function applyCellColor(td, cellData, rowData, columnData) {
+				$(td).removeClass('accepted-value');
+				$(td).removeClass('invalid-value');
+				$(td).removeClass('manually-edited-value');
+
+				if (cellData.value) {
+					var invalid = validateOutOfBoundData(cellData.value, columnData);
+
+					if (invalid) {
+						$(td).addClass($scope.preview ? 'invalid-value' : 'accepted-value');
+					}
+				}
+				if (cellData.status) {
+					var status = cellData.status;
+					if (!cellData.observationId) {
+						return;
+					}
+					$(td).removeAttr('title');
+					var toolTip = 'GID: ' + rowData.variables.GID.value + ' Designation: ' + rowData.variables.DESIGNATION.value;
+					if (status == 'MANUALLY_EDITED') {
+						$(td).attr('title', toolTip + ' manually-edited-value');
+						$(td).addClass('manually-edited-value');
+					} else if (status == 'OUT_OF_SYNC') {
+						$(td).attr('title', toolTip + ' out-of-sync-value');
+						$(td).addClass('out-of-sync-value');
+					}
+				}
+			}
+
 		}])
 		.directive('observationInlineEditor', function () {
 			return {
@@ -456,6 +621,13 @@
 					observation: '=',
 					// TODO upgrade angular to > 1.5 to use one-way binding
 					column: '='
+				},
+				controller: function($scope) {
+					$scope.doBlur = function ($event) {
+						if ($event.keyCode === 13) {
+							$event.target.blur();
+						}
+					}
 				}
 			};
 		})

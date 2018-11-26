@@ -4,9 +4,9 @@
 	var manageTrialApp = angular.module('manageTrialApp');
 
 	manageTrialApp.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
-		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout', 'studyContext', '$rootScope', '$filter', '_',
+		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout',
 		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
-				  datasetService, $timeout, studyContext, $rootScope, $filter, _
+				  datasetService, $timeout
 		) {
 			$scope.traitVariables = new angular.OrderedHash();
 			$scope.isHideDelete = false;
@@ -144,7 +144,7 @@
 					datasetService.observationCount($scope.subObservationSet.dataset.datasetId, deleteVariables).then(function (response) {
 						var count = response.headers('X-Total-Count');
 						if (count > 0) {
-							var modalInstance = $rootScope.openConfirmModal(measurementModalConfirmationText,
+							var modalInstance = $scope.openConfirmModal(measurementModalConfirmationText,
 								environmentConfirmLabel);
 							modalInstance.result.then(deferred.resolve);
 						} else {

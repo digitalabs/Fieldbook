@@ -440,7 +440,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		}
 
 		// validate alias that come from ontology too
-        if (!this._validateAlias(selectedVariable.alias)) {
+		if (!this._validateAlias(selectedVariable.alias)) {
 			return;
 		}
 
@@ -642,8 +642,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 				return null;
 			}
 
-            // Store the alias
-            this._selectedProperty.standardVariables[index].alias = alias;
+			// Store the alias
+			this._selectedProperty.standardVariables[index].alias = alias;
 		}
 
 		_renderVariableName(this._selectedProperty.standardVariables[index], container);
@@ -654,34 +654,34 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		return alias || this._selectedProperty.standardVariables[index].name;
 	};
 
-    VariableSelection.prototype._validateAlias = function(alias) {
+	VariableSelection.prototype._validateAlias = function (alias) {
 
-    	var aliasValidation = new RegExp(/^[a-zA-Z_%]{1}[a-zA-Z_%0-9]{0,31}$/);
+		var aliasValidation = new RegExp(/^[a-zA-Z_%]{1}[a-zA-Z_%0-9]{0,31}$/);
 
-        if (alias) {
+		if (alias) {
 
-            alias = alias.trim();
+			alias = alias.trim();
 
-            // Validate alias has no more than 32 characters, starts with a letter, underscore or % sign, and only contains
-            // numbers, letters, _ or %
-            if (!aliasValidation.test(alias)) {
-                showErrorMessage(null, this._translations.invalidAliasError);
-                return false;
-            }
+			// Validate alias has no more than 32 characters, starts with a letter, underscore or % sign, and only contains
+			// numbers, letters, _ or %
+			if (!aliasValidation.test(alias)) {
+				showErrorMessage(null, this._translations.invalidAliasError);
+				return false;
+			}
 
-            // Validate alias is unique among selected variables
-            var notUnique = Object.values(this._currentlySelectedVariables).some(function (variableName) {
-                return alias === variableName;
-            });
+			// Validate alias is unique among selected variables
+			var notUnique = Object.values(this._currentlySelectedVariables).some(function (variableName) {
+				return alias === variableName;
+			});
 
-            if (notUnique) {
-                showErrorMessage(null, this._translations.uniqueVariableError);
-                return false;
-            }
-        }
+			if (notUnique) {
+				showErrorMessage(null, this._translations.uniqueVariableError);
+				return false;
+			}
+		}
 
-        return true;
-    };
+		return true;
+	};
 
 	/*
 	 * Cancels editing a variable alias.

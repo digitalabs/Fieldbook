@@ -439,6 +439,11 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			}
 		}
 
+		// validate alias that come from ontology too
+        if (!this._validateAlias(selectedVariable.alias)) {
+			return;
+		}
+
 		variableId = _convertVariableId(selectedVariable.id);
 
 		var promise;
@@ -629,41 +634,16 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		var input = container.find(aliasVariableInputSelector),
 			alias = input.val(),
-			aliasValidation = new RegExp(/^[a-zA-Z_%]{1}[a-zA-Z_%0-9]{0,31}$/),
-			index = input.data('index'),
-			unique = true,
-			id;
+			index = input.data('index');
 
-		// If there is no alias we ignore it
 		if (alias) {
-
-			alias = alias.trim();
-
-			// Validate alias has no more than 32 characters, starts with a letter, underscore or % sign, and only contains
-			// numbers, letters, _ or %
-			if (!aliasValidation.test(alias)) {
-				showErrorMessage(null, this._translations.invalidAliasError);
-
+			if (!this._validateAlias(alias)) {
 				// Don't close the input before returning
 				return null;
 			}
 
-			// Validate alias is unique among selected variables
-			for (id in this._currentlySelectedVariables) {
-				if (this._currentlySelectedVariables.hasOwnProperty(id)) {
-					unique = unique && (alias !== this._currentlySelectedVariables[id]);
-				}
-			}
-
-			if (!unique) {
-				showErrorMessage(null, this._translations.uniqueVariableError);
-
-				// Don't close the input before returning
-				return null;
-			}
-
-			// Store the alias
-			this._selectedProperty.standardVariables[index].alias = alias;
+            // Store the alias
+            this._selectedProperty.standardVariables[index].alias = alias;
 		}
 
 		_renderVariableName(this._selectedProperty.standardVariables[index], container);
@@ -673,6 +653,35 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		return alias || this._selectedProperty.standardVariables[index].name;
 	};
+
+    VariableSelection.prototype._validateAlias = function(alias) {
+
+    	var aliasValidation = new RegExp(/^[a-zA-Z_%]{1}[a-zA-Z_%0-9]{0,31}$/);
+
+        if (alias) {
+
+            alias = alias.trim();
+
+            // Validate alias has no more than 32 characters, starts with a letter, underscore or % sign, and only contains
+            // numbers, letters, _ or %
+            if (!aliasValidation.test(alias)) {
+                showErrorMessage(null, this._translations.invalidAliasError);
+                return false;
+            }
+
+            // Validate alias is unique among selected variables
+            var notUnique = Object.values(this._currentlySelectedVariables).some(function (variableName) {
+                return alias === variableName;
+            });
+
+            if (notUnique) {
+                showErrorMessage(null, this._translations.uniqueVariableError);
+                return false;
+            }
+        }
+
+        return true;
+    };
 
 	/*
 	 * Cancels editing a variable alias.

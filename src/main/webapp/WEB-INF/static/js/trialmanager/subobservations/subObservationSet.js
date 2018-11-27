@@ -62,7 +62,7 @@
 			$scope.transformVariable = function (datasetVariable) {
 				var variable = {
 					cvTermId: datasetVariable.termId,
-					name: datasetVariable.name,
+					name: datasetVariable.alias,
 					description: datasetVariable.description,
 					property: datasetVariable.property,
 					scale: datasetVariable.scale,
@@ -514,7 +514,7 @@
 
 				angular.forEach(columnsData, function (columnData) {
 					columns.push({
-						title: columnData.name,
+						title: columnData.alias,
 						data: function (row) {
 							return row.variables[columnData.name];
 						},

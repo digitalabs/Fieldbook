@@ -513,7 +513,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/trial/hasFieldMap/{studyId}", method = RequestMethod.GET)
 	public Map<Integer, Boolean> hasFieldMap(@PathVariable final int studyId) {
-		return this.studyDataManager.hasFieldMap(studyId);
+		return this.studyDataManager.getInstanceHasFieldMapAsMap(studyId);
 	}
 
 	protected void setExportAdvanceListService(final ExportAdvanceListService exportAdvanceListService) {

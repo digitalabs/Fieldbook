@@ -116,6 +116,19 @@
 				return request.then(successHandler, failureHandler);
 			};
 
+			datasetService.importObservations = function (datasetId, observationList, dryTest) {
+				if (!studyContext.studyId) {
+					return $q.resolve([]);
+				}
+				var request = $http.put(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/observations',
+					{
+						"dryTest": dryTest,
+						"data": observationList
+					}
+					, config);
+				return request.then(successHandler, failureHandler);
+			};
+
 			return datasetService;
 	}]);
 

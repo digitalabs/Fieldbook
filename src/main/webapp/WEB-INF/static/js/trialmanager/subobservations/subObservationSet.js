@@ -295,12 +295,11 @@
 					var cell = this;
 
 					var table = $table.DataTable();
-					var rowIndex = cell.parentNode.rowIndex - 1;
-					var rowData = table.row(rowIndex).data();
-					var dtCell = table.cell({row: rowIndex, column: cell.cellIndex});
+					var rowData = table.row(cell.parentNode).data();
+					var dtCell = table.cell(cell);
 					var cellData = dtCell.data();
-					var column = $scope.columnsObj.columns[cell.cellIndex];
-					var termId = column.columnData.termId;
+					var columnData = $scope.columnsObj.columns[table.column(cell).index()].columnData;
+					var termId = columnData.termId;
 
 					if (!termId) return;
 
@@ -328,7 +327,7 @@
 							}
 						};
 
-						$inlineScope.column = column.columnData;
+						$inlineScope.column = columnData;
 
 						$(cell).html('');
 						var editor = $compile(
@@ -349,14 +348,14 @@
 
 								if (cellData.observationId) {
 									if (value) {
-										promise = confirmOutOfBoundData(value, column.columnData).then(function(doContinue) {
+										promise = confirmOutOfBoundData(value, columnData).then(function(doContinue) {
 											if (!doContinue) {
 												$inlineScope.observation.value = cellData.value;
 												return {observationId: cellData.observationId};
 											}
 											return datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
 												cellData.observationId, {
-													categoricalValueId: getCategoricalValueId(value, column.columnData),
+													categoricalValueId: getCategoricalValueId(value, columnData),
 													value: value
 												});
 										});
@@ -366,14 +365,14 @@
 									}
 								} else {
 									if (value) {
-										promise = confirmOutOfBoundData(value, column.columnData).then(function(doContinue) {
+										promise = confirmOutOfBoundData(value, columnData).then(function(doContinue) {
 											if (!doContinue) {
 												$inlineScope.observation.value = cellData.value;
 												return {observationId: cellData.observationId};
 											}
 											return datasetService.addObservation(subObservationSet.id, rowData.observationUnitId, {
 												observationUnitId: rowData.observationUnitId,
-												categoricalValueId: getCategoricalValueId(value, column.columnData),
+												categoricalValueId: getCategoricalValueId(value, columnData),
 												variableId: termId,
 												value: value
 											});
@@ -398,7 +397,7 @@
 								 */
 								$table.on('click', 'td.variates', clickHandler);
 
-								applyCellColor(cell, cellData, rowData, column.columnData);
+								applyCellColor(cell, cellData, rowData, columnData);
 							}, function (response) {
 								if (response.errors) {
 									showErrorMessage('', response.errors[0].message);
@@ -409,7 +408,7 @@
 
 						}
 
-						if (column.columnData.dataTypeCode === 'D') {
+						if (columnData.dataTypeCode === 'D') {
 							$timeout(function () {
 								angular.element('input', cell).on('keydown', function (e) {
 									if (e.keyCode === 13) {

@@ -10,11 +10,6 @@
 			// Add authorization token to headers
 			request: function(config) {
 				config.headers = config.headers || {};
-				/**
-				 * BMSAPI x-auth-token is stored in local storage service as "bms.xAuthToken" see login.js.
-				 * The prefix "bms" is configured in ontology.js as part of app.config:
-				 *     localStorageServiceProvider.setPrefix('bms');
-				 */
 				var token = localStorageService.get('xAuthToken');
 
 				if (token && token.expires) {
@@ -50,14 +45,7 @@
 				if (!hasBeenHandled) {
 					hasBeenHandled = true;
 					alert('Ontology manager needs to authenticate you again. Redirecting to login page.');
-					var isInFrame = window.location !== window.parent.location;
-					var parentUrl = isInFrame ? document.referrer : document.location.href;
-					var pathArray = parentUrl.split('/');
-					var protocol = pathArray[0];
-					var host = pathArray[2];
-					var baseUrl = protocol + '//' + host;
-					var logoutUrl = baseUrl + '/ibpworkbench/logout';
-					window.top.location.href = logoutUrl;
+					window.top.location.href = '/ibpworkbench/logout';
 				}
 			}
 		};

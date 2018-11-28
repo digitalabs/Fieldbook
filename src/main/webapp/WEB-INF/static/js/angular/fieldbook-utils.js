@@ -757,9 +757,6 @@
 				},
 
 				restFailureHandler: function (response) {
-					if (response.status === 401) {
-						bmsAuth.handleReAuthentication();
-					}
 					return $q.reject({
 						status: response.status,
 						data: response.data,

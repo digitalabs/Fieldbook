@@ -2,6 +2,7 @@
 	'use strict';
 
 	var manageTrialApp = angular.module('manageTrialApp');
+	var hiddenColumns = [8201];
 
 	manageTrialApp.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
 		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout',
@@ -484,9 +485,23 @@
 			}
 
 			function reloadTable() {
+				/**
+				 * We need to reinitilize all this because
+				 * if we use column.visible an change the columns with just
+				 * 		$scope.dtColumns = columnsObj.columns;
+				 * datatables is breaking with error:
+				 * Cannot read property 'clientWidth' of null
+				 */
+				var dtColumnsPromise = $q.defer();
+				var dtColumnDefsPromise = $q.defer();
+				$scope.dtColumns = dtColumnsPromise.promise;
+				$scope.dtColumnDefs = dtColumnDefsPromise.promise;
+				$scope.dtOptions = null;
+
 				loadColumns().then(function (columnsObj) {
-					$scope.dtColumns = columnsObj.columns;
-					$scope.dtColumnDefs = columnsObj.columnsDef;
+					$scope.dtOptions = getDtOptions();
+					dtColumnsPromise.resolve(columnsObj.columns);
+					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
 				});
 			}
 
@@ -517,6 +532,7 @@
 						data: function (row) {
 							return row.variables[columnData.name];
 						},
+						visible: hiddenColumns.indexOf(columnData.termId) < 0,
 						defaultContent: '',
 						className: columnData.factor === true ? 'factors' : 'variates',
 						columnData: columnData

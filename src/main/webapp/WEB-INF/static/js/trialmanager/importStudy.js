@@ -509,10 +509,12 @@ function doImportActionChange() {
 		}]);
 
 	importStudyModule.controller('importStudyCtrl', ['datasetId', '$scope', '$rootScope', '$uibModalInstance', 'datasetService', 'importStudyModalService',
-		'TrialManagerDataService','importSheetJs',
-		function (datasetId, $scope, $rootScope, $uibModalInstance, datasetService, importStudyModalService, importSheetJs ) {
+		'TrialManagerDataService',
+		function (datasetId, $scope, $rootScope, $uibModalInstance, datasetService, importStudyModalService) {
 
 			$scope.title = 'Import measurements';
+			$scope.fileName = undefined;
+			$scope.importData = undefined;
 			var ctrl = this;
 
 			ctrl.selectedImportFormatId = '1';
@@ -525,91 +527,197 @@ function doImportActionChange() {
 				importStudyModalService.openDatasetOptionModal();
 			};
 
-			$scope.onFileChange = function (evt) {
-				var file = evt.target.files[0];
-				$scope.fileName = file.name;
-
-			}
-
 			$scope.clearSelectedFile = function () {
-				console.log("import");
-
-			}
-
-			$scope.importMeasurements = function () {
-				console.log("import");
-
+				$scope.file = undefined;
+				$scope.fileName = undefined;
 			};
 
-			$scope.cancel = function () {
+			$scope.submitImport = function () {
+				$scope.previewImportMeasurements();
+			};
+
+			$scope.previewImportMeasurements = function () {
+				datasetService.importObservations(datasetId, $scope.importData, true).then(function (response) {
+					$scope.importMeasurements();
+				}, function (response) {
+					if (response.status == 401) {
+						bmsAuth.handleReAuthentication();
+					} else if (response.status == 400) {
+						showErrorMessage('', response.data.errors[0].message);
+					} else if (response.status == 412) {
+						ctrl.showConfirmModal(response.data.errors);
+					} else {
+						showErrorMessage('', ajaxGenericErrorMsg);
+					}
+				});
+			};
+
+			$scope.importMeasurements = function () {
+				datasetService.importObservations(datasetId, $scope.importData, false).then(function (response) {
+				}, function (response) {
+					if (response.status == 401) {
+						bmsAuth.handleReAuthentication();
+					} else if (response.status == 400) {
+						showErrorMessage('', response.data.errors[0].message);
+					} else if (response.status == 412) {
+						ctrl.showConfirmModal(response.data.errors);
+					} else {
+						showErrorMessage('', ajaxGenericErrorMsg);
+					}
+				});
+			};
+
+			$scope.close = function () {
 				$uibModalInstance.close();
 			};
 
-			ctrl.showConfirmModal = function (instanceIds) {
-				// Existing Trial with measurement data
-				var modalInstance = $rootScope.openConfirmModal('Some of the environments you selected do not have field plans and so must ' +
-					'be exported in plot order. Do you want to proceed?', 'Proceed');
+			ctrl.showConfirmModal = function (warnings) {
+				var warningMessages="";
+				for (var i = 0; i < warnings.length; i++) {
+					warningMessages += warnings[i].message;
+				}
+
+				var modalInstance = $rootScope.openConfirmModal(warningMessages, 'Proceed');
 				modalInstance.result.then(function (shouldContinue) {
 					if (shouldContinue) {
-						ctrl.export(instanceIds);
+						$scope.importMeasurements();
 					}
 				});
 			};
 
 
 			ctrl.init = function () {
+				$scope.file = undefined;
 
 			};
 
 			ctrl.init();
 
-		}]);
-
-/*	importStudyModule.directive('importSheetJs', ['SheetJSImportDirective', function (SheetJSImportDirective) {
-
-			function SheetJSImportDirective() {
+		}])
+			.directive('importSheetJs', function () {
 				return {
-					scope: {opts: '='},
+					//scope: true,
 					link: function ($scope, $elm) {
 						$elm.on('change', function (changeEvent) {
+							$scope.$parent.fileName = changeEvent.target.files[0].name;
+							$scope.$parent.file = changeEvent.target.files[0];
+							$scope.importData = undefined;
 							var reader = new FileReader();
 
-							reader.onload = function (e) {
-								/!* read workbook *!/
+							reader.onload = function(e) {
+								/* read workbook */
 								var bstr = e.target.result;
-								var workbook = XLSX.read(bstr, {type: 'binary'});
+								var wb = XLSX.read(bstr, {type:'binary'});
 
-								/!* DO SOMETHING WITH workbook HERE *!/
+								/* grab first sheet */
+								var wsname = wb.SheetNames[0];
+								var ws = wb.Sheets[wsname];
+
+								/* grab first row and generate column headers */
+								var aoa = XLSX.utils.sheet_to_json(ws, {header:1, raw:false});
+								var cols = [];
+								for(var i = 0; i < aoa[0].length; ++i) cols[i] = { field: aoa[0][i] };
+
+								/* generate rest of the data */
+								var data = [];
+								for(var r = 1; r < aoa.length; ++r) {
+									if (cols.length == aoa[r].length) {
+										for (i = 0; i < aoa[r].length; ++i) {
+											if (aoa[r][i] == null || aoa[r][i] == undefined) {
+												aoa[r][[i]] = "";
+											}
+
+										}
+									} else if (cols.length > aoa[r].length) {
+										for (i = 0; i < aoa[r].length; ++i) {
+											if (aoa[r][i] == null || aoa[r][i] == undefined) {
+												aoa[r][[i]] = "";
+											}
+										}
+
+										var count = cols.length - (cols.length - aoa[r].length);
+										for (i = count; i < cols.length; i++) {
+											aoa[r][[i]] = "";
+										}
+									}
+								}
+
+								/*for(var r = 1; r < aoa.length; ++r) {
+									data[r-1] = {};
+									if (cols.length == aoa[r].length) {
+										for (i = 0; i < aoa[r].length; ++i) {
+											if (aoa[r][i] == null || aoa[r][i] == undefined) {
+												//data[r - 1][aoa[0][i]] = "";
+												data[r - 1][[i]] = "";
+											}
+											else {
+												//data[r - 1][aoa[0][i]] = aoa[r][i]
+												data[r - 1][[i]] = aoa[r][i]
+											}
+										}
+									} else if (cols.length > aoa[r].length) {
+										for (i = 0; i < aoa[r].length; ++i) {
+											if (aoa[r][i] == null || aoa[r][i] == undefined) {
+												//data[r - 1][aoa[0][i]] = "";
+												data[r - 1][[i]] = "";
+											} else {
+												//data[r - 1][aoa[0][i]] = aoa[r][i]
+												data[r - 1][[i]] = aoa[r][i]
+											}
+										}
+
+										var count = cols.length - (cols.length - aoa[r].length);
+										for (i = count; i < cols.length; i++) {
+											//data[r - 1][aoa[0][i]] = "";
+											data[r - 1][[i]] = "";
+										}
+									}
+								}*/
+
+								/* update scope */
+								//$scope.$apply(function () {
+								$scope.$parent.importData = aoa;
+								//});
 							};
-
-							reader.readAsBinaryString(changeEvent.target.files[0]);
+							$scope.importData = reader.readAsBinaryString(changeEvent.target.files[0]);
 						});
 					}
 				};
-			}
-		}]
-	);*/
-	importStudyModule.directive("importSheetJs", [SheetJSImportDirective]);
+			})
+/*		.directive('importSheetJs', function () {
+			return {
+				scope: {
+					filename: '=',
+					importData: '='
+				},
+				link: function ($scope, $elm) {
+					$elm.on('change', function (changeEvent) {
+						$scope.filename = changeEvent.target.file[0].name;
+						var reader = new FileReader();
 
-	function SheetJSImportDirective() {
+						reader.onload = function (e) {
+							/!* read workbook *!/
+							var bstr = e.target.result;
+							var workbook = XLSX.read(bstr, {type: 'binary'});
+
+							/!* DO SOMETHING WITH workbook HERE *!/
+						};
+
+						reader.readAsBinaryString(changeEvent.target.file[0]);
+					});
+				}
+			};
+		})*/
+/*		.directive('fileInput', ['$parse', function($parse) {
 		return {
-			scope: { opts: '=' },
-			link: function ($scope, $elm) {
-				$elm.on('change', function (changeEvent) {
-					var reader = new FileReader();
-
-					reader.onload = function (e) {
-						/* read workbook */
-						var bstr = e.target.result;
-						var workbook = XLSX.read(bstr, {type:'binary'});
-
-						/* DO SOMETHING WITH workbook HERE */
-					};
-
-					reader.readAsBinaryString(changeEvent.target.files[0]);
+			restrict: 'A',
+			link: function(scope, elm, attrs) {
+				elm.bind('change', function() {
+					$parse(attrs.fileInput).assign(scope, elm[0].file);
 				});
 			}
-		};
-	}
+		}
 
+	}])*/
+	;
 })();

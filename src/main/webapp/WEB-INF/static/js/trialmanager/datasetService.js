@@ -116,13 +116,13 @@
 				return request.then(successHandler, failureHandler);
 			};
 
-			datasetService.importObservations = function (datasetId, observationList, dryTest) {
+			datasetService.importObservations = function (datasetId, observationList, processWarnings) {
 				if (!studyContext.studyId) {
 					return $q.resolve([]);
 				}
 				var request = $http.put(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/observations',
 					{
-						"dryTest": dryTest,
+						"processWarnings": processWarnings,
 						"data": observationList
 					}
 					, config);

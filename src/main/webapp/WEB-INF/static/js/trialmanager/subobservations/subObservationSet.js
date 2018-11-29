@@ -387,6 +387,7 @@
 							promise.then(function (data) {
 								cellData.value = $inlineScope.observation.value;
 								cellData.observationId = data.observationId;
+								cellData.status = data.status;
 
 								$inlineScope.$destroy();
 								editor.remove();

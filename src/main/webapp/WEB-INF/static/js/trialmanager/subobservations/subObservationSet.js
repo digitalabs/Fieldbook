@@ -235,7 +235,7 @@
 					.withDataProp('data')
 					.withOption('serverSide', true)
 					.withOption('headerCallback', headerCallback)
-					.withOption('initComplete', initComplete));
+					.withOption('drawCallback', drawCallback));
 			}
 
 			function addCommonOptions(options) {
@@ -288,9 +288,13 @@
 				});
 			}
 
-			function initComplete() {
+			function drawCallback() {
+                addCellClickHandler();
+			}
+
+			function addCellClickHandler() {
 				var $table = angular.element(tableId);
-				$table.off().on('click', 'td.variates', clickHandler);
+				$table.off('click').on('click', 'td.variates', clickHandler);
 
 				function clickHandler() {
 					var cell = this;
@@ -397,7 +401,7 @@
 								/**
 								 * Restore cell click handler
 								 */
-								$table.on('click', 'td.variates', clickHandler);
+								$table.off('click').on('click', 'td.variates', clickHandler);
 
 								applyCellColor(cell, cellData, rowData, columnData);
 							}, function (response) {

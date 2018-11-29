@@ -449,7 +449,7 @@
 			function confirmOutOfBoundData(cellDataValue, columnData) {
 				var deferred = $q.defer();
 
-				var invalid = validateOutOfBoundData(cellDataValue, columnData);
+				var invalid = validateDataOutOfScaleRange(cellDataValue, columnData);
 
 				if (invalid) {
 					var confirmModal = $scope.openConfirmModal(observationOutOfRange, keepLabel, discardLabel);
@@ -574,20 +574,16 @@
 				};
 			}
 
-			function validateOutOfBoundData(cellDataValue, columnData) {
-				var invalid = false;
-
-				var value = cellDataValue;
-				var minVal = columnData.minRange;
-				var maxVal = columnData.maxRange;
-
-				// Numeric
+			function validateNumericRange(minVal, maxVal, value, invalid) {
 				if (minVal && maxVal
 					&& (parseFloat(value) < parseFloat(minVal) || parseFloat(value) > parseFloat(maxVal))) {
 
 					invalid = true;
 				}
-				// Categorical
+				return invalid;
+			}
+
+			function validateCategoricalValues(columnData, cellDataValue, invalid) {
 				if (columnData.possibleValues
 					&& columnData.possibleValues.find(function (possibleValue) {
 						return possibleValue.name === cellDataValue;
@@ -599,13 +595,37 @@
 				return invalid;
 			}
 
+			function validateDataOutOfScaleRange(cellDataValue, columnData) {
+				var invalid = false;
+
+				var value = cellDataValue;
+				var minVal = columnData.scaleMinRange;
+				var maxVal = columnData.scaleMaxRange;
+
+				invalid = validateNumericRange(minVal, maxVal, value, invalid);
+				invalid = validateCategoricalValues(columnData, cellDataValue, invalid);
+				return invalid;
+			}
+
+			function validateDataOutOfRange(cellDataValue, columnData) {
+				var invalid = false;
+
+				var value = cellDataValue;
+				var minVal = columnData.minRange;
+				var maxVal = columnData.maxRange;
+
+				invalid = validateNumericRange(minVal, maxVal, value, invalid);
+				invalid = validateCategoricalValues(columnData, cellDataValue, invalid);
+				return invalid;
+			}
+
 			function applyCellColor(td, cellData, rowData, columnData) {
 				$(td).removeClass('accepted-value');
 				$(td).removeClass('invalid-value');
 				$(td).removeClass('manually-edited-value');
 
 				if (cellData.value) {
-					var invalid = validateOutOfBoundData(cellData.value, columnData);
+					var invalid = validateDataOutOfRange(cellData.value, columnData);
 
 					if (invalid) {
 						$(td).addClass($scope.preview ? 'invalid-value' : 'accepted-value');

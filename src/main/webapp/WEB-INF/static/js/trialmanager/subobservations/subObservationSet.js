@@ -446,6 +446,14 @@
 						// FIXME show combobox for categorical traits
 						$(cell).css('overflow', 'visible');
 
+						$timeout(function () {
+							/**
+							 * Initiate interaction with the input so that clicks on other parts of the page
+							 * will trigger blur immediately (except for date)
+							 */
+							$(cell).find('a.ui-select-match').click();
+							$(cell).find('input').focus();
+						});
 					});
 				}
 			}

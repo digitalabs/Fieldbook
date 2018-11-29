@@ -416,14 +416,29 @@
 
 						if (columnData.dataTypeCode === 'D') {
 							$timeout(function () {
-								angular.element('input', cell).on('keydown', function (e) {
-									if (e.keyCode === 13) {
-										e.stopImmediatePropagation();
-									}
-								}).datepicker({
-									'format': 'yyyymmdd'
-								}).on('hide', function () {
-									updateInline();
+								$('input', cell).one('click', function () {
+									var initialValue;
+									try {
+										initialValue = $.datepicker.formatDate("yy-mm-dd", $.datepicker.parseDate('yymmdd', $(this).val()));
+									} catch (e) { }
+
+									$(this).on('keydown', function (e) {
+										if (e.keyCode === 13) {
+											e.stopImmediatePropagation();
+										}
+									}).datepicker({
+										format: 'yyyymmdd',
+										todayHighlight: true,
+										todayBtn: true,
+										forceParse: false
+									}).on('hide', function () {
+										try {
+											$.datepicker.parseDate('yymmdd', $(this).val());
+											updateInline();
+										} catch (e) {
+                                            showErrorMessage('', 'invalid value');
+										}
+									}).datepicker("show").datepicker('update', initialValue)
 								});
 							});
 						}

@@ -479,6 +479,19 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			};
 
+			$scope.navigateToSubObsTab = function (datasetId) {
+				var subObsTab= undefined;
+				angular.forEach($scope.subObservationTabs, function (subObservationTab) {
+					if(subObservationTab.id === datasetId){
+						subObsTab = subObservationTab
+					}
+				});
+				var params = {subObservationTabId: id, subObservationTab: subObsTab};
+				$scope.isSettingsTab = false;
+				$scope.tabSelected = subObsTab.state;
+				$state.go('subObservationTabs', params);
+			};
+
 			$scope.hasAdvanceListCreated = function () {
 				return $scope.advanceTabsData.length !== 0;
 			};

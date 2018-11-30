@@ -35,14 +35,16 @@ describe('Export Study', function () {
 		"locationName": "CENTER FOR INTERNATIONAL FORESTRY RESEARCH",
 		"locationAbbreviation": "CIFOR",
 		"instanceNumber": 1,
-		"customLocationAbbreviation": "CIF"
+		"customLocationAbbreviation": "CIF",
+		"hasFieldmap": true
 	},
 		{
 			"instanceDbId": 2,
 			"locationName": "Agua Fria",
 			"locationAbbreviation": "Agua Fria",
 			"instanceNumber": 2,
-			"customLocationAbbreviation": "AF"
+			"customLocationAbbreviation": "AF",
+			"hasFieldmap": true
 		}];
 
 	beforeEach(function () {
@@ -140,22 +142,6 @@ describe('Export Study', function () {
 
 		});
 
-		describe('hasFieldmap', function () {
-
-			it('it should call the correct api', function () {
-
-				var mockData = {};
-				$httpBackend.whenGET('/Fieldbook/ExportManager/trial/hasFieldMap/' + studyContext.studyId)
-					.respond(mockData);
-
-				exportStudyModalService.hasFieldMap().then(function (response) {
-					expect(response.data).toEqual(mockData);
-				});
-
-			});
-
-		});
-
 	});
 
 	describe('Export Dataset Option Modal Controller', function () {
@@ -247,18 +233,14 @@ describe('Export Study', function () {
 			it('it should show the confirm modal if any of the selected instances has no field map', function () {
 
 				var instanceIds = ['1', '2'];
-				var hasFieldMapInfo = {
-					1: true,
-					2: false
-				};
+				exportStudyCtrlScope.instances = instances;
+				exportStudyCtrlScope.instances[0].hasFieldmap = true;
+				exportStudyCtrlScope.instances[1].hasFieldmap = false;
 
-				spyOn(exportStudyModalService, 'hasFieldMap').and.returnValue($q.resolve(hasFieldMapInfo));
 				spyOn(exportStudyCtrl, 'showConfirmModal');
 				spyOn(exportStudyCtrl, 'export');
 
 				exportStudyCtrl.checkIfInstancesHaveFieldMap(instanceIds);
-
-				exportStudyCtrlScope.$apply();
 
 				expect(exportStudyCtrl.showConfirmModal).toHaveBeenCalled();
 				expect(exportStudyCtrl.export).not.toHaveBeenCalled();
@@ -268,18 +250,14 @@ describe('Export Study', function () {
 			it('it should immediately export if all of the selected instances has field map', function () {
 
 				var instanceIds = ['1', '2'];
-				var hasFieldMapInfo = {
-					1: true,
-					2: true
-				};
+				exportStudyCtrlScope.instances = instances;
+				exportStudyCtrlScope.instances[0].hasFieldmap = true;
+				exportStudyCtrlScope.instances[1].hasFieldmap = true;
 
-				spyOn(exportStudyModalService, 'hasFieldMap').and.returnValue($q.resolve(hasFieldMapInfo));
 				spyOn(exportStudyCtrl, 'showConfirmModal');
 				spyOn(exportStudyCtrl, 'export');
 
 				exportStudyCtrl.checkIfInstancesHaveFieldMap(instanceIds);
-
-				exportStudyCtrlScope.$apply();
 
 				expect(exportStudyCtrl.export).toHaveBeenCalled();
 				expect(exportStudyCtrl.showConfirmModal).not.toHaveBeenCalled();

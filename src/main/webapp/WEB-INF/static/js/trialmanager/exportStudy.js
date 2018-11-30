@@ -42,11 +42,6 @@
 				showAlertMessage(title, message);
 			};
 
-			exportStudyModalService.hasFieldMap = function () {
-				var request = $http.get('/Fieldbook/ExportManager/trial/hasFieldMap/' + studyContext.studyId);
-				return request.then(serviceUtilities.restSuccessHandler, serviceUtilities.restFailureHandler);
-			}
-
 			return exportStudyModalService;
 
 		}]);
@@ -132,22 +127,17 @@
 
 			ctrl.checkIfInstancesHaveFieldMap = function (instanceIds) {
 
-				exportStudyModalService.hasFieldMap().then(function (data) {
-					var fieldMap = data;
-					var hasFieldMap = true;
-					$.each(instanceIds, function (index, value) {
-						if (!fieldMap[value]) {
-							hasFieldMap = false;
-						}
+				// If some of the selected instances don't have fieldmap, show the confirm popup.
+				var someInstancesHaveNoFieldmap = $scope.instances.some(
+					function (item) {
+						return !item.hasFieldmap && instanceIds.includes(item.instanceDbId.toString());
 					});
 
-					// If any of the selected instances don't have fieldmap, show the confirm popup.
-					if (!hasFieldMap) {
-						ctrl.showConfirmModal(instanceIds);
-					} else {
-						ctrl.export(instanceIds);
-					}
-				});
+				if (someInstancesHaveNoFieldmap) {
+					ctrl.showConfirmModal(instanceIds);
+				} else {
+					ctrl.export(instanceIds);
+				}
 
 			};
 

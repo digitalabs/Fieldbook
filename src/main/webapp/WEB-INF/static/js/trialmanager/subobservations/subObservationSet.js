@@ -449,10 +449,9 @@
 						$timeout(function () {
 							/**
 							 * Initiate interaction with the input so that clicks on other parts of the page
-							 * will trigger blur immediately (except for date)
+							 * will trigger blur immediately
 							 */
-							$(cell).find('a.ui-select-match').click();
-							$(cell).find('input').focus();
+							$(cell).find('a.ui-select-match, input').click().focus();
 						});
 					});
 				}

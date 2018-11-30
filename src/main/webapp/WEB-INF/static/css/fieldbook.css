@@ -640,6 +640,10 @@ tr.trialInstance {
     vertical-align: middle;
     cursor: pointer;
 }
+
+.tooltip.medium .tooltip-inner {
+    width: 250px;
+}
 .help-tooltip-study-advance{
     cursor: pointer;
 }

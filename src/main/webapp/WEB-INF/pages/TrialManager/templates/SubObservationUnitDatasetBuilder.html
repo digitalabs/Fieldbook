@@ -127,18 +127,18 @@
 							</div>
 						</div>
 						<br></br>
-						<div class="row form-group" ng-class="trialInstances.length === 0 ? 'row form-group has-error':'row form-group'">
+						<div class="row form-group" ng-class="isEmptySelection ? 'row form-group has-error':'row form-group'">
 							<div class="col-xs-12 col-md-12">
 								<label class="control-label label-bold">Select the environments for which you would like to generate
 									{{datasetType.name}}: <span class='required'>*</span></label>
 							</div>
 							<div class="col-sm-12">
-								<div class="text-danger" ng-if="trialInstances.length === 0">
+								<div class="text-danger" ng-if="isEmptySelection">
 									<p>The environment(s) to which you would like to apply the sub-observations must be selected</p>
 								</div>
 							</div>
 						</div>
-						<environment-details></environment-details>
+						<instances-table instances="instances" selected-instances="selectedInstances" instance-id-property="instanceDbId" is-empty-selection="isEmptySelection"></instances-table>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true"
 									ng-click="backToSubObservationUnitDatasetSelector()" th:text="#{common.form.back.text}">

@@ -484,6 +484,30 @@ function doImportActionChange() {
 				showAlertMessage(title, message);
 			};
 
+			importStudyModalService.showWarningMessage = function (header, title, warnings, question, confirmButtonLabel, cancelButtonLabel) {
+				var modalInstance = $uibModal.open({
+					animation: true,
+					templateUrl: '/Fieldbook/static/angular-templates/warningModal.html',
+					controller: function ($scope, $uibModalInstance) {
+						$scope.header = header;
+						$scope.title = title;
+						$scope.warnings = warnings;
+						$scope.question = question;
+						$scope.confirmButtonLabel = confirmButtonLabel;
+						$scope.cancelButtonLabel = cancelButtonLabel;
+
+						$scope.confirm = function () {
+							$uibModalInstance.close(true);
+						};
+
+						$scope.cancel = function () {
+							$uibModalInstance.close(false);
+						};
+					}
+				});
+				return modalInstance;
+			};
+
 			return importStudyModalService;
 
 		}]);
@@ -718,6 +742,4 @@ function doImportActionChange() {
 			}
 		}
 
-	}])*/
-	;
 })();

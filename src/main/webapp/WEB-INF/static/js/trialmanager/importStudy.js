@@ -537,14 +537,12 @@ function doImportActionChange() {
 		function (datasetId, $scope, $rootScope, $uibModalInstance, datasetService, importStudyModalService) {
 
 			$scope.title = 'Import measurements';
-			$scope.fileName = undefined;
-			$scope.importData = undefined;
+			$scope.file = '';
+			$scope.importedData = '';
 			var ctrl = this;
 
-			ctrl.selectedImportFormatId = '1';
-
-			$scope.importFormats = [{itemId: '1', name: 'CSV'}];
-
+			ctrl.importFormats = [{itemId: '1', name: 'CSV', extension: '.csv'}];
+			ctrl.format = {selected: ctrl.importFormats[0].extension};
 
 			$scope.backToDatasetOptionModal = function () {
 				$uibModalInstance.close();
@@ -552,8 +550,8 @@ function doImportActionChange() {
 			};
 
 			$scope.clearSelectedFile = function () {
-				$scope.file = undefined;
-				$scope.fileName = undefined;
+				$scope.file = '';
+				$scope.importedData = '';
 			};
 
 			$scope.submitImport = function () {
@@ -561,7 +559,7 @@ function doImportActionChange() {
 			};
 
 			$scope.previewImportMeasurements = function () {
-				datasetService.importObservations(datasetId, $scope.importData, true).then(function (response) {
+				datasetService.importObservations(datasetId, $scope.importedData, true).then(function (response) {
 					$scope.importMeasurements();
 				}, function (response) {
 					if (response.status == 401) {
@@ -577,14 +575,15 @@ function doImportActionChange() {
 			};
 
 			$scope.importMeasurements = function () {
-				datasetService.importObservations(datasetId, $scope.importData, false).then(function (response) {
+				datasetService.importObservations(datasetId, $scope.importedData, false).then(function () {
+					displaySaveSuccessMessage('page-message', 'Your data was successfully imported and saved.');
+					$scope.reloadObservations();
+					$scope.close();
 				}, function (response) {
 					if (response.status == 401) {
 						bmsAuth.handleReAuthentication();
 					} else if (response.status == 400) {
 						showErrorMessage('', response.data.errors[0].message);
-					} else if (response.status == 412) {
-						ctrl.showConfirmModal(response.data.errors);
 					} else {
 						showErrorMessage('', ajaxGenericErrorMsg);
 					}
@@ -595,151 +594,91 @@ function doImportActionChange() {
 				$uibModalInstance.close();
 			};
 
+			$scope.reloadObservations = function () {
+				var scope = angular.element(document.getElementById("mainApp")).scope();
+				scope.navigateToSubObsTab(datasetId);
+				//var scope = angular.element(document.getElementById("SubObservationSetCtrl")).scope();
+				//scope.reloadTable();
+			};
+
 			ctrl.showConfirmModal = function (warnings) {
-				var warningMessages="";
+				$uibModalInstance.close();
+				var warningMessages = [];
 				for (var i = 0; i < warnings.length; i++) {
-					warningMessages += warnings[i].message;
+					warningMessages.push(warnings[i].message);
 				}
 
-				var modalInstance = $rootScope.openConfirmModal(warningMessages, 'Proceed');
-				modalInstance.result.then(function (shouldContinue) {
+				var modalWarningMessage = importStudyModalService.showWarningMessage('Confirmation', 'Some observations were found in the imported file:', warningMessages, 'Would you like to proceed with the import ?', 'Proceed', 'Back');
+				modalWarningMessage.result.then(function (shouldContinue) {
 					if (shouldContinue) {
 						$scope.importMeasurements();
+					} else {
+						importStudyModalService.openImportStudyModal(datasetId);
 					}
 				});
 			};
 
-
 			ctrl.init = function () {
-				$scope.file = undefined;
-
+				$scope.file = '';
+				$scope.importedData = '';
+				//$scope.reloadObservations();
 			};
 
 			ctrl.init();
 
 		}])
-			.directive('importSheetJs', function () {
-				return {
-					//scope: true,
-					link: function ($scope, $elm) {
-						$elm.on('change', function (changeEvent) {
-							$scope.$parent.fileName = changeEvent.target.files[0].name;
-							$scope.$parent.file = changeEvent.target.files[0];
-							$scope.importData = undefined;
-							var reader = new FileReader();
-
-							reader.onload = function(e) {
-								/* read workbook */
-								var bstr = e.target.result;
-								var wb = XLSX.read(bstr, {type:'binary'});
-
-								/* grab first sheet */
-								var wsname = wb.SheetNames[0];
-								var ws = wb.Sheets[wsname];
-
-								/* grab first row and generate column headers */
-								var aoa = XLSX.utils.sheet_to_json(ws, {header:1, raw:false});
-								var cols = [];
-								for(var i = 0; i < aoa[0].length; ++i) cols[i] = { field: aoa[0][i] };
-
-								/* generate rest of the data */
-								var data = [];
-								for(var r = 1; r < aoa.length; ++r) {
-									if (cols.length == aoa[r].length) {
-										for (i = 0; i < aoa[r].length; ++i) {
-											if (aoa[r][i] == null || aoa[r][i] == undefined) {
-												aoa[r][[i]] = "";
-											}
-
-										}
-									} else if (cols.length > aoa[r].length) {
-										for (i = 0; i < aoa[r].length; ++i) {
-											if (aoa[r][i] == null || aoa[r][i] == undefined) {
-												aoa[r][[i]] = "";
-											}
-										}
-
-										var count = cols.length - (cols.length - aoa[r].length);
-										for (i = count; i < cols.length; i++) {
-											aoa[r][[i]] = "";
-										}
-									}
-								}
-
-								/*for(var r = 1; r < aoa.length; ++r) {
-									data[r-1] = {};
-									if (cols.length == aoa[r].length) {
-										for (i = 0; i < aoa[r].length; ++i) {
-											if (aoa[r][i] == null || aoa[r][i] == undefined) {
-												//data[r - 1][aoa[0][i]] = "";
-												data[r - 1][[i]] = "";
-											}
-											else {
-												//data[r - 1][aoa[0][i]] = aoa[r][i]
-												data[r - 1][[i]] = aoa[r][i]
-											}
-										}
-									} else if (cols.length > aoa[r].length) {
-										for (i = 0; i < aoa[r].length; ++i) {
-											if (aoa[r][i] == null || aoa[r][i] == undefined) {
-												//data[r - 1][aoa[0][i]] = "";
-												data[r - 1][[i]] = "";
-											} else {
-												//data[r - 1][aoa[0][i]] = aoa[r][i]
-												data[r - 1][[i]] = aoa[r][i]
-											}
-										}
-
-										var count = cols.length - (cols.length - aoa[r].length);
-										for (i = count; i < cols.length; i++) {
-											//data[r - 1][aoa[0][i]] = "";
-											data[r - 1][[i]] = "";
-										}
-									}
-								}*/
-
-								/* update scope */
-								//$scope.$apply(function () {
-								$scope.$parent.importData = aoa;
-								//});
-							};
-							$scope.importData = reader.readAsBinaryString(changeEvent.target.files[0]);
-						});
-					}
-				};
-			})
-/*		.directive('importSheetJs', function () {
+		.directive('importSheetJs', function () {
 			return {
+				restrict: 'AE',
 				scope: {
-					filename: '=',
-					importData: '='
+					importedFile: '=',
+					importedData: '='
 				},
-				link: function ($scope, $elm) {
-					$elm.on('change', function (changeEvent) {
-						$scope.filename = changeEvent.target.file[0].name;
+				link: function (scope, elem, attrs) {
+					elem.on('change', function (changeEvent) {
 						var reader = new FileReader();
 
 						reader.onload = function (e) {
-							/!* read workbook *!/
+							/* read workbook */
 							var bstr = e.target.result;
-							var workbook = XLSX.read(bstr, {type: 'binary'});
+							var wb = XLSX.read(bstr, {type: 'binary', sheetStubs: true});
 
-							/!* DO SOMETHING WITH workbook HERE *!/
+							/* grab first sheet */
+							var wsname = wb.SheetNames[0];
+							var ws = wb.Sheets[wsname];
+
+							/* grab first row and generate column headers */
+							var aoa = XLSX.utils.sheet_to_json(ws, {header: 1, raw: false});
+							var cols = [];
+							for (var i = 0; i < aoa[0].length; ++i) cols[i] = {field: aoa[0][i]};
+
+							/* replace empty spaces by double quote */
+							for (var r = 1; r < aoa.length; ++r) {
+								if (cols.length == aoa[r].length) {
+									for (i = 0; i < aoa[r].length; ++i) {
+										if (aoa[r][i] == null || aoa[r][i] == undefined) {
+											aoa[r][[i]] = "";
+										}
+
+									}
+								}
+							}
+
+							/* update scope */
+							scope.$apply(function () {
+								var length = 30;
+								scope.importedData = aoa;
+								scope.importedFile = changeEvent.target.files[0];
+								scope.importedFile.abbrName = scope.importedFile.name;
+
+								if (scope.importedFile.name.length > length) {
+									scope.importedFile.abbrName = scope.importedFile.abbrName.substring(0, length) + '...';
+								}
+							});
 						};
-
-						reader.readAsBinaryString(changeEvent.target.file[0]);
+						reader.readAsBinaryString(changeEvent.target.files[0]);
 					});
 				}
 			};
-		})*/
-/*		.directive('fileInput', ['$parse', function($parse) {
-		return {
-			restrict: 'A',
-			link: function(scope, elm, attrs) {
-				elm.bind('change', function() {
-					$parse(attrs.fileInput).assign(scope, elm[0].file);
-				});
-			}
-		}
-
+		});
 })();

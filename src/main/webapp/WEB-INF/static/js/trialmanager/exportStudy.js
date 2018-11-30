@@ -130,7 +130,7 @@
 				// If some of the selected instances don't have fieldmap, show the confirm popup.
 				var someInstancesHaveNoFieldmap = $scope.instances.some(
 					function (item) {
-						return !item.hasFieldmap && instanceIds.includes(item.instanceDbId.toString());
+						return !item.hasFieldmap && instanceIds.indexOf(item.instanceDbId.toString()) > -1;
 					});
 
 				if (someInstancesHaveNoFieldmap) {

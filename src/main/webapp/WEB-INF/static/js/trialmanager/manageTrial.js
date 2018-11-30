@@ -956,7 +956,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				return null;
 			};
 
-			$rootScope.openConfirmModal = function (message, confirmButtonLabel) {
+			$rootScope.openConfirmModal = function (message, confirmButtonLabel, cancelButtonLabel) {
 
 				var modalInstance = $uibModal.open({
 					animation: true,
@@ -964,6 +964,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					controller: function ($scope, $uibModalInstance) {
 						$scope.text = message;
 						$scope.confirmButtonLabel = confirmButtonLabel;
+						$scope.cancelButtonLabel = cancelButtonLabel;
 
 						$scope.confirm = function () {
 							$uibModalInstance.close(true);

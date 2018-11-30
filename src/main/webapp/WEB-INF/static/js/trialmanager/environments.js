@@ -154,7 +154,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				if ($scope.temp.noOfEnvironments > $scope.data.environments.length) {
 					$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
 				} else if ($scope.temp.noOfEnvironments < $scope.data.environments.length) {
-					var modalInstance = $rootScope.openConfirmModal(environmentModalConfirmationText, environmentConfirmLabel);
+					var modalInstance = $rootScope.openConfirmModal(environmentModalConfirmationText, environmentConfirmLabel, environmentCancelLabel);
 					modalInstance.result.then(function (shouldContinue) {
 						if (shouldContinue) {
 							$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
@@ -243,7 +243,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			/* Controller Utility functions */
 			ctrl.confirmDeleteEnvironment = function (index) {
 				// Existing Trial with measurement data
-				var modalInstance = $rootScope.openConfirmModal(environmentModalConfirmationText, environmentConfirmLabel);
+				var modalInstance = $rootScope.openConfirmModal(environmentModalConfirmationText, environmentConfirmLabel, environmentCancelLabel);
 				modalInstance.result.then(function (shouldContinue) {
 					if (shouldContinue) {
 						updateDeletedEnvironment(index);

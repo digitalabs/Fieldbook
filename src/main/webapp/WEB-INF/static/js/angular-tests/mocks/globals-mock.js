@@ -228,3 +228,4 @@ window.measurementObservationMessages = {
 
 var cropName = 'maize';
 var environmentConfirmLabel = '';
+var environmentCancelLabel = '';

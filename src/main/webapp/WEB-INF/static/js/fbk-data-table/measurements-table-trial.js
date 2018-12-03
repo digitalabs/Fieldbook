@@ -962,9 +962,7 @@ function onMeasurementsObservationLoad(isCategoricalDisplay) {
 	'use strict';
 	if ($('#measurement-table') && $('#measurement-table').length !== 0) {
 		var $categoricalDisplayToggleBtn = $('.fbk-toggle-categorical-display');
-	
-		window.isCategoricalDescriptionView = isCategoricalDisplay;
-	
+
 		// update the toggle button text depending on what current session value is
 		$categoricalDisplayToggleBtn.text(isCategoricalDisplay ? window.measurementObservationMessages.hideCategoricalDescription :
 			window.measurementObservationMessages.showCategoricalDescription);

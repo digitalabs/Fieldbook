@@ -25,9 +25,13 @@
 				id: DATASET_TYPES.CUSTOM_SUBOBSERVATIONS,
 				name: 'Sub-Observation Units',
 				abbr: 'SOUs'
+			}, {
+				id: DATASET_TYPES.PLOT_OBSERVATIONS,
+				name: 'Plots',
+				abbr: 'Plots'
 			}];
 
-			angular.forEach(datasetTypes, function(datasetType) {
+			angular.forEach(datasetTypes, function (datasetType) {
 				datasetTypeMap[datasetType.id] = datasetType;
 			});
 
@@ -72,13 +76,13 @@
 				return request.then(successHandler, failureHandler);
 			};
 
-			datasetService.getDatasets = function () {
+			datasetService.getDatasets = function (datasetTypeIds) {
 				if (!studyContext.studyId) {
 					return $q.resolve([]);
 				}
 				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets', angular.merge({
 					params: {
-						datasetTypeIds: DATASET_TYPES_SUBOBSERVATION_IDS.join(",")
+						datasetTypeIds: datasetTypeIds || DATASET_TYPES_SUBOBSERVATION_IDS.join(",")
 					}
 				}));
 				return request.then(successHandler, failureHandler);
@@ -89,7 +93,7 @@
 				return request.then(successHandler, failureHandler);
 			};
 
-			datasetService.getObservationTableUrl = function(datasetId, instanceId) {
+			datasetService.getObservationTableUrl = function (datasetId, instanceId) {
 				return BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/instances/' + instanceId + '/observationUnits/table';
 			};
 
@@ -117,12 +121,30 @@
 				return request.then(successHandler, failureHandler);
 			};
 
+			datasetService.getDatasetInstances = function (datasetId) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/instances');
+				return request.then(successHandler, failureHandler);
+			};
+
 			datasetService.getDatasetType = function (datasetTypeId) {
 				return datasetTypeMap[datasetTypeId];
 
 			};
 
+			datasetService.exportDataset = function (datasetId, instanceIds, collectionOrderId) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/csv', {
+					params: {
+						instanceIds: instanceIds.join(","),
+						collectionOrderId: collectionOrderId
+					},
+					responseType: 'blob'
+				});
+				return request.then(function (response) {
+					return response;
+				}, failureHandler);
+			};
+
 			return datasetService;
-	}]);
+		}]);
 
 })();

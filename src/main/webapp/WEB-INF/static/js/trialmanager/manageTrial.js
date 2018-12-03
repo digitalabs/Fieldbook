@@ -9,7 +9,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
-		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'import-study']);
+		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'export-study', 'import-study']);
 
 	manageTrialApp.config(['blockUIConfig', function(blockUIConfig) {
 		blockUIConfig.templateUrl = '/Fieldbook/static/angular-templates/blockUiTemplate.html';
@@ -182,9 +182,9 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
-		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'importStudyModalService', '$uibModal', '$q', 'datasetService',
+		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService', 'importStudyModalService', '$uibModal', '$q', 'datasetService',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
-				  derivedVariableService, importStudyModalService, $uibModal, $q, datasetService) {
+				  derivedVariableService, exportStudyModalService, importStudyModalService, $uibModal, $q, datasetService) {
 
 			$scope.trialTabs = [
 				{
@@ -977,6 +977,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				});
 				return modalInstance;
 			};
+
+			$scope.showExportStudyModal = function() {
+				exportStudyModalService.openDatasetOptionModal();
+			}
 
 			$scope.showImportStudyModal = function() {
 				importStudyModalService.openDatasetOptionModal();

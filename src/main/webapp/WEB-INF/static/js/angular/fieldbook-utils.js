@@ -67,7 +67,7 @@
 
 	})();
 
-	angular.module('fieldbook-utils', ['ui.select2', 'ui.select'])
+	angular.module('fieldbook-utils', ['ui.select2', 'ui.select', 'datatables'])
 		.constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
 		.constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
 		.directive('displaySettings', ['TrialManagerDataService', '$filter', '_', 'studyStateService',
@@ -310,7 +310,7 @@
 					var showAll = $scope.valuecontainer[$scope.targetkey];
 					$scope.localData.useFavorites = !showAll;
 					$scope.lookupLocation =  showAll ? 2 : 1;
-					
+
 					$scope.updateDropdownValuesFavorites = function() {
 						if ($scope.localData.useFavorites) {
 							if ($scope.lookupLocation == 1) {
@@ -326,12 +326,12 @@
 							}
 						}
 					};
-			
+
 					$scope.updateDropdownValuesBreedingLocation = function() { // Change state for breeding
 						$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.possibleValuesFavorite : $scope.variableDefinition.possibleValues;
 						$scope.lookupLocation = 1;
 					};
-					
+
 					$scope.updateDropdownValuesAllLocation = function() { // Change state for all locations radio
 						$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.allFavoriteValues : $scope.variableDefinition.allValues;
 						$scope.lookupLocation = 2;
@@ -610,8 +610,62 @@
 					};
 				}
 			};
-		})
-		.factory('formUtilities', function() {
+		}).directive('instancesTable', ['DTOptionsBuilder', 'DTColumnBuilder', function (DTOptionsBuilder, DTColumnBuilder) {
+
+			return {
+				restrict: 'E',
+				require: '?ngModel',
+				scope: {
+					instances: '=',
+					selectedInstances: '=',
+					isEmptySelection: '=',
+					instanceIdProperty: '@'
+				},
+				templateUrl: '/Fieldbook/static/angular-templates/instancesTable.html',
+				controller: function ($scope) {
+
+					var ctrl = this;
+
+					var watchInstances = $scope.$watch('instances', function (newValue, oldValue, scope) {
+						if (newValue.length !== oldValue.length) {
+							// Select All Checkbox by default.
+							$scope.toggleSelect(true);
+							// unregister watch once instances is initialized
+							watchInstances();
+						}
+					});
+
+					ctrl.isSelectAll = true;
+					$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<\'row\'<\'col-sm-6\'l><\'col-sm-6\'f>>' +
+						'<\'row\'<\'col-sm-12\'tr>>' +
+						'<\'row\'<\'col-sm-5\'i><\'col-sm-7\'>>' +
+						'<\'row\'<\'col-sm-12\'p>>');
+
+					$scope.toggleSelect = function (checked) {
+						$.each($scope.instances, function (key, value) {
+							$scope.selectedInstances[value[$scope.instanceIdProperty]] = checked;
+						});
+						$scope.selectionChanged();
+					};
+
+					$scope.select = function (itemId) {
+						if (!$scope.selectedInstances[itemId]) {
+							ctrl.isSelectAll = false;
+						}
+						$scope.selectionChanged();
+					};
+
+					$scope.selectionChanged = function() {
+						// Returns true if all instances are not selected
+						$scope.isEmptySelection = Object.values($scope.selectedInstances).every(function (value) {
+							return value === false;
+						});
+					};
+
+				},
+				controllerAs: 'ctrl'
+			};
+		}]).factory('formUtilities', function() {
 
 			var formUtilities = {
 
@@ -690,6 +744,36 @@
 					});
 				}
 			};
+		}]).service('fileDownloadHelper', [function () {
+
+			var fileDownloadHelper = {};
+
+			fileDownloadHelper.save = function (blob, fileName) {
+
+				var url = window.URL.createObjectURL(blob);
+
+				// For IE 10 or later
+				if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+					window.navigator.msSaveOrOpenBlob(url, fileName);
+				} else { // For Chrome/Safari/Firefox and other browsers with HTML5 support
+					var link = document.createElement('a');
+					link.href = url;
+					link.download = fileName;
+					document.body.appendChild(link);
+					link.click();
+					document.body.removeChild(link);
+				}
+			};
+
+			fileDownloadHelper.getFileNameFromResponseContentDisposition = function (response) {
+
+				var contentDisposition = response.headers('content-disposition') || '';
+				var matches = /filename=([^;]+)/ig.exec(contentDisposition);
+				var fileName = (matches[1] || 'untitled').trim();
+				return fileName;
+			};
+
+			return fileDownloadHelper;
 		}]);
 	}
 )();

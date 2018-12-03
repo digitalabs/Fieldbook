@@ -38,7 +38,7 @@
 				abbr: 'Plots'
 			}];
 
-			angular.forEach(datasetTypes, function(datasetType) {
+			angular.forEach(datasetTypes, function (datasetType) {
 				datasetTypeMap[datasetType.id] = datasetType;
 			});
 
@@ -67,13 +67,13 @@
 
 			};
 
-			datasetService.getDatasets = function () {
+			datasetService.getDatasets = function (datasetTypeIds) {
 				if (!studyContext.studyId) {
 					return $q.resolve([]);
 				}
 				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets', angular.merge({
 					params: {
-						datasetTypeIds: DATASET_TYPES_SUBOBSERVATION_IDS.join(",")
+						datasetTypeIds: datasetTypeIds || DATASET_TYPES_SUBOBSERVATION_IDS.join(",")
 					}
 				}, config));
 				return request.then(successHandler, failureHandler);
@@ -84,7 +84,7 @@
 				return request.then(successHandler, failureHandler);
 			};
 
-			datasetService.getObservationTableUrl = function(datasetId, instanceId) {
+			datasetService.getObservationTableUrl = function (datasetId, instanceId) {
 				return BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/instances/' + instanceId + '/observationUnits/table';
 			};
 
@@ -98,22 +98,27 @@
 				return request.then(successHandler, failureHandler);
 			};
 
+			datasetService.getDatasetInstances = function (datasetId) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/instances', config);
+				return request.then(successHandler, failureHandler);
+			};
+
 			datasetService.getDatasetType = function (datasetTypeId) {
 				return datasetTypeMap[datasetTypeId];
 
 			};
 
-			datasetService.getPlotAndSubobservationDatasets = function () {
-				if (!studyContext.studyId) {
-					return $q.resolve([]);
-				}
-				var datasetTypeIds = DATASET_TYPES_SUBOBSERVATION_IDS.concat(DATASET_TYPES.PLOT_OBSERVATIONS);
-				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets', angular.merge({
+			datasetService.exportDataset = function (datasetId, instanceIds, collectionOrderId) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/csv', angular.merge({
 					params: {
-						datasetTypeIds: datasetTypeIds.join(",")
-					}
+						instanceIds: instanceIds.join(","),
+						collectionOrderId: collectionOrderId
+					},
+					responseType: 'blob'
 				}, config));
-				return request.then(successHandler, failureHandler);
+				return request.then(function (response) {
+					return response;
+				}, failureHandler);
 			};
 
 			datasetService.importObservations = function (datasetId, observationList, processWarnings) {
@@ -130,6 +135,6 @@
 			};
 
 			return datasetService;
-	}]);
+		}]);
 
 })();

@@ -140,7 +140,7 @@
 								<a tabindex="-1" href="#">Data collection options</a>
 								<ul class="dropdown-menu" style="margin-left: 0px;">
 									<li ng-show="displayMeasurementOnlyActions()">
-										<a href="javascript: showExportOptions();" id="export-study-link"
+										<a ng-click="showExportStudyModal()" id="export-study-link"
 										   th:text="#{study.studydetails.action.export.study}">Export Study Book</a>
 									</li>
 									<li ng-show="displayMeasurementOnlyActions()">
@@ -606,11 +606,11 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/studyStateService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/datasetService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/SubObservationUnitDatasetBuilder.js}"></script>
-
-
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/datasetOptionModal.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/exportStudy.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/importStudy.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/xlsx.full.min.js}"></script>
+
 	<!-- constants here -->
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[

@@ -17,7 +17,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/angular-tests/mocks/globals-mock.js',
 
 			// AngularJS plugins and dependencies
-			'WEB-INF/static/js/lib/angular/angular.min.js',
+			'WEB-INF/static/js/lib/angular/angular.js',
 			'WEB-INF/static/js/lib/angular/angular-messages.min.js',
 			'WEB-INF/static/js/lib/angular/angular-local-storage.min.js',
 			'WEB-INF/static/js/lib/angular/angular-resource.min.js',
@@ -69,7 +69,10 @@ module.exports = function (config) {
 			'WEB-INF/static/js/trialmanager/showSettingFormElementNew.js',
 			'WEB-INF/static/js/trialmanager/germplasm.js',
 			'WEB-INF/static/js/trialmanager/datasetService.js',
+			'WEB-INF/static/js/trialmanager/exportStudy.js',
+			'WEB-INF/static/js/trialmanager/datasetOptionModal.js',
 			'WEB-INF/static/js/design-import/design-import-main.js',
+
 
 			// unit test files
 			'WEB-INF/static/js/angular-tests/lib/angular-mocks.js',

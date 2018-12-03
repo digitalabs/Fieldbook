@@ -415,44 +415,44 @@
 						}
 
 						if (columnData.dataTypeCode === 'D') {
-							$timeout(function () {
-								$('input', cell).one('click', function () {
-									var initialValue;
-									try {
-										initialValue = $.datepicker.formatDate("yy-mm-dd", $.datepicker.parseDate('yymmdd', $(this).val()));
-									} catch (e) { }
+							$(cell).one('click', 'input', function () {
+								var initialValue;
+								try {
+									initialValue = $.datepicker.formatDate("yy-mm-dd", $.datepicker.parseDate('yymmdd', $(this).val()));
+								} catch (e) {
+								}
 
-									$(this).on('keydown', function (e) {
-										if (e.keyCode === 13) {
-											e.stopImmediatePropagation();
-										}
-									}).datepicker({
-										format: 'yyyymmdd',
-										todayHighlight: true,
-										todayBtn: true,
-										forceParse: false
-									}).on('hide', function () {
-										try {
-											$.datepicker.parseDate('yymmdd', $(this).val());
-											updateInline();
-										} catch (e) {
-                                            showErrorMessage('', 'invalid value');
-										}
-									}).datepicker("show").datepicker('update', initialValue)
-								});
+								$(this).on('keydown', function (e) {
+									if (e.keyCode === 13) {
+										e.stopImmediatePropagation();
+									}
+								}).datepicker({
+									format: 'yyyymmdd',
+									todayHighlight: true,
+									todayBtn: true,
+									forceParse: false
+								}).on('hide', function () {
+									try {
+										$.datepicker.parseDate('yymmdd', $(this).val());
+										updateInline();
+									} catch (e) {
+										showErrorMessage('', 'invalid value');
+									}
+								}).datepicker("show").datepicker('update', initialValue)
 							});
 						}
 
 						// FIXME show combobox for categorical traits
 						$(cell).css('overflow', 'visible');
 
+						// FIXME find a better way
 						$timeout(function () {
 							/**
 							 * Initiate interaction with the input so that clicks on other parts of the page
-							 * will trigger blur immediately
+							 * will trigger blur immediately. Also necessary to initiate datepicker
 							 */
 							$(cell).find('a.ui-select-match, input').click().focus();
-						});
+						}, 100);
 					});
 				}
 			}

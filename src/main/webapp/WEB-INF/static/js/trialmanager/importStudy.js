@@ -555,12 +555,14 @@ function doImportActionChange() {
 			};
 
 			$scope.submitImport = function () {
-				$scope.previewImportMeasurements();
+				$scope.importMeasurements(true);
 			};
 
-			$scope.previewImportMeasurements = function () {
-				datasetService.importObservations(datasetId, $scope.importedData, true).then(function (response) {
-					$scope.importMeasurements();
+			$scope.importMeasurements = function (processWarnings) {
+				datasetService.importObservations(datasetId, $scope.importedData, processWarnings).then(function () {
+					displaySaveSuccessMessage('page-message', 'Your data was successfully imported and saved.');
+					$scope.reloadObservations();
+					$scope.close();
 				}, function (response) {
 					if (response.status == 401) {
 						bmsAuth.handleReAuthentication();
@@ -574,22 +576,6 @@ function doImportActionChange() {
 				});
 			};
 
-			$scope.importMeasurements = function () {
-				datasetService.importObservations(datasetId, $scope.importedData, false).then(function () {
-					displaySaveSuccessMessage('page-message', 'Your data was successfully imported and saved.');
-					$scope.reloadObservations();
-					$scope.close();
-				}, function (response) {
-					if (response.status == 401) {
-						bmsAuth.handleReAuthentication();
-					} else if (response.status == 400) {
-						showErrorMessage('', response.data.errors[0].message);
-					} else {
-						showErrorMessage('', ajaxGenericErrorMsg);
-					}
-				});
-			};
-
 			$scope.close = function () {
 				$uibModalInstance.close();
 			};
@@ -597,8 +583,6 @@ function doImportActionChange() {
 			$scope.reloadObservations = function () {
 				var scope = angular.element(document.getElementById("mainApp")).scope();
 				scope.navigateToSubObsTab(datasetId);
-				//var scope = angular.element(document.getElementById("SubObservationSetCtrl")).scope();
-				//scope.reloadTable();
 			};
 
 			ctrl.showConfirmModal = function (warnings) {
@@ -611,7 +595,7 @@ function doImportActionChange() {
 				var modalWarningMessage = importStudyModalService.showWarningMessage('Confirmation', 'Some observations were found in the imported file:', warningMessages, 'Would you like to proceed with the import ?', 'Proceed', 'Back');
 				modalWarningMessage.result.then(function (shouldContinue) {
 					if (shouldContinue) {
-						$scope.importMeasurements();
+						$scope.importMeasurements(false);
 					} else {
 						importStudyModalService.openImportStudyModal(datasetId);
 					}

@@ -89,6 +89,11 @@
 				</ui-select>
 			</div>
 
+			<span id="subObsCategoricalDescriptionBtn" class="btn btn-link pull-left" ng-click="toggleShowCategoricalDescription()" >
+				<span ng-if="!isCategoricalDescriptionView" th:text="#{measurements.show.categorical.description}"></span>
+				<span ng-if="isCategoricalDescriptionView" th:text="#{measurements.hide.categorical.description}"></span>
+			</span>
+
 			<table id="subobservation-table-{{subObservationTab.id}}-{{subObservationSet.id}}"
 				   datatable=""
 				   dt-instance="nested.dtInstance"

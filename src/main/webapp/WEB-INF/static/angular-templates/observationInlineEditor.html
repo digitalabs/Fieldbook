@@ -1,16 +1,16 @@
 <input type="text"
-	   ng-if="column.dataTypeCode === 'N' || column.dataTypeCode === 'T'"
+	   ng-if="columnData.dataTypeCode === 'N' || columnData.dataTypeCode === 'T'"
 	   ng-blur="observation.change()"
 	   ng-keyup="doBlur($event)"
 	   ng-model="observation.value" />
 
 <input type="text"
-	   ng-if="column.dataTypeCode === 'D'"
+	   ng-if="columnData.dataTypeCode === 'D'"
 	   placeholder="yyyymmdd"
 	   ng-model="observation.value" />
 
 <ui-select ng-model="observation.value"
-		   ng-if="column.dataTypeCode === 'C'"
+		   ng-if="columnData.dataTypeCode === 'C'"
 		   uis-open-close="observation.onOpenClose(isOpen)"
 		   tagging="observation.newInlineValue"
 		   tagging-label="false"
@@ -19,7 +19,7 @@
 		class="ui-select-match">
 		<span ng-bind="$select.selected.name"></span>
 	</ui-select-match>
-	<ui-select-choices repeat="value.name as value in (column.possibleValues | filter: { name: $select.search }) track by value.name">
-		<span ng-bind="value.name"></span>
+	<ui-select-choices repeat="value.name as value in (columnData.possibleValues | filter: { name: $select.search }) track by value.name">
+		{{value.name}} {{isCategoricalDescriptionView ? '= ' + value.description : ''}}
 	</ui-select-choices>
 </ui-select>

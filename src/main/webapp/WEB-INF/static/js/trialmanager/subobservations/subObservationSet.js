@@ -21,6 +21,7 @@
 			$scope.nested.dtInstance = null;
 			$scope.nested.reviewVariable = null;
 			$scope.enableActions = false;
+			$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
 
 			var subObservationTab = $scope.subObservationTab;
 			var tableId = '#subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
@@ -210,6 +211,14 @@
 				$scope.dtOptions = getDtOptions();
 			};
 
+			$scope.toggleShowCategoricalDescription = function () {
+				switchCategoricalView().done(function () {
+					$scope.$apply(function () {
+						$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
+					});
+				});
+			};
+
 			function getDtOptions() {
 				return addCommonOptions(DTOptionsBuilder.newOptions()
 					.withOption('ajax', {
@@ -234,6 +243,7 @@
 					})
 					.withDataProp('data')
 					.withOption('serverSide', true)
+					.withOption('initComplete', initCompleteCallback)
 					.withOption('headerCallback', headerCallback)
 					.withOption('drawCallback', drawCallback));
 			}
@@ -275,6 +285,12 @@
 					// TODO 1) extract common logic rowCallback 2) use datatable api to store data 3) use DataTable().rows().data() to save
 					// .withOption('rowCallback', previewRowCallback)
 				);
+			}
+
+			function initCompleteCallback() {
+				var $categoricalDescriptionBtn = $('#subObsCategoricalDescriptionBtn');
+				var buttons = $categoricalDescriptionBtn.parent().find('.dt-buttons');
+				$categoricalDescriptionBtn.detach().insertBefore(buttons);
 			}
 
 			function headerCallback(thead, data, start, end, display) {
@@ -331,12 +347,14 @@
 							}
 						};
 
-						$inlineScope.column = columnData;
+						$inlineScope.columnData = columnData;
+						$inlineScope.isCategoricalDescriptionView = $scope.isCategoricalDescriptionView;
 
 						$(cell).html('');
 						var editor = $compile(
 							' <observation-inline-editor ' +
-							' column="column" ' +
+							' is-categorical-description-view="isCategoricalDescriptionView" ' +
+							' column-data="columnData" ' +
 							' observation="observation"></observation-inline-editor> '
 						)($inlineScope);
 
@@ -402,7 +420,7 @@
 								 */
 								$table.off('click').on('click', 'td.variates', clickHandler);
 
-								applyCellColor(cell, cellData, rowData, columnData);
+								processCell(cell, cellData, rowData, columnData);
 							}, function (response) {
 								if (response.errors) {
 									showErrorMessage('', response.errors[0].message);
@@ -553,6 +571,13 @@
 				// TODO complete column definitions (highlighting, links, etc)
 
 				angular.forEach(columnsData, function (columnData) {
+					if (columnData.possibleValues) {
+						columnData.possibleValuesByValue = {};
+						angular.forEach(columnData.possibleValues, function (possibleValue) {
+							columnData.possibleValuesByValue[possibleValue.name] = possibleValue;
+						});
+					}
+
 					columns.push({
 						title: columnData.alias,
 						data: function (row) {
@@ -577,7 +602,7 @@
 						columnsDef.push({
 							targets: columns.length - 1,
 							createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
-								applyCellColor(td, cellData, rowData, columnData);
+								processCell(td, cellData, rowData, columnData);
 							},
 							render: function (data, type, full, meta) {
 								return data && EscapeHTML.escape(data.value);
@@ -644,7 +669,7 @@
 				return invalid;
 			}
 
-			function applyCellColor(td, cellData, rowData, columnData) {
+			function processCell(td, cellData, rowData, columnData) {
 				$(td).removeClass('accepted-value');
 				$(td).removeClass('invalid-value');
 				$(td).removeClass('manually-edited-value');
@@ -654,6 +679,26 @@
 
 					if (invalid) {
 						$(td).addClass($scope.preview ? 'invalid-value' : 'accepted-value');
+					}
+
+					if (columnData.possibleValues
+						&& columnData.possibleValuesByValue
+						&& columnData.possibleValuesByValue[cellData.value]
+						&& columnData.possibleValuesByValue[cellData.value].description
+						&& cellData.value !== 'missing') {
+
+						var description = columnData.possibleValuesByValue[cellData.value].description;
+						if (description) {
+							$(td).html('');
+							$(td).append('<span class="fbk-measurement-categorical-name"'
+								+ ($scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
+								+ ' >'
+								+ cellData.value + '</span>');
+							$(td).append('<span class="fbk-measurement-categorical-desc"'
+								+ (!$scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
+								+ ' >'
+								+ description + '</span>');
+						}
 					}
 				}
 				if (cellData.status) {
@@ -681,7 +726,8 @@
 				scope: {
 					observation: '=',
 					// TODO upgrade angular to > 1.5 to use one-way binding
-					column: '='
+					columnData: '=',
+					isCategoricalDescriptionView: '='
 				},
 				controller: function($scope) {
 					$scope.doBlur = function ($event) {

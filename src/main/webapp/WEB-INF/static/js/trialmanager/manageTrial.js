@@ -480,13 +480,14 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.navigateToSubObsTab = function (datasetId) {
-				var subObsTab= undefined;
+				var subObsTab = undefined;
 				angular.forEach($scope.subObservationTabs, function (subObservationTab) {
-					if(subObservationTab.id === datasetId){
+					if (subObservationTab.id === datasetId) {
 						subObsTab = subObservationTab
 					}
 				});
-				var params = {subObservationTabId: id, subObservationTab: subObsTab};
+
+				var params = {subObservationTabId: subObsTab.id, subObservationTab: subObsTab};
 				$scope.isSettingsTab = false;
 				$scope.tabSelected = subObsTab.state;
 				$state.go('subObservationTabs', params);

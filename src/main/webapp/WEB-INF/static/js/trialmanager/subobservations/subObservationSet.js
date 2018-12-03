@@ -264,8 +264,7 @@
 					.withButtons([{
 						extend: 'colvis',
 						className: 'fbk-buttons-no-border fbk-colvis-button',
-						text: '<i class="glyphicon glyphicon-th"></i>',
-						columns: ':gt(0):not(.ng-hide)'
+						text: '<i class="glyphicon glyphicon-th"></i>'
 					}])
 					.withPaginationType('full_numbers');
 			}

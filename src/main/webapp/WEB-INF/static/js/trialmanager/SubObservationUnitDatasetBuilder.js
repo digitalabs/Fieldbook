@@ -26,8 +26,7 @@
 		};
 
 		$scope.saveDataset = function(){
-			if ($scope.dtForm.$valid) {
-
+			if ($scope.dtForm.$valid && $scope.trialInstances != 0) {
 				var instanceIds = [];
 
 				Object.keys($scope.selectedInstances).forEach(function(instanceId) {
@@ -51,10 +50,8 @@
 					$scope.submitted = false;
 					$scope.addSubObservationTabData(response.datasetId, response.name,response.datasetTypeId,response.parentDatasetId);
 				}, function (response) {
-					if (response.status == 401) {
-						bmsAuth.handleReAuthentication();
-					} else if (response.data.errors) {
-						showErrorMessage('', response.data.errors[0].message);
+					if (response.errors) {
+						showErrorMessage('', response.errors[0].message);
 					} else {
 						showErrorMessage('', ajaxGenericErrorMsg);
 					}

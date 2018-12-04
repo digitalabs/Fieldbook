@@ -663,6 +663,9 @@
 		var ajaxGenericErrorMsg = /*[[#{ajax.generic.exception.error.message}]]*/ '';
 		var environmentModalConfirmationText = /*[[#{study.change.environment.confirmation}]]*/ '',
 			environmentConfirmLabel = /*[[#{common.form.ok.text}]]*/ '',
+			cancelLabel = /*[[#{form.cancel.text}]]*/ '',
+			keepLabel = /*[[#{common.form.keep.text}]]*/ '',
+			discardLabel = /*[[#{common.form.discard.text}]]*/ '',
 			operationMode = /*[[${operationMode}]]*/ '';
 
 		var loggedInUserId = /*[[${contextInfo.loggedInUserId}]]*/ '',
@@ -716,6 +719,7 @@
 			},
 			generalAjaxError: /*[[#{study.managesettings.variable.selection.error}]]*/ '',
 			variableSelectedMessage: /*[[#{common.warning.variable.in.use}]]*/ '',
+            uniqueVariableError: /*[[#{variable.selection.unique.variable.error}]]*/ '',
 			invalidAliasError: /*[[#{variable.selection.alias.error}]]*/ ''
 		};
 
@@ -800,7 +804,7 @@
 
 		jQuery(function () {
 			'use strict';
-			var isCategoricalDisplay = /*[[${session.isCategoricalDescriptionView}]]*/ false;
+			window.isCategoricalDescriptionView = /*[[${session.isCategoricalDescriptionView}]]*/ false;
 		});
 
 		//]]>
@@ -826,5 +830,7 @@
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-tabdrop.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/variableService.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/angular/angular-local-storage.min.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/angular/bmsAuth.js}"></script>
 
 </div>

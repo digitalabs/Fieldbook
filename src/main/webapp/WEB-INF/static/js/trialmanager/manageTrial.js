@@ -496,10 +496,14 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				});
 
-				var params = {subObservationTabId: subObsTab.id, subObservationTab: subObsTab};
 				$scope.isSettingsTab = false;
 				$scope.tabSelected = subObsTab.state;
-				$state.go('subObservationTabs', params);
+				$state.transitionTo('subObservationTabs',  {
+					subObservationTabId: subObsTab.id,
+					subObservationTab: subObsTab
+				}, {
+					reload: true, inherit: false, notify: true
+				});
 			};
 
 			$scope.hasAdvanceListCreated = function () {

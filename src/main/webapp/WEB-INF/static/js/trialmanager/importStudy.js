@@ -96,8 +96,8 @@
 		function (datasetId, $scope, $rootScope, $uibModalInstance, datasetService, importStudyModalService) {
 
 			$scope.title = 'Import measurements';
-			$scope.file = '';
-			$scope.importedData = '';
+			$scope.file = null;
+			$scope.importedData = null;
 			var ctrl = this;
 
 			ctrl.importFormats = [{itemId: '1', name: 'CSV', extension: '.csv'}];
@@ -109,8 +109,8 @@
 			};
 
 			$scope.clearSelectedFile = function () {
-				$scope.file = '';
-				$scope.importedData = '';
+				$scope.file = null;
+				$scope.importedData = null;
 			};
 
 			$scope.submitImport = function () {
@@ -142,6 +142,7 @@
 			$scope.reloadObservations = function () {
 				var scope = angular.element(document.getElementById("mainApp")).scope();
 				scope.navigateToSubObsTab(datasetId);
+
 			};
 
 			ctrl.showConfirmModal = function (warnings) {
@@ -162,9 +163,8 @@
 			};
 
 			ctrl.init = function () {
-				$scope.file = '';
-				$scope.importedData = '';
-				//$scope.reloadObservations();
+				$scope.file = null;
+				$scope.importedData = null;
 			};
 
 			ctrl.init();

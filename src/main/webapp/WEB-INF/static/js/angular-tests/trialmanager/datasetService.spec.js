@@ -13,14 +13,10 @@ describe('Dataset Service', function () {
 
 		module('datasets-api');
 
-		spyOn(JSON, 'parse').and.callFake(function (key) {
-			return {token: 734789327};
-		});
-
 		module(function ($provide) {
 			$provide.value("studyContext", studyContext);
 			$provide.value("serviceUtilities", {});
-			$provide.value("DATASET_TYPES_SUBOBSERVATION_IDS", {});
+			$provide.value("DATASET_TYPES_SUBOBSERVATION_IDS", [10094,10095,10096,10097]);
 			$provide.value("DATASET_TYPES", {});
 		});
 	});
@@ -43,7 +39,7 @@ describe('Dataset Service', function () {
 				datasetId + '/variables/observations?variableIds=' + variableIds.join(','))
 				.respond({}, {'X-Total-Count': '100'});
 
-			datasetService.observationCount(studyId, datasetId, variableIds).then(function (response) {
+			datasetService.observationCount(datasetId, variableIds).then(function (response) {
 				expect(response.headers('X-Total-Count')).toEqual('100');
 			});
 
@@ -51,7 +47,7 @@ describe('Dataset Service', function () {
 
 		it('should return reject if any of the parameters are undefined', function () {
 
-			datasetService.observationCount(undefined, undefined, undefined).then(function (response) {
+			datasetService.observationCount(undefined, undefined).then(function (response) {
 			}).catch(function (reason) {
 				expect(reason).toEqual('studyId, datasetId and variableIds are not defined.');
 			});
@@ -72,7 +68,7 @@ describe('Dataset Service', function () {
 				datasetId + '/observationUnits/' + instanceId)
 				.respond({}, {'X-Total-Count': '200'});
 
-			datasetService.observationCountByInstance(studyId, datasetId, instanceId).then(function (response) {
+			datasetService.observationCountByInstance(datasetId, instanceId).then(function (response) {
 				expect(response.headers('X-Total-Count')).toEqual('200');
 			});
 
@@ -80,7 +76,7 @@ describe('Dataset Service', function () {
 
 		it('should return reject if any of the parameters are undefined', function () {
 
-			datasetService.observationCountByInstance(undefined, undefined, undefined).then(function (response) {
+			datasetService.observationCountByInstance(undefined, undefined).then(function (response) {
 			}).catch(function (reason) {
 				expect(reason).toEqual('studyId, instanceId and datasetId are not defined.');
 			});

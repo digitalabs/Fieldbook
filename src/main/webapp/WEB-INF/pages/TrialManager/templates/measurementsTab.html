@@ -105,11 +105,10 @@
 
 jQuery(function() {
 	'use strict';
-	var isCategoricalDisplay = /*[[${session.isCategoricalDescriptionView}]]*/ false;
 	var hasSavedPlots = /*[[${measurementRowCount != null && measurementRowCount != 0}]]*/ false;
-	
+
 	if ($('#studyId').val() !== '' && hasSavedPlots) {
-		initializeTraitsPagination(isCategoricalDisplay);
+		initializeTraitsPagination(window.isCategoricalDescriptionView);
 	}
 });
 

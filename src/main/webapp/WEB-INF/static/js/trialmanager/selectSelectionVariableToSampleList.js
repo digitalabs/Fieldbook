@@ -4,8 +4,8 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('selectSelectionVariableToSampleListModalCtrl', ['$scope', 'TrialManagerDataService', '$http', function ($scope,
-																																	   TrialManagerDataService, $http) {
+	manageTrialApp.controller('selectSelectionVariableToSampleListModalCtrl', ['$scope', 'TrialManagerDataService', '$http', '$timeout', function ($scope,
+																																				   TrialManagerDataService, $http, $timeout) {
 
 		// TODO see Workbench/src/main/web/src/apps/ontology/app-services/bmsAuth.js
 		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
@@ -55,7 +55,7 @@
 				$scope.sampleForm.selectVariableManageSample.$setDirty();
 			}
 
-			$http.get('/bmsapi/projects/' + currentProgramId + '/users', config).success(function (data) {
+			$http.get('/bmsapi/projects/' + currentProgramId + '/users').success(function (data) {
 				$scope.users = data;
 
 				angular.forEach($scope.users, function (user) {
@@ -63,6 +63,10 @@
 						$scope.selectedUser = user.id;
 						$scope.listOwner = user.firstName + " " + user.lastName;
 					}
+					$timeout(function () {
+						angular.element('#sampleSelectUser').select2();
+
+					}, 1);
 				});
 			}).error(function (data) {
 				if (data.status == 401) {
@@ -71,6 +75,12 @@
 				showErrorMessage('', data.errors[0].message);
 				$scope.selectedUser = [];
 			});
+
+			$timeout(function () {
+				angular.element('#sampleSelectVariable').focus();
+				angular.element('#sampleSelectVariable').select2();
+				angular.element('#sampleSelectSamplingDate').datepicker({dateFormat: "yyyy-mm-dd"}).val('');
+			}, 1);
 		};
 
 		$scope.continue = function () {

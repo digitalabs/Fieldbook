@@ -414,8 +414,15 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				//TODO localise messages
 				language: {
 					processing: '<span class="throbber throbber-2x"></span>',
-					lengthMenu: 'Records per page: _MENU_'
+					lengthMenu: 'Records per page: _MENU_',
+					paginate: {
+						next: '>',
+						previous: '<',
+						first: '<<',
+						last: '>>'
+					}
 				},
+				paginationType: 'full_numbers',
 				// For column visibility
 				buttons: [
 				{
@@ -955,9 +962,7 @@ function onMeasurementsObservationLoad(isCategoricalDisplay) {
 	'use strict';
 	if ($('#measurement-table') && $('#measurement-table').length !== 0) {
 		var $categoricalDisplayToggleBtn = $('.fbk-toggle-categorical-display');
-	
-		window.isCategoricalDescriptionView = isCategoricalDisplay;
-	
+
 		// update the toggle button text depending on what current session value is
 		$categoricalDisplayToggleBtn.text(isCategoricalDisplay ? window.measurementObservationMessages.hideCategoricalDescription :
 			window.measurementObservationMessages.showCategoricalDescription);

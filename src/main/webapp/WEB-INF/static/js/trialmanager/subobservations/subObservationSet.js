@@ -307,6 +307,12 @@
                 addCellClickHandler();
 			}
 
+			function adjustColumns(table) {
+				$timeout(function () {
+					table.columns.adjust();
+				});
+			}
+
 			function addCellClickHandler() {
 				var $table = angular.element(tableId);
 				$table.off('click').on('click', 'td.variates', clickHandler);
@@ -359,6 +365,7 @@
 						)($inlineScope);
 
 						$(cell).append(editor);
+						adjustColumns(table);
 
 						function updateInline() {
 							var promise;
@@ -421,6 +428,7 @@
 								$table.off('click').on('click', 'td.variates', clickHandler);
 
 								processCell(cell, cellData, rowData, columnData);
+								adjustColumns(table);
 							}, function (response) {
 								if (response.errors) {
 									showErrorMessage('', response.errors[0].message);

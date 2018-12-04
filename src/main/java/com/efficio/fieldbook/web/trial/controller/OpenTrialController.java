@@ -899,7 +899,7 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	protected void assignDeleteOperationOnDeletedTreatmentVariables(final List<SettingDetail> deletedTreatmentFactors,	final List<SettingDetail> plotsLevelList) {
-		List<Integer> deletedTreatmentFactorsIds = new ArrayList<>();
+		final List<Integer> deletedTreatmentFactorsIds = new ArrayList<>();
 		if(deletedTreatmentFactors == null) return;
 		for(SettingDetail detail: deletedTreatmentFactors) {
 			deletedTreatmentFactorsIds.add(detail.getVariable().getCvTermId());

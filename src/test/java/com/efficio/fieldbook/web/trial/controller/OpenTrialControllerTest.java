@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -1344,6 +1345,20 @@ public class OpenTrialControllerTest {
 				Integer.valueOf(studyDetails.getCreatedBy()), ownerName, folderName, basicData);
 
 		this.verifyUserSelectionUponBasicDetailsPreparation(studyDetails);
+	}
+
+	@Test
+	public void testAssignDeleteOperationOnDeletedTreatmentVariables() {
+		final List<SettingDetail> deletedTreatmentFactors =  new ArrayList<>();
+		deletedTreatmentFactors.add(SettingDetailTestDataInitializer.createSettingDetail(1, "Deleted", "Deleted TF Value", PhenotypicType.TRIAL_DESIGN, Operation.DELETE));
+		deletedTreatmentFactors.add(SettingDetailTestDataInitializer.createSettingDetail(2, "Deleted TF Value", "1", PhenotypicType.TRIAL_DESIGN, Operation.DELETE));
+		final List<SettingDetail> plotsLevelList = new ArrayList<>();
+		plotsLevelList.add(SettingDetailTestDataInitializer.createSettingDetail(1, "Deleted", "Deleted TF Value", PhenotypicType.TRIAL_DESIGN, Operation.UPDATE));
+		plotsLevelList.add(SettingDetailTestDataInitializer.createSettingDetail(2, "Deleted TF Value", "1", PhenotypicType.TRIAL_DESIGN, Operation.UPDATE));
+		this.openTrialController.assignDeleteOperationOnDeletedTreatmentVariables(deletedTreatmentFactors, plotsLevelList);
+		for(SettingDetail settingDetail: plotsLevelList) {
+			Assert.assertEquals(Operation.DELETE, settingDetail.getVariable().getOperation());
+		}
 	}
 	
 	@Test

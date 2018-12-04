@@ -287,10 +287,21 @@
 				);
 			}
 
+			/**
+			 * FIXME we were having issues with clone() and $compile. Attaching and detaching instead for now
+			 */
+			function attachCategoricalDisplayBtn() {
+				$timeout(function () {
+					$('#subObsCategoricalDescriptionBtn').detach().insertBefore('#subObservationTableContainer .dt-buttons');
+				});
+			}
+
+			function detachCategoricalDisplayBtn() {
+				$('#subObsCategoricalDescriptionBtn').detach().appendTo('#subObsCategoricalDescriptionContainer');
+			}
+
 			function initCompleteCallback() {
-				var $categoricalDescriptionBtn = $('#subObsCategoricalDescriptionBtn');
-				var buttons = $categoricalDescriptionBtn.parent().find('.dt-buttons');
-				$categoricalDescriptionBtn.detach().insertBefore(buttons);
+				attachCategoricalDisplayBtn();
 			}
 
 			function headerCallback(thead, data, start, end, display) {
@@ -537,6 +548,8 @@
 			}
 
 			function reloadTable() {
+				detachCategoricalDisplayBtn();
+
 				/**
 				 * We need to reinitilize all this because
 				 * if we use column.visible an change the columns with just
@@ -554,6 +567,8 @@
 					$scope.dtOptions = getDtOptions();
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
+
+					attachCategoricalDisplayBtn();
 				});
 			}
 

@@ -46,7 +46,7 @@
 		</div>
 	</div>
 
-	<div class="col-xs-12 add-top-padding-small">
+	<div id="subObservationTableContainer" class="col-xs-12 add-top-padding-small">
 
 		<div class="row">
 			<div class="col-xs-12">
@@ -89,10 +89,12 @@
 				</ui-select>
 			</div>
 
-			<span id="subObsCategoricalDescriptionBtn" class="btn btn-link pull-left" ng-click="toggleShowCategoricalDescription()" >
-				<span ng-if="!isCategoricalDescriptionView" th:text="#{measurements.show.categorical.description}"></span>
-				<span ng-if="isCategoricalDescriptionView" th:text="#{measurements.hide.categorical.description}"></span>
-			</span>
+			<div id="subObsCategoricalDescriptionContainer" style="display: none">
+				<span id="subObsCategoricalDescriptionBtn" class="btn btn-link pull-left" ng-click="toggleShowCategoricalDescription()">
+					<span ng-if="!isCategoricalDescriptionView" th:text="#{measurements.show.categorical.description}"></span>
+					<span ng-if="isCategoricalDescriptionView" th:text="#{measurements.hide.categorical.description}"></span>
+				</span>
+			</div>
 
 			<table id="subobservation-table-{{subObservationTab.id}}-{{subObservationSet.id}}"
 				   datatable=""

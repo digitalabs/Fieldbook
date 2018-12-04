@@ -428,15 +428,18 @@
 								$inlineScope.$destroy();
 								editor.remove();
 
-								dtCell.data(cellData);
+								/**
+								 * TODO in review mode we can't reload, we can only update the cell data and status
+								 * Then we need to inform the user that some info may not be available during review, ie. out-of-sync data
+								 */
+								// dtCell.data(cellData);
+								// processCell(cell, cellData, rowData, columnData);
+								table.ajax.reload(null, false);
 
 								/**
 								 * Restore cell click handler
 								 */
 								$table.off('click').on('click', 'td.variates', clickHandler);
-
-								processCell(cell, cellData, rowData, columnData);
-								adjustColumns(table);
 							}, function (response) {
 								if (response.errors) {
 									showErrorMessage('', response.errors[0].message);

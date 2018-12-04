@@ -240,7 +240,6 @@ window.TrialSettingsManager = (function() {
 
 	TrialSettingsManager.prototype._initialiseVariableSelectionDialog = function() {
 		this._variableSelection = new window.BMS.NurseryManager.VariableSelection({
-			// FIXME pass in translated value with key variable.selection.unique.variable.error from html
 			uniqueVariableError: this._translations.uniqueVariableError,
 			variableSelectedMessage: this._translations.variableSelectedMessage,
 			invalidAliasError: this._translations.invalidAliasError

@@ -102,7 +102,7 @@
 								modalInstance.result.then(deferred.resolve);
 							} else {
 								// else, check if any of the selected variables for deletion has measurement data.
-								datasetService.observationCount(studyContext.studyId, studyContext.measurementDatasetId, variableIds).then(function (response) {
+								datasetService.observationCount(studyContext.measurementDatasetId, variableIds).then(function (response) {
 									var count = response.headers('X-Total-Count');
 									if (count > 0) {
 										var modalInstance = $rootScope.openConfirmModal(measurementModalConfirmationText,

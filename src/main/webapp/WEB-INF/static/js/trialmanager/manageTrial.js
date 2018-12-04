@@ -9,7 +9,16 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
-		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'export-study', 'import-study']);
+		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'bmsAuth','studyState', 'export-study', 'import-study']);
+
+	manageTrialApp.config(['$httpProvider', function($httpProvider) {
+		$httpProvider.interceptors.push('authInterceptor');
+		$httpProvider.interceptors.push('authExpiredInterceptor');
+	}]);
+
+	manageTrialApp.config(['localStorageServiceProvider', function(localStorageServiceProvider){
+		localStorageServiceProvider.setPrefix('bms');
+	}]);
 
 	manageTrialApp.config(['blockUIConfig', function(blockUIConfig) {
 		blockUIConfig.templateUrl = '/Fieldbook/static/angular-templates/blockUiTemplate.html';
@@ -239,7 +248,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 			};
 
-			$http.get('/bmsapi/studytype/' + cropName + '/allVisible', config).success(function (data) {
+			$http.get('/bmsapi/studytype/' + cropName + '/allVisible').success(function (data) {
 				$scope.studyTypes = data;
 
 			}).error(function (data) {
@@ -760,9 +769,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.addSubObservationTabData = function (id, name, datasetTypeId, parentDatasetId) {
 				var datasetType = datasetService.getDatasetType(datasetTypeId);
 
-				/**
-				 * Artificial id for subObs tabs, that do not exists on db
-				 */
 				var newSubObsTab = {
 					id: id,
 					name: name,
@@ -965,7 +971,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					controller: function ($scope, $uibModalInstance) {
 						$scope.text = message;
 						$scope.confirmButtonLabel = confirmButtonLabel;
-						$scope.cancelButtonLabel = cancelButtonLabel;
+						$scope.cancelButtonLabel = cancelButtonLabel || cancelLabel;
 
 						$scope.confirm = function () {
 							$uibModalInstance.close(true);

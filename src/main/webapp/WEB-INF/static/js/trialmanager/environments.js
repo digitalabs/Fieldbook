@@ -147,7 +147,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			/* Scope Functions */
 			$scope.shouldDisableEnvironmentCountUpdate = function () {
-				return TrialManagerDataService.trialMeasurement.hasMeasurement;
+				return $scope.subObservationTabs.length > 0 || TrialManagerDataService.trialMeasurement.hasMeasurement;
 			};
 
 			$scope.updateEnvironmentCount = function () {
@@ -260,21 +260,25 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						deferred.resolve();
 					}
 					else {
+						// FIXME - This validation should be removed once we fix the logic to delete environments without regenerating experiment units
+						if ($scope.subObservationTabs.length > 0) {
+							var warningMessage = 'Environments cannot be removed because the study has sub-observation units created.';
+							ctrl.showAlertMessage('', warningMessage);
+						} else {
+							var instanceId = environmentList[environmentNo].instanceDbId;
+							var datasetId = studyContext.measurementDatasetId;
 
-						var instanceId = environmentList[environmentNo].instanceDbId;
-						var datasetId = studyContext.measurementDatasetId;
-						var studyId = studyContext.studyId;
-
-						datasetService.observationCountByInstance(studyId, datasetId, instanceId).then(function (response) {
-							var count = response.headers('X-Total-Count');
-							if (count > 0) {
-								var warningMessage = 'This environment cannot be removed because it contains measurement data.';
-								ctrl.showAlertMessage('', warningMessage);
-							} else {
-								ctrl.confirmDeleteEnvironment(environmentNo);
-							}
-							deferred.resolve();
-						});
+							datasetService.observationCountByInstance(datasetId, instanceId).then(function (response) {
+								var count = response.headers('X-Total-Count');
+								if (count > 0) {
+									var warningMessage = 'This environment cannot be removed because it contains measurement data.';
+									ctrl.showAlertMessage('', warningMessage);
+								} else {
+									ctrl.confirmDeleteEnvironment(environmentNo);
+								}
+								deferred.resolve();
+							});
+						}
 					}
 
 				});

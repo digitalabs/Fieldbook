@@ -201,17 +201,16 @@
         <div class="col-md-12 sectionContainer collapse treatmentFactors">
             <!-- If trial has no treatment factors then display No available Treatment factors -->
             <div class="col-md-6" th:if="*{treatmentFactorDetails == null or #lists.isEmpty(treatmentFactorDetails)}">
-                <div class="" th:text="#{no.available.treatment.factors}">No available Treatment Factors</div>
+                <div class="" th:text="#{study.managesettings.treatment.factors.no.available.treatment.factors}">No available Treatment Factors</div>
             </div>
             <div class="col-md-6" th:if="*{treatmentFactorDetails != null and not #lists.isEmpty(treatmentFactorDetails)}">
                 <!-- Display TREATMENT FACTORS Section in tabular form -->
                 <table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="treatmentFactors">
                     <thead>
                     <tr>
-                        <th width="25%" th:utext="#{study.managesettings.treatment.factors.name}">Name</th>
-                        <th width="25%" th:utext="#{study.managesettings.treatment.factors.description}">Description</th>
-                        <th width="15%" th:utext="#{study.managesettings.treatment.factors.level}">Levels</th>
-                        <th width="35%" th:utext="#{study.managesettings.treatment.factors.value.name}">Treatment Level Factors</th>
+                        <th width="25%" th:utext="#{study.managesettings.treatment.factors.treatment}">Treatment</th>
+                        <th width="30%" th:utext="#{study.managesettings.treatment.factors.no.of.treatments}">Levels</th>
+                        <th width="20%" th:utext="#{study.managesettings.treatment.factors.label}">Treatment Level Factors</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -222,7 +221,6 @@
                             *{treatmentFactorDetails[__${rowStat.index}__].levelId} + '\', 1809);'"
                                th:text="${treatmentFactor.levelName}"></a>
                         </td>
-                        <td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.levelDescription}"></td>
                         <td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.levelValue}"></td>
                         <td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.amountName}"></td>
                     </tr>

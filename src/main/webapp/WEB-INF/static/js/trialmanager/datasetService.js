@@ -7,13 +7,6 @@
 		function ($http, $q, studyContext, DATASET_TYPES_SUBOBSERVATION_IDS, serviceUtilities, DATASET_TYPES) {
 
 			var BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/studies/';
-			var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
-			var config = {
-				headers: {
-					'X-Auth-Token': xAuthToken
-				},
-				cache: false
-			};
 
 			var datasetTypeMap = {};
 			var datasetTypes = [{
@@ -47,24 +40,40 @@
 			var successHandler = serviceUtilities.restSuccessHandler,
 				failureHandler = serviceUtilities.restFailureHandler;
 
-			datasetService.observationCount = function (studyId, datasetId, variableIds) {
+			datasetService.observationCount = function (datasetId, variableIds) {
 
-				if (studyId && datasetId && variableIds) {
-					return $http.head(BASE_URL + studyId + '/datasets/' + datasetId + '/variables/observations?variableIds=' + variableIds.join(','), config);
+				if (datasetId && variableIds) {
+					return $http.head(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables/observations?variableIds=' + variableIds.join(','));
 				}
 
 				return $q.reject('studyId, datasetId and variableIds are not defined.');
-
 			};
 
-			datasetService.observationCountByInstance = function (studyId, datasetId, instanceId) {
+			datasetService.observationCountByInstance = function (datasetId, instanceId) {
 
-				if (studyId && instanceId && datasetId) {
-					return $http.head(BASE_URL + studyId + '/datasets/' + datasetId + '/observationUnits/' + instanceId, config);
+				if (datasetId && instanceId) {
+					return $http.head(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/' + instanceId);
 				}
 
-				return $q.reject('studyId, instanceId and datasetId are not defined.');
+				return $q.reject('instanceId and datasetId are not defined.');
+			};
 
+			datasetService.addObservation = function (datasetId, observationUnitId, observation) {
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/' +
+					observationUnitId, observation);
+				return request.then(successHandler, failureHandler);
+			};
+
+			datasetService.updateObservation = function (datasetId, observationUnitId, observationId, observationValue) {
+				var request = $http.patch(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/' +
+					observationUnitId + '/observations/' + observationId, observationValue);
+				return request.then(successHandler, failureHandler);
+			};
+
+			datasetService.deleteObservation = function (datasetId, observationUnitId, observationId) {
+				var request = $http.delete(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/' +
+					observationUnitId + '/observations/' + observationId);
+				return request.then(successHandler, failureHandler);
 			};
 
 			datasetService.getDatasets = function (datasetTypeIds) {
@@ -75,12 +84,12 @@
 					params: {
 						datasetTypeIds: datasetTypeIds || DATASET_TYPES_SUBOBSERVATION_IDS.join(",")
 					}
-				}, config));
+				}));
 				return request.then(successHandler, failureHandler);
 			};
 
 			datasetService.getColumns = function (datasetId) {
-				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/table/columns', config);
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/table/columns');
 				return request.then(successHandler, failureHandler);
 			};
 
@@ -89,17 +98,31 @@
 			};
 
 			datasetService.generation = function (newDataset) {
-				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + studyContext.measurementDatasetId + '/generation', newDataset, config);
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + studyContext.measurementDatasetId + '/generation', newDataset);
 				return request.then(successHandler, failureHandler);
 			};
 
 			datasetService.getDataset = function (datasetId) {
-				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId, config);
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId);
+				return request.then(successHandler, failureHandler);
+			};
+
+			datasetService.addVariables = function (datasetId, newVariable) {
+				var request = $http.put(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables', newVariable);
+				return request.then(successHandler, failureHandler);
+			};
+
+			datasetService.removeVariables = function (datasetId, variableIds) {
+				var request = $http.delete(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables?', {
+					params: {
+						variableIds: variableIds.join(",")
+					}
+				});
 				return request.then(successHandler, failureHandler);
 			};
 
 			datasetService.getDatasetInstances = function (datasetId) {
-				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/instances', config);
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/instances');
 				return request.then(successHandler, failureHandler);
 			};
 
@@ -109,13 +132,13 @@
 			};
 
 			datasetService.exportDataset = function (datasetId, instanceIds, collectionOrderId) {
-				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/csv', angular.merge({
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/csv', {
 					params: {
 						instanceIds: instanceIds.join(","),
 						collectionOrderId: collectionOrderId
 					},
 					responseType: 'blob'
-				}, config));
+				});
 				return request.then(function (response) {
 					return response;
 				}, failureHandler);

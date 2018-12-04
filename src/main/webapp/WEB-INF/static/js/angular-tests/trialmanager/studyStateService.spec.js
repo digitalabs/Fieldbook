@@ -2,41 +2,24 @@
 
 describe('Study State Service', function() {
 
-    var service;
+    var studyStateService;
 
-    beforeEach(function() {
+	beforeEach(function() {
+		module('studyState');
+	});
 
-        module('datatables');
-        module('datatables.buttons');
-        module('ngResource');
-        module('ngStorage');
-        module('leafnode-utils');
-        module('fieldbook-utils');
-        module('ui.bootstrap');
-        module('ui.select');
-        module('ui.select2');
-        module('ngSanitize');
-        module('ui.router');
-        module('designImportApp');
-        module('ngLodash');
-        module('showSettingFormElementNew');
-        module('manageTrialApp');
 
-    });
-
-    beforeEach(function() {
-        inject(function(studyStateService) {
-            service = studyStateService;
-        });
-    });
+	beforeEach(inject(function ($injector) {
+		studyStateService = $injector.get('studyStateService');
+	}));
 
     describe('updateOccurred', function() {
 
         it('should update hasUnsavedData to true', function() {
 
-            service.updateOccurred();
+            studyStateService.updateOccurred();
 
-            expect(service.hasUnsavedData()).toEqual(true);
+            expect(studyStateService.hasUnsavedData()).toEqual(true);
 
         });
 
@@ -46,10 +29,10 @@ describe('Study State Service', function() {
 
         it('should reset hasUnsavedData value to false', function() {
 
-            service.updateOccurred();
-            service.resetState();
+            studyStateService.updateOccurred();
+            studyStateService.resetState();
 
-            expect(service.hasUnsavedData()).toEqual(false);
+            expect(studyStateService.hasUnsavedData()).toEqual(false);
 
         });
 

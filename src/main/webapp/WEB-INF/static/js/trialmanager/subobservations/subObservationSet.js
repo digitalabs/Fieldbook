@@ -41,13 +41,10 @@
 				$scope.environments = dataset.instances;
 				$scope.nested.selectedEnvironment = dataset.instances[0];
 
-				$scope.dtOptions = getDtOptions();
 				$scope.traitVariables = $scope.getTraitVariablesFromDataset();
 				$scope.selectedTraits = $scope.getSelectedVariables();
-				loadColumns().then(function (columnsObj) {
-					dtColumnsPromise.resolve(columnsObj.columns);
-					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
-				});
+
+				loadTable();
 			});
 
 			$scope.getTraitVariablesFromDataset = function () {
@@ -109,7 +106,7 @@
 						studyAlias: m_vals.variable.name
 					}).then(function () {
 						$scope.selectedTraits = $scope.getSelectedVariables();
-						reloadTable();
+						loadTable();
 					});
 				}
 			};
@@ -133,7 +130,7 @@
 							angular.forEach(variableIds, function (cvtermId) {
 								$scope.traitVariables.remove(cvtermId);
 							});
-							reloadTable();
+							loadTable();
 							$scope.selectedTraits = $scope.getSelectedVariables();
 						});
 					}
@@ -547,7 +544,7 @@
 					});
 			}
 
-			function reloadTable() {
+			function loadTable() {
 				detachCategoricalDisplayBtn();
 
 				/**

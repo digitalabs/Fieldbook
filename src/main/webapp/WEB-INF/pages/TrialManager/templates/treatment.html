@@ -14,10 +14,9 @@
                             <thead>
                             <tr>
                                 <th>&nbsp;</th>
-                                <th th:text="#{study.managesettings.treatment.factors.name}">Name</th>
-                                <th th:text="#{study.managesettings.treatment.factors.description}">Description</th>
-                                <th>Treatment Level Factors</th>
-                                <th th:text="#{study.managesettings.treatment.factors.level}">Levels</th>
+                                <th th:text="#{study.managesettings.treatment.factors.treatment}">Treatment</th>
+                                <th th:text="#{study.managesettings.treatment.factors.label}">Label</th>
+                                <th th:text="#{study.managesettings.treatment.factors.no.of.treatments}">No of Treatments</th>
 
                             </tr>
                             </thead>
@@ -29,7 +28,6 @@
                                 <td ng-class="{even : $even, odd : $odd}"><a show-details-modal="key"
                                                                              variable-type="{{VARIABLE_TYPES.TREATMENT_FACTOR}}">{{settings.details.val(key).variable.name}}</a>
                                 </td>
-                                <td ng-class="{even : $even, odd : $odd}">{{settings.details.val(key).variable.description}}</td>
                                 <td ng-class="{even : $even, odd : $odd}">
                                     <input type="hidden" ui-select2="generateDropdownOption(key)" class="form-control" ng-model="data.currentData[key].variableId" ng-disabled="trialMeasurement.hasMeasurement"/>
                                 </td>
@@ -41,7 +39,7 @@
                             </tr>
 
                             <tr ng-hide="settings.details.keys().length &gt; 0">
-                                <td class="odd" ng-repeat="val in [] | range : 5">&nbsp;</td>
+                                <td class="odd" ng-repeat="val in [] | range : 4">&nbsp;</td>
                             </tr>
 
                             </tbody>
@@ -60,29 +58,24 @@
         <div class="col-lg-12">
 
             <div id='treatment-levels' ng-hide="false" class="add_top_padding">
-                <!-- title -->
-                <div><strong class="sub-content-heading" th:text="#{study.managesettings.treatment.factors.specify.level}">Specify Treatment Factor Levels</strong></div>
-
                 <div class='horizontal-level-item' ng-repeat="key in settings.details.keys() track by key">
                     <div class="row">
                         <div class="col-lg-12 add-bottom-padding">
-                            <span class="sub-content-heading" style="text-transform: uppercase"><b>{{settings.details.val(key).variable.name}}</b> : <b>{{settings.details.val(key).variable.description}}</b></span>
+                            <span class="sub-content-heading" style="text-transform: uppercase"><b>{{settings.details.val(key).variable.name}}</b></span>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-sm-6">
                             <div>
-                                <b class="sub-content-heading">Treatment Factor:</b>
+                                <b class="sub-content-heading">Treatment:</b>
                                 <a style="text-transform: uppercase" show-details-modal="key"
                                    variable-type="{{VARIABLE_TYPES.TREATMENT_FACTOR}}">{{settings.details.val(key).variable.name}}</a> -
-                                <span>{{settings.details.val(key).variable.description}}</span>
                             </div>
                             <div class="add-bottom-padding" ng-show="data.currentData[key].variableId">
-                                <b class="sub-content-heading">Treatment Factor Level:</b>
+                                <b class="sub-content-heading">Treatment Label:</b>
                                 <a style="text-transform: uppercase" show-details-modal="data.currentData[key].variableId"
                                    variable-type="{{VARIABLE_TYPES.TREATMENT_FACTOR}}">{{retrievePairDetail(key).variable.name}}</a> -
-                                <span>{{retrievePairDetail(key).variable.description}}</span>
                             </div>
 
 
@@ -91,14 +84,14 @@
                         <div class="col-sm-6">
 
                             <div>
-                                <b th:text="#{study.managesettings.treatment.factors.define.label}">Define the labels for this factor</b>:
+                                <b th:text="#{study.managesettings.treatment.factors.define.label}">Define the labels values for this treatment</b>:
                             </div>
                             <table class='factor-level-tbl table table-curved table-condensed'>
                                 <thead>
                                 <tr>
-                                    <th th:text="#{study.managesettings.treatment.factors.level}">Level</th>
-                                    <th th:text="#{variable.details.scale}">Scale</th>
                                     <th th:text="#{study.managesettings.treatment.factors.label}">Label</th>
+                                    <th th:text="#{variable.details.scale}">Scale</th>
+                                    <th th:text="#{study.managesettings.treatment.factors.value}">Value</th>
                                 </tr>
                                 </thead>
                                 <tbody>

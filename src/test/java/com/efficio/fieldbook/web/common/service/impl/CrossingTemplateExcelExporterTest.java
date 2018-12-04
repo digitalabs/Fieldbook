@@ -23,6 +23,7 @@ import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.data.initializer.ProjectTestDataInitializer;
+import org.generationcp.middleware.data.initializer.VariableTypeListTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -218,6 +219,8 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null)).thenReturn(experiments);
 		Mockito.when(this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE)).thenReturn
 			(experiments);
+		Mockito.when(this.studyDataManager.getTreatmentFactorVariableTypes(measurementDataSetId)).thenReturn(
+			VariableTypeListTestDataInitializer.createTreatmentFactorsVariableTypeList());
 
 		final Sheet sheet = this.workbook.getSheetAt(3);
 		this.exporter.writeStudyListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
@@ -241,6 +244,8 @@ public class CrossingTemplateExcelExporterTest {
 		final int measurementDataSetId = 10101;
 		Mockito.when(this.fieldbookMiddlewareService.getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString()))
 				.thenReturn(measurementDataSetId);
+		Mockito.when(this.studyDataManager.getTreatmentFactorVariableTypes(measurementDataSetId)).thenReturn(
+			VariableTypeListTestDataInitializer.createTreatmentFactorsVariableTypeList());
 
 		final List<Experiment> experiments = intializeExperimentsWithAddUserDescriptors();
 
@@ -292,6 +297,7 @@ public class CrossingTemplateExcelExporterTest {
 		factors.add(createTestVariable(TermId.FIELDMAP_COLUMN.getId(), "FIELDMAP COLUMN", "1"));
 		factors.add(createTestVariable(TermId.FIELDMAP_RANGE.getId(), "FIELDMAP RANGE", "100"));
 		factors.add(createTestVariable(TermId.STOCKID.getId(), "StockID", "8269"));
+		factors.add(createTestVariable(1001, "NFert_NO", "VALUE"));
 		experiments.add(intializeExperiments(factors, 0));
 
 		factors = new VariableList();

@@ -32,6 +32,7 @@ import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.Variable;
 import org.generationcp.middleware.domain.dms.VariableList;
+import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -116,6 +117,8 @@ public class CrossingTemplateExcelExporter {
 
 		final int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
 		final List<Experiment> experiments = this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE);
+		final VariableTypeList treatmentFactorVariables = this.studyDataManager.getTreatmentFactorVariableTypes(measurementDataSetId);
+
 		int rowIndex = 1;
 		int columSheet = 6;
 		ArrayList<String> localNameList = new ArrayList<>();
@@ -160,10 +163,12 @@ public class CrossingTemplateExcelExporter {
 				columSheet = 8;
 			}
 			for (String localname : localNameList) {
-				if (rowIndex == 1) {
-					addHeaderToRow(row, methodCellStyle, localname);
+				if(treatmentFactorVariables.findByLocalName(localname) == null) {
+					if (rowIndex == 1) {
+						addHeaderToRow(row, methodCellStyle, localname);
+					}
+					PoiUtil.setCellValue(studyListSheet, ++columSheet, rowIndex, gpData.getFactors().findByLocalName(localname).getValue());
 				}
-				PoiUtil.setCellValue(studyListSheet, ++columSheet, rowIndex, gpData.getFactors().findByLocalName(localname).getValue());
 			}
 			rowIndex++;
 		}

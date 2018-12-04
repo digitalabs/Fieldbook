@@ -152,8 +152,7 @@
 					{
 						"processWarnings": processWarnings,
 						"data": observationList
-					}
-					, config);
+					});
 				return request.then(successHandler, failureHandler);
 			};
 

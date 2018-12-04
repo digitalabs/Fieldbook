@@ -89,4 +89,47 @@ describe('Dataset Service', function () {
 
 	});
 
+
+	describe('getDatasetInstances', function () {
+
+		it('should call the correct web api', function () {
+
+			var datasetId = 2;
+			var instanceId = 3;
+			var mockData = {};
+
+			$httpBackend.whenGET('/bmsapi/crops/maize/studies/' + studyContext.studyId + '/datasets/' +
+				datasetId + '/instances')
+				.respond(mockData);
+
+			datasetService.getDatasetInstances(datasetId).then(function (response) {
+				expect(response.data).toEqual(mockData);
+			});
+
+		});
+
+	});
+
+	describe('exportDataset', function () {
+
+		it('should call the correct web api', function () {
+
+			var datasetId = 2;
+			var instanceIds = [1, 2, 3];
+			var collectionOrderId = 1;
+			var mockData = {};
+
+			$httpBackend.whenGET('/bmsapi/crops/maize/studies/' + studyContext.studyId + '/datasets/' +
+				datasetId + '/csv/')
+				.respond(mockData);
+
+			datasetService.exportDataset(datasetId, instanceIds, collectionOrderId).then(function (response) {
+				expect(response.data).toEqual(mockData);
+			});
+
+
+		});
+
+	});
+
 });

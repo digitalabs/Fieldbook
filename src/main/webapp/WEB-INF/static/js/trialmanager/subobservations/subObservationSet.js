@@ -273,6 +273,7 @@
 						className: 'fbk-buttons-no-border fbk-colvis-button',
 						text: '<i class="glyphicon glyphicon-th"></i>'
 					}])
+					.withColReorder()
 					.withPaginationType('full_numbers');
 			}
 
@@ -332,7 +333,8 @@
 					var rowData = table.row(cell.parentNode).data();
 					var dtCell = table.cell(cell);
 					var cellData = dtCell.data();
-					var columnData = $scope.columnsObj.columns[table.column(cell).index()].columnData;
+					var index = table.colReorder.transpose(table.column(cell).index(), 'toOriginal');
+					var columnData = $scope.columnsObj.columns[index].columnData;
 					var termId = columnData.termId;
 
 					if (!termId) return;

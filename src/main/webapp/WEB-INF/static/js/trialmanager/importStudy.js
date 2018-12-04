@@ -203,6 +203,9 @@
 								if (scope.importedFile.name.length > length) {
 									scope.importedFile.abbrName = scope.importedFile.abbrName.substring(0, length) + '...';
 								}
+
+								var fileElement = angular.element('#file_upload');
+								angular.element(fileElement).val(null);
 							});
 						};
 						reader.readAsBinaryString(changeEvent.target.files[0]);

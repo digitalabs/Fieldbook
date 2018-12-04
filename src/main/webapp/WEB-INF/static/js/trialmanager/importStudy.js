@@ -184,28 +184,14 @@
 						reader.onload = function (e) {
 							/* read workbook */
 							var bstr = e.target.result;
-							var wb = XLSX.read(bstr, {type: 'binary', sheetStubs: true});
+							var wb = XLSX.read(bstr, {type: 'binary', sheetStubs: false});
 
 							/* grab first sheet */
 							var wsname = wb.SheetNames[0];
 							var ws = wb.Sheets[wsname];
 
 							/* grab first row and generate column headers */
-							var aoa = XLSX.utils.sheet_to_json(ws, {header: 1, raw: false});
-							var cols = [];
-							for (var i = 0; i < aoa[0].length; ++i) cols[i] = {field: aoa[0][i]};
-
-							/* replace empty spaces by double quote */
-							for (var r = 1; r < aoa.length; ++r) {
-								if (cols.length == aoa[r].length) {
-									for (i = 0; i < aoa[r].length; ++i) {
-										if (aoa[r][i] == null || aoa[r][i] == undefined) {
-											aoa[r][[i]] = "";
-										}
-
-									}
-								}
-							}
+							var aoa = XLSX.utils.sheet_to_json(ws, {header: 1, raw: false, defval: ""});
 
 							/* update scope */
 							scope.$apply(function () {

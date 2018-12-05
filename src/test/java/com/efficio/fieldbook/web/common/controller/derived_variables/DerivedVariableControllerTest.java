@@ -70,6 +70,8 @@ public class DerivedVariableControllerTest {
 	public static final int VARIABLE3_TERMID = 789;
 	public static final int VARIABLE4_TERMID = 999;
 	public static final int VARIABLE5_TERMID = 20439; // MRFVInc_Cmp_pct
+	public static final int DATE_TERM1 = 8630;
+	public static final int DATE_TERM2 = 8830;
 	public static final int TARGET_VARIABLE_TERMID = 321;
 
 	private static final String INVALID_REQUEST = "invalid request";
@@ -77,13 +79,16 @@ public class DerivedVariableControllerTest {
 	private static final String ENGINE_EXCEPTION = "engine exception";
 	private static final String MISSING_DATA = "missing data";
 	private static final String MISSING_VARIABLES = "missing variables";
+	private static final String DATE_PARSING_EXCEPTION = "date parsing exception";
 
 	private static final String TERM_VALUE_1 = "1000";
 	private static final String TERM_VALUE_2 = "12.5";
 	private static final String TERM_VALUE_3 = "10";
+	private static final String DATE_TERM1_VALUE = "20180101";
+	private static final String DATE_TERM2_VALUE = "20180101";
 
 	private static final String FORMULA = "({{" + VARIABLE1_TERMID + "}}/100)*((100-{{" + VARIABLE2_TERMID + "}})/(100-12.5))*(10/{{"
-		+ VARIABLE3_TERMID + "}})";
+		+ VARIABLE3_TERMID + "}}) + fn:daysdiff({{" + DATE_TERM1 + "}},{{" + DATE_TERM2 + "}})";
 	private static final String FORMULA_RESULT = "10";
 
 	private static final Locale locale = Locale.getDefault();
@@ -143,6 +148,7 @@ public class DerivedVariableControllerTest {
 		when(this.messageSource.getMessage("study.execute.calculation.formula.not.found", null, locale)).thenReturn(NOT_FOUND);
 		when(this.messageSource.getMessage("study.execute.calculation.engine.exception", null, locale)).thenReturn(ENGINE_EXCEPTION);
 		when(this.messageSource.getMessage("study.execute.calculation.missing.data", null, locale)).thenReturn(MISSING_DATA);
+		when(this.messageSource.getMessage("study.execute.calculation.parsing.exception", null, locale)).thenReturn(DATE_PARSING_EXCEPTION);
 
 		doAnswer(new Answer<Boolean>() {
 			@Override
@@ -163,6 +169,8 @@ public class DerivedVariableControllerTest {
 		inputs.add(new FormulaVariable(VARIABLE1_TERMID, String.valueOf(VARIABLE1_TERMID), TARGET_VARIABLE_TERMID));
 		inputs.add(new FormulaVariable(VARIABLE2_TERMID, String.valueOf(VARIABLE2_TERMID), TARGET_VARIABLE_TERMID));
 		inputs.add(new FormulaVariable(VARIABLE3_TERMID, String.valueOf(VARIABLE3_TERMID), TARGET_VARIABLE_TERMID));
+		inputs.add(new FormulaVariable(DATE_TERM1, String.valueOf(DATE_TERM1), TARGET_VARIABLE_TERMID));
+		inputs.add(new FormulaVariable(DATE_TERM2, String.valueOf(DATE_TERM2), TARGET_VARIABLE_TERMID));
 		formulaDTO.setInputs(inputs);
 		formulaDTO.setTarget(new FormulaVariable(Integer.valueOf(TARGET_VARIABLE_TERMID), "", null));
 		Mockito.when(formulaOptional.get()).thenReturn(formulaDTO);
@@ -269,8 +277,8 @@ public class DerivedVariableControllerTest {
 		when(this.studySelection.getBaselineTraitsList()).thenReturn(java.util.Collections.<SettingDetail>emptyList());
 		when(this.processor.evaluateFormula(anyString(), any(Map.class))).thenReturn(FORMULA_RESULT);
 		when(this.messageSource.getMessage(
-			"study.execute.calculation.missing.variables",
-			new String[] {VARIABLE1_TERMID + ", " + VARIABLE2_TERMID + ", " + VARIABLE3_TERMID}, locale)).thenReturn(MISSING_VARIABLES);
+			Matchers.eq("study.execute.calculation.missing.variables"),
+			Matchers.any(String[].class), Matchers.eq(locale))).thenReturn(MISSING_VARIABLES);
 
 		final ResponseEntity<Map<String, Object>> response = this.derivedVariableController.execute(request, bindingResult);
 
@@ -295,6 +303,24 @@ public class DerivedVariableControllerTest {
 
 		Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
 		Assert.assertEquals(ENGINE_EXCEPTION, response.getBody().get("errorMessage"));
+	}
+	
+	@Test
+	public void testExecute_DateParsingException() {
+		final BindingResult bindingResult = Mockito.mock(BindingResult.class);
+		final CalculateVariableRequest request = new CalculateVariableRequest();
+		final int locationId = RandomUtils.nextInt();
+		request.setGeoLocationId(locationId);
+		request.setVariableId(RandomUtils.nextInt());
+		for (final MeasurementRow observation : this.studySelection.getWorkbook().getObservations()) {
+			observation.setLocationId(locationId);
+			observation.getMeasurementData(DATE_TERM1).setValue("2018-03-27");
+		}
+
+		final ResponseEntity<Map<String, Object>> response = this.derivedVariableController.execute(request, bindingResult);
+
+		Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+		Assert.assertEquals(DATE_PARSING_EXCEPTION, response.getBody().get("errorMessage"));
 	}
 
 	@Test
@@ -386,6 +412,8 @@ public class DerivedVariableControllerTest {
 		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(VARIABLE2_TERMID, "VARIABLE2", "", "TRIAL"));
 		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(VARIABLE3_TERMID, "VARIABLE3", "", "TRIAL"));
 		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(VARIABLE4_TERMID, "VARIABLE4", "", "TRIAL"));
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(DATE_TERM1, "VARIABLE5", "", "TRIAL"));
+		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(DATE_TERM2, "VARIABLE6", "", "TRIAL"));
 
 		return settingDetails;
 
@@ -425,6 +453,12 @@ public class DerivedVariableControllerTest {
 		measurementDataList.add(this.createMeasurementDataTestData(String.valueOf(VARIABLE2_TERMID), TERM_VALUE_2, null));
 		measurementDataList.add(this.createMeasurementDataTestData(String.valueOf(VARIABLE3_TERMID), TERM_VALUE_3, null));
 		measurementDataList.add(this.createMeasurementDataTestData(String.valueOf(VARIABLE5_TERMID), "", ""));
+		final MeasurementData dateData1 = this.createMeasurementDataTestData(String.valueOf(DATE_TERM1), DATE_TERM1_VALUE, null);
+		dateData1.getMeasurementVariable().setDataTypeId(TermId.DATE_VARIABLE.getId());
+		measurementDataList.add(dateData1);
+		final MeasurementData dateData2 = this.createMeasurementDataTestData(String.valueOf(DATE_TERM2), DATE_TERM2_VALUE, null);
+		dateData2.getMeasurementVariable().setDataTypeId(TermId.DATE_VARIABLE.getId());
+		measurementDataList.add(dateData2);
 		return measurementDataList;
 	}
 

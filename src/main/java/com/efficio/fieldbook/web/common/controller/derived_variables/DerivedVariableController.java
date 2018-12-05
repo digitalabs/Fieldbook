@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -131,7 +133,13 @@ public class DerivedVariableController {
 			// Get input data
 
 			final Set<String> rowInputMissingData = new HashSet<>();
-			DerivedVariableUtils.extractValues(parameters, row, rowInputMissingData);
+			try {
+				DerivedVariableUtils.extractValues(parameters, row, rowInputMissingData);
+			} catch (ParseException e) {
+				LOG.error("Error parsing date value for parameters " + parameters, e);
+				results.put("errorMessage", this.getMessage("study.execute.calculation.parsing.exception"));
+				return new ResponseEntity<>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 			inputMissingData.addAll(rowInputMissingData);
 
 			if (!rowInputMissingData.isEmpty() || parameters.values().contains("")) {

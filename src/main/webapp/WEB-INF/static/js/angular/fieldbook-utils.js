@@ -67,7 +67,7 @@
 
 	})();
 
-	angular.module('fieldbook-utils', ['ui.select2'])
+	angular.module('fieldbook-utils', ['ui.select2', 'ui.select', 'datatables'])
 		.constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
 		.constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
 		.directive('displaySettings', ['TrialManagerDataService', '$filter', '_', 'studyStateService',
@@ -147,9 +147,80 @@
 					$scope.size = function() {
 						return Object.keys($scope.settings).length;
 					};
+
+					$scope.doSelect = function (isChecked) {
+						if (!isChecked) {
+							$scope.options.selectAll = false;
+						}
+					};
 				}
 			};
 		}])
+		.directive('datasetSettings', ['$filter', '_',
+			function($filter, _) {
+				return {
+					restrict: 'E',
+					scope: {
+						settings: '=',
+						hideDelete: '=',
+						predeleteFunction: '&'
+					},
+					templateUrl: '/Fieldbook/static/angular-templates/displaySettings.html',
+					controller: function($scope, $element, $attrs) {
+
+						$scope.variableType = $attrs.variableType;
+						$scope.options = {
+							selectAll: false
+						};
+
+						$scope.doSelect = function (isChecked) {
+							if (!isChecked) {
+								$scope.options.selectAll = false;
+							}
+						};
+
+						// when the selectAll checkbox is clicked, do this
+						$scope.doSelectAll = function() {
+							var filteredVariables = $filter('removeHiddenAndDeletablesVariableFilter')($scope.settings.keys(), $scope.settings.vals());
+
+							_.each(filteredVariables, function(cvTermID) {
+								$scope.settings.val(cvTermID).isChecked = $scope.options.selectAll;
+							});
+
+						};
+
+						// when the delete button is clicked do this
+						$scope.removeSettings = function() {
+
+							if (typeof $scope.predeleteFunction() === 'undefined') {
+								$scope.doDeleteSelectedSettings();
+							} else {
+								var checkedVariableTermIds = $scope.retrieveCheckedVariableTermIds($scope.settings);
+								$scope.predeleteFunction()(checkedVariableTermIds);
+							}
+						};
+
+						$scope.retrieveCheckedVariableTermIds = function(_settings) {
+							var checkedCvtermIds = _.pairs(_settings.vals())
+								.filter(function(val) {
+									return _.last(val).isChecked;
+								})
+								.map(function(val) {
+									return parseInt(_.first(val));
+								});
+							return checkedCvtermIds;
+						};
+
+						$scope.doDeleteSelectedSettings = function() {
+
+						};
+
+						$scope.size = function() {
+							return Object.keys($scope.settings).length;
+						};
+					}
+				};
+			}])
 		.directive('validNumber', function() {
 
 			return {
@@ -208,7 +279,9 @@
 					restrict: 'A',
 					scope: {
 						modeldata: '=',
-						callback: '&'
+						callback: '&',
+						selectedvariables: '=',
+						selectVariableCallback: '='
 					},
 
 					link: function(scope, elem, attrs) {
@@ -245,18 +318,22 @@
 
 							var params = {
 								variableType: attrs.variableType,
-								retrieveSelectedVariableFunction: function() {
-									var allSettings = TrialManagerDataService.getSettingsArray();
-									var selected = {};
+								retrieveSelectedVariableFunction: function () {
+									if (!scope.selectedvariables) {
+										var allSettings = TrialManagerDataService.getSettingsArray();
+										var selected = {};
 
-									angular.forEach(allSettings, function(tabSettings) {
-										angular.forEach(tabSettings.vals(), function(value) {
-											selected[value.variable.cvTermId] = value.variable.name;
+										angular.forEach(allSettings, function (tabSettings) {
+											angular.forEach(tabSettings.vals(), function (value) {
+												selected[value.variable.cvTermId] = value.variable.name;
+											});
 										});
-									});
 
-									return selected;
-								}
+										return selected;
+									}
+									return scope.selectedvariables;
+								},
+								callback: scope.selectVariableCallback
 							};
 
 							$(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
@@ -310,7 +387,7 @@
 					var showAll = $scope.valuecontainer[$scope.targetkey];
 					$scope.localData.useFavorites = !showAll;
 					$scope.lookupLocation =  showAll ? 2 : 1;
-					
+
 					$scope.updateDropdownValuesFavorites = function() {
 						if ($scope.localData.useFavorites) {
 							if ($scope.lookupLocation == 1) {
@@ -326,12 +403,12 @@
 							}
 						}
 					};
-			
+
 					$scope.updateDropdownValuesBreedingLocation = function() { // Change state for breeding
 						$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.possibleValuesFavorite : $scope.variableDefinition.possibleValues;
 						$scope.lookupLocation = 1;
 					};
-					
+
 					$scope.updateDropdownValuesAllLocation = function() { // Change state for all locations radio
 						$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.allFavoriteValues : $scope.variableDefinition.allValues;
 						$scope.lookupLocation = 2;
@@ -350,75 +427,41 @@
 					};
 
 					if ($scope.hasDropdownOptions) {
-						var currentVal = $scope.valuecontainer[$scope.targetkey];
+                        var currentVal = $scope.valuecontainer[$scope.targetkey];
 
-						// lets fix current val if its an object so that valuecontainer only contains the id
+						// lets fix current val if its an object so that it only contains the id
 						if (typeof currentVal !== 'undefined' && currentVal !== null && typeof currentVal.id !== 'undefined' && currentVal.id) {
 							currentVal = currentVal.id;
-							$scope.valuecontainer[$scope.targetkey] = currentVal;
 						}
 
 						$scope.localData.useFavorites = useFavorites(currentVal);
 
 						$scope.updateDropdownValuesFavorites();
+						$scope.lookUpValues = [];
 
-						$scope.computeMinimumSearchResults = function() {
-							if($scope.dropdownValues != null)
-								return ($scope.dropdownValues.length > 0) ? 20 : -1;
-							return -1;
-						};
-
-						$scope.dropdownOptions = {
-							data: function() {
-								return {results: $scope.dropdownValues};
-							},
-							formatResult: function(value) {
-								// TODO: add code that can handle display of methods
-								return value.description;
-							},
-							formatSelection: function(value) {
-								// TODO: add code that can handle display of methods
-								return value.description;
-							},
-							minimumResultsForSearch: $scope.computeMinimumSearchResults(),
-							query: function(query) {
-								var data = {
-									results: $scope.dropdownValues
-								};
-
-								// return the array that matches
-								data.results = $.grep(data.results, function(item) {
-									return ($.fn.select2.defaults.matcher(query.term,
-										item.name));
-
-								});
-
-								query.callback(data);
+						angular.forEach($scope.dropdownValues, function(value) {
+							var idNumber;
+							if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
+								idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
 							}
+							$scope.lookUpValues[value.id] = value;
+							$scope.lookUpValues[value.description] = value;
+							if (value.description === $scope.valuecontainer[$scope.targetkey] ||
+								value.id === idNumber) {
+								$scope.valuecontainer[$scope.targetkey] = value;
+								if ($scope.isLocation){
+									selectedLocation(value, $scope.dropdownValues);
+								}
+							}
+						});
 
-						};
+                        $scope.$watch('valuecontainer[targetkey]', function() {
+                        	if($scope.lookUpValues[$scope.valuecontainer[$scope.targetkey]]) {
+                                $scope.valuecontainer[$scope.targetkey] = $scope.lookUpValues[$scope.valuecontainer[$scope.targetkey]];
+							}
+                        });
 
-						if ($scope.valuecontainer[$scope.targetkey]) {
-							$scope.dropdownOptions.initSelection = function(element, callback) {
-								angular.forEach($scope.dropdownValues, function(value) {
-									var idNumber;
-
-									if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
-										idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
-									}
-
-									if (value.description === $scope.valuecontainer[$scope.targetkey] ||
-										value.id === idNumber) {
-										if ($scope.isLocation){
-											selectedLocation(value, $scope.dropdownValues);
-										}
-										callback(value);
-										return false;
-									}
-								});
-							};
-						}
-					}
+                    }
 
 					// TODO: add code that can handle display of favorite methods, as well as update of possible values in case of click of manage methods
 					if ($scope.isLocation) {
@@ -644,6 +687,167 @@
 					};
 				}
 			};
-		});
+		}).directive('instancesTable', ['DTOptionsBuilder', 'DTColumnBuilder', function (DTOptionsBuilder, DTColumnBuilder) {
+
+			return {
+				restrict: 'E',
+				require: '?ngModel',
+				scope: {
+					instances: '=',
+					selectedInstances: '=',
+					isEmptySelection: '=',
+					instanceIdProperty: '@'
+				},
+				templateUrl: '/Fieldbook/static/angular-templates/instancesTable.html',
+				controller: function ($scope) {
+
+					var ctrl = this;
+
+					var watchInstances = $scope.$watch('instances', function (newValue, oldValue, scope) {
+						if (newValue.length !== oldValue.length) {
+							// Select All Checkbox by default.
+							$scope.toggleSelect(true);
+							// unregister watch once instances is initialized
+							watchInstances();
+						}
+					});
+
+					ctrl.isSelectAll = true;
+					$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<\'row\'<\'col-sm-6\'l><\'col-sm-6\'f>>' +
+						'<\'row\'<\'col-sm-12\'tr>>' +
+						'<\'row\'<\'col-sm-5\'i><\'col-sm-7\'>>' +
+						'<\'row\'<\'col-sm-12\'p>>');
+
+					$scope.toggleSelect = function (checked) {
+						$.each($scope.instances, function (key, value) {
+							$scope.selectedInstances[value[$scope.instanceIdProperty]] = checked;
+						});
+						$scope.selectionChanged();
+					};
+
+					$scope.select = function (itemId) {
+						if (!$scope.selectedInstances[itemId]) {
+							ctrl.isSelectAll = false;
+						}
+						$scope.selectionChanged();
+					};
+
+					$scope.selectionChanged = function() {
+						// Returns true if all instances are not selected
+						$scope.isEmptySelection = Object.values($scope.selectedInstances).every(function (value) {
+							return value === false;
+						});
+					};
+
+				},
+				controllerAs: 'ctrl'
+			};
+		}]).factory('formUtilities', function() {
+
+			var formUtilities = {
+
+				formGroupClassGenerator: function ($scope, formName) {
+					return function (fieldName) {
+						var className = 'form-group';
+
+						// If the field hasn't been initialised yet, don't do anything!
+
+						if ($scope[formName] && $scope[formName][fieldName]) {
+
+							// Don't mark as invalid until we are relatively sure the user is finished doing things
+							if ($scope[formName].$submitted || $scope[formName][fieldName].$touched) {
+
+								// Only mark as invalid if the field is.. well, invalid
+								if ($scope[formName][fieldName].$invalid) {
+									className += ' has-error';
+								}
+							}
+						}
+						return className;
+					};
+				}
+			}
+			return formUtilities;
+		})
+		.filter('capitalize', function () {
+			return function (inputString) {
+				if (inputString !== undefined) {
+					inputString = inputString.toLowerCase();
+					if (inputString.indexOf(' ') !== -1) {
+						return splitAndCapitalizeString(inputString, ' ');
+					}
+					else {
+						return capitalizeString(inputString);
+					}
+				} else {
+					return inputString;
+				}
+
+				function capitalizeString(inputString) {
+					if (inputString.indexOf('-') !== -1) {
+						return splitAndCapitalizeString(inputString, '-');
+					}
+					return inputString.substring(0, 1).toUpperCase() + inputString.substring(1);
+				}
+
+				function splitAndCapitalizeString(inputString, splitBy) {
+					var inputPieces, i;
+					inputString = inputString.toLowerCase();
+					inputPieces = inputString.split(splitBy);
+
+					for (i = 0; i < inputPieces.length; i++) {
+						inputPieces[i] = capitalizeString(inputPieces[i]);
+					}
+					return inputPieces.toString().replace(/,/g, splitBy);
+
+				}
+
+			};
+		})
+		.factory('serviceUtilities', ['$q', function ($q) {
+			return {
+				restSuccessHandler: function (response) {
+					return response.data;
+				},
+
+				restFailureHandler: function (response) {
+					return $q.reject({
+						status: response.status,
+						data: response.data,
+						errors: response.data && response.data.errors
+					});
+				}
+			};
+		}]).service('fileDownloadHelper', [function () {
+
+			var fileDownloadHelper = {};
+
+			fileDownloadHelper.save = function (blob, fileName) {
+
+				var url = window.URL.createObjectURL(blob);
+
+				// For IE 10 or later
+				if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+					window.navigator.msSaveOrOpenBlob(url, fileName);
+				} else { // For Chrome/Safari/Firefox and other browsers with HTML5 support
+					var link = document.createElement('a');
+					link.href = url;
+					link.download = fileName;
+					document.body.appendChild(link);
+					link.click();
+					document.body.removeChild(link);
+				}
+			};
+
+			fileDownloadHelper.getFileNameFromResponseContentDisposition = function (response) {
+
+				var contentDisposition = response.headers('content-disposition') || '';
+				var matches = /filename=([^;]+)/ig.exec(contentDisposition);
+				var fileName = (matches[1] || 'untitled').trim();
+				return fileName;
+			};
+
+			return fileDownloadHelper;
+		}]);
 	}
 )();

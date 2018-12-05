@@ -1,6 +1,11 @@
 <div ng-switch="widgetType">
     <div ng-switch-when="DROPDOWN">
-        <input type="hidden" ui-select2="dropdownOptions" class="form-control select2" ng-model="valuecontainer[targetkey]" value-as-object="false" ng-change="changefunction()" ng-disabled="blockInput"/>
+        <ui-select name="name" theme="select2" search-enabled="false" ng-model="valuecontainer[targetkey]" ng-disabled="blockInput" style="width:100%" ng-change="changefunction()">
+            <ui-select-match placeholder="Please Choose">{{valuecontainer[targetkey].description}}</ui-select-match>
+            <ui-select-choices repeat="option in dropdownValues">
+                <div ng-bind-html="option.description"></div>
+            </ui-select-choices>
+        </ui-select>
         <div ng-if="isLocation">
             <div class="possibleValuesDiv">
                 <input type="radio" ng-disabled="blockInput"

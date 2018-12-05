@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.DesignRunner;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
-import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesign;
 import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
@@ -68,6 +68,9 @@ public class MockDesignRunnerImpl implements DesignRunner {
 			replications = Integer.parseInt(expDesign.getParameterValue(ExperimentDesignGenerator.NREPLICATES_PARAM));
 		}
 
+		final String numberTrialsParam = expDesign.getParameterValue(ExperimentDesignGenerator.NUMBER_TRIALS_PARAM);
+		final int numberTrials = StringUtils.isNumeric(numberTrialsParam) ? Integer.valueOf(numberTrialsParam) : 1;
+				
 		final String initPlotNoParam = expDesign.getParameterValue(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM);
 		int startingPlotNo = StringUtils.isNumeric(initPlotNoParam) ? Integer.valueOf(initPlotNoParam) : 1;
 
@@ -86,9 +89,9 @@ public class MockDesignRunnerImpl implements DesignRunner {
 					rowColTuples.add(new ImmutablePair<Integer, Integer>(r, c));
 				}
 			}
-			csvLines.add(new String[] {"PLOT_NO", "REP_NO", "ENTRY_NO", "ROW", "COL"});
+			csvLines.add(new String[] {"TRIAL", "PLOT_NO", "REP_NO", "ENTRY_NO", "ROW", "COL"});
 		} else {
-			csvLines.add(new String[] {"PLOT_NO", "REP_NO", "ENTRY_NO"});
+			csvLines.add(new String[] {"TRIAL", "PLOT_NO", "REP_NO", "ENTRY_NO"});
 		}
 
 		List<Integer> entryNumbers = new ArrayList<>();
@@ -96,25 +99,27 @@ public class MockDesignRunnerImpl implements DesignRunner {
 			entryNumbers.add(startingEntryNo++);
 		}
 
-
-		for (int rep = 1; rep <= replications; rep++) {
-			int rowColTuplesCounter = 0;
-			// Randomize entry number arrangements per replication
-			Collections.shuffle(entryNumbers);
-			for (int j = 0; j < entryNumbers.size(); j++) {
-				final List<String> csvLine = new ArrayList<>();
-				csvLine.add(String.valueOf(startingPlotNo++));
-				csvLine.add(String.valueOf(rep));
-				csvLine.add(entryNumbers.get(j).toString());
-				if (expDesign.getName().equals(ExperimentDesignGenerator.RESOLVABLE_ROW_COL_DESIGN)) {
-					Pair<Integer, Integer> rowColTuple = rowColTuples.get(rowColTuplesCounter);
-					csvLine.add(String.valueOf(rowColTuple.getLeft()));
-					csvLine.add(String.valueOf(rowColTuple.getRight()));
-					rowColTuplesCounter++;
+		for (int instance = 1; instance <= numberTrials; instance++) {
+			for (int rep = 1; rep <= replications; rep++) {
+				int rowColTuplesCounter = 0;
+				// Randomize entry number arrangements per replication
+				Collections.shuffle(entryNumbers);
+				for (int j = 0; j < entryNumbers.size(); j++) {
+					final List<String> csvLine = new ArrayList<>();
+					csvLine.add(String.valueOf(instance));
+					csvLine.add(String.valueOf(startingPlotNo++));
+					csvLine.add(String.valueOf(rep));
+					csvLine.add(entryNumbers.get(j).toString());
+					if (expDesign.getName().equals(ExperimentDesignGenerator.RESOLVABLE_ROW_COL_DESIGN)) {
+						Pair<Integer, Integer> rowColTuple = rowColTuples.get(rowColTuplesCounter);
+						csvLine.add(String.valueOf(rowColTuple.getLeft()));
+						csvLine.add(String.valueOf(rowColTuple.getRight()));
+						rowColTuplesCounter++;
+					}
+					String[] csvLineAsArray = new String[csvLine.size()];
+					csvLine.toArray(csvLineAsArray);
+					csvLines.add(csvLineAsArray);
 				}
-				String[] csvLineAsArray = new String[csvLine.size()];
-				csvLine.toArray(csvLineAsArray);
-				csvLines.add(csvLineAsArray);
 			}
 		}
 		BVDesignOutput output = new BVDesignOutput(0);

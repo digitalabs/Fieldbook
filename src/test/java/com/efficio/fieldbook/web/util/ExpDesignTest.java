@@ -27,9 +27,9 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
-import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
+import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 
 @Ignore
@@ -57,7 +57,7 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testResolvableIncompleteBlockExpDesignRunToBvDesign() {
 
-		final MainDesign mainDesign = experimentDesignGenerator.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps",
+		final MainDesign mainDesign = this.experimentDesignGenerator.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps",
 				"Subblocks", "Plots", 301, null, "0", "", "", false);
 
 		try {
@@ -71,7 +71,8 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testResolvableRowColExpDesignRunToBvDesign() {
 
-		final MainDesign mainDesign = experimentDesignGenerator.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns",
+		final MainDesign mainDesign = this.experimentDesignGenerator
+			.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns",
 				"Plots", 301, null, "0", "0", "", "", false);
 
 		try {
@@ -85,15 +86,16 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testRandomizeCompleteBlockDesignExpDesignRunToBvDesign() {
 
-		final List<String> treatmentFactor = new ArrayList<String>();
-		treatmentFactor.add("ENTRY_NO");
-		treatmentFactor.add("FERTILIZER");
+		final List<String> treatmentFactors = new ArrayList<String>();
+		treatmentFactors.add("ENTRY_NO");
+		treatmentFactors.add("FERTILIZER");
 
 		final List<String> levels = new ArrayList<String>();
 		levels.add("24");
 		levels.add("3");
 
-		final MainDesign mainDesign = experimentDesignGenerator.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, treatmentFactor, levels, "");
+		final MainDesign mainDesign = this.experimentDesignGenerator
+			.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, TermId.ENTRY_NO.name(), treatmentFactors, levels, "");
 
 		try {
 			final BVDesignOutput output = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);

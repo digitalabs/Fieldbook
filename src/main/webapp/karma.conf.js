@@ -17,14 +17,17 @@ module.exports = function (config) {
 			'WEB-INF/static/js/angular-tests/mocks/globals-mock.js',
 
 			// AngularJS plugins and dependencies
-			'WEB-INF/static/js/lib/angular/angular.min.js',
+			'WEB-INF/static/js/lib/angular/angular.js',
+			'WEB-INF/static/js/lib/angular/angular-messages.min.js',
 			'WEB-INF/static/js/lib/angular/angular-local-storage.min.js',
 			'WEB-INF/static/js/lib/angular/angular-resource.min.js',
-			'WEB-INF/static/js/lib/angular/angular-route.min.js',
 			'WEB-INF/static/js/lib/angular/angular-sanitize.js',
 			'WEB-INF/static/js/lib/angular/angular-select2.js',
-			'WEB-INF/static/js/lib/angular/angular-ui-router.min.js',
-			'WEB-INF/static/js/lib/angular/ct-ui-router-extras.min.js',
+			'WEB-INF/static/js/lib/angular/ui-router-core.min.js',
+			'WEB-INF/static/js/lib/angular/ui-router-dsr.min.js',
+			'WEB-INF/static/js/lib/angular/ui-router-sticky-states.js',
+			'WEB-INF/static/js/lib/angular/ui-router-angularjs.min.js',
+			'WEB-INF/static/js/lib/angular/angular-block-ui.min.js',
 			'WEB-INF/static/js/lib/angular/ng-lodash.min.js',
 			'WEB-INF/static/js/lib/angular/sanitize.js',
 			'WEB-INF/static/js/lib/angular/select.js',
@@ -43,6 +46,9 @@ module.exports = function (config) {
 			'WEB-INF/static/js/lib/datatable/dataTables.colVis.js',
 			'WEB-INF/static/js/lib/datatable/dataTables.fixedColumns.js',
 			'WEB-INF/static/js/lib/datatable/dataTables.scroller.js',
+
+			'WEB-INF/static/js/angular/angular-local-storage.min.js',
+			'WEB-INF/static/js/angular/bmsAuth.js',
 
 			// Modules to test
 			'WEB-INF/static/js/angular/angular-utilities.js',
@@ -66,7 +72,10 @@ module.exports = function (config) {
 			'WEB-INF/static/js/trialmanager/showSettingFormElementNew.js',
 			'WEB-INF/static/js/trialmanager/germplasm.js',
 			'WEB-INF/static/js/trialmanager/datasetService.js',
+			'WEB-INF/static/js/trialmanager/exportStudy.js',
+			'WEB-INF/static/js/trialmanager/datasetOptionModal.js',
 			'WEB-INF/static/js/design-import/design-import-main.js',
+
 
 			// unit test files
 			'WEB-INF/static/js/angular-tests/lib/angular-mocks.js',
@@ -76,7 +85,7 @@ module.exports = function (config) {
 		preprocessors: {},
 		reporters: ['dots'],
 		port: 9876,
-		colors: false,
+		colors: true,
 		logLevel: config.LOG_INFO,
 		autoWatch: false,
 		browsers: ['PhantomJS'],

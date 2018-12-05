@@ -190,18 +190,6 @@
 				});
 			};
 
-			var performDataCleanup = function() {
-				// TODO: delegate the task of cleaning up data to each tab that produces it, probably via listener
-
-				// perform cleanup of data for study settings
-				// right now, just make sure that no objects are sent as user input for user-defined settings
-				cleanupData(service.currentData.trialSettings.userInput);
-				angular.forEach(service.currentData.environments.environments, function(environment) {
-					cleanupData(environment.managementDetailValues);
-					cleanupData(environment.trialDetailValues);
-				});
-			};
-
 			var cleanupData = function(values) {
 				if (values) {
 					angular.forEach(values, function(value, key) {
@@ -281,6 +269,21 @@
                     hasAdvancedOrCrossesList: TRIAL_HAS_ADVANCED_OR_CROSSES_LIST,
 					count: parseInt(TRIAL_MEASUREMENT_COUNT, 10)
 				},
+
+                performDataCleanup: function() {
+                    // TODO: delegate the task of cleaning up data to each tab that produces it, probably via listener
+
+                    // perform cleanup of data for study settings
+                    // right now, just make sure that no objects are sent as user input for user-defined settings
+                    cleanupData(service.currentData.trialSettings.userInput);
+                    angular.forEach(service.currentData.treatmentFactors.currentData, function(treatmentFactor) {
+                        cleanupData(treatmentFactor.labels);
+                    });
+                    angular.forEach(service.currentData.environments.environments, function(environment) {
+                        cleanupData(environment.managementDetailValues);
+                        cleanupData(environment.trialDetailValues);
+                    });
+                },
 
 				// returns a promise object to be resolved later
 				retrieveVariablePairs: function(cvTermId) {
@@ -445,7 +448,7 @@
                         // Hide Discard Imported Data button when the user presses Save button
                         $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
                         stockListImportNotSaved = false;
-						performDataCleanup();
+						service.performDataCleanup();
 						var columnsOrder =  ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenStudy()) ?
 							BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table') : [];
 						var serializedData = (JSON.stringify(columnsOrder));

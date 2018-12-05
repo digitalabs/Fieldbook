@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
+import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -21,11 +23,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.pojos.workbench.settings.Condition;
-import org.generationcp.middleware.pojos.workbench.settings.Constant;
-import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.pojos.workbench.settings.Factor;
-import org.generationcp.middleware.pojos.workbench.settings.Variate;
+import org.generationcp.middleware.pojos.workbench.settings.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -47,6 +45,10 @@ import junit.framework.Assert;
 
 public class SettingsUtilTest {
 
+	public static final String NFERT_NO = "NFERT_NO";
+	public static final String NFERT_KG = "NFERT_KG";
+	public static final int NFERT_NO_ID = 1001;
+	public static final int NFERT_KG_ID = 1002;
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	
@@ -314,6 +316,46 @@ public class SettingsUtilTest {
 		result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
 		Assert.assertEquals(1, result.getReplicationsArrangement().intValue());
 
+	}
+
+	@Test
+	public void testProcessTreatmentFactorItems() {
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(SettingsUtilTest.NFERT_NO_ID, SettingsUtilTest.PROGRAM_UUID)).thenReturn(StandardVariableTestDataInitializer.createStandardVariable(
+				SettingsUtilTest.NFERT_NO_ID, SettingsUtilTest.NFERT_NO));
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(SettingsUtilTest.NFERT_KG_ID, SettingsUtilTest.PROGRAM_UUID)).thenReturn(StandardVariableTestDataInitializer.createStandardVariable(
+				SettingsUtilTest.NFERT_KG_ID, SettingsUtilTest.NFERT_KG));
+		final List<SettingDetail> treatmentFactorDetails =  new ArrayList<>();
+		treatmentFactorDetails.add(SettingDetailTestDataInitializer.createSettingDetail(SettingsUtilTest.NFERT_NO_ID, SettingsUtilTest.NFERT_NO, SettingsUtilTest.NFERT_KG, PhenotypicType.TRIAL_DESIGN));
+		treatmentFactorDetails.add(SettingDetailTestDataInitializer.createSettingDetail(SettingsUtilTest.NFERT_KG_ID, SettingsUtilTest.NFERT_KG, "1", PhenotypicType.TRIAL_DESIGN));
+
+		final Map<String, TreatmentFactorData> treatmentFactorItems = new HashMap<>();
+		final TreatmentFactorData data = new TreatmentFactorData();
+		data.setVariableId(SettingsUtilTest.NFERT_KG_ID);
+		data.setLabels(Arrays.asList("1"));
+		treatmentFactorItems.put("1001", data);
+
+		final List<Factor> factorList = new ArrayList<>();
+
+		final List<TreatmentFactor> treatmentFactors = SettingsUtil.processTreatmentFactorItems(treatmentFactorDetails, treatmentFactorItems, factorList, this.fieldbookMiddlewareService, SettingsUtilTest.PROGRAM_UUID);
+		Assert.assertEquals(1, treatmentFactors.size());
+		Assert.assertEquals("1", treatmentFactors.get(0).getValue());
+		Assert.assertEquals("1", treatmentFactors.get(0).getLevelNumber().toString());
+		Assert.assertEquals(SettingsUtilTest.NFERT_NO, treatmentFactors.get(0).getLevelFactor().getName());
+		Assert.assertEquals(SettingsUtilTest.NFERT_KG, treatmentFactors.get(0).getValueFactor().getName());
+	}
+
+	@Test
+	public void testAddFactor() {
+		final Map<Integer, Factor> factorsMap = new HashMap<>();
+		final Factor factor = new Factor();
+		factor.setId(1);
+		final List<Factor> factorList = new ArrayList<>();
+
+		SettingsUtil.addFactor(factorsMap, factor, factorList);
+		Assert.assertEquals(1, factorList.size());
+		//Try to re-add the factor
+		SettingsUtil.addFactor(factorsMap, factor, factorList);
+		Assert.assertEquals(1, factorList.size());
 	}
 
 	@Test

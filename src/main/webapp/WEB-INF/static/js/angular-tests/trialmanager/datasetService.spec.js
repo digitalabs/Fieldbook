@@ -3,15 +3,22 @@
 describe('Dataset Service', function () {
 
 	var datasetService, $httpBackend, $q;
+	var studyContext = {
+		studyId: 1,
+		cropName: 'maize',
+		measurementDatasetId: 2009
+	};
 
 	beforeEach(function () {
 
 		module('datasets-api');
 
-		spyOn(JSON, 'parse').and.callFake(function (key) {
-			return {token: 734789327};
+		module(function ($provide) {
+			$provide.value("studyContext", studyContext);
+			$provide.value("serviceUtilities", {});
+			$provide.value("DATASET_TYPES_SUBOBSERVATION_IDS", [10094,10095,10096,10097]);
+			$provide.value("DATASET_TYPES", {});
 		});
-
 	});
 
 	beforeEach(inject(function ($injector) {
@@ -32,17 +39,15 @@ describe('Dataset Service', function () {
 				datasetId + '/variables/observations?variableIds=' + variableIds.join(','))
 				.respond({}, {'X-Total-Count': '100'});
 
-			datasetService.observationCount(studyId, datasetId, variableIds).then(function (response) {
+			datasetService.observationCount(datasetId, variableIds).then(function (response) {
 				expect(response.headers('X-Total-Count')).toEqual('100');
 			});
-
-			$httpBackend.flush();
 
 		});
 
 		it('should return reject if any of the parameters are undefined', function () {
 
-			datasetService.observationCount(undefined, undefined, undefined).then(function (response) {
+			datasetService.observationCount(undefined, undefined).then(function (response) {
 			}).catch(function (reason) {
 				expect(reason).toEqual('studyId, datasetId and variableIds are not defined.');
 			});
@@ -63,20 +68,61 @@ describe('Dataset Service', function () {
 				datasetId + '/observationUnits/' + instanceId)
 				.respond({}, {'X-Total-Count': '200'});
 
-			datasetService.observationCountByInstance(studyId, datasetId, instanceId).then(function (response) {
+			datasetService.observationCountByInstance(datasetId, instanceId).then(function (response) {
 				expect(response.headers('X-Total-Count')).toEqual('200');
 			});
-
-			$httpBackend.flush();
 
 		});
 
 		it('should return reject if any of the parameters are undefined', function () {
 
-			datasetService.observationCountByInstance(undefined, undefined, undefined).then(function (response) {
+			datasetService.observationCountByInstance(undefined, undefined).then(function (response) {
 			}).catch(function (reason) {
 				expect(reason).toEqual('studyId, instanceId and datasetId are not defined.');
 			});
+
+		});
+
+	});
+
+
+	describe('getDatasetInstances', function () {
+
+		it('should call the correct web api', function () {
+
+			var datasetId = 2;
+			var instanceId = 3;
+			var mockData = {};
+
+			$httpBackend.whenGET('/bmsapi/crops/maize/studies/' + studyContext.studyId + '/datasets/' +
+				datasetId + '/instances')
+				.respond(mockData);
+
+			datasetService.getDatasetInstances(datasetId).then(function (response) {
+				expect(response.data).toEqual(mockData);
+			});
+
+		});
+
+	});
+
+	describe('exportDataset', function () {
+
+		it('should call the correct web api', function () {
+
+			var datasetId = 2;
+			var instanceIds = [1, 2, 3];
+			var collectionOrderId = 1;
+			var mockData = {};
+
+			$httpBackend.whenGET('/bmsapi/crops/maize/studies/' + studyContext.studyId + '/datasets/' +
+				datasetId + '/csv/')
+				.respond(mockData);
+
+			datasetService.exportDataset(datasetId, instanceIds, collectionOrderId).then(function (response) {
+				expect(response.data).toEqual(mockData);
+			});
+
 
 		});
 

@@ -5,20 +5,14 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.factory('environmentService', ['$rootScope', 'TrialManagerDataService', '$http', 'serviceUtilities', function ($rootScope, TrialManagerDataService, $http, serviceUtilities) {
+	manageTrialApp.factory('environmentService', ['$rootScope', 'TrialManagerDataService', '$http', 'serviceUtilities', 'studyContext', function ($rootScope, TrialManagerDataService, $http, serviceUtilities, studyContext) {
 
 		var environmentService = {};
 		var successHandler = serviceUtilities.restSuccessHandler,
 			failureHandler = serviceUtilities.restFailureHandler;
 
 		environmentService.getEnvironments = function () {
-			var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
-			var config = {
-				headers: {
-					'X-Auth-Token': xAuthToken
-				}
-			};
-			var request = $http.get('/bmsapi/study/' + cropName + '/' + TrialManagerDataService.currentData.basicDetails.studyID + '/instances', config);
+			var request = $http.get('/bmsapi/study/' + studyContext.cropName + '/' + studyContext.studyId + '/instances');
 			return request.then(successHandler, failureHandler);
 		};
 
@@ -34,21 +28,5 @@
 
 		return environmentService;
 
-	}]);
-
-	manageTrialApp.factory('serviceUtilities', ['$q', function ($q) {
-		return {
-			restSuccessHandler: function (response) {
-				return response.data;
-			},
-
-			restFailureHandler: function (response) {
-				return $q.reject({
-					status: response.status,
-					data: response.data,
-					errors: response.data && response.data.errors
-				});
-			}
-		};
 	}]);
 })();

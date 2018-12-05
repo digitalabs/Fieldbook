@@ -3,11 +3,12 @@ package com.efficio.fieldbook.service.internal;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.impl.BVDesignRunner;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
-import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import junit.framework.Assert;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,7 +56,7 @@ public class BVDesignRunnerTest {
 		this.bvDesignRunner.setProcessRunner(this.processRunner);
 		this.bvDesignRunner.setInputWriter(this.inputWriter);
 
-		when(fieldbookProperties.getBvDesignPath()).thenReturn(BV_DESIGN_EXECUTABLE_PATH);
+		when(this.fieldbookProperties.getBvDesignPath()).thenReturn(BV_DESIGN_EXECUTABLE_PATH);
 	}
 
 	@Test
@@ -64,13 +65,13 @@ public class BVDesignRunnerTest {
 		final String xmlInputFilePath = "xmlInputFilePath";
 		final Integer successfulReturnCode = 0;
 
-		final MainDesign mainDesign = createRandomizedCompleteBlockDesign();
+		final MainDesign mainDesign = this.createRandomizedCompleteBlockDesign();
 
 		when(this.inputWriter.write(anyString(), eq(this.fieldbookProperties))).thenReturn(xmlInputFilePath);
 		when(this.processRunner.run(BV_DESIGN_EXECUTABLE_PATH, "-i" + xmlInputFilePath)).thenReturn(successfulReturnCode);
 		when(this.outputReader.read(anyString())).thenReturn(new ArrayList<String[]>());
 
-		final BVDesignOutput bvDesignOutput = this.bvDesignRunner.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
+		final BVDesignOutput bvDesignOutput = this.bvDesignRunner.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
 
 		verify(this.processRunner).run(BV_DESIGN_EXECUTABLE_PATH, "-i" + xmlInputFilePath);
 		verify(this.outputReader).read(mainDesign.getDesign().getParameterValue(ExperimentDesignGenerator.OUTPUTFILE_PARAM));
@@ -84,12 +85,12 @@ public class BVDesignRunnerTest {
 		final String xmlInputFilePath = "xmlInputFilePath";
 		final Integer failureReturnCode = -1;
 
-		final MainDesign mainDesign = createRandomizedCompleteBlockDesign();
+		final MainDesign mainDesign = this.createRandomizedCompleteBlockDesign();
 
 		when(this.inputWriter.write(anyString(), eq(this.fieldbookProperties))).thenReturn(xmlInputFilePath);
 		when(this.processRunner.run(BV_DESIGN_EXECUTABLE_PATH, "-i" + xmlInputFilePath)).thenReturn(failureReturnCode);
 
-		final BVDesignOutput bvDesignOutput = this.bvDesignRunner.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
+		final BVDesignOutput bvDesignOutput = this.bvDesignRunner.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
 
 		verify(this.processRunner).run(BV_DESIGN_EXECUTABLE_PATH, "-i" + xmlInputFilePath);
 		verify(this.outputReader, never()).read(mainDesign.getDesign().getParameterValue(ExperimentDesignGenerator.OUTPUTFILE_PARAM));
@@ -100,7 +101,7 @@ public class BVDesignRunnerTest {
 	@Test
 	public void testGetXMLStringForRandomizedCompleteBlockDesign() {
 
-		final MainDesign mainDesign = createRandomizedCompleteBlockDesign();
+		final MainDesign mainDesign = this.createRandomizedCompleteBlockDesign();
 
 		final String expectedString =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"RandomizedBlock\">"
@@ -109,7 +110,8 @@ public class BVDesignRunnerTest {
 						+ ExperimentDesignGenerator.BLOCKFACTOR_PARAM + "\" value=\"Reps\"/>" + "<Parameter name=\""
 						+ ExperimentDesignGenerator.PLOTFACTOR_PARAM + "\" value=\"Plots\"/>" + "<Parameter name=\""
 						+ ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM + "\" value=\"301\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM + "\" value=\"201\"/>" + "<Parameter name=\""
+						+ ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM + "\">"
+						+ "<ListItem value=\"201\"/><ListItem value=\"1\"/></Parameter>"+"<Parameter name=\""
 						+ ExperimentDesignGenerator.TREATMENTFACTORS_PARAM
 						+ "\"><ListItem value=\"ENTRY_NO\"/><ListItem value=\"FERTILIZER\"/></Parameter>"
 						+ "<Parameter name=\"levels\"><ListItem value=\"24\"/><ListItem value=\"3\"/></Parameter>" + "<Parameter name=\""
@@ -125,7 +127,7 @@ public class BVDesignRunnerTest {
 
 	@Test
 	public void testGetXMLStringForResolvableIncompleteBlockDesign() {
-		final MainDesign mainDesign = experimentDesignGenerator
+		final MainDesign mainDesign = this.experimentDesignGenerator
 				.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps", "Subblocks", "Plots", 301, null, "0", "", "",
 						false);
 
@@ -153,7 +155,7 @@ public class BVDesignRunnerTest {
 
 	@Test
 	public void testGetXMLStringForResolvableRowColExpDesign() {
-		final MainDesign mainDesign = experimentDesignGenerator
+		final MainDesign mainDesign = this.experimentDesignGenerator
 				.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns", "Plots", 301, null, "0", "0", "",
 						"", false);
 
@@ -184,7 +186,7 @@ public class BVDesignRunnerTest {
 
 	@Test
 	public void testGetXMLStringForResolvableIncompleteBlockDesignWithEntryNumber() {
-		final MainDesign mainDesign = experimentDesignGenerator
+		final MainDesign mainDesign = this.experimentDesignGenerator
 				.createResolvableIncompleteBlockDesign("6", "24", "2", "ENTRY_NO", "Reps", "Subblocks", "Plots", 301, 245, "0", "", "",
 						false);
 
@@ -213,7 +215,7 @@ public class BVDesignRunnerTest {
 
 	@Test
 	public void testGetXMLStringForResolvableRowColumnDesignWithEntryNumber() {
-		final MainDesign mainDesign = experimentDesignGenerator
+		final MainDesign mainDesign = this.experimentDesignGenerator
 				.createResolvableRowColDesign("24", "2", "5", "10", "ENTRY_NO", "Reps", "Rows", "Columns", "Plots", 301, 245, "0", "0", "",
 						"", false);
 
@@ -262,14 +264,15 @@ public class BVDesignRunnerTest {
 
 	private MainDesign createRandomizedCompleteBlockDesign() {
 
-		final List<String> treatmentFactor = new ArrayList<>();
-		treatmentFactor.add("ENTRY_NO");
-		treatmentFactor.add("FERTILIZER");
+		final List<String> treatmentFactors = new ArrayList<>();
+		treatmentFactors.add("ENTRY_NO");
+		treatmentFactors.add("FERTILIZER");
 
 		final List<String> levels = new ArrayList<>();
 		levels.add("24");
 		levels.add("3");
 
-		return experimentDesignGenerator.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, treatmentFactor, levels, "");
+		return this.experimentDesignGenerator
+			.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, TermId.ENTRY_NO.name(), treatmentFactors, levels, "");
 	}
 }

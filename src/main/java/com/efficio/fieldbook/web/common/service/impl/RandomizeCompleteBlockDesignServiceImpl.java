@@ -79,7 +79,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 
 		try {
 
-			final List<String> treatmentFactor = new ArrayList<>();
+			final List<String> treatmentFactors = new ArrayList<>();
 			final List<String> levels = new ArrayList<>();
 
 			// Key - CVTerm ID , List of values
@@ -107,10 +107,10 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 						final int treatmentPair1 = Integer.parseInt(key);
 						final int treatmentPair2 = Integer.parseInt(pairVar);
 						final StandardVariable stdVar1 =
-								this.fieldbookMiddlewareService.getStandardVariable(treatmentPair1, contextUtil.getCurrentProgramUUID());
+								this.fieldbookMiddlewareService.getStandardVariable(treatmentPair1, this.contextUtil.getCurrentProgramUUID());
 						stdVar1.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 						final StandardVariable stdVar2 =
-								this.fieldbookMiddlewareService.getStandardVariable(treatmentPair2, contextUtil.getCurrentProgramUUID());
+								this.fieldbookMiddlewareService.getStandardVariable(treatmentPair2, this.contextUtil.getCurrentProgramUUID());
 						stdVar2.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 						final TreatmentVariable treatmentVar = new TreatmentVariable();
 						final MeasurementVariable measureVar1 =
@@ -137,16 +137,16 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 				final Set<String> keySet = treatmentFactorValues.keySet();
 				for (final String key : keySet) {
 					final int level = treatmentFactorValues.get(key).size();
-					treatmentFactor.add(ExpDesignUtil.cleanBVDesingKey(key));
+					treatmentFactors.add(ExpDesignUtil.cleanBVDesingKey(key));
 					levels.add(Integer.toString(level));
 				}
 			}
 
 			final StandardVariable stdvarTreatment =
-					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(), contextUtil.getCurrentProgramUUID());
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 
 			treatmentFactorValues.put(stdvarTreatment.getName(), Arrays.asList(Integer.toString(germplasmList.size())));
-			treatmentFactor.add(stdvarTreatment.getName());
+			treatmentFactors.add(stdvarTreatment.getName());
 			levels.add(Integer.toString(germplasmList.size()));
 
 			StandardVariable stdvarRep = null;
@@ -163,17 +163,13 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			}
 
 			final Integer plotNo = StringUtil.parseInt(parameter.getStartingPlotNo(), null);
-			Integer entryNo = StringUtil.parseInt(parameter.getStartingEntryNo(), null);
+			final Integer entryNo = StringUtil.parseInt(parameter.getStartingEntryNo(), null);
 
-			if (!Objects.equals(stdvarTreatment.getId(), TermId.ENTRY_NO.getId())) {
-				entryNo = null;
-			}
-
-			final MainDesign mainDesign = experimentDesignGenerator
-					.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), plotNo, entryNo, treatmentFactor,
+			final MainDesign mainDesign = this.experimentDesignGenerator
+					.createRandomizedCompleteBlockDesign(block, stdvarRep.getName(), stdvarPlot.getName(), plotNo, entryNo, stdvarTreatment.getName(), treatmentFactors,
 							levels, "");
 
-			measurementRowList = experimentDesignGenerator
+			measurementRowList = this.experimentDesignGenerator
 					.generateExperimentDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
 							variates, treatmentVariables, reqVarList, germplasmList, mainDesign, stdvarTreatment.getName(),
 							treatmentFactorValues, new HashMap<Integer, Integer>());
@@ -192,10 +188,10 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 		final List<StandardVariable> varList = new ArrayList<>();
 		try {
 			final StandardVariable stdvarRep =
-					this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId(), contextUtil.getCurrentProgramUUID());
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 			stdvarRep.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 			final StandardVariable stdvarPlot =
-					this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), contextUtil.getCurrentProgramUUID());
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 			stdvarPlot.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 
 			varList.add(stdvarRep);

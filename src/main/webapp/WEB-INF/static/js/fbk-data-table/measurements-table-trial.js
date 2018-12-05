@@ -110,12 +110,14 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 	jQuery.each(displayColumns, function(i, displayColumn) {
 		columns.push({
 			title: displayColumn.name,
-			data: displayColumn.termId < 0 ? displayColumn.termId : displayColumn.name, // FIXME handle collisions between real and virtual variables when they have the same name. I.e: special column SAMPLES
+			data: displayColumn.termId < 0 ? displayColumn.termId : displayColumn.name, // FIXME BMS-4397 handle collisions between real and virtual variables when they have the same name. I.e: special column SAMPLES
 			termId: displayColumn.termId,
 			defaultContent: '',
 			orderable: displayColumn.variableType === "TRAIT" ? true : $.inArray(displayColumn.termId, sortableColumnIDs) > -1,
 			className: displayColumn.factor === true ? 'factors' : 'variates',
-			isDerivedTrait: displayColumn.formula != null
+			isDerivedTrait: displayColumn.formula != null,
+			possibleValues: displayColumn.possibleValues,
+			dataTypeCode: displayColumn.dataTypeCode
 		});
 
 		var termId = displayColumn.termId;
@@ -151,7 +153,7 @@ var getColumns = function(displayColumns, displayTrialInstance) {
 				},
 				render: function(data, type, full, meta) {
 					if (data !== undefined) {
-						var displayData = EscapeHTML.escape((data[0] !== undefined && data[0] !== null && data[0] !== "")? Number(Math.round(data[0]+'e2')+'e-2'): '');
+						var displayData = getDisplayValueForNumericalValue(data[0]);
 						var hiddenData = EscapeHTML.escape(data[1]);
 						return displayData + '<input type="hidden" value="' + hiddenData + '" />';
 					}
@@ -412,8 +414,15 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				//TODO localise messages
 				language: {
 					processing: '<span class="throbber throbber-2x"></span>',
-					lengthMenu: 'Records per page: _MENU_'
+					lengthMenu: 'Records per page: _MENU_',
+					paginate: {
+						next: '>',
+						previous: '<',
+						first: '<<',
+						last: '>>'
+					}
 				},
+				paginationType: 'full_numbers',
 				// For column visibility
 				buttons: [
 				{
@@ -425,7 +434,11 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				]
 			});
 
-			new $.fn.dataTable.ColReorder(table);
+			try {
+				new $.fn.dataTable.ColReorder(table);
+			} catch (e) {
+				console.log(e)
+			}
 
 			if (studyId !== '') {
 				// Activate an inline edit on click of a table cell
@@ -816,6 +829,13 @@ BMS.Fieldbook.ImportPreviewMeasurementsDataTable = (function($) {
 	return dataTableConstructor;
 })(jQuery);
 
+function getDisplayValueForNumericalValue(numericValue) {
+	if(numericValue === "missing" || numericValue === "") {
+		return numericValue;
+	} else {
+        return EscapeHTML.escape((numericValue !== undefined && numericValue !== null)? Number(Math.round(numericValue+'e2')+'e-2'): '');
+	}
+}
 
 function markCellAsAccepted(indexElem, indexTermId, elem) {
 	'use strict';
@@ -942,9 +962,7 @@ function onMeasurementsObservationLoad(isCategoricalDisplay) {
 	'use strict';
 	if ($('#measurement-table') && $('#measurement-table').length !== 0) {
 		var $categoricalDisplayToggleBtn = $('.fbk-toggle-categorical-display');
-	
-		window.isCategoricalDescriptionView = isCategoricalDisplay;
-	
+
 		// update the toggle button text depending on what current session value is
 		$categoricalDisplayToggleBtn.text(isCategoricalDisplay ? window.measurementObservationMessages.hideCategoricalDescription :
 			window.measurementObservationMessages.showCategoricalDescription);

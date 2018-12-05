@@ -190,6 +190,48 @@
         <br/>
 
         <div class="col-xs-12 col-md-12">
+            <!-- Display Header: ADDITIONAL TREATMENT FACTORS -->
+            <label  class="control-label section-toggle toggle-icon" data-target=".treatmentFactors">
+                <span class="bms-treatment-factors fbk-trial-summary-icons"></span>
+                <img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+                <img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+                <strong class="sub-content-heading" th:text="#{study.studydetails.treatment.factors}">TREATMENT FACTORS</strong>
+            </label>
+        </div>
+        <div class="col-md-12 sectionContainer collapse treatmentFactors">
+            <!-- If trial has no treatment factors then display No available Treatment factors -->
+            <div class="col-md-6" th:if="*{treatmentFactorDetails == null or #lists.isEmpty(treatmentFactorDetails)}">
+                <div class="" th:text="#{study.managesettings.treatment.factors.no.available.treatment.factors}">No available Treatment Factors</div>
+            </div>
+            <div class="col-md-6" th:if="*{treatmentFactorDetails != null and not #lists.isEmpty(treatmentFactorDetails)}">
+                <!-- Display TREATMENT FACTORS Section in tabular form -->
+                <table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="treatmentFactors">
+                    <thead>
+                    <tr>
+                        <th width="25%" th:utext="#{study.managesettings.treatment.factors.treatment}">Treatment</th>
+                        <th width="30%" th:utext="#{study.managesettings.treatment.factors.no.of.treatments}">Levels</th>
+                        <th width="20%" th:utext="#{study.managesettings.treatment.factors.label}">Treatment Level Factors</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Passing Treatment factor type id 1809 which will fetch and display particular factor's details, valid values & usage in popup -->
+                    <tr th:each="treatmentFactor, rowStat : *{treatmentFactorDetails}">
+                        <td th:class="${rowStat.even}? 'even' : 'odd'">
+                            <a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
+                            *{treatmentFactorDetails[__${rowStat.index}__].levelId} + '\', 1809);'"
+                               th:text="${treatmentFactor.levelName}"></a>
+                        </td>
+                        <td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.levelValue}"></td>
+                        <td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.amountName}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+        <br/>
+
+        <div class="col-xs-12 col-md-12">
             <!-- Display Header: ENVIRONMENTS -->
             <label  class="control-label section-toggle toggle-icon" data-target=".trialEnvironments">
                 <span class="bms-environments fbk-trial-summary-icons"></span>

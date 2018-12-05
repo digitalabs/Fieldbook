@@ -1,5 +1,11 @@
 'use strict';
 
+var EscapeHTML = {
+	escape: function (data) {
+		return data;
+	}
+};
+
 describe('SubObservationSetCtrl', function () {
 
 	var $controller,
@@ -910,10 +916,20 @@ describe('SubObservationSetCtrl', function () {
 
 	describe('initialization:', function () {
 		describe('a dataset', function () {
-			it('should have instances', function () {
-				expect(scope.environments).toBeTruthy();
+
+			it('should initialize correctly', function () {
 				expect(scope.environments.length).toBeTruthy();
+
+				expect(scope.traitVariables.m_keys[2]).toEqual(extractedSettings.m_keys[2]);
+				expect(scope.traitVariables.m_vals["8630"].variable.name).toEqual(extractedSettings.m_vals["8630"].variable.name);
+
+				expect(scope.columnsObj.columns[0].columnData.termId).toEqual(columns[0].termId);
+
+				// AleuCol_E_1to5
+				expect(scope.columnsObj.columnsDef[10].render({value: columns[10].possibleValues[0].name}))
+					.toContain(columns[10].possibleValues[0].description);
 			});
+
 		});
 	});
 

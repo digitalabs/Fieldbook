@@ -483,11 +483,12 @@
 						// FIXME show combobox for categorical traits
 						$(cell).css('overflow', 'visible');
 
-						// FIXME find a better way
 						$timeout(function () {
 							/**
 							 * Initiate interaction with the input so that clicks on other parts of the page
 							 * will trigger blur immediately. Also necessary to initiate datepicker
+							 * This also avoids temporary click handler on body
+							 * FIXME is there a better way?
 							 */
 							$(cell).find('a.ui-select-match, input').click().focus();
 						}, 100);

@@ -38,6 +38,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/lib/datatable/angular-datatables.js',
 			'WEB-INF/static/js/lib/datatable/angular-datatables.buttons.js',
 			'WEB-INF/static/js/lib/datatable/angular-datatables.fixedcolumns.js',
+			'WEB-INF/static/js/lib/datatable/angular-datatables.colreorder.js',
 			'WEB-INF/static/js/lib/datatable/buttons.colVis.min.js',
 			'WEB-INF/static/js/lib/datatable/dataTables.bootstrap.js',
 			'WEB-INF/static/js/lib/datatable/dataTables.buttons.min.js',

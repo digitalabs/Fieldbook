@@ -8,8 +8,9 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	'use strict';
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
-		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
-		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'bmsAuth','studyState', 'export-study', 'import-study']);
+		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons', 'datatables.colreorder',
+		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'bmsAuth','studyState',
+		'export-study', 'import-study']);
 
 	manageTrialApp.config(['$httpProvider', function($httpProvider) {
 		$httpProvider.interceptors.push('authInterceptor');

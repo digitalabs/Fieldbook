@@ -41,13 +41,10 @@
 				$scope.environments = dataset.instances;
 				$scope.nested.selectedEnvironment = dataset.instances[0];
 
-				$scope.dtOptions = getDtOptions();
 				$scope.traitVariables = $scope.getTraitVariablesFromDataset();
 				$scope.selectedTraits = $scope.getSelectedVariables();
-				loadColumns().then(function (columnsObj) {
-					dtColumnsPromise.resolve(columnsObj.columns);
-					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
-				});
+
+				loadTable();
 			});
 
 			$scope.getTraitVariablesFromDataset = function () {
@@ -109,7 +106,7 @@
 						studyAlias: m_vals.variable.name
 					}).then(function () {
 						$scope.selectedTraits = $scope.getSelectedVariables();
-						reloadTable();
+						loadTable();
 					});
 				}
 			};
@@ -133,7 +130,7 @@
 							angular.forEach(variableIds, function (cvtermId) {
 								$scope.traitVariables.remove(cvtermId);
 							});
-							reloadTable();
+							loadTable();
 							$scope.selectedTraits = $scope.getSelectedVariables();
 						});
 					}
@@ -276,6 +273,7 @@
 						className: 'fbk-buttons-no-border fbk-colvis-button',
 						text: '<i class="glyphicon glyphicon-th"></i>'
 					}])
+					.withColReorder()
 					.withPaginationType('full_numbers');
 			}
 
@@ -287,10 +285,21 @@
 				);
 			}
 
+			/**
+			 * FIXME we were having issues with clone() and $compile. Attaching and detaching instead for now
+			 */
+			function attachCategoricalDisplayBtn() {
+				$timeout(function () {
+					$('#subObsCategoricalDescriptionBtn').detach().insertBefore('#subObservationTableContainer .dt-buttons');
+				});
+			}
+
+			function detachCategoricalDisplayBtn() {
+				$('#subObsCategoricalDescriptionBtn').detach().appendTo('#subObsCategoricalDescriptionContainer');
+			}
+
 			function initCompleteCallback() {
-				var $categoricalDescriptionBtn = $('#subObsCategoricalDescriptionBtn');
-				var buttons = $categoricalDescriptionBtn.parent().find('.dt-buttons');
-				$categoricalDescriptionBtn.detach().insertBefore(buttons);
+				attachCategoricalDisplayBtn();
 			}
 
 			function headerCallback(thead, data, start, end, display) {
@@ -307,6 +316,12 @@
                 addCellClickHandler();
 			}
 
+			function adjustColumns(table) {
+				$timeout(function () {
+					table.columns.adjust();
+				});
+			}
+
 			function addCellClickHandler() {
 				var $table = angular.element(tableId);
 				$table.off('click').on('click', 'td.variates', clickHandler);
@@ -318,7 +333,8 @@
 					var rowData = table.row(cell.parentNode).data();
 					var dtCell = table.cell(cell);
 					var cellData = dtCell.data();
-					var columnData = $scope.columnsObj.columns[table.column(cell).index()].columnData;
+					var index = table.colReorder.transpose(table.column(cell).index(), 'toOriginal');
+					var columnData = $scope.columnsObj.columns[index].columnData;
 					var termId = columnData.termId;
 
 					if (!termId) return;
@@ -359,6 +375,7 @@
 						)($inlineScope);
 
 						$(cell).append(editor);
+						adjustColumns(table);
 
 						function updateInline() {
 							var promise;
@@ -413,14 +430,18 @@
 								$inlineScope.$destroy();
 								editor.remove();
 
-								dtCell.data(cellData);
+								/**
+								 * TODO in review mode we can't reload, we can only update the cell data and status
+								 * Then we need to inform the user that some info may not be available during review, ie. out-of-sync data
+								 */
+								// dtCell.data(cellData);
+								// processCell(cell, cellData, rowData, columnData);
+								table.ajax.reload(null, false);
 
 								/**
 								 * Restore cell click handler
 								 */
 								$table.off('click').on('click', 'td.variates', clickHandler);
-
-								processCell(cell, cellData, rowData, columnData);
 							}, function (response) {
 								if (response.errors) {
 									showErrorMessage('', response.errors[0].message);
@@ -462,11 +483,12 @@
 						// FIXME show combobox for categorical traits
 						$(cell).css('overflow', 'visible');
 
-						// FIXME find a better way
 						$timeout(function () {
 							/**
 							 * Initiate interaction with the input so that clicks on other parts of the page
 							 * will trigger blur immediately. Also necessary to initiate datepicker
+							 * This also avoids temporary click handler on body
+							 * FIXME is there a better way?
 							 */
 							$(cell).find('a.ui-select-match, input').click().focus();
 						}, 100);
@@ -528,7 +550,9 @@
 					});
 			}
 
-			function reloadTable() {
+			function loadTable() {
+				detachCategoricalDisplayBtn();
+
 				/**
 				 * We need to reinitilize all this because
 				 * if we use column.visible an change the columns with just
@@ -546,6 +570,8 @@
 					$scope.dtOptions = getDtOptions();
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
+
+					attachCategoricalDisplayBtn();
 				});
 			}
 
@@ -605,6 +631,11 @@
 								processCell(td, cellData, rowData, columnData);
 							},
 							render: function (data, type, full, meta) {
+
+								if (columnData.dataTypeId === 1130) {
+									return renderCategoricalData(data, columnData);
+								}
+
 								return data && EscapeHTML.escape(data.value);
 							}
 						});
@@ -612,6 +643,11 @@
 						columnsDef.push({
 							targets: columns.length - 1,
 							render: function (data, type, full, meta) {
+
+								if (columnData.dataTypeId === 1130) {
+									return renderCategoricalData(data, columnData);
+								}
+
 								return data && EscapeHTML.escape(data.value);
 							}
 						});
@@ -622,6 +658,32 @@
 					columns: columns,
 					columnsDef: columnsDef
 				};
+			}
+
+			function renderCategoricalData(data, columnData) {
+				var value = data && EscapeHTML.escape(data.value);
+
+				if (columnData.possibleValues
+					&& columnData.possibleValuesByValue
+					&& columnData.possibleValuesByValue[data.value]
+					&& columnData.possibleValuesByValue[data.value].description
+					&& data.value !== 'missing') {
+
+					var description = columnData.possibleValuesByValue[data.value].description;
+					if (description) {
+						var categoricalNameDom = '<span class="fbk-measurement-categorical-name"'
+							+ ($scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
+							+ ' >'
+							+ data.value + '</span>';
+						var categoricalDescDom = '<span class="fbk-measurement-categorical-desc"'
+							+ (!$scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
+							+ ' >'
+							+ description + '</span>';
+
+						value = categoricalNameDom + categoricalDescDom;
+					}
+				}
+				return value;
 			}
 
 			function validateNumericRange(minVal, maxVal, value, invalid) {
@@ -679,26 +741,6 @@
 
 					if (invalid) {
 						$(td).addClass($scope.preview ? 'invalid-value' : 'accepted-value');
-					}
-
-					if (columnData.possibleValues
-						&& columnData.possibleValuesByValue
-						&& columnData.possibleValuesByValue[cellData.value]
-						&& columnData.possibleValuesByValue[cellData.value].description
-						&& cellData.value !== 'missing') {
-
-						var description = columnData.possibleValuesByValue[cellData.value].description;
-						if (description) {
-							$(td).html('');
-							$(td).append('<span class="fbk-measurement-categorical-name"'
-								+ ($scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
-								+ ' >'
-								+ cellData.value + '</span>');
-							$(td).append('<span class="fbk-measurement-categorical-desc"'
-								+ (!$scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
-								+ ' >'
-								+ description + '</span>');
-						}
 					}
 				}
 				if (cellData.status) {

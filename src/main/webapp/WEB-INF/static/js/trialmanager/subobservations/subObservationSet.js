@@ -1,10 +1,10 @@
 (function () {
 	'use strict';
 
-	var manageTrialApp = angular.module('manageTrialApp');
+	var subObservationModule = angular.module('subObservation', []);
 	var hiddenColumns = [8201];
 
-	manageTrialApp.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
+	subObservationModule.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
 		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout',
 		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
 				  datasetService, $timeout

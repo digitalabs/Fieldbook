@@ -195,7 +195,7 @@
 
 							/* update scope */
 							scope.$apply(function () {
-								var length = 30;
+								var length = 15;
 								scope.importedData = aoa;
 								scope.importedFile = changeEvent.target.files[0];
 								scope.importedFile.abbrName = scope.importedFile.name;

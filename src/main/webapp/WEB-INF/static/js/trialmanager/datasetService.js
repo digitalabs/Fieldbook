@@ -144,6 +144,18 @@
 				}, failureHandler);
 			};
 
+			datasetService.importObservations = function (datasetId, observationList, processWarnings) {
+				if (!studyContext.studyId) {
+					return $q.resolve([]);
+				}
+				var request = $http.put(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/observations',
+					{
+						"processWarnings": processWarnings,
+						"data": observationList
+					});
+				return request.then(successHandler, failureHandler);
+			};
+
 			return datasetService;
 		}]);
 

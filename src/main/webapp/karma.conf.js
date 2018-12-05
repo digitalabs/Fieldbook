@@ -50,6 +50,8 @@ module.exports = function (config) {
 
 			'WEB-INF/static/js/angular/angular-local-storage.min.js',
 			'WEB-INF/static/js/angular/bmsAuth.js',
+			'WEB-INF/static/js/lib/angular/xlsx.full.min.js',
+
 
 			// Modules to test
 			'WEB-INF/static/js/angular/angular-utilities.js',
@@ -76,6 +78,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/trialmanager/exportStudy.js',
 			'WEB-INF/static/js/trialmanager/datasetOptionModal.js',
 			'WEB-INF/static/js/design-import/design-import-main.js',
+			'WEB-INF/static/js/trialmanager/importStudy.js',
 
 
 			// unit test files

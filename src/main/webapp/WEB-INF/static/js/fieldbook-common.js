@@ -1463,6 +1463,14 @@ function showImportOptions() {
 		showAlertMessage('', importDataWarningNotification);
 	}
 }
+
+function backShowImportStudyModal(){
+	'use strict';
+	var scope = angular.element(document.getElementById("mainApp")).scope();
+	scope.$apply(function () {
+		scope.showImportStudyModal();
+	});
+}
 function goBackToImport() {
 	'use strict';
 	revertData(false);

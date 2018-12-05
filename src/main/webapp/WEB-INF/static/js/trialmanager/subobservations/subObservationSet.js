@@ -631,6 +631,11 @@
 								processCell(td, cellData, rowData, columnData);
 							},
 							render: function (data, type, full, meta) {
+
+								if (columnData.dataTypeId === 1130) {
+									return renderCategoricalData(data, columnData);
+								}
+
 								return data && EscapeHTML.escape(data.value);
 							}
 						});
@@ -638,6 +643,11 @@
 						columnsDef.push({
 							targets: columns.length - 1,
 							render: function (data, type, full, meta) {
+
+								if (columnData.dataTypeId === 1130) {
+									return renderCategoricalData(data, columnData);
+								}
+
 								return data && EscapeHTML.escape(data.value);
 							}
 						});
@@ -648,6 +658,32 @@
 					columns: columns,
 					columnsDef: columnsDef
 				};
+			}
+
+			function renderCategoricalData(data, columnData) {
+				var value = data && EscapeHTML.escape(data.value);
+
+				if (columnData.possibleValues
+					&& columnData.possibleValuesByValue
+					&& columnData.possibleValuesByValue[data.value]
+					&& columnData.possibleValuesByValue[data.value].description
+					&& data.value !== 'missing') {
+
+					var description = columnData.possibleValuesByValue[data.value].description;
+					if (description) {
+						var categoricalNameDom = '<span class="fbk-measurement-categorical-name"'
+							+ ($scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
+							+ ' >'
+							+ data.value + '</span>';
+						var categoricalDescDom = '<span class="fbk-measurement-categorical-desc"'
+							+ (!$scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
+							+ ' >'
+							+ description + '</span>';
+
+						value = categoricalNameDom + categoricalDescDom;
+					}
+				}
+				return value;
 			}
 
 			function validateNumericRange(minVal, maxVal, value, invalid) {
@@ -705,26 +741,6 @@
 
 					if (invalid) {
 						$(td).addClass($scope.preview ? 'invalid-value' : 'accepted-value');
-					}
-
-					if (columnData.possibleValues
-						&& columnData.possibleValuesByValue
-						&& columnData.possibleValuesByValue[cellData.value]
-						&& columnData.possibleValuesByValue[cellData.value].description
-						&& cellData.value !== 'missing') {
-
-						var description = columnData.possibleValuesByValue[cellData.value].description;
-						if (description) {
-							$(td).html('');
-							$(td).append('<span class="fbk-measurement-categorical-name"'
-								+ ($scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
-								+ ' >'
-								+ cellData.value + '</span>');
-							$(td).append('<span class="fbk-measurement-categorical-desc"'
-								+ (!$scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
-								+ ' >'
-								+ description + '</span>');
-						}
 					}
 				}
 				if (cellData.status) {

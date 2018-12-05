@@ -9,7 +9,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons',
-		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'bmsAuth','studyState', 'export-study']);
+		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'bmsAuth','studyState', 'export-study', 'import-study']);
 
 	manageTrialApp.config(['$httpProvider', function($httpProvider) {
 		$httpProvider.interceptors.push('authInterceptor');
@@ -191,9 +191,9 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
-		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService' ,'$uibModal', '$q', 'datasetService',
+		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService', 'importStudyModalService', '$uibModal', '$q', 'datasetService',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
-				  derivedVariableService, exportStudyModalService, $uibModal, $q, datasetService) {
+				  derivedVariableService, exportStudyModalService, importStudyModalService, $uibModal, $q, datasetService) {
 
 			$scope.trialTabs = [
 				{
@@ -486,6 +486,24 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				$state.go(targetState);
 				$scope.performFunctionOnTabChange(targetState);
 
+			};
+
+			$scope.navigateToSubObsTab = function (datasetId) {
+				var subObsTab = undefined;
+				angular.forEach($scope.subObservationTabs, function (subObservationTab) {
+					if (subObservationTab.id === datasetId) {
+						subObsTab = subObservationTab
+					}
+				});
+
+				$scope.isSettingsTab = false;
+				$scope.tabSelected = subObsTab.state;
+				$state.transitionTo('subObservationTabs',  {
+					subObservationTabId: subObsTab.id,
+					subObservationTab: subObsTab
+				}, {
+					reload: true, inherit: false, notify: true
+				});
 			};
 
 			$scope.hasAdvanceListCreated = function () {
@@ -973,6 +991,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.showExportStudyModal = function() {
 				exportStudyModalService.openDatasetOptionModal();
+			}
+
+			$scope.showImportStudyModal = function() {
+				importStudyModalService.openDatasetOptionModal();
 			}
 
 		}]);

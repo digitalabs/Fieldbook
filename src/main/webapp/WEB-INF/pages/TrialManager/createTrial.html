@@ -145,7 +145,7 @@
 									</li>
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a href="" style="display: none" id="open-study-url"></a>
-										<a href="javascript: showImportOptions();" id="open-study-url-link"
+										<a ng-click="showImportStudyModal()" id="open-study-url-link"
 										   th:text="#{study.studydetails.action.import.study}">Import Measurements</a>
 									</li>
 									<li ng-show="hasGermplasmListSelected()">
@@ -608,6 +608,8 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/SubObservationUnitDatasetBuilder.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/datasetOptionModal.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/exportStudy.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/importStudy.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/lib/angular/xlsx.full.min.js}"></script>
 
 	<!-- constants here -->
 	<script type="text/javascript" th:inline="javascript">

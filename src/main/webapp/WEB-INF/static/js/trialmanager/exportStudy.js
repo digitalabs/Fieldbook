@@ -4,8 +4,8 @@
 
 	var exportStudyModule = angular.module('export-study', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal', 'fieldbook-utils']);
 
-	exportStudyModule.factory('exportStudyModalService', ['$uibModal', '$http', 'studyContext', 'serviceUtilities',
-		function ($uibModal, $http, studyContext, serviceUtilities) {
+	exportStudyModule.factory('exportStudyModalService', ['$uibModal',
+		function ($uibModal) {
 
 			var exportStudyModalService = {};
 
@@ -47,7 +47,7 @@
 		}]);
 
 	exportStudyModule.controller('exportDatasetOptionCtrl', ['$scope', '$uibModal', '$uibModalInstance', 'studyContext', 'exportStudyModalService',
-		'datasetService', function ($scope, $uibModal, $uibModalInstance, studyContext, exportStudyModalService, datasetService) {
+		function ($scope, $uibModal, $uibModalInstance, studyContext, exportStudyModalService) {
 
 			$scope.modalTitle = 'Export study book';
 			$scope.message = 'Please choose the dataset you would like to export:';

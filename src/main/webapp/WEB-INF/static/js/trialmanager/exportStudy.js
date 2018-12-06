@@ -11,7 +11,7 @@
 
 			exportStudyModalService.openDatasetOptionModal = function () {
 				$uibModal.open({
-					template: '<dataset-option-modal title="title" message="message"' +
+					template: '<dataset-option-modal modal-title="modalTitle" message="message"' +
 					'selected="selected" on-continue="showExportOptions()"></dataset-option-modal>',
 					controller: 'exportDatasetOptionCtrl',
 					size: 'md'
@@ -49,7 +49,7 @@
 	exportStudyModule.controller('exportDatasetOptionCtrl', ['$scope', '$uibModal', '$uibModalInstance', 'studyContext', 'exportStudyModalService',
 		'datasetService', function ($scope, $uibModal, $uibModalInstance, studyContext, exportStudyModalService, datasetService) {
 
-			$scope.title = 'Export study book';
+			$scope.modalTitle = 'Export study book';
 			$scope.message = 'Please choose the dataset you would like to export:';
 			$scope.measurementDatasetId = studyContext.measurementDatasetId;
 			$scope.selected = {datasetId: $scope.measurementDatasetId};

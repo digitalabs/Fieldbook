@@ -687,8 +687,7 @@
 			}
 
 			function validateNumericRange(minVal, maxVal, value, invalid) {
-				if (minVal && maxVal
-					&& (parseFloat(value) < parseFloat(minVal) || parseFloat(value) > parseFloat(maxVal))) {
+				if (parseFloat(value) < parseFloat(minVal) || parseFloat(value) > parseFloat(maxVal)) {
 
 					invalid = true;
 				}
@@ -736,7 +735,7 @@
 				$(td).removeClass('invalid-value');
 				$(td).removeClass('manually-edited-value');
 
-				if (cellData.value) {
+				if (cellData.value || cellData.value === 0) {
 					var invalid = validateDataOutOfRange(cellData.value, columnData);
 
 					if (invalid) {

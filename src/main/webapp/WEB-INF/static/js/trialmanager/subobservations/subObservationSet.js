@@ -1,10 +1,10 @@
 (function () {
 	'use strict';
 
-	var manageTrialApp = angular.module('manageTrialApp');
+	var subObservationModule = angular.module('subObservation', []);
 	var hiddenColumns = [8201];
 
-	manageTrialApp.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
+	subObservationModule.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
 		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout',
 		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
 				  datasetService, $timeout
@@ -687,8 +687,7 @@
 			}
 
 			function validateNumericRange(minVal, maxVal, value, invalid) {
-				if (minVal && maxVal
-					&& (parseFloat(value) < parseFloat(minVal) || parseFloat(value) > parseFloat(maxVal))) {
+				if (parseFloat(value) < parseFloat(minVal) || parseFloat(value) > parseFloat(maxVal)) {
 
 					invalid = true;
 				}
@@ -736,7 +735,7 @@
 				$(td).removeClass('invalid-value');
 				$(td).removeClass('manually-edited-value');
 
-				if (cellData.value) {
+				if (cellData.value || cellData.value === 0) {
 					var invalid = validateDataOutOfRange(cellData.value, columnData);
 
 					if (invalid) {

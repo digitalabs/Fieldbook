@@ -7,7 +7,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 (function () {
 	'use strict';
 
-	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils',
+	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils', 'subObservation',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons', 'datatables.colreorder',
 		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'bmsAuth','studyState',
 		'export-study', 'import-study']);
@@ -491,17 +491,23 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.navigateToSubObsTab = function (datasetId) {
 				var subObsTab = undefined;
+				var subObsSet = undefined;
 				angular.forEach($scope.subObservationTabs, function (subObservationTab) {
-					if (subObservationTab.id === datasetId) {
-						subObsTab = subObservationTab
-					}
+					angular.forEach(subObservationTab.subObservationSets, function (subObservationSet) {
+						if (subObservationSet.id === datasetId) {
+							subObsSet = subObservationSet;
+							subObsTab = subObservationTab;
+						}
+					});
 				});
 
 				$scope.isSettingsTab = false;
 				$scope.tabSelected = subObsTab.state;
-				$state.transitionTo('subObservationTabs',  {
+				$state.transitionTo('subObservationTabs.subObservationSets',  {
 					subObservationTabId: subObsTab.id,
-					subObservationTab: subObsTab
+					subObservationTab: subObsTab,
+					subObservationSetId: subObsSet.id,
+					subObservationSet: subObsSet
 				}, {
 					reload: true, inherit: false, notify: true
 				});

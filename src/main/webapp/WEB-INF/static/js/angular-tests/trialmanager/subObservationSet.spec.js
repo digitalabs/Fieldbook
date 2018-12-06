@@ -465,9 +465,9 @@ describe('SubObservationSetCtrl', function () {
 				"dataTypeId": 1110,
 				"possibleValues": null,
 				"possibleValuesString": null,
-				"minRange": 25,
+				"minRange": 0,
 				"maxRange": 50,
-				"scaleMinRange": 25,
+				"scaleMinRange": 0,
 				"scaleMaxRange": 50,
 				"required": false,
 				"treatmentLabel": null,
@@ -655,9 +655,9 @@ describe('SubObservationSetCtrl', function () {
 				"dataTypeId": 1110,
 				"possibleValues": null,
 				"possibleValuesString": null,
-				"minRange": 25.0,
+				"minRange": 0,
 				"maxRange": 50.0,
-				"scaleMinRange": 25.0,
+				"scaleMinRange": 0,
 				"scaleMaxRange": 50.0,
 				"required": false,
 				"treatmentLabel": null,
@@ -915,7 +915,7 @@ describe('SubObservationSetCtrl', function () {
 	}));
 
 	describe('initialization:', function () {
-		describe('a dataset', function () {
+		describe('a SubObservationSetCtrl', function () {
 
 			it('should initialize correctly', function () {
 				expect(scope.environments.length).toBeTruthy();
@@ -924,10 +924,19 @@ describe('SubObservationSetCtrl', function () {
 				expect(scope.traitVariables.m_vals["8630"].variable.name).toEqual(extractedSettings.m_vals["8630"].variable.name);
 
 				expect(scope.columnsObj.columns[0].columnData.termId).toEqual(columns[0].termId);
+			});
 
+			it('should have datatables functionality', function () {
 				// AleuCol_E_1to5
 				expect(scope.columnsObj.columnsDef[10].render({value: columns[10].possibleValues[0].name}))
 					.toContain(columns[10].possibleValues[0].description);
+
+				spyOn($.fn, 'addClass').and.callFake(function () {
+				});
+
+				// nah_expected_range
+				scope.columnsObj.columnsDef[8].createdCell({}, {value: 60}, {}, scope.columnsObj.columns[8].columnData);
+				expect($.fn.addClass).toHaveBeenCalledWith('accepted-value')
 			});
 
 		});

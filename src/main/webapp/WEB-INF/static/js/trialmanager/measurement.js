@@ -98,7 +98,7 @@
 							// Check first if any of removed dependency variables has measurement data.
 							if (dependencyVariableHasMeasurementData) {
 								var modalInstance = $rootScope.openConfirmModal(removeVariableDependencyConfirmationText,
-									environmentConfirmLabel, environmentCancelLabel);
+									environmentConfirmLabel);
 								modalInstance.result.then(deferred.resolve);
 							} else {
 								// else, check if any of the selected variables for deletion has measurement data.
@@ -106,7 +106,7 @@
 									var count = response.headers('X-Total-Count');
 									if (count > 0) {
 										var modalInstance = $rootScope.openConfirmModal(measurementModalConfirmationText,
-											environmentConfirmLabel, environmentCancelLabel);
+											environmentConfirmLabel);
 										modalInstance.result.then(deferred.resolve);
 									} else {
 										deferred.resolve(true);

@@ -199,6 +199,7 @@ table .highlight td, table .field-map-highlight td, .tableSelect tr.selected td{
 table.dataTable thead .sorting,
 table.dataTable thead .sorting_asc,
 table.dataTable thead .sorting_desc {
+    background : none;
     background-color: #c8c6c6;
 }
 

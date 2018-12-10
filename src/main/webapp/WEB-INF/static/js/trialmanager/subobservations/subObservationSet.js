@@ -319,7 +319,7 @@
 			function adjustColumns(table) {
 				$timeout(function () {
 					table.columns.adjust();
-				});
+				}, 100);
 			}
 
 			function addCellClickHandler() {

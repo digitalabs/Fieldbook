@@ -594,14 +594,17 @@
 				var columns = [],
 					columnsDef = [];
 
-				// TODO complete column definitions (highlighting, links, etc)
-
 				angular.forEach(columnsData, function (columnData) {
 					if (columnData.possibleValues) {
 						columnData.possibleValuesByValue = {};
 						angular.forEach(columnData.possibleValues, function (possibleValue) {
+							// so we can use "Please Choose"=empty value
+							possibleValue.displayValue = possibleValue.name;
+							// convenience map to avoid looping later
 							columnData.possibleValuesByValue[possibleValue.name] = possibleValue;
 						});
+						// waiting for https://github.com/angular-ui/ui-select/issues/152
+						columnData.possibleValues.unshift({name: '', displayValue: 'Please Choose', displayDescription: 'Please Choose'});
 					}
 
 					columns.push({

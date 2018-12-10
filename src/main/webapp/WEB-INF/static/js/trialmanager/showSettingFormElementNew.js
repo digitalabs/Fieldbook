@@ -24,6 +24,10 @@
     					}
     				},
     				controller: function($scope, LOCATION_ID, UNSPECIFIED_LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http) {
+
+    					var LOCATION_LOOKUP_BREEDING_LOCATION = 1;
+    					var LOCATION_LOOKUP_ALL_LOCATION = 2;
+
     					if ($scope.settingkey === undefined) {
     						$scope.settingkey = $scope.targetkey;
     					}
@@ -54,7 +58,7 @@
                         if($scope.isLocation){
                             selectedLocation('', $scope.variableDefinition.allValues);
                             angular.forEach($scope.variableDefinition.allValues, function(val, index){
-                                if(val.id == $scope.valuecontainer[$scope.targetkey]){
+                                if(val.id === parseInt($scope.valuecontainer[$scope.targetkey])){
                                     selectedLocation(val , $scope.variableDefinition.allValues);
                                 }
                             });
@@ -66,14 +70,14 @@
 						
 						$scope.updateDropdownValuesFavorites = function() { // Change state for favorite checkbox
 								if ($scope.localData.useFavorites) {
-									if ($scope.locationLookup == 1) {
+									if ($scope.locationLookup === LOCATION_LOOKUP_BREEDING_LOCATION) {
 										$scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
 									} else {
 										$scope.dropdownValues = $scope.variableDefinition.allFavoriteValues;
 									}
 
 								} else {
-									if ($scope.locationLookup == 1) {
+									if ($scope.locationLookup === LOCATION_LOOKUP_BREEDING_LOCATION) {
 										$scope.dropdownValues = $scope.variableDefinition.possibleValues;
 									} else {
 										$scope.dropdownValues = $scope.variableDefinition.allValues;
@@ -85,13 +89,13 @@
 							// location radio
 							$scope.dropdownValues = $scope.localData.useFavorites ? $scope.variableDefinition.possibleValuesFavorite
 								: $scope.variableDefinition.possibleValues;
-							$scope.locationLookup = 1;
+							$scope.locationLookup = LOCATION_LOOKUP_BREEDING_LOCATION;
 						};
 
 						$scope.updateDropdownValuesAllLocation = function() { // Change state for all locations radio
 							$scope.dropdownValues = $scope.localData.useFavorites ? $scope.variableDefinition.allFavoriteValues
 								: $scope.variableDefinition.allValues;
-							$scope.locationLookup = 2;
+							$scope.locationLookup = LOCATION_LOOKUP_ALL_LOCATION;
 						};
 
     					if ($scope.hasDropdownOptions) {
@@ -104,17 +108,19 @@
 								$scope.valuecontainer[$scope.targetkey] = currentVal;
 							}
 
-                            $scope.locationLookup = $scope.isBreedingLocation($scope.valuecontainer[LOCATION_ID]) ? 1 : 2;
-                            $scope.localData.useFavorites = $scope.isFavoriteLocation($scope.valuecontainer[LOCATION_ID]);
-
                             // If the currentVal is undefined then we assume that the environment is newly created and not yet saved,
 							// so in this case, we need to set the set the location to the default value, which is UNSPECIFIED_LOCATION_ID (NOLOC)
                             if (!currentVal && $scope.targetkey === LOCATION_ID) {
                                 currentVal = UNSPECIFIED_LOCATION_ID;
                                 $scope.valuecontainer[$scope.targetkey] = UNSPECIFIED_LOCATION_ID;
-                                $scope.locationLookup = $scope.isBreedingLocation(UNSPECIFIED_LOCATION_ID) ? 1 : 2;
+                                $scope.locationLookup = $scope.isBreedingLocation(UNSPECIFIED_LOCATION_ID) ?
+									LOCATION_LOOKUP_BREEDING_LOCATION : LOCATION_LOOKUP_ALL_LOCATION;
                                 $scope.localData.useFavorites = $scope.isFavoriteLocation(UNSPECIFIED_LOCATION_ID);
-                            }
+                            } else {
+								$scope.locationLookup = $scope.isBreedingLocation($scope.valuecontainer[LOCATION_ID]) ?
+									LOCATION_LOOKUP_BREEDING_LOCATION : LOCATION_LOOKUP_ALL_LOCATION;
+								$scope.localData.useFavorites = $scope.isFavoriteLocation($scope.valuecontainer[LOCATION_ID]);
+							}
 
     						$scope.updateDropdownValuesFavorites();
 

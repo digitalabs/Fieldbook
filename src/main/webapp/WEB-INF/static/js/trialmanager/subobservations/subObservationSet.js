@@ -205,7 +205,9 @@
 			};
 
 			$scope.changeEnvironment = function () {
-				$scope.dtOptions = getDtOptions();
+				$(tableId).DataTable().ajax
+					.url(datasetService.getObservationTableUrl(subObservationSet.id, $scope.nested.selectedEnvironment.instanceDbId))
+					.load();
 			};
 
 			$scope.toggleShowCategoricalDescription = function () {

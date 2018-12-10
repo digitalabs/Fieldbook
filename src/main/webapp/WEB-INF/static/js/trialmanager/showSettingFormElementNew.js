@@ -33,22 +33,17 @@
     						};
     					}
 
-                       $scope.isFavoriteLocation = function(currentVal) {
-                            var favorite = false;
-                            angular.forEach($scope.variableDefinition.possibleValuesFavorite, function(value, key) {
-                                if (currentVal == value.id)
-                                    favorite = true;
-                            });
-                            return favorite;
-                        }
-                         $scope.isBreedingLocation = function(currentVal) {
-                           var breedingLocation = 2;
-                            angular.forEach($scope.variableDefinition.possibleValues, function(value) {
-                                if (currentVal == value.id) 
-                                    breedingLocation =  1;
-                            });
-                            return breedingLocation;
-                        }
+                       $scope.isFavoriteLocation = function(locationId) {
+    						return $scope.variableDefinition.possibleValuesFavorite.some(function(locationPossibleValue) {
+    							return parseInt(locationId) === locationPossibleValue.id;
+							});
+                        };
+
+    					$scope.isBreedingLocation = function(locationId) {
+							return $scope.variableDefinition.possibleValues.some(function(locationPossibleValue) {
+								return parseInt(locationId) === locationPossibleValue.id;
+							});
+                        };
 
     					$scope.variableDefinition = $scope.settings.val($scope.settingkey);
     					$scope.widgetType = $scope.variableDefinition.variable.widgetType.$name ?
@@ -102,21 +97,24 @@
     					if ($scope.hasDropdownOptions) {
 
     						var currentVal = $scope.valuecontainer[$scope.targetkey];
-                            $scope.locationLookup = $scope.isBreedingLocation($scope.valuecontainer[LOCATION_ID]);
+
+							// lets fix current val if its an object so that valuecontainer only contains the id
+							if (currentVal && currentVal.id) {
+								currentVal = currentVal.id;
+								$scope.valuecontainer[$scope.targetkey] = currentVal;
+							}
+
+                            $scope.locationLookup = $scope.isBreedingLocation($scope.valuecontainer[LOCATION_ID]) ? 1 : 2;
                             $scope.localData.useFavorites = $scope.isFavoriteLocation($scope.valuecontainer[LOCATION_ID]);
 
+                            // If the currentVal is undefined then we assume that the environment is newly created and not yet saved,
+							// so in this case, we need to set the set the location to the default value, which is UNSPECIFIED_LOCATION_ID (NOLOC)
                             if (!currentVal && $scope.targetkey === LOCATION_ID) {
                                 currentVal = UNSPECIFIED_LOCATION_ID;
                                 $scope.valuecontainer[$scope.targetkey] = UNSPECIFIED_LOCATION_ID;
-                                $scope.locationLookup =  $scope.isBreedingLocation(UNSPECIFIED_LOCATION_ID);
+                                $scope.locationLookup = $scope.isBreedingLocation(UNSPECIFIED_LOCATION_ID) ? 1 : 2;
                                 $scope.localData.useFavorites = $scope.isFavoriteLocation(UNSPECIFIED_LOCATION_ID);
                             }
-
-    						// lets fix current val if its an object so that valuecontainer only contains the id
-    						if (currentVal && currentVal.id) {
-    							currentVal = currentVal.id;
-    							$scope.valuecontainer[$scope.targetkey] = currentVal;
-    						}
 
     						$scope.updateDropdownValuesFavorites();
 

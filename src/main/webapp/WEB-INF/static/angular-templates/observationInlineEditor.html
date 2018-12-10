@@ -20,6 +20,6 @@
 		<span ng-bind="$select.selected.name"></span>
 	</ui-select-match>
 	<ui-select-choices repeat="value.name as value in (columnData.possibleValues | filter: { name: $select.search }) track by value.name">
-		{{value.name}} {{isCategoricalDescriptionView ? '= ' + value.description : ''}}
+		<div title="{{value.description}}">{{value.name}} {{isCategoricalDescriptionView ? '= ' + value.description : ''}}</div>
 	</ui-select-choices>
 </ui-select>

@@ -727,8 +727,8 @@
 				var invalid = false;
 
 				var value = cellDataValue;
-				var minVal = columnData.minRange;
-				var maxVal = columnData.maxRange;
+				var minVal = (columnData.variableMinRange || columnData.variableMinRange === 0) || columnData.scaleMinRange;
+				var maxVal = (columnData.variableMaxRange || columnData.variableMaxRange === 0) || columnData.scaleMaxRange;
 
 				invalid = validateNumericRange(minVal, maxVal, value, invalid);
 				invalid = validateCategoricalValues(columnData, cellDataValue, invalid);

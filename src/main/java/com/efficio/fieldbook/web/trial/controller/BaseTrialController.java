@@ -136,6 +136,11 @@ public abstract class BaseTrialController extends SettingsController {
 					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
 				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
 			}
+			if (!values.containsKey(Integer.toString(TermId.LOCATION_ID.getId()))
+				|| values.get(Integer.toString(TermId.LOCATION_ID.getId())) == null
+				|| values.get(Integer.toString(TermId.LOCATION_ID.getId())).isEmpty()) {
+				throw new MiddlewareException("The location must be selected for all environments");
+			}
 		}
 	}
 

@@ -431,7 +431,22 @@
 					if (!processInlineEditInput()) {
 						return false;
 					}
+					var validateEnvironments = "";
+					angular.forEach(service.currentData.environments.environments, function (environment) {
+						if (environment.managementDetailValues[8190] === "") {
+							if(validateEnvironments === ""){
+								validateEnvironments = environment.managementDetailValues[8170];
+							}else{
+								validateEnvironments += ", " + environment.managementDetailValues[8170];
+							}
 
+						}
+					});
+
+					if(validateEnvironments != ""){
+						showErrorMessage('', "The environments " + validateEnvironments + " doesn't have any location selected.");
+						return false;
+					}
 					if (hasOutOfBoundValues()) {
 						//we check if there is invalid value in the measurements
 						showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');

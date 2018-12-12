@@ -928,8 +928,8 @@ describe('SubObservationSetCtrl', function () {
 
 			it('should have datatables functionality', function () {
 				// AleuCol_E_1to5
-				expect(scope.columnsObj.columnsDef[10].render({value: columns[10].possibleValues[0].name}))
-					.toContain(columns[10].possibleValues[0].description);
+				expect(scope.columnsObj.columnsDef[10].render({value: scope.columnsObj.columns[10].columnData.possibleValues[1].name}))
+					.toContain(scope.columnsObj.columns[10].columnData.possibleValues[1].description);
 
 				spyOn($.fn, 'addClass').and.callFake(function () {
 				});

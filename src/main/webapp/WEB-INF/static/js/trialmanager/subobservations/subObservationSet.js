@@ -472,12 +472,7 @@
 									todayBtn: true,
 									forceParse: false
 								}).on('hide', function () {
-									try {
-										$.datepicker.parseDate('yymmdd', $(this).val());
-										updateInline();
-									} catch (e) {
-										showErrorMessage('', 'invalid value');
-									}
+									updateInline();
 								}).datepicker("show").datepicker('update', initialValue)
 							});
 						}

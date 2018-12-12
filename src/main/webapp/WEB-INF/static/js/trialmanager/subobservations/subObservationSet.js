@@ -634,6 +634,8 @@
 
 								if (columnData.dataTypeId === 1130) {
 									return renderCategoricalData(data, columnData);
+								} else if (columnData.dataTypeId === 1110) {
+									return getDisplayValueForNumericalValue(data.value);
 								}
 
 								return data && EscapeHTML.escape(data.value);

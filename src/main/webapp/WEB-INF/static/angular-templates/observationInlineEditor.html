@@ -2,19 +2,22 @@
 	   ng-if="columnData.dataTypeCode === 'N' || columnData.dataTypeCode === 'T'"
 	   ng-blur="observation.change()"
 	   ng-keyup="doBlur($event)"
-	   ng-model="observation.value" />
+	   ng-model="observation.value"
+	   style="width: 100%" />
 
 <input type="text"
 	   ng-if="columnData.dataTypeCode === 'D'"
 	   placeholder="yyyymmdd"
-	   ng-model="observation.value" />
+	   ng-model="observation.value"
+	   style="width: 100%" />
 
 <ui-select ng-model="observation.value"
 		   ng-if="columnData.dataTypeCode === 'C'"
 		   uis-open-close="observation.onOpenClose(isOpen)"
 		   tagging="observation.newInlineValue"
 		   tagging-label="false"
-		   theme="select2">
+		   theme="select2"
+		   style="width: 100%">
 	<ui-select-match
 		class="ui-select-match">
 		<span ng-bind="$select.selected.name"></span>

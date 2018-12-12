@@ -381,7 +381,6 @@
 						)($inlineScope);
 
 						$(cell).append(editor);
-						adjustColumns(table);
 
 						function updateInline() {
 							var promise;

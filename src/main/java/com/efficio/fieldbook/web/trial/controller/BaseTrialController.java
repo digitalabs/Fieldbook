@@ -136,11 +136,6 @@ public abstract class BaseTrialController extends SettingsController {
 					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
 				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
 			}
-			if (!values.containsKey(Integer.toString(TermId.LOCATION_ID.getId()))
-				|| values.get(Integer.toString(TermId.LOCATION_ID.getId())) == null
-				|| values.get(Integer.toString(TermId.LOCATION_ID.getId())).isEmpty()) {
-				throw new MiddlewareException("The location must be selected for all environments");
-			}
 		}
 	}
 
@@ -968,5 +963,16 @@ public abstract class BaseTrialController extends SettingsController {
 	
 	protected void setStudyDataManager(StudyDataManager studyDataManager) {
 		this.studyDataManager = studyDataManager;
+	}
+
+	protected void validateLocationOnEnvironment(final EnvironmentData data) {
+		for (Environment environment : data.getEnvironments()) {
+			final Map<String, String> values = environment.getManagementDetailValues();
+			if (!values.containsKey(Integer.toString(TermId.LOCATION_ID.getId()))
+				|| values.get(Integer.toString(TermId.LOCATION_ID.getId())) == null || values
+				.get(Integer.toString(TermId.LOCATION_ID.getId())).isEmpty()) {
+				throw new MiddlewareException("The location must be selected for all environments");
+			}
+		}
 	}
 }

@@ -26,7 +26,6 @@ import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.context.ContextInfo;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -37,7 +36,6 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -274,6 +272,7 @@ public class CreateTrialController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
 	public String submit(@RequestBody final TrialData data) {
+		this.validateLocationOnEnvironment(data.getEnvironments());
 		this.processEnvironmentData(data.getEnvironments());
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();

@@ -14,7 +14,7 @@
 	
     <span ng-hide="addVariable" class="pull-right {{actionButtonDirection}}" ng-multi-transclude="action-buttons"></span>
     <span ng-show="addVariable && hideVariable" callback="onAdd(result)" select-standard-variable=""
-          modeldata="modelData" selectedvariables="selectedVariables" variable-type="{{variableType}}"
+          modeldata="modelData" selectedvariables="selectedVariables" variable-type="{{variableType}}" on-hide-callback="onHideCallback"
           class="btn btn-info nrm-md-variable-select pull-right" select-variable-callback="selectVariableCallback" >Add</span>
 
     </div>

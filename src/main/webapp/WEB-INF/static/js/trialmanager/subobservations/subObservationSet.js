@@ -91,6 +91,10 @@
 				// just override default callback (see VariableSelection.prototype._selectVariable)
 			};
 
+			$scope.onHideCallback = function () {
+				adjustColumns($(tableId).DataTable());
+			};
+
 			$scope.onAddVariable = function () {
 				if ($scope.traitVariables.length()) {
 					var pos = $scope.traitVariables.m_keys.length - 1;

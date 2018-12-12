@@ -281,7 +281,8 @@
 						modeldata: '=',
 						callback: '&',
 						selectedvariables: '=',
-						selectVariableCallback: '='
+						selectVariableCallback: '=',
+						onHideCallback: '='
 					},
 
 					link: function(scope, elem, attrs) {
@@ -333,7 +334,8 @@
 									}
 									return scope.selectedvariables;
 								},
-								callback: scope.selectVariableCallback
+								callback: scope.selectVariableCallback,
+								onHideCallback: scope.onHideCallback
 							};
 
 							$(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);

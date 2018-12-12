@@ -438,12 +438,12 @@
 								 */
 								// dtCell.data(cellData);
 								// processCell(cell, cellData, rowData, columnData);
-								table.ajax.reload(null, false);
-
-								/**
-								 * Restore cell click handler
-								 */
-								$table.off('click').on('click', 'td.variates', clickHandler);
+								table.ajax.reload(function () {
+									/**
+									 * Restore cell click handler
+									 */
+									$table.off('click').on('click', 'td.variates', clickHandler);
+								}, false);
 							}, function (response) {
 								if (response.errors) {
 									showErrorMessage('', response.errors[0].message);

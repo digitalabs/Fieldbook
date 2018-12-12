@@ -371,8 +371,7 @@ public class TrialMeasurementsControllerTest {
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(), Matchers.eq(termId),
-				Matchers.eq(true), Matchers.eq(false))).thenReturn(variableText);
-
+				Matchers.eq(true))).thenReturn(variableText);
 		this.measurementsController.setUserSelection(userSelection);
 		this.measurementsController.editExperimentCells(experimentId, termId, null, model);
 		MatcherAssert.assertThat(TermId.CATEGORICAL_VARIABLE.getId(),
@@ -453,7 +452,7 @@ public class TrialMeasurementsControllerTest {
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(), Matchers.eq(termId),
-				Matchers.eq(true), Matchers.eq(false))).thenReturn(variableText);
+				Matchers.eq(true))).thenReturn(variableText);
 
 		final Map<String, String> data = new HashMap<String, String>();
 		data.put(TrialMeasurementsControllerTest.EXPERIMENT_ID, "1");
@@ -499,7 +498,7 @@ public class TrialMeasurementsControllerTest {
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(), Matchers.eq(termId),
-				Matchers.eq(true), Matchers.eq(false))).thenReturn(variableText);
+				Matchers.eq(true))).thenReturn(variableText);
 
 		final Map<String, String> data = new HashMap<String, String>();
 		data.put(TrialMeasurementsControllerTest.EXPERIMENT_ID, "1");
@@ -547,8 +546,7 @@ public class TrialMeasurementsControllerTest {
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(), Matchers.eq(termId),
-				Matchers.eq(true), Matchers.eq(false))).thenReturn(variableText);
-
+				Matchers.eq(true))).thenReturn(variableText);
 		final Map<String, String> data = new HashMap<String, String>();
 		data.put(TrialMeasurementsControllerTest.EXPERIMENT_ID, "1");
 		data.put(TrialMeasurementsControllerTest.TERM_ID, Integer.toString(termId));
@@ -1022,16 +1020,15 @@ public class TrialMeasurementsControllerTest {
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
-				Matchers.eq(this.measurementText.getMeasurementVariable().getId()), Matchers.eq(true),
-				Matchers.eq(false))).thenReturn(variableText);
+				Matchers.eq(this.measurementText.getMeasurementVariable().getId()), Matchers.eq(true))).thenReturn(variableText);
 
 		final Variable variableNumeric = new Variable();
 		final Scale scaleNumeric = new Scale();
 		scaleNumeric.setDataType(DataType.NUMERIC_VARIABLE);
 		variableNumeric.setScale(scaleNumeric);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
-				Matchers.eq(this.measurementNumeric.getMeasurementVariable().getId()), Matchers.eq(true),
-				Matchers.eq(false))).thenReturn(variableNumeric);
+				Matchers.eq(this.measurementNumeric.getMeasurementVariable().getId()), Matchers.eq(true)
+				)).thenReturn(variableNumeric);
 
 		final Variable variableCategorical = new Variable();
 		final Scale scaleCategorical = new Scale();
@@ -1039,8 +1036,8 @@ public class TrialMeasurementsControllerTest {
 		scaleCategorical.addCategory(category1);
 		variableCategorical.setScale(scaleCategorical);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
-				Matchers.eq(this.measurementCategorical.getMeasurementVariable().getId()), Matchers.eq(true),
-				Matchers.eq(false))).thenReturn(variableCategorical);
+				Matchers.eq(this.measurementCategorical.getMeasurementVariable().getId()), Matchers.eq(true)
+				)).thenReturn(variableCategorical);
 		return observations;
 	}
 

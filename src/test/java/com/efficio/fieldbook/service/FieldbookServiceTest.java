@@ -216,7 +216,7 @@ public class FieldbookServiceTest {
 	public void testGetAllPossibleValuesWhenIdIsLocationAndGetAllRecordsIsFalse() throws Exception {
 		final Variable variable = VariableTestDataInitializer.createVariable(DataType.LOCATION);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-				this.locationVariable.getTermId(), true, false)).thenReturn(variable);
+				this.locationVariable.getTermId(), true)).thenReturn(variable);
 
 		final List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl
 				.getAllPossibleValues(this.locationVariable.getTermId(), false);
@@ -231,7 +231,7 @@ public class FieldbookServiceTest {
 	public void testGetAllPossibleValuesWhenIdIsLocationAndGetAllRecordsIsTrue() throws Exception {
 		final Variable variable = VariableTestDataInitializer.createVariable(DataType.LOCATION);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-				this.locationVariable.getTermId(), true, false)).thenReturn(variable);
+				this.locationVariable.getTermId(), true)).thenReturn(variable);
 
 		final List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl
 				.getAllPossibleValues(this.locationVariable.getTermId(), true);
@@ -245,7 +245,7 @@ public class FieldbookServiceTest {
 				this.nonLocationVariable.getPossibleValues());
 
 		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-				this.nonLocationVariable.getTermId(), true, false)).thenReturn(variable);
+				this.nonLocationVariable.getTermId(), true)).thenReturn(variable);
 
 		final List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl
 				.getAllPossibleValues(this.nonLocationVariable.getTermId(), false);
@@ -819,7 +819,7 @@ public class FieldbookServiceTest {
 				.createMeasurementVariable(TermId.BREEDING_METHOD.getId(), TermId.BREEDING_METHOD.name(), "4");
 		final Variable var = VariableTestDataInitializer.createVariable(DataType.BREEDING_METHOD);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.eq(this.contextUtil.getCurrentProgramUUID()),
-				Matchers.anyInt(), Matchers.eq(true), Matchers.eq(false))).thenReturn(var);
+				Matchers.anyInt(), Matchers.eq(true))).thenReturn(var);
 		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Matchers.anyBoolean()))
 				.thenReturn(MethodTestDataInitializer.createMethodList(5));
 		final String result = this.fieldbookServiceImpl.resolveNameVarValue(mvar);

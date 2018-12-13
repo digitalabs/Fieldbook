@@ -219,6 +219,7 @@
 				switchCategoricalView().done(function () {
 					$scope.$apply(function () {
 						$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
+						adjustColumns($(tableId).DataTable());
 					});
 				});
 			};

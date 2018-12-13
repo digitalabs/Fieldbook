@@ -37,10 +37,9 @@ public class DefaultExceptionHandler {
 	@ExceptionHandler(FieldbookRequestValidationException.class)
 	@ResponseStatus(value = NOT_ACCEPTABLE)
 	@ResponseBody
-	public ErrorResponse handleValidationException(FieldbookRequestValidationException ex) {
+	public String handleValidationException(FieldbookRequestValidationException ex) {
 		LOG.error("Error in service validation", ex.getErrorCode());
-		ErrorResponse response = new ErrorResponse();
-		response.addError(this.messageSource.getMessage(ex.getErrorCode(), null, LocaleContextHolder.getLocale()));
-		return response;
+		String message = this.messageSource.getMessage(ex.getErrorCode(), null, LocaleContextHolder.getLocale());
+		return message;
 	}
 }

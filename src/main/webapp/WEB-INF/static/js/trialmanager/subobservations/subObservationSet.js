@@ -326,7 +326,7 @@
 			function adjustColumns(table) {
 				$timeout(function () {
 					table.columns.adjust();
-				}, 100);
+				});
 			}
 
 			function addCellClickHandler() {
@@ -602,6 +602,7 @@
 					subObservationSet.columnsData = columnsData;
 					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(columnsData);
 
+					// if not needed when implementing review -> remove
 					subObservationSet.columnMap = {};
 					angular.forEach(columnsData, function (columnData) {
 						subObservationSet.columnMap[columnData.termId] = columnData;
@@ -784,10 +785,10 @@
 					}
 					$(td).removeAttr('title');
 					var toolTip = 'GID: ' + rowData.variables.GID.value + ' Designation: ' + rowData.variables.DESIGNATION.value;
-					if (status == 'MANUALLY_EDITED') {
+					if (status === 'MANUALLY_EDITED') {
 						$(td).attr('title', toolTip + ' manually-edited-value');
 						$(td).addClass('manually-edited-value');
-					} else if (status == 'OUT_OF_SYNC') {
+					} else if (status === 'OUT_OF_SYNC') {
 						$(td).attr('title', toolTip + ' out-of-sync-value');
 						$(td).addClass('out-of-sync-value');
 					}

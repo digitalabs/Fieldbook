@@ -542,25 +542,28 @@
 								});
 							} else {
 								service.currentData.columnOrders = serializedData;
-								$http.post('/Fieldbook/TrialManager/openTrial?replace=1', service.currentData).
-									success(function() {
-										submitGermplasmList().then(function(trialID) {
-											showSuccessfulMessage('', saveSuccessMessage);
-											notifySaveEventListeners();
-											window.location = '/Fieldbook/TrialManager/openTrial/' + trialID;
+								$http.post('/Fieldbook/TrialManager/openTrial?replace=1', service.currentData).then(function () {
+									submitGermplasmList().then(function (trialID) {
+										showSuccessfulMessage('', saveSuccessMessage);
+										notifySaveEventListeners();
+										window.location = '/Fieldbook/TrialManager/openTrial/' + trialID;
 
-											displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-												service.trialMeasurement.count);
-											service.applicationData.unsavedGeneratedDesign = false;
-											service.applicationData.unsavedTraitsAvailable = false;
-											onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
-											$('body').data('needToSave', '0');
-										}, function() {
-											showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
-										});
-									}).error(function() {
+										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+											service.trialMeasurement.count);
+										service.applicationData.unsavedGeneratedDesign = false;
+										service.applicationData.unsavedTraitsAvailable = false;
+										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
+										$('body').data('needToSave', '0');
+									}, function () {
 										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 									});
+								}, function (response) {
+									if (response.data.errors) {
+										showErrorMessage('', response.data.errors[0].message);
+									} else {
+										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
+									}
+								});
 							}
 
 						}

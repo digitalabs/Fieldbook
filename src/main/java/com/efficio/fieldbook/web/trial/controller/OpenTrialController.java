@@ -418,7 +418,6 @@ public class OpenTrialController extends BaseTrialController {
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional
 	public Map<String, Object> submit(@RequestParam("replace") final int replace, @RequestBody final TrialData data) {
-		this.validateLocationOnEnvironment(data.getEnvironments());
 		this.processEnvironmentData(data.getEnvironments());
 
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();

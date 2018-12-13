@@ -431,18 +431,16 @@
 					if (!processInlineEditInput()) {
 						return false;
 					}
-					var validateLocation = true;
-					angular.forEach(service.currentData.environments.environments, function (environment) {
-						if (environment.managementDetailValues[8190] === undefined || environment.managementDetailValues[8190] === "") {
-							validateLocation = false;
 
-						}
+					var missingLocations = service.currentData.environments.environments.some(function (environment) {
+						return !environment.managementDetailValues || !environment.managementDetailValues[8190];
 					});
 
-					if(!validateLocation){
+					if (missingLocations) {
 						showErrorMessage('', "The are some environments that don't have any location selected");
 						return false;
 					}
+
 					if (hasOutOfBoundValues()) {
 						//we check if there is invalid value in the measurements
 						showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');

@@ -512,7 +512,7 @@
 										showAlertMessage('', outOfSyncWarningMessage);
 									}
 									notifySaveEventListeners();
-									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(updatedData) {
+									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function (updatedData) {
 										service.trialMeasurement.hasMeasurement = (updatedData.measurementDataExisting);
 										service.updateTrialMeasurementRowCount(updatedData.measurementRowCount);
 
@@ -530,11 +530,15 @@
 										setupSettingsVariables();
 										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
 										$('body').data('needToSave', '0');
-                                        studyStateService.resetState();
+										studyStateService.resetState();
 									});
 
-								}).error(function() {
-									showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
+								}).error(function (response) {
+									if (response.data.errors) {
+										showErrorMessage('', response.data.errors[0].message);
+									} else {
+										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
+									}
 								});
 							} else {
 								service.currentData.columnOrders = serializedData;

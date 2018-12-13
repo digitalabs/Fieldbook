@@ -461,32 +461,25 @@
 						var serializedData = (JSON.stringify(columnsOrder));
 						if (!service.isOpenStudy()) {
 							service.currentData.columnOrders = serializedData;
-							// we are receiving 'success' string message from server in a happy case, so the response should not be parsed
-							// as json, we set {{transformResponse: undefined}} to indicate that we don't need json transformation
-							$http({
-								url: '/Fieldbook/TrialManager/createTrial',
-								method: 'POST',
-								data: service.currentData,
-								transformResponse: undefined
-							}).then(function(response) {
-								if (response.data === 'success' && response.status === 200) {
-									submitGermplasmList().then(function(generatedID) {
-										showSuccessfulMessage('', saveSuccessMessage);
-										notifySaveEventListeners();
-										window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
+							$http.post('/Fieldbook/TrialManager/createTrial', service.currentData).then(function () {
+								submitGermplasmList().then(function (generatedID) {
+									showSuccessfulMessage('', saveSuccessMessage);
+									notifySaveEventListeners();
+									window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
 
-										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-											service.trialMeasurement.count);
-										service.applicationData.unsavedGeneratedDesign = false;
-										service.applicationData.unsavedTraitsAvailable = false;
-										$('body').data('needToSave', '0');
-                                        studyStateService.resetState();
-									});
+									displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+										service.trialMeasurement.count);
+									service.applicationData.unsavedGeneratedDesign = false;
+									service.applicationData.unsavedTraitsAvailable = false;
+									$('body').data('needToSave', '0');
+									studyStateService.resetState();
+								});
+							}, function (response) {
+								if (response.data.errors) {
+									showErrorMessage('',  response.data.errors[0].message);
 								} else {
-									showErrorMessage('', 'Trial could not be saved at the moment. Please try again later.');
+									showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 								}
-							}, function() {
-								showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 							});
 						} else {
 

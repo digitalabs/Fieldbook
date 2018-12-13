@@ -4,7 +4,7 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.exception.FieldbookRequestValidationException;
+import com.efficio.fieldbook.web.exception.FieldbookRequestException;
 import com.efficio.fieldbook.web.trial.bean.AdvanceList;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
 import com.efficio.fieldbook.web.trial.bean.CrossesList;
@@ -134,7 +134,7 @@ public abstract class BaseTrialController extends SettingsController {
 			if (!values.containsKey(Integer.toString(TermId.LOCATION_ID.getId()))
 				|| values.get(Integer.toString(TermId.LOCATION_ID.getId())) == null || values
 				.get(Integer.toString(TermId.LOCATION_ID.getId())).isEmpty()) {
-				throw new FieldbookRequestValidationException("save.study.no.location.selected.on.environment");
+				throw new FieldbookRequestException("save.study.no.location.selected.on.environment");
 			}
 
 			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))

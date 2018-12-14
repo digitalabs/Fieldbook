@@ -1135,20 +1135,20 @@ public class TrialMeasurementsControllerTest {
 		measurementVariable.setVariableType(VariableType.TRAIT);
 		measurementVariable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 
-		// Value: 1.999 - round up
-		List<MeasurementRow> measurementRows = MeasurementRowTestDataInitializer.createMeasurementRowList(1, "numeric", "1.999", measurementVariable);
+		// Value: 1.99999 - round up
+		List<MeasurementRow> measurementRows = MeasurementRowTestDataInitializer.createMeasurementRowList(1, "numeric", "1.99999", measurementVariable);
 		this.measurementsController.roundNumericValues(measurementRows);
 		Assert.assertEquals("2", measurementRows.get(0).getDataList().get(0).getValue());
 
-		// Value: 1.444 - round down
-		measurementRows = MeasurementRowTestDataInitializer.createMeasurementRowList(1, "numeric", "1.444", measurementVariable);
+		// Value: 1.44444 - round down
+		measurementRows = MeasurementRowTestDataInitializer.createMeasurementRowList(1, "numeric", "1.44444", measurementVariable);
 		this.measurementsController.roundNumericValues(measurementRows);
-		Assert.assertEquals("1.44", measurementRows.get(0).getDataList().get(0).getValue());
+		Assert.assertEquals("1.4444", measurementRows.get(0).getDataList().get(0).getValue());
 
-		// Value: 1.445 - round up
-		measurementRows = MeasurementRowTestDataInitializer.createMeasurementRowList(1, "numeric", "1.445", measurementVariable);
+		// Value: 1.44445 - round up
+		measurementRows = MeasurementRowTestDataInitializer.createMeasurementRowList(1, "numeric", "1.44445", measurementVariable);
 		this.measurementsController.roundNumericValues(measurementRows);
-		Assert.assertEquals("1.45", measurementRows.get(0).getDataList().get(0).getValue());
+		Assert.assertEquals("1.4445", measurementRows.get(0).getDataList().get(0).getValue());
 
 		// Value: 2 - no rounding needed
 		measurementRows = MeasurementRowTestDataInitializer.createMeasurementRowList(1, "numeric", "2", measurementVariable);

@@ -307,6 +307,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				if (typeof resetGermplasmList !== 'undefined') {
 					resetGermplasmList();
 				}
+				TrialManagerDataService.resetServiceBackup();
 			};
 
 			// To apply scope safely
@@ -367,6 +368,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						$scope.resetTabsData();
 						createErrorNotification(errorMsgHeader, data.createTrialForm.errorMessage);
 					} else {
+						TrialManagerDataService.storeInitialValuesInServiceBackup();
 						var environmentData = TrialManagerDataService.extractData(data.environmentData);
 						var environmentSettings = TrialManagerDataService.extractSettings(data.environmentData);
 

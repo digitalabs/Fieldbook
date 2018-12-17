@@ -432,6 +432,15 @@
 						return false;
 					}
 
+					var missingLocations = service.currentData.environments.environments.some(function (environment) {
+						return !environment.managementDetailValues || !environment.managementDetailValues[8190];
+					});
+
+					if (missingLocations) {
+						showErrorMessage('', "The are some environments that don't have any location selected");
+						return false;
+					}
+
 					if (hasOutOfBoundValues()) {
 						//we check if there is invalid value in the measurements
 						showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
@@ -452,32 +461,25 @@
 						var serializedData = (JSON.stringify(columnsOrder));
 						if (!service.isOpenStudy()) {
 							service.currentData.columnOrders = serializedData;
-							// we are receiving 'success' string message from server in a happy case, so the response should not be parsed
-							// as json, we set {{transformResponse: undefined}} to indicate that we don't need json transformation
-							$http({
-								url: '/Fieldbook/TrialManager/createTrial',
-								method: 'POST',
-								data: service.currentData,
-								transformResponse: undefined
-							}).then(function(response) {
-								if (response.data === 'success' && response.status === 200) {
-									submitGermplasmList().then(function(generatedID) {
-										showSuccessfulMessage('', saveSuccessMessage);
-										notifySaveEventListeners();
-										window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
+							$http.post('/Fieldbook/TrialManager/createTrial', service.currentData).then(function () {
+								submitGermplasmList().then(function (generatedID) {
+									showSuccessfulMessage('', saveSuccessMessage);
+									notifySaveEventListeners();
+									window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
 
-										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-											service.trialMeasurement.count);
-										service.applicationData.unsavedGeneratedDesign = false;
-										service.applicationData.unsavedTraitsAvailable = false;
-										$('body').data('needToSave', '0');
-                                        studyStateService.resetState();
-									});
+									displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+										service.trialMeasurement.count);
+									service.applicationData.unsavedGeneratedDesign = false;
+									service.applicationData.unsavedTraitsAvailable = false;
+									$('body').data('needToSave', '0');
+									studyStateService.resetState();
+								});
+							}, function (response) {
+								if (response.data.errors) {
+									showErrorMessage('',  response.data.errors[0].message);
 								} else {
-									showErrorMessage('', 'Trial could not be saved at the moment. Please try again later.');
+									showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 								}
-							}, function() {
-								showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 							});
 						} else {
 
@@ -510,7 +512,7 @@
 										showAlertMessage('', outOfSyncWarningMessage);
 									}
 									notifySaveEventListeners();
-									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(updatedData) {
+									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function (updatedData) {
 										service.trialMeasurement.hasMeasurement = (updatedData.measurementDataExisting);
 										service.updateTrialMeasurementRowCount(updatedData.measurementRowCount);
 
@@ -528,33 +530,40 @@
 										setupSettingsVariables();
 										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
 										$('body').data('needToSave', '0');
-                                        studyStateService.resetState();
+										studyStateService.resetState();
 									});
 
-								}).error(function() {
-									showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
+								}).error(function (response) {
+									if (response.data.errors) {
+										showErrorMessage('', response.data.errors[0].message);
+									} else {
+										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
+									}
 								});
 							} else {
 								service.currentData.columnOrders = serializedData;
-								$http.post('/Fieldbook/TrialManager/openTrial?replace=1', service.currentData).
-									success(function() {
-										submitGermplasmList().then(function(trialID) {
-											showSuccessfulMessage('', saveSuccessMessage);
-											notifySaveEventListeners();
-											window.location = '/Fieldbook/TrialManager/openTrial/' + trialID;
+								$http.post('/Fieldbook/TrialManager/openTrial?replace=1', service.currentData).then(function () {
+									submitGermplasmList().then(function (trialID) {
+										showSuccessfulMessage('', saveSuccessMessage);
+										notifySaveEventListeners();
+										window.location = '/Fieldbook/TrialManager/openTrial/' + trialID;
 
-											displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-												service.trialMeasurement.count);
-											service.applicationData.unsavedGeneratedDesign = false;
-											service.applicationData.unsavedTraitsAvailable = false;
-											onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
-											$('body').data('needToSave', '0');
-										}, function() {
-											showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
-										});
-									}).error(function() {
+										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+											service.trialMeasurement.count);
+										service.applicationData.unsavedGeneratedDesign = false;
+										service.applicationData.unsavedTraitsAvailable = false;
+										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
+										$('body').data('needToSave', '0');
+									}, function () {
 										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 									});
+								}, function (response) {
+									if (response.data.errors) {
+										showErrorMessage('', response.data.errors[0].message);
+									} else {
+										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
+									}
+								});
 							}
 
 						}

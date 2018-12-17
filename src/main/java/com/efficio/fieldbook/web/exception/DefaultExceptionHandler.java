@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -41,5 +42,16 @@ public class DefaultExceptionHandler {
 		LOG.error("Error in service validation", ex.getErrorCode());
 		String message = this.messageSource.getMessage(ex.getErrorCode(), null, LocaleContextHolder.getLocale());
 		return message;
+	}
+
+	@RequestMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ExceptionHandler(FieldbookRequestException.class)
+	@ResponseStatus(value = BAD_REQUEST)
+	@ResponseBody
+	public ErrorResponse handleValidationException(FieldbookRequestException ex) {
+		LOG.error("Error in request", ex.getErrorCode());
+		ErrorResponse response = new ErrorResponse();
+		response.addError(this.messageSource.getMessage(ex.getErrorCode(), null, LocaleContextHolder.getLocale()));
+		return response;
 	}
 }

@@ -833,7 +833,7 @@ function getDisplayValueForNumericalValue(numericValue) {
 	if(numericValue === "missing" || numericValue === "") {
 		return numericValue;
 	} else {
-        return EscapeHTML.escape((numericValue !== undefined && numericValue !== null)? Number(Math.round(numericValue+'e2')+'e-2'): '');
+        return EscapeHTML.escape( numericValue ? Number(Math.round(numericValue+'e4')+'e-4'): '');
 	}
 }
 

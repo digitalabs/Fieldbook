@@ -140,9 +140,6 @@ public class DataMapUtilTest {
 		final Scale scaleText = new Scale();
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
-//		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
-//				Matchers.eq(this.measurementText.getMeasurementVariable().getId()), Matchers.eq(true),
-//				Matchers.eq(false))).thenReturn(variableText);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
 				Matchers.eq(this.measurementText.getMeasurementVariable().getId()), Matchers.eq(true))).thenReturn(variableText);
 
@@ -150,9 +147,6 @@ public class DataMapUtilTest {
 		final Scale scaleNumeric = new Scale();
 		scaleNumeric.setDataType(DataType.NUMERIC_VARIABLE);
 		variableNumeric.setScale(scaleNumeric);
-//		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
-//				Matchers.eq(this.measurementNumeric.getMeasurementVariable().getId()), Matchers.eq(true),
-//				Matchers.eq(false))).thenReturn(variableNumeric);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
 				Matchers.eq(this.measurementNumeric.getMeasurementVariable().getId()), Matchers.eq(true))).thenReturn(variableNumeric);
 
@@ -161,9 +155,6 @@ public class DataMapUtilTest {
 		scaleCategorical.setDataType(DataType.CATEGORICAL_VARIABLE);
 		scaleCategorical.addCategory(category1);
 		variableCategorical.setScale(scaleCategorical);
-//		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
-//				Matchers.eq(this.measurementCategorical.getMeasurementVariable().getId()), Matchers.eq(true),
-//				Matchers.eq(false))).thenReturn(variableCategorical);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
 				Matchers.eq(this.measurementCategorical.getMeasurementVariable().getId()), Matchers.eq(true)
 		)).thenReturn(variableCategorical);

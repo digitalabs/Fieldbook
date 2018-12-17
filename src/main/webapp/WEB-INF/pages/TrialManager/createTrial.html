@@ -570,6 +570,10 @@
 	</div>
 
 	<div class="row">
+		<div id="choose-user" th:include="/Common/includes/chooseUser"></div>
+	</div>
+
+	<div class="row">
 		<div id="crossSetBreedingMethod" th:include="/Common/includes/crosses/setBreedingMethod"></div>
 	</div>
 
@@ -716,8 +720,8 @@
 			},
 			/*TRIAL CONDITIONS*/
 			1802: {
-				label: /*[[#{study.managesettings.add.studycondition}]]*/ '',
-				placeholder: /*[[#{study.reminder.add.studycondition}]]*/ ''
+				label: /*[[#{study.managesettings.add.study.conditions}]]*/ '',
+				placeholder: /*[[#{study.reminder.add.study.conditions}]]*/ ''
 			},
 			generalAjaxError: /*[[#{study.managesettings.variable.selection.error}]]*/ '',
 			variableSelectedMessage: /*[[#{common.warning.variable.in.use}]]*/ '',
@@ -834,5 +838,7 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/variableService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/angular/angular-local-storage.min.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/angular/bmsAuth.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/chooseUser.js}"></script>
+	
 
 </div>

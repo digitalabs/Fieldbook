@@ -22,6 +22,7 @@
 			$scope.nested.reviewVariable = null;
 			$scope.enableActions = false;
 			$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
+			$scope.columnDataByInputTermId = {};
 
 			var subObservationTab = $scope.subObservationTab;
 			var tableId = '#subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
@@ -89,6 +90,10 @@
 
 			$scope.selectVariableCallback = function(responseData) {
 				// just override default callback (see VariableSelection.prototype._selectVariable)
+			};
+
+			$scope.onHideCallback = function () {
+				adjustColumns($(tableId).DataTable());
 			};
 
 			$scope.onAddVariable = function () {
@@ -205,13 +210,16 @@
 			};
 
 			$scope.changeEnvironment = function () {
-				$scope.dtOptions = getDtOptions();
+				$(tableId).DataTable().ajax
+					.url(datasetService.getObservationTableUrl(subObservationSet.id, $scope.nested.selectedEnvironment.instanceDbId))
+					.load();
 			};
 
 			$scope.toggleShowCategoricalDescription = function () {
 				switchCategoricalView().done(function () {
 					$scope.$apply(function () {
 						$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
+						adjustColumns($(tableId).DataTable());
 					});
 				});
 			};
@@ -330,7 +338,8 @@
 					var cell = this;
 
 					var table = $table.DataTable();
-					var rowData = table.row(cell.parentNode).data();
+					var dtRow = table.row(cell.parentNode);
+					var rowData = dtRow.data();
 					var dtCell = table.cell(cell);
 					var cellData = dtCell.data();
 					var index = table.colReorder.transpose(table.column(cell).index(), 'toOriginal');
@@ -375,7 +384,6 @@
 						)($inlineScope);
 
 						$(cell).append(editor);
-						adjustColumns(table);
 
 						function updateInline() {
 							var promise;
@@ -423,6 +431,10 @@
 							}
 
 							promise.then(function (data) {
+								var valueChanged = false;
+								if (cellData.value !== $inlineScope.observation.value) {
+                                    valueChanged = true;
+								}
 								cellData.value = $inlineScope.observation.value;
 								cellData.observationId = data.observationId;
 								cellData.status = data.status;
@@ -431,16 +443,32 @@
 								editor.remove();
 
 								/**
-								 * TODO in review mode we can't reload, we can only update the cell data and status
-								 * Then we need to inform the user that some info may not be available during review, ie. out-of-sync data
+								 * We are updating the cell value and the target if the trait is input of a formula
+								 * to avoid reloading the page. It has these advantages:
+								 * - Make the inline edition more dynamic and fast
+								 * - Don't reset the table scroll
+								 * - We can show out-of-sync status changes on preview mode
+								 *
+								 * The alternative would be:
+								 *
+								 *     table.ajax.reload(function () {
+								 *         // Restore handler
+								 *         $table.off('click').on('click', 'td.variates', clickHandler);
+								 *     }, false);
 								 */
-								// dtCell.data(cellData);
-								// processCell(cell, cellData, rowData, columnData);
-								table.ajax.reload(null, false);
+								dtCell.data(cellData);
+								processCell(cell, cellData, rowData, columnData);
 
-								/**
-								 * Restore cell click handler
-								 */
+								if (valueChanged && $scope.columnDataByInputTermId[termId]) {
+									var targetColumnData = $scope.columnDataByInputTermId[termId];
+									var targetColIndex = table.colReorder.transpose(targetColumnData.index, 'toCurrent');
+									var targetDtCell = table.cell(dtRow.node(), targetColIndex);
+									var targetCellData = targetDtCell.data();
+									targetCellData.status = 'OUT_OF_SYNC';
+									processCell(targetDtCell.node(), targetCellData, rowData, targetColumnData);
+								}
+
+								// Restore handler
 								$table.off('click').on('click', 'td.variates', clickHandler);
 							}, function (response) {
 								if (response.errors) {
@@ -470,12 +498,7 @@
 									todayBtn: true,
 									forceParse: false
 								}).on('hide', function () {
-									try {
-										$.datepicker.parseDate('yymmdd', $(this).val());
-										updateInline();
-									} catch (e) {
-										showErrorMessage('', 'invalid value');
-									}
+									updateInline();
 								}).datepicker("show").datepicker('update', initialValue)
 							});
 						}
@@ -580,6 +603,7 @@
 					subObservationSet.columnsData = columnsData;
 					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(columnsData);
 
+					// if not needed when implementing review -> remove
 					subObservationSet.columnMap = {};
 					angular.forEach(columnsData, function (columnData) {
 						subObservationSet.columnMap[columnData.termId] = columnData;
@@ -594,15 +618,26 @@
 				var columns = [],
 					columnsDef = [];
 
-				// TODO complete column definitions (highlighting, links, etc)
-
-				angular.forEach(columnsData, function (columnData) {
+				angular.forEach(columnsData, function (columnData, index) {
 					if (columnData.possibleValues) {
 						columnData.possibleValuesByValue = {};
 						angular.forEach(columnData.possibleValues, function (possibleValue) {
+							// so we can use "Please Choose"=empty value
+							possibleValue.displayValue = possibleValue.name;
+							// convenience map to avoid looping later
 							columnData.possibleValuesByValue[possibleValue.name] = possibleValue;
 						});
+						// waiting for https://github.com/angular-ui/ui-select/issues/152
+						columnData.possibleValues.unshift({name: '', displayValue: 'Please Choose', displayDescription: 'Please Choose'});
 					}
+
+					// store formula info to update out-of-sync status after edit
+					if (columnData.formula && columnData.formula.inputs) {
+						columnData.formula.inputs.forEach(function (input) {
+							$scope.columnDataByInputTermId[input.id] = columnData;
+						});
+					}
+					columnData.index = index;
 
 					columns.push({
 						title: columnData.alias,
@@ -634,6 +669,8 @@
 
 								if (columnData.dataTypeId === 1130) {
 									return renderCategoricalData(data, columnData);
+								} else if (columnData.dataTypeId === 1110) {
+									return getDisplayValueForNumericalValue(data.value);
 								}
 
 								return data && EscapeHTML.escape(data.value);
@@ -722,8 +759,8 @@
 				var invalid = false;
 
 				var value = cellDataValue;
-				var minVal = columnData.minRange;
-				var maxVal = columnData.maxRange;
+				var minVal = (columnData.variableMinRange || columnData.variableMinRange === 0) || columnData.scaleMinRange;
+				var maxVal = (columnData.variableMaxRange || columnData.variableMaxRange === 0) || columnData.scaleMaxRange;
 
 				invalid = validateNumericRange(minVal, maxVal, value, invalid);
 				invalid = validateCategoricalValues(columnData, cellDataValue, invalid);
@@ -749,10 +786,10 @@
 					}
 					$(td).removeAttr('title');
 					var toolTip = 'GID: ' + rowData.variables.GID.value + ' Designation: ' + rowData.variables.DESIGNATION.value;
-					if (status == 'MANUALLY_EDITED') {
+					if (status === 'MANUALLY_EDITED') {
 						$(td).attr('title', toolTip + ' manually-edited-value');
 						$(td).addClass('manually-edited-value');
-					} else if (status == 'OUT_OF_SYNC') {
+					} else if (status === 'OUT_OF_SYNC') {
 						$(td).attr('title', toolTip + ' out-of-sync-value');
 						$(td).addClass('out-of-sync-value');
 					}

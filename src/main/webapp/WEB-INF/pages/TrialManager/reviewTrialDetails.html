@@ -288,7 +288,7 @@
                     <!-- Sub Header of Environments: STUDY CONDITIONS -->
                     <label  class="control-label">
                         <img th:src="@{/static/svg/conditions.svg}" style="margin: 3px 4px;" width="22" height="22" />
-                        <strong class="sub-content-heading" th:text="#{study.studydetails.study.conditions}">STUDY CONDITIONS</strong>
+                        <strong class="sub-content-heading" th:text="#{study.managesettings.environment.condition.details}">ENVIRONMENTAL CONDITIONS</strong>
                     </label>
                 </div>
 
@@ -318,7 +318,7 @@
 
                 <!-- If trial has no Condition then display No available trial conditions -->
                 <div th:if="*{studyConditionDetails == null or #lists.isEmpty(studyConditionDetails)}">
-                    <div class="add_top_padding" th:text="#{no.available.study.conditions}">No available study conditions</div>
+                    <div class="add_top_padding" th:text="#{no.available.environmental.conditions}">No available environmental conditions</div>
                 </div>
             </div>
 

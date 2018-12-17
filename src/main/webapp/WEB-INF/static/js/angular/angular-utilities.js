@@ -169,6 +169,7 @@
 					modelData: '=',
 					selectedVariables: '=',
 					selectVariableCallback: '=',
+					onHideCallback: '=',
 					variableType: '@',
 					showReminder: '=',
 					enableUpdate: '=',

@@ -173,9 +173,8 @@ public class ExportGermplasmListServiceTest {
 				.getOwnerListName(ExportGermplasmListServiceTest.CURRENT_USER_ID);
 		Mockito.doReturn("1010").when(this.fieldbookMiddlewareService).getOwnerListName(Matchers.anyInt());
 
-		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.STOCKID.getId(), false, false)).thenReturn(this.createVariable(TermId.STOCKID.getId()));
-		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.SEED_AMOUNT_G.getId(), false, false)).thenReturn(this.createVariable(TermId.SEED_AMOUNT_G.getId()));
-
+		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.STOCKID.getId(), false)).thenReturn(this.createVariable(TermId.STOCKID.getId()));
+		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.SEED_AMOUNT_G.getId(), false)).thenReturn(this.createVariable(TermId.SEED_AMOUNT_G.getId()));
 	}
 
 	@Test

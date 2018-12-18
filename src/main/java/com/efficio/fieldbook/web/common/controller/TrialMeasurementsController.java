@@ -202,7 +202,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			}
 			this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, trait.getId(), value, existingPhenotype,
 					trait.getScale().getDataType().getId(), status);
-			this.verifyAndUpdateValueStatus(oldValue, trait.getId(), value, experimentId);
 		}
 		map.put(TrialMeasurementsController.SUCCESS, "1");
 
@@ -821,21 +820,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	public boolean isBeingACalculatedValueEdited(final MeasurementVariable variable, final String oldValue, final String newValue) {
 		return ((oldValue == null || !oldValue.equals(newValue)) && variable.getFormula() != null) ? true : false;
-	}
-
-	public void verifyAndUpdateValueStatus(final String oldValue, final Integer termId, final String newValue, final Integer experimentId) {
-		if (oldValue == null || !oldValue.equals(newValue)) {
-			final Map<Integer, List<Integer>> usages = WorkbookUtil.getVariatesUsedInFormulas(this.getUserSelection().getWorkbook().getVariates());
-			if (usages.containsKey(termId)) {
-				for (final Integer targetTermId : usages.get(termId)) {
-					final Phenotype phenotype = this.studyDataManager.getPhenotype(experimentId, targetTermId);
-					if (phenotype != null) {
-						phenotype.setValueStatus(Phenotype.ValueStatus.OUT_OF_SYNC);
-						this.studyDataManager.updatePhenotype(phenotype);
-					}
-				}
-			}
-		}
 	}
 
 	private void processVisualStatusForImportedTable(final MeasurementRow row, final String oldValue, final String newValue, final Integer termId) {

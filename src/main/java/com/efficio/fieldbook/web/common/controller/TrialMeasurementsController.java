@@ -175,10 +175,8 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		if (!isDiscard) {
 			Phenotype existingPhenotype = null;
-			String oldValue = null;
 			if (phenotypeId != null) {
 				existingPhenotype = this.studyDataManager.getPhenotypeById(phenotypeId);
-				oldValue = existingPhenotype.getValue();
 			}
 
 			final Variable trait = this.ontologyVariableDataManager

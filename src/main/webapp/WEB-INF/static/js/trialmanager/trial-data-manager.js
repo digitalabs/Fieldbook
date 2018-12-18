@@ -7,11 +7,11 @@
             'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'SAMPLE_LIST_DATA','CROSSES_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
 		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', '$q',
-		'TrialSettingsManager','studyStateService', '_', '$localStorage','$rootScope',
+		'TrialSettingsManager','studyStateService', '_', '$localStorage','$rootScope', 'studyContext',
 		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA, SAMPLE_LIST_DATA, CROSSES_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
 					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope) {
+					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext) {
 
 			// TODO: clean up data service, at the very least arrange the functions in alphabetical order
 			var extractData = function(initialData, initializeProperty) {
@@ -353,8 +353,11 @@
 				changeLockedStatus : function(doLock) {
 					
 					var studyId = service.currentData.basicDetails.studyID;
+					var study = {
+						"locked": doLock
+					};
 					$http
-						.post('/Fieldbook/TrialManager/changeLockedStatus/' + studyId + '?doLock=' + doLock, null)
+						.patch('/bmsapi/study/' + studyContext.cropName + '/'+ studyId +'/', study)
 						.success(function(data) {
 							if (doLock) {
 								showSuccessfulMessage('', lockStudySuccessMessage);

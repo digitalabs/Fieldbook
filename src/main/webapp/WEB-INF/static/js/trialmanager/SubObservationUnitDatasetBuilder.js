@@ -26,7 +26,7 @@
 		};
 
 		$scope.saveDataset = function(){
-			if ($scope.dtForm.$valid && $scope.trialInstances != 0) {
+			if ($scope.dtForm.$valid && !$scope.isEmptySelection) {
 				var instanceIds = [];
 
 				Object.keys($scope.selectedInstances).forEach(function(instanceId) {

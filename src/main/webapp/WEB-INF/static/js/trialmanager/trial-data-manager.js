@@ -476,7 +476,7 @@
 									studyStateService.resetState();
 								});
 							}, function (response) {
-								if (response.data.errors) {
+								if (response.data && response.data.errors) {
 									showErrorMessage('',  response.data.errors[0].message);
 								} else {
 									showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
@@ -535,7 +535,7 @@
 									});
 
 								}).error(function (response) {
-									if (response.data.errors) {
+									if (response.data && response.data.errors) {
 										showErrorMessage('', response.data.errors[0].message);
 									} else {
 										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
@@ -559,7 +559,7 @@
 										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 									});
 								}, function (response) {
-									if (response.data.errors) {
+									if (response.data && response.data.errors) {
 										showErrorMessage('', response.data.errors[0].message);
 									} else {
 										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);

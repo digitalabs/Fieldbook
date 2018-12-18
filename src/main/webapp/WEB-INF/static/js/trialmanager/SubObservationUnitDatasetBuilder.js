@@ -72,38 +72,38 @@
 				$scope.initDatasetBuild();
 		};
 
-		$scope.initDatasetBuild = function () {
-			if($scope.dtForm){
-				$scope.dtForm.$submitted = false;
-				$scope.dtForm.$setUntouched(true);
-				$scope.dtForm.selectVariableDatasetBuilder.$setPristine();
-			}
+			$scope.initDatasetBuild = function () {
+				if ($scope.dtForm) {
+					$scope.dtForm.$submitted = false;
+					$scope.dtForm.$setUntouched(true);
+					$scope.dtForm.selectVariableDatasetBuilder.$setPristine();
+				}
 
-			$scope.header = $scope.datasetType.name;
-			$scope.datasetName = '';
-			$scope.numberOfSubObservationUnits = '';
-			$scope.selectedVariable = undefined;
+				$scope.header = $scope.datasetType.name;
+				$scope.datasetName = '';
+				$scope.numberOfSubObservationUnits = '';
+				$scope.selectedVariable = undefined;
 
-			environmentService.getEnvironments().then(function (environmentDetails) {
-				$scope.instances = environmentDetails;
-			});
+				environmentService.getEnvironments().then(function (environmentDetails) {
+					$scope.instances = environmentDetails;
 
-			variableService.getVariablesByFilter({
-				methodIds: 4040,
-				scaleIds: 6040,
-				variableTypeIds: 1812
-			}).then(function (variablesFiltered) {
-				$scope.variables = variablesFiltered;
-				angular.forEach($scope.variables, function (variable) {
-					if ($scope.datasetType.defaultVariableId === parseInt(variable.id)) {
-						$scope.selectedVariable = variable;
-					}
-					$timeout(function () {
-						angular.element('#variableDatasetBuilder').select2();
-					}, 1);
+					variableService.getVariablesByFilter({
+						methodIds: 4040,
+						scaleIds: 6040,
+						variableTypeIds: 1812
+					}).then(function (variablesFiltered) {
+						$scope.variables = variablesFiltered;
+						angular.forEach($scope.variables, function (variable) {
+							if ($scope.datasetType.defaultVariableId === parseInt(variable.id)) {
+								$scope.selectedVariable = variable;
+							}
+							$timeout(function () {
+								angular.element('#variableDatasetBuilder').select2();
+							}, 1);
+						});
+					});
 				});
-			});
-		};
+			};
 
 		$scope.formGroupClass = formUtilities.formGroupClassGenerator($scope, 'dtForm');
 

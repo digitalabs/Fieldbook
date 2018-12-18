@@ -192,7 +192,7 @@
 			var cleanupData = function(values) {
 				if (values) {
 					angular.forEach(values, function(value, key) {
-						if (value && value.id) {
+						if (value && (value.id || value.id === 0)) {
 							values[key] = value.id;
 						}
 					});
@@ -433,7 +433,8 @@
 					}
 
 					var missingLocations = service.currentData.environments.environments.some(function (environment) {
-						return !environment.managementDetailValues || !environment.managementDetailValues[8190];
+						return !environment.managementDetailValues ||
+							(!environment.managementDetailValues[8190] && environment.managementDetailValues[8190] !== 0);
 					});
 
 					if (missingLocations) {

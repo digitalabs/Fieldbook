@@ -87,8 +87,8 @@ public class SettingsControllerTest {
 		this.controller.setOntologyService(this.ontologyService);
 
 		this.createTestVariable();
-		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class), Matchers.anyBoolean(),
-				Matchers.anyBoolean())).thenReturn(this.testVariable);
+		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class), Matchers.anyBoolean()))
+				.thenReturn(this.testVariable);
 		Mockito.when(this.fieldbookService.getAllPossibleValues(Matchers.anyInt())).thenReturn(Arrays.asList(this.testValueReference));
 		Mockito.when(
 				this.fieldbookService.getAllPossibleValuesFavorite(Matchers.anyInt(), Matchers.any(String.class), Matchers.anyBoolean()))
@@ -178,7 +178,7 @@ public class SettingsControllerTest {
 				settingDetail.getPossibleValuesFavoriteJson().contains(this.testValueReference.getKey()));
 
 		Mockito.verify(this.variableDataManager, Mockito.times(1)).getVariable(this.contextUtil.getCurrentProgramUUID(),
-				this.testVariable.getId(), false, false);
+				this.testVariable.getId(), false);
 		Mockito.verify(this.fieldbookService, Mockito.times(1)).getAllPossibleValues(this.testVariable.getId());
 		Mockito.verify(this.contextUtil, Mockito.times(1)).getProjectInContext();
 		Mockito.verify(this.fieldbookService, Mockito.times(1)).getAllPossibleValuesFavorite(this.testVariable.getId(),

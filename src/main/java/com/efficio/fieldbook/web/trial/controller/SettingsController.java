@@ -170,7 +170,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the setting detail
 	 */// TODO TRIAL
 	protected SettingDetail createSettingDetailWithVariableType(final int id, final String alias, final VariableType variableType) {
-		final Variable variable = this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, false, false);
+		final Variable variable = this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, false);
 
 		String variableName = variable.getName();
 		if (alias != null && !alias.isEmpty()) {

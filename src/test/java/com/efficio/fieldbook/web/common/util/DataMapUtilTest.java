@@ -141,16 +141,14 @@ public class DataMapUtilTest {
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
-				Matchers.eq(this.measurementText.getMeasurementVariable().getId()), Matchers.eq(true),
-				Matchers.eq(false))).thenReturn(variableText);
+				Matchers.eq(this.measurementText.getMeasurementVariable().getId()), Matchers.eq(true))).thenReturn(variableText);
 
 		final Variable variableNumeric = new Variable();
 		final Scale scaleNumeric = new Scale();
 		scaleNumeric.setDataType(DataType.NUMERIC_VARIABLE);
 		variableNumeric.setScale(scaleNumeric);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
-				Matchers.eq(this.measurementNumeric.getMeasurementVariable().getId()), Matchers.eq(true),
-				Matchers.eq(false))).thenReturn(variableNumeric);
+				Matchers.eq(this.measurementNumeric.getMeasurementVariable().getId()), Matchers.eq(true))).thenReturn(variableNumeric);
 
 		final Variable variableCategorical = new Variable();
 		final Scale scaleCategorical = new Scale();
@@ -158,8 +156,8 @@ public class DataMapUtilTest {
 		scaleCategorical.addCategory(category1);
 		variableCategorical.setScale(scaleCategorical);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
-				Matchers.eq(this.measurementCategorical.getMeasurementVariable().getId()), Matchers.eq(true),
-				Matchers.eq(false))).thenReturn(variableCategorical);
+				Matchers.eq(this.measurementCategorical.getMeasurementVariable().getId()), Matchers.eq(true)
+		)).thenReturn(variableCategorical);
 		return observations;
 	}
 
@@ -484,7 +482,7 @@ public class DataMapUtilTest {
 	public void testAddGermplasmAndPlotFactorsDataToDataMapWithAdditionalDesignFactors() {
 
 		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-				DataMapUtilTest.ALEUCOL_1_5_TERM_ID, true, false))
+				DataMapUtilTest.ALEUCOL_1_5_TERM_ID, true))
 				.thenReturn(this.createTestCategoricalVariable());
 
 		final Map<String, Object> dataMap = new HashMap<>();

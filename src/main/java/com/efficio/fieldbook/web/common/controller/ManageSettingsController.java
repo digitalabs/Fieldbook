@@ -15,7 +15,6 @@ import com.google.common.collect.Maps;
 import org.generationcp.commons.derivedvariable.DerivedVariableUtils;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.ontology.FormulaDto;
 import org.generationcp.middleware.domain.ontology.FormulaVariable;
 import org.generationcp.middleware.domain.ontology.Property;
@@ -33,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -202,8 +200,7 @@ public class ManageSettingsController extends SettingsController {
 			@ModelAttribute("variableDetails") final OntologyDetailsForm variableDetails) {
 		try {
 			final Variable ontologyVariable =
-					this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, true, false);
-
+					this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, true);
 			if (!Objects.equals(ontologyVariable, null)) {
 				variableDetails.setVariable(ontologyVariable);
 				variableDetails.setCurrentVariableType(VariableType.getById(variableTypeId));

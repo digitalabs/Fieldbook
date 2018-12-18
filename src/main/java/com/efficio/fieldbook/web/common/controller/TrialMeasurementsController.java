@@ -182,7 +182,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			}
 
 			final Variable trait = this.ontologyVariableDataManager
-					.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true, false);
+					.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true);
 
 			if (!invalidButKeep && !this.validationService.validateObservationValue(trait, value)) {
 				map.put(TrialMeasurementsController.SUCCESS, "0");
@@ -464,7 +464,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 
 		final Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-			termId, true, false);
+				termId, true);
 
 		model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
 		model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
@@ -504,7 +504,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 
 		final Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-			termId, true, false);
+				termId, true);
 		model.addAttribute("variable", variable);
 		model.addAttribute(TrialMeasurementsController.PHENOTYPE_ID, editData.getPhenotypeId());
 		model.addAttribute(TrialMeasurementsController.PHENOTYPE_VALUE, editData.getValue());
@@ -707,7 +707,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	  	for (final MeasurementRow row : measurementRowList) {
 	  	  	for (final MeasurementData data : row.getDataList()) {
 		  		if (data.getMeasurementVariable().getVariableType() != null && data.getMeasurementVariable().getVariableType().getId().equals(VariableType.TRAIT.getId()) && data.isNumeric() && !StringUtils.isEmpty(data.getValue()) && !TrialMeasurementsController.MISSING_VALUE.equals(data.getValue())) {
-		    		final String value = StringUtils.stripEnd(String.format ("%.2f", Double.parseDouble(data.getValue())), "0");
+		    		final String value = StringUtils.stripEnd(String.format ("%.4f", Double.parseDouble(data.getValue())), "0");
 					data.setValue(StringUtils.stripEnd(value, "."));
 		  		}
 			}

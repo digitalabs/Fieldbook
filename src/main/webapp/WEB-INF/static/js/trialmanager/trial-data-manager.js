@@ -999,13 +999,11 @@
 					};
 				},
 				resetServiceBackup: function () {
-					$localStorage.serviceBackup = {
-						settings: {},
-						currentData: {},
-						specialSettings: {},
-						applicationData: {},
-						trialMeasurement: {}
-					};
+					if (!$localStorage.serviceBackup) {
+						return;
+					}
+
+					$localStorage.serviceBackup = null;
 				}
 
 

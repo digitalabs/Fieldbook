@@ -190,7 +190,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	void addVariableToMap(final Map<Integer, Variable> variableMap, final int termId) {
 
 		final Variable variable =
-				this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, false, false);
+				this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, false);
 		if (variable != null) {
 			variableMap.put(variable.getId(), variable);
 		}
@@ -207,7 +207,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 				if (!settingDetail.isHidden() && isVisible != null && isVisible) {
 					final Integer variableId = settingDetail.getVariable().getCvTermId();
 					final Variable variable =
-							this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, false, false);
+							this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, false);
 					standardVariableMap.put(variableId, variable);
 				}
 			}

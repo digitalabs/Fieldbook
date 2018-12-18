@@ -437,7 +437,7 @@
 					});
 
 					if (missingLocations) {
-						showErrorMessage('', "The are some environments that don't have any location selected");
+						showErrorMessage('', "There are some environments that don't have any location selected");
 						return false;
 					}
 

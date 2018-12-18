@@ -678,12 +678,11 @@
 
 					var ctrl = this;
 
-					var watchInstances = $scope.$watch('instances', function (newValue, oldValue, scope) {
-						if (newValue.length !== oldValue.length) {
+					$scope.$watch('instances', function (newValue, oldValue, scope) {
 							// Select All Checkbox by default.
+						if (newValue.length !== 0) {
 							$scope.toggleSelect(true);
-							// unregister watch once instances is initialized
-							watchInstances();
+							ctrl.isSelectAll = true;
 						}
 					});
 

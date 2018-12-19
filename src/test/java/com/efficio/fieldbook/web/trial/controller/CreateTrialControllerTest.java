@@ -2,12 +2,14 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -16,37 +18,58 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.LocationDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.ErrorCode;
+import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.dms.StudyType;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 
-public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
+public class CreateTrialControllerTest {
 
-	@Autowired
-	private CreateTrialController controller;
+	private static final String PROGRAM_UUID = RandomStringUtils.randomAlphabetic(20);
 
-	@Resource
+	@Mock
 	private FieldbookService fieldbookMiddlewareService;
 
-	@Override
+	@Mock
+	private UserSelection userSelection;
+
+	@Mock
+	private ContextUtil contextUtil;
+
+	@Mock
+	private LocationDataManager locationDataManager;
+
+	@Mock
+	private ErrorHandlerService errorHandlerService;
+
+	@InjectMocks
+	private CreateTrialController controller;
+
 	@Before
 	public void setUp() {
-		this.fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		this.controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
-		this.mockContextUtil();
+		MockitoAnnotations.initMocks(this);
+		Mockito.doReturn(CreateTrialControllerTest.PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
 	}
 
 	@Test
@@ -105,16 +128,10 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 		return analysisVariableFound;
 	}
 
-	private void mockContextUtil() {
-		final ContextUtil contextUtil = Mockito.mock(ContextUtil.class);
-		this.controller.setContextUtil(contextUtil);
-		Mockito.doReturn(this.PROGRAM_UUID).when(contextUtil).getCurrentProgramUUID();
-	}
-
 	private void mockStandardVariables(final List<MeasurementVariable> allVariables) {
 		for (final MeasurementVariable measurementVariable : allVariables) {
 			Mockito.doReturn(this.createStandardVariable(measurementVariable.getTermId())).when(this.fieldbookMiddlewareService)
-					.getStandardVariable(measurementVariable.getTermId(), this.PROGRAM_UUID);
+					.getStandardVariable(measurementVariable.getTermId(), CreateTrialControllerTest.PROGRAM_UUID);
 		}
 	}
 
@@ -166,7 +183,7 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 		Assert.assertFalse("Expected term to NOT be in the required var list but did not found it.",
 				this.controller.inRequiredExpDesignVar(TermId.LOCATION_ID.getId()));
 	}
-	
+
 	@Test
 	public void testShow() {
 		final CreateTrialController spy = Mockito.spy(new CreateTrialController());
@@ -177,12 +194,12 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 		Mockito.doReturn(new TabInfo()).when(spy).prepareEnvironmentsTabInfo(false);
 		Mockito.doReturn(new TabInfo()).when(spy).prepareTrialSettingsTabInfo();
 		Mockito.doReturn(new TabInfo()).when(spy).prepareExperimentalDesignSpecialData();
-		
+
 		final Model model = Mockito.mock(Model.class);
 		final CreateTrialForm form = Mockito.mock(CreateTrialForm.class);
 		final HttpSession session = Mockito.mock(HttpSession.class);
 		spy.show(form, model, session);
-		
+
 		// Verify model attributes
 		Mockito.verify(model).addAttribute(Matchers.eq("basicDetailsData"), Matchers.any(TabInfo.class));
 		Mockito.verify(model).addAttribute(Matchers.eq("germplasmData"), Matchers.any(TabInfo.class));
@@ -192,5 +209,32 @@ public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 		Mockito.verify(model).addAttribute("measurementRowCount", 0);
 		Mockito.verify(model).addAttribute(Matchers.eq("studyTypes"), Matchers.anyListOf(StudyType.class));
 		Mockito.verify(model).addAttribute("createTrialForm", form);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testPrepareEnvironmentsTabInfo() {
+		final Integer defaultLocationId = new Random().nextInt();
+		Mockito.doReturn(Arrays.asList(new Location(defaultLocationId))).when(this.locationDataManager)
+				.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
+		Mockito.doReturn(this.createStandardVariable(new Random().nextInt())).when(this.fieldbookMiddlewareService)
+				.getStandardVariable(Matchers.anyInt(), Matchers.eq(CreateTrialControllerTest.PROGRAM_UUID));
+
+		final TabInfo tabInfo = this.controller.prepareEnvironmentsTabInfo(true);
+		final EnvironmentData environmentData = (EnvironmentData) tabInfo.getData();
+		final int environmentCount = Integer.parseInt(AppConstants.DEFAULT_NO_OF_ENVIRONMENT_COUNT.getString());
+		Assert.assertEquals(environmentCount, environmentData.getNoOfEnvironments());
+		Assert.assertEquals(environmentCount, environmentData.getEnvironments().size());
+		for (final Environment environment : environmentData.getEnvironments()) {
+			Assert.assertNotNull(environment.getManagementDetailValues());
+			Assert.assertEquals(String.valueOf(defaultLocationId),
+					environment.getManagementDetailValues().get(String.valueOf(TermId.LOCATION_ID.getId())));
+		}
+		Assert.assertNotNull(tabInfo.getSettingMap());
+		Assert.assertNotNull(tabInfo.getSettingMap().get("trialConditionDetails"));
+		final List<SettingDetail> mgtDetailsList = (List<SettingDetail>) tabInfo.getSettingMap().get("managementDetails");
+		Assert.assertNotNull(mgtDetailsList);
+		Assert.assertEquals(AppConstants.CREATE_STUDY_ENVIRONMENT_REQUIRED_FIELDS.getString().split(",").length, mgtDetailsList.size());
+		Mockito.verify(this.userSelection).setTrialLevelVariableList(mgtDetailsList);
 	}
 }

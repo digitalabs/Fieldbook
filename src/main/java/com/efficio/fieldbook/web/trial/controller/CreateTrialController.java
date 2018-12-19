@@ -217,6 +217,11 @@ public class CreateTrialController extends BaseTrialController {
 		return this.buildVariableIDList(AppConstants.HIDE_STUDY_ENVIRONMENT_FIELDS.getString());
 	}
 
+	@ModelAttribute("unspecifiedLocationId")
+	public Integer unspecifiedLocationId() {
+		return this.getUnspecifiedLocationId();
+	}
+
 	@RequestMapping(value = "/trialSettings", method = RequestMethod.GET)
 	public String showCreateTrial(final Model model) {
 		return this.showAjaxPage(model, BaseTrialController.URL_SETTINGS);
@@ -365,7 +370,7 @@ public class CreateTrialController extends BaseTrialController {
 		data.setNoOfEnvironments(noOfEnvironments);
 		info.setData(data);
 
-		final String unspecifiedLocationid = this.getUnspecifiedLocationId().toString();
+		final String unspecifiedLocationid = this.unspecifiedLocationId().toString();
 
 		for (int i = 0; i < noOfEnvironments; i++) {
 			final Environment defaultEnvironment = new Environment();

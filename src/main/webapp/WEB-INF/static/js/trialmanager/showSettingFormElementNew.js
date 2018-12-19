@@ -23,7 +23,7 @@
 					uiSelect2.compile(tElement, tAttrs);
 				}
 			},
-			controller: function ($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http) {
+			controller: function ($scope, LOCATION_ID, UNSPECIFIED_LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http) {
 
 				var LOCATION_LOOKUP_BREEDING_LOCATION = 1;
 				var LOCATION_LOOKUP_ALL_LOCATION = 2;
@@ -108,9 +108,16 @@
 						$scope.valuecontainer[$scope.targetkey] = currentVal;
 					}
 
-					if ($scope.valuecontainer[LOCATION_ID]) {						
+					// If the currentVal is undefined then we assume that the environment is newly created and not yet saved,
+					// so in this case, we need to set the set the location to the default value, which is UNSPECIFIED_LOCATION_ID (NOLOC)
+					if (!currentVal && $scope.targetkey === LOCATION_ID) {
+						$scope.valuecontainer[$scope.targetkey] = UNSPECIFIED_LOCATION_ID;
+						$scope.locationLookup = $scope.isBreedingLocation(UNSPECIFIED_LOCATION_ID) ?
+							LOCATION_LOOKUP_BREEDING_LOCATION : LOCATION_LOOKUP_ALL_LOCATION;
+						$scope.localData.useFavorites = $scope.isFavoriteLocation(UNSPECIFIED_LOCATION_ID);
+					} else {
 						$scope.locationLookup = $scope.isBreedingLocation($scope.valuecontainer[LOCATION_ID]) ?
-								LOCATION_LOOKUP_BREEDING_LOCATION : LOCATION_LOOKUP_ALL_LOCATION;
+							LOCATION_LOOKUP_BREEDING_LOCATION : LOCATION_LOOKUP_ALL_LOCATION;
 						$scope.localData.useFavorites = $scope.isFavoriteLocation($scope.valuecontainer[LOCATION_ID]);
 					}
 

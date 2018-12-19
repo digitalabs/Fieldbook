@@ -53,8 +53,8 @@
 					var diff = entryNo - lowestEntryNo;
 					window.ImportGermplasm.updateEntryNo(dataTableIdentifier, entryNoColIndex, diff);
 					window.ImportGermplasm.setUnappliedChangesAvailable();
-					showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-						'To update the Measurements table, please review your settings and regenerate ' +
+					showAlertMessage('', 'These changes have not yet been applied to the Observations table. ' +
+						'To update the Observations table, please review your settings and regenerate ' +
 						'the Experimental Design', 10000);
 				}
 

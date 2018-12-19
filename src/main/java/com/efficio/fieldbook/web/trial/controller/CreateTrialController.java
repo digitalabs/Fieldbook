@@ -370,8 +370,14 @@ public class CreateTrialController extends BaseTrialController {
 		data.setNoOfEnvironments(noOfEnvironments);
 		info.setData(data);
 
+		final String unspecifiedLocationid = this.unspecifiedLocationId().toString();
+
 		for (int i = 0; i < noOfEnvironments; i++) {
-			data.getEnvironments().add(new Environment());
+			final Environment defaultEnvironment = new Environment();
+			final Map<String, String> managementDetails = new HashMap<>();
+			managementDetails.put(String.valueOf(TermId.LOCATION_ID.getId()), unspecifiedLocationid);
+			defaultEnvironment.setManagementDetailValues(managementDetails);
+			data.getEnvironments().add(defaultEnvironment);
 		}
 
 		final Map<String, Object> settingMap = new HashMap<>();

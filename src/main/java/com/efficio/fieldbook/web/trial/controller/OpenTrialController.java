@@ -144,11 +144,6 @@ public class OpenTrialController extends BaseTrialController {
 		return this.buildVariableIDList(AppConstants.HIDE_STUDY_ENVIRONMENT_FIELDS.getString());
 	}
 
-	@ModelAttribute("unspecifiedLocationId")
-	public Integer unspecifiedLocationId() {
-		return this.getUnspecifiedLocationId();
-	}
-
 	@ModelAttribute("isCategoricalDescriptionView")
 	public Boolean initIsCategoricalDescriptionView() {
 		return Boolean.FALSE;

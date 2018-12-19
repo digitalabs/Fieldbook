@@ -155,7 +155,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				resultsMap.put("changeDetails", importResult.getChangeDetails());
 				resultsMap.put("errorMessage", importResult.getErrorMessage());
 				final String reminderConfirmation = this.messageSource
-						.getMessage("confirmation.import.text.modify.measurements", null, locale);
+						.getMessage("confirmation.import.text.modify.observations", null, locale);
 				String addedTraits = " ";
 				String deletedTraits = " ";
 				if (importResult.getModes() != null && !importResult.getModes().isEmpty()) {

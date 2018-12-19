@@ -216,11 +216,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					state: 'experimentalDesign'
 				},
 				{
-					name: 'Measurements',
+					name: 'Observations',
 					state: 'createMeasurements'
 				},
 				{
-					name: 'Measurements',
+					name: 'Observations',
 					state: 'editMeasurements'
 				}
 			];

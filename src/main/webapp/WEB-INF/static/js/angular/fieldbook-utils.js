@@ -451,9 +451,6 @@
 							if (value.description === $scope.valuecontainer[$scope.targetkey] ||
 								value.id === idNumber) {
 								$scope.valuecontainer[$scope.targetkey] = value;
-								if ($scope.isLocation){
-									selectedLocation(value, $scope.dropdownValues);
-								}
 							}
 						});
 

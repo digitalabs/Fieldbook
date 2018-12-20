@@ -208,7 +208,7 @@ var ImportDesign = (function() {
 			//TODO Localise the message
 			showSuccessfulMessage(
 				'',
-				'The study design was imported successfully. Please review the Measurements tab.');
+				'The study design was imported successfully. Please review the Observations tab.');
 		},
 
 		loadReviewDesignData: function() {

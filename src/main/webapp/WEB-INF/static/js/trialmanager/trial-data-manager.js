@@ -395,8 +395,8 @@
 
 						if (displayWarningMessage === 'true' || displayWarningMessage) {
 							//TODO Localise that message
-							showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
-							'To update the Measurements table, please review your settings and regenerate ' +
+							showAlertMessage('', 'These changes have not yet been applied to the Observations table. ' +
+							'To update the Observations table, please review your settings and regenerate ' +
 							'the Experimental Design on the next tab', 10000);
 						}
 					}
@@ -447,7 +447,7 @@
 
 					if (hasOutOfBoundValues()) {
 						//we check if there is invalid value in the measurements
-						showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
+						showErrorMessage('', 'There are some observations that have invalid value, please correct them before proceeding');
 						return false;
 					}
 					if (service.applicationData.unsavedTreatmentFactorsAvailable) {

@@ -203,8 +203,7 @@ public class OpenTrialControllerTest {
 		Mockito.when(this.sampleListService.getSampleLists(Matchers.anyInt())).thenReturn(sampleListDTOs);
 
 		this.createTestVariable();
-		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class), Matchers.anyBoolean(),
-				Matchers.anyBoolean())).thenReturn(this.testVariable);
+		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class), Matchers.anyBoolean())).thenReturn(this.testVariable);
 		Mockito.when(studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
 	}
 
@@ -382,10 +381,8 @@ public class OpenTrialControllerTest {
 			variable.setMethod(TestDataHelper.createMethod());
 			variable.setProperty(TestDataHelper.createProperty());
 			variable.setScale(TestDataHelper.createScale());
-
 			Mockito.when(this.variableDataManager.getVariable(Matchers.eq(OpenTrialControllerTest.PROGRAM_UUID),
-					Matchers.eq(measurementVariable.getTermId()), Matchers.anyBoolean(), Matchers.anyBoolean())).thenReturn(variable);
-			;
+					Matchers.eq(measurementVariable.getTermId()), Matchers.anyBoolean())).thenReturn(variable);
 		}
 	}
 
@@ -1050,7 +1047,7 @@ public class OpenTrialControllerTest {
 		Mockito.when(this.fieldbookMiddlewareService.getStudy(Matchers.anyInt())).thenReturn(study);
 
 		Mockito.when(
-				this.variableDataManager.getVariable(Matchers.anyString(), Matchers.anyInt(), Matchers.anyBoolean(), Matchers.anyBoolean()))
+				this.variableDataManager.getVariable(Matchers.anyString(), Matchers.anyInt(), Matchers.anyBoolean()))
 				.thenReturn(VariableTestDataInitializer.createVariable());
 
 		// Verify that workbook has Analysis and/or Analysis Summary variables

@@ -1463,6 +1463,14 @@ function showImportOptions() {
 		showAlertMessage('', importDataWarningNotification);
 	}
 }
+
+function backShowImportStudyModal(){
+	'use strict';
+	var scope = angular.element(document.getElementById("mainApp")).scope();
+	scope.$apply(function () {
+		scope.showImportStudyModal();
+	});
+}
 function goBackToImport() {
 	'use strict';
 	revertData(false);
@@ -3561,6 +3569,7 @@ function saveInlineEdit(isDiscard, invalidButKeep) {
 
 				var oTable = $(tableIdentifier).dataTable();
 				oTable.fnUpdate(data.data, data.index, null, false); // Row
+				// Note: This triggers a table draw, necessary to remove inline input and do rowCallback
 				oTable.fnAdjustColumnSizing();
 				$('body').off('click');
 

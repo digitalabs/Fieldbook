@@ -9,7 +9,7 @@
 			restrict: 'E',
 			require: '?ngModel',
 			scope: {
-				title: '=',
+				modalTitle: '=',
 				message: '=',
 				selected: '=',
 				onContinue: '&'

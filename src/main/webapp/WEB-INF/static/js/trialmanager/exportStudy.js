@@ -4,14 +4,14 @@
 
 	var exportStudyModule = angular.module('export-study', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal', 'fieldbook-utils']);
 
-	exportStudyModule.factory('exportStudyModalService', ['$uibModal', '$http', 'studyContext', 'serviceUtilities',
-		function ($uibModal, $http, studyContext, serviceUtilities) {
+	exportStudyModule.factory('exportStudyModalService', ['$uibModal',
+		function ($uibModal) {
 
 			var exportStudyModalService = {};
 
 			exportStudyModalService.openDatasetOptionModal = function () {
 				$uibModal.open({
-					template: '<dataset-option-modal title="title" message="message"' +
+					template: '<dataset-option-modal modal-title="modalTitle" message="message"' +
 					'selected="selected" on-continue="showExportOptions()"></dataset-option-modal>',
 					controller: 'exportDatasetOptionCtrl',
 					size: 'md'
@@ -47,9 +47,9 @@
 		}]);
 
 	exportStudyModule.controller('exportDatasetOptionCtrl', ['$scope', '$uibModal', '$uibModalInstance', 'studyContext', 'exportStudyModalService',
-		'datasetService', function ($scope, $uibModal, $uibModalInstance, studyContext, exportStudyModalService, datasetService) {
+		function ($scope, $uibModal, $uibModalInstance, studyContext, exportStudyModalService) {
 
-			$scope.title = 'Export study book';
+			$scope.modalTitle = 'Export study book';
 			$scope.message = 'Please choose the dataset you would like to export:';
 			$scope.measurementDatasetId = studyContext.measurementDatasetId;
 			$scope.selected = {datasetId: $scope.measurementDatasetId};

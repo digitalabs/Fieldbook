@@ -97,7 +97,8 @@ public class DataMapUtil {
 
 			final Integer variableId = data.getMeasurementVariable().getId();
 			final Variable variable = ontologyVariableDataManager
-					.getVariable(programUUID, variableId, true, false);
+					.getVariable(programUUID, variableId, true);
+
 			final MeasurementVariable measurementVariable = WorkbookUtil
 					.getMeasurementVariable(measurementDatasetVariables, variableId);
 
@@ -248,7 +249,7 @@ public class DataMapUtil {
 					WorkbookUtil.findMeasurementVariableByName(measurementDatasetVariables, alias);
 			if (columnVariable.isPresent()) {
 				final Variable variable =
-						ontologyVariableDataManager.getVariable(programUUID, columnVariable.get().getTermId(), true, false);
+						ontologyVariableDataManager.getVariable(programUUID, columnVariable.get().getTermId(), true);
 
 				if (variable.getScale().getDataType().getId() == TermId.CATEGORICAL_VARIABLE.getId()) {
 					dataMap.put(alias, this.convertForCategoricalVariable(variable, additionalDesignCols.getRight(), null, true, null));

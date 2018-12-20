@@ -244,7 +244,10 @@ public class DesignImportTestDataInitializer {
 
 		for (int x = 0; x < numberOfIntances; x++) {
 			final Environment env = new Environment();
+			final Map<String, String> managementDetailValues = new HashMap<>();
+			managementDetailValues.put(Integer.toString(TermId.LOCATION_ID.getId()),Integer.toString(x));
 			env.setLocationId(x);
+			env.setManagementDetailValues(managementDetailValues);
 			environments.add(env);
 		}
 

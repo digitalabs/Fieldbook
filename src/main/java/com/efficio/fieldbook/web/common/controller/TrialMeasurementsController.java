@@ -175,14 +175,12 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 		if (!isDiscard) {
 			Phenotype existingPhenotype = null;
-			String oldValue = null;
 			if (phenotypeId != null) {
 				existingPhenotype = this.studyDataManager.getPhenotypeById(phenotypeId);
-				oldValue = existingPhenotype.getValue();
 			}
 
 			final Variable trait = this.ontologyVariableDataManager
-					.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true, false);
+					.getVariable(this.contextUtil.getCurrentProgramUUID(), termId, true);
 
 			if (!invalidButKeep && !this.validationService.validateObservationValue(trait, value)) {
 				map.put(TrialMeasurementsController.SUCCESS, "0");
@@ -202,7 +200,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 			}
 			this.studyDataManager.saveOrUpdatePhenotypeValue(experimentId, trait.getId(), value, existingPhenotype,
 					trait.getScale().getDataType().getId(), status);
-			this.verifyAndUpdateValueStatus(oldValue, trait.getId(), value, experimentId);
 		}
 		map.put(TrialMeasurementsController.SUCCESS, "1");
 
@@ -464,7 +461,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 
 		final Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-			termId, true, false);
+				termId, true);
 
 		model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
 		model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
@@ -504,7 +501,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		}
 
 		final Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-			termId, true, false);
+				termId, true);
 		model.addAttribute("variable", variable);
 		model.addAttribute(TrialMeasurementsController.PHENOTYPE_ID, editData.getPhenotypeId());
 		model.addAttribute(TrialMeasurementsController.PHENOTYPE_VALUE, editData.getValue());
@@ -707,7 +704,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 	  	for (final MeasurementRow row : measurementRowList) {
 	  	  	for (final MeasurementData data : row.getDataList()) {
 		  		if (data.getMeasurementVariable().getVariableType() != null && data.getMeasurementVariable().getVariableType().getId().equals(VariableType.TRAIT.getId()) && data.isNumeric() && !StringUtils.isEmpty(data.getValue()) && !TrialMeasurementsController.MISSING_VALUE.equals(data.getValue())) {
-		    		final String value = StringUtils.stripEnd(String.format ("%.2f", Double.parseDouble(data.getValue())), "0");
+		    		final String value = StringUtils.stripEnd(String.format ("%.4f", Double.parseDouble(data.getValue())), "0");
 					data.setValue(StringUtils.stripEnd(value, "."));
 		  		}
 			}
@@ -821,21 +818,6 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 
 	public boolean isBeingACalculatedValueEdited(final MeasurementVariable variable, final String oldValue, final String newValue) {
 		return ((oldValue == null || !oldValue.equals(newValue)) && variable.getFormula() != null) ? true : false;
-	}
-
-	public void verifyAndUpdateValueStatus(final String oldValue, final Integer termId, final String newValue, final Integer experimentId) {
-		if (oldValue == null || !oldValue.equals(newValue)) {
-			final Map<Integer, List<Integer>> usages = WorkbookUtil.getVariatesUsedInFormulas(this.getUserSelection().getWorkbook().getVariates());
-			if (usages.containsKey(termId)) {
-				for (final Integer targetTermId : usages.get(termId)) {
-					final Phenotype phenotype = this.studyDataManager.getPhenotype(experimentId, targetTermId);
-					if (phenotype != null) {
-						phenotype.setValueStatus(Phenotype.ValueStatus.OUT_OF_SYNC);
-						this.studyDataManager.updatePhenotype(phenotype);
-					}
-				}
-			}
-		}
 	}
 
 	private void processVisualStatusForImportedTable(final MeasurementRow row, final String oldValue, final String newValue, final Integer termId) {

@@ -1012,10 +1012,6 @@
 					};
 				},
 				resetServiceBackup: function () {
-					if (!$localStorage.serviceBackup) {
-						return;
-					}
-
 					$localStorage.serviceBackup = null;
 				}
 

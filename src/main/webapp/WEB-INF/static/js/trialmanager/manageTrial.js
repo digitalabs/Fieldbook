@@ -273,25 +273,23 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.resetTabsData = function () {
-				if (!$localStorage.serviceBackup) {
-					return;
+				if ($localStorage.serviceBackup) {
+					// reset the service data to initial state (for untick of user previous study)
+					_.each(_.keys($localStorage.serviceBackup.settings), function (key) {
+						if ('basicDetails' !== key) {
+							TrialManagerDataService.updateSettings(key, angular.copy($localStorage.serviceBackup.settings[key]));
+						}
+					});
+
+					_.each(_.keys($localStorage.serviceBackup.currentData), function (key) {
+						if ('basicDetails' !== key) {
+							TrialManagerDataService.updateCurrentData(key, angular.copy($localStorage.serviceBackup.currentData[key]));
+						}
+					});
+
+					TrialManagerDataService.applicationData = angular.copy($localStorage.serviceBackup.applicationData);
+					TrialManagerDataService.trialMeasurement = angular.copy($localStorage.serviceBackup.trialMeasurement);
 				}
-
-				// reset the service data to initial state (for untick of user previous study)
-				_.each(_.keys($localStorage.serviceBackup.settings), function (key) {
-					if ('basicDetails' !== key) {
-						TrialManagerDataService.updateSettings(key, angular.copy($localStorage.serviceBackup.settings[key]));
-					}
-				});
-
-				_.each(_.keys($localStorage.serviceBackup.currentData), function (key) {
-					if ('basicDetails' !== key) {
-						TrialManagerDataService.updateCurrentData(key, angular.copy($localStorage.serviceBackup.currentData[key]));
-					}
-				});
-
-				TrialManagerDataService.applicationData = angular.copy($localStorage.serviceBackup.applicationData);
-				TrialManagerDataService.trialMeasurement = angular.copy($localStorage.serviceBackup.trialMeasurement);
 
 				// perform other cleanup tasks
 				$http({

@@ -605,6 +605,14 @@ public abstract class BaseTrialController extends SettingsController {
 
 		return info;
 	}
+	
+	protected Environment createEnvironmentWithDefaultLocation(final Integer defaultLocationId) {
+		final Environment defaultEnvironment = new Environment();
+		final Map<String, String> managementDetails = new HashMap<>();
+		managementDetails.put(String.valueOf(TermId.LOCATION_ID.getId()), String.valueOf(defaultLocationId));
+		defaultEnvironment.setManagementDetailValues(managementDetails);
+		return defaultEnvironment;
+	}
 
 	protected List<AdvanceList> getAdvancedList(final Integer trialId) {
 		final List<GermplasmList> germplasmList =

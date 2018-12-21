@@ -587,6 +587,7 @@
                     $('body').removeClass('import-preview-measurements');
                     //Refresh the germplasm list table
                     refreshListDetails();
+					service.resetServiceBackup();
 				},
 				onUpdateData: function(dataKey, updateFunction) {
 					if (!dataRegistry[dataKey]) {
@@ -999,20 +1000,26 @@
 
 					return preferredLocationVariableName;
 
+				},
+				// store the initial values on some service properties so that we can revert to it later
+				storeInitialValuesInServiceBackup: function() {
+					$localStorage.serviceBackup = {
+						settings: angular.copy(service.settings),
+						currentData: angular.copy(service.currentData),
+						specialSettings: angular.copy(service.specialSettings),
+						applicationData: angular.copy(service.applicationData),
+						trialMeasurement: angular.copy(service.trialMeasurement)
+					};
+				},
+				resetServiceBackup: function () {
+					$localStorage.serviceBackup = null;
 				}
+
+
 			};
 
 			service.retrieveDesignType();
 			service.retrieveInsertionManner();
-
-			// store the initial values on some service properties so that we can revert to it later
-			$localStorage.serviceBackup = {
-				settings: angular.copy(service.settings),
-				currentData: angular.copy(service.currentData),
-				specialSettings: angular.copy(service.specialSettings),
-				applicationData: angular.copy(service.applicationData),
-				trialMeasurement: angular.copy(service.trialMeasurement)
-			};
 
 			// 5 is the group no of treatment factors
 			TrialSettingsManager.addDynamicFilterObj(service.currentData.treatmentFactors, 5);

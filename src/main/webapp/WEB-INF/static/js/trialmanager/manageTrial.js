@@ -273,21 +273,23 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.resetTabsData = function () {
-				// reset the service data to initial state (for untick of user previous study)
-				_.each(_.keys($localStorage.serviceBackup.settings), function (key) {
-					if ('basicDetails' !== key) {
-						TrialManagerDataService.updateSettings(key, angular.copy($localStorage.serviceBackup.settings[key]));
-					}
-				});
+				if ($localStorage.serviceBackup) {
+					// reset the service data to initial state (for untick of user previous study)
+					_.each(_.keys($localStorage.serviceBackup.settings), function (key) {
+						if ('basicDetails' !== key) {
+							TrialManagerDataService.updateSettings(key, angular.copy($localStorage.serviceBackup.settings[key]));
+						}
+					});
 
-				_.each(_.keys($localStorage.serviceBackup.currentData), function (key) {
-					if ('basicDetails' !== key) {
-						TrialManagerDataService.updateCurrentData(key, angular.copy($localStorage.serviceBackup.currentData[key]));
-					}
-				});
+					_.each(_.keys($localStorage.serviceBackup.currentData), function (key) {
+						if ('basicDetails' !== key) {
+							TrialManagerDataService.updateCurrentData(key, angular.copy($localStorage.serviceBackup.currentData[key]));
+						}
+					});
 
-				TrialManagerDataService.applicationData = angular.copy($localStorage.serviceBackup.applicationData);
-				TrialManagerDataService.trialMeasurement = angular.copy($localStorage.serviceBackup.trialMeasurement);
+					TrialManagerDataService.applicationData = angular.copy($localStorage.serviceBackup.applicationData);
+					TrialManagerDataService.trialMeasurement = angular.copy($localStorage.serviceBackup.trialMeasurement);
+				}
 
 				// perform other cleanup tasks
 				$http({
@@ -307,6 +309,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				if (typeof resetGermplasmList !== 'undefined') {
 					resetGermplasmList();
 				}
+				TrialManagerDataService.resetServiceBackup();
 			};
 
 			// To apply scope safely
@@ -367,6 +370,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						$scope.resetTabsData();
 						createErrorNotification(errorMsgHeader, data.createTrialForm.errorMessage);
 					} else {
+						TrialManagerDataService.storeInitialValuesInServiceBackup();
 						var environmentData = TrialManagerDataService.extractData(data.environmentData);
 						var environmentSettings = TrialManagerDataService.extractSettings(data.environmentData);
 

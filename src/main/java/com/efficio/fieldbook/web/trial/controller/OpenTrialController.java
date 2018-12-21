@@ -8,7 +8,6 @@ import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -460,7 +459,6 @@ public class OpenTrialController extends BaseTrialController {
 				this.userSelection.getTrialLevelVariableList());
 		SettingsUtil
 				.addDeletedSettingsList(null, this.userSelection.getDeletedTreatmentFactors(), this.userSelection.getTreatmentFactors());
-		this.assignDeleteOperationOnDeletedTreatmentVariables(this.userSelection.getDeletedTreatmentFactors(), this.userSelection.getPlotsLevelList());
 		final String name = data.getBasicDetails().getStudyName();
 		// retain measurement dataset id and trial dataset id
 		final int trialDatasetId = this.userSelection.getWorkbook().getTrialDatasetId();
@@ -891,24 +889,6 @@ public class OpenTrialController extends BaseTrialController {
 		filteredObservations = this.updateTrialInstanceNoAfterDelete(deletedEnvironment, filteredObservations);
 
 		return filteredObservations;
-	}
-
-	protected void assignDeleteOperationOnDeletedTreatmentVariables(final List<SettingDetail> deletedTreatmentFactors,	final List<SettingDetail> plotsLevelList) {
-		final List<Integer> deletedTreatmentFactorsIds = new ArrayList<>();
-		if(deletedTreatmentFactors == null) return;
-		for(SettingDetail detail: deletedTreatmentFactors) {
-			deletedTreatmentFactorsIds.add(detail.getVariable().getCvTermId());
-		}
-		
-		for(SettingDetail detail: plotsLevelList) {
-			if(deletedTreatmentFactorsIds.contains(detail.getVariable().getCvTermId())) {
-				detail.getVariable().setOperation(Operation.DELETE);
-				if(this.userSelection.getDeletedPlotLevelList() == null) {
-					this.userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
-				}
-				this.userSelection.getDeletedPlotLevelList().add(detail);
-			}
-		}
 	}
 
 	protected List<SampleListDTO> getSampleList(final Integer trialId) {

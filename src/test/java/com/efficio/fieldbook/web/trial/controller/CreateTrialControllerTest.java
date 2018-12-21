@@ -65,11 +65,16 @@ public class CreateTrialControllerTest {
 
 	@InjectMocks
 	private CreateTrialController controller;
+	
+	private Integer defaultLocationId;
 
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 		Mockito.doReturn(CreateTrialControllerTest.PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
+		this.defaultLocationId = new Random().nextInt();
+		Mockito.doReturn(Arrays.asList(new Location(defaultLocationId))).when(this.locationDataManager)
+				.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
 	}
 
 	@Test
@@ -86,7 +91,7 @@ public class CreateTrialControllerTest {
 	}
 
 	@Test
-	public void testUseExistingStudy() throws Exception {
+	public void testUseExistingStudyWithAnalysisAndAnalysisSummaryVariables() throws Exception {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 		Mockito.doReturn(workbook).when(this.fieldbookMiddlewareService).getStudyDataSet(1);
@@ -214,9 +219,6 @@ public class CreateTrialControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testPrepareEnvironmentsTabInfo() {
-		final Integer defaultLocationId = new Random().nextInt();
-		Mockito.doReturn(Arrays.asList(new Location(defaultLocationId))).when(this.locationDataManager)
-				.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
 		Mockito.doReturn(this.createStandardVariable(new Random().nextInt())).when(this.fieldbookMiddlewareService)
 				.getStandardVariable(Matchers.anyInt(), Matchers.eq(CreateTrialControllerTest.PROGRAM_UUID));
 
@@ -227,7 +229,7 @@ public class CreateTrialControllerTest {
 		Assert.assertEquals(environmentCount, environmentData.getEnvironments().size());
 		for (final Environment environment : environmentData.getEnvironments()) {
 			Assert.assertNotNull(environment.getManagementDetailValues());
-			Assert.assertEquals(String.valueOf(defaultLocationId),
+			Assert.assertEquals(String.valueOf(this.defaultLocationId),
 					environment.getManagementDetailValues().get(String.valueOf(TermId.LOCATION_ID.getId())));
 		}
 		Assert.assertNotNull(tabInfo.getSettingMap());
@@ -237,4 +239,21 @@ public class CreateTrialControllerTest {
 		Assert.assertEquals(AppConstants.CREATE_STUDY_ENVIRONMENT_REQUIRED_FIELDS.getString().split(",").length, mgtDetailsList.size());
 		Mockito.verify(this.userSelection).setTrialLevelVariableList(mgtDetailsList);
 	}
+	
+	@Test
+	public void testPrepareEnvironmentsTabInfoFromExistingStudyWithNoEnvironment() {
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(false);
+		// Assert that there are no trial environments specified in test workbook. But still expect a default one to be created
+		Assert.assertEquals(0, workbook.getTrialObservations().size());
+		
+		final TabInfo tabInfo = this.controller.prepareEnvironmentsTabInfo(workbook, true);
+		final EnvironmentData environmentData = (EnvironmentData) tabInfo.getData();
+		Assert.assertEquals(1, environmentData.getNoOfEnvironments());
+		Assert.assertEquals(1, environmentData.getEnvironments().size());
+		final Environment environment = environmentData.getEnvironments().get(0);
+		Assert.assertNotNull(environment.getManagementDetailValues());
+		Assert.assertEquals(String.valueOf(this.defaultLocationId),
+				environment.getManagementDetailValues().get(String.valueOf(TermId.LOCATION_ID.getId())));
+	}
+	
 }

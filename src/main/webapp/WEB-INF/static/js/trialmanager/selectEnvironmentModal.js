@@ -17,8 +17,6 @@
 		$scope.TRIAL_LOCATION_NAME_INDEX = 8180;
 		$scope.TRIAL_LOCATION_ABBR_INDEX = 8189;
 		$scope.LOCATION_NAME_ID = 8190;
-		$scope.trialInstances = [];
-		$scope.environmentListView = [];
 		$scope.applicationData = TrialManagerDataService.applicationData;
 		$scope.data = TrialManagerDataService.currentData.environments;
 
@@ -51,6 +49,10 @@
 
 		$scope.noOfReplications = TrialManagerDataService.currentData.experimentalDesign.replicationsCount;
 
+		$scope.instances = [];
+		$scope.selectedInstances = {};
+		$scope.isEmptySelection = false;
+
 		//NOTE: Continue action for navigate from Locations to Advance Study Modal
 		$scope.selectEnvironmentContinue = function() {
 
@@ -64,8 +66,8 @@
 			var selectedLocationDetails = [];
 			var locationAbbr = false;
 
-			if ($scope.trialInstances.length === 0) {
-				showErrorMessage('', selectOneLocationErrorMessageForAdvancing);
+			if ($scope.isEmptySelection) {
+				showErrorMessage('', $.fieldbookMessages.errorNotSelectedInstance);
 			} else {
 				if ($scope.settings.managementDetails.val($scope.TRIAL_LOCATION_ABBR_INDEX)) {
 					selectedLocationDetails
@@ -76,18 +78,15 @@
 						.push($scope.settings.managementDetails.val($scope.LOCATION_NAME_ID).variable.name);
 				}
 
-				angular.forEach($scope.trialInstances, function(trialInstanceNumber) {
-					if (trialInstanceNumber) {
-						selectedTrialInstances.push(trialInstanceNumber);
-						angular.forEach($scope.environmentListView, function(environment) {
-							if (environment.trialInstanceNumber === trialInstanceNumber) {
-								if(locationAbbr){
-									selectedLocationDetails.push(environment.customAbbrName);
-								}else{
-									selectedLocationDetails.push(environment.name);
-								}
-							}
-						});
+				angular.forEach($scope.instances, function (environment) {
+					var isSelected = $scope.selectedInstances[environment.instanceNumber];
+					if (isSelected) {
+						selectedTrialInstances.push(environment.instanceNumber);
+						if (locationAbbr) {
+							selectedLocationDetails.push(environment.customLocationAbbreviation);
+						} else {
+							selectedLocationDetails.push(environment.locationName);
+						}
 					}
 				});
 
@@ -98,33 +97,8 @@
 		};
 
 		$scope.init = function () {
-			$scope.selectAll = true;
 			environmentService.getEnvironments().then(function (environmentDetails) {
-				$scope.environmentListView = [];
-				$scope.trialInstances = [];
-				angular.forEach(environmentDetails, function (environment) {
-					$scope.environmentListView.push({
-						name: environment.locationName + ' - (' + environment.locationAbbreviation + ')',
-						abbrName: environment.locationAbbreviation,
-						customAbbrName: environment.customLocationAbbreviation,
-						trialInstanceNumber: environment.instanceNumber,
-						instanceDbId: environment.instanceDbId,
-						selected: $scope.selectAll
-					});
-					$scope.trialInstances.push(environment.instanceNumber);
-				});
-
-				//This can be used to check if a table is a DataTable or not already.
-				if (!$.fn.dataTable.isDataTable('#selectEnvironmentModal .fbk-datatable-environments')) {
-					$timeout(function () {
-						angular.element('#selectEnvironmentModal .fbk-datatable-environments').DataTable({
-							dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
-								"<'row'<'col-sm-12'tr>>" +
-								"<'row'<'col-sm-5'i><'col-sm-7'>>" +
-								"<'row'<'col-sm-12'p>>"
-						}).columns.adjust().draw();
-					}, 1);
-				}
+				$scope.instances = environmentDetails;
 			});
 		};
 	}]);

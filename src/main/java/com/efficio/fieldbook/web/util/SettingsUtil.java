@@ -21,7 +21,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -308,47 +310,48 @@ public class SettingsUtil {
 			final Map<String, TreatmentFactorData> treatmentFactorItems, final List<Factor> factorList,
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, final String programUUID) {
 		final List<TreatmentFactor> treatmentFactors = new ArrayList<>();
-		if (treatmentFactorItems == null || treatmentFactorDetails == null) {
+		if (MapUtils.isEmpty(treatmentFactorItems) || CollectionUtils.isEmpty(treatmentFactorDetails)) {
 			return treatmentFactors;
 		}
-
 		final Map<Integer, Factor> factorsMap = new HashMap<>();
 		for(final Factor factor: factorList) {
 			factorsMap.put(factor.getId(), factor);
 		}
 
 		for (final SettingDetail detail : treatmentFactorDetails) {
-			final Integer termId = detail.getVariable().getCvTermId();
-			final StandardVariable levelVariable = SettingsUtil.getStandardVariable(termId, fieldbookMiddlewareService, programUUID);
-			levelVariable.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
-			final Factor levelFactor = SettingsUtil.convertStandardVariableToFactor(levelVariable);
-			levelFactor.setName(detail.getVariable().getName());
-			final Factor valueFactor;
-			levelFactor.setOperation(detail.getVariable().getOperation());
-			levelFactor.setTreatmentLabel(detail.getVariable().getName());
+			if(detail.getVariable().getOperation() != Operation.DELETE) {
+				final Integer termId = detail.getVariable().getCvTermId();
+				final StandardVariable levelVariable = SettingsUtil.getStandardVariable(termId, fieldbookMiddlewareService, programUUID);
+				levelVariable.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
+				final Factor levelFactor = SettingsUtil.convertStandardVariableToFactor(levelVariable);
+				levelFactor.setName(detail.getVariable().getName());
+				final Factor valueFactor;
+				levelFactor.setOperation(detail.getVariable().getOperation());
+				levelFactor.setTreatmentLabel(detail.getVariable().getName());
 
-			final TreatmentFactorData data = treatmentFactorItems.get(termId.toString());
+				final TreatmentFactorData data = treatmentFactorItems.get(termId.toString());
 
-			if (data != null) {
-				final StandardVariable valueVariable =
+				if (data != null) {
+					final StandardVariable valueVariable =
 						SettingsUtil.getStandardVariable(data.getVariableId(), fieldbookMiddlewareService, programUUID);
 
-				valueVariable.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
-				valueFactor = SettingsUtil.convertStandardVariableToFactor(valueVariable);
-				valueFactor.setOperation(detail.getVariable().getOperation());
-				valueFactor.setTreatmentLabel(detail.getVariable().getName());
+					valueVariable.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
+					valueFactor = SettingsUtil.convertStandardVariableToFactor(valueVariable);
+					valueFactor.setOperation(detail.getVariable().getOperation());
+					valueFactor.setTreatmentLabel(detail.getVariable().getName());
 
-				int index = 1;
-				for (final String labelValue : data.getLabels()) {
-					final TreatmentFactor treatmentFactor = new TreatmentFactor(levelFactor, valueFactor, index, labelValue);
-					treatmentFactors.add(treatmentFactor);
-					index++;
+					int index = 1;
+					for (final String labelValue : data.getLabels()) {
+						final TreatmentFactor treatmentFactor = new TreatmentFactor(levelFactor, valueFactor, index, labelValue);
+						treatmentFactors.add(treatmentFactor);
+						index++;
+					}
+					valueFactor.setRole(detail.getRole().name());
+					SettingsUtil.addFactor(factorsMap, valueFactor, factorList);
 				}
-				valueFactor.setRole(detail.getRole().name());
-				SettingsUtil.addFactor(factorsMap, valueFactor, factorList);
+				levelFactor.setRole(detail.getRole().name());
+				SettingsUtil.addFactor(factorsMap, levelFactor, factorList);
 			}
-			levelFactor.setRole(detail.getRole().name());
-			SettingsUtil.addFactor(factorsMap, levelFactor, factorList);
 		}
 
 		return treatmentFactors;
@@ -532,7 +535,6 @@ public class SettingsUtil {
 	 * @param dataset the dataset
 	 * @param userSelection the user selection
 	 * @param programUUID the project id
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	public static void convertXmlDatasetToPojo(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			final com.efficio.fieldbook.service.api.FieldbookService fieldbookService, final ParentDataset dataset,
@@ -614,7 +616,6 @@ public class SettingsUtil {
 	 * @param dataset the dataset
 	 * @param userSelection the user selection
 	 * @param programUUID the project id
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	private static void convertXmlTrialDatasetToPojo(
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
@@ -1787,11 +1788,7 @@ public class SettingsUtil {
 	}
 
 	/**
-<<<<<<< HEAD
-	 * Removes the setting details from the list if its tem id is in the given bariable ids
-=======
 	 * Removes the basic details variables.
->>>>>>> master
 	 *
 	 * @param studyLevelConditions the study level conditions
 	 * @param variableIds the ids of the variables to be removed from the list

@@ -4,8 +4,7 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('selectEnvironmentToSampleListModalCtrl', ['$scope', 'environmentService', '$timeout', function ($scope,
-																															   environmentService, $timeout) {
+	manageTrialApp.controller('selectEnvironmentToSampleListModalCtrl', ['$scope', 'environmentService', function ($scope, environmentService) {
 
 		$scope.instances = [];
 		$scope.selectedInstances = {};
@@ -21,15 +20,14 @@
 				}
 			});
 
-			if (instanceNumbers.length === 0) {
-				showErrorMessage('', selectOneLocationErrorMessageForSampleList);
+			if ($scope.isEmptySelection) {
+				showErrorMessage('', $.fieldbookMessages.errorNotSelectedInstance);
 			} else {
 				selectedEnvironmentContinueCreatingSample(instanceNumbers);
 			}
 		};
 
 		$scope.init = function () {
-
 			environmentService.getEnvironments().then(function (environmentDetails) {
 				$scope.instances = environmentDetails;
 			});

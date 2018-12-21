@@ -7,19 +7,10 @@
 	manageTrialApp.controller('selectSelectionVariableToSampleListModalCtrl', ['$scope', 'TrialManagerDataService', '$http', '$timeout', function ($scope,
 																																				   TrialManagerDataService, $http, $timeout) {
 
-		// TODO see Workbench/src/main/web/src/apps/ontology/app-services/bmsAuth.js
-		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
-
-		var config = {
-			headers: {
-				'X-Auth-Token': xAuthToken
-			}
-		};
-
 		$scope.backToCreateSample = function () {
 			$('#selectSelectionVariableToSampleListModal').modal('hide');
 			$('#selectEnvironmentToSampleListModal').modal('show');
-		}
+		};
 
 		$scope.openToCalendar = function ($event) {
 			$event.preventDefault();

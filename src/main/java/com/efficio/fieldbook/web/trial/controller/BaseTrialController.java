@@ -536,11 +536,6 @@ public abstract class BaseTrialController extends SettingsController {
 
 		data.setNoOfEnvironments(trialObservations.size());
 
-		// minimum number of environments is 1
-		if (data.getNoOfEnvironments() == 0) {
-			data.setNoOfEnvironments(1);
-		}
-
 		final List<Environment> environments = new ArrayList<>();
 		for (final MeasurementRow row : trialObservations) {
 			final Environment environment = new Environment();
@@ -594,6 +589,14 @@ public abstract class BaseTrialController extends SettingsController {
 			environment.setTrialDetailValues(trialConditionValues);
 			environment.setPhenotypeIDMap(phenotypeIDMap);
 			environments.add(environment);
+		}
+		
+		// minimum number of environments is 1
+		if (data.getNoOfEnvironments() == 0) {
+			data.setNoOfEnvironments(1);
+			if (isUsePrevious) {
+				environments.add(this.createEnvironmentWithDefaultLocation(this.getUnspecifiedLocationId()));
+			}
 		}
 
 		data.setEnvironments(environments);

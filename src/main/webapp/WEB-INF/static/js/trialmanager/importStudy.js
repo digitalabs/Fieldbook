@@ -74,7 +74,7 @@
 	importStudyModule.controller('importDatasetOptionCtrl', ['$scope', '$uibModal', '$uibModalInstance', 'studyContext', 'importStudyModalService',
 		function ($scope, $uibModal, $uibModalInstance, studyContext, importStudyModalService) {
 
-			$scope.modalTitle = 'Import measurements';
+			$scope.modalTitle = 'Import observations';
 			$scope.message = 'Please choose the dataset you would like to import:';
 			$scope.measurementDatasetId = studyContext.measurementDatasetId;
 			$scope.selected = {datasetId: $scope.measurementDatasetId};
@@ -95,7 +95,7 @@
 		'TrialManagerDataService',
 		function (datasetId, $scope, $rootScope, $uibModalInstance, datasetService, importStudyModalService) {
 
-			$scope.modalTitle = 'Import measurements';
+			$scope.modalTitle = 'Import observations';
 			$scope.file = null;
 			$scope.importedData = null;
 			var ctrl = this;

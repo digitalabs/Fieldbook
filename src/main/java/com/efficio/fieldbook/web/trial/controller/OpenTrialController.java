@@ -14,7 +14,6 @@ import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -101,9 +100,6 @@ public class OpenTrialController extends BaseTrialController {
 
 	@Resource
 	private SampleListService sampleListService;
-
-	@Resource
-	protected FieldbookProperties fieldbookProperties;
 
 	@Override
 	public String getContentName() {

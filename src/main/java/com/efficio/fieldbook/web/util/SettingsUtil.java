@@ -535,7 +535,6 @@ public class SettingsUtil {
 	 * @param dataset the dataset
 	 * @param userSelection the user selection
 	 * @param programUUID the project id
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	public static void convertXmlDatasetToPojo(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			final com.efficio.fieldbook.service.api.FieldbookService fieldbookService, final ParentDataset dataset,
@@ -617,7 +616,6 @@ public class SettingsUtil {
 	 * @param dataset the dataset
 	 * @param userSelection the user selection
 	 * @param programUUID the project id
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	private static void convertXmlTrialDatasetToPojo(
 			final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,

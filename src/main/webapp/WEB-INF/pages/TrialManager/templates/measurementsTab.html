@@ -2,17 +2,17 @@
 	<div class="row form-group col-xs-12 col-md-12" th:if="${createTrialForm != null and measurementRowCount != 0}">
 		<!-- TODO Remove inlined styles-->
 		<img th:src="@{/static/svg/measurements.svg}" style="position: relative; bottom: 3px;" width="22" height="22"/>
-		<strong class="sub-content-heading measurements-header" th:text="#{study.edit.study.measurements}"></strong>
-		<strong class="sub-content-heading preview-measurements-header" th:text="#{study.edit.study.preview.measurements}"></strong>
+		<strong class="sub-content-heading measurements-header" th:text="#{study.edit.study.observations}"></strong>
+		<strong class="sub-content-heading preview-measurements-header" th:text="#{study.edit.study.preview.observations}"></strong>
 	</div>
 
 	<div class="no-measurements-table">
-		<span th:text="#{study.edit.study.preview.genearate.design.message}">Please generate the design to see the measurements</span>
+		<span th:text="#{study.edit.study.preview.genearate.design.message}">Please generate the design to see the observations</span>
 	</div>
 
 	<div class="preview-measurements-panel">
 		<div class="preview-measurements-message">
-			<span th:text="#{study.edit.study.preview.save.message}">Please save the study to be able to edit measurements</span>
+			<span th:text="#{study.edit.study.preview.save.message}">Please save the study to be able to edit observations</span>
 		</div>
 		<div class="preview-measurements-table">
 			<table id="preview-measurement-table" width="100%" th:object="${createTrialForm}" class="table-curved table-condensed">
@@ -23,12 +23,12 @@
 	<div class="edit-measurements-panel" th:if="${createTrialForm != null and measurementRowCount != 0}">
 
 		<div id="mdt-toggle-categorical-display-hidden-original" class="mdt-columns dataTables_info fbk-hide">
-			<span class="btn btn-link fbk-toggle-categorical-display" th:text="#{measurements.show.categorical.description}">Show Categorical Description</span>
+			<span class="btn btn-link fbk-toggle-categorical-display" th:text="#{observations.show.categorical.description}">Show Categorical Description</span>
 		</div>
 
 		<div id="mdt-environment-list-panel">
 			<div id="mdt-environment-list-label" class="dataTables_info fbk-std-padding-right fbk-float-left"
-				 th:text="#{measurement.environment.list.label}"></div>
+				 th:text="#{observation.environment.list.label}"></div>
 
 			<div id="mdt-environment-list" class="fbk-float-left">
 				<ui-select id="measurements-environment-number" name="measurements-environment-number" theme="select2"

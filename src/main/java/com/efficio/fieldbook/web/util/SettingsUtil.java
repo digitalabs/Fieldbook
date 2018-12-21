@@ -1788,11 +1788,7 @@ public class SettingsUtil {
 	}
 
 	/**
-<<<<<<< HEAD
-	 * Removes the setting details from the list if its tem id is in the given bariable ids
-=======
 	 * Removes the basic details variables.
->>>>>>> master
 	 *
 	 * @param studyLevelConditions the study level conditions
 	 * @param variableIds the ids of the variables to be removed from the list

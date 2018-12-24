@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.web.trial.bean.Environment;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -373,7 +374,13 @@ public class CreateTrialController extends BaseTrialController {
 
 		final Integer unspecifiedLocationid = this.unspecifiedLocationId();
 		for (int i = 0; i < noOfEnvironments; i++) {
-			data.getEnvironments().add(this.createEnvironmentWithDefaultLocation(unspecifiedLocationid));
+			if (unspecifiedLocationid > 0) {
+				// Create an environment with default location ONLY IF the system found a default location
+				// If unspecifiedLocationid is more than 0, it means the default location exists.
+				data.getEnvironments().add(this.createEnvironmentWithDefaultLocation(unspecifiedLocationid));
+			} else {
+				data.getEnvironments().add(new Environment());
+			}
 		}
 
 		final Map<String, Object> settingMap = new HashMap<>();

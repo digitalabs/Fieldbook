@@ -72,7 +72,7 @@ public class CreateTrialControllerTest {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 		Mockito.doReturn(CreateTrialControllerTest.PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
-		this.defaultLocationId = new Random().nextInt();
+		this.defaultLocationId = Math.abs(new Random().nextInt());
 		Mockito.doReturn(Arrays.asList(new Location(defaultLocationId))).when(this.locationDataManager)
 				.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
 	}
@@ -231,6 +231,29 @@ public class CreateTrialControllerTest {
 			Assert.assertNotNull(environment.getManagementDetailValues());
 			Assert.assertEquals(String.valueOf(this.defaultLocationId),
 					environment.getManagementDetailValues().get(String.valueOf(TermId.LOCATION_ID.getId())));
+		}
+		Assert.assertNotNull(tabInfo.getSettingMap());
+		Assert.assertNotNull(tabInfo.getSettingMap().get("trialConditionDetails"));
+		final List<SettingDetail> mgtDetailsList = (List<SettingDetail>) tabInfo.getSettingMap().get("managementDetails");
+		Assert.assertNotNull(mgtDetailsList);
+		Assert.assertEquals(AppConstants.CREATE_STUDY_ENVIRONMENT_REQUIRED_FIELDS.getString().split(",").length, mgtDetailsList.size());
+		Mockito.verify(this.userSelection).setTrialLevelVariableList(mgtDetailsList);
+	}
+
+	@Test
+	public void testPrepareEnvironmentsTabInfoNoDefaultLocation() {
+		Mockito.doReturn(this.createStandardVariable(new Random().nextInt())).when(this.fieldbookMiddlewareService)
+			.getStandardVariable(Matchers.anyInt(), Matchers.eq(CreateTrialControllerTest.PROGRAM_UUID));
+		Mockito.doReturn(new ArrayList<>()).when(this.locationDataManager)
+			.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
+
+		final TabInfo tabInfo = this.controller.prepareEnvironmentsTabInfo(true);
+		final EnvironmentData environmentData = (EnvironmentData) tabInfo.getData();
+		final int environmentCount = Integer.parseInt(AppConstants.DEFAULT_NO_OF_ENVIRONMENT_COUNT.getString());
+		Assert.assertEquals(environmentCount, environmentData.getNoOfEnvironments());
+		Assert.assertEquals(environmentCount, environmentData.getEnvironments().size());
+		for (final Environment environment : environmentData.getEnvironments()) {
+			Assert.assertTrue(environment.getManagementDetailValues().isEmpty());
 		}
 		Assert.assertNotNull(tabInfo.getSettingMap());
 		Assert.assertNotNull(tabInfo.getSettingMap().get("trialConditionDetails"));

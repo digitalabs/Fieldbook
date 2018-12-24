@@ -81,6 +81,7 @@ public class OpenTrialController extends BaseTrialController {
 	public static final String MEASUREMENT_ROW_COUNT = "measurementRowCount";
 	public static final String ENVIRONMENT_DATA_TAB = "environmentData";
 	public static final String MEASUREMENT_DATA_EXISTING = "measurementDataExisting";
+	public static final String HAS_ADVANCED_OR_CROSSES_LIST = "hasAdvancedOrCrossesList";
 	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
 	public static final String IS_EXP_DESIGN_PREVIEW_FALSE = "0";
 	public static final String IS_DELETED_ENVIRONMENT = "0";
@@ -377,6 +378,7 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService
 				.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
 						SettingsUtil.buildVariates(trialWorkbook.getVariates())));
+		model.addAttribute(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST, this.fieldbookMiddlewareService.hasAdvancedOrCrossesList(trialId));
 
 		model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT,
 				this.studyDataManager.countExperiments(trialWorkbook.getMeasurementDatesetId()));
@@ -511,6 +513,7 @@ public class OpenTrialController extends BaseTrialController {
 		final Map<String, Object> returnVal = new HashMap<>();
 		returnVal.put(OpenTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(workbook, false));
 		returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, false);
+		returnVal.put(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST, false);
 		returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT, 0);
 
 		// saving of measurement rows
@@ -537,6 +540,7 @@ public class OpenTrialController extends BaseTrialController {
 				returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService
 						.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(),
 								SettingsUtil.buildVariates(workbook.getVariates())));
+				returnVal.put(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST, this.fieldbookMiddlewareService.hasAdvancedOrCrossesList(workbook.getStudyDetails().getId()));
 				returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT, this.studyDataManager.countExperiments(measurementDatasetId));
 
 				this.fieldbookService
@@ -591,6 +595,7 @@ public class OpenTrialController extends BaseTrialController {
 		returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService
 				.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
 						SettingsUtil.buildVariates(trialWorkbook.getVariates())));
+		returnVal.put(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST, this.fieldbookMiddlewareService.hasAdvancedOrCrossesList(id));
 		returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT,
 				this.studyDataManager.countExperiments(trialWorkbook.getMeasurementDatesetId()));
 		returnVal.put(OpenTrialController.MEASUREMENTS_DATA,

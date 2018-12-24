@@ -6,12 +6,13 @@
 	angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','GERMPLASM_CHECKS_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
             'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'SAMPLE_LIST_DATA','CROSSES_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
-		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', '$q',
+		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_HAS_ADVANCED_OR_CROSSES_LIST', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', '$q',
 		'TrialSettingsManager','studyStateService', '_', '$localStorage','$rootScope', 'studyContext',
 		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA, SAMPLE_LIST_DATA, CROSSES_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
 					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-					TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext) {
+					TRIAL_HAS_MEASUREMENT, TRIAL_HAS_ADVANCED_OR_CROSSES_LIST, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext) {
+
 
 			// TODO: clean up data service, at the very least arrange the functions in alphabetical order
 			var extractData = function(initialData, initializeProperty) {
@@ -70,6 +71,7 @@
 
 						service.currentData.basicDetails.studyID = trialID;
 						service.trialMeasurement.hasMeasurement = data.measurementDataExisting;
+                        service.trialMeasurement.hasAdvancedOrCrossesList = data.hasAdvancedOrCrossesList;
 						service.updateTrialMeasurementRowCount(data.measurementRowCount);
 
 						// TODO: change from global function call
@@ -265,6 +267,7 @@
 
 				trialMeasurement: {
 					hasMeasurement: TRIAL_HAS_MEASUREMENT,
+                    hasAdvancedOrCrossesList: TRIAL_HAS_ADVANCED_OR_CROSSES_LIST,
 					count: parseInt(TRIAL_MEASUREMENT_COUNT, 10)
 				},
 
@@ -492,6 +495,7 @@
 									notifySaveEventListeners();
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(data) {
 										service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
+                                        service.trialMeasurement.hasAdvancedOrCrossesList = data.hasAdvancedOrCrossesList;
 										service.updateTrialMeasurementRowCount(data.measurementRowCount);
 										service.updateSettings('measurements', extractSettings(data.measurementsData));
 										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
@@ -518,6 +522,7 @@
 									notifySaveEventListeners();
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function (updatedData) {
 										service.trialMeasurement.hasMeasurement = (updatedData.measurementDataExisting);
+                                        service.trialMeasurement.hasAdvancedOrCrossesList = data.hasAdvancedOrCrossesList;
 										service.updateTrialMeasurementRowCount(updatedData.measurementRowCount);
 
 										service.updateCurrentData('environments', extractData(updatedData.environmentData));

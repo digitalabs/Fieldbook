@@ -21,6 +21,7 @@ describe('Measurement Controller', function () {
 		currentData: {
 			environments: []
 		},
+		trialMeasurement: {},
 		onUpdateData: function () {
 		},
 	};
@@ -54,6 +55,7 @@ describe('Measurement Controller', function () {
 
 			rootScopeMock.stateSuccessfullyLoaded['createMeasurements'] = true;
 			rootScopeMock.stateSuccessfullyLoaded['editMeasurements'] = true;
+			trialManageServiceMock.trialMeasurement['hasAdvancedOrCrossesList'] = false;
 
 			controller = $controller('EnvironmentCtrl', {
 				$rootScope: rootScopeMock,
@@ -78,8 +80,8 @@ describe('Measurement Controller', function () {
 
 	describe('When study environment to be deleted is not yet saved,', function () {
 
-		it('it should open the confirm delete modal', function () {
-
+		it('it should check if there is an existing cross/advance list', function () {
+			spyOn(controller, 'hasAdvancedOrCrossesListOnStudy');
 			var environmentNo = 1;
 			var environmentList = [];
 			environmentList[environmentNo] = undefined;
@@ -87,20 +89,18 @@ describe('Measurement Controller', function () {
 			httpBackend.whenGET('/Fieldbook/trial/measurements/instanceMetadata/' + studyContext.studyId).respond(environmentList);
 
 			controller.hasMeasurementDataOnEnvironment(environmentNo).then(function () {
-				expect(controller.confirmDeleteEnvironment).toHaveBeenCalled();
+				expect(controller.hasAdvancedOrCrossesListOnStudy).toHaveBeenCalled();
 			});
 
 		});
-
 	});
 
 	describe('When study environment to be deleted is already saved,', function () {
 
-
 		describe('and observation count is 0', function () {
 
-			it('it should open the confirm delete modal', function () {
-
+			it('it should check if there is an existing cross/advance list', function () {
+				spyOn(controller, 'hasAdvancedOrCrossesListOnStudy');
 				var environmentNo = 1;
 				var environmentList = [];
 				environmentList[environmentNo] = {};
@@ -110,7 +110,7 @@ describe('Measurement Controller', function () {
 				datasetServiceMock.observationCountByInstance.and.returnValue(q.resolve(responseMock));
 
 				controller.hasMeasurementDataOnEnvironment(environmentNo).then(function () {
-					expect(controller.confirmDeleteEnvironment).toHaveBeenCalled();
+					expect(controller.hasAdvancedOrCrossesListOnStudy).toHaveBeenCalled();
 				});
 
 			});
@@ -141,4 +141,27 @@ describe('Measurement Controller', function () {
 
 	});
 
+	describe('When study of the environment to be deleted is has no advance/cross list', function () {
+
+		it('it should open the confirm delete modal', function () {
+			var environmentNo = 1;
+
+			controller.hasAdvancedOrCrossesListOnStudy(environmentNo).then(function () {
+				expect(controller.confirmDeleteEnvironment).toHaveBeenCalled();
+			});
+		});
+	});
+
+	describe('When study of the environment to be deleted has advance/cross list', function () {
+
+		it('it should open the confirm delete modal', function () {
+			var environmentNo = 1;
+			trialManageServiceMock.trialMeasurement['hasAdvancedOrCrossesList'] = true;
+
+			controller.hasAdvancedOrCrossesListOnStudy(environmentNo).then(function () {
+				expect(controller.showAlertMessage)
+					.toHaveBeenCalledWith('', 'This environment cannot be removed because the study has Advance/Cross List.');
+			});
+		});
+	});
 });

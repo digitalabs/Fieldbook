@@ -146,8 +146,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			});
 
 			/* Scope Functions */
-			$scope.shouldDisableEnvironmentCountUpdate = function () {
-				return $scope.subObservationTabs.length > 0 || TrialManagerDataService.trialMeasurement.hasMeasurement;
+			$scope.shouldDisableEnvironmentCountUpdate = function() {
+				return $scope.subObservationTabs.length > 0 || TrialManagerDataService.trialMeasurement.hasMeasurement || TrialManagerDataService.trialMeasurement.hasAdvancedOrCrossesList;
 			};
 
 			$scope.updateEnvironmentCount = function () {
@@ -256,7 +256,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 				$http.get('/Fieldbook/trial/measurements/instanceMetadata/' + studyContext.studyId, {cache: false}).success(function (environmentList) {
 					if (environmentList[environmentNo] === undefined) {
-						ctrl.confirmDeleteEnvironment(environmentNo);
+						ctrl.hasAdvancedOrCrossesListOnStudy(environmentNo);
 						deferred.resolve();
 					}
 					else {
@@ -274,7 +274,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 									var warningMessage = 'This environment cannot be removed because it contains measurement data.';
 									ctrl.showAlertMessage('', warningMessage);
 								} else {
-									ctrl.confirmDeleteEnvironment(environmentNo);
+									ctrl.hasAdvancedOrCrossesListOnStudy(environmentNo);
 								}
 								deferred.resolve();
 							});
@@ -283,6 +283,18 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 				});
 
+				return deferred.promise();
+			}
+
+			ctrl.hasAdvancedOrCrossesListOnStudy = function (environmentNo) {
+				var deferred = $.Deferred();
+				if(TrialManagerDataService.trialMeasurement.hasAdvancedOrCrossesList) {
+					var warningMessage = 'This environment cannot be removed because the study has Advance/Cross List.';
+					ctrl.showAlertMessage('', warningMessage);
+				} else {
+					ctrl.confirmDeleteEnvironment(environmentNo);
+				}
+				deferred.resolve();
 				return deferred.promise();
 			}
 

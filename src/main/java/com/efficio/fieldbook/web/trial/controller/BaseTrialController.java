@@ -1,20 +1,30 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.exception.FieldbookRequestException;
+import com.efficio.fieldbook.web.trial.bean.AdvanceList;
+import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.CrossesList;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignDataDetail;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
+import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -48,29 +58,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.trial.bean.AdvanceList;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.CrossesList;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignDataDetail;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -131,6 +130,13 @@ public abstract class BaseTrialController extends SettingsController {
 	protected void processEnvironmentData(final EnvironmentData data) {
 		for (int i = 0; i < data.getEnvironments().size(); i++) {
 			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
+
+			if (!values.containsKey(Integer.toString(TermId.LOCATION_ID.getId()))
+				|| values.get(Integer.toString(TermId.LOCATION_ID.getId())) == null || values
+				.get(Integer.toString(TermId.LOCATION_ID.getId())).isEmpty()) {
+				throw new FieldbookRequestException("save.study.no.location.selected.on.environment");
+			}
+
 			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))
 					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null
 					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
@@ -530,11 +536,6 @@ public abstract class BaseTrialController extends SettingsController {
 
 		data.setNoOfEnvironments(trialObservations.size());
 
-		// minimum number of environments is 1
-		if (data.getNoOfEnvironments() == 0) {
-			data.setNoOfEnvironments(1);
-		}
-
 		final List<Environment> environments = new ArrayList<>();
 		for (final MeasurementRow row : trialObservations) {
 			final Environment environment = new Environment();
@@ -589,6 +590,14 @@ public abstract class BaseTrialController extends SettingsController {
 			environment.setPhenotypeIDMap(phenotypeIDMap);
 			environments.add(environment);
 		}
+		
+		// minimum number of environments is 1
+		if (data.getNoOfEnvironments() == 0) {
+			data.setNoOfEnvironments(1);
+			if (isUsePrevious) {
+				environments.add(this.createEnvironmentWithDefaultLocation(this.getUnspecifiedLocationId()));
+			}
+		}
 
 		data.setEnvironments(environments);
 		info.setData(data);
@@ -598,6 +607,14 @@ public abstract class BaseTrialController extends SettingsController {
 		this.userSelection.setStudyConditions(trialConditionsList);
 
 		return info;
+	}
+	
+	protected Environment createEnvironmentWithDefaultLocation(final Integer defaultLocationId) {
+		final Environment defaultEnvironment = new Environment();
+		final Map<String, String> managementDetails = new HashMap<>();
+		managementDetails.put(String.valueOf(TermId.LOCATION_ID.getId()), String.valueOf(defaultLocationId));
+		defaultEnvironment.setManagementDetailValues(managementDetails);
+		return defaultEnvironment;
 	}
 
 	protected List<AdvanceList> getAdvancedList(final Integer trialId) {

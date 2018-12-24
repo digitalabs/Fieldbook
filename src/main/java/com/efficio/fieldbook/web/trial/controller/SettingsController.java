@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -170,7 +171,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the setting detail
 	 */// TODO TRIAL
 	protected SettingDetail createSettingDetailWithVariableType(final int id, final String alias, final VariableType variableType) {
-		final Variable variable = this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, false, false);
+		final Variable variable = this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, false);
 
 		String variableName = variable.getName();
 		if (alias != null && !alias.isEmpty()) {
@@ -577,6 +578,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		for (final SettingDetail setting : currentList) {
 			if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
 				newSetting = setting;
+				break;
 			}
 		}
 
@@ -618,6 +620,24 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				this.userSelection.setDeletedTreatmentFactors(new ArrayList<SettingDetail>());
 			}
 			this.userSelection.getDeletedTreatmentFactors().add(newSetting);
+			this.addDeletedTreatmentFactorInDeletedPlotLevelList(newSetting);
+
+		}
+	}
+
+	protected void addDeletedTreatmentFactorInDeletedPlotLevelList(final SettingDetail newSetting) {
+		if(!CollectionUtils.isEmpty(this.userSelection.getPlotsLevelList())) {
+			//Also add the deleted setting detail to the plotLevelList to delete the corresponding TF variable in the measurements table
+			if (this.userSelection.getDeletedPlotLevelList() == null) {
+				this.userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
+			}
+
+			final int plotSettingDetailIndex = this.userSelection.getPlotsLevelList().indexOf(newSetting);
+			if (plotSettingDetailIndex >= 0) {
+				//We need to retrieve the Setting Detail object from the plotLevelList
+				final SettingDetail plotSettingDetail = this.userSelection.getPlotsLevelList().get(plotSettingDetailIndex);
+				this.userSelection.getDeletedPlotLevelList().add(plotSettingDetail);
+			}
 		}
 	}
 

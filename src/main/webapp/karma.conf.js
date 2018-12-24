@@ -38,6 +38,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/lib/datatable/angular-datatables.js',
 			'WEB-INF/static/js/lib/datatable/angular-datatables.buttons.js',
 			'WEB-INF/static/js/lib/datatable/angular-datatables.fixedcolumns.js',
+			'WEB-INF/static/js/lib/datatable/angular-datatables.colreorder.js',
 			'WEB-INF/static/js/lib/datatable/buttons.colVis.min.js',
 			'WEB-INF/static/js/lib/datatable/dataTables.bootstrap.js',
 			'WEB-INF/static/js/lib/datatable/dataTables.buttons.min.js',
@@ -49,6 +50,8 @@ module.exports = function (config) {
 
 			'WEB-INF/static/js/angular/angular-local-storage.min.js',
 			'WEB-INF/static/js/angular/bmsAuth.js',
+			'WEB-INF/static/js/lib/angular/xlsx.full.min.js',
+
 
 			// Modules to test
 			'WEB-INF/static/js/angular/angular-utilities.js',
@@ -69,12 +72,14 @@ module.exports = function (config) {
 			'WEB-INF/static/js/trialmanager/selectSelectionVariableToSampleList.js',
 			'WEB-INF/static/js/trialmanager/experimentalDesign.js',
 			'WEB-INF/static/js/trialmanager/measurement.js',
+			'WEB-INF/static/js/trialmanager/subobservations/subObservationSet.js',
 			'WEB-INF/static/js/trialmanager/showSettingFormElementNew.js',
 			'WEB-INF/static/js/trialmanager/germplasm.js',
 			'WEB-INF/static/js/trialmanager/datasetService.js',
 			'WEB-INF/static/js/trialmanager/exportStudy.js',
 			'WEB-INF/static/js/trialmanager/datasetOptionModal.js',
 			'WEB-INF/static/js/design-import/design-import-main.js',
+			'WEB-INF/static/js/trialmanager/importStudy.js',
 
 
 			// unit test files

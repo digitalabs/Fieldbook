@@ -8,7 +8,6 @@ import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -101,9 +100,6 @@ public class OpenTrialController extends BaseTrialController {
 
 	@Resource
 	private SampleListService sampleListService;
-
-	@Resource
-	protected FieldbookProperties fieldbookProperties;
 
 	@Override
 	public String getContentName() {
@@ -420,7 +416,6 @@ public class OpenTrialController extends BaseTrialController {
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional
 	public Map<String, Object> submit(@RequestParam("replace") final int replace, @RequestBody final TrialData data) {
-
 		this.processEnvironmentData(data.getEnvironments());
 
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
@@ -466,7 +461,6 @@ public class OpenTrialController extends BaseTrialController {
 				this.userSelection.getTrialLevelVariableList());
 		SettingsUtil
 				.addDeletedSettingsList(null, this.userSelection.getDeletedTreatmentFactors(), this.userSelection.getTreatmentFactors());
-
 		final String name = data.getBasicDetails().getStudyName();
 		// retain measurement dataset id and trial dataset id
 		final int trialDatasetId = this.userSelection.getWorkbook().getTrialDatasetId();

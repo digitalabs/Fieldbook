@@ -10,6 +10,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import org.generationcp.middleware.manager.Operation;
 
 public class SettingDetailTestDataInitializer {
 
@@ -17,6 +18,14 @@ public class SettingDetailTestDataInitializer {
 			final PhenotypicType role) {
 		final SettingDetail settingDetail = SettingDetailTestDataInitializer.createSettingDetail(cvTermId, name, value, role.name());
 		settingDetail.setRole(role);
+		return settingDetail;
+	}
+
+	public static SettingDetail createSettingDetail(final int cvTermId, final String name, final String value,
+		final PhenotypicType role, final Operation operation) {
+		final SettingDetail settingDetail = SettingDetailTestDataInitializer.createSettingDetail(cvTermId, name, value, role.name());
+		settingDetail.setRole(role);
+		settingDetail.getVariable().setOperation(operation);
 		return settingDetail;
 	}
 	

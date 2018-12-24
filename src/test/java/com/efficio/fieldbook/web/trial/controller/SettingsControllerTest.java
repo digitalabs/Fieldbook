@@ -6,8 +6,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.middleware.ContextHolder;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -87,8 +90,8 @@ public class SettingsControllerTest {
 		this.controller.setOntologyService(this.ontologyService);
 
 		this.createTestVariable();
-		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class), Matchers.anyBoolean(),
-				Matchers.anyBoolean())).thenReturn(this.testVariable);
+		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class), Matchers.anyBoolean()))
+				.thenReturn(this.testVariable);
 		Mockito.when(this.fieldbookService.getAllPossibleValues(Matchers.anyInt())).thenReturn(Arrays.asList(this.testValueReference));
 		Mockito.when(
 				this.fieldbookService.getAllPossibleValuesFavorite(Matchers.anyInt(), Matchers.any(String.class), Matchers.anyBoolean()))
@@ -178,7 +181,7 @@ public class SettingsControllerTest {
 				settingDetail.getPossibleValuesFavoriteJson().contains(this.testValueReference.getKey()));
 
 		Mockito.verify(this.variableDataManager, Mockito.times(1)).getVariable(this.contextUtil.getCurrentProgramUUID(),
-				this.testVariable.getId(), false, false);
+				this.testVariable.getId(), false);
 		Mockito.verify(this.fieldbookService, Mockito.times(1)).getAllPossibleValues(this.testVariable.getId());
 		Mockito.verify(this.contextUtil, Mockito.times(1)).getProjectInContext();
 		Mockito.verify(this.fieldbookService, Mockito.times(1)).getAllPossibleValuesFavorite(this.testVariable.getId(),
@@ -239,6 +242,21 @@ public class SettingsControllerTest {
 		final ArgumentCaptor<String> propertiesCaptor = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(this.ontologyService, Mockito.times(originalSize)).getProperty(propertiesCaptor.capture());
 		Assert.assertEquals(properties, propertiesCaptor.getAllValues());
+	}
+
+	@Test
+	public void testAddDeletedTreatmentFactorInDeletedPlotLevelList() {
+		final SettingDetail settingDetail = SettingDetailTestDataInitializer.createSettingDetail(TermId.TREATMENT_MEAN.getId(), TermId.TREATMENT_MEAN.name(), "2", PhenotypicType.TRIAL_DESIGN);
+		final UserSelection userSelection = new UserSelection();
+		userSelection.setPlotsLevelList(Arrays.asList(settingDetail));
+		this.controller.setUserSelection(userSelection);
+
+		this.controller.addDeletedTreatmentFactorInDeletedPlotLevelList(settingDetail);
+		Assert.assertEquals(1, userSelection.getDeletedPlotLevelList().size());
+
+		final SettingDetail deletedSettingDetail = userSelection.getDeletedPlotLevelList().get(0);
+		Assert.assertEquals(settingDetail.getVariable().getCvTermId(), deletedSettingDetail.getVariable().getCvTermId());
+		Assert.assertEquals(settingDetail.getVariable().getName(), deletedSettingDetail.getVariable().getName());
 	}
 	
 	@Test

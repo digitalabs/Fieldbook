@@ -327,7 +327,12 @@ public class SettingsUtilTest {
 		final List<SettingDetail> treatmentFactorDetails =  new ArrayList<>();
 		treatmentFactorDetails.add(SettingDetailTestDataInitializer.createSettingDetail(SettingsUtilTest.NFERT_NO_ID, SettingsUtilTest.NFERT_NO, SettingsUtilTest.NFERT_KG, PhenotypicType.TRIAL_DESIGN));
 		treatmentFactorDetails.add(SettingDetailTestDataInitializer.createSettingDetail(SettingsUtilTest.NFERT_KG_ID, SettingsUtilTest.NFERT_KG, "1", PhenotypicType.TRIAL_DESIGN));
-
+		final SettingDetail deletedTreatmentFactorLabel = SettingDetailTestDataInitializer.createSettingDetail(1, "Deleted", "Deleted TF Value", PhenotypicType.TRIAL_DESIGN);
+		deletedTreatmentFactorLabel.getVariable().setOperation(Operation.DELETE);
+		final SettingDetail deletedTreatmentFactorValue = SettingDetailTestDataInitializer.createSettingDetail(2, "Deleted TF Value", "1", PhenotypicType.TRIAL_DESIGN);
+		deletedTreatmentFactorValue.getVariable().setOperation(Operation.DELETE);
+		treatmentFactorDetails.add(deletedTreatmentFactorLabel);
+		treatmentFactorDetails.add(deletedTreatmentFactorValue);
 		final Map<String, TreatmentFactorData> treatmentFactorItems = new HashMap<>();
 		final TreatmentFactorData data = new TreatmentFactorData();
 		data.setVariableId(SettingsUtilTest.NFERT_KG_ID);

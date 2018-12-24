@@ -1,10 +1,10 @@
 (function () {
 	'use strict';
 
-	var manageTrialApp = angular.module('manageTrialApp');
+	var subObservationModule = angular.module('subObservation', []);
 	var hiddenColumns = [8201];
 
-	manageTrialApp.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
+	subObservationModule.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
 		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout',
 		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
 				  datasetService, $timeout
@@ -22,6 +22,7 @@
 			$scope.nested.reviewVariable = null;
 			$scope.enableActions = false;
 			$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
+			$scope.columnDataByInputTermId = {};
 
 			var subObservationTab = $scope.subObservationTab;
 			var tableId = '#subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
@@ -41,13 +42,10 @@
 				$scope.environments = dataset.instances;
 				$scope.nested.selectedEnvironment = dataset.instances[0];
 
-				$scope.dtOptions = getDtOptions();
 				$scope.traitVariables = $scope.getTraitVariablesFromDataset();
 				$scope.selectedTraits = $scope.getSelectedVariables();
-				loadColumns().then(function (columnsObj) {
-					dtColumnsPromise.resolve(columnsObj.columns);
-					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
-				});
+
+				loadTable();
 			});
 
 			$scope.getTraitVariablesFromDataset = function () {
@@ -94,6 +92,10 @@
 				// just override default callback (see VariableSelection.prototype._selectVariable)
 			};
 
+			$scope.onHideCallback = function () {
+				adjustColumns($(tableId).DataTable());
+			};
+
 			$scope.onAddVariable = function () {
 				if ($scope.traitVariables.length()) {
 					var pos = $scope.traitVariables.m_keys.length - 1;
@@ -109,7 +111,7 @@
 						studyAlias: m_vals.variable.name
 					}).then(function () {
 						$scope.selectedTraits = $scope.getSelectedVariables();
-						reloadTable();
+						loadTable();
 					});
 				}
 			};
@@ -133,7 +135,7 @@
 							angular.forEach(variableIds, function (cvtermId) {
 								$scope.traitVariables.remove(cvtermId);
 							});
-							reloadTable();
+							loadTable();
 							$scope.selectedTraits = $scope.getSelectedVariables();
 						});
 					}
@@ -208,13 +210,16 @@
 			};
 
 			$scope.changeEnvironment = function () {
-				$scope.dtOptions = getDtOptions();
+				$(tableId).DataTable().ajax
+					.url(datasetService.getObservationTableUrl(subObservationSet.id, $scope.nested.selectedEnvironment.instanceDbId))
+					.load();
 			};
 
 			$scope.toggleShowCategoricalDescription = function () {
 				switchCategoricalView().done(function () {
 					$scope.$apply(function () {
 						$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
+						adjustColumns($(tableId).DataTable());
 					});
 				});
 			};
@@ -276,6 +281,7 @@
 						className: 'fbk-buttons-no-border fbk-colvis-button',
 						text: '<i class="glyphicon glyphicon-th"></i>'
 					}])
+					.withColReorder()
 					.withPaginationType('full_numbers');
 			}
 
@@ -287,10 +293,21 @@
 				);
 			}
 
+			/**
+			 * FIXME we were having issues with clone() and $compile. Attaching and detaching instead for now
+			 */
+			function attachCategoricalDisplayBtn() {
+				$timeout(function () {
+					$('#subObsCategoricalDescriptionBtn').detach().insertBefore('#subObservationTableContainer .dt-buttons');
+				});
+			}
+
+			function detachCategoricalDisplayBtn() {
+				$('#subObsCategoricalDescriptionBtn').detach().appendTo('#subObsCategoricalDescriptionContainer');
+			}
+
 			function initCompleteCallback() {
-				var $categoricalDescriptionBtn = $('#subObsCategoricalDescriptionBtn');
-				var buttons = $categoricalDescriptionBtn.parent().find('.dt-buttons');
-				$categoricalDescriptionBtn.detach().insertBefore(buttons);
+				attachCategoricalDisplayBtn();
 			}
 
 			function headerCallback(thead, data, start, end, display) {
@@ -307,6 +324,12 @@
                 addCellClickHandler();
 			}
 
+			function adjustColumns(table) {
+				$timeout(function () {
+					table.columns.adjust();
+				});
+			}
+
 			function addCellClickHandler() {
 				var $table = angular.element(tableId);
 				$table.off('click').on('click', 'td.variates', clickHandler);
@@ -315,10 +338,12 @@
 					var cell = this;
 
 					var table = $table.DataTable();
-					var rowData = table.row(cell.parentNode).data();
+					var dtRow = table.row(cell.parentNode);
+					var rowData = dtRow.data();
 					var dtCell = table.cell(cell);
 					var cellData = dtCell.data();
-					var columnData = $scope.columnsObj.columns[table.column(cell).index()].columnData;
+					var index = table.colReorder.transpose(table.column(cell).index(), 'toOriginal');
+					var columnData = $scope.columnsObj.columns[index].columnData;
 					var termId = columnData.termId;
 
 					if (!termId) return;
@@ -406,6 +431,10 @@
 							}
 
 							promise.then(function (data) {
+								var valueChanged = false;
+								if (cellData.value !== $inlineScope.observation.value) {
+                                    valueChanged = true;
+								}
 								cellData.value = $inlineScope.observation.value;
 								cellData.observationId = data.observationId;
 								cellData.status = data.status;
@@ -413,14 +442,34 @@
 								$inlineScope.$destroy();
 								editor.remove();
 
-								dtCell.data(cellData);
-
 								/**
-								 * Restore cell click handler
+								 * We are updating the cell value and the target if the trait is input of a formula
+								 * to avoid reloading the page. It has these advantages:
+								 * - Make the inline edition more dynamic and fast
+								 * - Don't reset the table scroll
+								 * - We can show out-of-sync status changes on preview mode
+								 *
+								 * The alternative would be:
+								 *
+								 *     table.ajax.reload(function () {
+								 *         // Restore handler
+								 *         $table.off('click').on('click', 'td.variates', clickHandler);
+								 *     }, false);
 								 */
-								$table.off('click').on('click', 'td.variates', clickHandler);
-
+								dtCell.data(cellData);
 								processCell(cell, cellData, rowData, columnData);
+
+								if (valueChanged && $scope.columnDataByInputTermId[termId]) {
+									var targetColumnData = $scope.columnDataByInputTermId[termId];
+									var targetColIndex = table.colReorder.transpose(targetColumnData.index, 'toCurrent');
+									var targetDtCell = table.cell(dtRow.node(), targetColIndex);
+									var targetCellData = targetDtCell.data();
+									targetCellData.status = 'OUT_OF_SYNC';
+									processCell(targetDtCell.node(), targetCellData, rowData, targetColumnData);
+								}
+
+								// Restore handler
+								$table.off('click').on('click', 'td.variates', clickHandler);
 							}, function (response) {
 								if (response.errors) {
 									showErrorMessage('', response.errors[0].message);
@@ -449,12 +498,7 @@
 									todayBtn: true,
 									forceParse: false
 								}).on('hide', function () {
-									try {
-										$.datepicker.parseDate('yymmdd', $(this).val());
-										updateInline();
-									} catch (e) {
-										showErrorMessage('', 'invalid value');
-									}
+									updateInline();
 								}).datepicker("show").datepicker('update', initialValue)
 							});
 						}
@@ -462,11 +506,12 @@
 						// FIXME show combobox for categorical traits
 						$(cell).css('overflow', 'visible');
 
-						// FIXME find a better way
 						$timeout(function () {
 							/**
 							 * Initiate interaction with the input so that clicks on other parts of the page
 							 * will trigger blur immediately. Also necessary to initiate datepicker
+							 * This also avoids temporary click handler on body
+							 * FIXME is there a better way?
 							 */
 							$(cell).find('a.ui-select-match, input').click().focus();
 						}, 100);
@@ -528,7 +573,9 @@
 					});
 			}
 
-			function reloadTable() {
+			function loadTable() {
+				detachCategoricalDisplayBtn();
+
 				/**
 				 * We need to reinitilize all this because
 				 * if we use column.visible an change the columns with just
@@ -546,6 +593,8 @@
 					$scope.dtOptions = getDtOptions();
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
+
+					attachCategoricalDisplayBtn();
 				});
 			}
 
@@ -554,6 +603,7 @@
 					subObservationSet.columnsData = columnsData;
 					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(columnsData);
 
+					// if not needed when implementing review -> remove
 					subObservationSet.columnMap = {};
 					angular.forEach(columnsData, function (columnData) {
 						subObservationSet.columnMap[columnData.termId] = columnData;
@@ -568,15 +618,26 @@
 				var columns = [],
 					columnsDef = [];
 
-				// TODO complete column definitions (highlighting, links, etc)
-
-				angular.forEach(columnsData, function (columnData) {
+				angular.forEach(columnsData, function (columnData, index) {
 					if (columnData.possibleValues) {
 						columnData.possibleValuesByValue = {};
 						angular.forEach(columnData.possibleValues, function (possibleValue) {
+							// so we can use "Please Choose"=empty value
+							possibleValue.displayValue = possibleValue.name;
+							// convenience map to avoid looping later
 							columnData.possibleValuesByValue[possibleValue.name] = possibleValue;
 						});
+						// waiting for https://github.com/angular-ui/ui-select/issues/152
+						columnData.possibleValues.unshift({name: '', displayValue: 'Please Choose', displayDescription: 'Please Choose'});
 					}
+
+					// store formula info to update out-of-sync status after edit
+					if (columnData.formula && columnData.formula.inputs) {
+						columnData.formula.inputs.forEach(function (input) {
+							$scope.columnDataByInputTermId[input.id] = columnData;
+						});
+					}
+					columnData.index = index;
 
 					columns.push({
 						title: columnData.alias,
@@ -605,6 +666,13 @@
 								processCell(td, cellData, rowData, columnData);
 							},
 							render: function (data, type, full, meta) {
+
+								if (columnData.dataTypeId === 1130) {
+									return renderCategoricalData(data, columnData);
+								} else if (columnData.dataTypeId === 1110) {
+									return getDisplayValueForNumericalValue(data.value);
+								}
+
 								return data && EscapeHTML.escape(data.value);
 							}
 						});
@@ -612,6 +680,11 @@
 						columnsDef.push({
 							targets: columns.length - 1,
 							render: function (data, type, full, meta) {
+
+								if (columnData.dataTypeId === 1130) {
+									return renderCategoricalData(data, columnData);
+								}
+
 								return data && EscapeHTML.escape(data.value);
 							}
 						});
@@ -624,9 +697,34 @@
 				};
 			}
 
+			function renderCategoricalData(data, columnData) {
+				var value = data && EscapeHTML.escape(data.value);
+
+				if (columnData.possibleValues
+					&& columnData.possibleValuesByValue
+					&& columnData.possibleValuesByValue[data.value]
+					&& columnData.possibleValuesByValue[data.value].description
+					&& data.value !== 'missing') {
+
+					var description = columnData.possibleValuesByValue[data.value].description;
+					if (description) {
+						var categoricalNameDom = '<span class="fbk-measurement-categorical-name"'
+							+ ($scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
+							+ ' >'
+							+ data.value + '</span>';
+						var categoricalDescDom = '<span class="fbk-measurement-categorical-desc"'
+							+ (!$scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
+							+ ' >'
+							+ description + '</span>';
+
+						value = categoricalNameDom + categoricalDescDom;
+					}
+				}
+				return value;
+			}
+
 			function validateNumericRange(minVal, maxVal, value, invalid) {
-				if (minVal && maxVal
-					&& (parseFloat(value) < parseFloat(minVal) || parseFloat(value) > parseFloat(maxVal))) {
+				if (parseFloat(value) < parseFloat(minVal) || parseFloat(value) > parseFloat(maxVal)) {
 
 					invalid = true;
 				}
@@ -661,8 +759,8 @@
 				var invalid = false;
 
 				var value = cellDataValue;
-				var minVal = columnData.minRange;
-				var maxVal = columnData.maxRange;
+				var minVal = (columnData.variableMinRange || columnData.variableMinRange === 0) || columnData.scaleMinRange;
+				var maxVal = (columnData.variableMaxRange || columnData.variableMaxRange === 0) || columnData.scaleMaxRange;
 
 				invalid = validateNumericRange(minVal, maxVal, value, invalid);
 				invalid = validateCategoricalValues(columnData, cellDataValue, invalid);
@@ -674,31 +772,11 @@
 				$(td).removeClass('invalid-value');
 				$(td).removeClass('manually-edited-value');
 
-				if (cellData.value) {
+				if (cellData.value || cellData.value === 0) {
 					var invalid = validateDataOutOfRange(cellData.value, columnData);
 
 					if (invalid) {
 						$(td).addClass($scope.preview ? 'invalid-value' : 'accepted-value');
-					}
-
-					if (columnData.possibleValues
-						&& columnData.possibleValuesByValue
-						&& columnData.possibleValuesByValue[cellData.value]
-						&& columnData.possibleValuesByValue[cellData.value].description
-						&& cellData.value !== 'missing') {
-
-						var description = columnData.possibleValuesByValue[cellData.value].description;
-						if (description) {
-							$(td).html('');
-							$(td).append('<span class="fbk-measurement-categorical-name"'
-								+ ($scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
-								+ ' >'
-								+ cellData.value + '</span>');
-							$(td).append('<span class="fbk-measurement-categorical-desc"'
-								+ (!$scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
-								+ ' >'
-								+ description + '</span>');
-						}
 					}
 				}
 				if (cellData.status) {
@@ -708,10 +786,10 @@
 					}
 					$(td).removeAttr('title');
 					var toolTip = 'GID: ' + rowData.variables.GID.value + ' Designation: ' + rowData.variables.DESIGNATION.value;
-					if (status == 'MANUALLY_EDITED') {
+					if (status === 'MANUALLY_EDITED') {
 						$(td).attr('title', toolTip + ' manually-edited-value');
 						$(td).addClass('manually-edited-value');
-					} else if (status == 'OUT_OF_SYNC') {
+					} else if (status === 'OUT_OF_SYNC') {
 						$(td).attr('title', toolTip + ' out-of-sync-value');
 						$(td).addClass('out-of-sync-value');
 					}

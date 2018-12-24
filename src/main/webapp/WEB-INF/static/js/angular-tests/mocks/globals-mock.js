@@ -205,8 +205,8 @@ $.fieldbookMessages.errorNoParentageDesignationSeparator = /*[[#{error.no.parent
 $.fieldbookMessages.advanceListUnableToGenerateWarningMessage = /*[[#{study.advance.study.must.contain.EXPT_DESIGN.variable}]]*/ '';
 $.fieldbookMessages.determinedFromParentalLines = /*[[#{crosses.method.determined.from.parental.lines}]]*/ '';
 $.fieldbookMessages.errorMethodMissing = /*[[#{study.import.method.missing}]]*/ '';
-$.fieldbookMessages.measurementWarningNeedGenExpDesign = /*[[#{experiment.design.measurements.warning}]]*/ '',
-	$.fieldbookMessages.measurementsTraitsChangeWarning = /*[[#{study.measurement.traits.changes.warning}]]*/ '',
+$.fieldbookMessages.measurementWarningNeedGenExpDesign = /*[[#{experiment.design.observations.warning}]]*/ '',
+	$.fieldbookMessages.measurementsTraitsChangeWarning = /*[[#{study.observation.traits.changes.warning}]]*/ '',
 	$.fieldbookMessages.errorServerError = /*[[#{common.error.server.error}]]*/ '';
 $.fieldbookMessages.errorDesignGenerationFailed = /*[[#{common.design.generation.failed}]]*/ '';
 $.fieldbookMessages.showFavoriteLocationHeader = /*[[#{show.favorite.location.header}]]*/ '';
@@ -222,8 +222,8 @@ $.fieldbookMessages.errorSaveSamplesList = /*[[#{error.save.samples}]]*/ '';
 
 // Measurement observation messages
 window.measurementObservationMessages = {
-	showCategoricalDescription: /*[[#{measurements.show.categorical.description}]]*/ '',
-	hideCategoricalDescription: /*[[#{measurements.hide.categorical.description}]]*/ ''
+	showCategoricalDescription: /*[[#{observations.show.categorical.description}]]*/ '',
+	hideCategoricalDescription: /*[[#{observations.hide.categorical.description}]]*/ ''
 };
 
 var cropName = 'maize';

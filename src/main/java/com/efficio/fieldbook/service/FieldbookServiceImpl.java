@@ -270,7 +270,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	@Override
 	public List<ValueReference> getAllPossibleValues(final int id) {
 		final Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-				id, true, false);
+				id, true);
 
 		assert !Objects.equals(variable, null);
 
@@ -280,7 +280,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	@Override
 	public List<ValueReference> getAllPossibleValues(final int id, final boolean isGetAllRecords) {
 		final Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-				id, true, false);
+				id, true);
 
 		assert !Objects.equals(variable, null);
 
@@ -306,7 +306,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	@Override
 	public List<ValueReference> getAllPossibleValuesWithFilter(final int id, final boolean filtered) {
 		final Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-				id, true, false);
+				id, true);
 		return this.getAllPosibleValues(variable, filtered);
 	}
 
@@ -394,7 +394,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 	@Override
 	public List<ValueReference> getAllPossibleValuesFavorite(final int id, final String programUUID,
 			final Boolean filtered) {
-		final Variable variable = this.ontologyVariableDataManager.getVariable(programUUID, id, true, false);
+		final Variable variable = this.ontologyVariableDataManager.getVariable(programUUID, id, true);
+
 		assert !Objects.equals(variable, null);
 
 		List<ValueReference> possibleValuesFavorite = new ArrayList<>();
@@ -523,7 +524,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	@Override
 	public String getValue(final int id, final String valueOrId, final boolean isCategorical) {
 		final Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-				id, true, false);
+				id, true);
 		assert !Objects.equals(variable, null);
 
 		final List<ValueReference> possibleValues = this.possibleValuesCache.getPossibleValues(id);

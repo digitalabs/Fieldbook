@@ -11,22 +11,16 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TrialData;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.generationcp.commons.context.ContextInfo;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -37,7 +31,8 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -49,13 +44,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.bean.TrialData;
+import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 /**
  * The Class CreateTrialController.
@@ -273,7 +274,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public String submit(@RequestBody final TrialData data) {
+	public ResponseEntity<String> submit(@RequestBody final TrialData data) {
 		this.processEnvironmentData(data.getEnvironments());
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
@@ -335,7 +336,7 @@ public class CreateTrialController extends BaseTrialController {
 
 		this.fieldbookService.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), name, data.getColumnOrders(), workbook);
 
-		return "success";
+		return new ResponseEntity<>("", HttpStatus.OK);
 	}
 
 	protected TabInfo prepareGermplasmTabInfo(final boolean isClearSettings) {
@@ -370,8 +371,9 @@ public class CreateTrialController extends BaseTrialController {
 		data.setNoOfEnvironments(noOfEnvironments);
 		info.setData(data);
 
+		final Integer unspecifiedLocationid = this.unspecifiedLocationId();
 		for (int i = 0; i < noOfEnvironments; i++) {
-			data.getEnvironments().add(new Environment());
+			data.getEnvironments().add(this.createEnvironmentWithDefaultLocation(unspecifiedLocationid));
 		}
 
 		final Map<String, Object> settingMap = new HashMap<>();

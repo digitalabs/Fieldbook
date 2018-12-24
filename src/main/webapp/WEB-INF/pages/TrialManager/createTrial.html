@@ -145,8 +145,8 @@
 									</li>
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a href="" style="display: none" id="open-study-url"></a>
-										<a href="javascript: showImportOptions();" id="open-study-url-link"
-										   th:text="#{study.studydetails.action.import.study}">Import Measurements</a>
+										<a ng-click="showImportStudyModal()" id="open-study-url-link"
+										   th:text="#{study.studydetails.action.import.study}">Import Observations</a>
 									</li>
 									<li ng-show="hasGermplasmListSelected()">
 										<a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link"
@@ -570,6 +570,10 @@
 	</div>
 
 	<div class="row">
+		<div id="choose-user" th:include="/Common/includes/chooseUser"></div>
+	</div>
+
+	<div class="row">
 		<div id="crossSetBreedingMethod" th:include="/Common/includes/crosses/setBreedingMethod"></div>
 	</div>
 
@@ -608,6 +612,8 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/SubObservationUnitDatasetBuilder.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/datasetOptionModal.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/exportStudy.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/importStudy.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/lib/angular/xlsx.full.min.js}"></script>
 
 	<!-- constants here -->
 	<script type="text/javascript" th:inline="javascript">
@@ -714,8 +720,8 @@
 			},
 			/*TRIAL CONDITIONS*/
 			1802: {
-				label: /*[[#{study.managesettings.add.studycondition}]]*/ '',
-				placeholder: /*[[#{study.reminder.add.studycondition}]]*/ ''
+				label: /*[[#{study.managesettings.add.study.conditions}]]*/ '',
+				placeholder: /*[[#{study.reminder.add.study.conditions}]]*/ ''
 			},
 			generalAjaxError: /*[[#{study.managesettings.variable.selection.error}]]*/ '',
 			variableSelectedMessage: /*[[#{common.warning.variable.in.use}]]*/ '',
@@ -833,5 +839,7 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/variableService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/angular/angular-local-storage.min.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/angular/bmsAuth.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/chooseUser.js}"></script>
+	
 
 </div>

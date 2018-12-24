@@ -281,7 +281,8 @@
 						modeldata: '=',
 						callback: '&',
 						selectedvariables: '=',
-						selectVariableCallback: '='
+						selectVariableCallback: '=',
+						onHideCallback: '='
 					},
 
 					link: function(scope, elem, attrs) {
@@ -333,7 +334,8 @@
 									}
 									return scope.selectedvariables;
 								},
-								callback: scope.selectVariableCallback
+								callback: scope.selectVariableCallback,
+								onHideCallback: scope.onHideCallback
 							};
 
 							$(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
@@ -660,33 +662,6 @@
 
 				return keys;
 			};
-		})
-		.directive('environmentDetails', function () {
-			return {
-				restrict: 'E',
-				templateUrl: '/Fieldbook/static/angular-templates/environmentDetails.html',
-				controller: function ($scope) {
-					$scope.doSelectAll = function () {
-						$scope.trialInstances = [];
-						angular.forEach($scope.environmentListView, function (environment) {
-							environment.selected = $scope.selectAll;
-							if ($scope.selectAll) {
-								$scope.trialInstances.push(environment.trialInstanceNumber);
-							}
-						});
-					};
-
-					$scope.doSelectInstance = function (environment) {
-						if (environment.selected) {
-							$scope.trialInstances.push(environment.trialInstanceNumber);
-						} else {
-							$scope.selectAll = false;
-							var idx = $scope.trialInstances.indexOf(environment.trialInstanceNumber);
-							$scope.trialInstances.splice(idx, 1);
-						}
-					};
-				}
-			};
 		}).directive('instancesTable', ['DTOptionsBuilder', 'DTColumnBuilder', function (DTOptionsBuilder, DTColumnBuilder) {
 
 			return {
@@ -703,12 +678,11 @@
 
 					var ctrl = this;
 
-					var watchInstances = $scope.$watch('instances', function (newValue, oldValue, scope) {
-						if (newValue.length !== oldValue.length) {
+					$scope.$watch('instances', function (newValue, oldValue, scope) {
 							// Select All Checkbox by default.
+						if (newValue.length !== 0) {
 							$scope.toggleSelect(true);
-							// unregister watch once instances is initialized
-							watchInstances();
+							ctrl.isSelectAll = true;
 						}
 					});
 

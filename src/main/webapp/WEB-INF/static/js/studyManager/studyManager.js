@@ -1,10 +1,6 @@
 /*global getJquerySafeId, showErrorMessage, oldLineSelected, changeAdvanceBreedingMethod, setCorrecMethodValues, oldMethodSelected, msgSamplePlotError, msgHarvestDateError, methodSuggestionsFav_obj, isInt, breedingMethodId, oldMethodSelected*/
 /*global isStudyNameUnique, validateStartDateEndDateBasic*/
 
-//Used globle variable to selected location for study
-var selectedLocationForTrial;
-var possibleLocationsForTrial;
-
 function checkMethod() { //TODO ADVANCE
 	'use strict';
 	var methodChoiceCheckbox = $('input[type=checkbox][name=methodChoice]');
@@ -182,9 +178,6 @@ function showCorrectLocationCombo() { //TODO ADVANCE AND FIELDBOOK-COMMONS
 		}
 
 	}
-
-	//In case of study we have to set selected location
-	setSelectedLocation();
 }
 
 function setFavoriteMethodCheckbox(){//TODO ADVANCE
@@ -692,25 +685,4 @@ function discardImportedStockList(){
 		backdrop: 'static',
 		keyboard: true
 	});
-}
-
-function selectedLocation(location, possibleValues) {
-	selectedLocationForTrial = location;
-	possibleLocationsForTrial = possibleValues;
-}
-
-function setSelectedLocation() {
-    //Trial passes preferred values in which location abbreviation available in bracket.
-    //We need to split value to get actual abbreviation for selected location
-	if (possibleLocationsForTrial != null && selectedLocationForTrial != null && selectedLocationForTrial != '' &&
-			selectedLocationForTrial.id != undefined) {
-		$('#' + getJquerySafeId('harvestLocationId')).val(selectedLocationForTrial.id);
-		var locationName = $.grep(possibleLocationsForTrial, function(e) {
-			return e.key == selectedLocationForTrial.id;
-		});
-		$('#' + getJquerySafeId('harvestLocationName')).val(locationName[0].name);
-		var locAbbreviation = locationName[0].name.split("(");
-		locAbbreviation[1] = locAbbreviation[1].replace(")", '');
-		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val(locAbbreviation[1]);
-	}
 }

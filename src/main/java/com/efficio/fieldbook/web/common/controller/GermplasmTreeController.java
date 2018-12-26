@@ -739,11 +739,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		// Common germplasm fields
 		final Integer lgid = 0;
-		Integer locationId = 0;
-		final String harvestLocationId = form.getHarvestLocationId();
-		if (harvestLocationId != null && !"".equals(harvestLocationId)) {
-			locationId = Integer.valueOf(harvestLocationId);
-		}
 		final Integer gDate = DateUtil.getCurrentDateAsIntegerValue();
 
 		// Common germplasm list data fields
@@ -778,6 +773,16 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final Integer gpid1 = importedGermplasm.getGpid1();
 			final Integer gpid2 = importedGermplasm.getGpid2();
 			final Integer mgid = importedGermplasm.getMgid() == null ? 0 : importedGermplasm.getMgid();
+
+			Integer locationId = 0;
+			// old manage nursery used to have an input to specify harvest location
+			// we are keeping this in case that functionality is added again
+			if (!StringUtils.isBlank(form.getHarvestLocationId())) {
+				locationId = Integer.valueOf(form.getHarvestLocationId());
+			}
+			if (locationId == 0 && importedGermplasm.getLocationId() != null) {
+				locationId = importedGermplasm.getLocationId();
+			}
 
 			final List<Name> names = importedGermplasm.getNames();
 			Name preferredName = names.get(0);

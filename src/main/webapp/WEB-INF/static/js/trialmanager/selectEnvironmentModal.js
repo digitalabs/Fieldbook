@@ -38,11 +38,6 @@
 						= locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].id;
 					environment.managementDetailValues[$scope.TRIAL_LOCATION_NAME_INDEX]
 						= locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].name;
-
-					selectedLocationForTrial = {
-						id: environment.managementDetailValues[$scope.LOCATION_NAME_ID]
-						, name: locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].name
-					};
 				}
 			});
 		});

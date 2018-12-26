@@ -13,6 +13,7 @@ import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
+import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.constant.ListTreeState;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -568,6 +569,33 @@ public class GermplasmTreeControllerTest {
 	}
 
 	@Test
+	public void testPopulateGermplasmListDataFromAdvancedNoHarvestLocationId() {
+		final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
+		final List<Pair<Germplasm, List<Name>>> germplasmNames = new ArrayList<>();
+		final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
+
+		final AdvancingStudyForm advancingForm = this.createAdvancingStudyForm(false);
+
+		advancingForm.setHarvestLocationId("0");
+
+		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames, listDataItems,
+			GermplasmTreeControllerTest.TEST_USER_ID, germplasmAttributes);
+
+		final List<ImportedGermplasm> inputGermplasmList = advancingForm.getGermplasmList();
+		for (int i = 0; i < inputGermplasmList.size(); i++) {
+			final List<Attribute> attributes = germplasmAttributes.get(i).getRight();
+			final Iterator<Attribute> attributeIterator = attributes.iterator();
+			final ImportedGermplasm importedGermplasm = inputGermplasmList.get(i);
+
+			final Attribute originAttribute = attributeIterator.next();
+
+			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", importedGermplasm.getLocationId(),
+				originAttribute.getLocationId());
+		}
+
+	}
+
+	@Test
 	public void testSaveParentListPostSuccessful() {
 		final SaveListForm form = createSaveListForm();
 		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT);
@@ -927,6 +955,7 @@ public class GermplasmTreeControllerTest {
 		germplasm.setSource(GermplasmTreeControllerTest.LIST_NAME + ":" + gid);
 		germplasm.setCross(gid + "/" + (gid + 1));
 		germplasm.setSource("Import file");
+		germplasm.setLocationId(RandomUtils.nextInt());
 		germplasm.setTrialInstanceNumber("1");
 		germplasm.setPlotNumber(gidString);
 		if (withReplicationNumber) {

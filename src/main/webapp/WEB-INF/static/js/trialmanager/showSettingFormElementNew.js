@@ -60,33 +60,15 @@
 
 				$scope.localData = {};
 
-				$scope.updateDropdownValuesFavorites = function () { // Change state for favorite checkbox
-					if ($scope.localData.useFavorites) {
-						if ($scope.locationLookup === LOCATION_LOOKUP_BREEDING_LOCATION) {
-							$scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
-						} else {
-							$scope.dropdownValues = $scope.variableDefinition.allFavoriteValues;
-						}
-
-					} else {
-						if ($scope.locationLookup === LOCATION_LOOKUP_BREEDING_LOCATION) {
-							$scope.dropdownValues = $scope.variableDefinition.possibleValues;
-						} else {
-							$scope.dropdownValues = $scope.variableDefinition.allValues;
-						}
-					}
+				$scope.setDropdownValues = function () {
+					$scope.dropdownValues = $scope.variableDefinition.allValues;
 				};
 
 				$scope.updateDropdownValuesBreedingLocation = function () { // Change state for breeding
-					// location radio
-					$scope.dropdownValues = $scope.localData.useFavorites ? $scope.variableDefinition.possibleValuesFavorite
-						: $scope.variableDefinition.possibleValues;
 					$scope.locationLookup = LOCATION_LOOKUP_BREEDING_LOCATION;
 				};
 
 				$scope.updateDropdownValuesAllLocation = function () { // Change state for all locations radio
-					$scope.dropdownValues = $scope.localData.useFavorites ? $scope.variableDefinition.allFavoriteValues
-						: $scope.variableDefinition.allValues;
 					$scope.locationLookup = LOCATION_LOOKUP_ALL_LOCATION;
 				};
 
@@ -221,7 +203,9 @@
 							possibleValues.push({
 								id: value.locid,
 								name: locNameDisplay,
-								description: value.lname
+								description: value.lname,
+								ltype: value.ltype,
+								favorite: value.favorite
 							});
 						});
 
@@ -230,6 +214,19 @@
 
 					$(document).off('location-update');
 					$(document).on('location-update', $scope.updateLocationValues);
+				}
+
+				$scope.customFilter = function(location) {
+					if ($scope.locationLookup === LOCATION_LOOKUP_BREEDING_LOCATION
+						&& location.ltype !== 410
+						&& location.ltype !== 411
+						&& location.ltype !== 412) {
+                        return false;
+					}
+					if ($scope.localData.useFavorites && !location.favorite) {
+						return false;
+					}
+					return true;
 				}
 			}
 		};

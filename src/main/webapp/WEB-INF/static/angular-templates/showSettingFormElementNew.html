@@ -1,6 +1,12 @@
 <div ng-switch="widgetType">
     <div ng-switch-when="DROPDOWN">
-        <input type="hidden" ui-select2="dropdownOptions" class="form-control select2" ng-model="valuecontainer[targetkey]" value-as-object="false" ng-change="changefunction()" ng-disabled="blockInput"/>
+		<ui-select ng-model="valuecontainer[targetkey]" theme="select2" ng-change="changefunction()"
+                   ng-disabled="blockInput" style="width: 100%" class="form-control select2">
+			<ui-select-match placeholder="Please Choose">{{valuecontainer[targetkey].name}}</ui-select-match>
+			<ui-select-choices repeat="location in (dropdownValues | filter: $select.search | filter:customFilter) track by location.id">
+				{{::location.name}}
+			</ui-select-choices>
+		</ui-select>
         <div ng-if="isLocation">
             <div class="possibleValuesDiv">
                 <input type="radio" ng-disabled="blockInput" ng-attr-name="env_location_filter"
@@ -11,7 +17,7 @@
                 <span th:text="#{show.all.location}">All locations types</span>
             </div>
             <div class="possibleValuesDiv">            
-                <input type="checkbox" ng-model="localData.useFavorites" ng-change="updateDropdownValuesFavorites()"> &nbsp;
+                <input type="checkbox" ng-model="localData.useFavorites" > &nbsp;
                 <span th:text="#{show.favorite.location}">Show only favorite locations </span> &nbsp;
             </div>
         </div>

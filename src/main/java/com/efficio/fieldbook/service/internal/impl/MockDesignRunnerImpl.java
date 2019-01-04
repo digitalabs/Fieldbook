@@ -1,6 +1,5 @@
 package com.efficio.fieldbook.service.internal.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,15 +30,14 @@ public class MockDesignRunnerImpl implements DesignRunner {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MockDesignRunnerImpl.class);
 
-	private static String CSV_EXTENSION = ".csv";
-	private static String BV_PREFIX = "-bv";
-	private static String OUTPUT_FILE_PARAMETER_NAME = "outputfile";
+	private static final String CSV_EXTENSION = ".csv";
+	private static final String BV_PREFIX = "-bv";
+	private static final String OUTPUT_FILE_PARAMETER_NAME = "outputfile";
 
 	@Override
-	public BVDesignOutput runBVDesign(WorkbenchService workbenchService, FieldbookProperties fieldbookProperties, MainDesign design)
-			throws IOException {
+	public BVDesignOutput runBVDesign(WorkbenchService workbenchService, FieldbookProperties fieldbookProperties, MainDesign design) {
 
-		String outputFilePath = System.currentTimeMillis() + MockDesignRunnerImpl.BV_PREFIX + MockDesignRunnerImpl.CSV_EXTENSION;
+		final String outputFilePath = System.currentTimeMillis() + MockDesignRunnerImpl.BV_PREFIX + MockDesignRunnerImpl.CSV_EXTENSION;
 
 		design.getDesign().setParameterValue(MockDesignRunnerImpl.OUTPUT_FILE_PARAMETER_NAME, outputFilePath);
 
@@ -59,7 +57,7 @@ public class MockDesignRunnerImpl implements DesignRunner {
 		Integer replications = new Integer(1);
 
 		if (expDesign.getName().equals(ExperimentDesignGenerator.RANDOMIZED_COMPLETE_BLOCK_DESIGN)) {
-			List<ListItem> levelList = expDesign.getParameterList(ExperimentDesignGenerator.LEVELS_PARAM);
+			final List<ListItem> levelList = expDesign.getParameterList(ExperimentDesignGenerator.LEVELS_PARAM);
 			lines = Integer.parseInt(levelList.get(levelList.size()-1).getValue());
 			replications = Integer.parseInt(expDesign.getParameterValue(ExperimentDesignGenerator.NBLOCKS_PARAM));
 		} else if (expDesign.getName().equals(ExperimentDesignGenerator.AUGMENTED_RANDOMIZED_BLOCK_DESIGN)) {
@@ -76,12 +74,12 @@ public class MockDesignRunnerImpl implements DesignRunner {
 		final String initEntryNoParam = expDesign.getParameterValue(ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM);
 		int startingEntryNo = StringUtils.isNumeric(initEntryNoParam) ? Integer.valueOf(initEntryNoParam) : 1;
 
-		List<String[]> csvLines = new ArrayList<>();
+		final List<String[]> csvLines = new ArrayList<>();
 
-		List<Pair<Integer, Integer>> rowColTuples = new ArrayList<>();
+		final List<Pair<Integer, Integer>> rowColTuples = new ArrayList<>();
 		if (expDesign.getName().equals(ExperimentDesignGenerator.RESOLVABLE_ROW_COL_DESIGN)) {
-			int rows = Integer.valueOf(expDesign.getParameterValue(ExperimentDesignGenerator.NROWS_PARAM));
-			int cols = Integer.valueOf(expDesign.getParameterValue(ExperimentDesignGenerator.NCOLUMNS_PARAM));
+			final int rows = Integer.valueOf(expDesign.getParameterValue(ExperimentDesignGenerator.NROWS_PARAM));
+			final int cols = Integer.valueOf(expDesign.getParameterValue(ExperimentDesignGenerator.NCOLUMNS_PARAM));
 
 			for (int r = 1; r <= rows; r++) {
 				for (int c = 1; c <= cols; c++) {
@@ -92,36 +90,36 @@ public class MockDesignRunnerImpl implements DesignRunner {
 		} else if(expDesign.getName().equals(ExperimentDesignGenerator.RANDOMIZED_COMPLETE_BLOCK_DESIGN) && expDesign.getParameterList(ExperimentDesignGenerator.TREATMENTFACTORS_PARAM).size() != 1) {
 			final List<String> constants = Arrays.asList("TRIAL", "PLOT_NO", "REP_NO");
 			final List<String> headers = new ArrayList<>(constants);
-			List<ListItem> treatmentFactorsList = expDesign.getParameterList(ExperimentDesignGenerator.TREATMENTFACTORS_PARAM);
+			final List<ListItem> treatmentFactorsList = expDesign.getParameterList(ExperimentDesignGenerator.TREATMENTFACTORS_PARAM);
 			for(ListItem item: treatmentFactorsList) {
 				headers.add(item.getValue());
 			}
-			String[] headersAsArray = new String[headers.size()];
+			final String[] headersAsArray = new String[headers.size()];
 			headers.toArray(headersAsArray);
 			csvLines.add(headersAsArray);
 		} else {
 			csvLines.add(new String[] {"TRIAL", "PLOT_NO", "REP_NO", "ENTRY_NO"});
 		}
 
-		List<Integer> entryNumbers = new ArrayList<>();
+		final List<Integer> entryNumbers = new ArrayList<>();
 		for (int i = 1; i <= lines; i++) {
 			entryNumbers.add(startingEntryNo++);
 		}
-		List<ListItem> treatmentFactorsList = expDesign.getParameterList(ExperimentDesignGenerator.TREATMENTFACTORS_PARAM);
-		List<List<String>> tfValuesListForCSV = this.getTreatmentFactorValuesCombinations(expDesign);
+		final List<ListItem> treatmentFactorsList = expDesign.getParameterList(ExperimentDesignGenerator.TREATMENTFACTORS_PARAM);
+		final List<List<String>> tfValuesListForCSV = this.getTreatmentFactorValuesCombinations(expDesign);
 
+		final String initPlotNoParam = expDesign.getParameterValue(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM);
 		for (int instance = 1; instance <= numberTrials; instance++) {
-			final String initPlotNoParam = expDesign.getParameterValue(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM);
 			int startingPlotNo = StringUtils.isNumeric(initPlotNoParam) ? Integer.valueOf(initPlotNoParam) : 1;
 			for (int rep = 1; rep <= replications; rep++) {
 				if(!expDesign.getName().equals(ExperimentDesignGenerator.RANDOMIZED_COMPLETE_BLOCK_DESIGN) || treatmentFactorsList.size()==1) {
-					startingPlotNo = populateCSVLines(expDesign, startingPlotNo, csvLines, rowColTuples, entryNumbers, instance, rep);
+					startingPlotNo = this.populateCSVLines(expDesign, startingPlotNo, csvLines, rowColTuples, entryNumbers, instance, rep);
 				} else {
-					startingPlotNo = populateCSVLines(startingPlotNo, csvLines, entryNumbers, instance, rep, tfValuesListForCSV);
+					startingPlotNo = this.populateCSVLines(startingPlotNo, csvLines, entryNumbers, instance, rep, tfValuesListForCSV);
 				}
 			}
 		}
-		BVDesignOutput output = new BVDesignOutput(0);
+		final BVDesignOutput output = new BVDesignOutput(0);
 		output.setResults(csvLines);
 		return output;
 	}
@@ -139,12 +137,12 @@ public class MockDesignRunnerImpl implements DesignRunner {
 			csvLine.add(String.valueOf(rep));
 			csvLine.add(entryNumbers.get(j).toString());
 			if (expDesign.getName().equals(ExperimentDesignGenerator.RESOLVABLE_ROW_COL_DESIGN)) {
-				Pair<Integer, Integer> rowColTuple = rowColTuples.get(rowColTuplesCounter);
+				final Pair<Integer, Integer> rowColTuple = rowColTuples.get(rowColTuplesCounter);
 				csvLine.add(String.valueOf(rowColTuple.getLeft()));
 				csvLine.add(String.valueOf(rowColTuple.getRight()));
 				rowColTuplesCounter++;
 			}
-			String[] csvLineAsArray = new String[csvLine.size()];
+			final String[] csvLineAsArray = new String[csvLine.size()];
 			csvLine.toArray(csvLineAsArray);
 			csvLines.add(csvLineAsArray);
 		}
@@ -152,7 +150,7 @@ public class MockDesignRunnerImpl implements DesignRunner {
 	}
 
 	private int populateCSVLines(int startingPlotNo, final List<String[]> csvLines,
-		final List<Integer> entryNumbers, final int instance, final int rep, List<List<String>> tfValuesList) {
+		final List<Integer> entryNumbers, final int instance, final int rep, final List<List<String>> tfValuesList) {
 		// Randomize entry number arrangements per replication
 		Collections.shuffle(entryNumbers);
 		for (int j = 0; j < entryNumbers.size(); j++) {
@@ -176,11 +174,11 @@ public class MockDesignRunnerImpl implements DesignRunner {
 
 
 	public List<List<String>> getTreatmentFactorValuesCombinations(final ExpDesign expDesign) {
-		List<ListItem> levelList = expDesign.getParameterList(ExperimentDesignGenerator.LEVELS_PARAM);
-		List<List<String>> tfValuesListForCSV = new ArrayList<>();
+		final List<ListItem> levelList = expDesign.getParameterList(ExperimentDesignGenerator.LEVELS_PARAM);
+		final List<List<String>> tfValuesListForCSV = new ArrayList<>();
 		if(expDesign.getName().equals(ExperimentDesignGenerator.RANDOMIZED_COMPLETE_BLOCK_DESIGN) && levelList.size()!=1) {
 			//Create the lists of treatment factor values
-			List<List<String>> tfValuesList = new ArrayList<>();
+			final List<List<String>> tfValuesList = new ArrayList<>();
 			for(int tfIndex = 0; tfIndex<levelList.size()-1; tfIndex++) {
 				final List<String> tfValues = new ArrayList<>();
 				for(int levelIndex = 1; levelIndex<=Integer.valueOf(levelList.get(tfIndex).getValue()); levelIndex++) {
@@ -199,7 +197,7 @@ public class MockDesignRunnerImpl implements DesignRunner {
 		return tfValuesListForCSV;
 	}
 
-	private void getCombinations(List<List<String>> tfValuesList, List<List<String>> tfValuesListForCsv, int tfValuesSize, List<String> tfValues) {
+	private void getCombinations(final List<List<String>> tfValuesList, final List<List<String>> tfValuesListForCsv, final int tfValuesSize, final List<String> tfValues) {
 		// if number of elements in tfValues, final reached, add and return
 		if (tfValuesSize == tfValuesList.size()) {
 			tfValuesListForCsv.add(tfValues);
@@ -207,11 +205,11 @@ public class MockDesignRunnerImpl implements DesignRunner {
 		}
 
 		// iterate from current list and copy current element N times, one for each element
-		List<String> currentCollection = tfValuesList.get(tfValuesSize);
+		final List<String> currentCollection = tfValuesList.get(tfValuesSize);
 		for (String element : currentCollection) {
-			List<String> copy = new ArrayList<>(tfValues);
+			final List<String> copy = new ArrayList<>(tfValues);
 			copy.add(element);
-			getCombinations(tfValuesList, tfValuesListForCsv, tfValuesSize + 1, copy);
+			this.getCombinations(tfValuesList, tfValuesListForCsv, tfValuesSize + 1, copy);
 		}
 	}
 

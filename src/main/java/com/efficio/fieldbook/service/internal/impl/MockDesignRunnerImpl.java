@@ -161,10 +161,9 @@ public class MockDesignRunnerImpl implements DesignRunner {
 			//Randomize the treatment factor values combinations
 			Collections.shuffle(tfValuesList);
 			for(List<String> tfValues: tfValuesList) {
-				csvLine.add(String.valueOf(startingPlotNo++));
-				csvLine.add(String.valueOf(rep));
-
 				final List<String> tfCsvLine = new ArrayList<>(csvLine);
+				tfCsvLine.add(String.valueOf(startingPlotNo++));
+				tfCsvLine.add(String.valueOf(rep));
 				tfCsvLine.addAll(tfValues);
 				tfCsvLine.add(entryNumbers.get(j).toString());
 				String[] csvLineAsArray = new String[tfCsvLine.size()];
@@ -177,14 +176,13 @@ public class MockDesignRunnerImpl implements DesignRunner {
 
 
 	public List<List<String>> getTreatmentFactorValuesCombinations(final ExpDesign expDesign) {
-		List<ListItem> treatmentFactorsList = expDesign.getParameterList(ExperimentDesignGenerator.TREATMENTFACTORS_PARAM);
 		List<ListItem> levelList = expDesign.getParameterList(ExperimentDesignGenerator.LEVELS_PARAM);
 		List<List<String>> tfValuesListForCSV = new ArrayList<>();
-		if((expDesign.getName().equals(ExperimentDesignGenerator.RANDOMIZED_COMPLETE_BLOCK_DESIGN) && treatmentFactorsList.size()!=1)) {
+		if(expDesign.getName().equals(ExperimentDesignGenerator.RANDOMIZED_COMPLETE_BLOCK_DESIGN) && levelList.size()!=1) {
 			//Create the lists of treatment factor values
 			List<List<String>> tfValuesList = new ArrayList<>();
-			for(int tfIndex = 0; tfIndex<treatmentFactorsList.size()-1; tfIndex++) {
-				final List<String> tfValues =  new ArrayList<>();
+			for(int tfIndex = 0; tfIndex<levelList.size()-1; tfIndex++) {
+				final List<String> tfValues = new ArrayList<>();
 				for(int levelIndex = 1; levelIndex<=Integer.valueOf(levelList.get(tfIndex).getValue()); levelIndex++) {
 					tfValues.add(String.valueOf(levelIndex));
 				}

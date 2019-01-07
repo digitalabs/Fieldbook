@@ -4,7 +4,6 @@ import com.efficio.etl.service.ETLService;
 import com.efficio.etl.web.bean.UserSelection;
 import com.efficio.etl.web.bean.VariableDTO;
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.google.common.base.Optional;
 import junit.framework.Assert;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -64,9 +63,6 @@ public class AngularMapOntologyControllerTest {
 
 	@InjectMocks
 	private AngularMapOntologyController controller;
-
-	@Mock
-	protected WorkbenchService workbenchService;
 
 	@Before
 	public void setup() {
@@ -205,7 +201,6 @@ public class AngularMapOntologyControllerTest {
 				false);
 
 		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(apacheWorkbook);
-		Mockito.when(this.etlService.convertToWorkbook(this.userSelection)).thenReturn(workbook);
 		Mockito.when(this.dataImportService.parseWorkbookDescriptionSheet(apacheWorkbook, CURRENT_IBDB_USER_ID)).thenReturn(workbook);
 		Mockito.when(this.dataImportService.findMeasurementVariableByTermId(Matchers.eq(TermId.LOCATION_ID.getId()), Matchers.anyListOf(
 				MeasurementVariable.class))).thenReturn(Optional.<MeasurementVariable>absent());

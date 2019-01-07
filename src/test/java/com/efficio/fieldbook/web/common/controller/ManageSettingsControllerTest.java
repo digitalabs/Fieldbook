@@ -18,25 +18,19 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.google.common.base.Optional;
 import org.fest.util.Collections;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
-import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.ontology.FormulaDto;
 import org.generationcp.middleware.domain.ontology.FormulaVariable;
 import org.generationcp.middleware.domain.ontology.Property;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyPropertyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.manager.ontology.daoElements.VariableFilter;
-import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.derived_variables.FormulaService;
-import org.generationcp.middleware.service.api.study.StudyService;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -69,9 +63,6 @@ public class ManageSettingsControllerTest {
 	private UserSelection userSelection;
 
 	@Mock
-	private StudyService studyService;
-
-	@Mock
 	private FormulaService formulaService;
 
 	@Mock
@@ -90,7 +81,7 @@ public class ManageSettingsControllerTest {
 	public void init() {
 
 
-		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
 	}
 
 	@Test
@@ -131,8 +122,6 @@ public class ManageSettingsControllerTest {
 		final List<MeasurementRow> rows = Arrays.asList(Mockito.mock(MeasurementRow.class), Mockito.mock(MeasurementRow.class));
 		Mockito.when(this.userSelection.getMeasurementRowList()).thenReturn(rows);
 
-		final Workbook workbook = Mockito.mock(Workbook.class);
-		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 		final StudyDetails st = new StudyDetails();
 		st.setId(STUDY_ID);
 		return spyController;
@@ -155,15 +144,12 @@ public class ManageSettingsControllerTest {
 	public void testAddSettings() throws Exception {
 
 		final int cvTermId = 123;
-		final String myVariable1 = "MyVariable1";
 
 		final CreateTrialForm createTrialForm = new CreateTrialForm();
 		final SettingVariable settingVariable = new SettingVariable();
 
 		settingVariable.setCvTermId(cvTermId);
 		createTrialForm.setSelectedVariables(Collections.list(settingVariable));
-
-		final StandardVariable standardVariable = StandardVariableTestDataInitializer.createStandardVariable(cvTermId, myVariable1);
 
 		final FormulaDto formulaDto = new FormulaDto();
 
@@ -184,11 +170,11 @@ public class ManageSettingsControllerTest {
 		// Add the variable in TRAIT settings.
 		this.controller.addSettings(createTrialForm, VariableType.TRAIT.getId());
 
-		Mockito.verify(settingsService).populateSettingVariable(settingVariable);
+		Mockito.verify(this.settingsService).populateSettingVariable(settingVariable);
 
 		final ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
 
-		Mockito.verify(settingsService).addNewSettingDetails(Mockito.eq(VariableType.TRAIT.getId()), captor.capture());
+		Mockito.verify(this.settingsService).addNewSettingDetails(Mockito.eq(VariableType.TRAIT.getId()), captor.capture());
 
 		final List<SettingDetail> addedSettingDetails = captor.getValue();
 		final SettingDetail addedSettingDetail = addedSettingDetails.get(0);
@@ -214,10 +200,10 @@ public class ManageSettingsControllerTest {
 		final Variable variable = new Variable();
 		variable.setFormula(this.createFormula());
 
-		Mockito.when(ontologyPropertyDataManager
+		Mockito.when(this.ontologyPropertyDataManager
 				.getAllPropertiesWithClassAndVariableType(Matchers.eq(classes), Mockito.eq(new String[] {"Trait"})))
 				.thenReturn(Collections.list(property));
-		Mockito.when(ontologyVariableDataManager.getWithFilter(Mockito.any(VariableFilter.class))).thenReturn(Collections.list(variable));
+		Mockito.when(this.ontologyVariableDataManager.getWithFilter(Mockito.any(VariableFilter.class))).thenReturn(Collections.list(variable));
 
 		final List<PropertyTreeSummary> propertyTreeSummary =
 				this.controller.getOntologyPropertiesByVariableType(variableTypes, classes, false);
@@ -228,7 +214,7 @@ public class ManageSettingsControllerTest {
 		Assert.assertFalse(result.getStandardVariables().isEmpty());
 		Assert.assertEquals(variable, result.getStandardVariables().get(0));
 		Assert.assertEquals("Variable1 + Variable2", result.getStandardVariables().get(0).getFormula().getDefinition());
-		Mockito.verify(ontologyVariableDataManager, Mockito.times(0))
+		Mockito.verify(this.ontologyVariableDataManager, Mockito.times(0))
 				.processTreatmentFactorHasPairValue(Mockito.anyListOf(Variable.class), Mockito.anyListOf(Integer.class));
 	}
 
@@ -241,10 +227,10 @@ public class ManageSettingsControllerTest {
 		final Variable variable = new Variable();
 		variable.setFormula(this.createFormula());
 
-		Mockito.when(ontologyPropertyDataManager
+		Mockito.when(this.ontologyPropertyDataManager
 				.getAllPropertiesWithClassAndVariableType(Matchers.eq(classes), Mockito.eq(new String[] {"Treatment Factor"})))
 				.thenReturn(Collections.list(property));
-		Mockito.when(ontologyVariableDataManager.getWithFilter(Mockito.any(VariableFilter.class))).thenReturn(Collections.list(variable));
+		Mockito.when(this.ontologyVariableDataManager.getWithFilter(Mockito.any(VariableFilter.class))).thenReturn(Collections.list(variable));
 
 		final List<PropertyTreeSummary> propertyTreeSummary =
 				this.controller.getOntologyPropertiesByVariableType(variableTypes, classes, false);
@@ -255,7 +241,7 @@ public class ManageSettingsControllerTest {
 		Assert.assertFalse(result.getStandardVariables().isEmpty());
 		Assert.assertEquals(variable, result.getStandardVariables().get(0));
 		Assert.assertEquals("Variable1 + Variable2", result.getStandardVariables().get(0).getFormula().getDefinition());
-		Mockito.verify(ontologyVariableDataManager)
+		Mockito.verify(this.ontologyVariableDataManager)
 				.processTreatmentFactorHasPairValue(Mockito.anyListOf(Variable.class), Mockito.anyListOf(Integer.class));
 	}
 

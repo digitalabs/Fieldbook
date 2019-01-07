@@ -106,6 +106,7 @@ function chooseStudyNode(fromEnterKey, doOpenStudy) {
 
 function chooseStudy() {
 	'use strict';
+	focusNode = $('#studyTree').dynatree('getTree').getActiveNode();
 	chooseStudyNode(false, false);
 }
 

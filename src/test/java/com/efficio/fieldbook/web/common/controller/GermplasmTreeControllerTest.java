@@ -144,22 +144,15 @@ public class GermplasmTreeControllerTest {
 
 	@Before
 	public void setUp() throws MiddlewareQueryException {
-		Mockito.doReturn(this.getProject()).when(this.workbenchDataManager).getLastOpenedProjectAnyUser();
 		Mockito.doReturn(this.createCrossSetting()).when(this.userSelection).getCrossSettings();
 		Mockito.doReturn(this.createImportedCrossesList()).when(this.userSelection).getImportedCrossesList();
 		Mockito.doReturn(this.createWorkBook()).when(this.userSelection).getWorkbook();
-		Mockito.doReturn(null).when(this.fieldbookMiddlewareService).getGermplasmIdByName(Matchers.anyString());
 		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_GERMPLASM_ID).when(this.fieldbookMiddlewareService)
 				.saveGermplasmList(ArgumentMatchers.<List<Pair<Germplasm, GermplasmListData>>>any(), Matchers.any(GermplasmList.class), Matchers.eq(false));
 		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_LISTPROJECT_ID).when(this.fieldbookMiddlewareService)
 				.saveOrUpdateListDataProject(Matchers.anyInt(), Matchers.any(GermplasmListType.class), Matchers.anyInt(),
 						ArgumentMatchers.<List<ListDataProject>>any(), Matchers.anyInt());
 
-		Mockito.doReturn(1).when(this.crossingService).getIDForUserDefinedFieldCrossingName();
-
-		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(ArgumentMatchers.anyString());
-		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(ArgumentMatchers.<Map<Germplasm,Name>>any());
-		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmListData()).when(this.germplasmListManager).getGermplasmListDataByListId(Matchers.anyInt());
 
 		try {
@@ -168,8 +161,7 @@ public class GermplasmTreeControllerTest {
 		} catch (final Exception e) {
 
 		}
-		Mockito.when(this.messageSource.getMessage("error.save.cross.rules.not.configured", null, "The rules" + " were not configured",
-				LocaleContextHolder.getLocale())).thenReturn(GermplasmTreeControllerTest.ERROR_RULES_NOT_CONFIGURED);
+
 		Mockito.when(this.germplasmDataManager.getPlotCodeField())
 				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.PLOT_CODE_FIELD_NO));
 		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", "PLOT_NUMBER"))
@@ -339,8 +331,6 @@ public class GermplasmTreeControllerTest {
 		final SaveListForm form = createSaveListForm();
 		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 
-		Mockito.when(this.germplasmDataManager.getMethodByName(Matchers.anyString()))
-				.thenThrow(new MiddlewareQueryException(GermplasmTreeControllerTest.ERROR_MESSAGE));
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListByName(Matchers.anyString(), Matchers.anyString()))
 				.thenThrow(new MiddlewareQueryException(GermplasmTreeControllerTest.ERROR_MESSAGE));
 

@@ -135,7 +135,6 @@ public class ManageSettingsControllerTest {
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 		final StudyDetails st = new StudyDetails();
 		st.setId(STUDY_ID);
-		Mockito.when(this.userSelection.getWorkbook().getStudyDetails()).thenReturn(st);
 		return spyController;
 	}
 

@@ -103,7 +103,6 @@ public class EnforceUniqueNameRuleTest {
 
 		this.setupTestExecutionContext();
 		Mockito.when(this.germplasmDataManager.checkIfMatches(Matchers.anyString())).thenReturn(true);
-		Mockito.when(this.source.isBulk()).thenReturn(true);
 
 		this.dut.runRule(this.context);
 

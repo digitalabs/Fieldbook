@@ -194,13 +194,6 @@
 			<version>2.3</version>
 		</dependency>
 
-		<!--<dependency>-->
-			<!--<groupId>org.kubek2k</groupId>-->
-			<!--<artifactId>springockito</artifactId>-->
-			<!--<version>1.0.8</version>-->
-			<!--<scope>test</scope>-->
-		<!--</dependency>-->
-
 		<!-- for testing, uncomment to use junit tests in src/test/java -->
 		<dependency>
 			<groupId>javax.servlet</groupId>

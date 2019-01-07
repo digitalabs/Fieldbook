@@ -590,7 +590,7 @@ public class ImportGermplasmListControllerTest {
 		Mockito.doNothing().when(this.fieldbookService).createIdCodeNameVariablePairs(Matchers.isA(Workbook.class),
 				Matchers.isA(String.class));
 		Mockito.doNothing().when(this.fieldbookService).createIdNameVariablePairs(Matchers.isA(Workbook.class),
-				Matchers.anyList(), Matchers.isA(String.class), Matchers.anyBoolean());
+				Matchers.anyListOf(SettingDetail.class), Matchers.isA(String.class), Matchers.anyBoolean());
 
 		final Project project = new Project();
 		project.setUniqueID("123");
@@ -607,7 +607,7 @@ public class ImportGermplasmListControllerTest {
 
 		Mockito.when(this.dataImportService.saveDataset(workbook, true, true, project.getUniqueID(), this.cropPrefix))
 				.thenReturn(studyIdInSaveDataset);
-		Mockito.doNothing().when(this.fieldbookService).saveStudyImportedCrosses(Matchers.anyList(),
+		Mockito.doNothing().when(this.fieldbookService).saveStudyImportedCrosses(Matchers.anyListOf(Integer.class),
 				Matchers.isA(Integer.class));
 
 		final List<ListDataProject> listDataProjects = new ArrayList<>();
@@ -625,12 +625,12 @@ public class ImportGermplasmListControllerTest {
 		Mockito.verify(this.fieldbookService).createIdCodeNameVariablePairs(Matchers.isA(Workbook.class),
 				Matchers.isA(String.class));
 		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(Matchers.isA(Workbook.class),
-				Matchers.anyList(), Matchers.isA(String.class), Matchers.anyBoolean());
+				Matchers.anyListOf(SettingDetail.class), Matchers.isA(String.class), Matchers.anyBoolean());
 		Mockito.verify(this.workbenchService).getCurrentIbdbUserId(Matchers.isA(Long.class),
 				Matchers.isA(Integer.class));
 		Mockito.verify(this.dataImportService).saveDataset(workbook, true, true, project.getUniqueID(),
 				this.cropPrefix);
-		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(Matchers.anyList(), Matchers.isA(Integer.class));
+		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(Matchers.anyListOf(Integer.class), Matchers.isA(Integer.class));
 		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null, workbook);
 
 		Assert.assertEquals("Expecting studyIdInSaveDataset returned from nextScreen", "3", studyIdInNextScreen);

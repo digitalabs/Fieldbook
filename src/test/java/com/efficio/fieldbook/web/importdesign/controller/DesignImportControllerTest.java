@@ -38,6 +38,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -265,14 +266,14 @@ public class DesignImportControllerTest {
 	public void testPerformAutomap() throws Exception {
 
 		final Map<PhenotypicType, List<DesignHeaderItem>> result = new HashMap<>();
-		Mockito.doReturn(result).when(this.designImportService).categorizeHeadersByPhenotype(Matchers.anyList());
+		Mockito.doReturn(result).when(this.designImportService).categorizeHeadersByPhenotype(ArgumentMatchers.<List<DesignHeaderItem>>any());
 
 		this.designImportController.performAutomap(this.userSelection.getDesignImportData());
 
 		// Verify that the categorizeHeadersByPhenotype is called, which is
 		// actually the method that automatically maps headers to standard
 		// variables
-		Mockito.verify(this.designImportService).categorizeHeadersByPhenotype(Matchers.anyList());
+		Mockito.verify(this.designImportService).categorizeHeadersByPhenotype(ArgumentMatchers.<List<DesignHeaderItem>>any());
 	}
 
 	@Test
@@ -500,7 +501,7 @@ public class DesignImportControllerTest {
 		measurementVariables.add(this.createMeasurementVariable(TermId.COL.getId(), "COL", "ENTRY"));
 
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
-				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
+				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), ArgumentMatchers.<Map<PhenotypicType, List<DesignHeaderItem>>>any());
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(5, 1);
 
@@ -526,7 +527,7 @@ public class DesignImportControllerTest {
 		measurementVariables.add(this.getMeasurementVariable(TermId.GID.getId(), new HashSet<>(workbook.getFactors())));
 
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
-				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
+				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), ArgumentMatchers.<Map<PhenotypicType, List<DesignHeaderItem>>>any());
 
 		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 
@@ -547,7 +548,7 @@ public class DesignImportControllerTest {
 		measurementVariables.add(this.getMeasurementVariable(TermId.TRIAL_LOCATION.getId(), new HashSet<>(workbook.getConditions())));
 
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
-				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
+				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), ArgumentMatchers.<Map<PhenotypicType, List<DesignHeaderItem>>>any());
 
 		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 		this.designImportController.addConditionsIfNecessary(workbook, data);
@@ -565,7 +566,7 @@ public class DesignImportControllerTest {
 		measurementVariables.add(this.createMeasurementVariable(TermId.SITE_NAME.getId(), "SITENAME", "TRIAL"));
 
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
-				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
+				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), ArgumentMatchers.<Map<PhenotypicType, List<DesignHeaderItem>>>any());
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyTypeDto.getNurseryDto());
 		final int originalConditionsSize = workbook.getConditions().size();
@@ -841,7 +842,7 @@ public class DesignImportControllerTest {
 
 		this.designImportController.createTrialObservations(environmentData, workbook, designImportData);
 
-		Mockito.verify(workbook).setTrialObservations(Matchers.anyList());
+		Mockito.verify(workbook).setTrialObservations(ArgumentMatchers.<List<MeasurementRow>>any());
 		Mockito.verify(this.fieldbookService).addConditionsToTrialObservationsIfNecessary(Matchers.any(Workbook.class));
 
 	}
@@ -1313,7 +1314,7 @@ public class DesignImportControllerTest {
 		map.put("PI_NAME", this.createList(principalInvestigator));
 		map.put("PI_NAME_ID", this.createList(principalInvestigatorId));
 
-		Mockito.doReturn(map).when(this.ontologyDataManager).getStandardVariablesInProjects(Matchers.anyList(), Matchers.anyString());
+		Mockito.doReturn(map).when(this.ontologyDataManager).getStandardVariablesInProjects(ArgumentMatchers.<List<String>>any(), Matchers.anyString());
 
 		Mockito.doReturn(trialInstance).when(this.ontologyDataManager)
 				.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), this.project.getUniqueID());

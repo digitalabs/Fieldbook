@@ -39,6 +39,7 @@ import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
@@ -48,6 +49,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -148,15 +150,15 @@ public class GermplasmTreeControllerTest {
 		Mockito.doReturn(this.createWorkBook()).when(this.userSelection).getWorkbook();
 		Mockito.doReturn(null).when(this.fieldbookMiddlewareService).getGermplasmIdByName(Matchers.anyString());
 		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_GERMPLASM_ID).when(this.fieldbookMiddlewareService)
-				.saveGermplasmList(Matchers.anyList(), Matchers.any(GermplasmList.class), Matchers.eq(false));
+				.saveGermplasmList(ArgumentMatchers.<List<Pair<Germplasm, GermplasmListData>>>any(), Matchers.any(GermplasmList.class), Matchers.eq(false));
 		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_LISTPROJECT_ID).when(this.fieldbookMiddlewareService)
 				.saveOrUpdateListDataProject(Matchers.anyInt(), Matchers.any(GermplasmListType.class), Matchers.anyInt(),
-						Matchers.anyList(), Matchers.anyInt());
+						ArgumentMatchers.<List<ListDataProject>>any(), Matchers.anyInt());
 
 		Mockito.doReturn(1).when(this.crossingService).getIDForUserDefinedFieldCrossingName();
 
-		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
-		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyMap());
+		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(ArgumentMatchers.anyString());
+		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(ArgumentMatchers.<Map<Germplasm,Name>>any());
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmListData()).when(this.germplasmListManager).getGermplasmListDataByListId(Matchers.anyInt());
 

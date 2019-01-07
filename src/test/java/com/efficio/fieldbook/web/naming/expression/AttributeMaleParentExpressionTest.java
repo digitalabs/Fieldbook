@@ -104,7 +104,6 @@ public class AttributeMaleParentExpressionTest extends TestExpression {
 		groupSource.setGpid2(maleParentGidOfGroupSource);
 
 		Mockito.when(germplasmDataManager.getAttributeValue(null, ATTRIBUTE_NAME)).thenReturn("");
-		Mockito.when(germplasmDataManager.getGermplasmByGID(104)).thenReturn(groupSource);
 
 		final Method derivativeMethod = this.createDerivativeMethod(PREFIX, COUNT, null, "-", true);
 		final ImportedGermplasm importedGermplasm = this.createImportedGermplasm(1, "(AA/ABC)", "0", 0, 0, -1, derivativeMethod.getMid());

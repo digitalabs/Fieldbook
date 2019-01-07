@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -348,7 +349,7 @@ public class DerivedVariableControllerTest {
 	public void testDependencyVariablesArgumentVariablesArePresentInTheStudy() {
 
 		when(this.studySelection.getBaselineTraitsList()).thenReturn(this.createSettingDetails());
-		when(this.formulaService.getAllFormulaVariables(Matchers.anySet())).thenReturn(this.createFormulaVariables());
+		when(this.formulaService.getAllFormulaVariables(ArgumentMatchers.<Set<Integer>>any())).thenReturn(this.createFormulaVariables());
 
 		final ResponseEntity<Set<String>> result = this.derivedVariableController.dependencyVariables();
 
@@ -363,7 +364,7 @@ public class DerivedVariableControllerTest {
 		final Set<Integer> variableIdsOfTraitsInStudy = this.derivedVariableController.getVariableIdsOfTraitsInStudy();
 
 		when(this.formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy)).thenReturn(this.createFormulaVariables());
-		when(this.studyService.hasMeasurementDataEntered(Matchers.anyList(), Matchers.eq(STUDY_ID))).thenReturn(true);
+		when(this.studyService.hasMeasurementDataEntered(ArgumentMatchers.<List<Integer>>any(), Matchers.eq(STUDY_ID))).thenReturn(true);
 
 		final ResponseEntity<Boolean> result = this.derivedVariableController.dependencyVariableHasMeasurementData(idsToBeRemoved);
 
@@ -385,11 +386,11 @@ public class DerivedVariableControllerTest {
 		final Set<Integer> variableIdsOfTraitsInStudy = this.derivedVariableController.getVariableIdsOfTraitsInStudy();
 
 		when(this.formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy)).thenReturn(this.createFormulaVariables());
-		when(this.studyService.hasMeasurementDataEntered(Matchers.anyList(), Matchers.eq(STUDY_ID))).thenReturn(false);
+		when(this.studyService.hasMeasurementDataEntered(ArgumentMatchers.<List<Integer>>any(), Matchers.eq(STUDY_ID))).thenReturn(false);
 
 		final ResponseEntity<Boolean> result = this.derivedVariableController.dependencyVariableHasMeasurementData(idsToBeRemoved);
 
-		verify(this.studyService, Mockito.times(0)).hasMeasurementDataEntered(Matchers.anyList(), anyInt());
+		verify(this.studyService, Mockito.times(0)).hasMeasurementDataEntered(ArgumentMatchers.<List<Integer>>any(), anyInt());
 
 		assertFalse(result.getBody());
 

@@ -50,17 +50,12 @@ public class DesignImportValidatorTest {
 	public void setUp() throws DesignValidationException {
 		this.designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 
-		Mockito.doReturn("Error encountered.").when(this.messageSource)
-				.getMessage("design.import.error.no.valid.values", null, Locale.ENGLISH);
 		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
 				.getImportedGermplasmMainInfo();
 
 		final DesignHeaderItem trialInstanceHeaderItem = DesignImportTestDataInitializer
 				.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR,
 						this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
-		Mockito.doReturn(trialInstanceHeaderItem).when(this.designImportService).validateIfStandardVariableExists(
-				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
-				"design.import.error.study.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 
 		final DesignHeaderItem headerItem = DesignImportTestDataInitializer
 				.filterDesignHeaderItemsByTermId(TermId.ENTRY_NO, this.designImportData.getMappedHeaders().get(PhenotypicType.GERMPLASM));

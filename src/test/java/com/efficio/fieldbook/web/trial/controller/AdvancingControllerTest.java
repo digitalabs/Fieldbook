@@ -37,6 +37,7 @@ import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -184,10 +185,8 @@ public class AdvancingControllerTest {
 
 		this.preparePostAdvanceNursery(form, method, importedGermplasm);
 
-		Mockito.when(this.fieldbookService.advanceStudy(Matchers.any(AdvancingStudy.class), Matchers.any(Workbook.class)))
+		Mockito.when(this.fieldbookService.advanceStudy(Matchers.any(AdvancingStudy.class), ArgumentMatchers.<Workbook>isNull()))
 				.thenThrow(Mockito.mock(RuleException.class));
-
-		Mockito.doNothing().when(this.paginationListSelection).addAdvanceDetails(Matchers.anyString(), Matchers.eq(form));
 
 		// scenario 2, has a method throwing exception
 		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
@@ -208,9 +207,6 @@ public class AdvancingControllerTest {
 
 		this.preparePostAdvanceNursery(form, method, importedGermplasm);
 
-		Mockito.when(this.fieldbookService.advanceStudy(Matchers.any(AdvancingStudy.class), Matchers.any(Workbook.class)))
-				.thenThrow(Mockito.mock(RuleException.class));
-
 		// scenario 2, has a method throwing exception
 		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
 
@@ -230,8 +226,8 @@ public class AdvancingControllerTest {
 		result.setChangeDetails(new ArrayList<AdvanceGermplasmChangeDetail>());
 
 		Mockito.when(this.fieldbookMiddlewareService.getMethodById(Matchers.anyInt())).thenReturn(method);
-		Mockito.when(this.fieldbookService.advanceStudy(Matchers.any(AdvancingStudy.class), Matchers.any(Workbook.class))).thenReturn(
-				result);
+		Mockito.when(this.fieldbookService.advanceStudy(Matchers.any(AdvancingStudy.class), ArgumentMatchers.<Workbook>isNull())).thenReturn(
+                result);
 		Mockito.when(this.messageSource.getMessage(Matchers.eq("study.save.advance.error.generative.method"),
 				Matchers.any(String[].class), Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn("error.message");
 
@@ -284,20 +280,16 @@ public class AdvancingControllerTest {
     @Test
     public void testShowAdvanceNurseryGetSuccess(){
         final Study study = new Study();
-        Mockito.when(this.fieldbookMiddlewareService.getStudy(Mockito.anyInt())).thenReturn(study);
 
         Mockito.when(this.fieldbookProperties.getProgramBreedingMethodsUrl()).thenReturn("programBreedingMethodUrl");
 
         final Project testProject = new Project();
         testProject.setProjectId(1L);
-        Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(testProject);
 
         final Project project = new Project();
         final CropType cropType = new CropType();
         cropType.setCropName("maize");
         project.setCropType(cropType);
-        Mockito.when(this.workbenchService.getProjectById(Mockito.anyLong())).thenReturn(project);
-
 
         final List<SettingDetail> selectionVariates = Lists.newArrayList();
         final SettingDetail settingDetail = new SettingDetail();
@@ -334,8 +326,6 @@ public class AdvancingControllerTest {
     public void testApplyChangeDetailsSuccess() throws IOException {
         final List<ImportedGermplasm> importedGermplasmList = generateGermplasm();
         Mockito.when(this.userSelection.getImportedAdvancedGermplasmList()).thenReturn(importedGermplasmList);
-
-        Mockito.doNothing().when(this.userSelection).setImportedAdvancedGermplasmList(Lists.<ImportedGermplasm>newArrayList());
 
         final AdvanceGermplasmChangeDetail[] advanceGermplasmChangeDetailArray = generateAdvanceGermPlasmChangeDetails();
         final ObjectMapper mapper = new ObjectMapper();
@@ -409,7 +399,6 @@ public class AdvancingControllerTest {
         Mockito.when(this.userSelection.getImportedAdvancedGermplasmList()).thenReturn(importedGermplasmList);
 
         Mockito.when(this.request.getParameter("entryNums")).thenReturn("0,1,2");
-        Mockito.doNothing().when(this.userSelection).setImportedAdvancedGermplasmList(Lists.<ImportedGermplasm>newArrayList());
 
         Mockito.when(this.request.getParameter("uniqueId")).thenReturn("123");
 
@@ -515,7 +504,6 @@ public class AdvancingControllerTest {
         Mockito.when(this.messageSource.getMessage(Mockito.isA(String.class),Mockito.any(Object[].class),Mockito.isA(Locale.class))).thenReturn("The nursery has no methods defined under");
         final List<Method> methods = Lists.newArrayList();
 
-        Mockito.when(this.germplasmDataManager.getMethodsByIDs(Mockito.isA(List.class))).thenReturn(methods);
         final String methodType = this.advancingController.checkMethodTypeMode(12);
         System.out.println(methodType);
         Assert.assertTrue(methodType.contains("The nursery has no methods defined under"));

@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
@@ -108,7 +109,8 @@ public class CrossingServiceImplTest {
 
 		Mockito.when(this.processCodeRuleFactory.getRuleByProcessCode(Matchers.anyString())).thenReturn(this.processCodeOrderedRule);
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
-		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());
+		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(
+				ArgumentMatchers.<List<Pair<Germplasm, Name>>>any());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByID(CrossingServiceImplTest.BREEDING_METHOD_ID);
 		Mockito.doReturn(this.createProject()).when(this.contextUtil).getProjectInContext();
@@ -307,7 +309,7 @@ public class CrossingServiceImplTest {
 		this.crossingService
 				.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
 
-		Mockito.verify(this.germplasmDataManager, Mockito.never()).addGermplasmName(Matchers.anyList());
+		Mockito.verify(this.germplasmDataManager, Mockito.never()).addGermplasmName(ArgumentMatchers.<List<Name>>any());
 
 	}
 

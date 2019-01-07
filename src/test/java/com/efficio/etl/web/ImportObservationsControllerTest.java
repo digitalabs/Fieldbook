@@ -7,15 +7,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import java.util.List;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
+import org.generationcp.middleware.util.Message;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -106,7 +109,7 @@ public class ImportObservationsControllerTest {
 		Mockito.when(this.etlService.createWorkbookFromUserSelection(Matchers.eq(this.userSelection), Matchers.anyBoolean()))
 				.thenReturn(importData);
 		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(workbook);
-		Mockito.when(this.etlService.convertMessageList(Matchers.anyList())).thenReturn(Arrays.asList("error"));
+		Mockito.when(this.etlService.convertMessageList(ArgumentMatchers.<List<Message>>any())).thenReturn(Arrays.asList("error"));
 
 		final String returnValue =
 				this.importObservationsController.processImport(this.uploadForm, 1, this.model, this.session, this.request);

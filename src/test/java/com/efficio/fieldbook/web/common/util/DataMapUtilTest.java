@@ -29,6 +29,7 @@ import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -141,6 +142,8 @@ public class DataMapUtilTest {
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
+				Matchers.eq(this.measurementText.getMeasurementVariable().getId()), Matchers.eq(true))).thenReturn(variableText);
+		Mockito.when(this.ontologyVariableDataManager.getVariable(ArgumentMatchers.<String>isNull(),
 				Matchers.eq(this.measurementText.getMeasurementVariable().getId()), Matchers.eq(true))).thenReturn(variableText);
 
 		final Variable variableNumeric = new Variable();

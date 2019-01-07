@@ -437,8 +437,6 @@ public class ExperimentDesignGeneratorTest {
 	}
 	
 	private void setMockValues(final MainDesign design, final Integer numberOfInstances) throws IOException {
-		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.REP_NO.getId())).thenReturn(null);
-		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.PLOT_NO.getId())).thenReturn(null);
 		Mockito.when(this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, design))
 				.thenReturn(this.createBvOutput(numberOfInstances));
 	}

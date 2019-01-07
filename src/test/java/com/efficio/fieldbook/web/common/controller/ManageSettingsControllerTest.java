@@ -230,7 +230,7 @@ public class ManageSettingsControllerTest {
 		Assert.assertEquals(variable, result.getStandardVariables().get(0));
 		Assert.assertEquals("Variable1 + Variable2", result.getStandardVariables().get(0).getFormula().getDefinition());
 		Mockito.verify(ontologyVariableDataManager, Mockito.times(0))
-				.processTreatmentFactorHasPairValue(Mockito.anyList(), Mockito.anyList());
+				.processTreatmentFactorHasPairValue(Mockito.anyListOf(Variable.class), Mockito.anyListOf(Integer.class));
 	}
 
 	@Test
@@ -257,7 +257,7 @@ public class ManageSettingsControllerTest {
 		Assert.assertEquals(variable, result.getStandardVariables().get(0));
 		Assert.assertEquals("Variable1 + Variable2", result.getStandardVariables().get(0).getFormula().getDefinition());
 		Mockito.verify(ontologyVariableDataManager)
-				.processTreatmentFactorHasPairValue(Mockito.anyList(), Mockito.anyList());
+				.processTreatmentFactorHasPairValue(Mockito.anyListOf(Variable.class), Mockito.anyListOf(Integer.class));
 	}
 
 	private FormulaDto createFormula() {

@@ -3,11 +3,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mockito="http://www.mockito.org/spring/mockito"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
        	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       	http://www.mockito.org/spring/mockito http://www.mockito.org/spring/mockito.xsd
        	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd ">
 
     <context:property-placeholder location="classpath:fieldbook.properties"/>
@@ -25,17 +23,6 @@
     <bean id="etlFileService" class="com.efficio.etl.service.impl.FileServiceImpl" init-method="init">
         <constructor-arg value="${upload.directory}"/>
     </bean>
-
-    <mockito:mock id="dummyDataService" class="org.generationcp.middleware.service.api.DataImportService"/>
-	<mockito:mock id="dummyOntologyService" class="org.generationcp.middleware.service.api.OntologyService"/>
-
-    <mockito:mock class="org.generationcp.middleware.manager.api.OntologyDataManager" id="dummyManager"/>
-
-    <mockito:mock class="org.generationcp.middleware.manager.api.StudyDataManager" id="studyDataManager"/>
-
-    <mockito:mock class="org.generationcp.middleware.manager.api.WorkbenchDataManager" id="workbenchDataManager"/>
-
-    <mockito:mock class="org.generationcp.middleware.manager.api.GermplasmDataManager" id="germplasmDataManager"/>
 
     <bean id="messageSource"
           class="org.springframework.context.support.ResourceBundleMessageSource">

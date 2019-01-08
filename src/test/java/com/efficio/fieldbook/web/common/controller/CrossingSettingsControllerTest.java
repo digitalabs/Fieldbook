@@ -40,6 +40,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -147,9 +148,6 @@ public class CrossingSettingsControllerTest {
 	}
 
 	private void mockMappingOfHeadersToOntology() {
-		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(this.getTerm(ColumnLabels.ENTRY_ID));
-		Mockito.when(this.ontologyDataManager.getTermById(TermId.CROSS.getId())).thenReturn(this.getTerm(ColumnLabels.PARENTAGE));
-		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_CODE.getId())).thenReturn(this.getTerm(ColumnLabels.ENTRY_CODE));
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.FEMALE_PARENT.getId()))
 				.thenReturn(this.getTerm(ColumnLabels.FEMALE_PARENT));
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.FGID.getId())).thenReturn(this.getTerm(ColumnLabels.FGID));
@@ -175,10 +173,8 @@ public class CrossingSettingsControllerTest {
 		final CrossNameSetting nameSetting = Mockito.mock(CrossNameSetting.class);
 
 		try {
-			Mockito.doReturn(nameSetting).when(settingObject).getCrossNameSetting();
 			Mockito.doReturn(CrossingSettingsControllerTest.TEST_SEQUENCE_NAME_VALUE).when(this.crossingService)
-					.getNextNameInSequence(Matchers.any(CrossNameSetting.class));
-
+					.getNextNameInSequence(ArgumentMatchers.<CrossNameSetting>isNull());
 			final Map<String, String> output =
 					this.crossingSettingsController.generateSequenceValue(Mockito.mock(CrossSetting.class), this.request);
 
@@ -197,9 +193,8 @@ public class CrossingSettingsControllerTest {
 		final CrossSetting settingObject = Mockito.mock(CrossSetting.class);
 		final CrossNameSetting nameSetting = Mockito.mock(CrossNameSetting.class);
 
-		Mockito.doReturn(nameSetting).when(settingObject).getCrossNameSetting();
 		Mockito.doThrow(new InvalidInputException(errorMessage)).when(this.crossingService)
-				.getNextNameInSequence(Matchers.any(CrossNameSetting.class));
+				.getNextNameInSequence(ArgumentMatchers.<CrossNameSetting>isNull());
 
 		final Map<String, String> result = this.crossingSettingsController.generateSequenceValue(Mockito.mock(CrossSetting.class), this.request);
 		Assert.assertEquals(errorMessage, result.get(CrossingSettingsController.ERROR));
@@ -214,9 +209,8 @@ public class CrossingSettingsControllerTest {
 		final CrossSetting settingObject = Mockito.mock(CrossSetting.class);
 		final CrossNameSetting nameSetting = Mockito.mock(CrossNameSetting.class);
 
-		Mockito.doReturn(nameSetting).when(settingObject).getCrossNameSetting();
 		Mockito.doThrow(new InvalidInputException(errorMessage)).when(this.crossingService)
-				.getNextNameInSequence(Matchers.any(CrossNameSetting.class));
+				.getNextNameInSequence(ArgumentMatchers.<CrossNameSetting>isNull());
 
 		final Map<String, String> result = this.crossingSettingsController.generateSequenceValue(Mockito.mock(CrossSetting.class), this.request);
 		Assert.assertEquals(errorMessage, result.get(CrossingSettingsController.ERROR));
@@ -351,9 +345,8 @@ public class CrossingSettingsControllerTest {
 	@Test
 	public void testDoCrossingExportSuccess() throws Exception {
 
-		Mockito.when(this.crossingTemplateExcelExporter.export(Matchers.anyInt(), Matchers.anyString(), Matchers.anyInt()))
+		Mockito.when(this.crossingTemplateExcelExporter.export(Matchers.anyInt(), ArgumentMatchers.<String>isNull(), Matchers.anyInt()))
 				.thenReturn(new FileExportInfo(CrossingSettingsControllerTest.DUMMY_ABS_PATH, CrossingSettingsControllerTest.DUMMY_ABS_PATH));
-		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt())).thenReturn(1);
 
 		final Map<String, Object> jsonResult = this.crossingSettingsController.doCrossingExport();
 
@@ -373,7 +366,6 @@ public class CrossingSettingsControllerTest {
 		Mockito.when(this.studySelection.getWorkbook()).thenReturn(wb);
 
 		final File file = Mockito.mock(File.class);
-		Mockito.when(file.getAbsolutePath()).thenReturn(CrossingSettingsControllerTest.DUMMY_ABS_PATH);
 		Mockito.when(this.crossingTemplateExcelExporter.export(Matchers.anyInt(), Matchers.anyString(), Matchers.anyInt()))
 				.thenThrow(new CrossingTemplateExportException("export.error"));
 

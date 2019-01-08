@@ -37,6 +37,7 @@ import org.generationcp.middleware.util.Message;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -163,7 +164,7 @@ public class FileUploadControllerTest {
 		Mockito.when(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection)).thenReturn(this.mockFile);
 		Mockito.when(this.dataImportService.strictParseWorkbook(this.mockFile, FileUploadControllerTest.PROGRAM_UUID, USER_ID)).thenReturn(this.workbook);
 		Mockito.when(this.studyPermissionValidator.userLacksPermissionForStudy(Matchers.any(StudyReference.class))).thenReturn(false);
-		Mockito.when(this.fieldbookMiddlewareService.getStudyReferenceByNameAndProgramUUID(Matchers.anyString(), Matchers.anyString())).thenReturn(this.studyOptional);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyReferenceByNameAndProgramUUID(ArgumentMatchers.<String>isNull(), Matchers.anyString())).thenReturn(this.studyOptional);
 	}
 
 	@Test

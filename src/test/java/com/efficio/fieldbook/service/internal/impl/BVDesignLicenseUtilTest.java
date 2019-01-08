@@ -11,6 +11,7 @@ import org.generationcp.commons.util.DateUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -134,8 +135,7 @@ public class BVDesignLicenseUtilTest {
 	public void testIsExpiringWithinThirtyDaysExpirayDaysNotNumeric() {
 
 		final BVDesignLicenseInfo bvDesignLicenseInfo = this.createBVDesignLicenseInfo();
-		Mockito.when(this.messageSource.getMessage(Mockito.anyString(), Mockito.any(Object[].class), Mockito.any(Locale.class)))
-				.thenReturn("");
+
 		bvDesignLicenseInfo.getStatus().getLicense().setExpiryDays("AAA");
 
 		Assert.assertTrue(bvDesignLicenseUtil.isExpiringWithinThirtyDays(bvDesignLicenseInfo));
@@ -169,7 +169,7 @@ public class BVDesignLicenseUtilTest {
 		final File file = Mockito.mock(File.class);
 		final BVDesignLicenseInfo bvDesignLicenseInfo = this.createBVDesignLicenseInfo();
 
-		Mockito.when(this.messageSource.getMessage(Mockito.anyString(), Mockito.any(Object[].class), Mockito.any(Locale.class)))
+		Mockito.when(this.messageSource.getMessage(Mockito.anyString(), ArgumentMatchers.<Object[]>isNull(), Mockito.any(Locale.class)))
 				.thenReturn(GENERIC_ERROR);
 
 		// If BVDesign failed in generating the license file the return code value will be a non-zero (-1).

@@ -524,6 +524,15 @@ public class DataMapUtilTest {
 		final List<ObservationDto> observations = this.setupTestObservations(recordsCount, category1,
 				doAddNewGermplasmDescriptors);
 		final ObservationDto observationDto = observations.get(0);
+		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
+			Integer.valueOf(this.measurementText.getMeasurementVariable().getId()), true))
+			.thenReturn(this.createTestCategoricalVariable());
+		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
+			Integer.valueOf(this.measurementCategorical.getMeasurementVariable().getId()), true))
+			.thenReturn(this.createTestCategoricalVariable());
+		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
+			Integer.valueOf(this.measurementNumeric.getMeasurementVariable().getId()), true))
+			.thenReturn(this.createTestCategoricalVariable());
 
 		// Method to test
 		final Map<String, Object> dataMap = (new DataMapUtil()).generateDatatableDataMap(observationDto, new HashMap<String, String>(),

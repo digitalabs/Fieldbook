@@ -17,8 +17,10 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
+import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
 import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
 import com.efficio.fieldbook.web.util.AppConstants;
 import junit.framework.Assert;
 import org.codehaus.jackson.JsonParseException;
@@ -28,16 +30,20 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.GermplasmExportService;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
@@ -83,6 +89,15 @@ public class ExportStudyControllerTest {
 	@Mock
 	private HttpServletResponse resp;
 
+	@Mock
+	private ContextUtil contextUtil;
+
+	@Mock
+	private OntologyService ontologyService;
+
+	@Mock
+	private ExportOrderingRowColImpl exportOrderingRowColService;
+
 	@InjectMocks
 	private ExportStudyController exportStudyController;
 
@@ -92,10 +107,13 @@ public class ExportStudyControllerTest {
 
 	@Before
 	public void setUp() {
+		MockitoAnnotations.initMocks(this);
 		this.userSelection = new UserSelection();
 		this.exportStudyController.setUserSelection(this.userSelection);
 		final PaginationListSelection paginationListSelection = Mockito.mock(PaginationListSelection.class);
 		this.exportStudyController.setPaginationListSelection(paginationListSelection);
+		Mockito.doReturn(null).when(ontologyService).getStandardVariable(ArgumentMatchers.anyInt(),
+				ArgumentMatchers.<String>isNull());
 	}
 
 	@Test
@@ -258,8 +276,8 @@ public class ExportStudyControllerTest {
 		final String outputFilename =
 				"./someDirectory/output/" + ExportStudyControllerTest.SAMPLE_STUDY_FILENAME + ExportStudyControllerTest.CSV_EXT;
 		final String downloadFilename = generatedFilename + ExportStudyControllerTest.CSV_EXT;
-		Mockito.when(this.csvExportStudyService.export(workbook, generatedFilename, instances, this.getVisibleColumns()))
-				.thenReturn(new FileExportInfo(outputFilename, downloadFilename));
+		Mockito.doReturn(new FileExportInfo(outputFilename, downloadFilename)).when(this.csvExportStudyService)
+				.export(workbook, generatedFilename, instances, this.getVisibleColumns());
 		Mockito.when(this.resp.getContentType()).thenReturn(ExportStudyControllerTest.CSV_CONTENT_TYPE);
 
 		final Integer exportType = AppConstants.EXPORT_CSV.getInt();
@@ -326,8 +344,8 @@ public class ExportStudyControllerTest {
 		final String outputFilename =
 				"./someDirectory/output/" + ExportStudyControllerTest.SAMPLE_STUDY_FILENAME + ExportStudyControllerTest.XLS_EXT;
 		final String downloadFilename = generatedFilename + ExportStudyControllerTest.XLS_EXT;
-		Mockito.when(this.excelExportStudyService.export(workbook, generatedFilename, instances, this.getVisibleColumns()))
-				.thenReturn(new FileExportInfo(outputFilename, downloadFilename));
+		Mockito.doReturn(new FileExportInfo(outputFilename, downloadFilename)).when(this.excelExportStudyService).export(workbook,
+				generatedFilename, instances, this.getVisibleColumns());
 		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_ZIP);
 
 		final Integer exportType = AppConstants.EXPORT_STUDY_EXCEL.getInt();

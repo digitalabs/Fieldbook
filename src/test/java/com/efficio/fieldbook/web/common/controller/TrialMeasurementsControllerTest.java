@@ -52,6 +52,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -497,7 +498,7 @@ public class TrialMeasurementsControllerTest {
 		final Scale scaleText = new Scale();
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
-		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(), Matchers.eq(termId),
+		Mockito.when(this.ontologyVariableDataManager.getVariable(ArgumentMatchers.<String>isNull(), Matchers.eq(termId),
 				Matchers.eq(true))).thenReturn(variableText);
 
 		final Map<String, String> data = new HashMap<String, String>();
@@ -519,7 +520,7 @@ public class TrialMeasurementsControllerTest {
 		Mockito.verify(mockValidationService, Mockito.never()).validateObservationValue(variableText, newValue);
 		// But save step must be invoked.
 		Mockito.verify(this.studyDataManager).saveOrUpdatePhenotypeValue(Matchers.anyInt(), Matchers.anyInt(),
-				Matchers.anyString(), Matchers.any(Phenotype.class), Matchers.anyInt(), Matchers.any(Phenotype.ValueStatus.class));
+				Matchers.anyString(), ArgumentMatchers.<Phenotype>isNull(), Matchers.anyInt(), ArgumentMatchers.<Phenotype.ValueStatus>isNull());
 	}
 
 	@Test

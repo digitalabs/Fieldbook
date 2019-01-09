@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -51,7 +52,6 @@ public class LocationControllerTest {
 	public void setUp() throws Exception {
 		Mockito.doReturn(LocationControllerTest.DUMMY_URL).when(this.fieldbookProperties).getProgramLocationsUrl();
 		this.mole = Mockito.spy(this.controller);
-		Mockito.doReturn(LocationControllerTest.DUMMY_PROJECT_ID).when(this.mole).getCurrentProgramID(this.request);
 	}
 
 	@Test
@@ -67,10 +67,10 @@ public class LocationControllerTest {
 		final List<Location> breedingLocationsList = new ArrayList<>();
 		final List<Location> favoriteLocationsList = new ArrayList<>();
 
-		Mockito.doReturn(allLocationsList).when(this.fieldbookMiddlewareService).getLocationsByProgramUUID(Matchers.anyString());
-		Mockito.doReturn(locationIDs).when(this.fieldbookMiddlewareService).getFavoriteProjectLocationIds(Matchers.anyString());
+		Mockito.doReturn(allLocationsList).when(this.fieldbookMiddlewareService).getLocationsByProgramUUID(ArgumentMatchers.<String>isNull());
+		Mockito.doReturn(locationIDs).when(this.fieldbookMiddlewareService).getFavoriteProjectLocationIds(ArgumentMatchers.<String>isNull());
 		Mockito.doReturn(breedingLocationsList).when(this.fieldbookMiddlewareService)
-				.getAllBreedingLocationsByProgramUUID(Matchers.anyString());
+				.getAllBreedingLocationsByProgramUUID(ArgumentMatchers.<String>isNull());
 		Mockito.doReturn(favoriteLocationsList).when(this.fieldbookMiddlewareService).getFavoriteLocationByLocationIDs(locationIDs);
 		final Map<String, Object> locations = this.mole.getLocations();
 

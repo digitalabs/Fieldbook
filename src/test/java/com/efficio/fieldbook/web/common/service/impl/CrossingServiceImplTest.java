@@ -4,8 +4,6 @@ import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
-import org.generationcp.commons.ruleengine.ProcessCodeOrderedRule;
-import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
@@ -42,7 +40,14 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingServiceImplTest {
@@ -87,12 +92,6 @@ public class CrossingServiceImplTest {
 	private SeedSourceGenerator seedSourceGenertor;
 
 	@Mock
-	private ProcessCodeRuleFactory processCodeRuleFactory;
-
-	@Mock
-	private ProcessCodeOrderedRule processCodeOrderedRule;
-
-	@Mock
 	private MessageSource messageSource;
 
 	@InjectMocks
@@ -107,16 +106,12 @@ public class CrossingServiceImplTest {
 		this.importedCrossesList = this.createImportedCrossesList();
 		this.importedCrossesList.setImportedGermplasms(this.createImportedCrosses());
 
-		Mockito.when(this.processCodeRuleFactory.getRuleByProcessCode(Matchers.anyString())).thenReturn(this.processCodeOrderedRule);
+
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(
 				ArgumentMatchers.<List<Pair<Germplasm, Name>>>any());
-		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByID(CrossingServiceImplTest.BREEDING_METHOD_ID);
 		Mockito.doReturn(this.createProject()).when(this.contextUtil).getProjectInContext();
-		Mockito.doReturn("generatedSourceString").when(this.seedSourceGenertor)
-				.generateSeedSourceForCross(Matchers.any(Workbook.class), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-						Matchers.anyString());
 		Mockito.doReturn(new UserDefinedField(PLOT_CODE_FLD_NO)).when(this.germplasmDataManager).getPlotCodeField();
 
 		this.crossSetting = new CrossSetting();
@@ -212,8 +207,6 @@ public class CrossingServiceImplTest {
 	void setupMockCallsForGermplasm(final Integer gid) {
 		final Germplasm germplasm = new Germplasm(gid);
 		germplasm.setGnpgs(-1);
-		Mockito.doReturn(germplasm).when(this.germplasmDataManager).getGermplasmByGID(gid);
-
 	}
 
 	@Test
@@ -271,12 +264,9 @@ public class CrossingServiceImplTest {
 
 	@Test
 	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToTrue() {
-		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
-
 		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
 		savedGermplasmIds.add(1);
 		savedGermplasmIds.add(2);
-		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
 
 		final CrossNameSetting crossNameSetting = this.createCrossNameSetting();
 		crossNameSetting.setSaveParentageDesignationAsAString(true);
@@ -294,12 +284,9 @@ public class CrossingServiceImplTest {
 
 	@Test
 	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToFalse() {
-		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
-
 		final List<Integer> savedGermplasmIds = new ArrayList<Integer>();
 		savedGermplasmIds.add(1);
 		savedGermplasmIds.add(2);
-		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
 
 		final CrossNameSetting crossNameSetting = this.createCrossNameSetting();
 		crossNameSetting.setSaveParentageDesignationAsAString(false);
@@ -679,7 +666,6 @@ public class CrossingServiceImplTest {
 				.generateSeedSourceForCross(Matchers.any(Workbook.class), ArgumentMatchers.<String>isNull(), ArgumentMatchers.<String>isNull(), ArgumentMatchers.<String>isNull(),
 						ArgumentMatchers.<String>isNull(), ArgumentMatchers.<Workbook>isNull());
 
-		Mockito.when(this.fieldbookMiddlewareService.getStudyByNameAndProgramUUID(Matchers.anyString(), Matchers.anyString())).thenReturn(Mockito.mock(Workbook.class));
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
 		// Case 1 - No seed source present. Generate new.
 		final ImportedCrosses importedCross1 = new ImportedCrosses();

@@ -1,18 +1,14 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import static org.hamcrest.Matchers.hasSize;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.trial.service.ValidationService;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Lists;
+import junit.framework.Assert;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
@@ -62,15 +58,16 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.trial.service.ValidationService;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Lists;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import junit.framework.Assert;
+import static org.hamcrest.Matchers.hasSize;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TrialMeasurementsControllerTest {
@@ -104,6 +101,9 @@ public class TrialMeasurementsControllerTest {
 	private MeasurementDataTestDataInitializer measurementDataTestDataInitializer;
 
 	@Mock
+	private OntologyService ontologyService;
+
+	@Mock
 	private OntologyVariableDataManager ontologyVariableDataManager;
 
 	@Mock
@@ -120,9 +120,6 @@ public class TrialMeasurementsControllerTest {
 
 	@Mock
 	private OntologyDataManager ontologyDataManager;
-	
-	@Mock
-	private OntologyService ontologyService;
 
 	@Mock
 	private PaginationListSelection paginationListSelection;
@@ -371,8 +368,10 @@ public class TrialMeasurementsControllerTest {
 		final Scale scaleText = new Scale();
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
-		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(), Matchers.eq(termId),
+
+		Mockito.when(this.ontologyVariableDataManager.getVariable(ArgumentMatchers.<String>isNull(), Matchers.eq(termId),
 				Matchers.eq(true))).thenReturn(variableText);
+
 		this.measurementsController.setUserSelection(userSelection);
 		this.measurementsController.editExperimentCells(experimentId, termId, null, model);
 		MatcherAssert.assertThat(TermId.CATEGORICAL_VARIABLE.getId(),
@@ -444,15 +443,13 @@ public class TrialMeasurementsControllerTest {
 		this.measurementsController.setUserSelection(userSelection);
 
 		final ValidationService mockValidationService = Mockito.mock(ValidationService.class);
-		Mockito.when(mockValidationService.validateObservationValue(Matchers.any(Variable.class), Matchers.anyString()))
-				.thenReturn(true);
-		this.measurementsController.setValidationService(mockValidationService);
+this.measurementsController.setValidationService(mockValidationService);
 
 		final Variable variableText = new Variable();
 		final Scale scaleText = new Scale();
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
-		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(), Matchers.eq(termId),
+		Mockito.when(this.ontologyVariableDataManager.getVariable(ArgumentMatchers.<String>isNull(), Matchers.eq(termId),
 				Matchers.eq(true))).thenReturn(variableText);
 
 		final Map<String, String> data = new HashMap<String, String>();
@@ -462,6 +459,8 @@ public class TrialMeasurementsControllerTest {
 
 		final HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 		Mockito.when(req.getParameter(TrialMeasurementsControllerTest.IS_DISCARD)).thenReturn("0");
+		Mockito.when(mockValidationService.validateObservationValue(Matchers.any(Variable.class), Matchers.anyString()))
+			.thenReturn(true);
 
 		final Map<String, Object> results = this.measurementsController.updateExperimentCellData(data, req);
 
@@ -471,8 +470,9 @@ public class TrialMeasurementsControllerTest {
 		// Validation and saving of phenotype must occur when isDiscard flag is
 		// off.
 		Mockito.verify(mockValidationService).validateObservationValue(variableText, newValue);
-		Mockito.verify(this.studyDataManager).saveOrUpdatePhenotypeValue(Matchers.anyInt(), Matchers.anyInt(),
-				Matchers.anyString(), Matchers.any(Phenotype.class), Matchers.anyInt(), Matchers.any(Phenotype.ValueStatus.class));
+		Mockito.verify(this.studyDataManager).saveOrUpdatePhenotypeValue(1, variableText.getId(),
+			newValue, null, DataType.CHARACTER_VARIABLE.getId(), null);
+
 
 	}
 
@@ -490,8 +490,6 @@ public class TrialMeasurementsControllerTest {
 		this.measurementsController.setUserSelection(userSelection);
 
 		final ValidationService mockValidationService = Mockito.mock(ValidationService.class);
-		Mockito.when(mockValidationService.validateObservationValue(Matchers.any(Variable.class), Matchers.anyString()))
-				.thenReturn(true);
 		this.measurementsController.setValidationService(mockValidationService);
 
 		final Variable variableText = new Variable();
@@ -537,8 +535,6 @@ public class TrialMeasurementsControllerTest {
 		this.measurementsController.setUserSelection(userSelection);
 
 		final ValidationService mockValidationService = Mockito.mock(ValidationService.class);
-		Mockito.when(mockValidationService.validateObservationValue(Matchers.any(Variable.class), Matchers.anyString()))
-				.thenReturn(true);
 
 		this.measurementsController.setValidationService(mockValidationService);
 
@@ -546,8 +542,6 @@ public class TrialMeasurementsControllerTest {
 		final Scale scaleText = new Scale();
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
-		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(), Matchers.eq(termId),
-				Matchers.eq(true))).thenReturn(variableText);
 		final Map<String, String> data = new HashMap<String, String>();
 		data.put(TrialMeasurementsControllerTest.EXPERIMENT_ID, "1");
 		data.put(TrialMeasurementsControllerTest.TERM_ID, Integer.toString(termId));
@@ -1020,14 +1014,14 @@ public class TrialMeasurementsControllerTest {
 		final Scale scaleText = new Scale();
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
-		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
+		Mockito.when(this.ontologyVariableDataManager.getVariable(ArgumentMatchers.<String>isNull(),
 				Matchers.eq(this.measurementText.getMeasurementVariable().getId()), Matchers.eq(true))).thenReturn(variableText);
 
 		final Variable variableNumeric = new Variable();
 		final Scale scaleNumeric = new Scale();
 		scaleNumeric.setDataType(DataType.NUMERIC_VARIABLE);
 		variableNumeric.setScale(scaleNumeric);
-		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
+		Mockito.when(this.ontologyVariableDataManager.getVariable(ArgumentMatchers.<String>isNull(),
 				Matchers.eq(this.measurementNumeric.getMeasurementVariable().getId()), Matchers.eq(true)
 				)).thenReturn(variableNumeric);
 
@@ -1036,7 +1030,7 @@ public class TrialMeasurementsControllerTest {
 		scaleCategorical.setDataType(DataType.CATEGORICAL_VARIABLE);
 		scaleCategorical.addCategory(category1);
 		variableCategorical.setScale(scaleCategorical);
-		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
+		Mockito.when(this.ontologyVariableDataManager.getVariable(ArgumentMatchers.<String>isNull(),
 				Matchers.eq(this.measurementCategorical.getMeasurementVariable().getId()), Matchers.eq(true)
 				)).thenReturn(variableCategorical);
 		return observations;
@@ -1113,8 +1107,6 @@ public class TrialMeasurementsControllerTest {
 		Mockito.when(workbook.getMeasurementDatasetVariablesView())
 				.thenReturn(Arrays.asList(MeasurementVariableTestDataInitializer
 						.createMeasurementVariable(TermId.PLOT_CODE.getId(), TermId.PLOT_CODE.name(), "1-1")));
-		Mockito.when(this.fieldbookMiddlewareService.getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString()))
-				.thenReturn(1);
 		final String alias = "PlotCode";
 		Mockito.when(this.ontologyDataManager.getProjectPropertiesByProjectId(Matchers.anyInt())).thenReturn(Arrays
 				.asList(ProjectPropertyTestDataInitializer.createProjectProperty(alias, TermId.PLOT_CODE.getId())));

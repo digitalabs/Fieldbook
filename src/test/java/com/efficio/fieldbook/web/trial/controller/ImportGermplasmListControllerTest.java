@@ -55,6 +55,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -188,8 +189,6 @@ public class ImportGermplasmListControllerTest {
 
 		final List<GermplasmListData> list = this.createGermplasmListData();
 		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
-		Mockito.doReturn((long) list.size()).when(this.germplasmListManager)
-				.countGermplasmListDataByListId(this.LIST_ID);
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
@@ -229,8 +228,6 @@ public class ImportGermplasmListControllerTest {
 	public void testDisplayGermplasmDetailsOfSelectedListForStudy() throws MiddlewareException {
 		final List<GermplasmListData> list = this.createGermplasmListData();
 		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
-		Mockito.doReturn((long) list.size()).when(this.germplasmListManager)
-				.countGermplasmListDataByListId(this.LIST_ID);
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
@@ -319,9 +316,6 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testDisplayGermplasmDetailsOfCurrentStudyForNursery() throws MiddlewareException {
 		final List<GermplasmListData> list = this.createGermplasmListData();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
-		Mockito.doReturn((long) list.size()).when(this.germplasmListManager)
-				.countGermplasmListDataByListId(this.LIST_ID);
 
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
 				.getGermplasmListsByProjectId(ImportGermplasmListControllerTest.STUDY_ID, GermplasmListType.STUDY);
@@ -420,9 +414,6 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testDisplayGermplasmDetailsOfCurrentStudyForStudy() throws MiddlewareException {
 		final List<GermplasmListData> list = this.createGermplasmListData();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
-		Mockito.doReturn((long) list.size()).when(this.germplasmListManager)
-				.countGermplasmListDataByListId(this.LIST_ID);
 
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
 				.getGermplasmListsByProjectId(ImportGermplasmListControllerTest.STUDY_ID, GermplasmListType.STUDY);
@@ -607,15 +598,10 @@ public class ImportGermplasmListControllerTest {
 
 		Mockito.when(this.dataImportService.saveDataset(workbook, true, true, project.getUniqueID(), this.cropPrefix))
 				.thenReturn(studyIdInSaveDataset);
-		Mockito.doNothing().when(this.fieldbookService).saveStudyImportedCrosses(Matchers.anyListOf(Integer.class),
-				Matchers.isA(Integer.class));
 
 		final List<ListDataProject> listDataProjects = new ArrayList<>();
 		final ListDataProject listDataProject = new ListDataProject();
 		listDataProjects.add(listDataProject);
-
-		Mockito.when(this.fieldbookMiddlewareService.saveOrUpdateListDataProject(3, GermplasmListType.STUDY, 4,
-				listDataProjects, 7)).thenReturn(3);
 
 		Mockito.doNothing().when(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null,
 				workbook);
@@ -630,7 +616,7 @@ public class ImportGermplasmListControllerTest {
 				Matchers.isA(Integer.class));
 		Mockito.verify(this.dataImportService).saveDataset(workbook, true, true, project.getUniqueID(),
 				this.cropPrefix);
-		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(Matchers.anyListOf(Integer.class), Matchers.isA(Integer.class));
+		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(ArgumentMatchers.<List<Integer>>isNull(), Matchers.isA(Integer.class));
 		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null, workbook);
 
 		Assert.assertEquals("Expecting studyIdInSaveDataset returned from nextScreen", "3", studyIdInNextScreen);
@@ -642,7 +628,6 @@ public class ImportGermplasmListControllerTest {
 		final ImportGermplasmListController controllerToTest = Mockito.mock(ImportGermplasmListController.class);
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 
-		Mockito.when(controllerToTest.getUserSelection()).thenReturn(this.userSelection);
 		Mockito.doCallRealMethod().when(controllerToTest).validateEntryAndPlotNo(form);
 
 		controllerToTest.validateEntryAndPlotNo(form);

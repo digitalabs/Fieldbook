@@ -771,8 +771,8 @@ this.measurementsController.setValidationService(mockValidationService);
 		var.setMaxRange(Double.valueOf("10"));
 		MatcherAssert.assertThat("Should return false since 2 is not out of range", true,
 				Is.is(CoreMatchers.not(this.measurementsController.isNumericalValueOutOfBounds("2", var))));
-		MatcherAssert.assertThat("Should return true since 21 is out of range",
-				this.measurementsController.isNumericalValueOutOfBounds("21", var));
+		MatcherAssert.assertThat("Should return true since 21 is out of range", true,
+				Is.is(this.measurementsController.isNumericalValueOutOfBounds("21", var)));
 	}
 
 	@Test
@@ -798,7 +798,7 @@ this.measurementsController.setValidationService(mockValidationService);
 		final Boolean result = this.measurementsController.setCategoricalDisplayType(null, session);
 		Mockito.verify(session, Mockito.times(1))
 				.setAttribute(TrialMeasurementsControllerTest.IS_CATEGORICAL_DESCRIPTION_VIEW, Boolean.TRUE);
-		MatcherAssert.assertThat("should be true", result);
+		MatcherAssert.assertThat("should be true", true, Is.is(result));
 	}
 
 	@Test

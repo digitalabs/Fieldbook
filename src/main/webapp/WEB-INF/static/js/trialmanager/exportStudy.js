@@ -154,7 +154,7 @@
 			};
 
 			ctrl.export = function (instanceIds) {
-				datasetService.exportDataset(datasetId, instanceIds, ctrl.selectedCollectionOrderId).then(function (response) {
+				datasetService.exportDataset(datasetId, instanceIds, ctrl.selectedCollectionOrderId, ctrl.isExportInSingleFile).then(function (response) {
 					var fileName = fileDownloadHelper.getFileNameFromResponseContentDisposition(response);
 					fileDownloadHelper.save(response.data, fileName);
 					$uibModalInstance.close();

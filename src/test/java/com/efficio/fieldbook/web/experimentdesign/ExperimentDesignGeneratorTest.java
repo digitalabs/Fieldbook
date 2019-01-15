@@ -29,7 +29,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -437,8 +437,6 @@ public class ExperimentDesignGeneratorTest {
 	}
 	
 	private void setMockValues(final MainDesign design, final Integer numberOfInstances) throws IOException {
-		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.REP_NO.getId())).thenReturn(null);
-		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.PLOT_NO.getId())).thenReturn(null);
 		Mockito.when(this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, design))
 				.thenReturn(this.createBvOutput(numberOfInstances));
 	}

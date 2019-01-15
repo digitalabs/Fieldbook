@@ -8,6 +8,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.springframework.context.MessageSource;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
@@ -17,11 +18,9 @@ import org.generationcp.middleware.data.initializer.ProjectTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -32,6 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ExcelExportStudyServiceImplTest {
 
@@ -63,6 +64,9 @@ public class ExcelExportStudyServiceImplTest {
 
 	@Mock
 	private LocationDataManager locationDataManager;
+
+	@Mock
+	private MessageSource messageSource;
 
 	@InjectMocks
 	private ExcelExportStudyServiceImpl excelExportStudyService;
@@ -361,7 +365,7 @@ public class ExcelExportStudyServiceImplTest {
 		final List<File> outputDirectories = this.getTempOutputDirectoriesGenerated();
 		Assert.assertEquals(numberOfInstances, outputDirectories.size());
 		final ArgumentCaptor<String> filenameCaptor = ArgumentCaptor.forClass(String.class);
-		Mockito.verify(spyComponent, Mockito.times(numberOfInstances)).writeOutputFile(Mockito.any(Workbook.class), Mockito.anyListOf(Integer.class),
+		Mockito.verify(spyComponent, Mockito.times(numberOfInstances)).writeOutputFile(Mockito.any(Workbook.class), ArgumentMatchers.<List<Integer>>isNull(),
 				Mockito.any(MeasurementRow.class), Mockito.anyListOf(MeasurementRow.class), filenameCaptor.capture());
 		final List<String> filePaths = filenameCaptor.getAllValues();
 		Assert.assertEquals(numberOfInstances, filePaths.size());
@@ -381,13 +385,17 @@ public class ExcelExportStudyServiceImplTest {
 		final List<Integer> instances = WorkbookDataUtil.getTrialInstances(workbook);
 
 		final ExcelExportStudyServiceImpl spyComponent = this.setupExcelExportServiceSpy();
+		Mockito.doReturn("fileName")
+				.when(messageSource)
+				.getMessage(Matchers.anyString(), ArgumentMatchers.<Object[]>isNull(), Matchers.any(Locale.class));
+
 		final FileExportInfo exportInfo =
 				spyComponent.export(workbook, ExcelExportStudyServiceImplTest.STUDY_NAME, instances);
 
 		final List<File> outputDirectories = this.getTempOutputDirectoriesGenerated();
 		Assert.assertEquals(1, outputDirectories.size());
 		final ArgumentCaptor<String> filenameCaptor = ArgumentCaptor.forClass(String.class);
-		Mockito.verify(spyComponent).writeOutputFile(Mockito.any(Workbook.class), Mockito.anyListOf(Integer.class),
+		Mockito.verify(spyComponent).writeOutputFile(Mockito.any(Workbook.class), ArgumentMatchers.<List<Integer>>isNull(),
 				Mockito.any(MeasurementRow.class), Mockito.anyListOf(MeasurementRow.class), filenameCaptor.capture());
 		final String filePath = filenameCaptor.getValue();
 		final File outputFile = new File(filePath);
@@ -398,7 +406,7 @@ public class ExcelExportStudyServiceImplTest {
 
 	private ExcelExportStudyServiceImpl setupExcelExportServiceSpy() throws IOException {
 		final ExcelExportStudyServiceImpl spyComponent = Mockito.spy(this.excelExportStudyService);
-		Mockito.doNothing().when(spyComponent).writeOutputFile(Mockito.any(Workbook.class), Mockito.anyListOf(Integer.class),
+		Mockito.doNothing().when(spyComponent).writeOutputFile(Mockito.any(Workbook.class), ArgumentMatchers.<List<Integer>>isNull(),
 				Mockito.any(MeasurementRow.class), Mockito.anyListOf(MeasurementRow.class), Mockito.anyString());
 		Mockito.doReturn(ZIP_FILEPATH).when(spyComponent).createZipFile(Matchers.anyString(), Matchers.anyListOf(String.class));
 		return spyComponent;

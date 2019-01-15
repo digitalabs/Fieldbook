@@ -49,7 +49,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.exceptions.verification.NeverWantedButInvoked;
 import org.mockito.exceptions.verification.TooLittleActualInvocations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
 import com.efficio.fieldbook.service.api.SettingsService;
@@ -134,8 +134,6 @@ public class LabelPrintingServiceImplTest {
 		this.inventoryDetailsInitializer = new InventoryDetailsTestDataInitializer();
 
 		final Project project = Mockito.mock(Project.class);
-		Mockito.when(project.getCropType()).thenReturn(new CropType(LabelPrintingServiceImplTest.MAIZE_CROP_STR));
-
 		final Tool fieldbookWeb = new Tool();
 		fieldbookWeb.setToolId(23L);
 		fieldbookWeb.setToolName("fieldbook_web");
@@ -143,8 +141,6 @@ public class LabelPrintingServiceImplTest {
 		Mockito.when(this.workbenchService.getFieldbookWebTool()).thenReturn(fieldbookWeb);
 
 		// init mocks
-		Mockito.when(this.workbenchService.getProjectById(LabelPrintingServiceImplTest.TEST_PROJECT_ID)).thenReturn(project);
-
 		final ArrayList<ProgramPreset> notEmptySearchResult = new ArrayList<>();
 		final ProgramPreset searchResultPreset = new ProgramPreset();
 		searchResultPreset.setProgramUuid(LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID);
@@ -177,16 +173,6 @@ public class LabelPrintingServiceImplTest {
 
 		this.measurementData = MeasurementRowTestDataInitializer.createMeasurementDataMap();
 		this.environmentData = MeasurementRowTestDataInitializer.createEnvironmentDataMap();
-
-		Mockito.when(this.workbenchService.getStandardPresetByCropAndPresetName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME, 23,
-				LabelPrintingServiceImplTest.MAIZE_CROP_STR, ToolSection.PLANTING_LABEL_PRINTING_PRESET.name()))
-				.thenReturn(standardPresetSearchResults);
-		Mockito.when(this.workbenchService.getStandardPresetByCropAndPresetName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
-				23, LabelPrintingServiceImplTest.MAIZE_CROP_STR, ToolSection.PLANTING_LABEL_PRINTING_PRESET.name()))
-				.thenReturn(new ArrayList<StandardPreset>());
-
-		Mockito.when(this.workbenchService.getStandardPresetByCrop(23, LabelPrintingServiceImplTest.MAIZE_CROP_STR,
-				ToolSection.PLANTING_LABEL_PRINTING_PRESET.name())).thenReturn(standardPresetSearchResults);
 
 		Mockito.when(this.workbenchService.getStandardPresetById(LabelPrintingServiceImplTest.TEST_PRESET_ID)).thenReturn(sp);
 		Mockito.when(this.presetDataManager.getProgramPresetById(LabelPrintingServiceImplTest.TEST_PRESET_ID))
@@ -275,8 +261,6 @@ public class LabelPrintingServiceImplTest {
 		final GermplasmList germplasmList = germplasmLists.get(0);
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY))
 				.thenReturn(germplasmLists);
-		Mockito.when(this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId()))
-				.thenReturn(new ArrayList<InventoryDetails>());
 
 		Assert.assertFalse("Expecting to return false for germplasm list entries with inventory details.",
 				this.labelPrintingServiceImpl.hasInventoryValues(studyId));
@@ -431,9 +415,6 @@ public class LabelPrintingServiceImplTest {
 		Mockito.when(this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(Matchers.isA(Integer.class))).thenReturn(
 				inventoryDetailList);
 
-		Mockito.when(this.pedigreeService.getCrossExpansion(Matchers.isA(Integer.class), Matchers.isA(CrossExpansionProperties.class)))
-				.thenReturn("cross");
-
 		final Term term = new Term();
 		term.setName("termName");
 		Mockito.when(this.ontologyDataManager.getTermById(Matchers.isA(Integer.class))).thenReturn(term);
@@ -472,9 +453,6 @@ public class LabelPrintingServiceImplTest {
 		Mockito.when(this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(Matchers.isA(Integer.class))).thenReturn(
 				inventoryDetailList);
 
-		Mockito.when(this.pedigreeService.getCrossExpansion(Matchers.isA(Integer.class), Matchers.isA(CrossExpansionProperties.class)))
-				.thenReturn("cross");
-
 		this.labelPrintingServiceImpl.checkAndSetFieldMapInstanceInfo(trialFieldMap, workbook, isStockList, params,
 				this.measurementData, this.environmentData, userLabelPrinting);
 		try {
@@ -508,10 +486,6 @@ public class LabelPrintingServiceImplTest {
 		final List<InventoryDetails> inventoryDetailList = this.inventoryDetailsInitializer.createInventoryDetailList(1);
 		Mockito.when(this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(Matchers.isA(Integer.class))).thenReturn(
 				inventoryDetailList);
-
-		Mockito.when(this.pedigreeService.getCrossExpansion(Matchers.isA(Integer.class), Matchers.isA(CrossExpansionProperties.class)))
-				.thenReturn("cross");
-
 
 		final Term groupGid = new Term();
 		groupGid.setName(TermId.GROUPGID.name());

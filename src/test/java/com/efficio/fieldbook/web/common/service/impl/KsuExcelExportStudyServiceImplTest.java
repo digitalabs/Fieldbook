@@ -17,6 +17,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -52,7 +53,7 @@ public class KsuExcelExportStudyServiceImplTest {
 		this.ksuExcelExportServiceImpl.setContextUtil(this.contextUtil);
 
 		Mockito.doReturn(ProjectTestDataInitializer.createProject()).when(this.contextUtil).getProjectInContext();
-		Mockito.doNothing().when(this.ksuExcelExportServiceImpl).writeOutputFile(Matchers.anyString(), Matchers.anyList(), Matchers.anyString());
+		Mockito.doNothing().when(this.ksuExcelExportServiceImpl).writeOutputFile(Matchers.anyString(), ArgumentMatchers.<List<List<String>>>any(), Matchers.anyString());
 		Mockito.doReturn(ZIP_FILEPATH).when(this.ksuExcelExportServiceImpl).createZipFile(Matchers.anyString(), Matchers.anyListOf(String.class));
 		Mockito.doNothing().when(this.ksuExcelExportServiceImpl).writeTraitsFile(Matchers.any(Workbook.class), Matchers.anyString());
 	}
@@ -71,7 +72,7 @@ public class KsuExcelExportStudyServiceImplTest {
 		// Expecting 1 CSV file per trial instance plus Trait file
 		Assert.assertEquals(numberOfInstances + 1, outputDirectories.size());
 		final ArgumentCaptor<String> studyFilenameCaptor = ArgumentCaptor.forClass(String.class);
-		Mockito.verify(this.ksuExcelExportServiceImpl, Mockito.times(numberOfInstances)).writeOutputFile(Matchers.anyString(), Matchers.anyList(), studyFilenameCaptor.capture());
+		Mockito.verify(this.ksuExcelExportServiceImpl, Mockito.times(numberOfInstances)).writeOutputFile(Matchers.anyString(), ArgumentMatchers.<List<List<String>>>any(), studyFilenameCaptor.capture());
 		final ArgumentCaptor<String> traitFilenameCaptor = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(this.ksuExcelExportServiceImpl).writeTraitsFile(Matchers.any(Workbook.class), traitFilenameCaptor.capture());
 		final List<String> studyFilePaths = studyFilenameCaptor.getAllValues();

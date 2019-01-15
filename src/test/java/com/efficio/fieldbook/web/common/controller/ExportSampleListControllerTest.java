@@ -1,23 +1,14 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.efficio.fieldbook.web.util.AppConstants;
+import junit.framework.Assert;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.pojo.FileExportInfo;
+import org.generationcp.commons.service.CsvExportSampleListService;
 import org.generationcp.commons.util.FileUtils;
+import org.generationcp.commons.util.SampleListUtilTest;
 import org.generationcp.middleware.domain.sample.SampleDetailsDTO;
 import org.generationcp.middleware.service.api.SampleListService;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -25,14 +16,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import org.generationcp.commons.service.CsvExportSampleListService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import org.generationcp.commons.util.SampleListUtilTest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import junit.framework.Assert;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -44,10 +39,6 @@ public class ExportSampleListControllerTest {
 	private static final String VISIBLE_COLUMNS = "visibleColumns";
 	private static final String SAMPLE_STUDY_FILENAME = "Study33-SampleList";
 	private static final String CSV_EXT = ".csv";
-	private static final String UPLOAD_DIRECTORY = "";
-
-	@Mock
-	private FieldbookProperties fieldbookProperties;
 
 	@Mock
 	private CsvExportSampleListService csvExportSampleListService;
@@ -63,11 +54,6 @@ public class ExportSampleListControllerTest {
 
 	@InjectMocks
 	private ExportSampleListController exportSampleListController;
-
-	@Before
-	public void setUp() {
-		Mockito.doReturn(ExportSampleListControllerTest.UPLOAD_DIRECTORY).when(this.fieldbookProperties).getUploadDirectory();
-	}
 
 	@Test
 	public void testDoExportSampleListInCSVFormat()
@@ -93,7 +79,7 @@ public class ExportSampleListControllerTest {
 		
 		// Verify JSON
 		final Map<String, Object> result = new ObjectMapper().readValue(returnedValue, HashMap.class);
-		assertThat(true,equalTo((Boolean) result.get(exportSampleListController.IS_SUCCESS)));
+		assertThat(true,equalTo((Boolean) result.get(this.exportSampleListController.IS_SUCCESS)));
 		assertThat(FileUtils.MIME_CSV,equalTo(result.get(ExportSampleListController.CONTENT_TYPE)));
 		assertThat(downloadFilename,equalTo(result.get(ExportSampleListController.FILENAME)));
 		assertThat(outputFilename,equalTo(result.get(ExportSampleListController.OUTPUT_FILENAME)));

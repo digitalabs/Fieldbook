@@ -19,10 +19,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
 import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
@@ -55,7 +56,7 @@ public class WorkbookRowConverterTest {
 	public void testApplyValidations() throws FileParsingException {
 		List<ParsingValidator> validatorList = new ArrayList<>();
 		ParsingValidator validator = Mockito.mock(ParsingValidator.class);
-		Mockito.when(validator.isParsedValueValid(Matchers.anyString(), Matchers.anyMap())).thenReturn(true);
+		Mockito.when(validator.isParsedValueValid(Matchers.anyString(), ArgumentMatchers.<Map<String, Object>>any())).thenReturn(true);
 
 		validatorList.add(validator);
 
@@ -67,7 +68,7 @@ public class WorkbookRowConverterTest {
 	public void testApplyValidationsParseErrorOccur() throws FileParsingException {
 		List<ParsingValidator> validatorList = new ArrayList<>();
 		ParsingValidator validator = Mockito.mock(ParsingValidator.class);
-		Mockito.when(validator.isParsedValueValid(Matchers.anyString(), Matchers.anyMap())).thenReturn(false);
+		Mockito.when(validator.isParsedValueValid(Matchers.anyString(), ArgumentMatchers.<Map<String, Object>>any())).thenReturn(false);
 
 		validatorList.add(validator);
 
@@ -107,7 +108,7 @@ public class WorkbookRowConverterTest {
 		Mockito.doReturn(false).doReturn(true).when(mole).isRowEmpty(Matchers.anyInt(), Matchers.anyInt(), Matchers.anyInt());
 		Mockito.doReturn("").when(mole).getCellStringValue(Matchers.anyInt(), Matchers.anyInt(), Matchers.anyInt());
 		InventoryDetails details = Mockito.mock(InventoryDetails.class);
-		Mockito.doReturn(details).when(mole).convertToObject(Matchers.anyMap());
+		Mockito.doReturn(details).when(mole).convertToObject(ArgumentMatchers.<Map<Integer, String>>any());
 
 		List<InventoryDetails> inventoryDetailList = mole.convertWorkbookRowsToObject(new WorkbookRowConverter.ContinueTillBlank());
 

@@ -18,7 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
@@ -48,9 +48,10 @@ public class CSVSeedPreparationLabelGeneratorTest {
 		Mockito.when(this.userLabelPrinting.getBarcodeNeeded()).thenReturn("0");
 		Mockito.when(this.labelPrintingUtil.appendBarcode(Matchers.anyBoolean(), Matchers.anyString()))
 				.thenReturn("GID");
-		Mockito.when(this.labelPrintingUtil.getLabelHeadersForSeedPreparation(Matchers.anyList()))
+		Mockito.when(this.labelPrintingUtil.getLabelHeadersForSeedPreparation(Matchers.anyListOf(Integer.class)))
 				.thenReturn(new HashMap<Integer, String>());
-		Mockito.when(this.labelPrintingUtil.generateColumnHeaders(Matchers.anyList(), Matchers.anyMap()))
+		Mockito.when(this.labelPrintingUtil.generateColumnHeaders(Matchers.anyListOf(Integer.class), Matchers.anyMapOf(Integer.class,
+				String.class)))
 				.thenReturn(new ArrayList<ExportColumnHeader>());
 
 		final GermplasmListData germplasmListData = GermplasmListDataTestDataInitializer
@@ -67,7 +68,7 @@ public class CSVSeedPreparationLabelGeneratorTest {
 		Mockito.verify(this.userLabelPrinting).getIncludeColumnHeadinginNonPdf();
 		Mockito.verify(this.userLabelPrinting).getBarcodeNeeded();
 		Mockito.verify(this.labelPrintingUtil).appendBarcode(Matchers.anyBoolean(), Matchers.anyString());
-		Mockito.verify(this.labelPrintingUtil).getLabelHeadersForSeedPreparation(Matchers.anyList());
-		Mockito.verify(this.labelPrintingUtil).generateColumnHeaders(Matchers.anyList(), Matchers.anyMap());
+		Mockito.verify(this.labelPrintingUtil).getLabelHeadersForSeedPreparation(Matchers.anyListOf(Integer.class));
+		Mockito.verify(this.labelPrintingUtil).generateColumnHeaders(Matchers.anyListOf(Integer.class), Matchers.anyMapOf(Integer.class, String.class));
 	}
 }

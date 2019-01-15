@@ -16,6 +16,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.util.Message;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -71,7 +72,7 @@ public class AngularSelectSheetControllerTest {
 		for (int i = 1; i <= NUM_STUDIES; i++) {
 			this.allStudies.add(new StudyDetails(i, "STUDY" + i, "", "", "", "", StudyTypeDto.getTrialDto(), "", "", "", "1", true));
 		}
-		Mockito.doReturn(this.allStudies).when(this.etlService).retrieveExistingStudyDetails(Matchers.anyString());
+		Mockito.doReturn(this.allStudies).when(this.etlService).retrieveExistingStudyDetails(ArgumentMatchers.<String>isNull());
 		Mockito.doReturn(this.studyDetails).when(this.form).getStudyDetails();
 	}
 

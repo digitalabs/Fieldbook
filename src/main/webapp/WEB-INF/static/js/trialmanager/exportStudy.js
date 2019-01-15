@@ -81,6 +81,7 @@
 
 			ctrl.selectedExportFormatId = '1';
 			ctrl.selectedCollectionOrderId = '1';
+			ctrl.isExportInSingleFile = true;
 
 			$scope.exportFormats = [{itemId: '1', name: 'CSV'}];
 			$scope.collectionOrders = [

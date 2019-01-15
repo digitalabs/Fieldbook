@@ -194,7 +194,6 @@ public class ImportStudyControllerTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(Mockito.mock(Project.class));
 		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt()))
 				.thenReturn(ImportStudyControllerTest.TEST_USER_ID);
-//		Mockito.when(this.fieldbookMiddlewareService.addGermplasm(Matchers.anyListOf(Pair.class)).thenReturn(newGids);
 
 		this.unitUnderTest.applyChangeDetails(dummyUserResponse);
 		final ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);

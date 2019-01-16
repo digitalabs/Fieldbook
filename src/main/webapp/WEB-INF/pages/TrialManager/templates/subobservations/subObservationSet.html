@@ -9,11 +9,27 @@
 										   callback="onAddTraitVariable(result)" on-hide-callback="onHideCallback"
 										   select-variable-callback="selectVariableCallback" hide-variable="addVariable">
 
-				<dataset-settings hide-delete="isHideDelete" name="content" settings="traitVariables" variable-type="1808"
-								  predelete-function="onRemoveVariable"></dataset-settings>
-			</section-container>
-		</section-container>
-	</div>
+							<dataset-settings hide-delete="isHideDelete" name="content" settings="traitVariables" variable-type="1808"
+											  predelete-function="onRemoveTraitVariable"></dataset-settings>
+						</section-container>
+					</div>
+					<div class="col-xs-6 col-md-6">
+						<section-container icon="bms-variates" name="content" th:attr="heading=#{study.studydetails.variates},
+							   help-tooltip=#{study.managesettings.selection.tooltip}"
+										   icon-size="22" add-variable="true" model-data="selectionVariables"
+										   selected-variables="selectedSelection"
+										   variable-type="1807"
+										   callback="onAddSelectionVariable(result)" on-hide-callback="onHideCallback"
+										   select-variable-callback="selectVariableCallback" hide-variable="addVariable">
+
+							<dataset-settings hide-delete="isHideDelete" name="content" settings="selectionVariables" variable-type="1807"
+											  predelete-function="onRemoveSelectedVariable"></dataset-settings>
+						</section-container>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section-container>
 	<div class="col-xs-12">
 		<div class="row">
 			<div class="col-xs-12">

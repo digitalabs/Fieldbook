@@ -9,8 +9,6 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 			'takenBy',
 			'samplingDate',
 			'sampleList',
-			'plant.plantNumber',
-			'plant.plantBusinessKey',
 			'plateId',
 			'well',
 			''
@@ -67,8 +65,6 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 						}
 					},
 					{data: 'sampleList'},
-					{data: 'plantNumber'},
-					{data: 'plantBusinessKey'},
 					{data: 'plateId'},
 					{data: 'well'},
 					{

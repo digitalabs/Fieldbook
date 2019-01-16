@@ -41,8 +41,6 @@ public class SampleListController {
 	private static final String SAMPLE_UID = "sample.list.sample.uid";
 	private static final String PLATE_ID = "sample.list.sample.plate.id";
 	private static final String WELL = "sample.list.sample.well";
-	private static final String PLANT_UID = "sample.list.plant.uid";
-	private static final String PLANT_NO = "sample.list.plant.no";
 	private static final String OBS_UNIT_ID = "sample.list.obs.unit.id";
 	private static final String PLOT_NO = "sample.list.plot.no";
 	private static final String DESIGNATION = "seed.entry.designation";
@@ -96,8 +94,6 @@ public class SampleListController {
 		this.getCommonHeaders(locale, tableHeaderList);
 		tableHeaderList.add(new TableHeader(ColumnLabels.PLOT_NO.getTermNameFromOntology(this.ontologyDataManager),
 			this.messageSource.getMessage(SampleListController.PLOT_NO, null, locale)));
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.PLANT_NO, null, locale),
-			this.messageSource.getMessage(SampleListController.PLANT_NO, null, locale)));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_NAME, null, locale),
 			this.messageSource.getMessage(SampleListController.SAMPLE_NAME, null, locale)));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.TAKEN_BY, null, locale),
@@ -110,8 +106,6 @@ public class SampleListController {
 			this.messageSource.getMessage(SampleListController.PLATE_ID, null, locale), false));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.WELL, null, locale),
 			this.messageSource.getMessage(SampleListController.WELL, null, locale), false));
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.PLANT_UID, null, locale),
-			this.messageSource.getMessage(SampleListController.PLANT_UID, null, locale), false));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.OBS_UNIT_ID, null, locale),
 			this.messageSource.getMessage(SampleListController.OBS_UNIT_ID, null, locale), false));
 

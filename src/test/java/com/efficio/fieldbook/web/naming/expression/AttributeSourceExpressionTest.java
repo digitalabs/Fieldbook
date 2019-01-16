@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
@@ -93,7 +93,6 @@ public class AttributeSourceExpressionTest extends TestExpression {
 	@Test
 	public void testAttributeAsPrefixInvalidBreedingMethod() throws Exception {
 
-		Mockito.when(germplasmDataManager.getAttributeValue(1000, ATTRIBUTE_NAME)).thenReturn("AB");
 		final Method generativeMethod = this.createGenerativeMethod(PREFIX, COUNT, null, "-", true);
 		final ImportedGermplasm importedGermplasm =
 			this.createImportedGermplasm(1, "(AA/ABC)", "1000", 104, 104, -1, generativeMethod.getMid());

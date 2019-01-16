@@ -330,7 +330,8 @@ public class ExportAdvanceListServiceImplTest {
 
 	@Test
 	public void testExportAdvanceGermplasmListInCsvThrowsIOException() throws IOException {
-		Mockito.when(this.germplasmExportServiceImpl.generateCSVFile(Matchers.anyList(), Matchers.anyList(), Matchers.anyString()))
+		Mockito.when(this.germplasmExportServiceImpl.generateCSVFile(Matchers.anyListOf(ExportRow.class), Matchers.anyListOf(
+				ExportColumnHeader.class), Matchers.anyString()))
 				.thenThrow(new IOException());
 		final String listId = "1";
 		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportAdvanceGermplasmList(listId, this.studyName, this.germplasmExportServiceImpl,
@@ -377,7 +378,8 @@ public class ExportAdvanceListServiceImplTest {
 
 	@Test
 	public void testExportAdvanceGermplasmListInXlsThrowsIOException() throws IOException {
-		Mockito.when(this.germplasmExportServiceImpl.generateExcelFileForSingleSheet(Matchers.anyList(), Matchers.anyList(),
+		Mockito.when(this.germplasmExportServiceImpl.generateExcelFileForSingleSheet(Matchers.anyListOf(ExportRow.class), Matchers.anyListOf(
+				ExportColumnHeader.class),
 				Matchers.anyString(), Matchers.anyString())).thenThrow(new IOException());
 
 		final String listId = "1";

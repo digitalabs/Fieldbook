@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +97,6 @@ public class SelectionTraitExpressionDataProcessorTest {
     public void testExtractCategoricalValueNonOutofBounds() {
         final String categoricalValue = "test";
         final String testCategoricalValueID = "1";
-        Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(testCategoricalValueID))).thenReturn(categoricalValue);
 		Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(testCategoricalValueID), true)).thenReturn(categoricalValue);
 
         final String output = unitUnderTest.extractValue(testCategoricalValueID, TEST_TERM_ID);
@@ -109,7 +108,6 @@ public class SelectionTraitExpressionDataProcessorTest {
     public void testExtractCategoricalValueOutOfBoundsNumeric() {
         final String categoricalValue = "1";
 
-        Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(categoricalValue))).thenReturn(null);
 		Mockito.when(ontologyVariableDataManager.retrieveVariableCategoricalNameValue(TEST_PROGRAM_UUID, TEST_TERM_ID, Integer.parseInt(categoricalValue), true)).thenReturn(categoricalValue);
 
         final String output = unitUnderTest.extractValue(categoricalValue, TEST_TERM_ID);

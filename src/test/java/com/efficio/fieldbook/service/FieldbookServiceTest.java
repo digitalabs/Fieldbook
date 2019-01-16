@@ -40,11 +40,12 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
@@ -117,8 +118,6 @@ public class FieldbookServiceTest {
 
 		final List<Person> personsList = new ArrayList<Person>();
 		personsList.add(PersonTestDataInitializer.createPerson(200));
-
-		Mockito.when(this.fieldbookMiddlewareService.getAllPersonsOrderedByLocalCentral()).thenReturn(personsList);
 
 		this.fieldbookServiceImpl.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
 		this.possibleValuesCache = new PossibleValuesCache();
@@ -534,7 +533,7 @@ public class FieldbookServiceTest {
 		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited,
 				Mockito.mock(Workbook.class));
 		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(Matchers.any(Integer.class),
-				Matchers.any(String.class), Matchers.anyList());
+				Matchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
 	}
 
 	@Test
@@ -548,7 +547,7 @@ public class FieldbookServiceTest {
 		final Workbook workbook = Mockito.mock(Workbook.class);
 		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited, workbook);
 		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(Matchers.any(Integer.class),
-				Matchers.any(String.class), Matchers.anyList());
+				Matchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
 		Mockito.verify(api, Mockito.times(1)).setOrderVariableByRank(workbook);
 	}
 
@@ -563,7 +562,7 @@ public class FieldbookServiceTest {
 		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited,
 				Mockito.mock(Workbook.class));
 		Mockito.verify(api, Mockito.times(1)).saveStudyColumnOrdering(Matchers.any(Integer.class),
-				Matchers.any(String.class), Matchers.anyList());
+				Matchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
 	}
 
 	@Test

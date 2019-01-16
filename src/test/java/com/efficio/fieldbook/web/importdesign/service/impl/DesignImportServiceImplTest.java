@@ -42,7 +42,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -537,7 +537,6 @@ public class DesignImportServiceImplTest {
 		final Scale scale = new Scale();
 		scale.setMaxValue("1");
 		scale.setMinValue("100");
-		Mockito.doReturn(scale).when(this.ontologyScaleDataManager).getScaleById(1, false);
 	}
 
 	@SuppressWarnings({"unchecked"})
@@ -562,40 +561,18 @@ public class DesignImportServiceImplTest {
 				.getStandardVariable(TermId.OBS_UNIT_ID.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
 
 		Mockito.doReturn(DesignImportTestDataInitializer
-				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_TYPE.getId(), "ENTRY_TYPE", "", "", "",
-						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
-				.getStandardVariable(TermId.ENTRY_TYPE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(DesignImportTestDataInitializer
 				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.CROSS.getId(), "CROSS", "", "", "",
 						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
 				.getStandardVariable(TermId.CROSS.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(DesignImportTestDataInitializer
-				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_CODE.getId(), "ENTRY_CODE", "", "", "",
-						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
-				.getStandardVariable(TermId.ENTRY_CODE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(DesignImportTestDataInitializer
-				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.GERMPLASM_SOURCE.getId(), "GERMPLASM_SOURCE", "", "", "",
-						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
-				.getStandardVariable(TermId.GERMPLASM_SOURCE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
 		Mockito.doReturn(DesignImportTestDataInitializer
 				.createStandardVariable(PhenotypicType.GERMPLASM, TermId.SEED_SOURCE.getId(), "SEED_SOURCE", "", "", "",
 						DesignImportTestDataInitializer.CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
 				.getStandardVariable(TermId.SEED_SOURCE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
 
-		Mockito.doReturn(DesignImportTestDataInitializer
-				.createStandardVariable(PhenotypicType.VARIATE, DesignImportServiceImplTest.GYLD_TERMID, "GYLD", "", "", "",
-						DesignImportTestDataInitializer.NUMERIC_VARIABLE, "N", "", "")).when(this.ontologyService)
-				.getStandardVariable(DesignImportServiceImplTest.GYLD_TERMID, DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(DesignImportTestDataInitializer
-				.createStandardVariable(PhenotypicType.VARIATE, DesignImportServiceImplTest.CHALK_PCT_TERMID, "CHALK_PCT", "", "", "",
-						DesignImportTestDataInitializer.NUMERIC_VARIABLE, "N", "", "")).when(this.ontologyService)
-				.getStandardVariable(DesignImportServiceImplTest.CHALK_PCT_TERMID, DesignImportServiceImplTest.PROGRAM_UUID);
-
 		final Property prop = new Property();
 		final Term term = new Term();
 		term.setId(0);
 		prop.setTerm(term);
-		Mockito.doReturn(prop).when(this.ontologyService).getProperty(Matchers.anyString());
 
 		final Map<String, List<StandardVariable>> map = new HashMap<>();
 
@@ -613,7 +590,7 @@ public class DesignImportServiceImplTest {
 		map.put("BLOCK_NO", this.createList(DesignImportTestDataInitializer
 				.createStandardVariable(VariableType.EXPERIMENTAL_DESIGN, TermId.BLOCK_NO.getId(), "BLOCK_NO", "", "", "", "", "", "")));
 
-		Mockito.doReturn(map).when(this.ontologyDataManager).getStandardVariablesInProjects(Matchers.anyList(), Matchers.anyString());
+		Mockito.doReturn(map).when(this.ontologyDataManager).getStandardVariablesInProjects(Matchers.anyListOf(String.class), Matchers.anyString());
 
 	}
 

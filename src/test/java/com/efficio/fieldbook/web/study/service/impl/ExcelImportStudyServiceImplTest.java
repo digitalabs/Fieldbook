@@ -24,7 +24,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
@@ -32,11 +31,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.ChangeType;
-import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
 
 @RunWith(value = MockitoJUnitRunner.class)
 public class ExcelImportStudyServiceImplTest {
@@ -103,8 +100,8 @@ public class ExcelImportStudyServiceImplTest {
 		Mockito.doReturn(LABEL).when(this.labelCell).getStringCellValue();
 
 		this.xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
-        importStudy = new ExcelImportStudyServiceImpl(workbook, "", "");
-        importStudy.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		this.importStudy = new ExcelImportStudyServiceImpl(this.workbook, "", "");
+		this.importStudy.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
 	}
 
 	@Test
@@ -126,8 +123,6 @@ public class ExcelImportStudyServiceImplTest {
 	public void testImportDataCellValuesWhenExcelCellIsNull() {
 
 		Mockito.when(this.xlsRow.getCell(this.columnIndex)).thenReturn(null);
-		Mockito.when(this.cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
-		Mockito.when(this.cell.getStringCellValue()).thenReturn(this.testValue);
 
 		this.wData.setMeasurementVariable(new MeasurementVariable());
 
@@ -456,10 +451,11 @@ public class ExcelImportStudyServiceImplTest {
     @Test
     public void testCopyConditionsAndConstantsWorkbook() {
         this.workbook = WorkbookTestDataInitializer.getTestWorkbook();
-        this.importStudy.copyConditionsAndConstants(workbook);
+        this.importStudy.copyConditionsAndConstants(this.workbook);
 
-        Assert.assertNotNull("Conditions copy should not be emprt after copy operation", workbook.getImportConditionsCopy());
-        Assert.assertTrue("Unable to properly copy conditions portion of workbook", workbook.getImportConditionsCopy().size() == workbook.getConditions().size());
+        Assert.assertNotNull("Conditions copy should not be emprt after copy operation", this.workbook.getImportConditionsCopy());
+        Assert.assertTrue("Unable to properly copy conditions portion of workbook", this.workbook
+			.getImportConditionsCopy().size() == this.workbook.getConditions().size());
     }
 
     @Test
@@ -471,7 +467,7 @@ public class ExcelImportStudyServiceImplTest {
 		final List<String> addedTraits = new ArrayList<String>();
 		final List<String> removedTraits = new ArrayList<String>();
 
-        Mockito.doReturn(sheet).when(workbook2).getSheetAt(0);
+        Mockito.doReturn(this.sheet).when(workbook2).getSheetAt(0);
 
         this.importStudy.setParsedData(workbook2);
         this.importStudy.detectAddedTraitsAndPerformRename(modes,addedTraits,removedTraits);
@@ -483,21 +479,15 @@ public class ExcelImportStudyServiceImplTest {
     }
     
     protected void setupColumnHeaderMocks() {
-        sheet = Mockito.mock(Sheet.class);
-        row = Mockito.mock(Row.class);
-        Mockito.doReturn(row).when(sheet).getRow(0);
-
-        Mockito.doReturn((short) (TEST_COLUMN_HEADER_COUNT + 1)).when(row).getLastCellNum();
+		this.sheet = Mockito.mock(Sheet.class);
+		this.row = Mockito.mock(Row.class);
+        Mockito.doReturn(this.row).when(this.sheet).getRow(0);
 
         for (int i = 0; i < TEST_COLUMN_HEADER_COUNT; i++) {
             final Cell cell = Mockito.mock(Cell.class);
-            Mockito.doReturn(cell).when(row).getCell(i);
-            Mockito.doReturn(constructHeaderName(i)).when(cell).getStringCellValue();
+            Mockito.doReturn(cell).when(this.row).getCell(i);
+            Mockito.doReturn(this.constructHeaderName(i)).when(cell).getStringCellValue();
         }
-
-        final Cell cell = Mockito.mock(Cell.class);
-        Mockito.doReturn(cell).when(row).getCell(TEST_COLUMN_HEADER_COUNT);
-        Mockito.doReturn(KsuFieldbookUtil.PLOT).when(cell).getStringCellValue();
     }
     
     String constructHeaderName(final int columnNumber) {

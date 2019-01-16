@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import junit.framework.Assert;
+import org.apache.commons.lang.RandomStringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.GermplasmListTestDataInitializer;
 import org.generationcp.middleware.domain.dms.Study;
@@ -12,11 +13,12 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.Model;
 
@@ -74,9 +76,8 @@ public class DeleteStudyControllerTest {
 	@Test
 	public void testSubmitDeleteNursery() throws UnpermittedDeletionException {
 		final Study study = Mockito.mock(Study.class);
-		Mockito.when(study.getProgramUUID()).thenReturn(Mockito.anyString());
-		Mockito.when(this.fieldbookMiddlewareService.getStudy(DeleteStudyControllerTest.PROJECT_ID))
-			.thenReturn(study);
+		Mockito.when(study.getProgramUUID()).thenReturn(RandomStringUtils.random(10));
+		Mockito.doReturn(study).when(fieldbookMiddlewareService).getStudy(DeleteStudyControllerTest.PROJECT_ID);
 		final Map<String, Object> result = this.deleteStudyController
 				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, this.model, this.session, this.locale);
 		Assert.assertEquals("The value should be 1", "1", result.get(DeleteStudyController.IS_SUCCESS));
@@ -93,9 +94,8 @@ public class DeleteStudyControllerTest {
 	@Test
 	public void testSubmitDeleteTrial() throws UnpermittedDeletionException {
 		final Study study = Mockito.mock(Study.class);
-		Mockito.when(study.getProgramUUID()).thenReturn(Mockito.anyString());
-		Mockito.when(this.fieldbookMiddlewareService.getStudy(DeleteStudyControllerTest.PROJECT_ID))
-			.thenReturn(study);
+		Mockito.when(study.getProgramUUID()).thenReturn(RandomStringUtils.random(10));
+		Mockito.doReturn(study).when(fieldbookMiddlewareService).getStudy(DeleteStudyControllerTest.PROJECT_ID);
 		final Map<String, Object> result = this.deleteStudyController
 				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, this.model, this.session, this.locale);
 		Assert.assertEquals("The value should be 1", "1", result.get(DeleteStudyController.IS_SUCCESS));
@@ -110,10 +110,8 @@ public class DeleteStudyControllerTest {
 	@Test
 	public void testSubmitDeleteWithUnpermittedDeletionException() throws UnpermittedDeletionException {
 		final Study study = Mockito.mock(Study.class);
-		Mockito.when(study.getUser()).thenReturn(1);
-		Mockito.when(this.fieldbookMiddlewareService.getStudy(DeleteStudyControllerTest.PROJECT_ID))
-				.thenReturn(study);
-		Mockito.when(this.fieldbookMiddlewareService.getOwnerListName(1)).thenReturn("User Name");
+		Mockito.when(study.getProgramUUID()).thenReturn(RandomStringUtils.random(10));
+		Mockito.doReturn(study).when(fieldbookMiddlewareService).getStudy(DeleteStudyControllerTest.PROJECT_ID);
 
 		final String message = "UnpermittedDeletionException thrown";
 		Mockito.when(this.messageSource.getMessage(Matchers.anyString(), Matchers.any(Object[].class),
@@ -129,8 +127,6 @@ public class DeleteStudyControllerTest {
 
 	@Test
 	public void testSubmitDeleteGenericException() throws UnpermittedDeletionException {
-		Mockito.doThrow(Exception.class).when(this.fieldbookMiddlewareService).deleteStudy(Matchers.anyInt(),
-				Matchers.anyInt());
 
 		final Map<String, Object> result = this.deleteStudyController
 				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, this.model, this.session, this.locale);
@@ -141,10 +137,10 @@ public class DeleteStudyControllerTest {
 	public void testSubmitDeleteValidationStudyTemplate() throws UnpermittedDeletionException {
 		final Study study = Mockito.mock(Study.class);
 		Mockito.when(study.getProgramUUID()).thenReturn(null);
-		Mockito.when(this.fieldbookMiddlewareService.getStudy(DeleteStudyControllerTest.PROJECT_ID))
-			.thenReturn(study);
+		Mockito.doReturn(study).when(fieldbookMiddlewareService).getStudy(DeleteStudyControllerTest.PROJECT_ID);
+
 		final String message = "Program templates cannot be deleted.";
-		Mockito.when(this.messageSource.getMessage(Matchers.anyString(), Matchers.any(Object[].class),
+		Mockito.when(this.messageSource.getMessage(Matchers.anyString(), ArgumentMatchers.<Object[]>isNull(),
 			Matchers.eq(this.locale))).thenReturn(message);
 
 		final Map<String, Object> result = this.deleteStudyController
@@ -160,7 +156,7 @@ public class DeleteStudyControllerTest {
 		Mockito.when(this.fieldbookMiddlewareService.getStudy(DeleteStudyControllerTest.PROJECT_ID))
 			.thenReturn(study);
 		final String message = "Program templates cannot be deleted.";
-		Mockito.when(this.messageSource.getMessage(Matchers.anyString(), Matchers.any(Object[].class),
+		Mockito.when(this.messageSource.getMessage(Matchers.anyString(), ArgumentMatchers.<Object[]>isNull(),
 			Matchers.eq(this.locale))).thenReturn(message);
 
 		final Map<String, Object> result = this.deleteStudyController

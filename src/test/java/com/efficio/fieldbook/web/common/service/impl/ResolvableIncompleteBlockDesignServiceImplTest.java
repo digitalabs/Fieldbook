@@ -22,6 +22,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -35,7 +36,7 @@ import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
@@ -119,7 +120,7 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 						ResolvableIncompleteBlockDesignServiceImplTest.PROGRAM_UUID)).thenReturn(plotVar);
 
 		Mockito.when(
-				this.fieldbookService.runBVDesign(Matchers.any(WorkbenchService.class), Matchers.any(FieldbookProperties.class),
+				this.fieldbookService.runBVDesign(ArgumentMatchers.<WorkbenchService>isNull(), Matchers.any(FieldbookProperties.class),
 						Matchers.any(MainDesign.class))).thenReturn(this.mockDesignOutPut());
 	}
 

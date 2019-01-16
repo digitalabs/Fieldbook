@@ -18,7 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
@@ -56,7 +56,6 @@ public class BreedingMethodControllerTest {
 	public void setUp() throws Exception {
 		this.mole = Mockito.spy(this.controller);
 		Mockito.doReturn(BreedingMethodControllerTest.DUMMY_URL).when(this.fieldbookProperties).getProgramBreedingMethodsUrl();
-		Mockito.doReturn(BreedingMethodControllerTest.DUMMY_PROJECT_ID).when(this.mole).getCurrentProgramID(this.request);
 	}
 
 	@Test
@@ -71,7 +70,6 @@ public class BreedingMethodControllerTest {
 
 		try {
 			Mockito.doReturn(allMethodList).when(this.fieldbookMiddlewareService).getAllBreedingMethods(false);
-			Mockito.doReturn(favoriteMethodList).when(this.fieldbookMiddlewareService).getFavoriteProjectMethods(Matchers.anyString());
 			Map<String, Object> breedingMethods = this.mole.getBreedingMethods();
 
 			Assert.assertNotNull(breedingMethods);

@@ -6,21 +6,23 @@ import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
+import java.util.List;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
+import org.generationcp.middleware.util.Message;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.ui.Model;
@@ -50,9 +52,6 @@ public class ImportObservationsControllerTest {
 	@Mock
 	private DataImportService dataImportService;
 
-	@Mock
-	protected WorkbenchService workbenchService;
-
 	@InjectMocks
 	ImportObservationsController importObservationsController;
 	private HttpSession session;
@@ -71,7 +70,6 @@ public class ImportObservationsControllerTest {
 		project.setCropType(new CropType("Maize"));
 		project.getCropType().setPlotCodePrefix(ImportObservationsControllerTest.PROJECT_CODE_PREFIX);
 		project.setProjectId(Long.valueOf(123));
-		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(ImportObservationsControllerTest.PROGRAM_UUID);
 		Mockito.when(this.contextUtil.getCurrentIbdbUserId()).thenReturn(CURRENT_IBDB_USER_ID);
 	}
@@ -106,7 +104,7 @@ public class ImportObservationsControllerTest {
 		Mockito.when(this.etlService.createWorkbookFromUserSelection(Matchers.eq(this.userSelection), Matchers.anyBoolean()))
 				.thenReturn(importData);
 		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(workbook);
-		Mockito.when(this.etlService.convertMessageList(Matchers.anyList())).thenReturn(Arrays.asList("error"));
+		Mockito.when(this.etlService.convertMessageList(ArgumentMatchers.<List<Message>>any())).thenReturn(Arrays.asList("error"));
 
 		final String returnValue =
 				this.importObservationsController.processImport(this.uploadForm, 1, this.model, this.session, this.request);

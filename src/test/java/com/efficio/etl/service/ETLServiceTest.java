@@ -40,12 +40,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -64,7 +66,8 @@ import java.util.Map;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration
+@ContextConfiguration(classes = ETLServiceTestConfiguration.class)
+@ActiveProfiles("etl-service-test")
 public class ETLServiceTest {
 
 	@Resource
@@ -139,7 +142,9 @@ public class ETLServiceTest {
 		this.fillObservationInfoOfUserSelection(this.userSelection);
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(ETLServiceTest.PROGRAM_UUID);
-		Mockito.when(this.fileService.retrieveWorkbook(Matchers.anyString())).thenReturn(this.workbook);
+		Mockito.when(this.fileService.retrieveWorkbook(ArgumentMatchers.anyString())).thenReturn(this.workbook);
+		Mockito.when(this.fileService.retrieveWorkbook(ArgumentMatchers.<String>isNull())).thenReturn(this.workbook);
+
 		this.measurementDataTestDataInitializer = new MeasurementDataTestDataInitializer();
 
 		final StandardVariable standardVariable = Mockito.mock(StandardVariable.class);
@@ -430,9 +435,8 @@ public class ETLServiceTest {
 
 		// Accept any workbook when checkForOutOfBoundsData is called. It will
 		// be captured and verified later.
-		Mockito.when(this.dataImportService.checkForOutOfBoundsData(
-				Matchers.any(org.generationcp.middleware.domain.etl.Workbook.class),
-				Matchers.eq(ETLServiceTest.PROGRAM_UUID))).thenReturn(true);
+		Mockito.doReturn(true).when(this.dataImportService).checkForOutOfBoundsData(
+				ArgumentMatchers.any(org.generationcp.middleware.domain.etl.Workbook.class), Matchers.eq(ETLServiceTest.PROGRAM_UUID));
 
 		final int datasetType = DataSetType.PLOT_DATA.getId();
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
@@ -479,7 +483,7 @@ public class ETLServiceTest {
 	@Test(expected = IOException.class)
 	public void testCheckOutOfBoundsDataException() throws IOException {
 
-		Mockito.when(this.fileService.retrieveWorkbook(Matchers.anyString())).thenThrow(new IOException());
+		Mockito.when(this.fileService.retrieveWorkbook(ArgumentMatchers.<String>isNull())).thenThrow(new IOException());
 		this.etlService.checkOutOfBoundsData(this.userSelection);
 
 	}

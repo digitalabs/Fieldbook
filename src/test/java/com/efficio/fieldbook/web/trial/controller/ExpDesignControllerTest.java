@@ -26,10 +26,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
@@ -77,10 +78,8 @@ public class ExpDesignControllerTest {
 
 	@Before()
 	public void init() {
-		Mockito.doReturn("CIMMYT").when(this.crossExpansionProperties).getProfile();
 		final Project project = new Project();
 		project.setCropType(new CropType("maize"));
-		Mockito.doReturn(project).when(this.contextUtil).getProjectInContext();
 		this.expDesignController.setFieldbookProperties(this.fieldbookProperties);
 		this.messageSource.setUseCodeAsDefaultMessage(true);
 		this.expDesignController.setMessageSource(this.messageSource);
@@ -102,8 +101,8 @@ public class ExpDesignControllerTest {
 		Mockito.when(randomizeCompleteBlockDesign.requiresBreedingViewLicence()).thenReturn(Boolean.TRUE);
 		this.expDesignController.showMeasurements(model, expDesignParameterUi);
 
-		Mockito.verify(this.designLicenseUtil).isExpired(Mockito.any(BVDesignLicenseInfo.class));
-		Mockito.verify(this.designLicenseUtil).isExpiringWithinThirtyDays(Mockito.any(BVDesignLicenseInfo.class));
+		Mockito.verify(this.designLicenseUtil).isExpired(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
+		Mockito.verify(this.designLicenseUtil).isExpiringWithinThirtyDays(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
 	}
 
 	private void mockDesignValidation(final ExpDesignParameterUi expDesignParameterUi, final List<ImportedGermplasm> germplasmList) {
@@ -136,12 +135,14 @@ public class ExpDesignControllerTest {
 		this.mockDesignValidation(expDesignParameterUi, germplasmList);
 
 		// mock license has expired
-		Mockito.doReturn(true).when(this.designLicenseUtil).isExpired(Mockito.any(BVDesignLicenseInfo.class));
+		Mockito.doReturn(true).when(this.designLicenseUtil).isExpired(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
 		Mockito.when(randomizeCompleteBlockDesign.requiresBreedingViewLicence()).thenReturn(Boolean.TRUE);
 
 		final ExpDesignValidationOutput output = this.expDesignController.showMeasurements(model, expDesignParameterUi);
 
-		Mockito.verify(this.designLicenseUtil, Mockito.times(0)).isExpiringWithinThirtyDays(Mockito.any(BVDesignLicenseInfo.class));
+		Mockito.verify(this.designLicenseUtil, Mockito.times(0)).isExpiringWithinThirtyDays(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
+		Mockito.verify(this.designLicenseUtil, Mockito.times(0)).isExpiringWithinThirtyDays(ArgumentMatchers.<BVDesignLicenseInfo>any());
+
 
 		Assert.assertFalse("The output should be invalid. This means the generation of design is not executed.", output.isValid());
 
@@ -190,13 +191,13 @@ public class ExpDesignControllerTest {
 		Mockito.when(randomizeCompleteBlockDesign.requiresBreedingViewLicence()).thenReturn(Boolean.TRUE);
 
 		// mock valid license
-		Mockito.doReturn(false).when(this.designLicenseUtil).isExpired(Mockito.any(BVDesignLicenseInfo.class));
-		Mockito.doReturn(false).when(this.designLicenseUtil).isExpiringWithinThirtyDays(Mockito.any(BVDesignLicenseInfo.class));
+		Mockito.doReturn(false).when(this.designLicenseUtil).isExpired(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
+		Mockito.doReturn(false).when(this.designLicenseUtil).isExpiringWithinThirtyDays(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
 
 		final ExpDesignValidationOutput output = this.expDesignController.showMeasurements(model, expDesignParameterUi);
 
-		Mockito.verify(this.designLicenseUtil).isExpired(Mockito.any(BVDesignLicenseInfo.class));
-		Mockito.verify(this.designLicenseUtil).isExpiringWithinThirtyDays(Mockito.any(BVDesignLicenseInfo.class));
+		Mockito.verify(this.designLicenseUtil).isExpired(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
+		Mockito.verify(this.designLicenseUtil).isExpiringWithinThirtyDays(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
 
 		Assert.assertTrue("The output should be valid because the license is valid. This means the generation of design still executed.",
 				output.isValid());

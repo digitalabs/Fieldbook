@@ -28,6 +28,7 @@ import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -146,8 +147,9 @@ public class NamingConventionServiceImplTest {
 		Mockito.when(this.rulesService.runRules(Matchers.any(RuleExecutionContext.class))).thenReturn(Lists.newArrayList(ruleGeneratedName1, ruleGeneratedName2));
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
 		Mockito.when(
-				this.seedSourceGenerator.generateSeedSource(Matchers.any(Workbook.class), Matchers.anyString(), Matchers.anyString(),
-					Matchers.anyString(), Matchers.anyString(), Matchers.anyString())).thenReturn(testSeedSource);
+				this.seedSourceGenerator.generateSeedSource(Matchers.any(Workbook.class), ArgumentMatchers.<String>isNull(),
+						Matchers.anyString(), ArgumentMatchers.<String>isNull(), Matchers.anyString(), ArgumentMatchers.<String>isNull())).thenReturn(testSeedSource);
+
 
 		final AdvancingStudy advancingParameters = new AdvancingStudy();
 		advancingParameters.setCheckAdvanceLinesUnique(false);
@@ -271,8 +273,8 @@ public class NamingConventionServiceImplTest {
                 Lists.newArrayList(ruleGeneratedName));
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
 		Mockito.when(
-				this.seedSourceGenerator.generateSeedSource(Matchers.any(Workbook.class), Matchers.any(String.class),
-					Matchers.any(String.class), Matchers.any(String.class), Matchers.anyString(), Matchers.anyString())).thenReturn(testSeedSource);
+				this.seedSourceGenerator.generateSeedSource(Matchers.any(Workbook.class), ArgumentMatchers.<String>isNull(),
+					ArgumentMatchers.<String>isNull(), ArgumentMatchers.<String>isNull(), Matchers.anyString(), ArgumentMatchers.<String>isNull())).thenReturn(testSeedSource);
 
         final AdvancingStudy info = new AdvancingStudy();
         info.setMethodChoice("1");

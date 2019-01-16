@@ -147,8 +147,8 @@
 				return selected;
 			};
 
-			$scope.onRemoveVariable = function (variableIds) {
-				var promise = $scope.validateRemoveVariable(variableIds);
+			$scope.onRemoveTraitVariable = function (variableIds) {
+				var promise = $scope.validateRemoveVariable(variableIds,measurementModalConfirmationText);
 
 				promise.then(function (doContinue) {
 					if (doContinue) {
@@ -157,19 +157,35 @@
 								$scope.traitVariables.remove(cvtermId);
 							});
 							loadTable();
-							$scope.selectedTraits = $scope.getSelectedVariables();
+							$scope.selectedTraits = $scope.getSelectedVariables($scope.traitVariables);
 						});
 					}
 				});
 			};
 
-			$scope.validateRemoveVariable = function (deleteVariables) {
+			$scope.onRemoveSelectedVariable = function (variableIds) {
+				var promise = $scope.validateRemoveVariable(variableIds,measurementselectionVariableModalConfirmationText);
+
+				promise.then(function (doContinue) {
+					if (doContinue) {
+						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, variableIds).then(function () {
+							angular.forEach(variableIds, function (cvtermId) {
+								$scope.selectionVariables.remove(cvtermId);
+							});
+							loadTable();
+							$scope.selectedSelection = $scope.getSelectedVariables($scope.selectionVariables);
+						});
+					}
+				});
+			};
+
+			$scope.validateRemoveVariable = function (deleteVariables, message) {
 				var deferred = $q.defer();
 				if (deleteVariables.length != 0) {
 					datasetService.observationCount($scope.subObservationSet.dataset.datasetId, deleteVariables).then(function (response) {
 						var count = response.headers('X-Total-Count');
 						if (count > 0) {
-							var modalInstance = $scope.openConfirmModal(measurementModalConfirmationText,
+							var modalInstance = $scope.openConfirmModal(message,
 								environmentConfirmLabel);
 							modalInstance.result.then(deferred.resolve);
 						} else {

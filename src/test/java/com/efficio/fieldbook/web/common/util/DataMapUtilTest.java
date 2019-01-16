@@ -2,23 +2,18 @@ package com.efficio.fieldbook.web.common.util;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.controller.TrialMeasurementsController;
-import com.efficio.fieldbook.web.trial.service.ValidationService;
 import com.google.common.collect.Lists;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.Variable;
-import org.generationcp.middleware.manager.api.OntologyDataManager;
-import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.dms.Phenotype;
-import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.study.MeasurementDto;
 import org.generationcp.middleware.service.api.study.MeasurementVariableDto;
 import org.generationcp.middleware.service.api.study.ObservationDto;
@@ -26,14 +21,14 @@ import org.generationcp.middleware.service.api.study.StudyService;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,28 +63,10 @@ public class DataMapUtilTest {
 	private OntologyVariableDataManager ontologyVariableDataManager;
 
 	@Mock
-	private StudyDataManager studyDataManager;
-
-	@Mock
 	private ContextUtil contextUtil;
 
 	@Mock
-	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
-
-	@Mock
 	private StudyService studyService;
-
-	@Mock
-	private OntologyDataManager ontologyDataManager;
-
-	@Mock
-	private ValidationService validationService;
-
-	@Mock
-	private FieldbookService fieldbookMiddlewareService;
-
-	@Mock
-	private UserSelection userSelection;
 
 	private List<MeasurementVariable> measurementVariables;
 
@@ -104,13 +81,7 @@ public class DataMapUtilTest {
 			TermId.PLOT_NO, TermId.OBS_UNIT_ID, TermId.BLOCK_NO, TermId.REP_NO, TermId.ROW, TermId.COL,
 			TermId.FIELDMAP_COLUMN, TermId.FIELDMAP_RANGE };
 
-	@Before
-	public void setUp() {
-		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_NO.getId()))
-				.thenReturn(new Term(TermId.ENTRY_NO.getId(), TermId.ENTRY_NO.name(), "Definition"));
-	}
-
-	private List<ObservationDto> setupTestObservations(final int recordsCount, final TermSummary category1,
+	private List<ObservationDto> setupTestObservations(final TermSummary category1,
 			final boolean doAddNewGermplasmDescriptors) {
 		final List<MeasurementDto> measurements = Lists
 				.newArrayList(this.measurementText, this.measurementNumeric, this.measurementCategorical);
@@ -129,25 +100,21 @@ public class DataMapUtilTest {
 		testObservationDto.setObsUnitId("9CVRPNHaSlCE1");
 
 		final List<ObservationDto> observations = Lists.newArrayList(testObservationDto);
-		Mockito.when(this.studyService.getObservations(Matchers.anyInt(), Matchers.anyInt(), Matchers.anyInt(),
-				Matchers.anyInt(), Matchers.anyString(), Matchers.anyString())).thenReturn(observations);
 
-		Mockito.when(this.studyService.countTotalObservationUnits(Matchers.anyInt(), Matchers.anyInt()))
-				.thenReturn(recordsCount);
 		this.measurementsController.setStudyService(this.studyService);
 
 		final Variable variableText = new Variable();
 		final Scale scaleText = new Scale();
 		scaleText.setDataType(DataType.CHARACTER_VARIABLE);
 		variableText.setScale(scaleText);
-		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
+		Mockito.when(this.ontologyVariableDataManager.getVariable(ArgumentMatchers.<String>isNull(),
 				Matchers.eq(this.measurementText.getMeasurementVariable().getId()), Matchers.eq(true))).thenReturn(variableText);
 
 		final Variable variableNumeric = new Variable();
 		final Scale scaleNumeric = new Scale();
 		scaleNumeric.setDataType(DataType.NUMERIC_VARIABLE);
 		variableNumeric.setScale(scaleNumeric);
-		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
+		Mockito.when(this.ontologyVariableDataManager.getVariable(ArgumentMatchers.<String>isNull(),
 				Matchers.eq(this.measurementNumeric.getMeasurementVariable().getId()), Matchers.eq(true))).thenReturn(variableNumeric);
 
 		final Variable variableCategorical = new Variable();
@@ -155,7 +122,7 @@ public class DataMapUtilTest {
 		scaleCategorical.setDataType(DataType.CATEGORICAL_VARIABLE);
 		scaleCategorical.addCategory(category1);
 		variableCategorical.setScale(scaleCategorical);
-		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.anyString(),
+		Mockito.when(this.ontologyVariableDataManager.getVariable(ArgumentMatchers.<String>isNull(),
 				Matchers.eq(this.measurementCategorical.getMeasurementVariable().getId()), Matchers.eq(true)
 		)).thenReturn(variableCategorical);
 		return observations;
@@ -372,7 +339,7 @@ public class DataMapUtilTest {
 		final boolean doAddNewGermplasmDescriptors = false;
 		// null because we are not interested in categorical traits for this
 		// test method
-		final List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
+		final List<ObservationDto> observations = this.setupTestObservations(null, doAddNewGermplasmDescriptors);
 
 		// Method to test
 		final ObservationDto observationDto = observations.get(0);
@@ -400,7 +367,7 @@ public class DataMapUtilTest {
 		final boolean doAddNewGermplasmDescriptors = false;
 		// null because we are not interested in categorical traits for this
 		// test method
-		final List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
+		final List<ObservationDto> observations = this.setupTestObservations(null, doAddNewGermplasmDescriptors);
 
 		// Method to test
 		final ObservationDto observationDto = observations.get(0);
@@ -431,7 +398,7 @@ public class DataMapUtilTest {
 		final boolean doAddNewGermplasmDescriptors = true;
 		// null because we are not interested in categorical traits for this
 		// test method
-		final List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
+		final List<ObservationDto> observations = this.setupTestObservations(null, doAddNewGermplasmDescriptors);
 
 		// Method to test
 		final ObservationDto observationDto = observations.get(0);
@@ -457,7 +424,7 @@ public class DataMapUtilTest {
 		final boolean doAddNewGermplasmDescriptors = true;
 		// null because we are not interested in categorical traits for this
 		// test method
-		final List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
+		final List<ObservationDto> observations = this.setupTestObservations(null, doAddNewGermplasmDescriptors);
 
 		// Method to test
 		final ObservationDto observationDto = observations.get(0);
@@ -492,7 +459,7 @@ public class DataMapUtilTest {
 		final boolean doAddNewGermplasmDescriptors = true;
 		// null because we are not interested in categorical traits for this
 		// test method
-		final List<ObservationDto> observations = this.setupTestObservations(1, null, doAddNewGermplasmDescriptors);
+		final List<ObservationDto> observations = this.setupTestObservations(null, doAddNewGermplasmDescriptors);
 
 		final ObservationDto observationDto = observations.get(0);
 		// Add categorical design factor
@@ -514,13 +481,22 @@ public class DataMapUtilTest {
 		final boolean useDifferentLocalNames = false;
 		final UserSelection userSelection = this.setupMeasurementVariablesInMockWorkbook(useDifferentLocalNames);
 
-		final int recordsCount = 1;
 		final TermSummary category1 = new TermSummary(111, this.measurementCategorical.getVariableValue(),
 				"CategoryValue1Definition");
 		final boolean doAddNewGermplasmDescriptors = false;
-		final List<ObservationDto> observations = this.setupTestObservations(recordsCount, category1,
+		final List<ObservationDto> observations = this.setupTestObservations(category1,
 				doAddNewGermplasmDescriptors);
+
 		final ObservationDto observationDto = observations.get(0);
+		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
+			Integer.valueOf(this.measurementText.getMeasurementVariable().getId()), true))
+			.thenReturn(this.createTestTextVariable());
+		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
+			Integer.valueOf(this.measurementCategorical.getMeasurementVariable().getId()), true))
+			.thenReturn(this.createTestCategoricalVariable());
+		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
+			Integer.valueOf(this.measurementNumeric.getMeasurementVariable().getId()), true))
+			.thenReturn(this.createTestNumericVariable());
 
 		// Method to test
 		final Map<String, Object> dataMap = (new DataMapUtil()).generateDatatableDataMap(observationDto, new HashMap<String, String>(),
@@ -550,11 +526,10 @@ public class DataMapUtilTest {
 		// still in test observations
 		this.measurementVariables.remove(0);
 
-		final int recordsCount = 1;
 		final TermSummary category1 = new TermSummary(111, this.measurementCategorical.getVariableValue(),
 				"CategoryValue1Definition");
 		final boolean doAddNewGermplasmDescriptors = false;
-		final List<ObservationDto> observations = this.setupTestObservations(recordsCount, category1, doAddNewGermplasmDescriptors);
+		final List<ObservationDto> observations = this.setupTestObservations(category1, doAddNewGermplasmDescriptors);
 		final ObservationDto observationDto = observations.get(0);
 
 		// Method to test
@@ -579,12 +554,34 @@ public class DataMapUtilTest {
 		scale.addCategory(new TermSummary(1, "AAA", "AAA Definition 1"));
 		scale.addCategory(new TermSummary(2, "BBB", "AAA Definition 2"));
 		scale.addCategory(new TermSummary(3, "CCC", "AAA Definition 3"));
+		scale.addCategory(new TermSummary(4, "CategoryValue1", "CategoryValue1Definition"));
 		measurementVariable.setScale(scale);
 
 		return measurementVariable;
 
 	}
 
+	private Variable createTestNumericVariable() {
+
+		final Variable measurementVariable = new Variable();
+		final Scale scale = new Scale();
+		scale.setDataType(DataType.NUMERIC_VARIABLE);
+		measurementVariable.setScale(scale);
+
+		return measurementVariable;
+
+	}
+
+	private Variable createTestTextVariable() {
+
+		final Variable measurementVariable = new Variable();
+		final Scale scale = new Scale();
+		scale.setDataType(DataType.CHARACTER_VARIABLE);
+		measurementVariable.setScale(scale);
+
+		return measurementVariable;
+
+	}
 	private void verifyCorrectValuesForTraits(final TermSummary category1, final Map<String, Object> dataMap) {
 		// Character Trait
 		MatcherAssert

@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -278,7 +278,7 @@ public class AugmentedRandomizedBlockDesignServiceImplTest {
 		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
 		final List<ImportedGermplasm> germplasmList = new ArrayList<>();
 
-		Mockito.doThrow(Exception.class).when(experimentDesignValidator).validateAugmentedDesign(expDesignParameterUi, germplasmList);
+		Mockito.doThrow(RuntimeException.class).when(experimentDesignValidator).validateAugmentedDesign(expDesignParameterUi, germplasmList);
 
 		final ExpDesignValidationOutput result = augmentedRandomizedBlockDesignServiceImpl.validate(expDesignParameterUi, germplasmList);
 

@@ -60,11 +60,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
@@ -178,9 +179,7 @@ public class OpenTrialControllerTest {
 		studyType.setName(StudyTypeDto.TRIAL_NAME);
 		studyType.setLabel(StudyTypeDto.TRIAL_LABEL);
 		dmsProject.setStudyType(studyType);
-		Mockito.when(this.workbenchService.getCurrentIbdbUserId(1L, OpenTrialControllerTest.WORKBENCH_USER_ID))
-				.thenReturn(OpenTrialControllerTest.IBDB_USER_ID);
-		Mockito.when(this.workbenchDataManager.getLastOpenedProjectAnyUser()).thenReturn(project);
+
 		Mockito.when(this.studyDataManager.getProject(1)).thenReturn(dmsProject);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(OpenTrialControllerTest.PROGRAM_UUID);
 
@@ -215,7 +214,6 @@ public class OpenTrialControllerTest {
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.STUDY_ID)).thenReturn(workbook);
 		final Study study = new Study();
 		study.setStudyType(StudyTypeDto.getTrialDto());
-		Mockito.when(this.fieldbookMiddlewareService.getStudy(Matchers.anyInt())).thenReturn(study);
 
 		this.mockStandardVariables(workbook.getAllVariables());
 
@@ -1043,7 +1041,6 @@ public class OpenTrialControllerTest {
 			.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(1, "STD"));
 		final Study study = new Study();
 		study.setStudyType(StudyTypeDto.getTrialDto());
-		Mockito.when(this.fieldbookMiddlewareService.getStudy(Matchers.anyInt())).thenReturn(study);
 
 		Mockito.when(
 				this.variableDataManager.getVariable(Matchers.anyString(), Matchers.anyInt(), Matchers.anyBoolean()))
@@ -1132,7 +1129,7 @@ public class OpenTrialControllerTest {
 
 		final Map<Integer, String> mockData = Maps.newHashMap();
 		mockData.put(0, "StockID101, StockID102");
-		Mockito.when(this.inventoryDataManager.retrieveStockIds(Matchers.anyList())).thenReturn(mockData);
+		Mockito.when(this.inventoryDataManager.retrieveStockIds(Matchers.anyListOf(Integer.class))).thenReturn(mockData);
 
 		final Model model = new ExtendedModelMap();
 
@@ -1178,7 +1175,8 @@ public class OpenTrialControllerTest {
 		Assert.assertEquals("The measurement row count should be zero", 0, returnVal.get(OpenTrialController.MEASUREMENT_ROW_COUNT));
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).saveMeasurementRows(Matchers.any(Workbook.class),
 				Matchers.anyString(), Matchers.anyBoolean());
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).createIdNameVariablePairs(Matchers.any(Workbook.class), Matchers.anyList(),
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).createIdNameVariablePairs(Matchers.any(Workbook.class), Matchers.anyListOf(
+						SettingDetail.class),
 				Matchers.anyString(), Matchers.anyBoolean());
 		Mockito.verify(this.fieldbookService, Mockito.times(0)).saveStudyColumnOrdering(Matchers.anyInt(), Matchers.anyString(),
 				Matchers.anyString(), Matchers.any(Workbook.class));
@@ -1187,7 +1185,7 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testSubmitWhereReplaceIsZero() {
 		final TrialData data = this.setUpTrialData();
-		Mockito.when(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(Matchers.eq(1), Matchers.anyList())).thenReturn(true);
+		Mockito.when(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(Matchers.eq(1), Matchers.anyListOf(Integer.class))).thenReturn(true);
 		final long experimentCount = 10;
 		Mockito.when(this.studyDataManager.countExperiments(Matchers.eq(1))).thenReturn(experimentCount);
 
@@ -1203,9 +1201,10 @@ public class OpenTrialControllerTest {
 
 		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(Matchers.any(Workbook.class), Matchers.anyString(),
 				Matchers.anyBoolean());
-		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(Matchers.any(Workbook.class), Matchers.anyList(),
+		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(Matchers.any(Workbook.class), Matchers.anyListOf(
+				SettingDetail.class),
 				Matchers.anyString(), Matchers.anyBoolean());
-		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(Matchers.anyInt(), Matchers.anyString(), Matchers.anyString(),
+		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(Matchers.anyInt(), ArgumentMatchers.<String>isNull(), ArgumentMatchers.<String>isNull(),
 				Matchers.any(Workbook.class));
 		Mockito.verify(this.fieldbookMiddlewareService).hasAdvancedOrCrossesList(Matchers.anyInt());
 	}
@@ -1232,9 +1231,6 @@ public class OpenTrialControllerTest {
 		final int germplasmListId = 111;
 		final int studyId = 1;
 
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY))
-				.thenReturn(new ArrayList<GermplasmList>());
-
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryType(germplasmListId,
 				SystemDefinedEntryType.CHECK_ENTRY);
@@ -1257,13 +1253,6 @@ public class OpenTrialControllerTest {
 
 		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
 		listOfGermplasmList.add(germplasmList);
-
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY))
-				.thenReturn(listOfGermplasmList);
-		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(new ArrayList<ListDataProject>());
-
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY))
-				.thenReturn(new ArrayList<GermplasmList>());
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryType(germplasmListId,
@@ -1293,7 +1282,7 @@ public class OpenTrialControllerTest {
 		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENT_DATA_EXISTING), Matchers.anyBoolean());
 		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST), Matchers.anyBoolean());
 		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENT_ROW_COUNT),
-				Matchers.anyInt());
+				Matchers.anyLong());
 		Mockito.verify(this.model).addAttribute(Matchers.eq("treatmentFactorsData"), Matchers.any(TabInfo.class));
         Mockito.verify(this.model).addAttribute(Matchers.eq("studyTypes"), Matchers.anyListOf(StudyType.class));
 		Mockito.verify(this.model).addAttribute("createTrialForm", createTrialForm);

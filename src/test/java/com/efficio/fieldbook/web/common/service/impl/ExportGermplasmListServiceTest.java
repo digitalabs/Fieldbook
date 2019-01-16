@@ -39,6 +39,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -368,7 +369,7 @@ public class ExportGermplasmListServiceTest {
 
 		final Map<Integer, String> mockData = Maps.newHashMap();
 		mockData.put(0, "StockID101, StockID102");
-		Mockito.when(this.inventoryDataManager.retrieveStockIds(Mockito.anyList())).thenReturn(mockData);
+		Mockito.when(this.inventoryDataManager.retrieveStockIds(ArgumentMatchers.<List<Integer>>any())).thenReturn(mockData);
 
 		// Assert
 		final GermplasmListExportInputValues input =
@@ -391,7 +392,7 @@ public class ExportGermplasmListServiceTest {
 
 		final Map<Integer, String> mockData = Maps.newHashMap();
 		mockData.put(0, "StockID101, StockID102");
-		Mockito.when(this.inventoryDataManager.retrieveStockIds(Mockito.anyList())).thenReturn(mockData);
+		Mockito.when(this.inventoryDataManager.retrieveStockIds(ArgumentMatchers.<List<Integer>>any())).thenReturn(mockData);
 
 		// Assert
 		final GermplasmListExportInputValues input =

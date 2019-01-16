@@ -7,9 +7,7 @@ import com.google.common.base.Optional;
 import org.apache.commons.lang.math.RandomUtils;
 import org.fest.util.Collections;
 import org.generationcp.commons.derivedvariable.DerivedVariableProcessor;
-import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -18,25 +16,23 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.FormulaDto;
 import org.generationcp.middleware.domain.ontology.FormulaVariable;
-import org.generationcp.middleware.manager.api.StudyDataManager;
-import org.generationcp.middleware.operation.builder.DataSetBuilder;
 import org.generationcp.middleware.operation.builder.WorkbookBuilder;
 import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.derived_variables.FormulaService;
 import org.generationcp.middleware.service.api.study.StudyService;
-import org.generationcp.middleware.service.impl.gdms.DatasetBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -77,7 +73,6 @@ public class DerivedVariableControllerTest {
 	private static final String INVALID_REQUEST = "invalid request";
 	private static final String NOT_FOUND = "not found";
 	private static final String ENGINE_EXCEPTION = "engine exception";
-	private static final String MISSING_DATA = "missing data";
 	private static final String MISSING_VARIABLES = "missing variables";
 	private static final String DATE_PARSING_EXCEPTION = "date parsing exception";
 
@@ -113,9 +108,6 @@ public class DerivedVariableControllerTest {
 	@Mock
 	private DerivedVariableProcessor processor;
 
-	@Mock
-	private WorkbookBuilder workbookBuilder;
-
 	@InjectMocks
 	private DerivedVariableController derivedVariableController;
 
@@ -147,7 +139,6 @@ public class DerivedVariableControllerTest {
 		when(this.messageSource.getMessage("study.execute.calculation.invalid.request", null, locale)).thenReturn(INVALID_REQUEST);
 		when(this.messageSource.getMessage("study.execute.calculation.formula.not.found", null, locale)).thenReturn(NOT_FOUND);
 		when(this.messageSource.getMessage("study.execute.calculation.engine.exception", null, locale)).thenReturn(ENGINE_EXCEPTION);
-		when(this.messageSource.getMessage("study.execute.calculation.missing.data", null, locale)).thenReturn(MISSING_DATA);
 		when(this.messageSource.getMessage("study.execute.calculation.parsing.exception", null, locale)).thenReturn(DATE_PARSING_EXCEPTION);
 
 		doAnswer(new Answer<Boolean>() {
@@ -173,6 +164,7 @@ public class DerivedVariableControllerTest {
 		inputs.add(new FormulaVariable(DATE_TERM2, String.valueOf(DATE_TERM2), TARGET_VARIABLE_TERMID));
 		formulaDTO.setInputs(inputs);
 		formulaDTO.setTarget(new FormulaVariable(Integer.valueOf(TARGET_VARIABLE_TERMID), "", null));
+		//noinspection OptionalGetWithoutIsPresent
 		Mockito.when(formulaOptional.get()).thenReturn(formulaDTO);
 	}
 
@@ -275,7 +267,6 @@ public class DerivedVariableControllerTest {
 		}
 
 		when(this.studySelection.getBaselineTraitsList()).thenReturn(java.util.Collections.<SettingDetail>emptyList());
-		when(this.processor.evaluateFormula(anyString(), any(Map.class))).thenReturn(FORMULA_RESULT);
 		when(this.messageSource.getMessage(
 			Matchers.eq("study.execute.calculation.missing.variables"),
 			Matchers.any(String[].class), Matchers.eq(locale))).thenReturn(MISSING_VARIABLES);
@@ -348,7 +339,7 @@ public class DerivedVariableControllerTest {
 	public void testDependencyVariablesArgumentVariablesArePresentInTheStudy() {
 
 		when(this.studySelection.getBaselineTraitsList()).thenReturn(this.createSettingDetails());
-		when(this.formulaService.getAllFormulaVariables(Matchers.anySet())).thenReturn(this.createFormulaVariables());
+		when(this.formulaService.getAllFormulaVariables(ArgumentMatchers.<Set<Integer>>any())).thenReturn(this.createFormulaVariables());
 
 		final ResponseEntity<Set<String>> result = this.derivedVariableController.dependencyVariables();
 
@@ -363,7 +354,7 @@ public class DerivedVariableControllerTest {
 		final Set<Integer> variableIdsOfTraitsInStudy = this.derivedVariableController.getVariableIdsOfTraitsInStudy();
 
 		when(this.formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy)).thenReturn(this.createFormulaVariables());
-		when(this.studyService.hasMeasurementDataEntered(Matchers.anyList(), Matchers.eq(STUDY_ID))).thenReturn(true);
+		when(this.studyService.hasMeasurementDataEntered(ArgumentMatchers.<List<Integer>>any(), Matchers.eq(STUDY_ID))).thenReturn(true);
 
 		final ResponseEntity<Boolean> result = this.derivedVariableController.dependencyVariableHasMeasurementData(idsToBeRemoved);
 
@@ -385,11 +376,10 @@ public class DerivedVariableControllerTest {
 		final Set<Integer> variableIdsOfTraitsInStudy = this.derivedVariableController.getVariableIdsOfTraitsInStudy();
 
 		when(this.formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy)).thenReturn(this.createFormulaVariables());
-		when(this.studyService.hasMeasurementDataEntered(Matchers.anyList(), Matchers.eq(STUDY_ID))).thenReturn(false);
 
 		final ResponseEntity<Boolean> result = this.derivedVariableController.dependencyVariableHasMeasurementData(idsToBeRemoved);
 
-		verify(this.studyService, Mockito.times(0)).hasMeasurementDataEntered(Matchers.anyList(), anyInt());
+		verify(this.studyService, Mockito.times(0)).hasMeasurementDataEntered(ArgumentMatchers.<List<Integer>>any(), anyInt());
 
 		assertFalse(result.getBody());
 

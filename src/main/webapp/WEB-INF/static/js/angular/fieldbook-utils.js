@@ -169,6 +169,12 @@
 					templateUrl: '/Fieldbook/static/angular-templates/displaySettings.html',
 					controller: function($scope, $element, $attrs) {
 
+						$scope.$watch('settings', function (newValue, oldValue) {
+							if (oldValue.m_keys.length !== newValue.m_keys.length) {
+								$scope.options.selectAll = false;
+							}
+						}, true);
+
 						$scope.variableType = $attrs.variableType;
 						$scope.options = {
 							selectAll: false

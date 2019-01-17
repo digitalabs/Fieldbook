@@ -179,14 +179,13 @@
 				});
 			};
 
-			$scope.validateRemoveVariable = function (deleteVariables, message) {
+			$scope.validateRemoveVariable = function (deleteVariables) {
 				var deferred = $q.defer();
 				if (deleteVariables.length != 0) {
 					datasetService.observationCount($scope.subObservationSet.dataset.datasetId, deleteVariables).then(function (response) {
 						var count = response.headers('X-Total-Count');
 						if (count > 0) {
-							var modalInstance = $scope.openConfirmModal(message,
-								environmentConfirmLabel);
+							var modalInstance = $scope.openConfirmModal(observationVariableDeleteConfirmationText , environmentConfirmLabel);
 							modalInstance.result.then(deferred.resolve);
 						} else {
 							deferred.resolve(true);

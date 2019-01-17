@@ -1,7 +1,10 @@
 <div class="row" ng-cloak="">
-	<div class="col-lg-8 col-md-8 col-sm-10 col-xs-12">
-		<section-container collapsible="true" th:attr="heading=#{study.managesettings.observation.details}">
-			<section-container name="content" th:attr="heading=#{study.managesettings.baseline.traits},
+	<section-container th:attr="heading=#{study.managesettings.observation.details}" collapsible="true">
+		<div name="content">
+			<div class="environments col-lg-12">
+				<div class="row">
+					<div class="col-xs-6 col-md-6">
+						<section-container name="content" th:attr="heading=#{study.managesettings.baseline.traits},
 							   help-tooltip=#{study.managesettings.trait.notes},icon-img=@{/static/img/baseline-traits.png}"
 										   icon-size="22" add-variable="true" model-data="traitVariables"
 										   selected-variables="selectedVariable"

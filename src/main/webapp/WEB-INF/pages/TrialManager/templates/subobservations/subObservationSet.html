@@ -4,7 +4,7 @@
 			<section-container name="content" th:attr="heading=#{study.managesettings.baseline.traits},
 							   help-tooltip=#{study.managesettings.trait.notes},icon-img=@{/static/img/baseline-traits.png}"
 										   icon-size="22" add-variable="true" model-data="traitVariables"
-										   selected-variables="selectedTraits"
+										   selected-variables="selectedVariable"
 										   variable-type="1808"
 										   callback="onAddVariable(result,1808)" on-hide-callback="onHideCallback"
 										   select-variable-callback="selectVariableCallback" hide-variable="addVariable">
@@ -17,7 +17,7 @@
 						<section-container icon="bms-variates" name="content" th:attr="heading=#{study.studydetails.variates},
 							   help-tooltip=#{study.managesettings.selection.tooltip}"
 										   icon-size="22" add-variable="true" model-data="selectionVariables"
-										   selected-variables="selectedSelection"
+										   selected-variables="selectedVariable"
 										   variable-type="1807"
 										   callback="onAddVariable(result,1807)" on-hide-callback="onHideCallback"
 										   select-variable-callback="selectVariableCallback" hide-variable="addVariable">

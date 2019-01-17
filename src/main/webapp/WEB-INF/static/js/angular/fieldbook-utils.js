@@ -88,6 +88,7 @@
                         // tell the studyStateService that the study has been updated.
 						if (oldValue.m_keys.length !== newValue.m_keys.length) {
                             studyStateService.updateOccurred();
+							$scope.options.selectAll = false;
 						}
 					}, true);
 
@@ -191,7 +192,6 @@
 
 						// when the delete button is clicked do this
 						$scope.removeSettings = function() {
-
 							if (typeof $scope.predeleteFunction() === 'undefined') {
 								$scope.doDeleteSelectedSettings();
 							} else {

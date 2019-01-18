@@ -44,7 +44,7 @@
 				$scope.nested.selectedEnvironment = dataset.instances[0];
 				$scope.traitVariables = $scope.getVariables('TRAIT');
 				$scope.selectionVariables = $scope.getVariables('SELECTION_METHOD');
-				$scope.selectedVariable = $scope.getSelectedVariables();
+				$scope.selectedVariables = $scope.getSelectedVariables();
 				loadTable();
 			});
 
@@ -145,7 +145,7 @@
 							});
 
 							loadTable();
-							$scope.selectedVariable = $scope.getSelectedVariables();
+							$scope.selectedVariables = $scope.getSelectedVariables();
 						}, function (response) {
 							if (response.errors && response.errors.length) {
 								showErrorMessage('', response.errors[0].message);

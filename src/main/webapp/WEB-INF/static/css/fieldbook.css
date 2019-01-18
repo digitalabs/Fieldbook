@@ -2311,3 +2311,8 @@ input.select-all-margin{
 table.dataTable thead .derived-trait-column-header {
     background-color: #bdd9b4;
 }
+
+.dataset-options .ui-select-choices div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

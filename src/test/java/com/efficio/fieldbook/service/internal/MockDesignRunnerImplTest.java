@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
+import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MockDesignRunnerImplTest {
@@ -46,6 +47,29 @@ public class MockDesignRunnerImplTest {
 			Assert.assertEquals(2, output.getTrialInstances().size());
 			for (final BVDesignTrialInstance instance : output.getTrialInstances()) {				
 				Assert.assertEquals(40, instance.getRows().size());
+			}
+		} catch (final Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+
+	@Test
+	public void testMockDesignRunnerRCBDWithTreatmentFactors() {
+
+		final MainDesign mainDesign = this.experimentDesignGenerator
+			.createRandomizedCompleteBlockDesign("2", "REP_NO", "PLOT_NO", 200, 100, TermId.ENTRY_NO.name(), Arrays.asList("_8260", "_8261", "ENTRY_NO"), Arrays.asList("3", "2", "20"),
+				"mock-bv-out.csv");
+		// Configure number of instances to be generated
+		mainDesign.getDesign().getParameters().add(new ExpDesignParameter(ExperimentDesignGenerator.NUMBER_TRIALS_PARAM, "2"));
+
+		try {
+			final BVDesignOutput output = this.mockDesignRunner.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+			Assert.assertTrue(output.isSuccess());
+			// Per instance: 20 entries, 2 reps, expecting 40 rows back.
+			Assert.assertEquals(2, output.getTrialInstances().size());
+			for (final BVDesignTrialInstance instance : output.getTrialInstances()) {
+				Assert.assertEquals(240, instance.getRows().size());
 			}
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -97,6 +121,15 @@ public class MockDesignRunnerImplTest {
 			e.printStackTrace();
 			Assert.fail();
 		}
+	}
+
+	@Test
+	public void testGetTreatmentFactorValuesCombinations() {
+		final MainDesign mainDesign = this.experimentDesignGenerator
+			.createRandomizedCompleteBlockDesign("2", "REP_NO", "PLOT_NO", 200, 100, TermId.ENTRY_NO.name(), Arrays.asList("_8260", "_8261", "ENTRY_NO"), Arrays.asList("3", "2", "20"),
+				"mock-bv-out.csv");
+		final List<List<String>> treatmentFactorValuesList  = this.mockDesignRunner.getTreatmentFactorValuesCombinations(mainDesign.getDesign());
+		Assert.assertEquals(6, treatmentFactorValuesList.size());
 	}
 
 }

@@ -111,7 +111,6 @@
 					variable.description = variable.definition;
 					variable.name = variable.alias ? variable.alias : variable.name;
 					variable.termId = variable.id;
-					$scope.subObservationSet.dataset.variables.push(variable);
 				});
 
 				datasetService.addVariables($scope.subObservationSet.dataset.datasetId, {
@@ -119,6 +118,7 @@
 					variableId: variable.id,
 					studyAlias: variable.name
 				}).then(function () {
+					$scope.subObservationSet.dataset.variables.push(variable);
 					loadTable();
 				}, function (response) {
 					if (response.errors && response.errors.length) {

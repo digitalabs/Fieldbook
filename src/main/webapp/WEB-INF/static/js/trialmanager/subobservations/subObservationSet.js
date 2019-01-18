@@ -90,9 +90,7 @@
 			$scope.getSelectedVariables = function () {
 				var selected = {};
 				angular.forEach($scope.subObservationSet.dataset.variables, function (variable) {
-					variable.termId
 					selected[variable.termId] = variable.alias;
-
 				});
 				return selected;
 			};

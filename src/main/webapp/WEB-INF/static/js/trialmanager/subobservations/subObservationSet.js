@@ -112,6 +112,12 @@
 					}).then(function () {
 						$scope.selectedTraits = $scope.getSelectedVariables();
 						loadTable();
+					}, function (response) {
+						if (response.errors && response.errors.length) {
+							showErrorMessage('', response.errors[0].message);
+						} else {
+							showErrorMessage('', ajaxGenericErrorMsg);
+						}
 					});
 				}
 			};
@@ -137,6 +143,12 @@
 							});
 							loadTable();
 							$scope.selectedTraits = $scope.getSelectedVariables();
+						}, function (response) {
+							if (response.errors && response.errors.length) {
+								showErrorMessage('', response.errors[0].message);
+							} else {
+								showErrorMessage('', ajaxGenericErrorMsg);
+							}
 						});
 					}
 				});

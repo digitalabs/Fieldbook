@@ -932,11 +932,10 @@ function selectEnvironmentContinueAdvancing(trialInstances, noOfReplications, se
 
 function selectedEnvironmentContinueCreatingSample(trialInstances) {
 	'use strict';
-	var studyId = $('#studyId').val();
 	$('#selectEnvironmentToSampleListModal').modal('hide');
 
 	var scope = angular.element('#selectSelectionVariableToSampleListModal').scope();
-	scope.init(studyId, trialInstances);
+	scope.init(trialInstances);
 	$('#selectSelectionVariableToSampleListModal').modal('show');
 }
 

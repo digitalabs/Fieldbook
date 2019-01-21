@@ -107,8 +107,8 @@ var SaveSampleList = {};
 		Spinner.play();
 
 		$.ajax({
-			url: '/bmsapi/sampleLists/' + cropName + '/sampleList',
-			type: 'POST',
+			url: '/bmsapi/sampleLists/' + cropName + '/sampleLists',
+			type: 'PUT',
 			data: JSON.stringify(SaveSampleList.details),
 			contentType: "application/json",
 			beforeSend: function (xhr) {

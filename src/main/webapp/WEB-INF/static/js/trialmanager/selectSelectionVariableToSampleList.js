@@ -4,8 +4,8 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('selectSelectionVariableToSampleListModalCtrl', ['$scope', 'TrialManagerDataService', '$http', '$timeout', function ($scope,
-																																				   TrialManagerDataService, $http, $timeout) {
+	manageTrialApp.controller('selectSelectionVariableToSampleListModalCtrl', ['$scope', 'TrialManagerDataService', '$http', '$timeout', 'studyContext', function ($scope,
+																																				   TrialManagerDataService, $http, $timeout, studyContext) {
 
 		$scope.backToCreateSample = function () {
 			$('#selectSelectionVariableToSampleListModal').modal('hide');
@@ -17,8 +17,7 @@
 			$event.stopPropagation();
 		};
 
-		$scope.init = function (trialStudyId, trialInstances) {
-			$scope.studyId = trialStudyId;
+		$scope.init = function (trialInstances) {
 			$scope.instances = trialInstances;
 
 			$scope.selectionVariables = TrialManagerDataService.settings.selectionVariables.m_keys;
@@ -84,7 +83,7 @@
 				"instanceIds": $scope.instances,
 				"takenBy": "",
 				"samplingDate": $scope.dateSampling,
-				"studyId": $scope.studyId,
+				"datasetId": studyContext.measurementDatasetId,
 				"cropName": cropName,
 				"programUUID": currentProgramId,
 				"parentId": 0,

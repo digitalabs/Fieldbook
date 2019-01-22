@@ -5,28 +5,37 @@
 	var manageTrialApp = angular.module('manageTrialApp');
 
 	manageTrialApp.controller('ExecuteCalculatedVariableModalCtrl',
-		['$scope', 'TrialManagerDataService', '$http', function ($scope, TrialManagerDataService, $http) {
+		['$scope', 'TrialManagerDataService', '$http', 'environmentService', function ($scope, TrialManagerDataService, $http, environmentService) {
 
-		$scope.settings = TrialManagerDataService.settings.environments;
-		$scope.LOCATION_NAME_ID = 8190;
-		$scope.TRIAL_INSTANCE_INDEX = 8170;
+		//$scope.settings = TrialManagerDataService.settings.environments;
+		//$scope.LOCATION_NAME_ID = 8190;
+		//$scope.TRIAL_INSTANCE_INDEX = 8170;
+
+			$scope.instances = [];
+			$scope.selectedInstances = {};
+			$scope.isEmptySelection = false;
 
 		$scope.init = function () {
 			$scope.calculateVariableLocationForm.$setPristine();
 
 			$scope.environmentSelected = undefined;
 			$scope.variableSelected = undefined;
-			$scope.data = TrialManagerDataService.currentData.environments;
+			//$scope.data = TrialManagerDataService.currentData.environments;
 
 			$scope.variableListView = convertTraitsVariablesToListView(TrialManagerDataService.settings.measurements.m_keys);
-			$scope.environmentListView = convertToEnvironmentListView($scope.data.environments, $scope.LOCATION_NAME_ID, $scope.TRIAL_INSTANCE_INDEX);
+			//$scope.environmentListView = convertToEnvironmentListView($scope.data.environments, $scope.LOCATION_NAME_ID, $scope.TRIAL_INSTANCE_INDEX);
 
-			if(TrialManagerDataService.selectedEnviromentOnMeasurementTab){
+			/*if(TrialManagerDataService.selectedEnviromentOnMeasurementTab){
 				var instance = TrialManagerDataService.selectedEnviromentOnMeasurementTab.instanceNumber;
 				$scope.environmentSelected = $scope.environmentListView[parseInt(instance) - 1];
 			} else {
 				$scope.environmentSelected = $scope.environmentListView[0];
-			}
+			}*/
+
+			environmentService.getEnvironments().then(function (environmentDetails) {
+				$scope.instances = environmentDetails;
+			});
+
 		};
 
 		$scope.proceedExecution = function () {
@@ -86,7 +95,7 @@
 			return variableListView;
 		};
 
-		function convertToEnvironmentListView(environments, preferredLocationVariable, trialInstanceIndex) {
+		/*function convertToEnvironmentListView(environments, preferredLocationVariable, trialInstanceIndex) {
 			var environmentListView = [];
 			angular.forEach(environments, function(environment) {
 				environmentListView.push({ name: environment.managementDetailValues[trialInstanceIndex] + " - " + TrialManagerDataService.getPreferredEnvironmentName(environment, preferredLocationVariable, $scope.settings.managementDetails)
@@ -94,7 +103,7 @@
 				,locationId:environment.locationId});
 			});
 			return environmentListView;
-		};
+		};*/
 	}]);
 
 	manageTrialApp.controller('ConfirmOverrideCalculatedVariableModalCtrl', ['$scope', '$http', function ($scope, $http) {

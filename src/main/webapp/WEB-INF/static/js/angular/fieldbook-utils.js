@@ -88,6 +88,7 @@
                         // tell the studyStateService that the study has been updated.
 						if (oldValue.m_keys.length !== newValue.m_keys.length) {
                             studyStateService.updateOccurred();
+							$scope.options.selectAll = false;
 						}
 					}, true);
 
@@ -168,6 +169,12 @@
 					templateUrl: '/Fieldbook/static/angular-templates/displaySettings.html',
 					controller: function($scope, $element, $attrs) {
 
+						$scope.$watch('settings', function (newValue, oldValue) {
+							if (oldValue.m_keys.length !== newValue.m_keys.length) {
+								$scope.options.selectAll = false;
+							}
+						}, true);
+
 						$scope.variableType = $attrs.variableType;
 						$scope.options = {
 							selectAll: false
@@ -191,12 +198,11 @@
 
 						// when the delete button is clicked do this
 						$scope.removeSettings = function() {
-
 							if (typeof $scope.predeleteFunction() === 'undefined') {
 								$scope.doDeleteSelectedSettings();
 							} else {
 								var checkedVariableTermIds = $scope.retrieveCheckedVariableTermIds($scope.settings);
-								$scope.predeleteFunction()(checkedVariableTermIds);
+								$scope.predeleteFunction()(checkedVariableTermIds, $scope.settings);
 							}
 						};
 

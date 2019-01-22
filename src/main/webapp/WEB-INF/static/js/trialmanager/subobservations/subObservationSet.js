@@ -10,6 +10,7 @@
 				  datasetService, $timeout
 		) {
 			$scope.traitVariables = new angular.OrderedHash();
+			$scope.selectionVariables = new angular.OrderedHash();
 			$scope.isHideDelete = false;
 			$scope.addVariable = true;
 			var subObservationSet = $scope.subObservationSet = $stateParams.subObservationSet;
@@ -41,22 +42,30 @@
 				}
 				$scope.environments = dataset.instances;
 				$scope.nested.selectedEnvironment = dataset.instances[0];
-
-				$scope.traitVariables = $scope.getTraitVariablesFromDataset();
-				$scope.selectedTraits = $scope.getSelectedVariables();
-
+				$scope.traitVariables = $scope.getVariables('TRAIT');
+				$scope.selectionVariables = $scope.getVariables('SELECTION_METHOD');
+				$scope.selectedVariables = $scope.getSelectedVariables();
 				loadTable();
 			});
 
-			$scope.getTraitVariablesFromDataset = function () {
-				var traitVariables = {settings: []};
+			$scope.getVariables = function (variableType) {
+				var variables = {settings: []};
 				angular.forEach($scope.subObservationSet.dataset.variables, function (datasetVariable) {
-					var variableType = 'TRAIT';
 					var SettingDetail = $scope.transformSettingDetails(datasetVariable, variableType);
-					traitVariables.settings.push(SettingDetail);
+					variables.settings.push(SettingDetail);
 
 				});
-				return TrialManagerDataService.extractSettings(traitVariables);
+				return TrialManagerDataService.extractSettings(variables);
+			};
+
+			$scope.transformSettingDetails = function (datasetVariable, variableType) {
+				var variable = $scope.transformVariable(datasetVariable);
+				var SettingDetail = {
+					variable: variable,
+					hidden: datasetVariable.variableType != variableType,
+					deletable: true
+				};
+				return SettingDetail;
 			};
 
 			$scope.transformVariable = function (datasetVariable) {
@@ -78,17 +87,15 @@
 				return variable;
 			};
 
-			$scope.transformSettingDetails = function (datasetVariable, variableType) {
-				var variable = $scope.transformVariable(datasetVariable);
-				var SettingDetail = {
-					variable: variable,
-					hidden: datasetVariable.variableType != variableType,
-					deletable: true
-				};
-				return SettingDetail;
+			$scope.getSelectedVariables = function () {
+				var selected = {};
+				angular.forEach($scope.subObservationSet.dataset.variables, function (variable) {
+					selected[variable.termId] = variable.alias;
+				});
+				return selected;
 			};
 
-			$scope.selectVariableCallback = function(responseData) {
+			$scope.selectVariableCallback = function (responseData) {
 				// just override default callback (see VariableSelection.prototype._selectVariable)
 			};
 
@@ -96,47 +103,53 @@
 				adjustColumns($(tableId).DataTable());
 			};
 
-			$scope.onAddVariable = function () {
-				if ($scope.traitVariables.length()) {
-					var pos = $scope.traitVariables.m_keys.length - 1;
-					var variableId = $scope.traitVariables.m_keys[pos];
-					var m_vals = $scope.traitVariables.m_vals[variableId];
-					m_vals.deletable = true;
-					m_vals.variable.description = m_vals.variable.definition;
-					m_vals.variable.name = m_vals.variable.alias || m_vals.variable.name;
-
-					datasetService.addVariables($scope.subObservationSet.dataset.datasetId, {
-						variableTypeId: 1808,
-						variableId: variableId,
-						studyAlias: m_vals.variable.name
-					}).then(function () {
-						$scope.selectedTraits = $scope.getSelectedVariables();
-						loadTable();
-					});
-				}
-			};
-
-			$scope.getSelectedVariables = function() {
-				var selected = {};
-				angular.forEach($scope.traitVariables.m_keys, function (key) {
-					$scope.traitVariables.m_vals[key].variable.cvTermId
-					selected[$scope.traitVariables.m_vals[key].variable.cvTermId] = $scope.traitVariables.m_vals[key].variable.name;
-
+			$scope.onAddVariable = function (result, variableTypeId) {
+				var variable = undefined;
+				angular.forEach(result, function (val) {
+					variable = val.variable;
+					val.deletable = true;
+					variable.description = variable.definition;
+					variable.name = variable.alias ? variable.alias : variable.name;
+					variable.termId = variable.id;
 				});
-				return selected;
+
+				datasetService.addVariables($scope.subObservationSet.dataset.datasetId, {
+					variableTypeId: variableTypeId,
+					variableId: variable.id,
+					studyAlias: variable.name
+				}).then(function () {
+					$scope.subObservationSet.dataset.variables.push(variable);
+					loadTable();
+				}, function (response) {
+					if (response.errors && response.errors.length) {
+						showErrorMessage('', response.errors[0].message);
+					} else {
+						showErrorMessage('', ajaxGenericErrorMsg);
+					}
+				});
 			};
 
-			$scope.onRemoveVariable = function (variableIds) {
+			$scope.onRemoveVariable = function (variableIds, settings) {
 				var promise = $scope.validateRemoveVariable(variableIds);
 
 				promise.then(function (doContinue) {
 					if (doContinue) {
 						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, variableIds).then(function () {
 							angular.forEach(variableIds, function (cvtermId) {
-								$scope.traitVariables.remove(cvtermId);
+								settings.remove(cvtermId);
+								$scope.subObservationSet.dataset.variables = $scope.subObservationSet.dataset.variables.filter(function (variable) {
+									return variable.termId !== cvtermId;
+								});
 							});
+
 							loadTable();
-							$scope.selectedTraits = $scope.getSelectedVariables();
+							$scope.selectedVariables = $scope.getSelectedVariables();
+						}, function (response) {
+							if (response.errors && response.errors.length) {
+								showErrorMessage('', response.errors[0].message);
+							} else {
+								showErrorMessage('', ajaxGenericErrorMsg);
+							}
 						});
 					}
 				});
@@ -148,8 +161,7 @@
 					datasetService.observationCount($scope.subObservationSet.dataset.datasetId, deleteVariables).then(function (response) {
 						var count = response.headers('X-Total-Count');
 						if (count > 0) {
-							var modalInstance = $scope.openConfirmModal(measurementModalConfirmationText,
-								environmentConfirmLabel);
+							var modalInstance = $scope.openConfirmModal(observationVariableDeleteConfirmationText , environmentConfirmLabel);
 							modalInstance.result.then(deferred.resolve);
 						} else {
 							deferred.resolve(true);

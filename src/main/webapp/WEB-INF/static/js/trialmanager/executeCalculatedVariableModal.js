@@ -94,15 +94,6 @@
 			return variableListView;
 		};
 
-		/*function convertToEnvironmentListView(environments, preferredLocationVariable, trialInstanceIndex) {
-			var environmentListView = [];
-			angular.forEach(environments, function(environment) {
-				environmentListView.push({ name: environment.managementDetailValues[trialInstanceIndex] + " - " + TrialManagerDataService.getPreferredEnvironmentName(environment, preferredLocationVariable, $scope.settings.managementDetails)
-					,trialInstanceNumber: environment.managementDetailValues[trialInstanceIndex]
-				,locationId:environment.locationId});
-			});
-			return environmentListView;
-		};*/
 	}]);
 
 	manageTrialApp.controller('ConfirmOverrideCalculatedVariableModalCtrl', ['$scope', '$http', function ($scope, $http) {

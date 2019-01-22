@@ -10,7 +10,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils', 'subObservation',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons', 'datatables.colreorder',
 		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'bmsAuth','studyState',
-		'export-study', 'import-study']);
+		'export-study', 'import-study', 'create-sample']);
 
 	manageTrialApp.config(['$httpProvider', function($httpProvider) {
 		$httpProvider.interceptors.push('authInterceptor');
@@ -192,9 +192,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
-		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService', 'importStudyModalService', '$uibModal', '$q', 'datasetService',
+		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService', 'importStudyModalService',
+		'createSampleModalService', '$uibModal', '$q', 'datasetService',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
-				  derivedVariableService, exportStudyModalService, importStudyModalService, $uibModal, $q, datasetService) {
+				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, $uibModal, $q, datasetService) {
 
 			$scope.trialTabs = [
 				{
@@ -1006,6 +1007,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.showImportStudyModal = function() {
 				importStudyModalService.openDatasetOptionModal();
+			}
+
+			$scope.showCreateSampleListModal = function() {
+				createSampleModalService.openDatasetOptionModal();
 			}
 
 		}]);

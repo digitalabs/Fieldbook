@@ -913,13 +913,6 @@ function createSample() {
 		showErrorMessage('', needSaveImportDataError);
 		return;
 	}
-
-	$('#selectSelectionVariableToSampleListModal').modal('hide');
-	$('#selectEnvironmentToSampleListModal').modal({ backdrop: 'static', keyboard: true });
-
-	var scope = angular.element('#selectEnvironmentToSampleListModal').scope();
-	scope.init();
-	scope.$apply();
 }
 
 function selectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, advanceType) {
@@ -928,15 +921,6 @@ function selectEnvironmentContinueAdvancing(trialInstances, noOfReplications, se
 	$('#selectEnvironmentModal').modal('hide');
 	var locationDetailHtml = generateLocationDetailTable(selectedLocations);
 	advanceStudy(studyId, trialInstances, noOfReplications, locationDetailHtml, advanceType);
-}
-
-function selectedEnvironmentContinueCreatingSample(trialInstances) {
-	'use strict';
-	$('#selectEnvironmentToSampleListModal').modal('hide');
-
-	var scope = angular.element('#selectSelectionVariableToSampleListModal').scope();
-	scope.init(trialInstances);
-	$('#selectSelectionVariableToSampleListModal').modal('show');
 }
 
 function openSampleSummary(obsUnitId, plotNumber) {

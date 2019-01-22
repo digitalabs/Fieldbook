@@ -7,10 +7,6 @@
 	manageTrialApp.controller('ExecuteCalculatedVariableModalCtrl',
 		['$scope', 'TrialManagerDataService', '$http', 'environmentService', function ($scope, TrialManagerDataService, $http, environmentService) {
 
-		//$scope.settings = TrialManagerDataService.settings.environments;
-		//$scope.LOCATION_NAME_ID = 8190;
-		//$scope.TRIAL_INSTANCE_INDEX = 8170;
-
 			$scope.instances = [];
 			$scope.selectedInstances = {};
 			$scope.isEmptySelection = false;
@@ -23,15 +19,6 @@
 			//$scope.data = TrialManagerDataService.currentData.environments;
 
 			$scope.variableListView = convertTraitsVariablesToListView(TrialManagerDataService.settings.measurements.m_keys);
-			//$scope.environmentListView = convertToEnvironmentListView($scope.data.environments, $scope.LOCATION_NAME_ID, $scope.TRIAL_INSTANCE_INDEX);
-
-			/*if(TrialManagerDataService.selectedEnviromentOnMeasurementTab){
-				var instance = TrialManagerDataService.selectedEnviromentOnMeasurementTab.instanceNumber;
-				$scope.environmentSelected = $scope.environmentListView[parseInt(instance) - 1];
-			} else {
-				$scope.environmentSelected = $scope.environmentListView[0];
-			}*/
-
 			environmentService.getEnvironments().then(function (environmentDetails) {
 				$scope.instances = environmentDetails;
 			});

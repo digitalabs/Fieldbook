@@ -35,9 +35,21 @@
 		};
 
 		$scope.execute = function () {
+			var instanceIds = [];
+
+			Object.keys($scope.selectedInstances).forEach(function (instanceId) {
+				var isSelected = $scope.selectedInstances[instanceId];
+				if (isSelected) {
+					var instanceSelected = $scope.instances.find(function(instance) {
+						return instance.instanceNumber === parseInt(instanceId);
+					});
+					instanceIds.push(instanceSelected.instanceDbId);
+				}
+			});
+
 			var calculateData = {
 				variableId: $scope.variableSelected.cvTermId
-				, geoLocationId: $scope.environmentSelected.locationId
+				, geoLocationId: instanceIds
 			};
 
 			$http.post('/Fieldbook/DerivedVariableController/derived-variable/execute', JSON.stringify(calculateData))

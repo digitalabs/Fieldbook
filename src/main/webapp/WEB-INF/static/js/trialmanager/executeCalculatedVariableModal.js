@@ -13,10 +13,8 @@
 
 		$scope.init = function () {
 			$scope.calculateVariableLocationForm.$setPristine();
-
 			$scope.environmentSelected = undefined;
 			$scope.variableSelected = undefined;
-			//$scope.data = TrialManagerDataService.currentData.environments;
 
 			$scope.variableListView = convertTraitsVariablesToListView(TrialManagerDataService.settings.measurements.m_keys);
 			environmentService.getEnvironments().then(function (environmentDetails) {

@@ -39,13 +39,17 @@
 
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
 
-        <section-container icon="bms-variates" add-variable="true" hide-variable="addVariable" model-data="selectionVariables" variable-type="1807"
+        <section-container icon="bms-variates" add-variable="true" hide-variable="addVariable" model-data="selectionVariables" variable-type="1807" callback="onAddVariable(result,selectionVariablesOptions)"
                            th:attr="heading=#{study.create.study.selection.variates},help-tooltip=#{study.managesettings.selection.tooltip}">
             <div name="content" class="">
                 <table style="table-layout: fixed;" class="my-class table table-curved table-condensed selection-variate-table" id="selectionVariablesSettings">
                     <thead>
-                    <tr >
-                        <th class="fbk-delete-link"></th>
+                    <tr>
+                        <th style="text-align: center">
+                            <div ng-show="(selectionVariables.keys() | removeHiddenAndDeletablesVariableFilter: selectionVariables.vals() ).length &gt; 0">
+                                <input type="checkbox" ng-model="selectionVariablesOptions.selectAll" ng-change="doSelectAll(selectionVariables, selectionVariablesOptions)"/>
+                            </div>
+                        </th>
                         <th width="45%" >Name</th>
                         <th width="50%" >Description</th>
                     </tr>
@@ -58,9 +62,8 @@
                     </tr>
                     <tr ng-repeat="key in filteredKeys = (selectionVariables.keys() | removeHiddenVariableFilter: selectionVariables.vals() ) track by key" >
                         <td style="text-align: center" ng-class="{even : $even, odd : $odd}">
-                            <input class="remove-indv-btn" type="checkbox"
-                                   ng-model="selectionVariables.val(key).isChecked"/>
-                            <input class="cvTermIds" type="hidden" ng-model="selectionVariables.val(key).variable.cvTermId" />
+                            <input class="remove-indv-btn" type="checkbox" ng-model="selectionVariables.val(key).isChecked"/>
+                            <input class="cvTermIds" type="hidden" ng-model="selectionVariables.val(key).variable.cvTermId"/>
                         </td>
                         <td width="45%" ng-class="{even : $even, odd : $odd}">
                             <a href="javascript: void(0);">
@@ -75,7 +78,6 @@
 
                 <div class="row form-group" ng-show="((selectionVariables.keys() | removeHiddenAndDeletablesVariableFilter: selectionVariables.vals()).length &gt; 0)">
                     <div class="col-md-12">
-                        <label class="fbk-selectall-chk"><input type="checkbox" ng-model="selectionVariablesOptions.selectAll" ng-change="doSelectAll(selectionVariables, selectionVariablesOptions)"/> Select All</label>
                         <a class="fbk-remove-link" href="javascript: void(0);" ng-click="removeSettings(VARIABLE_TYPES.SELECTION_METHOD, selectionVariables, selectionVariablesOptions)" >Remove</a>
                     </div>
                 </div>

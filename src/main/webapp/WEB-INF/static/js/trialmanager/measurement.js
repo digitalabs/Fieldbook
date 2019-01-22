@@ -105,8 +105,7 @@
 								datasetService.observationCount(studyContext.measurementDatasetId, variableIds).then(function (response) {
 									var count = response.headers('X-Total-Count');
 									if (count > 0) {
-										var modalInstance = $rootScope.openConfirmModal(measurementModalConfirmationText,
-											environmentConfirmLabel);
+										var modalInstance = $rootScope.openConfirmModal(observationVariableDeleteConfirmationText, environmentConfirmLabel);
 										modalInstance.result.then(deferred.resolve);
 									} else {
 										deferred.resolve(true);

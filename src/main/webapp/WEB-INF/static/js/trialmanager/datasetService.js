@@ -131,14 +131,26 @@
 
 			};
 
-			datasetService.exportDataset = function (datasetId, instanceIds, collectionOrderId) {
-				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/csv', {
-					params: {
-						instanceIds: instanceIds.join(","),
-						collectionOrderId: collectionOrderId
-					},
-					responseType: 'blob'
-				});
+			datasetService.exportDataset = function (datasetId, instanceIds, collectionOrderId, fileFormatId) {
+				if (fileFormatId === '1') {
+					var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/csv', {
+						params: {
+							instanceIds: instanceIds.join(","),
+							collectionOrderId: collectionOrderId
+						},
+						responseType: 'blob'
+					});
+				}
+				else {
+					var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/xls', {
+						params: {
+							instanceIds: instanceIds.join(","),
+							collectionOrderId: collectionOrderId
+						},
+						responseType: 'blob'
+					});
+				}
+
 				return request.then(function (response) {
 					return response;
 				}, failureHandler);

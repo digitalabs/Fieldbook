@@ -5,7 +5,7 @@
 		</div>
 		<div class="col-xs-1 col-md-1">
 			<button id="closeAdvanceTrialModal" type="button" class="close  pull-right glyphicon glyphicon-remove"
-					data-dismiss="modal" aria-hidden="true"/>
+					ng-click="cancel()" aria-hidden="true"/>
 		</div>
 	</div>
 
@@ -26,7 +26,7 @@
 	</div>
 </div> <!-- Modal Body -->
 <div class="modal-footer">
-	<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">
+	<button type="button" class="btn btn-default" ng-click="cancel()" aria-hidden="true">
 		Cancel
 	</button>
 	<button type="button" class="btn btn-primary" ng-disabled="isEmptySelection"

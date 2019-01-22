@@ -112,6 +112,11 @@
 				return request.then(successHandler, failureHandler);
 			};
 
+			datasetService.getVariables = function (datasetId, variableTypeId) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables/' + variableTypeId);
+				return request.then(successHandler, failureHandler);
+			};
+
 			datasetService.removeVariables = function (datasetId, variableIds) {
 				var request = $http.delete(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables?', {
 					params: {

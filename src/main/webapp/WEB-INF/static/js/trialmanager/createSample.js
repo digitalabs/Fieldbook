@@ -32,7 +32,7 @@
 				});
 			};
 
-			createSampleModalService.openSelectSelectionVariableToSampleListModal = function (instanceNumbers) {
+			createSampleModalService.openSelectSelectionVariableToSampleListModal = function (datasetId, instanceNumbers) {
 				$uibModal.open({
 					templateUrl: '/Fieldbook/static/angular-templates/createSample/selectSelectionVariableToSampleListModal.html',
 					controller: "selectSelectionVariableToSampleListModalCtrl",
@@ -40,7 +40,8 @@
 					resolve: {
 						instanceNumbers: function () {
 							return instanceNumbers;
-						}
+						},
+						datasetId: datasetId
 					},
 					controllerAs: 'ctrl'
 				});
@@ -52,7 +53,7 @@
 			};
 
 			createSampleModalService.showErrorMessage = function (title, message) {
-				// Call the global function to show alert message
+				// Call the global function to show error message
 				showErrorMessage(title, message);
 			};
 
@@ -75,131 +76,144 @@
 
 		}]);
 
-	createSampleModule.controller('selectEnvironmentToSampleListModalCtrl', ['$scope', 'environmentService', 'createSampleModalService', '$uibModalInstance',
-		function ($scope, environmentService, createSampleModalService, $uibModalInstance) {
+	createSampleModule.controller('selectEnvironmentToSampleListModalCtrl', ['$scope', 'datasetService', 'environmentService',
+		'createSampleModalService', '$uibModalInstance', 'studyContext', 'datasetId',
+		function ($scope, datasetService, environmentService, createSampleModalService, $uibModalInstance, studyContext, datasetId) {
 
-		$scope.instances = [];
-		$scope.selectedInstances = {};
-		$scope.isEmptySelection = false;
+			$scope.instances = [];
+			$scope.selectedInstances = {};
+			$scope.isEmptySelection = false;
 
-		$scope.continueCreatingSampleList = function () {
+			$scope.continueCreatingSampleList = function () {
 
-			var instanceNumbers = [];
-			Object.keys($scope.selectedInstances).forEach(function (instanceNumber) {
-				var isSelected = $scope.selectedInstances[instanceNumber];
-				if (isSelected) {
-					instanceNumbers.push(instanceNumber);
-				}
-			});
-
-			if ($scope.isEmptySelection) {
-				createSampleModalService.showErrorMessage('', $.fieldbookMessages.errorNotSelectedInstance);
-			} else {
-				createSampleModalService.openSelectSelectionVariableToSampleListModal(instanceNumbers);
-				$uibModalInstance.close();
-			}
-		};
-
-		$scope.init = function () {
-			environmentService.getEnvironments().then(function (environmentDetails) {
-				$scope.instances = environmentDetails;
-			});
-		};
-
-		$scope.init();
-
-	}]);
-
-	createSampleModule.controller('selectSelectionVariableToSampleListModalCtrl', ['$scope', 'TrialManagerDataService', '$http', '$timeout', 'studyContext', 'createSampleModalService', 'instanceNumbers',
-		function ($scope, TrialManagerDataService, $http, $timeout, studyContext, createSampleModalService, instanceNumbers) {
-
-		$scope.backToCreateSample = function () {
-			createSampleModalService.openSelectEnvironmentToSampleListModal(studyContext.measurementDatasetId);
-		};
-
-		$scope.init = function () {
-
-			$scope.selectionVariables = TrialManagerDataService.settings.selectionVariables.m_keys;
-			$scope.saveSampleListButton = false;
-			$scope.dateSampling = '';
-
-			$scope.variables = [];
-			$scope.users = [];
-
-			$scope.selectedUser = undefined;
-			$scope.variableSelected = undefined;
-			$scope.listOwner = '';
-
-			if ($scope.selectionVariables.length !== 0) {
-				angular.forEach($scope.selectionVariables, function (variableId) {
-					if (TrialManagerDataService.settings.selectionVariables.m_vals[parseInt(variableId)].variable.dataType === "Numeric") {
-						$scope.variables.push(TrialManagerDataService.settings.selectionVariables.m_vals[parseInt(variableId)].variable);
+				var instanceNumbers = [];
+				Object.keys($scope.selectedInstances).forEach(function (instanceNumber) {
+					var isSelected = $scope.selectedInstances[instanceNumber];
+					if (isSelected) {
+						instanceNumbers.push(instanceNumber);
 					}
 				});
-			}
 
-			if ($scope.variables.length === 0) {
-				createSampleModalService.showErrorMessage('', $.fieldbookMessages.errorNoVarietiesSamples);
-			}
-
-			$http.get('/bmsapi/projects/' + currentProgramId + '/users').success(function (data) {
-				$scope.users = data;
-
-				angular.forEach($scope.users, function (user) {
-					if (user.id === loggedInUserId) {
-						$scope.selectedUser = user.id;
-						$scope.listOwner = user.firstName + " " + user.lastName;
-					}
-					$timeout(function () {
-						angular.element('#sampleSelectUser').select2();
-
-					}, 1);
-				});
-			}).error(function (data) {
-				if (data.status === 401) {
-					bmsAuth.handleReAuthentication();
+				if ($scope.isEmptySelection) {
+					createSampleModalService.showErrorMessage('', $.fieldbookMessages.errorNotSelectedInstance);
+				} else {
+					createSampleModalService.openSelectSelectionVariableToSampleListModal(datasetId, instanceNumbers);
+					$uibModalInstance.close();
 				}
-				createSampleModalService.showErrorMessage('', data.errors[0].message);
-				$scope.selectedUser = [];
-			});
-
-			$timeout(function () {
-				angular.element('#sampleSelectVariable').focus();
-				angular.element('#sampleSelectVariable').select2();
-				angular.element('#sampleSelectSamplingDate').datepicker({dateFormat: "yyyy-mm-dd"}).val('');
-			}, 1);
-		};
-
-		$scope.continue = function () {
-			$scope.saveSampleListButton = true;
-			$scope.sampleList = {
-				"description": "",
-				"notes": "",
-				"createdBy": $scope.listOwner,
-				"selectionVariableId": $scope.variableSelected.cvTermId,
-				"instanceIds": instanceNumbers,
-				"takenBy": "",
-				"samplingDate": $scope.dateSampling,
-				"datasetId": studyContext.measurementDatasetId,
-				"cropName": cropName,
-				"programUUID": currentProgramId,
-				"parentId": 0,
-				"listName": "",
-				"createdDate": ""
 			};
 
-			if ($scope.selectedUser !== null) {
-				angular.forEach($scope.users, function (user) {
-					if (user.id === $scope.selectedUser) {
-						$scope.sampleList.takenBy = user.username;
+			$scope.cancel = function () {
+				$uibModalInstance.close();
+			}
+
+			$scope.init = function () {
+
+				if (studyContext.measurementDatasetId === datasetId) {
+					// If selected dataset is PLOT, get the instances from environmentService
+					environmentService.getEnvironments().then(function (instances) {
+						$scope.instances = instances;
+					});
+				} else {
+					// If selected dataset is SUB-OBSERVATION, get the instances from datasetService
+					datasetService.getDatasetInstances(datasetId).then(function (instances) {
+						$scope.instances = instances;
+					});
+				}
+			};
+
+			$scope.init();
+
+		}]);
+
+	createSampleModule.controller('selectSelectionVariableToSampleListModalCtrl', ['$scope', 'datasetService', '$http',
+		'$timeout', 'createSampleModalService', 'instanceNumbers', 'datasetId', '$uibModalInstance', 'VARIABLE_TYPES',
+		function ($scope, datasetService, $http, $timeout, createSampleModalService, instanceNumbers, datasetId, $uibModalInstance, VARIABLE_TYPES) {
+
+			$scope.backToCreateSample = function () {
+				createSampleModalService.openSelectEnvironmentToSampleListModal(datasetId);
+				$scope.cancel();
+			};
+
+			$scope.init = function () {
+
+				$scope.variables = [];
+				$scope.saveSampleListButton = false;
+				$scope.dateSampling = '';
+				$scope.users = [];
+				$scope.selectedUser = undefined;
+				$scope.variableSelected = undefined;
+				$scope.listOwner = '';
+
+				datasetService.getVariables(datasetId, VARIABLE_TYPES.SELECTION_METHOD).then(function (variables) {
+					$scope.variables = variables;
+					if ($scope.variables.length === 0) {
+						createSampleModalService.showErrorMessage('', $.fieldbookMessages.errorNoVarietiesSamples);
 					}
 				});
-			}
-			$scope.saveSampleListButton = false;
-			SaveSampleList.openSaveSampleListModal($scope.sampleList);
-		};
 
-		$scope.init();
-	}]);
+				$http.get('/bmsapi/projects/' + currentProgramId + '/users').success(function (data) {
+					$scope.users = data;
+
+					angular.forEach($scope.users, function (user) {
+						if (user.id === loggedInUserId) {
+							$scope.selectedUser = user.id;
+							$scope.listOwner = user.firstName + " " + user.lastName;
+						}
+						$timeout(function () {
+							angular.element('#sampleSelectUser').select2();
+
+						}, 1);
+					});
+				}).error(function (data) {
+					if (data.status === 401) {
+						bmsAuth.handleReAuthentication();
+					}
+					createSampleModalService.showErrorMessage('', data.errors[0].message);
+					$scope.selectedUser = [];
+				});
+
+				$timeout(function () {
+					angular.element('#sampleSelectVariable').focus();
+					angular.element('#sampleSelectVariable').select2();
+					angular.element('#sampleSelectSamplingDate').datepicker({dateFormat: "yyyy-mm-dd"}).val('');
+				}, 1);
+			};
+
+			$scope.cancel = function () {
+				$uibModalInstance.close();
+			};
+
+			$scope.continue = function () {
+				$scope.saveSampleListButton = true;
+				$scope.sampleList = {
+					"description": "",
+					"notes": "",
+					"createdBy": $scope.listOwner,
+					"selectionVariableId": $scope.variableSelected.termId,
+					"instanceIds": instanceNumbers,
+					"takenBy": "",
+					"samplingDate": $scope.dateSampling,
+					"datasetId": datasetId,
+					"cropName": cropName,
+					"programUUID": currentProgramId,
+					"parentId": 0,
+					"listName": "",
+					"createdDate": ""
+				};
+
+				if ($scope.selectedUser !== null) {
+					angular.forEach($scope.users, function (user) {
+						if (user.id === $scope.selectedUser) {
+							$scope.sampleList.takenBy = user.username;
+						}
+					});
+				}
+				$scope.saveSampleListButton = false;
+				SaveSampleList.openSaveSampleListModal($scope.sampleList);
+				$uibModalInstance.close();
+			};
+
+			$scope.init();
+		}]);
 
 })();

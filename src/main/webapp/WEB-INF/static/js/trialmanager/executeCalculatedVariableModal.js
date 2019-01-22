@@ -35,7 +35,7 @@
 		};
 
 		$scope.execute = function () {
-			var instanceIds = [];
+			var geoLocationIds = [];
 
 			Object.keys($scope.selectedInstances).forEach(function (instanceId) {
 				var isSelected = $scope.selectedInstances[instanceId];
@@ -43,13 +43,13 @@
 					var instanceSelected = $scope.instances.find(function(instance) {
 						return instance.instanceNumber === parseInt(instanceId);
 					});
-					instanceIds.push(instanceSelected.instanceDbId);
+					geoLocationIds.push(instanceSelected.instanceDbId);
 				}
 			});
 
 			var calculateData = {
 				variableId: $scope.variableSelected.cvTermId
-				, geoLocationId: instanceIds
+				, geoLocationId: geoLocationIds
 			};
 
 			$http.post('/Fieldbook/DerivedVariableController/derived-variable/execute', JSON.stringify(calculateData))

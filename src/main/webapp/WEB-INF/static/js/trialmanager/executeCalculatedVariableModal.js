@@ -70,9 +70,7 @@
 						$scope.proceedExecution();
 					}
 				}, function (response) {
-					if (response.status == 401) {
-						bmsAuth.handleReAuthentication();
-					} else if (response.data.errorMessage) {
+					if (response.data.errorMessage) {
 						showErrorMessage('', response.data.errorMessage);
 					} else {
 						showErrorMessage('', ajaxGenericErrorMsg);
@@ -103,9 +101,7 @@
 					$('#confirmOverrideCalculatedVariableModal').modal('hide');
 					$('#executeCalculatedVariableModal').modal('show');
 				}, function (response) {
-					if (response.status == 401) {
-						bmsAuth.handleReAuthentication();
-					} else if (response.data.errorMessage) {
+					if (response.data.errorMessage) {
 						showErrorMessage('', response.data.errorMessage);
 					} else {
 						showErrorMessage('', ajaxGenericErrorMsg);

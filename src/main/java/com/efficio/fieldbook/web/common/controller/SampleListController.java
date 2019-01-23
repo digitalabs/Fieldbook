@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.common.bean.TableHeader;
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.sample.SampleDetailsDTO;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -70,30 +71,33 @@ public class SampleListController {
 			final String notes = sampleList.getNotes();
 			final String type = sampleList.getType().name();
 			final List<SampleDetailsDTO> sampleDetailsDTOs = this.sampleListService.getSampleDetailsDTOs(listId);
+			final String subObservationVariableName = this.sampleListService.getObservationVariableName(listId);
 			model.addAttribute(SampleListController.SAMPLE_LIST, sampleDetailsDTOs);
 			model.addAttribute(SampleListController.TOTAL_NUMBER_OF_GERMPLASMS, sampleDetailsDTOs.size());
-			model.addAttribute(SampleListController.TABLE_HEADER_LIST, this.getSampleListTableHeaders());
+			model.addAttribute(SampleListController.TABLE_HEADER_LIST, this.getSampleListTableHeaders(subObservationVariableName));
 
 			model.addAttribute("listId", listId);
 			model.addAttribute("listName", name);
 			model.addAttribute("listNotes", notes);
 			model.addAttribute("listType", type);
+			model.addAttribute("isSubObservationDataset", !StringUtils.isEmpty(subObservationVariableName));
 
 		} catch (final MiddlewareQueryException e) {
 			SampleListController.LOG.error(e.getMessage(), e);
 		}
 	}
 
-	private List<TableHeader> getSampleListTableHeaders() {
+	private List<TableHeader> getSampleListTableHeaders(final String subObservationVariableName) {
 		final Locale locale = LocaleContextHolder.getLocale();
 		final List<TableHeader> tableHeaderList = new ArrayList<>();
-
 
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_ENTRY, null, locale),
 			this.messageSource.getMessage(SampleListController.SAMPLE_ENTRY, null, locale)));
 		this.getCommonHeaders(locale, tableHeaderList);
 		tableHeaderList.add(new TableHeader(ColumnLabels.PLOT_NO.getTermNameFromOntology(this.ontologyDataManager),
-			this.messageSource.getMessage(SampleListController.PLOT_NO, null, locale)));
+				this.messageSource.getMessage(SampleListController.PLOT_NO, null, locale)));
+		tableHeaderList.add(new TableHeader(subObservationVariableName,
+			subObservationVariableName));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_NAME, null, locale),
 			this.messageSource.getMessage(SampleListController.SAMPLE_NAME, null, locale)));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.TAKEN_BY, null, locale),

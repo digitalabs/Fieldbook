@@ -152,6 +152,7 @@
 						responseType: 'blob'
 					});
 				}
+
 				return request.then(function (response) {
 					return response;
 				}, failureHandler);

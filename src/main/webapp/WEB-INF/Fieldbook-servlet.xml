@@ -563,6 +563,16 @@
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 
+	<bean id="datasetService" factory-bean="managerFactory"
+		  factory-method="getDatasetMiddlewareService" scope="request">
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<bean id="measurementVariableService" factory-bean="managerFactory"
+		  factory-method="getMeasurementVariableService" scope="request">
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
 	<bean id="derivedVariableProcessor"
 		  class="org.generationcp.commons.derivedvariable.DerivedVariableProcessor"
 		  scope="request">

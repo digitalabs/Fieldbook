@@ -198,7 +198,7 @@ public class OpenTrialControllerTest {
 		Mockito.when(factors.findById(Matchers.anyInt())).thenReturn(null);
 		Mockito.when(this.studyDataManager.getAllStudyFactors(Matchers.anyInt())).thenReturn(factors);
 		final List<SampleListDTO> sampleListDTOs = new ArrayList<>();
-		Mockito.when(this.sampleListService.getSampleLists(Matchers.anyInt())).thenReturn(sampleListDTOs);
+		Mockito.when(this.sampleListService.getSampleLists(Matchers.<Integer>anyList())).thenReturn(sampleListDTOs);
 
 		this.createTestVariable();
 		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class), Matchers.anyBoolean())).thenReturn(this.testVariable);

@@ -189,7 +189,7 @@
 					"description": "",
 					"notes": "",
 					"createdBy": $scope.listOwner,
-					"selectionVariableId": $scope.variableSelected.termId,
+					"selectionVariableId": $scope.variableSelected.id,
 					"instanceIds": instanceNumbers,
 					"takenBy": "",
 					"samplingDate": $scope.dateSampling,

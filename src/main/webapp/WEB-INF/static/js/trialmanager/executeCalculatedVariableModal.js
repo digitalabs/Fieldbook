@@ -47,7 +47,7 @@
 
 			var calculateData = {
 				variableId: $scope.variableSelected.cvTermId
-				, geoLocationId: geoLocationIds
+				, geoLocationIds: geoLocationIds
 			};
 
 			$http.post('/Fieldbook/DerivedVariableController/derived-variable/execute', JSON.stringify(calculateData))

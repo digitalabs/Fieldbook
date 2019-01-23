@@ -5,7 +5,7 @@
 	var manageTrialApp = angular.module('manageTrialApp');
 
 	manageTrialApp.controller('ExecuteCalculatedVariableModalCtrl',
-		['$scope', 'TrialManagerDataService', '$http', 'environmentService', function ($scope, TrialManagerDataService, $http, environmentService) {
+		['$scope', '$http', 'datasetService', 'studyContext', function ($scope, $http, datasetService, studyContext) {
 
 			$scope.instances = [];
 			$scope.selectedInstances = {};
@@ -16,9 +16,10 @@
 			$scope.environmentSelected = undefined;
 			$scope.variableSelected = undefined;
 
-			$scope.variableListView = convertTraitsVariablesToListView(TrialManagerDataService.settings.measurements.m_keys);
-			environmentService.getEnvironments().then(function (environmentDetails) {
-				$scope.instances = environmentDetails;
+			datasetService.getDataset(studyContext.measurementDatasetId).then(function (dataset) {
+				$scope.variableListView = buildVariableListView(dataset.variables);
+				$scope.instances = dataset.instances;
+
 			});
 
 		};
@@ -35,13 +36,10 @@
 		$scope.execute = function () {
 			var geoLocationIds = [];
 
-			Object.keys($scope.selectedInstances).forEach(function (instanceId) {
-				var isSelected = $scope.selectedInstances[instanceId];
+			Object.keys($scope.selectedInstances).forEach(function (instanceDbId) {
+				var isSelected = $scope.selectedInstances[instanceDbId];
 				if (isSelected) {
-					var instanceSelected = $scope.instances.find(function(instance) {
-						return instance.instanceNumber === parseInt(instanceId);
-					});
-					geoLocationIds.push(instanceSelected.instanceDbId);
+					geoLocationIds.push(instanceDbId);
 				}
 			});
 
@@ -79,16 +77,15 @@
 
 		};
 
-		function convertTraitsVariablesToListView(traitIdList) {
-			var variableListView = [];
-			angular.forEach(traitIdList, function (id) {
-				var variable = TrialManagerDataService.settings.measurements.m_vals[id].variable;
-				if (variable.formula) {
-					variableListView.push({name: variable.name, cvTermId: variable.cvTermId});
-				}
-			});
-			return variableListView;
-		};
+			function buildVariableListView(variables) {
+				var variableListView = [];
+				angular.forEach(variables, function (variable) {
+					if (variable.formula) {
+						variableListView.push({name: variable.name, cvTermId: variable.termId});//termId
+					}
+				});
+				return variableListView;
+			};
 
 	}]);
 

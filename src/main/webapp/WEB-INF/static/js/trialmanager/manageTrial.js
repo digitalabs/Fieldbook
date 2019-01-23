@@ -1011,7 +1011,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.printLabels = function () {
 				$uibModal.open({
 					template: '<dataset-option-modal modal-title="modalTitle" message="message"' +
-						' selected="selected" on-continue="forkPrintLabelFlows()"></dataset-option-modal>',
+					' selected="selected" on-continue="forkPrintLabelFlows()"></dataset-option-modal>',
 					size: 'md',
 					controller: ['$scope', 'studyContext', function (scope, studyContext) {
 
@@ -1019,14 +1019,15 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						scope.message = 'Please choose the dataset you would like to print from:';
 						scope.selected = {datasetId: studyContext.measurementDatasetId};
 
-                        scope.forkPrintLabelFlows = function () {
+						scope.forkPrintLabelFlows = function () {
 							if (studyContext.measurementDatasetId === scope.selected.datasetId) {
 								// Old workflow for plot dataset. TODO migrate
-                                createLabelPrinting();
+								createLabelPrinting();
 							} else {
 								window.location.href = '/ibpworkbench/controller/jhipster#print-labels' +
 									'?datasetId=' + scope.selected.datasetId +
-									'&studyId=' + studyContext.studyId;
+									'&studyId=' + studyContext.studyId +
+									'&printingLabelType=1';
 							}
 						};
 					}]

@@ -135,7 +135,8 @@
 				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/' + fileFormat , {
 						params: {
 							instanceIds: instanceIds.join(","),
-							collectionOrderId: collectionOrderId
+							collectionOrderId: collectionOrderId,
+							singleFile: false
 						},
 						responseType: 'blob'
 					});

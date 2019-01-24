@@ -2,7 +2,7 @@
 	<div class="modal fade" id="executeCalculatedVariableModal" role="dialog" aria-labelledby="executeCalculatedVariableModal"
 		 ng-controller="ExecuteCalculatedVariableModalCtrl">
 		<form name="calculateVariableLocationForm" novalidate="" class="simple-form">
-			<div class="modal-dialog modal-small">
+			<div class="modal-dialog modal-medium">
 				<div class="modal-content">
 					<div class="modal-body">
 						<div class="row form-group">
@@ -18,20 +18,25 @@
 							<div id="page-executeCalculatedVariable-modal-message"></div>
 						</div>
 						<div class="separator"></div>
-						<p></p>
+						<br/>
+						<div class="row form-group">
+							<div class="col-xs-12 col-md-12" >
+								<label class=""><em th:utext="#{label.indicate.mandatory.fields}"> indicates a mandatory field</em></label>
+							</div>
+						</div>
 						<div class="row form-group">
 							<div class="col-xs-10 col-md-10">
 								<div>
 									<label class="" th:utext="#{study.execute.calculation.comment}">Choose the calculation you would like to
-										execute.</label>
+										execute:</label>
 								</div>
 							</div>
 						</div>
 						<div class="row form-group">
-							<div class="col-xs-3 col-md-3" style=" padding-right: 0px; padding-left: 15px; width: 102px;">
-								<label class="control-label add_top_padding label-bold" th:utext="#{study.execute.calculation.variable}">Variable</label>
+							<div class="col-sm-2" style="padding-right: 0px;">
+								<label class="control-label add_top_padding label-bold" th:utext="#{study.execute.calculation.variable}">Variable</label><span class='required'>*</span>
 							</div>
-							<div class="report-type-section col-xs-5 col-md-5" style="padding-left: 5px;">
+							<div class="report-type-section col-sm-5" style="padding-left: 5px;">
 								<select id="selectVariable" name="selectVariable"
 										ng-options="variable.name for variable in variableListView" ng-model="variableSelected" required="">
 									<option value="">Please Choose</option>
@@ -39,22 +44,19 @@
 							</div>
 						</div>
 						<div class="row form-group">
-							<div class="col-xs-3 col-md-3" style=" padding-right: 0px; padding-left: 15px; width: 102px;">
-								<label class="control-label add_top_padding label-bold" th:utext="#{study.execute.calculation.environment}">Environment</label>
+							<div class="col-xs-10 col-md-10">
+								<label class="control-label add_top_padding label-bold" th:utext="#{study.execute.calculation.environment}">Select the environments where the calculation will be executed:</label><span class='required'>*</span>
 							</div>
-							<div class="report-type-section col-xs-9 col-md-9" style="padding-left: 5px;">
-								<select id="selectLocation" name="selectLocation"
-										ng-options="environment.name for environment in environmentListView" ng-model="environmentSelected" required="">
-									<option value="">Please Choose</option>
-								</select>
-							</div>
+						</div>
+						<div id="instance-selection">
+							<instances-table instances="instances" selected-instances="selectedInstances" instance-id-property="instanceDbId" is-empty-selection="isEmptySelection"></instances-table>
 						</div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="cancel()"
 								th:text="#{common.form.cancel.text}"> Cancel
 						</button>
-						<button type="button" class="btn btn-primary" ng-disabled="variableSelected === undefined || environmentSelected === undefined" ng-click="execute()" th:text="#{study.execute.calculation.calculate}">
+						<button type="button" class="btn btn-primary" ng-disabled="variableSelected === undefined || isEmptySelection" ng-click="execute()" th:text="#{study.execute.calculation.calculate}">
 							Execute
 						</button>
 					</div>

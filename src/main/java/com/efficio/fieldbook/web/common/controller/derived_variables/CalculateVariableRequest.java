@@ -1,8 +1,10 @@
 package com.efficio.fieldbook.web.common.controller.derived_variables;
 
+import java.util.List;
+
 public class CalculateVariableRequest {
 	private Integer variableId;
-	private Integer geoLocationId;
+	private List<Integer> geoLocationIds;
 
 	public Integer getVariableId() {
 		return this.variableId;
@@ -12,12 +14,12 @@ public class CalculateVariableRequest {
 		this.variableId = variableId;
 	}
 
-	public Integer getGeoLocationId() {
-		return this.geoLocationId;
+	public List<Integer> getGeoLocationIds() {
+		return this.geoLocationIds;
 	}
 
-	public void setGeoLocationId(final Integer geoLocationId) {
-		this.geoLocationId = geoLocationId;
+	public void setGeoLocationIds(final List<Integer> geoLocationIds) {
+		this.geoLocationIds = geoLocationIds;
 	}
 
 }

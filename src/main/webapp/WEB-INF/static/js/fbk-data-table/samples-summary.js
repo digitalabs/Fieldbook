@@ -41,10 +41,10 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 					}
 				},
 				columns: [
-					{data: 'sampleName'},
 					{data: 'sampleBusinessKey'},
-					{
-						data: 'takenBy',
+					{data: 'sampleList'},
+					{data: 'studyName'},
+					{data: 'takenBy',
 						render: function (data) {
 							if (!data) {
 								return '-';
@@ -52,8 +52,7 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 							return data;
 						}
 					},
-					{
-						data: 'samplingDate',
+					{data: 'samplingDate',
 						render: function (data, type, row) {
 							if (!data) {
 								return '-';
@@ -64,11 +63,12 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 							return data;
 						}
 					},
-					{data: 'sampleList'},
+					{data: 'datasetType'},
+					{data: 'observationUnitId'},
+					{data: 'enumerator'},
 					{data: 'plateId'},
 					{data: 'well'},
-					{
-						data: 'datasets',
+					{data: 'datasets',
 						orderable: false,
 						render: function (data, type, row) {
 							if (!data || !data.length || data.length === 0) {

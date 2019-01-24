@@ -192,9 +192,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
-		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService', 'importStudyModalService', '$uibModal', '$q', 'datasetService',
+		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService',
+		'importStudyModalService', '$uibModal', '$q', 'datasetService', 'LABEL_PRINTING_TYPE',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
-				  derivedVariableService, exportStudyModalService, importStudyModalService, $uibModal, $q, datasetService) {
+				  derivedVariableService, exportStudyModalService, importStudyModalService, $uibModal, $q, datasetService,
+				  LABEL_PRINTING_TYPE) {
 
 			$scope.trialTabs = [
 				{
@@ -1027,7 +1029,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 								window.location.href = '/ibpworkbench/controller/jhipster#print-labels' +
 									'?datasetId=' + scope.selected.datasetId +
 									'&studyId=' + studyContext.studyId +
-									'&printingLabelType=1';
+									'&printingLabelType=' + LABEL_PRINTING_TYPE.SUBOBSERVATION_DATASET;
 							}
 						};
 					}]

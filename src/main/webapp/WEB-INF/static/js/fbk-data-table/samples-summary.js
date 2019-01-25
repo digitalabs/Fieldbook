@@ -43,7 +43,19 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 				columns: [
 					{data: 'sampleBusinessKey'},
 					{data: 'sampleList'},
-					{data: 'studyName'},
+					{data: 'studyName',
+						render: function (data, type, row) {
+							if (!data || !data.length || data.length === 0) {
+								return '-';
+							}
+							var authParams =
+								'&authToken=' + authToken
+								+ '&selectedProjectId=' + selectedProjectId
+								+ '&loggedInUserId=' + loggedInUserId;
+							return "<a href='/Fieldbook/TrialManager/openTrial/" + row.studyId + "?restartApplication" + authParams
+									+ "'>" + data + "</a>"
+
+						}},
 					{data: 'takenBy',
 						render: function (data) {
 							if (!data) {

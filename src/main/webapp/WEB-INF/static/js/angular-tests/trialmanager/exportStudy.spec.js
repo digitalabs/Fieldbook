@@ -311,7 +311,6 @@ describe('Export Study', function () {
 		describe('export', function () {
 
 			it('it should generate and download the exported file', function () {
-				pending(); // FIXME
 
 				var instanceIds = ['1', '2'];
 				var response = {data: {}};

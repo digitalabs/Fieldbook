@@ -1026,7 +1026,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 								// Old workflow for plot dataset. TODO migrate
 								createLabelPrinting();
 							} else {
-								window.location.href = '/ibpworkbench/controller/jhipster#print-labels' +
+								window.location.href = '/ibpworkbench/controller/jhipster#label-printing' +
 									'?datasetId=' + scope.selected.datasetId +
 									'&studyId=' + studyContext.studyId +
 									'&printingLabelType=' + LABEL_PRINTING_TYPE.SUBOBSERVATION_DATASET;

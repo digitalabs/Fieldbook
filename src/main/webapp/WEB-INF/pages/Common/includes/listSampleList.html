@@ -31,6 +31,7 @@
 					</td>
 					<td th:class="${row.even}? 'even' : 'odd'" th:text="${sample.plotNumber}" th:unless="*{isSubObservationDataset}"></td>
 					<td th:class="${row.even}? 'even' : 'odd'" th:text="${sample.observationUnitNumber}" th:if="*{isSubObservationDataset}"></td>
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${sample.sampleNumber}"></td>
 					<td th:class="${row.even}? 'even' : 'odd'" th:text="${sample.sampleName}"></td>
 					<td th:class="${row.even}? 'even' : 'odd'" th:text="${sample.takenBy}"></td>
 					<td th:class="${row.even}? 'even' : 'odd'" th:text="${sample.displayDate}"></td>

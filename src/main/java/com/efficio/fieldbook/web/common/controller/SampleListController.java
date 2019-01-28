@@ -45,6 +45,7 @@ public class SampleListController {
 	private static final String OBS_UNIT_ID = "sample.list.obs.unit.id";
 	private static final String PLOT_NO = "sample.list.plot.no";
 	private static final String DESIGNATION = "seed.entry.designation";
+	private static final String SAMPLE_NUMBER = "sample.list.sample.no";
 	protected static final String TOTAL_NUMBER_OF_GERMPLASMS = "totalNumberOfGermplasms";
 	private static final String SAMPLE_ENTRY = "sample.list.sample.entry.no";
 
@@ -98,6 +99,8 @@ public class SampleListController {
 				this.messageSource.getMessage(SampleListController.PLOT_NO, null, locale)));
 		tableHeaderList.add(new TableHeader(subObservationVariableName,
 			subObservationVariableName));
+		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_NUMBER, null, locale),
+			this.messageSource.getMessage(SampleListController.SAMPLE_NUMBER, null, locale)));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_NAME, null, locale),
 			this.messageSource.getMessage(SampleListController.SAMPLE_NAME, null, locale)));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.TAKEN_BY, null, locale),

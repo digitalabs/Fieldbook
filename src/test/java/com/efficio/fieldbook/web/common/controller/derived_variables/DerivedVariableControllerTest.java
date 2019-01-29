@@ -172,7 +172,9 @@ public class DerivedVariableControllerTest {
 	public void testExecute() {
 		final BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		final CalculateVariableRequest request = new CalculateVariableRequest();
-		request.setGeoLocationId(RandomUtils.nextInt());
+		final List<Integer> locationIds = new ArrayList<>();
+		locationIds.add(RandomUtils.nextInt());
+		request.setGeoLocationIds(locationIds);
 		request.setVariableId(RandomUtils.nextInt());
 
 		final ResponseEntity<Map<String, Object>> response = this.derivedVariableController.execute(request, bindingResult);
@@ -195,7 +197,9 @@ public class DerivedVariableControllerTest {
 	public void testExecute_FormulaNotFound() {
 		final BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		final CalculateVariableRequest request = new CalculateVariableRequest();
-		request.setGeoLocationId(RandomUtils.nextInt());
+		final List<Integer> locationIds = new ArrayList<>();
+		locationIds.add(RandomUtils.nextInt());
+		request.setGeoLocationIds(locationIds);
 		request.setVariableId(RandomUtils.nextInt());
 
 		when(this.formulaService.getByTargetId(anyInt())).thenReturn(Optional.<FormulaDto>absent());
@@ -211,7 +215,9 @@ public class DerivedVariableControllerTest {
 		final BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		final CalculateVariableRequest request = new CalculateVariableRequest();
 		final int locationId = RandomUtils.nextInt();
-		request.setGeoLocationId(locationId);
+		final List<Integer> locationIds = new ArrayList<>();
+		locationIds.add(locationId);
+		request.setGeoLocationIds(locationIds);
 		request.setVariableId(RandomUtils.nextInt());
 		for (final MeasurementRow observation : this.studySelection.getWorkbook().getObservations()) {
 			observation.setLocationId(locationId);
@@ -236,7 +242,9 @@ public class DerivedVariableControllerTest {
 		final BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		final CalculateVariableRequest request = new CalculateVariableRequest();
 		final int locationId = RandomUtils.nextInt();
-		request.setGeoLocationId(locationId);
+		final List<Integer> locationIds = new ArrayList<>();
+		locationIds.add(locationId);
+		request.setGeoLocationIds(locationIds);
 		request.setVariableId(RandomUtils.nextInt());
 		final List<MeasurementRow> observations = this.studySelection.getWorkbook().getObservations();
 		final MeasurementData measurementData = observations.get(0).getMeasurementData(Integer.valueOf(VARIABLE1_TERMID));
@@ -259,7 +267,9 @@ public class DerivedVariableControllerTest {
 		final BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		final CalculateVariableRequest request = new CalculateVariableRequest();
 		final int locationId = RandomUtils.nextInt();
-		request.setGeoLocationId(locationId);
+		final List<Integer> locationIds = new ArrayList<>();
+		locationIds.add(locationId);
+		request.setGeoLocationIds(locationIds);
 		request.setVariableId(RandomUtils.nextInt());
 
 		for (final MeasurementRow observation : this.studySelection.getWorkbook().getObservations()) {
@@ -282,7 +292,9 @@ public class DerivedVariableControllerTest {
 		final BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		final CalculateVariableRequest request = new CalculateVariableRequest();
 		final int locationId = RandomUtils.nextInt();
-		request.setGeoLocationId(locationId);
+		final List<Integer> locationIds = new ArrayList<>();
+		locationIds.add(locationId);
+		request.setGeoLocationIds(locationIds);
 		request.setVariableId(RandomUtils.nextInt());
 		for (final MeasurementRow observation : this.studySelection.getWorkbook().getObservations()) {
 			observation.setLocationId(locationId);
@@ -301,7 +313,9 @@ public class DerivedVariableControllerTest {
 		final BindingResult bindingResult = Mockito.mock(BindingResult.class);
 		final CalculateVariableRequest request = new CalculateVariableRequest();
 		final int locationId = RandomUtils.nextInt();
-		request.setGeoLocationId(locationId);
+		final List<Integer> locationIds = new ArrayList<>();
+		locationIds.add(locationId);
+		request.setGeoLocationIds(locationIds);
 		request.setVariableId(RandomUtils.nextInt());
 		for (final MeasurementRow observation : this.studySelection.getWorkbook().getObservations()) {
 			observation.setLocationId(locationId);

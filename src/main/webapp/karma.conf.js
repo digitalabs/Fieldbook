@@ -57,7 +57,6 @@ module.exports = function (config) {
 			'WEB-INF/static/js/angular/angular-utilities.js',
 			'WEB-INF/static/js/angular/fieldbook-utils.js',
 			'WEB-INF/static/js/trialmanager/manageTrial.js',
-			'WEB-INF/static/js/trialmanager/selectEnvironmentToSampleList.js',
 			'WEB-INF/static/js/trialmanager/trial-settings-manager.js',
 			'WEB-INF/static/js/trialmanager/selectEnvironmentModal.js',
 			'WEB-INF/static/js/trialmanager/studyStateService.js',
@@ -69,7 +68,6 @@ module.exports = function (config) {
 			'WEB-INF/static/js/trialmanager/trialSettings.js',
 			'WEB-INF/static/js/trialmanager/treatment.js',
 			'WEB-INF/static/js/trialmanager/environments.js',
-			'WEB-INF/static/js/trialmanager/selectSelectionVariableToSampleList.js',
 			'WEB-INF/static/js/trialmanager/experimentalDesign.js',
 			'WEB-INF/static/js/trialmanager/measurement.js',
 			'WEB-INF/static/js/trialmanager/subobservations/subObservationSet.js',
@@ -80,6 +78,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/trialmanager/datasetOptionModal.js',
 			'WEB-INF/static/js/design-import/design-import-main.js',
 			'WEB-INF/static/js/trialmanager/importStudy.js',
+			'WEB-INF/static/js/trialmanager/createSample.js',
 
 
 			// unit test files

@@ -3,9 +3,12 @@ package com.efficio.fieldbook.web.trial.controller;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -21,6 +24,8 @@ import org.generationcp.middleware.data.initializer.StandardVariableTestDataInit
 import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
+import org.generationcp.middleware.domain.dms.DataSetType;
+import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -53,6 +58,7 @@ import org.generationcp.middleware.pojos.dms.StudyType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.SampleListService;
+import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.util.Util;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
 import org.junit.Assert;
@@ -169,6 +175,9 @@ public class OpenTrialControllerTest {
 	@Mock
 	private SampleListService sampleListService;
 
+	@Mock
+	private DatasetService datasetService;
+
 	private Variable testVariable;
 
 	@Before
@@ -197,6 +206,7 @@ public class OpenTrialControllerTest {
 		final VariableTypeList factors = Mockito.mock(VariableTypeList.class);
 		Mockito.when(factors.findById(Matchers.anyInt())).thenReturn(null);
 		Mockito.when(this.studyDataManager.getAllStudyFactors(Matchers.anyInt())).thenReturn(factors);
+
 		final List<SampleListDTO> sampleListDTOs = new ArrayList<>();
 		Mockito.when(this.sampleListService.getSampleLists(Matchers.<Integer>anyList())).thenReturn(sampleListDTOs);
 

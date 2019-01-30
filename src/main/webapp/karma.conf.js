@@ -83,7 +83,8 @@ module.exports = function (config) {
 
 			// unit test files
 			'WEB-INF/static/js/angular-tests/lib/angular-mocks.js',
-			'WEB-INF/static/js/angular-tests/trialmanager/*.spec.js'
+			'WEB-INF/static/js/angular-tests/trialmanager/*.spec.js',
+			'node_modules/babel-polyfill/dist/polyfill.js'
 		],
 		exclude: [],
 		preprocessors: {},

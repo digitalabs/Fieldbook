@@ -136,14 +136,16 @@
 
 			};
 
-			datasetService.exportDataset = function (datasetId, instanceIds, collectionOrderId) {
-				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/csv', {
-					params: {
-						instanceIds: instanceIds.join(","),
-						collectionOrderId: collectionOrderId
-					},
-					responseType: 'blob'
-				});
+			datasetService.exportDataset = function (datasetId, instanceIds, collectionOrderId, fileFormat) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/' + fileFormat , {
+						params: {
+							instanceIds: instanceIds.join(","),
+							collectionOrderId: collectionOrderId,
+							singleFile: false
+						},
+						responseType: 'blob'
+					});
+
 				return request.then(function (response) {
 					return response;
 				}, failureHandler);

@@ -5,97 +5,89 @@
 	var manageTrialApp = angular.module('manageTrialApp');
 
 	manageTrialApp.controller('ExecuteCalculatedVariableModalCtrl',
-		['$scope', 'TrialManagerDataService', '$http', function ($scope, TrialManagerDataService, $http) {
+		['$scope', '$http', 'datasetService', 'studyContext', function ($scope, $http, datasetService, studyContext) {
 
-		$scope.settings = TrialManagerDataService.settings.environments;
-		$scope.LOCATION_NAME_ID = 8190;
-		$scope.TRIAL_INSTANCE_INDEX = 8170;
+			$scope.instances = [];
+			$scope.selectedInstances = {};
+			$scope.isEmptySelection = false;
 
-		$scope.init = function () {
-			$scope.calculateVariableLocationForm.$setPristine();
+			$scope.init = function () {
+				$scope.calculateVariableLocationForm.$setPristine();
+				$scope.environmentSelected = undefined;
+				$scope.variableSelected = undefined;
 
-			$scope.environmentSelected = undefined;
-			$scope.variableSelected = undefined;
-			$scope.data = TrialManagerDataService.currentData.environments;
+				datasetService.getDataset(studyContext.measurementDatasetId).then(function (dataset) {
+					$scope.variableListView = buildVariableListView(dataset.variables);
+					$scope.instances = dataset.instances;
 
-			$scope.variableListView = convertTraitsVariablesToListView(TrialManagerDataService.settings.measurements.m_keys);
-			$scope.environmentListView = convertToEnvironmentListView($scope.data.environments, $scope.LOCATION_NAME_ID, $scope.TRIAL_INSTANCE_INDEX);
+				});
 
-			if(TrialManagerDataService.selectedEnviromentOnMeasurementTab){
-				var instance = TrialManagerDataService.selectedEnviromentOnMeasurementTab.instanceNumber;
-				$scope.environmentSelected = $scope.environmentListView[parseInt(instance) - 1];
-			} else {
-				$scope.environmentSelected = $scope.environmentListView[0];
-			}
-		};
-
-		$scope.proceedExecution = function () {
-			$('.import-study-data').data('data-import', '1');
-			$('body').addClass('import-preview-measurements');
-			var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
-			new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
-			$('.fbk-discard-imported-data').removeClass('fbk-hide');
-			showSuccessfulMessage('', 'Calculated values for ' + $scope.variableSelected.name + ' were added successfully.');
-		};
-
-		$scope.execute = function () {
-			var calculateData = {
-				variableId: $scope.variableSelected.cvTermId
-				, geoLocationId: $scope.environmentSelected.locationId
 			};
 
-			$http.post('/Fieldbook/DerivedVariableController/derived-variable/execute', JSON.stringify(calculateData))
-				.then(function (response) {
-					$('#executeCalculatedVariableModal').modal('hide');
-					if (response.data && response.data.inputMissingData) {
-						showAlertMessage('', response.data.inputMissingData, 15000);
-					}
-					if (response.data && response.data.hasDataOverwrite) {
-						$('#confirmOverrideCalculatedVariableModal').modal({backdrop: 'static', keyboard: true});
+			$scope.proceedExecution = function () {
+				$('.import-study-data').data('data-import', '1');
+				$('body').addClass('import-preview-measurements');
+				var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+				new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
+				$('.fbk-discard-imported-data').removeClass('fbk-hide');
+				showSuccessfulMessage('', 'Calculated values for ' + $scope.variableSelected.name + ' were added successfully.');
+			};
 
-						// Add hide listener to confirmOverrideCalculatedVariableModal
-						$('#confirmOverrideCalculatedVariableModal').one('hidden.bs.modal', function (e) {
-							// When the confirmOverrideCalculatedVariableModal is closed, remove the bs.modal data
-							// so that the modal content is refreshed when it is opened again.
-							$(e.target).removeData('bs.modal');
-						});
-						angular.element('#confirmOverrideCalculatedVariableModal').scope();
-					} else {
-						$scope.proceedExecution();
-					}
-				}, function (response) {
-					if (response.status == 401) {
-						bmsAuth.handleReAuthentication();
-					} else if (response.data.errorMessage) {
-						showErrorMessage('', response.data.errorMessage);
-					} else {
-						showErrorMessage('', ajaxGenericErrorMsg);
+			$scope.execute = function () {
+				var geoLocationIds = [];
+
+				Object.keys($scope.selectedInstances).forEach(function (instanceDbId) {
+					var isSelected = $scope.selectedInstances[instanceDbId];
+					if (isSelected) {
+						geoLocationIds.push(instanceDbId);
 					}
 				});
 
-		};
+				var calculateData = {
+					variableId: $scope.variableSelected.cvTermId
+					, geoLocationIds: geoLocationIds
+				};
 
-		function convertTraitsVariablesToListView(traitIdList) {
-			var variableListView = [];
-			angular.forEach(traitIdList, function (id) {
-				var variable = TrialManagerDataService.settings.measurements.m_vals[id].variable;
-				if (variable.formula) {
-					variableListView.push({name: variable.name, cvTermId: variable.cvTermId});
-				}
-			});
-			return variableListView;
-		};
+				$http.post('/Fieldbook/DerivedVariableController/derived-variable/execute', JSON.stringify(calculateData))
+					.then(function (response) {
+						$('#executeCalculatedVariableModal').modal('hide');
+						if (response.data && response.data.inputMissingData) {
+							showAlertMessage('', response.data.inputMissingData, 15000);
+						}
+						if (response.data && response.data.hasDataOverwrite) {
+							$('#confirmOverrideCalculatedVariableModal').modal({backdrop: 'static', keyboard: true});
 
-		function convertToEnvironmentListView(environments, preferredLocationVariable, trialInstanceIndex) {
-			var environmentListView = [];
-			angular.forEach(environments, function(environment) {
-				environmentListView.push({ name: environment.managementDetailValues[trialInstanceIndex] + " - " + TrialManagerDataService.getPreferredEnvironmentName(environment, preferredLocationVariable, $scope.settings.managementDetails)
-					,trialInstanceNumber: environment.managementDetailValues[trialInstanceIndex]
-				,locationId:environment.locationId});
-			});
-			return environmentListView;
-		};
-	}]);
+							// Add hide listener to confirmOverrideCalculatedVariableModal
+							$('#confirmOverrideCalculatedVariableModal').one('hidden.bs.modal', function (e) {
+								// When the confirmOverrideCalculatedVariableModal is closed, remove the bs.modal data
+								// so that the modal content is refreshed when it is opened again.
+								$(e.target).removeData('bs.modal');
+							});
+							angular.element('#confirmOverrideCalculatedVariableModal').scope();
+						} else {
+							$scope.proceedExecution();
+						}
+					}, function (response) {
+						if (response.data.errorMessage) {
+							showErrorMessage('', response.data.errorMessage);
+						} else {
+							showErrorMessage('', ajaxGenericErrorMsg);
+						}
+					});
+
+			};
+
+			function buildVariableListView(variables) {
+				var variableListView = [];
+				angular.forEach(variables, function (variable) {
+					if (variable.formula) {
+						variableListView.push({name: variable.name, cvTermId: variable.termId});//termId
+					}
+				});
+				return variableListView;
+			};
+
+		}]);
 
 	manageTrialApp.controller('ConfirmOverrideCalculatedVariableModalCtrl', ['$scope', '$http', function ($scope, $http) {
 
@@ -106,9 +98,7 @@
 					$('#confirmOverrideCalculatedVariableModal').modal('hide');
 					$('#executeCalculatedVariableModal').modal('show');
 				}, function (response) {
-					if (response.status == 401) {
-						bmsAuth.handleReAuthentication();
-					} else if (response.data.errorMessage) {
+					if (response.data.errorMessage) {
 						showErrorMessage('', response.data.errorMessage);
 					} else {
 						showErrorMessage('', ajaxGenericErrorMsg);

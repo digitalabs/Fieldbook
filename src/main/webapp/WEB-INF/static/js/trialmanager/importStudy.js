@@ -123,9 +123,7 @@
 					$scope.reloadObservations();
 					$scope.close();
 				}, function (response) {
-					if (response.status == 401) {
-						bmsAuth.handleReAuthentication();
-					} else if (response.status == 400) {
+					if (response.status == 400) {
 						showErrorMessage('', response.data.errors[0].message);
 					} else if (response.status == 412) {
 						ctrl.showConfirmModal(response.data.errors);

@@ -75,7 +75,7 @@ public class DerivedVariableController {
 
 		final Map<String, Object> results = new HashMap<>();
 
-		if (request == null || request.getGeoLocationId() == null || request.getVariableId() == null) {
+		if (request == null || request.getGeoLocationIds() == null || request.getVariableId() == null) {
 			results.put("errorMessage", this.getMessage("study.execute.calculation.invalid.request"));
 			return new ResponseEntity<>(results, HttpStatus.BAD_REQUEST);
 		}
@@ -126,7 +126,7 @@ public class DerivedVariableController {
 		final Set<String> inputMissingData = new HashSet<>();
 
 		for (final MeasurementRow row : workbook.getObservations()) {
-			if (!request.getGeoLocationId().equals((int)row.getLocationId())) {
+			if (!request.getGeoLocationIds().contains((int)row.getLocationId())) {
 				continue;
 			}
 

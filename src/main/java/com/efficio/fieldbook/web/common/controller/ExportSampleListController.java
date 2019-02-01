@@ -96,7 +96,8 @@ public class ExportSampleListController  extends AbstractBaseFieldbookController
 			final List<String> visibleColumns = Lists.newArrayList(data.get("visibleColumns").split(","));
 	
 			final List<SampleDetailsDTO> sampleDetailsDTOs = sampleListService.getSampleDetailsDTOs(sampleListId);
-			final FileExportInfo exportInfo = this.csvExportSampleListService.export(sampleDetailsDTOs, filename, visibleColumns);
+			final String enumeratorVariableName = sampleListService.getObservationVariableName(sampleListId);
+			final FileExportInfo exportInfo = this.csvExportSampleListService.export(sampleDetailsDTOs, filename, visibleColumns, enumeratorVariableName);
 			response.setContentType(FileUtils.MIME_CSV);
 
 			results.put(ExportSampleListController.IS_SUCCESS, true);

@@ -26,7 +26,7 @@ import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.sample.PlantDTO;
+import org.generationcp.middleware.domain.sample.SampleDTO;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.PedigreeDataManager;
@@ -251,13 +251,13 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 				// One plot may result in multiple plants/ears selected depending on selection method.
 				int selectionNumber = row.getCurrentMaxSequence() + 1;
-				final Iterator<PlantDTO> plantIterator = row.getPlants().iterator();
+				final Iterator<SampleDTO> sampleIterator = row.getSamples().iterator();
 				for (final String name : names) {
-					String plantNo = null;
-					if (plantIterator.hasNext()) {
-						plantNo = plantIterator.next().getPlantNo();
+					String sampleNo = null;
+					if (sampleIterator.hasNext()) {
+						sampleNo = String.valueOf(sampleIterator.next().getSampleNumber());
 					}
-					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber, advancingParameters, plantNo);
+					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber, advancingParameters, sampleNo);
 					selectionNumber++;
 				}
 			}

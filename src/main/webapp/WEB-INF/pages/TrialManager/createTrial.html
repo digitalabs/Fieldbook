@@ -168,7 +168,7 @@
 								<a tabindex="-1" href="#">Plant level options</a>
 								<ul class="dropdown-menu" style="margin-left: -18px;">
 									<li>
-										<a href="javascript: createSample();" id="sample-trial-link"
+										<a ng-click="showCreateSampleListModal()" id="sample-trial-link"
 										   th:text="#{study.studydetails.action.create.sample}">Create sample list</a>
 									</li>
 								</ul>
@@ -502,18 +502,6 @@
 
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			<div id="sample-list" th:include="/TrialManager/templates/selectEnvironmentToSampleListModal"></div>
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-xs-6 col-md-6">
-			<div id="Managersample-list" th:include="/TrialManager/templates/selectSelectionVariableToSampleListModal"></div>
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
 			<div id="study-executeCalculatedVariable" th:include="/TrialManager/templates/executeCalculatedVariableModal"></div>
 		</div>
 	</div>
@@ -602,8 +590,6 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/trial-data-manager.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentModal.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/trialmanager/selectSelectionVariableToSampleList.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentToSampleList.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/fbk-data-table/samples-summary.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/executeCalculatedVariableModal.js}"></script>
@@ -613,6 +599,7 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/datasetOptionModal.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/exportStudy.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/importStudy.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/createSample.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/angular/xlsx.full.min.js}"></script>
 
 	<!-- constants here -->

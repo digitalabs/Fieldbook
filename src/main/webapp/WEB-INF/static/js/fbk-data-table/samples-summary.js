@@ -109,7 +109,10 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 				     "<'row'<'col-sm-12'p>>"
 			});
 
-		$(tableIdentifier).closest('.modal').find('.modal-title span').text(plotNumber);
+		if (plotNumber) {
+			$(tableIdentifier).closest('.modal').find('.modal-title span').text("(PLOT_NO: " + plotNumber + ")");
+		}
+
 	};
 	return dataTableConstructor;
 })(jQuery);

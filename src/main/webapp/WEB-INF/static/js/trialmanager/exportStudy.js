@@ -79,10 +79,10 @@
 
 			var ctrl = this;
 
-			ctrl.selectedExportFormatId = '2';
+			ctrl.selectedExportFormatId = 'xls';
 			ctrl.selectedCollectionOrderId = '1';
 
-			$scope.exportFormats = [{itemId: '1', name: 'CSV', extension: 'csv'}, {itemId: '2', name: 'Excel', extension: 'xls'}];
+			$scope.exportFormats = [{key: 'csv', name: 'CSV'}, {key: 'xls', name: 'Excel'}];
 			$scope.collectionOrders = [
 				{itemId: PLOT_ORDER, name: 'Plot Order'},
 				{itemId: SERPENTINE_ALONG_ROWS_ORDER, name: 'Serpentine - Along Rows'},
@@ -154,9 +154,9 @@
 
 			ctrl.export = function (instanceIds) {
 				var formatSelected = $scope.exportFormats.find(function(format) {
-					return format.itemId === ctrl.selectedExportFormatId;
+					return format.key === ctrl.selectedExportFormatId;
 				});
-				datasetService.exportDataset(datasetId, instanceIds, ctrl.selectedCollectionOrderId, formatSelected.extension).then(function (response) {
+				datasetService.exportDataset(datasetId, instanceIds, ctrl.selectedCollectionOrderId, formatSelected.key).then(function (response) {
 					var fileName = fileDownloadHelper.getFileNameFromResponseContentDisposition(response);
 					fileDownloadHelper.save(response.data, fileName);
 					$uibModalInstance.close();

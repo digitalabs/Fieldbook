@@ -24,7 +24,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.sample.SampleObservationUnitDTO;
+import org.generationcp.middleware.domain.sample.SampleDTO;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
@@ -57,10 +57,10 @@ public class AdvancingSourceListFactory {
 	public AdvancingSourceList createAdvancingSourceList(final Workbook workbook, final AdvancingStudy advanceInfo, final Study study,
 			final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
 
-		Map<Integer, List<SampleObservationUnitDTO>> samplesMap = new HashMap<>();
+		Map<Integer, List<SampleDTO>> samplesMap = new HashMap<>();
 		if (advanceInfo.getAdvanceType().equals(AdvanceType.SAMPLE)) {
 			final Integer studyId = advanceInfo.getStudy().getId();
-			samplesMap = this.studyDataManager.getSampledObservationUnit(studyId);
+			samplesMap = this.studyDataManager.getExperimentSamplesDTOMap(studyId);
 		}
 
 		final AdvancingSource environmentLevel = new AdvancingSource();

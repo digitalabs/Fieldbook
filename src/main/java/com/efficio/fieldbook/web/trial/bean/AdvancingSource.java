@@ -19,7 +19,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.sample.SampleObservationUnitDTO;
+import org.generationcp.middleware.domain.sample.SampleDTO;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
@@ -72,7 +72,7 @@ public class AdvancingSource {
 
 	private StudyTypeDto studyType;
 
-	private List<SampleObservationUnitDTO> samples = new ArrayList<>();
+	private List<SampleDTO> samples = new ArrayList<>();
 
 	public AdvancingSource(final ImportedGermplasm germplasm, final List<Name> names, final Integer plantsSelected, final Method breedingMethod, final boolean isCheck,
 			final String studyName, final String plotNumber) {
@@ -441,11 +441,11 @@ public class AdvancingSource {
 		this.femaleGid = femaleGid;
 	}
 
-	public List<SampleObservationUnitDTO> getSamples() {
+	public List<SampleDTO> getSamples() {
 		return samples;
 	}
 
-	public void setSamples(final List<SampleObservationUnitDTO> samples) {
+	public void setSamples(final List<SampleDTO> samples) {
 		this.samples = samples;
 	}
 }

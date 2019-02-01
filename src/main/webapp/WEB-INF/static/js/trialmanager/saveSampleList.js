@@ -108,7 +108,7 @@ var SaveSampleList = {};
 
 		$.ajax({
 			url: '/bmsapi/sampleLists/' + cropName + '/sampleLists',
-			type: 'PUT',
+			type: 'POST',
 			data: JSON.stringify(SaveSampleList.details),
 			contentType: "application/json",
 			beforeSend: function (xhr) {

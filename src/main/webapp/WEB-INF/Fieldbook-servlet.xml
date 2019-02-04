@@ -558,13 +558,18 @@
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 
-	<bean id="plantService" factory-bean="managerFactory"
-		  factory-method="getPlantService" scope="request">
+	<bean id="formulaService" factory-bean="managerFactory"
+		  factory-method="getFormulaService" scope="request">
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 
-	<bean id="formulaService" factory-bean="managerFactory"
-		  factory-method="getFormulaService" scope="request">
+	<bean id="datasetService" factory-bean="managerFactory"
+		  factory-method="getDatasetMiddlewareService" scope="request">
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<bean id="measurementVariableService" factory-bean="managerFactory"
+		  factory-method="getMeasurementVariableService" scope="request">
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 

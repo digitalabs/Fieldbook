@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.common.bean.TableHeader;
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.sample.SampleDetailsDTO;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -41,11 +42,10 @@ public class SampleListController {
 	private static final String SAMPLE_UID = "sample.list.sample.uid";
 	private static final String PLATE_ID = "sample.list.sample.plate.id";
 	private static final String WELL = "sample.list.sample.well";
-	private static final String PLANT_UID = "sample.list.plant.uid";
-	private static final String PLANT_NO = "sample.list.plant.no";
 	private static final String OBS_UNIT_ID = "sample.list.obs.unit.id";
 	private static final String PLOT_NO = "sample.list.plot.no";
 	private static final String DESIGNATION = "seed.entry.designation";
+	private static final String SAMPLE_NO = "sample.list.sample.no";
 	protected static final String TOTAL_NUMBER_OF_GERMPLASMS = "totalNumberOfGermplasms";
 	private static final String SAMPLE_ENTRY = "sample.list.sample.entry.no";
 
@@ -72,32 +72,35 @@ public class SampleListController {
 			final String notes = sampleList.getNotes();
 			final String type = sampleList.getType().name();
 			final List<SampleDetailsDTO> sampleDetailsDTOs = this.sampleListService.getSampleDetailsDTOs(listId);
+			final String subObservationVariableName = this.sampleListService.getObservationVariableName(listId);
 			model.addAttribute(SampleListController.SAMPLE_LIST, sampleDetailsDTOs);
 			model.addAttribute(SampleListController.TOTAL_NUMBER_OF_GERMPLASMS, sampleDetailsDTOs.size());
-			model.addAttribute(SampleListController.TABLE_HEADER_LIST, this.getSampleListTableHeaders());
+			model.addAttribute(SampleListController.TABLE_HEADER_LIST, this.getSampleListTableHeaders(subObservationVariableName));
 
 			model.addAttribute("listId", listId);
 			model.addAttribute("listName", name);
 			model.addAttribute("listNotes", notes);
 			model.addAttribute("listType", type);
+			model.addAttribute("isSubObservationDataset", !StringUtils.isEmpty(subObservationVariableName));
 
 		} catch (final MiddlewareQueryException e) {
 			SampleListController.LOG.error(e.getMessage(), e);
 		}
 	}
 
-	private List<TableHeader> getSampleListTableHeaders() {
+	private List<TableHeader> getSampleListTableHeaders(final String subObservationVariableName) {
 		final Locale locale = LocaleContextHolder.getLocale();
 		final List<TableHeader> tableHeaderList = new ArrayList<>();
-
 
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_ENTRY, null, locale),
 			this.messageSource.getMessage(SampleListController.SAMPLE_ENTRY, null, locale)));
 		this.getCommonHeaders(locale, tableHeaderList);
 		tableHeaderList.add(new TableHeader(ColumnLabels.PLOT_NO.getTermNameFromOntology(this.ontologyDataManager),
-			this.messageSource.getMessage(SampleListController.PLOT_NO, null, locale)));
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.PLANT_NO, null, locale),
-			this.messageSource.getMessage(SampleListController.PLANT_NO, null, locale)));
+				this.messageSource.getMessage(SampleListController.PLOT_NO, null, locale)));
+		tableHeaderList.add(new TableHeader(subObservationVariableName,
+			subObservationVariableName));
+		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_NO, null, locale),
+			this.messageSource.getMessage(SampleListController.SAMPLE_NO, null, locale)));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_NAME, null, locale),
 			this.messageSource.getMessage(SampleListController.SAMPLE_NAME, null, locale)));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.TAKEN_BY, null, locale),
@@ -110,8 +113,6 @@ public class SampleListController {
 			this.messageSource.getMessage(SampleListController.PLATE_ID, null, locale), false));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.WELL, null, locale),
 			this.messageSource.getMessage(SampleListController.WELL, null, locale), false));
-		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.PLANT_UID, null, locale),
-			this.messageSource.getMessage(SampleListController.PLANT_UID, null, locale), false));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.OBS_UNIT_ID, null, locale),
 			this.messageSource.getMessage(SampleListController.OBS_UNIT_ID, null, locale), false));
 

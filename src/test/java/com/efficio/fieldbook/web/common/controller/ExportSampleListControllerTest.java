@@ -39,6 +39,7 @@ public class ExportSampleListControllerTest {
 	private static final String VISIBLE_COLUMNS = "visibleColumns";
 	private static final String SAMPLE_STUDY_FILENAME = "Study33-SampleList";
 	private static final String CSV_EXT = ".csv";
+	public static final String CUSTOM_ENUMERATOR_VARIABLE_NAME = "CustomEnumeratorVariableName";
 
 	@Mock
 	private CsvExportSampleListService csvExportSampleListService;
@@ -62,9 +63,10 @@ public class ExportSampleListControllerTest {
 		Mockito.doReturn(sampleDetailsDTOs).when(this.sampleListService).getSampleDetailsDTOs(Matchers.anyInt());
 		final String downloadFilename = ExportSampleListControllerTest.SAMPLE_STUDY_FILENAME + ExportSampleListControllerTest.CSV_EXT;
 		final String outputFilename = "./someDirectory/output" + downloadFilename;
-		Mockito.when(this.csvExportSampleListService.export(Matchers.any(List.class), Matchers.anyString(), Matchers.any(List.class)))
+		Mockito.when(this.csvExportSampleListService.export(Matchers.any(List.class), Matchers.anyString(), Matchers.any(List.class), Matchers.anyString()))
 			.thenReturn(new FileExportInfo(outputFilename, downloadFilename));
 		Mockito.when(this.resp.getContentType()).thenReturn(FileUtils.MIME_CSV);
+		Mockito.when(this.sampleListService.getObservationVariableName(Mockito.anyInt())).thenReturn(CUSTOM_ENUMERATOR_VARIABLE_NAME);
 
 		final Integer exportType = AppConstants.EXPORT_CSV.getInt();
 		final Map<String, String> data = this.getData();
@@ -74,7 +76,7 @@ public class ExportSampleListControllerTest {
 		final ArgumentCaptor<String> filenameCaptor = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(this.sampleListService).getSampleDetailsDTOs(Integer.valueOf(data.get(LIST_ID)));
 		Mockito.verify(this.csvExportSampleListService).export(Matchers.eq(sampleDetailsDTOs), filenameCaptor.capture(),
-				Matchers.eq(Arrays.asList(data.get(VISIBLE_COLUMNS).split(","))));
+				Matchers.eq(Arrays.asList(data.get(VISIBLE_COLUMNS).split(","))), Matchers.eq(CUSTOM_ENUMERATOR_VARIABLE_NAME));
 		Assert.assertEquals(FileUtils.sanitizeFileName(data.get(STUDYNAME) + "-" + data.get(LISTNAME)), filenameCaptor.getValue());
 		
 		// Verify JSON

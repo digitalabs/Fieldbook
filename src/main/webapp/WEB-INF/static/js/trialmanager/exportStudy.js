@@ -81,6 +81,7 @@
 
 			ctrl.selectedExportFormatId = 'xls';
 			ctrl.selectedCollectionOrderId = '1';
+			ctrl.singleFile = true;
 
 			$scope.exportFormats = [{key: 'csv', name: 'CSV'}, {key: 'xls', name: 'Excel'}];
 			$scope.collectionOrders = [
@@ -153,10 +154,7 @@
 			};
 
 			ctrl.export = function (instanceIds) {
-				var formatSelected = $scope.exportFormats.find(function(format) {
-					return format.key === ctrl.selectedExportFormatId;
-				});
-				datasetService.exportDataset(datasetId, instanceIds, ctrl.selectedCollectionOrderId, formatSelected.key).then(function (response) {
+				datasetService.exportDataset(datasetId, instanceIds, ctrl.selectedCollectionOrderId, ctrl.singleFile, ctrl.selectedExportFormatId).then(function (response) {
 					var fileName = fileDownloadHelper.getFileNameFromResponseContentDisposition(response);
 					fileDownloadHelper.save(response.data, fileName);
 					$uibModalInstance.close();

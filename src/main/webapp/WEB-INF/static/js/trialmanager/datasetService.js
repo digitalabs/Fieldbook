@@ -136,12 +136,12 @@
 
 			};
 
-			datasetService.exportDataset = function (datasetId, instanceIds, collectionOrderId, fileFormat) {
+			datasetService.exportDataset = function (datasetId, instanceIds, collectionOrderId, singleFile, fileFormat) {
 				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/' + fileFormat , {
 						params: {
 							instanceIds: instanceIds.join(","),
 							collectionOrderId: collectionOrderId,
-							singleFile: false
+							singleFile: singleFile
 						},
 						responseType: 'blob'
 					});

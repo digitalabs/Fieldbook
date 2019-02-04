@@ -18,6 +18,8 @@ import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
+import org.generationcp.middleware.domain.dms.DataSetType;
+import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -38,6 +40,7 @@ import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.SampleListService;
+import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +62,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequestMapping(OpenTrialController.URL)
@@ -91,6 +97,9 @@ public class OpenTrialController extends BaseTrialController {
 
 	@Resource
 	private ErrorHandlerService errorHandlerService;
+
+	@Resource
+	private DatasetService datasetService;
 
 	/**
 	 * The Inventory list manager.
@@ -391,7 +400,7 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
 		model.addAttribute("description", trialWorkbook.getStudyDetails().getDescription());
 		model.addAttribute("advancedList", this.getAdvancedList(trialId));
-		model.addAttribute("sampleList", this.getSampleList(trialId));
+		model.addAttribute("sampleList", this.getSampleList(trialWorkbook.getStudyDetails().getId()));
 		model.addAttribute("crossesList", this.getCrossesList(trialId));
 
 		model.addAttribute("germplasmListSize", 0);
@@ -896,8 +905,16 @@ public class OpenTrialController extends BaseTrialController {
 		return filteredObservations;
 	}
 
-	protected List<SampleListDTO> getSampleList(final Integer trialId) {
-		return this.sampleListService.getSampleLists(trialId);
+	protected List<SampleListDTO> getSampleList(final Integer studyId) {
+		final Set<Integer> datasetTypeIds = new HashSet<>(Arrays.asList(DataSetType.SUBOBSERVATION_IDS));
+		datasetTypeIds.add(DataSetType.PLOT_DATA.getId());
+
+		final List<Integer> datasetIds = new ArrayList<>();
+		final List<DatasetDTO> datasets = datasetService.getDatasets(studyId, datasetTypeIds);
+		for (final DatasetDTO dataset : datasets) {
+			datasetIds.add(dataset.getDatasetId());
+		}
+		return this.sampleListService.getSampleLists(datasetIds);
 	}
 
 }

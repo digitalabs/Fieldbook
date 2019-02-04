@@ -9,8 +9,6 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 			'takenBy',
 			'samplingDate',
 			'sampleList',
-			'plant.plantNumber',
-			'plant.plantBusinessKey',
 			'plateId',
 			'well',
 			''
@@ -43,10 +41,22 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 					}
 				},
 				columns: [
-					{data: 'sampleName'},
 					{data: 'sampleBusinessKey'},
-					{
-						data: 'takenBy',
+					{data: 'sampleList'},
+					{data: 'studyName',
+						render: function (data, type, row) {
+							if (!data || !data.length || data.length === 0) {
+								return '-';
+							}
+							var authParams =
+								'&authToken=' + authToken
+								+ '&selectedProjectId=' + selectedProjectId
+								+ '&loggedInUserId=' + loggedInUserId;
+							return "<a href='/Fieldbook/TrialManager/openTrial/" + row.studyId + "?restartApplication" + authParams
+									+ "'>" + data + "</a>"
+
+						}},
+					{data: 'takenBy',
 						render: function (data) {
 							if (!data) {
 								return '-';
@@ -54,8 +64,7 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 							return data;
 						}
 					},
-					{
-						data: 'samplingDate',
+					{data: 'samplingDate',
 						render: function (data, type, row) {
 							if (!data) {
 								return '-';
@@ -66,13 +75,12 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 							return data;
 						}
 					},
-					{data: 'sampleList'},
-					{data: 'plantNumber'},
-					{data: 'plantBusinessKey'},
+					{data: 'datasetType'},
+					{data: 'observationUnitId'},
+					{data: 'enumerator'},
 					{data: 'plateId'},
 					{data: 'well'},
-					{
-						data: 'datasets',
+					{data: 'datasets',
 						orderable: false,
 						render: function (data, type, row) {
 							if (!data || !data.length || data.length === 0) {
@@ -101,7 +109,10 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 				     "<'row'<'col-sm-12'p>>"
 			});
 
-		$(tableIdentifier).closest('.modal').find('.modal-title span').text(plotNumber);
+		if (plotNumber) {
+			$(tableIdentifier).closest('.modal').find('.modal-title span').text("(PLOT_NO: " + plotNumber + ")");
+		}
+
 	};
 	return dataTableConstructor;
 })(jQuery);

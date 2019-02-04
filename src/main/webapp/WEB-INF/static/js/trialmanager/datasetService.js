@@ -112,6 +112,11 @@
 				return request.then(successHandler, failureHandler);
 			};
 
+			datasetService.getVariables = function (datasetId, variableTypeId) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables/' + variableTypeId);
+				return request.then(successHandler, failureHandler);
+			};
+
 			datasetService.removeVariables = function (datasetId, variableIds) {
 				var request = $http.delete(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables?', {
 					params: {
@@ -131,12 +136,12 @@
 
 			};
 
-			datasetService.exportDataset = function (datasetId, instanceIds, collectionOrderId, fileFormat) {
+			datasetService.exportDataset = function (datasetId, instanceIds, collectionOrderId, singleFile, fileFormat) {
 				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/' + fileFormat , {
 						params: {
 							instanceIds: instanceIds.join(","),
 							collectionOrderId: collectionOrderId,
-							singleFile: false
+							singleFile: singleFile
 						},
 						responseType: 'blob'
 					});

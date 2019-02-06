@@ -23,8 +23,8 @@
 			$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
 			$scope.columnDataByInputTermId = {};
 
-			$scope.pendingView = Boolean(subObservationSet.pendingView);
-			$scope.toggleSection = false;
+			$scope.isPendingView = Boolean(subObservationSet.isPendingView);
+			$scope.toggleSection = $scope.isPendingView;
 
 			var subObservationTab = $scope.subObservationTab;
 			var tableId = '#subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
@@ -171,9 +171,12 @@
 				return deferred.promise;
 			};
 
-			$scope.togglePendingView = function () {
-				$scope.pendingView = subObservationSet.pendingView = !$scope.pendingView;
-				$scope.toggleSection = $scope.pendingView;
+			$scope.togglePendingView = function (isPendingView) {
+				if ($scope.isPendingView === isPendingView) {
+					return;
+				}
+				$scope.isPendingView = subObservationSet.isPendingView = isPendingView;
+				$scope.toggleSection = $scope.isPendingView;
 				loadTable();
 			};
 
@@ -746,7 +749,7 @@
 					var invalid = validateDataOutOfRange(cellData.value, columnData);
 
 					if (invalid) {
-						$(td).addClass($scope.pendingView ? 'invalid-value' : 'accepted-value');
+						$(td).addClass($scope.isPendingView ? 'invalid-value' : 'accepted-value');
 					}
 				}
 				if (cellData.status) {

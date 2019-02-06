@@ -2316,3 +2316,11 @@ table.dataTable thead .derived-trait-column-header {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.nav-tabs > li > a.pendingData,
+.nav-tabs > li > a.pendingData:focus,
+.nav-tabs > li > a.pendingData:hover {
+    -webkit-box-shadow: inset 0px -2px 0px 0px #ff8109;
+    -moz-box-shadow: inset 0px -2x 0px 0px #ff8109;
+    box-shadow: inset 0px -2px 0px 0px #ff8109;
+}

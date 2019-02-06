@@ -14,20 +14,20 @@
 			$scope.isHideDelete = false;
 			$scope.addVariable = true;
 			var subObservationSet = $scope.subObservationSet = $stateParams.subObservationSet;
-			$scope.preview = Boolean(subObservationSet.preview);
 			$scope.columnsObj = subObservationSet.columnsObj;
 			$scope.rows = subObservationSet.rows;
 			$scope.nested = {};
-			$scope.nested.dtPreviewInstance = null;
 			$scope.nested.dtInstance = null;
 			$scope.nested.reviewVariable = null;
 			$scope.enableActions = false;
 			$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
 			$scope.columnDataByInputTermId = {};
 
+			$scope.pendingView = Boolean(subObservationSet.pendingView);
+			$scope.toggleSection = false;
+
 			var subObservationTab = $scope.subObservationTab;
 			var tableId = '#subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
-			var previewTableId = '#preview-subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
 			var dtColumnsPromise = $q.defer();
 			var dtColumnDefsPromise = $q.defer();
 
@@ -171,44 +171,10 @@
 				return deferred.promise;
 			};
 
-			if ($scope.preview) {
-				loadPreview();
-			}
-
-			// Review prototype - remove when done
-			$scope.togglePreviewMode = function () {
-				$scope.preview = subObservationSet.preview = !$scope.preview;
-				if (!$scope.preview) {
-					return;
-				}
-				loadPreview();
-			};
-
-			// Review prototype - remove when done
-			$scope.resetPreview = function () {
-				$scope.rows = subObservationSet.rows = null;
-				$scope.nested.dtPreviewInstance.changeData(getPreview());
-			};
-
-			$scope.savePreview = function () {
-				// TODO implement call
-				$http.post('sub-observation-set/preview/save/', subObservationSet.rows);
-			};
-
-			$scope.filterVariable = function () {
-
-				angular.forEach($scope.columnsObj.columns, function (col) {
-					if (col.className === 'variates') {
-						col.visible = false;
-					}
-					if (col.title === $scope.nested.reviewVariable.title) {
-						col.visible = true;
-					}
-				});
-				// FIXME is there a faster way?
-				$scope.dtColumns = $scope.columnsObj.columns;
-				// FIXME Loading gif doesn't show immediately - is there a better way?
-				$('.dataTables_processing', $(previewTableId).closest('.dataTables_wrapper')).show();
+			$scope.togglePendingView = function () {
+				$scope.pendingView = subObservationSet.pendingView = !$scope.pendingView;
+				$scope.toggleSection = $scope.pendingView;
+				loadTable();
 			};
 
 			$scope.subDivide = function () {
@@ -295,14 +261,6 @@
 					}])
 					.withColReorder()
 					.withPaginationType('full_numbers');
-			}
-
-			function loadPreview() {
-				$scope.dtOptionsPreview = addCommonOptions(DTOptionsBuilder
-					.fromFnPromise(getPreview())
-					// TODO 1) extract common logic rowCallback 2) use datatable api to store data 3) use DataTable().rows().data() to save
-					// .withOption('rowCallback', previewRowCallback)
-				);
 			}
 
 			/**
@@ -459,7 +417,6 @@
 								 * to avoid reloading the page. It has these advantages:
 								 * - Make the inline edition more dynamic and fast
 								 * - Don't reset the table scroll
-								 * - We can show out-of-sync status changes on preview mode
 								 *
 								 * The alternative would be:
 								 *
@@ -559,30 +516,6 @@
 				}
 
 				return deferred.promise;
-			}
-
-			// FIXME 1) adapt to subobs 2) See previewRowCallback
-			function getPreview() {
-				// TODO check memory consumption
-				if (subObservationSet.rows) {
-					return $q.resolve(subObservationSet.rows);
-				}
-				return $http
-					.post('/Fieldbook/ImportManager/import/preview')
-					.then(function (resp) {
-
-						// Create map for easy access on review
-						var rowMap = $scope.rowMap = subObservationSet.rowMap = {};
-						angular.forEach(resp.data, function (row) {
-							rowMap[row.experimentId] = {};
-							angular.forEach(subObservationSet.columnsObj.columns, function (column) {
-								rowMap[row.experimentId][column.termId] = row[column.title];
-							});
-						});
-
-						$scope.rows = subObservationSet.rows = resp.data;
-						return $q.resolve(resp.data);
-					});
 			}
 
 			function loadTable() {
@@ -813,7 +746,7 @@
 					var invalid = validateDataOutOfRange(cellData.value, columnData);
 
 					if (invalid) {
-						$(td).addClass($scope.preview ? 'invalid-value' : 'accepted-value');
+						$(td).addClass($scope.pendingView ? 'invalid-value' : 'accepted-value');
 					}
 				}
 				if (cellData.status) {

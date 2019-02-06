@@ -178,6 +178,7 @@
 					hideVariable: '=',
 					useExactProperties: '@',
 					collapsible: '=',
+					toggleSection: '=',
 					actionButtonDirection: '@'
 				},
 				transclude: true,
@@ -193,8 +194,6 @@
 
 				},
 				controller: ['$scope', '$attrs', function($scope, $attrs) {
-					$scope.toggleCollapse = false;
-					$scope.toggleSection = $attrs.startCollapsed && $attrs.startCollapsed === 'true';
 					$scope.doCollapse = function() {
 						if ($scope.collapsible) {
 							$scope.toggleSection = !$scope.toggleSection;

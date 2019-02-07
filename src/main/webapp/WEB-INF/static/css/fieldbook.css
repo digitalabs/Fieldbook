@@ -2324,3 +2324,9 @@ table.dataTable thead .derived-trait-column-header {
     -moz-box-shadow: inset 0px -2x 0px 0px #ff8109;
     box-shadow: inset 0px -2px 0px 0px #ff8109;
 }
+
+td[disabled] {
+    background-color: #ccc;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+}

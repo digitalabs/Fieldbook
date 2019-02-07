@@ -305,7 +305,12 @@
 
 			function addCellClickHandler() {
 				var $table = angular.element(tableId);
-				$table.off('click').on('click', 'td.variates', clickHandler);
+
+				addClickHandler();
+
+				function addClickHandler() {
+					$table.off('click').on('click', 'td.variates:not([disabled])', clickHandler);
+				}
 
 				function clickHandler() {
 					var cell = this;
@@ -441,7 +446,7 @@
 								}
 
 								// Restore handler
-								$table.off('click').on('click', 'td.variates', clickHandler);
+								addClickHandler();
 							}, function (response) {
 								if (response.errors) {
 									showErrorMessage('', response.errors[0].message);
@@ -766,6 +771,10 @@
 						$(td).attr('title', toolTip + ' out-of-sync-value');
 						$(td).addClass('out-of-sync-value');
 					}
+				}
+				if ($scope.isPendingView && !cellData.draftValue) {
+                    $(td).text('');
+					$(td).attr('disabled', true);
 				}
 			}
 

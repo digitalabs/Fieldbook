@@ -83,7 +83,13 @@
 			ctrl.selectedCollectionOrderId = '1';
 			ctrl.singleFile = true;
 
-			$scope.exportFormats = [{key: 'csv', name: 'CSV'}, {key: 'xls', name: 'Excel'}];
+			$scope.exportFormats = [
+				{key: 'csv', name: 'CSV'},
+				{key: 'xls', name: 'Excel'},
+				{key: 'ksu_csv', name: 'KSU Fieldbook CSV'},
+				{key: 'ksu_xls', name: 'KSU Fieldbook Excel'}
+			];
+
 			$scope.collectionOrders = [
 				{itemId: PLOT_ORDER, name: 'Plot Order'},
 				{itemId: SERPENTINE_ALONG_ROWS_ORDER, name: 'Serpentine - Along Rows'},

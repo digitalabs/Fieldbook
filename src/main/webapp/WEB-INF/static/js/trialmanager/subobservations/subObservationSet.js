@@ -566,7 +566,6 @@
 				});
 			}
 
-			// TODO merge with measurements-table-trial.js#getColumns
 			function mapColumns(columnsData) {
 				var columns = [],
 					columnsDef = [];
@@ -613,7 +612,7 @@
 									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
 							}
 						});
-					} else if (!columnData.factor) {
+					} else if (!columnData.factor) { // variates
 						columnsDef.push({
 							targets: columns.length - 1,
 							createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
@@ -621,13 +620,26 @@
 							},
 							render: function (data, type, full, meta) {
 
-								if (columnData.dataTypeId === 1130) {
-									return renderCategoricalData(data, columnData);
-								} else if (columnData.dataTypeId === 1110) {
-									return getDisplayValueForNumericalValue(data.value);
+								if (!data) {
+									return '';
 								}
 
-								return data && EscapeHTML.escape(data.value);
+								function renderByDataType(value, columnData) {
+									if (columnData.dataTypeId === 1130) {
+										return renderCategoricalValue(value, columnData);
+									} else if (columnData.dataTypeId === 1110) {
+										return getDisplayValueForNumericalValue(value);
+									} else {
+										return EscapeHTML.escape(value);
+									}
+								}
+
+								let value = renderByDataType(data.value, columnData);
+								if ($scope.isPendingView && data.draftValue) {
+									value = renderByDataType(data.draftValue, columnData) + " (" + value + ")";
+								}
+
+								return value;
 							}
 						});
 					} else {
@@ -635,8 +647,12 @@
 							targets: columns.length - 1,
 							render: function (data, type, full, meta) {
 
+								if (!data) {
+									return '';
+								}
+
 								if (columnData.dataTypeId === 1130) {
-									return renderCategoricalData(data, columnData);
+									return renderCategoricalValue(data && data.value, columnData);
 								}
 
 								return data && EscapeHTML.escape(data.value);
@@ -675,30 +691,30 @@
 				};
 			}
 
-			function renderCategoricalData(data, columnData) {
-				var value = data && EscapeHTML.escape(data.value);
+			function renderCategoricalValue(value, columnData) {
+				var categoricalValue = EscapeHTML.escape(value);
 
 				if (columnData.possibleValues
 					&& columnData.possibleValuesByValue
-					&& columnData.possibleValuesByValue[data.value]
-					&& columnData.possibleValuesByValue[data.value].description
-					&& data.value !== 'missing') {
+					&& columnData.possibleValuesByValue[categoricalValue]
+					&& columnData.possibleValuesByValue[categoricalValue].description
+					&& categoricalValue !== 'missing') {
 
-					var description = columnData.possibleValuesByValue[data.value].description;
+					var description = columnData.possibleValuesByValue[categoricalValue].description;
 					if (description) {
 						var categoricalNameDom = '<span class="fbk-measurement-categorical-name"'
 							+ ($scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
 							+ ' >'
-							+ data.value + '</span>';
+							+ categoricalValue + '</span>';
 						var categoricalDescDom = '<span class="fbk-measurement-categorical-desc"'
 							+ (!$scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
 							+ ' >'
 							+ description + '</span>';
 
-						value = categoricalNameDom + categoricalDescDom;
+						categoricalValue = categoricalNameDom + categoricalDescDom;
 					}
 				}
-				return value;
+				return categoricalValue;
 			}
 
 			function validateNumericRange(minVal, maxVal, value, invalid) {

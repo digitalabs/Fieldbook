@@ -48,7 +48,7 @@
 			});
 		};
 
-		derivedVariableModalService.confirmOverrideCalculatedVariableModal = function (datasetId) {
+		derivedVariableModalService.confirmOverrideCalculatedVariableModal = function (datasetId, selectedVariable) {
 			$uibModal.open({
 				templateUrl: '/Fieldbook/static/angular-templates/derivedVariable/confirmOverrideCalculatedVariableModal.html',
 				controller: "confirmOverrideCalculatedVariableModalCtrl",
@@ -56,6 +56,9 @@
 				resolve: {
 					datasetId: function () {
 						return datasetId;
+					},
+					selectedVariable: function() {
+						return selectedVariable;
 					}
 				},
 				controllerAs: 'ctrl'
@@ -138,7 +141,7 @@
 								showAlertMessage('', response.data.inputMissingData, 15000);
 							}
 							if (response.data && response.data.hasDataOverwrite) {
-								derivedVariableModalService.confirmOverrideCalculatedVariableModal();
+								derivedVariableModalService.confirmOverrideCalculatedVariableModal(datasetId, $scope.selected.variable);
 							} else {
 								$scope.proceedExecution();
 							}
@@ -167,8 +170,8 @@
 
 			}]);
 
-	derivedVariableModule.controller('confirmOverrideCalculatedVariableModalCtrl', ['$scope', '$http', '$uibModalInstance', 'derivedVariableModalService',
-		function ($scope, $http, $uibModalInstance, derivedVariableModalService) {
+	derivedVariableModule.controller('confirmOverrideCalculatedVariableModalCtrl', ['$scope', '$http', '$uibModalInstance', 'derivedVariableModalService', 'selectedVariable',
+		function ($scope, $http, $uibModalInstance, derivedVariableModalService, selectedVariable) {
 
 			$scope.goBack = function () {
 				$http.get('/Fieldbook/ImportManager/revert/data')
@@ -199,8 +202,18 @@
 			};
 
 			$scope.proceed = function () {
+
+				$('.import-study-data').data('data-import', '1');
+				$('body').addClass('import-preview-measurements');
+
+				var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+				new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
+				$('.fbk-discard-imported-data').removeClass('fbk-hide');
+
+				showSuccessfulMessage('', 'Calculated values for ' + selectedVariable.name + ' were added successfully.');
+
 				$uibModalInstance.close();
-				angular.element('#executeCalculatedVariableModal').scope().proceedExecution();
+
 			};
 
 		}]);

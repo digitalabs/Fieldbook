@@ -337,7 +337,7 @@
 						var $inlineScope = $scope.$new(true);
 
 						$inlineScope.observation = {
-							value: cellData.value,
+							value: $scope.isPendingView ? cellData.draftValue : cellData.value,
 							change: function () {
 								updateInline();
 							},
@@ -370,10 +370,17 @@
 									return $q.resolve(cellData);
 								}
 
-								var value = $inlineScope.observation.value;
+								var value = cellData.value;
+								var draftValue = cellData.draftValue;
+
+								if ($scope.isPendingView) {
+									draftValue = $inlineScope.observation.value;
+								} else {
+									value = $inlineScope.observation.value;
+								}
 
 								if (cellData.observationId) {
-									if (!value) {
+									if (!value && !$scope.isPendingView) {
 										return datasetService.deleteObservation(subObservationSet.id, rowData.observationUnitId,
 											cellData.observationId);
 									}
@@ -386,7 +393,8 @@
 										return datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
 											cellData.observationId, {
 												categoricalValueId: getCategoricalValueId(value, columnData),
-												value: value
+												value: value,
+												draftValue: draftValue
 											});
 									});
 								}
@@ -416,7 +424,13 @@
 								if (cellData.value !== $inlineScope.observation.value) {
                                     valueChanged = true;
 								}
-								cellData.value = $inlineScope.observation.value;
+
+								if ($scope.isPendingView) {
+									cellData.draftValue = $inlineScope.observation.value;
+								} else {
+									cellData.value = $inlineScope.observation.value;
+								}
+
 								cellData.observationId = data.observationId;
 								cellData.status = data.status;
 

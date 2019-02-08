@@ -93,8 +93,8 @@
 				return request.then(successHandler, failureHandler);
 			};
 
-			datasetService.getObservationTableUrl = function (datasetId, instanceId) {
-				return BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/instances/' + instanceId + '/observationUnits/table';
+			datasetService.getObservationTableUrl = function (datasetId) {
+				return BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/table';
 			};
 
 			datasetService.generation = function (newDataset) {

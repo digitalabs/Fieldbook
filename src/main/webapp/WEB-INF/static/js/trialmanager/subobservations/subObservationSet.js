@@ -191,9 +191,7 @@
 			};
 
 			$scope.changeEnvironment = function () {
-				$(tableId).DataTable().ajax
-					.url(datasetService.getObservationTableUrl(subObservationSet.id, $scope.nested.selectedEnvironment.instanceDbId))
-					.load();
+				$(tableId).DataTable().ajax.reload();
 			};
 
 			$scope.toggleShowCategoricalDescription = function () {
@@ -208,7 +206,7 @@
 			function getDtOptions() {
 				return addCommonOptions(DTOptionsBuilder.newOptions()
 					.withOption('ajax', {
-						url: datasetService.getObservationTableUrl(subObservationSet.id, $scope.nested.selectedEnvironment.instanceDbId),
+						url: datasetService.getObservationTableUrl(subObservationSet.id),
 						type: 'GET',
 						beforeSend: function (xhr) {
 							xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
@@ -217,13 +215,15 @@
 							var sortedColIndex = $(tableId).dataTable().fnSettings().aaSorting[0][0];
 							var sortDirection = $(tableId).dataTable().fnSettings().aaSorting[0][1];
 							var sortedColTermId = subObservationSet.columnsData[sortedColIndex].termId;
+							var instanceId = $scope.nested.selectedEnvironment.instanceDbId;
 
 							return {
 								draw: d.draw,
 								pageSize: d.length,
 								pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
 								sortBy: sortedColTermId,
-								sortOrder: sortDirection
+								sortOrder: sortDirection,
+								instanceId: instanceId
 							};
 						}
 					})

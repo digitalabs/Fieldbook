@@ -697,11 +697,11 @@
 				if (columnData.possibleValues
 					&& columnData.possibleValuesByValue
 					&& columnData.possibleValuesByValue[categoricalValue]
-					&& columnData.possibleValuesByValue[categoricalValue].description
+					&& columnData.possibleValuesByValue[categoricalValue].displayDescription
 					&& categoricalValue !== 'missing') {
 
-					var description = columnData.possibleValuesByValue[categoricalValue].description;
-					if (description) {
+					var displayDescription = columnData.possibleValuesByValue[categoricalValue].displayDescription;
+					if (displayDescription) {
 						var categoricalNameDom = '<span class="fbk-measurement-categorical-name"'
 							+ ($scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
 							+ ' >'
@@ -709,7 +709,7 @@
 						var categoricalDescDom = '<span class="fbk-measurement-categorical-desc"'
 							+ (!$scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
 							+ ' >'
-							+ description + '</span>';
+							+ displayDescription + '</span>';
 
 						categoricalValue = categoricalNameDom + categoricalDescDom;
 					}

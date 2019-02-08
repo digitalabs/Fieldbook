@@ -931,7 +931,7 @@ describe('SubObservationSetCtrl', function () {
 
 				// AleuCol_E_1to5
 				expect(scope.columnsObj.columnsDef[10].render({value: scope.columnsObj.columns[10].columnData.possibleValues[1].name}))
-					.toContain(scope.columnsObj.columns[10].columnData.possibleValues[1].description);
+					.toContain(scope.columnsObj.columns[10].columnData.possibleValues[1].displayDescription);
 
 				spyOn($.fn, 'addClass').and.callFake(function () {
 				});

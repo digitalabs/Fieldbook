@@ -51,6 +51,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/angular/angular-local-storage.min.js',
 			'WEB-INF/static/js/angular/bmsAuth.js',
 			'WEB-INF/static/js/lib/angular/xlsx.full.min.js',
+			'node_modules/babel-polyfill/dist/polyfill.js',
 
 
 			// Modules to test
@@ -83,8 +84,7 @@ module.exports = function (config) {
 
 			// unit test files
 			'WEB-INF/static/js/angular-tests/lib/angular-mocks.js',
-			'WEB-INF/static/js/angular-tests/trialmanager/*.spec.js',
-			'node_modules/babel-polyfill/dist/polyfill.js'
+			'WEB-INF/static/js/angular-tests/trialmanager/*.spec.js'
 		],
 		exclude: [],
 		preprocessors: {},

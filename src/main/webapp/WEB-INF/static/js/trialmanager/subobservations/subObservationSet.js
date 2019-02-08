@@ -364,49 +364,52 @@
 						$(cell).append(editor);
 
 						function updateInline() {
-							var promise;
 
-							if (cellData.value === $inlineScope.observation.value) {
-								promise = $q.resolve(cellData);
-							} else {
+							function doAjaxUpdate() {
+								if (cellData.value === $inlineScope.observation.value) {
+									return $q.resolve(cellData);
+								}
+
 								var value = $inlineScope.observation.value;
 
 								if (cellData.observationId) {
-									if (value) {
-										promise = confirmOutOfBoundData(value, columnData).then(function(doContinue) {
-											if (!doContinue) {
-												$inlineScope.observation.value = cellData.value;
-												return {observationId: cellData.observationId};
-											}
-											return datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
-												cellData.observationId, {
-													categoricalValueId: getCategoricalValueId(value, columnData),
-													value: value
-												});
-										});
-									} else {
-										promise = datasetService.deleteObservation(subObservationSet.id, rowData.observationUnitId,
+									if (!value) {
+										return datasetService.deleteObservation(subObservationSet.id, rowData.observationUnitId,
 											cellData.observationId);
 									}
-								} else {
-									if (value) {
-										promise = confirmOutOfBoundData(value, columnData).then(function(doContinue) {
-											if (!doContinue) {
-												$inlineScope.observation.value = cellData.value;
-												return {observationId: cellData.observationId};
-											}
-											return datasetService.addObservation(subObservationSet.id, rowData.observationUnitId, {
-												observationUnitId: rowData.observationUnitId,
+
+									return confirmOutOfBoundData(value, columnData).then(function (doContinue) {
+										if (!doContinue) {
+											$inlineScope.observation.value = cellData.value;
+											return {observationId: cellData.observationId};
+										}
+										return datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
+											cellData.observationId, {
 												categoricalValueId: getCategoricalValueId(value, columnData),
-												variableId: termId,
 												value: value
 											});
-										});
-									} else {
-										promise = $q.resolve(cellData);
-									}
+									});
 								}
+
+								if (value) {
+									return confirmOutOfBoundData(value, columnData).then(function (doContinue) {
+										if (!doContinue) {
+											$inlineScope.observation.value = cellData.value;
+											return {observationId: cellData.observationId};
+										}
+										return datasetService.addObservation(subObservationSet.id, rowData.observationUnitId, {
+											observationUnitId: rowData.observationUnitId,
+											categoricalValueId: getCategoricalValueId(value, columnData),
+											variableId: termId,
+											value: value
+										});
+									});
+								}
+
+								return $q.resolve(cellData);
 							}
+
+							var promise = doAjaxUpdate();
 
 							promise.then(function (data) {
 								var valueChanged = false;

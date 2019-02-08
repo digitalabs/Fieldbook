@@ -634,7 +634,7 @@
 									}
 								}
 
-								let value = renderByDataType(data.value, columnData);
+								var value = renderByDataType(data.value, columnData);
 								if ($scope.isPendingView && data.draftValue) {
 									value = renderByDataType(data.draftValue, columnData) + " (" + value + ")";
 								}

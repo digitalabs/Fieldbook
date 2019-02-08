@@ -5,7 +5,7 @@
 				Calculations</label>
 		</div>
 		<div class="col-xs-1 col-md-1">
-			<button id="closeExecuteCalculatedVariableModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal"/>
+			<button id="closeExecuteCalculatedVariableModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" ng-click="cancel()"/>
 		</div>
 	</div>
 	<div class="row form-group">
@@ -15,7 +15,7 @@
 	<br/>
 	<div class="row form-group">
 		<div class="col-xs-12 col-md-12">
-			<label class=""><em> indicates a mandatory field</em></label>
+			<label class=""><span class='required'>*</span><em> indicates a mandatory field</em></label>
 		</div>
 	</div>
 	<div class="row form-group">
@@ -28,13 +28,15 @@
 	</div>
 	<div class="row form-group">
 		<div class="col-sm-2" style="padding-right: 0px;">
-			<label class="control-label add_top_padding label-bold">Variable</label><span class='required'>*</span>
+			<label class="control-label add_top_padding label-bold">Variable: </label><span class='required'>*</span>
 		</div>
 		<div class="report-type-section col-sm-5" style="padding-left: 5px;">
-			<select id="selectVariable" name="selectVariable"
-					ng-options="variable.name for variable in variableListView" ng-model="variableSelected" required="">
-				<option value="">Please Choose</option>
-			</select>
+			<ui-select name="selectVariable" theme="select2" search-enabled="false" ng-model="selected.variable">
+				<ui-select-match placeholder="Please Choose">{{$select.selected.name}}</ui-select-match>
+				<ui-select-choices repeat="variable in variableListView">
+					<div ng-bind-html="variable.name"></div>
+				</ui-select-choices>
+			</ui-select>
 		</div>
 	</div>
 	<div class="row form-group">
@@ -49,7 +51,7 @@
 <div class="modal-footer">
 	<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="cancel()"> Cancel
 	</button>
-	<button type="button" class="btn btn-primary" ng-disabled="variableSelected === undefined || isEmptySelection" ng-click="execute()">
+	<button type="button" class="btn btn-primary" ng-disabled="selected.variable === undefined || isEmptySelection" ng-click="execute()">
 		Execute
 	</button>
 </div>

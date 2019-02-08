@@ -69,7 +69,7 @@
 	derivedVariableModule.controller('executeCalculatedVariableDatasetOptionCtrl', ['$scope', '$uibModal', '$uibModalInstance', 'studyContext', 'derivedVariableModalService',
 		function ($scope, $uibModal, $uibModalInstance, studyContext, derivedVariableModalService) {
 
-			$scope.modalTitle = 'Execute calculations';
+			$scope.modalTitle = 'Execute Calculations';
 			$scope.message = 'Please choose the dataset where you would like to execute the calculation from:';
 			$scope.measurementDatasetId = studyContext.measurementDatasetId;
 			$scope.selected = {datasetId: $scope.measurementDatasetId};
@@ -88,20 +88,15 @@
 				$scope.instances = [];
 				$scope.selectedInstances = {};
 				$scope.isEmptySelection = false;
+				$scope.selected = { variable: undefined };
 
 				$scope.init = function () {
-					$scope.environmentSelected = undefined;
-					$scope.variableSelected = undefined;
 
 					datasetService.getDataset(datasetId).then(function (dataset) {
 						$scope.variableListView = buildVariableListView(dataset.variables);
 						$scope.instances = dataset.instances;
 
 					});
-
-					$('#selectLocation').select2();
-					$('#selectVariable').focus();
-					$('#selectVariable').select2();
 
 				};
 
@@ -118,7 +113,7 @@
 					new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
 					$('.fbk-discard-imported-data').removeClass('fbk-hide');
 
-					showSuccessfulMessage('', 'Calculated values for ' + $scope.variableSelected.name + ' were added successfully.');
+					showSuccessfulMessage('', 'Calculated values for ' + $scope.selected.variable.name + ' were added successfully.');
 				};
 
 				$scope.execute = function () {
@@ -132,7 +127,7 @@
 					});
 
 					var calculateData = {
-						variableId: $scope.variableSelected.cvTermId
+						variableId: $scope.selected.variable.cvTermId
 						, geoLocationIds: geoLocationIds
 					};
 

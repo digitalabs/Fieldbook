@@ -869,13 +869,13 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						name: datasetTab.name,
 						tabName: datasetType.abbr + ': ' + datasetTab.name,
 						titleName: datasetType.name + ': ' + datasetTab.name,
-						pendingData: datasetTab.hasPendingData,
+						hasPendingData: datasetTab.hasPendingData,
 						state: '/subObservationTabs/' + datasetTab.datasetId, // arbitrary prefix to filter tab content
 						subObservationSets: datasetByTabs[datasetTab.datasetId].map(function (dataset) {
 							return {
 								id: dataset.datasetId,
 								name: dataset.name,
-								pendingData: dataset.hasPendingData,
+								hasPendingData: dataset.hasPendingData,
 								datasetTypeId: dataset.datasetTypeId,
 								parentDatasetId: dataset.parentDatasetId
 							}

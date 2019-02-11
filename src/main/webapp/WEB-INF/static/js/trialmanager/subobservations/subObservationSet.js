@@ -46,7 +46,7 @@
 				$scope.selectionVariables = $scope.getVariables('SELECTION_METHOD');
 				$scope.selectedVariables = $scope.getSelectedVariables();
 
-				$scope.isPendingView = dataset.hasPendingData;
+				$scope.isPendingView = subObservationSet.hasPendingData = subObservationTab.hasPendingData = dataset.hasPendingData;
 				doPendingViewActions();
 
 				loadTable();

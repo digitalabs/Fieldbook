@@ -1,5 +1,5 @@
 <div ng-cloak="">
-	<div class="label label-warning center-block" ng-if="subObservationSet.pendingData" style=" width: 90px">pending data</div>
+	<div class="label label-warning center-block" ng-if="subObservationSet.hasPendingData" style=" width: 90px">pending data</div>
 	<section-container th:attr="heading=#{study.managesettings.observation.details}" collapsible="true" toggle-section="toggleSection">
 		<div name="content">
 			<div class="col-xs-12 col-md-12">
@@ -61,7 +61,7 @@
 					<div class="btn-group btn-group-justified " role="group" aria-label="...">
 						<div class="btn-group" role="group">
 							<button type="button" class="btn"
-									ng-disabled="!subObservationSet.pendingData"
+									ng-disabled="!subObservationSet.hasPendingData"
 									ng-class="isPendingView ? 'btn-primary btn-inverse' : 'btn-info'"
 									ng-click="togglePendingView(false)"
 									style="text-transform: uppercase">Existing
@@ -69,8 +69,8 @@
 						</div>
 						<div class="btn-group" role="group">
 							<button type="button" class="btn"
-									ng-disabled="!subObservationSet.pendingData"
-									ng-class="!subObservationSet.pendingData ? 'btn-default' : isPendingView ? 'btn-primary' : 'btn-warning btn-inverse'"
+									ng-disabled="!subObservationSet.hasPendingData"
+									ng-class="!subObservationSet.hasPendingData ? 'btn-default' : isPendingView ? 'btn-primary' : 'btn-warning btn-inverse'"
 									ng-click="togglePendingView(true)"
 									style="text-transform: uppercase">Pending
 							</button>

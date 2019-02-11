@@ -157,8 +157,9 @@
 				}
 				var request = $http.put(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/observations',
 					{
-						"processWarnings": processWarnings,
-						"data": observationList
+						processWarnings: processWarnings,
+						data: observationList,
+                        draftMode: true
 					});
 				return request.then(successHandler, failureHandler);
 			};

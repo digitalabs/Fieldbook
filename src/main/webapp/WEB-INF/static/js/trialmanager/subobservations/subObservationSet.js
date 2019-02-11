@@ -23,7 +23,7 @@
 			$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
 			$scope.columnDataByInputTermId = {};
 
-			$scope.isPendingView = Boolean(subObservationSet.isPendingView);
+			$scope.isPendingView = Boolean(subObservationSet.hasPendingData);
 			$scope.toggleSection = $scope.isPendingView;
 
 			var subObservationTab = $scope.subObservationTab;
@@ -45,6 +45,10 @@
 				$scope.traitVariables = $scope.getVariables('TRAIT');
 				$scope.selectionVariables = $scope.getVariables('SELECTION_METHOD');
 				$scope.selectedVariables = $scope.getSelectedVariables();
+
+				$scope.isPendingView = dataset.hasPendingData;
+				$scope.toggleSection = $scope.isPendingView;
+
 				loadTable();
 			});
 
@@ -175,7 +179,7 @@
 				if ($scope.isPendingView === isPendingView) {
 					return;
 				}
-				$scope.isPendingView = subObservationSet.isPendingView = isPendingView;
+				$scope.isPendingView = isPendingView;
 				$scope.toggleSection = $scope.isPendingView;
 				loadTable();
 			};

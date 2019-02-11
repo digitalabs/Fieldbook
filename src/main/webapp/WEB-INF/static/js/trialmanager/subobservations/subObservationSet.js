@@ -675,7 +675,11 @@
 
 								var value = renderByDataType(data.value, columnData);
 								if ($scope.isPendingView && data.draftValue !== null && data.draftValue !== undefined) {
-									value = renderByDataType(data.draftValue, columnData) + " (" + value + ")";
+									var existingValue = value;
+									value = renderByDataType(data.draftValue, columnData);
+									if (existingValue || existingValue === 0) {
+										value += " (" + existingValue + ")";
+									}
 								}
 
 								return value;
@@ -805,12 +809,26 @@
 				$(td).removeClass('invalid-value');
 				$(td).removeClass('manually-edited-value');
 
-				if (cellData.value || cellData.value === 0) {
-					var value = $scope.isPendingView ? cellData.draftValue : cellData.value;
-					var invalid = validateDataOutOfRange(value, columnData);
+				if ($scope.isPendingView) {
+					if (cellData.draftValue === null || cellData.draftValue === undefined) {
+						$(td).text('');
+						$(td).attr('disabled', true);
+						return;
+					}
+					var invalid = validateDataOutOfRange(cellData.draftValue, columnData);
 
 					if (invalid) {
-						$(td).addClass($scope.isPendingView ? 'invalid-value' : 'accepted-value');
+						$(td).addClass('invalid-value');
+					}
+
+					return;
+				}
+
+				if (cellData.value || cellData.value === 0) {
+					var invalid = validateDataOutOfRange(cellData.value, columnData);
+
+					if (invalid) {
+						$(td).addClass('accepted-value');
 					}
 				}
 				if (cellData.status) {
@@ -827,10 +845,6 @@
 						$(td).attr('title', toolTip + ' out-of-sync-value');
 						$(td).addClass('out-of-sync-value');
 					}
-				}
-				if ($scope.isPendingView && (cellData.draftValue === null || cellData.draftValue === undefined)) {
-                    $(td).text('');
-					$(td).attr('disabled', true);
 				}
 			}
 

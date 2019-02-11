@@ -23,9 +23,6 @@
 			$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
 			$scope.columnDataByInputTermId = {};
 
-			$scope.isPendingView = Boolean(subObservationSet.hasPendingData);
-			$scope.toggleSection = $scope.isPendingView;
-
 			var subObservationTab = $scope.subObservationTab;
 			var tableId = '#subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
 			var dtColumnsPromise = $q.defer();
@@ -40,17 +37,25 @@
 				if (!dataset.instances || !dataset.instances.length) {
 					return;
 				}
-				$scope.environments = dataset.instances;
-				$scope.nested.selectedEnvironment = dataset.instances[0];
+				$scope.environments = [{
+					instanceNumber: null,
+					locationName: 'All environments'
+				}].concat(dataset.instances);
+
 				$scope.traitVariables = $scope.getVariables('TRAIT');
 				$scope.selectionVariables = $scope.getVariables('SELECTION_METHOD');
 				$scope.selectedVariables = $scope.getSelectedVariables();
 
 				$scope.isPendingView = dataset.hasPendingData;
 				$scope.toggleSection = $scope.isPendingView;
+				if ($scope.isPendingView) {
+					$scope.nested.selectedEnvironment = $scope.environments[0];
+				} else {
+					$scope.nested.selectedEnvironment = dataset.instances[0];
+				}
 
 				loadTable();
-			});
+			}); // getDataset
 
 			$scope.getVariables = function (variableType) {
 				var variables = {settings: []};
@@ -141,6 +146,7 @@
 						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, variableIds).then(function () {
 							angular.forEach(variableIds, function (cvtermId) {
 								settings.remove(cvtermId);
+								// TODO review
 								$scope.subObservationSet.dataset.variables = $scope.subObservationSet.dataset.variables.filter(function (variable) {
 									return variable.termId !== cvtermId;
 								});

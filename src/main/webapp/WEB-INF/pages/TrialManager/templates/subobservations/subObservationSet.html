@@ -100,10 +100,10 @@
 							   class="input-sm form-control fbk-std-padding-right inline-select"
 							   ng-change="changeEnvironment()" search-enabled="false" theme="select2">
 						<ui-select-match class="ui-select-match">
-							{{nested.selectedEnvironment.instanceNumber + ' - ' + (nested.selectedEnvironment.locationName || nested.selectedEnvironment.locationAbbreviation || nested.selectedEnvironment.instanceNumber)}}
+							{{(nested.selectedEnvironment.instanceNumber ? nested.selectedEnvironment.instanceNumber + ' - ' : '') + (nested.selectedEnvironment.locationName || nested.selectedEnvironment.locationAbbreviation || nested.selectedEnvironment.instanceNumber)}}
 						</ui-select-match>
 						<ui-select-choices repeat="env in (environments | filter: { locationName: $select.search}) track by env.instanceDbId">
-							{{env.instanceNumber + ' - ' + (env.locationName || env.locationAbbreviation || env.instanceNumber)}}
+							{{(env.instanceNumber ? env.instanceNumber + ' - ' : '') + (env.locationName || env.locationAbbreviation || env.instanceNumber)}}
 						</ui-select-choices>
 					</ui-select>
 				</div>

@@ -652,7 +652,7 @@
 								}
 
 								var value = renderByDataType(data.value, columnData);
-								if ($scope.isPendingView && data.draftValue) {
+								if ($scope.isPendingView && data.draftValue !== null && data.draftValue !== undefined) {
 									value = renderByDataType(data.draftValue, columnData) + " (" + value + ")";
 								}
 
@@ -806,7 +806,7 @@
 						$(td).addClass('out-of-sync-value');
 					}
 				}
-				if ($scope.isPendingView && !cellData.draftValue) {
+				if ($scope.isPendingView && (cellData.draftValue === null || cellData.draftValue === undefined)) {
                     $(td).text('');
 					$(td).attr('disabled', true);
 				}

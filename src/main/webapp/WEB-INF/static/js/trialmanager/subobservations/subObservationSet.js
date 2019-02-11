@@ -47,12 +47,7 @@
 				$scope.selectedVariables = $scope.getSelectedVariables();
 
 				$scope.isPendingView = dataset.hasPendingData;
-				$scope.toggleSection = $scope.isPendingView;
-				if ($scope.isPendingView) {
-					$scope.nested.selectedEnvironment = $scope.environments[0];
-				} else {
-					$scope.nested.selectedEnvironment = dataset.instances[0];
-				}
+				doPendingViewActions();
 
 				loadTable();
 			}); // getDataset
@@ -186,7 +181,7 @@
 					return;
 				}
 				$scope.isPendingView = isPendingView;
-				$scope.toggleSection = $scope.isPendingView;
+				doPendingViewActions();
 				loadTable();
 			};
 
@@ -212,6 +207,16 @@
 					});
 				});
 			};
+
+			function doPendingViewActions() {
+				$scope.toggleSection = $scope.isPendingView;
+
+				if ($scope.isPendingView) {
+					$scope.nested.selectedEnvironment = $scope.environments[0];
+				} else {
+					$scope.nested.selectedEnvironment = $scope.environments[1];
+				}
+			}
 
 			function getDtOptions() {
 				return addCommonOptions(DTOptionsBuilder.newOptions()

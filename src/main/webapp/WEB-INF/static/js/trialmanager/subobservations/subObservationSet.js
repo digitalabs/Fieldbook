@@ -784,7 +784,8 @@
 				$(td).removeClass('manually-edited-value');
 
 				if (cellData.value || cellData.value === 0) {
-					var invalid = validateDataOutOfRange(cellData.value, columnData);
+					var value = $scope.isPendingView ? cellData.draftValue : cellData.value;
+					var invalid = validateDataOutOfRange(value, columnData);
 
 					if (invalid) {
 						$(td).addClass($scope.isPendingView ? 'invalid-value' : 'accepted-value');

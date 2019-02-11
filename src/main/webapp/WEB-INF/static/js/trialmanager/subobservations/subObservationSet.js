@@ -531,6 +531,11 @@
 			function confirmOutOfBoundData(cellDataValue, columnData) {
 				var deferred = $q.defer();
 
+				if ($scope.isPendingView) {
+					deferred.resolve(true);
+					return deferred.promise;
+				}
+
 				var invalid = validateDataOutOfScaleRange(cellDataValue, columnData);
 
 				if (invalid) {

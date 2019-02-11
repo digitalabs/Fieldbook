@@ -238,7 +238,8 @@
 								pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
 								sortBy: sortedColTermId,
 								sortOrder: sortDirection,
-								instanceId: instanceId
+								instanceId: instanceId,
+								draftMode: $scope.isPendingView
 							};
 						}
 					})
@@ -254,6 +255,7 @@
 					.withOption('processing', true)
 					.withOption('lengthMenu', [[50, 75, 100], [50, 75, 100]])
 					.withOption('scrollY', '500px')
+					.withOption('scrollCollapse', true)
 					.withOption('scrollX', '100%')
 					.withOption('language', {
 						processing: '<span class="throbber throbber-2x"></span>',

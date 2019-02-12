@@ -164,6 +164,12 @@
 				return request.then(successHandler, failureHandler);
 			};
 
+			datasetService.acceptDraftData = function (datasetId) {
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/drafts/acceptance');
+				return request.then(successHandler, failureHandler);
+
+			};
+
 			return datasetService;
 		}]);
 

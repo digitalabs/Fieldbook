@@ -185,6 +185,10 @@
 				loadTable();
 			};
 
+			$scope.acceptDraftData = function () {
+				datasetService.acceptDraftData($scope.subObservationSet.dataset.datasetId);
+			}
+
 			$scope.subDivide = function () {
 				// TODO
 				// var id = $scope.subObservationTab.subObservationSets.length + 1;

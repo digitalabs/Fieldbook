@@ -494,7 +494,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			};
 
-			$scope.navigateToSubObsTab = function (datasetId) {
+			$rootScope.$on('navigateToSubObsTab', function (event, datasetId) {
 				var subObsTab = undefined;
 				var subObsSet = undefined;
 				angular.forEach($scope.subObservationTabs, function (subObservationTab) {
@@ -516,7 +516,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}, {
 					reload: true, inherit: false, notify: true
 				});
-			};
+			});
 
 			$scope.hasAdvanceListCreated = function () {
 				return $scope.advanceTabsData.length !== 0;

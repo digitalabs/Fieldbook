@@ -591,7 +591,7 @@
 			}
 
 			function loadColumns() {
-				return datasetService.getColumns(subObservationSet.id).then(function (columnsData) {
+				return datasetService.getColumns(subObservationSet.id, $scope.isPendingView).then(function (columnsData) {
 					subObservationSet.columnsData = columnsData;
 					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(columnsData);
 

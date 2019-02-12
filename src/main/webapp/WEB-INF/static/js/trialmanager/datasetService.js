@@ -88,8 +88,12 @@
 				return request.then(successHandler, failureHandler);
 			};
 
-			datasetService.getColumns = function (datasetId) {
-				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/table/columns');
+			datasetService.getColumns = function (datasetId, draftMode) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/table/columns', {
+					params: {
+						draftMode: Boolean(draftMode)
+					}
+				});
 				return request.then(successHandler, failureHandler);
 			};
 

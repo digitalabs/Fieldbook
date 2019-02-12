@@ -186,7 +186,7 @@
 			};
 
 			$scope.acceptDraftData = function () {
-				datasetService.acceptDraftData($scope.subObservationSet.dataset.datasetId);
+				datasetService.acceptDraftData($scope.subObservationSet.dataset.datasetId).then(reloadDataset);
 			}
 
 			$scope.subDivide = function () {

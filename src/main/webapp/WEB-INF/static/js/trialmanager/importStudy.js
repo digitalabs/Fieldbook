@@ -120,7 +120,7 @@
 			$scope.importMeasurements = function (processWarnings) {
 				datasetService.importObservations(datasetId, $scope.importedData, processWarnings).then(function () {
 					displaySaveSuccessMessage('page-message', 'Your data was successfully imported and saved.');
-					$scope.reloadObservations();
+					$rootScope.$broadcast('navigateToSubObsTab', datasetId);
 					$scope.close();
 				}, function (response) {
 					if (response.status == 400) {
@@ -135,12 +135,6 @@
 
 			$scope.close = function () {
 				$uibModalInstance.close();
-			};
-
-			$scope.reloadObservations = function () {
-				var scope = angular.element(document.getElementById("mainApp")).scope();
-				scope.navigateToSubObsTab(datasetId);
-
 			};
 
 			ctrl.showConfirmModal = function (warnings) {

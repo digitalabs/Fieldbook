@@ -4,9 +4,9 @@
 	var subObservationModule = angular.module('subObservation', []);
 	var hiddenColumns = [8201];
 
-	subObservationModule.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
-		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout',
-		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
+	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
+		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout',
+		function ($scope, $rootScope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
 				  datasetService, $timeout
 		) {
 			$scope.traitVariables = new angular.OrderedHash();
@@ -563,6 +563,10 @@
 				}
 
 				return deferred.promise;
+			}
+
+			function reloadDataset() {
+                $rootScope.$broadcast('navigateToSubObsTab', subObservationSet.id);
 			}
 
 			function loadTable() {

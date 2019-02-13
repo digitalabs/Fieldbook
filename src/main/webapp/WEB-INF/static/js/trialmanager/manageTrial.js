@@ -172,7 +172,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						if (isTabChangeDisabled()) {
 							transition.abort();
 						}
-						// a 'transition prevented' error
+						TrialManagerDataService.applicationData.isSaveEnabled = true;
 					});
 
 				$rootScope.stateSuccessfullyLoaded = {};
@@ -246,6 +246,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.studyTypeSelected = undefined;
 			$scope.isChoosePreviousStudy = false;
 			$scope.hasUnsavedData = studyStateService.hasUnsavedData;
+			$scope.isSaveDisabled = TrialManagerDataService.isSaveDisabled;
+			$scope.isSaveEnabled = TrialManagerDataService.isSaveEnabled;
 
 			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
@@ -535,6 +537,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 				$scope.isSettingsTab = true;
 				$scope.tabSelected = targetState;
+
 				if (targetState === 'editMeasurements') {
 					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
 					// of the table if we do not do that
@@ -918,6 +921,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 				$scope.tabSelected = selectedTab;
 				$scope.isSettingsTab = false;
+				TrialManagerDataService.applicationData.isSaveEnabled = false;
 
 				// Load selected stock list inventory page setup function single time
 				if ($scope.stockListTabs && $scope.stockListTabs.indexOf(selectedTab) === -1) {

@@ -25,7 +25,7 @@
 					</span>
 
 						<div class="fbk-study-heading-btns">
-							<input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick=""
+							<input ng-click="saveCurrentTrialData()" ng-disabled="isSaveDisabled()" class="btn btn-info fbk-save-button-left-margin" onclick=""
 								   type="button" value="Save"/>
 							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide"
 								   onclick="discardImportedData();" th:value="#{import.discard.data}"/>
@@ -57,7 +57,7 @@
 							<span th:text="#{study.studydetails.actions}">Actions</span>
 						</button>
 						<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-							<li>
+							<li ng-if="isSaveEnabled()">
 								<a href="javascript: void(0);" ng-click="saveCurrentTrialData()"
 								   th:text="#{study.option.save}">Save Study</a>
 							</li>
@@ -181,7 +181,7 @@
 										<a href="javascript: startAdvance('trial');" id="advance-trial-link"
 										   th:text="#{study.studydetails.action.advance.study}">Advance Study</a>
 									</li>
-									<li>
+									<li ng-if="isSaveEnabled()">
 										<a href="javascript: startAdvance('sample');" id="advance-sample-link"
 										   th:text="#{study.studydetails.action.advance.sample}">Advance sampled plants</a>
 									</li>

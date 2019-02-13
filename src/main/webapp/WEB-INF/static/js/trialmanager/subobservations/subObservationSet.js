@@ -402,8 +402,12 @@
 
 								if (cellData.observationId) {
 									if (!value && !$scope.isPendingView) {
-										return datasetService.deleteObservation(subObservationSet.id, rowData.observationUnitId,
-											cellData.observationId);
+										if (cellData.draftValue) {
+                                            value = null;
+										} else {
+											return datasetService.deleteObservation(subObservationSet.id, rowData.observationUnitId,
+												cellData.observationId);
+										}
 									}
 
 									return confirmOutOfBoundData(value, columnData).then(function (doContinue) {

@@ -488,13 +488,13 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			// Programatically navigate to specified tab state
-			$scope.navigateToTab = function (targetState) {
+			$rootScope.navigateToTab = function (targetState) {
 				$state.go(targetState);
 				$scope.performFunctionOnTabChange(targetState);
 
 			};
 
-			$scope.navigateToSubObsTab = function (datasetId) {
+			$rootScope.navigateToSubObsTab = function (datasetId) {
 				var subObsTab = undefined;
 				var subObsSet = undefined;
 				angular.forEach($scope.subObservationTabs, function (subObservationTab) {
@@ -1014,9 +1014,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			}
 
 			$scope.showCalculatedVariableModal = function() {
-
-				$scope.navigateToTab('editMeasurements');
-
 				if ($('body').hasClass('import-preview-measurements')) {
 					return;
 				} else {

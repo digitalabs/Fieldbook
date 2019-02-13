@@ -1405,7 +1405,7 @@ function continueStudyImport(doDataRevert) {
 
 function showImportOptions() {
 	'use strict';
-	var scope = angular.element(document.getElementById("mainApp")).scope();
+	var scope = angular.element(document.getElementById("mainApp")).injector().get('$rootScope');
 	scope.$apply(function () {
 		scope.navigateToTab('editMeasurements');
 	});

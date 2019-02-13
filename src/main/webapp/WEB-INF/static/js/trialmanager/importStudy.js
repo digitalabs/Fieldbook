@@ -138,8 +138,7 @@
 			};
 
 			$scope.reloadObservations = function () {
-				var scope = angular.element(document.getElementById("mainApp")).scope();
-				scope.navigateToSubObsTab(datasetId);
+				$rootScope.navigateToSubObsTab(datasetId);
 
 			};
 

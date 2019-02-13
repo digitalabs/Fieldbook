@@ -4,16 +4,48 @@
 
 	var derivedVariableModule = angular.module('derived-variable', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal', 'fieldbook-utils']);
 
-	derivedVariableModule.factory('derivedVariableService', ['$http', '$q', function ($http, $q) {
+	derivedVariableModule.factory('derivedVariableService', ['$http', '$q', 'studyContext', function ($http, $q, studyContext) {
 
 		var derivedVariableService = {};
 
-		derivedVariableService.getDependencies = function () {
-			return $http.get('/Fieldbook/DerivedVariableController/derived-variable/dependencies');
+		var FIELDBOOK_BASE_URL = '/Fieldbook/DerivedVariableController/';
+		var BMSAPI_BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/studies/';
+
+		var successHandler = function (response) {
+
+			if (response.data && response.data.inputMissingData) {
+				showAlertMessage('', response.data.inputMissingData, 15000);
+			}
+			if (response.data && response.data.hasDataOverwrite) {
+				return response.data.hasDataOverwrite;
+			}
 		};
+		var failureHandler = function (response) {
+			if (response.data.errorMessage) {
+				showErrorMessage('', response.data.errorMessage);
+			} else {
+				showErrorMessage('', ajaxGenericErrorMsg);
+			}
+		};
+
+
+		derivedVariableService.getDependencies = function () {
+			return $http.get(FIELDBOOK_BASE_URL + 'derived-variable/dependencies');
+		};
+
 		derivedVariableService.hasMeasurementData = function (variableIds) {
-			return $http.post('/Fieldbook/DerivedVariableController/derived-variable/dependencyVariableHasMeasurementData/',
+			return $http.post(FIELDBOOK_BASE_URL + 'derived-variable/dependencyVariableHasMeasurementData/',
 				variableIds, {cache: false});
+		};
+
+		derivedVariableService.calculateVariableForObservation = function (calculateData) {
+			var request = $http.post(FIELDBOOK_BASE_URL + 'derived-variable/execute', calculateData);
+			return request.then(successHandler, failureHandler);
+		};
+
+		derivedVariableService.calculateVariableForSubObservation = function (datasetId, calculateData) {
+			var request = $http.post(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variable/calculate', calculateData);
+			return request.then(successHandler, failureHandler);
 		};
 
 		return derivedVariableService;
@@ -57,7 +89,7 @@
 					datasetId: function () {
 						return datasetId;
 					},
-					selectedVariable: function() {
+					selectedVariable: function () {
 						return selectedVariable;
 					}
 				},
@@ -69,8 +101,8 @@
 
 	}]);
 
-	derivedVariableModule.controller('executeCalculatedVariableDatasetOptionCtrl', ['$scope', '$uibModal', '$uibModalInstance', 'studyContext', 'derivedVariableModalService',
-		function ($scope, $uibModal, $uibModalInstance, studyContext, derivedVariableModalService) {
+	derivedVariableModule.controller('executeCalculatedVariableDatasetOptionCtrl', ['$rootScope', '$scope', '$uibModal', '$uibModalInstance', 'studyContext', 'derivedVariableModalService',
+		function ($rootScope, $scope, $uibModal, $uibModalInstance, studyContext, derivedVariableModalService) {
 
 			$scope.modalTitle = 'Execute Calculations';
 			$scope.message = 'Please choose the dataset where you would like to execute the calculation from:';
@@ -78,6 +110,13 @@
 			$scope.selected = {datasetId: $scope.measurementDatasetId};
 
 			$scope.next = function () {
+
+				if ($scope.selected.datasetId === $scope.measurementDatasetId) {
+					$rootScope.navigateToTab('editMeasurements');
+				} else {
+					$rootScope.navigateToSubObsTab($scope.selected.datasetId);
+				}
+
 				derivedVariableModalService.openExecuteCalculatedVariableModal($scope.selected.datasetId);
 				$uibModalInstance.close();
 			};
@@ -85,30 +124,26 @@
 		}]);
 
 	derivedVariableModule.controller('executeCalculatedVariableModalCtrl',
-		['$scope', '$http', '$uibModalInstance', 'datasetService', 'derivedVariableModalService', 'datasetId',
-			function ($scope, $http, $uibModalInstance, datasetService, derivedVariableModalService, datasetId) {
+		['$rootScope', '$scope', '$http', '$uibModalInstance', 'datasetService', 'derivedVariableModalService', 'derivedVariableService', 'datasetId', 'studyContext',
+			function ($rootScope, $scope, $http, $uibModalInstance, datasetService, derivedVariableModalService, derivedVariableService, datasetId, studyContext) {
 
 				$scope.instances = [];
 				$scope.selectedInstances = {};
 				$scope.isEmptySelection = false;
-				$scope.selected = { variable: undefined };
+				$scope.selected = {variable: undefined};
 
 				$scope.init = function () {
-
 					datasetService.getDataset(datasetId).then(function (dataset) {
 						$scope.variableListView = buildVariableListView(dataset.variables);
 						$scope.instances = dataset.instances;
-
 					});
-
 				};
 
 				$scope.cancel = function () {
 					$uibModalInstance.close();
 				};
 
-				$scope.proceedExecution = function () {
-
+				$scope.reloadObservation = function () {
 					$('.import-study-data').data('data-import', '1');
 					$('body').addClass('import-preview-measurements');
 
@@ -116,6 +151,11 @@
 					new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
 					$('.fbk-discard-imported-data').removeClass('fbk-hide');
 
+					showSuccessfulMessage('', 'Calculated values for ' + $scope.selected.variable.name + ' were added successfully.');
+				};
+
+				$scope.reloadSubObservation = function () {
+					$rootScope.navigateToSubObsTab(datasetId);
 					showSuccessfulMessage('', 'Calculated values for ' + $scope.selected.variable.name + ' were added successfully.');
 				};
 
@@ -134,24 +174,25 @@
 						, geoLocationIds: geoLocationIds
 					};
 
-					$http.post('/Fieldbook/DerivedVariableController/derived-variable/execute', JSON.stringify(calculateData))
-						.then(function (response) {
-							$uibModalInstance.close();
-							if (response.data && response.data.inputMissingData) {
-								showAlertMessage('', response.data.inputMissingData, 15000);
-							}
-							if (response.data && response.data.hasDataOverwrite) {
-								derivedVariableModalService.confirmOverrideCalculatedVariableModal(datasetId, $scope.selected.variable);
-							} else {
-								$scope.proceedExecution();
-							}
-						}, function (response) {
-							if (response.data.errorMessage) {
-								showErrorMessage('', response.data.errorMessage);
-							} else {
-								showErrorMessage('', ajaxGenericErrorMsg);
-							}
-						});
+					// If selected dataset is PLOT DATA
+					if (datasetId === studyContext.measurementDatasetId) {
+						derivedVariableService.calculateVariableForObservation(calculateData)
+							.then(function (hasDataOverwrite) {
+								if (hasDataOverwrite) {
+									derivedVariableModalService.confirmOverrideCalculatedVariableModal(datasetId, $scope.selected.variable);
+								} else {
+									$scope.reloadObservation();
+								}
+								$uibModalInstance.close();
+							});
+					} else {
+						derivedVariableService.calculateVariableForSubObservation(datasetId, calculateData)
+							.then(function (hasDataOverwrite) {
+								$scope.reloadSubObservation();
+								$uibModalInstance.close();
+							});
+					}
+
 
 				};
 
@@ -170,21 +211,15 @@
 
 			}]);
 
-	derivedVariableModule.controller('confirmOverrideCalculatedVariableModalCtrl', ['$scope', '$http', '$uibModalInstance', 'derivedVariableModalService', 'selectedVariable',
-		function ($scope, $http, $uibModalInstance, derivedVariableModalService, selectedVariable) {
+	derivedVariableModule.controller('confirmOverrideCalculatedVariableModalCtrl', ['$scope', '$http', '$uibModalInstance', 'derivedVariableModalService', 'selectedVariable', 'datasetId',
+		function ($scope, $http, $uibModalInstance, derivedVariableModalService, selectedVariable, datasetId) {
 
 			$scope.goBack = function () {
 				$http.get('/Fieldbook/ImportManager/revert/data')
 					.then(function (response) {
 						$scope.revertData();
 						$uibModalInstance.close();
-						derivedVariableModalService.openExecuteCalculatedVariableModal(1);
-					}, function (response) {
-						if (response.data.errorMessage) {
-							showErrorMessage('', response.data.errorMessage);
-						} else {
-							showErrorMessage('', ajaxGenericErrorMsg);
-						}
+						derivedVariableModalService.openExecuteCalculatedVariableModal(datasetId);
 					});
 
 			};

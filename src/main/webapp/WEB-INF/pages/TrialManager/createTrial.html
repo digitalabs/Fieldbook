@@ -25,8 +25,9 @@
 					</span>
 
 						<div class="fbk-study-heading-btns">
-							<input ng-click="saveCurrentTrialData()" ng-disabled="isSaveDisabled()" class="btn btn-info fbk-save-button-left-margin" onclick=""
-								   type="button" value="Save"/>
+							<input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick=""
+								   type="button" value="Save"  ng-disabled="isSaveDisabled()"
+								   ng-attr-title="{{isSaveDisabled() ? 'You cannot save in this tab' : ''}}" />
 							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide"
 								   onclick="discardImportedData();" th:value="#{import.discard.data}"/>
 							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-stocklist-data fbk-hide"

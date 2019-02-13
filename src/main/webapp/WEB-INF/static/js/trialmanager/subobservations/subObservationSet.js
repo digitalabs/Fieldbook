@@ -403,7 +403,7 @@
 								if (cellData.observationId) {
 									if (!value && !$scope.isPendingView) {
 										if (cellData.draftValue) {
-                                            value = null;
+											value = null;
 										} else {
 											return datasetService.deleteObservation(subObservationSet.id, rowData.observationUnitId,
 												cellData.observationId);

@@ -157,14 +157,19 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 		};
 	});
 
+	// do not switch tab if we have newly imported measurements or stock list is not saved
+	function isTabChangeDisabled() {
+		return stockListImportNotSaved || $('.import-study-data').data('data-import') === '1';
+	}
+
 	manageTrialApp.run(
-		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES', '$transitions',
-			function ($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES, $transitions) {
+		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES', '$transitions', 'TrialManagerDataService',
+			function ($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES, $transitions, TrialManagerDataService) {
 				$rootScope.VARIABLE_TYPES = VARIABLE_TYPES;
 
-				$transitions.onEnter({},
+				$transitions.onStart({},
 					function (transition) {
-						if ($('.import-study-data').data('data-import') === '1' || stockListImportNotSaved) {
+						if (isTabChangeDisabled()) {
 							transition.abort();
 						}
 						// a 'transition prevented' error
@@ -523,9 +528,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.performFunctionOnTabChange = function (targetState) {
-				// do not switch tab if we have newly imported measurements or stock list is not saved
-				if (stockListImportNotSaved || $('.import-study-data').data('data-import') === '1') {
-					// Display warning if the user tries to navigate across tabs(except advance & stock-list tab) without saving imported inventory file
+				if (isTabChangeDisabled()) {
 					showAlertMessage('', importSaveDataWarningMessage);
 					return;
 				}
@@ -908,10 +911,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				displayCrossesList(value.id, value.name, value.crossesType, true, '', true);
 			});
 
-			$scope.tabChange = function (selectedTab) {
-
-				// Display warning if the user tries to navigate across tabs(advance & stock-list tab) without saving imported inventory file
-				if (stockListImportNotSaved) {
+			$scope.listTabChange = function (selectedTab) {
+				if (isTabChangeDisabled()) {
 					showAlertMessage('', importSaveDataWarningMessage);
 					return;
 				}

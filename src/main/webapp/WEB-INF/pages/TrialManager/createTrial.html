@@ -91,7 +91,7 @@
 							<!--Crossing options-->
 							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Crossing options</a>
-								<ul class="dropdown-menu" style="margin-left: -47px;">
+								<ul class="dropdown-menu" style="margin-left: -48px;">
 									<!--Export crossing template-->
 									<li id="download-crosses-template">
 										<a href="javascript: void(0)" onclick="ImportCrosses.downloadCrosses()"
@@ -138,7 +138,7 @@
 
 							<li ng-show="displayGermplasmOrMeasurmentOnlyActions()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Data collection options</a>
-								<ul class="dropdown-menu" style="margin-left: 0px;">
+								<ul class="dropdown-menu" style="margin-left: -25px; width: 193px">
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a ng-click="showExportStudyModal()" id="export-study-link"
 										   th:text="#{study.studydetails.action.export.study}">Export Study Book</a>
@@ -176,7 +176,7 @@
 
 							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Advance study options</a>
-								<ul class="dropdown-menu" style="margin-left: -12px;">
+								<ul class="dropdown-menu" style="margin-left: -12px; width: 179px;">
 									<li>
 										<a href="javascript: startAdvance('trial');" id="advance-trial-link"
 										   th:text="#{study.studydetails.action.advance.study}">Advance Study</a>

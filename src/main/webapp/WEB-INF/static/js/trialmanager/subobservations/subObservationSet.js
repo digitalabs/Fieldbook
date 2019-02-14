@@ -188,6 +188,10 @@
 				loadTable();
 			};
 
+			$scope.acceptDraftData = function () {
+				datasetService.acceptDraftData($scope.subObservationSet.dataset.datasetId).then(reloadDataset);
+			}
+
 			$scope.subDivide = function () {
 				// TODO
 				// var id = $scope.subObservationTab.subObservationSets.length + 1;
@@ -401,8 +405,12 @@
 
 								if (cellData.observationId) {
 									if (!value && !$scope.isPendingView) {
-										return datasetService.deleteObservation(subObservationSet.id, rowData.observationUnitId,
-											cellData.observationId);
+										if (cellData.draftValue) {
+											value = null;
+										} else {
+											return datasetService.deleteObservation(subObservationSet.id, rowData.observationUnitId,
+												cellData.observationId);
+										}
 									}
 
 									return confirmOutOfBoundData(value, columnData).then(function (doContinue) {

@@ -660,6 +660,21 @@
 									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
 							}
 						});
+					} else if (columnData.termId === -2) { // variates
+						// SAMPLES count column
+						columnsDef.push({
+							targets: columns.length - 1,
+							orderable: false,
+							render: function (data, type, full, meta) {
+								if (full.samplesCount !== '-') {
+									return '<a class="gid-link" href="javascript: void(0)" ' +
+										'onclick="openSampleSummary(\'' +
+										full.variables['OBS_UNIT_ID'].value + '\', null)">' + EscapeHTML.escape(full.samplesCount) + '</a>';
+								} else {
+									return full.samplesCount;
+								}
+							}
+						});
 					} else if (!columnData.factor) { // variates
 						columnsDef.push({
 							targets: columns.length - 1,
@@ -708,30 +723,6 @@
 								}
 
 								return data && EscapeHTML.escape(data.value);
-							}
-						});
-					}
-
-					// Manually add SAMPLES count column after PLOT_NO field
-					if (columnData.termId === 8200) {
-						columns.push({
-							title: 'SAMPLES',
-							visible: true,
-							defaultContent: '',
-							className: 'factors',
-							columnData: { formula: undefined}
-						});
-
-						columnsDef.push({
-							targets: columns.length - 1,
-							render: function (data, type, full, meta) {
-								if (full.samplesCount !== '-') {
-									return '<a class="gid-link" href="javascript: void(0)" ' +
-										'onclick="openSampleSummary(\'' +
-										full.variables['OBS_UNIT_ID'].value + '\', null)">' + EscapeHTML.escape(full.samplesCount) + '</a>';
-								} else {
-									return full.samplesCount;
-								}
 							}
 						});
 					}

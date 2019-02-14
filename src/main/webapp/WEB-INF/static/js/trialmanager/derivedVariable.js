@@ -16,21 +16,18 @@
 			if (response.data && response.data.inputMissingData) {
 				showAlertMessage('', response.data.inputMissingData, 15000);
 			}
-			if (response.data && response.data.hasDataOverwrite) {
+			if (response.data) {
 				return response.data.hasDataOverwrite;
 			}
 		};
 		var failureHandler = function (response) {
 			if (response.data.errorMessage) {
 				showErrorMessage('', response.data.errorMessage);
-			} else {
+			} else if (response.data.errors) {
+				showErrorMessage('', response.data.errors[0].message);
+			}else {
 				showErrorMessage('', ajaxGenericErrorMsg);
 			}
-		};
-
-
-		derivedVariableService.getDependencies = function () {
-			return $http.get(FIELDBOOK_BASE_URL + 'derived-variable/dependencies');
 		};
 
 		derivedVariableService.hasMeasurementData = function (variableIds) {
@@ -46,6 +43,10 @@
 		derivedVariableService.calculateVariableForSubObservation = function (datasetId, calculateData) {
 			var request = $http.post(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variable/calculate', calculateData);
 			return request.then(successHandler, failureHandler);
+		};
+
+		derivedVariableService.getDependencies = function (datasetId) {
+			return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variable/dependencies');
 		};
 
 		return derivedVariableService;
@@ -188,8 +189,11 @@
 					} else {
 						derivedVariableService.calculateVariableForSubObservation(datasetId, calculateData)
 							.then(function (hasDataOverwrite) {
-								$scope.reloadSubObservation();
-								$uibModalInstance.close();
+								// if hasDataOverwrite is defined it means the service call is successful.
+								if (hasDataOverwrite !== undefined) {
+									$scope.reloadSubObservation();
+									$uibModalInstance.close();
+								}
 							});
 					}
 

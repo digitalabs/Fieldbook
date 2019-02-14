@@ -193,9 +193,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
 		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService', 'importStudyModalService',
-		'createSampleModalService','derivedVariableModalService', '$uibModal', '$q', 'datasetService',
+		'createSampleModalService','derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'studyContext',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
-				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService) {
+				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService,
+				  $uibModal, $q, datasetService, studyContext) {
 
 			$scope.trialTabs = [
 				{
@@ -349,7 +350,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.saveCurrentTrialData = function () {
-				derivedVariableService.getDependencies().then(function (response) {
+				derivedVariableService.getDependencies(studyContext.measurementDatasetId).then(function (response) {
 					return $scope.warnMissingInputData(response);
 				}).then(function () {
 					TrialManagerDataService.saveCurrentData();

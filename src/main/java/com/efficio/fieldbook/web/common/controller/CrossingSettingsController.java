@@ -319,8 +319,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 
-		// 1. PARSE the file into an ImportCrosses List REF: deprecated:
-		// CrossingManagerUploader.java
+		// 1. PARSE the file into an ImportCrosses List
 		try {
 			final ImportedCrossesList parseResults = this.crossingService.parseFile(form.getFile());
 			// 2. Process duplicates and set to ImportedCrossesList
@@ -490,7 +489,7 @@ public class CrossingSettingsController extends SettingsController {
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 		for (final GermplasmListData listData : germplasmListDataList) {
 			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, listData));
-			final ImportedCrosses importedCross = this.crossesListUtil.convertGermplasmListData2ImportedCrosses(listData);
+			final ImportedCrosses importedCross = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(listData);
 			if (importedCross.getGid() == null) {
 				responseMap.put(CrossingSettingsController.IS_SUCCESS, 0);
 				final String localisedErrorMessage = this.messageSource.getMessage("error.germplasm.record.already.exists", new String[] {},
@@ -605,12 +604,19 @@ public class CrossingSettingsController extends SettingsController {
 		final ImmutableList<Integer> listWithNoDuplicates = ImmutableSet.copyOf(gidList).asList();
 
 		final Map<Integer, String[]> pedigreeMap = germplasmDataManager.getParentsInfoByGIDList(listWithNoDuplicates);
-
+		// If any of the cross parents are unknown (GID = 0), display as "UNKNOWN"
+		if (pedigreeMap != null && listWithNoDuplicates.contains(0)) {
+			final String unknownParentLabel = this.crossesListUtil.getUnknownParentLabel();
+			pedigreeMap.put(0, new String[] {unknownParentLabel, unknownParentLabel});
+		}
 		for (final ImportedCrosses importedCrosses : importedCrossesList) {
-			importedCrosses.setFemalePedigree(pedigreeMap.get(Integer.parseInt(importedCrosses.getFemaleGid()))[0]);
-			importedCrosses.setMalePedigree(pedigreeMap.get(Integer.parseInt(importedCrosses.getMaleGid()))[0]);
-			importedCrosses.setFemaleCross(pedigreeMap.get(Integer.parseInt(importedCrosses.getFemaleGid()))[1]);
-			importedCrosses.setMaleCross(pedigreeMap.get(Integer.parseInt(importedCrosses.getMaleGid()))[1]);
+			final int femaleGid = Integer.parseInt(importedCrosses.getFemaleGid());
+			importedCrosses.setFemalePedigree(pedigreeMap.get(femaleGid)[0]);
+			importedCrosses.setFemaleCross(pedigreeMap.get(femaleGid)[1]);
+
+			final int maleGid = Integer.parseInt(importedCrosses.getMaleGid());
+			importedCrosses.setMalePedigree(pedigreeMap.get(maleGid)[0]);
+			importedCrosses.setMaleCross(pedigreeMap.get(maleGid)[1]);
 		}
 
 	}

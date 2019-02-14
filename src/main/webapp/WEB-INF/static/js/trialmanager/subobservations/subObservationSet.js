@@ -189,7 +189,27 @@
 			};
 
 			$scope.acceptDraftData = function () {
-				datasetService.acceptDraftData($scope.subObservationSet.dataset.datasetId).then(reloadDataset);
+				datasetService.acceptDraftData($scope.subObservationSet.dataset.datasetId).then(function () {
+					reloadDataset();
+				}, function (response) {
+					if (response.errors && response.errors.length) {
+						showErrorMessage('', response.errors[0].message);
+					} else {
+						showErrorMessage('', ajaxGenericErrorMsg);
+					}
+				});
+			}
+
+			$scope.rejectDraftData() = function () {
+				datasetService.rejectDraftData($scope.subObservationSet.dataset.datasetId).then(function () {
+					reloadDataset();
+				}, function (response) {
+					if (response.errors && response.errors.length) {
+						showErrorMessage('', response.errors[0].message);
+					} else {
+						showErrorMessage('', ajaxGenericErrorMsg);
+					}
+				});
 			}
 
 			$scope.subDivide = function () {

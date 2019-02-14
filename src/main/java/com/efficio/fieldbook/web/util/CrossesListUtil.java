@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
-import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,8 +78,18 @@ public class CrossesListUtil {
 		dataMap.put(tableHeaderList.get(CrossesListUtil.MGID_INDEX), crossesData.getMgid());
 		return dataMap;
 	}
+	
+	public void updateUnknownMaleParentsInfo(final List<GermplasmListData> germplasmListDataList) {
+		for (final GermplasmListData listData : germplasmListDataList) {
+			if (listData.getMgid() == 0) {
+				final String unknownParentLabel = this.getUnknownParentLabel();
+				listData.setMaleParent(unknownParentLabel); 
+				listData.setMalePedigree(unknownParentLabel); 
+			}
+		}
+	}
 
-	public ImportedCrosses convertGermplasmListData2ImportedCrosses(final GermplasmListData crossesData) {
+	public ImportedCrosses convertGermplasmListDataToImportedCrosses(final GermplasmListData crossesData) {
 		final ImportedCrosses importedCrosses = new ImportedCrosses();
 		importedCrosses.setCrossListId(crossesData.getId());
 		importedCrosses.setEntryId(crossesData.getEntryId());

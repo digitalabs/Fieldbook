@@ -476,14 +476,14 @@ public class CrossingSettingsController extends SettingsController {
 
 		final Map<String, Object> responseMap = new HashMap<>();
 		final List<Map<String, Object>> masterList = new ArrayList<>();
-		final Integer crossesListId = Integer.parseInt(createdCrossesListId);
-
-		final List<GermplasmListData> germplasmListDataList = this.germplasmListManager.retrieveListDataWithParents(crossesListId);
-		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(crossesListId);
-
-		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
 		final Map<Integer, ImportedCrosses> importedCrossesMap = new HashMap<>();
+
+		final Integer crossesListId = Integer.parseInt(createdCrossesListId);
+		final List<GermplasmListData> germplasmListDataList = this.germplasmListManager.retrieveListDataWithParents(crossesListId);
+		// For unknown male parents (GID=0), the Male designation and Male Pedigree are null since germplasm with ID = 0 
+		// doesn't exist in DB. They have to be manually updated to display "UNKNOWN"
+		this.crossesListUtil.updateUnknownMaleParentsInfo(germplasmListDataList);
 
 		final String studyName = this.studySelection.getWorkbook().getStudyDetails().getStudyName();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
@@ -505,6 +505,8 @@ public class CrossingSettingsController extends SettingsController {
 			importedCrosses.add(importedCross);
 			importedCrossesMap.put(importedCross.getEntryId(), importedCross);
 		}
+		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
+		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(crossesListId);
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 		importedCrossesList.setType(germplasmList.getType());
 		importedCrossesList.setUserId(germplasmList.getUserId());

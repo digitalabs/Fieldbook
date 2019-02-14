@@ -610,12 +610,6 @@
 					subObservationSet.columnsData = columnsData;
 					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(columnsData);
 
-					// if not needed when implementing review -> remove
-					subObservationSet.columnMap = {};
-					angular.forEach(columnsData, function (columnData) {
-						subObservationSet.columnMap[columnData.termId] = columnData;
-					});
-
 					return columnsObj;
 				});
 			}

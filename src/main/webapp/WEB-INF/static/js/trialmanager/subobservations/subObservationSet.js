@@ -9,6 +9,9 @@
 		function ($scope, $rootScope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
 				  datasetService, $timeout
 		) {
+
+			TrialManagerDataService.applicationData.isSaveEnabled = false;
+
 			$scope.traitVariables = new angular.OrderedHash();
 			$scope.selectionVariables = new angular.OrderedHash();
 			$scope.isHideDelete = false;

@@ -157,17 +157,22 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 		};
 	});
 
+	// do not switch tab if we have newly imported measurements or stock list is not saved
+	function isTabChangeDisabled() {
+		return stockListImportNotSaved || $('.import-study-data').data('data-import') === '1';
+	}
+
 	manageTrialApp.run(
-		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES', '$transitions',
-			function ($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES, $transitions) {
+		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES', '$transitions', 'TrialManagerDataService',
+			function ($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES, $transitions, TrialManagerDataService) {
 				$rootScope.VARIABLE_TYPES = VARIABLE_TYPES;
 
-				$transitions.onEnter({},
+				$transitions.onStart({},
 					function (transition) {
-						if ($('.import-study-data').data('data-import') === '1' || stockListImportNotSaved) {
+						if (isTabChangeDisabled()) {
 							transition.abort();
 						}
-						// a 'transition prevented' error
+						TrialManagerDataService.applicationData.isSaveEnabled = true;
 					});
 
 				$rootScope.stateSuccessfullyLoaded = {};
@@ -241,6 +246,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.studyTypeSelected = undefined;
 			$scope.isChoosePreviousStudy = false;
 			$scope.hasUnsavedData = studyStateService.hasUnsavedData;
+			$scope.isSaveDisabled = TrialManagerDataService.isSaveDisabled;
+			$scope.isSaveEnabled = TrialManagerDataService.isSaveEnabled;
 
 			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
@@ -523,15 +530,14 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.performFunctionOnTabChange = function (targetState) {
-				// do not switch tab if we have newly imported measurements or stock list is not saved
-				if (stockListImportNotSaved || $('.import-study-data').data('data-import') === '1') {
-					// Display warning if the user tries to navigate across tabs(except advance & stock-list tab) without saving imported inventory file
+				if (isTabChangeDisabled()) {
 					showAlertMessage('', importSaveDataWarningMessage);
 					return;
 				}
 
 				$scope.isSettingsTab = true;
 				$scope.tabSelected = targetState;
+
 				if (targetState === 'editMeasurements') {
 					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
 					// of the table if we do not do that
@@ -908,15 +914,14 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				displayCrossesList(value.id, value.name, value.crossesType, true, '', true);
 			});
 
-			$scope.tabChange = function (selectedTab) {
-
-				// Display warning if the user tries to navigate across tabs(advance & stock-list tab) without saving imported inventory file
-				if (stockListImportNotSaved) {
+			$scope.listTabChange = function (selectedTab) {
+				if (isTabChangeDisabled()) {
 					showAlertMessage('', importSaveDataWarningMessage);
 					return;
 				}
 				$scope.tabSelected = selectedTab;
 				$scope.isSettingsTab = false;
+				TrialManagerDataService.applicationData.isSaveEnabled = false;
 
 				// Load selected stock list inventory page setup function single time
 				if ($scope.stockListTabs && $scope.stockListTabs.indexOf(selectedTab) === -1) {

@@ -234,9 +234,9 @@
 							xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
 						},
 						data: function (d) {
-							var sortedColIndex = $(tableId).dataTable().fnSettings().aaSorting[0][0];
-							var sortDirection = $(tableId).dataTable().fnSettings().aaSorting[0][1];
-							var sortedColTermId = subObservationSet.columnsData[sortedColIndex].termId;
+							var order = d.order && d.order[0];
+							var sortedColTermId = subObservationSet.columnsData[order.column].termId;
+
 							var instanceId = $scope.nested.selectedEnvironment.instanceDbId;
 
 							return {
@@ -244,7 +244,7 @@
 								pageSize: d.length,
 								pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
 								sortBy: sortedColTermId,
-								sortOrder: sortDirection,
+								sortOrder: order.dir,
 								instanceId: instanceId,
 								draftMode: $scope.isPendingView
 							};

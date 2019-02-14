@@ -16,16 +16,15 @@
 			if (response.data && response.data.inputMissingData) {
 				showAlertMessage('', response.data.inputMissingData, 15000);
 			}
-			if (response.data) {
-				return response.data.hasDataOverwrite;
-			}
+			return response;
+
 		};
 		var failureHandler = function (response) {
 			if (response.data.errorMessage) {
 				showErrorMessage('', response.data.errorMessage);
 			} else if (response.data.errors) {
 				showErrorMessage('', response.data.errors[0].message);
-			}else {
+			} else {
 				showErrorMessage('', ajaxGenericErrorMsg);
 			}
 		};
@@ -81,7 +80,7 @@
 			});
 		};
 
-		derivedVariableModalService.confirmOverrideCalculatedVariableModal = function (datasetId, selectedVariable) {
+		derivedVariableModalService.confirmOverrideCalculatedVariableModal = function (datasetId, selectedVariable, calculateRequestData) {
 			$uibModal.open({
 				templateUrl: '/Fieldbook/static/angular-templates/derivedVariable/confirmOverrideCalculatedVariableModal.html',
 				controller: "confirmOverrideCalculatedVariableModalCtrl",
@@ -92,7 +91,8 @@
 					},
 					selectedVariable: function () {
 						return selectedVariable;
-					}
+					},
+					calculateRequestData: calculateRequestData
 				},
 				controllerAs: 'ctrl'
 			});
@@ -170,16 +170,16 @@
 						}
 					});
 
-					var calculateData = {
+					var calculateRequestData = {
 						variableId: $scope.selected.variable.cvTermId
 						, geoLocationIds: geoLocationIds
 					};
 
 					// If selected dataset is PLOT DATA
 					if (datasetId === studyContext.measurementDatasetId) {
-						derivedVariableService.calculateVariableForObservation(calculateData)
-							.then(function (hasDataOverwrite) {
-								if (hasDataOverwrite) {
+						derivedVariableService.calculateVariableForObservation(calculateRequestData)
+							.then(function (response) {
+								if (response.data && response.data.hasDataOverwrite) {
 									derivedVariableModalService.confirmOverrideCalculatedVariableModal(datasetId, $scope.selected.variable);
 								} else {
 									$scope.reloadObservation();
@@ -187,13 +187,16 @@
 								$uibModalInstance.close();
 							});
 					} else {
-						derivedVariableService.calculateVariableForSubObservation(datasetId, calculateData)
-							.then(function (hasDataOverwrite) {
-								// if hasDataOverwrite is defined it means the service call is successful.
-								if (hasDataOverwrite !== undefined) {
-									$scope.reloadSubObservation();
-									$uibModalInstance.close();
+						derivedVariableService.calculateVariableForSubObservation(datasetId, calculateRequestData)
+							.then(function (response) {
+								if (response) {
+									if (response.data && response.data.hasDataOverwrite) {
+										derivedVariableModalService.confirmOverrideCalculatedVariableModal(datasetId, $scope.selected.variable, calculateRequestData);
+									} else {
+										$scope.reloadSubObservation();
+									}
 								}
+								$uibModalInstance.close();
 							});
 					}
 
@@ -215,13 +218,19 @@
 
 			}]);
 
-	derivedVariableModule.controller('confirmOverrideCalculatedVariableModalCtrl', ['$scope', '$http', '$uibModalInstance', 'derivedVariableModalService', 'selectedVariable', 'datasetId',
-		function ($scope, $http, $uibModalInstance, derivedVariableModalService, selectedVariable, datasetId) {
+	derivedVariableModule.controller('confirmOverrideCalculatedVariableModalCtrl', ['$rootScope', '$scope', '$http', '$uibModalInstance',
+		'derivedVariableModalService', 'derivedVariableService', 'selectedVariable', 'datasetId', 'studyContext', 'calculateRequestData',
+		function ($rootScope, $scope, $http, $uibModalInstance, derivedVariableModalService, derivedVariableService, selectedVariable,
+				  datasetId, studyContext, calculateRequestData) {
 
 			$scope.goBack = function () {
 				$http.get('/Fieldbook/ImportManager/revert/data')
 					.then(function (response) {
-						$scope.revertData();
+
+						if (datasetId === studyContext.measurementDatasetId) {
+							// Only revert plot measurements data if the selected dataset is PLOT DATA
+							$scope.revertData();
+						}
 						$uibModalInstance.close();
 						derivedVariableModalService.openExecuteCalculatedVariableModal(datasetId);
 					});
@@ -242,14 +251,30 @@
 
 			$scope.proceed = function () {
 
-				$('.import-study-data').data('data-import', '1');
-				$('body').addClass('import-preview-measurements');
+				// If selected dataset is PLOT DATA
+				if (datasetId === studyContext.measurementDatasetId) {
 
-				var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
-				new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
-				$('.fbk-discard-imported-data').removeClass('fbk-hide');
+					$('.import-study-data').data('data-import', '1');
+					$('body').addClass('import-preview-measurements');
 
-				showSuccessfulMessage('', 'Calculated values for ' + selectedVariable.name + ' were added successfully.');
+					var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+					new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
+					$('.fbk-discard-imported-data').removeClass('fbk-hide');
+
+					showSuccessfulMessage('', 'Calculated values for ' + selectedVariable.name + ' were added successfully.');
+
+				} else {
+					// Explicitly tell the web service to save the calculated value immediately even if there's measurement data to overwrite.
+					calculateRequestData.overwriteExistingData = true;
+					derivedVariableService.calculateVariableForSubObservation(datasetId, calculateRequestData)
+						.then(function (response) {
+							if (response) {
+								$rootScope.navigateToSubObsTab(datasetId);
+								showSuccessfulMessage('', 'Calculated values for ' + selectedVariable.name + ' were added successfully.');
+								$uibModalInstance.close();
+							}
+						});
+				}
 
 				$uibModalInstance.close();
 

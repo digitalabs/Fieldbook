@@ -198,9 +198,9 @@
 						showErrorMessage('', ajaxGenericErrorMsg);
 					}
 				});
-			}
+			};
 
-			$scope.rejectDraftData() = function () {
+			$scope.rejectDraftData = function () {
 				datasetService.rejectDraftData($scope.subObservationSet.dataset.datasetId).then(function () {
 					reloadDataset();
 				}, function (response) {
@@ -210,7 +210,7 @@
 						showErrorMessage('', ajaxGenericErrorMsg);
 					}
 				});
-			}
+			};
 
 			$scope.subDivide = function () {
 				// TODO

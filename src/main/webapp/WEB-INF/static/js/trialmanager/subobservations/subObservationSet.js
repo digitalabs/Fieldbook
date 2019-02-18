@@ -252,7 +252,6 @@
 					})
 					.withDataProp('data')
 					.withOption('serverSide', true)
-					.withOption('initComplete', initCompleteCallback)
 					.withOption('headerCallback', headerCallback)
 					.withOption('drawCallback', drawCallback));
 			}
@@ -274,13 +273,11 @@
 							last: '>>'
 						}
 					})
-					.withDOM('"<"pull-left fbk-left-padding"l>' + //
-						'<"pull-left"i>' + //
-						'<"pull-left fbk-left-padding"r>' + //
+					.withDOM('<"pull-left fbk-left-padding"r>' + //
 						'<"pull-right"B>' + //
 						'<"clearfix">' + //
 						'<"row add-top-padding-small"<"col-sm-12"t>>' + //
-						'<"row"<"col-sm-12"p>>')
+						'<"row"<"col-sm-12 paginate-float-center"<"pull-left"i><"pull-right"l>p>>')
 					.withButtons([{
 						extend: 'colvis',
 						className: 'fbk-buttons-no-border fbk-colvis-button',
@@ -288,23 +285,6 @@
 					}])
 					.withColReorder()
 					.withPaginationType('full_numbers');
-			}
-
-			/**
-			 * FIXME we were having issues with clone() and $compile. Attaching and detaching instead for now
-			 */
-			function attachCategoricalDisplayBtn() {
-				$timeout(function () {
-					$('#subObsCategoricalDescriptionBtn').detach().insertBefore('#subObservationTableContainer .dt-buttons');
-				});
-			}
-
-			function detachCategoricalDisplayBtn() {
-				$('#subObsCategoricalDescriptionBtn').detach().appendTo('#subObsCategoricalDescriptionContainer');
-			}
-
-			function initCompleteCallback() {
-				attachCategoricalDisplayBtn();
 			}
 
 			function headerCallback(thead, data, start, end, display) {
@@ -581,8 +561,6 @@
 			}
 
 			function loadTable() {
-				detachCategoricalDisplayBtn();
-
 				/**
 				 * We need to reinitilize all this because
 				 * if we use column.visible an change the columns with just
@@ -600,8 +578,6 @@
 					$scope.dtOptions = getDtOptions();
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
-
-					attachCategoricalDisplayBtn();
 				});
 			}
 

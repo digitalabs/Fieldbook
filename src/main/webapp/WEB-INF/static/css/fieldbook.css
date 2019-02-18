@@ -2338,3 +2338,15 @@ td[disabled] {
     border: 1px solid transparent;
     background-clip: padding-box;
 }
+
+.paginate-float-center {
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.paginate-float-center .dataTables_paginate {
+    display: inline-block;
+    width: auto;
+    float: none;
+}

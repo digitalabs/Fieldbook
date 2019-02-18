@@ -479,13 +479,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.displayExecuteCalculatedVariableOnlyActions = function () {
-				return this.hasCalculatedVariable() && this.displayMeasurementOnlyActions();
-			};
-
-			$scope.hasCalculatedVariable = function () {
-				return TrialManagerDataService.settings.measurements.m_keys.some(function (key) {
-					return TrialManagerDataService.settings.measurements.m_vals[key].variable.formula;
-				});
+				return derivedVariableService.isStudyHasCalculatedVariables && this.displayMeasurementOnlyActions();
 			};
 
 			// Programatically navigate to specified tab state
@@ -1021,6 +1015,12 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					derivedVariableModalService.openDatasetOptionModal();
 				}
 			}
+
+			$scope.init = function () {
+				derivedVariableService.displayExecuteCalculateVariableMenu();
+			}
+
+			$scope.init();
 
 		}]);
 

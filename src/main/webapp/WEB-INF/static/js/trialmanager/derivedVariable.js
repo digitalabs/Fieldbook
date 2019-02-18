@@ -4,53 +4,91 @@
 
 	var derivedVariableModule = angular.module('derived-variable', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal', 'fieldbook-utils']);
 
-	derivedVariableModule.factory('derivedVariableService', ['$http', '$q', 'studyContext', function ($http, $q, studyContext) {
+	derivedVariableModule.factory('derivedVariableService', ['$http', '$q', 'studyContext', 'datasetService',
+		'VARIABLE_TYPES', 'DATASET_TYPES_SUBOBSERVATION_IDS', 'DATASET_TYPES',
+		function ($http, $q, studyContext, datasetService, VARIABLE_TYPES, DATASET_TYPES_SUBOBSERVATION_IDS, DATASET_TYPES) {
 
-		var derivedVariableService = {};
+			var derivedVariableService = {};
 
-		var FIELDBOOK_BASE_URL = '/Fieldbook/DerivedVariableController/';
-		var BMSAPI_BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/studies/';
+			var FIELDBOOK_BASE_URL = '/Fieldbook/DerivedVariableController/';
+			var BMSAPI_BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/studies/';
 
-		var successHandler = function (response) {
+			derivedVariableService.isStudyHasCalculatedVariables = true;
 
-			if (response.data && response.data.inputMissingData) {
-				showAlertMessage('', response.data.inputMissingData, 15000);
+			var successHandler = function (response) {
+
+				if (response.data && response.data.inputMissingData) {
+					showAlertMessage('', response.data.inputMissingData, 15000);
+				}
+				return response;
+
+			};
+			var failureHandler = function (response) {
+				if (response.data.errorMessage) {
+					showErrorMessage('', response.data.errorMessage);
+				} else if (response.data.errors) {
+					showErrorMessage('', response.data.errors[0].message);
+				} else {
+					showErrorMessage('', ajaxGenericErrorMsg);
+				}
+			};
+
+			derivedVariableService.hasMeasurementData = function (variableIds) {
+				return $http.post(FIELDBOOK_BASE_URL + 'derived-variable/dependencyVariableHasMeasurementData/',
+					variableIds, {cache: false});
+			};
+
+			derivedVariableService.calculateVariableForObservation = function (calculateData) {
+				var request = $http.post(FIELDBOOK_BASE_URL + 'derived-variable/execute', calculateData);
+				return request.then(successHandler, failureHandler);
+			};
+
+			derivedVariableService.calculateVariableForSubObservation = function (datasetId, calculateData) {
+				var request = $http.post(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variable/calculate', calculateData);
+				return request.then(successHandler, failureHandler);
+			};
+
+			derivedVariableService.getDependencies = function (datasetId) {
+				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variable/dependencies');
+			};
+
+			derivedVariableService.isAnyDatasetContainsCalculatedTraits = function (datasetIds) {
+				var request = $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/derived-variable/hasCalculatedTraits', {
+					params: {
+						datasetIds: datasetIds.join(",")
+					}
+				});
+				return request.then(successHandler, failureHandler);
+			};
+
+			/**
+			 * Displays the Execute Calculated Variable action menu if any of the datasets (plot and sub-observations) in the current study has calculated traits.
+			 * If none of the datasets have calculated variables, Execute Calculated Variable action menu is hidden.
+			 *
+			 * This method is triggered when:
+			 * 1. A study is opened and initialized.
+			 * 2. Measurement table's trait section is changed (added/removed) and is saved.
+			 * 3. SubObservation trait is changed (added/removed)
+			 */
+			derivedVariableService.displayExecuteCalculateVariableMenu = function () {
+
+				datasetService.getDatasets(DATASET_TYPES_SUBOBSERVATION_IDS.concat(DATASET_TYPES.PLOT_OBSERVATIONS)).then(function (datasets) {
+					var datasetIds = [];
+					datasets.forEach(function (dataset) {
+						datasetIds.push(dataset.datasetId)
+					});
+					derivedVariableService.isAnyDatasetContainsCalculatedTraits(datasetIds).then(function (response) {
+						var hasCalculatedVariable = response.data;
+						// isStudyHasCalculatedVariables variable is bound to HTML element via ngShow directive.
+						derivedVariableService.isStudyHasCalculatedVariables = hasCalculatedVariable;
+					});
+				});
+
 			}
-			return response;
 
-		};
-		var failureHandler = function (response) {
-			if (response.data.errorMessage) {
-				showErrorMessage('', response.data.errorMessage);
-			} else if (response.data.errors) {
-				showErrorMessage('', response.data.errors[0].message);
-			} else {
-				showErrorMessage('', ajaxGenericErrorMsg);
-			}
-		};
+			return derivedVariableService;
 
-		derivedVariableService.hasMeasurementData = function (variableIds) {
-			return $http.post(FIELDBOOK_BASE_URL + 'derived-variable/dependencyVariableHasMeasurementData/',
-				variableIds, {cache: false});
-		};
-
-		derivedVariableService.calculateVariableForObservation = function (calculateData) {
-			var request = $http.post(FIELDBOOK_BASE_URL + 'derived-variable/execute', calculateData);
-			return request.then(successHandler, failureHandler);
-		};
-
-		derivedVariableService.calculateVariableForSubObservation = function (datasetId, calculateData) {
-			var request = $http.post(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variable/calculate', calculateData);
-			return request.then(successHandler, failureHandler);
-		};
-
-		derivedVariableService.getDependencies = function (datasetId) {
-			return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variable/dependencies');
-		};
-
-		return derivedVariableService;
-
-	}]);
+		}]);
 
 
 	derivedVariableModule.factory('derivedVariableModalService', ['$uibModal', function ($uibModal) {
@@ -102,8 +140,9 @@
 
 	}]);
 
-	derivedVariableModule.controller('executeCalculatedVariableDatasetOptionCtrl', ['$rootScope', '$scope', '$uibModal', '$uibModalInstance', 'studyContext', 'derivedVariableModalService',
-		function ($rootScope, $scope, $uibModal, $uibModalInstance, studyContext, derivedVariableModalService) {
+	derivedVariableModule.controller('executeCalculatedVariableDatasetOptionCtrl', ['$rootScope', '$scope', '$uibModal', '$uibModalInstance',
+		'studyContext', 'derivedVariableModalService', 'derivedVariableService',
+		function ($rootScope, $scope, $uibModal, $uibModalInstance, studyContext, derivedVariableModalService, derivedVariableService) {
 
 			$scope.modalTitle = 'Execute Calculations';
 			$scope.message = 'Please choose the dataset where you would like to execute the calculation from:';
@@ -112,14 +151,21 @@
 
 			$scope.next = function () {
 
-				if ($scope.selected.datasetId === $scope.measurementDatasetId) {
-					$rootScope.navigateToTab('editMeasurements');
-				} else {
-					$rootScope.navigateToSubObsTab($scope.selected.datasetId);
-				}
-
-				derivedVariableModalService.openExecuteCalculatedVariableModal($scope.selected.datasetId);
-				$uibModalInstance.close();
+				// Do not continue with execute calculation process if no calculated traits is available for the selected dataset.
+				derivedVariableService.isAnyDatasetContainsCalculatedTraits([$scope.selected.datasetId]).then(function (response) {
+					var hasCalculatedVariable = response.data;
+					if (hasCalculatedVariable) {
+						if ($scope.selected.datasetId === $scope.measurementDatasetId) {
+							$rootScope.navigateToTab('editMeasurements');
+						} else {
+							$rootScope.navigateToSubObsTab($scope.selected.datasetId);
+						}
+						derivedVariableModalService.openExecuteCalculatedVariableModal($scope.selected.datasetId);
+						$uibModalInstance.close();
+					} else {
+						showErrorMessage('', 'There is no calculated variable for the dataset selected. Please add a calculated variable in the dataset and try again.');
+					}
+				});
 			};
 
 		}]);

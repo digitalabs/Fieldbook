@@ -142,16 +142,7 @@
 				promise.then(function (doContinue) {
 					if (doContinue) {
 						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, variableIds).then(function () {
-							angular.forEach(variableIds, function (cvtermId) {
-								settings.remove(cvtermId);
-								// TODO review
-								$scope.subObservationSet.dataset.variables = $scope.subObservationSet.dataset.variables.filter(function (variable) {
-									return variable.termId !== cvtermId;
-								});
-							});
-
-							loadTable();
-							$scope.selectedVariables = $scope.getSelectedVariables();
+							reloadDataset();
 						}, function (response) {
 							if (response.errors && response.errors.length) {
 								showErrorMessage('', response.errors[0].message);

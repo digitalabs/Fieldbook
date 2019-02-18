@@ -169,7 +169,7 @@
 			};
 
 			datasetService.acceptDraftData = function (datasetId) {
-				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/drafts/acceptance');
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observation-units/drafts/acceptance');
 				return request.then(successHandler, failureHandler);
 
 			};

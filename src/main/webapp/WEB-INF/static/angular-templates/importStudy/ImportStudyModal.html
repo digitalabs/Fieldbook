@@ -27,7 +27,7 @@
 			<label class="control-label add_top_padding label-bold">Please specify the format you are importing: </label><span
 			class="required">*</span>
 		</div>
-		<div class="col-xs-3 col-md-3">
+		<div class="col-xs-3 col-md-4" style="padding-left: 0px;">
 			<ui-select ng-model="ctrl.format.selected" theme="select2" search-enabled="false">
 				<ui-select-match placeholder="Choose an import type">{{$select.selected.name}}</ui-select-match>
 				<ui-select-choices repeat="format.extension as format in ctrl.importFormats ">{{format.name}}</ui-select-choices>
@@ -36,14 +36,14 @@
 	</div>
 
 	<div class="row">
+		<br>
 		<div class="col-xs-12 col-md-12">
 			<label class="control-label h4 label-bold">SELECT FILE</label>
 		</div>
 		<div class="col-xs-8 col-md-8">
-			<label class="control-label add_top_padding label-bold">Please choose the file you would like to import: </label><span
-			class="required">*</span>
+			<label class="control-label add_top_padding label-bold">Please choose the file you would like to import: </label><span class="required">*</span>
 		</div>
-		<div class="col-xs-4 col-md-4">
+		<div class="col-xs-4 col-md-4"  style="padding-left: 0px;">
 			<span ng-hide="file" class="btn btn-info btn-file">
 				<span>Browse</span>
 				<input id="file_upload" import-sheet-js="" imported-file="file" imported-data="importedData" type="file" multiple="false" accept="{{ctrl.format.selected}}">file</input>
@@ -56,6 +56,7 @@
 	</div>
 
 	<div class="row add_top_padding modal-footer">
+		<br>
 		<button type="button" class="btn btn-default" ng-click="backToDatasetOptionModal()">Back</button>
 		<button type="button" class="btn btn-primary" ng-click="submitImport()" aria-hidden="true" ng-disabled="!file">Import</button>
 	</div>

@@ -174,6 +174,12 @@
 
 			};
 
+			datasetService.checkOutOfBoundDraftData = function (datasetId) {
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observation-units/drafts/out-of-bounds');
+				return request.then(successHandler, failureHandler);
+
+			};
+
 			return datasetService;
 		}]);
 

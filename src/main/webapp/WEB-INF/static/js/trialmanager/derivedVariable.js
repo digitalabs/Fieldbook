@@ -49,11 +49,14 @@
 			};
 
 			derivedVariableService.getDependencies = function (datasetId) {
+				if (!studyContext.studyId) {
+					return $q.resolve();
+				}
 				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variable/dependencies');
 			};
 
-			derivedVariableService.isAnyDatasetContainsCalculatedTraits = function (datasetIds) {
-				var request = $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/derived-variable/hasCalculatedTraits', {
+			derivedVariableService.countCalculatedVariables = function (datasetIds) {
+				var request = $http.head(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/derived-variable/countCalculatedVariables', {
 					params: {
 						datasetIds: datasetIds.join(",")
 					}
@@ -72,13 +75,16 @@
 			 */
 			derivedVariableService.displayExecuteCalculateVariableMenu = function () {
 
+				if (!studyContext.studyId) return;
+
 				datasetService.getDatasets(DATASET_TYPES_SUBOBSERVATION_IDS.concat(DATASET_TYPES.PLOT_OBSERVATIONS)).then(function (datasets) {
 					var datasetIds = [];
 					datasets.forEach(function (dataset) {
 						datasetIds.push(dataset.datasetId)
 					});
-					derivedVariableService.isAnyDatasetContainsCalculatedTraits(datasetIds).then(function (response) {
-						var hasCalculatedVariable = response.data;
+					derivedVariableService.countCalculatedVariables(datasetIds).then(function (response) {
+						var count = response.headers('X-Total-Count');
+						var hasCalculatedVariable = count === 0;
 						// isStudyHasCalculatedVariables variable is bound to HTML element via ngShow directive.
 						derivedVariableService.isStudyHasCalculatedVariables = hasCalculatedVariable;
 					});
@@ -152,8 +158,9 @@
 			$scope.next = function () {
 
 				// Do not continue with execute calculation process if no calculated traits is available for the selected dataset.
-				derivedVariableService.isAnyDatasetContainsCalculatedTraits([$scope.selected.datasetId]).then(function (response) {
-					var hasCalculatedVariable = response.data;
+				derivedVariableService.countCalculatedVariables([$scope.selected.datasetId]).then(function (response) {
+					var count = response.headers('X-Total-Count');
+					var hasCalculatedVariable = count === 0;
 					if (hasCalculatedVariable) {
 						if ($scope.selected.datasetId === $scope.measurementDatasetId) {
 							$rootScope.navigateToTab('editMeasurements');

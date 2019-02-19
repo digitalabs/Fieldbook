@@ -329,8 +329,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.warnMissingInputData = function (response) {
 				var deferred = $q.defer();
-				var dependencyVariables = response.data;
-				if (dependencyVariables.length > 0) {
+				if (response && response.data.length > 0) {
 					$uibModal.open({
 						animation: true,
 						templateUrl: '/Fieldbook/static/angular-templates/derivedTraitsValidationModal.html',

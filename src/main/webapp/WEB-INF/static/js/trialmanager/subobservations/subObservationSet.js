@@ -2,7 +2,9 @@
 	'use strict';
 
 	var subObservationModule = angular.module('subObservation', []);
-	var hiddenColumns = [8201];
+	var TRIAL_INSTANCE = 8170,
+		OBS_UNIT_ID = 8201;
+	var hiddenColumns = [OBS_UNIT_ID, TRIAL_INSTANCE];
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
 		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout',
@@ -214,7 +216,8 @@
 			};
 
 			$scope.changeEnvironment = function () {
-				$(tableId).DataTable().ajax.reload();
+				table().columns("TRIAL_INSTANCE:name").visible($scope.nested.selectedEnvironment === $scope.environments[0]);
+				table().ajax.reload();
 			};
 
 			$scope.toggleShowCategoricalDescription = function () {
@@ -629,12 +632,21 @@
 					}
 					columnData.index = index;
 
+					function isColumnVisible() {
+
+						if (columnData.termId === TRIAL_INSTANCE) {
+							return $scope.nested.selectedEnvironment === $scope.environments[0]
+						}
+						return hiddenColumns.indexOf(columnData.termId) < 0;
+					}
+
 					columns.push({
 						title: columnData.alias,
+						name: columnData.alias,
 						data: function (row) {
 							return row.variables[columnData.name];
 						},
-						visible: hiddenColumns.indexOf(columnData.termId) < 0,
+						visible: isColumnVisible(),
 						defaultContent: '',
 						className: columnData.factor === true ? 'factors' : 'variates',
 						columnData: columnData

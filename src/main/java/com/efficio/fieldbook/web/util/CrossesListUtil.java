@@ -79,16 +79,6 @@ public class CrossesListUtil {
 		return dataMap;
 	}
 	
-	public void updateUnknownMaleParentsInfo(final List<GermplasmListData> germplasmListDataList) {
-		for (final GermplasmListData listData : germplasmListDataList) {
-			if (listData.getMgid() == 0) {
-				final String unknownParentLabel = this.getUnknownParentLabel();
-				listData.setMaleParent(unknownParentLabel); 
-				listData.setMalePedigree(unknownParentLabel); 
-			}
-		}
-	}
-
 	public ImportedCrosses convertGermplasmListDataToImportedCrosses(final GermplasmListData crossesData) {
 		final ImportedCrosses importedCrosses = new ImportedCrosses();
 		importedCrosses.setCrossListId(crossesData.getId());
@@ -164,8 +154,4 @@ public class CrossesListUtil {
 		return tableHeaderList;
 	}
 	
-	public String getUnknownParentLabel() {
-		return this.messageSource.getMessage("unknown.parent.label", new Object[] {}, LocaleContextHolder.getLocale());
-	}
-
 }

@@ -402,7 +402,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				}
 			});
 
-			final List<Germplasm> germplasms = new ArrayList<>();
 
 			final Set<Integer> parentGids = new HashSet<>();
 			parentGids.addAll(femaleGids);
@@ -416,9 +415,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			for (final Iterator<Germplasm> iterator = parentList.iterator(); iterator.hasNext(); ) {
 
 				final Germplasm parent = iterator.next();
-
-				germplasms.add(parent);
-
 				final GermplasmListData germplasmListData = new GermplasmListData();
 
 				germplasmListData.setGid(parent.getGid());

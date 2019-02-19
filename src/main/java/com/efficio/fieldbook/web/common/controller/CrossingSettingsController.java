@@ -481,9 +481,6 @@ public class CrossingSettingsController extends SettingsController {
 
 		final Integer crossesListId = Integer.parseInt(createdCrossesListId);
 		final List<GermplasmListData> germplasmListDataList = this.germplasmListManager.retrieveListDataWithParents(crossesListId);
-		// For unknown male parents (GID=0), the Male designation and Male Pedigree are null since germplasm with ID = 0 
-		// doesn't exist in DB. They have to be manually updated to display "UNKNOWN"
-		this.crossesListUtil.updateUnknownMaleParentsInfo(germplasmListDataList);
 
 		final String studyName = this.studySelection.getWorkbook().getStudyDetails().getStudyName();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
@@ -606,11 +603,6 @@ public class CrossingSettingsController extends SettingsController {
 		final ImmutableList<Integer> listWithNoDuplicates = ImmutableSet.copyOf(gidList).asList();
 
 		final Map<Integer, String[]> pedigreeMap = germplasmDataManager.getParentsInfoByGIDList(listWithNoDuplicates);
-		// If any of the cross parents are unknown (GID = 0), display as "UNKNOWN"
-		if (pedigreeMap != null && listWithNoDuplicates.contains(0)) {
-			final String unknownParentLabel = this.crossesListUtil.getUnknownParentLabel();
-			pedigreeMap.put(0, new String[] {unknownParentLabel, unknownParentLabel});
-		}
 		for (final ImportedCrosses importedCrosses : importedCrossesList) {
 			final int femaleGid = Integer.parseInt(importedCrosses.getFemaleGid());
 			importedCrosses.setFemalePedigree(pedigreeMap.get(femaleGid)[0]);

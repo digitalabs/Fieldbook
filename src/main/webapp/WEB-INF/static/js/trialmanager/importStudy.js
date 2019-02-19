@@ -185,6 +185,14 @@
 
 							/* grab first sheet */
 							var wsname = wb.SheetNames[0];
+							if (wb.SheetNames.length > 1) {
+								wsname = 'Observation';
+
+								if (!wb.Sheets[wsname]) {
+									showErrorMessage('', 'Observation sheet does not exist, please check your file.');
+									return;
+								}
+							}
 							var ws = wb.Sheets[wsname];
 
 							/* grab first row and generate column headers */

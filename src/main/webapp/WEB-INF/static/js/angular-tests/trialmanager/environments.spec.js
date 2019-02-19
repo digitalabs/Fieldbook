@@ -13,7 +13,7 @@ describe('Measurement Controller', function () {
 	};
 	var datasetServiceMock = {observationCountByInstance: jasmine.createSpy('observationCountByInstance')};
 	var responseMock = {headers: jasmine.createSpy('headers')};
-	var trialManageServiceMock = {
+	var trialManagerServiceMock = {
 		settings: {
 			environments: [],
 			managementDetails: []
@@ -44,6 +44,9 @@ describe('Measurement Controller', function () {
 		module('showSettingFormElementNew');
 		module('manageTrialApp');
 
+		module(function ($provide) {
+			$provide.value("TrialManagerDataService", trialManagerServiceMock);
+		});
 	});
 
 	beforeEach(function () {
@@ -55,14 +58,14 @@ describe('Measurement Controller', function () {
 
 			rootScopeMock.stateSuccessfullyLoaded['createMeasurements'] = true;
 			rootScopeMock.stateSuccessfullyLoaded['editMeasurements'] = true;
-			trialManageServiceMock.trialMeasurement['hasAdvancedOrCrossesList'] = false;
+			trialManagerServiceMock.trialMeasurement['hasAdvancedOrCrossesList'] = false;
 
 			controller = $controller('EnvironmentCtrl', {
 				$rootScope: rootScopeMock,
 				$scope: scope,
 				studyContext: studyContext,
 				datasetService: datasetServiceMock,
-				TrialManagerDataService: trialManageServiceMock,
+				TrialManagerDataService: trialManagerServiceMock,
 				environmentService: {},
 				LOCATION_ID: 1
 			});
@@ -156,7 +159,7 @@ describe('Measurement Controller', function () {
 
 		it('it should open the confirm delete modal', function () {
 			var environmentNo = 1;
-			trialManageServiceMock.trialMeasurement['hasAdvancedOrCrossesList'] = true;
+			trialManagerServiceMock.trialMeasurement['hasAdvancedOrCrossesList'] = true;
 
 			controller.hasAdvancedOrCrossesListOnStudy(environmentNo).then(function () {
 				expect(controller.showAlertMessage)

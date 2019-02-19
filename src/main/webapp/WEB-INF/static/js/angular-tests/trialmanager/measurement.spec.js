@@ -37,6 +37,9 @@ describe('Measurement Controller', function () {
 		module('showSettingFormElementNew');
 		module('manageTrialApp');
 
+		module(function ($provide) {
+			$provide.value("TrialManagerDataService", trialManagerServiceMock);
+		});
 	});
 
 	beforeEach(function () {

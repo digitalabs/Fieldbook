@@ -188,9 +188,40 @@
 				loadTable();
 			};
 
+			$scope.checkOutOfBoundDraftData = function () {
+				var deferred = $q.defer();
+
+				datasetService.checkOutOfBoundDraftData($scope.subObservationSet.dataset.datasetId).then(function (response) {
+					var modalInstance = $scope.openConfirmModal("Accept As-is?", "Proceed", "Discard");
+					modalInstance.result.then(deferred.resolve);
+				}, function (response) {
+					if (response.status == 404) {
+						deferred.resolve(true);
+					} else if (response.errors && response.errors.length) {
+						showErrorMessage('', response.data.errors[0].message);
+					} else {
+						showErrorMessage('', ajaxGenericErrorMsg);
+					}
+				});
+
+				return deferred.promise;
+			};
+
 			$scope.acceptDraftData = function () {
-				datasetService.acceptDraftData($scope.subObservationSet.dataset.datasetId).then(reloadDataset);
-			}
+				$scope.checkOutOfBoundDraftData().then(function (doContinue) {
+					if (doContinue) {
+						datasetService.acceptDraftData($scope.subObservationSet.dataset.datasetId).then(function () {
+							reloadDataset();
+						}, function (response) {
+							if (response.errors && response.errors.length) {
+								showErrorMessage('', response.errors[0].message);
+							} else {
+								showErrorMessage('', ajaxGenericErrorMsg);
+							}
+						});
+					}
+				});
+			};
 
 			$scope.subDivide = function () {
 				// TODO

@@ -189,7 +189,7 @@ describe('SubObservationSetCtrl', function () {
 				}
 			}
 		},
-		TrialManagerDataServiceMock = jasmine.createSpyObj('TrialManagerDataService', ['extractSettings']),
+		TrialManagerDataServiceMock = jasmine.createSpyObj('TrialManagerDataService', ['extractSettings', 'applicationData']),
 		subObservationSet = {
 			preview: false
 		},

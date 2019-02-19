@@ -38,8 +38,11 @@
 				<td th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') }" th:class="${row.even}? 'even' : 'odd'" >
 					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.maleParent}" th:attr="data-gid=${germplasm.mgid}" th:attrappend="data-desig=${germplasm.maleParent}">.2</a>
 				</td>
-				<td th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') }" th:class="${row.even}? 'even' : 'odd'" >
+				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.mgid != 0) }" th:class="${row.even}? 'even' : 'odd'" >
 					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.mgid}" th:attr="data-gid=${germplasm.mgid}" th:attrappend="data-desig=${germplasm.maleParent}">.2</a>
+				</td>
+				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.mgid == 0) }" th:class="${row.even}? 'even' : 'odd'" >
+					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.maleParent}" th:attr="data-gid=${germplasm.mgid}" th:attrappend="data-desig=${germplasm.maleParent}">.2</a>
 				</td>
 				<!-- End of Cross List Columns ONLY -->
 

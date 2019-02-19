@@ -107,7 +107,7 @@
 			};
 
 			$scope.onHideCallback = function () {
-				adjustColumns($(tableId).DataTable());
+				adjustColumns();
 			};
 
 			$scope.onAddVariable = function (result, variableTypeId) {
@@ -221,10 +221,14 @@
 				switchCategoricalView().done(function () {
 					$scope.$apply(function () {
 						$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
-						adjustColumns($(tableId).DataTable());
+						adjustColumns();
 					});
 				});
 			};
+
+			function table() {
+				return $scope.nested.dtInstance.DataTable;
+			}
 
 			function doPendingViewActions() {
 				$scope.toggleSection = $scope.isPendingView;
@@ -299,8 +303,7 @@
 			}
 
 			function headerCallback(thead, data, start, end, display) {
-				var table = $scope.nested.dtInstance.DataTable;
-				table.columns().every(function() {
+				table().columns().every(function() {
 					var column = $scope.columnsObj.columns[this.index()];
 					if (column.columnData.formula) {
 						$(this.header()).addClass('derived-trait-column-header');
@@ -312,9 +315,9 @@
                 addCellClickHandler();
 			}
 
-			function adjustColumns(table) {
+			function adjustColumns() {
 				$timeout(function () {
-					table.columns.adjust();
+					table().columns.adjust();
 				});
 			}
 

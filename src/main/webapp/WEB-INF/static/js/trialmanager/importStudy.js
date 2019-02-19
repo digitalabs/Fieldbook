@@ -167,7 +167,7 @@
 			ctrl.init();
 
 		}])
-		.directive('importSheetJs', function () {
+		.directive('importObservation', function () {
 			return {
 				restrict: 'AE',
 				scope: {

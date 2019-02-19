@@ -121,6 +121,7 @@
 					$scope.subObservationSet.dataset.variables.push(variable);
 					loadTable();
 					derivedVariableService.displayExecuteCalculateVariableMenu();
+					derivedVariableService.showWarningIfDependenciesAreMissing($scope.subObservationSet.dataset.datasetId, variable.id);
 				}, function (response) {
 					if (response.errors && response.errors.length) {
 						showErrorMessage('', response.errors[0].message);

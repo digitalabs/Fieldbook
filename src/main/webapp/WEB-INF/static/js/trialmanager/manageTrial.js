@@ -335,7 +335,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						templateUrl: '/Fieldbook/static/angular-templates/derivedTraitsValidationModal.html',
 						size: 'md',
 						controller: function ($scope, $uibModalInstance) {
-							$scope.dependencyVariables = dependencyVariables;
+							$scope.dependencyVariables = response.data;
 							$scope.continue = function () {
 								$uibModalInstance.close();
 								deferred.resolve();
@@ -349,7 +349,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.saveCurrentTrialData = function () {
-				derivedVariableService.getDependencies(studyContext.measurementDatasetId).then(function (response) {
+				derivedVariableService.getDependenciesForAllDerivedTraits(studyContext.measurementDatasetId).then(function (response) {
 					return $scope.warnMissingInputData(response);
 				}).then(function () {
 					TrialManagerDataService.saveCurrentData();

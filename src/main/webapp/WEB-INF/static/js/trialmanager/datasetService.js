@@ -180,6 +180,12 @@
 
 			};
 
+			datasetService.rejectDraftData = function (datasetId) {
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/drafts/rejection');
+				return request.then(successHandler, failureHandler);
+
+			};
+
 			return datasetService;
 		}]);
 

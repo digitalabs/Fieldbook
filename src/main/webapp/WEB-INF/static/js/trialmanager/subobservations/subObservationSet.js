@@ -2,7 +2,9 @@
 	'use strict';
 
 	var subObservationModule = angular.module('subObservation', []);
-	var hiddenColumns = [8201];
+	var TRIAL_INSTANCE = 8170,
+		OBS_UNIT_ID = 8201;
+	var hiddenColumns = [OBS_UNIT_ID, TRIAL_INSTANCE];
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
 		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout',
@@ -107,7 +109,7 @@
 			};
 
 			$scope.onHideCallback = function () {
-				adjustColumns($(tableId).DataTable());
+				adjustColumns();
 			};
 
 			$scope.onAddVariable = function (result, variableTypeId) {
@@ -142,16 +144,7 @@
 				promise.then(function (doContinue) {
 					if (doContinue) {
 						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, variableIds).then(function () {
-							angular.forEach(variableIds, function (cvtermId) {
-								settings.remove(cvtermId);
-								// TODO review
-								$scope.subObservationSet.dataset.variables = $scope.subObservationSet.dataset.variables.filter(function (variable) {
-									return variable.termId !== cvtermId;
-								});
-							});
-
-							loadTable();
-							$scope.selectedVariables = $scope.getSelectedVariables();
+							reloadDataset();
 						}, function (response) {
 							if (response.errors && response.errors.length) {
 								showErrorMessage('', response.errors[0].message);
@@ -223,6 +216,18 @@
 				});
 			};
 
+			$scope.rejectDraftData = function () {
+				datasetService.rejectDraftData($scope.subObservationSet.dataset.datasetId).then(function () {
+					reloadDataset();
+				}, function (response) {
+					if (response.errors && response.errors.length) {
+						showErrorMessage('', response.errors[0].message);
+					} else {
+						showErrorMessage('', ajaxGenericErrorMsg);
+					}
+				});
+			};
+
 			$scope.subDivide = function () {
 				// TODO
 				// var id = $scope.subObservationTab.subObservationSets.length + 1;
@@ -234,17 +239,22 @@
 			};
 
 			$scope.changeEnvironment = function () {
-				$(tableId).DataTable().ajax.reload();
+				table().columns("TRIAL_INSTANCE:name").visible($scope.nested.selectedEnvironment === $scope.environments[0]);
+				table().ajax.reload();
 			};
 
 			$scope.toggleShowCategoricalDescription = function () {
 				switchCategoricalView().done(function () {
 					$scope.$apply(function () {
 						$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
-						adjustColumns($(tableId).DataTable());
+						adjustColumns();
 					});
 				});
 			};
+
+			function table() {
+				return $scope.nested.dtInstance.DataTable;
+			}
 
 			function doPendingViewActions() {
 				$scope.toggleSection = $scope.isPendingView;
@@ -265,9 +275,9 @@
 							xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
 						},
 						data: function (d) {
-							var sortedColIndex = $(tableId).dataTable().fnSettings().aaSorting[0][0];
-							var sortDirection = $(tableId).dataTable().fnSettings().aaSorting[0][1];
-							var sortedColTermId = subObservationSet.columnsData[sortedColIndex].termId;
+							var order = d.order && d.order[0];
+							var sortedColTermId = subObservationSet.columnsData[order.column].termId;
+
 							var instanceId = $scope.nested.selectedEnvironment.instanceDbId;
 
 							return {
@@ -275,7 +285,7 @@
 								pageSize: d.length,
 								pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
 								sortBy: sortedColTermId,
-								sortOrder: sortDirection,
+								sortOrder: order.dir,
 								instanceId: instanceId,
 								draftMode: $scope.isPendingView
 							};
@@ -283,7 +293,6 @@
 					})
 					.withDataProp('data')
 					.withOption('serverSide', true)
-					.withOption('initComplete', initCompleteCallback)
 					.withOption('headerCallback', headerCallback)
 					.withOption('drawCallback', drawCallback));
 			}
@@ -305,13 +314,11 @@
 							last: '>>'
 						}
 					})
-					.withDOM('"<"pull-left fbk-left-padding"l>' + //
-						'<"pull-left"i>' + //
-						'<"pull-left fbk-left-padding"r>' + //
+					.withDOM('<"pull-left fbk-left-padding"r>' + //
 						'<"pull-right"B>' + //
 						'<"clearfix">' + //
 						'<"row add-top-padding-small"<"col-sm-12"t>>' + //
-						'<"row"<"col-sm-12"p>>')
+						'<"row"<"col-sm-12 paginate-float-center"<"pull-left"i><"pull-right"l>p>>')
 					.withButtons([{
 						extend: 'colvis',
 						className: 'fbk-buttons-no-border fbk-colvis-button',
@@ -321,26 +328,8 @@
 					.withPaginationType('full_numbers');
 			}
 
-			/**
-			 * FIXME we were having issues with clone() and $compile. Attaching and detaching instead for now
-			 */
-			function attachCategoricalDisplayBtn() {
-				$timeout(function () {
-					$('#subObsCategoricalDescriptionBtn').detach().insertBefore('#subObservationTableContainer .dt-buttons');
-				});
-			}
-
-			function detachCategoricalDisplayBtn() {
-				$('#subObsCategoricalDescriptionBtn').detach().appendTo('#subObsCategoricalDescriptionContainer');
-			}
-
-			function initCompleteCallback() {
-				attachCategoricalDisplayBtn();
-			}
-
 			function headerCallback(thead, data, start, end, display) {
-				var table = $scope.nested.dtInstance.DataTable;
-				table.columns().every(function() {
+				table().columns().every(function() {
 					var column = $scope.columnsObj.columns[this.index()];
 					if (column.columnData.formula) {
 						$(this.header()).addClass('derived-trait-column-header');
@@ -352,9 +341,9 @@
                 addCellClickHandler();
 			}
 
-			function adjustColumns(table) {
+			function adjustColumns() {
 				$timeout(function () {
-					table.columns.adjust();
+					table().columns.adjust();
 				});
 			}
 
@@ -612,8 +601,6 @@
 			}
 
 			function loadTable() {
-				detachCategoricalDisplayBtn();
-
 				/**
 				 * We need to reinitilize all this because
 				 * if we use column.visible an change the columns with just
@@ -631,8 +618,6 @@
 					$scope.dtOptions = getDtOptions();
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
-
-					attachCategoricalDisplayBtn();
 				});
 			}
 
@@ -640,12 +625,6 @@
 				return datasetService.getColumns(subObservationSet.id, $scope.isPendingView).then(function (columnsData) {
 					subObservationSet.columnsData = columnsData;
 					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(columnsData);
-
-					// if not needed when implementing review -> remove
-					subObservationSet.columnMap = {};
-					angular.forEach(columnsData, function (columnData) {
-						subObservationSet.columnMap[columnData.termId] = columnData;
-					});
 
 					return columnsObj;
 				});
@@ -676,12 +655,21 @@
 					}
 					columnData.index = index;
 
+					function isColumnVisible() {
+
+						if (columnData.termId === TRIAL_INSTANCE) {
+							return $scope.nested.selectedEnvironment === $scope.environments[0]
+						}
+						return hiddenColumns.indexOf(columnData.termId) < 0;
+					}
+
 					columns.push({
 						title: columnData.alias,
+						name: columnData.alias,
 						data: function (row) {
 							return row.variables[columnData.name];
 						},
-						visible: hiddenColumns.indexOf(columnData.termId) < 0,
+						visible: isColumnVisible(),
 						defaultContent: '',
 						className: columnData.factor === true ? 'factors' : 'variates',
 						columnData: columnData
@@ -695,6 +683,21 @@
 								return '<a class="gid-link" href="javascript: void(0)" ' +
 									'onclick="openGermplasmDetailsPopopWithGidAndDesig(\'' +
 									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
+							}
+						});
+					} else if (columnData.termId === -2) { // variates
+						// SAMPLES count column
+						columnsDef.push({
+							targets: columns.length - 1,
+							orderable: false,
+							render: function (data, type, full, meta) {
+								if (full.samplesCount !== '-') {
+									return '<a class="gid-link" href="javascript: void(0)" ' +
+										'onclick="openSampleSummary(\'' +
+										full.variables['OBS_UNIT_ID'].value + '\', null)">' + EscapeHTML.escape(full.samplesCount) + '</a>';
+								} else {
+									return full.samplesCount;
+								}
 							}
 						});
 					} else if (!columnData.factor) { // variates
@@ -745,30 +748,6 @@
 								}
 
 								return data && EscapeHTML.escape(data.value);
-							}
-						});
-					}
-
-					// Manually add SAMPLES count column after PLOT_NO field
-					if (columnData.termId === 8200) {
-						columns.push({
-							title: 'SAMPLES',
-							visible: true,
-							defaultContent: '',
-							className: 'factors',
-							columnData: { formula: undefined}
-						});
-
-						columnsDef.push({
-							targets: columns.length - 1,
-							render: function (data, type, full, meta) {
-								if (full.samplesCount !== '-') {
-									return '<a class="gid-link" href="javascript: void(0)" ' +
-										'onclick="openSampleSummary(\'' +
-										full.variables['OBS_UNIT_ID'].value + '\', null)">' + EscapeHTML.escape(full.samplesCount) + '</a>';
-								} else {
-									return full.samplesCount;
-								}
 							}
 						});
 					}

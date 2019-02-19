@@ -118,10 +118,10 @@
 			};
 
 			$scope.submitImport = function () {
-				$scope.importMeasurements(true);
+				$scope.importObservations(true);
 			};
 
-			$scope.importMeasurements = function (processWarnings) {
+			$scope.importObservations = function (processWarnings) {
 				datasetService.importObservations(datasetId, $scope.importedData, processWarnings).then(function () {
 					displaySaveSuccessMessage('page-message', 'Your data was successfully imported and saved.');
 					$rootScope.$broadcast('navigateToSubObsTab', datasetId);
@@ -151,7 +151,7 @@
 				var modalWarningMessage = importStudyModalService.showWarningMessage('Confirmation', 'Some observations were found in the imported file:', warningMessages, 'Would you like to proceed with the import ?', 'Proceed', 'Back');
 				modalWarningMessage.result.then(function (shouldContinue) {
 					if (shouldContinue) {
-						$scope.importMeasurements(false);
+						$scope.importObservations(false);
 					} else {
 						importStudyModalService.openImportStudyModal(datasetId);
 					}

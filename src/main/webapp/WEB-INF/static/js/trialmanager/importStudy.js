@@ -181,7 +181,7 @@
 						reader.onload = function (e) {
 							/* read workbook */
 							var bstr = e.target.result;
-							var wb = XLSX.read(bstr, {type: 'binary', sheetStubs: false});
+							var wb = XLSX.read(bstr, {type: 'binary'});
 
 							/* grab first sheet */
 							var wsname = wb.SheetNames[0];

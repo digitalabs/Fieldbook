@@ -100,8 +100,12 @@
 			$scope.importedData = null;
 			var ctrl = this;
 
-			ctrl.importFormats = [{itemId: '1', name: 'CSV', extension: '.csv'}];
-			ctrl.format = {selected: ctrl.importFormats[0].extension};
+			ctrl.importFormats = [
+				{name: 'CSV', extension: '.csv'}, //
+				{name: 'Excel', extension: '.xls,.xlsx'}, //
+				{name: 'KSU fieldbook CSV', extension: '.csv'}, //
+				{name: 'KSU fieldbook Excel', extension: '.xls,.xlsx'} //
+			];
 
 			$scope.backToDatasetOptionModal = function () {
 				$uibModalInstance.close();
@@ -157,6 +161,7 @@
 			ctrl.init = function () {
 				$scope.file = null;
 				$scope.importedData = null;
+				ctrl.format = {selected: ctrl.importFormats[1]};
 			};
 
 			ctrl.init();

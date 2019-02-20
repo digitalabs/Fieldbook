@@ -13,7 +13,11 @@ describe('Measurement Controller', function () {
 			then: jasmine.createSpy('then')
 		}
 	};
-	var rootScopeMock = jasmine.createSpyObj('$rootScope', {openConfirmModal: modalInstanceMock});
+	var rootScopeMock = jasmine.createSpyObj('$rootScope', {
+		openConfirmModal: modalInstanceMock,
+		$on: function () {
+		}
+	});
 	var trialManagerServiceMock = {settings: {measurements: {}}};
 	var derivedVariableServiceMock = {hasMeasurementData: jasmine.createSpy('hasMeasurementData')};
 	var datasetServiceMock = {observationCount: jasmine.createSpy('observationCount')};

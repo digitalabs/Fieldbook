@@ -16,8 +16,7 @@ describe('SubObservationSetCtrl', function () {
 		scope;
 
 	// Mock objects copied from actual objects using Chrome console
-	var rootScopeMock = {},
-		extractedSettings = {
+	var extractedSettings = {
 			"m_keys": [
 				8206,
 				100022,
@@ -897,7 +896,7 @@ describe('SubObservationSetCtrl', function () {
 
 		controller = $controller('SubObservationSetCtrl', {
 			$scope: scope,
-			$rootScope: rootScopeMock,
+			$rootScope: $rootScope,
 			TrialManagerDataService: TrialManagerDataServiceMock,
 			$stateParams: $stateParamsMock,
 			dTOptionsBuilder: dTOptionsBuilderMock,

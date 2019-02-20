@@ -27,7 +27,7 @@ import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.manager.api.PresetDataManager;
+import org.generationcp.middleware.manager.api.PresetService;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
@@ -96,7 +96,7 @@ public class CrossingSettingsController extends SettingsController {
 	private WorkbenchService workbenchService;
 
 	@Resource
-	private PresetDataManager presetDataManager;
+	private PresetService presetService;
 
 	@Resource
 	private SettingsPresetService settingsPresetService;
@@ -139,7 +139,7 @@ public class CrossingSettingsController extends SettingsController {
 		final List<CrossImportSettings> settings = new ArrayList<>();
 
 		try {
-			final List<ProgramPreset> presets = this.presetDataManager
+			final List<ProgramPreset> presets = this.presetService
 					.getProgramPresetFromProgramAndTool(this.getCurrentProgramID(), this.getFieldbookToolID(),
 							ToolSection.FBK_CROSS_IMPORT.name());
 
@@ -538,12 +538,12 @@ public class CrossingSettingsController extends SettingsController {
 	}
 
 	protected void deleteCrossSetting(final int programPresetId) {
-		this.presetDataManager.deleteProgramPreset(programPresetId);
+		this.presetService.deleteProgramPreset(programPresetId);
 	}
 
 	protected void saveCrossSetting(final CrossSetting setting, final String programUUID) throws JAXBException {
 
-		final List<ProgramPreset> presets = this.presetDataManager
+		final List<ProgramPreset> presets = this.presetService
 				.getProgramPresetFromProgramAndTool(programUUID, this.getFieldbookToolID(), ToolSection.FBK_CROSS_IMPORT.name());
 
 		boolean found = false;
@@ -566,7 +566,7 @@ public class CrossingSettingsController extends SettingsController {
 			forSaving.setConfiguration(this.settingsPresetService.convertPresetSettingToXml(setting, CrossSetting.class));
 		}
 
-		this.presetDataManager.saveOrUpdateProgramPreset(forSaving);
+		this.presetService.saveOrUpdateProgramPreset(forSaving);
 	}
 
 	protected Integer getFieldbookToolID() {

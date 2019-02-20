@@ -148,8 +148,8 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			}
 
 			// process female + male parent entries, will throw middleware query exception if no study valid or null
-			final ListDataProject femaleListData = this.getCrossingListProjectData(femaleStudy, Integer.valueOf(femalePlotNo), programUUID, false);
-			ListDataProject maleListData = this.getCrossingListProjectData(maleStudy, Integer.valueOf(malePlotNo), programUUID, true);
+			final ListDataProject femaleListData = this.getListDataProject(femaleStudy, Integer.valueOf(femalePlotNo), programUUID, false);
+			ListDataProject maleListData = this.getListDataProject(maleStudy, Integer.valueOf(malePlotNo), programUUID, true);
 
 			final ImportedCrosses importedCrosses =
 					new ImportedCrosses(femaleListData, maleListData, femaleStudy, maleStudy, femalePlotNo, malePlotNo, currentRow);
@@ -284,7 +284,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	 * @return ListDataProject - We need the Design, and female/male gids information that we can retrieve using this data structure
 	 * @throws FileParsingException
 	 */
-	ListDataProject getCrossingListProjectData(final String studyName, final Integer genderedPlotNo, final String programUUID, final Boolean isMaleParent)
+	ListDataProject getListDataProject(final String studyName, final Integer genderedPlotNo, final String programUUID, final Boolean isMaleParent)
 			throws FileParsingException {
 		// Only allow male parents to be unknown (GID = 0)
 		if (genderedPlotNo == 0 && isMaleParent) {

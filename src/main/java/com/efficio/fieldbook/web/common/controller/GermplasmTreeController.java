@@ -192,7 +192,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return super.showAjaxPage(model, GermplasmTreeController.COMMON_SAVE_GERMPLASM_LIST);
 	}
 
-	private class GermplasmListResult {
+	protected class GermplasmListResult {
 
 		private final Integer germplasmListId;
 		private final Boolean isTrimed;
@@ -381,7 +381,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			return new GermplasmListResult(germplasmListId, isTrimed);
 		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT.equals(form.getGermplasmListType())) {
 
-			return this.saveParentList(form, listDataItems, isTrimed, germplasmList);
+			return this.saveCrossesParentsAsList(form, listDataItems, isTrimed, germplasmList);
 
 		} else {
 			throw new IllegalArgumentException("Unknown germplasm list type supplied when saving germplasm list");
@@ -389,7 +389,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	}
 
-	private GermplasmListResult saveParentList(final SaveListForm form, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
+	GermplasmListResult saveCrossesParentsAsList(final SaveListForm form, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
 			Boolean isTrimed, final GermplasmList germplasmList) {
 		final Integer listId = form.getSourceListId();
 		final List<ListDataProject> listData = this.germplasmListManager.retrieveSnapshotListDataWithParents(listId);

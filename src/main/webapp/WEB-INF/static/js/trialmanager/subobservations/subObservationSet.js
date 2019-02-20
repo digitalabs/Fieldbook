@@ -57,6 +57,10 @@
 				loadTable();
 			}); // getDataset
 
+			$rootScope.$on('subObsTabSelected', function (event) {
+				adjustColumns();
+			});
+
 			$scope.getVariables = function (variableType) {
 				var variables = {settings: []};
 				angular.forEach($scope.subObservationSet.dataset.variables, function (datasetVariable) {

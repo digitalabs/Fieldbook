@@ -538,21 +538,21 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				$scope.isSettingsTab = true;
 				$scope.tabSelected = targetState;
 
+				// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
+				// of the table if we do not do that
+				function adjustColumns($table) {
+					if ($table.length !== 0 && $table.dataTable()) {
+						$timeout(function () {
+							$table.dataTable().fnAdjustColumnSizing();
+						});
+					}
+				}
+
 				if (targetState === 'editMeasurements') {
-					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
-					// of the table if we do not do that
 					if ($('body').hasClass('preview-measurements-only')) {
-						if ($('#preview-measurement-table').length !== 0 && $('#preview-measurement-table').dataTable()) {
-							$timeout(function () {
-								$('#preview-measurement-table').dataTable().fnAdjustColumnSizing();
-							}, 1);
-						}
+						adjustColumns($('#preview-measurement-table'));
 					} else {
-						if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
-							$timeout(function () {
-								$('#measurement-table').dataTable().fnAdjustColumnSizing();
-							}, 1);
-						}
+						adjustColumns($('#measurement-table'));
 					}
 
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
@@ -573,30 +573,15 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 							'Please regenerate the design on the Experimental Design tab', 10000);
 					}
 
-					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
-					// of the table if we do not do that
-					if (!TrialManagerDataService.applicationData.unsavedGeneratedDesign && $('#preview-measurement-table').length !== 0 &&
-						$('#preview-measurement-table').dataTable()) {
-						$timeout(function () {
-							$('#preview-measurement-table').dataTable().fnAdjustColumnSizing();
-						}, 1);
+					if (!TrialManagerDataService.applicationData.unsavedGeneratedDesign) {
+						adjustColumns($('#preview-measurement-table'));
 					}
 				} else if (targetState === 'germplasm') {
-					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
-					// of the table if we do not do that
-					if ($('#tableForGermplasm').length !== 0 && $('#tableForGermplasm').dataTable() !== null) {
-						$timeout(function () {
-							$('#tableForGermplasm').dataTable().fnAdjustColumnSizing();
-						}, 1);
-					}
+					adjustColumns($('#tableForGermplasm'));
 				} else if (targetState === 'environment') {
-					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
-					// of the table if we do not do that
-					if ($('#environment-table .fbk-datatable-environments').length !== 0 && $('#environment-table .fbk-datatable-environments').DataTable() !== null) {
-						$timeout(function () {
-							$('#environment-table .fbk-datatable-environments').DataTable().columns.adjust().draw();
-						}, 1);
-					}
+					adjustColumns($('#environment-table .fbk-datatable-environments'));
+				} else if (targetState.indexOf('/subObservationTabs/') === 0) {
+					$rootScope.$broadcast('subObsTabSelected');
 				}
 			};
 

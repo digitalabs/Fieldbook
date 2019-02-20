@@ -736,6 +736,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					if (isPageLoading !== true) {
 						$scope.tabSelected = 'sample-list' + tabId + '-li';
 						$scope.isSettingsTab = false;
+						$rootScope.$broadcast('sampleListCreated');
 					}
 				}
 			};

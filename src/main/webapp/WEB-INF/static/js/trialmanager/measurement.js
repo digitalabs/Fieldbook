@@ -160,6 +160,10 @@
 					$('body').addClass('measurements-traits-changed');
 				});
 
+				$rootScope.$on('sampleListCreated', function (event) {
+                    $scope.reloadMeasurements();
+				});
+
 				/* Controller Utility functions */
 				function reloadMeasurementPage(deletedEnvironmentIndex, columnsOrder) {
 					deletedEnvironmentIndex = typeof deletedEnvironmentIndex === 'undefined' ? 0 : deletedEnvironmentIndex;

@@ -61,6 +61,10 @@
 				adjustColumns();
 			});
 
+			$rootScope.$on('sampleListCreated', function (event) {
+				loadTable();
+			});
+
 			$scope.getVariables = function (variableType) {
 				var variables = {settings: []};
 				angular.forEach($scope.subObservationSet.dataset.variables, function (datasetVariable) {
@@ -618,7 +622,7 @@
 				$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 				$scope.dtOptions = null;
 
-				loadColumns().then(function (columnsObj) {
+				return loadColumns().then(function (columnsObj) {
 					$scope.dtOptions = getDtOptions();
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);

@@ -189,7 +189,7 @@
 								wsname = 'Observation';
 
 								if (!wb.Sheets[wsname]) {
-									showErrorMessage('', 'Observation sheet does not exist, please check your file.');
+									showErrorMessage('', 'Wrong name for Observation sheet - please remedy in spreadsheet and try again');
 									return;
 								}
 							}

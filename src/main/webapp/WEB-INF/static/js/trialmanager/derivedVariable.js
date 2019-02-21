@@ -173,23 +173,13 @@
 			$scope.selected = {datasetId: $scope.measurementDatasetId};
 
 			$scope.next = function () {
-
-				// Do not continue with execute calculation process if no calculated traits is available for the selected dataset.
-				derivedVariableService.countCalculatedVariables([$scope.selected.datasetId]).then(function (response) {
-					var count = response.headers('X-Total-Count');
-					var hasCalculatedVariable = parseInt(count) > 0;
-					if (hasCalculatedVariable) {
-						if ($scope.selected.datasetId === $scope.measurementDatasetId) {
-							$rootScope.navigateToTab('editMeasurements');
-						} else {
-							$rootScope.navigateToSubObsTab($scope.selected.datasetId);
-						}
-						derivedVariableModalService.openExecuteCalculatedVariableModal($scope.selected.datasetId);
-						$uibModalInstance.close();
-					} else {
-						showErrorMessage('', 'There is no calculated variable for the dataset selected. Please add a calculated variable in the dataset and try again.');
-					}
-				});
+				if ($scope.selected.datasetId === $scope.measurementDatasetId) {
+					$rootScope.navigateToTab('editMeasurements');
+				} else {
+					$rootScope.navigateToSubObsTab($scope.selected.datasetId);
+				}
+				derivedVariableModalService.openExecuteCalculatedVariableModal($scope.selected.datasetId);
+				$uibModalInstance.close();
 			};
 
 		}]);
@@ -207,6 +197,9 @@
 					datasetService.getDataset(datasetId).then(function (dataset) {
 						$scope.variableListView = buildVariableListView(dataset.variables);
 						$scope.instances = dataset.instances;
+						if ($scope.variableListView.length === 0) {
+							showErrorMessage('', 'There is no calculated variable for the dataset selected. Please add a calculated variable in the dataset and try again.');
+						}
 					});
 				};
 

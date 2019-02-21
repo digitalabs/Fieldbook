@@ -26,7 +26,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="row form-group">
+	<div class="row form-group" ng-class="{ 'has-error': variableListView.length === 0 }">
 		<div class="col-sm-2" style="padding-right: 0px;">
 			<label class="control-label add_top_padding label-bold">Variable: </label><span class='required'>*</span>
 		</div>
@@ -51,7 +51,7 @@
 <div class="modal-footer">
 	<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="cancel()"> Cancel
 	</button>
-	<button type="button" class="btn btn-primary" ng-disabled="selected.variable === undefined || isEmptySelection" ng-click="execute()">
+	<button type="button" class="btn btn-primary" ng-disabled="selected.variable === undefined || isEmptySelection || variableListView.length === 0" ng-click="execute()">
 		Execute
 	</button>
 </div>

@@ -123,7 +123,7 @@
 
 			$scope.importObservations = function (processWarnings) {
 				datasetService.importObservations(datasetId, $scope.importedData, processWarnings).then(function () {
-					displaySaveSuccessMessage('page-message', 'Your data was successfully imported and saved.');
+					displaySaveSuccessMessage('page-message', 'Your data was successfully imported and needs correspondence.');
 					$rootScope.navigateToSubObsTab(datasetId);
 					$scope.close();
 				}, function (response) {

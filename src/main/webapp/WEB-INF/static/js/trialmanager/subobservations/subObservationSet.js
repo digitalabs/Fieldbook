@@ -12,8 +12,6 @@
 				  datasetService, $timeout
 		) {
 
-			TrialManagerDataService.applicationData.isSaveEnabled = false;
-
 			$scope.traitVariables = new angular.OrderedHash();
 			$scope.selectionVariables = new angular.OrderedHash();
 			$scope.isHideDelete = false;

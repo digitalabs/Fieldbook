@@ -240,8 +240,7 @@
 					hasNewEnvironmentAdded: false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
 					designTypes: [],
-					deleteEnvironmentCallback: function() {},
-					isSaveEnabled: true
+					deleteEnvironmentCallback: function() {}
 				},
 
 				specialSettings: {
@@ -352,14 +351,6 @@
 				
 				isLockedStudy: function() {
 					return service.currentData.basicDetails.isLocked;
-				},
-
-				isSaveEnabled: function() {
-					return service.applicationData.isSaveEnabled;
-				},
-
-				isSaveDisabled: function() {
-                    return !service.applicationData.isSaveEnabled;
 				},
 
 				changeLockedStatus : function(doLock) {

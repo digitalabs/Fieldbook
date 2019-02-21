@@ -172,7 +172,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						if (isTabChangeDisabled()) {
 							transition.abort();
 						}
-						TrialManagerDataService.applicationData.isSaveEnabled = true;
 					});
 
 				$rootScope.stateSuccessfullyLoaded = {};
@@ -246,8 +245,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.studyTypeSelected = undefined;
 			$scope.isChoosePreviousStudy = false;
 			$scope.hasUnsavedData = studyStateService.hasUnsavedData;
-			$scope.isSaveDisabled = TrialManagerDataService.isSaveDisabled;
-			$scope.isSaveEnabled = TrialManagerDataService.isSaveEnabled;
 
 			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
@@ -513,8 +510,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					});
 				});
 
-				$scope.isSettingsTab = false;
-				$scope.tabSelected = subObsTab.state;
 				$state.transitionTo('subObservationTabs.subObservationSets',  {
 					subObservationTabId: subObsTab.id,
 					subObservationTab: subObsTab,
@@ -907,7 +902,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 				$scope.tabSelected = selectedTab;
 				$scope.isSettingsTab = false;
-				TrialManagerDataService.applicationData.isSaveEnabled = false;
 
 				// Load selected stock list inventory page setup function single time
 				if ($scope.stockListTabs && $scope.stockListTabs.indexOf(selectedTab) === -1) {
@@ -955,6 +949,22 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.changeLockedStatus = function (doLock) {
 				TrialManagerDataService.changeLockedStatus(doLock);
+			};
+
+			$scope.isSaveDisabled = function () {
+				return !$scope.isSaveEnabled();
+			};
+
+			$scope.isSaveEnabled = function () {
+				return $scope.tabSelected && [
+					"trialSettings",
+					"germplasm",
+					"treatment",
+					"environment",
+					"experimentalDesign",
+					"createMeasurements",
+					"editMeasurements"
+				].indexOf($scope.tabSelected) >= 0;
 			};
 
 			$('body').on('DO_AUTO_SAVE', function () {

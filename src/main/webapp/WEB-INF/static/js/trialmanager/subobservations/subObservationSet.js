@@ -605,7 +605,7 @@
 			}
 
 			function reloadDataset() {
-                $rootScope.$broadcast('navigateToSubObsTab', subObservationSet.id);
+                $rootScope.navigateToSubObsTab(subObservationSet.id);
 			}
 
 			function loadTable() {

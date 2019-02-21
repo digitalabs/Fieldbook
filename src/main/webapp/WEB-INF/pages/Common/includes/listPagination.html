@@ -35,15 +35,16 @@
 				<td th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') }" th:class="${row.even}? 'even' : 'odd'" >
 					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.fgid}" th:attr="data-gid=${germplasm.fgid}" th:attrappend="data-desig=${germplasm.femaleParent}">.2</a>
 				</td>
-				<td th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') }" th:class="${row.even}? 'even' : 'odd'" >
+				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.mgid != 0) }" th:class="${row.even}? 'even' : 'odd'" >
 					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.maleParent}" th:attr="data-gid=${germplasm.mgid}" th:attrappend="data-desig=${germplasm.maleParent}">.2</a>
 				</td>
+				<!-- Do not Render MALE PARENT as link if male parent is unknown-->
+				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.mgid == 0) }" th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.maleParent}" >.2</td>
 				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.mgid != 0) }" th:class="${row.even}? 'even' : 'odd'" >
 					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.mgid}" th:attr="data-gid=${germplasm.mgid}" th:attrappend="data-desig=${germplasm.maleParent}">.2</a>
 				</td>
-				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.mgid == 0) }" th:class="${row.even}? 'even' : 'odd'" >
-					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.maleParent}" th:attr="data-gid=${germplasm.mgid}" th:attrappend="data-desig=${germplasm.maleParent}">.2</a>
-				</td>
+				<!-- Do not Render MGID as link if male parent is unknown-->
+				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.mgid == 0) }" th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.maleParent}" >.2</td>
 				<!-- End of Cross List Columns ONLY -->
 
 				<td th:class="${row.even}? 'even' : 'odd'" >

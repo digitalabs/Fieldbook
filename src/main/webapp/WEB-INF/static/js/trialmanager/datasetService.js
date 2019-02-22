@@ -181,7 +181,7 @@
 			};
 
 			datasetService.rejectDraftData = function (datasetId) {
-				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/drafts/rejection');
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observation-units/drafts/rejection');
 				return request.then(successHandler, failureHandler);
 
 			};

@@ -1029,6 +1029,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 								window.location.href = '/ibpworkbench/controller/jhipster#label-printing' +
 									'?datasetId=' + scope.selected.datasetId +
 									'&studyId=' + studyContext.studyId +
+									'&programId=' + studyContext.programId +
 									'&printingLabelType=' + LABEL_PRINTING_TYPE.SUBOBSERVATION_DATASET;
 							}
 						};

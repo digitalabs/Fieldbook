@@ -7,9 +7,9 @@
 	var hiddenColumns = [OBS_UNIT_ID, TRIAL_INSTANCE];
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
-		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout',
-		function ($scope, $rootScope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
-				  datasetService, $timeout
+		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout', '$uibModal',
+		function ($scope, $rootScope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile,
+				  environmentService, datasetService, $timeout, $uibModal
 		) {
 
 			$scope.traitVariables = new angular.OrderedHash();
@@ -191,7 +191,7 @@
 				var deferred = $q.defer();
 
 				datasetService.checkOutOfBoundDraftData($scope.subObservationSet.dataset.datasetId).then(function (response) {
-					var modalInstance = $scope.openConfirmModal("Accept As-is?", "Proceed", "Discard");
+					var modalInstance = $scope.openAcceptPendingModal();
 					modalInstance.result.then(deferred.resolve);
 				}, function (response) {
 					if (response.status == 404) {
@@ -207,8 +207,8 @@
 			};
 
 			$scope.acceptDraftData = function () {
-				$scope.checkOutOfBoundDraftData().then(function (doContinue) {
-					if (doContinue) {
+				$scope.checkOutOfBoundDraftData().then(function (selectedOption) {
+					if (selectedOption === "2") {
 						datasetService.acceptDraftData($scope.subObservationSet.dataset.datasetId).then(function () {
 							reloadDataset();
 						}, function (response) {
@@ -230,6 +230,22 @@
 						showErrorMessage('', response.errors[0].message);
 					} else {
 						showErrorMessage('', ajaxGenericErrorMsg);
+					}
+				});
+			};
+
+			$scope.openAcceptPendingModal = function () {
+				return $uibModal.open({
+					templateUrl: '/Fieldbook/static/angular-templates/subObservations/acceptPendingModal.html',
+					controller: function ($scope, $uibModalInstance) {
+						$scope.selected = "2";
+
+						$scope.proceed = function () {
+							$uibModalInstance.close($scope.selected);
+						};
+						$scope.cancel = function () {
+							$uibModalInstance.close(null);
+						};
 					}
 				});
 			};

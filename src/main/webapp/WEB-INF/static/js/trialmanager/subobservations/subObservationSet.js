@@ -883,7 +883,7 @@
 		.directive('observationInlineEditor', function () {
 			return {
 				restrict: 'E',
-				templateUrl: '/Fieldbook/static/angular-templates/observationInlineEditor.html',
+				templateUrl: '/Fieldbook/static/angular-templates/subObservations/observationInlineEditor.html',
 				scope: {
 					observation: '=',
 					// TODO upgrade angular to > 1.5 to use one-way binding

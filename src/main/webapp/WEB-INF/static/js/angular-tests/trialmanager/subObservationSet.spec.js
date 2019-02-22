@@ -873,6 +873,7 @@ describe('SubObservationSetCtrl', function () {
 		module('datatables');
 		module('datatables.buttons');
 		module('datatables.colreorder');
+		module('ui.bootstrap');
 	});
 
 	beforeEach(inject(function (_$controller_, _$rootScope_, _$q_, $injector, _$timeout_) {

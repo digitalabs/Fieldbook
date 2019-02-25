@@ -24,7 +24,6 @@
 			$scope.nested.reviewVariable = null;
 			$scope.enableActions = false;
 			$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
-			$scope.columnDataByInputTermId = {};
 
 			var subObservationTab = $scope.subObservationTab;
 			var tableId = '#subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
@@ -524,12 +523,13 @@
 								processCell(cell, cellData, rowData, columnData);
 
 								if (valueChanged && $scope.columnDataByInputTermId[termId]) {
-									var targetColumnData = $scope.columnDataByInputTermId[termId];
-									var targetColIndex = table.colReorder.transpose(targetColumnData.index, 'toCurrent');
-									var targetDtCell = table.cell(dtRow.node(), targetColIndex);
-									var targetCellData = targetDtCell.data();
-									targetCellData.status = 'OUT_OF_SYNC';
-									processCell(targetDtCell.node(), targetCellData, rowData, targetColumnData);
+									angular.forEach($scope.columnDataByInputTermId[termId], function (targetColumnData) {
+										var targetColIndex = table.colReorder.transpose(targetColumnData.index, 'toCurrent');
+										var targetDtCell = table.cell(dtRow.node(), targetColIndex);
+										var targetCellData = targetDtCell.data();
+										targetCellData.status = 'OUT_OF_SYNC';
+										processCell(targetDtCell.node(), targetCellData, rowData, targetColumnData);
+									});
 								}
 
 								// Restore handler
@@ -653,6 +653,8 @@
 			}
 
 			function mapColumns(columnsData) {
+				$scope.columnDataByInputTermId = {};
+
 				var columns = [],
 					columnsDef = [];
 
@@ -672,7 +674,10 @@
 					// store formula info to update out-of-sync status after edit
 					if (columnData.formula && columnData.formula.inputs) {
 						columnData.formula.inputs.forEach(function (input) {
-							$scope.columnDataByInputTermId[input.id] = columnData;
+							if (!$scope.columnDataByInputTermId[input.id]) {
+								$scope.columnDataByInputTermId[input.id] = [];
+							}
+							$scope.columnDataByInputTermId[input.id].push(columnData);
 						});
 					}
 					columnData.index = index;

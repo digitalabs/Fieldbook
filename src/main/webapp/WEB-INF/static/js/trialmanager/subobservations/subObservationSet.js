@@ -217,7 +217,7 @@
 
 			$scope.acceptDraftData = function () {
 				$scope.checkOutOfBoundDraftData().then(function (selectedOption) {
-					if (selectedOption === "2") {
+					if (selectedOption === "1") {
 						datasetService.acceptDraftData($scope.subObservationSet.dataset.datasetId).then(function () {
 							reloadDataset();
 						}, function (response) {
@@ -247,7 +247,7 @@
 				return $uibModal.open({
 					templateUrl: '/Fieldbook/static/angular-templates/subObservations/acceptPendingModal.html',
 					controller: function ($scope, $uibModalInstance) {
-						$scope.selected = "2";
+						$scope.selected = "1";
 
 						$scope.proceed = function () {
 							$uibModalInstance.close($scope.selected);

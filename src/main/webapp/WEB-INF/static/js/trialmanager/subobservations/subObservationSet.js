@@ -12,6 +12,16 @@
 				  environmentService, datasetService, $timeout, $uibModal
 		) {
 
+			// FIXME is there a better way?
+			// Only used in tests - to call $rootScope.$apply()
+			// for production, rely on $scope.dtColumns promise
+			// we cannot use dtColumns.then because we need to call $rootScope.$apply
+			// just after dtColumnsPromise.resolve()
+			var tableLoadedResolve;
+			$scope.tableLoadedPromise = new Promise(function (resolve) {
+				tableLoadedResolve = resolve;
+			});
+
 			$scope.traitVariables = new angular.OrderedHash();
 			$scope.selectionVariables = new angular.OrderedHash();
 			$scope.isHideDelete = false;
@@ -484,7 +494,7 @@
 								}
 
 								return $q.resolve(cellData);
-							}
+							} // doAjaxUpdate
 
 							var promise = doAjaxUpdate();
 
@@ -542,7 +552,7 @@
 								}
 							});
 
-						}
+						} // updateInline
 
 						if (columnData.dataTypeCode === 'D') {
 							$(cell).one('click', 'input', function () {
@@ -580,7 +590,7 @@
 							$(cell).find('a.ui-select-match, input').click().focus();
 						}, 100);
 					});
-				}
+				} // clickHandler
 			}
 
 			function getCategoricalValueId(cellDataValue, columnData) {
@@ -640,6 +650,9 @@
 					$scope.dtOptions = getDtOptions();
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
+
+					// Only used in tests
+					tableLoadedResolve();
 				});
 			}
 
@@ -712,7 +725,7 @@
 									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
 							}
 						});
-					} else if (columnData.termId === -2) { // variates
+					} else if (columnData.termId === -2) {
 						// SAMPLES count column
 						columnsDef.push({
 							targets: columns.length - 1,

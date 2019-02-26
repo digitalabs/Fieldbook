@@ -13,7 +13,8 @@ describe('SubObservationSetCtrl', function () {
 		$q,
 		$timeout,
 		controller,
-		scope;
+		scope,
+		originalTimeout;
 
 	// Mock objects copied from actual objects using Chrome console
 	var extractedSettings = {
@@ -862,7 +863,14 @@ describe('SubObservationSetCtrl', function () {
 		environmentServiceMock = {},
 		datasetServiceMock = jasmine.createSpyObj('datasetService', ['getDataset', 'getColumns', 'getObservationTableUrl']);
 
-	beforeEach(function () {
+	function setJasmineTimeout() {
+		originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+		// jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000; // Uncomment if needed, but 5s should be enough
+	}
+	setJasmineTimeout();
+
+	beforeEach(function (done) {
+		setJasmineTimeout();
 
 		module(function ($provide) {
 			$provide.value("datasetService", datasetServiceMock);
@@ -874,45 +882,52 @@ describe('SubObservationSetCtrl', function () {
 		module('datatables.buttons');
 		module('datatables.colreorder');
 		module('ui.bootstrap');
-	});
 
-	beforeEach(inject(function (_$controller_, _$rootScope_, _$q_, $injector, _$timeout_) {
-		$controller = _$controller_;
-		$rootScope = _$rootScope_;
-		$q = _$q_;
-		$timeout = _$timeout_;
+		inject(function (_$controller_, _$rootScope_, _$q_, $injector, _$timeout_) {
+			$controller = _$controller_;
+			$rootScope = _$rootScope_;
+			$timeout = _$timeout_;
+			$q = _$q_;
 
-		scope = $rootScope.$new();
-		scope.subObservationTab = {
-			id: 1
-		};
+			scope = $rootScope.$new();
+			scope.subObservationTab = {
+				id: 1
+			};
 
-		datasetServiceMock = $injector.get('datasetService');
-		datasetServiceMock.getDataset.and.returnValue($q.resolve(serviceDataset));
-		datasetServiceMock.getColumns.and.returnValue($q.resolve(columns));
-		datasetServiceMock.getObservationTableUrl.and.returnValue('');
+			datasetServiceMock = $injector.get('datasetService');
+			datasetServiceMock.getDataset.and.returnValue($q.resolve(serviceDataset));
+			datasetServiceMock.getColumns.and.returnValue($q.resolve(columns));
+			datasetServiceMock.getObservationTableUrl.and.returnValue('');
 
-		TrialManagerDataServiceMock = $injector.get('TrialManagerDataService');
-		TrialManagerDataServiceMock.extractSettings.and.returnValue(extractedSettings);
+			TrialManagerDataServiceMock = $injector.get('TrialManagerDataService');
+			TrialManagerDataServiceMock.extractSettings.and.returnValue(extractedSettings);
 
-		controller = $controller('SubObservationSetCtrl', {
-			$scope: scope,
-			$rootScope: $rootScope,
-			TrialManagerDataService: TrialManagerDataServiceMock,
-			$stateParams: $stateParamsMock,
-			dTOptionsBuilder: dTOptionsBuilderMock,
-			dTColumnBuilder: dTColumnBuilderMock,
-			$http: $httpMock,
-			$q: _$q_,
-			$compile: $compileMock,
-			environmentService: environmentServiceMock,
-			datasetService: datasetServiceMock,
-			$timeout: $timeout
+			controller = $controller('SubObservationSetCtrl', {
+				$scope: scope,
+				$rootScope: $rootScope,
+				TrialManagerDataService: TrialManagerDataServiceMock,
+				$stateParams: $stateParamsMock,
+				dTOptionsBuilder: dTOptionsBuilderMock,
+				dTColumnBuilder: dTColumnBuilderMock,
+				$http: $httpMock,
+				$compile: $compileMock,
+				environmentService: environmentServiceMock,
+				datasetService: datasetServiceMock,
+				$timeout: $timeout
+			});
+
+			scope.tableLoadedPromise.then(function () {
+				done();
+			});
+
+			$rootScope.$apply();
 		});
 
-		scope.$apply();
+	});
 
-	}));
+	afterEach(function() {
+		jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+	});
 
 	describe('initialization:', function () {
 		describe('a SubObservationSetCtrl', function () {
@@ -927,8 +942,6 @@ describe('SubObservationSetCtrl', function () {
 			});
 
 			it('should have datatables functionality', function () {
-				pending(); // FIXME race condition?
-
 				// AleuCol_E_1to5
 				expect(scope.columnsObj.columnsDef[10].render({value: scope.columnsObj.columns[10].columnData.possibleValues[1].name}))
 					.toContain(scope.columnsObj.columns[10].columnData.possibleValues[1].displayDescription);

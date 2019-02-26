@@ -44,7 +44,7 @@
 			};
 
 			derivedVariableService.calculateVariableForSubObservation = function (datasetId, calculateData) {
-				var request = $http.post(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variable/calculate', calculateData);
+				var request = $http.post(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variable/calculation', calculateData);
 				return request.then(successHandler, failureHandler);
 			};
 
@@ -52,18 +52,18 @@
 				if (!studyContext.studyId) {
 					return $q.resolve();
 				}
-				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variable/dependencies');
+				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/missing-dependencies');
 			};
 
 			derivedVariableService.getDependenciesForSpecificTrait = function (datasetId, variableId) {
 				if (!studyContext.studyId) {
 					return $q.resolve();
 				}
-				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variable/dependencies/' + variableId);
+				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/' + variableId + '/missing-dependencies');
 			};
 
 			derivedVariableService.countCalculatedVariables = function (datasetIds) {
-				var request = $http.head(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/derived-variable/countCalculatedVariables', {
+				var request = $http.head(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/derived-variables', {
 					params: {
 						datasetIds: datasetIds.join(",")
 					}

@@ -54,8 +54,7 @@ public class CrossingTemplateParserTest {
 		final ListDataProject result = this.templateParser.getListDataProject(STUDY_NAME, 0, PROGRAM_UUID, true);
 		Assert.assertEquals(0, result.getGermplasmId().intValue());
 		Assert.assertEquals(Name.UNKNOWN, result.getDesignation());
-		Mockito.verifyZeroInteractions(this.studyDataManager);
-		Mockito.verifyZeroInteractions(this.messageSource);
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.never()).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, 0, "1");
 	}
 	
 	@Test
@@ -107,6 +106,21 @@ public class CrossingTemplateParserTest {
 
 		try {			
 			this.templateParser.getListDataProject(STUDY_NAME, 1, PROGRAM_UUID, new Random().nextBoolean());
+			Assert.fail("Expected to throw exception but didn't");
+		} catch (final FileParsingException e) {
+			Mockito.verify(this.messageSource).getMessage("no.such.study.exists", new Object[] {STUDY_NAME},
+					LocaleContextHolder.getLocale());
+			Mockito.verifyZeroInteractions(this.fieldbookMiddlewareService);
+			
+		}
+	}
+	
+	@Test
+	public void testGetListDataProjectForInvalidStudyWhenPlotIsZero() {
+		Mockito.doReturn(null).when(this.studyDataManager).getStudyIdByNameAndProgramUUID(STUDY_NAME, PROGRAM_UUID);
+
+		try {			
+			this.templateParser.getListDataProject(STUDY_NAME, 0, PROGRAM_UUID, new Random().nextBoolean());
 			Assert.fail("Expected to throw exception but didn't");
 		} catch (final FileParsingException e) {
 			Mockito.verify(this.messageSource).getMessage("no.such.study.exists", new Object[] {STUDY_NAME},

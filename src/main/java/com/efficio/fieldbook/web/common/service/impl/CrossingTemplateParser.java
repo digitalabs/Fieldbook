@@ -286,6 +286,17 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	 */
 	ListDataProject getListDataProject(final String studyName, final Integer genderedPlotNo, final String programUUID, final Boolean isMaleParent)
 			throws FileParsingException {
+		
+
+
+		// 1 get the particular study's list
+		final Integer studyId = this.studyDataManager.getStudyIdByNameAndProgramUUID(studyName, programUUID);
+
+		if (null == studyId) {
+			throw new FileParsingException(
+					this.messageSource.getMessage("no.such.study.exists", new String[] {studyName}, LocaleContextHolder.getLocale()));
+		}
+		
 		// Only allow male parents to be unknown (GID = 0)
 		if (genderedPlotNo == 0 && isMaleParent) {
 			final ListDataProject maleListData = new ListDataProject();
@@ -295,15 +306,6 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 
 		final String instanceNumber = "1";
-
-		// 1 get the particular study's list
-		final Integer studyId = this.studyDataManager.getStudyIdByNameAndProgramUUID(studyName, programUUID);
-
-		if (null == studyId) {
-			throw new FileParsingException(
-					this.messageSource.getMessage("no.such.study.exists", new String[] {studyName}, LocaleContextHolder.getLocale()));
-		}
-
 		// 2. retrieve the list id of the particular study
 		final ListDataProject listdataResult =
 			this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId, GermplasmListType.STUDY, genderedPlotNo, instanceNumber);

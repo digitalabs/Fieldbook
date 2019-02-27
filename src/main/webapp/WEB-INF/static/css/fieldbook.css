@@ -49,6 +49,13 @@ label{
 label#list-notes {
   width: 300px;
 }
+
+/* FIXME Rearrange
+    to be more consistent with boostrap buttons
+    For example:
+        - instead of overriding btn-primary use btn-warning
+        - instead of overriding btn-info use btn-primary
+    See also WEB-INF/static/css/lib/bootstrap/bootstrap-btn-outline.css */
 .btn-primary {
     color: #ffffff;
     background-color: #ff8109;
@@ -64,8 +71,6 @@ label#list-notes {
     border-color:  #ff8109;
     opacity: 0.7
 }
-
-
 .btn-default {
     color: #ffffff;
     background-color: #828282;
@@ -81,7 +86,16 @@ label#list-notes {
     border-color: #828282;
     opacity: 0.7
 }
-
+.btn-default.disabled.focus,
+.btn-default.disabled:focus,
+.btn-default.disabled:hover,
+.btn-default[disabled].focus,
+.btn-default[disabled]:focus,
+.btn-default[disabled]:hover
+ {
+    background-color: #828282;
+    border-color: #828282;
+}
 .btn-info {
     color: #ffffff;
     background-color: #1b95b2;
@@ -100,13 +114,7 @@ label#list-notes {
 .btn {
     font-size: 11px;
 }
-/*
-table th, table td{
-	background-color: #CECECE;
-	font-size: 12px;
-	color: #333333;
-}
-*/
+
 table > thead > tr > th, table .table-header{
     background-color: #c8c6c6;
 }
@@ -2331,7 +2339,41 @@ table.dataTable thead .derived-trait-column-header {
     background-color: #bdd9b4;
 }
 
+/* TODO not needed with colresize? */
+table.dataTable thead th.sorting,
+table.dataTable thead th.sorting_asc,
+table.dataTable thead th.sorting_desc
+{
+    cursor: pointer;
+}
+
 .dataset-options .ui-select-choices div {
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.nav-tabs > li > a.pendingData,
+.nav-tabs > li > a.pendingData:focus,
+.nav-tabs > li > a.pendingData:hover {
+    -webkit-box-shadow: inset 0px -2px 0px 0px #ff8109;
+    -moz-box-shadow: inset 0px -2x 0px 0px #ff8109;
+    box-shadow: inset 0px -2px 0px 0px #ff8109;
+}
+
+td[disabled] {
+    background-color: #ccc;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+}
+
+.paginate-float-center {
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.paginate-float-center .dataTables_paginate {
+    display: inline-block;
+    width: auto;
+    float: none;
 }

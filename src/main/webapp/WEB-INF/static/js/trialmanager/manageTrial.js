@@ -114,7 +114,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				},
 				params: {
-					subObservationTab: null
+					subObservationTab: null,
+					isPendingView: null
 				},
 				redirectTo: function (trans) {
 					var tab = trans.params().subObservationTab;
@@ -126,7 +127,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 								subObservationTabId: tab.id,
 								subObservationTab: tab,
 								subObservationSetId: subObservationSet.id,
-								subObservationSet: subObservationSet
+								subObservationSet: subObservationSet,
+								isPendingView: trans.params().isPendingView
 							}
 						}
 					}
@@ -138,7 +140,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				controller: 'SubObservationSetCtrl',
 				templateUrl: '/Fieldbook/TrialManager/openTrial/subObservationSet',
 				params: {
-					subObservationSet: null
+					subObservationSet: null,
+					isPendingView: null
 				},
 			})
 		;
@@ -157,17 +160,21 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 		};
 	});
 
+	// do not switch tab if we have newly imported measurements or stock list is not saved
+	function isTabChangeDisabled() {
+		return stockListImportNotSaved || $('.import-study-data').data('data-import') === '1';
+	}
+
 	manageTrialApp.run(
-		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES', '$transitions',
-			function ($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES, $transitions) {
+		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES', '$transitions', 'TrialManagerDataService',
+			function ($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES, $transitions, TrialManagerDataService) {
 				$rootScope.VARIABLE_TYPES = VARIABLE_TYPES;
 
-				$transitions.onEnter({},
+				$transitions.onStart({},
 					function (transition) {
-						if ($('.import-study-data').data('data-import') === '1' || stockListImportNotSaved) {
+						if (isTabChangeDisabled()) {
 							transition.abort();
 						}
-						// a 'transition prevented' error
 					});
 
 				$rootScope.stateSuccessfullyLoaded = {};
@@ -488,7 +495,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			};
 
-			$rootScope.navigateToSubObsTab = function (datasetId) {
+			$rootScope.navigateToSubObsTab = function (datasetId, isPendingView) {
 				var subObsTab = undefined;
 				var subObsSet = undefined;
 				angular.forEach($scope.subObservationTabs, function (subObservationTab) {
@@ -506,7 +513,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					subObservationTabId: subObsTab.id,
 					subObservationTab: subObsTab,
 					subObservationSetId: subObsSet.id,
-					subObservationSet: subObsSet
+					subObservationSet: subObsSet,
+					isPendingView: isPendingView
 				}, {
 					reload: true, inherit: false, notify: true
 				});
@@ -517,30 +525,29 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.performFunctionOnTabChange = function (targetState) {
-				// do not switch tab if we have newly imported measurements or stock list is not saved
-				if (stockListImportNotSaved || $('.import-study-data').data('data-import') === '1') {
-					// Display warning if the user tries to navigate across tabs(except advance & stock-list tab) without saving imported inventory file
+				if (isTabChangeDisabled()) {
 					showAlertMessage('', importSaveDataWarningMessage);
 					return;
 				}
 
 				$scope.isSettingsTab = true;
 				$scope.tabSelected = targetState;
+
+				// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
+				// of the table if we do not do that
+				function adjustColumns($table) {
+					if ($table.length !== 0 && $table.dataTable()) {
+						$timeout(function () {
+							$table.dataTable().fnAdjustColumnSizing();
+						});
+					}
+				}
+
 				if (targetState === 'editMeasurements') {
-					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
-					// of the table if we do not do that
 					if ($('body').hasClass('preview-measurements-only')) {
-						if ($('#preview-measurement-table').length !== 0 && $('#preview-measurement-table').dataTable()) {
-							$timeout(function () {
-								$('#preview-measurement-table').dataTable().fnAdjustColumnSizing();
-							}, 1);
-						}
+						adjustColumns($('#preview-measurement-table'));
 					} else {
-						if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
-							$timeout(function () {
-								$('#measurement-table').dataTable().fnAdjustColumnSizing();
-							}, 1);
-						}
+						adjustColumns($('#measurement-table'));
 					}
 
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
@@ -561,30 +568,15 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 							'Please regenerate the design on the Experimental Design tab', 10000);
 					}
 
-					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
-					// of the table if we do not do that
-					if (!TrialManagerDataService.applicationData.unsavedGeneratedDesign && $('#preview-measurement-table').length !== 0 &&
-						$('#preview-measurement-table').dataTable()) {
-						$timeout(function () {
-							$('#preview-measurement-table').dataTable().fnAdjustColumnSizing();
-						}, 1);
+					if (!TrialManagerDataService.applicationData.unsavedGeneratedDesign) {
+						adjustColumns($('#preview-measurement-table'));
 					}
 				} else if (targetState === 'germplasm') {
-					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
-					// of the table if we do not do that
-					if ($('#tableForGermplasm').length !== 0 && $('#tableForGermplasm').dataTable() !== null) {
-						$timeout(function () {
-							$('#tableForGermplasm').dataTable().fnAdjustColumnSizing();
-						}, 1);
-					}
+					adjustColumns($('#tableForGermplasm'));
 				} else if (targetState === 'environment') {
-					// we need to redraw the columns of the table on tab change as they appear all to be squeezed to the left corner
-					// of the table if we do not do that
-					if ($('#environment-table .fbk-datatable-environments').length !== 0 && $('#environment-table .fbk-datatable-environments').DataTable() !== null) {
-						$timeout(function () {
-							$('#environment-table .fbk-datatable-environments').DataTable().columns.adjust().draw();
-						}, 1);
-					}
+					adjustColumns($('#environment-table .fbk-datatable-environments'));
+				} else if (targetState.indexOf('/subObservationTabs/') === 0) {
+					$rootScope.$broadcast('subObsTabSelected');
 				}
 			};
 
@@ -739,6 +731,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					if (isPageLoading !== true) {
 						$scope.tabSelected = 'sample-list' + tabId + '-li';
 						$scope.isSettingsTab = false;
+						$rootScope.$broadcast('sampleListCreated');
 					}
 				}
 			};
@@ -863,11 +856,13 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						name: datasetTab.name,
 						tabName: datasetType.abbr + ': ' + datasetTab.name,
 						titleName: datasetType.name + ': ' + datasetTab.name,
+						hasPendingData: datasetTab.hasPendingData,
 						state: '/subObservationTabs/' + datasetTab.datasetId, // arbitrary prefix to filter tab content
 						subObservationSets: datasetByTabs[datasetTab.datasetId].map(function (dataset) {
 							return {
 								id: dataset.datasetId,
 								name: dataset.name,
+								hasPendingData: dataset.hasPendingData,
 								datasetTypeId: dataset.datasetTypeId,
 								parentDatasetId: dataset.parentDatasetId
 							}
@@ -900,10 +895,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				displayCrossesList(value.id, value.name, value.crossesType, true, '', true);
 			});
 
-			$scope.tabChange = function (selectedTab) {
-
-				// Display warning if the user tries to navigate across tabs(advance & stock-list tab) without saving imported inventory file
-				if (stockListImportNotSaved) {
+			$scope.listTabChange = function (selectedTab) {
+				if (isTabChangeDisabled()) {
 					showAlertMessage('', importSaveDataWarningMessage);
 					return;
 				}
@@ -956,6 +949,22 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.changeLockedStatus = function (doLock) {
 				TrialManagerDataService.changeLockedStatus(doLock);
+			};
+
+			$scope.isSaveDisabled = function () {
+				return !$scope.isSaveEnabled();
+			};
+
+			$scope.isSaveEnabled = function () {
+				return $scope.tabSelected && [
+					"trialSettings",
+					"germplasm",
+					"treatment",
+					"environment",
+					"experimentalDesign",
+					"createMeasurements",
+					"editMeasurements"
+				].indexOf($scope.tabSelected) >= 0;
 			};
 
 			$('body').on('DO_AUTO_SAVE', function () {

@@ -88,13 +88,17 @@
 				return request.then(successHandler, failureHandler);
 			};
 
-			datasetService.getColumns = function (datasetId) {
-				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/table/columns');
+			datasetService.getColumns = function (datasetId, draftMode) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/table/columns', {
+					params: {
+						draftMode: Boolean(draftMode)
+					}
+				});
 				return request.then(successHandler, failureHandler);
 			};
 
-			datasetService.getObservationTableUrl = function (datasetId, instanceId) {
-				return BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/instances/' + instanceId + '/observationUnits/table';
+			datasetService.getObservationTableUrl = function (datasetId) {
+				return BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/table';
 			};
 
 			datasetService.generation = function (newDataset) {
@@ -157,10 +161,29 @@
 				}
 				var request = $http.put(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/observations',
 					{
-						"processWarnings": processWarnings,
-						"data": observationList
+						processWarnings: processWarnings,
+						data: observationList,
+                        draftMode: true
 					});
 				return request.then(successHandler, failureHandler);
+			};
+
+			datasetService.acceptDraftData = function (datasetId) {
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observation-units/drafts/acceptance');
+				return request.then(successHandler, failureHandler);
+
+			};
+
+			datasetService.checkOutOfBoundDraftData = function (datasetId) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observation-units/drafts/out-of-bounds');
+				return request.then(successHandler, failureHandler);
+
+			};
+
+			datasetService.rejectDraftData = function (datasetId) {
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observation-units/drafts/rejection');
+				return request.then(successHandler, failureHandler);
+
 			};
 
 			return datasetService;

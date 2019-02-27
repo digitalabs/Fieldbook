@@ -352,7 +352,7 @@
 				isLockedStudy: function() {
 					return service.currentData.basicDetails.isLocked;
 				},
-				
+
 				changeLockedStatus : function(doLock) {
 					
 					var studyId = service.currentData.basicDetails.studyID;

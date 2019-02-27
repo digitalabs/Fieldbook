@@ -126,9 +126,6 @@ var SaveSampleList = {};
 			},
 			success: function (response) {
 				showSuccessfulMessage('', saveSampleListSuccessfullyMessage);
-				if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
-					BMS.Fieldbook.MeasurementsDataTable('#measurement-table');
-				}
 				$('#saveSampleListTreeModal').modal('hide');
 				displaySampleList(response.id, SaveSampleList.details.listName, false);
 			},

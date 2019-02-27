@@ -176,7 +176,7 @@
 				if ($scope.selected.datasetId === $scope.measurementDatasetId) {
 					$rootScope.navigateToTab('editMeasurements');
 				} else {
-					$rootScope.navigateToSubObsTab($scope.selected.datasetId);
+					$rootScope.navigateToSubObsTab($scope.selected.datasetId, false);
 				}
 				derivedVariableModalService.openExecuteCalculatedVariableModal($scope.selected.datasetId);
 				$uibModalInstance.close();
@@ -219,7 +219,7 @@
 				};
 
 				$scope.reloadSubObservation = function () {
-					$rootScope.navigateToSubObsTab(datasetId);
+					$rootScope.navigateToSubObsTab(datasetId, false);
 					showSuccessfulMessage('', 'Calculated values for ' + $scope.selected.variable.name + ' were added successfully.');
 				};
 
@@ -332,7 +332,7 @@
 					derivedVariableService.calculateVariableForSubObservation(datasetId, calculateRequestData)
 						.then(function (response) {
 							if (response) {
-								$rootScope.navigateToSubObsTab(datasetId);
+								$rootScope.navigateToSubObsTab(datasetId, false);
 								showSuccessfulMessage('', 'Calculated values for ' + selectedVariable.name + ' were added successfully.');
 								$uibModalInstance.close();
 							}

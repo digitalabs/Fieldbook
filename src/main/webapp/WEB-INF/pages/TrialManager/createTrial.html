@@ -26,7 +26,8 @@
 
 						<div class="fbk-study-heading-btns">
 							<input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick=""
-								   type="button" value="Save"/>
+								   type="button" value="Save"  ng-disabled="isSaveDisabled()"
+								   ng-attr-title="{{isSaveDisabled() ? 'You cannot save in this tab' : ''}}" />
 							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide"
 								   onclick="discardImportedData();" th:value="#{import.discard.data}"/>
 							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-stocklist-data fbk-hide"
@@ -48,7 +49,7 @@
 			</div>
 
 			<div class="col-md-12 nopadding-right">
-				<section-container heading="BASIC DETAILS" collapsible="isOpenStudy()" start-collapsed="true">
+				<section-container heading="BASIC DETAILS" collapsible="isOpenStudy()" toggle-section="true">
 				<span name="action-buttons" ng-show="isOpenStudy() &amp;&amp; !hasUnsavedData()">
 					<span class='bms-locked' style='position: relative; top:7px; right: 5px; color: #666666;font-size: 23px; font-weight: bold;' ng-show="isLockedStudy() &amp;&amp;  userHasLockPermission()" ng-click="changeLockedStatus(0)"/>
 					<span class='bms-lock-open' style='position: relative; top:7px; right: 5px; color: #666666;font-size: 23px; font-weight: bold;' ng-show="!isLockedStudy() &amp;&amp; userHasLockPermission()" ng-click="changeLockedStatus(1)"/>
@@ -57,7 +58,7 @@
 							<span th:text="#{study.studydetails.actions}">Actions</span>
 						</button>
 						<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-							<li>
+							<li ng-if="isSaveEnabled()">
 								<a href="javascript: void(0);" ng-click="saveCurrentTrialData()"
 								   th:text="#{study.option.save}">Save Study</a>
 							</li>
@@ -91,7 +92,7 @@
 							<!--Crossing options-->
 							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Crossing options</a>
-								<ul class="dropdown-menu" style="margin-left: -47px;">
+								<ul class="dropdown-menu" style="margin-left: -48px;">
 									<!--Export crossing template-->
 									<li id="download-crosses-template">
 										<a href="javascript: void(0)" onclick="ImportCrosses.downloadCrosses()"
@@ -137,7 +138,7 @@
 
 							<li ng-show="displayGermplasmOrMeasurmentOnlyActions()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Data collection options</a>
-								<ul class="dropdown-menu" style="margin-left: 0px;">
+								<ul class="dropdown-menu" style="margin-left: -25px; width: 193px">
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a ng-click="showExportStudyModal()" id="export-study-link"
 										   th:text="#{study.studydetails.action.export.study}">Export Study Book</a>
@@ -175,7 +176,7 @@
 
 							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Advance study options</a>
-								<ul class="dropdown-menu" style="margin-left: -12px;">
+								<ul class="dropdown-menu" style="margin-left: -12px; width: 179px;">
 									<li>
 										<a href="javascript: startAdvance('trial');" id="advance-trial-link"
 										   th:text="#{study.studydetails.action.advance.study}">Advance Study</a>
@@ -375,27 +376,28 @@
 			<a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
 		</li>
 		<li ng-repeat="tab in subObservationTabs" ng-class="{active: tabSelected===tab.state}">
-			<a ui-sref="subObservationTabs({ subObservationTabId: tab.id, subObservationTab: tab })"
+			<a ui-sref="subObservationTabs({ subObservationTabId: tab.id, subObservationTab: tab, isPendingView: null })"
+			   ng-class="{'pendingData': tab.hasPendingData}"
 			   ng-click="performFunctionOnTabChange(tab.state)">{{tab.tabName}}</a>
 		</li>
 		<li ng-repeat="tab in advanceTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
-			ng-click="tabChange(tab.state)"
+			ng-click="listTabChange(tab.state)"
 			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
-			<a href="#tab.name" tab-data='{{tab.id}}'>{{tab.displayName}}
+			<a tab-data='{{tab.id}}'>{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="id" ng-click="closeAdvanceListTab(tab.state)"></i>
 			</a>
 		</li>
 		<li ng-repeat="tab in sampleTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
-			ng-click="tabChange(tab.state)"
+			ng-click="listTabChange(tab.state)"
 			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
-			<a href="#tab.name" tab-data='{{tab.id}}' ng-click="initSampleTab(tab)">{{tab.displayName}}
+			<a tab-data='{{tab.id}}' ng-click="initSampleTab(tab)">{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="sampleListId" ng-click="closeSampleListTab(tab.state)"></i>
 			</a>
 		</li>
 		<li ng-repeat="tab in crossesTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
-			ng-click="tabChange(tab.state)"
+			ng-click="listTabChange(tab.state)"
 			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
-			<a href="#tab.name" tab-data='{{tab.id}}'>{{tab.displayName}}
+			<a tab-data='{{tab.id}}'>{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="crossesListId" ng-click="closeCrossesListTab(tab.state)"></i>
 			</a>
 		</li>

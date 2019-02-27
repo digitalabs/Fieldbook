@@ -100,8 +100,12 @@
 			$scope.importedData = null;
 			var ctrl = this;
 
-			ctrl.importFormats = [{itemId: '1', name: 'CSV', extension: '.csv'}];
-			ctrl.format = {selected: ctrl.importFormats[0].extension};
+			ctrl.importFormats = [
+				{name: 'CSV', extension: '.csv'}, //
+				{name: 'Excel', extension: '.xls,.xlsx'}, //
+				{name: 'KSU fieldbook CSV', extension: '.csv'}, //
+				{name: 'KSU fieldbook Excel', extension: '.xls,.xlsx'} //
+			];
 
 			$scope.backToDatasetOptionModal = function () {
 				$uibModalInstance.close();
@@ -114,13 +118,13 @@
 			};
 
 			$scope.submitImport = function () {
-				$scope.importMeasurements(true);
+				$scope.importObservations(true);
 			};
 
-			$scope.importMeasurements = function (processWarnings) {
+			$scope.importObservations = function (processWarnings) {
 				datasetService.importObservations(datasetId, $scope.importedData, processWarnings).then(function () {
-					displaySaveSuccessMessage('page-message', 'Your data was successfully imported and saved.');
-					$scope.reloadObservations();
+					displaySaveSuccessMessage('page-message', 'Your data was successfully imported and needs correspondence.');
+					$rootScope.navigateToSubObsTab(datasetId);
 					$scope.close();
 				}, function (response) {
 					if (response.status == 400) {
@@ -137,11 +141,6 @@
 				$uibModalInstance.close();
 			};
 
-			$scope.reloadObservations = function () {
-				$rootScope.navigateToSubObsTab(datasetId);
-
-			};
-
 			ctrl.showConfirmModal = function (warnings) {
 				$uibModalInstance.close();
 				var warningMessages = [];
@@ -152,7 +151,7 @@
 				var modalWarningMessage = importStudyModalService.showWarningMessage('Confirmation', 'Some observations were found in the imported file:', warningMessages, 'Would you like to proceed with the import ?', 'Proceed', 'Back');
 				modalWarningMessage.result.then(function (shouldContinue) {
 					if (shouldContinue) {
-						$scope.importMeasurements(false);
+						$scope.importObservations(false);
 					} else {
 						importStudyModalService.openImportStudyModal(datasetId);
 					}
@@ -162,12 +161,13 @@
 			ctrl.init = function () {
 				$scope.file = null;
 				$scope.importedData = null;
+				ctrl.format = {selected: ctrl.importFormats[1]};
 			};
 
 			ctrl.init();
 
 		}])
-		.directive('importSheetJs', function () {
+		.directive('importObservation', function () {
 			return {
 				restrict: 'AE',
 				scope: {
@@ -181,10 +181,18 @@
 						reader.onload = function (e) {
 							/* read workbook */
 							var bstr = e.target.result;
-							var wb = XLSX.read(bstr, {type: 'binary', sheetStubs: false});
+							var wb = XLSX.read(bstr, {type: 'binary'});
 
 							/* grab first sheet */
 							var wsname = wb.SheetNames[0];
+							if (wb.SheetNames.length > 1) {
+								wsname = 'Observation';
+
+								if (!wb.Sheets[wsname]) {
+									showErrorMessage('', 'Wrong name for Observation sheet - please remedy in spreadsheet and try again');
+									return;
+								}
+							}
 							var ws = wb.Sheets[wsname];
 
 							/* grab first row and generate column headers */
@@ -192,7 +200,7 @@
 
 							/* update scope */
 							scope.$apply(function () {
-								var length = 15;
+								var length = 20;
 								scope.importedData = aoa;
 								scope.importedFile = changeEvent.target.files[0];
 								scope.importedFile.abbrName = scope.importedFile.name;

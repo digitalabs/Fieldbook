@@ -2,32 +2,41 @@
 	'use strict';
 
 	var subObservationModule = angular.module('subObservation', []);
-	var hiddenColumns = [8201];
+	var TRIAL_INSTANCE = 8170,
+		OBS_UNIT_ID = 8201;
+	var hiddenColumns = [OBS_UNIT_ID, TRIAL_INSTANCE];
 
-	subObservationModule.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
-		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', 'derivedVariableService', '$timeout',
-		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
-				  datasetService, derivedVariableService, $timeout
+	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
+		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', 'derivedVariableService', '$timeout', '$uibModal',
+		function ($scope, $rootScope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile,
+				  environmentService, datasetService, derivedVariableService, $timeout, $uibModal
 		) {
+
+			// FIXME is there a better way?
+			// Only used in tests - to call $rootScope.$apply()
+			// for production, rely on $scope.dtColumns promise
+			// we cannot use dtColumns.then because we need to call $rootScope.$apply
+			// just after dtColumnsPromise.resolve()
+			var tableLoadedResolve;
+			$scope.tableLoadedPromise = new Promise(function (resolve) {
+				tableLoadedResolve = resolve;
+			});
+
 			$scope.traitVariables = new angular.OrderedHash();
 			$scope.selectionVariables = new angular.OrderedHash();
 			$scope.isHideDelete = false;
 			$scope.addVariable = true;
 			var subObservationSet = $scope.subObservationSet = $stateParams.subObservationSet;
-			$scope.preview = Boolean(subObservationSet.preview);
 			$scope.columnsObj = subObservationSet.columnsObj;
 			$scope.rows = subObservationSet.rows;
 			$scope.nested = {};
-			$scope.nested.dtPreviewInstance = null;
 			$scope.nested.dtInstance = null;
 			$scope.nested.reviewVariable = null;
 			$scope.enableActions = false;
 			$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
-			$scope.columnDataByInputTermId = {};
 
 			var subObservationTab = $scope.subObservationTab;
 			var tableId = '#subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
-			var previewTableId = '#preview-subobservation-table-' + subObservationTab.id + '-' + subObservationSet.id;
 			var dtColumnsPromise = $q.defer();
 			var dtColumnDefsPromise = $q.defer();
 
@@ -40,11 +49,28 @@
 				if (!dataset.instances || !dataset.instances.length) {
 					return;
 				}
-				$scope.environments = dataset.instances;
-				$scope.nested.selectedEnvironment = dataset.instances[0];
+				$scope.environments = [{
+					instanceNumber: null,
+					locationName: 'All environments'
+				}].concat(dataset.instances);
+
 				$scope.traitVariables = $scope.getVariables('TRAIT');
 				$scope.selectionVariables = $scope.getVariables('SELECTION_METHOD');
 				$scope.selectedVariables = $scope.getSelectedVariables();
+
+				subObservationSet.hasPendingData = subObservationTab.hasPendingData = dataset.hasPendingData;
+				// we set pending view unless we are specifically told not to
+				$scope.isPendingView = dataset.hasPendingData && $stateParams.isPendingView !== false;
+				doPendingViewActions();
+
+				loadTable();
+			}); // getDataset
+
+			$rootScope.$on('subObsTabSelected', function (event) {
+				adjustColumns();
+			});
+
+			$rootScope.$on('sampleListCreated', function (event) {
 				loadTable();
 			});
 
@@ -100,7 +126,7 @@
 			};
 
 			$scope.onHideCallback = function () {
-				adjustColumns($(tableId).DataTable());
+				adjustColumns();
 			};
 
 			$scope.onAddVariable = function (result, variableTypeId) {
@@ -137,15 +163,7 @@
 				promise.then(function (doContinue) {
 					if (doContinue) {
 						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, variableIds).then(function () {
-							angular.forEach(variableIds, function (cvtermId) {
-								settings.remove(cvtermId);
-								$scope.subObservationSet.dataset.variables = $scope.subObservationSet.dataset.variables.filter(function (variable) {
-									return variable.termId !== cvtermId;
-								});
-							});
-
-							loadTable();
-							$scope.selectedVariables = $scope.getSelectedVariables();
+							reloadDataset();
 							derivedVariableService.displayExecuteCalculateVariableMenu();
 						}, function (response) {
 							if (response.errors && response.errors.length) {
@@ -174,44 +192,76 @@
 				return deferred.promise;
 			};
 
-			if ($scope.preview) {
-				loadPreview();
-			}
-
-			// Review prototype - remove when done
-			$scope.togglePreviewMode = function () {
-				$scope.preview = subObservationSet.preview = !$scope.preview;
-				if (!$scope.preview) {
+			$scope.togglePendingView = function (isPendingView) {
+				if ($scope.isPendingView === isPendingView) {
 					return;
 				}
-				loadPreview();
+				$scope.isPendingView = isPendingView;
+				doPendingViewActions();
+				loadTable();
 			};
 
-			// Review prototype - remove when done
-			$scope.resetPreview = function () {
-				$scope.rows = subObservationSet.rows = null;
-				$scope.nested.dtPreviewInstance.changeData(getPreview());
-			};
+			$scope.checkOutOfBoundDraftData = function () {
+				var deferred = $q.defer();
 
-			$scope.savePreview = function () {
-				// TODO implement call
-				$http.post('sub-observation-set/preview/save/', subObservationSet.rows);
-			};
-
-			$scope.filterVariable = function () {
-
-				angular.forEach($scope.columnsObj.columns, function (col) {
-					if (col.className === 'variates') {
-						col.visible = false;
-					}
-					if (col.title === $scope.nested.reviewVariable.title) {
-						col.visible = true;
+				datasetService.checkOutOfBoundDraftData($scope.subObservationSet.dataset.datasetId).then(function (response) {
+					var modalInstance = $scope.openAcceptPendingModal();
+					modalInstance.result.then(deferred.resolve);
+				}, function (response) {
+					if (response.status == 404) {
+						deferred.resolve(true);
+					} else if (response.errors && response.errors.length) {
+						showErrorMessage('', response.data.errors[0].message);
+					} else {
+						showErrorMessage('', ajaxGenericErrorMsg);
 					}
 				});
-				// FIXME is there a faster way?
-				$scope.dtColumns = $scope.columnsObj.columns;
-				// FIXME Loading gif doesn't show immediately - is there a better way?
-				$('.dataTables_processing', $(previewTableId).closest('.dataTables_wrapper')).show();
+
+				return deferred.promise;
+			};
+
+			$scope.acceptDraftData = function () {
+				$scope.checkOutOfBoundDraftData().then(function (selectedOption) {
+					if (selectedOption === "1") {
+						datasetService.acceptDraftData($scope.subObservationSet.dataset.datasetId).then(function () {
+							reloadDataset();
+						}, function (response) {
+							if (response.errors && response.errors.length) {
+								showErrorMessage('', response.errors[0].message);
+							} else {
+								showErrorMessage('', ajaxGenericErrorMsg);
+							}
+						});
+					}
+				});
+			};
+
+			$scope.rejectDraftData = function () {
+				datasetService.rejectDraftData($scope.subObservationSet.dataset.datasetId).then(function () {
+					reloadDataset();
+				}, function (response) {
+					if (response.errors && response.errors.length) {
+						showErrorMessage('', response.errors[0].message);
+					} else {
+						showErrorMessage('', ajaxGenericErrorMsg);
+					}
+				});
+			};
+
+			$scope.openAcceptPendingModal = function () {
+				return $uibModal.open({
+					templateUrl: '/Fieldbook/static/angular-templates/subObservations/acceptPendingModal.html',
+					controller: function ($scope, $uibModalInstance) {
+						$scope.selected = "1";
+
+						$scope.proceed = function () {
+							$uibModalInstance.close($scope.selected);
+						};
+						$scope.cancel = function () {
+							$uibModalInstance.close(null);
+						};
+					}
+				});
 			};
 
 			$scope.subDivide = function () {
@@ -225,45 +275,60 @@
 			};
 
 			$scope.changeEnvironment = function () {
-				$(tableId).DataTable().ajax
-					.url(datasetService.getObservationTableUrl(subObservationSet.id, $scope.nested.selectedEnvironment.instanceDbId))
-					.load();
+				table().columns("TRIAL_INSTANCE:name").visible($scope.nested.selectedEnvironment === $scope.environments[0]);
+				table().ajax.reload();
 			};
 
 			$scope.toggleShowCategoricalDescription = function () {
 				switchCategoricalView().done(function () {
 					$scope.$apply(function () {
 						$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
-						adjustColumns($(tableId).DataTable());
+						adjustColumns();
 					});
 				});
 			};
 
+			function table() {
+				return $scope.nested.dtInstance.DataTable;
+			}
+
+			function doPendingViewActions() {
+				$scope.toggleSection = $scope.isPendingView;
+
+				if ($scope.isPendingView) {
+					$scope.nested.selectedEnvironment = $scope.environments[0];
+				} else {
+					$scope.nested.selectedEnvironment = $scope.environments[1];
+				}
+			}
+
 			function getDtOptions() {
 				return addCommonOptions(DTOptionsBuilder.newOptions()
 					.withOption('ajax', {
-						url: datasetService.getObservationTableUrl(subObservationSet.id, $scope.nested.selectedEnvironment.instanceDbId),
+						url: datasetService.getObservationTableUrl(subObservationSet.id),
 						type: 'GET',
 						beforeSend: function (xhr) {
 							xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
 						},
 						data: function (d) {
-							var sortedColIndex = $(tableId).dataTable().fnSettings().aaSorting[0][0];
-							var sortDirection = $(tableId).dataTable().fnSettings().aaSorting[0][1];
-							var sortedColTermId = subObservationSet.columnsData[sortedColIndex].termId;
+							var order = d.order && d.order[0];
+							var sortedColTermId = subObservationSet.columnsData[order.column].termId;
+
+							var instanceId = $scope.nested.selectedEnvironment.instanceDbId;
 
 							return {
 								draw: d.draw,
 								pageSize: d.length,
 								pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
 								sortBy: sortedColTermId,
-								sortOrder: sortDirection
+								sortOrder: order.dir,
+								instanceId: instanceId,
+								draftMode: $scope.isPendingView
 							};
 						}
 					})
 					.withDataProp('data')
 					.withOption('serverSide', true)
-					.withOption('initComplete', initCompleteCallback)
 					.withOption('headerCallback', headerCallback)
 					.withOption('drawCallback', drawCallback));
 			}
@@ -273,6 +338,7 @@
 					.withOption('processing', true)
 					.withOption('lengthMenu', [[50, 75, 100], [50, 75, 100]])
 					.withOption('scrollY', '500px')
+					.withOption('scrollCollapse', true)
 					.withOption('scrollX', '100%')
 					.withOption('language', {
 						processing: '<span class="throbber throbber-2x"></span>',
@@ -284,13 +350,11 @@
 							last: '>>'
 						}
 					})
-					.withDOM('"<"pull-left fbk-left-padding"l>' + //
-						'<"pull-left"i>' + //
-						'<"pull-left fbk-left-padding"r>' + //
+					.withDOM('<"pull-left fbk-left-padding"r>' + //
 						'<"pull-right"B>' + //
 						'<"clearfix">' + //
 						'<"row add-top-padding-small"<"col-sm-12"t>>' + //
-						'<"row"<"col-sm-12"p>>')
+						'<"row"<"col-sm-12 paginate-float-center"<"pull-left"i><"pull-right"l>p>>')
 					.withButtons([{
 						extend: 'colvis',
 						className: 'fbk-buttons-no-border fbk-colvis-button',
@@ -300,34 +364,8 @@
 					.withPaginationType('full_numbers');
 			}
 
-			function loadPreview() {
-				$scope.dtOptionsPreview = addCommonOptions(DTOptionsBuilder
-					.fromFnPromise(getPreview())
-					// TODO 1) extract common logic rowCallback 2) use datatable api to store data 3) use DataTable().rows().data() to save
-					// .withOption('rowCallback', previewRowCallback)
-				);
-			}
-
-			/**
-			 * FIXME we were having issues with clone() and $compile. Attaching and detaching instead for now
-			 */
-			function attachCategoricalDisplayBtn() {
-				$timeout(function () {
-					$('#subObsCategoricalDescriptionBtn').detach().insertBefore('#subObservationTableContainer .dt-buttons');
-				});
-			}
-
-			function detachCategoricalDisplayBtn() {
-				$('#subObsCategoricalDescriptionBtn').detach().appendTo('#subObsCategoricalDescriptionContainer');
-			}
-
-			function initCompleteCallback() {
-				attachCategoricalDisplayBtn();
-			}
-
 			function headerCallback(thead, data, start, end, display) {
-				var table = $scope.nested.dtInstance.DataTable;
-				table.columns().every(function() {
+				table().columns().every(function() {
 					var column = $scope.columnsObj.columns[this.index()];
 					if (column.columnData.formula) {
 						$(this.header()).addClass('derived-trait-column-header');
@@ -339,15 +377,20 @@
                 addCellClickHandler();
 			}
 
-			function adjustColumns(table) {
+			function adjustColumns() {
 				$timeout(function () {
-					table.columns.adjust();
+					table().columns.adjust();
 				});
 			}
 
 			function addCellClickHandler() {
 				var $table = angular.element(tableId);
-				$table.off('click').on('click', 'td.variates', clickHandler);
+
+				addClickHandler();
+
+				function addClickHandler() {
+					$table.off('click').on('click', 'td.variates:not([disabled])', clickHandler);
+				}
 
 				function clickHandler() {
 					var cell = this;
@@ -374,7 +417,7 @@
 						var $inlineScope = $scope.$new(true);
 
 						$inlineScope.observation = {
-							value: cellData.value,
+							value: $scope.isPendingView ? cellData.draftValue : cellData.value,
 							change: function () {
 								updateInline();
 							},
@@ -401,56 +444,77 @@
 						$(cell).append(editor);
 
 						function updateInline() {
-							var promise;
 
-							if (cellData.value === $inlineScope.observation.value) {
-								promise = $q.resolve(cellData);
-							} else {
-								var value = $inlineScope.observation.value;
+							function doAjaxUpdate() {
+								if (cellData.value === $inlineScope.observation.value) {
+									return $q.resolve(cellData);
+								}
+
+								var value = cellData.value;
+								var draftValue = cellData.draftValue;
+
+								if ($scope.isPendingView) {
+									draftValue = $inlineScope.observation.value;
+								} else {
+									value = $inlineScope.observation.value;
+								}
 
 								if (cellData.observationId) {
-									if (value) {
-										promise = confirmOutOfBoundData(value, columnData).then(function(doContinue) {
-											if (!doContinue) {
-												$inlineScope.observation.value = cellData.value;
-												return {observationId: cellData.observationId};
-											}
-											return datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
-												cellData.observationId, {
-													categoricalValueId: getCategoricalValueId(value, columnData),
-													value: value
-												});
-										});
-									} else {
-										promise = datasetService.deleteObservation(subObservationSet.id, rowData.observationUnitId,
-											cellData.observationId);
+									if (!value && !$scope.isPendingView) {
+										if (cellData.draftValue) {
+											value = null;
+										} else {
+											return datasetService.deleteObservation(subObservationSet.id, rowData.observationUnitId,
+												cellData.observationId);
+										}
 									}
-								} else {
-									if (value) {
-										promise = confirmOutOfBoundData(value, columnData).then(function(doContinue) {
-											if (!doContinue) {
-												$inlineScope.observation.value = cellData.value;
-												return {observationId: cellData.observationId};
-											}
-											return datasetService.addObservation(subObservationSet.id, rowData.observationUnitId, {
-												observationUnitId: rowData.observationUnitId,
+
+									return confirmOutOfBoundData(value, columnData).then(function (doContinue) {
+										if (!doContinue) {
+											$inlineScope.observation.value = cellData.value;
+											return {observationId: cellData.observationId};
+										}
+										return datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
+											cellData.observationId, {
 												categoricalValueId: getCategoricalValueId(value, columnData),
-												variableId: termId,
-												value: value
+												value: value,
+												draftValue: draftValue
 											});
-										});
-									} else {
-										promise = $q.resolve(cellData);
-									}
+									});
 								}
-							}
+
+								if (value) {
+									return confirmOutOfBoundData(value, columnData).then(function (doContinue) {
+										if (!doContinue) {
+											$inlineScope.observation.value = cellData.value;
+											return {observationId: cellData.observationId};
+										}
+										return datasetService.addObservation(subObservationSet.id, rowData.observationUnitId, {
+											observationUnitId: rowData.observationUnitId,
+											categoricalValueId: getCategoricalValueId(value, columnData),
+											variableId: termId,
+											value: value
+										});
+									});
+								}
+
+								return $q.resolve(cellData);
+							} // doAjaxUpdate
+
+							var promise = doAjaxUpdate();
 
 							promise.then(function (data) {
 								var valueChanged = false;
 								if (cellData.value !== $inlineScope.observation.value) {
                                     valueChanged = true;
 								}
-								cellData.value = $inlineScope.observation.value;
+
+								if ($scope.isPendingView) {
+									cellData.draftValue = $inlineScope.observation.value;
+								} else {
+									cellData.value = $inlineScope.observation.value;
+								}
+
 								cellData.observationId = data.observationId;
 								cellData.status = data.status;
 
@@ -462,7 +526,6 @@
 								 * to avoid reloading the page. It has these advantages:
 								 * - Make the inline edition more dynamic and fast
 								 * - Don't reset the table scroll
-								 * - We can show out-of-sync status changes on preview mode
 								 *
 								 * The alternative would be:
 								 *
@@ -475,16 +538,17 @@
 								processCell(cell, cellData, rowData, columnData);
 
 								if (valueChanged && $scope.columnDataByInputTermId[termId]) {
-									var targetColumnData = $scope.columnDataByInputTermId[termId];
-									var targetColIndex = table.colReorder.transpose(targetColumnData.index, 'toCurrent');
-									var targetDtCell = table.cell(dtRow.node(), targetColIndex);
-									var targetCellData = targetDtCell.data();
-									targetCellData.status = 'OUT_OF_SYNC';
-									processCell(targetDtCell.node(), targetCellData, rowData, targetColumnData);
+									angular.forEach($scope.columnDataByInputTermId[termId], function (targetColumnData) {
+										var targetColIndex = table.colReorder.transpose(targetColumnData.index, 'toCurrent');
+										var targetDtCell = table.cell(dtRow.node(), targetColIndex);
+										var targetCellData = targetDtCell.data();
+										targetCellData.status = 'OUT_OF_SYNC';
+										processCell(targetDtCell.node(), targetCellData, rowData, targetColumnData);
+									});
 								}
 
 								// Restore handler
-								$table.off('click').on('click', 'td.variates', clickHandler);
+								addClickHandler();
 							}, function (response) {
 								if (response.errors) {
 									showErrorMessage('', response.errors[0].message);
@@ -493,7 +557,7 @@
 								}
 							});
 
-						}
+						} // updateInline
 
 						if (columnData.dataTypeCode === 'D') {
 							$(cell).one('click', 'input', function () {
@@ -531,7 +595,7 @@
 							$(cell).find('a.ui-select-match, input').click().focus();
 						}, 100);
 					});
-				}
+				} // clickHandler
 			}
 
 			function getCategoricalValueId(cellDataValue, columnData) {
@@ -552,6 +616,11 @@
 			function confirmOutOfBoundData(cellDataValue, columnData) {
 				var deferred = $q.defer();
 
+				if ($scope.isPendingView) {
+					deferred.resolve(true);
+					return deferred.promise;
+				}
+
 				var invalid = validateDataOutOfScaleRange(cellDataValue, columnData);
 
 				if (invalid) {
@@ -564,33 +633,11 @@
 				return deferred.promise;
 			}
 
-			// FIXME 1) adapt to subobs 2) See previewRowCallback
-			function getPreview() {
-				// TODO check memory consumption
-				if (subObservationSet.rows) {
-					return $q.resolve(subObservationSet.rows);
-				}
-				return $http
-					.post('/Fieldbook/ImportManager/import/preview')
-					.then(function (resp) {
-
-						// Create map for easy access on review
-						var rowMap = $scope.rowMap = subObservationSet.rowMap = {};
-						angular.forEach(resp.data, function (row) {
-							rowMap[row.experimentId] = {};
-							angular.forEach(subObservationSet.columnsObj.columns, function (column) {
-								rowMap[row.experimentId][column.termId] = row[column.title];
-							});
-						});
-
-						$scope.rows = subObservationSet.rows = resp.data;
-						return $q.resolve(resp.data);
-					});
+			function reloadDataset() {
+                $rootScope.navigateToSubObsTab(subObservationSet.id);
 			}
 
 			function loadTable() {
-				detachCategoricalDisplayBtn();
-
 				/**
 				 * We need to reinitilize all this because
 				 * if we use column.visible an change the columns with just
@@ -604,32 +651,28 @@
 				$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 				$scope.dtOptions = null;
 
-				loadColumns().then(function (columnsObj) {
+				return loadColumns().then(function (columnsObj) {
 					$scope.dtOptions = getDtOptions();
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
 
-					attachCategoricalDisplayBtn();
+					// Only used in tests
+					tableLoadedResolve();
 				});
 			}
 
 			function loadColumns() {
-				return datasetService.getColumns(subObservationSet.id).then(function (columnsData) {
+				return datasetService.getColumns(subObservationSet.id, $scope.isPendingView).then(function (columnsData) {
 					subObservationSet.columnsData = columnsData;
 					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(columnsData);
-
-					// if not needed when implementing review -> remove
-					subObservationSet.columnMap = {};
-					angular.forEach(columnsData, function (columnData) {
-						subObservationSet.columnMap[columnData.termId] = columnData;
-					});
 
 					return columnsObj;
 				});
 			}
 
-			// TODO merge with measurements-table-trial.js#getColumns
 			function mapColumns(columnsData) {
+				$scope.columnDataByInputTermId = {};
+
 				var columns = [],
 					columnsDef = [];
 
@@ -649,17 +692,29 @@
 					// store formula info to update out-of-sync status after edit
 					if (columnData.formula && columnData.formula.inputs) {
 						columnData.formula.inputs.forEach(function (input) {
-							$scope.columnDataByInputTermId[input.id] = columnData;
+							if (!$scope.columnDataByInputTermId[input.id]) {
+								$scope.columnDataByInputTermId[input.id] = [];
+							}
+							$scope.columnDataByInputTermId[input.id].push(columnData);
 						});
 					}
 					columnData.index = index;
 
+					function isColumnVisible() {
+
+						if (columnData.termId === TRIAL_INSTANCE) {
+							return $scope.nested.selectedEnvironment === $scope.environments[0]
+						}
+						return hiddenColumns.indexOf(columnData.termId) < 0;
+					}
+
 					columns.push({
 						title: columnData.alias,
+						name: columnData.alias,
 						data: function (row) {
 							return row.variables[columnData.name];
 						},
-						visible: hiddenColumns.indexOf(columnData.termId) < 0,
+						visible: isColumnVisible(),
 						defaultContent: '',
 						className: columnData.factor === true ? 'factors' : 'variates',
 						columnData: columnData
@@ -675,49 +730,11 @@
 									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
 							}
 						});
-					} else if (!columnData.factor) {
+					} else if (columnData.termId === -2) {
+						// SAMPLES count column
 						columnsDef.push({
 							targets: columns.length - 1,
-							createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
-								processCell(td, cellData, rowData, columnData);
-							},
-							render: function (data, type, full, meta) {
-
-								if (columnData.dataTypeId === 1130) {
-									return renderCategoricalData(data, columnData);
-								} else if (columnData.dataTypeId === 1110) {
-									return getDisplayValueForNumericalValue(data.value);
-								}
-
-								return data && EscapeHTML.escape(data.value);
-							}
-						});
-					} else {
-						columnsDef.push({
-							targets: columns.length - 1,
-							render: function (data, type, full, meta) {
-
-								if (columnData.dataTypeId === 1130) {
-									return renderCategoricalData(data, columnData);
-								}
-
-								return data && EscapeHTML.escape(data.value);
-							}
-						});
-					}
-
-					// Manually add SAMPLES count column after PLOT_NO field
-					if (columnData.termId === 8200) {
-						columns.push({
-							title: 'SAMPLES',
-							visible: true,
-							defaultContent: '',
-							className: 'factors',
-							columnData: { formula: undefined}
-						});
-
-						columnsDef.push({
-							targets: columns.length - 1,
+							orderable: false,
 							render: function (data, type, full, meta) {
 								if (full.samplesCount !== '-') {
 									return '<a class="gid-link" href="javascript: void(0)" ' +
@@ -726,6 +743,56 @@
 								} else {
 									return full.samplesCount;
 								}
+							}
+						});
+					} else if (!columnData.factor) { // variates
+						columnsDef.push({
+							targets: columns.length - 1,
+							createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
+								processCell(td, cellData, rowData, columnData);
+							},
+							render: function (data, type, full, meta) {
+
+								if (!data) {
+									return '';
+								}
+
+								function renderByDataType(value, columnData) {
+									if (columnData.dataTypeId === 1130) {
+										return renderCategoricalValue(value, columnData);
+									} else if (columnData.dataTypeId === 1110) {
+										return getDisplayValueForNumericalValue(value);
+									} else {
+										return EscapeHTML.escape(value);
+									}
+								}
+
+								var value = renderByDataType(data.value, columnData);
+								if ($scope.isPendingView && data.draftValue !== null && data.draftValue !== undefined) {
+									var existingValue = value;
+									value = renderByDataType(data.draftValue, columnData);
+									if (existingValue || existingValue === 0) {
+										value += " (" + existingValue + ")";
+									}
+								}
+
+								return value;
+							}
+						});
+					} else {
+						columnsDef.push({
+							targets: columns.length - 1,
+							render: function (data, type, full, meta) {
+
+								if (!data) {
+									return '';
+								}
+
+								if (columnData.dataTypeId === 1130) {
+									return renderCategoricalValue(data && data.value, columnData);
+								}
+
+								return data && EscapeHTML.escape(data.value);
 							}
 						});
 					}
@@ -737,30 +804,30 @@
 				};
 			}
 
-			function renderCategoricalData(data, columnData) {
-				var value = data && EscapeHTML.escape(data.value);
+			function renderCategoricalValue(value, columnData) {
+				var categoricalValue = EscapeHTML.escape(value);
 
 				if (columnData.possibleValues
 					&& columnData.possibleValuesByValue
-					&& columnData.possibleValuesByValue[data.value]
-					&& columnData.possibleValuesByValue[data.value].description
-					&& data.value !== 'missing') {
+					&& columnData.possibleValuesByValue[categoricalValue]
+					&& columnData.possibleValuesByValue[categoricalValue].displayDescription
+					&& categoricalValue !== 'missing') {
 
-					var description = columnData.possibleValuesByValue[data.value].description;
-					if (description) {
+					var displayDescription = columnData.possibleValuesByValue[categoricalValue].displayDescription;
+					if (displayDescription) {
 						var categoricalNameDom = '<span class="fbk-measurement-categorical-name"'
 							+ ($scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
 							+ ' >'
-							+ data.value + '</span>';
+							+ categoricalValue + '</span>';
 						var categoricalDescDom = '<span class="fbk-measurement-categorical-desc"'
 							+ (!$scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
 							+ ' >'
-							+ description + '</span>';
+							+ displayDescription + '</span>';
 
-						value = categoricalNameDom + categoricalDescDom;
+						categoricalValue = categoricalNameDom + categoricalDescDom;
 					}
 				}
-				return value;
+				return categoricalValue;
 			}
 
 			function validateNumericRange(minVal, maxVal, value, invalid) {
@@ -812,11 +879,26 @@
 				$(td).removeClass('invalid-value');
 				$(td).removeClass('manually-edited-value');
 
+				if ($scope.isPendingView) {
+					if (cellData.draftValue === null || cellData.draftValue === undefined) {
+						$(td).text('');
+						$(td).attr('disabled', true);
+						return;
+					}
+					var invalid = validateDataOutOfRange(cellData.draftValue, columnData);
+
+					if (invalid) {
+						$(td).addClass('invalid-value');
+					}
+
+					return;
+				}
+
 				if (cellData.value || cellData.value === 0) {
 					var invalid = validateDataOutOfRange(cellData.value, columnData);
 
 					if (invalid) {
-						$(td).addClass($scope.preview ? 'invalid-value' : 'accepted-value');
+						$(td).addClass('accepted-value');
 					}
 				}
 				if (cellData.status) {
@@ -840,7 +922,7 @@
 		.directive('observationInlineEditor', function () {
 			return {
 				restrict: 'E',
-				templateUrl: '/Fieldbook/static/angular-templates/observationInlineEditor.html',
+				templateUrl: '/Fieldbook/static/angular-templates/subObservations/observationInlineEditor.html',
 				scope: {
 					observation: '=',
 					// TODO upgrade angular to > 1.5 to use one-way binding

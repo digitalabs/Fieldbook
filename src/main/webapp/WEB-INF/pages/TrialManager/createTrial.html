@@ -77,7 +77,7 @@
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a href="" style="display: none" id="label-printing-url"
 										   th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
-										<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link"
+										<a ng-click="printLabels()" id="label-printing-url-link"
 										   th:text="#{study.studydetails.action.printLabels}">Print Labels</a>
 									</li>
 									<!--Export advance list-->
@@ -109,7 +109,6 @@
 									</li>
 								</ul>
 							</li>
-
 							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Observation unit options</a>
 								<ul class="dropdown-menu" style="margin-left: -25px;">
@@ -778,6 +777,8 @@
 				loggedInUserId: /*[[${currentCropUserId}]]*/ '',
 				studyId: /*[[${studyId}]]*/ '',
 				measurementDatasetId: /*[[${measurementDatasetId}]]*/ ''
+			}).constant('LABEL_PRINTING_TYPE', {
+				SUBOBSERVATION_DATASET: /*[[${T(org.generationcp.middleware.domain.labelprinting.LabelPrintingType).SUBOBSERVATION_DATASET.getCode()}]]*/ null
 			});
 
 			$(document).ready(function () {

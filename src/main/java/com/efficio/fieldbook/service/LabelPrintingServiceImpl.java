@@ -29,10 +29,9 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
-import org.generationcp.middleware.manager.api.PresetDataManager;
+import org.generationcp.middleware.manager.api.PresetService;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
@@ -100,7 +99,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	private WorkbenchService workbenchService;
 
 	@Resource
-	private PresetDataManager presetDataManager;
+	private PresetService presetService;
 
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -309,7 +308,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	@Override
 	public void deleteProgramPreset(final Integer programPresetId) {
 
-		this.presetDataManager.deleteProgramPreset(programPresetId);
+		this.presetService.deleteProgramPreset(programPresetId);
 
 	}
 
@@ -957,7 +956,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			return new LabelPrintingPresets(presetId, standardPreset.getName(), LabelPrintingPresets.STANDARD_PRESET);
 
 		} else {
-			final ProgramPreset programPreset = this.presetDataManager.getProgramPresetById(presetId);
+			final ProgramPreset programPreset = this.presetService.getProgramPresetById(presetId);
 
 			return new LabelPrintingPresets(presetId, programPreset.getName(), LabelPrintingPresets.PROGRAM_PRESET);
 		}
@@ -965,7 +964,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	@Override
 	public ProgramPreset getLabelPrintingProgramPreset(final Integer programPresetId)  {
-		return this.presetDataManager.getProgramPresetById(programPresetId);
+		return this.presetService.getProgramPresetById(programPresetId);
 	}
 
 	@Override
@@ -975,7 +974,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		final String toolSectionName = this.userLabelPrinting.isStockList() ? ToolSection.INVENTORY_LABEL_PRINTING_PRESET.name() : ToolSection.PLANTING_LABEL_PRINTING_PRESET.name();
 		
 		final List<ProgramPreset> presets =
-					this.presetDataManager.getProgramPresetFromProgramAndToolByName(presetName, this.contextUtil.getCurrentProgramUUID(),
+					this.presetService.getProgramPresetFromProgramAndToolByName(presetName, this.contextUtil.getCurrentProgramUUID(),
 							this.workbenchService.getFieldbookWebTool().getToolId().intValue(), toolSectionName);
 
 		for (final ProgramPreset preset : presets) {
@@ -994,7 +993,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			final String toolSectionName = this.userLabelPrinting.isStockList() ? ToolSection.INVENTORY_LABEL_PRINTING_PRESET.name() : ToolSection.PLANTING_LABEL_PRINTING_PRESET.name();
 
 			// 2. add all program presets for fieldbook
-			for (final ProgramPreset preset : this.presetDataManager.getProgramPresetFromProgramAndTool(
+			for (final ProgramPreset preset : this.presetService.getProgramPresetFromProgramAndTool(
 					this.contextUtil.getCurrentProgramUUID(), fieldbookToolId, toolSectionName)) {
 				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(),
 						LabelPrintingPresets.PROGRAM_PRESET));
@@ -1018,10 +1017,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				}
 				return this.workbenchService.getStandardPresetById(presetId).getConfiguration();
 			} else {
-				if (this.presetDataManager.getProgramPresetById(presetId) == null) {
+				if (this.presetService.getProgramPresetById(presetId) == null) {
 					throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "label.printing.preset.does.not.exists", "");
 				}
-				return this.presetDataManager.getProgramPresetById(presetId).getConfiguration();
+				return this.presetService.getProgramPresetById(presetId).getConfiguration();
 			}
 	}
 
@@ -1037,7 +1036,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			final ProgramPreset currentLabelPrintingPreset = this.getLabelPrintingProgramPreset(searchPresetList.get(0).getId());
 			currentLabelPrintingPreset.setConfiguration(xmlConfig);
 
-			this.presetDataManager.saveOrUpdateProgramPreset(currentLabelPrintingPreset);
+			this.presetService.saveOrUpdateProgramPreset(currentLabelPrintingPreset);
 		} else {
 			// add new
 			final ProgramPreset preset = new ProgramPreset();
@@ -1047,7 +1046,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			preset.setToolSection(toolSectionName);
 			preset.setConfiguration(xmlConfig);
 
-			this.presetDataManager.saveOrUpdateProgramPreset(preset);
+			this.presetService.saveOrUpdateProgramPreset(preset);
 		}
 	}
 

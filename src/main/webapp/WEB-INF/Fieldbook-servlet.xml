@@ -292,8 +292,8 @@
 		<constructor-arg ref="workbenchHibernateSessionProvider" />
 	</bean>
 
-	<bean id="presetDataManager" factory-bean="managerFactory"
-		factory-method="getPresetDataManager" scope="request">
+	<bean id="presetService" factory-bean="managerFactory"
+		  factory-method="getPresetService" scope="request">
 		<aop:scoped-proxy />
 	</bean>
 

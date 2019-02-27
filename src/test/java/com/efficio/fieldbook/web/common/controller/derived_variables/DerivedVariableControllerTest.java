@@ -329,39 +329,6 @@ public class DerivedVariableControllerTest {
 	}
 
 	@Test
-	public void testDependencyVariablesArgumentVariablesAreNotPresentInTheStudy() {
-
-		final Set<Integer> variableIdsOfTraitsInStudy = Collections.set(VARIABLE1_TERMID, VARIABLE2_TERMID);
-		final List<SettingDetail> settingDetails = new ArrayList<SettingDetail>();
-		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(VARIABLE1_TERMID, "VARIABLE1", "", "TRIAL"));
-		settingDetails.add(SettingDetailTestDataInitializer.createSettingDetail(VARIABLE2_TERMID, "VARIABLE2", "", "TRIAL"));
-
-		final Set<FormulaVariable> formulaVariables = this.createFormulaVariables();
-		when(this.studySelection.getBaselineTraitsList()).thenReturn(settingDetails);
-		when(this.formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy)).thenReturn(this.createFormulaVariables());
-
-		final ResponseEntity<Set<String>> result = this.derivedVariableController.dependencyVariables();
-
-		assertEquals(formulaVariables.size(), result.getBody().size());
-		for (final FormulaVariable formulaVariable : formulaVariables) {
-			result.getBody().contains(formulaVariable.getName());
-		}
-
-	}
-
-	@Test
-	public void testDependencyVariablesArgumentVariablesArePresentInTheStudy() {
-
-		when(this.studySelection.getBaselineTraitsList()).thenReturn(this.createSettingDetails());
-		when(this.formulaService.getAllFormulaVariables(ArgumentMatchers.<Set<Integer>>any())).thenReturn(this.createFormulaVariables());
-
-		final ResponseEntity<Set<String>> result = this.derivedVariableController.dependencyVariables();
-
-		assertTrue(result.getBody().isEmpty());
-
-	}
-
-	@Test
 	public void testDependencyVariableHasMeasurementData() {
 
 		final List<Integer> idsToBeRemoved = Collections.list(VARIABLE3_TERMID);

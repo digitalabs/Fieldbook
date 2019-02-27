@@ -169,7 +169,7 @@ public class CrossesListUtilTest {
 		germplasmListData.setFemalePedigree(CrossesListUtilTest.UNKNOWN_PEDIGREE);
 		germplasmListData.setMalePedigree(CrossesListUtilTest.UNKNOWN_PEDIGREE);
 
-		final ImportedCrosses testImportedCrosses = this.crossesListUtil.convertGermplasmListData2ImportedCrosses(germplasmListData);
+		final ImportedCrosses testImportedCrosses = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(germplasmListData);
 
 		Assert.assertEquals(Integer.valueOf(CrossesListUtilTest.TEST_ENTRY_ID_VALUE), testImportedCrosses.getEntryId());
 		Assert.assertEquals(CrossesListUtilTest.TEST_ENTRY_CODE_VALUE, testImportedCrosses.getEntryCode());

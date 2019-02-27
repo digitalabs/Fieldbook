@@ -2,6 +2,8 @@ package com.efficio.fieldbook.web.naming.expression;
 
 import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 import junit.framework.Assert;
+
+import org.generationcp.middleware.manager.PedigreeDataManagerImpl;
 import org.generationcp.middleware.manager.api.PedigreeDataManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +30,7 @@ public class BackcrossExpressionTest extends TestExpression {
 		int femaleParentGid = 2;
 
 		Mockito.when(pedigreeDataManager.calculateRecurrentParent(maleParentGid, femaleParentGid))
-				.thenReturn(PedigreeDataManager.FEMALE_RECURRENT);
+				.thenReturn(PedigreeDataManagerImpl.FEMALE_RECURRENT);
 
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "[BC]", null, true);
 		List<StringBuilder> values = this.createInitialValues(source);
@@ -48,7 +50,7 @@ public class BackcrossExpressionTest extends TestExpression {
 		int femaleParentGid = 2;
 
 		Mockito.when(pedigreeDataManager.calculateRecurrentParent(maleParentGid, femaleParentGid))
-				.thenReturn(PedigreeDataManager.MALE_RECURRENT);
+				.thenReturn(PedigreeDataManagerImpl.MALE_RECURRENT);
 
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "[BC]", null, true);
 		List<StringBuilder> values = this.createInitialValues(source);
@@ -68,7 +70,7 @@ public class BackcrossExpressionTest extends TestExpression {
 		int femaleParentGid = 2;
 
 		Mockito.when(pedigreeDataManager.calculateRecurrentParent(maleParentGid, femaleParentGid))
-				.thenReturn(PedigreeDataManager.MALE_RECURRENT);
+				.thenReturn(PedigreeDataManagerImpl.MALE_RECURRENT);
 
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "AA[BC]CC", null, true);
 		List<StringBuilder> values = this.createInitialValues(source);
@@ -87,7 +89,7 @@ public class BackcrossExpressionTest extends TestExpression {
 		int maleParentGid = 1;
 		int femaleParentGid = 2;
 
-		Mockito.when(pedigreeDataManager.calculateRecurrentParent(maleParentGid, femaleParentGid)).thenReturn(PedigreeDataManager.NONE);
+		Mockito.when(pedigreeDataManager.calculateRecurrentParent(maleParentGid, femaleParentGid)).thenReturn(PedigreeDataManagerImpl.NONE);
 
 		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", "-", null, "[BC]", null, true);
 		List<StringBuilder> values = this.createInitialValues(source);

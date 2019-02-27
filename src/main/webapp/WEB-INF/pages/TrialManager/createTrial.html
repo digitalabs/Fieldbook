@@ -161,7 +161,7 @@
 							</li>
 
 							<li ng-show="displayExecuteCalculatedVariableOnlyActions()">
-								<a href="javascript: executeCalculatedVariable()" id="calculatedVariable-link"
+								<a ng-click="showCalculatedVariableModal()" id="calculatedVariable-link"
 								   th:text="#{study.option.execute.calculated.variable}">Execute calculated variable</a>
 							</li>
 
@@ -504,12 +504,6 @@
 
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			<div id="study-executeCalculatedVariable" th:include="/TrialManager/templates/executeCalculatedVariableModal"></div>
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
 			<div id="sub-observation-unit-dataset-builder" th:include="/TrialManager/templates/SubObservationUnitDatasetBuilder"></div>
 		</div>
 	</div>
@@ -594,7 +588,6 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentModal.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/fbk-data-table/samples-summary.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/trialmanager/executeCalculatedVariableModal.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/studyStateService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/datasetService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/SubObservationUnitDatasetBuilder.js}"></script>
@@ -602,6 +595,7 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/exportStudy.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/importStudy.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/createSample.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/derivedVariable.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/angular/xlsx.full.min.js}"></script>
 
 	<!-- constants here -->
@@ -820,7 +814,6 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/environments.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/trialmanager/derivedVariableService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationTab.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationSet.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>

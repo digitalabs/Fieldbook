@@ -806,30 +806,6 @@ function deleteStudyInEdit() {
 	});
 }
 
-/* EXECUTE CALCULATION */
-function executeCalculatedVariable() {
-	var scope = angular.element("#mainApp").scope();
-	scope.$apply(function () {
-		scope.navigateToTab('editMeasurements');
-	});
-
-	if ($('body').hasClass('import-preview-measurements')) {
-		return;
-	}
-	$('#executeCalculatedVariableModal').modal({backdrop: 'static', keyboard: true});
-
-	// Add hide listener to executeCalculatedVariableModal
-	$('#executeCalculatedVariableModal').one('hidden.bs.modal', function (e) {
-		// When the executeCalculatedVariableModal is closed, remove the bs.modal data
-		// so that the modal content is refreshed when it is opened again.
-		$(e.target).removeData('bs.modal');
-	});
-
-	var $scope = angular.element('#executeCalculatedVariableModal').scope();
-	$scope.init();
-	$scope.$apply();
-}
-/* END EXECUTE CALCULATION */
 /* CREATE SUB OBSERVATION UNIT SPECIFIC FUNCTIONS */
 
 function subObservationUnitDatasetSelector() {
@@ -1429,7 +1405,7 @@ function continueStudyImport(doDataRevert) {
 
 function showImportOptions() {
 	'use strict';
-	var scope = angular.element(document.getElementById("mainApp")).scope();
+	var scope = angular.element(document.getElementById("mainApp")).injector().get('$rootScope');
 	scope.$apply(function () {
 		scope.navigateToTab('editMeasurements');
 	});

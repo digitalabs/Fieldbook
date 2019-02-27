@@ -7,9 +7,9 @@
 	var hiddenColumns = [OBS_UNIT_ID, TRIAL_INSTANCE];
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
-		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout', '$uibModal',
+		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', 'derivedVariableService', '$timeout', '$uibModal',
 		function ($scope, $rootScope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile,
-				  environmentService, datasetService, $timeout, $uibModal
+				  environmentService, datasetService, derivedVariableService, $timeout, $uibModal
 		) {
 
 			// FIXME is there a better way?
@@ -144,6 +144,8 @@
 				}).then(function () {
 					$scope.subObservationSet.dataset.variables.push(variable);
 					loadTable();
+					derivedVariableService.displayExecuteCalculateVariableMenu();
+					derivedVariableService.showWarningIfDependenciesAreMissing($scope.subObservationSet.dataset.datasetId, variable.id);
 				}, function (response) {
 					if (response.errors && response.errors.length) {
 						showErrorMessage('', response.errors[0].message);
@@ -160,6 +162,7 @@
 					if (doContinue) {
 						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, variableIds).then(function () {
 							reloadDataset();
+							derivedVariableService.displayExecuteCalculateVariableMenu();
 						}, function (response) {
 							if (response.errors && response.errors.length) {
 								showErrorMessage('', response.errors[0].message);

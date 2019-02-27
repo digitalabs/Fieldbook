@@ -6,12 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
-import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -35,6 +39,9 @@ public class CrossesListUtil {
 
 	@Autowired
 	private OntologyDataManager ontologyDataManager;
+	
+	@Resource
+	private MessageSource messageSource;
 
 	public static final String DEFAULT_SEPARATOR = "/";
 
@@ -71,8 +78,8 @@ public class CrossesListUtil {
 		dataMap.put(tableHeaderList.get(CrossesListUtil.MGID_INDEX), crossesData.getMgid());
 		return dataMap;
 	}
-
-	public ImportedCrosses convertGermplasmListData2ImportedCrosses(final GermplasmListData crossesData) {
+	
+	public ImportedCrosses convertGermplasmListDataToImportedCrosses(final GermplasmListData crossesData) {
 		final ImportedCrosses importedCrosses = new ImportedCrosses();
 		importedCrosses.setCrossListId(crossesData.getId());
 		importedCrosses.setEntryId(crossesData.getEntryId());
@@ -146,5 +153,5 @@ public class CrossesListUtil {
 		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.MGID));
 		return tableHeaderList;
 	}
-
+	
 }

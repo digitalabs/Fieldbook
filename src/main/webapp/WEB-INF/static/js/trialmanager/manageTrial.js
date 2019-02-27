@@ -114,7 +114,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				},
 				params: {
-					subObservationTab: null
+					subObservationTab: null,
+					isPendingView: null
 				},
 				redirectTo: function (trans) {
 					var tab = trans.params().subObservationTab;
@@ -126,7 +127,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 								subObservationTabId: tab.id,
 								subObservationTab: tab,
 								subObservationSetId: subObservationSet.id,
-								subObservationSet: subObservationSet
+								subObservationSet: subObservationSet,
+								isPendingView: trans.params().isPendingView
 							}
 						}
 					}
@@ -138,7 +140,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				controller: 'SubObservationSetCtrl',
 				templateUrl: '/Fieldbook/TrialManager/openTrial/subObservationSet',
 				params: {
-					subObservationSet: null
+					subObservationSet: null,
+					isPendingView: null
 				},
 			})
 		;
@@ -492,7 +495,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			};
 
-			$rootScope.navigateToSubObsTab = function (datasetId) {
+			$rootScope.navigateToSubObsTab = function (datasetId, isPendingView) {
 				var subObsTab = undefined;
 				var subObsSet = undefined;
 				angular.forEach($scope.subObservationTabs, function (subObservationTab) {
@@ -510,7 +513,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					subObservationTabId: subObsTab.id,
 					subObservationTab: subObsTab,
 					subObservationSetId: subObsSet.id,
-					subObservationSet: subObsSet
+					subObservationSet: subObsSet,
+					isPendingView: isPendingView
 				}, {
 					reload: true, inherit: false, notify: true
 				});

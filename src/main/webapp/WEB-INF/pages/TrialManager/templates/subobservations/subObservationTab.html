@@ -13,7 +13,7 @@
 
 		<ul class="nav nav-tabs fb-tabs-headers">
 			<li ng-repeat="subObservationSet in subObservationTab.subObservationSets" ui-sref-active="active">
-				<a ui-sref="subObservationTabs.subObservationSets({ subObservationSetId: subObservationSet.id, subObservationSet: subObservationSet })"
+				<a ui-sref="subObservationTabs.subObservationSets({ subObservationSetId: subObservationSet.id, subObservationSet: subObservationSet, isPendingView: null })"
 				   ng-class="{'pendingData': subObservationSet.hasPendingData}">
 					{{subObservationSet.name}}</a>
 			</li>

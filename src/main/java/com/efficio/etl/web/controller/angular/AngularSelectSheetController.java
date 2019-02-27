@@ -60,13 +60,13 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	private static final Logger LOG = LoggerFactory.getLogger(AngularSelectSheetController.class);
 	public static final String URL = "/etl/workbook/step2";
 
-	public static final int ROW_COUNT_PER_SCREEN = 10;
-	public static final int MAX_DISPLAY_CHARACTER_PER_ROW = 60;
-	public static final int FIELDBOOK_DEFAULT_STUDY_ID = 1;
+	private static final int ROW_COUNT_PER_SCREEN = 10;
+	private static final int MAX_DISPLAY_CHARACTER_PER_ROW = 60;
+	private static final int FIELDBOOK_DEFAULT_STUDY_ID = 1;
 
-	protected static final SimpleDateFormat DATE_PICKER_FORMAT = DateUtil
+	private static final SimpleDateFormat DATE_PICKER_FORMAT = DateUtil
 			.getSimpleDateFormat(DateUtil.FRONTEND_DATE_FORMAT_2);
-	protected static final SimpleDateFormat DB_FORMAT = DateUtil.getSimpleDateFormat(DateUtil.DATE_AS_NUMBER_FORMAT);
+	private static final SimpleDateFormat DB_FORMAT = DateUtil.getSimpleDateFormat(DateUtil.DATE_AS_NUMBER_FORMAT);
 	private static final String ADD_TO_NEW_STUDY = "add.to.new.study";
 
 	@Resource
@@ -327,7 +327,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			final List<String> errors = new ArrayList<>();
 			Map<String, List<Message>> mismatchErrors = null;
 			final boolean isMeansDataImport = this.userSelection.getDatasetType() != null
-					&& this.userSelection.getDatasetType().intValue() == DataSetType.MEANS_DATA.getId();
+					&& this.userSelection.getDatasetType() == DataSetType.MEANS_DATA.getId();
 
 			try {
 				// check if the selected dataset still has no mapped headers
@@ -401,7 +401,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		return messageList;
 	}
 
-	boolean variableHasWrongPSM(final MeasurementVariable measurementVariable, final Variable variable) {
+	private boolean variableHasWrongPSM(final MeasurementVariable measurementVariable, final Variable variable) {
 		return (!variable.getProperty().getName().equalsIgnoreCase(measurementVariable.getProperty())
 			|| !variable.getMethod().getName().equalsIgnoreCase(measurementVariable.getMethod())
 			|| !variable.getScale().getName().equalsIgnoreCase(measurementVariable.getScale()));
@@ -527,7 +527,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		return datasetTypes;
 	}
 
-	public List<StudyDetails> getPreviousStudies(final Model model) {
+	List<StudyDetails> getPreviousStudies(final Model model) {
 		final List<String> restrictedStudies = new ArrayList<>();
 		final List<StudyDetails> finalStudies = new ArrayList<>();
 		final List<StudyDetails> existingStudies = this.etlService.retrieveExistingStudyDetails(this.contextUtil.getCurrentProgramUUID());

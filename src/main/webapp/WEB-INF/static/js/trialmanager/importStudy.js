@@ -141,11 +141,6 @@
 				$uibModalInstance.close();
 			};
 
-			$scope.reloadObservations = function () {
-				$rootScope.navigateToSubObsTab(datasetId);
-
-			};
-
 			ctrl.showConfirmModal = function (warnings) {
 				$uibModalInstance.close();
 				var warningMessages = [];

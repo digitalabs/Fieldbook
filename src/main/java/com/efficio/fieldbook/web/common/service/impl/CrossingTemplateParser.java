@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.util.AppConstants;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.parsing.AbstractExcelFileParser;
@@ -22,10 +23,10 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.pojos.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -73,7 +74,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 	@Resource
 	private UserDataManager userDataManager;
-
+	
 	public CrossingTemplateParser() {
 
 	}
@@ -147,13 +148,13 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			}
 
 			// process female + male parent entries, will throw middleware query exception if no study valid or null
-			final ListDataProject femaleListData = this.getCrossingListProjectData(femaleStudy, Integer.valueOf(femalePlotNo), programUUID);
-			final ListDataProject maleListData   = this.getCrossingListProjectData(maleStudy, Integer.valueOf(malePlotNo), programUUID);
+			final ListDataProject femaleListData = this.getListDataProject(femaleStudy, Integer.valueOf(femalePlotNo), programUUID, false);
+			ListDataProject maleListData = this.getListDataProject(maleStudy, Integer.valueOf(malePlotNo), programUUID, true);
 
 			final ImportedCrosses importedCrosses =
 					new ImportedCrosses(femaleListData, maleListData, femaleStudy, maleStudy, femalePlotNo, malePlotNo, currentRow);
 			// Show source as "Pending" in initial dialogue.
-			// Source (Plot Code) string is generated later in the proces and will be displayed in the final list generated.
+			// Source (Plot Code) string is generated later in the process and will be displayed in the final list generated.
 			importedCrosses.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
 			importedCrosses.setOptionalFields(breedingMethod, crossingDate, notes);
 			// this would set the correct cross string depending if the use is cimmyt wheat
@@ -278,13 +279,15 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	 *
 	 * @param studyName - femaleStudy/maleStudy equivalent from the template
 	 * @param genderedPlotNo - femalePlot/malePlot equivalent from the template
+	 * @param programUUID - unique program ID
+	 * @param isMaleParent - flag whether the current germplasm to be looked up was used as a male parent
 	 * @return ListDataProject - We need the Design, and female/male gids information that we can retrieve using this data structure
 	 * @throws FileParsingException
 	 */
-	private ListDataProject getCrossingListProjectData(final String studyName, final Integer genderedPlotNo, final String programUUID)
+	ListDataProject getListDataProject(final String studyName, final Integer genderedPlotNo, final String programUUID, final Boolean isMaleParent)
 			throws FileParsingException {
+		
 
-		final String instanceNumber = "1";
 
 		// 1 get the particular study's list
 		final Integer studyId = this.studyDataManager.getStudyIdByNameAndProgramUUID(studyName, programUUID);
@@ -293,7 +296,16 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			throw new FileParsingException(
 					this.messageSource.getMessage("no.such.study.exists", new String[] {studyName}, LocaleContextHolder.getLocale()));
 		}
+		
+		// Only allow male parents to be unknown (GID = 0)
+		if (genderedPlotNo == 0 && isMaleParent) {
+			final ListDataProject maleListData = new ListDataProject();
+			maleListData.setDesignation(Name.UNKNOWN);
+			maleListData.setGermplasmId(genderedPlotNo);
+			return maleListData;
+		}
 
+		final String instanceNumber = "1";
 		// 2. retrieve the list id of the particular study
 		final ListDataProject listdataResult =
 			this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId, GermplasmListType.STUDY, genderedPlotNo, instanceNumber);

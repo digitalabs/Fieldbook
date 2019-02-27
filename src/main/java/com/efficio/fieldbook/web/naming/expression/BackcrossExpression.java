@@ -1,11 +1,13 @@
 package com.efficio.fieldbook.web.naming.expression;
 
-import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import java.util.List;
+
+import org.generationcp.middleware.manager.PedigreeDataManagerImpl;
 import org.generationcp.middleware.manager.api.PedigreeDataManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 
 @Component
 public class BackcrossExpression extends BaseExpression {
@@ -24,9 +26,9 @@ public class BackcrossExpression extends BaseExpression {
 
 		final int computation = pedigreeDataManager.calculateRecurrentParent(source.getMaleGid(), source.getFemaleGid());
 
-		if (PedigreeDataManager.FEMALE_RECURRENT == computation) {
+		if (PedigreeDataManagerImpl.FEMALE_RECURRENT == computation) {
 			output += FEMALE_RECURRENT_SUFFIX;
-		} else if (PedigreeDataManager.MALE_RECURRENT == computation) {
+		} else if (PedigreeDataManagerImpl.MALE_RECURRENT == computation) {
 			output += MALE_RECURRENT_SUFFIX;
 		}
 

@@ -504,6 +504,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					});
 				});
 
+				$scope.isSettingsTab = false;
+				$scope.tabSelected = subObsTab.state;
 				$state.transitionTo('subObservationTabs.subObservationSets',  {
 					subObservationTabId: subObsTab.id,
 					subObservationTab: subObsTab,

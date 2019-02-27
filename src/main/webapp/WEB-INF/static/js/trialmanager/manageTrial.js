@@ -196,7 +196,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'studyContext', 'LABEL_PRINTING_TYPE',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
 				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService,
-				  LABEL_PRINTING_TYPE, studyContext) {
+				  studyContext, LABEL_PRINTING_TYPE ) {
 
 			$scope.trialTabs = [
 				{

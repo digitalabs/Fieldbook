@@ -44,7 +44,7 @@
 			};
 
 			derivedVariableService.calculateVariableForSubObservation = function (datasetId, calculateData) {
-				var request = $http.post(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variable/calculation', calculateData);
+				var request = $http.post(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/calculation', calculateData);
 				return request.then(successHandler, failureHandler);
 			};
 

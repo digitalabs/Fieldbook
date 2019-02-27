@@ -81,6 +81,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -192,7 +193,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return super.showAjaxPage(model, GermplasmTreeController.COMMON_SAVE_GERMPLASM_LIST);
 	}
 
-	private class GermplasmListResult {
+	protected class GermplasmListResult {
 
 		private final Integer germplasmListId;
 		private final Boolean isTrimed;
@@ -381,67 +382,69 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			return new GermplasmListResult(germplasmListId, isTrimed);
 		} else if (GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT.equals(form.getGermplasmListType())) {
 
-			final Integer listId = form.getSourceListId();
-			final List<ListDataProject> listData = this.germplasmListManager.retrieveSnapshotListDataWithParents(listId);
-
-			final Collection<Integer> femaleGids = CollectionUtils.collect(listData, new Transformer() {
-
-				@Override
-				public Object transform(final Object input) {
-					final ListDataProject germplasmListData = (ListDataProject) input;
-					return germplasmListData.getFgid();
-				}
-			});
-
-			final Collection<Integer> maleGids = CollectionUtils.collect(listData, new Transformer() {
-
-				@Override
-				public Object transform(final Object input) {
-					final ListDataProject germplasmListData = (ListDataProject) input;
-					return germplasmListData.getMgid();
-				}
-			});
-
-			final List<Germplasm> germplasms = new ArrayList<>();
-
-			final Set<Integer> parentGids = new HashSet<>();
-			parentGids.addAll(femaleGids);
-			parentGids.addAll(maleGids);
-
-			final ArrayList<Integer> gids = new ArrayList<>();
-			gids.addAll(parentGids);
-			final List<Germplasm> parentList = this.germplasmDataManager.getSortedGermplasmWithPrefName(gids);
-
-			int entryCode = 1;
-			for (final Iterator<Germplasm> iterator = parentList.iterator(); iterator.hasNext(); ) {
-
-				final Germplasm parent = iterator.next();
-
-				germplasms.add(parent);
-
-				final GermplasmListData germplasmListData = new GermplasmListData();
-
-				germplasmListData.setGid(parent.getGid());
-				germplasmListData.setDesignation(parent.getPreferredName().getNval());
-				germplasmListData.setStatus(GermplasmTreeController.LIST_DATA_STATUS);
-				germplasmListData.setEntryCode(String.valueOf(entryCode));
-				germplasmListData.setLocalRecordId(GermplasmTreeController.LIST_DATA_LRECID);
-				germplasmListData.setEntryId(entryCode);
-				germplasmListData.setSeedSource("");
-				germplasmListData.setGroupName("");
-				germplasmListData.setLocalRecordId(entryCode);
-
-				listDataItems.add(new ImmutablePair<>(parent, germplasmListData));
-				entryCode++;
-			}
-
-			final Integer germplasmListId = this.fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList, false);
-			return new GermplasmListResult(germplasmListId, isTrimed);
+			return this.saveCrossesParentsAsList(form, listDataItems, isTrimed, germplasmList);
 
 		} else {
 			throw new IllegalArgumentException("Unknown germplasm list type supplied when saving germplasm list");
 		}
 
+	}
+
+	GermplasmListResult saveCrossesParentsAsList(final SaveListForm form, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
+			Boolean isTrimed, final GermplasmList germplasmList) {
+		final Integer listId = form.getSourceListId();
+		final List<ListDataProject> listData = this.germplasmListManager.retrieveSnapshotListDataWithParents(listId);
+
+		final Collection<Integer> femaleGids = CollectionUtils.collect(listData, new Transformer() {
+
+			@Override
+			public Object transform(final Object input) {
+				final ListDataProject germplasmListData = (ListDataProject) input;
+				return germplasmListData.getFgid();
+			}
+		});
+
+		final Collection<Integer> maleGids = CollectionUtils.collect(listData, new Transformer() {
+
+			@Override
+			public Object transform(final Object input) {
+				final ListDataProject germplasmListData = (ListDataProject) input;
+				return germplasmListData.getMgid();
+			}
+		});
+		// Remove unknown male parents (GID = 0) from the parent list to be saved
+		maleGids.removeAll(Collections.singletonList(0));
+
+		final Set<Integer> parentGids = new HashSet<>();
+		parentGids.addAll(femaleGids);
+		parentGids.addAll(maleGids);
+
+		final ArrayList<Integer> gids = new ArrayList<>();
+		gids.addAll(parentGids);
+		final List<Germplasm> parentList = this.germplasmDataManager.getSortedGermplasmWithPrefName(gids);
+
+		int entryCode = 1;
+		for (final Iterator<Germplasm> iterator = parentList.iterator(); iterator.hasNext(); ) {
+
+			final Germplasm parent = iterator.next();
+			final GermplasmListData germplasmListData = new GermplasmListData();
+
+			germplasmListData.setGid(parent.getGid());
+			germplasmListData.setDesignation(parent.getPreferredName().getNval());
+			germplasmListData.setStatus(GermplasmTreeController.LIST_DATA_STATUS);
+			germplasmListData.setEntryCode(String.valueOf(entryCode));
+			germplasmListData.setLocalRecordId(GermplasmTreeController.LIST_DATA_LRECID);
+			germplasmListData.setEntryId(entryCode);
+			germplasmListData.setSeedSource("");
+			germplasmListData.setGroupName("");
+			germplasmListData.setLocalRecordId(entryCode);
+
+			listDataItems.add(new ImmutablePair<>(parent, germplasmListData));
+			entryCode++;
+		}
+
+		final Integer germplasmListId = this.fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList, false);
+		return new GermplasmListResult(germplasmListId, isTrimed);
 	}
 
 	private void checkForEmptyDesigNames(final List<ImportedCrosses> importedCrosses) throws RulesNotConfiguredException {

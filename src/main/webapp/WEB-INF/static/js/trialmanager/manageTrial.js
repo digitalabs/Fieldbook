@@ -199,11 +199,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
-		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService', 'importStudyModalService',
-		'createSampleModalService','derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'studyContext',
+		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService',
+		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'studyContext', 'LABEL_PRINTING_TYPE',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
-				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService,
-				  $uibModal, $q, datasetService, studyContext) {
+				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService,
+				  studyContext, LABEL_PRINTING_TYPE ) {
 
 			$scope.trialTabs = [
 				{
@@ -1011,6 +1011,33 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.showImportStudyModal = function() {
 				importStudyModalService.openDatasetOptionModal();
 			}
+
+			$scope.printLabels = function () {
+				$uibModal.open({
+					template: '<dataset-option-modal modal-title="modalTitle" message="message"' +
+					' selected="selected" on-continue="forkPrintLabelFlows()"></dataset-option-modal>',
+					size: 'md',
+					controller: ['$scope', 'studyContext', function (scope, studyContext) {
+
+						scope.modalTitle = 'Create planting labels';
+						scope.message = 'Please choose the dataset you would like to print from:';
+						scope.selected = {datasetId: studyContext.measurementDatasetId};
+
+						scope.forkPrintLabelFlows = function () {
+							if (studyContext.measurementDatasetId === scope.selected.datasetId) {
+								// Old workflow for plot dataset. TODO migrate
+								createLabelPrinting();
+							} else {
+								window.location.href = '/ibpworkbench/controller/jhipster#label-printing' +
+									'?datasetId=' + scope.selected.datasetId +
+									'&studyId=' + studyContext.studyId +
+									'&programId=' + studyContext.programId +
+									'&printingLabelType=' + LABEL_PRINTING_TYPE.SUBOBSERVATION_DATASET;
+							}
+						};
+					}]
+				});
+			};
 
 			$scope.showCreateSampleListModal = function() {
 				createSampleModalService.openDatasetOptionModal();

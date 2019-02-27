@@ -29,7 +29,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
-import org.generationcp.middleware.manager.api.PresetDataManager;
+import org.generationcp.middleware.manager.api.PresetService;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.UserDefinedField;
@@ -101,7 +101,7 @@ public class CrossingSettingsControllerTest {
 	@Mock
 	private WorkbenchService workbenchService;
 	@Mock
-	private PresetDataManager presetDataManager;
+	private PresetService presetService;
 	@Mock
 	private UserSelection studySelection;
 	@Mock
@@ -237,13 +237,13 @@ public class CrossingSettingsControllerTest {
 			Mockito.doReturn(CrossingSettingsControllerTest.TEST_PROGRAM_ID).when(mole).getCurrentProgramID();
 			Mockito.doReturn(CrossingSettingsControllerTest.DUMMY_TOOL_ID).when(mole).getFieldbookToolID();
 
-			Mockito.doReturn(new ArrayList<ProgramPreset>()).when(this.presetDataManager)
+			Mockito.doReturn(new ArrayList<ProgramPreset>()).when(this.presetService)
 					.getProgramPresetFromProgramAndTool(Matchers.anyString(), Matchers.anyInt(), Matchers.anyString());
 
 			final ArgumentCaptor<ProgramPreset> param = ArgumentCaptor.forClass(ProgramPreset.class);
 			mole.submitAndSaveCrossSettings(this.constructCrossSetting());
 
-			Mockito.verify(this.presetDataManager).saveOrUpdateProgramPreset(param.capture());
+			Mockito.verify(this.presetService).saveOrUpdateProgramPreset(param.capture());
 
 			final ProgramPreset captured = param.getValue();
 			Assert.assertEquals(CrossingSettingsControllerTest.TEST_SETTING_NAME, captured.getName());
@@ -266,13 +266,13 @@ public class CrossingSettingsControllerTest {
 			Mockito.doReturn(CrossingSettingsControllerTest.TEST_PROGRAM_ID).when(mole).getCurrentProgramID();
 			Mockito.doReturn(CrossingSettingsControllerTest.DUMMY_TOOL_ID).when(mole).getFieldbookToolID();
 
-			Mockito.doReturn(this.constructDummyPresetList()).when(this.presetDataManager)
+			Mockito.doReturn(this.constructDummyPresetList()).when(this.presetService)
 					.getProgramPresetFromProgramAndTool(Matchers.anyString(), Matchers.anyInt(), Matchers.anyString());
 
 			final ArgumentCaptor<ProgramPreset> param = ArgumentCaptor.forClass(ProgramPreset.class);
 			mole.submitAndSaveCrossSettings(this.constructCrossSetting());
 
-			Mockito.verify(this.presetDataManager).saveOrUpdateProgramPreset(param.capture());
+			Mockito.verify(this.presetService).saveOrUpdateProgramPreset(param.capture());
 
 			final ProgramPreset captured = param.getValue();
 			Assert.assertEquals(CrossingSettingsControllerTest.TEST_SETTING_NAME, captured.getName());
@@ -326,7 +326,7 @@ public class CrossingSettingsControllerTest {
 			Mockito.doReturn(CrossingSettingsControllerTest.TEST_PROGRAM_ID).when(mole).getCurrentProgramID();
 			Mockito.doReturn(CrossingSettingsControllerTest.DUMMY_TOOL_ID).when(mole).getFieldbookToolID();
 
-			Mockito.doReturn(this.constructDummyPresetList()).when(this.presetDataManager)
+			Mockito.doReturn(this.constructDummyPresetList()).when(this.presetService)
 					.getProgramPresetFromProgramAndTool(Matchers.anyString(), Matchers.anyInt(), Matchers.anyString());
 
 			final List<CrossImportSettings> output = mole.getAvailableCrossImportSettings();
@@ -391,7 +391,7 @@ public class CrossingSettingsControllerTest {
 		final Integer programPresetId = 1;
 		this.crossingSettingsController.deleteCrossSetting(programPresetId);
 
-		Mockito.verify(this.presetDataManager, times(1)).deleteProgramPreset(programPresetId);
+		Mockito.verify(this.presetService, times(1)).deleteProgramPreset(programPresetId);
 	}
 
 	@Test

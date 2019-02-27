@@ -221,8 +221,8 @@
 			};
 
 			$scope.acceptDraftData = function () {
-				$scope.checkOutOfBoundDraftData().then(function (selectedOption) {
-					if (selectedOption === "1") {
+				$scope.checkOutOfBoundDraftData().then(function (result) {
+					if (result === true || result === "1") {
 						datasetService.acceptDraftData($scope.subObservationSet.dataset.datasetId).then(function () {
 							reloadDataset();
 						}, function (response) {

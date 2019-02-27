@@ -23,8 +23,15 @@ import org.generationcp.middleware.domain.dms.StudyReference;
 import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.oms.CvId;
+import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
+import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.generationcp.middleware.manager.ontology.api.TermDataManager;
+import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +86,15 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	
 	@Resource
 	private StudyPermissionValidator studyPermissionValidator;
+
+	@Resource
+	private DataImportService dataImportService;
+
+	@Resource
+	private TermDataManager termDataManager;
+
+	@Resource
+	private OntologyVariableDataManager ontologyVariableDataManager;
 
 	@Override
 	public String getContentName() {
@@ -287,14 +303,12 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
 	public Map<String, Object> processForm(@RequestBody final ConsolidatedStepForm form,
-			final HttpServletRequest request) {
+			final HttpServletRequest request) throws IOException, WorkbookParserException {
+		List<Message> messageList = this.validate(form);
 
-		final List<Message> messageList = validateFormInput(form);
-
-		if (!messageList.isEmpty()) {
+		if(!messageList.isEmpty()) {
 			return this.wrapFormResult(this.etlService.convertMessageList(messageList));
 		}
-
 		// transfer form data to user selection object
 		this.userSelection.setSelectedSheet(form.getSelectedSheetIndex());
 		this.userSelection.setHeaderRowIndex(form.getHeaderRowIndex());
@@ -349,6 +363,48 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			return this.wrapFormResult(AngularMapOntologyController.URL, request);
 		}
 
+	}
+
+	List<Message> validate(final ConsolidatedStepForm form) throws IOException, WorkbookParserException {
+		List<Message> messages = validateFormInput(form);
+		if(!messages.isEmpty()) {
+			return messages;
+		}
+		return this.validateConditions();
+	}
+
+	List<Message> validateConditions() throws IOException, WorkbookParserException {
+		final List<Message> messageList = new ArrayList<>();
+		final Workbook wb = this.etlService.retrieveCurrentWorkbook(this.userSelection);
+		if (wb.getNumberOfSheets() > 1) {
+			final Sheet sheet1 = wb.getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
+			if (sheet1 != null && "Description".equalsIgnoreCase(sheet1.getSheetName())) {
+				final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
+					.parseWorkbookDescriptionSheet(wb, this.contextUtil.getCurrentIbdbUserId());
+
+				final List<String> variableWithWrongPSM = new ArrayList<>();
+				for(MeasurementVariable measurementVariable: referenceWorkbook.getConditions()) {
+					final Term term = this.termDataManager.getTermByNameAndCvId(measurementVariable.getName(), CvId.VARIABLES.getId());
+					if(term != null) {
+						Variable variable =
+							this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), term.getId(), true);
+						if (variable != null && this.variableHasWrongPSM(measurementVariable, variable)) {
+							variableWithWrongPSM.add(measurementVariable.getName());
+						}
+					}
+				}
+				if(!variableWithWrongPSM.isEmpty()) {
+					messageList.add(new Message("error.variable.wrong.psm", StringUtils.join(variableWithWrongPSM, ", ")));
+				}
+			}
+		}
+		return messageList;
+	}
+
+	boolean variableHasWrongPSM(final MeasurementVariable measurementVariable, final Variable variable) {
+		return (!variable.getProperty().getName().equalsIgnoreCase(measurementVariable.getProperty())
+			|| !variable.getMethod().getName().equalsIgnoreCase(measurementVariable.getMethod())
+			|| !variable.getScale().getName().equalsIgnoreCase(measurementVariable.getScale()));
 	}
 
 	List<Message> validateFormInput(final ConsolidatedStepForm form) {

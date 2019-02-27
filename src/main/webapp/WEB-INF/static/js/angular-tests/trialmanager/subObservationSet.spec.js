@@ -861,12 +861,14 @@ describe('SubObservationSetCtrl', function () {
 		$httpMock = {},
 		$compileMock = {},
 		environmentServiceMock = {},
-		datasetServiceMock = jasmine.createSpyObj('datasetService', ['getDataset', 'getColumns', 'getObservationTableUrl']);
+		datasetServiceMock = jasmine.createSpyObj('datasetService', ['getDataset', 'getColumns', 'getObservationTableUrl']),
+		derivedVariableServiceMock = jasmine.createSpyObj('derivedVariableService', ['displayExecuteCalculateVariableMenu', 'showWarningIfDependenciesAreMissing']);
 
 	beforeEach(function () {
 
 		module(function ($provide) {
 			$provide.value("datasetService", datasetServiceMock);
+			$provide.value("derivedVariableService", derivedVariableServiceMock);
 			$provide.value("TrialManagerDataService", TrialManagerDataServiceMock);
 		});
 

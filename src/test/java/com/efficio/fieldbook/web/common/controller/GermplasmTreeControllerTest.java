@@ -5,15 +5,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
-import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.constant.ListTreeState;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -40,18 +37,17 @@ import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
-import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
-import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -63,21 +59,23 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.controller.GermplasmTreeController.GermplasmListResult;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.google.common.collect.Lists;
 
-import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GermplasmTreeControllerTest {
 
 	private static final String GERMPLASM_NAME_PREFIX = "TEST VARIETY-";
 	private static final String LIST_NAME_SHOULD_BE_UNIQUE = "List Name should be unique";
-	private static final String ERROR_RULES_NOT_CONFIGURED = "The system was not able to generate names for your crosses because automatic "
-			+ "naming rules are not configured for the breeding methods used by the crosses. Please contact your system administrator for "
-			+ "assistance, or choose the “Specify name format” option to define the cross names you would like to use.";
 	private static final String PROJECT_ID = "1";
 	private static final String LIST_PARENT_ID = "999";
 	private static final String LIST_TYPE = "GERMPLASM LITS";
@@ -99,6 +97,12 @@ public class GermplasmTreeControllerTest {
 	private static final int PLOT_FIELD_NO = 1154;
 	private static final int TRIAL_INSTANCE_FIELD_NO = 1155;
 	private static final int PLANT_NUMBER = 1156;
+	
+	@Captor
+	private ArgumentCaptor<List<Pair<Germplasm, GermplasmListData>>> listDataItemsCaptor;
+	
+	@Captor
+	private ArgumentCaptor<List<Integer>> idListCaptor;
 
 	@Mock
 	private ResourceBundleMessageSource messageSource;
@@ -148,12 +152,12 @@ public class GermplasmTreeControllerTest {
 		Mockito.doReturn(this.createImportedCrossesList()).when(this.userSelection).getImportedCrossesList();
 		Mockito.doReturn(this.createWorkBook()).when(this.userSelection).getWorkbook();
 		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_GERMPLASM_ID).when(this.fieldbookMiddlewareService)
-				.saveGermplasmList(ArgumentMatchers.<List<Pair<Germplasm, GermplasmListData>>>any(), Matchers.any(GermplasmList.class), Matchers.eq(false));
+				.saveGermplasmList(ArgumentMatchers.<List<Pair<Germplasm, GermplasmListData>>>any(), ArgumentMatchers.any(GermplasmList.class), ArgumentMatchers.eq(false));
 		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_LISTPROJECT_ID).when(this.fieldbookMiddlewareService)
-				.saveOrUpdateListDataProject(Matchers.anyInt(), Matchers.any(GermplasmListType.class), Matchers.anyInt(),
-						ArgumentMatchers.<List<ListDataProject>>any(), Matchers.anyInt());
+				.saveOrUpdateListDataProject(ArgumentMatchers.anyInt(), ArgumentMatchers.any(GermplasmListType.class), ArgumentMatchers.anyInt(),
+						ArgumentMatchers.<List<ListDataProject>>any(), ArgumentMatchers.anyInt());
 
-		Mockito.doReturn(this.createGermplasmListData()).when(this.germplasmListManager).getGermplasmListDataByListId(Matchers.anyInt());
+		Mockito.doReturn(this.createGermplasmListData()).when(this.germplasmListManager).getGermplasmListDataByListId(ArgumentMatchers.anyInt());
 
 		try {
 			Mockito.doReturn(GermplasmTreeControllerTest.LIST_NAME_SHOULD_BE_UNIQUE).when(this.messageSource)
@@ -176,12 +180,6 @@ public class GermplasmTreeControllerTest {
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(GermplasmTreeControllerTest.TEST_PROGRAM_UUID);
 		Mockito.when(this.fieldbookMiddlewareService.getOwnerListName(GermplasmTreeControllerTest.TEST_USER_ID))
 				.thenReturn(GermplasmTreeControllerTest.TEST_USER_NAME);
-	}
-
-	private Project getProject() {
-		final Project project = new Project();
-		project.setProjectId((long) 1);
-		return project;
 	}
 
 	@Test
@@ -267,7 +265,7 @@ public class GermplasmTreeControllerTest {
 		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
-				.getGermplasmListByName(Matchers.anyString(), Matchers.anyString());
+				.getGermplasmListByName(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
 
 		final Map<String, Object> result = this.controller.savePost(form, Mockito.mock(Model.class));
 
@@ -331,7 +329,7 @@ public class GermplasmTreeControllerTest {
 		final SaveListForm form = createSaveListForm();
 		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListByName(Matchers.anyString(), Matchers.anyString()))
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListByName(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
 				.thenThrow(new MiddlewareQueryException(GermplasmTreeControllerTest.ERROR_MESSAGE));
 
 		final Map<String, Object> result = this.controller.savePost(form, Mockito.mock(Model.class));
@@ -402,7 +400,7 @@ public class GermplasmTreeControllerTest {
 		final int listId = 10;
 		Mockito.doReturn(parentID).when(req).getParameter("parentFolderId");
 		Mockito.doReturn(folderName).when(req).getParameter("folderName");
-		Mockito.doReturn(listId).when(this.germplasmListManager).addGermplasmList(Matchers.any(GermplasmList.class));
+		Mockito.doReturn(listId).when(this.germplasmListManager).addGermplasmList(ArgumentMatchers.any(GermplasmList.class));
 
 		final Map<String, Object> resultsMap = this.controller.addGermplasmFolder(req);
 		Assert.assertEquals("Expecting that Germplasm Folder is added successfully.", "1",
@@ -425,7 +423,7 @@ public class GermplasmTreeControllerTest {
 		// Called 3x - for REP, TRIAL_INSTANCE and PLOT FieldNos - and not
 		// inside germplasm list loop
 		Mockito.verify(this.germplasmDataManager, Mockito.times(4))
-				.getUserDefinedFieldByTableTypeAndCode(Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
+				.getUserDefinedFieldByTableTypeAndCode(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
 
 		// Check Attribute Objects created. Additional attributes are created
 		// for studies only
@@ -506,7 +504,7 @@ public class GermplasmTreeControllerTest {
 		// Called 3x - for REP, TRIAL_INSTANCE and PLOT FieldNos - and not
 		// inside germplasm list loop
 		Mockito.verify(this.germplasmDataManager, Mockito.times(4))
-				.getUserDefinedFieldByTableTypeAndCode(Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
+				.getUserDefinedFieldByTableTypeAndCode(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
 
 		// Check Attribute Objects created. Additional attributes are created
 		// for studies only
@@ -814,6 +812,69 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals(importedCrosses.getBreedingMethodId(), advancingSource.getBreedingMethodId());
 
 	}
+	
+	@Test
+	public void testSaveCrossesParentsAsList() {
+		final SaveListForm form = new SaveListForm();
+		final Random random = new Random();
+		final int sourceListId = random.nextInt();
+		form.setSourceListId(sourceListId);
+		
+		final int numOfCrosses = 5;
+		final int numCrossWithUnknownParent = 2;
+		this.setupMocksForSavingCrossParents(sourceListId, numOfCrosses, numCrossWithUnknownParent);
+		
+		final List<Pair<Germplasm, GermplasmListData>> items = new ArrayList<>();
+		final boolean isTrimed = random.nextBoolean();
+		final GermplasmList germplasmList = new GermplasmList(random.nextInt());
+		final GermplasmListResult result = this.controller.saveCrossesParentsAsList(form, items, isTrimed, germplasmList);
+		Assert.assertEquals(SAVED_GERMPLASM_ID, result.getGermplasmListId());
+		Assert.assertEquals(isTrimed, result.getIsTrimed());
+		Mockito.verify(this.germplasmDataManager).getSortedGermplasmWithPrefName(this.idListCaptor.capture());
+		// Verify that unknown parent was not queried from Middleware in retrieving germplasm info of items to add
+		Assert.assertFalse(idListCaptor.getValue().contains(0));
+		Mockito.verify(this.fieldbookMiddlewareService).saveGermplasmList(this.listDataItemsCaptor.capture(), ArgumentMatchers.eq(germplasmList), ArgumentMatchers.eq(false));
+		Assert.assertEquals((2*numOfCrosses) - numCrossWithUnknownParent, this.listDataItemsCaptor.getValue().size());
+	}
+
+	private void setupMocksForSavingCrossParents(final int sourceListId, final int numOfCrosses, final int numCrossWithUnknownParent) {
+		final Random random = new Random();
+		final List<ListDataProject> snapshotListData = new ArrayList<>();
+		final List<Germplasm> germplasmFromDB = new ArrayList<>();
+		final List<Integer> parentGids = new ArrayList<>();
+		
+		for (int i = 1; i<=numOfCrosses; i++) {
+			final ListDataProject listData = new ListDataProject();
+			final Integer femaleGid = random.nextInt();
+			listData.setFgid(femaleGid);
+			// For the first and 2nd crosses, set the male parent as unknown (GID = 0)
+			final int maleGid = (i <= numCrossWithUnknownParent) ? 0 : random.nextInt();
+			listData.setMgid(maleGid);
+			snapshotListData.add(listData);
+			parentGids.add(femaleGid);
+			parentGids.add(maleGid);
+			
+			final Germplasm femaleGermplasm = new Germplasm();
+			femaleGermplasm.setGid(femaleGid);
+			final Name preferredName = new Name();
+			preferredName.setNval(RandomStringUtils.randomAlphabetic(20));
+			femaleGermplasm.setPreferredName(preferredName);
+			germplasmFromDB.add(femaleGermplasm);
+			
+			if (i > numCrossWithUnknownParent) {
+				final Germplasm maleGermplasm = new Germplasm();
+				maleGermplasm.setGid(maleGid);
+				final Name name = new Name();
+				name.setNval(RandomStringUtils.randomAlphabetic(20));
+				maleGermplasm.setPreferredName(name);
+				germplasmFromDB.add(maleGermplasm);
+			}
+		}
+		Mockito.doReturn(snapshotListData).when(this.germplasmListManager).retrieveSnapshotListDataWithParents(sourceListId);
+		// Check that one of the male parent is unknown, just to verify that it's not added later on
+		Assert.assertTrue(parentGids.contains(0));
+		Mockito.doReturn(germplasmFromDB).when(this.germplasmDataManager).getSortedGermplasmWithPrefName(ArgumentMatchers.anyListOf(Integer.class));
+	}
 
 	public SaveListForm createSaveListForm() {
 		final SaveListForm form = new SaveListForm();
@@ -869,21 +930,6 @@ public class GermplasmTreeControllerTest {
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 
 		return importedCrossesList;
-	}
-
-	private List<UserDefinedField> createNameTypes() {
-		final List<UserDefinedField> nameTypes = new ArrayList<>();
-		final UserDefinedField udf = new UserDefinedField();
-		udf.setFcode(CrossingServiceImpl.USER_DEF_FIELD_CROSS_NAME[0]);
-		nameTypes.add(udf);
-		return nameTypes;
-	}
-
-	private List<Integer> createGermplasmIds() {
-		final List<Integer> ids = new ArrayList<>();
-		ids.add(Integer.valueOf(GermplasmTreeControllerTest.SAVED_CROSSES_GID1));
-		ids.add(Integer.valueOf(GermplasmTreeControllerTest.SAVED_CROSSES_GID2));
-		return ids;
 	}
 
 	private List<GermplasmListData> createGermplasmListData() {

@@ -5,9 +5,9 @@
 	var hiddenColumns = [8201];
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', 'TrialManagerDataService', '$stateParams', 'DTOptionsBuilder',
-		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', '$timeout',
+		'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', 'derivedVariableService', '$timeout',
 		function ($scope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile, environmentService,
-				  datasetService, $timeout
+				  datasetService, derivedVariableService, $timeout
 		) {
 			$scope.traitVariables = new angular.OrderedHash();
 			$scope.selectionVariables = new angular.OrderedHash();
@@ -120,6 +120,8 @@
 				}).then(function () {
 					$scope.subObservationSet.dataset.variables.push(variable);
 					loadTable();
+					derivedVariableService.displayExecuteCalculateVariableMenu();
+					derivedVariableService.showWarningIfDependenciesAreMissing($scope.subObservationSet.dataset.datasetId, variable.id);
 				}, function (response) {
 					if (response.errors && response.errors.length) {
 						showErrorMessage('', response.errors[0].message);
@@ -144,6 +146,7 @@
 
 							loadTable();
 							$scope.selectedVariables = $scope.getSelectedVariables();
+							derivedVariableService.displayExecuteCalculateVariableMenu();
 						}, function (response) {
 							if (response.errors && response.errors.length) {
 								showErrorMessage('', response.errors[0].message);

@@ -91,7 +91,10 @@ module.exports = function (config) {
 		reporters: ['dots'],
 		port: 9876,
 		colors: true,
-		logLevel: config.LOG_INFO,
+		browserConsoleLogOptions: {
+			level: config.LOG_INFO,
+			terminal: true
+		},
 		autoWatch: false,
 		browsers: ['PhantomJS'],
 		singleRun: true

@@ -8,10 +8,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -19,12 +21,16 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.StudyPermissionValidator;
 import org.generationcp.middleware.domain.dms.DataSetType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.StudyReference;
 import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
+import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,14 +59,16 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	private static final Logger LOG = LoggerFactory.getLogger(AngularSelectSheetController.class);
 	public static final String URL = "/etl/workbook/step2";
 
-	public static final int ROW_COUNT_PER_SCREEN = 10;
-	public static final int MAX_DISPLAY_CHARACTER_PER_ROW = 60;
-	public static final int FIELDBOOK_DEFAULT_STUDY_ID = 1;
+	private static final int ROW_COUNT_PER_SCREEN = 10;
+	private static final int MAX_DISPLAY_CHARACTER_PER_ROW = 60;
+	private static final int FIELDBOOK_DEFAULT_STUDY_ID = 1;
 
-	protected static final SimpleDateFormat DATE_PICKER_FORMAT = DateUtil
+	private static final SimpleDateFormat DATE_PICKER_FORMAT = DateUtil
 			.getSimpleDateFormat(DateUtil.FRONTEND_DATE_FORMAT_2);
-	protected static final SimpleDateFormat DB_FORMAT = DateUtil.getSimpleDateFormat(DateUtil.DATE_AS_NUMBER_FORMAT);
+	private static final SimpleDateFormat DB_FORMAT = DateUtil.getSimpleDateFormat(DateUtil.DATE_AS_NUMBER_FORMAT);
 	private static final String ADD_TO_NEW_STUDY = "add.to.new.study";
+	private static final String DESCRIPTION = "Description";
+	private static final String OBSERVATION = "Observation";
 
 	@Resource
 	private ETLService etlService;
@@ -79,6 +87,12 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	
 	@Resource
 	private StudyPermissionValidator studyPermissionValidator;
+
+	@Resource
+	private DataImportService dataImportService;
+
+	@Resource
+	private OntologyDataManager ontologyDataManager;
 
 	@Override
 	public String getContentName() {
@@ -164,8 +178,8 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		if (wb.getNumberOfSheets() > 1) {
 			final Sheet sheet1 = wb.getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
 			final Sheet sheet2 = wb.getSheetAt(ETLServiceImpl.OBSERVATION_SHEET);
-			if (sheet1 != null && "Description".equalsIgnoreCase(sheet1.getSheetName()) && sheet2 != null
-					&& "Observation".equalsIgnoreCase(sheet2.getSheetName())) {
+			if (sheet1 != null && AngularSelectSheetController.DESCRIPTION.equalsIgnoreCase(sheet1.getSheetName()) && sheet2 != null
+					&& AngularSelectSheetController.OBSERVATION.equalsIgnoreCase(sheet2.getSheetName())) {
 				inFieldbookFormat = true;
 			}
 			if (inFieldbookFormat) {
@@ -287,14 +301,12 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
 	public Map<String, Object> processForm(@RequestBody final ConsolidatedStepForm form,
-			final HttpServletRequest request) {
+			final HttpServletRequest request) throws IOException, WorkbookParserException {
+		List<Message> messageList = this.validate(form);
 
-		final List<Message> messageList = validateFormInput(form);
-
-		if (!messageList.isEmpty()) {
+		if(!messageList.isEmpty()) {
 			return this.wrapFormResult(this.etlService.convertMessageList(messageList));
 		}
-
 		// transfer form data to user selection object
 		this.userSelection.setSelectedSheet(form.getSelectedSheetIndex());
 		this.userSelection.setHeaderRowIndex(form.getHeaderRowIndex());
@@ -313,7 +325,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			final List<String> errors = new ArrayList<>();
 			Map<String, List<Message>> mismatchErrors = null;
 			final boolean isMeansDataImport = this.userSelection.getDatasetType() != null
-					&& this.userSelection.getDatasetType().intValue() == DataSetType.MEANS_DATA.getId();
+					&& this.userSelection.getDatasetType() == DataSetType.MEANS_DATA.getId();
 
 			try {
 				// check if the selected dataset still has no mapped headers
@@ -349,6 +361,49 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			return this.wrapFormResult(AngularMapOntologyController.URL, request);
 		}
 
+	}
+
+	List<Message> validate(final ConsolidatedStepForm form) throws IOException, WorkbookParserException {
+		List<Message> messages = validateFormInput(form);
+		if(!messages.isEmpty()) {
+			return messages;
+		}
+		return this.validateConditions();
+	}
+
+	List<Message> validateConditions() throws IOException, WorkbookParserException {
+		final List<Message> messageList = new ArrayList<>();
+		final Workbook wb = this.etlService.retrieveCurrentWorkbook(this.userSelection);
+		if (wb.getNumberOfSheets() > 1) {
+			final Sheet sheet1 = wb.getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
+			if (AngularSelectSheetController.DESCRIPTION.equalsIgnoreCase(sheet1.getSheetName())) {
+				final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
+					.parseWorkbookDescriptionSheet(wb, this.contextUtil.getCurrentIbdbUserId());
+
+				final List<String> variablesWithWrongPSM = new ArrayList<>();
+				for(MeasurementVariable measurementVariable: referenceWorkbook.getConditions()) {
+					Set<StandardVariable> standardVariables = this.ontologyDataManager.findStandardVariablesByNameOrSynonym(measurementVariable.getName(),
+						this.contextUtil.getCurrentProgramUUID());
+					if(!CollectionUtils.isEmpty(standardVariables) && this.variableHasWrongPSM(measurementVariable, standardVariables)) {
+						variablesWithWrongPSM.add(measurementVariable.getName());
+					}
+				}
+				if(!variablesWithWrongPSM.isEmpty()) {
+					messageList.add(new Message("error.variable.wrong.psm", StringUtils.join(variablesWithWrongPSM, ", ")));
+				}
+			}
+		}
+		return messageList;
+	}
+
+	private boolean variableHasWrongPSM(final MeasurementVariable measurementVariable, final Set<StandardVariable> standardVariables) {
+		//standardVariables set contains only one element.
+		for(StandardVariable variable: standardVariables) {
+			return (!variable.getProperty().getName().equalsIgnoreCase(measurementVariable.getProperty())
+				|| !variable.getMethod().getName().equalsIgnoreCase(measurementVariable.getMethod())
+				|| !variable.getScale().getName().equalsIgnoreCase(measurementVariable.getScale()));
+		}
+		return false;
 	}
 
 	List<Message> validateFormInput(final ConsolidatedStepForm form) {
@@ -471,7 +526,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		return datasetTypes;
 	}
 
-	public List<StudyDetails> getPreviousStudies(final Model model) {
+	List<StudyDetails> getPreviousStudies(final Model model) {
 		final List<String> restrictedStudies = new ArrayList<>();
 		final List<StudyDetails> finalStudies = new ArrayList<>();
 		final List<StudyDetails> existingStudies = this.etlService.retrieveExistingStudyDetails(this.contextUtil.getCurrentProgramUUID());

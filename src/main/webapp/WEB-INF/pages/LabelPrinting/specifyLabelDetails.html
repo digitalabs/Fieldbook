@@ -91,6 +91,12 @@
                         </div>
                         <div class="form-group" >
                             <div class="col-xs-12 col-md-12">
+                                <label class="control-label"><strong th:text="#{label.printing.selected.dataset}+':'"></strong></label>
+                                <span>Observations</span>
+                            </div>
+                        </div>
+                        <div class="form-group" >
+                            <div class="col-xs-12 col-md-12">
                                 <label class="control-label"><strong th:text="#{label.printing.number.of.instances}+':'"></strong></label>
                                 <span th:text="*{userLabelPrinting.numberOfInstances}">1</span>
                             </div>
@@ -476,7 +482,7 @@
                                                                                th:text="#{label.printing.study.details}">Study
                                                 Details</label></li>
                                         </ul>
-                                        <ul id="pdf-study-details-fields" class="list-group droptrue">
+                                        <ul id="pdf-study-details-fields" class="list-group droptrue availableFields">
                                         </ul>
                                     </div>
                                     <div class="col-xs-6 col-md-6">
@@ -493,7 +499,7 @@
                                                 </label>
                                             </li>
                                         </ul>
-                                        <ul id="pdf-study-list-details-fields" class="list-group droptrue">
+                                        <ul id="pdf-study-list-details-fields" class="list-group droptrue availableFields">
                                         </ul>
                                     </div>
                                 </div>
@@ -586,7 +592,7 @@
                                                                                th:text="#{label.printing.study.details}">Study
                                                 Details</label></li>
                                         </ul>
-                                        <ul id="non-pdf-study-details-fields" class="list-group droptrue">
+                                        <ul id="non-pdf-study-details-fields" class="list-group droptrue availableFields">
                                         </ul>
                                     </div>
                                     <div class="col-xs-6 col-md-6">
@@ -603,7 +609,7 @@
                                                 </label>
                                             </li>
                                         </ul>
-                                        <ul id="non-pdf-study-list-details-fields" class="list-group droptrue">
+                                        <ul id="non-pdf-study-list-details-fields" class="list-group droptrue availableFields">
                                         </ul>
                                     </div>
                                 </div>

@@ -867,7 +867,8 @@ describe('SubObservationSetCtrl', function () {
 			'getColumns',
 			'checkOutOfBoundDraftData',
 			'getObservationTableUrl'
-		]);
+		]),
+		derivedVariableServiceMock = jasmine.createSpyObj('derivedVariableService', ['displayExecuteCalculateVariableMenu', 'showWarningIfDependenciesAreMissing']);
 
 	function setJasmineTimeout() {
 		originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
@@ -880,6 +881,7 @@ describe('SubObservationSetCtrl', function () {
 
 		module(function ($provide) {
 			$provide.value("datasetService", datasetServiceMock);
+			$provide.value("derivedVariableService", derivedVariableServiceMock);
 			$provide.value("TrialManagerDataService", TrialManagerDataServiceMock);
 			$provide.value("$uibModal", $uibModal);
 		});

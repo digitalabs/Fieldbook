@@ -10,7 +10,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils', 'subObservation',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons', 'datatables.colreorder',
 		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'bmsAuth','studyState',
-		'export-study', 'import-study', 'create-sample']);
+		'export-study', 'import-study', 'create-sample', 'derived-variable']);
 
 	manageTrialApp.config(['$httpProvider', function($httpProvider) {
 		$httpProvider.interceptors.push('authInterceptor');
@@ -114,7 +114,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				},
 				params: {
-					subObservationTab: null
+					subObservationTab: null,
+					isPendingView: null
 				},
 				redirectTo: function (trans) {
 					var tab = trans.params().subObservationTab;
@@ -126,7 +127,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 								subObservationTabId: tab.id,
 								subObservationTab: tab,
 								subObservationSetId: subObservationSet.id,
-								subObservationSet: subObservationSet
+								subObservationSet: subObservationSet,
+								isPendingView: trans.params().isPendingView
 							}
 						}
 					}
@@ -138,7 +140,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				controller: 'SubObservationSetCtrl',
 				templateUrl: '/Fieldbook/TrialManager/openTrial/subObservationSet',
 				params: {
-					subObservationSet: null
+					subObservationSet: null,
+					isPendingView: null
 				},
 			})
 		;
@@ -196,10 +199,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
-		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService', 'importStudyModalService',
-		'createSampleModalService', '$uibModal', '$q', 'datasetService',
+		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService',
+		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'studyContext', 'LABEL_PRINTING_TYPE',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
-				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, $uibModal, $q, datasetService) {
+				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService,
+				  studyContext, LABEL_PRINTING_TYPE ) {
 
 			$scope.trialTabs = [
 				{
@@ -332,14 +336,13 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.warnMissingInputData = function (response) {
 				var deferred = $q.defer();
-				var dependencyVariables = response.data;
-				if (dependencyVariables.length > 0) {
+				if (response && response.data.length > 0) {
 					$uibModal.open({
 						animation: true,
 						templateUrl: '/Fieldbook/static/angular-templates/derivedTraitsValidationModal.html',
 						size: 'md',
 						controller: function ($scope, $uibModalInstance) {
-							$scope.dependencyVariables = dependencyVariables;
+							$scope.dependencyVariables = response.data;
 							$scope.continue = function () {
 								$uibModalInstance.close();
 								deferred.resolve();
@@ -353,7 +356,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.saveCurrentTrialData = function () {
-				derivedVariableService.getDependencies().then(function (response) {
+				derivedVariableService.getDependenciesForAllDerivedTraits(studyContext.measurementDatasetId).then(function (response) {
 					return $scope.warnMissingInputData(response);
 				}).then(function () {
 					TrialManagerDataService.saveCurrentData();
@@ -482,23 +485,17 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.displayExecuteCalculatedVariableOnlyActions = function () {
-				return this.hasCalculatedVariable() && this.displayMeasurementOnlyActions();
-			};
-
-			$scope.hasCalculatedVariable = function () {
-				return TrialManagerDataService.settings.measurements.m_keys.some(function (key) {
-					return TrialManagerDataService.settings.measurements.m_vals[key].variable.formula;
-				});
+				return derivedVariableService.isStudyHasCalculatedVariables && this.displayMeasurementOnlyActions();
 			};
 
 			// Programatically navigate to specified tab state
-			$scope.navigateToTab = function (targetState) {
+			$rootScope.navigateToTab = function (targetState) {
 				$state.go(targetState);
 				$scope.performFunctionOnTabChange(targetState);
 
 			};
 
-			$rootScope.navigateToSubObsTab = function (datasetId) {
+			$rootScope.navigateToSubObsTab = function (datasetId, isPendingView) {
 				var subObsTab = undefined;
 				var subObsSet = undefined;
 				angular.forEach($scope.subObservationTabs, function (subObservationTab) {
@@ -510,11 +507,14 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					});
 				});
 
+				$scope.isSettingsTab = false;
+				$scope.tabSelected = subObsTab.state;
 				$state.transitionTo('subObservationTabs.subObservationSets',  {
 					subObservationTabId: subObsTab.id,
 					subObservationTab: subObsTab,
 					subObservationSetId: subObsSet.id,
-					subObservationSet: subObsSet
+					subObservationSet: subObsSet,
+					isPendingView: isPendingView
 				}, {
 					reload: true, inherit: false, notify: true
 				});
@@ -1012,9 +1012,50 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				importStudyModalService.openDatasetOptionModal();
 			}
 
+			$scope.printLabels = function () {
+				$uibModal.open({
+					template: '<dataset-option-modal modal-title="modalTitle" message="message"' +
+					' selected="selected" on-continue="forkPrintLabelFlows()"></dataset-option-modal>',
+					size: 'md',
+					controller: ['$scope', 'studyContext', function (scope, studyContext) {
+
+						scope.modalTitle = 'Create planting labels';
+						scope.message = 'Please choose the dataset you would like to print from:';
+						scope.selected = {datasetId: studyContext.measurementDatasetId};
+
+						scope.forkPrintLabelFlows = function () {
+							if (studyContext.measurementDatasetId === scope.selected.datasetId) {
+								// Old workflow for plot dataset. TODO migrate
+								createLabelPrinting();
+							} else {
+								window.location.href = '/ibpworkbench/controller/jhipster#label-printing' +
+									'?datasetId=' + scope.selected.datasetId +
+									'&studyId=' + studyContext.studyId +
+									'&programId=' + studyContext.programId +
+									'&printingLabelType=' + LABEL_PRINTING_TYPE.SUBOBSERVATION_DATASET;
+							}
+						};
+					}]
+				});
+			};
+
 			$scope.showCreateSampleListModal = function() {
 				createSampleModalService.openDatasetOptionModal();
 			}
+
+			$scope.showCalculatedVariableModal = function() {
+				if ($('body').hasClass('import-preview-measurements')) {
+					return;
+				} else {
+					derivedVariableModalService.openDatasetOptionModal();
+				}
+			}
+
+			$scope.init = function () {
+				derivedVariableService.displayExecuteCalculateVariableMenu();
+			}
+
+			$scope.init();
 
 		}]);
 

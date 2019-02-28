@@ -238,6 +238,10 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					data: $(this).html(),
 					width: '100px',
 					render: function(data, type, row) {
+						// Do not render as link if male parent is unknown
+						if (row.MGID === '0'|| row.MGID === 0) {
+							return row['MALE PARENT'];
+						} 
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
 							row.MGID + '&quot;,&quot;' + row['MALE PARENT'] + '&quot;)">' + data + '</a>';

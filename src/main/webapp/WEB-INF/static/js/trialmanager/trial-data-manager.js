@@ -7,11 +7,11 @@
             'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'SAMPLE_LIST_DATA','CROSSES_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
 		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_HAS_ADVANCED_OR_CROSSES_LIST', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', '$q',
-		'TrialSettingsManager','studyStateService', '_', '$localStorage','$rootScope', 'studyContext',
+		'TrialSettingsManager','studyStateService', '_', '$localStorage','$rootScope', 'studyContext', 'derivedVariableService',
 		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA, SAMPLE_LIST_DATA, CROSSES_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
 					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-					TRIAL_HAS_MEASUREMENT, TRIAL_HAS_ADVANCED_OR_CROSSES_LIST, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext) {
+					TRIAL_HAS_MEASUREMENT, TRIAL_HAS_ADVANCED_OR_CROSSES_LIST, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext, derivedVariableService) {
 
 
 			// TODO: clean up data service, at the very least arrange the functions in alphabetical order
@@ -534,6 +534,7 @@
 										$rootScope.$broadcast('refreshEnvironmentListInMeasurementTable');
 										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 											service.trialMeasurement.count);
+										derivedVariableService.displayExecuteCalculateVariableMenu();
 										service.applicationData.unsavedGeneratedDesign = false;
 										service.applicationData.unsavedTraitsAvailable = false;
 										setupSettingsVariables();
@@ -559,6 +560,7 @@
 
 										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 											service.trialMeasurement.count);
+										derivedVariableService.displayExecuteCalculateVariableMenu();
 										service.applicationData.unsavedGeneratedDesign = false;
 										service.applicationData.unsavedTraitsAvailable = false;
 										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);

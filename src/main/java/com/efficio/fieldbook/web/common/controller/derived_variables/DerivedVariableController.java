@@ -205,23 +205,6 @@ public class DerivedVariableController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/derived-variable/dependencies", method = RequestMethod.GET)
-	public ResponseEntity<Set<String>> dependencyVariables() {
-
-		final Set<Integer> variableIdsOfTraitsInStudy = this.getVariableIdsOfTraitsInStudy();
-		final Set<String> derivedVariablesDependencies = new HashSet<>();
-
-		final Set<FormulaVariable> formulaVariables = this.formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy);
-		for (final FormulaVariable formulaVariable : formulaVariables) {
-			if (!variableIdsOfTraitsInStudy.contains(formulaVariable.getId())) {
-				derivedVariablesDependencies.add(formulaVariable.getName());
-			}
-		}
-
-		return new ResponseEntity<>(derivedVariablesDependencies, HttpStatus.OK);
-	}
-
-	@ResponseBody
 	@RequestMapping(value = "/derived-variable/dependencyVariableHasMeasurementData", method = RequestMethod.POST)
 	@Transactional
 	public ResponseEntity<Boolean> dependencyVariableHasMeasurementData(@RequestBody final List<Integer> ids) {

@@ -17,17 +17,17 @@
 	<b>DATASET</b>
 	<div class="row">&nbsp;</div>
 	<div class="row form-group">
-		<div class="col-xs-8 col-md-8">
-			<label class="label-bold">{{message}} <span class="required">*</span></label>
-		</div>
 		<div class="col-xs-10 col-md-10 dataset-options">
-			<ui-select ng-model="selected.datasetId" theme="select2" search-enabled="false">
+			<label class="label-bold">{{message}} <span class="required">*</span></label>
+			<ui-select ng-model="selected.datasetId" theme="select2" search-enabled="false" class="text-truncate">
 				<ui-select-match placeholder="Choose a dataset">{{getDatasetType($select.selected.datasetTypeId).name}}: {{$select.selected.name}}</ui-select-match>
 				<ui-select-choices repeat="dataset.datasetId as dataset in datasets">
 					<span uib-tooltip="{{getDatasetType(dataset.datasetTypeId).name}}: {{dataset.name}}" tooltip-append-to-body="true">
 					{{getDatasetType(dataset.datasetTypeId).name}}: {{dataset.name}}</span>
 				</ui-select-choices>
 			</ui-select>
+		</div>
+		<div class="col-xs-2 col-md-2">
 		</div>
 	</div>
 </div>

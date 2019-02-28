@@ -78,7 +78,7 @@
 									<li ng-show="displayMeasurementOnlyActions()">
 										<a href="" style="display: none" id="label-printing-url"
 										   th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
-										<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link"
+										<a ng-click="printLabels()" id="label-printing-url-link"
 										   th:text="#{study.studydetails.action.printLabels}">Print Labels</a>
 									</li>
 									<!--Export advance list-->
@@ -110,7 +110,6 @@
 									</li>
 								</ul>
 							</li>
-
 							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Observation unit options</a>
 								<ul class="dropdown-menu" style="margin-left: -25px;">
@@ -161,7 +160,7 @@
 							</li>
 
 							<li ng-show="displayExecuteCalculatedVariableOnlyActions()">
-								<a href="javascript: executeCalculatedVariable()" id="calculatedVariable-link"
+								<a ng-click="showCalculatedVariableModal()" id="calculatedVariable-link"
 								   th:text="#{study.option.execute.calculated.variable}">Execute calculated variable</a>
 							</li>
 
@@ -377,7 +376,7 @@
 			<a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
 		</li>
 		<li ng-repeat="tab in subObservationTabs" ng-class="{active: tabSelected===tab.state}">
-			<a ui-sref="subObservationTabs({ subObservationTabId: tab.id, subObservationTab: tab })"
+			<a ui-sref="subObservationTabs({ subObservationTabId: tab.id, subObservationTab: tab, isPendingView: null })"
 			   ng-class="{'pendingData': tab.hasPendingData}"
 			   ng-click="performFunctionOnTabChange(tab.state)">{{tab.tabName}}</a>
 		</li>
@@ -504,12 +503,6 @@
 
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			<div id="study-executeCalculatedVariable" th:include="/TrialManager/templates/executeCalculatedVariableModal"></div>
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
 			<div id="sub-observation-unit-dataset-builder" th:include="/TrialManager/templates/SubObservationUnitDatasetBuilder"></div>
 		</div>
 	</div>
@@ -594,7 +587,6 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentModal.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/fbk-data-table/samples-summary.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/trialmanager/executeCalculatedVariableModal.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/studyStateService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/datasetService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/SubObservationUnitDatasetBuilder.js}"></script>
@@ -602,6 +594,7 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/exportStudy.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/importStudy.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/createSample.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/derivedVariable.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/angular/xlsx.full.min.js}"></script>
 
 	<!-- constants here -->
@@ -786,6 +779,8 @@
 				loggedInUserId: /*[[${currentCropUserId}]]*/ '',
 				studyId: /*[[${studyId}]]*/ '',
 				measurementDatasetId: /*[[${measurementDatasetId}]]*/ ''
+			}).constant('LABEL_PRINTING_TYPE', {
+				SUBOBSERVATION_DATASET: /*[[${T(org.generationcp.middleware.domain.labelprinting.LabelPrintingType).SUBOBSERVATION_DATASET.getCode()}]]*/ null
 			});
 
 			$(document).ready(function () {
@@ -820,7 +815,6 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/environments.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/trialmanager/derivedVariableService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationTab.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationSet.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>

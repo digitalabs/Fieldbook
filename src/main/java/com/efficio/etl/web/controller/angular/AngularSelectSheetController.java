@@ -378,7 +378,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		final Workbook wb = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 		if (wb.getNumberOfSheets() > 1) {
 			final Sheet sheet1 = wb.getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
-			if (sheet1 != null && "Description".equalsIgnoreCase(sheet1.getSheetName())) {
+			if ("Description".equalsIgnoreCase(sheet1.getSheetName())) {
 				final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
 					.parseWorkbookDescriptionSheet(wb, this.contextUtil.getCurrentIbdbUserId());
 

@@ -8,10 +8,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -19,18 +21,15 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.StudyPermissionValidator;
 import org.generationcp.middleware.domain.dms.DataSetType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.StudyReference;
 import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.oms.CvId;
-import org.generationcp.middleware.domain.oms.Term;
-import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
-import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
-import org.generationcp.middleware.manager.ontology.api.TermDataManager;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
@@ -91,10 +90,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	private DataImportService dataImportService;
 
 	@Resource
-	private TermDataManager termDataManager;
-
-	@Resource
-	private OntologyVariableDataManager ontologyVariableDataManager;
+	private OntologyDataManager ontologyDataManager;
 
 	@Override
 	public String getContentName() {
@@ -382,29 +378,30 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 				final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
 					.parseWorkbookDescriptionSheet(wb, this.contextUtil.getCurrentIbdbUserId());
 
-				final List<String> variableWithWrongPSM = new ArrayList<>();
+				final List<String> variablesWithWrongPSM = new ArrayList<>();
 				for(MeasurementVariable measurementVariable: referenceWorkbook.getConditions()) {
-					final Term term = this.termDataManager.getTermByNameAndCvId(measurementVariable.getName(), CvId.VARIABLES.getId());
-					if(term != null) {
-						Variable variable =
-							this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), term.getId(), true);
-						if (variable != null && this.variableHasWrongPSM(measurementVariable, variable)) {
-							variableWithWrongPSM.add(measurementVariable.getName());
-						}
+					Set<StandardVariable> standardVariables = this.ontologyDataManager.findStandardVariablesByNameOrSynonym(measurementVariable.getName(),
+						this.contextUtil.getCurrentProgramUUID());
+					if(!CollectionUtils.isEmpty(standardVariables) && this.variableHasWrongPSM(measurementVariable, standardVariables)) {
+						variablesWithWrongPSM.add(measurementVariable.getName());
 					}
 				}
-				if(!variableWithWrongPSM.isEmpty()) {
-					messageList.add(new Message("error.variable.wrong.psm", StringUtils.join(variableWithWrongPSM, ", ")));
+				if(!variablesWithWrongPSM.isEmpty()) {
+					messageList.add(new Message("error.variable.wrong.psm", StringUtils.join(variablesWithWrongPSM, ", ")));
 				}
 			}
 		}
 		return messageList;
 	}
 
-	private boolean variableHasWrongPSM(final MeasurementVariable measurementVariable, final Variable variable) {
-		return (!variable.getProperty().getName().equalsIgnoreCase(measurementVariable.getProperty())
-			|| !variable.getMethod().getName().equalsIgnoreCase(measurementVariable.getMethod())
-			|| !variable.getScale().getName().equalsIgnoreCase(measurementVariable.getScale()));
+	private boolean variableHasWrongPSM(final MeasurementVariable measurementVariable, final Set<StandardVariable> standardVariables) {
+		//standardVariables set contains only one element.
+		for(StandardVariable variable: standardVariables) {
+			return (!variable.getProperty().getName().equalsIgnoreCase(measurementVariable.getProperty())
+				|| !variable.getMethod().getName().equalsIgnoreCase(measurementVariable.getMethod())
+				|| !variable.getScale().getName().equalsIgnoreCase(measurementVariable.getScale()));
+		}
+		return false;
 	}
 
 	List<Message> validateFormInput(final ConsolidatedStepForm form) {

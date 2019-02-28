@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.efficio.etl.service.impl.ETLServiceImpl;
 import com.efficio.etl.web.bean.UserSelection;
@@ -15,18 +17,16 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.StudyPermissionValidator;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
-import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
+import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.StudyReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.oms.CvId;
-import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
-import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
-import org.generationcp.middleware.manager.ontology.api.TermDataManager;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.junit.Assert;
@@ -83,10 +83,7 @@ public class AngularSelectSheetControllerTest {
 	private DataImportService dataImportService;
 
 	@Mock
-	private TermDataManager termDataManager;
-
-	@Mock
-	private OntologyVariableDataManager ontologyVariableDataManager;
+	private OntologyDataManager ontologyDataManager;
 
 	private List<StudyDetails> allStudies;
 
@@ -117,13 +114,11 @@ public class AngularSelectSheetControllerTest {
 		final MeasurementVariable measurementVariable = MeasurementVariableTestDataInitializer.createMeasurementVariable(
 			TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.EXPERIMENT_DESIGN_FACTOR.name(), "1");
 		Mockito.when(referenceWorkbook.getConditions()).thenReturn(Arrays.asList(measurementVariable));
-		Mockito.when(this.termDataManager.getTermByNameAndCvId(TermId.EXPERIMENT_DESIGN_FACTOR.name(), CvId.VARIABLES.getId()))
-			.thenReturn(new Term(TermId.EXPERIMENT_DESIGN_FACTOR.getId(),
-				TermId.EXPERIMENT_DESIGN_FACTOR.name(), TermId.EXPERIMENT_DESIGN_FACTOR.name()));
-		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.EXPERIMENT_DESIGN_FACTOR.getId(), true))
-			.thenReturn(VariableTestDataInitializer.createVariable(
-				TermId.EXPERIMENT_DESIGN_FACTOR.name(), measurementVariable.getProperty(),
-					measurementVariable.getScale(), measurementVariable.getMethod()));
+
+		final Set<StandardVariable> standardVariableSet = new HashSet<>();
+		standardVariableSet.add(StandardVariableTestDataInitializer.createStandardVariable(TermId.EXPERIMENT_DESIGN_FACTOR.name(), measurementVariable.getProperty(), measurementVariable.getScale(), measurementVariable.getMethod()));
+		Mockito.when(this.ontologyDataManager.findStandardVariablesByNameOrSynonym(measurementVariable.getName(),
+			this.contextUtil.getCurrentProgramUUID())).thenReturn(standardVariableSet);
 	}
 
 	@Test
@@ -223,16 +218,16 @@ public class AngularSelectSheetControllerTest {
 		Mockito.verify(this.contextUtil).getCurrentIbdbUserId();
 		Mockito.verify(this.dataImportService)
 			.parseWorkbookDescriptionSheet(this.workbook, this.contextUtil.getCurrentIbdbUserId());
-		Mockito.verify(this.termDataManager).getTermByNameAndCvId(TermId.EXPERIMENT_DESIGN_FACTOR.name(), CvId.VARIABLES.getId());
-		Mockito.verify(this.ontologyVariableDataManager)
-			.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.EXPERIMENT_DESIGN_FACTOR.getId(), true);
+		Mockito.verify(this.ontologyDataManager).findStandardVariablesByNameOrSynonym(TermId.EXPERIMENT_DESIGN_FACTOR.name(),
+			this.contextUtil.getCurrentProgramUUID());
 	}
 
 	@Test
 	public void testValidateConditionsWithError() throws IOException, WorkbookParserException {
-		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.EXPERIMENT_DESIGN_FACTOR.getId(), true))
-			.thenReturn(VariableTestDataInitializer.createVariable(
-				TermId.EXPERIMENT_DESIGN_FACTOR.name(), "Prop", "SCALE", "METHOD"));
+		final Set<StandardVariable> standardVariableSet = new HashSet<>();
+		standardVariableSet.add(StandardVariableTestDataInitializer.createStandardVariable(TermId.EXPERIMENT_DESIGN_FACTOR.name(), "PROPS", "SCALE", "METHOD"));
+		Mockito.when(this.ontologyDataManager.findStandardVariablesByNameOrSynonym(TermId.EXPERIMENT_DESIGN_FACTOR.name(),
+			this.contextUtil.getCurrentProgramUUID())).thenReturn(standardVariableSet);
 		List<Message> messages = this.angularSelectSheetController.validateConditions();
 		Assert.assertFalse(messages.isEmpty());
 		Assert.assertEquals("error.variable.wrong.psm", messages.get(0).getMessageKey());
@@ -244,8 +239,7 @@ public class AngularSelectSheetControllerTest {
 		Mockito.verify(this.contextUtil).getCurrentIbdbUserId();
 		Mockito.verify(this.dataImportService)
 			.parseWorkbookDescriptionSheet(this.workbook, this.contextUtil.getCurrentIbdbUserId());
-		Mockito.verify(this.termDataManager).getTermByNameAndCvId(TermId.EXPERIMENT_DESIGN_FACTOR.name(), CvId.VARIABLES.getId());
-		Mockito.verify(this.ontologyVariableDataManager)
-			.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.EXPERIMENT_DESIGN_FACTOR.getId(), true);
+		Mockito.verify(this.ontologyDataManager).findStandardVariablesByNameOrSynonym(TermId.EXPERIMENT_DESIGN_FACTOR.name(),
+			this.contextUtil.getCurrentProgramUUID());
 	}
 }

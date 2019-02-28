@@ -10,7 +10,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils', 'subObservation',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons', 'datatables.colreorder',
 		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'bmsAuth','studyState',
-		'export-study', 'import-study', 'create-sample']);
+		'export-study', 'import-study', 'create-sample', 'derived-variable']);
 
 	manageTrialApp.config(['$httpProvider', function($httpProvider) {
 		$httpProvider.interceptors.push('authInterceptor');
@@ -193,9 +193,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
 		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService', 'importStudyModalService',
-		'createSampleModalService', '$uibModal', '$q', 'datasetService',
+		'createSampleModalService','derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'studyContext',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
-				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, $uibModal, $q, datasetService) {
+				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService,
+				  $uibModal, $q, datasetService, studyContext) {
 
 			$scope.trialTabs = [
 				{
@@ -328,14 +329,13 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.warnMissingInputData = function (response) {
 				var deferred = $q.defer();
-				var dependencyVariables = response.data;
-				if (dependencyVariables.length > 0) {
+				if (response && response.data.length > 0) {
 					$uibModal.open({
 						animation: true,
 						templateUrl: '/Fieldbook/static/angular-templates/derivedTraitsValidationModal.html',
 						size: 'md',
 						controller: function ($scope, $uibModalInstance) {
-							$scope.dependencyVariables = dependencyVariables;
+							$scope.dependencyVariables = response.data;
 							$scope.continue = function () {
 								$uibModalInstance.close();
 								deferred.resolve();
@@ -349,7 +349,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.saveCurrentTrialData = function () {
-				derivedVariableService.getDependencies().then(function (response) {
+				derivedVariableService.getDependenciesForAllDerivedTraits(studyContext.measurementDatasetId).then(function (response) {
 					return $scope.warnMissingInputData(response);
 				}).then(function () {
 					TrialManagerDataService.saveCurrentData();
@@ -478,23 +478,17 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.displayExecuteCalculatedVariableOnlyActions = function () {
-				return this.hasCalculatedVariable() && this.displayMeasurementOnlyActions();
-			};
-
-			$scope.hasCalculatedVariable = function () {
-				return TrialManagerDataService.settings.measurements.m_keys.some(function (key) {
-					return TrialManagerDataService.settings.measurements.m_vals[key].variable.formula;
-				});
+				return derivedVariableService.isStudyHasCalculatedVariables && this.displayMeasurementOnlyActions();
 			};
 
 			// Programatically navigate to specified tab state
-			$scope.navigateToTab = function (targetState) {
+			$rootScope.navigateToTab = function (targetState) {
 				$state.go(targetState);
 				$scope.performFunctionOnTabChange(targetState);
 
 			};
 
-			$scope.navigateToSubObsTab = function (datasetId) {
+			$rootScope.navigateToSubObsTab = function (datasetId) {
 				var subObsTab = undefined;
 				var subObsSet = undefined;
 				angular.forEach($scope.subObservationTabs, function (subObservationTab) {
@@ -1012,6 +1006,20 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.showCreateSampleListModal = function() {
 				createSampleModalService.openDatasetOptionModal();
 			}
+
+			$scope.showCalculatedVariableModal = function() {
+				if ($('body').hasClass('import-preview-measurements')) {
+					return;
+				} else {
+					derivedVariableModalService.openDatasetOptionModal();
+				}
+			}
+
+			$scope.init = function () {
+				derivedVariableService.displayExecuteCalculateVariableMenu();
+			}
+
+			$scope.init();
 
 		}]);
 

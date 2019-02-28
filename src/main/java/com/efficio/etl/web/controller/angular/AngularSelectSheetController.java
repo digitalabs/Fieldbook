@@ -67,6 +67,8 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			.getSimpleDateFormat(DateUtil.FRONTEND_DATE_FORMAT_2);
 	private static final SimpleDateFormat DB_FORMAT = DateUtil.getSimpleDateFormat(DateUtil.DATE_AS_NUMBER_FORMAT);
 	private static final String ADD_TO_NEW_STUDY = "add.to.new.study";
+	private static final String DESCRIPTION = "Description";
+	private static final String OBSERVATION = "Observation";
 
 	@Resource
 	private ETLService etlService;
@@ -176,8 +178,8 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		if (wb.getNumberOfSheets() > 1) {
 			final Sheet sheet1 = wb.getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
 			final Sheet sheet2 = wb.getSheetAt(ETLServiceImpl.OBSERVATION_SHEET);
-			if (sheet1 != null && "Description".equalsIgnoreCase(sheet1.getSheetName()) && sheet2 != null
-					&& "Observation".equalsIgnoreCase(sheet2.getSheetName())) {
+			if (sheet1 != null && AngularSelectSheetController.DESCRIPTION.equalsIgnoreCase(sheet1.getSheetName()) && sheet2 != null
+					&& AngularSelectSheetController.OBSERVATION.equalsIgnoreCase(sheet2.getSheetName())) {
 				inFieldbookFormat = true;
 			}
 			if (inFieldbookFormat) {
@@ -374,7 +376,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		final Workbook wb = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 		if (wb.getNumberOfSheets() > 1) {
 			final Sheet sheet1 = wb.getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
-			if ("Description".equalsIgnoreCase(sheet1.getSheetName())) {
+			if (AngularSelectSheetController.DESCRIPTION.equalsIgnoreCase(sheet1.getSheetName())) {
 				final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
 					.parseWorkbookDescriptionSheet(wb, this.contextUtil.getCurrentIbdbUserId());
 

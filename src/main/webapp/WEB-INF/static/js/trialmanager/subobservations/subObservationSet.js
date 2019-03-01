@@ -237,13 +237,18 @@
 			};
 
 			$scope.rejectDraftData = function () {
-				datasetService.rejectDraftData($scope.subObservationSet.dataset.datasetId).then(function () {
-					reloadDataset();
-				}, function (response) {
-					if (response.errors && response.errors.length) {
-						showErrorMessage('', response.errors[0].message);
-					} else {
-						showErrorMessage('', ajaxGenericErrorMsg);
+				var confirmModal = $scope.openConfirmModal(importDiscardDataWarningMessage);
+				confirmModal.result.then(function (doContinue) {
+					if (doContinue) {
+						datasetService.rejectDraftData($scope.subObservationSet.dataset.datasetId).then(function () {
+							reloadDataset();
+						}, function (response) {
+							if (response.errors && response.errors.length) {
+								showErrorMessage('', response.errors[0].message);
+							} else {
+								showErrorMessage('', ajaxGenericErrorMsg);
+							}
+						});
 					}
 				});
 			};

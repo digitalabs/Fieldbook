@@ -14,6 +14,7 @@ describe('SubObservationSetCtrl', function () {
 		$timeout,
 		controller,
 		scope,
+		$uibModal,
 		originalTimeout;
 
 	// Mock objects copied from actual objects using Chrome console
@@ -861,7 +862,12 @@ describe('SubObservationSetCtrl', function () {
 		$httpMock = {},
 		$compileMock = {},
 		environmentServiceMock = {},
-		datasetServiceMock = jasmine.createSpyObj('datasetService', ['getDataset', 'getColumns', 'getObservationTableUrl']),
+		datasetServiceMock = jasmine.createSpyObj('datasetService', [
+			'getDataset',
+			'getColumns',
+			'checkOutOfBoundDraftData',
+			'getObservationTableUrl'
+		]),
 		derivedVariableServiceMock = jasmine.createSpyObj('derivedVariableService', ['displayExecuteCalculateVariableMenu', 'showWarningIfDependenciesAreMissing']);
 
 	function setJasmineTimeout() {
@@ -877,6 +883,7 @@ describe('SubObservationSetCtrl', function () {
 			$provide.value("datasetService", datasetServiceMock);
 			$provide.value("derivedVariableService", derivedVariableServiceMock);
 			$provide.value("TrialManagerDataService", TrialManagerDataServiceMock);
+			$provide.value("$uibModal", $uibModal);
 		});
 
 		module('subObservation');
@@ -895,6 +902,8 @@ describe('SubObservationSetCtrl', function () {
 			scope.subObservationTab = {
 				id: 1
 			};
+
+			$uibModal= jasmine.createSpyObj('$uibModal', ['open']);
 
 			datasetServiceMock = $injector.get('datasetService');
 			datasetServiceMock.getDataset.and.returnValue($q.resolve(serviceDataset));
@@ -915,7 +924,8 @@ describe('SubObservationSetCtrl', function () {
 				$compile: $compileMock,
 				environmentService: environmentServiceMock,
 				datasetService: datasetServiceMock,
-				$timeout: $timeout
+				$timeout: $timeout,
+				$uibModal: $uibModal
 			});
 
 			scope.tableLoadedPromise.then(function () {
@@ -925,6 +935,7 @@ describe('SubObservationSetCtrl', function () {
 			$rootScope.$apply();
 		});
 
+		console.debug("subObs spec beforeEach()")
 	});
 
 	afterEach(function() {
@@ -954,6 +965,22 @@ describe('SubObservationSetCtrl', function () {
 				// nah_expected_range
 				scope.columnsObj.columnsDef[8].createdCell({}, {value: 60}, {}, scope.columnsObj.columns[8].columnData);
 				expect($.fn.addClass).toHaveBeenCalledWith('accepted-value')
+			});
+
+			describe('that has draft data', function () {
+				it('should confirm out-of-bound', function () {
+					datasetServiceMock.checkOutOfBoundDraftData.and.returnValue($q.resolve(true));
+					$uibModal.open.and.returnValue({result: $q.resolve(true)});
+					scope.checkOutOfBoundDraftData();
+					$rootScope.$apply();
+					expect($uibModal.open).toHaveBeenCalled();
+				});
+				it('should not confirm if doesn\'t have out-of-bound', function () {
+					datasetServiceMock.checkOutOfBoundDraftData.and.returnValue($q.reject({status: 404}));
+					scope.checkOutOfBoundDraftData();
+					$rootScope.$apply();
+					expect($uibModal.open).not.toHaveBeenCalled();
+				});
 			});
 
 		});

@@ -81,6 +81,26 @@
 								</div>
 							</div>
 						</div>
+						<div id="renameStudyDiv">
+							<div class="col-xs-4 nopadding">
+								<label class="control-label  label-bold" th:utext="#{browse.study.rename.folder.input.label}">Study
+									Name:</label>
+							</div>
+							<div class="col-xs-8">
+								<div class="input-group">
+									<input id="newStudyName" name="newStudyName" type="text" class="form-control select2"
+										   placeholder="Study Name"/>
+									<span class="input-group-btn">
+                                            <button class="btn btn-success" id="renameStudyOkButton">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </button>
+                                            <button class="btn btn-danger" id="renameStudyCancelButton">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </button>
+                                        </span>
+								</div>
+							</div>
+						</div>
 					</div>
 					<div class="clearfix"></div>
 					<div class="row">

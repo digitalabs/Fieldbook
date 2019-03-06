@@ -261,6 +261,9 @@ function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionPa
 					changeBrowseStudyButtonBehavior(true);
 				}
 			}
+			if( $("[id^=rename][id$=Div]").is(':visible') ) {
+				$('.edit-folder').click();	
+			}
 			$('#studyTreeModalBody a.dynatree-title').off('keyup');
 			$('#studyTreeModalBody a.dynatree-title').on('keyup', function (e) {
 				if (e.keyCode === 13) {

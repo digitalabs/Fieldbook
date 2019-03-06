@@ -451,3 +451,43 @@ function showStudyIsLockedError(node) {
 	showErrorMessage('page-study-tree-message-modal',
 			noPermissionForLockedStudyError.replace('{0}', node.data.owner));
 }
+function submitRenameStudy(){
+	'use strict';
+
+	var studyName = $.trim($('#newStudyName', '#studyTreeModal').val());
+	var activeStudyNode = $('#studyTree').dynatree('getTree').getActiveNode();
+
+	if ($.trim(studyName) === activeStudyNode.data.title) {
+		$('#renameStudyDiv', '#studyTreeModal').slideUp('fast');
+		return false;
+	}
+	if (studyName === '') {
+		showErrorMessage('page-rename-study-folder-message-modal', studyNameRequiredMessage);
+		return false;
+	} else if (!isValidInput(studyName)) {
+		showErrorMessage('page-rename-study-folder-message-modal', invalidStudyNameCharacterMessage);
+		return false;
+	} else {
+		studyId = activeStudyNode.data.key;
+		$.ajax({
+			url: '/Fieldbook/StudyTreeManager/renameStudy',
+			type: 'POST',
+			data: 'studyId=' + studyId + '&newStudyName=' + studyName,
+			cache: false,
+			success: function(data) {
+				var node;
+				if (data.isSuccess === '1') {
+					hideRenameStudySection();
+					node = $('#studyTree').dynatree('getTree').getActiveNode();
+					node.data.title = studyName;
+					$(node.span).find('a').html(studyName);
+					node.focus();
+					showSuccessfulMessage('', renameItemSuccessful);
+				} else {
+					showErrorMessage('page-rename-study-folder-message-modal', data.message);
+				}
+			}
+		});
+	}
+}
+

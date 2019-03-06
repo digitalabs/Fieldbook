@@ -21,10 +21,14 @@ function studyTreeInit() {
 	changeBrowseStudyButtonBehavior(false);
 	$('#addFolderDiv', '#studyTreeModal').hide();
 	$('#renameFolderDiv', '#studyTreeModal').hide();
+	$('#renameStudyDiv', '#studyTreeModal').hide(); 
 	$('#addFolderOkButton', '#studyTreeModal').on('click', createFolder);
 	$('#addFolderCancelButton', '#studyTreeModal').on('click', hideAddFolderSection);
 	$('#renameFolderOkButton', '#studyTreeModal').on('click', submitRenameFolder);
 	$('#renameFolderCancelButton', '#studyTreeModal').on('click', hideRenameFolderSection);
+	$('#renameStudyOkButton', '#studyTreeModal').on('click', submitRenameStudy);
+	$('#renameStudyCancelButton', '#studyTreeModal').on('click', hideRenameStudySection);
+
 	$('#addFolderDiv #addFolderName', '#studyTreeModal').on('keypress', function (event) {
 		if (event.keyCode == 13) {
 			createFolder();

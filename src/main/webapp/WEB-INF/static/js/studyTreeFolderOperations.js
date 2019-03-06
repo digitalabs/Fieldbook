@@ -24,6 +24,17 @@ function hideRenameFolderDiv() {
 	$('#renameFolderDiv', '#studyTreeModal').slideUp('fast');
 }
 
+function renameStudy(object) {
+	if (!$(object).hasClass('disable-image')) {
+		hideAddFolderDiv();
+		hideStudyTypeDiv();
+		hideRenameFolderDiv();
+		$('#renameStudyDiv', '#studyTreeModal').slideDown('fast');
+		currentStudy = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
+		$('#newStudyName', '#studyTreeModal').val(currentStudy);
+	}
+}
+
 function renameFolder(object) {
 	'use strict';
 

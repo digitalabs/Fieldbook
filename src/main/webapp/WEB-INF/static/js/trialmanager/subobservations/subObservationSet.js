@@ -43,6 +43,8 @@
 			$scope.dtColumns = dtColumnsPromise.promise;
 			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 			$scope.dtOptions = null;
+			
+            $scope.columnFilter = {};
 
 			datasetService.getDataset(subObservationSet.id).then(function (dataset) {
 				$scope.subObservationSet.dataset = dataset;
@@ -293,6 +295,11 @@
 				});
 			};
 
+			$scope.openColumnFilter = function (index) {
+				var indexOriginal = table().colReorder.transpose(index, 'toOriginal');
+				$scope.columnFilter.columnData = $scope.columnsObj.columns[indexOriginal].columnData;
+			};
+
 			function table() {
 				return $scope.nested.dtInstance.DataTable;
 			}
@@ -334,6 +341,7 @@
 					})
 					.withDataProp('data')
 					.withOption('serverSide', true)
+					.withOption('initComplete', initCompleteCallback)
 					.withOption('headerCallback', headerCallback)
 					.withOption('drawCallback', drawCallback));
 			}
@@ -367,6 +375,19 @@
 					}])
 					.withColReorder()
 					.withPaginationType('full_numbers');
+			}
+
+			function initCompleteCallback() {
+				table().columns('.variates').every(function () {
+					$(this.header()).append($compile('<span class="glyphicon glyphicon-filter" style="cursor:pointer;"' +
+						' popover-placement="bottom"' +
+						' popover-append-to-body="true"' +
+						' popover-trigger="\'outsideClick\'"' +
+						' ng-click="openColumnFilter(' + this.index() + ')"' +
+						' uib-popover-template="\'columnFilterPopoverTemplate.html\'">' +
+						'</span>')($scope));
+				});
+				adjustColumns();
 			}
 
 			function headerCallback(thead, data, start, end, display) {
@@ -753,6 +774,7 @@
 					} else if (!columnData.factor) { // variates
 						columnsDef.push({
 							targets: columns.length - 1,
+							orderable: false,
 							createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
 								processCell(td, cellData, rowData, columnData);
 							},

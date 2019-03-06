@@ -251,10 +251,10 @@ function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionPa
 			if (node.data.isFolder === false) {
 				changeBrowseStudyButtonBehavior(false);
 				$('.delete-folder', '#studyTreeModal').removeClass('disable-image');
+				$('.edit-folder', '#studyTreeModal').removeClass('disable-image');
 			} else {
 				if (node.data.key === 'LOCAL') {
 					changeBrowseStudyButtonBehavior(true);
-					$('.edit-folder', '#studyTreeModal').addClass('disable-image');
 					$('.delete-folder', '#studyTreeModal').addClass('disable-image');
 				}
 				else {

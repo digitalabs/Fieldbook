@@ -39,6 +39,11 @@ function studyTreeInit() {
 			submitRenameFolder();
 		}
 	});
+	$('#renameStudyDiv #newStudyName', '#studyTreeModal').on('keypress', function (event) {
+		if (event.keyCode == 13) {
+			submitRenameStudy();
+		}
+	});
 	if ($('.landing-page').length !== 0) {
 		//means we are in the landing page
 		$('.tree-review-button').removeClass('fbk-hide');
@@ -454,7 +459,8 @@ function showStudyIsLockedError(node) {
 function submitRenameStudy(){
 	'use strict';
 
-	var studyName = $.trim($('#newStudyName', '#studyTreeModal').val());
+	var studyName = $.trim($('#newStudyName', '#studyTreeModal').val()),
+		studyId;
 	var activeStudyNode = $('#studyTree').dynatree('getTree').getActiveNode();
 
 	if ($.trim(studyName) === activeStudyNode.data.title) {

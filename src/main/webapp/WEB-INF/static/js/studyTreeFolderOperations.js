@@ -27,14 +27,21 @@ function hideRenameFolderDiv() {
 function renameFolder(object) {
 	'use strict';
 
-	var currentFolderName;
+	const isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder;
+	if(!isFolder) {
+		renameStudy(object);
+	}
+	else{
+		var currentFolderName;
 
-	if (!$(object).hasClass('disable-image')) {
-		hideAddFolderDiv();
-		hideStudyTypeDiv();
-		$('#renameFolderDiv', '#studyTreeModal').slideDown('fast');
-		currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
-		$('#newFolderName', '#studyTreeModal').val(currentFolderName);
+		if (!$(object).hasClass('disable-image')) {
+			hideAddFolderDiv();
+			hideStudyTypeDiv();
+			hideRenameStudyDiv();
+			$('#renameFolderDiv', '#studyTreeModal').slideDown('fast');
+			currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
+			$('#newFolderName', '#studyTreeModal').val(currentFolderName);
+		}
 	}
 }
 

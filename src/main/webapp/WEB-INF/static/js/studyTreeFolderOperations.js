@@ -24,6 +24,11 @@ function hideRenameFolderDiv() {
 	$('#renameFolderDiv', '#studyTreeModal').slideUp('fast');
 }
 
+function hideRenameStudyDiv() {
+	'use strict';
+	$('#renameStudyDiv', '#studyTreeModal').slideUp('fast');
+}
+
 function renameStudy(object) {
 	if (!$(object).hasClass('disable-image')) {
 		hideAddFolderDiv();

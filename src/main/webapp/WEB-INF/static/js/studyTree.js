@@ -436,6 +436,13 @@ function hideRenameFolderSection() {
 	}
 }
 
+function hideRenameStudySection() {
+	hideRenameStudyDiv();
+	if ($('#choosingType').val() !== "2"){
+		showStudyTypeDiv();
+	}
+}
+
 function userLacksPermissionForStudy(node) {
 	return node.data.isLocked && parseInt(node.data.ownerId) !== currentCropUserId && !isSuperAdmin;
 }

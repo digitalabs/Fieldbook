@@ -262,9 +262,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				$scope.studyTypes = data;
 
 			}).error(function (data) {
-				if (data.status == 401) {
-					bmsAuth.handleReAuthentication();
-				}
 				showErrorMessage('', data.error.message);
 			});
 

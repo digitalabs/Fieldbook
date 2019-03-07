@@ -45,6 +45,7 @@
 			$scope.dtOptions = null;
 			
             $scope.columnFilter = {};
+			$scope.selectedStatusFilter = "1";
 
 			datasetService.getDataset(subObservationSet.id).then(function (dataset) {
 				$scope.subObservationSet.dataset = dataset;
@@ -286,6 +287,10 @@
 				table().ajax.reload();
 			};
 
+			$scope.changeStatusFilter = function() {
+				table().ajax.reload();
+			};
+
 			$scope.toggleShowCategoricalDescription = function () {
 				switchCategoricalView().done(function () {
 					$scope.$apply(function () {
@@ -318,7 +323,8 @@
 				return addCommonOptions(DTOptionsBuilder.newOptions()
 					.withOption('ajax', {
 						url: datasetService.getObservationTableUrl(subObservationSet.id),
-						type: 'GET',
+						type: 'POST',
+						contentType: 'application/json',
 						beforeSend: function (xhr) {
 							xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
 						},
@@ -328,15 +334,23 @@
 
 							var instanceId = $scope.nested.selectedEnvironment.instanceDbId;
 
-							return {
+							return JSON.stringify({
 								draw: d.draw,
-								pageSize: d.length,
-								pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
-								sortBy: sortedColTermId,
-								sortOrder: order.dir,
+								sortedRequest: {
+									pageSize: d.length,
+									pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
+									sortBy: sortedColTermId,
+									sortOrder: order.dir
+								},
 								instanceId: instanceId,
-								draftMode: $scope.isPendingView
-							};
+								draftMode: $scope.isPendingView,
+								filter: {
+									byOutOfBound: $scope.selectedStatusFilter === "2" || null,
+									byMissing: $scope.selectedStatusFilter === "3" || null,
+									byOutOfSync: $scope.selectedStatusFilter === "4" || null,
+									byOverwritten: $scope.selectedStatusFilter === "5" || null
+								}
+							});
 						}
 					})
 					.withDataProp('data')

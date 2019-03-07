@@ -92,22 +92,37 @@
 			</div>
 		</div>
 		<div class="row add_top_padding">
-			<div class="col-xs-12">
-				<div class="dataTables_info fbk-std-padding-right pull-left">Select Environment:</div>
-				<ui-select ng-model="nested.selectedEnvironment"
-						   class="input-sm form-control fbk-std-padding-right inline-select"
-						   ng-change="changeEnvironment()" search-enabled="false" theme="select2">
-					<ui-select-match class="ui-select-match">
-						{{(nested.selectedEnvironment.instanceNumber ? nested.selectedEnvironment.instanceNumber + ' - ' : '') + (nested.selectedEnvironment.locationName || nested.selectedEnvironment.locationAbbreviation || nested.selectedEnvironment.instanceNumber)}}
-					</ui-select-match>
-					<ui-select-choices repeat="env in (environments | filter: { locationName: $select.search}) track by env.instanceDbId">
-						{{(env.instanceNumber ? env.instanceNumber + ' - ' : '') + (env.locationName || env.locationAbbreviation || env.instanceNumber)}}
-					</ui-select-choices>
-				</ui-select>
+			<div class="col-xs-12 form-inline">
+				<div class="form-group" style="padding-right: 10px;">
+					<label style="padding-right: 10px;">Select Environment: </label>
+					<ui-select ng-model="nested.selectedEnvironment"
+							   class="input-sm form-control inline-select"
+							   ng-change="changeEnvironment()" search-enabled="false" theme="select2">
+						<ui-select-match class="ui-select-match">
+							{{(nested.selectedEnvironment.instanceNumber ? nested.selectedEnvironment.instanceNumber + ' - ' : '') + (nested.selectedEnvironment.locationName || nested.selectedEnvironment.locationAbbreviation || nested.selectedEnvironment.instanceNumber)}}
+						</ui-select-match>
+						<ui-select-choices repeat="env in (environments | filter: { locationName: $select.search}) track by env.instanceDbId">
+							{{(env.instanceNumber ? env.instanceNumber + ' - ' : '') + (env.locationName || env.locationAbbreviation || env.instanceNumber)}}
+						</ui-select-choices>
+					</ui-select>
+				</div>
 
-				<div id="subObsCategoricalDescriptionBtn" class="btn btn-link pull-right" ng-click="toggleShowCategoricalDescription()">
-					<span ng-if="!isCategoricalDescriptionView" th:text="#{observations.show.categorical.description}"></span>
-					<span ng-if="isCategoricalDescriptionView" th:text="#{observations.hide.categorical.description}"></span>
+				<div class="form-group">
+					<label style="padding-right: 10px;">Filter by status:</label>
+					<select ng-model="selectedStatusFilter" ng-change="changeStatusFilter()" class="form-control input-sm">
+						<option value="1">All</option>
+						<option value="2">Out of bounds</option>
+						<option ng-if="!isPendingView" value="3">Missing</option>
+						<option ng-if="!isPendingView" value="4">Out of sync</option>
+						<option ng-if="isPendingView" value="5">Overwritten</option>
+					</select>
+				</div>
+
+				<div class="form-group pull-right">
+					<div id="subObsCategoricalDescriptionBtn" class="btn btn-link" ng-click="toggleShowCategoricalDescription()">
+						<span ng-if="!isCategoricalDescriptionView" th:text="#{observations.show.categorical.description}"></span>
+						<span ng-if="isCategoricalDescriptionView" th:text="#{observations.hide.categorical.description}"></span>
+					</div>
 				</div>
 			</div>
 		</div>

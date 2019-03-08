@@ -44,7 +44,18 @@
 			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 			$scope.dtOptions = null;
 			
-            $scope.columnFilter = {};
+            $scope.columnFilter = {
+            	selectAll: function () {
+                    this.columnData.possibleValues.forEach(function (value) {
+						value.isSelectedInFilters = this.columnData.isSelectAll;
+					}.bind(this));
+				},
+				selectOption: function (selected) {
+            		if (!selected) {
+						this.columnData.isSelectAll = false;
+					}
+				}
+			};
 			$scope.selectedStatusFilter = "1";
 
 			datasetService.getDataset(subObservationSet.id).then(function (dataset) {
@@ -310,6 +321,11 @@
 
 			$scope.resetFilterByColumn = function () {
 				$scope.columnFilter.columnData.query = '';
+				if ($scope.columnFilter.columnData.possibleValues) {
+					$scope.columnFilter.columnData.possibleValues.forEach(function (value) {
+						value.isSelectedInFilters = false;
+					});
+				}
 				table().ajax.reload();
 			};
 
@@ -364,7 +380,7 @@
 										}
 										if (columnData.possibleValues) {
 											columnData.possibleValues.forEach(function (value) {
-												if (value.selectedInFilters) {
+												if (value.isSelectedInFilters) {
                                                     if (!map[columnData.termId]) {
                                                     	map[columnData.termId] = [];
 													}

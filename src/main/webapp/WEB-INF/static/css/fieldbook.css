@@ -2360,6 +2360,17 @@ table.dataTable thead th.sorting_desc
     box-shadow: inset 0px -2px 0px 0px #ff8109;
 }
 
+.column-filter input {
+    margin-bottom: 20px;
+}
+.column-filter ul {
+    max-height: 190px;
+    overflow-y: auto;
+}
+.column-filter ul > li {
+    padding: 5px 10px;
+}
+
 td[disabled] {
     background-color: #ccc;
     border: 1px solid transparent;

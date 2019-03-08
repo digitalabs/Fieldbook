@@ -24,17 +24,40 @@ function hideRenameFolderDiv() {
 	$('#renameFolderDiv', '#studyTreeModal').slideUp('fast');
 }
 
-function renameFolder(object) {
+function hideRenameStudyDiv() {
 	'use strict';
+	$('#renameStudyDiv', '#studyTreeModal').slideUp('fast');
+}
 
-	var currentFolderName;
-
+function renameStudy(object) {
 	if (!$(object).hasClass('disable-image')) {
 		hideAddFolderDiv();
 		hideStudyTypeDiv();
-		$('#renameFolderDiv', '#studyTreeModal').slideDown('fast');
-		currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
-		$('#newFolderName', '#studyTreeModal').val(currentFolderName);
+		hideRenameFolderDiv();
+		$('#renameStudyDiv', '#studyTreeModal').slideDown('fast');
+		currentStudy = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
+		$('#newStudyName', '#studyTreeModal').val(currentStudy);
+	}
+}
+
+function renameFolder(object) {
+	'use strict';
+
+	const isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder;
+	if(!isFolder) {
+		renameStudy(object);
+	}
+	else{
+		var currentFolderName;
+
+		if (!$(object).hasClass('disable-image')) {
+			hideAddFolderDiv();
+			hideStudyTypeDiv();
+			hideRenameStudyDiv();
+			$('#renameFolderDiv', '#studyTreeModal').slideDown('fast');
+			currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
+			$('#newFolderName', '#studyTreeModal').val(currentFolderName);
+		}
 	}
 }
 

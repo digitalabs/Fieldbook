@@ -142,11 +142,22 @@
 	</div>
 </div>
 <script type="text/ng-template" id="columnFilterPopoverTemplate.html">
-	<input ng-model='columnFilter.query'/>
-	<ul>
-		<li ng-repeat='value in columnFilter.columnData.possibleValues | orderBy: "name" | filter: { name: columnFilter.query }'>
-			{{isCategoricalDescriptionView ? value.displayDescription : value.displayValue}}
-		</li>
-	</ul>
+	<input ng-model='columnFilter.columnData.query'/>
+	<div class="form-group">
+		<div class="col-xs-12 col-md-12">
+			<ul>
+				<li ng-repeat='option in columnFilter.columnData.possibleValues | orderBy: "name" | filter: { name: columnFilter.columnData.query }'>
+					<input type="checkbox" class="checkbox" ng-model="option.selectedInFilters" />
+					{{isCategoricalDescriptionView ? option.displayDescription : option.displayValue}}
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-xs-12 col-md-12">
+			<button class="btn btn-info" ng-click="filterByColumn()">Apply</button>
+			<button class="btn btn-default" ng-click="resetFilterByColumn()">Reset</button>
+		</div>
+	</div>
 </script>
 

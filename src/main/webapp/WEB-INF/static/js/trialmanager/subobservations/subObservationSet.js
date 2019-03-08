@@ -301,8 +301,16 @@
 			};
 
 			$scope.openColumnFilter = function (index) {
-				var indexOriginal = table().colReorder.transpose(index, 'toOriginal');
-				$scope.columnFilter.columnData = $scope.columnsObj.columns[indexOriginal].columnData;
+				$scope.columnFilter.columnData = $scope.columnsObj.columns[index].columnData;
+			};
+
+			$scope.filterByColumn = function () {
+				table().ajax.reload();
+			};
+
+			$scope.resetFilterByColumn = function () {
+				$scope.columnFilter.columnData.query = '';
+				table().ajax.reload();
 			};
 
 			function table() {
@@ -348,7 +356,26 @@
 									byOutOfBound: $scope.selectedStatusFilter === "2" || null,
 									byMissing: $scope.selectedStatusFilter === "3" || null,
 									byOutOfSync: $scope.selectedStatusFilter === "4" || null,
-									byOverwritten: $scope.selectedStatusFilter === "5" || null
+									byOverwritten: $scope.selectedStatusFilter === "5" || null,
+									filteredValues: $scope.columnsObj.columns.reduce(function (map, column) {
+										var columnData = column.columnData;
+										if (columnData.possibleValues) {
+											columnData.possibleValues.forEach(function (value) {
+												if (value.selectedInFilters) {
+                                                    if (!map[columnData.termId]) {
+                                                    	map[columnData.termId] = [];
+													}
+													map[columnData.termId].push(value.name);
+												}
+											});
+										} else if (columnData.query) {
+											if (!map[columnData.termId]) {
+												map[columnData.termId] = [];
+											}
+											map[columnData.termId].push(columnData.query);
+										}
+										return map;
+									}, {})
 								}
 							});
 						}
@@ -393,7 +420,8 @@
 
 			function initCompleteCallback() {
 				table().columns('.variates').every(function () {
-					$(this.header()).append($compile('<span class="glyphicon glyphicon-filter" style="cursor:pointer;"' +
+					$(this.header()).append($compile('<span class="glyphicon glyphicon-filter" ' +
+						' style="cursor:pointer; padding-left: 5px;"' +
 						' popover-placement="bottom"' +
 						' popover-append-to-body="true"' +
 						' popover-trigger="\'outsideClick\'"' +
@@ -748,6 +776,13 @@
 						return hiddenColumns.indexOf(columnData.termId) < 0;
 					}
 
+					function getClassName() {
+						var className = columnData.factor === true ? 'factors' : 'variates';
+						// avoid wrapping filter icon
+						className += ' dt-head-nowrap';
+						return className;
+					}
+
 					columns.push({
 						title: columnData.alias,
 						name: columnData.alias,
@@ -756,7 +791,7 @@
 						},
 						visible: isColumnVisible(),
 						defaultContent: '',
-						className: columnData.factor === true ? 'factors' : 'variates',
+						className: getClassName(),
 						columnData: columnData
 					});
 

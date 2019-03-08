@@ -359,6 +359,9 @@
 									byOverwritten: $scope.selectedStatusFilter === "5" || null,
 									filteredValues: $scope.columnsObj.columns.reduce(function (map, column) {
 										var columnData = column.columnData;
+										if (columnData.dataTypeCode === 'T') {
+											return map;
+										}
 										if (columnData.possibleValues) {
 											columnData.possibleValues.forEach(function (value) {
 												if (value.selectedInFilters) {
@@ -373,6 +376,16 @@
 												map[columnData.termId] = [];
 											}
 											map[columnData.termId].push(columnData.query);
+										}
+										return map;
+									}, {}),
+									filteredTextValues: $scope.columnsObj.columns.reduce(function (map, column) {
+										var columnData = column.columnData;
+										if (columnData.dataTypeCode !== 'T') {
+											return map;
+										}
+										if (columnData.query) {
+											map[columnData.termId] = columnData.query;
 										}
 										return map;
 									}, {})
@@ -425,6 +438,8 @@
 						' popover-placement="bottom"' +
 						' popover-append-to-body="true"' +
 						' popover-trigger="\'outsideClick\'"' +
+						// does not work with outsideClick
+						// ' popover-is-open="columnFilter.isOpen"' +
 						' ng-click="openColumnFilter(' + this.index() + ')"' +
 						' uib-popover-template="\'columnFilterPopoverTemplate.html\'">' +
 						'</span>')($scope));

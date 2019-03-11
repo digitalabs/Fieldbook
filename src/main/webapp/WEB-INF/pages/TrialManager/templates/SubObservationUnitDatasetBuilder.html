@@ -76,13 +76,13 @@
 								class="required">*</span></label>
 							</div>
 							<div class="col-sm-6" style="padding-left: 0px;">
-								<input type="text" name="name" ng-model="datasetName" ng-maxlength="100" pattern="^[a-zA-Z0-9]*$"
+								<input type="text" name="name" ng-model="datasetName" ng-maxlength="100" pattern="^[a-zA-Z0-9\s(\\/:*?&quot;&lt;&gt;|.)]*$"
 									   class="form-control" required="true"/>
 							</div>
 							<div class="col-sm-12">
 								<div class="text-danger" ng-messages="dtForm.name.$error" ng-if="dtForm.$submitted || dtForm.name.$touched">
 									<p ng-message="required">Name for (plants/quadrats/time series/custom)* dataset must be provided</p>
-									<p ng-message="pattern">Name for dataset should contain numbers and letter</p>
+									<p ng-message="pattern">Name for dataset should contain numbers, letter spaces and \ / : * ? &quot; &lt; &gt; |.</p>
 									<p ng-message="maxlength">Name for dataset must not exceed 100 characters</p>
 								</div>
 							</div>

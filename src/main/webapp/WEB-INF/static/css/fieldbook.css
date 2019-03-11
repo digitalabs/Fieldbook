@@ -2370,6 +2370,9 @@ table.dataTable thead th.sorting_desc
 .column-filter ul > li {
     padding: 5px 10px;
 }
+.glyphicon-filter.filtering-by {
+    color: #4caf50;
+}
 
 td[disabled] {
     background-color: #ccc;

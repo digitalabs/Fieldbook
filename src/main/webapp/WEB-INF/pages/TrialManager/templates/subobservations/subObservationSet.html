@@ -143,14 +143,15 @@
 </div>
 <script type="text/ng-template" id="columnFilterPopoverTemplate.html">
 	<div class="column-filter">
-		<input class="form-control" ng-model='columnFilter.columnData.query' />
+		<input class="form-control" ng-model='columnFilter.columnData.query'
+			   placeholder="{{columnFilter.columnData.possibleValues.length ? 'Search the list below' : 'Filter value'}}"/>
 		<ul class="list-group form-inline" ng-if="columnFilter.columnData.possibleValues">
-			<li class="list-group-item">
+			<li class="list-group-item" ng-if="!columnFilter.columnData.query">
 				<input type="checkbox" class="checkbox" ng-model="columnFilter.columnData.isSelectAll"
 					   ng-change="columnFilter.selectAll()"/>
 				Select all
 			</li>
-			<li ng-repeat='option in columnFilter.columnData.possibleValues | orderBy: "name" | filter: { name: columnFilter.columnData.query }'
+			<li ng-repeat='option in columnFilter.columnData.possibleValues | orderBy: "name" | filter: columnFilter.search '
 				ng-if="option.name"
 				class="list-group-item">
 				<input type="checkbox" class="checkbox" ng-model="option.isSelectedInFilters"
@@ -158,8 +159,8 @@
 				{{isCategoricalDescriptionView ? option.displayDescription : option.displayValue}}
 			</li>
 		</ul>
-		<button class="btn btn-info" ng-click="filterByColumn()">Apply</button>
-		<button class="btn btn-default" ng-click="resetFilterByColumn()">Reset</button>
+		<button class="btn btn-info" ng-click="filterByColumn()" title="Apply all selected filters">Apply</button>
+		<button class="btn btn-default" ng-click="resetFilterByColumn()" title="Reset this filter">Reset</button>
 	</div>
 </script>
 

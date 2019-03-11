@@ -54,6 +54,16 @@
             		if (!selected) {
 						this.columnData.isSelectAll = false;
 					}
+				},
+				search: function (item) {
+					var query = $scope.columnFilter.columnData.query;
+					if (!query) {
+						return true;
+					}
+					if (item.name.indexOf(query) !== -1 || item.displayDescription.indexOf(query) !== -1) {
+            			return true;
+					}
+					return false;
 				}
 			};
 			$scope.selectedStatusFilter = "1";
@@ -329,6 +339,20 @@
 				table().ajax.reload();
 			};
 
+			$scope.getFilteringByClass = function (index) {
+				var columnData = $scope.columnsObj.columns[index].columnData;
+				if (columnData.possibleValues && columnData.possibleValues.length) {
+                    if (columnData.possibleValues.some(function (value) {
+						return value.isSelectedInFilters;
+					})) {
+						return 'filtering-by';
+					}
+				} else if (columnData.query) {
+					return 'filtering-by';
+				}
+			};
+
+
 			function table() {
 				return $scope.nested.dtInstance.DataTable;
 			}
@@ -452,6 +476,7 @@
 					$(this.header()).append($compile('<span class="glyphicon glyphicon-filter" ' +
 						' style="cursor:pointer; padding-left: 5px;"' +
 						' popover-placement="bottom"' +
+						' ng-class="getFilteringByClass(' + this.index() + ')"' +
 						' popover-append-to-body="true"' +
 						' popover-trigger="\'outsideClick\'"' +
 						// does not work with outsideClick

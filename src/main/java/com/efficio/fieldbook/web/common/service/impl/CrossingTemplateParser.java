@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.google.common.collect.Lists;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -149,10 +150,11 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 			// process female + male parent entries, will throw middleware query exception if no study valid or null
 			final ListDataProject femaleListData = this.getListDataProject(femaleStudy, Integer.valueOf(femalePlotNo), programUUID, false);
+			// FIXME - should be able to handle multiple male parents (IBP-2045)
 			ListDataProject maleListData = this.getListDataProject(maleStudy, Integer.valueOf(malePlotNo), programUUID, true);
 
 			final ImportedCrosses importedCrosses =
-					new ImportedCrosses(femaleListData, maleListData, femaleStudy, maleStudy, femalePlotNo, malePlotNo, currentRow);
+					new ImportedCrosses(femaleListData, Lists.newArrayList(maleListData), femaleStudy, maleStudy, femalePlotNo, malePlotNo, currentRow);
 			// Show source as "Pending" in initial dialogue.
 			// Source (Plot Code) string is generated later in the process and will be displayed in the final list generated.
 			importedCrosses.setSource(ImportedCrosses.SEED_SOURCE_PENDING);

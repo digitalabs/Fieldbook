@@ -101,9 +101,11 @@ public class DuplicatesUtil {
 			}
 
 			final String nFemalePlotNo = importedCrossesMain.getFemalePlotNo();
-			final String nMalePlotNo = importedCrossesMain.getMalePlotNo();
+			// FIXME - check back how to handle for polycross. For now pass the first male parent
+			final String nMalePlotNo = importedCrossesMain.getMalePlotNos().get(0);
 			final String nFemaleGid = importedCrossesMain.getFemaleGid();
-			final String nMaleGid = importedCrossesMain.getMaleGid();
+			// FIXME - check back how to handle for polycross. For now pass the first male parent
+			final String nMaleGid = importedCrossesMain.getMaleGids().get(0).toString();
 
 			String plotDupePrefix = ImportedCrosses.PLOT_DUPE_PREFIX;
 			String pedigreeDupePrefix = ImportedCrosses.PEDIGREE_DUPE_PREFIX;
@@ -114,9 +116,11 @@ public class DuplicatesUtil {
 				if (!Objects.equals(importedCrossesMain.getEntryId(), possibleDuplicatesAndReciprocals.getEntryId())) {
 
 					final String femaleGidExcludingMain = possibleDuplicatesAndReciprocals.getFemaleGid();
-					final String maleGidExcludingMain = possibleDuplicatesAndReciprocals.getMaleGid();
+					// FIXME - check back how to handle for polycross. For now pass the first male parent
+					final String maleGidExcludingMain = possibleDuplicatesAndReciprocals.getMaleGids().get(0).toString();
 					final String femalePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getFemalePlotNo();
-					final String malePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getMalePlotNo();
+					// FIXME - check back how to handle for polycross. For now pass the first male parent
+					final String malePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getMalePlotNos().get(0);
 
 					// Duplicate scenario
 					if (femaleGidExcludingMain.equals(nFemaleGid) && maleGidExcludingMain.equals(nMaleGid)) {

@@ -1,9 +1,18 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.web.common.exception.InvalidInputException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
@@ -40,14 +49,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
+import com.efficio.fieldbook.web.common.exception.InvalidInputException;
+import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingServiceImplTest {
@@ -61,10 +64,10 @@ public class CrossingServiceImplTest {
 	private static final Integer USER_ID = 123;
 	public static final String TEST_BREEDING_METHOD_CODE = "GEN";
 	public static final Integer TEST_BREEDING_METHOD_ID = 5;
-	public static final String TEST_FEMALE_GID_1 = "12345";
-	public static final String TEST_MALE_GID_1 = "54321";
-	public static final String TEST_FEMALE_GID_2 = "9999";
-	public static final String TEST_MALE_GID_2 = "8888";
+	public static final Integer TEST_FEMALE_GID_1 = 12345;
+	public static final Integer TEST_MALE_GID_1 = 54321;
+	public static final Integer TEST_FEMALE_GID_2 = 9999;
+	public static final Integer TEST_MALE_GID_2 = 8888;
 
 	private static final Integer NEXT_NUMBER = 100;
 
@@ -189,10 +192,10 @@ public class CrossingServiceImplTest {
 		this.crossSetting.getBreedingMethodSetting().setMethodId(null);
 		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
 
-		this.setupMockCallsForGermplasm(Integer.parseInt(CrossingServiceImplTest.TEST_FEMALE_GID_1));
-		this.setupMockCallsForGermplasm(Integer.parseInt(CrossingServiceImplTest.TEST_MALE_GID_1));
-		this.setupMockCallsForGermplasm(Integer.parseInt(CrossingServiceImplTest.TEST_FEMALE_GID_2));
-		this.setupMockCallsForGermplasm(Integer.parseInt(CrossingServiceImplTest.TEST_MALE_GID_2));
+		this.setupMockCallsForGermplasm(CrossingServiceImplTest.TEST_FEMALE_GID_1);
+		this.setupMockCallsForGermplasm(CrossingServiceImplTest.TEST_MALE_GID_1);
+		this.setupMockCallsForGermplasm(CrossingServiceImplTest.TEST_FEMALE_GID_2);
+		this.setupMockCallsForGermplasm(CrossingServiceImplTest.TEST_MALE_GID_2);
 
 		for (final ImportedCrosses importedCrosses : this.importedCrossesList.getImportedCrosses()) {
 			Assert.assertNotNull(
@@ -249,7 +252,7 @@ public class CrossingServiceImplTest {
 
 		Assert.assertEquals(null, cross1.getGid());
 		Assert.assertEquals(setting.getPrefix() + " 0000100 " + setting.getSuffix(), cross1.getDesig());
-		Assert.assertEquals(cross1.getFemaleDesig() + setting.getSeparator() + cross1.getMaleDesig(), cross1.getCross());
+		Assert.assertEquals(cross1.getFemaleDesignation() + setting.getSeparator() + cross1.getMaleDesignationsAsString(), cross1.getCross());
 		Assert.assertEquals((Integer) 1, cross1.getEntryId());
 		Assert.assertEquals("1", cross1.getEntryCode());
 
@@ -257,7 +260,7 @@ public class CrossingServiceImplTest {
 
 		Assert.assertEquals(null, cross2.getGid());
 		Assert.assertEquals(setting.getPrefix() + " 0000101 " + setting.getSuffix(), cross2.getDesig());
-		Assert.assertEquals(cross2.getFemaleDesig() + setting.getSeparator() + cross2.getMaleDesig(), cross2.getCross());
+		Assert.assertEquals(cross2.getFemaleDesignation() + setting.getSeparator() + cross2.getMaleDesignationsAsString(), cross2.getCross());
 		Assert.assertEquals((Integer) 2, cross2.getEntryId());
 		Assert.assertEquals("2", cross2.getEntryCode());
 	}
@@ -307,7 +310,7 @@ public class CrossingServiceImplTest {
 		final ImportedCrosses cross = this.createCross();
 		final String crossName = this.crossingService.buildCrossName(cross, setting.getSeparator());
 
-		Assert.assertEquals(cross.getFemaleDesig() + setting.getSeparator() + cross.getMaleDesig(), crossName);
+		Assert.assertEquals(cross.getFemaleDesignation() + setting.getSeparator() + cross.getMaleDesignationsAsString(), crossName);
 
 	}
 
@@ -464,7 +467,7 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals(20150101, germplasm1.getGdate().intValue());
 		Assert.assertEquals(2, germplasm1.getGnpgs().intValue());
 		Assert.assertEquals(cross1.getFemaleGid(), germplasm1.getGpid1().toString());
-		Assert.assertEquals(cross1.getMaleGid(), germplasm1.getGpid2().toString());
+		Assert.assertEquals(cross1.getMaleGids().get(0), germplasm1.getGpid2().toString());
 		Assert.assertEquals(0, germplasm1.getGrplce().intValue());
 		Assert.assertEquals(0, germplasm1.getLgid().intValue());
 		Assert.assertEquals(0, germplasm1.getGrplce().intValue());
@@ -495,7 +498,7 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals(20150101, germplasm2.getGdate().intValue());
 		Assert.assertEquals(2, germplasm2.getGnpgs().intValue());
 		Assert.assertEquals(cross2.getFemaleGid(), germplasm2.getGpid1().toString());
-		Assert.assertEquals(cross2.getMaleGid(), germplasm2.getGpid2().toString());
+		Assert.assertEquals(cross2.getMaleGids().get(0), germplasm2.getGpid2().toString());
 		Assert.assertEquals(0, germplasm2.getGrplce().intValue());
 		Assert.assertEquals(0, germplasm2.getLgid().intValue());
 		Assert.assertEquals(0, germplasm2.getGrplce().intValue());
@@ -860,10 +863,10 @@ public class CrossingServiceImplTest {
 
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
 		final ImportedCrosses cross = new ImportedCrosses();
-		cross.setFemaleDesig("FEMALE-12345");
-		cross.setFemaleGid(CrossingServiceImplTest.TEST_FEMALE_GID_1);
-		cross.setMaleDesig("MALE-54321");
-		cross.setMaleGid(CrossingServiceImplTest.TEST_MALE_GID_1);
+		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(CrossingServiceImplTest.TEST_FEMALE_GID_1, "FEMALE-12345", "");
+		cross.setFemaleParent(femaleParent);
+		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(CrossingServiceImplTest.TEST_MALE_GID_1, "MALE-54321", "");
+		cross.setMaleParents(Lists.newArrayList(maleParent));
 		cross.setCross("CROSS 1");
 		cross.setSource("MALE:1:FEMALE:1");
 		cross.setDesig(
@@ -879,10 +882,10 @@ public class CrossingServiceImplTest {
 
 	private ImportedCrosses createSecondCross() {
 		final ImportedCrosses cross2 = new ImportedCrosses();
-		cross2.setFemaleDesig("FEMALE-9999");
-		cross2.setFemaleGid(CrossingServiceImplTest.TEST_FEMALE_GID_2);
-		cross2.setMaleDesig("MALE-8888");
-		cross2.setMaleGid(CrossingServiceImplTest.TEST_MALE_GID_2);
+		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(CrossingServiceImplTest.TEST_FEMALE_GID_2, "FEMALE-9999", "");
+		cross2.setFemaleParent(femaleParent);
+		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(CrossingServiceImplTest.TEST_MALE_GID_2, "MALE-8888", "");
+		cross2.setMaleParents(Lists.newArrayList(maleParent));
 		cross2.setCross("CROSS 2");
 		cross2.setSource("MALE:2:FEMALE:2");
 		cross2.setDesig(
@@ -893,10 +896,10 @@ public class CrossingServiceImplTest {
 
 	private ImportedCrosses createCross() {
 		final ImportedCrosses cross = new ImportedCrosses();
-		cross.setFemaleDesig("FEMALE-12345");
-		cross.setFemaleGid("12345");
-		cross.setMaleDesig("MALE-54321");
-		cross.setMaleGid("54321");
+		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(CrossingServiceImplTest.TEST_FEMALE_GID_1, "FEMALE-12345", "");
+		cross.setFemaleParent(femaleParent);
+		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(CrossingServiceImplTest.TEST_MALE_GID_1, "MALE-54321", "");
+		cross.setMaleParents(Lists.newArrayList(maleParent));
 		cross.setDesig("Cros12345");
 		return cross;
 	}

@@ -32,6 +32,7 @@ import org.generationcp.middleware.manager.api.PedigreeDataManager;
 import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.Methods;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -167,11 +168,14 @@ public class CrossingServiceImpl implements CrossingService {
 	public void populateSeedSource(final ImportedCrosses importedCross, final Workbook workbook, Map<String, Workbook> workbookMap) {
 		if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource()) || importedCross.getSource()
 				.equalsIgnoreCase(ImportedCrosses.SEED_SOURCE_PENDING)) {
-			final Workbook maleStudyWorkbook = this.getMaleStudyWorkbook(importedCross.getMaleStudyName(), workbook, workbookMap);
+			// With the current Excel import template, male parents of each cross will come same study
+			final String maleStudyName = importedCross.getMaleStudyNames().get(0);
+			final Workbook maleStudyWorkbook = this.getMaleStudyWorkbook(maleStudyName, workbook, workbookMap);
+			
 			//FIXME Refactor and optimise SeedSourceGenerator/LocationResolver/SeasonResolver to remove dependency on workbook.
 			final String generatedSource = this.seedSourceGenerator
-					.generateSeedSourceForCross(workbook, importedCross.getMalePlotNo(), importedCross.getFemalePlotNo(),
-							importedCross.getMaleStudyName(), importedCross.getFemaleStudyName(), maleStudyWorkbook);
+					.generateSeedSourceForCross(workbook, importedCross.getMalePlotNos(), importedCross.getFemalePlotNo(),
+							maleStudyName, importedCross.getFemaleStudyName(), maleStudyWorkbook);
 			importedCross.setSource(generatedSource);
 		}
 	}
@@ -304,7 +308,7 @@ public class CrossingServiceImpl implements CrossingService {
 		for (final ImportedCrosses entry : importedCrossesList.getImportedCrosses()) {
 
 			final Integer gid = germplasmIdIterator.next();
-			final String parentageDesignation = entry.getFemaleDesig() + "/" + entry.getMaleDesig();
+			final String parentageDesignation = entry.getFemaleDesignation() + "/" + entry.getMaleDesignationsAsString();
 
 			Integer locationId = 0;
 
@@ -356,7 +360,7 @@ public class CrossingServiceImpl implements CrossingService {
 			germplasm.setGnpgs(2);
 			germplasm.setGid(Integer.MAX_VALUE);
 			germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
-			germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
+			germplasm.setGpid2(Integer.valueOf(cross.getMaleGids().get(0)));
 			final String crossString = this.getCross(germplasm, cross, crossNameSetting.getSeparator());
 
 			cross.setCross(crossString);
@@ -487,7 +491,7 @@ public class CrossingServiceImpl implements CrossingService {
 				// create new Germplasm.
 				this.updateConstantFields(germplasm, userId);
 				germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
-				germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
+				germplasm.setGpid2(Integer.valueOf(cross.getMaleGids().get(0)));
 
 				germplasm.setMethodId(cross.getBreedingMethodId());
 
@@ -602,8 +606,9 @@ public class CrossingServiceImpl implements CrossingService {
 	protected String evaluateSuffixProcessCode(final ImportedCrosses crosses, final CrossSetting setting, final String processCode) {
 		final ProcessCodeOrderedRule rule = this.processCodeRuleFactory.getRuleByProcessCode(processCode);
 
+		final Integer maleGid = crosses.getMaleGids().get(0);
 		final CrossingRuleExecutionContext crossingRuleExecutionContext = new CrossingRuleExecutionContext(new ArrayList<String>(), setting,
-				crosses.getMaleGid() != null ? Integer.valueOf(crosses.getMaleGid()) : 0,
+				maleGid != null ? maleGid : 0,
 				crosses.getFemaleGid() != null ? Integer.valueOf(crosses.getFemaleGid()) : 0, this.germplasmDataManager,
 				this.pedigreeDataManager);
 
@@ -616,7 +621,7 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	protected String buildCrossName(final ImportedCrosses crosses, final String separator) {
-		return crosses.getFemaleDesig() + separator + crosses.getMaleDesig();
+		return crosses.getFemaleDesignation() + separator + crosses.getMaleDesignationsAsString();
 	}
 
 	protected String buildPrefixString(final CrossNameSetting setting) {
@@ -707,15 +712,20 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	private void processBreedingMethodParental(final ImportedCrosses importedCrosses) {
-		final Integer femaleGid = Integer.parseInt(importedCrosses.getFemaleGid());
-		final Integer maleGid = Integer.parseInt(importedCrosses.getMaleGid());
-
-		final Triple<Germplasm, Germplasm, Germplasm> femaleLine = this.retrieveParentGermplasmObjects(femaleGid);
-		final Triple<Germplasm, Germplasm, Germplasm> maleLine = this.retrieveParentGermplasmObjects(maleGid);
-
-		importedCrosses.setBreedingMethodId(CrossingUtil
-				.determineBreedingMethodBasedOnParentalLine(femaleLine.getLeft(), maleLine.getLeft(), femaleLine.getMiddle(),
-						femaleLine.getRight(), maleLine.getMiddle(), maleLine.getRight()));
+		// If polycross, automatically return as "Single Cross""
+		if (importedCrosses.isPolyCross()) {
+			importedCrosses.setBreedingMethodId(Methods.SINGLE_CROSS.getMethodID());
+		} else {			
+			final Integer femaleGid = Integer.parseInt(importedCrosses.getFemaleGid());
+			final Integer maleGid = importedCrosses.getMaleGids().get(0);
+			
+			final Triple<Germplasm, Germplasm, Germplasm> femaleLine = this.retrieveParentGermplasmObjects(femaleGid);
+			final Triple<Germplasm, Germplasm, Germplasm> maleLine = this.retrieveParentGermplasmObjects(maleGid);
+			
+			importedCrosses.setBreedingMethodId(CrossingUtil
+					.determineBreedingMethodBasedOnParentalLine(femaleLine.getLeft(), maleLine.getLeft(), femaleLine.getMiddle(),
+							femaleLine.getRight(), maleLine.getMiddle(), maleLine.getRight()));
+		}
 
 		this.setBreedingMethodNameByMethodId(importedCrosses);
 	}

@@ -6,9 +6,12 @@ import java.util.Map;
 
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.middleware.util.Debug;
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.google.common.collect.Lists;
 
 public class DuplicatesUtilTest {
 
@@ -141,8 +144,8 @@ public class DuplicatesUtilTest {
 
 	private String reviewImportedCrosses(ImportedCrosses importedCrosses) {
 		return "ENTRY=" + importedCrosses.getEntryId() + "\t" + "FEMALE_PLOTNO=" + importedCrosses.getFemalePlotNo() + "\t"
-				+ "MALE_PLOTNO=" + importedCrosses.getMalePlotNo() + "\t" + "FEMALE_GID=" + importedCrosses.getFemaleGid() + "\t"
-				+ "MALE_GID=" + importedCrosses.getMaleGid() + "\t" + "PARENTAGE=" + importedCrosses.getCross() + "\t" + "DUPLICATE="
+				+ "MALE_PLOTNO=" + importedCrosses.getMalePlotNos().get(0) + "\t" + "FEMALE_GID=" + importedCrosses.getFemaleGid() + "\t"
+				+ "MALE_GID=" + importedCrosses.getMaleGids().get(0) + "\t" + "PARENTAGE=" + importedCrosses.getCross() + "\t" + "DUPLICATE="
 				+ importedCrosses.getDuplicate();
 	}
 
@@ -161,16 +164,17 @@ public class DuplicatesUtilTest {
 	private ImportedCrosses createImportedCrossesTestData(String femaleDesig, String maleDesig, String femaleGid, String maleGid,
 			Integer entryId, String source, String femalePlotNo, String malePlotNo) {
 		ImportedCrosses importedCrosses = new ImportedCrosses();
-		importedCrosses.setFemaleDesig(femaleDesig);
-		importedCrosses.setMaleDesig(maleDesig);
-		importedCrosses.setMaleGid(maleGid);
-		importedCrosses.setFemaleGid(femaleGid);
+		
+		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(Integer.valueOf(femaleGid), femaleDesig, "");
+		femaleParent.setPlotNo(femalePlotNo);
+		importedCrosses.setFemaleParent(femaleParent);
+		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(Integer.valueOf(maleGid), maleDesig, "");
+		maleParent.setPlotNo(malePlotNo);
+		importedCrosses.setMaleParents(Lists.newArrayList(maleParent));
 		importedCrosses.setEntryId(entryId);
-		importedCrosses.setCross(importedCrosses.getFemaleDesig() + DuplicatesUtil.SEPARATOR + importedCrosses.getMaleDesig());
+		importedCrosses.setCross(importedCrosses.getFemaleDesignation() + DuplicatesUtil.SEPARATOR + importedCrosses.getMaleDesignationsAsString());
 		importedCrosses.setSource(source);
 		importedCrosses.setEntryCode(String.valueOf(entryId));
-		importedCrosses.setFemalePlotNo(femalePlotNo);
-		importedCrosses.setMalePlotNo(malePlotNo);
 		return importedCrosses;
 	}
 }

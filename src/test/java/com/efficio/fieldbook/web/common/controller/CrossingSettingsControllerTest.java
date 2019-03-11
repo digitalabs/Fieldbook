@@ -1,16 +1,23 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
-import com.efficio.fieldbook.web.common.exception.InvalidInputException;
-import com.efficio.fieldbook.web.common.service.CrossingService;
-import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
-import com.efficio.fieldbook.web.util.CrossesListUtil;
+import static org.mockito.Mockito.times;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBException;
+
 import org.generationcp.commons.data.initializer.ImportedCrossesTestDataInitializer;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.service.impl.SettingsPresetServiceImpl;
@@ -50,18 +57,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBException;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.mockito.Mockito.times;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import com.efficio.fieldbook.web.common.exception.InvalidInputException;
+import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
+import com.efficio.fieldbook.web.util.CrossesListUtil;
+import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingSettingsControllerTest {
@@ -450,7 +454,7 @@ public class CrossingSettingsControllerTest {
 	@Test
 	public void testGetImportedCrossesListSuccess() throws Exception {
 
-		final ArrayList<GermplasmListData> germplasmListDatas = new ArrayList<>();
+		final List<GermplasmListData> germplasmListDatas = new ArrayList<>();
 		final GermplasmList germplasmList = new GermplasmList();
 		final GermplasmListData germplasmListData = new GermplasmListData(771, germplasmList, 45, CrossingSettingsControllerTest.ENTRY_ID,
 				CrossingSettingsControllerTest.TEST_ENTRY_CODE, CrossingSettingsControllerTest.TEST_SEED_SOURCE, "testDesignation",
@@ -463,7 +467,7 @@ public class CrossingSettingsControllerTest {
 		germplasmListData.setMalePedigree(CrossingSettingsControllerTest.MALE_PEDIGREE);
 
 		germplasmListDatas.add(germplasmListData);
-		Mockito.when(this.germplasmListManager.retrieveListDataWithParents(80)).thenReturn(germplasmListDatas);
+//		Mockito.when(this.germplasmListManager.retrieveListDataWithParents(80)).thenReturn(germplasmListDatas);
 		Mockito.when(this.germplasmListManager.getGermplasmListById(80)).thenReturn(germplasmList);
 		final UserDefinedField userDefinedField = new UserDefinedField();
 		Mockito.when(this.germplasmDataManager
@@ -545,20 +549,18 @@ public class CrossingSettingsControllerTest {
 		importedCrosses.setEntryId(CrossingSettingsControllerTest.ENTRY_ID);
 		importedCrosses.setCross(CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT);
 		importedCrosses.setEntryCode(CrossingSettingsControllerTest.TEST_ENTRY_CODE);
-		importedCrosses.setFemaleDesig(CrossingSettingsControllerTest.TEST_FEMALE_PARENT);
-		importedCrosses.setFemaleGid(Integer.toString(CrossingSettingsControllerTest.FGID));
-		importedCrosses.setMaleDesig(CrossingSettingsControllerTest.TEST_MALE_PARENT);
-		importedCrosses.setMaleGid(Integer.toString(CrossingSettingsControllerTest.MGID));
+		
+		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(CrossingSettingsControllerTest.FGID, CrossingSettingsControllerTest.TEST_FEMALE_PARENT, CrossingSettingsControllerTest.FEMALE_PLOT, ""); 
+		femaleParent.setPedigree(CrossingSettingsControllerTest.FEMALE_PEDIGREE);
+		importedCrosses.setFemaleParent(femaleParent);
+		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(CrossingSettingsControllerTest.MGID, CrossingSettingsControllerTest.TEST_MALE_PARENT, CrossingSettingsControllerTest.MALE_PLOT, CrossingSettingsControllerTest.MALE_STUDY_NAME);
+		maleParent.setPedigree(CrossingSettingsControllerTest.MALE_PEDIGREE);
+		importedCrosses.setMaleParents(Lists.newArrayList(maleParent));
 		importedCrosses.setSource(CrossingSettingsControllerTest.TEST_SEED_SOURCE);
 		importedCrosses.setDuplicate(CrossingSettingsControllerTest.TEST_DUPLICATE);
-		importedCrosses.setFemalePlotNo(CrossingSettingsControllerTest.FEMALE_PLOT);
-		importedCrosses.setMalePlotNo(CrossingSettingsControllerTest.MALE_PLOT);
-		importedCrosses.setMaleStudyName(CrossingSettingsControllerTest.MALE_STUDY_NAME);
 		importedCrosses.setRawBreedingMethod(CrossingSettingsControllerTest.BREEDING_METHOD);
 		importedCrosses.setCrossingDate(CrossingSettingsControllerTest.CROSSING_DATE);
 		importedCrosses.setNotes(CrossingSettingsControllerTest.NOTES);
-		importedCrosses.setFemalePedigree(CrossingSettingsControllerTest.FEMALE_PEDIGREE);
-		importedCrosses.setMalePedigree(CrossingSettingsControllerTest.MALE_PEDIGREE);
 		importedCrossesList.add(importedCrosses);
 	}
 

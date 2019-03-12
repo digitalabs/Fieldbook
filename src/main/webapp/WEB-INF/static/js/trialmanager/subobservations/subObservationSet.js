@@ -791,6 +791,14 @@
 
 				return loadColumns().then(function (columnsObj) {
 					$scope.dtOptions = getDtOptions();
+
+					angular.forEach(columnsObj.columns, function (column, index) {
+						// "PLOT_NO"
+						if (column.columnData.termId === 8200) {
+							$scope.dtOptions.withOption('order', [index, 'asc'])
+						}
+					});
+
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
 

@@ -324,10 +324,10 @@
 			$scope.openColumnFilter = function (index) {
 				$scope.columnFilter.index = index;
 				$scope.columnFilter.columnData = $scope.columnsObj.columns[index].columnData;
-                if ($scope.columnFilter.columnData.sorting && !table().order().some(function (order) {
+                if ($scope.columnFilter.columnData.sortingAsc != null && !table().order().some(function (order) {
                     return order[0] === index;
 				})) {
-					$scope.columnFilter.columnData.sorting = null;
+					$scope.columnFilter.columnData.sortingAsc = null;
 				}
 			};
 
@@ -337,7 +337,7 @@
 
 			$scope.resetFilterByColumn = function () {
 				$scope.columnFilter.columnData.query = '';
-				$scope.columnFilter.columnData.sorting = null;
+				$scope.columnFilter.columnData.sortingAsc = null;
 				if ($scope.columnFilter.columnData.possibleValues) {
 					$scope.columnFilter.columnData.possibleValues.forEach(function (value) {
 						value.isSelectedInFilters = false;
@@ -348,7 +348,7 @@
 			};
 
 			$scope.sortColumn = function (asc) {
-				$scope.columnFilter.columnData.sorting = asc;
+				$scope.columnFilter.columnData.sortingAsc = asc;
 				table().order([$scope.columnFilter.index, asc ? 'asc' : 'desc']).draw();
 			};
 

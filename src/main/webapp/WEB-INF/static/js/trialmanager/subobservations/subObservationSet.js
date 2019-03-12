@@ -512,6 +512,7 @@
 
 			function drawCallback() {
                 addCellClickHandler();
+                adjustColumns();
 			}
 
 			function adjustColumns() {

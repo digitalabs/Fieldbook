@@ -211,6 +211,28 @@ table.dataTable thead .sorting_desc {
     background-color: #c8c6c6;
 }
 
+#subObservationTableContainer table.dataTable thead th.sorting,
+#subObservationTableContainer table.dataTable thead th.sorting_asc,
+#subObservationTableContainer table.dataTable thead th.sorting_desc {
+    padding-right: 20px;
+}
+#subObservationTableContainer table.dataTable thead th.sorting {
+    background: #c8c6c6 url('../img/datatable/sort_both.png') no-repeat center right;
+}
+#subObservationTableContainer table.dataTable thead th.sorting_asc {
+    background: #c8c6c6 url('../img/datatable/sort_asc.png') no-repeat center right;
+}
+#subObservationTableContainer table.dataTable thead th.sorting_desc {
+    background: #c8c6c6 url('../img/datatable/sort_desc.png') no-repeat center right;
+}
+
+#subObservationTableContainer table.dataTable thead th.factors.sorting,
+#subObservationTableContainer table.dataTable thead th.factors.sorting_asc,
+#subObservationTableContainer table.dataTable thead th.factors.sorting_desc {
+    background-color: #a4a4a4;
+}
+
+
 .pagination {
     font-size: 10px;
 }

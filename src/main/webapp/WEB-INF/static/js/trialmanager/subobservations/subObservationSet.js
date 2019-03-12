@@ -322,7 +322,13 @@
 			};
 
 			$scope.openColumnFilter = function (index) {
+				$scope.columnFilter.index = index;
 				$scope.columnFilter.columnData = $scope.columnsObj.columns[index].columnData;
+                if ($scope.columnFilter.columnData.sorting && !table().order().some(function (order) {
+                    return order[0] === index;
+				})) {
+					$scope.columnFilter.columnData.sorting = null;
+				}
 			};
 
 			$scope.filterByColumn = function () {
@@ -331,12 +337,19 @@
 
 			$scope.resetFilterByColumn = function () {
 				$scope.columnFilter.columnData.query = '';
+				$scope.columnFilter.columnData.sorting = null;
 				if ($scope.columnFilter.columnData.possibleValues) {
 					$scope.columnFilter.columnData.possibleValues.forEach(function (value) {
 						value.isSelectedInFilters = false;
 					});
+					$scope.columnFilter.columnData.isSelectAll = false;
 				}
 				table().ajax.reload();
+			};
+
+			$scope.sortColumn = function (asc) {
+				$scope.columnFilter.columnData.sorting = asc;
+				table().order([$scope.columnFilter.index, asc ? 'asc' : 'desc']).draw();
 			};
 
 			$scope.getFilteringByClass = function (index) {
@@ -921,10 +934,10 @@
 								}
 
 								if (columnData.dataTypeId === 1130) {
-									return renderCategoricalValue(data && data.value, columnData);
+									return renderCategoricalValue(data.value, columnData);
 								}
 
-								return data && EscapeHTML.escape(data.value);
+								return EscapeHTML.escape(data.value);
 							}
 						});
 					}

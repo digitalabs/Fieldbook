@@ -2360,7 +2360,11 @@ table.dataTable thead th.sorting_desc
     box-shadow: inset 0px -2px 0px 0px #ff8109;
 }
 
+.column-filter {
+    width: 200px;
+}
 .column-filter input {
+    margin-top: 10px;
     margin-bottom: 20px;
 }
 .column-filter ul {
@@ -2370,6 +2374,9 @@ table.dataTable thead th.sorting_desc
 .column-filter ul > li {
     padding: 5px 10px;
 }
+.column-filter span.glyphicon {
+    font-size: 20px;
+}
 .glyphicon-filter.filtering-by {
     color: #4caf50;
 }
@@ -2378,6 +2385,11 @@ td[disabled] {
     background-color: #ccc;
     border: 1px solid transparent;
     background-clip: padding-box;
+}
+
+/* https://datatables.net/forums/discussion/comment/129194/#Comment_129194 */
+th.dt-head-nowrap {
+    white-space: nowrap
 }
 
 .paginate-float-center {

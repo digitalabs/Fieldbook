@@ -353,6 +353,9 @@
 			};
 
 			$scope.getFilteringByClass = function (index) {
+				if (!$scope.columnsObj.columns[index]) {
+					return;
+				}
 				var columnData = $scope.columnsObj.columns[index].columnData;
 				if (columnData.isFiltered) {
 					return 'filtering-by';

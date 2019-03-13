@@ -354,13 +354,7 @@
 
 			$scope.getFilteringByClass = function (index) {
 				var columnData = $scope.columnsObj.columns[index].columnData;
-				if (columnData.possibleValues && columnData.possibleValues.length) {
-                    if (columnData.possibleValues.some(function (value) {
-						return value.isSelectedInFilters;
-					})) {
-						return 'filtering-by';
-					}
-				} else if (columnData.query) {
+				if (columnData.isFiltered) {
 					return 'filtering-by';
 				}
 			};
@@ -412,6 +406,7 @@
 									byOverwritten: $scope.selectedStatusFilter === "5" || null,
 									filteredValues: $scope.columnsObj.columns.reduce(function (map, column) {
 										var columnData = column.columnData;
+										columnData.isFiltered = false;
 										if (columnData.dataTypeCode === 'T') {
 											return map;
 										}
@@ -422,6 +417,7 @@
                                                     	map[columnData.termId] = [];
 													}
 													map[columnData.termId].push(value.name);
+													columnData.isFiltered = true;
 												}
 											});
 										} else if (columnData.query) {
@@ -429,6 +425,7 @@
 												map[columnData.termId] = [];
 											}
 											map[columnData.termId].push(columnData.query);
+											columnData.isFiltered = true;
 										}
 										return map;
 									}, {}),
@@ -439,6 +436,7 @@
 										}
 										if (columnData.query) {
 											map[columnData.termId] = columnData.query;
+											columnData.isFiltered = true;
 										}
 										return map;
 									}, {})

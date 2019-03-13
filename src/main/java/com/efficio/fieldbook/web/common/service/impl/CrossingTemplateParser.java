@@ -151,7 +151,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 			// process female + male parent entries, will throw middleware query exception if no study valid or null
 			final List<ListDataProject> femaleListDataProjects = this.getListDataProject(femaleStudy, Arrays.asList(Integer.valueOf(femalePlotNo)), programUUID, false);
-			final List<ListDataProject> maleListDataProjects = this.getListDataProject(maleStudy, convertCommaSeparatedStringToList(malePlotNo, currentRow), programUUID, true);
+
+			final List<Integer> malePlotNumbers = convertCommaSeparatedStringToList(malePlotNo, currentRow);
+			final List<ListDataProject> maleListDataProjects = this.getListDataProject(maleStudy, malePlotNumbers, programUUID, true);
 
 			// Only one female parent is expected to be retrieved from the imported template file.
 			final ListDataProject femaleListDataProject = femaleListDataProjects.get(0);
@@ -198,7 +200,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 					new Integer[] {currentRow}, LocaleContextHolder.getLocale()));
 		}
 
-		if (!(StringUtils.isNotBlank(malePlotNo) && StringUtils.isNumeric(malePlotNo))) {
+		if (StringUtils.isBlank(malePlotNo)) {
 			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.observation.row.malePlot",
 					new Integer[] {currentRow}, LocaleContextHolder.getLocale()));
 		}
@@ -218,13 +220,14 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		try {
 			for (final String value : values) {
 
-				final Integer convertedValue = Integer.parseInt(value);
+				final Integer convertedValue = Integer.parseInt(value.trim());
 
-				if (convertedValue > 0) {
-					list.add(convertedValue);
-				} else {
+				if (values.length > 1 && convertedValue.intValue() == 0) {
+					// Do not allow to import UNKNOWN germplasm if there are multiple male plot numbers are specified.
 					throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.observation.row.malePlot.must.be.greater.than.zero",
 						null, LocaleContextHolder.getLocale()));
+				} else {
+					list.add(convertedValue);
 				}
 
 			}

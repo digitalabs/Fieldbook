@@ -1,5 +1,7 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -51,22 +53,22 @@ public class CrossingTemplateParserTest {
 	
 	@Test
 	public void testGetListDataProjectForUnknownMaleParent() throws FileParsingException {
-		final ListDataProject result = this.templateParser.getListDataProject(STUDY_NAME, 0, PROGRAM_UUID, true);
+		final ListDataProject result = this.templateParser.getListDataProject(STUDY_NAME, Arrays.asList(0), PROGRAM_UUID, true).get(0);
 		Assert.assertEquals(0, result.getGermplasmId().intValue());
 		Assert.assertEquals(Name.UNKNOWN, result.getDesignation());
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.never()).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, 0, "1");
+		Mockito.verify(this.fieldbookMiddlewareService).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, Arrays.asList(0), "1");
 	}
 	
 	@Test
 	public void testGetListDataProjectForUnknownFemaleParent() {
-		Mockito.doReturn(null).when(this.fieldbookMiddlewareService).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, 0, "1");
+		Mockito.doReturn(new ArrayList<>()).when(this.fieldbookMiddlewareService).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, Arrays.asList(0), "1");
 
 		try {			
-			this.templateParser.getListDataProject(STUDY_NAME, 0, PROGRAM_UUID, false);
+			this.templateParser.getListDataProject(STUDY_NAME, Arrays.asList(0), PROGRAM_UUID, false);
 			Assert.fail("Expected to throw exception but didn't");
 		} catch (final FileParsingException e) {
-			Mockito.verify(this.fieldbookMiddlewareService).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, 0, "1");
-			Mockito.verify(this.messageSource).getMessage("no.list.data.for.plot", new Object[] {STUDY_NAME, 0},
+			Mockito.verify(this.fieldbookMiddlewareService).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, Arrays.asList(0), "1");
+			Mockito.verify(this.messageSource).getMessage("no.list.data.for.plot", new Object[] {STUDY_NAME, "0"},
 					LocaleContextHolder.getLocale());
 			
 		}
@@ -75,14 +77,14 @@ public class CrossingTemplateParserTest {
 	@Test
 	public void testGetListDataProjectForNonExistentPlotNumber() {
 		final Integer plotNumber = new Random().nextInt();
-		Mockito.doReturn(null).when(this.fieldbookMiddlewareService).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, plotNumber, "1");
+		Mockito.doReturn(new ArrayList<>()).when(this.fieldbookMiddlewareService).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, Arrays.asList(plotNumber), "1");
 
 		try {			
-			this.templateParser.getListDataProject(STUDY_NAME, plotNumber, PROGRAM_UUID, new Random().nextBoolean());
+			this.templateParser.getListDataProject(STUDY_NAME,  Arrays.asList(plotNumber), PROGRAM_UUID, new Random().nextBoolean());
 			Assert.fail("Expected to throw exception but didn't");
 		} catch (final FileParsingException e) {
-			Mockito.verify(this.fieldbookMiddlewareService).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, plotNumber, "1");
-			Mockito.verify(this.messageSource).getMessage("no.list.data.for.plot", new Object[] {STUDY_NAME, plotNumber},
+			Mockito.verify(this.fieldbookMiddlewareService).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY,  Arrays.asList(plotNumber), "1");
+			Mockito.verify(this.messageSource).getMessage("no.list.data.for.plot", new Object[] {STUDY_NAME, String.valueOf(plotNumber)},
 					LocaleContextHolder.getLocale());
 			
 		}
@@ -93,9 +95,9 @@ public class CrossingTemplateParserTest {
 		final Integer plotNumber = new Random().nextInt();
 		final ListDataProject middlewareResult = new ListDataProject();
 		middlewareResult.setListDataProjectId(new Random().nextInt());
-		Mockito.doReturn(middlewareResult).when(this.fieldbookMiddlewareService).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, plotNumber, "1");
+		Mockito.doReturn(Arrays.asList(middlewareResult)).when(this.fieldbookMiddlewareService).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY,  Arrays.asList(plotNumber), "1");
 
-		final ListDataProject result = this.templateParser.getListDataProject(STUDY_NAME, plotNumber, PROGRAM_UUID, new Random().nextBoolean());
+		final ListDataProject result = this.templateParser.getListDataProject(STUDY_NAME,  Arrays.asList(plotNumber), PROGRAM_UUID, new Random().nextBoolean()).get(0);
 		Assert.assertEquals(middlewareResult, result);
 			
 	}
@@ -105,7 +107,7 @@ public class CrossingTemplateParserTest {
 		Mockito.doReturn(null).when(this.studyDataManager).getStudyIdByNameAndProgramUUID(STUDY_NAME, PROGRAM_UUID);
 
 		try {			
-			this.templateParser.getListDataProject(STUDY_NAME, 1, PROGRAM_UUID, new Random().nextBoolean());
+			this.templateParser.getListDataProject(STUDY_NAME, Arrays.asList(1), PROGRAM_UUID, new Random().nextBoolean());
 			Assert.fail("Expected to throw exception but didn't");
 		} catch (final FileParsingException e) {
 			Mockito.verify(this.messageSource).getMessage("no.such.study.exists", new Object[] {STUDY_NAME},
@@ -120,7 +122,7 @@ public class CrossingTemplateParserTest {
 		Mockito.doReturn(null).when(this.studyDataManager).getStudyIdByNameAndProgramUUID(STUDY_NAME, PROGRAM_UUID);
 
 		try {			
-			this.templateParser.getListDataProject(STUDY_NAME, 0, PROGRAM_UUID, new Random().nextBoolean());
+			this.templateParser.getListDataProject(STUDY_NAME, Arrays.asList(0), PROGRAM_UUID, new Random().nextBoolean());
 			Assert.fail("Expected to throw exception but didn't");
 		} catch (final FileParsingException e) {
 			Mockito.verify(this.messageSource).getMessage("no.such.study.exists", new Object[] {STUDY_NAME},

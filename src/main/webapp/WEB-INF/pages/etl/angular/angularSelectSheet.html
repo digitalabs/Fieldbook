@@ -361,6 +361,14 @@ angular.module('di-consolidatedStep', ['digitalabs-util','di-directives', 'digit
                     	}
                     }
 
+                    if (valid) {
+                        var study = $scope.data.previousStudyList.find(study => study.studyName && study.studyName.toUpperCase() === $scope.selected.studyDetails.studyName.toUpperCase());
+                        if (study && study.id !== 0 && study.id !== 1 && !$scope.existingStudySelected()) {
+                            var errorMsg = [[#{error.duplicate.study.name}]];
+                            $scope.messages.push(errorMsg.replace('by {0} ', ''));
+                        }
+                    }
+
                     return $scope.messages.length == 0;
                 };
 
@@ -433,7 +441,7 @@ angular.module('di-consolidatedStep', ['digitalabs-util','di-directives', 'digit
                 };
 
                 $scope.updateStudyDetails = function() {
-                	
+
                 	$.each($scope.data.previousStudyList, function(key, value) {
                         if (value.id === $scope.selected.studyDetails.studyId) {
                         	$scope.studyObject = value;

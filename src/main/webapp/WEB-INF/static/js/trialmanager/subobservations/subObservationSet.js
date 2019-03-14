@@ -585,8 +585,9 @@
 						function updateInline() {
 
 							function doAjaxUpdate() {
-								if (cellData.value === $inlineScope.observation.value) {
-									return $q.resolve(cellData);
+								if ((!$scope.isPendingView && cellData.value === $inlineScope.observation.value)
+									|| ($scope.isPendingView && cellData.draftValue === $inlineScope.observation.value)) {
+										return $q.resolve(cellData);
 								}
 
 								var value = cellData.value;

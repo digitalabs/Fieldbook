@@ -4,13 +4,13 @@ import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.commons.ruleengine.ProcessCodeOrderedRule;
 import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
 import org.generationcp.commons.ruleengine.RuleException;
@@ -34,6 +34,7 @@ import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Methods;
 import org.generationcp.middleware.pojos.Name;
+import org.generationcp.middleware.pojos.Progenitor;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.PedigreeService;
@@ -113,23 +114,23 @@ public class CrossingServiceImpl implements CrossingService {
 			final Workbook workbook) {
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
 		final GermplasmListResult pairsResult = this.getPairs(crossSetting, importedCrossesList, userId, workbook);
-		this.save(crossSetting, importedCrossesList, pairsResult.germplasmPairs);
+		this.save(crossSetting, importedCrossesList, pairsResult.germplasmTriples);
 		return pairsResult.isTrimed;
 	}
 
 	public class GermplasmListResult {
 
-		private final List<Pair<Germplasm, Name>> germplasmPairs;
+		private final List<Triple<Germplasm, Name, List<Progenitor>>> germplasmTriples;
 		private final Boolean isTrimed;
 
-		public GermplasmListResult(final List<Pair<Germplasm, Name>> germplasmPairs, final Boolean isTrimed) {
+		public GermplasmListResult(final List<Triple<Germplasm, Name, List<Progenitor>>> germplasmTriples, final Boolean isTrimed) {
 			super();
-			this.germplasmPairs = germplasmPairs;
+			this.germplasmTriples = germplasmTriples;
 			this.isTrimed = isTrimed;
 		}
 
-		public List<Pair<Germplasm, Name>> getGermplasmPairs() {
-			return this.germplasmPairs;
+		public List<Triple<Germplasm, Name, List<Progenitor>>> getGermplasmTriples() {
+			return this.germplasmTriples;
 		}
 
 		public Boolean getIsTrimed() {
@@ -154,13 +155,13 @@ public class CrossingServiceImpl implements CrossingService {
 				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
 						importedCrossesList.hasPlotDuplicate());
 
-		final List<Germplasm> germplasmList = this.extractGermplasmList(pairsResult.germplasmPairs);
+		final List<Germplasm> germplasmList = this.extractGermplasmList(pairsResult.germplasmTriples);
 		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
 
-		CrossingUtil.applyMethodNameType(this.germplasmDataManager, pairsResult.germplasmPairs, crossingNameTypeId);
+		CrossingUtil.applyMethodNameType(this.germplasmDataManager, pairsResult.germplasmTriples, crossingNameTypeId);
 
 		this.verifyGermplasmMethodPresent(germplasmList);
-		this.save(crossSetting, importedCrossesList, pairsResult.germplasmPairs);
+		this.save(crossSetting, importedCrossesList, pairsResult.germplasmTriples);
 		return pairsResult.isTrimed;
 	}
 
@@ -201,8 +202,8 @@ public class CrossingServiceImpl implements CrossingService {
 	 */
 	@Transactional
 	private void save(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
-			final List<Pair<Germplasm, Name>> germplasmPairs) {
-		final List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmPairs);
+			final List<Triple<Germplasm, Name, List<Progenitor>>> germplasmTriples) {
+		final List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmTriples);
 		this.saveAttributes(crossSetting, importedCrossesList, savedGermplasmIds);
 	}
 
@@ -262,13 +263,13 @@ public class CrossingServiceImpl implements CrossingService {
 				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
 						importedCrossesList.hasPlotDuplicate());
 
-		final List<Germplasm> germplasmList = this.extractGermplasmList(pairsResult.germplasmPairs);
+		final List<Germplasm> germplasmList = this.extractGermplasmList(pairsResult.germplasmTriples);
 		final Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
 
-		CrossingUtil.applyMethodNameType(this.germplasmDataManager, pairsResult.germplasmPairs, crossingNameTypeId);
+		CrossingUtil.applyMethodNameType(this.germplasmDataManager, pairsResult.germplasmTriples, crossingNameTypeId);
 
 		this.verifyGermplasmMethodPresent(germplasmList);
-		return new GermplasmListResult(pairsResult.germplasmPairs, pairsResult.isTrimed);
+		return new GermplasmListResult(pairsResult.germplasmTriples, pairsResult.isTrimed);
 	}
 
 	private List<Integer> getImportedCrossesGidsList(final ImportedCrossesList importedCrossesList) {
@@ -287,11 +288,11 @@ public class CrossingServiceImpl implements CrossingService {
 		return gids;
 	}
 
-	protected List<Germplasm> extractGermplasmList(final List<Pair<Germplasm, Name>> germplasmPairs) {
+	protected List<Germplasm> extractGermplasmList(final List<Triple<Germplasm, Name, List<Progenitor>>> germplasmTriples) {
 		final List<Germplasm> returnValue = new ArrayList<>();
 
-		for (final Pair<Germplasm, Name> germplasmPair : germplasmPairs) {
-			returnValue.add(germplasmPair.getLeft());
+		for (final Triple<Germplasm, Name, List<Progenitor>> germplasmTriple : germplasmTriples) {
+			returnValue.add(germplasmTriple.getLeft());
 		}
 
 		return returnValue;
@@ -453,7 +454,7 @@ public class CrossingServiceImpl implements CrossingService {
 			final Integer userId, final boolean hasPlotDuplicate) {
 
 		boolean isTrimed = false;
-		final List<Pair<Germplasm, Name>> pairList = new ArrayList<>();
+		final List<Triple<Germplasm, Name, List<Progenitor>>> triples = new ArrayList<>();
 
 		final AdditionalDetailsSetting additionalDetailsSetting = crossSetting.getAdditionalDetailsSetting();
 
@@ -471,6 +472,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 			Germplasm germplasm = null;
 			Name name = null;
+			List<Progenitor> progenitors = new ArrayList<>();
 
 			// Retrieve the germplasm (cross) from database: In case of Study
 			// -> Crossing workflows, we expect the GID to always
@@ -500,6 +502,16 @@ public class CrossingServiceImpl implements CrossingService {
 				name.setReferenceId(CrossingServiceImpl.NAME_REFID);
 			}
 
+			// Create progenitors if the cross has multiple male parents.
+			if (cross.isPolyCross()) {
+				// Start the progenitor number at 3
+				int progenitorNumber = 3;
+				for (final ImportedGermplasmParent importedGermplasmParent : cross.getMaleParents()) {
+					progenitors.add(new Progenitor(germplasm, progenitorNumber, importedGermplasmParent.getGid()));
+					progenitorNumber++;
+				}
+			}
+
 			// Set germplasm date based on user input or information from source
 			// data.
 			this.populateGermplasmDate(germplasm, additionalDetailsSetting.getHarvestDate());
@@ -520,10 +532,10 @@ public class CrossingServiceImpl implements CrossingService {
 			names.add(name);
 			cross.setNames(names);
 
-			pairList.add(new ImmutablePair<>(germplasm, name));
+			triples.add(ImmutableTriple.of(germplasm, name, progenitors));
 		}
 
-		return new GermplasmListResult(pairList, isTrimed);
+		return new GermplasmListResult(triples, isTrimed);
 	}
 
 	private String truncateName(final String designation) {

@@ -417,8 +417,8 @@
 										if (columnData.possibleValues) {
 											columnData.possibleValues.forEach(function (value) {
 												if (value.isSelectedInFilters) {
-                                                    if (!map[columnData.termId]) {
-                                                    	map[columnData.termId] = [];
+													if (!map[columnData.termId]) {
+														map[columnData.termId] = [];
 													}
 													map[columnData.termId].push(value.name);
 													columnData.isFiltered = true;

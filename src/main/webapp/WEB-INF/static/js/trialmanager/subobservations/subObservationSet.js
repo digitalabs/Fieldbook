@@ -43,15 +43,15 @@
 			$scope.dtColumns = dtColumnsPromise.promise;
 			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 			$scope.dtOptions = null;
-			
-            $scope.columnFilter = {
-            	selectAll: function () {
-                    this.columnData.possibleValues.forEach(function (value) {
+
+			$scope.columnFilter = {
+				selectAll: function () {
+					this.columnData.possibleValues.forEach(function (value) {
 						value.isSelectedInFilters = this.columnData.isSelectAll;
 					}.bind(this));
 				},
 				selectOption: function (selected) {
-            		if (!selected) {
+					if (!selected) {
 						this.columnData.isSelectAll = false;
 					}
 				},
@@ -61,7 +61,7 @@
 						return true;
 					}
 					if (item.name.indexOf(query) !== -1 || item.displayDescription.indexOf(query) !== -1) {
-            			return true;
+						return true;
 					}
 					return false;
 				}
@@ -206,7 +206,7 @@
 					datasetService.observationCount($scope.subObservationSet.dataset.datasetId, deleteVariables).then(function (response) {
 						var count = response.headers('X-Total-Count');
 						if (count > 0) {
-							var modalInstance = $scope.openConfirmModal(observationVariableDeleteConfirmationText , environmentConfirmLabel);
+							var modalInstance = $scope.openConfirmModal(observationVariableDeleteConfirmationText, environmentConfirmLabel);
 							modalInstance.result.then(deferred.resolve);
 						} else {
 							deferred.resolve(true);
@@ -309,7 +309,7 @@
 				table().ajax.reload();
 			};
 
-			$scope.changeStatusFilter = function() {
+			$scope.changeStatusFilter = function () {
 				table().ajax.reload();
 			};
 
@@ -325,8 +325,8 @@
 			$scope.openColumnFilter = function (index) {
 				$scope.columnFilter.index = index;
 				$scope.columnFilter.columnData = $scope.columnsObj.columns[index].columnData;
-                if ($scope.columnFilter.columnData.sortingAsc != null && !table().order().some(function (order) {
-                    return order[0] === index;
+				if ($scope.columnFilter.columnData.sortingAsc != null && !table().order().some(function (order) {
+					return order[0] === index;
 				})) {
 					$scope.columnFilter.columnData.sortingAsc = null;
 				}
@@ -504,7 +504,7 @@
 			}
 
 			function headerCallback(thead, data, start, end, display) {
-				table().columns().every(function() {
+				table().columns().every(function () {
 					var column = $scope.columnsObj.columns[this.index()];
 					if (column.columnData.formula) {
 						$(this.header()).addClass('derived-trait-column-header');
@@ -513,8 +513,8 @@
 			}
 
 			function drawCallback() {
-                addCellClickHandler();
-                adjustColumns();
+				addCellClickHandler();
+				adjustColumns();
 			}
 
 			function adjustColumns() {
@@ -562,7 +562,7 @@
 								updateInline();
 							},
 							// FIXME altenative to blur bug https://github.com/angular-ui/ui-select/issues/499
-							onOpenClose: function(isOpen) {
+							onOpenClose: function (isOpen) {
 								if (!isOpen) updateInline();
 							},
 							newInlineValue: function (newValue) {
@@ -588,7 +588,7 @@
 							function doAjaxUpdate() {
 								if ((!$scope.isPendingView && cellData.value === $inlineScope.observation.value)
 									|| ($scope.isPendingView && cellData.draftValue === $inlineScope.observation.value)) {
-										return $q.resolve(cellData);
+									return $q.resolve(cellData);
 								}
 
 								var value = cellData.value;
@@ -647,7 +647,7 @@
 							promise.then(function (data) {
 								var valueChanged = false;
 								if (cellData.value !== $inlineScope.observation.value) {
-                                    valueChanged = true;
+									valueChanged = true;
 								}
 
 								if ($scope.isPendingView) {
@@ -775,14 +775,14 @@
 			}
 
 			function reloadDataset() {
-                $rootScope.navigateToSubObsTab(subObservationSet.id);
+				$rootScope.navigateToSubObsTab(subObservationSet.id);
 			}
 
 			function loadTable() {
 				/**
 				 * We need to reinitilize all this because
 				 * if we use column.visible an change the columns with just
-				 * 		$scope.dtColumns = columnsObj.columns;
+				 *        $scope.dtColumns = columnsObj.columns;
 				 * datatables is breaking with error:
 				 * Cannot read property 'clientWidth' of null
 				 */
@@ -1086,7 +1086,7 @@
 					columnData: '=',
 					isCategoricalDescriptionView: '='
 				},
-				controller: function($scope) {
+				controller: function ($scope) {
 					$scope.doBlur = function ($event) {
 						if ($event.keyCode === 13) {
 							$event.target.blur();

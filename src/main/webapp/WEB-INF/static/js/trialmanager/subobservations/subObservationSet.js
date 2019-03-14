@@ -221,6 +221,7 @@
 					return;
 				}
 				$scope.isPendingView = isPendingView;
+				$scope.selectedStatusFilter = "1";
 				doPendingViewActions();
 				loadTable();
 			};

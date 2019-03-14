@@ -40,6 +40,7 @@ import org.generationcp.middleware.manager.api.PresetService;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
@@ -459,12 +460,8 @@ public class CrossingSettingsControllerTest {
 		final GermplasmListData germplasmListData = new GermplasmListData(771, germplasmList, 45, CrossingSettingsControllerTest.ENTRY_ID,
 				CrossingSettingsControllerTest.TEST_ENTRY_CODE, CrossingSettingsControllerTest.TEST_SEED_SOURCE, "testDesignation",
 				"testGroupName", 0, 5);
-		germplasmListData.setMaleParent(CrossingSettingsControllerTest.TEST_MALE_PARENT);
-		germplasmListData.setFgid(CrossingSettingsControllerTest.FGID);
-		germplasmListData.setMgid(CrossingSettingsControllerTest.MGID);
-		germplasmListData.setFemaleParent(CrossingSettingsControllerTest.TEST_FEMALE_PARENT);
-		germplasmListData.setFemalePedigree(CrossingSettingsControllerTest.FEMALE_PEDIGREE);
-		germplasmListData.setMalePedigree(CrossingSettingsControllerTest.MALE_PEDIGREE);
+		germplasmListData.addMaleParent(new GermplasmParent(CrossingSettingsControllerTest.MGID, CrossingSettingsControllerTest.TEST_MALE_PARENT, CrossingSettingsControllerTest.MALE_PEDIGREE));
+		germplasmListData.setFemaleParent(new GermplasmParent(CrossingSettingsControllerTest.FGID, CrossingSettingsControllerTest.TEST_FEMALE_PARENT, CrossingSettingsControllerTest.FEMALE_PEDIGREE));
 
 		germplasmListDatas.add(germplasmListData);
 //		Mockito.when(this.germplasmListManager.retrieveListDataWithParents(80)).thenReturn(germplasmListDatas);

@@ -13,7 +13,7 @@ import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
-import org.generationcp.middleware.pojos.germplasm.CrossListData;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -68,31 +68,30 @@ public class CrossesListUtil {
 	}
 
 	public Map<String, Object> generateCrossesTableWithDuplicationNotes(final List<String> tableHeaderList,
-		final CrossListData crossesData) {
+		final GermplasmListData crossesData) {
 		final Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX), crossesData.getEntryId());
 		final String concatenatedMaleDesignations = this.concatenateMaleParentsValue(this.getDesignationsList(crossesData.getMaleParents()));
 		dataMap.put(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX),
-			crossesData.getFemaleParent().getDesignation() + CrossesListUtil.DEFAULT_SEPARATOR + concatenatedMaleDesignations);
+			crossesData.getFemaleParentDesignation() + CrossesListUtil.DEFAULT_SEPARATOR + concatenatedMaleDesignations);
 		dataMap.put(tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX), "");
 		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE), crossesData.getFemaleParent().getPedigree());
-		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_CROSS), crossesData.getFemaleParent().getDesignation());
+		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_CROSS), crossesData.getFemaleParentDesignation());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE), this.concatenateMaleParentsValue(this.getPedigreeList(crossesData.getMaleParents())));
 		dataMap.put(tableHeaderList.get(CrossesListUtil.MALE_CROSS), concatenatedMaleDesignations);
 		dataMap.put(tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX), crossesData.getBreedingMethodName());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX), crossesData.getSeedSource());
-		dataMap.put(tableHeaderList.get(CrossesListUtil.FGID_INDEX), crossesData.getFemaleParent().getGid());
+		dataMap.put(tableHeaderList.get(CrossesListUtil.FGID_INDEX), crossesData.getFemaleGid());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.MGID_INDEX), this.getGids(crossesData.getMaleParents()));
 		return dataMap;
 	}
 	
-	public ImportedCrosses convertCrossListDataToImportedCrosses(final CrossListData crossesData, final String studyName) {
+	public ImportedCrosses convertGermplasmListDataToImportedCrosses(final GermplasmListData crossesData, final String studyName) {
 		final ImportedCrosses importedCrosses = new ImportedCrosses();
 		importedCrosses.setCrossListId(crossesData.getId());
 		importedCrosses.setEntryId(crossesData.getEntryId());
 		importedCrosses.setGid(crossesData.getGid() != null ? Integer.toString(crossesData.getGid()) : null);
-		// TODO check if entry code is needed. IF so, add to CrossListData pojo and uncomment/fix code below
-		// importedCrosses.setEntryCode(crossesData.getEntryCode());
+		importedCrosses.setEntryCode(crossesData.getEntryCode());
 		importedCrosses.setSource(crossesData.getSeedSource());
 		
 		final GermplasmParent femaleParentFromDB = crossesData.getFemaleParent();

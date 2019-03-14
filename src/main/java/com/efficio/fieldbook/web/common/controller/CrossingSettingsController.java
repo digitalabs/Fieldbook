@@ -31,10 +31,10 @@ import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PresetService;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.UDTableType;
 import org.generationcp.middleware.pojos.UserDefinedField;
-import org.generationcp.middleware.pojos.germplasm.CrossListData;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
@@ -481,13 +481,13 @@ public class CrossingSettingsController extends SettingsController {
 		final Map<Integer, ImportedCrosses> importedCrossesMap = new HashMap<>();
 
 		final Integer crossesListId = Integer.parseInt(createdCrossesListId);
-		final List<CrossListData> germplasmListDataList = this.germplasmListManager.retrieveCrossListData(crossesListId);
+		final List<GermplasmListData> germplasmListDataList = this.germplasmListManager.retrieveGermplasmListDataWithParents(crossesListId);
 
 		final String studyName = this.studySelection.getWorkbook().getStudyDetails().getStudyName();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
-		for (final CrossListData listData : germplasmListDataList) {
+		for (final GermplasmListData listData : germplasmListDataList) {
 			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, listData));
-			final ImportedCrosses importedCross = this.crossesListUtil.convertCrossListDataToImportedCrosses(listData, studyName);
+			final ImportedCrosses importedCross = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(listData, studyName);
 			if (importedCross.getGid() == null) {
 				responseMap.put(CrossingSettingsController.IS_SUCCESS, 0);
 				final String localisedErrorMessage = this.messageSource.getMessage("error.germplasm.record.already.exists", new String[] {},

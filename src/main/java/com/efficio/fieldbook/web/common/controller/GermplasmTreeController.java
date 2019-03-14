@@ -400,7 +400,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			@Override
 			public Object transform(final Object input) {
 				final ListDataProject germplasmListData = (ListDataProject) input;
-				return germplasmListData.getFgid();
+				return germplasmListData.getFemaleGid();
 			}
 		});
 
@@ -409,7 +409,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			@Override
 			public Object transform(final Object input) {
 				final ListDataProject germplasmListData = (ListDataProject) input;
-				return germplasmListData.getMgid();
+				return germplasmListData.getMaleGid();
 			}
 		});
 		// Remove unknown male parents (GID = 0) from the parent list to be saved

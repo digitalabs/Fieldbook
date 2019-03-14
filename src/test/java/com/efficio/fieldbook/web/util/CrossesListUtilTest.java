@@ -1,22 +1,24 @@
 
 package com.efficio.fieldbook.web.util;
 
-import junit.framework.Assert;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.pojos.germplasm.CrossListData;
+import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.List;
-import java.util.Map;
+import junit.framework.Assert;
 
 public class CrossesListUtilTest {
 
@@ -40,7 +42,7 @@ public class CrossesListUtilTest {
 	private Term fromOntology = new Term();
 
 	@Mock
-	private CrossListData crossesData;
+	private GermplasmListData crossesData;
 
 	@Before
 	public void setUp() {
@@ -163,17 +165,11 @@ public class CrossesListUtilTest {
 		final GermplasmListData germplasmListData = new GermplasmListData();
 		germplasmListData.setEntryId(CrossesListUtilTest.TEST_ENTRY_ID_VALUE);
 		germplasmListData.setEntryCode(CrossesListUtilTest.TEST_ENTRY_CODE_VALUE);
-		germplasmListData.setFemaleParent(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE);
-		germplasmListData.setFgid(CrossesListUtilTest.TEST_FGID_VALUE);
-		germplasmListData.setMaleParent(CrossesListUtilTest.TEST_MALE_PARENT_VALUE);
-		germplasmListData.setMgid(CrossesListUtilTest.TEST_MGID_VALUE);
+		germplasmListData.setFemaleParent(new GermplasmParent(CrossesListUtilTest.TEST_FGID_VALUE, CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE, CrossesListUtilTest.UNKNOWN_PEDIGREE));
+		germplasmListData.addMaleParent(new GermplasmParent(CrossesListUtilTest.TEST_MGID_VALUE, CrossesListUtilTest.TEST_MALE_PARENT_VALUE, CrossesListUtilTest.UNKNOWN_PEDIGREE));
 		germplasmListData.setSeedSource(CrossesListUtilTest.TEST_SEED_SOURCE_VALUE);
-		germplasmListData.setFemalePedigree(CrossesListUtilTest.UNKNOWN_PEDIGREE);
-		germplasmListData.setMalePedigree(CrossesListUtilTest.UNKNOWN_PEDIGREE);
 
-		// FIXME - the method to test should be uncommented out once. Commenting out for now to resolve compile error
-//		final ImportedCrosses testImportedCrosses = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(germplasmListData);
-		final ImportedCrosses testImportedCrosses = new ImportedCrosses();
+		final ImportedCrosses testImportedCrosses = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(germplasmListData, RandomStringUtils.random(20));
 		Assert.assertEquals(Integer.valueOf(CrossesListUtilTest.TEST_ENTRY_ID_VALUE), testImportedCrosses.getEntryId());
 		Assert.assertEquals(CrossesListUtilTest.TEST_ENTRY_CODE_VALUE, testImportedCrosses.getEntryCode());
 		Assert.assertEquals(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE, testImportedCrosses.getFemaleDesignation());

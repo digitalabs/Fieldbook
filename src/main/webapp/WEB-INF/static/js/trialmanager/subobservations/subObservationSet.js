@@ -12,6 +12,65 @@
 				  environmentService, datasetService, derivedVariableService, $timeout, $uibModal
 		) {
 
+			// hook the context menu to the datatable cells with invalid values
+			// jquery-ui.contextmenu lib is replaced by jquery.contextMenu2.0. beforeOpen does not seem to be needed.
+			$.contextMenu({
+				// define which elements trigger this menu
+				selector: "#subObservationTableContainer td[class*='invalid-value'],#subObservationTableContainer td[class*='accepted-value']",
+				// define the elements of the menu
+				callback: function (key, opt) {
+					var cell = opt.$trigger.get(0);
+					var dtCell = table().cell(cell);
+					var cellData = dtCell.data();
+					var dtRow = table().row(cell.parentNode);
+					var rowData = dtRow.data();
+
+					var index = table().colReorder.transpose(table().column(cell).index(), 'toOriginal');
+					var columnData = $scope.columnsObj.columns[index].columnData;
+
+					var newValue, newDraftValue, newDraftCategoricalValueId;
+
+					switch (key) {
+						case 'accept':
+							newDraftValue = null;
+							newDraftCategoricalValueId = null;
+							newValue = cellData.draftValue;
+							break;
+						case 'missing':
+							newValue = 'missing';
+							if ($scope.isPendingView) {
+								newDraftValue = newDraftCategoricalValueId = null;
+							} else {
+								newDraftValue = cellData.draftValue;
+								newDraftCategoricalValueId = cellData.draftCategoricalValueId;
+							}
+							break;
+					}
+
+					datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
+						cellData.observationId, {
+							categoricalValueId: getCategoricalValueId(newValue, columnData),
+							value: newValue,
+							draftValue: newDraftValue,
+							draftCategoricalValueId: newDraftCategoricalValueId
+						}).then(function () {
+						table().ajax.reload()
+					});
+
+				},
+				items: {
+					accept: {
+						name: "Accept Value", visible: function (key, opt) {
+							return $scope.isPendingView;
+						}
+					},
+					missing: {
+						name: "Mark Missing"
+					}
+				}
+			});
+
+
 			// FIXME is there a better way?
 			// Only used in tests - to call $rootScope.$apply()
 			// for production, rely on $scope.dtColumns promise
@@ -1073,6 +1132,78 @@
 				}
 			}
 
+			function markCellAsAccepted(indexElem, indexTermId, elem) {
+				'use strict';
+
+				// var data = {
+				// 	index: indexElem,
+				// 	termId: indexTermId
+				// };
+				//
+				// var tableIdentifier = $('body').hasClass('import-preview-measurements') ? '#import-preview-measurement-table' : '#measurement-table';
+				//
+				// $.ajax({
+				// 	headers: {
+				// 		Accept: 'application/json',
+				// 		'Content-Type': 'application/json'
+				// 	},
+				// 	url: '/Fieldbook/trial/measurements/update/experiment/cell/accepted',
+				// 	type: 'POST',
+				// 	async: false,
+				// 	data:   JSON.stringify(data),
+				// 	contentType: 'application/json',
+				// 	success: function(data) {
+				// 		if (data.success === '1') {
+				// 			var oTable = $(tableIdentifier).dataTable();
+				// 			oTable.fnUpdate(data.data, data.index, null, false); // Row
+				// 			$(elem).removeClass('invalid-value');
+				// 			$(elem).addClass('accepted-value');
+				// 		} else {
+				// 			showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+				// 			$(tableIdentifier).data('show-inline-edit', '0');
+				// 		}
+				// 	}
+				// });
+			}
+
+			function markCellAsMissing(indexElem, indexTermId, indexDataVal, isNew, elem) {
+				'use strict';
+				// var data = {
+				// 	index:indexElem,
+				// 	termId:indexTermId,
+				// 	value:indexDataVal,
+				// 	isNew: isNew
+				// };
+				//
+				// var isImportPreviewMeasurementsView = $('body').hasClass('import-preview-measurements');
+				// var tableIdentifier = isImportPreviewMeasurementsView ? '#import-preview-measurement-table' : '#measurement-table';
+				//
+				// $.ajax({
+				// 	headers: {
+				// 		Accept: 'application/json',
+				// 		'Content-Type': 'application/json'
+				// 	},
+				// 	url: '/Fieldbook/trial/measurements/' +
+				// 		(isImportPreviewMeasurementsView ? 'updateByIndex' : 'update') + '/experiment/cell/data?isDiscard=0',
+				// 	type: 'POST',
+				// 	async: false,
+				// 	data:   JSON.stringify(data),
+				// 	contentType: 'application/json',
+				// 	success: function(data) {
+				// 		if (data.success === '1') {
+				// 			var oTable = $(tableIdentifier).dataTable();
+				// 			oTable.fnUpdate(data.data, data.index, null, false); // Row
+				// 			$(elem).removeClass('invalid-value');
+				// 		} else {
+				// 			showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+				// 		}
+				// 	},
+				// 	error: function() {
+				// 		//TODO Localise the message
+				// 		showErrorMessage('Server error', 'Could not update the measurement');
+				// 	}
+				// });
+			}
 		}])
 		.directive('observationInlineEditor', function () {
 			return {

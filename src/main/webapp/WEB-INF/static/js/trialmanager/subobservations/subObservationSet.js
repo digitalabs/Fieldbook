@@ -233,6 +233,17 @@
 							}
 						});
 					}
+					else if (result === true || result === "2") {
+						datasetService.setAsMissingDraftData($scope.subObservationSet.dataset.datasetId).then(function () {
+							reloadDataset();
+						}, function (response) {
+							if (response.errors && response.errors.length) {
+								showErrorMessage('', response.errors[0].message);
+							} else {
+								showErrorMessage('', ajaxGenericErrorMsg);
+							}
+						});
+					}
 				});
 			};
 

@@ -192,7 +192,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 	}
 
-	private void validateObservationRow(final String femalePlotNo, final String malePlotNo, final int currentRow,
+	protected void validateObservationRow(final String femalePlotNo, final String malePlotNo, final int currentRow,
 			final String strCrossingDate) throws FileParsingException {
 
 		if (!(StringUtils.isNotBlank(femalePlotNo) && StringUtils.isNumeric(femalePlotNo))) {

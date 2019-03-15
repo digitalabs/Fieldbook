@@ -306,7 +306,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 			// pass the parent gids (female and male) of the imported cross, this is required to properly resolve the Backcross process codes.
 			advancingSource.setFemaleGid(StringUtils.isNumeric(importedCross.getFemaleGid()) ? Integer.valueOf(importedCross.getFemaleGid()) : 0);
-			// FIXME - check back how to handle for polycross. For now pass the first male parent
+			// Always gets the first male parent, ie. GPID2
 			final String firstMaleGid = importedCross.getMaleGids().get(0).toString();
 			advancingSource.setMaleGid(StringUtils.isNumeric(firstMaleGid) ? Integer.valueOf(firstMaleGid) : 0);
 

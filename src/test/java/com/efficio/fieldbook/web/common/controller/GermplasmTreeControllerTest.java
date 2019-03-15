@@ -40,6 +40,7 @@ import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -848,10 +849,9 @@ public class GermplasmTreeControllerTest {
 		for (int i = 1; i<=numOfCrosses; i++) {
 			final ListDataProject listData = new ListDataProject();
 			final Integer femaleGid = random.nextInt();
-			listData.setFgid(femaleGid);
 			// For the first and 2nd crosses, set the male parent as unknown (GID = 0)
 			final int maleGid = (i <= numCrossWithUnknownParent) ? 0 : random.nextInt();
-			listData.setMgid(maleGid);
+			listData.addMaleParent(new GermplasmParent(maleGid, "", ""));
 			snapshotListData.add(listData);
 			parentGids.add(femaleGid);
 			parentGids.add(maleGid);
@@ -862,6 +862,7 @@ public class GermplasmTreeControllerTest {
 			preferredName.setNval(RandomStringUtils.randomAlphabetic(20));
 			femaleGermplasm.setPreferredName(preferredName);
 			germplasmFromDB.add(femaleGermplasm);
+			listData.setFemaleParent(new GermplasmParent(femaleGid, preferredName.getNval(), ""));
 			
 			if (i > numCrossWithUnknownParent) {
 				final Germplasm maleGermplasm = new Germplasm();

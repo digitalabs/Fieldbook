@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
@@ -30,6 +31,7 @@ import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
+import org.generationcp.middleware.pojos.Progenitor;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -112,7 +114,7 @@ public class CrossingServiceImplTest {
 
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(
-				ArgumentMatchers.<List<Pair<Germplasm, Name>>>any());
+				ArgumentMatchers.<List<Triple<Germplasm, Name, List<Progenitor>>>>any());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByID(CrossingServiceImplTest.BREEDING_METHOD_ID);
 		Mockito.doReturn(this.createProject()).when(this.contextUtil).getProjectInContext();
 		Mockito.doReturn(new UserDefinedField(PLOT_CODE_FLD_NO)).when(this.germplasmDataManager).getPlotCodeField();
@@ -457,9 +459,9 @@ public class CrossingServiceImplTest {
 				.generateGermplasmNamePairs(crossSetting, this.importedCrossesList.getImportedCrosses(), CrossingServiceImplTest.USER_ID,
 						false);
 
-		Pair<Germplasm, Name> germplasmNamePair = result.getGermplasmPairs().get(0);
-		final Germplasm germplasm1 = germplasmNamePair.getLeft();
-		final Name name1 = germplasmNamePair.getRight();
+		Triple<Germplasm, Name, List<Progenitor>> germplasmTriple = result.getGermplasmTriples().get(0);
+		final Germplasm germplasm1 = germplasmTriple.getLeft();
+		final Name name1 = germplasmTriple.getMiddle();
 		final ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
 		Assert.assertTrue(result.getIsTrimed());
@@ -489,9 +491,9 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals(null, name1.getTypeId());
 		Assert.assertEquals(CrossingServiceImplTest.USER_ID, name1.getUserId());
 
-		germplasmNamePair = result.getGermplasmPairs().get(1);
-		final Germplasm germplasm2 = germplasmNamePair.getLeft();
-		final Name name2 = germplasmNamePair.getRight();
+		germplasmTriple = result.getGermplasmTriples().get(1);
+		final Germplasm germplasm2 = germplasmTriple.getLeft();
+		final Name name2 = germplasmTriple.getMiddle();
 		final ImportedCrosses cross2 = this.importedCrossesList.getImportedCrosses().get(1);
 
 		Assert.assertNull(null, germplasm2.getGid());

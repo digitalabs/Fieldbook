@@ -64,6 +64,9 @@
 						return true;
 					}
 					return false;
+				},
+				isFilterOpen: function (index) {
+                    return $scope.columnsObj.columns[index].columnData.isFilterOpen;
 				}
 			};
 			$scope.selectedStatusFilter = "1";
@@ -324,11 +327,30 @@
 
 			$scope.openColumnFilter = function (index) {
 				$scope.columnFilter.index = index;
-				$scope.columnFilter.columnData = $scope.columnsObj.columns[index].columnData;
-				if ($scope.columnFilter.columnData.sortingAsc != null && !table().order().some(function (order) {
+				var columnData = $scope.columnFilter.columnData = $scope.columnsObj.columns[index].columnData;
+
+				if (columnData.isFilterOpen) {
+					columnData.isFilterOpen = false;
+					return;
+				}
+				angular.forEach($scope.columnsObj.columns, function (column) {
+					column.columnData.isFilterOpen = false;
+				});
+				columnData.isFilterOpen = true;
+
+				if (columnData.sortingAsc != null && !table().order().some(function (order) {
 					return order[0] === index;
 				})) {
-					$scope.columnFilter.columnData.sortingAsc = null;
+					columnData.sortingAsc = null;
+				}
+				if (columnData.dataTypeCode === 'D') {
+					$timeout(function () {
+						$('.sub-obs-column-filter input').datepicker({
+							format: 'yyyymmdd',
+							todayHighlight: true,
+							todayBtn: true
+						});
+					});
 				}
 			};
 
@@ -493,9 +515,9 @@
 						' popover-placement="bottom"' +
 						' ng-class="getFilteringByClass(' + this.index() + ')"' +
 						' popover-append-to-body="true"' +
-						' popover-trigger="\'outsideClick\'"' +
-						// does not work with outsideClick
-						// ' popover-is-open="columnFilter.isOpen"' +
+						// does not work with popover-is-open
+						// ' popover-trigger="\'outsideClick\'"' +
+						' popover-is-open="columnFilter.isFilterOpen(' + this.index() + ')"' +
 						' ng-click="openColumnFilter(' + this.index() + ')"' +
 						' uib-popover-template="\'columnFilterPopoverTemplate.html\'">' +
 						'</span>')($scope));

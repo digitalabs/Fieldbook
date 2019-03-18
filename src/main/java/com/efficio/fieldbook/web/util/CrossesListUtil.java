@@ -109,7 +109,7 @@ public class CrossesListUtil {
 			maleParents.add(maleParent);
 		}
 		importedCrosses.setMaleParents(maleParents);
-		importedCrosses.setCross(femaleParent + CrossesListUtil.DEFAULT_SEPARATOR + this.concatenateMaleParentsValue(this.getDesignationsList(crossesData.getMaleParents())));
+		importedCrosses.setCross(femaleParent.getDesignation() + CrossesListUtil.DEFAULT_SEPARATOR + this.concatenateMaleParentsValue(this.getDesignationsList(crossesData.getMaleParents())));
 		
 		return importedCrosses;
 	}

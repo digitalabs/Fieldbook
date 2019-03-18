@@ -550,8 +550,14 @@ public class CrossingServiceImpl implements CrossingService {
 
 		final List<Progenitor> progenitors = new ArrayList<>();
 
-		// Create progenitors if the cross has multiple male parents.
-		if (cross.isPolyCross()) {
+		// In case of Study
+		// -> Crossing workflows, we expect the GID to always
+		// exist as crosses are created in crossing manager and persisted.
+		if (cross.getGid() != null) {
+			return this.pedigreeDataManager.getProgenitorsByGID(Integer.valueOf(cross.getGid()));
+		} else if (cross.isPolyCross()) {
+
+			// Create progenitors if the cross has multiple male parents.
 			// Start the progenitor number at 3
 			int progenitorNumber = 3;
 			final Iterator<ImportedGermplasmParent> iterator = cross.getMaleParents().iterator();

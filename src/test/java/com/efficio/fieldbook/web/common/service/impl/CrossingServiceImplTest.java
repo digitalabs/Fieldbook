@@ -19,6 +19,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.api.PedigreeDataManager;
 import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
@@ -109,6 +110,9 @@ public class CrossingServiceImplTest {
 
 	@Mock
 	private MessageSource messageSource;
+
+	@Mock
+	private PedigreeDataManager pedigreeDataManager;
 
 	@InjectMocks
 	private CrossingServiceImpl crossingService;
@@ -660,6 +664,26 @@ public class CrossingServiceImplTest {
 		cross.setMaleParents(Lists.newArrayList(maleParent1));
 		final List<Progenitor> result = this.crossingService.createProgenitors(cross, germplasm);
 		assertTrue(result.isEmpty());
+
+	}
+
+	@Test
+	public void testCreateProgenitors_CrossAlreadyExistsInDatabase() {
+
+		final int crossGid = 1;
+		final Germplasm germplasm = new Germplasm();
+		final ImportedCrosses cross = new ImportedCrosses();
+		cross.setGid(String.valueOf(crossGid));
+		final Progenitor maleParent1 = new Progenitor(germplasm, 3, 1);
+		final Progenitor maleParent2 = new Progenitor(germplasm, 4, 2);
+		final Progenitor maleParent3 = new Progenitor(germplasm, 5, 3);
+
+		final List<Progenitor> existingProgenitors = Arrays.asList(maleParent1, maleParent2, maleParent3);
+		when(this.pedigreeDataManager.getProgenitorsByGID(crossGid)).thenReturn(existingProgenitors);
+
+		final List<Progenitor> result = this.crossingService.createProgenitors(cross, germplasm);
+
+		assertSame(existingProgenitors, result);
 
 	}
 

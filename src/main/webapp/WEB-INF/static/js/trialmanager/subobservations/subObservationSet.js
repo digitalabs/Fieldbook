@@ -64,6 +64,12 @@
 						return true;
 					}
 					return false;
+				},
+				datepicker: {
+					options: {
+						showWeeks: false
+					},
+					dt: new Date()
 				}
 			};
 			$scope.selectedStatusFilter = "1";
@@ -487,9 +493,11 @@
 									filteredValues: $scope.columnsObj.columns.reduce(function (map, column) {
 										var columnData = column.columnData;
 										columnData.isFiltered = false;
+
 										if (columnData.dataTypeCode === 'T') {
 											return map;
 										}
+
 										if (columnData.possibleValues) {
 											columnData.possibleValues.forEach(function (value) {
 												if (value.isSelectedInFilters) {
@@ -497,14 +505,20 @@
 														map[columnData.termId] = [];
 													}
 													map[columnData.termId].push(value.name);
-													columnData.isFiltered = true;
 												}
 											});
 										} else if (columnData.query) {
 											if (!map[columnData.termId]) {
 												map[columnData.termId] = [];
 											}
-											map[columnData.termId].push(columnData.query);
+											if (columnData.dataTypeCode === 'D') {
+												map[columnData.termId].push($.datepicker.formatDate("yymmdd", columnData.query));
+											} else {
+												map[columnData.termId].push(columnData.query);
+											}
+										}
+
+										if (map[columnData.termId]) {
 											columnData.isFiltered = true;
 										}
 										return map;

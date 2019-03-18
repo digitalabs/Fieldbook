@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
@@ -456,7 +455,7 @@ public class CrossingServiceImplTest {
 		crossSetting.setAdditionalDetailsSetting(additionalDetailsSetting);
 
 		final CrossingServiceImpl.GermplasmListResult result = this.crossingService
-				.generateGermplasmNamePairs(crossSetting, this.importedCrossesList.getImportedCrosses(), CrossingServiceImplTest.USER_ID,
+				.generateGermplasmNameTriples(crossSetting, this.importedCrossesList.getImportedCrosses(), CrossingServiceImplTest.USER_ID,
 						false);
 
 		Triple<Germplasm, Name, List<Progenitor>> germplasmTriple = result.getGermplasmTriples().get(0);

@@ -5,7 +5,6 @@ import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -113,7 +112,7 @@ public class CrossingServiceImpl implements CrossingService {
 	public boolean applyCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList, final Integer userId,
 			final Workbook workbook) {
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
-		final GermplasmListResult pairsResult = this.getPairs(crossSetting, importedCrossesList, userId, workbook);
+		final GermplasmListResult pairsResult = this.getTriples(crossSetting, importedCrossesList, userId, workbook);
 		this.save(crossSetting, importedCrossesList, pairsResult.germplasmTriples);
 		return pairsResult.isTrimed;
 	}
@@ -152,7 +151,7 @@ public class CrossingServiceImpl implements CrossingService {
 		}
 
 		final GermplasmListResult pairsResult =
-				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
+				this.generateGermplasmNameTriples(crossSetting, importedCrossesList.getImportedCrosses(), userId,
 						importedCrossesList.hasPlotDuplicate());
 
 		final List<Germplasm> germplasmList = this.extractGermplasmList(pairsResult.germplasmTriples);
@@ -172,7 +171,7 @@ public class CrossingServiceImpl implements CrossingService {
 			// With the current Excel import template, male parents of each cross will come same study
 			final String maleStudyName = importedCross.getMaleStudyNames().get(0);
 			final Workbook maleStudyWorkbook = this.getMaleStudyWorkbook(maleStudyName, workbook, workbookMap);
-			
+
 			//FIXME Refactor and optimise SeedSourceGenerator/LocationResolver/SeasonResolver to remove dependency on workbook.
 			final String generatedSource = this.seedSourceGenerator
 					.generateSeedSourceForCross(workbook, importedCross.getMalePlotNos(), importedCross.getFemalePlotNo(),
@@ -180,7 +179,7 @@ public class CrossingServiceImpl implements CrossingService {
 			importedCross.setSource(generatedSource);
 		}
 	}
-	
+
 	protected Workbook getMaleStudyWorkbook(final String maleStudyName, final Workbook workbook, final Map<String, Workbook> workbookMap) {
 		if(workbookMap.get(maleStudyName) !=  null) return workbookMap.get(maleStudyName);
 		final Workbook maleStudyWorkbook = workbook.getStudyName().equals(maleStudyName)? workbook : this.fieldbookMiddlewareService.getStudyByNameAndProgramUUID(maleStudyName, this.contextUtil.getCurrentProgramUUID());
@@ -250,9 +249,9 @@ public class CrossingServiceImpl implements CrossingService {
 		super();
 	}
 
-	// FIXME the methods getPairs() and generateGermplasmNamePairs() should be
+	// FIXME the methods getTriples() and generateGermplasmNameTriples() should be
 	// combined into one
-	private GermplasmListResult getPairs(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
+	private GermplasmListResult getTriples(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 			final Integer userId, final Workbook workbook) {
 		Map<String, Workbook> workbookMap = new HashMap<>();
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
@@ -260,7 +259,7 @@ public class CrossingServiceImpl implements CrossingService {
 		}
 
 		final GermplasmListResult pairsResult =
-				this.generateGermplasmNamePairs(crossSetting, importedCrossesList.getImportedCrosses(), userId,
+				this.generateGermplasmNameTriples(crossSetting, importedCrossesList.getImportedCrosses(), userId,
 						importedCrossesList.hasPlotDuplicate());
 
 		final List<Germplasm> germplasmList = this.extractGermplasmList(pairsResult.germplasmTriples);
@@ -346,7 +345,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	protected void applyCrossNameSettingToImportedCrosses(final CrossSetting setting, final List<ImportedCrosses> importedCrosses) {
 		final CrossNameSetting crossNameSetting = setting.getCrossNameSetting();
-		Integer nextNumberInSequence = this.getStartingSequenceNumber(crossNameSetting);   
+		Integer nextNumberInSequence = this.getStartingSequenceNumber(crossNameSetting);
 		Integer entryIdCounter = 0;
 
 		for (final ImportedCrosses cross : importedCrosses) {
@@ -448,9 +447,9 @@ public class CrossingServiceImpl implements CrossingService {
 		germplasm.setGdate(DateUtil.getCurrentDateAsIntegerValue());
 	}
 
-	// FIXME the methods getPairs() and generateGermplasmNamePairs() should be
+	// FIXME the methods getTriples() and generateGermplasmNameTriples() should be
 	// combined into one
-	protected GermplasmListResult generateGermplasmNamePairs(final CrossSetting crossSetting, final List<ImportedCrosses> importedCrosses,
+	protected GermplasmListResult generateGermplasmNameTriples(final CrossSetting crossSetting, final List<ImportedCrosses> importedCrosses,
 			final Integer userId, final boolean hasPlotDuplicate) {
 
 		boolean isTrimed = false;
@@ -470,72 +469,105 @@ public class CrossingServiceImpl implements CrossingService {
 				continue;
 			}
 
-			Germplasm germplasm = null;
-			Name name = null;
-			List<Progenitor> progenitors = new ArrayList<>();
-
-			// Retrieve the germplasm (cross) from database: In case of Study
-			// -> Crossing workflows, we expect the GID to always
-			// exist as crosses are created in crossing manager and persisted.
-			if (cross.getGid() != null) {
-				germplasm = this.germplasmDataManager.getGermplasmByGID(Integer.valueOf(cross.getGid()));
-
-				// Find the existing name that was created in crossing manager.
-				// There should only be one and must be preferred.
-				name = germplasm.findPreferredName();
-
-				germplasm.setMethodId(cross.getBreedingMethodId());
-			} else {
-				germplasm = new Germplasm();
-				// In case of importing crosses, the crosses are not yet
-				// persisted, GID will be null. We populate data from
-				// spreadsheet,
-				// create new Germplasm.
-				this.updateConstantFields(germplasm, userId);
-				germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
-				germplasm.setGpid2(Integer.valueOf(cross.getMaleGids().get(0)));
-
-				germplasm.setMethodId(cross.getBreedingMethodId());
-
-				// For import we always create new name
-				name = new Name();
-				name.setReferenceId(CrossingServiceImpl.NAME_REFID);
-			}
-
-			// Create progenitors if the cross has multiple male parents.
-			if (cross.isPolyCross()) {
-				// Start the progenitor number at 3
-				int progenitorNumber = 3;
-				for (final ImportedGermplasmParent importedGermplasmParent : cross.getMaleParents()) {
-					progenitors.add(new Progenitor(germplasm, progenitorNumber, importedGermplasmParent.getGid()));
-					progenitorNumber++;
-				}
-			}
-
-			// Set germplasm date based on user input or information from source
-			// data.
-			this.populateGermplasmDate(germplasm, additionalDetailsSetting.getHarvestDate());
-			// Set the location based on what is selected as harvest location in
-			// both cases of crossing.
-			germplasm.setLocationId(harvestLocationId);
-
-			// Common name updates
-			final String designation = cross.getDesig();
-
-			name.setNval(this.truncateName(designation));
-			isTrimed = designation.length() > CrossingServiceImpl.MAX_CROSS_NAME_SIZE;
-			name.setUserId(userId);
-			name.setNdate(germplasm.getGdate());
-			name.setLocationId(harvestLocationId);
+			final Germplasm germplasm = this.createGermplasm(cross, userId, harvestLocationId, additionalDetailsSetting.getHarvestDate());
+			final Name name = this.createName(germplasm, cross, userId, harvestLocationId);
+			final List<Progenitor> progenitors = this.createProgenitors(cross, germplasm);
 
 			final List<Name> names = new ArrayList<>();
 			names.add(name);
 			cross.setNames(names);
 
+			isTrimed = cross.getDesig().length() > CrossingServiceImpl.MAX_CROSS_NAME_SIZE;
+
 			triples.add(ImmutableTriple.of(germplasm, name, progenitors));
 		}
 
 		return new GermplasmListResult(triples, isTrimed);
+	}
+
+	protected Germplasm createGermplasm(final ImportedCrosses cross, final Integer userId, final Integer harvestLocationId, final String harvestDate) {
+
+		Germplasm germplasm = null;
+
+		// Retrieve the germplasm (cross) from database: In case of Study
+		// -> Crossing workflows, we expect the GID to always
+		// exist as crosses are created in crossing manager and persisted.
+		if (cross.getGid() != null) {
+			germplasm = this.germplasmDataManager.getGermplasmByGID(Integer.valueOf(cross.getGid()));
+			germplasm.setMethodId(cross.getBreedingMethodId());
+		} else {
+			germplasm = new Germplasm();
+			// In case of importing crosses, the crosses are not yet
+			// persisted, GID will be null. We populate data from
+			// spreadsheet,
+			// create new Germplasm.
+			this.updateConstantFields(germplasm, userId);
+			germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
+			germplasm.setGpid2(Integer.valueOf(cross.getMaleGids().get(0)));
+			germplasm.setMethodId(cross.getBreedingMethodId());
+		}
+
+		// Set germplasm date based on user input or information from source
+		// data.
+		this.populateGermplasmDate(germplasm, harvestDate);
+
+		// Set the location based on what is selected as harvest location in
+		// both cases of crossing.
+		germplasm.setLocationId(harvestLocationId);
+
+		return germplasm;
+	}
+
+	protected Name createName(final Germplasm germplasm, final ImportedCrosses cross, final Integer userId, final Integer harvestLocationId) {
+
+		Name name = null;
+
+		// In case of Study
+		// -> Crossing workflows, we expect the GID to always
+		// exist as crosses are created in crossing manager and persisted.
+		if (germplasm.getGid() != null) {
+			// Find the existing name that was created in crossing manager.
+			// There should only be one and must be preferred.
+			name = germplasm.findPreferredName();
+		} else {
+			// For import we always create new name
+			name = new Name();
+			name.setReferenceId(CrossingServiceImpl.NAME_REFID);
+		}
+
+		// Common name updates
+		final String designation = cross.getDesig();
+		name.setNval(this.truncateName(designation));
+		name.setUserId(userId);
+		name.setNdate(germplasm.getGdate());
+		name.setLocationId(harvestLocationId);
+
+		return name;
+
+	}
+
+	protected List<Progenitor> createProgenitors(final ImportedCrosses cross, final Germplasm germplasm) {
+
+		final List<Progenitor> progenitors = new ArrayList<>();
+
+		// Create progenitors if the cross has multiple male parents.
+		if (cross.isPolyCross()) {
+			// Start the progenitor number at 3
+			int progenitorNumber = 3;
+			final Iterator<ImportedGermplasmParent> iterator = cross.getMaleParents().iterator();
+
+			// Skip the first male parent as it is already assigned to germplasm's gpid2.
+			iterator.next();
+
+			while (iterator.hasNext()) {
+				final ImportedGermplasmParent importedGermplasmParent = iterator.next();
+				progenitors.add(new Progenitor(germplasm, progenitorNumber, importedGermplasmParent.getGid()));
+				progenitorNumber++;
+			}
+		}
+
+		return progenitors;
+
 	}
 
 	private String truncateName(final String designation) {
@@ -727,13 +759,13 @@ public class CrossingServiceImpl implements CrossingService {
 		// If polycross, automatically return as "Single Cross""
 		if (importedCrosses.isPolyCross()) {
 			importedCrosses.setBreedingMethodId(Methods.SINGLE_CROSS.getMethodID());
-		} else {			
+		} else {
 			final Integer femaleGid = Integer.parseInt(importedCrosses.getFemaleGid());
 			final Integer maleGid = importedCrosses.getMaleGids().get(0);
-			
+
 			final Triple<Germplasm, Germplasm, Germplasm> femaleLine = this.retrieveParentGermplasmObjects(femaleGid);
 			final Triple<Germplasm, Germplasm, Germplasm> maleLine = this.retrieveParentGermplasmObjects(maleGid);
-			
+
 			importedCrosses.setBreedingMethodId(CrossingUtil
 					.determineBreedingMethodBasedOnParentalLine(femaleLine.getLeft(), maleLine.getLeft(), femaleLine.getMiddle(),
 							femaleLine.getRight(), maleLine.getMiddle(), maleLine.getRight()));

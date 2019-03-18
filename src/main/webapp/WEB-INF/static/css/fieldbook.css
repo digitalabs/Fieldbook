@@ -2403,6 +2403,38 @@ table.dataTable thead th.sorting_desc
     color: #4caf50;
 }
 
+/* Make uib-datepicker look like native bootstrap datepicker */
+.column-filter-datepicker { }
+.column-filter-datepicker.well {
+    background: none;
+}
+.column-filter-datepicker table { }
+.column-filter-datepicker table thead,
+.column-filter-datepicker table thead th {
+    background: none;
+}
+.column-filter-datepicker table tbody { }
+.column-filter-datepicker table tbody tr { }
+.column-filter-datepicker table tbody tr td { }
+.column-filter-datepicker button,
+.column-filter-datepicker button.btn:hover {
+    background: none;
+    border: none;
+    padding: 2px;
+    color: inherit;
+}
+.column-filter-datepicker table button:hover {
+    background: #eee;
+}
+.column-filter-datepicker table button.active {
+    background: #357ebd;
+    color: #fff;
+}
+/* current date */
+.column-filter-datepicker table button.active .text-info {
+    color: #fff;
+}
+
 td[disabled] {
     background-color: #ccc;
     border: 1px solid transparent;

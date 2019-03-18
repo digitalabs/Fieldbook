@@ -71,14 +71,15 @@ public class CrossesListUtil {
 		final GermplasmListData crossesData) {
 		final Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX), crossesData.getEntryId());
-		final String concatenatedMaleDesignations = this.concatenateMaleParentsValue(this.getDesignationsList(crossesData.getMaleParents()));
+		final List<String> maleDesignations = this.getDesignationsList(crossesData.getMaleParents());
+		final String concatenatedMaleDesignations = this.concatenateMaleParentsValue(maleDesignations);
 		dataMap.put(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX),
 			crossesData.getFemaleParentDesignation() + CrossesListUtil.DEFAULT_SEPARATOR + concatenatedMaleDesignations);
 		dataMap.put(tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX), "");
 		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE), crossesData.getFemaleParent().getPedigree());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_CROSS), crossesData.getFemaleParentDesignation());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE), this.concatenateMaleParentsValue(this.getPedigreeList(crossesData.getMaleParents())));
-		dataMap.put(tableHeaderList.get(CrossesListUtil.MALE_CROSS), concatenatedMaleDesignations);
+		dataMap.put(tableHeaderList.get(CrossesListUtil.MALE_CROSS), maleDesignations);
 		dataMap.put(tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX), crossesData.getBreedingMethodName());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX), crossesData.getSeedSource());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.FGID_INDEX), crossesData.getFemaleGid());

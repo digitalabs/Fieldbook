@@ -106,12 +106,12 @@
 							draftCategoricalValueId: newDraftCategoricalValueId
 						}
 					).then(function () {
-						if (table().data().length = 1 && $scope.isPendingView) {
+						if (table().data().length == 1 && $scope.isPendingView) {
 							datasetService.getDataset(subObservationSet.id).then(function(dataset) {
 								if (!dataset.hasPendingData) {
 									reloadDataset();
 								} else {
-									table().ajax.reload()
+									table().ajax.reload(null, false)
 								}
 							}, function (response) {
 								if (response.errors && response.errors.length) {
@@ -121,7 +121,7 @@
 								}
 							});
 						} else {
-							table().ajax.reload()
+							table().ajax.reload(null, false)
 						}
 					}, function (response) {
 						if (response.errors && response.errors.length) {

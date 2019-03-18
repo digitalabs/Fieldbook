@@ -507,14 +507,14 @@
 													map[columnData.termId].push(value.name);
 												}
 											});
-										} else if (columnData.query) {
-											if (!map[columnData.termId]) {
-												map[columnData.termId] = [];
+											if (!map[columnData.termId] && columnData.query) {
+												map[columnData.termId] = [columnData.query];
 											}
+										} else if (columnData.query) {
 											if (columnData.dataTypeCode === 'D') {
-												map[columnData.termId].push($.datepicker.formatDate("yymmdd", columnData.query));
+												map[columnData.termId] = [($.datepicker.formatDate("yymmdd", columnData.query))];
 											} else {
-												map[columnData.termId].push(columnData.query);
+												map[columnData.termId] = [(columnData.query)];
 											}
 										}
 

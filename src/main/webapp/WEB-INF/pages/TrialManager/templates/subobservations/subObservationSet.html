@@ -159,7 +159,8 @@
 		</div>
 		<div ng-if="columnFilter.columnData.dataTypeCode !== 'D'">
 			<input class="form-control" ng-model='columnFilter.columnData.query'
-				   placeholder="{{columnFilter.columnData.possibleValues.length ? 'Search the list below' : 'Filter value'}}"/>
+				   placeholder="Filter value"
+				   title="{{columnFilter.columnData.possibleValues.length ? 'it\'ll used to filter if no values are checked' : ''}}" />
 			<ul class="list-group form-inline" ng-if="columnFilter.columnData.possibleValues">
 				<li class="list-group-item" ng-if="!columnFilter.columnData.query">
 					<input type="checkbox" class="checkbox" ng-model="columnFilter.columnData.isSelectAll"

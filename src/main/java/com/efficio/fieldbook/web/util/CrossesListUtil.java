@@ -26,7 +26,7 @@ import com.google.common.collect.Iterables;
 public class CrossesListUtil {
 
 	public static final String MULTIPARENT_BEGIN_CHAR = "[";
-	public static final String MULTIPARENT_END_CHAR = "[";
+	public static final String MULTIPARENT_END_CHAR = "]";
 	public static final String TABLE_HEADER_LIST = "tableHeaderList";
 	public static final String LIST_DATA_TABLE = "listDataTable";
 	public static final String IS_IMPORT = "isImport";

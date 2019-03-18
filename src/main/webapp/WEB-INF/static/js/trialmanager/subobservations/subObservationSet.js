@@ -12,65 +12,6 @@
 				  environmentService, datasetService, derivedVariableService, $timeout, $uibModal
 		) {
 
-			// hook the context menu to the datatable cells with invalid values
-			// jquery-ui.contextmenu lib is replaced by jquery.contextMenu2.0. beforeOpen does not seem to be needed.
-			$.contextMenu({
-				// define which elements trigger this menu
-				selector: "#subObservationTableContainer td[class*='invalid-value'],#subObservationTableContainer td[class*='accepted-value']",
-				// define the elements of the menu
-				callback: function (key, opt) {
-					var cell = opt.$trigger.get(0);
-					var dtCell = table().cell(cell);
-					var cellData = dtCell.data();
-					var dtRow = table().row(cell.parentNode);
-					var rowData = dtRow.data();
-
-					var index = table().colReorder.transpose(table().column(cell).index(), 'toOriginal');
-					var columnData = $scope.columnsObj.columns[index].columnData;
-
-					var newValue, newDraftValue, newDraftCategoricalValueId;
-
-					switch (key) {
-						case 'accept':
-							newDraftValue = null;
-							newDraftCategoricalValueId = null;
-							newValue = cellData.draftValue;
-							break;
-						case 'missing':
-							newValue = 'missing';
-							if ($scope.isPendingView) {
-								newDraftValue = newDraftCategoricalValueId = null;
-							} else {
-								newDraftValue = cellData.draftValue;
-								newDraftCategoricalValueId = cellData.draftCategoricalValueId;
-							}
-							break;
-					}
-
-					datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId,
-						cellData.observationId, {
-							categoricalValueId: getCategoricalValueId(newValue, columnData),
-							value: newValue,
-							draftValue: newDraftValue,
-							draftCategoricalValueId: newDraftCategoricalValueId
-						}).then(function () {
-						table().ajax.reload()
-					});
-
-				},
-				items: {
-					accept: {
-						name: "Accept Value", visible: function (key, opt) {
-							return $scope.isPendingView;
-						}
-					},
-					missing: {
-						name: "Mark Missing"
-					}
-				}
-			});
-
-
 			// FIXME is there a better way?
 			// Only used in tests - to call $rootScope.$apply()
 			// for production, rely on $scope.dtColumns promise
@@ -126,6 +67,82 @@
 				}
 			};
 			$scope.selectedStatusFilter = "1";
+
+			$.contextMenu('destroy', "#subObservationTableContainer td[class*='invalid-value'],#subObservationTableContainer td[class*='accepted-value']");
+
+			$.contextMenu({
+				// define which elements trigger this menu
+				selector: "#subObservationTableContainer td[class*='invalid-value'],#subObservationTableContainer td[class*='accepted-value']",
+				// define the elements of the menu
+				callback: function (key, opt) {
+					var cell = opt.$trigger.get(0);
+					var dtCell = table().cell(cell);
+					var cellData = dtCell.data();
+					var dtRow = table().row(cell.parentNode);
+					var rowData = dtRow.data();
+
+					var newValue, newDraftValue, newDraftCategoricalValueId;
+
+					switch (key) {
+						case 'accept':
+							newDraftValue = newDraftCategoricalValueId = null;
+							newValue = cellData.draftValue;
+							break;
+						case 'missing':
+							newValue = 'missing';
+							if ($scope.isPendingView) {
+								newDraftValue = newDraftCategoricalValueId = null;
+							} else {
+								newDraftValue = cellData.draftValue;
+								newDraftCategoricalValueId = cellData.draftCategoricalValueId;
+							}
+							break;
+					}
+
+					datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId, cellData.observationId, {
+							categoricalValueId: null,
+							value: newValue,
+							draftValue: newDraftValue,
+							draftCategoricalValueId: newDraftCategoricalValueId
+						}
+					).then(function () {
+						if (table().data().length = 1 && $scope.isPendingView) {
+							datasetService.getDataset(subObservationSet.id).then(function(dataset) {
+								if (!dataset.hasPendingData) {
+									reloadDataset();
+								} else {
+									table().ajax.reload()
+								}
+							}, function (response) {
+								if (response.errors && response.errors.length) {
+									showErrorMessage('', response.errors[0].message);
+								} else {
+									showErrorMessage('', ajaxGenericErrorMsg);
+								}
+							});
+						} else {
+							table().ajax.reload()
+						}
+					}, function (response) {
+						if (response.errors && response.errors.length) {
+							showErrorMessage('', response.errors[0].message);
+						} else {
+							showErrorMessage('', ajaxGenericErrorMsg);
+						}
+					});
+
+				},
+				items: {
+					accept: {
+						name: "Accept Value", visible: function () {
+							return $scope.isPendingView;
+						}
+					},
+					missing: {
+						name: "Mark Missing"
+					}
+				}
+			});
 
 			datasetService.getDataset(subObservationSet.id).then(function (dataset) {
 				$scope.subObservationSet.dataset = dataset;

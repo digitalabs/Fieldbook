@@ -554,7 +554,10 @@ public class CrossingServiceImpl implements CrossingService {
 		// -> Crossing workflows, we expect the GID to always
 		// exist as crosses are created in crossing manager and persisted.
 		if (cross.getGid() != null) {
-			return this.pedigreeDataManager.getProgenitorsByGID(Integer.valueOf(cross.getGid()));
+			final List<Progenitor> existingProgenitors  = this.pedigreeDataManager.getProgenitorsByGID(Integer.valueOf(cross.getGid()));
+			if(existingProgenitors != null) {
+				return existingProgenitors;
+			}
 		} else if (cross.isPolyCross()) {
 
 			// Create progenitors if the cross has multiple male parents.

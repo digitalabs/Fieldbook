@@ -964,10 +964,10 @@ $(function() {
 		},
 		items: {
 			accept: {
-				name: "Accept Value"
+				name: "Accept value as-is"
 			},
 			missing: {
-				name: "Mark Missing"
+				name: "Set value to missing"
 			}
 		}
 	});

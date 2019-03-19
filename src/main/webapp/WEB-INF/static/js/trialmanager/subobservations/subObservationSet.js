@@ -140,12 +140,12 @@
 				},
 				items: {
 					accept: {
-						name: "Accept Value", visible: function () {
+						name: "Accept value as-is", visible: function () {
 							return $scope.isPendingView;
 						}
 					},
 					missing: {
-						name: "Mark Missing"
+						name: "Set value to missing"
 					}
 				}
 			});

@@ -221,7 +221,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 					} else {
 						studyDetails = previousStudy;
 					}
-					if (this.userSelection.getStudyName() == null) {
+					if (StringUtils.isEmpty(this.userSelection.getStudyName())) {
 						// update user selection
 						this.userSelection.setStudyId(studyDetails.getId());
 						this.userSelection.setStudyName(studyName);

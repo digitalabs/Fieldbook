@@ -12,23 +12,21 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.SaveListForm;
-import com.efficio.fieldbook.web.common.service.CrossingService;
-import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
-import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
-import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ListDataProjectUtil;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
-import com.efficio.pojos.treeview.TreeNode;
-import com.efficio.pojos.treeview.TreeTableNode;
-import com.google.common.collect.Lists;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
@@ -390,6 +388,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	GermplasmListResult saveCrossesParentsAsList(final SaveListForm form, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
 			Boolean isTrimed, final GermplasmList germplasmList) {
 		final Integer listId = form.getSourceListId();
@@ -403,15 +402,19 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				return germplasmListData.getFemaleGid();
 			}
 		});
+		// Polycrosses have multiple male parents
+		final List<Integer> maleGids = new ArrayList<>();
+		for (final ListDataProject data : listData) {
+			maleGids.addAll(CollectionUtils.collect(data.getMaleParents(), new Transformer() {
 
-		final Collection<Integer> maleGids = CollectionUtils.collect(listData, new Transformer() {
-
-			@Override
-			public Object transform(final Object input) {
-				final ListDataProject germplasmListData = (ListDataProject) input;
-				return germplasmListData.getMaleGid();
-			}
-		});
+				@Override
+				public Object transform(final Object input) {
+					final GermplasmParent parent = (GermplasmParent) input;
+					return parent.getGid();
+				}
+			}));
+		}
+		
 		// Remove unknown male parents (GID = 0) from the parent list to be saved
 		maleGids.removeAll(Collections.singletonList(0));
 

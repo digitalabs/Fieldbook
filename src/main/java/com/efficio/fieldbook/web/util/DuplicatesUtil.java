@@ -100,9 +100,9 @@ public class DuplicatesUtil {
 				continue;
 			}
 
-			final String nFemalePlotNo = importedCrossesMain.getFemalePlotNo();
+			final String nFemalePlotNo = importedCrossesMain.getFemalePlotNo().toString();
 			// FIXME - check back how to handle for polycross. For now pass the first male parent
-			final String nMalePlotNo = importedCrossesMain.getMalePlotNos().get(0);
+			final String nMalePlotNo = importedCrossesMain.getMalePlotNos().get(0).toString();
 			final String nFemaleGid = importedCrossesMain.getFemaleGid();
 			// FIXME - check back how to handle for polycross. For now pass the first male parent
 			final String nMaleGid = importedCrossesMain.getMaleGids().get(0).toString();
@@ -118,9 +118,9 @@ public class DuplicatesUtil {
 					final String femaleGidExcludingMain = possibleDuplicatesAndReciprocals.getFemaleGid();
 					// FIXME - check back how to handle for polycross. For now pass the first male parent
 					final String maleGidExcludingMain = possibleDuplicatesAndReciprocals.getMaleGids().get(0).toString();
-					final String femalePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getFemalePlotNo();
+					final String femalePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getFemalePlotNo().toString();
 					// FIXME - check back how to handle for polycross. For now pass the first male parent
-					final String malePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getMalePlotNos().get(0);
+					final String malePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getMalePlotNos().get(0).toString();
 
 					// Duplicate scenario
 					if (femaleGidExcludingMain.equals(nFemaleGid) && maleGidExcludingMain.equals(nMaleGid)) {

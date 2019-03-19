@@ -855,7 +855,7 @@ public class CrossingServiceImplTest {
 	public void testGenerateSeedSource() {
 		final String newSeedSource = "newSeedSource";
 		Mockito.doReturn(newSeedSource).when(this.seedSourceGenertor)
-			.generateSeedSourceForCross(Matchers.any(Workbook.class), ArgumentMatchers.<String>isNull(), ArgumentMatchers.<String>isNull(),
+			.generateSeedSourceForCross(Matchers.any(Workbook.class), ArgumentMatchers.<String>anyList(), ArgumentMatchers.<String>isNull(),
 				ArgumentMatchers.<String>isNull(),
 				ArgumentMatchers.<String>isNull(), ArgumentMatchers.<Workbook>isNull());
 

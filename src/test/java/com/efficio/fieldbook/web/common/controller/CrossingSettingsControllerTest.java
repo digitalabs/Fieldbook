@@ -91,9 +91,9 @@ public class CrossingSettingsControllerTest {
 	public static final int MGID = 836;
 	public static final int FGID = 535;
 	private static final String TEST_DUPLICATE = "SID-1";
-	public static final String FEMALE_PLOT = "1";
+	public static final Integer FEMALE_PLOT = 1;
 	public static final String BREEDING_METHOD = "Test Method";
-	public static final String MALE_PLOT = "2";
+	public static final Integer MALE_PLOT = 2;
 	public static final String MALE_STUDY_NAME = "maleStudy";
 	public static final Integer CROSSING_DATE = 20161212;
 	public static final String NOTES = "Test notes";

@@ -125,11 +125,11 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 		while (!this.isRowEmpty(this.observationSheetIndex, currentRow, headerSize)) {
 
-			final String femalePlotNo = this.getCellStringValue(this.observationSheetIndex, currentRow,
+			final String femalePlotNoString = this.getCellStringValue(this.observationSheetIndex, currentRow,
 				this.observationColumnMap.get(AppConstants.FEMALE_PLOT.getString()));
 				  String maleStudy = this.getCellStringValue(this.observationSheetIndex, currentRow,
 				this.observationColumnMap.get(AppConstants.MALE_STUDY.getString()));
-			final String malePlotNo = this.getCellStringValue(this.observationSheetIndex, currentRow,
+			final String malePlotNoString = this.getCellStringValue(this.observationSheetIndex, currentRow,
 				this.observationColumnMap.get(AppConstants.MALE_PLOT.getString()));
 			final String breedingMethod = this.getCellStringValue(this.observationSheetIndex, currentRow,
 				this.observationColumnMap.get(AppConstants.BREEDING_METHOD.getString()));
@@ -138,7 +138,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			final String notes = this.getCellStringValue(this.observationSheetIndex, currentRow,
 				this.observationColumnMap.get(AppConstants.NOTES.getString()));
 
-			this.validateObservationRow(femalePlotNo, malePlotNo, currentRow, strCrossingDate);
+			this.validateObservationRow(femalePlotNoString, malePlotNoString, currentRow, strCrossingDate);
 
 			Integer crossingDate = null;
 			if (!StringUtils.isBlank(strCrossingDate)) {
@@ -150,16 +150,17 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			}
 
 			// process female + male parent entries, will throw middleware query exception if no study valid or null
-			final List<ListDataProject> femaleListDataProjects = this.getListDataProject(femaleStudy, Arrays.asList(Integer.valueOf(femalePlotNo)), programUUID, false);
+			final Integer femalePlotNo = Integer.valueOf(femalePlotNoString);
+			final List<ListDataProject> femaleListDataProjects = this.getListDataProject(femaleStudy, Arrays.asList(femalePlotNo), programUUID, false);
 
-			final List<Integer> malePlotNumbers = convertCommaSeparatedStringToList(malePlotNo, currentRow);
+			final List<Integer> malePlotNumbers = convertCommaSeparatedStringToList(malePlotNoString, currentRow);
 			final List<ListDataProject> maleListDataProjects = this.getListDataProject(maleStudy, malePlotNumbers, programUUID, true);
 
 			// Only one female parent is expected to be retrieved from the imported template file.
 			final ListDataProject femaleListDataProject = femaleListDataProjects.get(0);
 
-			final ImportedCrosses importedCrosses =
-					new ImportedCrosses(femaleListDataProject, maleListDataProjects, femaleStudy, maleStudy, femalePlotNo, malePlotNo, currentRow);
+			final ImportedCrosses importedCrosses = new ImportedCrosses(femaleListDataProject, maleListDataProjects, femaleStudy, maleStudy,
+					femalePlotNo, malePlotNumbers, currentRow);
 			// Show source as "Pending" in initial dialogue.
 			// Source (Plot Code) string is generated later in the process and will be displayed in the final list generated.
 			importedCrosses.setSource(ImportedCrosses.SEED_SOURCE_PENDING);

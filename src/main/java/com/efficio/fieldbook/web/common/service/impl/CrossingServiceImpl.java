@@ -174,7 +174,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 			//FIXME Refactor and optimise SeedSourceGenerator/LocationResolver/SeasonResolver to remove dependency on workbook.
 			final String generatedSource = this.seedSourceGenerator
-					.generateSeedSourceForCross(workbook, importedCross.getMalePlotNos(), importedCross.getFemalePlotNo(),
+					.generateSeedSourceForCross(workbook, importedCross.getMalePlotNumbersAsStringList(), importedCross.getFemalePlotNo().toString(),
 							maleStudyName, importedCross.getFemaleStudyName(), maleStudyWorkbook);
 			importedCross.setSource(generatedSource);
 		}

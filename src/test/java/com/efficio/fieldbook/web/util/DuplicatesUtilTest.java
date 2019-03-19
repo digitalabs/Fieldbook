@@ -90,36 +90,36 @@ public class DuplicatesUtilTest {
 	private ImportedCrossesList createImportedCrossesListTestData(Map<String, String> plotNoToGidTestData) {
 		ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		for (int i = 1; i <= 7; i++) {
-			String femalePlotNo = Integer.toString(i);
-			String malePlotNo = Integer.toString(i);
+			Integer femalePlotNo = i;
+			Integer malePlotNo = i;
 			switch (i) {
 				case 1:
-					femalePlotNo = "16";
-					malePlotNo = "1";
+					femalePlotNo = 16;
+					malePlotNo = 1;
 					break;
 				case 2:
-					femalePlotNo = "16";
-					malePlotNo = "1";
+					femalePlotNo = 16;
+					malePlotNo = 1;
 					break;
 				case 3:
-					femalePlotNo = "1";
-					malePlotNo = "16";
+					femalePlotNo = 1;
+					malePlotNo = 16;
 					break;
 				case 4:
-					femalePlotNo = "16";
-					malePlotNo = "11";
+					femalePlotNo = 16;
+					malePlotNo = 11;
 					break;
 				case 5:
-					femalePlotNo = "8";
-					malePlotNo = "1";
+					femalePlotNo = 8;
+					malePlotNo = 1;
 					break;
 				case 6:
-					femalePlotNo = "8";
-					malePlotNo = "11";
+					femalePlotNo = 8;
+					malePlotNo = 11;
 					break;
 				case 7:
-					femalePlotNo = "11";
-					malePlotNo = "8";
+					femalePlotNo = 11;
+					malePlotNo = 8;
 					break;
 
 			}
@@ -162,7 +162,7 @@ public class DuplicatesUtilTest {
 	 * @return importedCrosses
 	 */
 	private ImportedCrosses createImportedCrossesTestData(String femaleDesig, String maleDesig, String femaleGid, String maleGid,
-			Integer entryId, String source, String femalePlotNo, String malePlotNo) {
+			Integer entryId, String source, Integer femalePlotNo, Integer malePlotNo) {
 		ImportedCrosses importedCrosses = new ImportedCrosses();
 		
 		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(Integer.valueOf(femaleGid), femaleDesig, "");

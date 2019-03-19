@@ -32,8 +32,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/lib/angular/sanitize.js',
 			'WEB-INF/static/js/lib/angular/select.js',
 			'WEB-INF/static/js/lib/angular/sortable.js',
-			'WEB-INF/static/js/lib/angular/ui-bootstrap-tpls-0.11.0.js',
-			'WEB-INF/static/js/lib/angular/ui-bootstrap-tpls-0.14.3.js',
+			'WEB-INF/static/js/lib/angular/ui-bootstrap-tpls-2.5.0.min.js',
 			'WEB-INF/static/js/lib/datatable/jquery.dataTables.js',
 			'WEB-INF/static/js/lib/datatable/angular-datatables.js',
 			'WEB-INF/static/js/lib/datatable/angular-datatables.buttons.js',
@@ -47,6 +46,8 @@ module.exports = function (config) {
 			'WEB-INF/static/js/lib/datatable/dataTables.colVis.js',
 			'WEB-INF/static/js/lib/datatable/dataTables.fixedColumns.js',
 			'WEB-INF/static/js/lib/datatable/dataTables.scroller.js',
+			'WEB-INF/static/js/lib/jquery/jquery.contextMenu-2.0.min.js',
+
 
 			'WEB-INF/static/js/angular/angular-local-storage.min.js',
 			'WEB-INF/static/js/angular/bmsAuth.js',

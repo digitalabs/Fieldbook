@@ -211,6 +211,28 @@ table.dataTable thead .sorting_desc {
     background-color: #c8c6c6;
 }
 
+#subObservationTableContainer table.dataTable thead th.sorting,
+#subObservationTableContainer table.dataTable thead th.sorting_asc,
+#subObservationTableContainer table.dataTable thead th.sorting_desc {
+    padding-right: 20px;
+}
+#subObservationTableContainer table.dataTable thead th.sorting {
+    background: #c8c6c6 url('../img/datatable/sort_both.png') no-repeat center right;
+}
+#subObservationTableContainer table.dataTable thead th.sorting_asc {
+    background: #c8c6c6 url('../img/datatable/sort_asc.png') no-repeat center right;
+}
+#subObservationTableContainer table.dataTable thead th.sorting_desc {
+    background: #c8c6c6 url('../img/datatable/sort_desc.png') no-repeat center right;
+}
+
+#subObservationTableContainer table.dataTable thead th.factors.sorting,
+#subObservationTableContainer table.dataTable thead th.factors.sorting_asc,
+#subObservationTableContainer table.dataTable thead th.factors.sorting_desc {
+    background-color: #a4a4a4;
+}
+
+
 .pagination {
     font-size: 10px;
 }
@@ -2360,10 +2382,68 @@ table.dataTable thead th.sorting_desc
     box-shadow: inset 0px -2px 0px 0px #ff8109;
 }
 
+.column-filter {
+    width: 200px;
+}
+.column-filter input {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+.column-filter ul {
+    max-height: 190px;
+    overflow-y: auto;
+}
+.column-filter ul > li {
+    padding: 5px 10px;
+}
+.column-filter span.glyphicon {
+    font-size: 20px;
+}
+.glyphicon-filter.filtering-by {
+    color: #4caf50;
+}
+
+/* Make uib-datepicker look like native bootstrap datepicker */
+.column-filter-datepicker { }
+.column-filter-datepicker.well {
+    background: none;
+}
+.column-filter-datepicker table { }
+.column-filter-datepicker table thead,
+.column-filter-datepicker table thead th {
+    background: none;
+}
+.column-filter-datepicker table tbody { }
+.column-filter-datepicker table tbody tr { }
+.column-filter-datepicker table tbody tr td { }
+.column-filter-datepicker button,
+.column-filter-datepicker button.btn:hover {
+    background: none;
+    border: none;
+    padding: 2px;
+    color: inherit;
+}
+.column-filter-datepicker table button:hover {
+    background: #eee;
+}
+.column-filter-datepicker table button.active {
+    background: #357ebd;
+    color: #fff;
+}
+/* current date */
+.column-filter-datepicker table button.active .text-info {
+    color: #fff;
+}
+
 td[disabled] {
     background-color: #ccc;
     border: 1px solid transparent;
     background-clip: padding-box;
+}
+
+/* https://datatables.net/forums/discussion/comment/129194/#Comment_129194 */
+th.dt-head-nowrap {
+    white-space: nowrap
 }
 
 .paginate-float-center {

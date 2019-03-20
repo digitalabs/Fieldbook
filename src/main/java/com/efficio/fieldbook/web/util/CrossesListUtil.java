@@ -123,7 +123,7 @@ public class CrossesListUtil {
 		dataMap.put(tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX), importedCrosses.getDuplicate());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE), importedCrosses.getFemalePedigree());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_CROSS), importedCrosses.getFemaleCross());
-		dataMap.put(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE), importedCrosses.getMalePedigree());
+		dataMap.put(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE), this.concatenateMaleParentsValue(importedCrosses.getMalePedigree()));
 		dataMap.put(tableHeaderList.get(CrossesListUtil.MALE_CROSS), importedCrosses.getMaleCross());
 
 		//shows BREEDING_METHOD as "Pending" if method is not defined in import crossing file

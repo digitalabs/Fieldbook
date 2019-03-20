@@ -44,6 +44,112 @@
 			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 			$scope.dtOptions = null;
 
+			$scope.columnFilter = {
+				selectAll: function () {
+					this.columnData.possibleValues.forEach(function (value) {
+						value.isSelectedInFilters = this.columnData.isSelectAll;
+					}.bind(this));
+				},
+				selectOption: function (selected) {
+					if (!selected) {
+						this.columnData.isSelectAll = false;
+					}
+				},
+				search: function (item) {
+					var query = $scope.columnFilter.columnData.query;
+					if (!query) {
+						return true;
+					}
+					if (item.name.indexOf(query) !== -1 || item.displayDescription.indexOf(query) !== -1) {
+						return true;
+					}
+					return false;
+				},
+				datepicker: {
+					options: {
+						showWeeks: false
+					},
+					dt: new Date()
+				}
+			};
+			$scope.selectedStatusFilter = "1";
+
+			$.contextMenu('destroy', "#subObservationTableContainer td[class*='invalid-value'],#subObservationTableContainer td[class*='accepted-value']");
+
+			$.contextMenu({
+				// define which elements trigger this menu
+				selector: "#subObservationTableContainer td[class*='invalid-value'],#subObservationTableContainer td[class*='accepted-value']",
+				// define the elements of the menu
+				callback: function (key, opt) {
+					var cell = opt.$trigger.get(0);
+					var dtCell = table().cell(cell);
+					var cellData = dtCell.data();
+					var dtRow = table().row(cell.parentNode);
+					var rowData = dtRow.data();
+
+					var newValue, newDraftValue, newDraftCategoricalValueId;
+
+					switch (key) {
+						case 'accept':
+							newDraftValue = newDraftCategoricalValueId = null;
+							newValue = cellData.draftValue;
+							break;
+						case 'missing':
+							newValue = 'missing';
+							if ($scope.isPendingView) {
+								newDraftValue = newDraftCategoricalValueId = null;
+							} else {
+								newDraftValue = cellData.draftValue;
+								newDraftCategoricalValueId = cellData.draftCategoricalValueId;
+							}
+							break;
+					}
+
+					datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId, cellData.observationId, {
+							categoricalValueId: null,
+							value: newValue,
+							draftValue: newDraftValue,
+							draftCategoricalValueId: newDraftCategoricalValueId
+						}
+					).then(function () {
+						if (table().data().length == 1 && $scope.isPendingView) {
+							datasetService.getDataset(subObservationSet.id).then(function(dataset) {
+								if (!dataset.hasPendingData) {
+									reloadDataset();
+								} else {
+									table().ajax.reload(null, false)
+								}
+							}, function (response) {
+								if (response.errors && response.errors.length) {
+									showErrorMessage('', response.errors[0].message);
+								} else {
+									showErrorMessage('', ajaxGenericErrorMsg);
+								}
+							});
+						} else {
+							table().ajax.reload(null, false)
+						}
+					}, function (response) {
+						if (response.errors && response.errors.length) {
+							showErrorMessage('', response.errors[0].message);
+						} else {
+							showErrorMessage('', ajaxGenericErrorMsg);
+						}
+					});
+
+				},
+				items: {
+					accept: {
+						name: "Accept value as-is", visible: function () {
+							return $scope.isPendingView;
+						}
+					},
+					missing: {
+						name: "Set value to missing"
+					}
+				}
+			});
+
 			datasetService.getDataset(subObservationSet.id).then(function (dataset) {
 				$scope.subObservationSet.dataset = dataset;
 				if (!dataset.instances || !dataset.instances.length) {
@@ -182,7 +288,7 @@
 					datasetService.observationCount($scope.subObservationSet.dataset.datasetId, deleteVariables).then(function (response) {
 						var count = response.headers('X-Total-Count');
 						if (count > 0) {
-							var modalInstance = $scope.openConfirmModal(observationVariableDeleteConfirmationText , environmentConfirmLabel);
+							var modalInstance = $scope.openConfirmModal(observationVariableDeleteConfirmationText, environmentConfirmLabel);
 							modalInstance.result.then(deferred.resolve);
 						} else {
 							deferred.resolve(true);
@@ -197,6 +303,7 @@
 					return;
 				}
 				$scope.isPendingView = isPendingView;
+				$scope.selectedStatusFilter = "1";
 				doPendingViewActions();
 				loadTable();
 			};
@@ -291,6 +398,10 @@
 				table().ajax.reload();
 			};
 
+			$scope.changeStatusFilter = function () {
+				table().ajax.reload();
+			};
+
 			$scope.toggleShowCategoricalDescription = function () {
 				switchCategoricalView().done(function () {
 					$scope.$apply(function () {
@@ -299,6 +410,48 @@
 					});
 				});
 			};
+
+			$scope.openColumnFilter = function (index) {
+				$scope.columnFilter.index = index;
+				$scope.columnFilter.columnData = $scope.columnsObj.columns[index].columnData;
+				if ($scope.columnFilter.columnData.sortingAsc != null && !table().order().some(function (order) {
+					return order[0] === index;
+				})) {
+					$scope.columnFilter.columnData.sortingAsc = null;
+				}
+			};
+
+			$scope.filterByColumn = function () {
+				table().ajax.reload();
+			};
+
+			$scope.resetFilterByColumn = function () {
+				$scope.columnFilter.columnData.query = '';
+				$scope.columnFilter.columnData.sortingAsc = null;
+				if ($scope.columnFilter.columnData.possibleValues) {
+					$scope.columnFilter.columnData.possibleValues.forEach(function (value) {
+						value.isSelectedInFilters = false;
+					});
+					$scope.columnFilter.columnData.isSelectAll = false;
+				}
+				table().ajax.reload();
+			};
+
+			$scope.sortColumn = function (asc) {
+				$scope.columnFilter.columnData.sortingAsc = asc;
+				table().order([$scope.columnFilter.index, asc ? 'asc' : 'desc']).draw();
+			};
+
+			$scope.getFilteringByClass = function (index) {
+				if (!$scope.columnsObj.columns[index]) {
+					return;
+				}
+				var columnData = $scope.columnsObj.columns[index].columnData;
+				if (columnData.isFiltered) {
+					return 'filtering-by';
+				}
+			};
+
 
 			function table() {
 				return $scope.nested.dtInstance.DataTable;
@@ -318,7 +471,8 @@
 				return addCommonOptions(DTOptionsBuilder.newOptions()
 					.withOption('ajax', {
 						url: datasetService.getObservationTableUrl(subObservationSet.id),
-						type: 'GET',
+						type: 'POST',
+						contentType: 'application/json',
 						beforeSend: function (xhr) {
 							xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
 						},
@@ -328,19 +482,72 @@
 
 							var instanceId = $scope.nested.selectedEnvironment.instanceDbId;
 
-							return {
+							return JSON.stringify({
 								draw: d.draw,
-								pageSize: d.length,
-								pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
-								sortBy: sortedColTermId,
-								sortOrder: order.dir,
+								sortedRequest: {
+									pageSize: d.length,
+									pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
+									sortBy: sortedColTermId,
+									sortOrder: order.dir
+								},
 								instanceId: instanceId,
-								draftMode: $scope.isPendingView
-							};
+								draftMode: $scope.isPendingView,
+								filter: {
+									byOutOfBound: $scope.selectedStatusFilter === "2" || null,
+									byMissing: $scope.selectedStatusFilter === "3" || null,
+									byOutOfSync: $scope.selectedStatusFilter === "4" || null,
+									byOverwritten: $scope.selectedStatusFilter === "5" || null,
+									filteredValues: $scope.columnsObj.columns.reduce(function (map, column) {
+										var columnData = column.columnData;
+										columnData.isFiltered = false;
+
+										if (columnData.dataTypeCode === 'T') {
+											return map;
+										}
+
+										if (columnData.possibleValues) {
+											columnData.possibleValues.forEach(function (value) {
+												if (value.isSelectedInFilters) {
+													if (!map[columnData.termId]) {
+														map[columnData.termId] = [];
+													}
+													map[columnData.termId].push(value.name);
+												}
+											});
+											if (!map[columnData.termId] && columnData.query) {
+												map[columnData.termId] = [columnData.query];
+											}
+										} else if (columnData.query) {
+											if (columnData.dataTypeCode === 'D') {
+												map[columnData.termId] = [($.datepicker.formatDate("yymmdd", columnData.query))];
+											} else {
+												map[columnData.termId] = [(columnData.query)];
+											}
+										}
+
+										if (map[columnData.termId]) {
+											columnData.isFiltered = true;
+										}
+										return map;
+									}, {}),
+									filteredTextValues: $scope.columnsObj.columns.reduce(function (map, column) {
+										var columnData = column.columnData;
+										if (columnData.dataTypeCode !== 'T') {
+											return map;
+										}
+										if (columnData.query) {
+											map[columnData.termId] = columnData.query;
+											columnData.isFiltered = true;
+										}
+										return map;
+									}, {})
+								}
+							});
 						}
 					})
 					.withDataProp('data')
 					.withOption('serverSide', true)
+					.withOption('initComplete', initCompleteCallback)
 					.withOption('headerCallback', headerCallback)
 					.withOption('drawCallback', drawCallback));
 			}
@@ -376,8 +583,25 @@
 					.withPaginationType('full_numbers');
 			}
 
+			function initCompleteCallback() {
+				table().columns('.variates').every(function () {
+					$(this.header()).append($compile('<span class="glyphicon glyphicon-filter" ' +
+						' style="cursor:pointer; padding-left: 5px;"' +
+						' popover-placement="bottom"' +
+						' ng-class="getFilteringByClass(' + this.index() + ')"' +
+						' popover-append-to-body="true"' +
+						' popover-trigger="\'outsideClick\'"' +
+						// does not work with outsideClick
+						// ' popover-is-open="columnFilter.isOpen"' +
+						' ng-click="openColumnFilter(' + this.index() + ')"' +
+						' uib-popover-template="\'columnFilterPopoverTemplate.html\'">' +
+						'</span>')($scope));
+				});
+				adjustColumns();
+			}
+
 			function headerCallback(thead, data, start, end, display) {
-				table().columns().every(function() {
+				table().columns().every(function () {
 					var column = $scope.columnsObj.columns[this.index()];
 					if (column.columnData.formula) {
 						$(this.header()).addClass('derived-trait-column-header');
@@ -386,7 +610,8 @@
 			}
 
 			function drawCallback() {
-                addCellClickHandler();
+				addCellClickHandler();
+				adjustColumns();
 			}
 
 			function adjustColumns() {
@@ -434,7 +659,7 @@
 								updateInline();
 							},
 							// FIXME altenative to blur bug https://github.com/angular-ui/ui-select/issues/499
-							onOpenClose: function(isOpen) {
+							onOpenClose: function (isOpen) {
 								if (!isOpen) updateInline();
 							},
 							newInlineValue: function (newValue) {
@@ -458,7 +683,8 @@
 						function updateInline() {
 
 							function doAjaxUpdate() {
-								if (cellData.value === $inlineScope.observation.value) {
+								if ((!$scope.isPendingView && cellData.value === $inlineScope.observation.value)
+									|| ($scope.isPendingView && cellData.draftValue === $inlineScope.observation.value)) {
 									return $q.resolve(cellData);
 								}
 
@@ -518,7 +744,7 @@
 							promise.then(function (data) {
 								var valueChanged = false;
 								if (cellData.value !== $inlineScope.observation.value) {
-                                    valueChanged = true;
+									valueChanged = true;
 								}
 
 								if ($scope.isPendingView) {
@@ -646,14 +872,14 @@
 			}
 
 			function reloadDataset() {
-                $rootScope.navigateToSubObsTab(subObservationSet.id);
+				$rootScope.navigateToSubObsTab(subObservationSet.id);
 			}
 
 			function loadTable() {
 				/**
 				 * We need to reinitilize all this because
 				 * if we use column.visible an change the columns with just
-				 * 		$scope.dtColumns = columnsObj.columns;
+				 *        $scope.dtColumns = columnsObj.columns;
 				 * datatables is breaking with error:
 				 * Cannot read property 'clientWidth' of null
 				 */
@@ -665,6 +891,14 @@
 
 				return loadColumns().then(function (columnsObj) {
 					$scope.dtOptions = getDtOptions();
+
+					angular.forEach(columnsObj.columns, function (column, index) {
+						// "PLOT_NO"
+						if (column.columnData.termId === 8200) {
+							$scope.dtOptions.withOption('order', [index, 'asc'])
+						}
+					});
+
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
 
@@ -720,6 +954,13 @@
 						return hiddenColumns.indexOf(columnData.termId) < 0;
 					}
 
+					function getClassName() {
+						var className = columnData.factor === true ? 'factors' : 'variates';
+						// avoid wrapping filter icon
+						className += ' dt-head-nowrap';
+						return className;
+					}
+
 					columns.push({
 						title: columnData.alias,
 						name: columnData.alias,
@@ -728,7 +969,7 @@
 						},
 						visible: isColumnVisible(),
 						defaultContent: '',
-						className: columnData.factor === true ? 'factors' : 'variates',
+						className: getClassName(),
 						columnData: columnData
 					});
 
@@ -760,6 +1001,7 @@
 					} else if (!columnData.factor) { // variates
 						columnsDef.push({
 							targets: columns.length - 1,
+							orderable: false,
 							createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
 								processCell(td, cellData, rowData, columnData);
 							},
@@ -801,10 +1043,10 @@
 								}
 
 								if (columnData.dataTypeId === 1130) {
-									return renderCategoricalValue(data && data.value, columnData);
+									return renderCategoricalValue(data.value, columnData);
 								}
 
-								return data && EscapeHTML.escape(data.value);
+								return EscapeHTML.escape(data.value);
 							}
 						});
 					}
@@ -941,7 +1183,7 @@
 					columnData: '=',
 					isCategoricalDescriptionView: '='
 				},
-				controller: function($scope) {
+				controller: function ($scope) {
 					$scope.doBlur = function ($event) {
 						if ($event.keyCode === 13) {
 							$event.target.blur();

@@ -1027,6 +1027,7 @@ public class SettingsUtil {
 		mvar.setFactor(false);
 		mvar.setDataTypeId(constant.getDataTypeId());
 		mvar.setPossibleValues(constant.getPossibleValues());
+		mvar.setVariableType(VariableType.STUDY_CONDITION);
 		return mvar;
 	}
 

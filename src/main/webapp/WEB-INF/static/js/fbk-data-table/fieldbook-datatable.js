@@ -951,35 +951,37 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 })(jQuery);
 
 // hook the context menu to the datatable cells with invalid values
+// jquery-ui.contextmenu lib is replaced by jquery.contextMenu2.0. beforeOpen does not seem to be needed.
 $(function() {
-	$(document).contextmenu({
-		delegate: "#fbk-measurements-controller-div .dataTable td[class*='invalid-value']",
-		menu: [
-			{title: 'Accept Value', cmd: 'markAccepted'},
-			{title: 'Mark Missing', cmd: 'markMissing'}
-		],
-		select: function(event, ui) {
-			var colvindex = $(ui.target.parent()).data('row-index');
-			var termId = $(ui.target).data('term-id');
+	$.contextMenu({
+		// define which elements trigger this menu
+		selector: "#fbk-measurements-controller-div .dataTable td[class*='invalid-value']",
+		// define the elements of the menu
+		callback: function (key, opt) {
+			var colvindex = $(opt.$trigger.parent()).data('row-index');
+			var termId = $(opt.$trigger).data('term-id');
 			if (termId == null) {
-				termId = $(ui.target).parents('td').data('term-id');
-				colvindex = $(ui.target).parents('tr').data('row-index');
-				ui.target = $(ui.target).parents('td');
+				termId = $(opt.$trigger).parents('td').data('term-id');
+				colvindex = $(opt.$trigger).parents('tr').data('row-index');
+				opt.$trigger = $(opt.$trigger).parents('td');
 			}
-			switch (ui.cmd) {
-				case 'markAccepted':
-					markCellAsAccepted(colvindex, termId, ui.target);
+			switch (key) {
+				case 'accept':
+					markCellAsAccepted(colvindex, termId, opt.$trigger);
 					break;
-				case 'markMissing':
-					markCellAsMissing(colvindex, termId, 'missing', 1, ui.target);
+				case 'missing':
+					markCellAsMissing(colvindex, termId, 'missing', 1, opt.$trigger);
 					break;
 			}
+
 		},
-		beforeOpen: function(event, ui) {
-			var $menu = ui.menu,
-				$target = ui.target,
-				extraData = ui.extraData;
-			ui.menu.zIndex(9999);
+		items: {
+			accept: {
+				name: "Accept value as-is"
+			},
+			missing: {
+				name: "Set value to missing"
+			}
 		}
 	});
 });

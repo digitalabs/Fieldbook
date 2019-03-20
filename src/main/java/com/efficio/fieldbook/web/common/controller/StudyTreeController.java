@@ -286,6 +286,24 @@ public class StudyTreeController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "/renameStudy", method = RequestMethod.POST)
+	public Map<String, Object> renameStudy(final HttpServletRequest req) {
+		final Map<String, Object> resultsMap = new HashMap<>();
+		final Locale locale = LocaleContextHolder.getLocale();
+		try {
+			final String newStudyName = req.getParameter("newStudyName");
+			final String studyId = req.getParameter("studyId");
+			this.studyDataManager.renameStudy(newStudyName, Integer.parseInt(studyId), this.getCurrentProgramUUID());
+			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
+		} catch (final MiddlewareQueryException e) {
+			StudyTreeController.LOG.error(e.getMessage(), e);
+			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
+			resultsMap.put(StudyTreeController.MESSAGE, e.getMessage());
+		}
+		return resultsMap;
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/deleteStudyFolder", method = RequestMethod.POST)
 	public Map<String, Object> deleteStudyListFolder(final HttpServletRequest req) {
 		final Map<String, Object> resultsMap = new HashMap<>();

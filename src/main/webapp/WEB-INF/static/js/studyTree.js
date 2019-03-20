@@ -21,10 +21,14 @@ function studyTreeInit() {
 	changeBrowseStudyButtonBehavior(false);
 	$('#addFolderDiv', '#studyTreeModal').hide();
 	$('#renameFolderDiv', '#studyTreeModal').hide();
+	$('#renameStudyDiv', '#studyTreeModal').hide(); 
 	$('#addFolderOkButton', '#studyTreeModal').on('click', createFolder);
 	$('#addFolderCancelButton', '#studyTreeModal').on('click', hideAddFolderSection);
 	$('#renameFolderOkButton', '#studyTreeModal').on('click', submitRenameFolder);
 	$('#renameFolderCancelButton', '#studyTreeModal').on('click', hideRenameFolderSection);
+	$('#renameStudyOkButton', '#studyTreeModal').on('click', submitRenameStudy);
+	$('#renameStudyCancelButton', '#studyTreeModal').on('click', hideRenameStudySection);
+
 	$('#addFolderDiv #addFolderName', '#studyTreeModal').on('keypress', function (event) {
 		if (event.keyCode == 13) {
 			createFolder();
@@ -33,6 +37,11 @@ function studyTreeInit() {
 	$('#renameFolderDiv #newFolderName', '#studyTreeModal').on('keypress', function (event) {
 		if (event.keyCode == 13) {
 			submitRenameFolder();
+		}
+	});
+	$('#renameStudyDiv #newStudyName', '#studyTreeModal').on('keypress', function (event) {
+		if (event.keyCode == 13) {
+			submitRenameStudy();
 		}
 	});
 	if ($('.landing-page').length !== 0) {
@@ -247,15 +256,18 @@ function displayStudyListTree(treeName, choosingTypeParam, selectStudyFunctionPa
 			if (node.data.isFolder === false) {
 				changeBrowseStudyButtonBehavior(false);
 				$('.delete-folder', '#studyTreeModal').removeClass('disable-image');
+				$('.edit-folder', '#studyTreeModal').removeClass('disable-image');
 			} else {
 				if (node.data.key === 'LOCAL') {
 					changeBrowseStudyButtonBehavior(true);
-					$('.edit-folder', '#studyTreeModal').addClass('disable-image');
 					$('.delete-folder', '#studyTreeModal').addClass('disable-image');
 				}
 				else {
 					changeBrowseStudyButtonBehavior(true);
 				}
+			}
+			if( $("[id^=rename][id$=Div]").is(':visible') ) {
+				$('.edit-folder').click();	
 			}
 			$('#studyTreeModalBody a.dynatree-title').off('keyup');
 			$('#studyTreeModalBody a.dynatree-title').on('keyup', function (e) {
@@ -429,6 +441,13 @@ function hideRenameFolderSection() {
 	}
 }
 
+function hideRenameStudySection() {
+	hideRenameStudyDiv();
+	if ($('#choosingType').val() !== "2"){
+		showStudyTypeDiv();
+	}
+}
+
 function userLacksPermissionForStudy(node) {
 	return node.data.isLocked && parseInt(node.data.ownerId) !== currentCropUserId && !isSuperAdmin;
 }
@@ -437,3 +456,44 @@ function showStudyIsLockedError(node) {
 	showErrorMessage('page-study-tree-message-modal',
 			noPermissionForLockedStudyError.replace('{0}', node.data.owner));
 }
+function submitRenameStudy(){
+	'use strict';
+
+	var studyName = $.trim($('#newStudyName', '#studyTreeModal').val()),
+		studyId;
+	var activeStudyNode = $('#studyTree').dynatree('getTree').getActiveNode();
+
+	if ($.trim(studyName) === activeStudyNode.data.title) {
+		$('#renameStudyDiv', '#studyTreeModal').slideUp('fast');
+		return false;
+	}
+	if (studyName === '') {
+		showErrorMessage('page-rename-study-folder-message-modal', studyNameRequiredMessage);
+		return false;
+	} else if (!isValidInput(studyName)) {
+		showErrorMessage('page-rename-study-folder-message-modal', invalidStudyNameCharacterMessage);
+		return false;
+	} else {
+		studyId = activeStudyNode.data.key;
+		$.ajax({
+			url: '/Fieldbook/StudyTreeManager/renameStudy',
+			type: 'POST',
+			data: 'studyId=' + studyId + '&newStudyName=' + studyName,
+			cache: false,
+			success: function(data) {
+				var node;
+				if (data.isSuccess === '1') {
+					hideRenameStudySection();
+					node = $('#studyTree').dynatree('getTree').getActiveNode();
+					node.data.title = studyName;
+					$(node.span).find('a').html(studyName);
+					node.focus();
+					showSuccessfulMessage('', renameItemSuccessful);
+				} else {
+					showErrorMessage('page-rename-study-folder-message-modal', data.message);
+				}
+			}
+		});
+	}
+}
+

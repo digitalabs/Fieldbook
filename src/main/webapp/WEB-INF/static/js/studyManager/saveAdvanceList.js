@@ -354,24 +354,19 @@ var SaveAdvanceList = {};
 		$('#reviewAdvanceStudyModal .delete-entries').on('click', SaveAdvanceList.deleteSelectedEntries);
 		$('#reviewAdvanceStudyModal .select-all-entries').on('click', SaveAdvanceList.selectAllReviewEntries);
 
-		$('#' + sectionContainerDiv + ' .advance-germplasm-items').contextmenu({
-			delegate: 'tr',
-			menu: [
-				{title: 'Delete Selected Entries', cmd: 'deleteSelected'},
-				{title: 'Select All', cmd: 'selectAll'}
-			],
-			select: function(event, ui) {
-				switch (ui.cmd){
-					case 'deleteSelected':
+		$.contextMenu({
+			selector: '#' + sectionContainerDiv + ' .advance-germplasm-items',
+			items: {
+				deleteSelected: {
+					name: "Delete Selected Entries", callback: function() {
 						SaveAdvanceList.deleteSelectedEntries();
-						break;
-					case 'selectAll':
+					}
+				},
+				selectAll: {
+					name: "Select All", callback: function() {
 						SaveAdvanceList.selectAllReviewEntries();
-						break;
+					}
 				}
-			},
-			beforeOpen: function(event, ui) {
-				ui.menu.zIndex(9999);
 			}
 		});
 

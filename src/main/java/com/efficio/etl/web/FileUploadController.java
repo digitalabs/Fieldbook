@@ -127,6 +127,19 @@ public class FileUploadController extends AbstractBaseETLController {
 				final String tempFileName = this.etlService.storeUserWorkbook(uploadForm.getFile().getInputStream());
 				this.userSelection.setServerFileName(tempFileName);
 				this.userSelection.setActualFileName(uploadForm.getFile().getOriginalFilename());
+
+				this.userSelection.setSelectedSheet(0);
+				this.userSelection.setHeaderRowIndex(0);
+				this.userSelection.setHeaderRowDisplayText(null);
+				this.userSelection.setDatasetType(null);
+				this.userSelection.setStudyName(null);
+				this.userSelection.setStudyDescription(null);
+				this.userSelection.setStudyObjective(null);
+				this.userSelection.setStudyStartDate(null);
+				this.userSelection.setStudyEndDate(null);
+				this.userSelection.setStudyType(null);
+				this.userSelection.setStudyId(0);
+
 			} catch (final IOException e) {
 				FileUploadController.LOG.error(e.getMessage(), e);
 				result.reject(FileUploadController.UPLOAD_FORM_FILE, "Error occurred while uploading file.");

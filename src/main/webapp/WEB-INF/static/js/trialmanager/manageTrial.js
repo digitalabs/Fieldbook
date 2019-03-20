@@ -148,6 +148,14 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	});
 
+	manageTrialApp.config(['$provide', function ($provide) {
+		$provide.decorator('$locale', function ($delegate) {
+			var value = $delegate.DATETIME_FORMATS;
+			value.SHORTDAY = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+			return $delegate;
+		});
+	}]);
+
 	// common filters
 	manageTrialApp.filter('range', function () {
 		return function (input, total) {
@@ -262,9 +270,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				$scope.studyTypes = data;
 
 			}).error(function (data) {
-				if (data.status == 401) {
-					bmsAuth.handleReAuthentication();
-				}
 				showErrorMessage('', data.error.message);
 			});
 

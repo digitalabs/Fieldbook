@@ -329,8 +329,15 @@
 
 			$scope.acceptDraftData = function () {
 				$scope.checkOutOfBoundDraftData().then(function (result) {
+					var promise;
+
 					if (result === true || result === "1") {
-						datasetService.acceptDraftData($scope.subObservationSet.dataset.datasetId).then(function () {
+						promise = datasetService.acceptDraftData($scope.subObservationSet.dataset.datasetId).then();
+					} else if (result === "2") {
+						promise = datasetService.setAsMissingDraftData($scope.subObservationSet.dataset.datasetId).then();
+					}
+					if (promise) {
+						promise.then(function () {
 							reloadDataset();
 						}, function (response) {
 							if (response.errors && response.errors.length) {

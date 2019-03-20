@@ -1010,7 +1010,7 @@ public class SettingsUtil {
 		return measurementVariable;
 	}
 
-	private static MeasurementVariable convertConstantToMeasurementVariable(final Constant constant) {
+	protected static MeasurementVariable convertConstantToMeasurementVariable(final Constant constant) {
 		String label = constant.getLabel();
 
 		// currently if operation is add, then it's always a trial constant

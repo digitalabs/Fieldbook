@@ -957,6 +957,43 @@ public class SettingsUtilTest {
 		Assert.assertTrue("It should be a factor", measurementVariable.isFactor());
 		Assert.assertEquals("The possibleValues should be '" + cropSeasonCodeCondition.getPossibleValues() + "'",
 				cropSeasonCodeCondition.getPossibleValues(), measurementVariable.getPossibleValues());
+	@Test
+	public void testConvertConstantToMeasurementVariableOperationAddOrUpdate() {
+
+		final Constant constant =
+			new Constant("CONSTANT1", "CONSTANT1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N", "",
+				TermId.NUMERIC_VARIABLE.getId(), 0.0, 0.0);
+		constant.setOperation(Operation.ADD);
+		final MeasurementVariable measurementVariable = SettingsUtil.convertConstantToMeasurementVariable(constant);
+		Assert.assertEquals(PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0), measurementVariable.getLabel());
+
+		constant.setOperation(Operation.UPDATE);
+		final MeasurementVariable measurementVariable2 = SettingsUtil.convertConstantToMeasurementVariable(constant);
+		Assert.assertEquals(PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0), measurementVariable2.getLabel());
+
+	}
+
+	@Test
+	public void testConvertConstantToMeasurementVariable() {
+
+		final Constant constant =
+			new Constant("CONSTANT1", "CONSTANT1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N", "",
+				TermId.NUMERIC_VARIABLE.getId(), 0.0, 0.0);
+		final MeasurementVariable measurementVariable = SettingsUtil.convertConstantToMeasurementVariable(constant);
+
+		Assert.assertEquals(constant.getName(), measurementVariable.getName());
+		Assert.assertEquals(
+			constant.getDescription(),
+			measurementVariable.getDescription());
+		Assert.assertEquals(constant.getProperty(), measurementVariable.getProperty());
+		Assert.assertEquals(constant.getScale(), measurementVariable.getScale());
+		Assert.assertEquals(constant.getMethod(), measurementVariable.getMethod());
+		Assert.assertEquals(constant.getRole(), measurementVariable.getRole().name());
+		Assert.assertEquals(constant.getDatatype(), measurementVariable.getDataType());
+		Assert.assertEquals(PhenotypicType.STUDY.getLabelList().get(0), measurementVariable.getLabel());
+		Assert.assertEquals(VariableType.STUDY_CONDITION, measurementVariable.getVariableType());
+		Assert.assertFalse(measurementVariable.isFactor());
+
 	}
 
 }

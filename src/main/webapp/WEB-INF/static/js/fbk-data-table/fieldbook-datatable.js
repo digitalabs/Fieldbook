@@ -238,7 +238,6 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					data: $(this).html(),
 					width: '100px',
 					render: function(data, type, row) {
-						console.log(row);
 						// Do not render as link if male parent is unknown
 						if (row.MGID[0] === 0) {
 							return row['MALE PARENT'];

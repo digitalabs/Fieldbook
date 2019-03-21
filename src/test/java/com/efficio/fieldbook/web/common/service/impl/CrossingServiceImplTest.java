@@ -2,6 +2,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
@@ -855,19 +856,19 @@ public class CrossingServiceImplTest {
 	public void testGenerateSeedSource() {
 		final String newSeedSource = "newSeedSource";
 		Mockito.doReturn(newSeedSource).when(this.seedSourceGenertor)
-			.generateSeedSourceForCross(Matchers.any(Workbook.class), ArgumentMatchers.<String>anyList(), ArgumentMatchers.<String>isNull(),
-				ArgumentMatchers.<String>isNull(),
-				ArgumentMatchers.<String>isNull(), ArgumentMatchers.<Workbook>isNull());
+			.generateSeedSourceForCross(Matchers.any(Workbook.class), ArgumentMatchers.<String>anyList(), ArgumentMatchers.anyString(),
+				Mockito.<String>isNull(),
+				Mockito.<String>isNull(), Mockito.<Workbook>isNull());
 
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
 		// Case 1 - No seed source present. Generate new.
-		final ImportedCrosses importedCross1 = new ImportedCrosses();
+		final ImportedCrosses importedCross1 = this.createCross();
 		importedCross1.setSource(null);
 		this.crossingService.populateSeedSource(importedCross1, workbook, new HashMap<String, Workbook>());
 		assertEquals(newSeedSource, importedCross1.getSource());
 
 		// Case 2 - Seed source is present. Keep.
-		final ImportedCrosses importedCross2 = new ImportedCrosses();
+		final ImportedCrosses importedCross2 = this.createCross();
 		final String existingSeedSource = "existingSeedSource";
 		importedCross2.setSource(existingSeedSource);
 		this.crossingService.populateSeedSource(importedCross2, workbook, new HashMap<String, Workbook>());
@@ -875,17 +876,34 @@ public class CrossingServiceImplTest {
 
 		// Case 3 - Seed source is presend but is PENDING indicator. Generate
 		// new.
-		final ImportedCrosses importedCross3 = new ImportedCrosses();
+		final ImportedCrosses importedCross3 = this.createCross();
 		importedCross3.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
 		this.crossingService.populateSeedSource(importedCross3, workbook, new HashMap<String, Workbook>());
 		assertEquals(newSeedSource, importedCross3.getSource());
 
 		// Case 4 - Seed source is present but empty string. Generate new.
-		final ImportedCrosses importedCross4 = new ImportedCrosses();
+		final ImportedCrosses importedCross4 = this.createCross();
 		importedCross4.setSource("");
 		this.crossingService.populateSeedSource(importedCross4, workbook, new HashMap<String, Workbook>());
 		assertEquals(newSeedSource, importedCross4.getSource());
 
+	}
+
+	@Test
+	public void testGenerateSeedSource_GeneratedSourceIsOverMaximumLength() {
+
+		final String newSeedSource = RandomStringUtils.randomAlphabetic(300);
+		Mockito.doReturn(newSeedSource).when(this.seedSourceGenertor)
+			.generateSeedSourceForCross(Matchers.any(Workbook.class), ArgumentMatchers.<String>anyList(), ArgumentMatchers.anyString(),
+				Mockito.<String>isNull(),
+				Mockito.<String>isNull(), Mockito.<Workbook>isNull());
+
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		// Case 1 - No seed source present. Generate new.
+		final ImportedCrosses importedCross1 = this.createCross();
+		importedCross1.setSource(null);
+		this.crossingService.populateSeedSource(importedCross1, workbook, new HashMap<String, Workbook>());
+		assertEquals(CrossingServiceImpl.MAX_SEED_SOURCE_SIZE, importedCross1.getSource().length());
 	}
 
 	@Test
@@ -1094,8 +1112,10 @@ public class CrossingServiceImplTest {
 		final ImportedCrosses cross = new ImportedCrosses();
 		final ImportedGermplasmParent femaleParent =
 			new ImportedGermplasmParent(CrossingServiceImplTest.TEST_FEMALE_GID_1, "FEMALE-12345", "");
+		femaleParent.setPlotNo(1);
 		cross.setFemaleParent(femaleParent);
 		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(CrossingServiceImplTest.TEST_MALE_GID_1, "MALE-54321", "");
+		maleParent.setPlotNo(2);
 		cross.setMaleParents(Lists.newArrayList(maleParent));
 		cross.setDesig("Cros12345");
 		cross.setBreedingMethodId(123);

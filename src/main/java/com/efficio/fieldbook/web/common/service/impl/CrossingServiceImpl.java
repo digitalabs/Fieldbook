@@ -70,6 +70,7 @@ public class CrossingServiceImpl implements CrossingService {
 	private static final Integer PEDIGREE_NAME_TYPE = 18;
 	private static final Integer PREFERRED_NAME = 1;
 	public static final int MAX_CROSS_NAME_SIZE = 240;
+	public static final int MAX_SEED_SOURCE_SIZE = 255;
 	public static final String TRUNCATED = "(truncated)";
 
 	@Resource
@@ -176,7 +177,13 @@ public class CrossingServiceImpl implements CrossingService {
 			final String generatedSource = this.seedSourceGenerator
 					.generateSeedSourceForCross(workbook, importedCross.getMalePlotNumbersAsStringList(), importedCross.getFemalePlotNo().toString(),
 							maleStudyName, importedCross.getFemaleStudyName(), maleStudyWorkbook);
-			importedCross.setSource(generatedSource);
+
+			if (generatedSource.length() > CrossingServiceImpl.MAX_SEED_SOURCE_SIZE) {
+				importedCross.setSource(generatedSource.substring(0, CrossingServiceImpl.MAX_SEED_SOURCE_SIZE));
+			} else {
+				importedCross.setSource(generatedSource);
+			}
+
 		}
 	}
 

@@ -30,8 +30,10 @@ public class CrossesListUtilTest {
 	public static final String TEST_ENTRY_CODE_VALUE = "Test Entry code";
 	public static final String TEST_FEMALE_PARENT_VALUE = "Test female parent";
 	public static final Integer TEST_FGID_VALUE = 893;
-	public static final String TEST_MALE_PARENT_VALUE = "Test male parent";
-	public static final Integer TEST_MGID_VALUE = 493;
+	public static final String TEST_MALE_PARENT1_VALUE = "Test male parent " + RandomStringUtils.randomNumeric(3);
+	public static final Integer TEST_MGID1_VALUE = 493;
+	public static final String TEST_MALE_PARENT2_VALUE = "Test male parent " + RandomStringUtils.randomNumeric(3);;
+	public static final Integer TEST_MGID2_VALUE = 495;
 	public static final String TEST_SEED_SOURCE_VALUE = "Test seed source";
 	public static final String UNKNOWN_PEDIGREE = "-";
 
@@ -163,7 +165,7 @@ public class CrossesListUtilTest {
 		germplasmListData.setEntryId(CrossesListUtilTest.TEST_ENTRY_ID_VALUE);
 		germplasmListData.setEntryCode(CrossesListUtilTest.TEST_ENTRY_CODE_VALUE);
 		germplasmListData.setFemaleParent(new GermplasmParent(CrossesListUtilTest.TEST_FGID_VALUE, CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE, CrossesListUtilTest.UNKNOWN_PEDIGREE));
-		germplasmListData.addMaleParent(new GermplasmParent(CrossesListUtilTest.TEST_MGID_VALUE, CrossesListUtilTest.TEST_MALE_PARENT_VALUE, CrossesListUtilTest.UNKNOWN_PEDIGREE));
+		germplasmListData.addMaleParent(new GermplasmParent(CrossesListUtilTest.TEST_MGID1_VALUE, CrossesListUtilTest.TEST_MALE_PARENT1_VALUE, CrossesListUtilTest.UNKNOWN_PEDIGREE));
 		germplasmListData.setSeedSource(CrossesListUtilTest.TEST_SEED_SOURCE_VALUE);
 
 		final ImportedCrosses testImportedCrosses = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(germplasmListData, RandomStringUtils.random(20));
@@ -171,10 +173,10 @@ public class CrossesListUtilTest {
 		Assert.assertEquals(CrossesListUtilTest.TEST_ENTRY_CODE_VALUE, testImportedCrosses.getEntryCode());
 		Assert.assertEquals(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE, testImportedCrosses.getFemaleDesignation());
 		Assert.assertEquals(String.valueOf(CrossesListUtilTest.TEST_FGID_VALUE), testImportedCrosses.getFemaleGid());
-		Assert.assertEquals(CrossesListUtilTest.TEST_MALE_PARENT_VALUE, testImportedCrosses.getMaleDesignationsAsString());
-		Assert.assertEquals(Arrays.asList(CrossesListUtilTest.TEST_MGID_VALUE), testImportedCrosses.getMaleGids());
+		Assert.assertEquals(CrossesListUtilTest.TEST_MALE_PARENT1_VALUE, testImportedCrosses.getMaleDesignationsAsString());
+		Assert.assertEquals(Arrays.asList(CrossesListUtilTest.TEST_MGID1_VALUE), testImportedCrosses.getMaleGids());
 		Assert.assertEquals(CrossesListUtilTest.TEST_SEED_SOURCE_VALUE, testImportedCrosses.getSource());
-		Assert.assertEquals(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE + "/" + CrossesListUtilTest.TEST_MALE_PARENT_VALUE,
+		Assert.assertEquals(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE + "/" + CrossesListUtilTest.TEST_MALE_PARENT1_VALUE,
 				testImportedCrosses.getCross());
 		Assert.assertEquals(CrossesListUtilTest.UNKNOWN_PEDIGREE, testImportedCrosses.getFemalePedigree());
 		Assert.assertEquals(Arrays.asList(CrossesListUtilTest.UNKNOWN_PEDIGREE), testImportedCrosses.getMalePedigree());
@@ -187,22 +189,33 @@ public class CrossesListUtilTest {
 		germplasmListData.setEntryId(CrossesListUtilTest.TEST_ENTRY_ID_VALUE);
 		germplasmListData.setEntryCode(CrossesListUtilTest.TEST_ENTRY_CODE_VALUE);
 		germplasmListData.setFemaleParent(new GermplasmParent(CrossesListUtilTest.TEST_FGID_VALUE, CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE, CrossesListUtilTest.UNKNOWN_PEDIGREE));
-		germplasmListData.addMaleParent(new GermplasmParent(CrossesListUtilTest.TEST_MGID_VALUE, CrossesListUtilTest.TEST_MALE_PARENT_VALUE, CrossesListUtilTest.UNKNOWN_PEDIGREE));
+		final String malePedigree1 = RandomStringUtils.random(25);
+		germplasmListData.addMaleParent(new GermplasmParent(CrossesListUtilTest.TEST_MGID1_VALUE, CrossesListUtilTest.TEST_MALE_PARENT1_VALUE, malePedigree1));
+		final String malePedigree2 = RandomStringUtils.random(25);
+		germplasmListData.addMaleParent(new GermplasmParent(CrossesListUtilTest.TEST_MGID2_VALUE, CrossesListUtilTest.TEST_MALE_PARENT2_VALUE, malePedigree2));
 		germplasmListData.setSeedSource(CrossesListUtilTest.TEST_SEED_SOURCE_VALUE);
 
-		final ImportedCrosses testImportedCrosses = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(germplasmListData, RandomStringUtils.random(20));
+		final String studyName = RandomStringUtils.random(20);
+		final ImportedCrosses testImportedCrosses = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(germplasmListData, studyName);
 		Assert.assertEquals(Integer.valueOf(CrossesListUtilTest.TEST_ENTRY_ID_VALUE), testImportedCrosses.getEntryId());
 		Assert.assertEquals(CrossesListUtilTest.TEST_ENTRY_CODE_VALUE, testImportedCrosses.getEntryCode());
 		Assert.assertEquals(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE, testImportedCrosses.getFemaleDesignation());
 		Assert.assertEquals(String.valueOf(CrossesListUtilTest.TEST_FGID_VALUE), testImportedCrosses.getFemaleGid());
-		Assert.assertEquals(CrossesListUtilTest.TEST_MALE_PARENT_VALUE, testImportedCrosses.getMaleDesignationsAsString());
-		Assert.assertEquals(Arrays.asList(CrossesListUtilTest.TEST_MGID_VALUE), testImportedCrosses.getMaleGids());
+		final String concatenatedMaleDesignations = CrossesListUtil.MULTIPARENT_BEGIN_CHAR + CrossesListUtilTest.TEST_MALE_PARENT1_VALUE + ","
+				+ CrossesListUtilTest.TEST_MALE_PARENT2_VALUE + CrossesListUtil.MULTIPARENT_END_CHAR;
+		Assert.assertEquals(
+				concatenatedMaleDesignations,
+				testImportedCrosses.getMaleDesignationsAsString());
+		Assert.assertEquals(Arrays.asList(CrossesListUtilTest.TEST_MGID1_VALUE, CrossesListUtilTest.TEST_MGID2_VALUE), testImportedCrosses.getMaleGids());
 		Assert.assertEquals(CrossesListUtilTest.TEST_SEED_SOURCE_VALUE, testImportedCrosses.getSource());
-		Assert.assertEquals(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE + "/" + CrossesListUtilTest.TEST_MALE_PARENT_VALUE,
+		Assert.assertEquals(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE + "/" + concatenatedMaleDesignations,
 				testImportedCrosses.getCross());
 		Assert.assertEquals(CrossesListUtilTest.UNKNOWN_PEDIGREE, testImportedCrosses.getFemalePedigree());
-		Assert.assertEquals(Arrays.asList(CrossesListUtilTest.UNKNOWN_PEDIGREE), testImportedCrosses.getMalePedigree());
-
+		Assert.assertEquals(Arrays.asList(malePedigree1, malePedigree2), testImportedCrosses.getMalePedigree());
+		Assert.assertEquals(studyName, testImportedCrosses.getFemaleParent().getStudyName());
+		for (final ImportedGermplasmParent parent : testImportedCrosses.getMaleParents()) {
+			Assert.assertEquals(studyName, parent.getStudyName());
+		}
 	}
 
 }

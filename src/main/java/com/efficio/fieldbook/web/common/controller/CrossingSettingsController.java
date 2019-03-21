@@ -577,7 +577,7 @@ public class CrossingSettingsController extends SettingsController {
 		this.crossesListUtil = crossesListUtil;
 	}
 
-	private void setParentsInformation(final List<ImportedCrosses> importedCrossesList) {
+	void setParentsInformation(final List<ImportedCrosses> importedCrossesList) {
 		final List<Integer> maleGidList = new ArrayList<>();
 		for (final ImportedCrosses cross : importedCrossesList) {
 			maleGidList.addAll(cross.getMaleGids());

@@ -2,10 +2,12 @@ package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -64,7 +66,6 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.controller.GermplasmTreeController.GermplasmListResult;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
-import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImplTest;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
 import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
@@ -839,6 +840,40 @@ public class GermplasmTreeControllerTest {
 		Mockito.verify(this.fieldbookMiddlewareService).saveGermplasmList(this.listDataItemsCaptor.capture(), ArgumentMatchers.eq(germplasmList), ArgumentMatchers.eq(false));
 		Assert.assertEquals((2*numOfCrosses) - numCrossWithUnknownParent, this.listDataItemsCaptor.getValue().size());
 	}
+	
+	@Test
+	public void testSaveCrossesParentsAsListWithMultipleMaleParents() {
+		final SaveListForm form = new SaveListForm();
+		final Random random = new Random();
+		final int sourceListId = random.nextInt();
+		form.setSourceListId(sourceListId);
+		
+		final int numOfCrosses = 5;
+		final int numOfCrossWithMultipleParents = 3;
+		final List<ListDataProject> list = this.setupMocksWithMultipleMaleParents(sourceListId, numOfCrosses, numOfCrossWithMultipleParents);
+		final List<Integer> femaleGids = new ArrayList<>();
+		final List<Integer> maleGids = new ArrayList<>();
+		final Set<Integer> parentGids = new HashSet<>();
+		for (final ListDataProject data : list) {
+			femaleGids.add(data.getFemaleGid());
+			for (final GermplasmParent parent : data.getMaleParents()) {
+				maleGids.add(parent.getGid());
+			}
+		}
+		parentGids.addAll(femaleGids);
+		parentGids.addAll(maleGids);
+		final List<Pair<Germplasm, GermplasmListData>> items = new ArrayList<>();
+		final boolean isTrimed = random.nextBoolean();
+		final GermplasmList germplasmList = new GermplasmList(random.nextInt());
+		
+		final GermplasmListResult result = this.controller.saveCrossesParentsAsList(form, items, isTrimed, germplasmList);
+		Assert.assertEquals(SAVED_GERMPLASM_ID, result.getGermplasmListId());
+		Assert.assertEquals(isTrimed, result.getIsTrimed());
+		Mockito.verify(this.germplasmDataManager).getSortedGermplasmWithPrefName(this.idListCaptor.capture());
+		Assert.assertEquals(parentGids, new HashSet<>(this.idListCaptor.getValue()));
+		Mockito.verify(this.fieldbookMiddlewareService).saveGermplasmList(this.listDataItemsCaptor.capture(), ArgumentMatchers.eq(germplasmList), ArgumentMatchers.eq(false));
+		Assert.assertEquals(2*numOfCrosses + numOfCrossWithMultipleParents, this.listDataItemsCaptor.getValue().size());
+	}
 
 	private void setupMocksForSavingCrossParents(final int sourceListId, final int numOfCrosses, final int numCrossWithUnknownParent) {
 		final Random random = new Random();
@@ -876,7 +911,51 @@ public class GermplasmTreeControllerTest {
 		Mockito.doReturn(snapshotListData).when(this.germplasmListManager).retrieveSnapshotListDataWithParents(sourceListId);
 		// Check that one of the male parent is unknown, just to verify that it's not added later on
 		Assert.assertTrue(parentGids.contains(0));
-		Mockito.doReturn(germplasmFromDB).when(this.germplasmDataManager).getSortedGermplasmWithPrefName(ArgumentMatchers.anyListOf(Integer.class));
+		Mockito.doReturn(germplasmFromDB).when(this.germplasmDataManager).getSortedGermplasmWithPrefName(ArgumentMatchers.<Integer>anyList());
+	}
+	
+	private List<ListDataProject> setupMocksWithMultipleMaleParents(final int sourceListId, final int numOfCrosses, final int numOfCrossWithMultipleParents) {
+		final Random random = new Random();
+		final List<ListDataProject> snapshotListData = new ArrayList<>();
+		final List<Germplasm> germplasmFromDB = new ArrayList<>();
+		
+		for (int i = 1; i<=numOfCrosses; i++) {
+			final ListDataProject listData = new ListDataProject();
+			final Integer femaleGid = random.nextInt();
+			
+			final int maleGid = random.nextInt();
+			snapshotListData.add(listData);
+			
+			final Germplasm femaleGermplasm = new Germplasm();
+			femaleGermplasm.setGid(femaleGid);
+			final Name preferredName = new Name();
+			preferredName.setNval(RandomStringUtils.randomAlphabetic(20));
+			femaleGermplasm.setPreferredName(preferredName);
+			germplasmFromDB.add(femaleGermplasm);
+			listData.setFemaleParent(new GermplasmParent(femaleGid, preferredName.getNval(), ""));
+			
+			final Germplasm maleGermplasm = new Germplasm();
+			maleGermplasm.setGid(maleGid);
+			final Name name = new Name();
+			name.setNval(RandomStringUtils.randomAlphabetic(20));
+			maleGermplasm.setPreferredName(name);
+			germplasmFromDB.add(maleGermplasm);
+			listData.addMaleParent(new GermplasmParent(maleGid, name.getNval(), ""));
+			
+			if (i<= numOfCrossWithMultipleParents) {
+				final int maleGid2 = random.nextInt();
+				final Germplasm maleGermplasm2 = new Germplasm();
+				maleGermplasm2.setGid(maleGid2);
+				final Name name2 = new Name();
+				name2.setNval(RandomStringUtils.randomAlphabetic(20));
+				maleGermplasm2.setPreferredName(name2);
+				germplasmFromDB.add(maleGermplasm2);
+				listData.addMaleParent(new GermplasmParent(maleGid2, name2.getNval(), ""));
+			}
+		}
+		Mockito.doReturn(snapshotListData).when(this.germplasmListManager).retrieveSnapshotListDataWithParents(sourceListId);
+		Mockito.doReturn(germplasmFromDB).when(this.germplasmDataManager).getSortedGermplasmWithPrefName(ArgumentMatchers.<Integer>anyList());
+		return snapshotListData;
 	}
 
 	public SaveListForm createSaveListForm() {

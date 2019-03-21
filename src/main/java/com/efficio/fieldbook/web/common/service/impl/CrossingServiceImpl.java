@@ -1,8 +1,14 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.exception.InvalidInputException;
-import com.efficio.fieldbook.web.common.service.CrossingService;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
@@ -48,13 +54,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.exception.InvalidInputException;
+import com.efficio.fieldbook.web.common.service.CrossingService;
 
 public class CrossingServiceImpl implements CrossingService {
 
@@ -64,11 +66,12 @@ public class CrossingServiceImpl implements CrossingService {
 	public static final Integer GERMPLASM_MGID = 0;
 	public static final Integer GERMPLASM_REFID = 0;
 	public static final Integer NAME_REFID = 0;
-	public static final String[] USER_DEF_FIELD_CROSS_NAME = {"CROSS NAME", "CROSSING NAME"};
+	protected static final String[] USER_DEF_FIELD_CROSS_NAME = {"CROSS NAME", "CROSSING NAME"};
+	protected static final String DEFAULT_SEPARATOR = "/";
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingServiceImpl.class);
-	private static final Integer PEDIGREE_NAME_TYPE = 18;
-	private static final Integer PREFERRED_NAME = 1;
+	protected static final Integer PEDIGREE_NAME_TYPE = 18;
+	protected static final Integer PREFERRED_NAME = 1;
 	public static final int MAX_CROSS_NAME_SIZE = 240;
 	public static final int MAX_SEED_SOURCE_SIZE = 255;
 	public static final String TRUNCATED = "(truncated)";
@@ -315,7 +318,7 @@ public class CrossingServiceImpl implements CrossingService {
 		for (final ImportedCrosses entry : importedCrossesList.getImportedCrosses()) {
 
 			final Integer gid = germplasmIdIterator.next();
-			final String parentageDesignation = entry.getFemaleDesignation() + "/" + entry.getMaleDesignationsAsString();
+			final String parentageDesignation = entry.getFemaleDesignation() + DEFAULT_SEPARATOR + entry.getMaleDesignationsAsString();
 
 			Integer locationId = 0;
 

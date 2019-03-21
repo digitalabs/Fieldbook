@@ -2,10 +2,10 @@ package com.efficio.fieldbook.web.common.controller;
 
 import static org.mockito.Mockito.times;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +51,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
@@ -86,22 +85,27 @@ public class CrossingSettingsControllerTest {
 	public static final String DUMMY_ABS_PATH = "dummy/abs/path";
 	public static final String TEST_ENTRY_CODE = "testEntryCode";
 	public static final String TEST_SEED_SOURCE = "testSeedSource";
-	public static final String TEST_MALE_PARENT = "testMaleParent";
+	public static final String TEST_MALE_PARENT1 = "testMaleParent1";
+	public static final String TEST_MALE_PARENT2 = "testMaleParent2";
 	public static final int ENTRY_ID = 56;
 	public static final String TEST_FEMALE_PARENT = "testFemaleParent";
-	public static final Integer MGID = 836;
+	public static final Integer MGID1 = 836;
+	public static final Integer MGID2 = 987;
 	public static final Integer FGID = 535;
 	private static final String TEST_DUPLICATE = "SID-1";
-	public static final Integer FEMALE_PLOT = 1;
+	public static final Integer FEMALE_PLOT = 11;
 	public static final String BREEDING_METHOD = "Test Method";
-	public static final Integer MALE_PLOT = 2;
+	public static final Integer MALE_PLOT1 = 21;
+	public static final Integer MALE_PLOT2 = 22;
 	public static final String MALE_STUDY_NAME = "maleStudy";
 	public static final Integer CROSSING_DATE = 20161212;
 	public static final String NOTES = "Test notes";
 	public static final String FEMALE_PEDIGREE = RandomStringUtils.random(20);
-	public static final String MALE_PEDIGREE = RandomStringUtils.random(20);
+	public static final String MALE_PEDIGREE1 = RandomStringUtils.random(20);
+	public static final String MALE_PEDIGREE2 = RandomStringUtils.random(20);
 	public static final String FEMALE_CROSS = RandomStringUtils.random(20);
-	public static final String MALE_CROSS = RandomStringUtils.random(20);
+	public static final String MALE_CROSS1 = RandomStringUtils.random(20);
+	public static final String MALE_CROSS2 = RandomStringUtils.random(20);
 
 	private ImportedCrossesTestDataInitializer importedCrossesTestDataInitializer;
 	@Mock
@@ -455,7 +459,7 @@ public class CrossingSettingsControllerTest {
 		final GermplasmListData germplasmListData = new GermplasmListData(771, germplasmList, 45, CrossingSettingsControllerTest.ENTRY_ID,
 				CrossingSettingsControllerTest.TEST_ENTRY_CODE, CrossingSettingsControllerTest.TEST_SEED_SOURCE, "testDesignation",
 				"testGroupName", 0, 5);
-		germplasmListData.addMaleParent(new GermplasmParent(CrossingSettingsControllerTest.MGID, CrossingSettingsControllerTest.TEST_MALE_PARENT, CrossingSettingsControllerTest.MALE_PEDIGREE));
+		germplasmListData.addMaleParent(new GermplasmParent(CrossingSettingsControllerTest.MGID1, CrossingSettingsControllerTest.TEST_MALE_PARENT1, CrossingSettingsControllerTest.MALE_PEDIGREE1));
 		germplasmListData.setFemaleParent(new GermplasmParent(CrossingSettingsControllerTest.FGID, CrossingSettingsControllerTest.TEST_FEMALE_PARENT, CrossingSettingsControllerTest.FEMALE_PEDIGREE));
 
 		germplasmListDatas.add(germplasmListData);
@@ -475,14 +479,14 @@ public class CrossingSettingsControllerTest {
 		Assert.assertEquals("The master list should contain 1 record: ", 1, testMasterList.size());
 		Assert.assertEquals(CrossingSettingsControllerTest.ENTRY_ID, data.get(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.FGID, data.get(tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
-		Assert.assertEquals(CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT, data.get(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
+		Assert.assertEquals(CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT1, data.get(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.TEST_SEED_SOURCE, data.get(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
-		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.MGID), data.get(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.MGID1), data.get(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.TEST_FEMALE_PARENT, data.get(tableHeaderList.get(CrossesListUtil.FEMALE_CROSS)));
-		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.TEST_MALE_PARENT), data.get(tableHeaderList.get(CrossesListUtil.MALE_CROSS)));
+		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.TEST_MALE_PARENT1), data.get(tableHeaderList.get(CrossesListUtil.MALE_CROSS)));
 		Assert.assertEquals("", data.get(tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.FEMALE_PEDIGREE, data.get(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE)));
-		Assert.assertEquals(CrossingSettingsControllerTest.MALE_PEDIGREE, data.get(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE)));
+		Assert.assertEquals(CrossingSettingsControllerTest.MALE_PEDIGREE1, data.get(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE)));
 	}
 
 	@Test
@@ -510,39 +514,81 @@ public class CrossingSettingsControllerTest {
 		Assert.assertEquals("The master list should contain 1 record: ", 1, testMasterList.size());
 		Assert.assertEquals(CrossingSettingsControllerTest.ENTRY_ID, data.get(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.FGID.toString(), data.get(tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
-		Assert.assertEquals(CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT, data.get(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
+		Assert.assertEquals(CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT1, data.get(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.TEST_SEED_SOURCE, data.get(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
-		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.MGID), data.get(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.MGID1), data.get(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.FEMALE_CROSS, data.get(tableHeaderList.get(CrossesListUtil.FEMALE_CROSS)));
-		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.MALE_CROSS), data.get(tableHeaderList.get(CrossesListUtil.MALE_CROSS)));
+		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.MALE_CROSS1), data.get(tableHeaderList.get(CrossesListUtil.MALE_CROSS)));
 		Assert.assertEquals(CrossingSettingsControllerTest.BREEDING_METHOD, data.get(tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.TEST_DUPLICATE, data.get(tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.FEMALE_PEDIGREE, data.get(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE)));
-		Assert.assertEquals(CrossingSettingsControllerTest.MALE_PEDIGREE, data.get(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE)));
+		Assert.assertEquals(CrossingSettingsControllerTest.MALE_PEDIGREE1, data.get(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE)));
+	}
+	
+	@Test
+	public void testSetParentsInformation() {
+		final List<ImportedCrosses> crosses = this.createImportedCrossesList(true).getImportedCrosses();
+		final Map<Integer, String[]> parentsMap = new HashMap<>();
+		final String newFemalePedigree = RandomStringUtils.randomAlphabetic(20);
+		final String newFemaleCross = RandomStringUtils.randomAlphabetic(20);
+		final String newMalePedigree1 = RandomStringUtils.randomAlphabetic(20);
+		final String newMaleCross1 = RandomStringUtils.randomAlphabetic(20);
+		final String newMalePedigree2 = RandomStringUtils.randomAlphabetic(20);
+		final String newMaleCross2 = RandomStringUtils.randomAlphabetic(20);
+		parentsMap.put(CrossingSettingsControllerTest.FGID, new String[] {newFemalePedigree, newFemaleCross});
+		parentsMap.put(CrossingSettingsControllerTest.MGID1, new String[] {newMalePedigree1, newMaleCross1});
+		parentsMap.put(CrossingSettingsControllerTest.MGID2, new String[] {newMalePedigree2, newMaleCross2});
+		Mockito.when(this.germplasmDataManager.getParentsInfoByGIDList(Arrays.asList(CrossingSettingsControllerTest.MGID1,
+				CrossingSettingsControllerTest.MGID2, CrossingSettingsControllerTest.FGID))).thenReturn(parentsMap);
+		
+		this.crossingSettingsController.setParentsInformation(crosses);
+		final ImportedCrosses cross = crosses.get(0);
+		Assert.assertEquals(newFemalePedigree, cross.getFemalePedigree());
+		Assert.assertEquals(newFemaleCross, cross.getFemaleCross());
+		Assert.assertEquals(newMalePedigree1, cross.getMaleParents().get(0).getPedigree());
+		Assert.assertEquals(newMaleCross1,cross.getMaleParents().get(0).getCross());
+		Assert.assertEquals(newMalePedigree2, cross.getMaleParents().get(1).getPedigree());
+		Assert.assertEquals(newMaleCross2,cross.getMaleParents().get(1).getCross());
+		
 	}
 
 	private void fillUpUserSelectionWithImportedCrossTestData() {
-		Mockito.when(this.studySelection.getImportedCrossesList()).thenReturn(new ImportedCrossesList());
-		final List<ImportedCrosses> importedCrossesList = this.studySelection.getImportedCrossesList().getImportedCrosses();
+		Mockito.when(this.studySelection.getImportedCrossesList()).thenReturn(createImportedCrossesList(false));
+	}
+
+	private ImportedCrossesList createImportedCrossesList(boolean hasMultipleParents) {
+		final ImportedCrossesList list = new ImportedCrossesList();
+		final List<ImportedCrosses> importedCrossesList = new ArrayList<>();
 		final ImportedCrosses importedCrosses = new ImportedCrosses();
 		importedCrosses.setEntryId(CrossingSettingsControllerTest.ENTRY_ID);
-		importedCrosses.setCross(CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT);
+		importedCrosses.setCross(CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT1);
 		importedCrosses.setEntryCode(CrossingSettingsControllerTest.TEST_ENTRY_CODE);
 		
 		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(CrossingSettingsControllerTest.FGID, CrossingSettingsControllerTest.TEST_FEMALE_PARENT, CrossingSettingsControllerTest.FEMALE_PLOT, ""); 
 		femaleParent.setPedigree(CrossingSettingsControllerTest.FEMALE_PEDIGREE);
 		importedCrosses.setFemaleParent(femaleParent);
 		femaleParent.setCross(CrossingSettingsControllerTest.FEMALE_CROSS);
-		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(CrossingSettingsControllerTest.MGID, CrossingSettingsControllerTest.TEST_MALE_PARENT, CrossingSettingsControllerTest.MALE_PLOT, CrossingSettingsControllerTest.MALE_STUDY_NAME);
-		maleParent.setPedigree(CrossingSettingsControllerTest.MALE_PEDIGREE);
-		maleParent.setCross(CrossingSettingsControllerTest.MALE_CROSS);
-		importedCrosses.setMaleParents(Lists.newArrayList(maleParent));
+		
+		final ImportedGermplasmParent maleParent1 = new ImportedGermplasmParent(CrossingSettingsControllerTest.MGID1, CrossingSettingsControllerTest.TEST_MALE_PARENT1, CrossingSettingsControllerTest.MALE_PLOT1, CrossingSettingsControllerTest.MALE_STUDY_NAME);
+		maleParent1.setPedigree(CrossingSettingsControllerTest.MALE_PEDIGREE1);
+		maleParent1.setCross(CrossingSettingsControllerTest.MALE_CROSS1);
+		final ImportedGermplasmParent maleParent2 = new ImportedGermplasmParent(CrossingSettingsControllerTest.MGID2, CrossingSettingsControllerTest.TEST_MALE_PARENT2, CrossingSettingsControllerTest.MALE_PLOT2, CrossingSettingsControllerTest.MALE_STUDY_NAME);
+		maleParent2.setPedigree(CrossingSettingsControllerTest.MALE_PEDIGREE2);
+		maleParent2.setCross(CrossingSettingsControllerTest.MALE_CROSS2);
+		if (!hasMultipleParents) {
+			importedCrosses.setMaleParents(Lists.newArrayList(maleParent1));
+		} else {
+			importedCrosses.setMaleParents(Lists.newArrayList(maleParent1, maleParent2));
+		}
+		
 		importedCrosses.setSource(CrossingSettingsControllerTest.TEST_SEED_SOURCE);
 		importedCrosses.setDuplicate(CrossingSettingsControllerTest.TEST_DUPLICATE);
 		importedCrosses.setRawBreedingMethod(CrossingSettingsControllerTest.BREEDING_METHOD);
 		importedCrosses.setCrossingDate(CrossingSettingsControllerTest.CROSSING_DATE);
 		importedCrosses.setNotes(CrossingSettingsControllerTest.NOTES);
 		importedCrossesList.add(importedCrosses);
+		list.setImportedGermplasms(importedCrossesList);
+		return list;
 	}
 
 }

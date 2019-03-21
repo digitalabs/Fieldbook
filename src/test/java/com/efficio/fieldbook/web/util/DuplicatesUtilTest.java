@@ -25,7 +25,7 @@ public class DuplicatesUtilTest {
 	 */
 	@Test
 	public void testProcessDuplicates() {
-		Map<String, String> plotNoToGidTestData = this.createPlotNoToGidTestData();
+		Map<Integer, Integer> plotNoToGidTestData = this.createPlotNoToGidTestData();
 		ImportedCrossesList parseResults = this.createImportedCrossesListTestData(plotNoToGidTestData);
 
 		Debug.println("BEFORE: ");
@@ -72,12 +72,12 @@ public class DuplicatesUtilTest {
 	 * Create test data using Map which builds Plot Number and its Gid data
 	 * @return plotNoToGidTestData which contains plot number and its gid data
 	 */
-	private Map<String, String> createPlotNoToGidTestData() {
-		Map<String, String> plotNoToGidTestData = new HashMap<String, String>();
-		plotNoToGidTestData.put("1", "Cora");
-		plotNoToGidTestData.put("8", "MrCarson");
-		plotNoToGidTestData.put("11", "LadyMary");
-		plotNoToGidTestData.put("16", "MrCarson");
+	private Map<Integer, Integer> createPlotNoToGidTestData() {
+		Map<Integer, Integer> plotNoToGidTestData = new HashMap<Integer, Integer>();
+		plotNoToGidTestData.put(1, 123);
+		plotNoToGidTestData.put(8, 456);
+		plotNoToGidTestData.put(11, 789);
+		plotNoToGidTestData.put(16, 456);
 		return plotNoToGidTestData;
 	}
 
@@ -87,7 +87,7 @@ public class DuplicatesUtilTest {
 	 * @param plotNoToGidTestData used to get gid from plot number
 	 * @return importedCrossesList
 	 */
-	private ImportedCrossesList createImportedCrossesListTestData(Map<String, String> plotNoToGidTestData) {
+	private ImportedCrossesList createImportedCrossesListTestData(Map<Integer, Integer> plotNoToGidTestData) {
 		ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		for (int i = 1; i <= 7; i++) {
 			Integer femalePlotNo = i;
@@ -123,12 +123,12 @@ public class DuplicatesUtilTest {
 					break;
 
 			}
-			String femaleGid = plotNoToGidTestData.get(femalePlotNo);
-			String maleGid = plotNoToGidTestData.get(malePlotNo);
+			Integer femaleGid = plotNoToGidTestData.get(femalePlotNo);
+			Integer maleGid = plotNoToGidTestData.get(malePlotNo);
 			String femaleStudyName = "FNursery";
 			String maleStudyName = "MNursery";
-			String femaleDesig = femaleGid;
-			String maleDesig = maleGid;
+			String femaleDesig = femaleGid.toString();
+			String maleDesig =  maleGid.toString();
 			String source = femaleStudyName + ":" + i + " " + DuplicatesUtil.SEPARATOR + " " + maleStudyName + ":" + (i + 10);
 			importedCrossesList.addImportedCrosses(this.createImportedCrossesTestData(femaleDesig, maleDesig, femaleGid, maleGid, i,
 					source, femalePlotNo, malePlotNo));
@@ -161,14 +161,14 @@ public class DuplicatesUtilTest {
 	 * @param malePlotNo Male Plot Number
 	 * @return importedCrosses
 	 */
-	private ImportedCrosses createImportedCrossesTestData(String femaleDesig, String maleDesig, String femaleGid, String maleGid,
+	private ImportedCrosses createImportedCrossesTestData(String femaleDesig, String maleDesig, Integer femaleGid, Integer maleGid,
 			Integer entryId, String source, Integer femalePlotNo, Integer malePlotNo) {
 		ImportedCrosses importedCrosses = new ImportedCrosses();
 		
-		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(Integer.valueOf(femaleGid), femaleDesig, "");
+		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(femaleGid, femaleDesig, "");
 		femaleParent.setPlotNo(femalePlotNo);
 		importedCrosses.setFemaleParent(femaleParent);
-		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(Integer.valueOf(maleGid), maleDesig, "");
+		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(maleGid, maleDesig, "");
 		maleParent.setPlotNo(malePlotNo);
 		importedCrosses.setMaleParents(Lists.newArrayList(maleParent));
 		importedCrosses.setEntryId(entryId);

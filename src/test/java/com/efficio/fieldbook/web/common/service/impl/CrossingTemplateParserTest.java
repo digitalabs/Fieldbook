@@ -56,7 +56,7 @@ public class CrossingTemplateParserTest {
 		final ListDataProject result = this.templateParser.getListDataProject(STUDY_NAME, Arrays.asList(0), PROGRAM_UUID, true).get(0);
 		Assert.assertEquals(0, result.getGermplasmId().intValue());
 		Assert.assertEquals(Name.UNKNOWN, result.getDesignation());
-		Mockito.verify(this.fieldbookMiddlewareService).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, Arrays.asList(0), "1");
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, Arrays.asList(0), "1");
 	}
 
 	@Test
@@ -70,7 +70,7 @@ public class CrossingTemplateParserTest {
 		} catch (final FileParsingException e) {
 			Mockito.verify(this.fieldbookMiddlewareService)
 				.getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, Arrays.asList(0), "1");
-			Mockito.verify(this.messageSource).getMessage("no.list.data.for.plot", new Object[] {STUDY_NAME, "0"},
+			Mockito.verify(this.messageSource).getMessage("no.list.data.for.plot", new Object[] {STUDY_NAME, 0},
 				LocaleContextHolder.getLocale());
 
 		}
@@ -88,7 +88,7 @@ public class CrossingTemplateParserTest {
 		} catch (final FileParsingException e) {
 			Mockito.verify(this.fieldbookMiddlewareService)
 				.getListDataProjectByStudy(STUDY_ID, GermplasmListType.STUDY, Arrays.asList(plotNumber), "1");
-			Mockito.verify(this.messageSource).getMessage("no.list.data.for.plot", new Object[] {STUDY_NAME, String.valueOf(plotNumber)},
+			Mockito.verify(this.messageSource).getMessage("no.list.data.for.plot", new Object[] {STUDY_NAME, plotNumber},
 				LocaleContextHolder.getLocale());
 
 		}
@@ -308,5 +308,19 @@ public class CrossingTemplateParserTest {
 		}
 
 	}
+
+	@Test
+	public void testConvertCommaSeparatedStringToList_CommaSeparatedValuesAreNumericButWithValueLessThanZero() {
+
+		try {
+			this.templateParser.convertCommaSeparatedStringToList("-1, 1, 2", 1);
+			Assert.fail("Expected to throw an exception");
+		} catch (final FileParsingException e) {
+			Mockito.verify(this.messageSource).getMessage("error.import.crosses.observation.row.malePlot.must.be.greater.than.zero", null,
+				LocaleContextHolder.getLocale());
+		}
+
+	}
+
 
 }

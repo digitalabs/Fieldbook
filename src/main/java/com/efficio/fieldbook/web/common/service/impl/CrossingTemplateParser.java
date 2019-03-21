@@ -223,7 +223,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 				final Integer convertedValue = Integer.parseInt(value.trim());
 
-				if (values.length > 1 && convertedValue.intValue() == 0) {
+				if (values.length > 1 && convertedValue.intValue() <= 0) {
 					// Do not allow to import UNKNOWN germplasm if there are multiple male plot numbers are specified.
 					throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.observation.row.malePlot.must.be.greater.than.zero",
 						null, LocaleContextHolder.getLocale()));
@@ -332,23 +332,30 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 		// 2. Check for zeroes in plot numbers and treat them as UNKNOWN germplasm
 		for (final Integer plotNumber : genderedPlotNumbers) {
-			// Only allow male parents to be unknown (GID = 0)
-			if (plotNumber == 0 && isMaleParent) {
+			// Allow male parent to be unknown (GID = 0) if there is only one male parent
+			if (plotNumber == 0 && isMaleParent && genderedPlotNumbers.size() == 1) {
 				final ListDataProject maleListData = new ListDataProject();
 				maleListData.setDesignation(Name.UNKNOWN);
 				maleListData.setGermplasmId(plotNumber);
 				listDataProjects.add(maleListData);
+				return listDataProjects;
 			}
 		}
 
 		final String instanceNumber = "1";
-		// 3. Retrieve the list of ListDataProject from a study.
-		listDataProjects.addAll(this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId, GermplasmListType.STUDY, genderedPlotNumbers, instanceNumber));
 
-		// 4. If some of the specified plot numbers don't exist in a study, throw an error.
-		if (listDataProjects.size() != genderedPlotNumbers.size()) {
-			throw new FileParsingException(this.messageSource.getMessage("no.list.data.for.plot", new Object[] {studyName, StringUtils.join(genderedPlotNumbers, ",")},
-				LocaleContextHolder.getLocale()));
+		// 3. Retrieve the list of ListDataProject from a study.
+		for (final Integer plotNumber : genderedPlotNumbers) {
+
+			// 4. Retrieve the ListDataProject per plotNumber one by one. So that we can determine which of the plot numbers doesn't exist.
+			final List<ListDataProject> listDataProjectForPlotNumber = this.fieldbookMiddlewareService.getListDataProjectByStudy(studyId, GermplasmListType.STUDY, Arrays.asList(plotNumber), instanceNumber);
+			// If specified plot number doesn't exist in a study, throw an error
+			if (listDataProjectForPlotNumber.isEmpty()) {
+				throw new FileParsingException(this.messageSource.getMessage("no.list.data.for.plot", new Object[] {studyName, plotNumber},
+					LocaleContextHolder.getLocale()));
+			}
+			listDataProjects.addAll(listDataProjectForPlotNumber);
+
 		}
 
 		return listDataProjects;

@@ -12,23 +12,21 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.SaveListForm;
-import com.efficio.fieldbook.web.common.service.CrossingService;
-import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
-import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
-import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ListDataProjectUtil;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
-import com.efficio.pojos.treeview.TreeNode;
-import com.efficio.pojos.treeview.TreeTableNode;
-import com.google.common.collect.Lists;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
@@ -53,12 +51,13 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
-import org.generationcp.middleware.pojos.ListMetadata;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.pojos.ListMetadata;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,20 +73,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.SaveListForm;
+import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ListDataProjectUtil;
+import com.efficio.fieldbook.web.util.TreeViewUtil;
+import com.efficio.pojos.treeview.TreeNode;
+import com.efficio.pojos.treeview.TreeTableNode;
+import com.google.common.collect.Lists;
 
 /**
  * The Class GermplasmTreeController.
@@ -286,71 +288,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	}
 
-	// TODO Remove
-	@ResponseBody
-	@RequestMapping(value = "/updateCrossesList", method = RequestMethod.POST)
-	public Map<String, Object> updateCrossesList(final Model model, final HttpSession session) {
-		final Map<String, Object> results = new HashMap<>();
-
-		try {
-			final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
-			final String crossesListId = (String) session.getAttribute("createdCrossesListId");
-
-			if (crossesListId != null) {
-				boolean isTrimed = false;
-				final Integer germplasmListId = Integer.parseInt(crossesListId);
-				final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
-				isTrimed = this.updateGermplasmList(germplasmListId, listDataItems);
-				session.removeAttribute("createdCrossesListId");
-
-				final List<GermplasmListData> data = new ArrayList<>();
-				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
-				final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
-
-				final Integer listDataProjectListId =
-						this.saveListDataProjectList(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS, germplasmListId, listDataProject);
-				results.put(GermplasmTreeController.IS_SUCCESS, 1);
-				results.put("germplasmListId", germplasmListId);
-				results.put("listName", germplasmList.getName());
-				results.put("crossesListId", listDataProjectListId);
-				results.put("isTrimed", isTrimed ? 1 : 0);
-			} else {
-				results.put(GermplasmTreeController.IS_SUCCESS, 0);
-				results.put(GermplasmTreeController.MESSAGE,
-						this.messageSource.getMessage("crossing.no.crossing.list", null, LocaleContextHolder.getLocale()));
-			}
-		} catch (final RulesNotConfiguredException rnce) {
-			GermplasmTreeController.LOG.error(rnce.getMessage(), rnce);
-			results.put(GermplasmTreeController.IS_SUCCESS, 0);
-			results.put(GermplasmTreeController.MESSAGE, rnce.getMessage());
-		} catch (final RuleException re) {
-			GermplasmTreeController.LOG.error(re.getMessage(), re);
-			results.put(GermplasmTreeController.IS_SUCCESS, 0);
-			results.put(GermplasmTreeController.MESSAGE,
-					this.messageSource.getMessage("germplasm.naming.failed", null, LocaleContextHolder.getLocale()));
-		} catch (final Exception e) {
-			GermplasmTreeController.LOG.error(e.getMessage(), e);
-			results.put(GermplasmTreeController.IS_SUCCESS, 0);
-			results.put(GermplasmTreeController.MESSAGE, e.getMessage());
-		}
-
-		return results;
-	}
-
-	private boolean updateGermplasmList(final Integer germplasmListId, final List<Pair<Germplasm, GermplasmListData>> listDataItems)
-			throws RuleException {
-		boolean isTrimed = false;
-		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(germplasmListId);
-		final CrossSetting crossSetting = this.userSelection.getCrossSettings();
-		final ImportedCrossesList importedCrossesList = this.userSelection.getImportedCrossesList();
-
-		isTrimed = this.applyNamingSettingToCrosses(listDataItems, germplasmList, crossSetting, importedCrossesList);
-		this.fieldbookMiddlewareService.updateGermplasmList(listDataItems, germplasmList);
-
-		return isTrimed;
-	}
-
-	@SuppressWarnings("unchecked")
 	protected GermplasmListResult saveGermplasmList(final SaveListForm form, final List<Pair<Germplasm, GermplasmListData>> listDataItems)
 			throws RuleException {
 
@@ -390,6 +327,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	GermplasmListResult saveCrossesParentsAsList(final SaveListForm form, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
 			Boolean isTrimed, final GermplasmList germplasmList) {
 		final Integer listId = form.getSourceListId();
@@ -400,18 +338,22 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			@Override
 			public Object transform(final Object input) {
 				final ListDataProject germplasmListData = (ListDataProject) input;
-				return germplasmListData.getFgid();
+				return germplasmListData.getFemaleGid();
 			}
 		});
+		// Polycrosses have multiple male parents
+		final List<Integer> maleGids = new ArrayList<>();
+		for (final ListDataProject data : listData) {
+			maleGids.addAll(CollectionUtils.collect(data.getMaleParents(), new Transformer() {
 
-		final Collection<Integer> maleGids = CollectionUtils.collect(listData, new Transformer() {
-
-			@Override
-			public Object transform(final Object input) {
-				final ListDataProject germplasmListData = (ListDataProject) input;
-				return germplasmListData.getMgid();
-			}
-		});
+				@Override
+				public Object transform(final Object input) {
+					final GermplasmParent parent = (GermplasmParent) input;
+					return parent.getGid();
+				}
+			}));
+		}
+		
 		// Remove unknown male parents (GID = 0) from the parent list to be saved
 		maleGids.removeAll(Collections.singletonList(0));
 
@@ -539,7 +481,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	protected AdvancingSource createAdvancingSource(final ImportedCrosses cross) {
 		final AdvancingSource advancingSource = new AdvancingSource(cross);
-		// TODO add trail instance number
+		// TODO add trial instance number
 		final Workbook workbook = this.userSelection.getWorkbook();
 		advancingSource.setStudyId(workbook.getStudyDetails().getId());
 		advancingSource.setConditions(workbook.getConditions());
@@ -612,21 +554,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		}
 
 		return super.showAjaxPage(model, GermplasmTreeController.COMMON_SAVE_GERMPLASM_LIST);
-	}
-
-	// TODO only used in Test?
-	protected int saveCrossesList(final Integer germplasmListId, final List<ListDataProject> listDataProject, final Integer userId) {
-		int studyId = 0;
-
-		if (this.userSelection.getWorkbook() != null && this.userSelection.getWorkbook().getStudyDetails() != null
-				&& this.userSelection.getWorkbook().getStudyDetails().getId() != null) {
-			studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
-		}
-
-		final int crossesId = this.fieldbookMiddlewareService
-				.saveOrUpdateListDataProject(studyId, GermplasmListType.CROSSES, germplasmListId, listDataProject, userId);
-		this.userSelection.addImportedCrossesId(crossesId);
-		return crossesId;
 	}
 
 	GermplasmList createGermplasmList(final SaveListForm saveListForm, final Integer currentUserId) {

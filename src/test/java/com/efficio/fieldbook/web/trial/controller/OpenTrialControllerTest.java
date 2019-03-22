@@ -1129,7 +1129,6 @@ public class OpenTrialControllerTest {
 				.thenReturn(listOfGermplasmList);
 		final ListDataProject listDataProject = ListDataProjectTestDataInitializer.createListDataProject(germplasmList, 0, 0, 1,
 				"entryCode", "seedSource", "designation", "groupName", "duplicate", "notes", 20170125);
-		listDataProject.setMgid(12);
 		listDataProject.setGroupId(12);
 
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(Lists.newArrayList(listDataProject));

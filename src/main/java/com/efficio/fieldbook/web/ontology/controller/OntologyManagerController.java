@@ -979,7 +979,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 	 * Delete ontology.
 	 *
 	 * @param id the id
-	 * @param name the name
+	 * @param designation the name
 	 * @param ontology the ontology
 	 * @return the map
 	 */

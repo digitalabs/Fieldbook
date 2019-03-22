@@ -18,6 +18,7 @@ import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
@@ -53,7 +54,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -91,9 +91,6 @@ public class CrossingSettingsController extends SettingsController {
 
 	@Autowired
 	private CrossExpansionProperties crossExpansionProperties;
-
-	@Resource
-	private WorkbenchService workbenchService;
 
 	@Resource
 	private PresetService presetService;
@@ -480,13 +477,13 @@ public class CrossingSettingsController extends SettingsController {
 		final Map<Integer, ImportedCrosses> importedCrossesMap = new HashMap<>();
 
 		final Integer crossesListId = Integer.parseInt(createdCrossesListId);
-		final List<GermplasmListData> germplasmListDataList = this.germplasmListManager.retrieveListDataWithParents(crossesListId);
+		final List<GermplasmListData> germplasmListDataList = this.germplasmListManager.retrieveGermplasmListDataWithParents(crossesListId);
 
 		final String studyName = this.studySelection.getWorkbook().getStudyDetails().getStudyName();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 		for (final GermplasmListData listData : germplasmListDataList) {
 			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, listData));
-			final ImportedCrosses importedCross = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(listData);
+			final ImportedCrosses importedCross = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(listData, studyName);
 			if (importedCross.getGid() == null) {
 				responseMap.put(CrossingSettingsController.IS_SUCCESS, 0);
 				final String localisedErrorMessage = this.messageSource.getMessage("error.germplasm.record.already.exists", new String[] {},
@@ -495,10 +492,7 @@ public class CrossingSettingsController extends SettingsController {
 				responseMap.put(ERROR, new String[] {localisedErrorMessage});
 				return responseMap;
 			}
-			// When crossing using crossing manager (as opposed to crossing spreadsheet import),
-			// both female and male study is the current study.
-			importedCross.setMaleStudyName(studyName);
-			importedCross.setFemaleStudyName(studyName);
+			
 			importedCrosses.add(importedCross);
 			importedCrossesMap.put(importedCross.getEntryId(), importedCross);
 		}
@@ -579,15 +573,12 @@ public class CrossingSettingsController extends SettingsController {
 		this.crossesListUtil = crossesListUtil;
 	}
 
-	private void setParentsInformation(final List<ImportedCrosses> importedCrossesList) {
+	void setParentsInformation(final List<ImportedCrosses> importedCrossesList) {
+		final List<Integer> maleGidList = new ArrayList<>();
+		for (final ImportedCrosses cross : importedCrossesList) {
+			maleGidList.addAll(cross.getMaleGids());
+		}
 
-		final Collection<Integer> maleGidList = Collections2.transform(importedCrossesList, new Function<ImportedCrosses, Integer>() {
-
-			@Override
-			public Integer apply(final ImportedCrosses input) {
-				return Integer.parseInt(input.getMaleGid());
-			}
-		});
 		final Collection<Integer> femaleGidList = Collections2.transform(importedCrossesList, new Function<ImportedCrosses, Integer>() {
 
 			@Override
@@ -605,12 +596,15 @@ public class CrossingSettingsController extends SettingsController {
 		final Map<Integer, String[]> pedigreeMap = germplasmDataManager.getParentsInfoByGIDList(listWithNoDuplicates);
 		for (final ImportedCrosses importedCrosses : importedCrossesList) {
 			final int femaleGid = Integer.parseInt(importedCrosses.getFemaleGid());
-			importedCrosses.setFemalePedigree(pedigreeMap.get(femaleGid)[0]);
-			importedCrosses.setFemaleCross(pedigreeMap.get(femaleGid)[1]);
-
-			final int maleGid = Integer.parseInt(importedCrosses.getMaleGid());
-			importedCrosses.setMalePedigree(pedigreeMap.get(maleGid)[0]);
-			importedCrosses.setMaleCross(pedigreeMap.get(maleGid)[1]);
+			final String[] femaleInfo = pedigreeMap.get(femaleGid);
+			importedCrosses.getFemaleParent().setPedigree(femaleInfo[0]);
+			importedCrosses.getFemaleParent().setCross(femaleInfo[1]);
+			
+			for (final ImportedGermplasmParent maleParent : importedCrosses.getMaleParents()) {
+				final int maleGid = maleParent.getGid();
+				maleParent.setPedigree(pedigreeMap.get(maleGid)[0]);
+				maleParent.setCross(pedigreeMap.get(maleGid)[1]);
+			}
 		}
 
 	}

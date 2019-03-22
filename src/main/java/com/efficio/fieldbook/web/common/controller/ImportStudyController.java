@@ -1,23 +1,18 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.ChangeType;
-import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.ImportResult;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.util.DataMapUtil;
-import com.efficio.fieldbook.web.study.ImportStudyServiceFactory;
-import com.efficio.fieldbook.web.study.ImportStudyType;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.util.DateUtil;
@@ -33,6 +28,7 @@ import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Name;
+import org.generationcp.middleware.pojos.Progenitor;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -51,13 +47,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.ChangeType;
+import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
+import com.efficio.fieldbook.web.common.bean.ImportResult;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.util.DataMapUtil;
+import com.efficio.fieldbook.web.study.ImportStudyServiceFactory;
+import com.efficio.fieldbook.web.study.ImportStudyType;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Controller
 @RequestMapping(ImportStudyController.URL)
@@ -314,7 +317,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		// create data structures that will be used to store values that will
 		// eventually be stored into the database
 		final List<Name> namesForAdding = new ArrayList<>();
-		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
+		final List<Triple<Germplasm, Name, List<Progenitor>>> germplasmTriples = new ArrayList<>();
 		final Map<Integer, MeasurementRow> entryNumberIndexMap = new HashMap<>();
 		int germplasmPairIndex = 0;
 		for (final GermplasmChangeDetail responseDetail : responseDetails) {
@@ -352,7 +355,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 				// instead of directly saving into the database, store the
 				// germplasm - name pair into a list
-				germplasmPairs.add(new ImmutablePair<>(germplasm, name));
+				germplasmTriples.add(new ImmutableTriple<Germplasm, Name, List<Progenitor>>(germplasm, name, new ArrayList<Progenitor>()));
 
 				// store the measurement row and the associated index of the
 				// entry so that the GID resulting in the database save later on
@@ -386,8 +389,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				this.fieldbookMiddlewareService.addGermplasmNames(namesForAdding);
 			}
 
-			if (!germplasmPairs.isEmpty()) {
-				final List<Integer> newGids = this.fieldbookMiddlewareService.addGermplasm(germplasmPairs);
+			if (!germplasmTriples.isEmpty()) {
+				final List<Integer> newGids = this.fieldbookMiddlewareService.addGermplasm(germplasmTriples);
 
 				// update both the maintained change map as well as the GID
 				// measurement data with the new GID created from saving to the

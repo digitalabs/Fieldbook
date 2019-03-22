@@ -1,18 +1,15 @@
 
 package com.efficio.fieldbook.web.naming.impl;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
-import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
-import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
-import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import com.efficio.fieldbook.web.util.AppConstants;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -39,13 +36,18 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
+import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
+import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 @Service
 @Transactional
@@ -304,7 +306,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 			// pass the parent gids (female and male) of the imported cross, this is required to properly resolve the Backcross process codes.
 			advancingSource.setFemaleGid(StringUtils.isNumeric(importedCross.getFemaleGid()) ? Integer.valueOf(importedCross.getFemaleGid()) : 0);
-			advancingSource.setMaleGid(StringUtils.isNumeric(importedCross.getMaleGid()) ? Integer.valueOf(importedCross.getMaleGid()) : 0);
+			// Always gets the first male parent, ie. GPID2
+			final String firstMaleGid = importedCross.getMaleGids().get(0).toString();
+			advancingSource.setMaleGid(StringUtils.isNumeric(firstMaleGid) ? Integer.valueOf(firstMaleGid) : 0);
 
 			final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(advancingSource, advancingParameters.isCheckAdvanceLinesUnique());
 			names = (List<String>) this.rulesService.runRules(namingExecutionContext);

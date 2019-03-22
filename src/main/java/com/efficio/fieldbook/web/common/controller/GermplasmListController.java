@@ -71,14 +71,14 @@ public class GermplasmListController {
 	protected org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
 	@RequestMapping(value = "/advance/{listId}", method = RequestMethod.GET)
-	public String displayAdvanceGermplasmList(@PathVariable Integer listId, HttpServletRequest req, Model model) {
-		this.processGermplasmList(listId, GermplasmListType.ADVANCED.name(), req, model);
+	public String displayAdvanceGermplasmList(@PathVariable Integer listId, Model model) {
+		this.processGermplasmList(listId, GermplasmListType.ADVANCED.name(), model);
 		return GermplasmListController.STUDY_MANAGER_SAVED_FINAL_LIST;
 	}
 
 	@RequestMapping(value = "/crosses/{listId}", method = RequestMethod.GET)
-	public String displayCrossGermplasmList(@PathVariable Integer listId, HttpServletRequest req, Model model) {
-		this.processGermplasmList(listId, GermplasmListType.CROSSES.name(), req, model);
+	public String displayCrossGermplasmList(@PathVariable Integer listId, Model model) {
+		this.processGermplasmList(listId, GermplasmListType.CROSSES.name(), model);
 		return GermplasmListController.STUDY_MANAGER_SAVED_FINAL_LIST;
 	}
 
@@ -148,7 +148,7 @@ public class GermplasmListController {
 		return this.inventoryService.stockHasCompletedBulking(listId);
 	}
 
-	protected void processGermplasmList(Integer listId, String germplasmListType, HttpServletRequest req, Model model) {
+	protected void processGermplasmList(Integer listId, String germplasmListType, Model model) {
 		try {
 			List<ListDataProject> listData = null;
 			String name;

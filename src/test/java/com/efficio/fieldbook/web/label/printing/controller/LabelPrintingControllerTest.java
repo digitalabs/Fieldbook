@@ -473,8 +473,8 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		listEntry.setStatus(listDataId);
 		listEntry.setSeedSource("SeedSource " + listDataId);
 		listEntry.setGid(gid);
-		// Default MGID(GROUP ID) is 0
-		listEntry.setMgid(0);
+		// Default GROUP ID is 0
+		listEntry.setGroupId(0);
 
 		final ListDataInventory listDataInventory = new ListDataInventory(listDataId, gid);
 		listDataInventory.setLotCount(0);

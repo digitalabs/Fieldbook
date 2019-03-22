@@ -24,6 +24,7 @@ import org.generationcp.middleware.manager.api.PedigreeDataManager;
 import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.Methods;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.Progenitor;
 import org.generationcp.middleware.pojos.UserDefinedField;
@@ -31,6 +32,7 @@ import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
+import org.generationcp.middleware.util.Util;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +41,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -84,12 +85,16 @@ public class CrossingServiceImplTest {
 	public static final Integer TEST_MALE_GID_2 = 8888;
 	public static final Integer TEST_MALE_GID_3 = 93939;
 
+	protected static final int HARVEST_LOCATION_ID = 99;
 	private static final Integer NEXT_NUMBER = 100;
 
 	private ImportedCrossesList importedCrossesList;
 
 	@Captor
 	private ArgumentCaptor<List<Attribute>> attributesListCaptor;
+	
+	@Captor
+	private ArgumentCaptor<List<Name>> namesCaptor;
 
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
@@ -140,7 +145,7 @@ public class CrossingServiceImplTest {
 		this.crossSetting.setAdditionalDetailsSetting(this.getAdditionalDetailsSetting());
 
 		Mockito.doReturn(String.valueOf(CrossingServiceImplTest.NEXT_NUMBER)).when(this.germplasmDataManager)
-			.getNextSequenceNumberForCrossName(Matchers.anyString(), Matchers.anyString());
+			.getNextSequenceNumberForCrossName(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
 
 		this.localUserId = new Random().nextInt(Integer.MAX_VALUE);
 		Mockito.doReturn(this.localUserId).when(this.contextUtil).getCurrentUserLocalId();
@@ -178,7 +183,7 @@ public class CrossingServiceImplTest {
 		this.crossSetting.getBreedingMethodSetting().setBasedOnImportFile(true);
 		final Method breedingMethod = new Method();
 		breedingMethod.setMid(CrossingServiceImplTest.TEST_BREEDING_METHOD_ID);
-		when(this.germplasmDataManager.getMethodByCode(Matchers.anyString())).thenReturn(breedingMethod);
+		when(this.germplasmDataManager.getMethodByCode(ArgumentMatchers.anyString())).thenReturn(breedingMethod);
 
 		for (final ImportedCrosses cross : crosses) {
 			cross.setRawBreedingMethod(String.valueOf(CrossingServiceImplTest.TEST_BREEDING_METHOD_CODE));
@@ -205,7 +210,7 @@ public class CrossingServiceImplTest {
 	}
 
 	@Test
-	public void testProcessCrossBreedingMethodNoSetting() {
+	public void testProcessCrossBreedingMethodBasedOnParental() {
 		this.crossSetting.getBreedingMethodSetting().setMethodId(null);
 		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
 
@@ -221,6 +226,9 @@ public class CrossingServiceImplTest {
 			assertNotSame(
 				"A method based on parental lines must be assigned to germplasms if user does not select a breeding method", 0,
 				importedCrosses.getBreedingMethodId());
+			if (importedCrosses.isPolyCross()) {
+				assertEquals(Methods.SINGLE_CROSS.getMethodID(), importedCrosses.getBreedingMethodId());
+			}
 		}
 	}
 
@@ -298,7 +306,7 @@ public class CrossingServiceImplTest {
 
 		// TODO prepare descriptive messages for verification failure once
 		// Mockito has stable 2.0 version
-		Mockito.verify(this.germplasmDataManager, Mockito.atLeastOnce()).addGermplasmName(Matchers.any(List.class));
+		Mockito.verify(this.germplasmDataManager, Mockito.atLeastOnce()).addGermplasmName(ArgumentMatchers.<Name>anyList());
 
 	}
 
@@ -759,7 +767,7 @@ public class CrossingServiceImplTest {
 		final int nextNumber = this.crossingService.getNextNumberInSequence(setting);
 		assertEquals(1, nextNumber);
 		Mockito.verify(this.germplasmDataManager, Mockito.never())
-			.getNextSequenceNumberForCrossName(Matchers.anyString(), Matchers.anyString());
+			.getNextSequenceNumberForCrossName(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
 	}
 
 	@Test
@@ -856,7 +864,7 @@ public class CrossingServiceImplTest {
 	public void testGenerateSeedSource() {
 		final String newSeedSource = "newSeedSource";
 		Mockito.doReturn(newSeedSource).when(this.seedSourceGenertor)
-			.generateSeedSourceForCross(Matchers.any(Workbook.class), ArgumentMatchers.<String>anyList(), ArgumentMatchers.anyString(),
+			.generateSeedSourceForCross(ArgumentMatchers.any(Workbook.class), ArgumentMatchers.<String>anyList(), ArgumentMatchers.anyString(),
 				Mockito.<String>isNull(),
 				Mockito.<String>isNull(), Mockito.<Workbook>isNull());
 
@@ -894,7 +902,7 @@ public class CrossingServiceImplTest {
 
 		final String newSeedSource = RandomStringUtils.randomAlphabetic(300);
 		Mockito.doReturn(newSeedSource).when(this.seedSourceGenertor)
-			.generateSeedSourceForCross(Matchers.any(Workbook.class), ArgumentMatchers.<String>anyList(), ArgumentMatchers.anyString(),
+			.generateSeedSourceForCross(ArgumentMatchers.any(Workbook.class), ArgumentMatchers.<String>anyList(), ArgumentMatchers.anyString(),
 				Mockito.<String>isNull(),
 				Mockito.<String>isNull(), Mockito.<Workbook>isNull());
 
@@ -948,7 +956,7 @@ public class CrossingServiceImplTest {
 		this.crossSetting.getCrossNameSetting().setPrefix("ABC");
 		this.crossSetting.getCrossNameSetting().setStartNumber(1);
 
-		when(this.messageSource.getMessage(Matchers.isA(String.class), Matchers.any(Object[].class), Matchers.isA(Locale.class)))
+		when(this.messageSource.getMessage(ArgumentMatchers.isA(String.class), ArgumentMatchers.any(Object[].class), ArgumentMatchers.isA(Locale.class)))
 			.thenReturn("The starting sequence number specified will generate conflict with already existing cross codes.");
 
 		try {
@@ -1051,7 +1059,33 @@ public class CrossingServiceImplTest {
 			this.verifyPlotCodeAttributeValues(attribute, gid, cross);
 		}
 	}
-
+	
+	@Test
+	public void testSavePedigreeDesignationName() {
+		final List<Integer> gids = new ArrayList<>();
+		for (int i=0; i<this.importedCrossesList.getImportedCrosses().size(); i++) {
+			gids.add(new Random().nextInt());
+		}
+		this.crossSetting.setAdditionalDetailsSetting(this.createAdditionalDetailsSetting());
+		
+		this.crossingService.savePedigreeDesignationName(importedCrossesList, gids, crossSetting);
+		final Iterator<Integer> gidsIterator = gids.iterator();
+		Mockito.verify(this.germplasmDataManager).addGermplasmName(this.namesCaptor.capture());
+		final Iterator<Name> namesIterator = this.namesCaptor.getValue().iterator();
+		for (final ImportedCrosses cross : importedCrossesList.getImportedCrosses()) {
+			final Integer gid = gidsIterator.next();
+			final Name name = namesIterator.next();
+			assertEquals(gid, name.getGermplasmId());
+			assertEquals(this.localUserId, name.getUserId());
+			assertEquals(CrossingServiceImpl.PEDIGREE_NAME_TYPE, name.getTypeId());
+			assertEquals(cross.getFemaleDesignation() + CrossingServiceImpl.DEFAULT_SEPARATOR + cross.getMaleDesignationsAsString(), name.getNval());
+			assertEquals(CrossingServiceImpl.PREFERRED_NAME, name.getNstat());
+			assertEquals(CrossingServiceImplTest.HARVEST_LOCATION_ID, name.getLocationId().intValue());
+			assertEquals(Util.getCurrentDateAsIntegerValue(), name.getNdate());
+			assertEquals(0, name.getReferenceId().intValue());
+		}
+	}
+	
 	private void verifyPlotCodeAttributeValues(final Attribute attribute, final Integer gid, final ImportedCrosses cross) {
 		assertEquals(Integer.valueOf(DateUtil.getCurrentDateAsStringValue()), attribute.getAdate());
 		assertEquals(gid, attribute.getGermplasmId());
@@ -1156,7 +1190,7 @@ public class CrossingServiceImplTest {
 		final AdditionalDetailsSetting setting = new AdditionalDetailsSetting();
 
 		setting.setHarvestDate("20150101");
-		setting.setHarvestLocationId(99);
+		setting.setHarvestLocationId(HARVEST_LOCATION_ID);
 
 		return setting;
 	}

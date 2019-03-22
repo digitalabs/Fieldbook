@@ -71,7 +71,7 @@ public class GermplasmListControllerTest {
 		Mockito.doReturn(testList).when(this.germplasmListManager).retrieveSnapshotListData(GermplasmListControllerTest.TEST_LIST_ID);
 
 		Model model = Mockito.mock(Model.class);
-		this.dut.displayAdvanceGermplasmList(GermplasmListControllerTest.TEST_LIST_ID, Mockito.mock(HttpServletRequest.class), model);
+		this.dut.displayAdvanceGermplasmList(GermplasmListControllerTest.TEST_LIST_ID, model);
 		Mockito.verify(model).addAttribute("totalNumberOfGermplasms", testList.size());
 		Mockito.verify(model).addAttribute("listId", GermplasmListControllerTest.TEST_LIST_ID);
 		Mockito.verify(model).addAttribute("listName", GermplasmListControllerTest.TEST_LIST_NAME);
@@ -92,7 +92,7 @@ public class GermplasmListControllerTest {
 				.retrieveSnapshotListDataWithParents(GermplasmListControllerTest.TEST_LIST_ID);
 
 		Model model = Mockito.mock(Model.class);
-		this.dut.displayCrossGermplasmList(GermplasmListControllerTest.TEST_LIST_ID, Mockito.mock(HttpServletRequest.class), model);
+		this.dut.displayCrossGermplasmList(GermplasmListControllerTest.TEST_LIST_ID, model);
 		Mockito.verify(model).addAttribute("totalNumberOfGermplasms", testList.size());
 		Mockito.verify(model).addAttribute("listId", GermplasmListControllerTest.TEST_LIST_ID);
 		Mockito.verify(model).addAttribute("listName", GermplasmListControllerTest.TEST_LIST_NAME);

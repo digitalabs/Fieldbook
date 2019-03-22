@@ -206,11 +206,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 					new Integer[] {currentRow}, LocaleContextHolder.getLocale()));
 		}
 
-		if (!StringUtils.isBlank(strCrossingDate)) {
-			if (!DateUtil.isValidDate(strCrossingDate)) {
-				throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.observation.row.crossing.date",
-						new Integer[] {currentRow}, LocaleContextHolder.getLocale()));
-			}
+		if (!StringUtils.isBlank(strCrossingDate) && !DateUtil.isValidDate(strCrossingDate)) {
+			throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.observation.row.crossing.date",
+					new Integer[] {currentRow}, LocaleContextHolder.getLocale()));
 		}
 	}
 

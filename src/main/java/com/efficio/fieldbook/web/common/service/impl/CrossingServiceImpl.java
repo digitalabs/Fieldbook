@@ -16,10 +16,7 @@ import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
-import org.generationcp.commons.ruleengine.ProcessCodeOrderedRule;
 import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
-import org.generationcp.commons.ruleengine.RuleException;
-import org.generationcp.commons.ruleengine.cross.CrossingRuleExecutionContext;
 import org.generationcp.commons.service.impl.SeedSourceGenerator;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
@@ -46,8 +43,6 @@ import org.generationcp.middleware.service.api.PedigreeService;
 import org.generationcp.middleware.service.pedigree.PedigreeFactory;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.generationcp.middleware.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -69,7 +64,6 @@ public class CrossingServiceImpl implements CrossingService {
 	protected static final String[] USER_DEF_FIELD_CROSS_NAME = {"CROSS NAME", "CROSSING NAME"};
 	protected static final String DEFAULT_SEPARATOR = "/";
 
-	private static final Logger LOG = LoggerFactory.getLogger(CrossingServiceImpl.class);
 	protected static final Integer PEDIGREE_NAME_TYPE = 18;
 	protected static final Integer PREFERRED_NAME = 1;
 	public static final int MAX_CROSS_NAME_SIZE = 240;
@@ -664,23 +658,6 @@ public class CrossingServiceImpl implements CrossingService {
 		final String replaceValue = value == null ? "" : value;
 		container.replace(startIndex, endIndex, replaceValue);
 		return container.toString();
-	}
-
-	protected String evaluateSuffixProcessCode(final ImportedCrosses crosses, final CrossSetting setting, final String processCode) {
-		final ProcessCodeOrderedRule rule = this.processCodeRuleFactory.getRuleByProcessCode(processCode);
-
-		final Integer maleGid = crosses.getMaleGids().get(0);
-		final CrossingRuleExecutionContext crossingRuleExecutionContext = new CrossingRuleExecutionContext(new ArrayList<String>(), setting,
-				maleGid != null ? maleGid : 0,
-				crosses.getFemaleGid() != null ? Integer.valueOf(crosses.getFemaleGid()) : 0, this.germplasmDataManager,
-				this.pedigreeDataManager);
-
-		try {
-			return (String) rule.runRule(crossingRuleExecutionContext);
-		} catch (final RuleException e) {
-			CrossingServiceImpl.LOG.error(e.getMessage(), e);
-			return "";
-		}
 	}
 
 	protected String buildCrossName(final ImportedCrosses crosses, final String separator) {

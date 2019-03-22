@@ -54,7 +54,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -92,9 +91,6 @@ public class CrossingSettingsController extends SettingsController {
 
 	@Autowired
 	private CrossExpansionProperties crossExpansionProperties;
-
-	@Resource
-	private WorkbenchService workbenchService;
 
 	@Resource
 	private PresetService presetService;

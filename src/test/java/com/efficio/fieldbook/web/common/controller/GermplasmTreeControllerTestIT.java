@@ -19,31 +19,24 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.easymock.EasyMock;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
-import org.generationcp.middleware.service.api.FieldbookService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ui.ExtendedModelMap;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.pojos.treeview.TreeNode;
 import com.efficio.pojos.treeview.TreeTableNode;
-
-import junit.framework.Assert;
 
 public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 
@@ -199,7 +192,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 		Mockito.when(germplasmListManager.getAllTopLevelLists(GermplasmTreeControllerTestIT.PROGRAM_UUID)).thenReturn(GermplasmTreeControllerTestIT.PROGRAM_LISTS);
 		Mockito.when(germplasmListManager.getAllTopLevelLists(null)).thenReturn(GermplasmTreeControllerTestIT.CROP_LISTS);
 		Mockito.when(
-				germplasmListManager.getGermplasmListByParentFolderIdBatched(Matchers.anyInt(), Matchers.anyString(), Matchers.anyInt()))
+				germplasmListManager.getGermplasmListByParentFolderIdBatched(ArgumentMatchers.anyInt(), ArgumentMatchers.anyString(), ArgumentMatchers.anyInt()))
 				.thenReturn(GermplasmTreeControllerTestIT.EMPTY_GERMPLASM_LIST_TEST_DATA);
 		List<UserDefinedField> userDefinedFields = this.createGermplasmListUserDefinedFields();
 		Mockito.when(germplasmListManager.getGermplasmListTypes()).thenReturn(userDefinedFields);
@@ -323,43 +316,4 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 				this.controller.isSimilarToRootFolderName("Dummy Folder Name"));
 	}
 
-	public void testSaveCrossesListIfStudyIsNull() {
-		UserSelection userSelection = new UserSelection();
-		userSelection.setWorkbook(null);
-		GermplasmTreeController treeController = new GermplasmTreeController();
-		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		Integer germplasmListId = 1;
-		Integer userId = 9;
-		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
-		Integer crossesId = 5;
-		Mockito.when(fieldbookMiddlewareService.saveOrUpdateListDataProject(Matchers.anyInt(), Matchers.any(GermplasmListType.class),
-				Matchers.anyInt(), Matchers.anyListOf(ListDataProject.class), Matchers.anyInt())).thenReturn(crossesId);
-		treeController.setUserSelection(userSelection);
-		treeController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-		int savedCrossesId = treeController.saveCrossesList(germplasmListId, listDataProject, userId);
-		Assert.assertEquals("Should return the same crosses Id as per simulation of saving", crossesId.intValue(), savedCrossesId);
-	}
-
-	@Test
-	public void testSaveCrossesListIfStudyIsNotNull() {
-		UserSelection userSelection = new UserSelection();
-		Workbook workbook = new Workbook();
-		StudyDetails studyDetails = new StudyDetails();
-		Integer studyId = 99;
-		studyDetails.setId(studyId);
-		workbook.setStudyDetails(studyDetails);
-		userSelection.setWorkbook(workbook);
-		GermplasmTreeController treeController = new GermplasmTreeController();
-		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		Integer germplasmListId = 1;
-		Integer userId = 9;
-		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
-		Integer crossesId = 88;
-		Mockito.when(fieldbookMiddlewareService.saveOrUpdateListDataProject(Matchers.anyInt(), Matchers.any(GermplasmListType.class),
-				Matchers.anyInt(), Matchers.anyListOf(ListDataProject.class), Matchers.anyInt())).thenReturn(crossesId);
-		treeController.setUserSelection(userSelection);
-		treeController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-		int savedCrossesId = treeController.saveCrossesList(germplasmListId, listDataProject, userId);
-		Assert.assertEquals("Should return the same crosses Id as per simulation of saving", crossesId.intValue(), savedCrossesId);
-	}
 }

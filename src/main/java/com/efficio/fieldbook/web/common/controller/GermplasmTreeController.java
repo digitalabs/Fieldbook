@@ -481,7 +481,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	protected AdvancingSource createAdvancingSource(final ImportedCrosses cross) {
 		final AdvancingSource advancingSource = new AdvancingSource(cross);
-		// TODO add trail instance number
+		// TODO add trial instance number
 		final Workbook workbook = this.userSelection.getWorkbook();
 		advancingSource.setStudyId(workbook.getStudyDetails().getId());
 		advancingSource.setConditions(workbook.getConditions());
@@ -554,21 +554,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		}
 
 		return super.showAjaxPage(model, GermplasmTreeController.COMMON_SAVE_GERMPLASM_LIST);
-	}
-
-	// TODO only used in Test?
-	protected int saveCrossesList(final Integer germplasmListId, final List<ListDataProject> listDataProject, final Integer userId) {
-		int studyId = 0;
-
-		if (this.userSelection.getWorkbook() != null && this.userSelection.getWorkbook().getStudyDetails() != null
-				&& this.userSelection.getWorkbook().getStudyDetails().getId() != null) {
-			studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
-		}
-
-		final int crossesId = this.fieldbookMiddlewareService
-				.saveOrUpdateListDataProject(studyId, GermplasmListType.CROSSES, germplasmListId, listDataProject, userId);
-		this.userSelection.addImportedCrossesId(crossesId);
-		return crossesId;
 	}
 
 	GermplasmList createGermplasmList(final SaveListForm saveListForm, final Integer currentUserId) {

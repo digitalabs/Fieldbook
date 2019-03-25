@@ -8,7 +8,7 @@
 	 <div th:if="*{germplasmList == null or #lists.isEmpty(germplasmList)}">
 	   <span class="noGermplasmListIndicator" th:text="#{study.import.no.germplasm.list}">No Germplasm list</span>
 	 </div>
-
+ 
 	 <!-- case 2: advanced view of the importedGermplasm -->
 	 <div  class="advance-study-list-table" th:if="*{germplasmList != null and not #lists.isEmpty(germplasmList)}">
 		 <table id="inventory-table" th:if="*{not #lists.isEmpty(germplasmList)}" width="100%"
@@ -29,22 +29,38 @@
 
 
 				<!-- Cross List Columns ONLY -->
+				<!-- FEMALE PARENT COLUMN -->
 				<td th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') }" th:class="${row.even}? 'even' : 'odd'" >
-					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.femaleParent}" th:attr="data-gid=${germplasm.fgid}" th:attrappend="data-desig=${germplasm.femaleParent}">.2</a>
+					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.femaleParent.designation}" th:attr="data-gid=${germplasm.femaleParent.gid}" th:attrappend="data-desig=${germplasm.femaleParent.designation}">.2</a>
 				</td>
+				<!-- FGID COLUMN -->
 				<td th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') }" th:class="${row.even}? 'even' : 'odd'" >
-					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.fgid}" th:attr="data-gid=${germplasm.fgid}" th:attrappend="data-desig=${germplasm.femaleParent}">.2</a>
+					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.femaleParent.gid}" th:attr="data-gid=${germplasm.femaleParent.gid}" th:attrappend="data-desig=${germplasm.femaleParent.designation}">.2</a>
 				</td>
-				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.mgid != 0) }" th:class="${row.even}? 'even' : 'odd'" >
-					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.maleParent}" th:attr="data-gid=${germplasm.mgid}" th:attrappend="data-desig=${germplasm.maleParent}">.2</a>
+				<!-- MALE PARENT COLUMN -->
+				<!-- Render as comma separated links the male parent names -->
+				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.maleParents[0].gid != 0) }" th:class="${row.even}? 'even' : 'odd'" th:with="malesCount=${germplasm.maleParents.size()}">
+					<span th:if="*{malesCount > 1 }">[</span>
+					<span th:each="maleParent : ${germplasm.maleParents}">
+						<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)"  th:text="${maleParent.designation}" th:attr="data-gid=${maleParent.gid}" th:attrappend="data-desig=${maleParent.designation}">.2</a> 	
+						<span th:if="*{(malesCount - 1) > maleParentStat.index}">,</span>
+					</span>
+					<span th:if="*{malesCount > 1 }">]</span>
 				</td>
 				<!-- Do not Render MALE PARENT as link if male parent is unknown-->
-				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.mgid == 0) }" th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.maleParent}" >.2</td>
-				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.mgid != 0) }" th:class="${row.even}? 'even' : 'odd'" >
-					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.mgid}" th:attr="data-gid=${germplasm.mgid}" th:attrappend="data-desig=${germplasm.maleParent}">.2</a>
+				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.maleParents[0].gid == 0) }" th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.maleParents[0].designation}" >.2</td>
+				<!-- MGID COLUMN -->
+				<!-- Render as comma separated links the male parent GIDs -->
+				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.maleParents[0].gid != 0) }" th:class="${row.even}? 'even' : 'odd'" th:with="malesCount=${germplasm.maleParents.size()}">
+					<span th:if="*{malesCount > 1 }">[</span>
+					<span th:each="maleParent : ${germplasm.maleParents}">
+						<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)"  th:text="${maleParent.gid}" th:attr="data-gid=${maleParent.gid}" th:attrappend="data-desig=${maleParent.designation}">.2</a> 	
+						<span th:if="*{(malesCount - 1) > maleParentStat.index}">,</span>
+					</span>
+					<span th:if="*{malesCount > 1 }">]</span>
 				</td>
 				<!-- Do not Render MGID as link if male parent is unknown-->
-				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.mgid == 0) }" th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.maleParent}" >.2</td>
+				<td th:if="*{((listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') and germplasm.maleParents[0].gid == 0) }" th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.maleParents[0].designation}" >.2</td>
 				<!-- End of Cross List Columns ONLY -->
 
 				<td th:class="${row.even}? 'even' : 'odd'" >

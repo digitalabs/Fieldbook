@@ -239,12 +239,24 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, row) {
 						// Do not render as link if male parent is unknown
-						if (row.MGID === '0'|| row.MGID === 0) {
+						if (row.MGID[0] === 0) {
 							return row['MALE PARENT'];
 						} 
-						return '<a class="gid-link" href="javascript: void(0)" ' +
+						// Render bracket-enclosed, comma-separated links for male parents
+						var size = row.MGID.length;
+						var str = size > 1 ? '[':'';
+						$.each(row.MGID, function( index, value ) {
+							str += '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
-							row.MGID + '&quot;,&quot;' + row['MALE PARENT'] + '&quot;)">' + data + '</a>';
+							row.MGID[index] + '&quot;,&quot;' + row['MALE PARENT'][index] + '&quot;)">' + row['MALE PARENT'][index] + '</a>'
+							if (index < (size-1)) {
+								str += ", ";
+							}
+						});
+						if (size > 1) {
+							str = str + "]";
+						}
+						return str;
 					}
 				});
 			}

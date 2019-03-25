@@ -918,45 +918,47 @@ public class SettingsUtilTest {
 	@Test
 	public void testConvertConditionToMeasurementVariable() {
 		final Condition cropSeasonCodeCondition = new Condition("Crop_season_Code", "Season - Assigned (Code)",
-				"Season", "Code of Crop_season_Code", "Assigned", PhenotypicType.STUDY.toString(), "C", "Dry season",
-				TermId.CATEGORICAL_VARIABLE.getId(), null, null);
+			"Season", "Code of Crop_season_Code", "Assigned", PhenotypicType.STUDY.toString(), "C", "Dry season",
+			TermId.CATEGORICAL_VARIABLE.getId(), null, null);
 		cropSeasonCodeCondition.setOperation(Operation.ADD);
 		cropSeasonCodeCondition.setId(TermId.SEASON_VAR.getId());
 		cropSeasonCodeCondition.setPossibleValues(this.createCropSeasonPossibleValues());
 
 		final MeasurementVariable measurementVariable = SettingsUtil
-				.convertConditionToMeasurementVariable(cropSeasonCodeCondition);
+			.convertConditionToMeasurementVariable(cropSeasonCodeCondition);
 
 		Assert.assertEquals("The name should be '" + cropSeasonCodeCondition.getName() + "'",
-				cropSeasonCodeCondition.getName(), measurementVariable.getName());
+			cropSeasonCodeCondition.getName(), measurementVariable.getName());
 		Assert.assertEquals("The description should be '" + cropSeasonCodeCondition.getDescription() + "'",
-				cropSeasonCodeCondition.getDescription(), measurementVariable.getDescription());
+			cropSeasonCodeCondition.getDescription(), measurementVariable.getDescription());
 		Assert.assertEquals("The property should be '" + cropSeasonCodeCondition.getProperty() + "'",
-				cropSeasonCodeCondition.getProperty(), measurementVariable.getProperty());
+			cropSeasonCodeCondition.getProperty(), measurementVariable.getProperty());
 		Assert.assertEquals("The scale should be '" + cropSeasonCodeCondition.getScale() + "'",
-				cropSeasonCodeCondition.getScale(), measurementVariable.getScale());
+			cropSeasonCodeCondition.getScale(), measurementVariable.getScale());
 		Assert.assertEquals("The method should be '" + cropSeasonCodeCondition.getMethod() + "'",
-				cropSeasonCodeCondition.getMethod(), measurementVariable.getMethod());
+			cropSeasonCodeCondition.getMethod(), measurementVariable.getMethod());
 		Assert.assertEquals("The datatype should be '" + cropSeasonCodeCondition.getDatatype() + "'",
-				cropSeasonCodeCondition.getDatatype(), measurementVariable.getDataType());
+			cropSeasonCodeCondition.getDatatype(), measurementVariable.getDataType());
 		Assert.assertEquals("The dataTypeId should be '" + cropSeasonCodeCondition.getDataTypeId().intValue() + "'",
-				cropSeasonCodeCondition.getDataTypeId().intValue(), measurementVariable.getDataTypeId().intValue());
+			cropSeasonCodeCondition.getDataTypeId().intValue(), measurementVariable.getDataTypeId().intValue());
 		Assert.assertEquals("The value should be '" + cropSeasonCodeCondition.getValue() + "'",
-				cropSeasonCodeCondition.getValue(), measurementVariable.getValue());
+			cropSeasonCodeCondition.getValue(), measurementVariable.getValue());
 		Assert.assertEquals("The label should be 'STUDY'", "STUDY", measurementVariable.getLabel());
 		Assert.assertEquals("The minRange should be '" + cropSeasonCodeCondition.getMinRange() + "'",
-				cropSeasonCodeCondition.getMinRange(), measurementVariable.getMinRange());
+			cropSeasonCodeCondition.getMinRange(), measurementVariable.getMinRange());
 		Assert.assertEquals("The maxRange should be '" + cropSeasonCodeCondition.getMaxRange() + "'",
-				cropSeasonCodeCondition.getMaxRange(), measurementVariable.getMaxRange());
+			cropSeasonCodeCondition.getMaxRange(), measurementVariable.getMaxRange());
 		Assert.assertEquals("The role should be '" + PhenotypicType.STUDY + "'", PhenotypicType.STUDY,
-				measurementVariable.getRole());
+			measurementVariable.getRole());
 		Assert.assertEquals("The operation should be '" + cropSeasonCodeCondition.getOperation() + "'",
-				cropSeasonCodeCondition.getOperation(), measurementVariable.getOperation());
+			cropSeasonCodeCondition.getOperation(), measurementVariable.getOperation());
 		Assert.assertEquals("The termId should be '" + cropSeasonCodeCondition.getId() + "'",
-				cropSeasonCodeCondition.getId(), measurementVariable.getTermId());
+			cropSeasonCodeCondition.getId(), measurementVariable.getTermId());
 		Assert.assertTrue("It should be a factor", measurementVariable.isFactor());
 		Assert.assertEquals("The possibleValues should be '" + cropSeasonCodeCondition.getPossibleValues() + "'",
-				cropSeasonCodeCondition.getPossibleValues(), measurementVariable.getPossibleValues());
+			cropSeasonCodeCondition.getPossibleValues(), measurementVariable.getPossibleValues());
+	}
+
 	@Test
 	public void testConvertConstantToMeasurementVariableOperationAddOrUpdate() {
 

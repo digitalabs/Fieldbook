@@ -233,10 +233,6 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 						if (nbLatin >= blockLevel) {
 							output = new ExpDesignValidationOutput(false, this.messageSource
 									.getMessage("experiment.design.nblatin.should.not.be.greater.than.block.level", null, locale));
-						} else if (nbLatin >= replicationCount) {
-							output = new ExpDesignValidationOutput(false, this.messageSource
-									.getMessage("experiment.design.nblatin.should.not.be.greater.than.the.replication.count", null,
-											locale));
 						} else if (expDesignParameter.getReplicationsArrangement() != null
 								&& expDesignParameter.getReplicationsArrangement().intValue() == 3) {
 							// meaning adjacent

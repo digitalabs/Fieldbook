@@ -413,15 +413,9 @@
 										return false;
 									}
 
-									if (Number($scope.data.nblatin) >= Number($scope.data.replicationsCount)) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[23]);
-										return false;
-									}
-
 									if (Number($scope.data.replicationsArrangement) <= 0) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[21]);
 										return false;
-
 									}
 									if (Number($scope.data.replicationsArrangement) === 3) {
 										if (!$scope.data.replatinGroups || $scope.expDesignForm.replatinGroups.$invalid) {

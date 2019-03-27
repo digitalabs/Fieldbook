@@ -38,16 +38,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
-import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
+import org.generationcp.commons.ruleengine.naming.rules.EnforceUniqueNameRule;
+import org.generationcp.commons.ruleengine.naming.rules.NamingRuleExecutionContext;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
+import org.generationcp.commons.ruleengine.naming.service.ProcessCodeService;
+import org.generationcp.commons.pojo.AdvancingSource;
+import org.generationcp.commons.pojo.AdvancingSourceList;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 
 @Service
 @Transactional

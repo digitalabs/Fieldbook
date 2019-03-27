@@ -11,6 +11,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;

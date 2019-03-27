@@ -24,10 +24,10 @@ import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
-import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
-import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import org.generationcp.commons.ruleengine.naming.rules.EnforceUniqueNameRule;
+import org.generationcp.commons.ruleengine.naming.rules.NamingRuleExecutionContext;
+import org.generationcp.commons.ruleengine.naming.service.ProcessCodeService;
+import org.generationcp.commons.pojo.AdvancingSource;
 
 @Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class RuleServiceImplTest extends AbstractBaseIntegrationTest {

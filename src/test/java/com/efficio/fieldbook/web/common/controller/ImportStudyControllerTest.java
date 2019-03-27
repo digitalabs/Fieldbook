@@ -9,7 +9,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.study.ImportStudyType;
 import com.efficio.fieldbook.web.study.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import com.lowagie.text.pdf.codec.Base64.InputStream;
 import junit.framework.Assert;
 import org.apache.commons.lang3.tuple.Pair;

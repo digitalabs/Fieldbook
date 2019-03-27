@@ -5,7 +5,7 @@ import com.efficio.fieldbook.service.internal.impl.BVDesignRunner;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import junit.framework.Assert;
 import org.generationcp.middleware.domain.oms.TermId;

@@ -31,7 +31,7 @@ import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.service.impl.HorizontalFieldMapLayoutIterator;
 import com.efficio.fieldbook.web.label.printing.service.impl.VerticalFieldMapLayoutIterator;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 
 public class ExportFieldmapServiceImplTest extends AbstractBaseIntegrationTest {
 

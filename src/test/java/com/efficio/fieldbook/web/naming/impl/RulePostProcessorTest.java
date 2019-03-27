@@ -13,7 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.efficio.fieldbook.web.naming.rules.naming.CountRule;
+import org.generationcp.commons.ruleengine.naming.rules.CountRule;
 import com.efficio.fieldbook.web.trial.controller.CreateTrialController;
 
 /**

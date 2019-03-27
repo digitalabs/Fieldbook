@@ -39,7 +39,7 @@ import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.utils.test.ExcelImportUtil;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 

@@ -20,7 +20,7 @@
 
 	<!-- Declare property file locations -->
 	<context:property-placeholder
-		location="classpath:fieldbook.properties, classpath:naming.properties" />
+		location="classpath:fieldbook.properties, classpath:crossing.properties" />
 
 	<!-- AppConstants property -->
 	<util:properties id="appConstantsProperties" location="classpath:appconstants.properties" />

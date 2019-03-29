@@ -522,10 +522,10 @@
 		<aop:scoped-proxy />
 	</bean>
 	
-	<bean id="seedSourceGenerator" class="org.generationcp.commons.service.impl.SeedSourceGenerator">
+	<bean id="seedSourceGenerator" class="org.generationcp.commons.ruleengine.generator.SeedSourceGenerator">
 	</bean>
 
-    <bean id="breedersCrossIDGenerator" class="org.generationcp.commons.service.impl.BreedersCrossIDGenerator">
+    <bean id="breedersCrossIDGenerator" class="org.generationcp.commons.ruleengine.generator.BreedersCrossIDGenerator">
 	</bean>
 	
 	<bean id="jasperReportService" class="org.generationcp.commons.reports.service.impl.JasperReportServiceImpl"

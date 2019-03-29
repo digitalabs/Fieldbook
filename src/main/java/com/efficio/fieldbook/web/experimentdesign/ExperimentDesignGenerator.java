@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.util.StringUtil;
@@ -34,8 +35,12 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 @Component
@@ -66,11 +71,13 @@ public class ExperimentDesignGenerator {
 	public static final String SEED_PARAM = "seed";
 	public static final String NCONTROLS_PARAM = "ncontrols";
 	public static final String NUMBER_TRIALS_PARAM = "numbertrials";
+	public static final String NREPEATS_PARAM = "nrepeats";
 
 	public static final String RANDOMIZED_COMPLETE_BLOCK_DESIGN = "RandomizedBlock";
 	public static final String RESOLVABLE_INCOMPLETE_BLOCK_DESIGN = "ResolvableIncompleteBlock";
 	public static final String RESOLVABLE_ROW_COL_DESIGN = "ResolvableRowColumn";
 	public static final String AUGMENTED_RANDOMIZED_BLOCK_DESIGN = "Augmented";
+	public static final String P_REP_DESIGN = "Prep";
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExperimentDesignGenerator.class);
 	private static final List<Integer> EXP_DESIGN_VARIABLE_IDS =
@@ -204,6 +211,76 @@ public class ExperimentDesignGenerator {
 		return new MainDesign(design);
 	}
 
+	public MainDesign createPRepDesign(final String numberOfBlocks, final String nTreatments, final List<ListItem> nRepeatsListItem,
+		final String treatmentFactor, final String replicateFactor, final String blockFactor, final String plotFactor,
+		final Integer initialPlotNumber, final Integer initialEntryNumber, final String outputfile) {
+
+		final String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
+
+		final List<ExpDesignParameter> paramList = new ArrayList<>();
+		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.SEED_PARAM, "", null));
+		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.NTREATMENTS_PARAM, nTreatments, null));
+		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.NBLOCKS_PARAM, numberOfBlocks, null));
+		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.NREPEATS_PARAM, null , nRepeatsListItem));
+		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.TREATMENTFACTOR_PARAM, treatmentFactor, null));
+
+		this.addInitialTreatmenNumberIfAvailable(initialEntryNumber, paramList);
+
+		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.REPLICATEFACTOR_PARAM, replicateFactor, null));
+		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.BLOCKFACTOR_PARAM, blockFactor, null));
+		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.PLOTFACTOR_PARAM, plotFactor, null));
+		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM,
+			this.getPlotNumberStringValueOrDefault(initialPlotNumber), null));
+
+		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.TIMELIMIT_PARAM, timeLimit, null));
+		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.OUTPUTFILE_PARAM, outputfile, null));
+
+		final ExpDesign design = new ExpDesign(ExperimentDesignGenerator.P_REP_DESIGN, paramList);
+
+		return new MainDesign(design);
+	}
+
+	public List<ListItem> createReplicationListItemForPRepDesign(final List<ImportedGermplasm> germplasmList, final float replicationPercentage,
+		final int replicationNumber) {
+
+		// Count how many test entries we have in the germplasm list.
+		int testEntryCount = 0;
+
+		// Determine which of the germplasm entries are test entries
+		final List<Integer> testEntryNumbers = new ArrayList<>();
+
+		for (final ImportedGermplasm importedGermplasm : germplasmList) {
+			if (SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() == importedGermplasm.getEntryTypeCategoricalID()) {
+				testEntryCount++;
+				testEntryNumbers.add(importedGermplasm.getEntryId());
+			}
+		}
+
+		// Compute how may test entries we can replicate based on replicationPercentage (% of test entries to replicate)
+		final float noOfTestEntriesToReplicate = Math.round((float) testEntryCount * (replicationPercentage/100));
+		// Pick any random test entries to replicate
+		final Set<Integer> randomTestEntryNumbers = new HashSet<>();
+		for (int i = 0; i < noOfTestEntriesToReplicate; i++) {
+			randomTestEntryNumbers.add(testEntryNumbers.get(new Random().nextInt(testEntryNumbers.size())));
+		}
+
+		final List<ListItem> replicationListItem = new LinkedList<>();
+		for (final ImportedGermplasm importedGermplasm : germplasmList) {
+			if (SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId() == importedGermplasm.getEntryTypeCategoricalID()) {
+				// All Check Entries should be replicated
+				replicationListItem.add(new ListItem(String.valueOf(replicationNumber)));
+			} else if (randomTestEntryNumbers.contains(importedGermplasm.getEntryId())) {
+				// Randomized Test Entries should be replicated
+				replicationListItem.add(new ListItem(String.valueOf(replicationNumber)));
+			} else {
+				// Default replication number is 1
+				replicationListItem.add(new ListItem(String.valueOf(1)));
+			}
+		}
+
+		return replicationListItem;
+	}
+
 	public List<MeasurementRow> generateExperimentDesignMeasurements(final int noOfExistingEnvironments, final int noOfEnvironmentsToAdd,
 			final List<MeasurementVariable> trialVariables, final List<MeasurementVariable> factors,
 			final List<MeasurementVariable> nonTrialFactors, final List<MeasurementVariable> variates,
@@ -225,7 +302,7 @@ public class ExperimentDesignGenerator {
 		if (bvOutput == null || !bvOutput.isSuccess()) {
 			throw new BVDesignException("experiment.design.generate.generic.error");
 		}
-				
+
 		//Converting germplasm List to map
 		final Map<Integer, ImportedGermplasm> importedGermplasmMap = new HashMap<>();
 		for (final ImportedGermplasm ig : germplasmList) {
@@ -234,7 +311,7 @@ public class ExperimentDesignGenerator {
 
 		final List<MeasurementVariable> varList =
 				constructStudyVariableList(factors, nonTrialFactors, variates, treatmentVariables, requiredExpDesignVariable);
-		
+
 
 		final List<MeasurementRow> measurementRowList = new ArrayList<>();
 		Integer trialInstanceNumber = noOfExistingEnvironments - noOfEnvironmentsToAdd + 1;
@@ -247,7 +324,7 @@ public class ExperimentDesignGenerator {
 				}
 				final Optional<ImportedGermplasm> importedGermplasm =
 						this.findImportedGermplasmByEntryNumberAndChecks(importedGermplasmMap, entryNumber, designExpectedEntriesMap);
-				
+
 				if (!importedGermplasm.isPresent()) {
 					throw new BVDesignException("experiment.design.bv.exe.error.output.invalid.error");
 				}
@@ -323,10 +400,10 @@ public class ExperimentDesignGenerator {
 
 		if (designExpectedEntriesMap.containsKey(entryNumber)) {
 			return designExpectedEntriesMap.get(entryNumber);
-		} 
-		
+		}
+
 		return entryNumber;
-		
+
 	}
 
 	MeasurementRow createMeasurementRow(final List<MeasurementVariable> headerVariable, final ImportedGermplasm germplasm,
@@ -372,11 +449,11 @@ public class ExperimentDesignGenerator {
 				measurementData = new MeasurementData(var.getName(), germplasm.getEntryCode(), false, var.getDataType(), var);
 			} else if (EXP_DESIGN_VARIABLE_IDS.contains(termId)) {
 				measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
-			
+
 			} else if (termId.intValue() == TermId.CHECK.getId()) {
 				measurementData = new MeasurementData(var.getName(), Integer.toString(germplasm.getEntryTypeCategoricalID()), false,
 						var.getDataType(), germplasm.getEntryTypeCategoricalID(), var);
-			
+
 			} else if (termId.intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				measurementData = new MeasurementData(var.getName(), Integer.toString(trialNo), false, var.getDataType(), var);
 

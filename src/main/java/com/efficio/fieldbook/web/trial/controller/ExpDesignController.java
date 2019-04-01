@@ -9,6 +9,7 @@ import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.common.service.AugmentedRandomizedBlockDesignService;
 import com.efficio.fieldbook.web.common.service.EntryListOrderDesignService;
 import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
+import com.efficio.fieldbook.web.common.service.PRepDesignService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
@@ -53,17 +54,25 @@ public class ExpDesignController extends BaseTrialController {
 
 	@Resource
 	private RandomizeCompleteBlockDesignService randomizeCompleteBlockDesign;
+
 	@Resource
 	private ResolvableIncompleteBlockDesignService resolveIncompleteBlockDesign;
+
 	@Resource
 	private ResolvableRowColumnDesignService resolvableRowColumnDesign;
+
 	@Resource
 	private AugmentedRandomizedBlockDesignService augmentedRandomizedBlockDesignService;
+
 	@Resource
 	private EntryListOrderDesignService entryListOrderDesignService;
 
 	@Resource
+	private PRepDesignService pRepDesignService;
+
+	@Resource
 	private ResourceBundleMessageSource messageSource;
+
 	@Resource
 	private DesignLicenseUtil designLicenseUtil;
 
@@ -84,6 +93,7 @@ public class ExpDesignController extends BaseTrialController {
 		designTypes.add(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK);
 		designTypes.add(DesignTypeItem.CUSTOM_IMPORT);
 		designTypes.add(DesignTypeItem.ENTRY_LIST_ORDER);
+		designTypes.add(DesignTypeItem.P_REP);
 
 		return designTypes;
 	}
@@ -331,6 +341,8 @@ public class ExpDesignController extends BaseTrialController {
 			return this.augmentedRandomizedBlockDesignService;
 		} else if (designType == DesignTypeItem.ENTRY_LIST_ORDER.getId()) {
 			return this.entryListOrderDesignService;
+		} else if (designType == DesignTypeItem.P_REP.getId()) {
+			return this.pRepDesignService;
 		}
 		return null;
 	}

@@ -92,6 +92,8 @@ public class ExperimentDesignGenerator {
 	@Resource
 	private FieldbookService fieldbookService;
 
+	private Random random = new Random();
+
 	public MainDesign createRandomizedCompleteBlockDesign(final String nBlock, final String blockFactor, final String plotFactor,
 			final Integer initialPlotNumber, final Integer initialEntryNumber, final String entryNoVarName, final List<String> treatmentFactors,
 			final List<String> levels, final String outputfile) {
@@ -260,14 +262,14 @@ public class ExperimentDesignGenerator {
 		final float noOfTestEntriesToReplicate = Math.round((float) testEntryCount * (replicationPercentage/100));
 		// Pick any random test entries to replicate
 		final Set<Integer> randomTestEntryNumbers = new HashSet<>();
-		for (int i = 0; i < noOfTestEntriesToReplicate; i++) {
-			randomTestEntryNumbers.add(testEntryNumbers.get(new Random().nextInt(testEntryNumbers.size())));
+		while (testEntryNumbers.size() < noOfTestEntriesToReplicate) {
+			randomTestEntryNumbers.add(testEntryNumbers.get(random.nextInt(testEntryNumbers.size())));
 		}
 
 		final List<ListItem> replicationListItem = new LinkedList<>();
 		for (final ImportedGermplasm importedGermplasm : germplasmList) {
 			if (SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId() == importedGermplasm.getEntryTypeCategoricalID()) {
-				// All Check Entries should be replicated
+				// All Check Entries in the list should be replicated
 				replicationListItem.add(new ListItem(String.valueOf(replicationNumber)));
 			} else if (randomTestEntryNumbers.contains(importedGermplasm.getEntryId())) {
 				// Randomized Test Entries should be replicated

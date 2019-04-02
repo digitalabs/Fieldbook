@@ -19,9 +19,10 @@
 						if ($scope.data.designType === DESIGN_TYPE.ENTRY_LIST_ORDER ) {
 							$scope.refreshDesignDetailsForELODesign();
 						}
+						if ($scope.data.designType === DESIGN_TYPE.P_REP ) {
+							$scope.refreshDesignDetailsForPRepDesign();
+						}
 					});
-
-					var $body = $('body');
 
 					$scope.applicationData = TrialManagerDataService.applicationData;
 					$scope.studyID = TrialManagerDataService.currentData.basicDetails.studyID;
@@ -127,6 +128,7 @@
 							totalGermplasmListCount: $scope.totalGermplasmEntryListCount,
 							designType: null,
 							replicationsCount: null,
+							replicationPercentage: null,
 							blockSize: null,
 							useLatenized: false,
 							nblatin: null,
@@ -170,11 +172,15 @@
 							$scope.data.designType = $scope.currentDesignType.id;
 							TrialManagerDataService.currentData.experimentalDesign.designType = $scope.data.designType;
 							$scope.applicationData.unappliedChangesAvailable = true;
-							if ($scope.data.designType === DESIGN_TYPE.ENTRY_LIST_ORDER ) {
+
+							if (DESIGN_TYPE.ENTRY_LIST_ORDER === $scope.data.designType ) {
 								$scope.refreshDesignDetailsForELODesign();
-							} else {
+							} else if (DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK === $scope.data.designType ) {
 								$scope.refreshDesignDetailsForAugmentedDesign();
+							} else if (DESIGN_TYPE.P_REP === $scope.data.designType ) {
+								$scope.refreshDesignDetailsForPRepDesign();
 							}
+
 						} else {
 							$scope.currentDesignType = null;
 							$scope.data.designType = '';
@@ -208,8 +214,6 @@
 						if (environmentData && environmentData.treatmentFactors) {
 							environmentData.treatmentFactors = $scope.data.treatmentFactors.vals();
 						}
-
-						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 
 						TrialManagerDataService.generateExpDesign(environmentData).then(
 							function(response) {
@@ -599,6 +603,14 @@
 						$scope.germplasmTotalCheckEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalTestEntriesCount;
 					}
 
+					$scope.refreshDesignDetailsForPRepDesign = function() {
+
+						$scope.germplasmTotalCheckEntriesCount = countCheckEntries();
+						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
+						$scope.germplasmNumberOfTestEntriesPerBlock = $scope.germplasmTotalTestEntriesCount / $scope.data.numberOfBlocks;
+
+					}
+
 
 					function countNumberOfTestEntries() {
 						var germplasmListDataTable = $('.germplasm-list-items').DataTable();
@@ -696,6 +708,8 @@
 						excludeTermIds = [8210, 8581, 8582];
 					} else if (designTypeId === DESIGN_TYPE.ENTRY_LIST_ORDER) {
 						excludeTermIds = [8210, 8220, 8581, 8582];
+					} else if (designTypeId === DESIGN_TYPE.P_REP) {
+						excludeTermIds = [8210, 8581, 8582];
 					}
 
 					return _.filter(factorList, function(value) {

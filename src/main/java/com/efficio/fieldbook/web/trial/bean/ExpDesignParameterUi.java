@@ -33,7 +33,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private String checkStartingPosition;
 	private String checkSpacing;
 	private String checkInsertionManner;
-	private Integer testEntriesReplicationPercentage;
+	private Integer replicationPercentage;
 
 	/*
 	 * 1 - single col 2 - single row 3 - adjacent
@@ -233,10 +233,10 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	}
 
 	public Integer getReplicationPercentage() {
-		return testEntriesReplicationPercentage;
+		return replicationPercentage;
 	}
 
-	public void setTestEntriesReplicationPercentage(final Integer testEntriesReplicationPercentage) {
-		this.testEntriesReplicationPercentage = testEntriesReplicationPercentage;
+	public void setReplicationPercentage(final Integer replicationPercentage) {
+		this.replicationPercentage = replicationPercentage;
 	}
 }

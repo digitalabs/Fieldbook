@@ -143,6 +143,7 @@ public class NamingConventionServiceImplTest {
 		advancingSource.setStudyName("Test One");
 		advancingSource.setSeason("201412");
 		advancingSource.setCurrentMaxSequence(0);
+		advancingSource.setTrialInstanceNumber("1");
 		rows.getRows().add(advancingSource);
 
 		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace(Matchers.eq("naming"))).thenReturn(new String[] {"RootNameGenerator"});
@@ -151,9 +152,11 @@ public class NamingConventionServiceImplTest {
 		Mockito.when(this.rulesService.runRules(Matchers.any(RuleExecutionContext.class))).thenReturn(Lists.newArrayList(ruleGeneratedName1, ruleGeneratedName2));
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
 		Mockito.when(this.seedSourceGenerator
-			.generateSeedSource(anyInt(), anyInt(), Matchers.any(ObservationUnitRow.class), ArgumentMatchers.<MeasurementVariable>anyList(),
-				Matchers.anyString(), ArgumentMatchers.<String>isNull(), Matchers.anyString(), ArgumentMatchers.<String>isNull()))
-			.thenReturn(testSeedSource);
+			.generateSeedSource(ArgumentMatchers.<Integer>isNull(), ArgumentMatchers.<Integer>isNull(),
+				ArgumentMatchers.<ObservationUnitRow>any(),
+				ArgumentMatchers.<List<MeasurementVariable>>isNull(),
+				ArgumentMatchers.anyString(), ArgumentMatchers.<String>isNull(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.<String>isNull())).thenReturn(testSeedSource);
 
 
 		final AdvancingStudy advancingParameters = new AdvancingStudy();
@@ -266,6 +269,7 @@ public class NamingConventionServiceImplTest {
         as1.setStudyName("Test One");
         as1.setSeason("201412");
         as1.setCurrentMaxSequence(0);
+        as1.setTrialInstanceNumber("1");
         rows.getRows().add(as1);
 
         Mockito.when(this.advancingSourceListFactory.createAdvancingSourceList(Matchers.isA(Workbook.class),
@@ -278,8 +282,10 @@ public class NamingConventionServiceImplTest {
                 Lists.newArrayList(ruleGeneratedName));
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
 		Mockito.when(this.seedSourceGenerator
-			.generateSeedSource(anyInt(), anyInt(), Matchers.any(ObservationUnitRow.class), ArgumentMatchers.<MeasurementVariable>anyList(),
-				ArgumentMatchers.<String>isNull(), ArgumentMatchers.<String>isNull(), Matchers.anyString(),
+			.generateSeedSource(ArgumentMatchers.<Integer>isNull(), ArgumentMatchers.<Integer>isNull(),
+				ArgumentMatchers.<ObservationUnitRow>isNull(),
+				ArgumentMatchers.<List<MeasurementVariable>>isNull(),
+				ArgumentMatchers.<String>isNull(), ArgumentMatchers.<String>isNull(), ArgumentMatchers.anyString(),
 				ArgumentMatchers.<String>isNull())).thenReturn(testSeedSource);
 
         final AdvancingStudy info = new AdvancingStudy();

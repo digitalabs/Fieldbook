@@ -323,6 +323,11 @@
 				loadBatchActionCombo();
 			};
 
+			$scope.collapseBatchAction = function() {
+				$scope.toggleSectionBatchAction = !$scope.toggleSectionBatchAction;
+				$scope.hasVariableFilter = $scope.selectVariableFilter.length > 1;
+			};
+
 			$scope.checkOutOfBoundDraftData = function () {
 				var deferred = $q.defer();
 

@@ -145,6 +145,13 @@
 							<ui-select-choices repeat="variable as variable in selectVariableFilter">{{(variable.name)}}</ui-select-choices>
 						</ui-select>
 					</div>
+					<div class="form-group" ng-if="toggleSectionBatchAction &amp;&amp; hasVariableFilter &amp;&amp; nested.selectedVariableFilter.termId !== 0">
+						<label style="padding-right: 10px;">Select batch action:</label>
+						<ui-select ng-model="nested.selectedBatchAction" class="input-sm form-control inline-select" search-enabled="false" theme="select2">
+							<ui-select-match>{{$select.selected.name}}</ui-select-match>
+							<ui-select-choices repeat="selectBatchAction as selectBatchAction in selectBatchActions">{{(selectBatchAction.name)}}</ui-select-choices>
+						</ui-select>
+					</div>
 				</div>
 				<div class="col-xs-12 form-inline" ng-if="toggleSectionBatchAction &amp;&amp; !hasVariableFilter">
 					<div class="form-group">

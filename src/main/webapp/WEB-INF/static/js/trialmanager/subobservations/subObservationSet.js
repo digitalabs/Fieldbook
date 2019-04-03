@@ -434,6 +434,13 @@
 				}
 			};
 
+			$scope.isVariableFilter = function (index) {
+				if (!$scope.nested.selectedVariableFilter || !$scope.nested.selectedVariableFilter.termId) {
+					return true
+				}
+				return $scope.nested.selectedVariableFilter && $scope.columnsObj && $scope.columnsObj.columns && $scope.columnsObj.columns[index] && $scope.columnsObj.columns[index].columnData && $scope.columnsObj.columns[index].columnData.termId === $scope.nested.selectedVariableFilter.termId;
+			};
+
 			$scope.filterByColumn = function () {
 				table().ajax.reload();
 			};
@@ -606,6 +613,7 @@
 						' popover-trigger="\'outsideClick\'"' +
 						// does not work with outsideClick
 						// ' popover-is-open="columnFilter.isOpen"' +
+						' ng-if="isVariableFilter(' + this.index() + ')"' +
 						' ng-click="openColumnFilter(' + this.index() + ')"' +
 						' uib-popover-template="\'columnFilterPopoverTemplate.html\'">' +
 						'</span>')($scope));

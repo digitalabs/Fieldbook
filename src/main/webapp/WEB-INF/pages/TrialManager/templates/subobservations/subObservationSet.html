@@ -152,6 +152,11 @@
 							<ui-select-choices repeat="selectBatchAction as selectBatchAction in selectBatchActions">{{(selectBatchAction.name)}}</ui-select-choices>
 						</ui-select>
 					</div>
+					<div class="form-group" style="padding-left: 10px;" ng-if="toggleSectionBatchAction &amp;&amp; hasVariableFilter &amp;&amp; nested.selectedBatchAction.id!==0">
+						<button type="button" class="btn btn-info form-control"
+								ng-click="ApplyAction()">Apply
+						</button>
+					</div>
 				</div>
 				<div class="col-xs-12 form-inline" ng-if="toggleSectionBatchAction &amp;&amp; !hasVariableFilter">
 					<div class="form-group">

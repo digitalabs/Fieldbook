@@ -19,6 +19,7 @@ import com.google.common.base.Optional;
 import org.fest.util.Collections;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.ontology.FormulaDto;
@@ -243,6 +244,42 @@ public class ManageSettingsControllerTest {
 		Assert.assertEquals("Variable1 + Variable2", result.getStandardVariables().get(0).getFormula().getDefinition());
 		Mockito.verify(this.ontologyVariableDataManager)
 				.processTreatmentFactorHasPairValue(Mockito.anyListOf(Variable.class), Mockito.anyListOf(Integer.class));
+	}
+
+	@Test
+	public void testGetOntologyPropertiesByRole() {
+
+		final Integer roleId = TermId.TRIAL_ENVIRONMENT_INFO_STORAGE.getId();
+
+		final ArgumentCaptor<VariableFilter> captorVariableFilter = ArgumentCaptor.forClass(VariableFilter.class);
+		final String[] classes = new String[] {""};
+		final Property property = this.createProperty();
+
+		final Variable variable = new Variable();
+		variable.setFormula(this.createFormula());
+
+		Mockito.when(this.ontologyPropertyDataManager
+				.getAllPropertiesWithClassAndVariableType(Matchers.eq(classes), Mockito.eq(new String[] {"Trial environment information"})))
+				.thenReturn(Collections.list(property));
+		Mockito.when(this.ontologyVariableDataManager.getWithFilter(Mockito.any(VariableFilter.class))).thenReturn(Collections.list(variable));
+
+		final List<PropertyTreeSummary> propertyTreeSummary =
+				this.controller.getOntologyPropertiesByRole(roleId);
+
+		final PropertyTreeSummary result = propertyTreeSummary.get(0);
+
+		Mockito.verify(this.ontologyVariableDataManager, Mockito.times(1)).getWithFilter(captorVariableFilter.capture());
+		final VariableFilter variableFilterVal = captorVariableFilter.getValue();
+		final List<Integer> excludedVariableIds = variableFilterVal.getExcludedVariableIds();
+
+		Assert.assertNull(excludedVariableIds);
+		Assert.assertEquals(property.getId(), result.getPropertyId().intValue());
+		Assert.assertFalse(result.getStandardVariables().isEmpty());
+		Assert.assertEquals(variable, result.getStandardVariables().get(0));
+		Assert.assertEquals("Variable1 + Variable2", result.getStandardVariables().get(0).getFormula().getDefinition());
+		Mockito.verify(this.ontologyVariableDataManager, Mockito.times(0))
+				.processTreatmentFactorHasPairValue(Mockito.anyListOf(Variable.class), Mockito.anyListOf(Integer.class));
+
 	}
 
 	private FormulaDto createFormula() {

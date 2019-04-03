@@ -77,7 +77,6 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 				this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(), contextUtil.getCurrentProgramUUID());
 
 			final Map<Integer, StandardVariable> requiredVariablesMap = this.getRequiredDesignVariablesMap();
-			final StandardVariable stdvarRep = requiredVariablesMap.get(TermId.REP_NO.getId());
 			final StandardVariable stdvarBlock = requiredVariablesMap.get(TermId.BLOCK_NO.getId());
 			final StandardVariable stdvarPlot = requiredVariablesMap.get(TermId.PLOT_NO.getId());
 
@@ -92,7 +91,7 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 				experimentDesignGenerator.createReplicationListItemForPRepDesign(germplasmList, replicationPercentage, replicationNumber);
 			final MainDesign mainDesign = experimentDesignGenerator
 				.createPRepDesign(blockSize, Integer.toString(nTreatments), replicationListItems, stdvarTreatment.getName(),
-					stdvarRep.getName(), stdvarBlock.getName(), stdvarPlot.getName(), plotNo, entryNo, "");
+					stdvarBlock.getName(), stdvarPlot.getName(), plotNo, entryNo, "");
 
 			measurementRowList = experimentDesignGenerator
 				.generateExperimentDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
@@ -112,18 +111,14 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 	public List<StandardVariable> getRequiredDesignVariables() {
 		final List<StandardVariable> varList = new ArrayList<>();
 		try {
-			final StandardVariable stdvarRep =
-				this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId(), contextUtil.getCurrentProgramUUID());
 			final StandardVariable stdvarBlock =
 				this.fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId(), contextUtil.getCurrentProgramUUID());
 			final StandardVariable stdvarPlot =
 				this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), contextUtil.getCurrentProgramUUID());
 
-			stdvarRep.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 			stdvarBlock.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 			stdvarPlot.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 
-			varList.add(stdvarRep);
 			varList.add(stdvarBlock);
 			varList.add(stdvarPlot);
 		} catch (final MiddlewareException e) {

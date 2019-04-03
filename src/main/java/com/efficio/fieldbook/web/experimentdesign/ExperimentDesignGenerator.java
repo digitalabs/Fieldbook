@@ -214,7 +214,7 @@ public class ExperimentDesignGenerator {
 	}
 
 	public MainDesign createPRepDesign(final String numberOfBlocks, final String nTreatments, final List<ListItem> nRepeatsListItem,
-		final String treatmentFactor, final String replicateFactor, final String blockFactor, final String plotFactor,
+		final String treatmentFactor, final String blockFactor, final String plotFactor,
 		final Integer initialPlotNumber, final Integer initialEntryNumber, final String outputfile) {
 
 		final String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
@@ -228,7 +228,6 @@ public class ExperimentDesignGenerator {
 
 		this.addInitialTreatmenNumberIfAvailable(initialEntryNumber, paramList);
 
-		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.REPLICATEFACTOR_PARAM, replicateFactor, null));
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.BLOCKFACTOR_PARAM, blockFactor, null));
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.PLOTFACTOR_PARAM, plotFactor, null));
 		paramList.add(this.createExpDesignParameter(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM,

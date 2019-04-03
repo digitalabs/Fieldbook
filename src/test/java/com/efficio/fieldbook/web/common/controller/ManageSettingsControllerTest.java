@@ -252,14 +252,12 @@ public class ManageSettingsControllerTest {
 		final Integer roleId = TermId.TRIAL_ENVIRONMENT_INFO_STORAGE.getId();
 
 		final ArgumentCaptor<VariableFilter> captorVariableFilter = ArgumentCaptor.forClass(VariableFilter.class);
-		final String[] classes = new String[] {""};
 		final Property property = this.createProperty();
-
 		final Variable variable = new Variable();
 		variable.setFormula(this.createFormula());
 
 		Mockito.when(this.ontologyPropertyDataManager
-				.getAllPropertiesWithClassAndVariableType(Matchers.eq(classes), Mockito.eq(new String[] {"Trial environment information"})))
+				.getAllPropertiesWithClassAndVariableType(Mockito.<String[]>any(), Mockito.eq(new String[] {"Environment Detail"})))
 				.thenReturn(Collections.list(property));
 		Mockito.when(this.ontologyVariableDataManager.getWithFilter(Mockito.any(VariableFilter.class))).thenReturn(Collections.list(variable));
 
@@ -272,7 +270,7 @@ public class ManageSettingsControllerTest {
 		final VariableFilter variableFilterVal = captorVariableFilter.getValue();
 		final List<Integer> excludedVariableIds = variableFilterVal.getExcludedVariableIds();
 
-		Assert.assertNull(excludedVariableIds);
+		Assert.assertTrue("There should be no excluded variables", excludedVariableIds.isEmpty());
 		Assert.assertEquals(property.getId(), result.getPropertyId().intValue());
 		Assert.assertFalse(result.getStandardVariables().isEmpty());
 		Assert.assertEquals(variable, result.getStandardVariables().get(0));

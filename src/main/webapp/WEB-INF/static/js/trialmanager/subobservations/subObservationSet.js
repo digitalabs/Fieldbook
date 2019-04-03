@@ -183,6 +183,7 @@
 				doPendingViewActions();
 
 				loadTable();
+				loadBatchActionCombo();
 			}); // getDataset
 
 			$rootScope.$on('subObsTabSelected', function (event) {
@@ -319,6 +320,7 @@
 				$scope.selectedStatusFilter = "1";
 				doPendingViewActions();
 				loadTable();
+				loadBatchActionCombo();
 			};
 
 			$scope.checkOutOfBoundDraftData = function () {
@@ -431,6 +433,26 @@
 					return order[0] === index;
 				})) {
 					$scope.columnFilter.columnData.sortingAsc = null;
+				}
+			};
+
+			function loadBatchActionCombo() {
+				$scope.toggleSectionBatchAction = false;
+				$scope.nested.selectedVariableFilter = $scope.selectVariableFilter[0];
+				$scope.nested.selectedBatchAction = $scope.selectBatchActions[0];
+
+				$scope.selectBatchActions = [];
+				$scope.selectBatchActions = [{
+					name: 'Select action',
+					id: 0
+				}];
+				if ($scope.isPendingView) {
+					$scope.selectBatchActions.push({
+						name: 'Accept observations as-is',
+						id: 1
+					});
+				} else {
+
 				}
 			};
 

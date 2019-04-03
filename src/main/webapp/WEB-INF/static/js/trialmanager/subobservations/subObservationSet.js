@@ -904,11 +904,18 @@
 
 				return loadColumns().then(function (columnsObj) {
 					$scope.dtOptions = getDtOptions();
-
+					$scope.selectVariableFilter = [{
+						name: 'Choose a variable',
+						termId: 0
+					}];
 					angular.forEach(columnsObj.columns, function (column, index) {
 						// "PLOT_NO"
 						if (column.columnData.termId === 8200) {
 							$scope.dtOptions.withOption('order', [index, 'asc'])
+						}
+						if (!column.columnData.factor) {
+							$scope.selectVariableFilter.push(column.columnData);
+							$scope.hasVariableFilter = true;
 						}
 					});
 

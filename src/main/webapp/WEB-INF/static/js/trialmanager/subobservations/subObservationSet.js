@@ -461,6 +461,10 @@
 				}
 			};
 
+			$scope.ApplyAction = function(){
+				//TODO
+			};
+
 			$scope.isVariableFilter = function (index) {
 				if (!$scope.nested.selectedVariableFilter || !$scope.nested.selectedVariableFilter.termId) {
 					return true

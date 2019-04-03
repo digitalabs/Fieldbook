@@ -22,6 +22,17 @@
 				tableLoadedResolve = resolve;
 			});
 
+			$scope.toggleSectionBatchAction = false;
+			$scope.hasVariableFilter = false;
+			$scope.selectVariableFilter = [{
+				name: 'Choose a variable',
+				termId: 0
+			}];
+
+			$scope.selectBatchActions = [{
+				name: 'Select action',
+				id: 0
+			}];
 			$scope.traitVariables = new angular.OrderedHash();
 			$scope.selectionVariables = new angular.OrderedHash();
 			$scope.isHideDelete = false;
@@ -32,6 +43,8 @@
 			$scope.nested = {};
 			$scope.nested.dtInstance = null;
 			$scope.nested.reviewVariable = null;
+			$scope.nested.selectedVariableFilter = null;
+			$scope.nested.selectedBatchAction = null;
 			$scope.enableActions = false;
 			$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
 

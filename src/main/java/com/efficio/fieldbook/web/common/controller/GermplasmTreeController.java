@@ -484,6 +484,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		// TODO add trial instance number
 		final Workbook workbook = this.userSelection.getWorkbook();
 		advancingSource.setStudyId(workbook.getStudyDetails().getId());
+		advancingSource.setEnvironmentDatasetId(workbook.getTrialDatasetId());
 		advancingSource.setConditions(workbook.getConditions());
 		advancingSource.setStudyType(workbook.getStudyDetails().getStudyType());
 		advancingSource.setBreedingMethodId(cross.getBreedingMethodId());

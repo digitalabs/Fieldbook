@@ -30,6 +30,7 @@ import org.generationcp.middleware.manager.api.PedigreeDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.dataset.ObservationUnitUtils;
 import org.generationcp.middleware.util.TimerWatch;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -48,6 +49,8 @@ import org.generationcp.commons.pojo.AdvancingSource;
 import org.generationcp.commons.pojo.AdvancingSourceList;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import org.generationcp.commons.constant.AppConstants;
+
+import static org.generationcp.middleware.service.api.dataset.ObservationUnitUtils.fromMeasurementRow;
 
 @Service
 @Transactional
@@ -179,9 +182,11 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 		
 		// set the seed source string for the new Germplasm
-		final String seedSource =
-				this.seedSourceGenerator.generateSeedSource(workbook, source.getTrialInstanceNumber(), selectionNumberToApply,
-						source.getPlotNumber(), workbook.getStudyName(), plantNo);
+		final String seedSource = this.seedSourceGenerator
+			.generateSeedSource(workbook.getStudyDetails().getId(), workbook.getTrialDatasetId(),
+				fromMeasurementRow(workbook.getTrialObservationByTrialInstanceNo(Integer.valueOf(source.getTrialInstanceNumber()))),
+				workbook.getConditions(), selectionNumberToApply, source.getPlotNumber(), workbook.getStudyName(), plantNo);
+
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
 						, source.getGermplasm().getCross(), seedSource,

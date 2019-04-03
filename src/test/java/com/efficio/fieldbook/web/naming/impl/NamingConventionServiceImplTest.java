@@ -17,6 +17,7 @@ import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.commons.ruleengine.generator.SeedSourceGenerator;
 import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
@@ -26,6 +27,7 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.dataset.ObservationUnitRow;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -39,6 +41,8 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static org.mockito.ArgumentMatchers.anyInt;
 
 public class NamingConventionServiceImplTest {
 
@@ -146,9 +150,10 @@ public class NamingConventionServiceImplTest {
 		final String ruleGeneratedName2 = sourceGermplasmName.getNval() + "-B2";
 		Mockito.when(this.rulesService.runRules(Matchers.any(RuleExecutionContext.class))).thenReturn(Lists.newArrayList(ruleGeneratedName1, ruleGeneratedName2));
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
-		Mockito.when(
-				this.seedSourceGenerator.generateSeedSource(Matchers.any(Workbook.class), ArgumentMatchers.<String>isNull(),
-						Matchers.anyString(), ArgumentMatchers.<String>isNull(), Matchers.anyString(), ArgumentMatchers.<String>isNull())).thenReturn(testSeedSource);
+		Mockito.when(this.seedSourceGenerator
+			.generateSeedSource(anyInt(), anyInt(), Matchers.any(ObservationUnitRow.class), ArgumentMatchers.<MeasurementVariable>anyList(),
+				Matchers.anyString(), ArgumentMatchers.<String>isNull(), Matchers.anyString(), ArgumentMatchers.<String>isNull()))
+			.thenReturn(testSeedSource);
 
 
 		final AdvancingStudy advancingParameters = new AdvancingStudy();
@@ -217,7 +222,7 @@ public class NamingConventionServiceImplTest {
         methodList.add(breedingMethod);
 
         Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Matchers.anyBoolean())).thenReturn(methodList);
-		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Matchers.anyInt())).thenReturn(workbook);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(anyInt())).thenReturn(workbook);
 
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
@@ -272,9 +277,10 @@ public class NamingConventionServiceImplTest {
         Mockito.when(this.rulesService.runRules(Matchers.any(RuleExecutionContext.class))).thenReturn(
                 Lists.newArrayList(ruleGeneratedName));
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
-		Mockito.when(
-				this.seedSourceGenerator.generateSeedSource(Matchers.any(Workbook.class), ArgumentMatchers.<String>isNull(),
-					ArgumentMatchers.<String>isNull(), ArgumentMatchers.<String>isNull(), Matchers.anyString(), ArgumentMatchers.<String>isNull())).thenReturn(testSeedSource);
+		Mockito.when(this.seedSourceGenerator
+			.generateSeedSource(anyInt(), anyInt(), Matchers.any(ObservationUnitRow.class), ArgumentMatchers.<MeasurementVariable>anyList(),
+				ArgumentMatchers.<String>isNull(), ArgumentMatchers.<String>isNull(), Matchers.anyString(),
+				ArgumentMatchers.<String>isNull())).thenReturn(testSeedSource);
 
         final AdvancingStudy info = new AdvancingStudy();
         info.setMethodChoice("1");

@@ -53,6 +53,7 @@ import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 
+@Transactional
 public class CrossingServiceImpl implements CrossingService {
 
 	public static final Integer GERMPLASM_GNPGS = 2;

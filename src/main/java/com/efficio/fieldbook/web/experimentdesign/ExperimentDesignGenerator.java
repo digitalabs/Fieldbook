@@ -261,7 +261,7 @@ public class ExperimentDesignGenerator {
 		final float noOfTestEntriesToReplicate = Math.round((float) testEntryCount * (replicationPercentage/100));
 		// Pick any random test entries to replicate
 		final Set<Integer> randomTestEntryNumbers = new HashSet<>();
-		while (testEntryNumbers.size() < noOfTestEntriesToReplicate) {
+		while (randomTestEntryNumbers.size() < noOfTestEntriesToReplicate) {
 			randomTestEntryNumbers.add(testEntryNumbers.get(random.nextInt(testEntryNumbers.size())));
 		}
 

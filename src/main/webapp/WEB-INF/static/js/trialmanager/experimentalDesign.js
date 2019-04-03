@@ -557,6 +557,24 @@
 								}
 								break;
 							}
+							case DESIGN_TYPE.P_REP:  {
+
+								if (!$scope.data.replicationPercentage || $scope.expDesignForm.replicationPercentage.$invalid) {
+									showErrorMessage('page-message', 'Replication percentage should be between 0 and 100');
+									return false;
+								}
+
+								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
+									showErrorMessage('page-message', 'Replication count should be greater than 1');
+									return false;
+								}
+
+								if (!$scope.data.blockSize || $scope.expDesignForm.blockSize.$invalid) {
+									showErrorMessage('page-message', EXP_DESIGN_MSGS[8]);
+									return false;
+								}
+
+							}
 
 						}
 

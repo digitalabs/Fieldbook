@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
+import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.PRepDesignService;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
@@ -10,6 +11,7 @@ import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -22,6 +24,8 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -56,6 +61,9 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 
 	@Resource
 	public ExperimentDesignGenerator experimentDesignGenerator;
+
+	@Resource
+	private ResourceBundleMessageSource messageSource;
 
 	@Override
 	public List<MeasurementRow> generateDesign(
@@ -130,7 +138,63 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 	@Override
 	public ExpDesignValidationOutput validate(
 		final ExpDesignParameterUi expDesignParameter, final List<ImportedGermplasm> germplasmList) {
-		return null;
+
+		final Locale locale = LocaleContextHolder.getLocale();
+		ExpDesignValidationOutput output = new ExpDesignValidationOutput(true, "");
+		try {
+			if (expDesignParameter != null && germplasmList != null) {
+
+				if (expDesignParameter.getReplicationPercentage() == null || expDesignParameter.getReplicationPercentage() < 0
+					|| expDesignParameter.getReplicationPercentage() > 100) {
+					output = new ExpDesignValidationOutput(
+						false,
+						this.messageSource
+							.getMessage("experiment.design.replication.percentage.should.be.between.zero.and.hundred", null, locale));
+					return output;
+				} else if (!NumberUtils.isNumber(expDesignParameter.getBlockSize())) {
+					output = new ExpDesignValidationOutput(
+						false,
+						this.messageSource.getMessage("experiment.design.block.size.should.be.a.number", null, locale));
+					return output;
+				} else if (!NumberUtils.isNumber(expDesignParameter.getReplicationsCount())) {
+					output = new ExpDesignValidationOutput(
+						false,
+						this.messageSource.getMessage("experiment.design.replication.count.should.be.a.number", null, locale));
+					return output;
+				} else if (expDesignParameter.getStartingPlotNo() != null && !NumberUtils
+					.isNumber(expDesignParameter.getStartingPlotNo())) {
+					output = new ExpDesignValidationOutput(
+						false,
+						this.messageSource.getMessage("plot.number.should.be.in.range", null, locale));
+					return output;
+				} else if (expDesignParameter.getStartingEntryNo() != null && !NumberUtils
+					.isNumber(expDesignParameter.getStartingEntryNo())) {
+					output = new ExpDesignValidationOutput(
+						false,
+						this.messageSource.getMessage("entry.number.should.be.in.range", null, locale));
+					return output;
+				} else {
+					final Integer entryNumber = StringUtil.parseInt(expDesignParameter.getStartingEntryNo(), null);
+					final Integer plotNumber = StringUtil.parseInt(expDesignParameter.getStartingPlotNo(), null);
+
+					if (Objects.equals(entryNumber, 0)) {
+						output = new ExpDesignValidationOutput(
+							false,
+							this.messageSource.getMessage("entry.number.should.be.in.range", null, locale));
+					} else if (Objects.equals(plotNumber, 0)) {
+						output = new ExpDesignValidationOutput(
+							false,
+							this.messageSource.getMessage("plot.number.should.be.in.range", null, locale));
+					}
+				}
+			}
+		} catch (final Exception e) {
+			output = new ExpDesignValidationOutput(
+				false,
+				this.messageSource.getMessage("experiment.design.invalid.generic.error", null, locale));
+		}
+
+		return output;
 	}
 
 	@Override

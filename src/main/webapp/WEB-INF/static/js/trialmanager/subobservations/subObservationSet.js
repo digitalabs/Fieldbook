@@ -540,8 +540,7 @@
 							var sortedColTermId = subObservationSet.columnsData[order.column].termId;
 
 							var instanceId = $scope.nested.selectedEnvironment.instanceDbId;
-
-							return JSON.stringify({
+							$scope.observationUnitsSearch = JSON.stringify({
 								draw: d.draw,
 								sortedRequest: {
 									pageSize: d.length,

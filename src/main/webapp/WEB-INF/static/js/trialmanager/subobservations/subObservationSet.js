@@ -312,6 +312,14 @@
 				return deferred.promise;
 			};
 
+			$scope.validateApplyBatchAction = function (messages) {
+				var deferred = $q.defer();
+				var confirmApplyAction = "Proceed";
+				var modalConfirmationBatch = $scope.openConfirmModal(messages, confirmApplyAction);
+				modalConfirmationBatch.result.then(deferred.resolve);
+				return deferred.promise;
+			};
+
 			$scope.togglePendingView = function (isPendingView) {
 				if ($scope.isPendingView === isPendingView) {
 					return;
@@ -594,6 +602,7 @@
 									}, {})
 								}
 							});
+							return $scope.observationUnitsSearch;
 						}
 					})
 					.withDataProp('data')

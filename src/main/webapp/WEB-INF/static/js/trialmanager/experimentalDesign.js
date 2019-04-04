@@ -454,6 +454,11 @@
 
 								if ($scope.data.useLatenized) {
 
+									if(Number($scope.data.nrlatin) >= Number($scope.totalGermplasmEntryListCount) / Number($scope.data.rowsPerReplications)) {
+										showErrorMessage('page-message', EXP_DESIGN_MSGS[15]);
+										return false;
+									}
+
 									if (Number($scope.data.nrlatin) <= 0 || Number($scope.data.nrlatin) >= Number($scope.data.rowsPerReplications)) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[14]);
 										return false;

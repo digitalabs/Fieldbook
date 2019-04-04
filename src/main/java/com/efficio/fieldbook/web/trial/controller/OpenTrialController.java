@@ -906,7 +906,7 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	protected List<SampleListDTO> getSampleList(final Integer studyId) {
-		final Set<Integer> datasetTypeIds = new HashSet<>(Arrays.asList(DataSetType.SUBOBSERVATION_IDS));
+		final Set<Integer> datasetTypeIds = new HashSet<>(Arrays.asList(DataSetType.SUB_OBSERVATION_IDS));
 		datasetTypeIds.add(DataSetType.PLOT_DATA.getId());
 
 		final List<Integer> datasetIds = new ArrayList<>();

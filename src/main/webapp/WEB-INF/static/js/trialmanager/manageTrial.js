@@ -780,8 +780,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				var newSubObsTab = {
 					id: id,
 					name: name,
-					tabName: datasetType.abbr + ': ' + name,
-					titleName: datasetType.name + ': ' + name,
+					datasetType: datasetType,
 					state: '/subObservationTabs/' + id, // arbitrary prefix to filter tab content
 					subObservationSets: [{
 						id: id,
@@ -849,18 +848,18 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					datasetByTabs[parent.datasetId].push(dataset);
 				});
 
-				var subObservationTabs = data.filter(function (dataset) {
+				var observationTabs = data.filter(function (dataset) {
 					// those whose parent is not in the list are considered roots
 					return !datasetById[dataset.parentDatasetId];
 				});
 
-				angular.forEach(subObservationTabs, function (datasetTab) {
+				angular.forEach(observationTabs, function (datasetTab) {
 					var datasetType = datasetService.getDatasetType(datasetTab.datasetTypeId);
 					$scope.subObservationTabs.push({
 						id: datasetTab.datasetId,
 						name: datasetTab.name,
-						tabName: datasetType.abbr + ': ' + datasetTab.name,
-						titleName: datasetType.name + ': ' + datasetTab.name,
+						tabName: ((datasetType.abbr != 'Plots') ? datasetType.abbr + ': ' : '') + datasetTab.name,
+						datasetType: datasetType,
 						hasPendingData: datasetTab.hasPendingData,
 						state: '/subObservationTabs/' + datasetTab.datasetId, // arbitrary prefix to filter tab content
 						subObservationSets: datasetByTabs[datasetTab.datasetId].map(function (dataset) {

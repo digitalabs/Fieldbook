@@ -5,8 +5,8 @@
 	var derivedVariableModule = angular.module('derived-variable', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal', 'fieldbook-utils']);
 
 	derivedVariableModule.factory('derivedVariableService', ['$http', '$q', 'studyContext', 'datasetService',
-		'VARIABLE_TYPES', 'DATASET_TYPES_SUBOBSERVATION_IDS', 'DATASET_TYPES',
-		function ($http, $q, studyContext, datasetService, VARIABLE_TYPES, DATASET_TYPES_SUBOBSERVATION_IDS, DATASET_TYPES) {
+		'VARIABLE_TYPES', 'DATASET_TYPES_OBSERVATION_IDS',
+		function ($http, $q, studyContext, datasetService, VARIABLE_TYPES, DATASET_TYPES_OBSERVATION_IDS) {
 
 			var derivedVariableService = {};
 
@@ -84,7 +84,7 @@
 
 				if (!studyContext.studyId) return;
 
-				datasetService.getDatasets(DATASET_TYPES_SUBOBSERVATION_IDS.concat(DATASET_TYPES.PLOT_OBSERVATIONS)).then(function (datasets) {
+				datasetService.getDatasets(DATASET_TYPES_OBSERVATION_IDS).then(function (datasets) {
 					var datasetIds = [];
 					datasets.forEach(function (dataset) {
 						datasetIds.push(dataset.datasetId)

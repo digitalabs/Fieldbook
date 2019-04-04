@@ -3,32 +3,32 @@
 
 	var datasetsApiModule = angular.module('datasets-api', []);
 
-	datasetsApiModule.factory('datasetService', ['$http', '$q', 'studyContext', 'DATASET_TYPES_SUBOBSERVATION_IDS', 'serviceUtilities', 'DATASET_TYPES',
-		function ($http, $q, studyContext, DATASET_TYPES_SUBOBSERVATION_IDS, serviceUtilities, DATASET_TYPES) {
+	datasetsApiModule.factory('datasetService', ['$http', '$q', 'studyContext', 'serviceUtilities', 'DATASET_TYPES', 'DATASET_TYPES_OBSERVATION_IDS',
+		function ($http, $q, studyContext, serviceUtilities, DATASET_TYPES, DATASET_TYPES_OBSERVATION_IDS) {
 
 			var BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/studies/';
 
 			var datasetTypeMap = {};
 			var datasetTypes = [{
 				id: DATASET_TYPES.PLANT_SUBOBSERVATIONS,
-				name: 'Plants',
-				abbr: 'Plants'
+				tabTitlePrefix: 'Plants: ',
+				tabNamePrefix: 'Plants: '
 			}, {
 				id: DATASET_TYPES.QUADRAT_SUBOBSERVATIONS,
-				name: 'Quadrats',
-				abbr: 'Quadrats'
+				tabTitlePrefix: 'Quadrats: ',
+				tabNamePrefix: 'Quadrats: '
 			}, {
 				id: DATASET_TYPES.TIME_SERIES_SUBOBSERVATIONS,
-				name: 'Time Series',
-				abbr: 'Time Series'
+				tabTitlePrefix: 'Time Series: ',
+				tabNamePrefix: 'Time Series: '
 			}, {
 				id: DATASET_TYPES.CUSTOM_SUBOBSERVATIONS,
-				name: 'Sub-Observation Units',
-				abbr: 'SOUs'
+				tabTitlePrefix: 'Sub-Observation Units: ',
+				tabNamePrefix: 'SOUs: '
 			}, {
 				id: DATASET_TYPES.PLOT_OBSERVATIONS,
-				name: 'Plots',
-				abbr: 'Plots'
+				tabTitlePrefix: '',
+				tabNamePrefix: ''
 			}];
 
 			angular.forEach(datasetTypes, function (datasetType) {
@@ -82,7 +82,7 @@
 				}
 				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets', angular.merge({
 					params: {
-						datasetTypeIds: datasetTypeIds || DATASET_TYPES_SUBOBSERVATION_IDS.join(",")
+						datasetTypeIds: datasetTypeIds || DATASET_TYPES_OBSERVATION_IDS.join(",")
 					}
 				}));
 				return request.then(successHandler, failureHandler);

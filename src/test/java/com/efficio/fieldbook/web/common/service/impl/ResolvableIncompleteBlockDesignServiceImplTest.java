@@ -219,18 +219,12 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 
 		param.setTreatmentFactorsData(treatmentFactorValues);
 
-		// FIXME why try catch?
-		try{
-			final Integer maxEntry = treatmentSize + Integer.valueOf(startingEntryNo) - 1;
-			Mockito.doReturn("Some error message").when(this.messageSource)
-				.getMessage("experiment.design.entry.number.should.not.exceed", new Object[] {maxEntry}, locale);
-		}catch (Exception e){
-
-		}
+		final Integer maxEntry = treatmentSize + Integer.valueOf(startingEntryNo) - 1;
+		final String errorMessage = this.messageSource.getMessage("experiment.design.entry.number.should.not.exceed", new Object[] {maxEntry}, locale);
 
 		ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
 
-		Assert.assertFalse(output.getMessage().isEmpty());
+		Assert.assertEquals("Invalid entry number", output.getMessage(), errorMessage);
 	}
 
 	@Test
@@ -259,18 +253,12 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 
 		param.setTreatmentFactorsData(treatmentFactorValues);
 
-		// FIXME why try catch?
-		try{
-			int total = (treatmentSize * Integer.valueOf(replicationsCount)) + Integer.valueOf(startingPlotNo) - 1;
-			Mockito.doReturn("Some error message").when(this.messageSource)
-					.getMessage("experiment.design.plot.number.should.not.exceed", new Object[] {total}, locale);
-		}catch (Exception e){
-
-		}
+		int total = (treatmentSize * Integer.valueOf(replicationsCount)) + Integer.valueOf(startingPlotNo) - 1;
+		final String errorMessage = this.messageSource.getMessage("experiment.design.plot.number.should.not.exceed", new Object[] {total}, locale);
 
 		ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
 
-		Assert.assertFalse(output.getMessage().isEmpty());
+		Assert.assertEquals("Invalid plot number", output.getMessage(), errorMessage);
 	}
 
 	@Test
@@ -294,12 +282,12 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 		// Blocks to latinize is equal to block level
 		param.setNblatin("2");
 		ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
-		Assert.assertEquals("Invalid number of blocks to latinize", output.getMessage(), errorMessage);
+		Assert.assertEquals("Number of blocks to latinize should be less than block level", output.getMessage(), errorMessage);
 
 		// Blocks to latinize is greater than block level
 		param.setNblatin("3");
 		output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
-		Assert.assertEquals("Invalid number of blocks to latinize", output.getMessage(), errorMessage);
+		Assert.assertEquals("Number of blocks to latinize should be less than block level", output.getMessage(), errorMessage);
 
 	}
 
@@ -335,7 +323,7 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 		mvar.setDataTypeId(dataTypeId);
 		return mvar;
 	}
-
+	
 	private List<ImportedGermplasm> createGermplasmList(final String prefix, final int startingEntryNo, final int size) {
 		final List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
 		for (int i = startingEntryNo; i < startingEntryNo + size; i++) {

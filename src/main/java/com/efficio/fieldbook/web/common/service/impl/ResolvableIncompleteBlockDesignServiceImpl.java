@@ -281,4 +281,9 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 	public Boolean requiresBreedingViewLicence() {
 		return Boolean.TRUE;
 	}
+
+	public void setMessageSource(final ResourceBundleMessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+
 }

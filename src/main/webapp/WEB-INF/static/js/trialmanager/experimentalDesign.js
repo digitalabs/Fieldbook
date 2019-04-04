@@ -459,6 +459,11 @@
 										return false;
 									}
 
+									if(Number($scope.data.nclatin) >= Number($scope.totalGermplasmEntryListCount) / Number($scope.data.colsPerReplications)) {
+										showErrorMessage('page-message', EXP_DESIGN_MSGS[16]);
+										return false;
+									}
+
 									if (Number($scope.data.nrlatin) <= 0 || Number($scope.data.nrlatin) >= Number($scope.data.rowsPerReplications)) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[14]);
 										return false;

@@ -727,7 +727,7 @@
 					} else if (designTypeId === DESIGN_TYPE.ENTRY_LIST_ORDER) {
 						excludeTermIds = [8210, 8220, 8581, 8582];
 					} else if (designTypeId === DESIGN_TYPE.P_REP) {
-						excludeTermIds = [8210, 8581, 8582];
+						excludeTermIds = [8210, 8581, 8582, 8842];
 					}
 
 					return _.filter(factorList, function(value) {

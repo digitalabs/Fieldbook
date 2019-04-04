@@ -3,7 +3,6 @@ package com.efficio.fieldbook.web.common.service.impl;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.PRepDesignService;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
@@ -199,7 +198,7 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 
 	@Override
 	public List<Integer> getExperimentalDesignVariables(final ExpDesignParameterUi params) {
-		return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId());
+		return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.BLOCK_SIZE.getId(), TermId.PERCENTAGE_OF_REPLICATION.getId());
 	}
 
 	@Override

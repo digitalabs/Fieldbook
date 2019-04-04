@@ -1951,8 +1951,7 @@ public class SettingsUtil {
 				if (param.getDesignType() != null) {
 					if (param.getDesignType().equals(0)) {
 						return String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId());
-					} else if (param.getDesignType().equals(1) || param.getDesignType().equals(6) //|| param.getDesignType().equals(5)
-							|| param.getDesignType().equals(7)) {
+					} else if (param.getDesignType().equals(1)) {
 						if (param.getUseLatenized() != null && param.getUseLatenized()) {
 							return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId());
 						} else {
@@ -1970,11 +1969,15 @@ public class SettingsUtil {
 						return String.valueOf(TermId.AUGMENTED_RANDOMIZED_BLOCK.getId());
 					} else if (param.getDesignType().equals(5)) {
 						return String.valueOf(TermId.ENTRY_LIST_ORDER.getId());
+					} else if (param.getDesignType().equals(6)) {
+						return String.valueOf(TermId.P_REP.getId());
 					}
 				}
 				break;
 			case NUMBER_OF_REPLICATES:
 				return String.valueOf(param.getReplicationsCount());
+			case PERCENTAGE_OF_REPLICATION:
+				return String.valueOf(param.getReplicationPercentage());
 			case BLOCK_SIZE:
 				return String.valueOf(param.getBlockSize());
 			case REPLICATIONS_MAP:
@@ -2045,6 +2048,8 @@ public class SettingsUtil {
 						param.setDesignType(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId());
 					} else if (String.valueOf(TermId.ENTRY_LIST_ORDER.getId()).equals(var.getValue())) {
 						param.setDesignType(DesignTypeItem.ENTRY_LIST_ORDER.getId());
+					} else if (String.valueOf(TermId.P_REP.getId()).equals(var.getValue())) {
+							param.setDesignType(DesignTypeItem.P_REP.getId());
 					}
 					if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())
 							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
@@ -2069,6 +2074,8 @@ public class SettingsUtil {
 				}
 			} else if (var.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()) {
 				param.setReplicationsCount(var.getValue());
+			} else if (var.getTermId() == TermId.PERCENTAGE_OF_REPLICATION.getId()) {
+				param.setReplicationPercentage(Integer.valueOf(var.getValue()));
 			} else if (var.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
 				param.setFileName(var.getValue());
 			} else if (var.getTermId() == TermId.NBLKS.getId()) {

@@ -582,7 +582,8 @@ public class OpenTrialController extends BaseTrialController {
 			// EXP_DESIGN, EXP_DESIGN_SOURCE, NREP
 			// only if these variables already exists in the existing trial
 			if ((mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId() || mvar.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
-					|| mvar.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) && factors.findById(mvar.getTermId()) != null) {
+				|| mvar.getTermId() == TermId.PERCENTAGE_OF_REPLICATION.getId()
+				|| mvar.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) && factors.findById(mvar.getTermId()) != null) {
 				mvar.setOperation(Operation.UPDATE);
 			}
 		}

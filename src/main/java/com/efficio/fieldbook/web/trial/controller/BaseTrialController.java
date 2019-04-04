@@ -235,7 +235,7 @@ public abstract class BaseTrialController extends SettingsController {
 			final String designTypeString =
 					xpDesignVariable.getExperimentalDesign() == null ? null : xpDesignVariable.getExperimentalDesign().getValue();
 			if (NumberUtils.isNumber(designTypeString)) {
-				final Integer designTypeTermID = Integer.parseInt(designTypeString);
+				final int designTypeTermID = Integer.parseInt(designTypeString);
 
 				if (TermId.RANDOMIZED_COMPLETE_BLOCK.getId() == designTypeTermID) {
 					data.setDesignType(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId());
@@ -261,7 +261,15 @@ public abstract class BaseTrialController extends SettingsController {
 				} else if (TermId.ENTRY_LIST_ORDER.getId() == designTypeTermID) {
 					data.setDesignType(DesignTypeItem.ENTRY_LIST_ORDER.getId());
 					data.setUseLatenized(false);
+				} else if (TermId.P_REP.getId() == designTypeTermID) {
+					data.setDesignType(DesignTypeItem.P_REP.getId());
+					data.setUseLatenized(false);
 				}
+			}
+
+			final String replicationPercentage = this.getExperimentalDesignData(xpDesignVariable.getReplicationPercentage());
+			if (replicationPercentage != null) {
+				data.setReplicationPercentage(Integer.parseInt(replicationPercentage));
 			}
 
 			data.setNumberOfBlocks(this.getExperimentalDesignData(xpDesignVariable.getNumberOfBlocks()));

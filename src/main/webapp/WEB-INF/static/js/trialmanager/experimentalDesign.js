@@ -532,7 +532,7 @@
 							case DESIGN_TYPE.ENTRY_LIST_ORDER: {
 
 								if ($scope.germplasmTotalCheckEntriesCount > 0) {
-									if ($scope.germplasmTotalTestEntriesCount == 0) {
+									if ($scope.germplasmTotalTestEntriesCount === 0) {
 										showErrorMessage('page-message', EXP_DESIGN_MSGS[33]);
 										return false
 									}
@@ -597,7 +597,7 @@
 
 					$scope.showOnlyIfNumberOfBlocksIsSpecified = function() {
 
-						if ($scope.currentDesignType.id === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
+						if ($scope.currentDesignType.id === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK || $scope.currentDesignType.id === DESIGN_TYPE.P_REP) {
 							if (!$scope.data.numberOfBlocks && $scope.data.numberOfBlocks !== 0) {
 								return false;
 							}
@@ -605,6 +605,29 @@
 						}
 
 					};
+
+					$scope.showOnlyIfNumberOfBlockSizeIsSpecified = function() {
+
+						if ($scope.currentDesignType.id === DESIGN_TYPE.P_REP) {
+							if (!$scope.data.blockSize && $scope.data.blockSize !== 0) {
+								return false;
+							}
+							return true;
+						}
+
+					};
+
+					$scope.showOnlyIfNumberOfReplicationsCountIsSpecified = function() {
+
+						if ($scope.currentDesignType.id === DESIGN_TYPE.P_REP) {
+							if (!$scope.data.replicationsCount && $scope.data.replicationsCount !== 0) {
+								return false;
+							}
+							return true;
+						}
+					};
+
+
 
 					$scope.refreshDesignDetailsForAugmentedDesign = function() {
 
@@ -622,11 +645,11 @@
 					}
 
 					$scope.refreshDesignDetailsForPRepDesign = function() {
-
 						$scope.germplasmTotalCheckEntriesCount = countCheckEntries();
 						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
-						$scope.germplasmNumberOfTestEntriesPerBlock = $scope.germplasmTotalTestEntriesCount / $scope.data.numberOfBlocks;
-
+						var noOfTestEntriesToReplicate = Math.round($scope.germplasmTotalTestEntriesCount * ($scope.data.replicationPercentage / 100));
+						$scope.germplasmTotalNumberOfPlots = (noOfTestEntriesToReplicate + $scope.germplasmTotalCheckEntriesCount) * $scope.data.replicationsCount;
+						$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmTotalNumberOfPlots / $scope.data.blockSize;
 					}
 
 

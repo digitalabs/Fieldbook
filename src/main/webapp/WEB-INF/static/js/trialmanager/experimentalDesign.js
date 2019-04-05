@@ -655,7 +655,9 @@
 						$scope.germplasmTotalCheckEntriesCount = countCheckEntries();
 						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
 						var noOfTestEntriesToReplicate = Math.round($scope.germplasmTotalTestEntriesCount * ($scope.data.replicationPercentage / 100));
-						$scope.germplasmTotalNumberOfPlots = (noOfTestEntriesToReplicate + $scope.germplasmTotalCheckEntriesCount) * $scope.data.replicationsCount;
+						$scope.germplasmTotalNumberOfPlots = ($scope.germplasmTotalTestEntriesCount - noOfTestEntriesToReplicate) +
+							(noOfTestEntriesToReplicate * $scope.data.replicationsCount) +
+							($scope.germplasmTotalCheckEntriesCount * $scope.data.replicationsCount);
 						$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmTotalNumberOfPlots / $scope.data.blockSize;
 					}
 

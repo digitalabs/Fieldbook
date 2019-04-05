@@ -560,7 +560,8 @@
 							case DESIGN_TYPE.P_REP:  {
 
 								if (!$scope.data.replicationPercentage || $scope.expDesignForm.replicationPercentage.$invalid) {
-									showErrorMessage('page-message', 'Replication percentage should be between 0 and 100');
+									showErrorMessage(MESSAGE_DIV_ID, '% of test entries to replicate should be an integer number ' +
+										'greater or equal than 0 and less or equal than 100');
 									return false;
 								}
 
@@ -571,6 +572,8 @@
 
 								if (!$scope.data.blockSize || $scope.expDesignForm.blockSize.$invalid) {
 									showErrorMessage('page-message', EXP_DESIGN_MSGS[8]);
+								if ($scope.germplasmNumberOfPlotsPerBlock % 1 !== 0) {
+									showErrorMessage(MESSAGE_DIV_ID, 'The block size must be a factor of the number of treatments.');
 									return false;
 								}
 
@@ -597,7 +600,7 @@
 
 					$scope.showOnlyIfNumberOfBlocksIsSpecified = function() {
 
-						if ($scope.currentDesignType.id === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK || $scope.currentDesignType.id === DESIGN_TYPE.P_REP) {
+						if ($scope.currentDesignType.id === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
 							if (!$scope.data.numberOfBlocks && $scope.data.numberOfBlocks !== 0) {
 								return false;
 							}

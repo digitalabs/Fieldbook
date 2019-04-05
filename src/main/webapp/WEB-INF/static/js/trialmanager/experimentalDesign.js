@@ -8,7 +8,8 @@
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE','SYSTEM_DEFINED_ENTRY_TYPE', 'TrialManagerDataService', '$http',
 				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages, $rootScope) {
 
-					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
+					const ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
+					const MESSAGE_DIV_ID = 'page-message';
 
 					$scope.$on('$viewContentLoaded', function(){
 						// This is to automatically refresh the design details for augmented design
@@ -361,12 +362,12 @@
 							case DESIGN_TYPE.RANDOMIZED_COMPLETE_BLOCK:
 							{
 								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[4]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[4]);
 									return false;
 								}
 
 								if (!$scope.settings.treatmentFactors || !TrialManagerDataService.currentData.treatmentFactors.currentData) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[18]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[18]);
 									return false;
 								}
 
@@ -379,10 +380,10 @@
 								var errorCode = TrialManagerDataService.treatmentFactorDataInvalid();
 
 								if (errorCode === 1) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[24]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[24]);
 									return false;
 								} else if (errorCode === 2) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[25]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[25]);
 									return false;
 								}
 
@@ -392,44 +393,44 @@
 							{
 
 								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[5]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[5]);
 									return false;
 								}
 
 								if (!$scope.data.blockSize || $scope.expDesignForm.blockSize.$invalid) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[8]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[8]);
 									return false;
 								}
 
 								if ($scope.totalGermplasmEntryListCount % $scope.data.blockSize > 0) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[13]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[13]);
 									return false;
 								}
 
 								// latinized
 								if ($scope.data.useLatenized) {
 									if ($scope.data.nblatin === null) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[27]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[27]);
 										return false;
 									}
 									if (Number($scope.data.nblatin) >= ($scope.totalGermplasmEntryListCount / $scope.data.blockSize)) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[11]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[11]);
 										return false;
 									}
 
 									if (Number($scope.data.nblatin) >= Number($scope.data.replicationsCount)) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[23]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[23]);
 										return false;
 									}
 
 									if (Number($scope.data.replicationsArrangement) <= 0) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[21]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[21]);
 										return false;
 
 									}
 									if (Number($scope.data.replicationsArrangement) === 3) {
 										if (!$scope.data.replatinGroups || $scope.expDesignForm.replatinGroups.$invalid) {
-											showErrorMessage('page-message', EXP_DESIGN_MSGS[22]);
+											showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[22]);
 											return false;
 										}
 
@@ -442,7 +443,7 @@
 										}
 
 										if (sum !== Number($scope.data.replicationsCount)) {
-											showErrorMessage('page-message', EXP_DESIGN_MSGS[12]);
+											showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[12]);
 											return false;
 										}
 									}
@@ -453,47 +454,47 @@
 							case DESIGN_TYPE.ROW_COL:
 							{
 								if (!$scope.data.replicationsCount && $scope.expDesignForm.replicationsCount.$invalid) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[5]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[5]);
 									return false;
 								}
 
 								if ($scope.data.rowsPerReplications * $scope.data.colsPerReplications !== $scope.totalGermplasmEntryListCount) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[6]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[6]);
 									return false;
 								}
 
 								if ($scope.data.useLatenized) {
 
 									if (Number($scope.data.nrlatin) >= Number($scope.data.replicationsCount)) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[15]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[15]);
 										return false;
 									}
 
 									if (Number($scope.data.nclatin) >= Number($scope.data.replicationsCount)) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[16]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[16]);
 										return false;
 									}
 
 									if (Number($scope.data.nrlatin) <= 0 || Number($scope.data.nrlatin) >= Number($scope.data.rowsPerReplications)) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[14]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[14]);
 										return false;
 
 									}
 
 									if (Number($scope.data.nclatin) <= 0 || Number($scope.data.nclatin) >= Number($scope.data.colsPerReplications)) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[17]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[17]);
 										return false;
 
 									}
 
 									if (Number($scope.data.replicationsArrangement <= 0)) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[21]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[21]);
 										return false;
 									}
 
 									if (Number($scope.data.replicationsArrangement) === 3) {
 										if (!$scope.data.replatinGroups || $scope.expDesignForm.replatinGroups.$invalid) {
-											showErrorMessage('page-message', EXP_DESIGN_MSGS[22]);
+											showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[22]);
 											return false;
 										}
 
@@ -506,7 +507,7 @@
 										}
 
 										if (_sum !== Number($scope.data.replicationsCount)) {
-											showErrorMessage('page-message', EXP_DESIGN_MSGS[12]);
+											showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[12]);
 											return false;
 										}
 									}
@@ -533,23 +534,23 @@
 
 								if ($scope.germplasmTotalCheckEntriesCount > 0) {
 									if ($scope.germplasmTotalTestEntriesCount === 0) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[33]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[33]);
 										return false
 									}
 									if ($scope.data.checkStartingPosition > $scope.germplasmTotalTestEntriesCount) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[30]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[30]);
 										return false;
 									}
 									if ($scope.data.checkStartingPosition < 1) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[32]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[32]);
 										return false
 									}
 									if ($scope.data.checkSpacing > $scope.germplasmTotalTestEntriesCount) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[29]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[29]);
 										return false
 									}
 									if ($scope.data.checkSpacing < 1) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[31]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[31]);
 										return false
 									}
 								} else {
@@ -566,12 +567,15 @@
 								}
 
 								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
-									showErrorMessage('page-message', 'Replication count should be greater than 1');
+									showErrorMessage(MESSAGE_DIV_ID, 'Replication count should be greater than 1');
 									return false;
 								}
 
 								if (!$scope.data.blockSize || $scope.expDesignForm.blockSize.$invalid) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[8]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[8]);
+									return false;
+								}
+
 								if ($scope.germplasmNumberOfPlotsPerBlock % 1 !== 0) {
 									showErrorMessage(MESSAGE_DIV_ID, 'The block size must be a factor of the number of treatments.');
 									return false;
@@ -582,7 +586,7 @@
 						}
 
 						if ($scope.totalGermplasmEntryListCount <= 0) {
-							showErrorMessage('page-message', EXP_DESIGN_MSGS[26]);
+							showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[26]);
 							return false;
 						}
 
@@ -592,7 +596,7 @@
 					$scope.checkIfTheNumberOfTestEntriesPerBlockIsWholeNumber = function() {
 						// Check if the Number of Test entries per block is a whole number
 						if ($scope.germplasmNumberOfTestEntriesPerBlock % 1 !== 0) {
-							showErrorMessage('page-message', 'The number of test entries must be divisible by number of blocks.');
+							showErrorMessage(MESSAGE_DIV_ID, 'The number of test entries must be divisible by number of blocks.');
 							return false;
 						}
 						return true;
@@ -719,7 +723,7 @@
 
 					function validateNumberOfBlocks() {
 						if (!$scope.data.numberOfBlocks || $scope.expDesignForm.numberOfBlocks.$invalid) {
-							showErrorMessage('page-message', 'Please specify the number of blocks.');
+							showErrorMessage(MESSAGE_DIV_ID, 'Please specify the number of blocks.');
 							return false;
 						}
 						return true;
@@ -728,7 +732,7 @@
 					function validateNumberOfChecks() {
 
 						if ($scope.germplasmTotalCheckEntriesCount === 0) {
-							showErrorMessage('page-message', 'Please specify checks in germplasm list before generating augmented design.');
+							showErrorMessage(MESSAGE_DIV_ID, 'Please specify checks in germplasm list before generating augmented design.');
 							return false;
 						}
 						return true;

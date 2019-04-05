@@ -743,15 +743,15 @@
 					var excludeTermIds;
 
 					if (designTypeId === DESIGN_TYPE.RANDOMIZED_COMPLETE_BLOCK) {
-						excludeTermIds = [8230, 8220, 8581, 8582];
+						excludeTermIds = [8230, 8220, 8581, 8582, 8842];
 					} else if (designTypeId === DESIGN_TYPE.RESOLVABLE_INCOMPLETE_BLOCK) {
-						excludeTermIds = [8581, 8582];
+						excludeTermIds = [8581, 8582, 8842];
 					} else if (designTypeId === DESIGN_TYPE.ROW_COL) {
-						excludeTermIds = [8220, 8200];
+						excludeTermIds = [8220, 8200, 8842];
 					} else if (designTypeId === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
-						excludeTermIds = [8210, 8581, 8582];
+						excludeTermIds = [8210, 8581, 8582, 8842];
 					} else if (designTypeId === DESIGN_TYPE.ENTRY_LIST_ORDER) {
-						excludeTermIds = [8210, 8220, 8581, 8582];
+						excludeTermIds = [8210, 8220, 8581, 8582, 8842];
 					} else if (designTypeId === DESIGN_TYPE.P_REP) {
 						excludeTermIds = [8210, 8581, 8582, 8842];
 					}

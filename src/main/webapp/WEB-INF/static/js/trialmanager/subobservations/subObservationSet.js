@@ -474,25 +474,35 @@
 				$scope.resetFilterByColumn();
 			};
 
-			$scope.ApplyAction = function(){
+			$scope.ApplyAction = function () {
 				$scope.observationUnitsSearch = JSON.parse($scope.observationUnitsSearch);
 				$scope.observationUnitsSearch.filter.variableId = $scope.nested.selectedVariableFilter.termId;
 				$scope.observationUnitsSearch = JSON.stringify($scope.observationUnitsSearch);
-				datasetService.countFilteredPhenotypesAndInstances(subObservationSet.id,$scope.observationUnitsSearch).then(function (response) {
+				datasetService.countFilteredPhenotypesAndInstances(subObservationSet.id, $scope.observationUnitsSearch).then(function (response) {
 					var messages = "This action will update " + response.totalFilteredPhenotypes + " observations in " + response.totalFilteredInstances + " environments. You will not be able to undo this transaction. Are you sure you want to proceed?"
 					var promise = $scope.validateApplyBatchAction(messages);
 					promise.then(function (doContinue) {
 						if (doContinue) {
-							datasetService.acceptDraftDataByVariable(subObservationSet.id, $scope.observationUnitsSearch).then(function () {
-								loadTable();
-								loadBatchActionCombo();
-							}, function (response) {
-								if (response.errors && response.errors.length) {
-									showErrorMessage('', response.errors[0].message);
-								} else {
-									showErrorMessage('', ajaxGenericErrorMsg);
-								}
-							});
+
+						}
+						switch ($scope.nested.selectedBatchAction.id) {
+							case 1:
+							// setNewValue
+							case 2:
+								// acceptDraftDataByVariable
+								datasetService.acceptDraftDataByVariable(subObservationSet.id, $scope.observationUnitsSearch).then(function () {
+									reloadDataset();
+								}, function (response) {
+									if (response.errors && response.errors.length) {
+										showErrorMessage('', response.errors[0].message);
+									} else {
+										showErrorMessage('', ajaxGenericErrorMsg);
+									}
+								});
+								break;
+
+							default:
+								break;
 						}
 					});
 				});

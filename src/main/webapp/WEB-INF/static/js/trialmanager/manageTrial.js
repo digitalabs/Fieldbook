@@ -858,7 +858,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					$scope.subObservationTabs.push({
 						id: datasetTab.datasetId,
 						name: datasetTab.name,
-						tabName: ((datasetType.abbr != 'Plots') ? datasetType.abbr + ': ' : '') + datasetTab.name,
 						datasetType: datasetType,
 						hasPendingData: datasetTab.hasPendingData,
 						state: '/subObservationTabs/' + datasetTab.datasetId, // arbitrary prefix to filter tab content

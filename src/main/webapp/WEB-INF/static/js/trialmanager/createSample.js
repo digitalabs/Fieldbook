@@ -76,9 +76,9 @@
 
 		}]);
 
-	createSampleModule.controller('selectEnvironmentToSampleListModalCtrl', ['$scope', 'datasetService', 'environmentService',
+	createSampleModule.controller('selectEnvironmentToSampleListModalCtrl', ['$scope', 'datasetService',
 		'createSampleModalService', '$uibModalInstance', 'studyContext', 'datasetId',
-		function ($scope, datasetService, environmentService, createSampleModalService, $uibModalInstance, studyContext, datasetId) {
+		function ($scope, datasetService, createSampleModalService, $uibModalInstance, studyContext, datasetId) {
 
 			$scope.instances = [];
 			$scope.selectedInstances = {};
@@ -108,17 +108,9 @@
 
 			$scope.init = function () {
 
-				if (studyContext.measurementDatasetId === datasetId) {
-					// If selected dataset is PLOT, get the instances from environmentService
-					environmentService.getEnvironments().then(function (instances) {
-						$scope.instances = instances;
-					});
-				} else {
-					// If selected dataset is SUB-OBSERVATION, get the instances from datasetService
-					datasetService.getDatasetInstances(datasetId).then(function (instances) {
-						$scope.instances = instances;
-					});
-				}
+				datasetService.getDatasetInstances(datasetId).then(function (instances) {
+					$scope.instances = instances;
+				});
 			};
 
 			$scope.init();

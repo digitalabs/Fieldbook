@@ -470,6 +470,10 @@
 				}
 			};
 
+			$scope.changeSelectedVariableFilter = function(){
+				$scope.resetFilterByColumn();
+			};
+
 			$scope.ApplyAction = function(){
 				$scope.observationUnitsSearch = JSON.parse($scope.observationUnitsSearch);
 				$scope.observationUnitsSearch.filter.variableId = $scope.nested.selectedVariableFilter.termId;

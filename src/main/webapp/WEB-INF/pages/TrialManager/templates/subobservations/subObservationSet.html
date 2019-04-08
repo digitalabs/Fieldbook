@@ -139,8 +139,8 @@
 			<div class="row add_top_padding">
 				<div class="col-xs-12 form-inline" ng-if="toggleSectionBatchAction &amp;&amp; hasVariableFilter">
 					<div class="row form-group" style="padding-right: 10px;">
-						<label style="padding-right: 10px;padding-left: 15px;">select variable:</label>
-						<ui-select ng-model="nested.selectedVariableFilter" class="input-sm form-control inline-select" search-enabled="false" theme="select2">
+						<label style="padding-right: 10px;padding-left: 15px;">Select variable:</label>
+						<ui-select ng-model="nested.selectedVariableFilter" class="input-sm form-control inline-select" ng-change="changeSelectedVariableFilter()" search-enabled="false" theme="select2">
 							<ui-select-match>{{$select.selected.name}}</ui-select-match>
 							<ui-select-choices repeat="variable as variable in selectVariableFilter">{{(variable.name)}}</ui-select-choices>
 						</ui-select>

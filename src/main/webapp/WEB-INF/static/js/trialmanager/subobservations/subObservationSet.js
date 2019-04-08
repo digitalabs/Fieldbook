@@ -25,7 +25,7 @@
 			$scope.toggleSectionBatchAction = false;
 			$scope.hasVariableFilter = false;
 			$scope.selectVariableFilter = [{
-				name: 'Choose a variable',
+				name: 'Please choose',
 				termId: 0
 			}];
 
@@ -33,6 +33,7 @@
 				name: 'Select action',
 				id: 0
 			}];
+
 			$scope.traitVariables = new angular.OrderedHash();
 			$scope.selectionVariables = new angular.OrderedHash();
 			$scope.isHideDelete = false;
@@ -972,13 +973,13 @@
 				return loadColumns().then(function (columnsObj) {
 					$scope.dtOptions = getDtOptions();
 					$scope.selectVariableFilter = [{
-						name: 'Choose a variable',
+						name: 'Please choose',
 						termId: 0
 					}];
 					angular.forEach(columnsObj.columns, function (column, index) {
 						// "PLOT_NO"
 						if (column.columnData.termId === 8200) {
-							$scope.dtOptions.withOption('order', [index, 'asc'])
+							$scope.dtOptions.withOption('order', [index, 'asc']);
 						}
 						if (!column.columnData.factor) {
 							$scope.selectVariableFilter.push(column.columnData);

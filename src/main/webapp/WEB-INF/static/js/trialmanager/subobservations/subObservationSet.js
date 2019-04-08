@@ -24,16 +24,7 @@
 
 			$scope.toggleSectionBatchAction = false;
 			$scope.hasVariableFilter = false;
-			$scope.selectVariableFilter = [{
-				name: 'Please choose',
-				termId: 0
-			}];
-
-			$scope.selectBatchActions = [{
-				name: 'Select action',
-				id: 0
-			}];
-
+			$scope.selectVariableFilter = [];
 			$scope.traitVariables = new angular.OrderedHash();
 			$scope.selectionVariables = new angular.OrderedHash();
 			$scope.isHideDelete = false;
@@ -184,7 +175,6 @@
 				doPendingViewActions();
 
 				loadTable();
-				loadBatchActionCombo();
 			}); // getDataset
 
 			$rootScope.$on('subObsTabSelected', function (event) {
@@ -329,7 +319,6 @@
 				$scope.selectedStatusFilter = "1";
 				doPendingViewActions();
 				loadTable();
-				loadBatchActionCombo();
 			};
 
 			$scope.collapseBatchAction = function() {
@@ -452,18 +441,16 @@
 
 			function loadBatchActionCombo() {
 				$scope.toggleSectionBatchAction = false;
-				$scope.nested.selectedVariableFilter = $scope.selectVariableFilter[0];
-				$scope.nested.selectedBatchAction = $scope.selectBatchActions[0];
-
-				$scope.selectBatchActions = [];
 				$scope.selectBatchActions = [{
 					name: 'Select action',
 					id: 0
 				}];
+				$scope.nested.selectedVariableFilter = $scope.selectVariableFilter[0];
+				$scope.nested.selectedBatchAction = $scope.selectBatchActions[0];
 				if ($scope.isPendingView) {
 					$scope.selectBatchActions.push({
 						name: 'Accept observations as-is',
-						id: 1
+						id: 2
 					});
 				} else {
 
@@ -1006,6 +993,7 @@
 
 					// Only used in tests
 					tableLoadedResolve();
+					loadBatchActionCombo();
 				});
 			}
 

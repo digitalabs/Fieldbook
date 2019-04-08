@@ -261,7 +261,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					}
 					else {
 						// FIXME - This validation should be removed once we fix the logic to delete environments without regenerating experiment units
-						if ($scope.subObservationTabs.length > 0) {
+						if ($scope.subObservationTabs.length > 1) {
 							var warningMessage = 'Environments cannot be removed because the study has sub-observation units created.';
 							ctrl.showAlertMessage('', warningMessage);
 						} else {

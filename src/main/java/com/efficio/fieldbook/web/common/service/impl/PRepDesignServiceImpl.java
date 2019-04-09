@@ -42,6 +42,13 @@ import java.util.Objects;
 public class PRepDesignServiceImpl implements PRepDesignService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ResolvableIncompleteBlockDesignServiceImpl.class);
+	public static final String EXPERIMENT_DESIGN_REPLICATION_PERCENTAGE_SHOULD_BE_BETWEEN_ZERO_AND_HUNDRED =
+		"experiment.design.replication.percentage.should.be.between.zero.and.hundred";
+	public static final String EXPERIMENT_DESIGN_BLOCK_SIZE_SHOULD_BE_A_NUMBER = "experiment.design.block.size.should.be.a.number";
+	public static final String EXPERIMENT_DESIGN_REPLICATION_COUNT_SHOULD_BE_A_NUMBER =
+		"experiment.design.replication.count.should.be.a.number";
+	public static final String PLOT_NUMBER_SHOULD_BE_IN_RANGE = "plot.number.should.be.in.range";
+	public static final String ENTRY_NUMBER_SHOULD_BE_IN_RANGE = "entry.number.should.be.in.range";
 
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -72,7 +79,7 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 		List<MeasurementRow> measurementRowList = new ArrayList<>();
 
 		final int nTreatments = germplasmList.size();
-		final String blockSize = parameter.getBlockSize();
+		final int blockSize = Integer.parseInt(parameter.getBlockSize());
 		final int replicationPercentage = parameter.getReplicationPercentage();
 		final int replicationNumber = Integer.parseInt(parameter.getReplicationsCount());
 		final int environments = Integer.parseInt(parameter.getNoOfEnvironments());
@@ -81,7 +88,7 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 		try {
 
 			final StandardVariable stdvarTreatment =
-				this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(), contextUtil.getCurrentProgramUUID());
+				this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 
 			final Map<Integer, StandardVariable> requiredVariablesMap = this.getRequiredDesignVariablesMap();
 			final StandardVariable stdvarBlock = requiredVariablesMap.get(TermId.BLOCK_NO.getId());
@@ -95,12 +102,13 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 			}
 
 			final List<ListItem> replicationListItems =
-				experimentDesignGenerator.createReplicationListItemForPRepDesign(germplasmList, replicationPercentage, replicationNumber);
-			final MainDesign mainDesign = experimentDesignGenerator
-				.createPRepDesign(blockSize, Integer.toString(nTreatments), replicationListItems, stdvarTreatment.getName(),
-					stdvarBlock.getName(), stdvarPlot.getName(), plotNo, entryNo, "");
+				this.experimentDesignGenerator
+					.createReplicationListItemForPRepDesign(germplasmList, replicationPercentage, replicationNumber);
+			final MainDesign mainDesign = this.experimentDesignGenerator
+				.createPRepDesign(blockSize, nTreatments, replicationListItems, stdvarTreatment.getName(),
+					stdvarBlock.getName(), stdvarPlot.getName(), plotNo, entryNo);
 
-			measurementRowList = experimentDesignGenerator
+			measurementRowList = this.experimentDesignGenerator
 				.generateExperimentDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
 					variates, treatmentVariables, new ArrayList<StandardVariable>(requiredVariablesMap.values()), germplasmList, mainDesign,
 					stdvarTreatment.getName(), null,
@@ -119,9 +127,9 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 		final List<StandardVariable> varList = new ArrayList<>();
 		try {
 			final StandardVariable stdvarBlock =
-				this.fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId(), contextUtil.getCurrentProgramUUID());
+				this.fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 			final StandardVariable stdvarPlot =
-				this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), contextUtil.getCurrentProgramUUID());
+				this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 
 			stdvarBlock.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 			stdvarPlot.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
@@ -148,29 +156,29 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 					output = new ExpDesignValidationOutput(
 						false,
 						this.messageSource
-							.getMessage("experiment.design.replication.percentage.should.be.between.zero.and.hundred", null, locale));
+							.getMessage(EXPERIMENT_DESIGN_REPLICATION_PERCENTAGE_SHOULD_BE_BETWEEN_ZERO_AND_HUNDRED, null, locale));
 					return output;
 				} else if (!NumberUtils.isNumber(expDesignParameter.getBlockSize())) {
 					output = new ExpDesignValidationOutput(
 						false,
-						this.messageSource.getMessage("experiment.design.block.size.should.be.a.number", null, locale));
+						this.messageSource.getMessage(EXPERIMENT_DESIGN_BLOCK_SIZE_SHOULD_BE_A_NUMBER, null, locale));
 					return output;
 				} else if (!NumberUtils.isNumber(expDesignParameter.getReplicationsCount())) {
 					output = new ExpDesignValidationOutput(
 						false,
-						this.messageSource.getMessage("experiment.design.replication.count.should.be.a.number", null, locale));
+						this.messageSource.getMessage(EXPERIMENT_DESIGN_REPLICATION_COUNT_SHOULD_BE_A_NUMBER, null, locale));
 					return output;
 				} else if (expDesignParameter.getStartingPlotNo() != null && !NumberUtils
 					.isNumber(expDesignParameter.getStartingPlotNo())) {
 					output = new ExpDesignValidationOutput(
 						false,
-						this.messageSource.getMessage("plot.number.should.be.in.range", null, locale));
+						this.messageSource.getMessage(PLOT_NUMBER_SHOULD_BE_IN_RANGE, null, locale));
 					return output;
 				} else if (expDesignParameter.getStartingEntryNo() != null && !NumberUtils
 					.isNumber(expDesignParameter.getStartingEntryNo())) {
 					output = new ExpDesignValidationOutput(
 						false,
-						this.messageSource.getMessage("entry.number.should.be.in.range", null, locale));
+						this.messageSource.getMessage(ENTRY_NUMBER_SHOULD_BE_IN_RANGE, null, locale));
 					return output;
 				} else {
 					final Integer entryNumber = StringUtil.parseInt(expDesignParameter.getStartingEntryNo(), null);
@@ -179,11 +187,11 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 					if (Objects.equals(entryNumber, 0)) {
 						output = new ExpDesignValidationOutput(
 							false,
-							this.messageSource.getMessage("entry.number.should.be.in.range", null, locale));
+							this.messageSource.getMessage(ENTRY_NUMBER_SHOULD_BE_IN_RANGE, null, locale));
 					} else if (Objects.equals(plotNumber, 0)) {
 						output = new ExpDesignValidationOutput(
 							false,
-							this.messageSource.getMessage("plot.number.should.be.in.range", null, locale));
+							this.messageSource.getMessage(PLOT_NUMBER_SHOULD_BE_IN_RANGE, null, locale));
 					}
 				}
 			}
@@ -198,7 +206,8 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 
 	@Override
 	public List<Integer> getExperimentalDesignVariables(final ExpDesignParameterUi params) {
-		return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.BLOCK_SIZE.getId(), TermId.PERCENTAGE_OF_REPLICATION.getId());
+		return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.BLOCK_SIZE.getId(),
+			TermId.PERCENTAGE_OF_REPLICATION.getId());
 	}
 
 	@Override
@@ -206,13 +215,17 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 		return Boolean.TRUE;
 	}
 
-	private Map<Integer, StandardVariable> getRequiredDesignVariablesMap() {
+	protected Map<Integer, StandardVariable> getRequiredDesignVariablesMap() {
 		final Map<Integer, StandardVariable> map = new HashMap<>();
 		final List<StandardVariable> requiredDesignVariables = this.getRequiredDesignVariables();
 		for (final StandardVariable standardVariable : requiredDesignVariables) {
 			map.put(standardVariable.getId(), standardVariable);
 		}
 		return map;
+	}
+
+	protected void setMessageSource(final ResourceBundleMessageSource messageSource) {
+		this.messageSource = messageSource;
 	}
 
 }

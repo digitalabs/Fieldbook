@@ -481,29 +481,27 @@
 				datasetService.countFilteredPhenotypesAndInstances(subObservationSet.id, param).then(function (response) {
 					var messages = "This action will update " + response.totalFilteredPhenotypes + " observations in "
 						+ response.totalFilteredInstances + " environments. You will not be able to undo this transaction." +
-						" Are you sure you want to proceed?"
+						" Are you sure you want to proceed?";
 					$scope.validateApplyBatchAction(messages).then(function (doContinue) {
-						if (!doContinue) {
-                            return;
-						}
-						switch ($scope.nested.selectedBatchAction.id) {
-							case 1:
-							// setNewValue
-							case 2:
-								// acceptDraftDataByVariable
-								datasetService.acceptDraftDataByVariable(subObservationSet.id, param).then(function () {
-									reloadDataset();
-								}, function (response) {
-									if (response.errors && response.errors.length) {
-										showErrorMessage('', response.errors[0].message);
-									} else {
-										showErrorMessage('', ajaxGenericErrorMsg);
-									}
-								});
-								break;
-
-							default:
-								break;
+						if (doContinue) {
+							switch ($scope.nested.selectedBatchAction.id) {
+								case 1:
+								// setNewValue
+								case 2:
+									// acceptDraftDataByVariable
+									datasetService.acceptDraftDataByVariable(subObservationSet.id, param).then(function () {
+										reloadDataset();
+									}, function (response) {
+										if (response.errors && response.errors.length) {
+											showErrorMessage('', response.errors[0].message);
+										} else {
+											showErrorMessage('', ajaxGenericErrorMsg);
+										}
+									});
+									break;
+								default:
+									break;
+							}
 						}
 					});
 				});

@@ -466,11 +466,12 @@
 			};
 
 			$scope.ApplyAction = function () {
-				datasetService.countFilteredPhenotypesAndInstances(subObservationSet.id, JSON.stringify({
+				var param = JSON.stringify({
 					instanceId: $scope.nested.selectedEnvironment.instanceDbId,
 					draftMode: $scope.isPendingView,
-                    filter: getFilter()
-				})).then(function (response) {
+					filter: getFilter()
+				});
+				datasetService.countFilteredPhenotypesAndInstances(subObservationSet.id, param).then(function (response) {
 					var messages = "This action will update " + response.totalFilteredPhenotypes + " observations in "
 						+ response.totalFilteredInstances + " environments. You will not be able to undo this transaction." +
 						" Are you sure you want to proceed?"
@@ -483,7 +484,7 @@
 							// setNewValue
 							case 2:
 								// acceptDraftDataByVariable
-								datasetService.acceptDraftDataByVariable(subObservationSet.id, $scope.observationUnitsSearch).then(function () {
+								datasetService.acceptDraftDataByVariable(subObservationSet.id, param).then(function () {
 									reloadDataset();
 								}, function (response) {
 									if (response.errors && response.errors.length) {

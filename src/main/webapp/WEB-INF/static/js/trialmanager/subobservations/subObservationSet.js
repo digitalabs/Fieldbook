@@ -465,6 +465,13 @@
 				table().ajax.reload();
 			};
 
+			$scope.hasDataFiltered = function () {
+				return $scope.nested.dtInstance && //
+					$scope.nested.dtInstance.DataTable && //
+					$scope.nested.dtInstance.DataTable.data() && //
+					$scope.nested.dtInstance.DataTable.data().length > 0 || false;
+			};
+
 			$scope.ApplyAction = function () {
 				var param = JSON.stringify({
 					instanceId: $scope.nested.selectedEnvironment.instanceDbId,

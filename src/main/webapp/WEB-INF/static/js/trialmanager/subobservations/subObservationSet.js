@@ -323,7 +323,11 @@
 
 			$scope.collapseBatchAction = function() {
 				$scope.toggleSectionBatchAction = !$scope.toggleSectionBatchAction;
-				$scope.hasVariableFilter = $scope.selectVariableFilter.length > 1;
+				// TODO move somewhere else, collapse should only collapse
+				//  also review if this variable can be replace by a
+				//  	function hasVariableFilter() { return $scope.selectVariableFilter.length > 1 };
+				//  and bind it in the view
+				// $scope.hasVariableFilter = $scope.selectVariableFilter.length > 1;
 			};
 
 			$scope.checkOutOfBoundDraftData = function () {
@@ -443,7 +447,7 @@
 				$scope.toggleSectionBatchAction = false;
 				$scope.selectBatchActions = [{
 					name: 'Select action',
-					id: 0
+					id: null
 				}];
 				$scope.nested.selectedVariableFilter = $scope.selectVariableFilter[0];
 				$scope.nested.selectedBatchAction = $scope.selectBatchActions[0];
@@ -458,19 +462,21 @@
 			};
 
 			$scope.changeSelectedVariableFilter = function(){
-				$scope.resetFilterByColumn();
+				table().ajax.reload();
 			};
 
 			$scope.ApplyAction = function () {
-				$scope.observationUnitsSearch = JSON.parse($scope.observationUnitsSearch);
-				$scope.observationUnitsSearch.filter.variableId = $scope.nested.selectedVariableFilter.termId;
-				$scope.observationUnitsSearch = JSON.stringify($scope.observationUnitsSearch);
-				datasetService.countFilteredPhenotypesAndInstances(subObservationSet.id, $scope.observationUnitsSearch).then(function (response) {
-					var messages = "This action will update " + response.totalFilteredPhenotypes + " observations in " + response.totalFilteredInstances + " environments. You will not be able to undo this transaction. Are you sure you want to proceed?"
-					var promise = $scope.validateApplyBatchAction(messages);
-					promise.then(function (doContinue) {
-						if (doContinue) {
-
+				datasetService.countFilteredPhenotypesAndInstances(subObservationSet.id, JSON.stringify({
+					instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+					draftMode: $scope.isPendingView,
+                    filter: getFilter()
+				})).then(function (response) {
+					var messages = "This action will update " + response.totalFilteredPhenotypes + " observations in "
+						+ response.totalFilteredInstances + " environments. You will not be able to undo this transaction." +
+						" Are you sure you want to proceed?"
+					$scope.validateApplyBatchAction(messages).then(function (doContinue) {
+						if (!doContinue) {
+                            return;
 						}
 						switch ($scope.nested.selectedBatchAction.id) {
 							case 1:
@@ -499,7 +505,12 @@
 				if (!$scope.nested.selectedVariableFilter || !$scope.nested.selectedVariableFilter.termId) {
 					return true
 				}
-				return $scope.nested.selectedVariableFilter && $scope.columnsObj && $scope.columnsObj.columns && $scope.columnsObj.columns[index] && $scope.columnsObj.columns[index].columnData && $scope.columnsObj.columns[index].columnData.termId === $scope.nested.selectedVariableFilter.termId;
+				return $scope.nested.selectedVariableFilter //
+					&& $scope.columnsObj //
+					&& $scope.columnsObj.columns //
+					&& $scope.columnsObj.columns[index] //
+					&& $scope.columnsObj.columns[index].columnData //
+					&& $scope.columnsObj.columns[index].columnData.termId === $scope.nested.selectedVariableFilter.termId;
 			};
 
 			$scope.filterByColumn = function () {
@@ -548,6 +559,61 @@
 				}
 			}
 
+			function getFilter() {
+				var variableId = $scope.nested.selectedVariableFilter && $scope.nested.selectedVariableFilter.termId;
+				return {
+					byOutOfBound: $scope.selectedStatusFilter === "2" || null,
+					byMissing: $scope.selectedStatusFilter === "3" || null,
+					byOutOfSync: $scope.selectedStatusFilter === "4" || null,
+					byOverwritten: $scope.selectedStatusFilter === "5" || null,
+					variableId: variableId,
+					filteredValues: $scope.columnsObj.columns.reduce(function (map, column) {
+						var columnData = column.columnData;
+						columnData.isFiltered = false;
+
+						if (columnData.dataTypeCode === 'T') {
+							return map;
+						}
+
+						if (columnData.possibleValues) {
+							columnData.possibleValues.forEach(function (value) {
+								if (value.isSelectedInFilters) {
+									if (!map[columnData.termId]) {
+										map[columnData.termId] = [];
+									}
+									map[columnData.termId].push(value.name);
+								}
+							});
+							if (!map[columnData.termId] && columnData.query) {
+								map[columnData.termId] = [columnData.query];
+							}
+						} else if (columnData.query) {
+							if (columnData.dataTypeCode === 'D') {
+								map[columnData.termId] = [($.datepicker.formatDate("yymmdd", columnData.query))];
+							} else {
+								map[columnData.termId] = [(columnData.query)];
+							}
+						}
+
+						if (map[columnData.termId]) {
+							columnData.isFiltered = true;
+						}
+						return map;
+					}, {}),
+					filteredTextValues: $scope.columnsObj.columns.reduce(function (map, column) {
+						var columnData = column.columnData;
+						if (columnData.dataTypeCode !== 'T') {
+							return map;
+						}
+						if (columnData.query) {
+							map[columnData.termId] = columnData.query;
+							columnData.isFiltered = true;
+						}
+						return map;
+					}, {})
+				};
+			}
+
 			function getDtOptions() {
 				return addCommonOptions(DTOptionsBuilder.newOptions()
 					.withOption('ajax', {
@@ -561,8 +627,7 @@
 							var order = d.order && d.order[0];
 							var sortedColTermId = subObservationSet.columnsData[order.column].termId;
 
-							var instanceId = $scope.nested.selectedEnvironment.instanceDbId;
-							$scope.observationUnitsSearch = JSON.stringify({
+							return JSON.stringify({
 								draw: d.draw,
 								sortedRequest: {
 									pageSize: d.length,
@@ -570,60 +635,10 @@
 									sortBy: sortedColTermId,
 									sortOrder: order.dir
 								},
-								instanceId: instanceId,
+								instanceId: $scope.nested.selectedEnvironment.instanceDbId,
 								draftMode: $scope.isPendingView,
-								filter: {
-									byOutOfBound: $scope.selectedStatusFilter === "2" || null,
-									byMissing: $scope.selectedStatusFilter === "3" || null,
-									byOutOfSync: $scope.selectedStatusFilter === "4" || null,
-									byOverwritten: $scope.selectedStatusFilter === "5" || null,
-									filteredValues: $scope.columnsObj.columns.reduce(function (map, column) {
-										var columnData = column.columnData;
-										columnData.isFiltered = false;
-
-										if (columnData.dataTypeCode === 'T') {
-											return map;
-										}
-
-										if (columnData.possibleValues) {
-											columnData.possibleValues.forEach(function (value) {
-												if (value.isSelectedInFilters) {
-													if (!map[columnData.termId]) {
-														map[columnData.termId] = [];
-													}
-													map[columnData.termId].push(value.name);
-												}
-											});
-											if (!map[columnData.termId] && columnData.query) {
-												map[columnData.termId] = [columnData.query];
-											}
-										} else if (columnData.query) {
-											if (columnData.dataTypeCode === 'D') {
-												map[columnData.termId] = [($.datepicker.formatDate("yymmdd", columnData.query))];
-											} else {
-												map[columnData.termId] = [(columnData.query)];
-											}
-										}
-
-										if (map[columnData.termId]) {
-											columnData.isFiltered = true;
-										}
-										return map;
-									}, {}),
-									filteredTextValues: $scope.columnsObj.columns.reduce(function (map, column) {
-										var columnData = column.columnData;
-										if (columnData.dataTypeCode !== 'T') {
-											return map;
-										}
-										if (columnData.query) {
-											map[columnData.termId] = columnData.query;
-											columnData.isFiltered = true;
-										}
-										return map;
-									}, {})
-								}
+								filter: getFilter()
 							});
-							return $scope.observationUnitsSearch;
 						}
 					})
 					.withDataProp('data')
@@ -975,7 +990,7 @@
 					$scope.dtOptions = getDtOptions();
 					$scope.selectVariableFilter = [{
 						name: 'Please choose',
-						termId: 0
+						termId: null
 					}];
 					angular.forEach(columnsObj.columns, function (column, index) {
 						// "PLOT_NO"

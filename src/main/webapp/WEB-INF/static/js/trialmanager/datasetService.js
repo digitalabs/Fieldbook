@@ -204,6 +204,12 @@
 
 			};
 
+			datasetService.setValueToVariable = function (datasetId, observationUnitsSearch) {
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observation-units/drafts/filter/set-value', observationUnitsSearch);
+				return request.then(successHandler, failureHandler);
+
+			};
+
 			return datasetService;
 		}]);
 

@@ -56,13 +56,13 @@
 
 			$scope.showExportOptions = function () {
 
-				if ($scope.measurementDatasetId === $scope.selected.datasetId) {
-					// If the selected dataset is a PLOT OBSERVATION, then use the old
-					// export study modal (non-Angular)
-					exportStudyModalService.redirectToOldExportModal();
-				} else {
+				//if ($scope.measurementDatasetId === $scope.selected.datasetId) {
+				//	// If the selected dataset is a PLOT OBSERVATION, then use the old
+				//	// export study modal (non-Angular)
+				//	exportStudyModalService.redirectToOldExportModal();
+				//} else {
 					exportStudyModalService.openExportStudyModal($scope.selected.datasetId);
-				}
+				//}
 
 			};
 

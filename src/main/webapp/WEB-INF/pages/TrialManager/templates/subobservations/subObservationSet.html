@@ -152,10 +152,37 @@
 							<ui-select-choices repeat="selectBatchAction as selectBatchAction in selectBatchActions">{{(selectBatchAction.name)}}</ui-select-choices>
 						</ui-select>
 					</div>
-					<div class="form-group" style="padding-left: 10px;" ng-if="hasVariableFilter &amp;&amp; nested.selectedBatchAction.id!==0">
-						<button type="button" class="btn btn-info form-control"
-								ng-click="ApplyAction()">Apply
-						</button>
+					<div class="form-group" style="padding-left: 10px;" ng-if="nested.selectedBatchAction.id === 1">
+						<label style="padding-right: 10px;">New value:</label>
+						<div class="form-group" ng-if="nested.selectedVariableFilter.dataTypeCode === 'N' || nested.selectedVariableFilter.dataTypeCode === 'T'">
+							<input class="form-control inline-select" ng-model='nested.newValueObservations'/>
+						</div>
+						<div class="form-group" ng-if="nested.selectedVariableFilter.dataTypeCode === 'C'">
+							<ui-select ng-model="nested.newValueObservations"
+									   class="input-sm form-control inline-select"
+									   search-enabled="true"
+									   theme="select2">
+								<ui-select-match>{{$select.selected.name}}</ui-select-match>
+								<ui-select-choices repeat="value.name as value in (nested.selectedVariableFilter.possibleValues | orderBy: 'name' | filter: { name: $select.search }) track by value.name">
+									<div title="{{value.description}}">{{isCategoricalDescriptionView ? value.displayDescription : value.displayValue}}</div>
+								</ui-select-choices>
+							</ui-select>
+						</div>
+						<div class="input-group" ng-if="nested.selectedVariableFilter.dataTypeCode === 'D'">
+							<input class="form-control inline-select"
+								   ng-model="nested.newValueObservations"
+								   uib-datepicker-popup="yyyyMMdd"
+								   is-open="isDatepickerActionOpen"
+								   placeholder="yyyyMMdd"/>
+							<span style="padding-left: 1px;" class="input-group-btn inline-select">
+        						<button type="button" class="btn form-control" ng-click="isDatepickerActionOpen = !isDatepickerActionOpen">
+          							<i class="glyphicon glyphicon-calendar"></i>
+       							</button>
+      						</span>
+						</div>
+					</div>
+					<div class="form-group" style="padding-left: 10px;" ng-if="hasVariableFilter &amp;&amp; nested.selectedBatchAction.id !== null">
+						<button type="button" class="btn btn-info form-control"  ng-disabled="nested.selectedBatchAction.id === 1 &amp;&amp; (nested.newValueObservations === null || nested.newValueObservations === '')" ng-click="ApplyAction()">Apply</button>
 					</div>
 				</div>
 				<div class="col-xs-12 form-inline" ng-show="!hasVariableFilter || !hasDataFiltered()">

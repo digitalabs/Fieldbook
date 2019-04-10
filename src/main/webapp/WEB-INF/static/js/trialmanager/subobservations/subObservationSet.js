@@ -37,6 +37,7 @@
 			$scope.nested.reviewVariable = null;
 			$scope.nested.selectedVariableFilter = null;
 			$scope.nested.selectedBatchAction = null;
+			$scope.nested.newValueObservations = null;
 			$scope.enableActions = false;
 			$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
 
@@ -448,6 +449,9 @@
 				$scope.selectBatchActions = [{
 					name: 'Select action',
 					id: null
+				}, {
+					name: 'Apply new value to observations',
+					id: 1
 				}];
 				$scope.nested.selectedVariableFilter = $scope.selectVariableFilter[0];
 				$scope.nested.selectedBatchAction = $scope.selectBatchActions[0];
@@ -463,6 +467,7 @@
 
 			$scope.changeSelectedVariableFilter = function(){
 				table().ajax.reload();
+				$scope.nested.newValueObservations = null;
 			};
 
 			$scope.hasDataFiltered = function () {
@@ -486,9 +491,32 @@
 						if (doContinue) {
 							switch ($scope.nested.selectedBatchAction.id) {
 								case 1:
-								// setNewValue
+									// setNewValue
+									var param = JSON.stringify({
+										newValue: $scope.nested.newValueObservations,
+										newCategoricalValueId: getCategoricalValueId($scope.nested.newValueObservations, $scope.nested.selectedVariableFilter),
+										observationUnitsSearchDTO: {
+											instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+											draftMode: $scope.isPendingView,
+											filter: getFilter()
+										}
+									});
+									datasetService.setValueToVariable(subObservationSet.id, param).then(function () {
+										reloadDataset();
+									}, function (response) {
+										if (response.errors && response.errors.length) {
+											showErrorMessage('', response.errors[0].message);
+										} else {
+											showErrorMessage('', ajaxGenericErrorMsg);
+										}
+									});
 								case 2:
 									// acceptDraftDataByVariable
+									var param = JSON.stringify({
+										instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+										draftMode: $scope.isPendingView,
+										filter: getFilter()
+									});
 									datasetService.acceptDraftDataByVariable(subObservationSet.id, param).then(function () {
 										reloadDataset();
 									}, function (response) {

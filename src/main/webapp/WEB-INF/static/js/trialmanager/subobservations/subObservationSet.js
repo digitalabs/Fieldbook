@@ -324,11 +324,6 @@
 
 			$scope.collapseBatchAction = function() {
 				$scope.toggleSectionBatchAction = !$scope.toggleSectionBatchAction;
-				// TODO move somewhere else, collapse should only collapse
-				//  also review if this variable can be replace by a
-				//  	function hasVariableFilter() { return $scope.selectVariableFilter.length > 1 };
-				//  and bind it in the view
-				// $scope.hasVariableFilter = $scope.selectVariableFilter.length > 1;
 			};
 
 			$scope.checkOutOfBoundDraftData = function () {

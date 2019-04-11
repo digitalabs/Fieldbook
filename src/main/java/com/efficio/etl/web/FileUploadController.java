@@ -200,7 +200,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			this.fieldbookService.addStudyUUIDConditionAndObsUnitIDFactorToWorkbook(wb, true);
 			this.dataImportService.populatePossibleValuesForCategoricalVariates(wb.getConditions(), programUUID);
 			this.dataImportService.saveDataset(wb, programUUID,
-					this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
+					this.contextUtil.getProjectInContext().getCropType());
 
 			this.httpSessionUtil.clearSessionData(session,
 					new String[] { HTTPSessionUtil.USER_SELECTION_SESSION_NAME });

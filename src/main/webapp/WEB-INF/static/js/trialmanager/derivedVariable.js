@@ -238,31 +238,17 @@
 						, geoLocationIds: geoLocationIds
 					};
 
-					// If selected dataset is PLOT DATA
-					if (datasetId === studyContext.measurementDatasetId) {
-						derivedVariableService.calculateVariableForObservation(calculateRequestData)
-							.then(function (response) {
+					derivedVariableService.calculateVariableForSubObservation(datasetId, calculateRequestData)
+						.then(function (response) {
+							if (response) {
 								if (response.data && response.data.hasDataOverwrite) {
-									derivedVariableModalService.confirmOverrideCalculatedVariableModal(datasetId, $scope.selected.variable);
+									derivedVariableModalService.confirmOverrideCalculatedVariableModal(datasetId, $scope.selected.variable, calculateRequestData);
 								} else {
-									$scope.reloadObservation();
+									$scope.reloadSubObservation();
 								}
-								$uibModalInstance.close();
-							});
-					} else {
-						derivedVariableService.calculateVariableForSubObservation(datasetId, calculateRequestData)
-							.then(function (response) {
-								if (response) {
-									if (response.data && response.data.hasDataOverwrite) {
-										derivedVariableModalService.confirmOverrideCalculatedVariableModal(datasetId, $scope.selected.variable, calculateRequestData);
-									} else {
-										$scope.reloadSubObservation();
-									}
-								}
-								$uibModalInstance.close();
-							});
-					}
-
+							}
+							$uibModalInstance.close();
+						});
 
 				};
 

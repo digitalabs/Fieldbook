@@ -59,8 +59,8 @@
 			};
 
 			datasetService.addObservation = function (datasetId, observationUnitId, observation) {
-				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/observations' +
-					observationUnitId, observation);
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/' + observationUnitId + '/observations/'
+					, observation);
 				return request.then(successHandler, failureHandler);
 			};
 

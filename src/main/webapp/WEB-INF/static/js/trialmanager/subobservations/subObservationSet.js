@@ -501,7 +501,11 @@
 										}
 									});
 									datasetService.setValueToVariable(subObservationSet.id, param).then(function () {
-										reloadDataset();
+										if($scope.isPendingView){
+											reloadDataset();
+										}else{
+											table().ajax.reload();
+										}
 									}, function (response) {
 										if (response.errors && response.errors.length) {
 											showErrorMessage('', response.errors[0].message);

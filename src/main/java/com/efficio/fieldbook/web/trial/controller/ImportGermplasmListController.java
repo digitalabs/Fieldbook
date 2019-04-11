@@ -273,7 +273,7 @@ public class ImportGermplasmListController extends SettingsController {
 				new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);
 		final int studyId = this.dataImportService.saveDataset(this.userSelection.getWorkbook(), true,
 				isDeleteObservations, this.getCurrentProject().getUniqueID(),
-				this.getCurrentProject().getCropType().getPlotCodePrefix());
+				this.getCurrentProject().getCropType());
 		this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
 
 		// for saving the list data project

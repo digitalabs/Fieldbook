@@ -1,18 +1,13 @@
 
 package com.efficio.etl.web;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.web.bean.FileUploadForm;
+import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.validators.FileUploadFormValidator;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.google.common.base.Optional;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.HTTPSessionUtil;
 import org.generationcp.commons.util.StudyPermissionValidator;
@@ -37,12 +32,7 @@ import org.generationcp.middleware.util.Message;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -55,13 +45,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.web.bean.FileUploadForm;
-import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.validators.FileUploadFormValidator;
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.google.common.base.Optional;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -71,7 +60,6 @@ public class FileUploadControllerTest {
 
 	private static final int USER_ID = 1;
 	private static final String PROGRAM_UUID = "55bd5dde-3a68-4dcd-bdda-d2301eff9e16";
-	private static final String PROJECT_CODE_PREFIX = "AAGhs";
 	@Mock
 	private MultipartFile file;
 
@@ -92,7 +80,7 @@ public class FileUploadControllerTest {
 
 	@Mock
 	private HTTPSessionUtil httpSessionUtil;
-	
+
 	@Mock
 	private BindingResult result;
 
@@ -101,29 +89,30 @@ public class FileUploadControllerTest {
 
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-	
+
 	@Mock
 	private Model model;
-	
+
 	@Mock
 	private Workbook workbook;
-	
+
 	@Mock
 	private File mockFile;
-	
+
 	@Mock
 	private StudyPermissionValidator studyPermissionValidator;
-	
+
 	@Mock
 	private Optional<StudyReference> studyOptional;
-	
+
 	private FileUploadForm form;
 	private HttpSession session;
 	private HttpServletRequest request;
 	private HttpServletResponse response;
 	private MeasurementVariable obsUnitIdMeasurementVariable;
-	
+
 	private Locale locale = LocaleContextHolder.getLocale();
+	private CropType crop;
 
 	@InjectMocks
 	private FileUploadController fileUploadController;
@@ -144,8 +133,8 @@ public class FileUploadControllerTest {
 		this.fileUploadController.setStudyPermissionValidator(this.studyPermissionValidator);
 
 		final Project project = new Project();
-		project.setCropType(new CropType("Maize"));
-		project.getCropType().setPlotCodePrefix(FileUploadControllerTest.PROJECT_CODE_PREFIX);
+		this.crop = new CropType("Maize");
+		project.setCropType(this.crop);
 		project.setProjectId(Long.valueOf(1));
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(FileUploadControllerTest.PROGRAM_UUID);
@@ -214,7 +203,7 @@ public class FileUploadControllerTest {
 
 		Mockito.verify(this.fieldbookService).addStudyUUIDConditionAndObsUnitIDFactorToWorkbook(workbook, true);
 		Mockito.verify(this.dataImportService).saveDataset(workbook, FileUploadControllerTest.PROGRAM_UUID,
-				FileUploadControllerTest.PROJECT_CODE_PREFIX);
+				this.crop);
 		Mockito.verify(this.httpSessionUtil).clearSessionData(this.session,
 				new String[] { HTTPSessionUtil.USER_SELECTION_SESSION_NAME });
 
@@ -245,7 +234,7 @@ public class FileUploadControllerTest {
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToMeasurementRows(this.obsUnitIdMeasurementVariable, workbook.getObservations());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook,
-				FileUploadControllerTest.PROGRAM_UUID, FileUploadControllerTest.PROJECT_CODE_PREFIX);
+				FileUploadControllerTest.PROGRAM_UUID, this.crop);
 		Mockito.verify(this.httpSessionUtil, Mockito.times(0)).clearSessionData(this.session,
 				new String[] { HTTPSessionUtil.USER_SELECTION_SESSION_NAME });
 
@@ -275,7 +264,7 @@ public class FileUploadControllerTest {
 		Mockito.verify(this.fieldbookService, Mockito.times(0))
 				.addMeasurementVariableToMeasurementRows(this.obsUnitIdMeasurementVariable, workbook.getObservations());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).saveDataset(workbook,
-				FileUploadControllerTest.PROGRAM_UUID, FileUploadControllerTest.PROJECT_CODE_PREFIX);
+				FileUploadControllerTest.PROGRAM_UUID, this.crop);
 		Mockito.verify(this.httpSessionUtil, Mockito.times(0)).clearSessionData(this.session,
 				new String[] { HTTPSessionUtil.USER_SELECTION_SESSION_NAME });
 

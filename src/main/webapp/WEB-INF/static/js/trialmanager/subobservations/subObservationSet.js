@@ -505,6 +505,7 @@
 											showErrorMessage('', ajaxGenericErrorMsg);
 										}
 									});
+									break;
 								case 2:
 									// acceptDraftDataByVariable
 									var param = JSON.stringify({

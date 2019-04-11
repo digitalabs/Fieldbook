@@ -487,8 +487,12 @@
 							switch ($scope.nested.selectedBatchAction.id) {
 								case 1:
 									// setNewValue
+									var newValue = $scope.nested.newValueObservations;
+									if ($scope.nested.selectedVariableFilter.dataTypeCode === 'D') {
+										newValue = $.datepicker.formatDate("yymmdd", newValue);
+									}
 									var param = JSON.stringify({
-										newValue: $scope.nested.newValueObservations,
+										newValue: newValue,
 										newCategoricalValueId: getCategoricalValueId($scope.nested.newValueObservations, $scope.nested.selectedVariableFilter),
 										observationUnitsSearchDTO: {
 											instanceId: $scope.nested.selectedEnvironment.instanceDbId,

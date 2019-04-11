@@ -32,6 +32,8 @@ import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.workbench.CropType;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.util.Message;
@@ -101,6 +103,7 @@ public class ETLServiceTest {
 	private final ETLServiceImpl etlService = new ETLServiceImpl();
 
 	private UserSelection userSelection;
+	private CropType crop;
 
 	private MeasurementDataTestDataInitializer measurementDataTestDataInitializer;
 
@@ -141,6 +144,11 @@ public class ETLServiceTest {
 		this.userSelection = new UserSelection();
 		this.fillObservationInfoOfUserSelection(this.userSelection);
 
+		final Project project = new Project();
+		this.crop = new CropType();
+		this.crop.setDbName("maize");
+		project.setCropType(this.crop);
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(ETLServiceTest.PROGRAM_UUID);
 		Mockito.when(this.fileService.retrieveWorkbook(ArgumentMatchers.anyString())).thenReturn(this.workbook);
 		Mockito.when(this.fileService.retrieveWorkbook(ArgumentMatchers.<String>isNull())).thenReturn(this.workbook);
@@ -765,6 +773,20 @@ public class ETLServiceTest {
 		Assert.assertEquals("20130805", studyDetails.getStartDate());
 		Assert.assertEquals("20130805", studyDetails.getEndDate());
 		Assert.assertEquals(StudyTypeDto.getTrialDto(), studyDetails.getStudyType());
+	}
+
+	@Test
+	public void testSaveProjectData() {
+		final org.generationcp.middleware.domain.etl.Workbook workbook = Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class);
+		this.etlService.saveProjectData(workbook, ETLServiceTest.PROGRAM_UUID);
+		Mockito.verify(this.dataImportService).saveProjectData(workbook, ETLServiceTest.PROGRAM_UUID, this.crop);
+	}
+
+	@Test
+	public void testSaveProjectOntology() {
+		final org.generationcp.middleware.domain.etl.Workbook workbook = Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class);
+		this.etlService.saveProjectOntology(workbook, ETLServiceTest.PROGRAM_UUID);
+		Mockito.verify(this.dataImportService).saveProjectOntology(workbook, ETLServiceTest.PROGRAM_UUID, this.crop);
 	}
 
 	protected Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> createPhenotyicMapTestData() {

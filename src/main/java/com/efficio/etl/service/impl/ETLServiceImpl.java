@@ -701,7 +701,7 @@ public class ETLServiceImpl implements ETLService {
 	public int saveProjectOntology(final org.generationcp.middleware.domain.etl.Workbook importData,
 			final String programUUID) {
 		return this.dataImportService.saveProjectOntology(importData, programUUID,
-				this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
+				this.contextUtil.getProjectInContext().getCropType());
 	}
 
 	@Override
@@ -724,7 +724,7 @@ public class ETLServiceImpl implements ETLService {
 	public int saveProjectData(final org.generationcp.middleware.domain.etl.Workbook importData,
 			final String programUUID) {
 		return this.dataImportService.saveProjectData(importData, programUUID,
-				this.contextUtil.getProjectInContext().getCropType().getPlotCodePrefix());
+				this.contextUtil.getProjectInContext().getCropType());
 	}
 
 	@Override

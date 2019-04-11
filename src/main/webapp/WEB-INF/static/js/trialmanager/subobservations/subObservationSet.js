@@ -985,7 +985,7 @@
 					return deferred.promise;
 				}
 
-				var invalid = validateDataOutOfScaleRange(cellDataValue, columnData);
+				var invalid = validateDataOutOfRange(cellDataValue, columnData);
 
 				if (invalid) {
 					var confirmModal = $scope.openConfirmModal(observationOutOfRange, keepLabel, discardLabel);
@@ -1238,24 +1238,12 @@
 				return invalid;
 			}
 
-			function validateDataOutOfScaleRange(cellDataValue, columnData) {
-				var invalid = false;
-
-				var value = cellDataValue;
-				var minVal = columnData.scaleMinRange;
-				var maxVal = columnData.scaleMaxRange;
-
-				invalid = validateNumericRange(minVal, maxVal, value, invalid);
-				invalid = validateCategoricalValues(columnData, cellDataValue, invalid);
-				return invalid;
-			}
-
 			function validateDataOutOfRange(cellDataValue, columnData) {
 				var invalid = false;
 
 				var value = cellDataValue;
-				var minVal = (columnData.variableMinRange || columnData.variableMinRange === 0) || columnData.scaleMinRange;
-				var maxVal = (columnData.variableMaxRange || columnData.variableMaxRange === 0) || columnData.scaleMaxRange;
+				var minVal = columnData.minRange;
+				var maxVal = columnData.maxRange;
 
 				invalid = validateNumericRange(minVal, maxVal, value, invalid);
 				invalid = validateCategoricalValues(columnData, cellDataValue, invalid);

@@ -551,6 +551,15 @@
 					&& $scope.columnsObj.columns[index].columnData.termId === $scope.nested.selectedVariableFilter.termId;
 			};
 
+			$scope.isVariableBatchActionSelected = function (index) {
+				return $scope.nested.selectedVariableFilter //
+					&& $scope.columnsObj //
+					&& $scope.columnsObj.columns //
+					&& $scope.columnsObj.columns[index] //
+					&& $scope.columnsObj.columns[index].columnData //
+					&& $scope.columnsObj.columns[index].columnData.termId === $scope.nested.selectedVariableFilter.termId;
+			};
+
 			$scope.filterByColumn = function () {
 				table().ajax.reload();
 			};
@@ -719,7 +728,9 @@
 
 			function initCompleteCallback() {
 				table().columns('.variates').every(function () {
-					$(this.header()).append($compile('<span class="glyphicon glyphicon-filter" ' +
+					$(this.header()).prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#5d6cff;"' +
+						' ng-if="isVariableBatchActionSelected(' + this.index() + ')"> </span>')($scope))
+						.append($compile('<span class="glyphicon glyphicon-filter" ' +
 						' style="cursor:pointer; padding-left: 5px;"' +
 						' popover-placement="bottom"' +
 						' ng-class="getFilteringByClass(' + this.index() + ')"' +

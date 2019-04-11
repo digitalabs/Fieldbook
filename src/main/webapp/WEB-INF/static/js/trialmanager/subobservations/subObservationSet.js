@@ -463,6 +463,7 @@
 			$scope.changeSelectedVariableFilter = function(){
 				table().ajax.reload();
 				$scope.nested.newValueObservations = null;
+				$scope.nested.selectedBatchAction = $scope.selectBatchActions[0];
 			};
 
 			$scope.hasDataFiltered = function () {

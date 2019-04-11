@@ -323,7 +323,7 @@ public class ExperimentDesignGenerator {
 			this.constructStudyVariableList(factors, nonTrialFactors, variates, treatmentVariables, requiredExpDesignVariable);
 
 		final List<MeasurementRow> measurementRowList = new ArrayList<>();
-		Integer trialInstanceNumber = noOfExistingEnvironments - noOfEnvironmentsToAdd + 1;
+		int trialInstanceNumber = noOfExistingEnvironments - noOfEnvironmentsToAdd + 1;
 		for (final BVDesignTrialInstance instance : bvOutput.getTrialInstances()) {
 			for (final Map<String, String> row : instance.getRows()) {
 				final String entryNoValue = row.get(entryNumberIdentifier);
@@ -436,11 +436,11 @@ public class ExperimentDesignGenerator {
 
 			measurementData = null;
 
-			final Integer termId = var.getTermId();
+			final int termId = var.getTermId();
 
-			if (termId.intValue() == TermId.ENTRY_NO.getId()) {
+			if (termId == TermId.ENTRY_NO.getId()) {
 				measurementData = new MeasurementData(var.getName(), String.valueOf(germplasm.getEntryId()), false, var.getDataType(), var);
-			} else if (termId.intValue() == TermId.SOURCE.getId() || termId.intValue() == TermId.GERMPLASM_SOURCE.getId()) {
+			} else if (termId == TermId.SOURCE.getId() || termId == TermId.GERMPLASM_SOURCE.getId()) {
 				measurementData = new MeasurementData(var.getName(), germplasm.getSource() != null ? germplasm.getSource() : "", false,
 					var.getDataType(), var);
 			} else if (termId == TermId.GROUPGID.getId()) {
@@ -451,22 +451,22 @@ public class ExperimentDesignGenerator {
 				measurementData =
 					new MeasurementData(var.getName(), germplasm.getStockIDs() != null ? germplasm.getStockIDs() : "", false,
 						var.getDataType(), var);
-			} else if (termId.intValue() == TermId.CROSS.getId()) {
+			} else if (termId == TermId.CROSS.getId()) {
 				measurementData = new MeasurementData(var.getName(), germplasm.getCross(), false, var.getDataType(), var);
-			} else if (termId.intValue() == TermId.DESIG.getId()) {
+			} else if (termId == TermId.DESIG.getId()) {
 				measurementData = new MeasurementData(var.getName(), germplasm.getDesig(), false, var.getDataType(), var);
-			} else if (termId.intValue() == TermId.GID.getId()) {
+			} else if (termId == TermId.GID.getId()) {
 				measurementData = new MeasurementData(var.getName(), germplasm.getGid(), false, var.getDataType(), var);
-			} else if (termId.intValue() == TermId.ENTRY_CODE.getId()) {
+			} else if (termId == TermId.ENTRY_CODE.getId()) {
 				measurementData = new MeasurementData(var.getName(), germplasm.getEntryCode(), false, var.getDataType(), var);
 			} else if (EXP_DESIGN_VARIABLE_IDS.contains(termId)) {
 				measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
 
-			} else if (termId.intValue() == TermId.CHECK.getId()) {
+			} else if (termId == TermId.CHECK.getId()) {
 				measurementData = new MeasurementData(var.getName(), Integer.toString(germplasm.getEntryTypeCategoricalID()), false,
 					var.getDataType(), germplasm.getEntryTypeCategoricalID(), var);
 
-			} else if (termId.intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+			} else if (termId == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				measurementData = new MeasurementData(var.getName(), Integer.toString(trialNo), false, var.getDataType(), var);
 
 			} else if (var.getTreatmentLabel() != null && !"".equals(var.getTreatmentLabel())) {

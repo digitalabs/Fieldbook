@@ -49,6 +49,7 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 		"experiment.design.replication.count.should.be.a.number";
 	public static final String PLOT_NUMBER_SHOULD_BE_IN_RANGE = "plot.number.should.be.in.range";
 	public static final String ENTRY_NUMBER_SHOULD_BE_IN_RANGE = "entry.number.should.be.in.range";
+	public static final String EXPERIMENT_DESIGN_INVALID_GENERIC_ERROR = "experiment.design.invalid.generic.error";
 
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -198,7 +199,7 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 		} catch (final Exception e) {
 			output = new ExpDesignValidationOutput(
 				false,
-				this.messageSource.getMessage("experiment.design.invalid.generic.error", null, locale));
+				this.messageSource.getMessage(EXPERIMENT_DESIGN_INVALID_GENERIC_ERROR, null, locale));
 		}
 
 		return output;

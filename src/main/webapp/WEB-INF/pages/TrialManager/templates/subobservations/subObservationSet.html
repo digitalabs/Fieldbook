@@ -137,22 +137,33 @@
 				<strong class="sub-content-heading">Batch action to review data</strong>
 			</label>
 			<div class="row add_top_padding" ng-show="toggleSectionBatchAction">
-				<div class="col-xs-12 form-inline" ng-if="hasVariableFilter &amp;&amp; hasDataFiltered()">
+				<div class="col-xs-12 form-inline" ng-if="hasVariableFilter">
 					<div class="row form-group" style="padding-right: 10px;">
 						<label style="padding-right: 10px;padding-left: 15px;">Select variable:</label>
 						<ui-select ng-model="nested.selectedVariableFilter" class="input-sm form-control inline-select" ng-change="changeSelectedVariableFilter()" search-enabled="false" theme="select2">
 							<ui-select-match>{{$select.selected.name}}</ui-select-match>
-							<ui-select-choices repeat="variable as variable in selectVariableFilter">{{(variable.name)}}</ui-select-choices>
+							<ui-select-choices repeat="variable as variable in selectVariableFilter">
+								<div title="{{variable.name}}">{{variable.name}}</div>
+							</ui-select-choices>
 						</ui-select>
 					</div>
-					<div class="form-group" ng-if="hasVariableFilter &amp;&amp; nested.selectedVariableFilter.termId !== null">
+					<div class="form-group" ng-show="hasVariableFilter &amp;&amp; !hasDataFiltered()">
+						<div class="form-group">
+							<div class="form-group" style="padding-right: 10px;">
+								<label style="padding-right: 10px;">There are no observations to update for the variable selected</label>
+							</div>
+						</div>
+					</div>
+					<div class="form-group" ng-if="hasVariableFilter &amp;&amp; hasDataFiltered() &amp;&amp; nested.selectedVariableFilter.termId !== null">
 						<label style="padding-right: 10px;">Select batch action:</label>
 						<ui-select ng-model="nested.selectedBatchAction" class="input-sm form-control inline-select" search-enabled="false" theme="select2">
 							<ui-select-match>{{$select.selected.name}}</ui-select-match>
-							<ui-select-choices repeat="selectBatchAction as selectBatchAction in selectBatchActions">{{(selectBatchAction.name)}}</ui-select-choices>
+							<ui-select-choices repeat="selectBatchAction as selectBatchAction in selectBatchActions">
+								<div title="{{selectBatchAction.name}}">{{selectBatchAction.name}}</div>
+							</ui-select-choices>
 						</ui-select>
 					</div>
-					<div class="form-group" style="padding-left: 10px;" ng-if="nested.selectedBatchAction.id === 1">
+					<div class="form-group" style="padding-left: 10px;" ng-if="nested.selectedBatchAction.id === 1  &amp;&amp; hasDataFiltered()">
 						<label style="padding-right: 10px;">New value:</label>
 						<div class="form-group" ng-if="nested.selectedVariableFilter.dataTypeCode === 'N' || nested.selectedVariableFilter.dataTypeCode === 'T'">
 							<input class="form-control inline-select" ng-model='nested.newValueObservations'/>
@@ -181,7 +192,7 @@
       						</span>
 						</div>
 					</div>
-					<div class="form-group" style="padding-left: 10px;" ng-if="hasVariableFilter &amp;&amp; nested.selectedBatchAction.id !== null">
+					<div class="form-group" style="padding-left: 10px;" ng-if="hasVariableFilter &amp;&amp; hasDataFiltered() &amp;&amp; nested.selectedBatchAction.id !== null">
 						<button type="button" class="btn btn-info form-control"  ng-disabled="nested.selectedBatchAction.id === 1 &amp;&amp; (nested.newValueObservations === null || nested.newValueObservations === '')" ng-click="ApplyAction()">Apply</button>
 					</div>
 				</div>
@@ -189,13 +200,6 @@
 				<div class="form-group">
 						<div class="form-group" style="padding-right: 10px;">
 							<label style="padding-right: 10px;">There is no data to review in the dataset</label>
-						</div>
-					</div>
-				</div>
-				<div class="col-xs-12 form-inline" ng-show="hasVariableFilter &amp;&amp; !hasDataFiltered()">
-					<div class="form-group">
-						<div class="form-group" style="padding-right: 10px;">
-							<label style="padding-right: 10px;">There are no observations to update for the variable selected</label>
 						</div>
 					</div>
 				</div>

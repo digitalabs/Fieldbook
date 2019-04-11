@@ -185,10 +185,17 @@
 						<button type="button" class="btn btn-info form-control"  ng-disabled="nested.selectedBatchAction.id === 1 &amp;&amp; (nested.newValueObservations === null || nested.newValueObservations === '')" ng-click="ApplyAction()">Apply</button>
 					</div>
 				</div>
-				<div class="col-xs-12 form-inline" ng-show="!hasVariableFilter || !hasDataFiltered()">
+				<div class="col-xs-12 form-inline" ng-show="!hasVariableFilter">
 				<div class="form-group">
 						<div class="form-group" style="padding-right: 10px;">
 							<label style="padding-right: 10px;">There is no data to review in the dataset</label>
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-12 form-inline" ng-show="hasVariableFilter &amp;&amp; !hasDataFiltered()">
+					<div class="form-group">
+						<div class="form-group" style="padding-right: 10px;">
+							<label style="padding-right: 10px;">There are no observations to update for the variable selected</label>
 						</div>
 					</div>
 				</div>

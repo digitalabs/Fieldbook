@@ -74,11 +74,11 @@
 			};
 			$scope.selectedStatusFilter = "1";
 
-			$.contextMenu('destroy', "#subObservationTableContainer td[class*='invalid-value'],#subObservationTableContainer td[class*='accepted-value']");
+			$.contextMenu('destroy', "#subObservationTableContainer td.variates:not(:empty)");
 
 			$.contextMenu({
 				// define which elements trigger this menu
-				selector: "#subObservationTableContainer td[class*='invalid-value'],#subObservationTableContainer td[class*='accepted-value']",
+				selector: "#subObservationTableContainer td.variates:not(:empty)",
 				// define the elements of the menu
 				callback: function (key, opt) {
 					var cell = opt.$trigger.get(0);
@@ -105,8 +105,10 @@
 							break;
 					}
 
+					var index = table().colReorder.transpose(table().column(cell).index(), 'toOriginal');
+					var columnData = $scope.columnsObj.columns[index].columnData;
 					datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId, cellData.observationId, {
-							categoricalValueId: null,
+							categoricalValueId: getCategoricalValueId(newValue, columnData),
 							value: newValue,
 							draftValue: newDraftValue,
 							draftCategoricalValueId: newDraftCategoricalValueId

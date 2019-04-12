@@ -74,11 +74,11 @@
 			};
 			$scope.selectedStatusFilter = "1";
 
-			$.contextMenu('destroy', "#subObservationTableContainer td.variates:not(:empty)");
+			$.contextMenu('destroy', "#subObservationTableContainer td.variates:not(:empty):not([disabled])");
 
 			$.contextMenu({
 				// define which elements trigger this menu
-				selector: "#subObservationTableContainer td.variates:not(:empty)",
+				selector: "#subObservationTableContainer td.variates:not(:empty):not([disabled])",
 				// define the elements of the menu
 				callback: function (key, opt) {
 					var cell = opt.$trigger.get(0);

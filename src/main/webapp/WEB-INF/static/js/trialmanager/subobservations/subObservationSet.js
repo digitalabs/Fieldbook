@@ -505,7 +505,10 @@
 										if($scope.isPendingView){
 											reloadDataset();
 										}else{
+											$scope.selectedStatusFilter = "1";
+											$scope.nested.selectedEnvironment = $scope.environments[1];
 											table().ajax.reload();
+											loadBatchActionCombo();
 										}
 									}, function (response) {
 										if (response.errors && response.errors.length) {

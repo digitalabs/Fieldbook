@@ -560,11 +560,16 @@
 							}
 							case DESIGN_TYPE.P_REP:  {
 
-								if (!$scope.data.replicationPercentage || $scope.expDesignForm.replicationPercentage.$invalid) {
+								$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
+								var noOfTestEntriesToReplicate = Math.round($scope.germplasmTotalTestEntriesCount * ($scope.data.replicationPercentage / 100));
+
+								// Percentage should be below 100%. There must be some unreplicated treatments in a partially replicated design.
+								if (!$scope.data.replicationPercentage || $scope.expDesignForm.replicationPercentage.$invalid || $scope.germplasmTotalTestEntriesCount === noOfTestEntriesToReplicate) {
 									showErrorMessage(MESSAGE_DIV_ID, '% of test entries to replicate should be an integer number ' +
-										'greater or equal than 0 and less or equal than 100');
+										'greater or equal than 0 and less than 100');
 									return false;
 								}
+
 
 								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
 									showErrorMessage(MESSAGE_DIV_ID, 'Replication count should be greater than 1');

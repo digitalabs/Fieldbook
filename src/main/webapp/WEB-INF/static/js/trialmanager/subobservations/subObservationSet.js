@@ -74,11 +74,12 @@
 			};
 			$scope.selectedStatusFilter = "1";
 
-			$.contextMenu('destroy', "#subObservationTableContainer td.variates:not(:empty):not([disabled])");
+			$.contextMenu('destroy',
+				"#subObservationTableContainer td.variates.datatype-1130:not(:empty):not([disabled]),#subObservationTableContainer td.variates.datatype-1110:not(:empty):not([disabled])");
 
 			$.contextMenu({
-				// define which elements trigger this menu
-				selector: "#subObservationTableContainer td.variates:not(:empty):not([disabled])",
+				// define which elements trigger this menu: only non-empty, non-disabled categorical or numeric traits
+				selector: "#subObservationTableContainer td.variates.datatype-1130:not(:empty):not([disabled]),#subObservationTableContainer td.variates.datatype-1110:not(:empty):not([disabled])",
 				// define the elements of the menu
 				callback: function (key, opt) {
 					var cell = opt.$trigger.get(0);
@@ -958,6 +959,8 @@
 
 					function getClassName() {
 						var className = columnData.factor === true ? 'factors' : 'variates';
+						// include data type for determining when to show context menu option/s
+						className += ' datatype-' + columnData.dataTypeId;
 						// avoid wrapping filter icon
 						className += ' dt-head-nowrap';
 						return className;

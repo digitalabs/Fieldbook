@@ -55,9 +55,6 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 	@Mock
 	private FieldbookProperties fieldbookProperties;
 
-	@Mock
-	private ResourceBundleMessageSource messageSource;
-
 	@InjectMocks
 	private ExperimentDesignGenerator experimentDesignGenerator;
 
@@ -66,10 +63,15 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 
 	private static final String PROGRAM_UUID = "2191a54c-7d98-40d0-ae6f-6a400e4546ce";
 
+	private final ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+
 	Locale locale = LocaleContextHolder.getLocale();
 
 	@Before
 	public void beforeEachTest() throws IOException {
+
+		this.messageSource.setUseCodeAsDefaultMessage(true);
+		this.resolveIncompleteBlockDesignImpl.setMessageSource(this.messageSource);
 
 		resolveIncompleteBlockDesignImpl.setExperimentDesignGenerator(experimentDesignGenerator);
 
@@ -217,18 +219,12 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 
 		param.setTreatmentFactorsData(treatmentFactorValues);
 
-		// FIXME why try catch?
-		try{
-			final Integer maxEntry = treatmentSize + Integer.valueOf(startingEntryNo) - 1;
-			Mockito.doReturn("Some error message").when(this.messageSource)
-				.getMessage("experiment.design.entry.number.should.not.exceed", new Object[] {maxEntry}, locale);
-		}catch (Exception e){
-
-		}
+		final Integer maxEntry = treatmentSize + Integer.valueOf(startingEntryNo) - 1;
+		final String errorMessage = this.messageSource.getMessage("experiment.design.entry.number.should.not.exceed", new Object[] {maxEntry}, locale);
 
 		ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
 
-		Assert.assertFalse(output.getMessage().isEmpty());
+		Assert.assertEquals("Invalid entry number", output.getMessage(), errorMessage);
 	}
 
 	@Test
@@ -257,18 +253,66 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 
 		param.setTreatmentFactorsData(treatmentFactorValues);
 
-		// FIXME why try catch?
-		try{
-			int total = (treatmentSize * Integer.valueOf(replicationsCount)) + Integer.valueOf(startingPlotNo) - 1;
-			Mockito.doReturn("Some error message").when(this.messageSource)
-					.getMessage("experiment.design.plot.number.should.not.exceed", new Object[] {total}, locale);
-		}catch (Exception e){
-
-		}
+		int total = (treatmentSize * Integer.valueOf(replicationsCount)) + Integer.valueOf(startingPlotNo) - 1;
+		final String errorMessage = this.messageSource.getMessage("experiment.design.plot.number.should.not.exceed", new Object[] {total}, locale);
 
 		ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
 
-		Assert.assertFalse(output.getMessage().isEmpty());
+		Assert.assertEquals("Invalid plot number", output.getMessage(), errorMessage);
+	}
+
+	@Test
+	public void validate_NbLatinGreaterOrEqualToBlockLevel_ErrorMessageAddedToOutput() {
+		final int startingEntryNo = 5;
+		final List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", startingEntryNo, 10);
+		final List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
+		final String errorMessage = this.messageSource.getMessage("experiment.design.nblatin.should.not.be.greater.than.block.level", null, LocaleContextHolder.getLocale());
+
+		trialVariables.add(this.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "name", "desc", "scale", "method",
+				"property", "dataType", 1));
+
+		final ExpDesignParameterUi param = new ExpDesignParameterUi();
+		param.setNoOfEnvironments("2");
+		param.setReplicationsCount("2");
+		param.setStartingEntryNo(String.valueOf(startingEntryNo));
+		param.setStartingPlotNo("6");
+		param.setBlockSize("5");
+		param.setUseLatenized(true);
+
+		// Blocks to latinize is equal to block level
+		param.setNblatin("2");
+		ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
+		Assert.assertEquals("Number of blocks to latinize should be less than block level", output.getMessage(), errorMessage);
+
+		// Blocks to latinize is greater than block level
+		param.setNblatin("3");
+		output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
+		Assert.assertEquals("Number of blocks to latinize should be less than block level", output.getMessage(), errorMessage);
+
+	}
+
+	@Test
+	public void validate_NbLatinLessThanBlockLevel_NoErrorMessage() {
+		final int startingEntryNo = 5;
+		final List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", startingEntryNo, 10);
+		final List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
+		final String errorMessage = "Number of contiguous block should be less than the block level.";
+
+		trialVariables.add(this.createMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "name", "desc", "scale", "method",
+				"property", "dataType", 1));
+
+		final ExpDesignParameterUi param = new ExpDesignParameterUi();
+		param.setNoOfEnvironments("2");
+		param.setReplicationsCount("2");
+		param.setStartingEntryNo(String.valueOf(startingEntryNo));
+		param.setStartingPlotNo("6");
+		param.setBlockSize("5");
+		param.setUseLatenized(true);
+
+		// Blocks to latinize is less than block level
+		param.setNblatin("1");
+		final ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
+		Assert.assertTrue("Valid number of blocks to latinize", output.getMessage().isEmpty());
 	}
 
 	private MeasurementVariable createMeasurementVariable(final int varId, final String name, final String desc, final String scale,
@@ -279,7 +323,7 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 		mvar.setDataTypeId(dataTypeId);
 		return mvar;
 	}
-
+	
 	private List<ImportedGermplasm> createGermplasmList(final String prefix, final int startingEntryNo, final int size) {
 		final List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
 		for (int i = startingEntryNo; i < startingEntryNo + size; i++) {

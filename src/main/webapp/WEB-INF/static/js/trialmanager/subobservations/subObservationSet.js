@@ -70,13 +70,10 @@
 						return true;
 					}
 					return false;
-				},
-				datepicker: {
-					options: {
-						showWeeks: false
-					},
-					dt: new Date()
 				}
+			};
+			$scope.datepickerOptions = {
+				showWeeks: false
 			};
 			$scope.selectedStatusFilter = "1";
 

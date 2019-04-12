@@ -179,11 +179,12 @@
 								</ui-select-choices>
 							</ui-select>
 						</div>
-						<div class="input-group" ng-if="nested.selectedVariableFilter.dataTypeCode === 'D'">
+						<div class="input-group uib-datepicker-style-trasformer" ng-if="nested.selectedVariableFilter.dataTypeCode === 'D'" >
 							<input class="form-control inline-select"
 								   ng-model="nested.newValueObservations"
 								   uib-datepicker-popup="yyyyMMdd"
 								   is-open="isDatepickerActionOpen"
+								   datepicker-options="datepickerOptions"
 								   placeholder="yyyyMMdd"/>
 							<span style="padding-left: 1px;" class="input-group-btn inline-select">
         						<button type="button" class="btn form-control" ng-click="isDatepickerActionOpen = !isDatepickerActionOpen">
@@ -259,10 +260,10 @@
 			<input class="form-control" ng-model='columnFilter.columnData.query'
 				   uib-datepicker-popup="yyyyMMdd"
 				   placeholder="Filter value"/>
-			<div uib-datepicker="" ng-model="columnFilter.columnData.query" class="well well-sm column-filter-datepicker"
+			<div uib-datepicker="" ng-model="columnFilter.columnData.query" class="well well-sm uib-datepicker-style-trasformer"
 				 ng-click="$event.stopPropagation()"
 				 ng-if="columnFilter.columnData.dataTypeCode === 'D'"
-				 datepicker-options="columnFilter.datepicker.options"></div>
+				 datepicker-options="datepickerOptions"></div>
 		</div>
 		<button class="btn btn-info" ng-click="filterByColumn()" title="Apply all selected filters">Apply</button>
 		<button class="btn btn-default" ng-click="resetFilterByColumn()" title="Reset this filter">Reset</button>

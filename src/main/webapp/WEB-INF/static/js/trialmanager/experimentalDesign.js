@@ -8,8 +8,8 @@
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE','SYSTEM_DEFINED_ENTRY_TYPE', 'TrialManagerDataService', '$http',
 				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages, $rootScope) {
 
-					const ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
-					const MESSAGE_DIV_ID = 'page-message';
+					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
+					var MESSAGE_DIV_ID = 'page-message';
 
 					$scope.$on('$viewContentLoaded', function(){
 						// This is to automatically refresh the design details for augmented design

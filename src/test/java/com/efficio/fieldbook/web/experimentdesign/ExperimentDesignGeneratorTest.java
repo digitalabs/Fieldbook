@@ -223,7 +223,7 @@ public class ExperimentDesignGeneratorTest {
 		final Integer numberOfControls = 11;
 		final Integer startingPlotNumber = 1;
 		final Integer startingEntryNumber = 2;
-		final List<ListItem> nRepeatsListItem = new ArrayList<ListItem>();
+		final List<ListItem> nRepeatsListItem = Arrays.asList(new ListItem("1"));
 
 		final MainDesign mainDesign = this.experimentDesignGenerator
 			.createPRepDesign(
@@ -233,7 +233,7 @@ public class ExperimentDesignGeneratorTest {
 
 		Assert.assertEquals(
 			AppConstants.EXP_DESIGN_TIME_LIMIT.getString(),
-			expDesign.getParameterValue(ExperimentDesignGenerator.SEED_PARAM));
+			expDesign.getParameterValue(ExperimentDesignGenerator.TIMELIMIT_PARAM));
 		Assert.assertEquals(String.valueOf(numberOfTreatments), expDesign.getParameterValue(ExperimentDesignGenerator.NTREATMENTS_PARAM));
 		Assert.assertEquals(String.valueOf(numberOfBlocks), expDesign.getParameterValue(ExperimentDesignGenerator.NBLOCKS_PARAM));
 		Assert.assertNull(expDesign.getParameterValue(ExperimentDesignGenerator.NREPEATS_PARAM));

@@ -37,7 +37,7 @@
 			$scope.nested.reviewVariable = null;
 			$scope.nested.selectedVariableFilter = null;
 			$scope.nested.selectedBatchAction = null;
-			$scope.nested.newValueObservations = null;
+			$scope.nested.newValueBatchUpdate = null;
 			$scope.enableActions = false;
 			$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
 
@@ -459,7 +459,7 @@
 
 			$scope.changeSelectedVariableFilter = function(){
 				table().ajax.reload();
-				$scope.nested.newValueObservations = null;
+				$scope.nested.newValueBatchUpdate = null;
 				$scope.nested.selectedBatchAction = $scope.selectBatchActions[0];
 			};
 
@@ -470,7 +470,7 @@
 					$scope.nested.dtInstance.DataTable.data().length > 0 || false;
 			};
 
-			$scope.ApplyAction = function () {
+			$scope.applyBatchAction = function () {
 				var param = JSON.stringify({
 					instanceId: $scope.nested.selectedEnvironment.instanceDbId,
 					draftMode: $scope.isPendingView,
@@ -481,60 +481,61 @@
 						+ response.totalFilteredInstances + " environments. You will not be able to undo this transaction." +
 						" Are you sure you want to proceed?";
 					$scope.validateApplyBatchAction(messages).then(function (doContinue) {
-						if (doContinue) {
-							switch ($scope.nested.selectedBatchAction.id) {
-								case 1:
-									// setNewValue
-									var newValue = $scope.nested.newValueObservations;
-									if ($scope.nested.selectedVariableFilter.dataTypeCode === 'D') {
-										newValue = $.datepicker.formatDate("yymmdd", newValue);
-									}
-									var param = JSON.stringify({
-										newValue: newValue,
-										newCategoricalValueId: getCategoricalValueId($scope.nested.newValueObservations, $scope.nested.selectedVariableFilter),
-										observationUnitsSearchDTO: {
-											instanceId: $scope.nested.selectedEnvironment.instanceDbId,
-											draftMode: $scope.isPendingView,
-											filter: getFilter()
-										}
-									});
-									datasetService.setValueToVariable(subObservationSet.id, param).then(function () {
-										if($scope.isPendingView){
-											reloadDataset();
-										}else{
-											$scope.selectedStatusFilter = "1";
-											$scope.nested.selectedEnvironment = $scope.environments[1];
-											table().ajax.reload();
-											loadBatchActionCombo();
-										}
-									}, function (response) {
-										if (response.errors && response.errors.length) {
-											showErrorMessage('', response.errors[0].message);
-										} else {
-											showErrorMessage('', ajaxGenericErrorMsg);
-										}
-									});
-									break;
-								case 2:
-									// acceptDraftDataByVariable
-									var param = JSON.stringify({
+						if (!doContinue) {
+							return;
+						}
+						switch ($scope.nested.selectedBatchAction.id) {
+							case 1:
+								// setNewValue
+								var newValue = $scope.nested.newValueBatchUpdate;
+								if ($scope.nested.selectedVariableFilter.dataTypeCode === 'D') {
+									newValue = $.datepicker.formatDate("yymmdd", newValue);
+								}
+								var param = JSON.stringify({
+									newValue: newValue,
+									newCategoricalValueId: getCategoricalValueId($scope.nested.newValueBatchUpdate, $scope.nested.selectedVariableFilter),
+									observationUnitsSearchDTO: {
 										instanceId: $scope.nested.selectedEnvironment.instanceDbId,
 										draftMode: $scope.isPendingView,
 										filter: getFilter()
-									});
-									datasetService.acceptDraftDataByVariable(subObservationSet.id, param).then(function () {
+									}
+								});
+								datasetService.setValueToVariable(subObservationSet.id, param).then(function () {
+									if ($scope.isPendingView) {
 										reloadDataset();
-									}, function (response) {
-										if (response.errors && response.errors.length) {
-											showErrorMessage('', response.errors[0].message);
-										} else {
-											showErrorMessage('', ajaxGenericErrorMsg);
-										}
-									});
-									break;
-								default:
-									break;
-							}
+									} else {
+										$scope.selectedStatusFilter = "1";
+										$scope.nested.selectedEnvironment = $scope.environments[1];
+										table().ajax.reload();
+										loadBatchActionCombo();
+									}
+								}, function (response) {
+									if (response.errors && response.errors.length) {
+										showErrorMessage('', response.errors[0].message);
+									} else {
+										showErrorMessage('', ajaxGenericErrorMsg);
+									}
+								});
+								break;
+							case 2:
+								// acceptDraftDataByVariable
+								var param = JSON.stringify({
+									instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+									draftMode: $scope.isPendingView,
+									filter: getFilter()
+								});
+								datasetService.acceptDraftDataByVariable(subObservationSet.id, param).then(function () {
+									reloadDataset();
+								}, function (response) {
+									if (response.errors && response.errors.length) {
+										showErrorMessage('', response.errors[0].message);
+									} else {
+										showErrorMessage('', ajaxGenericErrorMsg);
+									}
+								});
+								break;
+							default:
+								break;
 						}
 					});
 				});
@@ -544,12 +545,7 @@
 				if (!$scope.nested.selectedVariableFilter || !$scope.nested.selectedVariableFilter.termId) {
 					return true
 				}
-				return $scope.nested.selectedVariableFilter //
-					&& $scope.columnsObj //
-					&& $scope.columnsObj.columns //
-					&& $scope.columnsObj.columns[index] //
-					&& $scope.columnsObj.columns[index].columnData //
-					&& $scope.columnsObj.columns[index].columnData.termId === $scope.nested.selectedVariableFilter.termId;
+				return $scope.isVariableBatchActionSelected(index);
 			};
 
 			$scope.isVariableBatchActionSelected = function (index) {

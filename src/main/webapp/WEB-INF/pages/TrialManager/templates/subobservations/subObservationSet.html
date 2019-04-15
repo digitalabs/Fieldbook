@@ -166,10 +166,10 @@
 					<div class="form-group" style="padding-left: 10px;" ng-if="nested.selectedBatchAction.id === 1  &amp;&amp; hasDataFiltered()">
 						<label style="padding-right: 10px;">New value:</label>
 						<div class="form-group" ng-if="nested.selectedVariableFilter.dataTypeCode === 'N' || nested.selectedVariableFilter.dataTypeCode === 'T'">
-							<input class="form-control inline-select" ng-model='nested.newValueObservations'/>
+							<input class="form-control inline-select" ng-model='nested.newValueBatchUpdate'/>
 						</div>
 						<div class="form-group" ng-if="nested.selectedVariableFilter.dataTypeCode === 'C'">
-							<ui-select ng-model="nested.newValueObservations"
+							<ui-select ng-model="nested.newValueBatchUpdate"
 									   class="input-sm form-control inline-select"
 									   search-enabled="true"
 									   theme="select2">
@@ -181,7 +181,7 @@
 						</div>
 						<div class="input-group uib-datepicker-style-trasformer" ng-if="nested.selectedVariableFilter.dataTypeCode === 'D'" >
 							<input class="form-control inline-select"
-								   ng-model="nested.newValueObservations"
+								   ng-model="nested.newValueBatchUpdate"
 								   uib-datepicker-popup="yyyyMMdd"
 								   is-open="isDatepickerActionOpen"
 								   datepicker-options="datepickerOptions"
@@ -194,7 +194,7 @@
 						</div>
 					</div>
 					<div class="form-group" style="padding-left: 10px;" ng-if="hasVariableFilter &amp;&amp; hasDataFiltered() &amp;&amp; nested.selectedBatchAction.id !== null">
-						<button type="button" class="btn btn-info form-control"  ng-disabled="nested.selectedBatchAction.id === 1 &amp;&amp; (nested.newValueObservations === null || nested.newValueObservations === '')" ng-click="ApplyAction()">Apply</button>
+						<button type="button" class="btn btn-info form-control"  ng-disabled="nested.selectedBatchAction.id === 1 &amp;&amp; (nested.newValueBatchUpdate === null || nested.newValueBatchUpdate === '')" ng-click="applyBatchAction()">Apply</button>
 					</div>
 				</div>
 				<div class="col-xs-12 form-inline" ng-show="!hasVariableFilter">

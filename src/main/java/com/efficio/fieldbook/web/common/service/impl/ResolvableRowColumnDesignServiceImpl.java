@@ -242,17 +242,9 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 						if (nrLatin >= rowsPerReplication) {
 							output = new ExpDesignValidationOutput(false, this.messageSource
 									.getMessage("experiment.design.nrlatin.should.be.less.than.rows.per.replication", null, locale));
-						} else if (nrLatin >= replicationCount) {
-							output = new ExpDesignValidationOutput(false, this.messageSource
-									.getMessage("experiment.design.nrlatin.should.not.be.greater.than.the.replication.count", null,
-											locale));
 						} else if (ncLatin >= colsPerReplication) {
 							output = new ExpDesignValidationOutput(false, this.messageSource
 									.getMessage("experiment.design.nclatin.should.be.less.than.cols.per.replication", null, locale));
-						} else if (ncLatin >= replicationCount) {
-							output = new ExpDesignValidationOutput(false, this.messageSource
-									.getMessage("experiment.design.nclatin.should.not.be.greater.than.the.replication.count", null,
-											locale));
 						} else if (expDesignParameter.getReplicationsArrangement() != null
 								&& expDesignParameter.getReplicationsArrangement().intValue() == 3) {
 							// meaning adjacent

@@ -418,15 +418,9 @@
 										return false;
 									}
 
-									if (Number($scope.data.nblatin) >= Number($scope.data.replicationsCount)) {
-										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[23]);
-										return false;
-									}
-
 									if (Number($scope.data.replicationsArrangement) <= 0) {
 										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[21]);
 										return false;
-
 									}
 									if (Number($scope.data.replicationsArrangement) === 3) {
 										if (!$scope.data.replatinGroups || $scope.expDesignForm.replatinGroups.$invalid) {
@@ -465,12 +459,12 @@
 
 								if ($scope.data.useLatenized) {
 
-									if (Number($scope.data.nrlatin) >= Number($scope.data.replicationsCount)) {
+									if(Number($scope.data.nrlatin) >= Number($scope.totalGermplasmEntryListCount) / Number($scope.data.rowsPerReplications)) {
 										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[15]);
 										return false;
 									}
 
-									if (Number($scope.data.nclatin) >= Number($scope.data.replicationsCount)) {
+									if(Number($scope.data.nclatin) >= Number($scope.totalGermplasmEntryListCount) / Number($scope.data.colsPerReplications)) {
 										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[16]);
 										return false;
 									}

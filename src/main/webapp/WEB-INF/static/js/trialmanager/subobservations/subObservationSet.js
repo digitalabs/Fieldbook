@@ -74,12 +74,14 @@
 			};
 			$scope.selectedStatusFilter = "1";
 
-			$.contextMenu('destroy',
-				"#subObservationTableContainer td.variates.datatype-1130:not(:empty):not([disabled]),#subObservationTableContainer td.variates.datatype-1110:not(:empty):not([disabled])");
+			// Define which elements trigger this menu: only non-empty, non-disabled categorical or numeric traits
+			var contextMenuSelector =
+				"#subObservationTableContainer td.variates.datatype-1130:not(:empty):not([disabled])," +
+				"#subObservationTableContainer td.variates.datatype-1110:not(:empty):not([disabled])";
+			$.contextMenu('destroy', contextMenuSelector);
 
 			$.contextMenu({
-				// define which elements trigger this menu: only non-empty, non-disabled categorical or numeric traits
-				selector: "#subObservationTableContainer td.variates.datatype-1130:not(:empty):not([disabled]),#subObservationTableContainer td.variates.datatype-1110:not(:empty):not([disabled])",
+				selector: contextMenuSelector,
 				// define the elements of the menu
 				callback: function (key, opt) {
 					var cell = opt.$trigger.get(0);

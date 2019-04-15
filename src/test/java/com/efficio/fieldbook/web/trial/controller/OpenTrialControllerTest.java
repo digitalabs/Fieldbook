@@ -1164,10 +1164,13 @@ public class OpenTrialControllerTest {
 				"entryCode", "seedSource", "designation", "groupName", "duplicate", "notes", 20170125);
 		listDataProject.setGroupId(12);
 
+		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
+		expDesignParameterUi.setDesignType(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId());
+		Mockito.when(this.userSelection.getExpDesignParams()).thenReturn(expDesignParameterUi);
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(Lists.newArrayList(listDataProject));
 
 		Mockito.when(this.fieldbookMiddlewareService.countListDataProjectByListIdAndEntryType(germplasmListId,
-				SystemDefinedEntryType.CHECK_ENTRY)).thenReturn(checkCount);
+				Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()))).thenReturn(checkCount);
 
 		final Map<Integer, String> mockData = Maps.newHashMap();
 		mockData.put(0, "StockID101, StockID102");
@@ -1275,7 +1278,7 @@ public class OpenTrialControllerTest {
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryType(germplasmListId,
-				SystemDefinedEntryType.CHECK_ENTRY);
+				Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
 
 		Assert.assertNull(this.userSelection.getImportedGermplasmMainInfo());
 		Assert.assertFalse(this.userSelection.isImportValid());
@@ -1298,7 +1301,7 @@ public class OpenTrialControllerTest {
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryType(germplasmListId,
-				SystemDefinedEntryType.CHECK_ENTRY);
+				Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
 
 		Assert.assertNull(this.userSelection.getImportedGermplasmMainInfo());
 		Assert.assertFalse(this.userSelection.isImportValid());

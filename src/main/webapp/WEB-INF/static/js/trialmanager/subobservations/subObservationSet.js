@@ -470,7 +470,40 @@
 					$scope.nested.dtInstance.DataTable.data().length > 0 || false;
 			};
 
+			function newValueBatchUpdateValidation() {
+				if ($scope.nested.selectedVariableFilter.dataTypeCode === 'D') {
+					var newValue = $.datepicker.formatDate("yymmdd", newValue);
+					// FIXME find a better way
+					if (!newValue) {
+						showErrorMessage('', 'invalid value.');
+						return false;
+					}
+				}
+
+				if ($scope.nested.selectedVariableFilter.dataTypeCode === 'N') {
+					var newValue = $scope.nested.newValueBatchUpdate;
+					if(newValue < $scope.nested.selectedVariableFilter.variableMinRange){
+						showAlertMessage('','New value is out of range.');
+					}
+
+					if(newValue > $scope.nested.selectedVariableFilter.variableMaxRange){
+						showAlertMessage('','New value is out of range.');
+					}
+
+					return true;
+				}
+
+			}
+
 			$scope.applyBatchAction = function () {
+
+				if ($scope.nested.selectedBatchAction.id === 1) {
+					var validated = newValueBatchUpdateValidation();
+					if (!validated) {
+						return;
+					}
+				}
+
 				var param = JSON.stringify({
 					instanceId: $scope.nested.selectedEnvironment.instanceDbId,
 					draftMode: $scope.isPendingView,
@@ -490,11 +523,6 @@
 								var newValue = $scope.nested.newValueBatchUpdate;
 								if ($scope.nested.selectedVariableFilter.dataTypeCode === 'D') {
 									newValue = $.datepicker.formatDate("yymmdd", newValue);
-									// FIXME find a better way
-									if (!newValue) {
-										showErrorMessage('', 'invalid value.');
-										return
-									}
 								}
 								var param = JSON.stringify({
 									newValue: newValue,

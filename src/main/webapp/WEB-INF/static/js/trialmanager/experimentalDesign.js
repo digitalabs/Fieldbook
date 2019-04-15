@@ -635,6 +635,9 @@
 							if (!$scope.data.replicationsCount && $scope.data.replicationsCount !== 0) {
 								return false;
 							}
+							if (isNaN($scope.germplasmTotalNumberOfPlots)) {
+								return false;
+							}
 							return true;
 						}
 					};

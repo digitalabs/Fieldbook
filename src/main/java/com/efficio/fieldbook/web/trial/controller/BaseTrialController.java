@@ -268,7 +268,7 @@ public abstract class BaseTrialController extends SettingsController {
 			}
 
 			final String replicationPercentage = this.getExperimentalDesignData(xpDesignVariable.getReplicationPercentage());
-			if (replicationPercentage != null) {
+			if (!StringUtils.isEmpty(replicationPercentage)) {
 				data.setReplicationPercentage(Integer.parseInt(replicationPercentage));
 			}
 

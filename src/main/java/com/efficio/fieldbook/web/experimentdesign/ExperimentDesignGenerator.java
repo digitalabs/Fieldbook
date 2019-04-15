@@ -274,7 +274,9 @@ public class ExperimentDesignGenerator {
 
 		final List<ListItem> replicationListItem = new LinkedList<>();
 		for (final ImportedGermplasm importedGermplasm : germplasmList) {
-			if (SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId() == importedGermplasm.getEntryTypeCategoricalID()) {
+			if (SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId() == importedGermplasm.getEntryTypeCategoricalID()
+				|| SystemDefinedEntryType.DISEASE_CHECK.getEntryTypeCategoricalId() == importedGermplasm.getEntryTypeCategoricalID()
+				|| SystemDefinedEntryType.STRESS_CHECK.getEntryTypeCategoricalId() == importedGermplasm.getEntryTypeCategoricalID()) {
 				// All Check Entries in the list should be replicated
 				replicationListItem.add(new ListItem(String.valueOf(replicationNumber)));
 			} else if (randomTestEntryNumbers.contains(importedGermplasm.getEntryId())) {

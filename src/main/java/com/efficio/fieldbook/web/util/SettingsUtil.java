@@ -2097,7 +2097,9 @@ public class SettingsUtil {
 			} else if (var.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()) {
 				param.setReplicationsCount(var.getValue());
 			} else if (var.getTermId() == TermId.PERCENTAGE_OF_REPLICATION.getId()) {
-				param.setReplicationPercentage(Integer.valueOf(var.getValue()));
+				if (!StringUtils.isEmpty(var.getValue())) {
+					param.setReplicationPercentage(Integer.valueOf(var.getValue()));
+				}
 			} else if (var.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
 				param.setFileName(var.getValue());
 			} else if (var.getTermId() == TermId.NBLKS.getId()) {

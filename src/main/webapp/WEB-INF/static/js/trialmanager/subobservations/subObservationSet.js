@@ -490,6 +490,11 @@
 								var newValue = $scope.nested.newValueBatchUpdate;
 								if ($scope.nested.selectedVariableFilter.dataTypeCode === 'D') {
 									newValue = $.datepicker.formatDate("yymmdd", newValue);
+									// FIXME find a better way
+									if (!newValue) {
+										showErrorMessage('', 'invalid value.');
+										return
+									}
 								}
 								var param = JSON.stringify({
 									newValue: newValue,

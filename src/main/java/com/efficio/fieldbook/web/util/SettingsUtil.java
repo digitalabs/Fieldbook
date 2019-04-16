@@ -1971,29 +1971,7 @@ public class SettingsUtil {
 		switch (termId) {
 			case EXPERIMENT_DESIGN_FACTOR:
 				if (param.getDesignType() != null) {
-					if (param.getDesignType().equals(0)) {
-						return String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId());
-					} else if (param.getDesignType().equals(1)) {
-						if (param.getUseLatenized() != null && param.getUseLatenized()) {
-							return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId());
-						} else {
-							return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId());
-						}
-					} else if (param.getDesignType().equals(2)) {
-						if (param.getUseLatenized() != null && param.getUseLatenized()) {
-							return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId());
-						} else {
-							return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId());
-						}
-					} else if (param.getDesignType().equals(3)) {
-						return String.valueOf(TermId.OTHER_DESIGN.getId());
-					} else if (param.getDesignType().equals(4)) {
-						return String.valueOf(TermId.AUGMENTED_RANDOMIZED_BLOCK.getId());
-					} else if (param.getDesignType().equals(5)) {
-						return String.valueOf(TermId.ENTRY_LIST_ORDER.getId());
-					} else if (param.getDesignType().equals(6)) {
-						return String.valueOf(TermId.P_REP.getId());
-					}
+					return String.valueOf(DesignTypeItem.getTermIdByDesignTypeId(param.getDesignType(), param.getUseLatenized()));
 				}
 				break;
 			case NUMBER_OF_REPLICATES:
@@ -2056,27 +2034,10 @@ public class SettingsUtil {
 				param.setRowsPerReplications(var.getValue());
 			} else if (var.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
 				if (var.getValue() != null) {
-					if (String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId()).equals(var.getValue())) {
-						param.setDesignType(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId());
-					} else if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).equals(var.getValue())
-						|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())) {
-						param.setDesignType(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId());
-					} else if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId()).equals(var.getValue())
-						|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
-						param.setDesignType(DesignTypeItem.ROW_COL.getId());
-					} else if (String.valueOf(TermId.OTHER_DESIGN.getId()).equals(var.getValue())) {
-						param.setDesignType(DesignTypeItem.CUSTOM_IMPORT.getId());
-					} else if (String.valueOf(TermId.AUGMENTED_RANDOMIZED_BLOCK.getId()).equals(var.getValue())) {
-						param.setDesignType(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId());
-					} else if (String.valueOf(TermId.ENTRY_LIST_ORDER.getId()).equals(var.getValue())) {
-						param.setDesignType(DesignTypeItem.ENTRY_LIST_ORDER.getId());
-					} else if (String.valueOf(TermId.P_REP.getId()).equals(var.getValue())) {
-						param.setDesignType(DesignTypeItem.P_REP.getId());
-					}
-					if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())
-						|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
-						param.setUseLatenized(true);
-					}
+					final int designTypeTermId = Integer.parseInt(var.getValue());
+					final DesignTypeItem designTypeItem = DesignTypeItem.getDesignTypeItemByTermId(designTypeTermId);
+					param.setDesignType(designTypeItem != null ? designTypeItem.getId() : null);
+					param.setUseLatenized(DesignTypeItem.isLatinized(designTypeTermId));
 				}
 			} else if (var.getTermId() == TermId.NO_OF_CBLKS_LATINIZE.getId()) {
 				param.setNblatin(var.getValue());

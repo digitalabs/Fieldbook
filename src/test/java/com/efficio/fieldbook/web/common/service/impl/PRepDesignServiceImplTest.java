@@ -348,6 +348,14 @@ public class PRepDesignServiceImplTest {
 		Assert.assertEquals(4, result.size());
 	}
 
+	@Test
+	public void testGetRequiredDesignVariables() {
+		final List<StandardVariable> result = this.pRepDesignService.getRequiredDesignVariables();
+		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(TermId.BLOCK_NO.getId(), result.get(0).getId());
+		Assert.assertEquals(TermId.PLOT_NO.getId(), result.get(1).getId());
+	}
+
 	private void mockRequiredStandardVariables() {
 
 		final StandardVariable blockVar = this.createStandardVariable(TermId.BLOCK_NO, BLOCK_NO);

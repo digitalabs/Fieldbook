@@ -330,7 +330,7 @@ public class ExpDesignController extends BaseTrialController {
 		return 0;
 	}
 
-	private ExperimentDesignService getExpDesignService(final int designType) {
+	protected ExperimentDesignService getExpDesignService(final int designType) {
 		if (designType == DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId()) {
 			return this.randomizeCompleteBlockDesign;
 		} else if (designType == DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId()) {

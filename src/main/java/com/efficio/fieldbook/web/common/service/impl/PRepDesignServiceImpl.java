@@ -41,7 +41,7 @@ import java.util.Objects;
 @Transactional
 public class PRepDesignServiceImpl implements PRepDesignService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ResolvableIncompleteBlockDesignServiceImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PRepDesignServiceImpl.class);
 	public static final String EXPERIMENT_DESIGN_REPLICATION_PERCENTAGE_SHOULD_BE_BETWEEN_ZERO_AND_HUNDRED =
 		"experiment.design.replication.percentage.should.be.between.zero.and.hundred";
 	public static final String EXPERIMENT_DESIGN_BLOCK_SIZE_SHOULD_BE_A_NUMBER = "experiment.design.block.size.should.be.a.number";
@@ -50,6 +50,8 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 	public static final String PLOT_NUMBER_SHOULD_BE_IN_RANGE = "plot.number.should.be.in.range";
 	public static final String ENTRY_NUMBER_SHOULD_BE_IN_RANGE = "entry.number.should.be.in.range";
 	public static final String EXPERIMENT_DESIGN_INVALID_GENERIC_ERROR = "experiment.design.invalid.generic.error";
+	public static final int MINIMUM_REPLICATION_PERCENTAGE = 0;
+	public static final int MAXIMUM_REPLICATION_PERCENTAGE = 100;
 
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -148,61 +150,60 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 		final ExpDesignParameterUi expDesignParameter, final List<ImportedGermplasm> germplasmList) {
 
 		final Locale locale = LocaleContextHolder.getLocale();
-		ExpDesignValidationOutput output = new ExpDesignValidationOutput(true, "");
 		try {
 			if (expDesignParameter != null && germplasmList != null) {
 
-				if (expDesignParameter.getReplicationPercentage() == null || expDesignParameter.getReplicationPercentage() < 0
-					|| expDesignParameter.getReplicationPercentage() > 100) {
-					output = new ExpDesignValidationOutput(
+				if (expDesignParameter.getReplicationPercentage() == null
+					|| expDesignParameter.getReplicationPercentage() < MINIMUM_REPLICATION_PERCENTAGE
+					|| expDesignParameter.getReplicationPercentage() > MAXIMUM_REPLICATION_PERCENTAGE) {
+					return new ExpDesignValidationOutput(
 						false,
 						this.messageSource
 							.getMessage(EXPERIMENT_DESIGN_REPLICATION_PERCENTAGE_SHOULD_BE_BETWEEN_ZERO_AND_HUNDRED, null, locale));
-					return output;
-				} else if (!NumberUtils.isNumber(expDesignParameter.getBlockSize())) {
-					output = new ExpDesignValidationOutput(
+				}
+				if (!NumberUtils.isNumber(expDesignParameter.getBlockSize())) {
+					return new ExpDesignValidationOutput(
 						false,
 						this.messageSource.getMessage(EXPERIMENT_DESIGN_BLOCK_SIZE_SHOULD_BE_A_NUMBER, null, locale));
-					return output;
-				} else if (!NumberUtils.isNumber(expDesignParameter.getReplicationsCount())) {
-					output = new ExpDesignValidationOutput(
+				}
+				if (!NumberUtils.isNumber(expDesignParameter.getReplicationsCount())) {
+					return new ExpDesignValidationOutput(
 						false,
 						this.messageSource.getMessage(EXPERIMENT_DESIGN_REPLICATION_COUNT_SHOULD_BE_A_NUMBER, null, locale));
-					return output;
-				} else if (expDesignParameter.getStartingPlotNo() != null && !NumberUtils
+				}
+				if (expDesignParameter.getStartingPlotNo() != null && !NumberUtils
 					.isNumber(expDesignParameter.getStartingPlotNo())) {
-					output = new ExpDesignValidationOutput(
+					return new ExpDesignValidationOutput(
 						false,
 						this.messageSource.getMessage(PLOT_NUMBER_SHOULD_BE_IN_RANGE, null, locale));
-					return output;
-				} else if (expDesignParameter.getStartingEntryNo() != null && !NumberUtils
+				}
+				if (expDesignParameter.getStartingEntryNo() != null && !NumberUtils
 					.isNumber(expDesignParameter.getStartingEntryNo())) {
-					output = new ExpDesignValidationOutput(
+					return new ExpDesignValidationOutput(
 						false,
 						this.messageSource.getMessage(ENTRY_NUMBER_SHOULD_BE_IN_RANGE, null, locale));
-					return output;
 				} else {
 					final Integer entryNumber = StringUtil.parseInt(expDesignParameter.getStartingEntryNo(), null);
 					final Integer plotNumber = StringUtil.parseInt(expDesignParameter.getStartingPlotNo(), null);
 
 					if (Objects.equals(entryNumber, 0)) {
-						output = new ExpDesignValidationOutput(
+						return new ExpDesignValidationOutput(
 							false,
 							this.messageSource.getMessage(ENTRY_NUMBER_SHOULD_BE_IN_RANGE, null, locale));
 					} else if (Objects.equals(plotNumber, 0)) {
-						output = new ExpDesignValidationOutput(
+						return new ExpDesignValidationOutput(
 							false,
 							this.messageSource.getMessage(PLOT_NUMBER_SHOULD_BE_IN_RANGE, null, locale));
 					}
 				}
 			}
 		} catch (final Exception e) {
-			output = new ExpDesignValidationOutput(
+			return new ExpDesignValidationOutput(
 				false,
 				this.messageSource.getMessage(EXPERIMENT_DESIGN_INVALID_GENERIC_ERROR, null, locale));
 		}
 
-		return output;
+		return new ExpDesignValidationOutput(true, "");
 	}
 
 	@Override

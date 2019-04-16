@@ -96,6 +96,10 @@ public class OpenTrialController extends BaseTrialController {
 	private static final int NO_LIST_ID = -1;
 	public static final String REDIRECT = "redirect:";
 
+	private static List<Integer> EXPERIMENT_DESIGN_FACTOR_IDS = Arrays
+		.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.PERCENTAGE_OF_REPLICATION.getId(),
+			TermId.EXPT_DESIGN_SOURCE.getId());
+
 	@Resource
 	private ErrorHandlerService errorHandlerService;
 
@@ -358,13 +362,14 @@ public class OpenTrialController extends BaseTrialController {
 			long germplasmListChecksSize = 0;
 			if (this.userSelection.getExpDesignParams().getDesignType() == DesignTypeItem.P_REP.getId()) {
 				germplasmListChecksSize = this.fieldbookMiddlewareService
-					.countListDataProjectByListIdAndEntryType(
-						germplasmList.getId(), Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId(),
+					.countListDataProjectByListIdAndEntryTypeIds(
+						germplasmList.getId(), Arrays.asList(
+							SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId(),
 							SystemDefinedEntryType.DISEASE_CHECK.getEntryTypeCategoricalId(),
 							SystemDefinedEntryType.STRESS_CHECK.getEntryTypeCategoricalId()));
 			} else {
 				germplasmListChecksSize = this.fieldbookMiddlewareService
-					.countListDataProjectByListIdAndEntryType(
+					.countListDataProjectByListIdAndEntryTypeIds(
 						germplasmList.getId(), Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
 			}
 
@@ -408,7 +413,8 @@ public class OpenTrialController extends BaseTrialController {
 			.checkIfStudyHasMeasurementData(
 				trialWorkbook.getMeasurementDatesetId(),
 				SettingsUtil.buildVariates(trialWorkbook.getVariates())));
-		model.addAttribute(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST,
+		model.addAttribute(
+			OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST,
 			this.fieldbookMiddlewareService.hasAdvancedOrCrossesList(trialId));
 
 		model.addAttribute(
@@ -575,7 +581,8 @@ public class OpenTrialController extends BaseTrialController {
 					.checkIfStudyHasMeasurementData(
 						workbook.getMeasurementDatesetId(),
 						SettingsUtil.buildVariates(workbook.getVariates())));
-				returnVal.put(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST,
+				returnVal.put(
+					OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST,
 					this.fieldbookMiddlewareService.hasAdvancedOrCrossesList(workbook.getStudyDetails().getId()));
 				returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT, this.studyDataManager.countExperiments(measurementDatasetId));
 
@@ -605,12 +612,10 @@ public class OpenTrialController extends BaseTrialController {
 			this.studyDataManager.getAllStudyFactors(this.userSelection.getWorkbook().getStudyDetails().getId());
 
 		for (final MeasurementVariable mvar : conditions) {
-			// update the operation for experiment design variables :
-			// EXP_DESIGN, EXP_DESIGN_SOURCE, NREP
+			// update the operation for experiment design variables
+			// EXP_DESIGN, EXP_DESIGN_SOURCE, NREP, PERCENTAGE_OF_REPLICATION
 			// only if these variables already exists in the existing trial
-			if ((mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId() || mvar.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()
-				|| mvar.getTermId() == TermId.PERCENTAGE_OF_REPLICATION.getId()
-				|| mvar.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) && factors.findById(mvar.getTermId()) != null) {
+			if (EXPERIMENT_DESIGN_FACTOR_IDS.contains(mvar.getTermId()) && factors.findById(mvar.getTermId()) != null) {
 				mvar.setOperation(Operation.UPDATE);
 			}
 		}

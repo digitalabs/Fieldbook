@@ -236,35 +236,9 @@ public abstract class BaseTrialController extends SettingsController {
 				xpDesignVariable.getExperimentalDesign() == null ? null : xpDesignVariable.getExperimentalDesign().getValue();
 			if (NumberUtils.isNumber(designTypeString)) {
 				final int designTypeTermID = Integer.parseInt(designTypeString);
-
-				if (TermId.RANDOMIZED_COMPLETE_BLOCK.getId() == designTypeTermID) {
-					data.setDesignType(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId());
-					data.setUseLatenized(false);
-				} else if (TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId() == designTypeTermID) {
-					data.setDesignType(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId());
-					data.setUseLatenized(true);
-				} else if (TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId() == designTypeTermID) {
-					data.setDesignType(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId());
-					data.setUseLatenized(false);
-				} else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId() == designTypeTermID) {
-					data.setDesignType(DesignTypeItem.ROW_COL.getId());
-					data.setUseLatenized(true);
-				} else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId() == designTypeTermID) {
-					data.setDesignType(DesignTypeItem.ROW_COL.getId());
-					data.setUseLatenized(false);
-				} else if (TermId.OTHER_DESIGN.getId() == designTypeTermID) {
-					data.setDesignType(DesignTypeItem.CUSTOM_IMPORT.getId());
-					data.setUseLatenized(false);
-				} else if (TermId.AUGMENTED_RANDOMIZED_BLOCK.getId() == designTypeTermID) {
-					data.setDesignType(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId());
-					data.setUseLatenized(false);
-				} else if (TermId.ENTRY_LIST_ORDER.getId() == designTypeTermID) {
-					data.setDesignType(DesignTypeItem.ENTRY_LIST_ORDER.getId());
-					data.setUseLatenized(false);
-				} else if (TermId.P_REP.getId() == designTypeTermID) {
-					data.setDesignType(DesignTypeItem.P_REP.getId());
-					data.setUseLatenized(false);
-				}
+				final DesignTypeItem designTypeItem = DesignTypeItem.getDesignTypeItemByTermId(designTypeTermID);
+				data.setDesignType(designTypeItem != null ? designTypeItem.getId() : null);
+				data.setUseLatenized(DesignTypeItem.isLatinized(designTypeTermID));
 			}
 
 			final String replicationPercentage = this.getExperimentalDesignData(xpDesignVariable.getReplicationPercentage());

@@ -5,10 +5,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -24,8 +22,6 @@ import org.generationcp.middleware.data.initializer.StandardVariableTestDataInit
 import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
-import org.generationcp.middleware.domain.dms.DataSetType;
-import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -1169,7 +1165,7 @@ public class OpenTrialControllerTest {
 		Mockito.when(this.userSelection.getExpDesignParams()).thenReturn(expDesignParameterUi);
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(Lists.newArrayList(listDataProject));
 
-		Mockito.when(this.fieldbookMiddlewareService.countListDataProjectByListIdAndEntryType(germplasmListId,
+		Mockito.when(this.fieldbookMiddlewareService.countListDataProjectByListIdAndEntryTypeIds(germplasmListId,
 				Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()))).thenReturn(checkCount);
 
 		final Map<Integer, String> mockData = Maps.newHashMap();
@@ -1277,7 +1273,7 @@ public class OpenTrialControllerTest {
 		final int studyId = 1;
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryType(germplasmListId,
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryTypeIds(germplasmListId,
 				Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
 
 		Assert.assertNull(this.userSelection.getImportedGermplasmMainInfo());
@@ -1300,7 +1296,7 @@ public class OpenTrialControllerTest {
 		listOfGermplasmList.add(germplasmList);
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryType(germplasmListId,
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryTypeIds(germplasmListId,
 				Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
 
 		Assert.assertNull(this.userSelection.getImportedGermplasmMainInfo());

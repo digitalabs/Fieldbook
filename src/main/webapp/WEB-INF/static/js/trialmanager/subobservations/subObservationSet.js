@@ -477,27 +477,22 @@
 
 			function newValueBatchUpdateValidation() {
 				if ($scope.nested.selectedVariableFilter.dataTypeCode === 'D') {
-					var newValue = $.datepicker.formatDate("yymmdd", newValue);
+					var newValue = $.datepicker.formatDate("yymmdd", $scope.nested.newValueBatchUpdate);
 					// FIXME find a better way
 					if (!newValue) {
-						showErrorMessage('', 'invalid value.');
+						showErrorMessage('', 'Invalid value.');
 						return false;
 					}
 				}
 
 				if ($scope.nested.selectedVariableFilter.dataTypeCode === 'N') {
 					var newValue = $scope.nested.newValueBatchUpdate;
-					if(newValue < $scope.nested.selectedVariableFilter.variableMinRange){
+					if(newValue < $scope.nested.selectedVariableFilter.minRange || newValue > $scope.nested.selectedVariableFilter.maxRange){
 						showAlertMessage('','New value is out of range.');
 					}
-
-					if(newValue > $scope.nested.selectedVariableFilter.variableMaxRange){
-						showAlertMessage('','New value is out of range.');
-					}
-
 					return true;
 				}
-
+				return true;
 			}
 
 			$scope.applyBatchAction = function () {

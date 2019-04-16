@@ -13,9 +13,11 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.commons.context.ContextConstants;
+import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.DesignType;
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -696,7 +698,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(workbook).when(this.userSelection).getTemporaryWorkbook();
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final GenerateDesignInput input = new GenerateDesignInput(environmentData, DesignType.CUSTOM_IMPORT, null, null, false);
+		final GenerateDesignInput input = new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
 
 		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(input);
 
@@ -716,7 +718,7 @@ public class DesignImportControllerTest {
 						Matchers.anyBoolean(), Matchers.anyMapOf(String.class, Integer.class));
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final GenerateDesignInput input = new GenerateDesignInput(environmentData, DesignType.CUSTOM_IMPORT, null, null, false);
+		final GenerateDesignInput input = new GenerateDesignInput(environmentData, DesignTypeItem.CUSTOM_IMPORT, null, null, false);
 		final Map<String, Object> resultsMap = this.designImportController.generateMeasurements(input);
 
 		Assert.assertEquals(0, resultsMap.get(DesignImportController.IS_SUCCESS));

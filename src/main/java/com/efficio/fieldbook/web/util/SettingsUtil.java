@@ -28,7 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.util.DateUtil;
-import org.generationcp.middleware.domain.dms.DesignType;
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -1971,7 +1971,7 @@ public class SettingsUtil {
 		switch (termId) {
 			case EXPERIMENT_DESIGN_FACTOR:
 				if (param.getDesignType() != null) {
-					return String.valueOf(DesignType.getTermIdByDesignTypeId(param.getDesignType(), param.getUseLatenized()));
+					return String.valueOf(DesignTypeItem.getTermIdByDesignTypeId(param.getDesignType(), param.getUseLatenized()));
 				}
 				break;
 			case NUMBER_OF_REPLICATES:
@@ -2035,9 +2035,9 @@ public class SettingsUtil {
 			} else if (var.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
 				if (var.getValue() != null) {
 					final int designTypeTermId = Integer.parseInt(var.getValue());
-					final DesignType designType = DesignType.getDesignTypeItemByTermId(designTypeTermId);
-					param.setDesignType(designType != null ? designType.getId() : null);
-					param.setUseLatenized(DesignType.isLatinized(designTypeTermId));
+					final DesignTypeItem designTypeItem = DesignTypeItem.getDesignTypeItemByTermId(designTypeTermId);
+					param.setDesignType(designTypeItem != null ? designTypeItem.getId() : null);
+					param.setUseLatenized(DesignTypeItem.isLatinized(designTypeTermId));
 				}
 			} else if (var.getTermId() == TermId.NO_OF_CBLKS_LATINIZE.getId()) {
 				param.setNblatin(var.getValue());

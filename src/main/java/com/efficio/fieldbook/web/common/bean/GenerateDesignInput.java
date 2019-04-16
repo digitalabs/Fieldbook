@@ -1,7 +1,7 @@
 
 package com.efficio.fieldbook.web.common.bean;
 
-import org.generationcp.middleware.domain.dms.DesignType;
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
 
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 
@@ -12,7 +12,7 @@ import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 public class GenerateDesignInput {
 
 	private EnvironmentData environmentData;
-	private DesignType selectedDesignType;
+	private DesignTypeItem selectedDesignType;
 	private Integer startingEntryNo;
 	private Integer startingPlotNo;
 	private Boolean hasNewEnvironmentAdded;
@@ -26,7 +26,7 @@ public class GenerateDesignInput {
 	}
 
 	public GenerateDesignInput(
-		final EnvironmentData environmentData, final DesignType selectedDesignType,
+		final EnvironmentData environmentData, final DesignTypeItem selectedDesignType,
 		final Integer startingEntryNo, final Integer startingPlotNo, final Boolean hasNewEnvironmentAdded) {
 		super();
 		this.environmentData = environmentData;
@@ -44,11 +44,11 @@ public class GenerateDesignInput {
 		this.environmentData = environmentData;
 	}
 
-	public DesignType getSelectedDesignType() {
+	public DesignTypeItem getSelectedDesignType() {
 		return this.selectedDesignType;
 	}
 
-	public void setSelectedDesignType(final DesignType selectedDesignType) {
+	public void setSelectedDesignType(final DesignTypeItem selectedDesignType) {
 		this.selectedDesignType = selectedDesignType;
 	}
 

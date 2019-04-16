@@ -22,7 +22,7 @@ import org.generationcp.middleware.data.initializer.StandardVariableTestDataInit
 import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
-import org.generationcp.middleware.domain.dms.DesignType;
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.Study;
@@ -614,7 +614,7 @@ public class OpenTrialControllerTest {
 				exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be RCBD", DesignType.RANDOMIZED_COMPLETE_BLOCK.getId().intValue(),
+		Assert.assertEquals("Design type should be RCBD", DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId().intValue(),
 				data.getDesignType().intValue());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
 		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
@@ -636,7 +636,7 @@ public class OpenTrialControllerTest {
 				exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be RCBD", DesignType.RANDOMIZED_COMPLETE_BLOCK.getId().intValue(),
+		Assert.assertEquals("Design type should be RCBD", DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId().intValue(),
 				data.getDesignType().intValue());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
@@ -659,7 +659,7 @@ public class OpenTrialControllerTest {
 				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be RIBD", DesignType.RESOLVABLE_INCOMPLETE_BLOCK.getId().intValue(),
+		Assert.assertEquals("Design type should be RIBD", DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId().intValue(),
 				data.getDesignType().intValue());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
@@ -682,7 +682,7 @@ public class OpenTrialControllerTest {
 				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be RIBDL", DesignType.RESOLVABLE_INCOMPLETE_BLOCK.getId().intValue(),
+		Assert.assertEquals("Design type should be RIBDL", DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId().intValue(),
 				data.getDesignType().intValue());
 		Assert.assertTrue("Design type should be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
@@ -705,7 +705,7 @@ public class OpenTrialControllerTest {
 				new Integer(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be RRCD", DesignType.ROW_COL.getId().intValue(), data.getDesignType().intValue());
+		Assert.assertEquals("Design type should be RRCD", DesignTypeItem.ROW_COL.getId().intValue(), data.getDesignType().intValue());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
 		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
@@ -727,7 +727,7 @@ public class OpenTrialControllerTest {
 				new Integer(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be RRCDL", DesignType.ROW_COL.getId().intValue(), data.getDesignType().intValue());
+		Assert.assertEquals("Design type should be RRCDL", DesignTypeItem.ROW_COL.getId().intValue(), data.getDesignType().intValue());
 		Assert.assertTrue("Design type should be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
 		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
@@ -749,7 +749,7 @@ public class OpenTrialControllerTest {
 				exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be Other Design", DesignType.CUSTOM_IMPORT.getId().intValue(),
+		Assert.assertEquals("Design type should be Other Design", DesignTypeItem.CUSTOM_IMPORT.getId().intValue(),
 				data.getDesignType().intValue());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
@@ -793,7 +793,7 @@ public class OpenTrialControllerTest {
 			new Integer(TermId.P_REP.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be P_REP", DesignType.P_REP.getId().intValue(),
+		Assert.assertEquals("Design type should be P_REP", DesignTypeItem.P_REP.getId().intValue(),
 			data.getDesignType().intValue());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
@@ -1161,7 +1161,7 @@ public class OpenTrialControllerTest {
 		listDataProject.setGroupId(12);
 
 		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
-		expDesignParameterUi.setDesignType(DesignType.AUGMENTED_RANDOMIZED_BLOCK.getId());
+		expDesignParameterUi.setDesignType(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId());
 		Mockito.when(this.userSelection.getExpDesignParams()).thenReturn(expDesignParameterUi);
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(Lists.newArrayList(listDataProject));
 

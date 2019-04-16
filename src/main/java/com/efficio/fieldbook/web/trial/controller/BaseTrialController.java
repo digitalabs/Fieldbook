@@ -29,7 +29,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
-import org.generationcp.middleware.domain.dms.DesignType;
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -236,9 +236,9 @@ public abstract class BaseTrialController extends SettingsController {
 				xpDesignVariable.getExperimentalDesign() == null ? null : xpDesignVariable.getExperimentalDesign().getValue();
 			if (NumberUtils.isNumber(designTypeString)) {
 				final int designTypeTermID = Integer.parseInt(designTypeString);
-				final DesignType designType = DesignType.getDesignTypeItemByTermId(designTypeTermID);
-				data.setDesignType(designType != null ? designType.getId() : null);
-				data.setUseLatenized(DesignType.isLatinized(designTypeTermID));
+				final DesignTypeItem designTypeItem = DesignTypeItem.getDesignTypeItemByTermId(designTypeTermID);
+				data.setDesignType(designTypeItem != null ? designTypeItem.getId() : null);
+				data.setUseLatenized(DesignTypeItem.isLatinized(designTypeTermID));
 			}
 
 			final String replicationPercentage = this.getExperimentalDesignData(xpDesignVariable.getReplicationPercentage());

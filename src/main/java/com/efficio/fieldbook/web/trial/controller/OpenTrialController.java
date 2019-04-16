@@ -20,7 +20,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
-import org.generationcp.middleware.domain.dms.DesignType;
+import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -360,7 +360,7 @@ public class OpenTrialController extends BaseTrialController {
 			final List<ListDataProject> listDataProjects = this.fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
 
 			long germplasmListChecksSize = 0;
-			if (this.userSelection.getExpDesignParams().getDesignType() == DesignType.P_REP.getId()) {
+			if (this.userSelection.getExpDesignParams().getDesignType() == DesignTypeItem.P_REP.getId()) {
 				germplasmListChecksSize = this.fieldbookMiddlewareService
 					.countListDataProjectByListIdAndEntryTypeIds(
 						germplasmList.getId(), Arrays.asList(

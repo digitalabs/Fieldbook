@@ -487,7 +487,8 @@
 
 				if ($scope.nested.selectedVariableFilter.dataTypeCode === 'N') {
 					var newValue = $scope.nested.newValueBatchUpdate;
-					if(newValue < $scope.nested.selectedVariableFilter.minRange || newValue > $scope.nested.selectedVariableFilter.maxRange){
+					if ($scope.nested.selectedVariableFilter.minRange && $scope.nested.selectedVariableFilter.maxRange && //
+						(newValue < $scope.nested.selectedVariableFilter.minRange || newValue > $scope.nested.selectedVariableFilter.maxRange)) {
 						showAlertMessage('','New value is out of range.');
 					}
 					return true;

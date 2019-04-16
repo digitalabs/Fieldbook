@@ -33,6 +33,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private String checkStartingPosition;
 	private String checkSpacing;
 	private String checkInsertionManner;
+	private Integer replicationPercentage;
 
 	/*
 	 * 1 - single col 2 - single row 3 - adjacent
@@ -200,7 +201,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	}
 
 	public String getNumberOfBlocks() {
-		return numberOfBlocks;
+		return this.numberOfBlocks;
 	}
 
 	public void setNumberOfBlocks(final String numberOfBlocks) {
@@ -208,7 +209,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	}
 
 	public String getCheckStartingPosition() {
-		return checkStartingPosition;
+		return this.checkStartingPosition;
 	}
 
 	public void setCheckStartingPosition(final String checkStartingPosition) {
@@ -216,7 +217,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	}
 
 	public String getCheckSpacing() {
-		return checkSpacing;
+		return this.checkSpacing;
 	}
 
 	public void setCheckSpacing(final String checkSpacing) {
@@ -224,10 +225,18 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	}
 
 	public String getCheckInsertionManner() {
-		return checkInsertionManner;
+		return this.checkInsertionManner;
 	}
 
 	public void setCheckInsertionManner(final String checkInsertionManner) {
 		this.checkInsertionManner = checkInsertionManner;
+	}
+
+	public Integer getReplicationPercentage() {
+		return this.replicationPercentage;
+	}
+
+	public void setReplicationPercentage(final Integer replicationPercentage) {
+		this.replicationPercentage = replicationPercentage;
 	}
 }

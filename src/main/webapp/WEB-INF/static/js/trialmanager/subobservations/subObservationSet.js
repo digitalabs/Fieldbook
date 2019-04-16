@@ -77,11 +77,14 @@
 			};
 			$scope.selectedStatusFilter = "1";
 
-			$.contextMenu('destroy', "#subObservationTableContainer td[class*='invalid-value'],#subObservationTableContainer td[class*='accepted-value']");
+			// Define which elements trigger this menu: only non-empty, non-disabled categorical or numeric traits
+			var contextMenuSelector =
+				"#subObservationTableContainer td.variates.datatype-1130:not(:empty):not([disabled])," +
+				"#subObservationTableContainer td.variates.datatype-1110:not(:empty):not([disabled])";
+			$.contextMenu('destroy', contextMenuSelector);
 
 			$.contextMenu({
-				// define which elements trigger this menu
-				selector: "#subObservationTableContainer td[class*='invalid-value'],#subObservationTableContainer td[class*='accepted-value']",
+				selector: contextMenuSelector,
 				// define the elements of the menu
 				callback: function (key, opt) {
 					var cell = opt.$trigger.get(0);
@@ -108,8 +111,10 @@
 							break;
 					}
 
+					var index = table().colReorder.transpose(table().column(cell).index(), 'toOriginal');
+					var columnData = $scope.columnsObj.columns[index].columnData;
 					datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId, cellData.observationId, {
-							categoricalValueId: null,
+							categoricalValueId: getCategoricalValueId(newValue, columnData),
 							value: newValue,
 							draftValue: newDraftValue,
 							draftCategoricalValueId: newDraftCategoricalValueId
@@ -1140,6 +1145,8 @@
 
 					function getClassName() {
 						var className = columnData.factor === true ? 'factors' : 'variates';
+						// include data type for determining when to show context menu option/s
+						className += ' datatype-' + columnData.dataTypeId;
 						// avoid wrapping filter icon
 						className += ' dt-head-nowrap';
 						return className;

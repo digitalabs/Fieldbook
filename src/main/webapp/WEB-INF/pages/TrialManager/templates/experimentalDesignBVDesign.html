@@ -38,11 +38,11 @@
 						block size</b>
 				</span>
 			</div>
-			<div class="add-bottom-padding" ng-show="currentDesignType.id == 4">
+			<div class="add-bottom-padding" ng-show="currentDesignType.id == 4 || currentDesignType.id == 6">
 				<b>Number of Test entries:</b>
 				<span>{{germplasmTotalTestEntriesCount}}</span>
 			</div>
-			<div class="add-bottom-padding" ng-show="currentDesignType.id == 4">
+			<div class="add-bottom-padding" ng-show="currentDesignType.id == 4 || currentDesignType.id == 6">
 				<b>Number of Check entries:</b>
 				<span>{{germplasmTotalCheckEntriesCount}}</span>
 			</div>
@@ -60,6 +60,17 @@
 			<div class="add-bottom-padding" ng-show="showOnlyIfNumberOfBlocksIsSpecified()">
 				<b>Total number of plots:</b>
 				<span ng-show="germplasmNumberOfTestEntriesPerBlock % 1 === 0">{{germplasmTotalNumberOfPlots}}</span>
+			</div>
+			<div class="add-bottom-padding" ng-show="showOnlyIfNumberOfBlockSizeIsSpecified()">
+				<b>Number of entries per block:</b>
+				<span ng-show="germplasmNumberOfPlotsPerBlock % 1 === 0">{{germplasmNumberOfPlotsPerBlock}}</span>
+				<span ng-show="germplasmNumberOfPlotsPerBlock % 1 !== 0">
+					<b class="text-danger">The Total number of plots must be divisible by number of blocks.</b>
+				</span>
+			</div>
+			<div class="add-bottom-padding" ng-show="showOnlyIfNumberOfReplicationsCountIsSpecified()">
+				<b>Total number of plots:</b>
+				<span>{{germplasmTotalNumberOfPlots}}</span>
 			</div>
 			<div class="add-bottom-padding"
 				ng-repeat="key in settings.factors.keys() | filterFactors : currentDesignType.id">

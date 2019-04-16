@@ -9,6 +9,7 @@
 				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages, $rootScope) {
 
 					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
+					var MESSAGE_DIV_ID = 'page-message';
 
 					$scope.$on('$viewContentLoaded', function(){
 						// This is to automatically refresh the design details for augmented design
@@ -19,9 +20,10 @@
 						if ($scope.data.designType === DESIGN_TYPE.ENTRY_LIST_ORDER ) {
 							$scope.refreshDesignDetailsForELODesign();
 						}
+						if ($scope.data.designType === DESIGN_TYPE.P_REP ) {
+							$scope.refreshDesignDetailsForPRepDesign();
+						}
 					});
-
-					var $body = $('body');
 
 					$scope.applicationData = TrialManagerDataService.applicationData;
 					$scope.studyID = TrialManagerDataService.currentData.basicDetails.studyID;
@@ -127,6 +129,7 @@
 							totalGermplasmListCount: $scope.totalGermplasmEntryListCount,
 							designType: null,
 							replicationsCount: null,
+							replicationPercentage: null,
 							blockSize: null,
 							useLatenized: false,
 							nblatin: null,
@@ -170,11 +173,15 @@
 							$scope.data.designType = $scope.currentDesignType.id;
 							TrialManagerDataService.currentData.experimentalDesign.designType = $scope.data.designType;
 							$scope.applicationData.unappliedChangesAvailable = true;
-							if ($scope.data.designType === DESIGN_TYPE.ENTRY_LIST_ORDER ) {
+
+							if (DESIGN_TYPE.ENTRY_LIST_ORDER === $scope.data.designType ) {
 								$scope.refreshDesignDetailsForELODesign();
-							} else {
+							} else if (DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK === $scope.data.designType ) {
 								$scope.refreshDesignDetailsForAugmentedDesign();
+							} else if (DESIGN_TYPE.P_REP === $scope.data.designType ) {
+								$scope.refreshDesignDetailsForPRepDesign();
 							}
+
 						} else {
 							$scope.currentDesignType = null;
 							$scope.data.designType = '';
@@ -208,8 +215,6 @@
 						if (environmentData && environmentData.treatmentFactors) {
 							environmentData.treatmentFactors = $scope.data.treatmentFactors.vals();
 						}
-
-						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 
 						TrialManagerDataService.generateExpDesign(environmentData).then(
 							function(response) {
@@ -357,12 +362,12 @@
 							case DESIGN_TYPE.RANDOMIZED_COMPLETE_BLOCK:
 							{
 								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[4]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[4]);
 									return false;
 								}
 
 								if (!$scope.settings.treatmentFactors || !TrialManagerDataService.currentData.treatmentFactors.currentData) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[18]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[18]);
 									return false;
 								}
 
@@ -375,10 +380,10 @@
 								var errorCode = TrialManagerDataService.treatmentFactorDataInvalid();
 
 								if (errorCode === 1) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[24]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[24]);
 									return false;
 								} else if (errorCode === 2) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[25]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[25]);
 									return false;
 								}
 
@@ -388,38 +393,38 @@
 							{
 
 								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[5]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[5]);
 									return false;
 								}
 
 								if (!$scope.data.blockSize || $scope.expDesignForm.blockSize.$invalid) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[8]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[8]);
 									return false;
 								}
 
 								if ($scope.totalGermplasmEntryListCount % $scope.data.blockSize > 0) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[13]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[13]);
 									return false;
 								}
 
 								// latinized
 								if ($scope.data.useLatenized) {
 									if ($scope.data.nblatin === null) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[27]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[27]);
 										return false;
 									}
 									if (Number($scope.data.nblatin) >= ($scope.totalGermplasmEntryListCount / $scope.data.blockSize)) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[11]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[11]);
 										return false;
 									}
 
 									if (Number($scope.data.replicationsArrangement) <= 0) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[21]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[21]);
 										return false;
 									}
 									if (Number($scope.data.replicationsArrangement) === 3) {
 										if (!$scope.data.replatinGroups || $scope.expDesignForm.replatinGroups.$invalid) {
-											showErrorMessage('page-message', EXP_DESIGN_MSGS[22]);
+											showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[22]);
 											return false;
 										}
 
@@ -432,7 +437,7 @@
 										}
 
 										if (sum !== Number($scope.data.replicationsCount)) {
-											showErrorMessage('page-message', EXP_DESIGN_MSGS[12]);
+											showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[12]);
 											return false;
 										}
 									}
@@ -443,47 +448,47 @@
 							case DESIGN_TYPE.ROW_COL:
 							{
 								if (!$scope.data.replicationsCount && $scope.expDesignForm.replicationsCount.$invalid) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[5]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[5]);
 									return false;
 								}
 
 								if ($scope.data.rowsPerReplications * $scope.data.colsPerReplications !== $scope.totalGermplasmEntryListCount) {
-									showErrorMessage('page-message', EXP_DESIGN_MSGS[6]);
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[6]);
 									return false;
 								}
 
 								if ($scope.data.useLatenized) {
 
 									if(Number($scope.data.nrlatin) >= Number($scope.totalGermplasmEntryListCount) / Number($scope.data.rowsPerReplications)) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[15]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[15]);
 										return false;
 									}
 
 									if(Number($scope.data.nclatin) >= Number($scope.totalGermplasmEntryListCount) / Number($scope.data.colsPerReplications)) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[16]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[16]);
 										return false;
 									}
 
 									if (Number($scope.data.nrlatin) <= 0 || Number($scope.data.nrlatin) >= Number($scope.data.rowsPerReplications)) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[14]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[14]);
 										return false;
 
 									}
 
 									if (Number($scope.data.nclatin) <= 0 || Number($scope.data.nclatin) >= Number($scope.data.colsPerReplications)) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[17]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[17]);
 										return false;
 
 									}
 
 									if (Number($scope.data.replicationsArrangement <= 0)) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[21]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[21]);
 										return false;
 									}
 
 									if (Number($scope.data.replicationsArrangement) === 3) {
 										if (!$scope.data.replatinGroups || $scope.expDesignForm.replatinGroups.$invalid) {
-											showErrorMessage('page-message', EXP_DESIGN_MSGS[22]);
+											showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[22]);
 											return false;
 										}
 
@@ -496,7 +501,7 @@
 										}
 
 										if (_sum !== Number($scope.data.replicationsCount)) {
-											showErrorMessage('page-message', EXP_DESIGN_MSGS[12]);
+											showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[12]);
 											return false;
 										}
 									}
@@ -522,24 +527,24 @@
 							case DESIGN_TYPE.ENTRY_LIST_ORDER: {
 
 								if ($scope.germplasmTotalCheckEntriesCount > 0) {
-									if ($scope.germplasmTotalTestEntriesCount == 0) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[33]);
+									if ($scope.germplasmTotalTestEntriesCount === 0) {
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[33]);
 										return false
 									}
 									if ($scope.data.checkStartingPosition > $scope.germplasmTotalTestEntriesCount) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[30]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[30]);
 										return false;
 									}
 									if ($scope.data.checkStartingPosition < 1) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[32]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[32]);
 										return false
 									}
 									if ($scope.data.checkSpacing > $scope.germplasmTotalTestEntriesCount) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[29]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[29]);
 										return false
 									}
 									if ($scope.data.checkSpacing < 1) {
-										showErrorMessage('page-message', EXP_DESIGN_MSGS[31]);
+										showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[31]);
 										return false
 									}
 								} else {
@@ -547,11 +552,40 @@
 								}
 								break;
 							}
+							case DESIGN_TYPE.P_REP:  {
+
+								var largestPossiblePercentage = Math.round((($scope.germplasmTotalTestEntriesCount - 1) / $scope.germplasmTotalTestEntriesCount) * 100);
+
+								// Percentage should be below largestPossiblePercentage. There must be some unreplicated treatments in a partially replicated design.
+								if ((!$scope.data.replicationPercentage && $scope.data.replicationPercentage !== 0)  || $scope.expDesignForm.replicationPercentage.$invalid
+									|| $scope.data.replicationPercentage > largestPossiblePercentage || $scope.expDesignForm.replicationPercentage.$viewValue === '') {
+									showErrorMessage(MESSAGE_DIV_ID, '% of test entries to replicate should be an integer number ' +
+										'greater or equal than 0 and less than or equal to ' + largestPossiblePercentage + '. Check entries must be specified if no test entry is replicated.');
+									return false;
+								}
+
+
+								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
+									showErrorMessage(MESSAGE_DIV_ID, 'Replication count should be greater than 1');
+									return false;
+								}
+
+								if (!$scope.data.blockSize || $scope.expDesignForm.blockSize.$invalid) {
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[8]);
+									return false;
+								}
+
+								if ($scope.germplasmNumberOfPlotsPerBlock % 1 !== 0) {
+									showErrorMessage(MESSAGE_DIV_ID, 'The block size must be a factor of the number of treatments.');
+									return false;
+								}
+
+							}
 
 						}
 
 						if ($scope.totalGermplasmEntryListCount <= 0) {
-							showErrorMessage('page-message', EXP_DESIGN_MSGS[26]);
+							showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[26]);
 							return false;
 						}
 
@@ -561,7 +595,7 @@
 					$scope.checkIfTheNumberOfTestEntriesPerBlockIsWholeNumber = function() {
 						// Check if the Number of Test entries per block is a whole number
 						if ($scope.germplasmNumberOfTestEntriesPerBlock % 1 !== 0) {
-							showErrorMessage('page-message', 'The number of test entries must be divisible by number of blocks.');
+							showErrorMessage(MESSAGE_DIV_ID, 'The number of test entries must be divisible by number of blocks.');
 							return false;
 						}
 						return true;
@@ -578,9 +612,35 @@
 
 					};
 
+					$scope.showOnlyIfNumberOfBlockSizeIsSpecified = function() {
+
+						if ($scope.currentDesignType.id === DESIGN_TYPE.P_REP) {
+							if (!$scope.data.blockSize && $scope.data.blockSize !== 0) {
+								return false;
+							}
+							return true;
+						}
+
+					};
+
+					$scope.showOnlyIfNumberOfReplicationsCountIsSpecified = function() {
+
+						if ($scope.currentDesignType.id === DESIGN_TYPE.P_REP) {
+							if (!$scope.data.replicationsCount && $scope.data.replicationsCount !== 0) {
+								return false;
+							}
+							if (isNaN($scope.germplasmTotalNumberOfPlots)) {
+								return false;
+							}
+							return true;
+						}
+					};
+
+
+
 					$scope.refreshDesignDetailsForAugmentedDesign = function() {
 
-						$scope.germplasmTotalCheckEntriesCount = countCheckEntries();
+						$scope.germplasmTotalCheckEntriesCount = countCheckEntries(true);
 						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
 						$scope.germplasmNumberOfTestEntriesPerBlock = $scope.germplasmTotalTestEntriesCount / $scope.data.numberOfBlocks;
 						$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmNumberOfTestEntriesPerBlock + $scope.germplasmTotalCheckEntriesCount;
@@ -591,6 +651,16 @@
 					$scope.refreshDesignDetailsForELODesign = function() {
 						$scope.germplasmTotalTestEntriesCount = countNumberOfTestEntries();
 						$scope.germplasmTotalCheckEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalTestEntriesCount;
+					}
+
+					$scope.refreshDesignDetailsForPRepDesign = function() {
+						$scope.germplasmTotalCheckEntriesCount = countCheckEntries(false);
+						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
+						var noOfTestEntriesToReplicate = Math.round($scope.germplasmTotalTestEntriesCount * ($scope.data.replicationPercentage / 100));
+						$scope.germplasmTotalNumberOfPlots = ($scope.germplasmTotalTestEntriesCount - noOfTestEntriesToReplicate) +
+							(noOfTestEntriesToReplicate * $scope.data.replicationsCount) +
+							($scope.germplasmTotalCheckEntriesCount * $scope.data.replicationsCount);
+						$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmTotalNumberOfPlots / $scope.data.blockSize;
 					}
 
 
@@ -621,7 +691,7 @@
 
 					}
 
-					function countCheckEntries() {
+					function countCheckEntries(checkEntryOnly) {
 
 						// When the user changed the entry type of germplasm entries in Germplasm Tab, the changes are not yet saved in the database,
 						// so we can only count the number of checks through DataTable.
@@ -632,7 +702,12 @@
 							var numberOfChecksEntries = 0;
 
 							$.each(germplasmListDataTable.rows().data(), function(index, obj) {
-								if (parseInt(obj[ENTRY_TYPE_COLUMN_DATA_KEY]) === SYSTEM_DEFINED_ENTRY_TYPE.CHECK_ENTRY) {
+								var currentEntryType = parseInt(obj[ENTRY_TYPE_COLUMN_DATA_KEY]);
+								if (checkEntryOnly && currentEntryType === SYSTEM_DEFINED_ENTRY_TYPE.CHECK_ENTRY) {
+									numberOfChecksEntries++;
+								} else if (currentEntryType === SYSTEM_DEFINED_ENTRY_TYPE.CHECK_ENTRY
+								|| currentEntryType === SYSTEM_DEFINED_ENTRY_TYPE.DISEASE_CHECK
+								|| currentEntryType === SYSTEM_DEFINED_ENTRY_TYPE.STRESS_CHECK) {
 									numberOfChecksEntries++;
 								}
 							});
@@ -657,7 +732,7 @@
 
 					function validateNumberOfBlocks() {
 						if (!$scope.data.numberOfBlocks || $scope.expDesignForm.numberOfBlocks.$invalid) {
-							showErrorMessage('page-message', 'Please specify the number of blocks.');
+							showErrorMessage(MESSAGE_DIV_ID, 'Please specify the number of blocks.');
 							return false;
 						}
 						return true;
@@ -666,7 +741,7 @@
 					function validateNumberOfChecks() {
 
 						if ($scope.germplasmTotalCheckEntriesCount === 0) {
-							showErrorMessage('page-message', 'Please specify checks in germplasm list before generating augmented design.');
+							showErrorMessage(MESSAGE_DIV_ID, 'Please specify checks in germplasm list before generating augmented design.');
 							return false;
 						}
 						return true;
@@ -681,15 +756,17 @@
 					var excludeTermIds;
 
 					if (designTypeId === DESIGN_TYPE.RANDOMIZED_COMPLETE_BLOCK) {
-						excludeTermIds = [8230, 8220, 8581, 8582];
+						excludeTermIds = [8230, 8220, 8581, 8582, 8842];
 					} else if (designTypeId === DESIGN_TYPE.RESOLVABLE_INCOMPLETE_BLOCK) {
-						excludeTermIds = [8581, 8582];
+						excludeTermIds = [8581, 8582, 8842];
 					} else if (designTypeId === DESIGN_TYPE.ROW_COL) {
-						excludeTermIds = [8220, 8200];
+						excludeTermIds = [8220, 8200, 8842];
 					} else if (designTypeId === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
-						excludeTermIds = [8210, 8581, 8582];
+						excludeTermIds = [8210, 8581, 8582, 8842];
 					} else if (designTypeId === DESIGN_TYPE.ENTRY_LIST_ORDER) {
-						excludeTermIds = [8210, 8220, 8581, 8582];
+						excludeTermIds = [8210, 8220, 8581, 8582, 8842];
+					} else if (designTypeId === DESIGN_TYPE.P_REP) {
+						excludeTermIds = [8210, 8581, 8582, 8842];
 					}
 
 					return _.filter(factorList, function(value) {

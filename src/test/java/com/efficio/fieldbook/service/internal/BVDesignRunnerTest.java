@@ -4,6 +4,7 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.impl.BVDesignRunner;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
@@ -11,18 +12,21 @@ import junit.framework.Assert;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BVDesignRunnerTest {
@@ -104,20 +108,20 @@ public class BVDesignRunnerTest {
 		final MainDesign mainDesign = this.createRandomizedCompleteBlockDesign();
 
 		final String expectedString =
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"RandomizedBlock\">"
-						+ "<Parameter name=\"" + ExperimentDesignGenerator.SEED_PARAM + "\" value=\":seedValue\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.NBLOCKS_PARAM + "\" value=\"6\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.BLOCKFACTOR_PARAM + "\" value=\"Reps\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.PLOTFACTOR_PARAM + "\" value=\"Plots\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM + "\" value=\"301\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM + "\">"
-						+ "<ListItem value=\"201\"/><ListItem value=\"1\"/></Parameter>"+"<Parameter name=\""
-						+ ExperimentDesignGenerator.TREATMENTFACTORS_PARAM
-						+ "\"><ListItem value=\"ENTRY_NO\"/><ListItem value=\"FERTILIZER\"/></Parameter>"
-						+ "<Parameter name=\"levels\"><ListItem value=\"24\"/><ListItem value=\"3\"/></Parameter>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.TIMELIMIT_PARAM + "\" value=\"" + AppConstants.EXP_DESIGN_TIME_LIMIT.getString()
-						+ "\"/>" + "<Parameter name=\"" + ExperimentDesignGenerator.OUTPUTFILE_PARAM
-						+ "\" value=\":outputFile\"/></Template></Templates>";
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"RandomizedBlock\">"
+				+ "<Parameter name=\"" + ExperimentDesignGenerator.SEED_PARAM + "\" value=\":seedValue\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.NBLOCKS_PARAM + "\" value=\"6\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.BLOCKFACTOR_PARAM + "\" value=\"Reps\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.PLOTFACTOR_PARAM + "\" value=\"Plots\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM + "\" value=\"301\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM + "\">"
+				+ "<ListItem value=\"201\"/><ListItem value=\"1\"/></Parameter>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.TREATMENTFACTORS_PARAM
+				+ "\"><ListItem value=\"ENTRY_NO\"/><ListItem value=\"FERTILIZER\"/></Parameter>"
+				+ "<Parameter name=\"levels\"><ListItem value=\"24\"/><ListItem value=\"3\"/></Parameter>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.TIMELIMIT_PARAM + "\" value=\"" + AppConstants.EXP_DESIGN_TIME_LIMIT.getString()
+				+ "\"/>" + "<Parameter name=\"" + ExperimentDesignGenerator.OUTPUTFILE_PARAM
+				+ "\" value=\":outputFile\"/></Template></Templates>";
 
 		final BVDesignRunner runner = new BVDesignRunner();
 		final String xmlString = runner.getXMLStringForDesign(mainDesign);
@@ -128,24 +132,24 @@ public class BVDesignRunnerTest {
 	@Test
 	public void testGetXMLStringForResolvableIncompleteBlockDesign() {
 		final MainDesign mainDesign = this.experimentDesignGenerator
-				.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps", "Subblocks", "Plots", 301, null, "0", "", "",
-						false);
+			.createResolvableIncompleteBlockDesign("6", "24", "2", "Treat", "Reps", "Subblocks", "Plots", 301, null, "0", "", "",
+				false);
 
 		final String expectedString =
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableIncompleteBlock\">"
-						+ "<Parameter name=\"" + ExperimentDesignGenerator.SEED_PARAM + "\" value=\":seedValue\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.BLOCKSIZE_PARAM + "\" value=\"6\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.NTREATMENTS_PARAM + "\" value=\"24\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.NREPLICATES_PARAM + "\" value=\"2\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.TREATMENTFACTOR_PARAM + "\" value=\"Treat\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.REPLICATEFACTOR_PARAM + "\" value=\"Reps\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.BLOCKFACTOR_PARAM + "\" value=\"Subblocks\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.PLOTFACTOR_PARAM + "\" value=\"Plots\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM + "\" value=\"301\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.NBLATIN_PARAM + "\" value=\"0\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.TIMELIMIT_PARAM + "\" value=\"" + AppConstants.EXP_DESIGN_TIME_LIMIT.getString()
-						+ "\"/>" + "<Parameter name=\"" + ExperimentDesignGenerator.OUTPUTFILE_PARAM
-						+ "\" value=\":outputFile\"/></Template></Templates>";
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableIncompleteBlock\">"
+				+ "<Parameter name=\"" + ExperimentDesignGenerator.SEED_PARAM + "\" value=\":seedValue\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.BLOCKSIZE_PARAM + "\" value=\"6\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.NTREATMENTS_PARAM + "\" value=\"24\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.NREPLICATES_PARAM + "\" value=\"2\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.TREATMENTFACTOR_PARAM + "\" value=\"Treat\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.REPLICATEFACTOR_PARAM + "\" value=\"Reps\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.BLOCKFACTOR_PARAM + "\" value=\"Subblocks\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.PLOTFACTOR_PARAM + "\" value=\"Plots\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM + "\" value=\"301\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.NBLATIN_PARAM + "\" value=\"0\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.TIMELIMIT_PARAM + "\" value=\"" + AppConstants.EXP_DESIGN_TIME_LIMIT.getString()
+				+ "\"/>" + "<Parameter name=\"" + ExperimentDesignGenerator.OUTPUTFILE_PARAM
+				+ "\" value=\":outputFile\"/></Template></Templates>";
 
 		final BVDesignRunner runner = new BVDesignRunner();
 		final String xmlString = runner.getXMLStringForDesign(mainDesign);
@@ -156,27 +160,27 @@ public class BVDesignRunnerTest {
 	@Test
 	public void testGetXMLStringForResolvableRowColExpDesign() {
 		final MainDesign mainDesign = this.experimentDesignGenerator
-				.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns", "Plots", 301, null, "0", "0", "",
-						"", false);
+			.createResolvableRowColDesign("50", "2", "5", "10", "Treat", "Reps", "Rows", "Columns", "Plots", 301, null, "0", "0", "",
+				"", false);
 
 		final String expectedString =
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableRowColumn\">"
-						+ "<Parameter name=\"" + ExperimentDesignGenerator.SEED_PARAM + "\" value=\":seedValue\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.NTREATMENTS_PARAM + "\" value=\"50\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.NREPLICATES_PARAM + "\" value=\"2\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.NROWS_PARAM + "\" value=\"5\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.NCOLUMNS_PARAM + "\" value=\"10\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.TREATMENTFACTOR_PARAM + "\" value=\"Treat\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.REPLICATEFACTOR_PARAM + "\" value=\"Reps\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.ROWFACTOR_PARAM + "\" value=\"Rows\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.COLUMNFACTOR_PARAM + "\" value=\"Columns\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.PLOTFACTOR_PARAM + "\" value=\"Plots\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM + "\" value=\"301\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.NRLATIN_PARAM + "\" value=\"0\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.NCLATIN_PARAM + "\" value=\"0\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.TIMELIMIT_PARAM + "\" value=\"" + AppConstants.EXP_DESIGN_TIME_LIMIT.getString()
-						+ "\"/>" + "<Parameter name=\"" + ExperimentDesignGenerator.OUTPUTFILE_PARAM
-						+ "\" value=\":outputFile\"/></Template></Templates>";
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableRowColumn\">"
+				+ "<Parameter name=\"" + ExperimentDesignGenerator.SEED_PARAM + "\" value=\":seedValue\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.NTREATMENTS_PARAM + "\" value=\"50\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.NREPLICATES_PARAM + "\" value=\"2\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.NROWS_PARAM + "\" value=\"5\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.NCOLUMNS_PARAM + "\" value=\"10\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.TREATMENTFACTOR_PARAM + "\" value=\"Treat\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.REPLICATEFACTOR_PARAM + "\" value=\"Reps\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.ROWFACTOR_PARAM + "\" value=\"Rows\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.COLUMNFACTOR_PARAM + "\" value=\"Columns\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.PLOTFACTOR_PARAM + "\" value=\"Plots\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM + "\" value=\"301\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.NRLATIN_PARAM + "\" value=\"0\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.NCLATIN_PARAM + "\" value=\"0\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.TIMELIMIT_PARAM + "\" value=\"" + AppConstants.EXP_DESIGN_TIME_LIMIT.getString()
+				+ "\"/>" + "<Parameter name=\"" + ExperimentDesignGenerator.OUTPUTFILE_PARAM
+				+ "\" value=\":outputFile\"/></Template></Templates>";
 
 		final BVDesignRunner runner = new BVDesignRunner();
 		final String xmlString = runner.getXMLStringForDesign(mainDesign);
@@ -187,25 +191,25 @@ public class BVDesignRunnerTest {
 	@Test
 	public void testGetXMLStringForResolvableIncompleteBlockDesignWithEntryNumber() {
 		final MainDesign mainDesign = this.experimentDesignGenerator
-				.createResolvableIncompleteBlockDesign("6", "24", "2", "ENTRY_NO", "Reps", "Subblocks", "Plots", 301, 245, "0", "", "",
-						false);
+			.createResolvableIncompleteBlockDesign("6", "24", "2", "ENTRY_NO", "Reps", "Subblocks", "Plots", 301, 245, "0", "", "",
+				false);
 
 		final String expectedString =
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableIncompleteBlock\">"
-						+ "<Parameter name=\"" + ExperimentDesignGenerator.SEED_PARAM + "\" value=\":seedValue\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.BLOCKSIZE_PARAM + "\" value=\"6\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.NTREATMENTS_PARAM + "\" value=\"24\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.NREPLICATES_PARAM + "\" value=\"2\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.TREATMENTFACTOR_PARAM + "\" value=\"ENTRY_NO\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM + "\" value=\"245\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.REPLICATEFACTOR_PARAM + "\" value=\"Reps\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.BLOCKFACTOR_PARAM + "\" value=\"Subblocks\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.PLOTFACTOR_PARAM + "\" value=\"Plots\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM + "\" value=\"301\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.NBLATIN_PARAM + "\" value=\"0\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.TIMELIMIT_PARAM + "\" value=\"" + AppConstants.EXP_DESIGN_TIME_LIMIT.getString()
-						+ "\"/>" + "<Parameter name=\"" + ExperimentDesignGenerator.OUTPUTFILE_PARAM
-						+ "\" value=\":outputFile\"/></Template></Templates>";
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableIncompleteBlock\">"
+				+ "<Parameter name=\"" + ExperimentDesignGenerator.SEED_PARAM + "\" value=\":seedValue\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.BLOCKSIZE_PARAM + "\" value=\"6\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.NTREATMENTS_PARAM + "\" value=\"24\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.NREPLICATES_PARAM + "\" value=\"2\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.TREATMENTFACTOR_PARAM + "\" value=\"ENTRY_NO\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM + "\" value=\"245\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.REPLICATEFACTOR_PARAM + "\" value=\"Reps\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.BLOCKFACTOR_PARAM + "\" value=\"Subblocks\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.PLOTFACTOR_PARAM + "\" value=\"Plots\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM + "\" value=\"301\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.NBLATIN_PARAM + "\" value=\"0\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.TIMELIMIT_PARAM + "\" value=\"" + AppConstants.EXP_DESIGN_TIME_LIMIT.getString()
+				+ "\"/>" + "<Parameter name=\"" + ExperimentDesignGenerator.OUTPUTFILE_PARAM
+				+ "\" value=\":outputFile\"/></Template></Templates>";
 
 		final BVDesignRunner runner = new BVDesignRunner();
 		final String xmlString = runner.getXMLStringForDesign(mainDesign);
@@ -216,31 +220,78 @@ public class BVDesignRunnerTest {
 	@Test
 	public void testGetXMLStringForResolvableRowColumnDesignWithEntryNumber() {
 		final MainDesign mainDesign = this.experimentDesignGenerator
-				.createResolvableRowColDesign("24", "2", "5", "10", "ENTRY_NO", "Reps", "Rows", "Columns", "Plots", 301, 245, "0", "0", "",
-						"", false);
+			.createResolvableRowColDesign("24", "2", "5", "10", "ENTRY_NO", "Reps", "Rows", "Columns", "Plots", 301, 245, "0", "0", "",
+				"", false);
 
 		final String expectedString =
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableRowColumn\">"
-						+ "<Parameter name=\"" + ExperimentDesignGenerator.SEED_PARAM + "\" value=\":seedValue\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.NTREATMENTS_PARAM + "\" value=\"24\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.NREPLICATES_PARAM + "\" value=\"2\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.NROWS_PARAM + "\" value=\"5\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.NCOLUMNS_PARAM + "\" value=\"10\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.TREATMENTFACTOR_PARAM + "\" value=\"ENTRY_NO\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM + "\" value=\"245\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.REPLICATEFACTOR_PARAM + "\" value=\"Reps\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.ROWFACTOR_PARAM + "\" value=\"Rows\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.COLUMNFACTOR_PARAM + "\" value=\"Columns\"/><Parameter name=\""
-						+ ExperimentDesignGenerator.PLOTFACTOR_PARAM + "\" value=\"Plots\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM + "\" value=\"301\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.NRLATIN_PARAM + "\" value=\"0\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.NCLATIN_PARAM + "\" value=\"0\"/>" + "<Parameter name=\""
-						+ ExperimentDesignGenerator.TIMELIMIT_PARAM + "\" value=\"" + AppConstants.EXP_DESIGN_TIME_LIMIT.getString()
-						+ "\"/>" + "<Parameter name=\"" + ExperimentDesignGenerator.OUTPUTFILE_PARAM
-						+ "\" value=\":outputFile\"/></Template></Templates>";
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableRowColumn\">"
+				+ "<Parameter name=\"" + ExperimentDesignGenerator.SEED_PARAM + "\" value=\":seedValue\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.NTREATMENTS_PARAM + "\" value=\"24\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.NREPLICATES_PARAM + "\" value=\"2\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.NROWS_PARAM + "\" value=\"5\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.NCOLUMNS_PARAM + "\" value=\"10\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.TREATMENTFACTOR_PARAM + "\" value=\"ENTRY_NO\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM + "\" value=\"245\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.REPLICATEFACTOR_PARAM + "\" value=\"Reps\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.ROWFACTOR_PARAM + "\" value=\"Rows\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.COLUMNFACTOR_PARAM + "\" value=\"Columns\"/><Parameter name=\""
+				+ ExperimentDesignGenerator.PLOTFACTOR_PARAM + "\" value=\"Plots\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM + "\" value=\"301\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.NRLATIN_PARAM + "\" value=\"0\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.NCLATIN_PARAM + "\" value=\"0\"/>" + "<Parameter name=\""
+				+ ExperimentDesignGenerator.TIMELIMIT_PARAM + "\" value=\"" + AppConstants.EXP_DESIGN_TIME_LIMIT.getString()
+				+ "\"/>" + "<Parameter name=\"" + ExperimentDesignGenerator.OUTPUTFILE_PARAM
+				+ "\" value=\":outputFile\"/></Template></Templates>";
 
 		final BVDesignRunner runner = new BVDesignRunner();
 		final String xmlString = runner.getXMLStringForDesign(mainDesign);
+		this.assertXMLStringEqualsExpected(mainDesign, expectedString, xmlString);
+	}
+
+	@Test
+	public void testGetXMLStringForPRepDesign() {
+		final int numberOfBlocks = 1;
+		final int nTreatments = 20;
+		final ArrayList<ListItem> nRepeatsListItem = new ArrayList<>();
+		nRepeatsListItem.add(new ListItem("1"));
+		nRepeatsListItem.add(new ListItem("2"));
+		nRepeatsListItem.add(new ListItem("3"));
+		final String treatmentFactor = "ENTRY_NO";
+		final String blockFactor = "BLOCK_NO";
+		final String plotFactor = "PLOT_NO";
+
+		final int initialPlotNumber = 99;
+		final int initialEntryNumber = 100;
+
+		final MainDesign mainDesign = this.experimentDesignGenerator
+			.createPRepDesign(numberOfBlocks, nTreatments, nRepeatsListItem, treatmentFactor, blockFactor, plotFactor, initialPlotNumber,
+				initialEntryNumber);
+
+		final String expectedString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+			+ "<Templates>"
+			+ "<Template name=\"" + ExperimentDesignGenerator.P_REP_DESIGN + "\"><"
+			+ "Parameter name=\"" + ExperimentDesignGenerator.SEED_PARAM + "\" value=\":seedValue\"/>"
+			+ "<Parameter name=\"" + ExperimentDesignGenerator.NTREATMENTS_PARAM + "\" value=\"20\"/>"
+			+ "<Parameter name=\"" + ExperimentDesignGenerator.NBLOCKS_PARAM + "\" value=\"1\"/>"
+			+ "<Parameter name=\"" + ExperimentDesignGenerator.NREPEATS_PARAM + "\">"
+			+ "<ListItem value=\"1\"/>"
+			+ "<ListItem value=\"2\"/>"
+			+ "<ListItem value=\"3\"/>"
+			+ "</Parameter>"
+			+ "<Parameter name=\"" + ExperimentDesignGenerator.TREATMENTFACTOR_PARAM + "\" value=\"ENTRY_NO\"/>"
+			+ "<Parameter name=\"" + ExperimentDesignGenerator.INITIAL_TREATMENT_NUMBER_PARAM + "\" value=\"100\"/>"
+			+ "<Parameter name=\"" + ExperimentDesignGenerator.BLOCKFACTOR_PARAM + "\" value=\"BLOCK_NO\"/>"
+			+ "<Parameter name=\"" + ExperimentDesignGenerator.PLOTFACTOR_PARAM
+			+ "\" value=\"PLOT_NO\"/><Parameter name=\"initialplotnum\" value=\"99\"/>"
+			+ "<Parameter name=\"" + ExperimentDesignGenerator.TIMELIMIT_PARAM + "\" value=\"0.1\"/>"
+			+ "<Parameter name=\"" + ExperimentDesignGenerator.OUTPUTFILE_PARAM
+			+ "\" value=\":outputFile\"/>"
+			+ "</Template>"
+			+ "</Templates>";
+
+		final BVDesignRunner runner = new BVDesignRunner();
+		final String xmlString = runner.getXMLStringForDesign(mainDesign);
+
 		this.assertXMLStringEqualsExpected(mainDesign, expectedString, xmlString);
 	}
 

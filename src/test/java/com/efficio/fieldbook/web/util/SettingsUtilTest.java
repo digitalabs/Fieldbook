@@ -238,6 +238,7 @@ public class SettingsUtilTest {
 		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_REPS_IN_COLS.getId(), "7"));
 		expDesigns.add(this.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "8"));
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "9"));
+		expDesigns.add(this.createMeasurementVariable(TermId.PERCENTAGE_OF_REPLICATION.getId(), "10"));
 
 		final ExpDesignParameterUi result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
 
@@ -250,6 +251,7 @@ public class SettingsUtilTest {
 		Assert.assertEquals("7", result.getReplatinGroups());
 		Assert.assertEquals("8", result.getReplicationsCount());
 		Assert.assertEquals("9", result.getFileName());
+		Assert.assertEquals(10, result.getReplicationPercentage().intValue());
 
 	}
 
@@ -457,11 +459,7 @@ public class SettingsUtilTest {
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 
 		expDesignParameterUi.setDesignType(6);
-		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
-				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
-
-		expDesignParameterUi.setDesignType(7);
-		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
+		Assert.assertEquals(String.valueOf(TermId.P_REP.getId()),
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 
 		expDesignParameterUi.setReplicationsArrangement(1);

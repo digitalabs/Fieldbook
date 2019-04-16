@@ -126,6 +126,86 @@
 				</div>
 			</div>
 		</div>
+		<div class="col-xs-12 col-md-12">
+			<div class="row"><br></br>
+			</div>
+		</div>
+		<div class="col-xs-12" style="padding-left: 0px;">
+			<label class="control-label section-toggle toggle-icon" ng-click="collapseBatchAction()">
+				<img class="icn section-expanded" ng-show="toggleSectionBatchAction" src="/Fieldbook/static/img/expanded-arrow.png"/>
+				<img style="margin-left: 7px" class="icn section-collapsed" ng-show="!toggleSectionBatchAction" src="/Fieldbook/static/img/collapsed-arrow.png"/>
+				<strong class="sub-content-heading">Batch action to review data</strong>
+			</label>
+			<div class="row add_top_padding" ng-show="toggleSectionBatchAction">
+				<div class="col-xs-12 form-inline" ng-if="hasVariableFilter">
+					<div class="row form-group" style="padding-right: 10px;">
+						<label style="padding-right: 10px;padding-left: 15px;">Select variable:</label>
+						<ui-select ng-model="nested.selectedVariableFilter" class="input-sm form-control inline-select" ng-change="changeSelectedVariableFilter()" search-enabled="false" theme="select2">
+							<ui-select-match>{{$select.selected.name}}</ui-select-match>
+							<ui-select-choices repeat="variable as variable in selectVariableFilter">
+								<div title="{{variable.name}}">{{variable.name}}</div>
+							</ui-select-choices>
+						</ui-select>
+					</div>
+					<div class="form-group" ng-show="hasVariableFilter &amp;&amp; !hasDataFiltered()">
+						<div class="form-group">
+							<div class="form-group" style="padding-right: 10px;">
+								<label style="padding-right: 10px;">There are no observations to update for the variable selected</label>
+							</div>
+						</div>
+					</div>
+					<div class="form-group" ng-if="hasVariableFilter &amp;&amp; hasDataFiltered() &amp;&amp; nested.selectedVariableFilter.termId !== null">
+						<label style="padding-right: 10px;">Select batch action:</label>
+						<ui-select ng-model="nested.selectedBatchAction" class="input-sm form-control inline-select" search-enabled="false" theme="select2">
+							<ui-select-match>{{$select.selected.name}}</ui-select-match>
+							<ui-select-choices repeat="selectBatchAction as selectBatchAction in selectBatchActions">
+								<div title="{{selectBatchAction.name}}">{{selectBatchAction.name}}</div>
+							</ui-select-choices>
+						</ui-select>
+					</div>
+					<div class="form-group" style="padding-left: 10px;" ng-if="nested.selectedBatchAction.id === 1  &amp;&amp; hasDataFiltered()">
+						<label style="padding-right: 10px;">New value:</label>
+						<div class="form-group" ng-if="nested.selectedVariableFilter.dataTypeCode === 'N' || nested.selectedVariableFilter.dataTypeCode === 'T'">
+							<input class="form-control inline-select" ng-model='nested.newValueBatchUpdate'/>
+						</div>
+						<div class="form-group" ng-if="nested.selectedVariableFilter.dataTypeCode === 'C'">
+							<ui-select ng-model="nested.newValueBatchUpdate"
+									   class="input-sm form-control inline-select"
+									   search-enabled="true"
+									   theme="select2">
+								<ui-select-match>{{$select.selected.name}}</ui-select-match>
+								<ui-select-choices repeat="value.name as value in (nested.selectedVariableFilter.possibleValues | orderBy: 'name' | filter: { name: $select.search }) track by value.name">
+									<div title="{{value.description}}">{{isCategoricalDescriptionView ? value.displayDescription : value.displayValue}}</div>
+								</ui-select-choices>
+							</ui-select>
+						</div>
+						<div class="input-group uib-datepicker-style-trasformer" ng-if="nested.selectedVariableFilter.dataTypeCode === 'D'" >
+							<input class="form-control inline-select"
+								   ng-model="nested.newValueBatchUpdate"
+								   uib-datepicker-popup="yyyyMMdd"
+								   is-open="isDatepickerActionOpen"
+								   datepicker-options="datepickerOptions"
+								   placeholder="yyyyMMdd"/>
+							<span style="padding-left: 1px;" class="input-group-btn inline-select">
+        						<button type="button" class="btn form-control" ng-click="isDatepickerActionOpen = !isDatepickerActionOpen">
+          							<i class="glyphicon glyphicon-calendar"></i>
+       							</button>
+      						</span>
+						</div>
+					</div>
+					<div class="form-group" style="padding-left: 10px;" ng-if="hasVariableFilter &amp;&amp; hasDataFiltered() &amp;&amp; nested.selectedBatchAction.id !== null">
+						<button type="button" class="btn btn-info form-control"  ng-disabled="nested.selectedBatchAction.id === 1 &amp;&amp; (nested.newValueBatchUpdate === null || nested.newValueBatchUpdate === '')" ng-click="applyBatchAction()">Apply</button>
+					</div>
+				</div>
+				<div class="col-xs-12 form-inline" ng-show="!hasVariableFilter">
+				<div class="form-group">
+						<div class="form-group" style="padding-right: 10px;">
+							<label style="padding-right: 10px;">There is no data to review in the dataset</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="row add_top_padding">
 			<div class="col-xs-12">
 				<table id="subobservation-table-{{subObservationTab.id}}-{{subObservationSet.id}}"
@@ -180,10 +260,10 @@
 			<input class="form-control" ng-model='columnFilter.columnData.query'
 				   uib-datepicker-popup="yyyyMMdd"
 				   placeholder="Filter value"/>
-			<div uib-datepicker="" ng-model="columnFilter.columnData.query" class="well well-sm column-filter-datepicker"
+			<div uib-datepicker="" ng-model="columnFilter.columnData.query" class="well well-sm uib-datepicker-style-trasformer"
 				 ng-click="$event.stopPropagation()"
 				 ng-if="columnFilter.columnData.dataTypeCode === 'D'"
-				 datepicker-options="columnFilter.datepicker.options"></div>
+				 datepicker-options="datepickerOptions"></div>
 		</div>
 		<button class="btn btn-info" ng-click="filterByColumn()" title="Apply all selected filters">Apply</button>
 		<button class="btn btn-default" ng-click="resetFilterByColumn()" title="Reset this filter">Reset</button>

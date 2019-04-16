@@ -560,7 +560,7 @@
 								if ((!$scope.data.replicationPercentage && $scope.data.replicationPercentage !== 0)  || $scope.expDesignForm.replicationPercentage.$invalid
 									|| $scope.data.replicationPercentage > largestPossiblePercentage || $scope.expDesignForm.replicationPercentage.$viewValue === '') {
 									showErrorMessage(MESSAGE_DIV_ID, '% of test entries to replicate should be an integer number ' +
-										'greater or equal than 0 and less than or equal to ' + largestPossiblePercentage);
+										'greater or equal than 0 and less than or equal to ' + largestPossiblePercentage + '. Check entries must be specified if none test entry is replicated.');
 									return false;
 								}
 

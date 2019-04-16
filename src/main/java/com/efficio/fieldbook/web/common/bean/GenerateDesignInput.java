@@ -19,14 +19,15 @@ public class GenerateDesignInput {
 
 	public GenerateDesignInput() {
 		this.environmentData = new EnvironmentData();
-		this.selectedDesignType = new DesignTypeItem();
+		this.selectedDesignType = null;
 		this.startingEntryNo = 1;
 		this.startingPlotNo = 1;
 		this.hasNewEnvironmentAdded = false;
 	}
 
-	public GenerateDesignInput(final EnvironmentData environmentData, final DesignTypeItem selectedDesignType,
-			final Integer startingEntryNo, final Integer startingPlotNo, final Boolean hasNewEnvironmentAdded) {
+	public GenerateDesignInput(
+		final EnvironmentData environmentData, final DesignTypeItem selectedDesignType,
+		final Integer startingEntryNo, final Integer startingPlotNo, final Boolean hasNewEnvironmentAdded) {
 		super();
 		this.environmentData = environmentData;
 		this.selectedDesignType = selectedDesignType;

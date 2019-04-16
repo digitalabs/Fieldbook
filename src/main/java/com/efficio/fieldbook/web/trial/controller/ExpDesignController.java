@@ -19,7 +19,7 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.dms.DesignType;
 import org.generationcp.middleware.domain.dms.InsertionMannerItem;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -83,17 +83,17 @@ public class ExpDesignController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/retrieveDesignTypes", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-	public List<DesignTypeItem> retrieveDesignTypes() {
+	public List<DesignType> retrieveDesignTypes() {
 
-		final List<DesignTypeItem> designTypes = new ArrayList<>();
+		final List<DesignType> designTypes = new ArrayList<>();
 
-		designTypes.add(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK);
-		designTypes.add(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK);
-		designTypes.add(DesignTypeItem.ROW_COL);
-		designTypes.add(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK);
-		designTypes.add(DesignTypeItem.CUSTOM_IMPORT);
-		designTypes.add(DesignTypeItem.ENTRY_LIST_ORDER);
-		designTypes.add(DesignTypeItem.P_REP);
+		designTypes.add(DesignType.RANDOMIZED_COMPLETE_BLOCK);
+		designTypes.add(DesignType.RESOLVABLE_INCOMPLETE_BLOCK);
+		designTypes.add(DesignType.ROW_COL);
+		designTypes.add(DesignType.AUGMENTED_RANDOMIZED_BLOCK);
+		designTypes.add(DesignType.CUSTOM_IMPORT);
+		designTypes.add(DesignType.ENTRY_LIST_ORDER);
+		designTypes.add(DesignType.P_REP);
 
 		return designTypes;
 	}
@@ -331,17 +331,17 @@ public class ExpDesignController extends BaseTrialController {
 	}
 
 	protected ExperimentDesignService getExpDesignService(final int designType) {
-		if (designType == DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId()) {
+		if (designType == DesignType.RANDOMIZED_COMPLETE_BLOCK.getId()) {
 			return this.randomizeCompleteBlockDesign;
-		} else if (designType == DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId()) {
+		} else if (designType == DesignType.RESOLVABLE_INCOMPLETE_BLOCK.getId()) {
 			return this.resolveIncompleteBlockDesign;
-		} else if (designType == DesignTypeItem.ROW_COL.getId()) {
+		} else if (designType == DesignType.ROW_COL.getId()) {
 			return this.resolvableRowColumnDesign;
-		} else if (designType == DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId()) {
+		} else if (designType == DesignType.AUGMENTED_RANDOMIZED_BLOCK.getId()) {
 			return this.augmentedRandomizedBlockDesignService;
-		} else if (designType == DesignTypeItem.ENTRY_LIST_ORDER.getId()) {
+		} else if (designType == DesignType.ENTRY_LIST_ORDER.getId()) {
 			return this.entryListOrderDesignService;
-		} else if (designType == DesignTypeItem.P_REP.getId()) {
+		} else if (designType == DesignType.P_REP.getId()) {
 			return this.pRepDesignService;
 		}
 		return null;

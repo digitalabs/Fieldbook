@@ -173,11 +173,7 @@
 			$scope.selected = {datasetId: $scope.measurementDatasetId};
 
 			$scope.next = function () {
-				if ($scope.selected.datasetId === $scope.measurementDatasetId) {
-					$rootScope.navigateToTab('editMeasurements');
-				} else {
-					$rootScope.navigateToSubObsTab($scope.selected.datasetId, false);
-				}
+				$rootScope.navigateToSubObsTab($scope.selected.datasetId, false);
 				derivedVariableModalService.openExecuteCalculatedVariableModal($scope.selected.datasetId);
 				$uibModalInstance.close();
 			};
@@ -300,19 +296,6 @@
 
 			$scope.proceed = function () {
 
-				// If selected dataset is PLOT DATA
-				if (datasetId === studyContext.measurementDatasetId) {
-
-					$('.import-study-data').data('data-import', '1');
-					$('body').addClass('import-preview-measurements');
-
-					var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
-					new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
-					$('.fbk-discard-imported-data').removeClass('fbk-hide');
-
-					showSuccessfulMessage('', 'Calculated values for ' + selectedVariable.name + ' were added successfully.');
-
-				} else {
 					// Explicitly tell the web service to save the calculated value immediately even if there's measurement data to overwrite.
 					calculateRequestData.overwriteExistingData = true;
 					derivedVariableService.calculateVariableForSubObservation(datasetId, calculateRequestData)
@@ -323,7 +306,6 @@
 								$uibModalInstance.close();
 							}
 						});
-				}
 
 				$uibModalInstance.close();
 

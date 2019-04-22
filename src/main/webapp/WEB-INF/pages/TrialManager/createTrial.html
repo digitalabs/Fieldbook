@@ -165,13 +165,8 @@
 							</li>
 
 							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
-								<a tabindex="-1" href="#">Plant level options</a>
-								<ul class="dropdown-menu" style="margin-left: -18px;">
-									<li>
-										<a ng-click="showCreateSampleListModal()" id="sample-trial-link"
-										   th:text="#{study.studydetails.action.create.sample}">Create sample list</a>
-									</li>
-								</ul>
+								<a ng-click="showCreateSampleListModal()" id="sample-trial-link"
+								   th:text="#{study.studydetails.action.create.sample}">Create genotyping samples</a>
 							</li>
 
 							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">

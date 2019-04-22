@@ -759,7 +759,7 @@
 
 			function initCompleteCallback() {
 				table().columns('.variates').every(function () {
-					$(this.header()).prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#5d6cff;"' +
+					$(this.header()).prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#1b95b2;"' +
 						' ng-if="isVariableBatchActionSelected(' + this.index() + ')"> </span>')($scope))
 						.append($compile('<span class="glyphicon glyphicon-filter" ' +
 						' style="cursor:pointer; padding-left: 5px;"' +

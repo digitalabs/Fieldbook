@@ -1540,7 +1540,6 @@ public class SettingsUtil {
 		final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 		final FieldbookService fieldbookService, final List<SettingDetail> traits, final List<SettingDetail> selectedVariates) {
 
-		final List<String> svProperties = SettingsUtil.getSelectedVariatesPropertyNames(fieldbookService);
 		if (variates == null) {
 			return;
 		}
@@ -1554,7 +1553,7 @@ public class SettingsUtil {
 				HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.VARIATE);
 			variable.setCvTermId(stdVar);
 			final SettingDetail settingDetail = new SettingDetail(variable, null, null, true);
-			if (svProperties.contains(variate.getProperty())) {
+			if (variate.getVariableType() != null && VariableType.SELECTION_METHOD.getId().equals(variate.getVariableType().getId())) {
 				selectedVariates.add(settingDetail);
 			} else {
 				traits.add(settingDetail);

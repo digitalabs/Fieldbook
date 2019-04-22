@@ -6,7 +6,9 @@ import com.efficio.fieldbook.service.internal.breedingview.BVLicenseParseExcepti
 import com.efficio.fieldbook.service.internal.breedingview.License;
 import com.efficio.fieldbook.service.internal.breedingview.Status;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.service.AugmentedRandomizedBlockDesignService;
 import com.efficio.fieldbook.web.common.service.EntryListOrderDesignService;
+import com.efficio.fieldbook.web.common.service.PRepDesignService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
@@ -38,12 +40,14 @@ import org.springframework.ui.Model;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class ExpDesignControllerTest {
 
 	@Mock
 	private RandomizeCompleteBlockDesignService randomizeCompleteBlockDesign;
+
+	@Mock
+	private AugmentedRandomizedBlockDesignService augmentedRandomizedBlockDesignService;
 
 	@Mock
 	private ResolvableIncompleteBlockDesignService resolveIncompleteBlockDesign;
@@ -53,6 +57,9 @@ public class ExpDesignControllerTest {
 
 	@Mock
 	private ResolvableRowColumnDesignService resolvableRowColumnDesign;
+
+	@Mock
+	private PRepDesignService pRepDesignService;
 
 	private final ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
 
@@ -88,7 +95,7 @@ public class ExpDesignControllerTest {
 	@Test
 	public void testRetrieveDesignTypes() {
 		final List<DesignTypeItem> designTypes = this.expDesignController.retrieveDesignTypes();
-		Assert.assertEquals("6 core design types are expected to be returned.", 6, designTypes.size());
+		Assert.assertEquals("7 core design types are expected to be returned.", 7, designTypes.size());
 	}
 
 	@Test
@@ -143,7 +150,6 @@ public class ExpDesignControllerTest {
 		Mockito.verify(this.designLicenseUtil, Mockito.times(0)).isExpiringWithinThirtyDays(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
 		Mockito.verify(this.designLicenseUtil, Mockito.times(0)).isExpiringWithinThirtyDays(ArgumentMatchers.<BVDesignLicenseInfo>any());
 
-
 		Assert.assertFalse("The output should be invalid. This means the generation of design is not executed.", output.isValid());
 
 		final String message = this.messageSource.getMessage("experiment.design.license.expired", null, LocaleContextHolder.getLocale());
@@ -174,8 +180,9 @@ public class ExpDesignControllerTest {
 		Mockito.verify(this.designLicenseUtil).isExpired(Mockito.any(BVDesignLicenseInfo.class));
 		Mockito.verify(this.designLicenseUtil).isExpiringWithinThirtyDays(Mockito.any(BVDesignLicenseInfo.class));
 
-		Assert.assertTrue("The output should be valid because it's only a warning. This means the generation of design still executed.",
-				output.isValid());
+		Assert.assertTrue(
+			"The output should be valid because it's only a warning. This means the generation of design still executed.",
+			output.isValid());
 
 		final String message = this.messageSource.getMessage("experiment.design.license.expiring", null, LocaleContextHolder.getLocale());
 		Assert.assertEquals("The message should be " + message, message, output.getMessage());
@@ -199,14 +206,15 @@ public class ExpDesignControllerTest {
 		Mockito.verify(this.designLicenseUtil).isExpired(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
 		Mockito.verify(this.designLicenseUtil).isExpiringWithinThirtyDays(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
 
-		Assert.assertTrue("The output should be valid because the license is valid. This means the generation of design still executed.",
-				output.isValid());
+		Assert.assertTrue(
+			"The output should be valid because the license is valid. This means the generation of design still executed.",
+			output.isValid());
 
 		Assert.assertEquals("The message should be empty", "", output.getMessage());
 	}
 
 	@Test
-	public void testShowMeasurementsBreedingViewLicenseNotRequired () throws BVLicenseParseException {
+	public void testShowMeasurementsBreedingViewLicenseNotRequired() throws BVLicenseParseException {
 		final Model model = Mockito.mock(Model.class);
 		final ExpDesignParameterUi expDesignParameterUi = this.createExpDesignParameterUiTestData();
 		expDesignParameterUi.setDesignType(5);
@@ -224,9 +232,35 @@ public class ExpDesignControllerTest {
 		Mockito.verify(this.designLicenseUtil, Mockito.never()).isExpiringWithinThirtyDays(Mockito.any(BVDesignLicenseInfo.class));
 		Mockito.verify(this.designLicenseUtil, Mockito.never()).retrieveLicenseInfo();
 
-		Assert.assertTrue("The output should be valid because the license is valid. This means the generation of design still executed.",
-				output.isValid());
+		Assert.assertTrue(
+			"The output should be valid because the license is valid. This means the generation of design still executed.",
+			output.isValid());
 
 		Assert.assertEquals("The message should be empty", "", output.getMessage());
+	}
+
+	@Test
+	public void testGetExpDesignService() {
+
+		Assert.assertSame(
+			this.randomizeCompleteBlockDesign,
+			this.expDesignController.getExpDesignService(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId()));
+		Assert.assertSame(
+			this.resolveIncompleteBlockDesign,
+			this.expDesignController.getExpDesignService(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId()));
+		Assert.assertSame(
+			this.resolvableRowColumnDesign,
+			this.expDesignController.getExpDesignService(DesignTypeItem.ROW_COL.getId()));
+		Assert.assertSame(
+			this.augmentedRandomizedBlockDesignService,
+			this.expDesignController.getExpDesignService(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId()));
+		Assert.assertSame(
+			this.entryListOrderDesignService,
+			this.expDesignController.getExpDesignService(DesignTypeItem.ENTRY_LIST_ORDER.getId()));
+		Assert.assertSame(
+			this.pRepDesignService,
+			this.expDesignController.getExpDesignService(DesignTypeItem.P_REP.getId()));
+		Assert.assertNull(
+			this.expDesignController.getExpDesignService(10101));
 	}
 }

@@ -2404,34 +2404,34 @@ table.dataTable thead th.sorting_desc
 }
 
 /* Make uib-datepicker look like native bootstrap datepicker */
-.column-filter-datepicker { }
-.column-filter-datepicker.well {
+.uib-datepicker-style-trasformer { }
+.uib-datepicker-style-trasformer.well {
     background: none;
 }
-.column-filter-datepicker table { }
-.column-filter-datepicker table thead,
-.column-filter-datepicker table thead th {
+.uib-datepicker-style-trasformer table { }
+.uib-datepicker-style-trasformer table thead,
+.uib-datepicker-style-trasformer table thead th {
     background: none;
 }
-.column-filter-datepicker table tbody { }
-.column-filter-datepicker table tbody tr { }
-.column-filter-datepicker table tbody tr td { }
-.column-filter-datepicker button,
-.column-filter-datepicker button.btn:hover {
+.uib-datepicker-style-trasformer table tbody { }
+.uib-datepicker-style-trasformer table tbody tr { }
+.uib-datepicker-style-trasformer table tbody tr td { }
+.uib-datepicker-style-trasformer button,
+.uib-datepicker-style-trasformer button.btn:hover {
     background: none;
     border: none;
     padding: 2px;
     color: inherit;
 }
-.column-filter-datepicker table button:hover {
+.uib-datepicker-style-trasformer table button:hover {
     background: #eee;
 }
-.column-filter-datepicker table button.active {
+.uib-datepicker-style-trasformer table button.active {
     background: #357ebd;
     color: #fff;
 }
 /* current date */
-.column-filter-datepicker table button.active .text-info {
+.uib-datepicker-style-trasformer table button.active .text-info {
     color: #fff;
 }
 

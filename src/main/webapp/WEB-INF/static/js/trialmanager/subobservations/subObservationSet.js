@@ -893,7 +893,8 @@
 											cellData.observationId, {
 												categoricalValueId: getCategoricalValueId(value, columnData),
 												value: value,
-												draftValue: draftValue
+												draftValue: draftValue,
+												draftMode: $scope.isPendingView
 											});
 									});
 								}
@@ -908,7 +909,8 @@
 											observationUnitId: rowData.observationUnitId,
 											categoricalValueId: getCategoricalValueId(value, columnData),
 											variableId: termId,
-											value: value
+											value: value,
+											draftMode: $scope.isPendingView
 										});
 									});
 								}

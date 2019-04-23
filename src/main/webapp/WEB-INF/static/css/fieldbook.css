@@ -2374,6 +2374,18 @@ table.dataTable thead th.sorting_desc
     text-overflow: ellipsis;
 }
 
+#pending-btn-group .btn-inverse,
+#pending-btn-group .btn-default[disabled]
+{
+    background-color: #f6f6f6;
+}
+#pending-btn-group .btn-default[disabled] {
+    color: #828282;
+}
+#pending-btn-group .btn.selected {
+    box-shadow: 1px 1px 3px 0px rgba(0, 0, 0, 0.5);
+}
+
 .nav-tabs > li > a.pendingData,
 .nav-tabs > li > a.pendingData:focus,
 .nav-tabs > li > a.pendingData:hover {

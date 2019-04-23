@@ -59,10 +59,10 @@
 				<img th:src="@{/static/svg/measurements.svg}" style="position: relative; bottom: 3px; width:22px; height:22" />
 				<strong class="sub-content-heading measurements-header">Observations</strong>
 				<div style=" float: right; width: 157px; ">
-					<div class="btn-group btn-group-justified " role="group" aria-label="...">
+					<div id="pending-btn-group" class="btn-group btn-group-justified " role="group" aria-label="...">
 						<div class="btn-group" role="group">
 							<button type="button" class="btn"
-									ng-class="isPendingView ? 'btn-primary btn-inverse' : 'btn-info'"
+									ng-class="isPendingView ? 'btn-primary btn-inverse' : 'btn-info selected'"
 									ng-click="togglePendingView(false)"
 									style="text-transform: uppercase">Accepted
 							</button>
@@ -71,7 +71,7 @@
 							<button type="button" class="btn"
 									ng-disabled="!subObservationSet.hasPendingData"
 									ng-attr-title="{{subObservationSet.hasPendingData ? '' : 'There is no pending data'}}"
-									ng-class="!subObservationSet.hasPendingData ? 'btn-default' : isPendingView ? 'btn-primary' : 'btn-warning btn-inverse'"
+									ng-class="!subObservationSet.hasPendingData ? 'btn-default' : isPendingView ? 'btn-primary selected' : 'btn-warning btn-inverse'"
 									ng-click="togglePendingView(true)"
 									style="text-transform: uppercase">Pending
 							</button>

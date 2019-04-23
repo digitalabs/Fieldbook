@@ -140,6 +140,11 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 								this.messageSource.getMessage("germplasm.list.all.entries.can.not.be.checks", null, locale));
 					}
 
+					if (expDesignParameter.getTreatmentFactorsData().size() > 0) {
+						return new ExpDesignValidationOutput(Boolean.FALSE,
+							this.messageSource.getMessage("experiment.design.treatment.factors.error", null, LocaleContextHolder.getLocale()));
+					}
+
 					if (!checkList.isEmpty()) {
 						if (expDesignParameter.getCheckStartingPosition() == null || !NumberUtils
 								.isNumber(expDesignParameter.getCheckStartingPosition())) {
@@ -181,10 +186,6 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 						if (germplasmList.size() - checkList.size() == 0) {
 							return new ExpDesignValidationOutput(Boolean.FALSE,
 									this.messageSource.getMessage("germplasm.list.all.entries.can.not.be.checks", null, locale));
-						}
-						if (expDesignParameter.getTreatmentFactorsData().size() > 0) {
-							return new ExpDesignValidationOutput(Boolean.FALSE,
-								this.messageSource.getMessage("experiment.design.treatment.factors.error", null, LocaleContextHolder.getLocale()));
 						}
 					}
 				}

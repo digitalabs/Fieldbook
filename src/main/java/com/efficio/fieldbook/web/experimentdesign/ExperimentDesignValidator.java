@@ -33,13 +33,21 @@ public class ExperimentDesignValidator {
 
 			final int treatmentSize = importedGermplasmList.size();
 
-			validateIfCheckEntriesExistInGermplasmList(importedGermplasmList);
-			validateStartingPlotNo(expDesignParameterUi, treatmentSize);
-			validateStartingEntryNo(expDesignParameterUi, treatmentSize);
-			validateNumberOfBlocks(expDesignParameterUi);
+			this.validateIfCheckEntriesExistInGermplasmList(importedGermplasmList);
+			this.validateStartingPlotNo(expDesignParameterUi, treatmentSize);
+			this.validateStartingEntryNo(expDesignParameterUi, treatmentSize);
+			this.validateNumberOfBlocks(expDesignParameterUi);
+			this.validateTreatmentFactors(expDesignParameterUi);
 
 		}
 
+	}
+
+	private void validateTreatmentFactors(final ExpDesignParameterUi expDesignParameterUi) throws DesignValidationException {
+		if (expDesignParameterUi.getTreatmentFactorsData().size() > 0) {
+			throw new DesignValidationException(
+				this.messageSource.getMessage("experiment.design.treatment.factors.error", null, LocaleContextHolder.getLocale()));
+		}
 	}
 
 	void validateIfCheckEntriesExistInGermplasmList(final List<ImportedGermplasm> importedGermplasmList) throws DesignValidationException {

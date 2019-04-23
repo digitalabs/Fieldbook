@@ -52,6 +52,7 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 	public static final String EXPERIMENT_DESIGN_INVALID_GENERIC_ERROR = "experiment.design.invalid.generic.error";
 	public static final int MINIMUM_REPLICATION_PERCENTAGE = 0;
 	public static final int MAXIMUM_REPLICATION_PERCENTAGE = 100;
+	public static final String EXPERIMENT_DESIGN_TREATMENT_FACTORS_ERROR = "experiment.design.treatment.factors.error";
 
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -182,6 +183,11 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 					return new ExpDesignValidationOutput(
 						false,
 						this.messageSource.getMessage(ENTRY_NUMBER_SHOULD_BE_IN_RANGE, null, locale));
+				}
+				if (expDesignParameter.getTreatmentFactorsData().size() > 0) {
+					return new ExpDesignValidationOutput(
+						false,
+						this.messageSource.getMessage(EXPERIMENT_DESIGN_TREATMENT_FACTORS_ERROR, null, locale));
 				} else {
 					final Integer entryNumber = StringUtil.parseInt(expDesignParameter.getStartingEntryNo(), null);
 					final Integer plotNumber = StringUtil.parseInt(expDesignParameter.getStartingPlotNo(), null);

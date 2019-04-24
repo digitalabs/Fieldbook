@@ -166,7 +166,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			$scope.deleteEnvironment = function (index) {
 				if (!TrialManagerDataService.isOpenStudy()) {
 					// For New Trial
-					confirmDeleteEnvironment(index);
+					ctrl.confirmDeleteEnvironment(index);
 
 				} else {
 					// For Existing Trial

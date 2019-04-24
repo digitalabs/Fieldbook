@@ -2379,6 +2379,10 @@ table.dataTable thead th.sorting_desc
 {
     background-color: #f6f6f6;
 }
+#pending-btn-group .btn-primary.btn-inverse:hover{
+    color: #1B95B2;
+    opacity: 0.7;
+}
 #pending-btn-group .btn-default[disabled] {
     color: #828282;
 }

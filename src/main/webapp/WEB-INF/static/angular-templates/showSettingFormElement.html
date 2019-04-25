@@ -1,6 +1,7 @@
 <div ng-switch="widgetType">
     <div ng-switch-when="DROPDOWN">
-        <ui-select name="name" theme="select2" search-enabled="false" ng-model="valuecontainer[targetkey]" ng-disabled="blockInput" style="width:100%" ng-change="changefunction()">
+        <ui-select name="name" theme="select2" search-enabled="false" ng-model="valuecontainer[targetkey]" ng-disabled="blockInput" style="width:100%" ng-change="changefunction()"
+                   append-to-body="true">
             <ui-select-match placeholder="Please Choose">{{valuecontainer[targetkey].description}}</ui-select-match>
             <ui-select-choices repeat="option in dropdownValues">
                 <div ng-bind-html="option.description"></div>

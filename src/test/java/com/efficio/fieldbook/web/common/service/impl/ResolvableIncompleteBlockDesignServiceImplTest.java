@@ -1,15 +1,14 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
+import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -27,18 +26,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
-import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
-import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ResolvableIncompleteBlockDesignServiceImplTest {
@@ -73,7 +70,7 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 		this.messageSource.setUseCodeAsDefaultMessage(true);
 		this.resolveIncompleteBlockDesignImpl.setMessageSource(this.messageSource);
 
-		resolveIncompleteBlockDesignImpl.setExperimentDesignGenerator(experimentDesignGenerator);
+		this.resolveIncompleteBlockDesignImpl.setExperimentDesignGenerator(this.experimentDesignGenerator);
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(ResolvableIncompleteBlockDesignServiceImplTest.PROGRAM_UUID);
 
@@ -178,7 +175,7 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 		param.setStartingPlotNo("6");
 		param.setBlockSize("5");
 		param.setUseLatenized(false);
-
+		param.setTreatmentFactorsData(new HashMap());
 		// Dont understand what this is for adding in test data to avoid number format exception.
 		param.setNoOfEnvironmentsToAdd("1");
 
@@ -197,32 +194,25 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 	@Test
 	public void testValidateInvalidEntryNumber(){
 
-		int treatmentSize = 200;
-		List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 100, treatmentSize);
+		final int treatmentSize = 200;
+		final List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 100, treatmentSize);
 
-		ExpDesignParameterUi param = new ExpDesignParameterUi();
+		final ExpDesignParameterUi param = new ExpDesignParameterUi();
 		param.setReplicationsCount("2");
 		param.setNoOfEnvironments("2");
 		param.setBlockSize("25");
-		String startingEntryNo = "99990";
+		final String startingEntryNo = "99990";
 		param.setStartingEntryNo(startingEntryNo);
 		param.setStartingPlotNo("400");
 
-		Map<String, Map<String, List<String>>> treatmentFactorValues = new HashMap<String, Map<String, List<String>>>(); // Key - CVTerm
-		// ID , List
-		// of values
-		Map<String, List<String>> treatmentData = new HashMap<String, List<String>>();
-		treatmentData.put("labels", Arrays.asList("100", "200", "300"));
-
-		treatmentFactorValues.put("8284", treatmentData);
-		treatmentFactorValues.put("8377", treatmentData);
-
+		final Map<String, Map<String, List<String>>> treatmentFactorValues = new HashMap<String, Map<String, List<String>>>(); // Key - CVTerm
 		param.setTreatmentFactorsData(treatmentFactorValues);
 
 		final Integer maxEntry = treatmentSize + Integer.valueOf(startingEntryNo) - 1;
-		final String errorMessage = this.messageSource.getMessage("experiment.design.entry.number.should.not.exceed", new Object[] {maxEntry}, locale);
+		final String errorMessage = this.messageSource.getMessage("experiment.design.entry.number.should.not.exceed", new Object[] {maxEntry},
+			this.locale);
 
-		ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
+		final ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
 
 		Assert.assertEquals("Invalid entry number", output.getMessage(), errorMessage);
 	}
@@ -230,33 +220,26 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 	@Test
 	public void testValidateInvalidPlotNumber(){
 
-		int treatmentSize = 200;
-		List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 100, treatmentSize);
+		final int treatmentSize = 200;
+		final List<ImportedGermplasm> germplasmList = this.createGermplasmList("Test", 100, treatmentSize);
 
-		ExpDesignParameterUi param = new ExpDesignParameterUi();
-		String replicationsCount = "2";
+		final ExpDesignParameterUi param = new ExpDesignParameterUi();
+		final String replicationsCount = "2";
 		param.setReplicationsCount(replicationsCount);
 		param.setNoOfEnvironments("2");
 		param.setBlockSize("25");
 		param.setStartingEntryNo("200");
-		String startingPlotNo = "99999970";
+		final String startingPlotNo = "99999970";
 		param.setStartingPlotNo(startingPlotNo);
 
-		Map<String, Map<String, List<String>>> treatmentFactorValues = new HashMap<String, Map<String, List<String>>>(); // Key - CVTerm
-		// ID , List
-		// of values
-		Map<String, List<String>> treatmentData = new HashMap<String, List<String>>();
-		treatmentData.put("labels", Arrays.asList("100", "200", "300"));
-
-		treatmentFactorValues.put("8284", treatmentData);
-		treatmentFactorValues.put("8377", treatmentData);
-
+		final Map<String, Map<String, List<String>>> treatmentFactorValues = new HashMap<String, Map<String, List<String>>>(); // Key - CVTerm
 		param.setTreatmentFactorsData(treatmentFactorValues);
 
-		int total = (treatmentSize * Integer.valueOf(replicationsCount)) + Integer.valueOf(startingPlotNo) - 1;
-		final String errorMessage = this.messageSource.getMessage("experiment.design.plot.number.should.not.exceed", new Object[] {total}, locale);
+		final int total = (treatmentSize * Integer.valueOf(replicationsCount)) + Integer.valueOf(startingPlotNo) - 1;
+		final String errorMessage = this.messageSource.getMessage("experiment.design.plot.number.should.not.exceed", new Object[] {total},
+			this.locale);
 
-		ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
+		final ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
 
 		Assert.assertEquals("Invalid plot number", output.getMessage(), errorMessage);
 	}
@@ -278,7 +261,7 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 		param.setStartingPlotNo("6");
 		param.setBlockSize("5");
 		param.setUseLatenized(true);
-
+		param.setTreatmentFactorsData(new HashMap());
 		// Blocks to latinize is equal to block level
 		param.setNblatin("2");
 		ExpDesignValidationOutput output = this.resolveIncompleteBlockDesignImpl.validate(param, germplasmList);
@@ -308,6 +291,7 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 		param.setStartingPlotNo("6");
 		param.setBlockSize("5");
 		param.setUseLatenized(true);
+		param.setTreatmentFactorsData(new HashMap());
 
 		// Blocks to latinize is less than block level
 		param.setNblatin("1");

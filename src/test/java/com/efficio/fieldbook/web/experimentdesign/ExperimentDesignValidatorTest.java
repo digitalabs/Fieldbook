@@ -15,6 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,18 +35,19 @@ public class ExperimentDesignValidatorTest {
 		expDesignParameterUi.setNumberOfBlocks("2");
 		expDesignParameterUi.setStartingPlotNo("1");
 		expDesignParameterUi.setStartingEntryNo("1");
+		expDesignParameterUi.setTreatmentFactorsData(new HashMap());
 
-		final List<ImportedGermplasm> importedGermplasmList = createImportedGermplasmList();
+		final List<ImportedGermplasm> importedGermplasmList = this.createImportedGermplasmList();
 		// Make the first ImportedGermplasm a check entry type.
 		importedGermplasmList.get(0).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
 
 		try {
-			experimentDesignValidator.validateAugmentedDesign(expDesignParameterUi, importedGermplasmList);
+			this.experimentDesignValidator.validateAugmentedDesign(expDesignParameterUi, importedGermplasmList);
 		} catch (final DesignValidationException e) {
 			Assert.fail("validateAugmentedDesign() should not throw a DesignValidationException.");
 		}
 
-		Mockito.verifyZeroInteractions(messageSource);
+		Mockito.verifyZeroInteractions(this.messageSource);
 
 	}
 
@@ -58,28 +60,28 @@ public class ExperimentDesignValidatorTest {
 		expDesignParameterUi.setStartingEntryNo("1");
 
 		// Create imported germplasm list without check
-		final List<ImportedGermplasm> importedGermplasmList = createImportedGermplasmList();
+		final List<ImportedGermplasm> importedGermplasmList = this.createImportedGermplasmList();
 
 		try {
-			experimentDesignValidator.validateAugmentedDesign(expDesignParameterUi, importedGermplasmList);
+			this.experimentDesignValidator.validateAugmentedDesign(expDesignParameterUi, importedGermplasmList);
 			Assert.fail("validateAugmentedDesign() should throw a DesignValidationException.");
 		} catch (final DesignValidationException e) {
 
 		}
 
-		Mockito.verify(messageSource).getMessage("germplasm.list.check.required.augmented.design", null, LocaleContextHolder.getLocale());
+		Mockito.verify(this.messageSource).getMessage("germplasm.list.check.required.augmented.design", null, LocaleContextHolder.getLocale());
 
 	}
 
 	@Test
 	public void testValidateIfCheckEntriesExistInGermplasmListCheckEntriesExist() {
 
-		final List<ImportedGermplasm> importedGermplasmList = createImportedGermplasmList();
+		final List<ImportedGermplasm> importedGermplasmList = this.createImportedGermplasmList();
 		// Make the first ImportedGermplasm a check entry type.
 		importedGermplasmList.get(0).setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
 
 		try {
-			experimentDesignValidator.validateIfCheckEntriesExistInGermplasmList(importedGermplasmList);
+			this.experimentDesignValidator.validateIfCheckEntriesExistInGermplasmList(importedGermplasmList);
 		} catch (final DesignValidationException e) {
 			Assert.fail(
 					"validateIfCheckEntriesExistInGermplasmList() should not throw a DesignValidationException because there are check entries in the imported germplasm list.");
@@ -90,17 +92,17 @@ public class ExperimentDesignValidatorTest {
 	@Test
 	public void testValidateIfCheckEntriesExistInGermplasmListCheckEntriesDoesNotExist() {
 
-		final List<ImportedGermplasm> importedGermplasmList = createImportedGermplasmList();
+		final List<ImportedGermplasm> importedGermplasmList = this.createImportedGermplasmList();
 
 		try {
-			experimentDesignValidator.validateIfCheckEntriesExistInGermplasmList(importedGermplasmList);
+			this.experimentDesignValidator.validateIfCheckEntriesExistInGermplasmList(importedGermplasmList);
 			Assert.fail(
 					"validateIfCheckEntriesExistInGermplasmList() should throw a DesignValidationException because there are no check entries in the imported germplasm list.");
 		} catch (final DesignValidationException e) {
 
 		}
 
-		Mockito.verify(messageSource).getMessage("germplasm.list.check.required.augmented.design", null, LocaleContextHolder.getLocale());
+		Mockito.verify(this.messageSource).getMessage("germplasm.list.check.required.augmented.design", null, LocaleContextHolder.getLocale());
 
 	}
 
@@ -113,12 +115,12 @@ public class ExperimentDesignValidatorTest {
 		expDesignParameterUi.setStartingPlotNo("1");
 
 		try {
-			experimentDesignValidator.validateStartingPlotNo(expDesignParameterUi, treatmentSize);
+			this.experimentDesignValidator.validateStartingPlotNo(expDesignParameterUi, treatmentSize);
 		} catch (final DesignValidationException e) {
 			Assert.fail("validateStartingPlotNo() should not fail.");
 		}
 
-		Mockito.verifyZeroInteractions(messageSource);
+		Mockito.verifyZeroInteractions(this.messageSource);
 	}
 
 	@Test
@@ -130,12 +132,12 @@ public class ExperimentDesignValidatorTest {
 		expDesignParameterUi.setStartingPlotNo("");
 
 		try {
-			experimentDesignValidator.validateStartingPlotNo(expDesignParameterUi, treatmentSize);
+			this.experimentDesignValidator.validateStartingPlotNo(expDesignParameterUi, treatmentSize);
 			Assert.fail("validateStartingPlotNo() should throw a DesignValidationException");
 		} catch (final DesignValidationException e) {
 
 		}
-		Mockito.verify(messageSource).getMessage("plot.number.should.be.in.range", null, LocaleContextHolder.getLocale());
+		Mockito.verify(this.messageSource).getMessage("plot.number.should.be.in.range", null, LocaleContextHolder.getLocale());
 	}
 
 	@Test
@@ -147,12 +149,12 @@ public class ExperimentDesignValidatorTest {
 		expDesignParameterUi.setStartingPlotNo("abc");
 
 		try {
-			experimentDesignValidator.validateStartingPlotNo(expDesignParameterUi, treatmentSize);
+			this.experimentDesignValidator.validateStartingPlotNo(expDesignParameterUi, treatmentSize);
 			Assert.fail("validateStartingPlotNo() should throw a DesignValidationException");
 		} catch (final DesignValidationException e) {
 
 		}
-		Mockito.verify(messageSource).getMessage("plot.number.should.be.in.range", null, LocaleContextHolder.getLocale());
+		Mockito.verify(this.messageSource).getMessage("plot.number.should.be.in.range", null, LocaleContextHolder.getLocale());
 	}
 
 	@Test
@@ -164,12 +166,12 @@ public class ExperimentDesignValidatorTest {
 		expDesignParameterUi.setStartingPlotNo("100000000");
 
 		try {
-			experimentDesignValidator.validateStartingPlotNo(expDesignParameterUi, treatmentSize);
+			this.experimentDesignValidator.validateStartingPlotNo(expDesignParameterUi, treatmentSize);
 			Assert.fail("validateStartingPlotNo() should throw a DesignValidationException");
 		} catch (final DesignValidationException e) {
 
 		}
-		Mockito.verify(messageSource).getMessage("plot.number.should.be.in.range", null, LocaleContextHolder.getLocale());
+		Mockito.verify(this.messageSource).getMessage("plot.number.should.be.in.range", null, LocaleContextHolder.getLocale());
 	}
 
 	@Test
@@ -181,12 +183,12 @@ public class ExperimentDesignValidatorTest {
 		expDesignParameterUi.setStartingEntryNo("1");
 
 		try {
-			experimentDesignValidator.validateStartingEntryNo(expDesignParameterUi, treatmentSize);
+			this.experimentDesignValidator.validateStartingEntryNo(expDesignParameterUi, treatmentSize);
 		} catch (final DesignValidationException e) {
 			Assert.fail("validateStartingEntryNo() should not fail.");
 		}
 
-		Mockito.verifyZeroInteractions(messageSource);
+		Mockito.verifyZeroInteractions(this.messageSource);
 	}
 
 	@Test
@@ -198,12 +200,12 @@ public class ExperimentDesignValidatorTest {
 		expDesignParameterUi.setStartingEntryNo("");
 
 		try {
-			experimentDesignValidator.validateStartingEntryNo(expDesignParameterUi, treatmentSize);
+			this.experimentDesignValidator.validateStartingEntryNo(expDesignParameterUi, treatmentSize);
 			Assert.fail("validateStartingEntryNo() should throw a DesignValidationException");
 		} catch (final DesignValidationException e) {
 
 		}
-		Mockito.verify(messageSource).getMessage("entry.number.should.be.in.range", null, LocaleContextHolder.getLocale());
+		Mockito.verify(this.messageSource).getMessage("entry.number.should.be.in.range", null, LocaleContextHolder.getLocale());
 	}
 
 	@Test
@@ -215,12 +217,12 @@ public class ExperimentDesignValidatorTest {
 		expDesignParameterUi.setStartingEntryNo("abc");
 
 		try {
-			experimentDesignValidator.validateStartingEntryNo(expDesignParameterUi, treatmentSize);
+			this.experimentDesignValidator.validateStartingEntryNo(expDesignParameterUi, treatmentSize);
 			Assert.fail("validateStartingEntryNo() should throw a DesignValidationException");
 		} catch (final DesignValidationException e) {
 
 		}
-		Mockito.verify(messageSource).getMessage("entry.number.should.be.in.range", null, LocaleContextHolder.getLocale());
+		Mockito.verify(this.messageSource).getMessage("entry.number.should.be.in.range", null, LocaleContextHolder.getLocale());
 	}
 
 	@Test
@@ -232,12 +234,12 @@ public class ExperimentDesignValidatorTest {
 		expDesignParameterUi.setStartingEntryNo("100000000");
 
 		try {
-			experimentDesignValidator.validateStartingEntryNo(expDesignParameterUi, treatmentSize);
+			this.experimentDesignValidator.validateStartingEntryNo(expDesignParameterUi, treatmentSize);
 			Assert.fail("validateStartingEntryNo() should throw a DesignValidationException");
 		} catch (final DesignValidationException e) {
 
 		}
-		Mockito.verify(messageSource).getMessage("entry.number.should.be.in.range", null, LocaleContextHolder.getLocale());
+		Mockito.verify(this.messageSource).getMessage("entry.number.should.be.in.range", null, LocaleContextHolder.getLocale());
 	}
 
 	@Test
@@ -247,7 +249,7 @@ public class ExperimentDesignValidatorTest {
 		expDesignParameterUi.setNumberOfBlocks("1");
 
 		try {
-			experimentDesignValidator.validateNumberOfBlocks(expDesignParameterUi);
+			this.experimentDesignValidator.validateNumberOfBlocks(expDesignParameterUi);
 		} catch (final DesignValidationException e) {
 			Assert.fail("validateNumberOfBlocks() should not throw a DesignValidationException");
 		}
@@ -261,13 +263,13 @@ public class ExperimentDesignValidatorTest {
 		expDesignParameterUi.setNumberOfBlocks("");
 
 		try {
-			experimentDesignValidator.validateNumberOfBlocks(expDesignParameterUi);
+			this.experimentDesignValidator.validateNumberOfBlocks(expDesignParameterUi);
 			Assert.fail("validateNumberOfBlocks() should throw a DesignValidationException");
 		} catch (final DesignValidationException e) {
 
 		}
 
-		Mockito.verify(messageSource).getMessage("number.of.blocks.should.be.numeric", null, LocaleContextHolder.getLocale());
+		Mockito.verify(this.messageSource).getMessage("number.of.blocks.should.be.numeric", null, LocaleContextHolder.getLocale());
 
 	}
 

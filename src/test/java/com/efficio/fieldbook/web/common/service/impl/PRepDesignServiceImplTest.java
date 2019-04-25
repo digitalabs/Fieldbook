@@ -56,7 +56,7 @@ public class PRepDesignServiceImplTest {
 	@InjectMocks
 	private PRepDesignServiceImpl pRepDesignService;
 
-	private ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+	private final ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
 
 	private static final String PROGRAM_UUID = UUID.randomUUID().toString();
 
@@ -66,7 +66,7 @@ public class PRepDesignServiceImplTest {
 	public void init() {
 
 		this.messageSource.setUseCodeAsDefaultMessage(true);
-		this.pRepDesignService.setMessageSource(messageSource);
+		this.pRepDesignService.setMessageSource(this.messageSource);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(PRepDesignServiceImplTest.PROGRAM_UUID);
 		this.mockRequiredStandardVariables();
 
@@ -99,7 +99,7 @@ public class PRepDesignServiceImplTest {
 		param.setStartingPlotNo(String.valueOf(startingPlotNo));
 		param.setBlockSize(String.valueOf(blockSize));
 		param.setNoOfEnvironmentsToAdd(String.valueOf(environmentsToAdd));
-
+		param.setTreatmentFactorsData(new HashMap());
 		final ExpDesignValidationOutput output = this.pRepDesignService.validate(param, germplasmList);
 		Assert.assertEquals(true, output.isValid());
 
@@ -157,6 +157,7 @@ public class PRepDesignServiceImplTest {
 		param.setStartingPlotNo(String.valueOf(startingPlotNo));
 		param.setBlockSize(String.valueOf(blockSize));
 		param.setNoOfEnvironmentsToAdd(String.valueOf(environmentsToAdd));
+		param.setTreatmentFactorsData(new HashMap());
 
 		final ExpDesignValidationOutput output = this.pRepDesignService.validate(param, germplasmList);
 		Assert.assertEquals(true, output.isValid());
@@ -204,6 +205,7 @@ public class PRepDesignServiceImplTest {
 		param.setStartingEntryNo("1");
 		param.setStartingPlotNo("2");
 		param.setBlockSize("1");
+		param.setTreatmentFactorsData(new HashMap());
 
 		param.setReplicationPercentage(101);
 		Assert.assertEquals(
@@ -232,7 +234,7 @@ public class PRepDesignServiceImplTest {
 		param.setStartingEntryNo("1");
 		param.setStartingPlotNo("2");
 		param.setReplicationPercentage(50);
-
+		param.setTreatmentFactorsData(new HashMap());
 		param.setBlockSize("ABC");
 		Assert.assertEquals(
 			PRepDesignServiceImpl.EXPERIMENT_DESIGN_BLOCK_SIZE_SHOULD_BE_A_NUMBER,
@@ -257,7 +259,7 @@ public class PRepDesignServiceImplTest {
 		param.setStartingEntryNo("1");
 		param.setStartingPlotNo("2");
 		param.setReplicationPercentage(50);
-
+		param.setTreatmentFactorsData(new HashMap());
 		param.setReplicationsCount("ABC");
 		Assert.assertEquals(
 			PRepDesignServiceImpl.EXPERIMENT_DESIGN_REPLICATION_COUNT_SHOULD_BE_A_NUMBER,
@@ -282,6 +284,7 @@ public class PRepDesignServiceImplTest {
 		param.setStartingPlotNo("2");
 		param.setReplicationPercentage(50);
 		param.setReplicationsCount("1");
+		param.setTreatmentFactorsData(new HashMap());
 
 		param.setStartingEntryNo("ABC");
 		Assert.assertEquals(
@@ -312,7 +315,7 @@ public class PRepDesignServiceImplTest {
 		param.setStartingEntryNo("2");
 		param.setReplicationPercentage(50);
 		param.setReplicationsCount("1");
-
+		param.setTreatmentFactorsData(new HashMap());
 		param.setStartingPlotNo("ABC");
 		Assert.assertEquals(
 			PRepDesignServiceImpl.PLOT_NUMBER_SHOULD_BE_IN_RANGE,

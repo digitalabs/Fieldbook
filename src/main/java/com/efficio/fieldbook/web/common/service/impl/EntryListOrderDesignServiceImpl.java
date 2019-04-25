@@ -1,19 +1,16 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.web.util.ExpDesignUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.InsertionMannerItem;
-import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.common.service.EntryListOrderDesignService;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.InsertionMannerItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -22,7 +19,10 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -109,7 +109,7 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 		try {
 
 			final StandardVariable stdVarPlot =
-					this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), contextUtil.getCurrentProgramUUID());
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 			stdVarPlot.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 
 			varList.add(stdVarPlot);
@@ -138,6 +138,11 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 					if (testEntryList.isEmpty()) {
 						return new ExpDesignValidationOutput(Boolean.FALSE,
 								this.messageSource.getMessage("germplasm.list.all.entries.can.not.be.checks", null, locale));
+					}
+
+					if (expDesignParameter.getTreatmentFactorsData().size() > 0) {
+						return new ExpDesignValidationOutput(Boolean.FALSE,
+							this.messageSource.getMessage("experiment.design.treatment.factors.error", null, LocaleContextHolder.getLocale()));
 					}
 
 					if (!checkList.isEmpty()) {
@@ -275,7 +280,7 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 
 			if (shouldInsert) {
 				shouldInsert = Boolean.FALSE;
-				List<ImportedGermplasm> checks = this.generateChecksToInsert(checkList, checkIndex, insertionManner);
+				final List<ImportedGermplasm> checks = this.generateChecksToInsert(checkList, checkIndex, insertionManner);
 				checkIndex++;
 				newList.addAll(checks);
 			}
@@ -330,7 +335,7 @@ public class EntryListOrderDesignServiceImpl implements EntryListOrderDesignServ
 
 		if (WorkbookUtil.getMeasurementVariable(nonTrialFactors, stdVarPlot.getId()) == null) {
 			final MeasurementVariable measureVar =
-					ExpDesignUtil.convertStandardVariableToMeasurementVariable(stdVarPlot, Operation.ADD, fieldbookService);
+					ExpDesignUtil.convertStandardVariableToMeasurementVariable(stdVarPlot, Operation.ADD, this.fieldbookService);
 			measureVar.setRole(PhenotypicType.TRIAL_DESIGN);
 			nonTrialFactors.add(measureVar);
 			if (WorkbookUtil.getMeasurementVariable(factors, stdVarPlot.getId()) == null) {

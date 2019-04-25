@@ -705,9 +705,7 @@
 								var currentEntryType = parseInt(obj[ENTRY_TYPE_COLUMN_DATA_KEY]);
 								if (checkEntryOnly && currentEntryType === SYSTEM_DEFINED_ENTRY_TYPE.CHECK_ENTRY) {
 									numberOfChecksEntries++;
-								} else if (currentEntryType === SYSTEM_DEFINED_ENTRY_TYPE.CHECK_ENTRY
-								|| currentEntryType === SYSTEM_DEFINED_ENTRY_TYPE.DISEASE_CHECK
-								|| currentEntryType === SYSTEM_DEFINED_ENTRY_TYPE.STRESS_CHECK) {
+								} else if (currentEntryType !== SYSTEM_DEFINED_ENTRY_TYPE.TEST_ENTRY) {
 									numberOfChecksEntries++;
 								}
 							});

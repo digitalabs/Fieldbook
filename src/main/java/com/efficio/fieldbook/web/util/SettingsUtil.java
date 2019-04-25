@@ -37,7 +37,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -1560,18 +1559,6 @@ public class SettingsUtil {
 			}
 		}
 
-	}
-
-	private static List<String> getSelectedVariatesPropertyNames(final FieldbookService fieldbookService) {
-		final List<String> names = new ArrayList<>();
-		final String[] ids = AppConstants.SELECTION_VARIATES_PROPERTIES.getString().split(",");
-		for (final String id : ids) {
-			final Term term = fieldbookService.getTermById(Integer.valueOf(id));
-			if (term != null) {
-				names.add(term.getName());
-			}
-		}
-		return names;
 	}
 
 	private static SettingVariable getSettingVariable(

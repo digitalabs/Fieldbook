@@ -893,7 +893,8 @@
 											cellData.observationId, {
 												categoricalValueId: getCategoricalValueId(value, columnData),
 												value: value,
-												draftValue: draftValue
+												draftValue: draftValue,
+												draftMode: $scope.isPendingView
 											});
 									});
 								}
@@ -908,7 +909,8 @@
 											observationUnitId: rowData.observationUnitId,
 											categoricalValueId: getCategoricalValueId(value, columnData),
 											variableId: termId,
-											value: value
+											value: value,
+											draftMode: $scope.isPendingView
 										});
 									});
 								}
@@ -1304,20 +1306,21 @@
 			}
 
 			function processCell(td, cellData, rowData, columnData) {
-				$(td).removeClass('accepted-value');
-				$(td).removeClass('invalid-value');
-				$(td).removeClass('manually-edited-value');
+				var $td = $(td);
+				$td.removeClass('accepted-value');
+				$td.removeClass('invalid-value');
+				$td.removeClass('manually-edited-value');
 
 				if ($scope.isPendingView) {
 					if (cellData.draftValue === null || cellData.draftValue === undefined) {
-						$(td).text('');
-						$(td).attr('disabled', true);
+						$td.text('');
+						$td.attr('disabled', true);
 						return;
 					}
 					var invalid = validateDataOutOfRange(cellData.draftValue, columnData);
 
 					if (invalid) {
-						$(td).addClass('invalid-value');
+						$td.addClass('invalid-value');
 					}
 
 					return;
@@ -1327,7 +1330,7 @@
 					var invalid = validateDataOutOfRange(cellData.value, columnData);
 
 					if (invalid) {
-						$(td).addClass('accepted-value');
+						$td.addClass('accepted-value');
 					}
 				}
 				if (cellData.status) {
@@ -1335,14 +1338,16 @@
 					if (!cellData.observationId) {
 						return;
 					}
-					$(td).removeAttr('title');
+					$td.removeAttr('title');
+					$td.removeClass('manually-edited-value');
+					$td.removeClass('out-of-sync-value');
 					var toolTip = 'GID: ' + rowData.variables.GID.value + ' Designation: ' + rowData.variables.DESIGNATION.value;
 					if (status === 'MANUALLY_EDITED') {
-						$(td).attr('title', toolTip + ' manually-edited-value');
-						$(td).addClass('manually-edited-value');
+						$td.attr('title', toolTip + ' manually-edited-value');
+						$td.addClass('manually-edited-value');
 					} else if (status === 'OUT_OF_SYNC') {
-						$(td).attr('title', toolTip + ' out-of-sync-value');
-						$(td).addClass('out-of-sync-value');
+						$td.attr('title', toolTip + ' out-of-sync-value');
+						$td.addClass('out-of-sync-value');
 					}
 				}
 			}

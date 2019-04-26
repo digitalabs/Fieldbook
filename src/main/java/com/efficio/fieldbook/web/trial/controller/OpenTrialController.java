@@ -21,6 +21,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -361,12 +362,8 @@ public class OpenTrialController extends BaseTrialController {
 
 			long germplasmListChecksSize = 0;
 			if (this.userSelection.getExpDesignParams().getDesignType() == DesignTypeItem.P_REP.getId()) {
-				germplasmListChecksSize = this.fieldbookMiddlewareService
-					.countListDataProjectByListIdAndEntryTypeIds(
-						germplasmList.getId(), Arrays.asList(
-							SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId(),
-							SystemDefinedEntryType.DISEASE_CHECK.getEntryTypeCategoricalId(),
-							SystemDefinedEntryType.STRESS_CHECK.getEntryTypeCategoricalId()));
+
+				germplasmListChecksSize = getGermplasmListChecksSize(germplasmList.getId());
 			} else {
 				germplasmListChecksSize = this.fieldbookMiddlewareService
 					.countListDataProjectByListIdAndEntryTypeIds(
@@ -391,6 +388,17 @@ public class OpenTrialController extends BaseTrialController {
 				userSelection.setImportValid(true);
 			}
 		}
+	}
+
+	long getGermplasmListChecksSize(final int germplasmListId) {
+		final List<ValueReference> entryTypes = this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true);
+		final List<Integer> checkEntryTypeIds = new ArrayList<>();
+		for(final ValueReference entryType: entryTypes) {
+			if(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() != entryType.getId()) {
+				checkEntryTypeIds.add(entryType.getId());
+			}
+		}
+		return this.fieldbookMiddlewareService.countListDataProjectByListIdAndEntryTypeIds(germplasmListId, checkEntryTypeIds);
 	}
 
 	protected void setModelAttributes(final CreateTrialForm form, final Integer trialId, final Model model, final Workbook trialWorkbook)

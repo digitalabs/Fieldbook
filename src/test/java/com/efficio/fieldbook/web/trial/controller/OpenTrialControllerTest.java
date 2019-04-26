@@ -11,7 +11,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.efficio.fieldbook.web.common.bean.Value;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -112,16 +111,14 @@ public class OpenTrialControllerTest {
 	private static final int NO_OF_TRIAL_INSTANCES = 3;
 	private static final int NO_OF_OBSERVATIONS = 5;
 	private static final int STUDY_ID = 1;
-	private static final int WORKBENCH_USER_ID = 1;
 	private static final long WORKBENCH_PROJECT_ID = 1L;
 	private static final String WORKBENCH_PROJECT_NAME = "Project 1";
-	private static final int IBDB_USER_ID = 1;
 	private static final String PROGRAM_UUID = "68f0d114-5b5b-11e5-885d-feff819cdc9f";
-	public static final String TEST_STUDY_NAME = "dummyStudy";
+	private static final String TEST_STUDY_NAME = "dummyStudy";
 	private static final int BM_CODE_VTE_ID = 8252;
 	private static final int N_EARS_SEL = 8253;
-	public static final String GERMPLASM_LIST_SIZE = "germplasmListSize";
-	public static final String GERMPLASM_CHECKS_SIZE = "germplasmChecksSize";
+	private static final String GERMPLASM_LIST_SIZE = "germplasmListSize";
+	private static final String GERMPLASM_CHECKS_SIZE = "germplasmChecksSize";
 
 	@Mock
 	private HttpServletRequest httpRequest;
@@ -215,7 +212,7 @@ public class OpenTrialControllerTest {
 	}
 
 	@Test
-	public void testOpenStudyNoRedirect() throws Exception {
+	public void testOpenStudyNoRedirect() {
 
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyTypeDto.getTrialDto());
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
@@ -235,7 +232,7 @@ public class OpenTrialControllerTest {
 	}
 
 	@Test
-	public void testOpenStudyRedirectForIncompatibleStudy() throws Exception {
+	public void testOpenStudyRedirectForIncompatibleStudy() {
 
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.STUDY_ID))
 				.thenThrow(MiddlewareQueryException.class);
@@ -528,11 +525,11 @@ public class OpenTrialControllerTest {
 				filteredObservations.size());
 	}
 
-	protected void handleUnexpectedException(final Exception e) {
+	private void handleUnexpectedException(final Exception e) {
 		Assert.fail("Unexpected error during unit test : " + e.getMessage());
 	}
 
-	protected DmsProject createDmsProject() {
+	private DmsProject createDmsProject() {
 		final DmsProject dmsProject = new DmsProject();
 		dmsProject.setProjectId(OpenTrialControllerTest.STUDY_ID);
 		dmsProject.setName(OpenTrialControllerTest.TEST_STUDY_NAME);
@@ -547,7 +544,7 @@ public class OpenTrialControllerTest {
 		return project;
 	}
 
-	protected void initializeOntology() {
+	private void initializeOntology() {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 				OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
@@ -584,7 +581,7 @@ public class OpenTrialControllerTest {
 
 	}
 
-	protected StandardVariable convertToStandardVariable(final MeasurementVariable measurementVar) {
+	private StandardVariable convertToStandardVariable(final MeasurementVariable measurementVar) {
 		final StandardVariable stdVar = this.createStandardVariable(measurementVar.getTermId(), measurementVar.getName(),
 				measurementVar.getProperty(), measurementVar.getScale(), measurementVar.getMethod(), measurementVar.getDataTypeId(),
 				measurementVar.getDataType(), measurementVar.getLabel());

@@ -97,7 +97,7 @@ public class OpenTrialController extends BaseTrialController {
 	private static final int NO_LIST_ID = -1;
 	public static final String REDIRECT = "redirect:";
 
-	private static List<Integer> EXPERIMENT_DESIGN_FACTOR_IDS = Arrays
+	private static final List<Integer> EXPERIMENT_DESIGN_FACTOR_IDS = Arrays
 		.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.PERCENTAGE_OF_REPLICATION.getId(),
 			TermId.EXPT_DESIGN_SOURCE.getId());
 
@@ -363,7 +363,7 @@ public class OpenTrialController extends BaseTrialController {
 			long germplasmListChecksSize = 0;
 			if (this.userSelection.getExpDesignParams().getDesignType() == DesignTypeItem.P_REP.getId()) {
 
-				germplasmListChecksSize = getGermplasmListChecksSize(germplasmList.getId());
+				germplasmListChecksSize = this.getGermplasmListChecksSize(germplasmList.getId());
 			} else {
 				germplasmListChecksSize = this.fieldbookMiddlewareService
 					.countListDataProjectByListIdAndEntryTypeIds(

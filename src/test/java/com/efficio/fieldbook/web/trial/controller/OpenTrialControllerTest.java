@@ -211,7 +211,7 @@ public class OpenTrialControllerTest {
 
 		this.createTestVariable();
 		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class), Matchers.anyBoolean())).thenReturn(this.testVariable);
-		Mockito.when(studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
+		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
 	}
 
 	@Test
@@ -1312,7 +1312,7 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testSetModelAttributes() throws ParseException {
 		final Workbook testWorkbook = WorkbookTestDataInitializer.getTestWorkbook();
-		this.openTrialController.setModelAttributes(createTrialForm, 1010, model, testWorkbook);
+		this.openTrialController.setModelAttributes(this.createTrialForm, 1010, this.model, testWorkbook);
 		Mockito.verify(this.model).addAttribute(Matchers.eq("basicDetailsData"), Matchers.any(TabInfo.class));
 		Mockito.verify(this.model).addAttribute(Matchers.eq("germplasmData"), Matchers.any(TabInfo.class));
 		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.ENVIRONMENT_DATA_TAB), Matchers.any(TabInfo.class));
@@ -1329,7 +1329,7 @@ public class OpenTrialControllerTest {
 				Matchers.anyLong());
 		Mockito.verify(this.model).addAttribute(Matchers.eq("treatmentFactorsData"), Matchers.any(TabInfo.class));
         Mockito.verify(this.model).addAttribute(Matchers.eq("studyTypes"), Matchers.anyListOf(StudyType.class));
-		Mockito.verify(this.model).addAttribute("createTrialForm", createTrialForm);
+		Mockito.verify(this.model).addAttribute("createTrialForm", this.createTrialForm);
 		Mockito.verify(this.model).addAttribute(Matchers.eq("experimentalDesignSpecialData"), Matchers.any(TabInfo.class));
 		Mockito.verify(this.model).addAttribute("studyName", testWorkbook.getStudyDetails().getLabel());
 		Mockito.verify(this.model).addAttribute("description", testWorkbook.getStudyDetails().getDescription());
@@ -1343,7 +1343,7 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testPrepareBasicDetailsTabInfo() throws ParseException {
 		final Integer trialID = 1011;
-		final StudyDetails studyDetails = createTestStudyDetails(trialID);
+		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
 		final String endDate = Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
 		final String updateDate = Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
@@ -1364,7 +1364,7 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testPrepareBasicDetailsTabInfoWithNullDates() throws ParseException {
 		final Integer trialID = 1011;
-		final StudyDetails studyDetails = createTestStudyDetails(trialID);
+		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		studyDetails.setEndDate(null);
 		studyDetails.setStudyUpdate(null);
 		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
@@ -1385,7 +1385,7 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testPrepareBasicDetailsTabInfoWithNoCreatorInfo() throws ParseException {
 		final Integer trialID = 1011;
-		final StudyDetails studyDetails = createTestStudyDetails(trialID);
+		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		studyDetails.setCreatedBy("");
 		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
 		final String endDate = Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
@@ -1404,7 +1404,7 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testPrepareBasicDetailsTabInfoWhenParentFolderIsRootFolder() throws ParseException {
 		final Integer trialID = 1011;
-		final StudyDetails studyDetails = createTestStudyDetails(trialID);
+		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		studyDetails.setParentFolderId(DmsProject.SYSTEM_FOLDER_ID);
 		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
 		final String endDate = Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);

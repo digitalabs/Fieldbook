@@ -329,7 +329,7 @@ public class OpenTrialController extends BaseTrialController {
 		}
 	}
 
-	protected Integer getGermplasmListId(final int studyId) {
+	private Integer getGermplasmListId(final int studyId) {
 		if (this.userSelection.getImportedAdvancedGermplasmList() == null) {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 			final GermplasmListType listType = GermplasmListType.STUDY;
@@ -352,7 +352,7 @@ public class OpenTrialController extends BaseTrialController {
 			OpenTrialController.NO_LIST_ID;
 	}
 
-	protected void setUserSelectionImportedGermplasmMainInfo(final UserSelection userSelection, final Integer trialId, final Model model) {
+	void setUserSelectionImportedGermplasmMainInfo(final UserSelection userSelection, final Integer trialId, final Model model) {
 		final List<GermplasmList> germplasmLists =
 			this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.STUDY);
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
@@ -447,7 +447,7 @@ public class OpenTrialController extends BaseTrialController {
 		this.setIsSuperAdminAttribute(model);
 	}
 
-	protected void clearSessionData(final HttpSession session) {
+	private void clearSessionData(final HttpSession session) {
 		SessionUtility.clearSessionData(
 			session,
 			new String[] {
@@ -709,7 +709,7 @@ public class OpenTrialController extends BaseTrialController {
 		return super.showAjaxPage(model, BaseTrialController.URL_DATATABLE);
 	}
 
-	protected String isPreviewEditable(final Workbook originalWorkbook) {
+	String isPreviewEditable(final Workbook originalWorkbook) {
 		String isPreviewEditable = IS_PREVIEW_EDITABLE;
 		if (originalWorkbook == null || originalWorkbook.getStudyDetails() == null || originalWorkbook.getStudyDetails().getId() == null) {
 			isPreviewEditable = "1";
@@ -865,7 +865,7 @@ public class OpenTrialController extends BaseTrialController {
 		return SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID());
 	}
 
-	protected List<MeasurementRow> getFilteredTrialObservations(
+	List<MeasurementRow> getFilteredTrialObservations(
 		final List<MeasurementRow> trialObservations,
 		final String deletedEnvironment) {
 
@@ -905,7 +905,7 @@ public class OpenTrialController extends BaseTrialController {
 		return false;
 	}
 
-	protected List<MeasurementRow> updateTrialInstanceNoAfterDelete(
+	private List<MeasurementRow> updateTrialInstanceNoAfterDelete(
 		final String deletedEnvironment,
 		final List<MeasurementRow> filteredMeasurementRowList) {
 
@@ -934,7 +934,7 @@ public class OpenTrialController extends BaseTrialController {
 		}
 	}
 
-	protected List<MeasurementRow> getFilteredObservations(final List<MeasurementRow> observations, final String deletedEnvironment) {
+	List<MeasurementRow> getFilteredObservations(final List<MeasurementRow> observations, final String deletedEnvironment) {
 
 		if (IS_DELETED_ENVIRONMENT.equalsIgnoreCase(deletedEnvironment) || StringUtils.EMPTY.equalsIgnoreCase(deletedEnvironment)) {
 			return observations;
@@ -957,7 +957,7 @@ public class OpenTrialController extends BaseTrialController {
 		return filteredObservations;
 	}
 
-	protected List<SampleListDTO> getSampleList(final Integer studyId) {
+	List<SampleListDTO> getSampleList(final Integer studyId) {
 		final Set<Integer> datasetTypeIds = new HashSet<>(Arrays.asList(DataSetType.SUBOBSERVATION_IDS));
 		datasetTypeIds.add(DataSetType.PLOT_DATA.getId());
 

@@ -77,25 +77,25 @@ import java.util.Set;
 @Transactional
 public class OpenTrialController extends BaseTrialController {
 
-	public static final String TRIAL_SETTINGS_DATA = "trialSettingsData";
-	public static final String SELECTION_VARIABLE_DATA = "selectionVariableData";
-	public static final String MEASUREMENTS_DATA = "measurementsData";
+	static final String TRIAL_SETTINGS_DATA = "trialSettingsData";
+	static final String SELECTION_VARIABLE_DATA = "selectionVariableData";
+	static final String MEASUREMENTS_DATA = "measurementsData";
 	private static final String TRIAL_INSTANCE = "TRIAL_INSTANCE";
 	private static final String TRIAL = "TRIAL";
 	public static final String URL = "/TrialManager/openTrial";
 	@Deprecated
 	public static final String IS_EXP_DESIGN_PREVIEW = "isExpDesignPreview";
-	public static final String CONTAINS_OUT_OF_SYNC_VALUES = "containsOutOfSyncValues";
-	public static final String MEASUREMENT_ROW_COUNT = "measurementRowCount";
-	public static final String ENVIRONMENT_DATA_TAB = "environmentData";
-	public static final String MEASUREMENT_DATA_EXISTING = "measurementDataExisting";
-	public static final String HAS_ADVANCED_OR_CROSSES_LIST = "hasAdvancedOrCrossesList";
+	private static final String CONTAINS_OUT_OF_SYNC_VALUES = "containsOutOfSyncValues";
+	static final String MEASUREMENT_ROW_COUNT = "measurementRowCount";
+	static final String ENVIRONMENT_DATA_TAB = "environmentData";
+	static final String MEASUREMENT_DATA_EXISTING = "measurementDataExisting";
+	static final String HAS_ADVANCED_OR_CROSSES_LIST = "hasAdvancedOrCrossesList";
 	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
-	public static final String IS_EXP_DESIGN_PREVIEW_FALSE = "0";
-	public static final String IS_DELETED_ENVIRONMENT = "0";
+	private static final String IS_EXP_DESIGN_PREVIEW_FALSE = "0";
+	private static final String IS_DELETED_ENVIRONMENT = "0";
 	private static final String IS_PREVIEW_EDITABLE = "0";
 	private static final int NO_LIST_ID = -1;
-	public static final String REDIRECT = "redirect:";
+	private static final String REDIRECT = "redirect:";
 
 	private static final List<Integer> EXPERIMENT_DESIGN_FACTOR_IDS = Arrays
 		.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.PERCENTAGE_OF_REPLICATION.getId(),

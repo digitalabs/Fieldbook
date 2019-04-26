@@ -8,7 +8,6 @@ import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.mysql.jdbc.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -98,37 +97,27 @@ public class DesignImportValidator {
 	}
 
 	/**
-	 * Checks that the size of the set of unique Entry Numbers matches the size of the already attached list for the Nursery or Trial
+	 * Validation to check that entry numbers from design file must match the entries in germplasm list in study.
 	 *
 	 * @param entryNumbers
 	 * @throws DesignValidationException
 	 */
 	protected void validateGermplasmEntriesShouldMatchTheGermplasmList(final Set<String> entryNumbers) throws DesignValidationException {
 
-		final Map<Integer, ImportedGermplasm> importedGermplasm =
-				Maps.uniqueIndex(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
-						new Function<ImportedGermplasm, Integer>() {
 
-							@Override
-							public Integer apply(final ImportedGermplasm input) {
-								return input.getEntryId();
-							}
+		final List<ImportedGermplasm> germplasmList = this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+		// Extract the entry numbers from germplasmList.
+		final Set<String> entryNumbersFromGermplasmList = new HashSet<>();
+		for (final ImportedGermplasm importedGermplasm : germplasmList) {
+			entryNumbersFromGermplasmList.add(String.valueOf(importedGermplasm.getEntryId()));
+		}
 
-						});
-
-		if (importedGermplasm.size() != entryNumbers.size()) {
+		// If not all entry numbers from design file match the entries in germplasm list in study, throw an error.
+		if (!entryNumbersFromGermplasmList.containsAll(entryNumbers)) {
 			throw new DesignValidationException(
-					this.messageSource.getMessage("design.import.error.mismatch.count.of.germplasm.entries", null, Locale.ENGLISH)
-							.replace("{0}", String.valueOf(entryNumbers.size())).replace("{1}", String.valueOf(importedGermplasm.size())));
+				this.messageSource.getMessage("design.import.error.mismatch.germplasm.entries", null, Locale.ENGLISH));
 		}
 
-		// Check if the entries in the imported design file match the entries in the current study.
-		for (final String entryNumberString : entryNumbers) {
-			if (NumberUtils.isNumber(entryNumberString) && importedGermplasm.get(Integer.valueOf(entryNumberString)) == null) {
-				throw new DesignValidationException(
-						this.messageSource.getMessage("design.import.error.mismatch.germplasm.entries", null, Locale.ENGLISH));
-			}
-		}
 	}
 
 	/**

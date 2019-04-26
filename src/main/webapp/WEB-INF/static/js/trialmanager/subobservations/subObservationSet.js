@@ -762,7 +762,7 @@
 					$(this.header()).prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#1b95b2;"' +
 						' ng-if="isVariableBatchActionSelected(' + this.index() + ')"> </span>')($scope))
 						.append($compile('<span class="glyphicon glyphicon-filter" ' +
-						' style="cursor:pointer; padding-left: 5px;"' +
+						' style="cursor:pointer; padding-left: 5px; color:#1b95b2;"' +
 						' popover-placement="bottom"' +
 						' ng-class="getFilteringByClass(' + this.index() + ')"' +
 						' popover-append-to-body="true"' +

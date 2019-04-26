@@ -64,7 +64,7 @@
 	createSampleModule.controller('createSampleDatasetOptionCtrl', ['$scope', '$uibModal', '$uibModalInstance', 'studyContext', 'createSampleModalService',
 		function ($scope, $uibModal, $uibModalInstance, studyContext, createSampleModalService) {
 
-			$scope.modalTitle = 'Create sample list';
+			$scope.modalTitle = 'Create genotyping samples';
 			$scope.message = 'Select the dataset from where you would like to generate genotyping samples';
 			$scope.measurementDatasetId = studyContext.measurementDatasetId;
 			$scope.selected = {datasetId: $scope.measurementDatasetId};

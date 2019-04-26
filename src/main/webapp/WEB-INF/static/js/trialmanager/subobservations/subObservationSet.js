@@ -496,6 +496,10 @@
 				return true;
 			}
 
+			$scope.disableApply = function(){
+				return $scope.nested.selectedBatchAction.id === 1 && ($scope.nested.newValueBatchUpdate === null || $scope.nested.newValueBatchUpdate === '')
+			};
+
 			$scope.applyBatchAction = function () {
 
 				if ($scope.nested.selectedBatchAction.id === 1) {

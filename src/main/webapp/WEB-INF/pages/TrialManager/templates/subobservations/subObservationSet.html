@@ -193,7 +193,7 @@
 						</div>
 					</div>
 					<div class="form-group" style="padding-left: 10px;" ng-if="hasVariableFilter &amp;&amp; hasDataFiltered() &amp;&amp; nested.selectedBatchAction.id !== null">
-						<button type="button" class="btn btn-info"  ng-disabled="nested.selectedBatchAction.id === 1 &amp;&amp; (nested.newValueBatchUpdate === null || nested.newValueBatchUpdate === '')" ng-click="applyBatchAction()">Apply</button>
+						<button type="button" class="btn  btn-info" ng-disabled="disableApply()" ng-click="applyBatchAction()">Apply</button>
 					</div>
 				</div>
 				<div class="col-xs-12 form-inline" ng-show="!hasVariableFilter">

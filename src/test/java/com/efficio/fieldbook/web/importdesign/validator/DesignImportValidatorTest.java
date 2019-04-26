@@ -135,7 +135,7 @@ public class DesignImportValidatorTest {
 	}
 
 	@Test
-	public void testValidateGermplasmEntriesShouldMatchTheGermplasmList() {
+	public void testValidateGermplasmEntriesShouldMatchTheGermplasmList_AllEntriesExactlyMatch() {
 
 		final Set<String> entryNumbers = new HashSet<>();
 		final int startingEntryNo = 1;
@@ -155,13 +155,11 @@ public class DesignImportValidatorTest {
 	}
 
 	@Test
-	public void testvValidateGermplasmEntriesShouldMatchTheGermplasmListListSizeDoNotMatch() {
+	public void testValidateGermplasmEntriesShouldMatchTheGermplasmList_SomeEntriesMatch() {
 
-		final int wrongNumberOfEntries = DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + 5;
 		final Set<String> entryNumbers = new HashSet<>();
-
 		final int startingEntryNo = 1;
-		for (int x = startingEntryNo; x <= wrongNumberOfEntries; x++) {
+		for (int x = startingEntryNo; x <= 2; x++) {
 			entryNumbers.add(String.valueOf(x));
 		}
 
@@ -171,13 +169,13 @@ public class DesignImportValidatorTest {
 
 		} catch (final DesignValidationException e) {
 
-			Assert.assertEquals(e.getMessage(), "Error encountered entries 10 and listsize 5");
+			Assert.fail("The data should pass the validateGermplasmEntriesFromShouldMatchTheGermplasmList test");
 		}
 
 	}
 
 	@Test
-	public void testvValidateGermplasmEntriesShouldMatchTheGermplasmListEntriesDoNotMatch() {
+	public void testvValidateGermplasmEntriesShouldMatchTheGermplasmList_SomeEntriesDoNotMatch() {
 
 		final int wrongNumberOfEntries = DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + 2;
 		final Set<String> entryNumbers = new HashSet<>();

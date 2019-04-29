@@ -19,6 +19,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.ListDataProjectTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
+import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitializer;
 import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
@@ -26,6 +27,7 @@ import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -109,16 +111,14 @@ public class OpenTrialControllerTest {
 	private static final int NO_OF_TRIAL_INSTANCES = 3;
 	private static final int NO_OF_OBSERVATIONS = 5;
 	private static final int STUDY_ID = 1;
-	private static final int WORKBENCH_USER_ID = 1;
 	private static final long WORKBENCH_PROJECT_ID = 1L;
 	private static final String WORKBENCH_PROJECT_NAME = "Project 1";
-	private static final int IBDB_USER_ID = 1;
 	private static final String PROGRAM_UUID = "68f0d114-5b5b-11e5-885d-feff819cdc9f";
-	public static final String TEST_STUDY_NAME = "dummyStudy";
+	private static final String TEST_STUDY_NAME = "dummyStudy";
 	private static final int BM_CODE_VTE_ID = 8252;
 	private static final int N_EARS_SEL = 8253;
-	public static final String GERMPLASM_LIST_SIZE = "germplasmListSize";
-	public static final String GERMPLASM_CHECKS_SIZE = "germplasmChecksSize";
+	private static final String GERMPLASM_LIST_SIZE = "germplasmListSize";
+	private static final String GERMPLASM_CHECKS_SIZE = "germplasmChecksSize";
 
 	@Mock
 	private HttpServletRequest httpRequest;
@@ -208,11 +208,11 @@ public class OpenTrialControllerTest {
 
 		this.createTestVariable();
 		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class), Matchers.anyBoolean())).thenReturn(this.testVariable);
-		Mockito.when(studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
+		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
 	}
 
 	@Test
-	public void testOpenStudyNoRedirect() throws Exception {
+	public void testOpenStudyNoRedirect() {
 
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyTypeDto.getTrialDto());
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
@@ -232,7 +232,7 @@ public class OpenTrialControllerTest {
 	}
 
 	@Test
-	public void testOpenStudyRedirectForIncompatibleStudy() throws Exception {
+	public void testOpenStudyRedirectForIncompatibleStudy() {
 
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.STUDY_ID))
 				.thenThrow(MiddlewareQueryException.class);
@@ -525,11 +525,11 @@ public class OpenTrialControllerTest {
 				filteredObservations.size());
 	}
 
-	protected void handleUnexpectedException(final Exception e) {
+	private void handleUnexpectedException(final Exception e) {
 		Assert.fail("Unexpected error during unit test : " + e.getMessage());
 	}
 
-	protected DmsProject createDmsProject() {
+	private DmsProject createDmsProject() {
 		final DmsProject dmsProject = new DmsProject();
 		dmsProject.setProjectId(OpenTrialControllerTest.STUDY_ID);
 		dmsProject.setName(OpenTrialControllerTest.TEST_STUDY_NAME);
@@ -544,7 +544,7 @@ public class OpenTrialControllerTest {
 		return project;
 	}
 
-	protected void initializeOntology() {
+	private void initializeOntology() {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 				OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
@@ -581,7 +581,7 @@ public class OpenTrialControllerTest {
 
 	}
 
-	protected StandardVariable convertToStandardVariable(final MeasurementVariable measurementVar) {
+	private StandardVariable convertToStandardVariable(final MeasurementVariable measurementVar) {
 		final StandardVariable stdVar = this.createStandardVariable(measurementVar.getTermId(), measurementVar.getName(),
 				measurementVar.getProperty(), measurementVar.getScale(), measurementVar.getMethod(), measurementVar.getDataTypeId(),
 				measurementVar.getDataType(), measurementVar.getLabel());
@@ -1309,7 +1309,7 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testSetModelAttributes() throws ParseException {
 		final Workbook testWorkbook = WorkbookTestDataInitializer.getTestWorkbook();
-		this.openTrialController.setModelAttributes(createTrialForm, 1010, model, testWorkbook);
+		this.openTrialController.setModelAttributes(this.createTrialForm, 1010, this.model, testWorkbook);
 		Mockito.verify(this.model).addAttribute(Matchers.eq("basicDetailsData"), Matchers.any(TabInfo.class));
 		Mockito.verify(this.model).addAttribute(Matchers.eq("germplasmData"), Matchers.any(TabInfo.class));
 		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.ENVIRONMENT_DATA_TAB), Matchers.any(TabInfo.class));
@@ -1326,7 +1326,7 @@ public class OpenTrialControllerTest {
 				Matchers.anyLong());
 		Mockito.verify(this.model).addAttribute(Matchers.eq("treatmentFactorsData"), Matchers.any(TabInfo.class));
         Mockito.verify(this.model).addAttribute(Matchers.eq("studyTypes"), Matchers.anyListOf(StudyType.class));
-		Mockito.verify(this.model).addAttribute("createTrialForm", createTrialForm);
+		Mockito.verify(this.model).addAttribute("createTrialForm", this.createTrialForm);
 		Mockito.verify(this.model).addAttribute(Matchers.eq("experimentalDesignSpecialData"), Matchers.any(TabInfo.class));
 		Mockito.verify(this.model).addAttribute("studyName", testWorkbook.getStudyDetails().getLabel());
 		Mockito.verify(this.model).addAttribute("description", testWorkbook.getStudyDetails().getDescription());
@@ -1340,7 +1340,7 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testPrepareBasicDetailsTabInfo() throws ParseException {
 		final Integer trialID = 1011;
-		final StudyDetails studyDetails = createTestStudyDetails(trialID);
+		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
 		final String endDate = Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
 		final String updateDate = Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
@@ -1361,7 +1361,7 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testPrepareBasicDetailsTabInfoWithNullDates() throws ParseException {
 		final Integer trialID = 1011;
-		final StudyDetails studyDetails = createTestStudyDetails(trialID);
+		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		studyDetails.setEndDate(null);
 		studyDetails.setStudyUpdate(null);
 		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
@@ -1382,7 +1382,7 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testPrepareBasicDetailsTabInfoWithNoCreatorInfo() throws ParseException {
 		final Integer trialID = 1011;
-		final StudyDetails studyDetails = createTestStudyDetails(trialID);
+		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		studyDetails.setCreatedBy("");
 		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
 		final String endDate = Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
@@ -1401,7 +1401,7 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testPrepareBasicDetailsTabInfoWhenParentFolderIsRootFolder() throws ParseException {
 		final Integer trialID = 1011;
-		final StudyDetails studyDetails = createTestStudyDetails(trialID);
+		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		studyDetails.setParentFolderId(DmsProject.SYSTEM_FOLDER_ID);
 		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
 		final String endDate = Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
@@ -1416,6 +1416,20 @@ public class OpenTrialControllerTest {
 				AppConstants.STUDIES.getString(), basicData);
 
 		this.verifyUserSelectionUponBasicDetailsPreparation(studyDetails);
+	}
+
+	@Test
+	public void testGetGermplasmListChecksSize() {
+		final List<ValueReference> entryTypes = ValueReferenceTestDataInitializer.createPossibleValues();
+		final List<Integer> checkEntryTypeIds = new ArrayList<>();
+		for(final ValueReference entryType: entryTypes) {
+			checkEntryTypeIds.add(entryType.getId());
+		}
+		entryTypes.add(new ValueReference(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId(), SystemDefinedEntryType.TEST_ENTRY.getEntryTypeName(), SystemDefinedEntryType.TEST_ENTRY.getEntryTypeValue()));
+		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true)).thenReturn(entryTypes);
+		this.openTrialController.getGermplasmListChecksSize(1);
+		Mockito.verify(this.fieldbookService).getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true);
+		Mockito.verify(this.fieldbookMiddlewareService).countListDataProjectByListIdAndEntryTypeIds(1, checkEntryTypeIds);
 	}
 
 	private void verifyUserSelectionUponBasicDetailsPreparation(final StudyDetails studyDetails) {

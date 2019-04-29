@@ -62,38 +62,27 @@ public class DesignImportValidator {
 		final Map<String, Map<Integer, List<String>>> csvMap =
 				this.designImportService.groupCsvRowsIntoTrialInstance(trialInstanceDesignHeaderItem, csvData);
 
-		this.validateEntryNoMustBeUniquePerInstance(entryNoDesignHeaderItem, csvMap);
+		this.validateEntryNumbersPerInstance(entryNoDesignHeaderItem, csvMap);
 
 		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
 		this.validateIfPlotNumberIsUniquePerInstance(mappedHeaders.get(PhenotypicType.TRIAL_DESIGN), csvMap);
 		this.validateColumnValues(designImportData.getRowDataMap(), mappedHeaders);
 	}
 
-	protected void validateEntryNoMustBeUniquePerInstance(final DesignHeaderItem entryNoHeaderItem,
+	protected void validateEntryNumbersPerInstance(final DesignHeaderItem entryNoHeaderItem,
 			final Map<String, Map<Integer, List<String>>> csvMapGrouped) throws DesignValidationException {
 
 		for (final Entry<String, Map<Integer, List<String>>> entry : csvMapGrouped.entrySet()) {
-			this.validateEntryNumberMustBeUnique(entryNoHeaderItem, entry.getValue());
-
-		}
-
-	}
-
-	protected void validateEntryNumberMustBeUnique(final DesignHeaderItem entryNoHeaderItem, final Map<Integer, List<String>> csvMap)
-			throws DesignValidationException {
-		final Set<String> set = new HashSet<String>();
-
-		final Iterator<Entry<Integer, List<String>>> iterator = csvMap.entrySet().iterator();
-		while (iterator.hasNext()) {
-			final String value = iterator.next().getValue().get(entryNoHeaderItem.getColumnIndex());
-			if (StringUtils.isNullOrEmpty(value) && set.contains(value)) {
-				throw new DesignValidationException(
-						this.messageSource.getMessage("design.import.error.entry.number.unique.per.instance", null, Locale.ENGLISH));
-			} else {
+			final Map<Integer, List<String>> csvMap = entry.getValue();
+			final Set<String> set = new HashSet<>();
+			final Iterator<Entry<Integer, List<String>>> iterator = csvMap.entrySet().iterator();
+			while (iterator.hasNext()) {
+				final String value = iterator.next().getValue().get(entryNoHeaderItem.getColumnIndex());
 				set.add(value);
 			}
+			this.validateGermplasmEntriesShouldMatchTheGermplasmList(set);
 		}
-		this.validateGermplasmEntriesShouldMatchTheGermplasmList(set);
+
 	}
 
 	/**

@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.data.initializer;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,7 @@ public class ImportedGermplasmMainInfoInitializer {
 		importedGermplasm.setBreedingMethodId(0);
 		importedGermplasm.setEntryTypeValue("");
 		importedGermplasm.setGid("");
-		importedGermplasm.setEntryTypeCategoricalID(0);
+		importedGermplasm.setEntryTypeCategoricalID(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId());
 		importedGermplasm.setEntryTypeName("");
 		importedGermplasm.setCross("");
 		importedGermplasm.setGnpgs(0);

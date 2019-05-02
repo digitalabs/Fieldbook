@@ -17,10 +17,12 @@ import com.google.common.base.Optional;
 import junit.framework.Assert;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.middleware.data.initializer.GermplasmListDataTestDataInitializer;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.junit.Test;
@@ -248,6 +250,92 @@ public class ExperimentDesignGeneratorTest {
 			String.valueOf(startingPlotNumber),
 			expDesign.getParameterValue(ExperimentDesignGenerator.INITIAL_PLOT_NUMBER_PARAM));
 		Assert.assertEquals(ExperimentDesignGenerator.P_REP_DESIGN, expDesign.getName());
+
+	}
+
+	@Test
+	public void testCreateReplicationListItemForPRepDesignNoCheckEntries() {
+
+		final int noOfTestEntries = 5;
+		final int replicationNumber = 3;
+		final float replicationPercentage = 50.0f;
+		final float noOfTestEntriesToReplicate = Math.round((float) noOfTestEntries * (replicationPercentage / 100));
+
+		final List<ImportedGermplasm> importedGermplasmList = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
+		final List<ListItem> listItems =
+			this.experimentDesignGenerator
+				.createReplicationListItemForPRepDesign(importedGermplasmList, replicationPercentage, replicationNumber);
+
+		float countOfReplicatedListItem = 0;
+		for (final ListItem listItem : listItems) {
+			if (listItem.getValue().equals(String.valueOf(replicationNumber))) {
+				countOfReplicatedListItem++;
+			}
+		}
+
+		Assert.assertEquals(countOfReplicatedListItem, noOfTestEntriesToReplicate);
+
+	}
+
+	@Test
+	public void testCreateReplicationListItemForPRepDesignWithSystemDefinedCheckEntryType() {
+
+		final int noOfTestEntries = 4;
+		final int noOfCheckEntries = 1;
+		final int replicationNumber = 3;
+		final float replicationPercentage = 50.0f;
+		final float noOfTestEntriesToReplicate = Math.round((float) noOfTestEntries * (replicationPercentage / 100));
+
+		final List<ImportedGermplasm> importedGermplasmList = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
+
+		// Set the first germplasm as CHECK_ENTRY.
+		final ImportedGermplasm checkImportedGermplasm = importedGermplasmList.get(0);
+		checkImportedGermplasm.setEntryTypeCategoricalID(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
+
+		final List<ListItem> listItems =
+			this.experimentDesignGenerator
+				.createReplicationListItemForPRepDesign(importedGermplasmList, replicationPercentage, replicationNumber);
+
+		float countOfReplicatedListItem = 0;
+		for (final ListItem listItem : listItems) {
+			if (listItem.getValue().equals(String.valueOf(replicationNumber))) {
+				countOfReplicatedListItem++;
+			}
+		}
+
+		Assert.assertEquals(countOfReplicatedListItem, noOfTestEntriesToReplicate + noOfCheckEntries);
+
+	}
+
+	@Test
+	public void testCreateReplicationListItemForPRepDesignWithCustomEntryType() {
+
+		final int noOfTestEntries = 4;
+		final int noOfCheckEntries = 1;
+		final int replicationNumber = 3;
+		final float replicationPercentage = 50.0f;
+		final float noOfTestEntriesToReplicate = Math.round((float) noOfTestEntries * (replicationPercentage / 100));
+
+		final List<ImportedGermplasm> importedGermplasmList = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
+
+		// Set the first germplasm as CUSTOM ENTRY_TYPE.
+		final ImportedGermplasm checkImportedGermplasm = importedGermplasmList.get(0);
+		// Any custom entry type (cagetorical id not in SystemDefineEntryType) is considered as check type.
+		final int customEntryTypeCategoricalId = 1000;
+		checkImportedGermplasm.setEntryTypeCategoricalID(customEntryTypeCategoricalId);
+
+		final List<ListItem> listItems =
+			this.experimentDesignGenerator
+				.createReplicationListItemForPRepDesign(importedGermplasmList, replicationPercentage, replicationNumber);
+
+		float countOfReplicatedListItem = 0;
+		for (final ListItem listItem : listItems) {
+			if (listItem.getValue().equals(String.valueOf(replicationNumber))) {
+				countOfReplicatedListItem++;
+			}
+		}
+
+		Assert.assertEquals(countOfReplicatedListItem, noOfTestEntriesToReplicate + noOfCheckEntries);
 
 	}
 

@@ -21,6 +21,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -76,27 +77,27 @@ import java.util.Set;
 @Transactional
 public class OpenTrialController extends BaseTrialController {
 
-	public static final String TRIAL_SETTINGS_DATA = "trialSettingsData";
-	public static final String SELECTION_VARIABLE_DATA = "selectionVariableData";
-	public static final String MEASUREMENTS_DATA = "measurementsData";
+	static final String TRIAL_SETTINGS_DATA = "trialSettingsData";
+	static final String SELECTION_VARIABLE_DATA = "selectionVariableData";
+	static final String MEASUREMENTS_DATA = "measurementsData";
 	private static final String TRIAL_INSTANCE = "TRIAL_INSTANCE";
 	private static final String TRIAL = "TRIAL";
 	public static final String URL = "/TrialManager/openTrial";
 	@Deprecated
 	public static final String IS_EXP_DESIGN_PREVIEW = "isExpDesignPreview";
-	public static final String CONTAINS_OUT_OF_SYNC_VALUES = "containsOutOfSyncValues";
-	public static final String MEASUREMENT_ROW_COUNT = "measurementRowCount";
-	public static final String ENVIRONMENT_DATA_TAB = "environmentData";
-	public static final String MEASUREMENT_DATA_EXISTING = "measurementDataExisting";
-	public static final String HAS_ADVANCED_OR_CROSSES_LIST = "hasAdvancedOrCrossesList";
+	private static final String CONTAINS_OUT_OF_SYNC_VALUES = "containsOutOfSyncValues";
+	static final String MEASUREMENT_ROW_COUNT = "measurementRowCount";
+	static final String ENVIRONMENT_DATA_TAB = "environmentData";
+	static final String MEASUREMENT_DATA_EXISTING = "measurementDataExisting";
+	static final String HAS_ADVANCED_OR_CROSSES_LIST = "hasAdvancedOrCrossesList";
 	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
-	public static final String IS_EXP_DESIGN_PREVIEW_FALSE = "0";
-	public static final String IS_DELETED_ENVIRONMENT = "0";
+	private static final String IS_EXP_DESIGN_PREVIEW_FALSE = "0";
+	private static final String IS_DELETED_ENVIRONMENT = "0";
 	private static final String IS_PREVIEW_EDITABLE = "0";
 	private static final int NO_LIST_ID = -1;
-	public static final String REDIRECT = "redirect:";
+	private static final String REDIRECT = "redirect:";
 
-	private static List<Integer> EXPERIMENT_DESIGN_FACTOR_IDS = Arrays
+	private static final List<Integer> EXPERIMENT_DESIGN_FACTOR_IDS = Arrays
 		.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.PERCENTAGE_OF_REPLICATION.getId(),
 			TermId.EXPT_DESIGN_SOURCE.getId());
 
@@ -328,7 +329,7 @@ public class OpenTrialController extends BaseTrialController {
 		}
 	}
 
-	protected Integer getGermplasmListId(final int studyId) {
+	private Integer getGermplasmListId(final int studyId) {
 		if (this.userSelection.getImportedAdvancedGermplasmList() == null) {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 			final GermplasmListType listType = GermplasmListType.STUDY;
@@ -351,7 +352,7 @@ public class OpenTrialController extends BaseTrialController {
 			OpenTrialController.NO_LIST_ID;
 	}
 
-	protected void setUserSelectionImportedGermplasmMainInfo(final UserSelection userSelection, final Integer trialId, final Model model) {
+	void setUserSelectionImportedGermplasmMainInfo(final UserSelection userSelection, final Integer trialId, final Model model) {
 		final List<GermplasmList> germplasmLists =
 			this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.STUDY);
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {
@@ -361,12 +362,8 @@ public class OpenTrialController extends BaseTrialController {
 
 			long germplasmListChecksSize = 0;
 			if (this.userSelection.getExpDesignParams().getDesignType() == DesignTypeItem.P_REP.getId()) {
-				germplasmListChecksSize = this.fieldbookMiddlewareService
-					.countListDataProjectByListIdAndEntryTypeIds(
-						germplasmList.getId(), Arrays.asList(
-							SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId(),
-							SystemDefinedEntryType.DISEASE_CHECK.getEntryTypeCategoricalId(),
-							SystemDefinedEntryType.STRESS_CHECK.getEntryTypeCategoricalId()));
+
+				germplasmListChecksSize = this.getGermplasmListChecksSize(germplasmList.getId());
 			} else {
 				germplasmListChecksSize = this.fieldbookMiddlewareService
 					.countListDataProjectByListIdAndEntryTypeIds(
@@ -391,6 +388,17 @@ public class OpenTrialController extends BaseTrialController {
 				userSelection.setImportValid(true);
 			}
 		}
+	}
+
+	long getGermplasmListChecksSize(final int germplasmListId) {
+		final List<ValueReference> entryTypes = this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true);
+		final List<Integer> checkEntryTypeIds = new ArrayList<>();
+		for(final ValueReference entryType: entryTypes) {
+			if(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() != entryType.getId()) {
+				checkEntryTypeIds.add(entryType.getId());
+			}
+		}
+		return this.fieldbookMiddlewareService.countListDataProjectByListIdAndEntryTypeIds(germplasmListId, checkEntryTypeIds);
 	}
 
 	protected void setModelAttributes(final CreateTrialForm form, final Integer trialId, final Model model, final Workbook trialWorkbook)
@@ -439,7 +447,7 @@ public class OpenTrialController extends BaseTrialController {
 		this.setIsSuperAdminAttribute(model);
 	}
 
-	protected void clearSessionData(final HttpSession session) {
+	private void clearSessionData(final HttpSession session) {
 		SessionUtility.clearSessionData(
 			session,
 			new String[] {
@@ -701,7 +709,7 @@ public class OpenTrialController extends BaseTrialController {
 		return super.showAjaxPage(model, BaseTrialController.URL_DATATABLE);
 	}
 
-	protected String isPreviewEditable(final Workbook originalWorkbook) {
+	String isPreviewEditable(final Workbook originalWorkbook) {
 		String isPreviewEditable = IS_PREVIEW_EDITABLE;
 		if (originalWorkbook == null || originalWorkbook.getStudyDetails() == null || originalWorkbook.getStudyDetails().getId() == null) {
 			isPreviewEditable = "1";
@@ -857,7 +865,7 @@ public class OpenTrialController extends BaseTrialController {
 		return SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID());
 	}
 
-	protected List<MeasurementRow> getFilteredTrialObservations(
+	List<MeasurementRow> getFilteredTrialObservations(
 		final List<MeasurementRow> trialObservations,
 		final String deletedEnvironment) {
 
@@ -897,7 +905,7 @@ public class OpenTrialController extends BaseTrialController {
 		return false;
 	}
 
-	protected List<MeasurementRow> updateTrialInstanceNoAfterDelete(
+	private List<MeasurementRow> updateTrialInstanceNoAfterDelete(
 		final String deletedEnvironment,
 		final List<MeasurementRow> filteredMeasurementRowList) {
 
@@ -926,7 +934,7 @@ public class OpenTrialController extends BaseTrialController {
 		}
 	}
 
-	protected List<MeasurementRow> getFilteredObservations(final List<MeasurementRow> observations, final String deletedEnvironment) {
+	List<MeasurementRow> getFilteredObservations(final List<MeasurementRow> observations, final String deletedEnvironment) {
 
 		if (IS_DELETED_ENVIRONMENT.equalsIgnoreCase(deletedEnvironment) || StringUtils.EMPTY.equalsIgnoreCase(deletedEnvironment)) {
 			return observations;
@@ -949,7 +957,7 @@ public class OpenTrialController extends BaseTrialController {
 		return filteredObservations;
 	}
 
-	protected List<SampleListDTO> getSampleList(final Integer studyId) {
+	List<SampleListDTO> getSampleList(final Integer studyId) {
 		final Set<Integer> datasetTypeIds = new HashSet<>(Arrays.asList(DataSetType.SUBOBSERVATION_IDS));
 		datasetTypeIds.add(DataSetType.PLOT_DATA.getId());
 

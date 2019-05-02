@@ -20,11 +20,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DesignImportValidatorTest {
@@ -64,8 +61,6 @@ public class DesignImportValidatorTest {
 			this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.GERMPLASM),
 			"design.import.error.entry.no.is.required", TermId.ENTRY_NO);
 
-		Mockito.doReturn("entries do not match").when(this.messageSource)
-			.getMessage("design.import.error.mismatch.germplasm.entries", null, Locale.ENGLISH);
 	}
 
 	@Test
@@ -82,17 +77,15 @@ public class DesignImportValidatorTest {
 	}
 
 	@Test
-	public void testValidateGermplasmEntriesShouldMatchTheGermplasmList() {
+	public void testValidateEntryNumbers() {
 
-		final Set<String> entryNumbers = new HashSet<>();
-		final int startingEntryNo = 1;
-		for (int x = startingEntryNo; x <= DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES; x++) {
-			entryNumbers.add(String.valueOf(x));
-		}
+		final DesignImportData testData = DesignImportTestDataInitializer.createDesignImportData(1, 1, 5);
+		final DesignHeaderItem entryNoHeader = DesignImportTestDataInitializer
+			.filterDesignHeaderItemsByTermId(TermId.ENTRY_NO, testData.getMappedHeaders().get(PhenotypicType.GERMPLASM));
 
 		try {
 
-			this.designImportValidator.validateGermplasmEntriesShouldMatchTheGermplasmList(entryNumbers);
+			this.designImportValidator.validateEntryNumbers(entryNoHeader, testData.getRowDataMap());
 
 		} catch (final DesignValidationException e) {
 
@@ -102,17 +95,15 @@ public class DesignImportValidatorTest {
 	}
 
 	@Test
-	public void testValidateGermplasmEntriesShouldMatchTheGermplasmList_SomeEntriesMatch() {
+	public void testValidateEntryNumbers_SomeEntriesMatch() {
 
-		final Set<String> entryNumbers = new HashSet<>();
-		final int startingEntryNo = 1;
-		for (int x = startingEntryNo; x <= 2; x++) {
-			entryNumbers.add(String.valueOf(x));
-		}
+		final DesignImportData testData = DesignImportTestDataInitializer.createDesignImportData(1, 1, 2);
+		final DesignHeaderItem entryNoHeader = DesignImportTestDataInitializer
+			.filterDesignHeaderItemsByTermId(TermId.ENTRY_NO, testData.getMappedHeaders().get(PhenotypicType.GERMPLASM));
 
 		try {
 
-			this.designImportValidator.validateGermplasmEntriesShouldMatchTheGermplasmList(entryNumbers);
+			this.designImportValidator.validateEntryNumbers(entryNoHeader, this.designImportData.getRowDataMap());
 
 		} catch (final DesignValidationException e) {
 
@@ -122,19 +113,15 @@ public class DesignImportValidatorTest {
 	}
 
 	@Test
-	public void testvValidateGermplasmEntriesShouldMatchTheGermplasmList_SomeEntriesDoNotMatch() {
+	public void testValidateEntryNumbers_SomeEntriesDoNotMatch() {
 
-		final int wrongNumberOfEntries = DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + 2;
-		final Set<String> entryNumbers = new HashSet<>();
-
-		final int startingEntryNo = 3;
-		for (int x = startingEntryNo; x <= wrongNumberOfEntries; x++) {
-			entryNumbers.add(String.valueOf(x));
-		}
+		final DesignImportData testData = DesignImportTestDataInitializer.createDesignImportData(1, 1, 10);
+		final DesignHeaderItem entryNoHeader = DesignImportTestDataInitializer
+			.filterDesignHeaderItemsByTermId(TermId.ENTRY_NO, testData.getMappedHeaders().get(PhenotypicType.GERMPLASM));
 
 		try {
 
-			this.designImportValidator.validateGermplasmEntriesShouldMatchTheGermplasmList(entryNumbers);
+			this.designImportValidator.validateEntryNumbers(entryNoHeader, this.designImportData.getRowDataMap());
 
 		} catch (final DesignValidationException e) {
 
@@ -228,4 +215,5 @@ public class DesignImportValidatorTest {
 		Assert.assertEquals(DesignImportTestDataInitializer.NO_OF_CATEGORICAL_VARIABLES, characterDesignHeaderItems.size());
 
 	}
+
 }

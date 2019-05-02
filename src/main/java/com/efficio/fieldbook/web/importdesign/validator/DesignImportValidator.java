@@ -57,40 +57,35 @@ public class DesignImportValidator {
 			.validateIfStandardVariableExists(mappedHeadersWithDesignHeaderItemsMappedToStdVarId.get(PhenotypicType.TRIAL_DESIGN),
 				"design.import.error.plot.no.is.required", TermId.PLOT_NO);
 
+		this.validateEntryNumbers(entryNoDesignHeaderItem, csvData);
+
 		final Map<String, Map<Integer, List<String>>> csvMap =
 			this.designImportService.groupCsvRowsIntoTrialInstance(trialInstanceDesignHeaderItem, csvData);
-
-		this.validateEntryNumbersPerInstance(entryNoDesignHeaderItem, csvMap);
-
 		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
 		this.validateIfPlotNumberIsUniquePerInstance(mappedHeaders.get(PhenotypicType.TRIAL_DESIGN), csvMap);
 		this.validateColumnValues(designImportData.getRowDataMap(), mappedHeaders);
 	}
 
-	protected void validateEntryNumbersPerInstance(
-		final DesignHeaderItem entryNoHeaderItem,
-		final Map<String, Map<Integer, List<String>>> csvMapGrouped) throws DesignValidationException {
-
-		for (final Entry<String, Map<Integer, List<String>>> entry : csvMapGrouped.entrySet()) {
-			final Map<Integer, List<String>> csvMap = entry.getValue();
-			final Set<String> set = new HashSet<>();
-			final Iterator<Entry<Integer, List<String>>> iterator = csvMap.entrySet().iterator();
-			while (iterator.hasNext()) {
-				final String value = iterator.next().getValue().get(entryNoHeaderItem.getColumnIndex());
-				set.add(value);
-			}
-			this.validateGermplasmEntriesShouldMatchTheGermplasmList(set);
-		}
-
-	}
-
 	/**
 	 * Validation to check that entry numbers from design file must match the entries in germplasm list in study.
 	 *
-	 * @param entryNumbers
+	 * @param entryNoHeaderItem
+	 * @param csvData
 	 * @throws DesignValidationException
 	 */
-	protected void validateGermplasmEntriesShouldMatchTheGermplasmList(final Set<String> entryNumbers) throws DesignValidationException {
+	protected void validateEntryNumbers(
+		final DesignHeaderItem entryNoHeaderItem,
+		final Map<Integer, List<String>> csvData) throws DesignValidationException {
+
+		// Extract entry numbers from design file.
+		final Set<String> entryNumberFromCsvData = new HashSet<>();
+		final Iterator<Entry<Integer, List<String>>> iterator = csvData.entrySet().iterator();
+		// Skip the first row which is the header.
+		iterator.next();
+		while (iterator.hasNext()) {
+			final String value = iterator.next().getValue().get(entryNoHeaderItem.getColumnIndex());
+			entryNumberFromCsvData.add(value);
+		}
 
 		final List<ImportedGermplasm> germplasmList =
 			this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
@@ -101,7 +96,7 @@ public class DesignImportValidator {
 		}
 
 		// If not all entry numbers from design file match the entries in germplasm list in study, throw an error.
-		if (!entryNumbersFromGermplasmList.containsAll(entryNumbers)) {
+		if (!entryNumbersFromGermplasmList.containsAll(entryNumberFromCsvData)) {
 			throw new DesignValidationException(
 				this.messageSource.getMessage("design.import.error.mismatch.germplasm.entries", null, Locale.ENGLISH));
 		}

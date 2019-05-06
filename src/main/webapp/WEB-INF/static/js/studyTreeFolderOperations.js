@@ -43,11 +43,13 @@ function renameStudy(object) {
 function renameFolder(object) {
 	'use strict';
 
-	const isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder;
-	if(!isFolder) {
-		renameStudy(object);
-	}
-	else{
+	var activeNode = $('#studyTree').dynatree('getTree').getActiveNode();
+	const isFolder = activeNode.data.isFolder;
+
+	if (activeNode.data.programUUID === null) {
+		showErrorMessage('page-study-tree-message-modal', cannotRenameTemplateError);
+
+	} else if (isFolder) {
 		var currentFolderName;
 
 		if (!$(object).hasClass('disable-image')) {
@@ -55,17 +57,24 @@ function renameFolder(object) {
 			hideStudyTypeDiv();
 			hideRenameStudyDiv();
 			$('#renameFolderDiv', '#studyTreeModal').slideDown('fast');
-			currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
+			currentFolderName = activeNode.data.title;
 			$('#newFolderName', '#studyTreeModal').val(currentFolderName);
 		}
+
+	} else if (parseInt(activeNode.data.ownerId) === currentCropUserId  || isSuperAdmin) {
+		renameStudy(object);
+
+	} else {
+		showErrorMessage('page-study-tree-message-modal', cannotRenameStudyError.replace('{0}', activeNode.data.owner));
 	}
+
 }
 
 function submitRenameFolder() {
 	'use strict';
 
 	var folderName = $.trim($('#newFolderName', '#studyTreeModal').val()),
-			parentFolderId;
+		parentFolderId;
 
 	var activeStudyNode = $('#studyTree').dynatree('getTree').getActiveNode();
 

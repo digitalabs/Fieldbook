@@ -37,7 +37,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -1018,7 +1017,7 @@ public class SettingsUtil {
 		return measurementVariable;
 	}
 
-	private static MeasurementVariable convertConstantToMeasurementVariable(final Constant constant) {
+	protected static MeasurementVariable convertConstantToMeasurementVariable(final Constant constant) {
 		String label = constant.getLabel();
 
 		// currently if operation is add, then it's always a trial constant
@@ -1035,6 +1034,7 @@ public class SettingsUtil {
 		mvar.setFactor(false);
 		mvar.setDataTypeId(constant.getDataTypeId());
 		mvar.setPossibleValues(constant.getPossibleValues());
+		mvar.setVariableType(VariableType.STUDY_CONDITION);
 		return mvar;
 	}
 
@@ -1540,7 +1540,6 @@ public class SettingsUtil {
 		final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 		final FieldbookService fieldbookService, final List<SettingDetail> traits, final List<SettingDetail> selectedVariates) {
 
-		final List<String> svProperties = SettingsUtil.getSelectedVariatesPropertyNames(fieldbookService);
 		if (variates == null) {
 			return;
 		}
@@ -1554,25 +1553,13 @@ public class SettingsUtil {
 				HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.VARIATE);
 			variable.setCvTermId(stdVar);
 			final SettingDetail settingDetail = new SettingDetail(variable, null, null, true);
-			if (svProperties.contains(variate.getProperty())) {
+			if (variate.getVariableType() != null && VariableType.SELECTION_METHOD.getId().equals(variate.getVariableType().getId())) {
 				selectedVariates.add(settingDetail);
 			} else {
 				traits.add(settingDetail);
 			}
 		}
 
-	}
-
-	private static List<String> getSelectedVariatesPropertyNames(final FieldbookService fieldbookService) {
-		final List<String> names = new ArrayList<>();
-		final String[] ids = AppConstants.SELECTION_VARIATES_PROPERTIES.getString().split(",");
-		for (final String id : ids) {
-			final Term term = fieldbookService.getTermById(Integer.valueOf(id));
-			if (term != null) {
-				names.add(term.getName());
-			}
-		}
-		return names;
 	}
 
 	private static SettingVariable getSettingVariable(

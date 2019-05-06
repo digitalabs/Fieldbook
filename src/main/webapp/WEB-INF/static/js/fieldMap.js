@@ -414,7 +414,15 @@ function recreatePopupLocationCombo() {
 				//recreate the select2 combos to get updated list of locations
 				//we check if the favorite is check then we use favorite locations
 
-				var popuplocationSuggestions =  $('#showFavoriteLocation').is(':checked') ? data.favoriteLocations : data.allBreedingLocations;
+				var popuplocationSuggestions;
+				if ($('#showFavoriteLocation').is(':checked')) {
+					popuplocationSuggestions = data.favoriteLocations;
+				} else if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
+					popuplocationSuggestions = data.allBreedingLocations;
+				} else {
+					popuplocationSuggestions = data.allLocations;
+				}
+
 				var popuplocationSuggestions_obj = [];
 				var defaultData = null;
 				var currentLocId = $('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val();

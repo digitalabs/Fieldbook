@@ -38,6 +38,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
@@ -478,10 +479,10 @@ public class ImportGermplasmListControllerTest {
 				.getImportedGermplasmList().getImportedGermplasms();
 
 		Assert.assertEquals("", importedGermplasmList.get(0).getEntryTypeValue());
-		Assert.assertEquals(0, importedGermplasmList.get(0).getEntryTypeCategoricalID().intValue());
+		Assert.assertEquals(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId(), importedGermplasmList.get(0).getEntryTypeCategoricalID().intValue());
 
 		Assert.assertEquals("", importedGermplasmList.get(1).getEntryTypeValue());
-		Assert.assertEquals(0, importedGermplasmList.get(1).getEntryTypeCategoricalID().intValue());
+		Assert.assertEquals(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId(), importedGermplasmList.get(1).getEntryTypeCategoricalID().intValue());
 
 	}
 

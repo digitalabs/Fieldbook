@@ -1,15 +1,12 @@
 
 package com.efficio.fieldbook.web.data.initializer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.google.common.collect.Lists;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -20,12 +17,14 @@ import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class DesignImportTestDataInitializer {
 
@@ -45,7 +44,18 @@ public class DesignImportTestDataInitializer {
 		final DesignImportData designImportData = new DesignImportData();
 
 		designImportData.setMappedHeaders(createTestMappedHeadersForDesignImportData());
-		designImportData.setRowDataMap(createTestCsvDataForDesignImportData(startingEntryNo, startingPlotNo));
+		designImportData.setRowDataMap(createTestCsvDataForDesignImportData(startingEntryNo, startingPlotNo, NO_OF_TEST_ENTRIES));
+
+		return designImportData;
+
+	}
+
+	public static DesignImportData createDesignImportData(final int startingEntryNo, final int startingPlotNo, final int noOfTestEntries) {
+
+		final DesignImportData designImportData = new DesignImportData();
+
+		designImportData.setMappedHeaders(createTestMappedHeadersForDesignImportData());
+		designImportData.setRowDataMap(createTestCsvDataForDesignImportData(startingEntryNo, startingPlotNo, noOfTestEntries));
 
 		return designImportData;
 
@@ -57,9 +67,10 @@ public class DesignImportTestDataInitializer {
 
 		final List<DesignHeaderItem> trialEvironmentItems = new ArrayList<>();
 		trialEvironmentItems.add(createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.TRIAL_INSTANCE_FACTOR.getId(),
-				"TRIAL_INSTANCE", 0, NUMERIC_VARIABLE));
+			"TRIAL_INSTANCE", 0, NUMERIC_VARIABLE));
 
-		DesignHeaderItem siteNameDesignHeaderItem = createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.SITE_NAME.getId(), "SITE_NAME", 1,
+		final DesignHeaderItem siteNameDesignHeaderItem =
+			createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.SITE_NAME.getId(), "SITE_NAME", 1,
 				CHARACTER_VARIABLE);
 		siteNameDesignHeaderItem.setName("SITE_NAME_LOCAL_NAME");
 		trialEvironmentItems.add(siteNameDesignHeaderItem);
@@ -84,7 +95,8 @@ public class DesignImportTestDataInitializer {
 
 	}
 
-	public static Map<Integer, List<String>> createTestCsvDataForDesignImportData(final int startingEntryNo, final int startingPlotNo) {
+	public static Map<Integer, List<String>> createTestCsvDataForDesignImportData(
+		final int startingEntryNo, final int startingPlotNo, final int noOfTestEntries) {
 
 		final Map<Integer, List<String>> csvData = new HashMap<>();
 
@@ -96,26 +108,33 @@ public class DesignImportTestDataInitializer {
 
 		// CSV DATA
 		// Create data rows for trial instance 1
-		for (int i = 0; i < NO_OF_TEST_ENTRIES; i++) {
-			csvData.put(startingRowIndex++, Lists.newArrayList("1", "Laguna", String.valueOf(startingEntryNo + i), String.valueOf(plotNo++), "1", "1", ""));
+		for (int i = 0; i < noOfTestEntries; i++) {
+			csvData.put(
+				startingRowIndex++,
+				Lists.newArrayList("1", "Laguna", String.valueOf(startingEntryNo + i), String.valueOf(plotNo++), "1", "1", ""));
 		}
 
 		// Create data rows for trial instance 2
-		for (int i = 0; i < NO_OF_TEST_ENTRIES; i++) {
-			csvData.put(startingRowIndex++, Lists.newArrayList("2", "Bicol", String.valueOf(startingEntryNo + i), String.valueOf(plotNo++), "1", "", ""));
+		for (int i = 0; i < noOfTestEntries; i++) {
+			csvData.put(
+				startingRowIndex++,
+				Lists.newArrayList("2", "Bicol", String.valueOf(startingEntryNo + i), String.valueOf(plotNo++), "1", "", ""));
 		}
 
 		// Create data rows for trial instance 3
-		for (int i = 0; i < NO_OF_TEST_ENTRIES; i++) {
-			csvData.put(startingRowIndex++, Lists.newArrayList("3", "Bulacan", String.valueOf(startingEntryNo + i), String.valueOf(plotNo++), "1", "2", ""));
+		for (int i = 0; i < noOfTestEntries; i++) {
+			csvData.put(
+				startingRowIndex++,
+				Lists.newArrayList("3", "Bulacan", String.valueOf(startingEntryNo + i), String.valueOf(plotNo++), "1", "2", ""));
 		}
 
 		return csvData;
 
 	}
 
-	public static DesignHeaderItem createDesignHeaderItem(final PhenotypicType phenotypicType, final int termId, final String headerName,
-			final int columnIndex, final int dataTypeId) {
+	public static DesignHeaderItem createDesignHeaderItem(
+		final PhenotypicType phenotypicType, final int termId, final String headerName,
+		final int columnIndex, final int dataTypeId) {
 		final DesignHeaderItem designHeaderItem = createDesignHeaderItem(termId, headerName, columnIndex);
 		designHeaderItem.setVariable(createStandardVariable(phenotypicType, termId, headerName, "", "", "", dataTypeId, "", "", ""));
 		return designHeaderItem;
@@ -129,13 +148,14 @@ public class DesignImportTestDataInitializer {
 		return designHeaderItem;
 	}
 
-	public static StandardVariable createStandardVariable(final PhenotypicType phenotypicType, final int id, final String name,
-			final String property, final String scale, final String method, final int dataTypeId, final String dataType,
-			final String storedIn, final String isA) {
+	public static StandardVariable createStandardVariable(
+		final PhenotypicType phenotypicType, final int id, final String name,
+		final String property, final String scale, final String method, final int dataTypeId, final String dataType,
+		final String storedIn, final String isA) {
 
 		final StandardVariable stdVar =
-				new StandardVariable(new Term(0, property, ""), new Term(0, scale, ""), new Term(0, method, ""), new Term(dataTypeId,
-						dataType, ""), new Term(0, isA, ""), phenotypicType);
+			new StandardVariable(new Term(0, property, ""), new Term(0, scale, ""), new Term(0, method, ""), new Term(dataTypeId,
+				dataType, ""), new Term(0, isA, ""), phenotypicType);
 
 		stdVar.setId(id);
 		stdVar.setName(name);
@@ -148,12 +168,13 @@ public class DesignImportTestDataInitializer {
 		return stdVar;
 	}
 
-	public static StandardVariable createStandardVariable(final VariableType variableType, final int id, final String name,
-			final String property, final String scale, final String method, final String dataType, final String storedIn, final String isA) {
+	public static StandardVariable createStandardVariable(
+		final VariableType variableType, final int id, final String name,
+		final String property, final String scale, final String method, final String dataType, final String storedIn, final String isA) {
 
 		final StandardVariable stdVar =
-				new StandardVariable(new Term(0, property, ""), new Term(0, scale, ""), new Term(0, method, ""), new Term(0, dataType, ""),
-						new Term(0, isA, ""), null);
+			new StandardVariable(new Term(0, property, ""), new Term(0, scale, ""), new Term(0, method, ""), new Term(0, dataType, ""),
+				new Term(0, isA, ""), null);
 
 		stdVar.setId(id);
 		stdVar.setName(name);
@@ -191,8 +212,9 @@ public class DesignImportTestDataInitializer {
 		return null;
 	}
 
-	public static Map<String, Map<Integer, List<String>>> groupCsvRowsIntoTrialInstance(final DesignHeaderItem trialInstanceHeaderItem,
-			final Map<Integer, List<String>> csvMap) {
+	public static Map<String, Map<Integer, List<String>>> groupCsvRowsIntoTrialInstance(
+		final DesignHeaderItem trialInstanceHeaderItem,
+		final Map<Integer, List<String>> csvMap) {
 
 		final Map<String, Map<Integer, List<String>>> csvMapGrouped = new HashMap<>();
 
@@ -211,8 +233,9 @@ public class DesignImportTestDataInitializer {
 
 	}
 
-	public static Map<Integer, StandardVariable> getStandardVariables(final PhenotypicType phenotypicType,
-			final List<MeasurementVariable> germplasmFactors) {
+	public static Map<Integer, StandardVariable> getStandardVariables(
+		final PhenotypicType phenotypicType,
+		final List<MeasurementVariable> germplasmFactors) {
 		final Map<Integer, StandardVariable> standardVariables = new HashMap<>();
 
 		for (final MeasurementVariable measurementVar : germplasmFactors) {
@@ -245,7 +268,7 @@ public class DesignImportTestDataInitializer {
 		for (int x = 0; x < numberOfIntances; x++) {
 			final Environment env = new Environment();
 			final Map<String, String> managementDetailValues = new HashMap<>();
-			managementDetailValues.put(Integer.toString(TermId.LOCATION_ID.getId()),Integer.toString(x));
+			managementDetailValues.put(Integer.toString(TermId.LOCATION_ID.getId()), Integer.toString(x));
 			env.setLocationId(x);
 			env.setManagementDetailValues(managementDetailValues);
 			environments.add(env);
@@ -262,7 +285,7 @@ public class DesignImportTestDataInitializer {
 			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) {
 				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
 			} else if (values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null
-					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
+				|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
 				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
 			}
 		}

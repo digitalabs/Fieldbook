@@ -959,7 +959,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.isSaveEnabled = function () {
-				return $scope.tabSelected && [
+
+				// Enable save button when Stock List tab is selected and only if there is an imported inventory.
+				var enableSaveForStockList = $scope.tabSelected.indexOf('stock-list') >=0 && stockListImportNotSaved;
+
+				return $scope.tabSelected && ([
 					"trialSettings",
 					"germplasm",
 					"treatment",
@@ -967,7 +971,9 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					"experimentalDesign",
 					"createMeasurements",
 					"editMeasurements"
-				].indexOf($scope.tabSelected) >= 0;
+				].indexOf($scope.tabSelected) >= 0 || enableSaveForStockList);
+
+
 			};
 
 			$('body').on('DO_AUTO_SAVE', function () {

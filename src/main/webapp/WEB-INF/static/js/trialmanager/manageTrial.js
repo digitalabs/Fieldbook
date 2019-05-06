@@ -968,9 +968,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					"germplasm",
 					"treatment",
 					"environment",
-					"experimentalDesign",
-					"createMeasurements",
-					"editMeasurements"
 				].indexOf($scope.tabSelected) >= 0 || enableSaveForStockList);
 
 

@@ -39,6 +39,7 @@ import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
+import org.generationcp.middleware.pojos.dms.DatasetType;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.DataImportService;
@@ -980,7 +981,7 @@ public class ETLServiceImpl implements ETLService {
 	@Override
 	public boolean hasMeansDataset(final int studyId) {
 		boolean hasMeansDataset = false;
-		final List<DataSet> ds = this.studyDataManager.getDataSetsByType(studyId, DataSetType.MEANS_DATA);
+		final List<DataSet> ds = this.studyDataManager.getDataSetsByType(studyId, DatasetType.MEANS_DATA);
 		if (ds != null && !ds.isEmpty()) {
 			hasMeansDataset = true;
 		}
@@ -990,7 +991,7 @@ public class ETLServiceImpl implements ETLService {
 	@Override
 	public boolean hasMeasurementEffectDataset(final int studyId) {
 		boolean hasMeasurementEffectDataset = false;
-		final List<DataSet> ds = this.studyDataManager.getDataSetsByType(studyId, DataSetType.PLOT_DATA);
+		final List<DataSet> ds = this.studyDataManager.getDataSetsByType(studyId, DatasetType.PLOT_DATA);
 		// handle old behavior
 		if (ds != null && ds.size() > 1) {
 			hasMeasurementEffectDataset = true;

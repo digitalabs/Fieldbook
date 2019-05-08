@@ -200,7 +200,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 								AppConstants.FILTER_STUDY_FIELDS.getString())
 								|| ref.getId() == TermId.DATASET_NAME.getId()
 								|| ref.getId() == TermId.DATASET_TITLE.getId()
-								|| ref.getId() == TermId.DATASET_TYPE.getId()
 								|| FieldbookServiceImpl.inHideVariableFields(ref.getId(),
 										AppConstants.HIDE_ID_VARIABLES.getString())) {
 							continue;

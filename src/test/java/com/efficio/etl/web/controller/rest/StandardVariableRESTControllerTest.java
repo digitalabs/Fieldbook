@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Method;
@@ -18,6 +17,7 @@ import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.manager.ontology.daoElements.VariableFilter;
+import org.generationcp.middleware.pojos.dms.DatasetType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +30,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.efficio.etl.web.bean.VariableDTO;
 import com.efficio.etl.web.util.AppConstants;
+import sun.text.resources.cldr.ss.FormatData_ss;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StandardVariableRESTControllerTest {
@@ -52,18 +53,17 @@ public class StandardVariableRESTControllerTest {
 
 	@Test
 	public void testRetrieveOntologyVariablesForPlotData() {
-		final Integer datasetType = DataSetType.PLOT_DATA.getId();
 
-		final List<Variable> expectedPlotDataVariables = this.createVariablesTestData(datasetType);
+		final List<Variable> expectedPlotDataVariables = this.createVariablesTestData(DatasetType.PLOT_DATA);
 		Mockito.doReturn(expectedPlotDataVariables).when(this.ontologyVariableDataManager)
 				.getWithFilter(Matchers.any(VariableFilter.class));
 
-		final List<VariableDTO> plotDataVariables = this.standardVariableRESTController.retrieveOntologyVariables(datasetType);
+		final List<VariableDTO> plotDataVariables = this.standardVariableRESTController.retrieveOntologyVariables(DatasetType.PLOT_DATA);
 		Assert.assertNotNull(plotDataVariables);
 
 		Mockito.verify(this.ontologyVariableDataManager).getWithFilter(Matchers.any(VariableFilter.class));
 
-		final Set<VariableType> variableTypes = this.createValidVariableTypes(datasetType);
+		final Set<VariableType> variableTypes = this.createValidVariableTypes(DatasetType.PLOT_DATA);
 		for (final VariableDTO variableDTO : plotDataVariables) {
 			if (variableDTO.getPhenotype() == null) {
 				Assert.fail("All variables should have a phenotype.");
@@ -76,7 +76,7 @@ public class StandardVariableRESTControllerTest {
 		}
 	}
 
-	private List<Variable> createVariablesTestData(final Integer datasetType) {
+	private List<Variable> createVariablesTestData(final Integer datasetTypeId) {
 		final List<Variable> variables = new ArrayList<>();
 		int variableId = 0;
 		int propertyId = 0;
@@ -88,7 +88,7 @@ public class StandardVariableRESTControllerTest {
 				Arrays.asList(new VariableType[] {VariableType.GERMPLASM_DESCRIPTOR})));
 		variables.add(this.createVariableTestData(++variableId, ++propertyId, ++scaleId, ++methodId,
 				Arrays.asList(new VariableType[] {VariableType.EXPERIMENTAL_DESIGN})));
-		if (DataSetType.MEANS_DATA.getId() == datasetType) {
+		if (DatasetType.MEANS_DATA == datasetTypeId) {
 			variables.add(this.createVariableTestData(++variableId, ++propertyId, ++scaleId, ++methodId,
 					Arrays.asList(new VariableType[] {VariableType.ANALYSIS})));
 		} else {
@@ -168,9 +168,9 @@ public class StandardVariableRESTControllerTest {
 		return mappedPhenotypicType;
 	}
 
-	private Set<VariableType> createValidVariableTypes(final Integer datasetType) {
+	private Set<VariableType> createValidVariableTypes(final Integer datasetTypeId) {
 		final Set<VariableType> variableTypes = new HashSet<>();
-		if (DataSetType.MEANS_DATA.getId() == datasetType) {
+		if (DatasetType.MEANS_DATA == datasetTypeId) {
 			variableTypes.add(VariableType.ENVIRONMENT_DETAIL);
 			variableTypes.add(VariableType.GERMPLASM_DESCRIPTOR);
 			variableTypes.add(VariableType.EXPERIMENTAL_DESIGN);
@@ -190,18 +190,17 @@ public class StandardVariableRESTControllerTest {
 
 	@Test
 	public void testRetrieveOntologyVariablesForMeansData() {
-		final Integer datasetType = DataSetType.MEANS_DATA.getId();
 
-		final List<Variable> expectedPlotDataVariables = this.createVariablesTestData(datasetType);
+		final List<Variable> expectedPlotDataVariables = this.createVariablesTestData(DatasetType.MEANS_DATA);
 		Mockito.doReturn(expectedPlotDataVariables).when(this.ontologyVariableDataManager)
 				.getWithFilter(Matchers.any(VariableFilter.class));
 
-		final List<VariableDTO> plotDataVariables = this.standardVariableRESTController.retrieveOntologyVariables(datasetType);
+		final List<VariableDTO> plotDataVariables = this.standardVariableRESTController.retrieveOntologyVariables(DatasetType.MEANS_DATA);
 		Assert.assertNotNull(plotDataVariables);
 
 		Mockito.verify(this.ontologyVariableDataManager).getWithFilter(Matchers.any(VariableFilter.class));
 
-		final Set<VariableType> variableTypes = this.createValidVariableTypes(datasetType);
+		final Set<VariableType> variableTypes = this.createValidVariableTypes(DatasetType.MEANS_DATA);
 		for (final VariableDTO variableDTO : plotDataVariables) {
 			if (variableDTO.getPhenotype() == null) {
 				Assert.fail("All variables should have a phenotype.");

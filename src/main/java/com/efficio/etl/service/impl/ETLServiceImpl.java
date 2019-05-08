@@ -20,7 +20,6 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.DataSet;
-import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -1017,7 +1016,7 @@ public class ETLServiceImpl implements ETLService {
 		final Workbook workbook = this.retrieveCurrentWorkbook(userSelection);
 
 		final boolean isMeansDataImport = userSelection.getDatasetType() != null
-				&& userSelection.getDatasetType().intValue() == DataSetType.MEANS_DATA.getId();
+				&& userSelection.getDatasetType().intValue() == DatasetType.MEANS_DATA;
 
 		importData = this.createWorkbookFromUserSelection(userSelection, isMeansDataImport);
 

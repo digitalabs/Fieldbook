@@ -18,7 +18,6 @@ import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
-import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -38,6 +37,7 @@ import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.pojos.dms.DatasetType;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
@@ -958,8 +958,8 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	List<SampleListDTO> getSampleList(final Integer studyId) {
-		final Set<Integer> datasetTypeIds = new HashSet<>(Arrays.asList(DataSetType.SUBOBSERVATION_IDS));
-		datasetTypeIds.add(DataSetType.PLOT_DATA.getId());
+		final Set<Integer> datasetTypeIds = new HashSet<>(DatasetType.SUBOBSERVATIONS);
+		datasetTypeIds.add(DatasetType.PLOT_DATA);
 
 		final List<Integer> datasetIds = new ArrayList<>();
 		final List<DatasetDTO> datasets = this.datasetService.getDatasets(studyId, datasetTypeIds);

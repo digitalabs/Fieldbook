@@ -20,7 +20,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.StudyPermissionValidator;
-import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.StudyReference;
 import org.generationcp.middleware.domain.etl.Constants;
@@ -30,6 +29,7 @@ import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.pojos.dms.DatasetType;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
@@ -325,7 +325,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			final List<String> errors = new ArrayList<>();
 			Map<String, List<Message>> mismatchErrors = null;
 			final boolean isMeansDataImport = this.userSelection.getDatasetType() != null
-					&& this.userSelection.getDatasetType() == DataSetType.MEANS_DATA.getId();
+					&& this.userSelection.getDatasetType() == DatasetType.MEANS_DATA;
 
 			try {
 				// check if the selected dataset still has no mapped headers
@@ -471,7 +471,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		consolidatedForm.setHeaderRowIndex(this.userSelection.getHeaderRowIndex());
 		consolidatedForm.setHeaderRowDisplayText(this.userSelection.getHeaderRowDisplayText());
 		consolidatedForm.setDatasetType(this.userSelection.getDatasetType() != null
-				? this.userSelection.getDatasetType() : DataSetType.PLOT_DATA.getId());
+				? this.userSelection.getDatasetType() : DatasetType.PLOT_DATA);
 
 		final StudyDetailsForm studyDetailsForm = new StudyDetailsForm();
 		studyDetailsForm.setStudyName(this.userSelection.getStudyName());
@@ -518,11 +518,12 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	@ModelAttribute("datasetTypeList")
 	public Map<Integer, String> getDatasetTypes() {
 
+		final DatasetType plotDatasetType = this.ontologyDataManager.getDatasetTypeById(DatasetType.PLOT_DATA);
+		final DatasetType meansDatasetType = this.ontologyDataManager.getDatasetTypeById(DatasetType.MEANS_DATA);
+
 		final Map<Integer, String> datasetTypes = new HashMap<>();
-		datasetTypes.put(DataSetType.PLOT_DATA.getId(),
-				this.etlService.getCVDefinitionById(DataSetType.PLOT_DATA.getId()));
-		datasetTypes.put(DataSetType.MEANS_DATA.getId(),
-				this.etlService.getCVDefinitionById(DataSetType.MEANS_DATA.getId()));
+		datasetTypes.put(DatasetType.PLOT_DATA, plotDatasetType.getDescription());
+		datasetTypes.put(DatasetType.MEANS_DATA, meansDatasetType.getDescription());
 		return datasetTypes;
 	}
 

@@ -8,10 +8,10 @@ import com.efficio.etl.web.validators.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.exceptions.PhenotypeException;
+import org.generationcp.middleware.pojos.dms.DatasetType;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
@@ -82,8 +82,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 			programUUID = this.contextUtil.getCurrentProgramUUID();
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 			final boolean isMeansDataImport =
-					this.userSelection.getDatasetType() != null && this.userSelection.getDatasetType().intValue() == DataSetType.MEANS_DATA
-							.getId();
+					this.userSelection.getDatasetType() != null && this.userSelection.getDatasetType().intValue() == DatasetType.MEANS_DATA;
 
 			importData = this.etlService.createWorkbookFromUserSelection(this.userSelection, isMeansDataImport);
 

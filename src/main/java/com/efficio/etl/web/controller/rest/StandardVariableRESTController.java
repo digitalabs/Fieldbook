@@ -10,7 +10,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -18,6 +17,7 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.manager.ontology.daoElements.VariableFilter;
+import org.generationcp.middleware.pojos.dms.DatasetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -76,9 +76,9 @@ public class StandardVariableRESTController {
 		StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER.addVariableType(VariableType.SELECTION_METHOD);
 		StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER.addVariableType(VariableType.TRAIT);
 
-		StandardVariableRESTController.VARIABLE_FILTER_MAP.put(DataSetType.MEANS_DATA.getId(),
+		StandardVariableRESTController.VARIABLE_FILTER_MAP.put(DatasetType.MEANS_DATA,
 				StandardVariableRESTController.MEANS_DATA_VARIABLE_FILTER);
-		StandardVariableRESTController.VARIABLE_FILTER_MAP.put(DataSetType.PLOT_DATA.getId(),
+		StandardVariableRESTController.VARIABLE_FILTER_MAP.put(DatasetType.PLOT_DATA,
 				StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER);
 
 	}
@@ -157,14 +157,14 @@ public class StandardVariableRESTController {
 	 * This API method is used to retrieve all ontology variables valid for importing in the given dataset type (plot data, means data or
 	 * none). This is mainly used in "Import Datasets".
 	 *
-	 * @param datasetType
+	 * @param datasetTypeId
 	 * @return list of VariableDTO
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/datasetType/{datasetType}", method = RequestMethod.GET)
-	public List<VariableDTO> retrieveOntologyVariables(@PathVariable final Integer datasetType) {
+	@RequestMapping(value = "/datasetType/{datasetTypeId}", method = RequestMethod.GET)
+	public List<VariableDTO> retrieveOntologyVariables(@PathVariable final Integer datasetTypeId) {
 		final List<VariableDTO> returnVal = new ArrayList<VariableDTO>();
-		final VariableFilter middlewareVariableFilter = StandardVariableRESTController.VARIABLE_FILTER_MAP.get(datasetType);
+		final VariableFilter middlewareVariableFilter = StandardVariableRESTController.VARIABLE_FILTER_MAP.get(datasetTypeId);
 		middlewareVariableFilter.setProgramUuid(this.contextUtil.getCurrentProgramUUID());
 		final List<Variable> variables = this.ontologyVariableDataManager.getWithFilter(middlewareVariableFilter);
 		for (final Variable variable : variables) {

@@ -11,9 +11,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.poi.ss.usermodel.Workbook;
-import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.exceptions.MiddlewareException;
+import org.generationcp.middleware.pojos.dms.DatasetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -245,7 +245,7 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 	public int getValidIndexColumnIndex(final Workbook workbook) {
 		final boolean isMeansDataImport =
 				this.userSelection.getDatasetType() != null
-						&& this.userSelection.getDatasetType().intValue() == DataSetType.MEANS_DATA.getId();
+						&& this.userSelection.getDatasetType().intValue() == DatasetType.MEANS_DATA;
 		final org.generationcp.middleware.domain.etl.Workbook importData =
 				this.etlService.retrieveAndSetProjectOntology(this.userSelection, isMeansDataImport);
 

@@ -38,6 +38,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
@@ -90,16 +91,10 @@ public class ImportGermplasmListControllerTest {
 	private final String programUUID = UUID.randomUUID().toString();
 
 	@Mock
-	private OntologyDataManager ontologyDataManager;
-
-	@Mock
 	private GermplasmListManager germplasmListManager;
 
 	@Mock
 	private FieldbookService fieldbookService;
-
-	@Mock
-	private MergeCheckService mergeCheckService;
 
 	@Mock
 	private Workbook workbook;
@@ -109,9 +104,6 @@ public class ImportGermplasmListControllerTest {
 
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-
-	@Mock
-	private ImportGermplasmFileService importGermplasmFileService;
 
 	@Mock
 	private DataImportService dataImportService;
@@ -128,9 +120,9 @@ public class ImportGermplasmListControllerTest {
 
 	@InjectMocks
 	private ImportGermplasmListController importGermplasmListController;
-	private final String cropPrefix = "ABCD";
 
 	private List<Enumeration> checkList;
+	private CropType cropType;
 
 	@Before
 	public void setUp() {
@@ -155,6 +147,8 @@ public class ImportGermplasmListControllerTest {
 
 		this.checkList = this.createCheckList();
 		Mockito.doReturn(this.checkList).when(this.fieldbookService).getCheckTypeList();
+
+		this.cropType = new CropType("maize");
 	}
 
 	@Test
@@ -485,10 +479,10 @@ public class ImportGermplasmListControllerTest {
 				.getImportedGermplasmList().getImportedGermplasms();
 
 		Assert.assertEquals("", importedGermplasmList.get(0).getEntryTypeValue());
-		Assert.assertEquals(0, importedGermplasmList.get(0).getEntryTypeCategoricalID().intValue());
+		Assert.assertEquals(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId(), importedGermplasmList.get(0).getEntryTypeCategoricalID().intValue());
 
 		Assert.assertEquals("", importedGermplasmList.get(1).getEntryTypeValue());
-		Assert.assertEquals(0, importedGermplasmList.get(1).getEntryTypeCategoricalID().intValue());
+		Assert.assertEquals(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId(), importedGermplasmList.get(1).getEntryTypeCategoricalID().intValue());
 
 	}
 
@@ -587,16 +581,14 @@ public class ImportGermplasmListControllerTest {
 		project.setUniqueID("123");
 		project.setUserId(1);
 		project.setProjectId(Long.parseLong("123"));
-		final CropType cropType = new CropType();
-		cropType.setPlotCodePrefix(this.cropPrefix);
-		project.setCropType(cropType);
+		project.setCropType(this.cropType);
 		Mockito.when(this.importGermplasmListController.getCurrentProject()).thenReturn(project);
 
 		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.isA(Long.class), Matchers.isA(Integer.class)))
 				.thenReturn(1);
 		final Integer studyIdInSaveDataset = 3;
 
-		Mockito.when(this.dataImportService.saveDataset(workbook, true, true, project.getUniqueID(), this.cropPrefix))
+		Mockito.when(this.dataImportService.saveDataset(workbook, true, true, project.getUniqueID(), this.cropType))
 				.thenReturn(studyIdInSaveDataset);
 
 		final List<ListDataProject> listDataProjects = new ArrayList<>();
@@ -615,7 +607,7 @@ public class ImportGermplasmListControllerTest {
 		Mockito.verify(this.workbenchService).getCurrentIbdbUserId(Matchers.isA(Long.class),
 				Matchers.isA(Integer.class));
 		Mockito.verify(this.dataImportService).saveDataset(workbook, true, true, project.getUniqueID(),
-				this.cropPrefix);
+				this.cropType);
 		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(ArgumentMatchers.<List<Integer>>isNull(), Matchers.isA(Integer.class));
 		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null, workbook);
 

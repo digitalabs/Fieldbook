@@ -96,7 +96,7 @@ public class ManageSettingsController extends SettingsController {
 
 		final Set<Integer> variableTypes = VariableType.getVariableTypesIdsByPhenotype(phenotypicTypeById);
 
-		return getOntologyPropertiesByVariableType(variableTypes.toArray(new Integer[0]), null, false);
+		return getOntologyPropertiesByVariableType(variableTypes.toArray(new Integer[0]), null, true);
 	}
 
 	@ResponseBody

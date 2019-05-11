@@ -74,7 +74,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 		try {
 
 			final StandardVariable stdvarTreatment =
-					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(), contextUtil.getCurrentProgramUUID());
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 			StandardVariable stdvarRep = null;
 			StandardVariable stdvarBlock = null;
 			StandardVariable stdvarPlot = null;
@@ -117,12 +117,12 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 				entryNo = null;
 			}
 
-			final MainDesign mainDesign = experimentDesignGenerator
+			final MainDesign mainDesign = this.experimentDesignGenerator
 					.createResolvableIncompleteBlockDesign(blockSize, Integer.toString(nTreatments), replicates, stdvarTreatment.getName(),
 							stdvarRep.getName(), stdvarBlock.getName(), stdvarPlot.getName(), plotNo, entryNo, parameter.getNblatin(),
 							parameter.getReplatinGroups(), "", parameter.getUseLatenized());
 
-			measurementRowList = experimentDesignGenerator
+			measurementRowList = this.experimentDesignGenerator
 					.generateExperimentDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
 							variates, treatmentVariables, reqVarList, germplasmList, mainDesign, stdvarTreatment.getName(), null,
 							new HashMap<Integer, Integer>());
@@ -140,11 +140,11 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 		final List<StandardVariable> varList = new ArrayList<StandardVariable>();
 		try {
 			final StandardVariable stdvarRep =
-					this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId(), contextUtil.getCurrentProgramUUID());
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 			final StandardVariable stdvarBlock =
-					this.fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId(), contextUtil.getCurrentProgramUUID());
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 			final StandardVariable stdvarPlot =
-					this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), contextUtil.getCurrentProgramUUID());
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 
 			stdvarRep.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 			stdvarBlock.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
@@ -182,6 +182,10 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 						.isNumber(expDesignParameter.getStartingEntryNo())) {
 					output = new ExpDesignValidationOutput(false,
 							this.messageSource.getMessage("entry.number.should.be.in.range", null, locale));
+					return output;
+				} else if (expDesignParameter.getTreatmentFactorsData().size() > 0) {
+					output = new ExpDesignValidationOutput(false,
+						this.messageSource.getMessage("experiment.design.treatment.factors.error", null, locale));
 					return output;
 				} else {
 					final int blockSize = Integer.valueOf(expDesignParameter.getBlockSize());
@@ -233,10 +237,6 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 						if (nbLatin >= blockLevel) {
 							output = new ExpDesignValidationOutput(false, this.messageSource
 									.getMessage("experiment.design.nblatin.should.not.be.greater.than.block.level", null, locale));
-						} else if (nbLatin >= replicationCount) {
-							output = new ExpDesignValidationOutput(false, this.messageSource
-									.getMessage("experiment.design.nblatin.should.not.be.greater.than.the.replication.count", null,
-											locale));
 						} else if (expDesignParameter.getReplicationsArrangement() != null
 								&& expDesignParameter.getReplicationsArrangement().intValue() == 3) {
 							// meaning adjacent
@@ -285,4 +285,9 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 	public Boolean requiresBreedingViewLicence() {
 		return Boolean.TRUE;
 	}
+
+	public void setMessageSource(final ResourceBundleMessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+
 }

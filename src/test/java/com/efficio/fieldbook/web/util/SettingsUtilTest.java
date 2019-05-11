@@ -239,6 +239,7 @@ public class SettingsUtilTest {
 		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_REPS_IN_COLS.getId(), "7"));
 		expDesigns.add(this.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "8"));
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "9"));
+		expDesigns.add(this.createMeasurementVariable(TermId.PERCENTAGE_OF_REPLICATION.getId(), "10"));
 
 		final ExpDesignParameterUi result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
 
@@ -251,6 +252,7 @@ public class SettingsUtilTest {
 		Assert.assertEquals("7", result.getReplatinGroups());
 		Assert.assertEquals("8", result.getReplicationsCount());
 		Assert.assertEquals("9", result.getFileName());
+		Assert.assertEquals(10, result.getReplicationPercentage().intValue());
 
 	}
 
@@ -458,11 +460,7 @@ public class SettingsUtilTest {
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 
 		expDesignParameterUi.setDesignType(6);
-		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
-				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
-
-		expDesignParameterUi.setDesignType(7);
-		Assert.assertEquals(String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()),
+		Assert.assertEquals(String.valueOf(TermId.P_REP.getId()),
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 
 		expDesignParameterUi.setReplicationsArrangement(1);
@@ -919,45 +917,84 @@ public class SettingsUtilTest {
 	@Test
 	public void testConvertConditionToMeasurementVariable() {
 		final Condition cropSeasonCodeCondition = new Condition("Crop_season_Code", "Season - Assigned (Code)",
-				"Season", "Code of Crop_season_Code", "Assigned", PhenotypicType.STUDY.toString(), "C", "Dry season",
-				TermId.CATEGORICAL_VARIABLE.getId(), null, null);
+			"Season", "Code of Crop_season_Code", "Assigned", PhenotypicType.STUDY.toString(), "C", "Dry season",
+			TermId.CATEGORICAL_VARIABLE.getId(), null, null);
 		cropSeasonCodeCondition.setOperation(Operation.ADD);
 		cropSeasonCodeCondition.setId(TermId.SEASON_VAR.getId());
 		cropSeasonCodeCondition.setPossibleValues(this.createCropSeasonPossibleValues());
 
 		final MeasurementVariable measurementVariable = SettingsUtil
-				.convertConditionToMeasurementVariable(cropSeasonCodeCondition);
+			.convertConditionToMeasurementVariable(cropSeasonCodeCondition);
 
 		Assert.assertEquals("The name should be '" + cropSeasonCodeCondition.getName() + "'",
-				cropSeasonCodeCondition.getName(), measurementVariable.getName());
+			cropSeasonCodeCondition.getName(), measurementVariable.getName());
 		Assert.assertEquals("The description should be '" + cropSeasonCodeCondition.getDescription() + "'",
-				cropSeasonCodeCondition.getDescription(), measurementVariable.getDescription());
+			cropSeasonCodeCondition.getDescription(), measurementVariable.getDescription());
 		Assert.assertEquals("The property should be '" + cropSeasonCodeCondition.getProperty() + "'",
-				cropSeasonCodeCondition.getProperty(), measurementVariable.getProperty());
+			cropSeasonCodeCondition.getProperty(), measurementVariable.getProperty());
 		Assert.assertEquals("The scale should be '" + cropSeasonCodeCondition.getScale() + "'",
-				cropSeasonCodeCondition.getScale(), measurementVariable.getScale());
+			cropSeasonCodeCondition.getScale(), measurementVariable.getScale());
 		Assert.assertEquals("The method should be '" + cropSeasonCodeCondition.getMethod() + "'",
-				cropSeasonCodeCondition.getMethod(), measurementVariable.getMethod());
+			cropSeasonCodeCondition.getMethod(), measurementVariable.getMethod());
 		Assert.assertEquals("The datatype should be '" + cropSeasonCodeCondition.getDatatype() + "'",
-				cropSeasonCodeCondition.getDatatype(), measurementVariable.getDataType());
+			cropSeasonCodeCondition.getDatatype(), measurementVariable.getDataType());
 		Assert.assertEquals("The dataTypeId should be '" + cropSeasonCodeCondition.getDataTypeId().intValue() + "'",
-				cropSeasonCodeCondition.getDataTypeId().intValue(), measurementVariable.getDataTypeId().intValue());
+			cropSeasonCodeCondition.getDataTypeId().intValue(), measurementVariable.getDataTypeId().intValue());
 		Assert.assertEquals("The value should be '" + cropSeasonCodeCondition.getValue() + "'",
-				cropSeasonCodeCondition.getValue(), measurementVariable.getValue());
+			cropSeasonCodeCondition.getValue(), measurementVariable.getValue());
 		Assert.assertEquals("The label should be 'STUDY'", "STUDY", measurementVariable.getLabel());
 		Assert.assertEquals("The minRange should be '" + cropSeasonCodeCondition.getMinRange() + "'",
-				cropSeasonCodeCondition.getMinRange(), measurementVariable.getMinRange());
+			cropSeasonCodeCondition.getMinRange(), measurementVariable.getMinRange());
 		Assert.assertEquals("The maxRange should be '" + cropSeasonCodeCondition.getMaxRange() + "'",
-				cropSeasonCodeCondition.getMaxRange(), measurementVariable.getMaxRange());
+			cropSeasonCodeCondition.getMaxRange(), measurementVariable.getMaxRange());
 		Assert.assertEquals("The role should be '" + PhenotypicType.STUDY + "'", PhenotypicType.STUDY,
-				measurementVariable.getRole());
+			measurementVariable.getRole());
 		Assert.assertEquals("The operation should be '" + cropSeasonCodeCondition.getOperation() + "'",
-				cropSeasonCodeCondition.getOperation(), measurementVariable.getOperation());
+			cropSeasonCodeCondition.getOperation(), measurementVariable.getOperation());
 		Assert.assertEquals("The termId should be '" + cropSeasonCodeCondition.getId() + "'",
-				cropSeasonCodeCondition.getId(), measurementVariable.getTermId());
+			cropSeasonCodeCondition.getId(), measurementVariable.getTermId());
 		Assert.assertTrue("It should be a factor", measurementVariable.isFactor());
 		Assert.assertEquals("The possibleValues should be '" + cropSeasonCodeCondition.getPossibleValues() + "'",
-				cropSeasonCodeCondition.getPossibleValues(), measurementVariable.getPossibleValues());
+			cropSeasonCodeCondition.getPossibleValues(), measurementVariable.getPossibleValues());
+	}
+
+	@Test
+	public void testConvertConstantToMeasurementVariableOperationAddOrUpdate() {
+
+		final Constant constant =
+			new Constant("CONSTANT1", "CONSTANT1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N", "",
+				TermId.NUMERIC_VARIABLE.getId(), 0.0, 0.0);
+		constant.setOperation(Operation.ADD);
+		final MeasurementVariable measurementVariable = SettingsUtil.convertConstantToMeasurementVariable(constant);
+		Assert.assertEquals(PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0), measurementVariable.getLabel());
+
+		constant.setOperation(Operation.UPDATE);
+		final MeasurementVariable measurementVariable2 = SettingsUtil.convertConstantToMeasurementVariable(constant);
+		Assert.assertEquals(PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0), measurementVariable2.getLabel());
+
+	}
+
+	@Test
+	public void testConvertConstantToMeasurementVariable() {
+
+		final Constant constant =
+			new Constant("CONSTANT1", "CONSTANT1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N", "",
+				TermId.NUMERIC_VARIABLE.getId(), 0.0, 0.0);
+		final MeasurementVariable measurementVariable = SettingsUtil.convertConstantToMeasurementVariable(constant);
+
+		Assert.assertEquals(constant.getName(), measurementVariable.getName());
+		Assert.assertEquals(
+			constant.getDescription(),
+			measurementVariable.getDescription());
+		Assert.assertEquals(constant.getProperty(), measurementVariable.getProperty());
+		Assert.assertEquals(constant.getScale(), measurementVariable.getScale());
+		Assert.assertEquals(constant.getMethod(), measurementVariable.getMethod());
+		Assert.assertEquals(constant.getRole(), measurementVariable.getRole().name());
+		Assert.assertEquals(constant.getDatatype(), measurementVariable.getDataType());
+		Assert.assertEquals(PhenotypicType.STUDY.getLabelList().get(0), measurementVariable.getLabel());
+		Assert.assertEquals(VariableType.STUDY_CONDITION, measurementVariable.getVariableType());
+		Assert.assertFalse(measurementVariable.isFactor());
+
 	}
 
 }

@@ -74,7 +74,7 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 		try {
 
 			final StandardVariable stdvarTreatment = this.fieldbookMiddlewareService.
-					getStandardVariable(TermId.ENTRY_NO.getId(), contextUtil.getCurrentProgramUUID());
+					getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 			StandardVariable stdvarRep = null;
 			StandardVariable stdvarPlot = null;
 			StandardVariable stdvarRows = null;
@@ -121,12 +121,12 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 				entryNo = null;
 			}
 
-			final MainDesign mainDesign = experimentDesignGenerator
+			final MainDesign mainDesign = this.experimentDesignGenerator
 					.createResolvableRowColDesign(Integer.toString(nTreatments), replicates, rows, cols, stdvarTreatment.getName(),
 							stdvarRep.getName(), stdvarRows.getName(), stdvarCols.getName(), stdvarPlot.getName(), plotNo, entryNo,
 							parameter.getNrlatin(), parameter.getNclatin(), parameter.getReplatinGroups(), "", parameter.getUseLatenized());
 
-			measurementRowList = experimentDesignGenerator
+			measurementRowList = this.experimentDesignGenerator
 					.generateExperimentDesignMeasurements(environments, environmentsToAdd, trialVariables, factors, nonTrialFactors,
 							variates, treatmentVariables, reqVarList, germplasmList, mainDesign, stdvarTreatment.getName(), null,
 							new HashMap<Integer, Integer>());
@@ -145,13 +145,13 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 		final List<StandardVariable> varList = new ArrayList<StandardVariable>();
 		try {
 			final StandardVariable stdvarRep =
-					this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId(), contextUtil.getCurrentProgramUUID());
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 			final StandardVariable stdvarPlot =
-					this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), contextUtil.getCurrentProgramUUID());
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 			final StandardVariable stdvarRows =
-					this.fieldbookMiddlewareService.getStandardVariable(TermId.ROW.getId(), contextUtil.getCurrentProgramUUID());
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.ROW.getId(), this.contextUtil.getCurrentProgramUUID());
 			final StandardVariable stdvarCols =
-					this.fieldbookMiddlewareService.getStandardVariable(TermId.COL.getId(), contextUtil.getCurrentProgramUUID());
+					this.fieldbookMiddlewareService.getStandardVariable(TermId.COL.getId(), this.contextUtil.getCurrentProgramUUID());
 
 			stdvarRep.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 			stdvarPlot.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
@@ -197,7 +197,15 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 					output = new ExpDesignValidationOutput(false,
 							this.messageSource.getMessage("entry.number.should.be.in.range", null, locale));
 					return output;
-				} else {
+				} else if (expDesignParameter.getTreatmentFactorsData().size() > 0) {
+					output = new ExpDesignValidationOutput(Boolean.FALSE,
+						this.messageSource.getMessage("experiment.design.treatment.factors.error", null, LocaleContextHolder.getLocale()));
+				} else if (expDesignParameter.getTreatmentFactorsData().size() > 0) {
+					output = new ExpDesignValidationOutput(false,
+						this.messageSource.getMessage("experiment.design.treatment.factors.error", null, locale));
+					return output;
+				}
+				else {
 
 					final int rowsPerReplication = Integer.valueOf(expDesignParameter.getRowsPerReplications());
 					final int colsPerReplication = Integer.valueOf(expDesignParameter.getColsPerReplications());
@@ -242,17 +250,9 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 						if (nrLatin >= rowsPerReplication) {
 							output = new ExpDesignValidationOutput(false, this.messageSource
 									.getMessage("experiment.design.nrlatin.should.be.less.than.rows.per.replication", null, locale));
-						} else if (nrLatin >= replicationCount) {
-							output = new ExpDesignValidationOutput(false, this.messageSource
-									.getMessage("experiment.design.nrlatin.should.not.be.greater.than.the.replication.count", null,
-											locale));
 						} else if (ncLatin >= colsPerReplication) {
 							output = new ExpDesignValidationOutput(false, this.messageSource
 									.getMessage("experiment.design.nclatin.should.be.less.than.cols.per.replication", null, locale));
-						} else if (ncLatin >= replicationCount) {
-							output = new ExpDesignValidationOutput(false, this.messageSource
-									.getMessage("experiment.design.nclatin.should.not.be.greater.than.the.replication.count", null,
-											locale));
 						} else if (expDesignParameter.getReplicationsArrangement() != null
 								&& expDesignParameter.getReplicationsArrangement().intValue() == 3) {
 							// meaning adjacent

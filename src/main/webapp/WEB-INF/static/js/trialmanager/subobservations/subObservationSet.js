@@ -22,6 +22,9 @@
 				tableLoadedResolve = resolve;
 			});
 
+			$scope.toggleSectionBatchAction = false;
+			$scope.hasVariableFilter = false;
+			$scope.selectVariableFilter = [];
 			$scope.traitVariables = new angular.OrderedHash();
 			$scope.selectionVariables = new angular.OrderedHash();
 			$scope.isHideDelete = false;
@@ -32,6 +35,9 @@
 			$scope.nested = {};
 			$scope.nested.dtInstance = null;
 			$scope.nested.reviewVariable = null;
+			$scope.nested.selectedVariableFilter = null;
+			$scope.nested.selectedBatchAction = null;
+			$scope.nested.newValueBatchUpdate = null;
 			$scope.enableActions = false;
 			$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
 
@@ -64,21 +70,21 @@
 						return true;
 					}
 					return false;
-				},
-				datepicker: {
-					options: {
-						showWeeks: false
-					},
-					dt: new Date()
 				}
+			};
+			$scope.datepickerOptions = {
+				showWeeks: false
 			};
 			$scope.selectedStatusFilter = "1";
 
-			$.contextMenu('destroy', "#subObservationTableContainer td[class*='invalid-value'],#subObservationTableContainer td[class*='accepted-value']");
+			// Define which elements trigger this menu: only non-empty, non-disabled categorical or numeric traits
+			var contextMenuSelector =
+				"#subObservationTableContainer td.variates.datatype-1130:not(:empty):not([disabled])," +
+				"#subObservationTableContainer td.variates.datatype-1110:not(:empty):not([disabled])";
+			$.contextMenu('destroy', contextMenuSelector);
 
 			$.contextMenu({
-				// define which elements trigger this menu
-				selector: "#subObservationTableContainer td[class*='invalid-value'],#subObservationTableContainer td[class*='accepted-value']",
+				selector: contextMenuSelector,
 				// define the elements of the menu
 				callback: function (key, opt) {
 					var cell = opt.$trigger.get(0);
@@ -105,8 +111,10 @@
 							break;
 					}
 
+					var index = table().colReorder.transpose(table().column(cell).index(), 'toOriginal');
+					var columnData = $scope.columnsObj.columns[index].columnData;
 					datasetService.updateObservation(subObservationSet.id, rowData.observationUnitId, cellData.observationId, {
-							categoricalValueId: null,
+							categoricalValueId: getCategoricalValueId(newValue, columnData),
 							value: newValue,
 							draftValue: newDraftValue,
 							draftCategoricalValueId: newDraftCategoricalValueId
@@ -298,6 +306,14 @@
 				return deferred.promise;
 			};
 
+			$scope.validateApplyBatchAction = function (messages) {
+				var deferred = $q.defer();
+				var confirmApplyAction = "Proceed";
+				var modalConfirmationBatch = $scope.openConfirmModal(messages, confirmApplyAction);
+				modalConfirmationBatch.result.then(deferred.resolve);
+				return deferred.promise;
+			};
+
 			$scope.togglePendingView = function (isPendingView) {
 				if ($scope.isPendingView === isPendingView) {
 					return;
@@ -306,6 +322,10 @@
 				$scope.selectedStatusFilter = "1";
 				doPendingViewActions();
 				loadTable();
+			};
+
+			$scope.collapseBatchAction = function() {
+				$scope.toggleSectionBatchAction = !$scope.toggleSectionBatchAction;
 			};
 
 			$scope.checkOutOfBoundDraftData = function () {
@@ -421,6 +441,160 @@
 				}
 			};
 
+			function loadBatchActionCombo() {
+				$scope.toggleSectionBatchAction = false;
+				$scope.selectBatchActions = [{
+					name: 'Select action',
+					id: null
+				}, {
+					name: 'Apply new value to observations',
+					id: 1
+				}];
+				$scope.nested.selectedVariableFilter = $scope.selectVariableFilter[0];
+				$scope.nested.selectedBatchAction = $scope.selectBatchActions[0];
+				if ($scope.isPendingView) {
+					$scope.selectBatchActions.push({
+						name: 'Accept observations as-is',
+						id: 2
+					});
+				} else {
+
+				}
+			};
+
+			$scope.changeSelectedVariableFilter = function(){
+				table().ajax.reload();
+				$scope.nested.newValueBatchUpdate = null;
+				$scope.nested.selectedBatchAction = $scope.selectBatchActions[0];
+			};
+
+			$scope.hasDataFiltered = function () {
+				return $scope.nested.dtInstance && //
+					$scope.nested.dtInstance.DataTable && //
+					$scope.nested.dtInstance.DataTable.data() && //
+					$scope.nested.dtInstance.DataTable.data().length > 0 || false;
+			};
+
+			function newValueBatchUpdateValidation() {
+				if ($scope.nested.selectedVariableFilter.dataTypeCode === 'D') {
+					var newValue = $.datepicker.formatDate("yymmdd", $scope.nested.newValueBatchUpdate);
+					// FIXME find a better way
+					if (!newValue) {
+						showErrorMessage('', 'Invalid value.');
+						return false;
+					}
+				}
+
+				if ($scope.nested.selectedVariableFilter.dataTypeCode === 'N') {
+					var newValue = $scope.nested.newValueBatchUpdate;
+					if ($scope.nested.selectedVariableFilter.minRange && $scope.nested.selectedVariableFilter.maxRange && //
+						(newValue < $scope.nested.selectedVariableFilter.minRange || newValue > $scope.nested.selectedVariableFilter.maxRange)) {
+						showAlertMessage('','New value is out of range.');
+					}
+					return true;
+				}
+				return true;
+			}
+
+			$scope.disableApply = function(){
+				return $scope.nested.selectedBatchAction.id === 1 && ($scope.nested.newValueBatchUpdate === null || $scope.nested.newValueBatchUpdate === '')
+			};
+
+			$scope.applyBatchAction = function () {
+
+				if ($scope.nested.selectedBatchAction.id === 1) {
+					var validated = newValueBatchUpdateValidation();
+					if (!validated) {
+						return;
+					}
+				}
+
+				var param = JSON.stringify({
+					instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+					draftMode: $scope.isPendingView,
+					filter: getFilter()
+				});
+				datasetService.countFilteredPhenotypesAndInstances(subObservationSet.id, param).then(function (response) {
+					var messages = "This action will update " + response.totalFilteredPhenotypes + " observations in "
+						+ response.totalFilteredInstances + " environments. You will not be able to undo this transaction." +
+						" Are you sure you want to proceed?";
+					$scope.validateApplyBatchAction(messages).then(function (doContinue) {
+						if (!doContinue) {
+							return;
+						}
+						switch ($scope.nested.selectedBatchAction.id) {
+							case 1:
+								// setNewValue
+								var newValue = $scope.nested.newValueBatchUpdate;
+								if ($scope.nested.selectedVariableFilter.dataTypeCode === 'D') {
+									newValue = $.datepicker.formatDate("yymmdd", newValue);
+								}
+								var param = JSON.stringify({
+									newValue: newValue,
+									newCategoricalValueId: getCategoricalValueId($scope.nested.newValueBatchUpdate, $scope.nested.selectedVariableFilter),
+									observationUnitsSearchDTO: {
+										instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+										draftMode: $scope.isPendingView,
+										filter: getFilter()
+									}
+								});
+								datasetService.setValueToVariable(subObservationSet.id, param).then(function () {
+									if ($scope.isPendingView) {
+										reloadDataset();
+									} else {
+										$scope.selectedStatusFilter = "1";
+										$scope.nested.selectedEnvironment = $scope.environments[1];
+										table().ajax.reload();
+										loadBatchActionCombo();
+									}
+								}, function (response) {
+									if (response.errors && response.errors.length) {
+										showErrorMessage('', response.errors[0].message);
+									} else {
+										showErrorMessage('', ajaxGenericErrorMsg);
+									}
+								});
+								break;
+							case 2:
+								// acceptDraftDataByVariable
+								var param = JSON.stringify({
+									instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+									draftMode: $scope.isPendingView,
+									filter: getFilter()
+								});
+								datasetService.acceptDraftDataByVariable(subObservationSet.id, param).then(function () {
+									reloadDataset();
+								}, function (response) {
+									if (response.errors && response.errors.length) {
+										showErrorMessage('', response.errors[0].message);
+									} else {
+										showErrorMessage('', ajaxGenericErrorMsg);
+									}
+								});
+								break;
+							default:
+								break;
+						}
+					});
+				});
+			};
+
+			$scope.isVariableFilter = function (index) {
+				if (!$scope.nested.selectedVariableFilter || !$scope.nested.selectedVariableFilter.termId) {
+					return true
+				}
+				return $scope.isVariableBatchActionSelected(index);
+			};
+
+			$scope.isVariableBatchActionSelected = function (index) {
+				return $scope.nested.selectedVariableFilter //
+					&& $scope.columnsObj //
+					&& $scope.columnsObj.columns //
+					&& $scope.columnsObj.columns[index] //
+					&& $scope.columnsObj.columns[index].columnData //
+					&& $scope.columnsObj.columns[index].columnData.termId === $scope.nested.selectedVariableFilter.termId;
+			};
+
 			$scope.filterByColumn = function () {
 				table().ajax.reload();
 			};
@@ -467,6 +641,61 @@
 				}
 			}
 
+			function getFilter() {
+				var variableId = $scope.nested.selectedVariableFilter && $scope.nested.selectedVariableFilter.termId;
+				return {
+					byOutOfBound: $scope.selectedStatusFilter === "2" || null,
+					byMissing: $scope.selectedStatusFilter === "3" || null,
+					byOutOfSync: $scope.selectedStatusFilter === "4" || null,
+					byOverwritten: $scope.selectedStatusFilter === "5" || null,
+					variableId: variableId,
+					filteredValues: $scope.columnsObj.columns.reduce(function (map, column) {
+						var columnData = column.columnData;
+						columnData.isFiltered = false;
+
+						if (columnData.dataTypeCode === 'T') {
+							return map;
+						}
+
+						if (columnData.possibleValues) {
+							columnData.possibleValues.forEach(function (value) {
+								if (value.isSelectedInFilters) {
+									if (!map[columnData.termId]) {
+										map[columnData.termId] = [];
+									}
+									map[columnData.termId].push(value.name);
+								}
+							});
+							if (!map[columnData.termId] && columnData.query) {
+								map[columnData.termId] = [columnData.query];
+							}
+						} else if (columnData.query) {
+							if (columnData.dataTypeCode === 'D') {
+								map[columnData.termId] = [($.datepicker.formatDate("yymmdd", columnData.query))];
+							} else {
+								map[columnData.termId] = [(columnData.query)];
+							}
+						}
+
+						if (map[columnData.termId]) {
+							columnData.isFiltered = true;
+						}
+						return map;
+					}, {}),
+					filteredTextValues: $scope.columnsObj.columns.reduce(function (map, column) {
+						var columnData = column.columnData;
+						if (columnData.dataTypeCode !== 'T') {
+							return map;
+						}
+						if (columnData.query) {
+							map[columnData.termId] = columnData.query;
+							columnData.isFiltered = true;
+						}
+						return map;
+					}, {})
+				};
+			}
+
 			function getDtOptions() {
 				return addCommonOptions(DTOptionsBuilder.newOptions()
 					.withOption('ajax', {
@@ -480,8 +709,6 @@
 							var order = d.order && d.order[0];
 							var sortedColTermId = subObservationSet.columnsData[order.column].termId;
 
-							var instanceId = $scope.nested.selectedEnvironment.instanceDbId;
-
 							return JSON.stringify({
 								draw: d.draw,
 								sortedRequest: {
@@ -490,58 +717,9 @@
 									sortBy: sortedColTermId,
 									sortOrder: order.dir
 								},
-								instanceId: instanceId,
+								instanceId: $scope.nested.selectedEnvironment.instanceDbId,
 								draftMode: $scope.isPendingView,
-								filter: {
-									byOutOfBound: $scope.selectedStatusFilter === "2" || null,
-									byMissing: $scope.selectedStatusFilter === "3" || null,
-									byOutOfSync: $scope.selectedStatusFilter === "4" || null,
-									byOverwritten: $scope.selectedStatusFilter === "5" || null,
-									filteredValues: $scope.columnsObj.columns.reduce(function (map, column) {
-										var columnData = column.columnData;
-										columnData.isFiltered = false;
-
-										if (columnData.dataTypeCode === 'T') {
-											return map;
-										}
-
-										if (columnData.possibleValues) {
-											columnData.possibleValues.forEach(function (value) {
-												if (value.isSelectedInFilters) {
-													if (!map[columnData.termId]) {
-														map[columnData.termId] = [];
-													}
-													map[columnData.termId].push(value.name);
-												}
-											});
-											if (!map[columnData.termId] && columnData.query) {
-												map[columnData.termId] = [columnData.query];
-											}
-										} else if (columnData.query) {
-											if (columnData.dataTypeCode === 'D') {
-												map[columnData.termId] = [($.datepicker.formatDate("yymmdd", columnData.query))];
-											} else {
-												map[columnData.termId] = [(columnData.query)];
-											}
-										}
-
-										if (map[columnData.termId]) {
-											columnData.isFiltered = true;
-										}
-										return map;
-									}, {}),
-									filteredTextValues: $scope.columnsObj.columns.reduce(function (map, column) {
-										var columnData = column.columnData;
-										if (columnData.dataTypeCode !== 'T') {
-											return map;
-										}
-										if (columnData.query) {
-											map[columnData.termId] = columnData.query;
-											columnData.isFiltered = true;
-										}
-										return map;
-									}, {})
-								}
+								filter: getFilter()
 							});
 						}
 					})
@@ -585,7 +763,9 @@
 
 			function initCompleteCallback() {
 				table().columns('.variates').every(function () {
-					$(this.header()).append($compile('<span class="glyphicon glyphicon-filter" ' +
+					$(this.header()).prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#1b95b2;"' +
+						' ng-if="isVariableBatchActionSelected(' + this.index() + ')"> </span>')($scope))
+						.append($compile('<span class="glyphicon glyphicon-filter" ' +
 						' style="cursor:pointer; padding-left: 5px;"' +
 						' popover-placement="bottom"' +
 						' ng-class="getFilteringByClass(' + this.index() + ')"' +
@@ -593,6 +773,7 @@
 						' popover-trigger="\'outsideClick\'"' +
 						// does not work with outsideClick
 						// ' popover-is-open="columnFilter.isOpen"' +
+						' ng-if="isVariableFilter(' + this.index() + ')"' +
 						' ng-click="openColumnFilter(' + this.index() + ')"' +
 						' uib-popover-template="\'columnFilterPopoverTemplate.html\'">' +
 						'</span>')($scope));
@@ -716,7 +897,8 @@
 											cellData.observationId, {
 												categoricalValueId: getCategoricalValueId(value, columnData),
 												value: value,
-												draftValue: draftValue
+												draftValue: draftValue,
+												draftMode: $scope.isPendingView
 											});
 									});
 								}
@@ -731,7 +913,8 @@
 											observationUnitId: rowData.observationUnitId,
 											categoricalValueId: getCategoricalValueId(value, columnData),
 											variableId: termId,
-											value: value
+											value: value,
+											draftMode: $scope.isPendingView
 										});
 									});
 								}
@@ -859,7 +1042,7 @@
 					return deferred.promise;
 				}
 
-				var invalid = validateDataOutOfScaleRange(cellDataValue, columnData);
+				var invalid = validateDataOutOfRange(cellDataValue, columnData);
 
 				if (invalid) {
 					var confirmModal = $scope.openConfirmModal(observationOutOfRange, keepLabel, discardLabel);
@@ -891,11 +1074,18 @@
 
 				return loadColumns().then(function (columnsObj) {
 					$scope.dtOptions = getDtOptions();
-
+					$scope.selectVariableFilter = [{
+						name: 'Please choose',
+						termId: null
+					}];
 					angular.forEach(columnsObj.columns, function (column, index) {
 						// "PLOT_NO"
 						if (column.columnData.termId === 8200) {
-							$scope.dtOptions.withOption('order', [index, 'asc'])
+							$scope.dtOptions.withOption('order', [index, 'asc']);
+						}
+						if (!column.columnData.factor) {
+							$scope.selectVariableFilter.push(column.columnData);
+							$scope.hasVariableFilter = true;
 						}
 					});
 
@@ -904,6 +1094,7 @@
 
 					// Only used in tests
 					tableLoadedResolve();
+					loadBatchActionCombo();
 				});
 			}
 
@@ -956,6 +1147,8 @@
 
 					function getClassName() {
 						var className = columnData.factor === true ? 'factors' : 'variates';
+						// include data type for determining when to show context menu option/s
+						className += ' datatype-' + columnData.dataTypeId;
 						// avoid wrapping filter icon
 						className += ' dt-head-nowrap';
 						return className;
@@ -1104,24 +1297,12 @@
 				return invalid;
 			}
 
-			function validateDataOutOfScaleRange(cellDataValue, columnData) {
-				var invalid = false;
-
-				var value = cellDataValue;
-				var minVal = columnData.scaleMinRange;
-				var maxVal = columnData.scaleMaxRange;
-
-				invalid = validateNumericRange(minVal, maxVal, value, invalid);
-				invalid = validateCategoricalValues(columnData, cellDataValue, invalid);
-				return invalid;
-			}
-
 			function validateDataOutOfRange(cellDataValue, columnData) {
 				var invalid = false;
 
 				var value = cellDataValue;
-				var minVal = (columnData.variableMinRange || columnData.variableMinRange === 0) || columnData.scaleMinRange;
-				var maxVal = (columnData.variableMaxRange || columnData.variableMaxRange === 0) || columnData.scaleMaxRange;
+				var minVal = columnData.minRange;
+				var maxVal = columnData.maxRange;
 
 				invalid = validateNumericRange(minVal, maxVal, value, invalid);
 				invalid = validateCategoricalValues(columnData, cellDataValue, invalid);
@@ -1129,20 +1310,21 @@
 			}
 
 			function processCell(td, cellData, rowData, columnData) {
-				$(td).removeClass('accepted-value');
-				$(td).removeClass('invalid-value');
-				$(td).removeClass('manually-edited-value');
+				var $td = $(td);
+				$td.removeClass('accepted-value');
+				$td.removeClass('invalid-value');
+				$td.removeClass('manually-edited-value');
 
 				if ($scope.isPendingView) {
 					if (cellData.draftValue === null || cellData.draftValue === undefined) {
-						$(td).text('');
-						$(td).attr('disabled', true);
+						$td.text('');
+						$td.attr('disabled', true);
 						return;
 					}
 					var invalid = validateDataOutOfRange(cellData.draftValue, columnData);
 
 					if (invalid) {
-						$(td).addClass('invalid-value');
+						$td.addClass('invalid-value');
 					}
 
 					return;
@@ -1152,7 +1334,7 @@
 					var invalid = validateDataOutOfRange(cellData.value, columnData);
 
 					if (invalid) {
-						$(td).addClass('accepted-value');
+						$td.addClass('accepted-value');
 					}
 				}
 				if (cellData.status) {
@@ -1160,14 +1342,16 @@
 					if (!cellData.observationId) {
 						return;
 					}
-					$(td).removeAttr('title');
+					$td.removeAttr('title');
+					$td.removeClass('manually-edited-value');
+					$td.removeClass('out-of-sync-value');
 					var toolTip = 'GID: ' + rowData.variables.GID.value + ' Designation: ' + rowData.variables.DESIGNATION.value;
 					if (status === 'MANUALLY_EDITED') {
-						$(td).attr('title', toolTip + ' manually-edited-value');
-						$(td).addClass('manually-edited-value');
+						$td.attr('title', toolTip + ' manually-edited-value');
+						$td.addClass('manually-edited-value');
 					} else if (status === 'OUT_OF_SYNC') {
-						$(td).attr('title', toolTip + ' out-of-sync-value');
-						$(td).addClass('out-of-sync-value');
+						$td.attr('title', toolTip + ' out-of-sync-value');
+						$td.addClass('out-of-sync-value');
 					}
 				}
 			}

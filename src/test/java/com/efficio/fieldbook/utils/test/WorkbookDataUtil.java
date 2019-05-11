@@ -658,7 +658,7 @@ public class WorkbookDataUtil {
 	}
 
 	public static void addOrUpdateExperimentalDesignVariables(final Workbook workbook, final String exptDesignFactorValue,
-			final String exptDesignSourceValue, final String nRepValue, final String rMapValue) {
+			final String exptDesignSourceValue, final String nRepValue, final String rMapValue, final String pRepValue) {
 		if (workbook.getExperimentalDesignVariables() == null) {
 			workbook.setExperimentalDesignVariables(new ArrayList<MeasurementVariable>());
 		}
@@ -677,6 +677,10 @@ public class WorkbookDataUtil {
 			} else if (termId == TermId.REPLICATIONS_MAP.getId()) {
 				if (rMapValue != null) {
 					termValue = rMapValue;
+				}
+			} else if (termId == TermId.PERCENTAGE_OF_REPLICATION.getId()) {
+				if (rMapValue != null) {
+					termValue = pRepValue;
 				}
 			} else {
 				termValue = "3";

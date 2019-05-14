@@ -12,16 +12,6 @@
 
 		$scope.managementDetails = TrialManagerDataService.settings.trialSettings;
 
-        $scope.managementDetailOptions = {
-			selectAll: false
-		};
-
-		$scope.selectionVariables = TrialManagerDataService.settings.selectionVariables;
-
-        $scope.selectionVariablesOptions = {
-            selectAll: false
-        };
-
 		$scope.doSelectAll = function(variables, options) {
 
 			var filteredVariables = $filter('removeHiddenAndDeletablesVariableFilter')(variables.keys(), variables.vals());
@@ -76,14 +66,6 @@
 				});
 			}
 			return deferred.promise;
-		};
-
-		$scope.onAddVariable = function (result, options) {
-			options.selectAll = false;
-		};
-
-		$scope.managementDetailsSize = function() {
-			return $scope.managementDetails.length();
 		};
 
 	}]);

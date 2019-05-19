@@ -414,6 +414,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		for (final DesignHeaderItem designHeaderItem : mappedHeaders.get(phenotypicType)) {
 			final MeasurementVariable measurementVariable = this.createMeasurementVariable(designHeaderItem.getVariable());
+			measurementVariable.setName(designHeaderItem.getName());
 			measurementVariables.add(measurementVariable);
 		}
 

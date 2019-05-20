@@ -5,12 +5,11 @@ import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import com.lowagie.text.pdf.PdfReader;
 import org.junit.Test;
 
 import javax.annotation.Resource;
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;

@@ -20,7 +20,7 @@ import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.RulesNotConfiguredException;
 import org.generationcp.commons.ruleengine.service.RulesService;
-import org.generationcp.commons.service.impl.SeedSourceGenerator;
+import org.generationcp.commons.ruleengine.generator.SeedSourceGenerator;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.sample.SampleDTO;
@@ -30,6 +30,7 @@ import org.generationcp.middleware.manager.api.PedigreeDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.dataset.ObservationUnitUtils;
 import org.generationcp.middleware.util.TimerWatch;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -38,16 +39,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
-import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
+import org.generationcp.commons.ruleengine.naming.rules.EnforceUniqueNameRule;
+import org.generationcp.commons.ruleengine.naming.rules.NamingRuleExecutionContext;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
+import org.generationcp.commons.ruleengine.naming.service.ProcessCodeService;
+import org.generationcp.commons.pojo.AdvancingSource;
+import org.generationcp.commons.pojo.AdvancingSourceList;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
+
+import static org.generationcp.middleware.service.api.dataset.ObservationUnitUtils.fromMeasurementRow;
 
 @Service
 @Transactional
@@ -179,9 +182,11 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 		
 		// set the seed source string for the new Germplasm
-		final String seedSource =
-				this.seedSourceGenerator.generateSeedSource(workbook, source.getTrialInstanceNumber(), selectionNumberToApply,
-						source.getPlotNumber(), workbook.getStudyName(), plantNo);
+		final String seedSource = this.seedSourceGenerator
+			.generateSeedSource(workbook.getStudyDetails().getId(), workbook.getTrialDatasetId(),
+				fromMeasurementRow(workbook.getTrialObservationByTrialInstanceNo(Integer.valueOf(source.getTrialInstanceNumber()))),
+				workbook.getConditions(), selectionNumberToApply, source.getPlotNumber(), workbook.getStudyName(), plantNo);
+
 		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
 						, source.getGermplasm().getCross(), seedSource,

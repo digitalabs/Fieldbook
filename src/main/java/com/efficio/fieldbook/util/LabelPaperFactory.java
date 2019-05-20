@@ -8,7 +8,7 @@ import com.efficio.fieldbook.web.label.printing.template.Paper3by7A4;
 import com.efficio.fieldbook.web.label.printing.template.Paper3by7Letter;
 import com.efficio.fieldbook.web.label.printing.template.Paper3by8A4;
 import com.efficio.fieldbook.web.label.printing.template.Paper3by8Letter;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 
 public class LabelPaperFactory {
 

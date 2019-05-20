@@ -3,11 +3,11 @@ package com.efficio.fieldbook.web.naming.impl;
 
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
+import org.generationcp.commons.ruleengine.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
+import org.generationcp.commons.pojo.AdvancingSource;
+import org.generationcp.commons.pojo.AdvancingSourceList;
 import com.google.common.collect.Lists;
 import junit.framework.Assert;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -15,8 +15,9 @@ import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.service.RulesService;
-import org.generationcp.commons.service.impl.SeedSourceGenerator;
+import org.generationcp.commons.ruleengine.generator.SeedSourceGenerator;
 import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
@@ -26,6 +27,7 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.dataset.ObservationUnitRow;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -39,6 +41,8 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static org.mockito.ArgumentMatchers.anyInt;
 
 public class NamingConventionServiceImplTest {
 
@@ -139,6 +143,7 @@ public class NamingConventionServiceImplTest {
 		advancingSource.setStudyName("Test One");
 		advancingSource.setSeason("201412");
 		advancingSource.setCurrentMaxSequence(0);
+		advancingSource.setTrialInstanceNumber("1");
 		rows.getRows().add(advancingSource);
 
 		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace(Matchers.eq("naming"))).thenReturn(new String[] {"RootNameGenerator"});
@@ -146,9 +151,12 @@ public class NamingConventionServiceImplTest {
 		final String ruleGeneratedName2 = sourceGermplasmName.getNval() + "-B2";
 		Mockito.when(this.rulesService.runRules(Matchers.any(RuleExecutionContext.class))).thenReturn(Lists.newArrayList(ruleGeneratedName1, ruleGeneratedName2));
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
-		Mockito.when(
-				this.seedSourceGenerator.generateSeedSource(Matchers.any(Workbook.class), ArgumentMatchers.<String>isNull(),
-						Matchers.anyString(), ArgumentMatchers.<String>isNull(), Matchers.anyString(), ArgumentMatchers.<String>isNull())).thenReturn(testSeedSource);
+		Mockito.when(this.seedSourceGenerator
+			.generateSeedSource(ArgumentMatchers.<Integer>isNull(), ArgumentMatchers.<Integer>isNull(),
+				ArgumentMatchers.<ObservationUnitRow>any(),
+				ArgumentMatchers.<List<MeasurementVariable>>isNull(),
+				ArgumentMatchers.anyString(), ArgumentMatchers.<String>isNull(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.<String>isNull())).thenReturn(testSeedSource);
 
 
 		final AdvancingStudy advancingParameters = new AdvancingStudy();
@@ -217,7 +225,7 @@ public class NamingConventionServiceImplTest {
         methodList.add(breedingMethod);
 
         Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Matchers.anyBoolean())).thenReturn(methodList);
-		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Matchers.anyInt())).thenReturn(workbook);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(anyInt())).thenReturn(workbook);
 
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
@@ -261,6 +269,7 @@ public class NamingConventionServiceImplTest {
         as1.setStudyName("Test One");
         as1.setSeason("201412");
         as1.setCurrentMaxSequence(0);
+        as1.setTrialInstanceNumber("1");
         rows.getRows().add(as1);
 
         Mockito.when(this.advancingSourceListFactory.createAdvancingSourceList(Matchers.isA(Workbook.class),
@@ -272,9 +281,12 @@ public class NamingConventionServiceImplTest {
         Mockito.when(this.rulesService.runRules(Matchers.any(RuleExecutionContext.class))).thenReturn(
                 Lists.newArrayList(ruleGeneratedName));
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
-		Mockito.when(
-				this.seedSourceGenerator.generateSeedSource(Matchers.any(Workbook.class), ArgumentMatchers.<String>isNull(),
-					ArgumentMatchers.<String>isNull(), ArgumentMatchers.<String>isNull(), Matchers.anyString(), ArgumentMatchers.<String>isNull())).thenReturn(testSeedSource);
+		Mockito.when(this.seedSourceGenerator
+			.generateSeedSource(ArgumentMatchers.<Integer>isNull(), ArgumentMatchers.<Integer>isNull(),
+				ArgumentMatchers.<ObservationUnitRow>isNull(),
+				ArgumentMatchers.<List<MeasurementVariable>>isNull(),
+				ArgumentMatchers.<String>isNull(), ArgumentMatchers.<String>isNull(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.<String>isNull())).thenReturn(testSeedSource);
 
         final AdvancingStudy info = new AdvancingStudy();
         info.setMethodChoice("1");

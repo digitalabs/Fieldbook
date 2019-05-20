@@ -52,7 +52,7 @@ import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 
 import junit.framework.Assert;
 

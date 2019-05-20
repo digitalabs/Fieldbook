@@ -24,7 +24,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 
 public class KsuCsvExportStudyServiceImplTest {
 	private static final String CSV_EXT = ".csv";

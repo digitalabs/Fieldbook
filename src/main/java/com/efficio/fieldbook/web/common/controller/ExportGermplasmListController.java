@@ -6,7 +6,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.ExportGermplasmListForm;
 import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.InstallationDirectoryUtil;

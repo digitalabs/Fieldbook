@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.csvreader.CsvWriter;
 import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 
 @Service
 @Transactional

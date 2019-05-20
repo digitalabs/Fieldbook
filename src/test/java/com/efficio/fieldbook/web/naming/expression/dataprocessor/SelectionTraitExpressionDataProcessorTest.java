@@ -2,7 +2,7 @@ package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import org.generationcp.commons.pojo.AdvancingSource;
 import com.google.common.collect.Lists;
 import junit.framework.Assert;
 import org.generationcp.commons.spring.util.ContextUtil;

@@ -23,7 +23,7 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import com.google.common.collect.Maps;
 
 /**

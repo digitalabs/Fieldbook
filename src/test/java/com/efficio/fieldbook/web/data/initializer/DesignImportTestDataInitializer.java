@@ -72,6 +72,7 @@ public class DesignImportTestDataInitializer {
 		final DesignHeaderItem siteNameDesignHeaderItem =
 			createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.SITE_NAME.getId(), "SITE_NAME", 1,
 				CHARACTER_VARIABLE);
+		siteNameDesignHeaderItem.setName("SITE_NAME_LOCAL_NAME");
 		trialEvironmentItems.add(siteNameDesignHeaderItem);
 
 		final List<DesignHeaderItem> germplasmItems = new ArrayList<>();
@@ -100,7 +101,7 @@ public class DesignImportTestDataInitializer {
 		final Map<Integer, List<String>> csvData = new HashMap<>();
 
 		// The first row is the header
-		csvData.put(0, Lists.newArrayList("TRIAL_INSTANCE", "SITE_NAME", "ENTRY_NO", "PLOT_NO", "REP_NO", "BLOCK_NO", "AflavER_1_5"));
+		csvData.put(0, Lists.newArrayList("TRIAL_INSTANCE", "SITE_NAME_LOCAL_NAME", "ENTRY_NO", "PLOT_NO", "REP_NO", "BLOCK_NO", "AflavER_1_5"));
 
 		int plotNo = startingPlotNo;
 		int startingRowIndex = 1;

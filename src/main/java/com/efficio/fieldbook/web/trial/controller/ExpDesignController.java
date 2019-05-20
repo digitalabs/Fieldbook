@@ -143,8 +143,8 @@ public class ExpDesignController extends BaseTrialController {
 						this.userSelection.getTreatmentFactors(), null, null, this.userSelection.getStudyConditions(),
 						this.contextUtil.getCurrentProgramUUID(), description, startDate, endDate, studyUpdate);
 
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID());
-		this.userSelection.setTemporaryWorkbook(workbook);
+		final Workbook temporaryWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID());
+		this.userSelection.setTemporaryWorkbook(temporaryWorkbook);
 
 		if (this.userSelection.getWorkbook() != null) {
 			final int persistedNumberOfEnvironments = this.userSelection.getWorkbook().getTotalNumberOfInstances();
@@ -209,17 +209,17 @@ public class ExpDesignController extends BaseTrialController {
 						}
 
 						final List<MeasurementRow> measurementRows =
-								designService.generateDesign(germplasmList, expDesign, workbook.getConditions(), workbook.getFactors(),
-										workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
+							designService.generateDesign(germplasmList, expDesign, temporaryWorkbook.getConditions(), temporaryWorkbook.getFactors(),
+									temporaryWorkbook.getGermplasmFactors(), temporaryWorkbook.getVariates(),temporaryWorkbook.getTreatmentFactors());
 
 						this.userSelection.setExpDesignParams(expDesign);
 						this.userSelection.setExpDesignVariables(designService.getExperimentalDesignVariables(expDesign));
 
-						workbook.setObservations(this.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection,
+						temporaryWorkbook.setObservations(this.combineNewlyGeneratedMeasurementsWithExisting(measurementRows, this.userSelection,
 								expDesign.isHasMeasurementData()));
 						// should have at least 1 record
 						final List<MeasurementVariable> currentNewFactors = new ArrayList<>();
-						final List<MeasurementVariable> oldFactors = workbook.getFactors();
+						final List<MeasurementVariable> oldFactors = temporaryWorkbook.getFactors();
 						final List<MeasurementVariable> deletedFactors = new ArrayList<>();
 						if (measurementRows != null && !measurementRows.isEmpty()) {
 							final List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
@@ -227,11 +227,11 @@ public class ExpDesignController extends BaseTrialController {
 							for (final MeasurementData measurementData : dataRow.getDataList()) {
 								measurementDatasetVariables.add(measurementData.getMeasurementVariable());
 								if (measurementData.getMeasurementVariable() != null && measurementData.getMeasurementVariable()
-										.isFactor()) {
+									.isFactor()) {
 									currentNewFactors.add(measurementData.getMeasurementVariable());
 								}
 							}
-							workbook.setMeasurementDatasetVariables(measurementDatasetVariables);
+							temporaryWorkbook.setMeasurementDatasetVariables(measurementDatasetVariables);
 						}
 						for (final MeasurementVariable var : oldFactors) {
 							// we do the cleanup of old variables
@@ -244,7 +244,7 @@ public class ExpDesignController extends BaseTrialController {
 							oldFactors.remove(var);
 						}
 
-						workbook.setExpDesignVariables(designService.getRequiredDesignVariables());
+						temporaryWorkbook.setExpDesignVariables(designService.getRequiredDesignVariables());
 
 						if (designService.requiresBreedingViewLicence() && this.designLicenseUtil.isExpiringWithinThirtyDays(bvDesignLicenseInfo)) {
 							final int daysBeforeExpiration = Integer.parseInt(bvDesignLicenseInfo.getStatus().getLicense().getExpiryDays());

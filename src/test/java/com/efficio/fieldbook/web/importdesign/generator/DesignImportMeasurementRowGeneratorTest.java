@@ -61,8 +61,6 @@ public class DesignImportMeasurementRowGeneratorTest {
 	private static final String TEST_VARIABLE_DESCRIPTION = "TEST DESCRIPTION";
 	private static final String TEST_VARIABLE_NAME = "TEST VARIABLE";
 
-	public static final int AFLAVER_5_ID = 51510;
-	public static final String AFLAVER_1_5_NAME  = "AflavER_1_5";
 
 	private UserSelection userSelection;
 
@@ -372,9 +370,9 @@ public class DesignImportMeasurementRowGeneratorTest {
 	public void testGetAliasFromMappedHeaders () {
 
 		final StandardVariable standardVariable = new StandardVariable();
-		standardVariable.setId(AFLAVER_5_ID);
-		standardVariable.setName(TEST_VARIABLE_NAME);
+		standardVariable.setId(DesignImportTestDataInitializer.AFLAVER_5_ID);
 		standardVariable.setPhenotypicType(PhenotypicType.VARIATE);
+		standardVariable.setName(TEST_VARIABLE_NAME);
 		standardVariable.setDescription(TEST_VARIABLE_DESCRIPTION);
 		standardVariable.setProperty(new Term(TEST_PROPERTY_TERMID, TEST_PROPERTY_NAME, ""));
 		standardVariable.setScale(new Term(TEST_SCALE_TERMID, TEST_SCALE_NAME, ""));
@@ -382,7 +380,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 		standardVariable.setDataType(new Term(TEST_DATATYPE_TERMID, TEST_DATATYPE_DESCRIPTION, ""));
 
 		final String alias = this.generator.getAliasFromMappedHeaders(standardVariable);
-		Assert.assertEquals(AFLAVER_1_5_NAME, alias);
+		Assert.assertEquals(DesignImportTestDataInitializer.AFLAVER_5_NAME, alias);
 	}
 
 

@@ -413,16 +413,12 @@ public class DesignImportServiceImpl implements DesignImportService {
 		final Set<MeasurementVariable> measurementVariables = new HashSet<>();
 
 		for (final DesignHeaderItem designHeaderItem : mappedHeaders.get(phenotypicType)) {
-			final MeasurementVariable measurementVariable = this.createMeasurementVariable(designHeaderItem.getVariable());
+			final MeasurementVariable measurementVariable = ExpDesignUtil.convertStandardVariableToMeasurementVariable(designHeaderItem.getVariable(), Operation.ADD, this.fieldbookService);
 			measurementVariable.setName(designHeaderItem.getName());
 			measurementVariables.add(measurementVariable);
 		}
 
 		return measurementVariables;
-	}
-
-	protected MeasurementVariable createMeasurementVariable(final StandardVariable standardVariable) {
-		return ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, this.fieldbookService);
 	}
 
 	protected Map<Integer, StandardVariable> convertToStandardVariables(final List<MeasurementVariable> list,

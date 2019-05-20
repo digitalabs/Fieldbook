@@ -966,7 +966,10 @@ public class OpenTrialController extends BaseTrialController {
 		for (final DatasetDTO dataset : datasets) {
 			datasetIds.add(dataset.getDatasetId());
 		}
-		return this.sampleListService.getSampleLists(datasetIds);
+		if (!datasetIds.isEmpty()) {
+			return this.sampleListService.getSampleLists(datasetIds);
+		}
+		return null;
 	}
 
 }

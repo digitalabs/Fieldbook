@@ -160,6 +160,10 @@
 
 			datasetService.getDataset(subObservationSet.id).then(function (dataset) {
 				$scope.subObservationSet.dataset = dataset;
+				$scope.traitVariables = $scope.getVariables('TRAIT');
+				$scope.selectionVariables = $scope.getVariables('SELECTION_METHOD');
+				$scope.selectedVariables = $scope.getSelectedVariables();
+
 				if (!dataset.instances || !dataset.instances.length) {
 					return;
 				}

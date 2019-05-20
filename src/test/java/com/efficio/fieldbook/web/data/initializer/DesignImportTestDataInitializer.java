@@ -72,7 +72,6 @@ public class DesignImportTestDataInitializer {
 		final DesignHeaderItem siteNameDesignHeaderItem =
 			createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.SITE_NAME.getId(), "SITE_NAME", 1,
 				CHARACTER_VARIABLE);
-		siteNameDesignHeaderItem.setName("SITE_NAME_LOCAL_NAME");
 		trialEvironmentItems.add(siteNameDesignHeaderItem);
 
 		final List<DesignHeaderItem> germplasmItems = new ArrayList<>();

@@ -405,8 +405,9 @@
 			<div class="col-xs-12" ui-view="" ng-show="isSettingsTab"></div>
 			<div class="col-xs-12" ui-view="germplasm" ng-show="tabSelected==='germplasm'"></div>
 			<div class="col-xs-12" ui-view="environment" ng-show="tabSelected==='environment'"></div>
-			<div class="col-xs-12" ui-view="createMeasurements" ng-show="tabSelected==='createMeasurements'"></div>
-			<div class="col-xs-12" ui-view="editMeasurements" ng-show="tabSelected==='editMeasurements'"></div>
+			<!-- TODO: MARK FOR DELETE IBP-2689 -->
+			<!--<div class="col-xs-12" ui-view="createMeasurements" ng-show="tabSelected==='createMeasurements'"></div>
+			<div class="col-xs-12" ui-view="editMeasurements" ng-show="tabSelected==='editMeasurements'"></div>-->
 			<div class="col-xs-12" ui-view="subObservationTab" ng-show="tabSelected.indexOf('/subObservationTabs/') === 0"></div>
 			<div class="col-xs-12" ng-repeat="advancetab in advanceTabsData track by $index" id="{{advancetab.id}}"
 				 ng-show="tabSelected===advancetab.name">

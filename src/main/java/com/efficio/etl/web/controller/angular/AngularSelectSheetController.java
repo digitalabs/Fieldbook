@@ -1,18 +1,13 @@
 package com.efficio.etl.web.controller.angular;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.service.impl.ETLServiceImpl;
+import com.efficio.etl.web.AbstractBaseETLController;
+import com.efficio.etl.web.bean.ConsolidatedStepForm;
+import com.efficio.etl.web.bean.RowDTO;
+import com.efficio.etl.web.bean.SheetDTO;
+import com.efficio.etl.web.bean.StudyDetailsForm;
+import com.efficio.etl.web.bean.UserSelection;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -43,14 +38,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.service.impl.ETLServiceImpl;
-import com.efficio.etl.web.AbstractBaseETLController;
-import com.efficio.etl.web.bean.ConsolidatedStepForm;
-import com.efficio.etl.web.bean.RowDTO;
-import com.efficio.etl.web.bean.SheetDTO;
-import com.efficio.etl.web.bean.StudyDetailsForm;
-import com.efficio.etl.web.bean.UserSelection;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequestMapping(AngularSelectSheetController.URL)
@@ -64,7 +62,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	private static final int FIELDBOOK_DEFAULT_STUDY_ID = 1;
 
 	private static final SimpleDateFormat DATE_PICKER_FORMAT = DateUtil
-			.getSimpleDateFormat(DateUtil.FRONTEND_DATE_FORMAT_2);
+		.getSimpleDateFormat(DateUtil.FRONTEND_DATE_FORMAT_2);
 	private static final SimpleDateFormat DB_FORMAT = DateUtil.getSimpleDateFormat(DateUtil.DATE_AS_NUMBER_FORMAT);
 	private static final String ADD_TO_NEW_STUDY = "add.to.new.study";
 	private static final String DESCRIPTION = "Description";
@@ -72,7 +70,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 	@Resource
 	private ETLService etlService;
-	
+
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
@@ -84,7 +82,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 	@Resource
 	private StudyDataManager studyDataManager;
-	
+
 	@Resource
 	private StudyPermissionValidator studyPermissionValidator;
 
@@ -113,23 +111,23 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		try {
 			for (final StudyDetails previousStudy : previousStudies) {
 				if (!StringUtils.isEmpty(previousStudy.getStartDate())) {
-						final Date date = AngularSelectSheetController.DB_FORMAT.parse(previousStudy.getStartDate());
-						previousStudy.setStartDate(AngularSelectSheetController.DATE_PICKER_FORMAT.format(date));
+					final Date date = AngularSelectSheetController.DB_FORMAT.parse(previousStudy.getStartDate());
+					previousStudy.setStartDate(AngularSelectSheetController.DATE_PICKER_FORMAT.format(date));
 				}
-	
+
 				if (!StringUtils.isEmpty(previousStudy.getEndDate())) {
-						final Date date = AngularSelectSheetController.DB_FORMAT.parse(previousStudy.getEndDate());
-						previousStudy.setEndDate(AngularSelectSheetController.DATE_PICKER_FORMAT.format(date));
+					final Date date = AngularSelectSheetController.DB_FORMAT.parse(previousStudy.getEndDate());
+					previousStudy.setEndDate(AngularSelectSheetController.DATE_PICKER_FORMAT.format(date));
 				}
 			}
 
 		} catch (final ParseException e) {
 			AngularSelectSheetController.LOG.error(e.getMessage(), e);
 		}
-		
+
 		if ((this.userSelection.getStudyId() == null || this.userSelection.getStudyId() == 0
-				|| this.userSelection.getStudyId() == AngularSelectSheetController.FIELDBOOK_DEFAULT_STUDY_ID)
-				&& !StringUtils.isEmpty(this.userSelection.getStudyName())) {
+			|| this.userSelection.getStudyId() == AngularSelectSheetController.FIELDBOOK_DEFAULT_STUDY_ID)
+			&& !StringUtils.isEmpty(this.userSelection.getStudyName())) {
 			this.addStudyDetails(previousStudies);
 		} else {
 			try {
@@ -137,7 +135,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 					final StudyDetails newStudy = new StudyDetails();
 					newStudy.setId(0);
 					newStudy.setLabel(
-							this.etlService.convertMessage(new Message(AngularSelectSheetController.ADD_TO_NEW_STUDY)));
+						this.etlService.convertMessage(new Message(AngularSelectSheetController.ADD_TO_NEW_STUDY)));
 					previousStudies.add(newStudy);
 				}
 			} catch (final IOException e) {
@@ -170,7 +168,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	}
 
 	private boolean populateStudyDetailsIfFieldbookFormat(final List<StudyDetails> previousStudies, final Model model)
-			throws IOException {
+		throws IOException {
 		boolean addedNewStudy = false;
 		// check if fieldbook format by checking 1st sheet
 		boolean inFieldbookFormat = false;
@@ -179,14 +177,14 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			final Sheet sheet1 = wb.getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
 			final Sheet sheet2 = wb.getSheetAt(ETLServiceImpl.OBSERVATION_SHEET);
 			if (sheet1 != null && AngularSelectSheetController.DESCRIPTION.equalsIgnoreCase(sheet1.getSheetName()) && sheet2 != null
-					&& AngularSelectSheetController.OBSERVATION.equalsIgnoreCase(sheet2.getSheetName())) {
+				&& AngularSelectSheetController.OBSERVATION.equalsIgnoreCase(sheet2.getSheetName())) {
 				inFieldbookFormat = true;
 			}
 			if (inFieldbookFormat) {
 				this.userSelection.setSelectedSheet(ETLServiceImpl.OBSERVATION_SHEET);
 				this.userSelection.setHeaderRowIndex(0);
 				final List<String> fileHeaders = this.etlService.retrieveColumnHeaders(wb, this.userSelection,
-						Boolean.FALSE);
+					Boolean.FALSE);
 				if (fileHeaders != null) {
 					this.userSelection.setHeaderRowDisplayText(StringUtils.join(fileHeaders, ','));
 				}
@@ -207,14 +205,14 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 						// is used for user-defined study name
 						studyDetails.setId(AngularSelectSheetController.FIELDBOOK_DEFAULT_STUDY_ID);
 						studyDetails.setLabel(this.etlService
-								.convertMessage(new Message(AngularSelectSheetController.ADD_TO_NEW_STUDY)));
+							.convertMessage(new Message(AngularSelectSheetController.ADD_TO_NEW_STUDY)));
 						// format dates
 						final String oldFormat = "yyyyMMdd";
 						final String newFormat = "MM/dd/yyyy";
 						studyDetails.setStartDate(
-								ETLServiceImpl.formatDate(studyDetails.getStartDate(), oldFormat, newFormat));
+							ETLServiceImpl.formatDate(studyDetails.getStartDate(), oldFormat, newFormat));
 						studyDetails
-								.setEndDate(ETLServiceImpl.formatDate(studyDetails.getEndDate(), oldFormat, newFormat));
+							.setEndDate(ETLServiceImpl.formatDate(studyDetails.getEndDate(), oldFormat, newFormat));
 						// add study to list
 						previousStudies.add(studyDetails);
 						addedNewStudy = true;
@@ -231,7 +229,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 						this.userSelection.setStudyEndDate(studyDetails.getEndDate());
 						this.userSelection.setStudyUpdate(studyDetails.getStudyUpdate());
 						this.userSelection.setStudyType(
-								studyDetails.getStudyType() == null ? "" : studyDetails.getStudyType().getName());
+							studyDetails.getStudyType() == null ? "" : studyDetails.getStudyType().getName());
 						// update form
 						final ConsolidatedStepForm form = this.getSelectRowsForm();
 						model.addAttribute("form", form);
@@ -251,9 +249,10 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	// added support for parameterized sheet index
 	@ResponseBody
 	@RequestMapping(value = "/displayRow", params = "list=true")
-	public List<RowDTO> getUpdatedRowDisplayHTML(@RequestParam(value = "lastRowIndex") final Integer lastRowIndex,
-			@RequestParam(value = "startRowIndex", required = false) final Integer startRow,
-			@RequestParam(value = "selectedSheetIndex") final Integer selectedSheetIndex) {
+	public List<RowDTO> getUpdatedRowDisplayHTML(
+		@RequestParam(value = "lastRowIndex") final Integer lastRowIndex,
+		@RequestParam(value = "startRowIndex", required = false) final Integer startRow,
+		@RequestParam(value = "selectedSheetIndex") final Integer selectedSheetIndex) {
 
 		try {
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
@@ -271,7 +270,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			}
 
 			return this.etlService.retrieveRowInformation(workbook, selectedSheetIndex, finalStartRow,
-					finalLastRowIndex, AngularSelectSheetController.MAX_DISPLAY_CHARACTER_PER_ROW);
+				finalLastRowIndex, AngularSelectSheetController.MAX_DISPLAY_CHARACTER_PER_ROW);
 
 		} catch (final IOException e) {
 			AngularSelectSheetController.LOG.error(e.getMessage(), e);
@@ -283,7 +282,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	@ResponseBody
 	@RequestMapping(value = "/displayRow", params = "count=true")
 	public Map<String, Object> getMaximumRowDisplayCount(
-			@RequestParam(value = "selectedSheetIndex") final Integer selectedSheetIndex) {
+		@RequestParam(value = "selectedSheetIndex") final Integer selectedSheetIndex) {
 		final Map<String, Object> returnValue = new HashMap<>();
 		try {
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
@@ -300,11 +299,12 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public Map<String, Object> processForm(@RequestBody final ConsolidatedStepForm form,
-			final HttpServletRequest request) throws IOException, WorkbookParserException {
-		List<Message> messageList = this.validate(form);
+	public Map<String, Object> processForm(
+		@RequestBody final ConsolidatedStepForm form,
+		final HttpServletRequest request) throws IOException, WorkbookParserException {
+		final List<Message> messageList = this.validate(form);
 
-		if(!messageList.isEmpty()) {
+		if (!messageList.isEmpty()) {
 			return this.wrapFormResult(this.etlService.convertMessageList(messageList));
 		}
 		// transfer form data to user selection object
@@ -325,7 +325,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			final List<String> errors = new ArrayList<>();
 			Map<String, List<Message>> mismatchErrors = null;
 			final boolean isMeansDataImport = this.userSelection.getDatasetType() != null
-					&& this.userSelection.getDatasetType() == DatasetType.MEANS_DATA;
+				&& this.userSelection.getDatasetType() == DatasetType.MEANS_DATA;
 
 			try {
 				// check if the selected dataset still has no mapped headers
@@ -364,8 +364,8 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	}
 
 	List<Message> validate(final ConsolidatedStepForm form) throws IOException, WorkbookParserException {
-		List<Message> messages = validateFormInput(form);
-		if(!messages.isEmpty()) {
+		final List<Message> messages = this.validateFormInput(form);
+		if (!messages.isEmpty()) {
 			return messages;
 		}
 		return this.validateConditions();
@@ -381,14 +381,15 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 					.parseWorkbookDescriptionSheet(wb, this.contextUtil.getCurrentIbdbUserId());
 
 				final List<String> variablesWithWrongPSM = new ArrayList<>();
-				for(MeasurementVariable measurementVariable: referenceWorkbook.getConditions()) {
-					Set<StandardVariable> standardVariables = this.ontologyDataManager.findStandardVariablesByNameOrSynonym(measurementVariable.getName(),
+				for (final MeasurementVariable measurementVariable : referenceWorkbook.getConditions()) {
+					final Set<StandardVariable> standardVariables = this.ontologyDataManager.findStandardVariablesByNameOrSynonym(
+						measurementVariable.getName(),
 						this.contextUtil.getCurrentProgramUUID());
-					if(!CollectionUtils.isEmpty(standardVariables) && this.variableHasWrongPSM(measurementVariable, standardVariables)) {
+					if (!CollectionUtils.isEmpty(standardVariables) && this.variableHasWrongPSM(measurementVariable, standardVariables)) {
 						variablesWithWrongPSM.add(measurementVariable.getName());
 					}
 				}
-				if(!variablesWithWrongPSM.isEmpty()) {
+				if (!variablesWithWrongPSM.isEmpty()) {
 					messageList.add(new Message("error.variable.wrong.psm", StringUtils.join(variablesWithWrongPSM, ", ")));
 				}
 			}
@@ -398,7 +399,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 	private boolean variableHasWrongPSM(final MeasurementVariable measurementVariable, final Set<StandardVariable> standardVariables) {
 		//standardVariables set contains only one element.
-		for(StandardVariable variable: standardVariables) {
+		for (final StandardVariable variable : standardVariables) {
 			return (!variable.getProperty().getName().equalsIgnoreCase(measurementVariable.getProperty())
 				|| !variable.getMethod().getName().equalsIgnoreCase(measurementVariable.getMethod())
 				|| !variable.getScale().getName().equalsIgnoreCase(measurementVariable.getScale()));
@@ -416,21 +417,21 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		try {
 			if (!StringUtils.isEmpty(startDateString)) {
 				// check if date is later than current date
-					startDate = AngularSelectSheetController.DATE_PICKER_FORMAT.parse(startDateString);
-					if (startDate.after(new Date())) {
-						messageList.add(new Message("error.start.is.after.current.date"));
-					}
+				startDate = AngularSelectSheetController.DATE_PICKER_FORMAT.parse(startDateString);
+				if (startDate.after(new Date())) {
+					messageList.add(new Message("error.start.is.after.current.date"));
+				}
 			}
 
 			if (!StringUtils.isEmpty(endDateString)) {
 				endDate = AngularSelectSheetController.DATE_PICKER_FORMAT.parse(endDateString);
-				
+
 				if (startDate == null) {
 					messageList.add(new Message("error.date.startdate.required"));
 				} else if (endDate.before(startDate)) {
 					messageList.add(new Message("error.date.enddate.invalid"));
 				}
-				
+
 			}
 
 		} catch (final ParseException e) {
@@ -439,19 +440,20 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		return messageList;
 	}
 
-	private Map<String, List<Message>> checkForMismatchedHeaders(final List<String> errors,
-			Map<String, List<Message>> mismatchErrors, final boolean isMeansDataImport) {
+	private Map<String, List<Message>> checkForMismatchedHeaders(
+		final List<String> errors,
+		final Map<String, List<Message>> mismatchErrors, final boolean isMeansDataImport) {
 		try {
 			// TODO : refactor validation logic to avoid duplication with
 			// ImportObservationsController
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService
-					.retrieveAndSetProjectOntology(this.userSelection, isMeansDataImport);
+				.retrieveAndSetProjectOntology(this.userSelection, isMeansDataImport);
 
 			final List<MeasurementVariable> studyHeaders = importData.getFactors();
 
 			final List<String> fileHeaders = this.etlService.retrieveColumnHeaders(workbook, this.userSelection,
-					this.etlService.headersContainsObsUnitId(importData));
+				this.etlService.headersContainsObsUnitId(importData));
 
 			return this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, isMeansDataImport);
 		} catch (final Exception e) {
@@ -471,7 +473,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		consolidatedForm.setHeaderRowIndex(this.userSelection.getHeaderRowIndex());
 		consolidatedForm.setHeaderRowDisplayText(this.userSelection.getHeaderRowDisplayText());
 		consolidatedForm.setDatasetType(this.userSelection.getDatasetType() != null
-				? this.userSelection.getDatasetType() : DatasetType.PLOT_DATA);
+			? this.userSelection.getDatasetType() : DatasetType.PLOT_DATA);
 
 		final StudyDetailsForm studyDetailsForm = new StudyDetailsForm();
 		studyDetailsForm.setStudyName(this.userSelection.getStudyName());
@@ -482,7 +484,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		studyDetailsForm.setStudyType(this.userSelection.getStudyType());
 		studyDetailsForm.setStudyId(this.userSelection.getStudyId());
 		studyDetailsForm
-				.setStudyType(this.userSelection.getStudyType() == null ? "" : this.userSelection.getStudyType());
+			.setStudyType(this.userSelection.getStudyType() == null ? "" : this.userSelection.getStudyType());
 
 		consolidatedForm.setStudyDetails(studyDetailsForm);
 

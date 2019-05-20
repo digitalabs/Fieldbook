@@ -1,12 +1,8 @@
 
 package com.efficio.etl.web.controller.rest;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.efficio.etl.web.bean.VariableDTO;
+import com.efficio.etl.web.util.AppConstants;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.ontology.DataType;
@@ -28,9 +24,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.efficio.etl.web.bean.VariableDTO;
-import com.efficio.etl.web.util.AppConstants;
-import sun.text.resources.cldr.ss.FormatData_ss;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StandardVariableRESTControllerTest {
@@ -56,7 +54,7 @@ public class StandardVariableRESTControllerTest {
 
 		final List<Variable> expectedPlotDataVariables = this.createVariablesTestData(DatasetType.PLOT_DATA);
 		Mockito.doReturn(expectedPlotDataVariables).when(this.ontologyVariableDataManager)
-				.getWithFilter(Matchers.any(VariableFilter.class));
+			.getWithFilter(Matchers.any(VariableFilter.class));
 
 		final List<VariableDTO> plotDataVariables = this.standardVariableRESTController.retrieveOntologyVariables(DatasetType.PLOT_DATA);
 		Assert.assertNotNull(plotDataVariables);
@@ -83,29 +81,30 @@ public class StandardVariableRESTControllerTest {
 		int scaleId = 0;
 		int methodId = 0;
 		variables.add(this.createVariableTestData(++variableId, ++propertyId, ++scaleId, ++methodId,
-				Arrays.asList(new VariableType[] {VariableType.ENVIRONMENT_DETAIL})));
+			Arrays.asList(new VariableType[] {VariableType.ENVIRONMENT_DETAIL})));
 		variables.add(this.createVariableTestData(++variableId, ++propertyId, ++scaleId, ++methodId,
-				Arrays.asList(new VariableType[] {VariableType.GERMPLASM_DESCRIPTOR})));
+			Arrays.asList(new VariableType[] {VariableType.GERMPLASM_DESCRIPTOR})));
 		variables.add(this.createVariableTestData(++variableId, ++propertyId, ++scaleId, ++methodId,
-				Arrays.asList(new VariableType[] {VariableType.EXPERIMENTAL_DESIGN})));
+			Arrays.asList(new VariableType[] {VariableType.EXPERIMENTAL_DESIGN})));
 		if (DatasetType.MEANS_DATA == datasetTypeId) {
 			variables.add(this.createVariableTestData(++variableId, ++propertyId, ++scaleId, ++methodId,
-					Arrays.asList(new VariableType[] {VariableType.ANALYSIS})));
+				Arrays.asList(new VariableType[] {VariableType.ANALYSIS})));
 		} else {
 			variables.add(this.createVariableTestData(++variableId, ++propertyId, ++scaleId, ++methodId,
-					Arrays.asList(new VariableType[] {VariableType.TRAIT})));
+				Arrays.asList(new VariableType[] {VariableType.TRAIT})));
 			variables.add(this.createVariableTestData(++variableId, ++propertyId, ++scaleId, ++methodId,
-					Arrays.asList(new VariableType[] {VariableType.STUDY_CONDITION})));
+				Arrays.asList(new VariableType[] {VariableType.STUDY_CONDITION})));
 			variables.add(this.createVariableTestData(++variableId, ++propertyId, ++scaleId, ++methodId,
-					Arrays.asList(new VariableType[] {VariableType.STUDY_CONDITION})));
+				Arrays.asList(new VariableType[] {VariableType.STUDY_CONDITION})));
 			variables.add(this.createVariableTestData(++variableId, ++propertyId, ++scaleId, ++methodId,
-					Arrays.asList(new VariableType[] {VariableType.SELECTION_METHOD})));
+				Arrays.asList(new VariableType[] {VariableType.SELECTION_METHOD})));
 		}
 		return variables;
 	}
 
-	private Variable createVariableTestData(final int id, final int propertyId, final int scaleId, final int methodId,
-			final List<VariableType> variableTypes) {
+	private Variable createVariableTestData(
+		final int id, final int propertyId, final int scaleId, final int methodId,
+		final List<VariableType> variableTypes) {
 		final Variable variable = new Variable();
 		variable.setId(id);
 		variable.setName("VARIABLE-" + id);
@@ -193,7 +192,7 @@ public class StandardVariableRESTControllerTest {
 
 		final List<Variable> expectedPlotDataVariables = this.createVariablesTestData(DatasetType.MEANS_DATA);
 		Mockito.doReturn(expectedPlotDataVariables).when(this.ontologyVariableDataManager)
-				.getWithFilter(Matchers.any(VariableFilter.class));
+			.getWithFilter(Matchers.any(VariableFilter.class));
 
 		final List<VariableDTO> plotDataVariables = this.standardVariableRESTController.retrieveOntologyVariables(DatasetType.MEANS_DATA);
 		Assert.assertNotNull(plotDataVariables);

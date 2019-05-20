@@ -393,8 +393,8 @@ public class OpenTrialController extends BaseTrialController {
 	long getGermplasmListChecksSize(final int germplasmListId) {
 		final List<ValueReference> entryTypes = this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true);
 		final List<Integer> checkEntryTypeIds = new ArrayList<>();
-		for(final ValueReference entryType: entryTypes) {
-			if(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() != entryType.getId()) {
+		for (final ValueReference entryType : entryTypes) {
+			if (SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() != entryType.getId()) {
 				checkEntryTypeIds.add(entryType.getId());
 			}
 		}

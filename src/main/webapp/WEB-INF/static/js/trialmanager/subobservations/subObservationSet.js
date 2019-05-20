@@ -21,6 +21,7 @@
 			$scope.tableLoadedPromise = new Promise(function (resolve) {
 				tableLoadedResolve = resolve;
 			});
+			$scope.hasInstances = false;
 
 			$scope.toggleSectionBatchAction = false;
 			$scope.hasVariableFilter = false;
@@ -165,16 +166,15 @@
 				$scope.selectedVariables = $scope.getSelectedVariables();
 
 				if (!dataset.instances || !dataset.instances.length) {
+					$scope.hasInstances = false;
 					return;
 				}
+
+				$scope.hasInstances = true;
 				$scope.environments = [{
 					instanceNumber: null,
 					locationName: 'All environments'
 				}].concat(dataset.instances);
-
-				$scope.traitVariables = $scope.getVariables('TRAIT');
-				$scope.selectionVariables = $scope.getVariables('SELECTION_METHOD');
-				$scope.selectedVariables = $scope.getSelectedVariables();
 
 				subObservationSet.hasPendingData = subObservationTab.hasPendingData = dataset.hasPendingData;
 				// we set pending view unless we are specifically told not to
@@ -263,9 +263,11 @@
 					studyAlias: variable.name
 				}).then(function () {
 					$scope.subObservationSet.dataset.variables.push(variable);
-					loadTable();
-					derivedVariableService.displayExecuteCalculateVariableMenu();
-					derivedVariableService.showWarningIfDependenciesAreMissing($scope.subObservationSet.dataset.datasetId, variable.id);
+					if ($scope.hasInstances) {
+						loadTable();
+						derivedVariableService.displayExecuteCalculateVariableMenu();
+						derivedVariableService.showWarningIfDependenciesAreMissing($scope.subObservationSet.dataset.datasetId, variable.id);
+					}
 				}, function (response) {
 					if (response.errors && response.errors.length) {
 						showErrorMessage('', response.errors[0].message);
@@ -281,8 +283,10 @@
 				promise.then(function (doContinue) {
 					if (doContinue) {
 						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, variableIds).then(function () {
-							reloadDataset();
-							derivedVariableService.displayExecuteCalculateVariableMenu();
+							if ($scope.hasInstances) {
+								reloadDataset();
+								derivedVariableService.displayExecuteCalculateVariableMenu();
+							}
 						}, function (response) {
 							if (response.errors && response.errors.length) {
 								showErrorMessage('', response.errors[0].message);
@@ -800,9 +804,11 @@
 			}
 
 			function adjustColumns() {
-				$timeout(function () {
-					table().columns.adjust();
-				});
+				if ($scope.hasInstances) {
+					$timeout(function () {
+						table().columns.adjust();
+					});
+				}
 			}
 
 			function addCellClickHandler() {

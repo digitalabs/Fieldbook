@@ -58,7 +58,7 @@ import com.efficio.fieldbook.web.common.util.DataMapUtil;
 import com.efficio.fieldbook.web.study.ImportStudyServiceFactory;
 import com.efficio.fieldbook.web.study.ImportStudyType;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 

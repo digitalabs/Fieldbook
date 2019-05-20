@@ -3,7 +3,7 @@ package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;

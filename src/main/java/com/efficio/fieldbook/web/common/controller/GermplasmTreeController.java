@@ -80,11 +80,11 @@ import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
+import org.generationcp.commons.pojo.AdvancingSource;
+import org.generationcp.commons.pojo.AdvancingSourceList;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
@@ -484,6 +484,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		// TODO add trial instance number
 		final Workbook workbook = this.userSelection.getWorkbook();
 		advancingSource.setStudyId(workbook.getStudyDetails().getId());
+		advancingSource.setEnvironmentDatasetId(workbook.getTrialDatasetId());
 		advancingSource.setConditions(workbook.getConditions());
 		advancingSource.setStudyType(workbook.getStudyDetails().getStudyType());
 		advancingSource.setBreedingMethodId(cross.getBreedingMethodId());

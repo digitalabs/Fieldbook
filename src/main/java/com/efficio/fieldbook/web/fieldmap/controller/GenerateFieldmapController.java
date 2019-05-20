@@ -21,7 +21,7 @@ import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.util.DateUtil;

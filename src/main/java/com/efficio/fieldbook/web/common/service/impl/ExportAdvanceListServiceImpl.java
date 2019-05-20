@@ -33,7 +33,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
 public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {

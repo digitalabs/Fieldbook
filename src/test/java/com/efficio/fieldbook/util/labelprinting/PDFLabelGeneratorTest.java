@@ -1,7 +1,7 @@
 package com.efficio.fieldbook.util.labelprinting;
 
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import com.google.zxing.common.BitMatrix;
 import org.junit.Assert;
 import org.junit.Test;

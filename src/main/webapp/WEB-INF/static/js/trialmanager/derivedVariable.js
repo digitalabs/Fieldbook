@@ -89,6 +89,12 @@
 					datasets.forEach(function (dataset) {
 						datasetIds.push(dataset.datasetId)
 					});
+
+					if (datasetIds.length === 0) {
+						derivedVariableService.isStudyHasCalculatedVariables = false;
+						return;
+					}
+
 					derivedVariableService.countCalculatedVariables(datasetIds).then(function (response) {
 						var count = response.headers('X-Total-Count');
 						var hasCalculatedVariable = parseInt(count) > 0;

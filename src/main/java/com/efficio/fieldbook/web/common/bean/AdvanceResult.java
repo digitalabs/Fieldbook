@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.common.bean;
 import java.util.List;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
 
 public class AdvanceResult {
 

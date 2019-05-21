@@ -14,7 +14,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 
 import com.efficio.fieldbook.web.common.service.ExportStudyService;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 
 public abstract class BaseExportStudyServiceImpl implements ExportStudyService {

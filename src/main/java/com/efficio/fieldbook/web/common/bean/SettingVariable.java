@@ -23,7 +23,7 @@ import org.generationcp.middleware.manager.Operation;
 import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.web.trial.bean.WidgetType;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 
 public class SettingVariable implements Serializable {
 

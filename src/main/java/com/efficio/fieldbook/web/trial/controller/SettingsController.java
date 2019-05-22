@@ -13,13 +13,16 @@ package com.efficio.fieldbook.web.trial.controller;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -661,4 +664,48 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		this.ontologyService = ontologyService;
 	}
 
+	/**
+	 *
+	 * @param userSelection
+	 */
+	protected void updateObservationsFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
+
+		final Map<Integer, MeasurementVariable> observationVariables = WorkbookUtil.createVariableList(
+			userSelection.getWorkbook().getFactors(), userSelection.getWorkbook().getVariates());
+
+		WorkbookUtil.deleteDeletedVariablesInObservations(observationVariables,
+			userSelection.getWorkbook().getObservations());
+
+		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
+
+		WorkbookUtil.updateTrialObservations(userSelection.getWorkbook(), userSelection.getTemporaryWorkbook());
+
+	}
+
+	/**
+	 * This will copy the factors, variates and experimental design variable
+	 * generated from importing a Custom Design to the Workbook that will be
+	 * saved.
+	 *
+	 * @param userSelection
+	 */
+	protected void addVariablesFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
+
+		if (userSelection.getExperimentalDesignVariables() != null) {
+
+			// Make sure that measurement variables are unique.
+			final Set<MeasurementVariable> unique = new HashSet<>(userSelection.getWorkbook().getFactors());
+			unique.addAll(userSelection.getTemporaryWorkbook().getFactors());
+			unique.addAll(userSelection.getExperimentalDesignVariables());
+			userSelection.getWorkbook().getFactors().clear();
+			userSelection.getWorkbook().getFactors().addAll(unique);
+
+			final Set<MeasurementVariable> makeUniqueVariates = new HashSet<>(
+				userSelection.getTemporaryWorkbook().getVariates());
+			makeUniqueVariates.addAll(userSelection.getWorkbook().getVariates());
+			userSelection.getWorkbook().getVariates().clear();
+			userSelection.getWorkbook().getVariates().addAll(makeUniqueVariates);
+
+		}
+	}
 }

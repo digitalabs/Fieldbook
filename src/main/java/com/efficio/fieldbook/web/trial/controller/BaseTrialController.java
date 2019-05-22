@@ -857,7 +857,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected void addMeasurementVariablesToTrialObservationIfNecessary(
-		final EnvironmentData environmentData, final Workbook workbook,
+		final List<Environment> environments, final Workbook workbook,
 		final List<MeasurementRow> trialObservations) {
 
 		if (trialObservations == null) {
@@ -867,8 +867,8 @@ public abstract class BaseTrialController extends SettingsController {
 		int x = 0;
 		for (final MeasurementRow row : trialObservations) {
 
-			final Map<String, String> trialDetailValues = environmentData.getEnvironments().get(x).getTrialDetailValues();
-			final Map<String, String> managementDetailValues = environmentData.getEnvironments().get(x).getManagementDetailValues();
+			final Map<String, String> trialDetailValues = environments.get(x).getTrialDetailValues();
+			final Map<String, String> managementDetailValues = environments.get(x).getManagementDetailValues();
 
 			for (final MeasurementVariable measurementVariable : workbook.getTrialVariables()) {
 				final MeasurementData data = row.getMeasurementData(measurementVariable.getTermId());

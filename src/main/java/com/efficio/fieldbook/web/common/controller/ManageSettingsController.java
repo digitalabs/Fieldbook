@@ -316,8 +316,9 @@ public class ManageSettingsController extends SettingsController {
 			settingsList = this.userSelection.getDeletedStudyLevelConditions();
 		} else if (mode == VariableType.EXPERIMENTAL_DESIGN.getId() || mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
 			settingsList = this.userSelection.getDeletedPlotLevelList();
-		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
-			settingsList = this.userSelection.getDeletedBaselineTraitsList();
+			// TODO: MARK FOR DELETE IBP-2689
+/*		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
+			settingsList = this.userSelection.getDeletedBaselineTraitsList();*/
 		} else if (mode == VariableType.STUDY_CONDITION.getId()) {
 			settingsList = this.userSelection.getDeletedStudyConditions();
 		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
@@ -370,12 +371,13 @@ public class ManageSettingsController extends SettingsController {
 			} else if (mode == VariableType.EXPERIMENTAL_DESIGN.getId() || mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getPlotsLevelList(), mode, variableId, true);
 				SettingsUtil.deleteVariableInSession(this.userSelection.getPlotsLevelList(), variableId);
-			} else if (mode == VariableType.TRAIT.getId()) {
+				// TODO: MARK FOR DELETE IBP-2689
+ 			/*} else if (mode == VariableType.TRAIT.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getBaselineTraitsList(), mode, variableId, true);
 				SettingsUtil.deleteVariableInSession(this.userSelection.getBaselineTraitsList(), variableId);
 			} else if (mode == VariableType.SELECTION_METHOD.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getSelectionVariates(), mode, variableId, true);
-				SettingsUtil.deleteVariableInSession(this.userSelection.getSelectionVariates(), variableId);
+				SettingsUtil.deleteVariableInSession(this.userSelection.getSelectionVariates(), variableId);*/
 			} else if (mode == VariableType.STUDY_CONDITION.getId() || mode == VariableType.STUDY_CONDITION.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getStudyConditions(), mode, variableId, true);
 				SettingsUtil.deleteVariableInSession(this.userSelection.getStudyConditions(), variableId);
@@ -410,10 +412,11 @@ public class ManageSettingsController extends SettingsController {
 		return "";
 	}
 
-	protected boolean checkModeAndHasMeasurementData(final int mode, final int variableId) {
+	// TODO: MARK FOR DELETE IBP-2689
+/*	protected boolean checkModeAndHasMeasurementData(final int mode, final int variableId) {
 		return mode == VariableType.TRAIT.getId() && this.userSelection.getMeasurementRowList() != null && !this.userSelection
 				.getMeasurementRowList().isEmpty() && this.hasMeasurementDataEntered(variableId);
-	}
+	}*/
 
 	@Override
 	public String getContentName() {

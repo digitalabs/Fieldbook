@@ -99,7 +99,8 @@ public class ManageSettingsControllerTest {
 		Mockito.verify(spyController).deleteVariable(VariableType.TRAIT.getId(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
 	}
 
-	@Test
+	// TODO: MARK FOR DELETE IBP-2689
+/*	@Test
 	public void testHasMeasurementFailScenario() throws Exception {
 		final ManageSettingsController spyController = this.initializeMockMeasurementRows();
 		Mockito.doReturn(false).when(spyController).hasMeasurementDataEntered(Matchers.anyInt());
@@ -108,14 +109,15 @@ public class ManageSettingsControllerTest {
 		Assert.assertFalse("we're sure this returns false",
 			spyController.checkModeAndHasMeasurementData(VariableType.TRAIT.getId(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0));
 
-	}
+	}*/
 
-	@Test
+	// TODO: MARK FOR DELETE IBP-2689
+/*	@Test
 	public void testCheckModeAndHasMeasurementData() throws Exception {
 		final ManageSettingsController spyController = this.initializeMockMeasurementRows();
 		assertThat(true, is(equalTo(spyController.checkModeAndHasMeasurementData(VariableType.TRAIT.getId(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0))));
 		Mockito.verify(spyController).hasMeasurementDataEntered(ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
-	}
+	}*/
 
 	protected ManageSettingsController initializeMockMeasurementRows() {
 		final ManageSettingsController spyController = Mockito.spy(this.controller);
@@ -128,7 +130,8 @@ public class ManageSettingsControllerTest {
 		return spyController;
 	}
 
-	@Test
+	// TODO: MARK FOR DELETE IBP-2689
+	/*@Test
 	public void testCheckModeAndHasMeasurementDataFailScenario() throws Exception {
 
 		final ManageSettingsController spyController = Mockito.spy(this.controller);
@@ -139,7 +142,7 @@ public class ManageSettingsControllerTest {
 
 		assertThat(false, is(equalTo(
 			spyController.checkModeAndHasMeasurementData(VariableType.TRAIT.getId(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0))));
-	}
+	}*/
 
 	@Test
 	public void testAddSettings() throws Exception {

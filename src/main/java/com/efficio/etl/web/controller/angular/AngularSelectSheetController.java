@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.StudyPermissionValidator;
+import org.generationcp.middleware.domain.dms.DatasetTypeDTO;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.StudyReference;
 import org.generationcp.middleware.domain.etl.Constants;
@@ -525,8 +526,8 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	@ModelAttribute("datasetTypeList")
 	public Map<Integer, String> getDatasetTypes() {
 
-		final DatasetType plotDatasetType = this.datasetTypeService.getDatasetTypeById(DatasetTypeEnum.PLOT_DATA.getId());
-		final DatasetType meansDatasetType = this.datasetTypeService.getDatasetTypeById(DatasetTypeEnum.MEANS_DATA.getId());
+		final DatasetTypeDTO plotDatasetType = this.datasetTypeService.getDatasetTypeById(DatasetTypeEnum.PLOT_DATA.getId());
+		final DatasetTypeDTO meansDatasetType = this.datasetTypeService.getDatasetTypeById(DatasetTypeEnum.MEANS_DATA.getId());
 
 		final Map<Integer, String> datasetTypes = new HashMap<>();
 		datasetTypes.put(DatasetTypeEnum.PLOT_DATA.getId(), plotDatasetType.getDescription());

@@ -533,7 +533,7 @@ public class OpenTrialController extends BaseTrialController {
 			this.userSelection.getWorkbook().setOriginalObservations(null);
 			this.userSelection.getWorkbook().setObservations(null);
 
-			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments(), workbook,
+			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments().getEnvironments(), workbook,
 				this.userSelection.getTemporaryWorkbook().getTrialObservations());
 		}
 

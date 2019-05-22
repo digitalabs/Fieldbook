@@ -12,7 +12,7 @@ public class TreatmentFactorTabBean implements TabInfoBean {
 	public Map<String, TreatmentFactorData> currentData;
 
 	public TreatmentFactorTabBean() {
-		this.currentData = new HashMap<String, TreatmentFactorData>();
+		this.currentData = new HashMap<>();
 	}
 
 	public Map<String, TreatmentFactorData> getCurrentData() {

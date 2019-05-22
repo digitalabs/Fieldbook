@@ -268,15 +268,22 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 							var instanceId = environmentList[environmentNo].instanceDbId;
 							var datasetId = studyContext.measurementDatasetId;
 
-							datasetService.observationCountByInstance(datasetId, instanceId).then(function (response) {
-								var count = response.headers('X-Total-Count');
-								if (count > 0) {
-									var warningMessage = 'This environment cannot be removed because it contains measurement data.';
-									ctrl.showAlertMessage('', warningMessage);
-								} else {
-									ctrl.hasAdvancedOrCrossesListOnStudy(environmentNo);
+							datasetService.getDataset(datasetId).then(function (dataset) {
+								if (!dataset.instances.length) {
+									updateDeletedEnvironment(environmentNo);
+									deferred.resolve();
+									return deferred.promise();
 								}
-								deferred.resolve();
+								datasetService.observationCountByInstance(datasetId, instanceId).then(function (response) {
+									var count = response.headers('X-Total-Count');
+									if (count > 0) {
+										var warningMessage = 'This environment cannot be removed because it contains measurement data.';
+										ctrl.showAlertMessage('', warningMessage);
+									} else {
+										ctrl.hasAdvancedOrCrossesListOnStudy(environmentNo);
+									}
+									deferred.resolve();
+								});
 							});
 						}
 					}

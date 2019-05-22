@@ -31,6 +31,7 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
+import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
@@ -997,7 +998,7 @@ public class ETLServiceImpl implements ETLService {
 	@Override
 	public boolean hasMeansDataset(final int studyId) {
 		boolean hasMeansDataset = false;
-		final List<DataSet> ds = this.studyDataManager.getDataSetsByType(studyId, DatasetType.MEANS_DATA);
+		final List<DataSet> ds = this.studyDataManager.getDataSetsByType(studyId, DatasetTypeEnum.MEANS_DATA.getId());
 		if (ds != null && !ds.isEmpty()) {
 			hasMeansDataset = true;
 		}
@@ -1007,7 +1008,7 @@ public class ETLServiceImpl implements ETLService {
 	@Override
 	public boolean hasMeasurementEffectDataset(final int studyId) {
 		boolean hasMeasurementEffectDataset = false;
-		final List<DataSet> ds = this.studyDataManager.getDataSetsByType(studyId, DatasetType.PLOT_DATA);
+		final List<DataSet> ds = this.studyDataManager.getDataSetsByType(studyId, DatasetTypeEnum.PLOT_DATA.getId());
 		// handle old behavior
 		if (ds != null && ds.size() > 1) {
 			hasMeasurementEffectDataset = true;
@@ -1033,7 +1034,7 @@ public class ETLServiceImpl implements ETLService {
 		final Workbook workbook = this.retrieveCurrentWorkbook(userSelection);
 
 		final boolean isMeansDataImport = userSelection.getDatasetType() != null
-			&& userSelection.getDatasetType().intValue() == DatasetType.MEANS_DATA;
+			&& userSelection.getDatasetType().intValue() == DatasetTypeEnum.MEANS_DATA.getId();
 
 		importData = this.createWorkbookFromUserSelection(userSelection, isMeansDataImport);
 

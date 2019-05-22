@@ -31,6 +31,7 @@ import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.samplelist.SampleListDTO;
+import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
@@ -958,8 +959,8 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	List<SampleListDTO> getSampleList(final Integer studyId) {
-		final Set<Integer> datasetTypeIds = new HashSet<>(DatasetType.SUBOBSERVATIONS);
-		datasetTypeIds.add(DatasetType.PLOT_DATA);
+		final Set<Integer> datasetTypeIds = new HashSet<>(DatasetTypeEnum.SUBOBSERVATIONS);
+		datasetTypeIds.add(DatasetTypeEnum.PLOT_DATA.getId());
 
 		final List<Integer> datasetIds = new ArrayList<>();
 		final List<DatasetDTO> datasets = this.datasetService.getDatasets(studyId, datasetTypeIds);

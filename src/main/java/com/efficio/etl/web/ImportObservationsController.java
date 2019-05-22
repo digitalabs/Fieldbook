@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.PhenotypeException;
 import org.generationcp.middleware.pojos.dms.DatasetType;
 import org.generationcp.middleware.service.api.DataImportService;
@@ -83,7 +84,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 			programUUID = this.contextUtil.getCurrentProgramUUID();
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 			final boolean isMeansDataImport =
-				this.userSelection.getDatasetType() != null && this.userSelection.getDatasetType().intValue() == DatasetType.MEANS_DATA;
+				this.userSelection.getDatasetType() != null && this.userSelection.getDatasetType().intValue() == DatasetTypeEnum.MEANS_DATA.getId();
 
 			importData = this.etlService.createWorkbookFromUserSelection(this.userSelection, isMeansDataImport);
 

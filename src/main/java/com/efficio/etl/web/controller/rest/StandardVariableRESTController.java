@@ -7,6 +7,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
@@ -75,10 +76,10 @@ public class StandardVariableRESTController {
 		StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER.addVariableType(VariableType.TRAIT);
 
 		StandardVariableRESTController.VARIABLE_FILTER_MAP.put(
-			DatasetType.MEANS_DATA,
+			DatasetTypeEnum.MEANS_DATA.getId(),
 			StandardVariableRESTController.MEANS_DATA_VARIABLE_FILTER);
 		StandardVariableRESTController.VARIABLE_FILTER_MAP.put(
-			DatasetType.PLOT_DATA,
+			DatasetTypeEnum.PLOT_DATA.getId(),
 			StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER);
 
 	}

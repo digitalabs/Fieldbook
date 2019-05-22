@@ -21,6 +21,7 @@ import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
+import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
@@ -325,7 +326,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			final List<String> errors = new ArrayList<>();
 			Map<String, List<Message>> mismatchErrors = null;
 			final boolean isMeansDataImport = this.userSelection.getDatasetType() != null
-				&& this.userSelection.getDatasetType() == DatasetType.MEANS_DATA;
+				&& this.userSelection.getDatasetType() == DatasetTypeEnum.MEANS_DATA.getId();
 
 			try {
 				// check if the selected dataset still has no mapped headers
@@ -473,7 +474,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		consolidatedForm.setHeaderRowIndex(this.userSelection.getHeaderRowIndex());
 		consolidatedForm.setHeaderRowDisplayText(this.userSelection.getHeaderRowDisplayText());
 		consolidatedForm.setDatasetType(this.userSelection.getDatasetType() != null
-			? this.userSelection.getDatasetType() : DatasetType.PLOT_DATA);
+			? this.userSelection.getDatasetType() : DatasetTypeEnum.PLOT_DATA.getId());
 
 		final StudyDetailsForm studyDetailsForm = new StudyDetailsForm();
 		studyDetailsForm.setStudyName(this.userSelection.getStudyName());
@@ -520,12 +521,12 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	@ModelAttribute("datasetTypeList")
 	public Map<Integer, String> getDatasetTypes() {
 
-		final DatasetType plotDatasetType = this.ontologyDataManager.getDatasetTypeById(DatasetType.PLOT_DATA);
-		final DatasetType meansDatasetType = this.ontologyDataManager.getDatasetTypeById(DatasetType.MEANS_DATA);
+		final DatasetType plotDatasetType = this.ontologyDataManager.getDatasetTypeById(DatasetTypeEnum.PLOT_DATA.getId());
+		final DatasetType meansDatasetType = this.ontologyDataManager.getDatasetTypeById(DatasetTypeEnum.MEANS_DATA.getId());
 
 		final Map<Integer, String> datasetTypes = new HashMap<>();
-		datasetTypes.put(DatasetType.PLOT_DATA, plotDatasetType.getDescription());
-		datasetTypes.put(DatasetType.MEANS_DATA, meansDatasetType.getDescription());
+		datasetTypes.put(DatasetTypeEnum.PLOT_DATA.getId(), plotDatasetType.getDescription());
+		datasetTypes.put(DatasetTypeEnum.MEANS_DATA.getId(), meansDatasetType.getDescription());
 		return datasetTypes;
 	}
 

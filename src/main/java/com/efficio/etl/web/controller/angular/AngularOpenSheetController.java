@@ -10,6 +10,7 @@ import com.efficio.etl.web.bean.SelectRowsForm;
 import com.efficio.etl.web.bean.UserSelection;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.pojos.dms.DatasetType;
 import org.slf4j.Logger;
@@ -246,7 +247,7 @@ public class AngularOpenSheetController extends AbstractBaseETLController {
 	public int getValidIndexColumnIndex(final Workbook workbook) {
 		final boolean isMeansDataImport =
 			this.userSelection.getDatasetType() != null
-				&& this.userSelection.getDatasetType().intValue() == DatasetType.MEANS_DATA;
+				&& this.userSelection.getDatasetType().intValue() == DatasetTypeEnum.MEANS_DATA.getId();
 		final org.generationcp.middleware.domain.etl.Workbook importData =
 			this.etlService.retrieveAndSetProjectOntology(this.userSelection, isMeansDataImport);
 

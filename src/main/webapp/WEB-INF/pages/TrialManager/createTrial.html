@@ -762,12 +762,12 @@
 
 				}
 			).constant('DATASET_TYPES', {
-				PLOT_OBSERVATIONS: /*[[${T(org.generationcp.middleware.pojos.dms.DatasetType).PLOT_DATA}]]*/ null,
-				PLANT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.pojos.dms.DatasetType).PLANT_SUBOBSERVATIONS}]]*/ null,
-				QUADRAT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.pojos.dms.DatasetType).QUADRAT_SUBOBSERVATIONS}]]*/ null,
-				TIME_SERIES_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.pojos.dms.DatasetType).TIME_SERIES_SUBOBSERVATIONS}]]*/ null,
-				CUSTOM_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.pojos.dms.DatasetType).CUSTOM_SUBOBSERVATIONS}]]*/ null
-			}).constant('DATASET_TYPES_SUBOBSERVATION_IDS', /*[[${T(org.generationcp.middleware.pojos.dms.DatasetType).SUBOBSERVATIONS}]]*/ null
+				PLOT_OBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).PLOT_DATA.getId()}]]*/ null,
+				PLANT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).PLANT_SUBOBSERVATIONS.getId()}]]*/ null,
+				QUADRAT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).QUADRAT_SUBOBSERVATIONS.getId()}]]*/ null,
+				TIME_SERIES_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).TIME_SERIES_SUBOBSERVATIONS.getId()}]]*/ null,
+				CUSTOM_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).CUSTOM_SUBOBSERVATIONS.getId()}]]*/ null
+			}).constant('DATASET_TYPES_SUBOBSERVATION_IDS', /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).SUBOBSERVATIONS}]]*/ null
 			).value('studyContext', {
 				cropName: /*[[${cropName}]]*/ '',
 				programId: /*[[${currentProgramId}]]*/ '',

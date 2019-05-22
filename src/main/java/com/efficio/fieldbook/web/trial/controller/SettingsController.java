@@ -279,15 +279,17 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			}
 		}
 
+		// TODO: MARK FOR DELETE IBP-2689
 		// remove deleted variables in measurement rows & header for variates
 		this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedPlotLevelList(), workbook);
-		this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedBaselineTraitsList(), workbook);
+		//this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedBaselineTraitsList(), workbook);
 
 		// remove deleted variables in the original lists
 		// and change add operation to update
 		this.removeDeletedSetUpdate(this.userSelection.getStudyLevelConditions(), workbook.getConditions());
 		this.removeDeletedSetUpdate(this.userSelection.getPlotsLevelList(), workbook.getFactors());
-		this.removeDeletedSetUpdate(this.userSelection.getBaselineTraitsList(), workbook.getVariates());
+		// TODO: MARK FOR DELETE IBP-2689
+		//this.removeDeletedSetUpdate(this.userSelection.getBaselineTraitsList(), workbook.getVariates());
 		this.removeDeletedSetUpdate(this.userSelection.getStudyConditions(), workbook.getConstants());
 		this.removeDeletedSetUpdate(this.userSelection.getTrialLevelVariableList(), null);
 		this.removeDeletedSetUpdate(this.userSelection.getSelectionVariates(), null);
@@ -603,8 +605,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				this.userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
 			}
 			this.userSelection.getDeletedPlotLevelList().add(newSetting);
-		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
-			this.addNewSettingToDeletedBaselineTraits(newSetting);
+			// TODO: MARK FOR DELETE IBP-2689
+/*		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
+			this.addNewSettingToDeletedBaselineTraits(newSetting);*/
 		} else if (mode == VariableType.STUDY_CONDITION.getId()) {
 			if (this.userSelection.getDeletedStudyConditions() == null) {
 				this.userSelection.setDeletedStudyConditions(new ArrayList<SettingDetail>());
@@ -641,13 +644,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	//TODO TRIAL
-	private void addNewSettingToDeletedBaselineTraits(final SettingDetail newSetting) {
+	// TODO: MARK FOR DELETE IBP-2689
+/*	private void addNewSettingToDeletedBaselineTraits(final SettingDetail newSetting) {
 		if (this.userSelection.getDeletedBaselineTraitsList() == null) {
 			this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
 		}
 		this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
-	}
+	}*/
 
 	public void setFieldbookService(final FieldbookService fieldbookService) {
 		this.fieldbookService = fieldbookService;

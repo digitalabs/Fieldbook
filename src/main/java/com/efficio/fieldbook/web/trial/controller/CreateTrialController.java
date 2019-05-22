@@ -317,7 +317,7 @@ public class CreateTrialController extends BaseTrialController {
 						this.contextUtil.getCurrentProgramUUID());
 
 		if (this.userSelection.getTemporaryWorkbook() != null) {
-			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments(), workbook,
+			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments().getEnvironments(), workbook,
 					this.userSelection.getTemporaryWorkbook().getTrialObservations());
 		}
 

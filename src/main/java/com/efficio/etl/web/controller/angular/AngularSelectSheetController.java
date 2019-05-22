@@ -27,6 +27,7 @@ import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.dms.DatasetType;
 import org.generationcp.middleware.service.api.DataImportService;
+import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
 import org.generationcp.middleware.util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +93,9 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 
 	@Resource
 	private OntologyDataManager ontologyDataManager;
+
+	@Resource
+	private DatasetTypeService datasetTypeService;
 
 	@Override
 	public String getContentName() {
@@ -521,8 +525,8 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 	@ModelAttribute("datasetTypeList")
 	public Map<Integer, String> getDatasetTypes() {
 
-		final DatasetType plotDatasetType = this.ontologyDataManager.getDatasetTypeById(DatasetTypeEnum.PLOT_DATA.getId());
-		final DatasetType meansDatasetType = this.ontologyDataManager.getDatasetTypeById(DatasetTypeEnum.MEANS_DATA.getId());
+		final DatasetType plotDatasetType = this.datasetTypeService.getDatasetTypeById(DatasetTypeEnum.PLOT_DATA.getId());
+		final DatasetType meansDatasetType = this.datasetTypeService.getDatasetTypeById(DatasetTypeEnum.MEANS_DATA.getId());
 
 		final Map<Integer, String> datasetTypes = new HashMap<>();
 		datasetTypes.put(DatasetTypeEnum.PLOT_DATA.getId(), plotDatasetType.getDescription());

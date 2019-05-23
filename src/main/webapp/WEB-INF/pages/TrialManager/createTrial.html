@@ -767,7 +767,12 @@
 				QUADRAT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).QUADRAT_SUBOBSERVATIONS.getId()}]]*/ null,
 				TIME_SERIES_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).TIME_SERIES_SUBOBSERVATIONS.getId()}]]*/ null,
 				CUSTOM_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).CUSTOM_SUBOBSERVATIONS.getId()}]]*/ null
-			}).constant('DATASET_TYPES_SUBOBSERVATION_IDS', /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).SUBOBSERVATIONS}]]*/ null
+			}).constant('DATASET_TYPES_SUBOBSERVATION_IDS', [
+				/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).PLANT_SUBOBSERVATIONS.getId()}]]*/,
+				/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).QUADRAT_SUBOBSERVATIONS.getId()}]]*/,
+				/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).TIME_SERIES_SUBOBSERVATIONS.getId()}]]*/,
+				/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).CUSTOM_SUBOBSERVATIONS.getId()}]]*/
+				]
 			).value('studyContext', {
 				cropName: /*[[${cropName}]]*/ '',
 				programId: /*[[${currentProgramId}]]*/ '',

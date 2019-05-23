@@ -959,7 +959,11 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	List<SampleListDTO> getSampleList(final Integer studyId) {
-		final Set<Integer> datasetTypeIds = new HashSet<>(DatasetTypeEnum.SUBOBSERVATIONS);
+		final Set<Integer> datasetTypeIds = new HashSet<>();
+		datasetTypeIds.add(DatasetTypeEnum.PLANT_SUBOBSERVATIONS.getId());
+		datasetTypeIds.add(DatasetTypeEnum.QUADRAT_SUBOBSERVATIONS.getId());
+		datasetTypeIds.add(DatasetTypeEnum.TIME_SERIES_SUBOBSERVATIONS.getId());
+		datasetTypeIds.add(DatasetTypeEnum.CUSTOM_SUBOBSERVATIONS.getId());
 		datasetTypeIds.add(DatasetTypeEnum.PLOT_DATA.getId());
 
 		final List<Integer> datasetIds = new ArrayList<>();

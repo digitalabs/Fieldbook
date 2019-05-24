@@ -2,13 +2,12 @@ package com.efficio.fieldbook.web.naming.expression.dataprocessor;
 
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import org.generationcp.commons.pojo.AdvancingSource;
 import com.google.common.collect.Lists;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.api.LocationDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.junit.Test;

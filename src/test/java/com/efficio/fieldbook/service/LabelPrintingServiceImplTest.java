@@ -63,7 +63,7 @@ import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import com.efficio.pojos.labelprinting.LabelPrintingProcessingParams;
 
 @RunWith(value = MockitoJUnitRunner.class)

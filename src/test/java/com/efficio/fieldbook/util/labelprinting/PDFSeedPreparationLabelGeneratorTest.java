@@ -21,7 +21,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.template.LabelPaper;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 

@@ -1,6 +1,6 @@
 package com.efficio.fieldbook.util.labelprinting;
 
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 
 import javax.annotation.Resource;
 

@@ -49,8 +49,7 @@ import org.generationcp.middleware.util.PoiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
-import org.springframework.transaction.annotation.Transactional;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 
 /**
  * The class providing export crossing template as an excel file function

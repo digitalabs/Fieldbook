@@ -6,7 +6,7 @@ import com.efficio.fieldbook.utils.test.ExcelImportUtil;
 import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import junit.framework.Assert;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;

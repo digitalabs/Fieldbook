@@ -763,12 +763,17 @@
 
 				}
 			).constant('DATASET_TYPES', {
-				PLOT_OBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).PLOT_DATA.getId()}]]*/ null,
-				PLANT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).PLANT_SUBOBSERVATIONS.getId()}]]*/ null,
-				QUADRAT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).QUADRAT_SUBOBSERVATIONS.getId()}]]*/ null,
-				TIME_SERIES_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).TIME_SERIES_SUBOBSERVATIONS.getId()}]]*/ null,
-				CUSTOM_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).CUSTOM_SUBOBSERVATIONS.getId()}]]*/ null
-			}).constant('DATASET_TYPES_SUBOBSERVATION_IDS', /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).SUB_OBSERVATION_IDS}]]*/ null
+				PLOT_OBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).PLOT_DATA.getId()}]]*/ null,
+				PLANT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).PLANT_SUBOBSERVATIONS.getId()}]]*/ null,
+				QUADRAT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).QUADRAT_SUBOBSERVATIONS.getId()}]]*/ null,
+				TIME_SERIES_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).TIME_SERIES_SUBOBSERVATIONS.getId()}]]*/ null,
+				CUSTOM_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).CUSTOM_SUBOBSERVATIONS.getId()}]]*/ null
+			}).constant('DATASET_TYPES_SUBOBSERVATION_IDS', [
+					/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).PLANT_SUBOBSERVATIONS.getId()}]]*/,
+					/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).QUADRAT_SUBOBSERVATIONS.getId()}]]*/,
+					/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).TIME_SERIES_SUBOBSERVATIONS.getId()}]]*/,
+					/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).CUSTOM_SUBOBSERVATIONS.getId()}]]*/
+				]
 			).constant('DATASET_TYPES_OBSERVATION_IDS', /*[[${T(org.generationcp.middleware.domain.dms.DataSetType).OBSERVATION_IDS}]]*/ null
 			).value('studyContext', {
 				cropName: /*[[${cropName}]]*/ '',

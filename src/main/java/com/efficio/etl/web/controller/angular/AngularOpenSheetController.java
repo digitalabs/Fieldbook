@@ -12,7 +12,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.pojos.dms.DatasetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

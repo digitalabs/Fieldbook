@@ -14,7 +14,6 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.manager.ontology.daoElements.VariableFilter;
-import org.generationcp.middleware.pojos.dms.DatasetType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

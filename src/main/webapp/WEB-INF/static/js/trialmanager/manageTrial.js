@@ -82,8 +82,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				},
 				deepStateRedirect: true, sticky: true
 			})
-
-			.state('createMeasurements', {
+			/*TODO: MARK FOR DELETE IBP-2689*/
+/*			.state('createMeasurements', {
 				url: '/createMeasurements',
 				views: {
 					createMeasurements: {
@@ -103,7 +103,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				},
 				deepStateRedirect: true, sticky: true
-			})
+			})*/
 
 			.state('subObservationTabs', {
 				url: '/subObservationTabs/:subObservationTabId',
@@ -222,12 +222,14 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					name: 'Germplasm & Checks',
 					state: 'germplasm'
 				},
-                {   name: 'Treatment Factors',
+/*                {   name: 'Treatment Factors',
                     state: 'treatment'
-                },
+                },*/
 				{   name: 'Environments',
 					state: 'environment'
-				},
+				}
+				/*TODO: MARK FOR DELETE IBP-2689*/
+/*				,
 				{
 					name: 'Experimental Design',
 					state: 'experimentalDesign'
@@ -239,7 +241,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				{
 					name: 'Observations',
 					state: 'editMeasurements'
-				}
+				}*/
 			];
 			$scope.subObservationTabs = [];
 			$scope.tabSelected = 'trialSettings';
@@ -361,11 +363,12 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.saveCurrentTrialData = function () {
-				derivedVariableService.getDependenciesForAllDerivedTraits(studyContext.measurementDatasetId).then(function (response) {
+				/*TODO: MARK FOR DELETE IBP-2689*/
+/*				derivedVariableService.getDependenciesForAllDerivedTraits(studyContext.measurementDatasetId).then(function (response) {
 					return $scope.warnMissingInputData(response);
-				}).then(function () {
+				}).then(function () {*/
 					TrialManagerDataService.saveCurrentData();
-				});
+				//});
 			};
 
 			$scope.selectPreviousStudy = function () {
@@ -428,6 +431,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				});
 			};
+
 			$scope.refreshTabAfterImport = function () {
 				$http.get('/Fieldbook/TrialManager/createTrial/refresh/settings/tab').success(function (data) {
 					// update data and settings
@@ -437,9 +441,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					TrialManagerDataService.updateCurrentData('environments', environmentData);
 				});
 			};
+
 			$scope.temp = {
 				noOfEnvironments: 0
 			};
+
 			$scope.refreshEnvironmentsAndExperimentalDesign = function () {
 				var currentDesignType = TrialManagerDataService.currentData.experimentalDesign.designType;
 				var showIndicateUnappliedChangesWarning = true;
@@ -471,6 +477,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 
 			};
+
 			$scope.displayMeasurementOnlyActions = function () {
 				return TrialManagerDataService.trialMeasurement.count &&
 					TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign &&

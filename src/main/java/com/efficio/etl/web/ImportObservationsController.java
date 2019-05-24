@@ -8,9 +8,9 @@ import com.efficio.etl.web.validators.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.PhenotypeException;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
@@ -70,8 +70,9 @@ public class ImportObservationsController extends AbstractBaseETLController {
 	}
 
 	@RequestMapping(value = "/{confirmDiscard}", method = RequestMethod.GET)
-	public String processImport(@ModelAttribute("uploadForm") final FileUploadForm uploadForm, @PathVariable final int confirmDiscard,
-			final Model model, final HttpSession session, final HttpServletRequest request) {
+	public String processImport(
+		@ModelAttribute("uploadForm") final FileUploadForm uploadForm, @PathVariable final int confirmDiscard,
+		final Model model, final HttpSession session, final HttpServletRequest request) {
 		final List<String> errors = new ArrayList<>();
 
 		org.generationcp.middleware.domain.etl.Workbook importData = null;
@@ -82,8 +83,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 			programUUID = this.contextUtil.getCurrentProgramUUID();
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 			final boolean isMeansDataImport =
-					this.userSelection.getDatasetType() != null && this.userSelection.getDatasetType().intValue() == DataSetType.MEANS_DATA
-							.getId();
+				this.userSelection.getDatasetType() != null && this.userSelection.getDatasetType().intValue() == DatasetTypeEnum.MEANS_DATA.getId();
 
 			importData = this.etlService.createWorkbookFromUserSelection(this.userSelection, isMeansDataImport);
 
@@ -92,13 +92,13 @@ public class ImportObservationsController extends AbstractBaseETLController {
 			final List<MeasurementVariable> studyHeaders = importData.getFactors();
 
 			final List<String> fileHeaders =
-					this.etlService.retrieveColumnHeaders(workbook, this.userSelection, this.etlService.headersContainsObsUnitId(importData));
+				this.etlService.retrieveColumnHeaders(workbook, this.userSelection, this.etlService.headersContainsObsUnitId(importData));
 
 			final Map<String, List<Message>> mismatchErrors =
-					this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, isMeansDataImport);
+				this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, isMeansDataImport);
 
 			final boolean isWorkbookHasObservationRecords =
-					this.etlService.isWorkbookHasObservationRecords(this.userSelection, errors, workbook);
+				this.etlService.isWorkbookHasObservationRecords(this.userSelection, errors, workbook);
 			final boolean isObservationOverMaxLimit = this.etlService.isObservationOverMaximumLimit(this.userSelection, errors, workbook);
 
 			if (mismatchErrors != null && !mismatchErrors.isEmpty()) {
@@ -110,7 +110,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 				this.dataImportService.removeLocationNameVariableIfExists(importData);
 				this.dataImportService.assignLocationIdVariableToEnvironmentDetailSection(importData);
 				importData.setObservations(
-						this.etlService.extractExcelFileData(workbook, this.userSelection, importData, confirmDiscard == 1 ? true : false));
+					this.etlService.extractExcelFileData(workbook, this.userSelection, importData, confirmDiscard == 1 ? true : false));
 
 				// there is now an expectation after the validate project data
 				// step
@@ -166,13 +166,15 @@ public class ImportObservationsController extends AbstractBaseETLController {
 		}
 	}
 
-	public String confirmImport(final Model model, final org.generationcp.middleware.domain.etl.Workbook importData,
-			final String programUUID) {
+	public String confirmImport(
+		final Model model, final org.generationcp.middleware.domain.etl.Workbook importData,
+		final String programUUID) {
 		final List<String> errors = new ArrayList<>();
 		try {
 			final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
-					.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection),
-							this.contextUtil.getCurrentIbdbUserId());
+				.parseWorkbookDescriptionSheet(
+					this.etlService.retrieveCurrentWorkbook(this.userSelection),
+					this.contextUtil.getCurrentIbdbUserId());
 			importData.setConstants(referenceWorkbook.getConstants());
 			importData.setConditions(referenceWorkbook.getConditions());
 			this.dataImportService.addLocationIDVariableIfNotExists(importData, importData.getFactors(), programUUID);

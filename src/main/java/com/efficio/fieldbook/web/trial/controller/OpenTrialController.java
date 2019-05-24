@@ -7,18 +7,17 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
-import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
-import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -32,6 +31,7 @@ import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.samplelist.SampleListDTO;
+import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
@@ -393,8 +393,8 @@ public class OpenTrialController extends BaseTrialController {
 	long getGermplasmListChecksSize(final int germplasmListId) {
 		final List<ValueReference> entryTypes = this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true);
 		final List<Integer> checkEntryTypeIds = new ArrayList<>();
-		for(final ValueReference entryType: entryTypes) {
-			if(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() != entryType.getId()) {
+		for (final ValueReference entryType : entryTypes) {
+			if (SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() != entryType.getId()) {
 				checkEntryTypeIds.add(entryType.getId());
 			}
 		}
@@ -958,8 +958,12 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	List<SampleListDTO> getSampleList(final Integer studyId) {
-		final Set<Integer> datasetTypeIds = new HashSet<>(Arrays.asList(DataSetType.SUBOBSERVATION_IDS));
-		datasetTypeIds.add(DataSetType.PLOT_DATA.getId());
+		final Set<Integer> datasetTypeIds = new HashSet<>();
+		datasetTypeIds.add(DatasetTypeEnum.PLANT_SUBOBSERVATIONS.getId());
+		datasetTypeIds.add(DatasetTypeEnum.QUADRAT_SUBOBSERVATIONS.getId());
+		datasetTypeIds.add(DatasetTypeEnum.TIME_SERIES_SUBOBSERVATIONS.getId());
+		datasetTypeIds.add(DatasetTypeEnum.CUSTOM_SUBOBSERVATIONS.getId());
+		datasetTypeIds.add(DatasetTypeEnum.PLOT_DATA.getId());
 
 		final List<Integer> datasetIds = new ArrayList<>();
 		final List<DatasetDTO> datasets = this.datasetService.getDatasets(studyId, datasetTypeIds);

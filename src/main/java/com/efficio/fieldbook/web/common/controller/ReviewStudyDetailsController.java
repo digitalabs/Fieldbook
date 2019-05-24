@@ -20,8 +20,10 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,6 +131,18 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		return this.fieldbookMiddlewareService.getDatasetReferences(nurseryId);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/getNumberOfChecks/{studyId}")
+	public long getNumberOfChecks(@PathVariable final int studyId) {
+		final List<GermplasmList> germplasmLists =
+			this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
+		if (germplasmLists != null && !germplasmLists.isEmpty()) {
+			final GermplasmList germplasmList = germplasmLists.get(0);
+			return this.fieldbookService.getGermplasmListChecksSize(germplasmList.getId());
+		}
+		return 0;
+	}
+
 	private void rearrangeDetails(final StudyDetails details) {
 		details.setBasicStudyDetails(this.rearrangeSettingDetails(details.getBasicStudyDetails()));
 		details.setManagementDetails(this.rearrangeSettingDetails(details.getManagementDetails()));
@@ -156,7 +170,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		}
 		return newList;
 	}
-	
+
 	@ModelAttribute("currentCropUserId")
 	public Integer getCurrentCropUserId() {
 		return this.contextUtil.getCurrentIbdbUserId();

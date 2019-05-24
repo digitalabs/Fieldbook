@@ -108,6 +108,18 @@ function reviewLandingSetup() {
 		} else {
 			$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #row-review-number-of-blocks').hide();
 		}
+
+		$.ajax({
+			url: '/Fieldbook/StudyManager/reviewStudyDetails/getNumberOfChecks/' + getCurrentStudyIdInTab(),
+			type: 'GET',
+			cache: false,
+			success: function(data) {
+				$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-number-of-check-entries').text(data);
+				var testEntriesCount = entrySize - data;
+				$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-number-of-test-entries').text(testEntriesCount);
+			}
+		});
+
 	} else {
 		$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #row-review-number-of-blocks').hide();
 	}

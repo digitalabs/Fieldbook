@@ -42,6 +42,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -1344,5 +1345,17 @@ public class FieldbookServiceImpl implements FieldbookService {
 	@Override
 	public StandardVariable getStandardVariable(final Integer termId) {
 		return this.getOntologyService().getStandardVariable(termId, this.contextUtil.getCurrentProgramUUID());
+	}
+
+	@Override
+	public long getGermplasmListChecksSize(final int germplasmListId) {
+		final List<ValueReference> entryTypes = this.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true);
+		final List<Integer> checkEntryTypeIds = new ArrayList<>();
+		for (final ValueReference entryType : entryTypes) {
+			if (SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() != entryType.getId()) {
+				checkEntryTypeIds.add(entryType.getId());
+			}
+		}
+		return this.fieldbookMiddlewareService.countListDataProjectByListIdAndEntryTypeIds(germplasmListId, checkEntryTypeIds);
 	}
 }

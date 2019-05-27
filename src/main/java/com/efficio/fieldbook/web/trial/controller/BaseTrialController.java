@@ -288,33 +288,33 @@ public abstract class BaseTrialController extends SettingsController {
 		final List<SettingDetail> detailList = new ArrayList<>();
 		final List<Integer> requiredIDList = this.buildVariableIDList(AppConstants.CREATE_STUDY_PLOT_REQUIRED_FIELDS.getString());
 
-		for (final MeasurementVariable var : measurementVariables) {
+		for (final MeasurementVariable measurementVariable : measurementVariables) {
 			// this condition is required so that treatment factors are not
 			// included in the list of factors for the germplasm tab
-			if (var.getTreatmentLabel() != null && !var.getTreatmentLabel().isEmpty()
-				|| this.inRequiredExpDesignVar(var.getTermId()) && isUsePrevious) {
+			if (measurementVariable.getTreatmentLabel() != null && !measurementVariable.getTreatmentLabel().isEmpty()
+				|| this.inRequiredExpDesignVar(measurementVariable.getTermId()) && isUsePrevious) {
 				continue;
 			}
 
 			final SettingDetail detail =
-				this.createSettingDetail(var.getTermId(), var.getName(), VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
+				this.createSettingDetail(measurementVariable.getTermId(), measurementVariable.getName(), VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
 
-			if (var.getRole() != null) {
-				detail.setRole(var.getRole());
-				detail.getVariable().setRole(var.getRole().name());
+			if (measurementVariable.getRole() != null) {
+				detail.setRole(measurementVariable.getRole());
+				detail.getVariable().setRole(measurementVariable.getRole().name());
 			}
 
-			if (requiredIDList.contains(var.getTermId())) {
+			if (requiredIDList.contains(measurementVariable.getTermId())) {
 				detail.setDeletable(false);
 			} else {
 				detail.setDeletable(true);
 			}
 
 			// set all variables with trial design role to hidden
-			if (var.getRole() == PhenotypicType.TRIAL_DESIGN) {
+			if (measurementVariable.getRole() == PhenotypicType.TRIAL_DESIGN) {
 				detail.setHidden(true);
 				// BMS-1048
-				if (var.getTermId() == TermId.COLUMN_NO.getId() || var.getTermId() == TermId.RANGE_NO.getId()) {
+				if (measurementVariable.getTermId() == TermId.COLUMN_NO.getId() || measurementVariable.getTermId() == TermId.RANGE_NO.getId()) {
 					detail.setDeletable(false);
 					detail.setHidden(false);
 				}
@@ -406,10 +406,10 @@ public abstract class BaseTrialController extends SettingsController {
 
 		final List<SettingDetail> detailList = new ArrayList<>();
 
-		for (final MeasurementVariable var : variatesList) {
-			if (var.getVariableType() == variableType) {
+		for (final MeasurementVariable measurementVariable : variatesList) {
+			if (measurementVariable.getVariableType() == variableType) {
 
-				final SettingDetail detail = this.createSettingDetailWithVariableType(var.getTermId(), var.getName(), variableType);
+				final SettingDetail detail = this.createSettingDetailWithVariableType(measurementVariable.getTermId(), measurementVariable.getName(), variableType);
 
 				if (!isUsePrevious) {
 					detail.getVariable().setOperation(Operation.UPDATE);
@@ -769,14 +769,14 @@ public abstract class BaseTrialController extends SettingsController {
 		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_STUDY_VARIABLE_DBCV_FIELDS.getString());
 		final List<Integer> basicDetailIDList = this.buildVariableIDList(AppConstants.HIDE_STUDY_FIELDS.getString());
 		final Map<String, MeasurementVariable> settingsMap = SettingsUtil.buildMeasurementVariableMap(measurementVariables);
-		for (final MeasurementVariable var : measurementVariables) {
-			if (!basicDetailIDList.contains(var.getTermId())) {
+		for (final MeasurementVariable measurementVariable : measurementVariables) {
+			if (!basicDetailIDList.contains(measurementVariable.getTermId())) {
 				final SettingDetail detail =
-					this.createSettingDetail(var.getTermId(), var.getName(), VariableType.STUDY_DETAIL.getRole().name());
+					this.createSettingDetail(measurementVariable.getTermId(), measurementVariable.getName(), VariableType.STUDY_DETAIL.getRole().name());
 				detail.setDeletable(true);
 				details.add(detail);
 
-				if (hiddenFields.contains(var.getTermId())) {
+				if (hiddenFields.contains(measurementVariable.getTermId())) {
 					detail.setHidden(true);
 				} else {
 					detail.setHidden(false);
@@ -789,18 +789,18 @@ public abstract class BaseTrialController extends SettingsController {
 				}
 
 				// set local name of id variable to local name of name variable
-				final String nameTermId = SettingsUtil.getNameCounterpart(var.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
+				final String nameTermId = SettingsUtil.getNameCounterpart(measurementVariable.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
 				if (settingsMap.get(nameTermId) != null) {
 					detail.getVariable().setName(settingsMap.get(nameTermId).getName());
 				}
 
 				final String value;
 				if ("DATE".equals(detail.getVariable().getWidgetType().getType())) {
-					value = this.convertDateStringForUI(var.getValue());
+					value = this.convertDateStringForUI(measurementVariable.getValue());
 				} else {
-					value = var.getValue();
+					value = measurementVariable.getValue();
 				}
-				trialValues.put(Integer.toString(var.getTermId()), value);
+				trialValues.put(Integer.toString(measurementVariable.getTermId()), value);
 			}
 		}
 

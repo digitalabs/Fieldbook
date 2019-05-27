@@ -199,7 +199,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			final HttpServletResponse response) throws IOException {
 		ExportStudyController.LOG.info("Entering Export Study:exportFileStudy");
 		final List<Integer> instancesList = new ArrayList<>();
-		final StringTokenizer tokenizer = new StringTokenizer(instances, "|");
+		final StringTokenizer tokenizer = new StringTokenizer(instances, "-");
 		while (tokenizer.hasMoreTokens()) {
 			instancesList.add(Integer.valueOf(tokenizer.nextToken()));
 		}

@@ -847,10 +847,17 @@ public class FieldbookServiceTest {
 
 	@Test
 	public void testGetGermplasmListChecksSize() {
+		final Variable variable = VariableTestDataInitializer.createVariable(DataType.CATEGORICAL_VARIABLE);
+		this.possibleValuesCache.addPossibleValuesByDataType(DataType.CATEGORICAL_VARIABLE,
+			this.nonLocationVariable.getPossibleValues());
+
+		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
+			TermId.ENTRY_TYPE.getId(), true)).thenReturn(variable);
+
 		final List<ValueReference> entryTypes = ValueReferenceTestDataInitializer.createPossibleValues();
 		final List<Integer> checkEntryTypeIds = new ArrayList<>();
 		for(final ValueReference entryType: entryTypes) {
-			checkEntryTypeIds.add(entryType.getId());
+			checkEntryTypeIds.add(entryType.getId() - 1);
 		}
 		entryTypes.add(new ValueReference(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId(), SystemDefinedEntryType.TEST_ENTRY.getEntryTypeName(), SystemDefinedEntryType.TEST_ENTRY.getEntryTypeValue()));
 		this.fieldbookServiceImpl.getGermplasmListChecksSize(1);

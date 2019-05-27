@@ -21,7 +21,6 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -33,7 +32,6 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.samplelist.SampleListDTO;
 import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
@@ -96,10 +94,6 @@ public class OpenTrialController extends BaseTrialController {
 	private static final String IS_PREVIEW_EDITABLE = "0";
 	private static final int NO_LIST_ID = -1;
 	private static final String REDIRECT = "redirect:";
-
-	private static final List<Integer> EXPERIMENT_DESIGN_FACTOR_IDS = Arrays
-		.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.PERCENTAGE_OF_REPLICATION.getId(),
-			TermId.EXPT_DESIGN_SOURCE.getId());
 
 	@Resource
 	private ErrorHandlerService errorHandlerService;
@@ -610,24 +604,7 @@ public class OpenTrialController extends BaseTrialController {
 		}
 	}
 
-	/**
-	 * assign UPDATE operation for existing experimental design variables
-	 *
-	 * @param conditions
-	 */
-	void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions) {
-		final VariableTypeList factors =
-			this.studyDataManager.getAllStudyFactors(this.userSelection.getWorkbook().getStudyDetails().getId());
 
-		for (final MeasurementVariable mvar : conditions) {
-			// update the operation for experiment design variables
-			// EXP_DESIGN, EXP_DESIGN_SOURCE, NREP, PERCENTAGE_OF_REPLICATION
-			// only if these variables already exists in the existing trial
-			if (EXPERIMENT_DESIGN_FACTOR_IDS.contains(mvar.getTermId()) && factors.findById(mvar.getTermId()) != null) {
-				mvar.setOperation(Operation.UPDATE);
-			}
-		}
-	}
 
 	@ResponseBody
 	@RequestMapping(value = "/updateSavedTrial", method = RequestMethod.GET)

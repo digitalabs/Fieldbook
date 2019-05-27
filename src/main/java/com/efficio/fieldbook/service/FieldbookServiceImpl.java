@@ -125,7 +125,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		this.possibleValuesCache = possibleValuesCache;
 	}
 
-	protected static boolean inHideVariableFields(final Integer stdVarId, final String variableList) {
+	static boolean inHideVariableFields(final Integer stdVarId, final String variableList) {
 		final StringTokenizer token = new StringTokenizer(variableList, ",");
 		boolean inList = false;
 		while (token.hasMoreTokens()) {
@@ -478,7 +478,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return list;
 	}
 
-	public List<ValueReference> getLocations(final boolean isBreedingMethodOnly) {
+	List<ValueReference> getLocations(final boolean isBreedingMethodOnly) {
 		final String currentProgramUUID = this.contextUtil.getCurrentProgramUUID();
 		if (isBreedingMethodOnly) {
 			return this.convertLocationsToValueReferences(this.getAllBreedingLocationsByUniqueID(currentProgramUUID));
@@ -517,7 +517,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		final Integer standardVariableId = this.fieldbookMiddlewareService
 			.getStandardVariableIdByPropertyScaleMethodRole(property, scale, method, phenotypeType);
 		if (standardVariableId != null) {
-			list = this.getAllPossibleValues(standardVariableId.intValue());
+			list = this.getAllPossibleValues(standardVariableId);
 		}
 		return list;
 	}
@@ -627,7 +627,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return this.getPersonNameByPersonId(user.getPersonid());
 	}
 
-	protected String getPersonNameByPersonId(final int personId) {
+	String getPersonNameByPersonId(final int personId) {
 		final Person person = this.userDataManager.getPersonById(personId);
 
 		if (person != null) {
@@ -977,7 +977,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		}
 	}
 
-	public String resolveNameVarValue(final MeasurementVariable tempVarId) {
+	String resolveNameVarValue(final MeasurementVariable tempVarId) {
 		String actualNameVal = "";
 		if (tempVarId.getValue() != null && !"".equalsIgnoreCase(tempVarId.getValue())) {
 
@@ -1068,7 +1068,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public List<ValueReference> getVariablePossibleValues(final MeasurementVariable var) {
-		List<ValueReference> possibleValues = new ArrayList<ValueReference>();
+		List<ValueReference> possibleValues = new ArrayList<>();
 		// we need to get all possible values so we can check the favorites as
 		// well, since if we depend on the variable possible values, its
 		// already filtered, so it can be wrong

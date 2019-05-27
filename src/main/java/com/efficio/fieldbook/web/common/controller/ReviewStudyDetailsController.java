@@ -55,7 +55,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	private static final int COLS = 3;
 
-	public static final String TRIAL_MANAGER_REVIEW_TRIAL_DETAILS = "TrialManager/reviewTrialDetails";
+	private static final String TRIAL_MANAGER_REVIEW_TRIAL_DETAILS = "TrialManager/reviewTrialDetails";
 
 	@Resource
 	private UserSelection userSelection;
@@ -114,7 +114,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		return this.showAjaxPage(model, this.getContentName());
 	}
 
-	protected void addErrorMessageToResult(final StudyDetails details, final MiddlewareException e, final int id) {
+	void addErrorMessageToResult(final StudyDetails details, final MiddlewareException e, final int id) {
 		final String param = AppConstants.STUDY.getString();
 		details.setId(id);
 		String errorMessage = e.getMessage();

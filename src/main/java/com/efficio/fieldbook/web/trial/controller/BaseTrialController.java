@@ -82,9 +82,6 @@ public abstract class BaseTrialController extends SettingsController {
 	@Resource
 	protected LocationDataManager locationDataManager;
 
-	@Resource
-	protected StudyDataManager studyDataManager;
-
 	private static final Logger LOG = LoggerFactory.getLogger(BaseTrialController.class);
 
 	public static final String URL_SETTINGS = "TrialManager/templates/trialSettings";
@@ -157,22 +154,6 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 	}
 
-	protected List<List<ValueReference>> convertToValueReference(final List<Environment> environments) {
-		final List<List<ValueReference>> returnVal = new ArrayList<>(environments.size());
-
-		for (final Environment environment : environments) {
-			final List<ValueReference> valueRefList = new ArrayList<>();
-
-			for (final Map.Entry<String, String> entry : environment.getManagementDetailValues().entrySet()) {
-				final ValueReference valueRef = new ValueReference(entry.getKey(), entry.getValue());
-				valueRefList.add(valueRef);
-			}
-
-			returnVal.add(valueRefList);
-		}
-
-		return returnVal;
-	}
 
 	protected TabInfo prepareExperimentalDesignTabInfo(final Workbook trialWorkbook, final boolean isUsePrevious) {
 		final TabInfo tabInfo = new TabInfo();

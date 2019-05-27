@@ -11,6 +11,7 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,12 +23,14 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -39,6 +42,7 @@ import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -61,6 +65,10 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
  * The Class SettingsController.
  */
 public abstract class SettingsController extends AbstractBaseFieldbookController {
+
+	private static final List<Integer> EXPERIMENT_DESIGN_FACTOR_IDS = Arrays
+		.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.PERCENTAGE_OF_REPLICATION.getId(),
+			TermId.EXPT_DESIGN_SOURCE.getId());
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsController.class);
@@ -91,6 +99,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	@Resource
 	protected OntologyService ontologyService;
+
+	@Resource
+	protected StudyDataManager studyDataManager;
 
 	
 	/**
@@ -707,5 +718,63 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			userSelection.getWorkbook().getVariates().addAll(makeUniqueVariates);
 
 		}
+	}
+
+	/**
+	 * assign UPDATE operation for existing experimental design variables
+	 *
+	 * @param conditions
+	 */
+	protected void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions) {
+		final VariableTypeList factors =
+			this.studyDataManager.getAllStudyFactors(this.userSelection.getWorkbook().getStudyDetails().getId());
+
+		for (final MeasurementVariable mvar : conditions) {
+			// update the operation for experiment design variables
+			// EXP_DESIGN, EXP_DESIGN_SOURCE, NREP, PERCENTAGE_OF_REPLICATION
+			// only if these variables already exists in the existing trial
+			if (EXPERIMENT_DESIGN_FACTOR_IDS.contains(mvar.getTermId()) && factors.findById(mvar.getTermId()) != null) {
+				mvar.setOperation(Operation.UPDATE);
+			}
+		}
+	}
+
+	protected List<List<ValueReference>> convertToValueReference(final List<Environment> environments) {
+		final List<List<ValueReference>> returnVal = new ArrayList<>(environments.size());
+
+		for (final Environment environment : environments) {
+			final List<ValueReference> valueRefList = new ArrayList<>();
+
+			for (final Map.Entry<String, String> entry : environment.getManagementDetailValues().entrySet()) {
+				final ValueReference valueRef = new ValueReference(entry.getKey(), entry.getValue());
+				valueRefList.add(valueRef);
+			}
+
+			returnVal.add(valueRefList);
+		}
+
+		return returnVal;
+	}
+
+	public void addDeletedSettingsList() {
+		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
+		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
+
+		final List<SettingDetail> combinedList = new ArrayList<>();
+		combinedList.addAll(basicDetails);
+		combinedList.addAll(studyLevelConditions);
+		// TODO: add deleted selection variates
+		// include deleted list if measurements are available
+		SettingsUtil.addDeletedSettingsList(combinedList, this.userSelection.getDeletedStudyLevelConditions(),
+			this.userSelection.getStudyLevelConditions());
+		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedPlotLevelList(), this.userSelection.getPlotsLevelList());
+		// TODO: MARK FOR DELETE IBP-2689
+		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedBaselineTraitsList(),
+			this.userSelection.getBaselineTraitsList());
+		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedStudyConditions(), this.userSelection.getStudyConditions());
+		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedTrialLevelVariables(),
+			this.userSelection.getTrialLevelVariableList());
+		SettingsUtil
+			.addDeletedSettingsList(null, this.userSelection.getDeletedTreatmentFactors(), this.userSelection.getTreatmentFactors());
 	}
 }

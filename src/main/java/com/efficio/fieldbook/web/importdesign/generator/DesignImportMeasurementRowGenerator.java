@@ -238,8 +238,22 @@ public class DesignImportMeasurementRowGenerator {
 		return data;
 	}
 
-	private MeasurementVariable createMeasurementVariable(final StandardVariable standardVariable) {
-		return ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, this.fieldbookService);
+    protected String getAliasFromMappedHeaders (final StandardVariable standardVariable) {
+		final Map<Integer, DesignHeaderItem> headers = this.mappedHeaders.get(standardVariable.getPhenotypicType());
+		if(headers != null) {
+			final DesignHeaderItem matchedHeader = headers.get(standardVariable.getId());
+            if(matchedHeader != null) {
+				return matchedHeader.getName();
+			}
+        }
+		return standardVariable.getName();
+	}
+
+	protected MeasurementVariable createMeasurementVariable(final StandardVariable standardVariable) {
+		final MeasurementVariable measurementVariable =  ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, this.fieldbookService);
+		final String alias = this.getAliasFromMappedHeaders(standardVariable);
+		measurementVariable.setName(alias);
+		return measurementVariable;
 	}
 
 	public void addFactorsToMeasurementRows(final List<MeasurementRow> measurements) {

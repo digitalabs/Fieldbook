@@ -98,15 +98,20 @@ function reviewLandingSetup() {
 	if ($('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-block-size') && $('#div-study-tab-' + getCurrentStudyIdInTab() + ' .review-stocks-count')) {
 		var blockSize = parseInt($('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-block-size').text(), 10);
 		var entrySize = parseInt($('#div-study-tab-' + getCurrentStudyIdInTab() + ' .review-stocks-count').text(), 10);
-		var plotSize = parseInt($('#div-study-tab-' + getCurrentStudyIdInTab() + ' .review-plots-count').text(), 10);
-		$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-number-of-plots').text(plotSize);
-		if (blockSize > 0) {
-			var blockCount = entrySize / blockSize;
-			$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-number-of-blocks').text(blockCount);
-			var entriesPerBlock = plotSize / blockSize;
-			$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-entries-per-blocks').text(entriesPerBlock);
-		} else {
-			$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #row-review-number-of-blocks').hide();
+		var totalPlotSize = parseInt($('#div-study-tab-' + getCurrentStudyIdInTab() + ' .review-plots-count').text(), 10);
+		var numberOfEnvironments = parseInt($('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-study-number-of-environments').text(), 10);
+		var plotSize = 0;
+		if (numberOfEnvironments > 0) {
+			plotSize = totalPlotSize / numberOfEnvironments;
+			$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-number-of-plots').text(plotSize);
+			if (blockSize > 0) {
+				var blockCount = entrySize / blockSize;
+				$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-number-of-blocks').text(blockCount);
+				var entriesPerBlock = plotSize / blockSize;
+				$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-entries-per-blocks').text(entriesPerBlock);
+			} else {
+				$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #row-review-number-of-blocks').hide();
+			}
 		}
 
 		$.ajax({

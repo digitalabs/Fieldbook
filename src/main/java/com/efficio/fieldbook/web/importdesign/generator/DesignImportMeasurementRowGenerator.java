@@ -241,12 +241,10 @@ public class DesignImportMeasurementRowGenerator {
     protected String getAliasFromMappedHeaders (final StandardVariable standardVariable) {
 		final Map<Integer, DesignHeaderItem> headers = this.mappedHeaders.get(standardVariable.getPhenotypicType());
 		if(headers != null) {
-            for (final Map.Entry<Integer, DesignHeaderItem> header : headers.entrySet()) {
-                final DesignHeaderItem headerItem = header.getValue();
-                if (headerItem.getVariable().getId() == standardVariable.getId()) {
-                    return headerItem.getName();
-                }
-            }
+			final DesignHeaderItem matchedHeader = headers.get(standardVariable.getId());
+            if(matchedHeader != null) {
+				return matchedHeader.getName();
+			}
         }
 		return standardVariable.getName();
 	}

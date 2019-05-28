@@ -53,7 +53,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+// TODO: MARK FOR DELETE IBP-2689
+@Deprecated
 @Controller
 @RequestMapping("/trial/measurements")
 public class TrialMeasurementsController extends AbstractBaseFieldbookController {

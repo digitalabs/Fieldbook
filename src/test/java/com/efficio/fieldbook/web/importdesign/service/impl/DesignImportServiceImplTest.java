@@ -63,6 +63,19 @@ public class DesignImportServiceImplTest {
 
 	private static final String PROGRAM_UUID = "789c6438-5a94-11e5-885d-feff819cdc9f";
 
+	private static final int TEST_STANDARD_VARIABLE_TERMID = 1;
+	private static final int TEST_PROPERTY_TERMID = 1234;
+	private static final int TEST_SCALE_TERMID = 4321;
+	private static final int TEST_METHOD_TERMID = 3333;
+	private static final int TEST_DATATYPE_TERMID = 4444;
+
+	private static final String TEST_DATATYPE_DESCRIPTION = "TEST DATATYPE";
+	private static final String TEST_METHOD_NAME = "TEST METHOD";
+	private static final String TEST_SCALE_NAME = "TEST SCALE";
+	private static final String TEST_PROPERTY_NAME = "TEST PROPERTY";
+	private static final String TEST_VARIABLE_DESCRIPTION = "TEST DESCRIPTION";
+	private static final String TEST_VARIABLE_NAME = "TEST VARIABLE";
+
 	@Mock
 	private DesignImportCsvParser designImportParser;
 
@@ -420,6 +433,24 @@ public class DesignImportServiceImplTest {
 		Assert.assertEquals("The csv file only contains " + expectedNoOfMeasurementVariablesFromCSV + " Measurement Variables",
 				expectedNoOfMeasurementVariablesFromCSV, returnValue.size());
 
+	}
+
+	@Test
+	public void testExtractMeasurementVariable_withAlias() {
+
+		final StandardVariable standardVariable = new StandardVariable();
+		standardVariable.setId(DesignImportTestDataInitializer.AFLAVER_5_ID);
+		standardVariable.setName(TEST_VARIABLE_NAME);
+		standardVariable.setPhenotypicType(PhenotypicType.VARIATE);
+		standardVariable.setDescription(TEST_VARIABLE_DESCRIPTION);
+		standardVariable.setProperty(new Term(TEST_PROPERTY_TERMID, TEST_PROPERTY_NAME, ""));
+		standardVariable.setScale(new Term(TEST_SCALE_TERMID, TEST_SCALE_NAME, ""));
+		standardVariable.setMethod(new Term(TEST_METHOD_TERMID, TEST_METHOD_NAME, ""));
+		standardVariable.setDataType(new Term(TEST_DATATYPE_TERMID, TEST_DATATYPE_DESCRIPTION, ""));
+
+		final Set<MeasurementVariable> measurementVariables = this.service.extractMeasurementVariable(PhenotypicType.VARIATE, this.designImportData.getMappedHeaders());
+		Assert.assertEquals(DesignImportTestDataInitializer.AFLAVER_5_ID, measurementVariables.iterator().next().getTermId());
+		Assert.assertEquals(DesignImportTestDataInitializer.AFLAVER_5_NAME, measurementVariables.iterator().next().getName());
 	}
 
 	@Test

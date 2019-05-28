@@ -7,7 +7,7 @@ import java.util.Locale;
 
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;

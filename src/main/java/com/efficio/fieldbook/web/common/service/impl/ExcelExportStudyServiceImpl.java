@@ -57,7 +57,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 
 @Service

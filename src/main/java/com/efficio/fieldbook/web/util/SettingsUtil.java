@@ -27,6 +27,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DesignTypeItem;
 import org.generationcp.middleware.domain.dms.PhenotypicType;

@@ -1,6 +1,6 @@
 package com.efficio.fieldbook.util;
 
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;

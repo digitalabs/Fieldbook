@@ -14,7 +14,7 @@ import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl;
 import com.efficio.fieldbook.web.trial.bean.ExportTrialInstanceBean;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import net.sf.jasperreports.engine.JRException;
 import org.generationcp.commons.constant.ToolSection;

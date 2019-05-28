@@ -1,6 +1,6 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 import junit.framework.Assert;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.pojo.FileExportInfo;

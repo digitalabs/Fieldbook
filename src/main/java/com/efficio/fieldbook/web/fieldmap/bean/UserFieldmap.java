@@ -24,7 +24,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 
 /**
  * The Class UserFieldmap.

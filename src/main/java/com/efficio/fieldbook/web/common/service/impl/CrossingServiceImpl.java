@@ -17,7 +17,7 @@ import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
-import org.generationcp.commons.service.impl.SeedSourceGenerator;
+import org.generationcp.commons.ruleengine.generator.SeedSourceGenerator;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
@@ -53,6 +53,7 @@ import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 
+@Transactional
 public class CrossingServiceImpl implements CrossingService {
 
 	public static final Integer GERMPLASM_GNPGS = 2;

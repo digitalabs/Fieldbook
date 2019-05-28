@@ -42,7 +42,7 @@ import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 
 public class CreateTrialControllerTest {
 

@@ -1,19 +1,13 @@
 
 package com.efficio.etl.web.controller.rest;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
+import com.efficio.etl.service.ETLService;
+import com.efficio.etl.web.bean.VariableDTO;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.DataSetType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
@@ -27,8 +21,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.etl.service.ETLService;
-import com.efficio.etl.web.bean.VariableDTO;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 3/4/14 Time: 2:03 AM
@@ -56,9 +54,9 @@ public class StandardVariableRESTController {
 
 	private static final Map<Integer, VariableFilter> VARIABLE_FILTER_MAP = new HashMap<>();
 	private static final VariableFilter MEANS_DATA_VARIABLE_FILTER =
-			new org.generationcp.middleware.manager.ontology.daoElements.VariableFilter();
+		new org.generationcp.middleware.manager.ontology.daoElements.VariableFilter();
 	private static final VariableFilter PLOT_DATA_VARIABLE_FILTER =
-			new org.generationcp.middleware.manager.ontology.daoElements.VariableFilter();
+		new org.generationcp.middleware.manager.ontology.daoElements.VariableFilter();
 
 	static {
 
@@ -76,10 +74,12 @@ public class StandardVariableRESTController {
 		StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER.addVariableType(VariableType.SELECTION_METHOD);
 		StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER.addVariableType(VariableType.TRAIT);
 
-		StandardVariableRESTController.VARIABLE_FILTER_MAP.put(DataSetType.MEANS_DATA.getId(),
-				StandardVariableRESTController.MEANS_DATA_VARIABLE_FILTER);
-		StandardVariableRESTController.VARIABLE_FILTER_MAP.put(DataSetType.PLOT_DATA.getId(),
-				StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER);
+		StandardVariableRESTController.VARIABLE_FILTER_MAP.put(
+			DatasetTypeEnum.MEANS_DATA.getId(),
+			StandardVariableRESTController.MEANS_DATA_VARIABLE_FILTER);
+		StandardVariableRESTController.VARIABLE_FILTER_MAP.put(
+			DatasetTypeEnum.PLOT_DATA.getId(),
+			StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER);
 
 	}
 
@@ -102,7 +102,7 @@ public class StandardVariableRESTController {
 			// TODO factor logic to ETLService
 
 			final Set<StandardVariable> ontologyResult =
-					this.ontologyDataManager.findStandardVariablesByNameOrSynonym(name, this.contextUtil.getCurrentProgramUUID());
+				this.ontologyDataManager.findStandardVariablesByNameOrSynonym(name, this.contextUtil.getCurrentProgramUUID());
 			for (final StandardVariable standardVariable : ontologyResult) {
 				try {
 					final VariableDTO dto = new VariableDTO(standardVariable);
@@ -122,9 +122,10 @@ public class StandardVariableRESTController {
 
 	@ResponseBody
 	@RequestMapping(params = "searchType=PMSR")
-	public List<VariableDTO> searchForStandardVariableByPropertyScaleMethodRole(@RequestParam("property") final String property,
-			@RequestParam("scale") final String scale, @RequestParam("method") final String method,
-			@RequestParam("phenoType") final String phenoType) {
+	public List<VariableDTO> searchForStandardVariableByPropertyScaleMethodRole(
+		@RequestParam("property") final String property,
+		@RequestParam("scale") final String scale, @RequestParam("method") final String method,
+		@RequestParam("phenoType") final String phenoType) {
 
 		// TODO factor logic to ETLService
 		final List<VariableDTO> result = new ArrayList<VariableDTO>();
@@ -157,14 +158,14 @@ public class StandardVariableRESTController {
 	 * This API method is used to retrieve all ontology variables valid for importing in the given dataset type (plot data, means data or
 	 * none). This is mainly used in "Import Datasets".
 	 *
-	 * @param datasetType
+	 * @param datasetTypeId
 	 * @return list of VariableDTO
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/datasetType/{datasetType}", method = RequestMethod.GET)
-	public List<VariableDTO> retrieveOntologyVariables(@PathVariable final Integer datasetType) {
+	@RequestMapping(value = "/datasetType/{datasetTypeId}", method = RequestMethod.GET)
+	public List<VariableDTO> retrieveOntologyVariables(@PathVariable final Integer datasetTypeId) {
 		final List<VariableDTO> returnVal = new ArrayList<VariableDTO>();
-		final VariableFilter middlewareVariableFilter = StandardVariableRESTController.VARIABLE_FILTER_MAP.get(datasetType);
+		final VariableFilter middlewareVariableFilter = StandardVariableRESTController.VARIABLE_FILTER_MAP.get(datasetTypeId);
 		middlewareVariableFilter.setProgramUuid(this.contextUtil.getCurrentProgramUUID());
 		final List<Variable> variables = this.ontologyVariableDataManager.getWithFilter(middlewareVariableFilter);
 		for (final Variable variable : variables) {

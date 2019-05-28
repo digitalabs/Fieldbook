@@ -14,8 +14,8 @@ import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataP
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory;
 import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSourceList;
+import org.generationcp.commons.pojo.AdvancingSource;
+import org.generationcp.commons.pojo.AdvancingSourceList;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.Study;
@@ -189,6 +189,7 @@ public class AdvancingSourceListFactory {
 					advancingSourceCandidate.setCheck(isCheck);
 					advancingSourceCandidate.setStudyName(studyName);
 					advancingSourceCandidate.setStudyId(workbook.getStudyDetails().getId());
+					advancingSourceCandidate.setEnvironmentDatasetId(workbook.getTrialDatasetId());
 
 					dataProcessor.processPlotLevelData(advancingSourceCandidate, row);
 

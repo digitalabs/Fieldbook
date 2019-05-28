@@ -30,7 +30,7 @@ import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.constant.AppConstants;
 
 public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 

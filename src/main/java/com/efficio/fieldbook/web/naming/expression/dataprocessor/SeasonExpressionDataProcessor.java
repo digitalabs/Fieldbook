@@ -13,11 +13,10 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import com.efficio.fieldbook.web.trial.bean.AdvancingSource;
+import org.generationcp.commons.pojo.AdvancingSource;
 
 @Component
 public class SeasonExpressionDataProcessor implements ExpressionDataProcessor {

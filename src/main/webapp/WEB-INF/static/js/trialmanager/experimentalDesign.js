@@ -329,26 +329,26 @@
 					});
 
 					$scope.toggleDesignView = function() {
-						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
+						var selectedExperimentDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign
 							|| ($scope.data.designType !== null
 							&& $scope.data.designType !== ''
-							&& selectedDesignType.name === 'Custom Import Design')
+							&& selectedExperimentDesignType.name === 'Custom Import Design')
 							);
 					};
 
 					$scope.isImportedDesign = function() {
-						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
+						var selectedExperimentDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						return $scope.data.designType != null
 							&& $scope.data.designType !== ''
-							&& selectedDesignType.name === 'Custom Import Design';
+							&& selectedExperimentDesignType.name === 'Custom Import Design';
 					};
 
 					$scope.isBVDesign = function() {
-						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
+						var selectedExperimentDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						return $scope.data.designType != null
 							&& $scope.data.designType !== ''
-							&& selectedDesignType.name !== 'Custom Import Design';
+							&& selectedExperimentDesignType.name !== 'Custom Import Design';
 					};
 					
 					$scope.showOrHideAdvancedOptions = function (isShown) {

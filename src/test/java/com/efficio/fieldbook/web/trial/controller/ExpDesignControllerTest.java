@@ -20,7 +20,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.dms.ExperimentDesignType;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.util.CrossExpansionProperties;
@@ -94,7 +94,7 @@ public class ExpDesignControllerTest {
 
 	@Test
 	public void testRetrieveDesignTypes() {
-		final List<DesignTypeItem> designTypes = this.expDesignController.retrieveDesignTypes();
+		final List<ExperimentDesignType> designTypes = this.expDesignController.retrieveDesignTypes();
 		Assert.assertEquals("7 core design types are expected to be returned.", 7, designTypes.size());
 	}
 
@@ -244,22 +244,22 @@ public class ExpDesignControllerTest {
 
 		Assert.assertSame(
 			this.randomizeCompleteBlockDesign,
-			this.expDesignController.getExpDesignService(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId()));
+			this.expDesignController.getExpDesignService(ExperimentDesignType.RANDOMIZED_COMPLETE_BLOCK.getId()));
 		Assert.assertSame(
 			this.resolveIncompleteBlockDesign,
-			this.expDesignController.getExpDesignService(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId()));
+			this.expDesignController.getExpDesignService(ExperimentDesignType.RESOLVABLE_INCOMPLETE_BLOCK.getId()));
 		Assert.assertSame(
 			this.resolvableRowColumnDesign,
-			this.expDesignController.getExpDesignService(DesignTypeItem.ROW_COL.getId()));
+			this.expDesignController.getExpDesignService(ExperimentDesignType.ROW_COL.getId()));
 		Assert.assertSame(
 			this.augmentedRandomizedBlockDesignService,
-			this.expDesignController.getExpDesignService(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId()));
+			this.expDesignController.getExpDesignService(ExperimentDesignType.AUGMENTED_RANDOMIZED_BLOCK.getId()));
 		Assert.assertSame(
 			this.entryListOrderDesignService,
-			this.expDesignController.getExpDesignService(DesignTypeItem.ENTRY_LIST_ORDER.getId()));
+			this.expDesignController.getExpDesignService(ExperimentDesignType.ENTRY_LIST_ORDER.getId()));
 		Assert.assertSame(
 			this.pRepDesignService,
-			this.expDesignController.getExpDesignService(DesignTypeItem.P_REP.getId()));
+			this.expDesignController.getExpDesignService(ExperimentDesignType.P_REP.getId()));
 		Assert.assertNull(
 			this.expDesignController.getExpDesignService(10101));
 	}

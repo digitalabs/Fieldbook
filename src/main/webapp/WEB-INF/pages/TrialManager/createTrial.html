@@ -54,7 +54,7 @@
 					<span class='bms-locked' style='position: relative; top:7px; right: 5px; color: #666666;font-size: 23px; font-weight: bold;' ng-show="isLockedStudy() &amp;&amp;  userHasLockPermission()" ng-click="changeLockedStatus(0)"/>
 					<span class='bms-lock-open' style='position: relative; top:7px; right: 5px; color: #666666;font-size: 23px; font-weight: bold;' ng-show="!isLockedStudy() &amp;&amp; userHasLockPermission()" ng-click="changeLockedStatus(1)"/>
 					<div class="btn-group" style="padding-right: 36px">
-						<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+						<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown" ng:click="reloadActionMenuConditions()">
 							<span th:text="#{study.studydetails.actions}">Actions</span>
 						</button>
 						<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
@@ -90,7 +90,7 @@
 							</li>
 
 							<!--Crossing options-->
-							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
+							<li ng-show="hasDesignGenerated" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Crossing options</a>
 								<ul class="dropdown-menu" style="margin-left: -48px;">
 									<!--Export crossing template-->
@@ -110,7 +110,7 @@
 									</li>
 								</ul>
 							</li>
-							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
+							<li ng-show="hasDesignGenerated" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Observation unit options</a>
 								<ul class="dropdown-menu" style="margin-left: -25px;">
 									<li>
@@ -164,12 +164,12 @@
 								   th:text="#{study.option.execute.calculated.variable}">Execute calculated variable</a>
 							</li>
 
-							<li>
+							<li ng-show="hasDesignGenerated" class="dropdown-submenu pull-left">
 								<a ng-click="showCreateSampleListModal()" id="sample-trial-link"
 								   th:text="#{study.studydetails.action.create.sample}">Create genotyping samples</a>
 							</li>
 
-							<li ng-show="hasMeasurementData()" class="dropdown-submenu pull-left">
+							<li ng-show="hasDesignGenerated" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Advance study options</a>
 								<ul class="dropdown-menu" style="margin-left: -68px; width: 235px;">
 									<li>

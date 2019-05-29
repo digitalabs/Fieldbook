@@ -483,10 +483,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign &&
 					!TrialManagerDataService.applicationData.unsavedTraitsAvailable;
 			};
-			$scope.hasMeasurementData = function () {
-				return TrialManagerDataService.trialMeasurement.count &&
-					TrialManagerDataService.trialMeasurement.count > 0;
-			};
+
+			// TODO: MARK FOR DELETE IBP-2689
+			/*$scope.hasMeasurementData = function () {
+				return TrialManagerDataService.trialMeasurement.hasExperimentDesigned;
+			};*/
 
 			$scope.hasGermplasmListSelected = function () {
 				return TrialManagerDataService.applicationData.germplasmListSelected;
@@ -498,6 +499,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.displayExecuteCalculatedVariableOnlyActions = function () {
 				return derivedVariableService.isStudyHasCalculatedVariables && this.displayMeasurementOnlyActions();
+			};
+
+			$scope.reloadActionMenuConditions = function () {
+				$scope.hasDesignGenerated = TrialManagerDataService.trialMeasurement.hasExperimentDesigned;
 			};
 
 			// Programatically navigate to specified tab state

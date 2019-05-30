@@ -18,7 +18,7 @@
 										<select ui-select2="{minimumResultsForSearch : -1}"
 											ng-model="data.designType"
 											ng-change="onSwitchDesignTypes(data.designType)"
-											ng-disabled="disableDesignTypeSelect">
+											ng-disabled="disableDesignTypeSelect()">
 											<option value="">Please Choose</option>
 											<option value="{{item.id}}"
 												ng-repeat="item in designTypeView" ng-disabled="item.isDisabled">

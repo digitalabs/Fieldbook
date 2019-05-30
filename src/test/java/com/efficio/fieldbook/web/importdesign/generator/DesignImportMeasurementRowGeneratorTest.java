@@ -61,6 +61,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 	private static final String TEST_VARIABLE_DESCRIPTION = "TEST DESCRIPTION";
 	private static final String TEST_VARIABLE_NAME = "TEST VARIABLE";
 
+
 	private UserSelection userSelection;
 
 	@Mock
@@ -341,5 +342,46 @@ public class DesignImportMeasurementRowGeneratorTest {
 					expectedVariableValueMap.get(variableName).toString(), value);
 		}
 	}
+
+	@Test
+	public void testCreateMeasurementVariable () {
+
+		final StandardVariable standardVariable = new StandardVariable();
+		standardVariable.setId(TEST_STANDARD_VARIABLE_TERMID);
+		standardVariable.setName(TEST_VARIABLE_NAME);
+		standardVariable.setDescription(TEST_VARIABLE_DESCRIPTION);
+		standardVariable.setProperty(new Term(TEST_PROPERTY_TERMID, TEST_PROPERTY_NAME, ""));
+		standardVariable.setScale(new Term(TEST_SCALE_TERMID, TEST_SCALE_NAME, ""));
+		standardVariable.setMethod(new Term(TEST_METHOD_TERMID, TEST_METHOD_NAME, ""));
+		standardVariable.setDataType(new Term(TEST_DATATYPE_TERMID, TEST_DATATYPE_DESCRIPTION, ""));
+
+		final MeasurementVariable measurementVariable = this.generator.createMeasurementVariable(standardVariable);
+		Assert.assertEquals(TEST_STANDARD_VARIABLE_TERMID, measurementVariable.getTermId());
+		Assert.assertEquals(TEST_VARIABLE_NAME, measurementVariable.getName());
+		Assert.assertEquals(TEST_VARIABLE_DESCRIPTION, measurementVariable.getDescription());
+		Assert.assertEquals(TEST_PROPERTY_NAME, measurementVariable.getProperty());
+		Assert.assertEquals(TEST_SCALE_NAME, measurementVariable.getScale());
+		Assert.assertEquals(TEST_METHOD_NAME, measurementVariable.getMethod());
+		Assert.assertEquals(TEST_DATATYPE_DESCRIPTION, measurementVariable.getDataType());
+
+	}
+
+	@Test
+	public void testGetAliasFromMappedHeaders () {
+
+		final StandardVariable standardVariable = new StandardVariable();
+		standardVariable.setId(DesignImportTestDataInitializer.AFLAVER_5_ID);
+		standardVariable.setPhenotypicType(PhenotypicType.VARIATE);
+		standardVariable.setName(TEST_VARIABLE_NAME);
+		standardVariable.setDescription(TEST_VARIABLE_DESCRIPTION);
+		standardVariable.setProperty(new Term(TEST_PROPERTY_TERMID, TEST_PROPERTY_NAME, ""));
+		standardVariable.setScale(new Term(TEST_SCALE_TERMID, TEST_SCALE_NAME, ""));
+		standardVariable.setMethod(new Term(TEST_METHOD_TERMID, TEST_METHOD_NAME, ""));
+		standardVariable.setDataType(new Term(TEST_DATATYPE_TERMID, TEST_DATATYPE_DESCRIPTION, ""));
+
+		final String alias = this.generator.getAliasFromMappedHeaders(standardVariable);
+		Assert.assertEquals(DesignImportTestDataInitializer.AFLAVER_5_NAME, alias);
+	}
+
 
 }

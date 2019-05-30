@@ -38,6 +38,7 @@ public class DesignImportTestDataInitializer {
 	public static final int NO_OF_TEST_ENTRIES = 5;
 
 	public static final int AFLAVER_5_ID = 51510;
+	public static final String AFLAVER_5_NAME = "AflavER_1_5";
 
 	public static DesignImportData createDesignImportData(final int startingEntryNo, final int startingPlotNo) {
 
@@ -84,7 +85,7 @@ public class DesignImportTestDataInitializer {
 		trialDesignItems.add(createDesignHeaderItem(PhenotypicType.TRIAL_DESIGN, TermId.BLOCK_NO.getId(), "BLOCK_NO", 5, NUMERIC_VARIABLE));
 
 		final List<DesignHeaderItem> variateItems = new ArrayList<>();
-		variateItems.add(createDesignHeaderItem(PhenotypicType.VARIATE, AFLAVER_5_ID, "AflavER_1_5", 6, CATEGORICAL_VARIABLE));
+		variateItems.add(createDesignHeaderItem(PhenotypicType.VARIATE, AFLAVER_5_ID, AFLAVER_5_NAME, 6, CATEGORICAL_VARIABLE));
 
 		mappedHeaders.put(PhenotypicType.TRIAL_ENVIRONMENT, trialEvironmentItems);
 		mappedHeaders.put(PhenotypicType.GERMPLASM, germplasmItems);
@@ -101,7 +102,7 @@ public class DesignImportTestDataInitializer {
 		final Map<Integer, List<String>> csvData = new HashMap<>();
 
 		// The first row is the header
-		csvData.put(0, Lists.newArrayList("TRIAL_INSTANCE", "SITE_NAME", "ENTRY_NO", "PLOT_NO", "REP_NO", "BLOCK_NO", "AflavER_1_5"));
+		csvData.put(0, Lists.newArrayList("TRIAL_INSTANCE", "SITE_NAME_LOCAL_NAME", "ENTRY_NO", "PLOT_NO", "REP_NO", "BLOCK_NO", "AflavER_1_5"));
 
 		int plotNo = startingPlotNo;
 		int startingRowIndex = 1;

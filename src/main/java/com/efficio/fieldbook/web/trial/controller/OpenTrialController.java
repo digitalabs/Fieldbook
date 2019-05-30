@@ -30,7 +30,6 @@ import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.samplelist.SampleListDTO;
-import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -41,6 +40,7 @@ import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
+import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
 import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,6 +100,9 @@ public class OpenTrialController extends BaseTrialController {
 
 	@Resource
 	private DatasetService datasetService;
+
+	@Resource
+	DatasetTypeService datasetTypeService;
 
 	/**
 	 * The Inventory list manager.
@@ -935,12 +938,11 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	List<SampleListDTO> getSampleList(final Integer studyId) {
-		final Set<Integer> datasetTypeIds = new HashSet<>(Arrays.asList(DatasetTypeEnum.SUB_OBSERVATION_IDS));
-		datasetTypeIds.add(DatasetTypeEnum.PLOT_DATA.getId());
-
+		final List<Integer> datasetTypeIds = this.datasetTypeService.getObservationDatasetTypeIds();
 		final List<Integer> datasetIds = new ArrayList<>();
-		final List<DatasetDTO> datasets = this.datasetService.getDatasets(studyId, datasetTypeIds);
-		for (final DatasetDTO dataset : datasets) {
+
+		final List<DatasetDTO> DatasetDTOs = this.datasetService.getDatasets(studyId, new HashSet<>(datasetTypeIds));
+		for (final DatasetDTO dataset : DatasetDTOs) {
 			datasetIds.add(dataset.getDatasetId());
 		}
 		if (!datasetIds.isEmpty()) {

@@ -166,7 +166,6 @@ public class UserSelection implements Serializable {
 
 	List<InventoryDetails> previousInventoryDetails;
 
-	private Integer startingEntryNo;
 	private Integer startingPlotNo;
 	private String studyName;
 	private String studyDescription;
@@ -604,7 +603,7 @@ public class UserSelection implements Serializable {
 	/**
 	 * Sets the deleted study conditions.
 	 *
-	 * @param deletedstudyConditions the deletedstudyConditions to set
+	 * @param deletedStudyConditions the deletedstudyConditions to set
 	 */
 	public void setDeletedStudyConditions(final List<SettingDetail> deletedStudyConditions) {
 		this.deletedStudyConditions = deletedStudyConditions;
@@ -937,14 +936,6 @@ public class UserSelection implements Serializable {
 		return HtmlUtils.htmlUnescape(this.getWorkbook().getStudyDetails().getStudyName());
 	}
 
-	public Integer getStartingEntryNo() {
-		return startingEntryNo;
-	}
-
-	public void setStartingEntryNo(final Integer startingEntryNo) {
-		this.startingEntryNo = startingEntryNo;
-	}
-
 	public Integer getStartingPlotNo() {
 		return startingPlotNo;
 	}
@@ -1079,8 +1070,7 @@ public class UserSelection implements Serializable {
 			.equals(getImportedCrossesList(), that.getImportedCrossesList()) && Objects
 			.equals(getImportedCrossesId(), that.getImportedCrossesId()) && Objects.equals(getCrossSettings(), that.getCrossSettings())
 			&& Objects.equals(getListId(), that.getListId()) && Objects
-			.equals(getPreviousInventoryDetails(), that.getPreviousInventoryDetails()) && Objects
-			.equals(getStartingEntryNo(), that.getStartingEntryNo()) && Objects.equals(getStartingPlotNo(), that.getStartingPlotNo())
+			.equals(getPreviousInventoryDetails(), that.getPreviousInventoryDetails()) && Objects.equals(getStartingPlotNo(), that.getStartingPlotNo())
 			&& Objects.equals(getStudyName(), that.getStudyName()) && Objects.equals(getStudyDescription(), that.getStudyDescription())
 			&& Objects.equals(getStudyObjective(), that.getStudyObjective()) && Objects
 			.equals(getStudyStartDate(), that.getStudyStartDate()) && Objects.equals(getStudyEndDate(), that.getStudyEndDate()) && Objects
@@ -1101,7 +1091,7 @@ public class UserSelection implements Serializable {
 			getNewSelectionVariates(), getWorkbook(), getTemporaryWorkbook(), getDesignImportData(), getCurrentPage(),
 			getMeasurementRowList(), getMeasurementDatasetVariable(), getConstantsWithLabels(), getExpDesignParams(),
 			getExpDesignVariables(), getExperimentalDesignVariables(), getImportedCrossesList(), getImportedCrossesId(), getCrossSettings(),
-			getListId(), getPreviousInventoryDetails(), getStartingEntryNo(), getStartingPlotNo(), getStudyName(), getStudyDescription(),
+			getListId(), getPreviousInventoryDetails(), getStartingPlotNo(), getStudyName(), getStudyDescription(),
 			getStudyObjective(), getStudyStartDate(), getStudyEndDate(), getStudyUpdate(), getStudyType(), getCreatedBy());
 	}
 
@@ -1126,8 +1116,8 @@ public class UserSelection implements Serializable {
 			+ measurementDatasetVariable + ", constantsWithLabels=" + constantsWithLabels + ", expDesignParams=" + expDesignParams
 			+ ", expDesignVariables=" + expDesignVariables + ", experimentalDesignVariables=" + experimentalDesignVariables
 			+ ", importedCrossesList=" + importedCrossesList + ", importedCrossesId=" + importedCrossesId + ", crossSettings="
-			+ crossSettings + ", listId=" + listId + ", previousInventoryDetails=" + previousInventoryDetails + ", startingEntryNo="
-			+ startingEntryNo + ", startingPlotNo=" + startingPlotNo + ", studyName='" + studyName + '\'' + ", studyDescription='"
+			+ crossSettings + ", listId=" + listId + ", previousInventoryDetails=" + previousInventoryDetails + ", startingPlotNo="
+			+ startingPlotNo + ", studyName='" + studyName + '\'' + ", studyDescription='"
 			+ studyDescription + '\'' + ", studyObjective='" + studyObjective + '\'' + ", studyStartDate='" + studyStartDate + '\''
 			+ ", studyEndDate='" + studyEndDate + '\'' + ", studyUpdate='" + studyUpdate + '\'' + ", studyType='" + studyType + '\''
 			+ ", createdBy='" + createdBy + '\'' + '}';

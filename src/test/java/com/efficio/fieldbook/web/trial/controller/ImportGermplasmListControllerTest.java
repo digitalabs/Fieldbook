@@ -18,12 +18,10 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.common.service.MergeCheckService;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
 import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.service.ImportGermplasmFileService;
 import com.google.common.collect.Lists;
 import org.generationcp.commons.data.initializer.ImportedGermplasmTestDataInitializer;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -45,7 +43,6 @@ import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
-import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
@@ -210,10 +207,6 @@ public class ImportGermplasmListControllerTest {
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
 			x++;
 		}
-
-		// Test values set in form
-		Assert.assertEquals("The starting entry number should be 1.", form.getStartingEntryNo(),
-				ImportGermplasmListControllerTest.STARTING_ENTRY_NUMBER);
 		Assert.assertEquals("The starting plot number should be 1.", form.getStartingPlotNo(),
 				ImportGermplasmListController.STARTING_PLOT_NO);
 	}
@@ -251,9 +244,6 @@ public class ImportGermplasmListControllerTest {
 			x++;
 		}
 
-		// Test values set in form
-		Assert.assertEquals("The starting entry number should be 1.", form.getStartingEntryNo(),
-				ImportGermplasmListControllerTest.STARTING_ENTRY_NUMBER);
 		Assert.assertEquals("The starting plot number should be 1.", form.getStartingPlotNo(),
 				ImportGermplasmListController.STARTING_PLOT_NO);
 	}
@@ -369,12 +359,11 @@ public class ImportGermplasmListControllerTest {
 				ImportGermplasmListController.TABLE_HEADER_LIST);
 		Assert.assertEquals("The starting plot no should be " + ImportGermplasmListController.STARTING_PLOT_NO,
 				ImportGermplasmListController.STARTING_PLOT_NO, form.getStartingPlotNo());
-		Assert.assertEquals("The starting entry no should be 1", "1", form.getStartingEntryNo());
 		Assert.assertEquals("The main info should be" + mainInfo, mainInfo, this.userSelection.getImportedGermplasmMainInfo());
 		Assert.assertNotNull("The imported germplasm list should not be null", this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList());
 		Assert.assertEquals("The imported germplasm should be " + list, list, this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
 	}
-	
+
 	@Test
 	public void testInitializeObjectsForGermplasmDetailsViewWhereListIsEmpty() {
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
@@ -400,7 +389,6 @@ public class ImportGermplasmListControllerTest {
 				ImportGermplasmListController.TABLE_HEADER_LIST);
 		Assert.assertEquals("The starting plot no should be " + ImportGermplasmListController.STARTING_PLOT_NO,
 				ImportGermplasmListController.STARTING_PLOT_NO, form.getStartingPlotNo());
-		Assert.assertNull("The starting entry no should be null", form.getStartingEntryNo());
 		Assert.assertEquals("The main info should be" + mainInfo, mainInfo, this.userSelection.getImportedGermplasmMainInfo());
 		Assert.assertNull("The imported germplasm list should be null", this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList());
 	}
@@ -541,7 +529,6 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testNextScreen() throws BVDesignException {
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		form.setStartingEntryNo("801");
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setStudyType(StudyTypeDto.getNurseryDto());
@@ -834,7 +821,6 @@ public class ImportGermplasmListControllerTest {
 		importGermplasmListController.setUserSelection(userSelection);
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		form.setStartingEntryNo(startEntryNumber);
 		form.setStartingPlotNo("100");
 		importGermplasmListController.assignAndIncrementEntryNumberAndPlotNumber(form);
 
@@ -871,9 +857,6 @@ public class ImportGermplasmListControllerTest {
 		Assert.assertEquals(
 				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
 				form.getImportedGermplasm());
-		Assert.assertEquals(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()
-				.getImportedGermplasms().get(0).getEntryId().toString(), form.getStartingEntryNo());
-		Assert.assertEquals(Integer.toString(this.userSelection.getStartingEntryNo()), form.getStartingEntryNo());
 		Mockito.verify(model).addAttribute(ImportGermplasmListController.CHECK_LISTS, checkTypes);
 		Mockito.verify(model).addAttribute(ImportGermplasmListController.TYPE2, "STUDY");
 		Mockito.verify(model).addAttribute("hasMeasurement", false);
@@ -881,7 +864,6 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	private void updateUserSelection() {
-		this.userSelection.setStartingEntryNo(ImportGermplasmListControllerTest.STARTING_ENTRY_NO);
 		this.userSelection.setPlotsLevelList(this.createPlotsLevelListTestData());
 		this.userSelection.setImportedGermplasmMainInfo(this.createImportedGermplasmMainInfoTestData());
 	}
@@ -943,22 +925,6 @@ public class ImportGermplasmListControllerTest {
 		checkTypes.add(new Enumeration(10170, "D", "Disease entry", 3));
 		checkTypes.add(new Enumeration(10170, "S", "Stress entry", 4));
 		return checkTypes;
-	}
-
-	@Test
-	public void testUpdateEntryNumbersOfGermplasmList() {
-		this.updateUserSelection();
-		this.importGermplasmListController.setUserSelection(this.userSelection);
-		final Integer newStartingEntryNo = 50;
-		this.importGermplasmListController.updateEntryNumbersOfGermplasmList(newStartingEntryNo);
-		final List<ImportedGermplasm> list = this.userSelection.getImportedGermplasmMainInfo()
-				.getImportedGermplasmList().getImportedGermplasms();
-		int expectedEntryNo = newStartingEntryNo;
-		for (final ImportedGermplasm germplasm : list) {
-			final Integer currentEntryNo = germplasm.getEntryId();
-			Assert.assertEquals(new Integer(expectedEntryNo++), currentEntryNo);
-		}
-		Assert.assertEquals(newStartingEntryNo, this.userSelection.getStartingEntryNo());
 	}
 
 }

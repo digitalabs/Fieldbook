@@ -1,7 +1,7 @@
 
 package com.efficio.fieldbook.web.common.bean;
 
-import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.dms.ExperimentDesignType;
 
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 
@@ -12,24 +12,24 @@ import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 public class GenerateDesignInput {
 
 	private EnvironmentData environmentData;
-	private DesignTypeItem selectedDesignType;
+	private ExperimentDesignType selectedExperimentDesignType;
 	private Integer startingEntryNo;
 	private Integer startingPlotNo;
 	private Boolean hasNewEnvironmentAdded;
 
 	public GenerateDesignInput() {
 		this.environmentData = new EnvironmentData();
-		this.selectedDesignType = new DesignTypeItem();
+		this.selectedExperimentDesignType = new ExperimentDesignType();
 		this.startingEntryNo = 1;
 		this.startingPlotNo = 1;
 		this.hasNewEnvironmentAdded = false;
 	}
 
-	public GenerateDesignInput(final EnvironmentData environmentData, final DesignTypeItem selectedDesignType,
+	public GenerateDesignInput(final EnvironmentData environmentData, final ExperimentDesignType selectedExperimentDesignType,
 			final Integer startingEntryNo, final Integer startingPlotNo, final Boolean hasNewEnvironmentAdded) {
 		super();
 		this.environmentData = environmentData;
-		this.selectedDesignType = selectedDesignType;
+		this.selectedExperimentDesignType = selectedExperimentDesignType;
 		this.startingEntryNo = startingEntryNo;
 		this.startingPlotNo = startingPlotNo;
 		this.hasNewEnvironmentAdded = hasNewEnvironmentAdded;
@@ -43,12 +43,12 @@ public class GenerateDesignInput {
 		this.environmentData = environmentData;
 	}
 
-	public DesignTypeItem getSelectedDesignType() {
-		return this.selectedDesignType;
+	public ExperimentDesignType getSelectedExperimentDesignType() {
+		return this.selectedExperimentDesignType;
 	}
 
-	public void setSelectedDesignType(final DesignTypeItem selectedDesignType) {
-		this.selectedDesignType = selectedDesignType;
+	public void setSelectedExperimentDesignType(final ExperimentDesignType selectedExperimentDesignType) {
+		this.selectedExperimentDesignType = selectedExperimentDesignType;
 	}
 
 	public Integer getStartingEntryNo() {

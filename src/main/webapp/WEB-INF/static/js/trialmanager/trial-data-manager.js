@@ -266,9 +266,10 @@
 				},
 
 				trialMeasurement: {
-					hasMeasurement: TRIAL_HAS_MEASUREMENT,
-                    hasAdvancedOrCrossesList: TRIAL_HAS_ADVANCED_OR_CROSSES_LIST,
-					count: parseInt(TRIAL_MEASUREMENT_COUNT, 10)
+					hasMeasurement: false,
+                    hasAdvancedOrCrossesList: false,
+					count: 0,
+					hasExperimentDesigned:false
 				},
 
                 performDataCleanup: function() {

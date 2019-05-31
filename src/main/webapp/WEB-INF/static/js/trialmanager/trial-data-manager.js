@@ -334,7 +334,6 @@
 					var data = {
 						environmentData: environmentData,
 						selectedExperimentDesignType: angular.copy(service.getDesignTypeById(designType, service.applicationData.designTypes)),
-						startingEntryNo: service.currentData.experimentalDesign.startingEntryNo,
 						startingPlotNo: service.currentData.experimentalDesign.startingPlotNo,
 						hasNewEnvironmentAdded: service.applicationData.hasNewEnvironmentAdded
 					};

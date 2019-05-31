@@ -173,6 +173,7 @@ public class ExpDesignController extends BaseTrialController {
 			} else {
 				final ExperimentDesignService designService = this.getExpDesignService(designType);
 				if (designService != null) {
+					expDesign.setStartingEntryNo(this.getLowestEntryNo(germplasmList).toString());
 					// we call the validation
 					expParameterOutput = designService.validate(expDesign, germplasmList);
 					// we call the actual process
@@ -188,8 +189,6 @@ public class ExpDesignController extends BaseTrialController {
 							expDesign.setStartingPlotNo("1");
 							this.userSelection.setStartingPlotNo(1);
 						}
-
-						expDesign.setStartingEntryNo(this.getLowestEntryNo(germplasmList).toString());
 
 						BVDesignLicenseInfo bvDesignLicenseInfo = null;
 						if (designService.requiresBreedingViewLicence()) {

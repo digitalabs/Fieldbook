@@ -218,20 +218,6 @@ public abstract class BaseTrialController extends SettingsController {
 			// Get starting entry and plot without loading all observations in OpenTrialController.openTrial()
 			this.setStartingEntryNoAndPlotNoFromObservations(trialWorkbook, data);
 
-			// Get all entry numbers from workbook, sort it and get first element from entry numbers list
-			final List<Integer> entryNumberList = new ArrayList<>();
-			for (final MeasurementRow measurementRow : trialWorkbook.getObservations()) {
-				final MeasurementData measurementData = measurementRow.getDataList().get(4);
-				if (Objects.equals(measurementData.getLabel(), TermId.ENTRY_NO.toString())) {
-					entryNumberList.add(Integer.parseInt(measurementData.getValue()));
-				}
-			}
-
-			if (!entryNumberList.isEmpty()) {
-				Collections.sort(entryNumberList);
-				data.setStartingEntryNo(String.valueOf(entryNumberList.get(0)));
-			}
-
 			final String designTypeString =
 				xpDesignVariable.getExperimentalDesign() == null ? null : xpDesignVariable.getExperimentalDesign().getValue();
 			if (NumberUtils.isNumber(designTypeString)) {
@@ -259,7 +245,6 @@ public abstract class BaseTrialController extends SettingsController {
 
 	private void setStartingEntryNoAndPlotNoFromObservations(final Workbook trialWorkbook, final ExpDesignParameterUi data) {
 		// Set starting entry and plot number from observations
-		Integer startingEntryNo = 0;
 		Integer startingPlotNo = 0;
 		if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {
 
@@ -275,23 +260,15 @@ public abstract class BaseTrialController extends SettingsController {
 						}
 					});
 
-				final Integer currentEntryNo = Integer.valueOf(dataMap.get(TermId.ENTRY_NO.getId()).getValue());
-				if (currentEntryNo < startingEntryNo || startingEntryNo == 0) {
-					startingEntryNo = currentEntryNo;
-				}
 				final Integer currentPlotNo = Integer.valueOf(dataMap.get(TermId.PLOT_NO.getId()).getValue());
 				if (currentPlotNo < startingPlotNo || startingPlotNo == 0) {
 					startingPlotNo = currentPlotNo;
 				}
 			}
 		} else {
-			// set the default starting entry no
-			startingEntryNo = 1;
-
 			// set the default starting plot no
 			startingPlotNo = 1;
 		}
-		data.setStartingEntryNo(startingEntryNo.toString());
 		data.setStartingPlotNo(startingPlotNo.toString());
 	}
 

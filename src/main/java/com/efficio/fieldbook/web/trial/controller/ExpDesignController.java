@@ -189,14 +189,7 @@ public class ExpDesignController extends BaseTrialController {
 							this.userSelection.setStartingPlotNo(1);
 						}
 
-						this.userSelection.setStartingEntryNo(StringUtil.parseInt(expDesign.getStartingEntryNo(), null));
-
-						if (this.userSelection.getStartingEntryNo() != null) {
-							Integer entryNo = this.userSelection.getStartingEntryNo();
-							for (final ImportedGermplasm g : germplasmList) {
-								g.setEntryId(entryNo++);
-							}
-						}
+						expDesign.setStartingEntryNo(this.getLowestEntryNo(germplasmList).toString());
 
 						BVDesignLicenseInfo bvDesignLicenseInfo = null;
 						if (designService.requiresBreedingViewLicence()) {
@@ -270,6 +263,23 @@ public class ExpDesignController extends BaseTrialController {
 		}
 
 		return expParameterOutput;
+	}
+
+	private Integer getLowestEntryNo(final List<ImportedGermplasm> list) {
+		if (list == null || list.isEmpty()) {
+			return null;
+		}
+		Integer lowestEntryNo = list.get(0).getEntryId();
+		if (list.size() == 1) {
+			return lowestEntryNo;
+		}
+		for (int i = 1; i < list.size(); i++) {
+			final ImportedGermplasm germplasm = list.get(i);
+			if (germplasm.getEntryId() != null && germplasm.getEntryId() < lowestEntryNo) {
+				lowestEntryNo = germplasm.getEntryId();
+			}
+		}
+		return lowestEntryNo;
 	}
 
 	protected List<MeasurementRow> combineNewlyGeneratedMeasurementsWithExisting(final List<MeasurementRow> measurementRows,

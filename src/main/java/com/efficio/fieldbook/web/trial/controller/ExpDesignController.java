@@ -357,7 +357,7 @@ public class ExpDesignController extends BaseTrialController {
 		return treatmentFactorItems;
 	}
 
-	private void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions) {
+	protected void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions) {
 		final VariableTypeList factors =
 			this.studyDataManager.getAllStudyFactors(this.userSelection.getWorkbook().getStudyDetails().getId());
 

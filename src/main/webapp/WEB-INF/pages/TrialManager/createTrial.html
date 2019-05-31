@@ -565,7 +565,9 @@
 	</div>
 
 	<form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">
+<!--
 		<input type="hidden" th:field="*{measurementDataExisting}"/>
+-->
 	</form>
 
 	<!-- Design import map headers -->
@@ -716,7 +718,8 @@
 			).constant('BREEDING_METHOD_CODE', /*[[${T(org.generationcp.commons.constant.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
 			).constant('BREEDING_METHOD_ID', /*[[${T(org.generationcp.commons.constant.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''
 			).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
-			).constant('SELECTION_VARIABLE_INITIAL_DATA', /*[[${selectionVariableData}]]*/ ''
+			// TODO: MARK FOR DELETE IBP-2789
+			//).constant('SELECTION_VARIABLE_INITIAL_DATA', /*[[${selectionVariableData}]]*/ ''
 			).constant('ADVANCE_LIST_DATA', /*[[${advancedList}]]*/ ''
 			).constant('SAMPLE_LIST_DATA', /*[[${sampleList}]]*/ ''
 			).constant('CROSSES_LIST_DATA', /*[[${crossesList}]]*/ ''
@@ -730,9 +733,12 @@
 			).constant('BASIC_DETAILS_DATA', /*[[${basicDetailsData}]]*/ ''
 			).constant('TRIAL_VARIABLE_SELECTION_LABELS', translations
 			).constant('TRIAL_MANAGEMENT_MODE', /*[[${operationMode}]]*/ ''
-			).constant('TRIAL_HAS_MEASUREMENT', /*[[${measurementDataExisting}]]*/ ''
-            ).constant('TRIAL_HAS_ADVANCED_OR_CROSSES_LIST', /*[[${hasAdvancedOrCrossesList}]]*/ ''
-			).constant('TRIAL_MEASUREMENT_COUNT', /*[[${measurementRowCount}]]*/ ''
+			// TODO: MARK FOR DELETE IBP-2789
+			//).constant('TRIAL_HAS_MEASUREMENT', /*[[${measurementDataExisting}]]*/ ''
+			// TODO: MARK FOR DELETE IBP-2789
+			//).constant('TRIAL_HAS_ADVANCED_OR_CROSSES_LIST', /*[[${hasAdvancedOrCrossesList}]]*/ ''
+			// TODO: MARK FOR DELETE IBP-2789
+			//).constant('TRIAL_MEASUREMENT_COUNT', /*[[${measurementRowCount}]]*/ ''
 			).constant('EXPERIMENTAL_DESIGN_SPECIAL_DATA', /*[[${experimentalDesignSpecialData}]]*/ ''
 			).constant('UNSPECIFIED_LOCATION_ID', /*[[${unspecifiedLocationId}]]*/ ''
 			).constant('DESIGN_TYPE',
@@ -818,7 +824,7 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/environmentService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/environments.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>
+	<!--<script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>-->
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationTab.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationSet.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>

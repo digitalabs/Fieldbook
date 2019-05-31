@@ -251,8 +251,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param variableId
 	 * @return
 	 */
-	// TODO TRIAL
-	public boolean hasMeasurementDataEntered(final int variableId) {
+	// TODO: MARK FOR DELETE IBP-2689
+	/*public boolean hasMeasurementDataEntered(final int variableId) {
 		for (final MeasurementRow row : this.userSelection.getMeasurementRowList()) {
 			for (final MeasurementData data : row.getDataList()) {
 				if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
@@ -261,17 +261,17 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			}
 		}
 		return false;
-	}
+	}*/
 
-	// TODO TRIAL
-	protected void removeVariablesFromExistingNursery(final List<SettingDetail> settingList, final String variables) {
+	// TODO: MARK FOR DELETE IBP-2789
+	/*protected void removeVariablesFromExistingNursery(final List<SettingDetail> settingList, final String variables) {
 		final Iterator<SettingDetail> variableList = settingList.iterator();
 		while (variableList.hasNext()) {
 			if (SettingsUtil.inHideVariableFields(variableList.next().getVariable().getCvTermId(), variables)) {
 				variableList.remove();
 			}
 		}
-	}
+	}*/
 
 	//TODO TRIAL
 	protected void resetSessionVariablesAfterSave(final Workbook workbook) {

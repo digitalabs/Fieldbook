@@ -313,8 +313,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			// on click generate design button
 			function refreshMeasurementTableAfterDeletingEnvironment() {
-				$rootScope.$broadcast('previewMeasurements');
-				$('body').addClass('preview-measurements-only');
+				// TODO MARK FOR DELETE IBP-2789
+				/*$rootScope.$broadcast('/*previewMeasurements');
+				$('body').addClass('preview-measurements-only');*/
 				// Make sure that the measurement table will only refresh if there is a selected design type for the current study
 				var designTypeId = TrialManagerDataService.currentData.experimentalDesign.designType;
 				var designTypes = TrialManagerDataService.applicationData.designTypes;

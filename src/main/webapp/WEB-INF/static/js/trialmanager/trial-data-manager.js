@@ -4,14 +4,14 @@
 (function() {
 	'use strict';
 	angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','GERMPLASM_CHECKS_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
-            'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'SAMPLE_LIST_DATA','CROSSES_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
+		'ADVANCE_LIST_DATA', 'SAMPLE_LIST_DATA','CROSSES_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
-		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_HAS_ADVANCED_OR_CROSSES_LIST', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', '$q',
+		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', '$q',
 		'TrialSettingsManager','studyStateService', '_', '$localStorage','$rootScope', 'studyContext', 'derivedVariableService',
-		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA, SAMPLE_LIST_DATA, CROSSES_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
+		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, ADVANCE_LIST_DATA, SAMPLE_LIST_DATA, CROSSES_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
 					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-					TRIAL_HAS_MEASUREMENT, TRIAL_HAS_ADVANCED_OR_CROSSES_LIST, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext, derivedVariableService) {
+					TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext, derivedVariableService) {
 
 
 			// TODO: clean up data service, at the very least arrange the functions in alphabetical order
@@ -72,7 +72,8 @@
 						service.currentData.basicDetails.studyID = trialID;
 						service.trialMeasurement.hasMeasurement = data.measurementDataExisting;
                         service.trialMeasurement.hasAdvancedOrCrossesList = data.hasAdvancedOrCrossesList;
-						service.updateTrialMeasurementRowCount(data.measurementRowCount);
+						// TODO: MARK FOR DELETE IBP-2789
+                        //service.updateTrialMeasurementRowCount(data.measurementRowCount);
 
 						// TODO: change from global function call
 						displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
@@ -219,7 +220,8 @@
 				// what I get is an instance of OrderedHash containing an array of keys with the map
 				settings: {
 					trialSettings: extractSettings(TRIAL_SETTINGS_INITIAL_DATA),
-					selectionVariables: extractSettings(SELECTION_VARIABLE_INITIAL_DATA),
+					// TODO: MARK FOR DELETE IBP-2789
+					//selectionVariables: extractSettings(SELECTION_VARIABLE_INITIAL_DATA),
 					environments: extractSettings(ENVIRONMENTS_INITIAL_DATA),
 					germplasm: extractSettings(GERMPLASM_INITIAL_DATA),
 					treatmentFactors: extractTreatmentFactorSettings(TREATMENT_FACTORS_INITIAL_DATA),
@@ -497,7 +499,8 @@
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(data) {
 										service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
                                         service.trialMeasurement.hasAdvancedOrCrossesList = data.hasAdvancedOrCrossesList;
-										service.updateTrialMeasurementRowCount(data.measurementRowCount);
+										// TODO: MARK FOR DELETE IBP-2789
+                                        //service.updateTrialMeasurementRowCount(data.measurementRowCount);
 										service.updateSettings('measurements', extractSettings(data.measurementsData));
 										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 											service.trialMeasurement.count);
@@ -524,7 +527,8 @@
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function (updatedData) {
 										service.trialMeasurement.hasMeasurement = (updatedData.measurementDataExisting);
                                         service.trialMeasurement.hasAdvancedOrCrossesList = data.hasAdvancedOrCrossesList;
-										service.updateTrialMeasurementRowCount(updatedData.measurementRowCount);
+										// TODO: MARK FOR DELETE IBP-2789
+                                        //service.updateTrialMeasurementRowCount(updatedData.measurementRowCount);
 
 										service.updateCurrentData('environments', extractData(updatedData.environmentData));
 										service.updateSettings('environments', extractSettings(updatedData.environmentData));
@@ -532,7 +536,8 @@
 										service.updateSettings('trialSettings', extractSettings(updatedData.trialSettingsData));
 
 										//refresh the environments list in measurements tab
-										$rootScope.$broadcast('refreshEnvironmentListInMeasurementTable');
+										//MARK FOR DELETE IBP-2789
+										//$rootScope.$broadcast('refreshEnvironmentListInMeasurementTable');
 										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 											service.trialMeasurement.count);
 										derivedVariableService.displayExecuteCalculateVariableMenu();

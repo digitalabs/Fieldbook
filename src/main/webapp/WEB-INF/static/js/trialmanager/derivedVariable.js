@@ -209,6 +209,7 @@
 					$uibModalInstance.close();
 				};
 
+				// TODO: MARK FOR DELETE IBP-2789
 				$scope.reloadObservation = function () {
 					$('.import-study-data').data('data-import', '1');
 					$('body').addClass('import-preview-measurements');

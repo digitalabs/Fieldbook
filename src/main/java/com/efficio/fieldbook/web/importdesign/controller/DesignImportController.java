@@ -21,7 +21,7 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 import org.generationcp.commons.parsing.FileParsingException;
-import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.dms.ExperimentDesignType;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -475,7 +475,7 @@ public class DesignImportController extends SettingsController {
 		try {
 
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(),
-					DesignTypeItem.CUSTOM_IMPORT, this.generateAdditionalParams(startingEntryNo, startingPlotNo));
+					ExperimentDesignType.CUSTOM_IMPORT, this.generateAdditionalParams(startingEntryNo, startingPlotNo));
 
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
@@ -513,7 +513,7 @@ public class DesignImportController extends SettingsController {
 		final Map<String, Object> output = new HashMap<>();
 
 		// defaults
-		output.put("name", DesignTypeItem.CUSTOM_IMPORT.getName());
+		output.put("name", ExperimentDesignType.CUSTOM_IMPORT.getName());
 		if (this.userSelection.getExpDesignParams() != null
 				&& this.userSelection.getExpDesignParams().getFileName() != null
 				&& !this.userSelection.getExpDesignParams().getFileName().isEmpty()) {
@@ -544,7 +544,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
-		final DesignTypeItem designTypeItem, final Map<String, Integer> additionalParams) throws DesignValidationException {
+		final ExperimentDesignType experimentDesignType, final Map<String, Integer> additionalParams) throws DesignValidationException {
 
 		this.processEnvironmentData(environmentData);
 
@@ -582,7 +582,7 @@ public class DesignImportController extends SettingsController {
 
 		this.addVariates(workbook, designImportData);
 
-		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, designTypeItem);
+		this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables, experimentDesignType);
 
 		if (additionalParams.containsKey("noOfAddedEnvironments")) {
 			this.updateTrialConditionVariables(workbook.getConditions());
@@ -725,23 +725,23 @@ public class DesignImportController extends SettingsController {
 
 	protected void addExperimentDesign(final Workbook workbook,
 			final Set<MeasurementVariable> experimentalDesignMeasurementVariables,
-			final DesignTypeItem designTypeItem) {
+			final ExperimentDesignType experimentDesignType) {
 
 		final ExpDesignParameterUi designParam = new ExpDesignParameterUi();
-		designParam.setDesignType(designTypeItem.getId());
+		designParam.setDesignType(experimentDesignType.getId());
 
 		final List<Integer> expDesignTermIds = new ArrayList<>();
 		expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
 
-		if (designTypeItem.getRepNo() > 0) {
-			designParam.setReplicationsCount(Integer.toString(designTypeItem.getRepNo()));
+		if (experimentDesignType.getRepNo() > 0) {
+			designParam.setReplicationsCount(Integer.toString(experimentDesignType.getRepNo()));
 			expDesignTermIds.add(TermId.NUMBER_OF_REPLICATES.getId());
 		}
 
-		if (designTypeItem.getTemplateName() != null) {
-			designParam.setFileName(designTypeItem.getTemplateName());
+		if (experimentDesignType.getTemplateName() != null) {
+			designParam.setFileName(experimentDesignType.getTemplateName());
 
-			if (designTypeItem.getName().equals(DesignTypeItem.CUSTOM_IMPORT.getName())) {
+			if (experimentDesignType.getName().equals(ExperimentDesignType.CUSTOM_IMPORT.getName())) {
 				designParam.setFileName(this.userSelection.getDesignImportData().getImportFileName());
 			}
 

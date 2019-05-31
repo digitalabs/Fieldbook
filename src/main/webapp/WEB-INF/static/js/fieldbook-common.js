@@ -1232,7 +1232,7 @@ function validateTrialInstance() {
 
 		for (counter = 0 ; counter < checkedInstances.length ; counter++) {
 			if (additionalParam !== '') {
-				additionalParam += '|';
+				additionalParam += '-';
 			}
 			additionalParam += checkedInstances[counter].instance;
 		}

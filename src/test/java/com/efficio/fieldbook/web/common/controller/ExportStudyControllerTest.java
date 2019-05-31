@@ -496,7 +496,7 @@ public class ExportStudyControllerTest {
 			if ("".equalsIgnoreCase(trialInstances)) {
 				trialInstances = instance.toString();
 			} else {
-				trialInstances = trialInstances + "|" + instance.toString();
+				trialInstances = trialInstances + "-" + instance.toString();
 			}
 		}
 

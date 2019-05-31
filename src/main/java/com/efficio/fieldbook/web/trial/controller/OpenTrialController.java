@@ -19,7 +19,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
-import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.dms.ExperimentDesignType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -358,7 +358,7 @@ public class OpenTrialController extends BaseTrialController {
 			final List<ListDataProject> listDataProjects = this.fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
 
 			long germplasmListChecksSize = 0;
-			if (this.userSelection.getExpDesignParams().getDesignType() == DesignTypeItem.P_REP.getId()) {
+			if (this.userSelection.getExpDesignParams().getDesignType() == ExperimentDesignType.P_REP.getId()) {
 
 				germplasmListChecksSize = this.getGermplasmListChecksSize(germplasmList.getId());
 			} else {

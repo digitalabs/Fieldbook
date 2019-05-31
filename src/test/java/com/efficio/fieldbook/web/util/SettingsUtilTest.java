@@ -405,6 +405,7 @@ public class SettingsUtilTest {
 		expDesignParameterUi.setNrlatin("6");
 		expDesignParameterUi.setReplatinGroups("7");
 		expDesignParameterUi.setReplicationsCount("8");
+		expDesignParameterUi.setUseLatenized(false);
 
 		Assert.assertEquals("1", SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.BLOCK_SIZE));
 		Assert.assertEquals("2",
@@ -447,10 +448,12 @@ public class SettingsUtilTest {
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 
 		expDesignParameterUi.setDesignType(3);
+		expDesignParameterUi.setUseLatenized(false);
 		Assert.assertEquals(String.valueOf(TermId.OTHER_DESIGN.getId()),
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 
 		expDesignParameterUi.setDesignType(4);
+		expDesignParameterUi.setUseLatenized(false);
 		Assert.assertEquals(String.valueOf(TermId.AUGMENTED_RANDOMIZED_BLOCK.getId()),
 				SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.EXPERIMENT_DESIGN_FACTOR));
 

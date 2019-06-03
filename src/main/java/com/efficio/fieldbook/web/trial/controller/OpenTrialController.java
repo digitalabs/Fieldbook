@@ -246,6 +246,8 @@ public class OpenTrialController extends BaseTrialController {
 		return this.showAjaxPage(model, BaseTrialController.URL_MEASUREMENT);
 	}
 
+	// TODO: MARK FOR DELETE IBP-2689
+	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "/columns", method = RequestMethod.POST)
 	public List<MeasurementVariable> getColumns(
@@ -590,7 +592,7 @@ public class OpenTrialController extends BaseTrialController {
 				// or not to false since it's already save after inline edit
 				// TODO VER ESTO PARA CAMBIAR SI SE PUEDE: MARK FOR DELETE IBP-2789
 				this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(), false);
-				this.fieldbookMiddlewareService.updatePhenotypeStatus(workbook.getObservations());
+				//this.fieldbookMiddlewareService.updatePhenotypeStatus(workbook.getObservations());
 				// TODO: MARK FOR DELETE IBP-2789
 				/*returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService
 					.checkIfStudyHasMeasurementData(

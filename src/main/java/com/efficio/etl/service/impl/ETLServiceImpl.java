@@ -20,6 +20,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.DataSet;
+import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -996,29 +997,14 @@ public class ETLServiceImpl implements ETLService {
 
 	@Override
 	public boolean hasMeansDataset(final int studyId) {
-		boolean hasMeansDataset = false;
-		final List<DataSet> ds = this.studyDataManager.getDataSetsByType(studyId, DatasetTypeEnum.MEANS_DATA.getId());
-		if (ds != null && !ds.isEmpty()) {
-			hasMeansDataset = true;
-		}
-		return hasMeansDataset;
+		final DatasetReference meansDatasetReference = this.studyDataManager.findOneDataSetReferenceByType(studyId, DatasetTypeEnum.MEANS_DATA.getId());
+		return meansDatasetReference != null;
 	}
 
 	@Override
 	public boolean hasMeasurementEffectDataset(final int studyId) {
-		boolean hasMeasurementEffectDataset = false;
-		final List<DataSet> ds = this.studyDataManager.getDataSetsByType(studyId, DatasetTypeEnum.PLOT_DATA.getId());
-		// handle old behavior
-		if (ds != null && ds.size() > 1) {
-			hasMeasurementEffectDataset = true;
-		} else if (ds != null) {// new
-			for (final DataSet dataSet : ds) {
-				if (dataSet.getName().endsWith("-PLOTDATA") || !dataSet.getName().endsWith("-ENVIRONMENT")) {
-					hasMeasurementEffectDataset = true;
-				}
-			}
-		}
-		return hasMeasurementEffectDataset;
+		final DatasetReference plotDatasetReference = this.studyDataManager.findOneDataSetReferenceByType(studyId, DatasetTypeEnum.PLOT_DATA.getId());
+		return plotDatasetReference != null;
 	}
 
 	@Override

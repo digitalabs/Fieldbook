@@ -296,14 +296,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		// TODO: MARK FOR DELETE IBP-2689
 		// remove deleted variables in measurement rows & header for variates
 		this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedPlotLevelList(), workbook);
-		//this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedBaselineTraitsList(), workbook);
+		this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedBaselineTraitsList(), workbook);
 
 		// remove deleted variables in the original lists
 		// and change add operation to update
 		this.removeDeletedSetUpdate(this.userSelection.getStudyLevelConditions(), workbook.getConditions());
 		this.removeDeletedSetUpdate(this.userSelection.getPlotsLevelList(), workbook.getFactors());
 		// TODO: MARK FOR DELETE IBP-2689
-		//this.removeDeletedSetUpdate(this.userSelection.getBaselineTraitsList(), workbook.getVariates());
+		this.removeDeletedSetUpdate(this.userSelection.getBaselineTraitsList(), workbook.getVariates());
 		this.removeDeletedSetUpdate(this.userSelection.getStudyConditions(), workbook.getConstants());
 		this.removeDeletedSetUpdate(this.userSelection.getTrialLevelVariableList(), null);
 		this.removeDeletedSetUpdate(this.userSelection.getSelectionVariates(), null);
@@ -589,7 +589,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	//TODO TRIAL
 	protected void addVariableInDeletedList(final List<SettingDetail> currentList, final int mode, final int variableId,
-			final boolean createNewSettingIfNull) {
+			final boolean createNewSettingIfNull) {// TODO NOT REMOVE USED IN GERMPLASM DETAILS.
 		SettingDetail newSetting = null;
 		for (final SettingDetail setting : currentList) {
 			if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {

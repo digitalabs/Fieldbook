@@ -528,12 +528,11 @@ public class FieldbookServiceTest {
 		final FieldbookService api = Mockito.mock(FieldbookService.class);
 		fieldbookService.setFieldbookMiddlewareService(api);
 		final Integer studyId = null;
-		final String studyName = "Study Name";
 		final String columnOrderDelimited = "";
-		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited,
-				Mockito.mock(Workbook.class));
+		fieldbookService.saveStudyColumnOrdering(studyId, columnOrderDelimited,
+			Mockito.mock(Workbook.class));
 		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(Matchers.any(Integer.class),
-				Matchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
+				ArgumentMatchers.<List<Integer>>any());
 	}
 
 	@Test
@@ -542,12 +541,11 @@ public class FieldbookServiceTest {
 		final FieldbookService api = Mockito.mock(FieldbookService.class);
 		fieldbookService.setFieldbookMiddlewareService(api);
 		final Integer studyId = 7;
-		final String studyName = "Study Name";
 		final String columnOrderDelimited = "";
 		final Workbook workbook = Mockito.mock(Workbook.class);
-		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited, workbook);
+		fieldbookService.saveStudyColumnOrdering(studyId, columnOrderDelimited, workbook);
 		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(Matchers.any(Integer.class),
-				Matchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
+			ArgumentMatchers.<List<Integer>>any());
 		Mockito.verify(api, Mockito.times(1)).setOrderVariableByRank(workbook);
 	}
 
@@ -559,10 +557,10 @@ public class FieldbookServiceTest {
 		final Integer studyId = 7;
 		final String studyName = "Study Name";
 		final String columnOrderDelimited = "[\"1100\", \"1900\"]";
-		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited,
-				Mockito.mock(Workbook.class));
+		fieldbookService.saveStudyColumnOrdering(studyId, columnOrderDelimited,
+			Mockito.mock(Workbook.class));
 		Mockito.verify(api, Mockito.times(1)).saveStudyColumnOrdering(Matchers.any(Integer.class),
-				Matchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
+			ArgumentMatchers.<List<Integer>>any());
 	}
 
 	@Test

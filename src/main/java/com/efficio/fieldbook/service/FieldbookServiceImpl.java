@@ -1231,11 +1231,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public void saveStudyColumnOrdering(
-		final Integer studyId, final String studyName,
-		final String columnOrderDelimited, final Workbook workbook) {
+		final Integer studyId, final String columnOrderDelimited, final Workbook workbook) {
 		final List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);
 		if (studyId != null && !columnOrdersList.isEmpty()) {
-			this.fieldbookMiddlewareService.saveStudyColumnOrdering(studyId, studyName, columnOrdersList);
+			this.fieldbookMiddlewareService.saveStudyColumnOrdering(studyId, columnOrdersList);
 			workbook.setColumnOrderedLists(columnOrdersList);
 		} else {
 			if (studyId != null && workbook.getStudyDetails() != null) {

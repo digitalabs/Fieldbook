@@ -260,12 +260,42 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.isChoosePreviousStudy = false;
 			$scope.hasUnsavedData = studyStateService.hasUnsavedData;
 
-			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+			if ($scope.isOpenStudy()) {
+				var environment = $scope.trialTabs.pop();
+				$scope.trialTabs.push({
+					name: 'Treatment Factors',
+					state: 'treatment'
+				});
+				$scope.trialTabs.push(environment);
+				$scope.trialTabs.push({
+					name: 'Experimental Design',
+					state: 'experimentalDesign'
+				});
 
-			var config = {
-				headers: {
-					'X-Auth-Token': xAuthToken
-				}
+				datasetService.getDataset(studyContext.measurementDatasetId).then(function (dataset) {
+					var variables = [];
+					if (!dataset.instances.length) {
+						TrialManagerDataService.trialMeasurement.hasMeasurement = false;
+						TrialManagerDataService.trialMeasurement.count = 0;
+						TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
+						return;
+					} else if (!dataset.variables.length) {
+						TrialManagerDataService.trialMeasurement.hasMeasurement = false;
+						TrialManagerDataService.trialMeasurement.count = 1000;
+						TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
+						return;
+					}
+					angular.forEach(dataset.variables, function (variable) {
+						variables.push(variable.termId);
+					});
+					datasetService.observationCount(studyContext.measurementDatasetId, variables).then(function (response) {
+						TrialManagerDataService.trialMeasurement.count = 1000;
+						TrialManagerDataService.trialMeasurement.hasMeasurement = response.headers('X-Total-Count') > 0;
+						TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
+						return;
+					});
+				});
+
 			};
 
 			$http.get('/bmsapi/studytype/' + cropName + '/allVisible').success(function (data) {
@@ -480,7 +510,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.displayMeasurementOnlyActions = function () {
-				return $scope.hasDesignGenerated && !TrialManagerDataService.applicationData.unsavedGeneratedDesign && !TrialManagerDataService.applicationData.unsavedTraitsAvailable;
+				return TrialManagerDataService.trialMeasurement.hasExperimentDesigned && !TrialManagerDataService.applicationData.unsavedGeneratedDesign && !TrialManagerDataService.applicationData.unsavedTraitsAvailable;
 			};
 			$scope.hasMeasurementData = function () {
 				return TrialManagerDataService.trialMeasurement.count &&
@@ -539,6 +569,32 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				if (isTabChangeDisabled()) {
 					showAlertMessage('', importSaveDataWarningMessage);
 					return;
+				}
+
+				if ($scope.tabSelected === '/subObservationTabs/' + studyContext.measurementDatasetId) {
+					datasetService.getDataset(studyContext.measurementDatasetId).then(function (dataset) {
+						var variables = [];
+						if (!dataset.instances.length) {
+							TrialManagerDataService.trialMeasurement.hasMeasurement = false;
+							TrialManagerDataService.trialMeasurement.count = 0;
+							TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
+							return;
+						} else if (!dataset.variables.length) {
+							TrialManagerDataService.trialMeasurement.hasMeasurement = false;
+							TrialManagerDataService.trialMeasurement.count = 1000;
+							TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
+							return;
+						}
+						angular.forEach(dataset.variables, function (variable) {
+							variables.push(variable.termId);
+						});
+						datasetService.observationCount(studyContext.measurementDatasetId, variables).then(function (response) {
+							TrialManagerDataService.trialMeasurement.count = 1000;
+							TrialManagerDataService.trialMeasurement.hasMeasurement = response.headers('X-Total-Count') > 0;
+							TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
+							return;
+						});
+					});
 				}
 
 				$scope.isSettingsTab = true;

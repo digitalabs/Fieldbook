@@ -3064,7 +3064,7 @@ function makeGermplasmListDraggable(isDraggable) {
 	isDraggable = isDraggable
 		&& (($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1
 			|| ($('#studyId').length === 0 && false))
-			|| $('#studyId').length > 0 && false && measurementRowCount === 0);
+			|| $('#studyId').length > 0 && false && measurementRowCount === 0); //TODO FIX IT IBP-2689
 	if (isDraggable) {
 		$('.germplasm-list-items tbody  tr').draggable({
 
@@ -3276,14 +3276,14 @@ function showGermplasmDetailsSection() {
 	'use strict';
 
 	// If Advance List for Trial is already generated then user can not Clear / Modify List.
-	if (isAdvanceListGeneratedForTrial) {
+/*	if (isAdvanceListGeneratedForTrial) {
 		showAlertMessage('', advanceListAlreadyGeneratedForTrialWarningMessage, 10000);
 		return;
-	}
+	}*/
 
-	$('.observation-exists-notif').hide();
-	$('.overwrite-germplasm-list').hide();
-	$('.browse-import-link').show();
+	//$('.observation-exists-notif').hide();
+	//$('.overwrite-germplasm-list').hide();
+	//$('.browse-import-link').show();
 	if ($('.germplasm-list-items tbody tr').length > 0) {
 		toggleControlsForGermplasmListManagement(true);
 	}
@@ -3291,12 +3291,12 @@ function showGermplasmDetailsSection() {
 	$('#chooseGermplasmAndChecks').data('replace', '1');
 }
 
-function hasMeasurementData() {
+function hasMeasurementData() { // TODO ARREGLAR ESTO
 	'use strict';
 	return angular.element('#mainApp').injector().get('TrialManagerDataService').trialMeasurement.hasMeasurement;
 }
 
-function displayStudyGermplasmSection(hasData, observationCount) {
+function displayStudyGermplasmSection(hasData, observationCount) { // TODO: MARK FOR DELETE IBP-2689
 	'use strict';
 	if (hasData) {
 		$('.overwrite-germplasm-list').hide();
@@ -3437,7 +3437,7 @@ function showExportAdvanceResponse(responseText, statusText, xhr, $form) {
 	$('#exportAdvanceListModal').modal('hide');
 }
 
-function processInlineEditInput() {
+function processInlineEditInput() { // TODO: MARK FOR DELETE IBP-2689
 	'use strict';
 
 	var tableIdentifier = $('body').hasClass('import-preview-measurements') ? '#import-preview-measurement-table' :
@@ -3500,7 +3500,7 @@ function processInlineEditInput() {
 	return true;
 }
 
-function saveInlineEdit(isDiscard, invalidButKeep) {
+function saveInlineEdit(isDiscard, invalidButKeep) { //TODO: MARK FOR DELETE IBP-2689
 	'use strict';
 
 	var isImportPreviewMeasurementsView = $('body').hasClass('import-preview-measurements');
@@ -3549,7 +3549,7 @@ function saveInlineEdit(isDiscard, invalidButKeep) {
 	});
 }
 
-function hasOutOfBoundValuesAsync() {
+function hasOutOfBoundValuesAsync() { // TODO: MARK FOR DELETE IBP-2689
 	'use strict';
 
 	return $.ajax({
@@ -3559,7 +3559,7 @@ function hasOutOfBoundValuesAsync() {
 	});
 }
 
-function hasOutOfBoundValues() {
+function hasOutOfBoundValues() { // TODO: MARK FOR DELETE IBP-2689
 	'use strict';
 	var _hasOutOfBound = false;
 
@@ -3576,7 +3576,7 @@ function hasOutOfBoundValues() {
 	return _hasOutOfBound;
 }
 
-function reviewOutOfBoundsData() {
+function reviewOutOfBoundsData() { // TODO: MARK FOR DELETE IBP-2689
 	'use strict';
 
 	hasOutOfBoundValuesAsync().then(function (hasOutOfBound) {
@@ -3591,7 +3591,7 @@ function reviewOutOfBoundsData() {
 	});
 }
 
-function displayDetailsOutOfBoundsData() {
+function displayDetailsOutOfBoundsData() { // TODO: MARK FOR DELETE IBP-2689
 	'use strict';
 
 	removeDetailsOutOfBoundDataInSessionStorage();
@@ -3625,7 +3625,7 @@ function removeDetailsOutOfBoundDataInSessionStorage() {
 
 }
 
-function proceedToReviewOutOfBoundsDataAction() {
+function proceedToReviewOutOfBoundsDataAction() { // TODO: MARK FOR DELETE IBP-2689
 	var action = $('#review-out-of-bounds-data-action').select2('data').id;
 	if (action === '0') {
 		showErrorMessage('page-review-out-of-bounds-data-message-modal', reviewOutOfBoundsDataActionRequiredError);
@@ -3663,7 +3663,7 @@ function setSpinnerMaxValue() {
 	}
 }
 
-function switchCategoricalView(showCategoricalDescriptionView) {
+function switchCategoricalView(showCategoricalDescriptionView) { // TODO: MARK FOR DELETE IBP-2689
 	'use strict';
 
 	if (typeof showCategoricalDescriptionView === 'undefined') {
@@ -3683,7 +3683,7 @@ function switchCategoricalView(showCategoricalDescriptionView) {
 		});
 }
 
-function onMeasurementsInlineEditConfirmationEvent() {
+function onMeasurementsInlineEditConfirmationEvent() { // TODO: MARK FOR DELETE IBP-2689
 	'use strict';
 	return function(e) {
 		if (parseInt($(this).data('inline-edit'), 10) === 1) {

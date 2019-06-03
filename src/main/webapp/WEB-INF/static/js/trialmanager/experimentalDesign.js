@@ -220,6 +220,7 @@
 							environmentData.treatmentFactors = $scope.data.treatmentFactors.vals();
 						}
 
+						environmentData.environments = TrialManagerDataService.currentData.environments.environments;
 						TrialManagerDataService.generateExpDesign(environmentData).then(
 							function(response) {
 								if (response.valid === true) {

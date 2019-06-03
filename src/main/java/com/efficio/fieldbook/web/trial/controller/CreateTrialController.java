@@ -134,6 +134,8 @@ public class CreateTrialController extends BaseTrialController {
 		return this.showAngularPage(model);
 	}
 
+	// TODO: MARK FOR DELETE IBP-2689
+	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "/columns", method = RequestMethod.POST)
 	public List<MeasurementVariable> getColumns(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model,
@@ -261,6 +263,8 @@ public class CreateTrialController extends BaseTrialController {
 		return this.showAjaxPage(model, BaseTrialController.URL_MEASUREMENT);
 	}
 
+	// TODO: MARK FOR DELETE IBP-2689
+	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "/measurements/variables", method = RequestMethod.POST, produces = "application/json")
 	public List<MeasurementVariable> showMeasurementsVariables(@ModelAttribute("createTrialForm") final CreateTrialForm form,

@@ -114,7 +114,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
 				GermplasmListType.STUDY)).thenReturn(this.initializeCrossesList());
 
-		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString());
+		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt());
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
 		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(new ArrayList<WorkbenchUser>());
@@ -209,7 +209,7 @@ public class CrossingTemplateExcelExporterTest {
 	public void testwriteNurseryListSection() throws IOException {
 
 		final int measurementDataSetId = 10101;
-		Mockito.when(this.fieldbookMiddlewareService.getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString()))
+		Mockito.when(this.fieldbookMiddlewareService.getMeasurementDatasetId(Matchers.anyInt()))
 				.thenReturn(measurementDataSetId);
 
 		final List<Experiment> experiments = intializeExperiments();
@@ -219,8 +219,8 @@ public class CrossingTemplateExcelExporterTest {
 			VariableTypeListTestDataInitializer.createTreatmentFactorsVariableTypeList());
 
 		final Sheet sheet = this.workbook.getSheetAt(3);
-		this.exporter.writeStudyListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
-				CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
+		this.exporter.writeStudyListSheet(sheet,
+			CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
 
 		assertThat("studyname", equalTo(sheet.getRow(1).getCell(0).getStringCellValue()));
 		assertThat(1, equalTo((int) sheet.getRow(1).getCell(1).getNumericCellValue()));
@@ -238,7 +238,7 @@ public class CrossingTemplateExcelExporterTest {
 	public void testwriteNurseryListSectionWithAddUserDescriptors() throws IOException {
 
 		final int measurementDataSetId = 10101;
-		Mockito.when(this.fieldbookMiddlewareService.getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString()))
+		Mockito.when(this.fieldbookMiddlewareService.getMeasurementDatasetId(Matchers.anyInt()))
 				.thenReturn(measurementDataSetId);
 		Mockito.when(this.studyDataManager.getTreatmentFactorVariableTypes(measurementDataSetId)).thenReturn(
 			VariableTypeListTestDataInitializer.createTreatmentFactorsVariableTypeList());
@@ -248,8 +248,8 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE)).thenReturn
 			(experiments);
 		final Sheet sheet = this.workbook.getSheetAt(3);
-		this.exporter.writeStudyListSheet(sheet, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook),
-				CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
+		this.exporter.writeStudyListSheet(sheet,
+			CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
 
 		// Header added//
 		assertThat("FIELDMAP COLUMN", equalTo(sheet.getRow(0).getCell(7).getStringCellValue()));
@@ -317,7 +317,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
 				GermplasmListType.STUDY)).thenReturn(this.initializeCrossesList());
 
-		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString());
+		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt());
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
 		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(new ArrayList<WorkbenchUser>());

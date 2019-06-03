@@ -161,6 +161,7 @@ public class StudyTreeController {
 		return "[]";
 	}
 
+	// FIXME IBP-2716 Remove studyName parameter, also in calling JS
 	@ResponseBody
 	@RequestMapping(value = "/has/observations/{studyId}/{studyName}", method = RequestMethod.GET)
 	public Map<String, String> hasObservations(@PathVariable final int studyId, @PathVariable final String studyName) {
@@ -168,7 +169,7 @@ public class StudyTreeController {
 
 		final int datasetId;
 		try {
-			datasetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
+			datasetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId);
 			final long observationCount = this.fieldbookMiddlewareService.countObservations(datasetId);
 			if (observationCount > 0) {
 				dataResults.put(StudyTreeController.HAS_OBSERVATIONS, "1");

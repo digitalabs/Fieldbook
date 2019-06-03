@@ -44,7 +44,6 @@ import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.util.DatasetUtil;
 import org.generationcp.middleware.util.Message;
 import org.generationcp.middleware.util.PoiUtil;
 import org.generationcp.middleware.util.Util;
@@ -830,7 +829,7 @@ public class ETLServiceImpl implements ETLService {
 	}
 
 	private DataSet getPlotDataset(final Integer studyId) {
-		final DataSet plotDataSet = DatasetUtil.getPlotDataSet(this.studyDataManager, studyId);
+		final DataSet plotDataSet = this.studyDataManager.findOneDataSetByType(studyId, DatasetTypeEnum.PLOT_DATA.getId());
 		if (plotDataSet == null) {
 			throw new MiddlewareQueryException("Missing plot dataset");
 		}
@@ -838,7 +837,7 @@ public class ETLServiceImpl implements ETLService {
 	}
 
 	private DataSet getTrialDataset(final Integer studyId) {
-		final DataSet trialDataSet = DatasetUtil.getTrialDataSet(this.studyDataManager, studyId);
+		final DataSet trialDataSet = this.studyDataManager.findOneDataSetByType(studyId, DatasetTypeEnum.SUMMARY_DATA.getId());
 		if (trialDataSet == null) {
 			throw new MiddlewareQueryException("Missing trial dataset");
 		}
@@ -846,7 +845,7 @@ public class ETLServiceImpl implements ETLService {
 	}
 
 	private DataSet getMeansDataset(final Integer studyId) {
-		final DataSet meansDataSet = DatasetUtil.getMeansDataSet(this.studyDataManager, studyId);
+		final DataSet meansDataSet = this.studyDataManager.findOneDataSetByType(studyId, DatasetTypeEnum.MEANS_DATA.getId());
 		if (meansDataSet == null) {
 			throw new MiddlewareQueryException("Missing means dataset");
 		}

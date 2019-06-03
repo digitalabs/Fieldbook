@@ -66,7 +66,7 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
  */
 public abstract class SettingsController extends AbstractBaseFieldbookController {
 
-	private static final List<Integer> EXPERIMENT_DESIGN_FACTOR_IDS = Arrays
+	protected static final List<Integer> EXPERIMENT_DESIGN_FACTOR_IDS = Arrays
 		.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.PERCENTAGE_OF_REPLICATION.getId(),
 			TermId.EXPT_DESIGN_SOURCE.getId());
 

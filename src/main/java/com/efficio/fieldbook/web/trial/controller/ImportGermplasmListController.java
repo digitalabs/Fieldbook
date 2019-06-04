@@ -60,7 +60,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -254,7 +253,7 @@ public class ImportGermplasmListController extends SettingsController {
 		// validation flow
 		if (null != this.userSelection.getImportedGermplasmMainInfo()
 				&& null != this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()) {
-			this.assignAndIncrementEntryNumberAndPlotNumber(form);
+			this.assignPlotNumber(form);
 
 			if (!hasTemporaryWorkbook) {
 				// this section of code is only called for existing trial
@@ -285,31 +284,7 @@ public class ImportGermplasmListController extends SettingsController {
 		return Integer.toString(studyId);
 	}
 
-	/**
-	 * Setting Entry Number and plot number to user selection and increment user
-	 * given entry number in germplasm list. Clearing Measurements list if
-	 * germplasm sheet is not uploaded.
-	 *
-	 * @param form
-	 */
-	protected void validateEntryAndPlotNo(
-			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form) {
-		
-		final Integer totalExpectedNumber = this.computeTotalExpectedWithChecks(form);
-		final Integer plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), null);
-
-		if (plotNo != null) {
-			final Integer totalMeasurement = totalExpectedNumber + plotNo - 1;
-
-			if (totalMeasurement > ImportGermplasmListController.MAX_PLOT_NO) {
-				throw new FieldbookRequestValidationException("plot.number.should.not.exceed");
-			}
-		}
-	}
-
-	// NOTE: BMS-1929 Setting custom entry and plot number in user selection as
-	// well as updating entry number in imported germplasm list
-	void assignAndIncrementEntryNumberAndPlotNumber(final ImportGermplasmListForm form) {
+	void assignPlotNumber(final ImportGermplasmListForm form) {
 		if (this.userSelection.getImportedGermplasmMainInfo() != null) {
 
 

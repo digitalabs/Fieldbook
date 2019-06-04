@@ -602,23 +602,6 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	@Test
-	public void testValidateEntryAndPlotNoEmptyList() throws Exception {
-		// create a stub of importGermplasmListController that we can test
-		final ImportGermplasmListController controllerToTest = Mockito.mock(ImportGermplasmListController.class);
-		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-
-		Mockito.doCallRealMethod().when(controllerToTest).validateEntryAndPlotNo(form);
-
-		controllerToTest.validateEntryAndPlotNo(form);
-
-		// validateEntryAndPlotNo should not process if theres no imported
-		// germplasm in the study
-		// Matthew : changed 0 to 1 - please improve this test
-		Mockito.verify(controllerToTest, Mockito.times(1)).computeTotalExpectedWithChecks(form);
-
-	}
-
-	@Test
 	public void testComputeTotalExpectedWithChecksEmptyChecks() throws Exception {
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ImportedGermplasmMainInfo mainInfo = Mockito.mock(ImportedGermplasmMainInfo.class);
@@ -795,50 +778,14 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	@Test
-	public void testCheckNumbersUpdatedAppropriately() throws Exception {
-		// Unchanged check entry number if there are no new start entry number
-		this.checkNumberTest(1, 5, 1, 1, null);
-		this.checkNumberTest(0, 0, 3, 3, null);
-
-		// Since the entry number starts at 100 we expect the check id to be
-		// bumped to 100 too
-		this.checkNumberTest(1, 5, 1, 1, "100");
-
-		// Since the entry number starts at 50 and our choosen check id is 52 we
-		// expect the check id to be bumped to 52 too
-		this.checkNumberTest(1, 5, 3, 3, "50");
-
-	}
-
-	private void checkNumberTest(final int startEntryNumberForTestList, final int numberOfItemsInGermplasmList,
-			final int checkNumberInCheckList, final int expectedGermplasmCheckEntryNumber,
-			final String startEntryNumber) {
+	public void testAssignPlotNumber() {
 		final UserSelection userSelection = new UserSelection();
-		userSelection.setImportedGermplasmMainInfo(this.getGermplasmMainInfo(startEntryNumberForTestList, 5));
-		userSelection.setImportedCheckGermplasmMainInfo(this.getGermplasmMainInfo(checkNumberInCheckList, 1));
-
-		final ImportGermplasmListController importGermplasmListController = new ImportGermplasmListController();
-		importGermplasmListController.setUserSelection(userSelection);
-
-		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		form.setStartingPlotNo("100");
-		importGermplasmListController.assignAndIncrementEntryNumberAndPlotNumber(form);
-
-		Assert.assertEquals("We exepect this to ", userSelection.getImportedCheckGermplasmMainInfo()
-				.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(),
-				new Integer(expectedGermplasmCheckEntryNumber));
-	}
-
-	private ImportedGermplasmMainInfo getGermplasmMainInfo(final int startingEntryId, final int number) {
-		final ImportedGermplasmMainInfo importedGermplasmMainInfo = new ImportedGermplasmMainInfo();
-		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
-		final List<ImportedGermplasm> germplasmList = new ArrayList<>();
-		for (int i = 0; i < number; i++) {
-			germplasmList.add(new ImportedGermplasm(i + startingEntryId, "desig", "check"));
-		}
-		importedGermplasmList.setImportedGermplasms(germplasmList);
-		importedGermplasmMainInfo.setImportedGermplasmList(importedGermplasmList);
-		return importedGermplasmMainInfo;
+		userSelection.setImportedGermplasmMainInfo(new ImportedGermplasmMainInfo());
+		this.importGermplasmListController.setUserSelection(userSelection);
+		final ImportGermplasmListForm germplasmListForm = new ImportGermplasmListForm();
+		germplasmListForm.setStartingPlotNo("5");
+		this.importGermplasmListController.assignPlotNumber(germplasmListForm);
+		Assert.assertEquals("5", userSelection.getStartingPlotNo().toString());
 	}
 
 	/**

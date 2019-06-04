@@ -351,11 +351,9 @@ public class StudyTreeController {
 	public Map<String, Object> moveStudyFolder(final HttpServletRequest req) {
 		final String sourceId = req.getParameter("sourceId");
 		final String targetId = req.getParameter("targetId");
-		final String isStudy = req.getParameter("isStudy");
-		final boolean isAStudy = "1".equalsIgnoreCase(isStudy) ? true : false;
 		final Map<String, Object> resultsMap = new HashMap<>();
 		try {
-			this.studyDataManager.moveDmsProject(Integer.parseInt(sourceId), Integer.parseInt(targetId), isAStudy);
+			this.studyDataManager.moveDmsProject(Integer.parseInt(sourceId), Integer.parseInt(targetId));
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 		} catch (final MiddlewareQueryException e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);

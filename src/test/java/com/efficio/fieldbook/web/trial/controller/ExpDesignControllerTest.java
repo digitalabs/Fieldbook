@@ -105,7 +105,7 @@ public class ExpDesignControllerTest {
 		final List<ImportedGermplasm> germplasmList = this.mockGermplasmList();
 		this.mockDesignValidation(expDesignParameterUi, germplasmList);
 
-		Mockito.when(randomizeCompleteBlockDesign.requiresBreedingViewLicence()).thenReturn(Boolean.TRUE);
+		Mockito.when(this.randomizeCompleteBlockDesign.requiresBreedingViewLicence()).thenReturn(Boolean.TRUE);
 		this.expDesignController.showMeasurements(model, expDesignParameterUi);
 
 		Mockito.verify(this.designLicenseUtil).isExpired(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
@@ -164,7 +164,7 @@ public class ExpDesignControllerTest {
 
 		// mock license has expired
 		Mockito.doReturn(true).when(this.designLicenseUtil).isExpired(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
-		Mockito.when(randomizeCompleteBlockDesign.requiresBreedingViewLicence()).thenReturn(Boolean.TRUE);
+		Mockito.when(this.randomizeCompleteBlockDesign.requiresBreedingViewLicence()).thenReturn(Boolean.TRUE);
 
 		final ExpDesignValidationOutput output = this.expDesignController.showMeasurements(model, expDesignParameterUi);
 
@@ -185,12 +185,12 @@ public class ExpDesignControllerTest {
 		this.mockDesignValidation(expDesignParameterUi, germplasmList);
 
 		// mock license has not yet expired but expiring in thirty days
-		BVDesignLicenseInfo bvDesignLicenseInfo = new BVDesignLicenseInfo();
+		final BVDesignLicenseInfo bvDesignLicenseInfo = new BVDesignLicenseInfo();
 		bvDesignLicenseInfo.setStatus(new Status());
 		bvDesignLicenseInfo.getStatus().setLicense(new License());
 		bvDesignLicenseInfo.getStatus().getLicense().setExpiryDays("29");
 
-		Mockito.when(randomizeCompleteBlockDesign.requiresBreedingViewLicence()).thenReturn(Boolean.TRUE);
+		Mockito.when(this.randomizeCompleteBlockDesign.requiresBreedingViewLicence()).thenReturn(Boolean.TRUE);
 
 		Mockito.doReturn(bvDesignLicenseInfo).when(this.designLicenseUtil).retrieveLicenseInfo();
 		Mockito.doReturn(false).when(this.designLicenseUtil).isExpired(bvDesignLicenseInfo);
@@ -216,7 +216,7 @@ public class ExpDesignControllerTest {
 		final List<ImportedGermplasm> germplasmList = this.mockGermplasmList();
 		this.mockDesignValidation(expDesignParameterUi, germplasmList);
 
-		Mockito.when(randomizeCompleteBlockDesign.requiresBreedingViewLicence()).thenReturn(Boolean.TRUE);
+		Mockito.when(this.randomizeCompleteBlockDesign.requiresBreedingViewLicence()).thenReturn(Boolean.TRUE);
 
 		// mock valid license
 		Mockito.doReturn(false).when(this.designLicenseUtil).isExpired(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
@@ -242,7 +242,7 @@ public class ExpDesignControllerTest {
 		final List<ImportedGermplasm> germplasmList = this.mockGermplasmList();
 		this.mockDesignValidation(expDesignParameterUi, germplasmList);
 
-		Mockito.when(entryListOrderDesignService.requiresBreedingViewLicence()).thenReturn(Boolean.FALSE);
+		Mockito.when(this.entryListOrderDesignService.requiresBreedingViewLicence()).thenReturn(Boolean.FALSE);
 		final ExpDesignValidationOutput expParameterOutput = new ExpDesignValidationOutput(true, "");
 		Mockito.doReturn(expParameterOutput).when(this.entryListOrderDesignService).validate(expDesignParameterUi, germplasmList);
 

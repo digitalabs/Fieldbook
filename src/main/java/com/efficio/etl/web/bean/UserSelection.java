@@ -42,10 +42,10 @@ public class UserSelection implements Serializable {
 	private String createdBy;
 	private Integer lastSheetRowNum;
 
-	private Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> giantMap =
+	private final Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> giantMap =
 			new LinkedHashMap<>();
 
-	private Map<PhenotypicType, List<String>> headerCategorization = new LinkedHashMap<>();
+	private final Map<PhenotypicType, List<String>> headerCategorization = new LinkedHashMap<>();
 
 	// add selected study and datasets if available
 	private Integer studyId;
@@ -245,7 +245,7 @@ public class UserSelection implements Serializable {
 	}
 
 	public String getStudyUpdate() {
-		return studyUpdate;
+		return this.studyUpdate;
 	}
 
 	public void setStudyUpdate(final String studyUpdate) {
@@ -253,7 +253,7 @@ public class UserSelection implements Serializable {
 	}
 
 	public String getCreatedBy() {
-		return createdBy;
+		return this.createdBy;
 	}
 
 	public void setCreatedBy(final String createdBy) {

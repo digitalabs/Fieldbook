@@ -27,7 +27,7 @@
 						<div class="fbk-study-heading-btns">
 							<input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick=""
 								   type="button" value="Save"  ng-disabled="isSaveDisabled()"
-								   ng-attr-title="{{isSaveDisabled() ? 'You cannot save in this tab' : ''}}" />
+								   ng-attr-title="{{isSaveDisabled() ? 'This tab is saved automatically' : ''}}" />
 							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide"
 								   onclick="discardImportedData();" th:value="#{import.discard.data}"/>
 							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-stocklist-data fbk-hide"
@@ -565,7 +565,9 @@
 	</div>
 
 	<form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">
+<!--
 		<input type="hidden" th:field="*{measurementDataExisting}"/>
+-->
 	</form>
 
 	<!-- Design import map headers -->
@@ -716,7 +718,8 @@
 			).constant('BREEDING_METHOD_CODE', /*[[${T(org.generationcp.commons.constant.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
 			).constant('BREEDING_METHOD_ID', /*[[${T(org.generationcp.commons.constant.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''
 			).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
-			).constant('SELECTION_VARIABLE_INITIAL_DATA', /*[[${selectionVariableData}]]*/ ''
+			// TODO: MARK FOR DELETE IBP-2789
+			//).constant('SELECTION_VARIABLE_INITIAL_DATA', /*[[${selectionVariableData}]]*/ ''
 			).constant('ADVANCE_LIST_DATA', /*[[${advancedList}]]*/ ''
 			).constant('SAMPLE_LIST_DATA', /*[[${sampleList}]]*/ ''
 			).constant('CROSSES_LIST_DATA', /*[[${crossesList}]]*/ ''
@@ -730,26 +733,29 @@
 			).constant('BASIC_DETAILS_DATA', /*[[${basicDetailsData}]]*/ ''
 			).constant('TRIAL_VARIABLE_SELECTION_LABELS', translations
 			).constant('TRIAL_MANAGEMENT_MODE', /*[[${operationMode}]]*/ ''
-			).constant('TRIAL_HAS_MEASUREMENT', /*[[${measurementDataExisting}]]*/ ''
-            ).constant('TRIAL_HAS_ADVANCED_OR_CROSSES_LIST', /*[[${hasAdvancedOrCrossesList}]]*/ ''
-			).constant('TRIAL_MEASUREMENT_COUNT', /*[[${measurementRowCount}]]*/ ''
+			// TODO: MARK FOR DELETE IBP-2789
+			//).constant('TRIAL_HAS_MEASUREMENT', /*[[${measurementDataExisting}]]*/ ''
+			// TODO: MARK FOR DELETE IBP-2789
+			//).constant('TRIAL_HAS_ADVANCED_OR_CROSSES_LIST', /*[[${hasAdvancedOrCrossesList}]]*/ ''
+			// TODO: MARK FOR DELETE IBP-2789
+			//).constant('TRIAL_MEASUREMENT_COUNT', /*[[${measurementRowCount}]]*/ ''
 			).constant('EXPERIMENTAL_DESIGN_SPECIAL_DATA', /*[[${experimentalDesignSpecialData}]]*/ ''
 			).constant('UNSPECIFIED_LOCATION_ID', /*[[${unspecifiedLocationId}]]*/ ''
 			).constant('DESIGN_TYPE',
 				{
-					RANDOMIZED_COMPLETE_BLOCK: /*[[${T(org.generationcp.middleware.domain.dms.DesignTypeItem).RANDOMIZED_COMPLETE_BLOCK.getId()}]]*/ 0
+					RANDOMIZED_COMPLETE_BLOCK: /*[[${T(org.generationcp.middleware.domain.dms.ExperimentDesignType).RANDOMIZED_COMPLETE_BLOCK.getId()}]]*/ 0
 					,
-					RESOLVABLE_INCOMPLETE_BLOCK: /*[[${T(org.generationcp.middleware.domain.dms.DesignTypeItem).RESOLVABLE_INCOMPLETE_BLOCK.getId()}]]*/ 1
+					RESOLVABLE_INCOMPLETE_BLOCK: /*[[${T(org.generationcp.middleware.domain.dms.ExperimentDesignType).RESOLVABLE_INCOMPLETE_BLOCK.getId()}]]*/ 1
 					,
-					ROW_COL: /*[[${T(org.generationcp.middleware.domain.dms.DesignTypeItem).ROW_COL.getId()}]]*/ 2
+					ROW_COL: /*[[${T(org.generationcp.middleware.domain.dms.ExperimentDesignType).ROW_COL.getId()}]]*/ 2
 					,
-					CUSTOM_IMPORT: /*[[${T(org.generationcp.middleware.domain.dms.DesignTypeItem).CUSTOM_IMPORT.getId()}]]*/ 3
+					CUSTOM_IMPORT: /*[[${T(org.generationcp.middleware.domain.dms.ExperimentDesignType).CUSTOM_IMPORT.getId()}]]*/ 3
 					,
-					AUGMENTED_RANDOMIZED_BLOCK: /*[[${T(org.generationcp.middleware.domain.dms.DesignTypeItem).AUGMENTED_RANDOMIZED_BLOCK.getId()}]]*/ 4
+					AUGMENTED_RANDOMIZED_BLOCK: /*[[${T(org.generationcp.middleware.domain.dms.ExperimentDesignType).AUGMENTED_RANDOMIZED_BLOCK.getId()}]]*/ 4
 					,
-					ENTRY_LIST_ORDER: /*[[${T(org.generationcp.middleware.domain.dms.DesignTypeItem).ENTRY_LIST_ORDER.getId()}]]*/ 5
+					ENTRY_LIST_ORDER: /*[[${T(org.generationcp.middleware.domain.dms.ExperimentDesignType).ENTRY_LIST_ORDER.getId()}]]*/ 5
 					,
-					P_REP: /*[[${T(org.generationcp.middleware.domain.dms.DesignTypeItem).P_REP.getId()}]]*/ 6
+					P_REP: /*[[${T(org.generationcp.middleware.domain.dms.ExperimentDesignType).P_REP.getId()}]]*/ 6
 				}
 			).constant('SYSTEM_DEFINED_ENTRY_TYPE',
 				{
@@ -768,13 +774,13 @@
 				QUADRAT_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).QUADRAT_SUBOBSERVATIONS.getId()}]]*/ null,
 				TIME_SERIES_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).TIME_SERIES_SUBOBSERVATIONS.getId()}]]*/ null,
 				CUSTOM_SUBOBSERVATIONS: /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).CUSTOM_SUBOBSERVATIONS.getId()}]]*/ null
-			}).constant('DATASET_TYPES_SUBOBSERVATION_IDS', [
-					/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).PLANT_SUBOBSERVATIONS.getId()}]]*/,
-					/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).QUADRAT_SUBOBSERVATIONS.getId()}]]*/,
-					/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).TIME_SERIES_SUBOBSERVATIONS.getId()}]]*/,
-					/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).CUSTOM_SUBOBSERVATIONS.getId()}]]*/
-				]
-			).constant('DATASET_TYPES_OBSERVATION_IDS', /*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).OBSERVATION_IDS}]]*/ null
+			}).constant('DATASET_TYPES_OBSERVATION_IDS', [
+				/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).PLOT_DATA.getId()}]]*/,
+				/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).PLANT_SUBOBSERVATIONS.getId()}]]*/,
+				/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).QUADRAT_SUBOBSERVATIONS.getId()}]]*/,
+				/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).TIME_SERIES_SUBOBSERVATIONS.getId()}]]*/,
+				/*[[${T(org.generationcp.middleware.enumeration.DatasetTypeEnum).CUSTOM_SUBOBSERVATIONS.getId()}]]*/
+			]
 			).value('studyContext', {
 				cropName: /*[[${cropName}]]*/ '',
 				programId: /*[[${currentProgramId}]]*/ '',
@@ -818,7 +824,7 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/environmentService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/environments.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>
+	<!--<script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>-->
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationTab.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationSet.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>

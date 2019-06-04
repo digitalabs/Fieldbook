@@ -20,7 +20,7 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.dms.ExperimentDesignType;
 import org.generationcp.middleware.domain.dms.InsertionMannerItem;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -93,17 +93,17 @@ public class ExpDesignController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/retrieveDesignTypes", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-	public List<DesignTypeItem> retrieveDesignTypes() {
+	public List<ExperimentDesignType> retrieveDesignTypes() {
 
-		final List<DesignTypeItem> designTypes = new ArrayList<>();
+		final List<ExperimentDesignType> designTypes = new ArrayList<>();
 
-		designTypes.add(DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK);
-		designTypes.add(DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK);
-		designTypes.add(DesignTypeItem.ROW_COL);
-		designTypes.add(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK);
-		designTypes.add(DesignTypeItem.CUSTOM_IMPORT);
-		designTypes.add(DesignTypeItem.ENTRY_LIST_ORDER);
-		designTypes.add(DesignTypeItem.P_REP);
+		designTypes.add(ExperimentDesignType.RANDOMIZED_COMPLETE_BLOCK);
+		designTypes.add(ExperimentDesignType.RESOLVABLE_INCOMPLETE_BLOCK);
+		designTypes.add(ExperimentDesignType.ROW_COL);
+		designTypes.add(ExperimentDesignType.AUGMENTED_RANDOMIZED_BLOCK);
+		designTypes.add(ExperimentDesignType.CUSTOM_IMPORT);
+		designTypes.add(ExperimentDesignType.ENTRY_LIST_ORDER);
+		designTypes.add(ExperimentDesignType.P_REP);
 
 		return designTypes;
 	}
@@ -357,7 +357,7 @@ public class ExpDesignController extends BaseTrialController {
 		return treatmentFactorItems;
 	}
 
-	private void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions) {
+	protected void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions) {
 		final VariableTypeList factors =
 			this.studyDataManager.getAllStudyFactors(this.userSelection.getWorkbook().getStudyDetails().getId());
 
@@ -430,17 +430,17 @@ public class ExpDesignController extends BaseTrialController {
 	}
 
 	protected ExperimentDesignService getExpDesignService(final int designType) {
-		if (designType == DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId()) {
+		if (designType == ExperimentDesignType.RANDOMIZED_COMPLETE_BLOCK.getId()) {
 			return this.randomizeCompleteBlockDesign;
-		} else if (designType == DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId()) {
+		} else if (designType == ExperimentDesignType.RESOLVABLE_INCOMPLETE_BLOCK.getId()) {
 			return this.resolveIncompleteBlockDesign;
-		} else if (designType == DesignTypeItem.ROW_COL.getId()) {
+		} else if (designType == ExperimentDesignType.ROW_COL.getId()) {
 			return this.resolvableRowColumnDesign;
-		} else if (designType == DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId()) {
+		} else if (designType == ExperimentDesignType.AUGMENTED_RANDOMIZED_BLOCK.getId()) {
 			return this.augmentedRandomizedBlockDesignService;
-		} else if (designType == DesignTypeItem.ENTRY_LIST_ORDER.getId()) {
+		} else if (designType == ExperimentDesignType.ENTRY_LIST_ORDER.getId()) {
 			return this.entryListOrderDesignService;
-		} else if (designType == DesignTypeItem.P_REP.getId()) {
+		} else if (designType == ExperimentDesignType.P_REP.getId()) {
 			return this.pRepDesignService;
 		}
 		return null;

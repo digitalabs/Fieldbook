@@ -121,7 +121,8 @@ public class ManageSettingsControllerTest {
 
 	protected ManageSettingsController initializeMockMeasurementRows() {
 		final ManageSettingsController spyController = Mockito.spy(this.controller);
-		Mockito.doReturn(true).when(spyController).hasMeasurementDataEntered(Matchers.anyInt());
+		// TODO: MARK FOR DELETE IBP-2689
+		//Mockito.doReturn(true).when(spyController).hasMeasurementDataEntered(Matchers.anyInt());
 		final List<MeasurementRow> rows = Arrays.asList(Mockito.mock(MeasurementRow.class), Mockito.mock(MeasurementRow.class));
 		Mockito.when(this.userSelection.getMeasurementRowList()).thenReturn(rows);
 

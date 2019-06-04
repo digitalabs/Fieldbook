@@ -19,7 +19,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
-import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.dms.ExperimentDesignType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -30,7 +30,6 @@ import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.samplelist.SampleListDTO;
-import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -41,6 +40,7 @@ import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
+import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
 import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +76,8 @@ import java.util.Set;
 public class OpenTrialController extends BaseTrialController {
 
 	static final String TRIAL_SETTINGS_DATA = "trialSettingsData";
-	static final String SELECTION_VARIABLE_DATA = "selectionVariableData";
+	// TODO: MARK FOR DELETE IBP-2789
+	//static final String SELECTION_VARIABLE_DATA = "selectionVariableData";
 	static final String MEASUREMENTS_DATA = "measurementsData";
 	private static final String TRIAL_INSTANCE = "TRIAL_INSTANCE";
 	private static final String TRIAL = "TRIAL";
@@ -84,10 +85,13 @@ public class OpenTrialController extends BaseTrialController {
 	@Deprecated
 	public static final String IS_EXP_DESIGN_PREVIEW = "isExpDesignPreview";
 	private static final String CONTAINS_OUT_OF_SYNC_VALUES = "containsOutOfSyncValues";
-	static final String MEASUREMENT_ROW_COUNT = "measurementRowCount";
+	// TODO: MARK FOR DELETE IBP-2789
+	//static final String MEASUREMENT_ROW_COUNT = "measurementRowCount";
 	static final String ENVIRONMENT_DATA_TAB = "environmentData";
-	static final String MEASUREMENT_DATA_EXISTING = "measurementDataExisting";
-	static final String HAS_ADVANCED_OR_CROSSES_LIST = "hasAdvancedOrCrossesList";
+	// TODO: MARK FOR DELETE IBP-2789
+	//static final String MEASUREMENT_DATA_EXISTING = "measurementDataExisting";
+	// TODO: MARK FOR DELETE IBP-2789
+	//static final String HAS_ADVANCED_OR_CROSSES_LIST = "hasAdvancedOrCrossesList";
 	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
 	private static final String IS_EXP_DESIGN_PREVIEW_FALSE = "0";
 	private static final String IS_DELETED_ENVIRONMENT = "0";
@@ -100,6 +104,9 @@ public class OpenTrialController extends BaseTrialController {
 
 	@Resource
 	private DatasetService datasetService;
+
+	@Resource
+	DatasetTypeService datasetTypeService;
 
 	/**
 	 * The Inventory list manager.
@@ -232,12 +239,15 @@ public class OpenTrialController extends BaseTrialController {
 			}
 
 			form.setMeasurementVariables(workbook.getMeasurementDatasetVariablesView());
-			model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT, this.studyDataManager.countExperiments(measurementDatasetId));
+			// TODO: MARK FOR DELETE IBP-2789
+			//model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT, this.studyDataManager.countExperiments(measurementDatasetId));
 		}
 
 		return this.showAjaxPage(model, BaseTrialController.URL_MEASUREMENT);
 	}
 
+	// TODO: MARK FOR DELETE IBP-2689
+	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "/columns", method = RequestMethod.POST)
 	public List<MeasurementVariable> getColumns(
@@ -355,7 +365,7 @@ public class OpenTrialController extends BaseTrialController {
 			final List<ListDataProject> listDataProjects = this.fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
 
 			long germplasmListChecksSize = 0;
-			if (this.userSelection.getExpDesignParams().getDesignType() == DesignTypeItem.P_REP.getId()) {
+			if (this.userSelection.getExpDesignParams().getDesignType() == ExperimentDesignType.P_REP.getId()) {
 
 				germplasmListChecksSize = this.getGermplasmListChecksSize(germplasmList.getId());
 			} else {
@@ -406,22 +416,24 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute(
 			OpenTrialController.MEASUREMENTS_DATA,
 			this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false));
-		model.addAttribute(
+		// TODO: MARK FOR DELETE IBP-2789
+		/*model.addAttribute(
 			OpenTrialController.SELECTION_VARIABLE_DATA,
-			this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
+			this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));*/
 		model.addAttribute("experimentalDesignData", this.prepareExperimentalDesignTabInfo(trialWorkbook, false));
-
-		model.addAttribute(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService
+		// TODO: MARK FOR DELETE IBP-2789
+		/*model.addAttribute(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService
 			.checkIfStudyHasMeasurementData(
 				trialWorkbook.getMeasurementDatesetId(),
-				SettingsUtil.buildVariates(trialWorkbook.getVariates())));
-		model.addAttribute(
+				SettingsUtil.buildVariates(trialWorkbook.getVariates())));*/
+		/*model.addAttribute(
 			OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST,
-			this.fieldbookMiddlewareService.hasAdvancedOrCrossesList(trialId));
+			this.fieldbookMiddlewareService.hasAdvancedOrCrossesList(trialId));*/
 
-		model.addAttribute(
+		// TODO: MARK FOR DELETE IBP-2789
+		/*model.addAttribute(
 			OpenTrialController.MEASUREMENT_ROW_COUNT,
-			this.studyDataManager.countExperiments(trialWorkbook.getMeasurementDatesetId()));
+			this.studyDataManager.countExperiments(trialWorkbook.getMeasurementDatesetId()));*/
 		model.addAttribute("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), false));
 		model.addAttribute("studyTypes", this.studyDataManager.getAllVisibleStudyTypes());
 
@@ -554,9 +566,11 @@ public class OpenTrialController extends BaseTrialController {
 
 		final Map<String, Object> returnVal = new HashMap<>();
 		returnVal.put(OpenTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(workbook, false));
-		returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, false);
-		returnVal.put(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST, false);
-		returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT, 0);
+		//returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, false);
+		// TODO: MARK FOR DELETE IBP-2789
+		//returnVal.put(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST, false);
+		// TODO: MARK FOR DELETE IBP-2789
+		//returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT, 0);
 
 		// saving of measurement rows
 		if (replace == 0) {
@@ -576,17 +590,19 @@ public class OpenTrialController extends BaseTrialController {
 
 				// Set the flag that indicates whether the variates will be save
 				// or not to false since it's already save after inline edit
+				// TODO VER ESTO PARA CAMBIAR SI SE PUEDE: MARK FOR DELETE IBP-2789
 				this.fieldbookMiddlewareService.saveMeasurementRows(workbook, this.contextUtil.getCurrentProgramUUID(), false);
-				this.fieldbookMiddlewareService.updatePhenotypeStatus(workbook.getObservations());
-
-				returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService
+				//this.fieldbookMiddlewareService.updatePhenotypeStatus(workbook.getObservations());
+				// TODO: MARK FOR DELETE IBP-2789
+				/*returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService
 					.checkIfStudyHasMeasurementData(
 						workbook.getMeasurementDatesetId(),
-						SettingsUtil.buildVariates(workbook.getVariates())));
-				returnVal.put(
+						SettingsUtil.buildVariates(workbook.getVariates())));*/
+				/*returnVal.put(
 					OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST,
-					this.fieldbookMiddlewareService.hasAdvancedOrCrossesList(workbook.getStudyDetails().getId()));
-				returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT, this.studyDataManager.countExperiments(measurementDatasetId));
+					this.fieldbookMiddlewareService.hasAdvancedOrCrossesList(workbook.getStudyDetails().getId()));*/
+				// TODO: MARK FOR DELETE IBP-2789
+				//returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT, this.studyDataManager.countExperiments(measurementDatasetId));
 
 				this.fieldbookService
 					.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), workbook.getStudyName(), data.getColumnOrders(),
@@ -619,20 +635,23 @@ public class OpenTrialController extends BaseTrialController {
 		this.userSelection.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));
 		this.userSelection.setExpDesignParams(SettingsUtil.convertToExpDesignParamsUi(this.userSelection.getExperimentalDesignVariables()));
 		returnVal.put(OpenTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(trialWorkbook, false));
-		returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService
+		// TODO: MARK FOR DELETE IBP-2789
+		/*returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService
 			.checkIfStudyHasMeasurementData(
 				trialWorkbook.getMeasurementDatesetId(),
-				SettingsUtil.buildVariates(trialWorkbook.getVariates())));
-		returnVal.put(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST, this.fieldbookMiddlewareService.hasAdvancedOrCrossesList(id));
-		returnVal.put(
+				SettingsUtil.buildVariates(trialWorkbook.getVariates())));*/
+		//returnVal.put(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST, this.fieldbookMiddlewareService.hasAdvancedOrCrossesList(id));
+		// TODO: MARK FOR DELETE IBP-2789
+		/*returnVal.put(
 			OpenTrialController.MEASUREMENT_ROW_COUNT,
-			this.studyDataManager.countExperiments(trialWorkbook.getMeasurementDatesetId()));
+			this.studyDataManager.countExperiments(trialWorkbook.getMeasurementDatesetId()));*/
 		returnVal.put(
 			OpenTrialController.MEASUREMENTS_DATA,
 			this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false));
-		returnVal.put(
+		// TODO: MARK FOR DELETE IBP-2789
+		/*returnVal.put(
 			OpenTrialController.SELECTION_VARIABLE_DATA,
-			this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
+			this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));*/
 		returnVal.put(OpenTrialController.TRIAL_SETTINGS_DATA, this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
 		this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, id);
 		this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false);
@@ -773,7 +792,8 @@ public class OpenTrialController extends BaseTrialController {
 		if (deletedEnvironments.length() > 0 && !IS_DELETED_ENVIRONMENT.equals(deletedEnvironments)) {
 			final Workbook tempWorkbook = this.processDeletedEnvironments(deletedEnvironments, measurementDatasetVariables, workbook);
 			form.setMeasurementRowList(tempWorkbook.getObservations());
-			model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT, this.studyDataManager.countExperiments(measurementDatasetId));
+			// TODO: MARK FOR DELETE IBP-2789
+			//model.addAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT, this.studyDataManager.countExperiments(measurementDatasetId));
 		}
 
 		form.setMeasurementVariables(measurementDatasetVariables);
@@ -935,12 +955,11 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	List<SampleListDTO> getSampleList(final Integer studyId) {
-		final Set<Integer> datasetTypeIds = new HashSet<>(Arrays.asList(DatasetTypeEnum.SUB_OBSERVATION_IDS));
-		datasetTypeIds.add(DatasetTypeEnum.PLOT_DATA.getId());
-
+		final List<Integer> datasetTypeIds = this.datasetTypeService.getObservationDatasetTypeIds();
 		final List<Integer> datasetIds = new ArrayList<>();
-		final List<DatasetDTO> datasets = this.datasetService.getDatasets(studyId, datasetTypeIds);
-		for (final DatasetDTO dataset : datasets) {
+
+		final List<DatasetDTO> DatasetDTOs = this.datasetService.getDatasets(studyId, new HashSet<>(datasetTypeIds));
+		for (final DatasetDTO dataset : DatasetDTOs) {
 			datasetIds.add(dataset.getDatasetId());
 		}
 		if (!datasetIds.isEmpty()) {

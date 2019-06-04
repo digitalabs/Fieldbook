@@ -1287,6 +1287,15 @@
 				return categoricalValue;
 			}
 
+
+			function getDisplayValueForNumericalValue(numericValue) {
+				if(numericValue === "missing" || numericValue === "") {
+					return numericValue;
+				} else {
+					return EscapeHTML.escape( numericValue ? Number(Math.round(numericValue+'e4')+'e-4'): '');
+				}
+			}
+
 			function validateNumericRange(minVal, maxVal, value, invalid) {
 				if (parseFloat(value) < parseFloat(minVal) || parseFloat(value) > parseFloat(maxVal)) {
 

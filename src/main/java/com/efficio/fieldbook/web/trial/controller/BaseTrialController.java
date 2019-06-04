@@ -29,10 +29,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
-import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.dms.ExperimentDesignType;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -89,12 +88,18 @@ public abstract class BaseTrialController extends SettingsController {
 	public static final String URL_ENVIRONMENTS = "TrialManager/templates/environments";
 	public static final String URL_TREATMENT = "TrialManager/templates/treatment";
 	public static final String URL_EXPERIMENTAL_DESIGN = "TrialManager/templates/experimentalDesign";
+	// TODO: MARK FOR DELETE IBP-2689
+	@Deprecated
 	public static final String URL_MEASUREMENT = "TrialManager/templates/measurements";
+	// TODO: MARK FOR DELETE IBP-2689
+	@Deprecated
 	public static final String URL_DATATABLE = "Common/showAddOrRemoveTraitsPagination";
 
 	public static final String URL_SUB_OBSERVATION_TAB = "TrialManager/templates/subobservations/subObservationTab";
 	public static final String URL_SUB_OBSERVATION_SET = "TrialManager/templates/subobservations/subObservationSet";
 
+	// TODO: MARK FOR DELETE IBP-2689
+	@Deprecated
 	protected StudyTypeBuilder studyTypeBuilder = new StudyTypeBuilder();
 
 	protected void createStudyDetails(final Workbook workbook, final BasicDetails detailBean) {
@@ -217,9 +222,9 @@ public abstract class BaseTrialController extends SettingsController {
 				xpDesignVariable.getExperimentalDesign() == null ? null : xpDesignVariable.getExperimentalDesign().getValue();
 			if (NumberUtils.isNumber(designTypeString)) {
 				final int designTypeTermID = Integer.parseInt(designTypeString);
-				final DesignTypeItem designTypeItem = DesignTypeItem.getDesignTypeItemByTermId(designTypeTermID);
-				data.setDesignType(designTypeItem != null ? designTypeItem.getId() : null);
-				data.setUseLatenized(DesignTypeItem.isLatinized(designTypeTermID));
+				final ExperimentDesignType experimentDesignType = ExperimentDesignType.getDesignTypeItemByTermId(designTypeTermID);
+				data.setDesignType(experimentDesignType != null ? experimentDesignType.getId() : null);
+				data.setUseLatenized(ExperimentDesignType.isLatinized(designTypeTermID));
 			}
 
 			final String replicationPercentage = this.getExperimentalDesignData(xpDesignVariable.getReplicationPercentage());
@@ -285,6 +290,96 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareGermplasmTabInfo(final List<MeasurementVariable> measurementVariables, final boolean isUsePrevious) {
+		final List<SettingDetail> detailList = this.buildSettingDetailListWithGermplasmInfo(measurementVariables,isUsePrevious);
+		final TabInfo info = new TabInfo();
+		info.setSettings(detailList);
+		return info;
+	}
+
+	protected List<SettingDetail> buildSettingDetailListWithTrialSettingsInfo(
+		final List<MeasurementVariable> measurementVariables, final boolean isUsePrevious) {
+
+		final Map<String, String> trialValues = new HashMap<>();
+		final List<SettingDetail> details = new ArrayList<>();
+
+		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_STUDY_VARIABLE_DBCV_FIELDS.getString());
+		final List<Integer> basicDetailIDList = this.buildVariableIDList(AppConstants.HIDE_STUDY_FIELDS.getString());
+		final Map<String, MeasurementVariable> settingsMap = SettingsUtil.buildMeasurementVariableMap(measurementVariables);
+		for (final MeasurementVariable measurementVariable : measurementVariables) {
+			if (!basicDetailIDList.contains(measurementVariable.getTermId())) {
+				final SettingDetail detail =
+					this.createSettingDetail(
+						measurementVariable.getTermId(), measurementVariable.getName(), VariableType.STUDY_DETAIL.getRole().name());
+				detail.setDeletable(true);
+				details.add(detail);
+
+				if (hiddenFields.contains(measurementVariable.getTermId())) {
+					detail.setHidden(true);
+				} else {
+					detail.setHidden(false);
+				}
+
+				if (!isUsePrevious) {
+					detail.getVariable().setOperation(Operation.UPDATE);
+				} else {
+					detail.getVariable().setOperation(Operation.ADD);
+				}
+
+				// set local name of id variable to local name of name variable
+				final String nameTermId =
+					SettingsUtil.getNameCounterpart(measurementVariable.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
+				if (settingsMap.get(nameTermId) != null) {
+					detail.getVariable().setName(settingsMap.get(nameTermId).getName());
+				}
+
+				final String value;
+				if ("DATE".equals(detail.getVariable().getWidgetType().getType())) {
+					value = this.convertDateStringForUI(measurementVariable.getValue());
+				} else {
+					value = measurementVariable.getValue();
+				}
+				trialValues.put(Integer.toString(measurementVariable.getTermId()), value);
+			}
+		}
+
+		this.userSelection.setStudyLevelConditions(details);
+		return details;
+	}
+
+	protected List<SettingDetail> buildSettingDetailListWithMeasurementInfo(
+		final List<MeasurementVariable> variatesList, final VariableType variableType,
+		final boolean isUsePrevious) {
+		final List<SettingDetail> detailList = new ArrayList<>();
+
+		for (final MeasurementVariable measurementVariable : variatesList) {
+			if (measurementVariable.getVariableType() == variableType) {
+
+				final SettingDetail detail =
+					this.createSettingDetailWithVariableType(measurementVariable.getTermId(), measurementVariable.getName(), variableType);
+
+				if (!isUsePrevious) {
+					detail.getVariable().setOperation(Operation.UPDATE);
+				} else {
+					detail.getVariable().setOperation(Operation.ADD);
+				}
+
+				detail.setDeletable(true);
+
+				detailList.add(detail);
+			}
+		}
+
+		if (variableType == VariableType.TRAIT) {
+			this.userSelection.setBaselineTraitsList(detailList);
+		} else if (variableType == VariableType.SELECTION_METHOD) {
+			this.userSelection.setSelectionVariates(detailList);
+		}
+
+		return detailList;
+	}
+
+	protected List<SettingDetail> buildSettingDetailListWithGermplasmInfo(
+		final List<MeasurementVariable> measurementVariables, final boolean isUsePrevious) {
 		final List<SettingDetail> detailList = new ArrayList<>();
 		final List<Integer> requiredIDList = this.buildVariableIDList(AppConstants.CREATE_STUDY_PLOT_REQUIRED_FIELDS.getString());
 
@@ -331,12 +426,9 @@ public abstract class BaseTrialController extends SettingsController {
 			detailList.add(detail);
 		}
 
-		final TabInfo info = new TabInfo();
-		info.setSettings(detailList);
-
 		this.userSelection.setPlotsLevelList(detailList);
 
-		return info;
+		return detailList;
 	}
 
 	protected boolean inRequiredExpDesignVar(final int termId) {
@@ -404,30 +496,7 @@ public abstract class BaseTrialController extends SettingsController {
 		final List<MeasurementVariable> variatesList, final VariableType variableType,
 		final boolean isUsePrevious) {
 
-		final List<SettingDetail> detailList = new ArrayList<>();
-
-		for (final MeasurementVariable measurementVariable : variatesList) {
-			if (measurementVariable.getVariableType() == variableType) {
-
-				final SettingDetail detail = this.createSettingDetailWithVariableType(measurementVariable.getTermId(), measurementVariable.getName(), variableType);
-
-				if (!isUsePrevious) {
-					detail.getVariable().setOperation(Operation.UPDATE);
-				} else {
-					detail.getVariable().setOperation(Operation.ADD);
-				}
-
-				detail.setDeletable(true);
-
-				detailList.add(detail);
-			}
-		}
-
-		if (variableType == VariableType.TRAIT) {
-			this.userSelection.setBaselineTraitsList(detailList);
-		} else if (variableType == VariableType.SELECTION_METHOD) {
-			this.userSelection.setSelectionVariates(detailList);
-		}
+		final List<SettingDetail> detailList = this.buildSettingDetailListWithMeasurementInfo(variatesList, variableType, isUsePrevious);
 
 		final TabInfo info = new TabInfo();
 		info.setSettings(detailList);
@@ -445,19 +514,19 @@ public abstract class BaseTrialController extends SettingsController {
 		final List<Integer> requiredFields = this.buildVariableIDList(AppConstants.CREATE_STUDY_ENVIRONMENT_REQUIRED_FIELDS.getString());
 		final List<Integer> filterFields = this.buildVariableIDList(AppConstants.EXP_DESIGN_VARIABLES.getString());
 		final Map<String, MeasurementVariable> factorsMap = SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
-		for (final MeasurementVariable var : workbook.getTrialConditions()) {
+		for (final MeasurementVariable measurementVariable : workbook.getTrialConditions()) {
 			final SettingDetail detail =
-				this.createSettingDetail(var.getTermId(), var.getName(), VariableType.ENVIRONMENT_DETAIL.getRole().name());
+				this.createSettingDetail(measurementVariable.getTermId(), measurementVariable.getName(), VariableType.ENVIRONMENT_DETAIL.getRole().name());
 
-			if (filterFields.contains(var.getTermId())) {
+			if (filterFields.contains(measurementVariable.getTermId())) {
 				continue;
 			}
 
-			if (hiddenFields.contains(var.getTermId())) {
+			if (hiddenFields.contains(measurementVariable.getTermId())) {
 				detail.setHidden(true);
 			}
 
-			if (!requiredFields.contains(var.getTermId())) {
+			if (!requiredFields.contains(measurementVariable.getTermId())) {
 				detail.setDeletable(true);
 			}
 
@@ -470,7 +539,7 @@ public abstract class BaseTrialController extends SettingsController {
 			}
 
 			// set local name of id variable to local name of name variable
-			final String nameTermId = SettingsUtil.getNameCounterpart(var.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
+			final String nameTermId = SettingsUtil.getNameCounterpart(measurementVariable.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
 			if (factorsMap.get(nameTermId) != null) {
 				detail.getVariable().setName(factorsMap.get(nameTermId).getName());
 			}
@@ -631,6 +700,8 @@ public abstract class BaseTrialController extends SettingsController {
 		return output;
 	}
 
+	// TODO: MARK FOR DELETE IBP-2689
+	@Deprecated
 	protected List<MeasurementVariable> getLatestMeasurements(
 		@ModelAttribute("createTrialForm") final CreateTrialForm form,
 		final HttpServletRequest request) {
@@ -764,48 +835,7 @@ public abstract class BaseTrialController extends SettingsController {
 	protected TabInfo prepareTrialSettingsTabInfo(final List<MeasurementVariable> measurementVariables, final boolean isUsePrevious) {
 		final TabInfo info = new TabInfo();
 		final Map<String, String> trialValues = new HashMap<>();
-		final List<SettingDetail> details = new ArrayList<>();
-
-		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_STUDY_VARIABLE_DBCV_FIELDS.getString());
-		final List<Integer> basicDetailIDList = this.buildVariableIDList(AppConstants.HIDE_STUDY_FIELDS.getString());
-		final Map<String, MeasurementVariable> settingsMap = SettingsUtil.buildMeasurementVariableMap(measurementVariables);
-		for (final MeasurementVariable measurementVariable : measurementVariables) {
-			if (!basicDetailIDList.contains(measurementVariable.getTermId())) {
-				final SettingDetail detail =
-					this.createSettingDetail(measurementVariable.getTermId(), measurementVariable.getName(), VariableType.STUDY_DETAIL.getRole().name());
-				detail.setDeletable(true);
-				details.add(detail);
-
-				if (hiddenFields.contains(measurementVariable.getTermId())) {
-					detail.setHidden(true);
-				} else {
-					detail.setHidden(false);
-				}
-
-				if (!isUsePrevious) {
-					detail.getVariable().setOperation(Operation.UPDATE);
-				} else {
-					detail.getVariable().setOperation(Operation.ADD);
-				}
-
-				// set local name of id variable to local name of name variable
-				final String nameTermId = SettingsUtil.getNameCounterpart(measurementVariable.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
-				if (settingsMap.get(nameTermId) != null) {
-					detail.getVariable().setName(settingsMap.get(nameTermId).getName());
-				}
-
-				final String value;
-				if ("DATE".equals(detail.getVariable().getWidgetType().getType())) {
-					value = this.convertDateStringForUI(measurementVariable.getValue());
-				} else {
-					value = measurementVariable.getValue();
-				}
-				trialValues.put(Integer.toString(measurementVariable.getTermId()), value);
-			}
-		}
-
-		this.userSelection.setStudyLevelConditions(details);
-
+		final List<SettingDetail> details = this.buildSettingDetailListWithTrialSettingsInfo(measurementVariables,isUsePrevious);
 		info.setSettings(details);
 		final TrialSettingsBean trialSettingsBean = new TrialSettingsBean();
 		trialSettingsBean.setUserInput(trialValues);

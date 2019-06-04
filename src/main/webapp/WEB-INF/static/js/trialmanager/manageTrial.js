@@ -228,7 +228,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				{   name: 'Environments',
 					state: 'environment'
 				}
-				/*TODO: MARK FOR DELETE IBP-2689*/
+				/*TODO: MARK FOR DELETE IBP-2789*/
 /*				,
 				{
 					name: 'Experimental Design',
@@ -260,12 +260,42 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.isChoosePreviousStudy = false;
 			$scope.hasUnsavedData = studyStateService.hasUnsavedData;
 
-			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+			if ($scope.isOpenStudy()) {
+				var environment = $scope.trialTabs.pop();
+				$scope.trialTabs.push({
+					name: 'Treatment Factors',
+					state: 'treatment'
+				});
+				$scope.trialTabs.push(environment);
+				$scope.trialTabs.push({
+					name: 'Experimental Design',
+					state: 'experimentalDesign'
+				});
 
-			var config = {
-				headers: {
-					'X-Auth-Token': xAuthToken
-				}
+				datasetService.getDataset(studyContext.measurementDatasetId).then(function (dataset) {
+					var variables = [];
+					if (!dataset.instances.length) {
+						TrialManagerDataService.trialMeasurement.hasMeasurement = false;
+						TrialManagerDataService.trialMeasurement.count = 0;
+						TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
+						return;
+					} else if (!dataset.variables.length) {
+						TrialManagerDataService.trialMeasurement.hasMeasurement = false;
+						TrialManagerDataService.trialMeasurement.count = 1000;
+						TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
+						return;
+					}
+					angular.forEach(dataset.variables, function (variable) {
+						variables.push(variable.termId);
+					});
+					datasetService.observationCount(studyContext.measurementDatasetId, variables).then(function (response) {
+						TrialManagerDataService.trialMeasurement.count = 1000;
+						TrialManagerDataService.trialMeasurement.hasMeasurement = response.headers('X-Total-Count') > 0;
+						TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
+						return;
+					});
+				});
+
 			};
 
 			$http.get('/bmsapi/studytype/' + cropName + '/allVisible').success(function (data) {
@@ -420,8 +450,9 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						//Added-selectionVariates
 						TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(
 							data.trialSettingsData));
-						TrialManagerDataService.updateSettings('selectionVariables', TrialManagerDataService.extractSettings(
-							data.selectionVariableData));
+						// TODO: MARK FOR DELETE IBP-2789
+						/*TrialManagerDataService.updateSettings('selectionVariables', TrialManagerDataService.extractSettings(
+							data.selectionVariableData));*/
 						TrialManagerDataService.updateSettings('environments', environmentSettings);
 						TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
 						TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(
@@ -479,9 +510,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.displayMeasurementOnlyActions = function () {
-				return TrialManagerDataService.trialMeasurement.count &&
-					TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign &&
-					!TrialManagerDataService.applicationData.unsavedTraitsAvailable;
+				return TrialManagerDataService.trialMeasurement.hasExperimentDesigned && !TrialManagerDataService.applicationData.unsavedGeneratedDesign && !TrialManagerDataService.applicationData.unsavedTraitsAvailable;
 			};
 
 			// TODO: MARK FOR DELETE IBP-2689
@@ -547,6 +576,32 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					return;
 				}
 
+				if ($scope.tabSelected === '/subObservationTabs/' + studyContext.measurementDatasetId) {
+					datasetService.getDataset(studyContext.measurementDatasetId).then(function (dataset) {
+						var variables = [];
+						if (!dataset.instances.length) {
+							TrialManagerDataService.trialMeasurement.hasMeasurement = false;
+							TrialManagerDataService.trialMeasurement.count = 0;
+							TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
+							return;
+						} else if (!dataset.variables.length) {
+							TrialManagerDataService.trialMeasurement.hasMeasurement = false;
+							TrialManagerDataService.trialMeasurement.count = 1000;
+							TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
+							return;
+						}
+						angular.forEach(dataset.variables, function (variable) {
+							variables.push(variable.termId);
+						});
+						datasetService.observationCount(studyContext.measurementDatasetId, variables).then(function (response) {
+							TrialManagerDataService.trialMeasurement.count = 1000;
+							TrialManagerDataService.trialMeasurement.hasMeasurement = response.headers('X-Total-Count') > 0;
+							TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
+							return;
+						});
+					});
+				}
+
 				$scope.isSettingsTab = true;
 				$scope.tabSelected = targetState;
 
@@ -560,7 +615,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				}
 
-				if (targetState === 'editMeasurements') {
+				// TODO: MARK FOR DELETE IBP-2789
+				/*if (targetState === 'editMeasurements') {
 					if ($('body').hasClass('preview-measurements-only')) {
 						adjustColumns($('#preview-measurement-table'));
 					} else {
@@ -571,12 +627,13 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						showAlertMessage('', 'Changes have been made that may affect the experimental design of this study.' +
 							'Please regenerate the design on the Experimental Design tab', 10000);
 					}
-				} else if (targetState === 'experimentalDesign') {
+				} else */if (targetState === 'experimentalDesign') {
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
 						showAlertMessage('', 'Study settings have been updated since the experimental design was generated. ' +
 							'Please select a design type and specify the parameters for your study again', 10000);
 					}
-				} else if (targetState === 'createMeasurements') {
+				// TODO: MARK FOR DELETE IBP-2789
+				/*} else if (targetState === 'createMeasurements') {
 					if (TrialManagerDataService.applicationData.unsavedGeneratedDesign) {
 						$rootScope.$broadcast('previewMeasurements');
 					}
@@ -587,7 +644,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 					if (!TrialManagerDataService.applicationData.unsavedGeneratedDesign) {
 						adjustColumns($('#preview-measurement-table'));
-					}
+					}*/
 				} else if (targetState === 'germplasm') {
 					adjustColumns($('#tableForGermplasm'));
 				} else if (targetState === 'environment') {

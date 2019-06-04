@@ -23,7 +23,7 @@ import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitia
 import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
-import org.generationcp.middleware.domain.dms.DesignTypeItem;
+import org.generationcp.middleware.domain.dms.ExperimentDesignType;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.Study;
@@ -319,10 +319,12 @@ public class OpenTrialControllerTest {
 			Assert.assertTrue("Controller does not properly set into the model special data required for experimental design tab",
 					model.containsAttribute("experimentalDesignSpecialData"));
 			Assert.assertTrue("Controller does not properly set into the model the study name", model.containsAttribute("studyName"));
-			Assert.assertTrue("Controller does not properly set into the model information on whether Study has measurements or not",
-					model.containsAttribute(OpenTrialController.MEASUREMENT_DATA_EXISTING));
-			Assert.assertTrue("Controller does not properly set into the model the data for measurement row count",
-					model.containsAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT));
+			// TODO: MARK FOR DELETE IBP-2789
+/*			Assert.assertTrue("Controller does not properly set into the model information on whether Study has measurements or not",
+					model.containsAttribute(OpenTrialController.MEASUREMENT_DATA_EXISTING));*/
+			// TODO: MARK FOR DELETE IBP-2789
+			/*Assert.assertTrue("Controller does not properly set into the model the data for measurement row count",
+					model.containsAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT));*/
 
 			Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be displayed.", this.hasAnalysisVariables(model));
 
@@ -614,7 +616,7 @@ public class OpenTrialControllerTest {
 				exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be RCBD", DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId().intValue(),
+		Assert.assertEquals("Design type should be RCBD", ExperimentDesignType.RANDOMIZED_COMPLETE_BLOCK.getId().intValue(),
 				data.getDesignType().intValue());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
 		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
@@ -636,7 +638,7 @@ public class OpenTrialControllerTest {
 				exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be RCBD", DesignTypeItem.RANDOMIZED_COMPLETE_BLOCK.getId().intValue(),
+		Assert.assertEquals("Design type should be RCBD", ExperimentDesignType.RANDOMIZED_COMPLETE_BLOCK.getId().intValue(),
 				data.getDesignType().intValue());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
@@ -659,7 +661,7 @@ public class OpenTrialControllerTest {
 				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be RIBD", DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId().intValue(),
+		Assert.assertEquals("Design type should be RIBD", ExperimentDesignType.RESOLVABLE_INCOMPLETE_BLOCK.getId().intValue(),
 				data.getDesignType().intValue());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
@@ -682,7 +684,7 @@ public class OpenTrialControllerTest {
 				new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be RIBDL", DesignTypeItem.RESOLVABLE_INCOMPLETE_BLOCK.getId().intValue(),
+		Assert.assertEquals("Design type should be RIBDL", ExperimentDesignType.RESOLVABLE_INCOMPLETE_BLOCK.getId().intValue(),
 				data.getDesignType().intValue());
 		Assert.assertTrue("Design type should be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
@@ -705,7 +707,7 @@ public class OpenTrialControllerTest {
 				new Integer(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be RRCD", DesignTypeItem.ROW_COL.getId().intValue(), data.getDesignType().intValue());
+		Assert.assertEquals("Design type should be RRCD", ExperimentDesignType.ROW_COL.getId().intValue(), data.getDesignType().intValue());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
 		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
@@ -727,7 +729,7 @@ public class OpenTrialControllerTest {
 				new Integer(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be RRCDL", DesignTypeItem.ROW_COL.getId().intValue(), data.getDesignType().intValue());
+		Assert.assertEquals("Design type should be RRCDL", ExperimentDesignType.ROW_COL.getId().intValue(), data.getDesignType().intValue());
 		Assert.assertTrue("Design type should be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
 		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
@@ -749,7 +751,7 @@ public class OpenTrialControllerTest {
 				exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be Other Design", DesignTypeItem.CUSTOM_IMPORT.getId().intValue(),
+		Assert.assertEquals("Design type should be Other Design", ExperimentDesignType.CUSTOM_IMPORT.getId().intValue(),
 				data.getDesignType().intValue());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
@@ -793,7 +795,7 @@ public class OpenTrialControllerTest {
 			new Integer(TermId.P_REP.getId()).toString(), exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertEquals("Design type should be P_REP", DesignTypeItem.P_REP.getId().intValue(),
+		Assert.assertEquals("Design type should be P_REP", ExperimentDesignType.P_REP.getId().intValue(),
 			data.getDesignType().intValue());
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
@@ -1092,11 +1094,14 @@ public class OpenTrialControllerTest {
 
 		final Map<String, Object> resultMap = this.openTrialController.updateSavedTrial(OpenTrialControllerTest.STUDY_ID);
 		Assert.assertNotNull(resultMap.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
-		Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));
-		Assert.assertNotNull(resultMap.get(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST));
-		Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENT_ROW_COUNT));
+		// TODO: MARK FOR DELETE IBP-2789
+		//Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));
+		//Assert.assertNotNull(resultMap.get(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST));
+		// TODO: MARK FOR DELETE IBP-2789
+		//Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENT_ROW_COUNT));
 		Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENTS_DATA));
-		Assert.assertNotNull(resultMap.get(OpenTrialController.SELECTION_VARIABLE_DATA));
+		// TODO: MARK FOR DELETE IBP-2789
+		//Assert.assertNotNull(resultMap.get(OpenTrialController.SELECTION_VARIABLE_DATA));
 		Assert.assertNotNull(resultMap.get(OpenTrialController.TRIAL_SETTINGS_DATA));
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).loadAllObservations(workbook);
@@ -1161,7 +1166,7 @@ public class OpenTrialControllerTest {
 		listDataProject.setGroupId(12);
 
 		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
-		expDesignParameterUi.setDesignType(DesignTypeItem.AUGMENTED_RANDOMIZED_BLOCK.getId());
+		expDesignParameterUi.setDesignType(ExperimentDesignType.AUGMENTED_RANDOMIZED_BLOCK.getId());
 		Mockito.when(this.userSelection.getExpDesignParams()).thenReturn(expDesignParameterUi);
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(Lists.newArrayList(listDataProject));
 
@@ -1209,11 +1214,13 @@ public class OpenTrialControllerTest {
 		final Map<String, Object> returnVal = this.openTrialController.submit(1, data);
 
 		Assert.assertNotNull("The environment data tab should not be null", returnVal.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
-		Assert.assertEquals("The measurement data flag should be false", false,
-				returnVal.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));
-		Assert.assertEquals("There should be no advanced or crosses list.", false,
-				returnVal.get(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST));
-		Assert.assertEquals("The measurement row count should be zero", 0, returnVal.get(OpenTrialController.MEASUREMENT_ROW_COUNT));
+		// TODO: MARK FOR DELETE IBP-2789
+		/*Assert.assertEquals("The measurement data flag should be false", false,
+				returnVal.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));*/
+		/*Assert.assertEquals("There should be no advanced or crosses list.", false,
+				returnVal.get(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST));*/
+		// TODO: MARK FOR DELETE IBP-2789
+		/*Assert.assertEquals("The measurement row count should be zero", 0, returnVal.get(OpenTrialController.MEASUREMENT_ROW_COUNT));*/
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).saveMeasurementRows(Matchers.any(Workbook.class),
 				Matchers.anyString(), Matchers.anyBoolean());
 		Mockito.verify(this.fieldbookService, Mockito.times(0)).createIdNameVariablePairs(Matchers.any(Workbook.class), Matchers.anyListOf(
@@ -1236,9 +1243,10 @@ public class OpenTrialControllerTest {
 		final Map<String, Object> returnVal = this.openTrialController.submit(0, data);
 
 		Assert.assertNotNull("The environment data tab should not be null", returnVal.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
-		Assert.assertEquals("The measurement data flag should be true", true, returnVal.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));
-		Assert.assertEquals("The measurement row count should be " + experimentCount, experimentCount,
-				returnVal.get(OpenTrialController.MEASUREMENT_ROW_COUNT));
+		// TODO: MARK FOR DELETE IBP-2789
+		//Assert.assertEquals("The measurement data flag should be true", true, returnVal.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));
+		/*Assert.assertEquals("The measurement row count should be " + experimentCount, experimentCount,
+				returnVal.get(OpenTrialController.MEASUREMENT_ROW_COUNT));*/
 
 		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(Matchers.any(Workbook.class), Matchers.anyString(),
 				Matchers.anyBoolean());
@@ -1317,13 +1325,16 @@ public class OpenTrialControllerTest {
 				Matchers.any(TabInfo.class));
 		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENTS_DATA),
 				Matchers.any(TabInfo.class));
-		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.SELECTION_VARIABLE_DATA),
-				Matchers.any(TabInfo.class));
+		// TODO: MARK FOR DELETE IBP-2789
+		/*Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.SELECTION_VARIABLE_DATA),
+				Matchers.any(TabInfo.class));*/
 		Mockito.verify(this.model).addAttribute(Matchers.eq("experimentalDesignData"), Matchers.any(TabInfo.class));
-		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENT_DATA_EXISTING), Matchers.anyBoolean());
-		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST), Matchers.anyBoolean());
-		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENT_ROW_COUNT),
-				Matchers.anyLong());
+		// TODO: MARK FOR DELETE IBP-2789
+		//Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENT_DATA_EXISTING), Matchers.anyBoolean());
+		//Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST), Matchers.anyBoolean());
+		// TODO: MARK FOR DELETE IBP-2789
+		/*Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENT_ROW_COUNT),
+				Matchers.anyLong());*/
 		Mockito.verify(this.model).addAttribute(Matchers.eq("treatmentFactorsData"), Matchers.any(TabInfo.class));
         Mockito.verify(this.model).addAttribute(Matchers.eq("studyTypes"), Matchers.anyListOf(StudyType.class));
 		Mockito.verify(this.model).addAttribute("createTrialForm", this.createTrialForm);

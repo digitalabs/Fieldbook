@@ -66,7 +66,7 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
  */
 public abstract class SettingsController extends AbstractBaseFieldbookController {
 
-	private static final List<Integer> EXPERIMENT_DESIGN_FACTOR_IDS = Arrays
+	protected static final List<Integer> EXPERIMENT_DESIGN_FACTOR_IDS = Arrays
 		.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.PERCENTAGE_OF_REPLICATION.getId(),
 			TermId.EXPT_DESIGN_SOURCE.getId());
 
@@ -251,8 +251,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param variableId
 	 * @return
 	 */
-	// TODO TRIAL
-	public boolean hasMeasurementDataEntered(final int variableId) {
+	// TODO: MARK FOR DELETE IBP-2689
+	/*public boolean hasMeasurementDataEntered(final int variableId) {
 		for (final MeasurementRow row : this.userSelection.getMeasurementRowList()) {
 			for (final MeasurementData data : row.getDataList()) {
 				if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
@@ -261,17 +261,17 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			}
 		}
 		return false;
-	}
+	}*/
 
-	// TODO TRIAL
-	protected void removeVariablesFromExistingNursery(final List<SettingDetail> settingList, final String variables) {
+	// TODO: MARK FOR DELETE IBP-2789
+	/*protected void removeVariablesFromExistingNursery(final List<SettingDetail> settingList, final String variables) {
 		final Iterator<SettingDetail> variableList = settingList.iterator();
 		while (variableList.hasNext()) {
 			if (SettingsUtil.inHideVariableFields(variableList.next().getVariable().getCvTermId(), variables)) {
 				variableList.remove();
 			}
 		}
-	}
+	}*/
 
 	//TODO TRIAL
 	protected void resetSessionVariablesAfterSave(final Workbook workbook) {
@@ -296,14 +296,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		// TODO: MARK FOR DELETE IBP-2689
 		// remove deleted variables in measurement rows & header for variates
 		this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedPlotLevelList(), workbook);
-		//this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedBaselineTraitsList(), workbook);
+		this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedBaselineTraitsList(), workbook);
 
 		// remove deleted variables in the original lists
 		// and change add operation to update
 		this.removeDeletedSetUpdate(this.userSelection.getStudyLevelConditions(), workbook.getConditions());
 		this.removeDeletedSetUpdate(this.userSelection.getPlotsLevelList(), workbook.getFactors());
 		// TODO: MARK FOR DELETE IBP-2689
-		//this.removeDeletedSetUpdate(this.userSelection.getBaselineTraitsList(), workbook.getVariates());
+		this.removeDeletedSetUpdate(this.userSelection.getBaselineTraitsList(), workbook.getVariates());
 		this.removeDeletedSetUpdate(this.userSelection.getStudyConditions(), workbook.getConstants());
 		this.removeDeletedSetUpdate(this.userSelection.getTrialLevelVariableList(), null);
 		this.removeDeletedSetUpdate(this.userSelection.getSelectionVariates(), null);
@@ -589,7 +589,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	//TODO TRIAL
 	protected void addVariableInDeletedList(final List<SettingDetail> currentList, final int mode, final int variableId,
-			final boolean createNewSettingIfNull) {
+			final boolean createNewSettingIfNull) {// TODO NOT REMOVE USED IN GERMPLASM DETAILS.
 		SettingDetail newSetting = null;
 		for (final SettingDetail setting : currentList) {
 			if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {

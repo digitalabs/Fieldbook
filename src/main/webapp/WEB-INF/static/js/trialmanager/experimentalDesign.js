@@ -6,7 +6,7 @@
 			.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 			.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE','SYSTEM_DEFINED_ENTRY_TYPE', 'TrialManagerDataService', '$http',
-				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages, $rootScope) {
+				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages, $rootScope, studyStateService) {
 
 					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
 					var MESSAGE_DIV_ID = 'page-message';
@@ -103,7 +103,9 @@
 
 					};
 
-					$scope.disableGenerateDesign = $scope.subObservationTabs.length > 0 || (TrialManagerDataService.trialMeasurement.hasMeasurement && !TrialManagerDataService.applicationData.unappliedChangesAvailable);
+					$scope.disableGenerateDesign = function () {
+						return $scope.subObservationTabs.length > 1 || (!!$scope.measurementDetails && $scope.measurementDetails.hasMeasurement && !TrialManagerDataService.applicationData.unappliedChangesAvailable);
+					};
 
 					//FIXME: cheating a bit for the meantime.
 					var totalGermplasms = countGermplasms();
@@ -162,9 +164,11 @@
 						2: 'In a single row',
 						3: 'In adjacent columns'
 					};
-					
-					$scope.disableDesignTypeSelect = ((TrialManagerDataService.trialMeasurement.hasMeasurement) || (TrialManagerDataService.trialMeasurement.count > 0 && TrialManagerDataService.applicationData.hasNewEnvironmentAdded));
-					
+
+					$scope.disableDesignTypeSelect = function () {
+						return ((!!$scope.measurementDetails && $scope.measurementDetails.hasMeasurement) || (!!$scope.measurementDetails && $scope.measurementDetails.count > 0 && TrialManagerDataService.applicationData.hasNewEnvironmentAdded));
+					};
+
 					$scope.onSwitchDesignTypes = function(newId) {
 						if (newId !== '') {
 
@@ -197,8 +201,8 @@
 						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 						$('#chooseGermplasmAndChecks').data('replace', '1');
 						//if the design is generated but not saved, the measurements datatable is for preview only (edit is not allowed)
-						$rootScope.$broadcast('previewMeasurements');
-						$('body').addClass('preview-measurements-only');
+/*						$rootScope.$broadcast('previewMeasurements');
+						$('body').addClass('preview-measurements-only');*/
 					};
 
 					// on click generate design button
@@ -216,6 +220,7 @@
 							environmentData.treatmentFactors = $scope.data.treatmentFactors.vals();
 						}
 
+						environmentData.environments = TrialManagerDataService.currentData.environments.environments;
 						TrialManagerDataService.generateExpDesign(environmentData).then(
 							function(response) {
 								if (response.valid === true) {
@@ -329,26 +334,26 @@
 					});
 
 					$scope.toggleDesignView = function() {
-						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
+						var selectedExperimentDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign
 							|| ($scope.data.designType !== null
 							&& $scope.data.designType !== ''
-							&& selectedDesignType.name === 'Custom Import Design')
+							&& selectedExperimentDesignType.name === 'Custom Import Design')
 							);
 					};
 
 					$scope.isImportedDesign = function() {
-						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
+						var selectedExperimentDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						return $scope.data.designType != null
 							&& $scope.data.designType !== ''
-							&& selectedDesignType.name === 'Custom Import Design';
+							&& selectedExperimentDesignType.name === 'Custom Import Design';
 					};
 
 					$scope.isBVDesign = function() {
-						var selectedDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
+						var selectedExperimentDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						return $scope.data.designType != null
 							&& $scope.data.designType !== ''
-							&& selectedDesignType.name !== 'Custom Import Design';
+							&& selectedExperimentDesignType.name !== 'Custom Import Design';
 					};
 					
 					$scope.showOrHideAdvancedOptions = function (isShown) {

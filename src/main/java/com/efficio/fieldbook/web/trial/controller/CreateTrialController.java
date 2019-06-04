@@ -125,7 +125,8 @@ public class CreateTrialController extends BaseTrialController {
 		model.addAttribute(CreateTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(false));
 		model.addAttribute(CreateTrialController.TRIAL_SETTINGS_DATA_TAB, this.prepareTrialSettingsTabInfo());
 		model.addAttribute("experimentalDesignSpecialData", this.prepareExperimentalDesignSpecialData());
-		model.addAttribute("measurementRowCount", 0);
+		// TODO: MARK FOR DELETE IBP-2789
+		//model.addAttribute("measurementRowCount", 0);
 		model.addAttribute("studyTypes", this.studyDataManager.getAllVisibleStudyTypes());
 
 		// so that we can reuse the same page being use for nursery
@@ -133,6 +134,8 @@ public class CreateTrialController extends BaseTrialController {
 		return this.showAngularPage(model);
 	}
 
+	// TODO: MARK FOR DELETE IBP-2689
+	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "/columns", method = RequestMethod.POST)
 	public List<MeasurementVariable> getColumns(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model,
@@ -159,8 +162,9 @@ public class CreateTrialController extends BaseTrialController {
 						this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
 				tabDetails.put("measurementsData",
 						this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, true));
-				tabDetails.put("selectionVariableData",
-						this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));
+				// TODO: MARK FOR DELETE IBP-2789
+				/*tabDetails.put("selectionVariableData",
+						this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));*/
 
 				this.fieldbookMiddlewareService
 						.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
@@ -259,6 +263,8 @@ public class CreateTrialController extends BaseTrialController {
 		return this.showAjaxPage(model, BaseTrialController.URL_MEASUREMENT);
 	}
 
+	// TODO: MARK FOR DELETE IBP-2689
+	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "/measurements/variables", method = RequestMethod.POST, produces = "application/json")
 	public List<MeasurementVariable> showMeasurementsVariables(@ModelAttribute("createTrialForm") final CreateTrialForm form,

@@ -41,6 +41,7 @@ import com.efficio.fieldbook.web.common.form.ReviewDetailsOutOfBoundsForm;
 
 @Controller
 @RequestMapping(ReviewDetailsOutOfBoundsController.URL)
+// TODO: MARK FOR DELETE IBP-2789
 public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookController {
 
 	public static final String URL = "/Common/ReviewDetailsOutOfBounds";

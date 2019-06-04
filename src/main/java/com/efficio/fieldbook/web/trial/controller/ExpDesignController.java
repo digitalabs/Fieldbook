@@ -264,7 +264,7 @@ public class ExpDesignController extends BaseTrialController {
 		return expParameterOutput;
 	}
 
-	private Integer getLowestEntryNo(final List<ImportedGermplasm> list) {
+	Integer getLowestEntryNo(final List<ImportedGermplasm> list) {
 		if (list == null || list.isEmpty()) {
 			return null;
 		}

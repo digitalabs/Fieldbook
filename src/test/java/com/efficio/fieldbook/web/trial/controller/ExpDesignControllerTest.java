@@ -112,6 +112,22 @@ public class ExpDesignControllerTest {
 		Mockito.verify(this.designLicenseUtil).isExpiringWithinThirtyDays(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
 	}
 
+	@Test
+	public void testGetLowestEntryNo() {
+		final List<ImportedGermplasm> germplasmList = new ArrayList<>();
+		final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
+		importedGermplasm.setEntryId(5);
+		germplasmList.add(importedGermplasm);
+		Integer startingEntryNo = this.expDesignController.getLowestEntryNo(germplasmList);
+		Assert.assertEquals("5", startingEntryNo.toString());
+		
+		final ImportedGermplasm importedGermplasm2 = new ImportedGermplasm();
+		importedGermplasm2.setEntryId(4);
+		germplasmList.add(importedGermplasm2);
+		startingEntryNo = this.expDesignController.getLowestEntryNo(germplasmList);
+		Assert.assertEquals("4", startingEntryNo.toString());
+	}
+
 	private void mockDesignValidation(final ExpDesignParameterUi expDesignParameterUi, final List<ImportedGermplasm> germplasmList) {
 		final ExpDesignValidationOutput expParameterOutput = new ExpDesignValidationOutput(true, "");
 		Mockito.doReturn(expParameterOutput).when(this.randomizeCompleteBlockDesign).validate(expDesignParameterUi, germplasmList);
@@ -119,6 +135,11 @@ public class ExpDesignControllerTest {
 
 	private List<ImportedGermplasm> mockGermplasmList() {
 		final List<ImportedGermplasm> germplasmList = new ArrayList<>();
+		for(int i = 1; i < 6; i++) {
+			final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
+			importedGermplasm.setEntryId(i);
+			germplasmList.add(importedGermplasm);
+		}
 		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 		importedGermplasmList.setImportedGermplasms(germplasmList);
 		final ImportedGermplasmMainInfo importedGermplasmMainInfo = new ImportedGermplasmMainInfo();

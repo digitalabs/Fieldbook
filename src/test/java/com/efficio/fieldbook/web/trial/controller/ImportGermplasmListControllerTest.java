@@ -70,7 +70,6 @@ import java.util.UUID;
 @RunWith(MockitoJUnitRunner.class)
 public class ImportGermplasmListControllerTest {
 
-	private static final String STARTING_ENTRY_NUMBER = "1";
 	private static final int EH_CM_TERMID = 20316;
 	private static final int CHECK_TYPE = 1;
 	private static final Integer PROJECT_ID = 97;
@@ -179,11 +178,11 @@ public class ImportGermplasmListControllerTest {
 	public void testDisplayGermplasmDetailsOfSelectedListForNursery() throws MiddlewareException {
 
 		final List<GermplasmListData> list = this.createGermplasmListData();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(LIST_ID);
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID, form, model);
+		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(LIST_ID, form, model);
 
 		Assert.assertTrue("If import is successful, isImportValid should be TRUE", this.userSelection.isImportValid());
 
@@ -214,11 +213,11 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testDisplayGermplasmDetailsOfSelectedListForStudy() throws MiddlewareException {
 		final List<GermplasmListData> list = this.createGermplasmListData();
-		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(this.LIST_ID);
+		Mockito.doReturn(list).when(this.germplasmListManager).getGermplasmListDataByListId(LIST_ID);
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
-		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(this.LIST_ID,
+		this.importGermplasmListController.displayGermplasmDetailsOfSelectedList(LIST_ID,
 				form, model);
 
 		Assert.assertTrue("If import is successful, isImportValid should be TRUE", this.userSelection.isImportValid());
@@ -299,7 +298,6 @@ public class ImportGermplasmListControllerTest {
 
 	@Test
 	public void testDisplayGermplasmDetailsOfCurrentStudyForNursery() throws MiddlewareException {
-		final List<GermplasmListData> list = this.createGermplasmListData();
 
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
 				.getGermplasmListsByProjectId(ImportGermplasmListControllerTest.STUDY_ID, GermplasmListType.STUDY);
@@ -395,7 +393,6 @@ public class ImportGermplasmListControllerTest {
 
 	@Test
 	public void testDisplayGermplasmDetailsOfCurrentStudyForStudy() throws MiddlewareException {
-		final List<GermplasmListData> list = this.createGermplasmListData();
 
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
 				.getGermplasmListsByProjectId(ImportGermplasmListControllerTest.STUDY_ID, GermplasmListType.STUDY);
@@ -559,10 +556,10 @@ public class ImportGermplasmListControllerTest {
 
 		this.userSelection.setImportedGermplasmMainInfo(importedGermplasmMainInfo);
 
-		Mockito.doNothing().when(this.fieldbookService).createIdCodeNameVariablePairs(Matchers.isA(Workbook.class),
-				Matchers.isA(String.class));
-		Mockito.doNothing().when(this.fieldbookService).createIdNameVariablePairs(Matchers.isA(Workbook.class),
-				Matchers.anyListOf(SettingDetail.class), Matchers.isA(String.class), Matchers.anyBoolean());
+		Mockito.doNothing().when(this.fieldbookService).createIdCodeNameVariablePairs(ArgumentMatchers.isA(Workbook.class),
+			ArgumentMatchers.isA(String.class));
+		Mockito.doNothing().when(this.fieldbookService).createIdNameVariablePairs(ArgumentMatchers.isA(Workbook.class),
+			ArgumentMatchers.anyListOf(SettingDetail.class), ArgumentMatchers.isA(String.class), ArgumentMatchers.anyBoolean());
 
 		final Project project = new Project();
 		project.setUniqueID("123");
@@ -587,22 +584,22 @@ public class ImportGermplasmListControllerTest {
 
 		final String studyIdInNextScreen = this.importGermplasmListController.nextScreen(form, null, null, null);
 
-		Mockito.verify(this.fieldbookService).createIdCodeNameVariablePairs(Matchers.isA(Workbook.class),
-				Matchers.isA(String.class));
-		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(Matchers.isA(Workbook.class),
-				Matchers.anyListOf(SettingDetail.class), Matchers.isA(String.class), Matchers.anyBoolean());
-		Mockito.verify(this.workbenchService).getCurrentIbdbUserId(Matchers.isA(Long.class),
-				Matchers.isA(Integer.class));
+		Mockito.verify(this.fieldbookService).createIdCodeNameVariablePairs(ArgumentMatchers.isA(Workbook.class),
+			ArgumentMatchers.isA(String.class));
+		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(ArgumentMatchers.isA(Workbook.class),
+			ArgumentMatchers.anyListOf(SettingDetail.class), ArgumentMatchers.isA(String.class), ArgumentMatchers.anyBoolean());
+		Mockito.verify(this.workbenchService).getCurrentIbdbUserId(ArgumentMatchers.isA(Long.class),
+			ArgumentMatchers.isA(Integer.class));
 		Mockito.verify(this.dataImportService).saveDataset(workbook, true, true, project.getUniqueID(),
 				this.cropType);
-		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(ArgumentMatchers.<List<Integer>>isNull(), Matchers.isA(Integer.class));
+		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(ArgumentMatchers.<List<Integer>>isNull(), ArgumentMatchers.isA(Integer.class));
 		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null, workbook);
 
 		Assert.assertEquals("Expecting studyIdInSaveDataset returned from nextScreen", "3", studyIdInNextScreen);
 	}
 
 	@Test
-	public void testComputeTotalExpectedWithChecksEmptyChecks() throws Exception {
+	public void testComputeTotalExpectedWithChecksEmptyChecks() {
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ImportedGermplasmMainInfo mainInfo = Mockito.mock(ImportedGermplasmMainInfo.class);
 
@@ -678,27 +675,6 @@ public class ImportGermplasmListControllerTest {
 			list.add(data);
 		}
 		return list;
-	}
-
-	private List<SettingDetail> createCheckVariables(final boolean hasValue) {
-		final List<SettingDetail> checkVariables = new ArrayList<>();
-
-		checkVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_START.getId(),
-				"CHECK_START", hasValue ? "1" : null, "TRIAL"));
-		checkVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_INTERVAL.getId(),
-				"CHECK_INTERVAL", hasValue ? "4" : null, "TRIAL"));
-		checkVariables.add(SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_PLAN.getId(), "CHECK_PLAN",
-				hasValue ? "8414" : null, "TRIAL"));
-
-		return checkVariables;
-	}
-
-	protected List<ImportedGermplasm> createMergedImportedGermplasm() {
-		final List<ImportedGermplasm> mergedImportedGermplasm = new ArrayList<>();
-		for (int x = 1; x <= 8; x++) {
-			mergedImportedGermplasm.add(ImportedGermplasmMainInfoInitializer.createImportedGermplasm(x));
-		}
-		return mergedImportedGermplasm;
 	}
 
 	private Workbook createWorkbook() {

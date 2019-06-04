@@ -22,7 +22,6 @@ import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.hazelcast.util.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.context.ContextInfo;
@@ -33,9 +32,7 @@ import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -53,7 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -92,11 +88,11 @@ public class ImportGermplasmListController extends SettingsController {
 
 	protected static final String TABLE_HEADER_LIST = "tableHeaderList";
 
-	protected static final String TYPE2 = "type";
+	static final String TYPE2 = "type";
 
-	protected static final String LIST_DATA_TABLE = "listDataTable";
+	static final String LIST_DATA_TABLE = "listDataTable";
 
-	protected static final String CHECK_LISTS = "checkLists";
+	static final String CHECK_LISTS = "checkLists";
 
 	protected static final String ENTRY_CODE = "entryCode";
 
@@ -112,29 +108,25 @@ public class ImportGermplasmListController extends SettingsController {
 
 	protected static final String ENTRY = "entry";
 
-	protected static final String CHECK_OPTIONS = "checkOptions";
+	static final String CHECK_OPTIONS = "checkOptions";
 
-	protected static final String POSITION = "position";
+	static final String POSITION = "position";
 
-	protected static final String GROUP_ID = "groupId";
-
-	protected static final Integer MAX_ENTRY_NO = 99999;
-
-	protected static final Integer MAX_PLOT_NO = 99999999;
+	private static final String GROUP_ID = "groupId";
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmListController.class);
 
 	/** The Constant URL. */
 	public static final String URL = "/StudyManager/importGermplasmList";
-	public static final String URL_1 = "/TrialManager/GermplasmList";
-	public static final String URL_2 = "/ListManager/GermplasmList";
+	static final String URL_1 = "/TrialManager/GermplasmList";
+	static final String URL_2 = "/ListManager/GermplasmList";
 
 	/** The Constant PAGINATION_TEMPLATE. */
-	public static final String PAGINATION_TEMPLATE = "/StudyManager/showGermplasmPagination";
-	public static final String EDIT_CHECK = "/Common/editCheck";
+	private static final String PAGINATION_TEMPLATE = "/StudyManager/showGermplasmPagination";
+	private static final String EDIT_CHECK = "/Common/editCheck";
 
-	public static final int NO_ID = -1;
+	private static final int NO_ID = -1;
 
 	static final String STARTING_PLOT_NO = "1";
 
@@ -304,21 +296,11 @@ public class ImportGermplasmListController extends SettingsController {
 		}
 	}
 
-	private Integer getMinimumEntryNumber(final Integer currentMinimumEntryNumber,
-			final ImportedGermplasm currentGermplasm) {
-		final Integer currentEntryId = currentGermplasm.getEntryId();
-		if (currentMinimumEntryNumber == null || currentMinimumEntryNumber > currentGermplasm.getEntryId()) {
-			return currentEntryId;
-		}
-		return currentMinimumEntryNumber;
-	}
-
 	/**
 	 * List data project data is the germplasm list that is attached to a study This method is saving the germplasm for this
 	 * study
 	 *
-	 * @param studyId
-	 * @throws MiddlewareQueryException
+	 * @param studyId - the study id
 	 */
 	private void saveListDataProject(final int studyId) {
 
@@ -364,8 +346,7 @@ public class ImportGermplasmListController extends SettingsController {
 			mainInfo.setAdvanceImportType(true);
 			form.setImportedGermplasmMainInfo(mainInfo);
 			mainInfo.setListId(listId);
-			final List<GermplasmListData> data = new ArrayList<>();
-			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId));
+			final List<GermplasmListData> data = new ArrayList<>(this.germplasmListManager.getGermplasmListDataByListId(listId));
 			FieldbookListUtil.populateStockIdInGermplasmListData(data, this.inventoryDataManager);
 			final List<ImportedGermplasm> list = this.transformGermplasmListDataToImportedGermplasm(data, null);
 			final String defaultTestCheckId = this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE,
@@ -509,7 +490,6 @@ public class ImportGermplasmListController extends SettingsController {
 
 
 	private List<TableHeader> getGermplasmTableHeader(final List<SettingDetail> factorsList) {
-		final Locale locale = LocaleContextHolder.getLocale();
 		final List<TableHeader> tableHeaderList = new ArrayList<>();
 
 		if (factorsList != null) {
@@ -614,7 +594,7 @@ public class ImportGermplasmListController extends SettingsController {
 				&& !this.userSelection.getMeasurementRowList().isEmpty();
 	}
 
-	protected String getCheckId(final String checkCode, final List<Enumeration> checksList) {
+	private String getCheckId(final String checkCode, final List<Enumeration> checksList) {
 
 		String checkId = "";
 
@@ -955,7 +935,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 *
 	 * @param userSelection
 	 */
-	protected void updateObservationsFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
+	private void updateObservationsFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
 
 		final Map<Integer, MeasurementVariable> observationVariables = WorkbookUtil.createVariableList(
 				userSelection.getWorkbook().getFactors(), userSelection.getWorkbook().getVariates());
@@ -976,7 +956,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 *
 	 * @param userSelection
 	 */
-	protected void addVariablesFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
+	void addVariablesFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
 
 		if (userSelection.getExperimentalDesignVariables() != null) {
 
@@ -1003,7 +983,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param userSelection
 	 * @param form
 	 */
-	protected void processChecks(final UserSelection userSelection, final ImportGermplasmListForm form) {
+	void processChecks(final UserSelection userSelection, final ImportGermplasmListForm form) {
 
 		final String[] selectedCheck = form.getSelectedCheck();
 
@@ -1053,7 +1033,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param userSelection
 	 * @param form
 	 */
-	protected void copyImportedGermplasmFromUserSelectionToForm(final UserSelection userSelection,
+	void copyImportedGermplasmFromUserSelectionToForm(final UserSelection userSelection,
 			final ImportGermplasmListForm form) {
 
 		if (userSelection.getImportedGermplasmMainInfo() != null) {
@@ -1084,7 +1064,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 *
 	 * @param conditions
 	 */
-	protected void addExperimentFactorToBeDeleted(final List<MeasurementVariable> conditions) {
+	void addExperimentFactorToBeDeleted(final List<MeasurementVariable> conditions) {
 		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.EXPERIMENT_DESIGN_FACTOR.getId()), "",
 				Operation.DELETE, PhenotypicType.TRIAL_ENVIRONMENT));
 	}
@@ -1106,14 +1086,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	}
 
-	protected boolean hasExperimentalDesign(final Workbook workbook) {
-		final ExperimentalDesignVariable expDesignVar = workbook.getExperimentalDesignVariables();
-		return expDesignVar != null && expDesignVar.getExperimentalDesign() != null
-				&& !StringUtil.isNullOrEmpty(expDesignVar.getExperimentalDesign().getValue());
-
-	}
-
-	protected Integer computeTotalExpectedWithChecks(final ImportGermplasmListForm form) {
+	Integer computeTotalExpectedWithChecks(final ImportGermplasmListForm form) {
 
 		final int totalGermplasmCount = this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()
 				.getImportedGermplasms().size();

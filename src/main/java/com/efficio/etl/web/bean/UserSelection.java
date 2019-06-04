@@ -3,7 +3,6 @@ package com.efficio.etl.web.bean;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -43,8 +42,6 @@ public class UserSelection implements Serializable {
 	private String createdBy;
 	private Integer lastSheetRowNum;
 
-	private Boolean initialCategorizationDone = false;
-
 	private Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> giantMap =
 			new LinkedHashMap<>();
 
@@ -58,13 +55,6 @@ public class UserSelection implements Serializable {
 
 	public void setHeadersForCategory(final List<String> headers, final PhenotypicType type) {
 		this.headerCategorization.put(type, headers);
-	}
-
-	public MeasurementVariable getCurrentVariableData(final String name, final PhenotypicType category) {
-
-		final Map<String, MeasurementVariable> typeMap = this.giantMap.get(category);
-
-		return typeMap.get(name);
 	}
 
 	public List<String> getHeadersForCategory(final PhenotypicType category) {
@@ -109,10 +99,6 @@ public class UserSelection implements Serializable {
 
 	public void setContentRowIndex(final Integer contentRowIndex) {
 		this.contentRowIndex = contentRowIndex;
-	}
-
-	public Integer getIndexColumnIndex() {
-		return this.indexColumnIndex;
 	}
 
 	public void setIndexColumnIndex(final Integer indexColumnIndex) {
@@ -175,11 +161,6 @@ public class UserSelection implements Serializable {
 		this.studyType = studyType;
 	}
 
-	public void transferTo(final UserSelection userSelection) {
-		BeanUtils.copyProperties(this, userSelection);
-		userSelection.setHeaderCategorization(this.headerCategorization);
-	}
-
 	public void setMeasurementVariablesByPhenotypic(final PhenotypicType phenotypickey, final LinkedHashMap<String, MeasurementVariable> item) {
 		this.giantMap.put(phenotypickey, item);
 	}
@@ -197,22 +178,6 @@ public class UserSelection implements Serializable {
 
 	public Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> getPhenotypicMap() {
 		return this.giantMap;
-	}
-
-	public Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> getGiantMap() {
-		return this.giantMap;
-	}
-
-	public void setGiantMap(final Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> giantMap) {
-		this.giantMap = giantMap;
-	}
-
-	public Map<PhenotypicType, List<String>> getHeaderCategorization() {
-		return this.headerCategorization;
-	}
-
-	public void setHeaderCategorization(final Map<PhenotypicType, List<String>> headerCategorization) {
-		this.headerCategorization = headerCategorization;
 	}
 
 	public String getHeaderRowDisplayText() {
@@ -237,14 +202,6 @@ public class UserSelection implements Serializable {
 
 	public void setLastSheetRowNum(final Integer lastSheetRowNum) {
 		this.lastSheetRowNum = lastSheetRowNum;
-	}
-
-	public Boolean getInitialCategorizationDone() {
-		return this.initialCategorizationDone;
-	}
-
-	public void setInitialCategorizationDone(final Boolean initialCategorizationDone) {
-		this.initialCategorizationDone = initialCategorizationDone;
 	}
 
 	public Integer getStudyId() {

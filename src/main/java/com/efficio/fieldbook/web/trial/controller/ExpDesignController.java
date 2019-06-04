@@ -28,7 +28,6 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -114,8 +113,7 @@ public class ExpDesignController extends BaseTrialController {
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
 		// transfer over data from user input into the list of setting details stored in the session
-		final List<SettingDetail> combinedList = new ArrayList<>();
-		combinedList.addAll(basicDetails);
+		final List<SettingDetail> combinedList = new ArrayList<>(basicDetails);
 
 		if (studyLevelConditions != null) {
 			combinedList.addAll(studyLevelConditions);
@@ -281,7 +279,7 @@ public class ExpDesignController extends BaseTrialController {
 		return lowestEntryNo;
 	}
 
-	protected List<MeasurementRow> combineNewlyGeneratedMeasurementsWithExisting(final List<MeasurementRow> measurementRows,
+	List<MeasurementRow> combineNewlyGeneratedMeasurementsWithExisting(final List<MeasurementRow> measurementRows,
 			final UserSelection userSelection, final boolean hasMeasurementData) {
 		final Workbook workbook;
 		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null
@@ -299,7 +297,7 @@ public class ExpDesignController extends BaseTrialController {
 		return measurementRows;
 	}
 
-	protected String countNewEnvironments(final String noOfEnvironments, final UserSelection userSelection,
+	String countNewEnvironments(final String noOfEnvironments, final UserSelection userSelection,
 			final boolean hasMeasurementData) {
 		final Workbook workbook;
 		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null
@@ -339,7 +337,7 @@ public class ExpDesignController extends BaseTrialController {
 		return 0;
 	}
 
-	protected ExperimentDesignService getExpDesignService(final int designType) {
+	ExperimentDesignService getExpDesignService(final int designType) {
 		if (designType == ExperimentDesignType.RANDOMIZED_COMPLETE_BLOCK.getId()) {
 			return this.randomizeCompleteBlockDesign;
 		} else if (designType == ExperimentDesignType.RESOLVABLE_INCOMPLETE_BLOCK.getId()) {

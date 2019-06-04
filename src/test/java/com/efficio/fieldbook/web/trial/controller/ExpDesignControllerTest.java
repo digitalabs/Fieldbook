@@ -120,7 +120,7 @@ public class ExpDesignControllerTest {
 		germplasmList.add(importedGermplasm);
 		Integer startingEntryNo = this.expDesignController.getLowestEntryNo(germplasmList);
 		Assert.assertEquals("5", startingEntryNo.toString());
-		
+
 		final ImportedGermplasm importedGermplasm2 = new ImportedGermplasm();
 		importedGermplasm2.setEntryId(4);
 		germplasmList.add(importedGermplasm2);

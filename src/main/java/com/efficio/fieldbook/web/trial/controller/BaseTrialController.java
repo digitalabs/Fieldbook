@@ -62,12 +62,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -216,7 +214,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 			// FIXME
 			// Get starting entry and plot without loading all observations in OpenTrialController.openTrial()
-			this.setStartingEntryNoAndPlotNoFromObservations(trialWorkbook, data);
+			this.setStartingPlotNoFromObservations(trialWorkbook, data);
 
 			final String designTypeString =
 				xpDesignVariable.getExperimentalDesign() == null ? null : xpDesignVariable.getExperimentalDesign().getValue();
@@ -243,7 +241,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return tabInfo;
 	}
 
-	private void setStartingEntryNoAndPlotNoFromObservations(final Workbook trialWorkbook, final ExpDesignParameterUi data) {
+	private void setStartingPlotNoFromObservations(final Workbook trialWorkbook, final ExpDesignParameterUi data) {
 		// Set starting entry and plot number from observations
 		Integer startingPlotNo = 0;
 		if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {

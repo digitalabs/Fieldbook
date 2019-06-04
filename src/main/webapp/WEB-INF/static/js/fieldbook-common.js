@@ -287,10 +287,9 @@ function createFieldMap() {
 		var mode = '#createTrialMainForm';
 		var active = '';
 	}
-	var id = $(mode + ' #studyId').val(),
-		name = $(active + ' #studyName').val();
+	var id = $(mode + ' #studyId').val();
 
-	openStudyFieldmapTree(id, name);
+	openStudyFieldmapTree(id);
 }
 
 

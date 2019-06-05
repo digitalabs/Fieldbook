@@ -93,7 +93,6 @@
 						}
 
 						$scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
-						$scope.measurementDetails = TrialManagerDataService.trialMeasurement;
 						$scope.data.noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments ?
 							TrialManagerDataService.currentData.environments.noOfEnvironments : 0;
 						$scope.data.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;
@@ -190,7 +189,6 @@
 							$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
 							$scope.data.designType = $scope.currentDesignType.id;
 							TrialManagerDataService.currentData.experimentalDesign.designType = $scope.data.designType;
-							$scope.applicationData.unappliedChangesAvailable = true;
 
 							if (DESIGN_TYPE.ENTRY_LIST_ORDER === $scope.data.designType ) {
 								$scope.refreshDesignDetailsForELODesign();
@@ -206,17 +204,6 @@
 							$scope.currentParams = '';
 						}
 
-					};
-
-					$scope.updateAfterGeneratingDesignSuccessfully = function() {
-						//we show the preview
-						showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
-						TrialManagerDataService.clearUnappliedChangesFlag();
-						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
-						$('#chooseGermplasmAndChecks').data('replace', '1');
-						//if the design is generated but not saved, the measurements datatable is for preview only (edit is not allowed)
-/*						$rootScope.$broadcast('previewMeasurements');
-						$('body').addClass('preview-measurements-only');*/
 					};
 
 					// on click generate design button
@@ -245,7 +232,9 @@
 											showSuccessfulMessage('', response.message);
 										}
 									}
-									$scope.updateAfterGeneratingDesignSuccessfully();
+									studyStateService.updateGeneratedDesign(true);
+									$scope.measurementDetails.hasMeasurement = true;
+									showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
 								} else {
 									if(response.message && response.message !== '') {
 										if(response.userConfirmationRequired) {
@@ -288,8 +277,6 @@
 					$scope.$on('designImportGenerated', function() {
 						var summaryPromise = $http.get('/Fieldbook/DesignImport/getMappingSummary');
 						var designTypeDetailsPromise = $http.get('/Fieldbook/DesignImport/getCustomImportDesignTypeDetails');
-
-						TrialManagerDataService.applicationData.unappliedChangesAvailable = false;
 
 						$q.all([summaryPromise, designTypeDetailsPromise]).then(function(results) {
 							$scope.applicationData.importDesignMappedData = results[0].data;
@@ -340,7 +327,6 @@
 						$scope.currentDesignType = null;
 						$scope.applicationData.importDesignMappedData = null;
 						$scope.data.designType = '';
-						$scope.applicationData.unsavedGeneratedDesign = true;
 					};
 					
 					$scope.$on('importedDesignReset', function() {

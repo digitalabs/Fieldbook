@@ -1418,20 +1418,6 @@ public class OpenTrialControllerTest {
 		this.verifyUserSelectionUponBasicDetailsPreparation(studyDetails);
 	}
 
-	@Test
-	public void testGetGermplasmListChecksSize() {
-		final List<ValueReference> entryTypes = ValueReferenceTestDataInitializer.createPossibleValues();
-		final List<Integer> checkEntryTypeIds = new ArrayList<>();
-		for(final ValueReference entryType: entryTypes) {
-			checkEntryTypeIds.add(entryType.getId());
-		}
-		entryTypes.add(new ValueReference(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId(), SystemDefinedEntryType.TEST_ENTRY.getEntryTypeName(), SystemDefinedEntryType.TEST_ENTRY.getEntryTypeValue()));
-		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true)).thenReturn(entryTypes);
-		this.openTrialController.getGermplasmListChecksSize(1);
-		Mockito.verify(this.fieldbookService).getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true);
-		Mockito.verify(this.fieldbookMiddlewareService).countListDataProjectByListIdAndEntryTypeIds(1, checkEntryTypeIds);
-	}
-
 	private void verifyUserSelectionUponBasicDetailsPreparation(final StudyDetails studyDetails) {
 		Mockito.verify(this.userSelection).setBasicDetails(Matchers.anyListOf(SettingDetail.class));
 		Mockito.verify(this.userSelection).setStudyName(studyDetails.getStudyName());

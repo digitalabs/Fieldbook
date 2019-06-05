@@ -73,6 +73,7 @@
                     <span th:if="${basicDetail.pairedVariable}">
                     	&nbsp;&nbsp;&nbsp;
                     	<strong th:text="${basicDetail.pairedVariable.label} + ':'"></strong>
+                        <span th:if="${basicDetail.pairedVariable.label == '# of Plots'}" th:text="${basicDetail.pairedVariable.value}" class="review-plots-count fbk-hide"></span>
                     	<span th:text="${basicDetail.pairedVariable.value}"></span>
                     </span>
                 </div>
@@ -436,7 +437,7 @@
                         <tr>
                             <td>
                                 <strong th:text="#{review.study.number.of.environments}">Number of study environments:</strong>
-                                <span th:text="*{numberOfEnvironments}"></span>
+                                <span  id="review-study-number-of-environments" th:text="*{numberOfEnvironments}"></span>
                             </td>
                         </tr>
                         <tr>
@@ -445,10 +446,34 @@
                                 <span id="review-treatment-count"></span>
                             </td>
                         </tr>
-                        <tr id="row-review-number-of-blocks">
+                        <tr th:if="*{experimentalDesignDetails.experimentalDesign.value == '10164'}">
+                            <td>
+                                <strong th:text="#{review.study.number.of.test.entries}"></strong>
+                                <span id="review-number-of-test-entries"></span>
+                            </td>
+                        </tr>
+                        <tr th:if="*{experimentalDesignDetails.experimentalDesign.value == '10164'}">
+                            <td>
+                                <strong th:text="#{review.study.number.of.check.entries}"></strong>
+                                <span id="review-number-of-check-entries" th:text="${numberOfChecks}"></span>
+                            </td>
+                        </tr>
+                        <tr th:if="*{experimentalDesignDetails.experimentalDesign.value != '10164'}" id="row-review-number-of-blocks">
                             <td>
                                 <strong th:text="#{review.study.number.of.blocks}"></strong>
                                 <span id="review-number-of-blocks"></span>
+                            </td>
+                        </tr>
+                        <tr th:if="*{experimentalDesignDetails.experimentalDesign.value == '10164'}">
+                            <td>
+                                <strong th:text="#{review.study.number.of.entries.per.block}">Number of entries per block:</strong>
+                                <span id="review-entries-per-blocks"></span>
+                            </td>
+                        </tr>
+                        <tr th:if="*{experimentalDesignDetails.experimentalDesign.value == '10164'}">
+                            <td>
+                                <strong th:text="#{review.study.total.number.of.plots}">Total number of plots:</strong>
+                                <span id="review-number-of-plots"></span>
                             </td>
                         </tr>
                         <!-- Display ENTRY_NO(8230) in Treatment Factor and pass treatment factor's type id(1809) which will display Details, valid values and usage in popup -->

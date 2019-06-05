@@ -161,7 +161,7 @@
 							replatinGroups: '',
 							startingPlotNo: 1,
 							startingEntryNo: (typeof $scope.data.startingEntryNo !== 'undefined')? parseInt($scope.data.startingEntryNo,10) : 1 ,
-							hasMeasurementData: TrialManagerDataService.trialMeasurement.hasMeasurement,
+							hasMeasurementData: false, // TODO now the data is deleted after create a new design.
 							numberOfBlocks: null
 						}, $scope.data);
 					}

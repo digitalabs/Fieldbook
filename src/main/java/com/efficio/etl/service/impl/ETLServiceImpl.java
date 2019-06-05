@@ -353,22 +353,6 @@ public class ETLServiceImpl implements ETLService {
 		return userSelection.getLastSheetRowNum();
 	}
 
-	@Override
-	public PhenotypicType retrievePhenotypicType(final String typeName) {
-		PhenotypicType phenotypicType = null;
-		if (AppConstants.TYPE_TRIAL_ENVIRONMENT.equals(typeName)) {
-			phenotypicType = PhenotypicType.TRIAL_ENVIRONMENT;
-		} else if (AppConstants.TYPE_GERMPLASM_ENTRY.equals(typeName)) {
-			phenotypicType = PhenotypicType.GERMPLASM;
-		} else if (AppConstants.TYPE_TRIAL_DESIGN.equals(typeName)) {
-			phenotypicType = PhenotypicType.TRIAL_DESIGN;
-		} else if (AppConstants.TYPE_VARIATE.equals(typeName)) {
-			phenotypicType = PhenotypicType.VARIATE;
-		}
-
-		return phenotypicType;
-	}
-
 	protected String getPhenotypicTypeString(final PhenotypicType type) {
 		if (type == PhenotypicType.TRIAL_ENVIRONMENT) {
 			return AppConstants.TYPE_TRIAL_ENVIRONMENT;
@@ -680,23 +664,6 @@ public class ETLServiceImpl implements ETLService {
 		return returnVal;
 	}
 
-	@Override
-	public String getCVDefinitionById(final int termId) {
-
-		String name = "";
-
-		try {
-			final Term term = this.ontologyDataManager.getTermById(termId);
-			if (term != null) {
-				name = term.getDefinition();
-			}
-		} catch (final MiddlewareQueryException e) {
-			ETLServiceImpl.LOG.error(e.getMessage(), e);
-		}
-
-		return name;
-
-	}
 
 	@Override
 	public Map<String, List<Message>> validateProjectOntology(

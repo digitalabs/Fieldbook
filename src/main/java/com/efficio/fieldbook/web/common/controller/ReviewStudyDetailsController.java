@@ -20,8 +20,10 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +55,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	private static final int COLS = 3;
 
-	public static final String TRIAL_MANAGER_REVIEW_TRIAL_DETAILS = "TrialManager/reviewTrialDetails";
+	private static final String TRIAL_MANAGER_REVIEW_TRIAL_DETAILS = "TrialManager/reviewTrialDetails";
 
 	@Resource
 	private UserSelection userSelection;
@@ -108,11 +110,12 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		}
 
 		model.addAttribute("trialDetails", details);
-		setIsSuperAdminAttribute(model);
+		model.addAttribute("numberOfChecks", this.getNumberOfChecks(id));
+		this.setIsSuperAdminAttribute(model);
 		return this.showAjaxPage(model, this.getContentName());
 	}
 
-	protected void addErrorMessageToResult(final StudyDetails details, final MiddlewareException e, final int id) {
+	void addErrorMessageToResult(final StudyDetails details, final MiddlewareException e, final int id) {
 		final String param = AppConstants.STUDY.getString();
 		details.setId(id);
 		String errorMessage = e.getMessage();
@@ -127,6 +130,17 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	@RequestMapping(value = "/datasets/{nurseryId}")
 	public List<DatasetReference> loadDatasets(@PathVariable final int nurseryId) {
 		return this.fieldbookMiddlewareService.getDatasetReferences(nurseryId);
+	}
+
+
+	long getNumberOfChecks(final int studyId) {
+		final List<GermplasmList> germplasmLists =
+			this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
+		if (germplasmLists != null && !germplasmLists.isEmpty()) {
+			final GermplasmList germplasmList = germplasmLists.get(0);
+			return this.fieldbookService.getGermplasmListChecksSize(germplasmList.getId());
+		}
+		return 0;
 	}
 
 	private void rearrangeDetails(final StudyDetails details) {
@@ -156,7 +170,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		}
 		return newList;
 	}
-	
+
 	@ModelAttribute("currentCropUserId")
 	public Integer getCurrentCropUserId() {
 		return this.contextUtil.getCurrentIbdbUserId();

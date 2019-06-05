@@ -40,6 +40,7 @@ import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
+import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.DataImportService;
@@ -217,6 +218,9 @@ public class ETLServiceImpl implements ETLService {
 		if (userSelection.getStudyId() != null) {
 			studyDetails.setId(userSelection.getStudyId());
 		}
+
+		// Save the imported Study at system root folder by default.
+		studyDetails.setParentFolderId(DmsProject.SYSTEM_FOLDER_ID);
 
 		return studyDetails;
 	}

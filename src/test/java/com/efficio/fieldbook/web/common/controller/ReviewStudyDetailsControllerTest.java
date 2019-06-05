@@ -35,7 +35,7 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -83,7 +83,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 		final GermplasmList germplasmList = new GermplasmList(1);
 		Mockito.when(this.fieldbookMWService.getGermplasmListsByProjectId(1, GermplasmListType.STUDY)).thenReturn(Arrays.asList(germplasmList));
-		Mockito.when(this.fieldbookService.getGermplasmListChecksSize(germplasmList.getId())).thenReturn(2l);
+		Mockito.when(this.fieldbookService.getGermplasmListChecksSize(germplasmList.getId())).thenReturn(2L);
 	}
 
 	@Test
@@ -138,7 +138,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		Assert.assertNotNull(details);
 		final Boolean isSuperAdmin =  (Boolean) model.asMap().get("isSuperAdmin");
 		Assert.assertNotNull(isSuperAdmin);
-		Assert.assertEquals(2l, model.asMap().get("numberOfChecks"));
+		Assert.assertEquals(2L, model.asMap().get("numberOfChecks"));
 	}
 
 	@Test
@@ -179,7 +179,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	@Test
 	public void getNumberOfChecks() {
 		final long numberOfChecks = this.reviewStudyDetailsController.getNumberOfChecks(1);
-		Assert.assertEquals(2l, numberOfChecks);
+		Assert.assertEquals(2L, numberOfChecks);
 
 	}
 
@@ -204,7 +204,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 			Mockito.doReturn(stdVar.getId()).when(fieldbookMiddlewareService).getStandardVariableIdByPropertyScaleMethodRole(
 					measurementVariable.getProperty(), measurementVariable.getScale(), measurementVariable.getMethod(),
 					measurementVariable.getRole());
-			Mockito.when(fieldbookService.getValue(Matchers.anyInt(), Matchers.anyString(), Matchers.anyBoolean())).thenReturn("");
+			Mockito.when(fieldbookService.getValue(ArgumentMatchers.anyInt(), ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean())).thenReturn("");
 		}
 	}
 

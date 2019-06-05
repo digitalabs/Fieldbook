@@ -121,7 +121,7 @@ function filterFieldmapTreeNodeByStudyType(node) {
 	
 }
 
-function openStudyFieldmapTree(id) {
+function openStudyFieldmapTree(id, name) {
 	'use strict';
     $('#fieldMapStudyTypeFilter').val("All");
 	$("#selectStudyFieldMapTree").dynatree("getTree").reload();
@@ -132,16 +132,16 @@ function openStudyFieldmapTree(id) {
 	$('#table-field-map-header').html('Selected Study');
 	$('.fbk-field-map-selected-header').html(studiesSelectedFieldPlan);
 	$('.fbk-field-map-selected-sub-header').html(additionalStudiesForFieldPlan);
-	addStudyInFieldMap(id);
+	addStudyInFieldMap(id, name);
 
 }
-function addStudyInFieldMap(id) {
+function addStudyInFieldMap(id, name) {
 	'use strict';
 	if ($('table.selected-study-fieldmap-table tbody tr.' + id).length !== 0) {
 		showAlertMessage('', trialAlreadyAdded);
 	} else {
 		$.ajax({
-			url: '/Fieldbook/StudyTreeManager/has/observations/' + id,
+			url: '/Fieldbook/StudyTreeManager/has/observations/' + id + '/' + name,
 			type: 'GET',
 			data: '',
 			cache: false,
@@ -178,7 +178,7 @@ function chooseStudyNodeInFieldMap(node, fromEnterKey) {
 	if (userLacksPermissionForStudy(node)) {
 		showStudyIsLockedError(node);
 	} else if (node.data.isFolder === false) {
-		addStudyInFieldMap(node.data.key);
+		addStudyInFieldMap(node.data.key, node.data.title);
 	} else {
 		if (fromEnterKey === false) {
 			showErrorMessage('page-study-tree-message-modal', chooseStudyError);
@@ -211,7 +211,7 @@ function doStudyFieldmapLazyLoad(node) {
 				}, 50);
 
 				if (node.data.isFolder === false) {
-					addStudyInFieldMap(node.data.key);
+					addStudyInFieldMap(node.data.key, node.data.title);
 				} else {
 					node.visit(function(child){
 						filterFieldmapTreeNodeByStudyType(child);

@@ -110,6 +110,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		}
 
 		model.addAttribute("trialDetails", details);
+		model.addAttribute("numberOfChecks", this.getNumberOfChecks(id));
 		this.setIsSuperAdminAttribute(model);
 		return this.showAjaxPage(model, this.getContentName());
 	}
@@ -131,9 +132,8 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		return this.fieldbookMiddlewareService.getDatasetReferences(nurseryId);
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/getNumberOfChecks/{studyId}")
-	public long getNumberOfChecks(@PathVariable final int studyId) {
+
+	long getNumberOfChecks(final int studyId) {
 		final List<GermplasmList> germplasmLists =
 			this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
 		if (germplasmLists != null && !germplasmLists.isEmpty()) {

@@ -80,10 +80,14 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 		this.reviewStudyDetailsController.setContextUtil(this.contextUtil);
 		Mockito.doReturn(this.PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
+
+		final GermplasmList germplasmList = new GermplasmList(1);
+		Mockito.when(this.fieldbookMWService.getGermplasmListsByProjectId(1, GermplasmListType.STUDY)).thenReturn(Arrays.asList(germplasmList));
+		Mockito.when(this.fieldbookService.getGermplasmListChecksSize(germplasmList.getId())).thenReturn(2l);
 	}
 
 	@Test
-	public void testAddErrorMessageToResultForStudy() throws Exception {
+	public void testAddErrorMessageToResultForStudy() {
 		final StudyDetails details = new StudyDetails();
 
 		this.reviewStudyDetailsController.addErrorMessageToResult(details,
@@ -120,7 +124,6 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be found under Study Conditions of the Summary page.",
 				hasAnalysisVariable);
 		Mockito.verify(fieldbookService).getPersonByUserId(NumberUtils.toInt(this.workbook.getStudyDetails().getCreatedBy()));
-
 	}
 
 	@Test
@@ -135,6 +138,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		Assert.assertNotNull(details);
 		final Boolean isSuperAdmin =  (Boolean) model.asMap().get("isSuperAdmin");
 		Assert.assertNotNull(isSuperAdmin);
+		Assert.assertEquals(2l, model.asMap().get("numberOfChecks"));
 	}
 
 	@Test
@@ -174,9 +178,6 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 	@Test
 	public void getNumberOfChecks() {
-		final GermplasmList germplasmList = new GermplasmList(1);
-		Mockito.when(this.fieldbookMWService.getGermplasmListsByProjectId(1, GermplasmListType.STUDY)).thenReturn(Arrays.asList(germplasmList));
-		Mockito.when(this.fieldbookService.getGermplasmListChecksSize(germplasmList.getId())).thenReturn(2l);
 		final long numberOfChecks = this.reviewStudyDetailsController.getNumberOfChecks(1);
 		Assert.assertEquals(2l, numberOfChecks);
 

@@ -6,7 +6,7 @@
 			.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 			.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE','SYSTEM_DEFINED_ENTRY_TYPE', 'TrialManagerDataService', '$http',
-				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages, $rootScope, studyStateService) {
+				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages, $rootScope, studyStateService, studyContext) {
 
 					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
 					var MESSAGE_DIV_ID = 'page-message';
@@ -103,8 +103,22 @@
 
 					};
 
-					$scope.disableGenerateDesign = function () {
-						return $scope.subObservationTabs.length > 1 || (!!$scope.measurementDetails && $scope.measurementDetails.hasMeasurement && !TrialManagerDataService.applicationData.unappliedChangesAvailable);
+					$scope.isDeleteDesignDisable = function (){
+						return !studyStateService.hasGeneratedDesign() || studyStateService.hasListOrSubObs();
+					};
+
+					$scope.deleteDesign = function () {
+						TrialManagerDataService.deleteGenerateExpDesign(studyContext.measurementDatasetId).then(
+							function (response) {
+								showSuccessfulMessage('', response.message);
+								TrialManagerDataService.clearUnappliedChangesFlag();
+
+								$scope.measurementDetails.hasMeasurement = false;
+								studyStateService.updateGeneratedDesign(false)
+							}, function (errResponse) {
+								showErrorMessage('', 'Something went wrong deleting the design.');
+							}
+						);
 					};
 
 					//FIXME: cheating a bit for the meantime.

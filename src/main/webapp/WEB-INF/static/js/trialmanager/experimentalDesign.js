@@ -100,6 +100,11 @@
 
 						$scope.data.hasMeasurementData = TrialManagerDataService.trialMeasurement.hasMeasurement;
 
+						$scope.measurementDetails = {hasMeasurement: studyStateService.hasGeneratedDesign()};
+					};
+
+					$scope.disableGenerateDesign = function () {
+						return !!$scope.measurementDetails && $scope.measurementDetails.hasMeasurement;
 					};
 
 					$scope.isDeleteDesignDisable = function (){
@@ -179,7 +184,7 @@
 					};
 
 					$scope.disableDesignTypeSelect = function () {
-						return ((!!$scope.measurementDetails && $scope.measurementDetails.hasMeasurement) || (!!$scope.measurementDetails && $scope.measurementDetails.count > 0 && TrialManagerDataService.applicationData.hasNewEnvironmentAdded));
+						return !!$scope.measurementDetails && $scope.measurementDetails.hasMeasurement;
 					};
 
 					$scope.onSwitchDesignTypes = function(newId) {
@@ -208,6 +213,10 @@
 
 					// on click generate design button
 					$scope.generateDesign = function() {
+						if (studyStateService.hasUnsavedData()) {
+							showErrorMessage('', 'Please first save the unsaved data');
+							return;
+						}
 
 						if (!$scope.doValidate()) {
 							return;

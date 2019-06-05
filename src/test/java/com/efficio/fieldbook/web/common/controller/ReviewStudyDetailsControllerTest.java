@@ -75,8 +75,8 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
 		this.reviewStudyDetailsController.setFieldbookMiddlewareService(this.fieldbookMWService);
 		this.reviewStudyDetailsController.setFieldbookService(this.fieldbookService);
-		Mockito.doReturn(workbook).when(this.fieldbookMWService).getStudyVariableSettings(1);
-		this.mockStandardVariables(workbook.getAllVariables(), this.fieldbookMWService, this.fieldbookService);
+		Mockito.doReturn(this.workbook).when(this.fieldbookMWService).getStudyVariableSettings(1);
+		this.mockStandardVariables(this.workbook.getAllVariables(), this.fieldbookMWService, this.fieldbookService);
 
 		this.reviewStudyDetailsController.setContextUtil(this.contextUtil);
 		Mockito.doReturn(this.PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
@@ -123,7 +123,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		}
 		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be found under Study Conditions of the Summary page.",
 				hasAnalysisVariable);
-		Mockito.verify(fieldbookService).getPersonByUserId(NumberUtils.toInt(this.workbook.getStudyDetails().getCreatedBy()));
+		Mockito.verify(this.fieldbookService).getPersonByUserId(NumberUtils.toInt(this.workbook.getStudyDetails().getCreatedBy()));
 	}
 
 	@Test
@@ -150,7 +150,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		this.workbook.getStudyDetails().setCreatedBy(null);
 		this.reviewStudyDetailsController.show(id, form, model);
 
-		Mockito.verify(fieldbookService).getPersonByUserId(0);
+		Mockito.verify(this.fieldbookService).getPersonByUserId(0);
 
 	}
 

@@ -1,4 +1,4 @@
-/*globals angular, displayStudyGermplasmSection, isStudyNameUnique, showSuccessfulMessage, isCategoricalDisplay,
+/*globals angular, isStudyNameUnique, showSuccessfulMessage, isCategoricalDisplay,
  showInvalidInputMessage, studyFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
  invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,validateAllDates, showErrorMessage*/
 (function() {
@@ -75,10 +75,6 @@
 						// TODO: MARK FOR DELETE IBP-2789
                         //service.updateTrialMeasurementRowCount(data.measurementRowCount);
 
-						// TODO: change from global function call
-						//TODO VER ESTO: MARK FOR DELETE IBP-2689
-						displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-							service.trialMeasurement.count);
 					}
 
 				}).error(function() {
@@ -207,7 +203,7 @@
 				{id: '@id'}, {get: {method: 'get', isArray: true}});
 
 			var UpdateStartingEntryNoService = $resource('/Fieldbook/TrialManager/GermplasmList/startingEntryNo', {}, {});
-			
+
 			var service = {
 				// user input data and default values of standard variables
 				currentData: {
@@ -484,8 +480,6 @@
 									notifySaveEventListeners();
 									window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
 
-									displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-										service.trialMeasurement.count);
 									service.applicationData.unsavedTraitsAvailable = false;
 									$('body').data('needToSave', '0');
 									studyStateService.resetState();
@@ -507,9 +501,7 @@
                                         service.trialMeasurement.hasAdvancedOrCrossesList = data.hasAdvancedOrCrossesList;
 										// TODO: MARK FOR DELETE IBP-2789
                                         //service.updateTrialMeasurementRowCount(data.measurementRowCount);
-										service.updateSettings('measurements', extractSettings(data.measurementsData));
-										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-											service.trialMeasurement.count);
+										//service.updateSettings('measurements', extractSettings(data.measurementsData));
 										service.applicationData.unsavedTraitsAvailable = false;
 										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
 										$('body').data('needToSave', '0');
@@ -542,8 +534,6 @@
 										//refresh the environments list in measurements tab
 										//MARK FOR DELETE IBP-2789
 										//$rootScope.$broadcast('refreshEnvironmentListInMeasurementTable');
-										/*displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-											service.trialMeasurement.count);*/
 										derivedVariableService.displayExecuteCalculateVariableMenu();
 										service.applicationData.unsavedTraitsAvailable = false;
 										setupSettingsVariables();
@@ -568,8 +558,6 @@
 										notifySaveEventListeners();
 										window.location = '/Fieldbook/TrialManager/openTrial/' + trialID;
 
-										/*displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-											service.trialMeasurement.count);*/
 										derivedVariableService.displayExecuteCalculateVariableMenu();
 										service.applicationData.unsavedTraitsAvailable = false;
 										// TODO: MARK FOR DELETE IBP-2789

@@ -3296,27 +3296,6 @@ function hasMeasurementData() { // TODO ARREGLAR ESTO
 	return angular.element('#mainApp').injector().get('studyStateService').hasGeneratedDesign();
 }
 
-function displayStudyGermplasmSection(hasData, observationCount) { // TODO: MARK FOR DELETE IBP-2689
-	'use strict';
-	if (hasData) {
-		$('.overwrite-germplasm-list').hide();
-		$('.observation-exists-notif').show();
-		$('.browse-import-link').hide();
-	} else if (observationCount > 0) {
-		$('.observation-exists-notif').hide();
-		$('.overwrite-germplasm-list').show();
-		$('#imported-germplasm-list').show();
-		$('.browse-import-link').hide();
-	} else if (countGermplasms() > 0) {
-		$('.observation-exists-notif').hide();
-		$('.overwrite-germplasm-list').show();
-		$('.browse-import-link').hide();
-	} else {
-		$('.observation-exists-notif').hide();
-		$('.overwrite-germplasm-list').hide();
-	}
-}
-
 function countGermplasms() {
 	var totalGermplasms = parseInt($('#totalGermplasms').val());
 	return totalGermplasms ? totalGermplasms : 0;

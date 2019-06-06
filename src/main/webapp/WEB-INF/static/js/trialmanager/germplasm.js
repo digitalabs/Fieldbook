@@ -1,4 +1,4 @@
-/*global angular, displayStudyGermplasmSection, openListTree, displaySelectedGermplasmDetails*/
+/*global angular, openListTree, displaySelectedGermplasmDetails*/
 
 (function () {
     'use strict';
@@ -26,10 +26,6 @@
                 label: 'Temp label here',
                 placeholderLabel: 'Temp placeholder here'
             };
-
-
-            /*displayStudyGermplasmSection($scope.trialMeasurement.hasMeasurement,
-                $scope.trialMeasurement.count);*/ //TODO: MARK FOR DELETE IBP-2689
 
             $('#imported-germplasm-list').bind("germplasmListIsUpdated", function () {
                 TrialManagerDataService.indicateUnappliedChangesAvailable(true);

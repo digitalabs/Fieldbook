@@ -174,8 +174,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	}
 
 	manageTrialApp.run(
-		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES', '$transitions', 'TrialManagerDataService',
-			function ($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES, $transitions, TrialManagerDataService) {
+		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES', '$transitions',
+			function ($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES, $transitions) {
 				$rootScope.VARIABLE_TYPES = VARIABLE_TYPES;
 
 				$transitions.onStart({},
@@ -185,11 +185,12 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						}
 					});
 
-				$rootScope.stateSuccessfullyLoaded = {};
+				// TODO: MARK CODE TO BE DELETE IBP-2789
+				/*$rootScope.stateSuccessfullyLoaded = {};
 				$transitions.onSuccess({},
 					function (transition) {
 						$rootScope.stateSuccessfullyLoaded[transition.from().name] = true;
-					});
+					});*/
 
 				// It's very handy to add references to $state and $stateParams to the $rootScope
 				// so that you can access them from any scope within your applications.For example,
@@ -291,7 +292,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					datasetService.observationCount(studyContext.measurementDatasetId, variables).then(function (response) {
 						TrialManagerDataService.trialMeasurement.count = 1000;
 						TrialManagerDataService.trialMeasurement.hasMeasurement = response.headers('X-Total-Count') > 0;
-						TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
 						return;
 					});
 				});
@@ -515,7 +515,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			// TODO: MARK FOR DELETE IBP-2689
 			/*$scope.hasMeasurementData = function () {
-				return TrialManagerDataService.trialMeasurement.hasExperimentDesigned;
+				return studyStateService.hasGeneratedDesign();
 			};*/
 
 			$scope.hasGermplasmListSelected = function () {

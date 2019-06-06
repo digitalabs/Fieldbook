@@ -9,10 +9,10 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('TreatmentCtrl', ['$scope', 'TrialManagerDataService', '_', '$q', '$http',
-		function($scope, TrialManagerDataService, _, $q, $http) {
+	manageTrialApp.controller('TreatmentCtrl', ['$scope', 'TrialManagerDataService', '_', '$q', '$http', 'studyStateService',
+		function($scope, TrialManagerDataService, _, $q, $http, studyStateService) {
 
-			$scope.disableTreatment = TrialManagerDataService.trialMeasurement.hasMeasurement;
+			$scope.disableTreatment = studyStateService.hasGeneratedDesign();
 
 			$scope.settings = TrialManagerDataService.settings.treatmentFactors;
 			$scope.data = TrialManagerDataService.currentData.treatmentFactors;
@@ -22,7 +22,7 @@
 			// store to $scope.currentData for the variable levels.
 
 			$scope.trialMeasurement = TrialManagerDataService.trialMeasurement;
-
+			$scope.trialMeasurement.hasMeasurement = studyStateService.hasGeneratedDesign();
 			TrialManagerDataService.onUpdateSettings('treatmentFactors', function(newValue) {
 				TrialManagerDataService.specialSettings.treatmentLevelPairs = $scope.settings.treatmentLevelPairs;
 			});
@@ -70,7 +70,7 @@
 
 			$scope.invalidBlockSizeMsg = '<b class="text-danger">Invalid Block Size</b>';
 			$scope.addVariable = function() {
-				return !TrialManagerDataService.trialMeasurement.hasMeasurement;
+				return !studyStateService.hasGeneratedDesign();
 			};
 
 			$scope.generateDropdownList = function(key) {

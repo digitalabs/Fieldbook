@@ -111,11 +111,15 @@
 					$scope.deleteDesign = function () {
 						TrialManagerDataService.deleteGenerateExpDesign(studyContext.measurementDatasetId).then(
 							function (response) {
-								showSuccessfulMessage('', response.message);
-								TrialManagerDataService.clearUnappliedChangesFlag();
+								if (response.valid === true) {
+									showSuccessfulMessage('', response.message);
+									TrialManagerDataService.clearUnappliedChangesFlag();
+									$scope.measurementDetails.hasMeasurement = false;
+									studyStateService.updateGeneratedDesign(false);
+								} else {
+									showErrorMessage('', 'Something went wrong deleting the design.');
+								}
 
-								$scope.measurementDetails.hasMeasurement = false;
-								studyStateService.updateGeneratedDesign(false)
 							}, function (errResponse) {
 								showErrorMessage('', 'Something went wrong deleting the design.');
 							}

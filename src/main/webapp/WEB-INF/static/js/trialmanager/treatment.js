@@ -171,7 +171,14 @@
 				}).then(function() {
 					$scope.settings.details.remove(key);
 					delete $scope.data.currentData[key];
-					TrialManagerDataService.indicateUnsavedTreatmentFactorsAvailable();
+					if(!$scope.settings.details.m_keys.length){
+						TrialManagerDataService.applicationData.unsavedTreatmentFactorsAvailable = false;
+						if (TrialManagerDataService.currentData.experimentalDesign.designType === 3) {
+							TrialManagerDataService.currentData.experimentalDesign.designType = null;
+						}
+					}else {
+						TrialManagerDataService.indicateUnsavedTreatmentFactorsAvailable();
+					}
 				});
 			};
 

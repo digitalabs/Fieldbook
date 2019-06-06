@@ -8,8 +8,7 @@
 
             $scope.settings = TrialManagerDataService.settings.germplasm;
             $scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
-            $scope.trialMeasurement = TrialManagerDataService.trialMeasurement;
-            $scope.trialMeasurement.hasMeasurement = studyStateService.hasGeneratedDesign();
+            $scope.trialMeasurement = {hasMeasurement: studyStateService.hasGeneratedDesign()};
 
             if ($scope.isOpenStudy()) {
                 TrialManagerDataService.updateTrialMeasurementRowCount($scope.trialMeasurement.count);

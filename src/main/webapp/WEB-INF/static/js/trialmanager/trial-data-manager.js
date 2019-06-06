@@ -70,8 +70,6 @@
 						service.updateCurrentData('environments', extractData(data.environmentData));
 
 						service.currentData.basicDetails.studyID = trialID;
-						service.trialMeasurement.hasMeasurement = data.measurementDataExisting;
-                        service.trialMeasurement.hasAdvancedOrCrossesList = data.hasAdvancedOrCrossesList;
 						// TODO: MARK FOR DELETE IBP-2789
                         //service.updateTrialMeasurementRowCount(data.measurementRowCount);
 
@@ -265,10 +263,9 @@
 				},
 
 				trialMeasurement: {
-					hasMeasurement: false,
-                    hasAdvancedOrCrossesList: false,
-					count: 0,
-					hasExperimentDesigned:false
+					//hasMeasurement: false,
+                    //hasAdvancedOrCrossesList: false,
+					count: 0
 				},
 
                 performDataCleanup: function() {
@@ -497,8 +494,6 @@
 								doSaveImportedData().then(function() {
 									notifySaveEventListeners();
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(data) {
-										service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
-                                        service.trialMeasurement.hasAdvancedOrCrossesList = data.hasAdvancedOrCrossesList;
 										// TODO: MARK FOR DELETE IBP-2789
                                         //service.updateTrialMeasurementRowCount(data.measurementRowCount);
 										//service.updateSettings('measurements', extractSettings(data.measurementsData));
@@ -521,8 +516,6 @@
 									}
 									notifySaveEventListeners();
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function (updatedData) {
-										service.trialMeasurement.hasMeasurement = (updatedData.measurementDataExisting);
-                                        service.trialMeasurement.hasAdvancedOrCrossesList = data.hasAdvancedOrCrossesList;
 										// TODO: MARK FOR DELETE IBP-2789
                                         //service.updateTrialMeasurementRowCount(updatedData.measurementRowCount);
 

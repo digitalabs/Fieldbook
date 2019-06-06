@@ -486,7 +486,6 @@
 
 									displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 										service.trialMeasurement.count);
-									service.applicationData.unsavedGeneratedDesign = false;
 									service.applicationData.unsavedTraitsAvailable = false;
 									$('body').data('needToSave', '0');
 									studyStateService.resetState();
@@ -511,7 +510,6 @@
 										service.updateSettings('measurements', extractSettings(data.measurementsData));
 										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 											service.trialMeasurement.count);
-										service.applicationData.unsavedGeneratedDesign = false;
 										service.applicationData.unsavedTraitsAvailable = false;
 										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
 										$('body').data('needToSave', '0');
@@ -521,8 +519,7 @@
 							} else if (service.trialMeasurement.count > 0 &&
 								(($('#chooseGermplasmAndChecks').length !== 0 &&
 								$('#chooseGermplasmAndChecks').data('replace') !== undefined &&
-								parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1) ||
-								service.applicationData.unsavedGeneratedDesign === false)
+								parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1) )
 							) {
 								service.currentData.columnOrders = serializedData;
 								$http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function(data) {
@@ -548,7 +545,6 @@
 										/*displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 											service.trialMeasurement.count);*/
 										derivedVariableService.displayExecuteCalculateVariableMenu();
-										service.applicationData.unsavedGeneratedDesign = false;
 										service.applicationData.unsavedTraitsAvailable = false;
 										setupSettingsVariables();
 										// TODO: MARK FOR DELETE IBP-2789
@@ -575,7 +571,6 @@
 										/*displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 											service.trialMeasurement.count);*/
 										derivedVariableService.displayExecuteCalculateVariableMenu();
-										service.applicationData.unsavedGeneratedDesign = false;
 										service.applicationData.unsavedTraitsAvailable = false;
 										// TODO: MARK FOR DELETE IBP-2789
 										//onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);

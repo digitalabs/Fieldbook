@@ -80,7 +80,7 @@ public class OpenTrialController extends BaseTrialController {
 	static final String TRIAL_SETTINGS_DATA = "trialSettingsData";
 	// TODO: MARK FOR DELETE IBP-2789
 	//static final String SELECTION_VARIABLE_DATA = "selectionVariableData";
-	static final String MEASUREMENTS_DATA = "measurementsData";
+	//static final String MEASUREMENTS_DATA = "measurementsData";
 	private static final String TRIAL_INSTANCE = "TRIAL_INSTANCE";
 	private static final String TRIAL = "TRIAL";
 	public static final String URL = "/TrialManager/openTrial";
@@ -212,6 +212,8 @@ public class OpenTrialController extends BaseTrialController {
 		return this.showAjaxPage(model, BaseTrialController.URL_EXPERIMENTAL_DESIGN);
 	}
 
+	// TODO: MARK FOR DELETE IBP-2789
+	@Deprecated
 	@RequestMapping(value = "/measurements", method = RequestMethod.GET)
 	public String showMeasurements(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model) {
 
@@ -422,9 +424,10 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute(
 			OpenTrialController.TRIAL_SETTINGS_DATA,
 			this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
-		model.addAttribute(
+		// TODO: MARK FOR DELETE IBP-2789
+/*		model.addAttribute(
 			OpenTrialController.MEASUREMENTS_DATA,
-			this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false));
+			this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false));*/
 		// TODO: MARK FOR DELETE IBP-2789
 		/*model.addAttribute(
 			OpenTrialController.SELECTION_VARIABLE_DATA,
@@ -653,9 +656,9 @@ public class OpenTrialController extends BaseTrialController {
 		/*returnVal.put(
 			OpenTrialController.MEASUREMENT_ROW_COUNT,
 			this.studyDataManager.countExperiments(trialWorkbook.getMeasurementDatesetId()));*/
-		returnVal.put(
+/*		returnVal.put(
 			OpenTrialController.MEASUREMENTS_DATA,
-			this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false));
+			this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false));*/
 		// TODO: MARK FOR DELETE IBP-2789
 		/*returnVal.put(
 			OpenTrialController.SELECTION_VARIABLE_DATA,
@@ -704,6 +707,8 @@ public class OpenTrialController extends BaseTrialController {
 		return result;
 	}
 
+	// TODO: MARK FOR DELETE IBP-2789
+	@Deprecated
 	@RequestMapping(value = "/load/preview/measurement", method = RequestMethod.GET)
 	public String loadPreviewMeasurement(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model) {
 		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
@@ -721,6 +726,8 @@ public class OpenTrialController extends BaseTrialController {
 		return isPreviewEditable;
 	}
 
+	// TODO: MARK FOR DELETE IBP-2789
+	@Deprecated
 	@ResponseBody
 	@RequestMapping(value = "/load/dynamic/change/measurement", method = RequestMethod.POST)
 	public Map<String, Object> loadDynamicChangeMeasurement(

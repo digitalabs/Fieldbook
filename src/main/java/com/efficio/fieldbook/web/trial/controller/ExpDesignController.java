@@ -115,6 +115,25 @@ public class ExpDesignController extends BaseTrialController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "/delete/{measurementDatasetId}", method = RequestMethod.DELETE)
+	public ExpDesignValidationOutput deleteGeneratedDesign(@PathVariable final Integer measurementDatasetId) {
+		ExpDesignValidationOutput expParameterOutput = new ExpDesignValidationOutput(true, "The design was deleted successfully");
+		final Locale locale = LocaleContextHolder.getLocale();
+
+		try{
+		this.fieldbookMiddlewareService.deleteExperimentalDesignGenerated(measurementDatasetId);
+			this.userSelection.setMeasurementRowList(null);
+			this.userSelection.getWorkbook().setOriginalObservations(null);
+			this.userSelection.getWorkbook().setObservations(null);
+		} catch (final Exception e) {
+			ExpDesignController.LOG.error(e.getMessage(), e);
+			expParameterOutput = new ExpDesignValidationOutput(false,
+				this.messageSource.getMessage("experiment.design.delete.generic.error", null, locale));
+		}
+		return expParameterOutput;
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/generate", method = RequestMethod.POST)
 	public ExpDesignValidationOutput showMeasurements(final Model model, @RequestBody final ExpDesignParameterUi expDesign) {
 		/*

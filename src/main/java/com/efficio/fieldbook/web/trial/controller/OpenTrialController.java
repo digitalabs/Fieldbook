@@ -4,6 +4,8 @@ import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.AdvanceList;
+import com.efficio.fieldbook.web.trial.bean.CrossesList;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
@@ -85,13 +87,11 @@ public class OpenTrialController extends BaseTrialController {
 	@Deprecated
 	public static final String IS_EXP_DESIGN_PREVIEW = "isExpDesignPreview";
 	private static final String CONTAINS_OUT_OF_SYNC_VALUES = "containsOutOfSyncValues";
-	// TODO: MARK FOR DELETE IBP-2789
-	//static final String MEASUREMENT_ROW_COUNT = "measurementRowCount";
+	static final String HAS_GENERATED_DESIGN = "hasGeneratedDesign";
 	static final String ENVIRONMENT_DATA_TAB = "environmentData";
 	// TODO: MARK FOR DELETE IBP-2789
 	//static final String MEASUREMENT_DATA_EXISTING = "measurementDataExisting";
-	// TODO: MARK FOR DELETE IBP-2789
-	//static final String HAS_ADVANCED_OR_CROSSES_LIST = "hasAdvancedOrCrossesList";
+	static final String HAS_LISTS_OR_SUB_OBS = "hasListsOrSubObs";
 	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
 	private static final String IS_EXP_DESIGN_PREVIEW_FALSE = "0";
 	private static final String IS_DELETED_ENVIRONMENT = "0";
@@ -407,6 +407,15 @@ public class OpenTrialController extends BaseTrialController {
 
 	protected void setModelAttributes(final CreateTrialForm form, final Integer trialId, final Model model, final Workbook trialWorkbook)
 		throws ParseException {
+		final List<AdvanceList> advanceLists = this.getAdvancedList(trialId);
+		final List<CrossesList> crossesLists = this.getCrossesList(trialId);
+		final List<SampleListDTO> sampleListDTOS = this.getSampleList(trialWorkbook.getStudyDetails().getId());
+
+		final List<Integer> datasetTypeIds = this.datasetTypeService.getSubObservationDatasetTypeIds();
+		final List<DatasetDTO> datasetDTOS = this.datasetService.getDatasets(trialId, new HashSet<>(datasetTypeIds));
+
+		final boolean hasListOrSubObs =
+			!advanceLists.isEmpty() || !crossesLists.isEmpty() || !sampleListDTOS.isEmpty() || !datasetDTOS.isEmpty();
 		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
 		model.addAttribute("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
 		model.addAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(trialWorkbook, false));
@@ -426,9 +435,8 @@ public class OpenTrialController extends BaseTrialController {
 			.checkIfStudyHasMeasurementData(
 				trialWorkbook.getMeasurementDatesetId(),
 				SettingsUtil.buildVariates(trialWorkbook.getVariates())));*/
-		/*model.addAttribute(
-			OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST,
-			this.fieldbookMiddlewareService.hasAdvancedOrCrossesList(trialId));*/
+		model.addAttribute(
+			OpenTrialController.HAS_LISTS_OR_SUB_OBS, hasListOrSubObs);
 
 		// TODO: MARK FOR DELETE IBP-2789
 		/*model.addAttribute(
@@ -442,9 +450,9 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("experimentalDesignSpecialData", this.prepareExperimentalDesignSpecialData());
 		model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
 		model.addAttribute("description", trialWorkbook.getStudyDetails().getDescription());
-		model.addAttribute("advancedList", this.getAdvancedList(trialId));
-		model.addAttribute("sampleList", this.getSampleList(trialWorkbook.getStudyDetails().getId()));
-		model.addAttribute("crossesList", this.getCrossesList(trialId));
+		model.addAttribute("advancedList", advanceLists);
+		model.addAttribute("sampleList", sampleListDTOS);
+		model.addAttribute("crossesList", crossesLists);
 
 		model.addAttribute("germplasmListSize", 0);
 		model.addAttribute("studyId", trialWorkbook.getStudyDetails().getId());

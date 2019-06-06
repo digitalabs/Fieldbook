@@ -209,10 +209,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
 		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService',
-		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'studyContext', 'LABEL_PRINTING_TYPE',
+		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'studyContext', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
 				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService,
-				  studyContext, LABEL_PRINTING_TYPE ) {
+				  studyContext, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN) {
 
 			$scope.trialTabs = [
 				{
@@ -273,30 +273,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					state: 'experimentalDesign'
 				});
 
-				datasetService.getDataset(studyContext.measurementDatasetId).then(function (dataset) {
-					studyStateService.updateHasListsOrSubObs(!!$scope.advanceTabs.length || !!$scope.sampleTabs.length || !!$scope.crossesTabs.length || $scope.subObservationTabs.length > 1);
-					var variables = [];
-					if (!dataset.instances.length) {
-						TrialManagerDataService.trialMeasurement.hasMeasurement = false;
-						TrialManagerDataService.trialMeasurement.count = 0;
-						studyStateService.updateGeneratedDesign(false);
-						return;
-					} else if (!dataset.variables.length) {
-						TrialManagerDataService.trialMeasurement.hasMeasurement = false;
-						TrialManagerDataService.trialMeasurement.count = 1000;
-						studyStateService.updateGeneratedDesign(true);
-						return;
-					}
-					studyStateService.updateGeneratedDesign(true);
-					angular.forEach(dataset.variables, function (variable) {
-						variables.push(variable.termId);
-					});
-					datasetService.observationCount(studyContext.measurementDatasetId, variables).then(function (response) {
-						TrialManagerDataService.trialMeasurement.count = 1000;
-						TrialManagerDataService.trialMeasurement.hasMeasurement = response.headers('X-Total-Count') > 0;
-						return;
-					});
-				});
+				studyStateService.updateHasListsOrSubObs(HAS_LISTS_OR_SUB_OBS);
+				studyStateService.updateGeneratedDesign(HAS_GENERATED_DESIGN);
 
 			};
 
@@ -578,34 +556,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					return;
 				}
 
-				if ($scope.tabSelected === '/subObservationTabs/' + studyContext.measurementDatasetId) {
-					datasetService.getDataset(studyContext.measurementDatasetId).then(function (dataset) {
-						var variables = [];
-						if (!dataset.instances.length) {
-							TrialManagerDataService.trialMeasurement.hasMeasurement = false;
-							TrialManagerDataService.trialMeasurement.count = 0;
-							studyStateService.updateGeneratedDesign(false);
-							return;
-						} else if (!dataset.variables.length) {
-							TrialManagerDataService.trialMeasurement.hasMeasurement = false;
-							TrialManagerDataService.trialMeasurement.count = 1000;
-							TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
-							studyStateService.updateGeneratedDesign(true);
-							return;
-						}
-						angular.forEach(dataset.variables, function (variable) {
-							variables.push(variable.termId);
-						});
-						datasetService.observationCount(studyContext.measurementDatasetId, variables).then(function (response) {
-							studyStateService.updateGeneratedDesign(true);
-							TrialManagerDataService.trialMeasurement.count = 1000;
-							TrialManagerDataService.trialMeasurement.hasMeasurement = response.headers('X-Total-Count') > 0;
-							TrialManagerDataService.trialMeasurement.hasExperimentDesigned = TrialManagerDataService.trialMeasurement.count > 0;
-							return;
-						});
-					});
-				}
-
 				$scope.isSettingsTab = true;
 				$scope.tabSelected = targetState;
 
@@ -743,6 +693,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.addAdvanceTabData = function (tabId, tabData, listName, isPageLoading) {
+				studyStateService.updateHasListsOrSubObs(true);
+
 				var isUpdate = false;
 				if (isPageLoading === undefined) {
 					isPageLoading = false;
@@ -780,6 +732,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.addSampleTabData = function (tabId, tabData, listName, isPageLoading) {
+				studyStateService.updateHasListsOrSubObs(true);
+
 				var isSwap = false;
 				var isUpdate = false;
 				if (isPageLoading === undefined) {
@@ -815,6 +769,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.addCrossesTabData = function (tabId, tabData, listName, crossesType, isPageLoading) {
+				studyStateService.updateHasListsOrSubObs(true);
+
 				var isUpdate = false;
 				if (isPageLoading === undefined) {
 					isPageLoading = false;
@@ -849,6 +805,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.addSubObservationTabData = function (id, name, datasetTypeId, parentDatasetId) {
 				var datasetType = datasetService.getDatasetType(datasetTypeId);
+				studyStateService.updateHasListsOrSubObs(true);
 
 				var newSubObsTab = {
 					id: id,

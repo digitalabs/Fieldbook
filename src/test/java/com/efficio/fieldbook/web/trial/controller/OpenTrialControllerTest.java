@@ -1099,7 +1099,7 @@ public class OpenTrialControllerTest {
 		//Assert.assertNotNull(resultMap.get(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST));
 		// TODO: MARK FOR DELETE IBP-2789
 		//Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENT_ROW_COUNT));
-		Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENTS_DATA));
+		//Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENTS_DATA));
 		// TODO: MARK FOR DELETE IBP-2789
 		//Assert.assertNotNull(resultMap.get(OpenTrialController.SELECTION_VARIABLE_DATA));
 		Assert.assertNotNull(resultMap.get(OpenTrialController.TRIAL_SETTINGS_DATA));
@@ -1323,8 +1323,8 @@ public class OpenTrialControllerTest {
 		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.ENVIRONMENT_DATA_TAB), Matchers.any(TabInfo.class));
 		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.TRIAL_SETTINGS_DATA),
 				Matchers.any(TabInfo.class));
-		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENTS_DATA),
-				Matchers.any(TabInfo.class));
+		/*Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENTS_DATA),
+				Matchers.any(TabInfo.class));*/
 		// TODO: MARK FOR DELETE IBP-2789
 		/*Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.SELECTION_VARIABLE_DATA),
 				Matchers.any(TabInfo.class));*/

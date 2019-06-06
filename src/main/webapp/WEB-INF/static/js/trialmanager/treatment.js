@@ -21,8 +21,7 @@
 			// use $watchCollection, for every added change we retrieve the 'AMOUNT' pairs dynamically. also create a
 			// store to $scope.currentData for the variable levels.
 
-			$scope.trialMeasurement = TrialManagerDataService.trialMeasurement;
-			$scope.trialMeasurement.hasMeasurement = studyStateService.hasGeneratedDesign();
+			$scope.trialMeasurement = {hasMeasurement: studyStateService.hasGeneratedDesign()};
 			TrialManagerDataService.onUpdateSettings('treatmentFactors', function(newValue) {
 				TrialManagerDataService.specialSettings.treatmentLevelPairs = $scope.settings.treatmentLevelPairs;
 			});

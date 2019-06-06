@@ -244,7 +244,9 @@
 									}
 									studyStateService.updateGeneratedDesign(true);
 									$scope.measurementDetails.hasMeasurement = true;
+									TrialManagerDataService.applicationData.unsavedTreatmentFactorsAvailable = false;
 									showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
+									window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
 								} else {
 									if(response.message && response.message !== '') {
 										if(response.userConfirmationRequired) {

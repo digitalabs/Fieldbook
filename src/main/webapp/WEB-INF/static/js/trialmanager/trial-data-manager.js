@@ -396,7 +396,7 @@
 				},
 
 				indicateUnappliedChangesAvailable: function(displayWarningMessage) {
-					if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count !== 0) {
+					if (!service.applicationData.unappliedChangesAvailable && studyStateService.hasGeneratedDesign()) {
 						service.applicationData.unappliedChangesAvailable = true;
 
 						if (displayWarningMessage === 'true' || displayWarningMessage) {
@@ -490,7 +490,7 @@
 							});
 						} else {
 
-							if (service.trialMeasurement.count > 0 && $('.import-study-data').data('data-import') === '1') {
+							if (studyStateService.hasGeneratedDesign() && $('.import-study-data').data('data-import') === '1') {
 								doSaveImportedData().then(function() {
 									notifySaveEventListeners();
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(data) {
@@ -503,7 +503,7 @@
 									});
 								});
 
-							} else if (service.trialMeasurement.count > 0 &&
+							} else if (studyStateService.hasGeneratedDesign() &&
 								(($('#chooseGermplasmAndChecks').length !== 0 &&
 								$('#chooseGermplasmAndChecks').data('replace') !== undefined &&
 								parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1) )

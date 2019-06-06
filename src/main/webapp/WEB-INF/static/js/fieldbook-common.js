@@ -3293,7 +3293,7 @@ function showGermplasmDetailsSection() {
 
 function hasMeasurementData() { // TODO ARREGLAR ESTO
 	'use strict';
-	return angular.element('#mainApp').injector().get('TrialManagerDataService').trialMeasurement.hasMeasurement;
+	return angular.element('#mainApp').injector().get('studyStateService').hasGeneratedDesign();
 }
 
 function displayStudyGermplasmSection(hasData, observationCount) { // TODO: MARK FOR DELETE IBP-2689

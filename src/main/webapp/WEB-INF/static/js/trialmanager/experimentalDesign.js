@@ -6,7 +6,7 @@
 			.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 			.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE','SYSTEM_DEFINED_ENTRY_TYPE', 'TrialManagerDataService', '$http',
-				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages, $rootScope, studyStateService) {
+				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages, $rootScope, studyStateService, studyContext) {
 
 					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
 					var MESSAGE_DIV_ID = 'page-message';
@@ -93,7 +93,6 @@
 						}
 
 						$scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
-						$scope.measurementDetails = TrialManagerDataService.trialMeasurement;
 						$scope.data.noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments ?
 							TrialManagerDataService.currentData.environments.noOfEnvironments : 0;
 						$scope.data.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;
@@ -101,10 +100,29 @@
 
 						$scope.data.hasMeasurementData = TrialManagerDataService.trialMeasurement.hasMeasurement;
 
+						$scope.measurementDetails = {hasMeasurement: studyStateService.hasGeneratedDesign()};
 					};
 
 					$scope.disableGenerateDesign = function () {
-						return $scope.subObservationTabs.length > 1 || (!!$scope.measurementDetails && $scope.measurementDetails.hasMeasurement && !TrialManagerDataService.applicationData.unappliedChangesAvailable);
+						return !!$scope.measurementDetails && $scope.measurementDetails.hasMeasurement;
+					};
+
+					$scope.isDeleteDesignDisable = function (){
+						return !studyStateService.hasGeneratedDesign() || studyStateService.hasListOrSubObs();
+					};
+
+					$scope.deleteDesign = function () {
+						TrialManagerDataService.deleteGenerateExpDesign(studyContext.measurementDatasetId).then(
+							function (response) {
+								showSuccessfulMessage('', response.message);
+								TrialManagerDataService.clearUnappliedChangesFlag();
+
+								$scope.measurementDetails.hasMeasurement = false;
+								studyStateService.updateGeneratedDesign(false)
+							}, function (errResponse) {
+								showErrorMessage('', 'Something went wrong deleting the design.');
+							}
+						);
 					};
 
 					//FIXME: cheating a bit for the meantime.
@@ -143,7 +161,7 @@
 							replatinGroups: '',
 							startingPlotNo: 1,
 							startingEntryNo: (typeof $scope.data.startingEntryNo !== 'undefined')? parseInt($scope.data.startingEntryNo,10) : 1 ,
-							hasMeasurementData: TrialManagerDataService.trialMeasurement.hasMeasurement,
+							hasMeasurementData: false, // TODO now the data is deleted after create a new design.
 							numberOfBlocks: null
 						}, $scope.data);
 					}
@@ -166,7 +184,7 @@
 					};
 
 					$scope.disableDesignTypeSelect = function () {
-						return ((!!$scope.measurementDetails && $scope.measurementDetails.hasMeasurement) || (!!$scope.measurementDetails && $scope.measurementDetails.count > 0 && TrialManagerDataService.applicationData.hasNewEnvironmentAdded));
+						return !!$scope.measurementDetails && $scope.measurementDetails.hasMeasurement;
 					};
 
 					$scope.onSwitchDesignTypes = function(newId) {
@@ -176,7 +194,6 @@
 							$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
 							$scope.data.designType = $scope.currentDesignType.id;
 							TrialManagerDataService.currentData.experimentalDesign.designType = $scope.data.designType;
-							$scope.applicationData.unappliedChangesAvailable = true;
 
 							if (DESIGN_TYPE.ENTRY_LIST_ORDER === $scope.data.designType ) {
 								$scope.refreshDesignDetailsForELODesign();
@@ -194,19 +211,12 @@
 
 					};
 
-					$scope.updateAfterGeneratingDesignSuccessfully = function() {
-						//we show the preview
-						showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
-						TrialManagerDataService.clearUnappliedChangesFlag();
-						TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
-						$('#chooseGermplasmAndChecks').data('replace', '1');
-						//if the design is generated but not saved, the measurements datatable is for preview only (edit is not allowed)
-/*						$rootScope.$broadcast('previewMeasurements');
-						$('body').addClass('preview-measurements-only');*/
-					};
-
 					// on click generate design button
 					$scope.generateDesign = function() {
+						if (studyStateService.hasUnsavedData()) {
+							showErrorMessage('', 'Please first save the unsaved data');
+							return;
+						}
 
 						if (!$scope.doValidate()) {
 							return;
@@ -231,7 +241,9 @@
 											showSuccessfulMessage('', response.message);
 										}
 									}
-									$scope.updateAfterGeneratingDesignSuccessfully();
+									studyStateService.updateGeneratedDesign(true);
+									$scope.measurementDetails.hasMeasurement = true;
+									showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
 								} else {
 									if(response.message && response.message !== '') {
 										if(response.userConfirmationRequired) {
@@ -274,8 +286,6 @@
 					$scope.$on('designImportGenerated', function() {
 						var summaryPromise = $http.get('/Fieldbook/DesignImport/getMappingSummary');
 						var designTypeDetailsPromise = $http.get('/Fieldbook/DesignImport/getCustomImportDesignTypeDetails');
-
-						TrialManagerDataService.applicationData.unappliedChangesAvailable = false;
 
 						$q.all([summaryPromise, designTypeDetailsPromise]).then(function(results) {
 							$scope.applicationData.importDesignMappedData = results[0].data;
@@ -326,7 +336,6 @@
 						$scope.currentDesignType = null;
 						$scope.applicationData.importDesignMappedData = null;
 						$scope.data.designType = '';
-						$scope.applicationData.unsavedGeneratedDesign = true;
 					};
 					
 					$scope.$on('importedDesignReset', function() {

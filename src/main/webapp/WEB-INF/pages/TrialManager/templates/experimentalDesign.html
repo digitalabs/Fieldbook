@@ -66,8 +66,8 @@
 						<section-container heading="SPECIFY PLOT NUMBERING" ng-hide="isImportedDesign()" ng-disabled="toggleDesignView()">
 				           <div name="content">
 				               <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}">Specify Starting Plot Number</label>
-												<input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onchange="validateAndSetPlotNo()" ng-model="data.startingPlotNo" />
-				               <input type="hidden" id="txtStartingEntryNo" ng-model="data.startingEntryNo" />
+							   <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onchange="validateAndSetPlotNo()" ng-model="data.startingPlotNo" ng-disabled="measurementDetails.hasMeasurement"/>
+							   <input type="hidden" id="txtStartingEntryNo" ng-model="data.startingEntryNo" />
 				           </div>
 						</section-container>
 					</div>

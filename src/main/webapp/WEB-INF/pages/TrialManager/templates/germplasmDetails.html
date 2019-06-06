@@ -1,47 +1,37 @@
 <div ng-cloak="">
 <div class="row" >
 	<div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
-
-		<section-container th:attr="heading=#{study.managesettings.germplasm.factors.label}"
-						   collapsible="true">
-
-			<span name="action-buttons">
+		<section-container th:attr="heading=#{study.managesettings.germplasm.factors.label}" collapsible="true">
+			<section-container icon="bms-factors" name="content" th:attr="heading=#{study.studydetails.germplasm.descriptors},help-tooltip=#{study.reminder.add.germplasm.factors}">
+				<display-settings hide-delete="hasGeneratedDesign()" settings="settings" variable-type="1804" name="content"></display-settings>
+				<span name="action-buttons">
 				<span class="btn btn-primary" ng-show="displayUpdateButton()" ng-click="updateDataTable()">
 					<span class="glyphicon glyphicon-refresh"></span> Update
 				</span>
-				<span select-standard-variable="" ng-show="!trialMeasurement.hasMeasurement" modeldata="settings" variable-type="1804"
+				<span select-standard-variable="" ng-hide="disableAddButton()" modeldata="settings" variable-type="1804"
 					  class="btn btn-info">Add
                 </span>
             </span>
-
-			<section-container icon="bms-factors" name="content" th:attr="heading=#{study.studydetails.germplasm.descriptors},help-tooltip=#{study.reminder.add.germplasm.factors}">
-				<display-settings hide-delete="trialMeasurement.hasMeasurement" settings="settings" variable-type="1804"
-								  name="content"></display-settings>
 			</section-container>
-
 		</section-container>
 	</div>
 </div>
 
-
-
-<div class="row form-group overwrite-germplasm-list">
+<div ng-show="ShowUpdateImportList()" class="row form-group">
 	<div class="col-xs-12 col-md-12">
 		<label class="control-label" th:text="#{study.edit.study.overwrite.germplasm.list.message}">
 		</label>
 		&nbsp;&nbsp;&nbsp;
-		<button class="btn btn-primary show-germplasm-details"  th:text="#{study.germplasm.replace}">Overwrite</button>
+		<button class="btn btn-primary show-germplasm-details"  ng-click="UpdateModifyList()" th:text="#{study.germplasm.replace}">Overwrite</button>
 	</div>
 </div>
-<div class="row form-group observation-exists-notif">
+<div ng-show="hasGeneratedDesign()" class="row form-group">
 	<div class="col-xs-12 col-md-12">
 		<label class="control-label">
 			<strong class="sub-content-heading" th:text="#{study.edit.study.cannot.modify.germplasm.list.message}">This Study has saved observations, germplasm list cannot be modified.</strong>
 		</label>
 	</div>
 </div>
-
-
 
 <div class="collapse in germplasmListDetails germplasmAndCheckSection" id="chooseGermplasmAndChecks" data-replace="0">
 	<!-- Germplasm List Table View -->
@@ -65,7 +55,7 @@
 			</div>
 
 		</div>
-		<div class="browse-import-link">
+		<div ng-show="showImportList()">
 			<label class="control-label"><a href="javascript: void(0)" ng-click="openGermplasmTree()">Browse</a> a list to work with.</label>
 		</div>
 	</div>

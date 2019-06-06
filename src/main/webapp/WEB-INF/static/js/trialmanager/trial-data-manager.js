@@ -76,6 +76,7 @@
                         //service.updateTrialMeasurementRowCount(data.measurementRowCount);
 
 						// TODO: change from global function call
+						//TODO VER ESTO: MARK FOR DELETE IBP-2689
 						displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
 							service.trialMeasurement.count);
 					}
@@ -233,7 +234,7 @@
 				},
 				applicationData: {
 					unappliedChangesAvailable: false,
-					unsavedGeneratedDesign: false,
+					//unsavedGeneratedDesign: false,
 					unsavedTreatmentFactorsAvailable: false,
 					unsavedTraitsAvailable: false,
 					germplasmListCleared: false,
@@ -303,11 +304,17 @@
 					return GenerateExpDesignService.save(data).$promise;
 				},
 
-				updateAfterGeneratingDesignSuccessfully: function() {
+				deleteGenerateExpDesign: function(measurementDatasetId) {
+					var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/delete/:measurementDatasetId',{datasetId: '@measurementDatasetId'},{delete: {method:'delete'}});
+					return GenerateExpDesignService.delete({measurementDatasetId: measurementDatasetId}).$promise;
+				},
+
+				// TODO: MARK CODE TO BE DELETE IBP-2789
+				/*updateAfterGeneratingDesignSuccessfully: function() {
 					service.clearUnappliedChangesFlag();
 					service.applicationData.unsavedGeneratedDesign = true;
 					$('#chooseGermplasmAndChecks').data('replace', '1');
-				},
+				},*/
 
 				retrieveDesignType: function() {
 					$http.get('/Fieldbook/TrialManager/experimental/design/retrieveDesignTypes').success(function(designTypes) {
@@ -458,9 +465,9 @@
 					}
 					if (service.applicationData.unsavedTreatmentFactorsAvailable) {
 						showErrorMessage('', unsavedTreatmentFactor);
-					} else if (service.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Changes have been made that may affect the experimental design of this study. Please ' +
-								'regenerate the design on the Experimental Design tab', 10000);
+						/*} else if (service.applicationData.unappliedChangesAvailable) {
+							showAlertMessage('', 'Changes have been made that may affect the experimental design of this study. Please ' +
+									'regenerate the design on the Experimental Design tab', 10000); */
 					} else if (service.isCurrentTrialDataValid(service.isOpenStudy())) {
                         // Hide Discard Imported Data button when the user presses Save button
                         $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
@@ -538,13 +545,14 @@
 										//refresh the environments list in measurements tab
 										//MARK FOR DELETE IBP-2789
 										//$rootScope.$broadcast('refreshEnvironmentListInMeasurementTable');
-										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-											service.trialMeasurement.count);
+										/*displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+											service.trialMeasurement.count);*/
 										derivedVariableService.displayExecuteCalculateVariableMenu();
 										service.applicationData.unsavedGeneratedDesign = false;
 										service.applicationData.unsavedTraitsAvailable = false;
 										setupSettingsVariables();
-										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
+										// TODO: MARK FOR DELETE IBP-2789
+										//onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
 										$('body').data('needToSave', '0');
 										studyStateService.resetState();
 									});
@@ -564,12 +572,13 @@
 										notifySaveEventListeners();
 										window.location = '/Fieldbook/TrialManager/openTrial/' + trialID;
 
-										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-											service.trialMeasurement.count);
+										/*displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+											service.trialMeasurement.count);*/
 										derivedVariableService.displayExecuteCalculateVariableMenu();
 										service.applicationData.unsavedGeneratedDesign = false;
 										service.applicationData.unsavedTraitsAvailable = false;
-										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
+										// TODO: MARK FOR DELETE IBP-2789
+										//onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
 										$('body').data('needToSave', '0');
 									}, function () {
 										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);

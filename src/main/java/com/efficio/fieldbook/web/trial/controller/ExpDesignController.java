@@ -38,6 +38,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -45,7 +46,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -59,9 +59,6 @@ public class ExpDesignController extends BaseTrialController {
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignController.class);
 	public static final String URL = "/TrialManager/experimental/design";
 
-	private static final List<Integer> EXPERIMENT_DESIGN_FACTOR_IDS = Arrays
-		.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.PERCENTAGE_OF_REPLICATION.getId(),
-			TermId.EXPT_DESIGN_SOURCE.getId());
 	@Resource
 	private RandomizeCompleteBlockDesignService randomizeCompleteBlockDesign;
 
@@ -304,39 +301,40 @@ public class ExpDesignController extends BaseTrialController {
 	}
 
 	private void saveDesignGenerated(final ExpDesignParameterUi expDesign) {
-		final Map<String, TreatmentFactorData> treatmentFactorItems = convertTreatmentFactorMapToTreatmentFactorDataMap(expDesign.getTreatmentFactors());
+		this.addDeletedSettingsList();
+		final Map<String, TreatmentFactorData> treatmentFactorItems = convertTreatmentFactorMapToTreatmentFactorDataMap(expDesign.getTreatmentFactorsData());
 		final Dataset newDataset = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, this.userSelection.getStudyName(), this.userSelection,
 			treatmentFactorItems, this.contextUtil.getCurrentProgramUUID());
 
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(newDataset, this.userSelection.getExpDesignParams(),
+		final Workbook workbookTemp = SettingsUtil.convertXmlDatasetToWorkbook(newDataset, this.userSelection.getExpDesignParams(),
 			this.userSelection.getExpDesignVariables(),	this.fieldbookMiddlewareService, this.userSelection.getExperimentalDesignVariables(),
 			this.contextUtil.getCurrentProgramUUID());
 
-		workbook.setStudyDetails(this.userSelection.getWorkbook().getStudyDetails());
+		workbookTemp.setStudyDetails(this.userSelection.getWorkbook().getStudyDetails());
 		this.userSelection.setMeasurementRowList(null);
 		this.userSelection.getWorkbook().setOriginalObservations(null);
 		this.userSelection.getWorkbook().setObservations(null);
 
-		this.addMeasurementVariablesToTrialObservationIfNecessary(expDesign.getEnvironments(), workbook,
+		this.addMeasurementVariablesToTrialObservationIfNecessary(expDesign.getEnvironments(), workbookTemp,
 			this.userSelection.getTemporaryWorkbook().getTrialObservations());
 
-		this.assignOperationOnExpDesignVariables(workbook.getConditions());
+		this.assignOperationOnExpDesignVariables(workbookTemp.getConditions());
 
-		workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
-		workbook.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());
+		workbookTemp.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
+		workbookTemp.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());
 		final int trialDatasetId = this.userSelection.getWorkbook().getTrialDatasetId();
 		final int measurementDatasetId = this.userSelection.getWorkbook().getMeasurementDatesetId();
-		workbook.setTrialDatasetId(trialDatasetId);
-		workbook.setMeasurementDatesetId(measurementDatasetId);
+		workbookTemp.setTrialDatasetId(trialDatasetId);
+		workbookTemp.setMeasurementDatesetId(measurementDatasetId);
 
 		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<>();
-		variablesForEnvironment.addAll(workbook.getTrialVariables());
+		variablesForEnvironment.addAll(workbookTemp.getTrialVariables());
 
 		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(expDesign.getEnvironments(), variablesForEnvironment,
 				this.userSelection.getExpDesignParams());
-		workbook.setTrialObservations(trialEnvironmentValues);
+		workbookTemp.setTrialObservations(trialEnvironmentValues);
 
-		this.userSelection.setWorkbook(workbook);
+		this.userSelection.setWorkbook(workbookTemp);
 
 		this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(expDesign.getEnvironments()));
 

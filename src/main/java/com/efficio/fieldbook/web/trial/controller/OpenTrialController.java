@@ -445,6 +445,7 @@ public class OpenTrialController extends BaseTrialController {
 		/*model.addAttribute(
 			OpenTrialController.MEASUREMENT_ROW_COUNT,
 			this.studyDataManager.countExperiments(trialWorkbook.getMeasurementDatesetId()));*/
+		model.addAttribute(OpenTrialController.HAS_GENERATED_DESIGN, this.studyDataManager.countExperiments(trialWorkbook.getMeasurementDatesetId()) > 0);
 		model.addAttribute("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), false));
 		model.addAttribute("studyTypes", this.studyDataManager.getAllVisibleStudyTypes());
 
@@ -973,8 +974,8 @@ public class OpenTrialController extends BaseTrialController {
 		final List<Integer> datasetTypeIds = this.datasetTypeService.getObservationDatasetTypeIds();
 		final List<Integer> datasetIds = new ArrayList<>();
 
-		final List<DatasetDTO> DatasetDTOs = this.datasetService.getDatasets(studyId, new HashSet<>(datasetTypeIds));
-		for (final DatasetDTO dataset : DatasetDTOs) {
+		final List<DatasetDTO> datasetDTOs = this.datasetService.getDatasets(studyId, new HashSet<>(datasetTypeIds));
+		for (final DatasetDTO dataset : datasetDTOs) {
 			datasetIds.add(dataset.getDatasetId());
 		}
 		if (!datasetIds.isEmpty()) {

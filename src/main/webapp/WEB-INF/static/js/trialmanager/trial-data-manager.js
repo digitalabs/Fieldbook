@@ -495,7 +495,8 @@
                                         //service.updateTrialMeasurementRowCount(data.measurementRowCount);
 										//service.updateSettings('measurements', extractSettings(data.measurementsData));
 										service.applicationData.unsavedTraitsAvailable = false;
-										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
+										// TODO: MARK FOR DELETE IBP-2789
+										//onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
 										$('body').data('needToSave', '0');
 									});
 								});

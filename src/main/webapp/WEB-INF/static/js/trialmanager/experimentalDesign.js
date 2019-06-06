@@ -97,9 +97,6 @@
 							TrialManagerDataService.currentData.environments.noOfEnvironments : 0;
 						$scope.data.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;
 						$scope.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors.currentData;
-
-						$scope.data.hasMeasurementData = TrialManagerDataService.trialMeasurement.hasMeasurement;
-
 						$scope.measurementDetails = {hasMeasurement: studyStateService.hasGeneratedDesign()};
 					};
 

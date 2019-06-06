@@ -314,7 +314,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					});
 
 					TrialManagerDataService.applicationData = angular.copy($localStorage.serviceBackup.applicationData);
-					TrialManagerDataService.trialMeasurement = angular.copy($localStorage.serviceBackup.trialMeasurement);
 				}
 
 				// perform other cleanup tasks

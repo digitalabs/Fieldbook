@@ -13,7 +13,7 @@
 					gpListDataTblClass = '.germplasm-list-data-table';
 
 				germplasmDataTable = new BMS.Fieldbook.TrialGermplasmListDataTable(gpListItemsClass, gpListDataTblClass, dataGermplasmList);
-				if ($noGermplasmListIndicator.length !== 0 && $('body').data('service.trialMeasurement.count') !== 0) {
+				if ($noGermplasmListIndicator.length !== 0 && hasGeneratedDesign()) {
 					$noGermplasmListIndicator.html(noStudyGermplasmList);
 				}
 

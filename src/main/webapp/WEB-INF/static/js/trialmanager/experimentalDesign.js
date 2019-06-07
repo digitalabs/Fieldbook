@@ -358,7 +358,7 @@
 						var selectedExperimentDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						return $scope.data.designType != null
 							&& $scope.data.designType !== ''
-							&& selectedExperimentDesignType.name === 'Custom Import Design';
+							&& selectedExperimentDesignType.name === 'Custom Import Design' || !studyStateService.hasListOrSubObs();
 					};
 
 					$scope.isBVDesign = function() {

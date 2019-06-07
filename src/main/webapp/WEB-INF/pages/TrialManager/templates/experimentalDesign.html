@@ -49,7 +49,7 @@
 										<span>{{currentDesignType.templateName}}</span>
 		                            </div>
 		                            <span class="pull-right">
-											<a ng-hide="!isImportedDesign() || measurementDetails.hasMeasurement" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
+											<a ng-hide="!isImportedDesign()" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
 											   class="btn btn-info chs-add-variable" th:text="#{design.import.change}">Change</a>
 		                            </span>
 		                            <div class="add-bottom-padding"

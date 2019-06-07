@@ -312,10 +312,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			}
 
 			// on click generate design button
-			function refreshMeasurementTableAfterDeletingEnvironment() {
+			/*function refreshMeasurementTableAfterDeletingEnvironment() {
 				// TODO MARK FOR DELETE IBP-2789
-				/*$rootScope.$broadcast('/*previewMeasurements');
-				$('body').addClass('preview-measurements-only');*/
+				/!*$rootScope.$broadcast('/!*previewMeasurements');
+				$('body').addClass('preview-measurements-only');*!/
 				// Make sure that the measurement table will only refresh if there is a selected design type for the current study
 				var designTypeId = TrialManagerDataService.currentData.experimentalDesign.designType;
 				var designTypes = TrialManagerDataService.applicationData.designTypes;
@@ -339,9 +339,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						$body.removeClass('preview-measurements-only');
 					}
 				);
-			}
+			}*/
 
-			function addNewEnvironments(noOfEnvironments, displayWarningMessage) {
+			function addNewEnvironments(noOfEnvironments) {
 				for (var ctr = 0; ctr < noOfEnvironments; ctr++) {
 					$scope.data.environments.push({
 						managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
@@ -410,7 +410,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments, 10);
 				$scope.temp.noOfEnvironments = parseInt($scope.temp.noOfEnvironments, 10) + addtlNumOfEnvironments;
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
-				addNewEnvironments(addtlNumOfEnvironments, 'true');
+				addNewEnvironments(addtlNumOfEnvironments);
 			}
 		}]).factory('DTLoadingTemplate', function () {
 		return {

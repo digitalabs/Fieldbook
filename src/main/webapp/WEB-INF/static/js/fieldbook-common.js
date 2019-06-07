@@ -3288,7 +3288,7 @@ function showGermplasmDetailsSection() {
 		toggleControlsForGermplasmListManagement(true);
 	}
 	//flag to determine if existing measurements should be deleted
-	$('#chooseGermplasmAndChecks').data('replace', '1');
+	//$('#chooseGermplasmAndChecks').data('replace', '1');
 }
 
 function hasGeneratedDesign() {

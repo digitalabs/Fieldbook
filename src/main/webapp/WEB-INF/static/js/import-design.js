@@ -29,7 +29,8 @@ var ImportDesign = (function() {
 			return ImportDesign.getTrialManagerDataService().currentData;
 		},
 
-		reloadMeasurements: function() {
+		// TODO: MARK FOR DELETE IBP-2689
+		/*reloadMeasurements: function() {
 			var angularElem = angular.element('#mainApp');
 
 			angularElem
@@ -37,9 +38,8 @@ var ImportDesign = (function() {
 				.$apply(
 				function () {
 					ImportDesign.getTrialManagerDataService().applicationData.isGeneratedOwnDesign = true;
-					ImportDesign.getTrialManagerDataService().applicationData.unsavedGeneratedDesign = true;
 				});
-		},
+		},*/
 
 		showPopup: function(hasGermplasmListSelected) {
 
@@ -138,10 +138,10 @@ var ImportDesign = (function() {
 		},
 
 		generateDesign: function() {
-			var $body = $('body');
+			//var $body = $('body');//TODO ENTRA POR ACA
 
 			//if the design is generated but not saved, the measurements datatable is for preview only (edit is not allowed)
-			$body.addClass('preview-measurements-only');
+			//$body.addClass('preview-measurements-only');
 
 			var environmentData =
 				angular.copy(ImportDesign.studyManagerCurrentData().environments);
@@ -184,10 +184,11 @@ var ImportDesign = (function() {
 			var $body = $('body');
 
 			$body.removeClass('modal-open');
-			$('#chooseGermplasmAndChecks').data('replace', '1');
+			//$('#chooseGermplasmAndChecks').data('replace', '1');
 
 			ImportDesign.closeReviewModal();
-			ImportDesign.reloadMeasurements();
+			// TODO: MARK FOR DELETE IBP-2689
+			//ImportDesign.reloadMeasurements();
 
 			var environmentData = resp.environmentData, environmentSettings = resp.environmentSettings, trialService = ImportDesign
 				.getTrialManagerDataService();

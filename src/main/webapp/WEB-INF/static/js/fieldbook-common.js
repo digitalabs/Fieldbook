@@ -3291,7 +3291,7 @@ function showGermplasmDetailsSection() {
 	$('#chooseGermplasmAndChecks').data('replace', '1');
 }
 
-function hasMeasurementData() { // TODO ARREGLAR ESTO
+function hasGeneratedDesign() {
 	'use strict';
 	return angular.element('#mainApp').injector().get('studyStateService').hasGeneratedDesign();
 }

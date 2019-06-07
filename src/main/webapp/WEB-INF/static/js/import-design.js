@@ -43,8 +43,8 @@ var ImportDesign = (function() {
 
 		showPopup: function(hasGermplasmListSelected) {
 
-			if (hasMeasurementData()) {
-				showErrorMessage(designImportErrorHeader, 'This study has saved observations, the experimental design can no longer be modified.');
+			if (hasGeneratedDesign()) {
+				showErrorMessage(designImportErrorHeader, 'This study has generated a design, the experimental design can no longer be modified.');
 			} else if (!hasGermplasmListSelected) {
 				showErrorMessage(designImportErrorHeader, 'Please choose a germplasm list before you can import a design.');
 			} else {

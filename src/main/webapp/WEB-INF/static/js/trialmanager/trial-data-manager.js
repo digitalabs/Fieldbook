@@ -68,9 +68,6 @@
 						service.updateCurrentData('environments', extractData(data.environmentData));
 
 						service.currentData.basicDetails.studyID = trialID;
-						// TODO: MARK FOR DELETE IBP-2789
-                        //service.updateTrialMeasurementRowCount(data.measurementRowCount);
-
 					}
 
 				}).error(function() {
@@ -491,8 +488,6 @@
 								doSaveImportedData().then(function() {
 									notifySaveEventListeners();
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(data) {
-										// TODO: MARK FOR DELETE IBP-2789
-                                        //service.updateTrialMeasurementRowCount(data.measurementRowCount);
 										//service.updateSettings('measurements', extractSettings(data.measurementsData));
 										service.applicationData.unsavedTraitsAvailable = false;
 										// TODO: MARK FOR DELETE IBP-2789
@@ -514,9 +509,6 @@
 									}
 									notifySaveEventListeners();
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function (updatedData) {
-										// TODO: MARK FOR DELETE IBP-2789
-                                        //service.updateTrialMeasurementRowCount(updatedData.measurementRowCount);
-
 										service.updateCurrentData('environments', extractData(updatedData.environmentData));
 										service.updateSettings('environments', extractSettings(updatedData.environmentData));
 										service.updateCurrentData('trialSettings', extractData(updatedData.trialSettingsData));
@@ -619,11 +611,6 @@
 
 					propagateChange(settingRegistry, key, newValue);
 					settingsArray = [];
-				},
-
-				updateTrialMeasurementRowCount: function(newCountValue) {
-					service.trialMeasurement.count = newCountValue;
-					$('body').data('service.trialMeasurement.count', newCountValue);
 				},
 
 				updateStartingEntryNoCount: function(newCountValue) {

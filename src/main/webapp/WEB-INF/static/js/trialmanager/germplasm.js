@@ -11,7 +11,6 @@
             $scope.trialMeasurement = {hasMeasurement: studyStateService.hasGeneratedDesign()};
 
             if ($scope.isOpenStudy()) {
-                TrialManagerDataService.updateTrialMeasurementRowCount($scope.trialMeasurement.count);
                 displaySelectedGermplasmDetails();
 
                 var startingEntryNo = $('#txtStartingEntryNo').val();
@@ -52,7 +51,6 @@
             };
 
             $scope.germplasmListCleared = function () {
-                TrialManagerDataService.updateTrialMeasurementRowCount(0);
                 TrialManagerDataService.applicationData.germplasmListCleared = true;
                 TrialManagerDataService.applicationData.germplasmListSelected = false;
             };

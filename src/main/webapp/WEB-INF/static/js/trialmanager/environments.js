@@ -356,7 +356,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = i + 1;
 					}
 				}
-				TrialManagerDataService.indicateUnappliedChangesAvailable(displayWarningMessage);
 			}
 
 			ctrl.updateEnvironmentVariables = function (type, entriesIncreased) {

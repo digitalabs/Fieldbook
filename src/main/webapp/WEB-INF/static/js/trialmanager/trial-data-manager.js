@@ -389,19 +389,6 @@
 						{headers: {'Content-Type': 'application/x-www-form-urlencoded'}});
 				},
 
-				indicateUnappliedChangesAvailable: function(displayWarningMessage) {
-					if (!service.applicationData.unappliedChangesAvailable && studyStateService.hasGeneratedDesign()) {
-						service.applicationData.unappliedChangesAvailable = true;
-
-						if (displayWarningMessage === 'true' || displayWarningMessage) {
-							//TODO Localise that message
-							showAlertMessage('', 'These changes have not yet been applied to the Observations table. ' +
-							'To update the Observations table, please review your settings and regenerate ' +
-							'the Experimental Design on the next tab', 10000);
-						}
-					}
-				},
-
 				warnAboutUnappliedChanges: function() {
 					if (service.applicationData.unappliedChangesAvailable) {
 						showAlertMessage('Unapplied Changes', $.fieldbookMessages.measurementWarningNeedGenExpDesign, 10000);

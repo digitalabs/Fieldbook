@@ -30,9 +30,6 @@ function resetGermplasmList() {
 	listId = 0;
 	lastDraggedPrimaryList = 0;
 
-	var trialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
-	trialManagerDataService.indicateUnappliedChangesAvailable(true);
-
 	$.ajax({
 		url: '/Fieldbook/StudyManager/importGermplasmList/resetStudyGermplasmDetails',
 		type: 'GET',

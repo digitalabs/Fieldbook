@@ -26,7 +26,7 @@
             };
 
             $('#imported-germplasm-list').bind("germplasmListIsUpdated", function () {
-                TrialManagerDataService.indicateUnappliedChangesAvailable(true);
+                studyStateService.updateOccurred();
             });
 
             $scope.updateOccurred = false;

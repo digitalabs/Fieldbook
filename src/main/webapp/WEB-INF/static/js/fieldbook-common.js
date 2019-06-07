@@ -3296,6 +3296,11 @@ function hasGeneratedDesign() {
 	return angular.element('#mainApp').injector().get('studyStateService').hasGeneratedDesign();
 }
 
+function hasListOrSubObs() {
+	'use strict';
+	return angular.element('#mainApp').injector().get('studyStateService').hasListOrSubObs();
+}
+
 function countGermplasms() {
 	var totalGermplasms = parseInt($('#totalGermplasms').val());
 	return totalGermplasms ? totalGermplasms : 0;

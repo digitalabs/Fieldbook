@@ -311,8 +311,8 @@ var ImportDesign = (function() {
 			return deferred.promise();
 		},
 
-		hideChangeButton: function() {
-			if (hasGeneratedDesign()) {
+		hideChangeButton: function () {
+			if (hasListOrSubObs()) {
 				$('#change-import-design-url-link').hide();
 			} else {
 				$('#change-import-design-url-link').show();

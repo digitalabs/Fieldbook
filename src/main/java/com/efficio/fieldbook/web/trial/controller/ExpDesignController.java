@@ -301,6 +301,7 @@ public class ExpDesignController extends BaseTrialController {
 	}
 
 	private void saveDesignGenerated(final ExpDesignParameterUi expDesign) {
+		this.initializeBasicUserSelectionLists();
 		this.addDeletedSettingsList();
 		final Map<String, TreatmentFactorData> treatmentFactorItems = convertTreatmentFactorMapToTreatmentFactorDataMap(expDesign.getTreatmentFactorsData());
 		final Dataset newDataset = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, this.userSelection.getStudyName(), this.userSelection,
@@ -335,10 +336,10 @@ public class ExpDesignController extends BaseTrialController {
 		workbookTemp.setTrialObservations(trialEnvironmentValues);
 
 		this.userSelection.setWorkbook(workbookTemp);
-		this.userSelection.setTemporaryWorkbook(null);
-		this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(expDesign.getEnvironments()));
 
+		this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(expDesign.getEnvironments()));
 		WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(), this.userSelection.getTemporaryWorkbook());
+
 		WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(), this.userSelection.getWorkbook().getObservations(), false, this.ontologyService,
 			this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
 		WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getVariates(), this.userSelection.getWorkbook().getObservations(), true, this.ontologyService,
@@ -346,6 +347,8 @@ public class ExpDesignController extends BaseTrialController {
 
 		this.addVariablesFromTemporaryWorkbookToWorkbook(this.userSelection);
 		this.updateObservationsFromTemporaryWorkbookToWorkbook(this.userSelection);
+
+		this.userSelection.setTemporaryWorkbook(null);
 
 		this.fieldbookMiddlewareService.saveExperimentalDesignGenerated(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(), this.getCurrentProject().getCropType());
 	}

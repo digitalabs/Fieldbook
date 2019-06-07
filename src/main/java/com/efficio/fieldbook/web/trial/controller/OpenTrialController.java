@@ -483,50 +483,13 @@ public class OpenTrialController extends BaseTrialController {
 	@Transactional
 	public Map<String, Object> submit(@RequestParam("replace") final int replace, @RequestBody final TrialData data) {
 		this.processEnvironmentData(data.getEnvironments());
-
-		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
-		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
-
-		final List<SettingDetail> combinedList = new ArrayList<>();
-		combinedList.addAll(basicDetails);
-		combinedList.addAll(studyLevelConditions);
-
 		// transfer over data from user input into the list of setting details
 		// stored in the session
 		this.populateSettingData(this.userSelection.getBasicDetails(), data.getBasicDetails().getBasicDetails());
 		this.populateSettingData(this.userSelection.getStudyLevelConditions(), data.getTrialSettings().getUserInput());
 
-		if (this.userSelection.getPlotsLevelList() == null) {
-			this.userSelection.setPlotsLevelList(new ArrayList<SettingDetail>());
-		}
-		if (this.userSelection.getBaselineTraitsList() == null) {
-			this.userSelection.setBaselineTraitsList(new ArrayList<SettingDetail>());
-		}
-		if (this.userSelection.getStudyConditions() == null) {
-			this.userSelection.setStudyConditions(new ArrayList<SettingDetail>());
-		}
-		if (this.userSelection.getTrialLevelVariableList() == null) {
-			this.userSelection.setTrialLevelVariableList(new ArrayList<SettingDetail>());
-		}
-		if (this.userSelection.getTreatmentFactors() == null) {
-			this.userSelection.setTreatmentFactors(new ArrayList<SettingDetail>());
-		}
-		if (this.userSelection.getSelectionVariates() == null) {
-			this.userSelection.setSelectionVariates(new ArrayList<SettingDetail>());
-		}
-
-		// TODO: add deleted selection variates
-		// include deleted list if measurements are available
-		SettingsUtil.addDeletedSettingsList(combinedList, this.userSelection.getDeletedStudyLevelConditions(),
-			this.userSelection.getStudyLevelConditions());
-		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedPlotLevelList(), this.userSelection.getPlotsLevelList());
-		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedBaselineTraitsList(),
-			this.userSelection.getBaselineTraitsList());
-		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedStudyConditions(), this.userSelection.getStudyConditions());
-		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedTrialLevelVariables(),
-			this.userSelection.getTrialLevelVariableList());
-		SettingsUtil
-			.addDeletedSettingsList(null, this.userSelection.getDeletedTreatmentFactors(), this.userSelection.getTreatmentFactors());
+		this.initializeBasicUserSelectionLists();
+		this.addDeletedSettingsList();
 		final String name = data.getBasicDetails().getStudyName();
 		// retain measurement dataset id and trial dataset id
 		final int trialDatasetId = this.userSelection.getWorkbook().getTrialDatasetId();

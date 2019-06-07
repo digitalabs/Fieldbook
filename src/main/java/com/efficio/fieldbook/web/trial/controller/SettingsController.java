@@ -777,4 +777,25 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		SettingsUtil
 			.addDeletedSettingsList(null, this.userSelection.getDeletedTreatmentFactors(), this.userSelection.getTreatmentFactors());
 	}
+
+	public void initializeBasicUserSelectionLists(){
+		if (this.userSelection.getPlotsLevelList() == null) {
+			this.userSelection.setPlotsLevelList(new ArrayList<SettingDetail>());
+		}
+		if (this.userSelection.getBaselineTraitsList() == null) {
+			this.userSelection.setBaselineTraitsList(new ArrayList<SettingDetail>());
+		}
+		if (this.userSelection.getStudyConditions() == null) {
+			this.userSelection.setStudyConditions(new ArrayList<SettingDetail>());
+		}
+		if (this.userSelection.getTrialLevelVariableList() == null) {
+			this.userSelection.setTrialLevelVariableList(new ArrayList<SettingDetail>());
+		}
+		if (this.userSelection.getTreatmentFactors() == null) {
+			this.userSelection.setTreatmentFactors(new ArrayList<SettingDetail>());
+		}
+		if (this.userSelection.getSelectionVariates() == null) {
+			this.userSelection.setSelectionVariates(new ArrayList<SettingDetail>());
+		}
+	}
 }

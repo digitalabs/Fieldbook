@@ -314,7 +314,7 @@ var ImportDesign = (function() {
 		},
 
 		hideChangeButton: function() {
-			if ($('#measurementDataExisting').val() === 'true') {
+			if (hasGeneratedDesign()) {
 				$('#change-import-design-url-link').hide();
 			} else {
 				$('#change-import-design-url-link').show();

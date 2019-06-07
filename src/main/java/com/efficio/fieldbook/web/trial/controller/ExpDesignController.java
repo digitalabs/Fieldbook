@@ -335,7 +335,7 @@ public class ExpDesignController extends BaseTrialController {
 		workbookTemp.setTrialObservations(trialEnvironmentValues);
 
 		this.userSelection.setWorkbook(workbookTemp);
-
+		this.userSelection.setTemporaryWorkbook(null);
 		this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(expDesign.getEnvironments()));
 
 		WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(), this.userSelection.getTemporaryWorkbook());
@@ -347,9 +347,7 @@ public class ExpDesignController extends BaseTrialController {
 		this.addVariablesFromTemporaryWorkbookToWorkbook(this.userSelection);
 		this.updateObservationsFromTemporaryWorkbookToWorkbook(this.userSelection);
 
-		fieldbookMiddlewareService.saveExperimentalDesignGenerated(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(), this.getCurrentProject().getCropType());
-
-		this.userSelection.setTemporaryWorkbook(null);
+		this.fieldbookMiddlewareService.saveExperimentalDesignGenerated(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(), this.getCurrentProject().getCropType());
 	}
 
 	private Map<String, TreatmentFactorData> convertTreatmentFactorMapToTreatmentFactorDataMap(final Map treatmentFactorsData) {

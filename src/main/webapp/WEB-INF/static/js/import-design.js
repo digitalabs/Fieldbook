@@ -206,9 +206,7 @@ var ImportDesign = (function() {
 
 			ImportDesign.getTrialManagerDataService().clearUnappliedChangesFlag();
 			//TODO Localise the message
-			showSuccessfulMessage(
-				'',
-				'The study design was imported successfully. Please review the Observations tab.');
+			showSuccessfulMessage('','The study design was imported successfully and saved. You can now access the observations tab. The observations data were saved automatically.');
 		},
 
 		loadReviewDesignData: function() {

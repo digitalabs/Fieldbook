@@ -57,7 +57,9 @@
 
             $(document).on('germplasmListUpdated', function () {
                 TrialManagerDataService.applicationData.germplasmListSelected = true;
-                studyStateService.updateOccurred();
+				if (TrialManagerDataService.isOpenStudy()) {
+					studyStateService.updateOccurred();
+				}
             });
 
             $scope.openGermplasmTree = function () {

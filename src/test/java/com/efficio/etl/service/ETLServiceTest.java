@@ -32,6 +32,7 @@ import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
@@ -249,6 +250,8 @@ public class ETLServiceTest {
 			this.userSelection.getStudyDescription(), workbook.getStudyDetails().getDescription());
 		Assert.assertEquals("Study objective must be " + this.userSelection.getStudyObjective(),
 			this.userSelection.getStudyObjective(), workbook.getStudyDetails().getObjective());
+		Assert.assertEquals("Study parent folder must be " + DmsProject.SYSTEM_FOLDER_ID,
+			DmsProject.SYSTEM_FOLDER_ID.intValue(), Long.valueOf(workbook.getStudyDetails().getParentFolderId()).intValue());
 		final String expectedStartDate = ETLServiceImpl.formatDate(this.userSelection.getStudyStartDate());
 		Assert.assertEquals("Study start date must be " + expectedStartDate, expectedStartDate,
 			workbook.getStudyDetails().getStartDate());
@@ -327,6 +330,8 @@ public class ETLServiceTest {
 			this.userSelection.getStudyDescription(), workbook.getStudyDetails().getDescription());
 		Assert.assertEquals("Study objective must be " + this.userSelection.getStudyObjective(),
 			this.userSelection.getStudyObjective(), workbook.getStudyDetails().getObjective());
+		Assert.assertEquals("Study parent folder must be " + DmsProject.SYSTEM_FOLDER_ID,
+			DmsProject.SYSTEM_FOLDER_ID.intValue(), Long.valueOf(workbook.getStudyDetails().getParentFolderId()).intValue());
 		final String expectedStartDate = ETLServiceImpl.formatDate(this.userSelection.getStudyStartDate());
 		Assert.assertEquals("Study start date must be " + expectedStartDate, expectedStartDate,
 			workbook.getStudyDetails().getStartDate());

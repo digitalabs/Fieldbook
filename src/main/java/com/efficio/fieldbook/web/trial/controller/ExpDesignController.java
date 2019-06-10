@@ -118,7 +118,7 @@ public class ExpDesignController extends BaseTrialController {
 		final Locale locale = LocaleContextHolder.getLocale();
 
 		try{
-		this.fieldbookMiddlewareService.deleteExperimentalDesignGenerated(measurementDatasetId);
+		this.fieldbookMiddlewareService.deleteExperimentalDesignGenerated(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(), this.getCurrentProject().getCropType());
 			this.userSelection.setMeasurementRowList(null);
 			this.userSelection.getWorkbook().setOriginalObservations(null);
 			this.userSelection.getWorkbook().setObservations(null);

@@ -984,7 +984,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.isSaveDisabled = function () {
-				return !$scope.isSaveEnabled();
+				return !$scope.isSaveEnabled() && !studyStateService.hasUnsavedData();
 			};
 
 			$scope.isSaveEnabled = function () {

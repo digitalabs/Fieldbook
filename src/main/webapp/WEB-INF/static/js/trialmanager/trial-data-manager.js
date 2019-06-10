@@ -477,9 +477,7 @@
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(data) {
 										//service.updateSettings('measurements', extractSettings(data.measurementsData));
 										service.applicationData.unsavedTraitsAvailable = false;
-										// TODO: MARK FOR DELETE IBP-2789
-										//onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
-										$('body').data('needToSave', '0');
+										//$('body').data('needToSave', '0');
 									});
 								});
 
@@ -509,7 +507,7 @@
 										setupSettingsVariables();
 										// TODO: MARK FOR DELETE IBP-2789
 										//onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
-										$('body').data('needToSave', '0');
+										//$('body').data('needToSave', '0');
 										studyStateService.resetState();
 									});
 
@@ -532,7 +530,7 @@
 										service.applicationData.unsavedTraitsAvailable = false;
 										// TODO: MARK FOR DELETE IBP-2789
 										//onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
-										$('body').data('needToSave', '0');
+										//$('body').data('needToSave', '0');
 									}, function () {
 										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 									});

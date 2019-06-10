@@ -499,9 +499,11 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		for (final SettingDetail detail : selectedVariates) {
 			detail.getVariable().setOperation(Operation.UPDATE);
 		}
-		form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(
+
+		//TODO VER ESTO: MARK FOR DELETE IBP-2689
+		/*form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(
 				userSelection.getWorkbook().getMeasurementDatesetId(),
-				SettingsUtil.buildVariates(userSelection.getWorkbook().getVariates())));
+				SettingsUtil.buildVariates(userSelection.getWorkbook().getVariates())));*/
 
 		this.fieldbookService.saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(),
 				userSelection.getWorkbook().getStudyDetails().getStudyName(), form.getColumnOrders(),

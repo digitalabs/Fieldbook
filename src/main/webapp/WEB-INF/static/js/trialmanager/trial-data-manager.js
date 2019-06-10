@@ -481,10 +481,15 @@
 									});
 								});
 
-							} else if (studyStateService.hasGeneratedDesign() &&
-								(($('#chooseGermplasmAndChecks').length !== 0 &&
+								// TODO THIS CONDITION SAVE OBSERVATIONS.
+							} else
+								if (studyStateService.hasGeneratedDesign()
+	/*								&&
+								(
+								$('#chooseGermplasmAndChecks').length !== 0 &&
 								$('#chooseGermplasmAndChecks').data('replace') !== undefined &&
-								parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1) )
+								parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1
+								)*/
 							) {
 								service.currentData.columnOrders = serializedData;
 								$http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function(data) {

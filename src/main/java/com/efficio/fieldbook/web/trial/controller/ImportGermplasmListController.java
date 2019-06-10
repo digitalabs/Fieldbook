@@ -225,10 +225,10 @@ public class ImportGermplasmListController extends SettingsController {
 			final BindingResult result, final Model model, final HttpServletRequest req) throws BVDesignException {
 		// start: section for taking note of the check germplasm
 		boolean isDeleteObservations = false;
-
-		boolean hasTemporaryWorkbook = false;
-
-		if (this.userSelection.getTemporaryWorkbook() != null) {
+		// TODO: MARK FOR DELETE IBP-2789
+		//boolean hasTemporaryWorkbook = false;
+		// TODO: MARK FOR DELETE IBP-2789
+		/*if (this.userSelection.getTemporaryWorkbook() != null) {
 
 			WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(),
 					this.userSelection.getTemporaryWorkbook());
@@ -248,21 +248,21 @@ public class ImportGermplasmListController extends SettingsController {
 			hasTemporaryWorkbook = true;
 			isDeleteObservations = true;
 
-		}
+		}*/
 
 		// if we have no germplasm list available for the study, skip this
 		// validation flow
 		if (null != this.userSelection.getImportedGermplasmMainInfo()
 				&& null != this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()) {
 			this.assignAndIncrementEntryNumberAndPlotNumber(form);
-
-			if (!hasTemporaryWorkbook) {
+			// TODO: MARK FOR DELETE IBP-2789
+			//if (!hasTemporaryWorkbook) {
 				// this section of code is only called for existing trial
 				// without temporary workbook. No need for reset of measurement
 				// row
 				// list here
 				isDeleteObservations = true;
-			}
+			//}
 		}
 
 		this.userSelection.getWorkbook().setObservations(this.userSelection.getMeasurementRowList());

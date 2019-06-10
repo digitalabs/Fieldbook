@@ -507,8 +507,8 @@ public class OpenTrialController extends BaseTrialController {
 			.convertXmlDatasetToWorkbook(dataset, this.userSelection.getExpDesignParams(), this.userSelection.getExpDesignVariables(),
 				this.fieldbookMiddlewareService, this.userSelection.getExperimentalDesignVariables(),
 				this.contextUtil.getCurrentProgramUUID());
-
-		if (this.userSelection.isDesignGenerated()) {
+		// TODO: MARK FOR DELETE IBP-2789
+		/*if (this.userSelection.isDesignGenerated()) {
 
 			this.userSelection.setMeasurementRowList(null);
 			this.userSelection.getWorkbook().setOriginalObservations(null);
@@ -516,7 +516,7 @@ public class OpenTrialController extends BaseTrialController {
 
 			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments().getEnvironments(), workbook,
 				this.userSelection.getTemporaryWorkbook().getTrialObservations());
-		}
+		}*/
 
 		this.assignOperationOnExpDesignVariables(workbook.getConditions());
 

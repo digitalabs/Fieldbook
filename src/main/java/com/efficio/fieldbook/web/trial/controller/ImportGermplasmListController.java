@@ -265,7 +265,11 @@ public class ImportGermplasmListController extends SettingsController {
 			//}
 		}
 
-		this.userSelection.getWorkbook().setObservations(this.userSelection.getMeasurementRowList());
+		this.userSelection.setMeasurementRowList(null);
+		this.userSelection.getWorkbook().setOriginalObservations(null);
+		this.userSelection.getWorkbook().setObservations(null);
+		// TODO: MARK FOR DELETE IBP-2789
+		//this.userSelection.getWorkbook().setObservations(this.userSelection.getMeasurementRowList());
 
 		this.fieldbookService.createIdCodeNameVariablePairs(this.userSelection.getWorkbook(),
 				AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());

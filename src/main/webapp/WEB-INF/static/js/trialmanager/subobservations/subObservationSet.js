@@ -283,10 +283,8 @@
 				promise.then(function (doContinue) {
 					if (doContinue) {
 						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, variableIds).then(function () {
-							if ($scope.hasInstances) {
-								reloadDataset();
-								derivedVariableService.displayExecuteCalculateVariableMenu();
-							}
+							reloadDataset();
+							derivedVariableService.displayExecuteCalculateVariableMenu();
 						}, function (response) {
 							if (response.errors && response.errors.length) {
 								showErrorMessage('', response.errors[0].message);

@@ -117,11 +117,27 @@ public class ExpDesignController extends BaseTrialController {
 		ExpDesignValidationOutput expParameterOutput = new ExpDesignValidationOutput(true, "The design was deleted successfully");
 		final Locale locale = LocaleContextHolder.getLocale();
 
-		try{
-		this.fieldbookMiddlewareService.deleteExperimentalDesignGenerated(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(), this.getCurrentProject().getCropType());
+		try {
+
 			this.userSelection.setMeasurementRowList(null);
 			this.userSelection.getWorkbook().setOriginalObservations(null);
 			this.userSelection.getWorkbook().setObservations(null);
+
+			final VariableTypeList factors =
+				this.studyDataManager.getAllStudyFactors(this.userSelection.getWorkbook().getStudyDetails().getId());
+
+			for (final MeasurementVariable measurementVariable : this.userSelection.getWorkbook().getConditions()) {
+				// update the operation for experiment design variables
+				// EXP_DESIGN, EXP_DESIGN_SOURCE, NREP, PERCENTAGE_OF_REPLICATION
+				// only if these variables already exists in the existing trial
+				if (EXPERIMENT_DESIGN_FACTOR_IDS.contains(measurementVariable.getTermId()) && factors.findById(measurementVariable.getTermId()) != null) {
+					measurementVariable.setOperation(Operation.DELETE);
+				}
+			}
+
+			this.fieldbookMiddlewareService
+				.deleteExperimentalDesignGenerated(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(),
+					this.getCurrentProject().getCropType());
 		} catch (final Exception e) {
 			ExpDesignController.LOG.error(e.getMessage(), e);
 			expParameterOutput = new ExpDesignValidationOutput(false,

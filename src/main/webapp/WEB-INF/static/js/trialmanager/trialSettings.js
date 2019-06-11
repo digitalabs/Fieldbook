@@ -12,6 +12,10 @@
 
 		$scope.managementDetails = TrialManagerDataService.settings.trialSettings;
 
+		$scope.managementDetailsOptions = {
+			selectAll: false
+		};
+
 		$scope.doSelectAll = function(variables, options) {
 
 			var filteredVariables = $filter('removeHiddenAndDeletablesVariableFilter')(variables.keys(), variables.vals());

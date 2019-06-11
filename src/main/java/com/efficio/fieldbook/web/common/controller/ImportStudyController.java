@@ -477,7 +477,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		// will do the cleanup for BM_CODE_VTE here
 		SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), false,
 				this.ontologyService, this.contextUtil.getCurrentProgramUUID());
-		this.fieldbookMiddlewareService.saveWorkbookVariablesAndObservations(userSelection.getWorkbook());
+		this.fieldbookMiddlewareService
+			.saveWorkbookVariablesAndObservations(userSelection.getWorkbook(), this.contextUtil.getCurrentProgramUUID());
 		SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
 				this.ontologyService, this.contextUtil.getCurrentProgramUUID());
 		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());

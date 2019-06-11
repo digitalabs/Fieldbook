@@ -566,7 +566,7 @@ public class OpenTrialController extends BaseTrialController {
 				// Set the flag that indicates whether the variates will be save
 				// or not to false since it's already save after inline edit
 				// TODO VER ESTO PARA CAMBIAR SI SE PUEDE: MARK FOR DELETE IBP-2789
-				this.fieldbookMiddlewareService.saveWorkbookVariablesAndObservations(workbook);
+				this.fieldbookMiddlewareService.saveWorkbookVariablesAndObservations(workbook, this.contextUtil.getCurrentProgramUUID());
 				//this.fieldbookMiddlewareService.updatePhenotypeStatus(workbook.getObservations());
 				// TODO: MARK FOR DELETE IBP-2789
 				/*returnVal.put(OpenTrialController.MEASUREMENT_DATA_EXISTING, this.fieldbookMiddlewareService

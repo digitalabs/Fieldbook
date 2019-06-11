@@ -116,6 +116,7 @@
 									TrialManagerDataService.clearUnappliedChangesFlag();
 									$scope.measurementDetails.hasMeasurement = false;
 									studyStateService.updateGeneratedDesign(false);
+									window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
 								} else {
 									showErrorMessage('', 'Something went wrong deleting the design.');
 								}

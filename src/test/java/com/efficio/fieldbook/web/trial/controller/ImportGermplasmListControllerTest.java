@@ -595,8 +595,8 @@ public class ImportGermplasmListControllerTest {
 		final ListDataProject listDataProject = new ListDataProject();
 		listDataProjects.add(listDataProject);
 
-		Mockito.doNothing().when(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null,
-				workbook);
+		Mockito.doNothing().when(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null,
+			workbook);
 
 		final String studyIdInNextScreen = this.importGermplasmListController.nextScreen(form, null, null, null);
 
@@ -609,7 +609,7 @@ public class ImportGermplasmListControllerTest {
 		Mockito.verify(this.dataImportService).saveDataset(workbook, true, true, project.getUniqueID(),
 				this.cropType);
 		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(ArgumentMatchers.<List<Integer>>isNull(), Matchers.isA(Integer.class));
-		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null, workbook);
+		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, workbook);
 
 		Assert.assertEquals("Expecting studyIdInSaveDataset returned from nextScreen", "3", studyIdInNextScreen);
 	}

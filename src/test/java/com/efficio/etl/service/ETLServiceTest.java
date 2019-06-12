@@ -32,6 +32,7 @@ import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
@@ -56,7 +57,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -160,7 +161,7 @@ public class ETLServiceTest {
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_TYPE.getId(), ETLServiceTest.PROGRAM_UUID))
 			.thenReturn(standardVariable);
 		Mockito.when(standardVariable.getEnumerations())
-			.thenReturn(Arrays.asList(new Enumeration(TermId.CHECK.getId(), TermId.CHECK.name(), "", 0)));
+			.thenReturn(Collections.singletonList(new Enumeration(TermId.CHECK.getId(), TermId.CHECK.name(), "", 0)));
 		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
 	}
 
@@ -222,15 +223,15 @@ public class ETLServiceTest {
 
 		Mockito.doReturn(new StudyTypeDto(10010, "Trial", StudyTypeDto.TRIAL_NAME)).when(this.studyDataManager)
 			.getStudyTypeByName(this.userSelection.getStudyType());
-		final List<DataSet> plotDatasets = DataSetTestDataInitializer
-			.createPlotDatasetsTestData(this.userSelection.getStudyName() + "-PLOTDATA");
-		Mockito.doReturn(plotDatasets).when(this.studyDataManager).getDataSetsByType(
+		final DataSet plotDataset = DataSetTestDataInitializer
+			.createPlotDatasetTestData(this.userSelection.getStudyName() + "-PLOTDATA");
+		Mockito.doReturn(plotDataset).when(this.studyDataManager).findOneDataSetByType(
 			this.userSelection.getStudyId(),
 			DatasetTypeEnum.PLOT_DATA.getId());
 
-		final List<DataSet> dataSetList = DataSetTestDataInitializer
-			.createStudyDatasetsTestData(this.userSelection.getStudyName() + "-ENVIRONMENT");
-		Mockito.doReturn(dataSetList).when(this.studyDataManager).getDataSetsByType(
+		final DataSet trialDataset = DataSetTestDataInitializer
+			.createStudyDatasetTestData(this.userSelection.getStudyName() + "-ENVIRONMENT");
+		Mockito.doReturn(trialDataset).when(this.studyDataManager).findOneDataSetByType(
 			this.userSelection.getStudyId(),
 			DatasetTypeEnum.SUMMARY_DATA.getId());
 
@@ -249,6 +250,8 @@ public class ETLServiceTest {
 			this.userSelection.getStudyDescription(), workbook.getStudyDetails().getDescription());
 		Assert.assertEquals("Study objective must be " + this.userSelection.getStudyObjective(),
 			this.userSelection.getStudyObjective(), workbook.getStudyDetails().getObjective());
+		Assert.assertEquals("Study parent folder must be " + DmsProject.SYSTEM_FOLDER_ID,
+			DmsProject.SYSTEM_FOLDER_ID.intValue(), Long.valueOf(workbook.getStudyDetails().getParentFolderId()).intValue());
 		final String expectedStartDate = ETLServiceImpl.formatDate(this.userSelection.getStudyStartDate());
 		Assert.assertEquals("Study start date must be " + expectedStartDate, expectedStartDate,
 			workbook.getStudyDetails().getStartDate());
@@ -288,100 +291,27 @@ public class ETLServiceTest {
 	}
 
 	@Test
-	public void testRetrieveAndSetProjectOntologyForPlotDataImportOldDatasetNames() {
-		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);//
-		this.userSelection.setDatasetType(DatasetTypeEnum.PLOT_DATA.getId());
-
-		Mockito.doReturn(new StudyTypeDto(10010, "Trial", StudyTypeDto.TRIAL_NAME)).when(this.studyDataManager)
-			.getStudyTypeByName(this.userSelection.getStudyType());
-		final List<DataSet> plotDatasets = DataSetTestDataInitializer
-			.createPlotDatasetsTestData("MEASUREMENT EFEC_" + this.userSelection.getStudyName());
-		plotDatasets.add(DataSetTestDataInitializer
-			.createPlotDatasetTestData("TRIAL_" + this.userSelection.getStudyName(), true));
-		Mockito.doReturn(plotDatasets).when(this.studyDataManager).getDataSetsByType(
-			this.userSelection.getStudyId(),
-			DatasetTypeEnum.PLOT_DATA.getId());
-		Mockito.doReturn(1).when(this.workbenchDataManager).getCurrentIbdbUserId(Long.valueOf(0), 1);
-
-		final org.generationcp.middleware.domain.etl.Workbook workbook = this.etlService
-			.retrieveAndSetProjectOntology(this.userSelection, false);
-
-		Mockito.verify(this.studyDataManager, Mockito.times(0)).getDataSetsByType(
-			this.userSelection.getStudyId(),
-			DatasetTypeEnum.MEANS_DATA.getId());
-
-		Assert.assertNotNull(workbook);
-		Assert.assertEquals("Imported type must be plot data", DatasetTypeEnum.PLOT_DATA.getId(), (int) workbook.getImportType());
-
-		Assert.assertNotNull(workbook.getStudyDetails());
-		Assert.assertEquals("Study id must be " + this.userSelection.getStudyId(), this.userSelection.getStudyId(),
-			workbook.getStudyDetails().getId());
-		Assert.assertEquals("Study name must be " + this.userSelection.getStudyName(),
-			this.userSelection.getStudyName(), workbook.getStudyDetails().getStudyName());
-		Assert.assertEquals("Study title must be " + this.userSelection.getStudyDescription(),
-			this.userSelection.getStudyDescription(), workbook.getStudyDetails().getDescription());
-		Assert.assertEquals("Study objective must be " + this.userSelection.getStudyObjective(),
-			this.userSelection.getStudyObjective(), workbook.getStudyDetails().getObjective());
-		final String expectedStartDate = ETLServiceImpl.formatDate(this.userSelection.getStudyStartDate());
-		Assert.assertEquals("Study start date must be " + expectedStartDate, expectedStartDate,
-			workbook.getStudyDetails().getStartDate());
-		final String expectedEndDate = ETLServiceImpl.formatDate(this.userSelection.getStudyEndDate());
-		Assert.assertEquals("Study end date must be " + expectedEndDate, expectedEndDate,
-			workbook.getStudyDetails().getEndDate());
-		Assert.assertEquals("Study type must be " + this.userSelection.getStudyType(),
-			this.userSelection.getStudyType(), workbook.getStudyDetails().getStudyType().getName());
-
-		Assert.assertEquals("Study id must be " + this.userSelection.getStudyId(), this.userSelection.getStudyId(),
-			workbook.getStudyDetails().getId());
-		Assert.assertEquals("Study dataset id must be " + ETLServiceTest.STUDY_DATASET_ID, ETLServiceTest.STUDY_DATASET_ID,
-			(int) workbook.getTrialDatasetId());
-		Assert
-			.assertEquals("Measurement dataset id must be " + ETLServiceTest.MEASUREMENT_DATASET_ID, ETLServiceTest.MEASUREMENT_DATASET_ID,
-				(int) workbook.getMeasurementDatesetId());
-
-		Assert.assertNotNull(workbook.getConditions());
-		Assert.assertNotNull(workbook.getConstants());
-
-		Assert.assertNotNull(workbook.getFactors());
-		Assert.assertEquals("The number of factors must be 5", 5, workbook.getFactors().size());
-		for (final MeasurementVariable measurementVariable : workbook.getFactors()) {
-			Assert.assertTrue(
-				"A factor should either have a study environment, germplasm or trial design role",
-				measurementVariable.getRole() == PhenotypicType.TRIAL_ENVIRONMENT
-					|| measurementVariable.getRole() == PhenotypicType.GERMPLASM
-					|| measurementVariable.getRole() == PhenotypicType.TRIAL_DESIGN);
-		}
-
-		Assert.assertNotNull(workbook.getVariates());
-		Assert.assertEquals("The number of variates must be 2", 2, workbook.getVariates().size());
-		for (final MeasurementVariable measurementVariable : workbook.getVariates()) {
-			Assert.assertSame("A variate should have a variate role", measurementVariable.getRole(), PhenotypicType.VARIATE);
-		}
-
-	}
-
-	@Test
 	public void testRetrieveAndSetProjectOntologyForMeansDataImport() {
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
 		this.userSelection.setDatasetType(DatasetTypeEnum.MEANS_DATA.getId());
 
 		Mockito.doReturn(new StudyTypeDto(10010, StudyTypeDto.TRIAL_LABEL, StudyTypeDto.TRIAL_NAME)).when(this.studyDataManager)
 			.getStudyTypeByName(this.userSelection.getStudyType());
-		final List<DataSet> meansDatasets = DataSetTestDataInitializer
-			.createMeansDatasetsTestData(this.userSelection.getStudyName() + "-MEANS");
-		Mockito.doReturn(meansDatasets).when(this.studyDataManager).getDataSetsByType(
+		final DataSet meansDataset = DataSetTestDataInitializer
+			.createMeansDatasetTestData(this.userSelection.getStudyName() + "-MEANS");
+		Mockito.doReturn(meansDataset).when(this.studyDataManager).findOneDataSetByType(
 			this.userSelection.getStudyId(),
 			DatasetTypeEnum.MEANS_DATA.getId());
 
-		final List<DataSet> plotDatasets = DataSetTestDataInitializer
-			.createPlotDatasetsTestData(this.userSelection.getStudyName() + "-PLOTDATA");
-		Mockito.doReturn(plotDatasets).when(this.studyDataManager).getDataSetsByType(
+		final DataSet plotDataset = DataSetTestDataInitializer
+			.createPlotDatasetTestData(this.userSelection.getStudyName() + "-PLOTDATA");
+		Mockito.doReturn(plotDataset).when(this.studyDataManager).findOneDataSetByType(
 			this.userSelection.getStudyId(),
 			DatasetTypeEnum.PLOT_DATA.getId());
 
-		final List<DataSet> dataSetList = DataSetTestDataInitializer
-			.createStudyDatasetsTestData(this.userSelection.getStudyName() + "-ENVIRONMENT");
-		Mockito.doReturn(dataSetList).when(this.studyDataManager).getDataSetsByType(
+		final DataSet trialDataset = DataSetTestDataInitializer
+			.createStudyDatasetTestData(this.userSelection.getStudyName() + "-ENVIRONMENT");
+		Mockito.doReturn(trialDataset).when(this.studyDataManager).findOneDataSetByType(
 			this.userSelection.getStudyId(),
 			DatasetTypeEnum.SUMMARY_DATA.getId());
 
@@ -400,6 +330,8 @@ public class ETLServiceTest {
 			this.userSelection.getStudyDescription(), workbook.getStudyDetails().getDescription());
 		Assert.assertEquals("Study objective must be " + this.userSelection.getStudyObjective(),
 			this.userSelection.getStudyObjective(), workbook.getStudyDetails().getObjective());
+		Assert.assertEquals("Study parent folder must be " + DmsProject.SYSTEM_FOLDER_ID,
+			DmsProject.SYSTEM_FOLDER_ID.intValue(), Long.valueOf(workbook.getStudyDetails().getParentFolderId()).intValue());
 		final String expectedStartDate = ETLServiceImpl.formatDate(this.userSelection.getStudyStartDate());
 		Assert.assertEquals("Study start date must be " + expectedStartDate, expectedStartDate,
 			workbook.getStudyDetails().getStartDate());
@@ -458,7 +390,7 @@ public class ETLServiceTest {
 		// Accept any workbook when checkForOutOfBoundsData is called. It will
 		// be captured and verified later.
 		Mockito.doReturn(true).when(this.dataImportService).checkForOutOfBoundsData(
-			ArgumentMatchers.any(org.generationcp.middleware.domain.etl.Workbook.class), Matchers.eq(ETLServiceTest.PROGRAM_UUID));
+			ArgumentMatchers.any(org.generationcp.middleware.domain.etl.Workbook.class), ArgumentMatchers.eq(ETLServiceTest.PROGRAM_UUID));
 
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
 		this.userSelection.setDatasetType(DatasetTypeEnum.PLOT_DATA.getId());
@@ -472,7 +404,7 @@ public class ETLServiceTest {
 		// Make sure the dataImportService.checkForOutOfBoundsData is called
 		Mockito.verify(this.dataImportService, Mockito.times(1)).checkForOutOfBoundsData(
 			workbookCaptor.capture(),
-			Matchers.eq(ETLServiceTest.PROGRAM_UUID));
+			ArgumentMatchers.eq(ETLServiceTest.PROGRAM_UUID));
 		Assert.assertNotNull(workbookCaptor.getValue());
 	}
 
@@ -483,7 +415,7 @@ public class ETLServiceTest {
 		// be captured and verified later.
 		Mockito.when(this.dataImportService.checkForOutOfBoundsData(
 			Matchers.any(org.generationcp.middleware.domain.etl.Workbook.class),
-			Matchers.eq(ETLServiceTest.PROGRAM_UUID))).thenReturn(false);
+			ArgumentMatchers.eq(ETLServiceTest.PROGRAM_UUID))).thenReturn(false);
 
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
 		this.userSelection.setDatasetType(DatasetTypeEnum.PLOT_DATA.getId());
@@ -497,7 +429,7 @@ public class ETLServiceTest {
 		// Make sure the dataImportService.checkForOutOfBoundsData is called
 		Mockito.verify(this.dataImportService, Mockito.times(1)).checkForOutOfBoundsData(
 			workbookCaptor.capture(),
-			Matchers.eq(ETLServiceTest.PROGRAM_UUID));
+			ArgumentMatchers.eq(ETLServiceTest.PROGRAM_UUID));
 		Assert.assertNotNull(workbookCaptor.getValue());
 
 	}
@@ -607,15 +539,15 @@ public class ETLServiceTest {
 		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
 		this.userSelection.setDatasetType(DatasetTypeEnum.PLOT_DATA.getId());
 
-		final List<DataSet> plotDatasets = DataSetTestDataInitializer
-			.createPlotDatasetsTestData(this.userSelection.getStudyName() + "-PLOTDATA");
-		Mockito.doReturn(plotDatasets).when(this.studyDataManager).getDataSetsByType(
+		final DataSet plotDataset = DataSetTestDataInitializer
+			.createPlotDatasetTestData(this.userSelection.getStudyName() + "-PLOTDATA");
+		Mockito.doReturn(plotDataset).when(this.studyDataManager).findOneDataSetByType(
 			this.userSelection.getStudyId(),
 			DatasetTypeEnum.PLOT_DATA.getId());
 
-		final List<DataSet> trialDatasets = DataSetTestDataInitializer
-			.createStudyDatasetsTestData(this.userSelection.getStudyName() + "-ENVIRONMENT");
-		Mockito.doReturn(trialDatasets).when(this.studyDataManager).getDataSetsByType(
+		final DataSet trialDataset = DataSetTestDataInitializer
+			.createStudyDatasetTestData(this.userSelection.getStudyName() + "-ENVIRONMENT");
+		Mockito.doReturn(trialDataset).when(this.studyDataManager).findOneDataSetByType(
 			this.userSelection.getStudyId(),
 			DatasetTypeEnum.SUMMARY_DATA.getId());
 		final org.generationcp.middleware.domain.etl.Workbook wb = WorkbookTestDataInitializer.getTestWorkbook();
@@ -809,7 +741,7 @@ public class ETLServiceTest {
 		Mockito.verify(this.dataImportService).saveProjectOntology(workbook, ETLServiceTest.PROGRAM_UUID, this.crop);
 	}
 
-	protected Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> createPhenotyicMapTestData() {
+	private Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> createPhenotyicMapTestData() {
 
 		final Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> map = new HashMap<>();
 
@@ -874,7 +806,7 @@ public class ETLServiceTest {
 		userSelection.setStudyId(studyId);
 	}
 
-	protected Workbook createTestExcelWorkbookFromWorkbook(
+	private Workbook createTestExcelWorkbookFromWorkbook(
 		final org.generationcp.middleware.domain.etl.Workbook workbook, final boolean withInvalidValues) {
 
 		final HSSFWorkbook excelWorkbook = new HSSFWorkbook();
@@ -906,7 +838,7 @@ public class ETLServiceTest {
 		return excelWorkbook;
 	}
 
-	protected org.generationcp.middleware.domain.etl.Workbook createTestWorkbook() {
+	private org.generationcp.middleware.domain.etl.Workbook createTestWorkbook() {
 		final org.generationcp.middleware.domain.etl.Workbook workbook = new org.generationcp.middleware.domain.etl.Workbook();
 
 		final List<MeasurementVariable> factors = new LinkedList<>();

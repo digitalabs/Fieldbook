@@ -584,7 +584,7 @@ public class OpenTrialController extends BaseTrialController {
 				returnVal.put(OpenTrialController.MEASUREMENT_ROW_COUNT, this.studyDataManager.countExperiments(measurementDatasetId));
 
 				this.fieldbookService
-					.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), workbook.getStudyName(), data.getColumnOrders(),
+					.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), data.getColumnOrders(),
 						workbook);
 				final Boolean hasOutOfSyncObservations =
 					this.fieldbookMiddlewareService.hasOutOfSyncObservations(workbook.getMeasurementDatesetId());

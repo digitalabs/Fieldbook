@@ -109,9 +109,9 @@ public class ImportStudyControllerTest {
 		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(workbook,
 				this.contextUtil.getCurrentProgramUUID(), true);
 		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(
-				this.userSelection.getWorkbook().getStudyDetails().getId(),
-				this.userSelection.getWorkbook().getStudyDetails().getStudyName(), form.getColumnOrders(),
-				this.userSelection.getWorkbook());
+			this.userSelection.getWorkbook().getStudyDetails().getId(),
+			form.getColumnOrders(),
+			this.userSelection.getWorkbook());
 	}
 
 	@Test

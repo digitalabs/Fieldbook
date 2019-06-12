@@ -120,7 +120,8 @@
 											//TODO: update the status is not gonna be necessary if reopen the study.
 											/*$scope.measurementDetails.hasMeasurement = false;
 											studyStateService.updateGeneratedDesign(false);
-											TrialManagerDataService.applicationData.unsavedTreatmentFactorsAvailable = false;*/
+											TrialManagerDataService.applicationData.unsavedTreatmentFactorsAvailable = false;
+											$scope.resetExperimentalDesignRelatedVariables();*/
 										} else {
 											showErrorMessage('', 'Something went wrong deleting the design.');
 										}

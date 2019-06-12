@@ -25,6 +25,11 @@ var ImportDesign = (function() {
 					'TrialManagerDataService');
 		},
 
+		getStudyStateService: function() {
+			return angular.element('#mainApp').injector().get(
+				'studyStateService');
+		},
+
 		studyManagerCurrentData: function() {
 			return ImportDesign.getTrialManagerDataService().currentData;
 		},
@@ -43,7 +48,9 @@ var ImportDesign = (function() {
 
 		showPopup: function(hasGermplasmListSelected) {
 
-			if (hasGeneratedDesign()) {
+			if(ImportDesign.getStudyStateService().hasUnsavedData()) {
+				showErrorMessage('', 'Please first save the unsaved data');
+			} else if (hasGeneratedDesign()) {
 				showErrorMessage(designImportErrorHeader, 'This study has generated a design, the experimental design can no longer be modified.');
 			} else if (!hasGermplasmListSelected) {
 				showErrorMessage(designImportErrorHeader, 'Please choose a germplasm list before you can import a design.');

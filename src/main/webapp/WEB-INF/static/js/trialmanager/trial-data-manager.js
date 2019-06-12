@@ -443,7 +443,7 @@
 							showAlertMessage('', 'Changes have been made that may affect the experimental design of this study. Please ' +
 									'regenerate the design on the Experimental Design tab', 10000); */
 					} else if (service.applicationData.unsavedTreatmentFactorsAvailable) {
-							showErrorMessage('', 'CANNOT SAVE TREATMENT FACTORS. Please generate the design and then it will be saved automatically.');
+							showErrorMessage('', 'TREATMENT FACTORS will be saved automatically when generating the design.');
 							/*} else if (service.applicationData.unappliedChangesAvailable) {
 								showAlertMessage('', 'Changes have been made that may affect the experimental design of this study. Please ' +
 										'regenerate the design on the Experimental Design tab', 10000); */

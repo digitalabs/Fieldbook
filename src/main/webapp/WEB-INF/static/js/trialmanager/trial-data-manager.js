@@ -558,8 +558,8 @@
 					}
 
                     //After Save Measurements table is available in edit mode
-                    $('body').removeClass('preview-measurements-only');
-                    $('body').removeClass('import-preview-measurements');
+                    //$('body').removeClass('preview-measurements-only');
+                    //$('body').removeClass('import-preview-measurements');
                     //Refresh the germplasm list table
                     refreshListDetails();
 					service.resetServiceBackup();

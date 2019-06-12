@@ -106,7 +106,7 @@ public class OpenTrialController extends BaseTrialController {
 	private DatasetService datasetService;
 
 	@Resource
-	DatasetTypeService datasetTypeService;
+	private DatasetTypeService datasetTypeService;
 
 	/**
 	 * The Inventory list manager.
@@ -417,6 +417,8 @@ public class OpenTrialController extends BaseTrialController {
 /*		model.addAttribute(
 			OpenTrialController.MEASUREMENTS_DATA,
 			this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false));*/
+		this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, false);
+		this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false);
 		// TODO: MARK FOR DELETE IBP-2789
 		/*model.addAttribute(
 			OpenTrialController.SELECTION_VARIABLE_DATA,

@@ -11,8 +11,8 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.LocationTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MethodTestDataInitializer;
-import org.generationcp.middleware.data.initializer.PersonTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
+import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitializer;
 import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -21,6 +21,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
@@ -37,12 +38,12 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -53,8 +54,6 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import org.generationcp.commons.constant.AppConstants;
-
-import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FieldbookServiceTest {
@@ -107,7 +106,7 @@ public class FieldbookServiceTest {
 
 	@Before
 	public void setUp() throws MiddlewareException {
-		final List<Location> allLocation = new ArrayList<Location>();
+		final List<Location> allLocation = new ArrayList<>();
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(FieldbookServiceTest.PROGRAMUUID);
 		allLocation.add(LocationTestDataInitializer.createLocation(1, FieldbookServiceTest.LOCATION_NAME, null));
@@ -116,16 +115,13 @@ public class FieldbookServiceTest {
 				.thenReturn(allLocation);
 		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingLocations()).thenReturn(new ArrayList<Location>());
 
-		final List<Person> personsList = new ArrayList<Person>();
-		personsList.add(PersonTestDataInitializer.createPerson(200));
-
 		this.fieldbookServiceImpl.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
 		this.possibleValuesCache = new PossibleValuesCache();
 		this.fieldbookServiceImpl.setPossibleValuesCache(this.possibleValuesCache);
 		this.fieldbookServiceImpl.setOntologyVariableDataManager(this.ontologyVariableDataManager);
 		this.fieldbookServiceImpl.setContextUtil(this.contextUtil);
 
-		final List<ValueReference> possibleValues = new ArrayList<ValueReference>();
+		final List<ValueReference> possibleValues = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
 			possibleValues.add(new ValueReference(i, "Name: " + i));
 		}
@@ -193,7 +189,7 @@ public class FieldbookServiceTest {
 	}
 
 	@Test
-	public void testGetVariablePossibleValuesWhenVariableIsNonLocation() throws Exception {
+	public void testGetVariablePossibleValuesWhenVariableIsNonLocation() {
 		final List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl
 				.getVariablePossibleValues(this.nonLocationVariable);
 		Assert.assertEquals(
@@ -202,7 +198,7 @@ public class FieldbookServiceTest {
 	}
 
 	@Test
-	public void testGetAllLocations() throws Exception {
+	public void testGetAllLocations() {
 		final List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl.getLocations(false);
 		Assert.assertEquals("First possible value should have an id of 1 as per our test data", Integer.valueOf(1),
 				resultPossibleValues.get(0).getId());
@@ -212,7 +208,7 @@ public class FieldbookServiceTest {
 	}
 
 	@Test
-	public void testGetAllPossibleValuesWhenIdIsLocationAndGetAllRecordsIsFalse() throws Exception {
+	public void testGetAllPossibleValuesWhenIdIsLocationAndGetAllRecordsIsFalse() {
 		final Variable variable = VariableTestDataInitializer.createVariable(DataType.LOCATION);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
 				this.locationVariable.getTermId(), true)).thenReturn(variable);
@@ -227,7 +223,7 @@ public class FieldbookServiceTest {
 	}
 
 	@Test
-	public void testGetAllPossibleValuesWhenIdIsLocationAndGetAllRecordsIsTrue() throws Exception {
+	public void testGetAllPossibleValuesWhenIdIsLocationAndGetAllRecordsIsTrue() {
 		final Variable variable = VariableTestDataInitializer.createVariable(DataType.LOCATION);
 		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
 				this.locationVariable.getTermId(), true)).thenReturn(variable);
@@ -238,7 +234,7 @@ public class FieldbookServiceTest {
 	}
 
 	@Test
-	public void testGetAllPossibleValuesWhenIdIsNonLocation() throws Exception {
+	public void testGetAllPossibleValuesWhenIdIsNonLocation() {
 		final Variable variable = VariableTestDataInitializer.createVariable(DataType.CATEGORICAL_VARIABLE);
 		this.possibleValuesCache.addPossibleValuesByDataType(DataType.CATEGORICAL_VARIABLE,
 				this.nonLocationVariable.getPossibleValues());
@@ -318,7 +314,7 @@ public class FieldbookServiceTest {
 	}
 
 	private List<ImportedGermplasm> createImportedCheckGermplasmData() {
-		final List<ImportedGermplasm> importedGermplasms = new ArrayList<ImportedGermplasm>();
+		final List<ImportedGermplasm> importedGermplasms = new ArrayList<>();
 		importedGermplasms.add(new ImportedGermplasm(1, FieldbookServiceTest.DESIG, FieldbookServiceTest.CHECK));
 		return importedGermplasms;
 	}
@@ -462,7 +458,7 @@ public class FieldbookServiceTest {
 
 	@Test
 	public void testCheckingOfCheckVariablesIfConditionsIsNotNullButEmpty() {
-		final List<MeasurementVariable> conditions = new ArrayList<MeasurementVariable>();
+		final List<MeasurementVariable> conditions = new ArrayList<>();
 
 		Assert.assertFalse("Expected no check variables in the conditions but found one.",
 				this.fieldbookServiceImpl.hasCheckVariables(conditions));
@@ -495,7 +491,7 @@ public class FieldbookServiceTest {
 	public void testSaveStudyImportCrossesIfStudyIdIsNull() throws MiddlewareQueryException {
 		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
 		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		final List<Integer> crossesIds = new ArrayList<Integer>();
+		final List<Integer> crossesIds = new ArrayList<>();
 		crossesIds.add(1);
 		crossesIds.add(2);
 		fieldbookService.setFieldbookMiddlewareService(fieldbookMiddlewareService);
@@ -509,7 +505,7 @@ public class FieldbookServiceTest {
 	public void testSaveStudyImportCrossesIfStudyIdIsNotNull() throws MiddlewareQueryException {
 		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
 		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		final List<Integer> crossesIds = new ArrayList<Integer>();
+		final List<Integer> crossesIds = new ArrayList<>();
 		crossesIds.add(1);
 		crossesIds.add(2);
 		final int studyId = 5;
@@ -532,8 +528,8 @@ public class FieldbookServiceTest {
 		final String columnOrderDelimited = "";
 		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited,
 				Mockito.mock(Workbook.class));
-		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(Matchers.any(Integer.class),
-				Matchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
+		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(ArgumentMatchers.any(Integer.class),
+			ArgumentMatchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
 	}
 
 	@Test
@@ -546,8 +542,8 @@ public class FieldbookServiceTest {
 		final String columnOrderDelimited = "";
 		final Workbook workbook = Mockito.mock(Workbook.class);
 		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited, workbook);
-		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(Matchers.any(Integer.class),
-				Matchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
+		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(ArgumentMatchers.any(Integer.class),
+			ArgumentMatchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
 		Mockito.verify(api, Mockito.times(1)).setOrderVariableByRank(workbook);
 	}
 
@@ -561,8 +557,8 @@ public class FieldbookServiceTest {
 		final String columnOrderDelimited = "[\"1100\", \"1900\"]";
 		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited,
 				Mockito.mock(Workbook.class));
-		Mockito.verify(api, Mockito.times(1)).saveStudyColumnOrdering(Matchers.any(Integer.class),
-				Matchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
+		Mockito.verify(api, Mockito.times(1)).saveStudyColumnOrdering(ArgumentMatchers.any(Integer.class),
+			ArgumentMatchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
 	}
 
 	@Test
@@ -630,10 +626,9 @@ public class FieldbookServiceTest {
 		fieldbookService.setFieldbookMiddlewareService(fieldbookMiddlewareService);
 		final ContextUtil contextUtil = Mockito.mock(ContextUtil.class);
 		fieldbookService.setContextUtil(contextUtil);
-		final String name = "Accession into genebank";
 		final String code = "AGB1";
 		final String programUUID = null;
-		final Method method = this.createMethod(name, code, programUUID);
+		final Method method = this.createMethod(programUUID);
 		Mockito.doReturn(method).when(fieldbookMiddlewareService).getMethodByCode(code, programUUID);
 		Mockito.doReturn(programUUID).when(contextUtil).getCurrentProgramUUID();
 		final String actualValue = fieldbookService.getBreedingMethodByCode(code);
@@ -660,10 +655,10 @@ public class FieldbookServiceTest {
 
 	}
 
-	private Method createMethod(final String name, final String code, final String uniqueID) {
+	private Method createMethod(final String uniqueID) {
 		final Method method = new Method();
-		method.setMname(name);
-		method.setMcode(code);
+		method.setMname("Accession into genebank");
+		method.setMcode("AGB1");
 		method.setUniqueID(uniqueID);
 		return method;
 	}
@@ -727,8 +722,8 @@ public class FieldbookServiceTest {
 		workbook.setFactors(new ArrayList<MeasurementVariable>());
 		workbook.getObservations().get(0).setDataList(new ArrayList<MeasurementData>());
 
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.OBS_UNIT_ID.getId()),
-				Matchers.anyString()))
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(ArgumentMatchers.eq(TermId.OBS_UNIT_ID.getId()),
+			ArgumentMatchers.anyString()))
 				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.OBS_UNIT_ID.getId(),
 						TermId.OBS_UNIT_ID.name()));
 
@@ -751,8 +746,8 @@ public class FieldbookServiceTest {
 		workbook.setFactors(new ArrayList<MeasurementVariable>());
 		workbook.getObservations().get(0).setDataList(new ArrayList<MeasurementData>());
 
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.eq(TermId.OBS_UNIT_ID.getId()),
-				Matchers.anyString()))
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(ArgumentMatchers.eq(TermId.OBS_UNIT_ID.getId()),
+			ArgumentMatchers.anyString()))
 				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(TermId.OBS_UNIT_ID.getId(),
 						TermId.OBS_UNIT_ID.name()));
 
@@ -817,9 +812,9 @@ public class FieldbookServiceTest {
 		final MeasurementVariable mvar = MeasurementVariableTestDataInitializer
 				.createMeasurementVariable(TermId.BREEDING_METHOD.getId(), TermId.BREEDING_METHOD.name(), "4");
 		final Variable var = VariableTestDataInitializer.createVariable(DataType.BREEDING_METHOD);
-		Mockito.when(this.ontologyVariableDataManager.getVariable(Matchers.eq(this.contextUtil.getCurrentProgramUUID()),
-				Matchers.anyInt(), Matchers.eq(true))).thenReturn(var);
-		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Matchers.anyBoolean()))
+		Mockito.when(this.ontologyVariableDataManager.getVariable(ArgumentMatchers.eq(this.contextUtil.getCurrentProgramUUID()),
+			ArgumentMatchers.anyInt(), ArgumentMatchers.eq(true))).thenReturn(var);
+		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(ArgumentMatchers.anyBoolean()))
 				.thenReturn(MethodTestDataInitializer.createMethodList(5));
 		final String result = this.fieldbookServiceImpl.resolveNameVarValue(mvar);
 		Assert.assertEquals("The result's value should be " + FieldbookServiceTest.METHOD_DESCRIPTION,
@@ -841,5 +836,24 @@ public class FieldbookServiceTest {
 		final String result = this.fieldbookServiceImpl.getDisplayName(location);
 		Assert.assertEquals("The result's value should be " + FieldbookServiceTest.LOCATION_NAME,
 				FieldbookServiceTest.LOCATION_NAME, result);
+	}
+
+	@Test
+	public void testGetGermplasmListChecksSize() {
+		final Variable variable = VariableTestDataInitializer.createVariable(DataType.CATEGORICAL_VARIABLE);
+		this.possibleValuesCache.addPossibleValuesByDataType(DataType.CATEGORICAL_VARIABLE,
+			this.nonLocationVariable.getPossibleValues());
+
+		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
+			TermId.ENTRY_TYPE.getId(), true)).thenReturn(variable);
+
+		final List<ValueReference> entryTypes = ValueReferenceTestDataInitializer.createPossibleValues();
+		final List<Integer> checkEntryTypeIds = new ArrayList<>();
+		for(final ValueReference entryType: entryTypes) {
+			checkEntryTypeIds.add(entryType.getId() - 1);
+		}
+		entryTypes.add(new ValueReference(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId(), SystemDefinedEntryType.TEST_ENTRY.getEntryTypeName(), SystemDefinedEntryType.TEST_ENTRY.getEntryTypeValue()));
+		this.fieldbookServiceImpl.getGermplasmListChecksSize(1);
+		Mockito.verify(this.fieldbookMiddlewareService).countListDataProjectByListIdAndEntryTypeIds(1, checkEntryTypeIds);
 	}
 }

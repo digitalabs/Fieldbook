@@ -11,6 +11,7 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -23,15 +24,18 @@ import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.ErrorCode;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.Role;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -47,40 +51,43 @@ import com.efficio.fieldbook.web.common.bean.StudyDetails;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.google.common.collect.Lists;
 
-import junit.framework.Assert;
 
 public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTest {
 
 	@Resource
 	private ReviewStudyDetailsController reviewStudyDetailsController;
-	
+
 	@Mock
 	private FieldbookService fieldbookMWService;
-	
+
 	@Mock
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
-	
+
 	@Mock
 	private ContextUtil contextUtil;
-	
+
 	private Workbook workbook;
-	
+
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
-		
+
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
 		this.reviewStudyDetailsController.setFieldbookMiddlewareService(this.fieldbookMWService);
 		this.reviewStudyDetailsController.setFieldbookService(this.fieldbookService);
-		Mockito.doReturn(workbook).when(this.fieldbookMWService).getStudyVariableSettings(1);
-		this.mockStandardVariables(workbook.getAllVariables(), this.fieldbookMWService, this.fieldbookService);
-		
+		Mockito.doReturn(this.workbook).when(this.fieldbookMWService).getStudyVariableSettings(1);
+		this.mockStandardVariables(this.workbook.getAllVariables(), this.fieldbookMWService, this.fieldbookService);
+
 		this.reviewStudyDetailsController.setContextUtil(this.contextUtil);
 		Mockito.doReturn(this.PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
+
+		final GermplasmList germplasmList = new GermplasmList(1);
+		Mockito.when(this.fieldbookMWService.getGermplasmListsByProjectId(1, GermplasmListType.STUDY)).thenReturn(Arrays.asList(germplasmList));
+		Mockito.when(this.fieldbookService.getGermplasmListChecksSize(germplasmList.getId())).thenReturn(2L);
 	}
 
 	@Test
-	public void testAddErrorMessageToResultForStudy() throws Exception {
+	public void testAddErrorMessageToResultForStudy() {
 		final StudyDetails details = new StudyDetails();
 
 		this.reviewStudyDetailsController.addErrorMessageToResult(details,
@@ -91,7 +98,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 						+ " wish to see the details of this study.",
 				details.getErrorMessage());
 	}
-	
+
 	@Test
 	public void testShowStudySummaryEnvironmentsWithoutAnalysisVariables() {
 		final int id = 1;
@@ -116,8 +123,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		}
 		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be found under Study Conditions of the Summary page.",
 				hasAnalysisVariable);
-		Mockito.verify(fieldbookService).getPersonByUserId(NumberUtils.toInt(this.workbook.getStudyDetails().getCreatedBy()));
-
+		Mockito.verify(this.fieldbookService).getPersonByUserId(NumberUtils.toInt(this.workbook.getStudyDetails().getCreatedBy()));
 	}
 
 	@Test
@@ -132,6 +138,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		Assert.assertNotNull(details);
 		final Boolean isSuperAdmin =  (Boolean) model.asMap().get("isSuperAdmin");
 		Assert.assertNotNull(isSuperAdmin);
+		Assert.assertEquals(2L, model.asMap().get("numberOfChecks"));
 	}
 
 	@Test
@@ -143,30 +150,37 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		this.workbook.getStudyDetails().setCreatedBy(null);
 		this.reviewStudyDetailsController.show(id, form, model);
 
-		Mockito.verify(fieldbookService).getPersonByUserId(0);
+		Mockito.verify(this.fieldbookService).getPersonByUserId(0);
 
 	}
-	
+
 	@Test
 	public void testSetIsSuperAdminAttributeForNonSuperAdminUser() {
 		final Model model = new ExtendedModelMap();
-		
+
 		SimpleGrantedAuthority roleAuthority = new SimpleGrantedAuthority(SecurityUtil.ROLE_PREFIX + Role.ADMIN);
 		UsernamePasswordAuthenticationToken loggedInUser = new UsernamePasswordAuthenticationToken("", "", Lists.newArrayList(roleAuthority));
 		SecurityContextHolder.getContext().setAuthentication(loggedInUser);
 		this.reviewStudyDetailsController.setIsSuperAdminAttribute(model);
-		Assert.assertFalse((Boolean)model.asMap().get("isSuperAdmin")); 
+		Assert.assertFalse((Boolean)model.asMap().get("isSuperAdmin"));
 	}
-	
+
 	@Test
 	public void testSetIsSuperAdminAttributeForSuperAdminUser() {
 		final Model model = new ExtendedModelMap();
-		
+
 		SimpleGrantedAuthority roleAuthority = new SimpleGrantedAuthority(SecurityUtil.ROLE_PREFIX + Role.SUPERADMIN);
 		UsernamePasswordAuthenticationToken loggedInUser = new UsernamePasswordAuthenticationToken("", "", Lists.newArrayList(roleAuthority));
 		SecurityContextHolder.getContext().setAuthentication(loggedInUser);
 		this.reviewStudyDetailsController.setIsSuperAdminAttribute(model);
-		Assert.assertTrue((Boolean)model.asMap().get("isSuperAdmin")); 
+		Assert.assertTrue((Boolean)model.asMap().get("isSuperAdmin"));
+	}
+
+	@Test
+	public void getNumberOfChecks() {
+		final long numberOfChecks = this.reviewStudyDetailsController.getNumberOfChecks(1);
+		Assert.assertEquals(2L, numberOfChecks);
+
 	}
 
 	private boolean hasAnalysisVariables(final List<MeasurementVariable> variables) {
@@ -190,7 +204,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 			Mockito.doReturn(stdVar.getId()).when(fieldbookMiddlewareService).getStandardVariableIdByPropertyScaleMethodRole(
 					measurementVariable.getProperty(), measurementVariable.getScale(), measurementVariable.getMethod(),
 					measurementVariable.getRole());
-			Mockito.when(fieldbookService.getValue(Matchers.anyInt(), Matchers.anyString(), Matchers.anyBoolean())).thenReturn("");
+			Mockito.when(fieldbookService.getValue(ArgumentMatchers.anyInt(), ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean())).thenReturn("");
 		}
 	}
 

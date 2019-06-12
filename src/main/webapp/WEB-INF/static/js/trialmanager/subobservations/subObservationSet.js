@@ -692,6 +692,10 @@
 							columnData.isFiltered = true;
 						}
 						return map;
+					}, {}),
+					variableTypeMap: $scope.columnsObj.columns.reduce(function (map, column) {
+						map[column.columnData.termId] = column.columnData.variableType;
+						return map;
 					}, {})
 				};
 			}
@@ -762,7 +766,7 @@
 			}
 
 			function initCompleteCallback() {
-				table().columns('.variates').every(function () {
+				table().columns().every(function () {
 					$(this.header()).prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#1b95b2;"' +
 						' ng-if="isVariableBatchActionSelected(' + this.index() + ')"> </span>')($scope))
 						.append($compile('<span class="glyphicon glyphicon-filter" ' +
@@ -1170,6 +1174,7 @@
 					if (columnData.termId === 8240 || columnData.termId === 8250) {
 						columnsDef.push({
 							targets: columns.length - 1,
+							orderable: false,
 							render: function (data, type, full, meta) {
 								return '<a class="gid-link" href="javascript: void(0)" ' +
 									'onclick="openGermplasmDetailsPopopWithGidAndDesig(\'' +
@@ -1229,6 +1234,7 @@
 					} else {
 						columnsDef.push({
 							targets: columns.length - 1,
+							orderable: false,
 							render: function (data, type, full, meta) {
 
 								if (!data) {

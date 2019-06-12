@@ -354,7 +354,6 @@
 					
 					$scope.$on('importedDesignReset', function() {
 						$scope.resetExperimentalDesignRelatedVariables();
-						$scope.deleteDesign();
 					});
 
 					$scope.toggleDesignView = function() {

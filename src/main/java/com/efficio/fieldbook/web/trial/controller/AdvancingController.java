@@ -14,39 +14,51 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
-import org.generationcp.commons.constant.AppConstants;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.constant.ColumnLabels;
+import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.Property;
+import org.generationcp.middleware.domain.ontology.Scale;
+import org.generationcp.middleware.domain.ontology.Variable;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -63,6 +75,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -115,6 +128,8 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	@Resource
 	private OntologyDataManager ontologyDataManager;
 
+	@Resource
+	private DatasetService datasetService;
 
 	@Override
 	public String getContentName() {
@@ -133,6 +148,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@RequestMapping(value = "/{studyId}", method = RequestMethod.GET)
+	@Transactional
 	public String show(@ModelAttribute("advancingStudyForm") AdvancingStudyForm form, Model model, HttpServletRequest req,
 		HttpSession session, @PathVariable int studyId, @RequestParam(required = false) Set<String> selectedInstances,
 		@RequestParam(required = false) String noOfReplications, @RequestParam(required = false) String advanceType)
@@ -147,10 +163,29 @@ public class AdvancingController extends AbstractBaseFieldbookController {
         form.setSelectedReplications(Sets.newHashSet("1"));
         form.setStudyId(Integer.toString(studyId));
 
-		form.setMethodVariates(this.filterVariablesByProperty(this.userSelection.getSelectionVariates(),
-				AppConstants.PROPERTY_BREEDING_METHOD.getString()));
-		form.setLineVariates(this.filterVariablesByProperty(this.userSelection.getSelectionVariates(),
-				AppConstants.PROPERTY_PLANTS_SELECTED.getString()));
+
+		final Workbook workbook = this.fieldbookMiddlewareService.getStudyDataSet(this.userSelection.getWorkbook().getStudyDetails().getId());
+		final DatasetDTO datasetDTO = this.datasetService.getDataset(this.userSelection.getWorkbook().getMeasurementDatesetId());
+		this.fieldbookMiddlewareService.loadAllObservations(workbook);
+		this.userSelection.getWorkbook().setObservations(workbook.getObservations());
+		final List<SettingDetail> detailList = new ArrayList<>();
+
+		for (final MeasurementVariable var : datasetDTO.getVariables()) {
+			if (var.getVariableType() == VariableType.SELECTION_METHOD) {
+
+				final SettingDetail detail = this.createSettingDetailWithVariableType(var.getTermId(), var.getName(), VariableType.SELECTION_METHOD);
+
+				detail.getVariable().setOperation(Operation.UPDATE);
+
+				detail.setDeletable(true);
+
+				detailList.add(detail);
+			}
+		}
+		form.setMethodVariates(this.filterVariablesByProperty(detailList,
+				AppConstants.PROPERTY_BREEDING_METHOD.getString())); //TODO FIX THIS.
+		form.setLineVariates(this.filterVariablesByProperty(detailList,
+				AppConstants.PROPERTY_PLANTS_SELECTED.getString())); //TODO FIX THIS.
 		form.setPlotVariates(form.getLineVariates());
 
 		Date currentDate = DateUtil.getCurrentDate();
@@ -541,5 +576,56 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			}
 		}
 		return this.messageSource.getMessage("error.advancing.study.empty.method", new String[] {name}, locale);
+	}
+
+	protected SettingDetail createSettingDetailWithVariableType(final int id, final String alias, final VariableType variableType) {
+		final Variable variable = this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, false);
+
+		String variableName = variable.getName();
+		if (alias != null && !alias.isEmpty()) {
+			variableName = alias;
+		}
+
+		final Property property = variable.getProperty();
+		final Scale scale = variable.getScale();
+		final org.generationcp.middleware.domain.ontology.Method method = variable.getMethod();
+
+		final Double minValue = variable.getMinValue() == null ? null : Double.parseDouble(variable.getMinValue());
+		final Double maxValue = variable.getMaxValue() == null ? null : Double.parseDouble(variable.getMaxValue());
+
+		final SettingVariable settingVariable = new SettingVariable(variableName, variable.getDefinition(),
+			variable.getProperty().getName(), scale.getName(), method.getName(), variableType.getRole().name(),
+			scale.getDataType().getName(), scale.getDataType().getId(), minValue, maxValue);
+
+		// NOTE: Using variable type which is used in project properties
+		settingVariable.setVariableTypes(Collections.singleton(variableType));
+
+		settingVariable.setCvTermId(variable.getId());
+		settingVariable.setCropOntologyId(property.getCropOntologyId());
+
+		if (variable.getFormula() != null) {
+			settingVariable.setFormula(variable.getFormula());
+		}
+
+		if (!property.getClasses().isEmpty()) {
+			settingVariable.setTraitClass(property.getClasses().iterator().next());
+		}
+
+		settingVariable.setOperation(Operation.ADD);
+		final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id);
+
+		final SettingDetail settingDetail = new SettingDetail(settingVariable, possibleValues, null, false);
+		settingDetail.setRole(variableType.getRole());
+		settingDetail.setVariableType(variableType);
+
+		if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
+			settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
+		}
+		settingDetail.setPossibleValuesToJson(possibleValues);
+		final List<ValueReference> possibleValuesFavorite =
+			this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID(), false);
+		settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
+		settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+		return settingDetail;
 	}
 }

@@ -437,11 +437,17 @@
 						showErrorMessage('', 'There are some observations that have invalid value, please correct them before proceeding');
 						return false;
 					}
-					if (service.applicationData.unsavedTreatmentFactorsAvailable) {
+					if (service.applicationData.unsavedTreatmentFactorsAvailable && studyStateService.hasUnsavedData()) {
 						showErrorMessage('', unsavedTreatmentFactor);
 						/*} else if (service.applicationData.unappliedChangesAvailable) {
 							showAlertMessage('', 'Changes have been made that may affect the experimental design of this study. Please ' +
 									'regenerate the design on the Experimental Design tab', 10000); */
+					} else if (service.applicationData.unsavedTreatmentFactorsAvailable) {
+							showErrorMessage('', 'CANNOT SAVE TREATMENT FACTORS. Please generate the design and then it will be saved automatically.');
+							/*} else if (service.applicationData.unappliedChangesAvailable) {
+								showAlertMessage('', 'Changes have been made that may affect the experimental design of this study. Please ' +
+										'regenerate the design on the Experimental Design tab', 10000); */
+
 					} else if (service.isCurrentTrialDataValid(service.isOpenStudy())) {
                         // Hide Discard Imported Data button when the user presses Save button
                         $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');

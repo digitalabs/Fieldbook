@@ -36,6 +36,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private String checkInsertionManner;
 	private Integer replicationPercentage;
 	private List<Environment> environments;
+	private TrialSettingsBean trialSettings;
 
 	/*
 	 * 1 - single col 2 - single row 3 - adjacent
@@ -248,5 +249,13 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 
 	public void setEnvironments(List<Environment> environments) {
 		this.environments = environments;
+	}
+
+	public TrialSettingsBean getTrialSettings() {
+		return trialSettings;
+	}
+
+	public void setTrialSettings(final TrialSettingsBean trialSettings) {
+		this.trialSettings = trialSettings;
 	}
 }

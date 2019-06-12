@@ -317,6 +317,9 @@ public class ExpDesignController extends BaseTrialController {
 	}
 
 	private void saveDesignGenerated(final ExpDesignParameterUi expDesign) {
+
+		this.populateSettingData(this.userSelection.getStudyLevelConditions(), expDesign.getTrialSettings().getUserInput());
+
 		this.initializeBasicUserSelectionLists();
 		this.addDeletedSettingsList();
 		final Map<String, TreatmentFactorData> treatmentFactorItems = convertTreatmentFactorMapToTreatmentFactorDataMap(expDesign.getTreatmentFactorsData());

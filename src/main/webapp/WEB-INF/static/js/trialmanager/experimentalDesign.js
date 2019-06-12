@@ -234,6 +234,7 @@
 						}
 
 						environmentData.environments = TrialManagerDataService.currentData.environments.environments;
+						environmentData.trialSettings =TrialManagerDataService.currentData.trialSettings;
 						TrialManagerDataService.generateExpDesign(environmentData).then(
 							function(response) {
 								if (response.valid === true) {

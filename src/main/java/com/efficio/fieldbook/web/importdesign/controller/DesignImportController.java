@@ -466,6 +466,7 @@ public class DesignImportController extends SettingsController {
 	@RequestMapping(value = "/generate", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
 	public Map<String, Object> generateMeasurements(@RequestBody final GenerateDesignInput generateDesignInput) {
 
+		this.populateSettingData(this.userSelection.getStudyLevelConditions(), generateDesignInput.getTrialSettings().getUserInput());
 		final EnvironmentData environmentData = generateDesignInput.getEnvironmentData();
 		final Integer startingEntryNo = generateDesignInput.getStartingEntryNo();
 		final Integer startingPlotNo = generateDesignInput.getStartingPlotNo();
@@ -699,6 +700,7 @@ public class DesignImportController extends SettingsController {
 
 		final List<SettingDetail> variatesList = new ArrayList<>();
 
+		// TODO: MARK FOR DELETE IBP-2689
 		if (this.userSelection.getBaselineTraitsList() != null) {
 			variatesList.addAll(this.userSelection.getBaselineTraitsList());
 		}

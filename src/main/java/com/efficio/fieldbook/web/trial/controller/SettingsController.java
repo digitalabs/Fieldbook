@@ -798,4 +798,16 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			this.userSelection.setSelectionVariates(new ArrayList<SettingDetail>());
 		}
 	}
+
+	protected void populateSettingData(final List<SettingDetail> details, final Map<String, String> values) {
+		if (details == null || details.isEmpty()) {
+			return;
+		}
+
+		for (final SettingDetail detail : details) {
+			if (values.containsKey(detail.getVariable().getCvTermId().toString())) {
+				detail.setValue(values.get(detail.getVariable().getCvTermId().toString()));
+			}
+		}
+	}
 }

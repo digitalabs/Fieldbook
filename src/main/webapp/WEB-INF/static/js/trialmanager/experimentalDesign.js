@@ -229,6 +229,7 @@
 						if (!$scope.doValidate()) {
 							return;
 						}
+						$scope.measurementDetails.hasMeasurement = true;
                         TrialManagerDataService.performDataCleanup();
 						var environmentData = angular.copy($scope.data);
 						environmentData.startingEntryNo = TrialManagerDataService.currentData.experimentalDesign.startingEntryNo;
@@ -263,6 +264,7 @@
 											showErrorMessage('', response.message);
 										}
 									}
+									$scope.measurementDetails.hasMeasurement = false;
 								}
 							}, function(errResponse) {
 								showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);

@@ -109,23 +109,28 @@
 					};
 
 					$scope.deleteDesign = function () {
-						TrialManagerDataService.deleteGenerateExpDesign(studyContext.measurementDatasetId).then(
-							function (response) {
-								if (response.valid === true) {
-									showSuccessfulMessage('', response.message);
-									window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
-									//TODO: update the status is not gonna be necessary if reopen the study.
-									/*$scope.measurementDetails.hasMeasurement = false;
-									studyStateService.updateGeneratedDesign(false);
-									TrialManagerDataService.applicationData.unsavedTreatmentFactorsAvailable = false;*/
-								} else {
-									showErrorMessage('', 'Something went wrong deleting the design.');
-								}
+						var modalConfirmDelete = $rootScope.openConfirmModal('With deleting the experimental design all taken observations will be lost. Do you want to proceed?', 'Yes','No');
+						modalConfirmDelete.result.then(function (shouldContinue) {
+							if (shouldContinue) {
+								TrialManagerDataService.deleteGenerateExpDesign(studyContext.measurementDatasetId).then(
+									function (response) {
+										if (response.valid === true) {
+											showSuccessfulMessage('', response.message);
+											window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
+											//TODO: update the status is not gonna be necessary if reopen the study.
+											/*$scope.measurementDetails.hasMeasurement = false;
+											studyStateService.updateGeneratedDesign(false);
+											TrialManagerDataService.applicationData.unsavedTreatmentFactorsAvailable = false;*/
+										} else {
+											showErrorMessage('', 'Something went wrong deleting the design.');
+										}
 
-							}, function (errResponse) {
-								showErrorMessage('', 'Something went wrong deleting the design.');
+									}, function (errResponse) {
+										showErrorMessage('', 'Something went wrong deleting the design.');
+									}
+								);
 							}
-						);
+						});
 					};
 
 					//FIXME: cheating a bit for the meantime.

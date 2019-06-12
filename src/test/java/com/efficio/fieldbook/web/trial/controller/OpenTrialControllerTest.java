@@ -1323,18 +1323,7 @@ public class OpenTrialControllerTest {
 		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.ENVIRONMENT_DATA_TAB), Matchers.any(TabInfo.class));
 		Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.TRIAL_SETTINGS_DATA),
 				Matchers.any(TabInfo.class));
-		/*Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENTS_DATA),
-				Matchers.any(TabInfo.class));*/
-		// TODO: MARK FOR DELETE IBP-2789
-		/*Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.SELECTION_VARIABLE_DATA),
-				Matchers.any(TabInfo.class));*/
 		Mockito.verify(this.model).addAttribute(Matchers.eq("experimentalDesignData"), Matchers.any(TabInfo.class));
-		// TODO: MARK FOR DELETE IBP-2789
-		//Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENT_DATA_EXISTING), Matchers.anyBoolean());
-		//Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST), Matchers.anyBoolean());
-		// TODO: MARK FOR DELETE IBP-2789
-		/*Mockito.verify(this.model).addAttribute(Matchers.eq(OpenTrialController.MEASUREMENT_ROW_COUNT),
-				Matchers.anyLong());*/
 		Mockito.verify(this.model).addAttribute(Matchers.eq("treatmentFactorsData"), Matchers.any(TabInfo.class));
         Mockito.verify(this.model).addAttribute(Matchers.eq("studyTypes"), Matchers.anyListOf(StudyType.class));
 		Mockito.verify(this.model).addAttribute("createTrialForm", this.createTrialForm);

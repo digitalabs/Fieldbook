@@ -153,6 +153,9 @@ var ImportDesign = (function() {
 			var environmentData =
 				angular.copy(ImportDesign.studyManagerCurrentData().environments);
 
+			var trialSettingsData =
+				angular.copy(ImportDesign.studyManagerCurrentData().trialSettings);
+
 			$.each(environmentData.environments, function(key, data) {
 				$.each(data.managementDetailValues, function(key, value) {
 					if (value && value.id) {
@@ -166,7 +169,7 @@ var ImportDesign = (function() {
 			var designTypeId = 3;
 			var data = service.retrieveGenerateDesignInput(designTypeId);
 			data.environmentData = environmentData;
-
+			data.trialSettings = trialSettingsData;
 			$.ajax({
 				type: 'POST',
 				url: '/Fieldbook/DesignImport/generate',
@@ -213,8 +216,10 @@ var ImportDesign = (function() {
 			angular.element('#mainApp').scope().$apply();
 
 			ImportDesign.getTrialManagerDataService().clearUnappliedChangesFlag();
+			ImportDesign.getStudyStateService().updateGeneratedDesign(true);
 			//TODO Localise the message
 			showSuccessfulMessage('','The study design was imported successfully and saved. You can now access the observations tab. The observations data were saved automatically.');
+			window.location = '/Fieldbook/TrialManager/openTrial/' + ImportDesign.getTrialManagerDataService().currentData.basicDetails.studyID;
 		},
 
 		loadReviewDesignData: function() {

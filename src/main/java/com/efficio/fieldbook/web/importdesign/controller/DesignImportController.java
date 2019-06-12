@@ -478,6 +478,50 @@ public class DesignImportController extends SettingsController {
 			this.generateDesign(environmentData, this.userSelection.getDesignImportData(),
 					ExperimentDesignType.CUSTOM_IMPORT, this.generateAdditionalParams(startingEntryNo, startingPlotNo));
 
+			this.initializeBasicUserSelectionLists();
+
+			final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, this.userSelection.getStudyName(), this.userSelection,
+				null, this.contextUtil.getCurrentProgramUUID());
+
+			final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.userSelection.getExpDesignParams(),
+				this.userSelection.getExpDesignVariables(),	this.fieldbookMiddlewareService, this.userSelection.getExperimentalDesignVariables(),
+				this.contextUtil.getCurrentProgramUUID());
+
+			workbook.setStudyDetails(this.userSelection.getWorkbook().getStudyDetails());
+			this.userSelection.setMeasurementRowList(null);
+			this.userSelection.getWorkbook().setOriginalObservations(null);
+			this.userSelection.getWorkbook().setObservations(null);
+
+			this.assignOperationOnExpDesignVariables(workbook.getConditions());
+
+			workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
+			workbook.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());
+			final int trialDatasetId = this.userSelection.getWorkbook().getTrialDatasetId();
+			final int measurementDatasetId = this.userSelection.getWorkbook().getMeasurementDatesetId();
+			workbook.setTrialDatasetId(trialDatasetId);
+			workbook.setMeasurementDatesetId(measurementDatasetId);
+
+			final List<MeasurementVariable> variablesForEnvironment = new ArrayList<>();
+			variablesForEnvironment.addAll(workbook.getTrialVariables());
+
+			final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(generateDesignInput.getEnvironmentData().getEnvironments(), variablesForEnvironment,
+				this.userSelection.getExpDesignParams());
+			workbook.setTrialObservations(trialEnvironmentValues);
+
+			this.userSelection.setWorkbook(workbook);
+
+			this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(generateDesignInput.getEnvironmentData().getEnvironments()));
+
+			WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(), this.userSelection.getTemporaryWorkbook());
+			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(), this.userSelection.getWorkbook().getObservations(), false, this.ontologyService,
+				this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
+			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getVariates(), this.userSelection.getWorkbook().getObservations(), true, this.ontologyService,
+				this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
+
+			this.addVariablesFromTemporaryWorkbookToWorkbook(this.userSelection);
+			this.updateObservationsFromTemporaryWorkbookToWorkbook(this.userSelection);
+
+			this.fieldbookMiddlewareService.saveExperimentalDesignGenerated(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(), this.getCurrentProject().getCropType());
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
 			resultsMap.put("environmentSettings", this.userSelection.getTrialLevelVariableList());

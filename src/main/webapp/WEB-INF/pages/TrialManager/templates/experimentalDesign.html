@@ -49,9 +49,13 @@
 										<span>{{currentDesignType.templateName}}</span>
 		                            </div>
 		                            <span class="pull-right">
-											<a ng-hide="!isImportedDesign()" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
-											   class="btn btn-info chs-add-variable" th:text="#{design.import.change}">Change</a>
-		                            </span>
+<!--											<a ng-hide="!isImportedDesign()" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
+											   class="btn btn-info chs-add-variable" th:text="#{design.import.change}">Change</a>-->
+											<a ng-hide="!isImportedDesign()" class="add_top_padding add-bottom-padding">
+												<input type="button" class="btn btn-info" value="Delete Design" ng-disabled="isDeleteDesignDisable()"
+													   ng-click="deleteDesign()"/>
+											</a>
+									</span>
 		                            <div class="add-bottom-padding"
 										ng-show="data.noOfEnvironments &gt;= 0">
 										<b th:text="#{review.study.design.type}"></b>

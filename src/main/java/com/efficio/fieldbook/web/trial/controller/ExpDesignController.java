@@ -26,6 +26,7 @@ import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
@@ -132,6 +133,15 @@ public class ExpDesignController extends BaseTrialController {
 				// only if these variables already exists in the existing trial
 				if (EXPERIMENT_DESIGN_FACTOR_IDS.contains(measurementVariable.getTermId()) && factors.findById(measurementVariable.getTermId()) != null) {
 					measurementVariable.setOperation(Operation.DELETE);
+				}
+			}
+
+			for (MeasurementVariable measurementVariable : this.userSelection.getWorkbook().getFactors()) {
+				for (TreatmentVariable treatmentVariable : this.userSelection.getWorkbook().getTreatmentFactors()) {
+					if (measurementVariable.getTermId() == treatmentVariable.getLevelVariable().getTermId()
+						|| measurementVariable.getTermId() == treatmentVariable.getValueVariable().getTermId()) {
+						measurementVariable.setOperation(Operation.DELETE);
+					}
 				}
 			}
 
@@ -326,8 +336,9 @@ public class ExpDesignController extends BaseTrialController {
 		final Dataset newDataset = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, this.userSelection.getStudyName(), this.userSelection,
 			treatmentFactorItems, this.contextUtil.getCurrentProgramUUID());
 
-		final Workbook workbookTemp = SettingsUtil.convertXmlDatasetToWorkbook(newDataset, this.userSelection.getExpDesignParams(),
-			this.userSelection.getExpDesignVariables(),	this.fieldbookMiddlewareService, this.userSelection.getExperimentalDesignVariables(),
+		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(newDataset, this.userSelection.getExpDesignParams(),
+			this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
+			this.userSelection.getExperimentalDesignVariables(),
 			this.contextUtil.getCurrentProgramUUID());
 
 		workbookTemp.setStudyDetails(this.userSelection.getWorkbook().getStudyDetails());
@@ -340,8 +351,6 @@ public class ExpDesignController extends BaseTrialController {
 
 		this.assignOperationOnExpDesignVariables(workbookTemp.getConditions());
 
-		workbookTemp.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
-		workbookTemp.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());
 		final int trialDatasetId = this.userSelection.getWorkbook().getTrialDatasetId();
 		final int measurementDatasetId = this.userSelection.getWorkbook().getMeasurementDatesetId();
 		workbookTemp.setTrialDatasetId(trialDatasetId);

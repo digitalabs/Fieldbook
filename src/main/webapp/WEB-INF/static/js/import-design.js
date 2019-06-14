@@ -149,20 +149,20 @@ var ImportDesign = (function() {
 
 			//if the design is generated but not saved, the measurements datatable is for preview only (edit is not allowed)
 			//$body.addClass('preview-measurements-only');
-
+			ImportDesign.getTrialManagerDataService().performDataCleanup();
 			var environmentData =
 				angular.copy(ImportDesign.studyManagerCurrentData().environments);
 
 			var trialSettingsData =
 				angular.copy(ImportDesign.studyManagerCurrentData().trialSettings);
 
-			$.each(environmentData.environments, function(key, data) {
+			/*$.each(environmentData.environments, function(key, data) {
 				$.each(data.managementDetailValues, function(key, value) {
 					if (value && value.id) {
 						data.managementDetailValues[key] = value.id;
 					}
 				});
-			});
+			});*/
 
 			var service = ImportDesign.getTrialManagerDataService();
 			// custom import design type id

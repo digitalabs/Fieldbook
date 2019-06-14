@@ -913,6 +913,14 @@
 					_.find(service.currentData.treatmentFactors.currentData, function(item, key) {
 						var settingsVar = service.settings.treatmentFactors.treatmentLevelPairs[key].
 							val(service.currentData.treatmentFactors.currentData[key].variableId).variable;
+
+						if (item.levels <= parseInt('0')) {
+							results.customHeader = 'Invalid Input ';
+							results.customMessage = 'The number of Treatments must be greater than 0';
+							results.hasError = true;
+							return results.hasError;
+						}
+
 						if (!(!settingsVar.maxRange && !settingsVar.minRange)) {
 							_.find(item.labels, function(val, index) {
 

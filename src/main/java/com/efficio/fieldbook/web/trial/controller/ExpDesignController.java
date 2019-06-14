@@ -312,7 +312,9 @@ public class ExpDesignController extends BaseTrialController {
 
 					}
 				}
-				this.saveDesignGenerated(expDesign);
+				if (expParameterOutput.isValid()) {
+					this.saveDesignGenerated(expDesign);
+				}
 			}
 		} catch (final BVDesignException e) {
 			// this should catch when the BV design is not successful

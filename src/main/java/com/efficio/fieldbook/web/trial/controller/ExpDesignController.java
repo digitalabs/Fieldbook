@@ -19,6 +19,7 @@ import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.ExperimentDesignType;
 import org.generationcp.middleware.domain.dms.InsertionMannerItem;
@@ -131,7 +132,8 @@ public class ExpDesignController extends BaseTrialController {
 				// update the operation for experiment design variables
 				// EXP_DESIGN, EXP_DESIGN_SOURCE, NREP, PERCENTAGE_OF_REPLICATION
 				// only if these variables already exists in the existing trial
-				if (EXPERIMENT_DESIGN_FACTOR_IDS.contains(measurementVariable.getTermId()) && factors.findById(measurementVariable.getTermId()) != null) {
+				if (EXPERIMENT_DESIGN_FACTOR_IDS.contains(measurementVariable.getTermId())
+					&& factors.findById(measurementVariable.getTermId()) != null) {
 					measurementVariable.setOperation(Operation.DELETE);
 				}
 			}
@@ -332,53 +334,77 @@ public class ExpDesignController extends BaseTrialController {
 
 		this.initializeBasicUserSelectionLists();
 		this.addDeletedSettingsList();
-		final Map<String, TreatmentFactorData> treatmentFactorItems = convertTreatmentFactorMapToTreatmentFactorDataMap(expDesign.getTreatmentFactorsData());
-		final Dataset newDataset = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, this.userSelection.getStudyName(), this.userSelection,
-			treatmentFactorItems, this.contextUtil.getCurrentProgramUUID());
+		final Map<String, TreatmentFactorData> treatmentFactorItems =
+			convertTreatmentFactorMapToTreatmentFactorDataMap(expDesign.getTreatmentFactorsData());
+		final Dataset newDataset = (Dataset) SettingsUtil
+			.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, this.userSelection.getStudyName(), this.userSelection,
+				treatmentFactorItems, this.contextUtil.getCurrentProgramUUID());
 
 		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(newDataset, this.userSelection.getExpDesignParams(),
 			this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
 			this.userSelection.getExperimentalDesignVariables(),
 			this.contextUtil.getCurrentProgramUUID());
 
-		workbookTemp.setStudyDetails(this.userSelection.getWorkbook().getStudyDetails());
+		workbook.setStudyDetails(this.userSelection.getWorkbook().getStudyDetails());
 		this.userSelection.setMeasurementRowList(null);
 		this.userSelection.getWorkbook().setOriginalObservations(null);
 		this.userSelection.getWorkbook().setObservations(null);
 
-		this.addMeasurementVariablesToTrialObservationIfNecessary(expDesign.getEnvironments(), workbookTemp,
+		this.addMeasurementVariablesToTrialObservationIfNecessary(expDesign.getEnvironments(), workbook,
 			this.userSelection.getTemporaryWorkbook().getTrialObservations());
 
-		this.assignOperationOnExpDesignVariables(workbookTemp.getConditions());
+		this.assignOperationOnExpDesignVariables(workbook.getConditions());
 
 		final int trialDatasetId = this.userSelection.getWorkbook().getTrialDatasetId();
 		final int measurementDatasetId = this.userSelection.getWorkbook().getMeasurementDatesetId();
-		workbookTemp.setTrialDatasetId(trialDatasetId);
-		workbookTemp.setMeasurementDatesetId(measurementDatasetId);
+
+		workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
+		workbook.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());
+		workbook.setTrialDatasetId(trialDatasetId);
+		workbook.setMeasurementDatesetId(measurementDatasetId);
 
 		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<>();
-		variablesForEnvironment.addAll(workbookTemp.getTrialVariables());
+		variablesForEnvironment.addAll(workbook.getTrialVariables());
 
-		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(expDesign.getEnvironments(), variablesForEnvironment,
+		final List<MeasurementRow> trialEnvironmentValues =
+			WorkbookUtil.createMeasurementRowsFromEnvironments(expDesign.getEnvironments(), variablesForEnvironment,
 				this.userSelection.getExpDesignParams());
-		workbookTemp.setTrialObservations(trialEnvironmentValues);
 
-		this.userSelection.setWorkbook(workbookTemp);
+		workbook.setTrialObservations(trialEnvironmentValues);
+
+		this.userSelection.setWorkbook(workbook);
 
 		this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(expDesign.getEnvironments()));
-		WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(), this.userSelection.getTemporaryWorkbook());
 
-		WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(), this.userSelection.getWorkbook().getObservations(), false, this.ontologyService,
-			this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
-		WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getVariates(), this.userSelection.getWorkbook().getObservations(), true, this.ontologyService,
-			this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
+		WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(),
+			this.userSelection.getTemporaryWorkbook());
+
+		WorkbookUtil
+			.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(), this.userSelection.getWorkbook().getObservations(),
+				false, this.ontologyService,
+				this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
+		WorkbookUtil
+			.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getVariates(), this.userSelection.getWorkbook().getObservations(),
+				true, this.ontologyService,
+				this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
 
 		this.addVariablesFromTemporaryWorkbookToWorkbook(this.userSelection);
+
 		this.updateObservationsFromTemporaryWorkbookToWorkbook(this.userSelection);
 
 		this.userSelection.setTemporaryWorkbook(null);
 
-		this.fieldbookMiddlewareService.saveExperimentalDesignGenerated(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(), this.getCurrentProject().getCropType());
+		this.userSelection.getWorkbook().setObservations(this.userSelection.getMeasurementRowList());
+
+		this.fieldbookService
+			.createIdCodeNameVariablePairs(this.userSelection.getWorkbook(), AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+
+		this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
+			AppConstants.ID_NAME_COMBINATION.getString(), true);
+
+		this.fieldbookMiddlewareService
+			.saveExperimentalDesignGenerated(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(),
+				this.getCurrentProject().getCropType());
 	}
 
 	private Map<String, TreatmentFactorData> convertTreatmentFactorMapToTreatmentFactorDataMap(final Map treatmentFactorsData) {

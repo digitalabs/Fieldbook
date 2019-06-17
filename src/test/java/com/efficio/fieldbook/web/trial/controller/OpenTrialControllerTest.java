@@ -34,7 +34,6 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.ListDataProjectTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
-import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.ExperimentDesignType;
@@ -69,6 +68,7 @@ import org.generationcp.middleware.pojos.dms.StudyType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.SampleListService;
+import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
 import org.generationcp.middleware.util.Util;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
@@ -172,6 +172,9 @@ public class OpenTrialControllerTest {
 	@Mock
 	private DatasetTypeService datasetTypeService;
 
+	@Mock
+	private DatasetService datasetService;
+
 	@Before
 	public void setUp() {
 		final Project project = this.createProject();
@@ -199,8 +202,8 @@ public class OpenTrialControllerTest {
 		Mockito.when(factors.findById(Matchers.anyInt())).thenReturn(null);
 		Mockito.when(this.studyDataManager.getAllStudyFactors(Matchers.anyInt())).thenReturn(factors);
 
-		final List<SampleListDTO> sampleListDTOs = new ArrayList<>();
-		Mockito.when(this.sampleListService.getSampleLists(Matchers.<Integer>anyList())).thenReturn(sampleListDTOs);
+/*		final List<SampleListDTO> sampleListDTOs = new ArrayList<>();
+		Mockito.when(this.sampleListService.getSampleLists(Matchers.<Integer>anyList())).thenReturn(sampleListDTOs);*/
 
 		this.createTestVariable();
 		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class), Matchers.anyBoolean())).thenReturn(this.testVariable);
@@ -214,9 +217,9 @@ public class OpenTrialControllerTest {
 		Mockito.doReturn(datasetTypes).when(this.datasetTypeService).getObservationDatasetTypeIds();
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyTypeDto.getTrialDto());
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
-		final List<Integer> datasetIds = new ArrayList<>();
-		datasetIds.add(4);
-		Mockito.doReturn(new ArrayList<>()).when(this.sampleListService).getSampleLists(datasetIds);
+		//final List<Integer> datasetIds = new ArrayList<>();
+		//datasetIds.add(4);
+		//Mockito.doReturn(new ArrayList<>()).when(this.sampleListService).getSampleLists(datasetIds);
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.STUDY_ID)).thenReturn(workbook);
 		final Study study = new Study();
 		study.setStudyType(StudyTypeDto.getTrialDto());
@@ -306,8 +309,8 @@ public class OpenTrialControllerTest {
 					model.containsAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB));
 			Assert.assertTrue("Controller does not properly set into the model the data for the Study settings tab",
 					model.containsAttribute("trialSettingsData"));
-			Assert.assertTrue("Controller does not properly set into the model the data for the measurements tab",
-					model.containsAttribute("measurementsData"));
+/*			Assert.assertTrue("Controller does not properly set into the model the data for the measurements tab",
+					model.containsAttribute("measurementsData"));*/
 			Assert.assertTrue("Controller does not properly set into the model the data for the experimental design tab",
 					model.containsAttribute("experimentalDesignData"));
 			Assert.assertTrue("Controller does not properly set into the model the data for the treatment factors tab",
@@ -369,10 +372,6 @@ public class OpenTrialControllerTest {
 				(List<SettingDetail>) experimentsDataTabInfo.getSettingMap().get("trialConditionDetails");
 		settingDetails.addAll(managementDetailList);
 		settingDetails.addAll(conditionDetails);
-
-		final TabInfo measurementsDataTabInfo = (TabInfo) modelMap.get("measurementsData");
-		settingDetails.addAll(measurementsDataTabInfo.getSettings());
-
 		return settingDetails;
 	}
 
@@ -1083,9 +1082,9 @@ public class OpenTrialControllerTest {
 		final Study study = new Study();
 		study.setStudyType(StudyTypeDto.getTrialDto());
 
-		Mockito.when(
+/*		Mockito.when(
 				this.variableDataManager.getVariable(Matchers.anyString(), Matchers.anyInt(), Matchers.anyBoolean()))
-				.thenReturn(VariableTestDataInitializer.createVariable());
+				.thenReturn(VariableTestDataInitializer.createVariable());*/
 
 		// Verify that workbook has Analysis and/or Analysis Summary variables
 		// beforehand to check that they were later removed
@@ -1232,9 +1231,9 @@ public class OpenTrialControllerTest {
 	@Test
 	public void testSubmitWhereReplaceIsZero() {
 		final TrialData data = this.setUpTrialData();
-		Mockito.when(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(Matchers.eq(1), Matchers.anyListOf(Integer.class))).thenReturn(true);
-		final long experimentCount = 10;
-		Mockito.when(this.studyDataManager.countExperiments(Matchers.eq(1))).thenReturn(experimentCount);
+		//Mockito.when(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(Matchers.eq(1), Matchers.anyListOf(Integer.class))).thenReturn(true);
+		//final long experimentCount = 10;
+		//Mockito.when(this.studyDataManager.countExperiments(Matchers.eq(1))).thenReturn(experimentCount);
 
 		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
 		data.setBasicDetails(new BasicDetails());
@@ -1247,14 +1246,13 @@ public class OpenTrialControllerTest {
 		/*Assert.assertEquals("The measurement row count should be " + experimentCount, experimentCount,
 				returnVal.get(OpenTrialController.MEASUREMENT_ROW_COUNT));*/
 
-		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(Matchers.any(Workbook.class), Matchers.anyString(),
-				Matchers.anyBoolean());
+		Mockito.verify(this.fieldbookMiddlewareService).saveWorkbookVariablesAndObservations(Matchers.any(Workbook.class), Matchers.anyString());
 		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(Matchers.any(Workbook.class), Matchers.anyListOf(
 				SettingDetail.class),
 				Matchers.anyString(), Matchers.anyBoolean());
 		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(Matchers.anyInt(), ArgumentMatchers.<String>isNull(), ArgumentMatchers.<String>isNull(),
 				Matchers.any(Workbook.class));
-		Mockito.verify(this.fieldbookMiddlewareService).hasAdvancedOrCrossesList(Matchers.anyInt());
+		/*Mockito.verify(this.fieldbookMiddlewareService).hasAdvancedOrCrossesList(Matchers.anyInt());*/
 	}
 
 	private TrialData setUpTrialData() {

@@ -653,7 +653,7 @@
 						var columnData = column.columnData;
 						columnData.isFiltered = false;
 
-						if (columnData.dataTypeCode === 'T') {
+						if (isTextFilter(columnData)) {
 							return map;
 						}
 
@@ -670,7 +670,7 @@
 								map[columnData.termId] = [columnData.query];
 							}
 						} else if (columnData.query) {
-							if (columnData.dataTypeCode === 'D') {
+							if (columnData.dataType === 'Date') {
 								map[columnData.termId] = [($.datepicker.formatDate("yymmdd", columnData.query))];
 							} else {
 								map[columnData.termId] = [(columnData.query)];
@@ -684,7 +684,7 @@
 					}, {}),
 					filteredTextValues: $scope.columnsObj.columns.reduce(function (map, column) {
 						var columnData = column.columnData;
-						if (columnData.dataTypeCode !== 'T') {
+						if (!isTextFilter(columnData)) {
 							return map;
 						}
 						if (columnData.query) {
@@ -698,6 +698,23 @@
 						return map;
 					}, {})
 				};
+			}
+
+			function isTextFilter(columnData) {
+
+				// Factors like GID, GROUPGID, LINE_GID and TESTER_GID have 'Germplasm List' datatype but they should be treated as numeric
+				if (columnData.name === 'GID' || columnData.dataType === 'GROUPGID'
+					|| columnData.dataType === 'LINE_GID' || columnData.dataType === 'LINE_GID') {
+					return false;
+				}
+
+				if (columnData.dataType === 'Categorical' || columnData.dataType === 'Numeric'
+					|| columnData.dataType === 'Date') {
+					return false;
+				}
+
+				return true;
+
 			}
 
 			function getDtOptions() {

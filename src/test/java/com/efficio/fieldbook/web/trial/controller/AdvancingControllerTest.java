@@ -6,8 +6,6 @@ import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
@@ -22,7 +20,6 @@ import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -315,7 +312,6 @@ public class AdvancingControllerTest {
 		measurementVariable.setName("SinglePlant");
 
 		Mockito.when(this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), measurementVariable.getTermId(), false)).thenReturn(variable);
-		Mockito.when(this.fieldbookService.getAllPossibleValuesFavorite(TermId.BREEDING_METHOD_ID.getId(), this.contextUtil.getProjectInContext().getUniqueID(), false)).thenReturn(new ArrayList<ValueReference>());
 
 		final DatasetDTO datasetDTO = new DatasetDTO();
 		datasetDTO.setVariables(Lists.newArrayList(measurementVariable));
@@ -323,19 +319,6 @@ public class AdvancingControllerTest {
 		Mockito.when(this.fieldbookProperties.getProgramBreedingMethodsUrl()).thenReturn("programBreedingMethodUrl");
         final Project testProject = new Project();
         testProject.setProjectId(1L);
-
-
-
-        final List<SettingDetail> selectionVariates = Lists.newArrayList();
-        final SettingDetail settingDetail = new SettingDetail();
-        final SettingVariable settingVariable = new SettingVariable();
-        settingVariable.setProperty("Breeding method");
-        settingVariable.setCvTermId(205);
-        settingVariable.setName("SinglePlant");
-
-        settingDetail.setVariable(settingVariable);
-        selectionVariates.add(settingDetail);
-        Mockito.when(this.userSelection.getSelectionVariates()).thenReturn(selectionVariates);
 
         final AdvancingStudyForm form = new AdvancingStudyForm();
         final Model model = new ExtendedModelMap();

@@ -3,7 +3,6 @@ package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookException;
-import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
@@ -18,23 +17,34 @@ import com.google.common.collect.Lists;
 import junit.framework.Assert;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
+import org.generationcp.middleware.domain.dms.DatasetDTO;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.DataType;
+import org.generationcp.middleware.domain.ontology.Property;
+import org.generationcp.middleware.domain.ontology.Scale;
+import org.generationcp.middleware.domain.ontology.Variable;
+import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
@@ -94,6 +104,12 @@ public class AdvancingControllerTest {
 
     @Mock
     private GermplasmDataManager germplasmDataManager;
+
+	@Mock
+	private DatasetService datasetService;
+
+	@Mock
+	protected OntologyVariableDataManager variableDataManager;
 
 	@InjectMocks
 	private final AdvancingController advancingController = Mockito.spy(new AdvancingController());
@@ -279,17 +295,36 @@ public class AdvancingControllerTest {
 
     @Test
     public void testShowAdvanceNurseryGetSuccess(){
-        final Study study = new Study();
+		Mockito.doReturn("ASDFDSAGFDGHSFDJ").when(this.contextUtil).getCurrentProgramUUID();
+		final Project project = new Project();
+		final CropType cropType = new CropType();
+		cropType.setCropName("maize");
+		project.setCropType(cropType);
+		project.setUniqueID("ASDASFGSDSDSDSDSDSDSD");
 
-        Mockito.when(this.fieldbookProperties.getProgramBreedingMethodsUrl()).thenReturn("programBreedingMethodUrl");
+		Mockito.doReturn(project).when(this.contextUtil).getProjectInContext();
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyTypeDto.getTrialDto());
+		WorkbookTestDataInitializer.setTrialObservations(workbook);
+		workbook.getStudyDetails().setId(1011);
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+        Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Mockito.anyInt())).thenReturn(workbook);
+		final Variable variable = this.createSelectionVariable();
+		final MeasurementVariable measurementVariable = new MeasurementVariable();
+		measurementVariable.setTermId(205);
+		measurementVariable.setVariableType(VariableType.SELECTION_METHOD);
+		measurementVariable.setName("SinglePlant");
 
+		Mockito.when(this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), measurementVariable.getTermId(), false)).thenReturn(variable);
+		Mockito.when(this.fieldbookService.getAllPossibleValuesFavorite(TermId.BREEDING_METHOD_ID.getId(), this.contextUtil.getProjectInContext().getUniqueID(), false)).thenReturn(new ArrayList<ValueReference>());
+
+		final DatasetDTO datasetDTO = new DatasetDTO();
+		datasetDTO.setVariables(Lists.newArrayList(measurementVariable));
+		Mockito.when(this.datasetService.getDataset(Mockito.anyInt())).thenReturn(datasetDTO);
+		Mockito.when(this.fieldbookProperties.getProgramBreedingMethodsUrl()).thenReturn("programBreedingMethodUrl");
         final Project testProject = new Project();
         testProject.setProjectId(1L);
 
-        final Project project = new Project();
-        final CropType cropType = new CropType();
-        cropType.setCropName("maize");
-        project.setCropType(cropType);
+
 
         final List<SettingDetail> selectionVariates = Lists.newArrayList();
         final SettingDetail settingDetail = new SettingDetail();
@@ -322,7 +357,7 @@ public class AdvancingControllerTest {
         Assert.assertEquals("SinglePlant",form.getMethodVariates().get(0).getName());
     }
 
-    @Test
+	@Test
     public void testApplyChangeDetailsSuccess() throws IOException {
         final List<ImportedGermplasm> importedGermplasmList = generateGermplasm();
         Mockito.when(this.userSelection.getImportedAdvancedGermplasmList()).thenReturn(importedGermplasmList);
@@ -537,4 +572,41 @@ public class AdvancingControllerTest {
         observations.add(row1);
         return observations;
     }
+
+	private Variable createSelectionVariable() {
+		final Variable variable =new Variable();
+		variable.setName("NPSEL");
+		variable.setDefinition("Number of plants selected - counted (number)");
+		variable.addVariableType(VariableType.SELECTION_METHOD);
+		variable.setAllowsFormula(false);
+		variable.setId(205);
+		Scale scale = new Scale();
+		scale.setDataType(DataType.NUMERIC_VARIABLE);
+		scale.setName("Number");
+		scale.setDefinition("Number");
+		scale.setId(6040);
+		scale.setVocabularyId(1030);
+		scale.setObsolete(false);
+
+		Property property = new Property();
+		property.setName("Breeding method");
+		property.setId(2600);
+		property.setVocabularyId(1010);
+		property.setDefinition("");
+		property.setObsolete(false);
+		property.addClass("Breedingprocess");
+
+		org.generationcp.middleware.domain.ontology.Method method = new org.generationcp.middleware.domain.ontology.Method();
+
+		method.setName("Counted");
+		method.setDefinition("Counting method");
+		method.setObsolete(false);
+		method.setId(4080);
+		method.setId(1020);
+
+		variable.setScale(scale);
+		variable.setProperty(property);
+		variable.setMethod(method);
+		return variable;
+	}
 }

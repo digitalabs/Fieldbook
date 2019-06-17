@@ -4,6 +4,7 @@
 	var subObservationModule = angular.module('subObservation', []);
 	var TRIAL_INSTANCE = 8170,
 		OBS_UNIT_ID = 8201;
+	var SAMPLES = -2;
 	var hiddenColumns = [OBS_UNIT_ID, TRIAL_INSTANCE];
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
@@ -709,7 +710,7 @@
 				}
 
 				if (columnData.dataType === 'Categorical' || columnData.dataType === 'Numeric'
-					|| columnData.dataType === 'Date') {
+					|| columnData.dataType === 'Date' || columnData.termId === SAMPLES) {
 					return false;
 				}
 
@@ -1198,7 +1199,7 @@
 									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
 							}
 						});
-					} else if (columnData.termId === -2) {
+					} else if (columnData.termId === SAMPLES) {
 						// SAMPLES count column
 						columnsDef.push({
 							targets: columns.length - 1,

@@ -932,7 +932,7 @@ public class OpenTrialController extends BaseTrialController {
 		if (!datasetIds.isEmpty()) {
 			return this.sampleListService.getSampleLists(datasetIds);
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
 }

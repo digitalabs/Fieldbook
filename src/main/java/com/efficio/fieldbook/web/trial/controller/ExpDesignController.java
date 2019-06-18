@@ -438,19 +438,6 @@ public class ExpDesignController extends BaseTrialController {
 		return treatmentFactorItems;
 	}
 
-	protected void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions) {
-		final VariableTypeList factors =
-			this.studyDataManager.getAllStudyFactors(this.userSelection.getWorkbook().getStudyDetails().getId());
-
-		for (final MeasurementVariable mvar : conditions) {
-			// update the operation for experiment design variables
-			// EXP_DESIGN, EXP_DESIGN_SOURCE, NREP, PERCENTAGE_OF_REPLICATION
-			// only if these variables already exists in the existing trial
-			if (EXPERIMENT_DESIGN_FACTOR_IDS.contains(mvar.getTermId()) && factors.findById(mvar.getTermId()) != null) {
-				mvar.setOperation(Operation.UPDATE);
-			}
-		}
-	}
 
 	protected List<MeasurementRow> combineNewlyGeneratedMeasurementsWithExisting(final List<MeasurementRow> measurementRows,
 		final UserSelection userSelection, final boolean hasMeasurementData) {

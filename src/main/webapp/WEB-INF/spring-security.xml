@@ -2,9 +2,9 @@
 <bean:beans xmlns:bean="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
-		http://www.springframework.org/schema/security 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/security
 		http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
 	<http pattern="/static/**" security="none"/>
@@ -18,8 +18,6 @@
 		<!--IMPORT_DATASETS-->
 		<intercept-url pattern="/etl" access="hasAnyAuthority('ROLE_SUPERADMIN', 'ROLE_ADMIN', 'ROLE_INFORMATION_MANAGEMENT', 'ROLE_IMPORT_DATASETS')"/>
 
-		<!-- TODO Old OM? - Remove -->
-		<intercept-url pattern="/OntologyManager/manage/variable" access="hasRole('ROLE_ADMIN')"/>
 		<intercept-url pattern="/**" access="isAuthenticated()" />
 		<custom-filter position="PRE_AUTH_FILTER" ref="bmsPreAuthenticationFilter" />
 		<access-denied-handler error-page="/accessDenied"/>
@@ -51,7 +49,7 @@
 	<bean:bean id="workbenchUserDetailsService" class="org.generationcp.commons.security.WorkbenchUserDetailsService">
 		<bean:property name="workbenchDataManager" ref="workbenchDataManager" />
 	</bean:bean>
-	
+
 	<authentication-manager alias="bmsAuthenticationManager">
 		<authentication-provider ref="preAuthenticatedAuthenticationProvider" />
 		<authentication-provider user-service-ref="workbenchUserDetailsService">

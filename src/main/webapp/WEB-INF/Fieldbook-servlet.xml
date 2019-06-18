@@ -292,6 +292,12 @@
 		<constructor-arg ref="workbenchHibernateSessionProvider" />
 	</bean>
 
+	<bean id="permissionService"
+		  class="org.generationcp.middleware.service.api.permission.PermissionServiceImpl"
+		  destroy-method="close">
+		<constructor-arg ref="workbenchHibernateSessionProvider" />
+	</bean>
+
 	<bean id="presetService" factory-bean="managerFactory"
 		  factory-method="getPresetService" scope="request">
 		<aop:scoped-proxy />

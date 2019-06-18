@@ -171,7 +171,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
 			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber, AdvancingStudy advancingParameters, final String plantNo) {
 
-		String selectionNumberToApply = null;
+		String selectionNumberToApply;
 		boolean allPlotsSelected = "1".equals(advancingParameters.getAllPlotsChoice());
 		if (source.isBulk()) {
 			if (allPlotsSelected) {
@@ -303,7 +303,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 					final String nextSequenceNumberString =
 						this.germplasmDataManager.getNextSequenceNumberForCrossName(selectedMethod.getPrefix());
 					//Subtract 1 since we're getting the "next" sequence number, not the current.
-					final Integer currentMaxSequence = Integer.parseInt(nextSequenceNumberString) - 1;
+					final int currentMaxSequence = Integer.parseInt(nextSequenceNumberString) - 1;
 					advancingSource.setCurrentMaxSequence(currentMaxSequence);
 				} else {
 					advancingSource.setCurrentMaxSequence(0);
@@ -366,28 +366,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 
-	void setRulesService(RulesService rulesService) {
-		this.rulesService = rulesService;
-	}
 
 	void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
 		this.germplasmDataManager = germplasmDataManager;
 	}
-
-	void setAdvancingSourceListFactory(AdvancingSourceListFactory advancingSourceListFactory) {
-		this.advancingSourceListFactory = advancingSourceListFactory;
-	}
-
-	void setProcessCodeService(ProcessCodeService processCodeService) {
-		this.processCodeService = processCodeService;
-	}
-
-	void setRuleFactory(RuleFactory ruleFactory) {
-		this.ruleFactory = ruleFactory;
-	}
-
-	void setSeedSourceGenerator(SeedSourceGenerator seedSourceGenerator) {
-		this.seedSourceGenerator = seedSourceGenerator;
-	}
-
 }

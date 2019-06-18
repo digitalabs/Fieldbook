@@ -228,7 +228,7 @@ public class NamingConventionServiceImplTest {
         methodList.add(breedingMethod);
 
         Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Matchers.anyBoolean())).thenReturn(methodList);
-		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(anyInt())).thenReturn(workbook);
+		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(anyInt())).thenReturn(this.workbook);
 
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
@@ -303,7 +303,7 @@ public class NamingConventionServiceImplTest {
         study.setId(2345);
         info.setStudy(study);
 
-		final AdvanceResult advanceResult = namingConventionService.advanceStudy(info, this.workbook);
+		final AdvanceResult advanceResult = this.namingConventionService.advanceStudy(info, this.workbook);
 
         Assert.assertNotNull(advanceResult);
         Assert.assertNotNull(advanceResult.getChangeDetails());
@@ -337,22 +337,22 @@ public class NamingConventionServiceImplTest {
     @Test
 	public void testGenerateCrossesListForMethodWithSequenceCount() throws RuleException{
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
-		ImportedCrosses importedCross = new ImportedCrosses();
-		ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(1, "femaleDesig", "femalePedig");
+		final ImportedCrosses importedCross = new ImportedCrosses();
+		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(1, "femaleDesig", "femalePedig");
 		importedCross.setFemaleParent(femaleParent);
-		ImportedGermplasmParent maleParent = new ImportedGermplasmParent(2, "maleDesig", "malePedig");
+		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(2, "maleDesig", "malePedig");
 		importedCross.setMaleParents(Arrays.asList(maleParent));
 		importedCrosses.add(importedCross);
 
 		final AdvancingSourceList rows = new AdvancingSourceList();
-		AdvancingSource advancingSource = new AdvancingSource();
+		final AdvancingSource advancingSource = new AdvancingSource();
 		advancingSource.setBreedingMethodId(101);
 		rows.setRows(Arrays.asList(advancingSource));
 
 		final AdvancingStudy advancingParameters = Mockito.mock(AdvancingStudy.class);
 		final Workbook workbook = Mockito.mock(Workbook.class);
 		final List<Integer> gids = Arrays.asList(1);
-		Method method = new Method();
+		final Method method = new Method();
 		method.setMid(101);
 		method.setPrefix("IB");
 		method.setCount(NamingConventionServiceImpl.SEQUENCE);
@@ -363,7 +363,7 @@ public class NamingConventionServiceImplTest {
 		Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(Arrays.asList("name"));
 		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace("naming")).thenReturn(new String[] {NamingConventionServiceImpl.SEQUENCE});
 
-		List<ImportedCrosses> results = this.namingConventionService.generateCrossesList(importedCrosses, rows, advancingParameters, workbook, gids);
+		final List<ImportedCrosses> results = this.namingConventionService.generateCrossesList(importedCrosses, rows, advancingParameters, workbook, gids);
 		Assert.assertEquals("name", importedCross.getDesig());
 		Mockito.verify(this.fieldbookMiddlewareService).getAllBreedingMethods(false);
 		Mockito.verify(this.germplasmDataManager).isMethodNamingConfigurationValid(method);
@@ -375,22 +375,22 @@ public class NamingConventionServiceImplTest {
 	@Test
 	public void testGenerateCrossesListForMethodWithCountNotSequence() throws RuleException{
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
-		ImportedCrosses importedCross = new ImportedCrosses();
-		ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(1, "femaleDesig", "femalePedig");
+		final ImportedCrosses importedCross = new ImportedCrosses();
+		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(1, "femaleDesig", "femalePedig");
 		importedCross.setFemaleParent(femaleParent);
-		ImportedGermplasmParent maleParent = new ImportedGermplasmParent(2, "maleDesig", "malePedig");
+		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(2, "maleDesig", "malePedig");
 		importedCross.setMaleParents(Arrays.asList(maleParent));
 		importedCrosses.add(importedCross);
 
 		final AdvancingSourceList rows = new AdvancingSourceList();
-		AdvancingSource advancingSource = new AdvancingSource();
+		final AdvancingSource advancingSource = new AdvancingSource();
 		advancingSource.setBreedingMethodId(101);
 		rows.setRows(Arrays.asList(advancingSource));
 
 		final AdvancingStudy advancingParameters = Mockito.mock(AdvancingStudy.class);
 		final Workbook workbook = Mockito.mock(Workbook.class);
 		final List<Integer> gids = Arrays.asList(1);
-		Method method = new Method();
+		final Method method = new Method();
 		method.setMid(101);
 		method.setPrefix("IB");
 		method.setCount("[COUNT]");
@@ -401,7 +401,7 @@ public class NamingConventionServiceImplTest {
 		Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(Arrays.asList("name"));
 		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace("naming")).thenReturn(new String[] {NamingConventionServiceImpl.SEQUENCE});
 
-		List<ImportedCrosses> results = this.namingConventionService.generateCrossesList(importedCrosses, rows, advancingParameters, workbook, gids);
+		final List<ImportedCrosses> results = this.namingConventionService.generateCrossesList(importedCrosses, rows, advancingParameters, workbook, gids);
 		Assert.assertEquals("name", importedCross.getDesig());
 		Mockito.verify(this.fieldbookMiddlewareService).getAllBreedingMethods(false);
 		Mockito.verify(this.germplasmDataManager).isMethodNamingConfigurationValid(method);

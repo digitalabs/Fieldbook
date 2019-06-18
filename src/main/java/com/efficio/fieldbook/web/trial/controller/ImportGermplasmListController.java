@@ -22,7 +22,6 @@ import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
-import com.hazelcast.util.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.context.ContextInfo;
@@ -33,9 +32,7 @@ import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -53,14 +50,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -93,11 +88,11 @@ public class ImportGermplasmListController extends SettingsController {
 
 	protected static final String TABLE_HEADER_LIST = "tableHeaderList";
 
-	protected static final String TYPE2 = "type";
+	static final String TYPE2 = "type";
 
-	protected static final String LIST_DATA_TABLE = "listDataTable";
+	static final String LIST_DATA_TABLE = "listDataTable";
 
-	protected static final String CHECK_LISTS = "checkLists";
+	static final String CHECK_LISTS = "checkLists";
 
 	protected static final String ENTRY_CODE = "entryCode";
 
@@ -113,29 +108,25 @@ public class ImportGermplasmListController extends SettingsController {
 
 	protected static final String ENTRY = "entry";
 
-	protected static final String CHECK_OPTIONS = "checkOptions";
+	static final String CHECK_OPTIONS = "checkOptions";
 
-	protected static final String POSITION = "position";
+	static final String POSITION = "position";
 
-	protected static final String GROUP_ID = "groupId";
-
-	protected static final Integer MAX_ENTRY_NO = 99999;
-
-	protected static final Integer MAX_PLOT_NO = 99999999;
+	private static final String GROUP_ID = "groupId";
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmListController.class);
 
 	/** The Constant URL. */
 	public static final String URL = "/StudyManager/importGermplasmList";
-	public static final String URL_1 = "/TrialManager/GermplasmList";
-	public static final String URL_2 = "/ListManager/GermplasmList";
+	static final String URL_1 = "/TrialManager/GermplasmList";
+	static final String URL_2 = "/ListManager/GermplasmList";
 
 	/** The Constant PAGINATION_TEMPLATE. */
-	public static final String PAGINATION_TEMPLATE = "/StudyManager/showGermplasmPagination";
-	public static final String EDIT_CHECK = "/Common/editCheck";
+	private static final String PAGINATION_TEMPLATE = "/StudyManager/showGermplasmPagination";
+	private static final String EDIT_CHECK = "/Common/editCheck";
 
-	public static final int NO_ID = -1;
+	private static final int NO_ID = -1;
 
 	static final String STARTING_PLOT_NO = "1";
 
@@ -254,14 +245,14 @@ public class ImportGermplasmListController extends SettingsController {
 		// validation flow
 		if (null != this.userSelection.getImportedGermplasmMainInfo()
 				&& null != this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()) {
-			this.assignAndIncrementEntryNumberAndPlotNumber(form);
+			this.assignPlotNumber(form);
 			// TODO: MARK FOR DELETE IBP-2789
 			//if (!hasTemporaryWorkbook) {
-				// this section of code is only called for existing trial
-				// without temporary workbook. No need for reset of measurement
-				// row
-				// list here
-				isDeleteObservations = true;
+			// this section of code is only called for existing trial
+			// without temporary workbook. No need for reset of measurement
+			// row
+			// list here
+			isDeleteObservations = true;
 			//}
 		}
 
@@ -289,54 +280,9 @@ public class ImportGermplasmListController extends SettingsController {
 		return Integer.toString(studyId);
 	}
 
-	/**
-	 * Setting Entry Number and plot number to user selection and increment user
-	 * given entry number in germplasm list. Clearing Measurements list if
-	 * germplasm sheet is not uploaded.
-	 *
-	 * @param form
-	 */
-	protected void validateEntryAndPlotNo(
-			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form) {
-
-		final Integer startingEntryNumber = org.generationcp.middleware.util.StringUtil
-				.parseInt(form.getStartingEntryNo(), null);
-
-		if (startingEntryNumber != null) {
-			final Integer totalExpectedEntryNumber = startingEntryNumber + this.userSelection
-					.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().size() - 1;
-
-			if (totalExpectedEntryNumber > ImportGermplasmListController.MAX_ENTRY_NO) {
-				throw new FieldbookRequestValidationException("entry.number.should.not.exceed");
-			}
-		}
-
-		final Integer totalExpectedNumber = this.computeTotalExpectedWithChecks(form);
-		final Integer plotNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingPlotNo(), null);
-
-		if (plotNo != null) {
-			final Integer totalMeasurement = totalExpectedNumber + plotNo - 1;
-
-			if (totalMeasurement > ImportGermplasmListController.MAX_PLOT_NO) {
-				throw new FieldbookRequestValidationException("plot.number.should.not.exceed");
-			}
-		}
-	}
-
-	// NOTE: BMS-1929 Setting custom entry and plot number in user selection as
-	// well as updating entry number in imported germplasm list
-	void assignAndIncrementEntryNumberAndPlotNumber(final ImportGermplasmListForm form) {
+	void assignPlotNumber(final ImportGermplasmListForm form) {
 		if (this.userSelection.getImportedGermplasmMainInfo() != null) {
 
-			// Taking entryNumber as null if not supplied
-			Integer entryNo = null;
-			if (form.getStartingEntryNo() != null) {
-				entryNo = org.generationcp.middleware.util.StringUtil.parseInt(form.getStartingEntryNo(), null);
-				if (entryNo == null) {
-					throw new FieldbookRequestValidationException("entry.number.should.be.in.range");
-
-				}
-			}
 
 			Integer plotNo = null;
 			if (form.getStartingPlotNo() != null) {
@@ -347,49 +293,18 @@ public class ImportGermplasmListController extends SettingsController {
 				}
 			}
 
-			this.userSelection.setStartingEntryNo(entryNo);
 
 			// Setting plot number in user selection as it will be used later
 			this.userSelection.setStartingPlotNo(plotNo);
 
-			// Skip applying entry number as it is null. So no change in list
-			if (entryNo == null) {
-				return;
-			}
-
-			final ImportedGermplasmMainInfo importedGermplasmMainInfo = this.userSelection
-					.getImportedGermplasmMainInfo();
-
-			// This will be used when updating the checks. Essentially the first
-			// entry number. This can be done using a get(0) on the list
-			// but this is safer.
-			Integer minOriginalEntryNumber = null;
-			if (importedGermplasmMainInfo != null && importedGermplasmMainInfo.getImportedGermplasmList() != null) {
-				for (final ImportedGermplasm g : importedGermplasmMainInfo.getImportedGermplasmList()
-						.getImportedGermplasms()) {
-					minOriginalEntryNumber = this.getMinimumEntryNumber(minOriginalEntryNumber, g);
-					g.setEntryId(entryNo++);
-				}
-			}
-
 		}
-	}
-
-	private Integer getMinimumEntryNumber(final Integer currentMinimumEntryNumber,
-			final ImportedGermplasm currentGermplasm) {
-		final Integer currentEntryId = currentGermplasm.getEntryId();
-		if (currentMinimumEntryNumber == null || currentMinimumEntryNumber > currentGermplasm.getEntryId()) {
-			return currentEntryId;
-		}
-		return currentMinimumEntryNumber;
 	}
 
 	/**
 	 * List data project data is the germplasm list that is attached to a study This method is saving the germplasm for this
 	 * study
 	 *
-	 * @param studyId
-	 * @throws MiddlewareQueryException
+	 * @param studyId - the study id
 	 */
 	private void saveListDataProject(final int studyId) {
 
@@ -435,8 +350,7 @@ public class ImportGermplasmListController extends SettingsController {
 			mainInfo.setAdvanceImportType(true);
 			form.setImportedGermplasmMainInfo(mainInfo);
 			mainInfo.setListId(listId);
-			final List<GermplasmListData> data = new ArrayList<>();
-			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId));
+			final List<GermplasmListData> data = new ArrayList<>(this.germplasmListManager.getGermplasmListDataByListId(listId));
 			FieldbookListUtil.populateStockIdInGermplasmListData(data, this.inventoryDataManager);
 			final List<ImportedGermplasm> list = this.transformGermplasmListDataToImportedGermplasm(data, null);
 			final String defaultTestCheckId = this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE,
@@ -550,7 +464,6 @@ public class ImportGermplasmListController extends SettingsController {
 		final List<Map<String, Object>> dataTableDataList) {
 		// Set first entry number from the list
 		if (!list.isEmpty()) {
-			form.setStartingEntryNo(list.get(0).getEntryId().toString());
 			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 			importedGermplasmList.setImportedGermplasms(list);
 			mainInfo.setImportedGermplasmList(importedGermplasmList);
@@ -581,7 +494,6 @@ public class ImportGermplasmListController extends SettingsController {
 
 
 	private List<TableHeader> getGermplasmTableHeader(final List<SettingDetail> factorsList) {
-		final Locale locale = LocaleContextHolder.getLocale();
 		final List<TableHeader> tableHeaderList = new ArrayList<>();
 
 		if (factorsList != null) {
@@ -671,14 +583,6 @@ public class ImportGermplasmListController extends SettingsController {
 				model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST, this.getGermplasmTableHeader(this.userSelection.getPlotsLevelList()));
 				model.addAttribute("hasMeasurement", this.hasMeasurement());
 
-				final Integer startingEntryNo = this.getUserSelection().getStartingEntryNo();
-
-				if (list.size() != 0) {
-					form.setStartingEntryNo(list.get(0).getEntryId().toString());
-				} else if (startingEntryNo != null) {
-					form.setStartingEntryNo(Integer.toString(startingEntryNo));
-				}
-
 				form.setImportedGermplasmMainInfo(this.getUserSelection().getImportedGermplasmMainInfo());
 				form.setImportedGermplasm(list);
 			}
@@ -694,7 +598,7 @@ public class ImportGermplasmListController extends SettingsController {
 				&& !this.userSelection.getMeasurementRowList().isEmpty();
 	}
 
-	protected String getCheckId(final String checkCode, final List<Enumeration> checksList) {
+	private String getCheckId(final String checkCode, final List<Enumeration> checksList) {
 
 		String checkId = "";
 
@@ -1038,7 +942,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param userSelection
 	 * @param form
 	 */
-	protected void processChecks(final UserSelection userSelection, final ImportGermplasmListForm form) {
+	void processChecks(final UserSelection userSelection, final ImportGermplasmListForm form) {
 
 		final String[] selectedCheck = form.getSelectedCheck();
 
@@ -1088,7 +992,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param userSelection
 	 * @param form
 	 */
-	protected void copyImportedGermplasmFromUserSelectionToForm(final UserSelection userSelection,
+	void copyImportedGermplasmFromUserSelectionToForm(final UserSelection userSelection,
 			final ImportGermplasmListForm form) {
 
 		if (userSelection.getImportedGermplasmMainInfo() != null) {
@@ -1119,7 +1023,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 *
 	 * @param conditions
 	 */
-	protected void addExperimentFactorToBeDeleted(final List<MeasurementVariable> conditions) {
+	void addExperimentFactorToBeDeleted(final List<MeasurementVariable> conditions) {
 		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.EXPERIMENT_DESIGN_FACTOR.getId()), "",
 				Operation.DELETE, PhenotypicType.TRIAL_ENVIRONMENT));
 	}
@@ -1141,14 +1045,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	}
 
-	protected boolean hasExperimentalDesign(final Workbook workbook) {
-		final ExperimentalDesignVariable expDesignVar = workbook.getExperimentalDesignVariables();
-		return expDesignVar != null && expDesignVar.getExperimentalDesign() != null
-				&& !StringUtil.isNullOrEmpty(expDesignVar.getExperimentalDesign().getValue());
-
-	}
-
-	protected Integer computeTotalExpectedWithChecks(final ImportGermplasmListForm form) {
+	Integer computeTotalExpectedWithChecks(final ImportGermplasmListForm form) {
 
 		final int totalGermplasmCount = this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()
 				.getImportedGermplasms().size();
@@ -1175,42 +1072,6 @@ public class ImportGermplasmListController extends SettingsController {
 
 		return totalGermplasmCount;
 
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "/startingEntryNo", method = RequestMethod.POST)
-	public void updateEntryNumbersOfGermplasmList(@RequestBody final Integer startingEntryNo) {
-		final List<ImportedGermplasm> list = this.getUserSelection().getImportedGermplasmMainInfo()
-				.getImportedGermplasmList().getImportedGermplasms();
-		final Integer lowestEntryNo = this.getLowestEntryNo(list);
-		if (lowestEntryNo == null) {
-			return;
-		}
-		final Integer numToAddToEntryNo = startingEntryNo - lowestEntryNo;
-		for (final ImportedGermplasm germplasm : list) {
-			final Integer currentEntryNo = germplasm.getEntryId();
-			if (currentEntryNo != null) {
-				germplasm.setEntryId(currentEntryNo + numToAddToEntryNo);
-			}
-		}
-		this.getUserSelection().setStartingEntryNo(startingEntryNo);
-	}
-
-	private Integer getLowestEntryNo(final List<ImportedGermplasm> list) {
-		if (list == null || list.isEmpty()) {
-			return null;
-		}
-		Integer lowestEntryNo = list.get(0).getEntryId();
-		if (list.size() == 1) {
-			return lowestEntryNo;
-		}
-		for (int i = 1; i < list.size(); i++) {
-			final ImportedGermplasm germplasm = list.get(i);
-			if (germplasm.getEntryId() != null && germplasm.getEntryId() < lowestEntryNo) {
-				lowestEntryNo = germplasm.getEntryId();
-			}
-		}
-		return lowestEntryNo;
 	}
 
 	public void setInventoryDataManager(final InventoryDataManager inventoryDataManager) {

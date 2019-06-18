@@ -33,7 +33,6 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -168,8 +167,7 @@ public class ExpDesignController extends BaseTrialController {
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
 		// transfer over data from user input into the list of setting details stored in the session
-		final List<SettingDetail> combinedList = new ArrayList<>();
-		combinedList.addAll(basicDetails);
+		final List<SettingDetail> combinedList = new ArrayList<>(basicDetails);
 
 		if (studyLevelConditions != null) {
 			combinedList.addAll(studyLevelConditions);
@@ -228,6 +226,7 @@ public class ExpDesignController extends BaseTrialController {
 			} else {
 				final ExperimentDesignService designService = this.getExpDesignService(designType);
 				if (designService != null) {
+					expDesign.setStartingEntryNo(this.getLowestEntryNo(germplasmList).toString());
 					// we call the validation
 					expParameterOutput = designService.validate(expDesign, germplasmList);
 					// we call the actual process
@@ -242,15 +241,6 @@ public class ExpDesignController extends BaseTrialController {
 							// Default plot no will be 1 if not given
 							expDesign.setStartingPlotNo("1");
 							this.userSelection.setStartingPlotNo(1);
-						}
-
-						this.userSelection.setStartingEntryNo(StringUtil.parseInt(expDesign.getStartingEntryNo(), null));
-
-						if (this.userSelection.getStartingEntryNo() != null) {
-							Integer entryNo = this.userSelection.getStartingEntryNo();
-							for (final ImportedGermplasm g : germplasmList) {
-								g.setEntryId(entryNo++);
-							}
 						}
 
 						BVDesignLicenseInfo bvDesignLicenseInfo = null;
@@ -328,6 +318,23 @@ public class ExpDesignController extends BaseTrialController {
 		}
 
 		return expParameterOutput;
+	}
+
+	Integer getLowestEntryNo(final List<ImportedGermplasm> list) {
+		if (list == null || list.isEmpty()) {
+			return null;
+		}
+		Integer lowestEntryNo = list.get(0).getEntryId();
+		if (list.size() == 1) {
+			return lowestEntryNo;
+		}
+		for (int i = 1; i < list.size(); i++) {
+			final ImportedGermplasm germplasm = list.get(i);
+			if (germplasm.getEntryId() != null && germplasm.getEntryId() < lowestEntryNo) {
+				lowestEntryNo = germplasm.getEntryId();
+			}
+		}
+		return lowestEntryNo;
 	}
 
 	private void saveDesignGenerated(final ExpDesignParameterUi expDesign) {
@@ -463,7 +470,7 @@ public class ExpDesignController extends BaseTrialController {
 		return measurementRows;
 	}
 
-	protected String countNewEnvironments(final String noOfEnvironments, final UserSelection userSelection,
+	String countNewEnvironments(final String noOfEnvironments, final UserSelection userSelection,
 			final boolean hasMeasurementData) {
 		final Workbook workbook;
 		if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null
@@ -503,7 +510,7 @@ public class ExpDesignController extends BaseTrialController {
 		return 0;
 	}
 
-	protected ExperimentDesignService getExpDesignService(final int designType) {
+	ExperimentDesignService getExpDesignService(final int designType) {
 		if (designType == ExperimentDesignType.RANDOMIZED_COMPLETE_BLOCK.getId()) {
 			return this.randomizeCompleteBlockDesign;
 		} else if (designType == ExperimentDesignType.RESOLVABLE_INCOMPLETE_BLOCK.getId()) {

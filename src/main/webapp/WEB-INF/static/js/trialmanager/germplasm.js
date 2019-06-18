@@ -12,9 +12,6 @@
 
             if ($scope.isOpenStudy()) {
                 displaySelectedGermplasmDetails();
-
-                var startingEntryNo = $('#txtStartingEntryNo').val();
-                TrialManagerDataService.updateStartingEntryNoCount((parseInt(startingEntryNo)) ? parseInt(startingEntryNo) : 1);
             }
 
             $scope.ShowImportListBrowser = !($scope.isOpenStudy() && TrialManagerDataService.applicationData.germplasmListSelected);

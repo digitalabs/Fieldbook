@@ -170,7 +170,6 @@
 							nclatin: null,
 							replatinGroups: '',
 							startingPlotNo: 1,
-							startingEntryNo: (typeof $scope.data.startingEntryNo !== 'undefined')? parseInt($scope.data.startingEntryNo,10) : 1 ,
 							hasMeasurementData: false, // TODO now the data is deleted after create a new design.
 							numberOfBlocks: null
 						}, $scope.data);
@@ -234,7 +233,6 @@
 						$scope.measurementDetails.hasMeasurement = true;
                         TrialManagerDataService.performDataCleanup();
 						var environmentData = angular.copy($scope.data);
-						environmentData.startingEntryNo = TrialManagerDataService.currentData.experimentalDesign.startingEntryNo;
 
 						// transform ordered has of treatment factors if existing to just the map
 						if (environmentData && environmentData.treatmentFactors) {
@@ -344,7 +342,7 @@
 							$scope.resetExperimentalDesignRelatedVariables();
 						});
 					};
-					
+
 					$scope.resetExperimentalDesignRelatedVariables = function() {
 						// the following reset the data used for the experimental design, allowing the user to select another design again
 						$scope.applicationData.isGeneratedOwnDesign = false;
@@ -352,7 +350,7 @@
 						$scope.applicationData.importDesignMappedData = null;
 						$scope.data.designType = '';
 					};
-					
+
 					$scope.$on('importedDesignReset', function() {
 						$scope.resetExperimentalDesignRelatedVariables();
 					});
@@ -379,7 +377,7 @@
 							&& $scope.data.designType !== ''
 							&& selectedExperimentDesignType.name !== 'Custom Import Design';
 					};
-					
+
 					$scope.showOrHideAdvancedOptions = function (isShown) {
 						$scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = isShown;
 						$scope.data.useLatenized = isShown;

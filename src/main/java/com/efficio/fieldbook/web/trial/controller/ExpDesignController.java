@@ -337,7 +337,7 @@ public class ExpDesignController extends BaseTrialController {
 		return lowestEntryNo;
 	}
 
-	private void saveDesignGenerated(final ExpDesignParameterUi expDesign) {
+	protected void saveDesignGenerated(final ExpDesignParameterUi expDesign) {
 
 		this.populateSettingData(this.userSelection.getStudyLevelConditions(), expDesign.getTrialSettings().getUserInput());
 

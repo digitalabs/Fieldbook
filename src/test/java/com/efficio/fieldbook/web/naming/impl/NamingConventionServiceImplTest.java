@@ -3,6 +3,8 @@ package com.efficio.fieldbook.web.naming.impl;
 
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.commons.ruleengine.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
@@ -39,6 +41,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +56,7 @@ public class NamingConventionServiceImplTest {
 	private RulesService rulesService;
 
 	@Mock
-	private GermplasmDataManager germplasmDataManger;
+	private GermplasmDataManager germplasmDataManager;
 
 	@Mock
 	private AdvancingSourceListFactory advancingSourceListFactory;
@@ -187,7 +190,7 @@ public class NamingConventionServiceImplTest {
 		Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName1.getTypeId().intValue());
 		Assert.assertEquals(new Integer(1), resultName1.getNstat());
 		Assert.assertEquals(ruleGeneratedName1, resultName1.getNval());
-		
+
 		// germplasm2
 		final ImportedGermplasm advanceResult2 = igList.get(1);
 		Assert.assertEquals(new Integer(2), advanceResult2.getEntryId());
@@ -330,4 +333,80 @@ public class NamingConventionServiceImplTest {
         Assert.assertEquals(ruleGeneratedName, resultName.getNval());
 
     }
+
+    @Test
+	public void testGenerateCrossesListForMethodWithSequenceCount() throws RuleException{
+		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
+		ImportedCrosses importedCross = new ImportedCrosses();
+		ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(1, "femaleDesig", "femalePedig");
+		importedCross.setFemaleParent(femaleParent);
+		ImportedGermplasmParent maleParent = new ImportedGermplasmParent(2, "maleDesig", "malePedig");
+		importedCross.setMaleParents(Arrays.asList(maleParent));
+		importedCrosses.add(importedCross);
+
+		final AdvancingSourceList rows = new AdvancingSourceList();
+		AdvancingSource advancingSource = new AdvancingSource();
+		advancingSource.setBreedingMethodId(101);
+		rows.setRows(Arrays.asList(advancingSource));
+
+		final AdvancingStudy advancingParameters = Mockito.mock(AdvancingStudy.class);
+		final Workbook workbook = Mockito.mock(Workbook.class);
+		final List<Integer> gids = Arrays.asList(1);
+		Method method = new Method();
+		method.setMid(101);
+		method.setPrefix("IB");
+		method.setCount(NamingConventionServiceImpl.SEQUENCE);
+
+		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(false)).thenReturn(Arrays.asList(method));
+		Mockito.when(this.germplasmDataManager.isMethodNamingConfigurationValid(method)).thenReturn(true);
+		Mockito.when(this.germplasmDataManager.getNextSequenceNumberForCrossName(method.getPrefix())).thenReturn("2");
+		Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(Arrays.asList("name"));
+		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace("naming")).thenReturn(new String[] {NamingConventionServiceImpl.SEQUENCE});
+
+		List<ImportedCrosses> results = this.namingConventionService.generateCrossesList(importedCrosses, rows, advancingParameters, workbook, gids);
+		Assert.assertEquals("name", importedCross.getDesig());
+		Mockito.verify(this.fieldbookMiddlewareService).getAllBreedingMethods(false);
+		Mockito.verify(this.germplasmDataManager).isMethodNamingConfigurationValid(method);
+		Mockito.verify(this.germplasmDataManager).getNextSequenceNumberForCrossName(method.getPrefix());
+		Mockito.verify(this.rulesService).runRules(ArgumentMatchers.any(RuleExecutionContext.class));
+		Mockito.verify(this.ruleFactory).getRuleSequenceForNamespace("naming");
+	}
+
+	@Test
+	public void testGenerateCrossesListForMethodWithCountNotSequence() throws RuleException{
+		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
+		ImportedCrosses importedCross = new ImportedCrosses();
+		ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(1, "femaleDesig", "femalePedig");
+		importedCross.setFemaleParent(femaleParent);
+		ImportedGermplasmParent maleParent = new ImportedGermplasmParent(2, "maleDesig", "malePedig");
+		importedCross.setMaleParents(Arrays.asList(maleParent));
+		importedCrosses.add(importedCross);
+
+		final AdvancingSourceList rows = new AdvancingSourceList();
+		AdvancingSource advancingSource = new AdvancingSource();
+		advancingSource.setBreedingMethodId(101);
+		rows.setRows(Arrays.asList(advancingSource));
+
+		final AdvancingStudy advancingParameters = Mockito.mock(AdvancingStudy.class);
+		final Workbook workbook = Mockito.mock(Workbook.class);
+		final List<Integer> gids = Arrays.asList(1);
+		Method method = new Method();
+		method.setMid(101);
+		method.setPrefix("IB");
+		method.setCount("[COUNT]");
+
+		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(false)).thenReturn(Arrays.asList(method));
+		Mockito.when(this.germplasmDataManager.isMethodNamingConfigurationValid(method)).thenReturn(true);
+		Mockito.when(this.germplasmDataManager.getNextSequenceNumberForCrossName(method.getPrefix())).thenReturn("2");
+		Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(Arrays.asList("name"));
+		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace("naming")).thenReturn(new String[] {NamingConventionServiceImpl.SEQUENCE});
+
+		List<ImportedCrosses> results = this.namingConventionService.generateCrossesList(importedCrosses, rows, advancingParameters, workbook, gids);
+		Assert.assertEquals("name", importedCross.getDesig());
+		Mockito.verify(this.fieldbookMiddlewareService).getAllBreedingMethods(false);
+		Mockito.verify(this.germplasmDataManager).isMethodNamingConfigurationValid(method);
+		Mockito.verify(this.germplasmDataManager, Mockito.never()).getNextSequenceNumberForCrossName(method.getPrefix());
+		Mockito.verify(this.rulesService).runRules(ArgumentMatchers.any(RuleExecutionContext.class));
+		Mockito.verify(this.ruleFactory).getRuleSequenceForNamespace("naming");
+	}
 }

@@ -56,6 +56,8 @@ import static org.generationcp.middleware.service.api.dataset.ObservationUnitUti
 @Transactional
 public class NamingConventionServiceImpl implements NamingConventionService {
 
+	static final String SEQUENCE = "[SEQUENCE]";
+
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
@@ -291,14 +293,13 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		// interaction for advancing. There is no user interaction in case of cross list.
 		final Map<Integer, Integer> previousMaxSequenceMap = new HashMap<>();
 		for (final AdvancingSource advancingSource : rows.getRows()) {
-
 			ImportedCrosses importedCross = importedCrosses.get(index++);
 			final List<String> names;
 
             final Integer breedingMethodId = advancingSource.getBreedingMethodId();
             final Method selectedMethod = breedingMethodMap.get(breedingMethodId);
 			if(previousMaxSequenceMap.get(breedingMethodId) == null) {
-				if (selectedMethod.getCount().equals("[SEQUENCE]")) {
+				if (SEQUENCE.equals(selectedMethod.getCount())) {
 					final String nextSequenceNumberString =
 						this.germplasmDataManager.getNextSequenceNumberForCrossName(selectedMethod.getPrefix());
 					//Subtract 1 since we're getting the "next" sequence number, not the current.

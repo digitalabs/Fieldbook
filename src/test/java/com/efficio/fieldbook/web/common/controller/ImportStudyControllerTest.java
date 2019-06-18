@@ -98,7 +98,9 @@ public class ImportStudyControllerTest {
 
 	}
 
+	// TODO: MARK FOR DELETE IBP-2689
 	@Test
+	@Ignore
 	public void testSaveImportedFiles() {
 		final CreateTrialForm form = Mockito.mock(CreateTrialForm.class);
 		final Model model = Mockito.mock(Model.class);

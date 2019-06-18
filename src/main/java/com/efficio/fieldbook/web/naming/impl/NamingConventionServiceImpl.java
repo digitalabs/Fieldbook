@@ -289,15 +289,27 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		// FIXME previousMaxSequence is a "quick fix" solution to propagate previous max sequence to the next cross entry to process.
 		// Rules engine is currently not designed to handle this (even for advancing case). Next sequence choice is managed this via user
 		// interaction for advancing. There is no user interaction in case of cross list.
-		int previousMaxSequence = 0;
+		final Map<Integer, Integer> previousMaxSequenceMap = new HashMap<>();
 		for (final AdvancingSource advancingSource : rows.getRows()) {
 
 			ImportedCrosses importedCross = importedCrosses.get(index++);
 			final List<String> names;
-			advancingSource.setCurrentMaxSequence(previousMaxSequence);
 
             final Integer breedingMethodId = advancingSource.getBreedingMethodId();
             final Method selectedMethod = breedingMethodMap.get(breedingMethodId);
+			if(previousMaxSequenceMap.get(breedingMethodId) == null) {
+				if (selectedMethod.getCount().equals("[SEQUENCE]")) {
+					final String nextSequenceNumberString =
+						this.germplasmDataManager.getNextSequenceNumberForCrossName(selectedMethod.getPrefix(), selectedMethod.getSuffix());
+					//Subtract 1 since we're getting the "next" sequence number, not the current.
+					final Integer currentMaxSequence = Integer.parseInt(nextSequenceNumberString) - 1;
+					advancingSource.setCurrentMaxSequence(currentMaxSequence);
+				} else {
+					advancingSource.setCurrentMaxSequence(0);
+				}
+			} else {
+				advancingSource.setCurrentMaxSequence(previousMaxSequenceMap.get(breedingMethodId));
+			}
 
 			if (!this.germplasmDataManager.isMethodNamingConfigurationValid(selectedMethod)) {
                 throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rule.not.configured", new Object[] {selectedMethod.getMname()}, "The rules"
@@ -319,7 +331,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
 			// Save away the current max sequence once rules have been run for this entry.
-			previousMaxSequence = advancingSource.getCurrentMaxSequence() + 1;
+			previousMaxSequenceMap.put(breedingMethodId, advancingSource.getCurrentMaxSequence() + 1);
 			for (final String name : names) {
 				importedCross.setDesig(name);
 			}

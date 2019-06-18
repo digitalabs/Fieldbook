@@ -168,7 +168,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
 			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber, AdvancingStudy advancingParameters, final String plantNo) {
-		
+
 		String selectionNumberToApply = null;
 		boolean allPlotsSelected = "1".equals(advancingParameters.getAllPlotsChoice());
 		if (source.isBulk()) {
@@ -180,7 +180,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		} else {
 			selectionNumberToApply = String.valueOf(selectionNumber);
 		}
-		
+
 		// set the seed source string for the new Germplasm
 		final String seedSource = this.seedSourceGenerator
 			.generateSeedSource(workbook.getStudyDetails().getId(), workbook.getTrialDatasetId(),
@@ -192,13 +192,13 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 						, source.getGermplasm().getCross(), seedSource,
 						FieldbookUtil.generateEntryCode(index), null /* check */
 						, breedingMethod.getMid());
-		
+
 		// assign parentage etc for the new Germplasm
 		final Integer sourceGid = source.getGermplasm().getGid() != null ? Integer.valueOf(source.getGermplasm().getGid()) : -1;
 		final Integer gnpgs = source.getGermplasm().getGnpgs() != null ? source.getGermplasm().getGnpgs() : -1;
 		this.assignGermplasmAttributes(germplasm, sourceGid, gnpgs, source.getGermplasm().getGpid1(), source.getGermplasm().getGpid2(),
 				source.getSourceMethod(), breedingMethod);
-		
+
 		// assign grouping based on parentage
 
 		// check to see if a group ID (MGID) exists in the parent for this Germplasm, and set
@@ -300,7 +300,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			if(previousMaxSequenceMap.get(breedingMethodId) == null) {
 				if (selectedMethod.getCount().equals("[SEQUENCE]")) {
 					final String nextSequenceNumberString =
-						this.germplasmDataManager.getNextSequenceNumberForCrossName(selectedMethod.getPrefix(), selectedMethod.getSuffix());
+						this.germplasmDataManager.getNextSequenceNumberForCrossName(selectedMethod.getPrefix());
 					//Subtract 1 since we're getting the "next" sequence number, not the current.
 					final Integer currentMaxSequence = Integer.parseInt(nextSequenceNumberString) - 1;
 					advancingSource.setCurrentMaxSequence(currentMaxSequence);

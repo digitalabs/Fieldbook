@@ -607,8 +607,7 @@ public class CrossingServiceImpl implements CrossingService {
 		int nextNumberInSequence = 1;
 
 		if (!StringUtils.isEmpty(setting.getPrefix())) {
-			final String suffix = this.buildSuffixString(setting, setting.getSuffix());
-			final String nextSequenceNumberString = this.germplasmDataManager.getNextSequenceNumberForCrossName(setting.getPrefix().trim(), suffix);
+			final String nextSequenceNumberString = this.germplasmDataManager.getNextSequenceNumberForCrossName(setting.getPrefix().trim());
 			nextNumberInSequence = Integer.parseInt(nextSequenceNumberString);
 		}
 

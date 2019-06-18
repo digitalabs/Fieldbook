@@ -204,8 +204,6 @@
 			var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
 				{id: '@id'}, {get: {method: 'get', isArray: true}});
 
-			var UpdateStartingEntryNoService = $resource('/Fieldbook/TrialManager/GermplasmList/startingEntryNo', {}, {});
-			
 			var service = {
 				// user input data and default values of standard variables
 				currentData: {
@@ -336,7 +334,6 @@
 					var data = {
 						environmentData: environmentData,
 						selectedExperimentDesignType: angular.copy(service.getDesignTypeById(designType, service.applicationData.designTypes)),
-						startingEntryNo: service.currentData.experimentalDesign.startingEntryNo,
 						startingPlotNo: service.currentData.experimentalDesign.startingPlotNo,
 						hasNewEnvironmentAdded: service.applicationData.hasNewEnvironmentAdded
 					};
@@ -348,13 +345,13 @@
 					return service.currentData.basicDetails.studyID !== null &&
 						service.currentData.basicDetails.studyID !== 0;
 				},
-				
+
 				isLockedStudy: function() {
 					return service.currentData.basicDetails.isLocked;
 				},
 
 				changeLockedStatus : function(doLock) {
-					
+
 					var studyId = service.currentData.basicDetails.studyID;
 					var study = {
 						"locked": doLock
@@ -369,9 +366,9 @@
 							}
 							service.currentData.basicDetails.isLocked = doLock;
 						});
-				
+
 				},
-				
+
 				deleteEnvironment: function(index) {
 					var refreshMeasurementDeferred = $q.defer();
 					var deleteMeasurementPossible = index !== 0;
@@ -635,18 +632,6 @@
 				updateTrialMeasurementRowCount: function(newCountValue) {
 					service.trialMeasurement.count = newCountValue;
 					$('body').data('service.trialMeasurement.count', newCountValue);
-				},
-
-				updateStartingEntryNoCount: function(newCountValue) {
-					service.currentData.experimentalDesign.startingEntryNo = newCountValue;
-					$('body').data('service.currentData.experimentalDesign.startingEntryNo', newCountValue);
-					//check if the starting entry number is a number before calling the resource 
-					//for updating the starting entry number in the server
-					//as the server expects the parameter passed as an Integer
-					//the newCountValue becomes "" or null if the germplasm list is not yet selected for the study
-					if($.isNumeric(newCountValue)) {
-						UpdateStartingEntryNoService.save(newCountValue);
-					}
 				},
 
 				onUpdateSettings: function(key, updateFunction) {

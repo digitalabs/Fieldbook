@@ -221,8 +221,9 @@ public class ExpDesignControllerTest {
 		// mock valid license
 		Mockito.doReturn(false).when(this.designLicenseUtil).isExpired(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
 		Mockito.doReturn(false).when(this.designLicenseUtil).isExpiringWithinThirtyDays(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
-
-		final ExpDesignValidationOutput output = this.expDesignController.showMeasurements(model, expDesignParameterUi);
+		ExpDesignController expDesignController = Mockito.spy(this.expDesignController);
+		Mockito.doNothing().when(expDesignController).saveDesignGenerated(Mockito.any(ExpDesignParameterUi.class));
+		final ExpDesignValidationOutput output = expDesignController.showMeasurements(model, expDesignParameterUi);
 
 		Mockito.verify(this.designLicenseUtil).isExpired(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
 		Mockito.verify(this.designLicenseUtil).isExpiringWithinThirtyDays(ArgumentMatchers.<BVDesignLicenseInfo>isNull());
@@ -246,7 +247,9 @@ public class ExpDesignControllerTest {
 		final ExpDesignValidationOutput expParameterOutput = new ExpDesignValidationOutput(true, "");
 		Mockito.doReturn(expParameterOutput).when(this.entryListOrderDesignService).validate(expDesignParameterUi, germplasmList);
 
-		final ExpDesignValidationOutput output = this.expDesignController.showMeasurements(model, expDesignParameterUi);
+		ExpDesignController expDesignController = Mockito.spy(this.expDesignController);
+		Mockito.doNothing().when(expDesignController).saveDesignGenerated(Mockito.any(ExpDesignParameterUi.class));
+		final ExpDesignValidationOutput output = expDesignController.showMeasurements(model, expDesignParameterUi);
 
 		Mockito.verify(this.entryListOrderDesignService, Mockito.times(2)).requiresBreedingViewLicence();
 		Mockito.verify(this.designLicenseUtil, Mockito.never()).isExpired(Mockito.any(BVDesignLicenseInfo.class));

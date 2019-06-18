@@ -11,7 +11,7 @@
 								style="vertical-align: top; position: relative; top: 6px;"><strong
 								th:text="#{study.experimental.design.select}">Select the
 									design type you would like to use for this study:</strong></label>
-				
+
 							<div style="display: inline-block">
 								<div style="width: 350px !important;">
 									<div class="col-xs-10">
@@ -67,22 +67,21 @@
 				           <div name="content">
 				               <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}">Specify Starting Plot Number</label>
 												<input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onchange="validateAndSetPlotNo()" ng-model="data.startingPlotNo" />
-				               <input type="hidden" id="txtStartingEntryNo" ng-model="data.startingEntryNo" />
 				           </div>
 						</section-container>
 					</div>
-           
+
 				</div>
-			</section-container> 
+			</section-container>
 		</section-container>
 	</div>
-	
+
 	<!-- summary view for experimental design -->
 	<div ng-if="data.designType != null">
 		<div id="experimental-design-bv-design" th:include="TrialManager/templates/experimentalDesignBVDesign"></div>
 		<div id="experimental-design-imported-design" th:include="Common/importedDesignColumnsSummary"></div>
 	</div>
-	
+
 </form>
 
 <script type="text/javascript" th:inline="javascript">

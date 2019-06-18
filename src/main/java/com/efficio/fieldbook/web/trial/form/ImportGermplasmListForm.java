@@ -103,7 +103,6 @@ public class ImportGermplasmListForm {
 
 	private String columnOrders;
 
-	private String startingEntryNo;
 	private String startingPlotNo;
 
 	private Integer germplasmListId;
@@ -637,14 +636,6 @@ public class ImportGermplasmListForm {
 
 	public void setColumnOrders(String columnOrders) {
 		this.columnOrders = columnOrders;
-	}
-
-	public String getStartingEntryNo() {
-		return startingEntryNo;
-	}
-
-	public void setStartingEntryNo(String startingEntryNo) {
-		this.startingEntryNo = startingEntryNo;
 	}
 
 	public String getStartingPlotNo() {

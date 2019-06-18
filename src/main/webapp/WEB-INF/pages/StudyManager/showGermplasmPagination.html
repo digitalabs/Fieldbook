@@ -41,24 +41,6 @@
 				   th:text="#{common.clear.list}"></a>
 			</div>
 		</div>
-
-		<br/>
-		<div class="rowForNumberingAndChecks row col-xs-12 col-md-12">
-			<div id="specify-numbering-section"><img th:src="@{/static/img/review-list-details.png}"/>
-				<!-- Section for Specify Numbering -->
-				<label class="control-label"><strong id="specifynumbering" class="sub-content-heading"
-													 th:text="#{germplasm.list.specify.numbering}">Specify Numbering</strong></label>
-				<div class="form-group">
-					<div class="col-xs-6">
-						<!-- The following label and input box will be displayed for both Nursery & Trial -->
-						<label class="control-label-bold" id="startingEntryNumber" th:text="#{germplasm.list.specify.starting.entry.number}"
-							   style="margin-left: 5px;">Specify Starting Entry Number</label>
-						<input class="inputForNumberingAndChecks" id="txtStartingEntryNo" rows="1" th:field="*{startingEntryNo}"
-							   readonly="readonly" title="Click Replace button to edit entry number"/>
-					</div>
-				</div>
-			</div>
-		</div>
 	</form>
 </div>
 <script type="text/javascript" th:inline="javascript">

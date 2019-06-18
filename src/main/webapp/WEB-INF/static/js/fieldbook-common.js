@@ -278,7 +278,7 @@ function createFieldMap() {
 		showErrorMessage('', needSaveImportDataError);
 		return;
 	}
-	
+
 	if( ($('.review-trial-page-identifier').length) ) {
 		var mode = '.active .review-trial-page-identifier';
 		var active = '.active';
@@ -1276,10 +1276,10 @@ function doFinalExport(paramUrl, additionalParams, exportWayType) {
 
 	newAction = action + 'exportStudy/' + paramUrl + '/' + additionalParams;
 	newAction += exportWayType;
-	
+
 	var mode = ($('.review-trial-page-identifier').length) ?  '.active .review-trial-page-identifier' : '#createTrialMainForm' ;
 	studyId = $(mode + ' #studyId').val();
-	
+
 	if ($('#browser-studies').length === 0) {
 		// the study is opened
 		var tableContainsObsUnitId = BMS.Fieldbook.MeasurementsTable.containsHeader('measurement-table', '8201');
@@ -2310,7 +2310,7 @@ function deleteFolder(object) {
 			});
 		} else if (node.data.programUUID === null) {
 			showErrorMessage('page-study-tree-message-modal', cannotDeleteTemplateError);
-		
+
 		} else if (parseInt(node.data.ownerId) === currentCropUserId  || isSuperAdmin) {
 
 			$('#delete-heading-modal').text(deleteStudyTitle);
@@ -3017,7 +3017,6 @@ function refreshListDetails() {
 			window.ImportGermplasm.initialize(dataGermplasmList);
 			$('#entries-details').css('display', 'block');
 			$('#numberOfEntries').html($('#totalGermplasms').val());
-			$('#txtStartingEntryNo').prop('readOnly', false);
 		});
 	}
 }
@@ -3032,7 +3031,7 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	$('#page-study-tree-message-modal').html('');
 	$('#addFolderDiv').hide();
 	$('#renameFolderDiv').hide();
-	
+
 	if ($('#create-study #studyTree').length !== 0) {
 		$('#studyTree').dynatree('destroy');
 		displayStudyListTree('studyTree', type, selectStudyFunction, isPreSelect);
@@ -3040,7 +3039,7 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	// Reset study filter to show all studies
 	} else {
 		$('#studyTypeFilter').val("All");
-		filterByStudyType();	
+		filterByStudyType();
 	}
 
 	$('#studyTreeModal').modal({
@@ -3260,14 +3259,10 @@ function toggleControlsForGermplasmListManagement(value) {
 	'use strict';
 	if (value) {
 		$('#imported-germplasm-list-reset-button').show();
-		$('#txtStartingEntryNo').prop('title', '');
-		$('#txtStartingPlotNo').prop('title', '');
 	} else {
 		$('#imported-germplasm-list-reset-button').hide();
-		$('#txtStartingEntryNo').prop('title', 'Click Modify List button to edit entry number');
 	}
 
-	$('#txtStartingEntryNo').prop('readOnly', !value);
 	$('#txtStartingPlotNo').prop('readOnly', !value);
 }
 

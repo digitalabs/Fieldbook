@@ -779,10 +779,8 @@ public class CrossingServiceImplTest {
 
 		this.crossingService.getNextNumberInSequence(setting);
 		final ArgumentCaptor<String> prefixCaptor = ArgumentCaptor.forClass(String.class);
-		final ArgumentCaptor<String> suffixCaptor = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(this.germplasmDataManager).getNextSequenceNumberForCrossName(prefixCaptor.capture());
 		assertEquals(prefix, prefixCaptor.getValue());
-		assertEquals(suffix, suffixCaptor.getValue());
 	}
 
 	@Test
@@ -798,7 +796,7 @@ public class CrossingServiceImplTest {
 		this.crossingService.getNextNumberInSequence(setting);
 		final ArgumentCaptor<String> prefixCaptor = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(this.germplasmDataManager).getNextSequenceNumberForCrossName(prefixCaptor.capture());
-		assertEquals(prefix + " ", prefixCaptor.getValue());
+		assertEquals(prefix, prefixCaptor.getValue());
 	}
 
 	@Test
@@ -830,10 +828,8 @@ public class CrossingServiceImplTest {
 
 		this.crossingService.getNextNumberInSequence(setting);
 		final ArgumentCaptor<String> prefixCaptor = ArgumentCaptor.forClass(String.class);
-		final ArgumentCaptor<String> suffixCaptor = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(this.germplasmDataManager).getNextSequenceNumberForCrossName(prefixCaptor.capture());
-		assertEquals(prefix + " ", prefixCaptor.getValue());
-		assertEquals(" " + suffix, suffixCaptor.getValue());
+		assertEquals(prefix, prefixCaptor.getValue());
 	}
 
 	@Test

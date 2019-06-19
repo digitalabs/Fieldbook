@@ -162,13 +162,13 @@ public class StudyTreeController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/has/observations/{studyId}/{studyName}", method = RequestMethod.GET)
-	public Map<String, String> hasObservations(@PathVariable final int studyId, @PathVariable final String studyName) {
+	@RequestMapping(value = "/has/observations/{studyId}", method = RequestMethod.GET)
+	public Map<String, String> hasObservations(@PathVariable final int studyId) {
 		final Map<String, String> dataResults = new HashMap<>();
 
 		final int datasetId;
 		try {
-			datasetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
+			datasetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId);
 			final long observationCount = this.fieldbookMiddlewareService.countObservations(datasetId);
 			if (observationCount > 0) {
 				dataResults.put(StudyTreeController.HAS_OBSERVATIONS, "1");
@@ -350,11 +350,9 @@ public class StudyTreeController {
 	public Map<String, Object> moveStudyFolder(final HttpServletRequest req) {
 		final String sourceId = req.getParameter("sourceId");
 		final String targetId = req.getParameter("targetId");
-		final String isStudy = req.getParameter("isStudy");
-		final boolean isAStudy = "1".equalsIgnoreCase(isStudy) ? true : false;
 		final Map<String, Object> resultsMap = new HashMap<>();
 		try {
-			this.studyDataManager.moveDmsProject(Integer.parseInt(sourceId), Integer.parseInt(targetId), isAStudy);
+			this.studyDataManager.moveDmsProject(Integer.parseInt(sourceId), Integer.parseInt(targetId));
 			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 		} catch (final MiddlewareQueryException e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);

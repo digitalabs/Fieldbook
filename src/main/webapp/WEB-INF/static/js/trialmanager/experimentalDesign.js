@@ -109,6 +109,10 @@
 					};
 
 					$scope.deleteDesign = function () {
+						if (studyStateService.hasUnsavedData()) {
+							showErrorMessage('', 'Please first save the unsaved data');
+							return;
+						}
 						var deleteMessage = Object.keys(TrialManagerDataService.currentData.treatmentFactors.currentData).length > 0 ? 'With deleting the experimental design all taken observations and Treatment Factors will be lost. Do you want to proceed?' : 'With deleting the experimental design all taken observations will be lost. Do you want to proceed?';
 						var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
 						modalConfirmDelete.result.then(function (shouldContinue) {

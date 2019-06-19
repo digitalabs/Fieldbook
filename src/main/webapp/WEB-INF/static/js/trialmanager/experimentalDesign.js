@@ -244,7 +244,7 @@
 						}
 
 						environmentData.environments = TrialManagerDataService.currentData.environments.environments;
-						environmentData.trialSettings =TrialManagerDataService.currentData.trialSettings;
+						environmentData.trialSettings = TrialManagerDataService.currentData.trialSettings;
 						TrialManagerDataService.generateExpDesign(environmentData).then(
 							function(response) {
 								if (response.valid === true) {
@@ -372,7 +372,7 @@
 						var selectedExperimentDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
 						return $scope.data.designType != null
 							&& $scope.data.designType !== ''
-							&& selectedExperimentDesignType.name === 'Custom Import Design' || !studyStateService.hasListOrSubObs();
+							&& selectedExperimentDesignType.name === 'Custom Import Design';
 					};
 
 					$scope.isBVDesign = function() {

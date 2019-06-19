@@ -506,8 +506,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				SettingsUtil.buildVariates(userSelection.getWorkbook().getVariates())));*/
 
 		this.fieldbookService.saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(),
-				userSelection.getWorkbook().getStudyDetails().getStudyName(), form.getColumnOrders(),
-				userSelection.getWorkbook());
+			form.getColumnOrders(), userSelection.getWorkbook());
 		final Boolean hasOutOfSyncObservations =
 			this.fieldbookMiddlewareService.hasOutOfSyncObservations(workbook.getMeasurementDatesetId());
 

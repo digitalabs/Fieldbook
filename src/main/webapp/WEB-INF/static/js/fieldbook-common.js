@@ -2380,7 +2380,6 @@ function moveStudy(sourceNode, targetNode) {
 	'use strict';
 	var sourceId = sourceNode.data.key,
 		targetId = targetNode.data.key,
-		isStudy = sourceNode.data.isFolder === true ? 0 : 1,
 		title;
 
 	if (targetId === 'LOCAL') {
@@ -2390,7 +2389,7 @@ function moveStudy(sourceNode, targetNode) {
 	$.ajax({
 		url: '/Fieldbook/StudyTreeManager/moveStudyFolder',
 		type: 'POST',
-		data: 'sourceId=' + sourceId + '&targetId=' + targetId + '&isStudy=' + isStudy,
+		data: 'sourceId=' + sourceId + '&targetId=' + targetId,
 		cache: false,
 		success: function(data) {
 			if (data.isSuccess === '1') {

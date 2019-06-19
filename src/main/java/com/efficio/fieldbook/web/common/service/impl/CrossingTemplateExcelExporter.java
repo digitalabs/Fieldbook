@@ -1,17 +1,7 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -20,6 +10,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.ExcelCellStyleBuilder;
 import org.generationcp.commons.parsing.ExcelWorkbookRow;
 import org.generationcp.commons.parsing.GermplasmExportedWorkbook;
@@ -48,8 +39,15 @@ import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
 import org.generationcp.middleware.util.PoiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
-import org.generationcp.commons.constant.AppConstants;
+import javax.annotation.Resource;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * The class providing export crossing template as an excel file function
@@ -101,8 +99,7 @@ public class CrossingTemplateExcelExporter {
 			this.updateCodesSection(excelWorkbook.getSheetAt(2));
 
 			// 5. write Study List Sheet
-			this.writeStudyListSheet(excelWorkbook.getSheetAt(3), new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook), studyId,
-					studyName);
+			this.writeStudyListSheet(excelWorkbook.getSheetAt(3), studyId, studyName);
 
 			// return the resulting file back to the user
 			return this.createExcelOutputFile(studyName, excelWorkbook);
@@ -112,9 +109,9 @@ public class CrossingTemplateExcelExporter {
 		}
 	}
 
-	void writeStudyListSheet(Sheet studyListSheet, final ExcelCellStyleBuilder sheetStyles, final int studyId, final String studyName) {
+	void writeStudyListSheet(final Sheet studyListSheet, final int studyId, final String studyName) {
 
-		final int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
+		final int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId);
 		final List<Experiment> experiments = this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE);
 		final VariableTypeList treatmentFactorVariables = this.studyDataManager.getTreatmentFactorVariableTypes(measurementDataSetId);
 

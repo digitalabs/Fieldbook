@@ -20,7 +20,6 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
-import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.google.common.collect.Lists;
 import org.generationcp.commons.data.initializer.ImportedGermplasmTestDataInitializer;
@@ -579,8 +578,8 @@ public class ImportGermplasmListControllerTest {
 		final ListDataProject listDataProject = new ListDataProject();
 		listDataProjects.add(listDataProject);
 
-		Mockito.doNothing().when(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null,
-				workbook);
+		Mockito.doNothing().when(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null,
+			workbook);
 
 		final String studyIdInNextScreen = this.importGermplasmListController.nextScreen(form, null, null, null);
 
@@ -592,8 +591,9 @@ public class ImportGermplasmListControllerTest {
 			ArgumentMatchers.isA(Integer.class));
 		Mockito.verify(this.dataImportService).saveDataset(workbook, true, true, project.getUniqueID(),
 				this.cropType);
+
 		Mockito.verify(this.fieldbookService).saveStudyImportedCrosses(ArgumentMatchers.<List<Integer>>isNull(), ArgumentMatchers.isA(Integer.class));
-		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, null, workbook);
+		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, workbook);
 
 		Assert.assertEquals("Expecting studyIdInSaveDataset returned from nextScreen", "3", studyIdInNextScreen);
 	}

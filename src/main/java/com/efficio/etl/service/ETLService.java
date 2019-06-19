@@ -1,28 +1,25 @@
 package com.efficio.etl.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
+import com.efficio.etl.web.bean.IndexValueDTO;
+import com.efficio.etl.web.bean.RowDTO;
+import com.efficio.etl.web.bean.SheetDTO;
+import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.bean.VariableDTO;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.util.Message;
 
-import com.efficio.etl.web.bean.IndexValueDTO;
-import com.efficio.etl.web.bean.RowDTO;
-import com.efficio.etl.web.bean.SheetDTO;
-import com.efficio.etl.web.bean.UserSelection;
-import com.efficio.etl.web.bean.VariableDTO;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -35,7 +32,7 @@ public interface ETLService {
    * @param in
    * @return
    */
-  public String storeUserWorkbook(InputStream in) throws IOException;
+  String storeUserWorkbook(InputStream in) throws IOException;
 
   /**
    * Retrieves
@@ -44,72 +41,66 @@ public interface ETLService {
    * @return
    * @throws WorkbookParserException
    */
-  public Workbook retrieveCurrentWorkbook(UserSelection userSelection) throws IOException;
+  Workbook retrieveCurrentWorkbook(UserSelection userSelection) throws IOException;
 
-  public File retrieveCurrentWorkbookAsFile(UserSelection userSelection) throws IOException;
+  File retrieveCurrentWorkbookAsFile(UserSelection userSelection) throws IOException;
 
-  public List<SheetDTO> retrieveSheetInformation(Workbook workbook);
+  List<SheetDTO> retrieveSheetInformation(Workbook workbook);
 
-  public List<RowDTO> retrieveRowInformation(Workbook workbook, int sheetIndex, int startRow, int endRow, int maxRowContentLength);
+  List<RowDTO> retrieveRowInformation(Workbook workbook, int sheetIndex, int startRow, int endRow, int maxRowContentLength);
 
-  public List<IndexValueDTO> retrieveColumnInformation(Workbook workbook, int sheetIndex, int rowIndex);
+  List<IndexValueDTO> retrieveColumnInformation(Workbook workbook, int sheetIndex, int rowIndex);
 
-  public int calculateObservationRows(Workbook workbook, int sheetIndex, int contentRowIndex, int indexColumnIndex);
+  int calculateObservationRows(Workbook workbook, int sheetIndex, int contentRowIndex, int indexColumnIndex);
 
-  public List<String> retrieveColumnHeaders(Workbook workbook, UserSelection userSelection, Boolean addObsUnitId);
+  List<String> retrieveColumnHeaders(Workbook workbook, UserSelection userSelection, Boolean addObsUnitId);
 
-  public int getAvailableRowsForDisplay(Workbook workbook, int selectedSheetIndex);
+  int getAvailableRowsForDisplay(Workbook workbook, int selectedSheetIndex);
 
-  public int getAvailableRowsForDisplay(Workbook workbook, UserSelection userSelection);
+  int getAvailableRowsForDisplay(Workbook workbook, UserSelection userSelection);
 
-  public org.generationcp.middleware.domain.etl.Workbook convertToWorkbook(UserSelection userSelection);
+  org.generationcp.middleware.domain.etl.Workbook convertToWorkbook(UserSelection userSelection);
 
-  public Map<PhenotypicType, List<VariableDTO>> prepareInitialCategorization(List<String> headers, UserSelection selection);
+  Map<PhenotypicType, List<VariableDTO>> prepareInitialCategorization(List<String> headers, UserSelection selection);
 
-  public VariableDTO retrieveStandardVariableByID(int id);
+  VariableDTO retrieveStandardVariableByID(int id);
 
-  public void mergeVariableData(VariableDTO[] variables, Workbook workbook, UserSelection userSelection);
+  void mergeVariableData(VariableDTO[] variables, Workbook workbook, UserSelection userSelection);
 
-  public List<MeasurementRow> extractExcelFileData(Workbook workbook, UserSelection userSelection,
+  List<MeasurementRow> extractExcelFileData(Workbook workbook, UserSelection userSelection,
 		  org.generationcp.middleware.domain.etl.Workbook importData, boolean discardInvalidValues);
 
-  public PhenotypicType retrievePhenotypicType(String typeName);
+  List<String> convertMessageList(List<Message> messages);
 
-  public String getCVDefinitionById(int termId);
+  String convertMessage(Message message);
 
-  public List<String> convertMessageList(List<Message> messages);
+  List<StudyDetails> retrieveExistingStudyDetails(String programUUID);
 
-  public String convertMessage(Message message);
+  Map<String, List<Message>> validateProjectOntology(org.generationcp.middleware.domain.etl.Workbook importData);
 
-  public List<StudyDetails> retrieveExistingStudyDetails(String programUUID);
+  int saveProjectOntology(org.generationcp.middleware.domain.etl.Workbook importData, String programUUID);
 
-  public Map<String, List<Message>> validateProjectOntology(org.generationcp.middleware.domain.etl.Workbook importData);
+  Map<String, List<Message>> validateProjectData(org.generationcp.middleware.domain.etl.Workbook importData, String programUUID);
 
-  public int saveProjectOntology(org.generationcp.middleware.domain.etl.Workbook importData, String programUUID)
-		  throws MiddlewareQueryException;
+  int saveProjectData(org.generationcp.middleware.domain.etl.Workbook importData, String programUUID);
 
-  public Map<String, List<Message>> validateProjectData(org.generationcp.middleware.domain.etl.Workbook importData, String programUUID);
-
-  public int saveProjectData(org.generationcp.middleware.domain.etl.Workbook importData, String programUUID)
-		  throws MiddlewareQueryException;
-
-  public org.generationcp.middleware.domain.etl.Workbook retrieveAndSetProjectOntology(UserSelection userSelection,
-		  boolean isMeansDataImport) throws MiddlewareException;
-
-  public Map<String, List<Message>> checkForMismatchedHeaders(List<String> fileHeaders, List<MeasurementVariable> studyHeaders,
+  org.generationcp.middleware.domain.etl.Workbook retrieveAndSetProjectOntology(UserSelection userSelection,
 		  boolean isMeansDataImport);
 
-  public Tool getFieldbookWebTool();
+  Map<String, List<Message>> checkForMismatchedHeaders(List<String> fileHeaders, List<MeasurementVariable> studyHeaders,
+		  boolean isMeansDataImport);
 
-  public Workbook retrieveCurrentWorkbookWithValidation(UserSelection userSelection) throws IOException, WorkbookParserException;
+  Tool getFieldbookWebTool();
+
+  Workbook retrieveCurrentWorkbookWithValidation(UserSelection userSelection) throws IOException, WorkbookParserException;
 
   int getIndexColumnIndex(List<String> fileHeaders, List<MeasurementVariable> studyHeaders);
 
-  public StudyDetails readStudyDetails(Sheet sheet);
+  StudyDetails readStudyDetails(Sheet sheet);
 
-  public boolean hasMeansDataset(int studyId) throws MiddlewareException;
+  boolean hasMeansDataset(int studyId);
 
-  public boolean hasMeasurementEffectDataset(int studyId) throws MiddlewareException;
+  boolean hasMeasurementEffectDataset(int studyId);
 
   /**
    * Checks the uploaded workbook for out of bounds data. Returns true if there are out of bounds data.

@@ -341,7 +341,7 @@ public class CreateTrialController extends BaseTrialController {
 
 		this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(data.getEnvironments().getEnvironments()));
 
-		this.fieldbookService.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), name, data.getColumnOrders(), workbook);
+		this.fieldbookService.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), data.getColumnOrders(), workbook);
 
 		return new ResponseEntity<>("", HttpStatus.OK);
 	}

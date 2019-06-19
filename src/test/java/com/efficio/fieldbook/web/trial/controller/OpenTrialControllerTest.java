@@ -1224,8 +1224,7 @@ public class OpenTrialControllerTest {
 		Mockito.verify(this.fieldbookService, Mockito.times(0)).createIdNameVariablePairs(Matchers.any(Workbook.class), Matchers.anyListOf(
 						SettingDetail.class),
 				Matchers.anyString(), Matchers.anyBoolean());
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).saveStudyColumnOrdering(Matchers.anyInt(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.any(Workbook.class));
+		Mockito.verify(this.fieldbookService, Mockito.times(0)).saveStudyColumnOrdering(Matchers.anyInt(), Matchers.anyString(), Matchers.any(Workbook.class));
 	}
 
 	@Test
@@ -1250,9 +1249,9 @@ public class OpenTrialControllerTest {
 		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(Matchers.any(Workbook.class), Matchers.anyListOf(
 				SettingDetail.class),
 				Matchers.anyString(), Matchers.anyBoolean());
-		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(Matchers.anyInt(), ArgumentMatchers.<String>isNull(), ArgumentMatchers.<String>isNull(),
-				Matchers.any(Workbook.class));
-		/*Mockito.verify(this.fieldbookMiddlewareService).hasAdvancedOrCrossesList(Matchers.anyInt());*/
+		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(Matchers.anyInt(), ArgumentMatchers.<String>isNull(),
+			Matchers.any(Workbook.class));
+		//Mockito.verify(this.fieldbookMiddlewareService).hasAdvancedOrCrossesList(Matchers.anyInt());
 	}
 
 	private TrialData setUpTrialData() {

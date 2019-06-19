@@ -1336,7 +1336,7 @@ public class SettingsUtil {
 		final String studyType = workbook.getStudyDetails().getStudyType().getLabel();
 		Integer datasetId = workbook.getMeasurementDatesetId();
 		if (datasetId == null) {
-			datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyDetails().getId(), studyName);
+			datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyDetails().getId());
 		}
 
 		final List<String> labelFieldsWithPairedVariable = new ArrayList<>(fields);

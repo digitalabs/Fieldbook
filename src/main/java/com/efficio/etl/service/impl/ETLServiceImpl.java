@@ -20,6 +20,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.DataSet;
+import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -39,11 +40,11 @@ import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.operation.parser.WorkbookParser;
+import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.util.DatasetUtil;
 import org.generationcp.middleware.util.Message;
 import org.generationcp.middleware.util.PoiUtil;
 import org.generationcp.middleware.util.Util;
@@ -218,6 +219,9 @@ public class ETLServiceImpl implements ETLService {
 			studyDetails.setId(userSelection.getStudyId());
 		}
 
+		// Save the imported Study at system root folder by default.
+		studyDetails.setParentFolderId(DmsProject.SYSTEM_FOLDER_ID);
+
 		return studyDetails;
 	}
 
@@ -347,22 +351,6 @@ public class ETLServiceImpl implements ETLService {
 		}
 
 		return userSelection.getLastSheetRowNum();
-	}
-
-	@Override
-	public PhenotypicType retrievePhenotypicType(final String typeName) {
-		PhenotypicType phenotypicType = null;
-		if (AppConstants.TYPE_TRIAL_ENVIRONMENT.equals(typeName)) {
-			phenotypicType = PhenotypicType.TRIAL_ENVIRONMENT;
-		} else if (AppConstants.TYPE_GERMPLASM_ENTRY.equals(typeName)) {
-			phenotypicType = PhenotypicType.GERMPLASM;
-		} else if (AppConstants.TYPE_TRIAL_DESIGN.equals(typeName)) {
-			phenotypicType = PhenotypicType.TRIAL_DESIGN;
-		} else if (AppConstants.TYPE_VARIATE.equals(typeName)) {
-			phenotypicType = PhenotypicType.VARIATE;
-		}
-
-		return phenotypicType;
 	}
 
 	protected String getPhenotypicTypeString(final PhenotypicType type) {
@@ -676,23 +664,6 @@ public class ETLServiceImpl implements ETLService {
 		return returnVal;
 	}
 
-	@Override
-	public String getCVDefinitionById(final int termId) {
-
-		String name = "";
-
-		try {
-			final Term term = this.ontologyDataManager.getTermById(termId);
-			if (term != null) {
-				name = term.getDefinition();
-			}
-		} catch (final MiddlewareQueryException e) {
-			ETLServiceImpl.LOG.error(e.getMessage(), e);
-		}
-
-		return name;
-
-	}
 
 	@Override
 	public Map<String, List<Message>> validateProjectOntology(
@@ -829,7 +800,7 @@ public class ETLServiceImpl implements ETLService {
 	}
 
 	private DataSet getPlotDataset(final Integer studyId) {
-		final DataSet plotDataSet = DatasetUtil.getPlotDataSet(this.studyDataManager, studyId);
+		final DataSet plotDataSet = this.studyDataManager.findOneDataSetByType(studyId, DatasetTypeEnum.PLOT_DATA.getId());
 		if (plotDataSet == null) {
 			throw new MiddlewareQueryException("Missing plot dataset");
 		}
@@ -837,7 +808,7 @@ public class ETLServiceImpl implements ETLService {
 	}
 
 	private DataSet getTrialDataset(final Integer studyId) {
-		final DataSet trialDataSet = DatasetUtil.getTrialDataSet(this.studyDataManager, studyId);
+		final DataSet trialDataSet = this.studyDataManager.findOneDataSetByType(studyId, DatasetTypeEnum.SUMMARY_DATA.getId());
 		if (trialDataSet == null) {
 			throw new MiddlewareQueryException("Missing trial dataset");
 		}
@@ -845,7 +816,7 @@ public class ETLServiceImpl implements ETLService {
 	}
 
 	private DataSet getMeansDataset(final Integer studyId) {
-		final DataSet meansDataSet = DatasetUtil.getMeansDataSet(this.studyDataManager, studyId);
+		final DataSet meansDataSet = this.studyDataManager.findOneDataSetByType(studyId, DatasetTypeEnum.MEANS_DATA.getId());
 		if (meansDataSet == null) {
 			throw new MiddlewareQueryException("Missing means dataset");
 		}
@@ -996,29 +967,14 @@ public class ETLServiceImpl implements ETLService {
 
 	@Override
 	public boolean hasMeansDataset(final int studyId) {
-		boolean hasMeansDataset = false;
-		final List<DataSet> ds = this.studyDataManager.getDataSetsByType(studyId, DatasetTypeEnum.MEANS_DATA.getId());
-		if (ds != null && !ds.isEmpty()) {
-			hasMeansDataset = true;
-		}
-		return hasMeansDataset;
+		final DatasetReference meansDatasetReference = this.studyDataManager.findOneDataSetReferenceByType(studyId, DatasetTypeEnum.MEANS_DATA.getId());
+		return meansDatasetReference != null;
 	}
 
 	@Override
 	public boolean hasMeasurementEffectDataset(final int studyId) {
-		boolean hasMeasurementEffectDataset = false;
-		final List<DataSet> ds = this.studyDataManager.getDataSetsByType(studyId, DatasetTypeEnum.PLOT_DATA.getId());
-		// handle old behavior
-		if (ds != null && ds.size() > 1) {
-			hasMeasurementEffectDataset = true;
-		} else if (ds != null) {// new
-			for (final DataSet dataSet : ds) {
-				if (dataSet.getName().endsWith("-PLOTDATA") || !dataSet.getName().endsWith("-ENVIRONMENT")) {
-					hasMeasurementEffectDataset = true;
-				}
-			}
-		}
-		return hasMeasurementEffectDataset;
+		final DatasetReference plotDatasetReference = this.studyDataManager.findOneDataSetReferenceByType(studyId, DatasetTypeEnum.PLOT_DATA.getId());
+		return plotDatasetReference != null;
 	}
 
 	@Override

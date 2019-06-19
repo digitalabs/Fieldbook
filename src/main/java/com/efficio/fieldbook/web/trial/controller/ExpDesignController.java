@@ -19,6 +19,8 @@ import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.google.common.base.Functions;
+import com.google.common.collect.Lists;
 import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.ExperimentDesignType;
@@ -424,13 +426,13 @@ public class ExpDesignController extends BaseTrialController {
 				final String key = (String) keySetIter.next();
 				final Map treatmentDataMap = (Map) treatmentFactorsData.get(key);
 				TreatmentFactorData treatmentFactorData = new TreatmentFactorData();
-				final Object levelsObject =treatmentDataMap.get("levels");
+				final Object levelsObject = treatmentDataMap.get("levels");
 				if (levelsObject instanceof String) {
 					treatmentFactorData.setLevels(Integer.valueOf((String) levelsObject));
 				} else if (levelsObject instanceof Integer) {
 					treatmentFactorData.setLevels(Integer.valueOf((Integer) levelsObject));
 				}
-				treatmentFactorData.setLabels((List)treatmentDataMap.get("labels"));
+				treatmentFactorData.setLabels(Lists.transform((List<Integer>)treatmentDataMap.get("labels"), Functions.toStringFunction()));
 				treatmentFactorData.setVariableId((Integer)treatmentDataMap.get("variableId"));
 				treatmentFactorItems.put(key,treatmentFactorData);
 			}

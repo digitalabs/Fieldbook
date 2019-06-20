@@ -56,8 +56,6 @@ import static org.generationcp.middleware.service.api.dataset.ObservationUnitUti
 @Transactional
 public class NamingConventionServiceImpl implements NamingConventionService {
 
-	static final String SEQUENCE = "[SEQUENCE]";
-
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
@@ -119,11 +117,11 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	private AdvancingSourceList createAdvancingSourceList(final AdvancingStudy advanceInfo, Workbook workbook,
-			final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
+		final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
 
 		final Study study = advanceInfo.getStudy();
 		if (workbook == null) {
-				workbook = this.fieldbookMiddlewareService.getStudyDataSet(study.getId());
+			workbook = this.fieldbookMiddlewareService.getStudyDataSet(study.getId());
 		}
 		return this.advancingSourceListFactory.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 	}
@@ -150,11 +148,11 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	private void assignGermplasmAttributes(final ImportedGermplasm germplasm, final Integer sourceGid, final Integer sourceGnpgs,
-			final Integer sourceGpid1, final Integer sourceGpid2, final Method sourceMethod, final Method breedingMethod) {
+		final Integer sourceGpid1, final Integer sourceGpid2, final Method sourceMethod, final Method breedingMethod) {
 
 		if ((sourceMethod != null && sourceMethod.getMtype() != null
-				&& AppConstants.METHOD_TYPE_GEN.getString().equals(sourceMethod.getMtype())) || sourceGnpgs < 0 &&
-				(sourceGpid1 != null && sourceGpid1.equals(0)) && (sourceGpid2 != null && sourceGpid2.equals(0))) {
+			&& AppConstants.METHOD_TYPE_GEN.getString().equals(sourceMethod.getMtype())) || sourceGnpgs < 0 &&
+			(sourceGpid1 != null && sourceGpid1.equals(0)) && (sourceGpid2 != null && sourceGpid2.equals(0))) {
 
 			germplasm.setGpid1(sourceGid);
 		} else {
@@ -169,9 +167,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
-			final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber, AdvancingStudy advancingParameters, final String plantNo) {
+		final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber, AdvancingStudy advancingParameters, final String plantNo) {
 
-		String selectionNumberToApply;
+		String selectionNumberToApply = null;
 		boolean allPlotsSelected = "1".equals(advancingParameters.getAllPlotsChoice());
 		if (source.isBulk()) {
 			if (allPlotsSelected) {
@@ -190,16 +188,16 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 				workbook.getConditions(), selectionNumberToApply, source.getPlotNumber(), workbook.getStudyName(), plantNo);
 
 		final ImportedGermplasm germplasm =
-				new ImportedGermplasm(index, newGermplasmName, null /* gid */
-						, source.getGermplasm().getCross(), seedSource,
-						FieldbookUtil.generateEntryCode(index), null /* check */
-						, breedingMethod.getMid());
+			new ImportedGermplasm(index, newGermplasmName, null /* gid */
+				, source.getGermplasm().getCross(), seedSource,
+				FieldbookUtil.generateEntryCode(index), null /* check */
+				, breedingMethod.getMid());
 
 		// assign parentage etc for the new Germplasm
 		final Integer sourceGid = source.getGermplasm().getGid() != null ? Integer.valueOf(source.getGermplasm().getGid()) : -1;
 		final Integer gnpgs = source.getGermplasm().getGnpgs() != null ? source.getGermplasm().getGnpgs() : -1;
 		this.assignGermplasmAttributes(germplasm, sourceGid, gnpgs, source.getGermplasm().getGpid1(), source.getGermplasm().getGpid2(),
-				source.getSourceMethod(), breedingMethod);
+			source.getSourceMethod(), breedingMethod);
 
 		// assign grouping based on parentage
 
@@ -213,8 +211,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		germplasm.setTrialInstanceNumber(source.getTrialInstanceNumber());
 		germplasm.setReplicationNumber(source.getReplicationNumber());
-        germplasm.setPlotNumber(source.getPlotNumber());
-        germplasm.setLocationId(source.getHarvestLocationId());
+		germplasm.setPlotNumber(source.getPlotNumber());
+		germplasm.setLocationId(source.getHarvestLocationId());
 		if (plantNo != null) {
 			germplasm.setPlantNumber(plantNo);
 		}
@@ -237,7 +235,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final AdvancingStudy advancingParameters,
-			Workbook workbook) throws RuleException {
+		Workbook workbook) throws RuleException {
 
 		final List<ImportedGermplasm> list = new ArrayList<>();
 		int index = 1;
@@ -245,7 +243,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		for (final AdvancingSource row : rows.getRows()) {
 			if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
-					&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
+				&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
 
 				final List<String> names;
 				final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, advancingParameters.isCheckAdvanceLinesUnique());
@@ -277,7 +275,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	@Override
 	public List<ImportedCrosses> generateCrossesList(final List<ImportedCrosses> importedCrosses, final AdvancingSourceList rows,
-			final AdvancingStudy advancingParameters, final Workbook workbook, final List<Integer> gids) throws RuleException {
+		final AdvancingStudy advancingParameters, final Workbook workbook, final List<Integer> gids) throws RuleException {
 
 		final List<Method> methodList = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
 		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
@@ -291,31 +289,20 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		// FIXME previousMaxSequence is a "quick fix" solution to propagate previous max sequence to the next cross entry to process.
 		// Rules engine is currently not designed to handle this (even for advancing case). Next sequence choice is managed this via user
 		// interaction for advancing. There is no user interaction in case of cross list.
-		final Map<Integer, Integer> previousMaxSequenceMap = new HashMap<>();
+		int previousMaxSequence = 0;
 		for (final AdvancingSource advancingSource : rows.getRows()) {
+
 			ImportedCrosses importedCross = importedCrosses.get(index++);
 			final List<String> names;
+			advancingSource.setCurrentMaxSequence(previousMaxSequence);
 
-            final Integer breedingMethodId = advancingSource.getBreedingMethodId();
-            final Method selectedMethod = breedingMethodMap.get(breedingMethodId);
-			if(previousMaxSequenceMap.get(breedingMethodId) == null) {
-				if (SEQUENCE.equals(selectedMethod.getCount())) {
-					final String nextSequenceNumberString =
-						this.germplasmDataManager.getNextSequenceNumberForCrossName(selectedMethod.getPrefix());
-					//Subtract 1 since we're getting the "next" sequence number, not the current.
-					final int currentMaxSequence = Integer.parseInt(nextSequenceNumberString) - 1;
-					advancingSource.setCurrentMaxSequence(currentMaxSequence);
-				} else {
-					advancingSource.setCurrentMaxSequence(0);
-				}
-			} else {
-				advancingSource.setCurrentMaxSequence(previousMaxSequenceMap.get(breedingMethodId));
-			}
+			final Integer breedingMethodId = advancingSource.getBreedingMethodId();
+			final Method selectedMethod = breedingMethodMap.get(breedingMethodId);
 
 			if (!this.germplasmDataManager.isMethodNamingConfigurationValid(selectedMethod)) {
-                throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rule.not.configured", new Object[] {selectedMethod.getMname()}, "The rules"
-                        + " were not configured", LocaleContextHolder.getLocale()));
-            }
+				throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rule.not.configured", new Object[] {selectedMethod.getMname()}, "The rules"
+					+ " were not configured", LocaleContextHolder.getLocale()));
+			}
 
 			// here, we resolve the breeding method ID stored in the advancing source object into a proper breeding Method object
 			advancingSource.setBreedingMethod(selectedMethod);
@@ -332,7 +319,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
 			// Save away the current max sequence once rules have been run for this entry.
-			previousMaxSequenceMap.put(breedingMethodId, advancingSource.getCurrentMaxSequence() + 1);
+			previousMaxSequence = advancingSource.getCurrentMaxSequence() + 1;
 			for (final String name : names) {
 				importedCross.setDesig(name);
 			}
@@ -351,8 +338,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 
 		final NamingRuleExecutionContext context =
-				new NamingRuleExecutionContext(sequenceList, this.processCodeService, row, this.germplasmDataManager,
-						new ArrayList<String>());
+			new NamingRuleExecutionContext(sequenceList, this.processCodeService, row, this.germplasmDataManager,
+				new ArrayList<String>());
 		context.setMessageSource(this.messageSource);
 
 		return context;

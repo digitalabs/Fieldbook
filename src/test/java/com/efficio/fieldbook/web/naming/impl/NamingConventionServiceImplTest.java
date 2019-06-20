@@ -333,47 +333,8 @@ public class NamingConventionServiceImplTest {
         Assert.assertEquals(ruleGeneratedName, resultName.getNval());
 
     }
-
-    @Test
-	public void testGenerateCrossesListForMethodWithSequenceCount() throws RuleException{
-		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
-		final ImportedCrosses importedCross = new ImportedCrosses();
-		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(1, "femaleDesig", "femalePedig");
-		importedCross.setFemaleParent(femaleParent);
-		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(2, "maleDesig", "malePedig");
-		importedCross.setMaleParents(Arrays.asList(maleParent));
-		importedCrosses.add(importedCross);
-
-		final AdvancingSourceList rows = new AdvancingSourceList();
-		final AdvancingSource advancingSource = new AdvancingSource();
-		advancingSource.setBreedingMethodId(101);
-		rows.setRows(Arrays.asList(advancingSource));
-
-		final AdvancingStudy advancingParameters = Mockito.mock(AdvancingStudy.class);
-		final Workbook workbook = Mockito.mock(Workbook.class);
-		final List<Integer> gids = Arrays.asList(1);
-		final Method method = new Method();
-		method.setMid(101);
-		method.setPrefix("IB");
-		method.setCount(NamingConventionServiceImpl.SEQUENCE);
-
-		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(false)).thenReturn(Arrays.asList(method));
-		Mockito.when(this.germplasmDataManager.isMethodNamingConfigurationValid(method)).thenReturn(true);
-		Mockito.when(this.germplasmDataManager.getNextSequenceNumberForCrossName(method.getPrefix())).thenReturn("2");
-		Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(Arrays.asList("name"));
-		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace("naming")).thenReturn(new String[] {NamingConventionServiceImpl.SEQUENCE});
-
-		final List<ImportedCrosses> results = this.namingConventionService.generateCrossesList(importedCrosses, rows, advancingParameters, workbook, gids);
-		Assert.assertEquals("name", importedCross.getDesig());
-		Mockito.verify(this.fieldbookMiddlewareService).getAllBreedingMethods(false);
-		Mockito.verify(this.germplasmDataManager).isMethodNamingConfigurationValid(method);
-		Mockito.verify(this.germplasmDataManager).getNextSequenceNumberForCrossName(method.getPrefix());
-		Mockito.verify(this.rulesService).runRules(ArgumentMatchers.any(RuleExecutionContext.class));
-		Mockito.verify(this.ruleFactory).getRuleSequenceForNamespace("naming");
-	}
-
 	@Test
-	public void testGenerateCrossesListForMethodWithCountNotSequence() throws RuleException{
+	public void testGenerateCrossesList() throws RuleException{
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
 		final ImportedCrosses importedCross = new ImportedCrosses();
 		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(1, "femaleDesig", "femalePedig");
@@ -397,15 +358,13 @@ public class NamingConventionServiceImplTest {
 
 		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(false)).thenReturn(Arrays.asList(method));
 		Mockito.when(this.germplasmDataManager.isMethodNamingConfigurationValid(method)).thenReturn(true);
-		Mockito.when(this.germplasmDataManager.getNextSequenceNumberForCrossName(method.getPrefix())).thenReturn("2");
 		Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(Arrays.asList("name"));
-		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace("naming")).thenReturn(new String[] {NamingConventionServiceImpl.SEQUENCE});
+		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace("naming")).thenReturn(new String[] {"[COUNT]"});
 
 		final List<ImportedCrosses> results = this.namingConventionService.generateCrossesList(importedCrosses, rows, advancingParameters, workbook, gids);
 		Assert.assertEquals("name", importedCross.getDesig());
 		Mockito.verify(this.fieldbookMiddlewareService).getAllBreedingMethods(false);
 		Mockito.verify(this.germplasmDataManager).isMethodNamingConfigurationValid(method);
-		Mockito.verify(this.germplasmDataManager, Mockito.never()).getNextSequenceNumberForCrossName(method.getPrefix());
 		Mockito.verify(this.rulesService).runRules(ArgumentMatchers.any(RuleExecutionContext.class));
 		Mockito.verify(this.ruleFactory).getRuleSequenceForNamespace("naming");
 	}

@@ -3,6 +3,10 @@
 
 	var subObservationModule = angular.module('subObservation', []);
 	var TRIAL_INSTANCE = 8170,
+		GID = 8240,
+		GROUPGID = 8330,
+		LINE_GID = 8836,
+		TESTER_GID = 8839,
 		OBS_UNIT_ID = 8201;
 	var SAMPLES = -2;
 	var hiddenColumns = [OBS_UNIT_ID, TRIAL_INSTANCE];
@@ -704,8 +708,8 @@
 			function isTextFilter(columnData) {
 
 				// Factors like GID, GROUPGID, LINE_GID and TESTER_GID have 'Germplasm List' datatype but they should be treated as numeric
-				if (columnData.name === 'GID' || columnData.dataType === 'GROUPGID'
-					|| columnData.dataType === 'LINE_GID' || columnData.dataType === 'LINE_GID') {
+				if (columnData.termId === GID || columnData.termId === GROUPGID
+					|| columnData.termId === LINE_GID || columnData.termId === TESTER_GID) {
 					return false;
 				}
 

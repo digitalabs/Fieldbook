@@ -12,9 +12,6 @@
     if (TrialManagerDataService.isOpenStudy()) {
         TrialManagerDataService.updateTrialMeasurementRowCount(TrialManagerDataService.trialMeasurement.count);
         displaySelectedGermplasmDetails();
-        
-        var startingEntryNo = $('#txtStartingEntryNo').val();
-        TrialManagerDataService.updateStartingEntryNoCount((parseInt(startingEntryNo)) ? parseInt(startingEntryNo) : 1);
     }
 
     $scope.labels = {};

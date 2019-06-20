@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 public class StudyTreeControllerTest {
@@ -126,6 +127,19 @@ public class StudyTreeControllerTest {
 				this.controller.expandTree(StudyTreeControllerTest.PARENT_FOLDER_ID, StudyTreeControllerTest.PARENT_FOLDER_ID);
 		Assert.assertNotNull(result);
 		Assert.assertTrue(!"[]".equals(result));
+	}
+
+	@Test
+	public void testMoveStudyFolder() {
+		final Integer sourceId = new Random().nextInt();
+		final Integer targetId = new Random().nextInt();
+		Mockito.when(this.request.getParameter("sourceId")).thenReturn(sourceId.toString());
+		Mockito.when(this.request.getParameter("targetId")).thenReturn(targetId.toString());
+
+		final Map<String, Object> result = this.controller.moveStudyFolder(this.request);
+
+		Mockito.verify(this.studyDataManager).moveDmsProject(sourceId, targetId);
+		Assert.assertEquals("1", result.get(StudyTreeController.IS_SUCCESS));
 	}
 
 	@Test

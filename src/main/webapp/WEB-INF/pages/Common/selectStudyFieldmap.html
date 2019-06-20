@@ -141,7 +141,7 @@ function addStudyInFieldMap(id, name) {
 		showAlertMessage('', trialAlreadyAdded);
 	} else {
 		$.ajax({
-			url: '/Fieldbook/StudyTreeManager/has/observations/' + id + '/' + name,
+			url: '/Fieldbook/StudyTreeManager/has/observations/' + id,
 			type: 'GET',
 			data: '',
 			cache: false,

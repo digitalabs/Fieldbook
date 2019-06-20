@@ -578,8 +578,7 @@ public class TrialMeasurementsController extends AbstractBaseFieldbookController
 		final List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>();
 		measurementDatasetVariables.addAll(this.userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 
-		final int measurementDatasetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId,
-				this.userSelection.getWorkbook().getStudyName());
+		final int measurementDatasetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId);
 		final List<ProjectProperty> projectProperties = this.ontologyDataManager
 				.getProjectPropertiesByProjectId(measurementDatasetId);
 

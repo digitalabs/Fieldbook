@@ -604,12 +604,10 @@ public class CrossingServiceImpl implements CrossingService {
 
 	protected Integer getNextNumberInSequence(final CrossNameSetting setting) {
 
-		final String lastPrefixUsed = this.buildPrefixString(setting).toUpperCase();
 		int nextNumberInSequence = 1;
 
-		if (!lastPrefixUsed.isEmpty()) {
-			final String suffix = this.buildSuffixString(setting, setting.getSuffix());
-			final String nextSequenceNumberString = this.germplasmDataManager.getNextSequenceNumberForCrossName(lastPrefixUsed, suffix);
+		if (!StringUtils.isEmpty(setting.getPrefix())) {
+			final String nextSequenceNumberString = this.germplasmDataManager.getNextSequenceNumberForCrossName(setting.getPrefix().trim());
 			nextNumberInSequence = Integer.parseInt(nextSequenceNumberString);
 		}
 

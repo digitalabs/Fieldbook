@@ -221,7 +221,7 @@ public interface FieldbookService {
 
 	void addConditionsToTrialObservationsIfNecessary(Workbook workbook);
 
-	void saveStudyColumnOrdering(Integer studyId, String studyName, String columnOrderDelimited, Workbook workbook);
+	void saveStudyColumnOrdering(Integer studyId, String columnOrderDelimited, Workbook workbook);
 
 	public List<ValueReference> getAllPossibleValuesWithFilter(final int id, boolean filtered);
 

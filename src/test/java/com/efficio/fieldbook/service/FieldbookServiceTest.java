@@ -1,10 +1,12 @@
 
 package com.efficio.fieldbook.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.PossibleValuesCache;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -48,12 +50,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
-import org.generationcp.commons.constant.AppConstants;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FieldbookServiceTest {
@@ -524,12 +523,11 @@ public class FieldbookServiceTest {
 		final FieldbookService api = Mockito.mock(FieldbookService.class);
 		fieldbookService.setFieldbookMiddlewareService(api);
 		final Integer studyId = null;
-		final String studyName = "Study Name";
 		final String columnOrderDelimited = "";
-		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited,
-				Mockito.mock(Workbook.class));
-		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(ArgumentMatchers.any(Integer.class),
-			ArgumentMatchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
+		fieldbookService.saveStudyColumnOrdering(studyId, columnOrderDelimited,
+			Mockito.mock(Workbook.class));
+		Mockito.verify(api, Mockito.times(0))
+			.saveStudyColumnOrdering(ArgumentMatchers.any(Integer.class), ArgumentMatchers.<List<Integer>>any());
 	}
 
 	@Test
@@ -538,12 +536,11 @@ public class FieldbookServiceTest {
 		final FieldbookService api = Mockito.mock(FieldbookService.class);
 		fieldbookService.setFieldbookMiddlewareService(api);
 		final Integer studyId = 7;
-		final String studyName = "Study Name";
 		final String columnOrderDelimited = "";
 		final Workbook workbook = Mockito.mock(Workbook.class);
-		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited, workbook);
-		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(ArgumentMatchers.any(Integer.class),
-			ArgumentMatchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
+		fieldbookService.saveStudyColumnOrdering(studyId, columnOrderDelimited, workbook);
+		Mockito.verify(api, Mockito.times(0))
+			.saveStudyColumnOrdering(ArgumentMatchers.any(Integer.class), ArgumentMatchers.<List<Integer>>any());
 		Mockito.verify(api, Mockito.times(1)).setOrderVariableByRank(workbook);
 	}
 
@@ -555,10 +552,11 @@ public class FieldbookServiceTest {
 		final Integer studyId = 7;
 		final String studyName = "Study Name";
 		final String columnOrderDelimited = "[\"1100\", \"1900\"]";
-		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited,
-				Mockito.mock(Workbook.class));
-		Mockito.verify(api, Mockito.times(1)).saveStudyColumnOrdering(ArgumentMatchers.any(Integer.class),
-			ArgumentMatchers.any(String.class), ArgumentMatchers.<List<Integer>>any());
+
+		fieldbookService.saveStudyColumnOrdering(studyId, columnOrderDelimited,
+			Mockito.mock(Workbook.class));
+		Mockito.verify(api, Mockito.times(1))
+			.saveStudyColumnOrdering(ArgumentMatchers.any(Integer.class), ArgumentMatchers.<List<Integer>>any());
 	}
 
 	@Test

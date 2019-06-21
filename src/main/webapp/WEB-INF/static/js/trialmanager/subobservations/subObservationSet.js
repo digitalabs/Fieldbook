@@ -3,7 +3,12 @@
 
 	var subObservationModule = angular.module('subObservation', []);
 	var TRIAL_INSTANCE = 8170,
+		GID = 8240,
+		GROUPGID = 8330,
+		LINE_GID = 8836,
+		TESTER_GID = 8839,
 		OBS_UNIT_ID = 8201;
+	var SAMPLES = -2;
 	var hiddenColumns = [OBS_UNIT_ID, TRIAL_INSTANCE];
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
@@ -653,7 +658,7 @@
 						var columnData = column.columnData;
 						columnData.isFiltered = false;
 
-						if (columnData.dataTypeCode === 'T') {
+						if (isTextFilter(columnData)) {
 							return map;
 						}
 
@@ -670,7 +675,7 @@
 								map[columnData.termId] = [columnData.query];
 							}
 						} else if (columnData.query) {
-							if (columnData.dataTypeCode === 'D') {
+							if (columnData.dataType === 'Date') {
 								map[columnData.termId] = [($.datepicker.formatDate("yymmdd", columnData.query))];
 							} else {
 								map[columnData.termId] = [(columnData.query)];
@@ -684,7 +689,7 @@
 					}, {}),
 					filteredTextValues: $scope.columnsObj.columns.reduce(function (map, column) {
 						var columnData = column.columnData;
-						if (columnData.dataTypeCode !== 'T') {
+						if (!isTextFilter(columnData)) {
 							return map;
 						}
 						if (columnData.query) {
@@ -692,8 +697,29 @@
 							columnData.isFiltered = true;
 						}
 						return map;
+					}, {}),
+					variableTypeMap: $scope.columnsObj.columns.reduce(function (map, column) {
+						map[column.columnData.termId] = column.columnData.variableType;
+						return map;
 					}, {})
 				};
+			}
+
+			function isTextFilter(columnData) {
+
+				// Factors like GID, GROUPGID, LINE_GID and TESTER_GID have 'Germplasm List' datatype but they should be treated as numeric
+				if (columnData.termId === GID || columnData.termId === GROUPGID
+					|| columnData.termId === LINE_GID || columnData.termId === TESTER_GID) {
+					return false;
+				}
+
+				if (columnData.dataType === 'Categorical' || columnData.dataType === 'Numeric'
+					|| columnData.dataType === 'Date' || columnData.termId === SAMPLES) {
+					return false;
+				}
+
+				return true;
+
 			}
 
 			function getDtOptions() {
@@ -762,7 +788,7 @@
 			}
 
 			function initCompleteCallback() {
-				table().columns('.variates').every(function () {
+				table().columns().every(function () {
 					$(this.header()).prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#1b95b2;"' +
 						' ng-if="isVariableBatchActionSelected(' + this.index() + ')"> </span>')($scope))
 						.append($compile('<span class="glyphicon glyphicon-filter" ' +
@@ -1170,13 +1196,14 @@
 					if (columnData.termId === 8240 || columnData.termId === 8250) {
 						columnsDef.push({
 							targets: columns.length - 1,
+							orderable: false,
 							render: function (data, type, full, meta) {
 								return '<a class="gid-link" href="javascript: void(0)" ' +
 									'onclick="openGermplasmDetailsPopopWithGidAndDesig(\'' +
 									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
 							}
 						});
-					} else if (columnData.termId === -2) {
+					} else if (columnData.termId === SAMPLES) {
 						// SAMPLES count column
 						columnsDef.push({
 							targets: columns.length - 1,
@@ -1229,6 +1256,7 @@
 					} else {
 						columnsDef.push({
 							targets: columns.length - 1,
+							orderable: false,
 							render: function (data, type, full, meta) {
 
 								if (!data) {

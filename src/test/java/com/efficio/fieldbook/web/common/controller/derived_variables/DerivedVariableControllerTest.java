@@ -16,7 +16,6 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.FormulaDto;
 import org.generationcp.middleware.domain.ontology.FormulaVariable;
-import org.generationcp.middleware.operation.builder.WorkbookBuilder;
 import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.derived_variables.FormulaService;
@@ -307,7 +306,7 @@ public class DerivedVariableControllerTest {
 		Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
 		Assert.assertEquals(ENGINE_EXCEPTION, response.getBody().get("errorMessage"));
 	}
-	
+
 	@Test
 	public void testExecute_DateParsingException() {
 		final BindingResult bindingResult = Mockito.mock(BindingResult.class);
@@ -332,7 +331,7 @@ public class DerivedVariableControllerTest {
 	public void testDependencyVariableHasMeasurementData() {
 
 		final List<Integer> idsToBeRemoved = Collections.list(VARIABLE3_TERMID);
-		final Set<Integer> variableIdsOfTraitsInStudy = this.derivedVariableController.getVariableIdsOfTraitsInStudy();
+		final Set<Integer> variableIdsOfTraitsInStudy = this.derivedVariableController.getAllPossibleInputVariables(1);
 
 		when(this.formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy)).thenReturn(this.createFormulaVariables());
 		when(this.studyService.hasMeasurementDataEntered(ArgumentMatchers.<List<Integer>>any(), Matchers.eq(STUDY_ID))).thenReturn(true);
@@ -354,7 +353,7 @@ public class DerivedVariableControllerTest {
 	public void testDependencyVariableHasMeasurementDataDerivedVariableAndItsDepencyVariablesAreRemoved() {
 
 		final List<Integer> idsToBeRemoved = Collections.list(VARIABLE3_TERMID, VARIABLE1_TERMID);
-		final Set<Integer> variableIdsOfTraitsInStudy = this.derivedVariableController.getVariableIdsOfTraitsInStudy();
+		final Set<Integer> variableIdsOfTraitsInStudy = this.derivedVariableController.getAllPossibleInputVariables(1);
 
 		when(this.formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy)).thenReturn(this.createFormulaVariables());
 
@@ -369,7 +368,7 @@ public class DerivedVariableControllerTest {
 	@Test
 	public void testGetVariableIdsOfTraitsInStudy() {
 
-		final Set<Integer> result = this.derivedVariableController.getVariableIdsOfTraitsInStudy();
+		final Set<Integer> result = this.derivedVariableController.getAllPossibleInputVariables(1);
 		assertTrue(result.contains(VARIABLE1_TERMID));
 		assertTrue(result.contains(VARIABLE2_TERMID));
 

@@ -5,16 +5,22 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.derivedvariable.DerivedVariableProcessor;
 import org.generationcp.commons.derivedvariable.DerivedVariableUtils;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.FormulaDto;
 import org.generationcp.middleware.domain.ontology.FormulaVariable;
+import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.enumeration.DatasetTypeEnum;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.derived_variables.FormulaService;
 import org.generationcp.middleware.service.api.study.StudyService;
 import org.slf4j.Logger;
@@ -35,6 +41,7 @@ import javax.annotation.Resource;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +49,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Controller
+@Transactional
 @RequestMapping("DerivedVariableController")
 public class DerivedVariableController {
 
@@ -61,6 +69,12 @@ public class DerivedVariableController {
 
 	@Resource
 	private StudyService studyService;
+
+	@Resource
+	private DatasetService datasetService;
+
+	@Resource
+	private StudyDataManager studyDataManager;
 
 	@Resource
 	private DerivedVariableProcessor processor;
@@ -107,17 +121,7 @@ public class DerivedVariableController {
 		final Map<String, Object> parameters = DerivedVariableUtils.extractParameters(formula.getDefinition());
 
 		// Verify that variables are present
-
-		final Set<Integer> variableIdsOfTraitsInStudy = this.getVariableIdsOfTraitsInStudy();
-		final Set<String> inputMissingVariables = new HashSet<>();
-		for (final FormulaVariable formulaVariable : formula.getInputs()) {
-			if (!variableIdsOfTraitsInStudy.contains(formulaVariable.getId())) {
-				inputMissingVariables.add(formulaVariable.getName());
-			}
-		}
-		if (!inputMissingVariables.isEmpty()) {
-			results.put("errorMessage", this.getMessage("study.execute.calculation.missing.variables",
-				new String[] {StringUtils.join(inputMissingVariables.toArray(), ", ")}));
+		if (hasMissingInputVariables(results, formula, workbook.getStudyDetails().getId())) {
 			return new ResponseEntity<>(results, HttpStatus.BAD_REQUEST);
 		}
 
@@ -204,6 +208,22 @@ public class DerivedVariableController {
 		return new ResponseEntity<>(results, HttpStatus.OK);
 	}
 
+	private boolean hasMissingInputVariables(final Map<String, Object> results, final FormulaDto formula, final int studyId) {
+		final Set<Integer> possibleInputVariables = this.getAllPossibleInputVariables(studyId);
+		final Set<String> inputMissingVariables = new HashSet<>();
+		for (final FormulaVariable formulaVariable : formula.getInputs()) {
+			if (!possibleInputVariables.contains(formulaVariable.getId())) {
+				inputMissingVariables.add(formulaVariable.getName());
+			}
+		}
+		if (!inputMissingVariables.isEmpty()) {
+			results.put("errorMessage", this.getMessage("study.execute.calculation.missing.variables",
+				new String[] {StringUtils.join(inputMissingVariables.toArray(), ", ")}));
+			return true;
+		}
+		return false;
+	}
+
 	@ResponseBody
 	@RequestMapping(value = "/derived-variable/dependencyVariableHasMeasurementData", method = RequestMethod.POST)
 	@Transactional
@@ -224,10 +244,10 @@ public class DerivedVariableController {
 
 	protected boolean checkDependencyVariableHasMeasurementDataEntered(final List<Integer> ids, final Integer studyId) {
 
-		final Set<Integer> variableIdsOfTraitsInStudy = this.getVariableIdsOfTraitsInStudy();
+		final Set<Integer> possibleInputVariables = this.getAllPossibleInputVariables(studyId);
 		final List<Integer> derivedVariablesDependencies = new ArrayList<>();
 
-		final Set<FormulaVariable> formulaVariables = this.formulaService.getAllFormulaVariables(variableIdsOfTraitsInStudy);
+		final Set<FormulaVariable> formulaVariables = this.formulaService.getAllFormulaVariables(possibleInputVariables);
 
 		// Determine which of the ids are dependency (argument) variables. If a derived variable and its dependency variables
 		// are removed in a study then there's no need to check if they have measurement data.
@@ -245,18 +265,31 @@ public class DerivedVariableController {
 		return false;
 	}
 
-	protected Set<Integer> getVariableIdsOfTraitsInStudy() {
-
+	protected Set<Integer> getAllPossibleInputVariables(final int studyId) {
 		final Set<Integer> variableIdsOfTraitsInStudy = new HashSet<>();
+		final List<MeasurementVariable> possibleInputVariables = new ArrayList<>();
+		final int environmentDatasetId = this.studyDataManager.getDataSetsByType(studyId, DatasetTypeEnum.SUMMARY_DATA.getId()).get(0).getId();
+		final List<MeasurementVariable> environmentVariables =
+			this.datasetService
+				.getObservationSetVariables(
+					environmentDatasetId, Lists.newArrayList(VariableType.ENVIRONMENT_DETAIL.getId(), VariableType.STUDY_CONDITION.getId()));
+		possibleInputVariables.addAll(environmentVariables);
 
-		if (this.studySelection.getBaselineTraitsList() != null) {
-			for (final SettingDetail settingDetail : this.studySelection.getBaselineTraitsList()) {
-				variableIdsOfTraitsInStudy.add(settingDetail.getVariable().getCvTermId());
+		final int plotDatasetId = this.studyDataManager.getDataSetsByType(studyId, DatasetTypeEnum.PLOT_DATA.getId()).get(0).getId();
+		final List<MeasurementVariable> plotTraits =
+			datasetService.getObservationSetVariables(plotDatasetId, Arrays.asList(VariableType.TRAIT.getId()));
+		possibleInputVariables.addAll(plotTraits);
+
+		final List<MeasurementVariable> subobservationsTraitVariables = this.datasetService.getAllSubObservationsTraits(studyId);
+		possibleInputVariables.addAll(subobservationsTraitVariables);
+
+		if (possibleInputVariables != null) {
+			for (final MeasurementVariable measurementVariable : possibleInputVariables) {
+				variableIdsOfTraitsInStudy.add(measurementVariable.getTermId());
 			}
 		}
 
 		return variableIdsOfTraitsInStudy;
-
 	}
 
 	private String getMessage(final String code) {

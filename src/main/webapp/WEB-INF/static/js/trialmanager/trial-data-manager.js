@@ -168,15 +168,12 @@
 					data: '',
 					cache: false,
 					success: function(html) {
-						$('body').data('columnReordered', '0');
-						//$('#measurementsDiv').html(html);
 						showSuccessfulMessage('', saveSuccessMessage);
 					}
 				});
 			};
 
 			var notifySaveEventListeners = function() {
-				$('body').removeClass('preview-measurements-only');
 				angular.forEach(saveEventListeners, function(saveListenerFunction) {
 					saveListenerFunction();
 				});
@@ -373,8 +370,6 @@
 					// when the user delete an environment for a existing study with or wihout measurement data
 					if (deleteMeasurementPossible) {
 						service.applicationData.unsavedTraitsAvailable = true;
-
-						$rootScope.$broadcast('onDeleteEnvironment', { deletedEnvironmentIndex: index, deferred: refreshMeasurementDeferred });
 					}
 
 					return refreshMeasurementDeferred.promise;
@@ -429,22 +424,10 @@
 						return false;
 					}
 
-					if (hasOutOfBoundValues()) {
-						//we check if there is invalid value in the measurements
-						showErrorMessage('', 'There are some observations that have invalid value, please correct them before proceeding');
-						return false;
-					}
 					if (service.applicationData.unsavedTreatmentFactorsAvailable && studyStateService.hasUnsavedData()) {
 						showErrorMessage('', unsavedTreatmentFactor);
-						/*} else if (service.applicationData.unappliedChangesAvailable) {
-							showAlertMessage('', 'Changes have been made that may affect the experimental design of this study. Please ' +
-									'regenerate the design on the Experimental Design tab', 10000); */
 					} else if (service.applicationData.unsavedTreatmentFactorsAvailable) {
 							showErrorMessage('', 'TREATMENT FACTORS will be saved automatically when generating the design.');
-							/*} else if (service.applicationData.unappliedChangesAvailable) {
-								showAlertMessage('', 'Changes have been made that may affect the experimental design of this study. Please ' +
-										'regenerate the design on the Experimental Design tab', 10000); */
-
 					} else if (service.isCurrentTrialDataValid(service.isOpenStudy())) {
                         // Hide Discard Imported Data button when the user presses Save button
                         $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
@@ -478,9 +461,7 @@
 								doSaveImportedData().then(function() {
 									notifySaveEventListeners();
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(data) {
-										//service.updateSettings('measurements', extractSettings(data.measurementsData));
 										service.applicationData.unsavedTraitsAvailable = false;
-										//$('body').data('needToSave', '0');
 									});
 								});
 
@@ -507,15 +488,9 @@
 										service.updateCurrentData('trialSettings', extractData(updatedData.trialSettingsData));
 										service.updateSettings('trialSettings', extractSettings(updatedData.trialSettingsData));
 
-										//refresh the environments list in measurements tab
-										//MARK FOR DELETE IBP-2789
-										//$rootScope.$broadcast('refreshEnvironmentListInMeasurementTable');
 										derivedVariableService.displayExecuteCalculateVariableMenu();
 										service.applicationData.unsavedTraitsAvailable = false;
 										setupSettingsVariables();
-										// TODO: MARK FOR DELETE IBP-2789
-										//onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
-										//$('body').data('needToSave', '0');
 										studyStateService.resetState();
 									});
 
@@ -553,10 +528,6 @@
 
 						}
 					}
-
-                    //After Save Measurements table is available in edit mode
-                    //$('body').removeClass('preview-measurements-only');
-                    //$('body').removeClass('import-preview-measurements');
                     //Refresh the germplasm list table
                     refreshListDetails();
 					service.resetServiceBackup();
@@ -604,11 +575,6 @@
 
 					propagateChange(settingRegistry, key, newValue);
 					settingsArray = [];
-				},
-
-				updateTrialMeasurementRowCount: function(newCountValue) {
-					service.trialMeasurement.count = newCountValue;
-					$('body').data('service.trialMeasurement.count', newCountValue);
 				},
 
 				onUpdateSettings: function(key, updateFunction) {

@@ -327,10 +327,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				});
 
-				var measurementDiv = $('#measurementsDiv');
-				if (measurementDiv.length !== 0) {
-					//measurementDiv.html('');
-				}
 				if (typeof resetGermplasmList !== 'undefined') {
 					resetGermplasmList();
 				}
@@ -568,36 +564,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				}
 
-				// TODO: MARK FOR DELETE IBP-2789
-				/*if (targetState === 'editMeasurements') {
-					if ($('body').hasClass('preview-measurements-only')) {
-						adjustColumns($('#preview-measurement-table'));
-					} else {
-						adjustColumns($('#measurement-table'));
-					}
-
-					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Changes have been made that may affect the experimental design of this study.' +
-							'Please regenerate the design on the Experimental Design tab', 10000);
-					}
-				} else */if (targetState === 'experimentalDesign') {
+				if (targetState === 'experimentalDesign') {
 					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
 						showAlertMessage('', 'Study settings have been updated since the experimental design was generated. ' +
 							'Please select a design type and specify the parameters for your study again', 10000);
 					}
-				// TODO: MARK FOR DELETE IBP-2789
-				/*} else if (targetState === 'createMeasurements') {
-					if (TrialManagerDataService.applicationData.unsavedGeneratedDesign) {
-						$rootScope.$broadcast('previewMeasurements');
-					}
-					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Changes have been made that may affect the experimental design of this study.' +
-							'Please regenerate the design on the Experimental Design tab', 10000);
-					}
-
-					if (!TrialManagerDataService.applicationData.unsavedGeneratedDesign) {
-						adjustColumns($('#preview-measurement-table'));
-					}*/
 				} else if (targetState === 'germplasm') {
 					adjustColumns($('#tableForGermplasm'));
 				} else if (targetState === 'environment') {

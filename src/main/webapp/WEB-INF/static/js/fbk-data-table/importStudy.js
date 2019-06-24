@@ -71,6 +71,7 @@ $(document).ready(function() {
 	$(document).on('location-update', recreateLocationCombo);
 });
 
+//TODO VER SI ESTO SE DEBE BORRAR
 function doSaveImportedData() {
 	'use strict';
 	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');

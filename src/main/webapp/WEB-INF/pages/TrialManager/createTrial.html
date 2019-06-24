@@ -152,10 +152,6 @@
 										<a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link"
 										   th:text="#{study.studydetails.action.export.germplasm.list}">Export Germplasm List</a>
 									</li>
-									<li id="review-out-of-bounds-data-list" style="display:none;">
-										<a href="javascript: reviewOutOfBoundsData();" id="review-out-of-bounds-data-link"
-										   th:text="#{study.studydetails.action.review.out.of.bounds.data}">Review out of bounds data</a>
-									</li>
 								</ul>
 							</li>
 
@@ -349,12 +345,6 @@
 
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			<div id="review-details-out-of-bounds" th:include="/Common/includes/reviewDetailsOutOfBoundsData"></div>
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
 			<div class="chs-vs-modal-container" th:include="/StudyManager/includes/variableSelectionModal"></div>
 		</div>
 	</div>
@@ -458,12 +448,6 @@
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
 			<div id="manage-location" th:include="/Common/includes/importStudy"></div>
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
-			<div id="review-out-of-bounds" th:include="/Common/includes/reviewOutOfBoundsData"></div>
 		</div>
 	</div>
 
@@ -821,7 +805,6 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/environmentService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/environments.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
-	<!--<script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>-->
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationTab.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationSet.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>

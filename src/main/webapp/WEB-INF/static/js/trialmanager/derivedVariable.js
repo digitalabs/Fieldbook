@@ -209,18 +209,6 @@
 					$uibModalInstance.close();
 				};
 
-				// TODO: MARK FOR DELETE IBP-2789
-				$scope.reloadObservation = function () {
-					$('.import-study-data').data('data-import', '1');
-					$('body').addClass('import-preview-measurements');
-
-					var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
-					new BMS.Fieldbook.ImportPreviewMeasurementsDataTable('#import-preview-measurement-table', JSON.stringify(columnsOrder));
-					$('.fbk-discard-imported-data').removeClass('fbk-hide');
-
-					showSuccessfulMessage('', 'Calculated values for ' + $scope.selected.variable.name + ' were added successfully.');
-				};
-
 				$scope.reloadSubObservation = function () {
 					$rootScope.navigateToSubObsTab(datasetId, false);
 					showSuccessfulMessage('', 'Calculated values for ' + $scope.selected.variable.name + ' were added successfully.');

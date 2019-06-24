@@ -147,8 +147,6 @@ var ImportDesign = (function() {
 		generateDesign: function() {
 			//var $body = $('body');//TODO ENTRA POR ACA
 
-			//if the design is generated but not saved, the measurements datatable is for preview only (edit is not allowed)
-			//$body.addClass('preview-measurements-only');
 			ImportDesign.getTrialManagerDataService().performDataCleanup();
 			var environmentData =
 				angular.copy(ImportDesign.studyManagerCurrentData().environments);

@@ -358,23 +358,6 @@
 					return refreshMeasurementDeferred.promise;
 				},
 
-				//TODO Remove that function, we are not reloading the entire page
-				reloadMeasurementAjax: function(data) {
-					return $http.post('/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement', data,
-						{headers: {'Content-Type': 'application/x-www-form-urlencoded'}});
-				},
-
-				warnAboutUnappliedChanges: function() {
-					if (service.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('Unapplied Changes', $.fieldbookMessages.measurementWarningNeedGenExpDesign, 10000);
-					}
-				},
-
-				// set unappliedChangesAvailable to true if Entry Number is updated
-				setUnappliedChangesAvailable: function() {
-					service.applicationData.unappliedChangesAvailable = true;
-				},
-
 				indicateUnsavedTreatmentFactorsAvailable: function() {
 					if (!service.applicationData.unsavedTreatmentFactorsAvailable) {
 						service.applicationData.unsavedTreatmentFactorsAvailable = true;

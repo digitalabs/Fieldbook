@@ -1,6 +1,5 @@
 /*global angular, openManageLocations,
 environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, showErrorMessage*/
-// TODO: MARK CODE TO BE DELETE IBP-2789
 (function () {
 	'use strict';
 

@@ -82,29 +82,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				},
 				deepStateRedirect: true, sticky: true
 			})
-			/*TODO: MARK FOR DELETE IBP-2689*/
-/*			.state('createMeasurements', {
-				url: '/createMeasurements',
-				views: {
-					createMeasurements: {
-						controller: 'MeasurementsCtrl',
-						templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
-					}
-				},
-				deepStateRedirect: true, sticky: true
-			})
-
-			.state('editMeasurements', {
-				url: '/editMeasurements',
-				views: {
-					editMeasurements: {
-						controller: 'MeasurementsCtrl',
-						templateUrl: '/Fieldbook/TrialManager/openTrial/measurements'
-					}
-				},
-				deepStateRedirect: true, sticky: true
-			})*/
-
 			.state('subObservationTabs', {
 				url: '/subObservationTabs/:subObservationTabId',
 				views: {
@@ -368,12 +345,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.saveCurrentTrialData = function () {
-				/*TODO: MARK FOR DELETE IBP-2689*/
-/*				derivedVariableService.getDependenciesForAllDerivedTraits(studyContext.measurementDatasetId).then(function (response) {
-					return $scope.warnMissingInputData(response);
-				}).then(function () {*/
-					TrialManagerDataService.saveCurrentData();
-				//});
+				TrialManagerDataService.saveCurrentData();
 			};
 
 			$scope.selectPreviousStudy = function () {
@@ -426,8 +398,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(
 							data.trialSettingsData));
 						// TODO: MARK FOR DELETE IBP-2789
-						/*TrialManagerDataService.updateSettings('selectionVariables', TrialManagerDataService.extractSettings(
-							data.selectionVariableData));*/
 						TrialManagerDataService.updateSettings('environments', environmentSettings);
 						TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
 						TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(
@@ -487,11 +457,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.displayMeasurementOnlyActions = function () {
 				return studyStateService.hasGeneratedDesign() && !TrialManagerDataService.applicationData.unsavedTraitsAvailable;
 			};
-
-			// TODO: MARK FOR DELETE IBP-2689
-			/*$scope.hasMeasurementData = function () {
-				return studyStateService.hasGeneratedDesign();
-			};*/
 
 			$scope.hasGermplasmListSelected = function () {
 				return TrialManagerDataService.applicationData.germplasmListSelected;

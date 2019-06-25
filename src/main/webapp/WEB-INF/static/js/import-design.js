@@ -34,18 +34,6 @@ var ImportDesign = (function() {
 			return ImportDesign.getTrialManagerDataService().currentData;
 		},
 
-		// TODO: MARK FOR DELETE IBP-2689
-		/*reloadMeasurements: function() {
-			var angularElem = angular.element('#mainApp');
-
-			angularElem
-				.scope()
-				.$apply(
-				function () {
-					ImportDesign.getTrialManagerDataService().applicationData.isGeneratedOwnDesign = true;
-				});
-		},*/
-
 		showPopup: function(hasGermplasmListSelected) {
 
 			if(ImportDesign.getStudyStateService().hasUnsavedData()) {
@@ -192,11 +180,8 @@ var ImportDesign = (function() {
 			var $body = $('body');
 
 			$body.removeClass('modal-open');
-			//$('#chooseGermplasmAndChecks').data('replace', '1');
 
 			ImportDesign.closeReviewModal();
-			// TODO: MARK FOR DELETE IBP-2689
-			//ImportDesign.reloadMeasurements();
 
 			var environmentData = resp.environmentData, environmentSettings = resp.environmentSettings, trialService = ImportDesign
 				.getTrialManagerDataService();

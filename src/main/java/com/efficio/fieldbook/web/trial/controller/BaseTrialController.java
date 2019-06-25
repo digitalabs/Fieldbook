@@ -73,9 +73,6 @@ import java.util.StringTokenizer;
 public abstract class BaseTrialController extends SettingsController {
 
 	@Resource
-	protected SampleService sampleService;
-
-	@Resource
 	protected LocationDataManager locationDataManager;
 
 	private static final Logger LOG = LoggerFactory.getLogger(BaseTrialController.class);
@@ -85,13 +82,6 @@ public abstract class BaseTrialController extends SettingsController {
 	static final String URL_ENVIRONMENTS = "TrialManager/templates/environments";
 	static final String URL_TREATMENT = "TrialManager/templates/treatment";
 	static final String URL_EXPERIMENTAL_DESIGN = "TrialManager/templates/experimentalDesign";
-	// TODO: MARK FOR DELETE IBP-2689
-	@Deprecated
-	static final String URL_MEASUREMENT = "TrialManager/templates/measurements";
-	// TODO: MARK FOR DELETE IBP-2689
-	@Deprecated
-	static final String URL_DATATABLE = "Common/showAddOrRemoveTraitsPagination";
-
 	static final String URL_SUB_OBSERVATION_TAB = "TrialManager/templates/subobservations/subObservationTab";
 	static final String URL_SUB_OBSERVATION_SET = "TrialManager/templates/subobservations/subObservationSet";
 
@@ -594,48 +584,6 @@ public abstract class BaseTrialController extends SettingsController {
 		return output;
 	}
 
-	// TODO: MARK FOR DELETE IBP-2689
-	@Deprecated
-	List<MeasurementVariable> getLatestMeasurements(
-		@ModelAttribute("createTrialForm") final CreateTrialForm form,
-		final HttpServletRequest request) {
-		Workbook workbook = this.userSelection.getWorkbook();
-		if (this.userSelection.getTemporaryWorkbook() != null) {
-			workbook = this.userSelection.getTemporaryWorkbook();
-		}
-
-		boolean hasSamples = false;
-		if (this.userSelection.getWorkbook() != null) {
-			hasSamples = this.sampleService.studyHasSamples(this.userSelection.getWorkbook().getStudyDetails().getId());
-		}
-
-		List<MeasurementVariable> measurementDatasetVariables = new ArrayList<>(workbook.getMeasurementDatasetVariablesView());
-
-		final String listCsv = request.getParameter("variableList");
-
-		if (!measurementDatasetVariables.isEmpty()) {
-			final List<MeasurementVariable> newMeasurementDatasetVariables = this.getMeasurementVariableFactor(measurementDatasetVariables);
-			if (hasSamples) {
-				final MeasurementVariable sample = this.createSampleVariable();
-				newMeasurementDatasetVariables.add(sample);
-			}
-			this.getTraitsAndSelectionVariates(measurementDatasetVariables, newMeasurementDatasetVariables, listCsv);
-			measurementDatasetVariables = newMeasurementDatasetVariables;
-		}
-
-		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, form.getColumnOrders());
-		return workbook.arrangeMeasurementVariables(measurementDatasetVariables);
-	}
-
-	private MeasurementVariable createSampleVariable() {
-		final MeasurementVariable sample = new MeasurementVariable();
-		sample.setName("SAMPLES");
-		sample.setTermId(TermId.SAMPLES.getId());
-		sample.setFactor(true);
-
-		return sample;
-	}
-
 	TabInfo prepareBasicDetailsTabInfo(final StudyDetails studyDetails, final boolean isUsePrevious, final int trialID)
 		throws ParseException {
 		final Map<String, String> basicDetails = new HashMap<>();
@@ -839,16 +787,6 @@ public abstract class BaseTrialController extends SettingsController {
 			x++;
 		}
 
-	}
-
-	List<MeasurementVariable> getMeasurementVariableFactor(final List<MeasurementVariable> measurementDatasetVariables) {
-		final List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<>();
-		for (final MeasurementVariable var : measurementDatasetVariables) {
-			if (var.isFactor()) {
-				newMeasurementDatasetVariables.add(var);
-			}
-		}
-		return newMeasurementDatasetVariables;
 	}
 
 	void getTraitsAndSelectionVariates(

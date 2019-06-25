@@ -744,7 +744,6 @@ public class DesignImportController extends SettingsController {
 
 		final List<SettingDetail> variatesList = new ArrayList<>();
 
-		// TODO: MARK FOR DELETE IBP-2689
 		if (this.userSelection.getBaselineTraitsList() != null) {
 			variatesList.addAll(this.userSelection.getBaselineTraitsList());
 		}

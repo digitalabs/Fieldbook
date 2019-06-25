@@ -529,12 +529,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				}
 
-				if (targetState === 'experimentalDesign') {
-					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Study settings have been updated since the experimental design was generated. ' +
-							'Please select a design type and specify the parameters for your study again', 10000);
-					}
-				} else if (targetState === 'germplasm') {
+				if (targetState === 'germplasm') {
 					adjustColumns($('#tableForGermplasm'));
 				} else if (targetState === 'environment') {
 					adjustColumns($('#environment-table .fbk-datatable-environments'));

@@ -361,7 +361,7 @@
 
 					$scope.toggleDesignView = function() {
 						var selectedExperimentDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
-						return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign
+						return ($scope.applicationData.isGeneratedOwnDesign
 							|| ($scope.data.designType !== null
 							&& $scope.data.designType !== ''
 							&& selectedExperimentDesignType.name === 'Custom Import Design')

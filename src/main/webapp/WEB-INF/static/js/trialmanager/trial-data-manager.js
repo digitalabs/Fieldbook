@@ -214,8 +214,6 @@
 					crossesList: CROSSES_LIST_DATA
 				},
 				applicationData: {
-					unappliedChangesAvailable: false,
-					//unsavedGeneratedDesign: false,
 					unsavedTreatmentFactorsAvailable: false,
 					unsavedTraitsAvailable: false,
 					germplasmListCleared: false,
@@ -387,7 +385,6 @@
 				},
 
 				clearUnappliedChangesFlag: function() {
-					service.applicationData.unappliedChangesAvailable = false;
 					service.applicationData.unsavedTreatmentFactorsAvailable = false;
 				},
 				extractData: extractData,

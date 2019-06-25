@@ -99,52 +99,6 @@ public class ManageSettingsControllerTest {
 		Mockito.verify(spyController).deleteVariable(VariableType.TRAIT.getId(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
 	}
 
-	// TODO: MARK FOR DELETE IBP-2689
-/*	@Test
-	public void testHasMeasurementFailScenario() throws Exception {
-		final ManageSettingsController spyController = this.initializeMockMeasurementRows();
-		Mockito.doReturn(false).when(spyController).hasMeasurementDataEntered(Matchers.anyInt());
-		final List<MeasurementRow> rows = Arrays.asList(Mockito.mock(MeasurementRow.class), Mockito.mock(MeasurementRow.class));
-		Mockito.when(this.userSelection.getMeasurementRowList()).thenReturn(rows);
-		Assert.assertFalse("we're sure this returns false",
-			spyController.checkModeAndHasMeasurementData(VariableType.TRAIT.getId(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0));
-
-	}*/
-
-	// TODO: MARK FOR DELETE IBP-2689
-/*	@Test
-	public void testCheckModeAndHasMeasurementData() throws Exception {
-		final ManageSettingsController spyController = this.initializeMockMeasurementRows();
-		assertThat(true, is(equalTo(spyController.checkModeAndHasMeasurementData(VariableType.TRAIT.getId(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0))));
-		Mockito.verify(spyController).hasMeasurementDataEntered(ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
-	}*/
-
-	protected ManageSettingsController initializeMockMeasurementRows() {
-		final ManageSettingsController spyController = Mockito.spy(this.controller);
-		// TODO: MARK FOR DELETE IBP-2689
-		//Mockito.doReturn(true).when(spyController).hasMeasurementDataEntered(Matchers.anyInt());
-		final List<MeasurementRow> rows = Arrays.asList(Mockito.mock(MeasurementRow.class), Mockito.mock(MeasurementRow.class));
-		Mockito.when(this.userSelection.getMeasurementRowList()).thenReturn(rows);
-
-		final StudyDetails st = new StudyDetails();
-		st.setId(STUDY_ID);
-		return spyController;
-	}
-
-	// TODO: MARK FOR DELETE IBP-2689
-	/*@Test
-	public void testCheckModeAndHasMeasurementDataFailScenario() throws Exception {
-
-		final ManageSettingsController spyController = Mockito.spy(this.controller);
-		Mockito.doReturn(false).when(spyController).hasMeasurementDataEntered(Matchers.anyInt());
-
-		final List<MeasurementRow> rows = Arrays.asList(Mockito.mock(MeasurementRow.class), Mockito.mock(MeasurementRow.class));
-		Mockito.when(this.userSelection.getMeasurementRowList()).thenReturn(rows);
-
-		assertThat(false, is(equalTo(
-			spyController.checkModeAndHasMeasurementData(VariableType.TRAIT.getId(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0))));
-	}*/
-
 	@Test
 	public void testAddSettings() throws Exception {
 

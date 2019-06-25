@@ -53,15 +53,11 @@ function resetGermplasmList() {
 
 }
 
-function showPopoverCheck(index, sectionContainer, bodyContainer) {//TODO FIX IT.
+function showPopoverCheck(index, sectionContainer, bodyContainer) {
 	'use strict';
 	//if replace has been clicked or if new study or if there are no measurement rows saved yet for study
 	var isShowPopOver =
-	//($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1) ||
-		(!isOpenStudy())
-		//|| (isOpenStudy() && $('body').data('service.trialMeasurement.count') === 0);
-		|| (isOpenStudy() && !hasGeneratedDesign());
-
+		(!isOpenStudy()) || (isOpenStudy() && !hasGeneratedDesign());
 	if (isShowPopOver) {
 		var currentCheckVal = $(sectionContainer + ' #selectedCheck' + index).val(),
 			realIndex = index,

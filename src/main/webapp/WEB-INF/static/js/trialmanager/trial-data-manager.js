@@ -410,10 +410,6 @@
 				extractTreatmentFactorSettings: extractTreatmentFactorSettings,
 				saveCurrentData: function() {
 
-					if (!processInlineEditInput()) {
-						return false;
-					}
-
 					var missingLocations = service.currentData.environments.environments.some(function (environment) {
 						return !environment.managementDetailValues ||
 							(!environment.managementDetailValues[8190] && environment.managementDetailValues[8190] !== 0);

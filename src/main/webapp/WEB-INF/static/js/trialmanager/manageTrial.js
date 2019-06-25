@@ -1009,12 +1009,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				createSampleModalService.openDatasetOptionModal();
 			}
 
-			$scope.showCalculatedVariableModal = function() {
-				if ($('body').hasClass('import-preview-measurements')) {
-					return;
-				} else {
-					derivedVariableModalService.openDatasetOptionModal();
-				}
+			$scope.showCalculatedVariableModal = function () {
+				derivedVariableModalService.openDatasetOptionModal();
 			}
 
 			$scope.init = function () {

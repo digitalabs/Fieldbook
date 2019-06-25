@@ -154,6 +154,7 @@ function validateStartEndDateBasic(startDate, endDate) {
 
 }
 
+//TODO: REMOVE NURSERY CODE.
 function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction) {
 	'use strict';
 
@@ -1365,79 +1366,6 @@ function getMeasurementTableVisibleColumns(addObsUnitId) {
 		visibleColumns = visibleColumns + ',' + '8201';
 	}
 	return visibleColumns;
-}
-
-function importFormatType(type) {
-	'use strict';
-	var action = '/Fieldbook/ImportManager/import/' + type,
-		formName = '#importStudyUploadForm';
-
-	$(formName).attr('action', action);
-}
-
-function submitImportStudy() {
-	'use strict';
-	if ($('#importType').val() === '0') {
-		showErrorMessage('page-import-study-message-modal', 'Please choose import type');
-		return false;
-	}
-
-	if ($('#fileupload').val() === '') {
-		showErrorMessage('page-import-study-message-modal', 'Please choose a file to import');
-		return false;
-	}
-
-	if ($('.import-study-data').data('data-import') === '1') {
-		setTimeout(function() {$('#importOverwriteConfirmation').modal({ backdrop: 'static', keyboard: true });}, 300);
-	} else {
-		continueStudyImport(false);
-	}
-}
-function continueStudyImport(doDataRevert) {
-	'use strict';
-	if (doDataRevert) {
-		revertData(false);
-		$('#importOverwriteConfirmation').modal('hide');
-	}
-
-	$('#importStudyUploadForm').ajaxForm(importOptions).submit();
-}
-
-function showImportOptions() {
-	'use strict';
-	var scope = angular.element(document.getElementById("mainApp")).injector().get('$rootScope');
-	scope.$apply(function () {
-		scope.navigateToTab('editMeasurements');
-	});
-
-	if ($('body').hasClass('import-preview-measurements')) {
-		return;
-	}
-	$('#fileupload').val('');
-	$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
-	// Navigate to edit measurements tab when clicking on import measurements
-
-
-	if ($('.import-study-data').data('data-import') === '1') {
-		showAlertMessage('', importDataWarningNotification);
-	}
-}
-
-function backShowImportStudyModal(){
-	'use strict';
-	var scope = angular.element(document.getElementById("mainApp")).scope();
-	scope.$apply(function () {
-		scope.showImportStudyModal();
-	});
-}
-function goBackToImport() {
-	'use strict';
-	revertData(false);
-	$('#importStudyConfirmationModal').modal('hide');
-	$('#importStudyDesigConfirmationModal').modal('hide');
-	$('#importOverwriteConfirmation').modal('hide');
-	setTimeout(function() {$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });}, 300);
-
 }
 
 function isFloat(value) {

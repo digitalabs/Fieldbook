@@ -245,35 +245,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		return this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
 	}
 
-	/**
-	 * Checks if the measurement table has user input data for a particular variable id
-	 *
-	 * @param variableId
-	 * @return
-	 */
-	// TODO: MARK FOR DELETE IBP-2689
-	/*public boolean hasMeasurementDataEntered(final int variableId) {
-		for (final MeasurementRow row : this.userSelection.getMeasurementRowList()) {
-			for (final MeasurementData data : row.getDataList()) {
-				if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}*/
-
-	// TODO: MARK FOR DELETE IBP-2789
-	/*protected void removeVariablesFromExistingNursery(final List<SettingDetail> settingList, final String variables) {
-		final Iterator<SettingDetail> variableList = settingList.iterator();
-		while (variableList.hasNext()) {
-			if (SettingsUtil.inHideVariableFields(variableList.next().getVariable().getCvTermId(), variables)) {
-				variableList.remove();
-			}
-		}
-	}*/
-
-	//TODO TRIAL
 	protected void resetSessionVariablesAfterSave(final Workbook workbook) {
 
 		// update variables in measurement rows
@@ -293,7 +264,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			}
 		}
 
-		// TODO: MARK FOR DELETE IBP-2689
 		// remove deleted variables in measurement rows & header for variates
 		this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedPlotLevelList(), workbook);
 		this.removeDeletedVariablesInMeasurements(this.userSelection.getDeletedBaselineTraitsList(), workbook);
@@ -302,7 +272,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		// and change add operation to update
 		this.removeDeletedSetUpdate(this.userSelection.getStudyLevelConditions(), workbook.getConditions());
 		this.removeDeletedSetUpdate(this.userSelection.getPlotsLevelList(), workbook.getFactors());
-		// TODO: MARK FOR DELETE IBP-2689
+
 		this.removeDeletedSetUpdate(this.userSelection.getBaselineTraitsList(), workbook.getVariates());
 		this.removeDeletedSetUpdate(this.userSelection.getStudyConditions(), workbook.getConstants());
 		this.removeDeletedSetUpdate(this.userSelection.getTrialLevelVariableList(), null);
@@ -619,9 +589,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				this.userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
 			}
 			this.userSelection.getDeletedPlotLevelList().add(newSetting);
-			// TODO: MARK FOR DELETE IBP-2689
-/*		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
-			this.addNewSettingToDeletedBaselineTraits(newSetting);*/
 		} else if (mode == VariableType.STUDY_CONDITION.getId()) {
 			if (this.userSelection.getDeletedStudyConditions() == null) {
 				this.userSelection.setDeletedStudyConditions(new ArrayList<SettingDetail>());
@@ -657,14 +624,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			}
 		}
 	}
-
-	// TODO: MARK FOR DELETE IBP-2689
-/*	private void addNewSettingToDeletedBaselineTraits(final SettingDetail newSetting) {
-		if (this.userSelection.getDeletedBaselineTraitsList() == null) {
-			this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-		}
-		this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
-	}*/
 
 	public void setFieldbookService(final FieldbookService fieldbookService) {
 		this.fieldbookService = fieldbookService;
@@ -768,7 +727,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		SettingsUtil.addDeletedSettingsList(combinedList, this.userSelection.getDeletedStudyLevelConditions(),
 			this.userSelection.getStudyLevelConditions());
 		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedPlotLevelList(), this.userSelection.getPlotsLevelList());
-		// TODO: MARK FOR DELETE IBP-2689
+
 		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedBaselineTraitsList(),
 			this.userSelection.getBaselineTraitsList());
 		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedStudyConditions(), this.userSelection.getStudyConditions());

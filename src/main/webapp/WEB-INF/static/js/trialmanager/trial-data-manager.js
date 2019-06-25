@@ -205,8 +205,6 @@
 				// what I get is an instance of OrderedHash containing an array of keys with the map
 				settings: {
 					trialSettings: extractSettings(TRIAL_SETTINGS_INITIAL_DATA),
-					// TODO: MARK FOR DELETE IBP-2789
-					//selectionVariables: extractSettings(SELECTION_VARIABLE_INITIAL_DATA),
 					environments: extractSettings(ENVIRONMENTS_INITIAL_DATA),
 					germplasm: extractSettings(GERMPLASM_INITIAL_DATA),
 					treatmentFactors: extractTreatmentFactorSettings(TREATMENT_FACTORS_INITIAL_DATA),
@@ -251,12 +249,6 @@
 					treatmentLevelPairs: {}
 				},
 
-				trialMeasurement: {
-					//hasMeasurement: false,
-                    //hasAdvancedOrCrossesList: false,
-					count: 0
-				},
-
                 performDataCleanup: function() {
                     // TODO: delegate the task of cleaning up data to each tab that produces it, probably via listener
 
@@ -290,13 +282,6 @@
 					var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/delete/:measurementDatasetId',{datasetId: '@measurementDatasetId'},{delete: {method:'delete'}});
 					return GenerateExpDesignService.delete({measurementDatasetId: measurementDatasetId}).$promise;
 				},
-
-				// TODO: MARK CODE TO BE DELETE IBP-2789
-				/*updateAfterGeneratingDesignSuccessfully: function() {
-					service.clearUnappliedChangesFlag();
-					service.applicationData.unsavedGeneratedDesign = true;
-					$('#chooseGermplasmAndChecks').data('replace', '1');
-				},*/
 
 				retrieveDesignType: function() {
 					$http.get('/Fieldbook/TrialManager/experimental/design/retrieveDesignTypes').success(function(designTypes) {
@@ -452,25 +437,7 @@
 								}
 							});
 						} else {
-
-							if (studyStateService.hasGeneratedDesign() && $('.import-study-data').data('data-import') === '1') {
-								doSaveImportedData().then(function() {
-									notifySaveEventListeners();
-									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(data) {
-										service.applicationData.unsavedTraitsAvailable = false;
-									});
-								});
-
-								// TODO THIS CONDITION SAVE OBSERVATIONS.
-							} else
-								if (studyStateService.hasGeneratedDesign()
-	/*								&&
-								(
-								$('#chooseGermplasmAndChecks').length !== 0 &&
-								$('#chooseGermplasmAndChecks').data('replace') !== undefined &&
-								parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1
-								)*/
-							) {
+							if (studyStateService.hasGeneratedDesign()) {
 								service.currentData.columnOrders = serializedData;
 								$http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function(data) {
 									recreateSessionVariablesTrial();
@@ -507,9 +474,6 @@
 
 										derivedVariableService.displayExecuteCalculateVariableMenu();
 										service.applicationData.unsavedTraitsAvailable = false;
-										// TODO: MARK FOR DELETE IBP-2789
-										//onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
-										//$('body').data('needToSave', '0');
 									}, function () {
 										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 									});
@@ -704,9 +668,6 @@
 					} else if ($.trim(service.currentData.basicDetails.studyType) === '') {
 						hasError = true;
 						name = 'Study type';
-/*					} else if ($('.germplasm-list-items tbody tr').length === 0 ) {
-						hasError = true;
-						customMessage = 'should have at least a germplasm list in the study';*/
 					} else if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
 						hasError = true;
 						name = $('#folderLabel').text();

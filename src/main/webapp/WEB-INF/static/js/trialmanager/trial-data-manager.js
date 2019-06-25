@@ -404,9 +404,7 @@
 									showSuccessfulMessage('', saveSuccessMessage);
 									notifySaveEventListeners();
 									window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
-
 									service.applicationData.unsavedTraitsAvailable = false;
-									$('body').data('needToSave', '0');
 									studyStateService.resetState();
 								});
 							}, function (response) {

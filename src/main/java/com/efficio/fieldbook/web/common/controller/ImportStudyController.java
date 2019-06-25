@@ -500,11 +500,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 			detail.getVariable().setOperation(Operation.UPDATE);
 		}
 
-		//TODO VER ESTO: MARK FOR DELETE IBP-2689
-		/*form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(
-				userSelection.getWorkbook().getMeasurementDatesetId(),
-				SettingsUtil.buildVariates(userSelection.getWorkbook().getVariates())));*/
-
 		this.fieldbookService.saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(),
 			form.getColumnOrders(), userSelection.getWorkbook());
 		final Boolean hasOutOfSyncObservations =

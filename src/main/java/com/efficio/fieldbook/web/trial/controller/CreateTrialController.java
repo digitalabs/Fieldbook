@@ -125,22 +125,11 @@ public class CreateTrialController extends BaseTrialController {
 		model.addAttribute(CreateTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(false));
 		model.addAttribute(CreateTrialController.TRIAL_SETTINGS_DATA_TAB, this.prepareTrialSettingsTabInfo());
 		model.addAttribute("experimentalDesignSpecialData", this.prepareExperimentalDesignSpecialData());
-		// TODO: MARK FOR DELETE IBP-2789
-		//model.addAttribute("measurementRowCount", 0);
 		model.addAttribute("studyTypes", this.studyDataManager.getAllVisibleStudyTypes());
 
 		// so that we can reuse the same page being use for nursery
 		model.addAttribute("createTrialForm", form);
 		return this.showAngularPage(model);
-	}
-
-	// TODO: MARK FOR DELETE IBP-2689
-	@Deprecated
-	@ResponseBody
-	@RequestMapping(value = "/columns", method = RequestMethod.POST)
-	public List<MeasurementVariable> getColumns(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model,
-			final HttpServletRequest request) {
-		return this.getLatestMeasurements(form, request);
 	}
 
 	@ResponseBody
@@ -162,10 +151,6 @@ public class CreateTrialController extends BaseTrialController {
 						this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
 				tabDetails.put("measurementsData",
 						this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, true));
-				// TODO: MARK FOR DELETE IBP-2789
-				/*tabDetails.put("selectionVariableData",
-						this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.SELECTION_METHOD, false));*/
-
 				this.fieldbookMiddlewareService
 						.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
 				tabDetails.put("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));
@@ -251,25 +236,6 @@ public class CreateTrialController extends BaseTrialController {
 	@RequestMapping(value = "/experimentalDesign", method = RequestMethod.GET)
 	public String showExperimentalDesign(final Model model) {
 		return this.showAjaxPage(model, BaseTrialController.URL_EXPERIMENTAL_DESIGN);
-	}
-
-	// TODO Merge this method with the OpenTrialController.showMeasurements()
-	@RequestMapping(value = "/measurements", method = RequestMethod.GET)
-	public String showMeasurements(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model) {
-		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
-		if (workbook != null) {
-			form.setMeasurementVariables(workbook.getMeasurementDatasetVariablesView());
-		}
-		return this.showAjaxPage(model, BaseTrialController.URL_MEASUREMENT);
-	}
-
-	// TODO: MARK FOR DELETE IBP-2689
-	@Deprecated
-	@ResponseBody
-	@RequestMapping(value = "/measurements/variables", method = RequestMethod.POST, produces = "application/json")
-	public List<MeasurementVariable> showMeasurementsVariables(@ModelAttribute("createTrialForm") final CreateTrialForm form,
-			final HttpServletRequest request) {
-		return this.getLatestMeasurements(form, request);
 	}
 
 	@Override

@@ -878,8 +878,7 @@
 						settings: angular.copy(service.settings),
 						currentData: angular.copy(service.currentData),
 						specialSettings: angular.copy(service.specialSettings),
-						applicationData: angular.copy(service.applicationData),
-						trialMeasurement: angular.copy(service.trialMeasurement)
+						applicationData: angular.copy(service.applicationData)
 					};
 				},
 				resetServiceBackup: function () {

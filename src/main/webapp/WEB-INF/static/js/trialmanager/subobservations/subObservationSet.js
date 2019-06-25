@@ -1322,6 +1322,26 @@
 				}
 			}
 
+			function switchCategoricalView(showCategoricalDescriptionView) {
+				'use strict';
+
+				if (typeof showCategoricalDescriptionView === 'undefined') {
+					showCategoricalDescriptionView = null;
+				}
+
+				$('.fbk-measurement-categorical-name').toggle();
+				$('.fbk-measurement-categorical-desc').toggle();
+
+				return $.get('/Fieldbook/TrialManager/openTrial/setCategoricalDisplayType', {showCategoricalDescriptionView: showCategoricalDescriptionView})
+					.done(function (result) {
+						window.isCategoricalDescriptionView = result;
+
+						$('.fbk-toggle-categorical-display').text(result ? window.measurementObservationMessages.hideCategoricalDescription :
+							window.measurementObservationMessages.showCategoricalDescription);
+
+					});
+			}
+
 			function validateNumericRange(minVal, maxVal, value, invalid) {
 				if (parseFloat(value) < parseFloat(minVal) || parseFloat(value) > parseFloat(maxVal)) {
 

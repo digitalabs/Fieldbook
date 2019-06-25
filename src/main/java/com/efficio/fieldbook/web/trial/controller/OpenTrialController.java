@@ -935,4 +935,33 @@ public class OpenTrialController extends BaseTrialController {
 		return new ArrayList<>();
 	}
 
+	/**
+	 * We maintain the state of categorical description view in session to
+	 * support the ff scenario: 1. When user does a browser refresh, the state
+	 * of measurements view is maintained 2. When user switches between studies
+	 * (either nursery or trial) state is also maintained 3. Generating the
+	 * modal for editing whole measurement row/entry is done in the backend (see
+	 * updateExperimentModal.html) , this also helps us track which display
+	 * values in the cateogrical dropdown is used
+	 *
+	 * @param showCategoricalDescriptionView
+	 * @param session
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/setCategoricalDisplayType", method = RequestMethod.GET)
+	public Boolean setCategoricalDisplayType(@RequestParam final Boolean showCategoricalDescriptionView,
+		final HttpSession session) {
+		Boolean isCategoricalDescriptionView = (Boolean) session.getAttribute("isCategoricalDescriptionView");
+
+		if (null != showCategoricalDescriptionView) {
+			isCategoricalDescriptionView = showCategoricalDescriptionView;
+		} else {
+			isCategoricalDescriptionView ^= Boolean.TRUE;
+		}
+
+		session.setAttribute("isCategoricalDescriptionView", isCategoricalDescriptionView);
+
+		return isCategoricalDescriptionView;
+	}
 }

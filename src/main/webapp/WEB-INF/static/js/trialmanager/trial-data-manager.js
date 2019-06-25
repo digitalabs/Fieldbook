@@ -421,9 +421,6 @@
 								service.currentData.columnOrders = serializedData;
 								$http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function(data) {
 									recreateSessionVariablesTrial();
-									if (data.containsOutOfSyncValues == true) {
-										showAlertMessage('', outOfSyncWarningMessage);
-									}
 									notifySaveEventListeners();
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function (updatedData) {
 										service.updateCurrentData('environments', extractData(updatedData.environmentData));

@@ -122,11 +122,6 @@
 										if (response.valid === true) {
 											showSuccessfulMessage('', response.message);
 											window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
-											//TODO: update the status is not gonna be necessary if reopen the study.
-											/*$scope.measurementDetails.hasMeasurement = false;
-											studyStateService.updateGeneratedDesign(false);
-											TrialManagerDataService.applicationData.unsavedTreatmentFactorsAvailable = false;
-											$scope.resetExperimentalDesignRelatedVariables();*/
 										} else {
 											showErrorMessage('', 'Something went wrong deleting the design.');
 										}
@@ -257,9 +252,6 @@
 									}
 									showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
 									window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
-									//TODO: update the status is not gonna be necessary if reopen the study.
-									/*$scope.measurementDetails.hasMeasurement = true;
-									TrialManagerDataService.applicationData.unsavedTreatmentFactorsAvailable = false;*/
 								} else {
 									if(response.message && response.message !== '') {
 										if(response.userConfirmationRequired) {

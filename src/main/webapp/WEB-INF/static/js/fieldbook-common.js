@@ -2966,7 +2966,7 @@ function makeGermplasmListDraggable(isDraggable) {
 	isDraggable = isDraggable
 		&& (($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1
 			|| ($('#studyId').length === 0 && false))
-			|| $('#studyId').length > 0 && false && measurementRowCount === 0); //TODO FIX IT IBP-2689
+			|| $('#studyId').length > 0 && false && !hasGeneratedDesign());
 	if (isDraggable) {
 		$('.germplasm-list-items tbody  tr').draggable({
 

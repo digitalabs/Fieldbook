@@ -1,18 +1,7 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
+import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -29,7 +18,6 @@ import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.Variable;
 import org.generationcp.middleware.domain.dms.VariableList;
-import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -37,7 +25,6 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -56,7 +43,17 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingTemplateExcelExporterTest {
@@ -117,7 +114,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt());
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
-		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(new ArrayList<WorkbenchUser>());
+		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong(), Matchers.anyString())).thenReturn(new ArrayList<WorkbenchUser>());
 
 		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID,
 				CrossingTemplateExcelExporterTest.STUDY_NAME, CrossingTemplateExcelExporterTest.CURRENT_USER_ID);
@@ -186,7 +183,7 @@ public class CrossingTemplateExcelExporterTest {
 		final WorkbenchUser mockUser = Mockito.mock(WorkbenchUser.class);
 		Mockito.when(mockUser.getUserid()).thenReturn(userId);
 		users.add(mockUser);
-		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(users);
+		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong(), Matchers.anyString())).thenReturn(users);
 
 		// Methods
 
@@ -212,7 +209,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.fieldbookMiddlewareService.getMeasurementDatasetId(Matchers.anyInt()))
 				.thenReturn(measurementDataSetId);
 
-		final List<Experiment> experiments = intializeExperiments();
+		final List<Experiment> experiments = this.intializeExperiments();
 		Mockito.when(this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE)).thenReturn
 			(experiments);
 		Mockito.when(this.studyDataManager.getTreatmentFactorVariableTypes(measurementDataSetId)).thenReturn(
@@ -243,7 +240,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.studyDataManager.getTreatmentFactorVariableTypes(measurementDataSetId)).thenReturn(
 			VariableTypeListTestDataInitializer.createTreatmentFactorsVariableTypeList());
 
-		final List<Experiment> experiments = intializeExperimentsWithAddUserDescriptors();
+		final List<Experiment> experiments = this.intializeExperimentsWithAddUserDescriptors();
 
 		Mockito.when(this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE)).thenReturn
 			(experiments);
@@ -284,28 +281,28 @@ public class CrossingTemplateExcelExporterTest {
 	private List<Experiment> intializeExperimentsWithAddUserDescriptors() {
 		final List<Experiment> experiments = new ArrayList<Experiment>();
 		VariableList factors = new VariableList();
-		factors.add(createTestVariable(TermId.PLOT_NO.getId(), "1"));
-		factors.add(createTestVariable(TermId.GID.getId(), "801"));
-		factors.add(createTestVariable(TermId.DESIG.getId(), "CML502A"));
-		factors.add(createTestVariable(TermId.CROSS.getId(), "-"));
-		factors.add(createTestVariable(TermId.ENTRY_TYPE.getId(), "10170"));
-		factors.add(createTestVariable(TermId.FIELDMAP_COLUMN.getId(), "FIELDMAP COLUMN", "1"));
-		factors.add(createTestVariable(TermId.FIELDMAP_RANGE.getId(), "FIELDMAP RANGE", "100"));
-		factors.add(createTestVariable(TermId.STOCKID.getId(), "StockID", "8269"));
-		factors.add(createTestVariable(1001, "NFert_NO", "VALUE"));
-		experiments.add(intializeExperiments(factors, 0));
+		factors.add(this.createTestVariable(TermId.PLOT_NO.getId(), "1"));
+		factors.add(this.createTestVariable(TermId.GID.getId(), "801"));
+		factors.add(this.createTestVariable(TermId.DESIG.getId(), "CML502A"));
+		factors.add(this.createTestVariable(TermId.CROSS.getId(), "-"));
+		factors.add(this.createTestVariable(TermId.ENTRY_TYPE.getId(), "10170"));
+		factors.add(this.createTestVariable(TermId.FIELDMAP_COLUMN.getId(), "FIELDMAP COLUMN", "1"));
+		factors.add(this.createTestVariable(TermId.FIELDMAP_RANGE.getId(), "FIELDMAP RANGE", "100"));
+		factors.add(this.createTestVariable(TermId.STOCKID.getId(), "StockID", "8269"));
+		factors.add(this.createTestVariable(1001, "NFert_NO", "VALUE"));
+		experiments.add(this.intializeExperiments(factors, 0));
 
 		factors = new VariableList();
-		factors.add(createTestVariable(TermId.PLOT_NO.getId(), "2"));
-		factors.add(createTestVariable(TermId.GID.getId(), "802"));
-		factors.add(createTestVariable(TermId.DESIG.getId(), "CLQRCWQ109"));
-		factors.add(createTestVariable(TermId.CROSS.getId(), "-"));
-		factors.add(createTestVariable(TermId.ENTRY_TYPE.getId(), "10170"));
-		factors.add(createTestVariable(TermId.FIELDMAP_COLUMN.getId(), "FIELDMAP COLUMN", "2"));
-		factors.add(createTestVariable(TermId.FIELDMAP_RANGE.getId(), "FIELDMAP RANGE", "100"));
-		factors.add(createTestVariable(TermId.STOCKID.getId(), "StockID", "8269"));
+		factors.add(this.createTestVariable(TermId.PLOT_NO.getId(), "2"));
+		factors.add(this.createTestVariable(TermId.GID.getId(), "802"));
+		factors.add(this.createTestVariable(TermId.DESIG.getId(), "CLQRCWQ109"));
+		factors.add(this.createTestVariable(TermId.CROSS.getId(), "-"));
+		factors.add(this.createTestVariable(TermId.ENTRY_TYPE.getId(), "10170"));
+		factors.add(this.createTestVariable(TermId.FIELDMAP_COLUMN.getId(), "FIELDMAP COLUMN", "2"));
+		factors.add(this.createTestVariable(TermId.FIELDMAP_RANGE.getId(), "FIELDMAP RANGE", "100"));
+		factors.add(this.createTestVariable(TermId.STOCKID.getId(), "StockID", "8269"));
 
-		experiments.add(intializeExperiments(factors, 1));
+		experiments.add(this.intializeExperiments(factors, 1));
 
 		return experiments;
 	}
@@ -320,7 +317,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt());
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
-		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong())).thenReturn(new ArrayList<WorkbenchUser>());
+		Mockito.when(this.workbenchDataManager.getUsersByProjectId(Matchers.anyLong(), Matchers.anyString())).thenReturn(new ArrayList<WorkbenchUser>());
 
 		// to test
 		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, studyName,
@@ -366,10 +363,10 @@ public class CrossingTemplateExcelExporterTest {
 		final Experiment experiment = new Experiment();
 
 		final VariableList factors = new VariableList();
-		factors.add(createTestVariable(TermId.PLOT_NO.getId(), "1"));
-		factors.add(createTestVariable(TermId.GID.getId(), "1"));
-		factors.add(createTestVariable(TermId.DESIG.getId(), "ABC"));
-		factors.add(createTestVariable(TermId.CROSS.getId(), "abc/def"));
+		factors.add(this.createTestVariable(TermId.PLOT_NO.getId(), "1"));
+		factors.add(this.createTestVariable(TermId.GID.getId(), "1"));
+		factors.add(this.createTestVariable(TermId.DESIG.getId(), "ABC"));
+		factors.add(this.createTestVariable(TermId.CROSS.getId(), "abc/def"));
 
 		experiment.setFactors(factors);
 		list.add(experiment);

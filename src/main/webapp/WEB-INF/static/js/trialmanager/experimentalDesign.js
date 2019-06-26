@@ -110,10 +110,10 @@
 
 					$scope.deleteDesign = function () {
 						if (studyStateService.hasUnsavedData()) {
-							showErrorMessage('', 'Please save first the unsaved data');
+							showErrorMessage('', 'Please save your data before deleting the design');
 							return;
 						}
-						var deleteMessage = Object.keys(TrialManagerDataService.currentData.treatmentFactors.currentData).length > 0 ? 'With deleting the experimental design all taken observations and Treatment Factors will be lost. Do you want to proceed?' : 'With deleting the experimental design all taken observations will be lost. Do you want to proceed?';
+						var deleteMessage = Object.keys(TrialManagerDataService.currentData.treatmentFactors.currentData).length > 0 ? 'With the deletion of the experimental design all observations and Treatment Factors will be lost. Do you want to proceed?' : 'With the deletion of the experimental design all observations will be lost. Do you want to proceed?';
 						var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
 						modalConfirmDelete.result.then(function (shouldContinue) {
 							if (shouldContinue) {
@@ -222,7 +222,7 @@
 					// on click generate design button
 					$scope.generateDesign = function() {
 						if (studyStateService.hasUnsavedData()) {
-							showErrorMessage('', 'Please save first the unsaved data');
+							showErrorMessage('', 'Please save your data before generating the design');
 							return;
 						}
 

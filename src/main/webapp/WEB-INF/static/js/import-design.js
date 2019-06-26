@@ -37,7 +37,7 @@ var ImportDesign = (function() {
 		showPopup: function(hasGermplasmListSelected) {
 
 			if(ImportDesign.getStudyStateService().hasUnsavedData()) {
-				showErrorMessage('', 'Please save first the unsaved data');
+				showErrorMessage('', 'Please save your data before importing the design');
 			} else if (hasGeneratedDesign()) {
 				showErrorMessage(designImportErrorHeader, 'This study has generated a design, the experimental design can no longer be modified.');
 			} else if (!hasGermplasmListSelected) {

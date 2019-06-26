@@ -437,6 +437,7 @@
         <constructor-arg name="factoryInstance" ref="dataProcessorFactory"/>
     </bean>
 
+	<bean id="germplasmNamingService" class="org.generationcp.commons.service.impl.GermplasmNamingServiceImpl" />
 
 	<bean id="ruleService"
 		class="org.generationcp.commons.ruleengine.impl.RulesServiceImpl" />

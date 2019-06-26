@@ -1,14 +1,8 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.exception.InvalidInputException;
+import com.efficio.fieldbook.web.common.service.CrossingService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
@@ -18,6 +12,7 @@ import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
 import org.generationcp.commons.ruleengine.generator.SeedSourceGenerator;
+import org.generationcp.commons.service.GermplasmNamingService;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
@@ -27,6 +22,7 @@ import org.generationcp.commons.util.CrossingUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.exceptions.InvalidGermplasmNameSettingException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -38,6 +34,7 @@ import org.generationcp.middleware.pojos.Methods;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.Progenitor;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.pojos.germplasm.GermplasmNameSetting;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.PedigreeService;
 import org.generationcp.middleware.service.pedigree.PedigreeFactory;
@@ -49,9 +46,13 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.exception.InvalidInputException;
-import com.efficio.fieldbook.web.common.service.CrossingService;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Transactional
 public class CrossingServiceImpl implements CrossingService {
@@ -88,8 +89,10 @@ public class CrossingServiceImpl implements CrossingService {
 
 	@Resource
 	private CrossExpansionProperties crossExpansionProperties;
+
 	@Resource
 	private PedigreeService pedigreeService;
+
 	@Resource
 	private ContextUtil contextUtil;
 
@@ -102,15 +105,21 @@ public class CrossingServiceImpl implements CrossingService {
 	@Resource
 	private SeedSourceGenerator seedSourceGenerator;
 
+	@Resource
+	private GermplasmNamingService germplasmNamingService;
+
 	@Override
 	public ImportedCrossesList parseFile(final MultipartFile file) throws FileParsingException {
 		return this.crossingTemplateParser.parseFile(file, null);
 	}
 
+	/*
+		This is used for MANUAL naming of crosses
+	 */
 	@Override
 	public boolean applyCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList, final Integer userId,
 			final Workbook workbook) {
-		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
+		this.applyCrossNameSettingToImportedCrosses(crossSetting.getCrossNameSetting(), importedCrossesList.getImportedCrosses());
 		final GermplasmListResult pairsResult = this.getTriples(crossSetting, importedCrossesList, userId, workbook);
 		this.save(crossSetting, importedCrossesList, pairsResult.germplasmTriples);
 		return pairsResult.isTrimed;
@@ -348,40 +357,27 @@ public class CrossingServiceImpl implements CrossingService {
 		}
 	}
 
-	protected void applyCrossNameSettingToImportedCrosses(final CrossSetting setting, final List<ImportedCrosses> importedCrosses) {
-		final CrossNameSetting crossNameSetting = setting.getCrossNameSetting();
-		Integer nextNumberInSequence = this.getStartingSequenceNumber(crossNameSetting);
+	// for MANUAL naming of crosses
+	protected void applyCrossNameSettingToImportedCrosses(final CrossNameSetting crossNameSetting, final List<ImportedCrosses> importedCrosses) {
 		Integer entryIdCounter = 0;
+		synchronized (CrossingServiceImpl.class) {
+			for (final ImportedCrosses cross : importedCrosses) {
+				entryIdCounter++;
+				cross.setEntryId(entryIdCounter);
+				cross.setEntryCode(String.valueOf(entryIdCounter));
+				cross.setDesig(this.germplasmNamingService.generateNextNameAndIncrementSequence(this.getGermplasmNameSetting(crossNameSetting)));
 
-		for (final ImportedCrosses cross : importedCrosses) {
-			entryIdCounter++;
-			cross.setEntryId(entryIdCounter);
-			cross.setEntryCode(String.valueOf(entryIdCounter));
-			cross.setDesig(this.buildDesignationNameInSequence(nextNumberInSequence++, crossNameSetting));
+				// this would set the correct cross string depending if the use is
+				// cimmyt wheat
+				final Germplasm germplasm = new Germplasm();
+				germplasm.setGnpgs(2);
+				germplasm.setGid(Integer.MAX_VALUE);
+				germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
+				germplasm.setGpid2(Integer.valueOf(cross.getMaleGids().get(0)));
+				final String crossString = this.getCross(germplasm, cross, crossNameSetting.getSeparator());
 
-			// this would set the correct cross string depending if the use is
-			// cimmyt wheat
-			final Germplasm germplasm = new Germplasm();
-			germplasm.setGnpgs(2);
-			germplasm.setGid(Integer.MAX_VALUE);
-			germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
-			germplasm.setGpid2(Integer.valueOf(cross.getMaleGids().get(0)));
-			final String crossString = this.getCross(germplasm, cross, crossNameSetting.getSeparator());
-
-			cross.setCross(crossString);
-		}
-	}
-
-	/**
-	 * Method that checks if the user specified a starting number else, returns the next number in sequence
-	 *
-	 * @param crossNameSetting
-	 */
-	Integer getStartingSequenceNumber(CrossNameSetting crossNameSetting) {
-		if(crossNameSetting.getStartNumber() != null && crossNameSetting.getStartNumber() > 0) {
-			return crossNameSetting.getStartNumber();
-		} else {
-			return this.getNextNumberInSequence(crossNameSetting);
+				cross.setCross(crossString);
+			}
 		}
 	}
 
@@ -602,13 +598,12 @@ public class CrossingServiceImpl implements CrossingService {
 		germplasm.setReferenceId(CrossingServiceImpl.GERMPLASM_REFID);
 	}
 
-	protected Integer getNextNumberInSequence(final CrossNameSetting setting) {
+	protected Integer getNextNumberInSequence(final String prefix) {
 
 		int nextNumberInSequence = 1;
 
-		if (!StringUtils.isEmpty(setting.getPrefix())) {
-			final String nextSequenceNumberString = this.germplasmDataManager.getNextSequenceNumberForCrossName(setting.getPrefix().trim());
-			nextNumberInSequence = Integer.parseInt(nextSequenceNumberString);
+		if (!StringUtils.isEmpty(prefix)) {
+			nextNumberInSequence = this.germplasmNamingService.getNextSequence(prefix.trim());
 		}
 
 		return nextNumberInSequence;
@@ -618,85 +613,31 @@ public class CrossingServiceImpl implements CrossingService {
 	@Override
 	public String getNextNameInSequence(final CrossNameSetting setting) throws InvalidInputException {
 
-		Integer nextNumberInSequence = this.getNextNumberInSequence(setting);
-
-		final Integer optionalStartNumber = setting.getStartNumber();
-
-		if (optionalStartNumber != null && optionalStartNumber > 0 && nextNumberInSequence > optionalStartNumber) {
+		try {
+			final String nextName = this.germplasmNamingService.getNextNameInSequence(this.getGermplasmNameSetting(setting));
+			return nextName;
+		} catch (final InvalidGermplasmNameSettingException e) {
 			final String invalidStatingNumberErrorMessage = this.messageSource
-					.getMessage("error.not.valid.starting.sequence", new Object[] {nextNumberInSequence - 1},
-							LocaleContextHolder.getLocale());
+				.getMessage("error.not.valid.starting.sequence", new Object[] {this.getNextNumberInSequence(setting.getPrefix()) - 1},
+					LocaleContextHolder.getLocale());
 			throw new InvalidInputException(invalidStatingNumberErrorMessage);
 		}
-
-		if (optionalStartNumber != null && nextNumberInSequence < optionalStartNumber) {
-			nextNumberInSequence = optionalStartNumber;
-		}
-
-		return this.buildDesignationNameInSequence(nextNumberInSequence, setting);
 	}
 
-	/*
-	 * This method is only used for Specify Name Scenario in import crosses and design crosses
-	 */
-	protected String buildDesignationNameInSequence(final Integer number, final CrossNameSetting setting) {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(this.buildPrefixString(setting));
-		sb.append(this.getNumberWithLeadingZeroesAsString(number, setting));
-
-		if (!StringUtils.isEmpty(setting.getSuffix())) {
-			sb.append(this.buildSuffixString(setting, setting.getSuffix()));
-		}
-		return sb.toString();
-	}
-
-	protected String replaceExpressionWithValue(final StringBuilder container, final String processCode, final String value) {
-		final int startIndex = container.toString().toUpperCase().indexOf(processCode);
-		final int endIndex = startIndex + processCode.length();
-
-		final String replaceValue = value == null ? "" : value;
-		container.replace(startIndex, endIndex, replaceValue);
-		return container.toString();
+	// TODO extract to utility class or method
+	private GermplasmNameSetting getGermplasmNameSetting(final CrossNameSetting crossNameSetting) {
+		final GermplasmNameSetting nameSetting = new GermplasmNameSetting();
+		nameSetting.setPrefix(crossNameSetting.getPrefix());
+		nameSetting.setSuffix(crossNameSetting.getSuffix());
+		nameSetting.setAddSpaceBetweenPrefixAndCode(crossNameSetting.isAddSpaceBetweenPrefixAndCode());
+		nameSetting.setAddSpaceBetweenSuffixAndCode(crossNameSetting.isAddSpaceBetweenSuffixAndCode());
+		nameSetting.setNumOfDigits(crossNameSetting.getNumOfDigits());
+		nameSetting.setStartNumber(crossNameSetting.getStartNumber());
+		return nameSetting;
 	}
 
 	protected String buildCrossName(final ImportedCrosses crosses, final String separator) {
 		return crosses.getFemaleDesignation() + separator + crosses.getMaleDesignationsAsString();
-	}
-
-	protected String buildPrefixString(final CrossNameSetting setting) {
-		final String prefix = !StringUtils.isEmpty(setting.getPrefix()) ? setting.getPrefix().trim() : "";
-		if (setting.isAddSpaceBetweenPrefixAndCode()) {
-			return prefix + " ";
-		}
-		return prefix;
-	}
-
-	protected String buildSuffixString(final CrossNameSetting setting, final String suffix) {
-		if (suffix != null) {
-			if (setting.isAddSpaceBetweenSuffixAndCode()) {
-				return " " + suffix.trim();
-			}
-			return suffix.trim();
-		}
-		return "";
-	}
-
-	protected String getNumberWithLeadingZeroesAsString(final Integer number, final CrossNameSetting setting) {
-		final StringBuilder sb = new StringBuilder();
-		final String numberString = number.toString();
-		final Integer numOfDigits = setting.getNumOfDigits();
-
-		if (numOfDigits != null && numOfDigits > 0) {
-			final int numOfZerosNeeded = numOfDigits - numberString.length();
-			if (numOfZerosNeeded > 0) {
-				for (int i = 0; i < numOfZerosNeeded; i++) {
-					sb.append("0");
-				}
-			}
-
-		}
-		sb.append(number);
-		return sb.toString();
 	}
 
 	public Integer getIDForUserDefinedFieldCrossingName() {

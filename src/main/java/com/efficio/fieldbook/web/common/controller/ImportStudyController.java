@@ -64,6 +64,8 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Controller
 @RequestMapping(ImportStudyController.URL)
+@Deprecated
+// TODO this controller aren't be used anymore, the import only.
 public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	public static final String SUCCESS = "success";

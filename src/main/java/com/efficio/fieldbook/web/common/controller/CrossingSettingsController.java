@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -149,7 +150,7 @@ public class CrossingSettingsController extends SettingsController {
 				settings.add(importSettings);
 			}
 
-		} catch (MiddlewareQueryException | JAXBException e) {
+		} catch (final MiddlewareQueryException | JAXBException e) {
 			CrossingSettingsController.LOG.error(e.getMessage(), e);
 		}
 
@@ -164,7 +165,7 @@ public class CrossingSettingsController extends SettingsController {
 		try {
 			this.saveCrossSetting(settings, this.getCurrentProgramID());
 			return this.submitCrossSettings(settings);
-		} catch (MiddlewareQueryException | JAXBException e) {
+		} catch (final MiddlewareQueryException | JAXBException e) {
 			CrossingSettingsController.LOG.error(e.getMessage(), e);
 		}
 
@@ -287,7 +288,7 @@ public class CrossingSettingsController extends SettingsController {
 			out.put(OUTPUT_FILENAME, exportInfo.getFilePath());
 			out.put(FILENAME, exportInfo.getDownloadFileName());
 
-		} catch (CrossingTemplateExportException | NullPointerException e) {
+		} catch (final CrossingTemplateExportException | NullPointerException e) {
 			CrossingSettingsController.LOG.debug(e.getMessage(), e);
 
 			out.put(CrossingSettingsController.IS_SUCCESS, Boolean.FALSE);
@@ -302,10 +303,10 @@ public class CrossingSettingsController extends SettingsController {
 	@RequestMapping(value = "/download/file", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	public ResponseEntity<FileSystemResource> download(final HttpServletRequest req) throws UnsupportedEncodingException {
 		final String outputFilename =
-				new String(req.getParameter(CrossingSettingsController.OUTPUT_FILENAME).getBytes(FieldbookUtil.ISO_8859_1),
-						FieldbookUtil.UTF_8);
-		final String filename = new String(req.getParameter(CrossingSettingsController.FILENAME).getBytes(FieldbookUtil.ISO_8859_1),
-				FieldbookUtil.UTF_8);
+				new String(req.getParameter(CrossingSettingsController.OUTPUT_FILENAME).getBytes( StandardCharsets.ISO_8859_1 ),
+					StandardCharsets.UTF_8 );
+		final String filename = new String(req.getParameter(CrossingSettingsController.FILENAME).getBytes( StandardCharsets.ISO_8859_1 ),
+			StandardCharsets.UTF_8 );
 
 		return FieldbookUtil.createResponseEntityForFileDownload(outputFilename, filename);
 	}
@@ -388,7 +389,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		this.crossingService.processCrossBreedingMethod(this.studySelection.getCrossSettings(), importedCrossesList);
 
-		Map<String, Workbook> workbookMap = new HashMap<>();
+		final Map<String, Workbook> workbookMap = new HashMap<>();
 		// TODO decouple save and apply settings and then replace this for for the apply settings method
 		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
 			this.crossingService.populateSeedSource(importedCross, this.userSelection.getWorkbook(), workbookMap);
@@ -414,12 +415,12 @@ public class CrossingSettingsController extends SettingsController {
 	public Map<String, Person> getCurrentProgramMembers() {
 		// we need to convert Integer to String because angular doest work with numbers as options for select
 
-		String cropname = this.contextUtil.getProjectInContext().getCropType().getCropName();
+		final String cropname = this.contextUtil.getProjectInContext().getCropType().getCropName();
 
 		final Map<String, Person> currentProgramMembers = new HashMap<>();
 		final Long projectId = this.workbenchDataManager.getProjectByUuidAndCrop(this.getCurrentProgramID(), cropname).getProjectId();
 
-		final Map<Integer, Person> programMembers = this.workbenchDataManager.getPersonsByProjectId(projectId);
+		final Map<Integer, Person> programMembers = this.workbenchDataManager.getPersonsByProjectId(projectId, cropname);
 		for (final Map.Entry<Integer, Person> member : programMembers.entrySet()) {
 			currentProgramMembers.put(String.valueOf(member.getKey()), member.getValue());
 		}
@@ -593,7 +594,7 @@ public class CrossingSettingsController extends SettingsController {
 
 		final ImmutableList<Integer> listWithNoDuplicates = ImmutableSet.copyOf(gidList).asList();
 
-		final Map<Integer, String[]> pedigreeMap = germplasmDataManager.getParentsInfoByGIDList(listWithNoDuplicates);
+		final Map<Integer, String[]> pedigreeMap = this.germplasmDataManager.getParentsInfoByGIDList(listWithNoDuplicates);
 		for (final ImportedCrosses importedCrosses : importedCrossesList) {
 			final int femaleGid = Integer.parseInt(importedCrosses.getFemaleGid());
 			final String[] femaleInfo = pedigreeMap.get(femaleGid);

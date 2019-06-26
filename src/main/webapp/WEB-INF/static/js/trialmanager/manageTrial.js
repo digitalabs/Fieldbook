@@ -162,13 +162,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						}
 					});
 
-				// TODO: MARK CODE TO BE DELETE IBP-2789
-				/*$rootScope.stateSuccessfullyLoaded = {};
-				$transitions.onSuccess({},
-					function (transition) {
-						$rootScope.stateSuccessfullyLoaded[transition.from().name] = true;
-					});*/
-
 				// It's very handy to add references to $state and $stateParams to the $rootScope
 				// so that you can access them from any scope within your applications.For example,
 				// <li ui-sref-active="active }"> will set the <li> // to active whenever
@@ -206,20 +199,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				{   name: 'Environments',
 					state: 'environment'
 				}
-				/*TODO: MARK FOR DELETE IBP-2789*/
-/*				,
-				{
-					name: 'Experimental Design',
-					state: 'experimentalDesign'
-				},
-				{
-					name: 'Observations',
-					state: 'createMeasurements'
-				},
-				{
-					name: 'Observations',
-					state: 'editMeasurements'
-				}*/
 			];
 			$scope.subObservationTabs = [];
 			$scope.tabSelected = 'trialSettings';
@@ -397,13 +376,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						//Added-selectionVariates
 						TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(
 							data.trialSettingsData));
-						// TODO: MARK FOR DELETE IBP-2789
 						TrialManagerDataService.updateSettings('environments', environmentSettings);
 						TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
 						TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(
 							data.treatmentFactorsData));
-						TrialManagerDataService.updateSettings('measurements',
-							TrialManagerDataService.extractSettings(data.measurementsData));
 					}
 				});
 			};

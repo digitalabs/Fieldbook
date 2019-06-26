@@ -216,52 +216,18 @@ public class ImportGermplasmListController extends SettingsController {
 			final BindingResult result, final Model model, final HttpServletRequest req) throws BVDesignException {
 		// start: section for taking note of the check germplasm
 		boolean isDeleteObservations = false;
-		// TODO: MARK FOR DELETE IBP-2789
-		//boolean hasTemporaryWorkbook = false;
-		// TODO: MARK FOR DELETE IBP-2789
-		/*if (this.userSelection.getTemporaryWorkbook() != null) {
-
-			WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(),
-					this.userSelection.getTemporaryWorkbook());
-			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(),
-					this.userSelection.getWorkbook().getObservations(), false, this.ontologyService,
-					this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
-			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getVariates(),
-					this.userSelection.getWorkbook().getObservations(), true, this.ontologyService,
-					this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
-
-			this.addVariablesFromTemporaryWorkbookToWorkbook(this.userSelection);
-
-			this.updateObservationsFromTemporaryWorkbookToWorkbook(this.userSelection);
-
-			this.userSelection.setTemporaryWorkbook(null);
-
-			hasTemporaryWorkbook = true;
-			isDeleteObservations = true;
-
-		}*/
 
 		// if we have no germplasm list available for the study, skip this
 		// validation flow
 		if (null != this.userSelection.getImportedGermplasmMainInfo()
 				&& null != this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()) {
 			this.assignPlotNumber(form);
-			// TODO: MARK FOR DELETE IBP-2789
-			//if (!hasTemporaryWorkbook) {
-			// this section of code is only called for existing trial
-			// without temporary workbook. No need for reset of measurement
-			// row
-			// list here
 			isDeleteObservations = true;
-			//}
 		}
 
 		this.userSelection.setMeasurementRowList(null);
 		this.userSelection.getWorkbook().setOriginalObservations(null);
 		this.userSelection.getWorkbook().setObservations(null);
-		// TODO: MARK FOR DELETE IBP-2789
-		//this.userSelection.getWorkbook().setObservations(this.userSelection.getMeasurementRowList());
-
 		this.fieldbookService.createIdCodeNameVariablePairs(this.userSelection.getWorkbook(),
 				AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 		this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(),

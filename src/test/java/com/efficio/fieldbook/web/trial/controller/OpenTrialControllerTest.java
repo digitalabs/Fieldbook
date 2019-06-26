@@ -322,13 +322,6 @@ public class OpenTrialControllerTest {
 			Assert.assertTrue("Controller does not properly set into the model special data required for experimental design tab",
 					model.containsAttribute("experimentalDesignSpecialData"));
 			Assert.assertTrue("Controller does not properly set into the model the study name", model.containsAttribute("studyName"));
-			// TODO: MARK FOR DELETE IBP-2789
-/*			Assert.assertTrue("Controller does not properly set into the model information on whether Study has measurements or not",
-					model.containsAttribute(OpenTrialController.MEASUREMENT_DATA_EXISTING));*/
-			// TODO: MARK FOR DELETE IBP-2789
-			/*Assert.assertTrue("Controller does not properly set into the model the data for measurement row count",
-					model.containsAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT));*/
-
 			Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be displayed.", this.hasAnalysisVariables(model));
 
 		} catch (final MiddlewareException e) {
@@ -1093,14 +1086,6 @@ public class OpenTrialControllerTest {
 
 		final Map<String, Object> resultMap = this.openTrialController.updateSavedTrial(OpenTrialControllerTest.STUDY_ID);
 		Assert.assertNotNull(resultMap.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
-		// TODO: MARK FOR DELETE IBP-2789
-		//Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));
-		//Assert.assertNotNull(resultMap.get(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST));
-		// TODO: MARK FOR DELETE IBP-2789
-		//Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENT_ROW_COUNT));
-		//Assert.assertNotNull(resultMap.get(OpenTrialController.MEASUREMENTS_DATA));
-		// TODO: MARK FOR DELETE IBP-2789
-		//Assert.assertNotNull(resultMap.get(OpenTrialController.SELECTION_VARIABLE_DATA));
 		Assert.assertNotNull(resultMap.get(OpenTrialController.TRIAL_SETTINGS_DATA));
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).loadAllObservations(workbook);
@@ -1207,51 +1192,20 @@ public class OpenTrialControllerTest {
 	}
 
 	@Test
-	public void testSubmitWhereReplaceIsNotZero() {
-		final TrialData data = this.setUpTrialData();
-		final Map<String, Object> returnVal = this.openTrialController.submit(1, data);
-
-		Assert.assertNotNull("The environment data tab should not be null", returnVal.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
-		// TODO: MARK FOR DELETE IBP-2789
-		/*Assert.assertEquals("The measurement data flag should be false", false,
-				returnVal.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));*/
-		/*Assert.assertEquals("There should be no advanced or crosses list.", false,
-				returnVal.get(OpenTrialController.HAS_ADVANCED_OR_CROSSES_LIST));*/
-		// TODO: MARK FOR DELETE IBP-2789
-		/*Assert.assertEquals("The measurement row count should be zero", 0, returnVal.get(OpenTrialController.MEASUREMENT_ROW_COUNT));*/
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).saveMeasurementRows(Matchers.any(Workbook.class),
-				Matchers.anyString(), Matchers.anyBoolean());
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).createIdNameVariablePairs(Matchers.any(Workbook.class), Matchers.anyListOf(
-						SettingDetail.class),
-				Matchers.anyString(), Matchers.anyBoolean());
-		Mockito.verify(this.fieldbookService, Mockito.times(0)).saveStudyColumnOrdering(Matchers.anyInt(), Matchers.anyString(), Matchers.any(Workbook.class));
-	}
-
-	@Test
 	public void testSubmitWhereReplaceIsZero() {
 		final TrialData data = this.setUpTrialData();
-		//Mockito.when(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(Matchers.eq(1), Matchers.anyListOf(Integer.class))).thenReturn(true);
-		//final long experimentCount = 10;
-		//Mockito.when(this.studyDataManager.countExperiments(Matchers.eq(1))).thenReturn(experimentCount);
-
 		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
 		data.setBasicDetails(new BasicDetails());
 		data.getBasicDetails().setStudyType(StudyTypeDto.getTrialDto());
 		final Map<String, Object> returnVal = this.openTrialController.submit(0, data);
 
 		Assert.assertNotNull("The environment data tab should not be null", returnVal.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
-		// TODO: MARK FOR DELETE IBP-2789
-		//Assert.assertEquals("The measurement data flag should be true", true, returnVal.get(OpenTrialController.MEASUREMENT_DATA_EXISTING));
-		/*Assert.assertEquals("The measurement row count should be " + experimentCount, experimentCount,
-				returnVal.get(OpenTrialController.MEASUREMENT_ROW_COUNT));*/
-
 		Mockito.verify(this.fieldbookMiddlewareService).saveWorkbookVariablesAndObservations(Matchers.any(Workbook.class), Matchers.anyString());
 		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(Matchers.any(Workbook.class), Matchers.anyListOf(
 				SettingDetail.class),
 				Matchers.anyString(), Matchers.anyBoolean());
 		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(Matchers.anyInt(), ArgumentMatchers.<String>isNull(),
 			Matchers.any(Workbook.class));
-		//Mockito.verify(this.fieldbookMiddlewareService).hasAdvancedOrCrossesList(Matchers.anyInt());
 	}
 
 	private TrialData setUpTrialData() {

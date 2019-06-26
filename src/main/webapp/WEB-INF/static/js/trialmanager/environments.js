@@ -9,14 +9,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				  studyStateService) {
 
 			var ctrl = this;
-			// preload the measurements tab, if the measurements tab is not yet loaded 
-			// to make sure deleting environments will still works
-			// since environments are directly correlated to their measurement rows
-			// NOTE: $rootScope.stateSuccessfullyLoaded will only have value once the specific tab is successfully loaded
-/*			if ($rootScope.stateSuccessfullyLoaded['createMeasurements'] === undefined
-				&& $rootScope.stateSuccessfullyLoaded['editMeasurements'] === undefined) {
-				$scope.loadMeasurementsTabInBackground();
-			}*/
 
 			// at least one environment should be in the datatable, so we are prepopulating the table with the first environment
 			var populateDatatableWithDefaultValues = function () {

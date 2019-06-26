@@ -98,24 +98,6 @@ public class ImportStudyControllerTest {
 
 	}
 
-	// TODO: MARK FOR DELETE IBP-2689
-	@Test
-	@Ignore
-	public void testSaveImportedFiles() {
-		final CreateTrialForm form = Mockito.mock(CreateTrialForm.class);
-		final Model model = Mockito.mock(Model.class);
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
-		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
-		final Map<String, Object> result = this.unitUnderTest.saveImportedFiles(form, model);
-		Assert.assertEquals("1", result.get(ImportStudyController.SUCCESS));
-		Mockito.verify(this.fieldbookMiddlewareService).saveMeasurementRows(workbook,
-				this.contextUtil.getCurrentProgramUUID(), true);
-		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(
-			this.userSelection.getWorkbook().getStudyDetails().getId(),
-			form.getColumnOrders(),
-			this.userSelection.getWorkbook());
-	}
-
 	@Test
 	public void testApplyChangeDetailsAddGidName() throws IOException, FieldbookException {
 		final String dummyUserResponse = "";

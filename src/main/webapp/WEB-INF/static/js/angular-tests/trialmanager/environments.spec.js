@@ -9,7 +9,6 @@ describe('Measurement Controller', function () {
 	};
 	var rootScopeMock = {
 		openConfirmModal: jasmine.createSpy('openConfirmModal'),
-		stateSuccessfullyLoaded: {}
 	};
 	var datasetServiceMock = {observationCountByInstance: jasmine.createSpy('observationCountByInstance')};
 	var responseMock = {headers: jasmine.createSpy('headers')};
@@ -56,8 +55,6 @@ describe('Measurement Controller', function () {
 			q = $q;
 			httpBackend = $httpBackend;
 
-			rootScopeMock.stateSuccessfullyLoaded['createMeasurements'] = true;
-			rootScopeMock.stateSuccessfullyLoaded['editMeasurements'] = true;
 			trialManagerServiceMock.trialMeasurement['hasAdvancedOrCrossesList'] = false;
 
 			controller = $controller('EnvironmentCtrl', {

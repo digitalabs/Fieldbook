@@ -37,7 +37,7 @@ var ImportDesign = (function() {
 		showPopup: function(hasGermplasmListSelected) {
 
 			if(ImportDesign.getStudyStateService().hasUnsavedData()) {
-				showErrorMessage('', 'Please first save the unsaved data');
+				showErrorMessage('', 'Please save first the unsaved data');
 			} else if (hasGeneratedDesign()) {
 				showErrorMessage(designImportErrorHeader, 'This study has generated a design, the experimental design can no longer be modified.');
 			} else if (!hasGermplasmListSelected) {
@@ -133,22 +133,12 @@ var ImportDesign = (function() {
 		},
 
 		generateDesign: function() {
-			//var $body = $('body');//TODO ENTRA POR ACA
-
 			ImportDesign.getTrialManagerDataService().performDataCleanup();
 			var environmentData =
 				angular.copy(ImportDesign.studyManagerCurrentData().environments);
 
 			var trialSettingsData =
 				angular.copy(ImportDesign.studyManagerCurrentData().trialSettings);
-
-			/*$.each(environmentData.environments, function(key, data) {
-				$.each(data.managementDetailValues, function(key, value) {
-					if (value && value.id) {
-						data.managementDetailValues[key] = value.id;
-					}
-				});
-			});*/
 
 			var service = ImportDesign.getTrialManagerDataService();
 			// custom import design type id

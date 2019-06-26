@@ -559,7 +559,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	//TODO TRIAL
 	protected void addVariableInDeletedList(final List<SettingDetail> currentList, final int mode, final int variableId,
-			final boolean createNewSettingIfNull) {// TODO NOT REMOVE USED IN GERMPLASM DETAILS.
+			final boolean createNewSettingIfNull) {
 		SettingDetail newSetting = null;
 		for (final SettingDetail setting : currentList) {
 			if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {

@@ -161,7 +161,7 @@ public class ExpDesignController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/generate", method = RequestMethod.POST)
-	public ExpDesignValidationOutput showMeasurements(final Model model, @RequestBody final ExpDesignParameterUi expDesign) {
+	public ExpDesignValidationOutput generateAndSaveDesign(final Model model, @RequestBody final ExpDesignParameterUi expDesign) {
 		/*
 		 * 0 - Resolvable Complete Block Design 1 - Resolvable Incomplete Block Design 2 - Resolvable Row Col
 		 */

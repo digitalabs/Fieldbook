@@ -166,19 +166,19 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 		final Workbook workbook = this.fieldbookMiddlewareService.getStudyDataSet(this.userSelection.getWorkbook().getStudyDetails().getId());
 		final DatasetDTO datasetDTO = this.datasetService.getDataset(this.userSelection.getWorkbook().getMeasurementDatesetId());
+		// FIXME BMS-4454
 		this.fieldbookMiddlewareService.loadAllObservations(workbook);
 		this.userSelection.getWorkbook().setObservations(workbook.getObservations());
+
+		// FIXME The Observation, Traits, and selections aren't loaded dynamically on the workbook is for that I reload the observation and the variables.
 		final List<SettingDetail> detailList = new ArrayList<>();
 
 		for (final MeasurementVariable var : datasetDTO.getVariables()) {
 			if (var.getVariableType() == VariableType.SELECTION_METHOD) {
 
 				final SettingDetail detail = this.createSettingDetailWithVariableType(var.getTermId(), var.getName(), VariableType.SELECTION_METHOD);
-
 				detail.getVariable().setOperation(Operation.UPDATE);
-
 				detail.setDeletable(true);
-
 				detailList.add(detail);
 			}
 		}

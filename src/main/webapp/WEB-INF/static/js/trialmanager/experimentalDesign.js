@@ -110,7 +110,7 @@
 
 					$scope.deleteDesign = function () {
 						if (studyStateService.hasUnsavedData()) {
-							showErrorMessage('', 'Please first save the unsaved data');
+							showErrorMessage('', 'Please save first the unsaved data');
 							return;
 						}
 						var deleteMessage = Object.keys(TrialManagerDataService.currentData.treatmentFactors.currentData).length > 0 ? 'With deleting the experimental design all taken observations and Treatment Factors will be lost. Do you want to proceed?' : 'With deleting the experimental design all taken observations will be lost. Do you want to proceed?';
@@ -227,7 +227,7 @@
 					// on click generate design button
 					$scope.generateDesign = function() {
 						if (studyStateService.hasUnsavedData()) {
-							showErrorMessage('', 'Please first save the unsaved data');
+							showErrorMessage('', 'Please save first the unsaved data');
 							return;
 						}
 

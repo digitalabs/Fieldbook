@@ -155,10 +155,6 @@
         $('#updateCheckTypes').hide();
         $('#deleteCheckTypes').hide();
 
-        // this is the handler for when user clicks on the Replace button
-      /*  $('.show-germplasm-details').on('click', function() {
-            showGermplasmDetailsSection();
-        });*/
     };
 
 })();

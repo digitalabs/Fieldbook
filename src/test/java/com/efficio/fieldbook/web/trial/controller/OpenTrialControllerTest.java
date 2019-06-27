@@ -201,10 +201,6 @@ public class OpenTrialControllerTest {
 		final VariableTypeList factors = Mockito.mock(VariableTypeList.class);
 		Mockito.when(factors.findById(Matchers.anyInt())).thenReturn(null);
 		Mockito.when(this.studyDataManager.getAllStudyFactors(Matchers.anyInt())).thenReturn(factors);
-
-/*		final List<SampleListDTO> sampleListDTOs = new ArrayList<>();
-		Mockito.when(this.sampleListService.getSampleLists(Matchers.<Integer>anyList())).thenReturn(sampleListDTOs);*/
-
 		this.createTestVariable();
 		Mockito.when(this.variableDataManager.getVariable(Matchers.any(String.class), Matchers.any(Integer.class), Matchers.anyBoolean())).thenReturn(this.testVariable);
 		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
@@ -217,9 +213,6 @@ public class OpenTrialControllerTest {
 		Mockito.doReturn(datasetTypes).when(this.datasetTypeService).getObservationDatasetTypeIds();
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyTypeDto.getTrialDto());
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
-		//final List<Integer> datasetIds = new ArrayList<>();
-		//datasetIds.add(4);
-		//Mockito.doReturn(new ArrayList<>()).when(this.sampleListService).getSampleLists(datasetIds);
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.STUDY_ID)).thenReturn(workbook);
 		final Study study = new Study();
 		study.setStudyType(StudyTypeDto.getTrialDto());
@@ -309,8 +302,6 @@ public class OpenTrialControllerTest {
 					model.containsAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB));
 			Assert.assertTrue("Controller does not properly set into the model the data for the Study settings tab",
 					model.containsAttribute("trialSettingsData"));
-/*			Assert.assertTrue("Controller does not properly set into the model the data for the measurements tab",
-					model.containsAttribute("measurementsData"));*/
 			Assert.assertTrue("Controller does not properly set into the model the data for the experimental design tab",
 					model.containsAttribute("experimentalDesignData"));
 			Assert.assertTrue("Controller does not properly set into the model the data for the treatment factors tab",
@@ -1074,10 +1065,6 @@ public class OpenTrialControllerTest {
 			.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(1, "STD"));
 		final Study study = new Study();
 		study.setStudyType(StudyTypeDto.getTrialDto());
-
-/*		Mockito.when(
-				this.variableDataManager.getVariable(Matchers.anyString(), Matchers.anyInt(), Matchers.anyBoolean()))
-				.thenReturn(VariableTestDataInitializer.createVariable());*/
 
 		// Verify that workbook has Analysis and/or Analysis Summary variables
 		// beforehand to check that they were later removed

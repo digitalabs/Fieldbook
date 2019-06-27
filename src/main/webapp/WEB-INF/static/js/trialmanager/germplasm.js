@@ -14,7 +14,7 @@
                 displaySelectedGermplasmDetails();
             }
 
-            $scope.ShowImportListBrowser = !($scope.isOpenStudy() && TrialManagerDataService.applicationData.germplasmListSelected);
+            $scope.showImportListBrowser = !($scope.isOpenStudy() && TrialManagerDataService.applicationData.germplasmListSelected);
 
             $scope.labels = {};
             $scope.labels.germplasmFactors = {
@@ -64,17 +64,17 @@
             };
 
             $scope.updateModifyList = function () {
-                $scope.ShowImportListBrowser = true;
+                $scope.showImportListBrowser = true;
                 showGermplasmDetailsSection();
             };
 
             $scope.ShowUpdateImportList = function () {
-                return $scope.isOpenStudy() && TrialManagerDataService.applicationData.germplasmListSelected && !studyStateService.hasGeneratedDesign() && !$scope.ShowImportListBrowser;
+                return $scope.isOpenStudy() && TrialManagerDataService.applicationData.germplasmListSelected && !studyStateService.hasGeneratedDesign() && !$scope.showImportListBrowser;
 
             };
 
             $scope.showImportList = function () {
-                return $scope.ShowImportListBrowser;
+                return $scope.showImportListBrowser;
             };
 
             TrialManagerDataService.registerSaveListener('germplasmUpdate', $scope.handleSaveEvent);

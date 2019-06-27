@@ -116,7 +116,7 @@ public class ExpDesignController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/delete/{measurementDatasetId}", method = RequestMethod.DELETE)
-	public ExpDesignValidationOutput deleteGeneratedDesign(@PathVariable final Integer measurementDatasetId) {
+	public ExpDesignValidationOutput deleteExperimentalDesign(@PathVariable final Integer measurementDatasetId) {
 		ExpDesignValidationOutput expParameterOutput = new ExpDesignValidationOutput(true, "The design was deleted successfully");
 		final Locale locale = LocaleContextHolder.getLocale();
 
@@ -304,7 +304,7 @@ public class ExpDesignController extends BaseTrialController {
 					}
 				}
 				if (expParameterOutput.isValid()) {
-					this.saveDesignGenerated(expDesign);
+					this.saveExperimentalDesign(expDesign);
 				}
 			}
 		} catch (final BVDesignException e) {
@@ -338,7 +338,7 @@ public class ExpDesignController extends BaseTrialController {
 		return lowestEntryNo;
 	}
 
-	protected void saveDesignGenerated(final ExpDesignParameterUi expDesign) {
+	protected void saveExperimentalDesign(final ExpDesignParameterUi expDesign) {
 
 		this.populateSettingData(this.userSelection.getStudyLevelConditions(), expDesign.getTrialSettings().getUserInput());
 

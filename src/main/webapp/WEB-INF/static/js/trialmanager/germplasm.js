@@ -63,7 +63,7 @@
                 openListTree(1, $scope.germplasmListSelected);
             };
 
-            $scope.UpdateModifyList = function () {
+            $scope.updateModifyList = function () {
                 $scope.ShowImportListBrowser = true;
                 showGermplasmDetailsSection();
             };

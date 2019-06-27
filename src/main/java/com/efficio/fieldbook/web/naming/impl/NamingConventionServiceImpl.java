@@ -156,10 +156,11 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
-		final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber, AdvancingStudy advancingParameters, final String plantNo) {
+		final String newGermplasmName, final Method breedingMethod, final int index, final Workbook workbook, final int selectionNumber,
+		final AdvancingStudy advancingParameters, final String plantNo) {
 
 		String selectionNumberToApply = null;
-		boolean allPlotsSelected = "1".equals(advancingParameters.getAllPlotsChoice());
+		final boolean allPlotsSelected = "1".equals(advancingParameters.getAllPlotsChoice());
 		if (source.isBulk()) {
 			if (allPlotsSelected) {
 				selectionNumberToApply = null;
@@ -277,7 +278,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		for (final AdvancingSource advancingSource : rows.getRows()) {
 
-			ImportedCrosses importedCross = importedCrosses.get(index++);
+			final ImportedCrosses importedCross = importedCrosses.get(index++);
 			final List<String> names;
 
 			final Integer breedingMethodId = advancingSource.getBreedingMethodId();
@@ -331,12 +332,12 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		this.messageSource = messageSource;
 	}
 
-	void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+	void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 
 
-	void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
+	void setGermplasmDataManager(final GermplasmDataManager germplasmDataManager) {
 		this.germplasmDataManager = germplasmDataManager;
 	}
 }

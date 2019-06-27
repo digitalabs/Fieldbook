@@ -38,11 +38,6 @@
 					variableIds, {cache: false});
 			};
 
-			derivedVariableService.calculateVariableForObservation = function (calculateData) {
-				var request = $http.post(FIELDBOOK_BASE_URL + 'derived-variable/execute', calculateData);
-				return request.then(successHandler, failureHandler);
-			};
-
 			derivedVariableService.calculateVariableForSubObservation = function (datasetId, calculateData) {
 				var request = $http.post(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/calculation', calculateData);
 				return request.then(successHandler, failureHandler);

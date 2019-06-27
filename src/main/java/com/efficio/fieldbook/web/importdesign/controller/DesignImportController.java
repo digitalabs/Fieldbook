@@ -521,7 +521,7 @@ public class DesignImportController extends SettingsController {
 			this.addVariablesFromTemporaryWorkbookToWorkbook(this.userSelection);
 			this.updateObservationsFromTemporaryWorkbookToWorkbook(this.userSelection);
 
-			this.fieldbookMiddlewareService.saveExperimentalDesignGenerated(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(), this.getCurrentProject().getCropType());
+			this.fieldbookMiddlewareService.saveExperimentalDesign(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(), this.getCurrentProject().getCropType());
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
 			resultsMap.put("environmentSettings", this.userSelection.getTrialLevelVariableList());

@@ -149,7 +149,7 @@ public class ExpDesignController extends BaseTrialController {
 			}
 
 			this.fieldbookMiddlewareService
-				.deleteExperimentalDesignGenerated(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(),
+				.deleteExperimentalDesign(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(),
 					this.getCurrentProject().getCropType());
 		} catch (final Exception e) {
 			ExpDesignController.LOG.error(e.getMessage(), e);
@@ -413,7 +413,7 @@ public class ExpDesignController extends BaseTrialController {
 			AppConstants.ID_NAME_COMBINATION.getString(), true);
 
 		this.fieldbookMiddlewareService
-			.saveExperimentalDesignGenerated(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(),
+			.saveExperimentalDesign(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(),
 				this.getCurrentProject().getCropType());
 	}
 

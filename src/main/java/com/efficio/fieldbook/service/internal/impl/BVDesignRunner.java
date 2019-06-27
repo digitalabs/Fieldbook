@@ -29,8 +29,8 @@ public class BVDesignRunner implements DesignRunner {
 	public static final String CSV_EXTENSION = ".csv";
 
 	private static final Logger LOG = LoggerFactory.getLogger(BVDesignRunner.class);
-	// set 3 minutes for the design runner process to timeout
-	private static final long DESIGN_RUNNER_TIMEOUT_MILLIS = 3 * 60 * 1000;
+	// set 6 minutes for the design runner process to timeout
+	private static final long DESIGN_RUNNER_TIMEOUT_MILLIS = 6 * 60 * 1000;
 	private static final String XML_EXTENSION = ".xml";
 
 	private ProcessRunner processRunner = new BVDesignProcessRunner();

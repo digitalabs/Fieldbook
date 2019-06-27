@@ -81,7 +81,6 @@ public class SampleListController {
 			model.addAttribute("listName", name);
 			model.addAttribute("listNotes", notes);
 			model.addAttribute("listType", type);
-			model.addAttribute("isSubObservationDataset", !StringUtils.isEmpty(subObservationVariableName));
 
 		} catch (final MiddlewareQueryException e) {
 			SampleListController.LOG.error(e.getMessage(), e);
@@ -95,10 +94,7 @@ public class SampleListController {
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_ENTRY, null, locale),
 			this.messageSource.getMessage(SampleListController.SAMPLE_ENTRY, null, locale)));
 		this.getCommonHeaders(locale, tableHeaderList);
-		tableHeaderList.add(new TableHeader(ColumnLabels.PLOT_NO.getTermNameFromOntology(this.ontologyDataManager),
-				this.messageSource.getMessage(SampleListController.PLOT_NO, null, locale)));
-		tableHeaderList.add(new TableHeader(subObservationVariableName,
-			subObservationVariableName));
+		tableHeaderList.add(new TableHeader(subObservationVariableName, subObservationVariableName));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_NO, null, locale),
 			this.messageSource.getMessage(SampleListController.SAMPLE_NO, null, locale)));
 		tableHeaderList.add(new TableHeader(this.messageSource.getMessage(SampleListController.SAMPLE_NAME, null, locale),

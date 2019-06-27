@@ -2,6 +2,7 @@
 package com.efficio.fieldbook.web.trial.bean;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 public class ExpDesignParameterUi implements Serializable, TabInfoBean {
@@ -34,6 +35,8 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private String checkSpacing;
 	private String checkInsertionManner;
 	private Integer replicationPercentage;
+	private List<Environment> environments;
+	private TrialSettingsBean trialSettings;
 
 	/*
 	 * 1 - single col 2 - single row 3 - adjacent
@@ -238,5 +241,21 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 
 	public void setReplicationPercentage(final Integer replicationPercentage) {
 		this.replicationPercentage = replicationPercentage;
+	}
+
+	public List<Environment> getEnvironments() {
+		return this.environments;
+	}
+
+	public void setEnvironments(List<Environment> environments) {
+		this.environments = environments;
+	}
+
+	public TrialSettingsBean getTrialSettings() {
+		return trialSettings;
+	}
+
+	public void setTrialSettings(final TrialSettingsBean trialSettings) {
+		this.trialSettings = trialSettings;
 	}
 }

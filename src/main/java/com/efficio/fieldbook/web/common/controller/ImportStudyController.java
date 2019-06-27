@@ -64,6 +64,8 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Controller
 @RequestMapping(ImportStudyController.URL)
+@Deprecated
+// TODO this controller aren't be used anymore, the import only.
 public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	public static final String SUCCESS = "success";
@@ -477,8 +479,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		// will do the cleanup for BM_CODE_VTE here
 		SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), false,
 				this.ontologyService, this.contextUtil.getCurrentProgramUUID());
-		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(),
-				this.contextUtil.getCurrentProgramUUID(), true);
+		this.fieldbookMiddlewareService
+			.saveWorkbookVariablesAndObservations(userSelection.getWorkbook(), this.contextUtil.getCurrentProgramUUID());
 		SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
 				this.ontologyService, this.contextUtil.getCurrentProgramUUID());
 		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
@@ -499,9 +501,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		for (final SettingDetail detail : selectedVariates) {
 			detail.getVariable().setOperation(Operation.UPDATE);
 		}
-		form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(
-				userSelection.getWorkbook().getMeasurementDatesetId(),
-				SettingsUtil.buildVariates(userSelection.getWorkbook().getVariates())));
 
 		this.fieldbookService.saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(),
 			form.getColumnOrders(), userSelection.getWorkbook());

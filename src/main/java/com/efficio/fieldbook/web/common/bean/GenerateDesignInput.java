@@ -1,6 +1,7 @@
 
 package com.efficio.fieldbook.web.common.bean;
 
+import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
 import org.generationcp.middleware.domain.dms.ExperimentDesignType;
 
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
@@ -16,6 +17,7 @@ public class GenerateDesignInput {
 	private Integer startingEntryNo;
 	private Integer startingPlotNo;
 	private Boolean hasNewEnvironmentAdded;
+	private TrialSettingsBean trialSettings;
 
 	public GenerateDesignInput() {
 		this.environmentData = new EnvironmentData();
@@ -73,5 +75,13 @@ public class GenerateDesignInput {
 
 	public void setHasNewEnvironmentAdded(final Boolean hasNewEnvironmentAdded) {
 		this.hasNewEnvironmentAdded = hasNewEnvironmentAdded;
+	}
+
+	public TrialSettingsBean getTrialSettings() {
+		return trialSettings;
+	}
+
+	public void setTrialSettings(TrialSettingsBean trialSettings) {
+		this.trialSettings = trialSettings;
 	}
 }

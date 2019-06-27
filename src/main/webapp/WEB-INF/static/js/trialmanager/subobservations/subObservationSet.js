@@ -26,6 +26,7 @@
 			$scope.tableLoadedPromise = new Promise(function (resolve) {
 				tableLoadedResolve = resolve;
 			});
+			$scope.hasInstances = false;
 
 			$scope.toggleSectionBatchAction = false;
 			$scope.hasVariableFilter = false;
@@ -165,17 +166,20 @@
 
 			datasetService.getDataset(subObservationSet.id).then(function (dataset) {
 				$scope.subObservationSet.dataset = dataset;
+				$scope.traitVariables = $scope.getVariables('TRAIT');
+				$scope.selectionVariables = $scope.getVariables('SELECTION_METHOD');
+				$scope.selectedVariables = $scope.getSelectedVariables();
+
 				if (!dataset.instances || !dataset.instances.length) {
+					$scope.hasInstances = false;
 					return;
 				}
+
+				$scope.hasInstances = true;
 				$scope.environments = [{
 					instanceNumber: null,
 					locationName: 'All environments'
 				}].concat(dataset.instances);
-
-				$scope.traitVariables = $scope.getVariables('TRAIT');
-				$scope.selectionVariables = $scope.getVariables('SELECTION_METHOD');
-				$scope.selectedVariables = $scope.getSelectedVariables();
 
 				subObservationSet.hasPendingData = subObservationTab.hasPendingData = dataset.hasPendingData;
 				// we set pending view unless we are specifically told not to
@@ -264,9 +268,11 @@
 					studyAlias: variable.name
 				}).then(function () {
 					$scope.subObservationSet.dataset.variables.push(variable);
-					loadTable();
-					derivedVariableService.displayExecuteCalculateVariableMenu();
-					derivedVariableService.showWarningIfDependenciesAreMissing($scope.subObservationSet.dataset.datasetId, variable.id);
+					if ($scope.hasInstances) {
+						loadTable();
+						derivedVariableService.displayExecuteCalculateVariableMenu();
+						derivedVariableService.showWarningIfDependenciesAreMissing($scope.subObservationSet.dataset.datasetId, variable.id);
+					}
 				}, function (response) {
 					if (response.errors && response.errors.length) {
 						showErrorMessage('', response.errors[0].message);
@@ -822,9 +828,11 @@
 			}
 
 			function adjustColumns() {
-				$timeout(function () {
-					table().columns.adjust();
-				});
+				if ($scope.hasInstances) {
+					$timeout(function () {
+						table().columns.adjust();
+					});
+				}
 			}
 
 			function addCellClickHandler() {
@@ -1304,6 +1312,35 @@
 					}
 				}
 				return categoricalValue;
+			}
+
+
+			function getDisplayValueForNumericalValue(numericValue) {
+				if(numericValue === "missing" || numericValue === "") {
+					return numericValue;
+				} else {
+					return EscapeHTML.escape( numericValue ? Number(Math.round(numericValue+'e4')+'e-4'): '');
+				}
+			}
+
+			function switchCategoricalView(showCategoricalDescriptionView) {
+				'use strict';
+
+				if (typeof showCategoricalDescriptionView === 'undefined') {
+					showCategoricalDescriptionView = null;
+				}
+
+				$('.fbk-measurement-categorical-name').toggle();
+				$('.fbk-measurement-categorical-desc').toggle();
+
+				return $.get('/Fieldbook/TrialManager/openTrial/setCategoricalDisplayType', {showCategoricalDescriptionView: showCategoricalDescriptionView})
+					.done(function (result) {
+						window.isCategoricalDescriptionView = result;
+
+						$('.fbk-toggle-categorical-display').text(result ? window.measurementObservationMessages.hideCategoricalDescription :
+							window.measurementObservationMessages.showCategoricalDescription);
+
+					});
 			}
 
 			function validateNumericRange(minVal, maxVal, value, invalid) {

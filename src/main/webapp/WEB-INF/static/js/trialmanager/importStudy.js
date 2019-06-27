@@ -80,13 +80,7 @@
 			$scope.selected = {datasetId: $scope.measurementDatasetId};
 
 			$scope.showImportOptions = function () {
-
-				if ($scope.measurementDatasetId === $scope.selected.datasetId) {
-					importStudyModalService.redirectToOldImportModal();
-				} else {
-					importStudyModalService.openImportStudyModal($scope.selected.datasetId);
-				}
-
+				importStudyModalService.openImportStudyModal($scope.selected.datasetId);
 			};
 
 		}]);

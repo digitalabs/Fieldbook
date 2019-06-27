@@ -9,7 +9,11 @@
 				<div class="add_top_padding add-bottom-padding">
 					<!-- TODO Localise Label -->
 					<input type="submit" class="btn btn-info" value="Generate Design"
-						   ng-disabled="disableGenerateDesign"/>
+						   ng-disabled="disableGenerateDesign()"/>
+				</div>
+				<div class="add_top_padding add-bottom-padding">
+					<input type="button" class="btn btn-info" value="Delete Design" ng-disabled="isDeleteDesignDisable()"
+						   ng-click="deleteDesign()"/>
 				</div>
 			</div>
 		</section-container>

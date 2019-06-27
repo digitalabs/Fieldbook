@@ -1,7 +1,6 @@
 package com.efficio.fieldbook.web.common.util;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.controller.TrialMeasurementsController;
 import com.google.common.collect.Lists;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
@@ -24,7 +23,6 @@ import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -55,9 +53,6 @@ public class DataMapUtilTest {
 	private static final String LOCAL = "-Local";
 	private static final String FIELDMAP_COLUMN = "FIELDMAP_COLUMN";
 	private static final String FIELDMAP_RANGE = "FIELDMAP_RANGE";
-
-	@InjectMocks
-	private TrialMeasurementsController measurementsController;
 
 	@Mock
 	private OntologyVariableDataManager ontologyVariableDataManager;
@@ -100,8 +95,6 @@ public class DataMapUtilTest {
 		testObservationDto.setObsUnitId("9CVRPNHaSlCE1");
 
 		final List<ObservationDto> observations = Lists.newArrayList(testObservationDto);
-
-		this.measurementsController.setStudyService(this.studyService);
 
 		final Variable variableText = new Variable();
 		final Scale scaleText = new Scale();

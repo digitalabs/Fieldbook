@@ -9,7 +9,8 @@
 		function ($scope, TrialManagerDataService, $stateParams) {
 
 			$scope.subObservationTab = $stateParams.subObservationTab;
-			$scope.title = $scope.subObservationTab.titleName;
+			$scope.title = $scope.subObservationTab.name;
+			$scope.tabTitlePrefix = $scope.subObservationTab.datasetType.tabTitlePrefix;
 
 		}]);
 

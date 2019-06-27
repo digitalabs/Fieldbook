@@ -32,11 +32,6 @@
 				});
 			};
 
-			exportStudyModalService.redirectToOldExportModal = function () {
-				// Call the global function to show the old export study modal
-				showExportOptions();
-			};
-
 			exportStudyModalService.showAlertMessage = function (title, message) {
 				// Call the global function to show alert message
 				showAlertMessage(title, message);
@@ -55,15 +50,7 @@
 			$scope.selected = {datasetId: $scope.measurementDatasetId};
 
 			$scope.showExportOptions = function () {
-
-				if ($scope.measurementDatasetId === $scope.selected.datasetId) {
-					// If the selected dataset is a PLOT OBSERVATION, then use the old
-					// export study modal (non-Angular)
-					exportStudyModalService.redirectToOldExportModal();
-				} else {
-					exportStudyModalService.openExportStudyModal($scope.selected.datasetId);
-				}
-
+				exportStudyModalService.openExportStudyModal($scope.selected.datasetId);
 			};
 
 		}]);

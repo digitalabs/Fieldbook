@@ -18,7 +18,7 @@
 										<select ui-select2="{minimumResultsForSearch : -1}"
 											ng-model="data.designType"
 											ng-change="onSwitchDesignTypes(data.designType)"
-											ng-disabled="disableDesignTypeSelect">
+											ng-disabled="disableDesignTypeSelect()">
 											<option value="">Please Choose</option>
 											<option value="{{item.id}}"
 												ng-repeat="item in designTypeView" ng-disabled="item.isDisabled">
@@ -49,9 +49,11 @@
 										<span>{{currentDesignType.templateName}}</span>
 		                            </div>
 		                            <span class="pull-right">
-											<a ng-hide="!isImportedDesign() || data.hasMeasurementData" href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
-											   class="btn btn-info chs-add-variable" th:text="#{design.import.change}">Change</a>
-		                            </span>
+											<a ng-hide="!isImportedDesign()" class="add_top_padding add-bottom-padding">
+												<input type="button" class="btn btn-info" value="Delete Design" ng-disabled="isDeleteDesignDisable()"
+													   ng-click="deleteDesign()"/>
+											</a>
+									</span>
 		                            <div class="add-bottom-padding"
 										ng-show="data.noOfEnvironments &gt;= 0">
 										<b th:text="#{review.study.design.type}"></b>
@@ -66,7 +68,7 @@
 						<section-container heading="SPECIFY PLOT NUMBERING" ng-hide="isImportedDesign()" ng-disabled="toggleDesignView()">
 				           <div name="content">
 				               <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}">Specify Starting Plot Number</label>
-												<input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onchange="validateAndSetPlotNo()" ng-model="data.startingPlotNo" />
+							   <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onchange="validateAndSetPlotNo()" ng-model="data.startingPlotNo" ng-disabled="measurementDetails.hasMeasurement"/>
 				           </div>
 						</section-container>
 					</div>

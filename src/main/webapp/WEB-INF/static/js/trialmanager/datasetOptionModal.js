@@ -3,8 +3,8 @@
 
 	var datasetOptionModal = angular.module('datasetOptionModal', ['ui.bootstrap', 'ngSanitize', 'ui.select', 'datasets-api']);
 
-	datasetOptionModal.directive('datasetOptionModal', ['datasetService', 'DATASET_TYPES_SUBOBSERVATION_IDS', 'DATASET_TYPES',
-		function (datasetService, DATASET_TYPES_SUBOBSERVATION_IDS, DATASET_TYPES) {
+	datasetOptionModal.directive('datasetOptionModal', ['datasetService', 'DATASET_TYPES_OBSERVATION_IDS',
+		function (datasetService, DATASET_TYPES_OBSERVATION_IDS) {
 		return {
 			restrict: 'E',
 			require: '?ngModel',
@@ -34,7 +34,7 @@
 				$scope.getDatasetType = datasetService.getDatasetType;
 
 				ctrl.init = function () {
-					datasetService.getDatasets(DATASET_TYPES_SUBOBSERVATION_IDS.concat(DATASET_TYPES.PLOT_OBSERVATIONS)).then(function (datasets) {
+					datasetService.getDatasets(DATASET_TYPES_OBSERVATION_IDS).then(function (datasets) {
 						$scope.datasets = datasets;
 					});
 				}

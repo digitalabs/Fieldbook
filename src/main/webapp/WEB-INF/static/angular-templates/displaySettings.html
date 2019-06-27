@@ -2,7 +2,7 @@
     <thead>
         <tr>
             <th style="text-align: center">
-                <div ng-show="(settings.keys() | removeHiddenAndDeletablesVariableFilter: settings.vals() ).length &gt; 0">
+                <div ng-show="(settings.keys() | removeHiddenAndDeletablesVariableFilter: settings.vals() ).length &gt; 0 && !hideDelete">
                     <input type="checkbox" ng-model="options.selectAll" ng-change="doSelectAll()"/>
                 </div>
             </th>
@@ -41,7 +41,7 @@
     </tbody>
 </table>
 
-<div class="row form-group" ng-show="(settings.keys() | removeHiddenAndDeletablesVariableFilter: settings.vals() ).length &gt; 0">
+<div class="row form-group" ng-show="(settings.keys() | removeHiddenAndDeletablesVariableFilter: settings.vals() ).length &gt; 0 && !hideDelete">
    <div class="col-md-12">
        <a class="fbk-remove-link fbk-remove-traits-link" href="javascript: void(0);" ng-click="removeSettings()" >Remove</a>
    </div>

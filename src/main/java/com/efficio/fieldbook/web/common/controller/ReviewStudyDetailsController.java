@@ -11,20 +11,32 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.middleware.domain.dms.DatasetReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -33,17 +45,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.StudyDetails;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import org.generationcp.commons.constant.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 @Controller
 @RequestMapping(ReviewStudyDetailsController.URL)
@@ -56,6 +65,10 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	private static final int COLS = 3;
 
 	private static final String TRIAL_MANAGER_REVIEW_TRIAL_DETAILS = "TrialManager/reviewTrialDetails";
+
+	private static final String OBSERVATIONS_HTML = "TrialManager/observations";
+
+	static final String MISSING_VALUE = "missing";
 
 	@Resource
 	private UserSelection userSelection;
@@ -75,6 +88,15 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	/** The workbench service. */
 	@Resource
 	protected WorkbenchService workbenchService;
+
+	@Resource
+	private PaginationListSelection paginationListSelection;
+
+	@Resource
+	private OntologyService ontologyService;
+
+	@Resource
+	private StudyDataManager studyDataManager;
 
 	@Override
 	public String getContentName() {
@@ -182,5 +204,84 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	protected void setFieldbookService(final com.efficio.fieldbook.service.api.FieldbookService fieldbookService) {
 		this.fieldbookService = fieldbookService;
+	}
+
+
+	public UserSelection getUserSelection() {
+		return this.userSelection;
+	}
+
+	@RequestMapping(value = "/measurements/pageView/{pageNum}", method = RequestMethod.GET)
+	public String getPaginatedListViewOnly(@PathVariable final int pageNum,
+		@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model,
+		@RequestParam("listIdentifier") final String datasetId) {
+
+		final List<MeasurementRow> rows = this.paginationListSelection.getReviewDetailsList(datasetId);
+		if (rows != null) {
+			form.setMeasurementRowList(rows);
+			form.changePage(pageNum);
+		}
+		final List<MeasurementVariable> variables = this.paginationListSelection.getReviewVariableList(datasetId);
+		if (variables != null) {
+			form.setMeasurementVariables(variables);
+		}
+		form.changePage(pageNum);
+		this.getUserSelection().setCurrentPage(form.getCurrentPage());
+		return super.showAjaxPage(model, "/TrialManager/datasetSummaryView");
+	}
+
+	@RequestMapping(value = "/measurements/viewStudyAjax/{datasetId}/{studyId}", method = RequestMethod.GET)
+	public String viewStudyAjax(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model,
+		@PathVariable final int datasetId, @PathVariable final int studyId) {
+		Workbook workbook = null;
+		try {
+			workbook = this.fieldbookMiddlewareService.getCompleteDataset(datasetId);
+			this.fieldbookService.setAllPossibleValuesInWorkbook(workbook);
+			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
+				this.ontologyService, this.contextUtil.getCurrentProgramUUID());
+		} catch (final MiddlewareException e) {
+			ReviewStudyDetailsController.LOG.error(e.getMessage(), e);
+		}
+		this.getUserSelection()
+			.setMeasurementRowList(workbook.arrangeMeasurementObservation(workbook.getObservations()));
+		form.setMeasurementRowList(this.getUserSelection().getMeasurementRowList());
+		form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+		this.changeLocationIdToName(form.getMeasurementRowList(), workbook.getMeasurementDatasetVariablesMap(),
+			studyId);
+		this.roundNumericValues(form.getMeasurementRowList());
+		this.paginationListSelection.addReviewDetailsList(String.valueOf(datasetId), form.getMeasurementRowList());
+		this.paginationListSelection.addReviewVariableList(String.valueOf(datasetId), form.getMeasurementVariables());
+		form.changePage(1);
+		this.getUserSelection().setCurrentPage(form.getCurrentPage());
+
+		return super.showAjaxPage(model, ReviewStudyDetailsController.OBSERVATIONS_HTML);
+	}
+
+	void roundNumericValues(final List<MeasurementRow> measurementRowList) {
+		for (final MeasurementRow row : measurementRowList) {
+			for (final MeasurementData data : row.getDataList()) {
+				if (data.getMeasurementVariable().getVariableType() != null && data.getMeasurementVariable().getVariableType().getId().equals(
+					VariableType.TRAIT.getId()) && data.isNumeric() && !StringUtils.isEmpty(data.getValue()) && !ReviewStudyDetailsController.MISSING_VALUE.equals(data.getValue())) {
+					final String value = StringUtils.stripEnd(String.format ("%.4f", Double.parseDouble(data.getValue())), "0");
+					data.setValue(StringUtils.stripEnd(value, "."));
+				}
+			}
+		}
+	}
+
+	void changeLocationIdToName(final List<MeasurementRow> measurementRowList,
+		final Map<String, MeasurementVariable> measurementDatasetVariablesMap, final int studyId) {
+		if (measurementDatasetVariablesMap.get(String.valueOf(TermId.LOCATION_ID.getId())) != null) {
+			final Map<String, String> locationNameMap = this.studyDataManager
+				.createInstanceLocationIdToNameMapFromStudy(studyId);
+			for (final MeasurementRow row : measurementRowList) {
+				for (final MeasurementData data : row.getDataList()) {
+					if (TermId.LOCATION_ID.getId() == data.getMeasurementVariable().getTermId()) {
+						data.setValue(locationNameMap.get(data.getValue()));
+					}
+				}
+			}
+		}
+
 	}
 }

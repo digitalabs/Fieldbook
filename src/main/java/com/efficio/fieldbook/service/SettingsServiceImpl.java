@@ -264,7 +264,7 @@ public class SettingsServiceImpl implements SettingsService {
 	 * Populates Setting Variable.
 	 *
 	 * @param var the var
-	 *///TODO TRIAL
+	 */
 	@Override
 	public void populateSettingVariable(final SettingVariable var) {
 

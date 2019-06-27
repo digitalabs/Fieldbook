@@ -201,14 +201,6 @@ public class CrossingServiceImpl implements CrossingService {
 		return maleStudyWorkbook;
 	}
 
-	/**
-	 * @Transactional to make sure Germplasm, Name and Attribute entities updated atomically.
-	 */
-	@Override
-	@Transactional
-	public void updateCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList) {
-		this.saveAttributes(crossSetting, importedCrossesList, this.getImportedCrossesGidsList(importedCrossesList));
-	}
 
 	/**
 	 * @Transactional to make sure Germplasm, Name and Attribute entities save atomically.
@@ -283,22 +275,6 @@ public class CrossingServiceImpl implements CrossingService {
 
 		this.verifyGermplasmMethodPresent(germplasmList);
 		return new GermplasmListResult(pairsResult.germplasmTriples, pairsResult.isTrimed);
-	}
-
-	private List<Integer> getImportedCrossesGidsList(final ImportedCrossesList importedCrossesList) {
-		final List<Integer> gids = new ArrayList<>();
-
-		if (importedCrossesList == null || importedCrossesList.getImportedCrosses() == null) {
-			return gids;
-		}
-
-		for (final ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()) {
-			final Integer gid = importedCrosses.getGid() != null ? Integer.parseInt(importedCrosses.getGid()) : null;
-			if (gid != null) {
-				gids.add(gid);
-			}
-		}
-		return gids;
 	}
 
 	protected List<Germplasm> extractGermplasmList(final List<Triple<Germplasm, Name, List<Progenitor>>> germplasmTriples) {
@@ -378,23 +354,6 @@ public class CrossingServiceImpl implements CrossingService {
 
 				cross.setCross(crossString);
 			}
-		}
-	}
-
-	/**
-	 * this method overwrites the naming settings with the defined rules from the DB if the breeding method was provided
-	 *
-	 * @param setting
-	 */
-	protected void processBreedingMethodProcessCodes(final CrossSetting setting) {
-		final CrossNameSetting nameSetting = setting.getCrossNameSetting();
-		final BreedingMethodSetting breedingMethodSetting = setting.getBreedingMethodSetting();
-
-		final Method method = this.germplasmDataManager.getMethodByID(breedingMethodSetting.getMethodId());
-
-		// overwrite other name setting items using method values here
-		if (method != null && method.getSuffix() != null) {
-			nameSetting.setSuffix(method.getSuffix());
 		}
 	}
 

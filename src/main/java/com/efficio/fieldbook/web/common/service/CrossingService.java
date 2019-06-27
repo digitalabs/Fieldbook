@@ -21,8 +21,6 @@ public interface CrossingService {
 
 	boolean applyCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId, Workbook workbook);
 
-	void updateCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList);
-
 	boolean applyCrossSettingWithNamingRules(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId, Workbook
 			workbook);
 

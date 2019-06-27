@@ -68,7 +68,7 @@
                 showGermplasmDetailsSection();
             };
 
-            $scope.ShowUpdateImportList = function () {
+            $scope.showUpdateImportList = function () {
                 return $scope.isOpenStudy() && TrialManagerDataService.applicationData.germplasmListSelected && !studyStateService.hasGeneratedDesign() && !$scope.showImportListBrowser;
 
             };

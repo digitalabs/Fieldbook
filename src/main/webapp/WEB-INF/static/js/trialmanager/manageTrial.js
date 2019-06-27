@@ -82,29 +82,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				},
 				deepStateRedirect: true, sticky: true
 			})
-
-			.state('createMeasurements', {
-				url: '/createMeasurements',
-				views: {
-					createMeasurements: {
-						controller: 'MeasurementsCtrl',
-						templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
-					}
-				},
-				deepStateRedirect: true, sticky: true
-			})
-
-			.state('editMeasurements', {
-				url: '/editMeasurements',
-				views: {
-					editMeasurements: {
-						controller: 'MeasurementsCtrl',
-						templateUrl: '/Fieldbook/TrialManager/openTrial/measurements'
-					}
-				},
-				deepStateRedirect: true, sticky: true
-			})
-
 			.state('subObservationTabs', {
 				url: '/subObservationTabs/:subObservationTabId',
 				views: {
@@ -174,8 +151,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	}
 
 	manageTrialApp.run(
-		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES', '$transitions', 'TrialManagerDataService',
-			function ($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES, $transitions, TrialManagerDataService) {
+		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES', '$transitions',
+			function ($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES, $transitions) {
 				$rootScope.VARIABLE_TYPES = VARIABLE_TYPES;
 
 				$transitions.onStart({},
@@ -183,12 +160,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						if (isTabChangeDisabled()) {
 							transition.abort();
 						}
-					});
-
-				$rootScope.stateSuccessfullyLoaded = {};
-				$transitions.onSuccess({},
-					function (transition) {
-						$rootScope.stateSuccessfullyLoaded[transition.from().name] = true;
 					});
 
 				// It's very handy to add references to $state and $stateParams to the $rootScope
@@ -208,10 +179,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
 		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService',
-		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'studyContext', 'LABEL_PRINTING_TYPE',
+		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'studyContext', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
 				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService,
-				  studyContext, LABEL_PRINTING_TYPE ) {
+				  studyContext, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN) {
 
 			$scope.trialTabs = [
 				{
@@ -222,23 +193,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					name: 'Germplasm & Checks',
 					state: 'germplasm'
 				},
-                {   name: 'Treatment Factors',
+/*                {   name: 'Treatment Factors',
                     state: 'treatment'
-                },
+                },*/
 				{   name: 'Environments',
 					state: 'environment'
-				},
-				{
-					name: 'Experimental Design',
-					state: 'experimentalDesign'
-				},
-				{
-					name: 'Observations',
-					state: 'createMeasurements'
-				},
-				{
-					name: 'Observations',
-					state: 'editMeasurements'
 				}
 			];
 			$scope.subObservationTabs = [];
@@ -258,12 +217,21 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.isChoosePreviousStudy = false;
 			$scope.hasUnsavedData = studyStateService.hasUnsavedData;
 
-			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+			if ($scope.isOpenStudy()) {
+				var environment = $scope.trialTabs.pop();
+				$scope.trialTabs.push({
+					name: 'Treatment Factors',
+					state: 'treatment'
+				});
+				$scope.trialTabs.push(environment);
+				$scope.trialTabs.push({
+					name: 'Experimental Design',
+					state: 'experimentalDesign'
+				});
 
-			var config = {
-				headers: {
-					'X-Auth-Token': xAuthToken
-				}
+				studyStateService.updateHasListsOrSubObs(HAS_LISTS_OR_SUB_OBS);
+				studyStateService.updateGeneratedDesign(HAS_GENERATED_DESIGN);
+
 			};
 
 			$http.get('/bmsapi/studytype/' + cropName + '/allVisible').success(function (data) {
@@ -302,7 +270,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					});
 
 					TrialManagerDataService.applicationData = angular.copy($localStorage.serviceBackup.applicationData);
-					TrialManagerDataService.trialMeasurement = angular.copy($localStorage.serviceBackup.trialMeasurement);
 				}
 
 				// perform other cleanup tasks
@@ -316,10 +283,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				});
 
-				var measurementDiv = $('#measurementsDiv');
-				if (measurementDiv.length !== 0) {
-					//measurementDiv.html('');
-				}
 				if (typeof resetGermplasmList !== 'undefined') {
 					resetGermplasmList();
 				}
@@ -361,11 +324,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.saveCurrentTrialData = function () {
-				derivedVariableService.getDependenciesForAllDerivedTraits(studyContext.measurementDatasetId).then(function (response) {
-					return $scope.warnMissingInputData(response);
-				}).then(function () {
-					TrialManagerDataService.saveCurrentData();
-				});
+				TrialManagerDataService.saveCurrentData();
 			};
 
 			$scope.selectPreviousStudy = function () {
@@ -417,17 +376,14 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						//Added-selectionVariates
 						TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(
 							data.trialSettingsData));
-						TrialManagerDataService.updateSettings('selectionVariables', TrialManagerDataService.extractSettings(
-							data.selectionVariableData));
 						TrialManagerDataService.updateSettings('environments', environmentSettings);
 						TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
 						TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(
 							data.treatmentFactorsData));
-						TrialManagerDataService.updateSettings('measurements',
-							TrialManagerDataService.extractSettings(data.measurementsData));
 					}
 				});
 			};
+
 			$scope.refreshTabAfterImport = function () {
 				$http.get('/Fieldbook/TrialManager/createTrial/refresh/settings/tab').success(function (data) {
 					// update data and settings
@@ -437,9 +393,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					TrialManagerDataService.updateCurrentData('environments', environmentData);
 				});
 			};
+
 			$scope.temp = {
 				noOfEnvironments: 0
 			};
+
 			$scope.refreshEnvironmentsAndExperimentalDesign = function () {
 				var currentDesignType = TrialManagerDataService.currentData.experimentalDesign.designType;
 				var showIndicateUnappliedChangesWarning = true;
@@ -471,14 +429,9 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 
 			};
+
 			$scope.displayMeasurementOnlyActions = function () {
-				return TrialManagerDataService.trialMeasurement.count &&
-					TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign &&
-					!TrialManagerDataService.applicationData.unsavedTraitsAvailable;
-			};
-			$scope.hasMeasurementData = function () {
-				return TrialManagerDataService.trialMeasurement.count &&
-					TrialManagerDataService.trialMeasurement.count > 0;
+				return studyStateService.hasGeneratedDesign() && !TrialManagerDataService.applicationData.unsavedTraitsAvailable;
 			};
 
 			$scope.hasGermplasmListSelected = function () {
@@ -491,6 +444,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.displayExecuteCalculatedVariableOnlyActions = function () {
 				return derivedVariableService.isStudyHasCalculatedVariables && this.displayMeasurementOnlyActions();
+			};
+
+			$scope.reloadActionMenuConditions = function () {
+				$scope.hasDesignGenerated = studyStateService.hasGeneratedDesign();
 			};
 
 			// Programatically navigate to specified tab state
@@ -548,35 +505,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				}
 
-				if (targetState === 'editMeasurements') {
-					if ($('body').hasClass('preview-measurements-only')) {
-						adjustColumns($('#preview-measurement-table'));
-					} else {
-						adjustColumns($('#measurement-table'));
-					}
-
-					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Changes have been made that may affect the experimental design of this study.' +
-							'Please regenerate the design on the Experimental Design tab', 10000);
-					}
-				} else if (targetState === 'experimentalDesign') {
-					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Study settings have been updated since the experimental design was generated. ' +
-							'Please select a design type and specify the parameters for your study again', 10000);
-					}
-				} else if (targetState === 'createMeasurements') {
-					if (TrialManagerDataService.applicationData.unsavedGeneratedDesign) {
-						$rootScope.$broadcast('previewMeasurements');
-					}
-					if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Changes have been made that may affect the experimental design of this study.' +
-							'Please regenerate the design on the Experimental Design tab', 10000);
-					}
-
-					if (!TrialManagerDataService.applicationData.unsavedGeneratedDesign) {
-						adjustColumns($('#preview-measurement-table'));
-					}
-				} else if (targetState === 'germplasm') {
+				if (targetState === 'germplasm') {
 					adjustColumns($('#tableForGermplasm'));
 				} else if (targetState === 'environment') {
 					adjustColumns($('#environment-table .fbk-datatable-environments'));
@@ -670,6 +599,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.addAdvanceTabData = function (tabId, tabData, listName, isPageLoading) {
+				studyStateService.updateHasListsOrSubObs(true);
+
 				var isUpdate = false;
 				if (isPageLoading === undefined) {
 					isPageLoading = false;
@@ -707,6 +638,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.addSampleTabData = function (tabId, tabData, listName, isPageLoading) {
+				studyStateService.updateHasListsOrSubObs(true);
+
 				var isSwap = false;
 				var isUpdate = false;
 				if (isPageLoading === undefined) {
@@ -742,6 +675,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.addCrossesTabData = function (tabId, tabData, listName, crossesType, isPageLoading) {
+				studyStateService.updateHasListsOrSubObs(true);
+
 				var isUpdate = false;
 				if (isPageLoading === undefined) {
 					isPageLoading = false;
@@ -776,12 +711,12 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.addSubObservationTabData = function (id, name, datasetTypeId, parentDatasetId) {
 				var datasetType = datasetService.getDatasetType(datasetTypeId);
+				studyStateService.updateHasListsOrSubObs(true);
 
 				var newSubObsTab = {
 					id: id,
 					name: name,
-					tabName: datasetType.abbr + ': ' + name,
-					titleName: datasetType.name + ': ' + name,
+					datasetType: datasetType,
 					state: '/subObservationTabs/' + id, // arbitrary prefix to filter tab content
 					subObservationSets: [{
 						id: id,
@@ -849,18 +784,17 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					datasetByTabs[parent.datasetId].push(dataset);
 				});
 
-				var subObservationTabs = data.filter(function (dataset) {
+				var observationTabs = data.filter(function (dataset) {
 					// those whose parent is not in the list are considered roots
 					return !datasetById[dataset.parentDatasetId];
 				});
 
-				angular.forEach(subObservationTabs, function (datasetTab) {
+				angular.forEach(observationTabs, function (datasetTab) {
 					var datasetType = datasetService.getDatasetType(datasetTab.datasetTypeId);
 					$scope.subObservationTabs.push({
 						id: datasetTab.datasetId,
 						name: datasetTab.name,
-						tabName: datasetType.abbr + ': ' + datasetTab.name,
-						titleName: datasetType.name + ': ' + datasetTab.name,
+						datasetType: datasetType,
 						hasPendingData: datasetTab.hasPendingData,
 						state: '/subObservationTabs/' + datasetTab.datasetId, // arbitrary prefix to filter tab content
 						subObservationSets: datasetByTabs[datasetTab.datasetId].map(function (dataset) {
@@ -957,7 +891,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.isSaveDisabled = function () {
-				return !$scope.isSaveEnabled();
+				return !$scope.isSaveEnabled() && !studyStateService.hasUnsavedData();
 			};
 
 			$scope.isSaveEnabled = function () {
@@ -970,9 +904,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					"germplasm",
 					"treatment",
 					"environment",
-					"experimentalDesign",
-					"createMeasurements",
-					"editMeasurements"
 				].indexOf($scope.tabSelected) >= 0 || enableSaveForStockList);
 
 
@@ -1054,12 +985,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				createSampleModalService.openDatasetOptionModal();
 			}
 
-			$scope.showCalculatedVariableModal = function() {
-				if ($('body').hasClass('import-preview-measurements')) {
-					return;
-				} else {
-					derivedVariableModalService.openDatasetOptionModal();
-				}
+			$scope.showCalculatedVariableModal = function () {
+				derivedVariableModalService.openDatasetOptionModal();
 			}
 
 			$scope.init = function () {

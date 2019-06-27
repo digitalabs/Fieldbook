@@ -6,7 +6,9 @@
             var service = {
                 state: {
                     // hasUnsavedData becomes true when adding/deleting environments and variables in a study.
-                    hasUnsavedData: false
+                    hasUnsavedData: false,
+                    hasGeneratedDesign: false,
+                    hasListOrSubObs: false
                 },
 
                 updateOccurred: function () {
@@ -19,6 +21,22 @@
 
                 hasUnsavedData: function() {
                     return service.state.hasUnsavedData;
+                },
+
+                hasGeneratedDesign: function(){
+                    return service.state.hasGeneratedDesign
+                },
+
+                updateGeneratedDesign: function (designStatus) {
+                    service.state.hasGeneratedDesign = designStatus;
+                },
+
+                hasListOrSubObs: function () {
+                    return service.state.hasListOrSubObs;
+                },
+
+                updateHasListsOrSubObs: function (status) {
+                    return service.state.hasListOrSubObs = status;
                 }
             };
             return service;

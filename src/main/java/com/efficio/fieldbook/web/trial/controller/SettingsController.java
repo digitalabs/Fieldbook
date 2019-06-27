@@ -11,20 +11,26 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -36,6 +42,7 @@ import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -58,6 +65,10 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
  * The Class SettingsController.
  */
 public abstract class SettingsController extends AbstractBaseFieldbookController {
+
+	protected static final List<Integer> EXPERIMENT_DESIGN_FACTOR_IDS = Arrays
+		.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.PERCENTAGE_OF_REPLICATION.getId(),
+			TermId.EXPT_DESIGN_SOURCE.getId());
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsController.class);
@@ -88,6 +99,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	@Resource
 	protected OntologyService ontologyService;
+
+	@Resource
+	protected StudyDataManager studyDataManager;
 
 	
 	/**
@@ -231,35 +245,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		return this.fieldbookMiddlewareService.getStandardVariable(id, this.contextUtil.getCurrentProgramUUID());
 	}
 
-	/**
-	 * Checks if the measurement table has user input data for a particular variable id
-	 *
-	 * @param variableId
-	 * @return
-	 */
-	// TODO TRIAL
-	public boolean hasMeasurementDataEntered(final int variableId) {
-		for (final MeasurementRow row : this.userSelection.getMeasurementRowList()) {
-			for (final MeasurementData data : row.getDataList()) {
-				if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	// TODO TRIAL
-	protected void removeVariablesFromExistingNursery(final List<SettingDetail> settingList, final String variables) {
-		final Iterator<SettingDetail> variableList = settingList.iterator();
-		while (variableList.hasNext()) {
-			if (SettingsUtil.inHideVariableFields(variableList.next().getVariable().getCvTermId(), variables)) {
-				variableList.remove();
-			}
-		}
-	}
-
-	//TODO TRIAL
 	protected void resetSessionVariablesAfterSave(final Workbook workbook) {
 
 		// update variables in measurement rows
@@ -287,6 +272,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		// and change add operation to update
 		this.removeDeletedSetUpdate(this.userSelection.getStudyLevelConditions(), workbook.getConditions());
 		this.removeDeletedSetUpdate(this.userSelection.getPlotsLevelList(), workbook.getFactors());
+
 		this.removeDeletedSetUpdate(this.userSelection.getBaselineTraitsList(), workbook.getVariates());
 		this.removeDeletedSetUpdate(this.userSelection.getStudyConditions(), workbook.getConstants());
 		this.removeDeletedSetUpdate(this.userSelection.getTrialLevelVariableList(), null);
@@ -603,8 +589,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				this.userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
 			}
 			this.userSelection.getDeletedPlotLevelList().add(newSetting);
-		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
-			this.addNewSettingToDeletedBaselineTraits(newSetting);
 		} else if (mode == VariableType.STUDY_CONDITION.getId()) {
 			if (this.userSelection.getDeletedStudyConditions() == null) {
 				this.userSelection.setDeletedStudyConditions(new ArrayList<SettingDetail>());
@@ -641,14 +625,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	//TODO TRIAL
-	private void addNewSettingToDeletedBaselineTraits(final SettingDetail newSetting) {
-		if (this.userSelection.getDeletedBaselineTraitsList() == null) {
-			this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-		}
-		this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
-	}
-
 	public void setFieldbookService(final FieldbookService fieldbookService) {
 		this.fieldbookService = fieldbookService;
 	}
@@ -658,4 +634,139 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		this.ontologyService = ontologyService;
 	}
 
+	/**
+	 *
+	 * @param userSelection
+	 */
+	protected void updateObservationsFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
+
+		final Map<Integer, MeasurementVariable> observationVariables = WorkbookUtil.createVariableList(
+			userSelection.getWorkbook().getFactors(), userSelection.getWorkbook().getVariates());
+
+		WorkbookUtil.deleteDeletedVariablesInObservations(observationVariables,
+			userSelection.getWorkbook().getObservations());
+
+		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
+
+		WorkbookUtil.updateTrialObservations(userSelection.getWorkbook(), userSelection.getTemporaryWorkbook());
+
+	}
+
+	/**
+	 * This will copy the factors, variates and experimental design variable
+	 * generated from importing a Custom Design to the Workbook that will be
+	 * saved.
+	 *
+	 * @param userSelection
+	 */
+	protected void addVariablesFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
+
+		if (userSelection.getExperimentalDesignVariables() != null) {
+
+			// Make sure that measurement variables are unique.
+			final Set<MeasurementVariable> unique = new HashSet<>(userSelection.getWorkbook().getFactors());
+			unique.addAll(userSelection.getTemporaryWorkbook().getFactors());
+			unique.addAll(userSelection.getExperimentalDesignVariables());
+			userSelection.getWorkbook().getFactors().clear();
+			userSelection.getWorkbook().getFactors().addAll(unique);
+
+			final Set<MeasurementVariable> makeUniqueVariates = new HashSet<>(
+				userSelection.getTemporaryWorkbook().getVariates());
+			makeUniqueVariates.addAll(userSelection.getWorkbook().getVariates());
+			userSelection.getWorkbook().getVariates().clear();
+			userSelection.getWorkbook().getVariates().addAll(makeUniqueVariates);
+
+		}
+	}
+
+	/**
+	 * assign UPDATE operation for existing experimental design variables
+	 *
+	 * @param conditions
+	 */
+	public void assignOperationOnExpDesignVariables(final List<MeasurementVariable> conditions) {
+		final VariableTypeList factors =
+			this.studyDataManager.getAllStudyFactors(this.userSelection.getWorkbook().getStudyDetails().getId());
+
+		for (final MeasurementVariable mvar : conditions) {
+			// update the operation for experiment design variables
+			// EXP_DESIGN, EXP_DESIGN_SOURCE, NREP, PERCENTAGE_OF_REPLICATION
+			// only if these variables already exists in the existing trial
+			if (EXPERIMENT_DESIGN_FACTOR_IDS.contains(mvar.getTermId()) && factors.findById(mvar.getTermId()) != null) {
+				mvar.setOperation(Operation.UPDATE);
+			}
+		}
+	}
+
+	protected List<List<ValueReference>> convertToValueReference(final List<Environment> environments) {
+		final List<List<ValueReference>> returnVal = new ArrayList<>(environments.size());
+
+		for (final Environment environment : environments) {
+			final List<ValueReference> valueRefList = new ArrayList<>();
+
+			for (final Map.Entry<String, String> entry : environment.getManagementDetailValues().entrySet()) {
+				final ValueReference valueRef = new ValueReference(entry.getKey(), entry.getValue());
+				valueRefList.add(valueRef);
+			}
+
+			returnVal.add(valueRefList);
+		}
+
+		return returnVal;
+	}
+
+	public void addDeletedSettingsList() {
+		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
+		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
+
+		final List<SettingDetail> combinedList = new ArrayList<>();
+		combinedList.addAll(basicDetails);
+		combinedList.addAll(studyLevelConditions);
+		// TODO: add deleted selection variates
+		// include deleted list if measurements are available
+		SettingsUtil.addDeletedSettingsList(combinedList, this.userSelection.getDeletedStudyLevelConditions(),
+			this.userSelection.getStudyLevelConditions());
+		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedPlotLevelList(), this.userSelection.getPlotsLevelList());
+
+		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedBaselineTraitsList(),
+			this.userSelection.getBaselineTraitsList());
+		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedStudyConditions(), this.userSelection.getStudyConditions());
+		SettingsUtil.addDeletedSettingsList(null, this.userSelection.getDeletedTrialLevelVariables(),
+			this.userSelection.getTrialLevelVariableList());
+		SettingsUtil
+			.addDeletedSettingsList(null, this.userSelection.getDeletedTreatmentFactors(), this.userSelection.getTreatmentFactors());
+	}
+
+	public void initializeBasicUserSelectionLists(){
+		if (this.userSelection.getPlotsLevelList() == null) {
+			this.userSelection.setPlotsLevelList(new ArrayList<SettingDetail>());
+		}
+		if (this.userSelection.getBaselineTraitsList() == null) {
+			this.userSelection.setBaselineTraitsList(new ArrayList<SettingDetail>());
+		}
+		if (this.userSelection.getStudyConditions() == null) {
+			this.userSelection.setStudyConditions(new ArrayList<SettingDetail>());
+		}
+		if (this.userSelection.getTrialLevelVariableList() == null) {
+			this.userSelection.setTrialLevelVariableList(new ArrayList<SettingDetail>());
+		}
+		if (this.userSelection.getTreatmentFactors() == null) {
+			this.userSelection.setTreatmentFactors(new ArrayList<SettingDetail>());
+		}
+		if (this.userSelection.getSelectionVariates() == null) {
+			this.userSelection.setSelectionVariates(new ArrayList<SettingDetail>());
+		}
+	}
+
+	protected void populateSettingData(final List<SettingDetail> details, final Map<String, String> values) {
+		if (details == null || details.isEmpty()) {
+			return;
+		}
+
+		for (final SettingDetail detail : details) {
+			if (values.containsKey(detail.getVariable().getCvTermId().toString())) {
+				detail.setValue(values.get(detail.getVariable().getCvTermId().toString()));
+			}
+		}
+	}
 }

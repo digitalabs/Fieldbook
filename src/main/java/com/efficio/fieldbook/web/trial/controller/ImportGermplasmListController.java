@@ -217,47 +217,17 @@ public class ImportGermplasmListController extends SettingsController {
 		// start: section for taking note of the check germplasm
 		boolean isDeleteObservations = false;
 
-		boolean hasTemporaryWorkbook = false;
-
-		if (this.userSelection.getTemporaryWorkbook() != null) {
-
-			WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(),
-					this.userSelection.getTemporaryWorkbook());
-			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(),
-					this.userSelection.getWorkbook().getObservations(), false, this.ontologyService,
-					this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
-			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getVariates(),
-					this.userSelection.getWorkbook().getObservations(), true, this.ontologyService,
-					this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
-
-			this.addVariablesFromTemporaryWorkbookToWorkbook(this.userSelection);
-
-			this.updateObservationsFromTemporaryWorkbookToWorkbook(this.userSelection);
-
-			this.userSelection.setTemporaryWorkbook(null);
-
-			hasTemporaryWorkbook = true;
-			isDeleteObservations = true;
-
-		}
-
 		// if we have no germplasm list available for the study, skip this
 		// validation flow
 		if (null != this.userSelection.getImportedGermplasmMainInfo()
 				&& null != this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()) {
 			this.assignPlotNumber(form);
-
-			if (!hasTemporaryWorkbook) {
-				// this section of code is only called for existing trial
-				// without temporary workbook. No need for reset of measurement
-				// row
-				// list here
-				isDeleteObservations = true;
-			}
+			isDeleteObservations = true;
 		}
 
-		this.userSelection.getWorkbook().setObservations(this.userSelection.getMeasurementRowList());
-
+		this.userSelection.setMeasurementRowList(null);
+		this.userSelection.getWorkbook().setOriginalObservations(null);
+		this.userSelection.getWorkbook().setObservations(null);
 		this.fieldbookService.createIdCodeNameVariablePairs(this.userSelection.getWorkbook(),
 				AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 		this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(),
@@ -929,51 +899,6 @@ public class ImportGermplasmListController extends SettingsController {
 			}
 		}
 		return true;
-	}
-
-	/**
-	 *
-	 * @param userSelection
-	 */
-	private void updateObservationsFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
-
-		final Map<Integer, MeasurementVariable> observationVariables = WorkbookUtil.createVariableList(
-				userSelection.getWorkbook().getFactors(), userSelection.getWorkbook().getVariates());
-
-		WorkbookUtil.deleteDeletedVariablesInObservations(observationVariables,
-				userSelection.getWorkbook().getObservations());
-
-		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
-
-		WorkbookUtil.updateTrialObservations(userSelection.getWorkbook(), userSelection.getTemporaryWorkbook());
-
-	}
-
-	/**
-	 * This will copy the factors, variates and experimental design variable
-	 * generated from importing a Custom Design to the Workbook that will be
-	 * saved.
-	 *
-	 * @param userSelection
-	 */
-	void addVariablesFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
-
-		if (userSelection.getExperimentalDesignVariables() != null) {
-
-			// Make sure that measurement variables are unique.
-			final Set<MeasurementVariable> unique = new HashSet<>(userSelection.getWorkbook().getFactors());
-			unique.addAll(userSelection.getTemporaryWorkbook().getFactors());
-			unique.addAll(userSelection.getExperimentalDesignVariables());
-			userSelection.getWorkbook().getFactors().clear();
-			userSelection.getWorkbook().getFactors().addAll(unique);
-
-			final Set<MeasurementVariable> makeUniqueVariates = new HashSet<>(
-					userSelection.getTemporaryWorkbook().getVariates());
-			makeUniqueVariates.addAll(userSelection.getWorkbook().getVariates());
-			userSelection.getWorkbook().getVariates().clear();
-			userSelection.getWorkbook().getVariates().addAll(makeUniqueVariates);
-
-		}
 	}
 
 	/**

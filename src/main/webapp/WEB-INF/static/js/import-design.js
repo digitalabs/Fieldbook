@@ -25,26 +25,21 @@ var ImportDesign = (function() {
 					'TrialManagerDataService');
 		},
 
+		getStudyStateService: function() {
+			return angular.element('#mainApp').injector().get(
+				'studyStateService');
+		},
+
 		studyManagerCurrentData: function() {
 			return ImportDesign.getTrialManagerDataService().currentData;
 		},
 
-		reloadMeasurements: function() {
-			var angularElem = angular.element('#mainApp');
-
-			angularElem
-				.scope()
-				.$apply(
-				function () {
-					ImportDesign.getTrialManagerDataService().applicationData.isGeneratedOwnDesign = true;
-					ImportDesign.getTrialManagerDataService().applicationData.unsavedGeneratedDesign = true;
-				});
-		},
-
 		showPopup: function(hasGermplasmListSelected) {
 
-			if (hasMeasurementData()) {
-				showErrorMessage(designImportErrorHeader, 'This study has saved observations, the experimental design can no longer be modified.');
+			if(ImportDesign.getStudyStateService().hasUnsavedData()) {
+				showErrorMessage('', 'Please save your data before importing the design');
+			} else if (hasGeneratedDesign()) {
+				showErrorMessage(designImportErrorHeader, 'This study has generated a design, the experimental design can no longer be modified.');
 			} else if (!hasGermplasmListSelected) {
 				showErrorMessage(designImportErrorHeader, 'Please choose a germplasm list before you can import a design.');
 			} else {
@@ -138,28 +133,19 @@ var ImportDesign = (function() {
 		},
 
 		generateDesign: function() {
-			var $body = $('body');
-
-			//if the design is generated but not saved, the measurements datatable is for preview only (edit is not allowed)
-			$body.addClass('preview-measurements-only');
-
+			ImportDesign.getTrialManagerDataService().performDataCleanup();
 			var environmentData =
 				angular.copy(ImportDesign.studyManagerCurrentData().environments);
 
-			$.each(environmentData.environments, function(key, data) {
-				$.each(data.managementDetailValues, function(key, value) {
-					if (value && value.id) {
-						data.managementDetailValues[key] = value.id;
-					}
-				});
-			});
+			var trialSettingsData =
+				angular.copy(ImportDesign.studyManagerCurrentData().trialSettings);
 
 			var service = ImportDesign.getTrialManagerDataService();
 			// custom import design type id
 			var designTypeId = 3;
 			var data = service.retrieveGenerateDesignInput(designTypeId);
 			data.environmentData = environmentData;
-
+			data.trialSettings = trialSettingsData;
 			$.ajax({
 				type: 'POST',
 				url: '/Fieldbook/DesignImport/generate',
@@ -184,10 +170,8 @@ var ImportDesign = (function() {
 			var $body = $('body');
 
 			$body.removeClass('modal-open');
-			$('#chooseGermplasmAndChecks').data('replace', '1');
 
 			ImportDesign.closeReviewModal();
-			ImportDesign.reloadMeasurements();
 
 			var environmentData = resp.environmentData, environmentSettings = resp.environmentSettings, trialService = ImportDesign
 				.getTrialManagerDataService();
@@ -205,10 +189,10 @@ var ImportDesign = (function() {
 			angular.element('#mainApp').scope().$apply();
 
 			ImportDesign.getTrialManagerDataService().clearUnappliedChangesFlag();
+			ImportDesign.getStudyStateService().updateGeneratedDesign(true);
 			//TODO Localise the message
-			showSuccessfulMessage(
-				'',
-				'The study design was imported successfully. Please review the Observations tab.');
+			showSuccessfulMessage('','The study design was imported successfully and saved. You can now access the observations tab. The observations data were saved automatically.');
+			window.location = '/Fieldbook/TrialManager/openTrial/' + ImportDesign.getTrialManagerDataService().currentData.basicDetails.studyID;
 		},
 
 		loadReviewDesignData: function() {
@@ -313,8 +297,8 @@ var ImportDesign = (function() {
 			return deferred.promise();
 		},
 
-		hideChangeButton: function() {
-			if ($('#measurementDataExisting').val() === 'true') {
+		hideChangeButton: function () {
+			if (hasListOrSubObs()) {
 				$('#change-import-design-url-link').hide();
 			} else {
 				$('#change-import-design-url-link').show();

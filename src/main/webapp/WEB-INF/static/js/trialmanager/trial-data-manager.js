@@ -1,17 +1,15 @@
-/*globals angular, displayStudyGermplasmSection, isStudyNameUnique, showSuccessfulMessage, isCategoricalDisplay,
+/*globals angular, isStudyNameUnique, showSuccessfulMessage, isCategoricalDisplay,
  showInvalidInputMessage, studyFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
  invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,validateAllDates, showErrorMessage*/
 (function() {
 	'use strict';
 	angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','GERMPLASM_CHECKS_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
-            'SELECTION_VARIABLE_INITIAL_DATA', 'ADVANCE_LIST_DATA', 'SAMPLE_LIST_DATA','CROSSES_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
-		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
-		'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_HAS_ADVANCED_OR_CROSSES_LIST', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', '$q',
+		'ADVANCE_LIST_DATA', 'SAMPLE_LIST_DATA','CROSSES_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
+		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA', 'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', '$q',
 		'TrialSettingsManager','studyStateService', '_', '$localStorage','$rootScope', 'studyContext', 'derivedVariableService',
-		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SELECTION_VARIABLE_INITIAL_DATA, ADVANCE_LIST_DATA, SAMPLE_LIST_DATA, CROSSES_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
-					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
-					TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-					TRIAL_HAS_MEASUREMENT, TRIAL_HAS_ADVANCED_OR_CROSSES_LIST, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext, derivedVariableService) {
+		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, ADVANCE_LIST_DATA, SAMPLE_LIST_DATA, CROSSES_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
+					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
+					TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext, derivedVariableService) {
 
 
 			// TODO: clean up data service, at the very least arrange the functions in alphabetical order
@@ -70,13 +68,6 @@
 						service.updateCurrentData('environments', extractData(data.environmentData));
 
 						service.currentData.basicDetails.studyID = trialID;
-						service.trialMeasurement.hasMeasurement = data.measurementDataExisting;
-                        service.trialMeasurement.hasAdvancedOrCrossesList = data.hasAdvancedOrCrossesList;
-						service.updateTrialMeasurementRowCount(data.measurementRowCount);
-
-						// TODO: change from global function call
-						displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-							service.trialMeasurement.count);
 					}
 
 				}).error(function() {
@@ -177,15 +168,12 @@
 					data: '',
 					cache: false,
 					success: function(html) {
-						$('body').data('columnReordered', '0');
-						//$('#measurementsDiv').html(html);
 						showSuccessfulMessage('', saveSuccessMessage);
 					}
 				});
 			};
 
 			var notifySaveEventListeners = function() {
-				$('body').removeClass('preview-measurements-only');
 				angular.forEach(saveEventListeners, function(saveListenerFunction) {
 					saveListenerFunction();
 				});
@@ -217,19 +205,15 @@
 				// what I get is an instance of OrderedHash containing an array of keys with the map
 				settings: {
 					trialSettings: extractSettings(TRIAL_SETTINGS_INITIAL_DATA),
-					selectionVariables: extractSettings(SELECTION_VARIABLE_INITIAL_DATA),
 					environments: extractSettings(ENVIRONMENTS_INITIAL_DATA),
 					germplasm: extractSettings(GERMPLASM_INITIAL_DATA),
 					treatmentFactors: extractTreatmentFactorSettings(TREATMENT_FACTORS_INITIAL_DATA),
-					measurements: extractSettings(MEASUREMENTS_INITIAL_DATA),
 					basicDetails: extractSettings(BASIC_DETAILS_DATA),
 					advancedList: ADVANCE_LIST_DATA,
 					sampleList: SAMPLE_LIST_DATA,
 					crossesList: CROSSES_LIST_DATA
 				},
 				applicationData: {
-					unappliedChangesAvailable: false,
-					unsavedGeneratedDesign: false,
 					unsavedTreatmentFactorsAvailable: false,
 					unsavedTraitsAvailable: false,
 					germplasmListCleared: false,
@@ -263,12 +247,6 @@
 					treatmentLevelPairs: {}
 				},
 
-				trialMeasurement: {
-					hasMeasurement: TRIAL_HAS_MEASUREMENT,
-                    hasAdvancedOrCrossesList: TRIAL_HAS_ADVANCED_OR_CROSSES_LIST,
-					count: parseInt(TRIAL_MEASUREMENT_COUNT, 10)
-				},
-
                 performDataCleanup: function() {
                     // TODO: delegate the task of cleaning up data to each tab that produces it, probably via listener
 
@@ -298,10 +276,9 @@
 					return GenerateExpDesignService.save(data).$promise;
 				},
 
-				updateAfterGeneratingDesignSuccessfully: function() {
-					service.clearUnappliedChangesFlag();
-					service.applicationData.unsavedGeneratedDesign = true;
-					$('#chooseGermplasmAndChecks').data('replace', '1');
+				deleteGenerateExpDesign: function(measurementDatasetId) {
+					var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/delete/:measurementDatasetId',{datasetId: '@measurementDatasetId'},{delete: {method:'delete'}});
+					return GenerateExpDesignService.delete({measurementDatasetId: measurementDatasetId}).$promise;
 				},
 
 				retrieveDesignType: function() {
@@ -376,41 +353,9 @@
 					// when the user delete an environment for a existing study with or wihout measurement data
 					if (deleteMeasurementPossible) {
 						service.applicationData.unsavedTraitsAvailable = true;
-
-						$rootScope.$broadcast('onDeleteEnvironment', { deletedEnvironmentIndex: index, deferred: refreshMeasurementDeferred });
 					}
 
 					return refreshMeasurementDeferred.promise;
-				},
-
-				//TODO Remove that function, we are not reloading the entire page
-				reloadMeasurementAjax: function(data) {
-					return $http.post('/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement', data,
-						{headers: {'Content-Type': 'application/x-www-form-urlencoded'}});
-				},
-
-				indicateUnappliedChangesAvailable: function(displayWarningMessage) {
-					if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count !== 0) {
-						service.applicationData.unappliedChangesAvailable = true;
-
-						if (displayWarningMessage === 'true' || displayWarningMessage) {
-							//TODO Localise that message
-							showAlertMessage('', 'These changes have not yet been applied to the Observations table. ' +
-							'To update the Observations table, please review your settings and regenerate ' +
-							'the Experimental Design on the next tab', 10000);
-						}
-					}
-				},
-
-				warnAboutUnappliedChanges: function() {
-					if (service.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('Unapplied Changes', $.fieldbookMessages.measurementWarningNeedGenExpDesign, 10000);
-					}
-				},
-
-				// set unappliedChangesAvailable to true if Entry Number is updated
-				setUnappliedChangesAvailable: function() {
-					service.applicationData.unappliedChangesAvailable = true;
 				},
 
 				indicateUnsavedTreatmentFactorsAvailable: function() {
@@ -423,17 +368,12 @@
 				},
 
 				clearUnappliedChangesFlag: function() {
-					service.applicationData.unappliedChangesAvailable = false;
 					service.applicationData.unsavedTreatmentFactorsAvailable = false;
 				},
 				extractData: extractData,
 				extractSettings: extractSettings,
 				extractTreatmentFactorSettings: extractTreatmentFactorSettings,
 				saveCurrentData: function() {
-
-					if (!processInlineEditInput()) {
-						return false;
-					}
 
 					var missingLocations = service.currentData.environments.environments.some(function (environment) {
 						return !environment.managementDetailValues ||
@@ -445,16 +385,10 @@
 						return false;
 					}
 
-					if (hasOutOfBoundValues()) {
-						//we check if there is invalid value in the measurements
-						showErrorMessage('', 'There are some observations that have invalid value, please correct them before proceeding');
-						return false;
-					}
-					if (service.applicationData.unsavedTreatmentFactorsAvailable) {
+					if (service.applicationData.unsavedTreatmentFactorsAvailable && studyStateService.hasUnsavedData()) {
 						showErrorMessage('', unsavedTreatmentFactor);
-					} else if (service.applicationData.unappliedChangesAvailable) {
-						showAlertMessage('', 'Changes have been made that may affect the experimental design of this study. Please ' +
-								'regenerate the design on the Experimental Design tab', 10000);
+					} else if (service.applicationData.unsavedTreatmentFactorsAvailable) {
+							showErrorMessage('', 'TREATMENT FACTORS will be saved automatically when generating the design.');
 					} else if (service.isCurrentTrialDataValid(service.isOpenStudy())) {
                         // Hide Discard Imported Data button when the user presses Save button
                         $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
@@ -470,12 +404,7 @@
 									showSuccessfulMessage('', saveSuccessMessage);
 									notifySaveEventListeners();
 									window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
-
-									displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-										service.trialMeasurement.count);
-									service.applicationData.unsavedGeneratedDesign = false;
 									service.applicationData.unsavedTraitsAvailable = false;
-									$('body').data('needToSave', '0');
 									studyStateService.resetState();
 								});
 							}, function (response) {
@@ -486,57 +415,20 @@
 								}
 							});
 						} else {
-
-							if (service.trialMeasurement.count > 0 && $('.import-study-data').data('data-import') === '1') {
-								doSaveImportedData().then(function() {
-									notifySaveEventListeners();
-									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(data) {
-										service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
-                                        service.trialMeasurement.hasAdvancedOrCrossesList = data.hasAdvancedOrCrossesList;
-										service.updateTrialMeasurementRowCount(data.measurementRowCount);
-										service.updateSettings('measurements', extractSettings(data.measurementsData));
-										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-											service.trialMeasurement.count);
-										service.applicationData.unsavedGeneratedDesign = false;
-										service.applicationData.unsavedTraitsAvailable = false;
-										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
-										$('body').data('needToSave', '0');
-									});
-								});
-
-							} else if (service.trialMeasurement.count > 0 &&
-								(($('#chooseGermplasmAndChecks').length !== 0 &&
-								$('#chooseGermplasmAndChecks').data('replace') !== undefined &&
-								parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1) ||
-								service.applicationData.unsavedGeneratedDesign === false)
-							) {
+							if (studyStateService.hasGeneratedDesign()) {
 								service.currentData.columnOrders = serializedData;
 								$http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function(data) {
 									recreateSessionVariablesTrial();
-									if (data.containsOutOfSyncValues == true) {
-										showAlertMessage('', outOfSyncWarningMessage);
-									}
 									notifySaveEventListeners();
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function (updatedData) {
-										service.trialMeasurement.hasMeasurement = (updatedData.measurementDataExisting);
-                                        service.trialMeasurement.hasAdvancedOrCrossesList = data.hasAdvancedOrCrossesList;
-										service.updateTrialMeasurementRowCount(updatedData.measurementRowCount);
-
 										service.updateCurrentData('environments', extractData(updatedData.environmentData));
 										service.updateSettings('environments', extractSettings(updatedData.environmentData));
 										service.updateCurrentData('trialSettings', extractData(updatedData.trialSettingsData));
 										service.updateSettings('trialSettings', extractSettings(updatedData.trialSettingsData));
 
-										//refresh the environments list in measurements tab
-										$rootScope.$broadcast('refreshEnvironmentListInMeasurementTable');
-										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-											service.trialMeasurement.count);
 										derivedVariableService.displayExecuteCalculateVariableMenu();
-										service.applicationData.unsavedGeneratedDesign = false;
 										service.applicationData.unsavedTraitsAvailable = false;
 										setupSettingsVariables();
-										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
-										$('body').data('needToSave', '0');
 										studyStateService.resetState();
 									});
 
@@ -555,13 +447,8 @@
 										notifySaveEventListeners();
 										window.location = '/Fieldbook/TrialManager/openTrial/' + trialID;
 
-										displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-											service.trialMeasurement.count);
 										derivedVariableService.displayExecuteCalculateVariableMenu();
-										service.applicationData.unsavedGeneratedDesign = false;
 										service.applicationData.unsavedTraitsAvailable = false;
-										onMeasurementsObservationLoad(typeof isCategoricalDisplay !== 'undefined' ? isCategoricalDisplay : false);
-										$('body').data('needToSave', '0');
 									}, function () {
 										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 									});
@@ -576,10 +463,6 @@
 
 						}
 					}
-
-                    //After Save Measurements table is available in edit mode
-                    $('body').removeClass('preview-measurements-only');
-                    $('body').removeClass('import-preview-measurements');
                     //Refresh the germplasm list table
                     refreshListDetails();
 					service.resetServiceBackup();
@@ -627,11 +510,6 @@
 
 					propagateChange(settingRegistry, key, newValue);
 					settingsArray = [];
-				},
-
-				updateTrialMeasurementRowCount: function(newCountValue) {
-					service.trialMeasurement.count = newCountValue;
-					$('body').data('service.trialMeasurement.count', newCountValue);
 				},
 
 				onUpdateSettings: function(key, updateFunction) {
@@ -765,9 +643,6 @@
 					} else if ($.trim(service.currentData.basicDetails.studyType) === '') {
 						hasError = true;
 						name = 'Study type';
-/*					} else if ($('.germplasm-list-items tbody tr').length === 0 ) {
-						hasError = true;
-						customMessage = 'should have at least a germplasm list in the study';*/
 					} else if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
 						hasError = true;
 						name = $('#folderLabel').text();
@@ -926,6 +801,14 @@
 					_.find(service.currentData.treatmentFactors.currentData, function(item, key) {
 						var settingsVar = service.settings.treatmentFactors.treatmentLevelPairs[key].
 							val(service.currentData.treatmentFactors.currentData[key].variableId).variable;
+
+						if (item.levels <= parseInt('0')) {
+							results.customHeader = 'Invalid Input ';
+							results.customMessage = 'The number of Treatments must be greater than 0';
+							results.hasError = true;
+							return results.hasError;
+						}
+
 						if (!(!settingsVar.maxRange && !settingsVar.minRange)) {
 							_.find(item.labels, function(val, index) {
 
@@ -990,8 +873,7 @@
 						settings: angular.copy(service.settings),
 						currentData: angular.copy(service.currentData),
 						specialSettings: angular.copy(service.specialSettings),
-						applicationData: angular.copy(service.applicationData),
-						trialMeasurement: angular.copy(service.trialMeasurement)
+						applicationData: angular.copy(service.applicationData)
 					};
 				},
 				resetServiceBackup: function () {

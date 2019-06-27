@@ -1,54 +1,49 @@
 
 package com.efficio.fieldbook.web.naming.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
+import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
+import org.generationcp.commons.pojo.AdvancingSource;
+import org.generationcp.commons.pojo.AdvancingSourceList;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.RulesNotConfiguredException;
-import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.commons.ruleengine.generator.SeedSourceGenerator;
+import org.generationcp.commons.ruleengine.naming.rules.EnforceUniqueNameRule;
+import org.generationcp.commons.ruleengine.naming.rules.NamingRuleExecutionContext;
+import org.generationcp.commons.ruleengine.naming.service.ProcessCodeService;
+import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.sample.SampleDTO;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
-import org.generationcp.middleware.manager.api.PedigreeDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.dataset.ObservationUnitUtils;
 import org.generationcp.middleware.util.TimerWatch;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import org.generationcp.commons.ruleengine.naming.rules.EnforceUniqueNameRule;
-import org.generationcp.commons.ruleengine.naming.rules.NamingRuleExecutionContext;
-import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import org.generationcp.commons.ruleengine.naming.service.ProcessCodeService;
-import org.generationcp.commons.pojo.AdvancingSource;
-import org.generationcp.commons.pojo.AdvancingSourceList;
-import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import org.generationcp.commons.constant.AppConstants;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static org.generationcp.middleware.service.api.dataset.ObservationUnitUtils.fromMeasurementRow;
 
@@ -79,12 +74,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	@Resource
 	private SeedSourceGenerator seedSourceGenerator;
-
-	@Resource
-	private ProcessCodeRuleFactory processCodeRuleFactory;
-
-	@Resource
-	private PedigreeDataManager pedigreeDataManager;
 
 	@Override
 	public AdvanceResult advanceStudy(final AdvancingStudy info, final Workbook workbook) throws RuleException, FieldbookException {
@@ -235,7 +224,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final AdvancingStudy advancingParameters,
-		Workbook workbook) throws RuleException {
+		final Workbook workbook) throws RuleException {
 
 		final List<ImportedGermplasm> list = new ArrayList<>();
 		int index = 1;
@@ -286,15 +275,10 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		int index = 0;
 		final TimerWatch timer = new TimerWatch("cross");
 
-		// FIXME previousMaxSequence is a "quick fix" solution to propagate previous max sequence to the next cross entry to process.
-		// Rules engine is currently not designed to handle this (even for advancing case). Next sequence choice is managed this via user
-		// interaction for advancing. There is no user interaction in case of cross list.
-		int previousMaxSequence = 0;
 		for (final AdvancingSource advancingSource : rows.getRows()) {
 
 			ImportedCrosses importedCross = importedCrosses.get(index++);
 			final List<String> names;
-			advancingSource.setCurrentMaxSequence(previousMaxSequence);
 
 			final Integer breedingMethodId = advancingSource.getBreedingMethodId();
 			final Method selectedMethod = breedingMethodMap.get(breedingMethodId);
@@ -318,8 +302,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(advancingSource, advancingParameters.isCheckAdvanceLinesUnique());
 			names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
-			// Save away the current max sequence once rules have been run for this entry.
-			previousMaxSequence = advancingSource.getCurrentMaxSequence() + 1;
 			for (final String name : names) {
 				importedCross.setDesig(name);
 			}

@@ -4,6 +4,7 @@ bin/
 *.doc
 FB.iml
 bower_components
+/Filename
 
 # Maven
 log/

@@ -16,7 +16,7 @@ describe('Dataset Service', function () {
 		module(function ($provide) {
 			$provide.value("studyContext", studyContext);
 			$provide.value("serviceUtilities", {});
-			$provide.value("DATASET_TYPES_SUBOBSERVATION_IDS", [5, 6, 7, 8]);
+			$provide.value("DATASET_TYPES_OBSERVATION_IDS", [4, 5, 6, 7, 8]);
 			$provide.value("DATASET_TYPES", {});
 		});
 	});

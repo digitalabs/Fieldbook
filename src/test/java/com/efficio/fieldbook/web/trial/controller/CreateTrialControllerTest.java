@@ -211,7 +211,6 @@ public class CreateTrialControllerTest {
 		Mockito.verify(model).addAttribute(Matchers.eq(CreateTrialController.ENVIRONMENT_DATA_TAB), Matchers.any(TabInfo.class));
 		Mockito.verify(model).addAttribute(Matchers.eq(CreateTrialController.TRIAL_SETTINGS_DATA_TAB), Matchers.any(TabInfo.class));
 		Mockito.verify(model).addAttribute(Matchers.eq("experimentalDesignSpecialData"), Matchers.any(TabInfo.class));
-		Mockito.verify(model).addAttribute("measurementRowCount", 0);
 		Mockito.verify(model).addAttribute(Matchers.eq("studyTypes"), Matchers.anyListOf(StudyType.class));
 		Mockito.verify(model).addAttribute("createTrialForm", form);
 	}

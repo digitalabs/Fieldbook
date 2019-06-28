@@ -1109,6 +1109,7 @@
 				return loadColumns().then(function (columnsObj) {
 					$scope.dtOptions = getDtOptions();
 					$scope.selectVariableFilter = [{
+						alias: 'Please choose',
 						name: 'Please choose',
 						termId: null
 					}];

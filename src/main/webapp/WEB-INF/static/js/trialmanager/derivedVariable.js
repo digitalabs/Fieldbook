@@ -168,7 +168,7 @@
 		};
 
 
-		derivedVariableModalService.selectDatasetPerInputVariableModal = function (datasetId, calculateRequestData, inputVariableDatasetMap) {
+		derivedVariableModalService.selectDatasetPerInputVariableModal = function (datasetId, calculateRequestData, selectedVariable, inputVariableDatasetMap) {
 			$uibModal.open({
 				templateUrl: '/Fieldbook/static/angular-templates/derivedVariable/selectDatasetPerInputVariableModal.html',
 				controller: "selectDatasetPerInputVariableModalCtrl",
@@ -179,6 +179,9 @@
 					},
 					inputVariableDatasetMap: function () {
 						return inputVariableDatasetMap;
+					},
+					selectedVariable: function () {
+						return selectedVariable;
 					},
 					calculateRequestData: calculateRequestData
 				},
@@ -253,8 +256,14 @@
 
 
 					derivedVariableService.getInputVariableDatasetMap(datasetId, $scope.selected.variable.cvTermId).then(function (response) {
+
 						if (response.data.length !== 0) {
-							derivedVariableModalService.selectDatasetPerInputVariableModal(datasetId, calculateRequestData, response.data)
+
+							angular.forEach(response.data, function(value, key) {
+								calculateRequestData.inputVariableDatasetMap[key] = value.datasets[0].id;
+							});
+
+							derivedVariableModalService.selectDatasetPerInputVariableModal(datasetId, calculateRequestData, $scope.selected.variable, response.data);
 							$uibModalInstance.close();
 							return $q.reject();
 						}
@@ -341,18 +350,34 @@
 
 	derivedVariableModule.controller('selectDatasetPerInputVariableModalCtrl', ['$rootScope', '$scope', '$uibModal', '$uibModalInstance',
 		'studyContext', 'derivedVariableModalService', 'derivedVariableService', 'datasetId', 'calculateRequestData', 'inputVariableDatasetMap',
+		'selectedVariable',
 		function ($rootScope, $scope, $uibModal, $uibModalInstance, studyContext, derivedVariableModalService, derivedVariableService, datasetId,
-				  calculateRequestData, inputVariableDatasetMap) {
+				  calculateRequestData, inputVariableDatasetMap, selectedVariable) {
 
 			$scope.calculateRequestData = calculateRequestData;
 			$scope.inputVariableDatasetMap = inputVariableDatasetMap;
 
 			$scope.proceed = function () {
-
+				derivedVariableService.calculateVariableForSubObservation(datasetId, $scope.calculateRequestData)
+					.then(function (response) {
+						if (response) {
+							if (response.data && response.data.hasDataOverwrite) {
+								derivedVariableModalService.confirmOverrideCalculatedVariableModal(datasetId, $scope.selected.variable, calculateRequestData);
+							} else {
+								$scope.reloadSubObservation();
+							}
+						}
+						$uibModalInstance.close();
+					});
 			};
 
 			$scope.cancel = function () {
 				$uibModalInstance.close();
+			};
+
+			$scope.reloadSubObservation = function () {
+				$rootScope.navigateToSubObsTab(datasetId, false);
+				showSuccessfulMessage('', 'Calculated values for ' + selectedVariable.name + ' were added successfully.');
 			};
 
 		}]);

@@ -112,7 +112,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		if (workbook == null) {
 			workbook = this.fieldbookMiddlewareService.getStudyDataSet(study.getId());
 		}
-		return this.advancingSourceListFactory.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
+		return this.advancingSourceListFactory
+			.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 	}
 
 	private void updatePlantsSelectedIfNecessary(final AdvancingSourceList list, final AdvancingStudy info) {
@@ -124,7 +125,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		} else {
 			lineChoiceSame = false;
 		}
-		if (list != null && list.getRows() != null && !list.getRows().isEmpty() && (lineChoiceSame && plantsSelected > 0 || allPlotsChoice)) {
+		if (list != null && list.getRows() != null && !list.getRows().isEmpty() && (lineChoiceSame && plantsSelected > 0
+			|| allPlotsChoice)) {
 			for (final AdvancingSource row : list.getRows()) {
 				if (!row.isBulk() && lineChoiceSame) {
 					row.setPlantsSelected(plantsSelected);
@@ -193,7 +195,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		// check to see if a group ID (MGID) exists in the parent for this Germplasm, and set
 		// newly created germplasm if part of a group ( > 0 )
-		if(source.getGermplasm().getMgid() != null && source.getGermplasm().getMgid() > 0){
+		if (source.getGermplasm().getMgid() != null && source.getGermplasm().getMgid() > 0) {
 			germplasm.setMgid(source.getGermplasm().getMgid());
 		}
 
@@ -236,7 +238,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 				&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
 
 				final List<String> names;
-				final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, advancingParameters.isCheckAdvanceLinesUnique());
+				final RuleExecutionContext namingExecutionContext =
+					this.setupNamingRuleExecutionContext(row, advancingParameters.isCheckAdvanceLinesUnique());
 				names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
 				// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
@@ -254,7 +257,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 					if (sampleIterator.hasNext()) {
 						sampleNo = String.valueOf(sampleIterator.next().getSampleNumber());
 					}
-					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber, advancingParameters, sampleNo);
+					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber,
+						advancingParameters, sampleNo);
 					selectionNumber++;
 				}
 			}
@@ -285,8 +289,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			final Method selectedMethod = breedingMethodMap.get(breedingMethodId);
 
 			if (!this.germplasmDataManager.isMethodNamingConfigurationValid(selectedMethod)) {
-				throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rule.not.configured", new Object[] {selectedMethod.getMname()}, "The rules"
-					+ " were not configured", LocaleContextHolder.getLocale()));
+				throw new RulesNotConfiguredException(this.messageSource
+					.getMessage("error.save.cross.rule.not.configured", new Object[] {selectedMethod.getMname()}, "The rules"
+						+ " were not configured", LocaleContextHolder.getLocale()));
 			}
 
 			// here, we resolve the breeding method ID stored in the advancing source object into a proper breeding Method object
@@ -295,12 +300,14 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			advancingSource.setPlantsSelected(1);
 
 			// pass the parent gids (female and male) of the imported cross, this is required to properly resolve the Backcross process codes.
-			advancingSource.setFemaleGid(StringUtils.isNumeric(importedCross.getFemaleGid()) ? Integer.valueOf(importedCross.getFemaleGid()) : 0);
+			advancingSource
+				.setFemaleGid(StringUtils.isNumeric(importedCross.getFemaleGid()) ? Integer.valueOf(importedCross.getFemaleGid()) : 0);
 			// Always gets the first male parent, ie. GPID2
 			final String firstMaleGid = importedCross.getMaleGids().get(0).toString();
 			advancingSource.setMaleGid(StringUtils.isNumeric(firstMaleGid) ? Integer.valueOf(firstMaleGid) : 0);
 
-			final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(advancingSource, advancingParameters.isCheckAdvanceLinesUnique());
+			final RuleExecutionContext namingExecutionContext =
+				this.setupNamingRuleExecutionContext(advancingSource, advancingParameters.isCheckAdvanceLinesUnique());
 			names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
 			for (final String name : names) {
@@ -335,7 +342,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
-
 
 	void setGermplasmDataManager(final GermplasmDataManager germplasmDataManager) {
 		this.germplasmDataManager = germplasmDataManager;

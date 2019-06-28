@@ -108,7 +108,8 @@
 			$scope.formGroupClass = formUtilities.formGroupClassGenerator($scope, 'dtForm');
 
 			$scope.validation = function () {
-				if ($scope.subObservationTabs.length >= MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS) {
+				var subObservationsTabs = $scope.subObservationTabs.length - 1;
+				if (subObservationsTabs >= MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS) {
 					showErrorMessage('', 'A study cannot have more than ' + MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS + ' Sub-Observation Tabs');
 					return false;
 				}

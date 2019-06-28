@@ -148,15 +148,6 @@ describe('Export Study', function () {
 
 		describe('showExportOptions', function () {
 
-			it('it should redirect to old export study modal if selected dataset is PLOT DATASET', function () {
-
-				spyOn(exportStudyModalService, 'redirectToOldExportModal');
-
-				exportDatasetOptionCtrlScope.showExportOptions();
-
-				expect(exportStudyModalService.redirectToOldExportModal).toHaveBeenCalled();
-			});
-
 			it('it should open Export Study Modal if selected dataset is SUBOBSERVATION DATASET', function () {
 
 				spyOn(exportStudyModalService, 'openExportStudyModal');

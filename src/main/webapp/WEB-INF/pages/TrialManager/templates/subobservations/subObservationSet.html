@@ -31,191 +31,202 @@
 					</div>
 				</div>
 			</div>
+			<div class="row">
+				<div class="col-xs-12 col-md-12"><br></br></div>
+			</div>
 		</div>
 	</section-container>
-	<div class="col-xs-12">
+	<div ng-hide="hasInstances" class="col-xs-12 col-md-12">
 		<div class="row">
-			<div class="col-xs-12">
-
-				<div class="btn-group pull-right" ng-if="enableActions">
-					<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
-						<span>Observation set Actions</span>
-					</button>
-					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-						<li>
-							<a ng-click="subDivide()">Subdivide Sub-observation units</a>
-						</li>
-					</ul>
-				</div>
-
-			</div>
+			<img th:src="@{/static/svg/measurements.svg}" style="position: relative; bottom: 3px; width:22px; height:22px;"/>
+			<span>Please generate the design to see the observations</span>
 		</div>
 	</div>
+	<div ng-show="hasInstances">
+		<div class="col-xs-12">
+			<div class="row">
+				<div class="col-xs-12">
 
-	<div id="subObservationTableContainer" class="col-xs-12 add-top-padding-small">
-
-		<div class="row">
-			<div class="col-xs-12">
-				<img th:src="@{/static/svg/measurements.svg}" style="position: relative; bottom: 3px; width:22px; height:22" />
-				<strong class="sub-content-heading measurements-header">Observations</strong>
-				<div style=" float: right; width: 157px; ">
-					<div id="pending-btn-group" class="btn-group btn-group-justified " role="group" aria-label="...">
-						<div class="btn-group" role="group">
-							<button type="button" class="btn"
-									ng-class="isPendingView ? 'btn-primary btn-inverse' : 'btn-info selected'"
-									ng-click="togglePendingView(false)"
-									style="text-transform: uppercase">Accepted
-							</button>
-						</div>
-						<div class="btn-group" role="group">
-							<button type="button" class="btn"
-									ng-disabled="!subObservationSet.hasPendingData"
-									ng-attr-title="{{subObservationSet.hasPendingData ? '' : 'There is no pending data'}}"
-									ng-class="!subObservationSet.hasPendingData ? 'btn-default' : isPendingView ? 'btn-info selected' : 'btn-primary btn-inverse'"
-									ng-click="togglePendingView(true)"
-									style="text-transform: uppercase">Pending
-							</button>
-						</div>
+					<div class="btn-group pull-right" ng-if="enableActions">
+						<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+							<span>Observation set Actions</span>
+						</button>
+						<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+							<li>
+								<a ng-click="subDivide()">Subdivide Sub-observation units</a>
+							</li>
+						</ul>
 					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row add_top_padding" ng-if="isPendingView">
-			<div class="col-xs-12">
-				<div class="btn-group" role="group" style="float: right; margin-left: 5px">
-					<button type="button" class="btn btn-default" ng-click="rejectDraftData()">Discard</button>
-				</div>
-				<div class="btn-group" role="group" style="float: right">
-					<button type="button" class="btn btn-info" ng-click="acceptDraftData()">Accept</button>
-				</div>
-			</div>
-		</div>
-		<div class="row add_top_padding">
-			<div class="col-xs-12 form-inline">
-				<div class="form-group" style="padding-right: 10px;">
-					<label style="padding-right: 10px;">Select Environment: </label>
-					<ui-select ng-model="nested.selectedEnvironment"
-							   class="input-sm form-control inline-select"
-							   ng-change="changeEnvironment()" search-enabled="false" theme="select2">
-						<ui-select-match class="ui-select-match">
-							{{(nested.selectedEnvironment.instanceNumber ? nested.selectedEnvironment.instanceNumber + ' - ' : '') + (nested.selectedEnvironment.locationName || nested.selectedEnvironment.locationAbbreviation || nested.selectedEnvironment.instanceNumber)}}
-						</ui-select-match>
-						<ui-select-choices repeat="env in (environments | filter: { locationName: $select.search}) track by env.instanceDbId">
-							{{(env.instanceNumber ? env.instanceNumber + ' - ' : '') + (env.locationName || env.locationAbbreviation || env.instanceNumber)}}
-						</ui-select-choices>
-					</ui-select>
-				</div>
 
-				<div class="form-group">
-					<label style="padding-right: 10px;">Filter by status:</label>
-					<select ng-model="selectedStatusFilter" ng-change="changeStatusFilter()" class="form-control input-sm">
-						<option value="1">All</option>
-						<option value="2">Out of bounds</option>
-						<option ng-if="!isPendingView" value="3">Missing</option>
-						<option ng-if="!isPendingView" value="4">Out of sync</option>
-						<option ng-if="isPendingView" value="5">To be overwritten</option>
-					</select>
 				</div>
+			</div>
+		</div>
 
-				<div class="form-group pull-right">
-					<div id="subObsCategoricalDescriptionBtn" class="btn btn-link" ng-click="toggleShowCategoricalDescription()">
-						<span ng-if="!isCategoricalDescriptionView" th:text="#{observations.show.categorical.description}"></span>
-						<span ng-if="isCategoricalDescriptionView" th:text="#{observations.hide.categorical.description}"></span>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-xs-12 col-md-12">
-			<div class="row"><br></br>
-			</div>
-		</div>
-		<div class="col-xs-12" style="padding-left: 0px;">
-			<label class="control-label section-toggle toggle-icon" ng-click="collapseBatchAction()">
-				<img class="icn section-expanded" ng-show="toggleSectionBatchAction" src="/Fieldbook/static/img/expanded-arrow.png"/>
-				<img style="margin-left: 7px" class="icn section-collapsed" ng-show="!toggleSectionBatchAction" src="/Fieldbook/static/img/collapsed-arrow.png"/>
-				<strong class="sub-content-heading">Batch Actions</strong>
-			</label>
-			<div class="row add_top_padding" ng-show="toggleSectionBatchAction">
-				<div class="col-xs-12 form-inline" ng-if="hasVariableFilter">
-					<div class="row form-group" style="padding-right: 10px;">
-						<label style="padding-right: 10px;padding-left: 15px;">Select variable:</label>
-						<ui-select ng-model="nested.selectedVariableFilter" class="input-sm form-control inline-select" ng-change="changeSelectedVariableFilter()" search-enabled="false" theme="select2">
-							<ui-select-match>{{$select.selected.name}}</ui-select-match>
-							<ui-select-choices repeat="variable as variable in selectVariableFilter">
-								<div title="{{variable.name}}">{{variable.name}}</div>
-							</ui-select-choices>
-						</ui-select>
-					</div>
-					<div class="form-group" ng-show="hasVariableFilter &amp;&amp; !hasDataFiltered()">
-						<div class="form-group">
-							<div class="form-group" style="padding-right: 10px;">
-								<label style="padding-right: 10px;">There are no observations to update for the variable selected</label>
+		<div id="subObservationTableContainer" class="col-xs-12 add-top-padding-small">
+
+			<div class="row">
+				<div class="col-xs-12">
+					<img th:src="@{/static/svg/measurements.svg}" style="position: relative; bottom: 3px; width:22px; height:22px;"/>
+					<strong class="sub-content-heading measurements-header">Observations</strong>
+					<div style=" float: right; width: 157px; ">
+						<div id="pending-btn-group" class="btn-group btn-group-justified " role="group" aria-label="...">
+							<div class="btn-group" role="group">
+								<button type="button" class="btn"
+										ng-class="isPendingView ? 'btn-primary btn-inverse' : 'btn-info selected'"
+										ng-click="togglePendingView(false)"
+										style="text-transform: uppercase">Accepted
+								</button>
+							</div>
+							<div class="btn-group" role="group">
+								<button type="button" class="btn"
+										ng-disabled="!subObservationSet.hasPendingData"
+										ng-attr-title="{{subObservationSet.hasPendingData ? '' : 'There is no pending data'}}"
+										ng-class="!subObservationSet.hasPendingData ? 'btn-default' : isPendingView ? 'btn-info selected' : 'btn-primary btn-inverse'"
+										ng-click="togglePendingView(true)"
+										style="text-transform: uppercase">Pending
+								</button>
 							</div>
 						</div>
 					</div>
-					<div class="form-group" ng-if="hasVariableFilter &amp;&amp; hasDataFiltered() &amp;&amp; nested.selectedVariableFilter.termId !== null">
-						<label style="padding-right: 10px;">Select batch action:</label>
-						<ui-select ng-model="nested.selectedBatchAction" class="input-sm form-control inline-select" search-enabled="false" theme="select2">
-							<ui-select-match>{{$select.selected.name}}</ui-select-match>
-							<ui-select-choices repeat="selectBatchAction as selectBatchAction in selectBatchActions">
-								<div title="{{selectBatchAction.name}}">{{selectBatchAction.name}}</div>
+				</div>
+			</div>
+			<div class="row add_top_padding" ng-if="isPendingView">
+				<div class="col-xs-12">
+					<div class="btn-group" role="group" style="float: right; margin-left: 5px">
+						<button type="button" class="btn btn-default" ng-click="rejectDraftData()">Discard</button>
+					</div>
+					<div class="btn-group" role="group" style="float: right">
+						<button type="button" class="btn btn-info" ng-click="acceptDraftData()">Accept</button>
+					</div>
+				</div>
+			</div>
+			<div class="row add_top_padding">
+				<div class="col-xs-12 form-inline">
+					<div class="form-group" style="padding-right: 10px;">
+						<label style="padding-right: 10px;">Select Environment: </label>
+						<ui-select ng-model="nested.selectedEnvironment"
+								   class="input-sm form-control inline-select"
+								   ng-change="changeEnvironment()" search-enabled="false" theme="select2">
+							<ui-select-match class="ui-select-match">
+								{{(nested.selectedEnvironment.instanceNumber ? nested.selectedEnvironment.instanceNumber + ' - ' : '') + (nested.selectedEnvironment.locationName || nested.selectedEnvironment.locationAbbreviation || nested.selectedEnvironment.instanceNumber)}}
+							</ui-select-match>
+							<ui-select-choices repeat="env in (environments | filter: { locationName: $select.search}) track by env.instanceDbId">
+								{{(env.instanceNumber ? env.instanceNumber + ' - ' : '') + (env.locationName || env.locationAbbreviation || env.instanceNumber)}}
 							</ui-select-choices>
 						</ui-select>
 					</div>
-					<div class="form-group" style="padding-left: 10px;" ng-if="nested.selectedBatchAction.id === 1  &amp;&amp; hasDataFiltered()">
-						<label style="padding-right: 10px;">New value:</label>
-						<div class="form-group" ng-if="nested.selectedVariableFilter.dataTypeCode === 'N' || nested.selectedVariableFilter.dataTypeCode === 'T'">
-							<input class="form-control inline-select" ng-model='nested.newValueBatchUpdate'/>
+
+					<div class="form-group">
+						<label style="padding-right: 10px;">Filter by status:</label>
+						<select ng-model="selectedStatusFilter" ng-change="changeStatusFilter()" class="form-control input-sm">
+							<option value="1">All</option>
+							<option value="2">Out of bounds</option>
+							<option ng-if="!isPendingView" value="3">Missing</option>
+							<option ng-if="!isPendingView" value="4">Out of sync</option>
+							<option ng-if="isPendingView" value="5">To be overwritten</option>
+						</select>
+					</div>
+
+					<div class="form-group pull-right">
+						<div id="subObsCategoricalDescriptionBtn" class="btn btn-link" ng-click="toggleShowCategoricalDescription()">
+							<span ng-if="!isCategoricalDescriptionView" th:text="#{observations.show.categorical.description}"></span>
+							<span ng-if="isCategoricalDescriptionView" th:text="#{observations.hide.categorical.description}"></span>
 						</div>
-						<div class="form-group" ng-if="nested.selectedVariableFilter.dataTypeCode === 'C'">
-							<ui-select ng-model="nested.newValueBatchUpdate"
-									   class="input-sm form-control inline-select"
-									   search-enabled="true"
-									   theme="select2">
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-md-12">
+				<div class="row"><br></br>
+				</div>
+			</div>
+			<div class="col-xs-12" style="padding-left: 0px;">
+				<label class="control-label section-toggle toggle-icon" ng-click="collapseBatchAction()">
+					<img class="icn section-expanded" ng-show="toggleSectionBatchAction" src="/Fieldbook/static/img/expanded-arrow.png"/>
+					<img style="margin-left: 7px" class="icn section-collapsed" ng-show="!toggleSectionBatchAction" src="/Fieldbook/static/img/collapsed-arrow.png"/>
+					<strong class="sub-content-heading">Batch Actions</strong>
+				</label>
+				<div class="row add_top_padding" ng-show="toggleSectionBatchAction">
+					<div class="col-xs-12 form-inline" ng-if="hasVariableFilter">
+						<div class="row form-group" style="padding-right: 10px;">
+							<label style="padding-right: 10px;padding-left: 15px;">Select variable:</label>
+							<ui-select ng-model="nested.selectedVariableFilter" class="input-sm form-control inline-select" ng-change="changeSelectedVariableFilter()" search-enabled="false" theme="select2">
 								<ui-select-match>{{$select.selected.name}}</ui-select-match>
-								<ui-select-choices repeat="value.name as value in (nested.selectedVariableFilter.possibleValues | orderBy: 'name' | filter: { name: $select.search }) track by value.name">
-									<div title="{{value.description}}">{{isCategoricalDescriptionView ? value.displayDescription : value.displayValue}}</div>
+								<ui-select-choices repeat="variable as variable in selectVariableFilter">
+									<div title="{{variable.name}}">{{variable.name}}</div>
 								</ui-select-choices>
 							</ui-select>
 						</div>
-						<div class="input-group uib-datepicker-style-trasformer" ng-if="nested.selectedVariableFilter.dataTypeCode === 'D'" >
-							<input class="form-control inline-select"
-								   ng-model="nested.newValueBatchUpdate"
-								   uib-datepicker-popup="yyyyMMdd"
-								   is-open="isDatepickerActionOpen"
-								   datepicker-options="datepickerOptions"
-								   placeholder="yyyyMMdd"/>
-							<span style="padding-left: 1px;" class="input-group-btn inline-select">
+						<div class="form-group" ng-show="hasVariableFilter &amp;&amp; !hasDataFiltered()">
+							<div class="form-group">
+								<div class="form-group" style="padding-right: 10px;">
+									<label style="padding-right: 10px;">There are no observations to update for the variable selected</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-group" ng-if="hasVariableFilter &amp;&amp; hasDataFiltered() &amp;&amp; nested.selectedVariableFilter.termId !== null">
+							<label style="padding-right: 10px;">Select batch action:</label>
+							<ui-select ng-model="nested.selectedBatchAction" class="input-sm form-control inline-select" search-enabled="false" theme="select2">
+								<ui-select-match>{{$select.selected.name}}</ui-select-match>
+								<ui-select-choices repeat="selectBatchAction as selectBatchAction in selectBatchActions">
+									<div title="{{selectBatchAction.name}}">{{selectBatchAction.name}}</div>
+								</ui-select-choices>
+							</ui-select>
+						</div>
+						<div class="form-group" style="padding-left: 10px;" ng-if="nested.selectedBatchAction.id === 1  &amp;&amp; hasDataFiltered()">
+							<label style="padding-right: 10px;">New value:</label>
+							<div class="form-group" ng-if="nested.selectedVariableFilter.dataTypeCode === 'N' || nested.selectedVariableFilter.dataTypeCode === 'T'">
+								<input class="form-control inline-select" ng-model='nested.newValueBatchUpdate'/>
+							</div>
+							<div class="form-group" ng-if="nested.selectedVariableFilter.dataTypeCode === 'C'">
+								<ui-select ng-model="nested.newValueBatchUpdate"
+										   class="input-sm form-control inline-select"
+										   search-enabled="true"
+										   theme="select2">
+									<ui-select-match>{{$select.selected.name}}</ui-select-match>
+									<ui-select-choices repeat="value.name as value in (nested.selectedVariableFilter.possibleValues | orderBy: 'name' | filter: { name: $select.search }) track by value.name">
+										<div title="{{value.description}}">{{isCategoricalDescriptionView ? value.displayDescription : value.displayValue}}</div>
+									</ui-select-choices>
+								</ui-select>
+							</div>
+							<div class="input-group uib-datepicker-style-trasformer" ng-if="nested.selectedVariableFilter.dataTypeCode === 'D'">
+								<input class="form-control inline-select"
+									   ng-model="nested.newValueBatchUpdate"
+									   uib-datepicker-popup="yyyyMMdd"
+									   is-open="isDatepickerActionOpen"
+									   datepicker-options="datepickerOptions"
+									   placeholder="yyyyMMdd"/>
+								<span style="padding-left: 1px;" class="input-group-btn inline-select">
         						<button type="button" class="btn form-control" ng-click="isDatepickerActionOpen = !isDatepickerActionOpen">
           							<i class="glyphicon glyphicon-calendar"></i>
        							</button>
       						</span>
+							</div>
+						</div>
+						<div class="form-group" style="padding-left: 10px;" ng-if="hasVariableFilter &amp;&amp; hasDataFiltered() &amp;&amp; nested.selectedBatchAction.id !== null">
+							<button type="button" class="btn  btn-info" ng-disabled="disableApply()" ng-click="applyBatchAction()">Apply</button>
 						</div>
 					</div>
-					<div class="form-group" style="padding-left: 10px;" ng-if="hasVariableFilter &amp;&amp; hasDataFiltered() &amp;&amp; nested.selectedBatchAction.id !== null">
-						<button type="button" class="btn  btn-info" ng-disabled="disableApply()" ng-click="applyBatchAction()">Apply</button>
-					</div>
-				</div>
-				<div class="col-xs-12 form-inline" ng-show="!hasVariableFilter">
-				<div class="form-group">
-						<div class="form-group" style="padding-right: 10px;">
-							<label style="padding-right: 10px;">There is no data to review in the dataset</label>
+					<div class="col-xs-12 form-inline" ng-show="!hasVariableFilter">
+						<div class="form-group">
+							<div class="form-group" style="padding-right: 10px;">
+								<label style="padding-right: 10px;">There is no data to review in the dataset</label>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="row add_top_padding">
-			<div class="col-xs-12">
-				<table id="subobservation-table-{{subObservationTab.id}}-{{subObservationSet.id}}"
-					   datatable=""
-					   dt-instance="nested.dtInstance"
-					   dt-options="dtOptions"
-					   dt-columns="dtColumns"
-					   dt-column-defs="dtColumnDefs"
-					   width="100%"
-					   class="table table-curved table-condensed">
-				</table>
+			<div class="row add_top_padding">
+				<div class="col-xs-12">
+					<table id="subobservation-table-{{subObservationTab.id}}-{{subObservationSet.id}}"
+						   datatable=""
+						   dt-instance="nested.dtInstance"
+						   dt-options="dtOptions"
+						   dt-columns="dtColumns"
+						   dt-column-defs="dtColumnDefs"
+						   width="100%"
+						   class="table table-curved table-condensed">
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -154,6 +154,7 @@ function validateStartEndDateBasic(startDate, endDate) {
 
 }
 
+//TODO: REMOVE NURSERY CODE.
 function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction) {
 	'use strict';
 
@@ -1367,79 +1368,6 @@ function getMeasurementTableVisibleColumns(addObsUnitId) {
 	return visibleColumns;
 }
 
-function importFormatType(type) {
-	'use strict';
-	var action = '/Fieldbook/ImportManager/import/' + type,
-		formName = '#importStudyUploadForm';
-
-	$(formName).attr('action', action);
-}
-
-function submitImportStudy() {
-	'use strict';
-	if ($('#importType').val() === '0') {
-		showErrorMessage('page-import-study-message-modal', 'Please choose import type');
-		return false;
-	}
-
-	if ($('#fileupload').val() === '') {
-		showErrorMessage('page-import-study-message-modal', 'Please choose a file to import');
-		return false;
-	}
-
-	if ($('.import-study-data').data('data-import') === '1') {
-		setTimeout(function() {$('#importOverwriteConfirmation').modal({ backdrop: 'static', keyboard: true });}, 300);
-	} else {
-		continueStudyImport(false);
-	}
-}
-function continueStudyImport(doDataRevert) {
-	'use strict';
-	if (doDataRevert) {
-		revertData(false);
-		$('#importOverwriteConfirmation').modal('hide');
-	}
-
-	$('#importStudyUploadForm').ajaxForm(importOptions).submit();
-}
-
-function showImportOptions() {
-	'use strict';
-	var scope = angular.element(document.getElementById("mainApp")).injector().get('$rootScope');
-	scope.$apply(function () {
-		scope.navigateToTab('editMeasurements');
-	});
-
-	if ($('body').hasClass('import-preview-measurements')) {
-		return;
-	}
-	$('#fileupload').val('');
-	$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
-	// Navigate to edit measurements tab when clicking on import measurements
-
-
-	if ($('.import-study-data').data('data-import') === '1') {
-		showAlertMessage('', importDataWarningNotification);
-	}
-}
-
-function backShowImportStudyModal(){
-	'use strict';
-	var scope = angular.element(document.getElementById("mainApp")).scope();
-	scope.$apply(function () {
-		scope.showImportStudyModal();
-	});
-}
-function goBackToImport() {
-	'use strict';
-	revertData(false);
-	$('#importStudyConfirmationModal').modal('hide');
-	$('#importStudyDesigConfirmationModal').modal('hide');
-	$('#importOverwriteConfirmation').modal('hide');
-	setTimeout(function() {$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });}, 300);
-
-}
-
 function isFloat(value) {
 	'use strict';
 	return !isNaN(parseInt(value, 10)) && (parseFloat(value, 10) == parseInt(value, 10));
@@ -2538,30 +2466,6 @@ function showGermplasmDetailsPopUp(gid, desig, germplasmDetailsUrl) {
 	});
 }
 
-function isAllowedEditMeasurementDataCellForTrials(needToSaveFirst) {
-	'use strict';
-	var trialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
-	if (needToSaveFirst) {
-		showAlertMessage('', $.fieldbookMessages.measurementsTraitsChangeWarning);
-		return false;
-	}
-	trialManagerDataService.warnAboutUnappliedChanges();
-	return !trialManagerDataService.applicationData.unappliedChangesAvailable;
-}
-
-function isAllowedEditMeasurementDataCell() {
-	'use strict';
-	// used to watch for changes on Traits
-	var needToSaveFirst = $('body').data('needToSave') === '1' ? true : false;
-
-	isAllowedEditMeasurementDataCellForTrials(needToSaveFirst);
-
-	if (needToSaveFirst) {
-		showAlertMessage('', $.fieldbookMessages.measurementWarningNeedGenExpDesign);
-	}
-	return !needToSaveFirst;
-}
-
 function showListTreeToolTip(node, nodeSpan) {
 	'use strict';
 	$.ajax({
@@ -3062,7 +2966,7 @@ function makeGermplasmListDraggable(isDraggable) {
 	isDraggable = isDraggable
 		&& (($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1
 			|| ($('#studyId').length === 0 && false))
-			|| $('#studyId').length > 0 && false && measurementRowCount === 0);
+			|| $('#studyId').length > 0 && false && !hasGeneratedDesign());
 	if (isDraggable) {
 		$('.germplasm-list-items tbody  tr').draggable({
 
@@ -3194,7 +3098,7 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 		return;
 	}
 	$.ajax({
-		url: '/Fieldbook/trial/measurements/viewStudyAjax/' + datasetId + '/' + currentStudyId,
+		url: '/Fieldbook/StudyManager/reviewStudyDetails/measurements/viewStudyAjax/' + datasetId + '/' + currentStudyId,
 		type: 'GET',
 		cache: false,
 		success: function(html) {
@@ -3268,47 +3172,19 @@ function toggleControlsForGermplasmListManagement(value) {
 
 function showGermplasmDetailsSection() {
 	'use strict';
-
-	// If Advance List for Trial is already generated then user can not Clear / Modify List.
-	if (isAdvanceListGeneratedForTrial) {
-		showAlertMessage('', advanceListAlreadyGeneratedForTrialWarningMessage, 10000);
-		return;
-	}
-
-	$('.observation-exists-notif').hide();
-	$('.overwrite-germplasm-list').hide();
-	$('.browse-import-link').show();
 	if ($('.germplasm-list-items tbody tr').length > 0) {
 		toggleControlsForGermplasmListManagement(true);
 	}
-	//flag to determine if existing measurements should be deleted
-	$('#chooseGermplasmAndChecks').data('replace', '1');
 }
 
-function hasMeasurementData() {
+function hasGeneratedDesign() {
 	'use strict';
-	return angular.element('#mainApp').injector().get('TrialManagerDataService').trialMeasurement.hasMeasurement;
+	return angular.element('#mainApp').injector().get('studyStateService').hasGeneratedDesign();
 }
 
-function displayStudyGermplasmSection(hasData, observationCount) {
+function hasListOrSubObs() {
 	'use strict';
-	if (hasData) {
-		$('.overwrite-germplasm-list').hide();
-		$('.observation-exists-notif').show();
-		$('.browse-import-link').hide();
-	} else if (observationCount > 0) {
-		$('.observation-exists-notif').hide();
-		$('.overwrite-germplasm-list').show();
-		$('#imported-germplasm-list').show();
-		$('.browse-import-link').hide();
-	} else if (countGermplasms() > 0) {
-		$('.observation-exists-notif').hide();
-		$('.overwrite-germplasm-list').show();
-		$('.browse-import-link').hide();
-	} else {
-		$('.observation-exists-notif').hide();
-		$('.overwrite-germplasm-list').hide();
-	}
+	return angular.element('#mainApp').injector().get('studyStateService').hasListOrSubObs();
 }
 
 function countGermplasms() {
@@ -3431,207 +3307,6 @@ function showExportAdvanceResponse(responseText, statusText, xhr, $form) {
 	$('#exportAdvanceListModal').modal('hide');
 }
 
-function processInlineEditInput() {
-	'use strict';
-
-	var tableIdentifier = $('body').hasClass('import-preview-measurements') ? '#import-preview-measurement-table' :
-		'#measurement-table';
-
-	if ($('.inline-input').length !== 0) {
-		var experimentId = $('.data-hidden-value-experimentId').val();
-		var indexElem = $('.data-hidden-value-index').val();
-		var phenotypeId = $('.data-hidden-value-phenotypeId').val();
-		var termId = $('.data-hidden-value-term-id').val();
-		var indexDataVal = '';
-		var isNew = '0';
-		if ($('.data-value').hasClass('variates-select')) {
-			if ($('.data-value').select2('data')) {
-				indexDataVal = $('.data-value').select2('data').id;
-				isNew  = $('.data-value').select2('data').status;
-			} else {
-				indexDataVal = '';
-			}
-		} else if ($('.data-value').hasClass('numeric-value')) {
-			var minVal = ($('.data-value').data('min-range'));
-			var maxVal = ($('.data-value').data('max-range'));
-			var cellText = $('.data-value').val();
-			if ($.trim(cellText.toLowerCase()) == 'missing') {
-				if (minVal && maxVal) {
-					isNew = '1';
-				} else {
-					isNew = '0';
-				}
-				$('.data-value').val('missing');
-			} else if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellText) ||
-				parseFloat(cellText) > parseFloat(maxVal))) {
-				isNew = '1';
-			}
-			indexDataVal =  $('.data-value').val();
-		} else {
-			indexDataVal =  $('.data-value').val();
-		}
-
-		var currentInlineEdit = {
-			experimentId: experimentId,
-			index: indexElem,
-			phenotypeId: phenotypeId,
-			termId: termId,
-			value: indexDataVal,
-			isNew: isNew
-		};
-		$(tableIdentifier).data('json-inline-edit-val', JSON.stringify(currentInlineEdit));
-		if (isNew === '1') {
-			$('#inlineEditConfirmationModal').modal({
-				backdrop: 'static',
-				keyboard: true
-			});
-			$(tableIdentifier).data('show-inline-edit', '0');
-			return false;
-		} else {
-			saveInlineEdit(0, 0);
-		}
-	}
-	return true;
-}
-
-function saveInlineEdit(isDiscard, invalidButKeep) {
-	'use strict';
-
-	var isImportPreviewMeasurementsView = $('body').hasClass('import-preview-measurements');
-	var tableIdentifier = isImportPreviewMeasurementsView ? '#import-preview-measurement-table' : '#measurement-table';
-
-	$.ajax({
-		url: '/Fieldbook/trial/measurements/' +
-		(isImportPreviewMeasurementsView ? 'updateByIndex' : 'update') +
-		'/experiment/cell/data?isDiscard=' + isDiscard + '&invalidButKeep=' + invalidButKeep,
-		type: 'POST',
-		async: false,
-		data:   $(tableIdentifier).data('json-inline-edit-val'),
-		contentType: 'application/json',
-		success: function(data) {
-			var jsonData = $.parseJSON($(tableIdentifier).data('json-inline-edit-val'));
-			if (isDiscard === 0 && jsonData.isNew === '1' && jsonData.value !== 'missing') {
-				$('.inline-input').parent('td').addClass('accepted-value').removeClass('invalid-value');
-				$('.inline-input').parent('td').data('is-accepted', '1');
-			} else if (jsonData.isNew === '0') {
-				$('.inline-input').parent('td').removeClass('accepted-value').removeClass('invalid-value');
-				$('.inline-input').parent('td').data('is-accepted', '0');
-			}
-			if (data.success === '1') {
-				$('.inline-input').parent('td').data('is-inline-edit', '0');
-
-				var oTable = $(tableIdentifier).dataTable();
-				oTable.fnUpdate(data.data, data.index, null, false); // Row
-				// Note: This triggers a table draw, necessary to remove inline input and do rowCallback
-				oTable.fnAdjustColumnSizing();
-				$('body').off('click');
-
-				if (!isImportPreviewMeasurementsView) {
-					var trialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
-					trialManagerDataService.trialMeasurement.hasMeasurement = true;
-					// .. so that generate design is disabled because input is instantly saved.
-				}
-			} else {
-				$(tableIdentifier).data('show-inline-edit', '0');
-				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
-			}
-		},
-		error: function() {
-			//TODO Localise the message
-			showErrorMessage('', 'Could not update the measurement');
-		}
-	});
-}
-
-function hasOutOfBoundValuesAsync() {
-	'use strict';
-
-	return $.ajax({
-		url: '/Fieldbook/Common/ReviewDetailsOutOfBounds/hasOutOfBoundValues',
-		type: 'GET',
-		cache: false
-	});
-}
-
-function hasOutOfBoundValues() {
-	'use strict';
-	var _hasOutOfBound = false;
-
-	$.ajax({
-		url: '/Fieldbook/Common/ReviewDetailsOutOfBounds/hasOutOfBoundValues',
-		type: 'GET',
-		cache: false,
-		async: false,
-		success: function (hasOutOfBound) {
-			_hasOutOfBound = hasOutOfBound;
-		}
-	});
-
-	return _hasOutOfBound;
-}
-
-function reviewOutOfBoundsData() {
-	'use strict';
-
-	hasOutOfBoundValuesAsync().then(function (hasOutOfBound) {
-		// Display the Review Out of Bound Data dialog if there are invalid values in the measurements table.
-		if (hasOutOfBound) {
-			$('#reviewOutOfBoundsDataModal').modal({ backdrop: 'static', keyboard: true });
-		} else {
-			showAlertMessage('', 'There are no more out of bounds data to review.', 5000);
-		}
-	}, function () {
-		// TODO error message
-	});
-}
-
-function displayDetailsOutOfBoundsData() {
-	'use strict';
-
-	removeDetailsOutOfBoundDataInSessionStorage();
-
-	if ($('#reviewDetailsOutOfBoundsDataModalBody').length !== 0) {
-		$.ajax({
-			url: '/Fieldbook/Common/ReviewDetailsOutOfBounds/showDetails',
-			type: 'GET',
-			success: function(html) {
-				$('#reviewOutOfBoundsDataModal').modal('hide');
-				$('#reviewDetailsOutOfBoundsDataModalBody').html(html);
-				$('#reviewDetailsOutOfBoundsDataModal').modal({
-					backdrop: 'static',
-					keyboard: true
-				});
-			}
-		});
-	}
-}
-
-function removeDetailsOutOfBoundDataInSessionStorage() {
-	'use strict';
-	if (sessionStorage) {
-		for (var i in sessionStorage)
-		{
-			if (i.indexOf('reviewDetailsFormData') === 0) {
-				sessionStorage.removeItem(i);
-			}
-		}
-	}
-
-}
-
-function proceedToReviewOutOfBoundsDataAction() {
-	var action = $('#review-out-of-bounds-data-action').select2('data').id;
-	if (action === '0') {
-		showErrorMessage('page-review-out-of-bounds-data-message-modal', reviewOutOfBoundsDataActionRequiredError);
-	} else if (action === '1') {
-		displayDetailsOutOfBoundsData();
-	} else if (action === '2') {
-		markAllCellAsAccepted();
-	} else if (action === '3') {
-		markAllCellAsMissing();
-	}
-}
-
 function exportDesignTemplate() {
 	$.ajax({
 		url: '/Fieldbook/DesignTemplate/export',
@@ -3655,40 +3330,6 @@ function setSpinnerMaxValue() {
 	if ($('#' + getJquerySafeId('checkVariables0.value')).val() === null || $('#' + getJquerySafeId('checkVariables0.value')).val() === '') {
 		$('#' + getJquerySafeId('checkVariables0.value')).val(1);
 	}
-}
-
-function switchCategoricalView(showCategoricalDescriptionView) {
-	'use strict';
-
-	if (typeof showCategoricalDescriptionView === 'undefined') {
-		showCategoricalDescriptionView = null;
-	}
-
-	$('.fbk-measurement-categorical-name').toggle();
-	$('.fbk-measurement-categorical-desc').toggle();
-
-	return $.get('/Fieldbook/trial/measurements/setCategoricalDisplayType', {showCategoricalDescriptionView: showCategoricalDescriptionView})
-		.done(function(result) {
-			window.isCategoricalDescriptionView = result;
-
-			$('.fbk-toggle-categorical-display').text(result ? window.measurementObservationMessages.hideCategoricalDescription :
-				window.measurementObservationMessages.showCategoricalDescription);
-
-		});
-}
-
-function onMeasurementsInlineEditConfirmationEvent() {
-	'use strict';
-	return function(e) {
-		if (parseInt($(this).data('inline-edit'), 10) === 1) {
-			//keep the changes
-			saveInlineEdit(0, 1);
-		} else if (parseInt($(this).data('inline-edit'), 10) === 0) {
-			//discard the changes
-			saveInlineEdit(1, 0);
-		}
-		$('#inlineEditConfirmationModal').modal('hide');
-	};
 }
 
 function ValidateValueCheckBoxFavorite(checkFavorite,data){

@@ -362,7 +362,7 @@
 					.then(function (response) {
 						if (response) {
 							if (response.data && response.data.hasDataOverwrite) {
-								derivedVariableModalService.confirmOverrideCalculatedVariableModal(datasetId, $scope.selected.variable, calculateRequestData);
+								derivedVariableModalService.confirmOverrideCalculatedVariableModal(datasetId, selectedVariable, calculateRequestData);
 							} else {
 								$scope.reloadSubObservation();
 							}

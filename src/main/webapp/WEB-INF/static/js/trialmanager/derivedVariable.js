@@ -252,13 +252,21 @@
 
 						if (response.data.length !== 0) {
 
-							angular.forEach(response.data, function(value, key) {
+							var hasMultipleOccurrenceInDataset = false;
+
+							angular.forEach(response.data, function (value, key) {
+								// initialize inputVariableDatasetMap in calculateRequestData
 								calculateRequestData.inputVariableDatasetMap[key] = value.datasets[0].id;
+								if (value.datasets.length > 1) {
+									hasMultipleOccurrenceInDataset = true;
+								}
 							});
 
-							derivedVariableModalService.selectDatasetPerInputVariableModal(datasetId, calculateRequestData, $scope.selected.variable, response.data);
-							$uibModalInstance.close();
-							return $q.reject();
+							if (hasMultipleOccurrenceInDataset) {
+								derivedVariableModalService.selectDatasetPerInputVariableModal(datasetId, calculateRequestData, $scope.selected.variable, response.data);
+								$uibModalInstance.close();
+								return $q.reject();
+							}
 						}
 					}).then(function () {
 						derivedVariableService.calculateVariableForSubObservation(datasetId, calculateRequestData)

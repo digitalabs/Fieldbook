@@ -43,18 +43,11 @@
 				return request.then(successHandler, failureHandler);
 			};
 
-			derivedVariableService.getDependenciesForAllDerivedTraits = function (datasetId) {
+			derivedVariableService.getMissingInputVariables = function (datasetId, variableId) {
 				if (!studyContext.studyId) {
 					return $q.resolve();
 				}
-				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/missing-dependencies');
-			};
-
-			derivedVariableService.getDependenciesForSpecificTrait = function (datasetId, variableId) {
-				if (!studyContext.studyId) {
-					return $q.resolve();
-				}
-				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/' + variableId + '/missing-dependencies');
+				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/' + variableId + '/missing-variables');
 			};
 
 			derivedVariableService.getInputVariableDatasetMap = function (datasetId, variableId) {
@@ -108,7 +101,7 @@
 			};
 
 			derivedVariableService.showWarningIfDependenciesAreMissing = function (datasetId, variableId) {
-				derivedVariableService.getDependenciesForSpecificTrait(datasetId, variableId).then(function (response) {
+				derivedVariableService.getMissingInputVariables(datasetId, variableId).then(function (response) {
 					var variableDependencies = response.data;
 					if (variableDependencies.length > 0) {
 						showAlertMessage('', 'The variable(s) ' + variableDependencies.join(', ') + ' are not included in this study. ' +

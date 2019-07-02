@@ -54,7 +54,7 @@
 				if (!studyContext.studyId) {
 					return $q.resolve();
 				}
-				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/derived-variables/' + variableId + '/formula-variables/dataset-map');
+				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/' + variableId + '/formula-variables/dataset-map');
 			};
 
 			derivedVariableService.getFormulaVariables = function () {

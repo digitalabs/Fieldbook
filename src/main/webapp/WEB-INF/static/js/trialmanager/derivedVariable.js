@@ -43,11 +43,11 @@
 				return request.then(successHandler, failureHandler);
 			};
 
-			derivedVariableService.getMissingFormulaVariables = function (variableId) {
+			derivedVariableService.getMissingFormulaVariables = function (datasetId, variableId) {
 				if (!studyContext.studyId) {
 					return $q.resolve();
 				}
-				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/derived-variables/' + variableId + '/formula-variables/missing');
+				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/' + variableId + '/formula-variables/missing');
 			};
 
 			derivedVariableService.getFormulaVariableDatasetMap = function (datasetId, variableId) {
@@ -107,8 +107,8 @@
 
 			};
 
-			derivedVariableService.showWarningIfDependenciesAreMissing = function (variableId) {
-				derivedVariableService.getMissingFormulaVariables(variableId).then(function (response) {
+			derivedVariableService.showWarningIfDependenciesAreMissing = function (datasetId, variableId) {
+				derivedVariableService.getMissingFormulaVariables(datasetId, variableId).then(function (response) {
 					var missingFormulaVariables = response.data;
 					if (missingFormulaVariables.length > 0) {
 						var missingFormulaVariablesNames = [];

@@ -47,14 +47,21 @@
 				if (!studyContext.studyId) {
 					return $q.resolve();
 				}
-				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/derived-variables/' + variableId + '/missing-formula-variables');
+				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/derived-variables/' + variableId + '/formula-variables/missing');
 			};
 
 			derivedVariableService.getFormulaVariableDatasetMap = function (datasetId, variableId) {
 				if (!studyContext.studyId) {
 					return $q.resolve();
 				}
-				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/derived-variables/' + variableId + '/formula-variable-dataset');
+				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/derived-variables/' + variableId + '/formula-variables/dataset-map');
+			};
+
+			derivedVariableService.getFormulaVariables = function () {
+				if (!studyContext.studyId) {
+					return $q.resolve();
+				}
+				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/derived-variables/formula-variables');
 			};
 
 			derivedVariableService.countCalculatedVariables = function (datasetIds) {

@@ -271,7 +271,7 @@
 					if ($scope.hasInstances) {
 						loadTable();
 						derivedVariableService.displayExecuteCalculateVariableMenu();
-						derivedVariableService.showWarningIfDependenciesAreMissing($scope.subObservationSet.dataset.datasetId, variable.id);
+						derivedVariableService.showWarningIfDependenciesAreMissing(variable.id);
 					}
 				}, function (response) {
 					if (response.errors && response.errors.length) {

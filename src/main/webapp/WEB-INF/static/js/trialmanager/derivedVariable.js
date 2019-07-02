@@ -43,22 +43,22 @@
 				return request.then(successHandler, failureHandler);
 			};
 
-			derivedVariableService.getMissingInputVariables = function (datasetId, variableId) {
+			derivedVariableService.getMissingFormulaVariables = function (variableId) {
 				if (!studyContext.studyId) {
 					return $q.resolve();
 				}
-				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/' + variableId + '/missing-variables');
+				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/derived-variables/' + variableId + '/missing-formula-variables');
 			};
 
-			derivedVariableService.getInputVariableDatasetMap = function (datasetId, variableId) {
+			derivedVariableService.getFormulaVariableDatasetMap = function (datasetId, variableId) {
 				if (!studyContext.studyId) {
 					return $q.resolve();
 				}
-				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/' + variableId + '/variable-dataset');
+				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/derived-variables/' + variableId + '/formula-variable-dataset');
 			};
 
 			derivedVariableService.countCalculatedVariables = function (datasetIds) {
-				var request = $http.head(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/derived-variables', {
+				var request = $http.head(BMSAPI_BASE_URL + studyContext.studyId + '/derived-variables', {
 					params: {
 						datasetIds: datasetIds.join(",")
 					}
@@ -100,11 +100,15 @@
 
 			};
 
-			derivedVariableService.showWarningIfDependenciesAreMissing = function (datasetId, variableId) {
-				derivedVariableService.getMissingInputVariables(datasetId, variableId).then(function (response) {
-					var variableDependencies = response.data;
-					if (variableDependencies.length > 0) {
-						showAlertMessage('', 'The variable(s) ' + variableDependencies.join(', ') + ' are not included in this study. ' +
+			derivedVariableService.showWarningIfDependenciesAreMissing = function (variableId) {
+				derivedVariableService.getMissingFormulaVariables(variableId).then(function (response) {
+					var missingFormulaVariables = response.data;
+					if (missingFormulaVariables.length > 0) {
+						var missingFormulaVariablesNames = [];
+						angular.forEach(missingFormulaVariables, function (formulaVariable) {
+							missingFormulaVariablesNames.push(formulaVariable.name);
+						});
+						showAlertMessage('', 'The variable(s) ' + missingFormulaVariablesNames.join(', ') + ' are not included in this study. ' +
 							'You will need data for these variables to calculate values for this variable.', 15000);
 					}
 				});
@@ -248,7 +252,7 @@
 					};
 
 
-					derivedVariableService.getInputVariableDatasetMap(datasetId, $scope.selected.variable.cvTermId).then(function (response) {
+					derivedVariableService.getFormulaVariableDatasetMap(datasetId, $scope.selected.variable.cvTermId).then(function (response) {
 
 						if (response.data.length !== 0) {
 

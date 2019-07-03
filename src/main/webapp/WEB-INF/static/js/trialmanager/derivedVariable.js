@@ -121,6 +121,17 @@
 				});
 			};
 
+			derivedVariableService.showWarningIfCalculatedVariablesAreOutOfSync = function () {
+				datasetService.getDatasets().then(function(data) {
+					angular.forEach(data, function (dataset) {
+						if (dataset.hasOutOfSyncData) {
+							showAlertMessage('', 'Some of the calculated variable data in this study is out of sync ' +
+								'because the input data has changed. Please recalculate the variable to update the results.', 15000);
+						}
+					});
+				});
+			}
+
 			return derivedVariableService;
 
 		}]);

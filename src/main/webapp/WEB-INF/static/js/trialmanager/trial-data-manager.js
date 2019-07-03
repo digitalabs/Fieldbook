@@ -427,6 +427,7 @@
 										service.updateSettings('trialSettings', extractSettings(updatedData.trialSettingsData));
 
 										derivedVariableService.displayExecuteCalculateVariableMenu();
+										derivedVariableService.showWarningIfCalculatedVariablesAreOutOfSync();
 										service.applicationData.unsavedTraitsAvailable = false;
 										setupSettingsVariables();
 										studyStateService.resetState();

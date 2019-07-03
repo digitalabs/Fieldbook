@@ -397,6 +397,7 @@
 					if (promise) {
 						promise.then(function () {
 							reloadDataset();
+							derivedVariableService.showWarningIfCalculatedVariablesAreOutOfSync();
 						}, function (response) {
 							if (response.errors && response.errors.length) {
 								showErrorMessage('', response.errors[0].message);

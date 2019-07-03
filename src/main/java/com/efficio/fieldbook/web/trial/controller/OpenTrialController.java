@@ -20,6 +20,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.ExperimentDesignType;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -431,6 +432,9 @@ public class OpenTrialController extends BaseTrialController {
 		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil
 			.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment,
 				this.userSelection.getExpDesignParams());
+
+		final Map<Integer, List<Integer>> changedVariablesPerInstance =
+			this.detectValueChangesInVariables(workbook.getTrialObservations(), trialEnvironmentValues);
 		workbook.setTrialObservations(trialEnvironmentValues);
 
 		this.createStudyDetails(workbook, data.getBasicDetails());
@@ -464,6 +468,13 @@ public class OpenTrialController extends BaseTrialController {
 				this.fieldbookService
 					.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), data.getColumnOrders(),
 						workbook);
+
+				// If the input variable at environment level is manually changed, the calculated variable at other levels
+				// should be tagged as out of sync.
+				for (final Map.Entry<Integer, List<Integer>> entry : changedVariablesPerInstance.entrySet()) {
+					this.datasetService.updateDependentPhenotypesStatusByGeolocation(entry.getKey(), entry.getValue());
+				}
+
 				return returnVal;
 			} catch (final MiddlewareQueryException e) {
 				OpenTrialController.LOG.error(e.getMessage(), e);
@@ -474,7 +485,43 @@ public class OpenTrialController extends BaseTrialController {
 		}
 	}
 
+	private Map<Integer, List<Integer>> detectValueChangesInVariables(final List<MeasurementRow> oldMeasurementRows,
+		final List<MeasurementRow> newMeasurementRows) {
 
+		final Map<Integer, List<Integer>> changedVariablesPerInstance = new HashMap<>();
+
+		if (oldMeasurementRows == null || newMeasurementRows == null) {
+			return changedVariablesPerInstance;
+		}
+
+		final Map<Integer, Map<Integer, MeasurementData>> oldMeasurementDataMap = new HashMap<>();
+		for (final MeasurementRow measurementRow : oldMeasurementRows) {
+			final Map<Integer, MeasurementData> measurementDataMap = new HashMap<>();
+			for (final MeasurementData measurementData : measurementRow.getDataList()) {
+				measurementDataMap.put(measurementData.getMeasurementVariable().getTermId(), measurementData);
+			}
+			oldMeasurementDataMap.put((int) measurementRow.getLocationId(), measurementDataMap);
+		}
+
+		for (final MeasurementRow measurementRow : newMeasurementRows) {
+			final int locationId = (int) measurementRow.getLocationId();
+			for (final MeasurementData newMeasurementData : measurementRow.getDataList()) {
+				if (oldMeasurementDataMap.containsKey(locationId)) {
+					final int termId = newMeasurementData.getMeasurementVariable().getTermId();
+					final String newValue = newMeasurementData.getValue();
+					final String oldValue = oldMeasurementDataMap.get(locationId).get(termId).getValue();
+					if (!newValue.equals(oldValue)) {
+						if (!changedVariablesPerInstance.containsKey(locationId)) {
+							changedVariablesPerInstance.put(locationId, new ArrayList<Integer>());
+						}
+						changedVariablesPerInstance.get(locationId).add(termId);
+					}
+				}
+			}
+		}
+
+		return changedVariablesPerInstance;
+	}
 
 	@ResponseBody
 	@RequestMapping(value = "/updateSavedTrial", method = RequestMethod.GET)

@@ -325,7 +325,7 @@
 				var variableIsUsedInOtherCalculatedVariable;
 
 				// Retrieve all formula variables in study
-				derivedVariableService.getFormulaVariables().then(function(response){
+				derivedVariableService.getFormulaVariables($scope.subObservationSet.dataset.datasetId).then(function(response){
 					var formulaVariables = response.data;
 					// Check if any of the deleted variables are formula variables
 					angular.forEach(formulaVariables, function (formulaVariable) {

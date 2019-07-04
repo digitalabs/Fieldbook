@@ -3,10 +3,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 (function () {
 	'use strict';
 
-	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$uibModal', '$stateParams',
-		'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService', 'studyStateService',
-		function ($scope, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService,
-				  studyStateService) {
+	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', '$q', 'TrialManagerDataService', '$uibModal', '$stateParams',
+		'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService', 'studyStateService', 'derivedVariableService', 'studyContext',
+		function ($scope, $q, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService,
+				  studyStateService, derivedVariableService, studyContext) {
 
 			var ctrl = this;
 
@@ -53,6 +53,34 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					return false;
 				}
 
+			};
+
+			$scope.onRemoveVariable = function (variableType, variableIds) {
+				return $scope.checkVariableIsUsedInCalculatedVariable(variableIds);
+			};
+
+			$scope.checkVariableIsUsedInCalculatedVariable = function (deleteVariables) {
+				var deferred = $q.defer();
+				var variableIsUsedInOtherCalculatedVariable;
+
+				// Retrieve all formula variables in study
+				derivedVariableService.getFormulaVariables(studyContext.measurementDatasetId).then(function(response){
+					var formulaVariables = response.data;
+					// Check if any of the deleted variables are formula variables
+					angular.forEach(formulaVariables, function (formulaVariable) {
+						if (deleteVariables.indexOf(formulaVariable.id) > -1) {
+							variableIsUsedInOtherCalculatedVariable = true;
+						}
+					});
+
+					if (variableIsUsedInOtherCalculatedVariable) {
+						var modalInstance = $scope.openConfirmModal(removeVariableDependencyConfirmationText, environmentConfirmLabel);
+						modalInstance.result.then(deferred.resolve);
+					} else {
+						deferred.resolve(true);
+					}
+				});
+				return deferred.promise;
 			};
 
 			//the flag to determine if we have a location variable in the datatable

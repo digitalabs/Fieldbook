@@ -506,8 +506,8 @@ public class OpenTrialController extends BaseTrialController {
 		for (final MeasurementRow measurementRow : newMeasurementRows) {
 			final int locationId = (int) measurementRow.getLocationId();
 			for (final MeasurementData newMeasurementData : measurementRow.getDataList()) {
-				if (oldMeasurementDataMap.containsKey(locationId)) {
-					final int termId = newMeasurementData.getMeasurementVariable().getTermId();
+				final int termId = newMeasurementData.getMeasurementVariable().getTermId();
+				if (oldMeasurementDataMap.containsKey(locationId) && oldMeasurementDataMap.get(locationId).containsKey(termId)) {
 					final String newValue = newMeasurementData.getValue();
 					final String oldValue = oldMeasurementDataMap.get(locationId).get(termId).getValue();
 					if (!newValue.equals(oldValue)) {

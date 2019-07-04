@@ -284,10 +284,8 @@
 
 			$scope.onRemoveVariable = function (variableIds, settings) {
 
-				$scope.checkVariableIsUsedInCalculatedVariable(variableIds).then(function(doContinue) {
-					if (doContinue) {
-						return $scope.checkVariableHasMeasurementData(variableIds);
-					}
+				$scope.checkVariableIsUsedInCalculatedVariable(variableIds).then(function(isVariableUsedInOtherCalculatedVariable) {
+					return $scope.checkVariableHasMeasurementData(isVariableUsedInOtherCalculatedVariable, variableIds);
 				}).then(function(doContinue) {
 					if (doContinue) {
 						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, variableIds).then(function () {
@@ -304,13 +302,14 @@
 				});
 			};
 
-			$scope.checkVariableHasMeasurementData = function (deleteVariables) {
+			$scope.checkVariableHasMeasurementData = function (isVariableUsedInOtherCalculatedVariable, deleteVariables) {
 				var deferred = $q.defer();
 				if (deleteVariables.length != 0) {
 					datasetService.observationCount($scope.subObservationSet.dataset.datasetId, deleteVariables).then(function (response) {
 						var count = response.headers('X-Total-Count');
 						if (count > 0) {
-							var modalInstance = $scope.openConfirmModal(observationVariableDeleteConfirmationText, environmentConfirmLabel);
+							var message = isVariableUsedInOtherCalculatedVariable ? removeVariableDependencyConfirmationText : observationVariableDeleteConfirmationText;
+							var modalInstance = $scope.openConfirmModal(message, environmentConfirmLabel);
 							modalInstance.result.then(deferred.resolve);
 						} else {
 							deferred.resolve(true);
@@ -322,7 +321,7 @@
 
 			$scope.checkVariableIsUsedInCalculatedVariable = function (deleteVariables) {
 				var deferred = $q.defer();
-				var variableIsUsedInOtherCalculatedVariable;
+				var variableIsUsedInOtherCalculatedVariable = false;
 
 				// Retrieve all formula variables in study
 				derivedVariableService.getFormulaVariables($scope.subObservationSet.dataset.datasetId).then(function(response){
@@ -333,13 +332,8 @@
 							variableIsUsedInOtherCalculatedVariable = true;
 						}
 					});
+					deferred.resolve(variableIsUsedInOtherCalculatedVariable);
 
-					if (variableIsUsedInOtherCalculatedVariable) {
-						var modalInstance = $scope.openConfirmModal(removeVariableDependencyConfirmationText, environmentConfirmLabel);
-						modalInstance.result.then(deferred.resolve);
-					} else {
-						deferred.resolve(true);
-					}
 				});
 				return deferred.promise;
 			};

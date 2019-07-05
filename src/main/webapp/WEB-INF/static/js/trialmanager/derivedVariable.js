@@ -379,6 +379,7 @@
 
 			$scope.calculateRequestData = calculateRequestData;
 			$scope.inputVariableDatasetMap = inputVariableDatasetMap;
+			$scope.inputVariablesWithMultipleDataset = getInputVariablesWithMultipleDataset(inputVariableDatasetMap);
 
 			$scope.proceed = function () {
 				derivedVariableService.calculateVariableForSubObservation(datasetId, $scope.calculateRequestData)
@@ -402,6 +403,16 @@
 				$rootScope.navigateToSubObsTab(datasetId, false);
 				showSuccessfulMessage('', 'Calculated values for ' + selectedVariable.name + ' were added successfully.');
 			};
+
+			function getInputVariablesWithMultipleDataset(inputVariableDatasetMap) {
+				var inputVariableNames = [];
+				angular.forEach(inputVariableDatasetMap, function (item) {
+					if (item.datasets.length > 1) {
+						inputVariableNames.push(item.variableName);//termId
+					}
+				});
+				return inputVariableNames;
+			}
 
 		}]);
 })();

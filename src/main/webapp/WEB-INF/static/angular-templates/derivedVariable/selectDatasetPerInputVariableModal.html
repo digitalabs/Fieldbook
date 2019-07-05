@@ -16,7 +16,9 @@
 	</div>
 	<div class="row form-group">
 		<div class="col-xs-12 col-md-12">
-			<label class="control-label import-confirmation">Multiple occurrences of input variable(s) were found in the study. To execute the calculation you have to confirm <b>from which dataset</b> each input variable must be read:</label>
+			<label class="control-label import-confirmation">Multiple occurrences
+				of {{inputVariablesWithMultipleDataset.join(', ')}}</span>
+				input variable(s) were found in the study. To execute the calculation you have to confirm <b>from which dataset</b> each input variable must be read:</label>
 		</div>
 	</div>
 	<div class="row form-group" ng-repeat="(key, value) in inputVariableDatasetMap" ng-if="value.datasets.length > 1">

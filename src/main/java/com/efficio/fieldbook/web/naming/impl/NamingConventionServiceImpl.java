@@ -280,10 +280,14 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		int index = 0;
 		final TimerWatch timer = new TimerWatch("cross");
 
+		// PreviousMaxSequence is used is the DEFAULT indexed numbering used for entries.
+		// The [SEQUENCE] code does not read this number but instead queries from the DB the next available number
+		int previousMaxSequence = 0;
 		for (final AdvancingSource advancingSource : rows.getRows()) {
 
 			final ImportedCrosses importedCross = importedCrosses.get(index++);
 			final List<String> names;
+			advancingSource.setCurrentMaxSequence(previousMaxSequence);
 
 			final Integer breedingMethodId = advancingSource.getBreedingMethodId();
 			final Method selectedMethod = breedingMethodMap.get(breedingMethodId);
@@ -310,6 +314,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 				this.setupNamingRuleExecutionContext(advancingSource, advancingParameters.isCheckAdvanceLinesUnique());
 			names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
+			// Save away the current max sequence once rules have been run for this entry.
+			previousMaxSequence = advancingSource.getCurrentMaxSequence() + 1;
 			for (final String name : names) {
 				importedCross.setDesig(name);
 			}

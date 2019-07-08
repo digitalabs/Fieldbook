@@ -485,7 +485,7 @@ public class OpenTrialController extends BaseTrialController {
 		}
 	}
 
-	private Map<Integer, List<Integer>> detectValueChangesInVariables(final List<MeasurementRow> oldMeasurementRows,
+	protected Map<Integer, List<Integer>> detectValueChangesInVariables(final List<MeasurementRow> oldMeasurementRows,
 		final List<MeasurementRow> newMeasurementRows) {
 
 		final Map<Integer, List<Integer>> changedVariablesPerInstance = new HashMap<>();

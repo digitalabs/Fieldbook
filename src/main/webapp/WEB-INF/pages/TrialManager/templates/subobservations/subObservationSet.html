@@ -150,9 +150,9 @@
 						<div class="row form-group" style="padding-right: 10px;">
 							<label style="padding-right: 10px;padding-left: 15px;">Select variable:</label>
 							<ui-select ng-model="nested.selectedVariableFilter" class="input-sm form-control inline-select" ng-change="changeSelectedVariableFilter()" search-enabled="false" theme="select2">
-								<ui-select-match>{{$select.selected.name}}</ui-select-match>
+								<ui-select-match>{{$select.selected.alias}}</ui-select-match>
 								<ui-select-choices repeat="variable as variable in selectVariableFilter">
-									<div title="{{variable.name}}">{{variable.name}}</div>
+									<div title="{{variable.alias}}">{{variable.alias}}</div>
 								</ui-select-choices>
 							</ui-select>
 						</div>

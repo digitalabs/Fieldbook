@@ -122,13 +122,17 @@
 			};
 
 			derivedVariableService.showWarningIfCalculatedVariablesAreOutOfSync = function () {
-				datasetService.getDatasets().then(function(data) {
+				datasetService.getDatasets().then(function (data) {
+					var datasetsWithOutOfSyncData = [];
 					angular.forEach(data, function (dataset) {
 						if (dataset.hasOutOfSyncData) {
-							showAlertMessage('', 'Some of the calculated variable data in this study is out of sync ' +
-								'because the input data has changed. Please recalculate the variable to update the results.', 15000);
+							datasetsWithOutOfSyncData.push(dataset.name);
 						}
 					});
+					if (datasetsWithOutOfSyncData.length > 0) {
+						showAlertMessage('', 'Some of the calculated variable data in the dataset(s) ' + datasetsWithOutOfSyncData.join(', ') + ' is out of sync ' +
+							'because the input data has changed. Please recalculate the variable to update the results.', 15000);
+					}
 				});
 			}
 

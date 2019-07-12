@@ -38,32 +38,34 @@
 					variableIds, {cache: false});
 			};
 
-			derivedVariableService.calculateVariableForObservation = function (calculateData) {
-				var request = $http.post(FIELDBOOK_BASE_URL + 'derived-variable/execute', calculateData);
-				return request.then(successHandler, failureHandler);
-			};
-
 			derivedVariableService.calculateVariableForSubObservation = function (datasetId, calculateData) {
 				var request = $http.post(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/calculation', calculateData);
 				return request.then(successHandler, failureHandler);
 			};
 
-			derivedVariableService.getDependenciesForAllDerivedTraits = function (datasetId) {
+			derivedVariableService.getMissingFormulaVariables = function (datasetId, variableId) {
 				if (!studyContext.studyId) {
 					return $q.resolve();
 				}
-				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/missing-dependencies');
+				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/' + variableId + '/formula-variables/missing');
 			};
 
-			derivedVariableService.getDependenciesForSpecificTrait = function (datasetId, variableId) {
+			derivedVariableService.getFormulaVariableDatasetMap = function (datasetId, variableId) {
 				if (!studyContext.studyId) {
 					return $q.resolve();
 				}
-				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/' + variableId + '/missing-dependencies');
+				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/' + variableId + '/formula-variables/dataset-map');
+			};
+
+			derivedVariableService.getFormulaVariables = function (datasetId) {
+				if (!studyContext.studyId) {
+					return $q.resolve();
+				}
+				return $http.get(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/derived-variables/formula-variables');
 			};
 
 			derivedVariableService.countCalculatedVariables = function (datasetIds) {
-				var request = $http.head(BMSAPI_BASE_URL + studyContext.studyId + '/datasets/derived-variables', {
+				var request = $http.head(BMSAPI_BASE_URL + studyContext.studyId + '/derived-variables', {
 					params: {
 						datasetIds: datasetIds.join(",")
 					}
@@ -106,14 +108,33 @@
 			};
 
 			derivedVariableService.showWarningIfDependenciesAreMissing = function (datasetId, variableId) {
-				derivedVariableService.getDependenciesForSpecificTrait(datasetId, variableId).then(function (response) {
-					var variableDependencies = response.data;
-					if (variableDependencies.length > 0) {
-						showAlertMessage('', 'The variable(s) ' + variableDependencies.join(', ') + ' are not included in this study. ' +
+				derivedVariableService.getMissingFormulaVariables(datasetId, variableId).then(function (response) {
+					var missingFormulaVariables = response.data;
+					if (missingFormulaVariables.length > 0) {
+						var missingFormulaVariablesNames = [];
+						angular.forEach(missingFormulaVariables, function (formulaVariable) {
+							missingFormulaVariablesNames.push(formulaVariable.name);
+						});
+						showAlertMessage('', 'The variable(s) ' + missingFormulaVariablesNames.join(', ') + ' are not included in this study. ' +
 							'You will need data for these variables to calculate values for this variable.', 15000);
 					}
 				});
 			};
+
+			derivedVariableService.showWarningIfCalculatedVariablesAreOutOfSync = function () {
+				datasetService.getDatasets().then(function (data) {
+					var datasetsWithOutOfSyncData = [];
+					angular.forEach(data, function (dataset) {
+						if (dataset.hasOutOfSyncData) {
+							datasetsWithOutOfSyncData.push(dataset.name);
+						}
+					});
+					if (datasetsWithOutOfSyncData.length > 0) {
+						showAlertMessage('', 'Some of the calculated variable data in the dataset(s) ' + datasetsWithOutOfSyncData.join(', ') + ' is out of sync ' +
+							'because the input data has changed. Please recalculate the variable to update the results.', 15000);
+					}
+				});
+			}
 
 			return derivedVariableService;
 
@@ -165,6 +186,28 @@
 			});
 		};
 
+
+		derivedVariableModalService.selectDatasetPerInputVariableModal = function (datasetId, calculateRequestData, selectedVariable, inputVariableDatasetMap) {
+			$uibModal.open({
+				templateUrl: '/Fieldbook/static/angular-templates/derivedVariable/selectDatasetPerInputVariableModal.html',
+				controller: "selectDatasetPerInputVariableModalCtrl",
+				size: 'md',
+				resolve: {
+					datasetId: function () {
+						return datasetId;
+					},
+					inputVariableDatasetMap: function () {
+						return inputVariableDatasetMap;
+					},
+					selectedVariable: function () {
+						return selectedVariable;
+					},
+					calculateRequestData: calculateRequestData
+				},
+				controllerAs: 'ctrl'
+			});
+		};
+
 		return derivedVariableModalService;
 
 	}]);
@@ -187,8 +230,8 @@
 		}]);
 
 	derivedVariableModule.controller('executeCalculatedVariableModalCtrl',
-		['$rootScope', '$scope', '$http', '$uibModalInstance', 'datasetService', 'derivedVariableModalService', 'derivedVariableService', 'datasetId', 'studyContext',
-			function ($rootScope, $scope, $http, $uibModalInstance, datasetService, derivedVariableModalService, derivedVariableService, datasetId, studyContext) {
+		['$q', '$rootScope', '$scope', '$http', '$uibModalInstance', 'datasetService', 'derivedVariableModalService', 'derivedVariableService', 'datasetId', 'studyContext',
+			function ($q, $rootScope, $scope, $http, $uibModalInstance, datasetService, derivedVariableModalService, derivedVariableService, datasetId, studyContext) {
 
 				$scope.instances = [];
 				$scope.selectedInstances = {};
@@ -227,19 +270,43 @@
 					var calculateRequestData = {
 						variableId: $scope.selected.variable.cvTermId
 						, geoLocationIds: geoLocationIds
+						, inputVariableDatasetMap: {}
 					};
 
-					derivedVariableService.calculateVariableForSubObservation(datasetId, calculateRequestData)
-						.then(function (response) {
-							if (response) {
-								if (response.data && response.data.hasDataOverwrite) {
-									derivedVariableModalService.confirmOverrideCalculatedVariableModal(datasetId, $scope.selected.variable, calculateRequestData);
-								} else {
-									$scope.reloadSubObservation();
+
+					derivedVariableService.getFormulaVariableDatasetMap(datasetId, $scope.selected.variable.cvTermId).then(function (response) {
+
+						if (response.data.length !== 0) {
+
+							var hasMultipleOccurrenceInDataset = false;
+
+							angular.forEach(response.data, function (value, key) {
+								// initialize inputVariableDatasetMap in calculateRequestData
+								calculateRequestData.inputVariableDatasetMap[key] = value.datasets[0].id;
+								if (value.datasets.length > 1) {
+									hasMultipleOccurrenceInDataset = true;
 								}
+							});
+
+							if (hasMultipleOccurrenceInDataset) {
+								derivedVariableModalService.selectDatasetPerInputVariableModal(datasetId, calculateRequestData, $scope.selected.variable, response.data);
+								$uibModalInstance.close();
+								return $q.reject();
 							}
-							$uibModalInstance.close();
-						});
+						}
+					}).then(function () {
+						derivedVariableService.calculateVariableForSubObservation(datasetId, calculateRequestData)
+							.then(function (response) {
+								if (response) {
+									if (response.data && response.data.hasDataOverwrite) {
+										derivedVariableModalService.confirmOverrideCalculatedVariableModal(datasetId, $scope.selected.variable, calculateRequestData);
+									} else {
+										$scope.reloadSubObservation();
+									}
+								}
+								$uibModalInstance.close();
+							});
+					});
 
 				};
 
@@ -291,20 +358,65 @@
 
 			$scope.proceed = function () {
 
-					// Explicitly tell the web service to save the calculated value immediately even if there's measurement data to overwrite.
-					calculateRequestData.overwriteExistingData = true;
-					derivedVariableService.calculateVariableForSubObservation(datasetId, calculateRequestData)
-						.then(function (response) {
-							if (response) {
-								$rootScope.navigateToSubObsTab(datasetId, false);
-								showSuccessfulMessage('', 'Calculated values for ' + selectedVariable.name + ' were added successfully.');
-								$uibModalInstance.close();
-							}
-						});
+				// Explicitly tell the web service to save the calculated value immediately even if there's measurement data to overwrite.
+				calculateRequestData.overwriteExistingData = true;
+				derivedVariableService.calculateVariableForSubObservation(datasetId, calculateRequestData)
+					.then(function (response) {
+						if (response) {
+							$rootScope.navigateToSubObsTab(datasetId, false);
+							showSuccessfulMessage('', 'Calculated values for ' + selectedVariable.name + ' were added successfully.');
+							$uibModalInstance.close();
+						}
+					});
 
 				$uibModalInstance.close();
 
 			};
+
+		}]);
+
+	derivedVariableModule.controller('selectDatasetPerInputVariableModalCtrl', ['$rootScope', '$scope', '$uibModal', '$uibModalInstance',
+		'studyContext', 'derivedVariableModalService', 'derivedVariableService', 'datasetId', 'calculateRequestData', 'inputVariableDatasetMap',
+		'selectedVariable',
+		function ($rootScope, $scope, $uibModal, $uibModalInstance, studyContext, derivedVariableModalService, derivedVariableService, datasetId,
+				  calculateRequestData, inputVariableDatasetMap, selectedVariable) {
+
+			$scope.calculateRequestData = calculateRequestData;
+			$scope.inputVariableDatasetMap = inputVariableDatasetMap;
+			$scope.inputVariablesWithMultipleDataset = getInputVariablesWithMultipleDataset(inputVariableDatasetMap);
+
+			$scope.proceed = function () {
+				derivedVariableService.calculateVariableForSubObservation(datasetId, $scope.calculateRequestData)
+					.then(function (response) {
+						if (response) {
+							if (response.data && response.data.hasDataOverwrite) {
+								derivedVariableModalService.confirmOverrideCalculatedVariableModal(datasetId, selectedVariable, calculateRequestData);
+							} else {
+								$scope.reloadSubObservation();
+							}
+						}
+						$uibModalInstance.close();
+					});
+			};
+
+			$scope.cancel = function () {
+				$uibModalInstance.close();
+			};
+
+			$scope.reloadSubObservation = function () {
+				$rootScope.navigateToSubObsTab(datasetId, false);
+				showSuccessfulMessage('', 'Calculated values for ' + selectedVariable.name + ' were added successfully.');
+			};
+
+			function getInputVariablesWithMultipleDataset(inputVariableDatasetMap) {
+				var inputVariableNames = [];
+				angular.forEach(inputVariableDatasetMap, function (item) {
+					if (item.datasets.length > 1) {
+						inputVariableNames.push(item.variableName);//termId
+					}
+				});
+				return inputVariableNames;
+			}
 
 		}]);
 })();

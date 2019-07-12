@@ -283,9 +283,10 @@
 			};
 
 			$scope.onRemoveVariable = function (variableIds, settings) {
-				var promise = $scope.validateRemoveVariable(variableIds);
 
-				promise.then(function (doContinue) {
+				$scope.checkVariableIsUsedInCalculatedVariable(variableIds).then(function(isVariableUsedInOtherCalculatedVariable) {
+					return $scope.checkVariableHasMeasurementData(isVariableUsedInOtherCalculatedVariable, variableIds);
+				}).then(function(doContinue) {
 					if (doContinue) {
 						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, variableIds).then(function () {
 							reloadDataset();
@@ -301,19 +302,39 @@
 				});
 			};
 
-			$scope.validateRemoveVariable = function (deleteVariables) {
+			$scope.checkVariableHasMeasurementData = function (isVariableUsedInOtherCalculatedVariable, deleteVariables) {
 				var deferred = $q.defer();
 				if (deleteVariables.length != 0) {
 					datasetService.observationCount($scope.subObservationSet.dataset.datasetId, deleteVariables).then(function (response) {
 						var count = response.headers('X-Total-Count');
 						if (count > 0) {
-							var modalInstance = $scope.openConfirmModal(observationVariableDeleteConfirmationText, environmentConfirmLabel);
+							var message = isVariableUsedInOtherCalculatedVariable ? removeVariableDependencyConfirmationText : observationVariableDeleteConfirmationText;
+							var modalInstance = $scope.openConfirmModal(message, environmentConfirmLabel);
 							modalInstance.result.then(deferred.resolve);
 						} else {
 							deferred.resolve(true);
 						}
 					});
 				}
+				return deferred.promise;
+			};
+
+			$scope.checkVariableIsUsedInCalculatedVariable = function (deleteVariables) {
+				var deferred = $q.defer();
+				var variableIsUsedInOtherCalculatedVariable = false;
+
+				// Retrieve all formula variables in study
+				derivedVariableService.getFormulaVariables($scope.subObservationSet.dataset.datasetId).then(function(response){
+					var formulaVariables = response.data;
+					// Check if any of the deleted variables are formula variables
+					angular.forEach(formulaVariables, function (formulaVariable) {
+						if (deleteVariables.indexOf(formulaVariable.id) > -1) {
+							variableIsUsedInOtherCalculatedVariable = true;
+						}
+					});
+					deferred.resolve(variableIsUsedInOtherCalculatedVariable);
+
+				});
 				return deferred.promise;
 			};
 
@@ -370,6 +391,7 @@
 					if (promise) {
 						promise.then(function () {
 							reloadDataset();
+							derivedVariableService.showWarningIfCalculatedVariablesAreOutOfSync();
 						}, function (response) {
 							if (response.errors && response.errors.length) {
 								showErrorMessage('', response.errors[0].message);

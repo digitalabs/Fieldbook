@@ -568,6 +568,11 @@
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 
+	<bean id="derivedVariableService" factory-bean="managerFactory"
+		  factory-method="getDerivedVariableService" scope="request">
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
 	<bean id="datasetTypeService" factory-bean="managerFactory"
 		  factory-method="getDatasetTypeService" scope="request">
 		<aop:scoped-proxy proxy-target-class="false" />

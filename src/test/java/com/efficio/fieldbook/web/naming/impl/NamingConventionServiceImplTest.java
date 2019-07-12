@@ -3,21 +3,20 @@ package com.efficio.fieldbook.web.naming.impl;
 
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
-import org.generationcp.commons.ruleengine.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.google.common.collect.Lists;
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.commons.pojo.AdvancingSource;
 import org.generationcp.commons.pojo.AdvancingSourceList;
-import com.google.common.collect.Lists;
-import junit.framework.Assert;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
-import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.commons.ruleengine.generator.SeedSourceGenerator;
+import org.generationcp.commons.ruleengine.naming.service.ProcessCodeService;
+import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -30,18 +29,18 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.dataset.ObservationUnitRow;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -149,10 +148,10 @@ public class NamingConventionServiceImplTest {
 		advancingSource.setTrialInstanceNumber("1");
 		rows.getRows().add(advancingSource);
 
-		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace(Matchers.eq("naming"))).thenReturn(new String[] {"RootNameGenerator"});
+		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace(ArgumentMatchers.eq("naming"))).thenReturn(new String[] {"RootNameGenerator"});
 		final String ruleGeneratedName1 = sourceGermplasmName.getNval() + "-B1";
 		final String ruleGeneratedName2 = sourceGermplasmName.getNval() + "-B2";
-		Mockito.when(this.rulesService.runRules(Matchers.any(RuleExecutionContext.class))).thenReturn(Lists.newArrayList(ruleGeneratedName1, ruleGeneratedName2));
+		Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(Lists.newArrayList(ruleGeneratedName1, ruleGeneratedName2));
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
 		Mockito.when(this.seedSourceGenerator
 			.generateSeedSource(ArgumentMatchers.<Integer>isNull(), ArgumentMatchers.<Integer>isNull(),
@@ -227,7 +226,7 @@ public class NamingConventionServiceImplTest {
         final List<Method> methodList = Lists.newArrayList();
         methodList.add(breedingMethod);
 
-        Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Matchers.anyBoolean())).thenReturn(methodList);
+        Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(ArgumentMatchers.anyBoolean())).thenReturn(methodList);
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(anyInt())).thenReturn(this.workbook);
 
 		final Workbook workbook = new Workbook();
@@ -275,13 +274,13 @@ public class NamingConventionServiceImplTest {
         as1.setTrialInstanceNumber("1");
         rows.getRows().add(as1);
 
-        Mockito.when(this.advancingSourceListFactory.createAdvancingSourceList(Matchers.isA(Workbook.class),
-			Matchers.isA(AdvancingStudy.class), Matchers.isA(Study.class), Matchers.isA(Map.class), Matchers.isA(Map.class)))
+        Mockito.when(this.advancingSourceListFactory.createAdvancingSourceList(ArgumentMatchers.isA(Workbook.class),
+			ArgumentMatchers.isA(AdvancingStudy.class), ArgumentMatchers.isA(Study.class), ArgumentMatchers.isA(Map.class), ArgumentMatchers.isA(Map.class)))
                 .thenReturn(rows);
 
-        Mockito.when(this.ruleFactory.getRuleSequenceForNamespace(Matchers.eq("naming"))).thenReturn(new String[] {"RootNameGenerator"});
+        Mockito.when(this.ruleFactory.getRuleSequenceForNamespace(ArgumentMatchers.eq("naming"))).thenReturn(new String[] {"RootNameGenerator"});
         final String ruleGeneratedName = name1.getNval() + "-B";
-        Mockito.when(this.rulesService.runRules(Matchers.any(RuleExecutionContext.class))).thenReturn(
+        Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(
                 Lists.newArrayList(ruleGeneratedName));
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
 		Mockito.when(this.seedSourceGenerator
@@ -340,32 +339,33 @@ public class NamingConventionServiceImplTest {
 		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(1, "femaleDesig", "femalePedig");
 		importedCross.setFemaleParent(femaleParent);
 		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(2, "maleDesig", "malePedig");
-		importedCross.setMaleParents(Arrays.asList(maleParent));
+		importedCross.setMaleParents(Collections.singletonList(maleParent));
 		importedCrosses.add(importedCross);
 
 		final AdvancingSourceList rows = new AdvancingSourceList();
 		final AdvancingSource advancingSource = new AdvancingSource();
 		advancingSource.setBreedingMethodId(101);
-		rows.setRows(Arrays.asList(advancingSource));
+		rows.setRows(Collections.singletonList(advancingSource));
 
 		final AdvancingStudy advancingParameters = Mockito.mock(AdvancingStudy.class);
 		final Workbook workbook = Mockito.mock(Workbook.class);
-		final List<Integer> gids = Arrays.asList(1);
+		final List<Integer> gids = Collections.singletonList(1);
 		final Method method = new Method();
 		method.setMid(101);
 		method.setPrefix("IB");
 		method.setCount("[COUNT]");
 
-		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(false)).thenReturn(Arrays.asList(method));
+		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(false)).thenReturn(Collections.singletonList(method));
 		Mockito.when(this.germplasmDataManager.isMethodNamingConfigurationValid(method)).thenReturn(true);
-		Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(Arrays.asList("name"));
+		Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(Collections.singletonList("name"));
 		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace("naming")).thenReturn(new String[] {"[COUNT]"});
 
-		final List<ImportedCrosses> results = this.namingConventionService.generateCrossesList(importedCrosses, rows, advancingParameters, workbook, gids);
+		this.namingConventionService.generateCrossesList(importedCrosses, rows, advancingParameters, workbook, gids);
 		Assert.assertEquals("name", importedCross.getDesig());
 		Mockito.verify(this.fieldbookMiddlewareService).getAllBreedingMethods(false);
 		Mockito.verify(this.germplasmDataManager).isMethodNamingConfigurationValid(method);
 		Mockito.verify(this.rulesService).runRules(ArgumentMatchers.any(RuleExecutionContext.class));
 		Mockito.verify(this.ruleFactory).getRuleSequenceForNamespace("naming");
+		Assert.assertEquals(0, advancingSource.getCurrentMaxSequence());
 	}
 }

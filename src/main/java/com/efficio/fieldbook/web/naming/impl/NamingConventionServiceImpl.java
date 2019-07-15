@@ -1,54 +1,49 @@
 
 package com.efficio.fieldbook.web.naming.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
+import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
+import org.generationcp.commons.pojo.AdvancingSource;
+import org.generationcp.commons.pojo.AdvancingSourceList;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.RulesNotConfiguredException;
-import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.commons.ruleengine.generator.SeedSourceGenerator;
+import org.generationcp.commons.ruleengine.naming.rules.EnforceUniqueNameRule;
+import org.generationcp.commons.ruleengine.naming.rules.NamingRuleExecutionContext;
+import org.generationcp.commons.ruleengine.naming.service.ProcessCodeService;
+import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.sample.SampleDTO;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
-import org.generationcp.middleware.manager.api.PedigreeDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.dataset.ObservationUnitUtils;
 import org.generationcp.middleware.util.TimerWatch;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import org.generationcp.commons.ruleengine.naming.rules.EnforceUniqueNameRule;
-import org.generationcp.commons.ruleengine.naming.rules.NamingRuleExecutionContext;
-import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import org.generationcp.commons.ruleengine.naming.service.ProcessCodeService;
-import org.generationcp.commons.pojo.AdvancingSource;
-import org.generationcp.commons.pojo.AdvancingSourceList;
-import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import org.generationcp.commons.constant.AppConstants;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static org.generationcp.middleware.service.api.dataset.ObservationUnitUtils.fromMeasurementRow;
 
@@ -79,12 +74,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	@Resource
 	private SeedSourceGenerator seedSourceGenerator;
-
-	@Resource
-	private ProcessCodeRuleFactory processCodeRuleFactory;
-
-	@Resource
-	private PedigreeDataManager pedigreeDataManager;
 
 	@Override
 	public AdvanceResult advanceStudy(final AdvancingStudy info, final Workbook workbook) throws RuleException, FieldbookException {
@@ -123,7 +112,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		if (workbook == null) {
 			workbook = this.fieldbookMiddlewareService.getStudyDataSet(study.getId());
 		}
-		return this.advancingSourceListFactory.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
+		return this.advancingSourceListFactory
+			.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 	}
 
 	private void updatePlantsSelectedIfNecessary(final AdvancingSourceList list, final AdvancingStudy info) {
@@ -135,7 +125,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		} else {
 			lineChoiceSame = false;
 		}
-		if (list != null && list.getRows() != null && !list.getRows().isEmpty() && (lineChoiceSame && plantsSelected > 0 || allPlotsChoice)) {
+		if (list != null && list.getRows() != null && !list.getRows().isEmpty() && (lineChoiceSame && plantsSelected > 0
+			|| allPlotsChoice)) {
 			for (final AdvancingSource row : list.getRows()) {
 				if (!row.isBulk() && lineChoiceSame) {
 					row.setPlantsSelected(plantsSelected);
@@ -167,10 +158,11 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
-		final String newGermplasmName, final Method breedingMethod, final int index, Workbook workbook, int selectionNumber, AdvancingStudy advancingParameters, final String plantNo) {
+		final String newGermplasmName, final Method breedingMethod, final int index, final Workbook workbook, final int selectionNumber,
+		final AdvancingStudy advancingParameters, final String plantNo) {
 
 		String selectionNumberToApply = null;
-		boolean allPlotsSelected = "1".equals(advancingParameters.getAllPlotsChoice());
+		final boolean allPlotsSelected = "1".equals(advancingParameters.getAllPlotsChoice());
 		if (source.isBulk()) {
 			if (allPlotsSelected) {
 				selectionNumberToApply = null;
@@ -203,7 +195,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		// check to see if a group ID (MGID) exists in the parent for this Germplasm, and set
 		// newly created germplasm if part of a group ( > 0 )
-		if(source.getGermplasm().getMgid() != null && source.getGermplasm().getMgid() > 0){
+		if (source.getGermplasm().getMgid() != null && source.getGermplasm().getMgid() > 0) {
 			germplasm.setMgid(source.getGermplasm().getMgid());
 		}
 
@@ -235,7 +227,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final AdvancingStudy advancingParameters,
-		Workbook workbook) throws RuleException {
+		final Workbook workbook) throws RuleException {
 
 		final List<ImportedGermplasm> list = new ArrayList<>();
 		int index = 1;
@@ -246,7 +238,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 				&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
 
 				final List<String> names;
-				final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, advancingParameters.isCheckAdvanceLinesUnique());
+				final RuleExecutionContext namingExecutionContext =
+					this.setupNamingRuleExecutionContext(row, advancingParameters.isCheckAdvanceLinesUnique());
 				names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
 				// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
@@ -264,7 +257,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 					if (sampleIterator.hasNext()) {
 						sampleNo = String.valueOf(sampleIterator.next().getSampleNumber());
 					}
-					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber, advancingParameters, sampleNo);
+					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber,
+						advancingParameters, sampleNo);
 					selectionNumber++;
 				}
 			}
@@ -286,13 +280,12 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		int index = 0;
 		final TimerWatch timer = new TimerWatch("cross");
 
-		// FIXME previousMaxSequence is a "quick fix" solution to propagate previous max sequence to the next cross entry to process.
-		// Rules engine is currently not designed to handle this (even for advancing case). Next sequence choice is managed this via user
-		// interaction for advancing. There is no user interaction in case of cross list.
+		// PreviousMaxSequence is used is the DEFAULT indexed numbering used for entries.
+		// The [SEQUENCE] code does not read this number but instead queries from the DB the next available number
 		int previousMaxSequence = 0;
 		for (final AdvancingSource advancingSource : rows.getRows()) {
 
-			ImportedCrosses importedCross = importedCrosses.get(index++);
+			final ImportedCrosses importedCross = importedCrosses.get(index++);
 			final List<String> names;
 			advancingSource.setCurrentMaxSequence(previousMaxSequence);
 
@@ -300,8 +293,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			final Method selectedMethod = breedingMethodMap.get(breedingMethodId);
 
 			if (!this.germplasmDataManager.isMethodNamingConfigurationValid(selectedMethod)) {
-				throw new RulesNotConfiguredException(this.messageSource.getMessage("error.save.cross.rule.not.configured", new Object[] {selectedMethod.getMname()}, "The rules"
-					+ " were not configured", LocaleContextHolder.getLocale()));
+				throw new RulesNotConfiguredException(this.messageSource
+					.getMessage("error.save.cross.rule.not.configured", new Object[] {selectedMethod.getMname()}, "The rules"
+						+ " were not configured", LocaleContextHolder.getLocale()));
 			}
 
 			// here, we resolve the breeding method ID stored in the advancing source object into a proper breeding Method object
@@ -310,12 +304,14 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			advancingSource.setPlantsSelected(1);
 
 			// pass the parent gids (female and male) of the imported cross, this is required to properly resolve the Backcross process codes.
-			advancingSource.setFemaleGid(StringUtils.isNumeric(importedCross.getFemaleGid()) ? Integer.valueOf(importedCross.getFemaleGid()) : 0);
+			advancingSource
+				.setFemaleGid(StringUtils.isNumeric(importedCross.getFemaleGid()) ? Integer.valueOf(importedCross.getFemaleGid()) : 0);
 			// Always gets the first male parent, ie. GPID2
 			final String firstMaleGid = importedCross.getMaleGids().get(0).toString();
 			advancingSource.setMaleGid(StringUtils.isNumeric(firstMaleGid) ? Integer.valueOf(firstMaleGid) : 0);
 
-			final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(advancingSource, advancingParameters.isCheckAdvanceLinesUnique());
+			final RuleExecutionContext namingExecutionContext =
+				this.setupNamingRuleExecutionContext(advancingSource, advancingParameters.isCheckAdvanceLinesUnique());
 			names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
 			// Save away the current max sequence once rules have been run for this entry.
@@ -349,12 +345,11 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		this.messageSource = messageSource;
 	}
 
-	void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+	void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 
-
-	void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
+	void setGermplasmDataManager(final GermplasmDataManager germplasmDataManager) {
 		this.germplasmDataManager = germplasmDataManager;
 	}
 }

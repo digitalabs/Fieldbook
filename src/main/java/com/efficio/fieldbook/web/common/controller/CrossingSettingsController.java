@@ -191,9 +191,11 @@ public class CrossingSettingsController extends SettingsController {
 		final Map<String, String> returnVal = new HashMap<>();
 
 		try {
-			final String sequenceValue = this.crossingService.getNextNameInSequence(setting.getCrossNameSetting());
-			returnVal.put(CrossingSettingsController.SUCCESS_KEY, "1");
-			returnVal.put("sequenceValue", sequenceValue);
+			synchronized (CrossingSettingsController.class) {
+				final String sequenceValue = this.crossingService.getNextNameInSequence(setting.getCrossNameSetting());
+				returnVal.put(CrossingSettingsController.SUCCESS_KEY, "1");
+				returnVal.put("sequenceValue", sequenceValue);
+			}
 		} catch (final InvalidInputException e) {
 			CrossingSettingsController.LOG.error(e.getMessage(), e);
 			returnVal.put(CrossingSettingsController.SUCCESS_KEY, "0");

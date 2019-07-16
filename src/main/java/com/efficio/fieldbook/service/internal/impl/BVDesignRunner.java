@@ -29,7 +29,7 @@ public class BVDesignRunner implements DesignRunner {
 	public static final String CSV_EXTENSION = ".csv";
 
 	private static final Logger LOG = LoggerFactory.getLogger(BVDesignRunner.class);
-	private static long DESIGN_RUNNER_TIMEOUT_MILLIS = 60 * 1000;
+	private static long DESIGN_RUNNER_TIMEOUT_MILLIS;
 	private static final String XML_EXTENSION = ".xml";
 
 	private ProcessRunner processRunner = new BVDesignProcessRunner();
@@ -42,7 +42,7 @@ public class BVDesignRunner implements DesignRunner {
 
 		final String bvDesignPath = fieldbookProperties.getBvDesignPath();
 
-		DESIGN_RUNNER_TIMEOUT_MILLIS *= Long.valueOf(fieldbookProperties.getBvDesignRunnerTimeout());
+		DESIGN_RUNNER_TIMEOUT_MILLIS = 60 * 1000 * Long.valueOf(fieldbookProperties.getBvDesignRunnerTimeout());
 
 		int returnCode = -1;
 

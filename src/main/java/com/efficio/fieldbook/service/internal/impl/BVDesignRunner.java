@@ -29,19 +29,20 @@ public class BVDesignRunner implements DesignRunner {
 	public static final String CSV_EXTENSION = ".csv";
 
 	private static final Logger LOG = LoggerFactory.getLogger(BVDesignRunner.class);
-	// set 3 minutes for the design runner process to timeout
-	private static final long DESIGN_RUNNER_TIMEOUT_MILLIS = 3 * 60 * 1000;
 	private static final String XML_EXTENSION = ".xml";
 
 	private ProcessRunner processRunner = new BVDesignProcessRunner();
 	private BVDesignOutputReader outputReader = new BVDesignOutputReader();
 	private BVDesignXmlInputWriter inputWriter = new BVDesignXmlInputWriter();
+	private static long bvDesignRunnerTimeout;
 
 	@Override
 	public BVDesignOutput runBVDesign(final WorkbenchService workbenchService, final FieldbookProperties fieldbookProperties,
 			final MainDesign design) throws IOException {
 
 		final String bvDesignPath = fieldbookProperties.getBvDesignPath();
+
+		bvDesignRunnerTimeout = 60 * 1000 * Long.valueOf(fieldbookProperties.getBvDesignRunnerTimeout());
 
 		int returnCode = -1;
 
@@ -120,7 +121,7 @@ public class BVDesignRunner implements DesignRunner {
 			final ProcessBuilder pb = new ProcessBuilder(command);
 			final Process p = pb.start();
 			// add a timeout for the design runner
-			final ProcessTimeoutThread processTimeoutThread = new ProcessTimeoutThread(p, BVDesignRunner.DESIGN_RUNNER_TIMEOUT_MILLIS);
+			final ProcessTimeoutThread processTimeoutThread = new ProcessTimeoutThread(p, BVDesignRunner.bvDesignRunnerTimeout);
 			processTimeoutThread.start();
 			try {
 				final InputStreamReader isr = new InputStreamReader(p.getInputStream());

@@ -52,13 +52,12 @@ import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
-import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.service.api.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,9 +108,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 	private ContextUtil contextUtil;
 
 	@Resource
-	private UserDataManager userDataManager;
+	private UserService userService;
 
-	// @Resource(name = "BVDesignRunner")
 	@Resource
 	private DesignRunner designRunner;
 
@@ -346,7 +344,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 					break;
 				case PERSON:
 					possibleValues = this.convertPersonsToValueReferences(
-						this.fieldbookMiddlewareService.getAllPersonsOrderedByLocalCentral());
+						this.userService.getAllPersons());
 					this.possibleValuesCache.addPossibleValuesByDataType(DataType.PERSON, possibleValues);
 					break;
 				case CATEGORICAL_VARIABLE:
@@ -570,7 +568,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		} else if (DataType.LOCATION.equals(variable.getScale().getDataType())) {
 			return this.getLocationById(valueId.intValue());
 		} else if (DataType.PERSON.equals(variable.getScale().getDataType())) {
-			return this.getPersonNameByPersonId(valueId.intValue());
+			return this.userService.getPersonName(valueId.intValue());
 		} else if (isCategorical) {
 			final Term term = this.ontologyService.getTermById(valueId.intValue());
 			if (term != null) {
@@ -614,27 +612,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 			return location.getLname();
 		}
 		return null;
-	}
-
-	@Override
-	public String getPersonByUserId(final int userId) {
-		final User user = this.userDataManager.getUserById(userId);
-
-		if (user == null) {
-			return "";
-		}
-
-		return this.getPersonNameByPersonId(user.getPersonid());
-	}
-
-	String getPersonNameByPersonId(final int personId) {
-		final Person person = this.userDataManager.getPersonById(personId);
-
-		if (person != null) {
-			return person.getDisplayName();
-		}
-
-		return "";
 	}
 
 	@Override
@@ -1319,10 +1296,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	void setContextUtil(final ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
-	}
-
-	void setUserDataManager(final UserDataManager userDataManager) {
-		this.userDataManager = userDataManager;
 	}
 
 	void setPossibleValuesCache(final PossibleValuesCache possibleValuesCache) {

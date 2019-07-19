@@ -99,12 +99,5 @@ public interface WorkbenchService {
 	 * @return the project by id
 	 */
 	Project getProjectById(Long projectId);
-	
-	/**
-	 * Gets the person by id.
-	 *
-	 * @param personID the person id
-	 * @return the person by id
-	 */
-	Person getPersonById(int personID);
+
 }

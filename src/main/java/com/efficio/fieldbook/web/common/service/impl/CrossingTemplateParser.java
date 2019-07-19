@@ -20,7 +20,6 @@ import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
-import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.Name;
@@ -74,9 +73,6 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	@Resource
 	private CrossingService crossingService;
 
-	@Resource
-	private UserDataManager userDataManager;
-
 	public CrossingTemplateParser() {
 
 	}
@@ -89,7 +85,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		try {
 
 			final CrossesListDescriptionSheetParser<ImportedCrossesList> crossesListDescriptionSheetParser =
-					new CrossesListDescriptionSheetParser<>(new ImportedCrossesList(), this.userDataManager);
+					new CrossesListDescriptionSheetParser<>(new ImportedCrossesList());
 
 			this.importedCrossesList = crossesListDescriptionSheetParser.parseWorkbook(this.workbook, additionalParams);
 

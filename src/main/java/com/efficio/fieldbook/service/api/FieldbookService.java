@@ -116,14 +116,6 @@ public interface FieldbookService {
 	String getValue(int id, String valueOrId, boolean isCategorical);
 
 	/**
-	 * Retrieves the person by user id
-	 *
-	 * @param userId
-	 * @return
-	 */
-	String getPersonByUserId(int userId);
-
-	/**
 	 * Gets the term by id.
 	 *
 	 * @param termId the term id

@@ -1,19 +1,20 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.text.DateFormatSymbols;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBException;
-
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import com.efficio.fieldbook.web.common.exception.InvalidInputException;
+import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
+import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
+import com.efficio.fieldbook.web.trial.controller.SettingsController;
+import com.efficio.fieldbook.web.util.CrossesListUtil;
+import com.efficio.fieldbook.web.util.DuplicatesUtil;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -36,6 +37,7 @@ import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.UDTableType;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
+import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,21 +56,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
-import com.efficio.fieldbook.web.common.exception.InvalidInputException;
-import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
-import com.efficio.fieldbook.web.common.service.CrossingService;
-import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
-import com.efficio.fieldbook.web.trial.controller.SettingsController;
-import com.efficio.fieldbook.web.util.CrossesListUtil;
-import com.efficio.fieldbook.web.util.DuplicatesUtil;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBException;
+import java.io.UnsupportedEncodingException;
+import java.text.DateFormatSymbols;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequestMapping(CrossingSettingsController.URL)
@@ -85,7 +84,7 @@ public class CrossingSettingsController extends SettingsController {
 	private static final String HAS_PLOT_DUPLICATE = "hasPlotDuplicate";
 	public static final String CHOOSING_LIST_OWNER_NEEDED = "isChoosingListOwnerNeeded";
 	public static final String ERROR = "error";
-	
+
 	private static final String OUTPUT_FILENAME = "outputFilename";
 	private static final String FILENAME = "filename";
 
@@ -118,6 +117,9 @@ public class CrossingSettingsController extends SettingsController {
 
 	@Resource
 	private WorkbenchDataManager workbenchDataManager;
+
+	@Resource
+	private UserService userService;
 
 	/**
 	 * The germplasm list manager.
@@ -421,7 +423,7 @@ public class CrossingSettingsController extends SettingsController {
 		final Map<String, Person> currentProgramMembers = new HashMap<>();
 		final Long projectId = this.workbenchDataManager.getProjectByUuidAndCrop(this.getCurrentProgramID(), cropname).getProjectId();
 
-		final Map<Integer, Person> programMembers = this.workbenchDataManager.getPersonsByProjectId(projectId);
+		final Map<Integer, Person> programMembers = this.userService.getPersonsByProjectId(projectId);
 		for (final Map.Entry<Integer, Person> member : programMembers.entrySet()) {
 			currentProgramMembers.put(String.valueOf(member.getKey()), member.getValue());
 		}
@@ -494,7 +496,7 @@ public class CrossingSettingsController extends SettingsController {
 				responseMap.put(ERROR, new String[] {localisedErrorMessage});
 				return responseMap;
 			}
-			
+
 			importedCrosses.add(importedCross);
 			importedCrossesMap.put(importedCross.getEntryId(), importedCross);
 		}
@@ -601,7 +603,7 @@ public class CrossingSettingsController extends SettingsController {
 			final String[] femaleInfo = pedigreeMap.get(femaleGid);
 			importedCrosses.getFemaleParent().setPedigree(femaleInfo[0]);
 			importedCrosses.getFemaleParent().setCross(femaleInfo[1]);
-			
+
 			for (final ImportedGermplasmParent maleParent : importedCrosses.getMaleParents()) {
 				final int maleGid = maleParent.getGid();
 				maleParent.setPedigree(pedigreeMap.get(maleGid)[0]);

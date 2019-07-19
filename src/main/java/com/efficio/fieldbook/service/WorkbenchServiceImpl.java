@@ -86,9 +86,4 @@ public class WorkbenchServiceImpl implements WorkbenchService {
 		return this.workbenchDataManager.getProjectById(projectId);
 	}
 
-	@Override
-	public Person getPersonById(int personID) {
-		return this.workbenchDataManager.getPersonById(personID);
-	}
-
 }

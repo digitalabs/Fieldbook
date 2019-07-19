@@ -405,7 +405,7 @@ public class CreateTrialController extends BaseTrialController {
 		basic.setBasicDetails(basicDetails);
 
 		basic.setUserID(this.contextUtil.getCurrentIbdbUserId());
-		basic.setUserName(this.fieldbookService.getPersonByUserId(basic.getUserID()));
+		basic.setUserName(this.userService.getPersonName(basic.getUserID()));
 
 		final TabInfo tab = new TabInfo();
 		tab.setData(basic);

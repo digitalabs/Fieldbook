@@ -37,6 +37,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.service.api.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -98,6 +99,9 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	@Resource
 	private StudyDataManager studyDataManager;
 
+	@Resource
+	private UserService userService;
+
 	@Override
 	public String getContentName() {
 		return TRIAL_MANAGER_REVIEW_TRIAL_DETAILS;
@@ -113,7 +117,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 			workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(id);
 			workbook.getStudyDetails().setId(id);
 			this.removeAnalysisAndAnalysisSummaryVariables(workbook);
-			final String createdBy = this.fieldbookService.getPersonByUserId(NumberUtils.toInt(workbook.getStudyDetails().getCreatedBy()));
+			final String createdBy = this.userService.getPersonName(NumberUtils.toInt(workbook.getStudyDetails().getCreatedBy()));
 			details = SettingsUtil.convertWorkbookToStudyDetails(workbook, this.fieldbookMiddlewareService, this.fieldbookService,
 					this.userSelection, this.contextUtil.getCurrentProgramUUID(), this.appConstantsProperties, createdBy);
 			this.rearrangeDetails(details);

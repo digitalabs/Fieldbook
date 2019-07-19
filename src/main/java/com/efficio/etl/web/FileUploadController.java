@@ -41,7 +41,6 @@ import com.efficio.etl.web.bean.FileUploadForm;
 import com.efficio.etl.web.bean.UserSelection;
 import com.efficio.etl.web.validators.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.google.common.base.Optional;
 
 /**
@@ -96,9 +95,6 @@ public class FileUploadController extends AbstractBaseETLController {
 	
 	@Resource
 	private StudyPermissionValidator studyPermissionValidator;
-
-	@Resource
-	protected WorkbenchService workbenchService;
 
 	private final Map<String, String> returnMessage = new HashMap<>();
 

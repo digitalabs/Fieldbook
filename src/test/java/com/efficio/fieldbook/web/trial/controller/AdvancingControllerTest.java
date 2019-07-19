@@ -1,7 +1,6 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
@@ -92,9 +91,6 @@ public class AdvancingControllerTest {
 
     @Mock
     private FieldbookProperties fieldbookProperties;
-
-    @Mock
-    private WorkbenchService workbenchService;
 
     @Mock
     private ContextUtil contextUtil;

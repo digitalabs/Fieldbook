@@ -37,6 +37,7 @@ import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.UDTableType;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
@@ -138,8 +139,11 @@ public class CrossingSettingsController extends SettingsController {
 		final List<CrossImportSettings> settings = new ArrayList<>();
 
 		try {
+
+			final int fieldbookToolId = this.workbenchDataManager.getToolWithName(ToolName.FIELDBOOK_WEB.getName()).getToolId().intValue();
+
 			final List<ProgramPreset> presets = this.presetService
-					.getProgramPresetFromProgramAndTool(this.getCurrentProgramID(), this.getFieldbookToolID(),
+					.getProgramPresetFromProgramAndTool(this.getCurrentProgramID(), fieldbookToolId,
 							ToolSection.FBK_CROSS_IMPORT.name());
 
 			for (final ProgramPreset preset : presets) {
@@ -281,8 +285,7 @@ public class CrossingSettingsController extends SettingsController {
 				studyId = this.studySelection.getWorkbook().getStudyDetails().getId();
 			}
 
-			final Integer currentUserId = this.workbenchService
-					.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()), this.contextUtil.getCurrentWorkbenchUserId());
+			final Integer currentUserId = this.contextUtil.getCurrentWorkbenchUserId();
 
 			final FileExportInfo exportInfo =
 					this.crossingTemplateExcelExporter.export(studyId, this.studySelection.getWorkbook().getStudyName(), currentUserId);
@@ -454,7 +457,7 @@ public class CrossingSettingsController extends SettingsController {
 			return resultsMap;
 		}
 
-		final Integer userId = this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()), workbenchUID);
+		final Integer userId = this.contextUtil.getCurrentWorkbenchUserId();
 		this.studySelection.getImportedCrossesList().setUserId(userId);
 		returnVal.put(CrossingSettingsController.IS_SUCCESS, 1);
 		return returnVal;
@@ -539,8 +542,9 @@ public class CrossingSettingsController extends SettingsController {
 
 	protected void saveCrossSetting(final CrossSetting setting, final String programUUID) throws JAXBException {
 
+		final int fieldbookToolId = this.workbenchDataManager.getToolWithName(ToolName.FIELDBOOK_WEB.getName()).getToolId().intValue();
 		final List<ProgramPreset> presets = this.presetService
-				.getProgramPresetFromProgramAndTool(programUUID, this.getFieldbookToolID(), ToolSection.FBK_CROSS_IMPORT.name());
+				.getProgramPresetFromProgramAndTool(programUUID, fieldbookToolId, ToolSection.FBK_CROSS_IMPORT.name());
 
 		boolean found = false;
 		ProgramPreset forSaving = null;
@@ -556,17 +560,13 @@ public class CrossingSettingsController extends SettingsController {
 		if (!found) {
 			forSaving = new ProgramPreset();
 			forSaving.setName(setting.getName());
-			forSaving.setToolId(this.getFieldbookToolID());
+			forSaving.setToolId(this.workbenchDataManager.getToolWithName(ToolName.FIELDBOOK_WEB.getName()).getToolId().intValue());
 			forSaving.setProgramUuid(programUUID);
 			forSaving.setToolSection(ToolSection.FBK_CROSS_IMPORT.name());
 			forSaving.setConfiguration(this.settingsPresetService.convertPresetSettingToXml(setting, CrossSetting.class));
 		}
 
 		this.presetService.saveOrUpdateProgramPreset(forSaving);
-	}
-
-	protected Integer getFieldbookToolID() {
-		return this.workbenchService.getFieldbookWebTool().getToolId().intValue();
 	}
 
 	protected String getCurrentProgramID() {

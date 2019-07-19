@@ -59,7 +59,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -125,9 +124,6 @@ public class GermplasmTreeControllerTest {
 
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
-
-	@Mock
-	private WorkbenchService workbenchService;
 
 	@Mock
 	private ContextUtil contextUtil;

@@ -12,7 +12,6 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -85,10 +84,6 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@Resource
 	private Properties appConstantsProperties;
-
-	/** The workbench service. */
-	@Resource
-	protected WorkbenchService workbenchService;
 
 	@Resource
 	private PaginationListSelection paginationListSelection;

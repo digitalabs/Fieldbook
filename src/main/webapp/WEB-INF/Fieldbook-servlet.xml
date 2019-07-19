@@ -125,8 +125,6 @@
 	<bean id="designRunner" class="${design.runner}" />
 
 	<bean id="designRunnerLicenseUtil" class="${design.runner.license.util}" />
-
-	<bean id="workbenchService" class="com.efficio.fieldbook.service.WorkbenchServiceImpl" />
 	
 	<bean id="fileService" class="org.generationcp.commons.service.impl.FileServiceImpl"
 		init-method="init">

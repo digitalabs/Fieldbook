@@ -6,7 +6,6 @@ import com.efficio.etl.web.bean.FileUploadForm;
 import com.efficio.etl.web.bean.UserSelection;
 import com.efficio.etl.web.validators.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.google.common.base.Optional;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.HTTPSessionUtil;
@@ -85,9 +84,6 @@ public class FileUploadControllerTest {
 	private BindingResult result;
 
 	@Mock
-	protected WorkbenchService workbenchService;
-
-	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
 	@Mock
@@ -149,7 +145,6 @@ public class FileUploadControllerTest {
 				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.any(PhenotypicType.class),
 				Matchers.anyString())).thenReturn(null);
 
-		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt())).thenReturn(USER_ID);
 		Mockito.when(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection)).thenReturn(this.mockFile);
 		Mockito.when(this.dataImportService.strictParseWorkbook(this.mockFile, FileUploadControllerTest.PROGRAM_UUID, USER_ID)).thenReturn(this.workbook);
 		Mockito.when(this.studyPermissionValidator.userLacksPermissionForStudy(Matchers.any(StudyReference.class))).thenReturn(false);

@@ -2,7 +2,6 @@ package com.efficio.fieldbook.web.importdesign.controller;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.SettingsService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
@@ -92,9 +91,6 @@ public class DesignImportControllerTest {
 	private WorkbenchDataManager workbenchDataManager;
 
 	@Mock
-	private WorkbenchService workbenchService;
-
-	@Mock
 	protected FieldbookService fieldbookService;
 
 	@Mock
@@ -143,7 +139,7 @@ public class DesignImportControllerTest {
 		Mockito.when(this.multiPartFile.getOriginalFilename()).thenReturn(DesignImportControllerTest.TEST_IMPORT_FILE_NAME_CSV);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(this.project);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(this.project.getUniqueID());
-		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt())).thenReturn(1);
+		Mockito.when(this.contextUtil.getCurrentWorkbenchUserId()).thenReturn(1);
 		Mockito.when(this.designImportParser.parseFile(DesignImportParser.FILE_TYPE_CSV, this.multiPartFile)).thenReturn(data);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.COOPERATOOR_ID.getId()))
 				.thenReturn(new Term(TermId.COOPERATOOR_ID.getId(), DesignImportControllerTest.COOPERATOR_ID, ""));

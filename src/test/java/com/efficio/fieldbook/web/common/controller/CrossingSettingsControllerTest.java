@@ -38,11 +38,13 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.PresetService;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
 import org.junit.Before;
@@ -58,7 +60,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
@@ -110,28 +111,39 @@ public class CrossingSettingsControllerTest {
 	private ImportedCrossesTestDataInitializer importedCrossesTestDataInitializer;
 	@Mock
 	private CrossExpansionProperties crossExpansionProperties;
-	@Mock
-	private WorkbenchService workbenchService;
+
 	@Mock
 	private PresetService presetService;
+
 	@Mock
 	private UserSelection studySelection;
+
 	@Mock
 	private HttpServletRequest request;
+
 	@Mock
 	private CrossingTemplateExcelExporter crossingTemplateExcelExporter;
+
 	@Mock
 	private MessageSource messageSource;
+
 	@Mock
 	private GermplasmListManager germplasmListManager;
+
 	@Mock
 	private GermplasmDataManager germplasmDataManager;
+
 	@Mock
 	private OntologyDataManager ontologyDataManager;
+
 	@Mock
 	private ContextUtil contextUtil;
+
 	@Mock
 	private CrossingService crossingService;
+
+	@Mock
+	private WorkbenchDataManager workbenchDataManager;
 
 	private CrossesListUtil crossesListUtil;
 
@@ -269,7 +281,7 @@ public class CrossingSettingsControllerTest {
 			final CrossingSettingsController mole = Mockito.spy(this.crossingSettingsController);
 			final CrossSetting sampleSetting = this.constructCrossSetting();
 			Mockito.doReturn(CrossingSettingsControllerTest.TEST_PROGRAM_ID).when(mole).getCurrentProgramID();
-			Mockito.doReturn(CrossingSettingsControllerTest.DUMMY_TOOL_ID).when(mole).getFieldbookToolID();
+			Mockito.doReturn(CrossingSettingsControllerTest.DUMMY_TOOL_ID).when(this.workbenchDataManager).getToolWithName(ToolName.FIELDBOOK_WEB.getName());
 
 			Mockito.doReturn(this.constructDummyPresetList()).when(this.presetService)
 					.getProgramPresetFromProgramAndTool(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt(), ArgumentMatchers.anyString());
@@ -329,7 +341,7 @@ public class CrossingSettingsControllerTest {
 		try {
 			final CrossingSettingsController mole = Mockito.spy(this.crossingSettingsController);
 			Mockito.doReturn(CrossingSettingsControllerTest.TEST_PROGRAM_ID).when(mole).getCurrentProgramID();
-			Mockito.doReturn(CrossingSettingsControllerTest.DUMMY_TOOL_ID).when(mole).getFieldbookToolID();
+			Mockito.doReturn(CrossingSettingsControllerTest.DUMMY_TOOL_ID).when(this.workbenchDataManager).getToolWithName(ToolName.FIELDBOOK_WEB.getName());
 
 			Mockito.doReturn(this.constructDummyPresetList()).when(this.presetService)
 					.getProgramPresetFromProgramAndTool(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt(), ArgumentMatchers.anyString());

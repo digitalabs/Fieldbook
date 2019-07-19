@@ -1,7 +1,6 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.common.service.PRepDesignService;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
@@ -56,9 +55,6 @@ public class PRepDesignServiceImpl implements PRepDesignService {
 
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-
-	@Resource
-	protected WorkbenchService workbenchService;
 
 	@Resource
 	protected FieldbookProperties fieldbookProperties;

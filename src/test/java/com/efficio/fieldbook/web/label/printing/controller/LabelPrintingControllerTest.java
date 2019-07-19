@@ -38,6 +38,7 @@ import org.generationcp.middleware.domain.inventory.GermplasmInventory;
 import org.generationcp.middleware.domain.inventory.ListDataInventory;
 import org.generationcp.middleware.domain.inventory.LotDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
@@ -66,7 +67,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
@@ -98,6 +98,9 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 	
 	@Mock
 	protected ContextUtil contextUtil;
+
+	@Mock
+	protected WorkbenchDataManager workbenchDataManager;
 	
 	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
@@ -112,6 +115,7 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		this.labelPrintingController.setContextUtil(this.contextUtil);
+		this.labelPrintingController.setWorkbenchDataManager(this.workbenchDataManager);
 		Mockito.doReturn(ProjectTestDataInitializer.createProject()).when(this.contextUtil).getProjectInContext();
 	}
 	
@@ -276,12 +280,10 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testGetLabelPrintingCustomReportsIfThereIsStudyId() throws MiddlewareQueryException {
-		final WorkbenchService workbenchService = Mockito.mock(WorkbenchService.class);
 		final Integer studyId = new Integer(3);
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 		userLabelPrinting.setStudyId(studyId);
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
-		this.labelPrintingController.setWorkbenchService(workbenchService);
 		final CrossExpansionProperties crossExpansionProperties = new CrossExpansionProperties();
 		crossExpansionProperties.setProfile("Cimmyt");
 		this.labelPrintingController.setCrossExpansionProperties(crossExpansionProperties);
@@ -290,11 +292,11 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		preset.setConfiguration(
 				"<reports><profile>cimmyt</profile><report><code>WLBL05</code><name>labels without design, wheat</name></report><report><code>WLBL21</code><name>labels with design, wheat</name></report></reports>");
 		standardPresets.add(preset);
-		Mockito.when(workbenchService.getStandardPresetByCrop(Matchers.anyInt(), Matchers.anyString(), Matchers.anyString()))
+		Mockito.when(this.workbenchDataManager.getStandardPresetFromCropAndTool(Matchers.anyString(), Matchers.anyInt(), Matchers.anyString()))
 				.thenReturn(standardPresets);
 		final Tool fbTool = new Tool();
 		fbTool.setToolId(new Long(1));
-		Mockito.when(workbenchService.getFieldbookWebTool()).thenReturn(fbTool);
+		Mockito.when(this.workbenchDataManager.getToolWithName(ToolName.FIELDBOOK_WEB.getName())).thenReturn(fbTool);
 		final ContextUtil contextUtil = Mockito.mock(ContextUtil.class);
 		final Project project = new Project();
 		final CropType cropType = new CropType();
@@ -308,12 +310,10 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testGetLabelPrintingCustomReportsIfThereIsNoStudyId() throws MiddlewareQueryException {
-		final WorkbenchService workbenchService = Mockito.mock(WorkbenchService.class);
 		final Integer studyId = null;
 		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 		userLabelPrinting.setStudyId(studyId);
 		this.labelPrintingController.setUserLabelPrinting(userLabelPrinting);
-		this.labelPrintingController.setWorkbenchService(workbenchService);
 		final List<CustomReportType> presets = this.labelPrintingController.getLabelPrintingCustomReports();
 
 		Assert.assertEquals("Should return no preset since there is not study", 0, presets.size());

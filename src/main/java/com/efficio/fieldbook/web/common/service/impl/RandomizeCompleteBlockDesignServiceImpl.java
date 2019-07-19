@@ -1,7 +1,6 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
@@ -52,18 +51,22 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-	@Resource
-	protected WorkbenchService workbenchService;
+
 	@Resource
 	protected FieldbookProperties fieldbookProperties;
+
 	@Resource
 	private ResourceBundleMessageSource messageSource;
+
 	@Resource
 	public FieldbookService fieldbookService;
+
 	@Resource
 	private UserSelection userSelection;
+
 	@Resource
 	private ContextUtil contextUtil;
+
 	@Resource
 	public ExperimentDesignGenerator experimentDesignGenerator;
 

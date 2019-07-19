@@ -5,7 +5,6 @@ import com.efficio.etl.web.bean.FileUploadForm;
 import com.efficio.etl.web.bean.UserSelection;
 import com.efficio.etl.web.controller.angular.AngularOpenSheetController;
 import com.efficio.etl.web.validators.FileUploadFormValidator;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.Constants;
@@ -52,9 +51,6 @@ public class ImportObservationsController extends AbstractBaseETLController {
 	private DataImportService dataImportService;
 
 	private boolean hasErrors;
-
-	@Resource
-	protected WorkbenchService workbenchService;
 
 	@Override
 	public String getContentName() {

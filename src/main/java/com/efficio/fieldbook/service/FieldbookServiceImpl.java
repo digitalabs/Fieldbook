@@ -12,7 +12,6 @@
 package com.efficio.fieldbook.service;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.DesignRunner;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
@@ -1182,10 +1181,9 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public BVDesignOutput runBVDesign(
-		final WorkbenchService workbenchService,
 		final FieldbookProperties fieldbookProperties, final MainDesign design) throws IOException {
 
-		return this.designRunner.runBVDesign(workbenchService, fieldbookProperties, design);
+		return this.designRunner.runBVDesign(fieldbookProperties, design);
 
 	}
 

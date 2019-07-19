@@ -1,7 +1,6 @@
 package com.efficio.fieldbook.service.internal.impl;
 
 import au.com.bytecode.opencsv.CSVReader;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.DesignRunner;
 import com.efficio.fieldbook.service.internal.ProcessRunner;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
@@ -37,7 +36,7 @@ public class BVDesignRunner implements DesignRunner {
 	private static long bvDesignRunnerTimeout;
 
 	@Override
-	public BVDesignOutput runBVDesign(final WorkbenchService workbenchService, final FieldbookProperties fieldbookProperties,
+	public BVDesignOutput runBVDesign(final FieldbookProperties fieldbookProperties,
 			final MainDesign design) throws IOException {
 
 		final String bvDesignPath = fieldbookProperties.getBvDesignPath();

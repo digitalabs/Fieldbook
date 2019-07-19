@@ -1,7 +1,6 @@
 package com.efficio.fieldbook.web.experimentdesign;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignTrialInstance;
@@ -82,9 +81,6 @@ public class ExperimentDesignGenerator {
 	private static final Logger LOG = LoggerFactory.getLogger(ExperimentDesignGenerator.class);
 	private static final List<Integer> EXP_DESIGN_VARIABLE_IDS =
 		Arrays.asList(TermId.PLOT_NO.getId(), TermId.REP_NO.getId(), TermId.BLOCK_NO.getId(), TermId.ROW.getId(), TermId.COL.getId());
-
-	@Resource
-	private WorkbenchService workbenchService;
 
 	@Resource
 	private FieldbookProperties fieldbookProperties;
@@ -303,7 +299,7 @@ public class ExperimentDesignGenerator {
 			.add(this.createExpDesignParameter(NUMBER_TRIALS_PARAM, String.valueOf(noOfEnvironmentsToAdd), null));
 		BVDesignOutput bvOutput = null;
 		try {
-			bvOutput = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+			bvOutput = this.fieldbookService.runBVDesign(this.fieldbookProperties, mainDesign);
 		} catch (final Exception e) {
 			ExperimentDesignGenerator.LOG.error(e.getMessage(), e);
 			throw new BVDesignException("experiment.design.bv.exe.error.generate.generic.error");

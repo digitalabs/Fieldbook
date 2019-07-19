@@ -7,7 +7,6 @@ import com.efficio.etl.web.bean.UserSelection;
 import com.efficio.etl.web.bean.VariableDTO;
 import com.efficio.etl.web.validators.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.WorkbenchAppPathResolver;
@@ -78,9 +77,6 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 	public UserSelection getUserSelection() {
 		return this.userSelection;
 	}
-
-	@Resource
-	protected WorkbenchService workbenchService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(final Model model, final HttpServletRequest request) {

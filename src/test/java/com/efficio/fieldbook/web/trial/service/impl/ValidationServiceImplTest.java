@@ -24,13 +24,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ValidationServiceImplTest {
-
-	@Mock
-	private WorkbenchService workbenchService;
 
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;

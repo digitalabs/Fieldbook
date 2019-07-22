@@ -36,7 +36,6 @@ import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.user.UserDto;
 import org.generationcp.middleware.service.api.user.UserService;
@@ -163,7 +162,7 @@ public class ValidationServiceImpl implements ValidationService {
 						&& !"".equalsIgnoreCase(var.getValue())) {
 						warningMessage = this.validateBreedingMethodCode(var);
 					} else if (var.getTermId() == TermId.PI_ID.getId() && var.getValue() != null && !"".equalsIgnoreCase(var.getValue())) {
-						warningMessage = this.validatePersonId(var);
+						warningMessage = this.validateUserId(var);
 					} else if (!this.isValidValue(var, var.getValue(), "", true)) {
 						var.setOperation(null);
 						var.setValue(null);
@@ -212,10 +211,10 @@ public class ValidationServiceImpl implements ValidationService {
 		return warningMessage;
 	}
 
-	String validatePersonId(final MeasurementVariable var) {
+	String validateUserId(final MeasurementVariable var) {
 		String warningMessage = "";
 		if (NumberUtils.isNumber(var.getValue())) {
-			final List<UserDto> workbenchUsers = this.userService.getUsersByPersonIds(Arrays.asList(Integer.valueOf(var.getValue())));
+			final List<UserDto> workbenchUsers = this.userService.getUsersByIds(Arrays.asList(Integer.valueOf(var.getValue())));
 			if (workbenchUsers.isEmpty()) {
 				warningMessage = this.setWarningMessage(var.getName());
 			}

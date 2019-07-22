@@ -23,6 +23,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.Name;
+import org.generationcp.middleware.service.api.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -73,6 +74,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	@Resource
 	private CrossingService crossingService;
 
+	@Resource
+	private UserService userService;
+
 	public CrossingTemplateParser() {
 
 	}
@@ -85,7 +89,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		try {
 
 			final CrossesListDescriptionSheetParser<ImportedCrossesList> crossesListDescriptionSheetParser =
-					new CrossesListDescriptionSheetParser<>(new ImportedCrossesList());
+					new CrossesListDescriptionSheetParser<>(new ImportedCrossesList(), userService);
 
 			this.importedCrossesList = crossesListDescriptionSheetParser.parseWorkbook(this.workbook, additionalParams);
 

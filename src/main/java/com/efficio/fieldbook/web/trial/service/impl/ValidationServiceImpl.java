@@ -11,6 +11,7 @@
 
 package com.efficio.fieldbook.web.trial.service.impl;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -35,7 +36,10 @@ import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.user.UserDto;
+import org.generationcp.middleware.service.api.user.UserService;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -60,6 +64,9 @@ public class ValidationServiceImpl implements ValidationService {
 
 	@Resource
 	private WorkbenchDataManager workbenchDataManager;
+
+	@Resource
+	private UserService userService;
 
 	@Resource
 	private ContextUtil contextUtil;
@@ -209,10 +216,8 @@ public class ValidationServiceImpl implements ValidationService {
 	String validatePersonId(final MeasurementVariable var) {
 		String warningMessage = "";
 		if (NumberUtils.isNumber(var.getValue())) {
-			final Integer workbenchUserId =
-					this.workbenchDataManager.getWorkbenchUserIdByIBDBUserIdAndProjectId(Integer.parseInt(var.getValue()), this.contextUtil
-							.getProjectInContext().getProjectId());
-			if (workbenchUserId == null) {
+			final List<UserDto> workbenchUsers = this.userService.getUsersByPersonIds(Arrays.asList(Integer.valueOf(var.getValue())));
+			if (workbenchUsers.isEmpty()) {
 				warningMessage = this.setWarningMessage(var.getName());
 			}
 		} else {

@@ -89,7 +89,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		try {
 
 			final CrossesListDescriptionSheetParser<ImportedCrossesList> crossesListDescriptionSheetParser =
-					new CrossesListDescriptionSheetParser<>(new ImportedCrossesList(), userService);
+					new CrossesListDescriptionSheetParser<>(new ImportedCrossesList(), this.userService);
 
 			this.importedCrossesList = crossesListDescriptionSheetParser.parseWorkbook(this.workbook, additionalParams);
 

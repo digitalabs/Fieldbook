@@ -44,6 +44,7 @@ import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
+import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
@@ -81,7 +82,7 @@ public class CrossingSettingsControllerTest {
 	public static final Integer TEST_PROGRAM_PRESET_ID = 1;
 	public static final String TEST_PROGRAM_ID = "2";
 	public static final int DUMMY_STUDY_ID = 2;
-	public static final int DUMMY_TOOL_ID = 2;
+	public static final long DUMMY_TOOL_ID = 2;
 	public static final int NUMBER_OF_MONTHS = 12;
 	public static final String DUMMY_ABS_PATH = "dummy/abs/path";
 	public static final String TEST_ENTRY_CODE = "testEntryCode";
@@ -249,10 +250,12 @@ public class CrossingSettingsControllerTest {
 	@Test
 	public void testSaveAndSubmitCrossSettingNewSetting() {
 		try {
+			final Tool fieldbookTool = new Tool();
+			fieldbookTool.setToolId(CrossingSettingsControllerTest.DUMMY_TOOL_ID);
 			final CrossingSettingsController mole = Mockito.spy(this.crossingSettingsController);
 			final CrossSetting sampleSetting = this.constructCrossSetting();
 			Mockito.doReturn(CrossingSettingsControllerTest.TEST_PROGRAM_ID).when(mole).getCurrentProgramID();
-			Mockito.doReturn(CrossingSettingsControllerTest.DUMMY_TOOL_ID).when(mole).getFieldbookToolID();
+			Mockito.doReturn(fieldbookTool).when(this.workbenchDataManager).getToolWithName(ToolName.FIELDBOOK_WEB.getName());
 
 			Mockito.doReturn(new ArrayList<ProgramPreset>()).when(this.presetService)
 					.getProgramPresetFromProgramAndTool(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt(), ArgumentMatchers.anyString());
@@ -278,10 +281,12 @@ public class CrossingSettingsControllerTest {
 	@Test
 	public void testSaveAndSubmitCrossSettingPreviousSetting() {
 		try {
+			final Tool fieldbookTool = new Tool();
+			fieldbookTool.setToolId(CrossingSettingsControllerTest.DUMMY_TOOL_ID);
 			final CrossingSettingsController mole = Mockito.spy(this.crossingSettingsController);
 			final CrossSetting sampleSetting = this.constructCrossSetting();
 			Mockito.doReturn(CrossingSettingsControllerTest.TEST_PROGRAM_ID).when(mole).getCurrentProgramID();
-			Mockito.doReturn(CrossingSettingsControllerTest.DUMMY_TOOL_ID).when(this.workbenchDataManager).getToolWithName(ToolName.FIELDBOOK_WEB.getName());
+			Mockito.doReturn(fieldbookTool).when(this.workbenchDataManager).getToolWithName(ToolName.FIELDBOOK_WEB.getName());
 
 			Mockito.doReturn(this.constructDummyPresetList()).when(this.presetService)
 					.getProgramPresetFromProgramAndTool(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt(), ArgumentMatchers.anyString());
@@ -339,9 +344,11 @@ public class CrossingSettingsControllerTest {
 	@Test
 	public void testRetrieveImportSettings() {
 		try {
+			final Tool fieldbookTool = new Tool();
+			fieldbookTool.setToolId(CrossingSettingsControllerTest.DUMMY_TOOL_ID);
 			final CrossingSettingsController mole = Mockito.spy(this.crossingSettingsController);
 			Mockito.doReturn(CrossingSettingsControllerTest.TEST_PROGRAM_ID).when(mole).getCurrentProgramID();
-			Mockito.doReturn(CrossingSettingsControllerTest.DUMMY_TOOL_ID).when(this.workbenchDataManager).getToolWithName(ToolName.FIELDBOOK_WEB.getName());
+			Mockito.doReturn(fieldbookTool).when(this.workbenchDataManager).getToolWithName(ToolName.FIELDBOOK_WEB.getName());
 
 			Mockito.doReturn(this.constructDummyPresetList()).when(this.presetService)
 					.getProgramPresetFromProgramAndTool(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt(), ArgumentMatchers.anyString());

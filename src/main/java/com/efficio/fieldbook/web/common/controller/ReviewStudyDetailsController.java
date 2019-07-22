@@ -205,6 +205,10 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		this.fieldbookService = fieldbookService;
 	}
 
+	protected void setUserService(final UserService userService) {
+		this.userService = userService;
+	}
+
 
 	public UserSelection getUserSelection() {
 		return this.userSelection;

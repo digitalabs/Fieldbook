@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.web.common.controller.CrossingSettingsControllerTest;
 import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
@@ -117,6 +118,11 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		this.labelPrintingController.setContextUtil(this.contextUtil);
 		this.labelPrintingController.setWorkbenchDataManager(this.workbenchDataManager);
 		Mockito.doReturn(ProjectTestDataInitializer.createProject()).when(this.contextUtil).getProjectInContext();
+
+		final Tool fieldbookTool = new Tool();
+		fieldbookTool.setToolId(1l);
+		Mockito.when(this.workbenchDataManager.getToolWithName(ToolName.FIELDBOOK_WEB.getName())).thenReturn(fieldbookTool);
+
 	}
 	
 	@Test

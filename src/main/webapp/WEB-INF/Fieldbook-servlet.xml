@@ -291,6 +291,11 @@
 		<constructor-arg ref="workbenchHibernateSessionProvider" />
 	</bean>
 
+	<bean id="userService"
+			  class="org.generationcp.middleware.service.impl.user.UserServiceImpl">
+		<constructor-arg ref="workbenchHibernateSessionProvider" />
+	</bean>
+
 	<bean id="presetService" factory-bean="managerFactory"
 		  factory-method="getPresetService" scope="request">
 		<aop:scoped-proxy />
@@ -385,11 +390,6 @@
 	</bean>
 
 	<bean id="settingsService" class="com.efficio.fieldbook.service.SettingsServiceImpl" />
-
-	<bean id="userDataManager" factory-bean="managerFactory"
-		factory-method="getUserDataManager" scope="request">
-		<aop:scoped-proxy />
-	</bean>
 
 	<bean id="listDataProjectSaver" factory-bean="managerFactory"
 		  factory-method="getListDataProjectSaver" scope="request">

@@ -33,13 +33,12 @@ import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
-import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.user.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,6 +93,9 @@ public class FieldbookServiceTest {
 
 	@Mock
 	private OntologyVariableDataManager ontologyVariableDataManager;
+
+	@Mock
+	private UserService userService;
 
 	@InjectMocks
 	private FieldbookServiceImpl fieldbookServiceImpl;
@@ -560,64 +562,6 @@ public class FieldbookServiceTest {
 	}
 
 	@Test
-	public void testGetPersonByUserId_WhenUserIsNull() throws MiddlewareQueryException {
-
-		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
-		final UserDataManager userDataManager = Mockito.mock(UserDataManager.class);
-		fieldbookService.setUserDataManager(userDataManager);
-
-		final int userId = 1;
-
-		Mockito.doReturn(null).when(userDataManager).getUserById(userId);
-
-		final String actualValue = fieldbookService.getPersonByUserId(userId);
-		Assert.assertEquals("Expecting the returned value \"\" but returned " + actualValue, "", actualValue);
-	}
-
-	@Test
-	public void testGetPersonByUserId_WhenPersonIsNull() throws MiddlewareQueryException {
-
-		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
-		final UserDataManager userDataManager = Mockito.mock(UserDataManager.class);
-		fieldbookService.setUserDataManager(userDataManager);
-
-		final int userId = 1;
-		final int personId = 1;
-		final User user = new User();
-		user.setPersonid(personId);
-
-		Mockito.doReturn(user).when(userDataManager).getUserById(userId);
-		Mockito.doReturn(null).when(userDataManager).getPersonById(personId);
-
-		final String actualValue = fieldbookService.getPersonByUserId(userId);
-		Assert.assertEquals("Expecting the returned value \"\" but returned " + actualValue, "", actualValue);
-	}
-
-	@Test
-	public void testGetPersonByUserId_WhenPersonIsNotNull() throws MiddlewareQueryException {
-		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
-		final UserDataManager userDataManager = Mockito.mock(UserDataManager.class);
-		fieldbookService.setUserDataManager(userDataManager);
-
-		final int userId = 1;
-		final int personId = 1;
-		final User user = new User();
-		user.setPersonid(personId);
-		final Person person = new Person();
-		person.setFirstName("FirstName");
-		person.setMiddleName("MiddleName");
-		person.setLastName("LastName");
-
-		Mockito.doReturn(user).when(userDataManager).getUserById(userId);
-		Mockito.doReturn(person).when(userDataManager).getPersonById(personId);
-
-		final String actualValue = fieldbookService.getPersonByUserId(userId);
-
-		final String expected = person.getDisplayName();
-		Assert.assertEquals("Expecting to return " + expected + " but returned " + actualValue, expected, actualValue);
-	}
-
-	@Test
 	public void testGetBreedingMethodByCode() throws MiddlewareQueryException {
 		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
 		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
@@ -659,38 +603,6 @@ public class FieldbookServiceTest {
 		method.setMcode("AGB1");
 		method.setUniqueID(uniqueID);
 		return method;
-	}
-
-	@Test
-	public void testGetPersonNameByPersonId() throws MiddlewareQueryException {
-		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
-		final UserDataManager userDataManager = Mockito.mock(UserDataManager.class);
-		fieldbookService.setUserDataManager(userDataManager);
-
-		final int personId = 1;
-		final Person person = new Person();
-		person.setFirstName("FirstName");
-		person.setMiddleName("MiddleName");
-		person.setLastName("LastName");
-
-		Mockito.doReturn(person).when(userDataManager).getPersonById(personId);
-
-		final String personName = fieldbookService.getPersonNameByPersonId(personId);
-		Assert.assertEquals(person.getDisplayName(), personName);
-	}
-
-	@Test
-	public void testGetPersonNameByPersonId_PersonNotFound() throws MiddlewareQueryException {
-		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
-		final UserDataManager userDataManager = Mockito.mock(UserDataManager.class);
-		fieldbookService.setUserDataManager(userDataManager);
-
-		final int personId = 100;
-		final String expectedName = "";
-		Mockito.doReturn(null).when(userDataManager).getPersonById(personId);
-
-		final String personName = fieldbookService.getPersonNameByPersonId(personId);
-		Assert.assertEquals(expectedName, personName);
 	}
 
 	@Test

@@ -1312,6 +1312,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 		this.ontologyService = ontologyService;
 	}
 
+	protected void setUserService(final UserService userService) {
+		this.userService = userService;
+	}
+
 	@Override
 	public StandardVariable getStandardVariable(final Integer termId) {
 		return this.getOntologyService().getStandardVariable(termId, this.contextUtil.getCurrentProgramUUID());

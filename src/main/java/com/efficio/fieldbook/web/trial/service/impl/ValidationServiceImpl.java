@@ -84,7 +84,8 @@ public class ValidationServiceImpl implements ValidationService {
 			return this.validateIfValueIsMissingOrNumber(value.trim());
 		} else if (validateDateForDB && var != null && var.getDataTypeId() != null && var.getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
 			return DateUtil.isValidDate(value);
-		} else if (StringUtils.isNotBlank(var.getDataType()) && var.getDataType().equalsIgnoreCase(ValidationServiceImpl.DATA_TYPE_NUMERIC)) {
+		} else if (StringUtils.isNotBlank(var.getDataType()) && var.getDataType()
+			.equalsIgnoreCase(ValidationServiceImpl.DATA_TYPE_NUMERIC)) {
 			return this.validateIfValueIsMissingOrNumber(value.trim());
 		}
 		return true;
@@ -119,9 +120,7 @@ public class ValidationServiceImpl implements ValidationService {
 				}
 			}
 			return withinValidRange;
-		}
-		
-		else if (var.getScale().getDataType() == DataType.DATE_TIME_VARIABLE) {
+		} else if (var.getScale().getDataType() == DataType.DATE_TIME_VARIABLE) {
 			return new DateValidator().isValid(value, "yyyyMMdd");
 		}
 
@@ -145,7 +144,7 @@ public class ValidationServiceImpl implements ValidationService {
 					final MeasurementVariable variate = data.getMeasurementVariable();
 					if (!this.isValidValue(variate, data.getValue(), data.getcValueId(), true)) {
 						throw new WorkbookParserException(this.messageSource.getMessage(ValidationServiceImpl.ERROR_NUMERIC_VARIABLE_VALUE,
-								new Object[] {variate.getName(), data.getValue()}, locale));
+							new Object[] {variate.getName(), data.getValue()}, locale));
 
 					}
 				}
@@ -161,7 +160,7 @@ public class ValidationServiceImpl implements ValidationService {
 			for (final MeasurementVariable var : workbook.getConditions()) {
 				if (WorkbookUtil.isConditionValidate(var.getTermId())) {
 					if (var.getTermId() == TermId.BREEDING_METHOD_CODE.getId() && var.getValue() != null
-							&& !"".equalsIgnoreCase(var.getValue())) {
+						&& !"".equalsIgnoreCase(var.getValue())) {
 						warningMessage = this.validateBreedingMethodCode(var);
 					} else if (var.getTermId() == TermId.PI_ID.getId() && var.getValue() != null && !"".equalsIgnoreCase(var.getValue())) {
 						warningMessage = this.validatePersonId(var);
@@ -234,7 +233,7 @@ public class ValidationServiceImpl implements ValidationService {
 				final MeasurementVariable variate = data.getMeasurementVariable();
 				if (!this.isValidValue(variate, data.getValue(), data.getcValueId(), false)) {
 					throw new MiddlewareQueryException(this.messageSource.getMessage(ValidationServiceImpl.ERROR_INVALID_CELL,
-							new Object[] {variate.getName(), data.getValue()}, locale));
+						new Object[] {variate.getName(), data.getValue()}, locale));
 				}
 			}
 		}
@@ -247,7 +246,7 @@ public class ValidationServiceImpl implements ValidationService {
 
 	private String setWarningMessage(final String value) {
 		return "The value for " + value + " in the import file is invalid and will not be imported. "
-				+ "You can change this value by editing it manually, or by uploading a corrected import file.";
+			+ "You can change this value by editing it manually, or by uploading a corrected import file.";
 	}
 
 }

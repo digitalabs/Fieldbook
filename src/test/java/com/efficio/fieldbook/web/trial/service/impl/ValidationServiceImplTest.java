@@ -14,6 +14,8 @@ import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.user.UserDto;
+import org.generationcp.middleware.service.api.user.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +26,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ValidationServiceImplTest {
@@ -33,6 +37,9 @@ public class ValidationServiceImplTest {
 
 	@Mock
 	private ContextUtil contextUtil;
+
+	@Mock
+	private UserService userService;
 	
 	@Mock
 	private WorkbenchDataManager workbenchDataManager;
@@ -52,8 +59,6 @@ public class ValidationServiceImplTest {
 	@Before
 	public void setUp() {
 		final Project project = Mockito.mock(Project.class);
-		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
-		Mockito.when(project.getProjectId()).thenReturn((long) 1);
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook();
 		this.workbook.setConditions(MeasurementVariableTestDataInitializer.createMeasurementVariableList());
 		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Matchers.eq(false)))
@@ -156,7 +161,7 @@ public class ValidationServiceImplTest {
 
 	@Test
 	public void testValidatePersonIdIfPIIdHasInvalidValue() {
-		Mockito.doReturn(null).when(this.workbenchDataManager).getWorkbenchUserIdByIBDBUserIdAndProjectId(Matchers.anyInt(), Matchers.anyLong());
+		Mockito.doReturn(new ArrayList<>()).when(this.userService).getUsersByPersonIds(Mockito.<Integer>anyList());
 		final String warningMessage =
 				this.validationService.validatePersonId(MeasurementVariableTestDataInitializer.createMeasurementVariable());
 		Assert.assertTrue("There should be a warning message", ValidationServiceImplTest.WARNING_MESSAGE.equals(warningMessage));
@@ -164,7 +169,9 @@ public class ValidationServiceImplTest {
 
 	@Test
 	public void testValidatePersonIdIfPIIdHasValidValue() {
-		Mockito.doReturn(Integer.valueOf(1)).when(this.workbenchDataManager).getWorkbenchUserIdByIBDBUserIdAndProjectId(Matchers.anyInt(), Matchers.anyLong());
+		final List<UserDto> users = new ArrayList<>();
+		users.add(new UserDto());
+		Mockito.doReturn(users).when(this.userService).getUsersByPersonIds(Mockito.<Integer>anyList());
 		final String warningMessage =
 				this.validationService.validatePersonId(MeasurementVariableTestDataInitializer.createMeasurementVariable());
 		Assert.assertTrue("There should be no warning message", ValidationServiceImplTest.EMPTY_STRING.equals(warningMessage));

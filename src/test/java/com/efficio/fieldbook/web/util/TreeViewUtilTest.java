@@ -12,7 +12,6 @@ import org.generationcp.middleware.domain.dms.StudyReference;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.junit.Assert;
@@ -46,24 +45,17 @@ public class TreeViewUtilTest {
 	
 	// Study Tree test data
 	private static final FolderReference FOLDER = new FolderReference(1, "Folder 1", "Folder 1 Description", PROGRAM_UUID);
-	private static final StudyReference TRIAL = new StudyReference(100, "F1 Trial", "Trial Description", PROGRAM_UUID, StudyTypeDto.getTrialDto(), true, 101, "Owner 1");
-	private static final StudyReference NURSERY = new StudyReference(101, "F2 Nusery", "Nursery Description", PROGRAM_UUID, StudyTypeDto.getNurseryDto(), false, 102, "Owner 2");
+	private static final StudyReference TRIAL = new StudyReference(100, "F1 Trial", "Trial Description", PROGRAM_UUID, StudyTypeDto.getTrialDto(), true, 101);
+	private static final StudyReference NURSERY = new StudyReference(101, "F2 Nusery", "Nursery Description", PROGRAM_UUID, StudyTypeDto.getNurseryDto(), false, 102);
 	private static final List<Reference> STUDY_REFERENCES = Arrays.asList(FOLDER, TRIAL, NURSERY);
 	
 	private static GermplasmListManager germplasmListManager;
 	private static GermplasmDataManager germplasmDataManager;
-	private static UserDataManager userDataManager;
 	private static List<UserDefinedField> userDefinedFields;
 
 	@BeforeClass
 	public static void setupClass() {
 		TreeViewUtilTest.mockGermplasmListManagerAndSomeOfItsMethods();
-		TreeViewUtilTest.mockUserDataManagerAndSomeOfItsMethods();
-	}
-
-	private static void mockUserDataManagerAndSomeOfItsMethods() {
-		TreeViewUtilTest.userDataManager = Mockito.mock(UserDataManager.class);
-		Mockito.when(TreeViewUtilTest.userDataManager.getUserById(TreeViewUtilTest.LIST_USER_ID)).thenReturn(null);
 	}
 
 	private static void mockGermplasmListManagerAndSomeOfItsMethods() {

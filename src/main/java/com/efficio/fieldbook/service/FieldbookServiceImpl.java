@@ -55,7 +55,6 @@ import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataMana
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
-import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.slf4j.Logger;
@@ -343,8 +342,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 					this.possibleValuesCache.addLocations(filtered, possibleValues);
 					break;
 				case PERSON:
-					possibleValues = this.convertUsersToValueReferences(
-						this.userService.getAllUsers());
+					possibleValues = this.convertPersonsToValueReferences(
+						this.userService.getAllPersons());
 					this.possibleValuesCache.addPossibleValuesByDataType(DataType.PERSON, possibleValues);
 					break;
 				case CATEGORICAL_VARIABLE:
@@ -520,12 +519,13 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return list;
 	}
 
-	private List<ValueReference> convertUsersToValueReferences(final List<WorkbenchUser> users) {
+	private List<ValueReference> convertPersonsToValueReferences(final List<Person> persons) {
 		final List<ValueReference> list = new ArrayList<>();
-		if (users != null && !users.isEmpty()) {
-			for (final WorkbenchUser user : users) {
-				final String displayName = user.getPerson().getDisplayName();
-				list.add(new ValueReference(user.getUserid(), displayName, displayName));
+		if (persons != null && !persons.isEmpty()) {
+			for (final Person person : persons) {
+				if (person != null) {
+					list.add(new ValueReference(person.getId(), person.getDisplayName(), person.getDisplayName()));
+				}
 			}
 		}
 		return list;

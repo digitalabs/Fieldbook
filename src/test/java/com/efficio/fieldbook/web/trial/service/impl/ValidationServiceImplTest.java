@@ -160,20 +160,20 @@ public class ValidationServiceImplTest {
 	}
 
 	@Test
-	public void testValidateUserIdIfPIIdHasInvalidValue() {
-		Mockito.doReturn(new ArrayList<>()).when(this.userService).getUsersByIds(Mockito.<Integer>anyList());
+	public void testValidatePersonIdIfPIIdHasInvalidValue() {
+		Mockito.doReturn(new ArrayList<>()).when(this.userService).getUsersByPersonIds(Mockito.<Integer>anyList());
 		final String warningMessage =
-				this.validationService.validateUserId(MeasurementVariableTestDataInitializer.createMeasurementVariable());
+				this.validationService.validatePersonId(MeasurementVariableTestDataInitializer.createMeasurementVariable());
 		Assert.assertTrue("There should be a warning message", ValidationServiceImplTest.WARNING_MESSAGE.equals(warningMessage));
 	}
 
 	@Test
-	public void testValidateUserIdIfPIIdHasValidValue() {
+	public void testValidatePersonIdIfPIIdHasValidValue() {
 		final List<UserDto> users = new ArrayList<>();
 		users.add(new UserDto());
-		Mockito.doReturn(users).when(this.userService).getUsersByIds(Mockito.<Integer>anyList());
+		Mockito.doReturn(users).when(this.userService).getUsersByPersonIds(Mockito.<Integer>anyList());
 		final String warningMessage =
-				this.validationService.validateUserId(MeasurementVariableTestDataInitializer.createMeasurementVariable());
+				this.validationService.validatePersonId(MeasurementVariableTestDataInitializer.createMeasurementVariable());
 		Assert.assertTrue("There should be no warning message", ValidationServiceImplTest.EMPTY_STRING.equals(warningMessage));
 	}
 

@@ -383,7 +383,7 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 			final Sheet sheet1 = wb.getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
 			if (AngularSelectSheetController.DESCRIPTION.equalsIgnoreCase(sheet1.getSheetName())) {
 				final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
-					.parseWorkbookDescriptionSheet(wb, this.contextUtil.getCurrentIbdbUserId());
+					.parseWorkbookDescriptionSheet(wb, this.contextUtil.getCurrentWorkbenchUserId());
 
 				final List<String> variablesWithWrongPSM = new ArrayList<>();
 				for (final MeasurementVariable measurementVariable : referenceWorkbook.getConditions()) {

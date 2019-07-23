@@ -57,19 +57,19 @@ public class AngularSelectSheetControllerTest {
 
 	@Mock
 	private ETLService etlService;
-	
+
 	@Mock
 	private ContextUtil contextUtil;
-	
+
 	@Mock
 	private StudyPermissionValidator studyPermissionValidator;
-	
+
 	@Mock
 	private Model model;
-	
+
 	@Mock
 	private ConsolidatedStepForm form;
-	
+
 	@Mock
 	private StudyDetailsForm studyDetails;
 
@@ -107,7 +107,7 @@ public class AngularSelectSheetControllerTest {
 		final Sheet descriptionSheet = Mockito.mock(Sheet.class);
 		Mockito.when(this.workbook.getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET)).thenReturn(descriptionSheet);
 		Mockito.when(descriptionSheet.getSheetName()).thenReturn("Description");
-		Mockito.when(this.contextUtil.getCurrentIbdbUserId()).thenReturn(1);
+		Mockito.when(this.contextUtil.getCurrentWorkbenchUserId()).thenReturn(1);
 		final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class);
 		Mockito.when(this.dataImportService
 			.parseWorkbookDescriptionSheet(this.workbook, 1)).thenReturn(referenceWorkbook);
@@ -141,21 +141,21 @@ public class AngularSelectSheetControllerTest {
 		Assert.assertEquals(this.allStudies, studies);
 		Mockito.verify(this.model).addAttribute("restrictedStudies", new ArrayList<String>());
 	}
-	
+
 	@Test
 	public void testGetPreviousStudiesWithRestrictedStudies() {
 		final StudyDetails restrictedStudy1 = this.allStudies.get(0);
 		final StudyDetails restrictedStudy2 = this.allStudies.get(1);
 		Mockito.doReturn(true).when(this.studyPermissionValidator).userLacksPermissionForStudy(new StudyReference(restrictedStudy1.getId(), restrictedStudy1.getStudyName()));
 		Mockito.doReturn(true).when(this.studyPermissionValidator).userLacksPermissionForStudy(new StudyReference(restrictedStudy2.getId(), restrictedStudy2.getStudyName()));
-		
+
 		final List<StudyDetails> studies = this.angularSelectSheetController.getPreviousStudies(this.model);
 		Assert.assertEquals(this.allStudies.size() - 2, studies.size());
 		Assert.assertFalse(studies.contains(restrictedStudy1));
 		Assert.assertFalse(studies.contains(restrictedStudy2));
 		Mockito.verify(this.model).addAttribute("restrictedStudies", Arrays.asList(restrictedStudy1.getStudyName(), restrictedStudy2.getStudyName()));
 	}
-	
+
 	@Test
 	public void testValidateFormInputWhenStartDateIsEmpty() {
 		Mockito.doReturn("").when(this.studyDetails).getStartDate();
@@ -164,7 +164,7 @@ public class AngularSelectSheetControllerTest {
 		Assert.assertFalse(messages.isEmpty());
 		Assert.assertEquals("error.date.startdate.required", messages.get(0).getMessageKey());
 	}
-	
+
 	@Test
 	public void testValidateFormInputWhenStartDateAfterCurrentDate() {
 		Mockito.doReturn("01/01/2500").when(this.studyDetails).getStartDate();
@@ -172,7 +172,7 @@ public class AngularSelectSheetControllerTest {
 		Assert.assertFalse(messages.isEmpty());
 		Assert.assertEquals("error.start.is.after.current.date", messages.get(0).getMessageKey());
 	}
-	
+
 	@Test
 	public void testValidateFormInputWhenEndDateBeforeStartDate() {
 		Mockito.doReturn("01/01/2018").when(this.studyDetails).getStartDate();
@@ -181,7 +181,7 @@ public class AngularSelectSheetControllerTest {
 		Assert.assertFalse(messages.isEmpty());
 		Assert.assertEquals("error.date.enddate.invalid", messages.get(0).getMessageKey());
 	}
-	
+
 	@Test
 	public void testValidateFormInputSuccessful() {
 		Mockito.doReturn("01/01/2017").when(this.studyDetails).getStartDate();
@@ -215,9 +215,9 @@ public class AngularSelectSheetControllerTest {
 		Mockito.verify(this.etlService).retrieveCurrentWorkbook(this.userSelection);
 		Mockito.verify(this.workbook).getNumberOfSheets();
 		Mockito.verify(this.workbook).getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
-		Mockito.verify(this.contextUtil).getCurrentIbdbUserId();
+		Mockito.verify(this.contextUtil).getCurrentWorkbenchUserId();
 		Mockito.verify(this.dataImportService)
-			.parseWorkbookDescriptionSheet(this.workbook, this.contextUtil.getCurrentIbdbUserId());
+			.parseWorkbookDescriptionSheet(this.workbook, this.contextUtil.getCurrentWorkbenchUserId());
 		Mockito.verify(this.ontologyDataManager).findStandardVariablesByNameOrSynonym(TermId.EXPERIMENT_DESIGN_FACTOR.name(),
 			this.contextUtil.getCurrentProgramUUID());
 	}
@@ -236,9 +236,9 @@ public class AngularSelectSheetControllerTest {
 		Mockito.verify(this.etlService).retrieveCurrentWorkbook(this.userSelection);
 		Mockito.verify(this.workbook).getNumberOfSheets();
 		Mockito.verify(this.workbook).getSheetAt(ETLServiceImpl.DESCRIPTION_SHEET);
-		Mockito.verify(this.contextUtil).getCurrentIbdbUserId();
+		Mockito.verify(this.contextUtil).getCurrentWorkbenchUserId();
 		Mockito.verify(this.dataImportService)
-			.parseWorkbookDescriptionSheet(this.workbook, this.contextUtil.getCurrentIbdbUserId());
+			.parseWorkbookDescriptionSheet(this.workbook, this.contextUtil.getCurrentWorkbenchUserId());
 		Mockito.verify(this.ontologyDataManager).findStandardVariablesByNameOrSynonym(TermId.EXPERIMENT_DESIGN_FACTOR.name(),
 			this.contextUtil.getCurrentProgramUUID());
 	}

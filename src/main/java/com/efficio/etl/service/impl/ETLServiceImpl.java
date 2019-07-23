@@ -212,7 +212,7 @@ public class ETLServiceImpl implements ETLService {
 		if (userSelection.getCreatedBy() != null) {
 			studyDetails.setCreatedBy(userSelection.getCreatedBy());
 		} else {
-			studyDetails.setCreatedBy(this.contextUtil.getCurrentIbdbUserId().toString());
+			studyDetails.setCreatedBy(String.valueOf(this.contextUtil.getCurrentWorkbenchUserId()));
 		}
 
 		if (userSelection.getStudyId() != null) {

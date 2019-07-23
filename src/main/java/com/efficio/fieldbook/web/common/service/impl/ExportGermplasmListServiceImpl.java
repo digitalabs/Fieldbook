@@ -121,7 +121,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 		input.setOwnerName(this.fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
 
-		final Integer currentLocalIbdbUserId = this.contextUtil.getCurrentUserLocalId();
+		final Integer currentLocalIbdbUserId = this.contextUtil.getCurrentWorkbenchUserId();
 		input.setCurrentLocalIbdbUserId(currentLocalIbdbUserId);
 		input.setExporterName(this.fieldbookMiddlewareService.getOwnerListName(currentLocalIbdbUserId));
 		input.setVisibleColumnMap(visibleColumns);
@@ -289,7 +289,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 			for (final SettingDetail settingDetail : factorsList) {
 				final Integer termId = settingDetail.getVariable().getCvTermId();
-				row.addColumnValue(termId, 
+				row.addColumnValue(termId,
 						this.getGermplasmInfo(settingDetail.getVariable().getCvTermId().toString(), data, settingDetail));
 			}
 

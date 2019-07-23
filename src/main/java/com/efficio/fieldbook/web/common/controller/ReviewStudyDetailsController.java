@@ -194,7 +194,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@ModelAttribute("currentCropUserId")
 	public Integer getCurrentCropUserId() {
-		return this.contextUtil.getCurrentIbdbUserId();
+		return this.contextUtil.getCurrentWorkbenchUserId();
 	}
 
 	protected void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {

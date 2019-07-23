@@ -70,7 +70,7 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 				return results;
 			}
 
-			this.fieldbookMiddlewareService.deleteStudy(studyId, this.contextUtil.getCurrentUserLocalId());
+			this.fieldbookMiddlewareService.deleteStudy(studyId, this.contextUtil.getCurrentWorkbenchUserId());
 
 			germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
 

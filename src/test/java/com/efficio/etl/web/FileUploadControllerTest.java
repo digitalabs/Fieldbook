@@ -116,7 +116,7 @@ public class FileUploadControllerTest {
 	@Before
 	public void setup() throws WorkbookParserException, IOException {
 		MockitoAnnotations.initMocks(this);
-		
+
 		this.session = new MockHttpSession();
 		this.request = new MockHttpServletRequest();
 		this.response = new MockHttpServletResponse();
@@ -134,8 +134,8 @@ public class FileUploadControllerTest {
 		project.setProjectId(Long.valueOf(1));
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(FileUploadControllerTest.PROGRAM_UUID);
-		Mockito.when(this.contextUtil.getCurrentIbdbUserId()).thenReturn(USER_ID);
-		
+		Mockito.when(this.contextUtil.getCurrentWorkbenchUserId()).thenReturn(USER_ID);
+
 		this.obsUnitIdMeasurementVariable = MeasurementVariableTestDataInitializer
 				.createMeasurementVariable(TermId.OBS_UNIT_ID.getId(), TermId.OBS_UNIT_ID.name(), null);
 		Mockito.when(this.fieldbookService.createMeasurementVariable(String.valueOf(TermId.OBS_UNIT_ID.getId()), "",
@@ -289,12 +289,12 @@ public class FileUploadControllerTest {
 
 		Assert.assertEquals(String.valueOf(TermId.ENTRY_TYPE.getId()), mdata.getValue());
 	}
-	
+
 	@Test
 	public void testValidateAndParseWorkbookForNewStudy() {
 		final HttpServletResponse mockResponse = Mockito.mock(HttpServletResponse.class);
 		Mockito.when(this.studyOptional.isPresent()).thenReturn(false);
-		
+
 		final Map<String, String> returnMessage = this.fileUploadController.validateAndParseWorkbook(this.session, this.request, mockResponse, this.model, this.locale);
 		Mockito.verify(mockResponse).setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 		Mockito.verify(mockResponse).setHeader("Pragma", "no-cache");
@@ -302,12 +302,12 @@ public class FileUploadControllerTest {
 		Assert.assertEquals(FileUploadController.STATUS_CODE_SUCCESSFUL, returnMessage.get(FileUploadController.STATUS_CODE));
 		Assert.assertEquals("", returnMessage.get(FileUploadController.STATUS_MESSAGE));
 	}
-	
+
 	@Test
 	public void testValidateAndParseWorkbookForExistingStudy() {
 		final HttpServletResponse mockResponse = Mockito.mock(HttpServletResponse.class);
 		Mockito.when(this.studyOptional.isPresent()).thenReturn(true);
-		
+
 		final Map<String, String> returnMessage = this.fileUploadController.validateAndParseWorkbook(this.session, this.request, mockResponse, this.model, this.locale);
 		Mockito.verify(mockResponse).setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 		Mockito.verify(mockResponse).setHeader("Pragma", "no-cache");
@@ -315,17 +315,17 @@ public class FileUploadControllerTest {
 		Assert.assertEquals(FileUploadController.STATUS_CODE_SUCCESSFUL, returnMessage.get(FileUploadController.STATUS_CODE));
 		Assert.assertEquals("", returnMessage.get(FileUploadController.STATUS_MESSAGE));
 	}
-	
+
 	@Test
 	public void testValidateAndParseWorkbookForExistingButRestrictedStudy() {
 		final HttpServletResponse mockResponse = Mockito.mock(HttpServletResponse.class);
 		injectMessageSource();
-		
+
 		Mockito.when(this.studyOptional.isPresent()).thenReturn(true);
 		Mockito.when(this.studyPermissionValidator.userLacksPermissionForStudy(Matchers.any(StudyReference.class))).thenReturn(true);
 		final StudyReference study = new StudyReference(1, "Study1");
 		Mockito.when(this.studyOptional.get()).thenReturn(study);
-		
+
 
 		final Map<String, String> returnMessage = this.fileUploadController.validateAndParseWorkbook(this.session, this.request, mockResponse, this.model, locale);
 		Mockito.verify(mockResponse).setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -340,18 +340,18 @@ public class FileUploadControllerTest {
 		bundleMessageSource.setUseCodeAsDefaultMessage(true);
 		ReflectionTestUtils.setField(this.fileUploadController, "messageSource", bundleMessageSource);
 	}
-	
+
 	@Test
 	public void testValidateAndParseWorkbookWithIOException() throws IOException {
 		final String message = "Some IOException message";
 		Mockito.doThrow(new IOException(message)).when(this.etlService).retrieveCurrentWorkbookAsFile(this.userSelection);
-		
+
 		final Map<String, String> returnMessage = this.fileUploadController.validateAndParseWorkbook(this.session, this.request, this.response, this.model, this.locale);
 		Assert.assertEquals(FileUploadController.STATUS_CODE_HAS_ERROR, returnMessage.get(FileUploadController.STATUS_CODE));
 		Assert.assertEquals(message, returnMessage.get(FileUploadController.STATUS_MESSAGE));
 		Assert.assertEquals("IOException", returnMessage.get(FileUploadController.ERROR_TYPE));
 	}
-	
+
 	@Test
 	public void testValidateAndParseWorkbookWithOutOfBoundsData() {
 		Mockito.when(this.workbook.hasOutOfBoundsData()).thenReturn(true);
@@ -359,7 +359,7 @@ public class FileUploadControllerTest {
 		Assert.assertEquals(FileUploadController.STATUS_CODE_HAS_OUT_OF_BOUNDS, returnMessage.get(FileUploadController.STATUS_CODE));
 		Assert.assertEquals("", returnMessage.get(FileUploadController.STATUS_MESSAGE));
 	}
-	
+
 	@Test
 	public void testValidateAndParseWorkbookOverMaxLimit() throws IOException {
 		ResourceBundleMessageSource bundleMessageSource = new ResourceBundleMessageSource();
@@ -373,7 +373,7 @@ public class FileUploadControllerTest {
 				throw new WorkbookParserException(Arrays.asList(new Message(messageKey)));
 			}
 		}).when(this.etlService).retrieveCurrentWorkbookAsFile(this.userSelection);
-		
+
 		final Map<String, String> returnMessage = this.fileUploadController.validateAndParseWorkbook(this.session, this.request, this.response, this.model, this.locale);
 		Assert.assertEquals(FileUploadController.STATUS_CODE_HAS_ERROR, returnMessage.get(FileUploadController.STATUS_CODE));
 		Assert.assertEquals("The system detected format errors in the file:<br/><br/>" + messageKey  + "<br />", returnMessage.get(FileUploadController.STATUS_MESSAGE));

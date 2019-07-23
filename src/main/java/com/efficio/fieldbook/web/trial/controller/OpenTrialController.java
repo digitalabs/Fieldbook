@@ -20,7 +20,6 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.ExperimentDesignType;
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -159,7 +158,7 @@ public class OpenTrialController extends BaseTrialController {
 
 	@ModelAttribute("currentCropUserId")
 	public Integer getCurrentCropUserId() {
-		return this.contextUtil.getCurrentIbdbUserId();
+		return this.contextUtil.getCurrentWorkbenchUserId();
 	}
 
 	@ModelAttribute("maxNumOfSubObsSets")

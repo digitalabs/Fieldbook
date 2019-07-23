@@ -189,7 +189,7 @@ public class ExcelImportStudyServiceImpl extends AbstractExcelImportStudyService
 		final org.apache.poi.ss.usermodel.Workbook excelWorkbook = parser.loadFileToExcelWorkbook(new File(this.currentFile));
 
 		final Workbook descriptionWorkbook =
-			parser.parseFile(excelWorkbook, false, false, this.contextUtil.getCurrentIbdbUserId().toString());
+			parser.parseFile(excelWorkbook, false, false, String.valueOf(this.contextUtil.getCurrentWorkbenchUserId()));
 		final Workbook originalWorkbook = this.workbook;
 
 		final List<MeasurementRow> trialObservations =

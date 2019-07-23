@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.efficio.fieldbook.web.trial.bean.Environment;
@@ -300,7 +299,7 @@ public class CreateTrialController extends BaseTrialController {
 				.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment,
 						this.userSelection.getExpDesignParams());
 		workbook.setTrialObservations(trialEnvironmentValues);
-		data.getBasicDetails().setCreatedBy(this.contextUtil.getCurrentIbdbUserId().toString());
+		data.getBasicDetails().setCreatedBy(String.valueOf(this.contextUtil.getCurrentWorkbenchUserId()));
 		this.createStudyDetails(workbook, data.getBasicDetails());
 
 		this.userSelection.setWorkbook(workbook);
@@ -404,7 +403,7 @@ public class CreateTrialController extends BaseTrialController {
 		final BasicDetails basic = new BasicDetails();
 		basic.setBasicDetails(basicDetails);
 
-		basic.setUserID(this.contextUtil.getCurrentIbdbUserId());
+		basic.setUserID(this.contextUtil.getCurrentWorkbenchUserId());
 		basic.setUserName(this.userService.getPersonName(basic.getUserID()));
 
 		final TabInfo tab = new TabInfo();

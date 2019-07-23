@@ -205,7 +205,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 		final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
 				.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection),
-						this.contextUtil.getCurrentIbdbUserId());
+						this.contextUtil.getCurrentWorkbenchUserId());
 		importData.setConstants(referenceWorkbook.getConstants());
 		importData.setConditions(referenceWorkbook.getConditions());
 
@@ -261,7 +261,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
 					.parseWorkbookDescriptionSheet(this.etlService.retrieveCurrentWorkbook(this.userSelection),
-							this.contextUtil.getCurrentIbdbUserId());
+							this.contextUtil.getCurrentWorkbenchUserId());
 			importData.setConstants(referenceWorkbook.getConstants());
 			importData.setConditions(referenceWorkbook.getConditions());
 

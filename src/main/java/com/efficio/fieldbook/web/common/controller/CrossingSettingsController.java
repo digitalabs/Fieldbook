@@ -457,8 +457,7 @@ public class CrossingSettingsController extends SettingsController {
 			return resultsMap;
 		}
 
-		final Integer userId = this.contextUtil.getCurrentWorkbenchUserId();
-		this.studySelection.getImportedCrossesList().setUserId(userId);
+		this.studySelection.getImportedCrossesList().setUserId(workbenchUID);
 		returnVal.put(CrossingSettingsController.IS_SUCCESS, 1);
 		return returnVal;
 	}

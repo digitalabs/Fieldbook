@@ -343,7 +343,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 					break;
 				case PERSON:
 					possibleValues = this.convertPersonsToValueReferences(
-						this.userService.getAllPersons());
+						this.userService.getPersonsByCrop(this.contextUtil.getProjectInContext().getCropType()));
 					this.possibleValuesCache.addPossibleValuesByDataType(DataType.PERSON, possibleValues);
 					break;
 				case CATEGORICAL_VARIABLE:

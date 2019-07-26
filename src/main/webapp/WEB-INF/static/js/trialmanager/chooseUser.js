@@ -25,14 +25,16 @@
                 showErrorMessage('', $.fieldbookMessages.errorNoProgramMembers);
             });
 
-         $http.post('/Fieldbook/crosses/submitListOwner', $scope.selectedUserId)
-            .then(function(data) {
-                if (data.isSuccess === 0) {
-                    showErrorMessage('', data.error);
-                }
-            }).catch(function(response) {
-                showErrorMessage('', $.fieldbookMessages.errorSubmittingListOwner);
-            });
+		$scope.saveSelectedUser = function() {
+			$http.post('/Fieldbook/crosses/submitListOwner', $scope.selectedUserId)
+				.then(function (data) {
+					if (data.isSuccess === 0) {
+						showErrorMessage('', data.error);
+					}
+				}).catch(function (response) {
+				showErrorMessage('', $.fieldbookMessages.errorSubmittingListOwner);
+			});
+		}
     }]);
 
 })();

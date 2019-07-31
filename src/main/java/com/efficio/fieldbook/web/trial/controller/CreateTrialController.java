@@ -404,7 +404,7 @@ public class CreateTrialController extends BaseTrialController {
 		basic.setBasicDetails(basicDetails);
 
 		basic.setUserID(this.contextUtil.getCurrentWorkbenchUserId());
-		basic.setUserName(this.userService.getPersonName(basic.getUserID()));
+		basic.setUserName(this.userService.getPersonNameForUserId(basic.getUserID()));
 
 		final TabInfo tab = new TabInfo();
 		tab.setData(basic);

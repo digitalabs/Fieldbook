@@ -640,7 +640,7 @@ public abstract class BaseTrialController extends SettingsController {
 		final String createdBy = studyDetails.getCreatedBy();
 		if (!StringUtils.isEmpty(createdBy)) {
 			studyOwnerUserId = Integer.valueOf(createdBy);
-			studyOwnerPersonName = this.userService.getPersonName(Integer.valueOf(createdBy));
+			studyOwnerPersonName = this.userService.getPersonNameForUserId(Integer.valueOf(createdBy));
 		}
 		basic.setUserID(studyOwnerUserId);
 		basic.setUserName(studyOwnerPersonName);

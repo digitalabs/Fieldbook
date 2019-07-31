@@ -567,7 +567,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		} else if (DataType.LOCATION.equals(variable.getScale().getDataType())) {
 			return this.getLocationById(valueId.intValue());
 		} else if (DataType.PERSON.equals(variable.getScale().getDataType())) {
-			return this.userService.getPersonName(valueId.intValue());
+			return this.userService.getPersonNameForPersonId(valueId.intValue());
 		} else if (isCategorical) {
 			final Term term = this.ontologyService.getTermById(valueId.intValue());
 			if (term != null) {

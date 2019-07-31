@@ -128,7 +128,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		}
 		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be found under Study Conditions of the Summary page.",
 				hasAnalysisVariable);
-		Mockito.verify(this.userService).getPersonName(NumberUtils.toInt(this.workbook.getStudyDetails().getCreatedBy()));
+		Mockito.verify(this.userService).getPersonNameForUserId(NumberUtils.toInt(this.workbook.getStudyDetails().getCreatedBy()));
 	}
 
 	@Test
@@ -155,7 +155,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		this.workbook.getStudyDetails().setCreatedBy(null);
 		this.reviewStudyDetailsController.show(id, form, model);
 
-		Mockito.verify(this.userService).getPersonName(0);
+		Mockito.verify(this.userService).getPersonNameForUserId(0);
 
 	}
 

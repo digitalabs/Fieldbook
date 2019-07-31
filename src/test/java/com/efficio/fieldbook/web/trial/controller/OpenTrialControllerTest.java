@@ -32,7 +32,6 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.ListDataProjectTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
-import org.generationcp.middleware.data.initializer.MeasurementRowTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
@@ -1312,7 +1311,7 @@ public class OpenTrialControllerTest {
 		final String ownerName = RandomStringUtils.randomAlphanumeric(20);
 		final String folderName = RandomStringUtils.randomAlphanumeric(20);
 		Mockito.doReturn(folderName).when(this.fieldbookMiddlewareService).getFolderNameById(Matchers.anyInt());
-		Mockito.doReturn(ownerName).when(this.userService).getPersonName(Matchers.anyInt());
+		Mockito.doReturn(ownerName).when(this.userService).getPersonNameForUserId(Matchers.anyInt());
 
 		final TabInfo tabInfo = this.openTrialController.prepareBasicDetailsTabInfo(studyDetails, false, trialID);
 		final BasicDetails basicData = (BasicDetails) tabInfo.getData();
@@ -1333,7 +1332,7 @@ public class OpenTrialControllerTest {
 		final String ownerName = RandomStringUtils.randomAlphanumeric(20);
 		final String folderName = RandomStringUtils.randomAlphanumeric(20);
 		Mockito.doReturn(folderName).when(this.fieldbookMiddlewareService).getFolderNameById(Matchers.anyInt());
-		Mockito.doReturn(ownerName).when(this.userService).getPersonName(Matchers.anyInt());
+		Mockito.doReturn(ownerName).when(this.userService).getPersonNameForUserId(Matchers.anyInt());
 
 		final TabInfo tabInfo = this.openTrialController.prepareBasicDetailsTabInfo(studyDetails, false, trialID);
 		final BasicDetails basicData = (BasicDetails) tabInfo.getData();
@@ -1372,7 +1371,7 @@ public class OpenTrialControllerTest {
 		final String endDate = Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
 		final String updateDate = Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
 		final String ownerName = RandomStringUtils.randomAlphanumeric(20);
-		Mockito.doReturn(ownerName).when(this.userService).getPersonName(Matchers.anyInt());
+		Mockito.doReturn(ownerName).when(this.userService).getPersonNameForUserId(Matchers.anyInt());
 
 		final TabInfo tabInfo = this.openTrialController.prepareBasicDetailsTabInfo(studyDetails, false, trialID);
 		final BasicDetails basicData = (BasicDetails) tabInfo.getData();

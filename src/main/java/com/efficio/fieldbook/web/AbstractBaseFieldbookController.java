@@ -27,6 +27,7 @@ import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataMana
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
@@ -59,6 +60,9 @@ public abstract class AbstractBaseFieldbookController {
 
 	@Resource
 	protected OntologyVariableDataManager variableDataManager;
+
+	@Autowired
+	protected AuthorizationUtil authorizationUtil;
 
 	/**
 	 * Implemented by the sub controllers to specify the html view that they render into the base template.
@@ -195,7 +199,7 @@ public abstract class AbstractBaseFieldbookController {
 	}
 	
 	public void setIsSuperAdminAttribute(final Model model) {
-		model.addAttribute("isSuperAdmin", AuthorizationUtil.isSuperAdminUser());
+		model.addAttribute("isSuperAdmin", authorizationUtil.isSuperAdminUser());
 	}
 
 	public void setVariableDataManager(final OntologyVariableDataManager variableDataManager) {

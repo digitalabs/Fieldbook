@@ -17,7 +17,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.security.SecurityUtil;
+import org.generationcp.commons.security.AuthorizationUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -30,7 +30,6 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.ErrorCode;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.workbench.Role;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,9 +38,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
@@ -49,7 +45,6 @@ import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.google.common.collect.Lists;
 
 
 public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTest {
@@ -66,6 +61,9 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	@Mock
 	private ContextUtil contextUtil;
 
+	@Mock
+	private AuthorizationUtil authorizationUtil;
+
 	private Workbook workbook;
 
 	@Before
@@ -73,6 +71,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		MockitoAnnotations.initMocks(this);
 
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
+		this.reviewStudyDetailsController.setAuthorizationUtil(authorizationUtil);
 		this.reviewStudyDetailsController.setFieldbookMiddlewareService(this.fieldbookMWService);
 		this.reviewStudyDetailsController.setFieldbookService(this.fieldbookService);
 		Mockito.doReturn(this.workbook).when(this.fieldbookMWService).getStudyVariableSettings(1);
@@ -158,9 +157,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	public void testSetIsSuperAdminAttributeForNonSuperAdminUser() {
 		final Model model = new ExtendedModelMap();
 
-		SimpleGrantedAuthority roleAuthority = new SimpleGrantedAuthority(SecurityUtil.ROLE_PREFIX + Role.ADMIN);
-		UsernamePasswordAuthenticationToken loggedInUser = new UsernamePasswordAuthenticationToken("", "", Lists.newArrayList(roleAuthority));
-		SecurityContextHolder.getContext().setAuthentication(loggedInUser);
+		Mockito.when(authorizationUtil.isSuperAdminUser()).thenReturn(Boolean.FALSE);
 		this.reviewStudyDetailsController.setIsSuperAdminAttribute(model);
 		Assert.assertFalse((Boolean)model.asMap().get("isSuperAdmin"));
 	}
@@ -169,9 +166,8 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	public void testSetIsSuperAdminAttributeForSuperAdminUser() {
 		final Model model = new ExtendedModelMap();
 
-		SimpleGrantedAuthority roleAuthority = new SimpleGrantedAuthority(SecurityUtil.ROLE_PREFIX + Role.SUPERADMIN);
-		UsernamePasswordAuthenticationToken loggedInUser = new UsernamePasswordAuthenticationToken("", "", Lists.newArrayList(roleAuthority));
-		SecurityContextHolder.getContext().setAuthentication(loggedInUser);
+		Mockito.when(authorizationUtil.isSuperAdminUser()).thenReturn(Boolean.TRUE);
+
 		this.reviewStudyDetailsController.setIsSuperAdminAttribute(model);
 		Assert.assertTrue((Boolean)model.asMap().get("isSuperAdmin"));
 	}

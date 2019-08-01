@@ -206,4 +206,7 @@ public abstract class AbstractBaseFieldbookController {
 		this.variableDataManager = variableDataManager;
 	}
 
+	public void setAuthorizationUtil(final AuthorizationUtil authorizationUtil) {
+		this.authorizationUtil = authorizationUtil;
+	}
 }

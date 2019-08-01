@@ -862,13 +862,13 @@ public class DesignImportControllerTest {
 				SettingDetailTestDataInitializer.createSettingDetail(TermId.CHECK_PLAN.getId(), "CHECK_PLAN", "", "TRIAL");
 
 		Mockito.when(this.settingsService
-				.createSettingDetail(TermId.CHECK_START.getId(), "CHECK_START", this.userSelection, 0, this.project.getUniqueID()))
+				.createSettingDetail(TermId.CHECK_START.getId(), "CHECK_START", this.userSelection, 1, this.project.getUniqueID()))
 				.thenReturn(checkStart);
 		Mockito.when(this.settingsService
-				.createSettingDetail(TermId.CHECK_INTERVAL.getId(), "CHECK_INTERVAL", this.userSelection, 0, this.project.getUniqueID()))
+				.createSettingDetail(TermId.CHECK_INTERVAL.getId(), "CHECK_INTERVAL", this.userSelection, 1, this.project.getUniqueID()))
 				.thenReturn(checkInterval);
 		Mockito.when(this.settingsService
-				.createSettingDetail(TermId.CHECK_PLAN.getId(), "CHECK_PLAN", this.userSelection, 0, this.project.getUniqueID()))
+				.createSettingDetail(TermId.CHECK_PLAN.getId(), "CHECK_PLAN", this.userSelection, 1, this.project.getUniqueID()))
 				.thenReturn(checkPlan);
 	}
 

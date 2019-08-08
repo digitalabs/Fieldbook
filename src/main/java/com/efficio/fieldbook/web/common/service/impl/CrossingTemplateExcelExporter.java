@@ -30,12 +30,12 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
-import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
+import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.PoiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -72,7 +72,7 @@ public class CrossingTemplateExcelExporter {
 	protected ContextUtil contextUtil;
 
 	@Autowired
-	private WorkbenchDataManager workbenchDataManager;
+	private UserService userService;
 
 	@Resource
 	private GermplasmDataManager germplasmDataManager;
@@ -181,7 +181,7 @@ public class CrossingTemplateExcelExporter {
 		row.setHeight((short) -1);
 
 	}
-	
+
 	private ArrayList<String> getTermIdList(VariableList factors) {
 		ArrayList<String> termIdList = new ArrayList<>();
 		List<Variable> variables = factors.getVariables();
@@ -221,7 +221,7 @@ public class CrossingTemplateExcelExporter {
 		// Users
 
 		final List<WorkbenchUser> allProgramMembers =
-				this.workbenchDataManager.getUsersByProjectId(this.contextUtil.getProjectInContext().getProjectId());
+				this.userService.getUsersByProjectId(this.contextUtil.getProjectInContext().getProjectId());
 
 		final CellStyle userCellStyle = codesSheet.getWorkbook().createCellStyle();
 		userCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
@@ -235,8 +235,7 @@ public class CrossingTemplateExcelExporter {
 			row.getCell(1).setCellStyle(userCellStyle);
 
 			row.createCell(2).setCellValue(user.getUserid().toString());
-			final Person person = this.workbenchDataManager.getPersonById(user.getPersonid());
-			row.createCell(3).setCellValue(person.getDisplayName());
+			row.createCell(3).setCellValue(user.getPerson().getDisplayName());
 		}
 
 		// Methods

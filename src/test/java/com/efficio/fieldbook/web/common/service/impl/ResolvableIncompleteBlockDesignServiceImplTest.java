@@ -2,7 +2,6 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
@@ -119,7 +118,7 @@ public class ResolvableIncompleteBlockDesignServiceImplTest {
 						ResolvableIncompleteBlockDesignServiceImplTest.PROGRAM_UUID)).thenReturn(plotVar);
 
 		Mockito.when(
-				this.fieldbookService.runBVDesign(ArgumentMatchers.<WorkbenchService>isNull(), Matchers.any(FieldbookProperties.class),
+				this.fieldbookService.runBVDesign(Matchers.any(FieldbookProperties.class),
 						Matchers.any(MainDesign.class))).thenReturn(this.mockDesignOutPut());
 	}
 

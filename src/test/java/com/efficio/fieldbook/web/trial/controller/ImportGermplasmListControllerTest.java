@@ -12,7 +12,6 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -102,9 +101,6 @@ public class ImportGermplasmListControllerTest {
 
 	@Mock
 	private DataImportService dataImportService;
-
-	@Mock
-	private WorkbenchService workbenchService;
 
 	@Mock
 	private InventoryDataManager inventoryDataManager;
@@ -567,7 +563,7 @@ public class ImportGermplasmListControllerTest {
 		project.setCropType(this.cropType);
 		Mockito.when(this.importGermplasmListController.getCurrentProject()).thenReturn(project);
 
-		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.isA(Long.class), Matchers.isA(Integer.class)))
+		Mockito.when(this.contextUtil.getCurrentWorkbenchUserId())
 				.thenReturn(1);
 		final Integer studyIdInSaveDataset = 3;
 
@@ -587,8 +583,7 @@ public class ImportGermplasmListControllerTest {
 			ArgumentMatchers.isA(String.class));
 		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(ArgumentMatchers.isA(Workbook.class),
 			ArgumentMatchers.anyListOf(SettingDetail.class), ArgumentMatchers.isA(String.class), ArgumentMatchers.anyBoolean());
-		Mockito.verify(this.workbenchService).getCurrentIbdbUserId(ArgumentMatchers.isA(Long.class),
-			ArgumentMatchers.isA(Integer.class));
+		Mockito.verify(this.contextUtil).getCurrentWorkbenchUserId();
 		Mockito.verify(this.dataImportService).saveDataset(workbook, true, true, project.getUniqueID(),
 				this.cropType);
 

@@ -71,7 +71,7 @@ public class ImportObservationsControllerTest {
 		project.getCropType().setPlotCodePrefix(ImportObservationsControllerTest.PROJECT_CODE_PREFIX);
 		project.setProjectId(Long.valueOf(123));
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(ImportObservationsControllerTest.PROGRAM_UUID);
-		Mockito.when(this.contextUtil.getCurrentIbdbUserId()).thenReturn(CURRENT_IBDB_USER_ID);
+		Mockito.when(this.contextUtil.getCurrentWorkbenchUserId()).thenReturn(CURRENT_IBDB_USER_ID);
 	}
 
 	@Test

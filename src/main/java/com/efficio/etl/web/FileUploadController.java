@@ -41,7 +41,6 @@ import com.efficio.etl.web.bean.FileUploadForm;
 import com.efficio.etl.web.bean.UserSelection;
 import com.efficio.etl.web.validators.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.google.common.base.Optional;
 
 /**
@@ -61,7 +60,7 @@ public class FileUploadController extends AbstractBaseETLController {
 	protected static final String ERROR_TYPE = "errorType";
 
 	protected static final String STATUS_MESSAGE = "statusMessage";
-	
+
 	protected static final String USER_LACKS_PERMISSION_MESSAGE = "browse.study.no.permission.for.locked.study";
 
 	private static final String UPLOAD_FORM_FILE = "uploadForm.file";
@@ -93,12 +92,9 @@ public class FileUploadController extends AbstractBaseETLController {
 
 	@Resource
 	private ContextUtil contextUtil;
-	
-	@Resource
-	private StudyPermissionValidator studyPermissionValidator;
 
 	@Resource
-	protected WorkbenchService workbenchService;
+	private StudyPermissionValidator studyPermissionValidator;
 
 	private final Map<String, String> returnMessage = new HashMap<>();
 
@@ -190,7 +186,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			final org.generationcp.middleware.domain.etl.Workbook wb;
 
 			wb = this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
-				confirmDiscard == 1 ? true : false, new WorkbookParser(), this.contextUtil.getCurrentIbdbUserId());
+				confirmDiscard == 1 ? true : false, new WorkbookParser(), this.contextUtil.getCurrentWorkbenchUserId());
 
 			// The entry type id should be saved in the db instead of the entry
 			// type name
@@ -270,12 +266,12 @@ public class FileUploadController extends AbstractBaseETLController {
 			final String programUUID = this.contextUtil.getCurrentProgramUUID();
 			final Workbook workbook = this.dataImportService
 				.strictParseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
-					this.contextUtil.getCurrentIbdbUserId());
+					this.contextUtil.getCurrentWorkbenchUserId());
 
 			if (workbook.hasOutOfBoundsData()) {
 				this.returnMessage.put(FileUploadController.STATUS_CODE,
 						FileUploadController.STATUS_CODE_HAS_OUT_OF_BOUNDS);
-			
+
 			// if appending to existing study, check if user has permission to modify study
 			} else {
 				final Optional<StudyReference> studyOptional = this.fieldbookMiddlewareService.getStudyReferenceByNameAndProgramUUID(workbook.getStudyName(), this.contextUtil.getCurrentProgramUUID());
@@ -283,7 +279,7 @@ public class FileUploadController extends AbstractBaseETLController {
 					this.returnMessage.put(FileUploadController.STATUS_CODE, FileUploadController.STATUS_CODE_LACKS_PERMISSION);
 					this.returnMessage.put(FileUploadController.STATUS_MESSAGE, this.messageSource.getMessage(
 							FileUploadController.USER_LACKS_PERMISSION_MESSAGE, new String[] {studyOptional.get().getOwnerName()}, locale));
-				}			
+				}
 			}
 
 		} catch (final IOException e) {
@@ -366,12 +362,12 @@ public class FileUploadController extends AbstractBaseETLController {
 		return this.userSelection;
 	}
 
-	
+
 	public void setStudyPermissionValidator(StudyPermissionValidator studyPermissionValidator) {
 		this.studyPermissionValidator = studyPermissionValidator;
 	}
 
-	
+
 	public void setMessageSource(ResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
 	}

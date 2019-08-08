@@ -1,7 +1,6 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
@@ -59,16 +58,22 @@ public class ImportStudyControllerTest {
 
 	@Mock
 	private BindingResult result;
+
 	@Mock
 	private MultipartFile file;
+
 	@Mock
 	private FileService fileService;
+
 	@Mock
 	private ExcelImportStudyService excelImportStudyService;
+
 	@Mock
 	private InputStream inputStream;
+
 	@Mock
 	private OntologyService ontologyService;
+
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
 
@@ -80,9 +85,6 @@ public class ImportStudyControllerTest {
 
 	@Mock
 	private ObjectMapper objectMapper;
-
-	@Mock
-	private WorkbenchService workbenchService;
 
 	@Mock
 	private ContextUtil contextUtil;
@@ -114,7 +116,7 @@ public class ImportStudyControllerTest {
 		Mockito.when(this.objectMapper.readValue(dummyUserResponse, GermplasmChangeDetail[].class))
 				.thenReturn(changeDetails);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(Mockito.mock(Project.class));
-		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt()))
+		Mockito.when(this.contextUtil.getCurrentWorkbenchUserId())
 				.thenReturn(ImportStudyControllerTest.TEST_USER_ID);
 
 		this.unitUnderTest.applyChangeDetails(dummyUserResponse);
@@ -176,7 +178,7 @@ public class ImportStudyControllerTest {
 		Mockito.when(this.objectMapper.readValue(dummyUserResponse, GermplasmChangeDetail[].class))
 				.thenReturn(changeDetails);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(Mockito.mock(Project.class));
-		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt()))
+		Mockito.when(this.contextUtil.getCurrentWorkbenchUserId())
 				.thenReturn(ImportStudyControllerTest.TEST_USER_ID);
 
 		this.unitUnderTest.applyChangeDetails(dummyUserResponse);

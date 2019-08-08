@@ -1,7 +1,6 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.exception.FieldbookRequestException;
@@ -17,8 +16,6 @@ import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
@@ -28,6 +25,7 @@ import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.ExperimentDesignType;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -50,14 +48,12 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.dms.DmsProject;
-import org.generationcp.middleware.service.api.SampleService;
+import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,6 +70,9 @@ public abstract class BaseTrialController extends SettingsController {
 
 	@Resource
 	protected LocationDataManager locationDataManager;
+
+	@Resource
+	protected UserService userService;
 
 	private static final Logger LOG = LoggerFactory.getLogger(BaseTrialController.class);
 
@@ -641,7 +640,7 @@ public abstract class BaseTrialController extends SettingsController {
 		final String createdBy = studyDetails.getCreatedBy();
 		if (!StringUtils.isEmpty(createdBy)) {
 			studyOwnerUserId = Integer.valueOf(createdBy);
-			studyOwnerPersonName = this.fieldbookService.getPersonByUserId(Integer.valueOf(createdBy));
+			studyOwnerPersonName = this.userService.getPersonNameForUserId(Integer.valueOf(createdBy));
 		}
 		basic.setUserID(studyOwnerUserId);
 		basic.setUserName(studyOwnerPersonName);

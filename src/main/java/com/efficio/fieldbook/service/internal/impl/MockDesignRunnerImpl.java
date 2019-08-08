@@ -1,6 +1,5 @@
 package com.efficio.fieldbook.service.internal.impl;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.DesignRunner;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
@@ -31,8 +30,7 @@ public class MockDesignRunnerImpl implements DesignRunner {
 	public static final String COL = "COL";
 
 	@Override
-	public BVDesignOutput runBVDesign(
-		final WorkbenchService workbenchService, final FieldbookProperties fieldbookProperties, final MainDesign design) {
+	public BVDesignOutput runBVDesign(final FieldbookProperties fieldbookProperties, final MainDesign design) {
 
 		final ExpDesign expDesign = design.getDesign();
 

@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
 
-import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,7 +33,7 @@ public class ManageTrialController extends AbstractBaseFieldbookController {
 
 	/** The Constant URL. */
 	public static final String URL = "/TrialManager/manageTrial";
-	
+
 	@Resource
 	protected StudyDataManager studyDataManager;
 
@@ -57,11 +56,11 @@ public class ManageTrialController extends AbstractBaseFieldbookController {
 	public String getContentName() {
 		return "Common/manageStudy";
 	}
-	
+
 	@ModelAttribute("currentCropUserId")
 	public Integer getCurrentCropUserId() {
-		return this.contextUtil.getCurrentIbdbUserId();
+		return this.contextUtil.getCurrentWorkbenchUserId();
 	}
-	
+
 
 }

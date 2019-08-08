@@ -82,7 +82,7 @@ public class DeleteStudyControllerTest {
 				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, this.model, this.session, this.locale);
 		Assert.assertEquals("The value should be 1", "1", result.get(DeleteStudyController.IS_SUCCESS));
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
-				.deleteStudy(DeleteStudyControllerTest.PROJECT_ID, this.contextUtil.getCurrentUserLocalId());
+				.deleteStudy(DeleteStudyControllerTest.PROJECT_ID, this.contextUtil.getCurrentWorkbenchUserId());
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
 				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.STUDY);
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
@@ -100,7 +100,7 @@ public class DeleteStudyControllerTest {
 				.submitDelete(DeleteStudyControllerTest.PROJECT_ID, this.model, this.session, this.locale);
 		Assert.assertEquals("The value should be 1", "1", result.get(DeleteStudyController.IS_SUCCESS));
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
-				.deleteStudy(DeleteStudyControllerTest.PROJECT_ID, this.contextUtil.getCurrentUserLocalId());
+				.deleteStudy(DeleteStudyControllerTest.PROJECT_ID, this.contextUtil.getCurrentWorkbenchUserId());
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
 				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.STUDY);
 		Mockito.verify(this.germplasmListManager, Mockito.times(1))

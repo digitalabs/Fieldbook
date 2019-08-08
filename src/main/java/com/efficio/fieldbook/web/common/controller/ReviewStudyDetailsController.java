@@ -12,7 +12,6 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -37,6 +36,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.service.api.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -85,10 +85,6 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	@Resource
 	private Properties appConstantsProperties;
 
-	/** The workbench service. */
-	@Resource
-	protected WorkbenchService workbenchService;
-
 	@Resource
 	private PaginationListSelection paginationListSelection;
 
@@ -97,6 +93,9 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@Resource
 	private StudyDataManager studyDataManager;
+
+	@Resource
+	private UserService userService;
 
 	@Override
 	public String getContentName() {
@@ -113,7 +112,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 			workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(id);
 			workbook.getStudyDetails().setId(id);
 			this.removeAnalysisAndAnalysisSummaryVariables(workbook);
-			final String createdBy = this.fieldbookService.getPersonByUserId(NumberUtils.toInt(workbook.getStudyDetails().getCreatedBy()));
+			final String createdBy = this.userService.getPersonNameForUserId(NumberUtils.toInt(workbook.getStudyDetails().getCreatedBy()));
 			details = SettingsUtil.convertWorkbookToStudyDetails(workbook, this.fieldbookMiddlewareService, this.fieldbookService,
 					this.userSelection, this.contextUtil.getCurrentProgramUUID(), this.appConstantsProperties, createdBy);
 			this.rearrangeDetails(details);
@@ -195,7 +194,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@ModelAttribute("currentCropUserId")
 	public Integer getCurrentCropUserId() {
-		return this.contextUtil.getCurrentIbdbUserId();
+		return this.contextUtil.getCurrentWorkbenchUserId();
 	}
 
 	protected void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
@@ -204,6 +203,10 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	protected void setFieldbookService(final com.efficio.fieldbook.service.api.FieldbookService fieldbookService) {
 		this.fieldbookService = fieldbookService;
+	}
+
+	protected void setUserService(final UserService userService) {
+		this.userService = userService;
 	}
 
 

@@ -219,7 +219,7 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 			}
 
 			this.userTreeStateService
-					.saveOrUpdateUserProgramTreeState(this.contextUtil.getCurrentUserLocalId(), this.getCurrentProgramUUID(), type, states);
+					.saveOrUpdateUserProgramTreeState(this.contextUtil.getCurrentWorkbenchUserId(), this.getCurrentProgramUUID(), type, states);
 		} catch (final MiddlewareQueryException e) {
 			SampleTreeController.LOG.error(e.getMessage(), e);
 			status = "ERROR";
@@ -232,7 +232,7 @@ public class SampleTreeController extends AbstractBaseFieldbookController {
 	public String retrieveTreeState(@PathVariable final String type, @PathVariable final Boolean saveMode) {
 
 		final List<String> stateList;
-		final Integer userID = this.contextUtil.getCurrentUserLocalId();
+		final Integer userID = this.contextUtil.getCurrentWorkbenchUserId();
 		final String programUUID = this.getCurrentProgramUUID();
 		if (saveMode) {
 			stateList = this.userTreeStateService.getUserProgramTreeStateForSaveSampleList(userID, programUUID, type);

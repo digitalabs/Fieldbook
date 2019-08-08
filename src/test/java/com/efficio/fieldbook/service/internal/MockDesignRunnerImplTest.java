@@ -1,6 +1,5 @@
 package com.efficio.fieldbook.service.internal;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.impl.MockDesignRunnerImpl;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
@@ -24,9 +23,6 @@ public class MockDesignRunnerImplTest {
 	private final MockDesignRunnerImpl mockDesignRunner = new MockDesignRunnerImpl();
 
 	@Mock
-	private WorkbenchService workbenchService;
-
-	@Mock
 	private FieldbookProperties fieldbookProperties;
 
 	private final ExperimentDesignGenerator experimentDesignGenerator = new ExperimentDesignGenerator();
@@ -41,7 +37,7 @@ public class MockDesignRunnerImplTest {
 		mainDesign.getDesign().getParameters().add(new ExpDesignParameter(ExperimentDesignGenerator.NUMBER_TRIALS_PARAM, "2"));
 		
 		try {
-			final BVDesignOutput output = this.mockDesignRunner.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+			final BVDesignOutput output = this.mockDesignRunner.runBVDesign(this.fieldbookProperties, mainDesign);
 			Assert.assertTrue(output.isSuccess());
 			// Per instance: 20 entries, 2 reps, expecting 40 rows back.
 			Assert.assertEquals(2, output.getTrialInstances().size());
@@ -64,7 +60,7 @@ public class MockDesignRunnerImplTest {
 		mainDesign.getDesign().getParameters().add(new ExpDesignParameter(ExperimentDesignGenerator.NUMBER_TRIALS_PARAM, "2"));
 
 		try {
-			final BVDesignOutput output = this.mockDesignRunner.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+			final BVDesignOutput output = this.mockDesignRunner.runBVDesign(this.fieldbookProperties, mainDesign);
 			Assert.assertTrue(output.isSuccess());
 			// Per instance: 20 entries, 2 reps, expecting 40 rows back.
 			Assert.assertEquals(2, output.getTrialInstances().size());
@@ -87,7 +83,7 @@ public class MockDesignRunnerImplTest {
 		mainDesign.getDesign().getParameters().add(new ExpDesignParameter(ExperimentDesignGenerator.NUMBER_TRIALS_PARAM, "3"));
 				
 		try {
-			final BVDesignOutput output = this.mockDesignRunner.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+			final BVDesignOutput output = this.mockDesignRunner.runBVDesign(this.fieldbookProperties, mainDesign);
 			Assert.assertTrue(output.isSuccess());
 			// Per instance: 20 entries, 2 reps, expecting 40 rows back.
 			Assert.assertEquals(3, output.getTrialInstances().size());
@@ -110,7 +106,7 @@ public class MockDesignRunnerImplTest {
 		mainDesign.getDesign().getParameters().add(new ExpDesignParameter(ExperimentDesignGenerator.NUMBER_TRIALS_PARAM, "5"));
 				
 		try {
-			final BVDesignOutput output = this.mockDesignRunner.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+			final BVDesignOutput output = this.mockDesignRunner.runBVDesign(this.fieldbookProperties, mainDesign);
 			Assert.assertTrue(output.isSuccess());
 			// Per instance: 20 entries, 2 reps, expecting 40 rows back.
 			Assert.assertEquals(5, output.getTrialInstances().size());

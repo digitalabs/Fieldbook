@@ -28,11 +28,13 @@ import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.PresetService;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.Tool;
+import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.PedigreeService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
@@ -51,7 +53,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
 import com.efficio.fieldbook.service.api.SettingsService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.initializer.LabelPrintingServiceDataInitializer;
 import com.efficio.fieldbook.util.labelprinting.CSVLabelGenerator;
 import com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory;
@@ -88,9 +89,6 @@ public class LabelPrintingServiceImplTest {
 	private InventoryDetailsTestDataInitializer inventoryDetailsInitializer;
 
 	@Mock
-	private WorkbenchService workbenchService;
-
-	@Mock
 	private PresetService presetService;
 
 	@Mock
@@ -120,6 +118,9 @@ public class LabelPrintingServiceImplTest {
 	@Mock
 	private SettingsService settingsService;
 
+	@Mock
+	private WorkbenchDataManager workbenchDataManager;
+
 	@InjectMocks
 	private LabelPrintingServiceImpl labelPrintingServiceImpl;
 
@@ -134,9 +135,9 @@ public class LabelPrintingServiceImplTest {
 		final Project project = Mockito.mock(Project.class);
 		final Tool fieldbookWeb = new Tool();
 		fieldbookWeb.setToolId(23L);
-		fieldbookWeb.setToolName("fieldbook_web");
+		fieldbookWeb.setToolName(ToolName.FIELDBOOK_WEB.getName());
 
-		Mockito.when(this.workbenchService.getFieldbookWebTool()).thenReturn(fieldbookWeb);
+		Mockito.when(this.workbenchDataManager.getToolWithName(ToolName.FIELDBOOK_WEB.getName())).thenReturn(fieldbookWeb);
 
 		// init mocks
 		final ArrayList<ProgramPreset> notEmptySearchResult = new ArrayList<>();
@@ -172,7 +173,7 @@ public class LabelPrintingServiceImplTest {
 		this.measurementData = MeasurementRowTestDataInitializer.createMeasurementDataMap();
 		this.environmentData = MeasurementRowTestDataInitializer.createEnvironmentDataMap();
 
-		Mockito.when(this.workbenchService.getStandardPresetById(LabelPrintingServiceImplTest.TEST_PRESET_ID)).thenReturn(sp);
+		Mockito.when(this.workbenchDataManager.getStandardPresetById(LabelPrintingServiceImplTest.TEST_PRESET_ID)).thenReturn(sp);
 		Mockito.when(this.presetService.getProgramPresetById(LabelPrintingServiceImplTest.TEST_PRESET_ID))
 				.thenReturn(searchResultPreset);
 

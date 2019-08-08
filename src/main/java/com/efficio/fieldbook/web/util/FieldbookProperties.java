@@ -10,6 +10,7 @@ public class FieldbookProperties {
 	private String germplasmDetailsUrl;
 
 	private String bvDesignPath;
+	private Integer bvDesignRunnerTimeout;
 	
 	private String uploadDirectory;
 	private Integer maxNumOfSubObsSetsPerStudy;
@@ -70,5 +71,13 @@ public class FieldbookProperties {
 
 	public void setMaxNumOfSubObsPerParentUnit(Integer maxNumOfSubObsPerParentUnit) {
 		this.maxNumOfSubObsPerParentUnit = maxNumOfSubObsPerParentUnit;
+	}
+
+	public Integer getBvDesignRunnerTimeout() {
+		return bvDesignRunnerTimeout;
+	}
+
+	public void setBvDesignRunnerTimeout(final Integer bvDesignRunnerTimeout) {
+		this.bvDesignRunnerTimeout = bvDesignRunnerTimeout;
 	}
 }

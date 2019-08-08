@@ -2,7 +2,6 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -33,7 +32,6 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.ListDataProjectTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
-import org.generationcp.middleware.data.initializer.MeasurementRowTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
@@ -72,6 +70,7 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
+import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.Util;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
 import org.junit.Assert;
@@ -132,9 +131,6 @@ public class OpenTrialControllerTest {
 	private WorkbenchDataManager workbenchDataManager;
 
 	@Mock
-	private WorkbenchService workbenchService;
-
-	@Mock
 	private UserSelection userSelection;
 
 	@Mock
@@ -157,6 +153,9 @@ public class OpenTrialControllerTest {
 
 	@Mock
 	private ContextUtil contextUtil;
+
+	@Mock
+	private UserService userService;
 
 	@Mock
 	private OntologyVariableDataManager variableDataManager;
@@ -1312,7 +1311,7 @@ public class OpenTrialControllerTest {
 		final String ownerName = RandomStringUtils.randomAlphanumeric(20);
 		final String folderName = RandomStringUtils.randomAlphanumeric(20);
 		Mockito.doReturn(folderName).when(this.fieldbookMiddlewareService).getFolderNameById(Matchers.anyInt());
-		Mockito.doReturn(ownerName).when(this.fieldbookService).getPersonByUserId(Matchers.anyInt());
+		Mockito.doReturn(ownerName).when(this.userService).getPersonNameForUserId(Matchers.anyInt());
 
 		final TabInfo tabInfo = this.openTrialController.prepareBasicDetailsTabInfo(studyDetails, false, trialID);
 		final BasicDetails basicData = (BasicDetails) tabInfo.getData();
@@ -1333,7 +1332,7 @@ public class OpenTrialControllerTest {
 		final String ownerName = RandomStringUtils.randomAlphanumeric(20);
 		final String folderName = RandomStringUtils.randomAlphanumeric(20);
 		Mockito.doReturn(folderName).when(this.fieldbookMiddlewareService).getFolderNameById(Matchers.anyInt());
-		Mockito.doReturn(ownerName).when(this.fieldbookService).getPersonByUserId(Matchers.anyInt());
+		Mockito.doReturn(ownerName).when(this.userService).getPersonNameForUserId(Matchers.anyInt());
 
 		final TabInfo tabInfo = this.openTrialController.prepareBasicDetailsTabInfo(studyDetails, false, trialID);
 		final BasicDetails basicData = (BasicDetails) tabInfo.getData();
@@ -1372,7 +1371,7 @@ public class OpenTrialControllerTest {
 		final String endDate = Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
 		final String updateDate = Util.convertDate(studyDetails.getStudyUpdate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
 		final String ownerName = RandomStringUtils.randomAlphanumeric(20);
-		Mockito.doReturn(ownerName).when(this.fieldbookService).getPersonByUserId(Matchers.anyInt());
+		Mockito.doReturn(ownerName).when(this.userService).getPersonNameForUserId(Matchers.anyInt());
 
 		final TabInfo tabInfo = this.openTrialController.prepareBasicDetailsTabInfo(studyDetails, false, trialID);
 		final BasicDetails basicData = (BasicDetails) tabInfo.getData();

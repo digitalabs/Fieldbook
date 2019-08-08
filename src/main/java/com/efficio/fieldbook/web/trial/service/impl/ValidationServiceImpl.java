@@ -11,6 +11,7 @@
 
 package com.efficio.fieldbook.web.trial.service.impl;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -35,7 +36,10 @@ import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.user.UserDto;
+import org.generationcp.middleware.service.api.user.UserService;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -62,6 +66,9 @@ public class ValidationServiceImpl implements ValidationService {
 	private WorkbenchDataManager workbenchDataManager;
 
 	@Resource
+	private UserService userService;
+
+	@Resource
 	private ContextUtil contextUtil;
 
 	@Override
@@ -77,7 +84,8 @@ public class ValidationServiceImpl implements ValidationService {
 			return this.validateIfValueIsMissingOrNumber(value.trim());
 		} else if (validateDateForDB && var != null && var.getDataTypeId() != null && var.getDataTypeId() == TermId.DATE_VARIABLE.getId()) {
 			return DateUtil.isValidDate(value);
-		} else if (StringUtils.isNotBlank(var.getDataType()) && var.getDataType().equalsIgnoreCase(ValidationServiceImpl.DATA_TYPE_NUMERIC)) {
+		} else if (StringUtils.isNotBlank(var.getDataType()) && var.getDataType()
+			.equalsIgnoreCase(ValidationServiceImpl.DATA_TYPE_NUMERIC)) {
 			return this.validateIfValueIsMissingOrNumber(value.trim());
 		}
 		return true;
@@ -112,9 +120,7 @@ public class ValidationServiceImpl implements ValidationService {
 				}
 			}
 			return withinValidRange;
-		}
-		
-		else if (var.getScale().getDataType() == DataType.DATE_TIME_VARIABLE) {
+		} else if (var.getScale().getDataType() == DataType.DATE_TIME_VARIABLE) {
 			return new DateValidator().isValid(value, "yyyyMMdd");
 		}
 
@@ -138,7 +144,7 @@ public class ValidationServiceImpl implements ValidationService {
 					final MeasurementVariable variate = data.getMeasurementVariable();
 					if (!this.isValidValue(variate, data.getValue(), data.getcValueId(), true)) {
 						throw new WorkbookParserException(this.messageSource.getMessage(ValidationServiceImpl.ERROR_NUMERIC_VARIABLE_VALUE,
-								new Object[] {variate.getName(), data.getValue()}, locale));
+							new Object[] {variate.getName(), data.getValue()}, locale));
 
 					}
 				}
@@ -154,7 +160,7 @@ public class ValidationServiceImpl implements ValidationService {
 			for (final MeasurementVariable var : workbook.getConditions()) {
 				if (WorkbookUtil.isConditionValidate(var.getTermId())) {
 					if (var.getTermId() == TermId.BREEDING_METHOD_CODE.getId() && var.getValue() != null
-							&& !"".equalsIgnoreCase(var.getValue())) {
+						&& !"".equalsIgnoreCase(var.getValue())) {
 						warningMessage = this.validateBreedingMethodCode(var);
 					} else if (var.getTermId() == TermId.PI_ID.getId() && var.getValue() != null && !"".equalsIgnoreCase(var.getValue())) {
 						warningMessage = this.validatePersonId(var);
@@ -209,10 +215,8 @@ public class ValidationServiceImpl implements ValidationService {
 	String validatePersonId(final MeasurementVariable var) {
 		String warningMessage = "";
 		if (NumberUtils.isNumber(var.getValue())) {
-			final Integer workbenchUserId =
-					this.workbenchDataManager.getWorkbenchUserIdByIBDBUserIdAndProjectId(Integer.parseInt(var.getValue()), this.contextUtil
-							.getProjectInContext().getProjectId());
-			if (workbenchUserId == null) {
+			final List<UserDto> workbenchUsers = this.userService.getUsersByPersonIds(Arrays.asList(Integer.valueOf(var.getValue())));
+			if (workbenchUsers.isEmpty()) {
 				warningMessage = this.setWarningMessage(var.getName());
 			}
 		} else {
@@ -229,7 +233,7 @@ public class ValidationServiceImpl implements ValidationService {
 				final MeasurementVariable variate = data.getMeasurementVariable();
 				if (!this.isValidValue(variate, data.getValue(), data.getcValueId(), false)) {
 					throw new MiddlewareQueryException(this.messageSource.getMessage(ValidationServiceImpl.ERROR_INVALID_CELL,
-							new Object[] {variate.getName(), data.getValue()}, locale));
+						new Object[] {variate.getName(), data.getValue()}, locale));
 				}
 			}
 		}
@@ -242,7 +246,7 @@ public class ValidationServiceImpl implements ValidationService {
 
 	private String setWarningMessage(final String value) {
 		return "The value for " + value + " in the import file is invalid and will not be imported. "
-				+ "You can change this value by editing it manually, or by uploading a corrected import file.";
+			+ "You can change this value by editing it manually, or by uploading a corrected import file.";
 	}
 
 }

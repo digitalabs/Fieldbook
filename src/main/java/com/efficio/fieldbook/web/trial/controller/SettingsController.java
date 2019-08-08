@@ -51,7 +51,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -72,10 +71,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsController.class);
-
-	/** The workbench service. */
-	@Resource
-	protected WorkbenchService workbenchService;
 
 	/** The fieldbook service. */
 	@Resource

@@ -158,7 +158,7 @@ public class CrossingServiceImplTest {
 			.getNextNameInSequence(ArgumentMatchers.<GermplasmNameSetting>any());
 
 		this.localUserId = new Random().nextInt(Integer.MAX_VALUE);
-		Mockito.doReturn(this.localUserId).when(this.contextUtil).getCurrentUserLocalId();
+		Mockito.doReturn(this.localUserId).when(this.contextUtil).getCurrentWorkbenchUserId();
 	}
 
 	private Project createProject() {

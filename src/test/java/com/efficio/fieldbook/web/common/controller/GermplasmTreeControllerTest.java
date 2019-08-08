@@ -59,7 +59,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -101,10 +100,10 @@ public class GermplasmTreeControllerTest {
 	private static final int PLOT_FIELD_NO = 1154;
 	private static final int TRIAL_INSTANCE_FIELD_NO = 1155;
 	private static final int PLANT_NUMBER = 1156;
-	
+
 	@Captor
 	private ArgumentCaptor<List<Pair<Germplasm, GermplasmListData>>> listDataItemsCaptor;
-	
+
 	@Captor
 	private ArgumentCaptor<List<Integer>> idListCaptor;
 
@@ -125,9 +124,6 @@ public class GermplasmTreeControllerTest {
 
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
-
-	@Mock
-	private WorkbenchService workbenchService;
 
 	@Mock
 	private ContextUtil contextUtil;
@@ -180,7 +176,7 @@ public class GermplasmTreeControllerTest {
 				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.TRIAL_INSTANCE_FIELD_NO));
 		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", "PLANT_NUMBER"))
 				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.PLANT_NUMBER));
-		Mockito.when(this.contextUtil.getCurrentUserLocalId()).thenReturn(GermplasmTreeControllerTest.TEST_USER_ID);
+		Mockito.when(this.contextUtil.getCurrentWorkbenchUserId()).thenReturn(GermplasmTreeControllerTest.TEST_USER_ID);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(GermplasmTreeControllerTest.TEST_PROGRAM_UUID);
 		Mockito.when(this.fieldbookMiddlewareService.getOwnerListName(GermplasmTreeControllerTest.TEST_USER_ID))
 				.thenReturn(GermplasmTreeControllerTest.TEST_USER_NAME);
@@ -816,18 +812,18 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals(importedCrosses.getBreedingMethodId(), advancingSource.getBreedingMethodId());
 
 	}
-	
+
 	@Test
 	public void testSaveCrossesParentsAsList() {
 		final SaveListForm form = new SaveListForm();
 		final Random random = new Random();
 		final int sourceListId = random.nextInt();
 		form.setSourceListId(sourceListId);
-		
+
 		final int numOfCrosses = 5;
 		final int numCrossWithUnknownParent = 2;
 		this.setupMocksForSavingCrossParents(sourceListId, numOfCrosses, numCrossWithUnknownParent);
-		
+
 		final List<Pair<Germplasm, GermplasmListData>> items = new ArrayList<>();
 		final boolean isTrimed = random.nextBoolean();
 		final GermplasmList germplasmList = new GermplasmList(random.nextInt());
@@ -840,14 +836,14 @@ public class GermplasmTreeControllerTest {
 		Mockito.verify(this.fieldbookMiddlewareService).saveGermplasmList(this.listDataItemsCaptor.capture(), ArgumentMatchers.eq(germplasmList), ArgumentMatchers.eq(false));
 		Assert.assertEquals((2*numOfCrosses) - numCrossWithUnknownParent, this.listDataItemsCaptor.getValue().size());
 	}
-	
+
 	@Test
 	public void testSaveCrossesParentsAsListWithMultipleMaleParents() {
 		final SaveListForm form = new SaveListForm();
 		final Random random = new Random();
 		final int sourceListId = random.nextInt();
 		form.setSourceListId(sourceListId);
-		
+
 		final int numOfCrosses = 5;
 		final int numOfCrossWithMultipleParents = 3;
 		final List<ListDataProject> list = this.setupMocksWithMultipleMaleParents(sourceListId, numOfCrosses, numOfCrossWithMultipleParents);
@@ -865,7 +861,7 @@ public class GermplasmTreeControllerTest {
 		final List<Pair<Germplasm, GermplasmListData>> items = new ArrayList<>();
 		final boolean isTrimed = random.nextBoolean();
 		final GermplasmList germplasmList = new GermplasmList(random.nextInt());
-		
+
 		final GermplasmListResult result = this.controller.saveCrossesParentsAsList(form, items, isTrimed, germplasmList);
 		Assert.assertEquals(SAVED_GERMPLASM_ID, result.getGermplasmListId());
 		Assert.assertEquals(isTrimed, result.getIsTrimed());
@@ -880,7 +876,7 @@ public class GermplasmTreeControllerTest {
 		final List<ListDataProject> snapshotListData = new ArrayList<>();
 		final List<Germplasm> germplasmFromDB = new ArrayList<>();
 		final List<Integer> parentGids = new ArrayList<>();
-		
+
 		for (int i = 1; i<=numOfCrosses; i++) {
 			final ListDataProject listData = new ListDataProject();
 			final Integer femaleGid = random.nextInt();
@@ -890,7 +886,7 @@ public class GermplasmTreeControllerTest {
 			snapshotListData.add(listData);
 			parentGids.add(femaleGid);
 			parentGids.add(maleGid);
-			
+
 			final Germplasm femaleGermplasm = new Germplasm();
 			femaleGermplasm.setGid(femaleGid);
 			final Name preferredName = new Name();
@@ -898,7 +894,7 @@ public class GermplasmTreeControllerTest {
 			femaleGermplasm.setPreferredName(preferredName);
 			germplasmFromDB.add(femaleGermplasm);
 			listData.setFemaleParent(new GermplasmParent(femaleGid, preferredName.getNval(), ""));
-			
+
 			if (i > numCrossWithUnknownParent) {
 				final Germplasm maleGermplasm = new Germplasm();
 				maleGermplasm.setGid(maleGid);
@@ -913,19 +909,19 @@ public class GermplasmTreeControllerTest {
 		Assert.assertTrue(parentGids.contains(0));
 		Mockito.doReturn(germplasmFromDB).when(this.germplasmDataManager).getSortedGermplasmWithPrefName(ArgumentMatchers.<Integer>anyList());
 	}
-	
+
 	private List<ListDataProject> setupMocksWithMultipleMaleParents(final int sourceListId, final int numOfCrosses, final int numOfCrossWithMultipleParents) {
 		final Random random = new Random();
 		final List<ListDataProject> snapshotListData = new ArrayList<>();
 		final List<Germplasm> germplasmFromDB = new ArrayList<>();
-		
+
 		for (int i = 1; i<=numOfCrosses; i++) {
 			final ListDataProject listData = new ListDataProject();
 			final Integer femaleGid = random.nextInt();
-			
+
 			final int maleGid = random.nextInt();
 			snapshotListData.add(listData);
-			
+
 			final Germplasm femaleGermplasm = new Germplasm();
 			femaleGermplasm.setGid(femaleGid);
 			final Name preferredName = new Name();
@@ -933,7 +929,7 @@ public class GermplasmTreeControllerTest {
 			femaleGermplasm.setPreferredName(preferredName);
 			germplasmFromDB.add(femaleGermplasm);
 			listData.setFemaleParent(new GermplasmParent(femaleGid, preferredName.getNval(), ""));
-			
+
 			final Germplasm maleGermplasm = new Germplasm();
 			maleGermplasm.setGid(maleGid);
 			final Name name = new Name();
@@ -941,7 +937,7 @@ public class GermplasmTreeControllerTest {
 			maleGermplasm.setPreferredName(name);
 			germplasmFromDB.add(maleGermplasm);
 			listData.addMaleParent(new GermplasmParent(maleGid, name.getNval(), ""));
-			
+
 			if (i<= numOfCrossWithMultipleParents) {
 				final int maleGid2 = random.nextInt();
 				final Germplasm maleGermplasm2 = new Germplasm();

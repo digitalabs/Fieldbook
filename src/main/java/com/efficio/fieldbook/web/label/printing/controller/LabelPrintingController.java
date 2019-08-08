@@ -12,7 +12,6 @@
 package com.efficio.fieldbook.web.label.printing.controller;
 
 import com.efficio.fieldbook.service.api.LabelPrintingService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.util.labelprinting.LabelPrintingUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
@@ -55,6 +54,7 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
@@ -156,9 +156,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	private CrossExpansionProperties crossExpansionProperties;
 
 	@Resource
-	private WorkbenchService workbenchService;
-
-	@Resource
 	private ReportService reportService;
 
 	@Resource
@@ -166,6 +163,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private InventoryDataManager inventoryDataManager;
+
+	@Resource
+	private WorkbenchDataManager workbenchDataManager;
 
 	@Resource
 	private LabelPrintingUtil labelPrintingUtil;
@@ -372,7 +372,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 				.getAvailableLabelFieldsForInventory(locale));
 
 		form.setIsStockList(false);
-		
+
 		return super.show(model);
 	}
 
@@ -401,7 +401,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	/**
 	 * Export File
-	 * 
+	 *
 	 * @param req
 	 * @return
 	 * @throws UnsupportedEncodingException
@@ -539,14 +539,14 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		final int numberOfCopies = Strings.isNullOrEmpty(this.userLabelPrinting.getNumberOfCopies()) ?
 				1 :
 				Integer.parseInt(this.userLabelPrinting.getNumberOfCopies());
-		
+
 
 		// GermplasmListData list sorting before printing
 		// Sort first and duplicate entries after that for performance
 		try {
 			if (!Strings.isNullOrEmpty(this.userLabelPrinting.getSorting())) {
 				this.labelPrintingUtil.sortGermplasmListDataList(germplasmListDataListWithExistingReservations, this.userLabelPrinting.getSorting());
-			}			
+			}
 		} catch (final LabelPrintingException ex) {
 			final Map<String, Object> results = new HashMap<>();
 			LabelPrintingController.LOG.error(ex.getMessage(), ex);
@@ -740,11 +740,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	public List<CustomReportType> getLabelPrintingCustomReports() {
 		final List<CustomReportType> customReportTypes = new ArrayList<>();
 		try {
+
+			final int fieldbookToolId = this.workbenchDataManager.getToolWithName(ToolName.FIELDBOOK_WEB.getName()).getToolId().intValue();
+
 			if (this.userLabelPrinting.getStudyId() != null) {
+
+
 				final List<StandardPreset> standardPresetList =
-						this.workbenchService.getStandardPresetByCrop(this.workbenchService.getFieldbookWebTool().getToolId().intValue(),
-								this.contextUtil.getProjectInContext().getCropType().getCropName().toLowerCase(),
-								ToolSection.FB_LBL_PRINT_CUSTOM_REPORT.name());
+					this.workbenchDataManager.getStandardPresetFromCropAndTool(this.contextUtil.getProjectInContext().getCropType().getCropName().toLowerCase(),
+					fieldbookToolId, ToolSection.FB_LBL_PRINT_CUSTOM_REPORT.name());
+
 				// we need to convert the standard preset for custom report type
 				// to custom report type pojo
 				for (int index = 0; index < standardPresetList.size(); index++) {
@@ -1035,10 +1040,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.userLabelPrinting = userLabelPrinting;
 	}
 
-	public void setWorkbenchService(final WorkbenchService workbenchService) {
-		this.workbenchService = workbenchService;
-	}
-
 	@Override
 	public void setContextUtil(final ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
@@ -1063,6 +1064,10 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	void setUserFieldMap(final UserFieldmap userFieldmap) {
 		this.userFieldmap = userFieldmap;
+	}
+
+	void setWorkbenchDataManager(final WorkbenchDataManager workbenchDataManager) {
+		this.workbenchDataManager = workbenchDataManager;
 	}
 
 	UserLabelPrinting getUserLabelPrinting() {

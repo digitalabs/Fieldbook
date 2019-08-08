@@ -31,6 +31,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.ErrorCode;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.user.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +60,9 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
 	@Mock
+	private UserService userService;
+
+	@Mock
 	private ContextUtil contextUtil;
 
 	@Mock
@@ -74,6 +78,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		this.reviewStudyDetailsController.setAuthorizationUtil(authorizationUtil);
 		this.reviewStudyDetailsController.setFieldbookMiddlewareService(this.fieldbookMWService);
 		this.reviewStudyDetailsController.setFieldbookService(this.fieldbookService);
+		this.reviewStudyDetailsController.setUserService(this.userService);
 		Mockito.doReturn(this.workbook).when(this.fieldbookMWService).getStudyVariableSettings(1);
 		this.mockStandardVariables(this.workbook.getAllVariables(), this.fieldbookMWService, this.fieldbookService);
 
@@ -122,7 +127,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		}
 		Assert.assertFalse("'Analysis' and 'Analysis Summary' variables should not be found under Study Conditions of the Summary page.",
 				hasAnalysisVariable);
-		Mockito.verify(this.fieldbookService).getPersonByUserId(NumberUtils.toInt(this.workbook.getStudyDetails().getCreatedBy()));
+		Mockito.verify(this.userService).getPersonNameForUserId(NumberUtils.toInt(this.workbook.getStudyDetails().getCreatedBy()));
 	}
 
 	@Test
@@ -149,7 +154,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		this.workbook.getStudyDetails().setCreatedBy(null);
 		this.reviewStudyDetailsController.show(id, form, model);
 
-		Mockito.verify(this.fieldbookService).getPersonByUserId(0);
+		Mockito.verify(this.userService).getPersonNameForUserId(0);
 
 	}
 

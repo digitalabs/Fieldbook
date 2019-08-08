@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
@@ -35,8 +34,6 @@ import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 @Ignore
 public class ExpDesignTest extends AbstractBaseIntegrationTest {
 
-	@Autowired
-	private WorkbenchService workbenchService;
 	@Autowired
 	private FieldbookProperties fieldbookProperties;
 	@Autowired
@@ -61,7 +58,7 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 				"Subblocks", "Plots", 301, null, "0", "", "", false);
 
 		try {
-			final BVDesignOutput output = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+			final BVDesignOutput output = this.fieldbookService.runBVDesign(this.fieldbookProperties, mainDesign);
 			Assert.assertTrue(output.isSuccess());
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -76,7 +73,7 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 				"Plots", 301, null, "0", "0", "", "", false);
 
 		try {
-			final BVDesignOutput output = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+			final BVDesignOutput output = this.fieldbookService.runBVDesign(this.fieldbookProperties, mainDesign);
 			Assert.assertTrue(output.isSuccess());
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -98,7 +95,7 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			.createRandomizedCompleteBlockDesign("6", "Reps", "Plots", 301, 201, TermId.ENTRY_NO.name(), treatmentFactors, levels, "");
 
 		try {
-			final BVDesignOutput output = this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+			final BVDesignOutput output = this.fieldbookService.runBVDesign(this.fieldbookProperties, mainDesign);
 			Assert.assertTrue(output.isSuccess());
 		} catch (final Exception e) {
 			e.printStackTrace();

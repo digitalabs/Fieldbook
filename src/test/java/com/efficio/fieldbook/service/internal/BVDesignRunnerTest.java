@@ -1,6 +1,5 @@
 package com.efficio.fieldbook.service.internal;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.impl.BVDesignRunner;
 import com.efficio.fieldbook.web.experimentdesign.ExperimentDesignGenerator;
 import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
@@ -32,9 +31,6 @@ import static org.mockito.Mockito.when;
 public class BVDesignRunnerTest {
 
 	public static final String BV_DESIGN_EXECUTABLE_PATH = "bvDesignExecutablePath";
-
-	@Mock
-	private WorkbenchService workbenchService;
 
 	@Mock
 	private FieldbookProperties fieldbookProperties;
@@ -75,7 +71,7 @@ public class BVDesignRunnerTest {
 		when(this.processRunner.run(BV_DESIGN_EXECUTABLE_PATH, "-i" + xmlInputFilePath)).thenReturn(successfulReturnCode);
 		when(this.outputReader.read(anyString())).thenReturn(new ArrayList<String[]>());
 
-		final BVDesignOutput bvDesignOutput = this.bvDesignRunner.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+		final BVDesignOutput bvDesignOutput = this.bvDesignRunner.runBVDesign(this.fieldbookProperties, mainDesign);
 
 		verify(this.processRunner).run(BV_DESIGN_EXECUTABLE_PATH, "-i" + xmlInputFilePath);
 		verify(this.outputReader).read(mainDesign.getDesign().getParameterValue(ExperimentDesignGenerator.OUTPUTFILE_PARAM));
@@ -94,7 +90,7 @@ public class BVDesignRunnerTest {
 		when(this.inputWriter.write(anyString(), eq(this.fieldbookProperties))).thenReturn(xmlInputFilePath);
 		when(this.processRunner.run(BV_DESIGN_EXECUTABLE_PATH, "-i" + xmlInputFilePath)).thenReturn(failureReturnCode);
 
-		final BVDesignOutput bvDesignOutput = this.bvDesignRunner.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+		final BVDesignOutput bvDesignOutput = this.bvDesignRunner.runBVDesign(this.fieldbookProperties, mainDesign);
 
 		verify(this.processRunner).run(BV_DESIGN_EXECUTABLE_PATH, "-i" + xmlInputFilePath);
 		verify(this.outputReader, never()).read(mainDesign.getDesign().getParameterValue(ExperimentDesignGenerator.OUTPUTFILE_PARAM));

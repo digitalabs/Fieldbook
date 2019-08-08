@@ -132,7 +132,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 * The Constant BATCH_SIZE.
 	 */
 	public static final int BATCH_SIZE = 500;
-	
+
 	/**
 	 * The germplasm list manager.
 	 */
@@ -182,7 +182,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		try {
 			form.setListDate(DateUtil.getCurrentDateInUIFormat());
 			form.setListIdentifier(listIdentifier);
-			final String listOwner = this.fieldbookMiddlewareService.getOwnerListName(this.contextUtil.getCurrentUserLocalId());
+			final String listOwner = this.fieldbookMiddlewareService.getOwnerListName(this.contextUtil.getCurrentWorkbenchUserId());
 			form.setListOwner(listOwner);
 			final List<UserDefinedField> germplasmListTypes = this.germplasmListManager.getGermplasmListTypes();
 			form.setListType(AppConstants.GERMPLASM_LIST_TYPE_HARVEST.getString());
@@ -353,7 +353,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				}
 			}));
 		}
-		
+
 		// Remove unknown male parents (GID = 0) from the parent list to be saved
 		maleGids.removeAll(Collections.singletonList(0));
 
@@ -531,7 +531,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			String listDescription = "";
 			String listType = AppConstants.GERMPLASM_LIST_TYPE_GENERIC_LIST.getString();
 			String listDate = DateUtil.getCurrentDateInUIFormat();
-			String listOwner = this.fieldbookMiddlewareService.getOwnerListName(this.contextUtil.getCurrentUserLocalId());
+			String listOwner = this.fieldbookMiddlewareService.getOwnerListName(this.contextUtil.getCurrentWorkbenchUserId());
 			if (this.userSelection.getImportedCrossesList() != null) {
 				listName = this.userSelection.getImportedCrossesList().getName();
 				listDescription = this.userSelection.getImportedCrossesList().getTitle();
@@ -837,13 +837,13 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return TreeViewUtil.convertTreeViewToJson(rootNodes);
 
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/getPreferredName/{gid}", method = RequestMethod.GET)
 	public String getPreferredName(@PathVariable final String gid) {
 		return this.germplasmDataManager.getPreferredNameValueByGID(Integer.valueOf(gid));
 	}
-	
+
 	/**
 	 * Load initial germplasm tree table.
 	 *
@@ -1217,7 +1217,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			}
 
 			this.userTreeStateService
-					.saveOrUpdateUserProgramTreeState(this.contextUtil.getCurrentUserLocalId(), this.getCurrentProgramUUID(), type, states);
+					.saveOrUpdateUserProgramTreeState(this.contextUtil.getCurrentWorkbenchUserId(), this.getCurrentProgramUUID(), type, states);
 		} catch (final MiddlewareQueryException e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
 			status = "ERROR";
@@ -1230,7 +1230,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	public String retrieveTreeState(@PathVariable final String type, @PathVariable final Boolean saveMode) {
 
 		final List<String> stateList;
-		final Integer userID = this.contextUtil.getCurrentUserLocalId();
+		final Integer userID = this.contextUtil.getCurrentWorkbenchUserId();
 		final String programUUID = this.getCurrentProgramUUID();
 		if (saveMode) {
 			stateList = this.userTreeStateService.getUserProgramTreeStateForSaveList(userID, programUUID);
@@ -1249,7 +1249,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final String listDescription = AppConstants.PARENT_LIST_DESCRIPTION.getString();
 			final String listType = AppConstants.PARENT_LIST_TYPE.getString();
 			final String listDate = DateUtil.getCurrentDateInUIFormat();
-			final String listOwner = this.fieldbookMiddlewareService.getOwnerListName(this.contextUtil.getCurrentUserLocalId());
+			final String listOwner = this.fieldbookMiddlewareService.getOwnerListName(this.contextUtil.getCurrentWorkbenchUserId());
 
 			form.setListName(listName);
 			form.setListOwner(listOwner);

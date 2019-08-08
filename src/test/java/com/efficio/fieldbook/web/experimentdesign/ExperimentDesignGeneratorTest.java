@@ -1,7 +1,6 @@
 package com.efficio.fieldbook.web.experimentdesign;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
@@ -55,9 +54,6 @@ public class ExperimentDesignGeneratorTest {
 	private static final int ENTRY_NO_3 = 3;
 	private static final int ENTRY_NO_10 = 10;
 	private static final int ENTRY_NO_5 = 5;
-
-	@Mock
-	private WorkbenchService workbenchService;
 
 	@Mock
 	private FieldbookProperties fieldbookProperties;
@@ -486,7 +482,7 @@ public class ExperimentDesignGeneratorTest {
 		Assert.assertEquals(
 			String.valueOf(environmentsToAdd),
 			mainDesign.getDesign().getParameterValue(ExperimentDesignGenerator.NUMBER_TRIALS_PARAM));
-		Mockito.verify(this.fieldbookService, Mockito.times(1)).runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+		Mockito.verify(this.fieldbookService, Mockito.times(1)).runBVDesign(this.fieldbookProperties, mainDesign);
 		Assert.assertTrue(
 			"Expected study instances nos. from " + (environments - environmentsToAdd + 1) + " to " + environments
 				+ " for all measurement rows but found a different trial no.",
@@ -501,7 +497,7 @@ public class ExperimentDesignGeneratorTest {
 				.createRandomizedCompleteBlockDesign("2", ExperimentDesignGeneratorTest.REP_NO, ExperimentDesignGeneratorTest.PLOT_NO,
 					301, 201, TermId.ENTRY_NO.name(), new ArrayList<String>(), new ArrayList<String>(), "");
 		Mockito.doReturn(new BVDesignOutput(1)).when(this.fieldbookService)
-			.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+			.runBVDesign(this.fieldbookProperties, mainDesign);
 		try {
 			this.experimentDesignGenerator
 				.generateExperimentDesignMeasurements(5, 3, null, null, null, null, null, null, null, mainDesign, null, null, null);
@@ -518,7 +514,7 @@ public class ExperimentDesignGeneratorTest {
 				.createRandomizedCompleteBlockDesign("2", ExperimentDesignGeneratorTest.REP_NO, ExperimentDesignGeneratorTest.PLOT_NO,
 					301, 201, TermId.ENTRY_NO.name(), new ArrayList<String>(), new ArrayList<String>(), "");
 		Mockito.doThrow(new IOException()).when(this.fieldbookService)
-			.runBVDesign(this.workbenchService, this.fieldbookProperties, mainDesign);
+			.runBVDesign(this.fieldbookProperties, mainDesign);
 		try {
 			this.experimentDesignGenerator
 				.generateExperimentDesignMeasurements(5, 3, null, null, null, null, null, null, null, mainDesign, null, null, null);
@@ -587,7 +583,7 @@ public class ExperimentDesignGeneratorTest {
 	}
 
 	private void setMockValues(final MainDesign design, final Integer numberOfInstances) throws IOException {
-		Mockito.when(this.fieldbookService.runBVDesign(this.workbenchService, this.fieldbookProperties, design))
+		Mockito.when(this.fieldbookService.runBVDesign(this.fieldbookProperties, design))
 			.thenReturn(this.createBvOutput(numberOfInstances));
 	}
 

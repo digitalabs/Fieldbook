@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
@@ -45,9 +44,6 @@ public abstract class AbstractBaseFieldbookController {
 	public static final String ANGULAR_BASE_TEMPLATE_NAME = "/template/ng-base-template";
 	public static final String ERROR_TEMPLATE_NAME = "/template/error-template";
 	public static final String TEMPLATE_NAME_ATTRIBUTE = "templateName";
-
-	@Resource
-	private WorkbenchService workbenchService;
 
 	@Resource
 	protected ContextUtil contextUtil;
@@ -93,8 +89,7 @@ public abstract class AbstractBaseFieldbookController {
 	}
 
 	public Integer getCurrentIbdbUserId() {
-		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
-				this.contextUtil.getCurrentWorkbenchUserId());
+		return this.contextUtil.getCurrentWorkbenchUserId();
 
 	}
 

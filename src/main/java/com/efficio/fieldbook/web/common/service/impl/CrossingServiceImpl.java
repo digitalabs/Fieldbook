@@ -241,7 +241,7 @@ public class CrossingServiceImpl implements CrossingService {
 			plotCodeAttribute.setGermplasmId(newGid);
 			plotCodeAttribute.setTypeId(this.germplasmDataManager.getPlotCodeField().getFldno());
 			plotCodeAttribute.setAval(cross.getSource());
-			plotCodeAttribute.setUserId(this.contextUtil.getCurrentUserLocalId());
+			plotCodeAttribute.setUserId(this.contextUtil.getCurrentWorkbenchUserId());
 
 			attributeList.add(plotCodeAttribute);
 		}
@@ -307,7 +307,7 @@ public class CrossingServiceImpl implements CrossingService {
 			final Name parentageDesignationName = new Name();
 			parentageDesignationName.setGermplasmId(gid);
 			parentageDesignationName.setTypeId(CrossingServiceImpl.PEDIGREE_NAME_TYPE);
-			parentageDesignationName.setUserId(this.contextUtil.getCurrentUserLocalId());
+			parentageDesignationName.setUserId(this.contextUtil.getCurrentWorkbenchUserId());
 
 			parentageDesignationName.setNval(this.truncateName(parentageDesignation));
 			parentageDesignationName.setNstat(nstatValue);

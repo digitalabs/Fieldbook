@@ -1145,7 +1145,7 @@ public class DesignImportController extends SettingsController {
 	 * Gets the local name of the specified termId in trial variable list if
 	 * available. If not, the system will search for the local name from the
 	 * headers in Design Import Data.
-	 * 
+	 *
 	 * @param termId
 	 * @param designImportData
 	 * @return
@@ -1168,7 +1168,7 @@ public class DesignImportController extends SettingsController {
 	 * Gets the standard name of the specified termId in trial variable list if
 	 * available. If not, the system will search for the standard name from the
 	 * headers in Design Import Data and Ontology.
-	 * 
+	 *
 	 * @param termId
 	 * @param designImportData
 	 * @return
@@ -1440,7 +1440,7 @@ public class DesignImportController extends SettingsController {
 	protected SettingDetail createCheckVariableToBeDeleted(final int checkTermId, final String name) {
 
 		final String programUUID = this.contextUtil.getCurrentProgramUUID();
-		final int currentIbDbUserId = this.contextUtil.getCurrentUserLocalId();
+		final int currentIbDbUserId = this.contextUtil.getCurrentWorkbenchUserId();
 
 		final SettingDetail checkSettingDetail = this.settingsService.createSettingDetail(checkTermId, name,
 				this.userSelection, currentIbDbUserId, programUUID);

@@ -1,7 +1,6 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
@@ -45,16 +44,19 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-	@Resource
-	protected WorkbenchService workbenchService;
+
 	@Resource
 	protected FieldbookProperties fieldbookProperties;
+
 	@Resource
 	private ResourceBundleMessageSource messageSource;
+
 	@Resource
 	public FieldbookService fieldbookService;
+
 	@Resource
 	private ContextUtil contextUtil;
+
 	@Resource
 	public ExperimentDesignGenerator experimentDesignGenerator;
 

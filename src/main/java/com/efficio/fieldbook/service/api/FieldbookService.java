@@ -116,14 +116,6 @@ public interface FieldbookService {
 	String getValue(int id, String valueOrId, boolean isCategorical);
 
 	/**
-	 * Retrieves the person by user id
-	 *
-	 * @param userId
-	 * @return
-	 */
-	String getPersonByUserId(int userId);
-
-	/**
 	 * Gets the term by id.
 	 *
 	 * @param termId the term id
@@ -214,7 +206,7 @@ public interface FieldbookService {
 	 */
 	void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form);
 
-	BVDesignOutput runBVDesign(WorkbenchService workbenchService, FieldbookProperties fieldbookProperties, MainDesign design)
+	BVDesignOutput runBVDesign(FieldbookProperties fieldbookProperties, MainDesign design)
 			throws IOException;
 
 	void saveStudyImportedCrosses(List<Integer> crossesIds, Integer studyId);

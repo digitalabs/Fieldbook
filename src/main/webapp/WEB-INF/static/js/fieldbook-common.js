@@ -1191,16 +1191,17 @@ function exportGermplasmList() {
 	$(formName).ajaxForm(exportOptions).submit();
 }
 
-function exportStudy() {
+/*function exportStudy() {
 	'use strict';
-	var type = $('#exportType').val();
-	if (type === '0') {
+	var exportType = $('#exportType').val();
+
+	if (exportType === '0') {
 		showMessage('Please choose export type');
 		return false;
 	}
 
-	doExportContinue(type);
-}
+	doExportContinue(exportType);
+}*/
 
 function getExportCheckedAdvancedList() {
 	'use strict';
@@ -1218,27 +1219,10 @@ function getExportCheckedInstances() {
 	var checkedInstances = [];
 	$('.trial-instance-export').each(function() {
 		if ($(this).is(':checked')) {
-			checkedInstances.push({'instance': $(this).data('instance-number'), 'hasFieldmap':  $(this).data('has-fieldmap')});
+			checkedInstances.push($(this).data('geolocation-id'));
 		}
 	});
 	return checkedInstances;
-}
-
-function validateTrialInstance() {
-	'use strict';
-	var checkedInstances = getExportCheckedInstances(),
-		counter = 0,
-		additionalParam = '';
-	if (checkedInstances !== null && checkedInstances.length !== 0) {
-
-		for (counter = 0 ; counter < checkedInstances.length ; counter++) {
-			if (additionalParam !== '') {
-				additionalParam += '-';
-			}
-			additionalParam += checkedInstances[counter].instance;
-		}
-	}
-	return additionalParam;
 }
 
 function exportAdvanceStudyList(advancedListIdParams) {
@@ -1248,72 +1232,52 @@ function exportAdvanceStudyList(advancedListIdParams) {
 	$('#exportAdvanceStudyForm').ajaxForm(exportAdvanceOptions).submit();
 }
 
-function doExportContinue(paramUrl) {
-	var currentPage = $('#measurement-data-list-pagination .pagination .active a').html(),
-		additionalParams = '',
-		formname,
-		$form,
-		serializedData,
-		exportWayType;
+/*function doExportContinue(exportType) {
+	var instanceIds, exportWayType = 1;
 
-	formname = '#addVariableForm, #addVariableForm2';
-	$form = $(formname);
-	serializedData = $form.serialize();
-
-	additionalParams = validateTrialInstance();
-	if (additionalParams == 'false') {
+	instanceIds = getExportCheckedInstances();
+	if (instanceIds.length === 0) {
 		return false;
 	}
 
-	exportWayType = '/' + $('#exportWayType').val();
-	doFinalExport(paramUrl, additionalParams, exportWayType);
-}
+	var exportWayType = $('#exportWayType').val();
+	doFinalExport(exportType, instanceIds, exportWayType);
+}*/
 
-function doFinalExport(paramUrl, additionalParams, exportWayType) {
-	var action = submitExportUrl,
-		newAction = '',
-		studyId = '0',
-		visibleColumns = '';
+function doFinalExport(exportParameters) {
 
-	newAction = action + 'exportStudy/' + paramUrl + '/' + additionalParams;
-	newAction += exportWayType;
 
-	var mode = ($('.review-trial-page-identifier').length) ?  '.active .review-trial-page-identifier' : '#createTrialMainForm' ;
-	studyId = $(mode + ' #studyId').val();
+	var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
 
-	if ($('#browser-studies').length === 0) {
-		// the study is opened
-		var tableContainsObsUnitId = BMS.Fieldbook.MeasurementsTable.containsHeader('measurement-table', '8201');
-		visibleColumns = getMeasurementTableVisibleColumns(tableContainsObsUnitId);
-		var exportType = $('#exportType').val();
-		// excel or csv
-		if ((exportType == 6 || exportType == 2) && visibleColumns.length !== 0) {
-			showWarningMessageForRequiredColumns(visibleColumns);
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', 'http://localhost:8080/bmsapi/crops/maize/studies/' + exportParameters.studyId + '/datasets/' + exportParameters.plotData + '/' + exportParameters.fileFormat + '?instanceIds=' + exportParameters.instanceIds + '&collectionOrderId=' + exportParameters.collectionOrderId + '&singleFile='+exportParameters.singleFile, true);
+	xhr.responseType = 'blob';
+	xhr.setRequestHeader('Content-Type', 'application/json');
+	xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+	xhr.onload = function(e) {
+		if (this.status == 200) {
+			const contentDisposition = this.getResponseHeader('content-disposition') || '';
+			const matches = /filename=([^;]+)/ig.exec(contentDisposition);
+			const fileName = (matches[1] || 'untitled').trim();
+			const blob = this.response;
+			const url =  window.URL.createObjectURL(blob);
+
+			// For IE 10 or later
+			if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+				window.navigator.msSaveOrOpenBlob(url, fileName);
+			} else { // For Chrome/Safari/Firefox and other browsers with HTML5 support
+				var link = document.createElement('a');
+				link.href = url;
+				link.download = fileName;
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+			}
+
 		}
-	}
-
-	var columnOrders = '';
-	if ($('.review-study-details').length == 0) {
-		var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true);
-		columnOrders = (JSON.stringify(columnsOrder));
-	}
-
-	$.ajax(newAction, {
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json'
-		},
-		data: JSON.stringify({
-			'visibleColumns': visibleColumns,
-			'columnOrders': columnOrders,
-			'studyExportId': studyId
-		}),
-		type: 'POST',
-		dataType: 'text',
-		success: function (data) {
-			showExportResponse(data);
-		}
-	});
+	};
+	xhr.send();
+	$('#exportStudyModal').modal('hide');
 }
 
 function hasRequiredColumnsHiddenInMeasurementDataTable(visibleColumns) {

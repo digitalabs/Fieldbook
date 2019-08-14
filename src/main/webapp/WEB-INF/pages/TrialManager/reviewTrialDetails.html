@@ -6,6 +6,7 @@
 		<input type="hidden" id="has-measurements" name="has-measurements" th:value="*{hasMeasurements}" />
 		<input type="hidden" th:id="'review-study-error-' + *{id}" th:value="*{errorMessage}" />
         <input type="hidden" id="studyName"  th:value="*{name}"/>
+        <input type="hidden" id="plotDataset" name="plotDataset" th:value="${plotDataset}" />
 
 		<div class="col-xs-12 col-md-12">
             <!-- Display Header: Basic Details -->

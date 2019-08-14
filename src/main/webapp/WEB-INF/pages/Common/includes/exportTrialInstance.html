@@ -1,14 +1,14 @@
 
 	 <table th:if="${not #lists.isEmpty(trialInstances)}" class="my-class table table-curved table-condensed">
 		<thead>
-			<tr>
-			<th class="fbk-export-select-instance-check-box" ><input type="checkbox" class="selectAllExportInstance" name="selectAllExportInstance" id="selectAllExportInstance"/></th>
-			<th th:utext="#{study.export.instance.number}">Trial Instance #</th>
-			<th th:utext="#{study.export.has.fieldmap}">Has Fieldmap</th>
-			</tr>
+		<tr>
+			<th class="fbk-export-select-instance-check-box"><input type="checkbox" class="selectAllExportInstance" name="selectAllExportInstance" id="selectAllExportInstance"/></th>
+			<th th:utext="#{study.export.instance.number}">TRIAL_INSTANCE</th>
+			<th th:utext="#{study.export.location.name}">LOCATION_NAME</th>
+		</tr>
 		</thead>
 		<tbody>
-			<tr th:each="instance, row : ${trialInstances}">
+		<tr th:each="instance, row : ${trialInstances}">
 			<td th:class="${row.even}? 'even fbk-export-select-instance-check-box' : 'odd fbk-export-select-instance-check-box'">
 				<input type="checkbox" class="trial-instance-export" th:attr="data-instance-number=${instance.instanceNum}" th:attrappend="data-geolocation-id=${instance.geolocationId}"/>
 			</td>

@@ -11,7 +11,6 @@
 
 package com.efficio.fieldbook.web.trial.bean;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ExportTrialInstanceBean.
  */
@@ -20,19 +19,25 @@ public class ExportTrialInstanceBean {
 	/** The instance num. */
 	private String instanceNum;
 
-	/** The has fieldmap. */
-	private boolean hasFieldmap;
+	/** The location name instance. */
+	private String locationName;
+
+	/** The geolocation id. */
+	private Integer geolocationId;
 
 	/**
 	 * Instantiates a new export trial instance bean.
 	 *
 	 * @param instanceNum the instance num
-	 * @param hasFieldmap the has fieldmap
+	 * @param locationName the location Name
+	 * @param geolocationId the geolocationId
 	 */
-	public ExportTrialInstanceBean(String instanceNum, boolean hasFieldmap) {
+	public ExportTrialInstanceBean(final String instanceNum, final String locationName, final Integer geolocationId) {
 		super();
 		this.instanceNum = instanceNum;
-		this.hasFieldmap = hasFieldmap;
+		this.setLocationName(locationName);
+		this.setGeolocationId(geolocationId);
+
 	}
 
 	/**
@@ -53,33 +58,20 @@ public class ExportTrialInstanceBean {
 		this.instanceNum = instanceNum;
 	}
 
-	/**
-	 * Checks if is checks for fieldmap.
-	 *
-	 * @return true, if is checks for fieldmap
-	 */
-	public boolean isHasFieldmap() {
-		return this.hasFieldmap;
+	/** The Location name. */
+	public String getLocationName() {
+		return locationName;
 	}
 
-	/**
-	 * Sets the checks for fieldmap.
-	 *
-	 * @param hasFieldmap the new checks for fieldmap
-	 */
-	public void setHasFieldmap(boolean hasFieldmap) {
-		this.hasFieldmap = hasFieldmap;
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
 	}
 
-	/**
-	 * Gets the checks for fieldmap display.
-	 *
-	 * @return the checks for fieldmap display
-	 */
-	public String getHasFieldmapDisplay() {
-		if (this.hasFieldmap) {
-			return "Yes";
-		}
-		return "No";
+	public Integer getGeolocationId() {
+		return geolocationId;
+	}
+
+	public void setGeolocationId(final Integer geolocationId) {
+		this.geolocationId = geolocationId;
 	}
 }

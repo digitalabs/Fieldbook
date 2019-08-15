@@ -1191,18 +1191,6 @@ function exportGermplasmList() {
 	$(formName).ajaxForm(exportOptions).submit();
 }
 
-/*function exportStudy() {
-	'use strict';
-	var exportType = $('#exportType').val();
-
-	if (exportType === '0') {
-		showMessage('Please choose export type');
-		return false;
-	}
-
-	doExportContinue(exportType);
-}*/
-
 function getExportCheckedAdvancedList() {
 	'use strict';
 	var advancedLists = [];
@@ -1232,35 +1220,20 @@ function exportAdvanceStudyList(advancedListIdParams) {
 	$('#exportAdvanceStudyForm').ajaxForm(exportAdvanceOptions).submit();
 }
 
-/*function doExportContinue(exportType) {
-	var instanceIds, exportWayType = 1;
-
-	instanceIds = getExportCheckedInstances();
-	if (instanceIds.length === 0) {
-		return false;
-	}
-
-	var exportWayType = $('#exportWayType').val();
-	doFinalExport(exportType, instanceIds, exportWayType);
-}*/
-
 function doFinalExport(exportParameters) {
-
-
 	var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
-
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', 'http://localhost:8080/bmsapi/crops/maize/studies/' + exportParameters.studyId + '/datasets/' + exportParameters.plotData + '/' + exportParameters.fileFormat + '?instanceIds=' + exportParameters.instanceIds + '&collectionOrderId=' + exportParameters.collectionOrderId + '&singleFile='+exportParameters.singleFile, true);
+	xhr.open('GET', 'http://localhost:8080/bmsapi/crops/maize/studies/' + exportParameters.studyId + '/datasets/' + exportParameters.plotData + '/' + exportParameters.fileFormat + '?instanceIds=' + exportParameters.instanceIds + '&collectionOrderId=' + exportParameters.collectionOrderId + '&singleFile=' + exportParameters.singleFile, true);
 	xhr.responseType = 'blob';
 	xhr.setRequestHeader('Content-Type', 'application/json');
 	xhr.setRequestHeader('X-Auth-Token', xAuthToken);
-	xhr.onload = function(e) {
+	xhr.onload = function (e) {
 		if (this.status == 200) {
 			const contentDisposition = this.getResponseHeader('content-disposition') || '';
 			const matches = /filename=([^;]+)/ig.exec(contentDisposition);
 			const fileName = (matches[1] || 'untitled').trim();
 			const blob = this.response;
-			const url =  window.URL.createObjectURL(blob);
+			const url = window.URL.createObjectURL(blob);
 
 			// For IE 10 or later
 			if (window.navigator && window.navigator.msSaveOrOpenBlob) {
@@ -1273,11 +1246,12 @@ function doFinalExport(exportParameters) {
 				link.click();
 				document.body.removeChild(link);
 			}
-
+			$('#exportStudyModal').modal('hide');
+		} else {
+			showErrorMessage('', 'Something went wrong exporting the file.');
 		}
 	};
 	xhr.send();
-	$('#exportStudyModal').modal('hide');
 }
 
 function hasRequiredColumnsHiddenInMeasurementDataTable(visibleColumns) {

@@ -27,6 +27,7 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
+import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
@@ -176,6 +177,8 @@ public class CrossingTemplateExcelExporterTest {
 
 		final Project projectMock = Mockito.mock(Project.class);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(projectMock);
+		Mockito.when(projectMock.getCropType()).thenReturn(new CropType("maize"));
+
 
 		// User
 		final int userId = 8;

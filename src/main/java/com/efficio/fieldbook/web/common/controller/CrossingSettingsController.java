@@ -38,6 +38,7 @@ import org.generationcp.middleware.pojos.UDTableType;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.workbench.ToolName;
+import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
@@ -422,14 +423,15 @@ public class CrossingSettingsController extends SettingsController {
 	public Map<String, Person> getCurrentProgramMembers() {
 		// we need to convert Integer to String because angular doest work with numbers as options for select
 
-		final String cropname = this.contextUtil.getProjectInContext().getCropType().getCropName();
+		final String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
 
 		final Map<String, Person> currentProgramMembers = new HashMap<>();
-		final Long projectId = this.workbenchDataManager.getProjectByUuidAndCrop(this.getCurrentProgramID(), cropname).getProjectId();
+		final Long projectId = this.workbenchDataManager.getProjectByUuidAndCrop(this.getCurrentProgramID(), cropName).getProjectId();
 
-		final Map<Integer, Person> programMembers = this.userService.getPersonsByProjectId(projectId);
-		for (final Map.Entry<Integer, Person> member : programMembers.entrySet()) {
-			currentProgramMembers.put(String.valueOf(member.getKey()), member.getValue());
+		//TODO Verify if it is possible to return a UserDto instead of a Map
+		final List<WorkbenchUser> users = this.userService.getUsersByProjectId(projectId, cropName);
+		for (final WorkbenchUser user : users) {
+			currentProgramMembers.put(String.valueOf(user.getUserid()), user.getPerson());
 		}
 		return currentProgramMembers;
 	}

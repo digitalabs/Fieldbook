@@ -118,7 +118,8 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt());
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
-		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong())).thenReturn(new ArrayList<WorkbenchUser>());
+		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+			.thenReturn(new ArrayList<WorkbenchUser>());
 
 		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID,
 				CrossingTemplateExcelExporterTest.STUDY_NAME, CrossingTemplateExcelExporterTest.CURRENT_USER_ID);
@@ -187,7 +188,7 @@ public class CrossingTemplateExcelExporterTest {
 		workbenchUser.setUserid(userId);
 		workbenchUser.setPerson(person);
 		users.add(workbenchUser);
-		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong())).thenReturn(users);
+		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString())).thenReturn(users);
 
 		// Methods
 		final String mCode = "6";
@@ -320,7 +321,8 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt());
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
-		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong())).thenReturn(new ArrayList<WorkbenchUser>());
+		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+			.thenReturn(new ArrayList<WorkbenchUser>());
 
 		// to test
 		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, studyName,

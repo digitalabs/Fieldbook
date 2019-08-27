@@ -27,7 +27,6 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
-import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
@@ -119,7 +118,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt());
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
-		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong()))
 			.thenReturn(new ArrayList<WorkbenchUser>());
 
 		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID,
@@ -177,7 +176,6 @@ public class CrossingTemplateExcelExporterTest {
 
 		final Project projectMock = Mockito.mock(Project.class);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(projectMock);
-		Mockito.when(projectMock.getCropType()).thenReturn(new CropType("maize"));
 
 
 		// User
@@ -191,7 +189,7 @@ public class CrossingTemplateExcelExporterTest {
 		workbenchUser.setUserid(userId);
 		workbenchUser.setPerson(person);
 		users.add(workbenchUser);
-		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString())).thenReturn(users);
+		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong())).thenReturn(users);
 
 		// Methods
 		final String mCode = "6";
@@ -324,7 +322,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt());
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
-		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong()))
 			.thenReturn(new ArrayList<WorkbenchUser>());
 
 		// to test

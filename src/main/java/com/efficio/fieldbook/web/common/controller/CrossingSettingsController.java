@@ -429,7 +429,7 @@ public class CrossingSettingsController extends SettingsController {
 		final Long projectId = this.workbenchDataManager.getProjectByUuidAndCrop(this.getCurrentProgramID(), cropName).getProjectId();
 
 		//TODO Verify if it is possible to return a UserDto instead of a Map
-		final List<WorkbenchUser> users = this.userService.getUsersByProjectId(projectId, cropName);
+		final List<WorkbenchUser> users = this.userService.getUsersByProjectId(projectId);
 		for (final WorkbenchUser user : users) {
 			currentProgramMembers.put(String.valueOf(user.getUserid()), user.getPerson());
 		}

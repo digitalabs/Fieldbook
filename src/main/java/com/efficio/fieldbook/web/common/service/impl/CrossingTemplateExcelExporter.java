@@ -220,8 +220,7 @@ public class CrossingTemplateExcelExporter {
 		// Users
 
 		final List<WorkbenchUser> allProgramMembers =
-			this.userService.getUsersByProjectId(this.contextUtil.getProjectInContext().getProjectId(),
-				this.contextUtil.getProjectInContext().getCropType().getCropName());
+			this.userService.getUsersByProjectId(this.contextUtil.getProjectInContext().getProjectId());
 
 		final CellStyle userCellStyle = codesSheet.getWorkbook().createCellStyle();
 		userCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);

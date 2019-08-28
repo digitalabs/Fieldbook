@@ -167,6 +167,7 @@
 			var singleFile = fileFormat === 'csv' ? $('#singleFile').prop('checked') : false;
 
 			var exportParameters = {
+				cropName: $('#cropName').val(),
 				fileFormat: fileFormat,
 				studyId: $('#studyId').val(),
 				plotData: $('#plotDataset').val(),

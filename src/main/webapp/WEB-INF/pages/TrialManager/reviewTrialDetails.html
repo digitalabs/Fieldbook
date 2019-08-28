@@ -7,8 +7,9 @@
 		<input type="hidden" th:id="'review-study-error-' + *{id}" th:value="*{errorMessage}" />
         <input type="hidden" id="studyName"  th:value="*{name}"/>
         <input type="hidden" id="plotDataset" name="plotDataset" th:value="${plotDataset}" />
+        <input type="hidden" id="cropName" name="cropName" th:value="${cropName}" />
 
-		<div class="col-xs-12 col-md-12">
+        <div class="col-xs-12 col-md-12">
             <!-- Display Header: Basic Details -->
 			<label  class="control-label section-toggle toggle-icon" data-target=".trialDetails">
 				<img th:src="@{/static/img/basic-details.png}" />

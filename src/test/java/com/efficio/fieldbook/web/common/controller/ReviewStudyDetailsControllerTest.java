@@ -30,6 +30,8 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.ErrorCode;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.workbench.CropType;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.Role;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.user.UserService;
@@ -75,7 +77,8 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
-
+		final Project project = new Project();
+		project.setCropType(new CropType("Maize"));
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
 		this.reviewStudyDetailsController.setFieldbookMiddlewareService(this.fieldbookMWService);
 		this.reviewStudyDetailsController.setFieldbookService(this.fieldbookService);
@@ -85,6 +88,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 		this.reviewStudyDetailsController.setContextUtil(this.contextUtil);
 		Mockito.doReturn(this.PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
+		Mockito.doReturn(project).when(this.contextUtil).getProjectInContext();
 
 		final GermplasmList germplasmList = new GermplasmList(1);
 		Mockito.when(this.fieldbookMWService.getGermplasmListsByProjectId(1, GermplasmListType.STUDY)).thenReturn(Arrays.asList(germplasmList));

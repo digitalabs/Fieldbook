@@ -625,12 +625,6 @@
 		<aop:scoped-proxy/>
 	</bean>
 
-	<bean id="securityUtil"
-		  class="org.generationcp.commons.security.SecurityUtil"
-		  scope="request">
-		<aop:scoped-proxy/>
-	</bean>
-
 	<!-- Data Source and Transaction Configuration -->
 
 	<bean id="xaDataSources" class="org.generationcp.middleware.hibernate.XADataSources" />

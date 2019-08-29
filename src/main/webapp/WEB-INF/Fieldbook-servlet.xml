@@ -619,8 +619,8 @@
 		<aop:scoped-proxy/>
 	</bean>
 
-	<bean id="authorizationUtil"
-		  class="org.generationcp.commons.security.AuthorizationUtil"
+	<bean id="authorizationService"
+		  class="org.generationcp.commons.security.AuthorizationService"
 		  scope="request">
 		<aop:scoped-proxy/>
 	</bean>

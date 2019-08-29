@@ -17,7 +17,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.commons.security.AuthorizationUtil;
+import org.generationcp.commons.security.AuthorizationService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -58,7 +58,7 @@ public abstract class AbstractBaseFieldbookController {
 	protected OntologyVariableDataManager variableDataManager;
 
 	@Autowired
-	protected AuthorizationUtil authorizationUtil;
+	protected AuthorizationService authorizationService;
 
 	/**
 	 * Implemented by the sub controllers to specify the html view that they render into the base template.
@@ -194,14 +194,14 @@ public abstract class AbstractBaseFieldbookController {
 	}
 	
 	public void setIsSuperAdminAttribute(final Model model) {
-		model.addAttribute("isSuperAdmin", authorizationUtil.isSuperAdminUser());
+		model.addAttribute("isSuperAdmin", authorizationService.isSuperAdminUser());
 	}
 
 	public void setVariableDataManager(final OntologyVariableDataManager variableDataManager) {
 		this.variableDataManager = variableDataManager;
 	}
 
-	public void setAuthorizationUtil(final AuthorizationUtil authorizationUtil) {
-		this.authorizationUtil = authorizationUtil;
+	public void setAuthorizationService(final AuthorizationService authorizationService) {
+		this.authorizationService = authorizationService;
 	}
 }

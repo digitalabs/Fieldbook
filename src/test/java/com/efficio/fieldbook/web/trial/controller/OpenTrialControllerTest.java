@@ -29,7 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
-import org.generationcp.commons.security.AuthorizationUtil;
+import org.generationcp.commons.security.AuthorizationService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.ListDataProjectTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
@@ -165,7 +165,7 @@ public class OpenTrialControllerTest {
 	private InventoryDataManager inventoryDataManager;
 
 	@Mock
-	private AuthorizationUtil authorizationUtil;
+	private AuthorizationService authorizationService;
 
 	@InjectMocks
 	private OpenTrialController openTrialController;
@@ -212,7 +212,7 @@ public class OpenTrialControllerTest {
 			.thenReturn(this.testVariable);
 		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
 
-		Mockito.when(this.authorizationUtil.isSuperAdminUser()).thenReturn(Boolean.TRUE);
+		Mockito.when(this.authorizationService.isSuperAdminUser()).thenReturn(Boolean.TRUE);
 	}
 
 	@Test

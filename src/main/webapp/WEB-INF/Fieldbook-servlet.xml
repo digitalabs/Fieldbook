@@ -125,7 +125,7 @@
 	<bean id="designRunner" class="${design.runner}" />
 
 	<bean id="designRunnerLicenseUtil" class="${design.runner.license.util}" />
-	
+
 	<bean id="fileService" class="org.generationcp.commons.service.impl.FileServiceImpl"
 		init-method="init">
 		<constructor-arg value="${upload.directory}" />
@@ -293,6 +293,12 @@
 
 	<bean id="userService"
 			  class="org.generationcp.middleware.service.impl.user.UserServiceImpl">
+		<constructor-arg ref="workbenchHibernateSessionProvider" />
+	</bean>
+
+	<bean id="permissionService"
+		  class="org.generationcp.middleware.service.api.permission.PermissionServiceImpl"
+		  destroy-method="close">
 		<constructor-arg ref="workbenchHibernateSessionProvider" />
 	</bean>
 
@@ -609,6 +615,18 @@
 
 	<bean id="derivedVariableProcessor"
 		  class="org.generationcp.commons.derivedvariable.DerivedVariableProcessor"
+		  scope="request">
+		<aop:scoped-proxy/>
+	</bean>
+
+	<bean id="authorizationUtil"
+		  class="org.generationcp.commons.security.AuthorizationUtil"
+		  scope="request">
+		<aop:scoped-proxy/>
+	</bean>
+
+	<bean id="securityUtil"
+		  class="org.generationcp.commons.security.SecurityUtil"
 		  scope="request">
 		<aop:scoped-proxy/>
 	</bean>

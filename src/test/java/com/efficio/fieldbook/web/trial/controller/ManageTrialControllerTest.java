@@ -11,6 +11,7 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
+import org.generationcp.commons.security.AuthorizationUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.junit.Before;
@@ -35,6 +36,9 @@ public class ManageTrialControllerTest {
 	@Mock
 	private ContextUtil contextUtil;
 
+	@Mock
+	private AuthorizationUtil authorizationUtil;
+
 	@InjectMocks
 	private ManageTrialController controller;
 
@@ -46,6 +50,7 @@ public class ManageTrialControllerTest {
         // Use standalone setup in order to mock StudyDataManager (there is error in
         // in CI server when creating bean StudyDataManager since there's no program in DB)
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+		Mockito.when(authorizationUtil.isSuperAdminUser()).thenReturn(Boolean.TRUE);
 	}
 
 	@Test

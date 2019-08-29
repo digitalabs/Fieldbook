@@ -11,13 +11,12 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.security.SecurityUtil;
+import org.generationcp.commons.security.AuthorizationUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -32,7 +31,6 @@ import org.generationcp.middleware.pojos.ErrorCode;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
-import org.generationcp.middleware.pojos.workbench.Role;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.junit.Assert;
@@ -42,17 +40,12 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.StudyDetails;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.google.common.collect.Lists;
+import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTest {
@@ -72,6 +65,9 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	@Mock
 	private ContextUtil contextUtil;
 
+	@Mock
+	private AuthorizationUtil authorizationUtil;
+
 	private Workbook workbook;
 
 	@Before
@@ -80,6 +76,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		final Project project = new Project();
 		project.setCropType(new CropType("Maize"));
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
+		this.reviewStudyDetailsController.setAuthorizationUtil(authorizationUtil);
 		this.reviewStudyDetailsController.setFieldbookMiddlewareService(this.fieldbookMWService);
 		this.reviewStudyDetailsController.setFieldbookService(this.fieldbookService);
 		this.reviewStudyDetailsController.setUserService(this.userService);
@@ -167,9 +164,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	public void testSetIsSuperAdminAttributeForNonSuperAdminUser() {
 		final Model model = new ExtendedModelMap();
 
-		SimpleGrantedAuthority roleAuthority = new SimpleGrantedAuthority(SecurityUtil.ROLE_PREFIX + Role.ADMIN);
-		UsernamePasswordAuthenticationToken loggedInUser = new UsernamePasswordAuthenticationToken("", "", Lists.newArrayList(roleAuthority));
-		SecurityContextHolder.getContext().setAuthentication(loggedInUser);
+		Mockito.when(authorizationUtil.isSuperAdminUser()).thenReturn(Boolean.FALSE);
 		this.reviewStudyDetailsController.setIsSuperAdminAttribute(model);
 		Assert.assertFalse((Boolean)model.asMap().get("isSuperAdmin"));
 	}
@@ -178,9 +173,8 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	public void testSetIsSuperAdminAttributeForSuperAdminUser() {
 		final Model model = new ExtendedModelMap();
 
-		SimpleGrantedAuthority roleAuthority = new SimpleGrantedAuthority(SecurityUtil.ROLE_PREFIX + Role.SUPERADMIN);
-		UsernamePasswordAuthenticationToken loggedInUser = new UsernamePasswordAuthenticationToken("", "", Lists.newArrayList(roleAuthority));
-		SecurityContextHolder.getContext().setAuthentication(loggedInUser);
+		Mockito.when(authorizationUtil.isSuperAdminUser()).thenReturn(Boolean.TRUE);
+
 		this.reviewStudyDetailsController.setIsSuperAdminAttribute(model);
 		Assert.assertTrue((Boolean)model.asMap().get("isSuperAdmin"));
 	}

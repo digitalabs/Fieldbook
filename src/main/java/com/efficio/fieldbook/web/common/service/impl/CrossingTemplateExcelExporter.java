@@ -32,7 +32,6 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
 import org.generationcp.middleware.service.api.user.UserService;
@@ -77,7 +76,7 @@ public class CrossingTemplateExcelExporter {
 	@Resource
 	private GermplasmDataManager germplasmDataManager;
 
-	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 	private String templateFile;
 
 	public FileExportInfo export(final Integer studyId, final String studyName, final Integer currentUserId) throws CrossingTemplateExportException {
@@ -104,7 +103,7 @@ public class CrossingTemplateExcelExporter {
 			// return the resulting file back to the user
 			return this.createExcelOutputFile(studyName, excelWorkbook);
 
-		} catch (MiddlewareException | IOException | InvalidFormatException | NullPointerException e) {
+		} catch (final MiddlewareException | IOException | InvalidFormatException | NullPointerException e) {
 			throw new CrossingTemplateExportException(e.getMessage(), e);
 		}
 	}
@@ -124,16 +123,16 @@ public class CrossingTemplateExcelExporter {
 		final Row row = studyListSheet.getRow(0);
 
 		if (!experiments.isEmpty()) {
-			localNameList = getTermIdList(experiments.get(0).getFactors());
+			localNameList = this.getTermIdList(experiments.get(0).getFactors());
 		}
 
-		for (Experiment gpData : experiments) {
+		for (final Experiment gpData : experiments) {
 			columSheet = 6;
 			PoiUtil.setCellValue(studyListSheet, 0, rowIndex, studyName);
 			PoiUtil.setCellValue(studyListSheet, 1, rowIndex, Integer.parseInt(gpData.getFactors().findById(TermId.PLOT_NO).getValue()));
 			if (gpData.getFactors().findById(TermId.ENTRY_TYPE) != null) {
-				int entryType = Integer.parseInt(gpData.getFactors().findById(TermId.ENTRY_TYPE).getValue());
-				PoiUtil.setCellValue(studyListSheet, 2, rowIndex, getEntryTypeName(entryType));
+				final int entryType = Integer.parseInt(gpData.getFactors().findById(TermId.ENTRY_TYPE).getValue());
+				PoiUtil.setCellValue(studyListSheet, 2, rowIndex, this.getEntryTypeName(entryType));
 			}
 			PoiUtil.setCellValue(studyListSheet, 3, rowIndex, gpData.getFactors().findById(TermId.GID).getValue());
 			PoiUtil.setCellValue(studyListSheet, 4, rowIndex, gpData.getFactors().findById(TermId.GID).getValue());
@@ -147,21 +146,21 @@ public class CrossingTemplateExcelExporter {
 
 			if (gpData.getFactors().findById(TermId.FIELDMAP_COLUMN) != null) {
 				if (rowIndex == 1) {
-					addHeaderToRow(row, methodCellStyle, FIELDMAP_COLUMN);
+					this.addHeaderToRow(row, methodCellStyle, FIELDMAP_COLUMN);
 				}
 				PoiUtil.setCellValue(studyListSheet, 7, rowIndex, gpData.getFactors().findById(TermId.FIELDMAP_COLUMN).getValue());
 			}
 			if (gpData.getFactors().findById(TermId.FIELDMAP_RANGE) != null) {
 				if (rowIndex == 1) {
-					addHeaderToRow(row, methodCellStyle, FIELDMAP_RANGE);
+					this.addHeaderToRow(row, methodCellStyle, FIELDMAP_RANGE);
 				}
 				PoiUtil.setCellValue(studyListSheet, 8, rowIndex, gpData.getFactors().findById(TermId.FIELDMAP_RANGE).getValue());
 				columSheet = 8;
 			}
-			for (String localname : localNameList) {
+			for (final String localname : localNameList) {
 				if(treatmentFactorVariables.findByLocalName(localname) == null) {
 					if (rowIndex == 1) {
-						addHeaderToRow(row, methodCellStyle, localname);
+						this.addHeaderToRow(row, methodCellStyle, localname);
 					}
 					PoiUtil.setCellValue(studyListSheet, ++columSheet, rowIndex, gpData.getFactors().findByLocalName(localname).getValue());
 				}
@@ -174,20 +173,20 @@ public class CrossingTemplateExcelExporter {
 		}
 	}
 
-	private void addHeaderToRow(Row row, CellStyle methodCellStyle, String name) {
-		int column = row.getLastCellNum();
+	private void addHeaderToRow(final Row row, final CellStyle methodCellStyle, final String name) {
+		final int column = row.getLastCellNum();
 		row.createCell(column).setCellValue(name);
 		row.getCell(column).setCellStyle(methodCellStyle);
 		row.setHeight((short) -1);
 
 	}
 
-	private ArrayList<String> getTermIdList(VariableList factors) {
-		ArrayList<String> termIdList = new ArrayList<>();
-		List<Variable> variables = factors.getVariables();
-		for (Variable vars : variables) {
-			String name = vars.getVariableType().getLocalName();
-			int termId = vars.getVariableType().getId();
+	private ArrayList<String> getTermIdList(final VariableList factors) {
+		final ArrayList<String> termIdList = new ArrayList<>();
+		final List<Variable> variables = factors.getVariables();
+		for (final Variable vars : variables) {
+			final String name = vars.getVariableType().getLocalName();
+			final int termId = vars.getVariableType().getId();
 
 			if (termId != TermId.TRIAL_INSTANCE_FACTOR.getId() && termId != TermId.ENTRY_NO.getId() && termId != TermId.PLOT_NO.getId()
 					&& termId != TermId.ENTRY_TYPE.getId() && termId != TermId.GID.getId() && termId != TermId.DESIG.getId()
@@ -221,7 +220,7 @@ public class CrossingTemplateExcelExporter {
 		// Users
 
 		final List<WorkbenchUser> allProgramMembers =
-				this.userService.getUsersByProjectId(this.contextUtil.getProjectInContext().getProjectId());
+			this.userService.getUsersByProjectId(this.contextUtil.getProjectInContext().getProjectId());
 
 		final CellStyle userCellStyle = codesSheet.getWorkbook().createCellStyle();
 		userCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
@@ -303,15 +302,15 @@ public class CrossingTemplateExcelExporter {
 		final String outputFilepath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(downloadFilename,
 				AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 
-		try (OutputStream out = new FileOutputStream(outputFilepath)) {
+		try (final OutputStream out = new FileOutputStream(outputFilepath)) {
 			excelWorkbook.write(out);
 		}
 
 		return new FileExportInfo(outputFilepath, downloadFilename + AppConstants.EXPORT_XLS_SUFFIX.getString());
 	}
 
-	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId) throws CrossingTemplateExportException {
-		List<GermplasmList> crossesList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
+	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(final Integer studyId) throws CrossingTemplateExportException {
+		final List<GermplasmList> crossesList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
 
 		if (crossesList.isEmpty()) {
 			throw new CrossingTemplateExportException("study.export.crosses.no.germplasm.list.available");

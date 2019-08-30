@@ -42,10 +42,10 @@
 						<div class="report-type-section col-xs-4 col-md-4">
 							<select id="exportType">
 								<option value="0">Please Choose</option>
-								<option value="6" th:text="#{study.export.csv}"></option>
-								<option selected="selected"  value="2" th:text="#{study.export.excel}"></option>
-								<option value="5" th:text="#{study.export.ksu.fieldbook.csv}">KSU Fieldbook CSV</option>
-								<option value="4" th:text="#{study.export.ksu.fieldbook.excel}">KSU Fieldbook Excel</option>
+								<option value="csv" th:text="#{study.export.csv}"></option>
+								<option selected="selected" value="xls" th:text="#{study.export.excel}"></option>
+								<option value="ksu_csv" th:text="#{study.export.ksu.fieldbook.csv}">KSU Fieldbook CSV</option>
+								<option value="ksu_xls" th:text="#{study.export.ksu.fieldbook.excel}">KSU Fieldbook Excel</option>
 							</select>
 						</div>
 					</div>
@@ -75,7 +75,12 @@
 					<div class="row form-group exportTrialInstanceSection fbk-hide">
 						<div class="col-xs-12 col-md-12">&nbsp;</div>
 						<div class="col-xs-12 col-md-12">
-							<label class="control-label h4" th:text="#{study.export.choose.instance}"></label>
+							<label class="control-label h4 label-bold">STUDY ENVIRONMENT</label>
+						</div>
+						<div class="col-xs-12 col-md-12">&nbsp;</div>
+						<div class="col-xs-12 col-md-12">
+							<label class="control-label label-bold" th:text="#{study.export.choose.instance}"></label><span class="required">*</span>
+							<label style="padding-left: 10px;" class="all-instances-in-one-file"><input type="checkbox" class="singleFile" name="singleFile" id="singleFile"/><span> All instances in one file</span></label>
 						</div>
 
 						<div class="col-xs-12 col-md-12">&nbsp;</div>
@@ -92,32 +97,6 @@
 			</div>
 		</div>
 	</div>
-
-	<div class="modal fade" id="exportStudyConfirmationModal" role="dialog" aria-labelledby="exportStudyConfirmationModal" aria-hidden="true">
-		<div class="modal-dialog modal-medium">
-			<div class="modal-content">
-				<div class="modal-body" id="exportStudyConfirmationModalBody">
-					<div class="row form-group">
-						<div class="col-xs-11 col-md-11">
-							<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.confirmation.text}">Confirmation</label>
-						</div>
-						<div class="col-xs-1 col-md-1">
-							<button id="close" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"></button>
-						</div>
-					</div>
-					<div class="row form-group">
-						<div class="col-xs-12 col-md-12">
-							<label class="control-label" th:text="#{study.export.field.plan.confirmation}"></label>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer addVariable-footer">
-					<button type="button" class="btn btn-default" aria-hidden="true" onclick="javascript:doConfirmGoBack();" th:text="#{study.go.back}">Cancel</button>
-					<button type="button" class="btn btn-primary" aria-hidden="true" onclick="javascript:doConfirmExport();" th:text="#{study.proceed}">Confirm</button>
-				</div>
-			</div>
-		</div>
-	</div>
 </div>
 
 <form id="exportStudyDownloadForm" role="form-horizontal" action="#" th:action="@{/ExportManager/download/file}" method="GET">
@@ -127,86 +106,82 @@
 </form>
 
 <div layout:fragment="page-script">
-<script type='text/javascript' th:inline="javascript">
-//<![CDATA[
+	<script type='text/javascript' th:inline="javascript">
+		//<![CDATA[
 
-var submitExportUrl = '/Fieldbook/ExportManager/',
-	exportHeader = /*[[#{study.export.study.header}]]*/ '',
-	exportBookHeader = /*[[#{study.export.study.book.header}]]*/ '';
+		var submitExportUrl = '/Fieldbook/ExportManager/',
+			exportHeader = /*[[#{study.export.study.header}]]*/ '',
+			exportBookHeader = /*[[#{study.export.study.book.header}]]*/ '';
 
-$(document).ready(function() {
-	'use strict';
-	$('#exportStudyModal select').select2({width: 'copy', minimumResultsForSearch: 20});
-	$('#exportType').on('change', function () {
-		if (StudyCustomExportReports.isCustomReport()) {
-			$('.data-collection-section').hide();
-			$('.exportTrialInstanceSection').addClass('fbk-hide');
-			$('.exportRSection').css('display', 'none');
-		} else if ($(this).val() === '2') {
-			$('.data-collection-section').show();
-			$('.exportRSection').css('display', 'block');
-			$('.exportTrialInstanceSection').removeClass('fbk-hide');
+		$(document).ready(function () {
+			'use strict';
+			$('.all-instances-in-one-file').hide();
+			$('#singleFile').prop('checked', true);
+			$('#exportStudyModal select').select2({width: 'copy', minimumResultsForSearch: 20});
+			$('#exportType').on('change', function () {
+				if (StudyCustomExportReports.isCustomReport()) {
+					$('.data-collection-section').hide();
+					$('.all-instances-in-one-file').hide();
+					$('.exportTrialInstanceSection').addClass('fbk-hide');
+					$('.exportRSection').css('display', 'none');
+				} else if ($(this).val() === 'xls') {
+					$('.data-collection-section').show();
+					$('.all-instances-in-one-file').hide();
+					$('.exportRSection').css('display', 'block');
+					$('.exportTrialInstanceSection').removeClass('fbk-hide');
+				} else if ($(this).val() === 'csv') {
+					$('.all-instances-in-one-file').show();
+				} else {
+					$('.all-instances-in-one-file').hide();
+					$('.data-collection-section').show();
+					$('.exportRSection').css('display', 'none');
+					$('.exportTrialInstanceSection').removeClass('fbk-hide');
 
-		} else {
-			$('.data-collection-section').show();
-			$('.exportRSection').css('display', 'none');
-			$('.exportTrialInstanceSection').removeClass('fbk-hide');
+				}
+			});
 
-		}
-	});
+			$('#exportStudyModal').on('hide.bs.modal', function () {
+				$("#page-export-message-modal").html('');
+			});
 
-	$('#exportStudyModal').on('hide.bs.modal', function() {
-		$("#page-export-message-modal").html('');
-	});
+		});
 
-});
+		function checkBeforeExport() {
+			'use strict';
 
-function checkBeforeExport() {
-	'use strict';
-	var checkedInstance = getExportCheckedInstances(),
-		counter = 0,
-		hasNoFieldmap = false;
+			var fileFormat = $('#exportType').val();
+			var collectionOrderId = $('#exportWayType').val();
 
-
-	if (StudyCustomExportReports.isCustomReport()) {
-		StudyCustomExportReports.doExport();
-		return true;
-	}
-
-
-	if (checkedInstance !== null && checkedInstance.length === 0) {
-		showErrorMessage('', 'Please select at least 1 instance');
-		return false;
-	}
-
-	if ($('#exportWayType').val() === '1') {
-		exportStudy();
-	} else {
-		for (counter = 0; counter < checkedInstance.length; counter++) {
-			if (checkedInstance[counter].hasFieldmap === 'No') {
-				hasNoFieldmap = true;
-				break;
+			if (fileFormat === '0') {
+				showMessage('Please choose export type');
+				return false;
 			}
+
+			var checkedInstance = getExportCheckedInstances();
+
+			if (checkedInstance !== null && checkedInstance.length === 0) {
+				showErrorMessage('', 'Please select at least 1 instance');
+				return false;
+			}
+
+			var singleFile = fileFormat === 'csv' ? $('#singleFile').prop('checked') : false;
+
+			var exportParameters = {
+				cropName: $('#cropName').val(),
+				fileFormat: fileFormat,
+				studyId: $('#studyId').val(),
+				plotData: $('#plotDataset').val(),
+				instanceIds: checkedInstance.join(","),
+				collectionOrderId: collectionOrderId,
+				singleFile: singleFile
+			};
+			doFinalExport(exportParameters);
 		}
-		if (hasNoFieldmap) {
-			$('#exportStudyModal').modal('hide');
-			$('#exportStudyConfirmationModal').modal({backdrop: 'static', keyboard: true});
-		} else {
-			exportStudy();
-		}
-	}
-}
 
 function doConfirmGoBack() {
 	'use strict';
 	$('#exportStudyConfirmationModal').modal('hide');
 	$('#exportStudyModal').modal({ backdrop: 'static', keyboard: true });
-}
-
-function doConfirmExport() {
-	'use strict';
-	exportStudy();
-	$('#exportStudyConfirmationModal').modal('hide');
 }
 
 function showExportOptions() {

@@ -122,6 +122,9 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 			} else {
 				details.setHasMeasurements(false);
 			}
+			model.addAttribute("plotDataset", workbook.getMeasurementDatesetId());
+			model.addAttribute("cropName", this.contextUtil.getProjectInContext().getCropType().getCropName());
+
 
 			this.userSelection.setWorkbook(workbook);
 		} catch (final MiddlewareException e) {

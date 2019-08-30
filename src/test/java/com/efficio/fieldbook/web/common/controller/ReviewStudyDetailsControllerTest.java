@@ -11,11 +11,10 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.security.AuthorizationService;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -30,6 +29,8 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.ErrorCode;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.workbench.CropType;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.junit.Assert;
@@ -42,10 +43,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.StudyDetails;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTest {
@@ -73,7 +73,8 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
-
+		final Project project = new Project();
+		project.setCropType(new CropType("Maize"));
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
 		this.reviewStudyDetailsController.setAuthorizationService(authorizationService);
 		this.reviewStudyDetailsController.setFieldbookMiddlewareService(this.fieldbookMWService);
@@ -84,6 +85,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 		this.reviewStudyDetailsController.setContextUtil(this.contextUtil);
 		Mockito.doReturn(this.PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
+		Mockito.doReturn(project).when(this.contextUtil).getProjectInContext();
 
 		final GermplasmList germplasmList = new GermplasmList(1);
 		Mockito.when(this.fieldbookMWService.getGermplasmListsByProjectId(1, GermplasmListType.STUDY)).thenReturn(Arrays.asList(germplasmList));

@@ -16,7 +16,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.security.AuthorizationUtil;
+import org.generationcp.commons.security.AuthorizationService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -66,7 +66,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	private ContextUtil contextUtil;
 
 	@Mock
-	private AuthorizationUtil authorizationUtil;
+	private AuthorizationService authorizationService;
 
 	private Workbook workbook;
 
@@ -76,7 +76,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		final Project project = new Project();
 		project.setCropType(new CropType("Maize"));
 		this.workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
-		this.reviewStudyDetailsController.setAuthorizationUtil(authorizationUtil);
+		this.reviewStudyDetailsController.setAuthorizationService(authorizationService);
 		this.reviewStudyDetailsController.setFieldbookMiddlewareService(this.fieldbookMWService);
 		this.reviewStudyDetailsController.setFieldbookService(this.fieldbookService);
 		this.reviewStudyDetailsController.setUserService(this.userService);
@@ -164,7 +164,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	public void testSetIsSuperAdminAttributeForNonSuperAdminUser() {
 		final Model model = new ExtendedModelMap();
 
-		Mockito.when(authorizationUtil.isSuperAdminUser()).thenReturn(Boolean.FALSE);
+		Mockito.when(authorizationService.isSuperAdminUser()).thenReturn(Boolean.FALSE);
 		this.reviewStudyDetailsController.setIsSuperAdminAttribute(model);
 		Assert.assertFalse((Boolean)model.asMap().get("isSuperAdmin"));
 	}
@@ -173,7 +173,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	public void testSetIsSuperAdminAttributeForSuperAdminUser() {
 		final Model model = new ExtendedModelMap();
 
-		Mockito.when(authorizationUtil.isSuperAdminUser()).thenReturn(Boolean.TRUE);
+		Mockito.when(authorizationService.isSuperAdminUser()).thenReturn(Boolean.TRUE);
 
 		this.reviewStudyDetailsController.setIsSuperAdminAttribute(model);
 		Assert.assertTrue((Boolean)model.asMap().get("isSuperAdmin"));

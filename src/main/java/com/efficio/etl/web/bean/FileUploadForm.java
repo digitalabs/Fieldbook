@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileUploadForm {
 
 	private MultipartFile file;
-	private String importType = "";
 
 	public MultipartFile getFile() {
 
@@ -19,13 +18,5 @@ public class FileUploadForm {
 
 	public void setFile(MultipartFile file) {
 		this.file = file;
-	}
-
-	public String getImportType() {
-		return this.importType;
-	}
-
-	public void setImportType(String importType) {
-		this.importType = importType;
 	}
 }

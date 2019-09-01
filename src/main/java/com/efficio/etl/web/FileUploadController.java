@@ -141,22 +141,16 @@ public class FileUploadController extends AbstractBaseETLController {
 				result.reject(FileUploadController.UPLOAD_FORM_FILE, "Error occurred while uploading file.");
 			}
 
-			if ("fieldbook".equalsIgnoreCase(uploadForm.getImportType())) {
-				model.addAttribute("fileName", this.userSelection.getActualFileName());
-				return "etl/fileUploadFieldbook";
-
-			} else {
-				try {
-					this.etlService.retrieveCurrentWorkbookWithValidation(this.userSelection);
-					return "redirect:workbook/step2";
-				} catch (final IOException e) {
-					FileUploadController.LOG.error(e.getMessage(), e);
-					result.reject(FileUploadController.UPLOAD_FORM_FILE, "Error occurred while reading Excel file");
-				} catch (final WorkbookParserException e) {
-					FileUploadController.LOG.error(e.getMessage(), e);
-					result.reject(FileUploadController.UPLOAD_FORM_FILE,
-							this.etlService.convertMessageList(e.getErrorMessages()).get(0));
-				}
+			try {
+				this.etlService.retrieveCurrentWorkbookWithValidation(this.userSelection);
+				return "redirect:workbook/step2";
+			} catch (final IOException e) {
+				FileUploadController.LOG.error(e.getMessage(), e);
+				result.reject(FileUploadController.UPLOAD_FORM_FILE, "Error occurred while reading Excel file");
+			} catch (final WorkbookParserException e) {
+				FileUploadController.LOG.error(e.getMessage(), e);
+				result.reject(FileUploadController.UPLOAD_FORM_FILE,
+						this.etlService.convertMessageList(e.getErrorMessages()).get(0));
 			}
 
 			// at this point, we can assume that program has reached an error

@@ -29,8 +29,8 @@
       </div>
 
       <div id="page-message">
-      
-      	  <div class="alert alert-danger" th:if="${hasErrors} " th:each="error : ${errors}" th:utext="${error}"></div>	
+
+      	  <div class="alert alert-danger" th:if="${hasErrors} " th:each="error : ${errors}" th:utext="${error}"></div>
           <form th:object="${uploadForm}" th:remove="tag">
               <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
           </form>
@@ -75,40 +75,35 @@
 <script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
 <script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
-			
-		           
-		$(function (){
-			$($("[name='importType']")[0]).attr('checked', 'checked');
-		});          
-		
+
 		var userSubmittingForm = false;
 		function do_validation() {
 			if (userSubmittingForm) {
                 return false;
             }
-			
+
 			// moved setting of flag to here so as to prevent user from re-submitting the form regardless if submission is error condition or not.
             Spinner.play();
-			
+
 			if ($('#fileupload').val() == "") {
 				userSubmittingForm = true;
-				
+
 				var message = /*[[#{error.file.no.file.selected}]]*/;
-				
+
 				$("#page-message").html(
 		    			"<div class='alert alert-danger'>"+ message +"</div>"
 		    		);
-				
+
 				$('div.fileupload').parent().parent().addClass('has-error');
-				
+
 				userSubmittingForm = false;
 				Spinner.stop();
 				return false;
 			}
-			
+
 			return true;
 		}
-			
+
 		//]]>
 </script>
 

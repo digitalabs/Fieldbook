@@ -16,7 +16,7 @@ public class FileUploadForm {
 
 	}
 
-	public void setFile(MultipartFile file) {
+	public void setFile(final MultipartFile file) {
 		this.file = file;
 	}
 }

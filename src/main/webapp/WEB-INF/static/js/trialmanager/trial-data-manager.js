@@ -802,7 +802,7 @@
 					_.find(service.currentData.treatmentFactors.currentData, function(item, key) {
 						if (!service.currentData.treatmentFactors.currentData[key].variableId) {
 							results.customHeader = 'Invalid Input ';
-							results.customMessage = 'Please choose treatment factors label';
+							results.customMessage = 'Please choose treatment factor label';
 							results.hasError = true;
 							return results.hasError;
 						}

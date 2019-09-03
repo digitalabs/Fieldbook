@@ -55,19 +55,19 @@ public class FileUploadController extends AbstractBaseETLController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileUploadController.class);
 
-	protected static final String STATUS_CODE = "statusCode";
+	static final String STATUS_CODE = "statusCode";
 
-	protected static final String ERROR_TYPE = "errorType";
+	static final String ERROR_TYPE = "errorType";
 
-	protected static final String STATUS_MESSAGE = "statusMessage";
+	static final String STATUS_MESSAGE = "statusMessage";
 
-	protected static final String USER_LACKS_PERMISSION_MESSAGE = "browse.study.no.permission.for.locked.study";
+	static final String USER_LACKS_PERMISSION_MESSAGE = "browse.study.no.permission.for.locked.study";
 
 	private static final String UPLOAD_FORM_FILE = "uploadForm.file";
-	public static final String STATUS_CODE_LACKS_PERMISSION = "3";
-	public static final String STATUS_CODE_HAS_OUT_OF_BOUNDS = "2";
-	public static final String STATUS_CODE_SUCCESSFUL = "1";
-	public static final String STATUS_CODE_HAS_ERROR = "-1";
+	static final String STATUS_CODE_LACKS_PERMISSION = "3";
+	static final String STATUS_CODE_HAS_OUT_OF_BOUNDS = "2";
+	static final String STATUS_CODE_SUCCESSFUL = "1";
+	static final String STATUS_CODE_HAS_ERROR = "-1";
 
 	@Resource
 	private FieldbookService fieldbookService;
@@ -113,9 +113,7 @@ public class FileUploadController extends AbstractBaseETLController {
 		validator.validate(uploadForm, result);
 
 		if (result.hasErrors()) {
-			/**
-			 * Return the user back to form to show errors
-			 */
+			// Return the user back to form to show errors
 			return this.getContentName();
 		} else {
 
@@ -141,22 +139,16 @@ public class FileUploadController extends AbstractBaseETLController {
 				result.reject(FileUploadController.UPLOAD_FORM_FILE, "Error occurred while uploading file.");
 			}
 
-			if ("fieldbook".equalsIgnoreCase(uploadForm.getImportType())) {
-				model.addAttribute("fileName", this.userSelection.getActualFileName());
-				return "etl/fileUploadFieldbook";
-
-			} else {
-				try {
-					this.etlService.retrieveCurrentWorkbookWithValidation(this.userSelection);
-					return "redirect:workbook/step2";
-				} catch (final IOException e) {
-					FileUploadController.LOG.error(e.getMessage(), e);
-					result.reject(FileUploadController.UPLOAD_FORM_FILE, "Error occurred while reading Excel file");
-				} catch (final WorkbookParserException e) {
-					FileUploadController.LOG.error(e.getMessage(), e);
-					result.reject(FileUploadController.UPLOAD_FORM_FILE,
-							this.etlService.convertMessageList(e.getErrorMessages()).get(0));
-				}
+			try {
+				this.etlService.retrieveCurrentWorkbookWithValidation(this.userSelection);
+				return "redirect:workbook/step2";
+			} catch (final IOException e) {
+				FileUploadController.LOG.error(e.getMessage(), e);
+				result.reject(FileUploadController.UPLOAD_FORM_FILE, "Error occurred while reading Excel file");
+			} catch (final WorkbookParserException e) {
+				FileUploadController.LOG.error(e.getMessage(), e);
+				result.reject(FileUploadController.UPLOAD_FORM_FILE,
+						this.etlService.convertMessageList(e.getErrorMessages()).get(0));
 			}
 
 			// at this point, we can assume that program has reached an error
@@ -186,7 +178,7 @@ public class FileUploadController extends AbstractBaseETLController {
 			final org.generationcp.middleware.domain.etl.Workbook wb;
 
 			wb = this.dataImportService.parseWorkbook(this.etlService.retrieveCurrentWorkbookAsFile(this.userSelection), programUUID,
-				confirmDiscard == 1 ? true : false, new WorkbookParser(), this.contextUtil.getCurrentWorkbenchUserId());
+				confirmDiscard == 1, new WorkbookParser(), this.contextUtil.getCurrentWorkbenchUserId());
 
 			// The entry type id should be saved in the db instead of the entry
 			// type name
@@ -225,7 +217,7 @@ public class FileUploadController extends AbstractBaseETLController {
 
 	}
 
-	public void convertEntryTypeNameToID(final String programUUID, final List<MeasurementRow> observations,
+	void convertEntryTypeNameToID(final String programUUID, final List<MeasurementRow> observations,
 			final Map<String, Integer> availableEntryTypes) {
 		final Map<String, MeasurementVariable> mVarMap = new HashMap<>();
 		for (final MeasurementRow row : observations) {
@@ -295,7 +287,7 @@ public class FileUploadController extends AbstractBaseETLController {
 
 			FileUploadController.LOG.error(e.getMessage(), e);
 			this.returnMessage.clear();
-			Boolean isMaxLimitException = buildWorkbookParserExceptionMessages(e);
+			final Boolean isMaxLimitException = this.buildWorkbookParserExceptionMessages(e);
 
 			this.returnMessage.put(FileUploadController.STATUS_CODE, FileUploadController.STATUS_CODE_HAS_ERROR);
 			if (isMaxLimitException) {
@@ -317,7 +309,7 @@ public class FileUploadController extends AbstractBaseETLController {
 
 	}
 
-	Boolean buildWorkbookParserExceptionMessages(final WorkbookParserException e) {
+	private Boolean buildWorkbookParserExceptionMessages(final WorkbookParserException e) {
 		boolean isMaxLimitException = false;
 		final StringBuilder builder = new StringBuilder();
 		builder.append("The system detected format errors in the file:<br/><br/>");
@@ -363,12 +355,12 @@ public class FileUploadController extends AbstractBaseETLController {
 	}
 
 
-	public void setStudyPermissionValidator(StudyPermissionValidator studyPermissionValidator) {
+	void setStudyPermissionValidator(final StudyPermissionValidator studyPermissionValidator) {
 		this.studyPermissionValidator = studyPermissionValidator;
 	}
 
 
-	public void setMessageSource(ResourceBundleMessageSource messageSource) {
+	public void setMessageSource(final ResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
 

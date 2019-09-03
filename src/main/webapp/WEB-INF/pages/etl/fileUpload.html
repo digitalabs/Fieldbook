@@ -39,23 +39,8 @@
 
       <form role="form-horizontal" onsubmit="return do_validation()" class="form-horizontal" action="#" th:action="@{/etl/fileUpload}" method="post" th:object="${uploadForm}" enctype="multipart/form-data">
 
-      <div class="form-group">
-          <div class="col-lg-10 col-lg-offset-2">
-              <label class="control-label" th:text="#{file.upload.import.type.select.lbl}">Select Import Type:</label>
-          <label class="radio inline">
-              <input name="radioImportType" type="radio" value="wizard" th:field="*{importType}" checked="checked"/>
-              <span th:utext="#{file.upload.import.wizard}">Import Excel using Data Import Wizard</span>
-          </label>
-          <label class="radio inline">
-              <input name="radioImportType" type="radio" value="fieldbook" th:field="*{importType}"/>
-              <span th:utext="#{file.upload.import.fieldbook.format}">Import Excel in Fieldbook Format</span>
-           </label>
-           </div>
-       </div>
-
-
       <div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
-          <label for="fileupload" class="col-md-2 control-label" th:text="#{file.upload.upload.label}">Row Header:</label>
+          <label for="fileupload" class="col-md-1 control-label" th:text="#{file.upload.upload.label}">Row Header:</label>
           <div class="col-lg-6">
               <div class="fileupload fileupload-new" data-provides="fileupload">
                   <div class="input-group">
@@ -76,7 +61,7 @@
 
 
       <div class="form-group">
-          <div class="col-lg-10 col-lg-offset-2">
+          <div class="col-lg-10 col-lg-offset-3">
               <input id="submitButton" type="submit" th:value="#{form.submit.text}" class="btn btn-primary btn-sm"/>
           </div>
       </div>
@@ -91,17 +76,15 @@
 <script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
 <script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
-			
-		           
+
+
 		$(function (){
-			$($("[name='importType']")[0]).attr('checked', 'checked');
-			
 			if (document.location.toString().indexOf('restartApplication') !== -1){
 				sessionStorage.clear();
 			}
-			
-		});          
-		
+
+		});
+
 		var userSubmittingForm = false;
 		function do_validation() {
 			if (userSubmittingForm) {
@@ -114,21 +97,21 @@
 
 			if ($('#fileupload').val() == "") {
 				var message = /*[[#{error.file.no.file.selected}]]*/;
-				
+
 				$("#page-message").html(
 		    			"<div class='alert alert-danger'>"+ message +"</div>"
 		    		);
-				
+
 				$('div.fileupload').parent().parent().addClass('has-error');
-				
+
 				userSubmittingForm = false;
                 Spinner.stop();
 				return false;
 			}
-			
+
 			return true;
 		}
-			
+
 		//]]>
 </script>
 

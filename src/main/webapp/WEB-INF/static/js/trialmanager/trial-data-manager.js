@@ -800,6 +800,13 @@
 				validateAllTreatmentFactorLabels: function(results) {
 					//  validate all treatments variable inputs
 					_.find(service.currentData.treatmentFactors.currentData, function(item, key) {
+						if (!service.currentData.treatmentFactors.currentData[key].variableId) {
+							results.customHeader = 'Invalid Input ';
+							results.customMessage = 'Please choose treatment factor label';
+							results.hasError = true;
+							return results.hasError;
+						}
+
 						var settingsVar = service.settings.treatmentFactors.treatmentLevelPairs[key].
 							val(service.currentData.treatmentFactors.currentData[key].variableId).variable;
 

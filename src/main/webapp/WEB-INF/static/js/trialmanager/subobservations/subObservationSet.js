@@ -457,6 +457,9 @@
 
 			$scope.toggleShowCategoricalDescription = function () {
 				switchCategoricalView().done(function () {
+					$('.fbk-measurement-categorical-name').toggle();
+					$('.fbk-measurement-categorical-desc').toggle();
+
 					$scope.$apply(function () {
 						$scope.isCategoricalDescriptionView = window.isCategoricalDescriptionView;
 						adjustColumns();
@@ -1359,9 +1362,6 @@
 				if (typeof showCategoricalDescriptionView === 'undefined') {
 					showCategoricalDescriptionView = null;
 				}
-
-				$('.fbk-measurement-categorical-name').toggle();
-				$('.fbk-measurement-categorical-desc').toggle();
 
 				return $.get('/Fieldbook/TrialManager/openTrial/setCategoricalDisplayType', {showCategoricalDescriptionView: showCategoricalDescriptionView})
 					.done(function (result) {

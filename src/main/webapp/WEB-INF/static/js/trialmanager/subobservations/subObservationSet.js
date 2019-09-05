@@ -1172,12 +1172,14 @@
 
 				angular.forEach(columnsData, function (columnData, index) {
 					if (columnData.possibleValues) {
-						columnData.possibleValuesByValue = {};
+						columnData.possibleValuesByName = {};
+						columnData.possibleValuesById = {};
 						angular.forEach(columnData.possibleValues, function (possibleValue) {
 							// so we can use "Please Choose"=empty value
 							possibleValue.displayValue = possibleValue.name;
 							// convenience map to avoid looping later
-							columnData.possibleValuesByValue[possibleValue.name] = possibleValue;
+							columnData.possibleValuesByName[possibleValue.name] = possibleValue;
+							columnData.possibleValuesById[possibleValue.id] = possibleValue;
 						});
 						// waiting for https://github.com/angular-ui/ui-select/issues/152
 						columnData.possibleValues.unshift({name: '', displayValue: 'Please Choose', displayDescription: 'Please Choose'});
@@ -1311,29 +1313,35 @@
 			}
 
 			function renderCategoricalValue(value, columnData) {
-				var categoricalValue = EscapeHTML.escape(value);
-
-				if (columnData.possibleValues
-					&& columnData.possibleValuesByValue
-					&& columnData.possibleValuesByValue[categoricalValue]
-					&& columnData.possibleValuesByValue[categoricalValue].displayDescription
-					&& categoricalValue !== 'missing') {
-
-					var displayDescription = columnData.possibleValuesByValue[categoricalValue].displayDescription;
-					if (displayDescription) {
-						var categoricalNameDom = '<span class="fbk-measurement-categorical-name"'
-							+ ($scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
-							+ ' >'
-							+ categoricalValue + '</span>';
-						var categoricalDescDom = '<span class="fbk-measurement-categorical-desc"'
-							+ (!$scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
-							+ ' >'
-							+ displayDescription + '</span>';
-
-						categoricalValue = categoricalNameDom + categoricalDescDom;
-					}
+				var possibleValue = null;
+				
+				if (columnData.possibleValues) {
+					/* FIXME fix data model
+					 *  Some variables don't store the cvterm.name (like traits in phenotype)
+					 *  but the cvterm.cvterm_id (like treatment factors in nd_experimentprop).
+					 *  This workaround will work most of the time with exception of out-of-bound categorical values that coincides
+					 *  with the cvterm_id, though it's unlikely because the ids are not small numbers and it's not possible now to insert
+					 *  outliers for categorical variables.
+					 */
+					possibleValue = columnData.possibleValuesByName[value] || columnData.possibleValuesById[value];
 				}
-				return categoricalValue;
+
+				if (possibleValue
+					&& possibleValue.displayDescription
+					&& value !== 'missing') {
+
+					var categoricalNameDom = '<span class="fbk-measurement-categorical-name"'
+						+ ($scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
+						+ ' >'
+						+ EscapeHTML.escape(possibleValue.name) + '</span>';
+					var categoricalDescDom = '<span class="fbk-measurement-categorical-desc"'
+						+ (!$scope.isCategoricalDescriptionView ? ' style="display: none; "' : '')
+						+ ' >'
+						+ EscapeHTML.escape(possibleValue.displayDescription) + '</span>';
+
+					value = categoricalNameDom + categoricalDescDom;
+				}
+				return value;
 			}
 
 

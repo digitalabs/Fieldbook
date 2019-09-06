@@ -326,46 +326,15 @@ public class AngularSelectSheetController extends AbstractBaseETLController {
 		// routing logic for existing study vs new study details
 		final Integer studyId = form.getStudyDetails().getStudyId();
 		this.userSelection.setStudyId(studyId);
-		if (studyId != null && studyId != 0) {
-			final List<String> errors = new ArrayList<>();
-			Map<String, List<Message>> mismatchErrors = null;
-			final boolean isMeansDataImport = this.userSelection.getDatasetType() != null
-				&& this.userSelection.getDatasetType() == DatasetTypeEnum.MEANS_DATA.getId();
 
-			try {
-				// check if the selected dataset still has no mapped headers
-				if (isMeansDataImport) {
-					if (!this.etlService.hasMeansDataset(studyId)) {
-						return this.wrapFormResult(AngularMapOntologyController.URL, request);
-					}
-				} else {
-					if (!this.etlService.hasMeasurementEffectDataset(studyId)) {
-						return this.wrapFormResult(AngularMapOntologyController.URL, request);
-					}
-				}
+		final boolean isMeansDataImport = this.userSelection.getDatasetType() != null
+			&& this.userSelection.getDatasetType() == DatasetTypeEnum.MEANS_DATA.getId();
 
-				mismatchErrors = this.checkForMismatchedHeaders(errors, mismatchErrors, isMeansDataImport);
-
-				if (mismatchErrors != null && !mismatchErrors.isEmpty()) {
-					for (final Map.Entry<String, List<Message>> entry : mismatchErrors.entrySet()) {
-						errors.addAll(this.etlService.convertMessageList(entry.getValue()));
-					}
-					return this.wrapFormResult(errors);
-				} else {
-					return this.wrapFormResult(AngularOpenSheetController.URL, request);
-				}
-
-			} catch (final Exception e) {
-				AngularSelectSheetController.LOG.error(e.getMessage(), e);
-				final List<Message> error = new ArrayList<>();
-				error.add(new Message(Constants.MESSAGE_KEY_GENERIC_ERROR));
-				errors.addAll(this.etlService.convertMessageList(error));
-				return this.wrapFormResult(errors);
-			}
-		} else {
+		// check if the selected dataset still has no mapped headers
+		if (isMeansDataImport) {
 			return this.wrapFormResult(AngularMapOntologyController.URL, request);
 		}
-
+		return this.wrapFormResult(AngularMapOntologyController.URL, request);
 	}
 
 	List<Message> validate(final ConsolidatedStepForm form) throws IOException, WorkbookParserException {

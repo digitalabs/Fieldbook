@@ -387,6 +387,8 @@ angular.module('di-consolidatedStep', ['digitalabs-util','di-directives', 'digit
                                 $scope.messages = data.messages;
                                 $scope.userAttemptedSubmission = false;
                             }
+                        }).error(function (error) {
+                            $scope.messages.push(error);
                         });
                     } else {
                         $scope.userAttemptedSubmission = false;

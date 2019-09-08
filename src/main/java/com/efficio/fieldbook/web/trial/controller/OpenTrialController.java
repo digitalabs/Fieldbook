@@ -66,7 +66,6 @@ import java.util.Map;
 
 @Controller
 @RequestMapping(OpenTrialController.URL)
-@SessionAttributes("isCategoricalDescriptionView")
 @Transactional
 public class OpenTrialController extends BaseTrialController {
 
@@ -144,11 +143,6 @@ public class OpenTrialController extends BaseTrialController {
 	@ModelAttribute("unspecifiedLocationId")
 	public Integer unspecifiedLocationId() {
 		return this.getUnspecifiedLocationId();
-	}
-
-	@ModelAttribute("isCategoricalDescriptionView")
-	public Boolean initIsCategoricalDescriptionView() {
-		return Boolean.FALSE;
 	}
 
 	@ModelAttribute("operationMode")
@@ -694,13 +688,9 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	/**
-	 * We maintain the state of categorical description view in session to
-	 * support the ff scenario: 1. When user does a browser refresh, the state
-	 * of measurements view is maintained 2. When user switches between studies
-	 * (either nursery or trial) state is also maintained 3. Generating the
-	 * modal for editing whole measurement row/entry is done in the backend (see
-	 * updateExperimentModal.html) , this also helps us track which display
-	 * values in the cateogrical dropdown is used
+	 * We maintain the state of categorical description view in session to support the ff scenario:
+	 * 1. When user does a browser refresh, the state of measurements view is maintained
+	 * 2. When user switches between studies, state is also maintained
 	 *
 	 * @param showCategoricalDescriptionView
 	 * @param session
@@ -711,6 +701,10 @@ public class OpenTrialController extends BaseTrialController {
 	public Boolean setCategoricalDisplayType(@RequestParam final Boolean showCategoricalDescriptionView,
 		final HttpSession session) {
 		Boolean isCategoricalDescriptionView = (Boolean) session.getAttribute("isCategoricalDescriptionView");
+
+		if (isCategoricalDescriptionView == null) {
+			isCategoricalDescriptionView = Boolean.FALSE;
+		}
 
 		if (null != showCategoricalDescriptionView) {
 			isCategoricalDescriptionView = showCategoricalDescriptionView;

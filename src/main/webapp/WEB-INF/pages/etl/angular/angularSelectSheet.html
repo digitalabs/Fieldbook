@@ -387,6 +387,8 @@ angular.module('di-consolidatedStep', ['digitalabs-util','di-directives', 'digit
                                 $scope.messages = data.messages;
                                 $scope.userAttemptedSubmission = false;
                             }
+                        }).error(function (message) {
+                            $scope.messages.push('There\'s an error in parsing the uploaded file. Make sure you are using the correct Study Book format: ' + message);
                         });
                     } else {
                         $scope.userAttemptedSubmission = false;

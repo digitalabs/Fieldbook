@@ -935,11 +935,7 @@ public class ETLServiceImpl implements ETLService {
 			ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
 		final String studyType = this.getCellStringValue(sheet, ETLServiceImpl.STUDY_TYPE_ROW_INDEX - rowAdjustMent,
 			ETLServiceImpl.STUDY_DETAILS_VALUE_COLUMN_INDEX);
-		StudyTypeDto studyTypeValue = this.studyDataManager.getStudyTypeByName(studyType);
-		if (studyTypeValue == null) {
-			// TODO we need to change what to do when Study Type is not in the file
-			studyTypeValue = this.studyDataManager.getStudyTypeByName(StudyTypeDto.NURSERY_NAME);
-		}
+		final StudyTypeDto studyTypeValue = this.studyDataManager.getStudyTypeByName((StudyTypeDto.TRIAL_LABEL.equals(studyType) ? StudyTypeDto.TRIAL_NAME : StudyTypeDto.NURSERY_NAME));
 		if (startDateStr == null || startDateStr.isEmpty()) {
 			final SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
 			startDateStr = df.format(new Date());

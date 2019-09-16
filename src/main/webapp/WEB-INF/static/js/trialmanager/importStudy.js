@@ -1,7 +1,8 @@
 (function () {
 	'use strict';
 
-	var importStudyModule = angular.module('import-study', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal', 'fieldbook-utils']);
+	var importStudyModule = angular.module('import-study', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal',
+		'fieldbook-utils']);
 
 	importStudyModule.factory('importStudyModalService', ['$uibModal',
 		function ($uibModal) {
@@ -112,7 +113,74 @@
 			};
 
 			$scope.submitImport = function () {
-				$scope.importObservations(true);
+				$scope.validateNewVariables().then(function (result) {
+					if (result[1].length > 0) {
+						ctrl.showAddVariableConfirmModal(result);
+					} else {
+						$scope.importObservations(true);
+					}
+				});
+			};
+
+			$scope.validateNewVariables = function () {
+				return datasetService.getColumns(datasetId, false).then(function (columnsData) {
+					var importedData = $scope.importedData[0];
+					var newVariables = [];
+					var output = [];
+					var traits = [];
+					var result = [traits,  newVariables];
+					var start = 0;
+					var end = 0;
+
+					$.each(columnsData, function (i, e) {
+						output.push(e.name)
+					});
+
+					for (var i = 0; i < importedData.length; i++) {
+						if ((importedData[i] === 'PLOT_NO')) {
+							start = i + 1;
+						}
+
+						if (!output.includes(importedData[i])) {
+							newVariables.push(importedData[i]);
+							end = i;
+						}
+					}
+
+					for (var i = start; i < importedData.length; i++) {
+						if (i >= start && i <= end && !newVariables.includes(importedData[i])) {
+							traits.push(importedData[i]);
+						}
+					}
+
+					return result;
+				});
+			};
+
+			$scope.initMapPopup = function(result) {
+
+				// get your angular element
+				var elem = angular
+					.element('#importMapModal .modal-content[ng-controller=importObservationsCtrl]');
+
+				// get the injector.
+				var injector = elem.injector();
+
+				// get the service.
+				var myService = injector.get('ImportMappingService');
+
+				var scope = elem.scope();
+
+				// retrieve initial data from the service
+				$.getJSON('/Fieldbook/etl/workbook/importObservations/getMappingData/' + result[0] + '/' + result[1]).done(
+					function(data) {
+
+						myService.data = data;
+						scope.data = myService.data;
+
+						// apply the changes to the scope.
+						scope.$apply();
+					});
 			};
 
 			$scope.importObservations = function (processWarnings) {
@@ -148,6 +216,36 @@
 						$scope.importObservations(false);
 					} else {
 						importStudyModalService.openImportStudyModal(datasetId);
+					}
+				});
+			};
+
+			ctrl.showDesignMapPopup = function(result) {
+				setTimeout(function() {
+					$('#importMapModal').one('show.bs.modal', function() {
+						$scope.initMapPopup(result);
+						setTimeout(function () {
+							//
+						}, 200);
+
+					}).modal();
+				}, 300);
+
+			};
+
+			ctrl.showAddVariableConfirmModal = function (result) {
+				$uibModalInstance.close();
+				var warningMessages = [];
+
+				var modalWarningMessage = importStudyModalService.showWarningMessage('Confirmation',
+					'Some of the variables that you are trying to import are not present in this dataset.', warningMessages,
+					'Would you like to add them? ', 'Yes', 'No');
+				modalWarningMessage.result.then(function (shouldContinue) {
+					if (shouldContinue) {
+						ctrl.showDesignMapPopup(result);
+
+					} else {
+						$scope.importObservations(true);
 					}
 				});
 			};

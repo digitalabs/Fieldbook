@@ -1,0 +1,111 @@
+<section xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+
+	<div ng-cloak="" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importMapModal" id="importMapModal" aria-hidden="true">
+		<div class="modal-dialog modal-lg" style="min-width: 98%">
+			<div class="modal-content" ng-controller="importObservationsCtrl">
+				<div class="modal-header">
+					<button type="button" class="close closeTrigger" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" th:text="#{form.import.observations.text}">Import Observations</h4>
+				</div>
+				<section class="modal-body" style="height:450pt; overflow-y: auto">
+					<div class="col-md-12">
+						<div class="btn-toolbar pull-left" style="padding-bottom: 10px">
+							<button class="btn btn-primary btn-lg" type="button" ng:show="!previewMode" ng:click="validateAndSend()" ng:disabled="userAttemptedSubmission"><span class="glyphicon glyphicon-floppy-open"></span>Save Mapping</button>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="panel panel-danger">
+								<div class="panel-heading"><b class="panel-title"><span
+									th:text="#{design.import.unmapped.header.group.text}"></span> <span class="badge-danger counter"
+																										style="float:right">{{unmappedHeaders.length}}</span></b>
+								</div>
+								<div class="unmapped list-group" ui-sortable="{ 'connectWith': '.list-group' }"
+									 ng-model="data.unmappedHeaders">
+									<div class="list-group-item" ng-repeat="header in data.unmappedHeaders">
+										<h4>{{header.name}}</h4>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-8 mapped-col" ng:class="{'preview' : previewMode}">
+
+							<div class="panel-group">
+
+								<div class="mapping-group panel panel-info">
+									<div class="panel panel-info">
+										<div class="panel-heading">
+											<b class="panel-title">
+												<a data-toggle="collapse" href="#collapseFour">Variate Group</a>
+												<span class="badge-info counter" style="float:right">{{data.mappedTraits.length}}</span>
+											</b>
+										</div>
+										<div class="panel-collapse collapse in list-group" id="collapseFour" ui-multi-sortable="" ui-options="uiSortOptsExt" ng:model="data.mappedTraits" data-phenotype="variate" model-subset="variate">
+											<div class="list-group-item" ng:class="{'list-group-item-danger' : header.hasError }" ng:repeat="header in data.mappedTraits" data-empty="{{previewMode}}">
+												<div class="row">
+													<div class="col-sm-12">
+														<h3 class="list-group-item-heading pull-left">{{header.name}} <span class="glyphicon glyphicon-arrow-right"></span> {{header.variable.name}} </h3> <span ng-show="header.required" class="text-danger">&nbsp;&nbsp; ({{Messages.REQUIRED}})</span>
+														<span callback="onAdd(result)" design-map-variable-selection="" modeldata="header" group="{{variableType}}" class="btn btn-xs pull-right" ng-class="{'btn-info' : header.variable, 'btn-danger' : !header.variable}"><span ng:class="{'glyphicon glyphicon-link' : header.variable, 'fa fa-warning' : !header.variable}"></span>&nbsp;<span ng:bind="computeButtonLabel(header)">Re-map</span></span>
+													</div>
+												</div>
+												<div class="row list-group-item-text">
+													<div class="col-sm-4">
+														<b>Property: </b> {{header.variable.property.name}}
+													</div>
+													<div class="col-sm-4">
+														<b>Scale: </b> {{header.variable.scale.name}}
+													</div>
+													<div class="col-sm-4">
+														<b>Method: </b>{{header.variable.method.name}}
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</section>
+
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript" th:src="@{/static/js/lib/angular/sortable.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/ImportObservations/variate-group-importer-main.js}"></script>
+
+	<script th:inline="javascript">
+		//<![CDATA[
+
+		(function () {
+			angular.module('importObservationsApp')
+				.constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
+				.constant('VARIABLE_SELECTION_LABELS', {
+					/*TRAITS*/
+					1043: {
+						label: /*[[#{design.import.traits}]]*/ '',
+						placeholder: /*[[#{design.import.traits.placeholder}]]*/ ''
+					},
+					generalAjaxError: /*[[#{study.managesettings.variable.selection.error}]]*/ '',
+					variableSelectedMessage: /*[[#{common.warning.variable.in.use}]]*/ '',
+					uniqueVariableError: /*[[#{variable.selection.unique.variable.error}]]*/ '',
+					invalidAliasError: /*[[#{variable.selection.alias.error}]]*/ ''
+				})
+				/* INTERNATIONALIZED MESSAGES HERE */
+				.constant('Messages', {
+					YES: /*[[#{common.form.yes.text}]]*/ 'Yes',
+					NO: /*[[#{common.form.no.text}]]*/ 'No',
+					OK: /*[[#{common.form.ok.text}]]*/ 'OK',
+					REQUIRED: /*[[#{common.form.required.text}]]*/ 'Required',
+					SELECT_TEXT: /*[[#{common.form.select.text}]]*/ 'Select'
+				});
+		})();
+
+		// ]]>
+	</script>
+
+</section>

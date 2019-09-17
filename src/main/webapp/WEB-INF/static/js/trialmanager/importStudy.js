@@ -147,9 +147,9 @@
 						}
 					}
 
-					for (var i = start; i < importedData.length; i++) {
-						if (i >= start && i <= end && !newVariables.includes(importedData[i])) {
-							traits.push(importedData[i]);
+					for (var i = start + 1; i < output.length; i++) {
+						if (i >= start && i <= end && !newVariables.includes(output[i])) {
+							traits.push(output[i]);
 						}
 					}
 

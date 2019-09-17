@@ -19,7 +19,7 @@
 				//Should continue with the import?
 			};
 
-			scope.validateAndSend = function () {
+			scope.validateVariateGroupAndSend = function () {
 				ImportMappingService.showConfirmIfHasUnmapped().then(function () {
 					return ImportMappingService.validateMapping();
 				}, function () {
@@ -93,7 +93,7 @@
 		}
 	]);
 
-	app.directive('importMappingGroup', ['Messages', function (Messages) {
+	app.directive('mappingVariateGroup', ['Messages', function (Messages) {
 		return {
 			restrict: 'E',
 			scope: {
@@ -107,6 +107,7 @@
 				$scope.variableType = $attrs.variableType;
 
 				$scope.sortableOptions = {
+
 					connectWith: '.list-group',
 					update: function (e, ui) {
 						if (!ui.item.sortable.received) {
@@ -130,6 +131,7 @@
 				};
 
 				$scope.computeButtonLabel = function (header) {
+
 					if (header.variable) {
 						return 'Re-map';
 					} else {
@@ -272,13 +274,11 @@
 									} else {
 										variableTypeId = 1807;
 									}
-
 									datasetService.addVariables(datasetId, {
 										variableTypeId: variableTypeId,
 										variableId: value[i].variable.id,
 										studyAlias: value[i].variable.name
 									}).then(function () {
-
 									}, function (response) {
 										if (response.errors && response.errors.length) {
 											showErrorMessage('', response.errors[0].message);
@@ -292,6 +292,12 @@
 					});
 				});
 			});
+			setTimeout(function() {
+				$('#importMapModal').one('hidden.bs.modal', function() {
+					deferred.resolve();
+				}).modal('hide');
+
+			}, 300);
 
 			return deferred.promise;
 		}

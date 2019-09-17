@@ -175,7 +175,7 @@
 				scope.datasetId = myService.datasetId;
 
 				// retrieve initial data from the service
-				$.getJSON('/Fieldbook/etl/workbook/importObservations/getMappingData/' + result[0] + '/' + result[1] ).done(
+				$.getJSON('/Fieldbook/etl/workbook/importObservations/getMappingData/' + datasetId + '/' + result[1] ).done(
 					function(data) {
 
 						myService.data = data;
@@ -227,10 +227,6 @@
 				setTimeout(function() {
 					$('#importMapModal').one('show.bs.modal', function() {
 						$scope.initMapPopup(result, datasetId);
-						setTimeout(function () {
-							//
-						}, 200);
-
 					}).modal();
 				}, 300);
 
@@ -245,7 +241,7 @@
 					'Would you like to add them? ', 'Yes', 'No');
 				modalWarningMessage.result.then(function (shouldContinue) {
 					if (shouldContinue) {
-						ctrl.showDesignMapPopup(result, datasetId);
+						ctrl.showDesignMapPopup(result, datasetId); //TODO FIX AFTER THAT IS NECESSARY INVOKE THE IMPORT.
 					} else {
 						$scope.importObservations(true);
 					}

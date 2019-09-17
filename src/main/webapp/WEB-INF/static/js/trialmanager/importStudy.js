@@ -246,7 +246,6 @@
 				modalWarningMessage.result.then(function (shouldContinue) {
 					if (shouldContinue) {
 						ctrl.showDesignMapPopup(result, datasetId);
-
 					} else {
 						$scope.importObservations(true);
 					}

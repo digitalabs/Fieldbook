@@ -31,9 +31,7 @@
 						</div>
 
 						<div class="col-md-8 mapped-col" ng:class="{'preview' : previewMode}">
-
 							<div class="panel-group">
-
 								<div class="mapping-group panel panel-info">
 									<div class="panel panel-info">
 										<div class="panel-heading">
@@ -42,12 +40,12 @@
 												<span class="badge-info counter" style="float:right">{{data.mappedTraits.length}}</span>
 											</b>
 										</div>
-										<div class="panel-collapse collapse in list-group" id="collapseFour" ui-multi-sortable="" ui-options="uiSortOptsExt" ng:model="data.mappedTraits" data-phenotype="variate" model-subset="variate">
+										<div class="panel-collapse collapse in list-group" id="collapseFour" ui-sortable="sortableOptions" ui-options="uiSortOptsExt" ng:model="data.mappedTraits" data-phenotype="variate" model-subset="variate">
 											<div class="list-group-item" ng:class="{'list-group-item-danger' : header.hasError }" ng:repeat="header in data.mappedTraits" data-empty="{{previewMode}}">
 												<div class="row">
 													<div class="col-sm-12">
 														<h3 class="list-group-item-heading pull-left">{{header.name}} <span class="glyphicon glyphicon-arrow-right"></span> {{header.variable.name}} </h3> <span ng-show="header.required" class="text-danger">&nbsp;&nbsp; ({{Messages.REQUIRED}})</span>
-														<span callback="onAdd(result)" design-map-variable-selection="" modeldata="header" group="{{variableType}}" class="btn btn-xs pull-right" ng-class="{'btn-info' : header.variable, 'btn-danger' : !header.variable}"><span ng:class="{'glyphicon glyphicon-link' : header.variable, 'fa fa-warning' : !header.variable}"></span>&nbsp;<span ng:bind="computeButtonLabel(header)">Re-map</span></span>
+														<span callback="onAdd(result)" import-map-variable-selection="" modeldata="header" group="{{variableType}}" class="btn btn-xs pull-right" ng-class="{'btn-info' : header.variable, 'btn-danger' : !header.variable}"><span ng:class="{'glyphicon glyphicon-link' : header.variable, 'fa fa-warning' : !header.variable}"></span>&nbsp;<span ng:bind="computeButtonLabel(header)">Re-map</span></span>
 													</div>
 												</div>
 												<div class="row list-group-item-text">
@@ -101,7 +99,10 @@
 					NO: /*[[#{common.form.no.text}]]*/ 'No',
 					OK: /*[[#{common.form.ok.text}]]*/ 'OK',
 					REQUIRED: /*[[#{common.form.required.text}]]*/ 'Required',
-					SELECT_TEXT: /*[[#{common.form.select.text}]]*/ 'Select'
+					SELECT_TEXT: /*[[#{common.form.select.text}]]*/ 'Select',
+					IMPORT_MAPPING_ERROR_HEADER: /*[[#{import.mapping.error.header}]]*/ 'IMPORT_MAPPING_ERROR_HEADER',
+					IMPORT_MISSING_MAPPING_TEXT: /*[[#{import.error.missing.mapping.text}]]*/ 'Please choose a mapping for all variables that you wish to import in the study.',
+					IMPORT_UNMAPPED_PROMPT_TEXT: /*[[#{import.unmapped.prompt.text}]]*/ ''
 				});
 		})();
 

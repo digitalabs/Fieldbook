@@ -3,96 +3,97 @@
  * Created by cyrus on 05/12/15.
  */
 /* global $, _, angular, bootbox, createErrorNotification, showAlertMessage */
-(function() {
+(function () {
 	'use strict';
 
 	var app = angular.module('importObservationsApp', ['ui.bootstrap', 'ngLodash', 'ngResource', 'ui.sortable']);
 
-	app.controller('importObservationsCtrl', ['$scope', 'ImportMappingService', 'DesignOntologyService', '$uibModal', 'Messages',
-			function(scope, ImportMappingService, DesignOntologyService, $uibModal, Messages) {
-		// we can retrieve this from a service
-		scope.Messages = Messages;
-		scope.data = ImportMappingService.data;
+	app.controller('importObservationsCtrl', ['$scope', 'ImportMappingService', 'DesignOntologyService', '$uibModal', 'Messages', 'datasetService',
+		function (scope, ImportMappingService, DesignOntologyService, $uibModal, Messages, datasetService) {
+			// we can retrieve this from a service
+			scope.Messages = Messages;
+			scope.data = ImportMappingService.data;
+			scope.datasetId = ImportMappingService.datasetId;
 
-		scope.cancelMapping = function() {
-			//Should continue with the import?
-		};
+			scope.cancelMapping = function () {
+				//Should continue with the import?
+			};
 
-		scope.validateAndSend = function() {
-			ImportMappingService.showConfirmIfHasUnmapped().then(function() {
-				return ImportMappingService.validateMapping();
-			}, function() {
-				return {cancelMapping: true};
-			}).then(function(result) {
+			scope.validateAndSend = function () {
+				ImportMappingService.showConfirmIfHasUnmapped().then(function () {
+					return ImportMappingService.validateMapping();
+				}, function () {
+					return {cancelMapping: true};
+				}).then(function (result) {
 
-				if (result.warning) {
-					/** @namespace result.warning */
-					showAlertMessage('', result.warning);
-				}
-			}, function(failResult) {
-				if (failResult.cancelMapping) {
-					return;
-				}
+					if (result.warning) {
+						/** @namespace result.warning */
+						showAlertMessage('', result.warning);
+					}
+				}, function (failResult) {
+					if (failResult.cancelMapping) {
+						return;
+					}
 
-				var msg = Messages.DESIGN_IMPORT_MISSING_MAPPING_TEXT;
-				createErrorNotification(Messages.DESIGN_MAPPING_ERROR_HEADER, msg);
-			});
+					var msg = Messages.DESIGN_IMPORT_MISSING_MAPPING_TEXT;
+					createErrorNotification(Messages.DESIGN_MAPPING_ERROR_HEADER, msg);
+				});
 
-		};
+			};
 
-		scope.launchOntologyBrowser = function() {
-			var $importMapModal = $('#importMapModal');
-			$importMapModal.one('hidden.bs.modal', function() {
-				setTimeout(function() {
-					scope.$apply(function() {
-						var title = 'Ontology Browser';
-						var url = '/ibpworkbench/controller/ontology';
+			scope.launchOntologyBrowser = function () {
+				var $importMapModal = $('#importMapModal');
+				$importMapModal.one('hidden.bs.modal', function () {
+					setTimeout(function () {
+						scope.$apply(function () {
+							var title = 'Ontology Browser';
+							var url = '/ibpworkbench/controller/ontology';
 
-						$uibModal.open({
-							windowClass: 'modal-very-huge',
-							controller: 'OntologyBrowserController',
-							templateUrl: '/Fieldbook/static/angular-templates/ontologyBrowserPopup.html',
-							resolve: {
-								title: function() {
-									return title;
-								},
+							$uibModal.open({
+								windowClass: 'modal-very-huge',
+								controller: 'OntologyBrowserController',
+								templateUrl: '/Fieldbook/static/angular-templates/ontologyBrowserPopup.html',
+								resolve: {
+									title: function () {
+										return title;
+									},
 
-								url: function() {
-									return url;
+									url: function () {
+										return url;
+									}
 								}
-							}
-						}).result.finally(function() {
-							// do something after this modal closes
-							DesignOntologyService.clearData();
+							}).result.finally(function () {
+								// do something after this modal closes
+								DesignOntologyService.clearData();
 
-							setTimeout(function() {
-								$importMapModal.modal('show');
-							}, 200);
+								setTimeout(function () {
+									$importMapModal.modal('show');
+								}, 200);
+
+							});
 
 						});
+					}, 200);
 
-					});
-				}, 200);
+				}).modal('hide');
 
-			}).modal('hide');
-
-		};
+			};
 
 
-	}]);
+		}]);
 
 	app.controller('OntologyBrowserController', ['$scope', '$uibModalInstance', 'title', 'url',
-		function($scope, $uibModalInstance, title, url) {
+		function ($scope, $uibModalInstance, title, url) {
 			$scope.title = title;
 			$scope.url = url;
-			$scope.close = function() {
+			$scope.close = function () {
 				$uibModalInstance.dismiss('Cancelled');
 			};
 
 		}
 	]);
 
-	app.directive('importMappingGroup', ['Messages', function(Messages) {
+	app.directive('importMappingGroup', ['Messages', function (Messages) {
 		return {
 			restrict: 'E',
 			scope: {
@@ -100,20 +101,20 @@
 				mappingData: '=data'
 			},
 			templateUrl: '/Fieldbook/static/angular-templates/importObservations/importMappingGroup.html',
-			controller: ['$scope', '$attrs', function($scope, $attrs) {
+			controller: ['$scope', '$attrs', function ($scope, $attrs) {
 				// data structure
 				$scope.Messages = Messages;
 				$scope.variableType = $attrs.variableType;
 
 				$scope.sortableOptions = {
 					connectWith: '.list-group',
-					update: function(e, ui) {
+					update: function (e, ui) {
 						if (!ui.item.sortable.received) {
 							var originNgModel = ui.item.sortable.sourceModel;
 							var itemModel = originNgModel[ui.item.sortable.index];
 							var dropNgModel = ui.item.sortable.droptargetModel;
 
-							var exists = !!dropNgModel.filter(function(item) {
+							var exists = !!dropNgModel.filter(function (item) {
 								return item.name === itemModel.name;
 							}).length;
 
@@ -128,7 +129,7 @@
 					}
 				};
 
-				$scope.computeButtonLabel = function(header) {
+				$scope.computeButtonLabel = function (header) {
 					if (header.variable) {
 						return 'Re-map';
 					} else {
@@ -142,7 +143,7 @@
 	}]);
 
 	app.directive('importMapVariableSelection', ['VARIABLE_SELECTION_MODAL_SELECTOR', 'DesignOntologyService', 'Messages',
-		function(VARIABLE_SELECTION_MODAL_SELECTOR, DesignOntologyService, Messages) {
+		function (VARIABLE_SELECTION_MODAL_SELECTOR, DesignOntologyService, Messages) {
 			return {
 				restrict: 'A',
 				scope: {
@@ -150,16 +151,16 @@
 					callback: '&'
 				},
 
-				link: function(scope, elem, attrs) {
-					scope.processData = function(data) {
-						scope.$apply(function() {
+				link: function (scope, elem, attrs) {
+					scope.processData = function (data) {
+						scope.$apply(function () {
 							if (data.responseData) {
 								data = data.responseData;
 							}
 							if (data) {
 								// if retrieved data is an array of values
 								if (data.length && data.length > 0) {
-									$.each(data, function(key, value) {
+									$.each(data, function (key, value) {
 										scope.modeldata.id = value.variable.cvTermId;
 										scope.modeldata.variable = value.variable;
 									});
@@ -170,22 +171,22 @@
 						});
 					};
 
-					elem.on('click', function() {
+					elem.on('click', function () {
 						// temporarily close the current modal
 						var $importMapModal = $('#importMapModal');
 
 						var params = {
-							variableType: attrs.group,
-							retrieveSelectedVariableFunction: function() {
+							variableType: '1043',
+							retrieveSelectedVariableFunction: function () {
 								return {};
 							},
 							callback: scope.processData,
-							onHideCallback: function() {
-								setTimeout(function() {
+							onHideCallback: function () {
+								setTimeout(function () {
 									$importMapModal.modal('show');
 								}, 200);
 							},
-							apiUrl: '/Fieldbook/manageSettings/settings/role/' + attrs.group,
+							apiUrl: '/Fieldbook/manageSettings/settings/role/1043',
 							options: {
 								variableSelectBtnName: Messages.SELECT_TEXT,
 								variableSelectBtnIco: 'glyphicon-chevron-right',
@@ -193,8 +194,8 @@
 							}
 						};
 
-						$importMapModal.one('hidden.bs.modal', function() {
-							setTimeout(function() {
+						$importMapModal.one('hidden.bs.modal', function () {
+							setTimeout(function () {
 								DesignOntologyService.openVariableSelectionDialog(params);
 							}, 200);
 						}).modal('hide');
@@ -205,19 +206,20 @@
 		}
 	]);
 
-	app.service('ImportMappingService', ['$http', '$q', '_', 'Messages', function($http, $q, _,  Messages) {
+	app.service('ImportMappingService', ['$http', '$q', '_', 'Messages', 'datasetService', function ($http, $q, _, Messages, datasetService) {
 
 		function validateMapping() {
 
 			var postData = angular.copy(service.data);
+			var datasetId = angular.copy(service.datasetId);
 			var allMapped = true;
 			var deferred = $q.defer();
 
 			delete postData.unmappedHeaders;
 
 			// lets grab all variables that are in groups but does not have mapped variables
-			_.forEach(postData, function(value) {
-				var results = _.filter(value, function(item) {
+			_.forEach(postData, function (value) {
+				var results = _.filter(value, function (item) {
 					return !_.has(item, 'variable');
 				});
 
@@ -234,31 +236,65 @@
 				return deferred.promise;
 			}
 
-			_.forIn(postData, function(value) {
-				for (var i = 0; i < value.length; i++) {
+			_.forIn(postData, function (value) {
 
-					if (_.has(value[i], 'variable')) {
-						if (_.has(value[i].variable, 'id') && value[i].variable.id) {
-							value[i].id = value[i].variable.id;
-						} else if (_.has(value[i].variable, 'cvTermId') && value[i].variable.cvTermId) {
-							value[i].id = value[i].variable.cvTermId;
-						} else {
-							value[i].id = 0;
+				var selections;
+				var traits;
+				var variableTypeId;
+				var output = [];
+
+				datasetService.getVariables(datasetId, 1807).then(function (variables) {
+					selections = variables;
+					$.each(selections, function (i, e) {
+						output.push(e.name)
+					});
+
+					datasetService.getVariables(datasetId, 1808).then(function (variables) {
+						traits = variables;
+						$.each(traits, function (i, e) {
+							output.push(e.name)
+						});
+
+						for (var i = 0; i < value.length; i++) {
+
+							if (_.has(value[i], 'variable')) {
+								if (_.has(value[i].variable, 'id') && value[i].variable.id) {
+									value[i].id = value[i].variable.id;
+								} else if (_.has(value[i].variable, 'cvTermId') && value[i].variable.cvTermId) {
+									value[i].id = value[i].variable.cvTermId;
+								} else {
+									value[i].id = 0;
+								}
+
+								if (!output.includes(value[i].variable.name)) {
+									if (value[i].variable.variableTypes.includes('TRAIT')) {
+										variableTypeId = 1808;
+									} else {
+										variableTypeId = 1807;
+									}
+
+									datasetService.addVariables(datasetId, {
+										variableTypeId: variableTypeId,
+										variableId: value[i].variable.id,
+										studyAlias: value[i].variable.name
+									}).then(function () {
+
+									}, function (response) {
+										if (response.errors && response.errors.length) {
+											showErrorMessage('', response.errors[0].message);
+										} else {
+											showErrorMessage('', ajaxGenericErrorMsg);
+										}
+									});
+								}
+							}
 						}
-
-						value[i] = _.pick(value[i], ['id', 'name', 'columnIndex']);
-					}
-					$http.post('/bmsapi/crops/' + studyContext.cropName + '/studies/' + studyContext.studyId + '/datasets/' + datasetId
-						+ '/variables', {
-						variableTypeId: variableType.id,
-						variableId: variable.cvTermId,
-						studyAlias: variable.name
-					})
-				}
+					});
+				});
 			});
 
 			return deferred.promise;
-			}
+		}
 
 		function showConfirmIfHasUnmapped() {
 			var hasUnmappedVariables = service.data.unmappedHeaders.length > 0;
@@ -276,14 +312,14 @@
 						yes: {
 							label: Messages.YES,
 							className: 'btn-primary',
-							callback: function() {
+							callback: function () {
 								deferred.resolve(true);
 							}
 						},
 						no: {
 							label: Messages.NO,
 							className: 'btn-default',
-							callback: function() {
+							callback: function () {
 								deferred.reject(false);
 							}
 						}
@@ -308,20 +344,20 @@
 
 	}]);
 
-	app.service('DesignOntologyService', ['VARIABLE_SELECTION_LABELS', function(VARIABLE_SELECTION_LABELS) {
+	app.service('DesignOntologyService', ['VARIABLE_SELECTION_LABELS', function (VARIABLE_SELECTION_LABELS) {
 		var TrialSettingsManager = window.TrialSettingsManager;
 		var settingsManager = new TrialSettingsManager(VARIABLE_SELECTION_LABELS);
 
 		return {
-			openVariableSelectionDialog: function(params) {
+			openVariableSelectionDialog: function (params) {
 				settingsManager._openVariableSelectionDialog(params);
 			},
 
 			// @param = this map contains variables of the pair that will be filtered
-			addDynamicFilterObj: function(_map, group) {
+			addDynamicFilterObj: function (_map, group) {
 				settingsManager._addDynamicFilter(_map, group);
 			},
-			clearData: function() {
+			clearData: function () {
 				settingsManager._clearCache();
 			}
 

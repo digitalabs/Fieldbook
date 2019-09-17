@@ -115,7 +115,7 @@
 			$scope.submitImport = function () {
 				$scope.validateNewVariables().then(function (result) {
 					if (result[1].length > 0) {
-						ctrl.showAddVariableConfirmModal(result);
+						ctrl.showAddVariableConfirmModal(result, datasetId);
 					} else {
 						$scope.importObservations(true);
 					}
@@ -157,7 +157,7 @@
 				});
 			};
 
-			$scope.initMapPopup = function(result) {
+			$scope.initMapPopup = function(result, datasetId) {
 
 				// get your angular element
 				var elem = angular
@@ -169,10 +169,13 @@
 				// get the service.
 				var myService = injector.get('ImportMappingService');
 
+				myService.datasetId = datasetId;
+
 				var scope = elem.scope();
+				scope.datasetId = myService.datasetId;
 
 				// retrieve initial data from the service
-				$.getJSON('/Fieldbook/etl/workbook/importObservations/getMappingData/' + result[0] + '/' + result[1]).done(
+				$.getJSON('/Fieldbook/etl/workbook/importObservations/getMappingData/' + result[0] + '/' + result[1] ).done(
 					function(data) {
 
 						myService.data = data;
@@ -220,10 +223,10 @@
 				});
 			};
 
-			ctrl.showDesignMapPopup = function(result) {
+			ctrl.showDesignMapPopup = function(result,datasetId) {
 				setTimeout(function() {
 					$('#importMapModal').one('show.bs.modal', function() {
-						$scope.initMapPopup(result);
+						$scope.initMapPopup(result, datasetId);
 						setTimeout(function () {
 							//
 						}, 200);
@@ -233,7 +236,7 @@
 
 			};
 
-			ctrl.showAddVariableConfirmModal = function (result) {
+			ctrl.showAddVariableConfirmModal = function (result, datasetId) {
 				$uibModalInstance.close();
 				var warningMessages = [];
 
@@ -242,7 +245,7 @@
 					'Would you like to add them? ', 'Yes', 'No');
 				modalWarningMessage.result.then(function (shouldContinue) {
 					if (shouldContinue) {
-						ctrl.showDesignMapPopup(result);
+						ctrl.showDesignMapPopup(result, datasetId);
 
 					} else {
 						$scope.importObservations(true);

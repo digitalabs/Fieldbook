@@ -6,6 +6,7 @@ import com.efficio.etl.web.bean.UserSelection;
 import com.efficio.etl.web.controller.angular.AngularOpenSheetController;
 import com.efficio.etl.web.validators.FileUploadFormValidator;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -217,11 +218,17 @@ public class ImportObservationsController extends AbstractBaseETLController {
 
 		final List<DesignHeaderItem> listTraits = this.createDesignHeaderItemList(traits);
 
-		mappingData.put(
-			ImportObservationsController.UNMAPPED_HEADERS, listNewVariables);
+		final List<DesignHeaderItem> newVariablesMapped = new ArrayList<DesignHeaderItem>();
+		final List<DesignHeaderItem> updatedNewVariables = this.updateMapping(listNewVariables);
+		newVariablesMapped.addAll(CollectionUtils.subtract(listNewVariables, updatedNewVariables));
 
 		mappingData.put(
-			ImportObservationsController.MAPPED_TRAITS, this.updateMapping(listTraits));
+			ImportObservationsController.UNMAPPED_HEADERS, newVariablesMapped);
+
+		final List<DesignHeaderItem> variablesInStudyMapped = new ArrayList<DesignHeaderItem>();
+		variablesInStudyMapped.addAll(CollectionUtils.union(updatedNewVariables, this.updateMapping(listTraits)));
+		mappingData.put(
+			ImportObservationsController.MAPPED_TRAITS, variablesInStudyMapped);
 
 		return mappingData;
 	}
@@ -247,9 +254,11 @@ public class ImportObservationsController extends AbstractBaseETLController {
 			final StandardVariable stdVar =
 				this.fieldbookService.getStandardVariableByName(item.getName(), this.contextUtil.getCurrentProgramUUID());
 
-			stdVar.setPhenotypicType(PhenotypicType.VARIATE);
-			item.setVariable(stdVar);
-			newMappingResults.add(item);
+			if (stdVar != null) {
+				stdVar.setPhenotypicType(PhenotypicType.VARIATE);
+				item.setVariable(stdVar);
+				newMappingResults.add(item);
+			}
 		}
 
 		return newMappingResults;

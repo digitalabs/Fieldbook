@@ -277,7 +277,7 @@
 									datasetService.addVariables(datasetId, {
 										variableTypeId: variableTypeId,
 										variableId: value[i].variable.id,
-										studyAlias: value[i].variable.name
+										studyAlias: value[i].name
 									}).then(function () {
 									}, function (response) {
 										if (response.errors && response.errors.length) {

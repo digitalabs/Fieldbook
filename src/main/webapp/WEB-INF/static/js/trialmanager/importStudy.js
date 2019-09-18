@@ -227,9 +227,9 @@
 				});
 			};
 
-			ctrl.showDesignMapPopup = function(result,datasetId) {
-				setTimeout(function() {
-					$('#importMapModal').one('show.bs.modal', function() {
+			ctrl.showDesignMapPopup = function (result, datasetId) {
+				setTimeout(function () {
+					$('#importMapModal').one('show.bs.modal', function () {
 						$scope.initMapPopup(result, datasetId);
 					}).modal();
 				}, 300);

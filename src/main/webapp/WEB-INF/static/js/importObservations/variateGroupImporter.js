@@ -299,13 +299,6 @@
 					});
 				});
 			});
-			setTimeout(function() {
-				$('#importMapModal').one('hidden.bs.modal', function() {
-					deferred.resolve();
-				}).modal('hide');
-
-			}, 300);
-
 			return deferred.promise;
 		}
 

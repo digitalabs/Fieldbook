@@ -8,8 +8,8 @@
 
 	var app = angular.module('importObservationsApp', ['ui.bootstrap', 'ngLodash', 'ngResource', 'ui.sortable']);
 
-	app.controller('importObservationsCtrl', ['$scope', 'ImportMappingService', 'DesignOntologyService', '$uibModal', 'Messages', 'datasetService',
-		function (scope, ImportMappingService, DesignOntologyService, $uibModal, Messages, datasetService) {
+	app.controller('importObservationsCtrl', ['$scope', 'ImportMappingService', 'DesignOntologyService', '$uibModal', 'Messages', 'datasetService','$rootScope',
+		function (scope, ImportMappingService, DesignOntologyService, $uibModal, Messages, datasetService, $rootScope) {
 			// we can retrieve this from a service
 			scope.Messages = Messages;
 			scope.data = ImportMappingService.data;
@@ -25,6 +25,12 @@
 				}, function () {
 					return {cancelMapping: true};
 				}).then(function (result) {
+					setTimeout(function() {
+
+						$('#importMapModal').one('hidden.bs.modal', function() {
+						}).modal('hide');
+						$rootScope.$broadcast('importObservationAfterMappingVariateGroup');
+					}, 300);
 
 					if (result.warning) {
 						/** @namespace result.warning */
@@ -279,6 +285,7 @@
 										variableId: value[i].variable.id,
 										studyAlias: value[i].name
 									}).then(function () {
+										deferred.resolve(true);
 									}, function (response) {
 										if (response.errors && response.errors.length) {
 											showErrorMessage('', response.errors[0].message);

@@ -95,6 +95,10 @@
 			$scope.importedData = null;
 			var ctrl = this;
 
+			$rootScope.$on('importObservationAfterMappingVariateGroup', function (event) {
+				$scope.importObservations(true);
+			});
+
 			ctrl.importFormats = [
 				{name: 'CSV', extension: '.csv'}, //
 				{name: 'Excel', extension: '.xls,.xlsx'}, //

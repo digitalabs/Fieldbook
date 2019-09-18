@@ -274,7 +274,7 @@
 									value[i].id = 0;
 								}
 
-								if (!output.includes(value[i].name)) {
+								if (!output.includes(value[i].name) && !output.includes(value[i].variable.name)) {
 									if (value[i].variable.variableTypes.includes('TRAIT')) {
 										variableTypeId = 1808;
 									} else {

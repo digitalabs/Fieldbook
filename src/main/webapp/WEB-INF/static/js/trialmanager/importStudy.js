@@ -118,7 +118,7 @@
 
 			$scope.submitImport = function () {
 				$scope.validateNewVariables().then(function (result) {
-					if (result[1].length > 0) {
+					if (result.length > 0) {
 						ctrl.showAddVariableConfirmModal(result, datasetId);
 					} else {
 						$scope.importObservations(true);
@@ -131,32 +131,18 @@
 					var importedData = $scope.importedData[0];
 					var newVariables = [];
 					var output = [];
-					var traits = [];
-					var result = [traits,  newVariables];
-					var start = 0;
-					var end = 0;
 
 					$.each(columnsData, function (i, e) {
 						output.push(e.alias)
 					});
 
 					for (var i = 0; i < importedData.length; i++) {
-						if ((importedData[i] === 'PLOT_NO')) {
-							start = i + 1;
-						}
-
 						if (!output.includes(importedData[i])) {
 							newVariables.push(importedData[i]);
 						}
 					}
 
-					for (var i = start + 1; i < output.length; i++) {
-						if (i >= start && !newVariables.includes(output[i])) {
-							traits.push(output[i]);
-						}
-					}
-
-					return result;
+					return newVariables;
 				});
 			};
 
@@ -178,7 +164,7 @@
 				scope.datasetId = myService.datasetId;
 
 				// retrieve initial data from the service
-				$.getJSON('/Fieldbook/etl/workbook/importObservations/getMappingData/' + result[0] + '/' + result[1] ).done(
+				$.getJSON('/Fieldbook/etl/workbook/importObservations/getMappingData/' + '/' + result ).done(
 					function(data) {
 
 						myService.data = data;

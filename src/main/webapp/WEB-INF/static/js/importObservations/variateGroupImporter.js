@@ -274,7 +274,7 @@
 									value[i].id = 0;
 								}
 
-								if (!output.includes(value[i].variable.name)) {
+								if (!output.includes(value[i].name)) {
 									if (value[i].variable.variableTypes.includes('TRAIT')) {
 										variableTypeId = 1808;
 									} else {
@@ -293,6 +293,9 @@
 											showErrorMessage('', ajaxGenericErrorMsg);
 										}
 									});
+								}
+								else {
+									showErrorMessage('', 'Variable already exists in dataset');
 								}
 							}
 						}

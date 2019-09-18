@@ -209,14 +209,11 @@ public class ImportObservationsController extends AbstractBaseETLController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/getMappingData/{traits}/{newVariables}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-	public Map<String, List<DesignHeaderItem>> getMappingData(
-		@PathVariable final List<String> traits, @PathVariable final List<String> newVariables) {
+	@RequestMapping(value = "/getMappingData/{newVariables}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	public Map<String, List<DesignHeaderItem>> getMappingData(@PathVariable final List<String> newVariables) {
 		final Map<String, List<DesignHeaderItem>> mappingData = new HashMap<>();
 
 		final List<DesignHeaderItem> listNewVariables = this.createDesignHeaderItemList(newVariables);
-
-		final List<DesignHeaderItem> listTraits = this.createDesignHeaderItemList(traits);
 
 		final List<DesignHeaderItem> newVariablesMapped = new ArrayList<DesignHeaderItem>();
 		final List<DesignHeaderItem> updatedNewVariables = this.updateMapping(listNewVariables);
@@ -224,11 +221,8 @@ public class ImportObservationsController extends AbstractBaseETLController {
 
 		mappingData.put(
 			ImportObservationsController.UNMAPPED_HEADERS, newVariablesMapped);
-
-		final List<DesignHeaderItem> variablesInStudyMapped = new ArrayList<DesignHeaderItem>();
-		variablesInStudyMapped.addAll(CollectionUtils.union(updatedNewVariables, this.updateMapping(listTraits)));
 		mappingData.put(
-			ImportObservationsController.MAPPED_TRAITS, variablesInStudyMapped);
+			ImportObservationsController.MAPPED_TRAITS, updatedNewVariables);
 
 		return mappingData;
 	}

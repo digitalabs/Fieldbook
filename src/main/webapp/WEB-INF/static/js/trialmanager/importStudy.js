@@ -137,7 +137,7 @@
 					var end = 0;
 
 					$.each(columnsData, function (i, e) {
-						output.push(e.name)
+						output.push(e.alias)
 					});
 
 					for (var i = 0; i < importedData.length; i++) {
@@ -147,12 +147,11 @@
 
 						if (!output.includes(importedData[i])) {
 							newVariables.push(importedData[i]);
-							end = i;
 						}
 					}
 
 					for (var i = start + 1; i < output.length; i++) {
-						if (i >= start && i <= end && !newVariables.includes(output[i])) {
+						if (i >= start && !newVariables.includes(output[i])) {
 							traits.push(output[i]);
 						}
 					}

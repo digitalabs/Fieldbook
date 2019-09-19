@@ -42,8 +42,8 @@
 						return;
 					}
 
-					var msg = Messages.DESIGN_IMPORT_MISSING_MAPPING_TEXT;
-					createErrorNotification(Messages.DESIGN_MAPPING_ERROR_HEADER, msg);
+					var msg = Messages.IMPORT_MISSING_MAPPING_TEXT;
+					createErrorNotification(Messages.IMPORT_MAPPING_ERROR_HEADER, msg);
 				});
 
 			};
@@ -249,7 +249,7 @@
 
 				if (!allMapped) {
 					showErrorMessage('', 'One or more variables have not been mapped and will not be imported.');
-					deferred.resolve(false);
+					deferred.reject();
 				} else {
 					datasetService.getVariables(datasetId, 1807).then(function (variables) {
 						selections = variables;

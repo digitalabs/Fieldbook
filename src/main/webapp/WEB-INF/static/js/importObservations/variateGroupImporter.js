@@ -8,7 +8,7 @@
 
 	var app = angular.module('importObservationsApp', ['ui.bootstrap', 'ngLodash', 'ngResource', 'ui.sortable']);
 
-	app.controller('importObservationsCtrl', ['$scope', 'ImportMappingService', 'DesignOntologyService', '$uibModal', 'Messages', 'datasetService','$rootScope',
+	app.controller('importObservationsCtrl', ['$scope', 'ImportMappingService', 'DesignOntologyService', '$uibModal', 'Messages', 'datasetService', '$rootScope',
 		function (scope, ImportMappingService, DesignOntologyService, $uibModal, Messages, datasetService, $rootScope) {
 			// we can retrieve this from a service
 			scope.Messages = Messages;
@@ -21,14 +21,15 @@
 
 			scope.validateVariateGroupAndSend = function () {
 				ImportMappingService.showConfirmIfHasUnmapped().then(function () {
-					return ImportMappingService.validateMapping();
+					return ImportMappingService.validateMappingAndSave();
 				}, function () {
 					return {cancelMapping: true};
 				}).then(function (result) {
-					setTimeout(function() {
+					setTimeout(function () {
 
-						$('#importMapModal').one('hidden.bs.modal', function() {
+						$('#importMapModal').one('hidden.bs.modal', function () {
 						}).modal('hide');
+
 						$rootScope.$broadcast('importObservationAfterMappingVariateGroup');
 					}, 300);
 
@@ -216,7 +217,7 @@
 
 	app.service('ImportMappingService', ['$http', '$q', '_', 'Messages', 'datasetService', function ($http, $q, _, Messages, datasetService) {
 
-		function validateMapping() {
+		function validateMappingAndSave() {
 
 			var postData = angular.copy(service.data);
 			var datasetId = angular.copy(service.datasetId);
@@ -225,82 +226,83 @@
 
 			delete postData.unmappedHeaders;
 
-			// lets grab all variables that are in groups but does not have mapped variables
-			_.forEach(postData, function (value) {
-				var results = _.filter(value, function (item) {
-					return !_.has(item, 'variable');
-				});
-
-				if (results.length > 0) {
-					allMapped = false;
-
-					deferred.reject(results[0].name);
-
-					return false;
-				}
-			});
-
-			if (!allMapped) {
-				return deferred.promise;
-			}
-
 			_.forIn(postData, function (value) {
-
 				var selections;
 				var traits;
 				var variableTypeId;
 				var output = [];
 
-				datasetService.getVariables(datasetId, 1807).then(function (variables) {
-					selections = variables;
-					$.each(selections, function (i, e) {
-						output.push(e.name)
+				// lets grab all variables that are in groups but does not have mapped variables
+				_.forEach(postData, function (value) {
+					var results = _.filter(value, function (item) {
+						return item.variable === null;
 					});
 
-					datasetService.getVariables(datasetId, 1808).then(function (variables) {
-						traits = variables;
-						$.each(traits, function (i, e) {
+					if (results.length > 0) {
+						allMapped = false;
+
+						deferred.reject(results[0].name);
+
+						return false;
+					}
+				});
+
+				if (!allMapped) {
+					showErrorMessage('', 'One or more variables in the design file have not been mapped and will not be imported.');
+					deferred.resolve(false);
+				} else {
+					datasetService.getVariables(datasetId, 1807).then(function (variables) {
+						selections = variables;
+						$.each(selections, function (i, e) {
 							output.push(e.name)
 						});
 
-						for (var i = 0; i < value.length; i++) {
+						datasetService.getVariables(datasetId, 1808).then(function (variables) {
+							traits = variables;
+							$.each(traits, function (i, e) {
+								output.push(e.name)
+							});
 
-							if (_.has(value[i], 'variable')) {
-								if (_.has(value[i].variable, 'id') && value[i].variable.id) {
-									value[i].id = value[i].variable.id;
-								} else if (_.has(value[i].variable, 'cvTermId') && value[i].variable.cvTermId) {
-									value[i].id = value[i].variable.cvTermId;
-								} else {
-									value[i].id = 0;
-								}
+							for (var i = 0; i < value.length; i++) {
 
-								if (!output.includes(value[i].name) && !output.includes(value[i].variable.name)) {
-									if (value[i].variable.variableTypes.includes('TRAIT')) {
-										variableTypeId = 1808;
+								if (_.has(value[i], 'variable')) {
+									if (_.has(value[i].variable, 'id') && value[i].variable.id) {
+										value[i].id = value[i].variable.id;
+									} else if (_.has(value[i].variable, 'cvTermId') && value[i].variable.cvTermId) {
+										value[i].id = value[i].variable.cvTermId;
 									} else {
-										variableTypeId = 1807;
+										value[i].id = 0;
 									}
-									datasetService.addVariables(datasetId, {
-										variableTypeId: variableTypeId,
-										variableId: value[i].variable.id,
-										studyAlias: value[i].name
-									}).then(function () {
-										deferred.resolve(true);
-									}, function (response) {
-										if (response.errors && response.errors.length) {
-											showErrorMessage('', response.errors[0].message);
+
+									if (!output.includes(value[i].name) && !output.includes(value[i].variable.name)) {
+										if (value[i].variable.variableTypes.includes('TRAIT')) {
+											variableTypeId = 1808;
 										} else {
-											showErrorMessage('', ajaxGenericErrorMsg);
+											variableTypeId = 1807;
 										}
-									});
-								}
-								else {
-									showErrorMessage('', 'Variable already exists in dataset');
+										datasetService.addVariables(datasetId, {
+											variableTypeId: variableTypeId,
+											variableId: value[i].variable.id,
+											studyAlias: value[i].name
+										}).then(function () {
+											deferred.resolve(true);
+										}, function (response) {
+											if (response.errors && response.errors.length) {
+												showErrorMessage('', response.errors[0].message);
+											} else {
+												showErrorMessage('', ajaxGenericErrorMsg);
+											}
+										});
+									} else {
+										showErrorMessage('', 'Variable already exists in dataset');
+									}
+
 								}
 							}
-						}
+						});
 					});
-				});
+
+				}
 			});
 			return deferred.promise;
 		}
@@ -345,7 +347,7 @@
 				unmappedHeaders: [],
 				mappedTraits: []
 			},
-			validateMapping: validateMapping,
+			validateMappingAndSave: validateMappingAndSave,
 			showConfirmIfHasUnmapped: showConfirmIfHasUnmapped
 		};
 

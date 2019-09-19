@@ -248,7 +248,7 @@
 				});
 
 				if (!allMapped) {
-					showErrorMessage('', 'One or more variables in the design file have not been mapped and will not be imported.');
+					showErrorMessage('', 'One or more variables have not been mapped and will not be imported.');
 					deferred.resolve(false);
 				} else {
 					datasetService.getVariables(datasetId, 1807).then(function (variables) {

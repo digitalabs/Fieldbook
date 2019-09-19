@@ -1,6 +1,8 @@
 (function () {
 	'use strict';
 
+	var importObservationAfterMappingVariateGroupDeRegister = function () {};
+
 	var importStudyModule = angular.module('import-study', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal',
 		'fieldbook-utils']);
 
@@ -95,7 +97,10 @@
 			$scope.importedData = null;
 			var ctrl = this;
 
-			$rootScope.$on('importObservationAfterMappingVariateGroup', function (event) {
+			// Deregister previously create listeners
+			importObservationAfterMappingVariateGroupDeRegister();
+
+			importObservationAfterMappingVariateGroupDeRegister = $rootScope.$on('importObservationAfterMappingVariateGroup', function (event) {
 				$scope.importObservations(true);
 			});
 

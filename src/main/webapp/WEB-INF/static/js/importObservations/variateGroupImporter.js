@@ -8,6 +8,7 @@
 
 	var app = angular.module('importObservationsApp', ['ui.bootstrap', 'ngLodash', 'ngResource', 'ui.sortable']);
 
+	// TODO Refactor: Extract common functionality with designImportCtrl
 	app.controller('importObservationsCtrl', ['$scope', 'ImportMappingService', 'DesignOntologyService', '$uibModal', 'Messages', 'datasetService', '$rootScope',
 		function (scope, ImportMappingService, DesignOntologyService, $uibModal, Messages, datasetService, $rootScope) {
 			// we can retrieve this from a service
@@ -227,8 +228,6 @@
 			delete postData.unmappedHeaders;
 
 			_.forIn(postData, function (value) {
-				var selections;
-				var traits;
 				var variableTypeId;
 				var output = [];
 
@@ -250,60 +249,66 @@
 				if (!allMapped) {
 					showErrorMessage('', 'One or more variables have not been mapped and will not be imported.');
 					deferred.reject();
-				} else {
-					datasetService.getVariables(datasetId, 1807).then(function (variables) {
-						selections = variables;
-						$.each(selections, function (i, e) {
-							output.push(e.name)
-						});
+					return;
+				}
 
-						datasetService.getVariables(datasetId, 1808).then(function (variables) {
-							traits = variables;
-							$.each(traits, function (i, e) {
-								output.push(e.name)
-							});
-
-							for (var i = 0; i < value.length; i++) {
-
-								if (_.has(value[i], 'variable')) {
-									if (_.has(value[i].variable, 'id') && value[i].variable.id) {
-										value[i].id = value[i].variable.id;
-									} else if (_.has(value[i].variable, 'cvTermId') && value[i].variable.cvTermId) {
-										value[i].id = value[i].variable.cvTermId;
-									} else {
-										value[i].id = 0;
-									}
-
-									if (!output.includes(value[i].name) && !output.includes(value[i].variable.name)) {
-										if (value[i].variable.variableTypes.includes('TRAIT')) {
-											variableTypeId = 1808;
-										} else {
-											variableTypeId = 1807;
-										}
-										datasetService.addVariables(datasetId, {
-											variableTypeId: variableTypeId,
-											variableId: value[i].variable.id,
-											studyAlias: value[i].name
-										}).then(function () {
-											deferred.resolve(true);
-										}, function (response) {
-											if (response.errors && response.errors.length) {
-												showErrorMessage('', response.errors[0].message);
-											} else {
-												showErrorMessage('', ajaxGenericErrorMsg);
-											}
-										});
-									} else {
-										showErrorMessage('', 'Variable already exists in dataset');
-									}
-
-								}
-							}
-						});
+				$q.all([
+					datasetService.getVariables(datasetId, 1807), // selections
+					datasetService.getVariables(datasetId, 1808) // traits
+				]).then(function (data) {
+					_.forEach(data[0], function (selections) {
+						output.push(selections.name)
+					});
+					_.forEach(data[1], function (trait) {
+						output.push(trait.name)
 					});
 
-				}
+					var addVariablesPromises = [];
+
+					for (var i = 0; i < value.length; i++) {
+
+						if (_.has(value[i], 'variable')) {
+							if (_.has(value[i].variable, 'id') && value[i].variable.id) {
+								value[i].id = value[i].variable.id;
+							} else if (_.has(value[i].variable, 'cvTermId') && value[i].variable.cvTermId) {
+								value[i].id = value[i].variable.cvTermId;
+							} else {
+								value[i].id = 0;
+							}
+
+							if (!output.includes(value[i].name) && !output.includes(value[i].variable.name)) {
+								if (value[i].variable.variableTypes.includes('TRAIT')) {
+									variableTypeId = 1808;
+								} else {
+									variableTypeId = 1807;
+								}
+								addVariablesPromises.push(datasetService.addVariables(datasetId, {
+									variableTypeId: variableTypeId,
+									variableId: value[i].variable.id,
+									studyAlias: value[i].name
+								}));
+							} else {
+								showErrorMessage('', 'Variable already exists in dataset');
+								deferred.reject();
+								return;
+							}
+
+						}
+					}
+
+					$q.all(addVariablesPromises).then(function () {
+						deferred.resolve();
+					}, function (response) {
+						if (response.errors && response.errors.length) {
+							showErrorMessage('', response.errors[0].message);
+						} else {
+							showErrorMessage('', ajaxGenericErrorMsg);
+						}
+						deferred.reject();
+					});
+				});
 			});
+
 			return deferred.promise;
 		}
 

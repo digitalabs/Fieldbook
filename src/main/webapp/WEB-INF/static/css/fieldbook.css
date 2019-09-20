@@ -50,12 +50,6 @@ label#list-notes {
   width: 300px;
 }
 
-/* FIXME Rearrange
-    to be more consistent with boostrap buttons
-    For example:
-        - instead of overriding btn-primary use btn-warning
-        - instead of overriding btn-info use btn-primary
-    See also WEB-INF/static/css/lib/bootstrap/bootstrap-btn-outline.css */
 .btn-primary {
     color: #ffffff;
     background-color: #ff8109;

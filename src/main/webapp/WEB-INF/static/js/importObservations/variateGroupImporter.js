@@ -43,8 +43,8 @@
 						return;
 					}
 
-					var msg = Messages.IMPORT_MISSING_MAPPING_TEXT;
-					createErrorNotification(Messages.IMPORT_MAPPING_ERROR_HEADER, msg);
+					var msg = 'Please choose a mapping for all variables that you wish to import in the study.';
+					createErrorNotification('Import Observations Mapping Error', msg);
 				});
 
 			};

@@ -169,7 +169,7 @@
 				scope.datasetId = myService.datasetId;
 
 				// retrieve initial data from the service
-				$.getJSON('/Fieldbook/etl/workbook/importObservations/getMappingData/' + '/' + result ).done(
+				$.getJSON('/Fieldbook/etl/workbook/importObservations/getMappingData/' + result ).done(
 					function(data) {
 
 						myService.data = data;

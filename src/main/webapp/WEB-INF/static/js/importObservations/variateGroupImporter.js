@@ -34,7 +34,7 @@
 						$rootScope.$broadcast('importObservationAfterMappingVariateGroup');
 					}, 300);
 
-					if (result.warning) {
+					if (result && result.warning) {
 						/** @namespace result.warning */
 						showAlertMessage('', result.warning);
 					}

@@ -132,7 +132,7 @@
 			};
 
 			$scope.validateNewVariables = function () {
-				return datasetService.getColumns(datasetId, false).then(function (columnsData) {
+				return datasetService.getAllVariables(datasetId).then(function (columnsData) {
 					var importedData = $scope.importedData[0];
 					var newVariables = [];
 					var output = [];

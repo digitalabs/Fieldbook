@@ -218,12 +218,9 @@
 			};
 
 			ctrl.showDesignMapPopup = function (result, datasetId) {
-				setTimeout(function () {
-					$('#importMapModal').one('show.bs.modal', function () {
+				$('#importMapModal').one('show.bs.modal', function () {
 						$scope.initMapPopup(result, datasetId);
 					}).modal();
-				}, 300);
-
 			};
 
 			ctrl.showAddVariableConfirmModal = function (result, datasetId) {
@@ -235,7 +232,7 @@
 					'Would you like to add them? ', 'Yes', 'No');
 				modalWarningMessage.result.then(function (shouldContinue) {
 					if (shouldContinue) {
-						ctrl.showDesignMapPopup(result, datasetId); //TODO FIX AFTER THAT IS NECESSARY INVOKE THE IMPORT.
+						ctrl.showDesignMapPopup(result, datasetId);
 					} else {
 						$scope.importObservations(true);
 					}

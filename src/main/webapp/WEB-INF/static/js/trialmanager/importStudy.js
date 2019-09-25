@@ -1,7 +1,10 @@
 (function () {
 	'use strict';
 
-	var importStudyModule = angular.module('import-study', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal', 'fieldbook-utils']);
+	var importObservationAfterMappingVariateGroupDeRegister = function () {};
+
+	var importStudyModule = angular.module('import-study', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal',
+		'fieldbook-utils']);
 
 	importStudyModule.factory('importStudyModalService', ['$uibModal',
 		function ($uibModal) {
@@ -94,6 +97,13 @@
 			$scope.importedData = null;
 			var ctrl = this;
 
+			// Deregister previously create listeners
+			importObservationAfterMappingVariateGroupDeRegister();
+
+			importObservationAfterMappingVariateGroupDeRegister = $rootScope.$on('importObservationAfterMappingVariateGroup', function (event) {
+				$scope.importObservations(true);
+			});
+
 			ctrl.importFormats = [
 				{name: 'CSV', extension: '.csv'}, //
 				{name: 'Excel', extension: '.xls,.xlsx'}, //
@@ -112,7 +122,62 @@
 			};
 
 			$scope.submitImport = function () {
-				$scope.importObservations(true);
+				$scope.validateNewVariables().then(function (result) {
+					if (result.length > 0) {
+						ctrl.showAddVariableConfirmModal(result, datasetId);
+					} else {
+						$scope.importObservations(true);
+					}
+				});
+			};
+
+			$scope.validateNewVariables = function () {
+				return datasetService.getAllVariables(datasetId).then(function (columnsData) {
+					var importedData = $scope.importedData[0];
+					var newVariables = [];
+					var output = [];
+
+					$.each(columnsData, function (i, e) {
+						output.push(e.alias)
+					});
+
+					for (var i = 0; i < importedData.length; i++) {
+						if (!output.includes(importedData[i])) {
+							newVariables.push(importedData[i]);
+						}
+					}
+
+					return newVariables;
+				});
+			};
+
+			$scope.initMapPopup = function(result, datasetId) {
+
+				// get your angular element
+				var elem = angular
+					.element('#importMapModal .modal-content[ng-controller=importObservationsCtrl]');
+
+				// get the injector.
+				var injector = elem.injector();
+
+				// get the service.
+				var myService = injector.get('ImportMappingService');
+
+				myService.datasetId = datasetId;
+
+				var scope = elem.scope();
+				scope.datasetId = myService.datasetId;
+
+				// retrieve initial data from the service
+				$.getJSON('/Fieldbook/etl/workbook/importObservations/getMappingData/' + result ).done(
+					function(data) {
+
+						myService.data = data;
+						scope.data = myService.data;
+
+						// apply the changes to the scope.
+						scope.$apply();
+					});
 			};
 
 			$scope.importObservations = function (processWarnings) {
@@ -148,6 +213,28 @@
 						$scope.importObservations(false);
 					} else {
 						importStudyModalService.openImportStudyModal(datasetId);
+					}
+				});
+			};
+
+			ctrl.showDesignMapPopup = function (result, datasetId) {
+				$('#importMapModal').one('show.bs.modal', function () {
+						$scope.initMapPopup(result, datasetId);
+					}).modal();
+			};
+
+			ctrl.showAddVariableConfirmModal = function (result, datasetId) {
+				$uibModalInstance.close();
+				var warningMessages = [];
+
+				var modalWarningMessage = importStudyModalService.showWarningMessage('Confirmation',
+					'Some of the variables that you are trying to import are not present in this dataset.', warningMessages,
+					'Would you like to add them? ', 'Yes', 'No');
+				modalWarningMessage.result.then(function (shouldContinue) {
+					if (shouldContinue) {
+						ctrl.showDesignMapPopup(result, datasetId);
+					} else {
+						$scope.importObservations(true);
 					}
 				});
 			};

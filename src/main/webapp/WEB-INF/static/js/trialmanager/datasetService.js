@@ -210,7 +210,13 @@
 
 			};
 
+			datasetService.getAllVariables = function (datasetId) {
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/variables');
+				return request.then(successHandler, failureHandler);
+			};
+
 			return datasetService;
+
 		}]);
 
 })();

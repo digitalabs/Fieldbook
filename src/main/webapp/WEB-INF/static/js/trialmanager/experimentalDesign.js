@@ -6,7 +6,9 @@
 			.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 			.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE','SYSTEM_DEFINED_ENTRY_TYPE', 'TrialManagerDataService', '$http',
-				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages, $rootScope, studyStateService, studyContext) {
+				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', 'experimentDesignService',
+				function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _,
+						 $q, Messages, $rootScope, studyStateService, studyContext, experimentDesignService) {
 
 					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
 					var MESSAGE_DIV_ID = 'page-message';
@@ -168,6 +170,7 @@
 							nrlatin: null,
 							nclatin: null,
 							replatinGroups: '',
+							startingEntryNo: 1,
 							startingPlotNo: 1,
 							hasMeasurementData: false, // TODO now the data is deleted after create a new design.
 							numberOfBlocks: null
@@ -226,47 +229,34 @@
 							return;
 						}
 
+						// TODO: Check if BVDesign is expiring and show confirmation popup.
+
 						if (!$scope.doValidate()) {
 							return;
 						}
 						$scope.measurementDetails.hasMeasurement = true;
+
                         TrialManagerDataService.performDataCleanup();
-						var environmentData = angular.copy($scope.data);
 
+						var experimentDesignInput = angular.copy($scope.data);
 						// transform ordered has of treatment factors if existing to just the map
-						if (environmentData && environmentData.treatmentFactors) {
-							environmentData.treatmentFactors = $scope.data.treatmentFactors.vals();
+						if (experimentDesignInput && experimentDesignInput.treatmentFactors) {
+							experimentDesignInput.treatmentFactors = $scope.data.treatmentFactors.vals();
 						}
+						experimentDesignInput.environments = TrialManagerDataService.currentData.environments.environments;
+						experimentDesignInput.trialSettings = TrialManagerDataService.currentData.trialSettings;
 
-						environmentData.environments = TrialManagerDataService.currentData.environments.environments;
-						environmentData.trialSettings = TrialManagerDataService.currentData.trialSettings;
-						TrialManagerDataService.generateExpDesign(environmentData).then(
+						experimentDesignService.generateDesign(experimentDesignInput).then(
 							function(response) {
-								if (response.valid === true) {
-									if(response.message && response.message !== '') {
-										if(response.userConfirmationRequired) {
-											$scope.showConfirmDialog(response.message);
-										} else {
-											showSuccessfulMessage('', response.message);
-										}
-									}
 									showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
 									window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
-								} else {
-									if(response.message && response.message !== '') {
-										if(response.userConfirmationRequired) {
-											$scope.showConfirmDialog(response.message);
-										} else {
-											showErrorMessage('', response.message);
-										}
-									}
-									$scope.measurementDetails.hasMeasurement = false;
-								}
 							}, function(errResponse) {
+
+								// TODO: Show the error messsage from response.
+								$scope.measurementDetails.hasMeasurement = false;
 								showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
 							}
 						);
-
 					};
 
 					$scope.showConfirmDialog = function(message) {

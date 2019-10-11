@@ -219,4 +219,27 @@
 
 		}]);
 
+
+	datasetsApiModule.factory('experimentDesignService', ['$http', '$q', 'studyContext', 'serviceUtilities',
+		function ($http, $q, studyContext, serviceUtilities) {
+
+			var BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/studies/';
+
+			var experimentDesignService = {};
+			var successHandler = serviceUtilities.restSuccessHandler,
+				failureHandler = serviceUtilities.restFailureHandler;
+
+			experimentDesignService.generateDesign = function (experimentDesignInput) {
+				var request = $http.post(BASE_URL + studyContext.studyId + '/design', experimentDesignInput);
+				return request.then(successHandler, failureHandler);
+			}
+
+			experimentDesignService.getBVDesignLicenseInfo = function () {
+				return;
+			}
+
+			return experimentDesignService;
+
+		}]);
+
 })();

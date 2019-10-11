@@ -122,9 +122,9 @@
 		<property name="designRunner" ref="designRunner" />
 	</bean>
 
-	<bean id="designRunner" class="${design.runner}" />
+	<bean id="designRunner" class="com.efficio.fieldbook.service.internal.impl.MockDesignRunnerImpl" />
 
-	<bean id="designRunnerLicenseUtil" class="${design.runner.license.util}" />
+	<bean id="designRunnerLicenseUtil" class="com.efficio.fieldbook.service.internal.impl.MockBVDesignLicenseUtil" />
 
 	<bean id="fileService" class="org.generationcp.commons.service.impl.FileServiceImpl"
 		init-method="init">

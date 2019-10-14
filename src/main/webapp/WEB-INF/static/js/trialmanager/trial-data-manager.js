@@ -288,7 +288,7 @@
 				},
 
 				retrieveInsertionManner: function () {
-					$http.get('/Fieldbook/TrialManager/experimental/design/retrieveInsertionManners').success(function(insertionManners) {
+					experimentDesignService.getInsertionManners().then(function(insertionManners) {
 						service.applicationData.insertionManners = insertionManners;
 					});
 				},

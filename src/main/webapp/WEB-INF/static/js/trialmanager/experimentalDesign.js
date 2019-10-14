@@ -154,7 +154,6 @@
 
 					$scope.data = TrialManagerDataService.currentData.experimentalDesign;
 
-					// the property "startingEntryNo" is at least part of the data object here when the germplasm tab is loaded first
 					if (!$scope.data || Object.keys($scope.data).length <= 1) {
 						angular.copy({
 							totalGermplasmListCount: $scope.totalGermplasmEntryListCount,
@@ -170,7 +169,6 @@
 							nrlatin: null,
 							nclatin: null,
 							replatinGroups: '',
-							startingEntryNo: 1,
 							startingPlotNo: 1,
 							hasMeasurementData: false, // TODO now the data is deleted after create a new design.
 							numberOfBlocks: null

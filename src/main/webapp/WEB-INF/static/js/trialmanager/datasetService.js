@@ -234,8 +234,9 @@
 				return request.then(successHandler, failureHandler);
 			}
 
-			experimentDesignService.getBVDesignLicenseInfo = function () {
-				return;
+			experimentDesignService.getLicenseExpiryDays = function () {
+				var request = $http.get('/bmsapi/design/generator/license/expiryDays');
+				return request.then(successHandler, failureHandler);
 			}
 
 			experimentDesignService.getDesignTypes = function () {

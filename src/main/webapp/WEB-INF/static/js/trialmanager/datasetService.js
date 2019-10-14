@@ -238,6 +238,11 @@
 				return;
 			}
 
+			experimentDesignService.getDesignTypes = function () {
+				var request = $http.get('/bmsapi/design-types');
+				return request.then(successHandler, failureHandler);
+			}
+
 			return experimentDesignService;
 
 		}]);

@@ -245,7 +245,7 @@
 			}
 
 			experimentDesignService.getInsertionManners = function () {
-				var request = $http.get('/bmsapi/checks/insertionManners');
+				var request = $http.get('/bmsapi/design/checks/insertionManners');
 				return request.then(successHandler, failureHandler);
 			}
 

@@ -119,15 +119,10 @@
 						var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
 						modalConfirmDelete.result.then(function (shouldContinue) {
 							if (shouldContinue) {
-								TrialManagerDataService.deleteGenerateExpDesign(studyContext.measurementDatasetId).then(
+								experimentDesignService.deleteDesign().then(
 									function (response) {
-										if (response.valid === true) {
-											showSuccessfulMessage('', response.message);
-											window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
-										} else {
-											showErrorMessage('', 'Something went wrong deleting the design.');
-										}
-
+										showSuccessfulMessage('', 'The design was deleted successfully');
+										window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
 									}, function (errResponse) {
 										showErrorMessage('', 'Something went wrong deleting the design.');
 									}

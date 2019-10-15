@@ -234,6 +234,11 @@
 				return request.then(successHandler, failureHandler);
 			}
 
+			experimentDesignService.deleteDesign = function () {
+				var request = $http.delete(BASE_URL + studyContext.studyId + '/design');
+				return request.then(successHandler, failureHandler);
+			}
+
 			experimentDesignService.getLicenseExpiryDays = function () {
 				var request = $http.get('/bmsapi/design/generator/license/expiryDays');
 				return request.then(successHandler, failureHandler);

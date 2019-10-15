@@ -206,9 +206,6 @@ public interface FieldbookService {
 	 */
 	void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form);
 
-	BVDesignOutput runBVDesign(FieldbookProperties fieldbookProperties, MainDesign design)
-			throws IOException;
-
 	void saveStudyImportedCrosses(List<Integer> crossesIds, Integer studyId);
 
 	void addConditionsToTrialObservationsIfNecessary(Workbook workbook);

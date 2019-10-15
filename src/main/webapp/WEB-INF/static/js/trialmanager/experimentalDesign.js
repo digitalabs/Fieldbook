@@ -222,18 +222,8 @@
 							return;
 						}
 
-						if ($scope.data.designType !== DESIGN_TYPE.ENTRY_LIST_ORDER) {
-							var licenseExpiryDays = experimentDesignService.getLicenseExpiryDays();
-
-							// TODO Get the error/warning messages from properties file
-							if(licenseExpiryDays <= 0) {
-								this.showErrorMessage("", "The Breeding View license is expired. The design generation cannot proceed until " +
-									"this is resolved. Please contact VSNi at support@vsni.co.uk.");
-								return;
-							} else if(licenseExpiryDays <= 30) {
-								this.showConfirmDialog("Your BVDesign license is going to expire in " + licenseExpiryDays +" days. Please" +
-									" contact VSNi at support@vsni.co.uk.");
-							}
+						if ($scope.data.designType !== DESIGN_TYPE.ENTRY_LIST_ORDER && experimentDesignService.isLicenseExpired()) {
+							return;
 						}
 
 						if (!$scope.doValidate()) {

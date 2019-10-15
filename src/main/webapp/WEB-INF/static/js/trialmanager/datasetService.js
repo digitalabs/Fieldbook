@@ -239,8 +239,26 @@
 				return request.then(successHandler, failureHandler);
 			}
 
+			experimentDesignService.isLicenseExpired = function() {
+				var isLicenseExpired = false;
+				experimentDesignService.getLicenseExpiryDays().then(function (response) {
+					var licenseExpiryDays = response.headers('X-Total-Count');
+
+					// TODO Get the error/warning messages from properties file
+					if (licenseExpiryDays <= 0) {
+						this.showErrorMessage("", "The Breeding View license is expired. The design generation cannot proceed until " +
+							"this is resolved. Please contact VSNi at support@vsni.co.uk.");
+						isLicenseExpired = true;
+					} else if (licenseExpiryDays <= 30) {
+						this.showConfirmDialog("Your BVDesign license is going to expire in " + licenseExpiryDays + " days. Please" +
+							" contact VSNi at support@vsni.co.uk.");
+					}
+				});
+				return isLicenseExpired;
+			}
+
 			experimentDesignService.getLicenseExpiryDays = function () {
-				var request = $http.get('/bmsapi/design/generator/license/expiryDays');
+				var request = $http.head('/bmsapi/design/generator/license/expiryDays');
 				return request.then(successHandler, failureHandler);
 			}
 

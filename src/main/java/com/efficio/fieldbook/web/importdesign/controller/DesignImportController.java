@@ -779,7 +779,7 @@ public class DesignImportController extends SettingsController {
 		expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
 
 		if (experimentDesignType.getRepNo() > 0) {
-			designParam.setReplicationsCount(Integer.toString(experimentDesignType.getRepNo()));
+			designParam.setReplicationsCount(experimentDesignType.getRepNo());
 			expDesignTermIds.add(TermId.NUMBER_OF_REPLICATES.getId());
 		}
 

@@ -152,8 +152,8 @@ public abstract class BaseTrialController extends SettingsController {
 			data.setNblatin(this.getExperimentalDesignData(xpDesignVariable.getNumberOfContiguousBlocksLatinize()));
 			data.setNrlatin(this.getExperimentalDesignData(xpDesignVariable.getNumberOfContiguousRowsLatinize()));
 
-			data.setReplatinGroups(this.getExperimentalDesignData(xpDesignVariable.getNumberOfRepsInCols()));
-			final String replicationsMap = this.getExperimentalDesignData(xpDesignVariable.getReplicationsMap());
+			data.setReplatinGroups(this.getExperimentalDesignDataString(xpDesignVariable.getNumberOfRepsInCols()));
+			final String replicationsMap = this.getExperimentalDesignDataString(xpDesignVariable.getReplicationsMap());
 
 			if (NumberUtils.isNumber(replicationsMap)) {
 				final int repArrangementID = Integer.parseInt(replicationsMap);
@@ -168,7 +168,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 			data.setReplicationsCount(this.getExperimentalDesignData(xpDesignVariable.getNumberOfReplicates()));
 
-			data.setFileName(this.getExperimentalDesignData(xpDesignVariable.getExperimentalDesignSource()));
+			data.setFileName(this.getExperimentalDesignDataString(xpDesignVariable.getExperimentalDesignSource()));
 
 			// FIXME
 			// Get starting entry and plot without loading all observations in OpenTrialController.openTrial()
@@ -183,10 +183,8 @@ public abstract class BaseTrialController extends SettingsController {
 				data.setUseLatenized(ExperimentDesignType.isLatinized(designTypeTermID));
 			}
 
-			final String replicationPercentage = this.getExperimentalDesignData(xpDesignVariable.getReplicationPercentage());
-			if (!StringUtils.isEmpty(replicationPercentage)) {
-				data.setReplicationPercentage(Integer.parseInt(replicationPercentage));
-			}
+			final Integer replicationPercentage = this.getExperimentalDesignData(xpDesignVariable.getReplicationPercentage());
+			data.setReplicationPercentage(replicationPercentage);
 
 			data.setNumberOfBlocks(this.getExperimentalDesignData(xpDesignVariable.getNumberOfBlocks()));
 			data.setCheckInsertionManner(this.getExperimentalDesignData(xpDesignVariable.getChecksMannerOfInsertion()));
@@ -225,10 +223,18 @@ public abstract class BaseTrialController extends SettingsController {
 			// set the default starting plot no
 			startingPlotNo = 1;
 		}
-		data.setStartingPlotNo(startingPlotNo.toString());
+		data.setStartingPlotNo(startingPlotNo);
 	}
 
-	private String getExperimentalDesignData(final MeasurementVariable var) {
+	private Integer getExperimentalDesignData(final MeasurementVariable var) {
+		if (var != null && NumberUtils.isDigits(var.getValue())) {
+			return Integer.valueOf(var.getValue());
+		} else {
+			return null;
+		}
+	}
+
+	private String getExperimentalDesignDataString(final MeasurementVariable var) {
 		if (var != null) {
 			return var.getValue();
 		} else {

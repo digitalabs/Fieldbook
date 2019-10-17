@@ -246,14 +246,14 @@ public class SettingsUtilTest {
 
 		final ExpDesignParameterUi result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
 
-		Assert.assertEquals("1", result.getBlockSize());
-		Assert.assertEquals("2", result.getColsPerReplications());
-		Assert.assertEquals("3", result.getRowsPerReplications());
-		Assert.assertEquals("4", result.getNblatin());
-		Assert.assertEquals("5", result.getNclatin());
-		Assert.assertEquals("6", result.getNrlatin());
+		Assert.assertEquals(1, result.getBlockSize().intValue());
+		Assert.assertEquals(2, result.getColsPerReplications().intValue());
+		Assert.assertEquals(3, result.getRowsPerReplications().intValue());
+		Assert.assertEquals(4, result.getNblatin().intValue());
+		Assert.assertEquals(5, result.getNclatin().intValue());
+		Assert.assertEquals(6, result.getNrlatin().intValue());
 		Assert.assertEquals("7", result.getReplatinGroups());
-		Assert.assertEquals("8", result.getReplicationsCount());
+		Assert.assertEquals(8, result.getReplicationsCount().intValue());
 		Assert.assertEquals("9", result.getFileName());
 		Assert.assertEquals(10, result.getReplicationPercentage().intValue());
 

@@ -235,6 +235,8 @@
 										" contact VSNi at support@vsni.co.uk.").then(function() {
 										$scope.continueGeneration();
 									});
+								} else {
+									$scope.continueGeneration();
 								}
 							});
 						} else {

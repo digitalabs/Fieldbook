@@ -246,10 +246,9 @@
 									showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
 									window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
 							}, function(errResponse) {
-
-								// TODO: Show the error messsage from response.
+								var errorMessage = errResponse.errors[0].message;
 								$scope.measurementDetails.hasMeasurement = false;
-								showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
+								showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed + ' ' + errorMessage);
 							}
 						);
 					};

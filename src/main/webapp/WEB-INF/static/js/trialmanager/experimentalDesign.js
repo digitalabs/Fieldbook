@@ -222,16 +222,33 @@
 							return;
 						}
 
-						if ($scope.data.designType !== DESIGN_TYPE.ENTRY_LIST_ORDER && experimentDesignService.isLicenseExpired()) {
-							return;
+						if ($scope.data.designType !== DESIGN_TYPE.ENTRY_LIST_ORDER) {
+							experimentDesignService.getLicenseExpiryDays().then(function (response) {
+								var licenseExpiryDays = response.headers('X-Total-Count');
+								// TODO Get the error/warning messages from properties file
+								if (licenseExpiryDays <= 0) {
+									showErrorMessage("", "The Breeding View license is expired. The design generation cannot proceed until " +
+										"this is resolved. Please contact VSNi at support@vsni.co.uk.");
+									return;
+								} else if (licenseExpiryDays <= 30) {
+									$scope.showConfirmDialog("Your BVDesign license is going to expire in " + licenseExpiryDays + " day()s). Please" +
+										" contact VSNi at support@vsni.co.uk.").then(function() {
+										$scope.continueGeneration();
+									});
+								}
+							});
+						} else {
+							$scope.continueGeneration();
 						}
+					};
 
+					$scope.continueGeneration = function() {
 						if (!$scope.doValidate()) {
 							return;
 						}
 						$scope.measurementDetails.hasMeasurement = true;
 
-                        TrialManagerDataService.performDataCleanup();
+						TrialManagerDataService.performDataCleanup();
 
 						var experimentDesignInput = angular.copy($scope.data);
 						// transform ordered has of treatment factors if existing to just the map
@@ -243,8 +260,8 @@
 
 						experimentDesignService.generateDesign(experimentDesignInput).then(
 							function(response) {
-									showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
-									window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
+								showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
+								window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
 							}, function(errResponse) {
 								var errorMessage = errResponse.errors[0].message;
 								$scope.measurementDetails.hasMeasurement = false;

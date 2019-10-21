@@ -223,33 +223,34 @@
 	datasetsApiModule.factory('experimentDesignService', ['$http', '$q', 'studyContext', 'serviceUtilities',
 		function ($http, $q, studyContext, serviceUtilities) {
 
-			var BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/studies/';
+			var BASE_CROP_URL = '/bmsapi/crops/' + studyContext.cropName + '/studies/';
+			var BASE_STUDY_URL = BASE_CROP_URL  +  '/studies/';
 
 			var experimentDesignService = {};
 			var successHandler = serviceUtilities.restSuccessHandler,
 				failureHandler = serviceUtilities.restFailureHandler;
 
 			experimentDesignService.generateDesign = function (experimentDesignInput) {
-				var request = $http.post(BASE_URL + studyContext.studyId + '/design', experimentDesignInput);
+				var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/design', experimentDesignInput);
 				return request.then(successHandler, failureHandler);
 			}
 
 			experimentDesignService.deleteDesign = function () {
-				var request = $http.delete(BASE_URL + studyContext.studyId + '/design');
+				var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/design');
 				return request.then(successHandler, failureHandler);
 			}
 
 			experimentDesignService.getLicenseExpiryDays = function () {
-				return $http.head('/bmsapi/design/generator/license/expiryDays');
+				return $http.head('/bmsapi/breeding_view/license/expiryDays');
 			}
 
 			experimentDesignService.getDesignTypes = function () {
-				var request = $http.get('/bmsapi/design/types');
+				var request = $http.get(BASE_CROP_URL + '/experimental-design-types');
 				return request.then(successHandler, failureHandler);
 			}
 
 			experimentDesignService.getInsertionManners = function () {
-				var request = $http.get('/bmsapi/design/checks/insertionManners');
+				var request = $http.get(BASE_CROP_URL + '/check-insertion-manners');
 				return request.then(successHandler, failureHandler);
 			}
 

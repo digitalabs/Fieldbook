@@ -223,7 +223,7 @@
 	datasetsApiModule.factory('experimentDesignService', ['$http', '$q', 'studyContext', 'serviceUtilities',
 		function ($http, $q, studyContext, serviceUtilities) {
 
-			var BASE_CROP_URL = '/bmsapi/crops/' + studyContext.cropName + '/studies/';
+			var BASE_CROP_URL = '/bmsapi/crops/' + studyContext.cropName;
 			var BASE_STUDY_URL = BASE_CROP_URL  +  '/studies/';
 
 			var experimentDesignService = {};

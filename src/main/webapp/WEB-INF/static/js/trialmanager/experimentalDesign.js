@@ -225,7 +225,6 @@
 						if ($scope.data.designType !== DESIGN_TYPE.ENTRY_LIST_ORDER) {
 							experimentDesignService.getLicenseExpiryDays().then(function (response) {
 								var licenseExpiryDays = response.headers('X-Total-Count');
-								// TODO Get the error/warning messages from properties file
 								if (licenseExpiryDays <= 0) {
 									showErrorMessage($.fieldbookMessages.errorServerError, $.experimentDesignMessages.bvLicenseExpired);
 									return;

@@ -112,19 +112,12 @@
 		<property name="programBreedingMethodsUrl" value="${url.program.breeding.methods}" />
 		<property name="germplasmDetailsUrl" value="${url.germplasm.details}" />
 		<property name="uploadDirectory" value="${upload.directory}" />
-		<property name="bvDesignPath" value="${bv.design.path}" />
-		<property name="bvDesignRunnerTimeout" value="${bv.design.runner.timeout}" />
 		<property name="maxNumOfSubObsSetsPerStudy" value="${maximum.number.of.sub.observation.sets}" />
 		<property name="maxNumOfSubObsPerParentUnit" value="${maximum.number.of.sub.observation.parent.unit}" />
 	</bean>
 
 	<bean id="fieldbookService" class="com.efficio.fieldbook.service.FieldbookServiceImpl">
-		<property name="designRunner" ref="designRunner" />
 	</bean>
-
-	<bean id="designRunner" class="${design.runner}" />
-
-	<bean id="designRunnerLicenseUtil" class="${design.runner.license.util}" />
 
 	<bean id="fileService" class="org.generationcp.commons.service.impl.FileServiceImpl"
 		init-method="init">

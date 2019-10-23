@@ -12,7 +12,6 @@
 package com.efficio.fieldbook.service;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.internal.DesignRunner;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
@@ -22,10 +21,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
-import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -108,9 +104,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Resource
 	private UserService userService;
-
-	@Resource
-	private DesignRunner designRunner;
 
 	public FieldbookServiceImpl() {
 	}
@@ -1177,22 +1170,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public BVDesignOutput runBVDesign(
-		final FieldbookProperties fieldbookProperties, final MainDesign design) throws IOException {
-
-		return this.designRunner.runBVDesign(fieldbookProperties, design);
-
-	}
-
-	public DesignRunner getDesignRunner() {
-		return this.designRunner;
-	}
-
-	public void setDesignRunner(final DesignRunner designRunner) {
-		this.designRunner = designRunner;
 	}
 
 	@Override

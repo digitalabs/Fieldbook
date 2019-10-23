@@ -11,29 +11,28 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	 *
 	 */
 	private static final long serialVersionUID = -3081300491744812262L;
-	private String noOfEnvironments;
-	private String noOfEnvironmentsToAdd;
+	private Integer noOfEnvironments;
+	private Integer noOfEnvironmentsToAdd;
 	private Integer designType;
-	private String replicationsCount;
+	private Integer replicationsCount;
 	private Boolean useLatenized;
-	private String blockSize;
-	private String rowsPerReplications;
-	private String colsPerReplications;
+	private Integer blockSize;
+	private Integer rowsPerReplications;
+	private Integer colsPerReplications;
 	private Map treatmentFactors;
 	private Map treatmentFactorsData;
-	private String totalGermplasmListCount;
-	private String nclatin;
-	private String nrlatin;
-	private String nblatin;
+	private Integer totalGermplasmListCount;
+	private Integer nclatin;
+	private Integer nrlatin;
+	private Integer nblatin;
 	private String replatinGroups;
 	private boolean hasMeasurementData;
-	private String startingPlotNo;
-	private String startingEntryNo;
+	private Integer startingPlotNo;
 	private String fileName;
-	private String numberOfBlocks;
-	private String checkStartingPosition;
-	private String checkSpacing;
-	private String checkInsertionManner;
+	private Integer numberOfBlocks;
+	private Integer checkStartingPosition;
+	private Integer checkSpacing;
+	private Integer checkInsertionManner;
 	private Integer replicationPercentage;
 	private List<Environment> environments;
 	private TrialSettingsBean trialSettings;
@@ -43,11 +42,11 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	 */
 	private Integer replicationsArrangement;
 
-	public String getNoOfEnvironments() {
+	public Integer getNoOfEnvironments() {
 		return this.noOfEnvironments;
 	}
 
-	public void setNoOfEnvironments(final String noOfEnvironments) {
+	public void setNoOfEnvironments(final Integer noOfEnvironments) {
 		this.noOfEnvironments = noOfEnvironments;
 	}
 
@@ -59,11 +58,11 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		this.designType = designType;
 	}
 
-	public String getReplicationsCount() {
+	public Integer getReplicationsCount() {
 		return this.replicationsCount;
 	}
 
-	public void setReplicationsCount(final String replicationsCount) {
+	public void setReplicationsCount(final Integer replicationsCount) {
 		this.replicationsCount = replicationsCount;
 	}
 
@@ -75,27 +74,27 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		this.useLatenized = useLatenized;
 	}
 
-	public String getBlockSize() {
+	public Integer getBlockSize() {
 		return this.blockSize;
 	}
 
-	public void setBlockSize(final String blockSize) {
+	public void setBlockSize(final Integer blockSize) {
 		this.blockSize = blockSize;
 	}
 
-	public String getRowsPerReplications() {
+	public Integer getRowsPerReplications() {
 		return this.rowsPerReplications;
 	}
 
-	public void setRowsPerReplications(final String rowsPerReplications) {
+	public void setRowsPerReplications(final Integer rowsPerReplications) {
 		this.rowsPerReplications = rowsPerReplications;
 	}
 
-	public String getColsPerReplications() {
+	public Integer getColsPerReplications() {
 		return this.colsPerReplications;
 	}
 
-	public void setColsPerReplications(final String colsPerReplications) {
+	public void setColsPerReplications(final Integer colsPerReplications) {
 		this.colsPerReplications = colsPerReplications;
 	}
 
@@ -115,35 +114,35 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		this.treatmentFactorsData = treatmentFactorsData;
 	}
 
-	public String getTotalGermplasmListCount() {
+	public Integer getTotalGermplasmListCount() {
 		return this.totalGermplasmListCount;
 	}
 
-	public void setTotalGermplasmListCount(final String totalGermplasmListCount) {
+	public void setTotalGermplasmListCount(final Integer totalGermplasmListCount) {
 		this.totalGermplasmListCount = totalGermplasmListCount;
 	}
 
-	public String getNclatin() {
+	public Integer getNclatin() {
 		return this.nclatin;
 	}
 
-	public void setNclatin(final String nclatin) {
+	public void setNclatin(final Integer nclatin) {
 		this.nclatin = nclatin;
 	}
 
-	public String getNrlatin() {
+	public Integer getNrlatin() {
 		return this.nrlatin;
 	}
 
-	public void setNrlatin(final String nrlatin) {
+	public void setNrlatin(final Integer nrlatin) {
 		this.nrlatin = nrlatin;
 	}
 
-	public String getNblatin() {
+	public Integer getNblatin() {
 		return this.nblatin;
 	}
 
-	public void setNblatin(final String nblatin) {
+	public void setNblatin(final Integer nblatin) {
 		this.nblatin = nblatin;
 	}
 
@@ -163,11 +162,11 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		this.replicationsArrangement = replicationsArrangement;
 	}
 
-	public String getNoOfEnvironmentsToAdd() {
+	public Integer getNoOfEnvironmentsToAdd() {
 		return this.noOfEnvironmentsToAdd;
 	}
 
-	public void setNoOfEnvironmentsToAdd(final String noOfEnvironmentsToAdd) {
+	public void setNoOfEnvironmentsToAdd(final Integer noOfEnvironmentsToAdd) {
 		this.noOfEnvironmentsToAdd = noOfEnvironmentsToAdd;
 	}
 
@@ -179,20 +178,12 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		this.hasMeasurementData = hasMeasurementData;
 	}
 
-	public String getStartingPlotNo() {
+	public Integer getStartingPlotNo() {
 		return this.startingPlotNo;
 	}
 
-	public void setStartingPlotNo(final String startingPlotNo) {
+	public void setStartingPlotNo(final Integer startingPlotNo) {
 		this.startingPlotNo = startingPlotNo;
-	}
-
-	public String getStartingEntryNo() {
-		return this.startingEntryNo;
-	}
-
-	public void setStartingEntryNo(final String startingEntryNo) {
-		this.startingEntryNo = startingEntryNo;
 	}
 
 	public String getFileName() {
@@ -203,35 +194,35 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		this.fileName = fileName;
 	}
 
-	public String getNumberOfBlocks() {
+	public Integer getNumberOfBlocks() {
 		return this.numberOfBlocks;
 	}
 
-	public void setNumberOfBlocks(final String numberOfBlocks) {
+	public void setNumberOfBlocks(final Integer numberOfBlocks) {
 		this.numberOfBlocks = numberOfBlocks;
 	}
 
-	public String getCheckStartingPosition() {
+	public Integer getCheckStartingPosition() {
 		return this.checkStartingPosition;
 	}
 
-	public void setCheckStartingPosition(final String checkStartingPosition) {
+	public void setCheckStartingPosition(final Integer checkStartingPosition) {
 		this.checkStartingPosition = checkStartingPosition;
 	}
 
-	public String getCheckSpacing() {
+	public Integer getCheckSpacing() {
 		return this.checkSpacing;
 	}
 
-	public void setCheckSpacing(final String checkSpacing) {
+	public void setCheckSpacing(final Integer checkSpacing) {
 		this.checkSpacing = checkSpacing;
 	}
 
-	public String getCheckInsertionManner() {
+	public Integer getCheckInsertionManner() {
 		return this.checkInsertionManner;
 	}
 
-	public void setCheckInsertionManner(final String checkInsertionManner) {
+	public void setCheckInsertionManner(final Integer checkInsertionManner) {
 		this.checkInsertionManner = checkInsertionManner;
 	}
 
@@ -247,12 +238,12 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		return this.environments;
 	}
 
-	public void setEnvironments(List<Environment> environments) {
+	public void setEnvironments(final List<Environment> environments) {
 		this.environments = environments;
 	}
 
 	public TrialSettingsBean getTrialSettings() {
-		return trialSettings;
+		return this.trialSettings;
 	}
 
 	public void setTrialSettings(final TrialSettingsBean trialSettings) {

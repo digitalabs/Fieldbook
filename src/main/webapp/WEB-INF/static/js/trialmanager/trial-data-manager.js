@@ -6,10 +6,10 @@
 	angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','GERMPLASM_CHECKS_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
 		'ADVANCE_LIST_DATA', 'SAMPLE_LIST_DATA','CROSSES_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA', 'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', '$q',
-		'TrialSettingsManager','studyStateService', '_', '$localStorage','$rootScope', 'studyContext', 'derivedVariableService',
+		'TrialSettingsManager','studyStateService', '_', '$localStorage','$rootScope', 'studyContext', 'derivedVariableService', 'experimentDesignService',
 		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, ADVANCE_LIST_DATA, SAMPLE_LIST_DATA, CROSSES_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-					TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext, derivedVariableService) {
+					TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext, derivedVariableService, experimentDesignService) {
 
 
 			// TODO: clean up data service, at the very least arrange the functions in alphabetical order
@@ -282,13 +282,13 @@
 				},
 
 				retrieveDesignType: function() {
-					$http.get('/Fieldbook/TrialManager/experimental/design/retrieveDesignTypes').success(function(designTypes) {
+					experimentDesignService.getDesignTypes().then(function(designTypes) {
 						service.applicationData.designTypes = designTypes;
 					});
 				},
 
 				retrieveInsertionManner: function () {
-					$http.get('/Fieldbook/TrialManager/experimental/design/retrieveInsertionManners').success(function(insertionManners) {
+					experimentDesignService.getInsertionManners().then(function(insertionManners) {
 						service.applicationData.insertionManners = insertionManners;
 					});
 				},

@@ -1990,19 +1990,19 @@ public class SettingsUtil {
 			case NO_OF_COLS_IN_REPS:
 				return String.valueOf(param.getColsPerReplications());
 			case NO_OF_CCOLS_LATINIZE:
-				return param.getNclatin();
+				return String.valueOf(param.getNclatin());
 			case NO_OF_CROWS_LATINIZE:
-				return param.getNrlatin();
+				return String.valueOf(param.getNrlatin());
 			case EXPT_DESIGN_SOURCE:
 				return param.getFileName();
 			case NBLKS:
-				return param.getNumberOfBlocks();
+				return String.valueOf(param.getNumberOfBlocks());
 			case CHECK_START:
-				return param.getCheckStartingPosition();
+				return String.valueOf(param.getCheckStartingPosition());
 			case CHECK_INTERVAL:
-				return param.getCheckSpacing();
+				return String.valueOf(param.getCheckSpacing());
 			case CHECK_PLAN:
-				return param.getCheckInsertionManner();
+				return String.valueOf(param.getCheckInsertionManner());
 			default:
 		}
 		return "";
@@ -2015,11 +2015,11 @@ public class SettingsUtil {
 		}
 		for (final MeasurementVariable var : expDesigns) {
 			if (var.getTermId() == TermId.BLOCK_SIZE.getId()) {
-				param.setBlockSize(var.getValue());
+				param.setBlockSize(Integer.valueOf(var.getValue()));
 			} else if (var.getTermId() == TermId.NO_OF_COLS_IN_REPS.getId()) {
-				param.setColsPerReplications(var.getValue());
+				param.setColsPerReplications(Integer.valueOf(var.getValue()));
 			} else if (var.getTermId() == TermId.NO_OF_ROWS_IN_REPS.getId()) {
-				param.setRowsPerReplications(var.getValue());
+				param.setRowsPerReplications(Integer.valueOf(var.getValue()));
 			} else if (var.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
 				if (var.getValue() != null) {
 					final int designTypeTermId = Integer.parseInt(var.getValue());
@@ -2028,11 +2028,11 @@ public class SettingsUtil {
 					param.setUseLatenized(ExperimentDesignType.isLatinized(designTypeTermId));
 				}
 			} else if (var.getTermId() == TermId.NO_OF_CBLKS_LATINIZE.getId()) {
-				param.setNblatin(var.getValue());
+				param.setNblatin(Integer.valueOf(var.getValue()));
 			} else if (var.getTermId() == TermId.NO_OF_CCOLS_LATINIZE.getId()) {
-				param.setNclatin(var.getValue());
+				param.setNclatin(Integer.valueOf(var.getValue()));
 			} else if (var.getTermId() == TermId.NO_OF_CROWS_LATINIZE.getId()) {
-				param.setNrlatin(var.getValue());
+				param.setNrlatin(Integer.valueOf(var.getValue()));
 			} else if (var.getTermId() == TermId.NO_OF_REPS_IN_COLS.getId()) {
 				param.setReplatinGroups(var.getValue());
 			} else if (var.getTermId() == TermId.REPLICATIONS_MAP.getId()) {
@@ -2044,7 +2044,7 @@ public class SettingsUtil {
 					param.setReplicationsArrangement(3);
 				}
 			} else if (var.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()) {
-				param.setReplicationsCount(var.getValue());
+				param.setReplicationsCount(Integer.valueOf(var.getValue()));
 			} else if (var.getTermId() == TermId.PERCENTAGE_OF_REPLICATION.getId()) {
 				if (!StringUtils.isEmpty(var.getValue())) {
 					param.setReplicationPercentage(Integer.valueOf(var.getValue()));
@@ -2052,13 +2052,13 @@ public class SettingsUtil {
 			} else if (var.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
 				param.setFileName(var.getValue());
 			} else if (var.getTermId() == TermId.NBLKS.getId()) {
-				param.setNumberOfBlocks(var.getValue());
+				param.setNumberOfBlocks(Integer.valueOf(var.getValue()));
 			} else if (var.getTermId() == TermId.CHECK_PLAN.getId()) {
-				param.setCheckInsertionManner(var.getValue());
+				param.setCheckInsertionManner(Integer.valueOf(var.getValue()));
 			} else if (var.getTermId() == TermId.CHECK_INTERVAL.getId()) {
-				param.setCheckSpacing(var.getValue());
+				param.setCheckSpacing(Integer.valueOf(var.getValue()));
 			} else if (var.getTermId() == TermId.CHECK_START.getId()) {
-				param.setCheckStartingPosition(var.getValue());
+				param.setCheckStartingPosition(Integer.valueOf(var.getValue()));
 			}
 		}
 

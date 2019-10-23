@@ -6,7 +6,9 @@
 			.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 			.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE','SYSTEM_DEFINED_ENTRY_TYPE', 'TrialManagerDataService', '$http',
-				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _, $q, Messages, $rootScope, studyStateService, studyContext) {
+				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', 'experimentDesignService',
+				function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _,
+						 $q, Messages, $rootScope, studyStateService, studyContext, experimentDesignService) {
 
 					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
 					var MESSAGE_DIV_ID = 'page-message';
@@ -117,15 +119,10 @@
 						var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
 						modalConfirmDelete.result.then(function (shouldContinue) {
 							if (shouldContinue) {
-								TrialManagerDataService.deleteGenerateExpDesign(studyContext.measurementDatasetId).then(
+								experimentDesignService.deleteDesign().then(
 									function (response) {
-										if (response.valid === true) {
-											showSuccessfulMessage('', response.message);
-											window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
-										} else {
-											showErrorMessage('', 'Something went wrong deleting the design.');
-										}
-
+										showSuccessfulMessage('', 'The design was deleted successfully');
+										window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
 									}, function (errResponse) {
 										showErrorMessage('', 'Something went wrong deleting the design.');
 									}
@@ -152,7 +149,6 @@
 
 					$scope.data = TrialManagerDataService.currentData.experimentalDesign;
 
-					// the property "startingEntryNo" is at least part of the data object here when the germplasm tab is loaded first
 					if (!$scope.data || Object.keys($scope.data).length <= 1) {
 						angular.copy({
 							totalGermplasmListCount: $scope.totalGermplasmEntryListCount,
@@ -226,47 +222,54 @@
 							return;
 						}
 
+						if ($scope.data.designType !== DESIGN_TYPE.ENTRY_LIST_ORDER) {
+							experimentDesignService.getBVDesignLicense().then(function (response) {
+								// we need only the first license
+                                var licenseExpiryDays = response.data[0].expiryDays;
+								if (licenseExpiryDays <= 0) {
+									showErrorMessage($.fieldbookMessages.errorServerError, $.experimentDesignMessages.bvLicenseExpired);
+									return;
+								} else if (licenseExpiryDays <= 30) {
+									$scope.showConfirmDialog($.experimentDesignMessages.bvLicenseExpiring.replace('{0}', licenseExpiryDays)).then(function() {
+										$scope.continueGeneration();
+									});
+								} else {
+									$scope.continueGeneration();
+								}
+							}, function(errResponse) {
+								showErrorMessage($.fieldbookMessages.errorServerError, $.experimentDesignMessages.bvLicenseGenericError);
+							});
+						} else {
+							$scope.continueGeneration();
+						}
+					};
+
+					$scope.continueGeneration = function() {
 						if (!$scope.doValidate()) {
 							return;
 						}
 						$scope.measurementDetails.hasMeasurement = true;
-                        TrialManagerDataService.performDataCleanup();
-						var environmentData = angular.copy($scope.data);
 
+						TrialManagerDataService.performDataCleanup();
+
+						var experimentDesignInput = angular.copy($scope.data);
 						// transform ordered has of treatment factors if existing to just the map
-						if (environmentData && environmentData.treatmentFactors) {
-							environmentData.treatmentFactors = $scope.data.treatmentFactors.vals();
+						if (experimentDesignInput && experimentDesignInput.treatmentFactors) {
+							experimentDesignInput.treatmentFactors = $scope.data.treatmentFactors.vals();
 						}
+						experimentDesignInput.environments = TrialManagerDataService.currentData.environments.environments;
+						experimentDesignInput.trialSettings = TrialManagerDataService.currentData.trialSettings;
 
-						environmentData.environments = TrialManagerDataService.currentData.environments.environments;
-						environmentData.trialSettings = TrialManagerDataService.currentData.trialSettings;
-						TrialManagerDataService.generateExpDesign(environmentData).then(
+						experimentDesignService.generateDesign(experimentDesignInput).then(
 							function(response) {
-								if (response.valid === true) {
-									if(response.message && response.message !== '') {
-										if(response.userConfirmationRequired) {
-											$scope.showConfirmDialog(response.message);
-										} else {
-											showSuccessfulMessage('', response.message);
-										}
-									}
-									showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
-									window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
-								} else {
-									if(response.message && response.message !== '') {
-										if(response.userConfirmationRequired) {
-											$scope.showConfirmDialog(response.message);
-										} else {
-											showErrorMessage('', response.message);
-										}
-									}
-									$scope.measurementDetails.hasMeasurement = false;
-								}
+								showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
+								window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
 							}, function(errResponse) {
-								showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed);
+								var errorMessage = errResponse.errors[0].message;
+								$scope.measurementDetails.hasMeasurement = false;
+								showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed + ' ' + errorMessage);
 							}
 						);
-
 					};
 
 					$scope.showConfirmDialog = function(message) {

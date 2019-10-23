@@ -1,16 +1,15 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
+import com.efficio.fieldbook.web.trial.TestDataHelper;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
@@ -24,25 +23,29 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.pojos.workbench.settings.*;
+import org.generationcp.middleware.pojos.workbench.settings.Condition;
+import org.generationcp.middleware.pojos.workbench.settings.Constant;
+import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.pojos.workbench.settings.Factor;
+import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
+import org.generationcp.middleware.pojos.workbench.settings.Variate;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.StudyDetails;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.TestDataHelper;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-
-import junit.framework.Assert;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 public class SettingsUtilTest {
 
@@ -172,7 +175,7 @@ public class SettingsUtilTest {
 		final List<String> labels = new ArrayList<>(Arrays.asList(new String[] { "abc", "def" }));
 
 		final Properties appConfigProp = Mockito.mock(Properties.class);
-		Mockito.when(appConfigProp.getProperty(Matchers.any(String.class))).thenReturn("any value");
+		Mockito.when(appConfigProp.getProperty(ArgumentMatchers.any(String.class))).thenReturn("any value");
 		final ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
 
 		SettingsUtil.getVariableAppConstantLabels(labels, appConfigProp);
@@ -243,14 +246,14 @@ public class SettingsUtilTest {
 
 		final ExpDesignParameterUi result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
 
-		Assert.assertEquals("1", result.getBlockSize());
-		Assert.assertEquals("2", result.getColsPerReplications());
-		Assert.assertEquals("3", result.getRowsPerReplications());
-		Assert.assertEquals("4", result.getNblatin());
-		Assert.assertEquals("5", result.getNclatin());
-		Assert.assertEquals("6", result.getNrlatin());
+		Assert.assertEquals(1, result.getBlockSize().intValue());
+		Assert.assertEquals(2, result.getColsPerReplications().intValue());
+		Assert.assertEquals(3, result.getRowsPerReplications().intValue());
+		Assert.assertEquals(4, result.getNblatin().intValue());
+		Assert.assertEquals(5, result.getNclatin().intValue());
+		Assert.assertEquals(6, result.getNrlatin().intValue());
 		Assert.assertEquals("7", result.getReplatinGroups());
-		Assert.assertEquals("8", result.getReplicationsCount());
+		Assert.assertEquals(8, result.getReplicationsCount().intValue());
 		Assert.assertEquals("9", result.getFileName());
 		Assert.assertEquals(10, result.getReplicationPercentage().intValue());
 
@@ -397,14 +400,14 @@ public class SettingsUtilTest {
 
 		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
 
-		expDesignParameterUi.setBlockSize("1");
-		expDesignParameterUi.setColsPerReplications("2");
-		expDesignParameterUi.setRowsPerReplications("3");
-		expDesignParameterUi.setNblatin("4");
-		expDesignParameterUi.setNclatin("5");
-		expDesignParameterUi.setNrlatin("6");
+		expDesignParameterUi.setBlockSize(1);
+		expDesignParameterUi.setColsPerReplications(2);
+		expDesignParameterUi.setRowsPerReplications(3);
+		expDesignParameterUi.setNblatin(4);
+		expDesignParameterUi.setNclatin(5);
+		expDesignParameterUi.setNrlatin(6);
 		expDesignParameterUi.setReplatinGroups("7");
-		expDesignParameterUi.setReplicationsCount("8");
+		expDesignParameterUi.setReplicationsCount(8);
 		expDesignParameterUi.setUseLatenized(false);
 
 		Assert.assertEquals("1", SettingsUtil.getExperimentalDesignValue(expDesignParameterUi, TermId.BLOCK_SIZE));
@@ -499,7 +502,7 @@ public class SettingsUtilTest {
 		final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
 
 		if (cvTermId == TermId.CHECK_PLAN.getId()) {
-			final List<ValueReference> possibleValues = new ArrayList<ValueReference>();
+			final List<ValueReference> possibleValues = new ArrayList<>();
 			possibleValues.add(new ValueReference(8414, "1", "Insert each check in turn"));
 			possibleValues.add(new ValueReference(8415, "2", "Insert all checks at each position"));
 			settingDetail.setPossibleValues(possibleValues);
@@ -707,7 +710,7 @@ public class SettingsUtilTest {
 		Mockito.when(this.userSelection.getStudyLevelConditions()).thenReturn(studyLevelConditions);
 		Mockito.when(this.userSelection.getBasicDetails()).thenReturn(basicDetails);
 		Mockito.when(this.userSelection.getBaselineTraitsList()).thenReturn(variatesList);
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.any(String.class)))
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(ArgumentMatchers.anyInt(), ArgumentMatchers.anyString()))
 				.thenReturn(standardVariable);
 		Mockito.when(this.userSelection.getPlotsLevelList()).thenReturn(basicDetails);
 		Mockito.when(this.userSelection.getStudyConditions()).thenReturn(basicDetails);

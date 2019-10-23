@@ -8,9 +8,6 @@ public class FieldbookProperties {
 	private String programLocationsUrl;
 	private String programBreedingMethodsUrl;
 	private String germplasmDetailsUrl;
-
-	private String bvDesignPath;
-	private Integer bvDesignRunnerTimeout;
 	
 	private String uploadDirectory;
 	private Integer maxNumOfSubObsSetsPerStudy;
@@ -21,7 +18,7 @@ public class FieldbookProperties {
 		return WorkbenchAppPathResolver.getFullWebAddress(this.programLocationsUrl);
 	}
 
-	public void setProgramLocationsUrl(String programLocationsUrl) {
+	public void setProgramLocationsUrl(final String programLocationsUrl) {
 		this.programLocationsUrl = programLocationsUrl;
 	}
 
@@ -29,7 +26,7 @@ public class FieldbookProperties {
 		return WorkbenchAppPathResolver.getFullWebAddress(this.programBreedingMethodsUrl);
 	}
 
-	public void setProgramBreedingMethodsUrl(String programBreedingMethodsUrl) {
+	public void setProgramBreedingMethodsUrl(final String programBreedingMethodsUrl) {
 		this.programBreedingMethodsUrl = programBreedingMethodsUrl;
 	}
 
@@ -37,7 +34,7 @@ public class FieldbookProperties {
 		return WorkbenchAppPathResolver.getFullWebAddress(this.germplasmDetailsUrl);
 	}
 
-	public void setGermplasmDetailsUrl(String germplasmDetailsUrl) {
+	public void setGermplasmDetailsUrl(final String germplasmDetailsUrl) {
 		this.germplasmDetailsUrl = germplasmDetailsUrl;
 	}
 
@@ -45,39 +42,24 @@ public class FieldbookProperties {
 		return this.uploadDirectory;
 	}
 
-	public void setUploadDirectory(String uploadDirectory) {
+	public void setUploadDirectory(final String uploadDirectory) {
 		this.uploadDirectory = uploadDirectory;
 	}
 
-	public String getBvDesignPath() {
-		return bvDesignPath;
-	}
-
-	public void setBvDesignPath(final String bvDesignPath) {
-		this.bvDesignPath = bvDesignPath;
-	}
-
 	public Integer getMaxNumOfSubObsSetsPerStudy() {
-		return maxNumOfSubObsSetsPerStudy;
+		return this.maxNumOfSubObsSetsPerStudy;
 	}
 
-	public void setMaxNumOfSubObsSetsPerStudy(Integer maxNumOfSubObsSetsPerStudy) {
+	public void setMaxNumOfSubObsSetsPerStudy(final Integer maxNumOfSubObsSetsPerStudy) {
 		this.maxNumOfSubObsSetsPerStudy = maxNumOfSubObsSetsPerStudy;
 	}
 
 	public Integer getMaxNumOfSubObsPerParentUnit() {
-		return maxNumOfSubObsPerParentUnit;
+		return this.maxNumOfSubObsPerParentUnit;
 	}
 
-	public void setMaxNumOfSubObsPerParentUnit(Integer maxNumOfSubObsPerParentUnit) {
+	public void setMaxNumOfSubObsPerParentUnit(final Integer maxNumOfSubObsPerParentUnit) {
 		this.maxNumOfSubObsPerParentUnit = maxNumOfSubObsPerParentUnit;
 	}
 
-	public Integer getBvDesignRunnerTimeout() {
-		return bvDesignRunnerTimeout;
-	}
-
-	public void setBvDesignRunnerTimeout(final Integer bvDesignRunnerTimeout) {
-		this.bvDesignRunnerTimeout = bvDesignRunnerTimeout;
-	}
 }

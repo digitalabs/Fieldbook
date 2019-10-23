@@ -11,15 +11,12 @@
 
 package com.efficio.fieldbook.service.api;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import com.efficio.fieldbook.web.trial.bean.bvdesign.BVDesignOutput;
-
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -33,13 +30,11 @@ import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.manager.Operation;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This is used by the trial manager and nursery manager in communicating to the data access layer, manipulating workbook files and
@@ -205,9 +200,6 @@ public interface FieldbookService {
 	 * @param form the form
 	 */
 	void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form);
-
-	BVDesignOutput runBVDesign(FieldbookProperties fieldbookProperties, MainDesign design)
-			throws IOException;
 
 	void saveStudyImportedCrosses(List<Integer> crossesIds, Integer studyId);
 

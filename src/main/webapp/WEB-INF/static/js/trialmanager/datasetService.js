@@ -240,9 +240,9 @@
 				return request.then(successHandler, failureHandler);
 			}
 
-			experimentDesignService.getLicenseExpiryDays = function () {
-				return $http.head('/bmsapi/breeding_view/license/expiryDays');
-			}
+            experimentDesignService.getBVDesignLicense = function () {
+               return $http.get('/bmsapi/breeding-view-licenses');
+            }
 
 			experimentDesignService.getDesignTypes = function () {
 				var request = $http.get(BASE_CROP_URL + '/experimental-design-types');

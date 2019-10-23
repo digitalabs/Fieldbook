@@ -223,8 +223,9 @@
 						}
 
 						if ($scope.data.designType !== DESIGN_TYPE.ENTRY_LIST_ORDER) {
-							experimentDesignService.getLicenseExpiryDays().then(function (response) {
-								var licenseExpiryDays = response.headers('X-Total-Count');
+							experimentDesignService.getBVDesignLicense().then(function (response) {
+								// we need only the first license
+                                var licenseExpiryDays = response.data[0].expiry;
 								if (licenseExpiryDays <= 0) {
 									showErrorMessage($.fieldbookMessages.errorServerError, $.experimentDesignMessages.bvLicenseExpired);
 									return;

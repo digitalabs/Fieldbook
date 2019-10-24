@@ -65,6 +65,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 				// Retrieve all formula variables in study
 				derivedVariableService.getFormulaVariables(studyContext.measurementDatasetId).then(function(response){
+					//response is null if study is not yet saved
 					if(response){
 						var formulaVariables = response.data;
 						// Check if any of the deleted variables are formula variables

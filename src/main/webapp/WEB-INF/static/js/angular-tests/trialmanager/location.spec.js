@@ -60,19 +60,11 @@ describe('Location', function () {
 
 
     beforeEach(function () {
-        inject(function ($rootScope, $controller, $injector){
+        inject(function ($rootScope, $controller, $injector, $q){
 
             scope = $rootScope.$new();
             datasetService = $injector.get('datasetService');
-            derivedVariableService.getFormulaVariables = function(dataSetId) {
-
-                return {
-                    then: function (callback) {
-                        dataSetId = '';
-                        return callback(formulaVariables);//force to return null
-                    }
-                };
-            };
+            derivedVariableService.getFormulaVariables.and.returnValue($q.resolve(null));
             controller = $controller('EnvironmentCtrl',{
                 $rootScope: rootScope,
                 $scope: scope,

@@ -48,7 +48,6 @@ module.exports = function (config) {
 			'WEB-INF/static/js/lib/datatable/dataTables.scroller.js',
 			'WEB-INF/static/js/lib/jquery/jquery.contextMenu-2.0.min.js',
 
-
 			'WEB-INF/static/js/angular/angular-local-storage.min.js',
 			'WEB-INF/static/js/angular/bmsAuth.js',
 			'WEB-INF/static/js/lib/angular/xlsx.full.min.js',
@@ -57,6 +56,7 @@ module.exports = function (config) {
 
 			// Modules to test
 			'WEB-INF/static/js/angular/angular-utilities.js',
+			'WEB-INF/static/js/importObservations/variateGroupImporter.js',
 			'WEB-INF/static/js/angular/fieldbook-utils.js',
 			'WEB-INF/static/js/trialmanager/manageTrial.js',
 			'WEB-INF/static/js/trialmanager/trial-settings-manager.js',
@@ -80,7 +80,6 @@ module.exports = function (config) {
 			'WEB-INF/static/js/design-import/design-import-main.js',
 			'WEB-INF/static/js/trialmanager/importStudy.js',
 			'WEB-INF/static/js/trialmanager/createSample.js',
-
 
 			// unit test files
 			'WEB-INF/static/js/angular-tests/lib/angular-mocks.js',

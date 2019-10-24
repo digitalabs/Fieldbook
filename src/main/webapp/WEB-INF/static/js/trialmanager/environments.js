@@ -65,13 +65,17 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 				// Retrieve all formula variables in study
 				derivedVariableService.getFormulaVariables(studyContext.measurementDatasetId).then(function(response){
-					var formulaVariables = response.data;
-					// Check if any of the deleted variables are formula variables
-					angular.forEach(formulaVariables, function (formulaVariable) {
-						if (deleteVariables.indexOf(formulaVariable.id) > -1) {
-							variableIsUsedInOtherCalculatedVariable = true;
-						}
-					});
+					//response is null if study is not yet saved
+					if(response){
+						var formulaVariables = response.data;
+						// Check if any of the deleted variables are formula variables
+						angular.forEach(formulaVariables, function (formulaVariable) {
+							if (deleteVariables.indexOf(formulaVariable.id) > -1) {
+								variableIsUsedInOtherCalculatedVariable = true;
+							}
+						});
+					}
+
 
 					if (variableIsUsedInOtherCalculatedVariable) {
 						var modalInstance = $scope.openConfirmModal(removeVariableDependencyConfirmationText, environmentConfirmLabel);

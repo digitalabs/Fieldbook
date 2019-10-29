@@ -231,12 +231,12 @@
 				failureHandler = serviceUtilities.restFailureHandler;
 
 			experimentDesignService.generateDesign = function (experimentDesignInput) {
-				var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/design', experimentDesignInput);
+				var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/experimental-designs/generation', experimentDesignInput);
 				return request.then(successHandler, failureHandler);
 			}
 
 			experimentDesignService.deleteDesign = function () {
-				var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/design');
+				var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/experimental-designs');
 				return request.then(successHandler, failureHandler);
 			}
 

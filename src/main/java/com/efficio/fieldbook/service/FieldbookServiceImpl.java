@@ -844,7 +844,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 						tempVarName.setFactor(false);
 						tempVarId.setName(tempVarId.getName() + AppConstants.ID_SUFFIX.getString());
 						if (tempVarId.getOperation() != Operation.DELETE) {
-							tempVarName.setOperation(Operation.ADD);
+							tempVarName.setOperation(tempVarId.getOperation());//set same operation as the id
 							workbook.getConditions().add(tempVarName);
 							workbook.resetTrialConditions();
 							final SettingVariable svar = new SettingVariable(tempVarName.getName(),

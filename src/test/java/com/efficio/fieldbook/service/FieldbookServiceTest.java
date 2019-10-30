@@ -113,11 +113,7 @@ public class FieldbookServiceTest {
 	@Before
 	public void setUp() throws MiddlewareException {
 		final List<Location> allLocation = new ArrayList<>();
-		Project project = this.getProject();
-		project.setCropType(getCropType());
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(FieldbookServiceTest.PROGRAMUUID);
-		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
-		Mockito.when(this.userService.getPersonsByCrop(this.contextUtil.getProjectInContext().getCropType())).thenReturn(new ArrayList<Person>());
 		allLocation.add(LocationTestDataInitializer.createLocation(1, FieldbookServiceTest.LOCATION_NAME, null));
 		allLocation.add(LocationTestDataInitializer.createLocation(2, "Loc2", null));
 		Mockito.when(this.fieldbookMiddlewareService.getLocationsByProgramUUID(FieldbookServiceTest.PROGRAMUUID))
@@ -786,8 +782,6 @@ public class FieldbookServiceTest {
 		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
 		piName.setPhenotypicType(PhenotypicType.STUDY);
 
-		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-				TermId.PI_ID.getId(), true)).thenReturn(variable);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(
                 TermId.PI_NAME.getId(), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
 		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
@@ -808,8 +802,6 @@ public class FieldbookServiceTest {
 		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
 		piName.setPhenotypicType(PhenotypicType.STUDY);
 
-		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-				TermId.PI_ID.getId(), true)).thenReturn(variable);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(
                 TermId.PI_NAME.getId(), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
 		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
@@ -830,8 +822,6 @@ public class FieldbookServiceTest {
 		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
 		piName.setPhenotypicType(PhenotypicType.STUDY);
 
-		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
-				TermId.PI_ID.getId(), true)).thenReturn(variable);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(
                 TermId.PI_NAME.getId(), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
 		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),

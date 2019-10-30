@@ -7,7 +7,6 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
-import com.sun.scenario.effect.Crop;
 import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
@@ -42,7 +41,6 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
-import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.junit.Assert;
@@ -54,7 +52,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.olap4j.metadata.Measure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +88,6 @@ public class FieldbookServiceTest {
 	private static final int NUMBER_ID = 6040;
 	private static final String ED_CHECK_START = "ED - Check Start";
 	private static final int CHECK_START_PROPERTY_ID = 2153;
-	private static final int CROP_TYPE_ID =1;
 	private static final long PROJECT_ID = 1L;
 	private static final String DUMMY_UNIQUE_ID = "1234567890";
 	@Mock
@@ -117,7 +113,7 @@ public class FieldbookServiceTest {
 	@Before
 	public void setUp() throws MiddlewareException {
 		final List<Location> allLocation = new ArrayList<>();
-		Project project = this.getProject(FieldbookServiceTest.PROJECT_ID);
+		Project project = this.getProject();
 		project.setCropType(getCropType());
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(FieldbookServiceTest.PROGRAMUUID);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
@@ -565,7 +561,6 @@ public class FieldbookServiceTest {
 		final FieldbookService api = Mockito.mock(FieldbookService.class);
 		fieldbookService.setFieldbookMiddlewareService(api);
 		final Integer studyId = 7;
-		final String studyName = "Study Name";
 		final String columnOrderDelimited = "[\"1100\", \"1900\"]";
 
 		fieldbookService.saveStudyColumnOrdering(studyId, columnOrderDelimited,
@@ -794,7 +789,7 @@ public class FieldbookServiceTest {
 		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
 				TermId.PI_ID.getId(), true)).thenReturn(variable);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(
-				Integer.valueOf(TermId.PI_NAME.getId()), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
+                TermId.PI_NAME.getId(), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
 		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
 				AppConstants.ID_NAME_COMBINATION.getString(), true);
 
@@ -816,7 +811,7 @@ public class FieldbookServiceTest {
 		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
 				TermId.PI_ID.getId(), true)).thenReturn(variable);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(
-				Integer.valueOf(TermId.PI_NAME.getId()), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
+                TermId.PI_NAME.getId(), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
 		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
 				AppConstants.ID_NAME_COMBINATION.getString(), true);
 
@@ -838,16 +833,16 @@ public class FieldbookServiceTest {
 		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
 				TermId.PI_ID.getId(), true)).thenReturn(variable);
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(
-				Integer.valueOf(TermId.PI_NAME.getId()), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
+                TermId.PI_NAME.getId(), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
 		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
 				AppConstants.ID_NAME_COMBINATION.getString(), true);
 		//Pair Name variable not added
 		Assert.assertEquals(1, userSelection.getWorkbook().getConditions().size());
 	}
 
-	private Project getProject(final long id) {
+	private Project getProject() {
 		final Project project = new Project();
-		project.setProjectId(id);
+		project.setProjectId(FieldbookServiceTest.PROJECT_ID);
 		project.setUniqueID(FieldbookServiceTest.DUMMY_UNIQUE_ID);
 		return project;
 	}
@@ -871,7 +866,7 @@ public class FieldbookServiceTest {
 	}
 
 	private List<ValueReference> getValueReferenceList() {
-		final List<ValueReference> possibleValues = new ArrayList<ValueReference>();
+		final List<ValueReference> possibleValues = new ArrayList<>();
 
 		for (int i = 0; i < 5; i++) {
 			final ValueReference possibleValue = new ValueReference(i, String.valueOf(i));

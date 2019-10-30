@@ -4,9 +4,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 	'use strict';
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', '$q', 'TrialManagerDataService', '$uibModal', '$stateParams',
-		'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService', 'studyStateService', 'derivedVariableService', 'studyContext',
+		'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService', 'studyStateService', 'derivedVariableService', 'studyInstanceService', 'studyContext',
 		function ($scope, $q, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService,
-				  studyStateService, derivedVariableService, studyContext) {
+				  studyStateService, derivedVariableService, studyInstanceService, studyContext) {
 
 			var ctrl = this;
 
@@ -64,9 +64,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				var variableIsUsedInOtherCalculatedVariable;
 
 				// Retrieve all formula variables in study
-				derivedVariableService.getFormulaVariables(studyContext.measurementDatasetId).then(function(response){
+				derivedVariableService.getFormulaVariables(studyContext.measurementDatasetId).then(function (response) {
 					//response is null if study is not yet saved
-					if(response){
+					if (response) {
 						var formulaVariables = response.data;
 						// Check if any of the deleted variables are formula variables
 						angular.forEach(formulaVariables, function (formulaVariable) {
@@ -169,7 +169,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			});
 
 			/* Scope Functions */
-			$scope.shouldDisableEnvironmentCountUpdate = function() {
+			$scope.shouldDisableEnvironmentCountUpdate = function () {
 				return studyStateService.hasGeneratedDesign() || studyStateService.hasListOrSubObs();
 			};
 
@@ -229,7 +229,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
 				} else if (Number(newVal) > Number(oldVal)) {
-					addNewEnvironments(newVal - oldVal);
+					$scope.addEnvironments(newVal);
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 				}
 
@@ -252,22 +252,29 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				showAlertMessage(title, message);
 			};
 
-			function addNewEnvironments(noOfEnvironments) {
-				for (var ctr = 0; ctr < noOfEnvironments; ctr++) {
-					$scope.data.environments.push({
-						managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
-							$scope.settings.managementDetails),
-						trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
-					});
+			$scope.addEnvironment = function () {
+				var startingInstanceNumber = $scope.data.environments.length + 1;
+				studyInstanceService.createStudyInstance(startingInstanceNumber).then(function () {
+					$scope.createEnvironment(startingInstanceNumber);
+				});
+			};
+
+			$scope.createEnvironment = function (instanceNumber) {
+				var environment = {
+					managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
+						$scope.settings.managementDetails),
+					trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
+				};
+				environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = instanceNumber;
+				$scope.data.environments.push(environment);
+			};
+
+			$scope.addEnvironments = function (numberOfEnvironments) {
+				var startingInstanceNumber = $scope.data.environments.length + 1;
+				for (var instanceNumber = startingInstanceNumber; instanceNumber <= numberOfEnvironments; instanceNumber++) {
+					$scope.createEnvironment(instanceNumber);
 				}
-				// we need to assign the TrialInstanceNumber and set it equal to index when new environments were added to the list
-				for (var i = 0; i < $scope.data.environments.length; i++) {
-					var environment = $scope.data.environments[i];
-					if (!environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX]) {
-						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = i + 1;
-					}
-				}
-			}
+			};
 
 			ctrl.updateEnvironmentVariables = function (type, entriesIncreased) {
 
@@ -299,7 +306,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						});
 					}
 				});
-			}
+			};
 
 			function updateDeletedEnvironment(index) {
 				// remove 1 environment
@@ -321,7 +328,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments, 10);
 				$scope.temp.noOfEnvironments = parseInt($scope.temp.noOfEnvironments, 10) + addtlNumOfEnvironments;
 				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
-				addNewEnvironments(addtlNumOfEnvironments);
+				$scope.addEnvironments(addtlNumOfEnvironments);
 			}
 		}]).factory('DTLoadingTemplate', function () {
 		return {

@@ -778,7 +778,6 @@ public class FieldbookServiceTest {
 		workbook.setConditions(getConditions(TermId.PI_ID.getId(), Operation.ADD));
 		userSelection.setWorkbook(workbook);
 
-		final Variable variable = VariableTestDataInitializer.createVariable(DataType.PERSON);
 		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
 		piName.setPhenotypicType(PhenotypicType.STUDY);
 
@@ -798,7 +797,6 @@ public class FieldbookServiceTest {
 		workbook.setConditions(getConditions(TermId.PI_ID.getId(), Operation.UPDATE));
 		userSelection.setWorkbook(workbook);
 
-		final Variable variable = VariableTestDataInitializer.createVariable(DataType.PERSON);
 		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
 		piName.setPhenotypicType(PhenotypicType.STUDY);
 
@@ -818,7 +816,6 @@ public class FieldbookServiceTest {
 		workbook.setConditions(getConditions(TermId.PI_ID.getId(), Operation.DELETE));
 		userSelection.setWorkbook(workbook);
 
-		final Variable variable = VariableTestDataInitializer.createVariable(DataType.PERSON);
 		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
 		piName.setPhenotypicType(PhenotypicType.STUDY);
 
@@ -828,20 +825,6 @@ public class FieldbookServiceTest {
 				AppConstants.ID_NAME_COMBINATION.getString(), true);
 		//Pair Name variable not added
 		Assert.assertEquals(1, userSelection.getWorkbook().getConditions().size());
-	}
-
-	private Project getProject() {
-		final Project project = new Project();
-		project.setProjectId(FieldbookServiceTest.PROJECT_ID);
-		project.setUniqueID(FieldbookServiceTest.DUMMY_UNIQUE_ID);
-		return project;
-	}
-
-	private CropType getCropType(){
-		final String cropName ="MAIZE";
-		final CropType cropType = new CropType();
-		cropType.setCropName(cropName);
-		return cropType;
 	}
 
 	private MeasurementVariable getMeasurementVariableForCategoricalVariable(int termId, Operation operation) {

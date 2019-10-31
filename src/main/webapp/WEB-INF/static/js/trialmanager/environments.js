@@ -46,15 +46,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.settings.trialConditionDetails = [];
 			}
 
-			$scope.ifLocationAddedToTheDataTable = function () {
-				if (Object.keys($scope.settings.managementDetails).length !== 0) {
-					return $scope.settings.managementDetails.keys().indexOf(parseInt(LOCATION_ID)) > -1;
-				} else {
-					return false;
-				}
-
-			};
-
 			$scope.onRemoveVariable = function (variableType, variableIds) {
 				return $scope.checkVariableIsUsedInCalculatedVariable(variableIds);
 			};
@@ -87,9 +78,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				return deferred.promise;
 			};
 
-			//the flag to determine if we have a location variable in the datatable
-			$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
-
 			$scope.onLocationChange = function (data) {
 				environmentService.changeEnvironments(data);
 			}
@@ -109,15 +97,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					columns: ':gt(0):not(.ng-hide)'
 				}];
 
-			$scope.buttonsTop = [{
-				extend: 'colvis',
-				className: 'fbk-buttons-no-border fbk-colvis-button',
-				text: '<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column"></i>',
-				columns: ':gt(0):not(.ng-hide)'
-			}];
-
 			$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<"fbk-datatable-panel-top"liB>rtp')
-				.withButtons($scope.isLocation ? $scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice())
+				.withButtons($scope.buttonsTopWithLocation.slice())
 				.withOption('scrollX', true)
 				.withOption('scrollCollapse', true)
 				.withOption('deferRender', true);
@@ -133,7 +114,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						api.buttons().remove();
 					}
 					new $.fn.dataTable.Buttons(api, {
-						buttons: $scope.isLocation ? $scope.buttonsTopWithLocation.slice() : $scope.buttonsTop.slice()
+						buttons: $scope.buttonsTopWithLocation.slice()
 					});
 
 					$(this).parents('.dataTables_wrapper').find('.dt-buttons').replaceWith(api.buttons().container());
@@ -142,14 +123,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			$scope.onAddVariable = function () {
 				$scope.nested.dtInstance.rerender();
-				// update the location flag, as it could have been added
-				$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 			};
 
 			$scope.$on('deleteOccurred', function () {
 				$scope.nested.dtInstance.rerender();
-				// update the location flag, as it could have been deleted
-				$scope.isLocation = $scope.ifLocationAddedToTheDataTable();
 			});
 
 			$scope.$on('rerenderEnvironmentTable', function (event, args) {

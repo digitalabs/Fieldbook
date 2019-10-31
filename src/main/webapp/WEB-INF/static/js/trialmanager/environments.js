@@ -230,9 +230,12 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			};
 
 			$scope.addEnvironment = function () {
-				var startingInstanceNumber = $scope.data.environments.length + 1;
-				studyInstanceService.createStudyInstance(startingInstanceNumber).then(function () {
-					$scope.createEnvironment(startingInstanceNumber);
+				// increment the last instance number
+				var instanceNumber = getMaxInstanceNumber() + 1;
+				// create and save the environment in the server
+				studyInstanceService.createStudyInstance(instanceNumber).then(function () {
+					// update the environment table
+					$scope.createEnvironment(instanceNumber);
 				});
 			};
 
@@ -298,6 +301,12 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				}
 
 				TrialManagerDataService.deleteEnvironment(index + 1);
+			}
+
+			function getMaxInstanceNumber() {
+				return Math.max.apply(Math, $scope.data.environments.map(function (environment) {
+					return environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX];
+				}));
 			}
 
 			// init

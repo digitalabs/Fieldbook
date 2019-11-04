@@ -26,8 +26,8 @@
 		</div>
 		<div class="col-xs-12 col-md-12">&nbsp;</div>
 		<div class="col-xs-12 col-md-12">
-			<generate-design-instances-table instances="instances" selected-instances="selectedInstances" instance-id-property="instanceDbId"
-											 has-experimental-design="hasExperimentalDesign" design-regeneration-allowed="designRegenerationAllowed"
+			<generate-design-instances-table instances="instances" selected-instances="selectedInstances" has-experimental-design="hasExperimentalDesign"
+											 design-regeneration-allowed="designRegenerationAllowed" instance-number="instanceNumber"
 											 is-empty-selection="isEmptySelection" ></generate-design-instances-table>
 		</div>
 
@@ -35,5 +35,5 @@
 </div>
 <div class="modal-footer">
 	<button class="btn btn-default" ng-click="cancel()">Cancel</button>
-	<button class="btn btn-primary" ng-disabled="isEmptySelection" ng-click="generateDesign()">Generate</button>
+	<button class="btn btn-primary" ng-disabled="isEmptySelection" ng-click="validateSelectedEnvironments()">Generate</button>
 </div>

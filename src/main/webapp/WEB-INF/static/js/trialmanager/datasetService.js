@@ -245,9 +245,8 @@
 			};
 
 			experimentDesignService.generateDesign = function (experimentDesignInput) {
-				experimentDesignService.openSelectEnvironmentToGenerateModal(experimentDesignInput);
-				/*var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/experimental-designs/generation', experimentDesignInput);
-				return request.then(successHandler, failureHandler);*/
+				var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/experimental-designs/generation', experimentDesignInput);
+				return request.then(successHandler, failureHandler);
 			}
 
 			experimentDesignService.deleteDesign = function () {
@@ -274,8 +273,8 @@
 		}]);
 
 	datasetsApiModule.controller('generateDesignCtrl', ['experimentDesignInput', '$scope', '$rootScope', '$uibModalInstance',
-		'datasetService', 'environmentService',
-		function (experimentDesignInput, $scope, $rootScope, $uibModalInstance, datasetService, environmentService) {
+		'environmentService', 'experimentDesignService', 'studyContext'
+		function (experimentDesignInput, $scope, $rootScope, $uibModalInstance, environmentService, experimentDesignService, studyContext) {
 
 			var generateDesignCtrl = this;
 
@@ -287,11 +286,13 @@
 				$uibModalInstance.dismiss();
 			};
 
-			$scope.generateDesign = function () {
+			$scope.validateSelectedEnvironments = function () {
+				experimentDesignInput.trialInstancesForDesignGeneration = generateDesignCtrl.getSelectedInstanceNumbers();
+
 				var environmentsWithMeasurements = [];
 				//Check if selected instances has measurement data
 				$scope.instances.forEach(function (instance) {
-					if($scope.selectedInstances[instance['instanceDbId']] && instance['hasMeasurements']) {
+					if($scope.selectedInstances[instance['instanceNumber']] && instance['hasMeasurements']) {
 						environmentsWithMeasurements.push(instance['instanceNumber']);
 					}
 				});
@@ -301,32 +302,42 @@
 					var environmentsWithDesign = [];
 					//Check if selected instances has measurement data
 					$scope.instances.forEach(function (instance) {
-						if($scope.selectedInstances[instance['instanceDbId']] && instance['hasExperimentalDesign']) {
+						if($scope.selectedInstances[instance['instanceNumber']] && instance['hasExperimentalDesign']) {
 							environmentsWithDesign.push(instance['instanceNumber']);
 						}
 					});
 					if(environmentsWithDesign.length > 0) {
 						generateDesignCtrl.showHasGeneratedDesignWarning(environmentsWithDesign);
 					} else {
-						// call design generation here
+						generateDesignCtrl.generateDesign();
 					}
 				}
 			};
 
-			generateDesignCtrl.getSelectedInstanceIds = function () {
+			generateDesignCtrl.generateDesign = function() {
+				experimentDesignService.generateDesign(experimentDesignInput).then(
+					function(response) {
+						showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
+						window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
+					}, function(errResponse) {
+						var errorMessage = errResponse.errors[0].message;
+						showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed + ' ' + errorMessage);
+					});
+			}
 
-				var instanceIds = [];
+			generateDesignCtrl.getSelectedInstanceNumbers = function () {
 
-				Object.keys($scope.selectedInstances).forEach(function (instanceId) {
-					console.log($scope.selectedInstances[instanceId]);
-					var isSelected = $scope.selectedInstances[instanceId];
-					$scope.selectedInstances[instanceId] = false;
+				var instanceNumbers = [];
+
+				Object.keys($scope.selectedInstances).forEach(function (instanceNumber) {
+					console.log($scope.selectedInstances[instanceNumber]);
+					var isSelected = $scope.selectedInstances[instanceNumber];
 					if (isSelected) {
-						instanceIds.push(instanceId);
+						instanceNumbers.push(instanceNumber);
 					}
 				});
 
-				return instanceIds;
+				return instanceNumbers;
 
 			};
 
@@ -336,7 +347,9 @@
 				var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
 				modalConfirmDelete.result.then(function (shouldContinue) {
 					if (shouldContinue) {
-						// call design generation here
+						generateDesignCtrl.generateDesign();
+					} else {
+						$scope.cancel();
 					}
 				});
 			};
@@ -347,7 +360,9 @@
 				var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
 				modalConfirmDelete.result.then(function (shouldContinue) {
 					if (shouldContinue) {
-						// call design generation here
+						generateDesignCtrl.generateDesign();
+					} else {
+						$scope.cancel();
 					}
 				});
 			};

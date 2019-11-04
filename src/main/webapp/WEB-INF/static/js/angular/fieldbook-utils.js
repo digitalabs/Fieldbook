@@ -728,9 +728,9 @@
 				instances: '=',
 				selectedInstances: '=',
 				isEmptySelection: '=',
-				instanceIdProperty: '@',
 				designRegenerationAllowed: '@',
 				hasExperimentalDesign: '@',
+				instanceNumber: '@',
 			},
 			templateUrl: '/Fieldbook/static/angular-templates/generateDesign/generateDesignInstancesTable.html',
 			controller: function ($scope) {
@@ -745,7 +745,7 @@
 				$scope.$watch('instances', function (newValue, oldValue, scope) {
 					if (newValue.length !== 0) {
 						$.each($scope.instances, function (key, value) {
-							$scope.selectedInstances[value[$scope.instanceIdProperty]] = !value[$scope.hasExperimentalDesign];
+							$scope.selectedInstances[value[$scope.instanceNumber]] = !value[$scope.hasExperimentalDesign];
 						});
 						$scope.selectionChanged();
 					}
@@ -753,7 +753,7 @@
 
 				$scope.toggleSelect = function (checked) {
 					$.each($scope.instances, function (key, value) {
-						$scope.selectedInstances[value[$scope.instanceIdProperty]] = checked;
+						$scope.selectedInstances[value[$scope.instanceNumber]] = checked;
 					});
 					$scope.selectionChanged();
 				};

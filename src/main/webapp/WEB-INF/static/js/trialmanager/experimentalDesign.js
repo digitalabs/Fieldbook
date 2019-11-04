@@ -260,16 +260,7 @@
 						experimentDesignInput.environments = TrialManagerDataService.currentData.environments.environments;
 						experimentDesignInput.trialSettings = TrialManagerDataService.currentData.trialSettings;
 
-						experimentDesignService.generateDesign(experimentDesignInput);/*.then(
-							function(response) {
-								showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
-								window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
-							}, function(errResponse) {
-								var errorMessage = errResponse.errors[0].message;
-								$scope.measurementDetails.hasMeasurement = false;
-								showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed + ' ' + errorMessage);
-							}
-						);*/
+						experimentDesignService.openSelectEnvironmentToGenerateModal(experimentDesignInput);
 					};
 
 					$scope.showConfirmDialog = function(message) {

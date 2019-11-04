@@ -102,10 +102,6 @@
 						$scope.measurementDetails = {hasMeasurement: studyStateService.hasGeneratedDesign()};
 					};
 
-					$scope.disableGenerateDesign = function () {
-						return !!$scope.measurementDetails && $scope.measurementDetails.hasMeasurement;
-					};
-
 					$scope.isDeleteDesignDisable = function (){
 						return !studyStateService.hasGeneratedDesign() || studyStateService.hasListOrSubObs();
 					};

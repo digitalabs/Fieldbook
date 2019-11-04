@@ -719,7 +719,66 @@
 				},
 				controllerAs: 'ctrl'
 			};
-		}]).factory('formUtilities', function() {
+		}]).directive('generateDesignInstancesTable', ['DTOptionsBuilder', 'DTColumnBuilder', function (DTOptionsBuilder, DTColumnBuilder) {
+
+		return {
+			restrict: 'E',
+			require: '?ngModel',
+			scope: {
+				instances: '=',
+				selectedInstances: '=',
+				isEmptySelection: '=',
+				instanceIdProperty: '@',
+				designRegenerationAllowed: '@',
+				hasExperimentalDesign: '@',
+			},
+			templateUrl: '/Fieldbook/static/angular-templates/generateDesign/generateDesignInstancesTable.html',
+			controller: function ($scope) {
+
+				var ctrl = this;
+				ctrl.isSelectAll = true;
+				$scope.dtOptions = DTOptionsBuilder.newOptions().withDOM('<\'row\'<\'col-sm-6\'l><\'col-sm-6\'f>>' +
+					'<\'row\'<\'col-sm-12\'tr>>' +
+					'<\'row\'<\'col-sm-5\'i><\'col-sm-7\'>>' +
+					'<\'row\'<\'col-sm-12\'p>>');
+
+				$scope.$watch('instances', function (newValue, oldValue, scope) {
+					if (newValue.length !== 0) {
+						$.each($scope.instances, function (key, value) {
+							$scope.selectedInstances[value[$scope.instanceIdProperty]] = !value[$scope.hasExperimentalDesign];
+						});
+						$scope.selectionChanged();
+					}
+				});
+
+				$scope.toggleSelect = function (checked) {
+					$.each($scope.instances, function (key, value) {
+						$scope.selectedInstances[value[$scope.instanceIdProperty]] = checked;
+					});
+					$scope.selectionChanged();
+				};
+
+				$scope.select = function (itemId) {
+					if (!$scope.selectedInstances[itemId]) {
+						ctrl.isSelectAll = false;
+					}
+					$scope.selectionChanged();
+				};
+
+				$scope.selectionChanged = function() {
+					// Returns true if all instances are not selected
+					$scope.isEmptySelection = Object.values($scope.selectedInstances).every(function (value) {
+						return value === false;
+					});
+					ctrl.isSelectAll = Object.values($scope.selectedInstances).every(function (value) {
+						return value === true;
+					});
+				};
+
+			},
+			controllerAs: 'ctrl'
+		};
+	}]).factory('formUtilities', function() {
 
 			var formUtilities = {
 

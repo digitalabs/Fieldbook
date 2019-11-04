@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	var datasetsApiModule = angular.module('datasets-api', []);
+	var datasetsApiModule = angular.module('datasets-api', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal', 'fieldbook-utils']);
 
 	datasetsApiModule.factory('datasetService', ['$http', '$q', 'studyContext', 'serviceUtilities', 'DATASET_TYPES', 'DATASET_TYPES_OBSERVATION_IDS',
 		function ($http, $q, studyContext, serviceUtilities, DATASET_TYPES, DATASET_TYPES_OBSERVATION_IDS) {
@@ -220,8 +220,8 @@
 		}]);
 
 
-	datasetsApiModule.factory('experimentDesignService', ['$http', '$q', 'studyContext', 'serviceUtilities',
-		function ($http, $q, studyContext, serviceUtilities) {
+	datasetsApiModule.factory('experimentDesignService', ['$http', '$q', 'studyContext', 'serviceUtilities', '$uibModal',
+		function ($http, $q, studyContext, serviceUtilities, $uibModal) {
 
 			var BASE_CROP_URL = '/bmsapi/crops/' + studyContext.cropName;
 			var BASE_STUDY_URL = BASE_CROP_URL  +  '/studies/';
@@ -230,9 +230,24 @@
 			var successHandler = serviceUtilities.restSuccessHandler,
 				failureHandler = serviceUtilities.restFailureHandler;
 
+			experimentDesignService.openSelectEnvironmentToGenerateModal = function (experimentDesignInput) {
+				$uibModal.open({
+					templateUrl: '/Fieldbook/static/angular-templates/generateDesign/selectEnvironmentModal.html',
+					controller: "generateDesignCtrl",
+					size: 'md',
+					resolve: {
+						experimentDesignInput: function () {
+							return experimentDesignInput;
+						}
+					},
+					controllerAs: 'ctrl'
+				});
+			};
+
 			experimentDesignService.generateDesign = function (experimentDesignInput) {
-				var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/experimental-designs/generation', experimentDesignInput);
-				return request.then(successHandler, failureHandler);
+				experimentDesignService.openSelectEnvironmentToGenerateModal(experimentDesignInput);
+				/*var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/experimental-designs/generation', experimentDesignInput);
+				return request.then(successHandler, failureHandler);*/
 			}
 
 			experimentDesignService.deleteDesign = function () {
@@ -255,6 +270,97 @@
 			}
 
 			return experimentDesignService;
+
+		}]);
+
+	datasetsApiModule.controller('generateDesignCtrl', ['experimentDesignInput', '$scope', '$rootScope', '$uibModalInstance',
+		'datasetService', 'environmentService',
+		function (experimentDesignInput, $scope, $rootScope, $uibModalInstance, datasetService, environmentService) {
+
+			var generateDesignCtrl = this;
+
+			$scope.instances = [];
+			$scope.selectedInstances = {};
+			$scope.isEmptySelection = false;
+
+			$scope.cancel = function () {
+				$uibModalInstance.dismiss();
+			};
+
+			$scope.generateDesign = function () {
+				var environmentsWithMeasurements = [];
+				//Check if selected instances has measurement data
+				$scope.instances.forEach(function (instance) {
+					if($scope.selectedInstances[instance['instanceDbId']] && instance['hasMeasurements']) {
+						environmentsWithMeasurements.push(instance['instanceNumber']);
+					}
+				});
+				if(environmentsWithMeasurements.length > 0 ) {
+					generateDesignCtrl.showHasMeasurementsWarning(environmentsWithMeasurements);
+				} else {
+					var environmentsWithDesign = [];
+					//Check if selected instances has measurement data
+					$scope.instances.forEach(function (instance) {
+						if($scope.selectedInstances[instance['instanceDbId']] && instance['hasExperimentalDesign']) {
+							environmentsWithDesign.push(instance['instanceNumber']);
+						}
+					});
+					if(environmentsWithDesign.length > 0) {
+						generateDesignCtrl.showHasGeneratedDesignWarning(environmentsWithDesign);
+					} else {
+						// call design generation here
+					}
+				}
+			};
+
+			generateDesignCtrl.getSelectedInstanceIds = function () {
+
+				var instanceIds = [];
+
+				Object.keys($scope.selectedInstances).forEach(function (instanceId) {
+					console.log($scope.selectedInstances[instanceId]);
+					var isSelected = $scope.selectedInstances[instanceId];
+					$scope.selectedInstances[instanceId] = false;
+					if (isSelected) {
+						instanceIds.push(instanceId);
+					}
+				});
+
+				return instanceIds;
+
+			};
+
+			generateDesignCtrl.showHasMeasurementsWarning = function(environmentsWithMeasurements) {
+				var deleteMessage = "The following environments' ("+environmentsWithMeasurements.toString()
+						.replace(new RegExp(",", 'g'), ", ") + ") measurement data will be deleted. Do you want to continue?";
+				var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
+				modalConfirmDelete.result.then(function (shouldContinue) {
+					if (shouldContinue) {
+						// call design generation here
+					}
+				});
+			};
+
+			generateDesignCtrl.showHasGeneratedDesignWarning = function(environmentsWithDesign) {
+				var deleteMessage = "The following environments ("+environmentsWithDesign.toString()
+						.replace(new RegExp(",", 'g'), ", ") + ") already has design generated. Do you want to continue?";
+				var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
+				modalConfirmDelete.result.then(function (shouldContinue) {
+					if (shouldContinue) {
+						// call design generation here
+					}
+				});
+			};
+
+			generateDesignCtrl.init = function () {
+				environmentService.getEnvironments().then(function(instances) {
+					$scope.instances = instances;
+				});
+
+			};
+
+			generateDesignCtrl.init();
+
 
 		}]);
 

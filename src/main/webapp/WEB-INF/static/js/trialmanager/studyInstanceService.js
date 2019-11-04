@@ -5,36 +5,36 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.factory('environmentService', ['$rootScope', 'TrialManagerDataService', '$http', 'serviceUtilities', 'studyContext', function ($rootScope, TrialManagerDataService, $http, serviceUtilities, studyContext) {
+	manageTrialApp.factory('studyInstanceService', ['$rootScope', 'TrialManagerDataService', '$http', 'serviceUtilities', 'studyContext', function ($rootScope, TrialManagerDataService, $http, serviceUtilities, studyContext) {
 
 		var BASE_CROP_URL = '/bmsapi/crops/' + studyContext.cropName;
 		var BASE_STUDY_URL = BASE_CROP_URL + '/studies/';
 
-		var environmentService = {};
+		var studyInstanceService = {};
 		var successHandler = serviceUtilities.restSuccessHandler,
 			failureHandler = serviceUtilities.restFailureHandler;
 
-		environmentService.createStudyInstance = function (instanceNumber) {
+		studyInstanceService.createStudyInstance = function (instanceNumber) {
 			var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceNumber);
 			return request.then(successHandler, failureHandler);
 		}
 
-		environmentService.getStudyInstances = function () {
+		studyInstanceService.getStudyInstances = function () {
 			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/instances/');
 			return request.then(successHandler, failureHandler);
 		};
 
-		environmentService.environments = TrialManagerDataService.currentData.environments;
+		studyInstanceService.environments = TrialManagerDataService.currentData.environments;
 
-		environmentService.changeEnvironments = function () {
+		studyInstanceService.changeEnvironments = function () {
 			this.broadcastEnvironments();
 		};
 
-		environmentService.broadcastEnvironments = function () {
+		studyInstanceService.broadcastEnvironments = function () {
 			$rootScope.$broadcast('changeEnvironments');
 		};
 
-		return environmentService;
+		return studyInstanceService;
 
 	}]);
 })();

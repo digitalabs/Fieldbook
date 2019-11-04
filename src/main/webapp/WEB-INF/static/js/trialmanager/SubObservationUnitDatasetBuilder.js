@@ -3,9 +3,9 @@
 	'use strict';
 
 	var manageTrialApp = angular.module('manageTrialApp');
-	manageTrialApp.controller('SubObservationUnitDatasetBuildCtrl', ['$scope', 'environmentService', '$http', 'formUtilities',
+	manageTrialApp.controller('SubObservationUnitDatasetBuildCtrl', ['$scope', 'studyInstanceService', '$http', 'formUtilities',
 		'MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS', 'MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT', 'variableService', 'studyContext',
-		'DATASET_TYPES', 'datasetService', '$timeout', function ($scope, environmentService, $http, formUtilities, MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS,
+		'DATASET_TYPES', 'datasetService', '$timeout', function ($scope, studyInstanceService, $http, formUtilities, MAXIMUM_NUMBER_OF_SUB_OBSERVATION_SETS,
 																 MAXIMUM_NUMBER_FOR_EACH_PARENT_UNIT, variableService, studyContext, DATASET_TYPES, datasetService, $timeout) {
 
 			$scope.instances = [];
@@ -84,7 +84,7 @@
 				$scope.numberOfSubObservationUnits = '';
 				$scope.selectedVariable = undefined;
 
-				environmentService.getStudyInstances().then(function (environmentDetails) {
+				studyInstanceService.getStudyInstances().then(function (environmentDetails) {
 					$scope.instances = environmentDetails;
 
 					variableService.getVariablesByFilter({

@@ -92,7 +92,7 @@
 		};
 
 		$scope.init = function () {
-			environmentService.getEnvironments().then(function (environmentDetails) {
+			environmentService.getStudyInstances().then(function (environmentDetails) {
 				$scope.instances = environmentDetails;
 			});
 		};

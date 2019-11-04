@@ -141,14 +141,14 @@
 			};
 
 			datasetService.exportDataset = function (datasetId, instanceIds, collectionOrderId, singleFile, fileFormat) {
-				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/' + fileFormat , {
-						params: {
-							instanceIds: instanceIds.join(","),
-							collectionOrderId: collectionOrderId,
-							singleFile: singleFile
-						},
-						responseType: 'blob'
-					});
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/' + fileFormat, {
+					params: {
+						instanceIds: instanceIds.join(","),
+						collectionOrderId: collectionOrderId,
+						singleFile: singleFile
+					},
+					responseType: 'blob'
+				});
 
 				return request.then(function (response) {
 					return response;
@@ -163,7 +163,7 @@
 					{
 						processWarnings: processWarnings,
 						data: observationList,
-                        draftMode: true
+						draftMode: true
 					});
 				return request.then(successHandler, failureHandler);
 			};
@@ -224,7 +224,7 @@
 		function ($http, $q, studyContext, serviceUtilities) {
 
 			var BASE_CROP_URL = '/bmsapi/crops/' + studyContext.cropName;
-			var BASE_STUDY_URL = BASE_CROP_URL  +  '/studies/';
+			var BASE_STUDY_URL = BASE_CROP_URL + '/studies/';
 
 			var experimentDesignService = {};
 			var successHandler = serviceUtilities.restSuccessHandler,
@@ -240,9 +240,9 @@
 				return request.then(successHandler, failureHandler);
 			}
 
-            experimentDesignService.getBVDesignLicense = function () {
-               return $http.get('/bmsapi/breeding-view-licenses');
-            }
+			experimentDesignService.getBVDesignLicense = function () {
+				return $http.get('/bmsapi/breeding-view-licenses');
+			}
 
 			experimentDesignService.getDesignTypes = function () {
 				var request = $http.get(BASE_CROP_URL + '/experimental-design-types');
@@ -255,26 +255,6 @@
 			}
 
 			return experimentDesignService;
-
-		}]);
-
-	datasetsApiModule.factory('studyInstanceService', ['$http', '$q', 'studyContext', 'serviceUtilities',
-		function ($http, $q, studyContext, serviceUtilities) {
-
-			var BASE_CROP_URL = '/bmsapi/crops/' + studyContext.cropName;
-			var BASE_STUDY_URL = BASE_CROP_URL  +  '/studies/';
-
-			var studyInstanceService = {};
-
-			var successHandler = serviceUtilities.restSuccessHandler,
-				failureHandler = serviceUtilities.restFailureHandler;
-
-			studyInstanceService.createStudyInstance = function (instanceNumber) {
-				var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceNumber);
-				return request.then(successHandler, failureHandler);
-			}
-
-			return studyInstanceService;
 
 		}]);
 

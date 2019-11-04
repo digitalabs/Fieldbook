@@ -4,9 +4,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 	'use strict';
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', '$q', 'TrialManagerDataService', '$uibModal', '$stateParams',
-		'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService', 'studyStateService', 'derivedVariableService', 'studyInstanceService', 'studyContext',
+		'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'environmentService', 'studyStateService', 'derivedVariableService', 'studyContext',
 		function ($scope, $q, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, environmentService,
-				  studyStateService, derivedVariableService, studyInstanceService, studyContext) {
+				  studyStateService, derivedVariableService, studyContext) {
 
 			var ctrl = this;
 
@@ -233,7 +233,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				// increment the last instance number
 				var instanceNumber = getMaxInstanceNumber() + 1;
 				// create and save the environment in the server
-				studyInstanceService.createStudyInstance(instanceNumber).then(function (studyInstance) {
+				environmentService.createStudyInstance(instanceNumber).then(function (studyInstance) {
 					// update the environment table
 					$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
 				});

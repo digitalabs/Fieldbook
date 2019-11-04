@@ -84,7 +84,7 @@
 				$scope.numberOfSubObservationUnits = '';
 				$scope.selectedVariable = undefined;
 
-				environmentService.getEnvironments().then(function (environmentDetails) {
+				environmentService.getStudyInstances().then(function (environmentDetails) {
 					$scope.instances = environmentDetails;
 
 					variableService.getVariablesByFilter({

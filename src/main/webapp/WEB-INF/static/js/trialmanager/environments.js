@@ -233,14 +233,15 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				// increment the last instance number
 				var instanceNumber = getMaxInstanceNumber() + 1;
 				// create and save the environment in the server
-				studyInstanceService.createStudyInstance(instanceNumber).then(function () {
+				studyInstanceService.createStudyInstance(instanceNumber).then(function (studyInstance) {
 					// update the environment table
-					$scope.createEnvironment(instanceNumber);
+					$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
 				});
 			};
 
-			$scope.createEnvironment = function (instanceNumber) {
+			$scope.createEnvironment = function (instanceNumber, experimentId) {
 				var environment = {
+					experimentId: experimentId,
 					managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
 						$scope.settings.managementDetails),
 					trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
@@ -252,7 +253,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			$scope.addEnvironments = function (numberOfEnvironments) {
 				var startingInstanceNumber = $scope.data.environments.length + 1;
 				for (var instanceNumber = startingInstanceNumber; instanceNumber <= numberOfEnvironments; instanceNumber++) {
-					$scope.createEnvironment(instanceNumber);
+					$scope.createEnvironment(instanceNumber, null);
 				}
 			};
 

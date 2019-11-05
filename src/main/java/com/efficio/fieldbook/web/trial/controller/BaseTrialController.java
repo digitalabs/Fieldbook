@@ -403,9 +403,9 @@ public abstract class BaseTrialController extends SettingsController {
 		final List<Integer> requiredFields = this.buildVariableIDList(AppConstants.CREATE_STUDY_ENVIRONMENT_REQUIRED_FIELDS.getString());
 		final List<Integer> filterFields = this.buildVariableIDList(AppConstants.EXP_DESIGN_VARIABLES.getString());
 		final Map<String, MeasurementVariable> factorsMap = SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
-		final List<Integer> basicDetailIDList = this.buildVariableIDList(AppConstants.HIDE_STUDY_FIELDS.getString());
+		final Map<String, String> pairedVariable = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
 		for (final MeasurementVariable measurementVariable : workbook.getTrialConditions()) {
-			if (!basicDetailIDList.contains(measurementVariable.getTermId())) {
+			if(!pairedVariable.containsValue(String.valueOf(measurementVariable.getTermId()))){
 				final SettingDetail detail =
 						this.createSettingDetail(measurementVariable.getTermId(), measurementVariable.getName(), VariableType.ENVIRONMENT_DETAIL.getRole().name());
 

@@ -273,7 +273,7 @@
 		}]);
 
 	datasetsApiModule.controller('generateDesignCtrl', ['experimentDesignInput', '$scope', '$rootScope', '$uibModalInstance',
-		'environmentService', 'experimentDesignService', 'studyContext'
+		'environmentService', 'experimentDesignService', 'studyContext',
 		function (experimentDesignInput, $scope, $rootScope, $uibModalInstance, environmentService, experimentDesignService, studyContext) {
 
 			var generateDesignCtrl = this;

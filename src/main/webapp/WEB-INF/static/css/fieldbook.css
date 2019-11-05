@@ -360,7 +360,6 @@ table.dataTable thead .sorting_desc {
     cursor: pointer;
     color: green;
     font-size: 25px;
-    left: 10px;
 }
 
 .fbk-table-delete-link {

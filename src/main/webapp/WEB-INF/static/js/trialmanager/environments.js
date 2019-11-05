@@ -146,7 +146,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			});
 
 			/* Scope Functions */
-			$scope.shouldDisableEnvironmentCountUpdate = function () {
+			$scope.isDesignAlreadyGenerated = function () {
 				return studyStateService.hasGeneratedDesign() || studyStateService.hasListOrSubObs();
 			};
 
@@ -210,7 +210,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
 				}
 
-				if (newVal !== oldVal) {
+				if (newVal !== oldVal && !$scope.isDesignAlreadyGenerated()) {
 					studyStateService.updateOccurred();
 				}
 			});
@@ -232,11 +232,20 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			$scope.addEnvironment = function () {
 				// increment the last instance number
 				var instanceNumber = getMaxInstanceNumber() + 1;
-				// create and save the environment in the server
-				studyInstanceService.createStudyInstance(instanceNumber).then(function (studyInstance) {
+
+				if ($scope.isDesignAlreadyGenerated()) {
+					// create and save the environment in the server
+					studyInstanceService.createStudyInstance(instanceNumber).then(function (studyInstance) {
+						// update the environment table
+						$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
+						$scope.data.noOfEnvironments++;
+					});
+				} else {
 					// update the environment table
-					$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
-				});
+					$scope.createEnvironment(instanceNumber, null);
+					$scope.data.noOfEnvironments++;
+				}
+
 			};
 
 			$scope.createEnvironment = function (instanceNumber, experimentId) {

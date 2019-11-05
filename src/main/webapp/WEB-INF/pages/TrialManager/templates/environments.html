@@ -31,18 +31,20 @@
 
                         <div class="form-horizontal">
                             <div class="form-group form-group-sm">
-                                <label class="control-label label-bold add_top_padding col-xs-8" style="text-align: left" th:text="#{study.managesettings.environment.specify.level.no}">Specify the number of environments for this study:</label>
+                                <label class="control-label label-bold add_top_padding col-xs-7" style="text-align: left" th:text="#{study.managesettings.environment.specify.level.no}">Specify the number of environments for this study:</label>
                                 <div class="col-xs-4">
                                     <div class="input-group">
-                                        <input maxlength="3" valid-number="" class="form-control input-sm" ng-model="temp.noOfEnvironments" ng-disabled="shouldDisableEnvironmentCountUpdate()"/>
-
+                                        <input maxlength="3" valid-number="" class="form-control input-sm" ng-model="temp.noOfEnvironments" ng-disabled="isDesignAlreadyGenerated()"/>
                                         <span class="input-group-btn">
-                                              <input ng-click="updateEnvironmentCount()" ng-hide="shouldDisableEnvironmentCountUpdate()" class="btn btn-info btn-sm" style="padding: 6px 10px 5px; font-size: 11px;" type="button" value="Ok"/>
+                                              <input ng-click="updateEnvironmentCount()" ng-hide="isDesignAlreadyGenerated()" class="btn btn-info btn-sm"
+                                                     style="padding: 6px 10px 5px; font-size: 11px;" type="button" value="Ok"/>
                                         </span>
-
-                                        <span class="glyphicon glyphicon-plus-sign fbk-add-sign" ng-show="shouldDisableEnvironmentCountUpdate()" ng-click="addEnvironment()"></span>
-
                                     </div><!-- /input-group -->
+                                </div>
+                                <div class="col-xs-offset-0">
+                                    <div class="input-group">
+                                        <span class="glyphicon glyphicon-plus-sign fbk-add-sign" ng-click="addEnvironment()"></span>
+                                    </div>
                                 </div>
                             </div>
 

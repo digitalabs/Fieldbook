@@ -76,7 +76,7 @@
                 <tbody>
                 <tr ng-repeat="environment in data.environments track by $index" ng-class="{even : $even, odd : $odd}">
                     <td class="fbk-delete-link fbk-table-delete-link">
-                        <span ng-click="deleteEnvironment($index)" ng-show="data.noOfEnvironments > 1 &amp;&amp; !shouldDisableEnvironmentCountUpdate()"
+                        <span ng-click="deleteEnvironment($index)" ng-show="data.noOfEnvironments > 1 &amp;&amp; !isDesignAlreadyGenerated()"
                               class="glyphicon glyphicon-minus-sign fbk-delete-sign" ng-model-options="{ debounce: 500 }">&nbsp;</span>
                     </td>
                     <td>{{environment.managementDetailValues[TRIAL_INSTANCE_NO_INDEX]}}</td>

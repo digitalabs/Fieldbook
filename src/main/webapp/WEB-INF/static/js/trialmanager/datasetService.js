@@ -330,7 +330,6 @@
 				var instanceNumbers = [];
 
 				Object.keys($scope.selectedInstances).forEach(function (instanceNumber) {
-					console.log($scope.selectedInstances[instanceNumber]);
 					var isSelected = $scope.selectedInstances[instanceNumber];
 					if (isSelected) {
 						instanceNumbers.push(instanceNumber);

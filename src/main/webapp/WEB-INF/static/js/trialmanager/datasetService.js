@@ -341,8 +341,8 @@
 			};
 
 			generateDesignCtrl.showHasMeasurementsWarning = function(environmentsWithMeasurements) {
-				var deleteMessage = "The following environments' ("+environmentsWithMeasurements.toString()
-						.replace(new RegExp(",", 'g'), ", ") + ") measurement data will be deleted. Do you want to continue?";
+				var deleteMessage = "The  measurement data of the following environment(s): "+environmentsWithMeasurements.toString()
+						.replace(new RegExp(",", 'g'), ", ") + " will be deleted. Do you want to continue?";
 				var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
 				modalConfirmDelete.result.then(function (shouldContinue) {
 					if (shouldContinue) {
@@ -354,8 +354,8 @@
 			};
 
 			generateDesignCtrl.showHasGeneratedDesignWarning = function(environmentsWithDesign) {
-				var deleteMessage = "The following environments ("+environmentsWithDesign.toString()
-						.replace(new RegExp(",", 'g'), ", ") + ") already has design generated. Do you want to continue?";
+				var deleteMessage = "The following environment(s): "+environmentsWithDesign.toString()
+						.replace(new RegExp(",", 'g'), ", ") + " already has design generated. Do you want to continue?";
 				var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
 				modalConfirmDelete.result.then(function (shouldContinue) {
 					if (shouldContinue) {

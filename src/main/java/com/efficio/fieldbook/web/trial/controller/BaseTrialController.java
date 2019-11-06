@@ -405,7 +405,10 @@ public abstract class BaseTrialController extends SettingsController {
 		final Map<String, MeasurementVariable> factorsMap = SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
 		final Map<String, String> pairedVariable = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
 		for (final MeasurementVariable measurementVariable : workbook.getTrialConditions()) {
+
+			// Exclude NameId variable to front end to resolve IBP-3139 for environment tab
 			if(!pairedVariable.containsValue(String.valueOf(measurementVariable.getTermId()))){
+
 				final SettingDetail detail =
 						this.createSettingDetail(measurementVariable.getTermId(), measurementVariable.getName(), VariableType.ENVIRONMENT_DETAIL.getRole().name());
 

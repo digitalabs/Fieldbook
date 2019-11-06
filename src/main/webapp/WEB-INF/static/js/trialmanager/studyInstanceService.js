@@ -19,6 +19,11 @@
 			return request.then(successHandler, failureHandler);
 		}
 
+		studyInstanceService.getStudyInstances = function () {
+			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/instances');
+			return request.then(successHandler, failureHandler);
+		};
+
 		studyInstanceService.environments = TrialManagerDataService.currentData.environments;
 
 		studyInstanceService.changeEnvironments = function () {

@@ -4,8 +4,8 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'studyInstanceService', '$timeout', function ($scope,
-																																			  TrialManagerDataService, studyInstanceService, $timeout) {
+	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'studyInstanceService', '$timeout', 'studyContext', 'datasetService',
+		function ($scope, TrialManagerDataService, studyInstanceService, $timeout, studyContext, datasetService) {
 
 		$scope.settings = TrialManagerDataService.settings.environments;
 		if (Object.keys($scope.settings).length === 0) {
@@ -92,8 +92,8 @@
 		};
 
 		$scope.init = function () {
-			studyInstanceService.getStudyInstances().then(function (environmentDetails) {
-				$scope.instances = environmentDetails;
+			datasetService.getDatasetInstances(studyContext.measurementDatasetId).then(function (datasetInstances) {
+				$scope.instances = datasetInstances;
 			});
 		};
 	}]);

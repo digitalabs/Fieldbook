@@ -84,8 +84,8 @@
 				$scope.numberOfSubObservationUnits = '';
 				$scope.selectedVariable = undefined;
 
-				studyInstanceService.getStudyInstances().then(function (environmentDetails) {
-					$scope.instances = environmentDetails;
+				datasetService.getDatasetInstances(studyContext.measurementDatasetId).then(function (datasetInstances) {
+					$scope.instances = datasetInstances;
 
 					variableService.getVariablesByFilter({
 						methodIds: 4040,

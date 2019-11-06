@@ -7,11 +7,10 @@ import java.util.Map;
 
 public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -3081300491744812262L;
 	private List<Integer> trialInstancesForDesignGeneration;
+	private Integer noOfEnvironments;
+	private Integer noOfEnvironmentsToAdd;
 	private Integer designType;
 	private Integer replicationsCount;
 	private Boolean useLatenized;
@@ -235,5 +234,21 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 
 	public void setTrialSettings(final TrialSettingsBean trialSettings) {
 		this.trialSettings = trialSettings;
+	}
+
+	public Integer getNoOfEnvironments() {
+		return noOfEnvironments;
+	}
+
+	public void setNoOfEnvironments(final Integer noOfEnvironments) {
+		this.noOfEnvironments = noOfEnvironments;
+	}
+
+	public Integer getNoOfEnvironmentsToAdd() {
+		return noOfEnvironmentsToAdd;
+	}
+
+	public void setNoOfEnvironmentsToAdd(final Integer noOfEnvironmentsToAdd) {
+		this.noOfEnvironmentsToAdd = noOfEnvironmentsToAdd;
 	}
 }

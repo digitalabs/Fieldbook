@@ -244,7 +244,6 @@
 						if (!$scope.doValidate()) {
 							return;
 						}
-						$scope.measurementDetails.hasMeasurement = true;
 
 						TrialManagerDataService.performDataCleanup();
 

@@ -292,7 +292,8 @@ public class StockController extends AbstractBaseFieldbookController {
 						final ListDataProject project = entry.getKey();
 						final GermplasmListData data = entry.getValue();
 						final InventoryDetails details = inventoryDetailMap.get(project.getEntryId());
-						StockController.this.inventoryService.addLotAndTransaction(details, data, project);
+						StockController.this.inventoryService.addLotAndTransaction(details, data, project,
+							StockController.this.contextUtil.getProjectInContext().getCropType());
 					}
 				}
 

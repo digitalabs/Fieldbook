@@ -728,7 +728,7 @@
 				instances: '=',
 				selectedInstances: '=',
 				isEmptySelection: '=',
-				designRegenerationAllowed: '@',
+				canBeDeleted: '@',
 				hasExperimentalDesign: '@',
 				instanceNumber: '@',
 			},

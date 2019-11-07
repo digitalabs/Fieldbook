@@ -8,7 +8,7 @@
 	</thead>
 	<tbody>
 	<tr ng-repeat="instance in instances">
-		<td><input type="checkbox" ng-disabled="!instance[designRegenerationAllowed]" ng-click="select(instance[instanceNumber])" ng-model="selectedInstances[instance[instanceNumber]]"/></td>
+		<td><input type="checkbox" ng-disabled="!instance[canBeDeleted]" ng-click="select(instance[instanceNumber])" ng-model="selectedInstances[instance[instanceNumber]]"/></td>
 		<td>{{::instance.instanceNumber}}</td>
 		<td>{{::instance.locationName}} - ({{::instance.locationAbbreviation}})</td>
 	</tr>

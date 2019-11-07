@@ -292,7 +292,7 @@
 				var environmentsWithMeasurements = [];
 				//Check if selected instances has measurement data
 				$scope.instances.forEach(function (instance) {
-					if($scope.selectedInstances[instance['instanceNumber']] && instance['hasMeasurements']) {
+					if($scope.selectedInstances[instance['instanceNumber']] && (instance['hasMeasurements'] || instance['hasFieldmap'])) {
 						environmentsWithMeasurements.push(instance['instanceNumber']);
 					}
 				});
@@ -341,7 +341,7 @@
 			};
 
 			generateDesignCtrl.showHasMeasurementsWarning = function(environmentsWithMeasurements) {
-				var deleteMessage = "Measurements of the following environment(s): " + environmentsWithMeasurements.toString()
+				var deleteMessage = "Measurements and fieldmaps of the following environment(s): " + environmentsWithMeasurements.toString()
 						.replace(new RegExp(",", 'g'), ", ") + " will be deleted. Do you want to continue?";
 				var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
 				modalConfirmDelete.result.then(function (shouldContinue) {

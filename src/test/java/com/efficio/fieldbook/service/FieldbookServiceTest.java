@@ -3,6 +3,7 @@ package com.efficio.fieldbook.service;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
@@ -18,6 +19,7 @@ import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitia
 import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -37,6 +39,8 @@ import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataMana
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
+import org.generationcp.middleware.pojos.workbench.CropType;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.junit.Assert;
@@ -84,7 +88,8 @@ public class FieldbookServiceTest {
 	private static final int NUMBER_ID = 6040;
 	private static final String ED_CHECK_START = "ED - Check Start";
 	private static final int CHECK_START_PROPERTY_ID = 2153;
-
+	private static final long PROJECT_ID = 1L;
+	private static final String DUMMY_UNIQUE_ID = "1234567890";
 	@Mock
 	private ContextUtil contextUtil;
 
@@ -108,7 +113,6 @@ public class FieldbookServiceTest {
 	@Before
 	public void setUp() throws MiddlewareException {
 		final List<Location> allLocation = new ArrayList<>();
-
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(FieldbookServiceTest.PROGRAMUUID);
 		allLocation.add(LocationTestDataInitializer.createLocation(1, FieldbookServiceTest.LOCATION_NAME, null));
 		allLocation.add(LocationTestDataInitializer.createLocation(2, "Loc2", null));
@@ -121,6 +125,7 @@ public class FieldbookServiceTest {
 		this.fieldbookServiceImpl.setPossibleValuesCache(this.possibleValuesCache);
 		this.fieldbookServiceImpl.setOntologyVariableDataManager(this.ontologyVariableDataManager);
 		this.fieldbookServiceImpl.setContextUtil(this.contextUtil);
+		this.fieldbookServiceImpl.setUserService(this.userService);
 
 		final List<ValueReference> possibleValues = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
@@ -552,7 +557,6 @@ public class FieldbookServiceTest {
 		final FieldbookService api = Mockito.mock(FieldbookService.class);
 		fieldbookService.setFieldbookMiddlewareService(api);
 		final Integer studyId = 7;
-		final String studyName = "Study Name";
 		final String columnOrderDelimited = "[\"1100\", \"1900\"]";
 
 		fieldbookService.saveStudyColumnOrdering(studyId, columnOrderDelimited,
@@ -765,5 +769,89 @@ public class FieldbookServiceTest {
 		entryTypes.add(new ValueReference(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId(), SystemDefinedEntryType.TEST_ENTRY.getEntryTypeName(), SystemDefinedEntryType.TEST_ENTRY.getEntryTypeValue()));
 		this.fieldbookServiceImpl.getGermplasmListChecksSize(1);
 		Mockito.verify(this.fieldbookMiddlewareService).countListDataProjectByListIdAndEntryTypeIds(1, checkEntryTypeIds);
+	}
+
+	@Test
+	public void testPairVariableAddOperation(){
+		final UserSelection userSelection = new UserSelection();
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
+		workbook.setConditions(getConditions(TermId.PI_ID.getId(), Operation.ADD));
+		userSelection.setWorkbook(workbook);
+
+		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
+		piName.setPhenotypicType(PhenotypicType.STUDY);
+
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(
+                TermId.PI_NAME.getId(), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
+		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
+				AppConstants.ID_NAME_COMBINATION.getString(), true);
+
+		Assert.assertEquals(2, userSelection.getWorkbook().getConditions().size());
+		Assert.assertEquals(userSelection.getWorkbook().getConditions().get(0).getOperation(), userSelection.getWorkbook().getConditions().get(0).getOperation());
+	}
+
+	@Test
+	public void testPairVariableUpdateOperation(){
+		final UserSelection userSelection = new UserSelection();
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
+		workbook.setConditions(getConditions(TermId.PI_ID.getId(), Operation.UPDATE));
+		userSelection.setWorkbook(workbook);
+
+		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
+		piName.setPhenotypicType(PhenotypicType.STUDY);
+
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(
+                TermId.PI_NAME.getId(), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
+		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
+				AppConstants.ID_NAME_COMBINATION.getString(), true);
+
+		Assert.assertEquals(2, userSelection.getWorkbook().getConditions().size());
+		Assert.assertEquals(userSelection.getWorkbook().getConditions().get(0).getOperation(), userSelection.getWorkbook().getConditions().get(0).getOperation());
+	}
+
+	@Test
+	public void testPairVariableDeleteOperation(){
+		final UserSelection userSelection = new UserSelection();
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
+		workbook.setConditions(getConditions(TermId.PI_ID.getId(), Operation.DELETE));
+		userSelection.setWorkbook(workbook);
+
+		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
+		piName.setPhenotypicType(PhenotypicType.STUDY);
+
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(
+                TermId.PI_NAME.getId(), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
+		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
+				AppConstants.ID_NAME_COMBINATION.getString(), true);
+		//Pair Name variable not added
+		Assert.assertEquals(1, userSelection.getWorkbook().getConditions().size());
+	}
+
+	private MeasurementVariable getMeasurementVariableForCategoricalVariable(int termId, Operation operation) {
+		final MeasurementVariable variable =
+				new MeasurementVariable(termId, "PI_ID", "TRIAL NUMBER", WorkbookDataUtil.NUMBER,
+						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "", WorkbookDataUtil.TRIAL);
+		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
+		variable.setPossibleValues(this.getValueReferenceList());
+		variable.setRole(PhenotypicType.STUDY);
+		variable.setOperation(operation);
+		return variable;
+	}
+
+	private List<ValueReference> getValueReferenceList() {
+		final List<ValueReference> possibleValues = new ArrayList<>();
+
+		for (int i = 0; i < 5; i++) {
+			final ValueReference possibleValue = new ValueReference(i, String.valueOf(i));
+			possibleValues.add(possibleValue);
+		}
+		return possibleValues;
+	}
+
+	private List<MeasurementVariable> getConditions(int cvtermId, Operation operation){
+		List<MeasurementVariable> conditionsList = new ArrayList<>();
+		conditionsList.add(getMeasurementVariableForCategoricalVariable(cvtermId, operation));
+		return  conditionsList;
+
 	}
 }

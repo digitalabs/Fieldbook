@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -249,7 +250,10 @@ public class LabelPrintingDataUtil {
 
 		final StudyTrialInstanceInfo trialInstance =
 				new StudyTrialInstanceInfo(LabelPrintingDataUtil.createFieldMapTrialInstanceInfo(), LabelPrintingDataUtil.FIELDBOOK_NAME);
+		final StudyTrialInstanceInfo trialInstance2 = new StudyTrialInstanceInfo(LabelPrintingDataUtil.createFieldMapSecondTrialInstanceInfo(), LabelPrintingDataUtil.FIELDBOOK_NAME);
+
 		trialInstances.add(trialInstance);
+		trialInstances.add(trialInstance2);
 
 		return trialInstances;
 	}

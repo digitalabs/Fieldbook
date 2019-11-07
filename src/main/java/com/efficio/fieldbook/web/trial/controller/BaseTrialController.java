@@ -403,34 +403,40 @@ public abstract class BaseTrialController extends SettingsController {
 		final List<Integer> requiredFields = this.buildVariableIDList(AppConstants.CREATE_STUDY_ENVIRONMENT_REQUIRED_FIELDS.getString());
 		final List<Integer> filterFields = this.buildVariableIDList(AppConstants.EXP_DESIGN_VARIABLES.getString());
 		final Map<String, MeasurementVariable> factorsMap = SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
+		final Map<String, String> pairedVariable = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
 		for (final MeasurementVariable measurementVariable : workbook.getTrialConditions()) {
-			final SettingDetail detail =
-				this.createSettingDetail(measurementVariable.getTermId(), measurementVariable.getName(), VariableType.ENVIRONMENT_DETAIL.getRole().name());
 
-			if (filterFields.contains(measurementVariable.getTermId())) {
-				continue;
-			}
+			// Exclude NameId variable to front end to resolve IBP-3139 for environment tab
+			if(!pairedVariable.containsValue(String.valueOf(measurementVariable.getTermId()))){
 
-			if (hiddenFields.contains(measurementVariable.getTermId())) {
-				detail.setHidden(true);
-			}
+				final SettingDetail detail =
+						this.createSettingDetail(measurementVariable.getTermId(), measurementVariable.getName(), VariableType.ENVIRONMENT_DETAIL.getRole().name());
 
-			if (!requiredFields.contains(measurementVariable.getTermId())) {
-				detail.setDeletable(true);
-			}
+				if (filterFields.contains(measurementVariable.getTermId())) {
+					continue;
+				}
 
-			managementDetailList.add(detail);
+				if (hiddenFields.contains(measurementVariable.getTermId())) {
+					detail.setHidden(true);
+				}
 
-			if (!isUsePrevious) {
-				detail.getVariable().setOperation(Operation.UPDATE);
-			} else {
-				detail.getVariable().setOperation(Operation.ADD);
-			}
+				if (!requiredFields.contains(measurementVariable.getTermId())) {
+					detail.setDeletable(true);
+				}
 
-			// set local name of id variable to local name of name variable
-			final String nameTermId = SettingsUtil.getNameCounterpart(measurementVariable.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
-			if (factorsMap.get(nameTermId) != null) {
-				detail.getVariable().setName(factorsMap.get(nameTermId).getName());
+				managementDetailList.add(detail);
+
+				if (!isUsePrevious) {
+					detail.getVariable().setOperation(Operation.UPDATE);
+				} else {
+					detail.getVariable().setOperation(Operation.ADD);
+				}
+
+				// set local name of id variable to local name of name variable
+				final String nameTermId = SettingsUtil.getNameCounterpart(measurementVariable.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
+				if (factorsMap.get(nameTermId) != null) {
+					detail.getVariable().setName(factorsMap.get(nameTermId).getName());
+				}
 			}
 		}
 

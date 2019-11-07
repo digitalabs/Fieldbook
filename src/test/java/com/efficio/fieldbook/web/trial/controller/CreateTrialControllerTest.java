@@ -9,14 +9,19 @@ import java.util.Random;
 
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.service.FieldbookServiceImpl;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.LocationDataManager;
@@ -68,6 +73,9 @@ public class CreateTrialControllerTest {
 	
 	private Integer defaultLocationId;
 
+	@Mock
+	private FieldbookServiceImpl fieldbookServiceImpl;
+
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
@@ -75,6 +83,7 @@ public class CreateTrialControllerTest {
 		this.defaultLocationId = Math.abs(new Random().nextInt());
 		Mockito.doReturn(Arrays.asList(new Location(defaultLocationId))).when(this.locationDataManager)
 				.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
+
 	}
 
 	@Test
@@ -199,7 +208,6 @@ public class CreateTrialControllerTest {
 		Mockito.doReturn(new TabInfo()).when(spy).prepareEnvironmentsTabInfo(false);
 		Mockito.doReturn(new TabInfo()).when(spy).prepareTrialSettingsTabInfo();
 		Mockito.doReturn(new TabInfo()).when(spy).prepareExperimentalDesignSpecialData();
-
 		final Model model = Mockito.mock(Model.class);
 		final CreateTrialForm form = Mockito.mock(CreateTrialForm.class);
 		final HttpSession session = Mockito.mock(HttpSession.class);
@@ -277,5 +285,49 @@ public class CreateTrialControllerTest {
 		Assert.assertEquals(String.valueOf(this.defaultLocationId),
 				environment.getManagementDetailValues().get(String.valueOf(TermId.LOCATION_ID.getId())));
 	}
-	
+
+	@Test
+	public void testPairVariableEnvironmentTab(){
+
+		final UserSelection userSelection = new UserSelection();
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
+		List<MeasurementVariable> conditions = getConditions(TermId.PI_ID.getId(), Operation.ADD, PhenotypicType.STUDY);
+		conditions.addAll(getConditions(TermId.PI_NAME.getId(), Operation.ADD, PhenotypicType.STUDY));
+		workbook.setConditions(conditions);
+		userSelection.setWorkbook(workbook);
+		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
+				AppConstants.ID_NAME_COMBINATION.getString(), true);
+		final TabInfo tabInfo = this.controller.prepareEnvironmentsTabInfo(workbook, true);
+		List<SettingDetail> managementDetails = (List<SettingDetail>) tabInfo.getSettingMap().get("managementDetails");
+		Assert.assertEquals(1, managementDetails.size());
+	}
+
+	private MeasurementVariable getMeasurementVariableForCategoricalVariable(int termId, Operation operation, PhenotypicType role) {
+		final MeasurementVariable variable =
+				new MeasurementVariable(termId, "PI_ID", "TRIAL NUMBER", WorkbookDataUtil.NUMBER,
+						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "", WorkbookDataUtil.TRIAL);
+		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
+		variable.setPossibleValues(this.getValueReferenceList());
+		variable.setRole(role);
+		variable.setOperation(operation);
+		return variable;
+	}
+
+
+	private List<ValueReference> getValueReferenceList() {
+		final List<ValueReference> possibleValues = new ArrayList<>();
+
+		for (int i = 0; i < 5; i++) {
+			final ValueReference possibleValue = new ValueReference(i, String.valueOf(i));
+			possibleValues.add(possibleValue);
+		}
+		return possibleValues;
+	}
+
+	private List<MeasurementVariable> getConditions(int cvtermId, Operation operation, PhenotypicType roleId){
+		List<MeasurementVariable> conditionsList = new ArrayList<>();
+		conditionsList.add(getMeasurementVariableForCategoricalVariable(cvtermId, operation, roleId));
+		return  conditionsList;
+
+	}
 }

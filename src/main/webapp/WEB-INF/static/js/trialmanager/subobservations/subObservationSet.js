@@ -12,9 +12,9 @@
 	var hiddenColumns = [OBS_UNIT_ID, TRIAL_INSTANCE];
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
-		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'environmentService', 'datasetService', 'derivedVariableService', '$timeout', '$uibModal',
+		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'studyInstanceService', 'datasetService', 'derivedVariableService', '$timeout', '$uibModal',
 		function ($scope, $rootScope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile,
-				  environmentService, datasetService, derivedVariableService, $timeout, $uibModal
+				  studyInstanceService, datasetService, derivedVariableService, $timeout, $uibModal
 		) {
 
 			// FIXME is there a better way?

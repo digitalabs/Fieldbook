@@ -861,7 +861,7 @@ describe('SubObservationSetCtrl', function () {
 		dTColumnBuilderMock = {},
 		$httpMock = {},
 		$compileMock = {},
-		environmentServiceMock = {},
+		studyInstanceServiceMock = {},
 		datasetServiceMock = jasmine.createSpyObj('datasetService', [
 			'getDataset',
 			'getColumns',
@@ -922,7 +922,7 @@ describe('SubObservationSetCtrl', function () {
 				dTColumnBuilder: dTColumnBuilderMock,
 				$http: $httpMock,
 				$compile: $compileMock,
-				environmentService: environmentServiceMock,
+				studyInstanceService: studyInstanceServiceMock,
 				datasetService: datasetServiceMock,
 				$timeout: $timeout,
 				$uibModal: $uibModal

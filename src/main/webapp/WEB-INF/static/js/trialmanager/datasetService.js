@@ -341,7 +341,7 @@
 			};
 
 			generateDesignCtrl.showHasMeasurementsWarning = function(environmentsWithMeasurements) {
-				var deleteMessage = "Measurements and fieldmaps of the following environment(s): " + environmentsWithMeasurements.toString()
+				var deleteMessage = "Observation data and fieldmaps of the following environment(s): " + environmentsWithMeasurements.toString()
 						.replace(new RegExp(",", 'g'), ", ") + " will be deleted. Do you want to continue?";
 				var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
 				modalConfirmDelete.result.then(function (shouldContinue) {
@@ -355,7 +355,7 @@
 
 			generateDesignCtrl.showHasGeneratedDesignWarning = function(environmentsWithDesign) {
 				var deleteMessage = "The following environment(s): " + environmentsWithDesign.toString()
-						.replace(new RegExp(",", 'g'), ", ") + " already has experimental design. Do you want to continue?";
+						.replace(new RegExp(",", 'g'), ", ") + " already has observations. Do you want to continue?";
 				var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
 				modalConfirmDelete.result.then(function (shouldContinue) {
 					if (shouldContinue) {

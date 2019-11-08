@@ -102,10 +102,6 @@
 						$scope.measurementDetails = {hasMeasurement: studyStateService.hasGeneratedDesign()};
 					};
 
-					$scope.disableGenerateDesign = function () {
-						return !!$scope.measurementDetails && $scope.measurementDetails.hasMeasurement;
-					};
-
 					$scope.isDeleteDesignDisable = function (){
 						return !studyStateService.hasGeneratedDesign() || studyStateService.hasListOrSubObs();
 					};
@@ -248,7 +244,6 @@
 						if (!$scope.doValidate()) {
 							return;
 						}
-						$scope.measurementDetails.hasMeasurement = true;
 
 						TrialManagerDataService.performDataCleanup();
 
@@ -260,16 +255,7 @@
 						experimentDesignInput.environments = TrialManagerDataService.currentData.environments.environments;
 						experimentDesignInput.trialSettings = TrialManagerDataService.currentData.trialSettings;
 
-						experimentDesignService.generateDesign(experimentDesignInput).then(
-							function(response) {
-								showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
-								window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
-							}, function(errResponse) {
-								var errorMessage = errResponse.errors[0].message;
-								$scope.measurementDetails.hasMeasurement = false;
-								showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed + ' ' + errorMessage);
-							}
-						);
+						experimentDesignService.openSelectEnvironmentToGenerateModal(experimentDesignInput);
 					};
 
 					$scope.showConfirmDialog = function(message) {

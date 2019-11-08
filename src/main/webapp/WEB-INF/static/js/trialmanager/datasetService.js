@@ -273,8 +273,8 @@
 		}]);
 
 	datasetsApiModule.controller('generateDesignCtrl', ['experimentDesignInput', '$scope', '$rootScope', '$uibModalInstance',
-		'environmentService', 'experimentDesignService', 'studyContext',
-		function (experimentDesignInput, $scope, $rootScope, $uibModalInstance, environmentService, experimentDesignService, studyContext) {
+		'studyInstanceService', 'experimentDesignService', 'studyContext',
+		function (experimentDesignInput, $scope, $rootScope, $uibModalInstance, studyInstanceService, experimentDesignService, studyContext) {
 
 			var generateDesignCtrl = this;
 
@@ -367,7 +367,7 @@
 			};
 
 			generateDesignCtrl.init = function () {
-				environmentService.getEnvironments().then(function(instances) {
+				studyInstanceService.getStudyInstances().then(function(instances) {
 					$scope.instances = instances;
 				});
 

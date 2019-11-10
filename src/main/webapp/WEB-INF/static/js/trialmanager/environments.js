@@ -233,18 +233,12 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				// increment the last instance number
 				var instanceNumber = getMaxInstanceNumber() + 1;
 
-				if ($scope.isDesignAlreadyGenerated()) {
-					// create and save the environment in the server
-					studyInstanceService.createStudyInstance(instanceNumber).then(function (studyInstance) {
-						// update the environment table
-						$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
-						$scope.data.noOfEnvironments++;
-					});
-				} else {
+				// create and save the environment in the server
+				studyInstanceService.createStudyInstance(instanceNumber).then(function (studyInstance) {
 					// update the environment table
-					$scope.createEnvironment(instanceNumber, null);
+					$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
 					$scope.data.noOfEnvironments++;
-				}
+				});
 
 			};
 

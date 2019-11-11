@@ -612,7 +612,7 @@
 					$scope.validateStartingPlotNo = function() {
 						var validNo = '^(?=.*[1-9].*)[0-9]{1,8}$';
 
-						if (!!$scope.data.startingPlotNo.match(validNo)) {
+						if (!$scope.data.startingPlotNo.match(validNo)) {
 							return false;
 						}
 						return true;

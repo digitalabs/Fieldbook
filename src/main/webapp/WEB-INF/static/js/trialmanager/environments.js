@@ -234,11 +234,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 				$scope.isDisableAddEnvironment = true;
 
-				// increment the last instance number
-				var instanceNumber = getMaxInstanceNumber() + 1;
-
 				// create and save the environment in the server
-				studyInstanceService.createStudyInstance(instanceNumber).then(function (studyInstance) {
+				studyInstanceService.createStudyInstance().then(function (studyInstance) {
 					// update the environment table
 					$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
 					$scope.data.noOfEnvironments++;
@@ -310,12 +307,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				}
 
 				TrialManagerDataService.deleteEnvironment(index + 1);
-			}
-
-			function getMaxInstanceNumber() {
-				return Math.max.apply(Math, $scope.data.environments.map(function (environment) {
-					return environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX];
-				}));
 			}
 
 			// init

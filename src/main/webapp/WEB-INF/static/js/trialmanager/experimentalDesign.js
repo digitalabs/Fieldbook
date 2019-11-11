@@ -370,6 +370,11 @@
 
 					$scope.doValidate = function() {
 
+						if(!$scope.validateStartingPlotNo()) {
+							showErrorMessage(MESSAGE_DIV_ID, 'Starting plot number must be an integer in range 1 to 99999999.');
+							return false;
+						}
+
 						switch ($scope.currentDesignType.id) {
 							case DESIGN_TYPE.RANDOMIZED_COMPLETE_BLOCK:
 							{
@@ -601,6 +606,15 @@
 							return false;
 						}
 
+						return true;
+					};
+
+					$scope.validateStartingPlotNo = function() {
+						var validNo = '^(?=.*[1-9].*)[0-9]{1,8}$';
+
+						if (!!$scope.data.startingPlotNo.match(validNo)) {
+							return false;
+						}
 						return true;
 					};
 

@@ -68,7 +68,7 @@
 						<section-container heading="SPECIFY PLOT NUMBERING" ng-hide="isImportedDesign()" ng-disabled="toggleDesignView()">
 				           <div name="content">
 				               <label class="control-label control-label-bold" id="startingPlotNumber" th:text="#{germplasm.list.specify.starting.plot.number}">Specify Starting Plot Number</label>
-							   <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" onchange="validateAndSetPlotNo()" ng-model="data.startingPlotNo" ng-disabled="measurementDetails.hasMeasurement"/>
+							   <input class="inputForNumberingAndChecks" id="txtStartingPlotNo" style="width:70px;" ng-model="data.startingPlotNo" ng-disabled="measurementDetails.hasMeasurement"/>
 				           </div>
 						</section-container>
 					</div>
@@ -85,29 +85,3 @@
 	</div>
 
 </form>
-
-<script type="text/javascript" th:inline="javascript">
-    var plotNoShouldBeInRange = /*[[#{plot.number.should.be.in.range}]]*/ '';
-
-	function validateAndSetPlotNo() {
-		var customMessage = '';
-		var plotNo = $.trim($("#txtStartingPlotNo").val());
-		if (!validatePlotNo(plotNo)) {
-			customMessage = plotNoShouldBeInRange;
-		}
-
-		if (customMessage !== '') {
-			showInvalidInputMessage(customMessage);
-		} else {
-			showAlertMessage('', 'These changes have not yet been applied to the Observations table. ' +
-					'To update the Observations table, please save the Study', 10000);
-		}
-
-	}
-
-	function validatePlotNo(inputNo) {
-		var validNo = '^(?=.*[1-9].*)[0-9]{1,8}$';
-		return !!inputNo.match(validNo);
-
-	}
-</script>

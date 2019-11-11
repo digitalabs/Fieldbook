@@ -33,6 +33,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			$scope.data = TrialManagerDataService.currentData.environments;
 			$scope.nested = {};
 			$scope.nested.dtInstance = {};
+			$scope.isDisableAddEnvironment = false;
 			$scope.isHideDelete = false;
 			$scope.temp = {
 				settingMap: {},
@@ -230,6 +231,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			};
 
 			$scope.addEnvironment = function () {
+
+				$scope.isDisableAddEnvironment = true;
+
 				// increment the last instance number
 				var instanceNumber = getMaxInstanceNumber() + 1;
 
@@ -238,6 +242,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					// update the environment table
 					$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
 					$scope.data.noOfEnvironments++;
+					$scope.isDisableAddEnvironment = false;
 				});
 
 			};

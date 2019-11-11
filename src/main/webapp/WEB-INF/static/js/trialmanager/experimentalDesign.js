@@ -1,14 +1,14 @@
 /* global angular, showErrorMessage, showAlertMessage, showSuccessfulMessage, expDesignMsgs */
 (function() {
 		'use strict';
+		var manageTrialAppModule = angular.module('manageTrialApp');
 
-		angular.module('manageTrialApp')
-			.constant('EXP_DESIGN_MSGS', expDesignMsgs)
+		manageTrialAppModule.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 			.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE','SYSTEM_DEFINED_ENTRY_TYPE', 'TrialManagerDataService', '$http',
-				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', 'experimentDesignService',
+				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', 'experimentDesignService', '$uibModal',
 				function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _,
-						 $q, Messages, $rootScope, studyStateService, studyContext, experimentDesignService) {
+						 $q, Messages, $rootScope, studyStateService, studyContext, experimentDesignService, $uibModal) {
 
 					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
 					var MESSAGE_DIV_ID = 'page-message';
@@ -255,7 +255,21 @@
 						experimentDesignInput.environments = TrialManagerDataService.currentData.environments.environments;
 						experimentDesignInput.trialSettings = TrialManagerDataService.currentData.trialSettings;
 
-						experimentDesignService.openSelectEnvironmentToGenerateModal(experimentDesignInput);
+						$scope.openSelectEnvironmentToGenerateModal(experimentDesignInput);
+					};
+
+					$scope.openSelectEnvironmentToGenerateModal = function(experimentDesignInput) {
+						$uibModal.open({
+							templateUrl: '/Fieldbook/static/angular-templates/generateDesign/selectEnvironmentModal.html',
+							controller: "generateDesignCtrl",
+							size: 'md',
+							resolve: {
+								experimentDesignInput: function () {
+									return experimentDesignInput;
+								}
+							},
+							controllerAs: 'ctrl'
+						});
 					};
 
 					$scope.showConfirmDialog = function(message) {
@@ -799,6 +813,112 @@
 
 
 				};
+			}]);
+
+		manageTrialAppModule.controller('generateDesignCtrl', ['experimentDesignInput', '$scope', '$rootScope', '$uibModalInstance',
+			'studyInstanceService', 'experimentDesignService', 'studyContext',
+			function (experimentDesignInput, $scope, $rootScope, $uibModalInstance, studyInstanceService, experimentDesignService, studyContext) {
+
+				var generateDesignCtrl = this;
+
+				$scope.instances = [];
+				$scope.selectedInstances = {};
+				$scope.isEmptySelection = false;
+
+				$scope.cancel = function () {
+					$uibModalInstance.dismiss();
+				};
+
+				$scope.validateSelectedEnvironments = function () {
+					experimentDesignInput.trialInstancesForDesignGeneration = generateDesignCtrl.getSelectedInstanceNumbers();
+
+					var environmentsWithMeasurements = [];
+					//Check if selected instances has measurement data
+					$scope.instances.forEach(function (instance) {
+						if($scope.selectedInstances[instance['instanceNumber']] && (instance['hasMeasurements'] || instance['hasFieldmap'])) {
+							environmentsWithMeasurements.push(instance['instanceNumber']);
+						}
+					});
+					if(environmentsWithMeasurements.length > 0 ) {
+						generateDesignCtrl.showHasMeasurementsWarning(environmentsWithMeasurements);
+					} else {
+						var environmentsWithDesign = [];
+						//Check if selected instances has measurement data
+						$scope.instances.forEach(function (instance) {
+							if($scope.selectedInstances[instance['instanceNumber']] && instance['hasExperimentalDesign']) {
+								environmentsWithDesign.push(instance['instanceNumber']);
+							}
+						});
+						if(environmentsWithDesign.length > 0) {
+							generateDesignCtrl.showHasGeneratedDesignWarning(environmentsWithDesign);
+						} else {
+							generateDesignCtrl.generateDesign();
+						}
+					}
+				};
+
+				generateDesignCtrl.generateDesign = function() {
+					experimentDesignService.generateDesign(experimentDesignInput).then(
+						function(response) {
+							showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
+							window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
+						}, function(errResponse) {
+							var errorMessage = errResponse.errors[0].message;
+							showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed + ' ' + errorMessage);
+						});
+				}
+
+				generateDesignCtrl.getSelectedInstanceNumbers = function () {
+
+					var instanceNumbers = [];
+
+					Object.keys($scope.selectedInstances).forEach(function (instanceNumber) {
+						var isSelected = $scope.selectedInstances[instanceNumber];
+						if (isSelected) {
+							instanceNumbers.push(instanceNumber);
+						}
+					});
+
+					return instanceNumbers;
+
+				};
+
+				generateDesignCtrl.showHasMeasurementsWarning = function(environmentsWithMeasurements) {
+					var deleteMessage = "Observation data and fieldmaps of the following environment(s): " + environmentsWithMeasurements.toString()
+						.replace(new RegExp(",", 'g'), ", ") + " will be deleted. Do you want to continue?";
+					var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
+					modalConfirmDelete.result.then(function (shouldContinue) {
+						if (shouldContinue) {
+							generateDesignCtrl.generateDesign();
+						} else {
+							$scope.cancel();
+						}
+					});
+				};
+
+				generateDesignCtrl.showHasGeneratedDesignWarning = function(environmentsWithDesign) {
+					var deleteMessage = "The following environment(s): " + environmentsWithDesign.toString()
+						.replace(new RegExp(",", 'g'), ", ") + " already has observations. Do you want to continue?";
+					var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
+					modalConfirmDelete.result.then(function (shouldContinue) {
+						if (shouldContinue) {
+							generateDesignCtrl.generateDesign();
+						} else {
+							$scope.cancel();
+						}
+					});
+				};
+
+				generateDesignCtrl.init = function () {
+					studyInstanceService.getStudyInstances().then(function(instances) {
+						$scope.instances = instances;
+					});
+
+				};
+
+				generateDesignCtrl.init();
+
+
 			}]);
 
 	}

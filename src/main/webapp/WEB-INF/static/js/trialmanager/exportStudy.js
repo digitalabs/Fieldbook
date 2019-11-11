@@ -161,11 +161,6 @@
 					$scope.instances = instances;
 
 					var noOfEnvironments = parseInt(TrialManagerDataService.currentData.environments.noOfEnvironments);
-
-					if (noOfEnvironments !== $scope.instances.length) {
-						exportStudyModalService.showAlertMessage('', 'Some instances do not have sub observation units associated and can not be' +
-							' selected to export.');
-					}
 				});
 			};
 

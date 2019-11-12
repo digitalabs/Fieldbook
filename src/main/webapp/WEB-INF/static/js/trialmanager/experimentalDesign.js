@@ -280,8 +280,8 @@
 									controllerAs: 'ctrl'
 								});
 							} else {
-								showAlertMessage('', 'All instances already have subobservations and/or samples. Regeneration of design ' +
-									'is not allowed.');
+								showAlertMessage('', 'All instances cannot be regenerated due to internal validations (presence of ' +
+									'samples or subobservations or advance/cross list).');
 							}
 						});
 					};

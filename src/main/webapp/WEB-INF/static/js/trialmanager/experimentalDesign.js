@@ -6,9 +6,9 @@
 		manageTrialAppModule.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 			.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE','SYSTEM_DEFINED_ENTRY_TYPE', 'TrialManagerDataService', '$http',
-				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', 'experimentDesignService', '$uibModal',
+				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', 'experimentDesignService', '$uibModal', 'studyInstanceService',
 				function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _,
-						 $q, Messages, $rootScope, studyStateService, studyContext, experimentDesignService, $uibModal) {
+						 $q, Messages, $rootScope, studyStateService, studyContext, experimentDesignService, $uibModal, studyInstanceService) {
 
 					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
 					var MESSAGE_DIV_ID = 'page-message';
@@ -257,16 +257,32 @@
 					};
 
 					$scope.openSelectEnvironmentToGenerateModal = function(experimentDesignInput) {
-						$uibModal.open({
-							templateUrl: '/Fieldbook/static/angular-templates/generateDesign/selectEnvironmentModal.html',
-							controller: "generateDesignCtrl",
-							size: 'md',
-							resolve: {
-								experimentDesignInput: function () {
-									return experimentDesignInput;
+						studyInstanceService.getStudyInstances().then(function(instances) {
+							var hasStudyInstanceForGeneration = false;
+							$.each(instances, function (key, value) {
+								if(value['canBeDeleted']) {
+									hasStudyInstanceForGeneration = true;
 								}
-							},
-							controllerAs: 'ctrl'
+							});
+							if(hasStudyInstanceForGeneration) {
+								$uibModal.open({
+									templateUrl: '/Fieldbook/static/angular-templates/generateDesign/selectEnvironmentModal.html',
+									controller: "generateDesignCtrl",
+									size: 'md',
+									resolve: {
+										experimentDesignInput: function () {
+											return experimentDesignInput;
+										},
+										studyInstances: function () {
+											return instances;
+										}
+									},
+									controllerAs: 'ctrl'
+								});
+							} else {
+								showAlertMessage('', 'All instances already have subobservations and/or samples. Regeneration of design ' +
+									'is not allowed.');
+							}
 						});
 					};
 
@@ -593,7 +609,10 @@
 									return false;
 								}
 
-
+								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[4]);
+									return false;
+								}
 								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
 									showErrorMessage(MESSAGE_DIV_ID, 'Replication count should be greater than 1');
 									return false;
@@ -813,13 +832,13 @@
 				};
 			}]);
 
-		manageTrialAppModule.controller('generateDesignCtrl', ['experimentDesignInput', '$scope', '$rootScope', '$uibModalInstance',
-			'studyInstanceService', 'experimentDesignService', 'studyContext',
-			function (experimentDesignInput, $scope, $rootScope, $uibModalInstance, studyInstanceService, experimentDesignService, studyContext) {
+		manageTrialAppModule.controller('generateDesignCtrl', ['experimentDesignInput', 'studyInstances', '$scope', '$rootScope', '$uibModalInstance',
+			'experimentDesignService', 'studyContext',
+			function (experimentDesignInput, studyInstances, $scope, $rootScope, $uibModalInstance, experimentDesignService, studyContext) {
 
 				var generateDesignCtrl = this;
 
-				$scope.instances = [];
+				$scope.instances = studyInstances;
 				$scope.selectedInstances = {};
 				$scope.isEmptySelection = false;
 
@@ -906,15 +925,6 @@
 						}
 					});
 				};
-
-				generateDesignCtrl.init = function () {
-					studyInstanceService.getStudyInstances().then(function(instances) {
-						$scope.instances = instances;
-					});
-
-				};
-
-				generateDesignCtrl.init();
 
 
 			}]);

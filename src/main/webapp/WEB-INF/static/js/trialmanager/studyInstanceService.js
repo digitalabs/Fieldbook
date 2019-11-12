@@ -14,8 +14,8 @@
 		var successHandler = serviceUtilities.restSuccessHandler,
 			failureHandler = serviceUtilities.restFailureHandler;
 
-		studyInstanceService.createStudyInstance = function (instanceNumber) {
-			var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceNumber);
+		studyInstanceService.createStudyInstance = function () {
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/generation');
 			return request.then(successHandler, failureHandler);
 		}
 

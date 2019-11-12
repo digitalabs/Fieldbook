@@ -15,7 +15,7 @@
 			failureHandler = serviceUtilities.restFailureHandler;
 
 		studyInstanceService.createStudyInstance = function () {
-			var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/instances');
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/generation');
 			return request.then(successHandler, failureHandler);
 		}
 

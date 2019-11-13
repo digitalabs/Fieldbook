@@ -62,7 +62,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/trialmanager/trial-settings-manager.js',
 			'WEB-INF/static/js/trialmanager/selectEnvironmentModal.js',
 			'WEB-INF/static/js/trialmanager/studyStateService.js',
-			'WEB-INF/static/js/trialmanager/environmentService.js',
+			'WEB-INF/static/js/trialmanager/studyInstanceService.js',
 			'WEB-INF/static/js/trialmanager/derivedVariable.js',
 			'WEB-INF/static/js/trialmanager/trial-data-manager.js',
 			'WEB-INF/static/js/trialmanager/saveSampleList.js',

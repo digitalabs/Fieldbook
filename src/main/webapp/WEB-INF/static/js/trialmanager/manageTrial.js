@@ -405,7 +405,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				var designTypes = TrialManagerDataService.applicationData.designTypes;
 
 				if (TrialManagerDataService.getDesignTypeById(currentDesignType, designTypes).name === 'Custom Import Design') {
-					TrialManagerDataService.currentData.experimentalDesign.noOfEnvironmentsToAdd = $scope.temp.noOfEnvironments;
 					showIndicateUnappliedChangesWarning = false;
 					ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());
 					showAlertMessage('', addEnvironmentsImportDesignMessage, 5000);

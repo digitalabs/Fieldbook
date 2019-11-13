@@ -1,14 +1,14 @@
 /* global angular, showErrorMessage, showAlertMessage, showSuccessfulMessage, expDesignMsgs */
 (function() {
 		'use strict';
+		var manageTrialAppModule = angular.module('manageTrialApp');
 
-		angular.module('manageTrialApp')
-			.constant('EXP_DESIGN_MSGS', expDesignMsgs)
+		manageTrialAppModule.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 			.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE','SYSTEM_DEFINED_ENTRY_TYPE', 'TrialManagerDataService', '$http',
-				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', 'experimentDesignService',
+				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', 'experimentDesignService', '$uibModal', 'studyInstanceService',
 				function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _,
-						 $q, Messages, $rootScope, studyStateService, studyContext, experimentDesignService) {
+						 $q, Messages, $rootScope, studyStateService, studyContext, experimentDesignService, $uibModal, studyInstanceService) {
 
 					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
 					var MESSAGE_DIV_ID = 'page-message';
@@ -95,15 +95,9 @@
 						}
 
 						$scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
-						$scope.data.noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments ?
-							TrialManagerDataService.currentData.environments.noOfEnvironments : 0;
 						$scope.data.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;
 						$scope.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors.currentData;
 						$scope.measurementDetails = {hasMeasurement: studyStateService.hasGeneratedDesign()};
-					};
-
-					$scope.disableGenerateDesign = function () {
-						return !!$scope.measurementDetails && $scope.measurementDetails.hasMeasurement;
 					};
 
 					$scope.isDeleteDesignDisable = function (){
@@ -248,7 +242,6 @@
 						if (!$scope.doValidate()) {
 							return;
 						}
-						$scope.measurementDetails.hasMeasurement = true;
 
 						TrialManagerDataService.performDataCleanup();
 
@@ -260,16 +253,37 @@
 						experimentDesignInput.environments = TrialManagerDataService.currentData.environments.environments;
 						experimentDesignInput.trialSettings = TrialManagerDataService.currentData.trialSettings;
 
-						experimentDesignService.generateDesign(experimentDesignInput).then(
-							function(response) {
-								showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
-								window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
-							}, function(errResponse) {
-								var errorMessage = errResponse.errors[0].message;
-								$scope.measurementDetails.hasMeasurement = false;
-								showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed + ' ' + errorMessage);
+						$scope.openSelectEnvironmentToGenerateModal(experimentDesignInput);
+					};
+
+					$scope.openSelectEnvironmentToGenerateModal = function(experimentDesignInput) {
+						studyInstanceService.getStudyInstances().then(function(instances) {
+							var hasStudyInstanceForGeneration = false;
+							$.each(instances, function (key, value) {
+								if(value['canBeDeleted']) {
+									hasStudyInstanceForGeneration = true;
+								}
+							});
+							if(hasStudyInstanceForGeneration) {
+								$uibModal.open({
+									templateUrl: '/Fieldbook/static/angular-templates/generateDesign/selectEnvironmentModal.html',
+									controller: "generateDesignCtrl",
+									size: 'md',
+									resolve: {
+										experimentDesignInput: function () {
+											return experimentDesignInput;
+										},
+										studyInstances: function () {
+											return instances;
+										}
+									},
+									controllerAs: 'ctrl'
+								});
+							} else {
+								showAlertMessage('', 'All instances cannot be regenerated due to internal validations (presence of ' +
+									'samples or subobservations or advance/cross list).');
 							}
-						);
+						});
 					};
 
 					$scope.showConfirmDialog = function(message) {
@@ -383,6 +397,11 @@
 					};
 
 					$scope.doValidate = function() {
+
+						if(!$scope.validateStartingPlotNo()) {
+							showErrorMessage(MESSAGE_DIV_ID, 'Starting plot number must be an integer in range 1 to 99999999.');
+							return false;
+						}
 
 						switch ($scope.currentDesignType.id) {
 							case DESIGN_TYPE.RANDOMIZED_COMPLETE_BLOCK:
@@ -590,7 +609,10 @@
 									return false;
 								}
 
-
+								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
+									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[4]);
+									return false;
+								}
 								if (!$scope.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
 									showErrorMessage(MESSAGE_DIV_ID, 'Replication count should be greater than 1');
 									return false;
@@ -615,6 +637,15 @@
 							return false;
 						}
 
+						return true;
+					};
+
+					$scope.validateStartingPlotNo = function() {
+						var validNo = '^(?=.*[1-9].*)[0-9]{1,8}$';
+
+						if (!String($scope.data.startingPlotNo).match(validNo)) {
+							return false;
+						}
 						return true;
 					};
 
@@ -799,6 +830,103 @@
 
 
 				};
+			}]);
+
+		manageTrialAppModule.controller('generateDesignCtrl', ['experimentDesignInput', 'studyInstances', '$scope', '$rootScope', '$uibModalInstance',
+			'experimentDesignService', 'studyContext',
+			function (experimentDesignInput, studyInstances, $scope, $rootScope, $uibModalInstance, experimentDesignService, studyContext) {
+
+				var generateDesignCtrl = this;
+
+				$scope.instances = studyInstances;
+				$scope.selectedInstances = {};
+				$scope.isEmptySelection = false;
+
+				$scope.cancel = function () {
+					$uibModalInstance.dismiss();
+				};
+
+				$scope.validateSelectedEnvironments = function () {
+					experimentDesignInput.trialInstancesForDesignGeneration = generateDesignCtrl.getSelectedInstanceNumbers();
+
+					var environmentsWithMeasurements = [];
+					//Check if selected instances has measurement data
+					$scope.instances.forEach(function (instance) {
+						if($scope.selectedInstances[instance['instanceNumber']] && (instance['hasMeasurements'] || instance['hasFieldmap'])) {
+							environmentsWithMeasurements.push(instance['instanceNumber']);
+						}
+					});
+					if(environmentsWithMeasurements.length > 0 ) {
+						generateDesignCtrl.showHasMeasurementsWarning(environmentsWithMeasurements);
+					} else {
+						var environmentsWithDesign = [];
+						//Check if selected instances has measurement data
+						$scope.instances.forEach(function (instance) {
+							if($scope.selectedInstances[instance['instanceNumber']] && instance['hasExperimentalDesign']) {
+								environmentsWithDesign.push(instance['instanceNumber']);
+							}
+						});
+						if(environmentsWithDesign.length > 0) {
+							generateDesignCtrl.showHasGeneratedDesignWarning(environmentsWithDesign);
+						} else {
+							generateDesignCtrl.generateDesign();
+						}
+					}
+				};
+
+				generateDesignCtrl.generateDesign = function() {
+					experimentDesignService.generateDesign(experimentDesignInput).then(
+						function(response) {
+							showSuccessfulMessage('', $.experimentDesignMessages.experimentDesignGeneratedSuccessfully);
+							window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
+						}, function(errResponse) {
+							var errorMessage = errResponse.errors[0].message;
+							showErrorMessage($.fieldbookMessages.errorServerError, $.fieldbookMessages.errorDesignGenerationFailed + ' ' + errorMessage);
+						});
+				}
+
+				generateDesignCtrl.getSelectedInstanceNumbers = function () {
+
+					var instanceNumbers = [];
+
+					Object.keys($scope.selectedInstances).forEach(function (instanceNumber) {
+						var isSelected = $scope.selectedInstances[instanceNumber];
+						if (isSelected) {
+							instanceNumbers.push(instanceNumber);
+						}
+					});
+
+					return instanceNumbers;
+
+				};
+
+				generateDesignCtrl.showHasMeasurementsWarning = function(environmentsWithMeasurements) {
+					var deleteMessage = "Observation data and fieldmaps of the following environment(s): " + environmentsWithMeasurements.toString()
+						.replace(new RegExp(",", 'g'), ", ") + " will be deleted. Do you want to continue?";
+					var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
+					modalConfirmDelete.result.then(function (shouldContinue) {
+						if (shouldContinue) {
+							generateDesignCtrl.generateDesign();
+						} else {
+							$scope.cancel();
+						}
+					});
+				};
+
+				generateDesignCtrl.showHasGeneratedDesignWarning = function(environmentsWithDesign) {
+					var deleteMessage = "The following environment(s): " + environmentsWithDesign.toString()
+						.replace(new RegExp(",", 'g'), ", ") + " already has observations. Do you want to continue?";
+					var modalConfirmDelete = $rootScope.openConfirmModal(deleteMessage, 'Yes','No');
+					modalConfirmDelete.result.then(function (shouldContinue) {
+						if (shouldContinue) {
+							generateDesignCtrl.generateDesign();
+						} else {
+							$scope.cancel();
+						}
+					});
+				};
+
+
 			}]);
 
 	}

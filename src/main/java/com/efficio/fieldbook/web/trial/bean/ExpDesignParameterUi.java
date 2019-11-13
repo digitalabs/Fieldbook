@@ -7,12 +7,8 @@ import java.util.Map;
 
 public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -3081300491744812262L;
-	private Integer noOfEnvironments;
-	private Integer noOfEnvironmentsToAdd;
+	private List<Integer> trialInstancesForDesignGeneration;
 	private Integer designType;
 	private Integer replicationsCount;
 	private Boolean useLatenized;
@@ -42,12 +38,8 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	 */
 	private Integer replicationsArrangement;
 
-	public Integer getNoOfEnvironments() {
-		return this.noOfEnvironments;
-	}
-
-	public void setNoOfEnvironments(final Integer noOfEnvironments) {
-		this.noOfEnvironments = noOfEnvironments;
+	public List<Integer> getTrialInstancesForDesignGeneration() {
+		return this.trialInstancesForDesignGeneration;
 	}
 
 	public Integer getDesignType() {
@@ -160,14 +152,6 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 
 	public void setReplicationsArrangement(final Integer replicationsArrangement) {
 		this.replicationsArrangement = replicationsArrangement;
-	}
-
-	public Integer getNoOfEnvironmentsToAdd() {
-		return this.noOfEnvironmentsToAdd;
-	}
-
-	public void setNoOfEnvironmentsToAdd(final Integer noOfEnvironmentsToAdd) {
-		this.noOfEnvironmentsToAdd = noOfEnvironmentsToAdd;
 	}
 
 	public boolean isHasMeasurementData() {

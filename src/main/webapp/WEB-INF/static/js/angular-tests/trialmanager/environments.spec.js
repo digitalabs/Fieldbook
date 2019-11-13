@@ -63,7 +63,7 @@ describe('Measurement Controller', function () {
 				studyContext: studyContext,
 				datasetService: datasetServiceMock,
 				TrialManagerDataService: trialManagerServiceMock,
-				environmentService: {},
+				studyInstanceService: {},
 				LOCATION_ID: 1
 			});
 

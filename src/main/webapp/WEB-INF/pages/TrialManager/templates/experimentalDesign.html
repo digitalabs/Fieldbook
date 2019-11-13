@@ -42,8 +42,7 @@
 	                </div>
 					<div ng-show="toggleDesignView()">
 	            		<div class="col-md-8">
-	            			<div class="add-bottom-padding"
-								ng-show="data.noOfEnvironments &gt;= 0">
+	            			<div class="add-bottom-padding">
 									<div ng-hide="currentDesignType.templateName =='Default Design'">
 										<b th:text="#{review.study.design.source}"></b>
 										<span>{{currentDesignType.templateName}}</span>
@@ -54,8 +53,7 @@
 													   ng-click="deleteDesign()"/>
 											</a>
 									</span>
-		                            <div class="add-bottom-padding"
-										ng-show="data.noOfEnvironments &gt;= 0">
+		                            <div class="add-bottom-padding">
 										<b th:text="#{review.study.design.type}"></b>
 										<span ng-hide="currentDesignType.templateName =='Default Design'">{{currentDesignType.name}}</span>
 										<span ng-show="currentDesignType.templateName =='Default Design'">Default Design</span>

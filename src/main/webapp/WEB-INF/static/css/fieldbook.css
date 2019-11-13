@@ -356,6 +356,12 @@ table.dataTable thead .sorting_desc {
     width: 25px;
 }
 
+.fbk-add-sign {
+    cursor: pointer;
+    color: green;
+    font-size: 25px;
+}
+
 .fbk-table-delete-link {
     width: 25px;
 }

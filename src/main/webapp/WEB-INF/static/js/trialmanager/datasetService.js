@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	var datasetsApiModule = angular.module('datasets-api', []);
+	var datasetsApiModule = angular.module('datasets-api', ['ui.bootstrap', 'datasets-api', 'datasetOptionModal', 'fieldbook-utils']);
 
 	datasetsApiModule.factory('datasetService', ['$http', '$q', 'studyContext', 'serviceUtilities', 'DATASET_TYPES', 'DATASET_TYPES_OBSERVATION_IDS',
 		function ($http, $q, studyContext, serviceUtilities, DATASET_TYPES, DATASET_TYPES_OBSERVATION_IDS) {
@@ -141,14 +141,14 @@
 			};
 
 			datasetService.exportDataset = function (datasetId, instanceIds, collectionOrderId, singleFile, fileFormat) {
-				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/' + fileFormat , {
-						params: {
-							instanceIds: instanceIds.join(","),
-							collectionOrderId: collectionOrderId,
-							singleFile: singleFile
-						},
-						responseType: 'blob'
-					});
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/' + fileFormat, {
+					params: {
+						instanceIds: instanceIds.join(","),
+						collectionOrderId: collectionOrderId,
+						singleFile: singleFile
+					},
+					responseType: 'blob'
+				});
 
 				return request.then(function (response) {
 					return response;
@@ -163,7 +163,7 @@
 					{
 						processWarnings: processWarnings,
 						data: observationList,
-                        draftMode: true
+						draftMode: true
 					});
 				return request.then(successHandler, failureHandler);
 			};
@@ -224,25 +224,25 @@
 		function ($http, $q, studyContext, serviceUtilities) {
 
 			var BASE_CROP_URL = '/bmsapi/crops/' + studyContext.cropName;
-			var BASE_STUDY_URL = BASE_CROP_URL  +  '/studies/';
+			var BASE_STUDY_URL = BASE_CROP_URL + '/studies/';
 
 			var experimentDesignService = {};
 			var successHandler = serviceUtilities.restSuccessHandler,
 				failureHandler = serviceUtilities.restFailureHandler;
 
 			experimentDesignService.generateDesign = function (experimentDesignInput) {
-				var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/design', experimentDesignInput);
+				var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/experimental-designs/generation', experimentDesignInput);
 				return request.then(successHandler, failureHandler);
 			}
 
 			experimentDesignService.deleteDesign = function () {
-				var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/design');
+				var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/experimental-designs');
 				return request.then(successHandler, failureHandler);
 			}
 
-            experimentDesignService.getBVDesignLicense = function () {
-               return $http.get('/bmsapi/breeding-view-licenses');
-            }
+			experimentDesignService.getBVDesignLicense = function () {
+				return $http.get('/bmsapi/breeding-view-licenses');
+			}
 
 			experimentDesignService.getDesignTypes = function () {
 				var request = $http.get(BASE_CROP_URL + '/experimental-design-types');

@@ -4,8 +4,8 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'environmentService', '$timeout', function ($scope,
-																																			  TrialManagerDataService, environmentService, $timeout) {
+	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'studyInstanceService', '$timeout', 'studyContext', 'datasetService',
+		function ($scope, TrialManagerDataService, studyInstanceService, $timeout, studyContext, datasetService) {
 
 		$scope.settings = TrialManagerDataService.settings.environments;
 		if (Object.keys($scope.settings).length === 0) {
@@ -21,7 +21,7 @@
 		$scope.data = TrialManagerDataService.currentData.environments;
 
 		$scope.$on('changeEnvironments', function () {
-			$scope.data = environmentService.environments;
+			$scope.data = studyInstanceService.environments;
 
 			//create a map for location dropdown values
 			var locationMap = {};
@@ -92,8 +92,8 @@
 		};
 
 		$scope.init = function () {
-			environmentService.getEnvironments().then(function (environmentDetails) {
-				$scope.instances = environmentDetails;
+			datasetService.getDatasetInstances(studyContext.measurementDatasetId).then(function (datasetInstances) {
+				$scope.instances = datasetInstances;
 			});
 		};
 	}]);

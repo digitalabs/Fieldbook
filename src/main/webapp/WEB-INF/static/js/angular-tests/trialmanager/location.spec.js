@@ -71,7 +71,7 @@ describe('Location', function () {
                 studyContext: studyContext,
                 derivedVariableService: derivedVariableService,
                 TrialManagerDataService: trialDataManagerService,
-                environmentService: {},
+                studyInstanceService: {},
                 LOCATION_ID: 1
             });
         });

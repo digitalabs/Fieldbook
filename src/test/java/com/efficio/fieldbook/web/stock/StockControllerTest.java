@@ -18,6 +18,7 @@ import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -97,14 +98,17 @@ public class StockControllerTest {
 	@Mock
 	private ContextUtil contextUtil;
 
+	@Mock
+	private CropType cropType;
+
 	@InjectMocks
 	private final StockController dut = Mockito.spy(new StockController());
 
 	@Before
 	public void init() {
 
-		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
-		dut.setContextUtil(contextUtil);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
+		this.dut.setContextUtil(this.contextUtil);
 
 	}
 
@@ -201,7 +205,7 @@ public class StockControllerTest {
 		final ArgumentCaptor<InventoryDetails> detailParam = ArgumentCaptor.forClass(InventoryDetails.class);
 		final ArgumentCaptor<ListDataProject> listDataParam = ArgumentCaptor.forClass(ListDataProject.class);
 		Mockito.verify(this.inventoryService, Mockito.atMost(StockControllerTest.GERMPLASM_DATA_COUNT))
-				.addLotAndTransaction(detailParam.capture(), Matchers.any(GermplasmListData.class), listDataParam.capture());
+				.addLotAndTransaction(detailParam.capture(), Matchers.any(GermplasmListData.class), listDataParam.capture(), this.cropType);
 
 		Assert.assertEquals(StockController.SUCCESS, resultMap.get(StockController.IS_SUCCESS));
 
@@ -322,7 +326,7 @@ public class StockControllerTest {
 		Mockito.doNothing().when(this.userSelection).setListId(listId);
 		Mockito.doNothing().when(this.userSelection).setInventoryDetails(inventoryDetailsList);
 
-		final String result = dut.importList(form);
+		final String result = this.dut.importList(form);
 
 		Assert.assertTrue("Incorrect List Id", result.contains("5"));
 		Assert.assertTrue("Has Error", result.contains("false"));

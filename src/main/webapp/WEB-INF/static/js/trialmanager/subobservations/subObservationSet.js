@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	var subObservationModule = angular.module('subObservation', []);
+	var subObservationModule = angular.module('subObservation', ['visualization']);
 	var TRIAL_INSTANCE = 8170,
 		GID = 8240,
 		GROUPGID = 8330,
@@ -13,8 +13,9 @@
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
 		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'studyInstanceService', 'datasetService', 'derivedVariableService', '$timeout', '$uibModal',
+		'visualizationModalService',
 		function ($scope, $rootScope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile,
-				  studyInstanceService, datasetService, derivedVariableService, $timeout, $uibModal
+				  studyInstanceService, datasetService, derivedVariableService, $timeout, $uibModal, visualizationModalService
 		) {
 
 			// FIXME is there a better way?
@@ -810,6 +811,12 @@
 						'<"row add-top-padding-small"<"col-sm-12"t>>' + //
 						'<"row"<"col-sm-12 paginate-float-center"<"pull-left"i><"pull-right"l>p>>')
 					.withButtons([{
+						className: 'fbk-buttons-no-border fbk-colvis-button',
+						text: '<i class="glyphicon glyphicon-signal"></i>',
+						action: function ( e, dt, node, config ) {
+							visualizationModalService.openModal();
+						}
+					}, {
 						extend: 'colvis',
 						className: 'fbk-buttons-no-border fbk-colvis-button',
 						text: '<i class="glyphicon glyphicon-th"></i>'

@@ -128,7 +128,7 @@
 						}
 					).then(function () {
 						if (table().data().length == 1 && $scope.isPendingView) {
-							datasetService.getDataset(subObservationSet.id).then(function(dataset) {
+							datasetService.getDataset(subObservationSet.id).then(function (dataset) {
 								if (!dataset.hasPendingData) {
 									reloadDataset();
 								} else {
@@ -285,9 +285,9 @@
 
 			$scope.onRemoveVariable = function (variableIds, settings) {
 
-				$scope.checkVariableIsUsedInCalculatedVariable(variableIds).then(function(isVariableUsedInOtherCalculatedVariable) {
+				$scope.checkVariableIsUsedInCalculatedVariable(variableIds).then(function (isVariableUsedInOtherCalculatedVariable) {
 					return $scope.checkVariableHasMeasurementData(isVariableUsedInOtherCalculatedVariable, variableIds);
-				}).then(function(doContinue) {
+				}).then(function (doContinue) {
 					if (doContinue) {
 						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, variableIds).then(function () {
 							reloadDataset();
@@ -325,7 +325,7 @@
 				var variableIsUsedInOtherCalculatedVariable = false;
 
 				// Retrieve all formula variables in study
-				derivedVariableService.getFormulaVariables($scope.subObservationSet.dataset.datasetId).then(function(response){
+				derivedVariableService.getFormulaVariables($scope.subObservationSet.dataset.datasetId).then(function (response) {
 					var formulaVariables = response.data;
 					// Check if any of the deleted variables are formula variables
 					angular.forEach(formulaVariables, function (formulaVariable) {
@@ -357,7 +357,7 @@
 				loadTable();
 			};
 
-			$scope.collapseBatchAction = function() {
+			$scope.collapseBatchAction = function () {
 				$scope.toggleSectionBatchAction = !$scope.toggleSectionBatchAction;
 			};
 
@@ -499,7 +499,7 @@
 				}
 			};
 
-			$scope.changeSelectedVariableFilter = function(){
+			$scope.changeSelectedVariableFilter = function () {
 				table().ajax.reload();
 				$scope.nested.newValueBatchUpdate = null;
 				$scope.nested.selectedBatchAction = $scope.selectBatchActions[0];
@@ -526,14 +526,14 @@
 					var newValue = $scope.nested.newValueBatchUpdate;
 					if ($scope.nested.selectedVariableFilter.minRange && $scope.nested.selectedVariableFilter.maxRange && //
 						(newValue < $scope.nested.selectedVariableFilter.minRange || newValue > $scope.nested.selectedVariableFilter.maxRange)) {
-						showAlertMessage('','New value is out of range.');
+						showAlertMessage('', 'New value is out of range.');
 					}
 					return true;
 				}
 				return true;
 			}
 
-			$scope.disableApply = function(){
+			$scope.disableApply = function () {
 				return $scope.nested.selectedBatchAction.id === 1 && ($scope.nested.newValueBatchUpdate === null || $scope.nested.newValueBatchUpdate === '')
 			};
 
@@ -813,7 +813,7 @@
 					.withButtons([{
 						className: 'fbk-buttons-no-border fbk-colvis-button',
 						text: '<i class="glyphicon glyphicon-signal"></i>',
-						action: function ( e, dt, node, config ) {
+						action: function (e, dt, node, config) {
 							visualizationModalService.openModal();
 						}
 					}, {
@@ -830,17 +830,17 @@
 					$(this.header()).prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#1b95b2;"' +
 						' ng-if="isVariableBatchActionSelected(' + this.index() + ')"> </span>')($scope))
 						.append($compile('<span class="glyphicon glyphicon-filter" ' +
-						' style="cursor:pointer; padding-left: 5px;"' +
-						' popover-placement="bottom"' +
-						' ng-class="getFilteringByClass(' + this.index() + ')"' +
-						' popover-append-to-body="true"' +
-						' popover-trigger="\'outsideClick\'"' +
-						// does not work with outsideClick
-						// ' popover-is-open="columnFilter.isOpen"' +
-						' ng-if="isVariableFilter(' + this.index() + ')"' +
-						' ng-click="openColumnFilter(' + this.index() + ')"' +
-						' uib-popover-template="\'columnFilterPopoverTemplate.html\'">' +
-						'</span>')($scope));
+							' style="cursor:pointer; padding-left: 5px;"' +
+							' popover-placement="bottom"' +
+							' ng-class="getFilteringByClass(' + this.index() + ')"' +
+							' popover-append-to-body="true"' +
+							' popover-trigger="\'outsideClick\'"' +
+							// does not work with outsideClick
+							// ' popover-is-open="columnFilter.isOpen"' +
+							' ng-if="isVariableFilter(' + this.index() + ')"' +
+							' ng-click="openColumnFilter(' + this.index() + ')"' +
+							' uib-popover-template="\'columnFilterPopoverTemplate.html\'">' +
+							'</span>')($scope));
 				});
 				adjustColumns();
 			}
@@ -1324,7 +1324,7 @@
 
 			function renderCategoricalValue(value, columnData) {
 				var possibleValue = null;
-				
+
 				if (columnData.possibleValues) {
 					/* FIXME fix data model
 					 *  Some variables don't store the cvterm.name (like traits in phenotype)
@@ -1356,10 +1356,10 @@
 
 
 			function getDisplayValueForNumericalValue(numericValue) {
-				if(numericValue === "missing" || numericValue === "") {
+				if (numericValue === "missing" || numericValue === "") {
 					return numericValue;
 				} else {
-					return EscapeHTML.escape( numericValue ? Number(Math.round(numericValue+'e4')+'e-4'): '');
+					return EscapeHTML.escape(numericValue ? Number(Math.round(numericValue + 'e4') + 'e-4') : '');
 				}
 			}
 

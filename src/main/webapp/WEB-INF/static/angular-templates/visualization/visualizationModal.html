@@ -1,7 +1,7 @@
 <div class="modal-body">
 	<div class="row form-group">
 		<div class="col-md-11">
-			<label class="modal-title fbk-modal-title" id="heading-modal">Plot data</label>&nbsp;&nbsp;<span class="label label-default">BETA</span>
+			<label class="modal-title fbk-modal-title" id="heading-modal">Plot Data</label>&nbsp;&nbsp;<span class="label label-default">BETA</span>
 		</div>
 		<div class="col-md-1">
 			<button type="button" class="close pull-right glyphicon glyphicon-remove"
@@ -13,15 +13,23 @@
 	<div class="row">
 		<div class="col-md-12 form-horizontal">
 			<div class="form-group">
-				<label class="control-label col-md-3">Plot type</label>
+				<label class="control-label col-md-3"><strong>Plot type:</strong></label>
 				<div class="col-md-7">
-					<select class="form-control" ng-options="item as item.description for item in rCalls" ng-model="selectedRCall"></select>
+					<ui-select ng-model="selectedRCall.selected" theme="select2" search-enabled="false" class="text-truncate">
+						<ui-select-match placeholder="Choose a dataset">{{$select.selected.description}}</ui-select-match>
+						<ui-select-choices repeat="item in rCalls">
+							<span>{{item.description}}</span>
+						</ui-select-choices>
+					</ui-select>
 				</div>
 			</div>
-			<div class="form-group" ng-repeat="(key, value) in selectedRCall.parameters">
-				<label class="control-label col-md-3">{{key}}</label>
+			<div class="form-group" ng-repeat="(key, value) in selectedRCall.selected.parameters">
+				<label class="control-label col-md-3"><strong>{{key}}:</strong></label>
 				<div class="col-md-7">
-					<select class="form-control" ng-options="item as item.description for item in rCalls" ng-model="selectedRCall[key]"></select>
+					<ui-select ng-model="selectedRCall[key]" theme="select2" search-enabled="false" class="text-truncate">
+						<ui-select-match placeholder="Please choose"></ui-select-match>
+						<ui-select-choices></ui-select-choices>
+					</ui-select>
 				</div>
 			</div>
 		</div>

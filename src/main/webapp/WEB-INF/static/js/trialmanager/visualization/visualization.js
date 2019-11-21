@@ -23,14 +23,14 @@
 		function ($scope, $q, $uibModalInstance, rPackageService) {
 
 			$scope.rCalls = [];
-			$scope.selectedRCall = null;
+			$scope.selectedRCall = {selected: null};
 
 			$scope.init = function () {
 
 				var qplotPackageId = 3;
 				rPackageService.getRCallsObjects(qplotPackageId).success(function (data) {
 					$scope.rCalls = data;
-					$scope.selectedRCall = data[0];
+					$scope.selectedRCall.selected = data[0];
 				});
 
 			};

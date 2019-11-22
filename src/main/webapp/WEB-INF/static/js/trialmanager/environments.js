@@ -161,8 +161,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			$scope.deleteEnvironment = function (index, locationId) {
 
-				// If study is saved, get updated information first on environment to be deleted
-				if (studyContext.studyId != undefined && locationId != undefined) {
+				// If study has experimental design, get updated information first on environment to be deleted
+				if ($scope.isDesignAlreadyGenerated()) {
 					studyInstanceService.getStudyInstance(locationId).then(function (studyInstance) {
 
 						// Show error if environment cannot be deleted
@@ -171,7 +171,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 							showErrorMessage('', 'Environment cannot be deleted due to internal validations (samples, sub-observations associated with the environment or advance/cross list associated with study).');
 							return;
 
-						// Show confirmation message for overwriting measurements and/or fieldmap
+							// Show confirmation message for overwriting measurements and/or fieldmap
 						} else if (studyInstance.hasMeasurements || studyInstance.hasFieldmap) {
 							// TODO get messages from file
 							var modalConfirmDelete = $scope.openConfirmModal('All observations and/or fieldmap will be lost. Do you want to proceed?', 'Yes','No');
@@ -188,13 +188,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					});
 
 
-				// Delete environment when study is not yet saved
+				// Delete environment from the UI if no experimental design yet. Study save needs to be clicked to persist
 				} else {
 					updateDeletedEnvironment(index);
 				}
 			};
 
-			// Proceed for deleting existing environment
+			// Proceed deleting existing environment
 			$scope.continueEnvironmentDeletion = function (index, locationId) {
 				studyInstanceService.deleteStudyInstance(locationId);
 				updateDeletedEnvironment(index, locationId);
@@ -355,7 +355,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				// remove 1 environment
 				$scope.temp.noOfEnvironments -= 1;
 				$scope.data.environments.splice(index, 1);
-				if (locationId == undefined) {
+				if (!$scope.isDesignAlreadyGenerated()) {
 					$scope.updateTrialInstanceNo($scope.data.environments, index);
 				}
 				$scope.data.noOfEnvironments -= 1;

@@ -159,9 +159,48 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				}
 			};
 
-			$scope.deleteEnvironment = function (index) {
-				updateDeletedEnvironment(index);
+			$scope.deleteEnvironment = function (index, locationId) {
+
+				// If study is saved, get updated information first on environment to be deleted
+				if (studyContext.studyId != undefined && locationId != undefined) {
+					studyInstanceService.getStudyInstance(locationId).then(function (studyInstance) {
+
+						// Show error if environment cannot be deleted
+						if (!studyInstance.canBeDeleted) {
+							// TODO get messages from file
+							showErrorMessage('', 'Environment cannot be deleted due to internal validations (samples, sub-observations associated with the environment or advance/cross list associated with study).');
+							return;
+
+						// Show confirmation message for overwriting measurements and/or fieldmap
+						} else if (studyInstance.hasMeasurements || studyInstance.hasFieldmap) {
+							// TODO get messages from file
+							var modalConfirmDelete = $scope.openConfirmModal('All observations and/or fieldmap will be lost. Do you want to proceed?', 'Yes','No');
+							modalConfirmDelete.result.then(function (shouldContinue) {
+								if (shouldContinue) {
+									$scope.continueEnvironmentDeletion(index, locationId);
+								}
+							});
+						} else {
+							$scope.continueEnvironmentDeletion(index, locationId);
+						}
+					}, function(errResponse) {
+						showErrorMessage($.fieldbookMessages.errorServerError, errResponse.errors[0].message);
+					});
+
+
+				// Delete environment when study is not yet saved
+				} else {
+					updateDeletedEnvironment(index);
+				}
 			};
+
+			// Proceed for deleting existing environment
+			$scope.continueEnvironmentDeletion = function (index, locationId) {
+				studyInstanceService.deleteStudyInstance(locationId);
+				updateDeletedEnvironment(index, locationId);
+				showSuccessfulMessage('', 'Environment deleted successfully.');
+			};
+
 
 			$scope.updateTrialInstanceNo = function (environments, index) {
 				for (var i = 0; i < environments.length; i++) {
@@ -294,17 +333,14 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				});
 			};
 
-			function updateDeletedEnvironment(index) {
+			function updateDeletedEnvironment(index, locationId) {
 				// remove 1 environment
 				$scope.temp.noOfEnvironments -= 1;
 				$scope.data.environments.splice(index, 1);
-				$scope.updateTrialInstanceNo($scope.data.environments, index);
-				$scope.data.noOfEnvironments -= 1;
-
-				//update the no of environments in experimental design tab
-				if (TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
-					TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.temp.noOfEnvironments;
+				if (locationId == undefined) {
+					$scope.updateTrialInstanceNo($scope.data.environments, index);
 				}
+				$scope.data.noOfEnvironments -= 1;
 
 				TrialManagerDataService.deleteEnvironment(index + 1);
 			}

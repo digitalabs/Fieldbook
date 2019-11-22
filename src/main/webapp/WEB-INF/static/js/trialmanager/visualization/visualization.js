@@ -7,11 +7,16 @@
 
 		var visualizationModalService = {};
 
-		visualizationModalService.openModal = function () {
+		visualizationModalService.openModal = function (columnsData) {
 			return $uibModal.open({
 				templateUrl: '/Fieldbook/static/angular-templates/visualization/visualizationModal.html',
 				controller: 'visualizationModalController',
-				size: 'md'
+				size: 'md',
+				resolve: {
+					columnsData: function () {
+						return columnsData
+					}
+				}
 			});
 		};
 
@@ -19,18 +24,36 @@
 
 	}]);
 
-	visualizationModule.controller('visualizationModalController', ['$scope', '$q', '$uibModalInstance', 'rPackageService',
-		function ($scope, $q, $uibModalInstance, rPackageService) {
+	visualizationModule.controller('visualizationModalController', ['$scope', '$q', '$uibModalInstance', 'rPackageService', 'columnsData',
+		function ($scope, $q, $uibModalInstance, rPackageService, columnsData) {
 
 			$scope.rCalls = [];
-			$scope.selectedRCall = {selected: null};
+			$scope.selection = {selectedRCall: null};
+			$scope.variates = columnsData.filter(column => column.variableType === 'TRAIT');
+			$scope.factors = columnsData.filter(column => column.variableType !== 'TRAIT');
+			$scope.regressionMethods = [{
+				method: 'auto',
+				description: 'auto'
+			}, {
+				method: 'lm',
+				description: 'linear model'
+			}, {
+				method: 'glm',
+				description: 'generalized linear model'
+			}, {
+				method: 'gam',
+				description: 'generalized additive model'
+			}, {
+				method: 'loess',
+				description: 'loess regression'
+			}]
 
 			$scope.init = function () {
 
 				var qplotPackageId = 3;
 				rPackageService.getRCallsObjects(qplotPackageId).success(function (data) {
 					$scope.rCalls = data;
-					$scope.selectedRCall.selected = data[0];
+					$scope.selection.selectedRCall = data[0];
 				});
 
 			};

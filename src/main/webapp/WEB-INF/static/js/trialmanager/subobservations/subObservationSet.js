@@ -814,7 +814,9 @@
 						className: 'fbk-buttons-no-border fbk-colvis-button',
 						text: '<img src="/Fieldbook/static/img/statistics.svg" height="16px" width="16px"></img>',
 						action: function (e, dt, node, config) {
-							visualizationModalService.openModal();
+							datasetService.getColumns(subObservationSet.id, $scope.isPendingView).then(function (columnsData) {
+								visualizationModalService.openModal(columnsData);
+							});
 						}
 					}, {
 						extend: 'colvis',

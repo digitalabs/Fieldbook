@@ -283,7 +283,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			};
 
-			$scope.createEnvironment = function (instanceNumber, experimentId) {
+			$scope.createEnvironment = function (instanceNumber, experimentId, index) {
 				var environment = {
 					experimentId: experimentId,
 					managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
@@ -291,14 +291,32 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
 				};
 				environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = instanceNumber;
-				$scope.data.environments.push(environment);
+				if (index != undefined) {
+					$scope.data.environments.splice(index, 0, environment);
+				} else {
+					$scope.data.environments.push(environment);
+				}
 			};
 
 			$scope.addEnvironments = function (numberOfEnvironments) {
-				var startingInstanceNumber = $scope.data.environments.length + 1;
-				for (var instanceNumber = startingInstanceNumber; instanceNumber <= numberOfEnvironments; instanceNumber++) {
-					$scope.createEnvironment(instanceNumber, null);
+				var currentNumberOfEnvironments =  $scope.data.environments.length;
+				var additionalEnvironments = numberOfEnvironments - currentNumberOfEnvironments;
+
+				var existingTrialInstanceNumbers = [];
+				angular.forEach($scope.data.environments, function (environment) {
+					existingTrialInstanceNumbers.push(parseInt(environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX]));
+				});
+
+				var instanceNumber = 1;
+				while ($scope.data.environments.length < numberOfEnvironments) {
+					while (existingTrialInstanceNumbers.includes(instanceNumber)) {
+						instanceNumber++;
+
+					}
+					$scope.createEnvironment(instanceNumber, null, instanceNumber -1);
+					existingTrialInstanceNumbers.push(instanceNumber);
 				}
+
 			};
 
 			ctrl.updateEnvironmentVariables = function (type, entriesIncreased) {

@@ -11,13 +11,13 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.easymock.EasyMock;
+import org.generationcp.commons.constant.AppConstants;
+import org.generationcp.commons.pojo.treeview.TreeNode;
+import org.generationcp.commons.pojo.treeview.TreeTableNode;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -33,10 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ui.ExtendedModelMap;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import org.generationcp.commons.constant.AppConstants;
-import com.efficio.pojos.treeview.TreeNode;
-import com.efficio.pojos.treeview.TreeTableNode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 

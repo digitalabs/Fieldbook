@@ -11,13 +11,9 @@
 
 package com.efficio.fieldbook.web.ontology.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
+import org.generationcp.commons.util.TreeViewUtil;
 import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
@@ -35,9 +31,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * This controller handles the ontology screen.

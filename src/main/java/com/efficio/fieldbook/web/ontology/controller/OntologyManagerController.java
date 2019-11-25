@@ -11,19 +11,19 @@
 
 package com.efficio.fieldbook.web.ontology.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.ontology.bean.EnumerationOperation;
+import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyMethodForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyModalForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyPropertyForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyScaleForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyTraitClassForm;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.TreeViewUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.VariableConstraints;
@@ -52,16 +52,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.ontology.bean.EnumerationOperation;
-import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyMethodForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyModalForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyPropertyForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyScaleForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyTraitClassForm;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * This controller handles the ontology screen.

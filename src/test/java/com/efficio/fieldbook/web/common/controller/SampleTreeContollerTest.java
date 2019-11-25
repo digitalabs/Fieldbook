@@ -1,7 +1,7 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.pojos.treeview.TreeNode;
 import junit.framework.Assert;
+import org.generationcp.commons.pojo.treeview.TreeNode;
 import org.generationcp.middleware.enumeration.SampleListType;
 import org.generationcp.middleware.pojos.ListMetadata;
 import org.generationcp.middleware.pojos.SampleList;

@@ -205,10 +205,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			$scope.updateTrialInstanceNo = function (environments, index) {
 				for (var i = 0; i < environments.length; i++) {
 					var environment = environments[i];
+					var expectedTrialInstanceNo = i+1;
 					var trialInstanceNo = environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX];
-					if (trialInstanceNo > index) {
-						trialInstanceNo -= 1;
-						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = trialInstanceNo;
+					if (trialInstanceNo > expectedTrialInstanceNo) {
+						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = expectedTrialInstanceNo;
 					}
 				}
 			};

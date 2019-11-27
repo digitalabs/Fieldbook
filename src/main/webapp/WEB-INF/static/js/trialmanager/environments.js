@@ -167,14 +167,12 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 						// Show error if environment cannot be deleted
 						if (!studyInstance.canBeDeleted) {
-							// TODO get messages from file
-							showErrorMessage('', 'Environment cannot be deleted due to internal validations (samples, sub-observations associated with the environment or advance/cross list associated with study).');
+							showErrorMessage('', $.environmentMessages.environmentCannotBeDeleted);
 							return;
 
-							// Show confirmation message for overwriting measurements and/or fieldmap
+						// Show confirmation message for overwriting measurements and/or fieldmap
 						} else if (studyInstance.hasMeasurements || studyInstance.hasFieldmap) {
-							// TODO get messages from file
-							var modalConfirmDelete = $scope.openConfirmModal('All observations and/or fieldmap will be lost. Do you want to proceed?', 'Yes','No');
+							var modalConfirmDelete = $scope.openConfirmModal($.environmentMessages.environmentHasDataThatWillBeLost, 'Yes','No');
 							modalConfirmDelete.result.then(function (shouldContinue) {
 								if (shouldContinue) {
 									$scope.continueEnvironmentDeletion(index, locationId);
@@ -197,8 +195,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			// Proceed deleting existing environment
 			$scope.continueEnvironmentDeletion = function (index, locationId) {
 				studyInstanceService.deleteStudyInstance(locationId);
-				updateDeletedEnvironment(index, locationId);
-				showSuccessfulMessage('', 'Environment deleted successfully.');
+				updateDeletedEnvironment(index);
+				showSuccessfulMessage('', $.environmentMessages.environmentDeletedSuccessfully);
 			};
 
 
@@ -351,7 +349,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				});
 			};
 
-			function updateDeletedEnvironment(index, locationId) {
+			function updateDeletedEnvironment(index) {
 				// remove 1 environment
 				$scope.temp.noOfEnvironments -= 1;
 				$scope.data.environments.splice(index, 1);

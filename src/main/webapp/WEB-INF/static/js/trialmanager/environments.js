@@ -170,7 +170,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 							showErrorMessage('', $.environmentMessages.environmentCannotBeDeleted);
 							return;
 
-						// Show confirmation message for overwriting measurements and/or fieldmap
+							// Show confirmation message for overwriting measurements and/or fieldmap
 						} else if (studyInstance.hasMeasurements || studyInstance.hasFieldmap) {
 							var modalConfirmDelete = $scope.openConfirmModal($.environmentMessages.environmentHasDataThatWillBeLost, 'Yes','No');
 							modalConfirmDelete.result.then(function (shouldContinue) {
@@ -186,7 +186,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					});
 
 
-				// Delete environment from the UI if no experimental design yet. Study save needs to be clicked to persist
+					// Delete environment from the UI if no experimental design yet. Study save needs to be clicked to persist
 				} else {
 					updateDeletedEnvironment(index);
 				}
@@ -274,15 +274,16 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				// create and save the environment in the server
 				studyInstanceService.createStudyInstance().then(function (studyInstance) {
 					// update the environment table
-					$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
+					$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.instanceDbId, studyInstance.experimentId);
 					$scope.data.noOfEnvironments++;
 					$scope.isDisableAddEnvironment = false;
 				});
 
 			};
 
-			$scope.createEnvironment = function (instanceNumber, experimentId, index) {
+			$scope.createEnvironment = function (instanceNumber, locationId, experimentId, index) {
 				var environment = {
+					locationId : locationId,
 					experimentId: experimentId,
 					managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
 						$scope.settings.managementDetails),
@@ -297,9 +298,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			};
 
 			$scope.addEnvironments = function (numberOfEnvironments) {
-				var currentNumberOfEnvironments =  $scope.data.environments.length;
-				var additionalEnvironments = numberOfEnvironments - currentNumberOfEnvironments;
-
 				var existingTrialInstanceNumbers = [];
 				angular.forEach($scope.data.environments, function (environment) {
 					existingTrialInstanceNumbers.push(parseInt(environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX]));
@@ -311,7 +309,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						instanceNumber++;
 
 					}
-					$scope.createEnvironment(instanceNumber, null, instanceNumber -1);
+					$scope.createEnvironment(instanceNumber, null, null, instanceNumber -1);
 					existingTrialInstanceNumbers.push(instanceNumber);
 				}
 

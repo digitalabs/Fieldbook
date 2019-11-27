@@ -1,11 +1,11 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.pojos.treeview.TreeNode;
-import com.efficio.pojos.treeview.TreeTableNode;
 import junit.framework.Assert;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.generationcp.commons.pojo.treeview.TreeNode;
+import org.generationcp.commons.pojo.treeview.TreeTableNode;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 

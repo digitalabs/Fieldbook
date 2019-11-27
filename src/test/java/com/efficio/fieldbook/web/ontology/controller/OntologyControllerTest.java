@@ -11,15 +11,13 @@
 
 package com.efficio.fieldbook.web.ontology.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.generationcp.commons.pojo.treeview.TreeNode;
+import org.generationcp.commons.util.TreeViewUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.CvId;
@@ -41,9 +39,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
-import com.efficio.pojos.treeview.TreeNode;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class OntologyControllerTest extends AbstractBaseIntegrationTest {
 

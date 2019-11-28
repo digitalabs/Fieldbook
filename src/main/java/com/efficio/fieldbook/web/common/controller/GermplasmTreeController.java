@@ -909,7 +909,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		}
 		final List<TreeNode> childNodes = TreeViewUtil.convertGermplasmListToTreeView(rootLists, isFolderOnly);
 
-		final Map<Integer, ListMetadata> allListMetaData = this.germplasmListManager.getGermplasmFolderMetadata(rootLists);
+		final Map<Integer, ListMetadata> allListMetaData = this.germplasmListManager.getGermplasmListMetadata(rootLists);
 
 		for (final TreeNode newNode : childNodes) {
 			final ListMetadata nodeMetaData = allListMetaData.get(Integer.parseInt(newNode.getKey()));

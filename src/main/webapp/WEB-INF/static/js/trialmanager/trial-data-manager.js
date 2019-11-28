@@ -215,7 +215,6 @@
 				},
 				applicationData: {
 					unsavedTreatmentFactorsAvailable: false,
-					unsavedTraitsAvailable: false,
 					germplasmListCleared: false,
 					isGeneratedOwnDesign: false,
 					advanceType: 'study',
@@ -349,12 +348,6 @@
 				deleteEnvironment: function(index) {
 					var refreshMeasurementDeferred = $q.defer();
 					var deleteMeasurementPossible = index !== 0;
-					// this scenario cover the update of measurement table
-					// when the user delete an environment for a existing study with or wihout measurement data
-					if (deleteMeasurementPossible) {
-						service.applicationData.unsavedTraitsAvailable = true;
-					}
-
 					return refreshMeasurementDeferred.promise;
 				},
 
@@ -404,7 +397,6 @@
 									showSuccessfulMessage('', saveSuccessMessage);
 									notifySaveEventListeners();
 									window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
-									service.applicationData.unsavedTraitsAvailable = false;
 									studyStateService.resetState();
 								});
 							}, function (response) {
@@ -428,7 +420,6 @@
 
 										derivedVariableService.displayExecuteCalculateVariableMenu();
 										derivedVariableService.showWarningIfCalculatedVariablesAreOutOfSync();
-										service.applicationData.unsavedTraitsAvailable = false;
 										setupSettingsVariables();
 										studyStateService.resetState();
 									});
@@ -449,7 +440,6 @@
 										window.location = '/Fieldbook/TrialManager/openTrial/' + trialID;
 
 										derivedVariableService.displayExecuteCalculateVariableMenu();
-										service.applicationData.unsavedTraitsAvailable = false;
 									}, function () {
 										showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 									});

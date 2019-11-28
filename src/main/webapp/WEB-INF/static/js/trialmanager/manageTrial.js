@@ -429,20 +429,16 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			};
 
-			$scope.displayMeasurementOnlyActions = function () {
-				return studyStateService.hasGeneratedDesign() && !TrialManagerDataService.applicationData.unsavedTraitsAvailable;
-			};
-
 			$scope.hasGermplasmListSelected = function () {
 				return TrialManagerDataService.applicationData.germplasmListSelected;
 			};
 
 			$scope.displayGermplasmOrMeasurmentOnlyActions = function () {
-				return this.hasGermplasmListSelected() || this.displayMeasurementOnlyActions();
+				return this.hasGermplasmListSelected() || studyStateService.hasGeneratedDesign();
 			};
 
 			$scope.displayExecuteCalculatedVariableOnlyActions = function () {
-				return derivedVariableService.isStudyHasCalculatedVariables && this.displayMeasurementOnlyActions();
+				return derivedVariableService.isStudyHasCalculatedVariables && studyStateService.hasGeneratedDesign();
 			};
 
 			$scope.reloadActionMenuConditions = function () {

@@ -87,7 +87,7 @@
 				var rCall = angular.copy($scope.selection.selectedRCall);
 				observationUnitsSearch.filter.filterColumns = getFilterColumns(rCall);
 				if (rCall.description === 'Boxplot') {
-					rCall.parameters.x = 'factor(\"' + rCall.parameters.x + '\")';
+					rCall.parameters.x = 'factor(' + rCall.parameters.x + ')';
 				}
 				datasetService.getObservationForVisualization(datasetId, JSON.stringify(observationUnitsSearch)).then(function (data) {
 					rCall.parameters.data = JSON.stringify(data);

@@ -44,6 +44,8 @@
 		'datasetId', 'observationUnitsSearch', 'visualizationModalService',
 		function ($scope, $q, $uibModalInstance, rPackageService, datasetService, datasetId, observationUnitsSearch, visualizationModalService) {
 
+			var OBSERVATION_UNIT_ID = 8201;
+
 			$scope.rCalls = [];
 			$scope.selection = {selectedRCall: null};
 			$scope.variates = [];
@@ -72,9 +74,8 @@
 					$scope.selection.selectedRCall = data[0];
 				});
 				datasetService.getColumns(datasetId, observationUnitsSearch.draftMode).then(function (columnsData) {
-					// Only show numeric and categorical trait variables
-					$scope.variates = columnsData.filter(column => column.variableType === 'TRAIT' && (column.dataTypeCode === 'C' || column.dataTypeCode === 'N'));
-					$scope.factors = columnsData.filter(column => column.variableType !== 'TRAIT');
+					$scope.variates = columnsData.filter(column => column.variableType === 'TRAIT');
+					$scope.factors = columnsData.filter(column => column.variableType !== 'TRAIT' && column.termId !== OBSERVATION_UNIT_ID);
 				});
 			};
 
@@ -86,7 +87,7 @@
 				var rCall = angular.copy($scope.selection.selectedRCall);
 				observationUnitsSearch.filter.filterColumns = getFilterColumns(rCall);
 				if (rCall.description === 'Boxplot') {
-					rCall.parameters.x = 'factor(' + rCall.parameters.x + ')';
+					rCall.parameters.x = 'factor(\"' + rCall.parameters.x + '\")';
 				}
 				datasetService.getObservationForVisualization(datasetId, JSON.stringify(observationUnitsSearch)).then(function (data) {
 					rCall.parameters.data = JSON.stringify(data);

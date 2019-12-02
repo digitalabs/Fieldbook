@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -266,6 +267,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			importData.setConditions(referenceWorkbook.getConditions());
 
 			this.dataImportService.addLocationIDVariableIfNotExists(importData, importData.getFactors(), this.contextUtil.getCurrentProgramUUID());
+			this.processExperimentalDesign(importData, workbook);
 			this.dataImportService.assignLocationIdVariableToEnvironmentDetailSection(importData);
 			this.dataImportService.removeLocationNameVariableIfExists(importData);
 			this.fieldbookService.addStudyUUIDConditionAndObsUnitIDFactorToWorkbook(importData, false);
@@ -278,6 +280,9 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			return this.wrapFormResult(AngularOpenSheetController.URL, request);
 
+		} catch (WorkbookParserException e) {
+			AngularMapOntologyController.LOG.error(e.getMessage(), e);
+			return this.wrapFormResult(Arrays.asList(e.getMessage()));
 		} catch (final Exception e) {
 			AngularMapOntologyController.LOG.error(e.getMessage(), e);
 			final List<Message> error = new ArrayList<>();
@@ -286,6 +291,19 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			return this.wrapFormResult(errorMessages);
 		}
 
+	}
+
+	void processExperimentalDesign(final org.generationcp.middleware.domain.etl.Workbook importData, final Workbook workbook)  throws WorkbookParserException{
+		final List<String> headers = this.etlService.retrieveColumnHeaders(workbook, this.userSelection, false);
+		final List<MeasurementVariable> variableList = importData.getFactors();
+		int exptDesignColumnIndex = -1;
+		for (final MeasurementVariable measurementVariable : variableList) {
+			if(TermId.EXPERIMENT_DESIGN_FACTOR.getId() == measurementVariable.getTermId()) {
+				 exptDesignColumnIndex = headers.indexOf(measurementVariable.getName());
+			}
+		}
+		final String valueFromObsevations = this.etlService.getExperimentalDesignValueFromObservationSheet(workbook, userSelection, exptDesignColumnIndex);
+		this.dataImportService.processExperimentalDesign(importData, this.contextUtil.getCurrentProgramUUID(), valueFromObsevations);
 	}
 
 	@ModelAttribute("uploadForm")

@@ -146,13 +146,22 @@ public interface ETLService {
    * @return
    */
   boolean headersContainsObsUnitId(final org.generationcp.middleware.domain.etl.Workbook importData);
-  
+
   /**
    * Returns all available entry types at the moment in the form of a map <Name, CVTermId> i.e <C,10170>
-   * @param programUUID 
-   * 
+   * @param programUUID
+   *
    * @return map <Name, CVTermId>
    **/
   Map<String, Integer> retrieveAvailableEntryTypes(String programUUID);
+
+  /**
+   * Returns the experimental design value in the observation sheet
+   * @param workbook
+   * @param userSelection
+   * @param columnIndex
+   * @return
+   */
+  String getExperimentalDesignValueFromObservationSheet(Workbook workbook, UserSelection userSelection, final int columnIndex);
 
 }

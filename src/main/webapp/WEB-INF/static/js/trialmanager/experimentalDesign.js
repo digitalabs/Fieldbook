@@ -76,22 +76,30 @@
 
 						if ($scope.data.designType != null && $scope.data.designType !== '') {
 							$scope.currentDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
+							if($scope.currentDesignType) {
+								if ($scope.currentDesignType.params !== null) {
+									$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
+								} else {
+									$scope.currentParams = null;
+								}
 
-							if ($scope.currentDesignType.params !== null) {
-								$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
+								if (!$scope.settings.showAdvancedOptions[$scope.data.designType]) {
+									$scope.settings.showAdvancedOptions[$scope.data.designType] = $scope.data.useLatenized;
+								}
+
+								if ($scope.currentDesignType !== null && $scope.currentDesignType.name === 'Custom Import Design') {
+									$http.get('/Fieldbook/DesignImport/getCustomImportDesignTypeDetails').then(function(result) {
+										$scope.currentDesignType.templateName = result.data.templateName;
+									});
+								}
 							} else {
-								$scope.currentParams = null;
-							}
-
-							if (!$scope.settings.showAdvancedOptions[$scope.data.designType]) {
-								$scope.settings.showAdvancedOptions[$scope.data.designType] = $scope.data.useLatenized;
-							}
-
-							if ($scope.currentDesignType !== null && $scope.currentDesignType.name === 'Custom Import Design') {
-								$http.get('/Fieldbook/DesignImport/getCustomImportDesignTypeDetails').then(function(result) {
-									$scope.currentDesignType.templateName = result.data.templateName;
+								$http.get('/Fieldbook/TrialManager/openTrial/getExperimentalDesignName/' + $scope.data.designType).then(function(result) {
+									$scope.currentDesignType = [];
+									$scope.currentDesignType.id = $scope.data.designType;
+									$scope.currentDesignType.name = result.data.name;
 								});
 							}
+
 						}
 
 						$scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
@@ -370,6 +378,7 @@
 
 					$scope.toggleDesignView = function() {
 						var selectedExperimentDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
+						if($scope.data.designType !== null && !selectedExperimentDesignType) return true;
 						return ($scope.applicationData.isGeneratedOwnDesign
 							|| ($scope.data.designType !== null
 							&& $scope.data.designType !== ''
@@ -379,6 +388,7 @@
 
 					$scope.isImportedDesign = function() {
 						var selectedExperimentDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
+						if(!selectedExperimentDesignType) return true;
 						return $scope.data.designType != null
 							&& $scope.data.designType !== ''
 							&& selectedExperimentDesignType.name === 'Custom Import Design';
@@ -386,6 +396,7 @@
 
 					$scope.isBVDesign = function() {
 						var selectedExperimentDesignType = TrialManagerDataService.getDesignTypeById($scope.data.designType, $scope.designTypes);
+						if(!selectedExperimentDesignType) return false;
 						return $scope.data.designType != null
 							&& $scope.data.designType !== ''
 							&& selectedExperimentDesignType.name !== 'Custom Import Design';
@@ -660,7 +671,7 @@
 
 					$scope.showOnlyIfNumberOfBlocksIsSpecified = function() {
 
-						if ($scope.currentDesignType.id === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
+						if ($scope.currentDesignType && $scope.currentDesignType.id === DESIGN_TYPE.AUGMENTED_RANDOMIZED_BLOCK) {
 							if (!$scope.data.numberOfBlocks && $scope.data.numberOfBlocks !== 0) {
 								return false;
 							}
@@ -671,7 +682,7 @@
 
 					$scope.showOnlyIfNumberOfBlockSizeIsSpecified = function() {
 
-						if ($scope.currentDesignType.id === DESIGN_TYPE.P_REP) {
+						if ($scope.currentDesignType && $scope.currentDesignType.id === DESIGN_TYPE.P_REP) {
 							if (!$scope.data.blockSize && $scope.data.blockSize !== 0) {
 								return false;
 							}
@@ -682,7 +693,7 @@
 
 					$scope.showOnlyIfNumberOfReplicationsCountIsSpecified = function() {
 
-						if ($scope.currentDesignType.id === DESIGN_TYPE.P_REP) {
+						if ($scope.currentDesignType && $scope.currentDesignType.id === DESIGN_TYPE.P_REP) {
 							if (!$scope.data.replicationsCount && $scope.data.replicationsCount !== 0) {
 								return false;
 							}

@@ -686,6 +686,7 @@
 					byOutOfSync: $scope.selectedStatusFilter === "4" || null,
 					byOverwritten: $scope.selectedStatusFilter === "5" || null,
 					variableId: variableId,
+					filterColumns: [],
 					filteredValues: $scope.columnsObj.columns.reduce(function (map, column) {
 						var columnData = column.columnData;
 						columnData.isFiltered = false;
@@ -814,9 +815,17 @@
 						className: 'fbk-buttons-no-border fbk-colvis-button',
 						text: '<img src="/Fieldbook/static/img/statistics.svg" height="16px" width="16px"></img>',
 						action: function (e, dt, node, config) {
-							datasetService.getColumns(subObservationSet.id, $scope.isPendingView).then(function (columnsData) {
-								visualizationModalService.openModal(columnsData);
-							});
+
+							var observationUnitsSearch = {
+								// We send all the data (with/without filter) to OpenCPU server,
+								// No pagination is needed.
+								sortedRequest: null,
+								instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+								draftMode: $scope.isPendingView,
+								filter: getFilter()
+							};
+
+							visualizationModalService.openModal(subObservationSet.id, observationUnitsSearch);
 						}
 					}, {
 						extend: 'colvis',

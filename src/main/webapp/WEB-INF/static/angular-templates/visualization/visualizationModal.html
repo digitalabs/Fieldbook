@@ -35,7 +35,7 @@
 				<label ng-if="key == 'binwidth'" class="control-label col-md-4"><strong>Bin Width:</strong></label>
 				<div class="col-md-6">
 					<!-- Scatterplot -->
-					<ui-select ng-if="(key == 'method')" ng-model="selection.selectedRCall[key]" theme="select2" search-enabled="false" class="text-truncate">
+					<ui-select ng-if="(key == 'method')" ng-model="selection.selectedRCall.parameters[key]" theme="select2" search-enabled="false" class="text-truncate">
 						<ui-select-match placeholder="Please choose">{{$select.selected.description}}</ui-select-match>
 						<ui-select-choices repeat="item.method as item in regressionMethods">
 							<span>{{item.description}}</span>

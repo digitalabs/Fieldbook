@@ -23,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -149,7 +150,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 
-			this.etlService.mergeVariableData(variables, workbook, this.userSelection);
+			this.etlService.mergeVariableData(variables, workbook, this.userSelection, true);
 
 			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService.convertToWorkbook(this.userSelection);
 
@@ -247,8 +248,8 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/confirm", method = RequestMethod.POST)
-	public Map<String, Object> confirmImport(@RequestBody final VariableDTO[] variables, final HttpSession session,
+	@RequestMapping(value = "/confirm/{maintainHeaderMapping}", method = RequestMethod.POST)
+	public Map<String, Object> confirmImport(@RequestBody final VariableDTO[] variables, @PathVariable final boolean maintainHeaderMapping, final HttpSession session,
 			final HttpServletRequest request) {
 
 		try {
@@ -256,7 +257,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			this.userSelection.clearMeasurementVariables();
 
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
-			this.etlService.mergeVariableData(variables, workbook, this.userSelection);
+			this.etlService.mergeVariableData(variables, workbook, this.userSelection, maintainHeaderMapping);
 			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService.convertToWorkbook(this.userSelection);
 
 			final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService

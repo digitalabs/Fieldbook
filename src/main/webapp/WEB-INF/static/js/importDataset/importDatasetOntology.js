@@ -238,7 +238,7 @@
 
 				var postData = $scope.mappingdata.germplasm.concat($scope.mappingdata.trialDesign).concat($scope.mappingdata.trialEnvironment).concat($scope.mappingdata.variate);
 
-				myHttp.post(APPLICATION_BASE + "/etl/workbook/mapOntology/confirm", postData).then(function (response) {
+				myHttp.post(APPLICATION_BASE + "/etl/workbook/mapOntology/confirm/" + $scope.advancedOptions.maintainHeaderNaming, postData).then(function (response) {
 					if (response.data.success) {
 						window.location.href = response.data.redirectUrl;
 					} else {

@@ -476,7 +476,7 @@ public class ETLServiceImpl implements ETLService {
 	@Override
 	public void mergeVariableData(
 		final VariableDTO[] variables, final Workbook workbook,
-		final UserSelection userSelection) {
+		final UserSelection userSelection, final boolean maintainHeaderMapping) {
 
 		for (final VariableDTO dto : variables) {
 
@@ -486,6 +486,10 @@ public class ETLServiceImpl implements ETLService {
 
 			final MeasurementVariable variable = new MeasurementVariable();
 			dto.populateMeasurementVariable(variable);
+			if(!maintainHeaderMapping) {
+				variable.setAlias(dto.getHeaderName());
+				variable.setName(dto.getVariable());
+			}
 
 			final PhenotypicType type = variable.getRole();
 			try {
@@ -530,7 +534,8 @@ public class ETLServiceImpl implements ETLService {
 		final Map<Integer, MeasurementVariable> variableIndexMap = new LinkedHashMap<>();
 
 		for (final MeasurementVariable measurementVariable : variableList) {
-			final int columnIndex = columnHeaders.indexOf(measurementVariable.getName());
+			final int columnIndex = columnHeaders.indexOf(measurementVariable.getName()) == -1 ?
+				columnHeaders.indexOf(measurementVariable.getAlias()) : columnHeaders.indexOf(measurementVariable.getName());
 			if (columnIndex != -1) {
 				variableIndexMap.put(columnIndex, measurementVariable);
 			}

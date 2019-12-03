@@ -24,6 +24,11 @@
 			$scope.missingTrial = false;
 			$scope.unmappedPresent = false;
 
+			$scope.advancedOptions = {
+				showAdvancedOptions: false,
+				maintainHeaderNaming: false,
+			};
+
 			$scope.uiSortOpts = {
 
 				connectWith: '.list-group',
@@ -145,6 +150,10 @@
 				} else {
 					return 'Apply Mapping';
 				}
+			};
+
+			$scope.toggleAdvancedOptions = function () {
+				$scope.advancedOptions.showAdvancedOptions = !$scope.advancedOptions.showAdvancedOptions;
 			};
 
 			$scope.performValidateHeaderMapping = function () {

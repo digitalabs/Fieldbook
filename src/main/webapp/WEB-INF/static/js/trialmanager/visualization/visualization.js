@@ -99,7 +99,7 @@
 					}).then(function (response) {
 						visualizationModalService.showImageModal(response.headers().location + 'graphics/1/svg');
 					}).catch(function (errorResponse) {
-						showErrorMessage('', $.fieldbookMessages.errorPlotGraphGeneration + errorResponse.data);
+						showErrorMessage('', $.fieldbookMessages.errorPlotGraphGeneration);
 					});
 				} else {
 					showErrorMessage('', $.fieldbookMessages.errorPlotGraphRequiredFields);

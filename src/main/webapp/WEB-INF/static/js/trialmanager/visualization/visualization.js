@@ -45,6 +45,11 @@
 		function ($scope, $q, $uibModalInstance, rPackageService, datasetService, datasetId, observationUnitsSearch, visualizationModalService) {
 
 			var OBSERVATION_UNIT_ID = 8201;
+			var PLOT_TYPES = {
+				SCATTERPLOT: 'Scatterplot',
+				BOXPLOT: 'Boxplot',
+				HISTOGRAM: 'Histogram'
+			};
 
 			$scope.rCalls = [];
 			$scope.selection = {selectedRCall: null};
@@ -84,28 +89,61 @@
 			};
 
 			$scope.generate = function () {
-				var rCall = angular.copy($scope.selection.selectedRCall);
-				observationUnitsSearch.filter.filterColumns = getFilterColumns(rCall);
-				if (rCall.description === 'Boxplot') {
-					rCall.parameters.x = 'factor(' + rCall.parameters.x + ')';
+
+				if (hasRequiredFields($scope.selection.selectedRCall)) {
+					var rCall = prepareParameters(angular.copy($scope.selection.selectedRCall));
+					observationUnitsSearch.filter.filterColumns = getFilterColumns($scope.selection.selectedRCall);
+					datasetService.getObservationForVisualization(datasetId, JSON.stringify(observationUnitsSearch)).then(function (data) {
+						rCall.parameters.data = JSON.stringify(data);
+						return rPackageService.executeRCall(rCall.endpoint, rCall.parameters);
+					}).then(function (response) {
+						visualizationModalService.showImageModal(response.headers().location + 'graphics/1/svg');
+					}).catch(function (errorResponse) {
+						showErrorMessage('', $.fieldbookMessages.errorPlotGraphGeneration + errorResponse.data);
+					});
+				} else {
+					showErrorMessage('', $.fieldbookMessages.errorPlotGraphRequiredFields);
 				}
-				datasetService.getObservationForVisualization(datasetId, JSON.stringify(observationUnitsSearch)).then(function (data) {
-					rCall.parameters.data = JSON.stringify(data);
-					return rPackageService.executeRCall(rCall.endpoint, rCall.parameters);
-				}).then(function (response) {
-					visualizationModalService.showImageModal(response.headers().location + 'graphics/1/svg');
-				}).catch(function (errorResponse) {
-					showErrorMessage('', 'There\'s an error in generating graphic plot. Please check the variables have data and have correct data type. ' + errorResponse.data);
-				});
+
 			};
 
+			function hasRequiredFields(rCall) {
+				if (rCall.description === PLOT_TYPES.SCATTERPLOT) {
+					return rCall.parameters.x && rCall.parameters.y && rCall.parameters.method;
+				} else if (rCall.description === PLOT_TYPES.HISTOGRAM) {
+					return rCall.parameters.x;
+				} else if (rCall.description === PLOT_TYPES.BOXPLOT) {
+					return rCall.parameters.x && rCall.parameters.y;
+				}
+			}
+
 			function getFilterColumns(rCall) {
+
+				// Only the variables selected from the UI should be included in the data that will be sent to OpenCPU.
 				var filterColumns = [];
 				filterColumns.push(rCall.parameters.x);
 				if (rCall.description !== 'Histogram') {
 					filterColumns.push(rCall.parameters.y);
 				}
 				return filterColumns;
+			}
+
+			function prepareParameters(rCall) {
+
+				// Make sure that field names are wrapped in backticks (`) to escape the spaces in them if there's any.
+				if (rCall.description === PLOT_TYPES.BOXPLOT) {
+					// If plot graph is a Boxplot, we must wrap the field name with R 'factor' function
+					// so that R will know that the field is a factor
+					rCall.parameters.x = 'factor(`' + rCall.parameters.x + '`)';
+				} else {
+					rCall.parameters.x = '`' + rCall.parameters.x + '`';
+				}
+
+				if (rCall.description !== PLOT_TYPES.HISTOGRAM) {
+					rCall.parameters.y = '`' + rCall.parameters.y + '`';
+				}
+
+				return rCall;
 			}
 
 			$scope.init();

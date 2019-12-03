@@ -43,6 +43,7 @@ import org.generationcp.commons.service.UserTreeStateService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.TreeViewUtil;
+import org.generationcp.commons.workbook.generator.RowColumnType;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -907,7 +908,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		} else {
 			throw new IllegalStateException("Add a message");
 		}
-		final List<TreeNode> childNodes = TreeViewUtil.convertGermplasmListToTreeView(rootLists, isFolderOnly);
+
+		final List<UserDefinedField> listTypes = germplasmDataManager
+				.getUserDefinedFieldByFieldTableNameAndType(RowColumnType.LIST_TYPE.getFtable(), RowColumnType.LIST_TYPE.getFtype());
+
+		final List<TreeNode> childNodes = TreeViewUtil.convertGermplasmListToTreeView(rootLists, isFolderOnly, listTypes);
 
 		final Map<Integer, ListMetadata> allListMetaData = this.germplasmListManager.getGermplasmListMetadata(rootLists);
 

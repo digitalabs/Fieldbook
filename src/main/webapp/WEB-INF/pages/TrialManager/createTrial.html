@@ -75,7 +75,7 @@
 										   id="import-design-url-link"
 										   th:text="#{study.studydetails.action.import.design}">Import Design</a>
 									</li>
-									<li ng-show="displayMeasurementOnlyActions()">
+									<li ng-show="hasDesignGenerated">
 										<a href="" style="display: none" id="label-printing-url"
 										   th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
 										<a ng-click="printLabels()" id="label-printing-url-link"
@@ -120,7 +120,7 @@
 								</ul>
                             </li>
 
-							<li ng-show="displayMeasurementOnlyActions()" class="dropdown-submenu pull-left">
+							<li ng-show="hasDesignGenerated" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Field map options</a>
 								<ul class="dropdown-menu" style="margin-left: -20px;">
 									<li>
@@ -139,11 +139,11 @@
 							<li ng-show="displayGermplasmOrMeasurmentOnlyActions()" class="dropdown-submenu pull-left">
 								<a tabindex="-1" href="#">Data collection options</a>
 								<ul class="dropdown-menu" style="margin-left: -25px; width: 193px">
-									<li ng-show="displayMeasurementOnlyActions()">
+									<li ng-show="hasDesignGenerated">
 										<a ng-click="showExportStudyModal()" id="export-study-link"
 										   th:text="#{study.studydetails.action.export.study}">Export Study Book</a>
 									</li>
-									<li ng-show="displayMeasurementOnlyActions()">
+									<li ng-show="hasDesignGenerated">
 										<a href="" style="display: none" id="open-study-url"></a>
 										<a ng-click="showImportStudyModal()" id="open-study-url-link"
 										   th:text="#{study.studydetails.action.import.study}">Import Observations</a>

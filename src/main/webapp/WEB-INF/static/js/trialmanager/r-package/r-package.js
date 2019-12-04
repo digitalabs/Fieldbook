@@ -1,9 +1,12 @@
 (function () {
 	'use strict';
 
-	var rPackageModule = angular.module('r-package', []);
+	var rPackageModule = angular.module('r-package', ['fieldbook-utils']);
 
-	rPackageModule.factory('rPackageService', ['$http', function ($http) {
+	rPackageModule.factory('rPackageService', ['$http', 'serviceUtilities', function ($http, serviceUtilities) {
+
+		var successHandler = serviceUtilities.restSuccessHandler,
+			failureHandler = serviceUtilities.restFailureHandler;
 
 		var rPackageService = {};
 
@@ -11,23 +14,29 @@
 			return $http({
 				method: 'GET',
 				url: '/bmsapi/r-packages/' + +packageId + '/r-calls'
-			});
+			}).then(successHandler, failureHandler);
 		};
 
 		rPackageService.executeRCall = function (url, parameters) {
-			delete $http.defaults.headers["x-auth-token"];
-
 			return $http({
 				method: 'POST',
 				url: url,
 				data: $.param(parameters),
 				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 				override: true
-			});
+			}).error(rCallErrorHandler);
 		};
 
-		return rPackageService;
+		function rCallErrorHandler(data, status) {
+			if (status === 400) {
+				// http status 400 (bad request) means OpenCPU cannot process the request due to bad/invalid data.
+				showErrorMessage('', $.fieldbookMessages.errorPlotGraphGeneration);
+			} else {
+				showErrorMessage('', $.fieldbookMessages.errorPlotGraphGenericError);
+			}
+		}
 
+		return rPackageService;
 	}]);
 
 

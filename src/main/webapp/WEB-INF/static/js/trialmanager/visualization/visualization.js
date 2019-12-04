@@ -79,11 +79,14 @@
 					$scope.selection.selectedRCall = data[0];
 				});
 				datasetService.getColumns(datasetId, observationUnitsSearch.draftMode).then(function (columnsData) {
+
+					var variateVariableTypes = ['TRAIT', 'SELECTION_METHOD'];
+
 					$scope.variates = columnsData.filter(column => {
-						return 'TRAIT' === column.variableType;
+						return variateVariableTypes.includes(column.variableType);
 					});
 					$scope.factors = columnsData.filter(column => {
-						return 'TRAIT' !== column.variableType && OBSERVATION_UNIT_ID !== column.termId;
+						return !variateVariableTypes.includes(column.variableType) && OBSERVATION_UNIT_ID !== column.termId;
 					});
 				});
 			};

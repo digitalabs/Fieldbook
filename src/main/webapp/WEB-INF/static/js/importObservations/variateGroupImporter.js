@@ -225,7 +225,8 @@
 		}
 	]);
 
-	app.service('ImportMappingService', ['$http', '$q', '_', 'Messages', 'datasetService', function ($http, $q, _, Messages, datasetService) {
+	app.service('ImportMappingService', ['$http', '$rootScope', '$q', '_', 'Messages', 'datasetService', function ($http, $rootScope, $q,
+		_, Messages, datasetService) {
 
 		function validateMappingAndSave(maintainHeaderNaming) {
 
@@ -296,6 +297,10 @@
 									variableId: value[i].variable.id,
 									studyAlias: maintainHeaderNaming ? value[i].name : value[i].variable.name,
 								}));
+								if(!maintainHeaderNaming) {
+									var headerIndex = $rootScope.importedData[0].findIndex(name => name === value[i].name);
+									$rootScope.importedData[0][headerIndex] = value[i].variable.name;
+								}
 							} else {
 								showErrorMessage('', 'Variable already exists in dataset');
 								deferred.reject();

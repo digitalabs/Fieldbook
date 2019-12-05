@@ -123,6 +123,7 @@
 
 			$scope.submitImport = function () {
 				$scope.validateNewVariables().then(function (result) {
+					$rootScope.importedData  = $scope.importedData;
 					if (result.length > 0) {
 						ctrl.showAddVariableConfirmModal(result, datasetId);
 					} else {
@@ -181,7 +182,7 @@
 			};
 
 			$scope.importObservations = function (processWarnings) {
-				datasetService.importObservations(datasetId, $scope.importedData, processWarnings).then(function () {
+				datasetService.importObservations(datasetId, $rootScope.importedData, processWarnings).then(function () {
 					displaySaveSuccessMessage('page-message', 'Your data was successfully imported and needs correspondence.');
 					$rootScope.navigateToSubObsTab(datasetId);
 					$scope.close();

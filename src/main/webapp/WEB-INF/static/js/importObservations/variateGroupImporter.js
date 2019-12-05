@@ -16,13 +16,22 @@
 			scope.data = ImportMappingService.data;
 			scope.datasetId = ImportMappingService.datasetId;
 
+			scope.advancedOptions = {
+				showAdvancedOptions: false,
+				maintainHeaderNaming: false,
+			};
+
+			scope.toggleAdvancedOptions = function () {
+				scope.advancedOptions.showAdvancedOptions = !scope.advancedOptions.showAdvancedOptions;
+			};
+
 			scope.cancelMapping = function () {
 				//Should continue with the import?
 			};
 
 			scope.validateVariateGroupAndSend = function () {
 				ImportMappingService.showConfirmIfHasUnmapped().then(function () {
-					return ImportMappingService.validateMappingAndSave();
+					return ImportMappingService.validateMappingAndSave(scope.advancedOptions.maintainHeaderNaming);
 				}, function () {
 					return {cancelMapping: true};
 				}).then(function (result) {
@@ -218,7 +227,7 @@
 
 	app.service('ImportMappingService', ['$http', '$q', '_', 'Messages', 'datasetService', function ($http, $q, _, Messages, datasetService) {
 
-		function validateMappingAndSave() {
+		function validateMappingAndSave(maintainHeaderNaming) {
 
 			var postData = angular.copy(service.data);
 			var datasetId = angular.copy(service.datasetId);
@@ -285,7 +294,7 @@
 								addVariablesPromises.push(datasetService.addVariables(datasetId, {
 									variableTypeId: variableTypeId,
 									variableId: value[i].variable.id,
-									studyAlias: value[i].name
+									studyAlias: maintainHeaderNaming ? value[i].name : value[i].variable.name,
 								}));
 							} else {
 								showErrorMessage('', 'Variable already exists in dataset');

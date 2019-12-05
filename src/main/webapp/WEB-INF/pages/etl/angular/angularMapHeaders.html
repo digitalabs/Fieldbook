@@ -6,8 +6,8 @@
       ng-app="di-mapHeaders">
 <head>
     <title th:inline="text">[[#{page.title.define.variables}]]</title>
-    
-    
+
+
     <script type='text/javascript' th:inline="javascript">
 		var applicationBase = /*[[${applicationBase}]]*/ '';
 		var fieldbookWebLink = /*[[${fieldbookWebLink}]]*/ '';
@@ -96,13 +96,13 @@
         <label  class="control-label">
             <span ng:show="advancedOptions.showAdvancedOptions" ng:click="toggleAdvancedOptions()"><img  th:src="@{/static/img/expanded-arrow.png}" /></span>
             <span ng:show="!advancedOptions.showAdvancedOptions" ng:click="toggleAdvancedOptions()"><img th:src="@{/static/img/collapsed-arrow.png}" /></span>
-            <strong class="sub-content-heading" ng:click="toggleAdvancedOptions()" th:text="#{dataset.importer.advanced.options}">Advanced Options</strong>
+            <strong class="sub-content-heading" ng:click="toggleAdvancedOptions()" th:text="#{advanced.options}">Advanced Options</strong>
         </label>
     </div>
     <div class="col-md-12 col-xs-12" ng:show="advancedOptions.showAdvancedOptions">
         <div class="col-md-6" style="margin-left: 10px" >
             <div class="checkbox-inline">
-                <label><input type="checkbox" ng:model="advancedOptions.maintainHeaderNaming" th:text="#{dataset.importer.maintain.naming}"/></label>
+                <label><input type="checkbox" ng:model="advancedOptions.maintainHeaderNaming" th:text="#{maintain.naming}"/></label>
             </div>
         </div>
     </div>
@@ -288,7 +288,7 @@
         </div>
 
         <form role="form" name="mappingForm" id="mappingForm">
-            
+
             <div class="row">
                 <div class="col-md-8">
 

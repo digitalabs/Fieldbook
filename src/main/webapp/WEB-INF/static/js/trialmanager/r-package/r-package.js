@@ -23,7 +23,7 @@
 				url: url,
 				data: $.param(parameters),
 				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-				override: true
+				overrideAuthToken: true
 			}).error(rCallErrorHandler);
 		};
 

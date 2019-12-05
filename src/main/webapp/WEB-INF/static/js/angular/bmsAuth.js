@@ -10,10 +10,9 @@
 			// Add authorization token to headers
 			request: function(config) {
 				config.headers = config.headers || {};
-				var override = config.override;
 				var token = localStorageService.get('xAuthToken');
 
-				if (token && token.expires && !override) {
+				if (token && token.expires && !config.overrideAuthToken) {
 					config.headers['x-auth-token'] = token.token;
 				}
 

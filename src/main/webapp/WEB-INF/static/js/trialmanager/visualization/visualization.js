@@ -52,7 +52,7 @@
 			};
 
 			$scope.rCalls = [];
-			$scope.selection = {selectedRCall: null};
+			$scope.selection = {selectedRCall: null, selectedVariableX: null, selectedVariableY: null};
 			$scope.variates = [];
 			$scope.factors = [];
 			$scope.regressionMethods = [{
@@ -70,7 +70,11 @@
 			}, {
 				method: '\"loess\"',
 				description: 'loess regression'
-			}]
+			}];
+
+			this.$onInit = function() {
+				$scope.init();
+			}
 
 			$scope.init = function () {
 				var qplotPackageId = 3;
@@ -96,9 +100,9 @@
 			};
 
 			$scope.generate = function () {
-				if (validate($scope.selection.selectedRCall)) {
-					var rCall = prepareParameters(angular.copy($scope.selection.selectedRCall));
-					observationUnitsSearch.filter.filterColumns = getFilterColumns($scope.selection.selectedRCall);
+				if (validate($scope.selection.selectedRCall, $scope.selection.selectedVariableX, $scope.selection.selectedVariableY)) {
+					var rCall = prepareParameters(angular.copy($scope.selection.selectedRCall), $scope.selection.selectedVariableX, $scope.selection.selectedVariableY);
+					observationUnitsSearch.filter.filterColumns = getFilterColumns($scope.selection.selectedRCall, $scope.selection.selectedVariableX, $scope.selection.selectedVariableY);
 					datasetService.getObservationForVisualization(datasetId, JSON.stringify(observationUnitsSearch)).then(function (data) {
 						rCall.parameters.data = JSON.stringify(data);
 						return rPackageService.executeRCall(rCall.endpoint, rCall.parameters);
@@ -108,54 +112,51 @@
 				}
 			};
 
-			function validate(rCall) {
-				if (!hasRequiredFields(rCall)) {
+			function validate(rCall, variableX, variableY) {
+				if (!hasRequiredFields(rCall, variableX, variableY)) {
 					showErrorMessage('', $.fieldbookMessages.errorPlotGraphRequiredFields);
 					return false;
 				}
 				return true;
 			}
 
-			function hasRequiredFields(rCall) {
+			function hasRequiredFields(rCall, variableX, variableY) {
 				if (PLOT_TYPES.SCATTERPLOT === rCall.description) {
-					return rCall.parameters.x && rCall.parameters.y && rCall.parameters.method;
+					return variableX && variableY && rCall.parameters.method;
 				} else if (PLOT_TYPES.HISTOGRAM === rCall.description) {
-					return rCall.parameters.x;
+					return variableX;
 				} else if (PLOT_TYPES.BOXPLOT === rCall.description) {
-					return rCall.parameters.x && rCall.parameters.y;
+					return variableX && variableY;
 				}
 			}
 
-			function getFilterColumns(rCall) {
-
+			function getFilterColumns(rCall, selectedVariableX, selectedVariableY) {
 				// Only the variables selected from the UI should be included in the data that will be sent to OpenCPU.
 				var filterColumns = [];
-				filterColumns.push(rCall.parameters.x);
+				filterColumns.push(selectedVariableX.name);
 				if ('Histogram' !== rCall.description) {
-					filterColumns.push(rCall.parameters.y);
+					filterColumns.push(selectedVariableY.name);
 				}
 				return filterColumns;
 			}
 
-			function prepareParameters(rCall) {
-
+			function prepareParameters(rCall, selectedVariableX, selectedVariableY) {
 				// Make sure that field names are wrapped in backticks (`) to escape the spaces in them if there's any.
-				if (PLOT_TYPES.BOXPLOT === rCall.description) {
-					// If plot graph is a Boxplot, we must wrap the field name with R 'factor' function
-					// so that R will know that the field is a factor
-					rCall.parameters.x = 'factor(`' + rCall.parameters.x + '`)';
-				} else {
-					rCall.parameters.x = '`' + rCall.parameters.x + '`';
-				}
-
+				// If plot graph is a Boxplot, we must wrap the X field name with R 'factor' function
+				// so that R will know that the field is a factor
+				rCall.parameters.x = PLOT_TYPES.BOXPLOT === rCall.description ? 'factor(' + wrapTextWith('`', selectedVariableX.name) + ')' : wrapTextWith('`', selectedVariableX.name);
+				// Set x and y labels with variable alias
+				rCall.parameters.xlab = wrapTextWith('"', selectedVariableX.alias);
 				if (PLOT_TYPES.HISTOGRAM !== rCall.description) {
-					rCall.parameters.y = '`' + rCall.parameters.y + '`';
+					rCall.parameters.y = wrapTextWith('`', selectedVariableY.name);
+					rCall.parameters.ylab = wrapTextWith('"', selectedVariableY.alias);
 				}
-
 				return rCall;
 			}
 
-			$scope.init();
+			function wrapTextWith(character, text) {
+				return character + text + character;
+			}
 
 		}]);
 

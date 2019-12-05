@@ -80,8 +80,6 @@ module.exports = function (config) {
 			'WEB-INF/static/js/design-import/design-import-main.js',
 			'WEB-INF/static/js/trialmanager/importStudy.js',
 			'WEB-INF/static/js/trialmanager/createSample.js',
-			'WEB-INF/static/js/trialmanager/visualization/visualization.js',
-			'WEB-INF/static/js/trialmanager/r-package/r-package.js',
 
 			// unit test files
 			'WEB-INF/static/js/angular-tests/lib/angular-mocks.js',

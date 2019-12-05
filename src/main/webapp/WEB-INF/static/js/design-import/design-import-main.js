@@ -12,6 +12,14 @@
 		// we can retrieve this from a service
 		scope.Messages = Messages;
 		scope.data = DesignMappingService.data;
+		scope.advancedOptions = {
+			showAdvancedOptions: false,
+			maintainHeaderNaming: false,
+		};
+
+		scope.toggleAdvancedOptions = function () {
+			scope.advancedOptions.showAdvancedOptions = !scope.advancedOptions.showAdvancedOptions;
+		};
 
 		scope.cancelMapping = function() {
 			ImportDesign.cancelDesignImport();
@@ -19,7 +27,7 @@
 
 		scope.validateAndSend = function() {
 			DesignMappingService.showConfirmIfHasUnmapped().then(function() {
-				return DesignMappingService.validateMapping();
+				return DesignMappingService.validateMapping(scope.advancedOptions.maintainHeaderNaming);
 			}, function() {
 				return {cancelMapping: true};
 			}).then(function(result) {
@@ -49,6 +57,8 @@
 			});
 
 		};
+
+
 
 		scope.launchOntologyBrowser = function() {
 			var $designMapModal = $('#designMapModal');
@@ -226,7 +236,7 @@
 
 	app.service('DesignMappingService', ['$http', '$q', '_', 'ImportDesign', 'Messages', function($http, $q, _, ImportDesign, Messages) {
 
-		function validateMapping() {
+		function validateMapping(maintainHeaderNaming) {
 
 			var postData = angular.copy(service.data);
 			var allMapped = true;
@@ -268,7 +278,7 @@
 						} else {
 							value[i].id = 0;
 						}
-
+						if(!maintainHeaderNaming) value[i].name = value[i].variable.name;
 						value[i] = _.pick(value[i], ['id', 'name', 'columnIndex']);
 					}
 

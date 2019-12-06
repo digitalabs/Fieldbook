@@ -53,7 +53,7 @@
 							<span>{{item.alias}}</span>
 						</ui-select-choices>
 					</ui-select>
-					<input class="form-control" ng-if="key == 'binwidth'" type="number" value="5" ng-model="selection.selectedRCall.parameters[key]">
+					<input class="form-control" ng-if="key == 'binwidth'" numbers-only ng-model="selection.selectedRCall.parameters[key]">
 					<!-- Histogram -->
 					<ui-select ng-if="key == 'x' && selection.selectedRCall.description == 'Histogram'" ng-model="selection.selectedVariableX" theme="select2" search-enabled="false" class="text-truncate">
 						<ui-select-match placeholder="Please choose">{{$select.selected.alias}}</ui-select-match>

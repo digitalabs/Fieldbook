@@ -40,9 +40,9 @@
 
 	}]);
 
-	visualizationModule.controller('visualizationModalController', ['$scope', '$q', '$uibModalInstance', 'rPackageService', 'datasetService',
+	visualizationModule.controller('visualizationModalController', ['$scope', '$q', '$timeout', '$uibModalInstance', 'rPackageService', 'datasetService',
 		'datasetId', 'observationUnitsSearch', 'visualizationModalService',
-		function ($scope, $q, $uibModalInstance, rPackageService, datasetService, datasetId, observationUnitsSearch, visualizationModalService) {
+		function ($scope, $q, $timeout, $uibModalInstance, rPackageService, datasetService, datasetId, observationUnitsSearch, visualizationModalService) {
 
 			var OBSERVATION_UNIT_ID = 8201;
 			var PLOT_TYPES = {
@@ -72,13 +72,15 @@
 				description: 'loess regression'
 			}];
 
-			this.$onInit = function() {
+			this.$onInit = function () {
 				$scope.init();
 			}
 
 			$scope.$watch('selection.selectedRCall', function () {
-				$scope.selection.selectedVariableX = null;
-				$scope.selection.selectedVariableY = null;
+				$timeout(function () {
+					$scope.selection.selectedVariableX = null;
+					$scope.selection.selectedVariableY = null;
+				}, 0);
 			});
 
 			$scope.init = function () {

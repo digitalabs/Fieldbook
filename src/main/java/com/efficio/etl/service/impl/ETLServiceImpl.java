@@ -872,6 +872,9 @@ public class ETLServiceImpl implements ETLService {
 			if (!"OCC".equalsIgnoreCase(studyHeader.getName())
 				&& studyHeader.getRole() != PhenotypicType.TRIAL_ENVIRONMENT
 				&& fileHeaderMap.get(studyHeader.getName().toUpperCase()) == null) {
+				if((studyHeader.getAlias() != null && fileHeaderMap.get(studyHeader.getAlias().toUpperCase()) != null)) {
+					continue;
+				}
 				missingHeaders.append(studyHeader.getName());
 				missingHeaders.append(delimeter);
 			}

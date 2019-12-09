@@ -87,7 +87,7 @@ public class VariableDTO {
 	}
 
 	public VariableDTO(final Variable variable) {
-		this.variable = variable.getName();
+		this.variable = variable.getAlias() != null ? variable.getAlias() : variable.getName();
 
 		this.property = variable.getProperty().getName();
 		this.propertyId = variable.getProperty().getId();

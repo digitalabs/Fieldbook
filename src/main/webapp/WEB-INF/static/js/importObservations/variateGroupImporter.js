@@ -27,6 +27,12 @@
 
 			scope.cancelMapping = function () {
 				//Should continue with the import?
+				scope.resetAdvancedOptions();
+			};
+
+			scope.resetAdvancedOptions = function () {
+				scope.advancedOptions.showAdvancedOptions = false;
+				scope.advancedOptions.maintainHeaderNaming = false;
 			};
 
 			scope.validateVariateGroupAndSend = function () {
@@ -47,6 +53,7 @@
 						/** @namespace result.warning */
 						showAlertMessage('', result.warning);
 					}
+					scope.resetAdvancedOptions();
 				}, function (failResult) {
 					if (failResult.cancelMapping) {
 						return;
@@ -54,6 +61,7 @@
 
 					var msg = 'Please choose a mapping for all variables that you wish to import in the study.';
 					createErrorNotification('Import Observations Mapping Error', msg);
+
 				});
 
 			};

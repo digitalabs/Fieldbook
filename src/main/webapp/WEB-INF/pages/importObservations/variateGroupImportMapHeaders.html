@@ -4,7 +4,7 @@
 		<div class="modal-dialog modal-lg" style="min-width: 98%">
 			<div class="modal-content" ng-controller="importObservationsCtrl">
 				<div class="modal-header">
-					<button type="button" class="close closeTrigger" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<button type="button" class="close closeTrigger" ng:click="cancelMapping()" data-dismiss="modal" aria-hidden="true">&times;</button>
 					<h4 class="modal-title" th:text="#{form.import.observations.text}">Import Observations</h4>
 				</div>
 				<section class="modal-body" style="height:450pt; overflow-y: auto">

@@ -22,8 +22,15 @@
 		};
 
 		scope.cancelMapping = function() {
+			scope.resetAdvancedOptions();
 			ImportDesign.cancelDesignImport();
 		};
+
+		scope.resetAdvancedOptions = function () {
+			scope.advancedOptions.showAdvancedOptions = false;
+			scope.advancedOptions.maintainHeaderNaming = false;
+		};
+
 
 		scope.validateAndSend = function() {
 			DesignMappingService.showConfirmIfHasUnmapped().then(function() {
@@ -31,6 +38,7 @@
 			}, function() {
 				return {cancelMapping: true};
 			}).then(function(result) {
+				scope.resetAdvancedOptions();
 				if (result.cancelDesignImport) {
 					ImportDesign.cancelDesignImport();
 					return;

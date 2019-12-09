@@ -26,10 +26,12 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.samplelist.SampleListDTO;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
+import org.generationcp.middleware.manager.ontology.api.TermDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
@@ -51,7 +53,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
@@ -90,6 +91,9 @@ public class OpenTrialController extends BaseTrialController {
 
 	@Resource
 	private DatasetTypeService datasetTypeService;
+
+	@Resource
+	private TermDataManager termDataManager;
 
 	/**
 	 * The Inventory list manager.
@@ -715,5 +719,14 @@ public class OpenTrialController extends BaseTrialController {
 		session.setAttribute("isCategoricalDescriptionView", isCategoricalDescriptionView);
 
 		return isCategoricalDescriptionView;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getExperimentalDesignName/{experimentalDesignId}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	public Map<String, Object> getExperimentalDesignName(@PathVariable final Integer experimentalDesignId) {
+		final Map<String, Object> output = new HashMap<>();
+		Term exptDesignValue = this.termDataManager.getTermById(experimentalDesignId);
+		output.put("name", exptDesignValue.getDefinition());
+		return output;
 	}
 }

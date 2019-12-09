@@ -186,6 +186,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 					this.contextUtil.getCurrentWorkbenchUserId());
 			importData.setConstants(referenceWorkbook.getConstants());
 			importData.setConditions(referenceWorkbook.getConditions());
+			this.dataImportService.addExptDesignVariableIfNotExists(importData, importData.getFactors(), programUUID);
 			this.dataImportService.addLocationIDVariableIfNotExists(importData, importData.getFactors(), programUUID);
 			this.dataImportService.assignLocationIdVariableToEnvironmentDetailSection(importData);
 			this.dataImportService.removeLocationNameVariableIfExists(importData);

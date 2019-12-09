@@ -518,6 +518,18 @@ public class ETLServiceImpl implements ETLService {
 
 	}
 
+	@Override
+	public String getExperimentalDesignValueFromObservationSheet(final Workbook workbook, final UserSelection userSelection,
+		final int columnIndex) {
+		if(columnIndex != -1) {
+			final Sheet sheet = workbook.getSheetAt(userSelection.getSelectedSheet());
+			final String data = PoiUtil.getCellStringValue(PoiUtil.getCell(sheet, columnIndex, 1));
+			return data;
+		}
+		return null;
+	}
+
+
 	/*
 	 * Method for extracting observation data from the provided Excel file in
 	 * the case where existing study data is used

@@ -774,28 +774,6 @@ public class OpenTrialControllerTest {
 	}
 
 	@Test
-	public void testPrepareExperimentalDesignTabInfo_UnknownDesign() {
-		final String exptDesignSourceValue = null;
-		final String nRepValue = null;
-		final String rMapValue = null;
-		final Integer replicationsArrangement = null;
-		final String percentageReplication = null;
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
-			OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
-		WorkbookDataUtil
-			.addOrUpdateExperimentalDesignVariables(workbook, "12345", exptDesignSourceValue, nRepValue, rMapValue, percentageReplication);
-		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
-		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
-		Assert.assertNull("Design type should be unknown", data.getDesignType());
-		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
-		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
-		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
-		Assert.assertEquals("Replications arrangement should be " + replicationsArrangement, replicationsArrangement,
-			data.getReplicationsArrangement());
-		Assert.assertEquals("Block size should be 3", 3, data.getBlockSize().intValue());
-	}
-
-	@Test
 	public void testPrepareExperimentalDesignTabInfo_PREP() {
 		final String exptDesignSourceValue = null;
 		final Integer nRepValue = 5;

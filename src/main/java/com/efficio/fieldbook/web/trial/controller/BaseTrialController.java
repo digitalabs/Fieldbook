@@ -179,7 +179,7 @@ public abstract class BaseTrialController extends SettingsController {
 			if (NumberUtils.isNumber(designTypeString)) {
 				final int designTypeTermID = Integer.parseInt(designTypeString);
 				final ExperimentDesignType experimentDesignType = ExperimentDesignType.getDesignTypeItemByTermId(designTypeTermID);
-				data.setDesignType(experimentDesignType != null ? experimentDesignType.getId() : null);
+				data.setDesignType(experimentDesignType != null ? experimentDesignType.getId() : designTypeTermID);
 				data.setUseLatenized(ExperimentDesignType.isLatinized(designTypeTermID));
 			}
 

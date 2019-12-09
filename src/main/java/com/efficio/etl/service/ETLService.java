@@ -155,4 +155,13 @@ public interface ETLService {
    **/
   Map<String, Integer> retrieveAvailableEntryTypes(String programUUID);
 
+  /**
+   * Returns the experimental design value in the observation sheet
+   * @param workbook
+   * @param userSelection
+   * @param columnIndex
+   * @return
+   */
+  String getExperimentalDesignValueFromObservationSheet(Workbook workbook, UserSelection userSelection, final int columnIndex);
+
 }

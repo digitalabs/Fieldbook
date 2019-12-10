@@ -109,7 +109,7 @@
 			$scope.generate = function () {
 				if (validate($scope.selection.selectedRCall, $scope.selection.selectedVariableX, $scope.selection.selectedVariableY)) {
 					var rCall = prepareParameters(angular.copy($scope.selection.selectedRCall), $scope.selection.selectedVariableX, $scope.selection.selectedVariableY);
-					observationUnitsSearch.filter.filterColumns = getFilterColumns($scope.selection.selectedRCall, $scope.selection.selectedVariableX, $scope.selection.selectedVariableY);
+					observationUnitsSearch.filterColumns = getFilterColumns($scope.selection.selectedRCall, $scope.selection.selectedVariableX, $scope.selection.selectedVariableY);
 					datasetService.getObservationForVisualization(datasetId, JSON.stringify(observationUnitsSearch)).then(function (data) {
 						rCall.parameters.data = JSON.stringify(data);
 						return rPackageService.executeRCall(rCall.endpoint, rCall.parameters);

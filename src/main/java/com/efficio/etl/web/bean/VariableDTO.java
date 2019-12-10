@@ -17,7 +17,7 @@ import com.efficio.etl.web.util.AppConstants;
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
 public class VariableDTO {
-
+	private String alias;
 	private String variable;
 	private String description;
 	private String property;
@@ -87,8 +87,8 @@ public class VariableDTO {
 	}
 
 	public VariableDTO(final Variable variable) {
-		this.variable = variable.getAlias() != null ? variable.getAlias() : variable.getName();
-
+		this.variable = variable.getName();
+		this.alias = variable.getAlias();
 		this.property = variable.getProperty().getName();
 		this.propertyId = variable.getProperty().getId();
 
@@ -341,5 +341,9 @@ public class VariableDTO {
 
 	public void setStatus(final String status) {
 		this.status = status;
+	}
+
+	public String getAlias() {
+		return this.alias;
 	}
 }

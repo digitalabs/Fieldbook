@@ -373,7 +373,7 @@
 						callback($scope.initialData);
 					},
 					formatSelection: function (item) {
-						return item.variable
+						return $scope.getVariableName(item);
 					},
 					formatResult: function (item, container, query) {
 						return $scope.format(item, query)
@@ -383,10 +383,17 @@
 					}
 				};
 
+				$scope.getVariableName = function (item) {
+					if(item.alias) {
+						return item.variable + " (" + item.alias + ")";
+					}
+					return item.variable;
+				}
+
 				// TODO: NOTE, move the stylings in external CSS later
 				$scope.format = function (item, query) {
 					var output = '<span style="font-size: 14pt; font-weight: 300" class="text-info">' + $scope.highlightQueryMatch(item.variable, query.term) + '</span>';
-					output += '<small class=\"text-info\">' + $scope.getOntologySuffix(item.id) + '</small>';
+					output += '<small class=\"text-info\" >' + $scope.getAlias(item) + '</small>';
 					output += '<div>';
 					output += '<strong>Property :</strong> ' + $scope.highlightQueryMatch(item.property, query.term);
 					output += '<small class=\"text-info\">' + $scope.getOntologySuffix(item.propertyId) + '</small>, ';
@@ -398,6 +405,13 @@
 
 					return output;
 				};
+
+				$scope.getAlias = function (item) {
+					if(item.alias) {
+						return " (" + item.alias + ")";
+					}
+					return "";
+				}
 
 				$scope.getOntologySuffix = function (id) {
 					if (id === null || typeof id === 'undefined' || id === "") return "";

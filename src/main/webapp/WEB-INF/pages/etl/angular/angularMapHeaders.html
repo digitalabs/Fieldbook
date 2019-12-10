@@ -251,7 +251,7 @@
                     <div class="list-group-item" ng:class="{'list-group-item-danger' : header.hasError }" ng:repeat="header in mappingdata.variate" data-empty="{{previewMode}}">
                         <div class="row">
                             <div class="col-sm-12">
-                                <h3 class="list-group-item-heading pull-left">{{header.headerName}} <span class="glyphicon glyphicon-arrow-right"></span> {{header.variable}} <small class="text-info">{{getOntologySuffix(header.id)}}</small></h3>
+                                <h3 class="list-group-item-heading pull-left">{{header.headerName}} <span class="glyphicon glyphicon-arrow-right"></span> {{ header.alias || header.variable}} <small class="text-info">{{getOntologySuffix(header.id)}}</small></h3>
                                 <a class="btn btn-primary btn-xs pull-right" ng:show="!previewMode" ng:click="performRemap(header, 'variate')" ng:class="{'btn-info' : header.variable &amp;&amp; !header.hasError, 'btn-danger' : !header.variable || header.hasError}" ><span ng:class="{'glyphicon glyphicon-link' : header.variable &amp;&amp; !header.hasError, 'fa fa-warning' : !header.variable || header.hasError}"></span>&nbsp;<span ng:bind="computeButtonLabel(header)">Re-map</span></a>
                             </div>
                         </div>
@@ -323,7 +323,7 @@
                     <div class="well" ng:show="selected.standardVariable.variable != null">
                         <div class="psm-group">
                             <h6 class="sv-subtitle">Standard Variable</h6>
-                            <h1 class="sv-title">{{selected.standardVariable.variable}} <small class="text-info">{{getOntologySuffix(selected.standardVariable.id).toUpperCase()}}</small></h1>
+                            <h1 class="sv-title">{{selected.standardVariable.variable}} <small class="text-info" ng:show="selected.standardVariable.alias != null">({{ selected.standardVariable.alias }})</small></h1>
                             <p class="sv-desc">{{selected.standardVariable.description}}</p>
                         </div>
                         <div class="psm-group">

@@ -95,7 +95,7 @@ module.exports = function (config) {
 			terminal: true
 		},
 		autoWatch: false,
-		browsers: ['ChromiumHeadless'],
+		browsers: ['Firefox'],
 		singleRun: true
 	});
 };

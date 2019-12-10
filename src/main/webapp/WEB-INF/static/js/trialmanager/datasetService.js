@@ -102,7 +102,7 @@
 			};
 
 			datasetService.getObservationForVisualization = function (datasetId, observationUnitsSearch) {
-				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/visualization', observationUnitsSearch);
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/mapList', observationUnitsSearch);
 				return request.then(successHandler, failureHandler);
 			};
 

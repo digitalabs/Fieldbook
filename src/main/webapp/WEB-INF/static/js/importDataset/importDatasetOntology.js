@@ -26,7 +26,7 @@
 
 			$scope.advancedOptions = {
 				showAdvancedOptions: false,
-				maintainHeaderNaming: false,
+				maintainHeaderNaming: false
 			};
 
 			$scope.uiSortOpts = {

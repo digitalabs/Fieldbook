@@ -8,37 +8,37 @@
 
 	var app = angular.module('designImportApp', ['ui.bootstrap', 'ngLodash', 'ngResource', 'ui.sortable']);
 
-	app.controller('designImportCtrl', ['$scope', 'DesignMappingService', 'DesignOntologyService', 'ImportDesign', '$uibModal', 'Messages', function(scope, DesignMappingService, DesignOntologyService, ImportDesign, $uibModal, Messages) {
+	app.controller('designImportCtrl', ['$scope', 'DesignMappingService', 'DesignOntologyService', 'ImportDesign', '$uibModal', 'Messages', function($scope, DesignMappingService, DesignOntologyService, ImportDesign, $uibModal, Messages) {
 		// we can retrieve this from a service
-		scope.Messages = Messages;
-		scope.data = DesignMappingService.data;
-		scope.advancedOptions = {
+		$scope.Messages = Messages;
+		$scope.data = DesignMappingService.data;
+		$scope.advancedOptions = {
 			showAdvancedOptions: false,
-			maintainHeaderNaming: false,
+			maintainHeaderNaming: false
 		};
 
-		scope.toggleAdvancedOptions = function () {
-			scope.advancedOptions.showAdvancedOptions = !scope.advancedOptions.showAdvancedOptions;
+		$scope.toggleAdvancedOptions = function () {
+			$scope.advancedOptions.showAdvancedOptions = !$scope.advancedOptions.showAdvancedOptions;
 		};
 
-		scope.cancelMapping = function() {
-			scope.resetAdvancedOptions();
+		$scope.cancelMapping = function() {
+			$scope.resetAdvancedOptions();
 			ImportDesign.cancelDesignImport();
 		};
 
-		scope.resetAdvancedOptions = function () {
-			scope.advancedOptions.showAdvancedOptions = false;
-			scope.advancedOptions.maintainHeaderNaming = false;
+		$scope.resetAdvancedOptions = function () {
+			$scope.advancedOptions.showAdvancedOptions = false;
+			$scope.advancedOptions.maintainHeaderNaming = false;
 		};
 
 
-		scope.validateAndSend = function() {
+		$scope.validateAndSend = function() {
 			DesignMappingService.showConfirmIfHasUnmapped().then(function() {
-				return DesignMappingService.validateMapping(scope.advancedOptions.maintainHeaderNaming);
+				return DesignMappingService.validateMapping($scope.advancedOptions.maintainHeaderNaming);
 			}, function() {
 				return {cancelMapping: true};
 			}).then(function(result) {
-				scope.resetAdvancedOptions();
+				$scope.resetAdvancedOptions();
 				if (result.cancelDesignImport) {
 					ImportDesign.cancelDesignImport();
 					return;
@@ -68,11 +68,11 @@
 
 
 
-		scope.launchOntologyBrowser = function() {
+		$scope.launchOntologyBrowser = function() {
 			var $designMapModal = $('#designMapModal');
 			$designMapModal.one('hidden.bs.modal', function() {
 				setTimeout(function() {
-					scope.$apply(function() {
+					$scope.$apply(function() {
 						var title = 'Ontology Browser';
 						var url = '/ibpworkbench/controller/ontology';
 
@@ -106,10 +106,10 @@
 
 		};
 
-		scope.designType = '';
-		scope.onDesignTypeSelect = function() {
+		$scope.designType = '';
+		$scope.onDesignTypeSelect = function() {
 
-			if (scope.designType === '3') {
+			if ($scope.designType === '3') {
 				// warning popup here
 				showAlertMessage('', Messages.OWN_DESIGN_SELECT_WARNING);
 			}
@@ -199,7 +199,7 @@
 									$.each(data, function(key, value) {
 										scope.modeldata.id = value.variable.cvTermId;
 										scope.modeldata.variable = value.variable;
-										if(value.variable.alias != null) {
+										if(value.variable.alias !== null) {
 											scope.modeldata.variable.name = value.variable.alias;
 										}
 									});

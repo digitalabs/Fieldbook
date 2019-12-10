@@ -10,34 +10,34 @@
 
 	// TODO Refactor: Extract common functionality with designImportCtrl
 	app.controller('importObservationsCtrl', ['$scope', 'ImportMappingService', 'DesignOntologyService', '$uibModal', 'Messages', 'datasetService', '$rootScope',
-		function (scope, ImportMappingService, DesignOntologyService, $uibModal, Messages, datasetService, $rootScope) {
+		function ($scope, ImportMappingService, DesignOntologyService, $uibModal, Messages, datasetService, $rootScope) {
 			// we can retrieve this from a service
-			scope.Messages = Messages;
-			scope.data = ImportMappingService.data;
-			scope.datasetId = ImportMappingService.datasetId;
+			$scope.Messages = Messages;
+			$scope.data = ImportMappingService.data;
+			$scope.datasetId = ImportMappingService.datasetId;
 
-			scope.advancedOptions = {
+			$scope.advancedOptions = {
 				showAdvancedOptions: false,
 				maintainHeaderNaming: false,
 			};
 
-			scope.toggleAdvancedOptions = function () {
-				scope.advancedOptions.showAdvancedOptions = !scope.advancedOptions.showAdvancedOptions;
+			$scope.toggleAdvancedOptions = function () {
+				$scope.advancedOptions.showAdvancedOptions = !$scope.advancedOptions.showAdvancedOptions;
 			};
 
-			scope.cancelMapping = function () {
+			$scope.cancelMapping = function () {
 				//Should continue with the import?
-				scope.resetAdvancedOptions();
+				$scope.resetAdvancedOptions();
 			};
 
-			scope.resetAdvancedOptions = function () {
-				scope.advancedOptions.showAdvancedOptions = false;
-				scope.advancedOptions.maintainHeaderNaming = false;
+			$scope.resetAdvancedOptions = function () {
+				$scope.advancedOptions.showAdvancedOptions = false;
+				$scope.advancedOptions.maintainHeaderNaming = false;
 			};
 
-			scope.validateVariateGroupAndSend = function () {
+			$scope.validateVariateGroupAndSend = function () {
 				ImportMappingService.showConfirmIfHasUnmapped().then(function () {
-					return ImportMappingService.validateMappingAndSave(scope.advancedOptions.maintainHeaderNaming);
+					return ImportMappingService.validateMappingAndSave($scope.advancedOptions.maintainHeaderNaming);
 				}, function () {
 					return {cancelMapping: true};
 				}).then(function (result) {
@@ -53,7 +53,7 @@
 						/** @namespace result.warning */
 						showAlertMessage('', result.warning);
 					}
-					scope.resetAdvancedOptions();
+					$scope.resetAdvancedOptions();
 				}, function (failResult) {
 					if (failResult.cancelMapping) {
 						return;
@@ -66,11 +66,11 @@
 
 			};
 
-			scope.launchOntologyBrowser = function () {
+			$scope.launchOntologyBrowser = function () {
 				var $importMapModal = $('#importMapModal');
 				$importMapModal.one('hidden.bs.modal', function () {
 					setTimeout(function () {
-						scope.$apply(function () {
+						$scope.$apply(function () {
 							var title = 'Ontology Browser';
 							var url = '/ibpworkbench/controller/ontology';
 

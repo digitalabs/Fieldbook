@@ -51,6 +51,7 @@ public class VariableDTO {
 		if (var != null) {
 			try {
 				this.variable = var.getName();
+				this.alias = var.getAlias();
 
 				this.property = var.getProperty().getName();
 				this.propertyId = var.getProperty().getId();

@@ -289,7 +289,7 @@
 						} else {
 							value[i].id = 0;
 						}
-						if(!maintainHeaderNaming) value[i].name = value[i].variable.name;
+						if(!maintainHeaderNaming) value[i].name = value[i].variable.alias || value[i].variable.name;
 						value[i] = _.pick(value[i], ['id', 'name', 'columnIndex']);
 					}
 

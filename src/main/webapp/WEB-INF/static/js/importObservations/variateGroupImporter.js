@@ -306,11 +306,11 @@
 								addVariablesPromises.push(datasetService.addVariables(datasetId, {
 									variableTypeId: variableTypeId,
 									variableId: value[i].variable.id,
-									studyAlias: maintainHeaderNaming ? value[i].name : value[i].variable.name,
+									studyAlias: maintainHeaderNaming ? value[i].name : value[i].variable.alias || value[i].variable.name,
 								}));
 								if(!maintainHeaderNaming) {
 									var headerIndex = $rootScope.importedData[0].findIndex(function(name){ return name === value[i].name});
-									$rootScope.importedData[0][headerIndex] = value[i].variable.name;
+									$rootScope.importedData[0][headerIndex] = value[i].variable.alias || value[i].variable.name;
 								}
 							} else {
 								showErrorMessage('', 'Variable already exists in dataset');

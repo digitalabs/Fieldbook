@@ -309,7 +309,7 @@
 									studyAlias: maintainHeaderNaming ? value[i].name : value[i].variable.name,
 								}));
 								if(!maintainHeaderNaming) {
-									var headerIndex = $rootScope.importedData[0].findIndex(name => name === value[i].name);
+									var headerIndex = $rootScope.importedData[0].findIndex(function(name){ return name === value[i].name});
 									$rootScope.importedData[0][headerIndex] = value[i].variable.name;
 								}
 							} else {

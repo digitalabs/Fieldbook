@@ -229,6 +229,84 @@ public class SettingsUtilTest {
 	}
 
 	@Test
+	public void testConvertToExpDesignParamsUi_NullValues() {
+
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
+
+		expDesigns.add(this.createMeasurementVariable(TermId.BLOCK_SIZE.getId(), null));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_COLS_IN_REPS.getId(), null));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_ROWS_IN_REPS.getId(), null));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_CBLKS_LATINIZE.getId(), null));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_CCOLS_LATINIZE.getId(), null));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_CROWS_LATINIZE.getId(), null));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_REPS_IN_COLS.getId(), null));
+		expDesigns.add(this.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), null));
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), null));
+		expDesigns.add(this.createMeasurementVariable(TermId.PERCENTAGE_OF_REPLICATION.getId(), null));
+		expDesigns.add(this.createMeasurementVariable(TermId.NBLKS.getId(), null));
+		expDesigns.add(this.createMeasurementVariable(TermId.CHECK_PLAN.getId(), null));
+		expDesigns.add(this.createMeasurementVariable(TermId.CHECK_INTERVAL.getId(), null));
+		expDesigns.add(this.createMeasurementVariable(TermId.CHECK_START.getId(), null));
+
+		final ExpDesignParameterUi result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
+
+		Assert.assertNull(result.getBlockSize());
+		Assert.assertNull(result.getColsPerReplications());
+		Assert.assertNull(result.getRowsPerReplications());
+		Assert.assertNull(result.getNblatin());
+		Assert.assertNull(result.getNclatin());
+		Assert.assertNull(result.getNrlatin());
+		Assert.assertNull(result.getReplatinGroups());
+		Assert.assertNull(result.getReplicationsCount());
+		Assert.assertNull(result.getFileName());
+		Assert.assertNull(result.getReplicationPercentage());
+		Assert.assertNull(result.getNumberOfBlocks());
+		Assert.assertNull(result.getCheckInsertionManner());
+		Assert.assertNull(result.getCheckSpacing());
+		Assert.assertNull(result.getCheckStartingPosition());
+
+	}
+
+	@Test
+	public void testConvertToExpDesignParamsUi_EmptyValues() {
+
+		final List<MeasurementVariable> expDesigns = new ArrayList<>();
+
+		expDesigns.add(this.createMeasurementVariable(TermId.BLOCK_SIZE.getId(), ""));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_COLS_IN_REPS.getId(), ""));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_ROWS_IN_REPS.getId(), ""));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_CBLKS_LATINIZE.getId(), ""));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_CCOLS_LATINIZE.getId(), ""));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_CROWS_LATINIZE.getId(), ""));
+		expDesigns.add(this.createMeasurementVariable(TermId.NO_OF_REPS_IN_COLS.getId(), ""));
+		expDesigns.add(this.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), ""));
+		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), ""));
+		expDesigns.add(this.createMeasurementVariable(TermId.PERCENTAGE_OF_REPLICATION.getId(), ""));
+		expDesigns.add(this.createMeasurementVariable(TermId.NBLKS.getId(), ""));
+		expDesigns.add(this.createMeasurementVariable(TermId.CHECK_PLAN.getId(), ""));
+		expDesigns.add(this.createMeasurementVariable(TermId.CHECK_INTERVAL.getId(), ""));
+		expDesigns.add(this.createMeasurementVariable(TermId.CHECK_START.getId(), ""));
+
+		final ExpDesignParameterUi result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
+
+		Assert.assertNull(result.getBlockSize());
+		Assert.assertNull(result.getColsPerReplications());
+		Assert.assertNull(result.getRowsPerReplications());
+		Assert.assertNull(result.getNblatin());
+		Assert.assertNull(result.getNclatin());
+		Assert.assertNull(result.getNrlatin());
+		Assert.assertNull(result.getReplatinGroups());
+		Assert.assertNull(result.getReplicationsCount());
+		Assert.assertNull(result.getFileName());
+		Assert.assertNull(result.getReplicationPercentage());
+		Assert.assertNull(result.getNumberOfBlocks());
+		Assert.assertNull(result.getCheckInsertionManner());
+		Assert.assertNull(result.getCheckSpacing());
+		Assert.assertNull(result.getCheckStartingPosition());
+
+	}
+
+	@Test
 	public void testConvertToExpDesignParamsUi() {
 
 		final List<MeasurementVariable> expDesigns = new ArrayList<>();
@@ -243,6 +321,10 @@ public class SettingsUtilTest {
 		expDesigns.add(this.createMeasurementVariable(TermId.NUMBER_OF_REPLICATES.getId(), "8"));
 		expDesigns.add(this.createMeasurementVariable(TermId.EXPT_DESIGN_SOURCE.getId(), "9"));
 		expDesigns.add(this.createMeasurementVariable(TermId.PERCENTAGE_OF_REPLICATION.getId(), "10"));
+		expDesigns.add(this.createMeasurementVariable(TermId.NBLKS.getId(), "11"));
+		expDesigns.add(this.createMeasurementVariable(TermId.CHECK_PLAN.getId(), "12"));
+		expDesigns.add(this.createMeasurementVariable(TermId.CHECK_INTERVAL.getId(), "13"));
+		expDesigns.add(this.createMeasurementVariable(TermId.CHECK_START.getId(), "14"));
 
 		final ExpDesignParameterUi result = SettingsUtil.convertToExpDesignParamsUi(expDesigns);
 
@@ -256,6 +338,10 @@ public class SettingsUtilTest {
 		Assert.assertEquals(8, result.getReplicationsCount().intValue());
 		Assert.assertEquals("9", result.getFileName());
 		Assert.assertEquals(10, result.getReplicationPercentage().intValue());
+		Assert.assertEquals(11, result.getNumberOfBlocks().intValue());
+		Assert.assertEquals(12, result.getCheckInsertionManner().intValue());
+		Assert.assertEquals(13, result.getCheckSpacing().intValue());
+		Assert.assertEquals(14, result.getCheckStartingPosition().intValue());
 
 	}
 

@@ -1,17 +1,11 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.constant.AppConstants;
+import org.generationcp.commons.pojo.treeview.TreeNode;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.TreeViewUtil;
 import org.generationcp.middleware.domain.dms.Reference;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -35,9 +29,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
 
-import org.generationcp.commons.constant.AppConstants;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
-import com.efficio.pojos.treeview.TreeNode;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Controller
 @RequestMapping(StudyTreeController.URL)

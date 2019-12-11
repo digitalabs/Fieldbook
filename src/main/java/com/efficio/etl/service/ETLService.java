@@ -65,7 +65,7 @@ public interface ETLService {
 
   VariableDTO retrieveStandardVariableByID(int id);
 
-  void mergeVariableData(VariableDTO[] variables, Workbook workbook, UserSelection userSelection);
+  void mergeVariableData(VariableDTO[] variables, Workbook workbook, UserSelection userSelection, boolean maintainHeaderMapping);
 
   List<MeasurementRow> extractExcelFileData(Workbook workbook, UserSelection userSelection,
 		  org.generationcp.middleware.domain.etl.Workbook importData, boolean discardInvalidValues);

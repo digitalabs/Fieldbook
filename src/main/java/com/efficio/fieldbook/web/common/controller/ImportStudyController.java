@@ -489,7 +489,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		final List<SettingDetail> newTraits = new ArrayList<>();
 		final List<SettingDetail> selectedVariates = new ArrayList<>();
 		SettingsUtil.convertWorkbookVariatesToSettingDetails(traits, this.fieldbookMiddlewareService,
-				this.fieldbookService, newTraits, selectedVariates);
+				newTraits, selectedVariates);
 
 		form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 		userSelection.getBaselineTraitsList().addAll(newTraits);

@@ -862,6 +862,7 @@ describe('SubObservationSetCtrl', function () {
 		$httpMock = {},
 		$compileMock = {},
 		studyInstanceServiceMock = {},
+		visualizationModalService = {},
 		datasetServiceMock = jasmine.createSpyObj('datasetService', [
 			'getDataset',
 			'getColumns',
@@ -869,6 +870,9 @@ describe('SubObservationSetCtrl', function () {
 			'getObservationTableUrl'
 		]),
 		derivedVariableServiceMock = jasmine.createSpyObj('derivedVariableService', ['displayExecuteCalculateVariableMenu', 'showWarningIfDependenciesAreMissing']);
+
+	// Mock the dependency module
+	angular.module('visualization', []);
 
 	function setJasmineTimeout() {
 		originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
@@ -925,7 +929,8 @@ describe('SubObservationSetCtrl', function () {
 				studyInstanceService: studyInstanceServiceMock,
 				datasetService: datasetServiceMock,
 				$timeout: $timeout,
-				$uibModal: $uibModal
+				$uibModal: $uibModal,
+				visualizationModalService: visualizationModalService,
 			});
 
 			scope.tableLoadedPromise.then(function () {

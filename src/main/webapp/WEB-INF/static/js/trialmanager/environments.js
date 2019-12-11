@@ -159,17 +159,54 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				}
 			};
 
-			$scope.deleteEnvironment = function (index) {
-				updateDeletedEnvironment(index);
+			$scope.deleteEnvironment = function (index, locationId) {
+
+				// If study has experimental design, get updated information first on environment to be deleted
+				if ($scope.isDesignAlreadyGenerated()) {
+					studyInstanceService.getStudyInstance(locationId).then(function (studyInstance) {
+
+						// Show error if environment cannot be deleted
+						if (!studyInstance.canBeDeleted) {
+							showErrorMessage('', $.environmentMessages.environmentCannotBeDeleted);
+							return;
+
+							// Show confirmation message for overwriting measurements and/or fieldmap
+						} else if (studyInstance.hasMeasurements || studyInstance.hasFieldmap) {
+							var modalConfirmDelete = $scope.openConfirmModal($.environmentMessages.environmentHasDataThatWillBeLost, 'Yes','No');
+							modalConfirmDelete.result.then(function (shouldContinue) {
+								if (shouldContinue) {
+									$scope.continueEnvironmentDeletion(index, locationId);
+								}
+							});
+						} else {
+							$scope.continueEnvironmentDeletion(index, locationId);
+						}
+					}, function(errResponse) {
+						showErrorMessage($.fieldbookMessages.errorServerError, errResponse.errors[0].message);
+					});
+
+
+					// Delete environment from the UI if no experimental design yet. Study save needs to be clicked to persist
+				} else {
+					updateDeletedEnvironment(index);
+				}
 			};
+
+			// Proceed deleting existing environment
+			$scope.continueEnvironmentDeletion = function (index, locationId) {
+				studyInstanceService.deleteStudyInstance(locationId);
+				updateDeletedEnvironment(index);
+				showSuccessfulMessage('', $.environmentMessages.environmentDeletedSuccessfully);
+			};
+
 
 			$scope.updateTrialInstanceNo = function (environments, index) {
 				for (var i = 0; i < environments.length; i++) {
 					var environment = environments[i];
+					var expectedTrialInstanceNo = i+1;
 					var trialInstanceNo = environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX];
-					if (trialInstanceNo > index) {
-						trialInstanceNo -= 1;
-						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = trialInstanceNo;
+					if (trialInstanceNo > expectedTrialInstanceNo) {
+						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = expectedTrialInstanceNo;
 					}
 				}
 			};
@@ -237,29 +274,45 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				// create and save the environment in the server
 				studyInstanceService.createStudyInstance().then(function (studyInstance) {
 					// update the environment table
-					$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
+					$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.instanceDbId, studyInstance.experimentId);
 					$scope.data.noOfEnvironments++;
 					$scope.isDisableAddEnvironment = false;
 				});
 
 			};
 
-			$scope.createEnvironment = function (instanceNumber, experimentId) {
+			$scope.createEnvironment = function (instanceNumber, locationId, experimentId, index) {
 				var environment = {
+					locationId : locationId,
 					experimentId: experimentId,
 					managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
 						$scope.settings.managementDetails),
 					trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
 				};
 				environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = instanceNumber;
-				$scope.data.environments.push(environment);
+				if (index != undefined) {
+					$scope.data.environments.splice(index, 0, environment);
+				} else {
+					$scope.data.environments.push(environment);
+				}
 			};
 
 			$scope.addEnvironments = function (numberOfEnvironments) {
-				var startingInstanceNumber = $scope.data.environments.length + 1;
-				for (var instanceNumber = startingInstanceNumber; instanceNumber <= numberOfEnvironments; instanceNumber++) {
-					$scope.createEnvironment(instanceNumber, null);
+				var existingTrialInstanceNumbers = [];
+				angular.forEach($scope.data.environments, function (environment) {
+					existingTrialInstanceNumbers.push(parseInt(environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX]));
+				});
+
+				var instanceNumber = 1;
+				while ($scope.data.environments.length < numberOfEnvironments) {
+					while (existingTrialInstanceNumbers.includes(instanceNumber)) {
+						instanceNumber++;
+
+					}
+					$scope.createEnvironment(instanceNumber, null, null, instanceNumber -1);
+					existingTrialInstanceNumbers.push(instanceNumber);
 				}
+
 			};
 
 			ctrl.updateEnvironmentVariables = function (type, entriesIncreased) {
@@ -298,13 +351,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				// remove 1 environment
 				$scope.temp.noOfEnvironments -= 1;
 				$scope.data.environments.splice(index, 1);
-				$scope.updateTrialInstanceNo($scope.data.environments, index);
-				$scope.data.noOfEnvironments -= 1;
-
-				//update the no of environments in experimental design tab
-				if (TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments !== undefined) {
-					TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.temp.noOfEnvironments;
+				if (!$scope.isDesignAlreadyGenerated()) {
+					$scope.updateTrialInstanceNo($scope.data.environments, index);
 				}
+				$scope.data.noOfEnvironments -= 1;
 
 				TrialManagerDataService.deleteEnvironment(index + 1);
 			}

@@ -101,6 +101,11 @@
 				return BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/table';
 			};
 
+			datasetService.getObservationForVisualization = function (datasetId, observationUnitsSearch) {
+				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observationUnits/mapList', observationUnitsSearch);
+				return request.then(successHandler, failureHandler);
+			};
+
 			datasetService.generation = function (newDataset) {
 				var request = $http.post(BASE_URL + studyContext.studyId + '/datasets/' + studyContext.measurementDatasetId + '/generation', newDataset);
 				return request.then(successHandler, failureHandler);

@@ -24,6 +24,16 @@
 			return request.then(successHandler, failureHandler);
 		};
 
+		studyInstanceService.getStudyInstance = function (locationId) {
+			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/instances/' + locationId);
+			return request.then(successHandler, failureHandler);
+		};
+
+		studyInstanceService.deleteStudyInstance = function (locationId) {
+			var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/instances/' + locationId);
+			return request.then(successHandler, failureHandler);
+		};
+
 		studyInstanceService.environments = TrialManagerDataService.currentData.environments;
 
 		studyInstanceService.changeEnvironments = function () {

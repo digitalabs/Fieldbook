@@ -65,7 +65,7 @@ public interface ETLService {
 
   VariableDTO retrieveStandardVariableByID(int id);
 
-  void mergeVariableData(VariableDTO[] variables, Workbook workbook, UserSelection userSelection);
+  void mergeVariableData(VariableDTO[] variables, Workbook workbook, UserSelection userSelection, boolean maintainHeaderMapping);
 
   List<MeasurementRow> extractExcelFileData(Workbook workbook, UserSelection userSelection,
 		  org.generationcp.middleware.domain.etl.Workbook importData, boolean discardInvalidValues);
@@ -146,13 +146,22 @@ public interface ETLService {
    * @return
    */
   boolean headersContainsObsUnitId(final org.generationcp.middleware.domain.etl.Workbook importData);
-  
+
   /**
    * Returns all available entry types at the moment in the form of a map <Name, CVTermId> i.e <C,10170>
-   * @param programUUID 
-   * 
+   * @param programUUID
+   *
    * @return map <Name, CVTermId>
    **/
   Map<String, Integer> retrieveAvailableEntryTypes(String programUUID);
+
+  /**
+   * Returns the experimental design value in the observation sheet
+   * @param workbook
+   * @param userSelection
+   * @param columnIndex
+   * @return
+   */
+  String getExperimentalDesignValueFromObservationSheet(Workbook workbook, UserSelection userSelection, final int columnIndex);
 
 }

@@ -12,7 +12,7 @@
 				config.headers = config.headers || {};
 				var token = localStorageService.get('xAuthToken');
 
-				if (token && token.expires) {
+				if (token && token.expires && !config.overrideAuthToken) {
 					config.headers['x-auth-token'] = token.token;
 				}
 

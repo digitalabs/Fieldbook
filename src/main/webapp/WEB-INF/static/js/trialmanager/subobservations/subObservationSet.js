@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	var subObservationModule = angular.module('subObservation', []);
+	var subObservationModule = angular.module('subObservation', ['visualization']);
 	var TRIAL_INSTANCE = 8170,
 		GID = 8240,
 		GROUPGID = 8330,
@@ -13,8 +13,9 @@
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
 		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'studyInstanceService', 'datasetService', 'derivedVariableService', '$timeout', '$uibModal',
+		'visualizationModalService',
 		function ($scope, $rootScope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile,
-				  studyInstanceService, datasetService, derivedVariableService, $timeout, $uibModal
+				  studyInstanceService, datasetService, derivedVariableService, $timeout, $uibModal, visualizationModalService
 		) {
 
 			// FIXME is there a better way?
@@ -127,7 +128,7 @@
 						}
 					).then(function () {
 						if (table().data().length == 1 && $scope.isPendingView) {
-							datasetService.getDataset(subObservationSet.id).then(function(dataset) {
+							datasetService.getDataset(subObservationSet.id).then(function (dataset) {
 								if (!dataset.hasPendingData) {
 									reloadDataset();
 								} else {
@@ -284,9 +285,9 @@
 
 			$scope.onRemoveVariable = function (variableIds, settings) {
 
-				$scope.checkVariableIsUsedInCalculatedVariable(variableIds).then(function(isVariableUsedInOtherCalculatedVariable) {
+				$scope.checkVariableIsUsedInCalculatedVariable(variableIds).then(function (isVariableUsedInOtherCalculatedVariable) {
 					return $scope.checkVariableHasMeasurementData(isVariableUsedInOtherCalculatedVariable, variableIds);
-				}).then(function(doContinue) {
+				}).then(function (doContinue) {
 					if (doContinue) {
 						datasetService.removeVariables($scope.subObservationSet.dataset.datasetId, variableIds).then(function () {
 							reloadDataset();
@@ -324,7 +325,7 @@
 				var variableIsUsedInOtherCalculatedVariable = false;
 
 				// Retrieve all formula variables in study
-				derivedVariableService.getFormulaVariables($scope.subObservationSet.dataset.datasetId).then(function(response){
+				derivedVariableService.getFormulaVariables($scope.subObservationSet.dataset.datasetId).then(function (response) {
 					var formulaVariables = response.data;
 					// Check if any of the deleted variables are formula variables
 					angular.forEach(formulaVariables, function (formulaVariable) {
@@ -356,7 +357,7 @@
 				loadTable();
 			};
 
-			$scope.collapseBatchAction = function() {
+			$scope.collapseBatchAction = function () {
 				$scope.toggleSectionBatchAction = !$scope.toggleSectionBatchAction;
 			};
 
@@ -498,7 +499,7 @@
 				}
 			};
 
-			$scope.changeSelectedVariableFilter = function(){
+			$scope.changeSelectedVariableFilter = function () {
 				table().ajax.reload();
 				$scope.nested.newValueBatchUpdate = null;
 				$scope.nested.selectedBatchAction = $scope.selectBatchActions[0];
@@ -525,14 +526,14 @@
 					var newValue = $scope.nested.newValueBatchUpdate;
 					if ($scope.nested.selectedVariableFilter.minRange && $scope.nested.selectedVariableFilter.maxRange && //
 						(newValue < $scope.nested.selectedVariableFilter.minRange || newValue > $scope.nested.selectedVariableFilter.maxRange)) {
-						showAlertMessage('','New value is out of range.');
+						showAlertMessage('', 'New value is out of range.');
 					}
 					return true;
 				}
 				return true;
 			}
 
-			$scope.disableApply = function(){
+			$scope.disableApply = function () {
 				return $scope.nested.selectedBatchAction.id === 1 && ($scope.nested.newValueBatchUpdate === null || $scope.nested.newValueBatchUpdate === '')
 			};
 
@@ -685,6 +686,7 @@
 					byOutOfSync: $scope.selectedStatusFilter === "4" || null,
 					byOverwritten: $scope.selectedStatusFilter === "5" || null,
 					variableId: variableId,
+					filterColumns: [],
 					filteredValues: $scope.columnsObj.columns.reduce(function (map, column) {
 						var columnData = column.columnData;
 						columnData.isFiltered = false;
@@ -810,6 +812,22 @@
 						'<"row add-top-padding-small"<"col-sm-12"t>>' + //
 						'<"row"<"col-sm-12 paginate-float-center"<"pull-left"i><"pull-right"l>p>>')
 					.withButtons([{
+						className: 'fbk-buttons-no-border fbk-colvis-button',
+						text: '<img src="/Fieldbook/static/img/statistics.svg" height="16px" width="16px"></img>',
+						action: function (e, dt, node, config) {
+
+							var observationUnitsSearch = {
+								// We send all the data (with/without filter) to OpenCPU server,
+								// No pagination is needed.
+								sortedRequest: null,
+								instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+								draftMode: $scope.isPendingView,
+								filter: getFilter()
+							};
+
+							visualizationModalService.openModal(subObservationSet.id, observationUnitsSearch);
+						}
+					}, {
 						extend: 'colvis',
 						className: 'fbk-buttons-no-border fbk-colvis-button',
 						text: '<i class="glyphicon glyphicon-th"></i>'
@@ -823,17 +841,17 @@
 					$(this.header()).prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#1b95b2;"' +
 						' ng-if="isVariableBatchActionSelected(' + this.index() + ')"> </span>')($scope))
 						.append($compile('<span class="glyphicon glyphicon-filter" ' +
-						' style="cursor:pointer; padding-left: 5px;"' +
-						' popover-placement="bottom"' +
-						' ng-class="getFilteringByClass(' + this.index() + ')"' +
-						' popover-append-to-body="true"' +
-						' popover-trigger="\'outsideClick\'"' +
-						// does not work with outsideClick
-						// ' popover-is-open="columnFilter.isOpen"' +
-						' ng-if="isVariableFilter(' + this.index() + ')"' +
-						' ng-click="openColumnFilter(' + this.index() + ')"' +
-						' uib-popover-template="\'columnFilterPopoverTemplate.html\'">' +
-						'</span>')($scope));
+							' style="cursor:pointer; padding-left: 5px;"' +
+							' popover-placement="bottom"' +
+							' ng-class="getFilteringByClass(' + this.index() + ')"' +
+							' popover-append-to-body="true"' +
+							' popover-trigger="\'outsideClick\'"' +
+							// does not work with outsideClick
+							// ' popover-is-open="columnFilter.isOpen"' +
+							' ng-if="isVariableFilter(' + this.index() + ')"' +
+							' ng-click="openColumnFilter(' + this.index() + ')"' +
+							' uib-popover-template="\'columnFilterPopoverTemplate.html\'">' +
+							'</span>')($scope));
 				});
 				adjustColumns();
 			}
@@ -1317,7 +1335,7 @@
 
 			function renderCategoricalValue(value, columnData) {
 				var possibleValue = null;
-				
+
 				if (columnData.possibleValues) {
 					/* FIXME fix data model
 					 *  Some variables don't store the cvterm.name (like traits in phenotype)
@@ -1349,10 +1367,10 @@
 
 
 			function getDisplayValueForNumericalValue(numericValue) {
-				if(numericValue === "missing" || numericValue === "") {
+				if (numericValue === "missing" || numericValue === "") {
 					return numericValue;
 				} else {
-					return EscapeHTML.escape( numericValue ? Number(Math.round(numericValue+'e4')+'e-4'): '');
+					return EscapeHTML.escape(numericValue ? Number(Math.round(numericValue + 'e4') + 'e-4') : '');
 				}
 			}
 

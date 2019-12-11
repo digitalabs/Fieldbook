@@ -476,7 +476,7 @@ public class ETLServiceImpl implements ETLService {
 	@Override
 	public void mergeVariableData(
 		final VariableDTO[] variables, final Workbook workbook,
-		final UserSelection userSelection) {
+		final UserSelection userSelection, final boolean maintainHeaderMapping) {
 
 		for (final VariableDTO dto : variables) {
 
@@ -486,6 +486,11 @@ public class ETLServiceImpl implements ETLService {
 
 			final MeasurementVariable variable = new MeasurementVariable();
 			dto.populateMeasurementVariable(variable);
+			if(!maintainHeaderMapping) {
+				variable.setAlias(dto.getHeaderName());
+				final String name = dto.getAlias() != null ? dto.getAlias() : dto.getVariable();
+				variable.setName(name);
+			}
 
 			final PhenotypicType type = variable.getRole();
 			try {
@@ -514,6 +519,18 @@ public class ETLServiceImpl implements ETLService {
 
 	}
 
+	@Override
+	public String getExperimentalDesignValueFromObservationSheet(final Workbook workbook, final UserSelection userSelection,
+		final int columnIndex) {
+		if(columnIndex != -1) {
+			final Sheet sheet = workbook.getSheetAt(userSelection.getSelectedSheet());
+			final String data = PoiUtil.getCellStringValue(PoiUtil.getCell(sheet, columnIndex, 1));
+			return data;
+		}
+		return null;
+	}
+
+
 	/*
 	 * Method for extracting observation data from the provided Excel file in
 	 * the case where existing study data is used
@@ -530,7 +547,8 @@ public class ETLServiceImpl implements ETLService {
 		final Map<Integer, MeasurementVariable> variableIndexMap = new LinkedHashMap<>();
 
 		for (final MeasurementVariable measurementVariable : variableList) {
-			final int columnIndex = columnHeaders.indexOf(measurementVariable.getName());
+			final int columnIndex = columnHeaders.indexOf(measurementVariable.getName()) == -1 ?
+				columnHeaders.indexOf(measurementVariable.getAlias()) : columnHeaders.indexOf(measurementVariable.getName());
 			if (columnIndex != -1) {
 				variableIndexMap.put(columnIndex, measurementVariable);
 			}
@@ -867,6 +885,9 @@ public class ETLServiceImpl implements ETLService {
 			if (!"OCC".equalsIgnoreCase(studyHeader.getName())
 				&& studyHeader.getRole() != PhenotypicType.TRIAL_ENVIRONMENT
 				&& fileHeaderMap.get(studyHeader.getName().toUpperCase()) == null) {
+				if((studyHeader.getAlias() != null && fileHeaderMap.get(studyHeader.getAlias().toUpperCase()) != null)) {
+					continue;
+				}
 				missingHeaders.append(studyHeader.getName());
 				missingHeaders.append(delimeter);
 			}

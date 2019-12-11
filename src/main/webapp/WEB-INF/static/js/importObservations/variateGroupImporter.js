@@ -10,19 +10,34 @@
 
 	// TODO Refactor: Extract common functionality with designImportCtrl
 	app.controller('importObservationsCtrl', ['$scope', 'ImportMappingService', 'DesignOntologyService', '$uibModal', 'Messages', 'datasetService', '$rootScope',
-		function (scope, ImportMappingService, DesignOntologyService, $uibModal, Messages, datasetService, $rootScope) {
+		function ($scope, ImportMappingService, DesignOntologyService, $uibModal, Messages, datasetService, $rootScope) {
 			// we can retrieve this from a service
-			scope.Messages = Messages;
-			scope.data = ImportMappingService.data;
-			scope.datasetId = ImportMappingService.datasetId;
+			$scope.Messages = Messages;
+			$scope.data = ImportMappingService.data;
+			$scope.datasetId = ImportMappingService.datasetId;
 
-			scope.cancelMapping = function () {
-				//Should continue with the import?
+			$scope.advancedOptions = {
+				showAdvancedOptions: false,
+				maintainHeaderNaming: false,
 			};
 
-			scope.validateVariateGroupAndSend = function () {
+			$scope.toggleAdvancedOptions = function () {
+				$scope.advancedOptions.showAdvancedOptions = !$scope.advancedOptions.showAdvancedOptions;
+			};
+
+			$scope.cancelMapping = function () {
+				//Should continue with the import?
+				$scope.resetAdvancedOptions();
+			};
+
+			$scope.resetAdvancedOptions = function () {
+				$scope.advancedOptions.showAdvancedOptions = false;
+				$scope.advancedOptions.maintainHeaderNaming = false;
+			};
+
+			$scope.validateVariateGroupAndSend = function () {
 				ImportMappingService.showConfirmIfHasUnmapped().then(function () {
-					return ImportMappingService.validateMappingAndSave();
+					return ImportMappingService.validateMappingAndSave($scope.advancedOptions.maintainHeaderNaming);
 				}, function () {
 					return {cancelMapping: true};
 				}).then(function (result) {
@@ -38,6 +53,7 @@
 						/** @namespace result.warning */
 						showAlertMessage('', result.warning);
 					}
+					$scope.resetAdvancedOptions();
 				}, function (failResult) {
 					if (failResult.cancelMapping) {
 						return;
@@ -45,15 +61,16 @@
 
 					var msg = 'Please choose a mapping for all variables that you wish to import in the study.';
 					createErrorNotification('Import Observations Mapping Error', msg);
+
 				});
 
 			};
 
-			scope.launchOntologyBrowser = function () {
+			$scope.launchOntologyBrowser = function () {
 				var $importMapModal = $('#importMapModal');
 				$importMapModal.one('hidden.bs.modal', function () {
 					setTimeout(function () {
-						scope.$apply(function () {
+						$scope.$apply(function () {
 							var title = 'Ontology Browser';
 							var url = '/ibpworkbench/controller/ontology';
 
@@ -173,6 +190,9 @@
 									$.each(data, function (key, value) {
 										scope.modeldata.id = value.variable.cvTermId;
 										scope.modeldata.variable = value.variable;
+										if(value.variable.alias != null) {
+											scope.modeldata.variable.name = value.variable.alias;
+										}
 									});
 								}
 							}
@@ -216,9 +236,10 @@
 		}
 	]);
 
-	app.service('ImportMappingService', ['$http', '$q', '_', 'Messages', 'datasetService', function ($http, $q, _, Messages, datasetService) {
+	app.service('ImportMappingService', ['$http', '$rootScope', '$q', '_', 'Messages', 'datasetService', function ($http, $rootScope, $q,
+		_, Messages, datasetService) {
 
-		function validateMappingAndSave() {
+		function validateMappingAndSave(maintainHeaderNaming) {
 
 			var postData = angular.copy(service.data);
 			var datasetId = angular.copy(service.datasetId);
@@ -285,8 +306,12 @@
 								addVariablesPromises.push(datasetService.addVariables(datasetId, {
 									variableTypeId: variableTypeId,
 									variableId: value[i].variable.id,
-									studyAlias: value[i].name
+									studyAlias: maintainHeaderNaming ? value[i].name : value[i].variable.alias || value[i].variable.name,
 								}));
+								if(!maintainHeaderNaming) {
+									var headerIndex = $rootScope.importedData[0].findIndex(function(name){ return name === value[i].name});
+									$rootScope.importedData[0][headerIndex] = value[i].variable.alias || value[i].variable.name;
+								}
 							} else {
 								showErrorMessage('', 'Variable already exists in dataset');
 								deferred.reject();

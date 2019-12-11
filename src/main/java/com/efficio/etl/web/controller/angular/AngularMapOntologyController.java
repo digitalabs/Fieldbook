@@ -23,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -149,7 +151,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 
-			this.etlService.mergeVariableData(variables, workbook, this.userSelection);
+			this.etlService.mergeVariableData(variables, workbook, this.userSelection, true);
 
 			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService.convertToWorkbook(this.userSelection);
 
@@ -247,8 +249,8 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/confirm", method = RequestMethod.POST)
-	public Map<String, Object> confirmImport(@RequestBody final VariableDTO[] variables, final HttpSession session,
+	@RequestMapping(value = "/confirm/{maintainHeaderMapping}", method = RequestMethod.POST)
+	public Map<String, Object> confirmImport(@RequestBody final VariableDTO[] variables, @PathVariable final boolean maintainHeaderMapping, final HttpSession session,
 			final HttpServletRequest request) {
 
 		try {
@@ -256,7 +258,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			this.userSelection.clearMeasurementVariables();
 
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
-			this.etlService.mergeVariableData(variables, workbook, this.userSelection);
+			this.etlService.mergeVariableData(variables, workbook, this.userSelection, maintainHeaderMapping);
 			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService.convertToWorkbook(this.userSelection);
 
 			final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService
@@ -266,6 +268,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			importData.setConditions(referenceWorkbook.getConditions());
 
 			this.dataImportService.addLocationIDVariableIfNotExists(importData, importData.getFactors(), this.contextUtil.getCurrentProgramUUID());
+			this.processExperimentalDesign(importData, workbook);
 			this.dataImportService.assignLocationIdVariableToEnvironmentDetailSection(importData);
 			this.dataImportService.removeLocationNameVariableIfExists(importData);
 			this.fieldbookService.addStudyUUIDConditionAndObsUnitIDFactorToWorkbook(importData, false);
@@ -278,6 +281,9 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			return this.wrapFormResult(AngularOpenSheetController.URL, request);
 
+		} catch (WorkbookParserException e) {
+			AngularMapOntologyController.LOG.error(e.getMessage(), e);
+			return this.wrapFormResult(Arrays.asList(e.getMessage()));
 		} catch (final Exception e) {
 			AngularMapOntologyController.LOG.error(e.getMessage(), e);
 			final List<Message> error = new ArrayList<>();
@@ -286,6 +292,19 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			return this.wrapFormResult(errorMessages);
 		}
 
+	}
+
+	void processExperimentalDesign(final org.generationcp.middleware.domain.etl.Workbook importData, final Workbook workbook)  throws WorkbookParserException{
+		final List<String> headers = this.etlService.retrieveColumnHeaders(workbook, this.userSelection, false);
+		final List<MeasurementVariable> variableList = importData.getFactors();
+		int exptDesignColumnIndex = -1;
+		for (final MeasurementVariable measurementVariable : variableList) {
+			if(TermId.EXPERIMENT_DESIGN_FACTOR.getId() == measurementVariable.getTermId()) {
+				 exptDesignColumnIndex = headers.indexOf(measurementVariable.getName());
+			}
+		}
+		final String valueFromObsevations = this.etlService.getExperimentalDesignValueFromObservationSheet(workbook, userSelection, exptDesignColumnIndex);
+		this.dataImportService.processExperimentalDesign(importData, this.contextUtil.getCurrentProgramUUID(), valueFromObsevations);
 	}
 
 	@ModelAttribute("uploadForm")

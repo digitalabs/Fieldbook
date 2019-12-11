@@ -2014,52 +2014,69 @@ public class SettingsUtil {
 			return param;
 		}
 		for (final MeasurementVariable var : expDesigns) {
-			if (var.getTermId() == TermId.BLOCK_SIZE.getId()) {
-				param.setBlockSize(Integer.valueOf(var.getValue()));
-			} else if (var.getTermId() == TermId.NO_OF_COLS_IN_REPS.getId()) {
-				param.setColsPerReplications(Integer.valueOf(var.getValue()));
-			} else if (var.getTermId() == TermId.NO_OF_ROWS_IN_REPS.getId()) {
-				param.setRowsPerReplications(Integer.valueOf(var.getValue()));
-			} else if (var.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
-				if (var.getValue() != null) {
-					final int designTypeTermId = Integer.parseInt(var.getValue());
-					final ExperimentDesignType experimentDesignType = ExperimentDesignType.getDesignTypeItemByTermId(designTypeTermId);
-					param.setDesignType(experimentDesignType != null ? experimentDesignType.getId() : null);
-					param.setUseLatenized(ExperimentDesignType.isLatinized(designTypeTermId));
+			final String value = var.getValue();
+			if(!StringUtils.isEmpty(value)) {
+				switch (TermId.getById(var.getTermId())) {
+					case BLOCK_SIZE:
+						param.setBlockSize(Integer.valueOf(value));
+						break;
+					case NO_OF_COLS_IN_REPS:
+						param.setColsPerReplications(Integer.valueOf(value));
+						break;
+					case NO_OF_ROWS_IN_REPS:
+						param.setRowsPerReplications(Integer.valueOf(value));
+						break;
+					case EXPERIMENT_DESIGN_FACTOR:
+						final int designTypeTermId = Integer.parseInt(value);
+						final ExperimentDesignType experimentDesignType = ExperimentDesignType.getDesignTypeItemByTermId(designTypeTermId);
+						param.setDesignType(experimentDesignType != null ? experimentDesignType.getId() : null);
+						param.setUseLatenized(ExperimentDesignType.isLatinized(designTypeTermId));
+						break;
+					case NO_OF_CBLKS_LATINIZE:
+						param.setNblatin(Integer.valueOf(value));
+						break;
+					case NO_OF_CCOLS_LATINIZE:
+						param.setNclatin(Integer.valueOf(value));
+						break;
+					case NO_OF_CROWS_LATINIZE:
+						param.setNrlatin(Integer.valueOf(value));
+						break;
+					case NO_OF_REPS_IN_COLS:
+						param.setReplatinGroups(value);
+						break;
+					case REPLICATIONS_MAP:
+						if (String.valueOf(TermId.REPS_IN_SINGLE_COL.getId()).equals(value)) {
+							param.setReplicationsArrangement(1);
+						} else if (String.valueOf(TermId.REPS_IN_SINGLE_ROW.getId()).equals(value)) {
+							param.setReplicationsArrangement(2);
+						} else if (String.valueOf(TermId.REPS_IN_ADJACENT_COLS.getId()).equals(value)) {
+							param.setReplicationsArrangement(3);
+						}
+						break;
+					case NUMBER_OF_REPLICATES:
+						param.setReplicationsCount(Integer.valueOf(value));
+						break;
+					case PERCENTAGE_OF_REPLICATION:
+						param.setReplicationPercentage(Integer.valueOf(value));
+						break;
+					case EXPT_DESIGN_SOURCE:
+						param.setFileName(value);
+						break;
+					case NBLKS:
+						param.setNumberOfBlocks(Integer.valueOf(value));
+						break;
+					case CHECK_PLAN:
+						param.setCheckInsertionManner(Integer.valueOf(value));
+						break;
+					case CHECK_INTERVAL:
+						param.setCheckSpacing(Integer.valueOf(value));
+						break;
+					case CHECK_START:
+						param.setCheckStartingPosition(Integer.valueOf(value));
+						break;
 				}
-			} else if (var.getTermId() == TermId.NO_OF_CBLKS_LATINIZE.getId()) {
-				param.setNblatin(Integer.valueOf(var.getValue()));
-			} else if (var.getTermId() == TermId.NO_OF_CCOLS_LATINIZE.getId()) {
-				param.setNclatin(Integer.valueOf(var.getValue()));
-			} else if (var.getTermId() == TermId.NO_OF_CROWS_LATINIZE.getId()) {
-				param.setNrlatin(Integer.valueOf(var.getValue()));
-			} else if (var.getTermId() == TermId.NO_OF_REPS_IN_COLS.getId()) {
-				param.setReplatinGroups(var.getValue());
-			} else if (var.getTermId() == TermId.REPLICATIONS_MAP.getId()) {
-				if (String.valueOf(TermId.REPS_IN_SINGLE_COL.getId()).equals(var.getValue())) {
-					param.setReplicationsArrangement(1);
-				} else if (String.valueOf(TermId.REPS_IN_SINGLE_ROW.getId()).equals(var.getValue())) {
-					param.setReplicationsArrangement(2);
-				} else if (String.valueOf(TermId.REPS_IN_ADJACENT_COLS.getId()).equals(var.getValue())) {
-					param.setReplicationsArrangement(3);
-				}
-			} else if (var.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()) {
-				param.setReplicationsCount(Integer.valueOf(var.getValue()));
-			} else if (var.getTermId() == TermId.PERCENTAGE_OF_REPLICATION.getId()) {
-				if (!StringUtils.isEmpty(var.getValue())) {
-					param.setReplicationPercentage(Integer.valueOf(var.getValue()));
-				}
-			} else if (var.getTermId() == TermId.EXPT_DESIGN_SOURCE.getId()) {
-				param.setFileName(var.getValue());
-			} else if (var.getTermId() == TermId.NBLKS.getId()) {
-				param.setNumberOfBlocks(Integer.valueOf(var.getValue()));
-			} else if (var.getTermId() == TermId.CHECK_PLAN.getId()) {
-				param.setCheckInsertionManner(Integer.valueOf(var.getValue()));
-			} else if (var.getTermId() == TermId.CHECK_INTERVAL.getId()) {
-				param.setCheckSpacing(Integer.valueOf(var.getValue()));
-			} else if (var.getTermId() == TermId.CHECK_START.getId()) {
-				param.setCheckStartingPosition(Integer.valueOf(var.getValue()));
 			}
+
 		}
 
 		return param;

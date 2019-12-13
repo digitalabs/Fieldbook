@@ -754,7 +754,7 @@ public class DesignImportController extends SettingsController {
 
 		final Dataset dataset = (Dataset) SettingsUtil
 			.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection.getPlotsLevelList(),
-				variatesList, this.userSelection, this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(),
+				variatesList, this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(),
 				null, null, this.userSelection.getStudyConditions(), this.contextUtil.getCurrentProgramUUID(), description, startDate,
 				endDate, studyUpdate);
 

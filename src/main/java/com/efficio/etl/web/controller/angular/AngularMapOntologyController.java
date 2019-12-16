@@ -51,9 +51,9 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 	public static final String URL = "/etl/workbook/mapOntology";
 	private static final Logger LOG = LoggerFactory.getLogger(AngularMapOntologyController.class);
-	public static final String ERROR_HEADER_NO_MAPPING = "error.header.no.mapping";
-	public static final String ERROR_DUPLICATE_LOCAL_VARIABLE = "error.duplicate.local.variable";
-	public static final String ERROR_LOCATION_ID_DOESNT_EXISTS = "error.location.id.doesnt.exists";
+	static final String ERROR_HEADER_NO_MAPPING = "error.header.no.mapping";
+	static final String ERROR_DUPLICATE_LOCAL_VARIABLE = "error.duplicate.local.variable";
+	static final String ERROR_LOCATION_ID_DOESNT_EXISTS = "error.location.id.doesnt.exists";
 
 	@Resource
 	private FieldbookService fieldbookService;
@@ -120,7 +120,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 		return super.show(model, true, request);
 	}
 
-	public int getTotalAllocatedCount(final Map<PhenotypicType, List<VariableDTO>> headerMap) {
+	private int getTotalAllocatedCount(final Map<PhenotypicType, List<VariableDTO>> headerMap) {
 		int allocatedCount = 0;
 
 		allocatedCount += this.getAllocatedCount(headerMap, PhenotypicType.TRIAL_ENVIRONMENT);
@@ -131,7 +131,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 		return allocatedCount;
 	}
 
-	public int getAllocatedCount(final Map<PhenotypicType, List<VariableDTO>> headerMap, final PhenotypicType type) {
+	private int getAllocatedCount(final Map<PhenotypicType, List<VariableDTO>> headerMap, final PhenotypicType type) {
 		final List<VariableDTO> variableDTOList = headerMap.get(type);
 
 		if (variableDTOList == null) {
@@ -148,8 +148,6 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 		try {
 
 			this.userSelection.clearMeasurementVariables();
-
-			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 
 			this.etlService.mergeVariableData(variables, this.userSelection, true);
 
@@ -202,7 +200,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 		}
 	}
 
-	protected boolean checkIfLocationIdVariableExists(final org.generationcp.middleware.domain.etl.Workbook importData)
+	boolean checkIfLocationIdVariableExists(final org.generationcp.middleware.domain.etl.Workbook importData)
 			throws IOException, WorkbookParserException {
 
 		final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService

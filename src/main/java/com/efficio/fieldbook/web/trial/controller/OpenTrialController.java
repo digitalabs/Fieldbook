@@ -74,9 +74,9 @@ public class OpenTrialController extends BaseTrialController {
 	private static final String TRIAL_INSTANCE = "TRIAL_INSTANCE";
 	private static final String TRIAL = "TRIAL";
 	public static final String URL = "/TrialManager/openTrial";
-	static final String HAS_GENERATED_DESIGN = "hasGeneratedDesign";
+	private static final String HAS_GENERATED_DESIGN = "hasGeneratedDesign";
 	static final String ENVIRONMENT_DATA_TAB = "environmentData";
-	static final String HAS_LISTS_OR_SUB_OBS = "hasListsOrSubObs";
+	private static final String HAS_LISTS_OR_SUB_OBS = "hasListsOrSubObs";
 	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
 	private static final String IS_DELETED_ENVIRONMENT = "0";
 	private static final String IS_PREVIEW_EDITABLE = "0";
@@ -302,8 +302,8 @@ public class OpenTrialController extends BaseTrialController {
 
 			final List<ListDataProject> listDataProjects = this.fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
 
-			long germplasmListChecksSize = 0;
-			if (this.userSelection.getExpDesignParams().getDesignType() == ExperimentDesignType.P_REP.getId()) {
+			long germplasmListChecksSize;
+			if (ExperimentDesignType.P_REP.getId().equals(this.userSelection.getExpDesignParams().getDesignType())) {
 
 				germplasmListChecksSize = this.fieldbookService.getGermplasmListChecksSize(germplasmList.getId());
 			} else {
@@ -423,8 +423,7 @@ public class OpenTrialController extends BaseTrialController {
 		workbook.setTrialDatasetId(trialDatasetId);
 		workbook.setMeasurementDatesetId(measurementDatasetId);
 
-		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<>();
-		variablesForEnvironment.addAll(workbook.getTrialVariables());
+		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<>(workbook.getTrialVariables());
 
 		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil
 			.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment,
@@ -482,7 +481,7 @@ public class OpenTrialController extends BaseTrialController {
 		}
 	}
 
-	protected Map<Integer, List<Integer>> detectValueChangesInVariables(final List<MeasurementRow> oldMeasurementRows,
+	Map<Integer, List<Integer>> detectValueChangesInVariables(final List<MeasurementRow> oldMeasurementRows,
 		final List<MeasurementRow> newMeasurementRows) {
 
 		final Map<Integer, List<Integer>> changedVariablesPerInstance = new HashMap<>();
@@ -594,8 +593,7 @@ public class OpenTrialController extends BaseTrialController {
 			return trialObservations;
 		}
 
-		List<MeasurementRow> filteredTrialObservations = new ArrayList<>();
-		filteredTrialObservations.addAll(trialObservations);
+		List<MeasurementRow> filteredTrialObservations = new ArrayList<>(trialObservations);
 
 		// remove the deleted trial instance
 		for (final MeasurementRow row : trialObservations) {
@@ -629,8 +627,7 @@ public class OpenTrialController extends BaseTrialController {
 		final String deletedEnvironment,
 		final List<MeasurementRow> filteredMeasurementRowList) {
 
-		final List<MeasurementRow> measurementRowList = new ArrayList<>();
-		measurementRowList.addAll(filteredMeasurementRowList);
+		final List<MeasurementRow> measurementRowList = new ArrayList<>(filteredMeasurementRowList);
 
 		for (final MeasurementRow row : measurementRowList) {
 			final List<MeasurementData> dataList = row.getDataList();
@@ -677,7 +674,7 @@ public class OpenTrialController extends BaseTrialController {
 		return filteredObservations;
 	}
 
-	List<SampleListDTO> getSampleList(final Integer studyId) {
+	private List<SampleListDTO> getSampleList(final Integer studyId) {
 		final List<Integer> datasetTypeIds = this.datasetTypeService.getObservationDatasetTypeIds();
 		final List<Integer> datasetIds = new ArrayList<>();
 

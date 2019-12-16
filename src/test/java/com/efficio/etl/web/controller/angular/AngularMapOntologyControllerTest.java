@@ -7,6 +7,7 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.google.common.base.Optional;
 import junit.framework.Assert;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -190,6 +192,27 @@ public class AngularMapOntologyControllerTest {
 		Assert.assertEquals(AngularMapOntologyControllerTest.CONTEXT_PATH + AngularOpenSheetController.URL,
 				result.get("redirectUrl"));
 
+	}
+
+	@Test
+	public void testProcessExperimentalDesign() throws WorkbookParserException {
+		final Workbook importData = new Workbook();
+		final org.apache.poi.ss.usermodel.Workbook workbook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
+		final List<String> headers = Arrays.asList("EXPT_DESIGN", "DESIG");
+		Mockito.when(this.etlService.retrieveColumnHeaders(workbook, this.userSelection, false)).thenReturn(headers);
+
+		final List<MeasurementVariable> factors = new ArrayList<>();
+		factors.add(MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "EXPT_DESIGN","RCBD"));
+		importData.setFactors(factors);
+
+		final String valueFromObsevations = "RCBD";
+		Mockito.when(this.etlService.getExperimentalDesignValueFromObservationSheet(workbook, userSelection, 0)).thenReturn(valueFromObsevations);
+
+		this.controller.processExperimentalDesign(importData, workbook);
+
+		Mockito.verify(this.etlService).retrieveColumnHeaders(workbook, this.userSelection, false);
+		Mockito.verify(this.etlService).getExperimentalDesignValueFromObservationSheet(workbook, userSelection, 0);
+		Mockito.verify(this.dataImportService).processExperimentalDesign(importData, this.contextUtil.getCurrentProgramUUID(), valueFromObsevations);
 	}
 
 	@Test

@@ -62,6 +62,7 @@ import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.generationcp.middleware.manager.ontology.api.TermDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.dms.DmsProject;
@@ -179,6 +180,9 @@ public class OpenTrialControllerTest {
 
 	@Mock
 	private DatasetService datasetService;
+
+	@Mock
+	private TermDataManager termDataManager;
 
 	@Before
 	public void setUp() {
@@ -1389,6 +1393,15 @@ public class OpenTrialControllerTest {
 		Assert.assertTrue(result.containsKey(geoLocationId));
 		Assert.assertTrue(result.get(geoLocationId).contains(variableId1));
 		Assert.assertTrue(result.get(geoLocationId).contains(variableId2));
+	}
+
+	@Test
+	public void testGetExperimentalDesignName() {
+		final Term term = new Term(TermId.RANDOMIZED_COMPLETE_BLOCK.getId(), "RCBD", "RCBD");
+		Mockito.when(this.termDataManager.getTermById((term.getId()))).thenReturn(term);
+
+		final Map<String, Object> map = this.openTrialController.getExperimentalDesignName(TermId.RANDOMIZED_COMPLETE_BLOCK.getId());
+		Assert.assertEquals(term.getName(), map.get("name").toString());
 	}
 
 	@Test

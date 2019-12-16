@@ -793,7 +793,7 @@ public class OpenTrialControllerTest {
 		Assert.assertFalse("Design type should not be latinized", data.getUseLatenized());
 		Assert.assertEquals("Source should be " + exptDesignSourceValue, exptDesignSourceValue, data.getFileName());
 		Assert.assertEquals("Number of replicates should be " + nRepValue, nRepValue, data.getReplicationsCount());
-		Assert.assertEquals("% of replication should be " + percentageReplication, percentageReplication, data.getReplicationPercentage().toString());
+		Assert.assertEquals("% of replication should be " + percentageReplication, percentageReplication, data.getReplicationPercentage());
 		Assert.assertEquals("Block size should be 3", 3, data.getBlockSize().intValue());
 	}
 

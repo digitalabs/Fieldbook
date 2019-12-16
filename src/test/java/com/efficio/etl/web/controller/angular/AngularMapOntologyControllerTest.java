@@ -107,7 +107,7 @@ public class AngularMapOntologyControllerTest {
 		final ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
 
 
-		Mockito.verify(this.etlService).mergeVariableData(variables, apacheWorkbook, this.userSelection, true);
+		Mockito.verify(this.etlService).mergeVariableData(variables, this.userSelection, true);
 		Mockito.verify(this.etlService).validateProjectOntology(workbook);
 
 		Mockito.verify(this.etlService, Mockito.times(5)).convertMessageList(captor.capture());
@@ -151,7 +151,7 @@ public class AngularMapOntologyControllerTest {
 
 		this.controller.processImport(variables);
 
-		Mockito.verify(this.etlService).mergeVariableData(variables, apacheWorkbook, this.userSelection, true);
+		Mockito.verify(this.etlService).mergeVariableData(variables, this.userSelection, true);
 		Mockito.verify(this.etlService).validateProjectOntology(workbook);
 
 		Mockito.verify(this.etlService, Mockito.times(0)).convertMessageList(Mockito.anyListOf(Message.class));
@@ -174,7 +174,7 @@ public class AngularMapOntologyControllerTest {
 		final Map<String, Object> result = this.controller.confirmImport(variables, true, this.session, this.request);
 
 		Mockito.verify(this.userSelection).clearMeasurementVariables();
-		Mockito.verify(this.etlService).mergeVariableData(variables, apacheWorkbook, this.userSelection, true);
+		Mockito.verify(this.etlService).mergeVariableData(variables, this.userSelection, true);
 		Mockito.verify(this.dataImportService).addLocationIDVariableIfNotExists(workbook, workbook.getFactors(), PROGRAM_UUID);
 		Mockito.verify(this.dataImportService).assignLocationIdVariableToEnvironmentDetailSection(workbook);
 		Mockito.verify(this.dataImportService).removeLocationNameVariableIfExists(workbook);

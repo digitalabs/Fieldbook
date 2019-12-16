@@ -5,6 +5,8 @@ import com.efficio.etl.service.impl.ETLServiceImpl;
 import com.efficio.etl.web.bean.IndexValueDTO;
 import com.efficio.etl.web.bean.SheetDTO;
 import com.efficio.etl.web.bean.UserSelection;
+import com.efficio.etl.web.bean.VariableDTO;
+import com.efficio.etl.web.util.AppConstants;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -45,7 +47,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -218,7 +219,7 @@ public class ETLServiceTest {
 
 	@Test
 	public void testRetrieveAndSetProjectOntologyForPlotDataImport() {
-		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
+		this.fillStudyDetailsOfUserSelection(this.userSelection);
 		this.userSelection.setDatasetType(DatasetTypeEnum.PLOT_DATA.getId());
 
 		Mockito.doReturn(new StudyTypeDto(10010, "Trial", StudyTypeDto.TRIAL_NAME)).when(this.studyDataManager)
@@ -292,7 +293,7 @@ public class ETLServiceTest {
 
 	@Test
 	public void testRetrieveAndSetProjectOntologyForMeansDataImport() {
-		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
+		this.fillStudyDetailsOfUserSelection(this.userSelection);
 		this.userSelection.setDatasetType(DatasetTypeEnum.MEANS_DATA.getId());
 
 		Mockito.doReturn(new StudyTypeDto(10010, StudyTypeDto.TRIAL_LABEL, StudyTypeDto.TRIAL_NAME)).when(this.studyDataManager)
@@ -392,7 +393,7 @@ public class ETLServiceTest {
 		Mockito.doReturn(true).when(this.dataImportService).checkForOutOfBoundsData(
 			ArgumentMatchers.any(org.generationcp.middleware.domain.etl.Workbook.class), ArgumentMatchers.eq(ETLServiceTest.PROGRAM_UUID));
 
-		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
+		this.fillStudyDetailsOfUserSelection(this.userSelection);
 		this.userSelection.setDatasetType(DatasetTypeEnum.PLOT_DATA.getId());
 		this.userSelection.getPhenotypicMap().putAll(this.createPhenotyicMapTestData());
 
@@ -414,10 +415,10 @@ public class ETLServiceTest {
 		// Accept any workbook when checkForOutOfBoundsData is called. It will
 		// be captured and verified later.
 		Mockito.when(this.dataImportService.checkForOutOfBoundsData(
-			Matchers.any(org.generationcp.middleware.domain.etl.Workbook.class),
+			ArgumentMatchers.any(org.generationcp.middleware.domain.etl.Workbook.class),
 			ArgumentMatchers.eq(ETLServiceTest.PROGRAM_UUID))).thenReturn(false);
 
-		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
+		this.fillStudyDetailsOfUserSelection(this.userSelection);
 		this.userSelection.setDatasetType(DatasetTypeEnum.PLOT_DATA.getId());
 		this.userSelection.getPhenotypicMap().putAll(this.createPhenotyicMapTestData());
 
@@ -485,7 +486,7 @@ public class ETLServiceTest {
 	@Test
 	public void testCreateWorkbookFromUserSelection() {
 
-		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
+		this.fillStudyDetailsOfUserSelection(this.userSelection);
 		this.userSelection.setDatasetType(DatasetTypeEnum.PLOT_DATA.getId());
 		this.userSelection.getPhenotypicMap().putAll(this.createPhenotyicMapTestData());
 
@@ -536,7 +537,7 @@ public class ETLServiceTest {
 
 	@Test
 	public void testFillDetailsOfDatasetsInWorkbook() {
-		this.fillStudyDetailsOfUserSelection(this.userSelection, ETLServiceTest.STUDY_ID);
+		this.fillStudyDetailsOfUserSelection(this.userSelection);
 		this.userSelection.setDatasetType(DatasetTypeEnum.PLOT_DATA.getId());
 
 		final DataSet plotDataset = DataSetTestDataInitializer
@@ -741,6 +742,55 @@ public class ETLServiceTest {
 		Mockito.verify(this.dataImportService).saveProjectOntology(workbook, ETLServiceTest.PROGRAM_UUID, this.crop);
 	}
 
+	@Test
+	public void testMergeVariableDataWhereVariableIsUnMapped() {
+		final VariableDTO[] variableDTOS = new VariableDTO[1];
+		variableDTOS[0] = new VariableDTO();
+		final UserSelection userSelection = new UserSelection();
+		this.etlService.mergeVariableData(variableDTOS, userSelection, false);
+		Mockito.verify(this.ontologyDataManager, Mockito.never()).getTermById(ArgumentMatchers.anyInt());
+	}
+
+	@Test
+	public void testMergeVariableDataMaintainHeaderMappingFalse() {
+		final VariableDTO[] variableDTOS = new VariableDTO[1];
+		final VariableDTO variableDTO =  new VariableDTO();
+		variableDTO.setId(1);
+		variableDTO.setHeaderName("HEADERNAME");
+		variableDTO.setAlias("ALIAS");
+		variableDTO.setVariable("NAME");
+		variableDTO.setPhenotype(AppConstants.TYPE_VARIATE);
+		variableDTO.setDataType(1110);
+		variableDTOS[0] = variableDTO;
+		final UserSelection userSelection = new UserSelection();
+		this.etlService.mergeVariableData(variableDTOS, userSelection, false);
+		Mockito.verify(this.ontologyDataManager).getTermById(ArgumentMatchers.anyInt());
+		final MeasurementVariable measurementVariable = userSelection
+			.getMeasurementVariablesByPhenotypic(PhenotypicType.VARIATE).get(variableDTO.getHeaderName());
+		Assert.assertEquals(variableDTO.getAlias(), measurementVariable.getName());
+		Assert.assertEquals(variableDTO.getId().toString(), String.valueOf(measurementVariable.getTermId()));
+	}
+
+	@Test
+	public void testMergeVariableDataMaintainHeaderMappingTrue() {
+		final VariableDTO[] variableDTOS = new VariableDTO[1];
+		final VariableDTO variableDTO =  new VariableDTO();
+		variableDTO.setId(1);
+		variableDTO.setHeaderName("HEADERNAME");
+		variableDTO.setAlias("ALIAS");
+		variableDTO.setVariable("NAME");
+		variableDTO.setPhenotype(AppConstants.TYPE_VARIATE);
+		variableDTO.setDataType(1110);
+		variableDTOS[0] = variableDTO;
+		final UserSelection userSelection = new UserSelection();
+		this.etlService.mergeVariableData(variableDTOS, userSelection, true);
+		Mockito.verify(this.ontologyDataManager).getTermById(ArgumentMatchers.anyInt());
+		final MeasurementVariable measurementVariable = userSelection
+			.getMeasurementVariablesByPhenotypic(PhenotypicType.VARIATE).get(variableDTO.getHeaderName());
+		Assert.assertEquals(variableDTO.getHeaderName(), measurementVariable.getName());
+		Assert.assertEquals(variableDTO.getId().toString(), String.valueOf(measurementVariable.getTermId()));
+	}
+
 	private Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> createPhenotyicMapTestData() {
 
 		final Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> map = new HashMap<>();
@@ -796,14 +846,14 @@ public class ETLServiceTest {
 		userSelection.setObservationRows(ETLServiceTest.ALL_OBSERVATION_ROWS);
 	}
 
-	private void fillStudyDetailsOfUserSelection(final UserSelection userSelection, final Integer studyId) {
+	private void fillStudyDetailsOfUserSelection(final UserSelection userSelection) {
 		userSelection.setStudyName("ETLStudy" + Math.random());
 		userSelection.setStudyDescription("Study for testing");
 		userSelection.setStudyObjective("To test the data import tool");
 		userSelection.setStudyStartDate("09/01/2015");
 		userSelection.setStudyEndDate("10/01/2015");
 		userSelection.setStudyType(StudyTypeDto.TRIAL_NAME);
-		userSelection.setStudyId(studyId);
+		userSelection.setStudyId(ETLServiceTest.STUDY_ID);
 	}
 
 	private Workbook createTestExcelWorkbookFromWorkbook(
@@ -827,7 +877,7 @@ public class ETLServiceTest {
 		for (int i = 0; i < allVariables.size(); i++) {
 			final HSSFCell cell = row2.createCell(i);
 
-			if (allVariables.get(i).getDataTypeId() == DataType.CATEGORICAL_VARIABLE.getId()) {
+			if (DataType.CATEGORICAL_VARIABLE.getId().equals(allVariables.get(i).getDataTypeId())) {
 				cell.setCellValue(withInvalidValues ? "6" : "1");
 			} else {
 				cell.setCellValue("1");

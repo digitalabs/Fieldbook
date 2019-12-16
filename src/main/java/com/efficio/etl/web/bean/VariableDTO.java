@@ -347,4 +347,8 @@ public class VariableDTO {
 	public String getAlias() {
 		return this.alias;
 	}
+
+	public void setAlias(final String alias) {
+		this.alias = alias;
+	}
 }

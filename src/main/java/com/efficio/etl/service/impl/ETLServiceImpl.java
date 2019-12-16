@@ -475,8 +475,7 @@ public class ETLServiceImpl implements ETLService {
 
 	@Override
 	public void mergeVariableData(
-		final VariableDTO[] variables, final Workbook workbook,
-		final UserSelection userSelection, final boolean maintainHeaderMapping) {
+		final VariableDTO[] variables, final UserSelection userSelection, final boolean maintainHeaderMapping) {
 
 		for (final VariableDTO dto : variables) {
 

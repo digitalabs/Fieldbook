@@ -151,7 +151,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
 
-			this.etlService.mergeVariableData(variables, workbook, this.userSelection, true);
+			this.etlService.mergeVariableData(variables, this.userSelection, true);
 
 			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService.convertToWorkbook(this.userSelection);
 
@@ -258,7 +258,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			this.userSelection.clearMeasurementVariables();
 
 			final Workbook workbook = this.etlService.retrieveCurrentWorkbook(this.userSelection);
-			this.etlService.mergeVariableData(variables, workbook, this.userSelection, maintainHeaderMapping);
+			this.etlService.mergeVariableData(variables, this.userSelection, maintainHeaderMapping);
 			final org.generationcp.middleware.domain.etl.Workbook importData = this.etlService.convertToWorkbook(this.userSelection);
 
 			final org.generationcp.middleware.domain.etl.Workbook referenceWorkbook = this.dataImportService

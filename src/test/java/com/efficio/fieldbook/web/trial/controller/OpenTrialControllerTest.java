@@ -62,6 +62,7 @@ import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.generationcp.middleware.manager.ontology.api.TermDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.dms.DmsProject;
@@ -179,6 +180,9 @@ public class OpenTrialControllerTest {
 
 	@Mock
 	private DatasetService datasetService;
+
+	@Mock
+	private TermDataManager termDataManager;
 
 	@Before
 	public void setUp() {
@@ -591,10 +595,9 @@ public class OpenTrialControllerTest {
 	}
 
 	private StandardVariable convertToStandardVariable(final MeasurementVariable measurementVar) {
-		final StandardVariable stdVar = this.createStandardVariable(measurementVar.getTermId(), measurementVar.getName(),
+		return this.createStandardVariable(measurementVar.getTermId(), measurementVar.getName(),
 			measurementVar.getProperty(), measurementVar.getScale(), measurementVar.getMethod(), measurementVar.getDataTypeId(),
 			measurementVar.getDataType(), measurementVar.getLabel());
-		return stdVar;
 	}
 
 	protected StandardVariable createStandardVariable(final int termId, final String name, final String property, final String scale,
@@ -619,7 +622,7 @@ public class OpenTrialControllerTest {
 		final String percentageReplication = null;
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 			OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
-		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook, new Integer(TermId.RANDOMIZED_COMPLETE_BLOCK.getId()).toString(),
+		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook, String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId()),
 			exptDesignSourceValue, nRepValue.toString(), rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
@@ -636,12 +639,12 @@ public class OpenTrialControllerTest {
 	public void testPrepareExperimentalDesignTabInfo_RCBDWithRMap() {
 		final String exptDesignSourceValue = null;
 		final Integer nRepValue = 3;
-		final String rMapValue = new Integer(TermId.REPS_IN_SINGLE_COL.getId()).toString();
+		final String rMapValue = String.valueOf(TermId.REPS_IN_SINGLE_COL.getId());
 		final Integer replicationsArrangement = 1;
 		final String percentageReplication = null;
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 			OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
-		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook, new Integer(TermId.RANDOMIZED_COMPLETE_BLOCK.getId()).toString(),
+		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook, String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId()),
 			exptDesignSourceValue, nRepValue.toString(), rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
@@ -665,7 +668,7 @@ public class OpenTrialControllerTest {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 			OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
 		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
-			new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).toString(), exptDesignSourceValue, nRepValue.toString(), rMapValue,
+			String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()), exptDesignSourceValue, nRepValue.toString(), rMapValue,
 			percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
@@ -689,7 +692,7 @@ public class OpenTrialControllerTest {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 			OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
 		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
-			new Integer(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).toString(), exptDesignSourceValue, nRepValue.toString(), rMapValue,
+			String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()), exptDesignSourceValue, nRepValue.toString(), rMapValue,
 			percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
@@ -713,7 +716,7 @@ public class OpenTrialControllerTest {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 			OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
 		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
-			new Integer(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId()).toString(), exptDesignSourceValue, nRepValue.toString(), rMapValue,
+			String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId()), exptDesignSourceValue, nRepValue.toString(), rMapValue,
 			percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
@@ -736,7 +739,7 @@ public class OpenTrialControllerTest {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 			OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
 		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
-			new Integer(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).toString(), exptDesignSourceValue, nRepValue.toString(), rMapValue,
+			String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()), exptDesignSourceValue, nRepValue.toString(), rMapValue,
 			percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
@@ -759,7 +762,7 @@ public class OpenTrialControllerTest {
 		final String percentageReplication = null;
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 			OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
-		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook, new Integer(TermId.OTHER_DESIGN.getId()).toString(),
+		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook, String.valueOf(TermId.OTHER_DESIGN.getId()),
 			exptDesignSourceValue, nRepValue.toString(), rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
@@ -778,12 +781,11 @@ public class OpenTrialControllerTest {
 		final String exptDesignSourceValue = null;
 		final Integer nRepValue = 5;
 		final String rMapValue = null;
-		final Integer replicationsArrangement = null;
 		final String percentageReplication = null;
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 			OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
 		WorkbookDataUtil.addOrUpdateExperimentalDesignVariables(workbook,
-			new Integer(TermId.P_REP.getId()).toString(), exptDesignSourceValue, nRepValue.toString(), rMapValue, percentageReplication);
+			String.valueOf(TermId.P_REP.getId()), exptDesignSourceValue, nRepValue.toString(), rMapValue, percentageReplication);
 		final TabInfo tabInfo = this.openTrialController.prepareExperimentalDesignTabInfo(workbook, false);
 		final ExpDesignParameterUi data = (ExpDesignParameterUi) tabInfo.getData();
 		Assert.assertEquals("Design type should be P_REP", ExperimentDesignType.P_REP.getId().intValue(),
@@ -1389,6 +1391,15 @@ public class OpenTrialControllerTest {
 		Assert.assertTrue(result.containsKey(geoLocationId));
 		Assert.assertTrue(result.get(geoLocationId).contains(variableId1));
 		Assert.assertTrue(result.get(geoLocationId).contains(variableId2));
+	}
+
+	@Test
+	public void testGetExperimentalDesignName() {
+		final Term term = new Term(TermId.RANDOMIZED_COMPLETE_BLOCK.getId(), "RCBD", "RCBD");
+		Mockito.when(this.termDataManager.getTermById((term.getId()))).thenReturn(term);
+
+		final Map<String, Object> map = this.openTrialController.getExperimentalDesignName(TermId.RANDOMIZED_COMPLETE_BLOCK.getId());
+		Assert.assertEquals(term.getName(), map.get("name").toString());
 	}
 
 	@Test

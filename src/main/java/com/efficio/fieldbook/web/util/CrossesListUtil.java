@@ -120,11 +120,11 @@ public class CrossesListUtil {
 
 		dataMap.put(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX), importedCrosses.getEntryId());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX), importedCrosses.getCross());
-		dataMap.put(tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX), importedCrosses.getDuplicate());
+		dataMap.put(ColumnLabels.DUPLICATE.getName(), importedCrosses.getDuplicate());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE), importedCrosses.getFemalePedigree());
-		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_CROSS), importedCrosses.getFemaleCross());
+		dataMap.put(ColumnLabels.FEMALE_PARENT.getName().toUpperCase(), importedCrosses.getFemaleCross());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE), this.concatenateMaleParentsValue(importedCrosses.getMalePedigree()));
-		dataMap.put(tableHeaderList.get(CrossesListUtil.MALE_CROSS), importedCrosses.getMaleCross());
+		dataMap.put(ColumnLabels.MALE_PARENT.getName().toUpperCase(), importedCrosses.getMaleCross());
 
 		//shows BREEDING_METHOD as "Pending" if method is not defined in import crossing file
 		String breedingMethodName = importedCrosses.getBreedingMethodName();
@@ -138,8 +138,8 @@ public class CrossesListUtil {
 
 		dataMap.put(tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX), breedingMethodName);
 		dataMap.put(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX), importedCrosses.getSource());
-		dataMap.put(tableHeaderList.get(CrossesListUtil.FGID_INDEX), importedCrosses.getFemaleGid());
-		dataMap.put(tableHeaderList.get(CrossesListUtil.MGID_INDEX), importedCrosses.getMaleGids());
+		dataMap.put(ColumnLabels.FGID.getName(), importedCrosses.getFemaleGid());
+		dataMap.put(ColumnLabels.MGID.getName(), importedCrosses.getMaleGids());
 
 		return dataMap;
 

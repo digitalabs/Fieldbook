@@ -10,6 +10,7 @@ import java.util.Random;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
+import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -112,17 +113,17 @@ public class CrossesListUtilTest {
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX) + ".",
 			dataMap.containsKey(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FGID_INDEX) + ".",
-			dataMap.containsKey(tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
+			dataMap.containsKey(ColumnLabels.FGID.getName()));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MGID_INDEX) + ".",
-			dataMap.containsKey(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+			dataMap.containsKey(ColumnLabels.MGID.getName()));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.SOURCE_INDEX) + ".",
 			dataMap.containsKey(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX) + ".",
 			dataMap.containsKey(tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FEMALE_CROSS) + ".",
-			dataMap.containsKey(tableHeaderList.get(CrossesListUtil.FEMALE_CROSS)));
+			dataMap.containsKey(ColumnLabels.FEMALE_PARENT.getName().toUpperCase()));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_CROSS) + ".",
-			dataMap.containsKey(tableHeaderList.get(CrossesListUtil.MALE_CROSS)));
+			dataMap.containsKey(ColumnLabels.MALE_PARENT.getName().toUpperCase()));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX) + ".",
 			dataMap.containsKey(tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE) + ".",
@@ -142,9 +143,9 @@ public class CrossesListUtilTest {
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX) + ".",
 				dataMap.containsKey(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FGID_INDEX) + ".",
-				dataMap.containsKey(tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
+				dataMap.containsKey(ColumnLabels.FGID.getName()));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MGID_INDEX) + ".",
-				dataMap.containsKey(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
+				dataMap.containsKey(ColumnLabels.MGID.getName()));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.SOURCE_INDEX) + ".",
 				dataMap.containsKey(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX) + ".",
@@ -154,9 +155,9 @@ public class CrossesListUtilTest {
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE) + ".",
 			dataMap.containsKey(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.FEMALE_CROSS) + ".",
-			dataMap.containsKey(tableHeaderList.get(CrossesListUtil.FEMALE_CROSS)));
+			dataMap.containsKey(ColumnLabels.FEMALE_PARENT.getName().toUpperCase()));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.MALE_CROSS) + ".",
-			dataMap.containsKey(tableHeaderList.get(CrossesListUtil.MALE_CROSS)));
+			dataMap.containsKey(ColumnLabels.MALE_PARENT.getName().toUpperCase()));
 	}
 
 	@Test

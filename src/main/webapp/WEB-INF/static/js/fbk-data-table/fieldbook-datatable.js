@@ -223,19 +223,17 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 			} else if ($(this).html() === 'FEMALE PARENT') {
 				columnsDef.push({
 					targets: index,
-					data: $(this).html(),
 					width: '100px',
 					render: function(data, type, row) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
-							row.FGID + '&quot;,&quot;' + row['FEMALE PARENT'] + '&quot;)">' + data + '</a>';
+							row.FGID + '&quot;,&quot;' + row['FEMALE PARENT'] + '&quot;)">' + row['FEMALE PARENT'] + '</a>';
 					}
 				});
 
 			} else if ($(this).html() === 'MALE PARENT') {
 				columnsDef.push({
 					targets: index,
-					data: $(this).html(),
 					width: '100px',
 					render: function(data, type, row) {
 						// Do not render as link if male parent is unknown

@@ -1,19 +1,25 @@
 package com.efficio.etl.web;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,8 +36,6 @@ import org.springframework.ui.Model;
 import com.efficio.etl.service.ETLService;
 import com.efficio.etl.web.bean.FileUploadForm;
 import com.efficio.etl.web.bean.UserSelection;
-
-import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ImportObservationsControllerTest {
@@ -97,7 +101,7 @@ public class ImportObservationsControllerTest {
 	}
 
 	@Test
-	public void testProcessImportWithErrors() throws IOException, WorkbookParserException {
+	public void testProcessImportWithInvalidGIDsError() throws IOException {
 		final Workbook workbook = Mockito.mock(Workbook.class);
 		final org.generationcp.middleware.domain.etl.Workbook importData =
 				Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class);
@@ -111,8 +115,64 @@ public class ImportObservationsControllerTest {
 		Assert.assertEquals("etl/validateProjectData", returnValue);
 		Mockito.verify(this.contextUtil).getCurrentProgramUUID();
 		Mockito.verify(this.etlService).createWorkbookFromUserSelection(Matchers.eq(this.userSelection), Matchers.anyBoolean());
+		Mockito.verify(this.dataImportService, Mockito.never()).removeLocationNameVariableIfExists(importData);
+		Mockito.verify(this.dataImportService, Mockito.never()).assignLocationIdVariableToEnvironmentDetailSection(importData);
+		Mockito.verify(this.dataImportService).checkForInvalidGids(ArgumentMatchers.eq(importData), ArgumentMatchers.<Message>anyList());
+		Mockito.verify(this.etlService).convertMessageList(ArgumentMatchers.<List<Message>>any());
+	}
+
+	@Test
+	public void testProcessImportWithProjectDataErrors() throws IOException {
+		final Workbook workbook = Mockito.mock(Workbook.class);
+		final org.generationcp.middleware.domain.etl.Workbook importData =
+			Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class);
+		Mockito.when(this.etlService.createWorkbookFromUserSelection(Matchers.eq(this.userSelection), Matchers.anyBoolean()))
+			.thenReturn(importData);
+		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(workbook);
+		Mockito.when(this.etlService.convertMessageList(ArgumentMatchers.<List<Message>>any())).thenReturn(Arrays.asList("error"));
+		final Map<String, List<Message>> projectDataErrors = new HashMap<>();
+		projectDataErrors.put("ERRORS", new ArrayList<Message>());
+		Mockito.when(this.etlService.validateProjectData(importData, PROGRAM_UUID)).thenReturn(projectDataErrors);
+		Mockito.when(this.etlService.isWorkbookHasObservationRecords(ArgumentMatchers.eq(this.userSelection), ArgumentMatchers.<String>anyList(), ArgumentMatchers.eq(workbook))).thenReturn(true);
+		Mockito.when(this.etlService.isObservationOverMaximumLimit(ArgumentMatchers.eq(this.userSelection), ArgumentMatchers.<String>anyList(), ArgumentMatchers.eq(workbook))).thenReturn(false);
+
+		final String returnValue =
+			this.importObservationsController.processImport(this.uploadForm, 1, this.model, this.session, this.request);
+		Assert.assertEquals("etl/validateProjectData", returnValue);
+		Mockito.verify(this.contextUtil).getCurrentProgramUUID();
+		Mockito.verify(this.etlService).createWorkbookFromUserSelection(Matchers.eq(this.userSelection), Matchers.anyBoolean());
+		Mockito.verify(this.dataImportService).removeLocationNameVariableIfExists(importData);
+		Mockito.verify(this.dataImportService).assignLocationIdVariableToEnvironmentDetailSection(importData);
+		Mockito.verify(this.dataImportService).checkForInvalidGids(ArgumentMatchers.eq(importData), ArgumentMatchers.<Message>anyList());
+		Mockito.verify(this.etlService).extractExcelFileData(workbook, this.userSelection, importData, true);
+		Mockito.verify(this.etlService, Mockito.times(2)).convertMessageList(ArgumentMatchers.<List<Message>>any());
+	}
+
+	@Test
+	public void testProcessImportWithMisMatchErrors() throws IOException {
+		final Workbook workbook = Mockito.mock(Workbook.class);
+		final org.generationcp.middleware.domain.etl.Workbook importData =
+			Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class);
+		Mockito.when(this.etlService.createWorkbookFromUserSelection(Matchers.eq(this.userSelection), Matchers.anyBoolean()))
+			.thenReturn(importData);
+		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(workbook);
+		Mockito.when(this.etlService.convertMessageList(ArgumentMatchers.<List<Message>>any())).thenReturn(Arrays.asList("error"));
+		Mockito.when(this.etlService.headersContainsObsUnitId(importData)).thenReturn(false);
+		final List<String> headers = new ArrayList<>();
+		Mockito.when(this.etlService.retrieveColumnHeaders(workbook, this.userSelection, false)).thenReturn(headers);
+		final Map<String, List<Message>> mismatchErrors = new HashMap<>();
+		mismatchErrors.put("ERRORS", new ArrayList<Message>());
+		Mockito.when(this.etlService.checkForMismatchedHeaders(ArgumentMatchers.eq(headers), ArgumentMatchers.<MeasurementVariable>anyList(), ArgumentMatchers.eq(false))).thenReturn(mismatchErrors);
+
+		final String returnValue =
+			this.importObservationsController.processImport(this.uploadForm, 1, this.model, this.session, this.request);
+		Assert.assertEquals("etl/validateProjectData", returnValue);
+		Mockito.verify(this.contextUtil).getCurrentProgramUUID();
+		Mockito.verify(this.etlService).createWorkbookFromUserSelection(Matchers.eq(this.userSelection), Matchers.anyBoolean());
 		Mockito.verify(this.dataImportService, Mockito.times(0)).removeLocationNameVariableIfExists(importData);
 		Mockito.verify(this.dataImportService, Mockito.times(0)).assignLocationIdVariableToEnvironmentDetailSection(importData);
+		Mockito.verify(this.dataImportService).checkForInvalidGids(ArgumentMatchers.eq(importData), ArgumentMatchers.<Message>anyList());
+		Mockito.verify(this.etlService, Mockito.times(2)).convertMessageList(ArgumentMatchers.<List<Message>>any());
 	}
 
 	@Test

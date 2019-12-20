@@ -501,8 +501,8 @@ public class CrossingSettingsControllerTest {
 		Assert.assertEquals(CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT1, data.get(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.TEST_SEED_SOURCE, data.get(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
 		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.MGID1), data.get(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
-		Assert.assertEquals(CrossingSettingsControllerTest.TEST_FEMALE_PARENT, data.get(ColumnLabels.FEMALE_PARENT.getName().toUpperCase()));
-		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.TEST_MALE_PARENT1), data.get(ColumnLabels.MALE_PARENT.getName().toUpperCase()));
+		Assert.assertEquals(CrossingSettingsControllerTest.TEST_FEMALE_PARENT, data.get(ColumnLabels.FEMALE_PARENT.name()));
+		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.TEST_MALE_PARENT1), data.get(ColumnLabels.MALE_PARENT.name()));
 		Assert.assertEquals("", data.get(tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.FEMALE_PEDIGREE, data.get(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE)));
 		Assert.assertEquals(CrossingSettingsControllerTest.MALE_PEDIGREE1, data.get(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE)));
@@ -536,8 +536,8 @@ public class CrossingSettingsControllerTest {
 		Assert.assertEquals(CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT1, data.get(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.TEST_SEED_SOURCE, data.get(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
 		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.MGID1), data.get(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
-		Assert.assertEquals(CrossingSettingsControllerTest.FEMALE_CROSS, data.get(ColumnLabels.FEMALE_PARENT.getName().toUpperCase()));
-		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.MALE_CROSS1), data.get(ColumnLabels.MALE_PARENT.getName().toUpperCase()));
+		Assert.assertEquals(CrossingSettingsControllerTest.FEMALE_CROSS, data.get(ColumnLabels.FEMALE_PARENT.name()));
+		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.MALE_CROSS1), data.get(ColumnLabels.MALE_PARENT.name()));
 		Assert.assertEquals(CrossingSettingsControllerTest.BREEDING_METHOD, data.get(tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.TEST_DUPLICATE, data.get(tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.FEMALE_PEDIGREE, data.get(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE)));

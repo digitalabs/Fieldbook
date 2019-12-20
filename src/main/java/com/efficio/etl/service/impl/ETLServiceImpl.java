@@ -487,7 +487,7 @@ public class ETLServiceImpl implements ETLService {
 			dto.populateMeasurementVariable(variable);
 			if(!maintainHeaderMapping) {
 				variable.setAlias(dto.getHeaderName());
-				final String name = dto.getAlias() != null ? dto.getAlias() : dto.getVariable();
+				final String name = !StringUtils.isEmpty(dto.getAlias()) ? dto.getAlias() : dto.getVariable();
 				variable.setName(name);
 			}
 

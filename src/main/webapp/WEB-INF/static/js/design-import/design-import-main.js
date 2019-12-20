@@ -199,9 +199,6 @@
 									$.each(data, function(key, value) {
 										scope.modeldata.id = value.variable.cvTermId;
 										scope.modeldata.variable = value.variable;
-										if(value.variable.alias !== null) {
-											scope.modeldata.variable.name = value.variable.alias;
-										}
 									});
 								}
 							}

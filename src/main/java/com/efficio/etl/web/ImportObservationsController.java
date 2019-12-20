@@ -98,7 +98,8 @@ public class ImportObservationsController extends AbstractBaseETLController {
 
 			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getVariates(), programUUID);
 
-			final List<MeasurementVariable> studyHeaders = importData.getFactors();
+			final List<MeasurementVariable> studyHeaders = new ArrayList<>(importData.getFactors());
+			studyHeaders.addAll(importData.getVariates());
 
 			final List<String> fileHeaders =
 				this.etlService.retrieveColumnHeaders(workbook, this.userSelection, this.etlService.headersContainsObsUnitId(importData));

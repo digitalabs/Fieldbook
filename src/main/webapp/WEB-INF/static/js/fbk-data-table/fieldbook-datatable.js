@@ -227,7 +227,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					render: function(data, type, row) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
-							row.FGID + '&quot;,&quot;' + row['FEMALE PARENT'] + '&quot;)">' + row['FEMALE PARENT'] + '</a>';
+							row.FGID + '&quot;,&quot;' + row['FEMALE_PARENT'] + '&quot;)">' + row['FEMALE_PARENT'] + '</a>';
 					}
 				});
 
@@ -246,7 +246,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 						$.each(row.MGID, function( index, value ) {
 							str += '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
-							row.MGID[index] + '&quot;,&quot;' + row['MALE PARENT'][index] + '&quot;)">' + row['MALE PARENT'][index] + '</a>'
+							row.MGID[index] + '&quot;,&quot;' + row['MALE_PARENT'][index] + '&quot;)">' + row['MALE_PARENT'][index] + '</a>'
 							if (index < (size-1)) {
 								str += ", ";
 							}

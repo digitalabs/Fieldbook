@@ -23,6 +23,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -97,6 +98,15 @@ public class ImportObservationsControllerTest {
 		Mockito.verify(this.dataImportService).assignLocationIdVariableToEnvironmentDetailSection(importData);
 		Mockito.verify(this.etlService).saveProjectData(importData, ImportObservationsControllerTest.PROGRAM_UUID);
 		Mockito.verify(this.dataImportService).removeLocationNameVariableIfExists(importData);
+
+		ArgumentCaptor<List<String>> errorsCaptor = ArgumentCaptor.forClass(ArrayList.class);
+		Mockito.verify(this.model, Mockito.times(2)).addAttribute(ArgumentMatchers.eq("errors"), errorsCaptor.capture());
+		List<String> projectDataErrorsList = errorsCaptor.getValue();
+		Assert.assertTrue(projectDataErrorsList.isEmpty());
+
+		ArgumentCaptor<Boolean> hasErrorsCaptor = ArgumentCaptor.forClass(Boolean.class);
+		Mockito.verify(this.model, Mockito.times(2)).addAttribute(ArgumentMatchers.eq("hasErrors"), hasErrorsCaptor.capture());
+		Assert.assertFalse(hasErrorsCaptor.getValue());
 	}
 
 	@Test
@@ -128,15 +138,29 @@ public class ImportObservationsControllerTest {
 		Mockito.when(this.etlService.createWorkbookFromUserSelection(ArgumentMatchers.eq(this.userSelection), ArgumentMatchers.anyBoolean()))
 			.thenReturn(importData);
 		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(workbook);
-		Mockito.when(this.etlService.convertMessageList(ArgumentMatchers.<List<Message>>any())).thenReturn(Arrays.asList("error"));
+
 		final Map<String, List<Message>> projectDataErrors = new HashMap<>();
-		projectDataErrors.put("ERRORS", new ArrayList<Message>());
+		final List<Message> projectDataError = Arrays.asList(new Message("Project Data Error"));
+		projectDataErrors.put("ERRORS", projectDataError);
+		final String errorMessage ="Project Data Error";
+		Mockito.when(this.etlService.convertMessageList(projectDataError)).thenReturn(Arrays.asList(errorMessage));
 		Mockito.when(this.etlService.validateProjectData(importData, PROGRAM_UUID)).thenReturn(projectDataErrors);
+
 		Mockito.when(this.etlService.isWorkbookHasObservationRecords(ArgumentMatchers.eq(this.userSelection), ArgumentMatchers.<String>anyList(), ArgumentMatchers.eq(workbook))).thenReturn(true);
 		Mockito.when(this.etlService.isObservationOverMaximumLimit(ArgumentMatchers.eq(this.userSelection), ArgumentMatchers.<String>anyList(), ArgumentMatchers.eq(workbook))).thenReturn(false);
 
 		final String returnValue =
 			this.importObservationsController.processImport(this.uploadForm, 1, this.model, this.session, this.request);
+
+		ArgumentCaptor<List<String>> errorsCaptor = ArgumentCaptor.forClass(ArrayList.class);
+		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("errors"), errorsCaptor.capture());
+		List<String> projectDataErrorsList = errorsCaptor.getValue();
+		Assert.assertTrue(projectDataErrorsList.contains(errorMessage));
+
+		ArgumentCaptor<Boolean> hasErrorsCaptor = ArgumentCaptor.forClass(Boolean.class);
+		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("hasErrors"), hasErrorsCaptor.capture());
+		Assert.assertTrue(hasErrorsCaptor.getValue());
+
 		Assert.assertEquals("etl/validateProjectData", returnValue);
 		Mockito.verify(this.contextUtil).getCurrentProgramUUID();
 		Mockito.verify(this.etlService).createWorkbookFromUserSelection(ArgumentMatchers.eq(this.userSelection), ArgumentMatchers.anyBoolean());
@@ -159,12 +183,27 @@ public class ImportObservationsControllerTest {
 		Mockito.when(this.etlService.headersContainsObsUnitId(importData)).thenReturn(false);
 		final List<String> headers = new ArrayList<>();
 		Mockito.when(this.etlService.retrieveColumnHeaders(workbook, this.userSelection, false)).thenReturn(headers);
-		final Map<String, List<Message>> mismatchErrors = new HashMap<>();
-		mismatchErrors.put("ERRORS", new ArrayList<Message>());
-		Mockito.when(this.etlService.checkForMismatchedHeaders(ArgumentMatchers.eq(headers), ArgumentMatchers.<MeasurementVariable>anyList(), ArgumentMatchers.eq(false))).thenReturn(mismatchErrors);
+
+		final Map<String, List<Message>> mismatchedErrors = new HashMap<>();
+		final String errorMessage ="Mismatched headers Error";
+		final List<Message> mismatchedError = Arrays.asList(new Message(errorMessage));
+		mismatchedErrors.put("ERRORS", mismatchedError);
+		Mockito.when(this.etlService.convertMessageList(mismatchedError)).thenReturn(Arrays.asList(errorMessage));
+		Mockito.when(this.etlService.checkForMismatchedHeaders(ArgumentMatchers.eq(headers), ArgumentMatchers.<MeasurementVariable>anyList(), ArgumentMatchers.eq(false))).thenReturn(mismatchedErrors);
+
 
 		final String returnValue =
 			this.importObservationsController.processImport(this.uploadForm, 1, this.model, this.session, this.request);
+
+		ArgumentCaptor<List<String>> errorsCaptor = ArgumentCaptor.forClass(ArrayList.class);
+		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("errors"), errorsCaptor.capture());
+		List<String> projectDataErrorsList = errorsCaptor.getValue();
+		Assert.assertTrue(projectDataErrorsList.contains(errorMessage));
+
+		ArgumentCaptor<Boolean> hasErrorsCaptor = ArgumentCaptor.forClass(Boolean.class);
+		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("hasErrors"), hasErrorsCaptor.capture());
+		Assert.assertTrue(hasErrorsCaptor.getValue());
+
 		Assert.assertEquals("etl/validateProjectData", returnValue);
 		Mockito.verify(this.contextUtil).getCurrentProgramUUID();
 		Mockito.verify(this.etlService).createWorkbookFromUserSelection(ArgumentMatchers.eq(this.userSelection), ArgumentMatchers.anyBoolean());

@@ -178,8 +178,8 @@
 		};
 	}]);
 
-	app.directive('designMapVariableSelection', ['VARIABLE_SELECTION_MODAL_SELECTOR', 'DesignOntologyService', 'Messages',
-		function(VARIABLE_SELECTION_MODAL_SELECTOR, DesignOntologyService, Messages) {
+	app.directive('designMapVariableSelection', ['VARIABLE_SELECTION_MODAL_SELECTOR', 'VARIABLE_SELECTED_EVENT_TYPE', 'DesignOntologyService', 'Messages',
+		function(VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE, DesignOntologyService, Messages) {
 			return {
 				restrict: 'A',
 				scope: {
@@ -229,6 +229,9 @@
 								noAlias: true
 							}
 						};
+
+						$(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
+						$(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE, scope.processData);
 
 						$designMapModal.one('hidden.bs.modal', function() {
 							setTimeout(function() {

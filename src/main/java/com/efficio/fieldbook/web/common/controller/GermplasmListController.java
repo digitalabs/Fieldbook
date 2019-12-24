@@ -308,8 +308,7 @@ public class GermplasmListController {
 			this.messageSource.getMessage("germplasm.list.group.id", null, locale)));
 
 		if (GermplasmListType.isCrosses(germplasmListType)) {
-			tableHeaderList.add(
-				new TableHeader(this.messageSource.getMessage(GermplasmListController.GERMPLASM_LIST_DUPLICATE, null, locale),
+			tableHeaderList.add(new TableHeader(ColumnLabels.DUPLICATE.getTermNameFromOntology(this.ontologyDataManager),
 					this.messageSource.getMessage(GermplasmListController.GERMPLASM_LIST_DUPLICATE, null, locale)));
 		}
 

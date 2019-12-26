@@ -234,7 +234,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			};
 
-			$http.get('/bmsapi/studytype/' + cropName + '/allVisible').success(function (data) {
+			$http.get('/bmsapi/crops/' + cropName + '/study-types/visible').success(function (data) {
 				$scope.studyTypes = data;
 
 			}).error(function (data) {

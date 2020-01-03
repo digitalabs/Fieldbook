@@ -24,7 +24,7 @@ BMS.Fieldbook.SamplesSummaryDataTable = (function ($) {
 				lengthMenu: [10, 50, 75, 100],
 				iDisplayLength: 10,
 				ajax: {
-					url: '/bmsapi/sample/' + cropName + '/samples?obsUnitId=' + obsUnitId,
+					url: '/bmsapi/crops/' + cropName + '/programs/' + studyContext.programId + '/samples?obsUnitId=' + obsUnitId,
 					dataSrc: '',
 					beforeSend: function (xhr) {
 						xhr.setRequestHeader('X-Auth-Token', xAuthToken);

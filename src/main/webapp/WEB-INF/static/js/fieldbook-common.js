@@ -856,7 +856,7 @@ function advanceSample() {
 	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 	$.ajax({
-		url: '/bmsapi/study/' + cropName + '/' + idVal + '/sampled',
+		url: '/bmsapi/crops/' + cropName + '/programs/' + currentProgramId + '/studies/'+ idVal + '/sampled',
 		type: 'GET',
 		async: false,
 		beforeSend: function (xhr) {

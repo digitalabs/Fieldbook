@@ -900,9 +900,9 @@ function selectEnvironmentContinueAdvancing(trialInstances, noOfReplications, se
 	advanceStudy(studyId, trialInstances, noOfReplications, locationDetailHtml, advanceType);
 }
 
-function openSampleSummary(obsUnitId, plotNumber) {
+function openSampleSummary(obsUnitId, plotNumber, programUUID) {
 	'use strict';
-	BMS.Fieldbook.SamplesSummaryDataTable('#samples-summary-table', obsUnitId, plotNumber);
+	BMS.Fieldbook.SamplesSummaryDataTable('#samples-summary-table', obsUnitId, plotNumber, programUUID);
 	$('#samplesSummaryModal').modal({ backdrop: 'static', keyboard: true });
 	$('#samples-summary-table').wrap('<div style="overflow-x: auto" />');
 }

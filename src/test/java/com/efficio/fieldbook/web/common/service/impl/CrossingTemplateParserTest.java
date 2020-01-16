@@ -287,13 +287,13 @@ public class CrossingTemplateParserTest {
 
 	@Test
 	public void testLookupCrossParentsWithOneMaleStudy() {
-		final ImportedCrossesList importCrossesList = this.createImportedCrossesList(5);
+		final ImportedCrossesList importCrossesList = this.createImportedCrossesList();
 		this.templateParser.setImportedCrossesList(importCrossesList);
 		final Set<Integer> femalePlotNumbers = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5));
 		final Set<Integer> malePlotNumbers = new HashSet<>(Arrays.asList(5, 4, 3, 2, 1));
 		final Map<String, Set<Integer>> maleNurseryMap = new HashMap<>();
 		maleNurseryMap.put(CrossingTemplateParserTest.MALE_STUDY_NAME, malePlotNumbers);
-		Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap(5);
+		Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap();
 
 
 		// setup mocks
@@ -319,11 +319,11 @@ public class CrossingTemplateParserTest {
 
 			// Verify that GID and Designation from parent crosses were set properly to crosses
 			for (final ImportedCrosses cross : importCrossesList.getImportedCrosses()) {
-				final Integer expectedFemaleGID = Integer.valueOf(cross.getFemalePlotNo()) + 100;
-				final Integer expectedMaleGID = Integer.valueOf(cross.getMalePlotNos().get(0)) + 100;
+				final Integer expectedFemaleGID = cross.getFemalePlotNo() + 100;
+				final Integer expectedMaleGID = cross.getMalePlotNos().get(0) + 100;
 				Assert.assertEquals(expectedFemaleGID, Integer.valueOf(cross.getFemaleGid()));
 				Assert.assertEquals(CrossingTemplateParserTest.FEMALE_STUDY_NAME + ":" + cross.getFemalePlotNo(), cross.getFemaleDesignation());
-				Assert.assertEquals(expectedMaleGID, Integer.valueOf(cross.getMaleParents().get(0).getGid()));
+				Assert.assertEquals(expectedMaleGID, cross.getMaleParents().get(0).getGid());
 				Assert.assertEquals(CrossingTemplateParserTest.MALE_STUDY_NAME + ":" + cross.getMalePlotNos().get(0), cross.getMaleDesignationsAsString());
 			}
 
@@ -335,18 +335,18 @@ public class CrossingTemplateParserTest {
 
 	@Test
 	public void testLookupCrossParentsWithInvalidFemalePlots() {
-		final ImportedCrossesList importCrossesList = this.createImportedCrossesList(5);
+		final ImportedCrossesList importCrossesList = this.createImportedCrossesList();
 		this.templateParser.setImportedCrossesList(importCrossesList);
 		final Set<Integer> femalePlotNumbers = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5));
 		final Set<Integer> malePlotNumbers = new HashSet<>(Arrays.asList(5, 4, 3, 2, 1));
 		final Map<String, Set<Integer>> maleNurseryMap = new HashMap<>();
 		maleNurseryMap.put(CrossingTemplateParserTest.MALE_STUDY_NAME, malePlotNumbers);
-		Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap(5);
+		Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap();
 
 
 		// setup mocks
 		final String errorMessage = "Invalid female plot.";
-		final Integer invalidPlotNo = 4;
+		final int invalidPlotNo = 4;
 		Mockito.when(this.messageSource.getMessage("no.list.data.for.plot",
 			new Object[] {CrossingTemplateParserTest.FEMALE_STUDY_NAME, invalidPlotNo}, LocaleContextHolder.getLocale()))
 			.thenReturn(errorMessage);
@@ -375,18 +375,18 @@ public class CrossingTemplateParserTest {
 
 	@Test
 	public void testLookupCrossParentsWithInvalidMalePlots() {
-		final ImportedCrossesList importCrossesList = this.createImportedCrossesList(5);
+		final ImportedCrossesList importCrossesList = this.createImportedCrossesList();
 		this.templateParser.setImportedCrossesList(importCrossesList);
 		final Set<Integer> femalePlotNumbers = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5));
 		final Set<Integer> malePlotNumbers = new HashSet<>(Arrays.asList(5, 4, 3, 2, 1));
 		final Map<String, Set<Integer>> maleNurseryMap = new HashMap<>();
 		maleNurseryMap.put(CrossingTemplateParserTest.MALE_STUDY_NAME, malePlotNumbers);
-		Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap(5);
+		Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap();
 
 
 		// setup mocks
 		final String errorMessage = "Invalid male plot.";
-		final Integer invalidPlotNo = 5;
+		final int invalidPlotNo = 5;
 		Mockito.when(this.messageSource.getMessage("no.list.data.for.plot",
 			new Object[] {CrossingTemplateParserTest.MALE_STUDY_NAME, invalidPlotNo}, LocaleContextHolder.getLocale()))
 			.thenReturn(errorMessage);
@@ -413,10 +413,10 @@ public class CrossingTemplateParserTest {
 
 	}
 
-	private ImportedCrossesList createImportedCrossesList(final Integer noOfCrosses) {
+	private ImportedCrossesList createImportedCrossesList() {
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
-		for (int i = 1; i <= noOfCrosses; i++) {
+		for (int i = 1; i <= 5; i++) {
 			final ImportedCrosses cross = new ImportedCrosses(i);
 			importedCrosses.add(cross);
 		}
@@ -436,9 +436,9 @@ public class CrossingTemplateParserTest {
 		return listDataMap;
 	}
 
-	private Map<Integer, Triple<String, Integer, List<Integer>>> createEntryIdToCrossInfoMap(final int numberOfEntries) {
+	private Map<Integer, Triple<String, Integer, List<Integer>>> createEntryIdToCrossInfoMap() {
 		final Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = new HashMap<>();
-		for(int i=0; i<numberOfEntries; i++) {
+		for(int i=0; i<5; i++) {
 			entryIdToCrossInfoMap.put(i+1, new ImmutableTriple<>(CrossingTemplateParserTest.MALE_STUDY_NAME, i+1, Collections.singletonList(i+1)));
 		}
 		return entryIdToCrossInfoMap;

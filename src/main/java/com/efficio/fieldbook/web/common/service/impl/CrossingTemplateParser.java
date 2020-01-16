@@ -20,12 +20,9 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.commons.parsing.pojo.ImportedVariate;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
-import org.generationcp.middleware.pojos.ListDataProject;
-import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.germplasm.ImportedCrossParent;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.slf4j.Logger;
@@ -34,7 +31,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -48,8 +44,8 @@ import java.util.Set;
  */
 public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCrossesList> {
 
-	public static final String NO_REFERENCES_ERROR_DESC = "study.import.crosses.error.no.references";
-	protected static final String OBSERVATION_SHEET_NAME = "Observation";
+	private static final String NO_REFERENCES_ERROR_DESC = "study.import.crosses.error.no.references";
+	private static final String OBSERVATION_SHEET_NAME = "Observation";
 
 	/**
 	 * The Constant LOG.
@@ -110,7 +106,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	/**
 	 * @throws org.generationcp.commons.parsing.FileParsingException
 	 */
-	void parseObservationSheet(final String programUUID) throws FileParsingException {
+	private void parseObservationSheet(final String programUUID) throws FileParsingException {
 		this.validateObservationsHeader();
 
 		String femaleStudy = null;
@@ -166,8 +162,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			if (maleStudiesWithPlotNos.containsKey(maleStudy)){
 				maleStudiesWithPlotNos.get(maleStudy).addAll(malePlotNumbers);
 			} else {
-				final Set<Integer> plotSet = new HashSet<>();
-				plotSet.addAll(malePlotNumbers);
+				final Set<Integer> plotSet = new HashSet<>(malePlotNumbers);
 				maleStudiesWithPlotNos.put(maleStudy, plotSet);
 			}
 
@@ -294,7 +289,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 	}
 
-	protected void validateObservationRow(final String femalePlotNo, final String malePlotNo, final int currentRow,
+	void validateObservationRow(final String femalePlotNo, final String malePlotNo, final int currentRow,
 			final String strCrossingDate) throws FileParsingException {
 
 		if (!(StringUtils.isNotBlank(femalePlotNo) && StringUtils.isNumeric(femalePlotNo))) {
@@ -313,7 +308,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 	}
 
-	protected List<Integer> convertCommaSeparatedStringToList(final String commaSeparatedValuesString, final int currentRow)  throws FileParsingException {
+	List<Integer> convertCommaSeparatedStringToList(final String commaSeparatedValuesString, final int currentRow)  throws FileParsingException {
 
 		final List<Integer> list = new ArrayList<>();
 		final String[] values = commaSeparatedValuesString.split(",");
@@ -322,7 +317,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 				final Integer convertedValue = Integer.parseInt(value.trim());
 
-				if (values.length > 1 && convertedValue.intValue() <= 0) {
+				if (values.length > 1 && convertedValue <= 0) {
 					// Do not allow to import UNKNOWN germplasm if there are multiple male plot numbers are specified.
 					throw new FileParsingException(this.messageSource.getMessage("error.import.crosses.observation.row.malePlot.must.be.greater.than.zero",
 						null, LocaleContextHolder.getLocale()));

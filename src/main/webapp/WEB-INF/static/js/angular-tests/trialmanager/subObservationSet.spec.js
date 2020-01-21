@@ -17,6 +17,12 @@ describe('SubObservationSetCtrl', function () {
 		$uibModal,
 		originalTimeout;
 
+	var studyContext = {
+		studyId: 1,
+		cropName: 'maize',
+		measurementDatasetId: 2009
+	};
+
 	// Mock objects copied from actual objects using Chrome console
 	var extractedSettings = {
 			"m_keys": [
@@ -888,6 +894,7 @@ describe('SubObservationSetCtrl', function () {
 			$provide.value("derivedVariableService", derivedVariableServiceMock);
 			$provide.value("TrialManagerDataService", TrialManagerDataServiceMock);
 			$provide.value("$uibModal", $uibModal);
+			$provide.value("studyContext", studyContext);
 		});
 
 		module('subObservation');

@@ -223,19 +223,17 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 			} else if ($(this).html() === 'FEMALE PARENT') {
 				columnsDef.push({
 					targets: index,
-					data: $(this).html(),
 					width: '100px',
 					render: function(data, type, row) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
-							row.FGID + '&quot;,&quot;' + row['FEMALE PARENT'] + '&quot;)">' + data + '</a>';
+							row.FGID + '&quot;,&quot;' + row['FEMALE_PARENT'] + '&quot;)">' + row['FEMALE_PARENT'] + '</a>';
 					}
 				});
 
 			} else if ($(this).html() === 'MALE PARENT') {
 				columnsDef.push({
 					targets: index,
-					data: $(this).html(),
 					width: '100px',
 					render: function(data, type, row) {
 						// Do not render as link if male parent is unknown
@@ -248,7 +246,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 						$.each(row.MGID, function( index, value ) {
 							str += '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
-							row.MGID[index] + '&quot;,&quot;' + row['MALE PARENT'][index] + '&quot;)">' + row['MALE PARENT'][index] + '</a>'
+							row.MGID[index] + '&quot;,&quot;' + row['MALE_PARENT'][index] + '&quot;)">' + row['MALE_PARENT'][index] + '</a>'
 							if (index < (size-1)) {
 								str += ", ";
 							}
@@ -278,7 +276,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 				scrollCollapse: true,
 				columnDefs: columnsDef,
 				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
-				bAutoWidth: false,
+				bAutoWidth: true,
 				iDisplayLength: 100,
 
 				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {

@@ -752,7 +752,7 @@ public class ETLServiceTest {
 	}
 
 	@Test
-	public void testMergeVariableDataMaintainHeaderMappingFalse() {
+	public void testMergeVariableDataMaintainHeaderMappingFalseWithAlias() {
 		final VariableDTO[] variableDTOS = new VariableDTO[1];
 		final VariableDTO variableDTO =  new VariableDTO();
 		variableDTO.setId(1);
@@ -768,6 +768,25 @@ public class ETLServiceTest {
 		final MeasurementVariable measurementVariable = userSelection
 			.getMeasurementVariablesByPhenotypic(PhenotypicType.VARIATE).get(variableDTO.getHeaderName());
 		Assert.assertEquals(variableDTO.getAlias(), measurementVariable.getName());
+		Assert.assertEquals(variableDTO.getId().toString(), String.valueOf(measurementVariable.getTermId()));
+	}
+
+	@Test
+	public void testMergeVariableDataMaintainHeaderMappingFalseWithNullAlias() {
+		final VariableDTO[] variableDTOS = new VariableDTO[1];
+		final VariableDTO variableDTO =  new VariableDTO();
+		variableDTO.setId(1);
+		variableDTO.setHeaderName("HEADERNAME");
+		variableDTO.setVariable("NAME");
+		variableDTO.setPhenotype(AppConstants.TYPE_VARIATE);
+		variableDTO.setDataType(1110);
+		variableDTOS[0] = variableDTO;
+		final UserSelection userSelection = new UserSelection();
+		this.etlService.mergeVariableData(variableDTOS, userSelection, false);
+		Mockito.verify(this.ontologyDataManager).getTermById(ArgumentMatchers.anyInt());
+		final MeasurementVariable measurementVariable = userSelection
+			.getMeasurementVariablesByPhenotypic(PhenotypicType.VARIATE).get(variableDTO.getHeaderName());
+		Assert.assertEquals(variableDTO.getVariable(), measurementVariable.getName());
 		Assert.assertEquals(variableDTO.getId().toString(), String.valueOf(measurementVariable.getTermId()));
 	}
 

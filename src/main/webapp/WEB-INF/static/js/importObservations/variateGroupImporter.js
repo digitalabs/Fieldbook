@@ -169,8 +169,8 @@
 		};
 	}]);
 
-	app.directive('importMapVariableSelection', ['VARIABLE_SELECTION_MODAL_SELECTOR', 'DesignOntologyService', 'Messages',
-		function (VARIABLE_SELECTION_MODAL_SELECTOR, DesignOntologyService, Messages) {
+	app.directive('importMapVariableSelection', ['VARIABLE_SELECTION_MODAL_SELECTOR', 'VARIABLE_SELECTED_EVENT_TYPE', 'DesignOntologyService', 'Messages',
+		function (VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE, DesignOntologyService, Messages) {
 			return {
 				restrict: 'A',
 				scope: {
@@ -190,9 +190,6 @@
 									$.each(data, function (key, value) {
 										scope.modeldata.id = value.variable.cvTermId;
 										scope.modeldata.variable = value.variable;
-										if(value.variable.alias != null) {
-											scope.modeldata.variable.name = value.variable.alias;
-										}
 									});
 								}
 							}
@@ -223,6 +220,9 @@
 								noAlias: true
 							}
 						};
+
+						$(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
+						$(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE, scope.processData);
 
 						$importMapModal.one('hidden.bs.modal', function () {
 							setTimeout(function () {

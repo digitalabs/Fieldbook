@@ -1,4 +1,8 @@
 // Karma configuration
+
+// Get the Chromium executable bundled in Puppeteer.
+process.env.CHROME_BIN = require('puppeteer').executablePath();
+
 module.exports = function (config) {
 	'use strict';
 	config.set({
@@ -95,7 +99,13 @@ module.exports = function (config) {
 			terminal: true
 		},
 		autoWatch: false,
-		browsers: ['PhantomJS'],
-		singleRun: true
+		browsers: ['ChromeHeadlessNoSandbox'],
+		singleRun: true,
+		customLaunchers: {
+			ChromeHeadlessNoSandbox: {
+				base: 'ChromeHeadless',
+				flags: ['--no-sandbox']
+			}
+		}
 	});
 };

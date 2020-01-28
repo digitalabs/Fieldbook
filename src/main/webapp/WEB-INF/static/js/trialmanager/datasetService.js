@@ -6,7 +6,7 @@
 	datasetsApiModule.factory('datasetService', ['$http', '$q', 'studyContext', 'serviceUtilities', 'DATASET_TYPES', 'DATASET_TYPES_OBSERVATION_IDS',
 		function ($http, $q, studyContext, serviceUtilities, DATASET_TYPES, DATASET_TYPES_OBSERVATION_IDS) {
 
-			var BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/studies/';
+			var BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/programs/' + studyContext.programId + '/studies/';
 
 			var datasetTypeMap = {};
 			var datasetTypes = [{
@@ -229,7 +229,7 @@
 		function ($http, $q, studyContext, serviceUtilities) {
 
 			var BASE_CROP_URL = '/bmsapi/crops/' + studyContext.cropName;
-			var BASE_STUDY_URL = BASE_CROP_URL + '/studies/';
+			var BASE_STUDY_URL = BASE_CROP_URL + '/programs/' + studyContext.programId + '/studies/';
 
 			var experimentDesignService = {};
 			var successHandler = serviceUtilities.restSuccessHandler,
@@ -250,12 +250,12 @@
 			}
 
 			experimentDesignService.getDesignTypes = function () {
-				var request = $http.get(BASE_CROP_URL + '/experimental-design-types');
+				var request = $http.get(BASE_CROP_URL + '/experimental-design-types?programUUID=' + studyContext.programId);
 				return request.then(successHandler, failureHandler);
 			}
 
 			experimentDesignService.getInsertionManners = function () {
-				var request = $http.get(BASE_CROP_URL + '/check-insertion-manners');
+				var request = $http.get(BASE_CROP_URL + '/check-insertion-manners?programUUID=' + studyContext.programId);
 				return request.then(successHandler, failureHandler);
 			}
 

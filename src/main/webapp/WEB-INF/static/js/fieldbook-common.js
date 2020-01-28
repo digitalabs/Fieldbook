@@ -856,7 +856,7 @@ function advanceSample() {
 	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 	$.ajax({
-		url: '/bmsapi/study/' + cropName + '/' + idVal + '/sampled',
+		url: '/bmsapi/crops/' + cropName + '/programs/' + currentProgramId + '/studies/'+ idVal + '/sampled',
 		type: 'GET',
 		async: false,
 		beforeSend: function (xhr) {
@@ -900,9 +900,9 @@ function selectEnvironmentContinueAdvancing(trialInstances, noOfReplications, se
 	advanceStudy(studyId, trialInstances, noOfReplications, locationDetailHtml, advanceType);
 }
 
-function openSampleSummary(obsUnitId, plotNumber) {
+function openSampleSummary(obsUnitId, plotNumber, programUUID) {
 	'use strict';
-	BMS.Fieldbook.SamplesSummaryDataTable('#samples-summary-table', obsUnitId, plotNumber);
+	BMS.Fieldbook.SamplesSummaryDataTable('#samples-summary-table', obsUnitId, plotNumber, programUUID);
 	$('#samplesSummaryModal').modal({ backdrop: 'static', keyboard: true });
 	$('#samples-summary-table').wrap('<div style="overflow-x: auto" />');
 }
@@ -2352,8 +2352,8 @@ function moveSamplesListFolder(sourceNode, targetNode) {
 	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 	return $.ajax({
-		url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + sourceId + '/move?newParentId=' + targetId
-		+ '&isCropList=' + isCropList + '&programUUID=' + currentProgramId,
+		url: '/bmsapi/crops/' + cropName + '/programs/' + currentProgramId + '/sample-list-folders/' + sourceId + '/move?newParentId=' + targetId
+			+ '&isCropList=' + isCropList,
 		type: 'PUT',
 		beforeSend: function (xhr) {
 			xhr.setRequestHeader('X-Auth-Token', xAuthToken);

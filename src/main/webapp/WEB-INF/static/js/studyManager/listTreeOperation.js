@@ -78,7 +78,7 @@ var ListTreeOperation = {};
 			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 			$.ajax({
-				url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder?folderName=' + folderName + '&parentId=' + parentFolderId + '&programUUID=' + currentProgramId,
+				url: '/bmsapi/crops/' + cropName + '/programs/' + currentProgramId +'/sample-list-folders?folderName=' + folderName + '&parentId=' + parentFolderId,
 				type: 'POST',
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader('X-Auth-Token', xAuthToken);
@@ -240,7 +240,7 @@ var ListTreeOperation = {};
 			var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 			$.ajax({
-				url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + parentFolderId + '?newFolderName=' + folderName,
+				url:  '/bmsapi/crops/' + cropName + '/programs/' + currentProgramId + '/sample-list-folders/' + parentFolderId + '?newFolderName=' + folderName,
 				type: 'PUT',
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader('X-Auth-Token', xAuthToken);
@@ -320,7 +320,7 @@ var ListTreeOperation = {};
 		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 		$.ajax({
-			url: '/bmsapi/sampleLists/' + cropName + '/sampleListFolder/' + folderId,
+			url: '/bmsapi/crops/' + cropName + '/programs/' + currentProgramId + '/sample-list-folders/' + folderId,
 			type: 'DELETE',
 			beforeSend: function(xhr) {
 				xhr.setRequestHeader('X-Auth-Token', xAuthToken);

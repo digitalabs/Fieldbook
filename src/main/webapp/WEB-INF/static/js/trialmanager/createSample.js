@@ -143,7 +143,7 @@
 					}
 				});
 
-				$http.get('/bmsapi/projects/' + currentProgramId + '/users').success(function (data) {
+				$http.get('/bmsapi/users/filter?cropName='+ cropName +'&programUUID=' + currentProgramId).success(function (data) {
 					$scope.users = data;
 
 					angular.forEach($scope.users, function (user) {

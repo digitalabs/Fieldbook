@@ -13,9 +13,9 @@
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
 		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'studyInstanceService', 'datasetService', 'derivedVariableService', '$timeout', '$uibModal',
-		'visualizationModalService',
+		'visualizationModalService', 'studyContext',
 		function ($scope, $rootScope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile,
-				  studyInstanceService, datasetService, derivedVariableService, $timeout, $uibModal, visualizationModalService
+				  studyInstanceService, datasetService, derivedVariableService, $timeout, $uibModal, visualizationModalService, studyContext
 		) {
 
 			// FIXME is there a better way?
@@ -1263,10 +1263,11 @@
 							targets: columns.length - 1,
 							orderable: false,
 							render: function (data, type, full, meta) {
+								var programUUID = studyContext.programId;
 								if (full.samplesCount !== '-') {
 									return '<a class="gid-link" href="javascript: void(0)" ' +
 										'onclick="openSampleSummary(\'' +
-										full.variables['OBS_UNIT_ID'].value + '\', null)">' + EscapeHTML.escape(full.samplesCount) + '</a>';
+										full.variables['OBS_UNIT_ID'].value + '\', null, \'' + programUUID + '\')">' + EscapeHTML.escape(full.samplesCount) + '</a>';
 								} else {
 									return full.samplesCount;
 								}

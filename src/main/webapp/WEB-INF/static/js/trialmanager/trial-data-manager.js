@@ -333,7 +333,7 @@
 						"locked": doLock
 					};
 					$http
-						.patch('/bmsapi/study/' + studyContext.cropName + '/'+ studyId +'/', study)
+						.patch('/bmsapi/crops/' + studyContext.cropName + '/programs/'+ studyContext.programId + '/studies/' + studyId, study)
 						.success(function(data) {
 							if (doLock) {
 								showSuccessfulMessage('', lockStudySuccessMessage);

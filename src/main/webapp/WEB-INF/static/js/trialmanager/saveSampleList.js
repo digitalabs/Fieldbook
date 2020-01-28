@@ -90,7 +90,7 @@ var SaveSampleList = {};
 		SaveSampleList.details.notes = $('#sampleListNotes').val();
 
 		var parentId = chosenNodeFolder.data.key;
-
+		var currentProgramUUID = SaveSampleList.details.programUUID;
 		if (parentId === 'CROPLISTS') {
 			SaveSampleList.details.programUUID = null;
 		}
@@ -107,7 +107,7 @@ var SaveSampleList = {};
 		Spinner.play();
 
 		$.ajax({
-			url: '/bmsapi/sampleLists/' + cropName + '/sampleLists',
+			url: '/bmsapi/crops/' + cropName + '/sample-lists?programUUID=' + currentProgramUUID,
 			type: 'POST',
 			data: JSON.stringify(SaveSampleList.details),
 			contentType: "application/json",

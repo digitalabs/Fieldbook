@@ -7,8 +7,7 @@
 
 	manageTrialApp.factory('studyInstanceService', ['$rootScope', 'TrialManagerDataService', '$http', 'serviceUtilities', 'studyContext', function ($rootScope, TrialManagerDataService, $http, serviceUtilities, studyContext) {
 
-		var BASE_CROP_URL = '/bmsapi/crops/' + studyContext.cropName;
-		var BASE_STUDY_URL = BASE_CROP_URL + '/studies/';
+		var BASE_STUDY_URL = '/bmsapi/crops/' + studyContext.cropName + '/programs/' + studyContext.programId + '/studies/';
 
 		var studyInstanceService = {};
 		var successHandler = serviceUtilities.restSuccessHandler,

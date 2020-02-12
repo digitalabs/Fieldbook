@@ -11,7 +11,7 @@
 			var derivedVariableService = {};
 
 			var FIELDBOOK_BASE_URL = '/Fieldbook/DerivedVariableController/';
-			var BMSAPI_BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/studies/';
+			var BMSAPI_BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/programs/' + studyContext.programId + '/studies/';
 
 			derivedVariableService.isStudyHasCalculatedVariables = true;
 

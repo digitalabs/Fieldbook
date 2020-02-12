@@ -361,11 +361,25 @@
                                 <span th:text="*{experimentalDesignDetails.experimentalDesignDisplay}"></span>
                             </td>
                         </tr>
+                        <tr th:if="*{experimentalDesignDetails.replicationPercentage ne null}">
+                            <td>
+                                <strong th:text="#{review.study.percentage.of.replication}"></strong>
+                                <span th:if="*{experimentalDesignDetails.replicationPercentage ne null}"
+                                      th:text="*{experimentalDesignDetails.replicationPercentage.value}"></span>
+                            </td>
+                        </tr>
                         <tr th:if="*{experimentalDesignDetails.numberOfReplicates ne null}">
                             <td>
                                 <strong th:text="#{review.study.number.of.replications}"></strong>
                                 <span th:if="*{experimentalDesignDetails.numberOfReplicates ne null}"
                                       th:text="*{experimentalDesignDetails.numberOfReplicates.value}"></span>
+                            </td>
+                        </tr>
+                        <tr th:if="*{experimentalDesignDetails.numberOfBlocks ne null}">
+                            <td>
+                                <strong th:text="#{review.study.number.of.blocks}"></strong>
+                                <span th:if="*{experimentalDesignDetails.numberOfBlocks ne null}"
+                                      th:text="*{experimentalDesignDetails.numberOfBlocks.value}"></span>
                             </td>
                         </tr>
                         <tr th:if="*{experimentalDesignDetails.blockSize ne null}">

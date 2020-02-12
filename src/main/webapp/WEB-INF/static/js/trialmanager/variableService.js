@@ -27,9 +27,9 @@
 				/**
 				 * See org.ibp.api.rest.ontology.VariableFilterResource.listAllVariablesUsingFilter
 				 */
-				var request = $http.get('/bmsapi/ontology/' + studyContext.cropName + '/filtervariables', angular.merge({
+				var request = $http.get('/bmsapi/crops/' + studyContext.cropName + '/variables/filter', angular.merge({
 					params: angular.merge({
-						programId: studyContext.programId
+						programUUID: studyContext.programId
 					}, filter)
 				}));
 				return request.then(successHandler, failureHandler);

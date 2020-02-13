@@ -23,6 +23,8 @@ import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
+import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.germplasm.ImportedCrossParent;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.slf4j.Logger;
@@ -232,6 +234,10 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 					final ImportedCrossParent maleCrossParent = malePlotMap.get(crossMalePlotNo);
 					final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(maleCrossParent.getGid(),
 						maleCrossParent.getDesignation(), crossMalePlotNo, crossMaleStudy);
+					maleParents.add(maleParent);
+				} else if(crossMalePlotNo == 0 && crossMalePlotNos.size() == 1) {
+					final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(crossMalePlotNo,
+						Name.UNKNOWN, crossMalePlotNo, crossMaleStudy);
 					maleParents.add(maleParent);
 				} else {
 					throw new FileParsingException(this.messageSource.getMessage("no.list.data.for.plot",

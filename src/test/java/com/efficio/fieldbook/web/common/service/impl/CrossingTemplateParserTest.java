@@ -7,6 +7,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
@@ -72,7 +73,7 @@ public class CrossingTemplateParserTest {
 	@Test
 	public void testValidateObservationRow_FemalePlotNoIsValid() {
 
-		String femalePlotNo = "1";
+		final String femalePlotNo = "1";
 		final String malePlotNo = "2";
 		final int currentRow = 1;
 		final String crossingDate = "20190101";
@@ -87,7 +88,7 @@ public class CrossingTemplateParserTest {
 	@Test
 	public void testValidateObservationRow_FemalePlotNoIsEmpty() {
 
-		String femalePlotNo = "";
+		final String femalePlotNo = "";
 		final String malePlotNo = "2";
 		final int currentRow = 1;
 		final String crossingDate = "20190101";
@@ -104,7 +105,7 @@ public class CrossingTemplateParserTest {
 	@Test
 	public void testValidateObservationRow_FemalePlotNoIsNotNumeric() {
 
-		String femalePlotNo = "AAA";
+		final String femalePlotNo = "AAA";
 		final String malePlotNo = "2";
 		final int currentRow = 1;
 		final String crossingDate = "20190101";
@@ -293,7 +294,7 @@ public class CrossingTemplateParserTest {
 		final Set<Integer> malePlotNumbers = new HashSet<>(Arrays.asList(5, 4, 3, 2, 1));
 		final Map<String, Set<Integer>> maleNurseryMap = new HashMap<>();
 		maleNurseryMap.put(CrossingTemplateParserTest.MALE_STUDY_NAME, malePlotNumbers);
-		Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap();
+		final Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap();
 
 
 		// setup mocks
@@ -341,7 +342,7 @@ public class CrossingTemplateParserTest {
 		final Set<Integer> malePlotNumbers = new HashSet<>(Arrays.asList(5, 4, 3, 2, 1));
 		final Map<String, Set<Integer>> maleNurseryMap = new HashMap<>();
 		maleNurseryMap.put(CrossingTemplateParserTest.MALE_STUDY_NAME, malePlotNumbers);
-		Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap();
+		final Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap();
 
 
 		// setup mocks
@@ -381,7 +382,7 @@ public class CrossingTemplateParserTest {
 		final Set<Integer> malePlotNumbers = new HashSet<>(Arrays.asList(5, 4, 3, 2, 1));
 		final Map<String, Set<Integer>> maleNurseryMap = new HashMap<>();
 		maleNurseryMap.put(CrossingTemplateParserTest.MALE_STUDY_NAME, malePlotNumbers);
-		Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap();
+		final Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap();
 
 
 		// setup mocks
@@ -407,6 +408,64 @@ public class CrossingTemplateParserTest {
 
 			Assert.fail("Exception should have been thrown for non-existent male plot but wasn't.");
 
+		} catch (final FileParsingException e) {
+			Assert.assertEquals(errorMessage, e.getMessage());
+		}
+
+	}
+
+	@Test
+	public void testGetMaleParents() {
+		final Map<String, Map<Integer, ImportedCrossParent>> maleNurseriesPlotMap =  new HashMap<>();
+		final Map<Integer, ImportedCrossParent> malePlotMap = this.createImportedCrossParents(new HashSet<>(Collections.singletonList(21)), CrossingTemplateParserTest.MALE_STUDY_NAME);
+		maleNurseriesPlotMap.put(CrossingTemplateParserTest.MALE_STUDY_NAME, malePlotMap);
+		final Triple<String, Integer, List<Integer>> crossInfo = new ImmutableTriple<>(CrossingTemplateParserTest.MALE_STUDY_NAME, 1, Collections.singletonList(21));
+		try {
+			final List<ImportedGermplasmParent> maleParents = this.templateParser.getMaleParents(maleNurseriesPlotMap, crossInfo);
+			final ImportedGermplasmParent maleParent = maleParents.get(0);
+			final ImportedCrossParent crossParent = malePlotMap.get(21);
+			Assert.assertEquals(crossParent.getPlotNo(), maleParent.getPlotNo());
+			Assert.assertEquals(crossParent.getGid(), maleParent.getGid());
+			Assert.assertEquals(crossParent.getDesignation(), maleParent.getDesignation());
+			Assert.assertEquals(CrossingTemplateParserTest.MALE_STUDY_NAME, maleParent.getStudyName());
+		} catch (final FileParsingException e) {
+			Assert.fail("Should not throw exception.");
+		}
+	}
+
+	@Test
+	public void testGetMaleParentsWithUnknownMaleParent() {
+		final Map<String, Map<Integer, ImportedCrossParent>> maleNurseriesPlotMap =  new HashMap<>();
+		final Map<Integer, ImportedCrossParent> malePlotMap = new HashMap<>();
+		maleNurseriesPlotMap.put(CrossingTemplateParserTest.MALE_STUDY_NAME, malePlotMap);
+		final Triple<String, Integer, List<Integer>> crossInfo = new ImmutableTriple<>(CrossingTemplateParserTest.MALE_STUDY_NAME, 1, Collections.singletonList(0));
+		try {
+			final List<ImportedGermplasmParent> maleParents = this.templateParser.getMaleParents(maleNurseriesPlotMap, crossInfo);
+			final ImportedGermplasmParent unknownParent = maleParents.get(0);
+			Assert.assertEquals("0", unknownParent.getPlotNo().toString());
+			Assert.assertEquals("0", unknownParent.getGid().toString());
+			Assert.assertEquals(Name.UNKNOWN, unknownParent.getDesignation());
+			Assert.assertEquals(CrossingTemplateParserTest.MALE_STUDY_NAME, unknownParent.getStudyName());
+		} catch (final FileParsingException e) {
+			Assert.fail("Should not throw exception.");
+		}
+	}
+
+	@Test
+	public void testGetMaleParentsWithInvalidMalePlotNo() {
+		final String errorMessage = "Invalid male plot.";
+		final int invalidPlotNo = 5;
+		Mockito.when(this.messageSource.getMessage("no.list.data.for.plot",
+			new Object[] {CrossingTemplateParserTest.MALE_STUDY_NAME, invalidPlotNo}, LocaleContextHolder.getLocale()))
+			.thenReturn(errorMessage);
+
+		final Map<String, Map<Integer, ImportedCrossParent>> maleNurseriesPlotMap =  new HashMap<>();
+		final Map<Integer, ImportedCrossParent> malePlotMap = new HashMap<>();
+		maleNurseriesPlotMap.put(CrossingTemplateParserTest.MALE_STUDY_NAME, malePlotMap);
+		final Triple<String, Integer, List<Integer>> crossInfo = new ImmutableTriple<>(CrossingTemplateParserTest.MALE_STUDY_NAME, 1, Collections.singletonList(invalidPlotNo));
+		try {
+			this.templateParser.getMaleParents(maleNurseriesPlotMap, crossInfo);
+			Assert.fail("Should throw exception.");
 		} catch (final FileParsingException e) {
 			Assert.assertEquals(errorMessage, e.getMessage());
 		}

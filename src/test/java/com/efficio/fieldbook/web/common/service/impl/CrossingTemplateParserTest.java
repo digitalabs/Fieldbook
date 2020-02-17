@@ -8,6 +8,7 @@ import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Name;
@@ -56,6 +57,9 @@ public class CrossingTemplateParserTest {
 	@Mock
 	private CrossingService crossingService;
 
+	@Mock
+	private ContextUtil contextUtil;
+
 	@InjectMocks
 	private CrossingTemplateParser templateParser;
 
@@ -66,6 +70,7 @@ public class CrossingTemplateParserTest {
 		Mockito.doReturn(NO_PLOT_DATA_ERROR).when(this.messageSource)
 			.getMessage("no.list.data.for.plot", new Object[] {ArgumentMatchers.eq(STUDY_NAME), ArgumentMatchers.anyInt()},
 				ArgumentMatchers.eq(LocaleContextHolder.getLocale()));
+		Mockito.doReturn(CrossingTemplateParserTest.PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
 	}
 
 	@Test
@@ -238,7 +243,7 @@ public class CrossingTemplateParserTest {
 
 
 	@Test
-	public void testGetPlotToListDataProjectMapForStudyWithInvalidStudyName() {
+	public void getPlotNoToStudyGermplasmDtoMapForStudyWithInvalidStudyName() {
 		// setup mocks
 		Mockito.when(this.studyDataManager.getStudyIdByNameAndProgramUUID(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(null);
 		final String errorMessage = "Study not found.";
@@ -247,8 +252,7 @@ public class CrossingTemplateParserTest {
 
 		// Expecting FileParsingException to be thrown for non-existent study name
 		try {
-			this.templateParser.getPlotToImportedCrossParentMapForStudy(CrossingTemplateParserTest.STUDY_NAME, Collections.singleton(1),
-				CrossingTemplateParserTest.PROGRAM_UUID);
+			this.templateParser.getPlotNoToStudyGermplasmDtoMapForStudy(CrossingTemplateParserTest.STUDY_NAME, Collections.singleton(1));
 
 			Assert.fail("Exception should have been thrown for non-existent study name but wasn't.");
 		} catch (final FileParsingException e) {
@@ -258,14 +262,13 @@ public class CrossingTemplateParserTest {
 	}
 
 	@Test
-	public void testGetPlotToListDataProjectMapForStudyWithValidStudyAndPlotNumbers() {
+	public void getPlotNoToStudyGermplasmDtoMapForStudyWithValidStudyAndPlotNumbers() {
 		Mockito.when(this.studyDataManager.getStudyIdByNameAndProgramUUID(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(1);
 		Mockito.when(this.fieldbookMiddlewareService.getPlotNoToStudyGermplasmDtoMap(ArgumentMatchers.anyInt(), ArgumentMatchers.anySetOf(Integer.class))).thenReturn(new HashMap<Integer, StudyGermplasmDto>());
 
 		try {
 			final Set<Integer> plotNumbers = new HashSet<>(Arrays.asList(5, 4, 3, 2, 1));
-			this.templateParser.getPlotToImportedCrossParentMapForStudy(CrossingTemplateParserTest.STUDY_NAME, plotNumbers,
-				CrossingTemplateParserTest.PROGRAM_UUID);
+			this.templateParser.getPlotNoToStudyGermplasmDtoMapForStudy(CrossingTemplateParserTest.STUDY_NAME, plotNumbers);
 
 			final ArgumentCaptor<String> nurseryNameCaptor = ArgumentCaptor.forClass(String.class);
 			final ArgumentCaptor<String> programUUIDCaptor = ArgumentCaptor.forClass(String.class);
@@ -309,7 +312,7 @@ public class CrossingTemplateParserTest {
 
 		try {
 			this.templateParser.lookupCrossParents(CrossingTemplateParserTest.FEMALE_STUDY_NAME, femalePlotNumbers, maleNurseryMap,
-				entryIdToCrossInfoMap, CrossingTemplateParserTest.PROGRAM_UUID);
+				entryIdToCrossInfoMap);
 
 			// Verify Middleware call for looking up cross parents called twice
 			// - once for female plots, once for male nursery with its male plots
@@ -362,7 +365,7 @@ public class CrossingTemplateParserTest {
 
 		try {
 			this.templateParser.lookupCrossParents(CrossingTemplateParserTest.FEMALE_STUDY_NAME, femalePlotNumbers, maleNurseryMap,
-				entryIdToCrossInfoMap, CrossingTemplateParserTest.PROGRAM_UUID);
+				entryIdToCrossInfoMap);
 
 			Assert.fail("Exception should have been thrown for non-existent female plot but wasn't.");
 
@@ -402,7 +405,7 @@ public class CrossingTemplateParserTest {
 
 		try {
 			this.templateParser.lookupCrossParents(CrossingTemplateParserTest.FEMALE_STUDY_NAME, femalePlotNumbers, maleNurseryMap,
-				entryIdToCrossInfoMap, CrossingTemplateParserTest.PROGRAM_UUID);
+				entryIdToCrossInfoMap);
 
 			Assert.fail("Exception should have been thrown for non-existent male plot but wasn't.");
 

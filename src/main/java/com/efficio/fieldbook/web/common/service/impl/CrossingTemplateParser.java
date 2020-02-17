@@ -94,7 +94,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 			this.importedCrossesList = crossesListDescriptionSheetParser.parseWorkbook(this.workbook, additionalParams);
 
-			this.parseObservationSheet(this.contextUtil.getCurrentProgramUUID());
+			this.parseObservationSheet();
 		} catch (final MiddlewareQueryException e) {
 			CrossingTemplateParser.LOG.debug(e.getMessage(), e);
 			throw new FileParsingException(
@@ -107,7 +107,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	/**
 	 * @throws org.generationcp.commons.parsing.FileParsingException
 	 */
-	private void parseObservationSheet(final String programUUID) throws FileParsingException {
+	private void parseObservationSheet() throws FileParsingException {
 		this.validateObservationsHeader();
 
 		String femaleStudy = null;
@@ -181,7 +181,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 
 		this.lookupCrossParents(this.studySelection.getWorkbook().getStudyName(),
-			femalePlotNos, maleStudiesWithPlotNos, entryIdToCrossInfoMap, programUUID);
+			femalePlotNos, maleStudiesWithPlotNos, entryIdToCrossInfoMap);
 	}
 
 
@@ -191,23 +191,21 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	 * @param femalePlotNos - plot numbers to look up for female study
 	 * @param maleStudiesWithPlotNos - map of male studies to corresponsing male plot numbers
 	 * @param entryIdToCrossInfoMap - map of entry id to study name
-	 * @param programUUID - program unique ID
 	 * @throws FileParsingException
 	 */
 
 	void lookupCrossParents(final String femaleStudyName, final Set<Integer> femalePlotNos,
-		final Map<String, Set<Integer>> maleStudiesWithPlotNos, final Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap,
-		final String programUUID) throws FileParsingException {
+		final Map<String, Set<Integer>> maleStudiesWithPlotNos, final Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap) throws FileParsingException {
 
 		final Map<Integer, StudyGermplasmDto> femalePlotMap =
-			this.getPlotToImportedCrossParentMapForStudy(femaleStudyName, femalePlotNos, programUUID);
-		// Create map of male studies to its plotToListDataProject lookup
-		// for each male study, lookup the associated ListDataProject of specified male plot #s
+			this.getPlotNoToStudyGermplasmDtoMapForStudy(femaleStudyName, femalePlotNos);
+		// Create map of male studies to its plotToStudyGermplasmDtoMap lookup
+		// for each male study, lookup the associated StudyGermplasmDto of specified male plot #s
 		final Map<String, Map<Integer, StudyGermplasmDto>> maleNurseriesPlotMap = new HashMap<>();
 		for (final Map.Entry<String, Set<Integer>> entry : maleStudiesWithPlotNos.entrySet()) {
 			final String maleStudyName = entry.getKey();
 			maleNurseriesPlotMap
-				.put(maleStudyName, this.getPlotToImportedCrossParentMapForStudy(maleStudyName, entry.getValue(), programUUID));
+				.put(maleStudyName, this.getPlotNoToStudyGermplasmDtoMapForStudy(maleStudyName, entry.getValue()));
 		}
 
 		// Set looked up GIDs and names of parents to ImportedCrosses object
@@ -261,17 +259,16 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	}
 
 	/**
-	 * Returns map of plot numbers to corresponding ImportedCrossParent record from specified plot numbers
+	 * Returns map of plot numbers to corresponding StudyGermplasmDto record from specified plot numbers
 	 * of given study
 	 *
 	 * @param studyName
 	 * @param plotNos
-	 * @param programUUID
 	 * @return
 	 * @throws FileParsingException
 	 */
-	Map<Integer, StudyGermplasmDto> getPlotToImportedCrossParentMapForStudy(final String studyName, final Set<Integer> plotNos,
-		final String programUUID) throws FileParsingException {
+	Map<Integer, StudyGermplasmDto> getPlotNoToStudyGermplasmDtoMapForStudy(final String studyName, final Set<Integer> plotNos) throws FileParsingException {
+		final String programUUID = this.contextUtil.getCurrentProgramUUID();
 		// 1. retrieve study ID of parent study
 		final Integer studyId = this.studyDataManager.getStudyIdByNameAndProgramUUID(studyName, programUUID);
 		if (null == studyId) {
@@ -279,9 +276,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 				LocaleContextHolder.getLocale()));
 		}
 
-		final Map<Integer, StudyGermplasmDto> plotToListDataProjectMap = this.fieldbookMiddlewareService.getPlotNoToStudyGermplasmDtoMap(studyId, plotNos);
+		final Map<Integer, StudyGermplasmDto> plotToStudyGermplasmDtoMap = this.fieldbookMiddlewareService.getPlotNoToStudyGermplasmDtoMap(studyId, plotNos);
 
-		return plotToListDataProjectMap;
+		return plotToStudyGermplasmDtoMap;
 	}
 
 

@@ -556,7 +556,7 @@ public class UserFieldmap implements Serializable {
 						if (dataset.getDatasetId().equals(datasetId)) {
 							if (dataset.getTrialInstances() != null) {
 								for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
-									if (trial.getGeolocationId().equals(geolocationId)) {
+									if (trial.getEnvironmentId().equals(geolocationId)) {
 										return trial;
 									}
 								}

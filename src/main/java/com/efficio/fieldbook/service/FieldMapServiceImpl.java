@@ -32,11 +32,7 @@ import java.util.Map;
 @Transactional
 public class FieldMapServiceImpl implements FieldMapService {
 
-	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see com.efficio.fieldbook.service.api.FieldMapService#createDummyData(int, int, int, int, boolean, java.util.Map)
-	 */
+
 	@Override
 	public Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine,
 			Map<String, String> deletedPlot, List<FieldMapLabel> fieldMapLabels, FieldPlotLayoutIterator plotLayouIterator) {
@@ -55,11 +51,7 @@ public class FieldMapServiceImpl implements FieldMapService {
 		return this.generateFieldmap(info, plotIterator, isSavedAlready, null);
 	}
 
-	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see com.efficio.fieldbook.service.api.FieldMapService#generateFieldmap(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
-	 */
+
 	@Override
 	public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, boolean isSavedAlready,
 			List<String> deletedPlots) throws MiddlewareQueryException {
@@ -80,7 +72,7 @@ public class FieldMapServiceImpl implements FieldMapService {
 					plot.setColumn(column);
 					plot.setRange(range);
 					plot.setDatasetId(label.getDatasetId());
-					plot.setGeolocationId(label.getGeolocationId());
+					plot.setGeolocationId(label.getEnvironmentId());
 					if (isSerpentine && column % 2 == 0) {
 					}
 					plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label));

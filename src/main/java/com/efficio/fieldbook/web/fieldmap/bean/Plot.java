@@ -44,6 +44,7 @@ public class Plot implements Serializable {
 	/** The dataset id. */
 	private Integer datasetId;
 
+	// TODO IBP-3305: rename to environmentId
 	/** The geolocation id. */
 	private Integer geolocationId;
 

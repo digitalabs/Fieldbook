@@ -33,7 +33,7 @@ public class ExportOrderingSerpentineOverColImpl extends ExportDataCollectionOrd
 			for (int trialInstanceNum = 1; trialInstanceNum <= numberOfTrialInstance; trialInstanceNum++) {
 
 				String blockId =
-						this.fieldbookMiddlewareService.getBlockId(workbook.getTrialDatasetId(), Integer.toString(trialInstanceNum));
+						this.fieldbookMiddlewareService.getBlockId(workbook.getTrialDatasetId(), trialInstanceNum);
 				List<Integer> indexes = new ArrayList<Integer>();
 				indexes.add(trialInstanceNum);
 

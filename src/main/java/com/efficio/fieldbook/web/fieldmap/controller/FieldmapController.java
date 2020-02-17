@@ -182,7 +182,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 					size = String.valueOf(trials.size());
 					if (trials.size() == 1) {
 						datasetId = datasetList.get(0).getDatasetId().toString();
-						geolocationId = trials.get(0).getGeolocationId().toString();
+						geolocationId = trials.get(0).getEnvironmentId().toString();
 					}
 				}
 			}
@@ -367,7 +367,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 						final FieldMapDatasetInfo dataset = datasetList.get(0);
 						nav = "0";
 						this.userFieldmap.setSelectedDatasetId(dataset.getDatasetId());
-						this.userFieldmap.setSelectedGeolocationId(dataset.getTrialInstancesWithFieldMap().get(0).getGeolocationId());
+						this.userFieldmap.setSelectedGeolocationId(dataset.getTrialInstancesWithFieldMap().get(0).getEnvironmentId());
 						result.put("datasetId", this.userFieldmap.getSelectedDatasetId().toString());
 						result.put("geolocationId", this.userFieldmap.getSelectedGeolocationId().toString());
 					}

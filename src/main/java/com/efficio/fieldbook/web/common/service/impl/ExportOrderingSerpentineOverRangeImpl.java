@@ -37,7 +37,7 @@ public class ExportOrderingSerpentineOverRangeImpl extends ExportDataCollectionO
 			Integer numberOfTrialInstance = workbook.getTrialObservations().size();
 			for (int trialInstanceNum = 1; trialInstanceNum <= numberOfTrialInstance; trialInstanceNum++) {
 				String blockId =
-						this.fieldbookMiddlewareService.getBlockId(workbook.getTrialDatasetId(), Integer.toString(trialInstanceNum));
+						this.fieldbookMiddlewareService.getBlockId(workbook.getTrialDatasetId(), trialInstanceNum);
 
 				List<MeasurementRow> observationsPerInstance = new ArrayList<MeasurementRow>();
 				List<Integer> indexes = new ArrayList<Integer>();

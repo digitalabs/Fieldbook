@@ -227,7 +227,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 		this.userSelection.setMeasurementRowList(null);
 		this.userSelection.getWorkbook().setOriginalObservations(null);
-		this.userSelection.getWorkbook().setObservations(null);
+		this.userSelection.getWorkbook().setObservations(new ArrayList<>());
 		this.fieldbookService.createIdCodeNameVariablePairs(this.userSelection.getWorkbook(),
 				AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 		this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(),

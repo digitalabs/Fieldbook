@@ -110,7 +110,7 @@
 							<ui-select-match class="ui-select-match">
 								{{(nested.selectedEnvironment.instanceNumber ? nested.selectedEnvironment.instanceNumber + ' - ' : '') + (nested.selectedEnvironment.locationName || nested.selectedEnvironment.locationAbbreviation || nested.selectedEnvironment.instanceNumber)}}
 							</ui-select-match>
-							<ui-select-choices repeat="env in (environments | filter: { locationName: $select.search}) track by env.instanceDbId">
+							<ui-select-choices repeat="env in (environments | filter: { locationName: $select.search}) track by env.experimentId">
 								{{(env.instanceNumber ? env.instanceNumber + ' - ' : '') + (env.locationName || env.locationAbbreviation || env.instanceNumber)}}
 							</ui-select-choices>
 						</ui-select>

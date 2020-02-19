@@ -159,11 +159,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				}
 			};
 
-			$scope.deleteEnvironment = function (index, locationId) {
+			$scope.deleteEnvironment = function (index, experimentId) {
 
 				// If study has experimental design, get updated information first on environment to be deleted
 				if ($scope.isDesignAlreadyGenerated()) {
-					studyInstanceService.getStudyInstance(locationId).then(function (studyInstance) {
+					studyInstanceService.getStudyInstance(experimentId).then(function (studyInstance) {
 
 						// Show error if environment cannot be deleted
 						if (!studyInstance.canBeDeleted) {
@@ -175,11 +175,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 							var modalConfirmDelete = $scope.openConfirmModal($.environmentMessages.environmentHasDataThatWillBeLost, 'Yes','No');
 							modalConfirmDelete.result.then(function (shouldContinue) {
 								if (shouldContinue) {
-									$scope.continueEnvironmentDeletion(index, locationId);
+									$scope.continueEnvironmentDeletion(index, experimentId);
 								}
 							});
 						} else {
-							$scope.continueEnvironmentDeletion(index, locationId);
+							$scope.continueEnvironmentDeletion(index, experimentId);
 						}
 					}, function(errResponse) {
 						showErrorMessage($.fieldbookMessages.errorServerError, errResponse.errors[0].message);
@@ -193,8 +193,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			};
 
 			// Proceed deleting existing environment
-			$scope.continueEnvironmentDeletion = function (index, locationId) {
-				studyInstanceService.deleteStudyInstance(locationId);
+			$scope.continueEnvironmentDeletion = function (index, experimentId) {
+				studyInstanceService.deleteStudyInstance(experimentId);
 				updateDeletedEnvironment(index);
 				showSuccessfulMessage('', $.environmentMessages.environmentDeletedSuccessfully);
 			};
@@ -274,16 +274,15 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				// create and save the environment in the server
 				studyInstanceService.createStudyInstance().then(function (studyInstance) {
 					// update the environment table
-					$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.instanceDbId, studyInstance.experimentId);
+					$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
 					$scope.data.noOfEnvironments++;
 					$scope.isDisableAddEnvironment = false;
 				});
 
 			};
 
-			$scope.createEnvironment = function (instanceNumber, locationId, experimentId, index) {
+			$scope.createEnvironment = function (instanceNumber, experimentId, index) {
 				var environment = {
-					locationId : locationId,
 					experimentId: experimentId,
 					managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
 						$scope.settings.managementDetails),

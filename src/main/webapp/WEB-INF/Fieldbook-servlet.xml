@@ -82,16 +82,16 @@
 	</bean>
 
 	<bean id="nonCachableMessageResolver"
-		  class="org.thymeleaf.spring3.messageresolver.SpringNonCacheableMessageResolver" />
+		  class="org.thymeleaf.spring4.messageresolver.SpringNonCacheableMessageResolver" />
 
-	<bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+	<bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
 		<property name="templateResolver" ref="templateResolver" />
 		<property name="additionalDialects">
 			<set>
 				<bean
 					class="com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect" />
 				<bean
-					class="org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect" />
+					class="org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect" />
 				<bean
 						class="org.thymeleaf.extras.conditionalcomments.dialect.ConditionalCommentsDialect" />
 				<bean class="nz.net.ultraq.thymeleaf.LayoutDialect" />
@@ -100,7 +100,7 @@
 		<property name="messageResolver" ref="nonCachableMessageResolver"></property>
 	</bean>
 
-	<bean class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
+	<bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
 		<property name="templateEngine" ref="templateEngine" />
 		<property name="characterEncoding" value="UTF-8" />
 	</bean>

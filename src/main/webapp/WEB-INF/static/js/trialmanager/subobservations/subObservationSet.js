@@ -547,7 +547,7 @@
 				}
 
 				var param = JSON.stringify({
-					instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+					instanceId: $scope.nested.selectedEnvironment.experimentId,
 					draftMode: $scope.isPendingView,
 					filter: getFilter()
 				});
@@ -570,7 +570,7 @@
 									newValue: newValue,
 									newCategoricalValueId: getCategoricalValueId($scope.nested.newValueBatchUpdate, $scope.nested.selectedVariableFilter),
 									observationUnitsSearchDTO: {
-										instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+										instanceId: $scope.nested.selectedEnvironment.experimentId,
 										draftMode: $scope.isPendingView,
 										filter: getFilter()
 									}
@@ -595,7 +595,7 @@
 							case 2:
 								// acceptDraftDataByVariable
 								var param = JSON.stringify({
-									instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+									instanceId: $scope.nested.selectedEnvironment.experimentId,
 									draftMode: $scope.isPendingView,
 									filter: getFilter()
 								});
@@ -776,7 +776,7 @@
 									sortBy: sortedColTermId,
 									sortOrder: order.dir
 								},
-								instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+								instanceId: $scope.nested.selectedEnvironment.experimentId,
 								draftMode: $scope.isPendingView,
 								filter: getFilter()
 							});
@@ -820,7 +820,7 @@
 								// We send all the data (with/without filter) to OpenCPU server,
 								// No pagination is needed.
 								sortedRequest: null,
-								instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+								instanceId: $scope.nested.selectedEnvironment.experimentId,
 								draftMode: $scope.isPendingView,
 								filter: getFilter()
 							};

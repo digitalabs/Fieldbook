@@ -397,7 +397,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 				&& fieldMapInfoList.get(0).getDatasets().get(0).getTrialInstances() != null) {
 			for (int i = 0; i < fieldMapInfoList.get(0).getDatasets().get(0).getTrialInstances().size(); i++) {
 				final FieldMapTrialInstanceInfo info = fieldMapInfoList.get(0).getDatasets().get(0).getTrialInstances().get(i);
-				trialInstances.add(new ExportTrialInstanceBean(info.getTrialInstanceNo(), info.getLocationName(), info.getGeolocationId()));
+				trialInstances.add(new ExportTrialInstanceBean(info.getTrialInstanceNo(), info.getLocationName(), info.getEnvironmentId()));
 			}
 		}
 		model.addAttribute("trialInstances", trialInstances);

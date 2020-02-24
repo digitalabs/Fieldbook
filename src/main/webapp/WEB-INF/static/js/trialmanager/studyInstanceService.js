@@ -14,22 +14,22 @@
 			failureHandler = serviceUtilities.restFailureHandler;
 
 		studyInstanceService.createStudyInstance = function () {
-			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/generation');
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/environments/generation');
 			return request.then(successHandler, failureHandler);
 		}
 
 		studyInstanceService.getStudyInstances = function () {
-			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/instances');
+			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/environments');
 			return request.then(successHandler, failureHandler);
 		};
 
 		studyInstanceService.getStudyInstance = function (locationId) {
-			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/instances/' + locationId);
+			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/environments/' + locationId);
 			return request.then(successHandler, failureHandler);
 		};
 
 		studyInstanceService.deleteStudyInstance = function (locationId) {
-			var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/instances/' + locationId);
+			var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/environments/' + locationId);
 			return request.then(successHandler, failureHandler);
 		};
 

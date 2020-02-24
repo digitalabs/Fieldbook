@@ -136,7 +136,7 @@
 			};
 
 			datasetService.getDatasetInstances = function (datasetId) {
-				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/instances');
+				var request = $http.get(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/environments');
 				return request.then(successHandler, failureHandler);
 			};
 

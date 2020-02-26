@@ -72,7 +72,7 @@ public class FieldMapServiceImpl implements FieldMapService {
 					plot.setColumn(column);
 					plot.setRange(range);
 					plot.setDatasetId(label.getDatasetId());
-					plot.setGeolocationId(label.getEnvironmentId());
+					plot.setEnvironmentId(label.getEnvironmentId());
 					if (isSerpentine && column % 2 == 0) {
 					}
 					plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label));

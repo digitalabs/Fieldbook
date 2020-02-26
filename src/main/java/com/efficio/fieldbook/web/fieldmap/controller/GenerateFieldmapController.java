@@ -135,7 +135,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 					.getAllFieldMapsInBlockByTrialInstanceId(datasetId, geolocationId, this.crossExpansionProperties));
 
 			FieldMapTrialInstanceInfo trialInfo =
-					this.userFieldmap.getSelectedTrialInstanceByDatasetIdAndGeolocationId(datasetId, geolocationId);
+					this.userFieldmap.getSelectedTrialInstanceByDatasetIdAndEnvironmentId(datasetId, geolocationId);
 			if (trialInfo != null) {
 				this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
 				this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getRowsInBlock());

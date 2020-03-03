@@ -753,7 +753,9 @@
 
 				$scope.toggleSelect = function (checked) {
 					$.each($scope.instances, function (key, value) {
-						$scope.selectedInstances[value[$scope.instanceNumber]] = checked;
+						if(value.canBeDeleted){
+							$scope.selectedInstances[value[$scope.instanceNumber]] = checked;
+						}
 					});
 					$scope.selectionChanged();
 				};
@@ -770,8 +772,10 @@
 					$scope.isEmptySelection = Object.values($scope.selectedInstances).every(function (value) {
 						return value === false;
 					});
-					ctrl.isSelectAll = Object.values($scope.selectedInstances).every(function (value) {
-						return value === true;
+
+					//return true if canBeDeleted false
+					ctrl.isSelectAll = Object.values($scope.selectedInstances).every(function (value, index) {
+						return value === true || ($scope.instances[index].canBeDeleted === false);
 					});
 				};
 

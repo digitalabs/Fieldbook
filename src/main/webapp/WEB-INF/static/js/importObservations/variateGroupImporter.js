@@ -201,7 +201,6 @@
 					elem.on('click', function () {
 						// temporarily close the current modal
 						var $importMapModal = $('#importMapModal');
-
 						var params = {
 							variableType: '1043',
 							retrieveSelectedVariableFunction: function () {
@@ -218,6 +217,9 @@
 								variableSelectBtnName: Messages.SELECT_TEXT,
 								variableSelectBtnIco: 'glyphicon-chevron-right',
 								noAlias: true
+							},
+							retrieveMappedTraits: function () {
+								return scope.modeldata.variable;
 							}
 						};
 

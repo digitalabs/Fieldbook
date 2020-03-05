@@ -219,10 +219,17 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		});
 
 		// Store these properties for later use
-		if(!groupData.callback){
-			this._currentlySelectedVariables = groupData.selectedVariables;
-		}
+		this._currentlySelectedVariables = groupData.selectedVariables;
 
+		if(groupData.mappedTraits){
+			if(groupData.mappedTraits.constructor === Array){
+				$.each(groupData.mappedTraits, function(i, variableObj) {
+					this._currentlySelectedVariables[variableObj.id] = variableObj.alias || variableObj.name;
+				});
+			}else{
+				this._currentlySelectedVariables[groupData.mappedTraits.id] = groupData.mappedTraits.alias || groupData.mappedTraits.name;
+			}
+		}
 		this._group = group;
 		this._properties = properties;
 		this._callback = groupData.callback;

@@ -219,7 +219,10 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		});
 
 		// Store these properties for later use
-		this._currentlySelectedVariables = groupData.selectedVariables;
+		if(!groupData.callback){
+			this._currentlySelectedVariables = groupData.selectedVariables;
+		}
+
 		this._group = group;
 		this._properties = properties;
 		this._callback = groupData.callback;

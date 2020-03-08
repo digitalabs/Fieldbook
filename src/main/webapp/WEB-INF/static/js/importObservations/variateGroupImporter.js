@@ -175,7 +175,8 @@
 				restrict: 'A',
 				scope: {
 					modeldata: '=',
-					callback: '&'
+					callback: '&',
+					mappedheader: '=mappedData'
 				},
 
 				link: function (scope, elem, attrs) {
@@ -219,7 +220,16 @@
 								noAlias: true
 							},
 							retrieveMappedTraits: function () {
-								return scope.modeldata.variable;
+								var mappedHeader = [];
+								var mapped = scope.mappedheader;
+								var object = {};
+								$.each(mapped, function(index, header) {
+									object.cvTermId = header.variable.id;
+									object.alias = header.variable.alias;
+									object.name = header.variable.name;
+									mappedHeader[object.cvTermId] = object;
+								});
+								return mappedHeader;
 							}
 						};
 

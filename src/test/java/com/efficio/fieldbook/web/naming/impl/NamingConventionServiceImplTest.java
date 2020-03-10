@@ -6,7 +6,7 @@ import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.google.common.collect.Lists;
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.commons.pojo.AdvancingSource;
@@ -334,8 +334,8 @@ public class NamingConventionServiceImplTest {
     }
 	@Test
 	public void testGenerateCrossesList() throws RuleException{
-		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
-		final ImportedCrosses importedCross = new ImportedCrosses();
+		final List<ImportedCross> importedCrosses = new ArrayList<>();
+		final ImportedCross importedCross = new ImportedCross();
 		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(1, "femaleDesig", "femalePedig");
 		importedCross.setFemaleParent(femaleParent);
 		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(2, "maleDesig", "malePedig");

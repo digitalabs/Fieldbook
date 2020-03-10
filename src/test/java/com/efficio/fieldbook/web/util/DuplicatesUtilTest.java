@@ -4,7 +4,7 @@ package com.efficio.fieldbook.web.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.middleware.util.Debug;
@@ -35,34 +35,41 @@ public class DuplicatesUtilTest {
 		this.debugTestData(parseResults);
 		int entryId = 1;
 		final String pipeCharacter = " | ";
-		for (ImportedCrosses importedCrosses : parseResults.getImportedCrosses()) {
+		for (ImportedCross importedCross : parseResults.getImportedCrosses()) {
 			switch (entryId) {
 				case 1:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "2" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "5" + pipeCharacter +
-							ImportedCrosses.PLOT_RECIP_PREFIX + "3", importedCrosses.getDuplicate());
+					Assert.assertEquals(
+						ImportedCross.PLOT_DUPE_PREFIX + "2" + pipeCharacter + ImportedCross.PEDIGREE_DUPE_PREFIX + "5" + pipeCharacter +
+							ImportedCross.PLOT_RECIP_PREFIX + "3", importedCross.getDuplicate());
 					break;
 				case 2:
-					Assert.assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX + "1" + pipeCharacter + ImportedCrosses.PEDIGREE_DUPE_PREFIX + "5" + pipeCharacter +
-							ImportedCrosses.PLOT_RECIP_PREFIX + "3", importedCrosses.getDuplicate());
+					Assert.assertEquals(
+						ImportedCross.PLOT_DUPE_PREFIX + "1" + pipeCharacter + ImportedCross.PEDIGREE_DUPE_PREFIX + "5" + pipeCharacter +
+							ImportedCross.PLOT_RECIP_PREFIX + "3", importedCross.getDuplicate());
 				break;
 				case 3:
-					Assert.assertEquals(ImportedCrosses.PLOT_RECIP_PREFIX + "1, 2"+ pipeCharacter + ImportedCrosses.PEDIGREE_RECIP_PREFIX + "5", importedCrosses.getDuplicate());
+					Assert.assertEquals(ImportedCross.PLOT_RECIP_PREFIX + "1, 2"+ pipeCharacter + ImportedCross.PEDIGREE_RECIP_PREFIX + "5", importedCross
+						.getDuplicate());
 				break;
 				case 4:
-					Assert.assertEquals(ImportedCrosses.PEDIGREE_DUPE_PREFIX + "6" + pipeCharacter + ImportedCrosses.PEDIGREE_RECIP_PREFIX + "7", importedCrosses.getDuplicate());
+					Assert.assertEquals(ImportedCross.PEDIGREE_DUPE_PREFIX + "6" + pipeCharacter + ImportedCross.PEDIGREE_RECIP_PREFIX + "7", importedCross
+						.getDuplicate());
 					break;
 				case 5:
-					Assert.assertEquals(ImportedCrosses.PEDIGREE_DUPE_PREFIX + "1, 2" + pipeCharacter + ImportedCrosses.PEDIGREE_RECIP_PREFIX + "3", importedCrosses.getDuplicate());
+					Assert.assertEquals(ImportedCross.PEDIGREE_DUPE_PREFIX + "1, 2" + pipeCharacter + ImportedCross.PEDIGREE_RECIP_PREFIX + "3", importedCross
+						.getDuplicate());
 					break;
 				case 6:
-					Assert.assertEquals(ImportedCrosses.PEDIGREE_DUPE_PREFIX + "4" + pipeCharacter + ImportedCrosses.PLOT_RECIP_PREFIX + "7", importedCrosses.getDuplicate());
+					Assert.assertEquals(ImportedCross.PEDIGREE_DUPE_PREFIX + "4" + pipeCharacter + ImportedCross.PLOT_RECIP_PREFIX + "7", importedCross
+						.getDuplicate());
 					break;
 				case 7:
-					Assert.assertEquals(ImportedCrosses.PLOT_RECIP_PREFIX + "6" + pipeCharacter + ImportedCrosses.PEDIGREE_RECIP_PREFIX + "4", importedCrosses.getDuplicate());
+					Assert.assertEquals(ImportedCross.PLOT_RECIP_PREFIX + "6" + pipeCharacter + ImportedCross.PEDIGREE_RECIP_PREFIX + "4", importedCross
+						.getDuplicate());
 					break;
 
 				default:
-					Assert.assertEquals(ImportedCrosses.PEDIGREE_DUPE_PREFIX + "12, 13", importedCrosses.getDuplicate());
+					Assert.assertEquals(ImportedCross.PEDIGREE_DUPE_PREFIX + "12, 13", importedCross.getDuplicate());
 			}
 			entryId++;
 		}
@@ -137,16 +144,16 @@ public class DuplicatesUtilTest {
 	}
 
 	private void debugTestData(ImportedCrossesList importedCrossesList) {
-		for (ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()) {
-			Debug.println(5, this.reviewImportedCrosses(importedCrosses));
+		for (ImportedCross importedCross : importedCrossesList.getImportedCrosses()) {
+			Debug.println(5, this.reviewImportedCrosses(importedCross));
 		}
 	}
 
-	private String reviewImportedCrosses(ImportedCrosses importedCrosses) {
-		return "ENTRY=" + importedCrosses.getEntryId() + "\t" + "FEMALE_PLOTNO=" + importedCrosses.getFemalePlotNo() + "\t"
-				+ "MALE_PLOTNO=" + importedCrosses.getMalePlotNos().get(0) + "\t" + "FEMALE_GID=" + importedCrosses.getFemaleGid() + "\t"
-				+ "MALE_GID=" + importedCrosses.getMaleGids().get(0) + "\t" + "PARENTAGE=" + importedCrosses.getCross() + "\t" + "DUPLICATE="
-				+ importedCrosses.getDuplicate();
+	private String reviewImportedCrosses(ImportedCross importedCross) {
+		return "ENTRY=" + importedCross.getEntryId() + "\t" + "FEMALE_PLOTNO=" + importedCross.getFemalePlotNo() + "\t"
+				+ "MALE_PLOTNO=" + importedCross.getMalePlotNos().get(0) + "\t" + "FEMALE_GID=" + importedCross.getFemaleGid() + "\t"
+				+ "MALE_GID=" + importedCross.getMaleGids().get(0) + "\t" + "PARENTAGE=" + importedCross.getCross() + "\t" + "DUPLICATE="
+				+ importedCross.getDuplicate();
 	}
 
 	/**
@@ -161,20 +168,20 @@ public class DuplicatesUtilTest {
 	 * @param malePlotNo Male Plot Number
 	 * @return importedCrosses
 	 */
-	private ImportedCrosses createImportedCrossesTestData(String femaleDesig, String maleDesig, Integer femaleGid, Integer maleGid,
+	private ImportedCross createImportedCrossesTestData(String femaleDesig, String maleDesig, Integer femaleGid, Integer maleGid,
 			Integer entryId, String source, Integer femalePlotNo, Integer malePlotNo) {
-		ImportedCrosses importedCrosses = new ImportedCrosses();
+		ImportedCross importedCross = new ImportedCross();
 		
 		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(femaleGid, femaleDesig, "");
 		femaleParent.setPlotNo(femalePlotNo);
-		importedCrosses.setFemaleParent(femaleParent);
+		importedCross.setFemaleParent(femaleParent);
 		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(maleGid, maleDesig, "");
 		maleParent.setPlotNo(malePlotNo);
-		importedCrosses.setMaleParents(Lists.newArrayList(maleParent));
-		importedCrosses.setEntryId(entryId);
-		importedCrosses.setCross(importedCrosses.getFemaleDesignation() + DuplicatesUtil.SEPARATOR + importedCrosses.getMaleDesignationsAsString());
-		importedCrosses.setSource(source);
-		importedCrosses.setEntryCode(String.valueOf(entryId));
-		return importedCrosses;
+		importedCross.setMaleParents(Lists.newArrayList(maleParent));
+		importedCross.setEntryId(entryId);
+		importedCross.setCross(importedCross.getFemaleDesignation() + DuplicatesUtil.SEPARATOR + importedCross.getMaleDesignationsAsString());
+		importedCross.setSource(source);
+		importedCross.setEntryCode(String.valueOf(entryId));
+		return importedCross;
 	}
 }

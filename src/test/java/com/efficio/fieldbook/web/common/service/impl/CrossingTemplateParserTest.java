@@ -5,7 +5,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.generationcp.commons.parsing.FileParsingException;
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -307,7 +307,7 @@ public class CrossingTemplateParserTest {
 			.thenReturn(this.createImportedCrossParents(femalePlotNumbers, CrossingTemplateParserTest.FEMALE_STUDY_NAME));
 		Mockito.when(this.fieldbookMiddlewareService.getPlotNoToStudyGermplasmDtoMap(2, malePlotNumbers))
 			.thenReturn(this.createImportedCrossParents(malePlotNumbers, CrossingTemplateParserTest.MALE_STUDY_NAME));
-		Mockito.when(this.crossingService.getCross(ArgumentMatchers.any(Germplasm.class), ArgumentMatchers.any(ImportedCrosses.class),
+		Mockito.when(this.crossingService.getCross(ArgumentMatchers.any(Germplasm.class), ArgumentMatchers.any(ImportedCross.class),
 			ArgumentMatchers.eq("/"))).thenReturn("cross");
 
 		try {
@@ -320,7 +320,7 @@ public class CrossingTemplateParserTest {
 				ArgumentMatchers.anyInt(), ArgumentMatchers.anySetOf(Integer.class));
 
 			// Verify that GID and Designation from parent crosses were set properly to crosses
-			for (final ImportedCrosses cross : importCrossesList.getImportedCrosses()) {
+			for (final ImportedCross cross : importCrossesList.getImportedCrosses()) {
 				final Integer expectedFemaleGID = cross.getFemalePlotNo() + 100;
 				final Integer expectedMaleGID = cross.getMalePlotNos().get(0) + 100;
 				Assert.assertEquals(expectedFemaleGID, Integer.valueOf(cross.getFemaleGid()));
@@ -360,7 +360,7 @@ public class CrossingTemplateParserTest {
 			.thenReturn(this.createImportedCrossParents(new HashSet<>(Arrays.asList(1, 2, 3, 5)), CrossingTemplateParserTest.FEMALE_STUDY_NAME));
 		Mockito.when(this.fieldbookMiddlewareService.getPlotNoToStudyGermplasmDtoMap(2, malePlotNumbers))
 			.thenReturn(this.createImportedCrossParents(malePlotNumbers, CrossingTemplateParserTest.MALE_STUDY_NAME));
-		Mockito.when(this.crossingService.getCross(ArgumentMatchers.any(Germplasm.class), ArgumentMatchers.any(ImportedCrosses.class),
+		Mockito.when(this.crossingService.getCross(ArgumentMatchers.any(Germplasm.class), ArgumentMatchers.any(ImportedCross.class),
 			ArgumentMatchers.eq("/"))).thenReturn("cross");
 
 		try {
@@ -400,7 +400,7 @@ public class CrossingTemplateParserTest {
 			.thenReturn(this.createImportedCrossParents(femalePlotNumbers, CrossingTemplateParserTest.FEMALE_STUDY_NAME));
 		Mockito.when(this.fieldbookMiddlewareService.getPlotNoToStudyGermplasmDtoMap(2, malePlotNumbers))
 			.thenReturn(this.createImportedCrossParents(new HashSet<>(Arrays.asList(1, 2, 3, 4)), CrossingTemplateParserTest.MALE_STUDY_NAME));
-		Mockito.when(this.crossingService.getCross(ArgumentMatchers.any(Germplasm.class), ArgumentMatchers.any(ImportedCrosses.class),
+		Mockito.when(this.crossingService.getCross(ArgumentMatchers.any(Germplasm.class), ArgumentMatchers.any(ImportedCross.class),
 			ArgumentMatchers.eq("/"))).thenReturn("cross");
 
 		try {
@@ -475,9 +475,9 @@ public class CrossingTemplateParserTest {
 
 	private ImportedCrossesList createImportedCrossesList() {
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
-		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
+		final List<ImportedCross> importedCrosses = new ArrayList<>();
 		for (int i = 1; i <= 5; i++) {
-			final ImportedCrosses cross = new ImportedCrosses(i);
+			final ImportedCross cross = new ImportedCross(i);
 			importedCrosses.add(cross);
 		}
 		importedCrossesList.setImportedGermplasms(importedCrosses);

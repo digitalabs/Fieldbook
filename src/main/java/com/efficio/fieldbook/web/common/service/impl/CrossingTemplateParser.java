@@ -13,7 +13,7 @@ import org.generationcp.commons.parsing.AbstractExcelFileParser;
 import org.generationcp.commons.parsing.CrossesListDescriptionSheetParser;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCondition;
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedFactor;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
@@ -169,13 +169,13 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 			entryIdToCrossInfoMap.put(currentRow, new ImmutableTriple<>(maleStudy, femalePlotNo, malePlotNumbers));
 
-			final ImportedCrosses importedCrosses = new ImportedCrosses(currentRow);
+			final ImportedCross importedCross = new ImportedCross(currentRow);
 			// Show source as "Pending" in initial dialogue.
 			// Source (Plot Code) string is generated later in the process and will be displayed in the final list generated.
-			importedCrosses.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
-			importedCrosses.setOptionalFields(breedingMethod, crossingDate, notes);
+			importedCross.setSource(ImportedCross.SEED_SOURCE_PENDING);
+			importedCross.setOptionalFields(breedingMethod, crossingDate, notes);
 
-			this.importedCrossesList.addImportedCrosses(importedCrosses);
+			this.importedCrossesList.addImportedCrosses(importedCross);
 
 			currentRow++;
 		}
@@ -208,8 +208,8 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 				.put(maleStudyName, this.getPlotNoToStudyGermplasmDtoMapForStudy(maleStudyName, entry.getValue()));
 		}
 
-		// Set looked up GIDs and names of parents to ImportedCrosses object
-		for (final ImportedCrosses cross : this.importedCrossesList.getImportedCrosses()) {
+		// Set looked up GIDs and names of parents to ImportedCross object
+		for (final ImportedCross cross : this.importedCrossesList.getImportedCrosses()) {
 			final Triple<String, Integer, List<Integer>> crossInfo = entryIdToCrossInfoMap.get(cross.getEntryId());
 			if (femalePlotMap.containsKey(crossInfo.getMiddle())) {
 				final StudyGermplasmDto femaleCrossParent = femalePlotMap.get(crossInfo.getMiddle());

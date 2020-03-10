@@ -13,7 +13,7 @@ package com.efficio.fieldbook.web.naming.service;
 
 import java.util.List;
 
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -47,7 +47,7 @@ public interface NamingConventionService {
 	/*
 	* Generated the names for the list of crosses based on on rules setup for the breeding methods
 	*/
-	List<ImportedCrosses> generateCrossesList(List<ImportedCrosses> importedCrosses, AdvancingSourceList rows, AdvancingStudy
+	List<ImportedCross> generateCrossesList(List<ImportedCross> importedCrosses, AdvancingSourceList rows, AdvancingStudy
 			advancingParameters, Workbook workbook, List<Integer> gids) throws RuleException;
 
 }

@@ -9,7 +9,7 @@ import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.constant.AppConstants;
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
 import org.generationcp.commons.pojo.AdvancingSource;
@@ -268,7 +268,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	@Override
-	public List<ImportedCrosses> generateCrossesList(final List<ImportedCrosses> importedCrosses, final AdvancingSourceList rows,
+	public List<ImportedCross> generateCrossesList(final List<ImportedCross> importedCrosses, final AdvancingSourceList rows,
 		final AdvancingStudy advancingParameters, final Workbook workbook, final List<Integer> gids) throws RuleException {
 
 		final List<Method> methodList = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
@@ -285,7 +285,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		int previousMaxSequence = 0;
 		for (final AdvancingSource advancingSource : rows.getRows()) {
 
-			final ImportedCrosses importedCross = importedCrosses.get(index++);
+			final ImportedCross importedCross = importedCrosses.get(index++);
 			final List<String> names;
 			advancingSource.setCurrentMaxSequence(previousMaxSequence);
 

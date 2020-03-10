@@ -224,7 +224,9 @@
 								var mapped = scope.mappedheader;
 								var object = {};
 								$.each(mapped, function(index, header) {
-									mappedHeader[header.variable.id] = header.variable.alias || header.variable.name;
+									if(header.variable){
+										mappedHeader[header.variable.id] = header.variable.alias || header.variable.name;
+									}
 								});
 								return mappedHeader;
 							}

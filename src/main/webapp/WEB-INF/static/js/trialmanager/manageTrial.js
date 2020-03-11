@@ -192,12 +192,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				{
 					name: 'Germplasm & Checks',
 					state: 'germplasm'
-				},
-/*                {   name: 'Treatment Factors',
-                    state: 'treatment'
-                },*/
-				{   name: 'Environments',
-					state: 'environment'
 				}
 			];
 			$scope.subObservationTabs = [];
@@ -218,12 +212,14 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.hasUnsavedData = studyStateService.hasUnsavedData;
 
 			if ($scope.isOpenStudy()) {
-				var environment = $scope.trialTabs.pop();
 				$scope.trialTabs.push({
 					name: 'Treatment Factors',
 					state: 'treatment'
 				});
-				$scope.trialTabs.push(environment);
+				$scope.trialTabs.push(	{
+					name: 'Environments',
+					state: 'environment'
+				});
 				$scope.trialTabs.push({
 					name: 'Experimental Design',
 					state: 'experimentalDesign'
@@ -897,8 +893,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				return $scope.tabSelected && ([
 					"trialSettings",
 					"germplasm",
-					"treatment",
-					"environment",
+					"treatment"
 				].indexOf($scope.tabSelected) >= 0 || enableSaveForStockList);
 
 

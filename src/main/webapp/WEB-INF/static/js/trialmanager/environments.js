@@ -9,27 +9,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				  studyStateService, derivedVariableService, studyContext) {
 
 			var ctrl = this;
-
-			// at least one environment should be in the datatable, so we are prepopulating the table with the first environment
-			var populateDatatableWithDefaultValues = function () {
-				$scope.data = TrialManagerDataService.currentData.environments;
-
-				if (!$scope.data.environments) {
-					$scope.data.environments = [];
-				}
-				if ($scope.data.environments.length === 0) {
-					$scope.data.environments.push({});
-				}
-				if (!$scope.data.environments[0].managementDetailValues) {
-					$scope.data.environments[0].managementDetailValues = {};
-				}
-				if (!$scope.data.environments[0].managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX]) {
-					$scope.data.environments[0].managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = 1;
-				}
-			};
-
 			$scope.TRIAL_INSTANCE_NO_INDEX = 8170;
-
 			$scope.data = TrialManagerDataService.currentData.environments;
 			$scope.nested = {};
 			$scope.nested.dtInstance = {};
@@ -41,11 +21,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			};
 
 			$scope.settings = TrialManagerDataService.settings.environments;
-			if (Object.keys($scope.settings).length === 0) {
-				$scope.settings = {};
-				$scope.settings.managementDetails = [];
-				$scope.settings.trialConditionDetails = [];
-			}
 
 			$scope.onRemoveVariable = function (variableType, variableIds) {
 				return $scope.checkVariableIsUsedInCalculatedVariable(variableIds);
@@ -139,9 +114,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				openManageLocations();
 			};
 
-			//prepopulate the datatable
-			populateDatatableWithDefaultValues();
-
 			TrialManagerDataService.onUpdateData('environments', function () {
 				$scope.temp.noOfEnvironments = $scope.data.noOfEnvironments;
 			});
@@ -154,47 +126,48 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			$scope.updateEnvironmentCount = function () {
 				if ($scope.temp.noOfEnvironments > $scope.data.environments.length) {
 					$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
+					$scope.addEnvironments($scope.temp.noOfEnvironments - $scope.data.environments.length);
 				} else if ($scope.temp.noOfEnvironments < $scope.data.environments.length) {
 					$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
+					var instanceIds = [];
+					// if new environment count is less than previous value, splice array
+					while ($scope.data.environments.length > $scope.temp.noOfEnvironments) {
+						var environment = $scope.data.environments.pop();
+						instanceIds.push(environment.experimentId);
+					}
+					studyInstanceService.deleteStudyInstances(instanceIds);
 				}
 			};
 
-			$scope.deleteEnvironment = function (index, experimentId) {
+			$scope.deleteEnvironment = function (index, instanceId) {
 
-				// If study has experimental design, get updated information first on environment to be deleted
-				if ($scope.isDesignAlreadyGenerated()) {
-					studyInstanceService.getStudyInstance(experimentId).then(function (studyInstance) {
+				studyInstanceService.getStudyInstance(instanceId).then(function (studyInstance) {
 
-						// Show error if environment cannot be deleted
-						if (!studyInstance.canBeDeleted) {
-							showErrorMessage('', $.environmentMessages.environmentCannotBeDeleted);
-							return;
+					// Show error if environment cannot be deleted
+					if (!studyInstance.canBeDeleted) {
+						showErrorMessage('', $.environmentMessages.environmentCannotBeDeleted);
+						return;
 
-							// Show confirmation message for overwriting measurements and/or fieldmap
-						} else if (studyInstance.hasMeasurements || studyInstance.hasFieldmap) {
-							var modalConfirmDelete = $scope.openConfirmModal($.environmentMessages.environmentHasDataThatWillBeLost, 'Yes','No');
-							modalConfirmDelete.result.then(function (shouldContinue) {
-								if (shouldContinue) {
-									$scope.continueEnvironmentDeletion(index, experimentId);
-								}
-							});
-						} else {
-							$scope.continueEnvironmentDeletion(index, experimentId);
-						}
-					}, function(errResponse) {
-						showErrorMessage($.fieldbookMessages.errorServerError, errResponse.errors[0].message);
-					});
+						// Show confirmation message for overwriting measurements and/or fieldmap
+					} else if (studyInstance.hasMeasurements || studyInstance.hasFieldmap) {
+						var modalConfirmDelete = $scope.openConfirmModal($.environmentMessages.environmentHasDataThatWillBeLost, 'Yes', 'No');
+						modalConfirmDelete.result.then(function (shouldContinue) {
+							if (shouldContinue) {
+								$scope.continueEnvironmentDeletion(index, [instanceId]);
+							}
+						});
+					} else {
+						$scope.continueEnvironmentDeletion(index, [instanceId]);
+					}
+				}, function (errResponse) {
+					showErrorMessage($.fieldbookMessages.errorServerError, errResponse.errors[0].message);
+				});
 
-
-					// Delete environment from the UI if no experimental design yet. Study save needs to be clicked to persist
-				} else {
-					updateDeletedEnvironment(index);
-				}
 			};
 
 			// Proceed deleting existing environment
-			$scope.continueEnvironmentDeletion = function (index, experimentId) {
-				studyInstanceService.deleteStudyInstance(experimentId);
+			$scope.continueEnvironmentDeletion = function (index, instanceIds) {
+				studyInstanceService.deleteStudyInstances(instanceIds);
 				updateDeletedEnvironment(index);
 				showSuccessfulMessage('', $.environmentMessages.environmentDeletedSuccessfully);
 			};
@@ -203,7 +176,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			$scope.updateTrialInstanceNo = function (environments, index) {
 				for (var i = 0; i < environments.length; i++) {
 					var environment = environments[i];
-					var expectedTrialInstanceNo = i+1;
+					var expectedTrialInstanceNo = i + 1;
 					var trialInstanceNo = environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX];
 					if (trialInstanceNo > expectedTrialInstanceNo) {
 						environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = expectedTrialInstanceNo;
@@ -237,19 +210,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			$scope.$watch('data.noOfEnvironments', function (newVal, oldVal) {
 				$scope.temp.noOfEnvironments = newVal;
 				if (Number(newVal) < Number(oldVal)) {
-					// if new environment count is less than previous value, splice array
-					while ($scope.data.environments.length > newVal) {
-						$scope.data.environments.pop();
-					}
-
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
 				} else if (Number(newVal) > Number(oldVal)) {
-					$scope.addEnvironments(newVal);
 					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
-				}
-
-				if (newVal !== oldVal && !$scope.isDesignAlreadyGenerated()) {
-					studyStateService.updateOccurred();
 				}
 			});
 
@@ -272,13 +235,25 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.isDisableAddEnvironment = true;
 
 				// create and save the environment in the server
-				studyInstanceService.createStudyInstance().then(function (studyInstance) {
-					// update the environment table
-					$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
-					$scope.data.noOfEnvironments++;
+				studyInstanceService.createStudyInstances(1).then(function (studyInstances) {
+					angular.forEach(studyInstances, function (studyInstance) {
+						// update the environment table
+						$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
+						$scope.data.noOfEnvironments++;
+					});
 					$scope.isDisableAddEnvironment = false;
 				});
 
+			};
+
+			$scope.addEnvironments = function (numberOfEnvironments) {
+				// create and save the environment in the server
+				studyInstanceService.createStudyInstances(numberOfEnvironments).then(function (studyInstances) {
+					angular.forEach(studyInstances, function (studyInstance) {
+						// update the environment table
+						$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
+					});
+				});
 			};
 
 			$scope.createEnvironment = function (instanceNumber, experimentId, index) {
@@ -294,24 +269,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				} else {
 					$scope.data.environments.push(environment);
 				}
-			};
-
-			$scope.addEnvironments = function (numberOfEnvironments) {
-				var existingTrialInstanceNumbers = [];
-				angular.forEach($scope.data.environments, function (environment) {
-					existingTrialInstanceNumbers.push(parseInt(environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX]));
-				});
-
-				var instanceNumber = 1;
-				while ($scope.data.environments.length < numberOfEnvironments) {
-					while (existingTrialInstanceNumbers.includes(instanceNumber)) {
-						instanceNumber++;
-
-					}
-					$scope.createEnvironment(instanceNumber, null, null, instanceNumber -1);
-					existingTrialInstanceNumbers.push(instanceNumber);
-				}
-
 			};
 
 			ctrl.updateEnvironmentVariables = function (type, entriesIncreased) {
@@ -358,13 +315,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				TrialManagerDataService.deleteEnvironment(index + 1);
 			}
 
-			// init
-			if ($stateParams && $stateParams.addtlNumOfEnvironments && !isNaN(parseInt($stateParams.addtlNumOfEnvironments))) {
-				var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments, 10);
-				$scope.temp.noOfEnvironments = parseInt($scope.temp.noOfEnvironments, 10) + addtlNumOfEnvironments;
-				$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
-				$scope.addEnvironments(addtlNumOfEnvironments);
-			}
 		}]).factory('DTLoadingTemplate', function () {
 		return {
 			html: '<span class="throbber throbber-2x"></span>'

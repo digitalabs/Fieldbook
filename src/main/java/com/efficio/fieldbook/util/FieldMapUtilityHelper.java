@@ -177,8 +177,8 @@ public class FieldMapUtilityHelper {
 
 			FieldMapTrialInstanceInfo trial = null;
 
-			if (plot.getDatasetId() != null && plot.getGeolocationId() != null) {
-				trial = info.getSelectedTrialInstanceByDatasetIdAndGeolocationId(plot.getDatasetId(), plot.getGeolocationId());
+			if (plot.getDatasetId() != null && plot.getEnvironmentId() != null) {
+				trial = info.getSelectedTrialInstanceByDatasetIdAndEnvironmentId(plot.getDatasetId(), plot.getEnvironmentId());
 			}
 			if (trial != null && trial.getOrder() == null) {
 				trial.setOrder(order[0]);

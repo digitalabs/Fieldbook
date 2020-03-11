@@ -44,9 +44,8 @@ public class Plot implements Serializable {
 	/** The dataset id. */
 	private Integer datasetId;
 
-	// TODO IBP-3305: rename to environmentId
-	/** The geolocation id. */
-	private Integer geolocationId;
+	/** The environment id. */
+	private Integer environmentId;
 
 	/** The is saved already. */
 	private boolean isSavedAlready;
@@ -191,21 +190,21 @@ public class Plot implements Serializable {
 	}
 
 	/**
-	 * Gets the geolocation id.
+	 * Gets the environment id.
 	 *
-	 * @return the geolocationId
+	 * @return the environment id
 	 */
-	public Integer getGeolocationId() {
-		return this.geolocationId;
+	public Integer getEnvironmentId() {
+		return this.environmentId;
 	}
 
 	/**
-	 * Sets the geolocation id.
+	 * Sets the environment id.
 	 *
-	 * @param geolocationId the geolocationId to set
+	 * @param environmentId the environment to set
 	 */
-	public void setGeolocationId(Integer geolocationId) {
-		this.geolocationId = geolocationId;
+	public void setEnvironmentId(Integer environmentId) {
+		this.environmentId = environmentId;
 	}
 
 	/**

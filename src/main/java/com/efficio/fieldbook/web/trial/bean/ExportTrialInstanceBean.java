@@ -22,21 +22,21 @@ public class ExportTrialInstanceBean {
 	/** The location name instance. */
 	private String locationName;
 
-	/** The geolocation id. */
-	private Integer geolocationId;
+	/** The environment id. */
+	private Integer environmentId;
 
 	/**
 	 * Instantiates a new export trial instance bean.
 	 *
 	 * @param instanceNum the instance num
 	 * @param locationName the location Name
-	 * @param geolocationId the geolocationId
+	 * @param environmentId the geolocationId
 	 */
-	public ExportTrialInstanceBean(final String instanceNum, final String locationName, final Integer geolocationId) {
+	public ExportTrialInstanceBean(final String instanceNum, final String locationName, final Integer environmentId) {
 		super();
 		this.instanceNum = instanceNum;
 		this.setLocationName(locationName);
-		this.setGeolocationId(geolocationId);
+		this.setEnvironmentId(environmentId);
 
 	}
 
@@ -67,11 +67,11 @@ public class ExportTrialInstanceBean {
 		this.locationName = locationName;
 	}
 
-	public Integer getGeolocationId() {
-		return geolocationId;
+	public Integer getEnvironmentId() {
+		return environmentId;
 	}
 
-	public void setGeolocationId(final Integer geolocationId) {
-		this.geolocationId = geolocationId;
+	public void setEnvironmentId(final Integer environmentId) {
+		this.environmentId = environmentId;
 	}
 }

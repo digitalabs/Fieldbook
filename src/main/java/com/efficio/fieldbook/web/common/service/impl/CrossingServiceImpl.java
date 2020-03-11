@@ -5,6 +5,7 @@ import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
@@ -20,12 +21,15 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.CrossingUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.StringUtil;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.InvalidGermplasmNameSettingException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PedigreeDataManager;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
@@ -36,6 +40,7 @@ import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.germplasm.GermplasmNameSetting;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.PedigreeService;
+import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.pedigree.PedigreeFactory;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.generationcp.middleware.util.Util;
@@ -47,11 +52,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import static org.generationcp.middleware.service.api.dataset.ObservationUnitUtils.fromMeasurementRow;
 
 @Transactional
 public class CrossingServiceImpl implements CrossingService {
@@ -70,6 +78,7 @@ public class CrossingServiceImpl implements CrossingService {
 	static final Integer PREFERRED_NAME = 1;
 	static final int MAX_SEED_SOURCE_SIZE = 255;
 	public static final String TRUNCATED = "(truncated)";
+
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
@@ -104,6 +113,13 @@ public class CrossingServiceImpl implements CrossingService {
 	@Resource
 	private GermplasmNamingService germplasmNamingService;
 
+	@Resource
+	private DatasetService datasetService;
+
+	@Resource
+	private StudyDataManager studyDataManager;
+
+
 	@Override
 	public ImportedCrossesList parseFile(final MultipartFile file) throws FileParsingException {
 		return this.crossingTemplateParser.parseFile(file, null);
@@ -121,12 +137,39 @@ public class CrossingServiceImpl implements CrossingService {
 		return pairsResult.isTrimed;
 	}
 
-	public class GermplasmListResult {
+	class CrossSourceStudy {
+
+		private final Workbook workbook;
+		private final Map<String, String> locationIdNameMap;
+		private final List<MeasurementVariable> environmentVariables;
+
+		CrossSourceStudy(final Workbook workbook, final Map<String, String> locationIdNameMap,
+			final List<MeasurementVariable> environmentVariables) {
+			this.workbook = workbook;
+			this.locationIdNameMap = locationIdNameMap;
+			this.environmentVariables = environmentVariables;
+		}
+
+		Workbook getWorkbook() {
+			return this.workbook;
+		}
+
+		Map<String, String> getLocationIdNameMap() {
+			return this.locationIdNameMap;
+		}
+
+		List<MeasurementVariable> getEnvironmentVariables() {
+			return this.environmentVariables;
+		}
+	}
+
+	// TODO: Rename to CrossesListResult
+	class GermplasmListResult {
 
 		private final List<Triple<Germplasm, Name, List<Progenitor>>> germplasmTriples;
 		private final Boolean isTrimed;
 
-		public GermplasmListResult(final List<Triple<Germplasm, Name, List<Progenitor>>> germplasmTriples, final Boolean isTrimed) {
+		GermplasmListResult(final List<Triple<Germplasm, Name, List<Progenitor>>> germplasmTriples, final Boolean isTrimed) {
 			super();
 			this.germplasmTriples = germplasmTriples;
 			this.isTrimed = isTrimed;
@@ -146,10 +189,10 @@ public class CrossingServiceImpl implements CrossingService {
 		final Integer userId, final Workbook workbook) {
 
 		int entryIdCounter = 1;
-		final Map<String, Workbook> workbookMap = new HashMap<>();
-
+		final Map<String, CrossSourceStudy> maleStudyMap = new HashMap<>();
+		final CrossSourceStudy femaleStudyData = this.getCrossSourceStudyData(workbook);
 		for (final ImportedCross importedCross : importedCrossesList.getImportedCrosses()) {
-			this.populateSeedSource(importedCross, workbook, workbookMap);
+			this.populateSeedSource(importedCross, femaleStudyData, maleStudyMap);
 			importedCross.setEntryCode(String.valueOf(entryIdCounter));
 			importedCross.setEntryId(entryIdCounter);
 			entryIdCounter++;
@@ -169,19 +212,40 @@ public class CrossingServiceImpl implements CrossingService {
 		return pairsResult.isTrimed;
 	}
 
+	private CrossSourceStudy getCrossSourceStudyData(final Workbook workbook){
+		final Map<String, String> locationIdNameMap = this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(workbook.getStudyDetails().getId());
+		final List<MeasurementVariable> environmentVariables =
+			this.datasetService.getObservationSetVariables(workbook.getTrialDatasetId(), Collections.singletonList(
+				VariableType.ENVIRONMENT_DETAIL.getId()));
+		return new CrossSourceStudy(workbook, locationIdNameMap, environmentVariables);
+	}
+
 	@Override
-	public void populateSeedSource(final ImportedCross importedCross, final Workbook workbook, final Map<String, Workbook> workbookMap) {
+	public void populateSeedSource(final ImportedCrossesList importedCrossesList, final Workbook workbook) {
+		final Map<String, CrossSourceStudy> maleStudyMap = new HashMap<>();
+		final CrossSourceStudy femaleStudyData = this.getCrossSourceStudyData(workbook);
+		for (final ImportedCross importedCross : importedCrossesList.getImportedCrosses()) {
+			this.populateSeedSource(importedCross, femaleStudyData, maleStudyMap);
+		}
+	}
+
+	void populateSeedSource(final ImportedCross importedCross, final CrossSourceStudy femaleStudyData,
+		final Map<String, CrossSourceStudy> maleStudyDataMap) {
 		if (importedCross.getSource() == null || StringUtils.isEmpty(importedCross.getSource()) || importedCross.getSource()
 			.equalsIgnoreCase(ImportedCross.SEED_SOURCE_PENDING)) {
-			// With the current Excel import template, male parents of each cross will come same study
-			final String maleStudyName = importedCross.getMaleStudyNames().get(0);
-			final Workbook maleStudyWorkbook = this.getMaleStudyWorkbook(maleStudyName, workbook, workbookMap);
+			final String maleStudyName = importedCross.getMaleStudyName();
+			final CrossSourceStudy maleStudyData =
+				this.getMaleStudyData(maleStudyName, femaleStudyData, maleStudyDataMap);
 
-			//FIXME Refactor and optimise SeedSourceGenerator/LocationResolver/SeasonResolver to remove dependency on workbook.
+			final Workbook femaleWorkbook = femaleStudyData.getWorkbook();
+			final Workbook maleWorkbook = maleStudyData.getWorkbook();
 			final String generatedSource = this.seedSourceGenerator
-				.generateSeedSourceForCross(workbook, importedCross.getMalePlotNumbersAsStringList(),
-					importedCross.getFemalePlotNo().toString(),
-					maleStudyName, importedCross.getFemaleStudyName(), maleStudyWorkbook);
+				.generateSeedSourceForCross(Pair.of(fromMeasurementRow(femaleWorkbook.getTrialObservationByTrialInstanceNo(1)),
+					fromMeasurementRow(maleWorkbook.getTrialObservationByTrialInstanceNo(1))),
+					Pair.of(femaleWorkbook.getConditions(), maleWorkbook.getConditions()),
+					Pair.of(femaleStudyData.getLocationIdNameMap(), maleStudyData.getLocationIdNameMap()),
+					Pair.of(femaleStudyData.getEnvironmentVariables(), maleStudyData.getEnvironmentVariables()),
+					importedCross);
 
 			if (generatedSource.length() > CrossingServiceImpl.MAX_SEED_SOURCE_SIZE) {
 				importedCross.setSource(generatedSource.substring(0, CrossingServiceImpl.MAX_SEED_SOURCE_SIZE));
@@ -192,13 +256,20 @@ public class CrossingServiceImpl implements CrossingService {
 		}
 	}
 
-	private Workbook getMaleStudyWorkbook(final String maleStudyName, final Workbook workbook, final Map<String, Workbook> workbookMap) {
-		if (workbookMap.get(maleStudyName) != null)
-			return workbookMap.get(maleStudyName);
-		final Workbook maleStudyWorkbook = workbook.getStudyName().equals(maleStudyName) ? workbook :
+	private CrossSourceStudy getMaleStudyData(final String maleStudyName,
+		final CrossSourceStudy femaleStudyData,
+		final Map<String, CrossSourceStudy> maleStudyMap) {
+		if (femaleStudyData.getWorkbook().getStudyName().equals(maleStudyName)) {
+			return femaleStudyData;
+		} else if (maleStudyMap.get(maleStudyName) != null) {
+			return maleStudyMap.get(maleStudyName);
+		}
+		final Workbook maleStudyWorkbook =
 			this.fieldbookMiddlewareService.getStudyByNameAndProgramUUID(maleStudyName, this.contextUtil.getCurrentProgramUUID());
-		workbookMap.put(maleStudyName, maleStudyWorkbook);
-		return maleStudyWorkbook;
+		final CrossSourceStudy maleSourceStudy =
+			this.getCrossSourceStudyData(maleStudyWorkbook);
+		maleStudyMap.put(maleStudyName, maleSourceStudy);
+		return maleSourceStudy;
 	}
 
 	/**
@@ -258,10 +329,7 @@ public class CrossingServiceImpl implements CrossingService {
 	// combined into one
 	private GermplasmListResult getTriples(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 		final Integer userId, final Workbook workbook) {
-		final Map<String, Workbook> workbookMap = new HashMap<>();
-		for (final ImportedCross importedCross : importedCrossesList.getImportedCrosses()) {
-			this.populateSeedSource(importedCross, workbook, workbookMap);
-		}
+		this.populateSeedSource(importedCrossesList, workbook);
 
 		final GermplasmListResult pairsResult =
 			this.generateGermplasmNameTriples(crossSetting, importedCrossesList.getImportedCrosses(), userId,

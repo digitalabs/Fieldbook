@@ -26,7 +26,7 @@ public interface CrossingService {
 
 	void processCrossBreedingMethod(CrossSetting crossSetting, ImportedCrossesList importedCrossesList);
 
-	void populateSeedSource(ImportedCross importedCross, Workbook workbook, Map<String, Workbook> workbookMap);
-	
+	void populateSeedSource(ImportedCrossesList importedCrossesList, final Workbook workbook);
+
 	String getNextNameInSequence(final CrossNameSetting setting) throws InvalidInputException;
 }

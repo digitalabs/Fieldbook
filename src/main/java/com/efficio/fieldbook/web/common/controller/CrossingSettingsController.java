@@ -379,6 +379,7 @@ public class CrossingSettingsController extends SettingsController {
 		return this.crossExpansionProperties.getHybridBreedingMethods();
 	}
 
+	/** This is used for the Review Imported Cross (no temporary list created yet as in Design Crosses **/
 	@ResponseBody
 	@RequestMapping(value = "/getImportedCrossesList", method = RequestMethod.GET)
 	public Map<String, Object> getImportedCrossesList() {
@@ -397,11 +398,8 @@ public class CrossingSettingsController extends SettingsController {
 
 		this.crossingService.processCrossBreedingMethod(this.studySelection.getCrossSettings(), importedCrossesList);
 
-		final Map<String, Workbook> workbookMap = new HashMap<>();
 		// TODO decouple save and apply settings and then replace this for for the apply settings method
-		for (final ImportedCross importedCross : importedCrossesList.getImportedCrosses()) {
-			this.crossingService.populateSeedSource(importedCross, this.userSelection.getWorkbook(), workbookMap);
-		}
+		this.crossingService.populateSeedSource(importedCrossesList, this.userSelection.getWorkbook());
 
 		final List<Map<String, Object>> masterList = new ArrayList<>();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();

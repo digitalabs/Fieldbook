@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
@@ -57,6 +58,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -260,7 +262,7 @@ public class CrossingServiceImplTest {
 		assertEquals(this.getExpectedName(CrossingServiceImplTest.NEXT_NUMBER), cross1.getDesig());
 		assertEquals((Integer) 1, cross1.getEntryId());
 		assertEquals("1", cross1.getEntryCode());
-		assertEquals(null, cross1.getNames().get(0).getGermplasmId());
+		assertNull(cross1.getNames().get(0).getGermplasmId());
 		assertEquals((Integer) 0, cross1.getNames().get(0).getLocationId());
 		assertEquals(CrossingServiceImplTest.USER_ID, cross1.getNames().get(0).getUserId());
 
@@ -270,7 +272,7 @@ public class CrossingServiceImplTest {
 		assertEquals(this.getExpectedName(NEXT_NUMBER + 1), cross2.getDesig());
 		assertEquals((Integer) 2, cross2.getEntryId());
 		assertEquals("2", cross2.getEntryCode());
-		assertEquals(null, cross2.getNames().get(0).getGermplasmId());
+		assertNull(cross2.getNames().get(0).getGermplasmId());
 		assertEquals((Integer) 0, cross2.getNames().get(0).getLocationId());
 		assertEquals(CrossingServiceImplTest.USER_ID, cross2.getNames().get(0).getUserId());
 
@@ -285,7 +287,7 @@ public class CrossingServiceImplTest {
 
 		final ImportedCross cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
-		assertEquals(null, cross1.getGid());
+		assertNull(cross1.getGid());
 		assertEquals(this.getExpectedName(NEXT_NUMBER), cross1.getDesig());
 		assertEquals(cross1.getFemaleDesignation() + setting.getSeparator() + cross1.getMaleDesignationsAsString(), cross1.getCross());
 		assertEquals((Integer) 1, cross1.getEntryId());
@@ -293,7 +295,7 @@ public class CrossingServiceImplTest {
 
 		final ImportedCross cross2 = this.importedCrossesList.getImportedCrosses().get(1);
 
-		assertEquals(null, cross2.getGid());
+		assertNull(cross2.getGid());
 		assertEquals(this.getExpectedName(NEXT_NUMBER + 1), cross2.getDesig());
 		assertEquals(cross2.getFemaleDesignation() + setting.getSeparator() + cross2.getMaleDesignationsAsString(), cross2.getCross());
 		assertEquals((Integer) 2, cross2.getEntryId());
@@ -638,35 +640,34 @@ public class CrossingServiceImplTest {
 	public void testGenerateSeedSource() {
 		final String newSeedSource = "newSeedSource";
 		Mockito.doReturn(newSeedSource).when(this.seedSourceGenerator)
-			.generateSeedSourceForCross(ArgumentMatchers.any(Workbook.class), ArgumentMatchers.<String>anyList(), ArgumentMatchers.anyString(),
-				Mockito.<String>isNull(),
-				Mockito.<String>isNull(), Mockito.<Workbook>isNull());
+			.generateSeedSourceForCross(ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(Pair.class),
+				ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(ImportedCross.class));
 
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
 		// Case 1 - No seed source present. Generate new.
 		final ImportedCross importedCross1 = this.createCross();
 		importedCross1.setSource(null);
-		this.crossingService.populateSeedSource(importedCross1, workbook, new HashMap<String, Workbook>());
+		this.crossingService.populateSeedSource(importedCross1, this.crossingService.new CrossSourceStudy(workbook, null, null), new HashMap<>());
 		assertEquals(newSeedSource, importedCross1.getSource());
 
 		// Case 2 - Seed source is present. Keep.
 		final ImportedCross importedCross2 = this.createCross();
 		final String existingSeedSource = "existingSeedSource";
 		importedCross2.setSource(existingSeedSource);
-		this.crossingService.populateSeedSource(importedCross2, workbook, new HashMap<String, Workbook>());
+		this.crossingService.populateSeedSource(importedCross2, this.crossingService.new CrossSourceStudy(workbook, null, null), new HashMap<>());
 		assertEquals(existingSeedSource, importedCross2.getSource());
 
 		// Case 3 - Seed source is presend but is PENDING indicator. Generate
 		// new.
 		final ImportedCross importedCross3 = this.createCross();
 		importedCross3.setSource(ImportedCross.SEED_SOURCE_PENDING);
-		this.crossingService.populateSeedSource(importedCross3, workbook, new HashMap<String, Workbook>());
+		this.crossingService.populateSeedSource(importedCross3, this.crossingService.new CrossSourceStudy(workbook, null, null), new HashMap<>());
 		assertEquals(newSeedSource, importedCross3.getSource());
 
 		// Case 4 - Seed source is present but empty string. Generate new.
 		final ImportedCross importedCross4 = this.createCross();
 		importedCross4.setSource("");
-		this.crossingService.populateSeedSource(importedCross4, workbook, new HashMap<String, Workbook>());
+		this.crossingService.populateSeedSource(importedCross4, this.crossingService.new CrossSourceStudy(workbook, null, null), new HashMap<>());
 		assertEquals(newSeedSource, importedCross4.getSource());
 
 	}
@@ -676,15 +677,15 @@ public class CrossingServiceImplTest {
 
 		final String newSeedSource = RandomStringUtils.randomAlphabetic(300);
 		Mockito.doReturn(newSeedSource).when(this.seedSourceGenerator)
-			.generateSeedSourceForCross(ArgumentMatchers.any(Workbook.class), ArgumentMatchers.<String>anyList(), ArgumentMatchers.anyString(),
-				Mockito.<String>isNull(),
-				Mockito.<String>isNull(), Mockito.<Workbook>isNull());
+			.generateSeedSourceForCross(ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(Pair.class),
+				ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(ImportedCross.class));
+
 
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
 		// Case 1 - No seed source present. Generate new.
 		final ImportedCross importedCross1 = this.createCross();
 		importedCross1.setSource(null);
-		this.crossingService.populateSeedSource(importedCross1, workbook, new HashMap<String, Workbook>());
+		this.crossingService.populateSeedSource(importedCross1, this.crossingService.new CrossSourceStudy(workbook, null, null), new HashMap<>());
 		assertEquals(CrossingServiceImpl.MAX_SEED_SOURCE_SIZE, importedCross1.getSource().length());
 	}
 
@@ -948,5 +949,6 @@ public class CrossingServiceImplTest {
 	private String getExpectedName(final Integer number) {
 		return PREFIX + " 0000" + number + " " + SUFFIX;
 	}
+
 
 }

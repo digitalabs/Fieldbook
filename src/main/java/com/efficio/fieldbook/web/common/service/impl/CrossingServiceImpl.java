@@ -294,6 +294,7 @@ public class CrossingServiceImpl implements CrossingService {
 		final List<Attribute> attributeList = new ArrayList<>();
 		final Iterator<Integer> germplasmIdIterator = savedGermplasmIds.iterator();
 		final Integer today = Integer.valueOf(DateUtil.getCurrentDateAsStringValue());
+		final Integer plotCodeFldNo = this.germplasmDataManager.getPlotCodeField().getFldno();
 		for (final ImportedCross cross : importedCrossesList.getImportedCrosses()) {
 
 			// this will do the merging and using the gid and cross from the
@@ -311,7 +312,7 @@ public class CrossingServiceImpl implements CrossingService {
 			final Attribute plotCodeAttribute = new Attribute();
 			plotCodeAttribute.setAdate(today);
 			plotCodeAttribute.setGermplasmId(newGid);
-			plotCodeAttribute.setTypeId(this.germplasmDataManager.getPlotCodeField().getFldno());
+			plotCodeAttribute.setTypeId(plotCodeFldNo);
 			plotCodeAttribute.setAval(cross.getSource());
 			plotCodeAttribute.setUserId(this.contextUtil.getCurrentWorkbenchUserId());
 

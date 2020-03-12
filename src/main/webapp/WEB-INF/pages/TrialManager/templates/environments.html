@@ -9,7 +9,7 @@
                         <section-container icon="bms-mgt-details"
                                            th:attr="heading=#{study.managesettings.environment.management.details},help-tooltip=#{study.managesettings.environment.management.details.tooltip}"
                                            add-variable="true" hide-variable="addVariable" model-data="settings.managementDetails"
-                                           variable-type="1806" callback="onAddVariable(result)">
+                                           variable-type="1806" callback="onAddVariable(result, 1806)">
                             <display-settings hide-delete="isHideDelete" name="content" predelete-function="onRemoveVariable" settings="settings.managementDetails"
                                               variable-type="1806"></display-settings>
                         </section-container>
@@ -19,7 +19,7 @@
                         <section-container
                                 th:attr="heading=#{study.managesettings.environment.condition.details},help-tooltip=#{study.managesettings.conditions.tooltip},icon-img=@{/static/svg/conditions.svg}"
                                 icon-size="22" add-variable="true" hide-variable="addVariable" model-data="settings.trialConditionDetails"
-                                variable-type="1802" callback="onAddVariable(result)">
+                                variable-type="1802" callback="onAddVariable(result, 1802)">
                             <display-settings hide-delete="isHideDelete" name="content" predelete-function="onRemoveVariable" settings="settings.trialConditionDetails"
                                               variable-type="1802"></display-settings>
                         </section-container>

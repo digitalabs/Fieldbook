@@ -5,8 +5,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', '$q', 'TrialManagerDataService', '$uibModal', '$stateParams',
 		'$http', 'DTOptionsBuilder', 'LOCATION_ID', '$timeout', 'studyInstanceService', 'studyStateService', 'derivedVariableService', 'studyContext',
+		'datasetService',
 		function ($scope, $q, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, $timeout, studyInstanceService,
-				  studyStateService, derivedVariableService, studyContext) {
+				  studyStateService, derivedVariableService, studyContext, datasetService) {
 
 			var ctrl = this;
 			$scope.TRIAL_INSTANCE_NO_INDEX = 8170;
@@ -26,6 +27,21 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				return $scope.checkVariableIsUsedInCalculatedVariable(variableIds);
 			};
 
+			$scope.onAddVariable = function (result, variableTypeId) {
+				var variable = undefined;
+				angular.forEach(result, function (val) {
+					variable = val.variable;
+				});
+
+				datasetService.addVariables(studyContext.trialDatasetId, {
+					variableTypeId: variableTypeId,
+					variableId: variable.cvTermId,
+					studyAlias: variable.alias ? variable.alias : variable.name
+				}).then(function () {
+					$scope.nested.dtInstance.rerender();
+				});
+			};
+
 			$scope.checkVariableIsUsedInCalculatedVariable = function (deleteVariables) {
 				var deferred = $q.defer();
 				var variableIsUsedInOtherCalculatedVariable;
@@ -43,12 +59,21 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						});
 					}
 
-
 					if (variableIsUsedInOtherCalculatedVariable) {
 						var modalInstance = $scope.openConfirmModal(removeVariableDependencyConfirmationText, environmentConfirmLabel);
 						modalInstance.result.then(deferred.resolve);
+						modalInstance.result.then((isOK) => {
+							if (isOK) {
+								datasetService.removeVariables(studyContext.trialDatasetId, deleteVariables).then(() => {
+									$scope.nested.dtInstance.rerender();
+								});
+							}
+						});
 					} else {
 						deferred.resolve(true);
+						datasetService.removeVariables(studyContext.trialDatasetId, deleteVariables).then(() => {
+							$scope.nested.dtInstance.rerender();
+						});
 					}
 				});
 				return deferred.promise;
@@ -96,18 +121,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					$(this).parents('.dataTables_wrapper').find('.dt-buttons').replaceWith(api.buttons().container());
 				}
 			};
-
-			$scope.onAddVariable = function () {
-				$scope.nested.dtInstance.rerender();
-			};
-
-			$scope.$on('deleteOccurred', function () {
-				$scope.nested.dtInstance.rerender();
-			});
-
-			$scope.$on('rerenderEnvironmentTable', function (event, args) {
-				$scope.nested.dtInstance.rerender();
-			});
 
 			$scope.initiateManageLocationModal = function () {
 				//TODO $scope.variableDefinition.locationUpdated = false;

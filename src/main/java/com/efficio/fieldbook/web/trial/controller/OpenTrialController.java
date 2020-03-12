@@ -370,6 +370,7 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("germplasmListSize", 0);
 		model.addAttribute("studyId", trialWorkbook.getStudyDetails().getId());
 		model.addAttribute("measurementDatasetId", trialWorkbook.getMeasurementDatesetId());
+		model.addAttribute("trialDatasetId", trialWorkbook.getTrialDatasetId());
 
 		this.setIsSuperAdminAttribute(model);
 	}

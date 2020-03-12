@@ -205,6 +205,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 				.put(maleStudyName, this.getPlotNoToStudyGermplasmDtoMapForStudy(maleStudyName, entry.getValue()));
 		}
 
+		final String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
 		// Set looked up GIDs and names of parents to ImportedCross object
 		for (final ImportedCross cross : this.importedCrossesList.getImportedCrosses()) {
 			final Triple<String, Integer, List<Integer>> crossInfo = entryIdToCrossInfoMap.get(cross.getEntryId());

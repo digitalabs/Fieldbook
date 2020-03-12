@@ -17,7 +17,7 @@ public interface CrossingService {
 
 	ImportedCrossesList parseFile(MultipartFile file) throws FileParsingException;
 
-	String getCross(Germplasm germplasm, ImportedCross crosses, String separator);
+	String getCross(Germplasm germplasm, ImportedCross crosses, String separator, String cropName);
 
 	boolean applyCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId, Workbook workbook);
 

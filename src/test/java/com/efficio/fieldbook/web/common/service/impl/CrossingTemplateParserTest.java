@@ -54,9 +54,6 @@ public class CrossingTemplateParserTest {
 	private MessageSource messageSource;
 
 	@Mock
-	private FieldbookService fieldbookMiddlewareService;
-
-	@Mock
 	private CrossingService crossingService;
 
 	@Mock

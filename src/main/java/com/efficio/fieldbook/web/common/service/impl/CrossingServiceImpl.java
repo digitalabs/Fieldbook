@@ -295,6 +295,7 @@ public class CrossingServiceImpl implements CrossingService {
 		final Iterator<Integer> germplasmIdIterator = savedGermplasmIds.iterator();
 		final Integer today = Integer.valueOf(DateUtil.getCurrentDateAsStringValue());
 		final Integer plotCodeFldNo = this.germplasmDataManager.getPlotCodeField().getFldno();
+		final int currentWorkbenchUserId = this.contextUtil.getCurrentWorkbenchUserId();
 		for (final ImportedCross cross : importedCrossesList.getImportedCrosses()) {
 
 			// this will do the merging and using the gid and cross from the
@@ -314,7 +315,7 @@ public class CrossingServiceImpl implements CrossingService {
 			plotCodeAttribute.setGermplasmId(newGid);
 			plotCodeAttribute.setTypeId(plotCodeFldNo);
 			plotCodeAttribute.setAval(cross.getSource());
-			plotCodeAttribute.setUserId(this.contextUtil.getCurrentWorkbenchUserId());
+			plotCodeAttribute.setUserId(currentWorkbenchUserId);
 
 			attributeList.add(plotCodeAttribute);
 		}
@@ -363,6 +364,7 @@ public class CrossingServiceImpl implements CrossingService {
 		final Integer nstatValue =
 			crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString() ? 0 : CrossingServiceImpl.PREFERRED_NAME;
 
+		final int currentWorkbenchUserId = this.contextUtil.getCurrentWorkbenchUserId();
 		for (final ImportedCross entry : importedCrossesList.getImportedCrosses()) {
 
 			final Integer gid = germplasmIdIterator.next();
@@ -377,7 +379,7 @@ public class CrossingServiceImpl implements CrossingService {
 			final Name parentageDesignationName = new Name();
 			parentageDesignationName.setGermplasmId(gid);
 			parentageDesignationName.setTypeId(CrossingServiceImpl.PEDIGREE_NAME_TYPE);
-			parentageDesignationName.setUserId(this.contextUtil.getCurrentWorkbenchUserId());
+			parentageDesignationName.setUserId(currentWorkbenchUserId);
 
 			parentageDesignationName.setNval(this.truncateName(parentageDesignation));
 			parentageDesignationName.setNstat(nstatValue);
@@ -404,6 +406,7 @@ public class CrossingServiceImpl implements CrossingService {
 	// for MANUAL naming of crosses
 	void applyCrossNameSettingToImportedCrosses(final CrossNameSetting crossNameSetting, final List<ImportedCross> importedCrosses) {
 		Integer entryIdCounter = 0;
+		final String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
 		synchronized (CrossingServiceImpl.class) {
 			for (final ImportedCross cross : importedCrosses) {
 				entryIdCounter++;
@@ -419,7 +422,7 @@ public class CrossingServiceImpl implements CrossingService {
 				germplasm.setGid(Integer.MAX_VALUE);
 				germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 				germplasm.setGpid2(cross.getMaleGids().get(0));
-				final String crossString = this.getCross(germplasm, cross, crossNameSetting.getSeparator());
+				final String crossString = this.getCross(germplasm, cross, crossNameSetting.getSeparator(), cropName);
 
 				cross.setCross(crossString);
 			}
@@ -427,10 +430,10 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	@Override
-	public String getCross(final Germplasm germplasm, final ImportedCross crosses, final String separator) {
+	public String getCross(final Germplasm germplasm, final ImportedCross crosses, final String separator, final String cropName) {
 		try {
 			if (PedigreeFactory.isCimmytWheat(this.crossExpansionProperties.getProfile(),
-				this.contextUtil.getProjectInContext().getCropType().getCropName())) {
+				cropName)) {
 				return this.pedigreeService.getCrossExpansion(germplasm, null, this.crossExpansionProperties);
 			}
 			return this.buildCrossName(crosses, separator);

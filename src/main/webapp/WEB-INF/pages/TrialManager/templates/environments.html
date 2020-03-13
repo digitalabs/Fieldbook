@@ -60,16 +60,16 @@
     <section-container th:attr="heading=#{study.managesettings.environment.specify.level}">
         <div name="content">
 
-            <table id="environment-table" datatable="ng" dt-options="dtOptions" dt-instance="nested.dtInstance"
+            <table id="environment-table" datatable="ng" dt-options="dtOptions" dt-instance="nested.dataTable"
                    class="table table-curved table-condensed fbk-table-with-check fbk-datatable-environments" width="100%">
                 <thead>
                 <tr>
                     <th data-sortable="false" class="fbk-delete-link"></th>
                     <th data-sortable="false" th:text="#{study.managesettings.environment.label}">Environment</th>
                     <th data-sortable="false" ng-repeat="key in settings.managementDetails.keys() track by $index"
-                        ng-hide="settings.managementDetails.val(key).hidden">
+                        ng-hide="settings.managementDetails.val(key).hidden"  data-termid="{{key}}">
                         {{settings.managementDetails.val(key).variable.name}}</th>
-                    <th data-sortable="false" ng-repeat="key in settings.trialConditionDetails.keys()">
+                    <th data-sortable="false" ng-repeat="key in settings.trialConditionDetails.keys()" data-termid="{{key}}">
                         {{settings.trialConditionDetails.val(key).variable.name}}</th>
                 </tr>
                 </thead>
@@ -80,16 +80,12 @@
                               class="glyphicon glyphicon-minus-sign fbk-delete-sign" ng-model-options="{ debounce: 500 }">&nbsp;</span>
                     </td>
                     <td>{{environment.managementDetailValues[TRIAL_INSTANCE_NO_INDEX]}}</td>
-                    <td ng-repeat="key in settings.managementDetails.keys() track by $index"
-                        ng-hide="settings.managementDetails.val(key).hidden">
-                        <show-setting-form-element-new ng-if="isLocation" settings="settings.managementDetails" targetkey="{{key}}"
-                                                   valuecontainer="environment.managementDetailValues"
-                                                       changefunction="onLocationChange({key: environment.managementDetailValues[key]})"></show-setting-form-element-new>
-                        <show-setting-form-element-new ng-if="!isLocation" settings="settings.managementDetails" targetkey="{{key}}"
-                                                       valuecontainer="environment.managementDetailValues"></show-setting-form-element-new></td>
-                    <td ng-repeat="key in settings.trialConditionDetails.keys() track by $index">
-                        <show-setting-form-element settings="settings.trialConditionDetails" targetkey="{{key}}"
-                                                   valuecontainer="environment.trialDetailValues"></show-setting-form-element></td>
+                    <td class="environmentVariable" ng-repeat="key in settings.managementDetails.keys() track by $index" ng-hide="settings.managementDetails.val(key).hidden">
+                        {{renderDisplayValue(settings.managementDetails.val(key), environment.managementDetailValues[key])}}
+                    </td>
+                    <td class="environmentVariable" ng-repeat="key in settings.trialConditionDetails.keys() track by $index">
+                        {{renderDisplayValue(settings.trialConditionDetails.val(key), environment.trialDetailValues[key])}}
+                    </td>
                 </tr>
                 </tbody>
             </table>

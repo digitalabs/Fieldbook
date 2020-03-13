@@ -33,6 +33,16 @@
 			return request.then(successHandler, failureHandler);
 		};
 
+		studyInstanceService.addInstanceData = function (instanceData) {
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/environments/' + instanceData.environmentId + '/environment-data', instanceData);
+			return request.then(successHandler, failureHandler);
+		};
+
+		studyInstanceService.updateInstanceData = function (instanceData) {
+			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/environments/' + instanceData.environmentId + '/environment-data/' + instanceData.environmentDataId, instanceData);
+			return request.then(successHandler, failureHandler);
+		};
+
 		studyInstanceService.environments = TrialManagerDataService.currentData.environments;
 
 		studyInstanceService.changeEnvironments = function () {

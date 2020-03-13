@@ -1,0 +1,51 @@
+<div ng-switch="widgetType">
+	<div ng-switch-when="DROPDOWN">
+		<ui-select ng-model="valuecontainer[targetkey]"
+				   on-select="environment.change()"
+				   tagging="environment.newInlineValue"
+				   tagging-label="false"
+				   append-to-body="true"
+				   theme="select2">
+			<ui-select-match
+				class="ui-select-match">
+				<span ng-bind="$select.selected.description"></span>
+			</ui-select-match>
+			<ui-select-choices repeat="value.id as value in (localData.dropdownValues | orderBy: 'name' | filter: { name: $select.search }) track by $index" >
+				<div title="{{value.description}}">{{value.description}}</div>
+			</ui-select-choices>
+		</ui-select>
+		<div ng-if="isLocation">
+			<div class="possibleValuesDiv">
+				<input type="radio" ng-attr-name="env_location_filter"
+					   ng-model="localData.locationLookup" value="1" ng-change="updateDropdownValuesBreedingLocation()"> &nbsp;
+				<span th:text="#{show.breeding.location}">Breeding locations</span> &nbsp;
+				<input type="radio" ng-attr-name="env_location_filter"
+					   ng-model="localData.locationLookup" value="2" ng-change="updateDropdownValuesAllLocation()"> &nbsp;
+				<span th:text="#{show.all.location}">All locations types</span>
+			</div>
+			<div class="possibleValuesDiv">
+				<input type="checkbox" ng-model="localData.useFavorites" ng-change="updateDropdownValuesFavorites()"> &nbsp;
+				<span th:text="#{show.favorite.location}">Show only favorite locations </span> &nbsp;
+			</div>
+		</div>
+		<div ng-if="isBreedingMethod" class="possibleValuesDiv">
+			<!--TODO : handle rendering of breeding method dropdowns for completeness-->
+		</div>
+	</div>
+	<div ng-switch-when="NTEXT">
+		<input type="text" valid-decimal="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="environment.change()"/>
+	</div>
+	<div ng-switch-when="SLIDER">
+		<input type="text" valid-decimal="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="environment.change()"/>
+	</div>
+	<div ng-switch-when="CTEXT">
+		<input type="text" class="form-control character-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="environment.change()"/>
+	</div>
+	<div ng-switch-when="TEXTAREA">
+		<textarea class="form-control character-input" rows="3" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="environment.change()"/>
+	</div>
+	<div ng-switch-when="DATE">
+		<input type="text" placeholder="yyyy-mm-dd" class="form-control date-input" ng-model="valuecontainer[targetkey]" jq-datepicker="true" with-image="true" image-src="/Fieldbook/static/img/calendar.png"
+			   ng-change="environment.change()"/>
+	</div>
+</div>

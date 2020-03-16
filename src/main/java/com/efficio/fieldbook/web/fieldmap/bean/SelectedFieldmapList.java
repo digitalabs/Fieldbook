@@ -19,7 +19,7 @@ public class SelectedFieldmapList implements Serializable {
 	private static final long serialVersionUID = 3166386440351404690L;
 
 	/** The rows. */
-	private List<SelectedFieldmapRow> rows = new ArrayList<SelectedFieldmapRow>();
+	private List<SelectedFieldmapRow> rows = new ArrayList<>();
 
 
 	/**
@@ -27,14 +27,14 @@ public class SelectedFieldmapList implements Serializable {
 	 *
 	 * @param studies the studies
 	 */
-	public SelectedFieldmapList(List<FieldMapInfo> studies) {
+	public SelectedFieldmapList(final List<FieldMapInfo> studies) {
 		if (studies != null && !studies.isEmpty()) {
-			for (FieldMapInfo study : studies) {
+			for (final FieldMapInfo study : studies) {
 				if (study.getDatasets() != null) {
-					for (FieldMapDatasetInfo dataset : study.getDatasets()) {
+					for (final FieldMapDatasetInfo dataset : study.getDatasets()) {
 						if (dataset.getTrialInstances() != null) {
-							for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
-								SelectedFieldmapRow row = new SelectedFieldmapRow();
+							for (final FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+								final SelectedFieldmapRow row = new SelectedFieldmapRow();
 								row.setOrder(trial.getOrder());
 								row.setStudyName(study.getFieldbookName());
 								row.setEntryCount(trial.getEntryCount());
@@ -71,7 +71,7 @@ public class SelectedFieldmapList implements Serializable {
 	 *
 	 * @param rows the rows to set
 	 */
-	public void setRows(List<SelectedFieldmapRow> rows) {
+	public void setRows(final List<SelectedFieldmapRow> rows) {
 		this.rows = rows;
 	}
 
@@ -83,7 +83,7 @@ public class SelectedFieldmapList implements Serializable {
 	public long getTotalNumberOfPlots() {
 		long total = 0;
 		if (this.rows != null && !this.rows.isEmpty()) {
-			for (SelectedFieldmapRow row : this.rows) {
+			for (final SelectedFieldmapRow row : this.rows) {
 				total += row.getPlotCount() != null ? row.getPlotCount() : 0;
 			}
 		}
@@ -96,6 +96,6 @@ public class SelectedFieldmapList implements Serializable {
 	 * @return true, if is empty
 	 */
 	public boolean isEmpty() {
-		return this.rows != null ? this.rows.isEmpty() : true;
+		return this.rows == null || this.rows.isEmpty();
 	}
 }

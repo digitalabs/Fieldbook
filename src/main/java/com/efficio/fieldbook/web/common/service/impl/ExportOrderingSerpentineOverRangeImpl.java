@@ -30,42 +30,42 @@ public class ExportOrderingSerpentineOverRangeImpl extends ExportDataCollectionO
 	private FieldbookService fieldbookMiddlewareService;
 
 	@Override
-	public void reorderWorkbook(Workbook workbook) {
+	public void reorderWorkbook(final Workbook workbook) {
 
-		List<MeasurementRow> arrangedExportObservations = new ArrayList<MeasurementRow>();
+		final List<MeasurementRow> arrangedExportObservations = new ArrayList<>();
 		try {
-			Integer numberOfTrialInstance = workbook.getTrialObservations().size();
+			final int numberOfTrialInstance = workbook.getTrialObservations().size();
 			for (int trialInstanceNum = 1; trialInstanceNum <= numberOfTrialInstance; trialInstanceNum++) {
-				String blockId =
+				final String blockId =
 						this.fieldbookMiddlewareService.getBlockId(workbook.getTrialDatasetId(), trialInstanceNum);
 
-				List<MeasurementRow> observationsPerInstance = new ArrayList<MeasurementRow>();
-				List<Integer> indexes = new ArrayList<Integer>();
+				final List<MeasurementRow> observationsPerInstance = new ArrayList<>();
+				final List<Integer> indexes = new ArrayList<>();
 				indexes.add(trialInstanceNum);
 
-				List<MeasurementRow> observations =
+				final List<MeasurementRow> observations =
 						ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), indexes);
 				if (blockId == null) {
 					// meaning no fieldmap
 					// we just set the normal observations
 					arrangedExportObservations.addAll(observations);
 				} else {
-					FieldmapBlockInfo blockInfo = this.fieldbookMiddlewareService.getBlockInformation(Integer.valueOf(blockId));
-					int ranges = blockInfo.getRangesInBlock();
-					int columns = blockInfo.getRowsInBlock() / blockInfo.getNumberOfRowsInPlot();
+					final FieldmapBlockInfo blockInfo = this.fieldbookMiddlewareService.getBlockInformation(Integer.valueOf(blockId));
+					final int ranges = blockInfo.getRangesInBlock();
+					final int columns = blockInfo.getRowsInBlock() / blockInfo.getNumberOfRowsInPlot();
 
 					// we now need to arrange
 					// we set it to map first then we iterate now
 
-					Map<String, MeasurementRow> fieldMapExperimentMap = this.getFieldMapExperimentsMap(observations);
+					final Map<String, MeasurementRow> fieldMapExperimentMap = this.getFieldMapExperimentsMap(observations);
 
 					boolean leftToRight = true;
 					for (int y = 1; y <= ranges; y++) {
 						if (leftToRight) {
 							for (int x = 0; x <= columns; x++) {
 								// for left to right planting
-								String coordinateKey = Integer.toString(x) + ":" + Integer.toString(y);
-								MeasurementRow rowExperiment = fieldMapExperimentMap.get(coordinateKey);
+								final String coordinateKey = Integer.toString(x) + ":" + Integer.toString(y);
+								final MeasurementRow rowExperiment = fieldMapExperimentMap.get(coordinateKey);
 								if (rowExperiment != null) {
 									observationsPerInstance.add(rowExperiment);
 								}
@@ -73,8 +73,8 @@ public class ExportOrderingSerpentineOverRangeImpl extends ExportDataCollectionO
 						} else {
 							for (int x = columns; x >= 0; x--) {
 								// for right to left planting
-								String coordinateKey = Integer.toString(x) + ":" + Integer.toString(y);
-								MeasurementRow rowExperiment = fieldMapExperimentMap.get(coordinateKey);
+								final String coordinateKey = Integer.toString(x) + ":" + Integer.toString(y);
+								final MeasurementRow rowExperiment = fieldMapExperimentMap.get(coordinateKey);
 								if (rowExperiment != null) {
 									observationsPerInstance.add(rowExperiment);
 								}
@@ -86,7 +86,7 @@ public class ExportOrderingSerpentineOverRangeImpl extends ExportDataCollectionO
 					arrangedExportObservations.addAll(observationsPerInstance);
 				}
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			// TODO Auto-generated catch block
 			ExportOrderingSerpentineOverRangeImpl.LOG.error("Ordering of the workbook was not successful", e);
 		}

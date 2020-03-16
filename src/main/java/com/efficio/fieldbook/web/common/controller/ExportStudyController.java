@@ -62,6 +62,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -74,11 +75,9 @@ import java.util.StringTokenizer;
 @RequestMapping(ExportStudyController.URL)
 public class ExportStudyController extends AbstractBaseFieldbookController {
 
-	protected static final String CONTENT_TYPE = "contentType";
-	protected static final String FILENAME = "filename";
-	protected static final String OUTPUT_FILENAME = "outputFilename";
-	private static final String UTF_8 = "UTF-8";
-	private static final String ISO_8859_1 = "iso-8859-1";
+	static final String CONTENT_TYPE = "contentType";
+	static final String FILENAME = "filename";
+	static final String OUTPUT_FILENAME = "outputFilename";
 	private static final String ERROR_MESSAGE = "errorMessage";
 	static final String IS_SUCCESS = "isSuccess";
 	private static final Logger LOG = LoggerFactory.getLogger(ExportStudyController.class);
@@ -136,7 +135,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private StudyDataManager studyDataManager;
-	
+
 	@Override
 	public String getContentName() {
 		return null;
@@ -146,10 +145,10 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	public ResponseEntity<FileSystemResource> downloadFile(final HttpServletRequest req) throws UnsupportedEncodingException {
 
 		final String outputFilename =
-				new String(req.getParameter(ExportStudyController.OUTPUT_FILENAME).getBytes(ExportStudyController.ISO_8859_1),
-						ExportStudyController.UTF_8);
-		final String filename = new String(req.getParameter(ExportStudyController.FILENAME).getBytes(ExportStudyController.ISO_8859_1),
-				ExportStudyController.UTF_8);
+				new String(req.getParameter(ExportStudyController.OUTPUT_FILENAME).getBytes(StandardCharsets.ISO_8859_1),
+					StandardCharsets.UTF_8);
+		final String filename = new String(req.getParameter(ExportStudyController.FILENAME).getBytes(StandardCharsets.ISO_8859_1),
+			StandardCharsets.UTF_8);
 
 		return FieldbookUtil.createResponseEntityForFileDownload(outputFilename, filename);
 
@@ -227,7 +226,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	 * @throws IOException
 	 */
 	private String doExport(final int exportType, final HttpServletResponse response,
-		final List<Integer> instances, final int exportWayType, final Map<String, String> data) throws IOException {
+		final List<Integer> instances, final int exportWayType, final Map<String, String> data) {
 
 		/*
 		 * exportWayType 1 - row column 2 - serpentine (range) 3 - serpentine (col)
@@ -258,7 +257,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 			SettingsUtil
 				.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, userSelection.getWorkbook().getObservations(), true,
-					this.ontologyService, contextUtil.getCurrentProgramUUID());
+					this.ontologyService, this.contextUtil.getCurrentProgramUUID());
 
 			exportDataCollectionService.reorderWorkbook(userSelection.getWorkbook());
 
@@ -291,7 +290,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			results.put(ExportStudyController.CONTENT_TYPE, response.getContentType());
 
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, userSelection.getWorkbook().getObservations(), true,
-				this.ontologyService, contextUtil.getCurrentProgramUUID());
+				this.ontologyService, this.contextUtil.getCurrentProgramUUID());
 
 			LOG.info("Export Study : doExport : processWorbook : end");
 
@@ -456,7 +455,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/custom/{studyId}/reports", method = RequestMethod.GET)
 	public List<CustomReportType> getCustomReports(@PathVariable final int studyId) {
-		final StudyDetails studyDetails = studyDataManager.getStudyDetails(studyId);
+		final StudyDetails studyDetails = this.studyDataManager.getStudyDetails(studyId);
 		// DO NOT remove this condition. Reports are organized based on the study type
 		// It needs to be discussed with IBP whenever they want to bring custom reports back
 		if (StudyTypeDto.NURSERY_NAME.equalsIgnoreCase(studyDetails.getStudyType().getName())) {

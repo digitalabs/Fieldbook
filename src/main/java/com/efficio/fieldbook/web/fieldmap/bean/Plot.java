@@ -57,7 +57,7 @@ public class Plot implements Serializable {
 	 * @param range the range
 	 * @param displayString the display string
 	 */
-	public Plot(int column, int range, String displayString) {
+	public Plot(final int column, final int range, final String displayString) {
 		this.setRange(range);
 		this.setColumn(column);
 		this.setDisplayString(displayString);
@@ -77,7 +77,7 @@ public class Plot implements Serializable {
 	 *
 	 * @param isPlotDeleted the new plot deleted
 	 */
-	public void setPlotDeleted(boolean isPlotDeleted) {
+	public void setPlotDeleted(final boolean isPlotDeleted) {
 		this.isPlotDeleted = isPlotDeleted;
 	}
 
@@ -95,7 +95,7 @@ public class Plot implements Serializable {
 	 *
 	 * @param isNotStarted the new not started
 	 */
-	public void setNotStarted(boolean isNotStarted) {
+	public void setNotStarted(final boolean isNotStarted) {
 		this.isNotStarted = isNotStarted;
 	}
 
@@ -113,7 +113,7 @@ public class Plot implements Serializable {
 	 *
 	 * @param isNoMoreEntries the new no more entries
 	 */
-	public void setNoMoreEntries(boolean isNoMoreEntries) {
+	public void setNoMoreEntries(final boolean isNoMoreEntries) {
 		this.isNoMoreEntries = isNoMoreEntries;
 	}
 
@@ -131,7 +131,7 @@ public class Plot implements Serializable {
 	 *
 	 * @param displayString the new display string
 	 */
-	public void setDisplayString(String displayString) {
+	public void setDisplayString(final String displayString) {
 		this.displayString = displayString;
 	}
 
@@ -149,7 +149,7 @@ public class Plot implements Serializable {
 	 *
 	 * @param range the new range
 	 */
-	public void setRange(int range) {
+	public void setRange(final int range) {
 		this.range = range;
 	}
 
@@ -167,7 +167,7 @@ public class Plot implements Serializable {
 	 *
 	 * @param column the new column
 	 */
-	public void setColumn(int column) {
+	public void setColumn(final int column) {
 		this.column = column;
 	}
 
@@ -185,7 +185,7 @@ public class Plot implements Serializable {
 	 *
 	 * @param datasetId the datasetId to set
 	 */
-	public void setDatasetId(Integer datasetId) {
+	public void setDatasetId(final Integer datasetId) {
 		this.datasetId = datasetId;
 	}
 
@@ -203,7 +203,7 @@ public class Plot implements Serializable {
 	 *
 	 * @param environmentId the environment to set
 	 */
-	public void setEnvironmentId(Integer environmentId) {
+	public void setEnvironmentId(final Integer environmentId) {
 		this.environmentId = environmentId;
 	}
 
@@ -221,7 +221,7 @@ public class Plot implements Serializable {
 	 *
 	 * @param isSavedAlready the new saved already
 	 */
-	public void setSavedAlready(boolean isSavedAlready) {
+	public void setSavedAlready(final boolean isSavedAlready) {
 		this.isSavedAlready = isSavedAlready;
 	}
 

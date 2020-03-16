@@ -21,7 +21,6 @@ import com.efficio.fieldbook.web.trial.form.UpdateGermplasmCheckForm;
 import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.context.ContextInfo;
@@ -65,12 +64,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * This controller handles the 2nd step in the study manager process.
@@ -213,7 +210,7 @@ public class ImportGermplasmListController extends SettingsController {
 	@RequestMapping(value = { "/next", "/submitAll" }, method = RequestMethod.POST)
 	@Transactional
 	public String nextScreen(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form,
-			final BindingResult result, final Model model, final HttpServletRequest req) throws BVDesignException {
+			final BindingResult result, final Model model, final HttpServletRequest req) {
 		// start: section for taking note of the check germplasm
 		boolean isDeleteObservations = false;
 
@@ -480,7 +477,7 @@ public class ImportGermplasmListController extends SettingsController {
 	private String getGermplasmData(final String termId, final ImportedGermplasm germplasm) {
 		String val = "";
 		if (NumberUtils.isNumber(termId)) {
-			final Integer term = Integer.valueOf(termId);
+			final int term = Integer.parseInt(termId);
 			if (term == TermId.GID.getId()) {
 				val = germplasm.getGid();
 			} else if (term == TermId.ENTRY_CODE.getId()) {
@@ -1031,7 +1028,7 @@ public class ImportGermplasmListController extends SettingsController {
 			}
 
 			if (checkInterval != null && startCheckFrom != null) {
-				final Integer totalCount = (totalGermplasmCount - startCheckFrom) / checkInterval;
+				final int totalCount = (totalGermplasmCount - startCheckFrom) / checkInterval;
 				return totalCount + totalGermplasmCount + 1;
 			}
 		}

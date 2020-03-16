@@ -145,7 +145,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param isNew the new new
 	 */
-	public void setNew(boolean isNew) {
+	public void setNew(final boolean isNew) {
 		this.isNew = isNew;
 	}
 
@@ -161,7 +161,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param fieldMapInfo the field map info
 	 */
-	public UserFieldmap(List<FieldMapInfo> fieldMapInfo) {
+	public UserFieldmap(final List<FieldMapInfo> fieldMapInfo) {
 		this.setUserFieldmapInfo(fieldMapInfo);
 	}
 
@@ -179,7 +179,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param isGenerated the new generated
 	 */
-	public void setGenerated(boolean isGenerated) {
+	public void setGenerated(final boolean isGenerated) {
 		this.isGenerated = isGenerated;
 	}
 
@@ -188,16 +188,16 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param fieldMapInfoList the field map info list
 	 */
-	public void setUserFieldmapInfo(List<FieldMapInfo> fieldMapInfoList) {
+	public void setUserFieldmapInfo(final List<FieldMapInfo> fieldMapInfoList) {
 
 		if (this.getSelectedDatasetId() != null && this.getSelectedGeolocationId() != null) {
 
-			int datasetId = this.getSelectedDatasetId();
-			int trialInstanceId = this.getSelectedGeolocationId();
+			final int datasetId = this.getSelectedDatasetId();
+			final int trialInstanceId = this.getSelectedGeolocationId();
 
-			for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+			for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 				if (fieldMapInfo.getDataSet(datasetId) != null) {
-					FieldMapTrialInstanceInfo info = fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialInstanceId);
+					final FieldMapTrialInstanceInfo info = fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialInstanceId);
 					this.setFieldMapLabels(this.getAllSelectedFieldMapLabels(false));
 					this.setNumberOfEntries(info.getEntryCount());
 					this.setNumberOfReps(info.getRepCount());
@@ -218,24 +218,24 @@ public class UserFieldmap implements Serializable {
 	 * @param isSorted the is sorted
 	 * @return the all selected field map labels
 	 */
-	public List<FieldMapLabel> getAllSelectedFieldMapLabels(boolean isSorted) {
-		List<FieldMapLabel> allLabels = new ArrayList<>();
+	public List<FieldMapLabel> getAllSelectedFieldMapLabels(final boolean isSorted) {
+		final List<FieldMapLabel> allLabels = new ArrayList<>();
 
 		if (isSorted) {
 			if (this.getSelectedFieldmapList() != null && !this.getSelectedFieldmapList().isEmpty()) {
-				for (SelectedFieldmapRow row : this.getSelectedFieldmapList().getRows()) {
-					FieldMapTrialInstanceInfo trial =
+				for (final SelectedFieldmapRow row : this.getSelectedFieldmapList().getRows()) {
+					final FieldMapTrialInstanceInfo trial =
 							this.getSelectedTrialInstanceByDatasetIdAndEnvironmentId(row.getDatasetId(), row.getGeolocationId());
 					allLabels.addAll(trial.getFieldMapLabels());
 				}
 			}
 		} else {
 			if (this.getSelectedFieldMaps() != null && !this.getSelectedFieldMaps().isEmpty()) {
-				for (FieldMapInfo info : this.getSelectedFieldMaps()) {
+				for (final FieldMapInfo info : this.getSelectedFieldMaps()) {
 					if (info.getDatasets() != null && !info.getDatasets().isEmpty()) {
-						for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+						for (final FieldMapDatasetInfo dataset : info.getDatasets()) {
 							if (dataset.getTrialInstances() != null) {
-								for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+								for (final FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
 									if (trial.getFieldMapLabels() != null && !trial.getFieldMapLabels().isEmpty()) {
 										allLabels.addAll(trial.getFieldMapLabels());
 									}
@@ -249,24 +249,24 @@ public class UserFieldmap implements Serializable {
 		return allLabels;
 	}
 
-	public List<FieldMapLabel> getAllSelectedFieldMapLabelsToBeAdded(boolean isSorted) {
-		List<FieldMapLabel> allLabels = new ArrayList<FieldMapLabel>();
+	public List<FieldMapLabel> getAllSelectedFieldMapLabelsToBeAdded(final boolean isSorted) {
+		final List<FieldMapLabel> allLabels = new ArrayList<>();
 
 		if (isSorted) {
 			if (this.getSelectedFieldmapListToBeAdded() != null && !this.getSelectedFieldmapListToBeAdded().isEmpty()) {
-				for (SelectedFieldmapRow row : this.getSelectedFieldmapListToBeAdded().getRows()) {
-					FieldMapTrialInstanceInfo trial =
+				for (final SelectedFieldmapRow row : this.getSelectedFieldmapListToBeAdded().getRows()) {
+					final FieldMapTrialInstanceInfo trial =
 							this.getSelectedTrialInstanceByDatasetIdAndEnvironmentId(row.getDatasetId(), row.getGeolocationId());
 					allLabels.addAll(trial.getFieldMapLabels());
 				}
 			}
 		} else {
 			if (this.getSelectedFieldmapListToBeAdded() != null && !this.getSelectedFieldmapListToBeAdded().isEmpty()) {
-				for (FieldMapInfo info : this.getSelectedFieldMapsToBeAdded()) {
+				for (final FieldMapInfo info : this.getSelectedFieldMapsToBeAdded()) {
 					if (info.getDatasets() != null && !info.getDatasets().isEmpty()) {
-						for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+						for (final FieldMapDatasetInfo dataset : info.getDatasets()) {
 							if (dataset.getTrialInstances() != null) {
-								for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+								for (final FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
 									if (trial.getFieldMapLabels() != null && !trial.getFieldMapLabels().isEmpty()) {
 										allLabels.addAll(trial.getFieldMapLabels());
 									}
@@ -278,7 +278,7 @@ public class UserFieldmap implements Serializable {
 			}
 		}
 
-		for (FieldMapLabel fieldMapLabel : allLabels) {
+		for (final FieldMapLabel fieldMapLabel : allLabels) {
 			fieldMapLabel.setColumn(null);
 			fieldMapLabel.setRange(null);
 		}
@@ -299,7 +299,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param fieldMapInfo the new field map info
 	 */
-	public void setFieldMapInfo(List<FieldMapInfo> fieldMapInfo) {
+	public void setFieldMapInfo(final List<FieldMapInfo> fieldMapInfo) {
 		this.fieldMapInfo = fieldMapInfo;
 	}
 
@@ -317,7 +317,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param entryNumbers the new entry numbers
 	 */
-	public void setEntryNumbers(List<String> entryNumbers) {
+	public void setEntryNumbers(final List<String> entryNumbers) {
 		this.entryNumbers = entryNumbers;
 	}
 
@@ -335,7 +335,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param germplasmNames the new germplasm names
 	 */
-	public void setGermplasmNames(List<String> germplasmNames) {
+	public void setGermplasmNames(final List<String> germplasmNames) {
 		this.germplasmNames = germplasmNames;
 	}
 
@@ -353,7 +353,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param reps the new reps
 	 */
-	public void setReps(List<Integer> reps) {
+	public void setReps(final List<Integer> reps) {
 		this.reps = reps;
 	}
 
@@ -372,7 +372,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param numberOfEntries the new number of entries
 	 */
-	public void setNumberOfEntries(Long numberOfEntries) {
+	public void setNumberOfEntries(final Long numberOfEntries) {
 		this.numberOfEntries = numberOfEntries;
 	}
 
@@ -390,7 +390,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param numberOfReps the new number of reps
 	 */
-	public void setNumberOfReps(Long numberOfReps) {
+	public void setNumberOfReps(final Long numberOfReps) {
 		this.numberOfReps = numberOfReps;
 	}
 
@@ -408,7 +408,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param totalNumberOfPlots the new total number of plots
 	 */
-	public void setTotalNumberOfPlots(Long totalNumberOfPlots) {
+	public void setTotalNumberOfPlots(final Long totalNumberOfPlots) {
 		this.totalNumberOfPlots = totalNumberOfPlots;
 	}
 
@@ -426,7 +426,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param fieldLocationId the new field location id
 	 */
-	public void setFieldLocationId(int fieldLocationId) {
+	public void setFieldLocationId(final int fieldLocationId) {
 		this.fieldLocationId = fieldLocationId;
 	}
 
@@ -444,7 +444,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param fieldName the new field name
 	 */
-	public void setFieldName(String fieldName) {
+	public void setFieldName(final String fieldName) {
 		this.fieldName = fieldName;
 	}
 
@@ -462,7 +462,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param blockName the new block name
 	 */
-	public void setBlockName(String blockName) {
+	public void setBlockName(final String blockName) {
 		this.blockName = blockName;
 	}
 
@@ -490,11 +490,11 @@ public class UserFieldmap implements Serializable {
 	 * @param messageSource the message source
 	 * @return the block capacity string
 	 */
-	public String getBlockCapacityString(ResourceBundleMessageSource messageSource) {
+	public String getBlockCapacityString(final ResourceBundleMessageSource messageSource) {
 		// 10 Columns, 10 Ranges
-		Locale locale = LocaleContextHolder.getLocale();
-		String columns = messageSource.getMessage("fieldmap.label.rows", null, locale);
-		String ranges = messageSource.getMessage("fieldmap.label.ranges", null, locale);
+		final Locale locale = LocaleContextHolder.getLocale();
+		final String columns = messageSource.getMessage("fieldmap.label.rows", null, locale);
+		final String ranges = messageSource.getMessage("fieldmap.label.ranges", null, locale);
 		return this.getNumberOfRowsInBlock() + " " + columns + ", " + this.getNumberOfRangesInBlock() + " " + ranges;
 	}
 
@@ -504,11 +504,11 @@ public class UserFieldmap implements Serializable {
 	 * @param messageSource the message source
 	 * @return the starting coordinate string
 	 */
-	public String getStartingCoordinateString(ResourceBundleMessageSource messageSource) {
+	public String getStartingCoordinateString(final ResourceBundleMessageSource messageSource) {
 		// Column 1, Range 1
-		Locale locale = LocaleContextHolder.getLocale();
-		String column = messageSource.getMessage("fieldmap.label.capitalized.column", null, locale);
-		String range = messageSource.getMessage("fieldmap.label.capitalized.range", null, locale);
+		final Locale locale = LocaleContextHolder.getLocale();
+		final String column = messageSource.getMessage("fieldmap.label.capitalized.column", null, locale);
+		final String range = messageSource.getMessage("fieldmap.label.capitalized.range", null, locale);
 		return column + " " + this.getStartingColumn() + ", " + range + " " + this.getStartingRange();
 	}
 
@@ -519,8 +519,8 @@ public class UserFieldmap implements Serializable {
 	 * @return the planting order string
 	 * @throws FieldbookException the fieldbook exception
 	 */
-	public String getPlantingOrderString(ResourceBundleMessageSource messageSource) throws FieldbookException {
-		Locale locale = LocaleContextHolder.getLocale();
+	public String getPlantingOrderString(final ResourceBundleMessageSource messageSource) throws FieldbookException {
+		final Locale locale = LocaleContextHolder.getLocale();
 		if (this.plantingOrder == AppConstants.ROW_COLUMN.getInt()) {
 			return messageSource.getMessage("fieldmap.planting.order.row.column", null, locale);
 		} else if (this.plantingOrder == AppConstants.SERPENTINE.getInt()) {
@@ -548,14 +548,14 @@ public class UserFieldmap implements Serializable {
 	 * @param geolocationId the geolocation id
 	 * @return the selected trial instance by dataset id and geolocation id
 	 */
-	public FieldMapTrialInstanceInfo getSelectedTrialInstanceByDatasetIdAndEnvironmentId(int datasetId, int geolocationId) {
+	public FieldMapTrialInstanceInfo getSelectedTrialInstanceByDatasetIdAndEnvironmentId(final int datasetId, final int geolocationId) {
 		if (this.getSelectedFieldMaps() != null) {
-			for (FieldMapInfo info : this.getSelectedFieldMaps()) {
+			for (final FieldMapInfo info : this.getSelectedFieldMaps()) {
 				if (info.getDatasets() != null) {
-					for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+					for (final FieldMapDatasetInfo dataset : info.getDatasets()) {
 						if (dataset.getDatasetId().equals(datasetId)) {
 							if (dataset.getTrialInstances() != null) {
-								for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+								for (final FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
 									if (trial.getEnvironmentId().equals(geolocationId)) {
 										return trial;
 									}
@@ -571,12 +571,12 @@ public class UserFieldmap implements Serializable {
 
 	public FieldMapTrialInstanceInfo getAnySelectedTrialInstance() {
 		if (this.getSelectedFieldMaps() != null) {
-			FieldMapInfo info = this.getSelectedFieldMaps().get(this.getSelectedFieldMaps().size() - 1);
+			final FieldMapInfo info = this.getSelectedFieldMaps().get(this.getSelectedFieldMaps().size() - 1);
 			if (info.getDatasets() != null) {
-				FieldMapDatasetInfo dataset = info.getDatasets().get(info.getDatasets().size() - 1);
+				final FieldMapDatasetInfo dataset = info.getDatasets().get(info.getDatasets().size() - 1);
 				if (dataset.getTrialInstances() != null) {
 
-					for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+					for (final FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
 						if (trial.getBlockId() != null) {
 							return trial;
 						}
@@ -592,7 +592,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param numberOfRowsInBlock the new number of rows in block
 	 */
-	public void setNumberOfRowsInBlock(int numberOfRowsInBlock) {
+	public void setNumberOfRowsInBlock(final int numberOfRowsInBlock) {
 		this.numberOfRowsInBlock = numberOfRowsInBlock;
 	}
 
@@ -602,7 +602,7 @@ public class UserFieldmap implements Serializable {
 	 * @param numberOfColumnsInBlock the number of columns in block
 	 * @param rowsPerPlot the rows per plot
 	 */
-	public void setNumberOfRowsInBlock(int numberOfColumnsInBlock, int rowsPerPlot) {
+	public void setNumberOfRowsInBlock(final int numberOfColumnsInBlock, final int rowsPerPlot) {
 		this.numberOfRowsInBlock = numberOfColumnsInBlock * rowsPerPlot;
 	}
 
@@ -620,7 +620,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param numberOfRangesInBlock the new number of ranges in block
 	 */
-	public void setNumberOfRangesInBlock(int numberOfRangesInBlock) {
+	public void setNumberOfRangesInBlock(final int numberOfRangesInBlock) {
 		this.numberOfRangesInBlock = numberOfRangesInBlock;
 	}
 
@@ -638,7 +638,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param numberOfRowsPerPlot the new number of rows per plot
 	 */
-	public void setNumberOfRowsPerPlot(int numberOfRowsPerPlot) {
+	public void setNumberOfRowsPerPlot(final int numberOfRowsPerPlot) {
 		this.numberOfRowsPerPlot = numberOfRowsPerPlot;
 	}
 
@@ -656,7 +656,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param plantingOrder the new planting order
 	 */
-	public void setPlantingOrder(int plantingOrder) {
+	public void setPlantingOrder(final int plantingOrder) {
 		this.plantingOrder = plantingOrder;
 	}
 
@@ -674,7 +674,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param startingColumn the new starting column
 	 */
-	public void setStartingColumn(int startingColumn) {
+	public void setStartingColumn(final int startingColumn) {
 		this.startingColumn = startingColumn;
 	}
 
@@ -692,7 +692,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param startingRange the new starting range
 	 */
-	public void setStartingRange(int startingRange) {
+	public void setStartingRange(final int startingRange) {
 		this.startingRange = startingRange;
 	}
 
@@ -710,7 +710,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param fieldmap the new fieldmap
 	 */
-	public void setFieldmap(Plot[][] fieldmap) {
+	public void setFieldmap(final Plot[][] fieldmap) {
 		this.fieldmap = fieldmap;
 	}
 
@@ -728,7 +728,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param fieldMapLabels the new field map labels
 	 */
-	public void setFieldMapLabels(List<FieldMapLabel> fieldMapLabels) {
+	public void setFieldMapLabels(final List<FieldMapLabel> fieldMapLabels) {
 		this.fieldMapLabels = fieldMapLabels;
 	}
 
@@ -746,7 +746,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param locationName the new location name
 	 */
-	public void setLocationName(String locationName) {
+	public void setLocationName(final String locationName) {
 		this.locationName = locationName;
 	}
 
@@ -764,7 +764,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param studyId the studyId to set
 	 */
-	public void setStudyId(Integer studyId) {
+	public void setStudyId(final Integer studyId) {
 		this.studyId = studyId;
 	}
 
@@ -782,7 +782,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param selectedDatasetId the selectedDatasetId to set
 	 */
-	public void setSelectedDatasetId(Integer selectedDatasetId) {
+	public void setSelectedDatasetId(final Integer selectedDatasetId) {
 		this.selectedDatasetId = selectedDatasetId;
 	}
 
@@ -800,7 +800,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param selectedGeolocationId the selectedGeolocationId to set
 	 */
-	public void setSelectedGeolocationId(Integer selectedGeolocationId) {
+	public void setSelectedGeolocationId(final Integer selectedGeolocationId) {
 		this.selectedGeolocationId = selectedGeolocationId;
 	}
 
@@ -827,7 +827,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param order the new order
 	 */
-	public void setOrder(String order) {
+	public void setOrder(final String order) {
 		this.order = order;
 	}
 
@@ -836,7 +836,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param selectedFieldMaps the selectedFieldMaps to set
 	 */
-	public void setSelectedFieldMaps(List<FieldMapInfo> selectedFieldMaps) {
+	public void setSelectedFieldMaps(final List<FieldMapInfo> selectedFieldMaps) {
 		this.selectedFieldMaps = selectedFieldMaps;
 	}
 
@@ -854,30 +854,8 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param machineRowCapacity the machineRowCapacity to set
 	 */
-	public void setMachineRowCapacity(Integer machineRowCapacity) {
+	public void setMachineRowCapacity(final Integer machineRowCapacity) {
 		this.machineRowCapacity = machineRowCapacity;
-	}
-
-	/**
-	 * Gets the total number of selected plots.
-	 *
-	 * @return the total number of selected plots
-	 */
-	public long getTotalNumberOfSelectedPlots() {
-		long total = 0;
-		List<FieldMapInfo> fieldMapTemp = this.getSelectedFieldMapsToBeAdded();
-		if (fieldMapTemp == null) {
-			fieldMapTemp = this.getSelectedFieldMaps();
-		}
-		for (FieldMapInfo info : fieldMapTemp) {
-			for (FieldMapDatasetInfo dataset : info.getDatasets()) {
-				for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
-					total += trial.getPlotCount();
-				}
-			}
-		}
-
-		return total;
 	}
 
 	/**
@@ -894,7 +872,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param selectedFieldmapList the selectedFieldmapList to set
 	 */
-	public void setSelectedFieldmapList(SelectedFieldmapList selectedFieldmapList) {
+	public void setSelectedFieldmapList(final SelectedFieldmapList selectedFieldmapList) {
 		this.selectedFieldmapList = selectedFieldmapList;
 	}
 
@@ -912,7 +890,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param fieldId the new field id
 	 */
-	public void setFieldId(Integer fieldId) {
+	public void setFieldId(final Integer fieldId) {
 		this.fieldId = fieldId;
 	}
 
@@ -930,7 +908,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param blockId the new block id
 	 */
-	public void setBlockId(Integer blockId) {
+	public void setBlockId(final Integer blockId) {
 		this.blockId = blockId;
 	}
 
@@ -948,7 +926,7 @@ public class UserFieldmap implements Serializable {
 	 *
 	 * @param deletedPlots the deletedPlots to set
 	 */
-	public void setDeletedPlots(List<String> deletedPlots) {
+	public void setDeletedPlots(final List<String> deletedPlots) {
 		this.deletedPlots = deletedPlots;
 	}
 
@@ -956,7 +934,7 @@ public class UserFieldmap implements Serializable {
 		return this.selectedFieldMapsToBeAdded;
 	}
 
-	public void setSelectedFieldMapsToBeAdded(List<FieldMapInfo> selectedFieldMapsToBeAdded) {
+	public void setSelectedFieldMapsToBeAdded(final List<FieldMapInfo> selectedFieldMapsToBeAdded) {
 		this.selectedFieldMapsToBeAdded = selectedFieldMapsToBeAdded;
 	}
 
@@ -964,7 +942,7 @@ public class UserFieldmap implements Serializable {
 		return this.selectedFieldmapListToBeAdded;
 	}
 
-	public void setSelectedFieldmapListToBeAdded(SelectedFieldmapList selectedFieldmapListToBeAdded) {
+	public void setSelectedFieldmapListToBeAdded(final SelectedFieldmapList selectedFieldmapListToBeAdded) {
 		this.selectedFieldmapListToBeAdded = selectedFieldmapListToBeAdded;
 	}
 

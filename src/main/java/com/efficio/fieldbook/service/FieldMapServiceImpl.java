@@ -34,18 +34,16 @@ public class FieldMapServiceImpl implements FieldMapService {
 
 
 	@Override
-	public Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine,
-			Map<String, String> deletedPlot, List<FieldMapLabel> fieldMapLabels, FieldPlotLayoutIterator plotLayouIterator) {
+	public Plot[][] createDummyData(
+		final int col, final int range, int startRange, int startCol, final boolean isSerpentine,
+			final Map<String, String> deletedPlot, final List<FieldMapLabel> fieldMapLabels, final FieldPlotLayoutIterator plotLayouIterator) {
 		startRange--;
 		startCol--;
-		// for testing only
-		Plot[][] plots =
-			plotLayouIterator.createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, fieldMapLabels, null);
-		return plots;
+		return plotLayouIterator.createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, fieldMapLabels, null);
 	}
 
 	@Override
-	public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, boolean isSavedAlready)
+	public Plot[][] generateFieldmap(final UserFieldmap info, final FieldPlotLayoutIterator plotIterator, final boolean isSavedAlready)
 			throws MiddlewareQueryException {
 
 		return this.generateFieldmap(info, plotIterator, isSavedAlready, null);
@@ -53,28 +51,27 @@ public class FieldMapServiceImpl implements FieldMapService {
 
 
 	@Override
-	public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, boolean isSavedAlready,
-			List<String> deletedPlots) throws MiddlewareQueryException {
+	public Plot[][] generateFieldmap(
+		final UserFieldmap info, final FieldPlotLayoutIterator plotIterator, final boolean isSavedAlready,
+			final List<String> deletedPlots) throws MiddlewareQueryException {
 
-		int totalColumns = info.getNumberOfColumnsInBlock();
-		int totalRanges = info.getNumberOfRangesInBlock();
-		boolean isSerpentine = info.getPlantingOrder() == 2;
-		Plot[][] plots = new Plot[totalColumns][totalRanges];
+		final int totalColumns = info.getNumberOfColumnsInBlock();
+		final int totalRanges = info.getNumberOfRangesInBlock();
+		final boolean isSerpentine = info.getPlantingOrder() == 2;
+		final Plot[][] plots = new Plot[totalColumns][totalRanges];
 
-		List<FieldMapLabel> labels = info.getFieldMapLabels();
+		final List<FieldMapLabel> labels = info.getFieldMapLabels();
 		this.initializeFieldMapArray(plots, totalColumns, totalRanges);
-		for (FieldMapLabel label : labels) {
+		for (final FieldMapLabel label : labels) {
 			if (label.getColumn() != null && label.getRange() != null) {
-				int column = label.getColumn();
-				int range = label.getRange();
+				final int column = label.getColumn();
+				final int range = label.getRange();
 				if (column <= totalColumns && range <= totalRanges) {
-					Plot plot = plots[column - 1][range - 1];
+					final Plot plot = plots[column - 1][range - 1];
 					plot.setColumn(column);
 					plot.setRange(range);
 					plot.setDatasetId(label.getDatasetId());
 					plot.setEnvironmentId(label.getEnvironmentId());
-					if (isSerpentine && column % 2 == 0) {
-					}
 					plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label));
 					plot.setNotStarted(false);
 					plot.setSavedAlready(isSavedAlready);
@@ -85,13 +82,13 @@ public class FieldMapServiceImpl implements FieldMapService {
 		}
 
 		if (deletedPlots != null) {
-			for (String deletedPlot : deletedPlots) {
-				String[] coordinates = deletedPlot.split(",");
+			for (final String deletedPlot : deletedPlots) {
+				final String[] coordinates = deletedPlot.split(",");
 				if (coordinates != null && coordinates.length == 2 && NumberUtils.isNumber(coordinates[0])
 						&& NumberUtils.isNumber(coordinates[1])) {
 
-					int column = Integer.valueOf(coordinates[0]);
-					int range = Integer.valueOf(coordinates[1]);
+					final int column = Integer.valueOf(coordinates[0]);
+					final int range = Integer.valueOf(coordinates[1]);
 					if (column < totalColumns && range < totalRanges) {
 						plots[column][range].setPlotDeleted(true);
 						plots[column][range].setSavedAlready(isSavedAlready);
@@ -111,11 +108,11 @@ public class FieldMapServiceImpl implements FieldMapService {
 	 * @param totalColumns the total columns
 	 * @param totalRanges the total ranges
 	 */
-	private void initializeFieldMapArray(Plot[][] plots, int totalColumns, int totalRanges) {
+	private void initializeFieldMapArray(final Plot[][] plots, final int totalColumns, final int totalRanges) {
 		for (int i = 0; i < totalColumns; i++) {
 			for (int j = 0; j < totalRanges; j++) {
 
-				Plot plot = new Plot(i, j, "");
+				final Plot plot = new Plot(i, j, "");
 				plots[i][j] = plot;
 				plot.setNotStarted(false);
 			}
@@ -129,11 +126,11 @@ public class FieldMapServiceImpl implements FieldMapService {
 	 * @param deletedCoordinates the deleted coordinates
 	 */
 	@SuppressWarnings("unused")
-	private void markDeletedCoordinates(Plot[][] plots, List<String> deletedCoordinates) {
-		for (String deletedIndex : deletedCoordinates) {
-			String[] columnRange = deletedIndex.split("_");
-			int column = Integer.parseInt(columnRange[0]);
-			int range = Integer.parseInt(columnRange[1]);
+	private void markDeletedCoordinates(final Plot[][] plots, final List<String> deletedCoordinates) {
+		for (final String deletedIndex : deletedCoordinates) {
+			final String[] columnRange = deletedIndex.split("_");
+			final int column = Integer.parseInt(columnRange[0]);
+			final int range = Integer.parseInt(columnRange[1]);
 			plots[column][range].setPlotDeleted(true);
 		}
 	}

@@ -343,11 +343,11 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	final String ids, final HttpServletRequest req, final HttpSession session) {
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.FIELDMAP_SESSION_NAME,
 				SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 
 		String nav = "1";
 		try {
-			final List<Integer> nurseryIds = new ArrayList<Integer>();
+			final List<Integer> nurseryIds = new ArrayList<>();
 			final String[] idList = ids.split(",");
 			for (final String id : idList) {
 				nurseryIds.add(Integer.parseInt(id));
@@ -472,7 +472,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
 	 */
 	@Override
@@ -498,7 +498,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/getFields/{locationId}", method = RequestMethod.GET)
 	public Map<String, String> getFieldLocations(@PathVariable final int locationId) {
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 
 		try {
 			final List<Location> allFields = this.fieldbookMiddlewareService.getAllFieldLocations(locationId);
@@ -522,7 +522,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/getBlocks/{fieldId}", method = RequestMethod.GET)
 	public Map<String, String> getBlockFields(@PathVariable final int fieldId) {
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 
 		try {
 
@@ -547,7 +547,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/getBlockInformation/{blockId}", method = RequestMethod.GET)
 	public Map<String, String> getBlockInfo(@PathVariable final int blockId) {
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 
 		try {
 
@@ -661,7 +661,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/getFields", method = RequestMethod.GET)
 	public Map<String, String> getFieldLocations() {
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 
 		try {
 			final List<Location> allLocations = this.fieldbookMiddlewareService.getAllFields();

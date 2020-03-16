@@ -54,21 +54,21 @@ public class ExportTrialInstanceBean {
 	 *
 	 * @param instanceNum the new instance num
 	 */
-	public void setInstanceNum(String instanceNum) {
+	public void setInstanceNum(final String instanceNum) {
 		this.instanceNum = instanceNum;
 	}
 
 	/** The Location name. */
 	public String getLocationName() {
-		return locationName;
+		return this.locationName;
 	}
 
-	public void setLocationName(String locationName) {
+	public void setLocationName(final String locationName) {
 		this.locationName = locationName;
 	}
 
 	public Integer getEnvironmentId() {
-		return environmentId;
+		return this.environmentId;
 	}
 
 	public void setEnvironmentId(final Integer environmentId) {

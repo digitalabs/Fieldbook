@@ -13,37 +13,37 @@
 		var successHandler = serviceUtilities.restSuccessHandler,
 			failureHandler = serviceUtilities.restFailureHandler;
 
-		studyInstanceService.createStudyInstances = function (numberOfEnvironmentsToGenerate) {
-			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/environments/generation/?numberOfEnvironmentsToGenerate=' + numberOfEnvironmentsToGenerate);
+		studyInstanceService.createStudyInstances = function (numberOfInstancesToGenerate) {
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/generation/?numberOfInstancesToGenerate=' + numberOfInstancesToGenerate);
 			return request.then(successHandler, failureHandler);
 		}
 
 		studyInstanceService.getStudyInstances = function () {
-			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/environments');
+			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/instances');
 			return request.then(successHandler, failureHandler);
 		};
 
 		studyInstanceService.getStudyInstance = function (instanceId) {
-			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/environments/' + instanceId);
+			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceId);
 			return request.then(successHandler, failureHandler);
 		};
 
 		studyInstanceService.deleteStudyInstances = function (instanceIds) {
-			var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/environments/?environmentIds=' + instanceIds.join(','));
+			var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/instances/?instanceIds=' + instanceIds.join(','));
 			return request.then(successHandler, failureHandler);
 		};
 
 		studyInstanceService.addInstanceData = function (instanceData) {
-			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/environments/' + instanceData.environmentId + '/environment-data', instanceData);
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceData.instanceId + '/instance-data', instanceData);
 			return request.then(successHandler, failureHandler);
 		};
 
 		studyInstanceService.updateInstanceData = function (instanceData) {
-			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/environments/' + instanceData.environmentId + '/environment-data/' + instanceData.environmentDataId, instanceData);
+			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceData.instanceId + '/instance-data/' + instanceData.instanceId, instanceData);
 			return request.then(successHandler, failureHandler);
 		};
 
-		studyInstanceService.environments = TrialManagerDataService.currentData.environments;
+		studyInstanceService.instanceInfo = TrialManagerDataService.currentData.instanceInfo;
 
 		studyInstanceService.changeEnvironments = function () {
 			this.broadcastEnvironments();

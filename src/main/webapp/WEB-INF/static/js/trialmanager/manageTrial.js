@@ -411,7 +411,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					displayWarningMessage: showIndicateUnappliedChangesWarning, timestamp: new Date()
 				});
 
-				TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
+				TrialManagerDataService.applicationData.hasNewInstanceAdded = true;
 
 				$state.go('environment', {addtlNumOfEnvironments: $scope.temp.noOfEnvironments, timestamp: new Date()});
 				$scope.performFunctionOnTabChange('environment');

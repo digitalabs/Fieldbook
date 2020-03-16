@@ -157,10 +157,7 @@
 
 			ctrl.init = function () {
 				datasetService.getDatasetInstances(datasetId).then(function (instances) {
-
 					$scope.instances = instances;
-
-					var noOfEnvironments = parseInt(TrialManagerDataService.currentData.environments.noOfEnvironments);
 				});
 			};
 

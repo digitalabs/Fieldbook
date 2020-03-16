@@ -243,12 +243,12 @@ var ImportDesign = (function() {
 			}
 
 			var TrialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
-			var hasNewEnvironmentAdded = TrialManagerDataService.applicationData.hasNewEnvironmentAdded;
-			var noOfEnvironments = parseInt(TrialManagerDataService.currentData.environments.noOfEnvironments);
+			var hasNewInstanceAdded = TrialManagerDataService.applicationData.hasNewInstanceAdded;
+			var numberOfInstances = parseInt(TrialManagerDataService.currentData.instanceInfo.numberOfInstances);
 
 			var actionURL = '/Fieldbook/DesignImport/import';
-			if (hasNewEnvironmentAdded) {
-				actionURL += '/' + noOfEnvironments;
+			if (hasNewInstanceAdded) {
+				actionURL += '/' + numberOfInstances;
 			}
 
 			$('#importDesignUploadForm').attr('action', actionURL);

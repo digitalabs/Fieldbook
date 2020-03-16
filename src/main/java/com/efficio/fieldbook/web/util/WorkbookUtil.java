@@ -27,7 +27,7 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.Instance;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.google.common.base.Optional;
 
@@ -118,20 +118,20 @@ public class WorkbookUtil {
 		return Optional.absent();
 	}
 
-	public static List<MeasurementRow> createMeasurementRowsFromEnvironments(final List<Environment> environments,
+	public static List<MeasurementRow> createMeasurementRowsFromEnvironments(final List<Instance> instances,
 			final List<MeasurementVariable> variables, final ExpDesignParameterUi params) {
 
 		final List<MeasurementRow> observations = new ArrayList<>();
 
-		if (environments != null) {
-			for (final Environment environment : environments) {
+		if (instances != null) {
+			for (final Instance instance : instances) {
 				final List<MeasurementData> dataList = new ArrayList<>();
 				for (final MeasurementVariable var : variables) {
-					String value = environment.getManagementDetailValues().get(Integer.toString(var.getTermId()));
+					String value = instance.getManagementDetailValues().get(Integer.toString(var.getTermId()));
 					Integer phenotypeId = null;
 					if (value == null) {
-						value = environment.getTrialDetailValues().get(Integer.toString(var.getTermId()));
-						phenotypeId = environment.getPhenotypeIDMap().get(Integer.toString(var.getTermId()));
+						value = instance.getTrialDetailValues().get(Integer.toString(var.getTermId()));
+						phenotypeId = instance.getPhenotypeIDMap().get(Integer.toString(var.getTermId()));
 					}
 					if (params != null && value == null) {
 						final TermId termId = TermId.getById(var.getTermId());
@@ -145,8 +145,8 @@ public class WorkbookUtil {
 					data.setPhenotypeId(phenotypeId);
 					dataList.add(data);
 				}
-				final MeasurementRow row = new MeasurementRow(environment.getStockId(), environment.getLocationId(), dataList);
-				row.setExperimentId((int) environment.getExperimentId());
+				final MeasurementRow row = new MeasurementRow(instance.getStockId(), instance.getLocationId(), dataList);
+				row.setExperimentId((int) instance.getInstanceId());
 				observations.add(row);
 			}
 		}

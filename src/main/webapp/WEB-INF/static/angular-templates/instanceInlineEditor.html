@@ -1,8 +1,8 @@
 <div ng-switch="widgetType">
 	<div ng-switch-when="DROPDOWN">
 		<ui-select ng-model="valuecontainer[targetkey]"
-				   on-select="environment.change()"
-				   tagging="environment.newInlineValue"
+				   on-select="instance.change()"
+				   tagging="instance.newInlineValue"
 				   tagging-label="false"
 				   append-to-body="true"
 				   theme="select2">
@@ -33,19 +33,19 @@
 		</div>
 	</div>
 	<div ng-switch-when="NTEXT">
-		<input type="text" valid-decimal="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="environment.change()"/>
+		<input type="text" valid-decimal="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="instance.change()"/>
 	</div>
 	<div ng-switch-when="SLIDER">
-		<input type="text" valid-decimal="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="environment.change()"/>
+		<input type="text" valid-decimal="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="instance.change()"/>
 	</div>
 	<div ng-switch-when="CTEXT">
-		<input type="text" class="form-control character-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="environment.change()"/>
+		<input type="text" class="form-control character-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="instance.change()"/>
 	</div>
 	<div ng-switch-when="TEXTAREA">
-		<textarea class="form-control character-input" rows="3" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="environment.change()"/>
+		<textarea class="form-control character-input" rows="3" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="instance.change()"/>
 	</div>
 	<div ng-switch-when="DATE">
 		<input type="text" placeholder="yyyy-mm-dd" class="form-control date-input" ng-model="valuecontainer[targetkey]" jq-datepicker="true" with-image="true" image-src="/Fieldbook/static/img/calendar.png"
-			   ng-change="environment.change()"/>
+			   ng-change="instance.change()"/>
 	</div>
 </div>

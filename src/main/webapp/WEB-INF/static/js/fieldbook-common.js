@@ -892,7 +892,7 @@ function createSample() {
 	}
 }
 
-function selectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, advanceType) {
+function selectInstanceContinueAdvancing(trialInstances, noOfReplications, selectedLocations, advanceType) {
 	'use strict';
 	var studyId = $('#studyId').val();
 	$('#selectEnvironmentModal').modal('hide');

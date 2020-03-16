@@ -14,14 +14,14 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			$scope.TRIAL_INSTANCE_NO_INDEX = 8170;
 			$scope.addVariable = true;
-			$scope.data = TrialManagerDataService.currentData.environments;
+			$scope.instanceInfo = studyInstanceService.instanceInfo;
 			$scope.nested = {};
 			$scope.nested.dataTable = {};
-			$scope.isDisableAddEnvironment = false;
+			$scope.isDisableAddInstance = false;
 			$scope.isHideDelete = false;
 			$scope.temp = {
 				settingMap: {},
-				noOfEnvironments: $scope.data.noOfEnvironments
+				numberOfInstances: $scope.instanceInfo.numberOfInstances
 			};
 
 			$scope.settings = TrialManagerDataService.settings.environments;
@@ -157,7 +157,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			};
 
 			TrialManagerDataService.onUpdateData('environments', function () {
-				$scope.temp.noOfEnvironments = $scope.data.noOfEnvironments;
+				$scope.temp.numberOfInstances = $scope.instanceInfo.numberOfInstances;
 			});
 
 			/* Scope Functions */
@@ -165,27 +165,27 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				return studyStateService.hasGeneratedDesign() || studyStateService.hasListOrSubObs();
 			};
 
-			$scope.updateEnvironmentCount = function () {
-				if ($scope.temp.noOfEnvironments > $scope.data.environments.length) {
-					$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
-					$scope.addEnvironments($scope.temp.noOfEnvironments - $scope.data.environments.length);
-				} else if ($scope.temp.noOfEnvironments < $scope.data.environments.length) {
-					$scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
+			$scope.updateInstanceCount = function () {
+				if ($scope.temp.numberOfInstances > $scope.instanceInfo.instances.length) {
+					$scope.instanceInfo.numberOfInstances = $scope.temp.numberOfInstances;
+					$scope.addInstances($scope.temp.numberOfInstances - $scope.instanceInfo.instances.length);
+				} else if ($scope.temp.numberOfInstances < $scope.instanceInfo.instances.length) {
+					$scope.instanceInfo.numberOfInstances = $scope.temp.numberOfInstances;
 					var instanceIds = [];
-					// if new environment count is less than previous value, splice array
-					while ($scope.data.environments.length > $scope.temp.noOfEnvironments) {
-						var environment = $scope.data.environments.pop();
-						instanceIds.push(environment.experimentId);
+					// if new instance count is less than previous value, splice array
+					while ($scope.instanceInfo.instances.length > $scope.temp.numberOfInstances) {
+						var instance = $scope.instanceInfo.instances.pop();
+						instanceIds.push(instance.instanceId);
 					}
 					studyInstanceService.deleteStudyInstances(instanceIds);
 				}
 			};
 
-			$scope.deleteEnvironment = function (index, instanceId) {
+			$scope.deleteInstance = function (index, instanceId) {
 
 				studyInstanceService.getStudyInstance(instanceId).then(function (studyInstance) {
 
-					// Show error if environment cannot be deleted
+					// Show error if instance cannot be deleted
 					if (!studyInstance.canBeDeleted) {
 						showErrorMessage('', $.environmentMessages.environmentCannotBeDeleted);
 						return;
@@ -195,11 +195,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						var modalConfirmDelete = $scope.openConfirmModal($.environmentMessages.environmentHasDataThatWillBeLost, 'Yes', 'No');
 						modalConfirmDelete.result.then(function (shouldContinue) {
 							if (shouldContinue) {
-								$scope.continueEnvironmentDeletion(index, [instanceId]);
+								$scope.continueInstanceDeletion(index, [instanceId]);
 							}
 						});
 					} else {
-						$scope.continueEnvironmentDeletion(index, [instanceId]);
+						$scope.continueInstanceDeletion(index, [instanceId]);
 					}
 				}, function (errResponse) {
 					showErrorMessage($.fieldbookMessages.errorServerError, errResponse.errors[0].message);
@@ -207,10 +207,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			};
 
-			// Proceed deleting existing environment
-			$scope.continueEnvironmentDeletion = function (index, instanceIds) {
+			// Proceed deleting existing instance
+			$scope.continueInstanceDeletion = function (index, instanceIds) {
 				studyInstanceService.deleteStudyInstances(instanceIds);
-				updateDeletedEnvironment(index);
+				updateDeletedInstances(index);
 				showSuccessfulMessage('', $.environmentMessages.environmentDeletedSuccessfully);
 			};
 
@@ -227,53 +227,53 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			};
 
 			/* Watchers */
-			$scope.$watch('data.noOfEnvironments', function (newVal, oldVal) {
-				$scope.temp.noOfEnvironments = newVal;
+			$scope.$watch('instanceInfo.numberOfInstances', function (newVal, oldVal) {
+				$scope.temp.numberOfInstances = newVal;
 				if (Number(newVal) < Number(oldVal)) {
-					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = false;
+					TrialManagerDataService.applicationData.hasNewInstanceAdded = false;
 				} else if (Number(newVal) > Number(oldVal)) {
-					TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
+					TrialManagerDataService.applicationData.hasNewInstanceAdded = true;
 					addCellClickHandler();
 				}
 			});
 
 			$scope.$watch('settings.managementDetails', function (newVal, oldVal) {
-				ctrl.updateEnvironmentVariables('managementDetails', newVal.keys().length > oldVal.keys().length);
+				ctrl.updateInstanceVariables('managementDetails', newVal.keys().length > oldVal.keys().length);
 			}, true);
 
 			$scope.$watch('settings.trialConditionDetails', function (newVal, oldVal) {
-				ctrl.updateEnvironmentVariables('trialConditionDetails', newVal.keys().length > oldVal.keys().length);
+				ctrl.updateInstanceVariables('trialConditionDetails', newVal.keys().length > oldVal.keys().length);
 			}, true);
 
-			$scope.addEnvironment = function () {
+			$scope.addInstance = function () {
 
-				$scope.isDisableAddEnvironment = true;
+				$scope.isDisableAddInstance = true;
 
 				// create and save the environment in the server
 				studyInstanceService.createStudyInstances(1).then(function (studyInstances) {
 					angular.forEach(studyInstances, function (studyInstance) {
 						// update the environment table
-						$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
-						$scope.data.noOfEnvironments++;
+						$scope.createInstance(studyInstance.instanceNumber, studyInstance.instanceId);
+						$scope.instanceInfo.numberOfInstances++;
 					});
-					$scope.isDisableAddEnvironment = false;
+					$scope.isDisableAddInstance = false;
 				});
 
 			};
 
-			$scope.addEnvironments = function (numberOfEnvironments) {
+			$scope.addInstances = function (numberOfEnvironments) {
 				// create and save the environment in the server
 				studyInstanceService.createStudyInstances(numberOfEnvironments).then(function (studyInstances) {
 					angular.forEach(studyInstances, function (studyInstance) {
 						// update the environment table
-						$scope.createEnvironment(studyInstance.instanceNumber, studyInstance.experimentId);
+						$scope.createInstance(studyInstance.instanceNumber, studyInstance.instanceId);
 					});
 				});
 			};
 
-			$scope.createEnvironment = function (instanceNumber, experimentId, index) {
+			$scope.createInstance = function (instanceNumber, instanceId, index) {
 				var environment = {
-					experimentId: experimentId,
+					instanceId: instanceId,
 					managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
 						$scope.settings.managementDetails),
 					trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
@@ -282,13 +282,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				environment.managementDetailValues[LOCATION_ID] = UNSPECIFIED_LOCATION_ID;
 				environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = instanceNumber;
 				if (index != undefined) {
-					$scope.data.environments.splice(index, 0, environment);
+					$scope.instanceInfo.instances.splice(index, 0, environment);
 				} else {
-					$scope.data.environments.push(environment);
+					$scope.instanceInfo.instances.push(environment);
 				}
 			};
 
-			ctrl.updateEnvironmentVariables = function (type, entriesIncreased) {
+			ctrl.updateInstanceVariables = function (type, entriesIncreased) {
 
 				var settingDetailSource = null;
 				var targetKey = null;
@@ -301,7 +301,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					targetKey = 'trialDetailValues';
 				}
 
-				$.each($scope.data.environments, function (key, value) {
+				$.each($scope.instanceInfo.instances, function (key, value) {
 					var subList = value[targetKey];
 
 					if (entriesIncreased) {
@@ -320,7 +320,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				});
 			};
 
-			ctrl.initializePossibleValuesMap = function initializePossibleValuesMap () {
+			ctrl.initializePossibleValuesMap = function initializePossibleValuesMap() {
 
 				angular.forEach($scope.settings.managementDetails.vals(), function (settingVariable) {
 					process(settingVariable);
@@ -347,16 +347,16 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			ctrl.initializePossibleValuesMap();
 
-			function updateDeletedEnvironment(index) {
+			function updateDeletedInstances(index) {
 				// remove 1 environment
-				$scope.temp.noOfEnvironments -= 1;
-				$scope.data.environments.splice(index, 1);
+				$scope.temp.numberOfInstances -= 1;
+				$scope.instanceInfo.instances.splice(index, 1);
 				if (!$scope.isDesignAlreadyGenerated()) {
-					$scope.updateTrialInstanceNo($scope.data.environments, index);
+					$scope.updateTrialInstanceNo($scope.instanceInfo.instances, index);
 				}
-				$scope.data.noOfEnvironments -= 1;
+				$scope.instanceInfo.numberOfInstances -= 1;
 
-				TrialManagerDataService.deleteEnvironment(index + 1);
+				TrialManagerDataService.deleteInstance(index + 1);
 			}
 
 			function addCellClickHandler() {
@@ -377,13 +377,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					var cellIndex = table.colReorder.transpose(table.column(cell).index(), 'toOriginal');
 
 					var termId = $table.find('th:eq(' + cellIndex + ')').data('termid');
-					var environment = $scope.data.environments[rowIndex];
-					var isManagementDetailVariable = environment.managementDetailValues.hasOwnProperty(termId);
+					var instance = $scope.instanceInfo.instances[rowIndex];
+					var isManagementDetailVariable = instance.managementDetailValues.hasOwnProperty(termId);
 
 					if (isManagementDetailVariable) {
-						createInlineEditor(dtCell, cell, $scope.settings.managementDetails, environment.managementDetailValues, termId);
+						createInlineEditor(dtCell, cell, $scope.settings.managementDetails, instance.managementDetailValues, termId);
 					} else {
-						createInlineEditor(dtCell, cell, $scope.settings.trialConditionDetails, environment.trialDetailValues, termId);
+						createInlineEditor(dtCell, cell, $scope.settings.trialConditionDetails, instance.trialDetailValues, termId);
 					}
 					/**
 					 * Remove handler to not interfere with inline editor
@@ -401,7 +401,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						$inlineScope.settings = settings;
 						$inlineScope.valueContainer = valueContainer;
 						$inlineScope.targetKey = targetKey;
-						$inlineScope.environment = {
+						$inlineScope.instance = {
 							change: function () {
 								updateInline();
 							},
@@ -417,13 +417,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						$(cell).html('');
 
 						var editor = $compile(
-							'<environment-inline-editor ' +
-							'environment="environment" ' +
+							'<instance-inline-editor ' +
+							'instance="instance" ' +
 							'settings="settings" ' +
 							'targetkey="targetKey"' +
 							'settingkey="targetKey"' +
 							'valuecontainer="valueContainer"' +
-							'</environment-inline-editor>'
+							'</instance-inline-editor>'
 						)($inlineScope);
 
 						$(cell).append(editor);
@@ -451,12 +451,12 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			}
 
-		}]).directive('environmentInlineEditor', ['_', function (_) {
+		}]).directive('instanceInlineEditor', ['_', function (_) {
 		return {
 			require: '?ngModel',
 			restrict: 'E',
 			scope: {
-				environment: '=',
+				instance: '=',
 				settings: '=',
 				targetkey: '=',
 				settingkey: '=',
@@ -464,7 +464,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				changefunction: '&'
 			},
 
-			templateUrl: '/Fieldbook/static/angular-templates/environmentInlineEditor.html',
+			templateUrl: '/Fieldbook/static/angular-templates/instanceInlineEditor.html',
 			controller: function ($scope, LOCATION_ID, UNSPECIFIED_LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http) {
 
 				var LOCATION_LOOKUP_BREEDING_LOCATION = 1;

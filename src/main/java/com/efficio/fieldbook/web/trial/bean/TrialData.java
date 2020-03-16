@@ -8,7 +8,7 @@ public class TrialData {
 
 	private BasicDetails basicDetails;
 	private TrialSettingsBean trialSettings;
-	private EnvironmentData environments;
+	private InstanceInfo instanceInfo;
 	private TreatmentFactorTabBean treatmentFactors;
 	private ExpDesignParameterUi experimentalDesign;
 	private String columnOrders;
@@ -32,12 +32,12 @@ public class TrialData {
 		this.trialSettings = trialSettings;
 	}
 
-	public EnvironmentData getEnvironments() {
-		return this.environments;
+	public InstanceInfo getInstanceInfo() {
+		return this.instanceInfo;
 	}
 
-	public void setEnvironments(EnvironmentData environments) {
-		this.environments = environments;
+	public void setInstanceInfo(InstanceInfo instanceInfo) {
+		this.instanceInfo = instanceInfo;
 	}
 
 	public TreatmentFactorTabBean getTreatmentFactors() {

@@ -1,20 +1,36 @@
 <div ng-switch="widgetType">
 	<div ng-switch-when="DROPDOWN">
-		<ui-select ng-model="valuecontainer[targetkey]"
-				   on-select="instance.change()"
-				   tagging="instance.newInlineValue"
-				   tagging-label="false"
-				   append-to-body="true"
-				   theme="select2">
-			<ui-select-match
-				class="ui-select-match">
-				<span ng-bind="$select.selected.description"></span>
-			</ui-select-match>
-			<ui-select-choices repeat="value.id as value in (localData.dropdownValues | orderBy: 'name' | filter: { name: $select.search }) track by $index" >
-				<div title="{{value.description}}">{{value.description}}</div>
-			</ui-select-choices>
-		</ui-select>
+		<div ng-if="!isLocation">
+			<ui-select ng-model="valuecontainer[targetkey]"
+					   uis-open-close="instance.onOpenClose(isOpen)"
+					   tagging="instance.newInlineValue"
+					   tagging-label="false"
+					   append-to-body="true"
+					   theme="select2">
+				<ui-select-match
+					class="ui-select-match">
+					<span ng-bind="$select.selected.description"></span>
+				</ui-select-match>
+				<ui-select-choices repeat="value.id as value in (localData.dropdownValues | orderBy: 'name' | filter: { name: $select.search }) track by $index" >
+					<div title="{{value.description}}">{{value.description}}</div>
+				</ui-select-choices>
+			</ui-select>
+		</div>
 		<div ng-if="isLocation">
+			<ui-select ng-model="valuecontainer[targetkey]"
+					   on-select="instance.change()"
+					   tagging="instance.newInlineValue"
+					   tagging-label="false"
+					   append-to-body="true"
+					   theme="select2">
+				<ui-select-match
+					class="ui-select-match">
+					<span ng-bind="$select.selected.description"></span>
+				</ui-select-match>
+				<ui-select-choices repeat="value.id as value in (localData.dropdownValues | orderBy: 'name' | filter: { name: $select.search }) track by $index" >
+					<div title="{{value.description}}">{{value.description}}</div>
+				</ui-select-choices>
+			</ui-select>
 			<div class="possibleValuesDiv">
 				<input type="radio" ng-attr-name="env_location_filter"
 					   ng-model="localData.locationLookup" value="1" ng-change="updateDropdownValuesBreedingLocation()"> &nbsp;
@@ -45,7 +61,6 @@
 		<textarea class="form-control character-input" rows="3" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="instance.change()"/>
 	</div>
 	<div ng-switch-when="DATE">
-		<input type="text" placeholder="yyyy-mm-dd" class="form-control date-input" ng-model="valuecontainer[targetkey]" jq-datepicker="true" with-image="true" image-src="/Fieldbook/static/img/calendar.png"
-			   ng-change="instance.change()"/>
+		<input type="text" placeholder="yyyymmdd" class="form-control date-input" ng-model="valuecontainer[targetkey]" instance="instance" instance-datepicker="true" ng-blur="instance.change()"/>
 	</div>
 </div>

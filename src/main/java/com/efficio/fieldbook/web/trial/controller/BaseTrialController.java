@@ -482,16 +482,11 @@ public abstract class BaseTrialController extends SettingsController {
 				final MeasurementData mData = row.getMeasurementData(detail.getVariable().getCvTermId());
 				if (mData != null) {
 					final String value;
-					if ("DATE".equals(detail.getVariable().getWidgetType().getType())) {
-						value = this.convertDateStringForUI(mData.getValue());
-					} else if (mData.getcValueId() != null) {
+					if (mData.getcValueId() != null) {
 						value = mData.getcValueId();
 					} else {
-
 						value = mData.getValue();
-
 					}
-
 					experimentPropertyIdMap.put(Integer.toString(mData.getMeasurementVariable().getTermId()), mData.getExperimentPropertyId());
 					managementDetailValues.put(Integer.toString(mData.getMeasurementVariable().getTermId()), value);
 				}
@@ -500,17 +495,10 @@ public abstract class BaseTrialController extends SettingsController {
 
 				final MeasurementData mData = row.getMeasurementData(detail.getVariable().getCvTermId());
 				if (mData != null) {
-					final String value;
-					if ("DATE".equals(detail.getVariable().getWidgetType().getType())) {
-						value = this.convertDateStringForUI(mData.getValue());
-					} else {
-						value = mData.getValue();
-					}
-
+					final String value = mData.getValue();
 					if (!isUsePrevious) {
 						phenotypeIDMap.put(Integer.toString(mData.getMeasurementVariable().getTermId()), mData.getPhenotypeId());
 					}
-
 					trialConditionValues.put(Integer.toString(mData.getMeasurementVariable().getTermId()), value);
 				}
 			}

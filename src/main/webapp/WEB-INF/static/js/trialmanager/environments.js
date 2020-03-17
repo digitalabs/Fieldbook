@@ -144,7 +144,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				function renderCategoricalValue(settingVariable, value) {
 					var displayValue = '';
 					if (settingVariable.possibleValuesById && settingVariable.possibleValuesById[value]) {
-						displayValue = settingVariable.possibleValuesById[value].name;
+						displayValue = settingVariable.possibleValuesById[value].description;
 					}
 					return displayValue;
 				}
@@ -276,7 +276,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					instanceId: instanceId,
 					managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
 						$scope.settings.managementDetails),
-					trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
+					trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails),
+					experimentPropertyIdMap: {},
+					phenotypeIDMap: {}
 				};
 
 				environment.managementDetailValues[LOCATION_ID] = UNSPECIFIED_LOCATION_ID;
@@ -656,7 +658,35 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				}
 			}
 		};
-	}]).factory('DTLoadingTemplate', function () {
+	}]).directive('instanceDatepicker', function() {
+		return {
+			require: '^?ngModel',
+			scope: {
+				instance: '='
+			},
+			link: function(scope, el, attr, ngModel) {
+				$(el).datepicker({
+					format: 'yyyymmdd',
+					todayHighlight: true,
+					todayBtn: true
+				}).on('changeDate', function() {
+					scope.$apply(function() {
+						ngModel.$setViewValue(el.val());
+						scope.instance.change();
+					});
+					$(this).datepicker('hide');
+				});
+				ngModel.$render = function() {
+					var parsedDate;
+					try {
+						parsedDate = $.datepicker.formatDate("yy-mm-dd", $.datepicker.parseDate('yymmdd', ngModel.$viewValue));
+					} catch (e) {
+					}
+					$(el).datepicker('setDate', parsedDate);
+				};
+			}
+		};
+	}).factory('DTLoadingTemplate', function () {
 		return {
 			html: '<span class="throbber throbber-2x"></span>'
 		};

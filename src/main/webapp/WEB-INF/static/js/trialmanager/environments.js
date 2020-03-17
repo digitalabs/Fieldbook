@@ -376,15 +376,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					var dtCell = table.cell(cell);
 					var cellIndex = table.colReorder.transpose(table.column(cell).index(), 'toOriginal');
 
-					var termId = $table.find('th:eq(' + cellIndex + ')').data('termid');
+					var variableId = $table.find('th:eq(' + cellIndex + ')').data('termid');
 					var instance = $scope.instanceInfo.instances[rowIndex];
-					var isManagementDetailVariable = instance.managementDetailValues.hasOwnProperty(termId);
 
-					if (isManagementDetailVariable) {
-						createInlineEditor(dtCell, cell, $scope.settings.managementDetails, instance.managementDetailValues, termId);
-					} else {
-						createInlineEditor(dtCell, cell, $scope.settings.trialConditionDetails, instance.trialDetailValues, termId);
-					}
+					createInlineEditor(dtCell, cell, instance, variableId);
 					/**
 					 * Remove handler to not interfere with inline editor
 					 * will be restored after fnUpdate
@@ -393,14 +388,30 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 				}
 
-				function createInlineEditor(dtCell, cell, settings, valueContainer, targetKey) {
+				function createInlineEditor(dtCell, cell, instance, variableId) {
+
+					var isManagementDetailVariable = instance.managementDetailValues.hasOwnProperty(variableId);
+					var instanceId = instance.instanceId;
+					var variableSettings;
+					var valueContainer;
+					var instanceDataIdMap;
+
+					if (isManagementDetailVariable) {
+						variableSettings = $scope.settings.managementDetails;
+						valueContainer = instance.managementDetailValues;
+						instanceDataIdMap = instance.experimentPropertyIdMap;
+					} else {
+						variableSettings = $scope.settings.trialConditionDetails;
+						valueContainer = instance.trialDetailValues;
+						instanceDataIdMap = instance.phenotypeIDMap;
+					}
 
 					$scope.$apply(function () {
 
 						var $inlineScope = $scope.$new(true);
-						$inlineScope.settings = settings;
+						$inlineScope.settings = variableSettings;
 						$inlineScope.valueContainer = valueContainer;
-						$inlineScope.targetKey = targetKey;
+						$inlineScope.targetKey = variableId;
 						$inlineScope.instance = {
 							change: function () {
 								updateInline();
@@ -429,11 +440,36 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						$(cell).append(editor);
 
 						function updateInline() {
+							if (!instanceDataIdMap[variableId]) {
+								studyInstanceService.addInstanceData({
+									instanceId: instanceId,
+									variableId: variableId,
+									value: valueContainer[variableId]
+								}).then(function (instanceData) {
+
+									instanceDataIdMap[variableId] = instanceData.instanceDataId;
+									// Restore handler
+									refreshDisplay();
+									addClickHandler();
+								});
+							} else {
+								studyInstanceService.updateInstanceData({
+									instanceId: instanceId,
+									variableId: variableId,
+									instanceDataId: instanceDataIdMap[variableId],
+									value: valueContainer[variableId]
+								}).then(function (instanceData) {
+									// Restore handler
+									refreshDisplay();
+									addClickHandler();
+								});
+							}
+						}
+
+						function refreshDisplay() {
 							$inlineScope.$destroy();
 							editor.remove();
-							dtCell.data($scope.renderDisplayValue(settings.vals()[targetKey], valueContainer[targetKey]));
-							// Restore handler
-							addClickHandler();
+							dtCell.data($scope.renderDisplayValue(variableSettings.vals()[variableId], valueContainer[variableId]));
 						}
 
 						$timeout(function () {

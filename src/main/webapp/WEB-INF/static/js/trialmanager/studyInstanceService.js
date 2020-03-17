@@ -39,7 +39,7 @@
 		};
 
 		studyInstanceService.updateInstanceData = function (instanceData) {
-			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceData.instanceId + '/instance-data/' + instanceData.instanceId, instanceData);
+			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceData.instanceId + '/instance-data/' + instanceData.instanceDataId, instanceData);
 			return request.then(successHandler, failureHandler);
 		};
 

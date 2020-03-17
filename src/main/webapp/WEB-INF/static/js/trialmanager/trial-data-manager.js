@@ -62,14 +62,8 @@
 					if (updateFunction) {
 						updateFunction(data);
 					} else {
-						// update necessary data and settings
-						// currently identified is the stockid, locationid, and experimentid found in the environment tab
-						service.updateSettings('environments', extractSettings(data.environmentData));
-						service.updateCurrentData('environments', extractData(data.environmentData));
-
 						service.currentData.basicDetails.studyID = trialID;
 					}
-
 				}).error(function() {
 					showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 				});
@@ -413,17 +407,11 @@
 									recreateSessionVariablesTrial();
 									notifySaveEventListeners();
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function (updatedData) {
-										service.updateCurrentData('environments', extractData(updatedData.environmentData));
-										service.updateSettings('environments', extractSettings(updatedData.environmentData));
 										service.updateCurrentData('trialSettings', extractData(updatedData.trialSettingsData));
 										service.updateSettings('trialSettings', extractSettings(updatedData.trialSettingsData));
-
-										derivedVariableService.displayExecuteCalculateVariableMenu();
-										derivedVariableService.showWarningIfCalculatedVariablesAreOutOfSync();
 										setupSettingsVariables();
 										studyStateService.resetState();
 									});
-
 								}).error(function (response) {
 									if (response.data && response.data.errors) {
 										showErrorMessage('', response.data.errors[0].message);

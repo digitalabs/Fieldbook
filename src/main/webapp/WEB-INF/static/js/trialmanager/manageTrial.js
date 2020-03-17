@@ -339,12 +339,12 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						createErrorNotification(errorMsgHeader, data.createTrialForm.errorMessage);
 					} else {
 						TrialManagerDataService.storeInitialValuesInServiceBackup();
-						var environmentData = TrialManagerDataService.extractData(data.environmentData);
+						var instanceInfo = TrialManagerDataService.extractData(data.environmentData);
 						var environmentSettings = TrialManagerDataService.extractSettings(data.environmentData);
 
-						if (environmentData.noOfEnvironments > 0 && environmentData.environments.length === 0) {
-							while (environmentData.environments.length !== environmentData.noOfEnvironments) {
-								environmentData.environments.push({
+						if (instanceInfo.numberOfInstances > 0 && instanceInfo.instances.length === 0) {
+							while (instanceInfo.instances.length !== instanceInfo.numberOfInstances) {
+								instanceInfo.instances.push({
 									managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
 										environmentSettings.managementDetails),
 									trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
@@ -365,7 +365,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 						TrialManagerDataService.updateCurrentData('trialSettings',
 							TrialManagerDataService.extractData(data.trialSettingsData));
-						TrialManagerDataService.updateCurrentData('environments', environmentData);
+						TrialManagerDataService.updateCurrentData('instanceInfo', instanceInfo);
 						TrialManagerDataService.updateCurrentData('treatmentFactors', TrialManagerDataService.extractData(
 							data.treatmentFactorsData));
 

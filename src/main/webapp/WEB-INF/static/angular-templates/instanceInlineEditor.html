@@ -27,38 +27,33 @@
 					class="ui-select-match">
 					<span ng-bind="$select.selected.description"></span>
 				</ui-select-match>
-				<ui-select-choices repeat="value.id as value in (localData.dropdownValues | orderBy: 'name' | filter: { name: $select.search }) track by $index" >
+				<ui-select-choices repeat="value.key as value in (localData.dropdownValues | orderBy: 'name' | filter: { name: $select.search }) track by $index" >
 					<div title="{{value.description}}">{{value.description}}</div>
 				</ui-select-choices>
 			</ui-select>
 			<div class="possibleValuesDiv">
-				<input type="radio" ng-attr-name="env_location_filter"
-					   ng-model="localData.locationLookup" value="1" ng-change="updateDropdownValuesBreedingLocation()"> &nbsp;
+				<input type="radio" name="location-lookup" ng-model="localData.locationLookup" value="1">
 				<span th:text="#{show.breeding.location}">Breeding locations</span> &nbsp;
-				<input type="radio" ng-attr-name="env_location_filter"
-					   ng-model="localData.locationLookup" value="2" ng-change="updateDropdownValuesAllLocation()"> &nbsp;
-				<span th:text="#{show.all.location}">All locations types</span>
+				<input type="radio" name="location-lookup" ng-model="localData.locationLookup" value="2">
+				<span th:text="#{show.all.location}">All locations types</span> &nbsp;
 			</div>
 			<div class="possibleValuesDiv">
-				<input type="checkbox" ng-model="localData.useFavorites" ng-change="updateDropdownValuesFavorites()"> &nbsp;
-				<span th:text="#{show.favorite.location}">Show only favorite locations </span> &nbsp;
+				<input type="checkbox" name="location-favorite" ng-model="localData.useFavorites">
+				<span th:text="#{show.favorite.location}">Show only favorite locations </span>
 			</div>
-		</div>
-		<div ng-if="isBreedingMethod" class="possibleValuesDiv">
-			<!--TODO : handle rendering of breeding method dropdowns for completeness-->
 		</div>
 	</div>
 	<div ng-switch-when="NTEXT">
-		<input type="text" valid-decimal="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="instance.change()"/>
+		<input type="text" valid-decimal="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]" ng-blur="instance.change()"/>
 	</div>
 	<div ng-switch-when="SLIDER">
-		<input type="text" valid-decimal="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="instance.change()"/>
+		<input type="text" valid-decimal="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]" ng-blur="instance.change()"/>
 	</div>
 	<div ng-switch-when="CTEXT">
-		<input type="text" class="form-control character-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="instance.change()"/>
+		<input type="text" class="form-control character-input" ng-model="valuecontainer[targetkey]" ng-blur="instance.change()"/>
 	</div>
 	<div ng-switch-when="TEXTAREA">
-		<textarea class="form-control character-input" rows="3" ng-model="valuecontainer[targetkey]" ng-change="changefunction()" ng-blur="instance.change()"/>
+		<textarea class="form-control character-input" rows="3" ng-model="valuecontainer[targetkey]" ng-blur="instance.change()"/>
 	</div>
 	<div ng-switch-when="DATE">
 		<input type="text" placeholder="yyyymmdd" class="form-control date-input" ng-model="valuecontainer[targetkey]" instance="instance" instance-datepicker="true" ng-blur="instance.change()"/>

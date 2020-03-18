@@ -481,7 +481,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 							 * This also avoids temporary click handler on body
 							 * FIXME is there a better way?
 							 */
-							$(cell).find('a.ui-select-match, input').click().focus();
+							$(cell).find('a.ui-select-match, input:not([type=radio], [type=checkbox])').click().focus();
 						}, 100);
 
 					});
@@ -491,31 +491,55 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 		}]).directive('instanceInlineEditor', ['_', function (_) {
 		return {
-			require: '?ngModel',
+			require: [],
 			restrict: 'E',
 			scope: {
 				instance: '=',
 				settings: '=',
 				targetkey: '=',
 				settingkey: '=',
-				valuecontainer: '=',
-				changefunction: '&'
+				valuecontainer: '='
 			},
-
 			templateUrl: '/Fieldbook/static/angular-templates/instanceInlineEditor.html',
+			link: function ($scope, element, attrs) {
+				if ($scope.hasDropdownOptions) {
+					$scope.initializeDropdown();
+					$scope.updateDropdownValuesFavorites();
+				}
+			},
 			controller: function ($scope, LOCATION_ID, UNSPECIFIED_LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http) {
 
-				var LOCATION_LOOKUP_BREEDING_LOCATION = 1;
-				var LOCATION_LOOKUP_ALL_LOCATION = 2;
+				var LOCATION_LOOKUP_BREEDING_LOCATION = '1';
+				var LOCATION_LOOKUP_ALL_LOCATION = '2';
 
-				if ($scope.settingkey === undefined) {
-					$scope.settingkey = $scope.targetkey;
-				}
+				$scope.variableDefinition = $scope.settings.val($scope.settingkey);
+				$scope.widgetType = $scope.variableDefinition.variable.widgetType.$name ?
+					$scope.variableDefinition.variable.widgetType.$name : $scope.variableDefinition.variable.widgetType;
+				$scope.hasDropdownOptions = $scope.widgetType === 'DROPDOWN';
 
-				if (!$scope.changefunction) {
-					$scope.changefunction = function () {
-					};
-				}
+				$scope.isLocation = parseInt(LOCATION_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
+				$scope.isBreedingMethod = parseInt(BREEDING_METHOD_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10) ||
+					parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
+
+				$scope.localData = {locationLookup: null, useFavorites: null};
+
+				$scope.$watch('localData.locationLookup', function (newValue, oldValue) {
+					if (!angular.equals(newValue, oldValue)) {
+						if (angular.equals(newValue, LOCATION_LOOKUP_BREEDING_LOCATION)) {
+							$scope.localData.dropdownValues = $scope.localData.useFavorites ? $scope.variableDefinition.possibleValuesFavorite
+								: $scope.variableDefinition.possibleValues;
+						} else {
+							$scope.localData.dropdownValues = $scope.localData.useFavorites ? $scope.variableDefinition.allFavoriteValues
+								: $scope.variableDefinition.allValues;
+						}
+					}
+				});
+
+				$scope.$watch('localData.useFavorites', function (newValue, oldValue) {
+					if (!angular.equals(newValue, oldValue)) {
+						$scope.updateDropdownValuesFavorites();
+					}
+				});
 
 				$scope.isFavoriteLocation = function (locationId) {
 					return $scope.variableDefinition.possibleValuesFavorite.some(function (locationPossibleValue) {
@@ -528,17 +552,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						return parseInt(locationId) === locationPossibleValue.id;
 					});
 				};
-
-				$scope.variableDefinition = $scope.settings.val($scope.settingkey);
-				$scope.widgetType = $scope.variableDefinition.variable.widgetType.$name ?
-					$scope.variableDefinition.variable.widgetType.$name : $scope.variableDefinition.variable.widgetType;
-				$scope.hasDropdownOptions = $scope.widgetType === 'DROPDOWN';
-
-				$scope.isLocation = parseInt(LOCATION_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
-				$scope.isBreedingMethod = parseInt(BREEDING_METHOD_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10) ||
-					parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
-
-				$scope.localData = {};
 
 				$scope.updateDropdownValuesFavorites = function () { // Change state for favorite checkbox
 					if ($scope.localData.useFavorites) {
@@ -556,21 +569,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					}
 				};
 
-				$scope.updateDropdownValuesBreedingLocation = function () { // Change state for breeding
-					// location radio
-					$scope.localData.dropdownValues = $scope.localData.useFavorites ? $scope.variableDefinition.possibleValuesFavorite
-						: $scope.variableDefinition.possibleValues;
-					$scope.localData.locationLookup = LOCATION_LOOKUP_BREEDING_LOCATION;
-				};
-
-				$scope.updateDropdownValuesAllLocation = function () { // Change state for all locations radio
-					$scope.localData.dropdownValues = $scope.localData.useFavorites ? $scope.variableDefinition.allFavoriteValues
-						: $scope.variableDefinition.allValues;
-					$scope.localData.locationLookup = LOCATION_LOOKUP_ALL_LOCATION;
-				};
-
-				if ($scope.hasDropdownOptions) {
-
+				$scope.initializeDropdown = function () {
 					var currentVal = $scope.valuecontainer[$scope.targetkey];
 
 					// lets fix current val if its an object so that valuecontainer only contains the id
@@ -591,92 +590,29 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 							LOCATION_LOOKUP_BREEDING_LOCATION : LOCATION_LOOKUP_ALL_LOCATION;
 						$scope.localData.useFavorites = $scope.isFavoriteLocation($scope.valuecontainer[LOCATION_ID]);
 					}
+				};
 
-					$scope.updateDropdownValuesFavorites();
-
-				}
-
-
-				// TODO: add code that can handle display of favorite methods, as well as update of possible values in case of click
-				// of manage methods
-				if ($scope.isLocation) {
-					$scope.clearArray = function (targetArray) {
-						// current internet research suggests that this is the fastest way of clearing an array
-						while (targetArray.length > 0) {
-							targetArray.pop();
-						}
-					};
-
-					$scope.updateLocationValues = function () {
-						$http.get('/Fieldbook/locations/getLocations').then(function (returnVal) {
-							if (returnVal.data.success === '1') {
-								$scope.variableDefinition.locationUpdated = true;
-								// clear and copy of array is performed so as to preserve previous reference
-								// and have changes applied to all components with a copy of the previous reference
-								$scope.clearArray($scope.variableDefinition.possibleValues);
-								$scope.clearArray($scope.variableDefinition.possibleValuesFavorite);
-								$scope.clearArray($scope.variableDefinition.allFavoriteValues);
-								$scope.clearArray($scope.variableDefinition.allValues);
-
-								$scope.variableDefinition.possibleValues.push.apply($scope.variableDefinition.possibleValues,
-									$scope.convertLocationsToPossibleValues(returnVal.data.allBreedingLocations));
-								$scope.variableDefinition.possibleValuesFavorite.push.apply(
-									$scope.variableDefinition.possibleValuesFavorite,
-									$scope.convertLocationsToPossibleValues(returnVal.data.allBreedingFavoritesLocations));
-								$scope.variableDefinition.allFavoriteValues.push.apply(
-									$scope.variableDefinition.allFavoriteValues,
-									$scope.convertLocationsToPossibleValues(returnVal.data.favoriteLocations));
-								$scope.variableDefinition.allValues.push.apply(
-									$scope.variableDefinition.allValues,
-									$scope.convertLocationsToPossibleValues(returnVal.data.allLocations));
-								$scope.updateDropdownValuesFavorites();
-							}
-						});
-					};
-
-					$scope.convertLocationsToPossibleValues = function (locations) {
-						var possibleValues = [];
-
-						$.each(locations, function (key, value) {
-							var locNameDisplay = value.lname;
-							if (value.labbr != null && value.labbr !== '') {
-								locNameDisplay += ' - (' + value.labbr + ')';
-							}
-
-							possibleValues.push({
-								id: value.locid,
-								name: locNameDisplay,
-								description: value.lname
-							});
-						});
-
-						return possibleValues;
-					};
-
-					$(document).off('location-update');
-					$(document).on('location-update', $scope.updateLocationValues);
-				}
 			}
 		};
-	}]).directive('instanceDatepicker', function() {
+	}]).directive('instanceDatepicker', function () {
 		return {
 			require: '^?ngModel',
 			scope: {
 				instance: '='
 			},
-			link: function(scope, el, attr, ngModel) {
+			link: function (scope, el, attr, ngModel) {
 				$(el).datepicker({
 					format: 'yyyymmdd',
 					todayHighlight: true,
 					todayBtn: true
-				}).on('changeDate', function() {
-					scope.$apply(function() {
+				}).on('changeDate', function () {
+					scope.$apply(function () {
 						ngModel.$setViewValue(el.val());
 						scope.instance.change();
 					});
 					$(this).datepicker('hide');
 				});
-				ngModel.$render = function() {
+				ngModel.$render = function () {
 					var parsedDate;
 					try {
 						parsedDate = $.datepicker.formatDate("yy-mm-dd", $.datepicker.parseDate('yymmdd', ngModel.$viewValue));

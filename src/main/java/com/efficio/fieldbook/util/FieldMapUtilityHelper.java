@@ -107,6 +107,21 @@ public class FieldMapUtilityHelper {
 		return counter;
 	}
 
+	public static void markedDeletedPlot(final Plot[][] plots, final Map<String, String> deletedPlot) {
+		final Plot[][] currentPlot = plots;
+
+		if (currentPlot != null) {
+			for (int i = 0; i < currentPlot.length; i++) {
+				for (int j = 0; j < currentPlot[i].length; j++) {
+					final Plot plot = currentPlot[i][j];
+					if (FieldMapUtilityHelper.isDeleted(i, j, deletedPlot)) {
+						plot.setPlotDeleted(true);
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * Checks if is deleted.
 	 *
@@ -177,5 +192,21 @@ public class FieldMapUtilityHelper {
 		}
 
 		return isStarted;
+	}
+
+
+	/**
+	 * Mark deleted coordinates.
+	 *
+	 * @param plots the plots
+	 * @param deletedCoordinates the deleted coordinates
+	 */
+	public static void markDeletedCoordinates(final Plot[][] plots, final List<String> deletedCoordinates) {
+		for (final String deletedIndex : deletedCoordinates) {
+			final String[] columnRange = deletedIndex.split("_");
+			final int column = Integer.parseInt(columnRange[0]);
+			final int range = Integer.parseInt(columnRange[1]);
+			plots[column][range].setPlotDeleted(true);
+		}
 	}
 }

@@ -134,7 +134,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 				function renderByDataType(settingVariable, value) {
 
-					if (settingVariable.variable.dataTypeId === 1130 || settingVariable.variable.dataTypeId === 1132) {
+					// If variable is LOCATION_ID variable or categorical, show the description of the selected possible value.
+					if (settingVariable.variable.dataTypeId === 1130 || settingVariable.variable.cvTermId === parseInt(LOCATION_ID)) {
 						return renderCategoricalValue(settingVariable, value);
 					} else {
 						return EscapeHTML.escape(value);
@@ -253,7 +254,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				studyInstanceService.createStudyInstances(1).then(function (studyInstances) {
 					angular.forEach(studyInstances, function (studyInstance) {
 						// update the environment table
-						$scope.createInstance(studyInstance.instanceNumber, studyInstance.instanceId);
+						$scope.createInstance(studyInstance);
 						$scope.instanceInfo.numberOfInstances++;
 					});
 					$scope.isDisableAddInstance = false;
@@ -266,56 +267,56 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				studyInstanceService.createStudyInstances(numberOfEnvironments).then(function (studyInstances) {
 					angular.forEach(studyInstances, function (studyInstance) {
 						// update the environment table
-						$scope.createInstance(studyInstance.instanceNumber, studyInstance.instanceId);
+						$scope.createInstance(studyInstance);
 					});
 				});
 			};
 
-			$scope.createInstance = function (instanceNumber, instanceId, index) {
-				var environment = {
-					instanceId: instanceId,
+			$scope.createInstance = function (studyInstance) {
+				var instance = {
+					instanceId: studyInstance.instanceId,
 					managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
 						$scope.settings.managementDetails),
 					trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails),
-					experimentPropertyIdMap: {},
+					experimentPropertyIdMap: {8190: studyInstance.locationInstanceDataId},
 					phenotypeIDMap: {}
 				};
-
-				environment.managementDetailValues[LOCATION_ID] = UNSPECIFIED_LOCATION_ID;
-				environment.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = instanceNumber;
-				if (index != undefined) {
-					$scope.instanceInfo.instances.splice(index, 0, environment);
-				} else {
-					$scope.instanceInfo.instances.push(environment);
-				}
+				instance.managementDetailValues[LOCATION_ID] = UNSPECIFIED_LOCATION_ID;
+				instance.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = studyInstance.instanceNumber;
+				$scope.instanceInfo.instances.push(instance);
 			};
 
 			ctrl.updateInstanceVariables = function (type, entriesIncreased) {
 
 				var settingDetailSource = null;
-				var targetKey = null;
+				var valuesPropertyKey = null;
+				var idsPropertyKey = null;
 
 				if (type === 'managementDetails') {
 					settingDetailSource = $scope.settings.managementDetails;
-					targetKey = 'managementDetailValues';
+					valuesPropertyKey = 'managementDetailValues';
+					idsPropertyKey = 'experimentPropertyIdMap';
 				} else if (type === 'trialConditionDetails') {
 					settingDetailSource = $scope.settings.trialConditionDetails;
-					targetKey = 'trialDetailValues';
+					valuesPropertyKey = 'trialDetailValues';
+					idsPropertyKey = 'phenotypeIDMap';
 				}
 
-				$.each($scope.instanceInfo.instances, function (key, value) {
-					var subList = value[targetKey];
+				angular.forEach($scope.instanceInfo.instances, function (instance) {
+					var valuesList = instance[valuesPropertyKey];
+					var idList = instance[idsPropertyKey];
 
 					if (entriesIncreased) {
-						$.each(settingDetailSource.keys(), function (key, value) {
-							if (subList[value] === undefined) {
-								subList[value] = null;
+						angular.forEach(settingDetailSource.keys(), function (settingDetailKey) {
+							if (valuesList[settingDetailKey] === undefined) {
+								valuesList[settingDetailKey] = null;
 							}
 						});
 					} else {
-						$.each(subList, function (idKey) {
-							if (!settingDetailSource.vals().hasOwnProperty(idKey)) {
-								delete subList[idKey];
+						angular.forEach(valuesList, function (value, settingDetailKey) {
+							if (!settingDetailSource.vals().hasOwnProperty(settingDetailKey)) {
+								delete valuesList[settingDetailKey];
+								delete idList[settingDetailKey];
 							}
 						});
 					}
@@ -553,7 +554,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					});
 				};
 
-				$scope.updateDropdownValuesFavorites = function () { // Change state for favorite checkbox
+				$scope.updateDropdownValuesFavorites = function () {
 					if ($scope.localData.useFavorites) {
 						if ($scope.localData.locationLookup === LOCATION_LOOKUP_BREEDING_LOCATION) {
 							$scope.localData.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
@@ -570,26 +571,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				};
 
 				$scope.initializeDropdown = function () {
-					var currentVal = $scope.valuecontainer[$scope.targetkey];
-
-					// lets fix current val if its an object so that valuecontainer only contains the id
-					if (currentVal && currentVal.id) {
-						currentVal = currentVal.id;
-						$scope.valuecontainer[$scope.targetkey] = currentVal;
-					}
-
-					// If the currentVal is undefined then we assume that the environment is newly created and not yet saved,
-					// so in this case, we need to set the set the location to the default value, which is UNSPECIFIED_LOCATION_ID (NOLOC)
-					if (!currentVal && $scope.targetkey === LOCATION_ID) {
-						$scope.valuecontainer[$scope.targetkey] = UNSPECIFIED_LOCATION_ID;
-						$scope.localData.locationLookup = $scope.isBreedingLocation(UNSPECIFIED_LOCATION_ID) ?
-							LOCATION_LOOKUP_BREEDING_LOCATION : LOCATION_LOOKUP_ALL_LOCATION;
-						$scope.localData.useFavorites = $scope.isFavoriteLocation(UNSPECIFIED_LOCATION_ID);
-					} else {
-						$scope.localData.locationLookup = $scope.isBreedingLocation($scope.valuecontainer[LOCATION_ID]) ?
-							LOCATION_LOOKUP_BREEDING_LOCATION : LOCATION_LOOKUP_ALL_LOCATION;
-						$scope.localData.useFavorites = $scope.isFavoriteLocation($scope.valuecontainer[LOCATION_ID]);
-					}
+					$scope.localData.locationLookup = $scope.isBreedingLocation($scope.valuecontainer[LOCATION_ID]) ?
+						LOCATION_LOOKUP_BREEDING_LOCATION : LOCATION_LOOKUP_ALL_LOCATION;
+					$scope.localData.useFavorites = $scope.isFavoriteLocation($scope.valuecontainer[LOCATION_ID]);
 				};
 
 			}

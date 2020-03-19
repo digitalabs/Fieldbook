@@ -3,7 +3,6 @@
 		<div ng-if="!isLocation">
 			<ui-select ng-model="valuecontainer[targetkey]"
 					   uis-open-close="instance.onOpenClose(isOpen)"
-					   tagging="instance.newInlineValue"
 					   tagging-label="false"
 					   append-to-body="true"
 					   theme="select2">
@@ -11,7 +10,7 @@
 					class="ui-select-match">
 					<span ng-bind="$select.selected.description"></span>
 				</ui-select-match>
-				<ui-select-choices repeat="value.id as value in (localData.dropdownValues | orderBy: 'name' | filter: { name: $select.search }) track by $index" >
+				<ui-select-choices repeat="value.id as value in (localData.dropdownValues | orderBy: 'name' | filter: { name: $select.search }) track by $index">
 					<div title="{{value.description}}">{{value.description}}</div>
 				</ui-select-choices>
 			</ui-select>
@@ -19,7 +18,6 @@
 		<div ng-if="isLocation">
 			<ui-select ng-model="valuecontainer[targetkey]"
 					   on-select="instance.change()"
-					   tagging="instance.newInlineValue"
 					   tagging-label="false"
 					   append-to-body="true"
 					   theme="select2">
@@ -27,7 +25,7 @@
 					class="ui-select-match">
 					<span ng-bind="$select.selected.description"></span>
 				</ui-select-match>
-				<ui-select-choices repeat="value.key as value in (localData.dropdownValues | orderBy: 'name' | filter: { name: $select.search }) track by $index" >
+				<ui-select-choices repeat="value.key as value in (localData.dropdownValues | orderBy: 'name' | filter: { name: $select.search }) track by $index">
 					<div title="{{value.description}}">{{value.description}}</div>
 				</ui-select-choices>
 			</ui-select>

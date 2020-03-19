@@ -5,9 +5,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', '$q', 'TrialManagerDataService', '$uibModal', '$stateParams',
 		'$http', 'DTOptionsBuilder', 'LOCATION_ID', 'UNSPECIFIED_LOCATION_ID', '$timeout', 'studyInstanceService', 'studyStateService', 'derivedVariableService', 'studyContext',
-		'datasetService', '$compile',
+		'datasetService', '$compile', '$document',
 		function ($scope, $q, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, UNSPECIFIED_LOCATION_ID, $timeout, studyInstanceService,
-				  studyStateService, derivedVariableService, studyContext, datasetService, $compile) {
+				  studyStateService, derivedVariableService, studyContext, datasetService, $compile, $document) {
 
 			var ctrl = this;
 			var tableId = '#environment-table';
@@ -365,13 +365,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			function addCellClickHandler() {
 				var $table = angular.element(tableId);
 
-				addClickHandler();
+				addCellClickHandler();
 
-				function addClickHandler() {
-					$table.off('click').on('click', 'td.environmentVariable', clickHandler);
+				function addCellClickHandler() {
+					$table.off('click').on('click', 'td.environmentVariable', cellClickHandler);
 				}
 
-				function clickHandler() {
+				function cellClickHandler() {
 					var cell = this;
 					var table = $table.DataTable();
 					var dtRow = table.row(cell.parentNode);
@@ -382,16 +382,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					var variableId = $table.find('th:eq(' + cellIndex + ')').data('termid');
 					var instance = $scope.instanceInfo.instances[rowIndex];
 
-					createInlineEditor(dtCell, cell, instance, variableId);
-					/**
-					 * Remove handler to not interfere with inline editor
-					 * will be restored after fnUpdate
-					 */
-					$table.off('click');
-
+					createInlineEditor($table, dtCell, cell, instance, variableId);
 				}
 
-				function createInlineEditor(dtCell, cell, instance, variableId) {
+				function createInlineEditor($table, dtCell, cell, instance, variableId) {
 
 					var isManagementDetailVariable = instance.managementDetailValues.hasOwnProperty(variableId);
 					var instanceId = instance.instanceId;
@@ -409,83 +403,87 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						instanceDataIdMap = instance.phenotypeIDMap;
 					}
 
-					$scope.$apply(function () {
-
-						var $inlineScope = $scope.$new(true);
-						$inlineScope.settings = variableSettings;
-						$inlineScope.valueContainer = valueContainer;
-						$inlineScope.targetKey = variableId;
-						$inlineScope.instance = {
-							change: function () {
-								updateInline();
-							},
-							// FIXME altenative to blur bug https://github.com/angular-ui/ui-select/issues/499
-							onOpenClose: function (isOpen) {
-								if (!isOpen) updateInline();
-							},
-							newInlineValue: function (newValue) {
-								return {name: newValue};
-							}
-						};
-
-						$(cell).html('');
-
-						var editor = $compile(
-							'<instance-inline-editor ' +
-							'instance="instance" ' +
-							'settings="settings" ' +
-							'targetkey="targetKey"' +
-							'settingkey="targetKey"' +
-							'valuecontainer="valueContainer"' +
-							'</instance-inline-editor>'
-						)($inlineScope);
-
-						$(cell).append(editor);
-
-						function updateInline() {
-							if (!instanceDataIdMap[variableId]) {
-								studyInstanceService.addInstanceData({
-									instanceId: instanceId,
-									variableId: variableId,
-									value: valueContainer[variableId]
-								}).then(function (instanceData) {
-
-									instanceDataIdMap[variableId] = instanceData.instanceDataId;
-									// Restore handler
-									refreshDisplay();
-									addClickHandler();
-								});
-							} else {
-								studyInstanceService.updateInstanceData({
-									instanceId: instanceId,
-									variableId: variableId,
-									instanceDataId: instanceDataIdMap[variableId],
-									value: valueContainer[variableId]
-								}).then(function (instanceData) {
-									// Restore handler
-									refreshDisplay();
-									addClickHandler();
-								});
-							}
+					var $inlineScope = $scope.$new(true);
+					$inlineScope.settings = variableSettings;
+					$inlineScope.valueContainer = valueContainer;
+					$inlineScope.targetKey = variableId;
+					$inlineScope.instance = {
+						change: function () {
+							updateInline();
+						},
+						// FIXME altenative to blur bug https://github.com/angular-ui/ui-select/issues/499
+						onOpenClose: function (isOpen) {
+							if (!isOpen) updateInline();
 						}
+					};
 
-						function refreshDisplay() {
-							$inlineScope.$destroy();
-							editor.remove();
-							dtCell.data($scope.renderDisplayValue(variableSettings.vals()[variableId], valueContainer[variableId]));
+					$(cell).html('');
+
+					var editor = $compile(
+						'<instance-inline-editor ' +
+						'instance="instance" ' +
+						'settings="settings" ' +
+						'targetkey="targetKey"' +
+						'settingkey="targetKey"' +
+						'valuecontainer="valueContainer"' +
+						'</instance-inline-editor>'
+					)($inlineScope);
+
+					$(cell).append(editor);
+
+					function updateInline() {
+						if (!instanceDataIdMap[variableId]) {
+							studyInstanceService.addInstanceData({
+								instanceId: instanceId,
+								variableId: variableId,
+								value: valueContainer[variableId]
+							}).then(function (instanceData) {
+								instanceDataIdMap[variableId] = instanceData.instanceDataId;
+								refreshDisplay();
+							});
+						} else {
+							studyInstanceService.updateInstanceData({
+								instanceId: instanceId,
+								variableId: variableId,
+								instanceDataId: instanceDataIdMap[variableId],
+								value: valueContainer[variableId]
+							}).then(function (instanceData) {
+								// Restore handler
+								refreshDisplay();
+								addCellClickHandler();
+							});
 						}
+					}
 
-						$timeout(function () {
-							/**
-							 * Initiate interaction with the input so that clicks on other parts of the page
-							 * will trigger blur immediately. Also necessary to initiate datepicker
-							 * This also avoids temporary click handler on body
-							 * FIXME is there a better way?
-							 */
-							$(cell).find('a.ui-select-match, input:not([type=radio], [type=checkbox])').click().focus();
-						}, 100);
+					function refreshDisplay() {
+						$inlineScope.$destroy();
+						editor.remove();
+						dtCell.data($scope.renderDisplayValue(variableSettings.vals()[variableId], valueContainer[variableId]));
+						// Restore handler
+						addCellClickHandler();
+					}
 
-					});
+					$timeout(function () {
+						/**
+						 * Initiate interaction with the input so that clicks on other parts of the page
+						 * will trigger blur immediately. Also necessary to initiate datepicker
+						 * This also avoids temporary click handler on body
+						 * FIXME is there a better way?
+						 */
+						$(cell).find('a.ui-select-match, input:not([type=radio], [type=checkbox])').click().focus();
+
+						/** Remove the Location inline editor when the document is clicked. **/
+						$document.off('click').on('click', () => {
+							refreshDisplay();
+							$document.off('click');
+						});
+					}, 100);
+
+					/**
+					 * Remove handler to not interfere with inline editor
+					 * will be restored after saving/update
+					 */
+					$table.off('click');
 				}
 
 			}
@@ -592,9 +590,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				}).on('changeDate', function () {
 					scope.$apply(function () {
 						ngModel.$setViewValue(el.val());
-						scope.instance.change();
 					});
 					$(this).datepicker('hide');
+				}).on('hide', function () {
+					scope.instance.change();
 				});
 				ngModel.$render = function () {
 					var parsedDate;

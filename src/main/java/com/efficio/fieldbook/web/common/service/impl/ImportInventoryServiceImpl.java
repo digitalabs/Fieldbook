@@ -1,14 +1,9 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.common.service.ImportInventoryService;
+import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -16,9 +11,11 @@ import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.springframework.context.MessageSource;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.common.service.ImportInventoryService;
-import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -34,22 +31,22 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 	private MessageSource messageSource;
 
 	@Override
-	public ImportedInventoryList parseFile(MultipartFile file, Map<String, Object> additionalParams) throws FileParsingException {
+	public ImportedInventoryList parseFile(final MultipartFile file, final Map<String, Object> additionalParams) throws FileParsingException {
 		return this.parser.parseFile(file, additionalParams);
 	}
 
 	@Override
-	public boolean mergeImportedData(List<InventoryDetails> originalList, ImportedInventoryList importedDataObject) {
-		List<InventoryDetails> importedList = importedDataObject.getImportedInventoryDetails();
+	public boolean mergeImportedData(final List<InventoryDetails> originalList, final ImportedInventoryList importedDataObject) {
+		final List<InventoryDetails> importedList = importedDataObject.getImportedInventoryDetails();
 
-		Map<Integer, InventoryDetails> originalDetailMap = this.convertToMap(originalList);
-		Map<Integer, InventoryDetails> importedDetailMap = this.convertToMap(importedList);
+		final Map<Integer, InventoryDetails> originalDetailMap = this.convertToMap(originalList);
+		final Map<Integer, InventoryDetails> importedDetailMap = this.convertToMap(importedList);
 
 		boolean possibleOverwrite = false;
 
-		for (Map.Entry<Integer, InventoryDetails> detailsEntry : originalDetailMap.entrySet()) {
-			InventoryDetails original = detailsEntry.getValue();
-			InventoryDetails imported = importedDetailMap.get(detailsEntry.getKey());
+		for (final Map.Entry<Integer, InventoryDetails> detailsEntry : originalDetailMap.entrySet()) {
+			final InventoryDetails original = detailsEntry.getValue();
+			final InventoryDetails imported = importedDetailMap.get(detailsEntry.getKey());
 
 			if (imported == null) {
 				continue;
@@ -61,7 +58,7 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 		return possibleOverwrite;
 	}
 
-	protected boolean mergeIndividualDetailData(InventoryDetails original, InventoryDetails imported) {
+	boolean mergeIndividualDetailData(final InventoryDetails original, final InventoryDetails imported) {
 
 		boolean possibleOverwrite = false;
 
@@ -80,48 +77,36 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 		return possibleOverwrite;
 	}
 
-	protected boolean isEmpty(Number numberValue) {
+	protected boolean isEmpty(final Number numberValue) {
 		return numberValue == null || numberValue.intValue() == 0 && numberValue.doubleValue() == 0.0;
 	}
 
-	protected boolean isEmpty(String stringValue) {
+	protected boolean isEmpty(final String stringValue) {
 		return stringValue == null || stringValue.isEmpty();
 	}
 
-	protected Map<Integer, InventoryDetails> convertToMap(List<InventoryDetails> detailList) {
-		Map<Integer, InventoryDetails> detailMap = new HashMap<>();
+	private Map<Integer, InventoryDetails> convertToMap(final List<InventoryDetails> detailList) {
+		final Map<Integer, InventoryDetails> detailMap = new HashMap<>();
 
-		for (InventoryDetails inventoryDetails : detailList) {
+		for (final InventoryDetails inventoryDetails : detailList) {
 			detailMap.put(inventoryDetails.getGid(), inventoryDetails);
 		}
 
 		return detailMap;
 	}
 
-	protected List<InventoryDetails> filterBlankDetails(List<InventoryDetails> originalList) {
-		List<InventoryDetails> list = new ArrayList<>();
-
-		for (InventoryDetails inventoryDetails : originalList) {
-			if (inventoryDetails.getLocationId() != null) {
-				list.add(inventoryDetails);
-			}
-		}
-
-		return list;
-	}
-
 	@Override
-	public void validateInventoryDetails(List<InventoryDetails> inventoryDetailListFromDB, ImportedInventoryList importedInventoryList,
-			GermplasmListType germplasmListType) throws FieldbookException {
-		List<InventoryDetails> inventoryDetailListFromImport = importedInventoryList.getImportedInventoryDetails();
+	public void validateInventoryDetails(final List<InventoryDetails> inventoryDetailListFromDB, final ImportedInventoryList importedInventoryList,
+			final GermplasmListType germplasmListType) throws FieldbookException {
+		final List<InventoryDetails> inventoryDetailListFromImport = importedInventoryList.getImportedInventoryDetails();
 		this.validateImportedInventoryDetails(inventoryDetailListFromImport);
 		this.checkNumberOfEntries(inventoryDetailListFromDB, inventoryDetailListFromImport);
 		this.checkEntriesIfTheyMatch(inventoryDetailListFromImport, inventoryDetailListFromDB);
 	}
 
-	private void validateImportedInventoryDetails(List<InventoryDetails> inventoryDetailListFromImport) throws FieldbookException {
+	private void validateImportedInventoryDetails(final List<InventoryDetails> inventoryDetailListFromImport) throws FieldbookException {
 		String amountHeader = null;
-		for (InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
+		for (final InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
 			amountHeader = (amountHeader == null ? inventoryDetailsFromImport.getScaleName() : amountHeader);
 			if (inventoryDetailsFromImport.getLocationId() != null && inventoryDetailsFromImport.getScaleId() != null
 					&& inventoryDetailsFromImport.getAmount() != null) {
@@ -136,7 +121,7 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 
 	private String getAmountHeader(final String amountHeader, final List<InventoryDetails> inventoryDetailsList) {
 		if(amountHeader==null){
-			for(InventoryDetails inventoryDetails: inventoryDetailsList){
+			for(final InventoryDetails inventoryDetails: inventoryDetailsList){
 				if(inventoryDetails.getScaleName() != null) {
 					return inventoryDetails.getScaleName().toUpperCase();
 				}
@@ -146,15 +131,15 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 		return amountHeader.toUpperCase();
 	}
 
-	private void checkEntriesIfTheyMatch(List<InventoryDetails> inventoryDetailListFromImport,
-			List<InventoryDetails> inventoryDetailListFromDB) throws FieldbookException {
-		Map<Integer, InventoryDetails> entryIdInventoryMap = new HashMap<Integer, InventoryDetails>();
+	private void checkEntriesIfTheyMatch(final List<InventoryDetails> inventoryDetailListFromImport,
+			final List<InventoryDetails> inventoryDetailListFromDB) throws FieldbookException {
+		final Map<Integer, InventoryDetails> entryIdInventoryMap = new HashMap<>();
 
-		for (InventoryDetails inventoryDetailsFromDB : inventoryDetailListFromDB) {
+		for (final InventoryDetails inventoryDetailsFromDB : inventoryDetailListFromDB) {
 			entryIdInventoryMap.put(inventoryDetailsFromDB.getEntryId(), inventoryDetailsFromDB);
 		}
-		for (InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
-			InventoryDetails inventoryDetailsFromDB = entryIdInventoryMap.get(inventoryDetailsFromImport.getEntryId());
+		for (final InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
+			final InventoryDetails inventoryDetailsFromDB = entryIdInventoryMap.get(inventoryDetailsFromImport.getEntryId());
 			if (inventoryDetailsFromDB == null) {
 				throw new FieldbookException(this.messageSource.getMessage("common.error.import.entry.id.does.not.exist",
 						new Object[] {inventoryDetailsFromImport.getEntryId().toString()}, Locale.getDefault()));
@@ -167,8 +152,8 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 		}
 	}
 
-	protected void updateInventoryDetailsFromImport(InventoryDetails inventoryDetailsFromDB, InventoryDetails inventoryDetailsFromImport,
-			GermplasmListType germplasmListType) {
+	void updateInventoryDetailsFromImport(final InventoryDetails inventoryDetailsFromDB, final InventoryDetails inventoryDetailsFromImport,
+			final GermplasmListType germplasmListType) {
 		if (GermplasmListType.isCrosses(germplasmListType)) {
 			if (inventoryDetailsFromImport.getDuplicate() != null) {
 				inventoryDetailsFromDB.setDuplicate(inventoryDetailsFromImport.getDuplicate());
@@ -190,8 +175,8 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 		inventoryDetailsFromDB.setComment(inventoryDetailsFromImport.getComment());
 	}
 
-	private void checkNumberOfEntries(List<InventoryDetails> inventoryDetailListFromDB,
-			List<InventoryDetails> inventoryDetailListFromImport) throws FieldbookException {
+	private void checkNumberOfEntries(final List<InventoryDetails> inventoryDetailListFromDB,
+			final List<InventoryDetails> inventoryDetailListFromImport) throws FieldbookException {
 		if (inventoryDetailListFromImport.size() > inventoryDetailListFromDB.size()) {
 			throw new FieldbookException(this.messageSource.getMessage("common.error.import.incorrect.number.of.entries",
 					new Object[] {inventoryDetailListFromDB.size()}, Locale.getDefault()));
@@ -199,14 +184,14 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 	}
 
 	@Override
-	public boolean hasConflict(List<InventoryDetails> inventoryDetailListFromDB, ImportedInventoryList importedInventoryList) {
-		Map<Integer, InventoryDetails> entryIdInventoryMap = new HashMap<Integer, InventoryDetails>();
-		List<InventoryDetails> inventoryDetailListFromImport = importedInventoryList.getImportedInventoryDetails();
-		for (InventoryDetails inventoryDetailsFromDB : inventoryDetailListFromDB) {
+	public boolean hasConflict(final List<InventoryDetails> inventoryDetailListFromDB, final ImportedInventoryList importedInventoryList) {
+		final Map<Integer, InventoryDetails> entryIdInventoryMap = new HashMap<>();
+		final List<InventoryDetails> inventoryDetailListFromImport = importedInventoryList.getImportedInventoryDetails();
+		for (final InventoryDetails inventoryDetailsFromDB : inventoryDetailListFromDB) {
 			entryIdInventoryMap.put(inventoryDetailsFromDB.getEntryId(), inventoryDetailsFromDB);
 		}
-		for (InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
-			InventoryDetails inventoryDetailsFromDB = entryIdInventoryMap.get(inventoryDetailsFromImport.getEntryId());
+		for (final InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
+			final InventoryDetails inventoryDetailsFromDB = entryIdInventoryMap.get(inventoryDetailsFromImport.getEntryId());
 			if (this.checkConflict(inventoryDetailsFromImport, inventoryDetailsFromDB)) {
 				return true;
 			}
@@ -215,38 +200,35 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 	}
 
 	@Override
-	public void mergeInventoryDetails(List<InventoryDetails> inventoryDetailListFromDB, ImportedInventoryList importedInventoryList,
-			GermplasmListType germplasmListType) {
-		Map<Integer, InventoryDetails> entryIdInventoryMap = new HashMap<Integer, InventoryDetails>();
-		List<InventoryDetails> inventoryDetailListFromImport = importedInventoryList.getImportedInventoryDetails();
+	public void mergeInventoryDetails(final List<InventoryDetails> inventoryDetailListFromDB, final ImportedInventoryList importedInventoryList,
+			final GermplasmListType germplasmListType) {
+		final Map<Integer, InventoryDetails> entryIdInventoryMap = new HashMap<>();
+		final List<InventoryDetails> inventoryDetailListFromImport = importedInventoryList.getImportedInventoryDetails();
 
-		for (InventoryDetails inventoryDetailsFromDB : inventoryDetailListFromDB) {
+		for (final InventoryDetails inventoryDetailsFromDB : inventoryDetailListFromDB) {
 			entryIdInventoryMap.put(inventoryDetailsFromDB.getEntryId(), inventoryDetailsFromDB);
 		}
-		for (InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
-			InventoryDetails inventoryDetailsFromDB = entryIdInventoryMap.get(inventoryDetailsFromImport.getEntryId());
+		for (final InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
+			final InventoryDetails inventoryDetailsFromDB = entryIdInventoryMap.get(inventoryDetailsFromImport.getEntryId());
 			this.updateInventoryDetailsFromImport(inventoryDetailsFromDB, inventoryDetailsFromImport, germplasmListType);
 		}
 	}
 
-	public boolean checkConflict(InventoryDetails inventoryDetailsFromImport, InventoryDetails inventoryDetailsFromDB) {
-		boolean isLocationNotEq = inventoryDetailsFromImport.getLocationName() != null && inventoryDetailsFromDB.getLocationName() != null
+	private boolean checkConflict(final InventoryDetails inventoryDetailsFromImport, final InventoryDetails inventoryDetailsFromDB) {
+		final boolean isLocationNotEq = inventoryDetailsFromImport.getLocationName() != null && inventoryDetailsFromDB.getLocationName() != null
 				&& !inventoryDetailsFromImport.getLocationName().equals(inventoryDetailsFromDB.getLocationName());
 
-		boolean isAmountConflict = this.checkConflictAmount(inventoryDetailsFromImport, inventoryDetailsFromDB);
+		final boolean isAmountConflict = this.checkConflictAmount(inventoryDetailsFromImport, inventoryDetailsFromDB);
 
-		boolean isInventoryScaleNotEq = inventoryDetailsFromImport.getScaleName() != null && inventoryDetailsFromDB.getScaleName() != null
+		final boolean isInventoryScaleNotEq = inventoryDetailsFromImport.getScaleName() != null && inventoryDetailsFromDB.getScaleName() != null
 				&& !inventoryDetailsFromImport.getScaleName().equals(inventoryDetailsFromDB.getScaleName());
 
 		return isLocationNotEq || isAmountConflict || isInventoryScaleNotEq;
 	}
 
-	public boolean checkConflictAmount(InventoryDetails inventoryDetailsFromImport, InventoryDetails inventoryDetailsFromDB) {
-		if (inventoryDetailsFromDB.getAmount() != null && inventoryDetailsFromDB.getAmount() != 0
+	private boolean checkConflictAmount(final InventoryDetails inventoryDetailsFromImport, final InventoryDetails inventoryDetailsFromDB) {
+		return inventoryDetailsFromDB.getAmount() != null && inventoryDetailsFromDB.getAmount() != 0
 				&& inventoryDetailsFromImport.getAmount() != null && inventoryDetailsFromImport.getAmount() != 0
-				&& !inventoryDetailsFromImport.getAmount().toString().equals(inventoryDetailsFromDB.getAmount().toString())) {
-			return true;
-		}
-		return false;
+				&& !inventoryDetailsFromImport.getAmount().toString().equals(inventoryDetailsFromDB.getAmount().toString());
 	}
 }

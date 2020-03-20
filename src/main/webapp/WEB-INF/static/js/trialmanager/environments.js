@@ -368,7 +368,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				addCellClickHandler();
 
 				function addCellClickHandler() {
-					$table.off('click').on('click', 'td.environmentVariable', cellClickHandler);
+					$table.off('click').on('click', 'td.instance-editable-cell', cellClickHandler);
 				}
 
 				function cellClickHandler() {
@@ -460,23 +460,29 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						editor.remove();
 						dtCell.data($scope.renderDisplayValue(variableSettings.vals()[variableId], valueContainer[variableId]));
 						// Restore handler
+						$(cell).addClass('instance-editable-cell');
 						addCellClickHandler();
 					}
 
 					$timeout(function () {
-						/**
-						 * Initiate interaction with the input so that clicks on other parts of the page
-						 * will trigger blur immediately. Also necessary to initiate datepicker
-						 * This also avoids temporary click handler on body
-						 * FIXME is there a better way?
-						 */
-						$(cell).find('a.ui-select-match, input:not([type=radio], [type=checkbox])').click().focus();
-
-						/** Remove the Location inline editor when the document is clicked. **/
-						$document.off('click').on('click', () => {
-							refreshDisplay();
-							$document.off('click');
-						});
+						if (variableId === parseInt(LOCATION_ID)) {
+							/** Remove the instance-editable-cell class to exclude the cell from adding click handler, to not interfere
+							 * with location inline editor.
+							 **/
+							$(cell).removeClass('instance-editable-cell');
+							/** Remove the inline editor for Location when the other table cell is clicked. **/
+							$table.off('click').on('click', 'td.instance-editable-cell', (e) => {
+								refreshDisplay();
+							});
+						} else {
+							/**
+							 * Initiate interaction with the input so that clicks on other parts of the page
+							 * will trigger blur immediately. Also necessary to initiate datepicker
+							 * This also avoids temporary click handler on body
+							 * FIXME is there a better way?
+							 */
+							$(cell).find('a.ui-select-match, input:not([type=radio], [type=checkbox])').click().focus();
+						}
 					}, 100);
 
 					/**

@@ -82,10 +82,10 @@
 							  class="glyphicon glyphicon-minus-sign fbk-delete-sign" ng-model-options="{ debounce: 500 }">&nbsp;</span>
 					</td>
 					<td>{{instance.managementDetailValues[TRIAL_INSTANCE_NO_INDEX]}}</td>
-					<td class="environmentVariable" ng-repeat="key in settings.managementDetails.keys() track by $index" ng-hide="settings.managementDetails.val(key).hidden">
+					<td class="instance-editable-cell" ng-repeat="key in settings.managementDetails.keys() track by $index" ng-hide="settings.managementDetails.val(key).hidden">
 						{{renderDisplayValue(settings.managementDetails.val(key), instance.managementDetailValues[key])}}
 					</td>
-					<td class="environmentVariable" ng-repeat="key in settings.trialConditionDetails.keys() track by $index">
+					<td class="instance-editable-cell" ng-repeat="key in settings.trialConditionDetails.keys() track by $index">
 						{{renderDisplayValue(settings.trialConditionDetails.val(key), instance.trialDetailValues[key])}}
 					</td>
 				</tr>

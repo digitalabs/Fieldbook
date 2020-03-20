@@ -859,6 +859,28 @@ public class UserFieldmap implements Serializable {
 	}
 
 	/**
+	 * Gets the total number of selected plots.
+	 *
+	 * @return the total number of selected plots
+	 */
+	public long getTotalNumberOfSelectedPlots() {
+		long total = 0;
+		List<FieldMapInfo> fieldMapTemp = this.getSelectedFieldMapsToBeAdded();
+		if (fieldMapTemp == null) {
+			fieldMapTemp = this.getSelectedFieldMaps();
+		}
+		for (final FieldMapInfo info : fieldMapTemp) {
+			for (final FieldMapDatasetInfo dataset : info.getDatasets()) {
+				for (final FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+					total += trial.getPlotCount();
+				}
+			}
+		}
+
+		return total;
+	}
+
+	/**
 	 * Gets the selected fieldmap list.
 	 *
 	 * @return the selectedFieldmapList

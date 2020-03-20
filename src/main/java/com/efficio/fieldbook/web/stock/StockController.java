@@ -264,12 +264,14 @@ public class StockController extends AbstractBaseFieldbookController {
 					.calculateNextStockIDPrefix(generationSettings.getBreederIdentifier(), generationSettings.getSeparator());
 			final Map<Integer, InventoryDetails> inventoryDetailMap = new HashMap<>();
 
+			final Integer currentUserId = this.getCurrentIbdbUserId();
+			final Integer unspecifiedLocationId = this.getUnspecifiedLocationId();
 			for (final Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
 				final InventoryDetails details = new InventoryDetails();
 				details.setAmount(0d);
-				details.setLocationId(null);
+				details.setLocationId(unspecifiedLocationId);
 				details.setScaleId(null);
-				details.setUserId(this.getCurrentIbdbUserId());
+				details.setUserId(currentUserId);
 				details.setGid(entry.getKey().getGermplasmId());
 				details.setSourceId(listDataID);
 				details.setInventoryID(prefix + entry.getKey().getEntryId());

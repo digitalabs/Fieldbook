@@ -210,7 +210,7 @@ public abstract class AbstractBaseFieldbookController {
 	}
 	
 	public void setIsSuperAdminAttribute(final Model model) {
-		model.addAttribute("isSuperAdmin", authorizationService.isSuperAdminUser());
+		model.addAttribute("isSuperAdmin", this.authorizationService.isSuperAdminUser());
 	}
 
 	public void setVariableDataManager(final OntologyVariableDataManager variableDataManager) {

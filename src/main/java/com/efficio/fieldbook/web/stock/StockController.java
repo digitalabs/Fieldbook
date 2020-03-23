@@ -48,10 +48,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 4/24/2015 Time: 4:38 PM
@@ -423,9 +426,9 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@RequestMapping(value = "/ajax/{listId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public String showAjax(@ModelAttribute("seedStoreForm") final SeedStoreForm form, @PathVariable final Integer listId,
-			@RequestBody final Integer[] entryIdList, final Model model, final HttpSession session) {
+			@RequestBody final String[] stockIdsForUpdate, final Model model, final HttpSession session) {
 		form.setListId(listId);
-		form.setEntryIdList(Joiner.on(",").join(entryIdList));
+		form.setStockIdsForUpdate(Joiner.on(",").join(stockIdsForUpdate));
 		return super.showAjaxPage(model, "Inventory/addLotsModal");
 	}
 
@@ -434,25 +437,35 @@ public class StockController extends AbstractBaseFieldbookController {
 	public Map<String, Object> updateLots(@ModelAttribute("seedStoreForm") final SeedStoreForm form, final Model model,
 			final Locale local) {
 		final Map<String, Object> result = new HashMap<>();
-		final List<Integer> entryIdList = new ArrayList<>();
+		final List<String> stockIdsForUpdate = new ArrayList<>(Arrays.asList(form.getStockIdsForUpdate().split(",")));
 
-		for (final String gid : form.getEntryIdList().split(",")) {
-			entryIdList.add(Integer.parseInt(gid));
-		}
-
-		// update of lots here
 		final Integer listId = form.getListId();
+		final Double amount = form.getAmount();
+		final int inventoryLocationId = form.getInventoryLocationId();
+		final int inventoryScaleId = form.getInventoryScaleId();
+		final String inventoryComments = form.getInventoryComments();
+
+		// Check that among lots to be updated, we will not be updating the amount of a lot that has multiple transactions already
+		final Map<String, Double> stockIdsWithMultipleTransactions = this.inventoryDataManager.getStockIdsWithMultipleTransactions(listId);
+		final Set<Double> amountsInDb =
+			stockIdsWithMultipleTransactions.entrySet().stream().filter(e -> stockIdsForUpdate.contains(e.getKey()))
+				.map(Map.Entry::getValue).collect(Collectors.toSet());
+		for (final Double amountInDb : amountsInDb) {
+			if (!amount.equals(amountInDb)) {
+				result.put(StockController.HAS_ERROR, true);
+				result.put(StockController.ERROR_MESSAGE,
+					this.messageSource.getMessage("error.inventory.amount.cannot.be.updated", null, local));
+				result.put(StockController.IS_SUCCESS, StockController.FAILURE);
+				return result;
+			}
+		}
 
 		try {
 			final List<InventoryDetails> inventoryDetailListFromDB = this.inventoryService.getInventoryListByListDataProjectListId(listId);
 
-			final Double amount = form.getAmount();
-			final int inventoryLocationId = form.getInventoryLocationId();
-			final int inventoryScaleId = form.getInventoryScaleId();
-			final String inventoryComments = form.getInventoryComments();
-
+			// update of lots here
 			for (final InventoryDetails inventoryDetail : inventoryDetailListFromDB) {
-				if (entryIdList.contains(inventoryDetail.getEntryId())) {
+				if (stockIdsForUpdate.contains(inventoryDetail.getInventoryID())) {
 					inventoryDetail.setAmount(amount);
 					inventoryDetail.setLocationId(inventoryLocationId);
 					inventoryDetail.setScaleId(inventoryScaleId);
@@ -468,7 +481,7 @@ public class StockController extends AbstractBaseFieldbookController {
 
 		} catch (final MiddlewareQueryException e) {
 			StockController.LOG.error(e.getMessage(), e);
-			result.put("message", "error: " + e.getMessage());
+			result.put(StockController.ERROR_MESSAGE, "error: " + e.getMessage());
 			result.put("success", 0);
 		}
 

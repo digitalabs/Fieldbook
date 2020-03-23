@@ -49,8 +49,7 @@ public class SeedStoreForm {
 	/** The gid list. */
 	private String gidList;
 
-	/** The entry Id list */
-	private String entryIdList;
+	private String stockIdsForUpdate;
 
 	/** The list id. */
 	private Integer listId;
@@ -281,12 +280,12 @@ public class SeedStoreForm {
 		this.gidList = gidList;
 	}
 
-	public String getEntryIdList() {
-		return this.entryIdList;
+	public String getStockIdsForUpdate() {
+		return this.stockIdsForUpdate;
 	}
 
-	public void setEntryIdList(String entryIdList) {
-		this.entryIdList = entryIdList;
+	public void setStockIdsForUpdate(String stockIdsForUpdate) {
+		this.stockIdsForUpdate = stockIdsForUpdate;
 	}
 
 	/**

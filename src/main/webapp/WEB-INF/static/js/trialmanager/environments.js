@@ -466,13 +466,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 					$timeout(function () {
 						if (variableId === parseInt(LOCATION_ID)) {
-							/** Remove the instance-editable-cell class to exclude the cell from adding click handler, to not interfere
-							 * with location inline editor.
-							 **/
-							$(cell).removeClass('instance-editable-cell');
-							/** Remove the inline editor for Location when the other table cell is clicked. **/
-							$table.off('click').on('click', 'td.instance-editable-cell', (e) => {
+							/** Remove the inline editor for Location when the other part of the page clicked. We can't apply onblur event on location
+							 * combobox because the user would need to use the location filter radio and checkbox. **/
+							$document.off('click').on('click', () => {
 								refreshDisplay();
+								$document.off('click');
 							});
 						} else {
 							/**
@@ -484,14 +482,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 							$(cell).find('a.ui-select-match, input:not([type=radio], [type=checkbox])').click().focus();
 						}
 					}, 100);
-
-					/**
-					 * Remove handler to not interfere with inline editor
-					 * will be restored after saving/update
-					 */
-					$table.off('click');
 				}
-
 			}
 
 		}]).directive('instanceInlineEditor', ['_', function (_) {
@@ -511,6 +502,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					$scope.initializeDropdown();
 					$scope.updateDropdownValuesFavorites();
 				}
+				// Stop bubbling of click event so to not interfere with
+				// document body click event.
+				$(element).click(function (event) {
+					event.stopPropagation();
+				});
 			},
 			controller: function ($scope, LOCATION_ID, UNSPECIFIED_LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http) {
 
@@ -609,6 +605,12 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					}
 					$(el).datepicker('setDate', parsedDate);
 				};
+
+				// Stop bubbling of click event on datepicker selector so to not interfere with
+				// document body click event.
+				$("#ui-datepicker-div").click(function (event) {
+					event.stopPropagation();
+				});
 			}
 		};
 	}).factory('DTLoadingTemplate', function () {

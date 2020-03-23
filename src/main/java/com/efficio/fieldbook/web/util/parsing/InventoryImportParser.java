@@ -8,6 +8,7 @@ import org.generationcp.commons.parsing.WorkbookRowConverter;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.commons.parsing.validation.BulkComplValidator;
 import org.generationcp.commons.parsing.validation.CommaDelimitedValueValidator;
+import org.generationcp.commons.parsing.validation.InventoryAmountUpdateValidator;
 import org.generationcp.commons.parsing.validation.NonEmptyValidator;
 import org.generationcp.commons.parsing.validation.ParseValidationMap;
 import org.generationcp.commons.parsing.validation.ValueRangeValidator;
@@ -128,7 +129,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		this.importedInventoryList = new ImportedInventoryList(detailList, this.originalFilename);
 	}
 
-	private Map<String, Location> convertToLocationMap(final List<Location> locationList) {
+	Map<String, Location> convertToLocationMap(final List<Location> locationList) {
 		final Map<String, Location> locationMap = new HashMap<>();
 
 		for (final Location location : locationList) {
@@ -159,7 +160,10 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 				validationMap.addValidation(index, bulkWithValidator);
 			} else if (InventoryHeaderLabels.BULK_COMPL.getName().equals(header)) {
 				validationMap.addValidation(index,
-						new BulkComplValidator(InventoryHeaderLabels.BULK_COMPL.ordinal(), InventoryHeaderLabels.BULK_WITH.ordinal()));
+						new BulkComplValidator(InventoryHeaderLabels.BULK_WITH.ordinal()));
+			} else if (InventoryHeaderLabels.STOCKID.getName().equals(header)) {
+				validationMap.addValidation(index,
+					new InventoryAmountUpdateValidator(InventoryHeaderLabels.AMOUNT.ordinal(), this.inventoryDataManager.getStockIdsWithMultipleTransactions(this.listId)));
 			}
 		}
 		return validationMap;
@@ -183,17 +187,8 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		return locationList;
 	}
 
-	List<String> buildAllowedStockList() {
-		List<String> stockIDList = new ArrayList<>();
-
-		// TODO Remove exception swallowing
-		try {
-			stockIDList = this.inventoryDataManager.getStockIdsByListDataProjectListId(this.listId);
-		} catch (final MiddlewareQueryException e) {
-			InventoryImportParser.LOG.error(e.getMessage(), e);
-		}
-
-		return stockIDList;
+	private List<String> buildAllowedStockList() {
+		return  this.inventoryDataManager.getStockIdsByListDataProjectListId(this.listId);
 	}
 
 	public static class InventoryRowConverter extends WorkbookRowConverter<InventoryDetails> {

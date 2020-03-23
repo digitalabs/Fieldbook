@@ -1,11 +1,8 @@
 
 package com.efficio.fieldbook.util.parsing;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
+import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.WorkbookRowConverter;
@@ -25,13 +22,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
-import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 3/12/2015 Time: 5:13 PM
  */
-
+// TODO move this class to Commons
 @RunWith(MockitoJUnitRunner.class)
 public class WorkbookRowConverterTest {
 
@@ -60,7 +60,8 @@ public class WorkbookRowConverterTest {
 
 		validatorList.add(validator);
 
-		this.dut.applyValidation(WorkbookRowConverterTest.TEST_VALUE, null, WorkbookRowConverterTest.TEST_COLUMN, validatorList);
+		this.dut.applyValidation(WorkbookRowConverterTest.TEST_VALUE, WorkbookRowConverterTest.TEST_COLUMN, validatorList,
+			Collections.emptyMap());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -72,7 +73,7 @@ public class WorkbookRowConverterTest {
 
 		validatorList.add(validator);
 
-		this.dut.applyValidation(WorkbookRowConverterTest.TEST_VALUE, null, WorkbookRowConverterTest.TEST_COLUMN, validatorList);
+		this.dut.applyValidation(WorkbookRowConverterTest.TEST_VALUE, WorkbookRowConverterTest.TEST_COLUMN, validatorList, Collections.emptyMap());
 	}
 
 	@Test

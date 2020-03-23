@@ -5,9 +5,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', '$q', 'TrialManagerDataService', '$uibModal', '$stateParams',
 		'$http', 'DTOptionsBuilder', 'LOCATION_ID', 'UNSPECIFIED_LOCATION_ID', '$timeout', 'studyInstanceService', 'studyStateService', 'derivedVariableService', 'studyContext',
-		'datasetService', '$compile', '$document',
+		'datasetService', '$compile',
 		function ($scope, $q, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, UNSPECIFIED_LOCATION_ID, $timeout, studyInstanceService,
-				  studyStateService, derivedVariableService, studyContext, datasetService, $compile, $document) {
+				  studyStateService, derivedVariableService, studyContext, datasetService, $compile) {
 
 			var ctrl = this;
 			var tableId = '#environment-table';
@@ -466,11 +466,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 					$timeout(function () {
 						if (variableId === parseInt(LOCATION_ID)) {
-							/** Remove the inline editor for Location when the other part of the page clicked. We can't apply onblur event on location
-							 * combobox because the user would need to use the location filter radio and checkbox. **/
-							$document.off('click').on('click', () => {
+							/** Remove the inline editor for Location when the other part of the environment tab is clicked. We can't apply onblur event on location
+							 * combobox because the user would need to use the location filter ('breeding location/all location' radio option and 'use favorite' checkbox). **/
+							$("[ui-view*='environment']").off('click').on('click', () => {
 								refreshDisplay();
-								$document.off('click');
+								$("[ui-view*='environment']").off('click');
 							});
 						} else {
 							/**
@@ -503,7 +503,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					$scope.updateDropdownValuesFavorites();
 				}
 				// Stop bubbling of click event so to not interfere with
-				// document body click event.
+				// the container's click event.
 				$(element).click(function (event) {
 					event.stopPropagation();
 				});
@@ -606,8 +606,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					$(el).datepicker('setDate', parsedDate);
 				};
 
-				// Stop bubbling of click event on datepicker selector so to not interfere with
-				// document body click event.
+				// Stop bubbling of click event on datepicker selector so to not interfere with the container's
+				// click event.
 				$("#ui-datepicker-div").click(function (event) {
 					event.stopPropagation();
 				});

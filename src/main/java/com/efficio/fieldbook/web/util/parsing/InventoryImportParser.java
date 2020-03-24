@@ -141,6 +141,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 	ParseValidationMap setupIndividualColumnValidation() {
 		final ParseValidationMap validationMap = new ParseValidationMap();
+		Integer amountHeaderIndex = 0;
 		for (int index = 0; index < this.headers.length; index++) {
 			final String header = this.headers[index];
 			if (InventoryHeaderLabels.ENTRY.getName().equals(header) || InventoryHeaderLabels.GID.getName().equals(header)) {
@@ -151,6 +152,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 				locationValidator.setValidationErrorMessage("error.import.location.invalid.value");
 				validationMap.addValidation(index, locationValidator);
 			} else if (InventoryHeaderLabels.AMOUNT.getName().equals(header)) {
+				amountHeaderIndex = index;
 				final ValueTypeValidator amountValidator = new ValueTypeValidator(Double.class);
 				amountValidator.setValidationErrorMessage("error.import.amount.must.be.numeric");
 				validationMap.addValidation(index, amountValidator);
@@ -163,7 +165,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 						new BulkComplValidator(InventoryHeaderLabels.BULK_WITH.ordinal()));
 			} else if (InventoryHeaderLabels.STOCKID.getName().equals(header)) {
 				validationMap.addValidation(index,
-					new InventoryAmountUpdateValidator(InventoryHeaderLabels.AMOUNT.ordinal(), this.inventoryDataManager.getStockIdsWithMultipleTransactions(this.listId)));
+					new InventoryAmountUpdateValidator(amountHeaderIndex, this.inventoryDataManager.getStockIdsWithMultipleTransactions(this.listId)));
 			}
 		}
 		return validationMap;

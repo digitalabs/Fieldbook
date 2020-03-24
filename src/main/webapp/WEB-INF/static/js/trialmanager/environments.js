@@ -387,6 +387,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 				function createInlineEditor($table, dtCell, cell, instance, variableId) {
 
+					var oldValue = dtCell.data();
 					var isManagementDetailVariable = instance.managementDetailValues.hasOwnProperty(variableId);
 					var instanceId = instance.instanceId;
 					var variableSettings;
@@ -432,12 +433,24 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					$(cell).append(editor);
 
 					function updateInline() {
+
+						var newValue = valueContainer[variableId];
+
+						// Do not update if data did not change.
+						if (angular.equals(oldValue, newValue)) {
+							refreshDisplay();
+							return;
+						}
+
 						if (!instanceDataIdMap[variableId]) {
 							studyInstanceService.addInstanceData({
 								instanceId: instanceId,
 								variableId: variableId,
-								value: valueContainer[variableId]
+								value: newValue
 							}).then(function (instanceData) {
+
+								// Add the created instanceDataId from the server to the map
+								// so that it can be used to update the instance data later.
 								instanceDataIdMap[variableId] = instanceData.instanceDataId;
 								refreshDisplay();
 							});
@@ -446,11 +459,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 								instanceId: instanceId,
 								variableId: variableId,
 								instanceDataId: instanceDataIdMap[variableId],
-								value: valueContainer[variableId]
+								value: newValue
 							}).then(function (instanceData) {
 								// Restore handler
 								refreshDisplay();
-								addCellClickHandler();
 							});
 						}
 					}
@@ -460,7 +472,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						editor.remove();
 						dtCell.data($scope.renderDisplayValue(variableSettings.vals()[variableId], valueContainer[variableId]));
 						// Restore handler
-						$(cell).addClass('instance-editable-cell');
 						addCellClickHandler();
 					}
 

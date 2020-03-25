@@ -12,6 +12,8 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Name;
+import org.generationcp.middleware.pojos.workbench.CropType;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
 import org.generationcp.middleware.service.api.study.StudyService;
 import org.junit.Assert;
@@ -72,6 +74,9 @@ public class CrossingTemplateParserTest {
 			.getMessage("no.list.data.for.plot", new Object[] {ArgumentMatchers.eq(STUDY_NAME), ArgumentMatchers.anyInt()},
 				ArgumentMatchers.eq(LocaleContextHolder.getLocale()));
 		Mockito.doReturn(CrossingTemplateParserTest.PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
+		final Project project = new Project();
+		project.setCropType(new CropType("scmaize"));
+		Mockito.doReturn(project).when(this.contextUtil).getProjectInContext();
 	}
 
 	@Test

@@ -23,7 +23,10 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.LocationDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +47,9 @@ public abstract class AbstractBaseFieldbookController {
 	public static final String ANGULAR_BASE_TEMPLATE_NAME = "/template/ng-base-template";
 	public static final String ERROR_TEMPLATE_NAME = "/template/error-template";
 	public static final String TEMPLATE_NAME_ATTRIBUTE = "templateName";
+
+	@Resource
+	protected LocationDataManager locationDataManager;
 
 	@Resource
 	protected ContextUtil contextUtil;
@@ -166,6 +172,16 @@ public abstract class AbstractBaseFieldbookController {
 		this.paginationListSelection = paginationListSelection;
 	}
 
+	protected Integer getUnspecifiedLocationId() {
+
+		final List<Location> locations = this.locationDataManager.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
+		if (!locations.isEmpty()) {
+			return locations.get(0).getLocid();
+		}
+		return 0;
+
+	}
+
 	public void setContextUtil(final ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
 	}
@@ -194,7 +210,7 @@ public abstract class AbstractBaseFieldbookController {
 	}
 	
 	public void setIsSuperAdminAttribute(final Model model) {
-		model.addAttribute("isSuperAdmin", authorizationService.isSuperAdminUser());
+		model.addAttribute("isSuperAdmin", this.authorizationService.isSuperAdminUser());
 	}
 
 	public void setVariableDataManager(final OntologyVariableDataManager variableDataManager) {

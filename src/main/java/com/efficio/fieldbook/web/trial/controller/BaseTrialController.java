@@ -43,10 +43,8 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.manager.api.LocationDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.Util;
@@ -67,9 +65,6 @@ import java.util.StringTokenizer;
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
 public abstract class BaseTrialController extends SettingsController {
-
-	@Resource
-	protected LocationDataManager locationDataManager;
 
 	@Resource
 	protected UserService userService;
@@ -829,16 +824,6 @@ public abstract class BaseTrialController extends SettingsController {
 				}
 			}
 		}
-	}
-
-	Integer getUnspecifiedLocationId() {
-
-		final List<Location> locations = this.locationDataManager.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
-		if (!locations.isEmpty()) {
-			return locations.get(0).getLocid();
-		}
-		return 0;
-
 	}
 
 	private ImmutableMap<Integer, SettingDetail> createMapOfTraitsAndSelectionVariatesFromUserSelection() {

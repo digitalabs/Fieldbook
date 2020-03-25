@@ -134,8 +134,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 				function renderByDataType(settingVariable, value) {
 
-					// If variable is LOCATION_ID variable or categorical, show the description of the selected possible value.
-					if (settingVariable.variable.dataTypeId === 1130 || settingVariable.variable.cvTermId === parseInt(LOCATION_ID)) {
+					var categoricalDataTypeId = 1130;
+					var personDataTypeId = 1131;
+
+					// If variable is LOCATION_ID variable, person or categorical, show the description of the selected possible value.
+					if (settingVariable.variable.dataTypeId === categoricalDataTypeId ||
+						settingVariable.variable.dataTypeId === personDataTypeId ||
+						settingVariable.variable.cvTermId === parseInt(LOCATION_ID)) {
 						return renderCategoricalValue(settingVariable, value);
 					} else {
 						return EscapeHTML.escape(value);
@@ -151,11 +156,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				}
 
 			}
-
-			$scope.initiateManageLocationModal = function () {
-				//TODO $scope.variableDefinition.locationUpdated = false;
-				openManageLocations();
-			};
 
 			TrialManagerDataService.onUpdateData('environments', function () {
 				$scope.temp.numberOfInstances = $scope.instanceInfo.numberOfInstances;
@@ -286,6 +286,69 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.instanceInfo.instances.push(instance);
 			};
 
+			$scope.initiateManageLocationModal = function () {
+				openManageLocations();
+				$(document).off('location-update').on('location-update', $scope.updateLocationValues);
+			};
+
+			// Re-populate the possible values for Location variable
+			$scope.updateLocationValues = function () {
+				// FIXME: Move this service to BMSAPI
+				$http.get('/Fieldbook/locations/getLocations').then(function (returnVal) {
+					if (returnVal.data.success === '1') {
+						
+						var locationSettingVariable = $scope.settings.managementDetails.m_vals[LOCATION_ID];
+						// clear and copy of array is performed so as to preserve previous reference
+						// and have changes applied to all components with a copy of the previous reference
+						clearArray(locationSettingVariable.possibleValues);
+						clearArray(locationSettingVariable.possibleValuesFavorite);
+						clearArray(locationSettingVariable.allFavoriteValues);
+						clearArray(locationSettingVariable.allValues);
+
+						locationSettingVariable.possibleValues.push.apply(locationSettingVariable.possibleValues,
+							convertLocationsToPossibleValues(returnVal.data.allBreedingLocations));
+						locationSettingVariable.possibleValuesFavorite.push.apply(
+							locationSettingVariable.possibleValuesFavorite,
+							convertLocationsToPossibleValues(returnVal.data.allBreedingFavoritesLocations));
+						locationSettingVariable.allFavoriteValues.push.apply(
+							locationSettingVariable.allFavoriteValues,
+							convertLocationsToPossibleValues(returnVal.data.favoriteLocations));
+						locationSettingVariable.allValues.push.apply(
+							locationSettingVariable.allValues,
+							convertLocationsToPossibleValues(returnVal.data.allLocations));
+
+						ctrl.createPossibleValuesById($scope.settings.managementDetails.m_vals[LOCATION_ID]);
+					}
+				});
+				
+				function clearArray (targetArray) {
+					// current internet research suggests that this is the fastest way of clearing an array
+					while (targetArray.length > 0) {
+						targetArray.pop();
+					}
+				}
+
+				function convertLocationsToPossibleValues(locations) {
+					var possibleValues = [];
+
+					$.each(locations, function (key, value) {
+						var locNameDisplay = value.lname;
+						if (value.labbr != null && value.labbr !== '') {
+							locNameDisplay += ' - (' + value.labbr + ')';
+						}
+
+						possibleValues.push({
+							id: value.locid,
+							key: value.locid+'',
+							name: locNameDisplay,
+							description: locNameDisplay
+						});
+					});
+
+					return possibleValues;
+				}
+			};
+
 			ctrl.updateInstanceVariables = function (type, entriesIncreased) {
 
 				var settingDetailSource = null;
@@ -326,21 +389,23 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			ctrl.initializePossibleValuesMap = function initializePossibleValuesMap() {
 
 				angular.forEach($scope.settings.managementDetails.vals(), function (settingVariable) {
-					process(settingVariable);
+					ctrl.createPossibleValuesById(settingVariable);
 				});
 				angular.forEach($scope.settings.trialConditionDetails.vals(), function (settingVariable) {
-					process(settingVariable);
+					ctrl.createPossibleValuesById(settingVariable);
 				});
 
-				function process(settingVariable) {
-					if (settingVariable.allValues && settingVariable.allValues.length > 0 && !settingVariable.hasOwnProperty('possibleValuesById')) {
-						settingVariable.possibleValuesById = {};
-						angular.forEach(settingVariable.allValues, function (possibleValue) {
-							settingVariable.possibleValuesById[possibleValue.id] = possibleValue;
-						});
-					}
-				}
+
 			};
+
+			ctrl.createPossibleValuesById = function (settingVariable) {
+				if (settingVariable.allValues && settingVariable.allValues.length > 0) {
+					settingVariable.possibleValuesById = {};
+					angular.forEach(settingVariable.allValues, function (possibleValue) {
+						settingVariable.possibleValuesById[possibleValue.id] = possibleValue;
+					});
+				}
+			}
 
 			// Wrap 'showAlertMessage' global function to a controller function so that
 			// we can mock it in unit test.

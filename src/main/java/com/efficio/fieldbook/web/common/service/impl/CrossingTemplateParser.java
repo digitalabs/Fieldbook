@@ -226,7 +226,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			germplasm.setGid(Integer.MAX_VALUE);
 			germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 			germplasm.setGpid2(cross.getMaleParents().get(0).getGid());
-			final String crossString = this.crossingService.getCross(germplasm, cross, "/");
+			final String crossString = this.crossingService.getCross(germplasm, cross, "/", cropName);
 			cross.setCross(crossString);
 		}
 	}

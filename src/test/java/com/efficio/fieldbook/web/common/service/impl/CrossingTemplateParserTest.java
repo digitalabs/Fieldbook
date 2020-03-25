@@ -12,7 +12,6 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Name;
-import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
 import org.generationcp.middleware.service.api.study.StudyService;
 import org.junit.Assert;
@@ -310,7 +309,7 @@ public class CrossingTemplateParserTest {
 		Mockito.when(this.studyService.getStudyGermplasmListWithPlotInformation(2, malePlotNumbers))
 			.thenReturn(this.createImportedCrossParents(malePlotNumbers, CrossingTemplateParserTest.MALE_STUDY_NAME));
 		Mockito.when(this.crossingService.getCross(ArgumentMatchers.any(Germplasm.class), ArgumentMatchers.any(ImportedCross.class),
-			ArgumentMatchers.eq("/"))).thenReturn("cross");
+			ArgumentMatchers.eq("/"), ArgumentMatchers.eq("scmaize"))).thenReturn("cross");
 
 		try {
 			this.templateParser.lookupCrossParents(CrossingTemplateParserTest.FEMALE_STUDY_NAME, femalePlotNumbers, maleNurseryMap,
@@ -363,7 +362,7 @@ public class CrossingTemplateParserTest {
 		Mockito.when(this.studyService.getStudyGermplasmListWithPlotInformation(2, malePlotNumbers))
 			.thenReturn(this.createImportedCrossParents(malePlotNumbers, CrossingTemplateParserTest.MALE_STUDY_NAME));
 		Mockito.when(this.crossingService.getCross(ArgumentMatchers.any(Germplasm.class), ArgumentMatchers.any(ImportedCross.class),
-			ArgumentMatchers.eq("/"))).thenReturn("cross");
+			ArgumentMatchers.eq("/"), ArgumentMatchers.eq("scmaize"))).thenReturn("cross");
 
 		try {
 			this.templateParser.lookupCrossParents(CrossingTemplateParserTest.FEMALE_STUDY_NAME, femalePlotNumbers, maleNurseryMap,
@@ -403,7 +402,7 @@ public class CrossingTemplateParserTest {
 		Mockito.when(this.studyService.getStudyGermplasmListWithPlotInformation(2, malePlotNumbers))
 			.thenReturn(this.createImportedCrossParents(new HashSet<>(Arrays.asList(1, 2, 3, 4)), CrossingTemplateParserTest.MALE_STUDY_NAME));
 		Mockito.when(this.crossingService.getCross(ArgumentMatchers.any(Germplasm.class), ArgumentMatchers.any(ImportedCross.class),
-			ArgumentMatchers.eq("/"))).thenReturn("cross");
+			ArgumentMatchers.eq("/"), ArgumentMatchers.eq("scmaize"))).thenReturn("cross");
 
 		try {
 			this.templateParser.lookupCrossParents(CrossingTemplateParserTest.FEMALE_STUDY_NAME, femalePlotNumbers, maleNurseryMap,

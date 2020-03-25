@@ -106,7 +106,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				.withButtons($scope.buttonsTopWithLocation.slice())
 				.withOption('scrollX', true)
 				.withOption('scrollCollapse', true)
-				.withOption('deferRender', true);
+				.withOption('deferRender', true)
+				.withOption('stateSave', true);
 
 			$scope.dtOptions.drawCallback = function () {
 				var api = $(this).DataTable();

@@ -6,7 +6,6 @@ import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
@@ -25,9 +24,11 @@ import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 
@@ -71,6 +73,12 @@ public class NamingConventionServiceImplTest {
 	@Mock
 	private SeedSourceGenerator seedSourceGenerator;
 
+	@Mock
+	private StudyDataManager studyDataManager;
+
+	@Mock
+	private DatasetService datasetService;
+
 	@InjectMocks
 	private final NamingConventionServiceImpl namingConventionService = new NamingConventionServiceImpl();
 
@@ -91,6 +99,7 @@ public class NamingConventionServiceImplTest {
 		final StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setStudyType(StudyTypeDto.getNurseryDto());
 		studyDetails.setStudyName("STUDY:ABC");
+		studyDetails.setId(new Random().nextInt());
 		this.workbook.setStudyDetails(studyDetails);
 
 	}
@@ -153,8 +162,10 @@ public class NamingConventionServiceImplTest {
 		Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(Lists.newArrayList(ruleGeneratedName1, ruleGeneratedName2));
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
 		Mockito.when(this.seedSourceGenerator.
-			generateSeedSourceForCross(ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(Pair.class),
-				ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(ImportedCross.class))).thenReturn(testSeedSource);
+			generateSeedSource(ArgumentMatchers.any(),
+				ArgumentMatchers.any(),
+				ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.eq("STUDY:ABC"),
+				ArgumentMatchers.any(), ArgumentMatchers.isNull(), ArgumentMatchers.anyList())).thenReturn(testSeedSource);
 
 
 		final AdvancingStudy advancingParameters = new AdvancingStudy();
@@ -280,10 +291,12 @@ public class NamingConventionServiceImplTest {
                 Lists.newArrayList(ruleGeneratedName));
 		final String testSeedSource = "MEX-DrySeason-N1-1-2";
 		Mockito.when(this.seedSourceGenerator.
-			generateSeedSourceForCross(ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(Pair.class),
-				ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(ImportedCross.class))).thenReturn(testSeedSource);
+			generateSeedSource(ArgumentMatchers.any(),
+				ArgumentMatchers.any(),
+				ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.eq("STUDY:ABC"),
+				ArgumentMatchers.any(), ArgumentMatchers.isNull(), ArgumentMatchers.anyList())).thenReturn(testSeedSource);
 
-        final AdvancingStudy info = new AdvancingStudy();
+		final AdvancingStudy info = new AdvancingStudy();
         info.setMethodChoice("1");
         info.setLineChoice("1");
         info.setLineSelected("1");

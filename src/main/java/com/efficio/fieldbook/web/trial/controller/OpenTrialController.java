@@ -18,6 +18,7 @@ import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
+import org.generationcp.middleware.domain.dms.DatasetBasicDTO;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.ExperimentDesignType;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -339,7 +340,7 @@ public class OpenTrialController extends BaseTrialController {
 		final List<SampleListDTO> sampleListDTOS = this.getSampleList(trialWorkbook.getStudyDetails().getId());
 
 		final List<Integer> datasetTypeIds = this.datasetTypeService.getSubObservationDatasetTypeIds();
-		final List<DatasetDTO> datasetDTOS = this.datasetService.getDatasets(trialId, new HashSet<>(datasetTypeIds));
+		final List<DatasetBasicDTO> datasetDTOS = this.datasetService.getDatasetBasicDTOs(trialId, new HashSet<>(datasetTypeIds));
 
 		final boolean hasListOrSubObs =
 			!advanceLists.isEmpty() || !crossesLists.isEmpty() || !sampleListDTOS.isEmpty() || !datasetDTOS.isEmpty();
@@ -678,8 +679,8 @@ public class OpenTrialController extends BaseTrialController {
 		final List<Integer> datasetTypeIds = this.datasetTypeService.getObservationDatasetTypeIds();
 		final List<Integer> datasetIds = new ArrayList<>();
 
-		final List<DatasetDTO> datasetDTOs = this.datasetService.getDatasets(studyId, new HashSet<>(datasetTypeIds));
-		for (final DatasetDTO dataset : datasetDTOs) {
+		final List<DatasetBasicDTO> datasetDTOs = this.datasetService.getDatasetBasicDTOs(studyId, new HashSet<>(datasetTypeIds));
+		for (final DatasetBasicDTO dataset : datasetDTOs) {
 			datasetIds.add(dataset.getDatasetId());
 		}
 		if (!datasetIds.isEmpty()) {

@@ -2,7 +2,7 @@
 	<form id="add-plot-form" role="form-horizontal" class="form-horizontal" action="#"
 		method="post" th:object="${seedStoreForm}" enctype="multipart/form-data">
 		<input type="hidden" th:field="*{listId}"/>
-		<input type ="hidden" th:field="*{entryIdList}" />
+		<input type ="hidden" th:field="*{stockIdsForUpdate}" />
 	<!-- Modal  -->
 	<div class="modal fade" id="addLotsModal" role="dialog" aria-labelledby="addLotsLabel" aria-hidden="true">
 		<div class="modal-dialog  modal-extra-large">

@@ -3,8 +3,9 @@ package com.efficio.fieldbook.web.common.service.impl;
 import com.efficio.fieldbook.web.common.exception.InvalidInputException;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.commons.ruleengine.generator.SeedSourceGenerator;
@@ -16,11 +17,13 @@ import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
+import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.InvalidGermplasmNameSettingException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PedigreeDataManager;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
@@ -32,6 +35,7 @@ import org.generationcp.middleware.pojos.germplasm.GermplasmNameSetting;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.generationcp.middleware.util.Util;
 import org.junit.Assert;
@@ -57,6 +61,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -125,6 +130,12 @@ public class CrossingServiceImplTest {
 	@Mock
 	private GermplasmNamingService germplasmNamingService;
 
+	@Mock
+	private StudyDataManager studyDataManager;
+
+	@Mock
+	private DatasetService datasetService;
+
 	@InjectMocks
 	private CrossingServiceImpl crossingService;
 
@@ -169,7 +180,7 @@ public class CrossingServiceImplTest {
 
 	@Test
 	public void testProcessCrossBreedingMethodCodeAlreadyAvailable() {
-		final List<ImportedCrosses> crosses = this.importedCrossesList.getImportedCrosses();
+		final List<ImportedCross> crosses = this.importedCrossesList.getImportedCrosses();
 
 		this.crossSetting.getBreedingMethodSetting().setBasedOnImportFile(true);
 
@@ -188,20 +199,20 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testProcessCrossBreedingMethodIDAlreadyAvailable() {
 
-		final List<ImportedCrosses> crosses = this.importedCrossesList.getImportedCrosses();
+		final List<ImportedCross> crosses = this.importedCrossesList.getImportedCrosses();
 
 		this.crossSetting.getBreedingMethodSetting().setBasedOnImportFile(true);
 		final Method breedingMethod = new Method();
 		breedingMethod.setMid(CrossingServiceImplTest.TEST_BREEDING_METHOD_ID);
 		when(this.germplasmDataManager.getMethodByCode(ArgumentMatchers.anyString())).thenReturn(breedingMethod);
 
-		for (final ImportedCrosses cross : crosses) {
+		for (final ImportedCross cross : crosses) {
 			cross.setRawBreedingMethod(CrossingServiceImplTest.TEST_BREEDING_METHOD_CODE);
 		}
 
 		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
 
-		for (final ImportedCrosses cross : crosses) {
+		for (final ImportedCross cross : crosses) {
 			assertEquals("Breeding method ID should not be overridden if it is already present in the imported cross info",
 				CrossingServiceImplTest.TEST_BREEDING_METHOD_ID.intValue(), cross.getBreedingMethodId().intValue());
 		}
@@ -213,9 +224,9 @@ public class CrossingServiceImplTest {
 
 		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
 
-		for (final ImportedCrosses importedCrosses : this.importedCrossesList.getImportedCrosses()) {
+		for (final ImportedCross importedCross : this.importedCrossesList.getImportedCrosses()) {
 			assertEquals("User provided breeding method must be applied to all objects",
-				CrossingServiceImplTest.TEST_BREEDING_METHOD_ID, importedCrosses.getBreedingMethodId());
+				CrossingServiceImplTest.TEST_BREEDING_METHOD_ID, importedCross.getBreedingMethodId());
 		}
 	}
 
@@ -229,15 +240,15 @@ public class CrossingServiceImplTest {
 		this.setupMockCallsForGermplasm(CrossingServiceImplTest.TEST_FEMALE_GID_2);
 		this.setupMockCallsForGermplasm(CrossingServiceImplTest.TEST_MALE_GID_2);
 
-		for (final ImportedCrosses importedCrosses : this.importedCrossesList.getImportedCrosses()) {
+		for (final ImportedCross importedCross : this.importedCrossesList.getImportedCrosses()) {
 			Assert.assertNotNull(
 				"A method based on parental lines must be assigned to germplasms if user does not select a breeding method",
-				importedCrosses.getBreedingMethodId());
+				importedCross.getBreedingMethodId());
 			assertNotSame(
 				"A method based on parental lines must be assigned to germplasms if user does not select a breeding method", 0,
-				importedCrosses.getBreedingMethodId());
-			if (importedCrosses.isPolyCross()) {
-				assertEquals(Methods.SINGLE_CROSS.getMethodID(), importedCrosses.getBreedingMethodId());
+				importedCross.getBreedingMethodId());
+			if (importedCross.isPolyCross()) {
+				assertEquals(Methods.SINGLE_CROSS.getMethodID(), importedCross.getBreedingMethodId());
 			}
 		}
 	}
@@ -249,28 +260,28 @@ public class CrossingServiceImplTest {
 
 	@Test
 	public void testApplyCrossSetting() {
-
-		final CrossNameSetting crossNameSetting = this.crossSetting.getCrossNameSetting();
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		workbook.getStudyDetails().setId(new Random().nextInt());
 		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
-		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, null);
+		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, workbook);
 
-		final ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
+		final ImportedCross cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
 		assertEquals(CrossingServiceImplTest.SAVED_CROSSES_GID1, cross1.getGid());
 		assertEquals(this.getExpectedName(CrossingServiceImplTest.NEXT_NUMBER), cross1.getDesig());
 		assertEquals((Integer) 1, cross1.getEntryId());
 		assertEquals("1", cross1.getEntryCode());
-		assertEquals(null, cross1.getNames().get(0).getGermplasmId());
+		assertNull(cross1.getNames().get(0).getGermplasmId());
 		assertEquals((Integer) 0, cross1.getNames().get(0).getLocationId());
 		assertEquals(CrossingServiceImplTest.USER_ID, cross1.getNames().get(0).getUserId());
 
-		final ImportedCrosses cross2 = this.importedCrossesList.getImportedCrosses().get(1);
+		final ImportedCross cross2 = this.importedCrossesList.getImportedCrosses().get(1);
 
 		assertEquals(CrossingServiceImplTest.SAVED_CROSSES_GID2, cross2.getGid());
 		assertEquals(this.getExpectedName(NEXT_NUMBER + 1), cross2.getDesig());
 		assertEquals((Integer) 2, cross2.getEntryId());
 		assertEquals("2", cross2.getEntryCode());
-		assertEquals(null, cross2.getNames().get(0).getGermplasmId());
+		assertNull(cross2.getNames().get(0).getGermplasmId());
 		assertEquals((Integer) 0, cross2.getNames().get(0).getLocationId());
 		assertEquals(CrossingServiceImplTest.USER_ID, cross2.getNames().get(0).getUserId());
 
@@ -283,17 +294,17 @@ public class CrossingServiceImplTest {
 
 		this.crossingService.applyCrossNameSettingToImportedCrosses(setting, this.importedCrossesList.getImportedCrosses());
 
-		final ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
+		final ImportedCross cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
-		assertEquals(null, cross1.getGid());
+		assertNull(cross1.getGid());
 		assertEquals(this.getExpectedName(NEXT_NUMBER), cross1.getDesig());
 		assertEquals(cross1.getFemaleDesignation() + setting.getSeparator() + cross1.getMaleDesignationsAsString(), cross1.getCross());
 		assertEquals((Integer) 1, cross1.getEntryId());
 		assertEquals("1", cross1.getEntryCode());
 
-		final ImportedCrosses cross2 = this.importedCrossesList.getImportedCrosses().get(1);
+		final ImportedCross cross2 = this.importedCrossesList.getImportedCrosses().get(1);
 
-		assertEquals(null, cross2.getGid());
+		assertNull(cross2.getGid());
 		assertEquals(this.getExpectedName(NEXT_NUMBER + 1), cross2.getDesig());
 		assertEquals(cross2.getFemaleDesignation() + setting.getSeparator() + cross2.getMaleDesignationsAsString(), cross2.getCross());
 		assertEquals((Integer) 2, cross2.getEntryId());
@@ -311,8 +322,10 @@ public class CrossingServiceImplTest {
 
 		this.crossSetting.setCrossNameSetting(crossNameSetting);
 		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		workbook.getStudyDetails().setId(new Random().nextInt());
 		this.crossingService
-			.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
+			.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, workbook);
 
 		// TODO prepare descriptive messages for verification failure once
 		// Mockito has stable 2.0 version
@@ -331,8 +344,10 @@ public class CrossingServiceImplTest {
 
 		this.crossSetting.setCrossNameSetting(crossNameSetting);
 		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		workbook.getStudyDetails().setId(new Random().nextInt());
 		this.crossingService
-			.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, new Workbook());
+			.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, workbook);
 
 		Mockito.verify(this.germplasmDataManager, Mockito.never()).addGermplasmName(ArgumentMatchers.<List<Name>>any());
 
@@ -342,7 +357,7 @@ public class CrossingServiceImplTest {
 	public void testBuildCrossName() {
 
 		final CrossNameSetting setting = this.createCrossNameSetting();
-		final ImportedCrosses cross = this.createCross();
+		final ImportedCross cross = this.createCross();
 		final String crossName = this.crossingService.buildCrossName(cross, setting.getSeparator());
 
 		assertEquals(cross.getFemaleDesignation() + setting.getSeparator() + cross.getMaleDesignationsAsString(), crossName);
@@ -390,7 +405,7 @@ public class CrossingServiceImplTest {
 		final Germplasm germplasm1 = germplasmTriple.getLeft();
 		final Name name1 = germplasmTriple.getMiddle();
 		final List<Progenitor> progenitorList1 = germplasmTriple.getRight();
-		final ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
+		final ImportedCross cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
 
 		assertTrue(result.getIsTrimed());
@@ -426,7 +441,7 @@ public class CrossingServiceImplTest {
 		final Germplasm germplasm2 = germplasmTriple.getLeft();
 		final Name name2 = germplasmTriple.getMiddle();
 		final List<Progenitor> progenitorList2 = germplasmTriple.getRight();
-		final ImportedCrosses cross2 = this.importedCrossesList.getImportedCrosses().get(1);
+		final ImportedCross cross2 = this.importedCrossesList.getImportedCrosses().get(1);
 
 		Assert.assertNull(null, germplasm2.getGid());
 		assertEquals(20150101, germplasm2.getGdate().intValue());
@@ -466,7 +481,7 @@ public class CrossingServiceImplTest {
 		final String harvestDate = "2019-01-01";
 
 		// If cross gid is not null, it means the cross is created from Design Crosses functionality
-		final ImportedCrosses cross = new ImportedCrosses();
+		final ImportedCross cross = new ImportedCross();
 		cross.setGid(String.valueOf(crossGid));
 
 		cross.setBreedingMethodId(breedingMethodId);
@@ -493,7 +508,7 @@ public class CrossingServiceImplTest {
 		final int harvestLocationId = 2;
 		final String harvestDate = "2019-01-01";
 
-		final ImportedCrosses cross = this.createCross();
+		final ImportedCross cross = this.createCross();
 		// If cross gid is null, it means the cross is created from Imported Crosses functionality
 		cross.setGid(null);
 
@@ -529,7 +544,7 @@ public class CrossingServiceImplTest {
 		germplasm.setGid(crossGid);
 		germplasm.setGdate(20190101);
 
-		final ImportedCrosses cross = this.createCross();
+		final ImportedCross cross = this.createCross();
 		cross.setGid(String.valueOf(crossGid));
 
 		final Name result = this.crossingService.createName(germplasm, cross, userId, harvestLocationId);
@@ -554,7 +569,7 @@ public class CrossingServiceImplTest {
 		germplasm.setGid(null);
 		germplasm.setGdate(20190101);
 
-		final ImportedCrosses cross = this.createCross();
+		final ImportedCross cross = this.createCross();
 		cross.setGid(null);
 
 		final Name result = this.crossingService.createName(germplasm, cross, userId, harvestLocationId);
@@ -572,7 +587,7 @@ public class CrossingServiceImplTest {
 	public void testCreateProgenitors_SingleCross() {
 
 		final Germplasm germplasm = new Germplasm();
-		final ImportedCrosses cross = new ImportedCrosses();
+		final ImportedCross cross = new ImportedCross();
 		final ImportedGermplasmParent maleParent1 = new ImportedGermplasmParent(111, "", "");
 		cross.setMaleParents(Lists.newArrayList(maleParent1));
 		final List<Progenitor> result = this.crossingService.createProgenitors(cross, germplasm);
@@ -585,7 +600,7 @@ public class CrossingServiceImplTest {
 
 		final int crossGid = 1;
 		final Germplasm germplasm = new Germplasm();
-		final ImportedCrosses cross = new ImportedCrosses();
+		final ImportedCross cross = new ImportedCross();
 		cross.setGid(String.valueOf(crossGid));
 		final Progenitor maleParent1 = new Progenitor(germplasm, 3, 1);
 		final Progenitor maleParent2 = new Progenitor(germplasm, 4, 2);
@@ -604,7 +619,7 @@ public class CrossingServiceImplTest {
 	public void testCreateProgenitors_PolyCross() {
 
 		final Germplasm germplasm = new Germplasm();
-		final ImportedCrosses cross = new ImportedCrosses();
+		final ImportedCross cross = new ImportedCross();
 		final ImportedGermplasmParent maleParent1 = new ImportedGermplasmParent(111, "", "");
 		final ImportedGermplasmParent maleParent2 = new ImportedGermplasmParent(222, "", "");
 		final ImportedGermplasmParent maleParent3 = new ImportedGermplasmParent(333, "", "");
@@ -638,35 +653,42 @@ public class CrossingServiceImplTest {
 	public void testGenerateSeedSource() {
 		final String newSeedSource = "newSeedSource";
 		Mockito.doReturn(newSeedSource).when(this.seedSourceGenerator)
-			.generateSeedSourceForCross(ArgumentMatchers.any(Workbook.class), ArgumentMatchers.<String>anyList(), ArgumentMatchers.anyString(),
-				Mockito.<String>isNull(),
-				Mockito.<String>isNull(), Mockito.<Workbook>isNull());
+			.generateSeedSourceForCross(ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(Pair.class),
+				ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(ImportedCross.class));
 
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		workbook.getStudyDetails().setId(new Random().nextInt());
 		// Case 1 - No seed source present. Generate new.
-		final ImportedCrosses importedCross1 = this.createCross();
+		final ImportedCross importedCross1 = this.createCross();
+		final String studyName = workbook.getStudyName();
+		importedCross1.setMaleStudyname(studyName);
 		importedCross1.setSource(null);
-		this.crossingService.populateSeedSource(importedCross1, workbook, new HashMap<String, Workbook>());
+		final CrossingServiceImpl.CrossSourceStudy studydata = this.crossingService.new CrossSourceStudy(workbook, null, null);
+		this.crossingService.populateSeedSource(importedCross1, studydata, Collections.emptyMap());
+
 		assertEquals(newSeedSource, importedCross1.getSource());
 
 		// Case 2 - Seed source is present. Keep.
-		final ImportedCrosses importedCross2 = this.createCross();
+		final ImportedCross importedCross2 = this.createCross();
 		final String existingSeedSource = "existingSeedSource";
 		importedCross2.setSource(existingSeedSource);
-		this.crossingService.populateSeedSource(importedCross2, workbook, new HashMap<String, Workbook>());
+		importedCross2.setMaleStudyname(studyName);
+		this.crossingService.populateSeedSource(importedCross2, this.crossingService.new CrossSourceStudy(workbook, null, null), new HashMap<>());
 		assertEquals(existingSeedSource, importedCross2.getSource());
 
 		// Case 3 - Seed source is presend but is PENDING indicator. Generate
 		// new.
-		final ImportedCrosses importedCross3 = this.createCross();
-		importedCross3.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
-		this.crossingService.populateSeedSource(importedCross3, workbook, new HashMap<String, Workbook>());
+		final ImportedCross importedCross3 = this.createCross();
+		importedCross3.setSource(ImportedCross.SEED_SOURCE_PENDING);
+		importedCross3.setMaleStudyname(studyName);
+		this.crossingService.populateSeedSource(importedCross3, this.crossingService.new CrossSourceStudy(workbook, null, null), new HashMap<>());
 		assertEquals(newSeedSource, importedCross3.getSource());
 
 		// Case 4 - Seed source is present but empty string. Generate new.
-		final ImportedCrosses importedCross4 = this.createCross();
+		final ImportedCross importedCross4 = this.createCross();
 		importedCross4.setSource("");
-		this.crossingService.populateSeedSource(importedCross4, workbook, new HashMap<String, Workbook>());
+		importedCross4.setMaleStudyname(studyName);
+		this.crossingService.populateSeedSource(importedCross4, this.crossingService.new CrossSourceStudy(workbook, null, null), new HashMap<>());
 		assertEquals(newSeedSource, importedCross4.getSource());
 
 	}
@@ -676,15 +698,19 @@ public class CrossingServiceImplTest {
 
 		final String newSeedSource = RandomStringUtils.randomAlphabetic(300);
 		Mockito.doReturn(newSeedSource).when(this.seedSourceGenerator)
-			.generateSeedSourceForCross(ArgumentMatchers.any(Workbook.class), ArgumentMatchers.<String>anyList(), ArgumentMatchers.anyString(),
-				Mockito.<String>isNull(),
-				Mockito.<String>isNull(), Mockito.<Workbook>isNull());
+			.generateSeedSourceForCross(ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(Pair.class),
+				ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(Pair.class), ArgumentMatchers.any(ImportedCross.class));
+
 
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		workbook.getStudyDetails().setId(new Random().nextInt());
 		// Case 1 - No seed source present. Generate new.
-		final ImportedCrosses importedCross1 = this.createCross();
+		final ImportedCross importedCross1 = this.createCross();
 		importedCross1.setSource(null);
-		this.crossingService.populateSeedSource(importedCross1, workbook, new HashMap<String, Workbook>());
+		final String studyName = workbook.getStudyName();
+		importedCross1.setMaleStudyname(studyName);
+		final CrossingServiceImpl.CrossSourceStudy studydata = this.crossingService.new CrossSourceStudy(workbook, null, null);
+		this.crossingService.populateSeedSource(importedCross1, studydata, Collections.singletonMap(studyName, studydata));
 		assertEquals(CrossingServiceImpl.MAX_SEED_SOURCE_SIZE, importedCross1.getSource().length());
 	}
 
@@ -694,7 +720,8 @@ public class CrossingServiceImplTest {
 		final CrossSetting crossSetting = this.createCrossSetting();
 		final ImportedCrossesList importedCrossesList = this.createImportedCrossesList();
 		final Integer userId = 123456;
-		final Workbook workbook = new Workbook();
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		workbook.getStudyDetails().setId(new Random().nextInt());
 
 		this.importedCrossesList.addImportedCrosses(this.createCross());
 		this.importedCrossesList.addImportedCrosses(this.createSecondCross());
@@ -702,7 +729,7 @@ public class CrossingServiceImplTest {
 		this.crossingService.applyCrossSettingWithNamingRules(crossSetting, importedCrossesList, userId, workbook);
 
 		int counter = 1;
-		for (final ImportedCrosses importedCross : importedCrossesList.getImportedCrosses()) {
+		for (final ImportedCross importedCross : importedCrossesList.getImportedCrosses()) {
 			assertEquals(importedCross.getEntryCode(), importedCross.getEntryId());
 			assertTrue(importedCross.getEntryCode().equals(counter));
 			assertTrue(importedCross.getEntryId().equals(counter));
@@ -743,20 +770,20 @@ public class CrossingServiceImplTest {
 		final List<Attribute> attributesList = attributesListCaptor.getValue();
 		assertEquals(germplasmIds.size(), attributesList.size());
 		final Iterator<Integer> idsIterator = germplasmIds.iterator();
-		final Iterator<ImportedCrosses> crossesIterator = importedCrossesList.getImportedCrosses().iterator();
+		final Iterator<ImportedCross> crossesIterator = importedCrossesList.getImportedCrosses().iterator();
 		for (final Attribute attribute : attributesList) {
 			final Integer gid = idsIterator.next();
-			final ImportedCrosses cross = crossesIterator.next();
+			final ImportedCross cross = crossesIterator.next();
 			this.verifyPlotCodeAttributeValues(attribute, gid, cross);
 		}
 	}
 
 	@Test
 	public void testSaveAttributesWhenMergingPlotDuplicates() {
-		final ImportedCrosses secondCross = this.importedCrossesList.getImportedCrosses().get(1);
+		final ImportedCross secondCross = this.importedCrossesList.getImportedCrosses().get(1);
 		// Set 2nd cross as plot duplicate of first cross
 		secondCross.setDuplicateEntries(new HashSet<>(Collections.singletonList(1)));
-		secondCross.setDuplicatePrefix(ImportedCrosses.PLOT_DUPE_PREFIX);
+		secondCross.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
 		this.crossSetting.setPreservePlotDuplicates(false);
 
 		final List<Integer> germplasmIds = Arrays.asList(101, 102);
@@ -764,7 +791,7 @@ public class CrossingServiceImplTest {
 		Mockito.verify(this.germplasmDataManager).addAttributes(attributesListCaptor.capture());
 		final List<Attribute> attributesList = attributesListCaptor.getValue();
 		assertEquals("Attribute will be saved only for first entry", 1, attributesList.size());
-		final ImportedCrosses firstCross = this.importedCrossesList.getImportedCrosses().get(0);
+		final ImportedCross firstCross = this.importedCrossesList.getImportedCrosses().get(0);
 		this.verifyPlotCodeAttributeValues(attributesList.get(0), germplasmIds.get(0),
 			firstCross);
 		// Verify that gid, cross and designation from 1st cross was copied to 2nd cross
@@ -775,10 +802,10 @@ public class CrossingServiceImplTest {
 
 	@Test
 	public void testSaveAttributesWhenPreservingPlotDuplicates() {
-		final ImportedCrosses secondCross = this.importedCrossesList.getImportedCrosses().get(1);
+		final ImportedCross secondCross = this.importedCrossesList.getImportedCrosses().get(1);
 		// Set 2nd cross as plot duplicate of first cross
 		secondCross.setDuplicateEntries(new HashSet<>(Collections.singletonList(1)));
-		secondCross.setDuplicatePrefix(ImportedCrosses.PLOT_DUPE_PREFIX);
+		secondCross.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
 		this.crossSetting.setPreservePlotDuplicates(true);
 
 		final List<Integer> germplasmIds = Arrays.asList(101, 102);
@@ -787,10 +814,10 @@ public class CrossingServiceImplTest {
 		final List<Attribute> attributesList = attributesListCaptor.getValue();
 		assertEquals("Expecting plot duplicate crosses to be preserved", germplasmIds.size(), attributesList.size());
 		final Iterator<Integer> idsIterator = germplasmIds.iterator();
-		final Iterator<ImportedCrosses> crossesIterator = importedCrossesList.getImportedCrosses().iterator();
+		final Iterator<ImportedCross> crossesIterator = importedCrossesList.getImportedCrosses().iterator();
 		for (final Attribute attribute : attributesList) {
 			final Integer gid = idsIterator.next();
-			final ImportedCrosses cross = crossesIterator.next();
+			final ImportedCross cross = crossesIterator.next();
 			this.verifyPlotCodeAttributeValues(attribute, gid, cross);
 		}
 	}
@@ -807,7 +834,7 @@ public class CrossingServiceImplTest {
 		final Iterator<Integer> gidsIterator = gids.iterator();
 		Mockito.verify(this.germplasmDataManager).addGermplasmName(this.namesCaptor.capture());
 		final Iterator<Name> namesIterator = this.namesCaptor.getValue().iterator();
-		for (final ImportedCrosses cross : importedCrossesList.getImportedCrosses()) {
+		for (final ImportedCross cross : importedCrossesList.getImportedCrosses()) {
 			final Integer gid = gidsIterator.next();
 			final Name name = namesIterator.next();
 			assertEquals(gid, name.getGermplasmId());
@@ -821,7 +848,7 @@ public class CrossingServiceImplTest {
 		}
 	}
 
-	private void verifyPlotCodeAttributeValues(final Attribute attribute, final Integer gid, final ImportedCrosses cross) {
+	private void verifyPlotCodeAttributeValues(final Attribute attribute, final Integer gid, final ImportedCross cross) {
 		assertEquals(Integer.valueOf(DateUtil.getCurrentDateAsStringValue()), attribute.getAdate());
 		assertEquals(gid, attribute.getGermplasmId());
 		assertEquals(gid.toString(), cross.getGid());
@@ -833,16 +860,16 @@ public class CrossingServiceImplTest {
 	private ImportedCrossesList createImportedCrossesList() {
 
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
-		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
+		final List<ImportedCross> importedCrosses = new ArrayList<>();
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 		return importedCrossesList;
 
 	}
 
-	private List<ImportedCrosses> createImportedCrosses() {
+	private List<ImportedCross> createImportedCrosses() {
 
-		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
-		final ImportedCrosses cross = new ImportedCrosses();
+		final List<ImportedCross> importedCrosses = new ArrayList<>();
+		final ImportedCross cross = new ImportedCross();
 		final ImportedGermplasmParent femaleParent =
 			new ImportedGermplasmParent(CrossingServiceImplTest.TEST_FEMALE_GID_1, "FEMALE-12345", "");
 		cross.setFemaleParent(femaleParent);
@@ -855,15 +882,15 @@ public class CrossingServiceImplTest {
 			"G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B/((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML161xCML451)-B-18-1-BBB/CML1612345");
 		cross.setEntryId(1);
 		importedCrosses.add(cross);
-		final ImportedCrosses cross2 = this.createSecondCross();
+		final ImportedCross cross2 = this.createSecondCross();
 		importedCrosses.add(cross2);
 
 		return importedCrosses;
 
 	}
 
-	private ImportedCrosses createSecondCross() {
-		final ImportedCrosses cross2 = new ImportedCrosses();
+	private ImportedCross createSecondCross() {
+		final ImportedCross cross2 = new ImportedCross();
 		final ImportedGermplasmParent femaleParent =
 			new ImportedGermplasmParent(CrossingServiceImplTest.TEST_FEMALE_GID_2, "FEMALE-9999", "");
 		cross2.setFemaleParent(femaleParent);
@@ -877,8 +904,8 @@ public class CrossingServiceImplTest {
 		return cross2;
 	}
 
-	private ImportedCrosses createCross() {
-		final ImportedCrosses cross = new ImportedCrosses();
+	private ImportedCross createCross() {
+		final ImportedCross cross = new ImportedCross();
 		final ImportedGermplasmParent femaleParent =
 			new ImportedGermplasmParent(CrossingServiceImplTest.TEST_FEMALE_GID_1, "FEMALE-12345", "");
 		femaleParent.setPlotNo(1);
@@ -948,5 +975,6 @@ public class CrossingServiceImplTest {
 	private String getExpectedName(final Integer number) {
 		return PREFIX + " 0000" + number + " " + SUFFIX;
 	}
+
 
 }

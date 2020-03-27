@@ -3,17 +3,16 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.service.CrossingService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
-import org.generationcp.commons.constant.AppConstants;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.AbstractExcelFileParser;
 import org.generationcp.commons.parsing.CrossesListDescriptionSheetParser;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCondition;
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedFactor;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
@@ -25,6 +24,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
+import org.generationcp.middleware.service.api.study.StudyService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This parses a Crossing Template Excel file Note that this class is stateful, declare in spring app context as prototyped scope
@@ -64,9 +65,6 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	private StudyDataManager studyDataManager;
 
 	@Resource
-	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-
-	@Resource
 	private ContextUtil contextUtil;
 
 	@Resource
@@ -74,6 +72,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 	@Resource
 	private CrossingService crossingService;
+
+	@Resource
+	private StudyService studyService;
 
 	@Resource
 	private UserService userService;
@@ -160,22 +161,18 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 			final List<Integer> malePlotNumbers = this.convertCommaSeparatedStringToList(malePlotNoString, currentRow);
 			// group together male plots by male study for one-off Middleware lookup
-			if (maleStudiesWithPlotNos.containsKey(maleStudy)){
-				maleStudiesWithPlotNos.get(maleStudy).addAll(malePlotNumbers);
-			} else {
-				final Set<Integer> plotSet = new HashSet<>(malePlotNumbers);
-				maleStudiesWithPlotNos.put(maleStudy, plotSet);
-			}
+			maleStudiesWithPlotNos.putIfAbsent(maleStudy, new HashSet<>());
+			maleStudiesWithPlotNos.get(maleStudy).addAll(malePlotNumbers);
 
 			entryIdToCrossInfoMap.put(currentRow, new ImmutableTriple<>(maleStudy, femalePlotNo, malePlotNumbers));
 
-			final ImportedCrosses importedCrosses = new ImportedCrosses(currentRow);
+			final ImportedCross importedCross = new ImportedCross(currentRow);
 			// Show source as "Pending" in initial dialogue.
 			// Source (Plot Code) string is generated later in the process and will be displayed in the final list generated.
-			importedCrosses.setSource(ImportedCrosses.SEED_SOURCE_PENDING);
-			importedCrosses.setOptionalFields(breedingMethod, crossingDate, notes);
+			importedCross.setSource(ImportedCross.SEED_SOURCE_PENDING);
+			importedCross.setOptionalFields(breedingMethod, crossingDate, notes);
 
-			this.importedCrossesList.addImportedCrosses(importedCrosses);
+			this.importedCrossesList.addImportedCrosses(importedCross);
 
 			currentRow++;
 		}
@@ -201,15 +198,16 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			this.getPlotNoToStudyGermplasmDtoMapForStudy(femaleStudyName, femalePlotNos);
 		// Create map of male studies to its plotToStudyGermplasmDtoMap lookup
 		// for each male study, lookup the associated StudyGermplasmDto of specified male plot #s
-		final Map<String, Map<Integer, StudyGermplasmDto>> maleNurseriesPlotMap = new HashMap<>();
+		final Map<String, Map<Integer, StudyGermplasmDto>> maleStudiesPlotMap = new HashMap<>();
 		for (final Map.Entry<String, Set<Integer>> entry : maleStudiesWithPlotNos.entrySet()) {
 			final String maleStudyName = entry.getKey();
-			maleNurseriesPlotMap
+			maleStudiesPlotMap
 				.put(maleStudyName, this.getPlotNoToStudyGermplasmDtoMapForStudy(maleStudyName, entry.getValue()));
 		}
 
-		// Set looked up GIDs and names of parents to ImportedCrosses object
-		for (final ImportedCrosses cross : this.importedCrossesList.getImportedCrosses()) {
+		final String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
+		// Set looked up GIDs and names of parents to ImportedCross object
+		for (final ImportedCross cross : this.importedCrossesList.getImportedCrosses()) {
 			final Triple<String, Integer, List<Integer>> crossInfo = entryIdToCrossInfoMap.get(cross.getEntryId());
 			if (femalePlotMap.containsKey(crossInfo.getMiddle())) {
 				final StudyGermplasmDto femaleCrossParent = femalePlotMap.get(crossInfo.getMiddle());
@@ -221,23 +219,23 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 					new Object[] {femaleStudyName, crossInfo.getMiddle()}, LocaleContextHolder.getLocale()));
 			}
 
-			cross.setMaleParents(this.getMaleParents(maleNurseriesPlotMap, crossInfo));
+			cross.setMaleParents(this.getMaleParents(maleStudiesPlotMap, crossInfo));
 
 			final Germplasm germplasm = new Germplasm();
 			germplasm.setGnpgs(2);
 			germplasm.setGid(Integer.MAX_VALUE);
 			germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 			germplasm.setGpid2(cross.getMaleParents().get(0).getGid());
-			final String crossString = this.crossingService.getCross(germplasm, cross, "/");
+			final String crossString = this.crossingService.getCross(germplasm, cross, "/", cropName);
 			cross.setCross(crossString);
 		}
 	}
 
 	List<ImportedGermplasmParent> getMaleParents(
-		final Map<String, Map<Integer, StudyGermplasmDto>> maleNurseriesPlotMap,
+		final Map<String, Map<Integer, StudyGermplasmDto>> maleStudiesPlotMap,
 		final Triple<String, Integer, List<Integer>> crossInfo) throws FileParsingException {
 		final String crossMaleStudy = crossInfo.getLeft();
-		final Map<Integer, StudyGermplasmDto> malePlotMap = maleNurseriesPlotMap.get(crossMaleStudy);
+		final Map<Integer, StudyGermplasmDto> malePlotMap = maleStudiesPlotMap.get(crossMaleStudy);
 		final List<Integer> crossMalePlotNos = crossInfo.getRight();
 		final List<ImportedGermplasmParent> maleParents = new ArrayList<>();
 		for(final Integer crossMalePlotNo: crossMalePlotNos) {
@@ -275,10 +273,10 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			throw new FileParsingException(this.messageSource.getMessage("no.such.study.exists", new String[] {studyName},
 				LocaleContextHolder.getLocale()));
 		}
-
-		final Map<Integer, StudyGermplasmDto> plotToStudyGermplasmDtoMap = this.fieldbookMiddlewareService.getPlotNoToStudyGermplasmDtoMap(studyId, plotNos);
-
-		return plotToStudyGermplasmDtoMap;
+		// 2. Retrieve study germplasm list for given plot number/s
+		final List<StudyGermplasmDto> studyList =
+			this.studyService.getStudyGermplasmListWithPlotInformation(studyId, plotNos);
+		return studyList.stream().collect(Collectors.toMap(e -> Integer.valueOf(e.getPosition()), e -> e));
 	}
 
 

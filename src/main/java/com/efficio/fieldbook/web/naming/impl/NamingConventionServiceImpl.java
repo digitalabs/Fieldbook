@@ -9,7 +9,7 @@ import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.constant.AppConstants;
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
 import org.generationcp.commons.pojo.AdvancingSource;
@@ -24,13 +24,17 @@ import org.generationcp.commons.ruleengine.naming.rules.NamingRuleExecutionConte
 import org.generationcp.commons.ruleengine.naming.service.ProcessCodeService;
 import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.sample.SampleDTO;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.util.TimerWatch;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -40,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -74,6 +79,12 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	@Resource
 	private SeedSourceGenerator seedSourceGenerator;
+
+	@Resource
+	private StudyDataManager studyDataManager;
+
+	@Resource
+	private DatasetService datasetService;
 
 	@Override
 	public AdvanceResult advanceStudy(final AdvancingStudy info, final Workbook workbook) throws RuleException, FieldbookException {
@@ -159,7 +170,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
 		final String newGermplasmName, final Method breedingMethod, final int index, final Workbook workbook, final int selectionNumber,
-		final AdvancingStudy advancingParameters, final String plantNo) {
+		final AdvancingStudy advancingParameters, final String plantNo, final Map<String, String> locationIdNameMap,
+		final List<MeasurementVariable> environmentVariables) {
 
 		String selectionNumberToApply = null;
 		final boolean allPlotsSelected = "1".equals(advancingParameters.getAllPlotsChoice());
@@ -175,9 +187,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		// set the seed source string for the new Germplasm
 		final String seedSource = this.seedSourceGenerator
-			.generateSeedSource(workbook.getStudyDetails().getId(), workbook.getTrialDatasetId(),
-				fromMeasurementRow(workbook.getTrialObservationByTrialInstanceNo(Integer.valueOf(source.getTrialInstanceNumber()))),
-				workbook.getConditions(), selectionNumberToApply, source.getPlotNumber(), workbook.getStudyName(), plantNo);
+			.generateSeedSource(fromMeasurementRow(workbook.getTrialObservationByTrialInstanceNo(Integer.valueOf(source.getTrialInstanceNumber()))),
+				workbook.getConditions(), selectionNumberToApply, source.getPlotNumber(), workbook.getStudyName(), plantNo, locationIdNameMap, environmentVariables);
 
 		final ImportedGermplasm germplasm =
 			new ImportedGermplasm(index, newGermplasmName, null /* gid */
@@ -232,7 +243,10 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		final List<ImportedGermplasm> list = new ArrayList<>();
 		int index = 1;
 		final TimerWatch timer = new TimerWatch("advance");
-
+		final Map<String, String> locationIdNameMap = this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(workbook.getStudyDetails().getId());
+		final List<MeasurementVariable> environmentVariables =
+			this.datasetService.getObservationSetVariables(workbook.getTrialDatasetId(), Collections.singletonList(
+				VariableType.ENVIRONMENT_DETAIL.getId()));
 		for (final AdvancingSource row : rows.getRows()) {
 			if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
 				&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
@@ -258,7 +272,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 						sampleNo = String.valueOf(sampleIterator.next().getSampleNumber());
 					}
 					this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, workbook, selectionNumber,
-						advancingParameters, sampleNo);
+						advancingParameters, sampleNo, locationIdNameMap, environmentVariables);
 					selectionNumber++;
 				}
 			}
@@ -268,7 +282,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	@Override
-	public List<ImportedCrosses> generateCrossesList(final List<ImportedCrosses> importedCrosses, final AdvancingSourceList rows,
+	public List<ImportedCross> generateCrossesList(final List<ImportedCross> importedCrosses, final AdvancingSourceList rows,
 		final AdvancingStudy advancingParameters, final Workbook workbook, final List<Integer> gids) throws RuleException {
 
 		final List<Method> methodList = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
@@ -285,7 +299,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		int previousMaxSequence = 0;
 		for (final AdvancingSource advancingSource : rows.getRows()) {
 
-			final ImportedCrosses importedCross = importedCrosses.get(index++);
+			final ImportedCross importedCross = importedCrosses.get(index++);
 			final List<String> names;
 			advancingSource.setCurrentMaxSequence(previousMaxSequence);
 

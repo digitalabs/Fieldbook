@@ -49,8 +49,7 @@ public class SeedStoreForm {
 	/** The gid list. */
 	private String gidList;
 
-	/** The entry Id list */
-	private String entryIdList;
+	private String stockIdsForUpdate;
 
 	/** The list id. */
 	private Integer listId;
@@ -75,7 +74,7 @@ public class SeedStoreForm {
 	 *
 	 * @param listId the new list id
 	 */
-	public void setListId(Integer listId) {
+	public void setListId(final Integer listId) {
 		this.listId = listId;
 	}
 
@@ -96,7 +95,7 @@ public class SeedStoreForm {
 	 *
 	 * @param totalNumberOfGermplasms the new total number of germplasms
 	 */
-	public void setTotalNumberOfGermplasms(int totalNumberOfGermplasms) {
+	public void setTotalNumberOfGermplasms(final int totalNumberOfGermplasms) {
 		this.totalNumberOfGermplasms = totalNumberOfGermplasms;
 	}
 
@@ -114,7 +113,7 @@ public class SeedStoreForm {
 	 *
 	 * @param resultPerPage the new result per page
 	 */
-	public void setResultPerPage(int resultPerPage) {
+	public void setResultPerPage(final int resultPerPage) {
 		this.resultPerPage = resultPerPage;
 	}
 
@@ -146,12 +145,12 @@ public class SeedStoreForm {
 	 *
 	 * @param currentPage the new current page
 	 */
-	public void setCurrentPage(int currentPage) {
+	public void setCurrentPage(final int currentPage) {
 
 		// assumption is there are nursery list already
 		if (this.inventoryList != null && !this.inventoryList.isEmpty()) {
-			int totalItemsPerPage = this.getResultPerPage();
-			int start = (currentPage - 1) * totalItemsPerPage;
+			final int totalItemsPerPage = this.getResultPerPage();
+			final int start = (currentPage - 1) * totalItemsPerPage;
 			int end = start + totalItemsPerPage;
 			if (this.inventoryList.size() < end) {
 				end = this.inventoryList.size();
@@ -169,7 +168,7 @@ public class SeedStoreForm {
 	 *
 	 * @param totalPages the new total pages
 	 */
-	public void setTotalPages(int totalPages) {
+	public void setTotalPages(final int totalPages) {
 		this.totalPages = totalPages;
 	}
 
@@ -187,7 +186,7 @@ public class SeedStoreForm {
 	 *
 	 * @param inventoryList the new inventory list
 	 */
-	public void setInventoryList(List<InventoryDetails> inventoryList) {
+	public void setInventoryList(final List<InventoryDetails> inventoryList) {
 		this.inventoryList = inventoryList;
 	}
 
@@ -205,7 +204,7 @@ public class SeedStoreForm {
 	 *
 	 * @param paginatedInventoryList the new paginated inventory list
 	 */
-	public void setPaginatedInventoryList(List<InventoryDetails> paginatedInventoryList) {
+	public void setPaginatedInventoryList(final List<InventoryDetails> paginatedInventoryList) {
 		this.paginatedInventoryList = paginatedInventoryList;
 	}
 
@@ -223,7 +222,7 @@ public class SeedStoreForm {
 	 *
 	 * @param inventoryLocationId the new inventory location id
 	 */
-	public void setInventoryLocationId(int inventoryLocationId) {
+	public void setInventoryLocationId(final int inventoryLocationId) {
 		this.inventoryLocationId = inventoryLocationId;
 	}
 
@@ -241,7 +240,7 @@ public class SeedStoreForm {
 	 *
 	 * @param inventoryScaleId the new inventory scale id
 	 */
-	public void setInventoryScaleId(int inventoryScaleId) {
+	public void setInventoryScaleId(final int inventoryScaleId) {
 		this.inventoryScaleId = inventoryScaleId;
 	}
 
@@ -259,7 +258,7 @@ public class SeedStoreForm {
 	 *
 	 * @param inventoryComments the new inventory comments
 	 */
-	public void setInventoryComments(String inventoryComments) {
+	public void setInventoryComments(final String inventoryComments) {
 		this.inventoryComments = inventoryComments;
 	}
 
@@ -277,16 +276,16 @@ public class SeedStoreForm {
 	 *
 	 * @param gidList the gidList to set
 	 */
-	public void setGidList(String gidList) {
+	public void setGidList(final String gidList) {
 		this.gidList = gidList;
 	}
 
-	public String getEntryIdList() {
-		return this.entryIdList;
+	public String getStockIdsForUpdate() {
+		return this.stockIdsForUpdate;
 	}
 
-	public void setEntryIdList(String entryIdList) {
-		this.entryIdList = entryIdList;
+	public void setStockIdsForUpdate(final String stockIdsForUpdate) {
+		this.stockIdsForUpdate = stockIdsForUpdate;
 	}
 
 	/**
@@ -303,7 +302,7 @@ public class SeedStoreForm {
 	 *
 	 * @param amount the new amount
 	 */
-	public void setAmount(Double amount) {
+	public void setAmount(final Double amount) {
 		this.amount = amount;
 	}
 

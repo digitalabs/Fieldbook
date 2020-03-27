@@ -7,7 +7,7 @@ import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.util.CrossesListUtil;
 import org.generationcp.commons.parsing.FileParsingException;
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,7 +75,7 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 			return masterList;
 		}
 
-		for (final ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
+		for (final ImportedCross cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
 			masterList.add(crossesListUtil.generateCrossesTableDataMap(cross));
 		}
 

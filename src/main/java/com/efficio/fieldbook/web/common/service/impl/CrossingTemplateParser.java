@@ -39,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -276,7 +277,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		// 2. Retrieve study germplasm list for given plot number/s
 		final List<StudyGermplasmDto> studyList =
 			this.studyService.getStudyGermplasmListWithPlotInformation(studyId, plotNos);
-		return studyList.stream().collect(Collectors.toMap(e -> Integer.valueOf(e.getPosition()), e -> e));
+		return studyList.stream().collect(Collectors.toMap(e -> Integer.valueOf(e.getPosition()), Function.identity(), (existing, replacement) -> replacement));
 	}
 
 

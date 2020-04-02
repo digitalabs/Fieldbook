@@ -226,7 +226,6 @@ public class OpenTrialController extends BaseTrialController {
 				// FIXME
 				// See setStartingEntryNoAndPlotNoFromObservations() in
 				// prepareExperimentalDesignTabInfo
-				this.fieldbookMiddlewareService.loadAllObservations(workbook);
 
 				this.removeAnalysisAndAnalysisSummaryVariables(workbook);
 
@@ -524,7 +523,6 @@ public class OpenTrialController extends BaseTrialController {
 	public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") final int id) throws ParseException {
 		final Map<String, Object> returnVal = new HashMap<>();
 		final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(id);
-		this.fieldbookMiddlewareService.loadAllObservations(trialWorkbook);
 
 		this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
 

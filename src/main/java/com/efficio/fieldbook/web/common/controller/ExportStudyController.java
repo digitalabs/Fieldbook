@@ -15,13 +15,10 @@ import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.reports.service.JasperReportService;
 import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.util.FileUtils;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -53,9 +50,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -64,9 +61,9 @@ import java.util.Map;
 @RequestMapping(ExportStudyController.URL)
 public class ExportStudyController extends AbstractBaseFieldbookController {
 
-	protected static final String CONTENT_TYPE = "contentType";
-	protected static final String FILENAME = "filename";
-	protected static final String OUTPUT_FILENAME = "outputFilename";
+	static final String CONTENT_TYPE = "contentType";
+	private static final String FILENAME = "filename";
+	private static final String OUTPUT_FILENAME = "outputFilename";
 	private static final String UTF_8 = "UTF-8";
 	private static final String ISO_8859_1 = "iso-8859-1";
 	private static final String ERROR_MESSAGE = "errorMessage";
@@ -112,10 +109,10 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	public ResponseEntity<FileSystemResource> downloadFile(final HttpServletRequest req) throws UnsupportedEncodingException {
 
 		final String outputFilename =
-				new String(req.getParameter(ExportStudyController.OUTPUT_FILENAME).getBytes(ExportStudyController.ISO_8859_1),
-						ExportStudyController.UTF_8);
-		final String filename = new String(req.getParameter(ExportStudyController.FILENAME).getBytes(ExportStudyController.ISO_8859_1),
-				ExportStudyController.UTF_8);
+				new String(req.getParameter(ExportStudyController.OUTPUT_FILENAME).getBytes(StandardCharsets.ISO_8859_1),
+					StandardCharsets.UTF_8);
+		final String filename = new String(req.getParameter(ExportStudyController.FILENAME).getBytes(StandardCharsets.ISO_8859_1),
+			StandardCharsets.UTF_8);
 
 		return FieldbookUtil.createResponseEntityForFileDownload(outputFilename, filename);
 
@@ -244,7 +241,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/custom/{studyId}/reports", method = RequestMethod.GET)
 	public List<CustomReportType> getCustomReports(@PathVariable final int studyId) {
-		final StudyDetails studyDetails = studyDataManager.getStudyDetails(studyId);
+		final StudyDetails studyDetails = this.studyDataManager.getStudyDetails(studyId);
 		// DO NOT remove this condition. Reports are organized based on the study type
 		// It needs to be discussed with IBP whenever they want to bring custom reports back
 		if (StudyTypeDto.NURSERY_NAME.equalsIgnoreCase(studyDetails.getStudyType().getName())) {
@@ -256,11 +253,11 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		return new ArrayList<>();
 	}
 
-	public List<CustomReportType> getCustomReportTypes(final String name) {
+	private List<CustomReportType> getCustomReportTypes(final String name) {
 		return this.jasperReportService.getCustomReportTypes(name, ToolName.FIELDBOOK_WEB.getName());
 	}
 
-	protected FileExportInfo exportAdvanceListItems(final String exportType, final String advancedListIds, final StudyDetails studyDetails) {
+	FileExportInfo exportAdvanceListItems(final String exportType, final String advancedListIds, final StudyDetails studyDetails) {
 		if (AppConstants.EXPORT_ADVANCE_STUDY_EXCEL.getString().equalsIgnoreCase(exportType)
 				|| AppConstants.EXPORT_ADVANCE_STUDY_CSV.getString().equalsIgnoreCase(exportType)) {
 			return this.exportAdvanceListService.exportAdvanceGermplasmList(advancedListIds, studyDetails.getStudyName(),
@@ -293,7 +290,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		return super.convertObjectToJson(results);
 	}
 
-	protected void setExportAdvanceListService(final ExportAdvanceListService exportAdvanceListService) {
+	void setExportAdvanceListService(final ExportAdvanceListService exportAdvanceListService) {
 		this.exportAdvanceListService = exportAdvanceListService;
 	}
 

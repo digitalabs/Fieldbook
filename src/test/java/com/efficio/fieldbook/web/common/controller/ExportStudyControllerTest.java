@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.common.controller;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
-import junit.framework.Assert;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -23,16 +22,14 @@ import org.codehaus.jackson.type.TypeReference;
 import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.GermplasmExportService;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.OntologyService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -50,11 +47,6 @@ import java.util.Map;
 @RunWith(MockitoJUnitRunner.class)
 public class ExportStudyControllerTest {
 
-	private static final String SAMPLE_STUDY_FILENAME = "Sample_Study";
-	private static final String ZIP_EXT = ".zip";
-	private static final String CSV_EXT = ".csv";
-	private static final String XLS_EXT = ".xls";
-
 	@Mock
 	private GermplasmExportService germplasmExportService;
 
@@ -62,24 +54,13 @@ public class ExportStudyControllerTest {
 	private ExportAdvanceListService exportAdvanceListService;
 
 	@Mock
-	private FieldbookService fieldbookMiddlewareService;
-
-	@Mock
 	private HttpServletRequest req;
 
 	@Mock
 	private HttpServletResponse resp;
 
-	@Mock
-	private ContextUtil contextUtil;
-
-	@Mock
-	private OntologyService ontologyService;
-
 	@InjectMocks
 	private ExportStudyController exportStudyController;
-
-	private static final String CSV_CONTENT_TYPE = "text/csv";
 
 	private UserSelection userSelection;
 
@@ -90,8 +71,6 @@ public class ExportStudyControllerTest {
 		this.exportStudyController.setUserSelection(this.userSelection);
 		final PaginationListSelection paginationListSelection = Mockito.mock(PaginationListSelection.class);
 		this.exportStudyController.setPaginationListSelection(paginationListSelection);
-		Mockito.doReturn(null).when(ontologyService).getStandardVariable(ArgumentMatchers.anyInt(),
-				ArgumentMatchers.<String>isNull());
 	}
 
 	@Test

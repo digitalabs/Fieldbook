@@ -173,19 +173,6 @@
 
 	<bean id="exportFieldmapService" class="com.efficio.fieldbook.service.ExportFieldmapServiceImpl" />
 
-
-	<bean id="exportOrderingSerpentineOverRangeService"
-		class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl" />
-
-
-	<bean id="exportOrderingSerpentineOverColumnService"
-		class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl" />
-
-
-	<bean id="exportOrderingRowColService"
-		class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl" />
-
-
 	<bean id="exportGermplasmListService"
 		class="com.efficio.fieldbook.web.common.service.impl.ExportGermplasmListServiceImpl" scope="request">
 		<aop:scoped-proxy />

@@ -226,7 +226,6 @@ public class OpenTrialController extends BaseTrialController {
 				// FIXME
 				// See setStartingEntryNoAndPlotNoFromObservations() in
 				// prepareExperimentalDesignTabInfo
-				this.fieldbookMiddlewareService.loadAllObservations(workbook);
 
 				this.removeAnalysisAndAnalysisSummaryVariables(workbook);
 
@@ -302,7 +301,7 @@ public class OpenTrialController extends BaseTrialController {
 
 			final List<ListDataProject> listDataProjects = this.fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
 
-			long germplasmListChecksSize;
+			final long germplasmListChecksSize;
 			if (ExperimentDesignType.P_REP.getId().equals(this.userSelection.getExpDesignParams().getDesignType())) {
 
 				germplasmListChecksSize = this.fieldbookService.getGermplasmListChecksSize(germplasmList.getId());
@@ -524,7 +523,6 @@ public class OpenTrialController extends BaseTrialController {
 	public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") final int id) throws ParseException {
 		final Map<String, Object> returnVal = new HashMap<>();
 		final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(id);
-		this.fieldbookMiddlewareService.loadAllObservations(trialWorkbook);
 
 		this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
 
@@ -722,7 +720,7 @@ public class OpenTrialController extends BaseTrialController {
 	@RequestMapping(value = "/getExperimentalDesignName/{experimentalDesignId}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	public Map<String, Object> getExperimentalDesignName(@PathVariable final Integer experimentalDesignId) {
 		final Map<String, Object> output = new HashMap<>();
-		Term exptDesignValue = this.termDataManager.getTermById(experimentalDesignId);
+		final Term exptDesignValue = this.termDataManager.getTermById(experimentalDesignId);
 		output.put("name", exptDesignValue.getDefinition());
 		return output;
 	}

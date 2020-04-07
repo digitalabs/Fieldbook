@@ -135,11 +135,11 @@
 									</li>
 									<li>
 										<a ng-click="showGeoJSONModal()"
-										   th:text="#{study.edit.study.geojson.create}">Create georeference</a>
+										   th:text="#{study.studydetails.action.geojson.create}">Create georeference</a>
 									</li>
 									<li>
 										<a ng-click="showGeoJSONModal(true)"
-										   th:text="#{study.edit.study.geojson.view}">View georeference</a>
+										   th:text="#{study.studydetails.action.geojson.view}">View georeference</a>
 									</li>
 								</ul>
 							</li>
@@ -643,6 +643,9 @@
 		var lockStudySuccessMessage = /*[[#{lock.study.success.message}]]*/ '';
 		var unlockStudySuccessMessage = /*[[#{unlock.study.success.message}]]*/ '';
 		var subObservationDatasetBuiltSuccessMessage =/*[[#{sub.observation.dataset.built.successfully}]]*/'';
+		var noLayoutError =/*[[#{error.no.layout}]]*/ '',
+			geoReferenceCreateNotAvailableError =/*[[#{error.geojson.create.not.available}]]*/ '',
+			geoReferenceViewNotAvailableError =/*[[#{error.geojson.view.not.available}]]*/ '';
 
 		var translations = {
 			/*TRIAL SETTINGS*/

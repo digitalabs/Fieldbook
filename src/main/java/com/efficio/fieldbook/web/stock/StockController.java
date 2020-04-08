@@ -30,7 +30,6 @@ import org.generationcp.middleware.pojos.LocationType;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -275,6 +274,14 @@ public class StockController extends AbstractBaseFieldbookController {
 
 			final Integer currentUserId = this.getCurrentIbdbUserId();
 			final Location location = this.locationDataManager.getDefaultLocationByType(LocationType.SSTORE);
+
+			if (location == null) {
+				resultMap.put(StockController.IS_SUCCESS, StockController.FAILURE);
+				resultMap.put(StockController.ERROR_MESSAGE,
+					this.messageSource.getMessage("stock.list.no.default.storage.location.foundco", new Object[] {}, Locale.getDefault()));
+				return resultMap;
+			}
+
 			for (final Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
 				final InventoryDetails details = new InventoryDetails();
 				details.setAmount(0d);
@@ -311,7 +318,7 @@ public class StockController extends AbstractBaseFieldbookController {
 			});
 
 			resultMap.put(StockController.IS_SUCCESS, StockController.SUCCESS);
-		} catch (final NullPointerException | MiddlewareException | HibernateException e) {
+		} catch (final MiddlewareException e) {
 			StockController.LOG.error(e.getMessage(), e);
 			resultMap.put(StockController.IS_SUCCESS, StockController.FAILURE);
 			resultMap.put(StockController.ERROR_MESSAGE,

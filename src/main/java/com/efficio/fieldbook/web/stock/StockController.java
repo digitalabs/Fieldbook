@@ -30,6 +30,7 @@ import org.generationcp.middleware.pojos.LocationType;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -273,11 +274,11 @@ public class StockController extends AbstractBaseFieldbookController {
 			final Map<Integer, InventoryDetails> inventoryDetailMap = new HashMap<>();
 
 			final Integer currentUserId = this.getCurrentIbdbUserId();
-			final Integer defaultSeedStorageLocationId = this.locationDataManager.getDefaultLocationByType(LocationType.SSTORE).getLocid();
+			final Location location = this.locationDataManager.getDefaultLocationByType(LocationType.SSTORE);
 			for (final Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
 				final InventoryDetails details = new InventoryDetails();
 				details.setAmount(0d);
-				details.setLocationId(defaultSeedStorageLocationId);
+				details.setLocationId(location.getLocid());
 				details.setScaleId(null);
 				details.setUserId(currentUserId);
 				details.setGid(entry.getKey().getGermplasmId());
@@ -310,7 +311,7 @@ public class StockController extends AbstractBaseFieldbookController {
 			});
 
 			resultMap.put(StockController.IS_SUCCESS, StockController.SUCCESS);
-		} catch (final MiddlewareException e) {
+		} catch (final NullPointerException | MiddlewareException | HibernateException e) {
 			StockController.LOG.error(e.getMessage(), e);
 			resultMap.put(StockController.IS_SUCCESS, StockController.FAILURE);
 			resultMap.put(StockController.ERROR_MESSAGE,

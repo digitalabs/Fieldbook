@@ -278,7 +278,7 @@ public class StockController extends AbstractBaseFieldbookController {
 			if (location == null) {
 				resultMap.put(StockController.IS_SUCCESS, StockController.FAILURE);
 				resultMap.put(StockController.ERROR_MESSAGE,
-					this.messageSource.getMessage("stock.list.no.default.storage.location.foundco", new Object[] {}, Locale.getDefault()));
+					this.messageSource.getMessage("stock.list.no.default.storage.location.found", new Object[] {}, Locale.getDefault()));
 				return resultMap;
 			}
 

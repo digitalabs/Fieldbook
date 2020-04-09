@@ -976,6 +976,57 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				});
 			};
 
+			$scope.showGeoJSONModal = function (isViewGeoJSON) {
+				datasetService.getDatasetInstances(studyContext.measurementDatasetId).then((datasetInstances) => {
+					let instances = datasetInstances.filter((instance) => instance.hasFieldLayout);
+					if (!instances || !instances.length) {
+						return showErrorMessage('', noLayoutError);
+					}
+
+					if (isViewGeoJSON) {
+						instances = instances.filter((instance) => instance.hasGeoJSON)
+						if (!instances.length) {
+							return showErrorMessage('', geoReferenceViewNotAvailableError);
+						}
+					} else {
+						instances = instances.filter((instance) => instance.hasFieldLayout && !instance.hasGeoJSON)
+						if (!instances.length) {
+							return showErrorMessage('', geoReferenceCreateNotAvailableError);
+						}
+					}
+
+					$uibModal.open({
+						template: '<single-instance-selector-modal instances="instances" ' +
+							' instance-id-property="instanceDbId" ' +
+							' selected="selected" ' +
+							' on-select-instance="onSelectInstance" ' +
+							' on-continue="onContinue" ' +
+							' ></single-instance-selector-modal>',
+						controller: function ($scope, $uibModalInstance) {
+							$scope.selected = {};
+							$scope.instances = instances;
+
+							$scope.onContinue = function () {
+								$uibModal.open({
+									templateUrl: '/Fieldbook/static/angular-templates/geojson/geojson-modal.html',
+									size: 'lg',
+									controller: 'GeoJSONModalCtrl',
+									resolve: {
+										isViewGeoJSON: function () {
+											return Boolean(isViewGeoJSON);
+										},
+										instanceId: function () {
+											return $scope.selected.instanceDbId;
+										}
+									}
+								});
+							};
+						}
+
+					});
+				});
+			};
+
 			$scope.showCreateSampleListModal = function() {
 				createSampleModalService.openDatasetOptionModal();
 			}

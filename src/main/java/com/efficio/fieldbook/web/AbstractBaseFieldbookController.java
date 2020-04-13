@@ -11,11 +11,8 @@
 
 package com.efficio.fieldbook.web;
 
-import java.util.Iterator;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.security.AuthorizationService;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -33,8 +30,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import javax.annotation.Resource;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Base controller encapsulaitng common functionality between all the Fieldbook controllers.
@@ -68,7 +66,6 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Implemented by the sub controllers to specify the html view that they render into the base template.
-	 * 
 	 */
 	public abstract String getContentName();
 
@@ -101,7 +98,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Base functionality for displaying the page.
-	 * 
+	 *
 	 * @param model the model
 	 * @return the string
 	 */
@@ -125,7 +122,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Base functionality for displaying the error page.
-	 * 
+	 *
 	 * @param model the model
 	 * @return the string
 	 */
@@ -136,8 +133,8 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Base functionality for displaying the page.
-	 * 
-	 * @param model the model
+	 *
+	 * @param model    the model
 	 * @param ajaxPage the ajax page
 	 * @return the string
 	 */
@@ -148,7 +145,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Convert favorite location to json.
-	 * 
+	 *
 	 * @param objectList list of objects
 	 * @return the string
 	 */
@@ -173,13 +170,12 @@ public abstract class AbstractBaseFieldbookController {
 	}
 
 	protected Integer getUnspecifiedLocationId() {
-
+		//FIXME Should return default breeding location id when it is implemented
 		final List<Location> locations = this.locationDataManager.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
 		if (!locations.isEmpty()) {
 			return locations.get(0).getLocid();
 		}
 		return 0;
-
 	}
 
 	public void setContextUtil(final ContextUtil contextUtil) {

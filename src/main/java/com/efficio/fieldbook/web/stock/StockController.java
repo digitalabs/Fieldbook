@@ -21,10 +21,12 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
+import org.generationcp.middleware.manager.api.LocationDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.Location;
+import org.generationcp.middleware.pojos.LocationType;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -101,6 +103,9 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private UserSelection userSelection;
+
+	@Resource
+	private LocationDataManager locationDataManager;
 
 	/**
 	 * Gets the data types.
@@ -268,11 +273,19 @@ public class StockController extends AbstractBaseFieldbookController {
 			final Map<Integer, InventoryDetails> inventoryDetailMap = new HashMap<>();
 
 			final Integer currentUserId = this.getCurrentIbdbUserId();
-			final Integer unspecifiedLocationId = this.getUnspecifiedLocationId();
+			final Location location = this.locationDataManager.getDefaultLocationByType(LocationType.SSTORE);
+
+			if (location == null) {
+				resultMap.put(StockController.IS_SUCCESS, StockController.FAILURE);
+				resultMap.put(StockController.ERROR_MESSAGE,
+					this.messageSource.getMessage("stock.list.no.default.storage.location.found", new Object[] {}, Locale.getDefault()));
+				return resultMap;
+			}
+
 			for (final Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
 				final InventoryDetails details = new InventoryDetails();
 				details.setAmount(0d);
-				details.setLocationId(unspecifiedLocationId);
+				details.setLocationId(location.getLocid());
 				details.setScaleId(null);
 				details.setUserId(currentUserId);
 				details.setGid(entry.getKey().getGermplasmId());

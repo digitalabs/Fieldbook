@@ -47,7 +47,7 @@
 			<span th:if="*{listType !='SAMPLE_LIST'}" th:text="#{list.number.of.selected}" class="control-label control-label-italic advanced-list-label">Selected:</span>
 			<span th:if="*{listType !='SAMPLE_LIST'}" class="control-label control-label-bold control-label-italic advance-list-size advanced-list-label numberOfAdvanceSelected">0</span>
 		</div>
-		<div class="pull-right">
+		<div class="pull-right" th:if="*{totalNumberOfGermplasms > 0 }">
 			<div class="col-md-12">
 				<div class="btn-group">
 					<button type="button" th:id="*{'listActionButton' + listId}"

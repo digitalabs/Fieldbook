@@ -1223,7 +1223,7 @@ function exportAdvanceStudyList(advancedListIdParams) {
 function doFinalExport(exportParameters) {
 	var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', '/bmsapi/crops/' + exportParameters.cropName + '/studies/' + exportParameters.studyId + '/datasets/' + exportParameters.plotData + '/' + exportParameters.fileFormat + '?instanceIds=' + exportParameters.instanceIds + '&collectionOrderId=' + exportParameters.collectionOrderId + '&singleFile=' + exportParameters.singleFile, true);
+	xhr.open('GET', '/bmsapi/crops/' + exportParameters.cropName + '/programs/'+currentProgramId+'/studies/' + exportParameters.studyId + '/datasets/' + exportParameters.plotData + '/' + exportParameters.fileFormat + '?instanceIds=' + exportParameters.instanceIds + '&collectionOrderId=' + exportParameters.collectionOrderId + '&singleFile=' + exportParameters.singleFile, true);
 	xhr.responseType = 'blob';
 	xhr.setRequestHeader('Content-Type', 'application/json');
 	xhr.setRequestHeader('X-Auth-Token', xAuthToken);

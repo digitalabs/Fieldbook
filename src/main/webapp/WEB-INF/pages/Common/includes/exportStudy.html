@@ -169,8 +169,8 @@
 			var exportParameters = {
 				cropName: $('#cropName').val(),
 				fileFormat: fileFormat,
-				studyId: $('#studyId').val(),
-				plotData: $('#plotDataset').val(),
+				studyId: $('.info.tab-pane.active #studyId').val(),
+				plotData: $('.info.tab-pane.active #plotDataset').val(),
 				instanceIds: checkedInstance.join(","),
 				collectionOrderId: collectionOrderId,
 				singleFile: singleFile

@@ -95,7 +95,9 @@ public class DuplicatesUtil {
 
 			final String nFemalePlotNo = importedCrossMain.getFemalePlotNo().toString();
 			final String nFemaleGid = importedCrossMain.getFemaleGid();
-			// FIXME - check back how to handle for polycross. For now pass the first male parent
+			if (importedCrossMain.getMalePlotNos().size() > 1) {
+				continue;
+			}
 			final String nMalePlotNo = importedCrossMain.getMalePlotNos().get(0).toString();
 			final String nMaleGid = importedCrossMain.getMaleGids().get(0).toString();
 

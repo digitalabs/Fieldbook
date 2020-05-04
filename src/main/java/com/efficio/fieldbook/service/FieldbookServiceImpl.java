@@ -741,8 +741,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 								Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
 						} else {
 							method = studyConditionMap.get(codeTermId).getValue().isEmpty() ? null
-								: this.fieldbookMiddlewareService.getMethodById(
-								Integer.parseInt(studyConditionMap.get(codeTermId).getValue()));
+								: this.fieldbookMiddlewareService.getMethodByCode(
+									studyConditionMap.get(codeTermId).getValue(), this.contextUtil.getCurrentProgramUUID());
 						}
 
 						// add name variable if it is not yet in the list

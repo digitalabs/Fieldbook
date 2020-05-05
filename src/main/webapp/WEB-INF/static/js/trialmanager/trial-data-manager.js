@@ -182,8 +182,8 @@
 			var cleanupData = function(values) {
 				if (values) {
 					angular.forEach(values, function(value, key) {
-						if (value && (value.id || value.id === 0)) {
-							values[key] = value.id;
+						if (value && (value.key || value.key === 0)) {
+							values[key] = value.key;
 						}
 					});
 				}

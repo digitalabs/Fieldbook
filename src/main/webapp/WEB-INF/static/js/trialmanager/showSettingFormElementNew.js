@@ -39,13 +39,13 @@
 
 				$scope.isFavoriteLocation = function (locationId) {
 					return $scope.variableDefinition.possibleValuesFavorite.some(function (locationPossibleValue) {
-						return parseInt(locationId) === locationPossibleValue.id;
+						return parseInt(locationId) === locationPossibleValue.key;
 					});
 				};
 
 				$scope.isBreedingLocation = function (locationId) {
 					return $scope.variableDefinition.possibleValues.some(function (locationPossibleValue) {
-						return parseInt(locationId) === locationPossibleValue.id;
+						return parseInt(locationId) === locationPossibleValue.key;
 					});
 				};
 
@@ -95,8 +95,8 @@
 					var currentVal = $scope.valuecontainer[$scope.targetkey];
 
 					// lets fix current val if its an object so that valuecontainer only contains the id
-					if (currentVal && currentVal.id) {
-						currentVal = currentVal.id;
+					if (currentVal && currentVal.key) {
+						currentVal = currentVal.key;
 						$scope.valuecontainer[$scope.targetkey] = currentVal;
 					}
 
@@ -157,12 +157,12 @@
 							angular.forEach($scope.dropdownValues, function (value) {
 								var idNumber;
 
-								if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
-									idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
+								if ($scope.valuecontainer[$scope.targetkey]) {
+									idNumber = $scope.valuecontainer[$scope.targetkey];
 								}
 
 								if (value.description === $scope.valuecontainer[$scope.targetkey] ||
-									value.id === idNumber) {
+									value.key === idNumber) {
 									callback(value);
 									return false;
 								}

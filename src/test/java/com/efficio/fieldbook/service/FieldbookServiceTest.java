@@ -54,6 +54,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -853,5 +854,31 @@ public class FieldbookServiceTest {
 		conditionsList.add(getMeasurementVariableForCategoricalVariable(cvtermId, operation));
 		return  conditionsList;
 
+	}
+
+	@Test
+	public void testGetAllBreedingMethods() {
+		final Method breedingMethod =
+			new Method(40, "DER", "G", "SLF", "Self and Bulk", "Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490,
+				1, 0, 19980708, this.contextUtil.getCurrentProgramUUID());
+		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Mockito.anyBoolean())).thenReturn(Arrays.asList(breedingMethod));
+		List<ValueReference> valueReferences = this.fieldbookServiceImpl.getAllBreedingMethods(true, this.contextUtil.getCurrentProgramUUID());
+		Assert.assertEquals("Breeding methods returns 1",1,valueReferences.size());
+		for(ValueReference valueReference : valueReferences){
+			Assert.assertEquals(valueReference.getKey(), breedingMethod.getMcode());
+		}
+	}
+
+	@Test
+	public void testGetFavoriteBreedingMethods() {
+		final Method breedingMethod =
+			new Method(40, "DER", "G", "SLF", "Self and Bulk", "Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490,
+				1, 0, 19980708, this.contextUtil.getCurrentProgramUUID());
+		Mockito.when(this.fieldbookMiddlewareService.getFavoriteMethods(Mockito.anyList(), Mockito.anyBoolean())).thenReturn(Arrays.asList(breedingMethod));
+		List<ValueReference> valueReferences = this.fieldbookServiceImpl.getFavoriteBreedingMethods(Arrays.asList(breedingMethod.getMid()),true);
+		Assert.assertEquals("Breeding methods returns 1",1,valueReferences.size());
+		for(ValueReference valueReference : valueReferences){
+			Assert.assertEquals(valueReference.getKey(), breedingMethod.getMcode());
+		}
 	}
 }

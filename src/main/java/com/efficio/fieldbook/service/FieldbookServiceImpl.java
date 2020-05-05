@@ -431,7 +431,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return possibleValuesFavorite;
 	}
 
-	private List<ValueReference> getFavoriteBreedingMethods(
+	public List<ValueReference> getFavoriteBreedingMethods(
 		final List<Integer> methodIDList,
 		final Boolean isFilterOutGenerative) {
 		final List<Method> methods = this.fieldbookMiddlewareService.getFavoriteMethods(

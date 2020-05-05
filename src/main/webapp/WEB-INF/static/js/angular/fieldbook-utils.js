@@ -437,9 +437,9 @@
 					if ($scope.hasDropdownOptions) {
                         var currentVal = $scope.valuecontainer[$scope.targetkey];
 
-						// lets fix current val if its an object so that it only contains the key
-						if (typeof currentVal !== 'undefined' && currentVal !== null && typeof currentVal.key !== 'undefined' && currentVal.key) {
-							currentVal = currentVal.key;
+						// lets fix current val if its an object so that it only contains the id
+						if (typeof currentVal !== 'undefined' && currentVal !== null && typeof currentVal.id !== 'undefined' && currentVal.id) {
+							currentVal = currentVal.id;
 						}
 
 						$scope.localData.useFavorites = useFavorites(currentVal);
@@ -449,13 +449,13 @@
 
 						angular.forEach($scope.dropdownValues, function(value) {
 							var idNumber;
-							if ($scope.valuecontainer[$scope.targetkey]) {
-								idNumber = $scope.valuecontainer[$scope.targetkey];
+							if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
+								idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
 							}
-							$scope.lookUpValues[value.key] = value;
+							$scope.lookUpValues[value.id] = value;
 							$scope.lookUpValues[value.description] = value;
 							if (value.description === $scope.valuecontainer[$scope.targetkey] ||
-								value.key === idNumber) {
+								value.id === idNumber) {
 								$scope.valuecontainer[$scope.targetkey] = value;
 							}
 						});

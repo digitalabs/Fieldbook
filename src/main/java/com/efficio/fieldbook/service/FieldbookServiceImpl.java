@@ -460,10 +460,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 		if (methods != null && !methods.isEmpty()) {
 			for (final Method method : methods) {
 				if (method != null && (method.getUniqueID() == null || method.getUniqueID().equals(programUUID))) {
-					ValueReference valueReference = new ValueReference(method.getMid(), method.getMdesc(),
-						method.getMname() + " - " + method.getMcode());
-					valueReference.setKey(method.getMcode());
-					list.add(valueReference);
+					list.add(new ValueReference(method.getMid(), method.getMdesc(),
+						method.getMname() + " - " + method.getMcode()));
 				}
 			}
 		}

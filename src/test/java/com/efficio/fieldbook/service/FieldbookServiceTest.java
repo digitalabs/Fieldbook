@@ -782,7 +782,7 @@ public class FieldbookServiceTest {
 	public void testPairVariableAddOperation(){
 		final UserSelection userSelection = new UserSelection();
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		workbook.setConditions(getConditions(TermId.PI_ID.getId(), Operation.ADD));
+		workbook.setConditions(this.getConditions(TermId.PI_ID.getId(), Operation.ADD));
 		userSelection.setWorkbook(workbook);
 
 		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
@@ -801,7 +801,7 @@ public class FieldbookServiceTest {
 	public void testPairVariableUpdateOperation(){
 		final UserSelection userSelection = new UserSelection();
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		workbook.setConditions(getConditions(TermId.PI_ID.getId(), Operation.UPDATE));
+		workbook.setConditions(this.getConditions(TermId.PI_ID.getId(), Operation.UPDATE));
 		userSelection.setWorkbook(workbook);
 
 		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
@@ -820,7 +820,7 @@ public class FieldbookServiceTest {
 	public void testPairVariableDeleteOperation(){
 		final UserSelection userSelection = new UserSelection();
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		workbook.setConditions(getConditions(TermId.PI_ID.getId(), Operation.DELETE));
+		workbook.setConditions(this.getConditions(TermId.PI_ID.getId(), Operation.DELETE));
 		userSelection.setWorkbook(workbook);
 
 		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
@@ -834,7 +834,7 @@ public class FieldbookServiceTest {
 		Assert.assertEquals(1, userSelection.getWorkbook().getConditions().size());
 	}
 
-	private MeasurementVariable getMeasurementVariableForCategoricalVariable(int termId, Operation operation) {
+	private MeasurementVariable getMeasurementVariableForCategoricalVariable(final int termId, final Operation operation) {
 		final MeasurementVariable variable =
 				new MeasurementVariable(termId, "PI_ID", "TRIAL NUMBER", WorkbookDataUtil.NUMBER,
 						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "", WorkbookDataUtil.TRIAL);
@@ -866,7 +866,7 @@ public class FieldbookServiceTest {
 		return possibleValues;
 	}
 
-	private MeasurementVariable getMeasurementVariableForBreedingMethodVariable(Operation operation) {
+	private MeasurementVariable getMeasurementVariableForBreedingMethodVariable(final Operation operation) {
 		final MeasurementVariable variable =
 			new MeasurementVariable(TermId.BREEDING_METHOD_CODE.getId(), "BREEDING_METHOD_CODE", "BREEDING_METHOD_CODE", WorkbookDataUtil.NUMBER,
 				WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "", WorkbookDataUtil.TRIAL);
@@ -879,12 +879,12 @@ public class FieldbookServiceTest {
 		return variable;
 	}
 
-	private List<MeasurementVariable> getConditions(int cvtermId, Operation operation){
-		List<MeasurementVariable> conditionsList = new ArrayList<>();
+	private List<MeasurementVariable> getConditions(final int cvtermId, final Operation operation){
+		final List<MeasurementVariable> conditionsList = new ArrayList<>();
 		if(cvtermId == TermId.BREEDING_METHOD_CODE.getId()) {
-			conditionsList.add(getMeasurementVariableForBreedingMethodVariable(operation));
+			conditionsList.add(this.getMeasurementVariableForBreedingMethodVariable(operation));
 		}else{
-			conditionsList.add(getMeasurementVariableForCategoricalVariable(cvtermId, operation));
+			conditionsList.add(this.getMeasurementVariableForCategoricalVariable(cvtermId, operation));
 		}
 		return  conditionsList;
 	}
@@ -893,7 +893,7 @@ public class FieldbookServiceTest {
 	public void testPairVariableCodeAndNameAddOperation(){
 		final UserSelection userSelection = new UserSelection();
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		workbook.setConditions(getConditions(TermId.BREEDING_METHOD_CODE.getId(), Operation.ADD));
+		workbook.setConditions(this.getConditions(TermId.BREEDING_METHOD_CODE.getId(), Operation.ADD));
 		userSelection.setWorkbook(workbook);
 
 		final StandardVariable breedingMethodName = StandardVariableTestDataInitializer.createStandardVariable(TermId.BREEDING_METHOD.getId(), "BREEDING_METHOD");
@@ -911,7 +911,7 @@ public class FieldbookServiceTest {
 			AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 
 		Assert.assertEquals(2, userSelection.getWorkbook().getConditions().size());
-		for(MeasurementVariable measurementVariable : userSelection.getWorkbook().getConditions()){
+		for(final MeasurementVariable measurementVariable : userSelection.getWorkbook().getConditions()){
 			Assert.assertTrue("TermId must include BREEDING_METHOD and BREEDING_METHOD_CODE ",measurementVariable.getTermId() == TermId.BREEDING_METHOD.getId() || measurementVariable.getTermId() == TermId.BREEDING_METHOD_CODE.getId());
 			Assert.assertTrue("Operation is ADD", measurementVariable.getOperation().equals(Operation.ADD));
 		}
@@ -921,7 +921,7 @@ public class FieldbookServiceTest {
 	public void testPairVariableCodeAndNameUpdateOperation(){
 		final UserSelection userSelection = new UserSelection();
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		workbook.setConditions(getConditions(TermId.BREEDING_METHOD_CODE.getId(), Operation.UPDATE));
+		workbook.setConditions(this.getConditions(TermId.BREEDING_METHOD_CODE.getId(), Operation.UPDATE));
 		userSelection.setWorkbook(workbook);
 
 		final StandardVariable breedingMethodName = StandardVariableTestDataInitializer.createStandardVariable(TermId.BREEDING_METHOD.getId(), "BREEDING_METHOD");
@@ -936,7 +936,7 @@ public class FieldbookServiceTest {
 			AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 
 		Assert.assertEquals(1, userSelection.getWorkbook().getConditions().size());
-		for(MeasurementVariable measurementVariable : userSelection.getWorkbook().getConditions()){
+		for(final MeasurementVariable measurementVariable : userSelection.getWorkbook().getConditions()){
 			Assert.assertTrue("TermId must include BREEDING_METHOD_CODE ",measurementVariable.getTermId() == TermId.BREEDING_METHOD_CODE.getId());
 			Assert.assertTrue("Operation is UPDATE", measurementVariable.getOperation().equals(Operation.UPDATE));
 		}
@@ -946,7 +946,7 @@ public class FieldbookServiceTest {
 	public void testPairVariableCodeAndNameDeleteOperation(){
 		final UserSelection userSelection = new UserSelection();
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		workbook.setConditions(getConditions(TermId.BREEDING_METHOD_CODE.getId(), Operation.DELETE));
+		workbook.setConditions(this.getConditions(TermId.BREEDING_METHOD_CODE.getId(), Operation.DELETE));
 		userSelection.setWorkbook(workbook);
 
 		final StandardVariable breedingMethodName = StandardVariableTestDataInitializer.createStandardVariable(TermId.BREEDING_METHOD.getId(), "BREEDING_METHOD");
@@ -962,7 +962,7 @@ public class FieldbookServiceTest {
 
 		Assert.assertEquals(1, userSelection.getWorkbook().getConditions().size());
 		System.out.println(userSelection.getWorkbook().getConditions());
-		for(MeasurementVariable measurementVariable : userSelection.getWorkbook().getConditions()){
+		for(final MeasurementVariable measurementVariable : userSelection.getWorkbook().getConditions()){
 			Assert.assertTrue("TermId must include BREEDING_METHOD_CODE ",measurementVariable.getTermId() == TermId.BREEDING_METHOD_CODE.getId());
 			Assert.assertTrue("Operation is DELETE", measurementVariable.getOperation().equals(Operation.DELETE));
 

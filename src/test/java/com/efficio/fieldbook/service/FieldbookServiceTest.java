@@ -776,7 +776,7 @@ public class FieldbookServiceTest {
 	public void testPairVariableAddOperation(){
 		final UserSelection userSelection = new UserSelection();
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		workbook.setConditions(getConditions(TermId.PI_ID.getId(), Operation.ADD));
+		workbook.setConditions(this.getConditions(TermId.PI_ID.getId(), Operation.ADD));
 		userSelection.setWorkbook(workbook);
 
 		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
@@ -795,7 +795,7 @@ public class FieldbookServiceTest {
 	public void testPairVariableUpdateOperation(){
 		final UserSelection userSelection = new UserSelection();
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		workbook.setConditions(getConditions(TermId.PI_ID.getId(), Operation.UPDATE));
+		workbook.setConditions(this.getConditions(TermId.PI_ID.getId(), Operation.UPDATE));
 		userSelection.setWorkbook(workbook);
 
 		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
@@ -814,7 +814,7 @@ public class FieldbookServiceTest {
 	public void testPairVariableDeleteOperation(){
 		final UserSelection userSelection = new UserSelection();
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		workbook.setConditions(getConditions(TermId.PI_ID.getId(), Operation.DELETE));
+		workbook.setConditions(this.getConditions(TermId.PI_ID.getId(), Operation.DELETE));
 		userSelection.setWorkbook(workbook);
 
 		final StandardVariable piName = StandardVariableTestDataInitializer.createStandardVariable(TermId.PI_NAME.getId(), "PI_NAME");
@@ -828,7 +828,7 @@ public class FieldbookServiceTest {
 		Assert.assertEquals(1, userSelection.getWorkbook().getConditions().size());
 	}
 
-	private MeasurementVariable getMeasurementVariableForCategoricalVariable(int termId, Operation operation) {
+	private MeasurementVariable getMeasurementVariableForCategoricalVariable(final int termId, final Operation operation) {
 		final MeasurementVariable variable =
 				new MeasurementVariable(termId, "PI_ID", "TRIAL NUMBER", WorkbookDataUtil.NUMBER,
 						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "", WorkbookDataUtil.TRIAL);
@@ -849,9 +849,9 @@ public class FieldbookServiceTest {
 		return possibleValues;
 	}
 
-	private List<MeasurementVariable> getConditions(int cvtermId, Operation operation){
-		List<MeasurementVariable> conditionsList = new ArrayList<>();
-		conditionsList.add(getMeasurementVariableForCategoricalVariable(cvtermId, operation));
+	private List<MeasurementVariable> getConditions(final int cvtermId, final Operation operation){
+		final List<MeasurementVariable> conditionsList = new ArrayList<>();
+		conditionsList.add(this.getMeasurementVariableForCategoricalVariable(cvtermId, operation));
 		return  conditionsList;
 
 	}
@@ -862,9 +862,9 @@ public class FieldbookServiceTest {
 			new Method(40, "DER", "G", "SLF", "Self and Bulk", "Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490,
 				1, 0, 19980708, this.contextUtil.getCurrentProgramUUID());
 		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Mockito.anyBoolean())).thenReturn(Arrays.asList(breedingMethod));
-		List<ValueReference> valueReferences = this.fieldbookServiceImpl.getAllBreedingMethods(true, this.contextUtil.getCurrentProgramUUID());
+		final List<ValueReference> valueReferences = this.fieldbookServiceImpl.getAllBreedingMethods(true, this.contextUtil.getCurrentProgramUUID());
 		Assert.assertEquals("Breeding methods returns 1",1,valueReferences.size());
-		for(ValueReference valueReference : valueReferences){
+		for(final ValueReference valueReference : valueReferences){
 			Assert.assertEquals(valueReference.getKey(), breedingMethod.getMcode());
 		}
 	}
@@ -875,9 +875,9 @@ public class FieldbookServiceTest {
 			new Method(40, "DER", "G", "SLF", "Self and Bulk", "Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490,
 				1, 0, 19980708, this.contextUtil.getCurrentProgramUUID());
 		Mockito.when(this.fieldbookMiddlewareService.getFavoriteMethods(Mockito.anyList(), Mockito.anyBoolean())).thenReturn(Arrays.asList(breedingMethod));
-		List<ValueReference> valueReferences = this.fieldbookServiceImpl.getFavoriteBreedingMethods(Arrays.asList(breedingMethod.getMid()),true);
+		final List<ValueReference> valueReferences = this.fieldbookServiceImpl.getFavoriteBreedingMethods(Arrays.asList(breedingMethod.getMid()),true);
 		Assert.assertEquals("Breeding methods returns 1",1,valueReferences.size());
-		for(ValueReference valueReference : valueReferences){
+		for(final ValueReference valueReference : valueReferences){
 			Assert.assertEquals(valueReference.getKey(), breedingMethod.getMcode());
 		}
 	}

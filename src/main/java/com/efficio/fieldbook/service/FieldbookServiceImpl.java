@@ -445,8 +445,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 		if (methods != null && !methods.isEmpty()) {
 			for (final Method method : methods) {
 				if (method != null) {
-					list.add(new ValueReference(method.getMid(), method.getMdesc(),
-						method.getMname() + " - " + method.getMcode()));
+					ValueReference valueReference = new ValueReference(method.getMid(), method.getMdesc(),
+						method.getMname() + " - " + method.getMcode());
+					valueReference.setKey(method.getMcode());
+					list.add(valueReference);
 				}
 			}
 		}
@@ -460,8 +462,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 		if (methods != null && !methods.isEmpty()) {
 			for (final Method method : methods) {
 				if (method != null && (method.getUniqueID() == null || method.getUniqueID().equals(programUUID))) {
-					list.add(new ValueReference(method.getMid(), method.getMdesc(),
-						method.getMname() + " - " + method.getMcode()));
+					ValueReference valueReference = new ValueReference(method.getMid(), method.getMdesc(),
+						method.getMname() + " - " + method.getMcode());
+					valueReference.setKey(method.getMcode());
+					list.add(valueReference);
 				}
 			}
 		}

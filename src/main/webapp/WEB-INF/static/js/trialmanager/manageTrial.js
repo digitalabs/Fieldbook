@@ -452,7 +452,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			};
 
-			$rootScope.navigateToSubObsTab = function (datasetId, isPendingView) {
+			$rootScope.navigateToSubObsTab = function (datasetId, options) {
 				var subObsTab = undefined;
 				var subObsSet = undefined;
 				angular.forEach($scope.subObservationTabs, function (subObservationTab) {
@@ -466,14 +466,14 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 				$scope.isSettingsTab = false;
 				$scope.tabSelected = subObsTab.state;
-				$state.transitionTo('subObservationTabs.subObservationSets',  {
+				return $state.transitionTo('subObservationTabs.subObservationSets',  {
 					subObservationTabId: subObsTab.id,
 					subObservationTab: subObsTab,
 					subObservationSetId: subObsSet.id,
 					subObservationSet: subObsSet,
-					isPendingView: isPendingView
+					isPendingView: options && options.isPendingView
 				}, {
-					reload: true, inherit: false, notify: true
+					reload: options && options.reload, inherit: false, notify: true
 				});
 			};
 
@@ -1026,6 +1026,12 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					});
 				});
 			};
+
+			$scope.preparePlanting = function () {
+				$scope.navigateToSubObsTab(studyContext.measurementDatasetId, {isPendingView: false}).then(function () {
+					$rootScope.$broadcast('startPreparePlanting');
+				});
+			}
 
 			$scope.showCreateSampleListModal = function() {
 				createSampleModalService.openDatasetOptionModal();

@@ -1132,7 +1132,7 @@
 			}
 
 			function reloadDataset() {
-				$rootScope.navigateToSubObsTab(subObservationSet.id);
+				$rootScope.navigateToSubObsTab(subObservationSet.id, {reload: true});
 			}
 
 			function loadTable() {

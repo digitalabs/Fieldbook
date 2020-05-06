@@ -18,11 +18,6 @@
 				  studyInstanceService, datasetService, derivedVariableService, $timeout, $uibModal, visualizationModalService, studyContext
 		) {
 
-			// FIXME is there a better way?
-			// Only used in tests - to call $rootScope.$apply()
-			// for production, rely on $scope.dtColumns promise
-			// we cannot use dtColumns.then because we need to call $rootScope.$apply
-			// just after dtColumnsPromise.resolve()
 			var tableLoadedResolve;
 			$scope.tableLoadedPromise = new Promise(function (resolve) {
 				tableLoadedResolve = resolve;
@@ -197,6 +192,26 @@
 			$rootScope.$on('sampleListCreated', function (event) {
 				loadTable();
 			});
+
+			$rootScope.$on('startPreparePlanting', function (event) {
+				$scope.tableLoadedPromise.then(function () {
+					if ($scope.isPendingView) {
+						$scope.togglePendingView(false);
+						return showErrorMessage('', $.fieldbookMessages.errorPlantingSelectionInvalid);
+					}
+
+					if (!$scope.validateSelection()) {
+						return;
+					}
+					// TODO open prepare planting dialog
+				});
+			});
+
+			$scope.validateSelection = function () {
+				// TODO validate and alert
+				// return showErrorMessage('', $.fieldbookMessages.errorPlantingSelectionInvalid);
+				return true;
+			};
 
 			$scope.getVariables = function (variableType) {
 				var variables = {settings: []};
@@ -1170,7 +1185,6 @@
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
 
-					// Only used in tests
 					tableLoadedResolve();
 					loadBatchActionCombo();
 				});

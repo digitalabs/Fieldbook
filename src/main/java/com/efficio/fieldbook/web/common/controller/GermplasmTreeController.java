@@ -608,6 +608,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 			final Germplasm germplasm = new Germplasm();
 			germplasm.setGid(gid);
+			germplasm.setMethodId(importedCross.getBreedingMethodId());
 
 			// Create list data items to save - Map<Germplasm,
 			// GermplasmListData>

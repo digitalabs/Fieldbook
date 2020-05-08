@@ -113,10 +113,17 @@ public class DuplicatesUtil {
 					final List<Integer> maleGidExcludingMain = possibleDuplicatesAndReciprocals.getMaleGids();
 					final List<Integer> malePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getMalePlotNos();
 
+					boolean containsAllGids =
+						maleGidExcludingMain.stream().allMatch(gid -> nMaleGid.contains(gid))
+							&& nMaleGid.stream().allMatch(gid -> maleGidExcludingMain.contains(gid));
+
+					boolean containsAllPlots =
+						malePlotNoExcludingMain.stream().allMatch(plotNo -> nMalePlotNo.contains(plotNo))
+							&& nMalePlotNo.stream().allMatch(plotNo -> malePlotNoExcludingMain.contains(plotNo));
+
 					// Duplicate scenario
-					if (femaleGidExcludingMain.equals(nFemaleGid) && maleGidExcludingMain.equals(nMaleGid)) {
-						if (Objects.equals(femalePlotNoExcludingMain, nFemalePlotNo) && Objects
-							.equals(malePlotNoExcludingMain, nMalePlotNo)) {
+					if (femaleGidExcludingMain.equals(nFemaleGid) && containsAllGids) {
+						if (Objects.equals(femalePlotNoExcludingMain, nFemalePlotNo) && containsAllPlots) {
 							// Plot Dupe
 							DuplicatesUtil.setDuplicatePrefixAndEntriesForDuplicates(
 								Lists.newArrayList(possibleDuplicatesAndReciprocals),

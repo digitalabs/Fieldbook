@@ -164,6 +164,25 @@ table .even{
     border-bottom: none;
 }
 
+table.table-fit {
+    width: auto !important;
+    table-layout: auto !important;
+}
+table.table-fit thead th, table.table-fit tfoot th {
+    width: auto !important;
+}
+table.table-fit tbody td, table.table-fit tfoot td {
+    width: auto !important;
+}
+
+.table-no-wrap th {
+    white-space: nowrap;
+}
+
+.table-no-wrap td {
+    white-space: nowrap;
+}
+
 td.manually-edited-value {
     background-color: #c5c6de;
     color: black;
@@ -2027,6 +2046,24 @@ input.select-all-margin{
 
 .vertical-spacer {
     margin-bottom: 25px;
+}
+
+@media (min-width: 1135px) {
+    .modal-huge .modal-dialog {
+        width: 60%;
+    }
+}
+
+@media (min-width: 980px) {
+    .modal-huge .modal-dialog {
+        width: 75%;
+    }
+}
+
+@media (max-width: 980px) {
+    .modal-huge .modal-dialog {
+        width: 90%;
+    }
 }
 
 /* exp design remap css */

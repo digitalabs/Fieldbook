@@ -1,0 +1,92 @@
+<div class="modal-body">
+	<div class="row form-group">
+		<div class="col-xs-10 col-md-11">
+			<h3 class="modal-title fbk-modal-title" id="heading-modal">Prepare Inventory</h3>
+		</div>
+		<div class="col-xs-1 col-md-1">
+			<button type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" ng-click="cancel()"/>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<table datatable="ng" dt-options="unitsDTOptions" class="table table-curved table-condensed table-fit">
+				<thead>
+				<tr>
+					<th>Unit</th>
+					<th># Lots with status "Valid"</th>
+					<th>Group transactions</th>
+					<th>Withdraw all available inventory?</th>
+					<th>Amount per packet</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="(unitName, unit) in units">
+					<td>{{::unitName}}</td>
+					<td>{{validLots(unitName)}}</td>
+					<td><input type="checkbox" ng-change="onGroupTransactionsChecked($event)" ng-model="unit.groupTransactions"/></td>
+					<td><input type="checkbox" ng-change="onWithdrawAllChecked($event)" ng-model="unit.withdrawAll"/></td>
+					<td><input type="text" ng-change="onAmountPerPacketChanged(unitName)" ng-model="unit.amountPerPacket"/></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			&nbsp;
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<table datatable="ng" dt-options="entriesDTOptions" dt-instance="nested.entriesDTInstance"
+				   class="table table-curved table-condensed table-no-wrap" style="width: 100%">
+				<thead>
+				<tr>
+					<th>ENTRY_NO</th>
+					<th>ENTRY_TYPE</th>
+					<th>GID</th>
+					<th>DESIGNATION</th>
+					<th>Stock id</th>
+					<th>Storage location</th>
+					<th>Available balance</th>
+					<th># of packets</th>
+					<th>Units</th>
+					<th>Withdrawal</th>
+					<th>Transaction Status</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="entry in entries">
+					<td>{{::entry.entryNo}}</td>
+					<td>{{::entry.entryType}}</td>
+					<td>{{::entry.gid}}</td>
+					<td>{{::entry.designation}}</td>
+					<td>
+						<select class="form-control" ng-model="entry.stockIdSelected" ng-change="stockIdChange(entry)">
+							<option ng-repeat="(stockId, stock) in entry.stock" value="{{::stockId}}">{{::stockId}}</option>
+						</select>
+					</td>
+					<td>{{::entry.storageLocation}}</td>
+					<td>{{entry.stock[entry.stockIdSelected].available}}</td>
+					<td>{{::entry.numberOfPackets}}</td>
+					<td>{{::entry.unit}}</td>
+					<td>{{units[entry.unit].amountPerPacket * entry.numberOfPackets}}</td>
+					<td style="font-size: 2rem">
+<!--						<span class="glyphicon glyphicon-ok-circle text-success" ng-if="units[entry.unit].amountPerPacket * entry.numberOfPackets <= entry.stock[entry.stockIdSelected].available"></span>-->
+<!--						<span class="glyphicon glyphicon-ban-circle text-danger" ng-if="units[entry.unit].amountPerPacket * entry.numberOfPackets >  entry.stock[entry.stockIdSelected].available"></span>-->
+						<span class="glyphicon glyphicon-ok-circle text-success" ng-if="entry.valid"></span>
+						<span class="glyphicon glyphicon-ban-circle text-danger" ng-if="!entry.valid"></span>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+</div>

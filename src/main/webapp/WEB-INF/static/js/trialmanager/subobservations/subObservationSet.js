@@ -203,7 +203,18 @@
 					if (!$scope.validateSelection()) {
 						return;
 					}
-					// TODO open prepare planting dialog
+					$uibModal.open({
+						templateUrl: '/Fieldbook/static/js/trialmanager/subobservations/prepare-planting/prepare-planting-modal.html',
+						windowClass: 'modal-huge',
+						// size: 'lg',
+						controller: 'PreparePlantingModalCtrl',
+						resolve: {
+							observationUnitIdList: function () {
+								// TODO
+								return [];
+							}
+						}
+					});
 				});
 			});
 

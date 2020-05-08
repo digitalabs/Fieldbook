@@ -893,6 +893,13 @@
 				}
 			}
 
+			/* WARNING Complexity up ahead.
+			 * The following logic is probably one the most complex in the BMS system
+			 * The previous version was even more complex, spanning several files and thousand of lines.
+			 * A lot of effort was put to simplify that logic here.
+			 * We hope we can make even simpler and clearer in the future
+			 * TODO unit test
+			 */
 			function addCellClickHandler() {
 				var $table = angular.element(tableId);
 

@@ -20,12 +20,12 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr ng-repeat="(unitName, unit) in units">
-					<td>{{::unitName}}</td>
-					<td>{{validLots(unitName)}}</td>
-					<td><input type="checkbox" ng-change="onGroupTransactionsChecked($event)" ng-model="unit.groupTransactions"/></td>
-					<td><input type="checkbox" ng-change="onWithdrawAllChecked($event)" ng-model="unit.withdrawAll"/></td>
-					<td><input type="text" ng-change="onAmountPerPacketChanged(unitName)" ng-model="unit.amountPerPacket"/></td>
+				<tr ng-repeat="(unitId, unit) in units">
+					<td>{{::unitId}}</td>
+					<td>{{validLotsCount(unitId)}}</td>
+					<td><input type="checkbox" ng-change="onGroupTransactionsChecked(unitId, unit)" ng-model="unit.groupTransactions"/></td>
+					<td><input type="checkbox" ng-change="onWithdrawAllChecked(unitId, unit)" ng-model="unit.withdrawAll" ng-disabled="unit.groupTransactions" /></td>
+					<td><input type="text" ng-change="onAmountPerPacketChanged(unitId, unit)" ng-model="unit.amountPerPacket" ng-disabled="unit.withdrawAll" /></td>
 				</tr>
 				</tbody>
 			</table>
@@ -70,10 +70,8 @@
 					<td>{{entry.stock[entry.stockIdSelected].available}}</td>
 					<td>{{::entry.numberOfPackets}}</td>
 					<td>{{::entry.unit}}</td>
-					<td>{{units[entry.unit].amountPerPacket * entry.numberOfPackets}}</td>
+					<td>{{(units[entry.unit].withdrawAll && entry.stock[entry.stockIdSelected].available) || units[entry.unit].amountPerPacket * entry.numberOfPackets}}</td>
 					<td style="font-size: 2rem">
-<!--						<span class="glyphicon glyphicon-ok-circle text-success" ng-if="units[entry.unit].amountPerPacket * entry.numberOfPackets <= entry.stock[entry.stockIdSelected].available"></span>-->
-<!--						<span class="glyphicon glyphicon-ban-circle text-danger" ng-if="units[entry.unit].amountPerPacket * entry.numberOfPackets >  entry.stock[entry.stockIdSelected].available"></span>-->
 						<span class="glyphicon glyphicon-ok-circle text-success" ng-if="entry.valid"></span>
 						<span class="glyphicon glyphicon-ban-circle text-danger" ng-if="!entry.valid"></span>
 					</td>

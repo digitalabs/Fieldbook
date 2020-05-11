@@ -47,14 +47,24 @@
 				}
 			});
 
-			$scope.onGroupTransactionsChecked = function (event) {
+			$scope.onGroupTransactionsChecked = function (unitId, unit) {
+				unit.withdrawAll = false;
+				$scope.revalidateEntries(unitId);
 			};
 
-			$scope.onWithdrawAllChecked = function (event) {
+			$scope.onWithdrawAllChecked = function (unitId, unit) {
+				if (unit.withdrawAll) {
+					unit.amountPerPacket = 0;
+				}
+				$scope.revalidateEntries(unitId);
 			};
 
-			$scope.onAmountPerPacketChanged = function (unit) {
-				const entryMap = $scope.entryMap[unit];
+			$scope.onAmountPerPacketChanged = function (unitId, unit) {
+				$scope.revalidateEntries(unitId);
+			};
+
+			$scope.revalidateEntries = function (unitId) {
+				const entryMap = $scope.entryMap[unitId];
 				if (entryMap) {
 					for (const [entryNo, entry] of Object.entries(entryMap)) {
 						entryMap[Number(entryNo)].valid = $scope.isValid(entry);
@@ -71,15 +81,22 @@
 			};
 
 			$scope.isValid = function (entry) {
-				return entry.numberOfPackets &&  //
-					entry.stock[entry.stockIdSelected] && //
-					$scope.units && //
-					$scope.units[entry.unit] &&  //
-					$scope.units[entry.unit].amountPerPacket &&  //
-					$scope.units[entry.unit].amountPerPacket * entry.numberOfPackets <= entry.stock[entry.stockIdSelected].available
+				if (!($scope.units && entry)) {
+					return false;
+				}
+				const unit = $scope.units[entry.unit];
+				const stock = entry.stock[entry.stockIdSelected];
+				if (!(unit && stock)) {
+					return false;
+				}
+				if (unit.withdrawAll) {
+					return stock.available;
+				}
+				return unit.amountPerPacket && //
+					unit.amountPerPacket * entry.numberOfPackets <= stock.available;
 			};
 
-			$scope.validLots = function (unitId) {
+			$scope.validLotsCount = function (unitId) {
 				return Object.values(Object.values($scope.entryMap[unitId]))
 					.filter((entry) => entry.valid).length
 			};

@@ -44,6 +44,14 @@
 						$scope.entryMap[entry.unit] = {};
 					}
 					$scope.entryMap[entry.unit][entry.entryNo] = entry;
+					if (entry.stock) {
+						if ($scope.size(entry.stock) === 1) {
+							entry.stockIdSelected = Object.keys(entry.stock)[0];
+						} else if ($scope.size(entry.stock) > 1) {
+							entry.stockIdSelected = Object.entries(entry.stock)
+								.sort((a, b) => a[1].available > b[1].available)[0][0];
+						}
+					}
 				}
 			});
 
@@ -99,6 +107,14 @@
 			$scope.validLotsCount = function (unitId) {
 				return Object.values(Object.values($scope.entryMap[unitId]))
 					.filter((entry) => entry.valid).length
+			};
+
+			$scope.size = function (obj) {
+				return Object.keys(obj).length;
+			};
+
+			$scope.keys = function (obj) {
+				return Object.keys(obj);
 			};
 
 			$scope.cancel = function () {

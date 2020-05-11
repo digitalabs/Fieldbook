@@ -62,9 +62,10 @@
 					<td>{{::entry.gid}}</td>
 					<td>{{::entry.designation}}</td>
 					<td>
-						<select class="form-control" ng-model="entry.stockIdSelected" ng-change="stockIdChange(entry)">
+						<select ng-if="size(entry.stock) > 1" class="form-control" ng-model="entry.stockIdSelected" ng-change="stockIdChange(entry)">
 							<option ng-repeat="(stockId, stock) in entry.stock" value="{{::stockId}}">{{::stockId}}</option>
 						</select>
+						<span ng-if="size(entry.stock) == 1">{{keys(entry.stock)[0]}}</span>
 					</td>
 					<td>{{::entry.storageLocation}}</td>
 					<td>{{entry.stock[entry.stockIdSelected].available}}</td>

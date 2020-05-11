@@ -25,7 +25,8 @@
 					<td>{{validLotsCount(unitId)}}</td>
 					<td><input type="checkbox" ng-change="onGroupTransactionsChecked(unitId, unit)" ng-model="unit.groupTransactions"/></td>
 					<td><input type="checkbox" ng-change="onWithdrawAllChecked(unitId, unit)" ng-model="unit.withdrawAll" ng-disabled="unit.groupTransactions" /></td>
-					<td><input type="text" ng-change="onAmountPerPacketChanged(unitId, unit)" ng-model="unit.amountPerPacket" ng-disabled="unit.withdrawAll" /></td>
+					<td><input type="text" ng-change="onAmountPerPacketChanged(unitId, unit)" ng-model="unit.amountPerPacket" ng-disabled="unit.withdrawAll"
+							   ng-model-options="{ debounce: 1000 }"/></td>
 				</tr>
 				</tbody>
 			</table>

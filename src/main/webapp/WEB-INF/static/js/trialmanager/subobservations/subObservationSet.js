@@ -1,6 +1,10 @@
 (function () {
 	'use strict';
 
+	var subObsTabSelectedDeRegister = () => {};
+	var sampleListCreatedDeRegister = () => {};
+	var startPreparePlantingDeRegister = () => {};
+
 	var subObservationModule = angular.module('subObservation', ['visualization']);
 	var TRIAL_INSTANCE = 8170,
 		GID = 8240,
@@ -18,10 +22,17 @@
 				  studyInstanceService, datasetService, derivedVariableService, $timeout, $uibModal, visualizationModalService, studyContext
 		) {
 
+			// used also in tests - to call $rootScope.$apply()
 			var tableLoadedResolve;
 			$scope.tableLoadedPromise = new Promise(function (resolve) {
 				tableLoadedResolve = resolve;
 			});
+
+			var tableRenderedResolve;
+			$scope.tableRenderedPromise = new Promise(function (resolve) {
+				tableRenderedResolve = resolve;
+			});
+
 			$scope.hasInstances = false;
 
 			$scope.toggleSectionBatchAction = false;
@@ -185,16 +196,19 @@
 				loadTable();
 			}); // getDataset
 
-			$rootScope.$on('subObsTabSelected', function (event) {
+			subObsTabSelectedDeRegister();
+			subObsTabSelectedDeRegister = $rootScope.$on('subObsTabSelected', function (event) {
 				adjustColumns();
 			});
 
-			$rootScope.$on('sampleListCreated', function (event) {
+			sampleListCreatedDeRegister();
+			sampleListCreatedDeRegister = $rootScope.$on('sampleListCreated', function (event) {
 				loadTable();
 			});
 
-			$rootScope.$on('startPreparePlanting', function (event) {
-				$scope.tableLoadedPromise.then(function () {
+			startPreparePlantingDeRegister();
+			startPreparePlantingDeRegister = $rootScope.$on('startPreparePlanting', function (event) {
+				$scope.tableRenderedPromise.then(function () {
 					if ($scope.isPendingView) {
 						$scope.togglePendingView(false);
 						return showErrorMessage('', $.fieldbookMessages.errorPlantingSelectionInvalid);
@@ -880,6 +894,7 @@
 							'</span>')($scope));
 				});
 				adjustColumns();
+				tableRenderedResolve();
 			}
 
 			function headerCallback(thead, data, start, end, display) {

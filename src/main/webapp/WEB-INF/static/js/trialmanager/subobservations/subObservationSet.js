@@ -63,6 +63,10 @@
 			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 			$scope.dtOptions = null;
 
+			$scope.totalItems = 0;
+			$scope.selectedItems = [];
+			$scope.allItemsPerPages = false;
+
 			$scope.columnFilter = {
 				selectAll: function () {
 					this.columnData.possibleValues.forEach(function (value) {
@@ -489,10 +493,12 @@
 
 			$scope.changeEnvironment = function () {
 				table().columns("TRIAL_INSTANCE:name").visible($scope.nested.selectedEnvironment === $scope.environments[0]);
+				resetChecksStatus();
 				table().ajax.reload();
 			};
 
 			$scope.changeStatusFilter = function () {
+				resetChecksStatus();
 				table().ajax.reload();
 			};
 
@@ -663,6 +669,10 @@
 				return $scope.isVariableBatchActionSelected(index);
 			};
 
+			$scope.isCheckBoxColumn = function (index) {
+				return index === 0;
+			};
+
 			$scope.isVariableBatchActionSelected = function (index) {
 				return $scope.nested.selectedVariableFilter //
 					&& $scope.columnsObj //
@@ -673,6 +683,7 @@
 			};
 
 			$scope.filterByColumn = function () {
+				resetChecksStatus();
 				table().ajax.reload();
 			};
 
@@ -685,6 +696,7 @@
 					});
 					$scope.columnFilter.columnData.isSelectAll = false;
 				}
+				resetChecksStatus();
 				table().ajax.reload();
 			};
 
@@ -878,9 +890,10 @@
 
 			function initCompleteCallback() {
 				table().columns().every(function () {
-					$(this.header()).prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#1b95b2;"' +
-						' ng-if="isVariableBatchActionSelected(' + this.index() + ')"> </span>')($scope))
-						.append($compile('<span class="glyphicon glyphicon-filter" ' +
+					$(this.header())
+						.prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#1b95b2;"' +
+							' ng-if="isVariableBatchActionSelected(' + this.index() + ')"> </span>')($scope))
+						.append($compile('<span ng-if="!isCheckBoxColumn(' + this.index() + ')" class="glyphicon glyphicon-filter" ' +
 							' style="cursor:pointer; padding-left: 5px;"' +
 							' popover-placement="bottom"' +
 							' ng-class="getFilteringByClass(' + this.index() + ')"' +
@@ -890,8 +903,10 @@
 							// ' popover-is-open="columnFilter.isOpen"' +
 							' ng-if="isVariableFilter(' + this.index() + ')"' +
 							' ng-click="openColumnFilter(' + this.index() + ')"' +
-							' uib-popover-template="\'columnFilterPopoverTemplate.html\'">' +
-							'</span>')($scope));
+							' uib-popover-template="\'columnFilterPopoverTemplate.html\'"></span>')($scope))
+						.prepend($compile('<span ng-if="isCheckBoxColumn(' + this.index() + ')">'
+							+ '<input type="checkbox" title="select current page" ng-checked="isAllPageSelected()"  ng-click="onSelectAllPage()">'
+							+ '</span>')($scope));
 				});
 				adjustColumns();
 				tableRenderedResolve();
@@ -1144,6 +1159,64 @@
 				} // clickHandler
 			}
 
+			$scope.allTableItems = function () {
+				return table().context[0].json['recordsFiltered'];
+			};
+
+			$scope.isAllPageSelected = function () {
+				var currentItems = getCurrentItems();
+				return $scope.selectedItems.length > 0 && !currentItems.some((item) => $scope.selectedItems.indexOf(item) === -1);
+			};
+
+			$scope.isSelected = function (itemId) {
+				return itemId && $scope.selectedItems.length > 0 && $scope.selectedItems.find((item) => item === itemId);
+			};
+
+			$scope.toggleSelect = function (observationUnitId) {
+				if ($scope.selectedItems.length === 0) {
+					$scope.selectedItems.push(observationUnitId);
+				} else {
+					var idx = $scope.selectedItems.indexOf(observationUnitId);
+					if (idx > -1) {
+						$scope.selectedItems.splice(idx, 1)
+					} else {
+						$scope.selectedItems.push(observationUnitId);
+					}
+				}
+			};
+
+			$scope.onSelectAllPages = function () {
+				$scope.allItemsPerPages = !$scope.allItemsPerPages;
+				table().columns(0).visible(!$scope.allItemsPerPages);
+				$scope.selectedItems = [];
+				table().ajax.reload();
+			};
+
+			$scope.onSelectAllPage = function () {
+				var currentItems = getCurrentItems();
+				if ($scope.isAllPageSelected()) {
+					$scope.selectedItems = $scope.selectedItems.filter((item) =>
+						currentItems.indexOf(item) === -1);
+				} else {
+					$scope.selectedItems = currentItems.filter((item) =>
+						$scope.selectedItems.indexOf(item) === -1
+					).concat($scope.selectedItems);
+				}
+			};
+
+			function getCurrentItems() {
+				return table().context[0].json.data.map((data) => {
+					return data.observationUnitId
+				});
+			};
+
+			function resetChecksStatus() {
+				$scope.totalItems = 0;
+				$scope.selectedItems = [];
+				$scope.allItemsPerPages = false;
+				table().columns(0).visible(!$scope.allItemsPerPages);
+			};
+
 			function getCategoricalValueId(cellDataValue, columnData) {
 				if (columnData.possibleValues
 					&& cellDataValue !== 'missing') {
@@ -1225,11 +1298,44 @@
 
 			function loadColumns() {
 				return datasetService.getColumns(subObservationSet.id, $scope.isPendingView).then(function (columnsData) {
+					columnsData.unshift(buildCheckBoxColumn());
 					subObservationSet.columnsData = columnsData;
 					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(columnsData);
-
 					return columnsObj;
 				});
+			}
+
+			function buildCheckBoxColumn() {
+				return {
+					alias: "",
+					cropOntology: null,
+					dataType: null,
+					dataTypeCode: "",
+					dataTypeId: null,
+					description: null,
+					factor: true,
+					formula: null,
+					label: "",
+					maxRange: null,
+					method: null,
+					minRange: null,
+					name: "CHECK",
+					operation: null,
+					possibleValues: null,
+					possibleValuesString: null,
+					property: null,
+					required: false,
+					role: null,
+					scale: null,
+					scaleMaxRange: null,
+					scaleMinRange: null,
+					termId: -3,
+					treatmentLabel: null,
+					value: null,
+					variableMaxRange: null,
+					variableMinRange: null,
+					variableType: null
+				}
 			}
 
 			function mapColumns(columnsData) {
@@ -1293,7 +1399,18 @@
 						columnData: columnData
 					});
 
-					// GID or DESIGNATION
+					// CheckBox Column
+					if (columnData.index === 0) {
+						columnsDef.push({
+							targets: columns.length - 1,
+							orderable: false,
+							createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
+								$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.observationUnitId + ')" ng-click="toggleSelect(' + rowData.observationUnitId + ')"></span>')($scope));
+							}
+						});
+					} else
+
+						// GID or DESIGNATION
 					if (columnData.termId === 8240 || columnData.termId === 8250) {
 						columnsDef.push({
 							targets: columns.length - 1,

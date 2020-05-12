@@ -218,7 +218,7 @@
 			<div class="row add_top_padding">
 				<div class="col-xs-12 checkbox-inline" style="padding-top: 20px;">
 					<label>Selected:</label>
-					<label class="control-label-bold" style="padding-right: 15px;"> {{allItemsPerPages ? totalItems : selectedItems.length}}</label>
+					<label class="control-label-bold" style="padding-right: 15px;"> {{allItemsPerPages ? allTableItems() : selectedItems.length}}</label>
 					<label style="padding-left: 15px;">
 						<input type="checkbox" ng-checked="allItemsPerPages" ng-click="onSelectAllPages()" id="check-select-all">
 						Select all pages</input>

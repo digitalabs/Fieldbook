@@ -882,7 +882,8 @@
 					}, {
 						extend: 'colvis',
 						className: 'fbk-buttons-no-border fbk-colvis-button',
-						text: '<i class="glyphicon glyphicon-th"></i>'
+						text: '<i class="glyphicon glyphicon-th"></i>',
+						columns: ':gt(0)'
 					}])
 					.withColReorder()
 					.withPaginationType('full_numbers');

@@ -392,7 +392,7 @@
 						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
 					$scope.localData = {};
-					var showAll = $scope.valuecontainer[$scope.targetkey];
+					var showAll = $scope.isBreedingMethod ? true : $scope.valuecontainer[$scope.targetkey];
 					$scope.localData.useFavorites = !showAll;
 					$scope.lookupLocation =  showAll ? 2 : 1;
 

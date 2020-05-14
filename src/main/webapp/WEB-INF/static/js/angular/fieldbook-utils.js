@@ -429,11 +429,8 @@
 							return false;
 						} else if ($scope.variableDefinition.possibleValuesFavorite) {
 							if($scope.isBreedingMethod){
-								var hasOption;
-								angular.forEach($scope.variableDefinition.possibleValuesFavorite, function (value) {
-									hasOption = value.id > 0;
-								});
-								return hasOption;
+								//If isBreedingMethod returns false
+								false;
 							}else{
 								return $scope.variableDefinition.possibleValuesFavorite.length > 0;
 							}

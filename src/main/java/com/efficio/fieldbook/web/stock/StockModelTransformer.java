@@ -7,6 +7,7 @@ import org.generationcp.middleware.pojos.dms.StockModel;
 import org.generationcp.middleware.pojos.dms.StockProperty;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +28,7 @@ public class StockModelTransformer {
 				importedGermplasm.setEntryTypeCategoricalID(entryTypeId != null ? Integer.valueOf(entryTypeId) : null);
 				importedGermplasm.setCross(germplasm.getCrossName());
 				importedGermplasm.setDesig(stockModel.getName());
-				importedGermplasm.setEntryCode(stockModel.getUniqueName());
+				importedGermplasm.setEntryCode(stockModel.getValue());
 				importedGermplasm.setEntryId(Integer.valueOf(stockModel.getUniqueName()));
 				importedGermplasm.setGid(germplasm.getGid().toString());
 				importedGermplasm.setMgid(germplasm.getMgid());
@@ -42,7 +43,32 @@ public class StockModelTransformer {
 			}
 		}
 		return importedGermplasmList;
+	}
 
+	public List<StockModel> transformToStockModels(final int studyId, final List<ImportedGermplasm> importedGermplasmList) {
+		final List<StockModel> stockModelList = new ArrayList<>();
+		for (final ImportedGermplasm importedGermplasm : importedGermplasmList) {
+			final StockModel stockModel = new StockModel();
+			stockModel.setProjectId(studyId);
+			stockModel.setName(importedGermplasm.getDesig());
+			stockModel.setGermplasm(new Germplasm(Integer.valueOf(importedGermplasm.getGid())));
+			stockModel.setTypeId(TermId.ENTRY_CODE.getId());
+			stockModel.setValue(importedGermplasm.getEntryCode());
+			stockModel.setUniqueName(importedGermplasm.getEntryId().toString());
+			stockModel.setIsObsolete(false);
+
+			final Set<StockProperty> stockProperties = new HashSet<>();
+			final StockProperty entryTypeProperty = new StockProperty();
+			entryTypeProperty.setStock(stockModel);
+			entryTypeProperty.setRank(1);
+			entryTypeProperty.setTypeId(TermId.ENTRY_TYPE.getId());
+			entryTypeProperty.setValue(importedGermplasm.getEntryTypeCategoricalID().toString());
+			stockProperties.add(entryTypeProperty);
+			stockModel.setProperties(stockProperties);
+
+			stockModelList.add(stockModel);
+		}
+		return stockModelList;
 	}
 
 	private String findStockPropValue(final int termId, final Set<StockProperty> properties) {

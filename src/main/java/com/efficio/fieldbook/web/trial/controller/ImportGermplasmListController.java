@@ -19,10 +19,9 @@ import com.efficio.fieldbook.web.exception.FieldbookRequestValidationException;
 import com.efficio.fieldbook.web.stock.StockModelTransformer;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.form.UpdateGermplasmCheckForm;
+import org.fest.util.Collections;
 import org.generationcp.commons.constant.AppConstants;
-import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.context.ContextInfo;
@@ -41,9 +40,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.dms.StockModel;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -68,12 +65,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * This controller handles the 2nd step in the study manager process.
@@ -245,7 +240,7 @@ public class ImportGermplasmListController extends SettingsController {
 		this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
 
 		// for saving the list data project
-		this.saveListDataProject(studyId);
+		this.saveStocks(studyId);
 
 		this.fieldbookService.saveStudyColumnOrdering(studyId,
 			form.getColumnOrders(), this.userSelection.getWorkbook());
@@ -279,26 +274,19 @@ public class ImportGermplasmListController extends SettingsController {
 	 *
 	 * @param studyId - the study id
 	 */
-	private void saveListDataProject(final int studyId) {
+	private void saveStocks(final int studyId) {
 
 		final ImportedGermplasmMainInfo germplasmMainInfo = this.getUserSelection().getImportedGermplasmMainInfo();
 
-		if (germplasmMainInfo != null && germplasmMainInfo.getListId() != null) {
-			// we save the list
-			// we need to create a new germplasm list
-			final Integer listId = germplasmMainInfo.getListId();
-			final List<ImportedGermplasm> projectGermplasmList;
-
-			final ImportedGermplasmList importedGermplasmList = germplasmMainInfo.getImportedGermplasmList();
-
-			projectGermplasmList = importedGermplasmList.getImportedGermplasms();
-
-			final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(projectGermplasmList);
-			this.fieldbookMiddlewareService
-				.saveOrUpdateListDataProject(studyId, GermplasmListType.STUDY, listId, listDataProject, this.getCurrentIbdbUserId());
+		if (germplasmMainInfo.getImportedGermplasmList() != null && !Collections.isEmpty(germplasmMainInfo.getImportedGermplasmList().getImportedGermplasms())) {
+			final List<ImportedGermplasm> importedGermplasmList = germplasmMainInfo.getImportedGermplasmList().getImportedGermplasms();
+			final List<StockModel> stockModelList = new StockModelTransformer().transformToStockModels(studyId, importedGermplasmList);
+			// Delete the existing stocks so that we can replace it with the current list.
+			this.stockModelService.deleteStocksForStudy(studyId);
+			this.stockModelService.saveStocks(stockModelList);
 		} else {
 			// we delete the record in the db
-			this.fieldbookMiddlewareService.deleteListDataProjects(studyId, GermplasmListType.STUDY);
+			this.stockModelService.deleteStocksForStudy(studyId);
 		}
 
 	}

@@ -36,6 +36,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.ontology.api.TermDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.dms.StockModel;
@@ -255,6 +256,7 @@ public class OpenTrialController extends BaseTrialController {
 				form.setGermplasmListId(this.getGermplasmListId(studyId));
 				form.setStudyTypeName(dmsProject.getStudyType().getName());
 				this.setModelAttributes(form, studyId, model, workbook);
+				this.setUserSelectionImportedGermplasmMainInfo(this.userSelection, studyId, model);
 			}
 			return this.showAngularPage(model);
 
@@ -308,6 +310,36 @@ public class OpenTrialController extends BaseTrialController {
 			}
 		}
 		return checkEntryTypeIds;
+	}
+
+	void setUserSelectionImportedGermplasmMainInfo(final UserSelection userSelection, final Integer studyId, final Model model) {
+
+		final List<StockModel> stockModelList = this.stockModelService.getStocksForStudy(studyId);
+		if (!stockModelList.isEmpty()) {
+
+			final long germplasmListChecksSize;
+			if (ExperimentDesignType.P_REP.getId().equals(this.userSelection.getExpDesignParams().getDesignType())) {
+				germplasmListChecksSize = this.stockModelService.countStocksByStudyAndEntryTypeIds(studyId, this.getAllCheckEntryTypeIds());
+			} else {
+				germplasmListChecksSize = this.stockModelService.countStocksByStudyAndEntryTypeIds(studyId,
+					Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
+			}
+
+			final Map<Integer, String> inventoryStockIdMap = this.stockModelService.getInventoryStockIdMap(stockModelList);
+			final List<ImportedGermplasm> list = new StockModelTransformer().tranformToImportedGermplasm(stockModelList, inventoryStockIdMap);
+			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+			importedGermplasmList.setImportedGermplasms(list);
+			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+
+			mainInfo.setAdvanceImportType(true);
+			mainInfo.setImportedGermplasmList(importedGermplasmList);
+			userSelection.setImportedGermplasmMainInfo(mainInfo);
+			userSelection.setImportValid(true);
+
+			model.addAttribute("germplasmListSize", stockModelList.size());
+			model.addAttribute("germplasmChecksSize", germplasmListChecksSize);
+
+		}
 	}
 
 	protected void setModelAttributes(final CreateTrialForm form, final Integer trialId, final Model model, final Workbook trialWorkbook)

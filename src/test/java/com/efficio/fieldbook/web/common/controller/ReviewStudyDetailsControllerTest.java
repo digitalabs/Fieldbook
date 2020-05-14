@@ -89,7 +89,6 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 		final GermplasmList germplasmList = new GermplasmList(1);
 		Mockito.when(this.fieldbookMWService.getGermplasmListsByProjectId(1, GermplasmListType.STUDY)).thenReturn(Arrays.asList(germplasmList));
-		Mockito.when(this.fieldbookService.getGermplasmListChecksSize(germplasmList.getId())).thenReturn(2L);
 	}
 
 	@Test
@@ -177,13 +176,6 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 		this.reviewStudyDetailsController.setIsSuperAdminAttribute(model);
 		Assert.assertTrue((Boolean)model.asMap().get("isSuperAdmin"));
-	}
-
-	@Test
-	public void getNumberOfChecks() {
-		final long numberOfChecks = this.reviewStudyDetailsController.getNumberOfChecks(1);
-		Assert.assertEquals(2L, numberOfChecks);
-
 	}
 
 	private boolean hasAnalysisVariables(final List<MeasurementVariable> variables) {

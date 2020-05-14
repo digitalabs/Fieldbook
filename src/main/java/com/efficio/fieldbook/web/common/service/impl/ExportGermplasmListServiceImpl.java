@@ -105,7 +105,8 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 				this.userSelection.getImportedGermplasmMainInfo().setListId(germplasmList.getListRef());
 			}
 			final List<ListDataProject> listDataProjects = this.germplasmListManager.retrieveSnapshotListData(germplasmList.getId());
-			FieldbookListUtil.populateStockIdInListDataProject(listDataProjects, inventoryDataManager);
+			// TODO: IBP-3947
+			// FieldbookListUtil.populateStockIdInListDataProject(listDataProjects, inventoryDataManager);
 			germplasmlistData = listDataProjects;
 		}
 

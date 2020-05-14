@@ -70,6 +70,7 @@ import org.generationcp.middleware.pojos.dms.StudyType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.SampleListService;
+import org.generationcp.middleware.service.api.StockModelService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
 import org.generationcp.middleware.service.api.user.UserService;
@@ -183,6 +184,9 @@ public class OpenTrialControllerTest {
 
 	@Mock
 	private TermDataManager termDataManager;
+
+	@Mock
+	private StockModelService stockModelService;
 
 	@Before
 	public void setUp() {
@@ -1124,71 +1128,6 @@ public class OpenTrialControllerTest {
 	}
 
 	@Test
-	public void testSetUserSelectionImportedGermplasmMainInfoGermplasmListIsNotEmpty() {
-
-		final int germplasmListId = 111;
-		final int germplasmListRef = 222;
-		final int studyId = 1;
-		final long checkCount = 23;
-		final int germplasmCount = 1;
-
-		final GermplasmList germplasmList = new GermplasmList();
-		germplasmList.setId(germplasmListId);
-		germplasmList.setListRef(germplasmListRef);
-
-		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
-		listOfGermplasmList.add(germplasmList);
-
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY))
-			.thenReturn(listOfGermplasmList);
-		final ListDataProject listDataProject = ListDataProjectTestDataInitializer.createListDataProject(germplasmList, 0, 0, 1,
-			"entryCode", "seedSource", "designation", "groupName", "duplicate", "notes", 20170125);
-		listDataProject.setGroupId(12);
-
-		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
-		expDesignParameterUi.setDesignType(ExperimentDesignType.AUGMENTED_RANDOMIZED_BLOCK.getId());
-		Mockito.when(this.userSelection.getExpDesignParams()).thenReturn(expDesignParameterUi);
-		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(Lists.newArrayList(listDataProject));
-
-		Mockito.when(this.fieldbookMiddlewareService.countListDataProjectByListIdAndEntryTypeIds(germplasmListId,
-			Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()))).thenReturn(checkCount);
-
-		final Map<Integer, String> mockData = Maps.newHashMap();
-		mockData.put(0, "StockID101, StockID102");
-		Mockito.when(this.inventoryDataManager.retrieveStockIds(ArgumentMatchers.anyListOf(Integer.class))).thenReturn(mockData);
-
-		final Model model = new ExtendedModelMap();
-
-		final UserSelection userSelection = new UserSelection();
-
-		this.openTrialController.setUserSelectionImportedGermplasmMainInfo(userSelection, 1, model);
-
-		final ImportedGermplasmMainInfo importedGermplasmMainInfo = userSelection.getImportedGermplasmMainInfo();
-
-		Assert.assertEquals(germplasmListRef, importedGermplasmMainInfo.getListId().intValue());
-		Assert.assertTrue(importedGermplasmMainInfo.isAdvanceImportType());
-		Assert.assertNotNull(importedGermplasmMainInfo.getImportedGermplasmList());
-		Assert.assertTrue(userSelection.isImportValid());
-
-		Assert.assertEquals(Integer.valueOf(germplasmCount), model.asMap().get(OpenTrialControllerTest.GERMPLASM_LIST_SIZE));
-		Assert.assertEquals(checkCount, model.asMap().get(OpenTrialControllerTest.GERMPLASM_CHECKS_SIZE));
-
-		final ImportedGermplasm importedGermplasm = importedGermplasmMainInfo.getImportedGermplasmList().getImportedGermplasms().get(0);
-		Assert.assertEquals("0", importedGermplasm.getEntryTypeValue());
-		Assert.assertEquals(0, importedGermplasm.getEntryTypeCategoricalID().intValue());
-		Assert.assertEquals("groupName", importedGermplasm.getCross());
-		Assert.assertEquals("groupName", importedGermplasm.getCross());
-		Assert.assertEquals("entryCode", importedGermplasm.getEntryCode());
-		Assert.assertEquals(1, importedGermplasm.getEntryId().intValue());
-		Assert.assertEquals("0", importedGermplasm.getGid());
-		Assert.assertEquals(12, importedGermplasm.getMgid().intValue());
-		Assert.assertEquals("seedSource", importedGermplasm.getSource());
-		Assert.assertEquals(12, importedGermplasm.getGroupId().intValue());
-		Assert.assertEquals("StockID101, StockID102", importedGermplasm.getStockIDs());
-
-	}
-
-	@Test
 	public void testSubmitWhereReplaceIsZero() {
 		final TrialData data = this.setUpTrialData();
 		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
@@ -1229,8 +1168,8 @@ public class OpenTrialControllerTest {
 		final int studyId = 1;
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryTypeIds(germplasmListId,
-			Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
+		Mockito.verify(this.stockModelService, Mockito.times(0)).countStocksByStudyAndEntryTypeIds(studyId,
+			Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 
 		Assert.assertNull(this.userSelection.getImportedGermplasmMainInfo());
 		Assert.assertFalse(this.userSelection.isImportValid());
@@ -1252,8 +1191,8 @@ public class OpenTrialControllerTest {
 		listOfGermplasmList.add(germplasmList);
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryTypeIds(germplasmListId,
-			Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
+		Mockito.verify(this.stockModelService, Mockito.times(0)).countStocksByStudyAndEntryTypeIds(studyId,
+			Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 
 		Assert.assertNull(this.userSelection.getImportedGermplasmMainInfo());
 		Assert.assertFalse(this.userSelection.isImportValid());

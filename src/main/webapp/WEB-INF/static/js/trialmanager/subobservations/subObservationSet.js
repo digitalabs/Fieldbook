@@ -1299,44 +1299,22 @@
 
 			function loadColumns() {
 				return datasetService.getColumns(subObservationSet.id, $scope.isPendingView).then(function (columnsData) {
-					columnsData.unshift(buildCheckBoxColumn());
-					subObservationSet.columnsData = columnsData;
-					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(columnsData);
+					subObservationSet.columnsData = addCheckBoxColumn(columnsData);
+					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(subObservationSet.columnsData);
 					return columnsObj;
 				});
 			}
 
-			function buildCheckBoxColumn() {
-				return {
+			function addCheckBoxColumn(columnsData) {
+				var columns = columnsData.slice();
+				columns.unshift({
 					alias: "",
-					cropOntology: null,
-					dataType: null,
-					dataTypeCode: "",
-					dataTypeId: null,
-					description: null,
 					factor: true,
-					formula: null,
-					label: "",
-					maxRange: null,
-					method: null,
-					minRange: null,
 					name: "CHECK",
-					operation: null,
-					possibleValues: null,
-					possibleValuesString: null,
-					property: null,
-					required: false,
-					role: null,
-					scale: null,
-					scaleMaxRange: null,
-					scaleMinRange: null,
 					termId: -3,
-					treatmentLabel: null,
-					value: null,
-					variableMaxRange: null,
-					variableMinRange: null,
-					variableType: null
-				}
+				});
+
+				return columns;
 			}
 
 			function mapColumns(columnsData) {
